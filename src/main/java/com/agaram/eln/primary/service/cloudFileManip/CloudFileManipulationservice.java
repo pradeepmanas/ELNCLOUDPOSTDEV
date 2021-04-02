@@ -8,6 +8,7 @@ import java.util.Date;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,7 +48,10 @@ public class CloudFileManipulationservice {
 	@Autowired
     private LSuserMasterRepository lsuserMasterRepository;
 	
-	final String storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=lleln;AccountKey=0ShoGnoRZFQ6ozTyv65CRRaaywEA/4d2LJRWznrwMn1+di5ExZ3BjovCC8nZpnyCnXvTpFmgkIy19atmAM7wnQ==;EndpointSuffix=core.windows.net";
+	@Autowired
+    private Environment env;
+	
+	
     
 	public CloudProfilePicture addPhoto(Integer usercode, MultipartFile file,Date currentdate) throws IOException { 
     	
@@ -102,6 +106,7 @@ public class CloudFileManipulationservice {
 		CloudStorageAccount storageAccount;
 		CloudBlobClient blobClient = null;
 		CloudBlobContainer container=null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
 
 		try {    
 			// Parse the connection string and create a blob client to interact with Blob storage
@@ -158,6 +163,7 @@ public class CloudFileManipulationservice {
 		CloudBlobClient blobClient = null;
 		CloudBlobContainer container=null;
 		CloudBlockBlob blob = null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
 		try {    
 			// Parse the connection string and create a blob client to interact with Blob storage
 			storageAccount = CloudStorageAccount.parse(storageConnectionString);
@@ -189,6 +195,7 @@ public class CloudFileManipulationservice {
 		CloudBlobClient blobClient = null;
 		CloudBlobContainer container=null;
 		CloudBlockBlob blob = null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
 		try {    
 			// Parse the connection string and create a blob client to interact with Blob storage
 			storageAccount = CloudStorageAccount.parse(storageConnectionString);
@@ -216,6 +223,7 @@ public class CloudFileManipulationservice {
 		CloudStorageAccount storageAccount;
 		CloudBlobClient blobClient = null;
 		CloudBlobContainer container=null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
 
 		try {    
 			// Parse the connection string and create a blob client to interact with Blob storage
@@ -266,6 +274,8 @@ public class CloudFileManipulationservice {
 		CloudBlobClient blobClient = null;
 		CloudBlobContainer container=null;
 		CloudBlockBlob blob = null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+		
 		try {    
 			// Parse the connection string and create a blob client to interact with Blob storage
 			storageAccount = CloudStorageAccount.parse(storageConnectionString);
@@ -293,6 +303,7 @@ public class CloudFileManipulationservice {
 		CloudBlobClient blobClient = null;
 		CloudBlobContainer container=null;
 		CloudBlockBlob blob = null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
 		try {    
 			// Parse the connection string and create a blob client to interact with Blob storage
 			storageAccount = CloudStorageAccount.parse(storageConnectionString);

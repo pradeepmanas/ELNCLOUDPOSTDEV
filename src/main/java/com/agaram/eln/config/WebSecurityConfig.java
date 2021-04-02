@@ -73,7 +73,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		.authorizeRequests().antMatchers("/authenticate").permitAll().
 		antMatchers("/multitenant/otpvarification").permitAll().
 		antMatchers("/multitenant/sendotp").permitAll().
-		antMatchers("/multitenant/ValidatetenantByID").permitAll().
 		antMatchers("/Login/LoadSite").permitAll().
 		antMatchers("/Login/LoadDomain").permitAll().
 		antMatchers("/Login/azureusertokengenrate").permitAll().
@@ -85,7 +84,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/User/Createcentraliseduser").permitAll().
 		antMatchers("/User/Getallcentraliseduser").permitAll().
 		antMatchers("/User/Getcentraliseduserbyid").permitAll().
-		antMatchers("/User/getUserOnCode").permitAll().
 		antMatchers("/Instrument/GetInstrumentParameters").permitAll().
 		antMatchers("/Instrument/Insertshareorder").permitAll().
 		antMatchers("/Instrument/GetsharedtomeorderStatus").permitAll().
@@ -125,6 +123,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/Login/Logout").permitAll().
 		antMatchers("/Instrument/Unshareorderto").permitAll().
 		antMatchers("/User/GetUserslocal").permitAll().
+		antMatchers("/multitenant/ValidatetenantByID").permitAll().
+		antMatchers("/multitenant/ValidatetenantByName").permitAll().
+		antMatchers("/User/getUserOnCode").permitAll().
 		// all other requests need to be authenticated
 		anyRequest().authenticated().and().
 		// make sure we use stateless session; session won't be used to
