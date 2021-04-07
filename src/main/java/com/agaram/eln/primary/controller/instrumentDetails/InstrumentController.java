@@ -225,6 +225,12 @@ public class InstrumentController {
 		return instrumentService.GetorderStatus(objorder);
 	}
 	
+	@PostMapping("/GetdetailorderStatus")
+	public LSlogilablimsorderdetail GetdetailorderStatus(@RequestBody LSlogilablimsorderdetail objupdatedorder)
+	{
+		return instrumentService.GetdetailorderStatus(objupdatedorder);
+	}
+	
 	@PostMapping("/GetResults")
 	public List<LSresultdetails> GetResults(@RequestBody LSlogilablimsorderdetail objorder)
 	{

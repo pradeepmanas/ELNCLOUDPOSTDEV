@@ -10,10 +10,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -75,7 +71,6 @@ import com.agaram.eln.primary.repository.instrumentDetails.Lselninstrumentmaster
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharedbyRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharetoRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsorderworkflowhistoryRepositroy;
-import com.agaram.eln.primary.repository.notification.EmailRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSparsedparametersRespository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
@@ -801,12 +796,13 @@ public class InstrumentService {
 		return lstorder;
 	}
 	
+
 	public List<LSsamplefile> getsamplefileIds(List<Integer>  lstsamplefilecode, SearchCriteria searchCriteria, Integer ismultitenant)
 	{
 
 		List<Long> idList = new ArrayList<Long>();
-		String searchtext =searchCriteria.getContentsearch().replace("[", "\\[").replace("]", "\\]");
-		if(ismultitenant == 1)
+		String searchtext = searchCriteria.getContentsearch().replace("[", "\\[").replace("]", "\\]");
+		if(ismultitenant == 0)
 		{
 			Query query = new Query();
 			if(searchCriteria.getContentsearchtype() == 1)
@@ -829,11 +825,11 @@ public class InstrumentService {
 			List<CloudOrderCreation> orders = new ArrayList<CloudOrderCreation>();
 			if(searchCriteria.getContentsearchtype() == 1)
 			{
-				orders = cloudOrderCreationRepository.findByContentvaluesContainingIgnoreCase(searchtext);
+				orders = cloudOrderCreationRepository.findByContentvaluesequal(searchtext);
 			}
 			else if(searchCriteria.getContentsearchtype() == 2)
 			{
-				orders = cloudOrderCreationRepository.findByContentparameterContainingIgnoreCase(searchtext);
+				orders = cloudOrderCreationRepository.findByContentparameterequal(searchtext);
 			}
 			idList = orders.stream().map(CloudOrderCreation::getId).collect(Collectors.toList());
 		}
@@ -1256,7 +1252,7 @@ public class InstrumentService {
 	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder)
 	{
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findByBatchcode(objorder.getBatchcode());
-		objupdatedorder.setLsLSlimsorder(lSlimsorderRepository.findBybatchid(objorder.getBatchid()));
+		
 		if(objupdatedorder.getLockeduser() != null)
 		{
 			objupdatedorder.setIsLock(1);
@@ -1275,24 +1271,7 @@ public class InstrumentService {
 		{
 			objupdatedorder.setIsLockbycurrentuser(0);
 		}
-		
-		
-		if(objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
-			if(objupdatedorder.getLsworkflow().equals(lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster())))
-			{
-				objupdatedorder.setIsFinalStep(1);
-			}
-			else
-			{
-				objupdatedorder.setIsFinalStep(0);
-			}	
-		}
-		
-		if(objupdatedorder.getFiletype() == 0)
-		{
-			objupdatedorder.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
-		}
-		
+				
 		if(objupdatedorder.getLssamplefile() != null)
 		{
 			if(objorder.getIsmultitenant() == 1)
@@ -1318,6 +1297,29 @@ public class InstrumentService {
     		lscfttransactionRepository.save(objorder.getObjsilentaudit());
     	}
 		
+		return objupdatedorder;
+	}
+	
+	public LSlogilablimsorderdetail GetdetailorderStatus(LSlogilablimsorderdetail objupdatedorder)
+	{
+		objupdatedorder.setLsLSlimsorder(lSlimsorderRepository.findBybatchid(objupdatedorder.getBatchid()));
+		
+		if(objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
+			if(objupdatedorder.getLsworkflow().equals(lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objupdatedorder.getObjLoggeduser().getLssitemaster())))
+			{
+				objupdatedorder.setIsFinalStep(1);
+			}
+			else
+			{
+				objupdatedorder.setIsFinalStep(0);
+			}	
+		}
+		
+		if(objupdatedorder.getFiletype() == 0)
+		{
+			objupdatedorder.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
+		}
+
 		return objupdatedorder;
 	}
 	
