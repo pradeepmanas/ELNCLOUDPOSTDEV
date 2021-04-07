@@ -269,7 +269,7 @@ public class FileService {
 				mongoTemplate.upsert(query, update, SheetCreation.class);
 			}
 		}
-		objfile.setFilecontent(Content);	
+		//objfile.setFilecontent(Content);	
 	}
 	
 	public List<LSfile> GetSheets(LSuserMaster objuser)
@@ -1118,6 +1118,12 @@ public class FileService {
 	
 	public LSfile getfileoncode(LSfile objfile)
 	{
+		if(objfile.getObjsilentaudit()!=null) {
+			objfile.getObjsilentaudit().setTableName("LSfile");
+			lscfttransactionRepository.save(objfile.getObjsilentaudit());
+		}
+		
+		
 		LSfile objreturnfile = lSfileRepository.findByfilecode(objfile.getFilecode());
 		List<LSsheetupdates> list= lssheetupdatesRepository.findByfilecode(objfile.getFilecode());
 		objreturnfile.setModifiedlist(new ArrayList<LSsheetupdates>());
@@ -1141,10 +1147,7 @@ public class FileService {
 				}
 			}
 		}
-if(objfile.getObjsilentaudit()!=null) {
-	objfile.getObjsilentaudit().setTableName("LSfile");
-	lscfttransactionRepository.save(objfile.getObjsilentaudit());
-}
+		
 		return objreturnfile;
 	}
 }

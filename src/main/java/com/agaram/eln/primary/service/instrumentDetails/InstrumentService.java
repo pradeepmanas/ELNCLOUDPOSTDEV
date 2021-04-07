@@ -1251,6 +1251,12 @@ public class InstrumentService {
 	
 	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder)
 	{
+		if(objorder.getObjsilentaudit() != null)
+    	{
+			objorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+    		lscfttransactionRepository.save(objorder.getObjsilentaudit());
+    	}
+		
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findByBatchcode(objorder.getBatchcode());
 		
 		if(objupdatedorder.getLockeduser() != null)
@@ -1272,25 +1278,25 @@ public class InstrumentService {
 			objupdatedorder.setIsLockbycurrentuser(0);
 		}
 				
-//		if(objupdatedorder.getLssamplefile() != null)
-//		{
-//			if(objorder.getIsmultitenant() == 1)
-//			{
-//				CloudOrderCreation file = cloudOrderCreationRepository.findById((long)objupdatedorder.getLssamplefile().getFilesamplecode());
-//				if(file != null)
-//				{
-//					objupdatedorder.getLssamplefile().setFilecontent(file.getContent());
-//				}
-//			}
-//			else
-//			{
-//				OrderCreation file = mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class);
-//				if(file != null)
-//				{
-//					objupdatedorder.getLssamplefile().setFilecontent(file.getContent());
-//				}
-//			}
-//		}
+		if(objupdatedorder.getLssamplefile() != null)
+		{
+			if(objorder.getIsmultitenant() == 1)
+			{
+				CloudOrderCreation file = cloudOrderCreationRepository.findById((long)objupdatedorder.getLssamplefile().getFilesamplecode());
+				if(file != null)
+				{
+					objupdatedorder.getLssamplefile().setFilecontent(file.getContent());
+				}
+			}
+			else
+			{
+				OrderCreation file = mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class);
+				if(file != null)
+				{
+					objupdatedorder.getLssamplefile().setFilecontent(file.getContent());
+				}
+			}
+		}
 		
 		
 		return objupdatedorder;
@@ -1298,6 +1304,7 @@ public class InstrumentService {
 	
 	public LSlogilablimsorderdetail GetdetailorderStatus(LSlogilablimsorderdetail objupdatedorder)
 	{
+		
 		objupdatedorder.setLsLSlimsorder(lSlimsorderRepository.findBybatchid(objupdatedorder.getBatchid()));
 		
 		if(objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
@@ -1316,11 +1323,6 @@ public class InstrumentService {
 			objupdatedorder.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
 		}
 		
-		if(objupdatedorder.getObjsilentaudit() != null)
-    	{
-			objupdatedorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-    		lscfttransactionRepository.save(objupdatedorder.getObjsilentaudit());
-    	}
 
 		return objupdatedorder;
 	}
