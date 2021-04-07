@@ -1272,25 +1272,25 @@ public class InstrumentService {
 			objupdatedorder.setIsLockbycurrentuser(0);
 		}
 				
-		if(objupdatedorder.getLssamplefile() != null)
-		{
-			if(objorder.getIsmultitenant() == 1)
-			{
-				CloudOrderCreation file = cloudOrderCreationRepository.findById((long)objupdatedorder.getLssamplefile().getFilesamplecode());
-				if(file != null)
-				{
-					objupdatedorder.getLssamplefile().setFilecontent(file.getContent());
-				}
-			}
-			else
-			{
-				OrderCreation file = mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class);
-				if(file != null)
-				{
-					objupdatedorder.getLssamplefile().setFilecontent(file.getContent());
-				}
-			}
-		}
+//		if(objupdatedorder.getLssamplefile() != null)
+//		{
+//			if(objorder.getIsmultitenant() == 1)
+//			{
+//				CloudOrderCreation file = cloudOrderCreationRepository.findById((long)objupdatedorder.getLssamplefile().getFilesamplecode());
+//				if(file != null)
+//				{
+//					objupdatedorder.getLssamplefile().setFilecontent(file.getContent());
+//				}
+//			}
+//			else
+//			{
+//				OrderCreation file = mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class);
+//				if(file != null)
+//				{
+//					objupdatedorder.getLssamplefile().setFilecontent(file.getContent());
+//				}
+//			}
+//		}
 		
 		
 		return objupdatedorder;
