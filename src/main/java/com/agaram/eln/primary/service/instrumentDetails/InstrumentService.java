@@ -1291,11 +1291,7 @@ public class InstrumentService {
 				}
 			}
 		}
-		if(objorder.getObjsilentaudit() != null)
-    	{
-			objorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-    		lscfttransactionRepository.save(objorder.getObjsilentaudit());
-    	}
+		
 		
 		return objupdatedorder;
 	}
@@ -1319,6 +1315,12 @@ public class InstrumentService {
 		{
 			objupdatedorder.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
 		}
+		
+		if(objupdatedorder.getObjsilentaudit() != null)
+    	{
+			objupdatedorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+    		lscfttransactionRepository.save(objupdatedorder.getObjsilentaudit());
+    	}
 
 		return objupdatedorder;
 	}
