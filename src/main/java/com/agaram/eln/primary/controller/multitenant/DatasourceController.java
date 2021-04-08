@@ -135,4 +135,10 @@ public class DatasourceController {
 	{
 		return datasourceService.ValidatetenantByName(TenantID);
 	}
+	
+	@PostMapping("/Remindertenant")
+	public DataSourceConfig Remindertenant(@RequestBody DataSourceConfig Tenantname) throws MessagingException
+	{
+		return datasourceService.Remindertenant(Tenantname);
+	}
 }

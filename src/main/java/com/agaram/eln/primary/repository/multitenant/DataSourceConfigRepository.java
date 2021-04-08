@@ -13,6 +13,7 @@ import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
 public interface DataSourceConfigRepository extends JpaRepository<DataSourceConfig, Long> {
     DataSourceConfig findByName(String name);
     DataSourceConfig findByTenantid(String tenantid);
+    DataSourceConfig findByTenantidIgnoreCase(String tenantid);
     DataSourceConfig findByuseremail(String useremail);
     DataSourceConfig findBytenantcontactno(String tenantcontactno);
     DataSourceConfig findByTenantidAndIsenable(String tenantid, boolean enabled);

@@ -65,7 +65,9 @@ public class DatasourceService {
 	public DataSourceConfig Validatetenant(DataSourceConfig Tenantname)
 	{
 		
-		DataSourceConfig objdatasource = configRepo.findByTenantid(Tenantname.getTenantid());
+		//DataSourceConfig objdatasource = configRepo.findByTenantid(Tenantname.getTenantid());
+		
+		DataSourceConfig objdatasource = configRepo.findByTenantidIgnoreCase(Tenantname.getTenantid());
 		
 		Response objreponse = new Response();
 		if(objdatasource != null)
@@ -538,5 +540,16 @@ public class DatasourceService {
 			objdatasource.setObjResponse(objreponse);
 		}
 		return objdatasource;
+	}
+
+	public DataSourceConfig Remindertenant(DataSourceConfig Tenantname) throws MessagingException {
+		
+		Email email = new Email();
+		email.setMailto(Tenantname.getUseremail());
+		email.setSubject("UsrName and PassWord");
+		email.setMailcontent("<b>Dear Customer</b>,<br><i>You need to validate your OTP before organization initiated </i><br><b>Your OTP validation path <br><b><a href="+Tenantname.getLoginpath()+">click here to validate OTP</a></b>");
+		emailService.sendEmail(email);
+		
+		return Tenantname;
 	}
 }

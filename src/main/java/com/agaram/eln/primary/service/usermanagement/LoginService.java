@@ -1566,6 +1566,7 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 			objuser.setModifiedby(objuser.getUsername());
 			objuser.setUserstatus("A");
 			objuser.setLockcount(0);
+			objuser.setUserretirestatus(0);
 			objuser.setPassword(objuser.getToken());
 			
 			Response objResponse = new Response();
@@ -1633,6 +1634,7 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 			objuser.setModifiedby(objuser.getUsername());
 			objuser.setUserstatus("A");
 			objuser.setLockcount(0);
+			objuser.setUserretirestatus(0);
 			objuser.setPassword(objuser.getToken());
 			objuser.setPasswordexpirydate(c.getTime());
 		
