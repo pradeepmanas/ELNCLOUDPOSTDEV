@@ -959,8 +959,8 @@ public class FileService {
 			objversion.setIsactive(objesixting.getIsactive());
 			objversion.setLssheetworkflow(objesixting.getLssheetworkflow());
 			objversion.setLssitemaster(objesixting.getLssitemaster());
-			objversion.setModifiedby(objesixting.getModifiedby());
-			objversion.setModifieddate(objesixting.getModifieddate());
+			objversion.setModifiedby(objfile.getModifiedby());
+			objversion.setModifieddate(objfile.getModifieddate());
 			objversion.setRejected(objesixting.getRejected());
 			objversion.setVersionno(Versionnumber);
 			
