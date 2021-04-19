@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.agaram.eln.config.ADS_Connection;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
-import com.agaram.eln.primary.model.jwt.JwtRequest;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSdomainMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -55,7 +54,7 @@ public class LoginController {
 	}
 	
 	@PostMapping("/Login")
-	public Map<String, Object> Login(@RequestBody LoggedUser objuser) {
+	public Map<String, Object> Login(@RequestBody LoggedUser objuser) throws Exception {
 		return loginService.Login(objuser);
 	}
 	

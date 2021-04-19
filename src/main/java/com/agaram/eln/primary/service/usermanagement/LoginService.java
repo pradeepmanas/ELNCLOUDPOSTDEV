@@ -16,11 +16,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.agaram.eln.config.ADS_Connection;
 import com.agaram.eln.config.AESEncryption;
@@ -141,7 +138,7 @@ public class LoginService {
 //    }};
 	
 	@SuppressWarnings("unused")
-	public Map<String, Object> Login(LoggedUser objuser)
+	public Map<String, Object> Login(LoggedUser objuser) throws Exception
 	{
 		Map<String, Object> obj = new HashMap<>();
 		LSuserMaster objExitinguser = new LSuserMaster();
@@ -150,6 +147,9 @@ public class LoginService {
 		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(username,"0");
 		LSPasswordPolicy lockcount =objExitinguser!=null? LSPasswordPolicyRepository.findTopByAndLssitemasterOrderByPolicycodeDesc(objExitinguser.getLssitemaster()):null;
 //		if(objExitinguser != null && objExitinguser.getLssitemaster().getSitecode().toString().equals(objuser.getsSiteCode()))
+		
+		createAuthenticationToken(objExitinguser);
+		
 		if(objExitinguser != null)
 		{
 			objExitinguser.setObjResponse(new Response());
@@ -1655,6 +1655,18 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 		final UserDetails userDetailstoken = userDetailsService.loadUserByUsername(Tokenuser);
 		
 		final String token = jwtTokenUtil.generateToken(userDetailstoken);
+
+		return ResponseEntity.ok(new JwtResponse(token));
+	}
+
+	public ResponseEntity<?> createAuthenticationToken(LSuserMaster objuser) throws Exception {
+
+		String Tokenuser = objuser.getUsername() +"["+objuser.getLssitemaster().getSitecode()+"]";
+		
+		final UserDetails userDetails = userDetailsService
+				.loadUserByUsername(Tokenuser);
+
+		final String token = jwtTokenUtil.generateToken(userDetails);
 
 		return ResponseEntity.ok(new JwtResponse(token));
 	}

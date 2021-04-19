@@ -123,6 +123,14 @@ CREATE TABLE IF NOT EXISTS public.LsLogilabprotocolstepInfoCloud
     CONSTRAINT LsLogilabprotocolstepInfoCloud_pkey PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS public.helpdocument
+(
+    id integer NOT NULL,
+    documentname character varying(255) COLLATE pg_catalog."default",
+    lshelpdocumentcontent jsonb,
+    CONSTRAINT helpdocument_pkey PRIMARY KEY (id)
+);
+
 update LSusergrouprightsmaster set sallow='0' where sallow='1';
 update LSusergrouprightsmaster set screate='0' where  screate='1';
 update LSusergrouprightsmaster set sdelete='0' where sdelete='1';
