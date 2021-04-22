@@ -123,10 +123,46 @@ CREATE TABLE IF NOT EXISTS public.LsLogilabprotocolstepInfoCloud
     CONSTRAINT LsLogilabprotocolstepInfoCloud_pkey PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS public.helpdocument
+(
+    id integer NOT NULL,
+    documentname character varying(255) COLLATE pg_catalog."default",
+    lshelpdocumentcontent jsonb,
+    CONSTRAINT helpdocument_pkey PRIMARY KEY (id)
+);
+
 update LSusergrouprightsmaster set sallow='0' where sallow='1';
 update LSusergrouprightsmaster set screate='0' where  screate='1';
 update LSusergrouprightsmaster set sdelete='0' where sdelete='1';
 update LSusergrouprightsmaster set sedit='0' where sedit='1';
 
 update LSfileversion set modifiedby_usercode= (select  modifiedby_usercode from LSfileversion where modifiedby_usercode is not null and modifieddate is not null order by modifieddate asc LIMIT  1 ), modifieddate= (select createdate from LSfileversion where modifiedby_usercode is not null and modifieddate is not null order by modifieddate asc LIMIT  1 ) where modifiedby_usercode is null or modifieddate is  null and versionname='version_1';
+
+create table IF NOT EXISTS LSprotocolupdates(
+	protocolcode integer NOT NULL,
+	protocolcomment character varying(250),
+	protocolmastercode integer,
+	protocolmodifieddate timestamp without time zone,
+	modifiedby_usercode integer
+	);
+create table IF NOT EXISTS  LSprotocolworkflowhistory(
+	historycode integer NOT NULL,
+	action character varying(250),
+	approvelstatus integer,
+	comment character varying(250),
+	createdate timestamp without time zone,
+	protocolmastercode integer,
+	createby_usercode integer,
+	currentworkflow_workflowcode integer
+	);
+	--ALTER TABLE IF Exists lsprotocolmaster ADD COLUMN IF NOT EXISTS createby_usercode integer;
+	--UPDATE LSprotocolmaster SET createby_usercode = createdby where createby_usercode is null;
+	ALTER TABLE IF Exists lsprotocolmaster DROP COLUMN IF Exists createby_usercode;
+
+	ALTER TABLE IF Exists lsrepositories ADD COLUMN IF NOT EXISTS isconsumable boolean;
+
+	UPDATE  lsrepositories SET isconsumable=false WHERE isconsumable is null;
+
+	ALTER TABLE IF Exists lsrepositories ADD COLUMN IF NOT EXISTS consumefield varchar(250);
+
 

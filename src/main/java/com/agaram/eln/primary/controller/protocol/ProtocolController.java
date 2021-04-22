@@ -188,6 +188,13 @@ public class ProtocolController {
 		return objMap;
 	}
 	
+	@PostMapping("/GetProtocolTransactionDetails")
+	public Map<String, Object> GetProtocolTransactionDetails(@RequestBody LSprotocolmaster LSprotocolmaster)
+	{
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		objMap = ProtocolMasterService.GetProtocolTransactionDetails(LSprotocolmaster);
+		return objMap;
+	}
 //	@RequestMapping(value="/addProtocolOrderStep")
 //	protected Map<String, Object> addProtocolOrderStep(@RequestBody Map<String, Object> argObj){
 //		Map<String, Object> objMap = new HashMap<String, Object>();

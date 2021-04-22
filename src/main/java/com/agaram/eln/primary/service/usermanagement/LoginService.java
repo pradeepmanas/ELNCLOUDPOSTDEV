@@ -160,7 +160,7 @@ public class LoginService {
 				System.out.println(" password: " + Password);
 			    
 			    Date passwordexp=objExitinguser.getPasswordexpirydate();
-			    if(Password.equals(objuser.getsPassword()) && objExitinguser.getUserstatus()!="Locked")
+			    if(Password.equals(objuser.getsPassword()) && objExitinguser.getUserstatus()!="Locked" && objExitinguser.getUserretirestatus() ==0)
 			    {
 			    	
 			    	String status = objExitinguser.getUserstatus();
@@ -356,6 +356,29 @@ public class LoginService {
 				    		}
 				    	}
 			    	}
+			    else if(objExitinguser.getUserretirestatus() !=0) {
+			    	
+			    	objExitinguser.getObjResponse().setInformation("ID_RETIREDUSER");
+					objExitinguser.getObjResponse().setStatus(false);
+//					if(objExitinguser.getObjsilentaudit() != null)
+//			    	{   
+					objuser.getObjsilentaudit().setActions("Warning");
+					objuser.getObjsilentaudit().setComments(objExitinguser.getUsername()+" "+"user was Retired");
+					objuser.getObjsilentaudit().setTableName("LSuserMaster");
+					objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
+//					objuser.getObjsilentaudit().setTransactiondate(new Date());
+					objuser.getObjsilentaudit().setSystemcoments("System Generated");
+					objuser.getObjsilentaudit().setModuleName(ModuleName);
+					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
+		    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+			    		
+			    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
+//			    	}
+					obj.put("user", objExitinguser);
+					return obj;
+			    	
+			    }
+			    
 			    	else if(!Password.equals(objuser.getsPassword()) 
 			    				|| objExitinguser.getLockcount() == 5 
 			    					|| objExitinguser.getUserstatus()=="Locked") {
@@ -1370,7 +1393,7 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 		{
 			objExitinguser.setObjResponse(new Response());
 			objExitinguser.setObjsilentaudit(new LScfttransaction());
-			if(Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode()) 
+			if((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode()) && objExitinguser.getUserretirestatus() ==0 ) 
 			{
 				
 			    if(objExitinguser.getUserstatus()!="Locked")
@@ -1470,6 +1493,31 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 			    	}
 			    	
 			}
+			else if(objExitinguser.getUserretirestatus() !=0) {
+				
+
+		    	String status = objExitinguser.getUserstatus();
+		    	String groupstatus=objExitinguser.getLsusergroup().getUsergroupstatus();
+		    	
+		    		objExitinguser.getObjResponse().setInformation("ID_RETIREDUSER");
+					objExitinguser.getObjResponse().setStatus(false);
+					objuser.getObjsilentaudit().setActions("Warning");
+					objuser.getObjsilentaudit().setComments(objExitinguser.getUsername()+" "+" user was retired");
+					objuser.getObjsilentaudit().setTableName("LSuserMaster");
+					objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
+					objuser.getObjsilentaudit().setSystemcoments("System Generated");
+					objuser.getObjsilentaudit().setModuleName(ModuleName);
+					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
+		    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+			    		
+			    	lscfttransactionRepository.save(objuser.getObjsilentaudit());
+			    		
+					obj.put("user", objExitinguser);
+					return obj;
+				
+			
+			}
+			
 			else {
 				objExitinguser.getObjResponse().setInformation("ID_SITEVALID");
 				objExitinguser.getObjResponse().setStatus(false);

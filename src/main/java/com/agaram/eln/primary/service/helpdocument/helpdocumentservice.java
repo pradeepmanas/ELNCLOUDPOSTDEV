@@ -44,9 +44,15 @@ public class helpdocumentservice {
 	}
 	
 	public Map<String, Object> getdocumentcontent() {
-		List<Helpdocument> objMap=HelpdocumentRepository.findAll();
 		Map<String, Object> object = new HashMap<String, Object>();
+		try {
+		List<Helpdocument> objMap=HelpdocumentRepository.findAll();
+		
 		object.put("Helpdocument", objMap);
+		}
+		catch (Exception e) {
+			object.put("Helpdocument", "notset");
+		}
 		return object;
 	}
 

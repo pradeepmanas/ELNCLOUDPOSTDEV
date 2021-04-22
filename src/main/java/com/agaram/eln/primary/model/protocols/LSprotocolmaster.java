@@ -1,17 +1,22 @@
 package com.agaram.eln.primary.model.protocols;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
 @Table(name="LSprotocolmaster")
@@ -44,6 +49,9 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster>{
 	private Integer approved;
 	
 	private Integer rejected;
+	
+	@Transient
+	private  List<LSprotocolworkflowhistory> lsprotocolworkflowhistory;
 	
 	public Integer getRejected() {
 		return rejected;
@@ -141,6 +149,14 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster>{
 	public void setCreatedateprotocol(String createdateprotocol) {
 		this.createdateprotocol = createdateprotocol;
 	}
+	 
+	public List<LSprotocolworkflowhistory> getLsprotocolworkflowhistory() {
+		return lsprotocolworkflowhistory;
+	}
+	public void setLsprotocolworkflowhistory(List<LSprotocolworkflowhistory> lsprotocolworkflowhistory) {
+		this.lsprotocolworkflowhistory = lsprotocolworkflowhistory;
+	}
+	
 	@Override
 	public String toString() {
 		return "LSprotocolmaster [protocolmastercode=" + protocolmastercode + ", protocolmastername="

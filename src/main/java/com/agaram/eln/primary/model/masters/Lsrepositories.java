@@ -40,6 +40,10 @@ public class Lsrepositories {
 	
 	private Integer fieldcount=-1;
 	
+	private boolean isconsumable = false;
+	
+	private String consumefield;
+	
 	@Transient
 	Response objResponse;
 
@@ -113,6 +117,22 @@ public class Lsrepositories {
 
 	public void setFieldcount(Integer fieldcount) {
 		this.fieldcount = fieldcount;
+	}
+
+	public boolean isIsconsumable() {
+		return isconsumable;
+	}
+
+	public void setIsconsumable(boolean isconsumable) {
+		this.isconsumable = isconsumable;
+	}
+
+	public String getConsumefield() {
+		return consumefield;
+	}
+
+	public void setConsumefield(String consumefield) {
+		this.consumefield = consumefield;
 	}
 	
 	
