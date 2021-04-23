@@ -8,6 +8,15 @@
 	<packaging>war</packaging>
 	<name>ELN</name>
 	<description>Electronic note book</description>
+	
+	<resourceGroup>logilabeln</resourceGroup>
+   <appName>elnpostgre-1613628974986</appName>
+             
+   <!-- Java Running Stack for Web App on Linux-->
+   <linuxRuntime>tomcat 8.5-jre8</linuxRuntime>
+ 
+   <!-- Deployment Type -->
+   <deploymentType>war</deploymentType>
 
 	<properties>
 		<java.version>8</java.version>
