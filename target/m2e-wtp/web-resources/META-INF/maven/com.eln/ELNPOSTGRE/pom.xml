@@ -104,11 +104,11 @@
 	        <groupId>org.postgresql</groupId>
 	        <artifactId>postgresql</artifactId>
 	    </dependency>
-		<dependency>
+		<!-- <dependency>
 	        <groupId>org.projectlombok</groupId>
 	        <artifactId>lombok</artifactId>
 	        <optional>true</optional>
-	    </dependency>
+	    </dependency> -->
 		<dependency>
 		    <groupId>com.zaxxer</groupId>
 		    <artifactId>HikariCP</artifactId>
@@ -154,6 +154,16 @@
 		    <groupId>org.flywaydb</groupId>
 		    <artifactId>flyway-core</artifactId>
 		    <version>7.5.2</version>
+		</dependency>
+		 <!-- send email -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
+			<groupId>com.microsoft.azure</groupId>
+			<artifactId>azure-storage</artifactId>
+			<version>8.4.0</version>
 		</dependency>
 	</dependencies>
 

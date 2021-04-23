@@ -5,6 +5,7 @@
 	<groupId>com.eln</groupId>
 	<artifactId>ELNPOSTGRE</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>ELN</name>
 	<description>Electronic note book</description>
 
