@@ -133,7 +133,7 @@ public class ProtocolController {
 	}
 	
 	@RequestMapping(value="/getProtocolOrderList")
-	protected List<LSlogilabprotocoldetail> getProtocolOrderList(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail){
+	protected  Map<String, Object>  getProtocolOrderList(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail){
 		return ProtocolMasterService.getProtocolOrderList(LSlogilabprotocoldetail);
 	}
 	

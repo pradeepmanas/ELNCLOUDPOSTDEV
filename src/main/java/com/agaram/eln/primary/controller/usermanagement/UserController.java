@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.config.SMTPMailvalidation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudProfilePicture;
 import com.agaram.eln.primary.model.fileManipulation.ProfilePicture;
 import com.agaram.eln.primary.model.general.Response;
@@ -577,4 +578,13 @@ public class UserController {
 	{
 		return userService.getUserOnCode(objuser);
 	}
+	
+	@PostMapping("/validatemailaddress")
+	public Response validatemailaddress(@RequestBody String mailaddress)
+	{
+		Response objresponse =  new Response();
+		objresponse.setStatus(SMTPMailvalidation.isAddressValid(mailaddress));
+		return objresponse;
+	}
+	
 }

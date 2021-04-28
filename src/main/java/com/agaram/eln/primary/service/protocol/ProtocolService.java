@@ -452,25 +452,30 @@ public class ProtocolService {
 				 */
 				List<LSprotocolstep> tempLSprotocolstepLst = LSProtocolStepRepositoryObj.findByProtocolmastercodeAndStatus(LSprotocolstepObj.getProtocolmastercode(), 1);
 				List<LSprotocolstep> LSprotocolstepLst = new ArrayList<LSprotocolstep>();
-				for(LSprotocolstep LSprotocolstepObj1: tempLSprotocolstepLst) {
+//				for(LSprotocolstep LSprotocolstepObj1: tempLSprotocolstepLst) {
 					if(LSprotocolstepObj.getIsmultitenant() == 1) {
 						if(LSprotocolstepObj.getNewStep() == 1) {
-							LSprotocolstepObj1.setLsprotocolstepInfo(CloudLSprotocolstepInfoObj.getLsprotocolstepInfo());
+							LSprotocolstepObj.setLsprotocolstepInfo(CloudLSprotocolstepInfoObj.getLsprotocolstepInfo());
+							LSprotocolstepLst.add(LSprotocolstepObj);
 						}else {
 							CloudLSprotocolstepInfo newLSprotocolstepInfo = CloudLSprotocolstepInfoRepository.findById(LSprotocolstepObj.getProtocolstepcode());
 							if(newLSprotocolstepInfo != null) {
-								LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
+//								if(LSprotocolstepObj1.getProtocolstepcode()== newLSprotocolstepInfo.getId()) {
+								LSprotocolstepObj.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
+//								}
 							}	
+							LSprotocolstepLst.add(LSprotocolstepObj);
 						}
 					}
 					else {
-						LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate.findById(LSprotocolstepObj1.getProtocolstepcode(), LSprotocolstepInfo.class);
+						LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate.findById(LSprotocolstepObj.getProtocolstepcode(), LSprotocolstepInfo.class);
 						if(newLSprotocolstepInfo != null) {
-							LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+							LSprotocolstepObj.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
 						}
+						LSprotocolstepLst.add(LSprotocolstepObj);
 					}
-					LSprotocolstepLst.add(LSprotocolstepObj1);
-				}
+					
+//				}
 
 				mapObj.put("protocolstepLst", LSprotocolstepLst);
 			}
@@ -607,7 +612,34 @@ public class ProtocolService {
 						LSprotocolmasterLst.addAll(LSprotocolmasterLst2);
 					}
 				}
-				
+				LSprotocolmaster newProtocolMasterObj1 = new ObjectMapper().convertValue(argObj.get("newProtocolMasterObj"), new TypeReference<LSprotocolmaster>() {});
+				List<LSprotocolstep> LSprotocolsteplst = LSProtocolStepRepositoryObj.findByProtocolmastercodeAndStatus(newProtocolMasterObj1.getProtocolmastercode() , 1);
+				List<LSprotocolstep> LSprotocolstepLst = new ArrayList<LSprotocolstep>();
+				for(LSprotocolstep LSprotocolstepObj1: LSprotocolsteplst) {
+					if(newProtocolMasterObj1.getIsmultitenant() == 1) {
+						CloudLSprotocolstepInfo newLSprotocolstepInfo = CloudLSprotocolstepInfoRepository.findById(LSprotocolstepObj1.getProtocolstepcode());
+						if(newLSprotocolstepInfo != null) {
+							LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
+						}
+					}
+					else {
+						LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate.findById(LSprotocolstepObj1.getProtocolstepcode(), LSprotocolstepInfo.class);
+						if(newLSprotocolstepInfo != null) {
+							LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+						}
+					}
+//					LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate.findById(LSprotocolstepObj1.getProtocolstepcode(), LSprotocolstepInfo.class);
+//					if(newLSprotocolstepInfo != null) {
+//						LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+//					}
+					LSprotocolstepLst.add(LSprotocolstepObj1);
+//					LSprotocolstepObj1.setLsprotocolstepInfo(mongoTemplate.findById(LSprotocolstepObj1.getProtocolstepcode(), LSprotocolstepInfo.class).getContent());
+				}
+				if(LSprotocolsteplst != null) {
+					mapObj.put("protocolstepLst", LSprotocolstepLst);
+				}else {
+					mapObj.put("protocolstepLst", new ArrayList<>());
+				}
 				if(argObj.containsKey("edit")) {
 					Map<String, Object> argObj1 = new HashMap<String, Object>();
 					argObj1.put("objsilentaudit", argObj.get("objsilentaudit"));
@@ -940,16 +972,21 @@ public class ProtocolService {
 			
 			mapObj.put("AddedProtocol",lSlogilabprotocoldetail);
 		}
-		List<LSlogilabprotocoldetail> lstOrder = LSlogilabprotocoldetailRepository.findByProtocoltype(lSlogilabprotocoldetail.getProtocoltype());
+		List<LSlogilabprotocoldetail> lstOrder = LSlogilabprotocoldetailRepository.findByProtocoltypeAndOrderflag(lSlogilabprotocoldetail.getProtocoltype(),"N");
 		Collections.sort(lstOrder, Collections.reverseOrder());
 		mapObj.put("ListOfProtocol",lstOrder);
 		return mapObj;
 	}
 
-	public List<LSlogilabprotocoldetail> getProtocolOrderList(LSlogilabprotocoldetail lSlogilabprotocoldetail) {
-//		List<LSlogilabprotocoldetail> lstOrder = LSlogilabprotocoldetailRepository.findByProtocoltype(lSlogilabprotocoldetail.getProtocoltype());
-		List<LSlogilabprotocoldetail> lstOrder = LSlogilabprotocoldetailRepository.findByProtocoltypeAndOrderflag(lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getOrderflag());
-		Collections.sort(lstOrder, Collections.reverseOrder());
+	public Map<String, Object>  getProtocolOrderList(LSlogilabprotocoldetail lSlogilabprotocoldetail) {
+		 Map<String, Object>  lstOrder = new HashMap<String, Object>();
+		List<LSlogilabprotocoldetail> lstPendingOrder = LSlogilabprotocoldetailRepository.findByProtocoltypeAndOrderflag(lSlogilabprotocoldetail.getProtocoltype(), "N");
+		List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository.findByProtocoltypeAndOrderflag(lSlogilabprotocoldetail.getProtocoltype(),"R");
+		Collections.sort(lstPendingOrder, Collections.reverseOrder());
+		Collections.sort(lstCompletedOrder, Collections.reverseOrder());
+		lstOrder.put("lstPendingOrder",lstPendingOrder);
+		lstOrder.put("lstCompletedOrder",lstCompletedOrder);
+		
 		return lstOrder;
 	}
 	

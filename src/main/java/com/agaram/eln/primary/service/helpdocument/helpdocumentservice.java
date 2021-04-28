@@ -3,7 +3,6 @@ package com.agaram.eln.primary.service.helpdocument;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -12,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
-import com.agaram.eln.primary.model.helpdocumentmodel.Helpdocument;
+import com.agaram.eln.primary.model.helpdocument.Helpdocument;
+import com.agaram.eln.primary.model.helpdocument.Helptittle;
 import com.agaram.eln.primary.repository.helpdocument.HelpdocumentRepository;
+import com.agaram.eln.primary.repository.helpdocument.HelptittleRepository;
 
 
 
@@ -23,6 +24,9 @@ import com.agaram.eln.primary.repository.helpdocument.HelpdocumentRepository;
 public class helpdocumentservice {
 	@Autowired
 	HelpdocumentRepository HelpdocumentRepository;
+	
+	@Autowired
+	HelptittleRepository helptittleRepository;
 	
 	public Map<String, Object> adddocument(Map<String, Object> obj) {
 		Helpdocument Helpdocument = new Helpdocument();
@@ -55,5 +59,24 @@ public class helpdocumentservice {
 		}
 		return object;
 	}
+	
+	public Helptittle savenode(Helptittle objhelp)
+	{
+		return helptittleRepository.save(objhelp);
+	}
 
+	public List<Helptittle> gethelpnodes( Helptittle objhelp)
+	{
+		return helptittleRepository.findAll();
+	}
+	
+	public Helpdocument getdocumentonid(Helpdocument objhelp)
+	{
+		return HelpdocumentRepository.findByNodecode(objhelp.getNodecode());
+	}
+	
+	public Helpdocument savedocument(Helpdocument objhelp)
+	{
+		return HelpdocumentRepository.save(objhelp);
+	}
 }

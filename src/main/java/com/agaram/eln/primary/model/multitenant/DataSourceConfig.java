@@ -43,7 +43,9 @@ public class DataSourceConfig implements Serializable {
     private String archivename;
     private String archiveurl;
     private boolean isenable;
-    private int loginfrom = 0;
+    private boolean isadministrator_verify;
+	private String administratormailid;		
+	private int loginfrom = 0;
     private String varificationOTP;
     private int packagetype = 0;
     private Date registereddate;
@@ -57,6 +59,18 @@ public class DataSourceConfig implements Serializable {
 	public void setVarificationOTP(String varificationOTP) {
 		this.varificationOTP = varificationOTP;
 	}
+    public boolean isIsadministrator_verify() {
+			return isadministrator_verify;
+		}
+		public void setIsadministrator_verify(boolean isadministrator_verify) {
+			this.isadministrator_verify = isadministrator_verify;
+		}
+		public String getAdministratormailid() {
+			return administratormailid;
+		}
+		public void setAdministratormailid(String administratormailid) {
+			this.administratormailid = administratormailid;
+		}
 	@Transient
 	Response objResponse;
 	

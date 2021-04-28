@@ -21,6 +21,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.config.AESEncryption;
+import com.agaram.eln.config.SMTPMailvalidation;
 import com.agaram.eln.primary.config.DataSourceBasedMultiTenantConnectionProviderImpl;
 import com.agaram.eln.primary.config.TenantDataSource;
 import com.agaram.eln.primary.model.general.Response;
@@ -34,6 +35,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSPasswordPolicyReposito
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.notification.EmailService;
 import com.agaram.eln.secondary.config.ArchiveDataSourceBasedMultiTenantConnectionProviderImpl;
+import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 @Service
 public class DatasourceService {
@@ -130,10 +132,25 @@ public class DatasourceService {
 		
 
 		Email email = new Email();
-		email.setMailto(Tenantname.getUseremail());
-		email.setSubject("UsrName and PassWord");
-		email.setMailcontent("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+Tenantname.getTenantid()+"</b><br><b>Password:\t\t"+password+"</b><br><b><a href="+Tenantname.getLoginpath()+">click here to ligin</a></b>");
-		emailService.sendEmail(email);
+		
+		if(!Tenantname.getAdministratormailid().equals(""))
+		{
+//			int countmail=2;
+			String mails[]= {Tenantname.getUseremail(),Tenantname.getAdministratormailid()};
+			for(int i=0;i<mails.length;i++) {
+				email.setMailto(mails[i]);
+				email.setSubject("UsrName and PassWord");
+				email.setMailcontent("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+Tenantname.getTenantid()+"</b><br><b>Password:\t\t"+password+"</b><br><b><a href="+Tenantname.getLoginpath()+">click here to ligin</a></b>");
+				emailService.sendEmail(email);
+			}
+		}else {
+			email.setMailto(Tenantname.getUseremail());
+			email.setSubject("UsrName and PassWord");
+			email.setMailcontent("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+Tenantname.getTenantid()+"</b><br><b>Password:\t\t"+password+"</b><br><b><a href="+Tenantname.getLoginpath()+">click here to ligin</a></b>");
+			emailService.sendEmail(email);
+		}
+		
+		
 		
 		return Tenantname;
 	}
@@ -382,10 +399,27 @@ public class DatasourceService {
 		
 		
 		Email email = new Email();
-		email.setMailto(Tenantname.getUseremail());
-		email.setSubject("This is an OTP verification email");
-		email.setMailcontent("<b>Dear Customer</b>,<br><i>use code <b>"+otp+"</b> to login our account Never share your OTP with anyone</i>");
-		emailService.sendmailOPT(email);
+		
+		if(!Tenantname.getAdministratormailid().equals(""))
+		{
+//			int countmail=2;
+			String mails[]= {Tenantname.getUseremail(),Tenantname.getAdministratormailid()};
+			for(int i=0;i<mails.length;i++) {
+				email.setMailto(Tenantname.getUseremail());
+				email.setSubject("This is an OTP verification email");
+				email.setMailcontent("<b>Dear Customer</b>,<br><i>use code <b>"+otp+"</b> to login our account Never share your OTP with anyone</i>");
+				emailService.sendmailOPT(email);
+			}
+		}else {
+			email.setMailto(Tenantname.getUseremail());
+			email.setSubject("This is an OTP verification email");
+			email.setMailcontent("<b>Dear Customer</b>,<br><i>use code <b>"+otp+"</b> to login our account Never share your OTP with anyone</i>");
+			emailService.sendmailOPT(email);
+		}
+//		email.setMailto(Tenantname.getUseremail());
+//		email.setSubject("This is an OTP verification email");
+//		email.setMailcontent("<b>Dear Customer</b>,<br><i>use code <b>"+otp+"</b> to login our account Never share your OTP with anyone</i>");
+//		emailService.sendmailOPT(email);
 		
 		return Tenantname;
 	
@@ -415,6 +449,8 @@ public class DatasourceService {
 		Map<String, Object> mapOrder = new HashMap<String, Object>();
 		objDataSourceConfig =configRepo.findByuseremail(useremail);
 		mapOrder.put("usermail",objDataSourceConfig);
+		
+		mapOrder.put("isvalidmail", SMTPMailvalidation.isAddressValid(useremail));
 
 		return mapOrder;
 	}

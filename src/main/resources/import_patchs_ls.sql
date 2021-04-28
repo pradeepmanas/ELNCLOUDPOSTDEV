@@ -17,3 +17,5 @@ update LSfileversion set modifiedby_usercode= (select  modifiedby_usercode from 
 
 --UPDATE LSprotocolmaster SET createby_usercode = createdby where createby_usercode is null;
 ALTER TABLE IF Exists lsprotocolmaster DROP COLUMN IF Exists createby_usercode;
+
+UPDATE  DataSourceConfig SET isadministrator_verify=false WHERE isadministrator_verify is null;

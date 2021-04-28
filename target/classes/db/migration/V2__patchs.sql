@@ -165,4 +165,45 @@ create table IF NOT EXISTS  LSprotocolworkflowhistory(
 
 	ALTER TABLE IF Exists lsrepositories ADD COLUMN IF NOT EXISTS consumefield varchar(250);
 
+CREATE TABLE IF NOT EXISTS public.datasourceconfig(
+     id bigint NOT NULL,
+    activateddate timestamp without time zone,
+    archivename character varying(255) COLLATE pg_catalog."default",
+    archiveurl character varying(255) COLLATE pg_catalog."default",
+    driverclassname character varying(255) COLLATE pg_catalog."default",
+    initialize boolean NOT NULL,
+    isenable boolean NOT NULL,
+    loginfrom integer NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default",
+    noofusers integer NOT NULL,
+    packagetype integer NOT NULL,
+    password character varying(255) COLLATE pg_catalog."default",
+    registereddate timestamp without time zone,
+    tenantaddress character varying(255) COLLATE pg_catalog."default",
+    tenantcity character varying(255) COLLATE pg_catalog."default",
+    tenantcontactno character varying(255) COLLATE pg_catalog."default",
+    tenantcountry character varying(255) COLLATE pg_catalog."default",
+    tenantid character varying(255) COLLATE pg_catalog."default",
+    tenantname character varying(255) COLLATE pg_catalog."default",
+    tenantpassword character varying(255) COLLATE pg_catalog."default",
+    tenantpincode character varying(255) COLLATE pg_catalog."default",
+    tenantstate character varying(255) COLLATE pg_catalog."default",
+    url character varying(255) COLLATE pg_catalog."default",
+    useremail character varying(255) COLLATE pg_catalog."default",
+    username character varying(255) COLLATE pg_catalog."default",
+    validatenodays integer NOT NULL,
+    varificationotp character varying(255) COLLATE pg_catalog."default",
+    verifiedemail boolean NOT NULL,
+    CONSTRAINT datasourceconfig_pkey PRIMARY KEY (id)
+   );
+
+    ALTER TABLE IF Exists DataSourceConfig ADD COLUMN IF NOT EXISTS isadministrator_verify boolean;
+
+	ALTER TABLE IF Exists DataSourceConfig ADD COLUMN IF NOT EXISTS administratormailid varchar(250);
+    
+	UPDATE  DataSourceConfig SET isadministrator_verify=false WHERE isadministrator_verify is null;
+
+
+	
+
 
