@@ -450,7 +450,7 @@ public class DatasourceService {
 		objDataSourceConfig =configRepo.findByuseremail(useremail);
 		mapOrder.put("usermail",objDataSourceConfig);
 		
-		mapOrder.put("isvalidmail", SMTPMailvalidation.isAddressValid(useremail));
+		//mapOrder.put("isvalidmail", SMTPMailvalidation.isAddressValid(useremail));
 
 		return mapOrder;
 	}
