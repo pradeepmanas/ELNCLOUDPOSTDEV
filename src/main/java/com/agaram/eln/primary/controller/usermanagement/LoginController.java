@@ -330,7 +330,8 @@ public class LoginController {
 	public List<LSdomainMaster> LoadDomainMaster(@RequestBody LSSiteMaster objsite) {
 		return loginService.LoadDomainMaster(objsite);
 	}
-@PostMapping("/Validateuser")
+	
+	@PostMapping("/Validateuser")
 	public LSuserMaster Validateuser(@RequestBody LSuserMaster objClass)
 	{
 		return loginService.validateuser(objClass);
@@ -387,5 +388,10 @@ public class LoginController {
 	public LSuserMaster createuserforazure(@RequestBody LSuserMaster objClass)
 	{
 		return loginService.createuserforazure(objClass);
+	}
+	
+	@RequestMapping(value = "/limsloginusertokengenarate", method = RequestMethod.POST)
+	public ResponseEntity<?> limsloginusertokengenarate(@RequestBody LSuserMaster objClass) throws Exception {
+		return loginService.limsloginusertokengenarate(objClass);
 	}
 }

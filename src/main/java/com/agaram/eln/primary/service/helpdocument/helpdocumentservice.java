@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.helpdocument;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.helpdocument.Helpdocument;
 import com.agaram.eln.primary.model.helpdocument.Helptittle;
 import com.agaram.eln.primary.repository.helpdocument.HelpdocumentRepository;
@@ -30,7 +32,6 @@ public class helpdocumentservice {
 	
 	public Map<String, Object> adddocument(Map<String, Object> obj) {
 		Helpdocument Helpdocument = new Helpdocument();
-		String obj1=(String) obj.get("filedata");
 		Helpdocument.setLshelpdocumentcontent(new JSONObject(obj).toString());
 		Helpdocument.setDocumentname((String) obj.get("documentname"));
 		Map<String, Object> object = new HashMap<String, Object>();
@@ -62,12 +63,37 @@ public class helpdocumentservice {
 	
 	public Helptittle savenode(Helptittle objhelp)
 	{
-		return helptittleRepository.save(objhelp);
+		Response objresponse = new Response();
+		
+		List<Helptittle> lstnode = new ArrayList<Helptittle>();
+		if(objhelp.getNodecode() != null)
+		{
+			lstnode = helptittleRepository.findByTextAndParentcodeAndNodecodeNot(objhelp.getText(),objhelp.getParentcode() ,objhelp.getNodecode());
+		}
+		else
+		{
+			lstnode = helptittleRepository.findByTextAndParentcode(objhelp.getText(), objhelp.getParentcode() );
+		}
+			
+		if(lstnode != null && lstnode.size()>0)
+		{
+			objresponse.setStatus(false);
+			objresponse.setInformation("Node already exists");
+			objhelp.setObjResponse(objresponse);
+			return objhelp;
+		}
+		
+		objhelp = helptittleRepository.save(objhelp);
+		
+		objresponse.setStatus(true);
+		objhelp.setObjResponse(objresponse);
+		
+		return objhelp;
 	}
 
 	public List<Helptittle> gethelpnodes( Helptittle objhelp)
 	{
-		return helptittleRepository.findAll();
+		return helptittleRepository.findByOrderByNodeindexAsc();
 	}
 	
 	public Helpdocument getdocumentonid(Helpdocument objhelp)
@@ -78,5 +104,11 @@ public class helpdocumentservice {
 	public Helpdocument savedocument(Helpdocument objhelp)
 	{
 		return HelpdocumentRepository.save(objhelp);
+	}
+	
+	public List<Helptittle>  sortNodesforhelp(List<Helptittle>  objhelp)
+	{
+		objhelp = helptittleRepository.save(objhelp);
+		return objhelp;
 	}
 }

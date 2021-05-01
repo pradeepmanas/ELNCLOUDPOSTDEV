@@ -7,6 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.agaram.eln.primary.model.general.Response;
 
 @Entity
 @Table(name = "Helptittle")
@@ -20,6 +23,11 @@ public class Helptittle {
 	private String text;
 	
 	private Integer parentcode;
+	
+	private Integer nodeindex;
+	
+	@Transient
+	Response objResponse;
 
 	public Integer getNodecode() {
 		return nodecode;
@@ -43,6 +51,22 @@ public class Helptittle {
 
 	public void setParentcode(Integer parentcode) {
 		this.parentcode = parentcode;
+	}
+
+	public Response getObjResponse() {
+		return objResponse;
+	}
+
+	public void setObjResponse(Response objResponse) {
+		this.objResponse = objResponse;
+	}
+
+	public Integer getNodeindex() {
+		return nodeindex;
+	}
+
+	public void setNodeindex(Integer nodeindex) {
+		this.nodeindex = nodeindex;
 	}
 	
 	

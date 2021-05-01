@@ -79,6 +79,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/Login/CheckUserAndPassword").permitAll().
 		antMatchers("/Login/createuserforazure").permitAll().
 		antMatchers("/Login/UpdatePassword").permitAll().
+		antMatchers("/Login/Validateuser").permitAll().
+		antMatchers("/Login/LinkLogin").permitAll().
+		antMatchers("/User/InsertUpdateUserGroup").permitAll().
+		antMatchers("/User/InsertUpdateUser").permitAll().
 		antMatchers("/AuditTrail/AuditConfigurationrecord").permitAll().
 		antMatchers("/User/GetPasswordPolicySitewise").permitAll().
 		antMatchers("/User/Createcentraliseduser").permitAll().
@@ -128,6 +132,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/User/getUserOnCode").permitAll().
 		antMatchers("/helpdocument/getdocumentcontent").permitAll().
 		antMatchers("/User/validatemailaddress").permitAll().
+		antMatchers("/Login/limsloginusertokengenarate").permitAll().
 		// all other requests need to be authenticated
 		anyRequest().authenticated().and().
 		// make sure we use stateless session; session won't be used to

@@ -1267,22 +1267,30 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 		LSuserMaster objuser = new LSuserMaster();
 		LSuserMaster objExitinguser = new LSuserMaster();
 		
-		objExitinguser = lSuserMasterRepository.findByUsernameAndPassword(AESEncryption.decrypt(objClass.getUsername()), objClass.getPassword());
+		//String password =AESEncryption.decrypt(objClass.getPassword());
+		String username =AESEncryption.decrypt(objClass.getUsername());
+		
+		//String username =objClass.getUsername();
+		String password =objClass.getPassword();
+		
+		objExitinguser = lSuserMasterRepository.findByUsernameAndPassword(username,password);
 		
 		if(objExitinguser != null)
 		{
-			objuser = objExitinguser;
-			objuser.setObjResponse(new Response());
-			objuser.getObjResponse().setStatus(true);
+			//objuser = objExitinguser;
+			objExitinguser.setObjResponse(new Response());
+			objExitinguser.getObjResponse().setStatus(true);
+			
+			return objExitinguser;
 		}
 		else
 		{
 			objuser.setObjResponse(new Response());
 			objuser.getObjResponse().setStatus(false);
 			objuser.getObjResponse().setInformation("Invalid user");
+
+			return objuser;
 		}
-		
-		return objuser;
 	}
 
 	public LSSiteMaster InsertupdateSite(LSSiteMaster objClass) {
@@ -1380,6 +1388,7 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 		return objClass;
 	}
 	
+	@SuppressWarnings("unused")
 	public Map<String, Object> azureauthenticatelogin(LoggedUser objuser)
 	{
 		Map<String, Object> obj = new HashMap<>();
@@ -1717,5 +1726,18 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 		final String token = jwtTokenUtil.generateToken(userDetails);
 
 		return ResponseEntity.ok(new JwtResponse(token));
+	}
+	
+	public ResponseEntity<?> limsloginusertokengenarate(LSuserMaster objClass) {
+		
+		String Tokenuser = objClass.getUsername() +"["+objClass.getLssitemaster().getSitecode()+"]";
+		
+		final UserDetails userDetails = userDetailsService
+				.loadUserByUsername(Tokenuser);
+
+		final String token = jwtTokenUtil.generateToken(userDetails);
+
+		return ResponseEntity.ok(new JwtResponse(token));
+		
 	}
 }

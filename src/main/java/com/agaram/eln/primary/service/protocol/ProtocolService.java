@@ -490,6 +490,8 @@ public class ProtocolService {
 		if(argObj.containsKey("objsilentaudit")) {
 			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),new TypeReference<LScfttransaction>() {});
 			
+			LSprotocolstep deleteprotocolstep = new ObjectMapper().convertValue(argObj.get("deleteprotocolstep"), new TypeReference<LSprotocolstep>() {});
+			
 			List<LSprotocolstep> updateLSprotocolstepLst = new ObjectMapper().convertValue(argObj.get("protocolstepLst"), new TypeReference<List<LSprotocolstep>>() {});
 			for(LSprotocolstep LSprotocolstepObj1: updateLSprotocolstepLst) {
 				LSProtocolStepRepositoryObj.save(LSprotocolstepObj1);				
@@ -501,7 +503,7 @@ public class ProtocolService {
 				/**
 				 * Added by sathishkumar chandrasekar for multitenant
 				 */
-				if(LSprotocolstepObj1.getIsmultitenant() == 1) {
+				if(deleteprotocolstep.getIsmultitenant() == 1) {
 					CloudLSprotocolstepInfo newLSprotocolstepInfo = CloudLSprotocolstepInfoRepository.findById(LSprotocolstepObj1.getProtocolstepcode());
 					if(newLSprotocolstepInfo != null) {
 						LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());

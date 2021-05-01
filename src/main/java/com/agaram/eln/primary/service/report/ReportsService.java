@@ -186,11 +186,16 @@ public class ReportsService {
 	private String getDocxAbsolutePath() {
 //		LSConfiguration objLSConfiguration = ObjConfigurationService.getConfigurationForDocsPath();
 		String filePath = "";
-		if(env.getProperty("DocsPath") != null && env.getProperty("DocsPath") != "") {
-			filePath = env.getProperty("DocsPath");
-		}
 		if (filePath == "") {
-			filePath = new File("").getAbsolutePath() + "/webapps/ROOT/ELNdocuments";
+			if(System.getProperty("os.name").contains("Linux")) {
+				System.out.print("reportgetAbsolutePath()" + new File("").getAbsolutePath().toString());
+				filePath = "/home/site/wwwroot/webapps/ELNdocuments";
+			}else {
+				if(env.getProperty("DocsPath") != null && env.getProperty("DocsPath") != "") {
+					filePath = env.getProperty("DocsPath");
+				}
+				filePath = new File("").getAbsolutePath() + "/webapps/ROOT/ELNdocuments";
+			}
 		} 
 		File newFile = new File(filePath);
 		if (!newFile.exists()) {
@@ -385,7 +390,12 @@ public class ReportsService {
 				logger.info(fileContent);
 				if (fileContent.equals("working")) {
 					status = true;
-					String filePath = getDocxAbsolutePath() + "/link.txt";
+					String filePath = "";
+					if(System.getProperty("os.name") == "Linux") {
+						filePath = new File("").getAbsolutePath(); 
+					}else {
+						filePath = getDocxAbsolutePath() + "/link.txt";
+					}
 					File linkFile = new File(filePath);
 					if (linkFile.exists()) {
 						fileContent = new BufferedReader(new InputStreamReader(new FileInputStream(linkFile))).lines()

@@ -65,5 +65,11 @@ public class Documentcontroller {
 	{
 		return helpdocumentservice.savedocument(objhelp);
 	}
+	
+	@GetMapping(value="/sortNodesforhelp")
+	public List<Helptittle> sortNodesforhelp(@RequestBody List<Helptittle> objhelp)
+	{
+		return helpdocumentservice.sortNodesforhelp(objhelp);
+	}
 
 }
