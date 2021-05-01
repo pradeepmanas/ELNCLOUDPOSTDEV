@@ -131,6 +131,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/multitenant/ValidatetenantByName").permitAll().
 		antMatchers("/User/getUserOnCode").permitAll().
 		antMatchers("/helpdocument/getdocumentcontent").permitAll().
+		antMatchers("/helpdocument/gethelpnodes").permitAll().
+		antMatchers("/helpdocument/getdocumentonid").permitAll().
 		antMatchers("/User/validatemailaddress").permitAll().
 		antMatchers("/Login/limsloginusertokengenarate").permitAll().
 		// all other requests need to be authenticated

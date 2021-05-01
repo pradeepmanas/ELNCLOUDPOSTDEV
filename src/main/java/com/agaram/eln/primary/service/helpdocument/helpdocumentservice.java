@@ -98,7 +98,8 @@ public class helpdocumentservice {
 	
 	public Helpdocument getdocumentonid(Helpdocument objhelp)
 	{
-		return HelpdocumentRepository.findByNodecode(objhelp.getNodecode());
+		Helpdocument objupdatehelp = HelpdocumentRepository.findByNodecode(objhelp.getNodecode());
+		return objupdatehelp != null ?objupdatehelp:objhelp;
 	}
 	
 	public Helpdocument savedocument(Helpdocument objhelp)
