@@ -3,7 +3,7 @@ package com.agaram.eln.primary.service.helpdocument;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 import java.util.List;
 
 
@@ -111,5 +111,33 @@ public class helpdocumentservice {
 	{
 		objhelp = helptittleRepository.save(objhelp);
 		return objhelp;
+	}
+	
+	public List<Helptittle> deletenode(List<Helptittle> objhelp)
+	{
+		List<Integer> lstnodecode = objhelp.stream().map(Helptittle::getNodecode).collect(Collectors.toList());
+		HelpdocumentRepository.deleteByNodecode(lstnodecode);
+		helptittleRepository.deleteByNodecode(lstnodecode);
+		return objhelp;
+		
+	}
+	
+	public Helptittle deletechildnode(Helptittle objhelp)
+	{
+		Response objresponse = new Response();
+		if(objhelp.getNodecode() != null) {
+			HelpdocumentRepository.deleteByNodecode(objhelp.getNodecode());
+			helptittleRepository.deleteByNodecode(objhelp.getNodecode());
+			objresponse.setInformation("Success");
+			objresponse.setStatus(true);
+			objhelp.setObjResponse(objresponse);
+		}
+		else {
+			objresponse.setInformation("failed");
+			objresponse.setStatus(false);
+			objhelp.setObjResponse(objresponse);
+		}
+		return objhelp;
+		
 	}
 }

@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.repository.helpdocument;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +20,12 @@ public interface HelpdocumentRepository extends JpaRepository <Helpdocument,Inte
 	
 	
 	public Helpdocument findByNodecode(Integer nodecode);
+
+	@Transactional
+	@Modifying
+	 @Query("delete from Helpdocument u where u.nodecode in (?1)")
+	void deleteByNodecode(List<Integer> lstnodecode);
+
+	@Transactional
+	void deleteByNodecode(Integer nodecode);
 }

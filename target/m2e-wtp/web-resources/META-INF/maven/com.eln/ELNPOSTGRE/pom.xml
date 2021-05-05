@@ -9,15 +9,6 @@
 	<name>ELN</name>
 	<description>Electronic note book</description>
 	
-	<resourceGroup>logilabeln</resourceGroup>
-   <appName>elnpostgre-1613628974986</appName>
-             
-   <!-- Java Running Stack for Web App on Linux-->
-   <linuxRuntime>tomcat 8.5-jre8</linuxRuntime>
- 
-   <!-- Deployment Type -->
-   <deploymentType>war</deploymentType>
-
 	<properties>
 		<java.version>8</java.version>
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
@@ -194,6 +185,32 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
+			<plugin> 
+			  <groupId>com.microsoft.azure</groupId>  
+			  <artifactId>azure-webapp-maven-plugin</artifactId>  
+			  <version>1.12.0</version>  
+			  <configuration>
+			   
+			   <resourceGroup>your-resource-group</resourceGroup>
+			   <appName>your-app-name</appName>
+			             
+
+			   <linuxRuntime>tomcat 8.5-jre8</linuxRuntime>
+			 
+			   <deploymentType>war</deploymentType>
+			   
+			    <deployment>
+			      <resources>
+			        <resource>
+			          <directory>${project.basedir}/target</directory>
+			          <includes>
+			            <include>*.war</include>
+			          </includes>
+			        </resource>
+			      </resources>
+			    </deployment>
+			  </configuration>
+			</plugin> 
 		</plugins>
 
 	</build>

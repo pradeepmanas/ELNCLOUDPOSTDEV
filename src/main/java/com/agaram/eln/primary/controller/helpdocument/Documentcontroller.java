@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -70,6 +71,20 @@ public class Documentcontroller {
 	public List<Helptittle> sortNodesforhelp(@RequestBody List<Helptittle> objhelp)
 	{
 		return helpdocumentservice.sortNodesforhelp(objhelp);
+	}
+	
+	@PostMapping(value="/deletenode")
+	public List<Helptittle> deletenode(@RequestBody List<Helptittle> objhelp)
+	{
+		return helpdocumentservice.deletenode(objhelp);
+		
+	}
+	
+	@PostMapping(value="/deletechildnode")
+	public Helptittle deletechildnode(@RequestBody Helptittle objhelp)
+	{
+		return helpdocumentservice.deletechildnode(objhelp);
+		
 	}
 
 }

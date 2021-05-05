@@ -438,13 +438,12 @@ public class InstrumentController {
 //	            .body(new InputStreamResource(gridFsFile.getInputStream()));
 	}
 	
-	@RequestMapping(value = "cloudattachment/{fileid}", method = RequestMethod.GET)
-	@GetMapping
-	public ResponseEntity<InputStreamResource> downloadlargecloudattachment(@PathVariable String fileid) throws IllegalStateException, IOException {
+	@PostMapping("/cloudattachment")
+	public ResponseEntity<InputStreamResource> downloadlargecloudattachment(@RequestBody LsOrderattachments objattachments) throws IllegalStateException, IOException {
 	  
 	    HttpHeaders header = new HttpHeaders();
 	    header.set("Content-Disposition", "attachment; filename=gg.pdf");
-	    return new ResponseEntity<>(new InputStreamResource(instrumentService.retrieveColudLargeFile(fileid)), header, HttpStatus.OK);
+	    return new ResponseEntity<>(new InputStreamResource(instrumentService.retrieveColudLargeFile(objattachments.getFileid())), header, HttpStatus.OK);
 	}
 	
 	@PostMapping("/deleteattachments")

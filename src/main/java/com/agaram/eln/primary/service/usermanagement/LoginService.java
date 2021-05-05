@@ -1232,10 +1232,27 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 		LSuserMaster objuser = new LSuserMaster();
 		LSuserMaster objExitinguser = new LSuserMaster();
 		String username = objClass.getUsername();
+		String usergroupname = objClass.getLsusergroup().getUsergroupname();
 		objExitinguser = lSuserMasterRepository.findByusernameAndLssitemaster(username, objClass.getLssitemaster());
 		objuser.setObjResponse(new Response());
 		if(objExitinguser != null)
 		{
+			if(usergroupname.equalsIgnoreCase(objExitinguser.getLsusergroup().getUsergroupname())) {
+				
+			}else {
+				LSusergroup usergroup = LSusergroupRepository.findByusergroupname(usergroupname);
+				
+				if(usergroup== null) {
+					objuser.getObjResponse().setStatus(false);
+					objuser.getObjResponse().setInformation("user group are not matched , contact Administrator");
+					return objuser;
+				}
+				else {
+					objExitinguser.setLsusergroup(usergroup);
+					lsuserMasterRepository.save(objExitinguser);
+				}
+			}
+			
 			String Password = AESEncryption.decrypt(objExitinguser.getPassword());
 			
 		    if(Password.equals(objClass.getPassword()) && objExitinguser.getUserstatus()!="Locked")
