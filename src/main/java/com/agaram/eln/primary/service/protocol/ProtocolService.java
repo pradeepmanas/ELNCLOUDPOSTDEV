@@ -181,9 +181,13 @@ public class ProtocolService {
 			LSprotocolworkflow lsprotocolworkflow = new LSprotocolworkflow();
 			if(LScfttransactionobj.getUsername().equalsIgnoreCase("Administrator")) {
 //				for need site vice filter on protocol for Administrator login
-				//LSprotocolmasterLst = LSProtocolMasterRepositoryObj.findByStatusAndLssitemaster( 1, LScfttransactionobj.getLssitemaster());
+				LSSiteMaster siteObj = new ObjectMapper().convertValue(argObj.get("lssitemaster"),
+						new TypeReference<LSSiteMaster>() {
+						});
 				
-				LSprotocolmasterLst =  LSProtocolMasterRepositoryObj.findByStatus(1);
+				LSprotocolmasterLst = LSProtocolMasterRepositoryObj.findByStatusAndLssitemaster( 1, siteObj.getSitecode());
+				
+				//LSprotocolmasterLst =  LSProtocolMasterRepositoryObj.findByStatus(1);
 			}
 			else {
 				LSprotocolmasterLst =  LSProtocolMasterRepositoryObj.findByCreatedbyAndStatusAndLssitemaster(LScfttransactionobj.getLsuserMaster(), 1, LScfttransactionobj.getLssitemaster());
@@ -361,6 +365,7 @@ public class ProtocolService {
 		return mapObj;
 	}
 	
+	@SuppressWarnings({ "unused"})
 	public Map<String, Object> addProtocolStep(Map<String, Object> argObj){
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		LScfttransaction LScfttransactionobj = new LScfttransaction();

@@ -327,7 +327,39 @@ public class DatasourceService {
 			    		objExitinguser.getObjResponse().setStatus(true);
 			    		obj.put("user", objExitinguser);
 			    	}
-			    }
+			    } 
+			    else if(!Password.equals(objuser.getsPassword()) 
+	    				|| objExitinguser.getLockcount() == 5 
+	    					|| objExitinguser.getUserstatus()=="Locked") {
+		    	if(!username.trim().toLowerCase().equals("administrator")) 
+		    	{
+			    	Integer count= objExitinguser.getLockcount()==null?0: objExitinguser.getLockcount();
+			    	count++;
+			    	if(count.equals(lockcount.getLockpolicy())) {
+			    		objExitinguser.setUserstatus("Locked");
+			    		objExitinguser.setLockcount(count++);
+					objExitinguser.getObjResponse().setInformation("ID_LOCKED");
+					objExitinguser.getObjResponse().setStatus(false);
+					lsuserMasterRepository.save(objExitinguser);
+					obj.put("user", objExitinguser);
+					return obj;
+			    	}
+			    	else if(count<lockcount.getLockpolicy()) {
+			    		objExitinguser.setLockcount(count++);
+						objExitinguser.getObjResponse().setInformation("ID_INVALID");
+						objExitinguser.getObjResponse().setStatus(false);	
+						lsuserMasterRepository.save(objExitinguser);
+						obj.put("user", objExitinguser);
+						return obj;
+			    	}
+		    	}
+		    	else {
+		    		objExitinguser.getObjResponse().setInformation("ID_INVALID");
+					objExitinguser.getObjResponse().setStatus(false);
+					obj.put("user", objExitinguser);
+					return obj;
+		    	}
+		}	    
 			    else
 			    {
 			    	objExitinguser.getObjResponse().setStatus(false);

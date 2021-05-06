@@ -70,6 +70,7 @@ public class JwtAuthenticationController {
 		return ResponseEntity.ok(userDetailsService.save(user));
 	}
 
+	@SuppressWarnings("unused")
 	private void authenticate(String username, String password) throws Exception {
 		try {
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));

@@ -2,16 +2,13 @@ package com.agaram.eln.primary.service.JWTservice;
 
 import java.util.ArrayList;
 
-import org.apache.commons.compress.PasswordRequiredException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.model.jwt.UserDTO;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -61,7 +58,14 @@ public class JwtUserDetailsService implements UserDetailsService {
 		
 		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(sitecodevalue));
 		
-		LSuserMaster user = userDao.findByUsernameIgnoreCaseAndLssitemaster(usernamevalue, objsite);
+		LSuserMaster user = new LSuserMaster();
+		
+		if(usernamevalue.equalsIgnoreCase("Administrator")) {
+			user = userDao.findByusernameIgnoreCase(usernamevalue);
+		}
+		else {
+			user = userDao.findByUsernameIgnoreCaseAndLssitemaster(usernamevalue, objsite);
+		}
 //		LSuserMaster user = userDao.findByUsernameIgnoreCaseAndLssitemasterAndUserretirestatusNot(usernamevalue, objsite,1);
 		
 		if (user == null) {

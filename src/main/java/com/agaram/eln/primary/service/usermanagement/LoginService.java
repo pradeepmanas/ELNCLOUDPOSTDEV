@@ -154,7 +154,8 @@ public class LoginService {
 		{
 			objExitinguser.setObjResponse(new Response());
 			objExitinguser.setObjsilentaudit(new LScfttransaction());
-			if(Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode()) 
+			if((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode())
+					|| objuser.getsUsername().equalsIgnoreCase("Administrator")) 
 			{
 				String Password = AESEncryption.decrypt(objExitinguser.getPassword());
 				System.out.println(" password: " + Password);
