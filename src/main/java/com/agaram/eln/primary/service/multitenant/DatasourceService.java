@@ -21,7 +21,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.config.AESEncryption;
-import com.agaram.eln.config.SMTPMailvalidation;
 import com.agaram.eln.primary.config.DataSourceBasedMultiTenantConnectionProviderImpl;
 import com.agaram.eln.primary.config.TenantDataSource;
 import com.agaram.eln.primary.model.general.Response;
@@ -35,7 +34,6 @@ import com.agaram.eln.primary.repository.usermanagement.LSPasswordPolicyReposito
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.notification.EmailService;
 import com.agaram.eln.secondary.config.ArchiveDataSourceBasedMultiTenantConnectionProviderImpl;
-import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 @Service
 public class DatasourceService {
@@ -432,7 +430,8 @@ public class DatasourceService {
 		
 		Email email = new Email();
 		
-		if(!Tenantname.getAdministratormailid().equals(""))
+		if(Tenantname.getAdministratormailid() != null && 
+				!Tenantname.getAdministratormailid().equals(""))
 		{
 //			int countmail=2;
 			String mails[]= {Tenantname.getUseremail(),Tenantname.getAdministratormailid()};

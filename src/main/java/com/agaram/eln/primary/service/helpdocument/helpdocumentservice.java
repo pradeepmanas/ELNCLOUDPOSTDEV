@@ -98,12 +98,17 @@ public class helpdocumentservice {
 	
 	public Helpdocument getdocumentonid(Helpdocument objhelp)
 	{
-		Helpdocument objupdatehelp = HelpdocumentRepository.findByNodecode(objhelp.getNodecode());
+		Helpdocument objupdatehelp = HelpdocumentRepository.findFirst1ByNodecodeOrderByNodecodeDesc(objhelp.getNodecode());
 		return objupdatehelp != null ?objupdatehelp:objhelp;
 	}
 	
 	public Helpdocument savedocument(Helpdocument objhelp)
 	{
+		Helpdocument objupdatehelp = HelpdocumentRepository.findFirst1ByNodecodeOrderByNodecodeDesc(objhelp.getNodecode());
+		if(objupdatehelp != null)
+		{
+			objhelp.setId(objupdatehelp.getId());
+		}
 		return HelpdocumentRepository.save(objhelp);
 	}
 	

@@ -19,7 +19,7 @@ public interface HelpdocumentRepository extends JpaRepository <Helpdocument,Inte
 	int setlshelpdocumentcontentanddocumentnameByid(String lshelpdocumentcontent,String documentname,Integer id);
 	
 	
-	public Helpdocument findByNodecode(Integer nodecode);
+	public Helpdocument findFirst1ByNodecodeOrderByNodecodeDesc(Integer nodecode);
 
 	@Transactional
 	@Modifying
