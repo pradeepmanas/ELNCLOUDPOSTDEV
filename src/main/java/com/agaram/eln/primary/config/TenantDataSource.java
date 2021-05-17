@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.config;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -14,6 +15,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
@@ -23,10 +25,13 @@ import org.springframework.stereotype.Component;
 
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
+import com.agaram.eln.primary.service.report.ReportsService;
 
 @Primary
 @Component
 public class TenantDataSource implements Serializable {
+	
+	static final Logger logger = Logger.getLogger(TenantDataSource.class.getName());
 
     private HashMap<String, DataSource> dataSources = new HashMap<>();
     
@@ -69,15 +74,21 @@ public class TenantDataSource implements Serializable {
 	@PostConstruct
     public Map<String, DataSource> getAll() {
         List<DataSourceConfig> configList = configRepo.findByInitialize(true);
+        logger.info("Get all datasource");
         Map<String, DataSource> result = new HashMap<>();
-        for (DataSourceConfig config : configList) {
-            DataSource dataSource = getDataSource(config.getName(), config.getArchivename());
-            result.put(config.getName(), dataSource); 
-            
-            Flyway flyway = Flyway.configure().dataSource(dataSource).load();
-            flyway.repair();
-            flyway.migrate();
-
+        try {
+	        for (DataSourceConfig config : configList) {
+	            DataSource dataSource = getDataSource(config.getName(), config.getArchivename());
+	            result.put(config.getName(), dataSource); 
+	            
+	            Flyway flyway = Flyway.configure().dataSource(dataSource).load();
+	            flyway.repair();
+	            flyway.migrate();
+	
+	        }
+        }
+        catch(Exception e) {
+        	logger.error(e.getLocalizedMessage());
         }
         return result;
     }
