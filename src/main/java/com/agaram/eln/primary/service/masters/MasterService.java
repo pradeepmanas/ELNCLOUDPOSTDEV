@@ -77,16 +77,16 @@ public class MasterService {
 				
 		}
 		
-		if(lsrepodata != null)
-		{
-			objResponse.setStatus(false);
-			objResponse.setInformation("Iteam name already exists in the repositroy");
-		}
-		else
-		{
+//		if(lsrepodata != null)
+//		{
+//			objResponse.setStatus(false);
+//			objResponse.setInformation("Iteam name already exists in the repositroy");
+//		}
+//		else
+//		{
 			objResponse.setStatus(true);
 			lsrepositoriesdataRepository.save(lsrepositoriesdata);
-		}
+//		}
 		
 		lsrepositoriesdata.setObjResponse(objResponse);
 		return lsrepositoriesdata;

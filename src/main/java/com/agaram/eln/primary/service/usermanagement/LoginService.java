@@ -1230,30 +1230,15 @@ public class LoginService {
 		return lSDomainMasterRepository.findBylssitemasterAndDomainstatus(objsite,1);
 	}
 public LSuserMaster validateuser(LSuserMaster objClass) {
-		LSuserMaster objuser = new LSuserMaster();
-		LSuserMaster objExitinguser = new LSuserMaster();
-		String username = objClass.getUsername();
-		String usergroupname = objClass.getLsusergroup().getUsergroupname();
-		objExitinguser = lSuserMasterRepository.findByusernameAndLssitemaster(username, objClass.getLssitemaster());
-		objuser.setObjResponse(new Response());
-		if(objExitinguser != null)
-		{
-			if(usergroupname.equalsIgnoreCase(objExitinguser.getLsusergroup().getUsergroupname())) {
-				
-			}else {
-				LSusergroup usergroup = LSusergroupRepository.findByusergroupname(usergroupname);
-				
-				if(usergroup== null) {
-					objuser.getObjResponse().setStatus(false);
-					objuser.getObjResponse().setInformation("user group are not matched , contact Administrator");
-					return objuser;
-				}
-				else {
-					objExitinguser.setLsusergroup(usergroup);
-					lsuserMasterRepository.save(objExitinguser);
-				}
-			}
-			
+	LSuserMaster objuser = new LSuserMaster();
+	LSuserMaster objExitinguser = new LSuserMaster();
+	String username = objClass.getUsername();
+	String usergroupname = objClass.getLsusergroup().getUsergroupname();
+	objExitinguser = lSuserMasterRepository.findByusernameAndLssitemaster(username, objClass.getLssitemaster());
+	objuser.setObjResponse(new Response());
+	if(objExitinguser != null)
+	{
+		if(usergroupname.equalsIgnoreCase(objExitinguser.getLsusergroup().getUsergroupname())) {
 			String Password = AESEncryption.decrypt(objExitinguser.getPassword());
 			
 		    if(Password.equals(objClass.getPassword()) && objExitinguser.getUserstatus()!="Locked")
@@ -1272,14 +1257,49 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 		    	objuser.getObjResponse().setStatus(false);
 				objuser.getObjResponse().setInformation("User Locked");
 		    }
-		}
-		else
-		{
+		}else {
+			/*LSusergroup usergroup = LSusergroupRepository.findByusergroupname(usergroupname);
+			
+			if(usergroup== null) {
+				objuser.getObjResponse().setStatus(false);
+				objuser.getObjResponse().setInformation("user group are not matched , contact Administrator");
+				return objuser;
+			}
+			else {
+				objExitinguser.setLsusergroup(usergroup);
+				lsuserMasterRepository.save(objExitinguser);
+			}*/
 			objuser.getObjResponse().setStatus(false);
-			objuser.getObjResponse().setInformation("Invalid user");
+			objuser.getObjResponse().setInformation("Group name is Mismatched for this Username in ELN Application");
+			return objuser;
 		}
-		return objuser;
+		
+		/*String Password = AESEncryption.decrypt(objExitinguser.getPassword());
+		
+	    if(Password.equals(objClass.getPassword()) && objExitinguser.getUserstatus()!="Locked")
+	    {
+	    	objuser.getObjResponse().setStatus(true);
+	    	objuser.setUsername(AESEncryption.encrypt(objExitinguser.getUsername()));
+	    	objuser.setPassword(objExitinguser.getPassword());
+	    }
+	    else if(!Password.equals(objClass.getPassword()))
+	    {
+	    	objuser.getObjResponse().setStatus(false);
+			objuser.getObjResponse().setInformation("Password mismatch");
+	    }
+	    else
+	    {
+	    	objuser.getObjResponse().setStatus(false);
+			objuser.getObjResponse().setInformation("User Locked");
+	    }*/
 	}
+	else
+	{
+		objuser.getObjResponse().setStatus(false);
+		objuser.getObjResponse().setInformation("Invalid user");
+	}
+	return objuser;
+}
 	
 	public LSuserMaster LinkLogin(LSuserMaster objClass) {
 		LSuserMaster objuser = new LSuserMaster();

@@ -239,6 +239,13 @@ public class ReportsController {
 		mapObj = ObjReportsService.getReportDocxInfo(Obj);
 		return mapObj;
 	}
+	
+	@RequestMapping(value = "/getCloudReportDocxInfo")
+	protected Map<String, Object> getCloudReportDocxInfo(@RequestBody Map<String, Object> Obj) throws IOException {
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+		mapObj = ObjReportsService.getCloudReportDocxInfo(Obj);
+		return mapObj;
+	}
 
 //	@RequestMapping(value = "/updateDocxReportOrder")
 //	public Map<String, Object> updateDocxReportOrder(@RequestBody Map<String, Object> obj) {

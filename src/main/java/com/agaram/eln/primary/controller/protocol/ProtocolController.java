@@ -201,4 +201,11 @@ public class ProtocolController {
 //		objMap = ProtocolMasterService.addProtocolOrderStep(argObj);
 //		return objMap;
 //	}
+	
+	@RequestMapping(value="/addProtocolStepforsaveas")
+	protected Map<String, Object> addProtocolStepforsaveas(@RequestBody Map<String, Object> argObj){
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		objMap = ProtocolMasterService.addProtocolStepforsaveas(argObj);
+		return objMap;
+	}
 }

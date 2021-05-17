@@ -193,8 +193,9 @@ public class ReportsService {
 			}else {
 				if(env.getProperty("DocsPath") != null && env.getProperty("DocsPath") != "") {
 					filePath = env.getProperty("DocsPath");
+				}else {
+					filePath = new File("").getAbsolutePath() + "/webapps/ROOT/ELNdocuments";
 				}
-				filePath = new File("").getAbsolutePath() + "/webapps/ROOT/ELNdocuments";
 			}
 		} 
 		File newFile = new File(filePath);
@@ -1546,6 +1547,96 @@ public class ReportsService {
 						fileInfo.put("filePath", requestedFile);
 						Map<String, Object> fileStatus = uploadAndRetriveDoc(fileInfo, "retrive");
 						if(fileStatus.get("status") == "success") {
+							filePresent = true;
+						}else {
+							filePresent = false;
+						}
+					}else {
+						filePresent = true;
+					}
+					if (filePresent) {
+						// lSdocreportsObj.setFileHashName(HashKey);
+						if (LSdocreportsversionhistorylst.size() > 0) {
+							lSdocreportsObj.setVersionno(LSdocreportsversionhistorylst
+									.get(LSdocreportsversionhistorylst.size() - 1).getVersionNo());
+						} else {
+							lSdocreportsObj.setVersionno(1);
+						}
+						LSdocreportsRepositoryObj.save(lSdocreportsObj);
+						rtnobjMap.put("status", "success");
+						rtnobjMap.put("fileFullPath", requestedFile.getAbsolutePath());
+						rtnobjMap.put("fileName", FileName + ".docx");
+						if (lSdocreportsObj.getIsTemplate() == 1 && !isftpAvailable()) {
+							rtnobjMap.put("fileOriginalPath", "reports/templates/" + HashKey + "." + "docx");
+						} else {
+							rtnobjMap.put("fileOriginalPath", "reports/" + HashKey + "." + "docx");
+						}
+						rtnobjMap.put("hashKey", HashKey);
+						rtnobjMap.put("isdraft", lSdocreportsObj.getIsdraft());
+						rtnobjMap.put("LSdocreportsversionhistorylst", LSdocreportsversionhistorylst);
+						if (objMap.containsKey("objsilentaudit")) {
+							if (objMap.get("objsilentaudit") != null) {
+								LScfttransaction LScfttransactionobj = new ObjectMapper().convertValue(
+										objMap.get("objsilentaudit"), new TypeReference<LScfttransaction>() {
+										});
+								LScfttransactionobj.setSystemcoments("System Generated");
+								LScfttransactionobj.setTableName("LSdocreports");
+								lscfttransactionRepository.save(LScfttransactionobj);
+							}
+						}
+					} else {
+						rtnobjMap.put("status", "ID_FILENOTFOUNDEITHERDELETEDORMOVED");
+					}
+				}
+//			}
+		} catch (Exception e) {
+			logger.error("getReportDocxInfo" + e.getMessage());
+		}
+		return rtnobjMap;
+	}
+	
+	public Map<String, Object> getCloudReportDocxInfo(Map<String, Object> objMap) {
+		Map<String, Object> rtnobjMap = new HashMap<String, Object>();
+		try {
+			LSdocreports lSdocreportsObj = LSdocreportsRepositoryObj
+					.findByDocReportsCode((int) objMap.get("docReportsCode"));
+			List<LSdocreportsversionhistory> LSdocreportsversionhistorylst = LSdocreportsversionHistoryRepositoryObj
+					.findAllByDocReportsCodeAndStatus(lSdocreportsObj.getDocReportsCode(), 1);
+			@SuppressWarnings("unused")
+			Map<String, Object> ftpstatus = null;
+//			boolean canLoad = false;
+			String FileName = lSdocreportsObj.getFileName();
+			String HashKey = lSdocreportsObj.getFileHashName();
+
+//			if (canLoad) {
+				String filePath = getDocxAbsolutePath();
+				if (lSdocreportsObj.getIsTemplate() == 1 && !isftpAvailable()) {
+					filePath += "\\templates";
+				}
+				boolean filePresent = false;
+				boolean status = false;
+				File directory = new File(filePath);
+				if (directory.exists()) {
+					File requestedFile = new File(filePath + "\\" + HashKey + ".docx");
+					if (!requestedFile.exists()) {
+//						Map<String, Object> fileInfo = new HashMap<String, Object>();
+//						fileInfo.put("id", lSdocreportsObj.getStreamid());
+//						fileInfo.put("filePath", requestedFile);
+						String FileID = lSdocreportsObj.getStreamid();
+						try (FileOutputStream out = new FileOutputStream(requestedFile)) {
+							InputStream stream = CloudFileManipulationservice.retrieveReportFiles(FileID);
+							int read;
+							final byte[] bytes = new byte[1024];
+							while ((read = stream.read(bytes)) != -1) {
+								out.write(bytes, 0, read);
+							}
+							out.flush();
+							out.close();
+							status = true;
+						}catch(Exception e) {
+							logger.error(e.getMessage());
+						}
+						if(status) {
 							filePresent = true;
 						}else {
 							filePresent = false;

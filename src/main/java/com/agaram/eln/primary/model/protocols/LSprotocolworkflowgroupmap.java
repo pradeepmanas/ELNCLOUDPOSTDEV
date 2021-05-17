@@ -21,6 +21,7 @@ public class LSprotocolworkflowgroupmap {
 	@Column(name = "workflowmapid")
 	private Integer workflowmapid;
 
+	@Column(nullable=false)
 	private Integer workflowcode;
 	
 	@ManyToOne 

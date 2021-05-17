@@ -269,13 +269,12 @@ public class CloudFileManipulationservice {
     }
     
     public InputStream retrieveReportFiles(String fileid) throws IOException{
-    	
+
 	    CloudStorageAccount storageAccount;
 		CloudBlobClient blobClient = null;
 		CloudBlobContainer container=null;
 		CloudBlockBlob blob = null;
 		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
-		
 		try {    
 			// Parse the connection string and create a blob client to interact with Blob storage
 			storageAccount = CloudStorageAccount.parse(storageConnectionString);

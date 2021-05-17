@@ -7,4 +7,5 @@ import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolstepInfo;
 public interface CloudLSprotocolstepInfoRepository extends JpaRepository<CloudLSprotocolstepInfo, Integer> {
 
 	public CloudLSprotocolstepInfo findById(Integer integer);
+
 }
