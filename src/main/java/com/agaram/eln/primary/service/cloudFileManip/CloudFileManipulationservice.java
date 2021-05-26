@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.UUID;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -91,9 +92,12 @@ public class CloudFileManipulationservice {
     
     public CloudOrderAttachment storeattachment(MultipartFile file) throws IOException
     {
+    	UUID objGUID = UUID.randomUUID();
+        String randomUUIDString = objGUID.toString();
+        
     	CloudOrderAttachment objattachment = new CloudOrderAttachment();
-    	objattachment.setFile(
-          new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+    	objattachment.setFile(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+    	objattachment.setFileid(randomUUIDString);
     	
     	objattachment = cloudOrderAttachmentRepository.save(objattachment);
     	
@@ -108,6 +112,9 @@ public class CloudFileManipulationservice {
 		CloudBlobContainer container=null;
 		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
 
+		UUID objGUID = UUID.randomUUID();
+        String randomUUIDString = objGUID.toString();
+        
 		try {    
 			// Parse the connection string and create a blob client to interact with Blob storage
 			storageAccount = CloudStorageAccount.parse(storageConnectionString);
@@ -118,7 +125,7 @@ public class CloudFileManipulationservice {
 			System.out.println("Creating container: " + container.getName());
 			container.createIfNotExists(BlobContainerPublicAccessType.CONTAINER, new BlobRequestOptions(), new OperationContext());		    
 
-			File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+title);
+			File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+randomUUIDString);
 			file.transferTo(convFile);
 
 			//Getting a blob reference
@@ -152,7 +159,12 @@ public class CloudFileManipulationservice {
     
     public CloudOrderAttachment retrieveFile(LsOrderattachments objattachment){
     
-    	CloudOrderAttachment objfile = cloudOrderAttachmentRepository.findById(Integer.parseInt(objattachment.getFileid()));
+    	CloudOrderAttachment objfile = cloudOrderAttachmentRepository.findByFileid(objattachment.getFileid());
+    	
+    	if(objfile == null)
+    	{
+    		cloudOrderAttachmentRepository.findById(Integer.parseInt(objattachment.getFileid()));
+    	}
 	
         return objfile;
 	}
@@ -187,7 +199,12 @@ public class CloudFileManipulationservice {
     }
     
     public Long deleteattachments(String id) { 
-        return cloudOrderAttachmentRepository.deleteById(Integer.parseInt(id)); 
+    	Long count = cloudOrderAttachmentRepository.deleteByFileid(id);
+    	if(count <= 0)
+    	{
+    		count = cloudOrderAttachmentRepository.deleteById(Integer.parseInt(id)); 
+    	}
+        return count;
     }
     
     public void deletelargeattachments(String id) { 

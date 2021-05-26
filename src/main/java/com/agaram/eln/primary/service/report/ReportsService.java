@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -59,12 +60,21 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVMerge;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -210,6 +220,24 @@ public class ReportsService {
 		return filePath;
 	}
 
+	int uploadSingleFile(String FileAbsolutePath, int doctype) throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        File file = new File(FileAbsolutePath);
+        body.add("file", new FileSystemResource(file));
+        body.add("type", doctype);
+        
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        String fileReceiver = env.getProperty("fileReceiver");
+        String serverUrl = fileReceiver + "singlefileupload/";
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.postForEntity(serverUrl, requestEntity, String.class);
+        System.out.println("Response code: " + response.getStatusCode());
+        return response.getStatusCode().value();
+    }
+	
 	public Map<String, Object> handleFTP(String filename, String type, String FolderName) {
 		Map<String, Object> rtnObj = new HashMap<String, Object>();
 		FTPClient client = new FTPClient();
@@ -493,7 +521,12 @@ public class ReportsService {
 			String apiUri = env.getProperty("DocxApi");
 			String doxUri = env.getProperty("DocxUrl");
 			Map<String, Object> apiStatus = checkLinkAvail(apiUri, "api");
-			Map<String, Object> urlStatus = checkLinkAvail(doxUri+ "/reports/link.txt", "url");
+			Map<String, Object> urlStatus = new HashMap<String, Object>();
+			if(env.getProperty("fileReceiver") == null) {
+				urlStatus = checkLinkAvail(doxUri+ "/reports/link.txt", "url");
+			}else {
+				urlStatus = checkLinkAvail(doxUri+ "/link.txt", "url");
+			}
 //			boolean urlStatus = true;
 			if((boolean)apiStatus.get("status")) {
 				ConfigObj.put("DocxApi", apiUri);
@@ -567,7 +600,16 @@ public class ReportsService {
 			FileOutputStream fos = new FileOutputStream(newFile);
 			new XWPFDocument().write(fos);
 			fos.close();
-			objMap.put("fileFullPath", newFile.getAbsolutePath());
+			if(env.getProperty("fileReceiver") != null) {
+				int httpfileStatus = uploadSingleFile(newFile.getAbsolutePath(), docType);
+				if(httpfileStatus == 200) {
+					objMap.put("fileFullPath", "");
+				}else {
+					objMap.put("fileFullPath", newFile.getAbsolutePath());
+				}
+			}else {
+				objMap.put("fileFullPath", newFile.getAbsolutePath());
+			}
 			objMap.put("fileName", "New Document.docx");
 			if (docType == 1) {
 				objMap.put("fileOriginalPath", "reports/templates/" + filename);
@@ -861,152 +903,153 @@ public class ReportsService {
 						if (LScfttransactionobj != null)
 							LScfttransactionobj.setComments("Saving document : " + LSDocReportsObj.getFileName());
 					}
-				}
-				originalFilePath = filePath + "\\" + sKey + ".docx";
-				if (LSDocReportsObj.getFileName() == null && (int) jsonObj.get("status") == 2) {
-					List<LSdocreports> LSDocReportsLst = LSdocreportsRepositoryObj.findByIsdraftAndStatus(1, 1);
-					LSdocdirectory LSdocdirectoryObj = LSdocdirectoryRepositoryObj
-							.findFirstByDirectorynameAndStatus("Draft Reports", 1);
-					String name = "";
-					if (LSDocReportsLst.size() > 0) {
-						String[] temp = LSDocReportsLst.get(LSDocReportsLst.size() - 1).getFileName().split("_");
-						name = "draft_" + (Integer.parseInt(temp[1]) + 1);
-					} else {
-						name = "draft_1";
-					}
-					LSDocReportsObj.setFileName(name);
-					LSDocReportsObj.setIsdraft(1);
-					if(LSdocdirectoryObj.getDocdirectorycode() != null)
-					LSDocReportsObj.setDocdirectorycode(LSdocdirectoryObj.getDocdirectorycode());
-				}
-				if ((int) jsonObj.get("status") == 2) {
-					logger.info("saveDocxsReport() > status:2 ");
-					String downloadUri = (String) jsonObj.get("url");
-					logger.info("saveDocxsReport() downloadUri: " + downloadUri);
-					InputStream stream;
-					HttpsURLConnection connectionSSL = null;
-					HttpURLConnection connection = null;
-					logger.info("saveDocxsReport() downloadUri: " + downloadUri);
-					if (downloadUri.contains("https")) {
-						SSLContext sc = SSLContext.getInstance("SSL");
-						sc.init(null, trustAllCerts, new java.security.SecureRandom());
-						HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-						URL url = new URL(downloadUri);
-						connectionSSL = (HttpsURLConnection) url.openConnection();
-						stream = connectionSSL.getInputStream();
-					} else {
-						URL url = new URL(downloadUri);
-						connection = (HttpURLConnection) url.openConnection();
-						stream = connection.getInputStream();
-					}
-					
-					if (!originalFilePath.isEmpty()) {
-						logger.info("saveDocxsReport() originalFilePath: " + originalFilePath);
-						if(LSDocReportsObj.getStreamid() != null ) {
-							if(!LSDocReportsObj.getStreamid().isEmpty())
-//								gridFsTemplate.delete(Query.query(Criteria.where("_id").is(LSDocReportsObj.getStreamid())));
-								CloudFileManipulationservice.deleteReportFile(LSDocReportsObj.getStreamid());
+				
+					originalFilePath = filePath + "\\" + sKey + ".docx";
+					if (LSDocReportsObj.getFileName() == null && (int) jsonObj.get("status") == 2) {
+						List<LSdocreports> LSDocReportsLst = LSdocreportsRepositoryObj.findByIsdraftAndStatus(1, 1);
+						LSdocdirectory LSdocdirectoryObj = LSdocdirectoryRepositoryObj
+								.findFirstByDirectorynameAndStatus("Draft Reports", 1);
+						String name = "";
+						if (LSDocReportsLst.size() > 0) {
+							String[] temp = LSDocReportsLst.get(LSDocReportsLst.size() - 1).getFileName().split("_");
+							name = "draft_" + (Integer.parseInt(temp[1]) + 1);
+						} else {
+							name = "draft_1";
 						}
-						File savedFile = new File(originalFilePath);
-						if (LSDocReportsObj.getIsTemplate() == 1 && LSDocReportsObj.getIsmultiplesheet() == 0) {
-							try (FileOutputStream out = new FileOutputStream(savedFile)) {
-								int read;
-								final byte[] bytes = new byte[1024];
-								while ((read = stream.read(bytes)) != -1) {
-									out.write(bytes, 0, read);
+						LSDocReportsObj.setFileName(name);
+						LSDocReportsObj.setIsdraft(1);
+						if(LSdocdirectoryObj.getDocdirectorycode() != null)
+						LSDocReportsObj.setDocdirectorycode(LSdocdirectoryObj.getDocdirectorycode());
+					}
+					if ((int) jsonObj.get("status") == 2) {
+						logger.info("saveDocxsReport() > status:2 ");
+						String downloadUri = (String) jsonObj.get("url");
+						logger.info("saveDocxsReport() downloadUri: " + downloadUri);
+						InputStream stream;
+						HttpsURLConnection connectionSSL = null;
+						HttpURLConnection connection = null;
+						logger.info("saveDocxsReport() downloadUri: " + downloadUri);
+						if (downloadUri.contains("https")) {
+							SSLContext sc = SSLContext.getInstance("SSL");
+							sc.init(null, trustAllCerts, new java.security.SecureRandom());
+							HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+							URL url = new URL(downloadUri);
+							connectionSSL = (HttpsURLConnection) url.openConnection();
+							stream = connectionSSL.getInputStream();
+						} else {
+							URL url = new URL(downloadUri);
+							connection = (HttpURLConnection) url.openConnection();
+							stream = connection.getInputStream();
+						}
+						
+						if (!originalFilePath.isEmpty()) {
+							logger.info("saveDocxsReport() originalFilePath: " + originalFilePath);
+							if(LSDocReportsObj.getStreamid() != null ) {
+								if(!LSDocReportsObj.getStreamid().isEmpty())
+	//								gridFsTemplate.delete(Query.query(Criteria.where("_id").is(LSDocReportsObj.getStreamid())));
+									CloudFileManipulationservice.deleteReportFile(LSDocReportsObj.getStreamid());
+							}
+							File savedFile = new File(originalFilePath);
+							if (LSDocReportsObj.getIsTemplate() == 1 && LSDocReportsObj.getIsmultiplesheet() == 0) {
+								try (FileOutputStream out = new FileOutputStream(savedFile)) {
+									int read;
+									final byte[] bytes = new byte[1024];
+									while ((read = stream.read(bytes)) != -1) {
+										out.write(bytes, 0, read);
+									}
+									out.flush();
+									out.close();
 								}
-								out.flush();
-								out.close();
-							}
-							stream = new FileInputStream(originalFilePath);
-							List<String> tagLst = new ArrayList<String>();
-							XWPFDocument document = new XWPFDocument(stream);
-							for (XWPFParagraph para : document.getParagraphs()) {
-								tagLst.addAll(getTagsfromDocx(para));
-							}
-							for (XWPFTable tbl : document.getTables()) {
-								for (XWPFTableRow row : tbl.getRows()) {
-									for (XWPFTableCell cell : row.getTableCells()) {
-										for (XWPFParagraph para : cell.getParagraphs()) {
-											tagLst.addAll(getTagsfromDocx(para));			
+								stream = new FileInputStream(originalFilePath);
+								List<String> tagLst = new ArrayList<String>();
+								XWPFDocument document = new XWPFDocument(stream);
+								for (XWPFParagraph para : document.getParagraphs()) {
+									tagLst.addAll(getTagsfromDocx(para));
+								}
+								for (XWPFTable tbl : document.getTables()) {
+									for (XWPFTableRow row : tbl.getRows()) {
+										for (XWPFTableCell cell : row.getTableCells()) {
+											for (XWPFParagraph para : cell.getParagraphs()) {
+												tagLst.addAll(getTagsfromDocx(para));			
+											}
 										}
 									}
 								}
-							}
-							int ismultisheet = 0;
-							for(String tempTagStr: tagLst) {
-								if(ismultisheet == 0 && tempTagStr.startsWith("<<$") && tempTagStr.endsWith("$>>")) {
-									ismultisheet = 1;
-									break;
-								}
-							}
-							if(ismultisheet == 1) {
-								LSDocReportsObj.setIsmultiplesheet(1);
-							}
-						}
-						stream.close();
-						String streamId = CloudFileManipulationservice.storeReportFile(sKey, savedFile);
-						LSDocReportsObj.setStreamid(streamId);
-//						Map<String, Object> FileInfo = new HashMap<String, Object>();
-//						FileInfo.put("Name", sKey);
-//						FileInfo.put("getInputStream", stream);
-//						Map<String, Object> FileStatus =  uploadAndRetriveDoc(FileInfo, "upload");
-//						LSDocReportsObj.setStreamid((String) FileStatus.get("id"));
-//						CloudFileManipulationservice.storeReportFile(sKey, savedFile)
-						LSdocreportsRepositoryObj.save(LSDocReportsObj);
-//						stream.close();
-						if (downloadUri.contains("https")) {
-							connectionSSL.disconnect();
-						} else {
-							connection.disconnect();
-						}
-						
-						if (!LSDocReportsObj.getStreamid().equals("") && LScfttransactionobj != null) {
-							File toBeDeleted = new File(originalFilePath);
-							logger.info("saveDocxsReport() > status:2 to be Deleted path after upload:" + toBeDeleted.getAbsolutePath());
-							if (toBeDeleted.exists()) {
-								toBeDeleted.delete();
-							}
-							lscfttransactionRepository.save(LScfttransactionobj);
-						}
-					}
-				} else if ((int) jsonObj.get("status") == 4) {
-					if (LSDocReportsObj != null) {
-						if (LSDocReportsObj.getFileName() == null) {
-							filePath = getDocxAbsolutePath();
-							File toBeDeleted = new File(filePath + "\\" + jsonObj.get("key") + ".docx");
-							logger.info(
-									"saveDocxsReport() > status:4 to be Deleted path:" + toBeDeleted.getAbsolutePath());
-							if (toBeDeleted.exists()) {
-								boolean FileStatus = toBeDeleted.delete();
-								LSdocreportsRepositoryObj.delete(LSDocReportsObj);
-								logger.info("docSave() temp File deleted Status " + FileStatus);
-								logger.info("saveDocxsReport() > status:4 ");
-							}
-						} else {
-							if(LSDocReportsObj.getIsreport() == 1 && LSDocReportsObj.getStreamid() == null) {
-								File newFile = new File(filePath + "\\" + jsonObj.get("key") + ".docx");
-								if(newFile.exists()) {
-									InputStream fis = new FileInputStream(newFile);
-									Map<String, Object> FileInfo = new HashMap<String, Object>();
-									FileInfo.put("Name", sKey);
-									FileInfo.put("getInputStream", fis);
-									Map<String, Object> FileStatus =  uploadAndRetriveDoc(FileInfo, "upload");
-									LSDocReportsObj.setStreamid((String) FileStatus.get("id"));
-									LSdocreportsRepositoryObj.save(LSDocReportsObj);
-									if (((String) FileStatus.get("status")).equals("success")) {
-										fis.close();
-										newFile.delete();
-										logger.info("saveDocxsReport() > status:4 Deleted Name:" + LSDocReportsObj.getFileName());
+								int ismultisheet = 0;
+								for(String tempTagStr: tagLst) {
+									if(ismultisheet == 0 && tempTagStr.startsWith("<<$") && tempTagStr.endsWith("$>>")) {
+										ismultisheet = 1;
+										break;
 									}
 								}
-							}else {
-								File newFile = new File(filePath + "\\" + jsonObj.get("key") + ".docx");
-								if(newFile.exists()) {
-									newFile.delete();
-									logger.info("saveDocxsReport() > status:4 Deleted Name:" + LSDocReportsObj.getFileName());
+								if(ismultisheet == 1) {
+									LSDocReportsObj.setIsmultiplesheet(1);
+								}
+							}
+							stream.close();
+							String streamId = CloudFileManipulationservice.storeReportFile(sKey, savedFile);
+							LSDocReportsObj.setStreamid(streamId);
+	//						Map<String, Object> FileInfo = new HashMap<String, Object>();
+	//						FileInfo.put("Name", sKey);
+	//						FileInfo.put("getInputStream", stream);
+	//						Map<String, Object> FileStatus =  uploadAndRetriveDoc(FileInfo, "upload");
+	//						LSDocReportsObj.setStreamid((String) FileStatus.get("id"));
+	//						CloudFileManipulationservice.storeReportFile(sKey, savedFile)
+							LSdocreportsRepositoryObj.save(LSDocReportsObj);
+	//						stream.close();
+							if (downloadUri.contains("https")) {
+								connectionSSL.disconnect();
+							} else {
+								connection.disconnect();
+							}
+							
+							if (!LSDocReportsObj.getStreamid().equals("") && LScfttransactionobj != null) {
+								File toBeDeleted = new File(originalFilePath);
+								logger.info("saveDocxsReport() > status:2 to be Deleted path after upload:" + toBeDeleted.getAbsolutePath());
+								if (toBeDeleted.exists()) {
+									toBeDeleted.delete();
+								}
+								lscfttransactionRepository.save(LScfttransactionobj);
+							}
+						}
+					} else if ((int) jsonObj.get("status") == 4) {
+						if (LSDocReportsObj != null) {
+							if (LSDocReportsObj.getFileName() == null) {
+								filePath = getDocxAbsolutePath();
+								File toBeDeleted = new File(filePath + "\\" + jsonObj.get("key") + ".docx");
+								logger.info(
+										"saveDocxsReport() > status:4 to be Deleted path:" + toBeDeleted.getAbsolutePath());
+								if (toBeDeleted.exists()) {
+									boolean FileStatus = toBeDeleted.delete();
+									LSdocreportsRepositoryObj.delete(LSDocReportsObj);
+									logger.info("docSave() temp File deleted Status " + FileStatus);
+									logger.info("saveDocxsReport() > status:4 ");
+								}
+							} else {
+								if(LSDocReportsObj.getIsreport() == 1 && LSDocReportsObj.getStreamid() == null) {
+									File newFile = new File(filePath + "\\" + jsonObj.get("key") + ".docx");
+									if(newFile.exists()) {
+										InputStream fis = new FileInputStream(newFile);
+										Map<String, Object> FileInfo = new HashMap<String, Object>();
+										FileInfo.put("Name", sKey);
+										FileInfo.put("getInputStream", fis);
+										Map<String, Object> FileStatus =  uploadAndRetriveDoc(FileInfo, "upload");
+										LSDocReportsObj.setStreamid((String) FileStatus.get("id"));
+										LSdocreportsRepositoryObj.save(LSDocReportsObj);
+										if (((String) FileStatus.get("status")).equals("success")) {
+											fis.close();
+											newFile.delete();
+											logger.info("saveDocxsReport() > status:4 Deleted Name:" + LSDocReportsObj.getFileName());
+										}
+									}
 								}else {
-									logger.info("saveDocxsReport() > status:4 not Deleted Name:" + LSDocReportsObj.getFileName());
+									File newFile = new File(filePath + "\\" + jsonObj.get("key") + ".docx");
+									if(newFile.exists()) {
+										newFile.delete();
+										logger.info("saveDocxsReport() > status:4 Deleted Name:" + LSDocReportsObj.getFileName());
+									}else {
+										logger.info("saveDocxsReport() > status:4 not Deleted Name:" + LSDocReportsObj.getFileName());
+									}
 								}
 							}
 						}
@@ -1555,6 +1598,16 @@ public class ReportsService {
 						filePresent = true;
 					}
 					if (filePresent) {
+						if(env.getProperty("fileReceiver") != null) {
+							int httpfileStatus = uploadSingleFile(requestedFile.getAbsolutePath(), lSdocreportsObj.getIsTemplate());
+							if(httpfileStatus == 200) {
+								rtnobjMap.put("fileFullPath", "");
+							}else {
+								rtnobjMap.put("fileFullPath", requestedFile.getAbsolutePath());
+							}
+						}else {
+							rtnobjMap.put("fileFullPath", requestedFile.getAbsolutePath());
+						}
 						// lSdocreportsObj.setFileHashName(HashKey);
 						if (LSdocreportsversionhistorylst.size() > 0) {
 							lSdocreportsObj.setVersionno(LSdocreportsversionhistorylst
@@ -1564,7 +1617,7 @@ public class ReportsService {
 						}
 						LSdocreportsRepositoryObj.save(lSdocreportsObj);
 						rtnobjMap.put("status", "success");
-						rtnobjMap.put("fileFullPath", requestedFile.getAbsolutePath());
+//						rtnobjMap.put("fileFullPath", requestedFile.getAbsolutePath());
 						rtnobjMap.put("fileName", FileName + ".docx");
 						if (lSdocreportsObj.getIsTemplate() == 1 && !isftpAvailable()) {
 							rtnobjMap.put("fileOriginalPath", "reports/templates/" + HashKey + "." + "docx");
@@ -1645,6 +1698,16 @@ public class ReportsService {
 						filePresent = true;
 					}
 					if (filePresent) {
+						if(env.getProperty("fileReceiver") != null) {
+							int httpfileStatus = uploadSingleFile(requestedFile.getAbsolutePath(), lSdocreportsObj.getIsTemplate());
+							if(httpfileStatus == 200) {
+								rtnobjMap.put("fileFullPath", "");
+							}else {
+								rtnobjMap.put("fileFullPath", requestedFile.getAbsolutePath());
+							}
+						}else {
+							rtnobjMap.put("fileFullPath", requestedFile.getAbsolutePath());
+						}
 						// lSdocreportsObj.setFileHashName(HashKey);
 						if (LSdocreportsversionhistorylst.size() > 0) {
 							lSdocreportsObj.setVersionno(LSdocreportsversionhistorylst
@@ -1914,6 +1977,240 @@ public class ReportsService {
 
 	Map<String, List<Map<String, Object>>> sequenceTagList = new HashMap<String, List<Map<String, Object>>>();
 	
+	public Map<String, Object> cloudHandleOrderTemplate(Map<String, Object> obj) {
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		sequenceTagList = new HashMap<String, List<Map<String, Object>>>();
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			List<LSlogilablimsorderdetail> lstSelectedData = mapper.convertValue(obj.get("OrderData"),
+					new TypeReference<List<LSlogilablimsorderdetail>>() {
+					});
+			LSdocreports LSdocreportsObj = mapper.convertValue(obj.get("templateRecords"), new TypeReference<LSdocreports>() { });
+			LSuserMaster lsusermaster = new LSuserMaster();
+			if (obj.containsKey("Lsusermaster")) {
+				if (obj.get("Lsusermaster") != null) {
+				lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
+				}
+			}
+			if (LSdocreportsObj != null) {
+				logger.info("handleOrderandTemplate() templateData: " + LSdocreportsObj);
+				logger.info("handleOrderandTemplate() lstSelectedData: " + lstSelectedData);
+				String fileName = "";
+				@SuppressWarnings("unused")
+				String templateName = LSdocreportsObj.getFileName();
+				String templateHashName = LSdocreportsObj.getFileHashName();
+				String filePath = getDocxAbsolutePath();
+				File newFile = null;
+				boolean fileLoaded = false;
+				String HashKey = UUID.randomUUID().toString();
+				if (lstSelectedData.size() == 1) {
+					List<LSdocreports> LSdocreportsLst = LSdocreportsRepositoryObj.findByIsreportAndLssitemaster(1, lsusermaster.getLssitemaster().getSitecode());
+//					fileName = templateName + "_" + lstSelectedData.get(0).getBatchid();
+					fileName = "Report_";
+					if(LSdocreportsLst.size() < 10) {
+						fileName += "0000";
+					} else if(LSdocreportsLst.size() < 100) {
+						fileName += "000";
+					} else if(LSdocreportsLst.size() < 1000) {
+						fileName += "00";
+					} else if(LSdocreportsLst.size() < 10000) {
+						fileName += "0";
+					}
+					fileName += (LSdocreportsLst.size() + 1);
+					newFile = new File(filePath + "\\" + fileName + ".docx");
+					if (newFile.exists()) {
+						fileName = HashKey;
+					}
+				} else {
+					fileName = HashKey;
+				}
+				logger.info("handleOrderandTemplate() fileName: " + fileName);
+				File loadFile = new File(filePath + "\\templates");
+				if(!loadFile.exists()) {
+					loadFile.mkdir();
+				}
+				loadFile = new File(filePath + "\\templates\\" + templateHashName + ".docx");
+				if (!loadFile.exists()) {
+//					Map<String, Object> fileInfo = new HashMap<String, Object>();
+//					fileInfo.put("id", LSdocreportsObj.getStreamid());
+//					fileInfo.put("filePath", loadFile);
+//					Map<String, Object> fileStatus = uploadAndRetriveDoc(fileInfo, "retrive");
+//					boolean status = false;
+					String FileID = LSdocreportsObj.getStreamid();
+					try (FileOutputStream out = new FileOutputStream(loadFile)) {
+						InputStream stream = CloudFileManipulationservice.retrieveReportFiles(FileID);
+						int read;
+						final byte[] bytes = new byte[1024];
+						while ((read = stream.read(bytes)) != -1) {
+							out.write(bytes, 0, read);
+						}
+						out.flush();
+						out.close();
+						fileLoaded = true;
+					}catch(Exception e) {
+						logger.error(e.getMessage());
+					}
+//					if(fileStatus.get("status") == "success") {
+//						fileLoaded = true;
+//					}else {
+//						fileLoaded = false;
+//					}
+				}else {
+					if(loadFile.length() == 0) {
+						loadFile.delete();
+//						Map<String, Object> fileInfo = new HashMap<String, Object>();
+//						fileInfo.put("id", LSdocreportsObj.getStreamid());
+//						fileInfo.put("filePath", loadFile);
+//						Map<String, Object> fileStatus = uploadAndRetriveDoc(fileInfo, "retrive");
+//						boolean status = false;
+						String FileID = LSdocreportsObj.getStreamid();
+						try (FileOutputStream out = new FileOutputStream(loadFile)) {
+							InputStream stream = CloudFileManipulationservice.retrieveReportFiles(FileID);
+							int read;
+							final byte[] bytes = new byte[1024];
+							while ((read = stream.read(bytes)) != -1) {
+								out.write(bytes, 0, read);
+							}
+							out.flush();
+							out.close();
+							fileLoaded = true;
+						}catch(Exception e) {
+							logger.error(e.getMessage());
+						}
+//						if(status) {
+//							fileLoaded = true;
+//						}else {
+//							fileLoaded = false;
+//						}
+					}
+					fileLoaded = true;
+				}
+				if (fileLoaded) {
+					newFile = new File(filePath + "\\" + HashKey + ".docx");
+					FileInputStream fis = new FileInputStream(loadFile);
+					XWPFDocument document = new XWPFDocument(fis);
+					logger.info("handleOrderandTemplate() Reading Paragraphs Done");
+					for (LSlogilablimsorderdetail SelectedDataObj : lstSelectedData) {
+						String SheetName = SelectedDataObj.getLsfile().getFilenameuser();
+						LSsamplefile LsSampleFiles = (LSsamplefile) SelectedDataObj.getLssamplefile();// QueryForList(squery);
+						logger.info("updateDocxReportOrder() LsSampleFiles" + LsSampleFiles);
+						String excelData = "";
+						if(LsSampleFiles.getFilecontent() != null) {
+							excelData = LsSampleFiles.getFilecontent();
+						}else {
+							OrderCreation file = mongoTemplate.findById(SelectedDataObj.getLssamplefile().getFilesamplecode(), OrderCreation.class);
+							excelData = file.getContent();
+						}
+						if (!excelData.isEmpty()) {
+							List<Map<String, Object>> TagLst = getTagInfofromSheet(excelData);
+							logger.info("handleOrderandTemplate() sheetProps" + TagLst);
+							for (Map<String, Object> SingleTag : TagLst) {
+								replaceDocxTagWithCell(SingleTag, document, SheetName);
+							}
+						}
+					}
+					if(!sequenceTagList.isEmpty()) {
+						replaceDocxTagWithSequenceData(sequenceTagList, document);
+					}
+					FileOutputStream fos = new FileOutputStream(newFile);
+					document.write(fos);
+					document.close();
+					fos.close();
+					fis.close();
+					loadFile.delete();
+					LScfttransaction LScfttransactionobj = new LScfttransaction();
+					if (obj.containsKey("objsilentaudit")) {
+						if (obj.get("objsilentaudit") != null) {
+							LScfttransactionobj = new ObjectMapper().convertValue(obj.get("objsilentaudit"),
+									new TypeReference<LScfttransaction>() {
+									});
+						}
+					}
+					LSdocdirectory LSdocdirectoryObj = LSdocdirectoryRepositoryObj
+							.findFirstByDirectorynameAndStatus("Generated Reports", 1);
+					LSdocreports LSDocReportobj = new LSdocreports();
+					if (obj.containsKey("Lsusermaster")) {
+						if (obj.get("Lsusermaster") != null) {
+						lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
+						LSDocReportobj.setLssitemaster(lsusermaster.getLssitemaster().getSitecode());
+						}
+					}
+					// silent audit
+					LScfttransactionobj.setComments("Report generated successfully");
+					LScfttransactionobj.setActions("update");
+					LScfttransactionobj.setModuleName("Reports");
+					LScfttransactionobj.setTransactiondate(new Date());
+					LScfttransactionobj.setTableName("LSdocreports");
+					
+					LSDocReportobj.setExtention("docx");
+					LSDocReportobj.setFileName(fileName);
+					LSDocReportobj.setFileHashName(HashKey);
+					LSDocReportobj.setDocdirectorycode(LSdocdirectoryObj.getDocdirectorycode());
+					LSDocReportobj.setIsTemplate(0);
+					LSDocReportobj.setIsreport(1);
+					LSDocReportobj.setCreatedBy(LScfttransactionobj.getLsuserMaster());
+					LSDocReportobj.setCreatedate(new Date());
+					LSDocReportobj.setSheetfilecodeString("");
+					LSDocReportobj.setStatus(1);
+					logger.info("handleOrderandTemplate() Data LSDocReport" + LSDocReportobj);
+					LSdocreportsRepositoryObj.save(LSDocReportobj);
+					
+					Map<String, Object> newDocx = new HashMap<String, Object>();
+					if(env.getProperty("fileReceiver") != null) {
+						int httpfileStatus = uploadSingleFile(newFile.getAbsolutePath(), 0);
+						if(httpfileStatus == 200) {
+							newDocx.put("fileFullPath", "");
+						}else {
+							newDocx.put("fileFullPath", newFile.getAbsolutePath());
+						}
+					}else {
+						newDocx.put("fileFullPath", newFile.getAbsolutePath());
+					}
+					objMap.put("DocxDirectoryLst", getDocxDirectoryLst());
+					objMap.put("DocxReportLst", getLSdocreportsLst("all"));
+					
+					objMap.put("status", "success");
+					newDocx.put("fileFullPath", newFile.getAbsolutePath());
+					newDocx.put("fileName", fileName);
+					newDocx.put("fileOriginalPath", "reports/" + HashKey + ".docx");
+					newDocx.put("hashKey", HashKey);
+					objMap.put("newDocx", newDocx);
+					if (LScfttransactionobj != null) {
+						LScfttransactionobj = new ObjectMapper().convertValue(obj.get("objsilentaudit"),
+								new TypeReference<LScfttransaction>() {
+								});
+						LScfttransactionobj.setTableName("LSdocreports");
+						lscfttransactionRepository.save(LScfttransactionobj);
+					}
+					if (obj.containsKey("objmanualaudit")) {
+						if (obj.get("objmanualaudit") != null) {
+							LScfttransactionobj = new ObjectMapper().convertValue(obj.get("objmanualaudit"),
+									new TypeReference<LScfttransaction>() {
+									});
+							if (obj.containsKey("objuser")) {
+								Map<String, Object> objuser = (Map<String, Object>) obj.get("objuser");
+								LScfttransactionobj.setComments((String) objuser.get("comments"));
+							}
+							LScfttransactionobj.setTableName("LSdocreports");
+							lscfttransactionRepository.save(LScfttransactionobj);
+						}
+					}
+				} else {
+					logger.info("File not fount");
+					objMap.put("status", "ID_REQUESTEDTEMPLATENOTFOUND");
+				}
+				logger.info("handleOrderandTemplate() status: Done");
+			} else {
+				logger.info("Template not found for selected Order");
+				objMap.put("status", "ID_TEMPLATENOTFOUNDFORSELECTEDORDER");
+			}
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+		}
+		return objMap;
+	}
+
+	
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> handleOrderTemplate(Map<String, Object> obj) {
 		Map<String, Object> objMap = new HashMap<String, Object>();
@@ -2062,9 +2359,20 @@ public class ReportsService {
 					LSDocReportobj.setStatus(1);
 					logger.info("handleOrderandTemplate() Data LSDocReport" + LSDocReportobj);
 					LSdocreportsRepositoryObj.save(LSDocReportobj);
+					Map<String, Object> newDocx = new HashMap<String, Object>();
+					if(env.getProperty("fileReceiver") != null) {
+						int httpfileStatus = uploadSingleFile(newFile.getAbsolutePath(), 0);
+						if(httpfileStatus == 200) {
+							newDocx.put("fileFullPath", "");
+						}else {
+							newDocx.put("fileFullPath", newFile.getAbsolutePath());
+						}
+					}else {
+						newDocx.put("fileFullPath", newFile.getAbsolutePath());
+					}
 					objMap.put("DocxDirectoryLst", getDocxDirectoryLst());
 					objMap.put("DocxReportLst", getLSdocreportsLst("all"));
-					Map<String, Object> newDocx = new HashMap<String, Object>();
+					
 					objMap.put("status", "success");
 					newDocx.put("fileFullPath", newFile.getAbsolutePath());
 					newDocx.put("fileName", fileName);
@@ -3059,5 +3367,63 @@ public class ReportsService {
 			fileContentLst.add(file);
 		}
 		return fileContentLst;
+	}
+	
+	public void createFIle(){
+//		String URLString = "http://localhost:8081/ELNdocuments/";
+//		String FilePath = "C:/Program Files/Apache Software Foundation/Tomcat 8.5/webapps/ROOT/ELNdocuments/reports/link.txt";
+//		File newFIle = new File(FilePath);
+//		try {
+//			InputStream fileInputStream = new FileInputStream(newFIle);
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} 
+		URLConnection urlconnection = null;
+		try {
+			File file = new File("C:/Program Files/Apache Software Foundation/Tomcat 8.5/webapps/ROOT/ELNdocuments/reports/link.txt");
+			URL url = new URL("http://localhost:8081/Testing/link.txt");
+			urlconnection = url.openConnection();
+			urlconnection.setDoOutput(true);
+			urlconnection.setDoInput(true);
+
+			if (urlconnection instanceof HttpURLConnection) {
+				((HttpURLConnection) urlconnection).setRequestMethod("PUT");
+				((HttpURLConnection) urlconnection).setRequestProperty("Content-type", "text/plain");
+				((HttpURLConnection) urlconnection).connect();
+			}
+
+			BufferedOutputStream bos = new BufferedOutputStream(urlconnection.getOutputStream());
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+			int i;
+			// read byte by byte until end of stream
+			while ((i = bis.read()) > -1) {
+				bos.write(i);
+			}
+			bis.close();
+			bos.close();
+			System.out.println(((HttpURLConnection) urlconnection).getResponseMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+
+			InputStream inputStream;
+			int responseCode = ((HttpURLConnection) urlconnection).getResponseCode();
+			if ((responseCode >= 200) && (responseCode <= 202)) {
+				inputStream = ((HttpURLConnection) urlconnection).getInputStream();
+				int j;
+				while ((j = inputStream.read()) > 0) {
+					System.out.println(j);
+				}
+
+			} else {
+				inputStream = ((HttpURLConnection) urlconnection).getErrorStream();
+			}
+			((HttpURLConnection) urlconnection).disconnect();
+			System.out.println(inputStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

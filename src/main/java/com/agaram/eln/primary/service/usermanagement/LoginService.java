@@ -910,7 +910,7 @@ public class LoginService {
 				if(objClass.getObjmanualaudit() != null)
 		    	{
 				
-				Date date = new Date();
+//				Date date = new Date();
 				
 				//manualAudit.setModuleName("UserManagement");
 				//manualAudit.setComments("Insert Domain Successfully");
@@ -921,7 +921,7 @@ public class LoginService {
 				//manualAudit.setManipulatetype("Insert");
 				objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster().getUsercode());
 				objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster().getSitecode());
-				objClass.getObjmanualaudit().setTransactiondate(date);
+//				objClass.getObjmanualaudit().setTransactiondate(date);
 	    		lscfttransactionRepository.save(objClass.getObjmanualaudit());
 			}
 			}
@@ -959,7 +959,7 @@ public class LoginService {
 			if(objClass.getObjmanualaudit() != null)
 	    	{
 			
-			Date date = new Date();
+//			Date date = new Date();
 			
 			//manualAudit.setModuleName("UserManagement");
 			//manualAudit.setComments("Insert Domain Successfully");
@@ -970,7 +970,7 @@ public class LoginService {
 			//manualAudit.setManipulatetype("Insert");
 			objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster().getUsercode());
 			objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster().getSitecode());
-			objClass.getObjmanualaudit().setTransactiondate(date);
+//			objClass.getObjmanualaudit().setTransactiondate(date);
     		lscfttransactionRepository.save(objClass.getObjmanualaudit());
 		}
 		}
@@ -1364,15 +1364,19 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 			
 			if(objClass.getObjuser() != null) {
 				if(objClass.getObjmanualaudit() != null)
-		    	{	
-					Date date = new Date();
-			
+		    	{
+//					objClass.getObjmanualaudit().setActions("Warning");
 					objClass.getObjmanualaudit().setTableName("LSSiteMaster");
 					objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-					objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster().getUsercode());
-					objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster().getSitecode());
-					objClass.getObjmanualaudit().setTransactiondate(date);
 		    		lscfttransactionRepository.save(objClass.getObjmanualaudit());
+//					Date date = new Date();
+//			
+//					objClass.getObjmanualaudit().setTableName("LSSiteMaster");
+//					objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
+//					objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster().getUsercode());
+//					objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster().getSitecode());
+//					objClass.getObjmanualaudit().setTransactiondate(date);
+//		    		lscfttransactionRepository.save(objClass.getObjmanualaudit());
 				}
 			}
 			
@@ -1413,14 +1417,18 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 		if(objClass.getObjuser() != null) {
 			if(objClass.getObjmanualaudit() != null)
 	    	{
-				Date date = new Date();
-				
+//				objClass.getObjmanualaudit().setActions("Warning");
 				objClass.getObjmanualaudit().setTableName("LSSiteMaster");
 				objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-				objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster().getUsercode());
-				objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster().getSitecode());
-				objClass.getObjmanualaudit().setTransactiondate(date);
 	    		lscfttransactionRepository.save(objClass.getObjmanualaudit());
+//				Date date = new Date();
+//				
+//				objClass.getObjmanualaudit().setTableName("LSSiteMaster");
+//				objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
+//				objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster().getUsercode());
+//				objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster().getSitecode());
+//				objClass.getObjmanualaudit().setTransactiondate(date);
+//	    		lscfttransactionRepository.save(objClass.getObjmanualaudit());
 			}
 		}
 		return objClass;

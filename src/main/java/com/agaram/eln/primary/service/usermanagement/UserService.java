@@ -128,7 +128,28 @@ public class UserService {
 	    	}
 			return objusergroup;
 		}
-		
+			else if(objusergroup.getUsergroupcode() != null && lSusergroupRepository.findByusergroupnameIgnoreCaseAndUsergroupcodeNotAndLssitemaster(objusergroup.getUsergroupname(),objusergroup.getUsergroupcode(),objusergroup.getLssitemaster())!= null)
+			{
+			objusergroup.setResponse(new Response());
+			objusergroup.getResponse().setStatus(false);
+			objusergroup.getResponse().setInformation("ID_EXIST");
+			if(objusergroup.getObjsilentaudit() != null)
+	    	{   
+				objusergroup.getObjsilentaudit().setActions("Warning");
+				objusergroup.getObjsilentaudit().setComments(objusergroup.getCreateby().getUsername()+" "+"made attempt to create existing group name");
+				objusergroup.getObjsilentaudit().setTableName("LSusergroup");
+	    		lscfttransactionRepository.save(objusergroup.getObjsilentaudit());
+	    	}
+//			manual audit
+			if(objusergroup.getObjuser() != null)
+	    	{
+				objusergroup.getObjmanualaudit().setActions("Warning");
+				objusergroup.getObjmanualaudit().setTableName("LScfttransaction");
+				objusergroup.getObjmanualaudit().setComments(objusergroup.getObjuser().getComments());
+	    		lscfttransactionRepository.save(objusergroup.getObjmanualaudit());
+	    	}
+			return objusergroup;
+		}
 		lSusergroupRepository.save(objusergroup);
 		objusergroup.setResponse(new Response());
 		objusergroup.getResponse().setStatus(true);
@@ -147,21 +168,25 @@ public class UserService {
 	
 		if(objusergroup.getObjuser() != null) {
 			//LScfttransaction manualAudit=new LScfttransaction();
-			Date date = new Date();
+//			Date date = new Date();
 			if(objusergroup.getObjmanualaudit() != null)
 	    	{
-			//objusergroup.getObjmanualaudit().setComments("Insert Test Successfully");
-			objusergroup.getObjmanualaudit().setComments(objusergroup.getObjuser().getComments());
-			//manualAudit.setActions("Insert Test");
-			//manualAudit.setSystemcoments("User Generated");
-			objusergroup.getObjmanualaudit().setTableName("LStestmasterlocal");
-			//manualAudit.setManipulatetype("Insert");
-			objusergroup.getObjmanualaudit().setLsuserMaster(objusergroup.getLSuserMaster().getUsercode());
-			objusergroup.getObjmanualaudit().setLssitemaster(objusergroup.getLSuserMaster().getLssitemaster().getSitecode());
-			objusergroup.getObjmanualaudit().setTransactiondate(date);
-    		lscfttransactionRepository.save(objusergroup.getObjmanualaudit());
+				objusergroup.getObjmanualaudit().setTableName("LSusergroup");
+				objusergroup.getObjmanualaudit().setComments(objusergroup.getObjuser().getComments());
+	    		lscfttransactionRepository.save(objusergroup.getObjmanualaudit());
+//			//objusergroup.getObjmanualaudit().setComments("Insert Test Successfully");
+//			objusergroup.getObjmanualaudit().setComments(objusergroup.getObjuser().getComments());
+//			//manualAudit.setActions("Insert Test");
+//			//manualAudit.setSystemcoments("User Generated");
+//			objusergroup.getObjmanualaudit().setTableName("LStestmasterlocal");
+//			//manualAudit.setManipulatetype("Insert");
+//			objusergroup.getObjmanualaudit().setLsuserMaster(objusergroup.getLSuserMaster().getUsercode());
+//			objusergroup.getObjmanualaudit().setLssitemaster(objusergroup.getLSuserMaster().getLssitemaster().getSitecode());
+//			objusergroup.getObjmanualaudit().setTransactiondate(date);
+//    		lscfttransactionRepository.save(objusergroup.getObjmanualaudit());
 		}
 		}
+		
 		return objusergroup;
 	}
 	
@@ -310,12 +335,12 @@ public class UserService {
 	    	}
 
 			if(objusermaster.getObjuser() != null) {
-				Date date = new Date();
+//				Date date = new Date();
 				objusermaster.getObjmanualaudit().setComments(objusermaster.getObjuser().getComments());
-				objusermaster.getObjmanualaudit().setTableName("LStestmasterlocal");
+				objusermaster.getObjmanualaudit().setTableName("LSuserMaster");
 				objusermaster.getObjmanualaudit().setLsuserMaster(objusermaster.getUsercode());
 				objusermaster.getObjmanualaudit().setLssitemaster(objusermaster.getLssitemaster().getSitecode());
-				objusermaster.getObjmanualaudit().setTransactiondate(date);
+//				objusermaster.getObjmanualaudit().setTransactiondate(date);
 	    		lscfttransactionRepository.save(objusermaster.getObjmanualaudit());
 			}
 			objusermaster.setResponse(new Response());
@@ -328,7 +353,7 @@ public class UserService {
 		if(objusermaster.getUsercode() == null && objusermaster.getIsmultitenant() != null && objusermaster.getMultitenantusercount() != null && objusermaster.getIsmultitenant() == 1)
 		{
 //			if(lsuserMasterRepository.countByusercodeNot(1) >= objusermaster.getMultitenantusercount())
-				if(lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1,1) >= objusermaster.getMultitenantusercount())
+				if(lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1,1) >= objusermaster.getMultitenantusercount() && lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1,1)!=0)
 			{
 				Response objResponse = new Response();
 				objResponse.setStatus(false);
@@ -376,13 +401,16 @@ public class UserService {
     	}
 		//Manual Audit
 		if(objusermaster.getObjuser() != null) {
-			Date date = new Date();
+			objusermaster.getObjmanualaudit().setTableName("LSuserMaster");
 			objusermaster.getObjmanualaudit().setComments(objusermaster.getObjuser().getComments());
-			objusermaster.getObjmanualaudit().setTableName("LStestmasterlocal");
-			objusermaster.getObjmanualaudit().setLsuserMaster(objusermaster.getUsercode());
-			objusermaster.getObjmanualaudit().setLssitemaster(objusermaster.getLssitemaster().getSitecode());
-			objusermaster.getObjmanualaudit().setTransactiondate(date);
-    		lscfttransactionRepository.save(objusermaster.getObjmanualaudit());
+			lscfttransactionRepository.save(objusermaster.getObjmanualaudit());
+//			Date date = new Date();
+//			objusermaster.getObjmanualaudit().setComments(objusermaster.getObjuser().getComments());
+//			objusermaster.getObjmanualaudit().setTableName("LStestmasterlocal");
+//			objusermaster.getObjmanualaudit().setLsuserMaster(objusermaster.getUsercode());
+//			objusermaster.getObjmanualaudit().setLssitemaster(objusermaster.getLssitemaster().getSitecode());
+//			objusermaster.getObjmanualaudit().setTransactiondate(date);
+//    		lscfttransactionRepository.save(objusermaster.getObjmanualaudit());
 		}
 		objusermaster.setResponse(new Response());
 		objusermaster.getResponse().setStatus(true);
@@ -562,18 +590,18 @@ public class UserService {
 				if(objteam.getObjmanualaudit() != null)
 		    	{
 				
-				Date date = new Date();
+//				Date date = new Date();
 				
 				/*manualAudit.setModuleName("UserManagement");
 				manualAudit.setComments("Insert Test Successfully");
 				manualAudit.setActions("Insert Test");
 				manualAudit.setSystemcoments("User Generated");*/
-				objteam.getObjmanualaudit().setTableName("LStestmasterlocal");
+				objteam.getObjmanualaudit().setTableName("LSuserteam");
 				objteam.getObjmanualaudit().setComments(objteam.getObjuser().getComments());
 				//manualAudit.setManipulatetype("Insert");
 				objteam.getObjmanualaudit().setLsuserMaster(objteam.getModifieduserMaster().getUsercode());
 				objteam.getObjmanualaudit().setLssitemaster(objteam.getModifieduserMaster().getLssitemaster().getSitecode());
-				objteam.getObjmanualaudit().setTransactiondate(date);
+//				objteam.getObjmanualaudit().setTransactiondate(date);
 	    		lscfttransactionRepository.save(objteam.getObjmanualaudit());
 			}
 			}
@@ -754,7 +782,7 @@ public class UserService {
 		if(lsrights.get(0).getObjuser() != null) {
 			
 			//LScfttransaction manualAudit=new LScfttransaction();
-			Date date = new Date();
+//			Date date = new Date();
 			if(lsrights.get(0).getObjmanualaudit() != null)
 	    	{
 
@@ -764,11 +792,11 @@ public class UserService {
 			//manualAudit.setActions("Update file test");
 			//manualAudit.setSystemcoments("System Generated");
 			lsrights.get(0).getObjmanualaudit().setComments(lsrights.get(0).getObjuser().getComments());
-			lsrights.get(0).getObjmanualaudit().setTableName("LSworkflow");
+			lsrights.get(0).getObjmanualaudit().setTableName("LSuserMaster");
 			//manualAudit.setManipulatetype("Insert");
 			lsrights.get(0).getObjmanualaudit().setLsuserMaster(lsrights.get(0).getObjmanualaudit().getLsuserMaster());
 			lsrights.get(0).getObjmanualaudit().setLssitemaster(lsrights.get(0).getObjmanualaudit().getLssitemaster());
-			lsrights.get(0).getObjmanualaudit().setTransactiondate(date);
+//			lsrights.get(0).getObjmanualaudit().setTransactiondate(date);
     		lscfttransactionRepository.save(lsrights.get(0).getObjmanualaudit());
 		}
 		}

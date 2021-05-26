@@ -2,6 +2,7 @@ package com.agaram.eln.primary.service.fileManipulation;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.UUID;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -81,9 +82,12 @@ public class FileManipulationservice {
 	    
 	    public OrderAttachment storeattachment(MultipartFile file) throws IOException
 	    {
+	    	UUID objGUID = UUID.randomUUID();
+            String randomUUIDString = objGUID.toString();
+            
 	    	OrderAttachment objattachment = new OrderAttachment();
-	    	objattachment.setFile(
-	          new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+	    	objattachment.setId(randomUUIDString);
+	    	objattachment.setFile(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
 	    	
 	    	objattachment = orderAttachmentRepository.insert(objattachment);
 	    	
@@ -93,8 +97,13 @@ public class FileManipulationservice {
 	    public String storeLargeattachment(String title, MultipartFile file) throws IOException { 
 	        DBObject metaData = new BasicDBObject(); 
 	        metaData.put("title", title); 
-	        Object id = gridFsTemplate.store(file.getInputStream(), file.getName(), file.getContentType(), metaData).getId(); 
-	        return id.toString(); 
+	        
+	        UUID objGUID = UUID.randomUUID();
+            String randomUUIDString = objGUID.toString();
+            
+            gridFsTemplate.store(file.getInputStream(), randomUUIDString, file.getContentType(), metaData);
+
+	        return randomUUIDString;
 	    }
 	    
 	    public OrderAttachment retrieveFile(LsOrderattachments objattachment){
@@ -105,7 +114,11 @@ public class FileManipulationservice {
 		}
 	    
 	    public GridFSDBFile retrieveLargeFile(String fileid) throws IllegalStateException, IOException{
-	    	GridFSDBFile file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
+	    	GridFSDBFile file = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
+	    	if(file == null)
+	    	{
+	    		file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
+	    	}
 	    	return file;
 	    }
 	    
@@ -114,6 +127,7 @@ public class FileManipulationservice {
 	    }
 	    
 	    public void deletelargeattachments(String id) { 
+	    	gridFsTemplate.delete(Query.query(Criteria.where("filename").is(id)));
 	    	gridFsTemplate.delete(Query.query(Criteria.where("_id").is(id)));
 	    }
 }

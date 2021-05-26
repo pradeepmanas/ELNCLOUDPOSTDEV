@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.instrumentDetails;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -11,12 +12,17 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -274,8 +280,8 @@ public class InstrumentService {
 		}
 		else
 		{
-			logger.info("InsertELNOrder  objorder.getLssamplefile().getTempfilecontent() : "+ objorder.getLssamplefile().getTempfilecontent());
-			Content = objorder.getLssamplefile().getTempfilecontent();
+			logger.info("InsertELNOrder  objorder.getLssamplefile().getTempfilecontent() : "+ objorder.getLssamplefile().getFilecontent());
+			Content = objorder.getLssamplefile().getFilecontent();
 		}
 		
 		objorder.getLssamplefile().setFilecontent(null);
@@ -1277,6 +1283,22 @@ public class InstrumentService {
 		{
 			objupdatedorder.setIsLockbycurrentuser(0);
 		}
+		
+		if(objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
+			if(objupdatedorder.getLsworkflow().equals(lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster())))
+			{
+				objupdatedorder.setIsFinalStep(1);
+			}
+			else
+			{
+				objupdatedorder.setIsFinalStep(0);
+			}	
+		}
+		
+		if(objupdatedorder.getFiletype() == 0)
+		{
+			objupdatedorder.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
+		}
 				
 		if(objupdatedorder.getLssamplefile() != null)
 		{
@@ -1428,7 +1450,7 @@ public class InstrumentService {
 		lssamplefileRepository.save(objfile);
 		updateordercontent(Content, objfile, objfile.getIsmultitenant());
 		
-		objfile.setFilecontent(objfile.getTempfilecontent());
+		objfile.setFilecontent(Content);
 		
 		if(objfile.getObjActivity() != null)
 		{
@@ -1956,7 +1978,7 @@ public class InstrumentService {
 			CloudOrderAttachment objfile = cloudFileManipulationservice.storeattachment(file);
 			if(objfile != null)
 			{
-				objattachment.setFileid(objfile.getId().toString());
+				objattachment.setFileid(objfile.getFileid());
 			}
 		}
 		
@@ -2281,6 +2303,68 @@ public class InstrumentService {
 	{
 		return fileManipulationservice.retrieveLargeFile(fileid);
 	}
+	
+	public ResponseEntity<InputStreamResource> downloadattachments(String param, String fileid)
+	{
+
+		if(param == null)
+		{
+			return null;
+		}
+		
+		LsOrderattachments objattach = lsOrderattachmentsRepository.findFirst1ByfileidOrderByAttachmentcodeDesc(fileid);
+		HttpHeaders header = new HttpHeaders();
+		header.set("Content-Disposition", "attachment; filename="+objattach.getFilename());
+		
+		if(Integer.parseInt(param) == 0)
+		{
+			OrderAttachment objfile = fileManipulationservice.retrieveFile(objattach);
+			
+			InputStreamResource resource = null;
+			byte[] content = objfile.getFile().getData();
+	        int size = content.length;
+	        InputStream is = null;
+	        try {
+	            is = new ByteArrayInputStream(content);
+	            resource = new InputStreamResource(is);	
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            try{
+	                if(is != null) is.close();
+	            } catch (Exception ex){
+	                 
+	            }
+	        }
+	       
+	        header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+	        header.setContentLength(size);
+		    return new ResponseEntity<>(resource, header, HttpStatus.OK);
+		}
+		else if(Integer.parseInt(param) == 1)
+		{
+			GridFSDBFile gridFsFile = null;
+			
+			try {
+				gridFsFile = retrieveLargeFile(fileid);
+			} catch (IllegalStateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(gridFsFile.getContentType());
+		    header.setContentType(MediaType.parseMediaType(gridFsFile.getContentType()));
+		    header.setContentLength(gridFsFile.getLength());
+		    return new ResponseEntity<>(new InputStreamResource(gridFsFile.getInputStream()), header, HttpStatus.OK);
+		}
+		
+	    
+	    return null;
+	    
+	}
+
 
 }
 	

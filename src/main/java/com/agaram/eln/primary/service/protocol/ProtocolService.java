@@ -840,9 +840,11 @@ public class ProtocolService {
 		if(objClass.getApproved() != null) {
 			approved = objClass.getApproved();
 		}
-		LSprotocolmaster LsProto = LSProtocolMasterRepositoryObj.findFirstByProtocolmastercode(objClass.getProtocolmastercode());
+		
 		LSProtocolMasterRepositoryObj.updateFileWorkflow(objClass.getlSprotocolworkflow(),
 				approved,objClass.getRejected(), objClass.getProtocolmastercode());
+		
+		LSprotocolmaster LsProto = LSProtocolMasterRepositoryObj.findFirstByProtocolmastercode(objClass.getProtocolmastercode());
 		
 		LsProto.setlSprotocolworkflow(objClass.getlSprotocolworkflow());
 		if(LsProto.getApproved() == null) {
@@ -872,13 +874,13 @@ public class ProtocolService {
 			lscfttransactionRepository.save(lSprotocolworkflow.get(0).getObjsilentaudit());
 		}
 		if(lSprotocolworkflow.get(0).getObjuser() != null) {
-			Date date = new Date();
+//			Date date = new Date();
 			
 			lSprotocolworkflow.get(0).getObjmanualaudit().setComments(lSprotocolworkflow.get(0).getObjuser().getComments());
 			lSprotocolworkflow.get(0).getObjmanualaudit().setTableName("lSprotocolworkflow");
 			lSprotocolworkflow.get(0).getObjmanualaudit().setLsuserMaster(lSprotocolworkflow.get(0).getObjsilentaudit().getLsuserMaster());
 			lSprotocolworkflow.get(0).getObjmanualaudit().setLssitemaster(lSprotocolworkflow.get(0).getLssitemaster().getSitecode());
-			lSprotocolworkflow.get(0).getObjmanualaudit().setTransactiondate(date);
+//			lSprotocolworkflow.get(0).getObjmanualaudit().setTransactiondate(date);
 			lscfttransactionRepository.save(lSprotocolworkflow.get(0).getObjmanualaudit());
 		}
 		lSprotocolworkflow.get(0).setResponse(new Response());

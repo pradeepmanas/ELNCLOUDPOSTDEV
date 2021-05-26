@@ -46,15 +46,15 @@ public class LSsamplefile {
 	LoggedUser objuser;
 	@Transient
 	private LSuserMaster lsuserMaster;
-	@Transient
-	private String tempfilecontent;
-	
-	public String getTempfilecontent() {
-		return tempfilecontent;
-	}
-	public void setTempfilecontent(String tempfilecontent) {
-		this.tempfilecontent = tempfilecontent;
-	}
+//	@Transient
+//	private String tempfilecontent;
+//	
+//	public String getTempfilecontent() {
+//		return tempfilecontent;
+//	}
+//	public void setTempfilecontent(String tempfilecontent) {
+//		this.tempfilecontent = tempfilecontent;
+//	}
 	public LSuserMaster getLsuserMaster() {
 		return lsuserMaster;
 	}

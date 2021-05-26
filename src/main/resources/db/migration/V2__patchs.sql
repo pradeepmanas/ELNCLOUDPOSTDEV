@@ -203,6 +203,8 @@ CREATE TABLE IF NOT EXISTS public.datasourceconfig(
     
 	UPDATE  DataSourceConfig SET isadministrator_verify=false WHERE isadministrator_verify is null;
 
+	ALTER TABLE IF Exists LSOrderAttachmentfiles ADD COLUMN IF NOT EXISTS fileid varchar(250);
+
 
 	
 

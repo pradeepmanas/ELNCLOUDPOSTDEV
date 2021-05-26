@@ -27,4 +27,6 @@ public interface LSusergroupRepository extends JpaRepository<LSusergroup, Intege
 			String usergroupname);
 	public List<LSusergroup> findBylssitemasterAndUsergroupstatusAndUsergroupnameNotOrderByUsergroupcodeAsc(
 			Integer sitecode, String string, String string2);
+	public Object findByusergroupnameIgnoreCaseAndUsergroupcodeNotAndLssitemaster(String usergroupname,
+			Integer usergroupcode, Integer lssitemaster);
 }

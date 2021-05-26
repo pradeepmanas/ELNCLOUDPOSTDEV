@@ -587,5 +587,11 @@ public class InstrumentController {
 	    header.set("Content-Disposition", "attachment; filename=gg.pdf");
 	    return new ResponseEntity<>(new InputStreamResource(instrumentService.sharedretrieveColudLargeFile(fileid)), header, HttpStatus.OK);
 	}
+	
+	@RequestMapping(path = "/download/{param}/{fileid}", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> download(@PathVariable String param, @PathVariable String fileid) throws IOException {
+
+	    return instrumentService.downloadattachments(param, fileid);
+	}
 
 }

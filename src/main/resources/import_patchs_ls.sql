@@ -1,10 +1,10 @@
-select 1
+select 1;
 
-select * from LSSitemaster
+select * from LSSitemaster;
 
-ALTER TABLE if exists email alter column  mailcontent Type varchar(5000)
+ALTER TABLE if exists email alter column  mailcontent Type varchar(5000);
 
-UPDATE  lsusermaster SET userretirestatus=0 WHERE userretirestatus is null
+UPDATE  lsusermaster SET userretirestatus=0 WHERE userretirestatus is null;
 
 --update LSusergrouprightsmaster set sallow='0',screate='0',sdelete='0',sedit='0' where sallow='1' or screate='1' or sdelete='1' or sedit='1';
 

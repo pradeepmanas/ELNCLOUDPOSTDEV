@@ -278,7 +278,7 @@ public class FileService {
 		{
 			LSuserMaster user= lSuserMasterRepository.findByusercode(objuser.getUsercode());
 			if(objuser.getObjsilentaudit()!=null) {
-			Date date = new Date();
+//			Date date = new Date();
 			objuser.setObjsilentaudit(new LScfttransaction());
 			objuser.getObjsilentaudit().setModuleName("Sheet Creation");
 			objuser.getObjsilentaudit().setComments("Request to load Sheet Creation screen");
@@ -288,7 +288,7 @@ public class FileService {
 			objuser.getObjsilentaudit().setManipulatetype("view");
 			objuser.getObjsilentaudit().setLsuserMaster(user.getUsercode());
 			objuser.getObjsilentaudit().setLssitemaster(user.getLssitemaster().getSitecode());
-			objuser.getObjsilentaudit().setTransactiondate(date);
+//			objuser.getObjsilentaudit().setTransactiondate(date);
 		lscfttransactionRepository.save(objuser.getObjsilentaudit());
 			}
 			//return lSfileRepository.findByfilecodeGreaterThan(1);
@@ -298,7 +298,7 @@ public class FileService {
 		{
 			LSuserMaster user= lSuserMasterRepository.findByusercode(objuser.getUsercode());
 //			if(objuser.getObjsilentaudit()!=null) {
-			Date date = new Date();
+//			Date date = new Date();
 			objuser.setObjsilentaudit(new LScfttransaction());
 			objuser.getObjsilentaudit().setModuleName("Sheet Creation");
 			objuser.getObjsilentaudit().setComments("Request to load Sheet Creation screen");
@@ -308,7 +308,9 @@ public class FileService {
 			objuser.getObjsilentaudit().setManipulatetype("view");
 			objuser.getObjsilentaudit().setLsuserMaster(user.getUsercode());
 			objuser.getObjsilentaudit().setLssitemaster(user.getLssitemaster().getSitecode());
-			objuser.getObjsilentaudit().setTransactiondate(date);
+//		
+
+			
 		lscfttransactionRepository.save(objuser.getObjsilentaudit());
 //			}
 			return GetSheetsbyuser(objuser);
@@ -353,6 +355,10 @@ public class FileService {
 			List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
 			lstteamuser.add(objuser);
 			lstfile = lSfileRepository.findByCreatebyInAndFilecodeGreaterThanOrderByFilecodeDesc(lstteamuser,1);
+		}
+		if(objuser.getObjsilentaudit()!=null) {
+			objuser.getObjsilentaudit().setTableName("LSfile");
+			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 		return lstfile;
 	}
@@ -505,13 +511,13 @@ public class FileService {
     	}
 		//Manual Audit
 		if(lstworkflow.get(0).getObjuser() != null) {
-			Date date = new Date();
+//			Date date = new Date();
 			
 			lstworkflow.get(0).getObjmanualaudit().setComments(lstworkflow.get(0).getObjuser().getComments());
 			lstworkflow.get(0).getObjmanualaudit().setTableName("LSworkflow");
 			lstworkflow.get(0).getObjmanualaudit().setLsuserMaster(lstworkflow.get(0).getLSuserMaster().getUsercode());
 			lstworkflow.get(0).getObjmanualaudit().setLssitemaster(lstworkflow.get(0).getLSuserMaster().getLssitemaster().getSitecode());
-			lstworkflow.get(0).getObjmanualaudit().setTransactiondate(date);
+//			lstworkflow.get(0).getObjmanualaudit().setTransactiondate(date);
     		lscfttransactionRepository.save(lstworkflow.get(0).getObjmanualaudit());
 		}
 		lstworkflow.get(0).setResponse(new Response());
@@ -630,13 +636,14 @@ public class FileService {
 //		    		lscfttransactionRepository.save(manualAudit);
 //				}
 				if(lSsheetworkflow.get(0).getObjuser() != null) {
-					Date date = new Date();
+					
+//					Date date = new Date();
 					
 					lSsheetworkflow.get(0).getObjmanualaudit().setComments(lSsheetworkflow.get(0).getObjuser().getComments());
 					lSsheetworkflow.get(0).getObjmanualaudit().setTableName("LSsheetworkflow");
 					lSsheetworkflow.get(0).getObjmanualaudit().setLsuserMaster(lSsheetworkflow.get(0).getLSuserMaster().getUsercode());
 					lSsheetworkflow.get(0).getObjmanualaudit().setLssitemaster(lSsheetworkflow.get(0).getLSuserMaster().getLssitemaster().getSitecode());
-					lSsheetworkflow.get(0).getObjmanualaudit().setTransactiondate(date);
+//					lSsheetworkflow.get(0).getObjmanualaudit().setTransactiondate(date);
 		    		lscfttransactionRepository.save(lSsheetworkflow.get(0).getObjmanualaudit());
 				}
 				lSsheetworkflow.get(0).setResponse(new Response());

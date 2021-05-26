@@ -10,4 +10,5 @@ public interface LsOrderattachmentsRepository extends JpaRepository<LsOrderattac
 	@Transactional
 	public Long deleteByAttachmentcode(Long attachmentcode);
 
+	public LsOrderattachments findFirst1ByfileidOrderByAttachmentcodeDesc(String fileid);
 }

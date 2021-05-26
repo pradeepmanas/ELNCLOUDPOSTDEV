@@ -373,11 +373,71 @@ public class ReportsController {
 		return ObjMap;
 	}
 	
+	@RequestMapping(value = "/cloudHandleOrderTemplate")
+	public Map<String, Object> cloudHandleOrderTemplate(@RequestBody Map<String, Object> obj) {
+		Map<String, Object> ObjMap = new HashMap<String, Object>();
+		try {
+			Thread.sleep(2000);
+			LoggedUser objuser = new LoggedUser();
+			ObjectMapper mapper = new ObjectMapper();
+			Response objResponse = new Response();
+			
+			LScfttransaction objsilentaudit = new LScfttransaction();
+			LScfttransaction objmanualaudit = new LScfttransaction();
+			if(obj.containsKey("objsilentaudit"))
+			{
+				objsilentaudit = mapper.convertValue(obj.get("objsilentaudit"),LScfttransaction.class);
+			}
+			if(obj.containsKey("objmanualaudit"))
+			{
+				objmanualaudit = mapper.convertValue(obj.get("objmanualaudit"),LScfttransaction.class);
+			}
+			
+			if(obj.containsKey("objuser"))
+			{
+				objuser = mapper.convertValue(obj.get("objuser"),LoggedUser.class);
+			}
+			if(objuser.getsUsername() != null) {
+				
+				LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
+				
+				if(userClass.getObjResponse().getStatus()) {
+					ObjMap = ObjReportsService.cloudHandleOrderTemplate(obj);
+				}
+				else
+				{
+					objsilentaudit.setComments("Entered invalid username and password");
+					Map<String, Object> map=new HashMap<>();
+					map.put("objsilentaudit",objsilentaudit);
+					map.put("objmanualaudit",objmanualaudit);
+					map.put("objUser",objuser);
+					auditService.AuditConfigurationrecord(map);
+					objResponse.setStatus(false);
+					objResponse.setInformation("ID_VALIDATION");
+					ObjMap.put("objResponse", objResponse);
+				}
+				
+			}else {
+			ObjMap = ObjReportsService.handleOrderTemplate(obj);
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ObjMap;
+	}
+	
 	@RequestMapping(value = "/getReportDocxonVersion")
 	public Map<String, Object> getReportDocxonVersion(@RequestBody Map<String, Object> obj) {
 		Map<String, Object> ObjMap = new HashMap<String, Object>();
 		ObjMap = ObjReportsService.getReportDocxonVersion(obj);
 		return ObjMap;
+	}
+	
+	@RequestMapping(value = "/createFIle")
+	public void createFIle() {
+		Map<String, Object> ObjMap = new HashMap<String, Object>();
+		ObjReportsService.createFIle();
 	}
 	
 //	@RequestMapping(value = "/getversion")

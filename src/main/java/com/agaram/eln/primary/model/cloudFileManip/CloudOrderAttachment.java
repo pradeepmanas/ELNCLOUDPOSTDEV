@@ -21,7 +21,7 @@ public class CloudOrderAttachment {
         
     private Binary file;
 
-	
+    private String fileid;
 
 	public Integer getId() {
 		return id;
@@ -37,6 +37,14 @@ public class CloudOrderAttachment {
 
 	public void setFile(Binary file) {
 		this.file = file;
+	}
+
+	public String getFileid() {
+		return fileid;
+	}
+
+	public void setFileid(String fileid) {
+		this.fileid = fileid;
 	}
 
 	

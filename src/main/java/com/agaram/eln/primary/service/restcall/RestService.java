@@ -905,10 +905,25 @@ public class RestService {
     	return res;
 	}
 	
+	public boolean CheckLIMS() throws Exception {
+		
+		String getLIMS=limsService("materialController/getLimsStructure");
+		
+		if(getLIMS.equalsIgnoreCase("2")) {
+			return true;
+		}else {
+			importLIMSMaterial();
+			importLIMSMaterialTrans();
+			
+			return true;
+		}
+	}
+	
 	public boolean syncLimsMasters(Map<String, Object> objMap) throws Exception {
 		ImportLimsTest("");
-		importLIMSMaterial();
-		importLIMSMaterialTrans();
+		CheckLIMS();
+		//importLIMSMaterial();
+		//importLIMSMaterialTrans();
 		return true;
 	}
 }

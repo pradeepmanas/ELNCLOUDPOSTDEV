@@ -101,6 +101,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/Instrument/Shareddownloadattachments").permitAll().
 		antMatchers("/Instrument/Sharedattachment").permitAll().
 		antMatchers("/Instrument/Getorderforlink").permitAll().
+		antMatchers("/Instrument/download/{param}/{fileid}").permitAll().
 		antMatchers("/Instrument/Sharedcloudattachment").permitAll().
 		antMatchers("/multitenant/Registertenant").permitAll().
 		antMatchers("/multitenant/Validatetenant").permitAll().
@@ -132,9 +133,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/User/getUserOnCode").permitAll().
 		antMatchers("/helpdocument/gethelpnodes").permitAll().
 		antMatchers("/helpdocument/getdocumentonid").permitAll().
-		antMatchers("/helpdocument/getdocumentonid").permitAll().
-		antMatchers("/helpdocument/gethelpnodes").permitAll().
-		antMatchers("/helpdocument/getdocumentonid").permitAll().
+		antMatchers("/helpdocument/getdocumentcontent").permitAll().
 		antMatchers("/User/validatemailaddress").permitAll().
 		antMatchers("/Login/limsloginusertokengenarate").permitAll().
 		// all other requests need to be authenticated
