@@ -22,7 +22,6 @@ public interface DataSourceConfigRepository extends JpaRepository<DataSourceConf
     DataSourceConfig findById(Long id);
     
     List<DataSourceConfig> findByInitialize(boolean initiated);
-    
 	 @Transactional
 	 @Modifying
 	 @Query("update DataSourceConfig u set u.verifiedemail = ?1 where u.tenantid = ?2")
@@ -37,4 +36,6 @@ public interface DataSourceConfigRepository extends JpaRepository<DataSourceConf
 	 @Modifying
 	 @Query("update DataSourceConfig u set u.tenantcontactno = ?1,u.tenantaddress=?2 ,u.tenantstate=?3 ,u.tenantcity=?4 ,u.tenantpincode=?5 ,u.tenantcountry=?6  where u.tenantid = ?7")
 	 int setcontactandaddressandstateandcityandpincodeandcountry (String contact ,String address,String state ,String city ,String pincocde,String country,String tenantid );
+	List<DataSourceConfig> findAllByOrderByIdDesc();
+	
 }

@@ -138,13 +138,13 @@ public class DatasourceService {
 			for(int i=0;i<mails.length;i++) {
 				email.setMailto(mails[i]);
 				email.setSubject("UsrName and PassWord");
-				email.setMailcontent("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+Tenantname.getTenantid()+"</b><br><b>Password:\t\t"+password+"</b><br><b><a href="+Tenantname.getLoginpath()+">click here to ligin</a></b>");
+				email.setMailcontent("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+Tenantname.getTenantid()+"</b><br><b>Password:\t\t"+password+"</b><br><b><a href="+Tenantname.getLoginpath()+">click here to login</a></b>");
 				emailService.sendEmail(email);
 			}
 		}else {
 			email.setMailto(Tenantname.getUseremail());
 			email.setSubject("UsrName and PassWord");
-			email.setMailcontent("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+Tenantname.getTenantid()+"</b><br><b>Password:\t\t"+password+"</b><br><b><a href="+Tenantname.getLoginpath()+">click here to ligin</a></b>");
+			email.setMailcontent("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+Tenantname.getTenantid()+"</b><br><b>Password:\t\t"+password+"</b><br><b><a href="+Tenantname.getLoginpath()+">click here to login</a></b>");
 			emailService.sendEmail(email);
 		}
 		
@@ -205,7 +205,7 @@ public class DatasourceService {
 	
 	public List<DataSourceConfig> Getalltenant()
 	{
-		return configRepo.findAll();
+		return configRepo.findAllByOrderByIdDesc();
 	}
 	
 	public DataSourceConfig Gettenantonid(DataSourceConfig Tenant)
