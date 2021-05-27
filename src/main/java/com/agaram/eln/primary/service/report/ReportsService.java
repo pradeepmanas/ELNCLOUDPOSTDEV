@@ -199,7 +199,7 @@ public class ReportsService {
 		if (filePath == "") {
 			if(System.getProperty("os.name").contains("Linux")) {
 				System.out.print("reportgetAbsolutePath()" + new File("").getAbsolutePath().toString());
-				filePath = "/home/site/wwwroot/webapps/ELNdocuments";
+				filePath = "/home/site/wwwroot/ELNdocuments";
 			}else {
 				if(env.getProperty("DocsPath") != null && env.getProperty("DocsPath") != "") {
 					filePath = env.getProperty("DocsPath");
