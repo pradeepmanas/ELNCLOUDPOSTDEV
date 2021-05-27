@@ -201,7 +201,7 @@ public class ReportsService {
 			if(System.getProperty("os.name").contains("Linux")) {
 				System.out.print("reportgetAbsolutePath()" + new File("").getAbsolutePath().toString());
 				logger.info("reportgetAbsolutePath()" + new File("").getAbsolutePath().toString());
-				filePath = "/home/site/wwwroot/ELNdocuments";
+				filePath = "/home/site/wwwroot/webapps/ELNdocuments";
 				File newFile = new File(filePath);
 				if (!newFile.exists()) {
 					newFile.mkdir();
@@ -606,10 +606,11 @@ public class ReportsService {
 			if(System.getProperty("os.name").contains("Linux")) {
 //				newFile.createNewFile();
 				Files.createFile(newFile.toPath());
+			}else {
+				FileOutputStream fos = new FileOutputStream(newFile);
+				new XWPFDocument().write(fos);
+				fos.close();
 			}
-			FileOutputStream fos = new FileOutputStream(newFile);
-			new XWPFDocument().write(fos);
-			fos.close();
 			if(env.getProperty("fileReceiver") != null) {
 				int httpfileStatus = uploadSingleFile(newFile.getAbsolutePath(), docType);
 				if(httpfileStatus == 200) {
