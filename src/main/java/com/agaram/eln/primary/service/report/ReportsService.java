@@ -597,6 +597,9 @@ public class ReportsService {
 				newFile.mkdir();
 			}
 			newFile = new File(filePath + "\\" + filename);
+			if(System.getProperty("os.name").contains("Linux")) {
+				newFile.createNewFile();
+			}
 			FileOutputStream fos = new FileOutputStream(newFile);
 			new XWPFDocument().write(fos);
 			fos.close();
