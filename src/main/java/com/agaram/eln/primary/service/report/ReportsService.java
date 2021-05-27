@@ -603,14 +603,14 @@ public class ReportsService {
 				newFile.mkdir();
 			}
 			newFile = new File(filePath + "\\" + filename);
-			if(System.getProperty("os.name").contains("Linux")) {
-//				newFile.createNewFile();
-				Files.createFile(newFile.toPath());
-			}else {
+//			if(System.getProperty("os.name").contains("Linux")) {
+////				newFile.createNewFile();
+//				Files.createFile(newFile.toPath());
+//			}else {
 				FileOutputStream fos = new FileOutputStream(newFile);
 				new XWPFDocument().write(fos);
 				fos.close();
-			}
+//			}
 			if(env.getProperty("fileReceiver") != null) {
 				int httpfileStatus = uploadSingleFile(newFile.getAbsolutePath(), docType);
 				if(httpfileStatus == 200) {
