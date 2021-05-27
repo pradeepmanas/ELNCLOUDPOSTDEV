@@ -17,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
@@ -199,7 +200,12 @@ public class ReportsService {
 		if (filePath == "") {
 			if(System.getProperty("os.name").contains("Linux")) {
 				System.out.print("reportgetAbsolutePath()" + new File("").getAbsolutePath().toString());
+				logger.info("reportgetAbsolutePath()" + new File("").getAbsolutePath().toString());
 				filePath = "/home/site/wwwroot/ELNdocuments";
+				File newFile = new File(filePath);
+				if (!newFile.exists()) {
+					newFile.mkdir();
+				}
 			}else {
 				if(env.getProperty("DocsPath") != null && env.getProperty("DocsPath") != "") {
 					filePath = env.getProperty("DocsPath");
@@ -598,7 +604,8 @@ public class ReportsService {
 			}
 			newFile = new File(filePath + "\\" + filename);
 			if(System.getProperty("os.name").contains("Linux")) {
-				newFile.createNewFile();
+//				newFile.createNewFile();
+				Files.createFile(newFile.toPath());
 			}
 			FileOutputStream fos = new FileOutputStream(newFile);
 			new XWPFDocument().write(fos);
