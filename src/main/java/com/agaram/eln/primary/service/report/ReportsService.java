@@ -602,7 +602,8 @@ public class ReportsService {
 			if(!newFile.exists()) {
 				newFile.mkdir();
 			}
-			newFile = new File(filePath + "\\" + filename);
+			//newFile = new File(filePath + "\\" + filename);
+			newFile = new File (filePath, filename);
 //			if(System.getProperty("os.name").contains("Linux")) {
 ////				newFile.createNewFile();
 //				Files.createFile(newFile.toPath());
