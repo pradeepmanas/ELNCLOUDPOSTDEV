@@ -436,7 +436,8 @@ public class DatasourceService {
 //			int countmail=2;
 			String mails[]= {Tenantname.getUseremail(),Tenantname.getAdministratormailid()};
 			for(int i=0;i<mails.length;i++) {
-				email.setMailto(Tenantname.getUseremail());
+				email.setMailto(mails[i]);
+//				email.setMailto(Tenantname.getUseremail());
 				email.setSubject("This is an OTP verification email");
 				email.setMailcontent("<b>Dear Customer</b>,<br><i>use code <b>"+otp+"</b> to login our account Never share your OTP with anyone</i>");
 				emailService.sendmailOPT(email);
@@ -521,17 +522,33 @@ public class DatasourceService {
 			String passwordadmin=AESEncryption.encrypt(password);
 			lsuserMaster.setPassword(passwordadmin);
 			lsuserMaster.setPasswordstatus(1);
-			
+
 			Email email = new Email();
-			email.setMailto(Tenant.getUseremail());
-			email.setSubject("Registration success");
-			email.setMailcontent("<b>Dear Customer</b>,<br>"
-					+ "<i>You have successfully registered to Logilab ELN.</i><br>"
-					+ "<i>Your organisation ID is <b>"+Tenant.getTenantid()+"</b>.</i><br>"
-					+ "<i>we create a default administrator user for you and this are the login credentials.</i><br>"
-					+ "<b>UserName:\t\t Administrator </b><br><b>Password:\t\t"+password+"</b>");
-			emailService.sendEmail(email);
-			
+			if(!Tenant.getAdministratormailid().equals(""))
+			{
+				String mails[]= {Tenant.getUseremail(),Tenant.getAdministratormailid()};
+				
+				for(int i=0;i<mails.length;i++) {
+					email.setMailto(mails[i]);
+					email.setSubject("Registration success");
+					email.setMailcontent("<b>Dear Customer</b>,<br>"
+							+ "<i>You have successfully registered to Logilab ELN.</i><br>"
+							+ "<i>Your organisation ID is <b>"+Tenant.getTenantid()+"</b>.</i><br>"
+							+ "<i>we create a default administrator user for you and this are the login credentials.</i><br>"
+							+ "<b>UserName:\t\t Administrator </b><br><b>Password:\t\t"+password+"</b>");
+					emailService.sendEmail(email);
+				}
+			}
+			else {
+				email.setMailto(Tenant.getUseremail());
+				email.setSubject("Registration success");
+				email.setMailcontent("<b>Dear Customer</b>,<br>"
+						+ "<i>You have successfully registered to Logilab ELN.</i><br>"
+						+ "<i>Your organisation ID is <b>"+Tenant.getTenantid()+"</b>.</i><br>"
+						+ "<i>we create a default administrator user for you and this are the login credentials.</i><br>"
+						+ "<b>UserName:\t\t Administrator </b><br><b>Password:\t\t"+password+"</b>");
+				emailService.sendEmail(email);
+			}
 			lsuserMasterRepository.save(lsuserMaster);
 		}
 		return Tenant;
@@ -610,13 +627,24 @@ public class DatasourceService {
 	}
 
 	public DataSourceConfig Remindertenant(DataSourceConfig Tenantname) throws MessagingException {
-		
 		Email email = new Email();
-		email.setMailto(Tenantname.getUseremail());
-		email.setSubject("UsrName and PassWord");
-		email.setMailcontent("<b>Dear Customer</b>,<br><i>You need to validate your OTP before organization initiated </i><br><b>Your OTP validation path <br><b><a href="+Tenantname.getLoginpath()+">click here to validate OTP</a></b>");
-		emailService.sendEmail(email);
 		
+		if(!Tenantname.getAdministratormailid().equals(""))
+		{
+//			int countmail=2;
+			String mails[]= {Tenantname.getUseremail(),Tenantname.getAdministratormailid()};
+			for(int i=0;i<mails.length;i++) {
+				email.setMailto(mails[i]);
+				email.setSubject("UsrName and PassWord");
+				email.setMailcontent("<b>Dear Customer</b>,<br><i>You need to validate your OTP before organization initiated </i><br><b>Your OTP validation path <br><b><a href="+Tenantname.getLoginpath()+">click here to validate OTP</a></b>");
+				emailService.sendEmail(email);
+			}
+		}else {
+			email.setMailto(Tenantname.getUseremail());
+			email.setSubject("UsrName and PassWord");
+			email.setMailcontent("<b>Dear Customer</b>,<br><i>You need to validate your OTP before organization initiated </i><br><b>Your OTP validation path <br><b><a href="+Tenantname.getLoginpath()+">click here to validate OTP</a></b>");
+			emailService.sendEmail(email);
+		}
 		return Tenantname;
 	}
 }

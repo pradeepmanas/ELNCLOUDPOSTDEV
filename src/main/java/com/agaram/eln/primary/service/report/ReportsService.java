@@ -80,6 +80,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.configuration.LSConfiguration;
 import com.agaram.eln.primary.model.general.OrderCreation;
 import com.agaram.eln.primary.model.general.SheetCreation;
@@ -96,6 +97,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
+import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.report.LSdocdirectoryRepository;
 import com.agaram.eln.primary.repository.report.LSdocreportsRepository;
@@ -170,7 +172,10 @@ public class ReportsService {
 	
 	@Autowired
     private Environment env;
-
+	
+	@Autowired
+	private CloudSheetCreationRepository cloudSheetCreationRepository;
+	
 	@Autowired
     private CloudFileManipulationservice CloudFileManipulationservice;
 	
@@ -708,6 +713,22 @@ public class ReportsService {
 				String filePath = getDocxAbsolutePath();
 				String sKey = (String) jsonObj.get("key");
 				String originalFilePath = "";
+				String fileReceiver = env.getProperty("fileReceiver");
+				if(fileReceiver != null) {
+					HttpHeaders headers = new HttpHeaders();
+			        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+			        
+			        MultiValueMap<String, Object> reqBodyData = new LinkedMultiValueMap<>();
+			        reqBodyData.add("fileName", sKey);
+			        reqBodyData.add("type", 0); // LSDocReportsObj.getIsTemplate()
+			        
+			        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(reqBodyData, headers);
+			        
+			        String serverUrl = fileReceiver + "delete/";
+			        RestTemplate restTemplate = new RestTemplate();
+			        ResponseEntity<String> fileDeleteRes = restTemplate.postForEntity(serverUrl, requestEntity, String.class);
+			        System.out.println("Response code: " + fileDeleteRes.getStatusCode());
+				}
 				LSdocreports LSDocReportsObj = LSdocreportsRepositoryObj.findFirstByFileHashNameAndStatus(sKey, 1);
 				if (LSDocReportsObj != null) {
 					if (LSDocReportsObj.getIsTemplate() == 1) {
@@ -722,6 +743,7 @@ public class ReportsService {
 						if (LScfttransactionobj != null)
 							LScfttransactionobj.setComments("Saving document : " + LSDocReportsObj.getFileName());
 					}
+					
 				}
 				originalFilePath = filePath +'/'+ sKey + ".docx";
 				if (LSDocReportsObj.getFileName() == null && (int) jsonObj.get("status") == 2) {
@@ -901,6 +923,22 @@ public class ReportsService {
 				String filePath = getDocxAbsolutePath();
 				String sKey = (String) jsonObj.get("key");
 				String originalFilePath = "";
+				String fileReceiver = env.getProperty("fileReceiver");
+				if(fileReceiver != null) {
+					HttpHeaders headers = new HttpHeaders();
+			        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+			        
+			        MultiValueMap<String, Object> reqBodyData = new LinkedMultiValueMap<>();
+			        reqBodyData.add("fileName", sKey);
+			        reqBodyData.add("type", 0); // LSDocReportsObj.getIsTemplate()
+			        
+			        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(reqBodyData, headers);
+			        
+			        String serverUrl = fileReceiver + "delete/";
+			        RestTemplate restTemplate = new RestTemplate();
+			        ResponseEntity<String> fileDeleteRes = restTemplate.postForEntity(serverUrl, requestEntity, String.class);
+			        System.out.println("Response code: " + fileDeleteRes.getStatusCode());
+				}
 				LSdocreports LSDocReportsObj = LSdocreportsRepositoryObj.findFirstByFileHashNameAndStatus(sKey, 1);
 				if (LSDocReportsObj != null) {
 					if (LSDocReportsObj.getIsTemplate() == 1) {
@@ -915,7 +953,7 @@ public class ReportsService {
 						if (LScfttransactionobj != null)
 							LScfttransactionobj.setComments("Saving document : " + LSDocReportsObj.getFileName());
 					}
-				
+					
 					originalFilePath = filePath + "/" + sKey + ".docx";
 					if (LSDocReportsObj.getFileName() == null && (int) jsonObj.get("status") == 2) {
 						List<LSdocreports> LSDocReportsLst = LSdocreportsRepositoryObj.findByIsdraftAndStatus(1, 1);
@@ -3248,9 +3286,17 @@ public class ReportsService {
 		List<LSfile> LSfileLst = LSfileRepositoryObj.findByApproved(1);
 		for(LSfile LSfileObj: LSfileLst) {
 			if(LSfileObj.getFilecontent() == null) {
-				SheetCreation sheetcreationObj = mongoTemplate.findById(LSfileObj.getFilecode(), SheetCreation.class);
-				if(sheetcreationObj != null) {
-					LSfileObj.setFilecontent( sheetcreationObj.getContent());
+				if((int)argMap.get("isMultitenant") == 1) {
+					CloudSheetCreation file = cloudSheetCreationRepository.findById((long)LSfileObj.getFilecode());
+					if(file != null)
+					{
+						LSfileObj.setFilecontent(file.getContent());
+					}
+				}else {
+					SheetCreation sheetcreationObj = mongoTemplate.findById(LSfileObj.getFilecode(), SheetCreation.class);
+					if(sheetcreationObj != null) {
+						LSfileObj.setFilecontent( sheetcreationObj.getContent());
+					}
 				}
 			}
 		}
