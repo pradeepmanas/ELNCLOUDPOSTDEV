@@ -601,7 +601,13 @@ public class ReportsService {
 				}
 			}
 			if (docType == 1) {
-				filePath += "\\templates";
+				if(System.getProperty("os.name").contains("Linux")) {
+					filePath += "/templates";
+				}
+				else
+				{
+					filePath += "\\templates";
+				}
 			}
 			File newFile = new File(filePath);
 			if(!newFile.exists()) {
