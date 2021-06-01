@@ -738,7 +738,13 @@ public class ReportsService {
 				LSdocreports LSDocReportsObj = LSdocreportsRepositoryObj.findFirstByFileHashNameAndStatus(sKey, 1);
 				if (LSDocReportsObj != null) {
 					if (LSDocReportsObj.getIsTemplate() == 1) {
-						filePath += "\\templates";
+						if(System.getProperty("os.name").contains("Linux")) {
+							filePath += "/templates";
+						}
+						else
+						{
+							filePath += "\\templates";
+						}
 						if (!(new File(filePath)).exists()) {
 							(new File(filePath)).mkdir();
 						}
@@ -948,7 +954,13 @@ public class ReportsService {
 				LSdocreports LSDocReportsObj = LSdocreportsRepositoryObj.findFirstByFileHashNameAndStatus(sKey, 1);
 				if (LSDocReportsObj != null) {
 					if (LSDocReportsObj.getIsTemplate() == 1) {
-						filePath += "\\templates";
+						if(System.getProperty("os.name").contains("Linux")) {
+							filePath += "/templates";
+						}
+						else
+						{
+							filePath += "\\templates";
+						}
 						if (!(new File(filePath)).exists()) {
 							(new File(filePath)).mkdir();
 						}
@@ -1254,7 +1266,13 @@ public class ReportsService {
 						LSDocReportObj.setFileHashName(saveAsHashKey);
 						LSdocreportsRepositoryObj.save(LSDocReportObj);
 						if (LSDocReportObj.getIsTemplate() == 1) {
-							filePath += "\\templates";
+							if(System.getProperty("os.name").contains("Linux")) {
+								filePath += "/templates";
+							}
+							else
+							{
+								filePath += "\\templates";
+							}
 						}
 						File oldFile = new File(filePath, haskKey + ".docx");
 						newFile = new File(filePath, saveAsHashKey + ".docx");
@@ -1634,7 +1652,13 @@ public class ReportsService {
 //			if (canLoad) {
 				String filePath = getDocxAbsolutePath();
 				if (lSdocreportsObj.getIsTemplate() == 1 && !isftpAvailable()) {
-					filePath += "\\templates";
+					if(System.getProperty("os.name").contains("Linux")) {
+						filePath += "/templates";
+					}
+					else
+					{
+						filePath += "\\templates";
+					}
 				}
 				boolean filePresent = false;
 				File directory = new File(filePath);
@@ -1720,7 +1744,13 @@ public class ReportsService {
 //			if (canLoad) {
 				String filePath = getDocxAbsolutePath();
 				if (lSdocreportsObj.getIsTemplate() == 1 && !isftpAvailable()) {
-					filePath += "\\templates";
+					if(System.getProperty("os.name").contains("Linux")) {
+						filePath += "/templates";
+					}
+					else
+					{
+						filePath += "\\templates";
+					}
 				}
 				boolean filePresent = false;
 				boolean status = false;
@@ -1968,7 +1998,14 @@ public class ReportsService {
 						fileLoaded = true;
 					}
 				} else {
-					loadFile = new File(filePath + "\\templates\\" + templateName + ".docx");
+					
+					if(System.getProperty("os.name").contains("Linux")) {
+						loadFile = new File(filePath + "/templates/" + templateName + ".docx");
+					}
+					else
+					{
+						loadFile = new File(filePath + "\\templates\\" + templateName + ".docx");
+					}
 					if (loadFile.exists()) {
 						fileLoaded = true;
 					} else {
@@ -2081,11 +2118,24 @@ public class ReportsService {
 					fileName = HashKey;
 				}
 				logger.info("handleOrderandTemplate() fileName: " + fileName);
-				File loadFile = new File(filePath + "\\templates");
+				File loadFile = null;
+				if(System.getProperty("os.name").contains("Linux")) {
+					loadFile = new File(filePath + "/templates");
+				}
+				else
+				{
+					loadFile = new File(filePath + "\\templates");
+				}
 				if(!loadFile.exists()) {
 					loadFile.mkdir();
 				}
-				loadFile = new File(filePath + "\\templates\\" + templateHashName + ".docx");
+				if(System.getProperty("os.name").contains("Linux")) {
+					loadFile = new File(filePath + "/templates/" + templateHashName + ".docx");
+				}
+				else
+				{
+					loadFile = new File(filePath + "\\templates\\" + templateHashName + ".docx");
+				}
 				if (!loadFile.exists()) {
 //					Map<String, Object> fileInfo = new HashMap<String, Object>();
 //					fileInfo.put("id", LSdocreportsObj.getStreamid());
@@ -2316,11 +2366,24 @@ public class ReportsService {
 					fileName = HashKey;
 				}
 				logger.info("handleOrderandTemplate() fileName: " + fileName);
-				File loadFile = new File(filePath + "\\templates");
+				File loadFile = null;
+				if(System.getProperty("os.name").contains("Linux")) {
+					loadFile = new File(filePath + "/templates");
+				}
+				else
+				{
+					loadFile = new File(filePath + "\\templates");
+				}
 				if(!loadFile.exists()) {
 					loadFile.mkdir();
 				}
-				loadFile = new File(filePath + "\\templates\\" + templateHashName + ".docx");
+				if(System.getProperty("os.name").contains("Linux")) {
+					loadFile = new File(filePath + "/templates/" + templateHashName + ".docx");
+				}
+				else
+				{
+					loadFile = new File(filePath + "\\templates\\" + templateHashName + ".docx");
+				}
 				if (!loadFile.exists()) {
 					Map<String, Object> fileInfo = new HashMap<String, Object>();
 					fileInfo.put("id", LSdocreportsObj.getStreamid());
@@ -3393,7 +3456,14 @@ public class ReportsService {
 			FIleVersionName = hashKey;
 		}
 		if (LSdocreportsObj.getIsTemplate() == 1) {
-			filePath += "\\templates";
+			if(System.getProperty("os.name").contains("Linux")) {
+				filePath += "/templates";
+			}
+			else
+			{
+				filePath += "\\templates";
+			}
+			
 			if (!(new File(filePath)).exists()) {
 				(new File(filePath)).mkdir();
 			}
