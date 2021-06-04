@@ -130,4 +130,5 @@ public class FileManipulationservice {
 	    	gridFsTemplate.delete(Query.query(Criteria.where("filename").is(id)));
 	    	gridFsTemplate.delete(Query.query(Criteria.where("_id").is(id)));
 	    }
+	    
 }

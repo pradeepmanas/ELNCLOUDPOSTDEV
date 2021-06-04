@@ -1,22 +1,47 @@
 package com.agaram.eln.primary.service.helpdocument;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.List;
 
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.helpdocument.Helpdocument;
 import com.agaram.eln.primary.model.helpdocument.Helptittle;
 import com.agaram.eln.primary.repository.helpdocument.HelpdocumentRepository;
 import com.agaram.eln.primary.repository.helpdocument.HelptittleRepository;
+import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
+import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
+import com.microsoft.azure.storage.CloudStorageAccount;
+import com.microsoft.azure.storage.OperationContext;
+import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.blob.BlobContainerPublicAccessType;
+import com.microsoft.azure.storage.blob.BlobRequestOptions;
+import com.microsoft.azure.storage.blob.CloudBlobClient;
+import com.microsoft.azure.storage.blob.CloudBlobContainer;
+import com.microsoft.azure.storage.blob.CloudBlockBlob;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.gridfs.GridFSDBFile;
 
 
 
@@ -29,6 +54,16 @@ public class helpdocumentservice {
 	
 	@Autowired
 	HelptittleRepository helptittleRepository;
+	
+	@Autowired
+    private InstrumentService instrumentService;
+	
+	@Autowired
+	private FileManipulationservice fileManipulationservice;
+	
+	
+	@Autowired
+    private Environment env;
 	
 	public Map<String, Object> adddocument(Map<String, Object> obj) {
 		Helpdocument Helpdocument = new Helpdocument();
@@ -109,6 +144,7 @@ public class helpdocumentservice {
 		{
 			objhelp.setId(objupdatehelp.getId());
 		}
+		objhelp.setFiletype(1);
 		return HelpdocumentRepository.save(objhelp);
 	}
 	
@@ -144,5 +180,129 @@ public class helpdocumentservice {
 		}
 		return objhelp;
 		
+	}
+	
+	public Helpdocument storevideoforhelp(Integer Nodecode, MultipartFile file) throws IOException { 
+		Helpdocument objupdatehelp = HelpdocumentRepository.findFirst1ByNodecodeOrderByNodecodeDesc(Nodecode);
+		
+		if(objupdatehelp == null)
+		{
+			objupdatehelp = new Helpdocument();
+			objupdatehelp.setNodecode(Nodecode);
+		}
+		
+        UUID objGUID = UUID.randomUUID();
+        String randomUUIDString = objGUID.toString();
+        
+        String bloburi="";
+		CloudStorageAccount storageAccount;
+		CloudBlobClient blobClient = null;
+		CloudBlobContainer container=null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+		
+        
+		try {    
+			
+			// Parse the connection string and create a blob client to interact with Blob storage
+			storageAccount = CloudStorageAccount.parse(storageConnectionString);
+			blobClient = storageAccount.createCloudBlobClient();
+			container = blobClient.getContainerReference(TenantContext.getCurrentTenant().toLowerCase());
+			
+			if(objupdatehelp.getId() != null && objupdatehelp.getDocumentname() != null)
+			{
+				CloudBlockBlob oldblob = container.getBlockBlobReference(objupdatehelp.getDocumentname());
+				oldblob.deleteIfExists();
+			}
+
+			// Create the container if it does not exist with public access.
+			System.out.println("Creating container: " + container.getName());
+			container.createIfNotExists(BlobContainerPublicAccessType.CONTAINER, new BlobRequestOptions(), new OperationContext());		    
+
+			File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+randomUUIDString);
+			file.transferTo(convFile);
+
+			//Getting a blob reference
+			CloudBlockBlob blob = container.getBlockBlobReference(convFile.getName());
+
+			//Creating blob and uploading file to it
+			System.out.println("Uploading the sample file ");
+			blob.uploadFromFile(convFile.getAbsolutePath());
+			
+			bloburi = blob.getUri().toString();
+
+		} 
+		catch (StorageException ex)
+		{
+			System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s", ex.getHttpStatusCode(), ex.getErrorCode()));
+		}
+		catch (Exception ex) 
+		{
+			System.out.println(ex.getMessage());
+		}
+		finally 
+		{
+			System.out.println("The program has completed successfully.");
+			System.out.println("Press the 'Enter' key while in the console to delete the sample files, example container, and exit the application.");
+
+		
+		}
+        
+		objupdatehelp.setFiletype(1);
+        objupdatehelp.setDocumentname(randomUUIDString);
+        objupdatehelp.setFileref(bloburi);
+        //objupdatehelp.setLshelpdocumentcontent(randomUUIDString);
+        
+        HelpdocumentRepository.save(objupdatehelp);
+       
+        return objupdatehelp;
+    }
+	
+	public ResponseEntity<InputStreamResource> helpdownload(String fileid) throws IOException
+	{
+			
+			HttpHeaders header = new HttpHeaders();
+		    header.set("Content-Disposition", "attachment; filename=gg.mp4");
+
+			GridFSDBFile gridFsFile = null;
+			
+			try {
+				gridFsFile = instrumentService.retrieveLargeFile(fileid);
+			} catch (IllegalStateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(gridFsFile.getContentType());
+		    header.setContentType(MediaType.parseMediaType(gridFsFile.getContentType()));
+		    header.setContentLength(gridFsFile.getLength());
+		    return new ResponseEntity<>(new InputStreamResource(gridFsFile.getInputStream()), header, HttpStatus.OK);
+	}
+	
+	public Helpdocument storevideoforhelponprim(Integer Nodecode, MultipartFile file) throws IOException { 
+		Helpdocument objupdatehelp = HelpdocumentRepository.findFirst1ByNodecodeOrderByNodecodeDesc(Nodecode);
+		
+		if(objupdatehelp == null)
+		{
+			objupdatehelp = new Helpdocument();
+			objupdatehelp.setNodecode(Nodecode);
+			
+			if(objupdatehelp.getId() != null && objupdatehelp.getDocumentname() != null)
+			{
+			fileManipulationservice.deletelargeattachments(objupdatehelp.getDocumentname());
+			}
+		}
+	
+		String id=  fileManipulationservice.storeLargeattachment("help", file);
+		
+		objupdatehelp.setFiletype(1);
+        objupdatehelp.setDocumentname(id);
+        objupdatehelp.setFileref(id);
+        //objupdatehelp.setLshelpdocumentcontent(randomUUIDString);
+        
+        HelpdocumentRepository.save(objupdatehelp);
+       
+        return objupdatehelp;
 	}
 }

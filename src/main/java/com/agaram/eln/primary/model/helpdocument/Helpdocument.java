@@ -37,6 +37,11 @@ public class Helpdocument {
 	
 	private Integer nodecode;
 	
+	private Integer filetype=0;
+	
+	@Column(columnDefinition = "varchar(255)")
+	 public String fileref;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -61,7 +66,17 @@ public class Helpdocument {
 	public void setNodecode(Integer nodecode) {
 		this.nodecode = nodecode;
 	}
-
-	 
+	public Integer getFiletype() {
+		return filetype;
+	}
+	public void setFiletype(Integer filetype) {
+		this.filetype = filetype;
+	}
+	public String getFileref() {
+		return fileref;
+	}
+	public void setFileref(String fileref) {
+		this.fileref = fileref;
+	}
 
 }

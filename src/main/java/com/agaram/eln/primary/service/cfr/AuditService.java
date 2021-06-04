@@ -573,22 +573,32 @@ public class AuditService {
 		
 		map.put("reviewDetails", GetReviewDetails(objreviewdetails));
 		map.put("cfttDeatils", cfttDeatils);
-		if(objreviewdetails.get(0).getObjuser() != null) {
-			LScfttransaction manualAudit=new LScfttransaction();
-			Date date = new Date();
-			
-			manualAudit.setModuleName("Audit Trail");
-			manualAudit.setComments("Reviewed History Successfully");
-			manualAudit.setActions("Review History");
-			manualAudit.setSystemcoments("User Generated");
-			manualAudit.setTableName("LSreviewdetails");
-			manualAudit.setManipulatetype("Review");
-			manualAudit.setLsuserMaster(objreviewdetails.get(0).getLsusermaster().getUsercode());
-//			manualAudit.setLssitemaster(objreviewdetails.get(0).getLsusermaster().getLssitemaster());
-			manualAudit.setLssitemaster(objreviewdetails.get(0).getLsusermaster().getLssitemaster().getSitecode());
-			manualAudit.setTransactiondate(date);
-    		lscfttransactionRepository.save(manualAudit);
-		}
+//		if(objreviewdetails.get(0).getObjuser() != null) {
+//		LScfttransaction manualAudit=new LScfttransaction();
+//		Date date = new Date();
+//		
+//		manualAudit.setModuleName("Audit Trail");
+//		manualAudit.setComments("Reviewed History Successfully");
+//		manualAudit.setActions("Review History");
+//		manualAudit.setSystemcoments("User Generated");
+//		manualAudit.setTableName("LSreviewdetails");
+//		manualAudit.setManipulatetype("Review");
+//		manualAudit.setLsuserMaster(objreviewdetails.get(0).getLsusermaster().getUsercode());
+////		manualAudit.setLssitemaster(objreviewdetails.get(0).getLsusermaster().getLssitemaster());
+//		manualAudit.setLssitemaster(objreviewdetails.get(0).getLsusermaster().getLssitemaster().getSitecode());
+//		manualAudit.setTransactiondate(date);
+//		lscfttransactionRepository.save(manualAudit);
+//	}
+	if(objreviewdetails.get(0).getObjsilentaudit()!= null) {
+
+		objreviewdetails.get(0).getObjsilentaudit().setTableName("LSreviewdetails");
+		lscfttransactionRepository.save(objreviewdetails.get(0).getObjsilentaudit());
+	}
+	if(objreviewdetails.get(0).getObjuser()!= null) {
+		objreviewdetails.get(0).getObjmanualaudit().setTableName("LSreviewdetails");
+		objreviewdetails.get(0).getObjmanualaudit().setComments(objreviewdetails.get(0).getObjuser().getComments());
+		lscfttransactionRepository.save(objreviewdetails.get(0).getObjmanualaudit());
+	}
 		return map;
 	}
 

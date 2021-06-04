@@ -1,17 +1,26 @@
 package com.agaram.eln.primary.controller.helpdocument;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.model.helpdocument.Helpdocument;
 import com.agaram.eln.primary.model.helpdocument.Helptittle;
@@ -87,4 +96,20 @@ public class Documentcontroller {
 		
 	}
 
+	@PostMapping("/storevideoforhelp")
+    public Helpdocument storevideoforhelp(@RequestParam("nodecode") Integer nodecode, @RequestParam("file") MultipartFile file) throws IOException
+    {
+		return helpdocumentservice.storevideoforhelp(nodecode, file);
+    }
+	
+	@PostMapping("/storevideoforhelponprim")
+    public Helpdocument storevideoforhelponprim(@RequestParam("nodecode") Integer nodecode, @RequestParam("file") MultipartFile file) throws IOException
+    {
+		return helpdocumentservice.storevideoforhelponprim(nodecode, file);
+    }
+	
+	@RequestMapping(path = "/helpdownload/{fileid}", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> helpdownload(@PathVariable String fileid) throws IOException {
+		return helpdocumentservice.helpdownload(fileid);
+	}
 }

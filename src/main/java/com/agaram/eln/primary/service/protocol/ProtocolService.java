@@ -1250,7 +1250,7 @@ public class ProtocolService {
 					List<LSprotocolstep> LSprotocolsteplstforsecond =LSProtocolStepRepositoryObj.findByProtocolmastercodeAndStatus(LSprotocolstepObj.getProtocolmastercode() , 1);
 					for(int j=i; j < LSprotocolsteplstforsecond.size(); j++)
 					{
-						if(newProtocolMasterObj.getIsmultitenant() == 1 && CloudLSprotocolstepInfo !=null) {
+						if(LSprotocolstepObj.getIsmultitenant() == 1 && CloudLSprotocolstepInfo !=null) {
 					CloudLSprotocolstepInfo CloudLSprotocolstepInfoforinsert = new CloudLSprotocolstepInfo();
 					CloudLSprotocolstepInfoforinsert.setId(LSprotocolsteplstforsecond.get(i).getProtocolstepcode());
 					CloudLSprotocolstepInfoforinsert.setLsprotocolstepInfo(CloudLSprotocolstepInfo.getLsprotocolstepInfo());
