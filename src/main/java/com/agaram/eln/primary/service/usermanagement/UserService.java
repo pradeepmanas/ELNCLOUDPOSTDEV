@@ -1099,12 +1099,18 @@ public class UserService {
 			Email email = new Email();
 			email.setMailto(objusermaster.getEmailid());
 			email.setSubject("Usercreation success");
-			email.setMailcontent("<b>Dear Customer</b>,<br>"
-					+ "<i>You have successfully create user</i><br>"
-//					+ "<i>Your organisation ID is <b>"+Tenant.getTenantid()+"</b>.</i><br>"
-					+ "<i>This is for your username and password.</i><br>"
-					+ "<b>UserName:\t\t "+objusermaster.getUsername()+" </b><br><b>Password:\t\t"+password+"</b>");
-			
+//			email.setMailcontent("<b>Dear Customer</b>,<br>"
+//					+ "<i>You have successfully create user</i><br>"
+////					+ "<i>Your organisation ID is <b>"+Tenant.getTenantid()+"</b>.</i><br>"
+//					+ "<i>This is for your username and password.</i><br>"
+//					+ "<b>UserName:\t\t "+objusermaster.getUsername()+" </b><br><b>Password:\t\t"+password+"</b>");
+			email.setMailcontent("As requested, a new user has been created.<br><br>"
+					+ "The following are the details of the user:<br><br>"
+					+ "User Name:\t\t "+objusermaster.getUsername()+"<br><br>"
+							+ "Password:\t\t"+password+"<br><br>"
+									+ "Please enter the above password in the Old password field, followed by entering a password of your choice in ‘New Password’ and ‘Confirm <br>"
+									+ "Password’ fields to complete the user setup.<br><br>"
+									+ "This message has been sent by Agaram Technologies Private Limited for using Logilab ELN on Azure Cloud.");
 			emailService.sendEmail(email);
 			lsuserMasterRepository.setpasswordandpasswordstatusByusercode(objusermaster.getPassword(),objusermaster.getPasswordstatus(),objusermaster.getUsercode());
 		}
