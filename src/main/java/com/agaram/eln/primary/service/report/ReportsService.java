@@ -1204,6 +1204,16 @@ public class ReportsService {
 						lscfttransactionRepository.save(LScfttransactionManualobj);
 					}
 				}
+				if(env.getProperty("fileReceiver") != null) {
+					int httpfileStatus = uploadSingleFile(file.getAbsolutePath(), 0);
+					if(httpfileStatus == 200) {
+						map.put("fileFullPath", "");
+					}else {
+						map.put("fileFullPath", file.getAbsolutePath());
+					}
+				}else {
+					map.put("fileFullPath", file.getAbsolutePath());
+				}
 				map.put("rtnStatus", "Success");
 				map.put("fileFullPath", file.getAbsolutePath());
 				map.put("fileName", fileName);
