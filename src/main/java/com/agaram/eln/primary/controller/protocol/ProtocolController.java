@@ -11,12 +11,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
+import com.agaram.eln.primary.model.protocols.LSprotocolstep;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LoggedUser;
+import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping(value="/protocol", method=RequestMethod.POST)
@@ -24,6 +30,9 @@ public class ProtocolController {
 
 	@Autowired
 	ProtocolService ProtocolMasterService;
+	
+	@Autowired
+	private AuditService auditService;
 	
 	@RequestMapping(value="/getProtocolMasterInit")
 	protected Map<String, Object> getProtocolMasterInit(@RequestBody Map<String, Object> argObj){
@@ -35,14 +44,98 @@ public class ProtocolController {
 	@RequestMapping(value="/addProtocolMaster")
 	protected Map<String, Object> addProtocolMaster(@RequestBody Map<String, Object> argObj){
 		Map<String, Object> objMap = new HashMap<String, Object>();
-		objMap = ProtocolMasterService.addProtocolMaster(argObj);
+		LoggedUser objuser = new LoggedUser();
+		Response response = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+		LScfttransaction objsilentaudit = new LScfttransaction();
+		LScfttransaction objmanualaudit = new LScfttransaction();
+		
+			if(argObj.containsKey("objuser"))
+			{
+				objuser = mapper.convertValue(argObj.get("objuser"),LoggedUser.class);
+			}
+		
+			if(argObj.containsKey("objsilentaudit"))
+			{
+				objsilentaudit = mapper.convertValue(argObj.get("objsilentaudit"),LScfttransaction.class);
+			}
+			if(argObj.containsKey("objmanualaudit"))
+			{
+				objmanualaudit = mapper.convertValue(argObj.get("objmanualaudit"),LScfttransaction.class);
+			}
+            if(objuser.getsUsername() != null) {
+			
+			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
+			
+			if(userClass.getObjResponse().getStatus()) {
+		    objMap = ProtocolMasterService.addProtocolMaster(argObj);
+			 }
+			
+			else
+			{
+				objsilentaudit.setComments("Entered invalid username and password");
+				Map<String, Object> map=new HashMap<>();
+				map.put("objsilentaudit",objsilentaudit);
+				map.put("objmanualaudit",objmanualaudit);
+				map.put("objUser",objuser);
+				auditService.AuditConfigurationrecord(map);
+				
+				response.setStatus(false);
+				response.setInformation("ID_VALIDATION");
+				map.put("response",response);
+				return map;
+			 }
+            }
+
+			objMap = ProtocolMasterService.addProtocolMaster(argObj);
 		return objMap;
 	}
-	
 	@RequestMapping(value="/deleteProtocolMaster")
 	protected Map<String, Object> deleteProtocolMaster(@RequestBody Map<String, Object> argObj){
 		Map<String, Object> objMap = new HashMap<String, Object>();
+		LoggedUser objuser = new LoggedUser();
+		Response response = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+		LScfttransaction objsilentaudit = new LScfttransaction();
+		LScfttransaction objmanualaudit = new LScfttransaction();
+		
+			if(argObj.containsKey("objuser"))
+			{
+				objuser = mapper.convertValue(argObj.get("objuser"),LoggedUser.class);
+			}
+		
+			if(argObj.containsKey("objsilentaudit"))
+			{
+				objsilentaudit = mapper.convertValue(argObj.get("objsilentaudit"),LScfttransaction.class);
+			}
+			if(argObj.containsKey("objmanualaudit"))
+			{
+				objmanualaudit = mapper.convertValue(argObj.get("objmanualaudit"),LScfttransaction.class);
+			}
+            if(objuser.getsUsername() != null) {
+			
+			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
+			
+			if(userClass.getObjResponse().getStatus()) {
 		objMap = ProtocolMasterService.deleteProtocolMaster(argObj);
+	 }
+			
+			else
+			{
+				objsilentaudit.setComments("Entered invalid username and password");
+				Map<String, Object> map=new HashMap<>();
+				map.put("objsilentaudit",objsilentaudit);
+				map.put("objmanualaudit",objmanualaudit);
+				map.put("objUser",objuser);
+				auditService.AuditConfigurationrecord(map);
+				
+				response.setStatus(false);
+				response.setInformation("ID_VALIDATION");
+				map.put("response",response);
+				return map;
+			 }
+            }
+            objMap = ProtocolMasterService.deleteProtocolMaster(argObj);
 		return objMap;
 	}
 	
@@ -77,6 +170,48 @@ public class ProtocolController {
 	@RequestMapping(value="/addProtocolStep")
 	protected Map<String, Object> addProtocolStep(@RequestBody Map<String, Object> argObj){
 		Map<String, Object> objMap = new HashMap<String, Object>();
+		LoggedUser objuser = new LoggedUser();
+		Response response = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+		LScfttransaction objsilentaudit = new LScfttransaction();
+		LScfttransaction objmanualaudit = new LScfttransaction();
+		
+			if(argObj.containsKey("objuser"))
+			{
+				objuser = mapper.convertValue(argObj.get("objuser"),LoggedUser.class);
+			}
+		
+			if(argObj.containsKey("objsilentaudit"))
+			{
+				objsilentaudit = mapper.convertValue(argObj.get("objsilentaudit"),LScfttransaction.class);
+			}
+			if(argObj.containsKey("objmanualaudit"))
+			{
+				objmanualaudit = mapper.convertValue(argObj.get("objmanualaudit"),LScfttransaction.class);
+			}
+            if(objuser.getsUsername() != null) {
+			
+			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
+			
+			if(userClass.getObjResponse().getStatus()) {
+				objMap = ProtocolMasterService.addProtocolStep(argObj);
+	 }
+			
+			else
+			{
+				objsilentaudit.setComments("Entered invalid username and password");
+				Map<String, Object> map=new HashMap<>();
+				map.put("objsilentaudit",objsilentaudit);
+				map.put("objmanualaudit",objmanualaudit);
+				map.put("objUser",objuser);
+				auditService.AuditConfigurationrecord(map);
+				
+				response.setStatus(false);
+				response.setInformation("ID_VALIDATION");
+				map.put("response",response);
+				return map;
+			 }
+            }
 		objMap = ProtocolMasterService.addProtocolStep(argObj);
 		return objMap;
 	}
@@ -91,6 +226,47 @@ public class ProtocolController {
 	@RequestMapping(value="/sharewithteam")
 	protected Map<String, Object> sharewithteam(@RequestBody Map<String, Object> argObj){
 		Map<String, Object> objMap = new HashMap<String, Object>();
+		LoggedUser objuser = new LoggedUser();
+		ObjectMapper mapper = new ObjectMapper();
+		LScfttransaction objsilentaudit = new LScfttransaction();
+		LScfttransaction objmanualaudit = new LScfttransaction();
+		
+			if(argObj.containsKey("objuser"))
+			{
+				objuser = mapper.convertValue(argObj.get("objuser"),LoggedUser.class);
+			}
+		
+			if(argObj.containsKey("objsilentaudit"))
+			{
+				objsilentaudit = mapper.convertValue(argObj.get("objsilentaudit"),LScfttransaction.class);
+			}
+			if(argObj.containsKey("objmanualaudit"))
+			{
+				objmanualaudit = mapper.convertValue(argObj.get("objmanualaudit"),LScfttransaction.class);
+			}
+            if(objuser.getsUsername() != null) {
+			
+			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
+			
+			if(userClass.getObjResponse().getStatus()) {
+				objMap = ProtocolMasterService.sharewithteam(argObj);
+	 }
+			
+			else
+			{
+				objsilentaudit.setComments("Entered invalid username and password");
+				Map<String, Object> map=new HashMap<>();
+				map.put("objsilentaudit",objsilentaudit);
+				map.put("objmanualaudit",objmanualaudit);
+				map.put("objUser",objuser);
+				auditService.AuditConfigurationrecord(map);
+				
+			
+				map.put("status", false);
+				map.put("Information","ID_VALIDATION");
+				return map;
+			 }
+            }
 		objMap = ProtocolMasterService.sharewithteam(argObj);
 		return objMap;
 	}
@@ -207,5 +383,10 @@ public class ProtocolController {
 		Map<String, Object> objMap = new HashMap<String, Object>();
 		objMap = ProtocolMasterService.addProtocolStepforsaveas(argObj);
 		return objMap;
+	}
+	@RequestMapping("/GetProtocolResourcesQuantitylst")
+	public  List<LSprotocolsampleupdates> GetProtocolResourcesQuantitylst(@RequestBody LSprotocolstep LSprotocolstep)
+	{
+		return ProtocolMasterService.GetProtocolResourcesQuantitylst(LSprotocolstep);
 	}
 }
