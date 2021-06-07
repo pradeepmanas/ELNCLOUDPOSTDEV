@@ -1156,8 +1156,7 @@ public class ReportsService {
 				if (!directory.exists()) {
 					directory.mkdirs();
 				}
-				File file = new File(
-						directory.getAbsolutePath() + System.getProperty("file.separator") + uniquefilename + ".docx");
+				File file = new File(directory.getAbsolutePath(), uniquefilename + ".docx");
 				if (file.exists()) {
 					file.delete();
 					BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
