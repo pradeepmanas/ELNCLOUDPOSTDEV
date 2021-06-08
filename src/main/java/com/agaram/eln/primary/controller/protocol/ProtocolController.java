@@ -86,8 +86,9 @@ public class ProtocolController {
 				return map;
 			 }
             }
-
+            else {
 			objMap = ProtocolMasterService.addProtocolMaster(argObj);
+            }
 		return objMap;
 	}
 	@RequestMapping(value="/deleteProtocolMaster")
@@ -135,7 +136,9 @@ public class ProtocolController {
 				return map;
 			 }
             }
+            else {
             objMap = ProtocolMasterService.deleteProtocolMaster(argObj);
+            }
 		return objMap;
 	}
 	
@@ -212,7 +215,9 @@ public class ProtocolController {
 				return map;
 			 }
             }
+            else {
 		objMap = ProtocolMasterService.addProtocolStep(argObj);
+            }
 		return objMap;
 	}
 	
@@ -250,7 +255,7 @@ public class ProtocolController {
 			
 			if(userClass.getObjResponse().getStatus()) {
 				objMap = ProtocolMasterService.sharewithteam(argObj);
-	 }
+	        }
 			
 			else
 			{
@@ -267,7 +272,9 @@ public class ProtocolController {
 				return map;
 			 }
             }
+            else {
 		objMap = ProtocolMasterService.sharewithteam(argObj);
+            }
 		return objMap;
 	}
 	

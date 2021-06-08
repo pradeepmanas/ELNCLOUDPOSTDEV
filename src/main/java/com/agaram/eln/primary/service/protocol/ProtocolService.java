@@ -204,8 +204,9 @@ public class ProtocolService {
 							new TypeReference<LSusergroup>() {
 							});
 					
-					List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap= LSprotocolworkflowgroupmapRepository.findBylsusergroup(lsusergroup);
-					
+//					List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap= LSprotocolworkflowgroupmapRepository.findBylsusergroup(lsusergroup);
+					List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap= LSprotocolworkflowgroupmapRepository.findBylsusergroupAndWorkflowcodeNotNull(lsusergroup);
+//					
 					if(lsprotocolworkflowgroupmap != null) {
 						lsprotocolworkflow = lSprotocolworkflowRepository.findByworkflowcode(lsprotocolworkflowgroupmap.get(0).getWorkflowcode());
 						
@@ -412,14 +413,7 @@ public class ProtocolService {
 			}
 		}
 		
-		 if(argObj.containsKey("modifiedsamplestep")) {
-			 LSprotocolsampleupdates sample= new ObjectMapper().convertValue(argObj.get("modifiedsamplestep"), new TypeReference<LSprotocolsampleupdates>() {});
-			 LSprotocolsampleupdatesRepository.save(sample);
-		 }
-		 if(argObj.containsKey("repositorydata")) {
-			 Lsrepositoriesdata lsrepositoriesdata= new ObjectMapper().convertValue(argObj.get("repositorydata"), new TypeReference<Lsrepositoriesdata>() {});
-			 LsrepositoriesdataRepository.save(lsrepositoriesdata);
-		 }
+	
 		 
 			if(argObj.containsKey("newProtocolstepObj")) {
 				LSprotocolstep LSprotocolstepObj = new ObjectMapper().convertValue(argObj.get("newProtocolstepObj"), new TypeReference<LSprotocolstep>() {});
@@ -498,6 +492,15 @@ public class ProtocolService {
 					}
 					
 //				}
+					 if(argObj.containsKey("modifiedsamplestep")) {
+						 LSprotocolsampleupdates sample= new ObjectMapper().convertValue(argObj.get("modifiedsamplestep"), new TypeReference<LSprotocolsampleupdates>() {});
+						 sample.setProtocolstepcode(LSprotocolstepObj.getProtocolstepcode());
+						 LSprotocolsampleupdatesRepository.save(sample);
+					 }
+					 if(argObj.containsKey("repositorydata")) {
+						 Lsrepositoriesdata lsrepositoriesdata= new ObjectMapper().convertValue(argObj.get("repositorydata"), new TypeReference<Lsrepositoriesdata>() {});
+						 LsrepositoriesdataRepository.save(lsrepositoriesdata);
+					 }
 					response.setStatus(true);
 					response.setInformation("");
 					mapObj.put("response", response);
@@ -620,7 +623,7 @@ public class ProtocolService {
 							new TypeReference<LSusergroup>() {
 							});
 					
-					List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap= LSprotocolworkflowgroupmapRepository.findBylsusergroup(lsusergroup);
+					List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap= LSprotocolworkflowgroupmapRepository.findBylsusergroupAndWorkflowcodeNotNull(lsusergroup);
 					
 					if(lsprotocolworkflowgroupmap != null) {
 						lsprotocolworkflow = lSprotocolworkflowRepository.findByworkflowcode(lsprotocolworkflowgroupmap.get(0).getWorkflowcode());
@@ -775,7 +778,7 @@ public class ProtocolService {
 							new TypeReference<LSusergroup>() {
 							});
 					
-					List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap= LSprotocolworkflowgroupmapRepository.findBylsusergroup(lsusergroup);
+					List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap= LSprotocolworkflowgroupmapRepository.findBylsusergroupAndWorkflowcodeNotNull(lsusergroup);
 					
 					if(lsprotocolworkflowgroupmap != null) {
 						lsprotocolworkflow = lSprotocolworkflowRepository.findByworkflowcode(lsprotocolworkflowgroupmap.get(0).getWorkflowcode());
@@ -1310,8 +1313,11 @@ public class ProtocolService {
 	
 	public List<LSprotocolsampleupdates> GetProtocolResourcesQuantitylst(LSprotocolstep LSprotocolstep) {
 		// TODO Auto-generated method stub
-		
-		return LSprotocolsampleupdatesRepository.findByprotocolstepcode(LSprotocolstep.getProtocolstepcode());
+		List<LSprotocolsampleupdates> sampleupdatelst= new ArrayList<LSprotocolsampleupdates>();
+		if(LSprotocolstep.getProtocolstepcode()!=null) {
+			sampleupdatelst=LSprotocolsampleupdatesRepository.findByprotocolstepcode(LSprotocolstep.getProtocolstepcode());
+		}
+		return sampleupdatelst;
 	}
 	/*public Map<String, Object> addProtocolOrderStep(Map<String, Object> argObj) {
 		
