@@ -205,7 +205,16 @@ CREATE TABLE IF NOT EXISTS public.datasourceconfig(
 
 	ALTER TABLE IF Exists LSOrderAttachmentfiles ADD COLUMN IF NOT EXISTS fileid varchar(250);
 
-
+	create table IF NOT EXISTS  LSprotocolsampleupdates(
+	protocolsamplecode integer NOT NULL,
+	protocolsampletype character varying(250),
+	protocolsample character varying(250),
+	protocolsampleusedDetail character varying(250),
+	protocolstepcode integer,
+	protocolmastercode integer,
+	createddate timestamp without time zone,
+	usercode integer
+	);
 	
 
 

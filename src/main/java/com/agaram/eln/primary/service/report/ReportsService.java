@@ -80,6 +80,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.cloudFileManip.CloudOrderCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.configuration.LSConfiguration;
 import com.agaram.eln.primary.model.general.OrderCreation;
@@ -118,6 +119,7 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
+import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderCreationRepository;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSdocreportsRepository.class)
@@ -178,6 +180,9 @@ public class ReportsService {
 	
 	@Autowired
     private CloudFileManipulationservice CloudFileManipulationservice;
+	
+	@Autowired
+	private CloudOrderCreationRepository CloudOrderCreationRepository;
 	
 	LSConfiguration FTPConfig = new LSConfiguration();
 
@@ -2192,7 +2197,12 @@ public class ReportsService {
 						String excelData = "";
 						if(LsSampleFiles.getFilecontent() != null) {
 							excelData = LsSampleFiles.getFilecontent();
-						}else {
+						}else if((int)obj.get("isMultitenant") == 1) {
+							
+							CloudOrderCreation file = CloudOrderCreationRepository.findById((long)SelectedDataObj.getLssamplefile().getFilesamplecode());
+							excelData = file.getContent();
+						}
+						else {
 							OrderCreation file = mongoTemplate.findById(SelectedDataObj.getLssamplefile().getFilesamplecode(), OrderCreation.class);
 							excelData = file.getContent();
 						}

@@ -418,7 +418,7 @@ public class ReportsController {
 				}
 				
 			}else {
-			ObjMap = ObjReportsService.handleOrderTemplate(obj);
+			ObjMap = ObjReportsService.cloudHandleOrderTemplate(obj);
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
