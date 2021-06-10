@@ -2125,11 +2125,16 @@ public class ReportsService {
 					fileName = HashKey;
 				}
 				logger.info("handleOrderandTemplate() fileName: " + fileName);
-				File loadFile = new File(filePath + "\\templates");
+				String path = filePath + "\\templates";
+				if(System.getProperty("os.name").contains("Linux")) {
+					path = filePath + "/templates";
+				}
+				
+				File loadFile = new File(path);
 				if(!loadFile.exists()) {
 					loadFile.mkdir();
 				}
-				loadFile = new File(filePath + "\\templates\\" + templateHashName + ".docx");
+				loadFile = new File(path, templateHashName + ".docx");
 				if (!loadFile.exists()) {
 //					Map<String, Object> fileInfo = new HashMap<String, Object>();
 //					fileInfo.put("id", LSdocreportsObj.getStreamid());
