@@ -396,4 +396,11 @@ public class ProtocolController {
 	{
 		return ProtocolMasterService.GetProtocolResourcesQuantitylst(LSprotocolstep);
 	}
+	
+	@RequestMapping("/GetProtocolVersionDetails")
+	public Map<String, Object> GetProtocolVersionDetails(@RequestBody Map<String, Object> argObj) {
+		return ProtocolMasterService.GetProtocolVersionDetails(argObj);
+		}
+	
 }
+	

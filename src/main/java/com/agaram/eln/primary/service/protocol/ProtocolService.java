@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolstepInfo;
+import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolversionstep;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
@@ -31,6 +32,8 @@ import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
 import com.agaram.eln.primary.model.protocols.LSprotocolstepInfo;
 import com.agaram.eln.primary.model.protocols.LSprotocolupdates;
+import com.agaram.eln.primary.model.protocols.LSprotocolversion;
+import com.agaram.eln.primary.model.protocols.LSprotocolversionstepInfo;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowhistory;
@@ -40,6 +43,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolstepInfoRepository;
+import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolversionstepRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolStepRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowgroupmapRepository;
@@ -52,6 +56,7 @@ import com.agaram.eln.primary.service.basemaster.BaseMasterService;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocolstepsRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolupdatesRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolversionRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolsampleupdatesRepository;
@@ -118,6 +123,11 @@ public class ProtocolService {
 	@Autowired
 	private LSprotocolsampleupdatesRepository  LSprotocolsampleupdatesRepository;
 	
+	@Autowired
+	private LSprotocolversionRepository  lsprotocolversionRepository;
+	
+	@Autowired
+	private CloudLSprotocolversionstepRepository  CloudLSprotocolversionstepRepository;
 	
 	public Map<String, Object> getProtocolMasterInit(Map<String, Object> argObj){
 		Map<String, Object> mapObj = new HashMap<String, Object>();
@@ -131,7 +141,7 @@ public class ProtocolService {
 		}
 			@SuppressWarnings("unchecked")
 			List<LSprotocolmaster> LSprotocolmasterLst = (List<LSprotocolmaster>) getLSProtocolMasterLst(argObj).get("LSProtocolMasterLst");
-			
+			List<LSprotocolversion> LSprotocolversionlst = lsprotocolversionRepository.findAll();
 			Integer isMulitenant = (Integer) argObj.get("ismultitenant");
 			
 			if(LSprotocolmasterLst.size() > 0) {
@@ -162,6 +172,8 @@ public class ProtocolService {
 				
 				mapObj.put("protocolmasterLst", LSprotocolmasterLst);
 				mapObj.put("protocolstepLst", LSprotocolstepLst);
+				mapObj.put("LSprotocolversionlst", LSprotocolversionlst);
+				
 			}else {
 				LSprotocolmasterLst = LSprotocolmasterLst.stream()
 						.distinct().collect(Collectors.toList());
@@ -170,6 +182,7 @@ public class ProtocolService {
 				
 				mapObj.put("protocolmasterLst", LSprotocolmasterLst);
 				mapObj.put("protocolstepLst", new ArrayList<>());
+				mapObj.put("LSprotocolversionlst", new ArrayList<>());
 			}
 		
 		return mapObj;
@@ -207,7 +220,7 @@ public class ProtocolService {
 //					List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap= LSprotocolworkflowgroupmapRepository.findBylsusergroup(lsusergroup);
 					List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap= LSprotocolworkflowgroupmapRepository.findBylsusergroupAndWorkflowcodeNotNull(lsusergroup);
 //					
-					if(lsprotocolworkflowgroupmap != null) {
+					if(lsprotocolworkflowgroupmap != null && lsprotocolworkflowgroupmap.size()>0) {
 						lsprotocolworkflow = lSprotocolworkflowRepository.findByworkflowcode(lsprotocolworkflowgroupmap.get(0).getWorkflowcode());
 						
 //						List<LSprotocolmaster> LSprotocolmasterLst1 = LSProtocolMasterRepositoryObj.findByStatusAndLssitemasterAndLSprotocolworkflowAndCreatedbyNot(1, LScfttransactionobj.getLssitemaster(),lsprotocolworkflow ,LScfttransactionobj.getLsuserMaster());
@@ -278,6 +291,9 @@ public class ProtocolService {
 			LSprotocolmaster newProtocolMasterObj = new ObjectMapper().convertValue(argObj.get("ProtocolMasterObj"), new TypeReference<LSprotocolmaster>(){});
 			List<LSprotocolstep> LSprotocolsteplst = LSProtocolStepRepositoryObj.findByProtocolmastercodeAndStatus(newProtocolMasterObj.getProtocolmastercode() , 1);
 			List<LSprotocolstep> LSprotocolstepLst = new ArrayList<LSprotocolstep>();
+
+			List<LSprotocolversion> LSprotocolversionlst = lsprotocolversionRepository.findByprotocolmastercode(newProtocolMasterObj.getProtocolmastercode());
+			
 			for(LSprotocolstep LSprotocolstepObj1: LSprotocolsteplst) {
 				if(newProtocolMasterObj.getIsmultitenant() == 1) {
 					CloudLSprotocolstepInfo newLSprotocolstepInfo = CloudLSprotocolstepInfoRepository.findById(LSprotocolstepObj1.getProtocolstepcode());
@@ -300,8 +316,10 @@ public class ProtocolService {
 			}
 			if(LSprotocolsteplst != null) {
 				mapObj.put("protocolstepLst", LSprotocolstepLst);
+				mapObj.put("LSprotocolversionlst", LSprotocolversionlst);
 			}else {
 				mapObj.put("protocolstepLst", new ArrayList<>());
+				mapObj.put("LSprotocolversionlst", new ArrayList<>());
 			}
 		}
 		return mapObj;
@@ -598,11 +616,14 @@ public class ProtocolService {
 					LSprotocolmaster newProtocolMasterObj1 = new ObjectMapper().convertValue(argObj.get("newProtocolMasterObj"), new TypeReference<LSprotocolmaster>() {});
 					newProtocolMasterObj = LSProtocolMasterRepositoryObj.findFirstByProtocolmastercodeAndStatusAndLssitemaster(newProtocolMasterObj1.getProtocolmastercode(), 1, LScfttransactionobj.getLssitemaster());
 					newProtocolMasterObj.setProtocolmastername(newProtocolMasterObj1.getProtocolmastername());
+					newProtocolMasterObj.setVersionno(newProtocolMasterObj.getVersionno()+1);
+					UpdateProtocolversion(newProtocolMasterObj, objMapper.convertValue(argObj.get("modifiedlist"), LSprotocolupdates.class));
 				}else {
 					newProtocolMasterObj = new ObjectMapper().convertValue(argObj.get("newProtocolMasterObj"), new TypeReference<LSprotocolmaster>() {});
 					newProtocolMasterObj.setCreatedate(new Date());
 					newProtocolMasterObj.setLssitemaster(LScfttransactionobj.getLssitemaster());
 					newProtocolMasterObj.setCreatedbyusername(LsuserMasterObj.getUsername());
+					newProtocolMasterObj.setVersionno(0);
 					LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(LScfttransactionobj.getLssitemaster());
 					LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
 					newProtocolMasterObj.setlSprotocolworkflow(lsprotocolworkflow);
@@ -625,7 +646,7 @@ public class ProtocolService {
 					
 					List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap= LSprotocolworkflowgroupmapRepository.findBylsusergroupAndWorkflowcodeNotNull(lsusergroup);
 					
-					if(lsprotocolworkflowgroupmap != null) {
+					if(lsprotocolworkflowgroupmap != null && lsprotocolworkflowgroupmap.size()>0) {
 						lsprotocolworkflow = lSprotocolworkflowRepository.findByworkflowcode(lsprotocolworkflowgroupmap.get(0).getWorkflowcode());
 						
 						List<LSprotocolmaster> LSprotocolmasterLst1 = LSProtocolMasterRepositoryObj.
@@ -680,6 +701,29 @@ public class ProtocolService {
 					if( argObj.containsKey("modifiedlist")) {
 					lsprotocolupdatesRepository.save(objMapper.convertValue(argObj.get("modifiedlist"), LSprotocolupdates.class));
 					}
+					String versiondetails="";
+					if( argObj.containsKey("versiondetails")) {
+						versiondetails=objMapper.convertValue(argObj.get("versiondetails"), String.class);
+					}
+					CloudLSprotocolversionstep CloudLSprotocolversionstep = new CloudLSprotocolversionstep();
+					LSprotocolversion lsprotocolversion= lsprotocolversionRepository.findFirstByProtocolmastercodeOrderByVersionnoDesc(newProtocolMasterObj.getProtocolmastercode());
+
+						
+						if(newProtocolMasterObj1.getIsmultitenant() == 1) {
+							CloudLSprotocolversionstep.setId(newProtocolMasterObj.getProtocolmastercode());
+							CloudLSprotocolversionstep.setLsprotocolstepInfo(versiondetails);
+							CloudLSprotocolversionstep.setStatus(newProtocolMasterObj.getStatus());
+							CloudLSprotocolversionstep.setVersionno(lsprotocolversion.getProtocolversioncode());
+							CloudLSprotocolversionstepRepository.save(CloudLSprotocolversionstep);
+							}
+						
+						else {
+							Query query = new Query(Criteria.where("id").is(lsprotocolversion.getProtocolversioncode()));
+							Update update=new Update();
+							update.set("content",versiondetails);
+							
+							mongoTemplate.upsert(query, update, LSprotocolversionstepInfo.class);
+						}
 				}else {
 					List<Integer> teamCodeLst = LSuserteammappingRepositoryObj.
 							getTeamcodeByLsuserMaster4postgressandsql(LScfttransactionobj.getLsuserMaster());
@@ -714,7 +758,9 @@ public class ProtocolService {
 				Collections.sort(LSprotocolmasterLst, Collections.reverseOrder());
 				response.setStatus(true);
 				response.setInformation("");
-				
+
+				List<LSprotocolversion> LSprotocolversionlst = lsprotocolversionRepository.findAll();
+				mapObj.put("LSprotocolversionlst", LSprotocolversionlst);
 				mapObj.put("protocolmasterLst", LSprotocolmasterLst);
 				mapObj.put("AddedLSprotocolmasterObj", AddedLSprotocolmasterObj);
 				mapObj.put("response", response);
@@ -723,6 +769,64 @@ public class ProtocolService {
 		
 		return mapObj;
 	}
+	
+	public boolean UpdateProtocolversion(LSprotocolmaster newProtocolMasterObj1, LSprotocolupdates lSprotocolupdates)
+	{
+		int Versionnumber = 0;
+		LSprotocolversion objLatestversion = lsprotocolversionRepository.findFirstByProtocolmastercodeOrderByVersionnoDesc(newProtocolMasterObj1.getProtocolmastercode());
+		if(objLatestversion != null)
+		{
+			Versionnumber = objLatestversion.getVersionno();
+		}
+		
+		Versionnumber++;
+		
+		
+		if(newProtocolMasterObj1 != null)
+		{
+		
+			LSprotocolversion objversion = new LSprotocolversion();
+			
+			objversion.setApproved(newProtocolMasterObj1.getApproved());
+			objversion.setCreatedby(newProtocolMasterObj1.getCreatedby());
+			objversion.setCreatedate(newProtocolMasterObj1.getCreatedate());
+			objversion.setModifiedby(lSprotocolupdates.getModifiedby());
+			objversion.setModifieddate(lSprotocolupdates.getProtocolmodifiedDate());
+			objversion.setProtocolmastercode(newProtocolMasterObj1.getProtocolmastercode());
+			objversion.setProtocolmastername(newProtocolMasterObj1.getProtocolmastername());
+			objversion.setProtocolstatus(newProtocolMasterObj1.getProtocolstatus());
+			objversion.setCreatedbyusername(newProtocolMasterObj1.getCreatedbyusername());
+			objversion.setSharewithteam(newProtocolMasterObj1.getSharewithteam());
+			objversion.setLssitemaster(newProtocolMasterObj1.getLssitemaster());
+			objversion.setRejected(newProtocolMasterObj1.getRejected());
+			objversion.setVersionname("Version_"+ Versionnumber);
+			objversion.setVersionno(Versionnumber);
+			
+			if(newProtocolMasterObj1.getLsprotocolversion() != null)
+			{
+				newProtocolMasterObj1.getLsprotocolversion().add(objversion);
+			}
+			else
+			{
+				List<LSprotocolversion> lstversion = new ArrayList<LSprotocolversion>();
+				lstversion.add(objversion);
+				newProtocolMasterObj1.setLsprotocolversion(lstversion);
+			}
+			
+			lsprotocolversionRepository.save(newProtocolMasterObj1.getLsprotocolversion());
+			if(lSprotocolupdates!= null)
+	    	{
+				lSprotocolupdates.getObjsilentaudit().setComments("Protocol"+" "+newProtocolMasterObj1.getProtocolmastername()+" "+" was versioned to version_"+Versionnumber +" "+"by the user"+ " "+newProtocolMasterObj1.getCreatedbyusername());
+		        lSprotocolupdates.getObjsilentaudit().setTableName("LSfile");
+		        lSprotocolupdates.getObjsilentaudit().setTableName("LSprotocolmaster");
+	    		lscfttransactionRepository.save(lSprotocolupdates.getObjsilentaudit());
+	    	}
+			
+		}
+		return true;
+		
+	}
+	
 	
 	public Map<String, Object> deleteProtocolMaster(Map<String, Object> argObj){
 		Map<String, Object> mapObj = new HashMap<String, Object>();
@@ -780,7 +884,7 @@ public class ProtocolService {
 					
 					List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap= LSprotocolworkflowgroupmapRepository.findBylsusergroupAndWorkflowcodeNotNull(lsusergroup);
 					
-					if(lsprotocolworkflowgroupmap != null) {
+					if(lsprotocolworkflowgroupmap != null && lsprotocolworkflowgroupmap.size()>0) {
 						lsprotocolworkflow = lSprotocolworkflowRepository.findByworkflowcode(lsprotocolworkflowgroupmap.get(0).getWorkflowcode());
 						
 						List<LSprotocolmaster> LSprotocolmasterLst1 = LSProtocolMasterRepositoryObj.
@@ -1236,10 +1340,13 @@ public class ProtocolService {
 		LSuserMaster createby = lSuserMasterRepository.findByusercode(LSprotocolmasterrecord.getCreatedby());
 		List<LSprotocolworkflowhistory> lsprotocolworkflowhistory=lsprotocolworkflowhistoryRepository.findByProtocolmastercode(lSprotocolmaster.getProtocolmastercode());
 		List<LSprotocolupdates> modifiedlist= lsprotocolupdatesRepository.findByprotocolmastercode(lSprotocolmaster.getProtocolmastercode());
+
+		List<LSprotocolversion> lsprotocolversion =  lsprotocolversionRepository.findByprotocolmastercode(lSprotocolmaster.getProtocolmastercode());
 		
 		mapObj.put("createby", createby);
 		mapObj.put("lsprotocolworkflowhistory", lsprotocolworkflowhistory);
 		mapObj.put("modifiedlist", modifiedlist);
+		mapObj.put("lsprotocolversion", lsprotocolversion);
 		
 		return mapObj;
 	}
@@ -1319,6 +1426,39 @@ public class ProtocolService {
 		}
 		return sampleupdatelst;
 	}
+	
+	public Map<String, Object> GetProtocolVersionDetails(Map<String, Object> argObj) {
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+		LSprotocolversion versiondetail= new LSprotocolversion();
+		if(argObj.containsKey("lsprotocolversion")) {
+			versiondetail = new ObjectMapper().convertValue(argObj.get("lsprotocolversion"), new TypeReference<LSprotocolversion>() {});
+              	}
+		List<LSprotocolstep> LSprotocolsteplst = LSProtocolStepRepositoryObj.findByProtocolmastercodeAndStatus(versiondetail.getProtocolmastercode() , 1);
+		
+		Integer ismultitenant=new ObjectMapper().convertValue(argObj.get("ismultitenant"), new TypeReference<Integer>() {});
+		String mangoversioncontent="";
+		CloudLSprotocolversionstep versioncontent= new CloudLSprotocolversionstep();
+	
+		if(ismultitenant==1) {
+			versioncontent =CloudLSprotocolversionstepRepository.findByVersionno(versiondetail.getProtocolversioncode());
+		
+			if(versioncontent != null) {
+				mangoversioncontent=versioncontent.getLsprotocolstepInfo();
+				}
+		}
+		else {
+			LSprotocolversionstepInfo newLSprotocolstepInfo = mongoTemplate.findById(versiondetail.getProtocolversioncode(), LSprotocolversionstepInfo.class);
+			if(newLSprotocolstepInfo != null) {
+			mangoversioncontent=newLSprotocolstepInfo.getContent();
+			}
+			
+		}
+		
+		mapObj.put("mangoversioncontent",mangoversioncontent);
+		mapObj.put("LSprotocolsteplst",LSprotocolsteplst);
+		return mapObj;
+	}
+
 	/*public Map<String, Object> addProtocolOrderStep(Map<String, Object> argObj) {
 		
 		Map<String, Object> mapObj = new HashMap<String, Object>();

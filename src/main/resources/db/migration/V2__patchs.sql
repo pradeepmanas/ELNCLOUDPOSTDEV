@@ -215,6 +215,31 @@ CREATE TABLE IF NOT EXISTS public.datasourceconfig(
 	createddate timestamp without time zone,
 	usercode integer
 	);
-	
+	ALTER TABLE IF Exists LSprotocolmaster ADD COLUMN IF NOT EXISTS versionno integer ;
+	update LSprotocolmaster set versionno=0 where versionno is null;
+
+	create table IF NOT EXISTS  LSprotocolversion(
+	protocolversioncode integer NOT NULL,
+	protocolmastercode integer,
+	protocolmastername character varying(250),
+	createdate timestamp without time zone,
+	sharewithteam integer,
+	createdbyusername character varying(250),
+	approved integer,
+	rejected integer,
+    protocolstatus	integer,
+	createdby integer,
+	lssitemaster_sitecode integer,
+	versionno integer,
+	versionname character varying(250),
+	modifiedby_usercode integer,
+	modifieddate timestamp without time zone
+	);
 
 
+	create table IF NOT EXISTS CloudLSprotocolversionstep (
+    id integer NOT NULL,
+    lsprotocolstepinfo jsonb,
+	versionno integer,
+	status integer
+);

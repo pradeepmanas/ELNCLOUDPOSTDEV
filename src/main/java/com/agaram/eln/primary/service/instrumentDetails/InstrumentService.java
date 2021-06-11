@@ -1329,6 +1329,10 @@ public class InstrumentService {
 		
 		objupdatedorder.setLsLSlimsorder(lSlimsorderRepository.findBybatchid(objupdatedorder.getBatchid()));
 		
+		 LSsamplefile LSsamplefile=objupdatedorder.getLssamplefile();
+		 List<LSsamplefileversion> LSsamplefileversion=	lssamplefileversionRepository.findByFilesamplecodeOrderByVersionnoDesc(LSsamplefile);
+		 objupdatedorder.getLssamplefile().setLssamplefileversion(LSsamplefileversion);
+		 
 		if(objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
 			if(objupdatedorder.getLsworkflow().equals(lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objupdatedorder.getObjLoggeduser().getLssitemaster())))
 			{

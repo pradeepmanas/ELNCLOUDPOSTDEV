@@ -16,6 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.agaram.eln.primary.model.sheetManipulation.LSfileversion;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
@@ -50,9 +51,13 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster>{
 	
 	private Integer rejected;
 	
+	public Integer versionno=0;
+	
 	@Transient
 	private  List<LSprotocolworkflowhistory> lsprotocolworkflowhistory;
 	
+	@Transient
+	private List<LSprotocolversion> lsprotocolversion;
 	public Integer getRejected() {
 		return rejected;
 	}
@@ -156,14 +161,29 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster>{
 	public void setLsprotocolworkflowhistory(List<LSprotocolworkflowhistory> lsprotocolworkflowhistory) {
 		this.lsprotocolworkflowhistory = lsprotocolworkflowhistory;
 	}
+	                              
+	public List<LSprotocolversion> getLsprotocolversion() {
+		return lsprotocolversion;
+	}
+	public void setLsprotocolversion(List<LSprotocolversion> lsprotocolversion) {
+		this.lsprotocolversion = lsprotocolversion;
+	}
 	
+	public Integer getVersionno() {
+		return versionno;
+	}
+	public void setVersionno(Integer versionno) {
+		this.versionno = versionno;
+	}
 	@Override
 	public String toString() {
 		return "LSprotocolmaster [protocolmastercode=" + protocolmastercode + ", protocolmastername="
 				+ protocolmastername + ", protocolstatus=" + protocolstatus + ", status=" + status + ", createdby="
 				+ createdby + ", createdate=" + createdate + ", sharewithteam=" + sharewithteam + ", createdbyusername="
-				+ createdbyusername + ", lssitemaster=" + lssitemaster + ", lSprotocolworkflow=" + lSprotocolworkflow
-				+ ", approved=" + approved + ", rejected=" + rejected + ", ismultitenant=" + ismultitenant + "]";
+				+ createdbyusername + ", lssitemaster=" + lssitemaster + ", createdateprotocol=" + createdateprotocol
+				+ ", lSprotocolworkflow=" + lSprotocolworkflow + ", approved=" + approved + ", rejected=" + rejected
+				+ ", versionno=" + versionno + ", lsprotocolworkflowhistory=" + lsprotocolworkflowhistory
+				+ ", lsprotocolversion=" + lsprotocolversion + ", ismultitenant=" + ismultitenant + "]";
 	}
 	@Override
 	public int compareTo(LSprotocolmaster o) {
