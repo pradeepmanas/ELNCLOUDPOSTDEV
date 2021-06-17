@@ -6,8 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.mail.MessagingException;
-
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -28,18 +31,21 @@ import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSresultdetails;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
-import com.agaram.eln.primary.model.notification.Email;
+import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
 import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 import com.mongodb.gridfs.GridFSDBFile;
+
 
 @RestController
 @RequestMapping(value = "/Instrument")
@@ -48,7 +54,8 @@ public class InstrumentController {
 	@Autowired
     private InstrumentService instrumentService;
 	
-
+	@Autowired
+	private LSsamplefileRepository lssamplefileRepository;
 	
 	@Autowired
 	private AuditService auditService;
@@ -458,10 +465,53 @@ public class InstrumentController {
 		return instrumentService.Clouddeleteattachments(objattachments);
 	}
 
-	@PostMapping("/getmetatag")
+	@GetMapping("/getmetatag")
 	public String getmetatag()
 	{
-		return "[{\"1e89782a-1357-4108-928c-4c05e2731397-T2\":{\"ParsedData\":{\"MultiFileds\":{\"MultiParserFields\":{\"MultiParsedFields_0\":[{\"SampleID\":\"Baseline\",\"Value1\":\"0.005\",\"Value2\":\"0.000\",\"Value3\":\"0.000\"},{\"SampleID\":\"Primer\",\"Value1\":\"0.502\",\"Value2\":\"0.982\",\"Value3\":\"1.004\"},{\"SampleID\":\"Cal.\",\"Value1\":\"0.506\",\"Value2\":\"0.996\",\"Value3\":\"0.996\"},{\"SampleID\":\"Cal.\",\"Value1\":\"0.396\",\"Value2\":\"0.504\",\"Value3\":\"0.508\"},{\"SampleID\":\"Cal.\",\"Value1\":\"0.297\",\"Value2\":\"0.207\",\"Value3\":\"0.200\"},{\"SampleID\":\"Cal.\",\"Value1\":\"0.196\",\"Value2\":\"0.099\",\"Value3\":\"0.095\"},{\"SampleID\":\"0.257\",\"Value1\":\"0.399\",\"Value2\":\"0.402\",\"Value3\":\"\"},{\"SampleID\":\"0.252\",\"Value1\":\"0.400\",\"Value2\":\"0.399\",\"Value3\":\"\"},{\"SampleID\":\"Final\",\"Value1\":\"Base\",\"Value2\":\"0.005\",\"Value3\":\"0.000\"}]},\"MultiParsedFieldsTableInfo\":{\"MultiParsedFieldsTableInfo_0\":[{\"sFieldName\":\"Method1\",\"sFieldValue\":\"MBAS\"},{\"sFieldName\":\"Method2\",\"sFieldValue\":\"phenol\"},{\"sFieldName\":\"Method3\",\"sFieldValue\":\"CN\"}]}},\"SingleFields\":[{\"FieldName\":\"Method1\",\"FieldValue\":\"MBAS\"},{\"FieldName\":\"Method2\",\"FieldValue\":\"phenol\"},{\"FieldName\":\"Method3\",\"FieldValue\":\"CN\"}]},\"FileMetaTags\":[{\"Property\":\"Name\",\"Values\":\"200701DR1-RUN-02\"},{\"Property\":\"Size\",\"Values\":\"14.1 KB\"},{\"Property\":\"Itemtype\",\"Values\":\"Adobe Acrobat Document\"},{\"Property\":\"Date modified\",\"Values\":\"18-02-2021 18:08\"},{\"Property\":\"Date created\",\"Values\":\"19-02-2021 17:36\"},{\"Property\":\"Date accessed\",\"Values\":\"19-02-2021 17:36\"},{\"Property\":\"Attributes\",\"Values\":\"A\"},{\"Property\":\"Perceived type\",\"Values\":\"Unspecified\"},{\"Property\":\"Owner\",\"Values\":\"AGL66\\\\Pasupathi\"},{\"Property\":\"Kind\",\"Values\":\"Document\"},{\"Property\":\"Rating\",\"Values\":\"Unrated\"}],\"BatchID\":\"001\",\"FileLink\":\"http://AGL66:8081/SDMS_Web/Login.html?GUID=1e89782a-1357-4108-928c-4c05e2731397&TaskID=T2\",\"TransferID\":\"BF204D77-F1D3-49E7-883B-61611C5A9F31\",\"OrderID\":\"20210218124411210\",\"Tags\":{\"UnMappedTemplateTags\":[],\"MappedTemplateTags\":{\"QC\":[{\"TagName\":\"Sample\",\"TagValue\":\"Pantoprazole tablets IP\",\"CreatedBy\":\"Administrator\",\"CreatedOn\":\"2021-02-19 12:06:15\"},{\"TagName\":\"Test\",\"TagValue\":\"Dissolution\",\"CreatedBy\":\"Administrator\",\"CreatedOn\":\"2021-02-19 12:06:15\"}]}}}}]";
+		String jsonString = "[{\"1e89782a-1357-4108-928c-4c05e2731397-T2\":{\"ParsedData\":{\"MultiFileds\":{\"MultiParserFields\":{\"MultiParsedFields_0\":[{\"SampleID\":\"Baseline\",\"Value1\":\"0.005\",\"Value2\":\"0.000\",\"Value3\":\"0.000\"},{\"SampleID\":\"Primer\",\"Value1\":\"0.502\",\"Value2\":\"0.982\",\"Value3\":\"1.004\"},{\"SampleID\":\"Cal.\",\"Value1\":\"0.506\",\"Value2\":\"0.996\",\"Value3\":\"0.996\"},{\"SampleID\":\"Cal.\",\"Value1\":\"0.396\",\"Value2\":\"0.504\",\"Value3\":\"0.508\"},{\"SampleID\":\"Cal.\",\"Value1\":\"0.297\",\"Value2\":\"0.207\",\"Value3\":\"0.200\"},{\"SampleID\":\"Cal.\",\"Value1\":\"0.196\",\"Value2\":\"0.099\",\"Value3\":\"0.095\"},{\"SampleID\":\"0.257\",\"Value1\":\"0.399\",\"Value2\":\"0.402\",\"Value3\":\"\"},{\"SampleID\":\"0.252\",\"Value1\":\"0.400\",\"Value2\":\"0.399\",\"Value3\":\"\"},{\"SampleID\":\"Final\",\"Value1\":\"Base\",\"Value2\":\"0.005\",\"Value3\":\"0.000\"}]},\"MultiParsedFieldsTableInfo\":{\"MultiParsedFieldsTableInfo_0\":[{\"sFieldName\":\"Method1\",\"sFieldValue\":\"MBAS\"},{\"sFieldName\":\"Method2\",\"sFieldValue\":\"phenol\"},{\"sFieldName\":\"Method3\",\"sFieldValue\":\"CN\"}]}},\"SingleFields\":[{\"FieldName\":\"Method1\",\"FieldValue\":\"MBAS\"},{\"FieldName\":\"Method2\",\"FieldValue\":\"phenol\"},{\"FieldName\":\"Method3\",\"FieldValue\":\"CN\"}]},\"FileMetaTags\":[{\"Property\":\"Name\",\"Values\":\"200701DR1-RUN-02\"},{\"Property\":\"Size\",\"Values\":\"14.1 KB\"},{\"Property\":\"Itemtype\",\"Values\":\"Adobe Acrobat Document\"},{\"Property\":\"Date modified\",\"Values\":\"18-02-2021 18:08\"},{\"Property\":\"Date created\",\"Values\":\"19-02-2021 17:36\"},{\"Property\":\"Date accessed\",\"Values\":\"19-02-2021 17:36\"},{\"Property\":\"Attributes\",\"Values\":\"A\"},{\"Property\":\"Perceived type\",\"Values\":\"Unspecified\"},{\"Property\":\"Owner\",\"Values\":\"AGL66\\\\Pasupathi\"},{\"Property\":\"Kind\",\"Values\":\"Document\"},{\"Property\":\"Rating\",\"Values\":\"Unrated\"}],\"BatchID\":\"001\",\"FileLink\":\"http://AGL66:8081/SDMS_Web/Login.html?GUID=1e89782a-1357-4108-928c-4c05e2731397&TaskID=T2\",\"TransferID\":\"BF204D77-F1D3-49E7-883B-61611C5A9F31\",\"OrderID\":\"20210218124411210\",\"Tags\":{\"UnMappedTemplateTags\":[],\"MappedTemplateTags\":{\"QC\":[{\"TagName\":\"Sample\",\"TagValue\":\"Pantoprazole tablets IP\",\"CreatedBy\":\"Administrator\",\"CreatedOn\":\"2021-02-19 12:06:15\"},{\"TagName\":\"Test\",\"TagValue\":\"Dissolution\",\"CreatedBy\":\"Administrator\",\"CreatedOn\":\"2021-02-19 12:06:15\"}]}}}}]";
+
+		jsonString = instrumentService.getsampledata();
+		try {  
+		//	JSONParser jsonParser = new JSONParser();
+            @SuppressWarnings("unused")
+			JSONObject jsonObject = new JSONObject(jsonString);
+            JSONArray jsonArray = jsonObject.getJSONArray("sheets");
+            
+            jsonArray.forEach(item -> {
+                JSONObject obj = (JSONObject) item;
+                JSONArray jsonrowsArray = obj.getJSONArray("rows");
+                jsonrowsArray.forEach(rowitem -> {
+                    JSONObject rowobj = (JSONObject) rowitem;
+                    if(rowobj.getInt("index") == 2)
+                    {
+	                    JSONArray jsoncellsArray = rowobj.getJSONArray("cells");
+	                    jsoncellsArray.forEach(cellitem -> {
+	                    	JSONObject cellobj = (JSONObject) cellitem;
+	                    	if(cellobj.getInt("index") == 4)
+	                        {
+		                    	cellobj.put("value", "feee");
+	                        }
+	                    });
+                    }
+                    
+                });
+            });
+            
+            jsonObject.put("sheets", jsonArray);
+            
+            jsonString = jsonObject.toString();
+            
+           // JSONObject addedObj = (JSONObject) jsonObject.get("Added");
+
+			//JSONArray jsonArray = new JSONArray(jsonString);
+			System.out.println("\n\njsonArray: " + jsonArray);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} 
+		
+	
+		
+		return 	jsonString;
 	}
 		
 	@PostMapping("/Insertshareorder")
@@ -592,6 +642,80 @@ public class InstrumentController {
 	public ResponseEntity<InputStreamResource> download(@PathVariable String param, @PathVariable String fileid) throws IOException {
 
 	    return instrumentService.downloadattachments(param, fileid);
+	}
+	
+	@RequestMapping("/GetOrderResourcesQuantitylst")
+	public  List<LsOrderSampleUpdate> GetOrderResourcesQuantitylst(@RequestBody LsOrderSampleUpdate objorder)
+	{
+		return instrumentService.GetOrderResourcesQuantitylst(objorder);
+	}
+	
+	@RequestMapping("/SaveOrderResourcesQuantity")
+	public  Map<String, Object> SaveOrderResourcesQuantity(@RequestBody Map<String, Object> argobj)
+	{
+		return instrumentService.SaveOrderResourcesQuantity(argobj);
+	}
+	
+	@RequestMapping("/GetEditedOrderResources")
+	public  List<Lsrepositoriesdata> GetEditedOrderResources(@RequestBody Lsrepositoriesdata objorder)
+	{
+		return instrumentService.GetEditedOrderResources(objorder);
+	}
+	
+	@PostMapping("/getmetatagdata")
+	public String getmetatagdata(@RequestParam("order") Long batchcode,@RequestParam("indexrow") Integer indexrow,
+			@RequestParam("cellindex") Integer cellindex,@RequestParam("sheetval") Integer sheetval,@RequestParam("tagdata") String tagdata,
+			@RequestParam("tagvalue") String tagvalue,@RequestParam("samplevalue") String samplevalue,
+			@RequestParam("sampledetails") String sampledetails,@RequestParam("lssamplefile") Integer lssamplefile,@RequestParam("multitenant") Integer multitenant)
+	{
+		String jsonString = "[{\"1e89782a-1357-4108-928c-4c05e2731397-T2\":{\"ParsedData\":{\"MultiFileds\":{\"MultiParserFields\":{\"MultiParsedFields_0\":[{\"SampleID\":\"Baseline\",\"Value1\":\"0.005\",\"Value2\":\"0.000\",\"Value3\":\"0.000\"},{\"SampleID\":\"Primer\",\"Value1\":\"0.502\",\"Value2\":\"0.982\",\"Value3\":\"1.004\"},{\"SampleID\":\"Cal.\",\"Value1\":\"0.506\",\"Value2\":\"0.996\",\"Value3\":\"0.996\"},{\"SampleID\":\"Cal.\",\"Value1\":\"0.396\",\"Value2\":\"0.504\",\"Value3\":\"0.508\"},{\"SampleID\":\"Cal.\",\"Value1\":\"0.297\",\"Value2\":\"0.207\",\"Value3\":\"0.200\"},{\"SampleID\":\"Cal.\",\"Value1\":\"0.196\",\"Value2\":\"0.099\",\"Value3\":\"0.095\"},{\"SampleID\":\"0.257\",\"Value1\":\"0.399\",\"Value2\":\"0.402\",\"Value3\":\"\"},{\"SampleID\":\"0.252\",\"Value1\":\"0.400\",\"Value2\":\"0.399\",\"Value3\":\"\"},{\"SampleID\":\"Final\",\"Value1\":\"Base\",\"Value2\":\"0.005\",\"Value3\":\"0.000\"}]},\"MultiParsedFieldsTableInfo\":{\"MultiParsedFieldsTableInfo_0\":[{\"sFieldName\":\"Method1\",\"sFieldValue\":\"MBAS\"},{\"sFieldName\":\"Method2\",\"sFieldValue\":\"phenol\"},{\"sFieldName\":\"Method3\",\"sFieldValue\":\"CN\"}]}},\"SingleFields\":[{\"FieldName\":\"Method1\",\"FieldValue\":\"MBAS\"},{\"FieldName\":\"Method2\",\"FieldValue\":\"phenol\"},{\"FieldName\":\"Method3\",\"FieldValue\":\"CN\"}]},\"FileMetaTags\":[{\"Property\":\"Name\",\"Values\":\"200701DR1-RUN-02\"},{\"Property\":\"Size\",\"Values\":\"14.1 KB\"},{\"Property\":\"Itemtype\",\"Values\":\"Adobe Acrobat Document\"},{\"Property\":\"Date modified\",\"Values\":\"18-02-2021 18:08\"},{\"Property\":\"Date created\",\"Values\":\"19-02-2021 17:36\"},{\"Property\":\"Date accessed\",\"Values\":\"19-02-2021 17:36\"},{\"Property\":\"Attributes\",\"Values\":\"A\"},{\"Property\":\"Perceived type\",\"Values\":\"Unspecified\"},{\"Property\":\"Owner\",\"Values\":\"AGL66\\\\Pasupathi\"},{\"Property\":\"Kind\",\"Values\":\"Document\"},{\"Property\":\"Rating\",\"Values\":\"Unrated\"}],\"BatchID\":\"001\",\"FileLink\":\"http://AGL66:8081/SDMS_Web/Login.html?GUID=1e89782a-1357-4108-928c-4c05e2731397&TaskID=T2\",\"TransferID\":\"BF204D77-F1D3-49E7-883B-61611C5A9F31\",\"OrderID\":\"20210218124411210\",\"Tags\":{\"UnMappedTemplateTags\":[],\"MappedTemplateTags\":{\"QC\":[{\"TagName\":\"Sample\",\"TagValue\":\"Pantoprazole tablets IP\",\"CreatedBy\":\"Administrator\",\"CreatedOn\":\"2021-02-19 12:06:15\"},{\"TagName\":\"Test\",\"TagValue\":\"Dissolution\",\"CreatedBy\":\"Administrator\",\"CreatedOn\":\"2021-02-19 12:06:15\"}]}}}}]";
+
+		jsonString = instrumentService.getsampledata(batchcode,indexrow,cellindex,sheetval,tagdata,tagvalue,samplevalue,sampledetails,lssamplefile,multitenant);
+
+		LSsamplefile LSsamplefile= lssamplefileRepository.findByfilesamplecode(lssamplefile);
+		try {  
+		//	JSONParser jsonParser = new JSONParser();
+            @SuppressWarnings("unused")
+			JSONObject jsonObject = new JSONObject(jsonString);
+            JSONArray jsonArray = jsonObject.getJSONArray("sheets");
+            
+            jsonArray.forEach(item -> {
+                JSONObject obj = (JSONObject) item;
+                JSONArray jsonrowsArray = obj.getJSONArray("rows");
+                jsonrowsArray.forEach(rowitem -> {
+                    JSONObject rowobj = (JSONObject) rowitem;
+                    if(rowobj.getInt("index") == indexrow)
+                    {
+	                    JSONArray jsoncellsArray = rowobj.getJSONArray("cells");
+	                    jsoncellsArray.forEach(cellitem -> {
+	                    	JSONObject cellobj = (JSONObject) cellitem;
+	                    	if(cellobj.getInt("index") == cellindex)
+	                        {
+	                    		cellobj.put("tag", tagvalue);
+		                    	cellobj.put("value", sampledetails);
+	                        }
+	                    });
+                    }
+                    
+                });
+            });
+            
+            jsonObject.put("sheets", jsonArray);
+            
+            jsonString = jsonObject.toString();
+            
+            instrumentService.updateordercontent(jsonString,LSsamplefile,multitenant);
+           // JSONObject addedObj = (JSONObject) jsonObject.get("Added");
+
+			//JSONArray jsonArray = new JSONArray(jsonString);
+			System.out.println("\n\njsonArray: " + jsonArray);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} 
+		
+	
+		
+		return 	jsonString;
 	}
 
 }

@@ -143,8 +143,15 @@ public class helpdocumentservice {
 		if(objupdatehelp != null)
 		{
 			objhelp.setId(objupdatehelp.getId());
+			if(objupdatehelp.getFiletype()==1) {
+				objhelp.setFiletype(0);
+			}
+			else {
+				objhelp.setFiletype(1);
+			}
+			
 		}
-		objhelp.setFiletype(1);
+		
 		return HelpdocumentRepository.save(objhelp);
 	}
 	

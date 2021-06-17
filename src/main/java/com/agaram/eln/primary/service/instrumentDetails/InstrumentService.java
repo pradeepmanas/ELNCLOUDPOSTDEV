@@ -26,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderAttachment;
@@ -44,9 +45,12 @@ import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSresultdetails;
 import com.agaram.eln.primary.model.instrumentDetails.LsMethodFields;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
+import com.agaram.eln.primary.model.masters.Lsrepositories;
+import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
@@ -72,11 +76,13 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSlimsorderRepository
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSresultdetailsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstrumentmasterRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharedbyRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharetoRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsorderworkflowhistoryRepositroy;
+import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSparsedparametersRespository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
@@ -94,6 +100,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
 
 @Service
@@ -197,6 +204,11 @@ public class InstrumentService {
 	@Autowired
 	private LsordersharedbyRepository lsordersharedbyRepository;
 	
+	@Autowired
+	private LsOrderSampleUpdateRepository lsOrderSampleUpdateRepository;
+	
+	@Autowired
+    private LsrepositoriesdataRepository LsrepositoriesdataRepository;
 	
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster)
 	{
@@ -1425,7 +1437,8 @@ public class InstrumentService {
 			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
 		}
 		else {
-			Contentversion = objfile.getLssamplefileversion().get(lastversionindex).getFilecontent();
+			//Contentversion = objfile.getLssamplefileversion().get(lastversionindex).getFilecontent();
+			Contentversion = objfile.getFilecontent();
 			objfile.getLssamplefileversion().get(lastversionindex).setFilecontent(null);
 			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
 			updateorderversioncontent(Contentversion,objfile.getLssamplefileversion().get(lastversionindex), objfile.getIsmultitenant());
@@ -2368,7 +2381,131 @@ public class InstrumentService {
 	    return null;
 	    
 	}
+	
+	public String getsampledata()
+	{
+		String jsondata = "{\r\n" + 
+				"    \"rowHeight\": 20,\r\n" + 
+				"    \"tags\": [],\r\n" + 
+				"    \"columnWidth\": 64,\r\n" + 
+				"    \"fieldcount\": 0,\r\n" + 
+				"    \"activeSheet\": \"Sheet1\",\r\n" + 
+				"    \"charts\": [],\r\n" + 
+				"    \"Batchcoordinates\": {\r\n" + 
+				"        \"resultdirection\": 1,\r\n" + 
+				"        \"parameters\": []\r\n" + 
+				"    },\r\n" + 
+				"    \"names\": [],\r\n" + 
+				"    \"sheets\": [\r\n" + 
+				"        {\r\n" + 
+				"            \"gridLinesColor\": null,\r\n" + 
+				"            \"selection\": \"E5:E5\",\r\n" + 
+				"            \"name\": \"Sheet1\",\r\n" + 
+				"            \"frozenColumns\": 0,\r\n" + 
+				"            \"showGridLines\": true,\r\n" + 
+				"            \"defaultCellStyle\": {\r\n" + 
+				"                \"fontFamily\": \"Arial\",\r\n" + 
+				"                \"fontSize\": \"12\"\r\n" + 
+				"            },\r\n" + 
+				"            \"hyperlinks\": [],\r\n" + 
+				"            \"rows\": [\r\n" + 
+				"                {\r\n" + 
+				"                    \"index\": 2,\r\n" + 
+				"                    \"cells\": [\r\n" + 
+				"                        {\r\n" + 
+				"                            \"index\": 4,\r\n" + 
+				"                            \"value\": \"nreee\"\r\n" + 
+				"                        }\r\n" + 
+				"                    ]\r\n" + 
+				"                }\r\n" + 
+				"            ],\r\n" + 
+				"            \"activeCell\": \"E5:E5\",\r\n" + 
+				"            \"drawings\": [],\r\n" + 
+				"            \"mergedCells\": [],\r\n" + 
+				"            \"columns\": [],\r\n" + 
+				"            \"frozenRows\": 0\r\n" + 
+				"        }\r\n" + 
+				"    ],\r\n" + 
+				"    \"images\": []\r\n" + 
+				"}";
+		
+		
+		return jsondata;
+	}
+	public List<LsOrderSampleUpdate> GetOrderResourcesQuantitylst(LsOrderSampleUpdate objorder) {
+		// TODO Auto-generated method stub
+		List<LsOrderSampleUpdate> sampleupdatelst= new ArrayList<LsOrderSampleUpdate>();
+		if(objorder.getOrdersampleusedDetail()!=null) {
+			sampleupdatelst=lsOrderSampleUpdateRepository.findByOrdersampleusedDetail(objorder.getOrdersampleusedDetail());
+		}
+		return sampleupdatelst;
+	}
 
+	public Map<String, Object> SaveOrderResourcesQuantity(Map<String, Object> argobj) {
+		// TODO Auto-generated method stub
+		Map<String, Object> objmap= new HashMap<>();
+		ObjectMapper mapper = new ObjectMapper();
+		LsOrderSampleUpdate ordersample= new LsOrderSampleUpdate();
+		Lsrepositoriesdata lsrepositoriesdata  = new Lsrepositoriesdata();
+		if(argobj.containsKey("Ordersampleobj"))
+		{
+			ordersample = mapper.convertValue(argobj.get("Ordersampleobj"),LsOrderSampleUpdate.class);
+//			lsOrderSampleUpdateRepository.save(ordersample);
+//			ordersample.setOrdersampleusedDetail(ordersample.getOrdersampleusedDetail()+ " id:" + ordersample.getOrdersamplecode());
+			lsOrderSampleUpdateRepository.save(ordersample);
+		}
+		if(argobj.containsKey("LsrepositoriesdataSeletedObj"))
+		{
+			 lsrepositoriesdata = mapper.convertValue(argobj.get("LsrepositoriesdataSeletedObj"),Lsrepositoriesdata.class);
+			 LsrepositoriesdataRepository.save(lsrepositoriesdata);
+		}
+		if(argobj.containsKey("LsrepositoriesObj"))
+		{
+			Lsrepositories LsrepositoriesObj = mapper.convertValue(argobj.get("LsrepositoriesObj"),Lsrepositories.class);
+		}
+		objmap.put("ordersample", ordersample);
+		objmap.put("lsrepositoriesdata", lsrepositoriesdata);
+		return  objmap;
+	}
+
+	public List<Lsrepositoriesdata> GetEditedOrderResources(Lsrepositoriesdata objorder) {
+		// TODO Auto-generated method stub
+		return LsrepositoriesdataRepository.findByRepositorycodeAndSitecodeAndItemstatusOrderByRepositorydatacodeDesc(objorder.getRepositorycode(),objorder.getSitecode(),1);
+	}
+	public String getsampledata(Long batchcode, Integer indexrow, Integer cellindex, Integer sheetval, String tagdata, String tagvalue, String samplevalue, String sampledetails, Integer lssamplefile, Integer multitenant)
+	{
+//		LSsamplefile LSsamplefile= lssamplefileRepository.findByfilesamplecode(lssamplefile);
+//		OrderCreation objsavefile = new OrderCreation();
+		String Content="";
+		if(multitenant== 1)
+		{
+			CloudOrderCreation file = cloudOrderCreationRepository.findById((long)lssamplefile);
+			
+			if(file != null)
+			{
+				Content = file.getContent();
+			}
+//			else
+//			{
+//				Content = objorder.getLsfile().getFilecontent();
+//			}
+		}
+		else
+		{
+		OrderCreation objsavefile= mongoTemplate.findById(lssamplefile, OrderCreation.class);
+			if(objsavefile != null)
+			{
+				Content = objsavefile.getContent();
+			}
+			else
+			{
+//				Content = objorder.getLsfile().getFilecontent();
+			}
+		}
+		
+		
+		return Content;
+	}
 
 }
 	

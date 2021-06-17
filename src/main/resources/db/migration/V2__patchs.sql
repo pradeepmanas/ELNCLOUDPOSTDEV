@@ -227,7 +227,7 @@ CREATE TABLE IF NOT EXISTS public.datasourceconfig(
 	createdbyusername character varying(250),
 	approved integer,
 	rejected integer,
-    protocolstatus	integer,
+    protocolstatus integer,
 	createdby integer,
 	lssitemaster_sitecode integer,
 	versionno integer,
@@ -243,3 +243,24 @@ CREATE TABLE IF NOT EXISTS public.datasourceconfig(
 	versionno integer,
 	status integer
 );
+
+
+	create table IF NOT EXISTS  LsOrderSampleUpdate(
+	ordersamplecode integer NOT NULL,
+	ordersampletype character varying(250),
+	ordersample character varying(250),
+	ordersampleusedDetail character varying(250),
+	ordersampleinfo text,
+	batchcode numeric(17,0),
+	createddate timestamp without time zone,
+	usercode integer,
+	repositorycode integer,
+	repositorydatacode integer,
+    quantityused integer
+	);
+	update LsOrderSampleUpdate set quantityused=0 where quantityused is null;
+
+	INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) VALUES (57, NULL, NULL, 18, 3, 1, 'G1', 'ID_GENERAL', '18', 'ID_GENERAL', 18, 'ID_GENERAL', 'G18', 'Resource Detail', 1) on conflict (fieldcode) do nothing;
+
+	--INSERT into LSfields ( createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) select  NULL, NULL, 18, 3, 1, 'G1', 'ID_GENERAL', '18', 'ID_GENERAL', 18, 'ID_GENERAL', 'G18', 'Resource Detail', 1 from LSfields where NOT EXISTS (Select 1 from LSfields where level04name='Resource Detail' );
+	--INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) VALUES (57, NULL, NULL, 18, 3, 1, 'G1', 'ID_GENERAL', '18', 'ID_GENERAL', 18, 'ID_GENERAL', 'G18', 'Resource Detail', 1);

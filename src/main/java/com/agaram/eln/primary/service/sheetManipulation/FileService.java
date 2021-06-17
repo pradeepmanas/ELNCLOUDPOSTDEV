@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.service.sheetManipulation;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,8 @@ import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
+import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationRepository;
+import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetVersionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsorderworkflowhistoryRepositroy;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
@@ -53,7 +54,6 @@ import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
-import com.agaram.eln.primary.repository.cloudFileManip.*;
 import com.agaram.eln.primary.service.basemaster.BaseMasterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -173,6 +173,8 @@ public class FileService {
 		else
 		{
 			Isnew = true;
+			
+			objfile.setVersionno(0);
 		}
 
 		if(objfile.getLstest().size()>0)
@@ -914,7 +916,7 @@ public class FileService {
 			Versionnumber = objLatestversion.getVersionno();
 		}
 		
-		Versionnumber++;
+		//Versionnumber++;
 		
 		LSfile objesixting  = lSfileRepository.findByfilecode(objfile.getFilecode());
 		if(objesixting == null)
@@ -924,6 +926,8 @@ public class FileService {
 		
 		if(objesixting.getApproved() == 1 && objfile.getApproved()==1)
 		{
+			Versionnumber++;
+			
 			LSsheetworkflow objfirstworkflow = lssheetworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objfile.getLssitemaster());
 			objfile.setApproved(0);
 			objfile.setLssheetworkflow(objfirstworkflow);
@@ -1014,6 +1018,7 @@ public class FileService {
 			
 			updatefileversioncontent(Content, objversion, objfile.getIsmultitenant());
 		}
+		objfile.setVersionno(Versionnumber);
 //		else
 //		{
 //			lsfileversionRepository.save(objfile.getLsfileversion());
@@ -1027,7 +1032,7 @@ public class FileService {
 		if(ismultitenant == 1)
 		{
 			CloudSheetVersion objsavefile = new CloudSheetVersion();
-			objsavefile.setId((long)objfile.getFilecode());
+			objsavefile.setId((long)objfile.getFileversioncode());
 			objsavefile.setContent(Content);
 			cloudSheetVersionRepository.save(objsavefile);
 		}
@@ -1099,7 +1104,7 @@ public class FileService {
 			{
 				if(objfile.getIsmultitenant() == 1)
 				{
-					CloudSheetVersion file = cloudSheetVersionRepository.findById((long)objfile.getFilecode());
+					CloudSheetVersion file = cloudSheetVersionRepository.findById((long)objVersion.getFileversioncode());
 					if(file != null)
 					{
 						Content = file.getContent();

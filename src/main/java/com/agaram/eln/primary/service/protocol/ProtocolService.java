@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolstepInfo;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolversionstep;
+import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
@@ -37,6 +38,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolversionstepInfo;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowhistory;
+import com.agaram.eln.primary.model.protocols.LsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
@@ -44,6 +46,7 @@ import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolstepInfoRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolversionstepRepository;
+import com.agaram.eln.primary.repository.cloudProtocol.CloudLsLogilabprotocolstepInfoRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolStepRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowgroupmapRepository;
@@ -128,6 +131,9 @@ public class ProtocolService {
 	
 	@Autowired
 	private CloudLSprotocolversionstepRepository  CloudLSprotocolversionstepRepository;
+	
+	@Autowired
+	private CloudLsLogilabprotocolstepInfoRepository CloudLsLogilabprotocolstepInfoRepository;
 	
 	public Map<String, Object> getProtocolMasterInit(Map<String, Object> argObj){
 		Map<String, Object> mapObj = new HashMap<String, Object>();
@@ -1066,49 +1072,70 @@ public class ProtocolService {
 				List<LSprotocolstep> lstSteps=LSProtocolStepRepositoryObj
 						.findByProtocolmastercode(lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode());
 				
-				int i =0;
+				//int i =0;
 				
 				List<LSlogilabprotocolsteps> lststep1 = new ObjectMapper().convertValue(lstSteps,
 						new TypeReference<List<LSlogilabprotocolsteps>>() {
 						});
 				
-				while(i < lstSteps.size()) {
+				/*while(i < lstSteps.size()) {
 					lststep1.get(i).setProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
 					lststep1.get(i).setOrderstepflag("N");
-					/*if(lSlogilabprotocoldetail.getIsmultitenant() == 1) {
-							CloudLSprotocolstepInfo updateLSprotocolstepInfo = CloudLSprotocolstepInfoRepository.findById(lststep1.get(i).getProtocolstepcode());
-							updateLSprotocolstepInfo.setLsprotocolstepInfo(lststep1.get(i).getLsprotocolstepInfo());
-							CloudLSprotocolstepInfoRepository.save(updateLSprotocolstepInfo);
+					
+					LSlogilabprotocolstepsRepository.save(lststep1);
+					
+					if(lSlogilabprotocoldetail.getIsmultitenant() == 1) {						
+						CloudLsLogilabprotocolstepInfo CloudLSprotocolstepInfoObj = new CloudLsLogilabprotocolstepInfo();
+						CloudLSprotocolstepInfoObj.setId(lststep1.get(i).getProtocolorderstepcode());
+						CloudLSprotocolstepInfoObj.setLsprotocolstepInfo(lststep1.get(i).getLsprotocolstepInfo());
+						CloudLsLogilabprotocolstepInfoRepository.save(CloudLSprotocolstepInfoObj);
 					}
 					else {
-							Query query = new Query(Criteria.where("id").is(lststep1.get(i).getProtocolstepcode()));
-							Update update=new Update();
-							update.set("content",lststep1.get(i).getLsprotocolstepInfo());
-		
-							mongoTemplate.upsert(query, update, LSprotocolstepInfo.class);
-					}*/
+						Query query = new Query(Criteria.where("id").is(lststep1.get(i).getProtocolorderstepcode()));
+						Update update=new Update();
+						update.set("content",lststep1.get(i).getLsprotocolstepInfo());
+	
+						mongoTemplate.upsert(query, update, LsLogilabprotocolstepInfo.class);
+					}
+					
 					i++;
-				}
+				}*/
 				
-				/*for(LSlogilabprotocolsteps LSprotocolstepObj1: lststep1) {
-					
-					LSprotocolstepObj1.setProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
-					
-					if(LSprotocolstepObj1.getIsmultitenant() == 1) {
-							CloudLSprotocolstepInfo updateLSprotocolstepInfo = CloudLSprotocolstepInfoRepository.findById(LSprotocolstepObj1.getProtocolstepcode());
-							updateLSprotocolstepInfo.setLsprotocolstepInfo(LSprotocolstepObj1.getLsprotocolstepInfo());
-							CloudLSprotocolstepInfoRepository.save(updateLSprotocolstepInfo);
-					}
-					else {
-							Query query = new Query(Criteria.where("id").is(LSprotocolstepObj1.getProtocolstepcode()));
+				
+				for(LSlogilabprotocolsteps LSprotocolstepObj1: lststep1) {
+						
+						LSprotocolstepObj1.setProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
+						LSprotocolstepObj1.setOrderstepflag("N");
+						
+						LSlogilabprotocolstepsRepository.save(LSprotocolstepObj1);
+						
+						if(lSlogilabprotocoldetail.getIsmultitenant() == 1) {	
+							// for getting master step into order step
+							CloudLSprotocolstepInfo newLSprotocolstepInfo = CloudLSprotocolstepInfoRepository.findById(LSprotocolstepObj1.getProtocolstepcode());
+							if(newLSprotocolstepInfo != null) {
+								LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
+							}
+							
+							CloudLsLogilabprotocolstepInfo CloudLSprotocolstepInfoObj = new CloudLsLogilabprotocolstepInfo();
+							CloudLSprotocolstepInfoObj.setId(LSprotocolstepObj1.getProtocolorderstepcode());
+							CloudLSprotocolstepInfoObj.setLsprotocolstepInfo(LSprotocolstepObj1.getLsprotocolstepInfo());
+							CloudLsLogilabprotocolstepInfoRepository.save(CloudLSprotocolstepInfoObj);
+						}
+						else {
+							// for getting master step into order step
+							LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate.findById(LSprotocolstepObj1.getProtocolstepcode(), LSprotocolstepInfo.class);
+							if(newLSprotocolstepInfo != null) {
+								LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+							}
+							
+							Query query = new Query(Criteria.where("id").is(LSprotocolstepObj1.getProtocolorderstepcode()));
 							Update update=new Update();
 							update.set("content",LSprotocolstepObj1.getLsprotocolstepInfo());
 		
-							mongoTemplate.upsert(query, update, LSprotocolstepInfo.class);
+							mongoTemplate.upsert(query, update, LsLogilabprotocolstepInfo.class);
+						}
 					}
-				}*/
 								
-				LSlogilabprotocolstepsRepository.save(lststep1);
 				
 				LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
 			}
@@ -1135,41 +1162,55 @@ public class ProtocolService {
 	
 	public Map<String, Object> updateProtocolOrderStep(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
+		
 		LSlogilabprotocolsteps LSprotocolstepObj= new ObjectMapper().convertValue(argObj.get("ProtocolOrderStepObj"),
 				new TypeReference<LSlogilabprotocolsteps>() {
 				});
-//		List<LSlogilabprotocoldetail> lstOrder = LSlogilabprotocoldetailRepository.findByProtocoltype(lSlogilabprotocoldetail.getProtocoltype());
-//		Collections.sort(lstOrder, Collections.reverseOrder());
 		
-		@SuppressWarnings("unused")
-		CloudLSprotocolstepInfo CloudLSprotocolstepInfoObj = new CloudLSprotocolstepInfo();
+		CloudLsLogilabprotocolstepInfo CloudLSprotocolstepInfoObj = new CloudLsLogilabprotocolstepInfo();
 		if(LSprotocolstepObj.getIsmultitenant() == 1) {
-				CloudLSprotocolstepInfo updateLSprotocolstepInfo = CloudLSprotocolstepInfoRepository.findById(LSprotocolstepObj.getProtocolstepcode());
+			if(LSprotocolstepObj.getNewStep() == 0) {
+				CloudLsLogilabprotocolstepInfo updateLSprotocolstepInfo = CloudLsLogilabprotocolstepInfoRepository.findById(LSprotocolstepObj.getProtocolorderstepcode());
 				updateLSprotocolstepInfo.setLsprotocolstepInfo(LSprotocolstepObj.getLsprotocolstepInfo());
-				CloudLSprotocolstepInfoRepository.save(updateLSprotocolstepInfo);
+				CloudLsLogilabprotocolstepInfoRepository.save(updateLSprotocolstepInfo);
+			}
+			else {
+				
+				LSlogilabprotocolstepsRepository.save(LSprotocolstepObj);
+				
+				CloudLSprotocolstepInfoObj.setId(LSprotocolstepObj.getProtocolorderstepcode());
+				CloudLSprotocolstepInfoObj.setLsprotocolstepInfo(LSprotocolstepObj.getLsprotocolstepInfo());
+				CloudLsLogilabprotocolstepInfoRepository.save(CloudLSprotocolstepInfoObj);
+			}
 		}
 		else {
-				Query query = new Query(Criteria.where("id").is(LSprotocolstepObj.getProtocolstepcode()));
-				Update update=new Update();
-				update.set("content",LSprotocolstepObj.getLsprotocolstepInfo());
-				
-				mongoTemplate.upsert(query, update, LSprotocolstepInfo.class);
+			Query query = new Query(Criteria.where("id").is(LSprotocolstepObj.getProtocolorderstepcode()));
+			Update update=new Update();
+			update.set("content",LSprotocolstepObj.getLsprotocolstepInfo());
+
+			mongoTemplate.upsert(query, update, LsLogilabprotocolstepInfo.class);
 		}
 		
 		List<LSlogilabprotocolsteps> LSprotocolsteplst = 
 				LSlogilabprotocolstepsRepository.findByProtocolordercode(LSprotocolstepObj.getProtocolordercode());
+		
 		List<LSlogilabprotocolsteps> LSprotocolstepLst = new ArrayList<LSlogilabprotocolsteps>();
 		
 		for(LSlogilabprotocolsteps LSprotocolstepObj1: LSprotocolsteplst) {
 		
 			if(LSprotocolstepObj.getIsmultitenant() == 1) {
-				CloudLSprotocolstepInfo newLSprotocolstepInfo = CloudLSprotocolstepInfoRepository.findById(LSprotocolstepObj1.getProtocolstepcode());
-				if(newLSprotocolstepInfo != null) {
-					LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
+				
+				if(LSprotocolstepObj.getNewStep() == 1) {
+					LSprotocolstepObj1.setLsprotocolstepInfo(CloudLSprotocolstepInfoObj.getLsprotocolstepInfo());
+				}else {
+					CloudLsLogilabprotocolstepInfo newLSprotocolstepInfo = CloudLsLogilabprotocolstepInfoRepository.findById(LSprotocolstepObj1.getProtocolorderstepcode());
+					if(newLSprotocolstepInfo != null) {
+						LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
+					}	
 				}
 			}
 			else {
-				LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate.findById(LSprotocolstepObj1.getProtocolstepcode(), LSprotocolstepInfo.class);
+				LsLogilabprotocolstepInfo newLSprotocolstepInfo = mongoTemplate.findById(LSprotocolstepObj1.getProtocolorderstepcode(), LsLogilabprotocolstepInfo.class);
 				if(newLSprotocolstepInfo != null) {
 					LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
 				}
@@ -1177,13 +1218,9 @@ public class ProtocolService {
 
 			LSprotocolstepLst.add(LSprotocolstepObj1);
 		}
-		if(LSprotocolsteplst != null) {
-			mapObj.put("protocolstepLst", LSprotocolstepLst);
-		}else {
-			mapObj.put("protocolstepLst", new ArrayList<>());
-		}
-		
+				
 		mapObj.put("protocolstepLst", LSprotocolstepLst);
+		
 		return mapObj;
 	}
 
@@ -1202,23 +1239,26 @@ public class ProtocolService {
 					LSlogilabprotocolstepsRepository.findByProtocolordercode(newProtocolOrderObj.getProtocolordercode());
 			List<LSlogilabprotocolsteps> LSprotocolstepLst = new ArrayList<LSlogilabprotocolsteps>();
 			
-			for(LSlogilabprotocolsteps LSprotocolstepObj1: LSprotocolsteplst) {
+		
+		for(LSlogilabprotocolsteps LSprotocolstepObj1: LSprotocolsteplst) {
 			
-				if(newProtocolOrderObj.getIsmultitenant() == 1) {
-					CloudLSprotocolstepInfo newLSprotocolstepInfo = CloudLSprotocolstepInfoRepository.findById(LSprotocolstepObj1.getProtocolstepcode());
-					if(newLSprotocolstepInfo != null) {
-						LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
-					}
+			if(newProtocolOrderObj.getIsmultitenant() == 1) {
+				
+				CloudLsLogilabprotocolstepInfo newLSprotocolstepInfo = CloudLsLogilabprotocolstepInfoRepository.findById(LSprotocolstepObj1.getProtocolorderstepcode());
+				if(newLSprotocolstepInfo != null) {
+					LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
 				}
-				else {
-					LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate.findById(LSprotocolstepObj1.getProtocolstepcode(), LSprotocolstepInfo.class);
-					if(newLSprotocolstepInfo != null) {
-						LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
-					}
-				}
-
-				LSprotocolstepLst.add(LSprotocolstepObj1);
 			}
+			else {
+				
+				LsLogilabprotocolstepInfo newLSprotocolstepInfo = mongoTemplate.findById(LSprotocolstepObj1.getProtocolorderstepcode(), LsLogilabprotocolstepInfo.class);
+				if(newLSprotocolstepInfo != null) {
+					LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+				}
+			}
+
+			LSprotocolstepLst.add(LSprotocolstepObj1);
+		}
 			if(LSprotocolsteplst != null) {
 				mapObj.put("protocolstepLst", LSprotocolstepLst);
 			}else {
@@ -1353,7 +1393,6 @@ public class ProtocolService {
 
 	public Map<String, Object> addProtocolStepforsaveas(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
-		@SuppressWarnings("unused")
 		LScfttransaction LScfttransactionobj = new LScfttransaction();
 //		if(argObj.containsKey("objsilentaudit")) {
 			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),
@@ -1362,6 +1401,7 @@ public class ProtocolService {
 			LSprotocolmaster newProtocolMasterObj = new ObjectMapper().convertValue(argObj.get("ProtocolMasterObj"), new TypeReference<LSprotocolmaster>(){});
 			List<LSprotocolstep> LSprotocolsteplst = LSProtocolStepRepositoryObj.findByProtocolmastercodeAndStatus(newProtocolMasterObj.getProtocolmastercode() , 1);
 			CloudLSprotocolstepInfo CloudLSprotocolstepInfo = new CloudLSprotocolstepInfo();
+			@SuppressWarnings("unused")
 			List<LSprotocolstep> LSprotocolstepLst = new ArrayList<LSprotocolstep>();
 			int i=0;
 			for(LSprotocolstep LSprotocolstepObj1: LSprotocolsteplst) {
