@@ -1128,11 +1128,16 @@ public class ProtocolService {
 								LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
 							}
 							
-							Query query = new Query(Criteria.where("id").is(LSprotocolstepObj1.getProtocolorderstepcode()));
-							Update update=new Update();
-							update.set("content",LSprotocolstepObj1.getLsprotocolstepInfo());
-		
-							mongoTemplate.upsert(query, update, LsLogilabprotocolstepInfo.class);
+							LsLogilabprotocolstepInfo LsLogilabprotocolstepInfoObj = new LsLogilabprotocolstepInfo();
+							
+							LsLogilabprotocolstepInfoObj.setId(LSprotocolstepObj1.getProtocolorderstepcode());
+							LsLogilabprotocolstepInfoObj.setContent(LSprotocolstepObj1.getLsprotocolstepInfo());
+							mongoTemplate.insert(LsLogilabprotocolstepInfoObj);
+							
+							//Query query = new Query(Criteria.where("id").is(LSprotocolstepObj1.getProtocolorderstepcode()));
+							//Update update=new Update();
+							//update.set("content",LSprotocolstepObj1.getLsprotocolstepInfo());
+							//mongoTemplate.upsert(query, update, LsLogilabprotocolstepInfo.class);
 						}
 					}
 								
@@ -1167,6 +1172,8 @@ public class ProtocolService {
 				new TypeReference<LSlogilabprotocolsteps>() {
 				});
 		
+		LSlogilabprotocolstepsRepository.save(LSprotocolstepObj);
+		
 		CloudLsLogilabprotocolstepInfo CloudLSprotocolstepInfoObj = new CloudLsLogilabprotocolstepInfo();
 		if(LSprotocolstepObj.getIsmultitenant() == 1) {
 			if(LSprotocolstepObj.getNewStep() == 0) {
@@ -1176,19 +1183,25 @@ public class ProtocolService {
 			}
 			else {
 				
-				LSlogilabprotocolstepsRepository.save(LSprotocolstepObj);
-				
 				CloudLSprotocolstepInfoObj.setId(LSprotocolstepObj.getProtocolorderstepcode());
 				CloudLSprotocolstepInfoObj.setLsprotocolstepInfo(LSprotocolstepObj.getLsprotocolstepInfo());
 				CloudLsLogilabprotocolstepInfoRepository.save(CloudLSprotocolstepInfoObj);
 			}
 		}
 		else {
-			Query query = new Query(Criteria.where("id").is(LSprotocolstepObj.getProtocolorderstepcode()));
-			Update update=new Update();
-			update.set("content",LSprotocolstepObj.getLsprotocolstepInfo());
-
-			mongoTemplate.upsert(query, update, LsLogilabprotocolstepInfo.class);
+			if(LSprotocolstepObj.getNewStep() == 0) {
+				Query query = new Query(Criteria.where("id").is(LSprotocolstepObj.getProtocolorderstepcode()));
+				Update update=new Update();
+				update.set("content",LSprotocolstepObj.getLsprotocolstepInfo());
+	
+				mongoTemplate.upsert(query, update, LsLogilabprotocolstepInfo.class);
+			}else {
+				LsLogilabprotocolstepInfo LsLogilabprotocolstepInfoObj = new LsLogilabprotocolstepInfo();
+				
+				LsLogilabprotocolstepInfoObj.setId(LSprotocolstepObj.getProtocolorderstepcode());
+				LsLogilabprotocolstepInfoObj.setContent(LSprotocolstepObj.getLsprotocolstepInfo());
+				mongoTemplate.insert(LsLogilabprotocolstepInfoObj);
+			}
 		}
 		
 		List<LSlogilabprotocolsteps> LSprotocolsteplst = 
