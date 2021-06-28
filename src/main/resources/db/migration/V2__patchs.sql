@@ -276,3 +276,11 @@ CREATE TABLE IF NOT EXISTS public.datasourceconfig(
 
 	
     alter table Lsrepositoriesdata add column  IF NOT EXISTS  repositoryuniqueid character varying(250);
+
+	update LSaudittrailconfigmaster set screenname='Protocols',taskname='Add Protocol' where serialno=58;
+update LSaudittrailconfigmaster set screenname='Protocols',taskname='New Step' where serialno=59;
+update LSaudittrailconfigmaster set screenname='Protocols',taskname='Share with Team' where serialno=60;
+update LSaudittrailconfigmaster set screenname='Protocols',taskname='Delete' where serialno=61;
+
+update LSaudittrailconfigmaster set ordersequnce= 63 where serialno=64;
+update LSaudittrailconfigmaster set ordersequnce= 64 where serialno=65;
