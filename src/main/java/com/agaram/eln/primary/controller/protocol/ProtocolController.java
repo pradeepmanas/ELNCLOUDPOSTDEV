@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocolsteps;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
@@ -401,6 +403,10 @@ public class ProtocolController {
 	public Map<String, Object> GetProtocolVersionDetails(@RequestBody Map<String, Object> argObj) {
 		return ProtocolMasterService.GetProtocolVersionDetails(argObj);
 		}
-	
+	@RequestMapping("/GetProtocolorderResourcesQuantitylst")
+	public  List<LSprotocolordersampleupdates> GetProtocolorderResourcesQuantitylst(@RequestBody LSlogilabprotocolsteps LSlogilabprotocolsteps)
+	{
+		return ProtocolMasterService.GetProtocolorderResourcesQuantitylst(LSlogilabprotocolsteps);
+	}
 }
 	

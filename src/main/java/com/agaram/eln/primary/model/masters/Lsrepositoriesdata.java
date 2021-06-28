@@ -43,6 +43,8 @@ public class Lsrepositoriesdata {
 	
 	private Integer itemstatus =1;
 	
+	private String repositoryuniqueid;
+	
 	@Transient
 	Response objResponse;
 
@@ -126,6 +128,13 @@ public class Lsrepositoriesdata {
 		this.itemstatus = itemstatus;
 	}
 
-	
+	public String getRepositoryuniqueid() {
+		return repositoryuniqueid;
+	}
+
+	public void setRepositoryuniqueid(String repositoryuniqueid) {
+		this.repositoryuniqueid = repositoryuniqueid;
+	}
+
 	
 }

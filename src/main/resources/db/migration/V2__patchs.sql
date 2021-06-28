@@ -261,6 +261,18 @@ CREATE TABLE IF NOT EXISTS public.datasourceconfig(
 	update LsOrderSampleUpdate set quantityused=0 where quantityused is null;
 
 	INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) VALUES (57, NULL, NULL, 18, 3, 1, 'G1', 'ID_GENERAL', '18', 'ID_GENERAL', 18, 'ID_GENERAL', 'G18', 'Resource Detail', 1) on conflict (fieldcode) do nothing;
+   
+    create table IF NOT EXISTS  LSprotocolordersampleupdates(
+	protocolsamplecode integer NOT NULL,
+	protocolsampletype character varying(250),
+	protocolsample character varying(250),
+	protocolsampleusedDetail character varying(250),
+	protocolstepcode integer,
+	protocolmastercode integer,
+	createddate timestamp without time zone,
+	usercode integer,
+	protocolordercode numeric(17,0)
+	);
 
-	--INSERT into LSfields ( createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) select  NULL, NULL, 18, 3, 1, 'G1', 'ID_GENERAL', '18', 'ID_GENERAL', 18, 'ID_GENERAL', 'G18', 'Resource Detail', 1 from LSfields where NOT EXISTS (Select 1 from LSfields where level04name='Resource Detail' );
-	--INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) VALUES (57, NULL, NULL, 18, 3, 1, 'G1', 'ID_GENERAL', '18', 'ID_GENERAL', 18, 'ID_GENERAL', 'G18', 'Resource Detail', 1);
+	
+    alter table Lsrepositoriesdata add column  IF NOT EXISTS  repositoryuniqueid character varying(250);
