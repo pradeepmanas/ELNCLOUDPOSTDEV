@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,10 +12,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.agaram.eln.config.AESEncryption;
+import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.service.multitenant.DatasourceService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping(value="/multitenant", method=RequestMethod.POST)
@@ -141,4 +147,31 @@ public class DatasourceController {
 	{
 		return datasourceService.Remindertenant(Tenantname);
 	}
+	
+	//kumu
+		@PostMapping("/Registertenantid")
+		public Response Registertenantid(MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
+			
+			
+			ObjectMapper objMap = new ObjectMapper();
+			Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
+			System.out.println(request.getParameter("tenantID"));
+			Response objres = new Response();
+//			Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
+			DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
+//			System.out.println(Tenantname);
+//		return null;
+			String password ="agaram";
+			 String tenantID = AESEncryption.decrypt(request.getHeader("password"));
+			if(password.equals(tenantID)) {
+				return datasourceService.Registertenantid(Tenantname);
+			}
+			else {
+				boolean check =false;
+				objres.setStatus(check);
+				objres.setInformation("Authendication failed");
+				return objres;
+			}
+			
+		}
 }

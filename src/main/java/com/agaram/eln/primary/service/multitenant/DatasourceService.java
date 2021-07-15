@@ -655,4 +655,59 @@ public class DatasourceService {
 		}
 		return Tenantname;
 	}
+	
+	public Response Registertenantid(DataSourceConfig Tenantname) throws MessagingException
+	{
+		DataSourceConfig objconfig = configRepo.findByTenantid(Tenantname.getTenantid().trim());
+		Response objres = new Response();
+		
+		if(objconfig != null)
+		{
+			DataSourceConfig objdata = new DataSourceConfig();
+			objres.setStatus(false);
+			objres.setInformation("Organisation ID already esixts.");
+			objdata.setObjResponse(objres);
+			return objres;
+		}
+		
+		Tenantname.setInitialize(false);
+		Tenantname.setIsenable(false);
+		
+		objres.setStatus(true);
+		Tenantname.setObjResponse(objres);
+		
+		String password = Generatetenantpassword();
+		String passwordtenant=AESEncryption.encrypt(password);
+		Tenantname.setTenantpassword(passwordtenant);
+		
+		configRepo.save(Tenantname);
+		objres.setInformation("Organisation ID Successfully Created");
+
+//		Email email = new Email();
+		
+		if(!Tenantname.getAdministratormailid().equals(""))
+		{
+//			int countmail=2;
+			String mails[]= {Tenantname.getUseremail(),Tenantname.getAdministratormailid()};
+			for(int i=0;i<mails.length;i++) {
+				Email email = new Email();
+				email.setMailto(mails[i]);
+				email.setSubject("UsrName and PassWord");
+				email.setMailcontent("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+Tenantname.getTenantid()+"</b><br><b>Password:\t\t"+password+"</b><br><b><a href="+Tenantname.getLoginpath()+">click here to login</a></b>");
+				emailService.sendEmail(email);
+			}
+		}else {
+			Email email = new Email();
+			email.setMailto(Tenantname.getUseremail());
+			email.setSubject("UsrName and PassWord");
+			email.setMailcontent("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+Tenantname.getTenantid()+"</b><br><b>Password:\t\t"+password+"</b><br><b><a href="+Tenantname.getLoginpath()+">click here to login</a></b>");
+			emailService.sendEmail(email);
+		}
+		
+		
+		
+		return objres;
+	}
+	
+	
 }
