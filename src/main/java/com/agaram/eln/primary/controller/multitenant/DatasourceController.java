@@ -149,29 +149,30 @@ public class DatasourceController {
 	}
 	
 	//kumu
-		@PostMapping("/Registertenantid")
-		public Response Registertenantid(MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
-			
-			
-			ObjectMapper objMap = new ObjectMapper();
-			Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
-			System.out.println(request.getParameter("tenantID"));
-			Response objres = new Response();
-//			Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
-			DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
-//			System.out.println(Tenantname);
-//		return null;
-			String password ="agaram";
-			 String tenantID = AESEncryption.decrypt(request.getHeader("password"));
-			if(password.equals(tenantID)) {
-				return datasourceService.Registertenantid(Tenantname);
-			}
-			else {
-				boolean check =false;
-				objres.setStatus(check);
-				objres.setInformation("Authendication failed");
-				return objres;
-			}
-			
+	@PostMapping("/Registertenantid")
+	public DataSourceConfig Registertenantid(MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		
+		ObjectMapper objMap = new ObjectMapper();
+		Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
+		System.out.println(request.getParameter("tenantID"));
+		Response objres = new Response();
+//		Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
+		DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
+//		System.out.println(Tenantname);
+//	return null;
+		String password ="agaram";
+		 String tenantID = AESEncryption.decrypt(request.getHeader("password"));
+		if(password.equals(tenantID)) {
+			return datasourceService.Registertenantid(Tenantname);
 		}
+		else {
+			boolean check =false;
+			objres.setStatus(check);
+			objres.setInformation("Authentication failed");
+			Tenantname.setObjResponse(objres);
+			return Tenantname;
+		}
+		
+	}
 }

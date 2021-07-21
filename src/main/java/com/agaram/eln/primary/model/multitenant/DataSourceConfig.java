@@ -3,6 +3,7 @@ package com.agaram.eln.primary.model.multitenant;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -52,9 +53,13 @@ public class DataSourceConfig implements Serializable {
     private Date activateddate;
     private int validatenodays = 0;
     private int noofusers = 0;
-    private Integer customer_crm_id;
-    private Integer customer_creator_id;
-    private Integer customer_subscription_id;
+    @Column(columnDefinition = "numeric(30,0)",name = "customer_crm_id") 
+	private Long customer_crm_id;
+    @Column(columnDefinition = "numeric(30,0)",name = "customer_creator_id") 
+  	private Long customer_creator_id;
+    @Column(columnDefinition = "numeric(30,0)",name = "customer_subscription_id") 
+  	private Long customer_subscription_id;
+    
     
     public String getVarificationOTP() {
 		return varificationOTP;
@@ -257,23 +262,24 @@ public class DataSourceConfig implements Serializable {
 	public void setNoofusers(int noofusers) {
 		this.noofusers = noofusers;
 	}
-	public Integer getCustomer_crm_id() {
+	public Long getCustomer_crm_id() {
 		return customer_crm_id;
 	}
-	public void setCustomer_crm_id(Integer customer_crm_id) {
+	public void setCustomer_crm_id(Long customer_crm_id) {
 		this.customer_crm_id = customer_crm_id;
 	}
-	public Integer getCustomer_creator_id() {
+	public Long getCustomer_creator_id() {
 		return customer_creator_id;
 	}
-	public void setCustomer_creator_id(Integer customer_creator_id) {
+	public void setCustomer_creator_id(Long customer_creator_id) {
 		this.customer_creator_id = customer_creator_id;
 	}
-	public Integer getCustomer_subscription_id() {
+	public Long getCustomer_subscription_id() {
 		return customer_subscription_id;
 	}
-	public void setCustomer_subscription_id(Integer customer_subscription_id) {
+	public void setCustomer_subscription_id(Long customer_subscription_id) {
 		this.customer_subscription_id = customer_subscription_id;
 	}
+	
     
 }

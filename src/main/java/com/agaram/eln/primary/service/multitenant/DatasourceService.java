@@ -656,18 +656,19 @@ public class DatasourceService {
 		return Tenantname;
 	}
 	
-	public Response Registertenantid(DataSourceConfig Tenantname) throws MessagingException
+	public DataSourceConfig Registertenantid(DataSourceConfig Tenantname) throws MessagingException
 	{
 		DataSourceConfig objconfig = configRepo.findByTenantid(Tenantname.getTenantid().trim());
 		Response objres = new Response();
 		
 		if(objconfig != null)
 		{
-			DataSourceConfig objdata = new DataSourceConfig();
+//			DataSourceConfig objdata = new DataSourceConfig();
 			objres.setStatus(false);
 			objres.setInformation("Organisation ID already esixts.");
-			objdata.setObjResponse(objres);
-			return objres;
+//			objdata.setObjResponse(objres);
+			Tenantname.setObjResponse(objres);
+			return Tenantname;
 		}
 		
 		Tenantname.setInitialize(false);
@@ -682,6 +683,8 @@ public class DatasourceService {
 		
 		configRepo.save(Tenantname);
 		objres.setInformation("Organisation ID Successfully Created");
+		Tenantname.setObjResponse(objres);
+		
 
 //		Email email = new Email();
 		
@@ -706,7 +709,7 @@ public class DatasourceService {
 		
 		
 		
-		return objres;
+		return Tenantname;
 	}
 	
 	
