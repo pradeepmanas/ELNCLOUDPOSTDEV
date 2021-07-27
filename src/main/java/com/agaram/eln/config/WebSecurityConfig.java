@@ -106,6 +106,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/Instrument/Sharedcloudattachment").permitAll().
 		antMatchers("/multitenant/Registertenant").permitAll().
 		antMatchers("/multitenant/Registertenantid").permitAll().
+		antMatchers("/multitenant/Registercustomersubscription").permitAll().
 		antMatchers("/multitenant/Validatetenant").permitAll().
 		antMatchers("/multitenant/checktenantid").permitAll().
 		antMatchers("/multitenant/tenantlogin").permitAll().

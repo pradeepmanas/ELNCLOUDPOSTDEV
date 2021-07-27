@@ -3,11 +3,14 @@ package com.agaram.eln.primary.model.multitenant;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -54,14 +57,38 @@ public class DataSourceConfig implements Serializable {
     private int validatenodays = 0;
     private int noofusers = 0;
     @Column(columnDefinition = "numeric(30,0)",name = "customer_crm_id") 
-	private Long customer_crm_id;
-    @Column(columnDefinition = "numeric(30,0)",name = "customer_creator_id") 
-  	private Long customer_creator_id;
-    @Column(columnDefinition = "numeric(30,0)",name = "customer_subscription_id") 
-  	private Long customer_subscription_id;
+   	private Long customer_crm_id;
+       @Column(columnDefinition = "numeric(30,0)",name = "customer_creator_id") 
+     	private Long customer_creator_id;
+//       @Column(columnDefinition = "numeric(30,0)",name = "customer_subscription_id") 
+//     	private Long customer_subscription_id;
+       
+       
+       @OneToOne(cascade=CascadeType.ALL)
+       @JoinColumn(name = "customer_subscription_id", referencedColumnName = "customer_subscription_id")
+       private CustomerSubscription CustomerSubscription;
+       
+       
+       public CustomerSubscription getCustomerSubscription() {
+   		return CustomerSubscription;
+   	}
+   	public void setCustomerSubscription(CustomerSubscription customerSubscription) {
+   		CustomerSubscription = customerSubscription;
+   	}
     
-    
-    public String getVarificationOTP() {
+    public Long getCustomer_crm_id() {
+		return customer_crm_id;
+	}
+	public void setCustomer_crm_id(Long customer_crm_id) {
+		this.customer_crm_id = customer_crm_id;
+	}
+	public Long getCustomer_creator_id() {
+		return customer_creator_id;
+	}
+	public void setCustomer_creator_id(Long customer_creator_id) {
+		this.customer_creator_id = customer_creator_id;
+	}
+	public String getVarificationOTP() {
 		return varificationOTP;
 	}
 	public void setVarificationOTP(String varificationOTP) {
@@ -262,24 +289,5 @@ public class DataSourceConfig implements Serializable {
 	public void setNoofusers(int noofusers) {
 		this.noofusers = noofusers;
 	}
-	public Long getCustomer_crm_id() {
-		return customer_crm_id;
-	}
-	public void setCustomer_crm_id(Long customer_crm_id) {
-		this.customer_crm_id = customer_crm_id;
-	}
-	public Long getCustomer_creator_id() {
-		return customer_creator_id;
-	}
-	public void setCustomer_creator_id(Long customer_creator_id) {
-		this.customer_creator_id = customer_creator_id;
-	}
-	public Long getCustomer_subscription_id() {
-		return customer_subscription_id;
-	}
-	public void setCustomer_subscription_id(Long customer_subscription_id) {
-		this.customer_subscription_id = customer_subscription_id;
-	}
-	
     
 }

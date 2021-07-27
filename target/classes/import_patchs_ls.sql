@@ -19,3 +19,11 @@ update LSfileversion set modifiedby_usercode= (select  modifiedby_usercode from 
 ALTER TABLE IF Exists lsprotocolmaster DROP COLUMN IF Exists createby_usercode;
 
 UPDATE  DataSourceConfig SET isadministrator_verify=false WHERE isadministrator_verify is null;
+
+update LSaudittrailconfigmaster set screenname='Protocols',taskname='Add Protocol' where serialno=58;
+update LSaudittrailconfigmaster set screenname='Protocols',taskname='New Step' where serialno=59;
+update LSaudittrailconfigmaster set screenname='Protocols',taskname='Share with Team' where serialno=60;
+update LSaudittrailconfigmaster set screenname='Protocols',taskname='Delete' where serialno=61;
+
+update LSaudittrailconfigmaster set ordersequnce= 63 where serialno=64;
+update LSaudittrailconfigmaster set ordersequnce= 64 where serialno=65;

@@ -24,11 +24,13 @@ import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.config.DataSourceBasedMultiTenantConnectionProviderImpl;
 import com.agaram.eln.primary.config.TenantDataSource;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.multitenant.CustomerSubscription;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
 import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
+import com.agaram.eln.primary.repository.multitenant.CustomerSubscriptionRepository;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordPolicyRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -49,6 +51,10 @@ public class DatasourceService {
 	
 	@Autowired
 	private ArchiveDataSourceBasedMultiTenantConnectionProviderImpl archiveDataSourceBasedMultiTenantConnectionProviderImpl;
+	
+	@Autowired
+    private CustomerSubscriptionRepository CustomerSubscriptionRepository;
+	
 	
 	@Autowired
 	TenantDataSource objtenantsource;
@@ -681,6 +687,7 @@ public class DatasourceService {
 		String passwordtenant=AESEncryption.encrypt(password);
 		Tenantname.setTenantpassword(passwordtenant);
 		
+//		CustomerSubscriptionRepository.save(Tenantname.getCustomerSubscription());
 		configRepo.save(Tenantname);
 		objres.setInformation("Organisation ID Successfully Created");
 		Tenantname.setObjResponse(objres);
@@ -711,6 +718,24 @@ public class DatasourceService {
 		
 		return Tenantname;
 	}
+	public CustomerSubscription Registercustomersubscription(CustomerSubscription CustomerSubscription) {
+		Response objres = new Response();
+		if(CustomerSubscription.getCustomer_subscription_id() != null) {
+			
+			CustomerSubscriptionRepository.save(CustomerSubscription);
+			objres.setStatus(true);
+			objres.setInformation("Customer Subscription Successfully stored ");
+			CustomerSubscription.setObjResponse(objres);
+		}else {
+			objres.setStatus(false);
+			objres.setInformation("Please Pass CustomerSubscriptionID ");
+			CustomerSubscription.setObjResponse(objres);
+		}
+
+			
+			return CustomerSubscription;
+		}
+		
 	
 	
 }

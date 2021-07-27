@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.multitenant.CustomerSubscription;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.service.multitenant.DatasourceService;
@@ -148,18 +149,23 @@ public class DatasourceController {
 		return datasourceService.Remindertenant(Tenantname);
 	}
 	
-	//kumu
 	@PostMapping("/Registertenantid")
 	public DataSourceConfig Registertenantid(MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		
 		ObjectMapper objMap = new ObjectMapper();
 		Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
+		
+//		DataSourceConfig Tenantname = objMap.readValue(request.getParameter("tenantID"), new TypeReference<DataSourceConfig>() {}) ;
+		
 		System.out.println(request.getParameter("tenantID"));
 		Response objres = new Response();
 //		Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
 		DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
-//		System.out.println(Tenantname);
+//		Tenantname = objMap.convertValue(argObj.get("CustomerSubscription"),  new TypeReference<DataSourceConfig>() {}) ;
+		CustomerSubscription CustomerSubscription =objMap.convertValue(argObj.get("CustomerSubscription"),  new TypeReference<CustomerSubscription>() {});
+		Tenantname.setCustomerSubscription(CustomerSubscription);
+		//		System.out.println(Tenantname);
 //	return null;
 		String password ="agaram";
 		 String tenantID = AESEncryption.decrypt(request.getHeader("password"));
@@ -175,4 +181,38 @@ public class DatasourceController {
 		}
 		
 	}
+		
+		@PostMapping("/Registercustomersubscription")
+		public CustomerSubscription Registercustomersubscription(MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
+			
+			
+			ObjectMapper objMap = new ObjectMapper();
+			Map<String, Object> argObj = objMap.readValue(request.getParameter("customer_subscription_id"), new TypeReference<Map<String, Object>>() {}) ;
+//			System.out.println(request.getParameter("tenantID"));
+			Response objres = new Response();
+//			Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
+//			DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
+			CustomerSubscription CustomerSubscription =objMap.convertValue(argObj,  new TypeReference<CustomerSubscription>() {}) ;
+
+			//		CustomerSubscription CustomerSubscription = objMap.convertValue(argObj,  new TypeReference<CustomerSubscription>() {}) ;
+//			System.out.println(Tenantname);
+			
+			
+
+			String password ="agaram";
+			 String tenantID = AESEncryption.decrypt(request.getHeader("password"));
+			if(password.equals(tenantID)) {
+				return datasourceService.Registercustomersubscription(CustomerSubscription);
+			}
+			else {
+				boolean check =false;
+				objres.setStatus(check);
+				objres.setInformation("Authentication failed");
+				CustomerSubscription.setObjResponse(objres);
+				return CustomerSubscription;
+			}
+			
+			
+//			
+		}
 }
