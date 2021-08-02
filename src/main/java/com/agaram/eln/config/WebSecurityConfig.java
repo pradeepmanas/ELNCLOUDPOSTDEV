@@ -92,6 +92,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/Instrument/Insertshareorder").permitAll().
 		antMatchers("/Instrument/GetsharedtomeorderStatus").permitAll().
 		antMatchers("/Instrument/GetResultsharedfileverContent").permitAll().
+		antMatchers("/reports/saveDocxsReport").permitAll().
 		antMatchers("/Instrument/SaveSharedResultfile").permitAll().
 		antMatchers("/Instrument/SharedCloudUploadattachments").permitAll().
 		antMatchers("/Instrument/SharedUploadattachments").permitAll().
