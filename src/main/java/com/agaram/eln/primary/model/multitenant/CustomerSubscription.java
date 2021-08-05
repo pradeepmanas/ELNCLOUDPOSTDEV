@@ -33,7 +33,16 @@ public class CustomerSubscription {
 	 private String zoho_subscription_id;
 	 private String creator_subscription_id;
 	 private String hosted_page_id;
+	 private String type;
 	 
+		
+	 public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 	
 	 @Transient
 		Response objResponse;

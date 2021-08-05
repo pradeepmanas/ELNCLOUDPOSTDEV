@@ -92,7 +92,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/Instrument/Insertshareorder").permitAll().
 		antMatchers("/Instrument/GetsharedtomeorderStatus").permitAll().
 		antMatchers("/Instrument/GetResultsharedfileverContent").permitAll().
-		antMatchers("/reports/saveDocxsReport").permitAll().
 		antMatchers("/Instrument/SaveSharedResultfile").permitAll().
 		antMatchers("/Instrument/SharedCloudUploadattachments").permitAll().
 		antMatchers("/Instrument/SharedUploadattachments").permitAll().
@@ -120,6 +119,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/multitenant/tenantcontactno").permitAll().
 		antMatchers("/multitenant/Completeregistration").permitAll().
 		antMatchers("/multitenant/updatetenantadminpassword").permitAll().
+		antMatchers("/reports/saveDocxsReport").permitAll().
 		antMatchers("/reports/cloudsaveDocxsReport").permitAll().
 		antMatchers("/reports/getSheetLSfileWithFileCode").permitAll().
 		antMatchers("/reports/getLSdocreportsLst").permitAll().
@@ -141,6 +141,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/helpdocument/helpdownload/{fileid}").permitAll().
 		antMatchers("/User/validatemailaddress").permitAll().
 		antMatchers("/Login/limsloginusertokengenarate").permitAll().
+		antMatchers("/multitenant/Registerinvoice").permitAll().
 		// all other requests need to be authenticated
 		anyRequest().authenticated().and().
 		// make sure we use stateless session; session won't be used to

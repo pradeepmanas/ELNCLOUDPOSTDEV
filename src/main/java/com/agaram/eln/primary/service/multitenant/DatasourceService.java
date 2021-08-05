@@ -26,12 +26,14 @@ import com.agaram.eln.primary.config.TenantDataSource;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.multitenant.CustomerSubscription;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
+import com.agaram.eln.primary.model.multitenant.Invoice;
 import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.multitenant.CustomerSubscriptionRepository;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
+import com.agaram.eln.primary.repository.multitenant.InvoiceRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordPolicyRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.notification.EmailService;
@@ -67,6 +69,9 @@ public class DatasourceService {
 	
 	@Autowired
 	private LSPasswordPolicyRepository LSPasswordPolicyRepository;
+	
+	@Autowired
+	private InvoiceRepository InvoiceRepository;
 	
 	public DataSourceConfig Validatetenant(DataSourceConfig Tenantname)
 	{
@@ -736,6 +741,24 @@ public class DatasourceService {
 			return CustomerSubscription;
 		}
 		
-	
+	public Invoice Registerinvoice(Invoice invoice) {
+		
+		Response objres = new Response();
+		if(invoice.getCustomerSubscription() != null) {
+			CustomerSubscription CustomerSubscription =CustomerSubscriptionRepository.findBycustomersubscriptionid(invoice.getCustomerSubscription().getCustomer_subscription_id());
+			invoice.setCustomerSubscription(CustomerSubscription);
+			InvoiceRepository.save(invoice);
+			objres.setStatus(true);
+			objres.setInformation("Invoice Successfully created ");
+			invoice.setObjResponse(objres);
+		}else {
+			objres.setStatus(false);
+			objres.setInformation("Please Pass CustomerSubscriptionID ");
+			invoice.setObjResponse(objres);
+		}
+
+			
+			return invoice;
+		}
 	
 }

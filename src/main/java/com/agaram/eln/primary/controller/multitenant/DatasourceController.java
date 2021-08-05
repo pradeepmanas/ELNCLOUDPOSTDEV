@@ -18,6 +18,7 @@ import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.multitenant.CustomerSubscription;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
+import com.agaram.eln.primary.model.multitenant.Invoice;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.service.multitenant.DatasourceService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -210,6 +211,42 @@ public class DatasourceController {
 				objres.setInformation("Authentication failed");
 				CustomerSubscription.setObjResponse(objres);
 				return CustomerSubscription;
+			}
+			
+			
+//			
+		}
+		
+		
+		@PostMapping("/Registerinvoice")
+		public Invoice Registerinvoice(MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
+			
+			
+			ObjectMapper objMap = new ObjectMapper();
+			Map<String, Object> argObj = objMap.readValue(request.getParameter("Registerinvoice"), new TypeReference<Map<String, Object>>() {}) ;
+//			System.out.println(request.getParameter("tenantID"));
+			Response objres = new Response();
+//			Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
+//			DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
+			Invoice Invoice =objMap.convertValue(argObj,  new TypeReference<Invoice>() {}) ;
+			CustomerSubscription CustomerSubscription =objMap.convertValue(argObj.get("CustomerSubscription"),  new TypeReference<CustomerSubscription>() {});
+			Invoice.setCustomerSubscription(CustomerSubscription);
+			//		CustomerSubscription CustomerSubscription = objMap.convertValue(argObj,  new TypeReference<CustomerSubscription>() {}) ;
+//			System.out.println(Tenantname);
+			
+			
+
+			String password ="agaram";
+			 String tenantID = AESEncryption.decrypt(request.getHeader("password"));
+			if(password.equals(tenantID)) {
+				return datasourceService.Registerinvoice(Invoice);
+			}
+			else {
+				boolean check =false;
+				objres.setStatus(check);
+				objres.setInformation("Authentication failed");
+				Invoice.setObjResponse(objres);
+				return Invoice;
 			}
 			
 			
