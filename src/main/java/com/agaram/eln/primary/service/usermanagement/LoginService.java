@@ -26,6 +26,7 @@ import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.jwt.JwtResponse;
+import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordHistoryDetails;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -35,6 +36,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordHistoryDetailsRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordPolicyRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
@@ -90,6 +92,9 @@ public class LoginService {
 	@Autowired
 	private JwtUserDetailsService userDetailsService;
 	
+	@Autowired
+	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
+	
 	static final Logger logger = Logger.getLogger(LoginService.class.getName());
 	
 	public List<LSSiteMaster> loadSite() {
@@ -142,9 +147,12 @@ public class LoginService {
 	{
 		Map<String, Object> obj = new HashMap<>();
 		LSuserMaster objExitinguser = new LSuserMaster();
-		
+		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
+		int multiusergroupcode =objuser.getMultiusergroupcode();
+		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(multiusergroupcode);
 		String username = objuser.getsUsername();
 		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(username,"0");
+		objExitinguser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		LSPasswordPolicy lockcount =objExitinguser!=null? LSPasswordPolicyRepository.findTopByAndLssitemasterOrderByPolicycodeDesc(objExitinguser.getLssitemaster()):null;
 //		if(objExitinguser != null && objExitinguser.getLssitemaster().getSitecode().toString().equals(objuser.getsSiteCode()))
 		
@@ -268,7 +276,9 @@ public class LoginService {
 			    		if(comp3== true  ||(comp1==false && comp2== true)) {
 //					    	if(expiry.compareTo(df)==0 || expiry.compareTo(df) < 0) {
 				    			objExitinguser.setPassword(null);
+//				    			objExitinguser.setLsusergroup(null);
 				    			lSuserMasterRepository.save(objExitinguser);
+//				    			objExitinguser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 				    			objExitinguser.getObjResponse().setInformation("ID_EXPIRY");
 								objExitinguser.getObjResponse().setStatus(false);
 								  
@@ -282,7 +292,7 @@ public class LoginService {
 								objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
 					    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
 					    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-						    
+//					    		objExitinguser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 								obj.put("user", objExitinguser);
 								return obj;
 				    		}
@@ -305,8 +315,9 @@ public class LoginService {
 						    	 	objactiveuser.setLsusermaster(objExitinguser);
 						    	 	objactiveuser.setLssitemaster(objExitinguser.getLssitemaster());
 						    	 	objactiveuser.setTimestamp(objuser.getLogindate());
-						    		
+//						    	 	objExitinguser.setLsusergroup(null);
 						    	 	lsactiveUserRepository.save(objactiveuser);
+//						    	 	objExitinguser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 						    	
 						    	}
 					    	
@@ -403,8 +414,9 @@ public class LoginService {
 								objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
 					    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
 					    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-					    	
+//					    		objExitinguser.setLsusergroup(null);
 							lSuserMasterRepository.save(objExitinguser);
+//							objExitinguser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 					    	}
 					    	else if(count<lockcount.getLockpolicy()) {
 					    		objExitinguser.setLockcount(count++);
@@ -422,7 +434,9 @@ public class LoginService {
 					    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
 					    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
 						    	
+//					    		objExitinguser.setLsusergroup(null);
 								lSuserMasterRepository.save(objExitinguser);
+//								objExitinguser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 					    	}
 					    	else {
 							objExitinguser.getObjResponse().setInformation("ID_LOCKED");
@@ -507,6 +521,7 @@ public class LoginService {
 			LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
 			objauditconfig.setLsusermaster(objExitinguser);
 			obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig));
+			obj.put("multiusergroupcode",multiusergroupcode);
 		}
 		
 		return obj;
@@ -1455,6 +1470,16 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 			    {
 			    	
 			    	String status = objExitinguser.getUserstatus();
+			    	
+//			    	if(objExitinguser.getLsusergroup() == null)
+//			    	{
+			    		 List<LSMultiusergroup> LSMultiusergroup = new ArrayList<LSMultiusergroup>();
+						
+			    		 LSMultiusergroup =LSMultiusergroupRepositery.findByusercode(objExitinguser.getUsercode());
+			    		
+			    		objExitinguser.setLsusergroup(LSMultiusergroup.get(0).getLsusergroup());
+//			    	}
+			    	
 			    	String groupstatus=objExitinguser.getLsusergroup().getUsergroupstatus();
 			    	if(status.equals("Deactive"))
 			    	{
@@ -1618,6 +1643,7 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 			LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
 			objauditconfig.setLsusermaster(objExitinguser);
 			obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig));
+			obj.put("multiusergroupcode",objExitinguser.getMultiusergroupcode().get(0).getMultiusergroupcode());
 		}
 		
 		return obj;
@@ -1645,6 +1671,7 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 			}
 			LSusergroup objaadsgroup = LSusergroupRepository.findByusergroupnameAndLssitemaster("Azure aads", objuser.getLssitemaster().getSitecode());
 			LSusergroup objgroup = new LSusergroup();
+			LSMultiusergroup LSMultiusergroup =new LSMultiusergroup();
 			if(objaadsgroup == null)
 			{
 				
@@ -1659,10 +1686,12 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 				LSusergroupRepository.save(objgroup);
 				
 				objuser.setLsusergroup(objgroup);
+				LSMultiusergroup.setLsusergroup(objgroup);
 			}
 			else
 			{
 				objuser.setLsusergroup(objaadsgroup);
+				LSMultiusergroup.setLsusergroup(objaadsgroup);
 			}
 			
 			objuser.setCreatedby(objuser.getUsername());
@@ -1676,7 +1705,14 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 			objResponse.setStatus(true);
 			objuser.setObjResponse(objResponse);
 			objuser.setLoginfrom("1");
+			
+			
+			 List<LSMultiusergroup> LSMultiusergroup1 = new ArrayList<LSMultiusergroup>();
+			 LSMultiusergroup1.add(LSMultiusergroup);
+			 objuser.setMultiusergroupcode(LSMultiusergroup1);
+			LSMultiusergroupRepositery.save(objuser.getMultiusergroupcode());
 			lsuserMasterRepository.save(objuser);
+			
 			
 			String unifieduser = objuser.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "")+"u"+objuser.getUsercode()+"s"+objuser.getLssitemaster().getSitecode()+
 					objuser.getUnifieduserid();
@@ -1785,5 +1821,49 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 
 		return ResponseEntity.ok(new JwtResponse(token));
 		
+	}
+
+	public Map<String, Object> Switchusergroup(LSuserMaster lsuserMaster) {
+		Map<String, Object> obj = new HashMap<>();
+		int multiusergroupcode =lsuserMaster.getMultiusergroupcode().get(0).getMultiusergroupcode();
+		LSMultiusergroup objLSMultiusergroup = LSMultiusergroupRepositery.findBymultiusergroupcode(multiusergroupcode);
+//		String username = objuser.getsUsername();
+		LSuserMaster objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(lsuserMaster.getUsername(),"0");
+		objExitinguser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+		objExitinguser.setObjResponse(new Response());
+		if(objLSMultiusergroup != null) {
+			
+			
+			
+			if(lsuserMaster.getObjsilentaudit() != null)
+	    	{
+				lsuserMaster.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
+				lsuserMaster.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+//	    		objuser.getObjsilentaudit().setModuleName(ModuleName);
+//	    		objuser.getObjsilentaudit().setComments("PassWord Created Successfully");
+//	    		objuser.getObjsilentaudit().setActions("PassWord Created");
+//	    		objuser.getObjsilentaudit().setSystemcoments("System Generated");
+				lsuserMaster.getObjsilentaudit().setManipulatetype("Password");
+				lsuserMaster.getObjsilentaudit().setTableName("LSuserMaster");
+	    		lscfttransactionRepository.save(lsuserMaster.getObjsilentaudit());
+	    		
+	    	}
+			
+			obj.put("user", objExitinguser);
+			if(objExitinguser.getLsusergroup() != null)
+			{
+				obj.put("userrights", userService.GetUserRightsonGroup(objExitinguser.getLsusergroup()));
+				LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
+				objauditconfig.setLsusermaster(objExitinguser);
+				obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig));
+				obj.put("multiusergroupcode",multiusergroupcode);
+			}
+			
+			objExitinguser.getObjResponse().setInformation("usergroup switched successfully ");
+			objExitinguser.getObjResponse().setStatus(true);
+		}
+		
+		
+		return obj;
 	}
 }

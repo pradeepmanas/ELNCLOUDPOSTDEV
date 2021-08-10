@@ -36,7 +36,25 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 		final String requestTokenHeader = request.getHeader("Authorization");
 		
-		final String tenantID = request.getHeader("X-TenantID");
+		
+		
+		String path =request.getRequestURI();
+		int index =path.lastIndexOf("/");
+		String substringtenant= path.substring(index+1);
+		int length= path.length();
+		String substringpath="";
+		if(length>=20) {
+		substringpath=path.substring(1,20);
+		}
+		final String tenantID;
+		if(substringpath.equals("Instrument/download")) {
+		tenantID =substringtenant;
+		}
+		else {
+		tenantID = request.getHeader("X-TenantID");
+		}
+		
+
 		
 		final String arciveTenant = request.getHeader("X-TenantID")+"archive";
 		

@@ -8,16 +8,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-
 @Entity
 @Table(name="LSprotocolversion")
-public class LSprotocolversion {
+public class LSprotocolversion implements Comparable<LSprotocolversion>{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Basic(optional = false)
@@ -42,9 +39,6 @@ public class LSprotocolversion {
 	private Integer versionno;
 	@Column(columnDefinition = "varchar(255)")
 	private String versionname;
-	
-	@ManyToOne 
-	private LSuserMaster modifiedby;
 	
 //	@Column(columnDefinition = "datetime")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -128,12 +122,6 @@ public class LSprotocolversion {
 	public void setVersionname(String versionname) {
 		this.versionname = versionname;
 	}
-	public LSuserMaster getModifiedby() {
-		return modifiedby;
-	}
-	public void setModifiedby(LSuserMaster modifiedby) {
-		this.modifiedby = modifiedby;
-	}
 	public Date getModifieddate() {
 		return modifieddate;
 	}
@@ -141,5 +129,8 @@ public class LSprotocolversion {
 		this.modifieddate = modifieddate;
 	}
 	
-	
+	@Override
+	public int compareTo(LSprotocolversion o) {
+		return this.getProtocolversioncode().compareTo(o.getProtocolversioncode());
+	}
 }

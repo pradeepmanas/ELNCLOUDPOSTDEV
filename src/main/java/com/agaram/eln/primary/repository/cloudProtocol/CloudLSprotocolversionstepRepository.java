@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.repository.cloudProtocol;
 
-
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +11,8 @@ public interface CloudLSprotocolversionstepRepository extends JpaRepository<Clou
 	public CloudLSprotocolversionstep findByVersionno(Integer versionno);
 
 	public CloudLSprotocolversionstep findById(Integer protocolversioncode);
+
+	public List<CloudLSprotocolversionstep> findByprotocolmastercode(Integer protocolmastercode);
+
+	public CloudLSprotocolversionstep findByIdAndVersionno(Integer protocolstepcode, Integer versionno);
 }

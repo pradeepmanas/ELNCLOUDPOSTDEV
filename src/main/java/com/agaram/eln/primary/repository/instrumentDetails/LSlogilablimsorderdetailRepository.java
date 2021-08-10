@@ -29,6 +29,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	
 	public LSlogilablimsorderdetail findByBatchcode(Long batchcode);
 	
+	public List<LSlogilablimsorderdetail> findByBatchcodeAndBatchid(Long batchcode,String batchid);
+	
 	public LSlogilablimsorderdetail findByBatchid(String Batchid);
 	
 	public LSlogilablimsorderdetail findBylssamplefile(LSsamplefile lssamplefile);

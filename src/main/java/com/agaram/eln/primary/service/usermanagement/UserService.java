@@ -11,7 +11,6 @@ import javax.mail.MessagingException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.config.AESEncryption;
@@ -19,6 +18,7 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.notification.Email;
+import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSactiveUser;
@@ -35,6 +35,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordPolicyRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSactiveUserRepository;
@@ -103,6 +104,9 @@ public class UserService {
 	
 	@Autowired
     private EmailService emailService;
+	
+	@Autowired
+	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
 	
 	public LSusergroup InsertUpdateUserGroup(LSusergroup objusergroup)
 	{
@@ -326,6 +330,19 @@ public class UserService {
 			updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active")?"A":"D");
 			updateUser.setPassword(objusermaster.getPassword());
 			updateUser.setLockcount(objusermaster.getLockcount());
+			updateUser.setUserretirestatus(objusermaster.getUserretirestatus()==1 ? objusermaster.getUserretirestatus(): updateUser.getUserretirestatus());
+			if(objusermaster.getMultiusergroupcode() != null && objusermaster.getUsercode() !=null) {
+				if(!objusermaster.isSameusertologin()) {
+					LSMultiusergroupRepositery.deleteByusercode(objusermaster.getUsercode());
+					LSMultiusergroupRepositery.save(objusermaster.getMultiusergroupcode());
+				}
+			
+				updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active")?"A":"D");
+				updateUser.setUserfullname(objusermaster.getUserfullname());
+				updateUser.setEmailid(objusermaster.getEmailid());
+				updateUser.setUnifieduserid(objusermaster.getUnifieduserid());
+			}
+			
 			lsuserMasterRepository.save(updateUser);
 			
 			if(objusermaster.getObjsilentaudit() != null)
@@ -382,9 +399,16 @@ public class UserService {
 //			emailService.sendEmail(email);
 		}
 		
-		lsuserMasterRepository.save(objusermaster);
+//		LSuserMaster LSuserMasterobj =new LSuserMaster();
+//		LSuserMasterobj.setMultiusergroupcode(objusermaster.getMultiusergroupcode());
+//		objusermaster.setMultiusergroupcode(null);
 		
+		
+		
+		LSMultiusergroupRepositery.save(objusermaster.getMultiusergroupcode());
+			lsuserMasterRepository.save(objusermaster);
 
+		
 		if(isnewuser)
 		{
 			String unifieduser = objusermaster.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "")+"u"+objusermaster.getUsercode()+"s"+objusermaster.getLssitemaster().getSitecode()+
@@ -724,6 +748,9 @@ public class UserService {
 	public Map<String, Object> GetUserRightsonUser(LSuserMaster objUser)
 	{
 		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objUser.getUsercode());
+		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
+		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objUser.getMultiusergroups());
+		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		LSusergroup lsusergroup = objupdateduser.getLsusergroup();
 		Map<String, Object> maprights = new HashMap<String, Object>();
 		if(lsusergroup.getUsergroupcode()==null) {
@@ -1108,8 +1135,8 @@ public class UserService {
 					+ "The following are the details of the user:<br><br>"
 					+ "User Name:\t\t "+objusermaster.getUsername()+"<br><br>"
 							+ "Password:\t\t"+password+"<br><br>"
-									+ "Please enter the above password in the Old password field, followed by entering a password of your choice in ‘New Password’ and ‘Confirm <br>"
-									+ "Password’ fields to complete the user setup.<br><br>"
+									+ "Please enter the above password in the Old password field, followed by entering a password of your choice in ï¿½New Passwordï¿½ and ï¿½Confirm <br>"
+									+ "Passwordï¿½ fields to complete the user setup.<br><br>"
 									+ "This message has been sent by Agaram Technologies Private Limited for using Logilab ELN on Azure Cloud.");
 			emailService.sendEmail(email);
 			lsuserMasterRepository.setpasswordandpasswordstatusByusercode(objusermaster.getPassword(),objusermaster.getPasswordstatus(),objusermaster.getUsercode());

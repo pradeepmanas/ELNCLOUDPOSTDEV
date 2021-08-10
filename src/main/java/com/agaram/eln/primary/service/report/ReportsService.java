@@ -648,10 +648,11 @@ public class ReportsService {
 			objMap.put("type", docType);
 			objMap.put("SheetFileCode", sheetfilecodeString);
 			LSdocreports LSDocReportobj = new LSdocreports();
-			if (argObj.containsKey("Lsusermaster")) {
-				if (argObj.get("Lsusermaster") != null) {
-				lsusermaster = new ObjectMapper().convertValue(argObj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
-				LSDocReportobj.setLssitemaster(lsusermaster.getLssitemaster().getSitecode());
+			if (argObj.containsKey("lssitecode")) {
+				if (argObj.get("lssitecode") != null) {
+//				lsusermaster = new ObjectMapper().convertValue(argObj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
+//				LSDocReportobj.setLssitemaster(lsusermaster.getLssitemaster().getSitecode());
+				LSDocReportobj.setLssitemaster((Integer) argObj.get("lssitecode"));
 				}
 			}
 			LSDocReportobj.setExtention("docx");
@@ -2082,14 +2083,27 @@ public class ReportsService {
 		sequenceTagList = new HashMap<String, List<Map<String, Object>>>();
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			List<LSlogilablimsorderdetail> lstSelectedData = mapper.convertValue(obj.get("OrderData"),
-					new TypeReference<List<LSlogilablimsorderdetail>>() {
-					});
+//			List<LSlogilablimsorderdetail> lstSelectedData = mapper.convertValue(obj.get("OrderData"),
+//					new TypeReference<List<LSlogilablimsorderdetail>>() {
+//					});
+			long batchcode =mapper.convertValue(obj.get("batchcode"), long.class);
+			String batchid =mapper.convertValue(obj.get("batchid"), String.class);
+			List<LSlogilablimsorderdetail> lstSelectedData=lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(batchcode,batchid);
+			
 			LSdocreports LSdocreportsObj = mapper.convertValue(obj.get("templateRecords"), new TypeReference<LSdocreports>() { });
 			LSuserMaster lsusermaster = new LSuserMaster();
-			if (obj.containsKey("Lsusermaster")) {
-				if (obj.get("Lsusermaster") != null) {
-				lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
+//			if (obj.containsKey("Lsusermaster")) {
+//				if (obj.get("Lsusermaster") != null) {
+//				lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
+//				}
+//			}
+			
+			if (obj.containsKey("usercode")) {
+				if (obj.get("usercode") != null) {
+					int usercode =new ObjectMapper().convertValue(obj.get("usercode"), Integer.class);
+					lsusermaster = LSuserMasterRepositoryObj
+							.findByusercode(usercode);
+//				lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
 				}
 			}
 			if (LSdocreportsObj != null) {
@@ -2239,10 +2253,19 @@ public class ReportsService {
 					LSdocdirectory LSdocdirectoryObj = LSdocdirectoryRepositoryObj
 							.findFirstByDirectorynameAndStatus("Generated Reports", 1);
 					LSdocreports LSDocReportobj = new LSdocreports();
-					if (obj.containsKey("Lsusermaster")) {
-						if (obj.get("Lsusermaster") != null) {
-						lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
-						LSDocReportobj.setLssitemaster(lsusermaster.getLssitemaster().getSitecode());
+//					if (obj.containsKey("Lsusermaster")) {
+//						if (obj.get("Lsusermaster") != null) {
+//						lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
+//						LSDocReportobj.setLssitemaster(lsusermaster.getLssitemaster().getSitecode());
+//						}
+//					}
+					if (obj.containsKey("usercode")) {
+						if (obj.get("usercode") != null) {
+							int usercode =new ObjectMapper().convertValue(obj.get("usercode"), Integer.class);
+							lsusermaster = LSuserMasterRepositoryObj
+									.findByusercode(usercode);
+//						lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
+							LSDocReportobj.setLssitemaster(lsusermaster.getLssitemaster().getSitecode());
 						}
 					}
 					// silent audit
@@ -2327,14 +2350,26 @@ public class ReportsService {
 		sequenceTagList = new HashMap<String, List<Map<String, Object>>>();
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			List<LSlogilablimsorderdetail> lstSelectedData = mapper.convertValue(obj.get("OrderData"),
-					new TypeReference<List<LSlogilablimsorderdetail>>() {
-					});
+			long batchcode =mapper.convertValue(obj.get("batchcode"), long.class);
+			String batchid =mapper.convertValue(obj.get("batchid"), String.class);
+			List<LSlogilablimsorderdetail> lstSelectedData=lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(batchcode,batchid);
+//			List<LSlogilablimsorderdetail> lstSelectedData = mapper.convertValue(obj.get("OrderData"),
+//					new TypeReference<List<LSlogilablimsorderdetail>>() {
+//					});
 			LSdocreports LSdocreportsObj = mapper.convertValue(obj.get("templateRecords"), new TypeReference<LSdocreports>() { });
 			LSuserMaster lsusermaster = new LSuserMaster();
-			if (obj.containsKey("Lsusermaster")) {
-				if (obj.get("Lsusermaster") != null) {
-				lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
+//			if (obj.containsKey("Lsusermaster")) {
+//				if (obj.get("Lsusermaster") != null) {
+//				lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
+//				}
+//			}
+			
+			if (obj.containsKey("usercode")) {
+				if (obj.get("usercode") != null) {
+					int usercode =new ObjectMapper().convertValue(obj.get("usercode"), Integer.class);
+					lsusermaster = LSuserMasterRepositoryObj
+							.findByusercode(usercode);
+//				lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
 				}
 			}
 			if (LSdocreportsObj != null) {
@@ -2444,9 +2479,19 @@ public class ReportsService {
 					LSdocdirectory LSdocdirectoryObj = LSdocdirectoryRepositoryObj
 							.findFirstByDirectorynameAndStatus("Generated Reports", 1);
 					LSdocreports LSDocReportobj = new LSdocreports();
-					if (obj.containsKey("Lsusermaster")) {
-						if (obj.get("Lsusermaster") != null) {
-						lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
+//					if (obj.containsKey("Lsusermaster")) {
+//						if (obj.get("Lsusermaster") != null) {
+//						lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
+//						LSDocReportobj.setLssitemaster(lsusermaster.getLssitemaster().getSitecode());
+//						}
+//					}
+					
+					if (obj.containsKey("usercode")) {
+						if (obj.get("usercode") != null) {
+							int usercode =new ObjectMapper().convertValue(obj.get("usercode"), Integer.class);
+							lsusermaster = LSuserMasterRepositoryObj
+									.findByusercode(usercode);
+//						lsusermaster = new ObjectMapper().convertValue(obj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
 						LSDocReportobj.setLssitemaster(lsusermaster.getLssitemaster().getSitecode());
 						}
 					}
@@ -3301,9 +3346,13 @@ public class ReportsService {
 		LSuserMaster LsuserMasterObj = LSuserMasterRepositoryObj
 				.findByusercode((int) objorder.get("lsuserMasterUserCode"));
 		if (LsuserMasterObj.getUsername().equals("Administrator")) {
-			List<LSlogilablimsorderdetail> Pending = lslogilablimsorderdetailRepository.findByOrderflag("N");
+//			List<LSlogilablimsorderdetail> Pending = lslogilablimsorderdetailRepository.findByOrderflag("N");
+			List<LSlogilablimsorderdetail> Pending= lslogilablimsorderdetailRepository.findByFiletypeAndOrderflagOrderByBatchcodeDesc((int) objorder.get("filetype"),"N");
 			Collections.reverse(Pending);
-			List<LSlogilablimsorderdetail> Completed = lslogilablimsorderdetailRepository.findByOrderflag("R");
+			
+//			List<LSlogilablimsorderdetail> Completed = lslogilablimsorderdetailRepository.findByOrderflag("R");
+			List<LSlogilablimsorderdetail> Completed = lslogilablimsorderdetailRepository
+				.findByFiletypeAndOrderflagOrderByBatchcodeDesc((int) objorder.get("filetype"),"R");
 			Collections.reverse(Completed);
 			mapOrders.put("Pending", Pending);
 			mapOrders.put("Completed", Completed);
@@ -3315,13 +3364,26 @@ public class ReportsService {
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
 //			List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
-			List<LSlogilablimsorderdetail> Pending = lslogilablimsorderdetailRepository
+			List<LSlogilablimsorderdetail> Pending = new ArrayList<LSlogilablimsorderdetail>();
+			List<LSlogilablimsorderdetail> Completed = new ArrayList<LSlogilablimsorderdetail>();
+			
+			if((int) objorder.get("filetype")==0) {
+			 Pending = lslogilablimsorderdetailRepository.findByFiletypeAndOrderflagOrderByBatchcodeDesc((int) objorder.get("filetype"),"N");
+
+		     Completed = lslogilablimsorderdetailRepository
+						.findByFiletypeAndOrderflagOrderByBatchcodeDesc((int) objorder.get("filetype"),"R");
+
+			}
+			else {
+			 Pending = lslogilablimsorderdetailRepository
 					.findByFiletypeAndOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc(
 							(int) objorder.get("filetype"), "N", lstproject, lsworkflow);
-			Collections.reverse(Pending);
-			List<LSlogilablimsorderdetail> Completed = lslogilablimsorderdetailRepository
+			
+			 Completed = lslogilablimsorderdetailRepository
 					.findByFiletypeAndOrderflagAndLsprojectmasterInOrderByBatchcodeDesc((int) objorder.get("filetype"),
 							"R", lstproject);
+			}
+			Collections.reverse(Pending);
 			Collections.reverse(Completed);
 			mapOrders.put("Pending", Pending);
 //			System.out.println(objorder.get("filetype") +"," +lstproject.get(0).getProjectcode() +", "+lsworkflow.get(0).getWorkflowcode());
@@ -3400,13 +3462,17 @@ public class ReportsService {
 		Map<String, Object> MapObj = new HashMap<String, Object>();
 		String sheetCode = (String) argMap.get("FileCodeString");
 		int ismultiplesheet = (int) argMap.get("ismultiplesheet");
+		
+		int sitecode =(int) argMap.get("lssitecode");
 //		LScfttransaction LScfttransactionobj = new ObjectMapper().convertValue(argMap.get("objsilentaudit"),
 //				new TypeReference<LScfttransaction>() {
 //				});
-		LSuserMaster LSuserMasterObj = new ObjectMapper().convertValue(argMap.get("Lsusermaster"),
-				new TypeReference<LSuserMaster>() {
-				});
-		List<LSdocreports> LSDocReportsLst = LSdocreportsRepositoryObj.findAllByIsTemplateAndIsdraftAndSheetfilecodeStringAndIsmultiplesheetAndLssitemasterAndFileNameIsNotNull(1, 0, sheetCode, ismultiplesheet, LSuserMasterObj.getLssitemaster().getSitecode());
+		//kumaresan
+//		LSuserMaster LSuserMasterObj = new ObjectMapper().convertValue(argMap.get("Lsusermaster"),
+//				new TypeReference<LSuserMaster>() {
+//				});
+//		List<LSdocreports> LSDocReportsLst = LSdocreportsRepositoryObj.findAllByIsTemplateAndIsdraftAndSheetfilecodeStringAndIsmultiplesheetAndLssitemasterAndFileNameIsNotNull(1, 0, sheetCode, ismultiplesheet, LSuserMasterObj.getLssitemaster().getSitecode());
+		List<LSdocreports> LSDocReportsLst = LSdocreportsRepositoryObj.findAllByIsTemplateAndIsdraftAndSheetfilecodeStringAndIsmultiplesheetAndLssitemasterAndFileNameIsNotNull(1, 0, sheetCode, ismultiplesheet, sitecode);
 		MapObj.put("LSDocReportsLst", LSDocReportsLst);
 		return MapObj;
 	}

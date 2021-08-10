@@ -15,6 +15,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
+import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
@@ -26,6 +27,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSparsedparametersRes
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
@@ -66,12 +68,17 @@ public class DashBoardService {
 	@Autowired
     private LSuserMasterRepository lsuserMasterRepository;
 	
+	@Autowired
+	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
+	
 	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser)
 	{
 		
 		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		
+		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
+		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
 		
 		if(objupdateduser.getUsername().equals("Administrator"))
@@ -93,6 +100,7 @@ public class DashBoardService {
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 			List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository.findBylsusergroup(objupdateduser.getLsusergroup());
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+			
 			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
 			
 			long lstUserorder = lslogilablimsorderdetailRepository.countByLsprojectmasterInOrderByBatchcodeDesc(lstproject);
@@ -102,6 +110,7 @@ public class DashBoardService {
 			List<Long> lstCompletedordercount = new ArrayList<Long>();
 			if(lstproject != null && lstproject.size() >0)
 			{
+				
 //				lstCompletedordercount = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInOrderByBatchcodeDesc("R",lstproject,objuser.getUsercode());
 				lstCompletedordercount = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInOrderByBatchcodeDesc1("R",lstproject);
 			}

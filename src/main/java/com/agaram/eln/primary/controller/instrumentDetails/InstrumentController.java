@@ -9,8 +9,6 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -638,11 +636,20 @@ public class InstrumentController {
 	    return new ResponseEntity<>(new InputStreamResource(instrumentService.sharedretrieveColudLargeFile(fileid)), header, HttpStatus.OK);
 	}
 	
-	@RequestMapping(path = "/download/{param}/{fileid}", method = RequestMethod.GET)
-	public ResponseEntity<InputStreamResource> download(@PathVariable String param, @PathVariable String fileid) throws IOException {
 
-	    return instrumentService.downloadattachments(param, fileid);
-	}
+		//cloud
+		@RequestMapping(path = "/downloadNonCloud/{param}/{fileid}/{tenant}", method = RequestMethod.GET)
+		public ResponseEntity<InputStreamResource> download(@PathVariable String param,@PathVariable String fileid,@PathVariable String tenant) throws IOException {
+
+			return instrumentService.downloadattachmentsNonCloud(param, fileid);
+		}
+		//normal
+		@RequestMapping(path = "/download/{param}/{fileid}", method = RequestMethod.GET)
+		public ResponseEntity<InputStreamResource> downloadNonCloud(@PathVariable String param,@PathVariable String fileid,@PathVariable String tenant) throws IOException {
+
+			return instrumentService.downloadattachments(param, fileid);
+		}
+	
 	
 	@RequestMapping("/GetOrderResourcesQuantitylst")
 	public  List<LsOrderSampleUpdate> GetOrderResourcesQuantitylst(@RequestBody LsOrderSampleUpdate objorder)
@@ -675,8 +682,7 @@ public class InstrumentController {
 		LSsamplefile LSsamplefile= lssamplefileRepository.findByfilesamplecode(lssamplefile);
 		try {  
 		//	JSONParser jsonParser = new JSONParser();
-            @SuppressWarnings("unused")
-			JSONObject jsonObject = new JSONObject(jsonString);
+            JSONObject jsonObject = new JSONObject(jsonString);
             JSONArray jsonArray = jsonObject.getJSONArray("sheets");
             
             jsonArray.forEach(item -> {
@@ -717,5 +723,6 @@ public class InstrumentController {
 		
 		return 	jsonString;
 	}
+	
 
 }

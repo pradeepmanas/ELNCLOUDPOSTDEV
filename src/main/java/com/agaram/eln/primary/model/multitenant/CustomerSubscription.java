@@ -34,17 +34,26 @@ public class CustomerSubscription {
 	 private String creator_subscription_id;
 	 private String hosted_page_id;
 	 private String type;
+	 private Integer totalamount;
 	 
-		
-	 public String getType() {
+	
+	 public Integer getTotalamount() {
+		return totalamount;
+	}
+
+	public void setTotalamount(Integer totalamount) {
+		this.totalamount = totalamount;
+	}
+
+	public String getType() {
 		return type;
 	}
 
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	 @Transient
+
+	@Transient
 		Response objResponse;
 	
 	public Response getObjResponse() {

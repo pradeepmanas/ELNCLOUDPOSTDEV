@@ -31,6 +31,8 @@ public class DatasourceController {
 	@Autowired
 	private DatasourceService datasourceService;
 	
+	
+	
 	@PostMapping("/Validatetenant")
 	public DataSourceConfig Validatetenant(@RequestBody DataSourceConfig Tenantname)
 	{
@@ -40,7 +42,113 @@ public class DatasourceController {
 	@PostMapping("/Registertenant")
 	public DataSourceConfig Registertenant(@RequestBody DataSourceConfig Tenantname) throws MessagingException
 	{
+		
 		return datasourceService.Registertenant(Tenantname);
+	}
+	
+	
+	//kumu
+	@PostMapping("/Registertenantid")
+	public DataSourceConfig Registertenantid(MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		
+		ObjectMapper objMap = new ObjectMapper();
+		Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
+		
+//		DataSourceConfig Tenantname = objMap.readValue(request.getParameter("tenantID"), new TypeReference<DataSourceConfig>() {}) ;
+		
+		System.out.println(request.getParameter("tenantID"));
+		Response objres = new Response();
+//		Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
+		DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
+//		Tenantname = objMap.convertValue(argObj.get("CustomerSubscription"),  new TypeReference<DataSourceConfig>() {}) ;
+		CustomerSubscription CustomerSubscription =objMap.convertValue(argObj.get("CustomerSubscription"),  new TypeReference<CustomerSubscription>() {});
+		Tenantname.setCustomerSubscription(CustomerSubscription);
+		//		System.out.println(Tenantname);
+//	return null;
+		String password ="agaram";
+		 String tenantID = AESEncryption.decrypt(request.getHeader("password"));
+		if(password.equals(tenantID)) {
+			return datasourceService.Registertenantid(Tenantname);
+		}
+		else {
+			boolean check =false;
+			objres.setStatus(check);
+			objres.setInformation("Authentication failed");
+			Tenantname.setObjResponse(objres);
+			return Tenantname;
+		}
+		
+	}
+	
+	@PostMapping("/Registercustomersubscription")
+	public CustomerSubscription Registercustomersubscription(MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		
+		ObjectMapper objMap = new ObjectMapper();
+		Map<String, Object> argObj = objMap.readValue(request.getParameter("customer_subscription_id"), new TypeReference<Map<String, Object>>() {}) ;
+//		System.out.println(request.getParameter("tenantID"));
+		Response objres = new Response();
+//		Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
+//		DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
+		CustomerSubscription CustomerSubscription =objMap.convertValue(argObj,  new TypeReference<CustomerSubscription>() {}) ;
+
+		//		CustomerSubscription CustomerSubscription = objMap.convertValue(argObj,  new TypeReference<CustomerSubscription>() {}) ;
+//		System.out.println(Tenantname);
+		
+		
+
+		String password ="agaram";
+		 String tenantID = AESEncryption.decrypt(request.getHeader("password"));
+		if(password.equals(tenantID)) {
+			return datasourceService.Registercustomersubscription(CustomerSubscription);
+		}
+		else {
+			boolean check =false;
+			objres.setStatus(check);
+			objres.setInformation("Authentication failed");
+			CustomerSubscription.setObjResponse(objres);
+			return CustomerSubscription;
+		}
+		
+		
+//		
+	}
+	
+	
+	@PostMapping("/Registerinvoice")
+	public Invoice Registerinvoice(MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		
+		ObjectMapper objMap = new ObjectMapper();
+		Map<String, Object> argObj = objMap.readValue(request.getParameter("Registerinvoice"), new TypeReference<Map<String, Object>>() {}) ;
+//		System.out.println(request.getParameter("tenantID"));
+		Response objres = new Response();
+//		Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
+//		DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
+		Invoice Invoice =objMap.convertValue(argObj,  new TypeReference<Invoice>() {}) ;
+		CustomerSubscription CustomerSubscription =objMap.convertValue(argObj.get("CustomerSubscription"),  new TypeReference<CustomerSubscription>() {});
+		Invoice.setCustomerSubscription(CustomerSubscription);
+		//		CustomerSubscription CustomerSubscription = objMap.convertValue(argObj,  new TypeReference<CustomerSubscription>() {}) ;
+//		System.out.println(Tenantname);
+		
+		
+
+		String password ="agaram";
+		 String tenantID = AESEncryption.decrypt(request.getHeader("password"));
+		if(password.equals(tenantID)) {
+			return datasourceService.Registerinvoice(Invoice);
+		}
+		else {
+			boolean check =false;
+			objres.setStatus(check);
+			objres.setInformation("Authentication failed");
+			Invoice.setObjResponse(objres);
+			return Invoice;
+		}
+		
+		
+//		
 	}
 
 	@PostMapping("/Getalltenant")
@@ -149,107 +257,4 @@ public class DatasourceController {
 	{
 		return datasourceService.Remindertenant(Tenantname);
 	}
-	
-	@PostMapping("/Registertenantid")
-	public DataSourceConfig Registertenantid(MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
-		
-		
-		ObjectMapper objMap = new ObjectMapper();
-		Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
-		
-//		DataSourceConfig Tenantname = objMap.readValue(request.getParameter("tenantID"), new TypeReference<DataSourceConfig>() {}) ;
-		
-		System.out.println(request.getParameter("tenantID"));
-		Response objres = new Response();
-//		Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
-		DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
-//		Tenantname = objMap.convertValue(argObj.get("CustomerSubscription"),  new TypeReference<DataSourceConfig>() {}) ;
-		CustomerSubscription CustomerSubscription =objMap.convertValue(argObj.get("CustomerSubscription"),  new TypeReference<CustomerSubscription>() {});
-		Tenantname.setCustomerSubscription(CustomerSubscription);
-		//		System.out.println(Tenantname);
-//	return null;
-		String password ="agaram";
-		 String tenantID = AESEncryption.decrypt(request.getHeader("password"));
-		if(password.equals(tenantID)) {
-			return datasourceService.Registertenantid(Tenantname);
-		}
-		else {
-			boolean check =false;
-			objres.setStatus(check);
-			objres.setInformation("Authentication failed");
-			Tenantname.setObjResponse(objres);
-			return Tenantname;
-		}
-		
-	}
-		
-		@PostMapping("/Registercustomersubscription")
-		public CustomerSubscription Registercustomersubscription(MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
-			
-			
-			ObjectMapper objMap = new ObjectMapper();
-			Map<String, Object> argObj = objMap.readValue(request.getParameter("customer_subscription_id"), new TypeReference<Map<String, Object>>() {}) ;
-//			System.out.println(request.getParameter("tenantID"));
-			Response objres = new Response();
-//			Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
-//			DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
-			CustomerSubscription CustomerSubscription =objMap.convertValue(argObj,  new TypeReference<CustomerSubscription>() {}) ;
-
-			//		CustomerSubscription CustomerSubscription = objMap.convertValue(argObj,  new TypeReference<CustomerSubscription>() {}) ;
-//			System.out.println(Tenantname);
-			
-			
-
-			String password ="agaram";
-			 String tenantID = AESEncryption.decrypt(request.getHeader("password"));
-			if(password.equals(tenantID)) {
-				return datasourceService.Registercustomersubscription(CustomerSubscription);
-			}
-			else {
-				boolean check =false;
-				objres.setStatus(check);
-				objres.setInformation("Authentication failed");
-				CustomerSubscription.setObjResponse(objres);
-				return CustomerSubscription;
-			}
-			
-			
-//			
-		}
-		
-		
-		@PostMapping("/Registerinvoice")
-		public Invoice Registerinvoice(MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
-			
-			
-			ObjectMapper objMap = new ObjectMapper();
-			Map<String, Object> argObj = objMap.readValue(request.getParameter("Registerinvoice"), new TypeReference<Map<String, Object>>() {}) ;
-//			System.out.println(request.getParameter("tenantID"));
-			Response objres = new Response();
-//			Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
-//			DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
-			Invoice Invoice =objMap.convertValue(argObj,  new TypeReference<Invoice>() {}) ;
-			CustomerSubscription CustomerSubscription =objMap.convertValue(argObj.get("CustomerSubscription"),  new TypeReference<CustomerSubscription>() {});
-			Invoice.setCustomerSubscription(CustomerSubscription);
-			//		CustomerSubscription CustomerSubscription = objMap.convertValue(argObj,  new TypeReference<CustomerSubscription>() {}) ;
-//			System.out.println(Tenantname);
-			
-			
-
-			String password ="agaram";
-			 String tenantID = AESEncryption.decrypt(request.getHeader("password"));
-			if(password.equals(tenantID)) {
-				return datasourceService.Registerinvoice(Invoice);
-			}
-			else {
-				boolean check =false;
-				objres.setStatus(check);
-				objres.setInformation("Authentication failed");
-				Invoice.setObjResponse(objres);
-				return Invoice;
-			}
-			
-			
-//			
-		}
 }

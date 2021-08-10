@@ -72,6 +72,17 @@ public class LoggedUser {
 	public void setLsusermaster(LSuserMaster lsusermaster) {
 		this.lsusermaster = lsusermaster;
 	}
+	
+	@Transient
+	private Integer multiusergroupcode;
+
+	public Integer getMultiusergroupcode() {
+		return multiusergroupcode;
+	}
+
+	public void setMultiusergroupcode(Integer multiusergroupcode) {
+		this.multiusergroupcode = multiusergroupcode;
+	}
 
 	@Transient
 	private String sUserPassword;

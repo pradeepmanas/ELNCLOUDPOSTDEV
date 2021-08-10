@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -58,6 +59,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
+import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
@@ -67,6 +69,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
+import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderCreationRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderVersionRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationRepository;
@@ -93,6 +96,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
 import com.agaram.eln.primary.repository.templates.LsMappedTemplateRepository;
 import com.agaram.eln.primary.repository.templates.LsUnmappedTemplateRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -209,6 +213,12 @@ public class InstrumentService {
 	
 	@Autowired
     private LsrepositoriesdataRepository LsrepositoriesdataRepository;
+	
+	@Autowired
+	private CloudOrderAttachmentRepository CloudOrderAttachmentRepository;
+	
+	@Autowired
+	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
 	
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster)
 	{
@@ -1258,7 +1268,10 @@ public class InstrumentService {
 	public Map<String, Object> GetWorkflowanduseronUsercode(LSuserMaster usercode)
 	{
 		LSuserMaster objuser = lsuserMasterRepository.findByusercode(usercode.getUsercode());
-		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository.findBylsusergroup(objuser.getLsusergroup());
+		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
+		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(usercode.getMultiusergroups());
+		objuser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository.findBylsusergroup(objLSMultiusergroup.getLsusergroup());
 		List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
 		
 		Map<String, Object> maplogindetails = new HashMap<String, Object>();
@@ -2039,6 +2052,7 @@ public class InstrumentService {
 			{
 				objattachment.setFileid(id);
 			}
+	
 			lsOrderattachmentsRepository.save(objorder.getLsOrderattachments());
 		}
 		
@@ -2321,7 +2335,7 @@ public class InstrumentService {
 		return fileManipulationservice.retrieveLargeFile(fileid);
 	}
 	
-	public ResponseEntity<InputStreamResource> downloadattachments(String param, String fileid)
+	public ResponseEntity<InputStreamResource> downloadattachmentsNonCloud(String param, String fileid) throws IOException
 	{
 
 		if(param == null)
@@ -2329,12 +2343,83 @@ public class InstrumentService {
 			return null;
 		}
 		
+		
 		LsOrderattachments objattach = lsOrderattachmentsRepository.findFirst1ByfileidOrderByAttachmentcodeDesc(fileid);
 		HttpHeaders header = new HttpHeaders();
 		header.set("Content-Disposition", "attachment; filename="+objattach.getFilename());
 		
 		if(Integer.parseInt(param) == 0)
+		{	
+			CloudOrderAttachment objfile = CloudOrderAttachmentRepository.findByFileid(fileid);
+//			OrderAttachment objfile = fileManipulationservice.retrieveFile(objattach);
+			
+			InputStreamResource resource = null;
+			byte[] content = objfile.getFile().getData();
+	        int size = content.length;
+	        InputStream is = null;
+	        try {
+	            is = new ByteArrayInputStream(content);
+	            resource = new InputStreamResource(is);	
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            try{
+	                if(is != null) is.close();
+	            } catch (Exception ex){
+	                 
+	            }
+	        }
+	       
+	        header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+	        header.setContentLength(size);
+		    return new ResponseEntity<>(resource, header, HttpStatus.OK);
+		}
+		else if(Integer.parseInt(param) == 1)
 		{
+			InputStream fileDtream =  cloudFileManipulationservice.retrieveLargeFile(fileid);
+			
+			InputStreamResource resource = null;
+			byte[] content = IOUtils.toByteArray(fileDtream);
+	        int size = content.length;
+	        InputStream is = null;
+	        try {
+	            is = new ByteArrayInputStream(content);
+	            resource = new InputStreamResource(is);	
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            try{
+	                if(is != null) is.close();
+	            } catch (Exception ex){
+	                 
+	            }
+	        }
+	       
+	        header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+	        header.setContentLength(size);
+		    return new ResponseEntity<>(resource, header, HttpStatus.OK);
+			
+			}
+		
+	    
+	    return null;
+	    
+	}
+	
+	
+	public ResponseEntity<InputStreamResource> downloadattachments(String param, String fileid) {
+
+		if(param == null)
+		{
+			return null;
+		}
+
+		LsOrderattachments objattach = lsOrderattachmentsRepository.findFirst1ByfileidOrderByAttachmentcodeDesc(fileid);
+		HttpHeaders header = new HttpHeaders();
+		header.set("Content-Disposition", "attachment; filename="+objattach.getFilename());
+		
+		if(Integer.parseInt(param) == 0)
+		{	
 			OrderAttachment objfile = fileManipulationservice.retrieveFile(objattach);
 			
 			InputStreamResource resource = null;
@@ -2374,10 +2459,8 @@ public class InstrumentService {
 			System.out.println(gridFsFile.getContentType());
 		    header.setContentType(MediaType.parseMediaType(gridFsFile.getContentType()));
 		    header.setContentLength(gridFsFile.getLength());
-		    return new ResponseEntity<>(new InputStreamResource(gridFsFile.getInputStream()), header, HttpStatus.OK);
-		}
-		
-	    
+		    return new ResponseEntity<>(new InputStreamResource(gridFsFile.getInputStream()), header, HttpStatus.OK);	
+		}  
 	    return null;
 	    
 	}
@@ -2507,5 +2590,6 @@ public class InstrumentService {
 		return Content;
 	}
 
+
+
 }
-	

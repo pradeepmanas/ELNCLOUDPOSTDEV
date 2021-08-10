@@ -2,6 +2,7 @@ package com.agaram.eln.primary.model.multitenant;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,11 +11,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -51,32 +54,30 @@ public class DataSourceConfig implements Serializable {
 	private String administratormailid;		
 	private int loginfrom = 0;
     private String varificationOTP;
-    private int packagetype = 0;
+//    public Long getCustomer_subscription_id() {
+//		return customer_subscription_id;
+//	}
+//	public void setCustomer_subscription_id(Long customer_subscription_id) {
+//		this.customer_subscription_id = customer_subscription_id;
+//	}
+	private int packagetype = 0;
     private Date registereddate;
     private Date activateddate;
     private int validatenodays = 0;
     private int noofusers = 0;
     @Column(columnDefinition = "numeric(30,0)",name = "customer_crm_id") 
-   	private Long customer_crm_id;
-       @Column(columnDefinition = "numeric(30,0)",name = "customer_creator_id") 
-     	private Long customer_creator_id;
-//       @Column(columnDefinition = "numeric(30,0)",name = "customer_subscription_id") 
-//     	private Long customer_subscription_id;
-       
-       
-       @OneToOne(cascade=CascadeType.ALL)
-       @JoinColumn(name = "customer_subscription_id", referencedColumnName = "customer_subscription_id")
-       private CustomerSubscription CustomerSubscription;
-       
-       
-       public CustomerSubscription getCustomerSubscription() {
-   		return CustomerSubscription;
-   	}
-   	public void setCustomerSubscription(CustomerSubscription customerSubscription) {
-   		CustomerSubscription = customerSubscription;
-   	}
+	private Long customer_crm_id;
+    @Column(columnDefinition = "numeric(30,0)",name = "customer_creator_id") 
+  	private Long customer_creator_id;
+//    @Column(columnDefinition = "numeric(30,0)",name = "customer_subscription_id") 
+//  	private Long customer_subscription_id;
     
-    public Long getCustomer_crm_id() {
+    
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "customer_subscription_id", referencedColumnName = "customer_subscription_id")
+    private CustomerSubscription CustomerSubscription;
+    
+	public Long getCustomer_crm_id() {
 		return customer_crm_id;
 	}
 	public void setCustomer_crm_id(Long customer_crm_id) {
@@ -88,8 +89,15 @@ public class DataSourceConfig implements Serializable {
 	public void setCustomer_creator_id(Long customer_creator_id) {
 		this.customer_creator_id = customer_creator_id;
 	}
+
 	public String getVarificationOTP() {
 		return varificationOTP;
+	}
+	public CustomerSubscription getCustomerSubscription() {
+		return CustomerSubscription;
+	}
+	public void setCustomerSubscription(CustomerSubscription customerSubscription) {
+		CustomerSubscription = customerSubscription;
 	}
 	public void setVarificationOTP(String varificationOTP) {
 		this.varificationOTP = varificationOTP;

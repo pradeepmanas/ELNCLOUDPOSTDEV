@@ -394,4 +394,10 @@ public class LoginController {
 	public ResponseEntity<?> limsloginusertokengenarate(@RequestBody LSuserMaster objClass) throws Exception {
 		return loginService.limsloginusertokengenarate(objClass);
 	}
+	
+	
+	@PostMapping("/Switchusergroup")
+	public Map<String, Object> Switchusergroup(@RequestBody LSuserMaster lsuserMaster) throws Exception {
+		return loginService.Switchusergroup(lsuserMaster);
+	}
 }

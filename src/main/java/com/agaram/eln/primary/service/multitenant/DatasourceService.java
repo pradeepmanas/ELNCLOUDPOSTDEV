@@ -49,14 +49,13 @@ public class DatasourceService {
     private DataSourceConfigRepository configRepo;
 	
 	@Autowired
+    private CustomerSubscriptionRepository CustomerSubscriptionRepository;
+	
+	@Autowired
 	private DataSourceBasedMultiTenantConnectionProviderImpl dataSourceBasedMultiTenantConnectionProviderImpl;
 	
 	@Autowired
 	private ArchiveDataSourceBasedMultiTenantConnectionProviderImpl archiveDataSourceBasedMultiTenantConnectionProviderImpl;
-	
-	@Autowired
-    private CustomerSubscriptionRepository CustomerSubscriptionRepository;
-	
 	
 	@Autowired
 	TenantDataSource objtenantsource;
@@ -165,6 +164,103 @@ public class DatasourceService {
 		
 		return Tenantname;
 	}
+	
+	public DataSourceConfig Registertenantid(DataSourceConfig Tenantname) throws MessagingException
+	{
+		DataSourceConfig objconfig = configRepo.findByTenantid(Tenantname.getTenantid().trim());
+		Response objres = new Response();
+		
+		if(objconfig != null)
+		{
+//			DataSourceConfig objdata = new DataSourceConfig();
+			objres.setStatus(false);
+			objres.setInformation("Organisation ID already esixts.");
+//			objdata.setObjResponse(objres);
+			Tenantname.setObjResponse(objres);
+			return Tenantname;
+		}
+		
+		Tenantname.setInitialize(false);
+		Tenantname.setIsenable(false);
+		
+		objres.setStatus(true);
+		Tenantname.setObjResponse(objres);
+		
+		String password = Generatetenantpassword();
+		String passwordtenant=AESEncryption.encrypt(password);
+		Tenantname.setTenantpassword(passwordtenant);
+		
+//		CustomerSubscriptionRepository.save(Tenantname.getCustomerSubscription());
+		configRepo.save(Tenantname);
+		objres.setInformation("Organisation ID Successfully Created");
+		Tenantname.setObjResponse(objres);
+		
+
+//		Email email = new Email();
+		
+		if(!Tenantname.getAdministratormailid().equals(""))
+		{
+//			int countmail=2;
+			String mails[]= {Tenantname.getUseremail(),Tenantname.getAdministratormailid()};
+			for(int i=0;i<mails.length;i++) {
+				Email email = new Email();
+				email.setMailto(mails[i]);
+				email.setSubject("UsrName and PassWord");
+				email.setMailcontent("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+Tenantname.getTenantid()+"</b><br><b>Password:\t\t"+password+"</b><br><b><a href="+Tenantname.getLoginpath()+">click here to login</a></b>");
+				emailService.sendEmail(email);
+			}
+		}else {
+			Email email = new Email();
+			email.setMailto(Tenantname.getUseremail());
+			email.setSubject("UsrName and PassWord");
+			email.setMailcontent("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+Tenantname.getTenantid()+"</b><br><b>Password:\t\t"+password+"</b><br><b><a href="+Tenantname.getLoginpath()+">click here to login</a></b>");
+			emailService.sendEmail(email);
+		}
+		
+		
+		
+		return Tenantname;
+	}
+	
+public CustomerSubscription Registercustomersubscription(CustomerSubscription CustomerSubscription) {
+	Response objres = new Response();
+	if(CustomerSubscription.getCustomer_subscription_id() != null) {
+		
+		CustomerSubscriptionRepository.save(CustomerSubscription);
+		objres.setStatus(true);
+		objres.setInformation("Customer Subscription Successfully stored ");
+		CustomerSubscription.setObjResponse(objres);
+	}else {
+		objres.setStatus(false);
+		objres.setInformation("Please Pass CustomerSubscriptionID ");
+		CustomerSubscription.setObjResponse(objres);
+	}
+
+		
+		return CustomerSubscription;
+	}
+	
+public Invoice Registerinvoice(Invoice invoice) {
+	
+	Response objres = new Response();
+	if(invoice.getCustomerSubscription() != null) {
+		CustomerSubscription CustomerSubscription =CustomerSubscriptionRepository.findBycustomersubscriptionid(invoice.getCustomerSubscription().getCustomer_subscription_id());
+		invoice.setCustomerSubscription(CustomerSubscription);
+		InvoiceRepository.save(invoice);
+		objres.setStatus(true);
+		objres.setInformation("Invoice Successfully created ");
+		invoice.setObjResponse(objres);
+	}else {
+		objres.setStatus(false);
+		objres.setInformation("Please Pass CustomerSubscriptionID ");
+		invoice.setObjResponse(objres);
+	}
+
+		
+		return invoice;
+	}
+
+
 	
 	private String Generatetenantpassword()
 	{
@@ -319,8 +415,10 @@ public class DatasourceService {
 			    Date passwordexp=objExitinguser.getPasswordexpirydate();
 			    if(Password.equals(objuser.getsPassword()) && objExitinguser.getUserstatus()!="Locked")
 			    {
+			    	objExitinguser.setLsusergroup(objExitinguser.getMultiusergroupcode().get(0).getLsusergroup());
 			    	String status = objExitinguser.getUserstatus();
 			    	String groupstatus=objExitinguser.getLsusergroup().getUsergroupstatus();
+			    
 			    	if(status.equals("Deactive"))
 			    	{
 			    		objExitinguser.getObjResponse().setInformation("ID_NOTACTIVE");
@@ -666,99 +764,7 @@ public class DatasourceService {
 		}
 		return Tenantname;
 	}
+
 	
-	public DataSourceConfig Registertenantid(DataSourceConfig Tenantname) throws MessagingException
-	{
-		DataSourceConfig objconfig = configRepo.findByTenantid(Tenantname.getTenantid().trim());
-		Response objres = new Response();
-		
-		if(objconfig != null)
-		{
-//			DataSourceConfig objdata = new DataSourceConfig();
-			objres.setStatus(false);
-			objres.setInformation("Organisation ID already esixts.");
-//			objdata.setObjResponse(objres);
-			Tenantname.setObjResponse(objres);
-			return Tenantname;
-		}
-		
-		Tenantname.setInitialize(false);
-		Tenantname.setIsenable(false);
-		
-		objres.setStatus(true);
-		Tenantname.setObjResponse(objres);
-		
-		String password = Generatetenantpassword();
-		String passwordtenant=AESEncryption.encrypt(password);
-		Tenantname.setTenantpassword(passwordtenant);
-		
-//		CustomerSubscriptionRepository.save(Tenantname.getCustomerSubscription());
-		configRepo.save(Tenantname);
-		objres.setInformation("Organisation ID Successfully Created");
-		Tenantname.setObjResponse(objres);
-		
-
-//		Email email = new Email();
-		
-		if(!Tenantname.getAdministratormailid().equals(""))
-		{
-//			int countmail=2;
-			String mails[]= {Tenantname.getUseremail(),Tenantname.getAdministratormailid()};
-			for(int i=0;i<mails.length;i++) {
-				Email email = new Email();
-				email.setMailto(mails[i]);
-				email.setSubject("UsrName and PassWord");
-				email.setMailcontent("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+Tenantname.getTenantid()+"</b><br><b>Password:\t\t"+password+"</b><br><b><a href="+Tenantname.getLoginpath()+">click here to login</a></b>");
-				emailService.sendEmail(email);
-			}
-		}else {
-			Email email = new Email();
-			email.setMailto(Tenantname.getUseremail());
-			email.setSubject("UsrName and PassWord");
-			email.setMailcontent("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+Tenantname.getTenantid()+"</b><br><b>Password:\t\t"+password+"</b><br><b><a href="+Tenantname.getLoginpath()+">click here to login</a></b>");
-			emailService.sendEmail(email);
-		}
-		
-		
-		
-		return Tenantname;
-	}
-	public CustomerSubscription Registercustomersubscription(CustomerSubscription CustomerSubscription) {
-		Response objres = new Response();
-		if(CustomerSubscription.getCustomer_subscription_id() != null) {
-			
-			CustomerSubscriptionRepository.save(CustomerSubscription);
-			objres.setStatus(true);
-			objres.setInformation("Customer Subscription Successfully stored ");
-			CustomerSubscription.setObjResponse(objres);
-		}else {
-			objres.setStatus(false);
-			objres.setInformation("Please Pass CustomerSubscriptionID ");
-			CustomerSubscription.setObjResponse(objres);
-		}
-
-			
-			return CustomerSubscription;
-		}
-		
-	public Invoice Registerinvoice(Invoice invoice) {
-		
-		Response objres = new Response();
-		if(invoice.getCustomerSubscription() != null) {
-			CustomerSubscription CustomerSubscription =CustomerSubscriptionRepository.findBycustomersubscriptionid(invoice.getCustomerSubscription().getCustomer_subscription_id());
-			invoice.setCustomerSubscription(CustomerSubscription);
-			InvoiceRepository.save(invoice);
-			objres.setStatus(true);
-			objres.setInformation("Invoice Successfully created ");
-			invoice.setObjResponse(objres);
-		}else {
-			objres.setStatus(false);
-			objres.setInformation("Please Pass CustomerSubscriptionID ");
-			invoice.setObjResponse(objres);
-		}
-
-			
-			return invoice;
-		}
 	
 }

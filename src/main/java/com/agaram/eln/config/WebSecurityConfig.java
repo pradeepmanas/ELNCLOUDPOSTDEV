@@ -102,6 +102,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/Instrument/Sharedattachment").permitAll().
 		antMatchers("/Instrument/Getorderforlink").permitAll().
 		antMatchers("/Instrument/getmetatag").permitAll().
+		antMatchers("/Instrument/downloadNonCloud/{param}/{fileid}/{tenant}").permitAll().
 		antMatchers("/Instrument/download/{param}/{fileid}").permitAll().
 		antMatchers("/Instrument/Sharedcloudattachment").permitAll().
 		antMatchers("/multitenant/Registertenant").permitAll().
@@ -119,7 +120,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/multitenant/tenantcontactno").permitAll().
 		antMatchers("/multitenant/Completeregistration").permitAll().
 		antMatchers("/multitenant/updatetenantadminpassword").permitAll().
-		antMatchers("/reports/saveDocxsReport").permitAll().
 		antMatchers("/reports/cloudsaveDocxsReport").permitAll().
 		antMatchers("/reports/getSheetLSfileWithFileCode").permitAll().
 		antMatchers("/reports/getLSdocreportsLst").permitAll().

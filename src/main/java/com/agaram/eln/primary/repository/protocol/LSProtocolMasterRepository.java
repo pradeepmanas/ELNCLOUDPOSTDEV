@@ -90,4 +90,6 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	List<LSprotocolmaster> findByProtocolmastercodeIn( ArrayList<Integer> ids);
 
+	LSprotocolmaster findByprotocolmastercode(int protocolusercode);
+
 }

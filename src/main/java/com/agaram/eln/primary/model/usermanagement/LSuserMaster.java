@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.model.usermanagement;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -8,7 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -92,6 +95,9 @@ public class LSuserMaster {
 	@Transient
 	private String sitename;
 	
+	@Transient
+	private boolean sameusertologin;
+	
 	private String loginfrom = "0";
 	
 	@Transient
@@ -99,6 +105,32 @@ public class LSuserMaster {
 	
 	@Transient
 	private Integer multitenantusercount;
+	
+	@Transient
+	private LSusergroup lsusergrouptrans;
+	
+	@OneToMany
+	@JoinColumn(name="usercode")
+	private List<LSMultiusergroup> multiusergroupcode;
+	
+	public LSusergroup getLsusergrouptrans() {
+		return lsusergrouptrans;
+	}
+
+	public void setLsusergrouptrans(LSusergroup lsusergrouptrans) {
+		this.lsusergrouptrans = lsusergrouptrans;
+	}
+
+	@Transient
+	private Integer multiusergroups;
+	
+	public Integer getMultiusergroups() {
+		return multiusergroups;
+	}
+
+	public void setMultiusergroups(Integer multiusergroups) {
+		this.multiusergroups = multiusergroups;
+	}
 	
 	@Column(columnDefinition = "varchar(500)")
 	private String unifieduserid;
@@ -111,6 +143,15 @@ public class LSuserMaster {
 		DFormat = dFormat;
 	}
 	
+
+	public boolean isSameusertologin() {
+		return sameusertologin;
+	}
+
+	public void setSameusertologin(boolean sameusertologin) {
+		this.sameusertologin = sameusertologin;
+	}
+
 	public Integer getPasswordstatus() {
 		return passwordstatus;
 	}
@@ -150,6 +191,14 @@ public class LSuserMaster {
 
 	public void setObjuser(LoggedUser objuser) {
 		this.objuser = objuser;
+	}
+	
+	public List<LSMultiusergroup> getMultiusergroupcode() {
+		return multiusergroupcode;
+	}
+
+	public void setMultiusergroupcode(List<LSMultiusergroup> multiusergroupcode) {
+		this.multiusergroupcode = multiusergroupcode;
 	}
 
 	@Transient
@@ -298,11 +347,11 @@ public class LSuserMaster {
 	}
 
 	public LSusergroup getLsusergroup() {
-		return lsusergroup;
+		return lsusergrouptrans;
 	}
 
 	public void setLsusergroup(LSusergroup lsusergroup) {
-		this.lsusergroup = lsusergroup;
+		this.lsusergrouptrans = lsusergroup;
 	}
 
 	public Response getObjResponse() {

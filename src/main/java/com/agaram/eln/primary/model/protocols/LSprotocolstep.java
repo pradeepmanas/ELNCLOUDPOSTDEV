@@ -34,7 +34,15 @@ public class LSprotocolstep {
 	public Integer sitecode;
 	@Transient
 	private Integer newStep;
+	@Transient
+	private Integer versionno;
 	
+	public Integer getVersionno() {
+		return versionno;
+	}
+	public void setVersionno(Integer versionno) {
+		this.versionno = versionno;
+	}
 	public Integer getNewStep() {
 		return newStep;
 	}
@@ -108,6 +116,14 @@ public class LSprotocolstep {
 		this.sitecode = sitecode;
 	}
 	
+	@Transient 
+	private Integer protocolstepversioncode;
 	
+	public Integer getProtocolstepversioncode() {
+		return protocolstepversioncode;
+	}
+	public void setProtocolstepversioncode(Integer protocolstepversioncode) {
+		this.protocolstepversioncode = protocolstepversioncode;
+	}
 	
 }

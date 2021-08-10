@@ -8,6 +8,7 @@ import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
 
 public interface CustomerSubscriptionRepository extends JpaRepository<CustomerSubscription, Long>  {
 //	void save(CustomerSubscription customerSubscription);
+	
 	@Query("select log from CustomerSubscription log where log.customer_subscription_id = ?1")
 	CustomerSubscription findBycustomersubscriptionid(Long customer_subscription_id);
 }

@@ -70,8 +70,8 @@ public class ProtocolController {
 			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
 			
 			if(userClass.getObjResponse().getStatus()) {
-		    objMap = ProtocolMasterService.addProtocolMaster(argObj);
-			 }
+				objMap = ProtocolMasterService.addProtocolMaster(argObj);
+			}
 			
 			else
 			{
@@ -200,7 +200,7 @@ public class ProtocolController {
 			
 			if(userClass.getObjResponse().getStatus()) {
 				objMap = ProtocolMasterService.addProtocolStep(argObj);
-	 }
+			}
 			
 			else
 			{
@@ -353,7 +353,7 @@ public class ProtocolController {
 		return objMap;
 	}
 	@RequestMapping(value="/updateOrderStatus")
-	protected Map<String, Object> updateOrderStatus(@RequestBody Map<String, Object> argMap){
+	protected Map<String, Object> updateOrderStatus(@RequestBody LSlogilabprotocoldetail argMap){
 		Map<String, Object> objMap = new HashMap<String, Object>();
 		objMap = ProtocolMasterService.updateOrderStatus(argMap);
 		return objMap;
@@ -403,10 +403,16 @@ public class ProtocolController {
 	public Map<String, Object> GetProtocolVersionDetails(@RequestBody Map<String, Object> argObj) {
 		return ProtocolMasterService.GetProtocolVersionDetails(argObj);
 		}
+	
 	@RequestMapping("/GetProtocolorderResourcesQuantitylst")
 	public  List<LSprotocolordersampleupdates> GetProtocolorderResourcesQuantitylst(@RequestBody LSlogilabprotocolsteps LSlogilabprotocolsteps)
 	{
 		return ProtocolMasterService.GetProtocolorderResourcesQuantitylst(LSlogilabprotocolsteps);
 	}
-}
 	
+	@RequestMapping("/GetProtocolTemplateVerionLst")
+	public  Map<String, Object> GetProtocolTemplateVerionLst(@RequestBody  Map<String, Object> argObj)
+	{
+		return ProtocolMasterService.GetProtocolTemplateVerionLst(argObj);
+	}
+}
