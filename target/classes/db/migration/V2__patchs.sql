@@ -284,3 +284,4 @@ update LSaudittrailconfigmaster set screenname='Protocols',taskname='Delete' whe
 
 update LSaudittrailconfigmaster set ordersequnce= 63 where serialno=64;
 update LSaudittrailconfigmaster set ordersequnce= 64 where serialno=65;
+
