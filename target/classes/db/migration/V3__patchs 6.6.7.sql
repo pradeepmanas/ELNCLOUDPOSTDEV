@@ -1,4 +1,3 @@
-
 DO
 $do$
 DECLARE
