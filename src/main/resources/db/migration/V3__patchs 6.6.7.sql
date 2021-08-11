@@ -1,1 +1,3 @@
 ALTER TABLE if exists email alter column  mailcontent Type varchar(5000);
+
+ALTER TABLE if exists email alter column  mailcontent Type varchar(5000);
