@@ -27,3 +27,26 @@ update LSaudittrailconfigmaster set screenname='Protocols',taskname='Delete' whe
 
 update LSaudittrailconfigmaster set ordersequnce= 63 where serialno=64;
 update LSaudittrailconfigmaster set ordersequnce= 64 where serialno=65;
+
+--DO
+--$do$
+--declare
+--  multiusergroupcount integer :=0;
+--begin
+-- select count(*) 
+--   into multiusergroupcount
+--    from lsmultiusergroup;
+---- 	select * from multiusergroupcount
+-- IF multiusergroupcount =0 THEN
+
+-- insert into lsmultiusergroup (usercode,lsusergroup_usergroupcode) 
+--(
+--	select usercode,lsusergroup.usergroupcode from lsusermaster,lsusergroup 
+--where lsusermaster.lsusergroup_usergroupcode = lsusergroup.usergroupcode
+--);
+--     ELSE               
+--      -- do something!
+--   END IF;
+--END
+--$do$;
+

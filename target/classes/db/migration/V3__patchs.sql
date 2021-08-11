@@ -1276,13 +1276,14 @@ $do$
 declare
   multiusergroupcount integer :=0;
 begin
+
  select count(*) into multiusergroupcount from information_schema.columns 
                   where table_name='cloudlsprotocolversionstep';
-
- IF multiusergroupcount =7 
+			
+ IF multiusergroupcount <=6
  	THEN
 ELSE
-	drop table cloudlsprotocolversionstep;
+	DROP TABLE IF EXISTS cloudlsprotocolversionstep;
    END IF;
 END
 $do$;
