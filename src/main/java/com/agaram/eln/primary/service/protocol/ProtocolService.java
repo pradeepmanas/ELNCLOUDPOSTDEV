@@ -454,12 +454,15 @@ public class ProtocolService {
 		}
 //		manual audit
 		if(argObj.containsKey("objuser")) {
-			objUser=objMapper.convertValue(argObj.get("objuser"), LoggedUser.class);
+//			objUser=objMapper.convertValue(argObj.get("objuser"), LoggedUser.class);
+			@SuppressWarnings("unchecked")
+			Map<String, Object> mapObjUser  =(Map<String, Object>) argObj.get("objuser");
+			
 			if(argObj.containsKey("objmanualaudit")) {
 				LScfttransaction objmanualaudit=new LScfttransaction();
 				objmanualaudit = objMapper.convertValue(argObj.get("objmanualaudit"), LScfttransaction.class);
 				
-				objmanualaudit.setComments(objUser.getComments());
+				objmanualaudit.setComments((String) mapObjUser.get("comments"));
 				lscfttransactionRepository.save(objmanualaudit);
 			}
 		}
@@ -797,7 +800,6 @@ public class ProtocolService {
 					});
 		}
 		ObjectMapper objMapper= new ObjectMapper();
-		LoggedUser objUser = new LoggedUser();
 		Response response = new Response();
 		
 //		silent audit
@@ -817,12 +819,14 @@ public class ProtocolService {
 		}
 //		manual audit
 		if(argObj.containsKey("objuser")) {
-			objUser=objMapper.convertValue(argObj.get("objuser"), LoggedUser.class);
+//			objUser=objMapper.convertValue(argObj.get("objuser"), LoggedUser.class);
+			Map<String, Object> mapObjUser  =(Map<String, Object>) argObj.get("objuser");
+			
 			if(argObj.containsKey("objmanualaudit")) {
 				LScfttransaction objmanualaudit=new LScfttransaction();
 				objmanualaudit = objMapper.convertValue(argObj.get("objmanualaudit"), LScfttransaction.class);
 				
-				objmanualaudit.setComments(objUser.getComments());
+				objmanualaudit.setComments((String) mapObjUser.get("comments"));
 				lscfttransactionRepository.save(objmanualaudit);
 			}
 		}
@@ -1160,6 +1164,7 @@ public class ProtocolService {
 //	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> deleteProtocolMaster(Map<String, Object> argObj){
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		LScfttransaction LScfttransactionobj = new LScfttransaction();
@@ -1169,7 +1174,6 @@ public class ProtocolService {
 					});
 			}
 		ObjectMapper objMapper= new ObjectMapper();
-		LoggedUser objUser = new LoggedUser();
 		Response response = new Response();
 //		silent audit
 		if(LScfttransactionobj!=null ) {
@@ -1187,12 +1191,14 @@ public class ProtocolService {
 		}
 //		manual audit
 		if(argObj.containsKey("objuser")) {
-			objUser=objMapper.convertValue(argObj.get("objuser"), LoggedUser.class);
+//			objUser=objMapper.convertValue(argObj.get("objuser"), LoggedUser.class);
+			Map<String, Object> mapObjUser  =(Map<String, Object>) argObj.get("objuser");
+			
 			if(argObj.containsKey("objmanualaudit")) {
 				LScfttransaction objmanualaudit=new LScfttransaction();
 				objmanualaudit = objMapper.convertValue(argObj.get("objmanualaudit"), LScfttransaction.class);
 				
-				objmanualaudit.setComments(objUser.getComments());
+				objmanualaudit.setComments((String) mapObjUser.get("comments"));
 				lscfttransactionRepository.save(objmanualaudit);
 			}
 		}
@@ -1270,15 +1276,14 @@ public class ProtocolService {
 		return mapObj;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> sharewithteam(Map<String, Object> argObj){
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		LScfttransaction LScfttransactionobj = new LScfttransaction();
 		if(argObj.containsKey("objsilentaudit")) {
 			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),new TypeReference<LScfttransaction>() {});
 		ObjectMapper objMapper= new ObjectMapper();
-		LoggedUser objUser = new LoggedUser();
-		
-//		silent audit
+		//		silent audit
 		if(LScfttransactionobj!=null ) {
 			LScfttransactionobj.setTableName("LSprotocolmaster");
 			if(argObj.containsKey("username")) {
@@ -1295,12 +1300,14 @@ public class ProtocolService {
 		}
 //		manual audit
 		if(argObj.containsKey("objuser")) {
-			objUser=objMapper.convertValue(argObj.get("objuser"), LoggedUser.class);
+//			objUser=objMapper.convertValue(argObj.get("objuser"), LoggedUser.class);
+			Map<String, Object> mapObjUser  =(Map<String, Object>) argObj.get("objuser");
+			
 			if(argObj.containsKey("objmanualaudit")) {
 				LScfttransaction objmanualaudit=new LScfttransaction();
 				objmanualaudit = objMapper.convertValue(argObj.get("objmanualaudit"), LScfttransaction.class);
 				
-				objmanualaudit.setComments(objUser.getComments());
+				objmanualaudit.setComments((String) mapObjUser.get("comments"));
 				lscfttransactionRepository.save(objmanualaudit);
 			}
 		}
