@@ -273,7 +273,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	@Transactional
 	@Modifying
 	@Query(value = "select batchcode from"
-	+ " LSlogilablimsorderdetail where ( orderflag = ?1 and lsprojectmaster_projectcode in (?2) and approvelstatus = ?3  and createdtimestamp BETWEEN (?6) AND (?7) ) or ( approved= ?4 and orderflag = ?5 )", nativeQuery=true)
+	+ " LSlogilablimsorderdetail where ( orderflag = ?1 and lsprojectmaster_projectcode in (?2) and approvelstatus = ?3  and createdtimestamp BETWEEN (?6) AND (?7) ) or ( approved= ?4 and orderflag = ?5 and createdtimestamp BETWEEN (?6) AND (?7) )", nativeQuery=true)
 	public List<Long> countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDescInprogress(String orderflag,
 			List<LSprojectmaster> lstproject, Integer approvelstatus , Integer approved,String orderflag1,Date fromdate, Date todate);
 
