@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.service.dashboard;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,6 +145,93 @@ public class DashBoardService {
 			mapOrders.put("completedorder", (lstlimscompleted+lstCompletedordercount.size()));
 			mapOrders.put("onproces", lstlimsprocess+orderinproject.size());
 			mapOrders.put("activities", lsactivityRepository.findTop20ByOrderByActivitycodeDesc());
+			mapOrders.put("activitiescount",lsactivityRepository.count());
+			mapOrders.put("ParsedParameters", lstparsedparam);
+		}
+		
+		if(objuser.getObjsilentaudit() != null)
+    	{
+			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
+    	}
+		
+		return mapOrders;
+	}
+	
+	public Map<String, Object> Getdashboarddetailsonfilters(LSuserMaster objuser)
+	{
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
+		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
+		
+		if(objupdateduser.getUsername().equals("Administrator"))
+		{
+			mapOrders.put("orders", lslogilablimsorderdetailRepository.countByCreatedtimestampBetween(fromdate,todate));
+			mapOrders.put("pendingorder", lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetween("N",fromdate,todate));
+			mapOrders.put("completedorder", lslogilablimsorderdetailRepository.countByOrderflagAndCompletedtimestampBetween("R", fromdate,todate));
+			mapOrders.put("onproces", lslogilablimsorderdetailRepository.countByOrderflagAndLssamplefileInAndCreatedtimestampBetween("N", lssamplefile, fromdate,todate));
+			mapOrders.put("activities", lsactivityRepository.findTop20ByActivityDateBetweenOrderByActivitycodeDesc(fromdate,todate));
+			mapOrders.put("activitiescount",lsactivityRepository.countByActivityDateBetween(fromdate,todate));
+			List<LSparsedparameters> lstparsedparam = lsparsedparametersRespository.getallrecords();
+			mapOrders.put("ParsedParameters", lstparsedparam);
+		}
+		else
+		{
+			long lsorder = lslogilablimsorderdetailRepository.countByFiletypeAndCreatedtimestampBetween(0,fromdate,todate);
+			
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objupdateduser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+			List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository.findBylsusergroup(objupdateduser.getLsusergroup());
+			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+			
+			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
+			
+			long lstUserorder = lslogilablimsorderdetailRepository.countByLsprojectmasterInAndCreatedtimestampBetween(lstproject,fromdate,todate);
+			
+			long lstlimscompleted = lslogilablimsorderdetailRepository.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "R",fromdate,todate);
+//			long lstCompletedordercount = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInOrderByBatchcodeDesc("R",lstproject);
+			List<Long> lstCompletedordercount = new ArrayList<Long>();
+			if(lstproject != null && lstproject.size() >0)
+			{
+				
+//				lstCompletedordercount = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInOrderByBatchcodeDesc("R",lstproject,objuser.getUsercode());
+				lstCompletedordercount = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInAndCompletedtimestampBetween("R",lstproject,fromdate,todate);
+			}
+			List<LSlogilablimsorderdetail> lstCompletedorder =  lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndCompletedtimestampBetweenOrderByBatchcodeDesc("R",lstproject,fromdate,todate);
+			
+			List<Long> lstBatchcode = lstCompletedorder.stream().map(LSlogilablimsorderdetail::getBatchcode).collect(Collectors.toList());
+			long lstlimsprocess = lslogilablimsorderdetailRepository.countByFiletypeAndOrderflagAndLssamplefileInAndCreatedtimestampBetween(0,"N", lssamplefile,fromdate,todate);
+//			long orderinproject = lslogilablimsorderdetailRepository.countByOrderflagAndLssamplefileInAndLsprojectmasterIn("N", lssamplefile,lstproject);
+			List<Long> orderinproject = new ArrayList<Long>();
+			if(lstproject != null && lssamplefile != null && lstproject.size() >0 && lssamplefile.size()>0)
+			{
+//				orderinproject = lslogilablimsorderdetailRepository.countByOrderflagAndLssamplefileInAndLsprojectmasterIn("N", lssamplefile,lstproject,objuser.getUsercode());
+				orderinproject = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDescInprogress("N",lstproject,1,1,"N",fromdate,todate);
+			}
+			mapOrders.put("orders", (lsorder+lstUserorder));
+			long lstlimspending = lslogilablimsorderdetailRepository.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "N",fromdate,todate);
+//			long lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc("N",lstproject, lsworkflow);
+			List<Long> lstpending = new ArrayList<Long>();
+			if(lstproject != null && lsworkflow != null && lstproject.size() >0 && lsworkflow.size()>0)
+			{
+//				lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc("N",lstproject, lsworkflow,objuser.getUsercode());
+				lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("N",lstproject,fromdate,todate);
+			}
+			
+			List<LSparsedparameters> lstparsedparam = new ArrayList<LSparsedparameters>(); 
+			if(lstBatchcode != null && lstBatchcode.size()>0)
+			{
+				lstparsedparam = lsparsedparametersRespository.getByBatchcodeIn(lstBatchcode);
+			}
+			mapOrders.put("pendingorder", (lstlimspending+lstpending.size()));
+			mapOrders.put("completedorder", (lstlimscompleted+lstCompletedordercount.size()));
+			mapOrders.put("onproces", lstlimsprocess+orderinproject.size());
+			mapOrders.put("activities", lsactivityRepository.findTop20ByActivityDateBetweenOrderByActivitycodeDesc(fromdate,todate));
 			mapOrders.put("activitiescount",lsactivityRepository.count());
 			mapOrders.put("ParsedParameters", lstparsedparam);
 		}

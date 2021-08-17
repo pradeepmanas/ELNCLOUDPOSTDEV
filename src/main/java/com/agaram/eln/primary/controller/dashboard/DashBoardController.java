@@ -23,7 +23,15 @@ public class DashBoardController {
 	@PostMapping("/Getdashboarddetails")
 	public Map<String, Object> Getdashboarddetails(@RequestBody LSuserMaster objuser)
 	{
-		return dashBoardService.Getdashboarddetails(objuser);
+		if(objuser.getObjuser() != null && objuser.getObjuser().getFromdate() != null 
+				&& objuser.getObjuser().getTodate() != null && objuser.getObjuser().getFiltertype() != null)
+		{
+			return dashBoardService.Getdashboarddetailsonfilters(objuser);
+		}
+		else
+		{
+			return dashBoardService.Getdashboarddetails(objuser);
+		}
 	}
 	
 	@PostMapping("/GetActivitiesonLazy")

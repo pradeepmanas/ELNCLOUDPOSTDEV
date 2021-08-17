@@ -241,5 +241,47 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	+ " LSlogilablimsorderdetail where ( orderflag = ?1 and lsprojectmaster_projectcode in (?2) and approvelstatus = ?3 ) or ( approved= ?4 and orderflag = ?5 )", nativeQuery=true)
 	public List<Long> countByOrderflagAndLsprojectmasterInOrderByBatchcodeDescInprogress(String orderflag,List<LSprojectmaster> lstproject, Integer approvelstatus , Integer approved,String orderflag1);
 
+	
+	public Long countByCreatedtimestampBetween(Date fromdate, Date todate);
+	
+	public long countByOrderflagAndCreatedtimestampBetween(String orderflag,Date fromdate, Date todate);
+	
+	public long countByOrderflagAndCompletedtimestampBetween(String orderflag,Date fromdate, Date todate);
+	
+	public long countByOrderflagAndLssamplefileInAndCreatedtimestampBetween(String orderflag, 
+			List<LSsamplefile> lssamplefile,Date fromdate, Date todate);
+	
+	public long countByFiletypeAndCreatedtimestampBetween(Integer filetype,Date fromdate, Date todate);
+	
+	public long countByLsprojectmasterInAndCreatedtimestampBetween(List<LSprojectmaster> lstproject,Date fromdate, Date todate);
+	
+	public long countByFiletypeAndOrderflagAndCreatedtimestampBetween(Integer filetype, String orderflag,Date fromdate, Date todate);
+	
+	@Transactional
+	@Modifying
+	@Query(value = "select batchcode from"
+	+ " LSlogilablimsorderdetail where orderflag = ?1 and lsprojectmaster_projectcode in (?2) and completedtimestamp BETWEEN (?3) AND (?4)", nativeQuery=true)
+	public List<Long> countByOrderflagAndLsprojectmasterInAndCompletedtimestampBetween(String orderflag
+			,List<LSprojectmaster> lstproject,Date fromdate, Date todate);
+	
+	public List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndCompletedtimestampBetweenOrderByBatchcodeDesc(String orderflag,
+			List<LSprojectmaster> lstproject,Date fromdate, Date todate);
+	
+	public long countByFiletypeAndOrderflagAndLssamplefileInAndCreatedtimestampBetween(Integer filetype
+			, String orderflag, List<LSsamplefile> lssamplefile,Date fromdate, Date todate);
+	
+	@Transactional
+	@Modifying
+	@Query(value = "select batchcode from"
+	+ " LSlogilablimsorderdetail where ( orderflag = ?1 and lsprojectmaster_projectcode in (?2) and approvelstatus = ?3  and createdtimestamp BETWEEN (?6) AND (?7) ) or ( approved= ?4 and orderflag = ?5 )", nativeQuery=true)
+	public List<Long> countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDescInprogress(String orderflag,
+			List<LSprojectmaster> lstproject, Integer approvelstatus , Integer approved,String orderflag1,Date fromdate, Date todate);
 
+	@Transactional
+	@Modifying
+	@Query(value = "select batchcode from"
+	+ " LSlogilablimsorderdetail where orderflag = ?1 and lsprojectmaster_projectcode in (?2) and createdtimestamp BETWEEN (?3) AND (?4)", nativeQuery=true)
+	public List<Long> countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween(String orderflag
+			,List<LSprojectmaster> lstproject,Date fromdate, Date todate);
+	
 }

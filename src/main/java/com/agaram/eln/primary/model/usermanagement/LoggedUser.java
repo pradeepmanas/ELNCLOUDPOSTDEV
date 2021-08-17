@@ -23,14 +23,42 @@ public class LoggedUser {
 	private String sInformation;
 	
 	private String sOLDPassword;
-
-	//	private LSSiteMaster objsite;
+	private String sNewPassword;
+	private String sConfirmPassword;
+	private Date logindate;
+	private Date passwordexpirydate;
 	private Integer objsite;
 
 	private Integer ismultitenant;
 	
 	private Integer multitenantusercount;
 	
+	private Integer filtertype;
+	private Date fromdate;
+	private Date todate;
+
+	private LScfttransaction objsilentaudit;
+	private LScfttransaction objmanualaudit;
+	private LSuserMaster lsusermaster;
+	@Transient
+	private LoggedUser objuser;
+	
+
+	@Transient
+	private String sUserPassword;
+	
+	@Transient
+	private String sReasonNo;
+	
+	@Transient
+	private String sReasonName;
+	
+	@Transient
+	private String comments;
+
+	@Transient
+	private Integer multiusergroupcode;
+
 	public Integer getObjsite() {
 		return objsite;
 	}
@@ -38,10 +66,6 @@ public class LoggedUser {
 	public void setObjsite(Integer objsite) {
 		this.objsite = objsite;
 	}
-	private String sNewPassword;
-	private String sConfirmPassword;
-	private Date logindate;
-	private Date passwordexpirydate;
 	
 	public String getsOLDPassword() {
 		return sOLDPassword;
@@ -58,12 +82,6 @@ public class LoggedUser {
 	public void setPasswordexpirydate(Date passwordexpirydate) {
 		this.passwordexpirydate = passwordexpirydate;
 	}
-
-	private LScfttransaction objsilentaudit;
-	private LScfttransaction objmanualaudit;
-	private LSuserMaster lsusermaster;
-	@Transient
-	private LoggedUser objuser;
 	
 	public LSuserMaster getLsusermaster() {
 		return lsusermaster;
@@ -73,9 +91,6 @@ public class LoggedUser {
 		this.lsusermaster = lsusermaster;
 	}
 	
-	@Transient
-	private Integer multiusergroupcode;
-
 	public Integer getMultiusergroupcode() {
 		return multiusergroupcode;
 	}
@@ -84,20 +99,6 @@ public class LoggedUser {
 		this.multiusergroupcode = multiusergroupcode;
 	}
 
-	@Transient
-	private String sUserPassword;
-	
-	@Transient
-	private String sReasonNo;
-	
-	@Transient
-	private String sReasonName;
-	
-	@Transient
-	private String comments;
-	
-	
-	
 	public String getsUserPassword() {
 		return sUserPassword;
 	}
@@ -122,8 +123,6 @@ public class LoggedUser {
 		this.sReasonName = sReasonName;
 	}
 
-	
-
 	public String getComments() {
 		return comments;
 	}
@@ -146,7 +145,6 @@ public class LoggedUser {
 	public void setsUsername(String sUsername) {
 		this.sUsername = sUsername;
 	}
-	
 	
 	public String getsNewPassword() {
 		return sNewPassword;
@@ -285,6 +283,30 @@ public class LoggedUser {
 
 	public void setMultitenantusercount(Integer multitenantusercount) {
 		this.multitenantusercount = multitenantusercount;
+	}
+
+	public Integer getFiltertype() {
+		return filtertype;
+	}
+
+	public void setFiltertype(Integer filtertype) {
+		this.filtertype = filtertype;
+	}
+
+	public Date getFromdate() {
+		return fromdate;
+	}
+
+	public void setFromdate(Date fromdate) {
+		this.fromdate = fromdate;
+	}
+
+	public Date getTodate() {
+		return todate;
+	}
+
+	public void setTodate(Date todate) {
+		this.todate = todate;
 	}
 		
 	

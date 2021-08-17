@@ -58,8 +58,6 @@ public class LSuserMaster {
 	@Column(name = "userretirestatus")
 	private Integer userretirestatus;
 	
-	
-
 	private Integer labsheet;
 	private String emailid;
 	private String profileimage;
@@ -113,6 +111,21 @@ public class LSuserMaster {
 	@JoinColumn(name="usercode")
 	private List<LSMultiusergroup> multiusergroupcode;
 	
+	@Transient
+	private Integer multiusergroups;
+	
+	@Column(columnDefinition = "varchar(500)")
+	private String unifieduserid;
+	
+	@Transient
+	private Response response;
+	
+	@Transient
+	LoggedUser objuser;
+	
+	@Transient
+	private String token;
+	
 	public LSusergroup getLsusergrouptrans() {
 		return lsusergrouptrans;
 	}
@@ -120,9 +133,6 @@ public class LSuserMaster {
 	public void setLsusergrouptrans(LSusergroup lsusergrouptrans) {
 		this.lsusergrouptrans = lsusergrouptrans;
 	}
-
-	@Transient
-	private Integer multiusergroups;
 	
 	public Integer getMultiusergroups() {
 		return multiusergroups;
@@ -132,9 +142,6 @@ public class LSuserMaster {
 		this.multiusergroups = multiusergroups;
 	}
 	
-	@Column(columnDefinition = "varchar(500)")
-	private String unifieduserid;
-	
 	public String getDFormat() {
 		return DFormat;
 	}
@@ -143,7 +150,6 @@ public class LSuserMaster {
 		DFormat = dFormat;
 	}
 	
-
 	public boolean isSameusertologin() {
 		return sameusertologin;
 	}
@@ -200,16 +206,6 @@ public class LSuserMaster {
 	public void setMultiusergroupcode(List<LSMultiusergroup> multiusergroupcode) {
 		this.multiusergroupcode = multiusergroupcode;
 	}
-
-	@Transient
-	private Response response;
-	
-	@Transient
-	LoggedUser objuser;
-	
-	@Transient
-	private String token;
-	
 
 	public LScfttransaction getObjsilentaudit() {
 		return objsilentaudit;
