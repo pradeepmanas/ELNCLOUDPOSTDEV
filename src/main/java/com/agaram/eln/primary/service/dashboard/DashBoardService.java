@@ -179,6 +179,8 @@ public class DashBoardService {
 			mapOrders.put("activitiescount",lsactivityRepository.countByActivityDateBetween(fromdate,todate));
 			List<LSparsedparameters> lstparsedparam = lsparsedparametersRespository.getallrecords();
 			mapOrders.put("ParsedParameters", lstparsedparam);
+			
+			mapOrders.put("orderlst", lslogilablimsorderdetailRepository.findAll());
 		}
 		else
 		{
@@ -234,6 +236,8 @@ public class DashBoardService {
 			mapOrders.put("activities", lsactivityRepository.findTop20ByActivityDateBetweenOrderByActivitycodeDesc(fromdate,todate));
 			mapOrders.put("activitiescount",lsactivityRepository.count());
 			mapOrders.put("ParsedParameters", lstparsedparam);
+			
+			mapOrders.put("orderlst", lslogilablimsorderdetailRepository.findAll());
 		}
 		
 		if(objuser.getObjsilentaudit() != null)

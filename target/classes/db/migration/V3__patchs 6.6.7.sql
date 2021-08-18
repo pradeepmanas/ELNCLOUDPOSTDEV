@@ -1280,24 +1280,22 @@ begin
                   where table_name='cloudlsprotocolversionstep';
 			
  IF multiusergroupcount <=6
- 	THEN
-ELSE
-	DROP TABLE IF EXISTS cloudlsprotocolversionstep;
+ THEN
+ 	DROP TABLE IF EXISTS cloudlsprotocolversionstep;
    END IF;
 END
-$do$;
-    
+$do$;    
     
 CREATE TABLE IF NOT EXISTS public.cloudlsprotocolversionstep
 (
-	idversioncode integer NOT NULL,
     id integer NOT NULL,
-    lsprotocolstepinfo character varying(255) COLLATE pg_catalog."default",
     protocolmastercode integer,
     status integer,
     versionname character varying(100) COLLATE pg_catalog."default",
     versionno integer,
-    CONSTRAINT cloudlsprotocolversionstep_pkey PRIMARY KEY (idversioncode)
+    idversioncode integer NOT NULL,
+    lsprotocolstepinfo jsonb,
+    CONSTRAINT cloudlsprotocolversionstep_pkey PRIMARY KEY (id)
 )
 WITH (
     OIDS = FALSE
@@ -1306,3 +1304,7 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.cloudlsprotocolversionstep
     OWNER to postgres;
+    
+update lsaudittrailconfigmaster set manualaudittrail = 0;
+
+ALTER TABLE if exists CloudLSprotocolversionstep alter column lsprotocolstepinfo type jsonb;
