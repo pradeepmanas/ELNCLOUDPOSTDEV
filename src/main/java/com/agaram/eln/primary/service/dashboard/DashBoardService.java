@@ -180,7 +180,7 @@ public class DashBoardService {
 			List<LSparsedparameters> lstparsedparam = lsparsedparametersRespository.getallrecords();
 			mapOrders.put("ParsedParameters", lstparsedparam);
 			
-			mapOrders.put("orderlst", lslogilablimsorderdetailRepository.findAll());
+			mapOrders.put("orderlst", lslogilablimsorderdetailRepository.findByOrderByBatchcodeDesc());
 		}
 		else
 		{
@@ -237,7 +237,7 @@ public class DashBoardService {
 			mapOrders.put("activitiescount",lsactivityRepository.count());
 			mapOrders.put("ParsedParameters", lstparsedparam);
 			
-			mapOrders.put("orderlst", lslogilablimsorderdetailRepository.findAll());
+			mapOrders.put("orderlst", lslogilablimsorderdetailRepository.findByOrderByBatchcodeDesc());
 		}
 		
 		if(objuser.getObjsilentaudit() != null)

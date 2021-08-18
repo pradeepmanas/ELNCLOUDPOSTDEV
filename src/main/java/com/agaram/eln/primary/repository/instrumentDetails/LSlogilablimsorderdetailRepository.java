@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import com.agaram.eln.primary.model.general.Logilaborders;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
@@ -283,5 +284,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	+ " LSlogilablimsorderdetail where orderflag = ?1 and lsprojectmaster_projectcode in (?2) and createdtimestamp BETWEEN (?3) AND (?4)", nativeQuery=true)
 	public List<Long> countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween(String orderflag
 			,List<LSprojectmaster> lstproject,Date fromdate, Date todate);
+	
+	
+	public List<Logilaborders> findByOrderByBatchcodeDesc();
 	
 }
