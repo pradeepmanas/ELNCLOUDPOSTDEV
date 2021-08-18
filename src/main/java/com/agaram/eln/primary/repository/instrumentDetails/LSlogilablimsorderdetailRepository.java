@@ -287,5 +287,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	
 	
 	public List<Logilaborders> findByOrderByBatchcodeDesc();
+	public List<Logilaborders> findByCreatedtimestampBetweenOrderByBatchcodeDesc(Date fromdate, Date todate);
+	public List<Logilaborders> findByLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc(List<LSprojectmaster> lstproject,Date fromdate, Date todate);
 	
 }
