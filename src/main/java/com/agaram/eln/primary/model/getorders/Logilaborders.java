@@ -16,10 +16,11 @@ public class Logilaborders {
 	private String testname;
 	private LSsamplemaster lssamplemaster;
 	private LSprojectmaster lsprojectmaster;
+	private Sheet lsfile;
 	
 	public Logilaborders(Long batchcode, String batchid, String orderflag,
 			Integer approvelstatus, Integer lockeduser, Integer testcode, String testname,
-			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster)
+			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,Sheet lsfile)
 	{
 		this.batchcode = batchcode;
 		this.batchid = batchid;
@@ -30,6 +31,7 @@ public class Logilaborders {
 		this.testname = testname;
 		this.lssamplemaster = lssamplemaster;
 		this.lsprojectmaster = lsprojectmaster;
+		this.lsfile = lsfile;
 	}
 	
 	public Long getBatchcode() {
@@ -99,6 +101,14 @@ public class Logilaborders {
 
 	public void setLsprojectmaster(LSprojectmaster lsprojectmaster) {
 		this.lsprojectmaster = lsprojectmaster;
+	}
+
+	public Sheet getLsfile() {
+		return lsfile;
+	}
+
+	public void setLsfile(Sheet lsfile) {
+		this.lsfile = lsfile;
 	}
 	
 	
