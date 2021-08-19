@@ -32,7 +32,7 @@ public class Logilaborders {
 		this.testname = testname;
 		this.lssamplemaster = lssamplemaster;
 		this.lsprojectmaster = lsprojectmaster;
-		this.lsfile = lsfile;
+		this.lsfile = new LSfile(lsfile.getFilecode(), lsfile.getFilenameuser());
 	}
 	
 	public Long getBatchcode() {
