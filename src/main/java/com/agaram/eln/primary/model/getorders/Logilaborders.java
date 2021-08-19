@@ -3,6 +3,7 @@ package com.agaram.eln.primary.model.getorders;
 import javax.persistence.Column;
 
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 
 public class Logilaborders {
 
@@ -14,10 +15,11 @@ public class Logilaborders {
 	private Integer testcode;
 	private String testname;
 	private LSsamplemaster lssamplemaster;
+	private LSprojectmaster lsprojectmaster;
 	
 	public Logilaborders(Long batchcode, String batchid, String orderflag,
 			Integer approvelstatus, Integer lockeduser, Integer testcode, String testname,
-			LSsamplemaster lssamplemaster)
+			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster)
 	{
 		this.batchcode = batchcode;
 		this.batchid = batchid;
@@ -27,6 +29,7 @@ public class Logilaborders {
 		this.testcode= testcode; 
 		this.testname = testname;
 		this.lssamplemaster = lssamplemaster;
+		this.lsprojectmaster = lsprojectmaster;
 	}
 	
 	public Long getBatchcode() {
@@ -88,6 +91,14 @@ public class Logilaborders {
 
 	public void setLssamplemaster(LSsamplemaster lssamplemaster) {
 		this.lssamplemaster = lssamplemaster;
+	}
+
+	public LSprojectmaster getLsprojectmaster() {
+		return lsprojectmaster;
+	}
+
+	public void setLsprojectmaster(LSprojectmaster lsprojectmaster) {
+		this.lsprojectmaster = lsprojectmaster;
 	}
 	
 	
