@@ -105,7 +105,7 @@ public class Logilaborders {
 	}
 
 	public LSfile getLsfile() {
-		return lsfile;
+		return new LSfile(lsfile.getFilecode(), lsfile.getFilenameuser());
 	}
 
 	public void setLsfile(LSfile lsfile) {
