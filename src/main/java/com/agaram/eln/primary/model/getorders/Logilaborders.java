@@ -34,8 +34,8 @@ public class Logilaborders {
 		this.testname = testname;
 		this.lssamplemaster = lssamplemaster;
 		this.lsprojectmaster = lsprojectmaster;
-		this.filecode = lsfile.getFilecode();
-		this.filename = lsfile.getFilenameuser();
+		this.filecode = lsfile != null ? lsfile.getFilecode():-1;
+		this.filename = lsfile != null ? lsfile.getFilenameuser() : null;
 //		this.lsfile = new LSfile(lsfile.getFilecode(), lsfile.getFilenameuser());
 	}
 	
