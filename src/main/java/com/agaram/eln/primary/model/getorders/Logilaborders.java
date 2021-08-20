@@ -19,7 +19,7 @@ public class Logilaborders {
 	private LSprojectmaster lsprojectmaster;
 	private Integer filecode;
 	private String filename;
-//	private LSfile lsfile;
+	private Sheet lsfile;
 	
 	public Logilaborders(Long batchcode, String batchid, String orderflag,
 			Integer approvelstatus, Integer lockeduser, Integer testcode, String testname,
@@ -36,7 +36,9 @@ public class Logilaborders {
 		this.lsprojectmaster = lsprojectmaster;
 		this.filecode = lsfile.getFilecode();
 		this.filename = lsfile.getFilenameuser();
-//		this.lsfile = new LSfile(lsfile.getFilecode(), lsfile.getFilenameuser());
+		this.lsfile.setFilecode(lsfile.getFilecode());
+		this.lsfile.setFilenameuser(lsfile.getFilenameuser());
+				//new LSfile(lsfile.getFilecode(), lsfile.getFilenameuser());
 	}
 	
 	public Long getBatchcode() {
