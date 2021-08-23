@@ -1,7 +1,5 @@
 package com.agaram.eln.primary.model.getorders;
 
-import javax.persistence.Column;
-
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
@@ -21,20 +19,21 @@ public class Logilaborders {
 	private String filename;
 //	private LSfile lsfile;
 	
-	public Logilaborders(Long batchcode, String batchid, String orderflag,
-			Integer approvelstatus, Integer lockeduser, Integer testcode, String testname,
-			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,LSfile lsfile)
-	{
+
+	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus, Integer lockeduser,
+			Integer testcode, String testname, LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,
+			LSfile lsfile) {
+		
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.orderflag = orderflag;
-		this.approvelstatus= approvelstatus;
-		this.lockeduser= lockeduser;
-		this.testcode= testcode; 
+		this.approvelstatus = approvelstatus;
+		this.lockeduser = lockeduser;
+		this.testcode = testcode;
 		this.testname = testname;
 		this.lssamplemaster = lssamplemaster;
 		this.lsprojectmaster = lsprojectmaster;
-		this.filecode = lsfile != null ? lsfile.getFilecode():-1;
+		this.filecode = lsfile != null ? lsfile.getFilecode() : -1;
 		this.filename = lsfile != null ? lsfile.getFilenameuser() : null;
 //		this.lsfile = new LSfile(lsfile.getFilecode(), lsfile.getFilenameuser());
 	}
