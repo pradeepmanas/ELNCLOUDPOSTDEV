@@ -35,6 +35,25 @@ public class LSlogilabprotocolsteps {
 	private Integer newStep;
 	private Integer sitecode;
 	private String orderstepflag;
+	@Transient
+	private Integer versionno;
+	
+	@Transient 
+	private Integer protocolstepversioncode;
+	
+	public Integer getProtocolstepversioncode() {
+		return protocolstepversioncode;
+	}
+	public void setProtocolstepversioncode(Integer protocolstepversioncode) {
+		this.protocolstepversioncode = protocolstepversioncode;
+	}
+	
+	public Integer getVersionno() {
+		return versionno;
+	}
+	public void setVersionno(Integer versionno) {
+		this.versionno = versionno;
+	}
 	public Integer getProtocolorderstepcode() {
 		return protocolorderstepcode;
 	}

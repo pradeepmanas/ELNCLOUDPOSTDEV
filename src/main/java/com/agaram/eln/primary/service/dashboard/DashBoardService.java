@@ -249,6 +249,184 @@ public class DashBoardService {
 		return mapOrders;
 	}
 	
+	public Map<String, Object> Getdashboardordercount(LSuserMaster objuser)
+	{
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
+		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
+		
+		if(objupdateduser.getUsername().equals("Administrator"))
+		{
+			mapOrders.put("orders", lslogilablimsorderdetailRepository.countByCreatedtimestampBetween(fromdate,todate));
+			mapOrders.put("pendingorder", lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetween("N",fromdate,todate));
+			mapOrders.put("completedorder", lslogilablimsorderdetailRepository.countByOrderflagAndCompletedtimestampBetween("R", fromdate,todate));
+			mapOrders.put("onproces", lslogilablimsorderdetailRepository.countByOrderflagAndLssamplefileInAndCreatedtimestampBetween("N", lssamplefile, fromdate,todate));
+			
+		}
+		else
+		{
+			long lsorder = lslogilablimsorderdetailRepository.countByFiletypeAndCreatedtimestampBetween(0,fromdate,todate);
+			
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objupdateduser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+			List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository.findBylsusergroup(objupdateduser.getLsusergroup());
+			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+			
+			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
+			
+			long lstUserorder = lslogilablimsorderdetailRepository.countByLsprojectmasterInAndCreatedtimestampBetween(lstproject,fromdate,todate);
+			
+			long lstlimscompleted = lslogilablimsorderdetailRepository.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "R",fromdate,todate);
+			List<Long> lstCompletedordercount = new ArrayList<Long>();
+			if(lstproject != null && lstproject.size() >0)
+			{
+				lstCompletedordercount = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInAndCompletedtimestampBetween("R",lstproject,fromdate,todate);
+			}
+			
+			long lstlimsprocess = lslogilablimsorderdetailRepository.countByFiletypeAndOrderflagAndLssamplefileInAndCreatedtimestampBetween(0,"N", lssamplefile,fromdate,todate);
+			List<Long> orderinproject = new ArrayList<Long>();
+			if(lstproject != null && lssamplefile != null && lstproject.size() >0 && lssamplefile.size()>0)
+			{
+				orderinproject = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDescInprogress("N",lstproject,1,1,"N",fromdate,todate);
+			}
+			mapOrders.put("orders", (lsorder+lstUserorder));
+			long lstlimspending = lslogilablimsorderdetailRepository.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "N",fromdate,todate);
+			List<Long> lstpending = new ArrayList<Long>();
+			if(lstproject != null && lsworkflow != null && lstproject.size() >0 && lsworkflow.size()>0)
+			{
+				lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("N",lstproject,fromdate,todate);
+			}
+			
+			mapOrders.put("pendingorder", (lstlimspending+lstpending.size()));
+			mapOrders.put("completedorder", (lstlimscompleted+lstCompletedordercount.size()));
+			mapOrders.put("onproces", lstlimsprocess+orderinproject.size());
+			
+		}
+		
+		if(objuser.getObjsilentaudit() != null)
+    	{
+			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
+    	}
+		
+		return mapOrders;
+	}
+	
+	public Map<String, Object> Getdashboardorders(LSuserMaster objuser)
+	{
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
+		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+		
+		if(objupdateduser.getUsername().equals("Administrator"))
+		{
+			mapOrders.put("orderlst", lslogilablimsorderdetailRepository.findByCreatedtimestampBetweenOrderByBatchcodeDesc(fromdate,todate));
+		}
+		else
+		{
+			
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objupdateduser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+			
+			mapOrders.put("orderlst", lslogilablimsorderdetailRepository.findByLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc(lstproject,fromdate,todate));
+		}
+		
+		if(objuser.getObjsilentaudit() != null)
+    	{
+			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
+    	}
+		
+		return mapOrders;
+	}
+	
+	
+	public Map<String, Object> Getdashboardparameters(LSuserMaster objuser)
+	{
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
+		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+		
+		if(objupdateduser.getUsername().equals("Administrator"))
+		{	
+			List<LSparsedparameters> lstparsedparam = lsparsedparametersRespository.getallrecords();
+			mapOrders.put("ParsedParameters", lstparsedparam);
+		}
+		else
+		{
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objupdateduser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+			
+			
+			List<LSlogilablimsorderdetail> lstCompletedorder =  lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndCompletedtimestampBetweenOrderByBatchcodeDesc("R",lstproject,fromdate,todate);
+			
+			List<Long> lstBatchcode = lstCompletedorder.stream().map(LSlogilablimsorderdetail::getBatchcode).collect(Collectors.toList());
+			
+			
+			List<LSparsedparameters> lstparsedparam = new ArrayList<LSparsedparameters>(); 
+			if(lstBatchcode != null && lstBatchcode.size()>0)
+			{
+				lstparsedparam = lsparsedparametersRespository.getByBatchcodeIn(lstBatchcode);
+			}
+			
+			mapOrders.put("ParsedParameters", lstparsedparam);
+			
+		}
+		
+		if(objuser.getObjsilentaudit() != null)
+    	{
+			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
+    	}
+		
+		return mapOrders;
+	}
+	
+	public Map<String, Object> Getdashboardactivities(LSuserMaster objuser)
+	{
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
+		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+		
+		if(objupdateduser.getUsername().equals("Administrator"))
+		{
+			mapOrders.put("activities", lsactivityRepository.findTop20ByActivityDateBetweenOrderByActivitycodeDesc(fromdate,todate));
+			mapOrders.put("activitiescount",lsactivityRepository.countByActivityDateBetween(fromdate,todate));
+		}
+		else
+		{
+			mapOrders.put("activities", lsactivityRepository.findTop20ByActivityDateBetweenOrderByActivitycodeDesc(fromdate,todate));
+			mapOrders.put("activitiescount",lsactivityRepository.count());
+		}
+		
+		if(objuser.getObjsilentaudit() != null)
+    	{
+			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
+    	}
+		
+		return mapOrders;
+	}
+	
 	public List<LSactivity> GetActivitiesonLazy(LSactivity objactivities)
 	{
 		List<LSactivity> lstactivities = new ArrayList<LSactivity>();  

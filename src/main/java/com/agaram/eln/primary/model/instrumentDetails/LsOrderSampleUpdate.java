@@ -34,7 +34,28 @@ public class LsOrderSampleUpdate {
 	public Integer repositorycode;
 	public Integer repositorydatacode;
 	public Integer quantityused=0;
+	public String historydetails;
+	public String createdbyusername;
+	public String screenmodule;
 	
+	public String getHistorydetails() {
+		return historydetails;
+	}
+	public String getCreatedbyusername() {
+		return createdbyusername;
+	}
+	public String getScreenmodule() {
+		return screenmodule;
+	}
+	public void setHistorydetails(String historydetails) {
+		this.historydetails = historydetails;
+	}
+	public void setCreatedbyusername(String createdbyusername) {
+		this.createdbyusername = createdbyusername;
+	}
+	public void setScreenmodule(String screenmodule) {
+		this.screenmodule = screenmodule;
+	}
 	public Integer getOrdersamplecode() {
 		return ordersamplecode;
 	}

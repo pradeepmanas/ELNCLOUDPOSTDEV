@@ -44,6 +44,18 @@ public class Lsrepositories {
 	
 	private String consumefield;
 	
+	private boolean isexpiredate = false;
+	
+	private String isonexpireddatefield;
+	
+	public String getIsonexpireddatefield() {
+		return isonexpireddatefield;
+	}
+
+	public void setIsonexpireddatefield(String isonexpireddatefield) {
+		this.isonexpireddatefield = isonexpireddatefield;
+	}
+
 	@Transient
 	Response objResponse;
 
@@ -55,6 +67,14 @@ public class Lsrepositories {
 		this.repositorycode = repositorycode;
 	}
 	
+	public boolean isIsexpiredate() {
+		return isexpiredate;
+	}
+
+	public void setIsexpiredate(boolean isexpiredate) {
+		this.isexpiredate = isexpiredate;
+	}
+
 	public String getRepositoryname() {
 		return repositoryname;
 	}

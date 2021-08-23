@@ -1,11 +1,8 @@
 package com.agaram.eln.primary.model.multitenant;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -26,20 +23,39 @@ public class Invoice {
 //	@GeneratedValue(strategy = GenerationType.IDENTITY)
 //	@Basic(optional = false)
 //	    private Long id;
-	 @Id
-	 private Integer invoice_id;
-	 private String type;
-	 private String invoice_status;
-//	 private Integer subscription_id;
-	 private Integer customer_id;
-	 
-	 @OneToOne(cascade=CascadeType.ALL)
-	    @JoinColumn(name = "customer_subscription_id", referencedColumnName = "customer_subscription_id")
-	    private CustomerSubscription CustomerSubscription;
-	  
-	 @Transient
-		Response objResponse;
-	 
+	@Id
+	@Column(columnDefinition = "numeric(30,0)", name = "invoice_id")
+	private Long invoice_id;
+	private String type;
+	private String invoice_status;
+	@Column(columnDefinition = "numeric(30,0)", name = "customer_id")
+	private Long customer_id;
+	private String invoiceno;
+	public String getInvoiceno() {
+		return invoiceno;
+	}
+
+	public void setInvoiceno(String invoiceno) {
+		this.invoiceno = invoiceno;
+	}
+
+	private Long customersubscriptionid;
+
+	public Long getCustomersubscriptionid() {
+		return customersubscriptionid;
+	}
+
+	public void setCustomersubscriptionid(Long customersubscriptionid) {
+		this.customersubscriptionid = customersubscriptionid;
+	}
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "customer_subscription_id", referencedColumnName = "customer_subscription_id")
+	private CustomerSubscription CustomerSubscription;
+
+	@Transient
+	Response objResponse;
+
 	public Response getObjResponse() {
 		return objResponse;
 	}
@@ -64,7 +80,7 @@ public class Invoice {
 		return type;
 	}
 
-	public Integer getInvoice_id() {
+	public Long getInvoice_id() {
 		return invoice_id;
 	}
 
@@ -76,7 +92,7 @@ public class Invoice {
 //		return subscription_id;
 //	}
 
-	public Integer getCustomer_id() {
+	public Long getCustomer_id() {
 		return customer_id;
 	}
 //
@@ -88,7 +104,7 @@ public class Invoice {
 		this.type = type;
 	}
 
-	public void setInvoice_id(Integer invoice_id) {
+	public void setInvoice_id(Long invoice_id) {
 		this.invoice_id = invoice_id;
 	}
 
@@ -100,12 +116,8 @@ public class Invoice {
 //		this.subscription_id = subscription_id;
 //	}
 
-	public void setCustomer_id(Integer customer_id) {
+	public void setCustomer_id(Long customer_id) {
 		this.customer_id = customer_id;
 	}
 
-
-	  
-	  
-	  
 }

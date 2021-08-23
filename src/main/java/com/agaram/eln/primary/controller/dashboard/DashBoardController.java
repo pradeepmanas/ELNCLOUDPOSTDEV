@@ -39,5 +39,29 @@ public class DashBoardController {
 	{
 		return dashBoardService.GetActivitiesonLazy(objactivities);
 	}
+	
+	@PostMapping("/Getdashboardordercount")
+	public Map<String, Object> Getdashboardordercount(@RequestBody LSuserMaster objuser)
+	{
+		return dashBoardService.Getdashboardordercount(objuser);
+	}
+	
+	@PostMapping("/Getdashboardorders")
+	public Map<String, Object> Getdashboardorders(@RequestBody LSuserMaster objuser)
+	{
+		return dashBoardService.Getdashboardorders(objuser);
+	}
+	
+	@PostMapping("/Getdashboardparameters")
+	public Map<String, Object> Getdashboardparameters(@RequestBody LSuserMaster objuser)
+	{
+		return dashBoardService.Getdashboardparameters(objuser);
+	}
+	
+	@PostMapping("/Getdashboardactivities")
+	public Map<String, Object> Getdashboardactivities(@RequestBody LSuserMaster objuser)
+	{
+		return dashBoardService.Getdashboardactivities(objuser);
+	}
 
 }

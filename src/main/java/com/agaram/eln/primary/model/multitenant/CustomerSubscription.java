@@ -3,8 +3,6 @@ package com.agaram.eln.primary.model.multitenant;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -13,31 +11,51 @@ import com.agaram.eln.primary.model.general.Response;
 @Entity
 @Table(name = "CustomerSubscription")
 public class CustomerSubscription {
-	 @Id
-	 @Column(columnDefinition = "numeric(30,0)",name = "customer_subscription_id") 
+	@Id
+	@Column(columnDefinition = "numeric(30,0)", name = "customer_subscription_id")
 	private Long customer_subscription_id;
-	 private String username;
-	 private String organization_name;
-	 private String currency;
-	 private String academic;
-	 private String plan_type;
-	 private String monthly_Annual;
-	 private Integer number_of_users;
-	 private Integer subscription_amount;
-	 private String gst_treatment;
-	 private String gst_number;
-	 private String online_offline_payment;
-	 private boolean i_agree_to_the_terms_of_agreement;
-	 private String subscription_number;
-	 private String customer_register_id;
-	 private String zoho_subscription_id;
-	 private String creator_subscription_id;
-	 private String hosted_page_id;
-	 private String type;
-	 private Integer totalamount;
-	 
-	
-	 public Integer getTotalamount() {
+	private String username;
+	private String organization_name;
+	private String currency;
+	private String academic;
+	private String plan_type;
+	private String monthly_Annual;
+	private Integer number_of_users;
+	private Integer subscription_amount;
+	private String gst_treatment;
+	private String gst_number;
+	private String online_offline_payment;
+	private boolean i_agree_to_the_terms_of_agreement;
+	private String subscription_number;
+	private String customer_register_id;
+	private String zoho_subscription_id;
+	private String creator_subscription_id;
+	private String hosted_page_id;
+	private String type;
+	private Integer totalamount;
+	private Long id;
+
+//	@OneToOne
+//	@JoinColumn(name="customer_subscription_id")
+//	private Invoice invoice;
+//	
+//	public Invoice getInvoice() {
+//		return invoice;
+//	}
+//
+//	public void setInvoice(Invoice invoice) {
+//		this.invoice = invoice;
+//	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Integer getTotalamount() {
 		return totalamount;
 	}
 
@@ -54,8 +72,8 @@ public class CustomerSubscription {
 	}
 
 	@Transient
-		Response objResponse;
-	
+	Response objResponse;
+
 	public Response getObjResponse() {
 		return objResponse;
 	}
@@ -208,5 +226,4 @@ public class CustomerSubscription {
 		this.hosted_page_id = hosted_page_id;
 	}
 
-	
 }

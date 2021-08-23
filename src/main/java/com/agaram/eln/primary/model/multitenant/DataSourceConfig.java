@@ -2,7 +2,6 @@ package com.agaram.eln.primary.model.multitenant;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,13 +10,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.general.Response;
-import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -77,6 +74,25 @@ public class DataSourceConfig implements Serializable {
     @JoinColumn(name = "customer_subscription_id", referencedColumnName = "customer_subscription_id")
     private CustomerSubscription CustomerSubscription;
     
+    @OneToOne
+	@JoinColumn(name="id")
+	private CustomerSubscription customersubscriptionid;
+    
+    @Transient
+    private Invoice invoice;
+    
+	public Invoice getInvoice() {
+		return invoice;
+	}
+	public void setInvoice(Invoice invoice) {
+		this.invoice = invoice;
+	}
+	public CustomerSubscription getCustomersubscriptionid() {
+		return customersubscriptionid;
+	}
+	public void setCustomersubscriptionid(CustomerSubscription customersubscriptionid) {
+		this.customersubscriptionid = customersubscriptionid;
+	}
 	public Long getCustomer_crm_id() {
 		return customer_crm_id;
 	}

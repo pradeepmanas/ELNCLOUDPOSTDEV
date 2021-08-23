@@ -7,8 +7,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 
@@ -21,6 +23,9 @@ public class MasterService {
 	
 	@Autowired
 	private LsrepositoriesdataRepository lsrepositoriesdataRepository;
+	
+	@Autowired
+	private LsOrderSampleUpdateRepository LsOrderSampleUpdateRepository ;
 	
 	public List<Lsrepositories> Getallrepositories(Lsrepositories lsrepositories)
 	{
@@ -105,5 +110,13 @@ public class MasterService {
 		lsrepositoriesdataRepository.save(lsrepositoriesdata);
 		
 		return lsrepositoriesdata;
+	}
+
+	public List<LsOrderSampleUpdate> getinventoryhistory(LsOrderSampleUpdate lsordersamplUpdate) {                      
+//		List<LsOrderSampleUpdate>	lsordersamplUpdateobj =LsOrderSampleUpdateRepository.findByRepositorycodeAndRepositorydatacodeAndQuantityusedNotAndHistorydetailsNotNull(lsordersamplUpdate.getRepositorycode(),lsordersamplUpdate.getRepositorydatacode(),0);
+		List<LsOrderSampleUpdate> lsordersamplUpdateobj = LsOrderSampleUpdateRepository
+				.findByRepositorycodeAndRepositorydatacodeAndQuantityusedNotAndHistorydetailsNotNull(lsordersamplUpdate.getRepositorycode(),lsordersamplUpdate.getRepositorydatacode(),0);
+
+		return lsordersamplUpdateobj;
 	}
 }
