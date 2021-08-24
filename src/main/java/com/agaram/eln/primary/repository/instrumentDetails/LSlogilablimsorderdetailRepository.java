@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.getorders.Logilaborders;
-import com.agaram.eln.primary.model.getsheetdetails.Logilabsheetdetailsget;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
@@ -372,36 +371,36 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	 * @param filetype
 	 * @return
 	 */
-	public List<Logilabsheetdetailsget> findByLssamplefileInAndFiletypeOrderByBatchcodeDesc(List<LSsamplefile> lssamplefile,
+	public List<Logilaborders> findByLssamplefileInAndFiletypeOrderByBatchcodeDesc(List<LSsamplefile> lssamplefile,
 			Integer filetype);
 
-	public List<Logilabsheetdetailsget> findByOrderflagAndFiletypeAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+	public List<Logilaborders> findByOrderflagAndFiletypeAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String orderflag, Integer filetype, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 
-	public List<Logilabsheetdetailsget> findByLsuserMasterAndFiletypeAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrderByBatchcodeDesc(
+	public List<Logilaborders> findByLsuserMasterAndFiletypeAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrderByBatchcodeDesc(
 			LSuserMaster user, Integer filetype, LSuserMaster assignedto, Date fromdate, Date todate);
 
-	public List<Logilabsheetdetailsget> findByOrderflagAndFiletypeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrderByBatchcodeDesc(
+	public List<Logilaborders> findByOrderflagAndFiletypeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrderByBatchcodeDesc(
 			String flag, Integer filetype, LSuserMaster user, LSuserMaster assignedto, Date fromdate, Date todate);
 	
-	public List<Logilabsheetdetailsget> findByAssignedtoAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+	public List<Logilaborders> findByAssignedtoAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			 LSuserMaster assignedto,Integer filetype, Date fromdate, Date todate);
 	
-	public List<Logilabsheetdetailsget> findByOrderflagAndFiletypeAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+	public List<Logilaborders> findByOrderflagAndFiletypeAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			String string, Integer filetype, LSuserMaster lsuserMaster, Date fromdate, Date todate);
 	
-	public List<Logilabsheetdetailsget> findByOrderflagAndFiletypeAndLsprojectmasterInAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+	public List<Logilaborders> findByOrderflagAndFiletypeAndLsprojectmasterInAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			 String orderflag, Integer filetype,List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 	
-	public List<Logilabsheetdetailsget> findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndLssamplefileIn(
+	public List<Logilaborders> findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndLssamplefileIn(
 			String flag, Integer filetype, Date fromdate, Date todate, List<LSsamplefile> idList);
 	
-	public List<Logilabsheetdetailsget> findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+	public List<Logilaborders> findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String orderflag, Integer filetype, Date fromdate, Date todate);
 	
-	public List<Logilabsheetdetailsget> findByOrderflagAndFiletypeAndCompletedtimestampBetweenAndLssamplefileIn(
+	public List<Logilaborders> findByOrderflagAndFiletypeAndCompletedtimestampBetweenAndLssamplefileIn(
 			String flag, Integer filetype, Date fromdate, Date todate, List<LSsamplefile> idList);
 	
-	public List<Logilabsheetdetailsget> findByOrderflagAndFiletypeAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+	public List<Logilaborders> findByOrderflagAndFiletypeAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String orderflag, Integer filetype, Date fromdate, Date todate);
 }

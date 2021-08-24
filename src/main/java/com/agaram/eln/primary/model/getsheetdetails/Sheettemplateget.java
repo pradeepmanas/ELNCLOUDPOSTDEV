@@ -1,7 +1,6 @@
-package com.agaram.eln.primary.model.getorders;
+package com.agaram.eln.primary.model.getsheetdetails;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -13,7 +12,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
-public class Logilaborders {
+public class Sheettemplateget {
 
 	private Long batchcode;
 	private String batchid;
@@ -24,10 +23,9 @@ public class Logilaborders {
 	private String testname;
 	private LSsamplemaster lssamplemaster;
 	private LSprojectmaster lsprojectmaster;
+	private LSuserMaster lsuserMaster;
 	private Integer filecode;
 	private String filename;
-//	private LSfile lsfile;
-	private LSuserMaster lsuserMaster;
 	private String projectname;
 	private String samplename;
 	private Integer filetype;
@@ -35,20 +33,20 @@ public class Logilaborders {
 	private LSworkflow lsworkflow;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdtimestamp;
-	List<LSworkflow> lstworkflow;
-	private boolean canuserprocess;
-	
 
-	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
+	public Sheettemplateget(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp) {
-		
-		LSsamplefile objSampleFile = new LSsamplefile();
-		objSampleFile.setFilesamplecode(lssamplefile.getFilesamplecode());
-		objSampleFile.setModifieddate(lssamplefile.getModifieddate());
-		objSampleFile.setCreatedate(lssamplefile.getCreatedate());
-		
+
+		LSsamplefile lssamplefile1 = new LSsamplefile();
+		lssamplefile1.setModifieddate(lssamplefile.getModifieddate());
+		lssamplefile1.setCreatedate(lssamplefile.getCreatedate());
+
+		LSworkflow lsworkflow1 = new LSworkflow();
+		lsworkflow1.setWorkflowcode(lsworkflow.getWorkflowcode());
+		lsworkflow1.setWorkflowname(lsworkflow.getWorkflowname());
+
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.orderflag = orderflag;
@@ -60,16 +58,31 @@ public class Logilaborders {
 		this.lsprojectmaster = lsprojectmaster;
 		this.filecode = lsfile != null ? lsfile.getFilecode() : -1;
 		this.filename = lsfile != null ? lsfile.getFilenameuser() : null;
-//		this.lsfile = new LSfile(lsfile.getFilecode(), lsfile.getFilenameuser());
 		this.projectname = lsprojectmaster != null ? lsprojectmaster.getProjectname() : null;
 		this.samplename = lssamplemaster != null ? lssamplemaster.getSamplename() : null;
 		this.filetype = filetype;
 		this.lsuserMaster = lsuserMaster;
-		this.lssamplefile = objSampleFile;
-		this.lsworkflow = lsworkflow;
+		this.lssamplefile = lssamplefile1;
+		this.lsworkflow = lsworkflow1;
 		this.createdtimestamp = createdtimestamp;
 	}
 	
+	public Date getCreatedtimestamp() {
+		return createdtimestamp;
+	}
+
+	public void setCreatedtimestamp(Date createdtimestamp) {
+		this.createdtimestamp = createdtimestamp;
+	}
+
+	public LSworkflow getLsworkflow() {
+		return lsworkflow;
+	}
+
+	public void setLsworkflow(LSworkflow lsworkflow) {
+		this.lsworkflow = lsworkflow;
+	}
+
 	public LSuserMaster getLsuserMaster() {
 		return lsuserMaster;
 	}
@@ -94,14 +107,6 @@ public class Logilaborders {
 		this.samplename = samplename;
 	}
 
-	public Integer getFiletype() {
-		return filetype;
-	}
-
-	public void setFiletype(Integer filetype) {
-		this.filetype = filetype;
-	}
-
 	public LSsamplefile getLssamplefile() {
 		return lssamplefile;
 	}
@@ -109,23 +114,7 @@ public class Logilaborders {
 	public void setLssamplefile(LSsamplefile lssamplefile) {
 		this.lssamplefile = lssamplefile;
 	}
-
-	public LSworkflow getLsworkflow() {
-		return lsworkflow;
-	}
-
-	public void setLsworkflow(LSworkflow lsworkflow) {
-		this.lsworkflow = lsworkflow;
-	}
-
-	public Date getCreatedtimestamp() {
-		return createdtimestamp;
-	}
-
-	public void setCreatedtimestamp(Date createdtimestamp) {
-		this.createdtimestamp = createdtimestamp;
-	}
-
+	
 	public Long getBatchcode() {
 		return batchcode;
 	}
@@ -211,45 +200,11 @@ public class Logilaborders {
 		this.filename = filename;
 	}
 
-	public List<LSworkflow> getLstworkflow() {
-		return lstworkflow;
+	public Integer getFiletype() {
+		return filetype;
 	}
 
-	public void setLstworkflow(List<LSworkflow> lstworkflow) {
-		
-		if(lstworkflow != null && this.lsworkflow !=null && lstworkflow.size() >0)
-		{
-			if(lstworkflow.contains(this.lsworkflow))
-			{
-				this.setCanuserprocess(true);
-			}
-			else
-			{
-				this.setCanuserprocess(false);
-			}
-		}
-		else
-		{
-			this.setCanuserprocess(false);
-		}
-		this.lstworkflow = null;
-	}
-
-	public boolean isCanuserprocess() {
-		return canuserprocess;
-	}
-
-	public void setCanuserprocess(boolean canuserprocess) {
-		this.canuserprocess = canuserprocess;
-	}
-
-//	public LSfile getLsfile() {
-//		return new LSfile(lsfile.getFilecode(), lsfile.getFilenameuser());
-//	}
-//
-//	public void setLsfile(LSfile lsfile) {
-//		this.lsfile = new LSfile(lsfile.getFilecode(), lsfile.getFilenameuser());
-//	}
-	
-	
+	public void setFiletype(Integer filetype) {
+		this.filetype = filetype;
+	}	
 }

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.model.cfr.LSactivity;
+import com.agaram.eln.primary.model.getorders.Logilaborders;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
@@ -33,6 +34,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepositor
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
+import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 
 @Service
 public class DashBoardService {
@@ -70,7 +72,10 @@ public class DashBoardService {
     private LSuserMasterRepository lsuserMasterRepository;
 	
 	@Autowired
-	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
+	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
+	
+	@Autowired
+	private InstrumentService instrumentService;
 	
 	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser)
 	{
@@ -78,7 +83,7 @@ public class DashBoardService {
 		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
-		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+		objLSMultiusergroup =lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
 		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
 		
@@ -165,7 +170,7 @@ public class DashBoardService {
 		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
-		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+		objLSMultiusergroup =lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
 		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
 		
@@ -256,7 +261,7 @@ public class DashBoardService {
 		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
-		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+		objLSMultiusergroup =lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
 		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
 		
@@ -324,7 +329,7 @@ public class DashBoardService {
 		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
-		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+		objLSMultiusergroup =lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
 		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		
 		if(objupdateduser.getUsername().equals("Administrator"))
@@ -338,7 +343,13 @@ public class DashBoardService {
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 			
-			mapOrders.put("orderlst", lslogilablimsorderdetailRepository.findByLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc(lstproject,fromdate,todate));
+			List<LSworkflow> lstworkflow = instrumentService.GetWorkflowonuser(lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups()));
+			
+			List<Logilaborders> lstorders = lslogilablimsorderdetailRepository.findByLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc(lstproject,fromdate,todate);
+			
+			lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
+			
+			mapOrders.put("orderlst", lstorders);
 		}
 		
 		if(objuser.getObjsilentaudit() != null)
@@ -358,7 +369,7 @@ public class DashBoardService {
 		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
-		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+		objLSMultiusergroup =lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
 		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		
 		if(objupdateduser.getUsername().equals("Administrator"))
@@ -404,7 +415,7 @@ public class DashBoardService {
 		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
-		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+		objLSMultiusergroup =lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
 		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		
 		if(objupdateduser.getUsername().equals("Administrator"))

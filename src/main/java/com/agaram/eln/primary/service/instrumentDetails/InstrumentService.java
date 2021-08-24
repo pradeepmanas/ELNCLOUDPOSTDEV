@@ -39,7 +39,7 @@ import com.agaram.eln.primary.model.general.OrderVersion;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.general.SheetCreation;
-import com.agaram.eln.primary.model.getsheetdetails.Logilabsheetdetailsget;
+import com.agaram.eln.primary.model.getorders.Logilaborders;
 import com.agaram.eln.primary.model.instrumentDetails.LSfields;
 import com.agaram.eln.primary.model.instrumentDetails.LSinstruments;
 import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
@@ -787,10 +787,10 @@ public class InstrumentService {
 		return lstorder;
 	}
 
-	public List<Logilabsheetdetailsget> GetorderbytypeandflagOrdersonly(LSlogilablimsorderdetail objorder,
+	public List<Logilaborders> GetorderbytypeandflagOrdersonly(LSlogilablimsorderdetail objorder,
 			Map<String, Object> mapOrders) {
 //		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilabLogilabsheetdetailsget();
-		List<Logilabsheetdetailsget> lstorder = new ArrayList<Logilabsheetdetailsget>();
+		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		List<Long> lstBatchcode = new ArrayList<Long>();
 		List<Integer> lstsamplefilecode = new ArrayList<Integer>();
 		List<LSsamplefile> idList = new ArrayList<LSsamplefile>();
@@ -1293,13 +1293,13 @@ public class InstrumentService {
 		return lstorder;
 	}
 
-	public List<Logilabsheetdetailsget> GetorderbytypeandflaganduserOrdersonly(LSlogilablimsorderdetail objorder,
+	public List<Logilaborders> GetorderbytypeandflaganduserOrdersonly(LSlogilablimsorderdetail objorder,
 			Map<String, Object> mapOrders) {
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 //		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
-		List<Logilabsheetdetailsget> lstorder = new ArrayList<Logilabsheetdetailsget>();
+		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		List<Long> lstBatchcode = new ArrayList<Long>();
 
 		long pendingcount = 0;
@@ -1653,10 +1653,10 @@ public class InstrumentService {
 		return lstorder;
 	}
 
-	public List<Logilabsheetdetailsget> getordersonsamplefileidlsorder(List<Long> lstBatchcode,
+	public List<Logilaborders> getordersonsamplefileidlsorder(List<Long> lstBatchcode,
 			LSlogilablimsorderdetail objorder) {
 		List<LSsamplefile> idList = new ArrayList<LSsamplefile>();
-		List<Logilabsheetdetailsget> lstorder = new ArrayList<Logilabsheetdetailsget>();
+		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		List<Integer> lstsamplefilecode = new ArrayList<Integer>();
 
 		if (lstBatchcode != null && lstBatchcode.size() > 0) {
@@ -1775,14 +1775,20 @@ public class InstrumentService {
 		LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
 		objLSMultiusergroup = LSMultiusergroupRepositery.findBymultiusergroupcode(usercode.getMultiusergroups());
 		objuser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+		
+		Map<String, Object> maplogindetails = new HashMap<String, Object>();
+		maplogindetails.put("workflow", GetWorkflowonuser(objLSMultiusergroup));
+		maplogindetails.put("user", objuser);
+		return maplogindetails;
+	}
+	
+	public List<LSworkflow> GetWorkflowonuser(LSMultiusergroup objLSMultiusergroup)
+	{
 		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
 				.findBylsusergroup(objLSMultiusergroup.getLsusergroup());
 		List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
-
-		Map<String, Object> maplogindetails = new HashMap<String, Object>();
-		maplogindetails.put("workflow", lsworkflow);
-		maplogindetails.put("user", objuser);
-		return maplogindetails;
+		
+		return lsworkflow;
 	}
 
 	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder) {
