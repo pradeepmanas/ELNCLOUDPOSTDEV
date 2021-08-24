@@ -39,7 +39,7 @@ import com.agaram.eln.primary.model.general.OrderVersion;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.general.SheetCreation;
-import com.agaram.eln.primary.model.getorders.Logilabordersget;
+import com.agaram.eln.primary.model.getsheetdetails.Logilabsheetdetailsget;
 import com.agaram.eln.primary.model.instrumentDetails.LSfields;
 import com.agaram.eln.primary.model.instrumentDetails.LSinstruments;
 import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
@@ -252,7 +252,11 @@ public class InstrumentService {
 
 		objorder.setLsworkflow(lsworkflowRepository
 				.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
-		objorder.setCreatedtimestamp(new Date());
+		
+//		ZonedDateTime utc = ZonedDateTime.now(ZoneOffset.UTC);
+//		System.out.print(utc.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+		
+//		objorder.setCreatedtimestamp(new Date());
 		objorder.setOrderflag("N");
 		logger.info("InsertELNOrder : " + objorder);
 		String Content = "";
@@ -345,7 +349,7 @@ public class InstrumentService {
 				objLimsOrder.setMethodcode(objmethod.getMethodid());
 				objLimsOrder.setInstrumentcode(objmethod.getInstrumentid());
 				objLimsOrder.setTestcode(objorder.getTestcode() != null ? objorder.getTestcode().toString() : null);
-				objLimsOrder.setCreatedtimestamp(new Date());
+//				objLimsOrder.setCreatedtimestamp(new Date());
 				objLimsOrder.setOrderflag("N");
 
 				lsorder.add(objLimsOrder);
@@ -364,7 +368,7 @@ public class InstrumentService {
 			objLimsOrder.setOrderid(Long.parseLong(Limsorder.concat("00")));
 			objLimsOrder.setBatchid(Batchid);
 			objLimsOrder.setTestcode(objorder.getTestcode() != null ? objorder.getTestcode().toString() : null);
-			objLimsOrder.setCreatedtimestamp(new Date());
+//			objLimsOrder.setCreatedtimestamp(new Date());
 			objLimsOrder.setOrderflag("N");
 
 			lslimsorderRepository.save(objLimsOrder);
@@ -783,10 +787,10 @@ public class InstrumentService {
 		return lstorder;
 	}
 
-	public List<Logilabordersget> GetorderbytypeandflagOrdersonly(LSlogilablimsorderdetail objorder,
+	public List<Logilabsheetdetailsget> GetorderbytypeandflagOrdersonly(LSlogilablimsorderdetail objorder,
 			Map<String, Object> mapOrders) {
-//		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
-		List<Logilabordersget> lstorder = new ArrayList<Logilabordersget>();
+//		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilabLogilabsheetdetailsget();
+		List<Logilabsheetdetailsget> lstorder = new ArrayList<Logilabsheetdetailsget>();
 		List<Long> lstBatchcode = new ArrayList<Long>();
 		List<Integer> lstsamplefilecode = new ArrayList<Integer>();
 		List<LSsamplefile> idList = new ArrayList<LSsamplefile>();
@@ -1289,13 +1293,13 @@ public class InstrumentService {
 		return lstorder;
 	}
 
-	public List<Logilabordersget> GetorderbytypeandflaganduserOrdersonly(LSlogilablimsorderdetail objorder,
+	public List<Logilabsheetdetailsget> GetorderbytypeandflaganduserOrdersonly(LSlogilablimsorderdetail objorder,
 			Map<String, Object> mapOrders) {
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 //		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
-		List<Logilabordersget> lstorder = new ArrayList<Logilabordersget>();
+		List<Logilabsheetdetailsget> lstorder = new ArrayList<Logilabsheetdetailsget>();
 		List<Long> lstBatchcode = new ArrayList<Long>();
 
 		long pendingcount = 0;
@@ -1649,10 +1653,10 @@ public class InstrumentService {
 		return lstorder;
 	}
 
-	public List<Logilabordersget> getordersonsamplefileidlsorder(List<Long> lstBatchcode,
+	public List<Logilabsheetdetailsget> getordersonsamplefileidlsorder(List<Long> lstBatchcode,
 			LSlogilablimsorderdetail objorder) {
 		List<LSsamplefile> idList = new ArrayList<LSsamplefile>();
-		List<Logilabordersget> lstorder = new ArrayList<Logilabordersget>();
+		List<Logilabsheetdetailsget> lstorder = new ArrayList<Logilabsheetdetailsget>();
 		List<Integer> lstsamplefilecode = new ArrayList<Integer>();
 
 		if (lstBatchcode != null && lstBatchcode.size() > 0) {

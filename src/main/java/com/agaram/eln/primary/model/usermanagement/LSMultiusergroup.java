@@ -17,9 +17,9 @@ public class LSMultiusergroup {
 	@Basic(optional = false)
 	@Column(name = "multiusergroupcode") 
 	private int multiusergroupcode;
-	public void setMultiusergroupcode(int multiusergroupcode) {
-		this.multiusergroupcode = multiusergroupcode;
-	}
+//	public void setMultiusergroupcode(int multiusergroupcode) {
+//		this.multiusergroupcode = multiusergroupcode;
+//	}
 	@Column(name = "usercode")
 	private Integer usercode;
 	@ManyToOne 
@@ -32,14 +32,20 @@ public class LSMultiusergroup {
 	public void setDefaultusergroup(Integer defaultusergroup) {
 		this.defaultusergroup = defaultusergroup;
 	}
-	public Integer getMultiusergroupcode() {
-		return multiusergroupcode;
-	}
-	public void setMultiusergroupcode(Integer multiusergroupcode) {
-		this.multiusergroupcode = multiusergroupcode;
-	}
+//	public Integer getMultiusergroupcode() {
+//		return multiusergroupcode;
+//	}
+//	public void setMultiusergroupcode(Integer multiusergroupcode) {
+//		this.multiusergroupcode = multiusergroupcode;
+//	}
 	public Integer getUsercode() {
 		return usercode;
+	}
+	public int getMultiusergroupcode() {
+		return multiusergroupcode;
+	}
+	public void setMultiusergroupcode(int multiusergroupcode) {
+		this.multiusergroupcode = multiusergroupcode;
 	}
 	public void setUsercode(Integer usercode) {
 		this.usercode = usercode;
