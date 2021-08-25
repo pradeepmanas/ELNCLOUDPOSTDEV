@@ -33,6 +33,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusergrouprightsmaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
+import com.agaram.eln.primary.model.usermanagement.Lsusersettings;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
@@ -49,6 +50,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsReposit
 import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
+import com.agaram.eln.primary.repository.usermanagement.LsusersettingsRepository;
 import com.agaram.eln.primary.service.notification.EmailService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -107,6 +109,9 @@ public class UserService {
 	
 	@Autowired
 	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
+	
+	@Autowired
+	private LsusersettingsRepository LsusersettingsRepository;
 	
 	public LSusergroup InsertUpdateUserGroup(LSusergroup objusergroup)
 	{
@@ -1111,6 +1116,7 @@ public class UserService {
 		return objctrluser;
 	}
 	
+	@SuppressWarnings("unused")
 	public LSuserMaster Usersendpasswormail(LSuserMaster objusermaster) throws MessagingException
 	{
 		
@@ -1173,5 +1179,14 @@ public class UserService {
 		return lsuserMasterRepository.findByusercode(objuser.getUsercode());
 	}
 
-	
+	public Lsusersettings updateUserDateFormat(Lsusersettings objuser) {
+		Lsusersettings getUserPreference = LsusersettingsRepository.findByUsercode(objuser.getUsercode());
+		if(getUserPreference != null) {
+			getUserPreference.setDFormat(objuser.getDFormat());
+			LsusersettingsRepository.save(getUserPreference);
+		}else {
+			LsusersettingsRepository.save(objuser);
+		}
+		return objuser;
+	}
 }

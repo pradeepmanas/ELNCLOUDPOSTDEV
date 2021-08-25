@@ -1307,4 +1307,53 @@ ALTER TABLE public.cloudlsprotocolversionstep
     
 update lsaudittrailconfigmaster set manualaudittrail = 0;
 
-ALTER TABLE if exists CloudLSprotocolversionstep alter column lsprotocolstepinfo type jsonb;
+ALTER TABLE IF Exists Lsrepositories ADD COLUMN IF NOT EXISTS isexpiredate boolean;
+
+
+ALTER TABLE IF Exists lsrepositories ADD COLUMN IF NOT EXISTS isonexpireddatefield varchar(250);
+
+ALTER TABLE IF Exists lsordersampleupdate ADD COLUMN IF NOT EXISTS createdbyusername character varying(255);
+
+ALTER TABLE IF Exists lsordersampleupdate ADD COLUMN IF NOT EXISTS historydetails character varying(255);
+
+ALTER TABLE IF Exists lsordersampleupdate ADD COLUMN IF NOT EXISTS screenmodule character varying(255);
+
+ALTER TABLE IF Exists lsnotification ADD COLUMN IF NOT EXISTS repositorycode integer;
+
+ALTER TABLE IF Exists lsnotification ADD COLUMN IF NOT EXISTS repositorydatacode integer;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsusersettings_userid_seq'  
+   -- sequence name, optionally schema-qualified
+   INTO  _kind;
+
+   IF NOT FOUND THEN       -- name is free
+      CREATE SEQUENCE lsusersettings_userid_seq;
+   ELSIF _kind = 'S' THEN  -- sequence exists
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.lsusersettings
+(
+    userid integer NOT NULL DEFAULT nextval('lsusersettings_userid_seq'::regclass),
+    dformat character varying(255) COLLATE pg_catalog."default",
+    usercode integer,
+    CONSTRAINT lsusersettings_pkey PRIMARY KEY (userid)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsusersettings
+    OWNER to postgres;

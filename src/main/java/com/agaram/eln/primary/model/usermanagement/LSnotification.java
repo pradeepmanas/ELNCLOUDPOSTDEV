@@ -38,6 +38,28 @@ public class LSnotification {
 	
 	@Column(columnDefinition = "date",name = "CreatedTimeStamp")
 	private Date notificationdate;
+	
+	@Column(name = "repositorydatacode")
+	private Integer repositorydatacode;
+	
+	@Column(name = "repositorycode")
+	private Integer repositorycode;
+
+	public Integer getRepositorydatacode() {
+		return repositorydatacode;
+	}
+
+	public Integer getRepositorycode() {
+		return repositorycode;
+	}
+
+	public void setRepositorydatacode(Integer repositorydatacode) {
+		this.repositorydatacode = repositorydatacode;
+	}
+
+	public void setRepositorycode(Integer repositorycode) {
+		this.repositorycode = repositorycode;
+	}
 
 	public Long getNotificationcode() {
 		return notificationcode;

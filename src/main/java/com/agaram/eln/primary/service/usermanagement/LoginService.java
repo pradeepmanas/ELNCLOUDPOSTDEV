@@ -44,6 +44,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSactiveUserRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSdomainMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
+import com.agaram.eln.primary.repository.usermanagement.LsusersettingsRepository;
 import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
 import com.agaram.eln.primary.service.cfr.AuditService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -94,6 +95,9 @@ public class LoginService {
 	
 	@Autowired
 	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
+	
+	@Autowired
+	private LsusersettingsRepository LsusersettingsRepository;
 	
 	static final Logger logger = Logger.getLogger(LoginService.class.getName());
 	
@@ -160,6 +164,8 @@ public class LoginService {
 		
 		if(objExitinguser != null)
 		{
+			obj.put("usersettings", LsusersettingsRepository.findByUsercode(objExitinguser.getUsercode()));
+			
 			objExitinguser.setObjResponse(new Response());
 			objExitinguser.setObjsilentaudit(new LScfttransaction());
 			if((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode())

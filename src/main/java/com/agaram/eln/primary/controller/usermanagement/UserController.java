@@ -43,6 +43,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
+import com.agaram.eln.primary.model.usermanagement.Lsusersettings;
 import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
@@ -587,4 +588,9 @@ public class UserController {
 		return objresponse;
 	}
 	
+	@PostMapping("/updateUserDateFormat")
+	public Lsusersettings updateUserDateFormat(@RequestBody Lsusersettings objuser)
+	{
+		return userService.updateUserDateFormat(objuser);
+	}
 }

@@ -66,7 +66,7 @@ public class EmailService {
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message);
 			 
-			helper.setSubject("UsrName and PassWord");
+			helper.setSubject("Username and Password");
 			helper.setFrom(from);
 			helper.setTo(to);
 			

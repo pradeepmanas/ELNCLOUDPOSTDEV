@@ -47,9 +47,21 @@ public class Lsrepositoriesdata {
 	
 	@Transient
 	Response objResponse;
-
+	
+	@Transient
+	private Integer expireddatecount;
+	
+	
 	public Integer getRepositorydatacode() {
 		return repositorydatacode;
+	}
+
+	public Integer getExpireddatecount() {
+		return expireddatecount;
+	}
+
+	public void setExpireddatecount(Integer expireddatecount) {
+		this.expireddatecount = expireddatecount;
 	}
 
 	public void setRepositorydatacode(Integer repositorydatacode) {
