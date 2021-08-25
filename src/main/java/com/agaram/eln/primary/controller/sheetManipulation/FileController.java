@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.getsheetdetails.Sheettemplateget;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -70,8 +71,14 @@ public class FileController {
 		return fileService.GetSheets(objuser);
 	}
 	
+//	@PostMapping("/GetSheetsbyuseronDetailview")
+//	public List<LSfile> GetSheetsbyuseronDetailview(@RequestBody LSuserMaster objuser)
+//	{
+//		return fileService.GetSheetsbyuseronDetailview(objuser);
+//	}
+	
 	@PostMapping("/GetSheetsbyuseronDetailview")
-	public List<LSfile> GetSheetsbyuseronDetailview(@RequestBody LSuserMaster objuser)
+	public List<Sheettemplateget> GetSheetsbyuseronDetailview(@RequestBody LSuserMaster objuser)
 	{
 		return fileService.GetSheetsbyuseronDetailview(objuser);
 	}

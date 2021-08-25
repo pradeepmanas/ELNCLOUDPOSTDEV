@@ -21,6 +21,7 @@ import com.agaram.eln.primary.model.cloudFileManip.CloudSheetVersion;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.general.SheetVersion;
+import com.agaram.eln.primary.model.getsheetdetails.Sheettemplateget;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
@@ -341,22 +342,47 @@ public class FileService {
 		return lstfile;
 	}
 	
-	public List<LSfile> GetSheetsbyuseronDetailview(LSuserMaster objuser)
+//	public List<LSfile> GetSheetsbyuseronDetailview(LSuserMaster objuser)
+//	{
+//		List<LSfile> lstfile = new ArrayList<LSfile>();
+//		List<Integer> lstteammap = lsuserteammappingRepository.getTeamcodeByLsuserMaster4postgressandsql(objuser.getUsercode());
+//		
+//		if(lstteammap.size() >0)
+//		{
+//			List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
+//			lstteamuser.add(objuser);
+//			lstfile = lSfileRepository.findByCreatebyInAndFilecodeGreaterThanOrderByFilecodeDesc(lstteamuser,1);
+//		}
+//		else
+//		{
+//			List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
+//			lstteamuser.add(objuser);
+//			lstfile = lSfileRepository.findByCreatebyInAndFilecodeGreaterThanOrderByFilecodeDesc(lstteamuser,1);
+//		}
+//		if(objuser.getObjsilentaudit()!=null) {
+//			objuser.getObjsilentaudit().setTableName("LSfile");
+//			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+//		}
+//		return lstfile;
+//	}
+//	
+	
+	public List<Sheettemplateget> GetSheetsbyuseronDetailview(LSuserMaster objuser)
 	{
-		List<LSfile> lstfile = new ArrayList<LSfile>();
+		List<Sheettemplateget> lstfile = new ArrayList<Sheettemplateget>();
 		List<Integer> lstteammap = lsuserteammappingRepository.getTeamcodeByLsuserMaster4postgressandsql(objuser.getUsercode());
 		
 		if(lstteammap.size() >0)
 		{
 			List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
 			lstteamuser.add(objuser);
-			lstfile = lSfileRepository.findByCreatebyInAndFilecodeGreaterThanOrderByFilecodeDesc(lstteamuser,1);
+			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1,lstteamuser);
 		}
 		else
 		{
 			List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
 			lstteamuser.add(objuser);
-			lstfile = lSfileRepository.findByCreatebyInAndFilecodeGreaterThanOrderByFilecodeDesc(lstteamuser,1);
+			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1,lstteamuser);
 		}
 		if(objuser.getObjsilentaudit()!=null) {
 			objuser.getObjsilentaudit().setTableName("LSfile");

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.agaram.eln.primary.model.getsheetdetails.Sheettemplateget;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
@@ -88,4 +89,16 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	public List<LSfile> getsheetGreaterthanoneandapprovelanduserIn(Integer Approved, List<LSuserMaster> lstusermaster);
 
 	public LSfile findByfilenameuserIgnoreCase(String filenameuser);
+	
+	/**
+	 * Added bu sathishkumar chandrasekar 
+	 * 
+	 * for reducing sheet loading time on sheet template creation 
+	 */
+	
+//	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc( Integer filecode,List<LSuserMaster> lstusermaster);
+	
+	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc( Integer filecode,List<LSuserMaster> lstusermaster);
+	
+//	public List<Sheettemplateget> findByCreatebyInAndFilecodeGreaterThanOrderByFilecodeDesc(List<LSuserMaster> lstusermaster, Integer filecode);
 }
