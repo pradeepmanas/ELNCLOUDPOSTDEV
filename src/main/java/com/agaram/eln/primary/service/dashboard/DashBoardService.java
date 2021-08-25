@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.getorders.Logilaborders;
+import com.agaram.eln.primary.model.getsheetdetails.Sheettemplateget;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
@@ -25,6 +26,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSparsedparametersRespository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
@@ -76,6 +78,9 @@ public class DashBoardService {
 	
 	@Autowired
 	private InstrumentService instrumentService;
+	
+	@Autowired
+	private LSfileRepository lsfileRepository;
 	
 	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser)
 	{
@@ -359,6 +364,18 @@ public class DashBoardService {
     	}
 		
 		return mapOrders;
+	}
+	
+	public Map<String, Object> Getdashboardsheets(LSuserMaster objuser)
+	{
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		Map<String, Object> mapSheets = new HashMap<String, Object>();
+		
+		List<Sheettemplateget> lstsheets = lsfileRepository.findByCreatebyAndCreatedateBetweenOrderByFilecodeDesc(objuser, fromdate, todate);
+		mapSheets.put("Sheets", lstsheets);
+		
+		return mapSheets;
 	}
 	
 	

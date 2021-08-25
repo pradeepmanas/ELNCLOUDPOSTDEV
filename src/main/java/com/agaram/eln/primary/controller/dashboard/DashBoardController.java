@@ -63,5 +63,11 @@ public class DashBoardController {
 	{
 		return dashBoardService.Getdashboardactivities(objuser);
 	}
+	
+	@PostMapping("/Getdashboardsheets")
+	public Map<String, Object> Getdashboardsheets(@RequestBody LSuserMaster objuser)
+	{
+		return dashBoardService.Getdashboardsheets(objuser);
+	}
 
 }

@@ -10,6 +10,7 @@ public class Sheettemplateget {
 	private String filenameuser;
 	private Integer approved;
 	private Integer rejected;
+	private Integer versionno;
 	
 	private Date createdate;
 	
@@ -23,7 +24,7 @@ public class Sheettemplateget {
 //			List<LSfileversion> lsfileversion,
 //			List<Lssheetworkflowhistory> lssheetworkflowhistory, 
 			LSuserMaster createby, LSuserMaster modifiedby,
-			Integer approved, Integer rejected) {
+			Integer approved, Integer rejected, Integer versionno) {
 
 //		LSfileversion objFileversion = new LSfileversion();
 //		
@@ -41,6 +42,7 @@ public class Sheettemplateget {
 		this.createby = createby;
 		this.createdate = createdate;
 		this.modifiedby = modifiedby;
+		this.versionno = versionno;
 //		this.lsfileversion = lsfileversion;
 //		this.lssheetworkflowhistory = lssheetworkflowhistory;
 	}
@@ -116,4 +118,14 @@ public class Sheettemplateget {
 	public void setFilenameuser(String filenameuser) {
 		this.filenameuser = filenameuser;
 	}
+
+	public Integer getVersionno() {
+		return versionno;
+	}
+
+	public void setVersionno(Integer versionno) {
+		this.versionno = versionno;
+	}
+	
+	
 }

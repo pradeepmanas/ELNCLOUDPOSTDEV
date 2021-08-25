@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.sheetManipulation;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -101,4 +102,6 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc( Integer filecode,List<LSuserMaster> lstusermaster);
 	
 //	public List<Sheettemplateget> findByCreatebyInAndFilecodeGreaterThanOrderByFilecodeDesc(List<LSuserMaster> lstusermaster, Integer filecode);
+	
+	public List<Sheettemplateget> findByCreatebyAndCreatedateBetweenOrderByFilecodeDesc(LSuserMaster lsusermaster,Date fromdate, Date todate);
 }
