@@ -331,20 +331,19 @@ public class DashBoardService {
 	{
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
-		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
 		objLSMultiusergroup =lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
-		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+		objuser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		
-		if(objupdateduser.getUsername().equals("Administrator"))
+		if(objuser.getUsername().equals("Administrator"))
 		{
 			mapOrders.put("orderlst", lslogilablimsorderdetailRepository.findByCreatedtimestampBetweenOrderByBatchcodeDesc(fromdate,todate));
 		}
 		else
 		{
 			
-			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objupdateduser);
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 			
@@ -372,8 +371,26 @@ public class DashBoardService {
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapSheets = new HashMap<String, Object>();
 		
-		List<Sheettemplateget> lstsheets = lsfileRepository.findByCreatebyAndCreatedateBetweenOrderByFilecodeDesc(objuser, fromdate, todate);
-		mapSheets.put("Sheets", lstsheets);
+		if(objuser.getUsername().equals("Administrator"))
+		{
+			mapSheets.put("Sheets", lsfileRepository.findByCreatedateBetweenAndFilecodeGreaterThanOrderByFilecodeDesc(fromdate,todate,1));
+		}
+		else
+		{
+			List<Sheettemplateget> lstsheets = new ArrayList<Sheettemplateget>();
+			List<Integer> lstteammap = lsuserteammappingRepository
+					.getTeamcodeByLsuserMaster4postgressandsql(objuser.getUsercode());
+
+			if (lstteammap.size() > 0) {
+				List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
+				lstteamuser.add(objuser);
+				lstsheets = lsfileRepository.findByFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenOrderByFilecodeDesc(1, lstteamuser, fromdate, todate);
+			} else {
+				lstsheets = lsfileRepository.findByFilecodeGreaterThanAndCreatebyAndCreatedateBetweenOrderByFilecodeDesc(1,objuser, fromdate, todate);
+			}
+			
+			mapSheets.put("Sheets", lstsheets);
+		}
 		
 		return mapSheets;
 	}

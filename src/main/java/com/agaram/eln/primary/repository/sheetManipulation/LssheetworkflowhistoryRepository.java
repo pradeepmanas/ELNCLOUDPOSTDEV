@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.repository.sheetManipulation;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +16,6 @@ public interface LssheetworkflowhistoryRepository  extends JpaRepository<Lssheet
 	@Modifying
 	@Query("update Lssheetworkflowhistory o set o.currentworkflow = null where o.currentworkflow = ?1")
 	void setWorkflownullforHistory(LSsheetworkflow lssheetworkflow);
+	
+	public List<Lssheetworkflowhistory> findByFilecode(Integer filecode);
 }

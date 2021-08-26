@@ -19,6 +19,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
+import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.service.cfr.AuditService;
@@ -323,6 +324,12 @@ public class FileController {
 	public List<LSfileversion> Getfileversions(@RequestBody LSfile objfile)
 	{
 		return fileService.Getfileversions(objfile);
+	}
+	
+	@PostMapping("/Getfileworkflowhistory")
+	public List<Lssheetworkflowhistory> Getfilehistory(@RequestBody LSfile objfile)
+	{
+		return fileService.Getfilehistory(objfile);
 	}
 	
 	@PostMapping("/GetfileverContent")

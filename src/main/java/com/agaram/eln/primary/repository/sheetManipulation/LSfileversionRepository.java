@@ -16,6 +16,8 @@ public interface LSfileversionRepository   extends JpaRepository<LSfileversion, 
 	public List<LSfileversion> findByFilecodeOrderByVersionnoDesc(Integer filecode);
 	public LSfileversion findByFilecodeAndVersionnoOrderByVersionnoDesc(Integer filecode, Integer versionnumber);
 	
+	public long countByFilecode(Integer filecode);
+	
 	@Transactional
 	@Modifying
 	@Query("update LSfileversion o set o.lssheetworkflow = null where o.lssheetworkflow = ?1")

@@ -1,7 +1,9 @@
 package com.agaram.eln.primary.model.getsheetdetails;
 
 import java.util.Date;
+import java.util.List;
 
+import com.agaram.eln.primary.model.sheetManipulation.LSfileversion;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public class Sheettemplateget {
@@ -10,30 +12,15 @@ public class Sheettemplateget {
 	private String filenameuser;
 	private Integer approved;
 	private Integer rejected;
-	private Integer versionno;
-	
 	private Date createdate;
-	
+
 	private LSuserMaster createby;
 	private LSuserMaster modifiedby;
+	
+	List<LSfileversion> lsfileversion;
 
-//	private List<LSfileversion> lsfileversion;
-//	private List<Lssheetworkflowhistory> lssheetworkflowhistory;
-
-	public Sheettemplateget(Integer filecode, String filenameuser, Date createdate, 
-//			List<LSfileversion> lsfileversion,
-//			List<Lssheetworkflowhistory> lssheetworkflowhistory, 
-			LSuserMaster createby, LSuserMaster modifiedby,
-			Integer approved, Integer rejected, Integer versionno) {
-
-//		LSfileversion objFileversion = new LSfileversion();
-//		
-//		if(lsfileversion!= null) {
-//			objFileversion.setFileversioncode(lsfileversion.getFileversioncode());
-//			objFileversion.setFilecode(lsfileversion.getFilecode());
-//			objFileversion.setVersionno(lsfileversion.getVersionno());
-//			objFileversion.setVersionname(lsfileversion.getVersionname());
-//		}	
+	public Sheettemplateget(Integer filecode, String filenameuser, Date createdate, LSuserMaster createby,
+			LSuserMaster modifiedby, Integer approved, Integer rejected) {
 		
 		this.filecode = filecode;
 		this.filenameuser = filenameuser;
@@ -42,26 +29,16 @@ public class Sheettemplateget {
 		this.createby = createby;
 		this.createdate = createdate;
 		this.modifiedby = modifiedby;
-		this.versionno = versionno;
-//		this.lsfileversion = lsfileversion;
-//		this.lssheetworkflowhistory = lssheetworkflowhistory;
+
 	}
 
-//	public List<LSfileversion> getLsfileversion() {
-//		return lsfileversion;
-//	}
-//
-//	public void setLsfileversion(List<LSfileversion> lsfileversion) {
-//		this.lsfileversion = lsfileversion;
-//	}
-//
-//	public List<Lssheetworkflowhistory> getLssheetworkflowhistory() {
-//		return lssheetworkflowhistory;
-//	}
-//
-//	public void setLssheetworkflowhistory(List<Lssheetworkflowhistory> lssheetworkflowhistory) {
-//		this.lssheetworkflowhistory = lssheetworkflowhistory;
-//	}
+	public List<LSfileversion> getLsfileversion() {
+		return lsfileversion;
+	}
+
+	public void setLsfileversion(List<LSfileversion> lsfileversion) {
+		this.lsfileversion = lsfileversion;
+	}
 
 	public Date getCreatedate() {
 		return createdate;
@@ -118,14 +95,4 @@ public class Sheettemplateget {
 	public void setFilenameuser(String filenameuser) {
 		this.filenameuser = filenameuser;
 	}
-
-	public Integer getVersionno() {
-		return versionno;
-	}
-
-	public void setVersionno(Integer versionno) {
-		this.versionno = versionno;
-	}
-	
-	
 }

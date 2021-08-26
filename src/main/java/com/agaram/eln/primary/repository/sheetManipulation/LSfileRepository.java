@@ -92,7 +92,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	public LSfile findByfilenameuserIgnoreCase(String filenameuser);
 	
 	/**
-	 * Added bu sathishkumar chandrasekar 
+	 * Added by sathishkumar chandrasekar 
 	 * 
 	 * for reducing sheet loading time on sheet template creation 
 	 */
@@ -104,4 +104,10 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 //	public List<Sheettemplateget> findByCreatebyInAndFilecodeGreaterThanOrderByFilecodeDesc(List<LSuserMaster> lstusermaster, Integer filecode);
 	
 	public List<Sheettemplateget> findByCreatebyAndCreatedateBetweenOrderByFilecodeDesc(LSuserMaster lsusermaster,Date fromdate, Date todate);
+	
+	public List<Sheettemplateget> findByCreatedateBetweenAndFilecodeGreaterThanOrderByFilecodeDesc(Date fromdate, Date todate, Integer filecode);
+	
+	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenOrderByFilecodeDesc(Integer filecode,List<LSuserMaster> lstusermaster, Date fromdate, Date todate);
+	
+	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyAndCreatedateBetweenOrderByFilecodeDesc(Integer filecode, LSuserMaster lsusermaster,Date fromdate, Date todate);
 }

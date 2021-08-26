@@ -36,6 +36,7 @@ public class LoggedUser {
 	private Integer filtertype;
 	private Date fromdate;
 	private Date todate;
+	private Integer orderselectiontype;
 
 	private LScfttransaction objsilentaudit;
 	private LScfttransaction objmanualaudit;
@@ -307,6 +308,14 @@ public class LoggedUser {
 
 	public void setTodate(Date todate) {
 		this.todate = todate;
+	}
+
+	public Integer getOrderselectiontype() {
+		return orderselectiontype;
+	}
+
+	public void setOrderselectiontype(Integer orderselectiontype) {
+		this.orderselectiontype = orderselectiontype;
 	}
 		
 	

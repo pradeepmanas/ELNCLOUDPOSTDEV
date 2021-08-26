@@ -675,10 +675,12 @@ public class ProtocolService {
 			
 			int i =0;
 			List<LSprotocolstepversion> lstVersStep = new ArrayList<LSprotocolstepversion>();
+			List<CloudLSprotocolversionstep> lstcloudStepVersion = new ArrayList<CloudLSprotocolversionstep>();
 			
 			while(i < lststep.size()) {
 				
 					LSprotocolstepversion protoVersStep = new LSprotocolstepversion();
+					CloudLSprotocolversionstep cloudStepVersion = new CloudLSprotocolversionstep();
 					
 					protoVersStep.setProtocolmastercode(lststep.get(i).getProtocolmastercode());
 					protoVersStep.setProtocolstepcode(lststep.get(i).getProtocolstepcode());
@@ -687,12 +689,31 @@ public class ProtocolService {
 					protoVersStep.setStepno(lststep.get(i).getStepno());
 					protoVersStep.setVersionno(protocolMaster.getVersionno());
 					
+					LSprotocolstepversionRepository.save(protoVersStep);
+					
+					cloudStepVersion.setId(protoVersStep.getProtocolstepversioncode());
+					cloudStepVersion.setProtocolmastercode(protocolmastercode);
+					
+					if(protocolstepcode == lststep.get(i).getProtocolstepcode()) {
+						cloudStepVersion.setLsprotocolstepInfo(lsprotocolstepInfo);
+					}else {
+						CloudLSprotocolstepInfo newLSprotocolstepInfo = CloudLSprotocolstepInfoRepository.findById(protocolstepcode);
+						if(newLSprotocolstepInfo != null) {
+							cloudStepVersion.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
+						}
+					}
+					
+					cloudStepVersion.setVersionname("version_"+protocolMaster.getVersionno());
+					cloudStepVersion.setVersionno(protocolMaster.getVersionno());
+					
 					lstVersStep.add(protoVersStep);
-			
+					lstcloudStepVersion.add(cloudStepVersion);
 				i++;
 			}
 			
-			LSprotocolstepversionRepository.save(lstVersStep);
+//			LSprotocolstepversionRepository.save(lstVersStep);
+			
+			CloudLSprotocolversionstepRepository.save(lstcloudStepVersion);
 			
 			LSprotocolversion versProto = new LSprotocolversion();
 			
@@ -703,16 +724,6 @@ public class ProtocolService {
 			versProto.setVersionname("version_"+protocolMaster.getVersionno());	
 			
 			lsprotocolversionRepository.save(versProto);
-			
-			CloudLSprotocolversionstep cloudStepVersion = new CloudLSprotocolversionstep();
-			
-			cloudStepVersion.setId(protocolstepcode);
-			cloudStepVersion.setProtocolmastercode(protocolmastercode);
-			cloudStepVersion.setLsprotocolstepInfo(lsprotocolstepInfo);
-			cloudStepVersion.setVersionname("version_"+protocolMaster.getVersionno());
-			cloudStepVersion.setVersionno(protocolMaster.getVersionno());
-			
-			CloudLSprotocolversionstepRepository.save(cloudStepVersion);
 			
 		}else {
 			
@@ -730,7 +741,7 @@ public class ProtocolService {
 				
 				LSprotocolstepversionRepository.save(protoVersStep);
 				
-				cloudStepVersion.setId(protocolstepcode);
+				cloudStepVersion.setId(protoVersStep.getProtocolstepversioncode());
 				cloudStepVersion.setProtocolmastercode(protocolmastercode);
 				cloudStepVersion.setLsprotocolstepInfo(lsprotocolstepInfo);
 				cloudStepVersion.setVersionno(protocolMaster.getVersionno());
@@ -738,7 +749,11 @@ public class ProtocolService {
 				
 				CloudLSprotocolversionstepRepository.save(cloudStepVersion);
 			}else {
-				CloudLSprotocolversionstep cloudStepVersion = CloudLSprotocolversionstepRepository.findById(protocolstepcode);
+				
+				LSprotocolstepversion protocolStep = LSprotocolstepversionRepository.
+						findByprotocolstepcodeAndVersionno(lSprotocolstepObj.getProtocolstepcode(),protocolMaster.getVersionno());
+				
+				CloudLSprotocolversionstep cloudStepVersion = CloudLSprotocolversionstepRepository.findById(protocolStep.getProtocolstepversioncode());
 
 				cloudStepVersion.setLsprotocolstepInfo(lsprotocolstepInfo);
 				
@@ -2066,7 +2081,7 @@ public class ProtocolService {
 			for(LSprotocolstep LSprotocolstepObj1: LSprotocolsteplst) {
 				if(multitenent == 1) {
 					
-					CloudLSprotocolversionstep newLSprotocolstepInfo = CloudLSprotocolversionstepRepository.findByIdAndVersionno(LSprotocolstepObj1.getProtocolstepcode(),LSprotocolstepObj1.getVersionno());
+					CloudLSprotocolversionstep newLSprotocolstepInfo = CloudLSprotocolversionstepRepository.findByIdAndVersionno(LSprotocolstepObj1.getProtocolstepversioncode(),LSprotocolstepObj1.getVersionno());
 					if(newLSprotocolstepInfo != null) {
 						LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
 					}		

@@ -136,8 +136,8 @@ public class LSlogilablimsorderdetail {
 	@JoinColumn(name="batchcode")
 	private List<Lsbatchdetails> lsbatchdetails;
 	
-	@ManyToOne
-	private Lsrepositoriesdata Lsrepositoriesdata;
+//	@ManyToOne
+//	private Lsrepositoriesdata Lsrepositoriesdata;
 	
 	
 	@Transient
@@ -167,12 +167,12 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	private Integer ismultitenant;
 	
-	public Lsrepositoriesdata getLsrepositoriesdata() {
-		return Lsrepositoriesdata;
-	}
-	public void setLsrepositoriesdata(Lsrepositoriesdata lsrepositoriesdata) {
-		Lsrepositoriesdata = lsrepositoriesdata;
-	}
+//	public Lsrepositoriesdata getLsrepositoriesdata() {
+//		return Lsrepositoriesdata;
+//	}
+//	public void setLsrepositoriesdata(Lsrepositoriesdata lsrepositoriesdata) {
+//		Lsrepositoriesdata = lsrepositoriesdata;
+//	}
 	
 	public Integer getApproved() {
 		return approved;
