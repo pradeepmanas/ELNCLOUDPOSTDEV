@@ -382,25 +382,59 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	public List<Logilaborders> findByOrderflagAndFiletypeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrderByBatchcodeDesc(
 			String flag, Integer filetype, LSuserMaster user, LSuserMaster assignedto, Date fromdate, Date todate);
-	
+
 	public List<Logilaborders> findByAssignedtoAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-			 LSuserMaster assignedto,Integer filetype, Date fromdate, Date todate);
-	
+			LSuserMaster assignedto, Integer filetype, Date fromdate, Date todate);
+
 	public List<Logilaborders> findByOrderflagAndFiletypeAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			String string, Integer filetype, LSuserMaster lsuserMaster, Date fromdate, Date todate);
-	
+
 	public List<Logilaborders> findByOrderflagAndFiletypeAndLsprojectmasterInAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-			 String orderflag, Integer filetype,List<LSprojectmaster> lstproject, Date fromdate, Date todate);
-	
-	public List<Logilaborders> findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndLssamplefileIn(
-			String flag, Integer filetype, Date fromdate, Date todate, List<LSsamplefile> idList);
-	
+			String orderflag, Integer filetype, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
+
+	public List<Logilaborders> findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndLssamplefileIn(String flag,
+			Integer filetype, Date fromdate, Date todate, List<LSsamplefile> idList);
+
 	public List<Logilaborders> findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String orderflag, Integer filetype, Date fromdate, Date todate);
-	
-	public List<Logilaborders> findByOrderflagAndFiletypeAndCompletedtimestampBetweenAndLssamplefileIn(
-			String flag, Integer filetype, Date fromdate, Date todate, List<LSsamplefile> idList);
-	
+
+	public List<Logilaborders> findByOrderflagAndFiletypeAndCompletedtimestampBetweenAndLssamplefileIn(String flag,
+			Integer filetype, Date fromdate, Date todate, List<LSsamplefile> idList);
+
 	public List<Logilaborders> findByOrderflagAndFiletypeAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String orderflag, Integer filetype, Date fromdate, Date todate);
+
+	/**
+	 * Added by sathishkumar chandrasekar 
+	 * 
+	 * for filter orders on dashboard users
+	 * 
+	 * @param orderflag
+	 * @param lstproject
+	 * @param fromdate
+	 * @param todate
+	 * @return
+	 */
+	public List<Logilaborders> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween(String orderflag,
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate);
+
+	public List<Logilaborders> findByOrderflagAndLsprojectmasterInAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Integer approvelstatus, Integer approved, Date fromdate,
+			Date todate);
+	
+	/**
+	 * Added by sathishkumar chandrasekar 
+	 * 
+	 * for filter orders on dashboard Administrator 
+	 * 
+	 * @param orderflag
+	 * @param fromdate
+	 * @param todate
+	 * @return
+	 */
+	public List<Logilaborders> findByOrderflagAndCreatedtimestampBetween(String orderflag, Date fromdate, Date todate);
+
+	public List<Logilaborders> findByOrderflagAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String orderflag, Integer approvelstatus, Integer approved, Date fromdate,
+			Date todate);
 }

@@ -1462,7 +1462,7 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 		LSuserMaster objExitinguser = new LSuserMaster();
 		
 		String username = objuser.getsUsername();
-		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
+		LSSiteMaster objsite = new LSSiteMaster(Integer.parseInt(objuser.getsSiteCode()));
 		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(username,"1", objsite);
 		
 		if(objExitinguser != null)

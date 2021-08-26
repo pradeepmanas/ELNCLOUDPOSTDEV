@@ -66,6 +66,16 @@ public class LSSiteMaster {
 	@Transient
 	private Integer ismultitenant;
 	
+	public LSSiteMaster()
+	{
+		
+	}
+	
+	public LSSiteMaster(Integer sitecode)
+	{
+		this.sitecode = sitecode;
+	}
+	
 	public LSuserMaster getLSuserMaster() {
 		return LSuserMaster;
 	}
