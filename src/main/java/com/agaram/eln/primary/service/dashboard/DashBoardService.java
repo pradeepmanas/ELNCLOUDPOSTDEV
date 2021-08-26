@@ -325,11 +325,15 @@ public class DashBoardService {
 			long lstlimsprocess = lslogilablimsorderdetailRepository
 					.countByFiletypeAndOrderflagAndLssamplefileInAndCreatedtimestampBetween(0, "N", lssamplefile,
 							fromdate, todate);
-			List<Long> orderinproject = new ArrayList<Long>();
+//			List<Long> orderinproject = new ArrayList<Long>();
+			List<Logilaborders> lstordersinprogress = new ArrayList<Logilaborders>();
 			if (lstproject != null && lssamplefile != null && lstproject.size() > 0 && lssamplefile.size() > 0) {
-				orderinproject = lslogilablimsorderdetailRepository
-						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDescInprogress(
-								"N", lstproject, 1, 1, "N", fromdate, todate);
+//				orderinproject = lslogilablimsorderdetailRepository
+//						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDescInprogress(
+//								"N", lstproject, 1, 1, "N", fromdate, todate);
+				lstordersinprogress = lslogilablimsorderdetailRepository
+						.findByOrderflagAndLsprojectmasterInAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+								"N", lstproject, 1, 1, fromdate, todate);
 			}
 			mapOrders.put("orders", (lsorder + lstUserorder));
 			long lstlimspending = lslogilablimsorderdetailRepository
@@ -343,7 +347,7 @@ public class DashBoardService {
 
 			mapOrders.put("pendingorder", (lstlimspending + lstpending.size()));
 			mapOrders.put("completedorder", (lstlimscompleted + lstCompletedordercount.size()));
-			mapOrders.put("onproces", lstlimsprocess + orderinproject.size());
+			mapOrders.put("onproces", lstlimsprocess + lstordersinprogress.size());
 
 		}
 
@@ -366,21 +370,22 @@ public class DashBoardService {
 //		objuser.getObjuser().getOrderselectiontype()
 
 		if (objuser.getUsername().equals("Administrator")) {
-			
+
 			if (objuser.getObjuser().getOrderselectiontype() == 1) {
 				mapOrders.put("orderlst", lslogilablimsorderdetailRepository
 						.findByCreatedtimestampBetweenOrderByBatchcodeDesc(fromdate, todate));
 			} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
 				mapOrders.put("orderlst", lslogilablimsorderdetailRepository
-						.findByOrderflagAndCreatedtimestampBetween("R",fromdate, todate));
+						.findByOrderflagAndCreatedtimestampBetween("R", fromdate, todate));
 			} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
 				mapOrders.put("orderlst", lslogilablimsorderdetailRepository
-						.findByOrderflagAndCreatedtimestampBetween("N",fromdate, todate));
+						.findByOrderflagAndCreatedtimestampBetween("N", fromdate, todate));
 			} else if (objuser.getObjuser().getOrderselectiontype() == 4) {
 				mapOrders.put("orderlst", lslogilablimsorderdetailRepository
-						.findByOrderflagAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc("N",1,1,fromdate, todate));
+						.findByOrderflagAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc("N",
+								1, 1, fromdate, todate));
 			}
-			
+
 		} else {
 
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
@@ -391,7 +396,6 @@ public class DashBoardService {
 					lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups()));
 
 			List<Logilaborders> lstorders = new ArrayList<Logilaborders>();
-			
 
 			if (objuser.getObjuser().getOrderselectiontype() == 1) {
 				lstorders = lslogilablimsorderdetailRepository
@@ -408,7 +412,7 @@ public class DashBoardService {
 			} else if (objuser.getObjuser().getOrderselectiontype() == 4) {
 				lstorders = lslogilablimsorderdetailRepository
 						.findByOrderflagAndLsprojectmasterInAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-								"N",lstproject,1,1, fromdate, todate);
+								"N", lstproject, 1, 1, fromdate, todate);
 			}
 
 			lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
