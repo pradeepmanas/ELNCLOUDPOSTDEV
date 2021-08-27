@@ -363,14 +363,26 @@ public class FileService {
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
+//		if (!lstfile.isEmpty() && lstfile.size() > 0) {
+//
+//			int i = 0;
+//
+//			while (i < lstfile.size()) {
+//
+//				lstfile.get(i).setLsfileversion(
+//						lsfileversionRepository.findByFilecodeOrderByVersionnoDesc(lstfile.get(i).getFilecode()));
+//
+//				i++;
+//			}
+//		}
+		
 		if (!lstfile.isEmpty() && lstfile.size() > 0) {
 
 			int i = 0;
 
 			while (i < lstfile.size()) {
 
-				lstfile.get(i).setLsfileversion(
-						lsfileversionRepository.findByFilecodeOrderByVersionnoDesc(lstfile.get(i).getFilecode()));
+				lstfile.get(i).setVersioncout(lsfileversionRepository.countByFilecode(lstfile.get(i).getFilecode()));
 
 				i++;
 			}

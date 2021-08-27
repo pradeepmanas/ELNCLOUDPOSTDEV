@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.model.cfr.LSactivity;
+import com.agaram.eln.primary.model.getorders.Logilabordermaster;
 import com.agaram.eln.primary.model.getorders.Logilaborders;
 import com.agaram.eln.primary.model.getsheetdetails.Sheettemplateget;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
@@ -281,14 +282,10 @@ public class DashBoardService {
 	public Map<String, Object> Getdashboardordercount(LSuserMaster objuser) {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
-		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
-		objLSMultiusergroup = lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
-		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
 
-		if (objupdateduser.getUsername().equals("Administrator")) {
+		if (objuser.getUsername().equals("Administrator")) {
 			mapOrders.put("orders",
 					lslogilablimsorderdetailRepository.countByCreatedtimestampBetween(fromdate, todate));
 			mapOrders.put("pendingorder", lslogilablimsorderdetailRepository
@@ -302,10 +299,10 @@ public class DashBoardService {
 			long lsorder = lslogilablimsorderdetailRepository.countByFiletypeAndCreatedtimestampBetween(0, fromdate,
 					todate);
 
-			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objupdateduser);
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 			List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
-					.findBylsusergroup(objupdateduser.getLsusergroup());
+					.findBylsusergroup(objuser.getLsusergroup());
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 
 			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
@@ -325,14 +322,11 @@ public class DashBoardService {
 			long lstlimsprocess = lslogilablimsorderdetailRepository
 					.countByFiletypeAndOrderflagAndLssamplefileInAndCreatedtimestampBetween(0, "N", lssamplefile,
 							fromdate, todate);
-//			List<Long> orderinproject = new ArrayList<Long>();
-			List<Logilaborders> lstordersinprogress = new ArrayList<Logilaborders>();
+			long lstordersinprogress = 0;
 			if (lstproject != null && lssamplefile != null && lstproject.size() > 0 && lssamplefile.size() > 0) {
-//				orderinproject = lslogilablimsorderdetailRepository
-//						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDescInprogress(
-//								"N", lstproject, 1, 1, "N", fromdate, todate);
+
 				lstordersinprogress = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterInAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+						.countByOrderflagAndLsprojectmasterInAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 								"N", lstproject, 1, 1, fromdate, todate);
 			}
 			mapOrders.put("orders", (lsorder + lstUserorder));
@@ -345,9 +339,9 @@ public class DashBoardService {
 								todate);
 			}
 
-			mapOrders.put("pendingorder", (lstlimspending + lstpending.size()));
+			mapOrders.put("pendingorder", (lstlimspending + lstpending.size() + lstordersinprogress));
 			mapOrders.put("completedorder", (lstlimscompleted + lstCompletedordercount.size()));
-			mapOrders.put("onproces", lstlimsprocess + lstordersinprogress.size());
+			mapOrders.put("onproces", lstlimsprocess + lstordersinprogress);
 
 		}
 
@@ -363,11 +357,8 @@ public class DashBoardService {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
-		objLSMultiusergroup = lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
-		objuser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 
-//		objuser.getObjuser().getOrderselectiontype()
+		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
 
 		if (objuser.getUsername().equals("Administrator")) {
 
@@ -381,9 +372,9 @@ public class DashBoardService {
 				mapOrders.put("orderlst", lslogilablimsorderdetailRepository
 						.findByOrderflagAndCreatedtimestampBetween("N", fromdate, todate));
 			} else if (objuser.getObjuser().getOrderselectiontype() == 4) {
-				mapOrders.put("orderlst", lslogilablimsorderdetailRepository
-						.findByOrderflagAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc("N",
-								1, 1, fromdate, todate));
+				mapOrders.put("orderlst",
+						lslogilablimsorderdetailRepository.findByOrderflagAndLssamplefileInAndCreatedtimestampBetween(
+								"N", lssamplefile, fromdate, todate));
 			}
 
 		} else {
@@ -395,7 +386,7 @@ public class DashBoardService {
 			List<LSworkflow> lstworkflow = instrumentService.GetWorkflowonuser(
 					lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups()));
 
-			List<Logilaborders> lstorders = new ArrayList<Logilaborders>();
+			List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
 
 			if (objuser.getObjuser().getOrderselectiontype() == 1) {
 				lstorders = lslogilablimsorderdetailRepository
@@ -464,9 +455,9 @@ public class DashBoardService {
 		Date todate = objuser.getObjuser().getTodate();
 		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
-		objLSMultiusergroup = lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
-		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+//		LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
+//		objLSMultiusergroup = lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+//		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 
 		if (objupdateduser.getUsername().equals("Administrator")) {
 			List<LSparsedparameters> lstparsedparam = lsparsedparametersRespository.getallrecords();
@@ -503,13 +494,13 @@ public class DashBoardService {
 	public Map<String, Object> Getdashboardactivities(LSuserMaster objuser) {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
-		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
+		//LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
-		objLSMultiusergroup = lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
-		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+//		LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
+//		objLSMultiusergroup = lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+//		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 
-		if (objupdateduser.getUsername().equals("Administrator")) {
+		if (objuser.getUsername().equals("Administrator")) {
 			mapOrders.put("activities",
 					lsactivityRepository.findTop20ByActivityDateBetweenOrderByActivitycodeDesc(fromdate, todate));
 			mapOrders.put("activitiescount", lsactivityRepository.countByActivityDateBetween(fromdate, todate));

@@ -17,27 +17,51 @@ public class Sheettemplateget {
 	private LSuserMaster createby;
 	private LSuserMaster modifiedby;
 	
-	List<LSfileversion> lsfileversion;
+	private long versioncout;
+	
+//	List<LSfileversion> lsfileversion;
 
 	public Sheettemplateget(Integer filecode, String filenameuser, Date createdate, LSuserMaster createby,
 			LSuserMaster modifiedby, Integer approved, Integer rejected) {
+		
+		LSuserMaster createdUser = new LSuserMaster();
+		
+		if(createby!=null) {
+			createdUser.setUsercode(createby.getUsercode());
+			createdUser.setUsername(createby.getUsername());	
+		}
+		
+		LSuserMaster modifiedUser = new LSuserMaster();
+		if(modifiedby != null) {
+			modifiedUser.setUsercode(modifiedby.getUsercode());
+			modifiedUser.setUsername(modifiedby.getUsername());	
+		}
+		
 		
 		this.filecode = filecode;
 		this.filenameuser = filenameuser;
 		this.approved = approved;
 		this.rejected = rejected;
-		this.createby = createby;
+		this.createby = createdUser;
 		this.createdate = createdate;
-		this.modifiedby = modifiedby;
+		this.modifiedby = modifiedUser;
 
 	}
 
-	public List<LSfileversion> getLsfileversion() {
-		return lsfileversion;
+//	public List<LSfileversion> getLsfileversion() {
+//		return lsfileversion;
+//	}
+//
+//	public void setLsfileversion(List<LSfileversion> lsfileversion) {
+//		this.lsfileversion = lsfileversion;
+//	}
+
+	public long getVersioncout() {
+		return versioncout;
 	}
 
-	public void setLsfileversion(List<LSfileversion> lsfileversion) {
-		this.lsfileversion = lsfileversion;
+	public void setVersioncout(long versioncout) {
+		this.versioncout = versioncout;
 	}
 
 	public Date getCreatedate() {

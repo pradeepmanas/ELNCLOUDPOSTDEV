@@ -13,30 +13,20 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
-public class Logilaborders {
+public class Logilaborders extends Logilabordermaster {
 
-	private Long batchcode;
-	private String batchid;
 	private String orderflag;
 	private Integer approvelstatus;
 	private Integer lockeduser;
 	private Integer testcode;
-	private String testname;
 	private LSsamplemaster lssamplemaster;
 	private LSprojectmaster lsprojectmaster;
 	private Integer filecode;
-	private String filename;
-//	private LSfile lsfile;
 	private LSuserMaster lsuserMaster;
-	private String projectname;
-	private String samplename;
 	private Integer filetype;
 	private LSsamplefile lssamplefile;
-	private LSworkflow lsworkflow;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdtimestamp;
-	List<LSworkflow> lstworkflow;
-	private boolean canuserprocess;
 	
 
 	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
@@ -44,29 +34,23 @@ public class Logilaborders {
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp) {
 		
+		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster);
+		 
 		LSsamplefile objSampleFile = new LSsamplefile();
 		objSampleFile.setFilesamplecode(lssamplefile.getFilesamplecode());
 		objSampleFile.setModifieddate(lssamplefile.getModifieddate());
 		objSampleFile.setCreatedate(lssamplefile.getCreatedate());
 		
-		this.batchcode = batchcode;
-		this.batchid = batchid;
 		this.orderflag = orderflag;
 		this.approvelstatus = approvelstatus;
 		this.lockeduser = lockeduser;
 		this.testcode = testcode;
-		this.testname = testname;
 		this.lssamplemaster = lssamplemaster;
 		this.lsprojectmaster = lsprojectmaster;
 		this.filecode = lsfile != null ? lsfile.getFilecode() : -1;
-		this.filename = lsfile != null ? lsfile.getFilenameuser() : null;
-//		this.lsfile = new LSfile(lsfile.getFilecode(), lsfile.getFilenameuser());
-		this.projectname = lsprojectmaster != null ? lsprojectmaster.getProjectname() : null;
-		this.samplename = lssamplemaster != null ? lssamplemaster.getSamplename() : null;
 		this.filetype = filetype;
 		this.lsuserMaster = lsuserMaster;
 		this.lssamplefile = objSampleFile;
-		this.lsworkflow = lsworkflow;
 		this.createdtimestamp = createdtimestamp;
 	}
 	
@@ -78,22 +62,7 @@ public class Logilaborders {
 		this.lsuserMaster = lsuserMaster;
 	}
 
-	public String getProjectname() {
-		return projectname;
-	}
-
-	public void setProjectname(String projectname) {
-		this.projectname = projectname;
-	}
-
-	public String getSamplename() {
-		return samplename;
-	}
-
-	public void setSamplename(String samplename) {
-		this.samplename = samplename;
-	}
-
+	
 	public Integer getFiletype() {
 		return filetype;
 	}
@@ -110,33 +79,12 @@ public class Logilaborders {
 		this.lssamplefile = lssamplefile;
 	}
 
-	public LSworkflow getLsworkflow() {
-		return lsworkflow;
-	}
-
-	public void setLsworkflow(LSworkflow lsworkflow) {
-		this.lsworkflow = lsworkflow;
-	}
-
 	public Date getCreatedtimestamp() {
 		return createdtimestamp;
 	}
 
 	public void setCreatedtimestamp(Date createdtimestamp) {
 		this.createdtimestamp = createdtimestamp;
-	}
-
-	public Long getBatchcode() {
-		return batchcode;
-	}
-	public void setBatchcode(Long batchcode) {
-		this.batchcode = batchcode;
-	}
-	public String getBatchid() {
-		return batchid;
-	}
-	public void setBatchid(String batchid) {
-		this.batchid = batchid;
 	}
 
 	public String getOrderflag() {
@@ -171,14 +119,6 @@ public class Logilaborders {
 		this.testcode = testcode;
 	}
 
-	public String getTestname() {
-		return testname;
-	}
-
-	public void setTestname(String testname) {
-		this.testname = testname;
-	}
-
 	public LSsamplemaster getLssamplemaster() {
 		return lssamplemaster;
 	}
@@ -203,53 +143,7 @@ public class Logilaborders {
 		this.filecode = filecode;
 	}
 
-	public String getFilename() {
-		return filename;
-	}
-
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
-
-	public List<LSworkflow> getLstworkflow() {
-		return lstworkflow;
-	}
-
-	public void setLstworkflow(List<LSworkflow> lstworkflow) {
-		
-		if(lstworkflow != null && this.lsworkflow !=null && lstworkflow.size() >0)
-		{
-			if(lstworkflow.contains(this.lsworkflow))
-			{
-				this.setCanuserprocess(true);
-			}
-			else
-			{
-				this.setCanuserprocess(false);
-			}
-		}
-		else
-		{
-			this.setCanuserprocess(false);
-		}
-		this.lstworkflow = null;
-	}
-
-	public boolean isCanuserprocess() {
-		return canuserprocess;
-	}
-
-	public void setCanuserprocess(boolean canuserprocess) {
-		this.canuserprocess = canuserprocess;
-	}
-
-//	public LSfile getLsfile() {
-//		return new LSfile(lsfile.getFilecode(), lsfile.getFilenameuser());
-//	}
-//
-//	public void setLsfile(LSfile lsfile) {
-//		this.lsfile = new LSfile(lsfile.getFilecode(), lsfile.getFilenameuser());
-//	}
+	
 	
 	
 }
