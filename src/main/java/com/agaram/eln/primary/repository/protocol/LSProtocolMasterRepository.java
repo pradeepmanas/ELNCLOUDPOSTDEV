@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.repository.protocol;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.agaram.eln.primary.fetchmodel.gettemplate.Protocoltemplateget;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 
@@ -91,5 +93,32 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 	List<LSprotocolmaster> findByProtocolmastercodeIn( ArrayList<Integer> ids);
 
 	LSprotocolmaster findByprotocolmastercode(int protocolusercode);
+	
+	/**
+	 * Added for getting
+	 * 
+	 * @param status
+	 * @return
+	 */
+	List<Protocoltemplateget> findBystatus(Integer status);
+	
+//	List<Protocoltemplateget> findBystatusAndcreatedateBetween(Date fDate,Date tDate);
 
+	List<Protocoltemplateget> findByCreatedbyAndStatusAndLssitemasterAndSharewithteamAndCreatedateBetween
+	(Integer createdby, Integer status,Integer site, Integer Sharewithteam,Date fDate,Date tDate);
+	
+	List<Protocoltemplateget> findByStatusAndLssitemasterAndCreatedateBetween
+	(Integer status,Integer site,Date fDate,Date tDate);
+	
+	List<Protocoltemplateget> findByCreatedbyAndStatusAndLssitemasterAndLSprotocolworkflowNotAndCreatedateBetween
+	(Integer createdby, Integer status,Integer site,LSprotocolworkflow lSprotocolworkflow,Date fDate,Date tDate);
+	
+	List<Protocoltemplateget> findByCreatedbyAndStatusAndLssitemasterAndCreatedateBetween
+	(Integer createdby, Integer status,Integer site,Date fDate,Date tDate);
+	
+	List<Protocoltemplateget> findByCreatedbyNotAndStatusAndLssitemasterAndLSprotocolworkflowAndCreatedateBetween
+	(Integer createdby, Integer status,Integer site,LSprotocolworkflow lSprotocolworkflow,Date fDate,Date tDate);
+	
+	List<Protocoltemplateget> findByCreatedbyAndStatusAndLssitemasterAndSharewithteamAndLSprotocolworkflowNotAndCreatedateBetween
+	(Integer createdby, Integer status,Integer site, Integer Sharewithteam,LSprotocolworkflow lSprotocolworkflow,Date fDate,Date tDate);
 }

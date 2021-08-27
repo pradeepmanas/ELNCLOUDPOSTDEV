@@ -1,4 +1,4 @@
-package com.agaram.eln.primary.model.getorders;
+package com.agaram.eln.primary.fetchmodel.getorders;
 
 import java.util.List;
 

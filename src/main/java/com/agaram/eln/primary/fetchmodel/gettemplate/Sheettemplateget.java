@@ -1,4 +1,4 @@
-package com.agaram.eln.primary.model.getsheetdetails;
+package com.agaram.eln.primary.fetchmodel.gettemplate;
 
 import java.util.Date;
 
@@ -26,7 +26,8 @@ public class Sheettemplateget {
 		
 		if(createby!=null) {
 			createdUser.setUsercode(createby.getUsercode());
-			createdUser.setUsername(createby.getUsername());	
+			createdUser.setUsername(createby.getUsername());
+			createdUser.setUserfullname(createby.getUserfullname());
 		}
 		
 		LSuserMaster modifiedUser = new LSuserMaster();

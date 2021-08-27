@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
-import com.agaram.eln.primary.model.getsheetdetails.Sheettemplateget;
+import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -119,6 +119,12 @@ public class FileController {
 	public List<LSfile> GetfilesOnTestcode(@RequestBody LSfiletest objtest)
 	{
 		return fileService.GetfilesOnTestcode(objtest);
+	}
+	
+	@PostMapping("/GetUnapprovedsheets")
+	public List<LSfile> GetUnapprovedsheets(@RequestBody LSuserMaster objuser)
+	{
+		return fileService.GetApprovedSheets(0, objuser);
 	}
 	
 	@PostMapping("/InsertUpdateWorkflow")

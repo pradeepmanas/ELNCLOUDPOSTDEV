@@ -15,13 +15,13 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetVersion;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.general.SheetVersion;
-import com.agaram.eln.primary.model.getsheetdetails.Sheettemplateget;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
@@ -193,16 +193,8 @@ public class FileService {
 		if (objfile.getModifiedlist() != null) {
 
 			lssheetupdatesRepository.save(objfile.getModifiedlist());
-//			if(objfile.getModifiedlist().get(0).getObjsilentaudit() != null && objfile.getApproved()==1)
-//	    	{
-//
-//				objfile.getModifiedlist().get(0).getObjsilentaudit().setTableName("LSfile");
-//	    		lscfttransactionRepository.save(objfile.getModifiedlist().get(0).getObjsilentaudit());
-//	    	}
 		}
-//		List<LSsheetupdates> list= lssheetupdatesRepository.findByfilecode(objfile.getFilecode());
-//		objfile.setModifiedlist(new ArrayList<LSsheetupdates>());
-//		objfile.getModifiedlist().addAll(list);
+
 		objfile.setFilecontent(null);
 		lSfileRepository.save(objfile);
 
@@ -255,14 +247,13 @@ public class FileService {
 				mongoTemplate.upsert(query, update, SheetCreation.class);
 			}
 		}
-		// objfile.setFilecontent(Content);
+		
 	}
 
 	public List<LSfile> GetSheets(LSuserMaster objuser) {
 		if (objuser.getUsername().equals("Administrator")) {
 			LSuserMaster user = lSuserMasterRepository.findByusercode(objuser.getUsercode());
 			if (objuser.getObjsilentaudit() != null) {
-//			Date date = new Date();
 				objuser.setObjsilentaudit(new LScfttransaction());
 				objuser.getObjsilentaudit().setModuleName("Sheet Creation");
 				objuser.getObjsilentaudit().setComments("Request to load Sheet Creation screen");
@@ -272,15 +263,12 @@ public class FileService {
 				objuser.getObjsilentaudit().setManipulatetype("view");
 				objuser.getObjsilentaudit().setLsuserMaster(user.getUsercode());
 				objuser.getObjsilentaudit().setLssitemaster(user.getLssitemaster().getSitecode());
-//			objuser.getObjsilentaudit().setTransactiondate(date);
 				lscfttransactionRepository.save(objuser.getObjsilentaudit());
 			}
-			// return lSfileRepository.findByfilecodeGreaterThan(1);
 			return lSfileRepository.getsheetGreaterthanone();
 		} else {
 			LSuserMaster user = lSuserMasterRepository.findByusercode(objuser.getUsercode());
-//			if(objuser.getObjsilentaudit()!=null) {
-//			Date date = new Date();
+
 			objuser.setObjsilentaudit(new LScfttransaction());
 			objuser.getObjsilentaudit().setModuleName("Sheet Creation");
 			objuser.getObjsilentaudit().setComments("Request to load Sheet Creation screen");
@@ -290,10 +278,8 @@ public class FileService {
 			objuser.getObjsilentaudit().setManipulatetype("view");
 			objuser.getObjsilentaudit().setLsuserMaster(user.getUsercode());
 			objuser.getObjsilentaudit().setLssitemaster(user.getLssitemaster().getSitecode());
-//		
 
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
-//			}
 			return GetSheetsbyuser(objuser);
 		}
 	}
@@ -306,43 +292,14 @@ public class FileService {
 		if (lstteammap.size() > 0) {
 			List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
 			lstteamuser.add(objuser);
-			// lstfile =
-			// lSfileRepository.findByCreatebyInAndFilecodeGreaterThan(lstteamuser,1);
 			lstfile = lSfileRepository.getsheetGreaterthanOneAndCreatedByUserIN(lstteamuser);
 		} else {
 			List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
 			lstteamuser.add(objuser);
-			// lstfile =
-			// lSfileRepository.findByCreatebyInAndFilecodeGreaterThan(lstteamuser,1);
 			lstfile = lSfileRepository.getsheetGreaterthanOneAndCreatedByUserIN(lstteamuser);
 		}
 		return lstfile;
 	}
-
-//	public List<LSfile> GetSheetsbyuseronDetailview(LSuserMaster objuser)
-//	{
-//		List<LSfile> lstfile = new ArrayList<LSfile>();
-//		List<Integer> lstteammap = lsuserteammappingRepository.getTeamcodeByLsuserMaster4postgressandsql(objuser.getUsercode());
-//		
-//		if(lstteammap.size() >0)
-//		{
-//			List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
-//			lstteamuser.add(objuser);
-//			lstfile = lSfileRepository.findByCreatebyInAndFilecodeGreaterThanOrderByFilecodeDesc(lstteamuser,1);
-//		}
-//		else
-//		{
-//			List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
-//			lstteamuser.add(objuser);
-//			lstfile = lSfileRepository.findByCreatebyInAndFilecodeGreaterThanOrderByFilecodeDesc(lstteamuser,1);
-//		}
-//		if(objuser.getObjsilentaudit()!=null) {
-//			objuser.getObjsilentaudit().setTableName("LSfile");
-//			lscfttransactionRepository.save(objuser.getObjsilentaudit());
-//		}
-//		return lstfile;
-//	}
-//	
 
 	public List<Sheettemplateget> GetSheetsbyuseronDetailview(LSuserMaster objuser) {
 		List<Sheettemplateget> lstfile = new ArrayList<Sheettemplateget>();
@@ -362,19 +319,6 @@ public class FileService {
 			objuser.getObjsilentaudit().setTableName("LSfile");
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
-
-//		if (!lstfile.isEmpty() && lstfile.size() > 0) {
-//
-//			int i = 0;
-//
-//			while (i < lstfile.size()) {
-//
-//				lstfile.get(i).setLsfileversion(
-//						lsfileversionRepository.findByFilecodeOrderByVersionnoDesc(lstfile.get(i).getFilecode()));
-//
-//				i++;
-//			}
-//		}
 		
 		if (!lstfile.isEmpty() && lstfile.size() > 0) {
 
@@ -424,10 +368,6 @@ public class FileService {
 		lSfiletestRepository.save(objtest);
 
 		if (objtest.getObjsilentaudit() != null) {
-//			objtest.getObjsilentaudit().setModuleName("SheetSettings");
-//			objtest.getObjsilentaudit().setComments("Update file test Successfully");
-//			objtest.getObjsilentaudit().setActions("Update file test");
-//			objtest.getObjsilentaudit().setSystemcoments("System Generated");
 			objtest.getObjsilentaudit().setTableName("LSfiletest");
 			lscfttransactionRepository.save(objtest.getObjsilentaudit());
 		}
@@ -438,21 +378,6 @@ public class FileService {
 			lscfttransactionRepository.save(objtest.getObjmanualaudit());
 		}
 
-//		if(objtest.getObjuser() != null) {
-//			LScfttransaction manualAudit=new LScfttransaction();
-//			Date date = new Date();
-//			
-////			manualAudit.setModuleName("SheetSettings");
-////			manualAudit.setComments("Update file test Successfully");
-////			manualAudit.setActions("Update file test");
-////			manualAudit.setSystemcoments("System Generated");
-//			manualAudit.setTableName("LSfiletest");
-////			manualAudit.setManipulatetype("Insert");
-//			manualAudit.setLsuserMaster(objtest.getLSuserMaster());
-//			manualAudit.setLssitemaster(objtest.getLSuserMaster().getLssitemaster());
-//			manualAudit.setTransactiondate(date);
-//    		lscfttransactionRepository.save(manualAudit);
-//		}
 		objtest.setResponse(new Response());
 		objtest.getResponse().setStatus(true);
 		objtest.getResponse().setInformation("ID_SHEETGRP");
@@ -484,15 +409,13 @@ public class FileService {
 		}
 
 		if (lsfiles != null && lsfiles.size() == 1) {
-//			if(objtest.getIsmultitenant() != null )
-//			{
+
 			if (objtest.getIsmultitenant() == 1) {
 				CloudSheetCreation file = cloudSheetCreationRepository.findById((long) lsfiles.get(0).getFilecode());
 				if (file != null) {
 					lsfiles.get(0).setFilecontent(file.getContent());
 				}
 			}
-//			}
 			else {
 				SheetCreation file = mongoTemplate.findById(lsfiles.get(0).getFilecode(), SheetCreation.class);
 				if (file != null) {
@@ -539,10 +462,7 @@ public class FileService {
 			objflow.getObjsilentaudit().setTableName("LSuserMaster");
 			lscfttransactionRepository.save(objflow.getObjsilentaudit());
 		}
-//		if(objflow.getLsusermaster().getUsername().equalsIgnoreCase("Administrator"))
-//		{
-//			return lsworkflowRepository.findAll();	
-//		}
+
 		return lsworkflowRepository.findByLssitemasterOrderByWorkflowcodeAsc(objflow.getLssitemaster());
 	}
 
@@ -552,11 +472,7 @@ public class FileService {
 		long onprocess = LSlogilablimsorderdetailRepository.countByLsworkflowAndOrderflag(objflow, "N");
 		if (onprocess > 0) {
 			response.setStatus(false);
-//			if(objflow.getObjsilentaudit()!=null) {
-//				objflow.getObjsilentaudit().setComments("Some of the orders are inprogess with this workflow");
-//				objflow.getObjsilentaudit().setTableName("LSworkflow");
-//	    		lscfttransactionRepository.save(objflow.getObjsilentaudit());
-//			}
+
 		} else {
 			LSlogilablimsorderdetailRepository.setWorkflownullforcompletedorder(objflow);
 			lsorderworkflowhistoryRepositroy.setWorkflownullforHistory(objflow);
@@ -614,24 +530,8 @@ public class FileService {
 			lscfttransactionRepository.save(lSsheetworkflow.get(0).getObjsilentaudit());
 		}
 
-//				if(lSsheetworkflow.get(0).getObjuser() != null) {
-//					LScfttransaction manualAudit=new LScfttransaction();
-//					Date date = new Date();
-//					
-//					manualAudit.setModuleName("SheetSettings");
-//					manualAudit.setComments("Update file test Successfully");
-//					manualAudit.setActions("Update file test");
-//					manualAudit.setSystemcoments("System Generated");
-//					manualAudit.setTableName("LSfiletest");
-//					manualAudit.setManipulatetype("Insert");
-//					manualAudit.setLsuserMaster(lSsheetworkflow.get(0).getLSuserMaster());
-//					manualAudit.setLssitemaster(lSsheetworkflow.get(0).getLSuserMaster().getLssitemaster());
-//					manualAudit.setTransactiondate(date);
-//		    		lscfttransactionRepository.save(manualAudit);
-//				}
 		if (lSsheetworkflow.get(0).getObjuser() != null) {
 
-//					Date date = new Date();
 
 			lSsheetworkflow.get(0).getObjmanualaudit().setComments(lSsheetworkflow.get(0).getObjuser().getComments());
 			lSsheetworkflow.get(0).getObjmanualaudit().setTableName("LSsheetworkflow");
@@ -639,7 +539,6 @@ public class FileService {
 					.setLsuserMaster(lSsheetworkflow.get(0).getLSuserMaster().getUsercode());
 			lSsheetworkflow.get(0).getObjmanualaudit()
 					.setLssitemaster(lSsheetworkflow.get(0).getLSuserMaster().getLssitemaster().getSitecode());
-//					lSsheetworkflow.get(0).getObjmanualaudit().setTransactiondate(date);
 			lscfttransactionRepository.save(lSsheetworkflow.get(0).getObjmanualaudit());
 		}
 		lSsheetworkflow.get(0).setResponse(new Response());
@@ -654,10 +553,7 @@ public class FileService {
 			objuser.getObjsilentaudit().setTableName("LSuserMaster");
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
-//		if(objuser.getLsusermaster().getUsername().equalsIgnoreCase("Administrator"))
-//		{
-//			return lssheetworkflowRepository.findAll();	
-//		}
+
 		return lssheetworkflowRepository.findBylssitemaster(objuser.getLssitemaster());
 	}
 
@@ -961,8 +857,7 @@ public class FileService {
 				objfile.getModifiedlist().get(0).getObjsilentaudit()
 						.setComments("Sheet" + " " + objfile.getFilenameuser() + " " + " was versioned to version_"
 								+ Versionnumber + " " + "by the user" + " " + objfile.getCreateby().getUsername());
-				// objpwd.getObjsilentaudit().setActions("view");
-				// objpwd.getObjsilentaudit().setSystemcoments("System Generated");
+			
 				objfile.getModifiedlist().get(0).getObjsilentaudit().setTableName("LSfile");
 				lscfttransactionRepository.save(objfile.getModifiedlist().get(0).getObjsilentaudit());
 			}
@@ -984,10 +879,7 @@ public class FileService {
 			updatefileversioncontent(Content, objversion, objfile.getIsmultitenant());
 		}
 		objfile.setVersionno(Versionnumber);
-//		else
-//		{
-//			lsfileversionRepository.save(objfile.getLsfileversion());
-//		}
+
 
 		return true;
 	}

@@ -37,13 +37,23 @@ public class LoggedUser {
 	private Date fromdate;
 	private Date todate;
 	private Integer orderselectiontype;
-
+	private Integer orderfor;
+	private Integer templatefor;
+	
 	private LScfttransaction objsilentaudit;
 	private LScfttransaction objmanualaudit;
 	private LSuserMaster lsusermaster;
 	@Transient
 	private LoggedUser objuser;
 	
+
+	public Integer getTemplatefor() {
+		return templatefor;
+	}
+
+	public void setTemplatefor(Integer templatefor) {
+		this.templatefor = templatefor;
+	}
 
 	@Transient
 	private String sUserPassword;
@@ -59,6 +69,14 @@ public class LoggedUser {
 
 	@Transient
 	private Integer multiusergroupcode;
+
+	public Integer getOrderfor() {
+		return orderfor;
+	}
+
+	public void setOrderfor(Integer orderfor) {
+		this.orderfor = orderfor;
+	}
 
 	public Integer getObjsite() {
 		return objsite;

@@ -70,15 +70,15 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private LSprotocolmaster Lsprotocolmaster;
 	
 	@ManyToOne
-	private LSuserMaster LsuserMaster;
+	private LSuserMaster lsuserMaster;
 	
 	private Integer Testcode;
 	
 	@ManyToOne
-	private LSsamplemaster Lssamplemaster;
+	private LSsamplemaster lssamplemaster;
 	
 	@ManyToOne
-	private LSprojectmaster Lsprojectmaster;
+	private LSprojectmaster lsprojectmaster;
 	
 	@Transient
 	LoggedUser objuser;
@@ -89,16 +89,6 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	LScfttransaction objsilentaudit;
 	
-	public LScfttransaction getObjsilentaudit() {
-		return objsilentaudit;
-	}
-
-	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
-		this.objsilentaudit = objsilentaudit;
-	}
-
-	@Transient
-	private Integer ismultitenant;
 
 	public Long getProtocolordercode() {
 		return protocolordercode;
@@ -140,6 +130,46 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.completedtimestamp = completedtimestamp;
 	}
 
+	public LSprotocolmaster getLsprotocolmaster() {
+		return Lsprotocolmaster;
+	}
+
+	public void setLsprotocolmaster(LSprotocolmaster lsprotocolmaster) {
+		this.Lsprotocolmaster = lsprotocolmaster;
+	}
+
+	public LSuserMaster getLsuserMaster() {
+		return lsuserMaster;
+	}
+
+	public void setLsuserMaster(LSuserMaster lsuserMaster) {
+		this.lsuserMaster = lsuserMaster;
+	}
+
+	public Integer getTestcode() {
+		return Testcode;
+	}
+
+	public void setTestcode(Integer testcode) {
+		Testcode = testcode;
+	}
+
+	public LSsamplemaster getLssamplemaster() {
+		return lssamplemaster;
+	}
+
+	public void setLssamplemaster(LSsamplemaster lssamplemaster) {
+		this.lssamplemaster = lssamplemaster;
+	}
+
+	public LSprojectmaster getLsprojectmaster() {
+		return lsprojectmaster;
+	}
+
+	public void setLsprojectmaster(LSprojectmaster lsprojectmaster) {
+		this.lsprojectmaster = lsprojectmaster;
+	}
+
 	public LoggedUser getObjuser() {
 		return objuser;
 	}
@@ -156,6 +186,14 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.objmanualaudit = objmanualaudit;
 	}
 
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+
 	public Integer getIsmultitenant() {
 		return ismultitenant;
 	}
@@ -164,45 +202,8 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.ismultitenant = ismultitenant;
 	}
 
-	public LSprotocolmaster getLsprotocolmaster() {
-		return Lsprotocolmaster;
-	}
-
-	public void setLsprotocolmaster(LSprotocolmaster lsprotocolmaster) {
-		Lsprotocolmaster = lsprotocolmaster;
-	}
-
-	public LSuserMaster getLsuserMaster() {
-		return LsuserMaster;
-	}
-
-	public void setLsuserMaster(LSuserMaster lsuserMaster) {
-		LsuserMaster = lsuserMaster;
-	}
-
-	public Integer getTestcode() {
-		return Testcode;
-	}
-
-	public void setTestcode(Integer testcode) {
-		Testcode = testcode;
-	}
-
-	public LSsamplemaster getLssamplemaster() {
-		return Lssamplemaster;
-	}
-
-	public void setLssamplemaster(LSsamplemaster lssamplemaster) {
-		Lssamplemaster = lssamplemaster;
-	}
-
-	public LSprojectmaster getLsprojectmaster() {
-		return Lsprojectmaster;
-	}
-
-	public void setLsprojectmaster(LSprojectmaster lsprojectmaster) {
-		Lsprojectmaster = lsprojectmaster;
-	}
+	@Transient
+	private Integer ismultitenant;
 
 	@Override
 	public int compareTo(LSlogilabprotocoldetail o) {

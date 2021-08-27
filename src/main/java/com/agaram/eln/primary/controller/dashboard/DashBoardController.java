@@ -49,7 +49,12 @@ public class DashBoardController {
 	@PostMapping("/Getdashboardorders")
 	public Map<String, Object> Getdashboardorders(@RequestBody LSuserMaster objuser)
 	{
-		return dashBoardService.Getdashboardorders(objuser);
+		if(objuser.getObjuser().getOrderfor()==1) {
+			return dashBoardService.Getdashboardorders(objuser);
+		}else {
+			return dashBoardService.Getdashboardprotocolorders(objuser);
+		}
+		
 	}
 	
 	@PostMapping("/Getdashboardparameters")
@@ -67,7 +72,10 @@ public class DashBoardController {
 	@PostMapping("/Getdashboardsheets")
 	public Map<String, Object> Getdashboardsheets(@RequestBody LSuserMaster objuser)
 	{
-		return dashBoardService.Getdashboardsheets(objuser);
+		if(objuser.getObjuser().getTemplatefor()==1) {
+			return dashBoardService.Getdashboardsheets(objuser);
+		}else {
+			return dashBoardService.Getdashboardprotocoltemplate(objuser);
+		}
 	}
-
 }

@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
+import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
+import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.Lselninstrumentmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
@@ -39,7 +42,7 @@ public class BaseMasterController {
 	 */
 	
 	@RequestMapping("/getTestmaster")
-	public List<LStestmasterlocal> getTestmaster(@RequestBody LSuserMaster objClass) {
+	public List<Testmaster> getTestmaster(@RequestBody LSuserMaster objClass) {
 		return masterService.getTestmaster(objClass);
 	}
 	
@@ -49,12 +52,12 @@ public class BaseMasterController {
 	}
 	
 	@RequestMapping("/getSamplemaster")
-	public List<LSsamplemaster> getsamplemaster(@RequestBody LSuserMaster objClass) {
+	public List<Samplemaster> getsamplemaster(@RequestBody LSuserMaster objClass) {
 		return masterService.getsamplemaster(objClass);
 	}
 	
 	@RequestMapping("/getProjectmaster")
-	public List<LSprojectmaster> getProjectmaster(@RequestBody LSuserMaster objClass) {
+	public List<Projectmaster> getProjectmaster(@RequestBody LSuserMaster objClass) {
 		return masterService.getProjectmaster(objClass);
 	}
 	

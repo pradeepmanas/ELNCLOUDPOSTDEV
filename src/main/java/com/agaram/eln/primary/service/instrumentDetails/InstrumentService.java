@@ -39,7 +39,7 @@ import com.agaram.eln.primary.model.general.OrderVersion;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.general.SheetCreation;
-import com.agaram.eln.primary.model.getorders.Logilaborders;
+import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.instrumentDetails.LSfields;
 import com.agaram.eln.primary.model.instrumentDetails.LSinstruments;
 import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;

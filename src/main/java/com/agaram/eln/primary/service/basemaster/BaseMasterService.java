@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
+import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
+import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.Lselninstrumentfields;
 import com.agaram.eln.primary.model.instrumentDetails.Lselninstrumentmaster;
@@ -87,7 +90,7 @@ public class BaseMasterService {
 	private String ModuleName = "Base Master";
 	
 
-	public List<LStestmasterlocal> getTestmaster(LSuserMaster objClass) 
+	public List<Testmaster> getTestmaster(LSuserMaster objClass) 
 	{	
 //		silent audit
 		if(objClass.getObjsilentaudit() != null)
@@ -112,7 +115,7 @@ public class BaseMasterService {
 		return lstestmasterRepository.findAll();
 	}
 	
-	public List<LSsamplemaster> getsamplemaster(LSuserMaster objClass) {
+	public List<Samplemaster> getsamplemaster(LSuserMaster objClass) {
 		
 		if(objClass.getObjsilentaudit() != null)
     	{
@@ -125,7 +128,7 @@ public class BaseMasterService {
 		return lSsamplemasterRepository.findBystatusAndLssitemaster(1,objClass.getLssitemaster());
 	}
 
-	public List<LSprojectmaster> getProjectmaster(LSuserMaster objClass) {
+	public List<Projectmaster> getProjectmaster(LSuserMaster objClass) {
 		
 		if(objClass.getObjsilentaudit() != null)
     	{
