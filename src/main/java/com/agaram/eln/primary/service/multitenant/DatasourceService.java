@@ -322,9 +322,9 @@ public class DatasourceService {
 		CustomerSubscription getSubs = CustomerSubscriptionRepository.findByid(datasourceconfig.getId());
 
 		Invoice invoice = new Invoice();
-		
-		if(getSubs != null) {
-			invoice = InvoiceRepository.findBycustomersubscriptionid(getSubs.getCustomer_subscription_id());	
+
+		if (getSubs != null) {
+			invoice = InvoiceRepository.findBycustomersubscriptionid(getSubs.getCustomer_subscription_id());
 		}
 
 		datasourceconfig.setInvoice(invoice);
@@ -613,6 +613,8 @@ public class DatasourceService {
 			lsuserMaster.setPassword(passwordadmin);
 			lsuserMaster.setPasswordstatus(1);
 
+//			System.out.print(Tenant.getLoginpath());
+
 //			Email email = new Email();
 			if (!Tenant.getAdministratormailid().equals("")) {
 				String mails[] = { Tenant.getUseremail(), Tenant.getAdministratormailid() };
@@ -625,7 +627,8 @@ public class DatasourceService {
 							+ "<i>You have successfully registered to Logilab ELN.</i><br>"
 							+ "<i>Your organisation ID is <b>" + Tenant.getTenantid() + "</b>.</i><br>"
 							+ "<i>we create a default administrator user for you and this are the login credentials.</i><br>"
-							+ "<b>UserName:\t\t Administrator </b><br><b>Password:\t\t" + password + "</b>");
+							+ "<b>UserName:\t\t Administrator </b><br><b>Password:\t\t" + password + "</b>"
+							+ "</b><br><b><a href=" + Tenant.getLoginpath() + ">click here to login</a></b>");
 					emailService.sendEmail(email);
 				}
 			} else {
@@ -636,7 +639,8 @@ public class DatasourceService {
 						+ "<i>You have successfully registered to Logilab ELN.</i><br>"
 						+ "<i>Your organisation ID is <b>" + Tenant.getTenantid() + "</b>.</i><br>"
 						+ "<i>we create a default administrator user for you and this are the login credentials.</i><br>"
-						+ "<b>UserName:\t\t Administrator </b><br><b>Password:\t\t" + password + "</b>");
+						+ "<b>UserName:\t\t Administrator </b><br><b>Password:\t\t" + password + "</b>"
+						+ "</b><br><b><a href=" + Tenant.getLoginpath() + ">click here to login</a></b>");
 				emailService.sendEmail(email);
 			}
 			lsuserMasterRepository.save(lsuserMaster);

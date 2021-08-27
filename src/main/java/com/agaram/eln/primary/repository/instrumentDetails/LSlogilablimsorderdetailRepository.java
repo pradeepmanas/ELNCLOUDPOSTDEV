@@ -324,16 +324,22 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	public long countByLsprojectmasterInAndCreatedtimestampBetween(List<LSprojectmaster> lstproject, Date fromdate,
 			Date todate);
+	
+	public long countByLsprojectmasterInOrFiletypeAndCreatedtimestampBetween(List<LSprojectmaster> lstproject,Integer filetype, Date fromdate,
+			Date todate);
 
 	public long countByFiletypeAndOrderflagAndCreatedtimestampBetween(Integer filetype, String orderflag, Date fromdate,
 			Date todate);
 
-	@Transactional
-	@Modifying
-	@Query(value = "select batchcode from"
-			+ " LSlogilablimsorderdetail where orderflag = ?1 and lsprojectmaster_projectcode in (?2) and completedtimestamp BETWEEN (?3) AND (?4)", nativeQuery = true)
-	public List<Long> countByOrderflagAndLsprojectmasterInAndCompletedtimestampBetween(String orderflag,
+//	@Transactional
+//	@Modifying
+//	@Query(value = "select batchcode from"
+//			+ " LSlogilablimsorderdetail where orderflag = ?1 and lsprojectmaster_projectcode in (?2) and completedtimestamp BETWEEN (?3) AND (?4)", nativeQuery = true)
+	public long countByOrderflagAndLsprojectmasterInAndCompletedtimestampBetween(String orderflag,
 			List<LSprojectmaster> lstproject, Date fromdate, Date todate);
+	
+	public long countByOrderflagAndLsprojectmasterInOrFiletypeAndCompletedtimestampBetween(String orderflag,
+			List<LSprojectmaster> lstproject, Integer filetype, Date fromdate, Date todate);
 
 	public List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndCompletedtimestampBetweenOrderByBatchcodeDesc(
 			String orderflag, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
@@ -349,12 +355,15 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			String orderflag, List<LSprojectmaster> lstproject, Integer approvelstatus, Integer approved,
 			String orderflag1, Date fromdate, Date todate);
 
-	@Transactional
-	@Modifying
-	@Query(value = "select batchcode from"
-			+ " LSlogilablimsorderdetail where orderflag = ?1 and lsprojectmaster_projectcode in (?2) and createdtimestamp BETWEEN (?3) AND (?4)", nativeQuery = true)
-	public List<Long> countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween(String orderflag,
+//	@Transactional
+//	@Modifying
+//	@Query(value = "select batchcode from"
+//			+ " LSlogilablimsorderdetail where orderflag = ?1 and lsprojectmaster_projectcode in (?2) and createdtimestamp BETWEEN (?3) AND (?4)", nativeQuery = true)
+	public long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween(String orderflag,
 			List<LSprojectmaster> lstproject, Date fromdate, Date todate);
+	
+	public long countByOrderflagAndLsprojectmasterInOrFiletypeAndCreatedtimestampBetween(String orderflag,
+			List<LSprojectmaster> lstproject, Integer filetype, Date fromdate, Date todate);
 
 	public List<Logilaborders> findByOrderByBatchcodeDesc();
 

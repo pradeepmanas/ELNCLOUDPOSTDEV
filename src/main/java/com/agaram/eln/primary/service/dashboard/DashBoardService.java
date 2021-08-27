@@ -216,7 +216,7 @@ public class DashBoardService {
 			long lstlimscompleted = lslogilablimsorderdetailRepository
 					.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "R", fromdate, todate);
 //			long lstCompletedordercount = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInOrderByBatchcodeDesc("R",lstproject);
-			List<Long> lstCompletedordercount = new ArrayList<Long>();
+			long lstCompletedordercount = 0;
 			if (lstproject != null && lstproject.size() > 0) {
 
 //				lstCompletedordercount = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInOrderByBatchcodeDesc("R",lstproject,objuser.getUsercode());
@@ -245,7 +245,7 @@ public class DashBoardService {
 			long lstlimspending = lslogilablimsorderdetailRepository
 					.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "N", fromdate, todate);
 //			long lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc("N",lstproject, lsworkflow);
-			List<Long> lstpending = new ArrayList<Long>();
+			long lstpending = 0;
 			if (lstproject != null && lsworkflow != null && lstproject.size() > 0 && lsworkflow.size() > 0) {
 //				lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc("N",lstproject, lsworkflow,objuser.getUsercode());
 				lstpending = lslogilablimsorderdetailRepository
@@ -257,8 +257,8 @@ public class DashBoardService {
 			if (lstBatchcode != null && lstBatchcode.size() > 0) {
 				lstparsedparam = lsparsedparametersRespository.getByBatchcodeIn(lstBatchcode);
 			}
-			mapOrders.put("pendingorder", (lstlimspending + lstpending.size()));
-			mapOrders.put("completedorder", (lstlimscompleted + lstCompletedordercount.size()));
+			mapOrders.put("pendingorder", (lstlimspending + lstpending));
+			mapOrders.put("completedorder", (lstlimscompleted + lstCompletedordercount));
 			mapOrders.put("onproces", lstlimsprocess + orderinproject.size());
 			mapOrders.put("activities",
 					lsactivityRepository.findTop20ByActivityDateBetweenOrderByActivitycodeDesc(fromdate, todate));
@@ -296,28 +296,37 @@ public class DashBoardService {
 					.countByOrderflagAndLssamplefileInAndCreatedtimestampBetween("N", lssamplefile, fromdate, todate));
 
 		} else {
-			long lsorder = lslogilablimsorderdetailRepository.countByFiletypeAndCreatedtimestampBetween(0, fromdate,
-					todate);
+//			long lsorder = lslogilablimsorderdetailRepository.countByFiletypeAndCreatedtimestampBetween(0, fromdate,
+//					todate);
 
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
-			List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
-					.findBylsusergroup(objuser.getLsusergroup());
+
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 
-			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
+			long lstUserorder = 0;
+			if(lstproject != null && lstproject.size() >0)
+			{
+				lstUserorder = lslogilablimsorderdetailRepository
+					.countByLsprojectmasterInOrFiletypeAndCreatedtimestampBetween(lstproject, 0, fromdate, todate);
+			}
+			else
+			{
+				lstUserorder = lslogilablimsorderdetailRepository.countByFiletypeAndCreatedtimestampBetween(0, fromdate, todate);
+			}
 
-			long lstUserorder = lslogilablimsorderdetailRepository
-					.countByLsprojectmasterInAndCreatedtimestampBetween(lstproject, fromdate, todate);
-
-			long lstlimscompleted = lslogilablimsorderdetailRepository
-					.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "R", fromdate, todate);
-			List<Long> lstCompletedordercount = new ArrayList<Long>();
+			long lstlimscompleted = 0;
 			if (lstproject != null && lstproject.size() > 0) {
-				lstCompletedordercount = lslogilablimsorderdetailRepository
-						.countByOrderflagAndLsprojectmasterInAndCompletedtimestampBetween("R", lstproject, fromdate,
+				lstlimscompleted = lslogilablimsorderdetailRepository
+						.countByOrderflagAndLsprojectmasterInOrFiletypeAndCompletedtimestampBetween("R", lstproject, 0, fromdate,
 								todate);
 			}
+			else
+			{
+				lstlimscompleted = lslogilablimsorderdetailRepository.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "R", fromdate, todate);
+			}
+			
+			
 
 			long lstlimsprocess = lslogilablimsorderdetailRepository
 					.countByFiletypeAndOrderflagAndLssamplefileInAndCreatedtimestampBetween(0, "N", lssamplefile,
@@ -329,18 +338,22 @@ public class DashBoardService {
 						.countByOrderflagAndLsprojectmasterInAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 								"N", lstproject, 1, 1, fromdate, todate);
 			}
-			mapOrders.put("orders", (lsorder + lstUserorder));
-			long lstlimspending = lslogilablimsorderdetailRepository
-					.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "N", fromdate, todate);
-			List<Long> lstpending = new ArrayList<Long>();
-			if (lstproject != null && lsworkflow != null && lstproject.size() > 0 && lsworkflow.size() > 0) {
+			
+			long lstpending = 0;
+			if (lstproject != null &&  lstproject.size() > 0) {
 				lstpending = lslogilablimsorderdetailRepository
-						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("N", lstproject, fromdate,
+						.countByOrderflagAndLsprojectmasterInOrFiletypeAndCreatedtimestampBetween("N", lstproject, 0, fromdate,
 								todate);
 			}
+			else
+			{
+				lstpending = lslogilablimsorderdetailRepository
+						.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "N", fromdate, todate);
+			}
 
-			mapOrders.put("pendingorder", (lstlimspending + lstpending.size() + lstordersinprogress));
-			mapOrders.put("completedorder", (lstlimscompleted + lstCompletedordercount.size()));
+			mapOrders.put("orders", (lstUserorder));
+			mapOrders.put("pendingorder", (lstpending + lstordersinprogress));
+			mapOrders.put("completedorder", (lstlimscompleted));
 			mapOrders.put("onproces", lstlimsprocess + lstordersinprogress);
 
 		}
