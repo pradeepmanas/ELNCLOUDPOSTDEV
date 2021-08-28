@@ -1357,3 +1357,38 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.lsusersettings
     OWNER to postgres;
+    
+    
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS lsrepositoriesdata_repositorydatacode integer;
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fkm083etdp4bi5xn7vxmupfkv3e'
+AND table_name='lslogilablimsorderdetail';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY lslogilablimsorderdetail ADD CONSTRAINT fkm083etdp4bi5xn7vxmupfkv3e FOREIGN KEY (lsrepositoriesdata_repositorydatacode) REFERENCES lsrepositoriesdata(repositorydatacode);
+   END IF;
+END
+$do$;  
+
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS lsrepositories_repositorycode integer;
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fkjayf1kn6mm1gfpj451la8b88i'
+AND table_name='lslogilablimsorderdetail';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY lslogilablimsorderdetail ADD CONSTRAINT fkjayf1kn6mm1gfpj451la8b88i FOREIGN KEY (lsrepositories_repositorycode) REFERENCES lsrepositories(repositorycode);
+   END IF;
+END
+$do$;
