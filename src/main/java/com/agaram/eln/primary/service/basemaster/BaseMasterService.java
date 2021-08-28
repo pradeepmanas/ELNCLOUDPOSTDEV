@@ -98,9 +98,7 @@ public class BaseMasterService {
 			objClass.getObjsilentaudit().setTableName("LStestmasterlocal");
     		lscfttransactionRepository.save(objClass.getObjsilentaudit());
     	}
-//		if(objClass.getUsername().equalsIgnoreCase("Administrator")) {
-//			return lStestmasterlocalRepository.findBystatus(1);
-//		}
+
 		return lStestmasterlocalRepository.findBystatusAndLssitemaster(1,objClass.getLssitemaster());
 	}
 	
@@ -122,9 +120,7 @@ public class BaseMasterService {
 			objClass.getObjsilentaudit().setTableName("LSsamplemaster");
     		lscfttransactionRepository.save(objClass.getObjsilentaudit());
     	}
-//		if(objClass.getUsername().equalsIgnoreCase("Administrator")) {
-//			return lSsamplemasterRepository.findBystatus(1);
-//		}
+
 		return lSsamplemasterRepository.findBystatusAndLssitemaster(1,objClass.getLssitemaster());
 	}
 
@@ -135,9 +131,7 @@ public class BaseMasterService {
 			objClass.getObjsilentaudit().setTableName("LSprojectmaster");
     		lscfttransactionRepository.save(objClass.getObjsilentaudit());
     	}
-//		if(objClass.getUsername().equalsIgnoreCase("Administrator")) {
-//			return lSprojectmasterRepository.findBystatus(1);
-//		}
+
 		return lSprojectmasterRepository.findBystatusAndLssitemaster(1,objClass.getLssitemaster());
 	}
 	
@@ -216,10 +210,6 @@ public class BaseMasterService {
 		
 		if(objClass.getObjsilentaudit() != null)
     	{
-//			objClass.getObjsilentaudit().setModuleName(ModuleName);
-//			objClass.getObjsilentaudit().setComments("Insert Test Successfully");
-//			objClass.getObjsilentaudit().setActions("Insert Test");
-//			objClass.getObjsilentaudit().setSystemcoments("System Generated");
 			objClass.getObjsilentaudit().setTableName("LStestmasterlocal");
     		lscfttransactionRepository.save(objClass.getObjsilentaudit());
     	}
@@ -230,21 +220,6 @@ public class BaseMasterService {
 			objClass.getObjmanualaudit().setTableName("LStestmasterlocal");
     		lscfttransactionRepository.save(objClass.getObjmanualaudit());
 		}
-//		if(objClass.getObjuser() != null) {
-//			LScfttransaction manualAudit=new LScfttransaction();
-//			Date date = new Date();
-//			
-//			manualAudit.setModuleName(ModuleName);
-//			manualAudit.setComments("Insert Test Successfully");
-//			manualAudit.setActions("Insert Test");
-//			manualAudit.setSystemcoments("User Generated");
-//			manualAudit.setTableName("LStestmasterlocal");
-////			manualAudit.setManipulatetype("Insert");
-//			manualAudit.setLsuserMaster(objClass.getLSuserMaster());
-//			manualAudit.setLssitemaster(objClass.getLSuserMaster().getLssitemaster());
-//			manualAudit.setTransactiondate(date);
-//    		lscfttransactionRepository.save(manualAudit);
-//		}
 
 		return objClass;
 	}
@@ -303,10 +278,6 @@ public class BaseMasterService {
 		//silent AuditTrail
 		if(objClass.getObjsilentaudit() != null)
     	{
-//			objClass.getObjsilentaudit().setModuleName(ModuleName);
-//			objClass.getObjsilentaudit().setComments("Insert Sample Successfully");
-//			objClass.getObjsilentaudit().setActions("Insert Sample");
-//			objClass.getObjsilentaudit().setSystemcoments("System Generated");
 			objClass.getObjsilentaudit().setTableName("LSsamplemaster");
     		lscfttransactionRepository.save(objClass.getObjsilentaudit());
     	}
@@ -317,22 +288,7 @@ public class BaseMasterService {
 			objClass.getObjmanualaudit().setTableName("LSsamplemaster");
     		lscfttransactionRepository.save(objClass.getObjmanualaudit());
 		}
-//		//Manual Audit
-//		if(objClass.getObjuser() != null) {
-//			LScfttransaction manualAudit=new LScfttransaction();
-//			Date date = new Date();
-//			
-//			manualAudit.setModuleName(ModuleName);
-//			manualAudit.setComments("Insert Sample Successfully");
-//			manualAudit.setActions("Insert Sample");
-//			manualAudit.setSystemcoments("User Generated");
-//			manualAudit.setTableName("LSsamplemaster");
-//			manualAudit.setManipulatetype("Insert");
-//			manualAudit.setLsuserMaster(objClass.getLSuserMaster());
-//			manualAudit.setLssitemaster(objClass.getLSuserMaster().getLssitemaster());
-//			manualAudit.setTransactiondate(date);
-//    		lscfttransactionRepository.save(manualAudit);
-//		}
+
 		return objClass;
 	}
 
@@ -433,10 +389,7 @@ public class BaseMasterService {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		
 		mapOrders.put("test", getTestmaster(objuser));
-//		mapOrders.put("material", materialService.getlsMaterial(objuser));
-//		mapOrders.put("equpiment", materialService.getLsInstrument(objuser));
-//		mapOrders.put("instrument", materialService.getLsInstrumentMaster(objuser));
-		
+	
 		if(objuser.getObjsilentaudit() != null)
     	{
 			objuser.getObjsilentaudit().setTableName("LStestmaster");

@@ -165,5 +165,14 @@ public class LSfileversion {
 		this.versionname = versionname;
 	}
 	
-	
+//	@Override
+//    public String toString()
+//    {
+//        return "{modifiedby : { usercode : "
+//            + this.modifiedby.getUsercode()
+//            + ", username : "
+//            + this.modifiedby.getUsername()
+//            + "}, versionname : "
+//            + this.versionname + "}";
+//    }
 }

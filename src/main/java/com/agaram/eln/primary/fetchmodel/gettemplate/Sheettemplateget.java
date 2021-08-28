@@ -1,7 +1,9 @@
 package com.agaram.eln.primary.fetchmodel.gettemplate;
 
 import java.util.Date;
+import java.util.List;
 
+import com.agaram.eln.primary.model.sheetManipulation.LSfileversion;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public class Sheettemplateget {
@@ -16,8 +18,6 @@ public class Sheettemplateget {
 	private LSuserMaster modifiedby;
 	
 	private long versioncout;
-	
-//	List<LSfileversion> lsfileversion;
 
 	public Sheettemplateget(Integer filecode, String filenameuser, Date createdate, LSuserMaster createby,
 			LSuserMaster modifiedby, Integer approved, Integer rejected) {
@@ -46,14 +46,6 @@ public class Sheettemplateget {
 		this.modifiedby = modifiedUser;
 
 	}
-
-//	public List<LSfileversion> getLsfileversion() {
-//		return lsfileversion;
-//	}
-//
-//	public void setLsfileversion(List<LSfileversion> lsfileversion) {
-//		this.lsfileversion = lsfileversion;
-//	}
 
 	public long getVersioncout() {
 		return versioncout;

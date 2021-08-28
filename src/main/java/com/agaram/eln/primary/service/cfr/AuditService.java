@@ -133,51 +133,21 @@ public class AuditService {
 		}
 		//Manual Audit
 				if(objClass.getObjuser() != null) {
-					//LScfttransaction manualAudit=new LScfttransaction();
-					//Date date = new Date();
 					objClass.getObjmanualaudit().setTableName("LScfrreasons");
-//					manualAudit.setModuleName("AuditTrail History");
 					objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-//					manualAudit.setActions("Insert Reason");
-//					manualAudit.setSystemcoments("User Generated");
-//					manualAudit.setTableName("LScfrreasons");
-//					manualAudit.setManipulatetype("Insert");
 					objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster().getUsercode());
-//					objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster());
 					objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster().getSitecode());
-					//objClass.getObjmanualaudit().setTransactiondate(date);
 					lscfttransactionRepository.save(objClass.getObjmanualaudit());
 				}
 				
 		
 		if(objClass.getObjsilentaudit() != null)
     	{
-//			objClass.getObjsilentaudit().setModuleName("AuditTrail History");
-//			objClass.getObjsilentaudit().setComments("Insert Reason Successfully");
-//			objClass.getObjsilentaudit().setActions("Insert Reason");
-//			objClass.getObjsilentaudit().setSystemcoments("System Generated");
 			objClass.getObjsilentaudit().setTableName("LScfrreasons");
     		lscfttransactionRepository.save(objClass.getObjsilentaudit());
     		return objClass;
     	}
 
-//		//Manual Audit
-//		if(objClass.getObjuser() != null) {
-//			//LScfttransaction manualAudit=new LScfttransaction();
-//			//Date date = new Date();
-//			objClass.getObjmanualaudit().setTableName("LScfrreasons");
-////			manualAudit.setModuleName("AuditTrail History");
-//			objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-////			manualAudit.setActions("Insert Reason");
-////			manualAudit.setSystemcoments("User Generated");
-////			manualAudit.setTableName("LScfrreasons");
-////			manualAudit.setManipulatetype("Insert");
-//			objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster());
-//			objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster());
-//			//objClass.getObjmanualaudit().setTransactiondate(date);
-//			lscfttransactionRepository.save(objClass.getObjmanualaudit());
-//		}
-//		
 		return objClass;
 	}
 	
@@ -262,10 +232,7 @@ public class AuditService {
 			int i = 0;
 			
 			List<LSuserMaster> userDetails = lSuserMasterRepository.findAll();
-//			list.stream().forEach(obj1->{ userDetails.stream().filter(obj2->{ return obj2.getUsercode().equals(obj1.getLsuserMaster());})
-//				.limit(1)
-//				.forEach(obj2->{obj1.setUsername(obj2.getUsername());}); });
-			
+		
 			while(list.size() > i) {
 				int k = 0;
 				while(userDetails.size() > k) {
@@ -282,88 +249,6 @@ public class AuditService {
 		return list;
 	}
 	
-//	public List<Map<String, Object>> GetCFRTransactions(Map<String, Object> objCFRFilter) throws ParseException
-//	{
-//		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-//		LScfttransaction cfttransaction;
-//		
-//		if(objCFRFilter.containsKey("user") && objCFRFilter.containsKey("module")
-//				&& objCFRFilter.containsKey("system")&& objCFRFilter.containsKey("fromdate")
-//				&& objCFRFilter.containsKey("todate"))
-//		{
-//			@SuppressWarnings("unchecked")
-//			Map<String, Object> objuser = (Map<String, Object>)objCFRFilter.get("user");
-//			ObjectMapper objMapper = new ObjectMapper();
-//			
-//			Integer Usercode = (Integer)objuser.get("usercode");
-//			String module = (String)objCFRFilter.get("module");
-//			@SuppressWarnings("unchecked")
-//			Map<String, String> system=(Map)objCFRFilter.get("system");
-//			//kumaresan
-//			
-//			String Audit=(String)system.get("Audit");
-//			if(system.get("Audit").equals("All")||system.get("Audit").equals("User Generated")||system.get("Audit").equals("System Generated")) {
-//				 Audit=(String)system.get("Audit");
-//			}
-//			else {
-//				Audit=(String)system.get("name");
-//			}
-//			if (objCFRFilter.containsKey("objsilentaudit")) {
-//				
-//				cfttransaction = objMapper.convertValue(objCFRFilter.get("objsilentaudit"), LScfttransaction.class);				
-//				LSuserMaster usercode = lSuserMasterRepository.findByusercode(cfttransaction.getLsuserMaster() !=null ? cfttransaction.getLsuserMaster():null);
-//				cfttransaction.setLsuserMaster(usercode.getUsercode());
-//				lscfttransactionRepository.save(cfttransaction);
-//			    
-//			}
-//			Date fromdate = new SimpleDateFormat("dd/MM/yyyy").parse((String) objCFRFilter.get("fromdate"));
-//			Date todate = new SimpleDateFormat("dd/MM/yyyy").parse((String) objCFRFilter.get("todate"));
-//			
-//			if(Usercode == -1 && module.equals("All") && Audit.equals("All"))
-//			{
-//				list = lscfttransactionRepository.findByTransactiondateBetweenOrderBySerialnoDesc(fromdate, todate);
-//			}
-//		
-//			else if(Usercode != -1 && module.equals("All") && Audit.equals("All"))//user code filter
-//			{
-//				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
-////				list = lscfttransactionRepository.findByLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(objuserselected, fromdate, todate);
-//				list = lscfttransactionRepository.findByLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(objuserselected.getUsercode(), fromdate, todate);
-//			}
-//			else if(Usercode == -1 && !module.equals("All") && Audit.equals("All"))//module filter
-//			{
-//				list = lscfttransactionRepository.findByModuleNameAndTransactiondateBetweenOrderBySerialnoDesc(module, fromdate, todate);	
-//			}
-//			else if(Usercode != -1 && !module.equals("All") &&  Audit.equals("All"))//user code and moduel name
-//			{
-//				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
-//				list = lscfttransactionRepository.findByModuleNameAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(module,objuserselected.getUsercode(), fromdate, todate);	
-//			}
-//			//kumaresan
-//			else if(Usercode == -1 && !Audit.equals("All")  &&module.equals("All"))//Audit type filter
-//			{
-//				
-//				list =lscfttransactionRepository.findBysystemcomentsAndTransactiondateBetweenOrderBySerialnoDesc(Audit, fromdate, todate);
-//			}
-//			else if(Usercode == -1 && !Audit.equals("All") && !module.equals("All"))//audit+module
-//			{
-//				list =lscfttransactionRepository.findBysystemcomentsAndModuleNameAndTransactiondateBetweenOrderBySerialnoDesc(Audit,module,fromdate, todate);
-//			}
-//			else if(Usercode != -1 && !Audit.equals("All") && module.equals("All"))
-//			{
-//				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
-//				list =lscfttransactionRepository.findBysystemcomentsAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(Audit,objuserselected.getUsercode(), fromdate, todate);
-//			}
-//			else if(Usercode != -1 && !Audit.equals("All") && !module.equals("All")) {
-//				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
-//				list =lscfttransactionRepository.findBysystemcomentsAndModuleNameAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(Audit,module,objuserselected.getUsercode(), fromdate, todate);
-//			}
-//		}
-//       
-//		return list;
-//	}
-
-
 	public Map<String, Object> GetAuditconfigUser(LSaudittrailconfiguration LSaudittrailconfiguration) {
 		
 		Map<String, Object> maprAuditConfig = new HashMap<String, Object>();
@@ -384,10 +269,7 @@ public class AuditService {
 		
 		if(LSaudittrailconfiguration.getObjsilentaudit() != null)
     	{
-//			LSaudittrailconfiguration.getObjsilentaudit().setModuleName("AuditTrail History");
-//			LSaudittrailconfiguration.getObjsilentaudit().setComments("Allow To view AuditTrail Configuaration");
-//			LSaudittrailconfiguration.getObjsilentaudit().setActions("view");
-//			LSaudittrailconfiguration.getObjsilentaudit().setSystemcoments("System Generated");
+
 			LSaudittrailconfiguration.getObjsilentaudit().setTableName("LSaudittrailconfiguration");
     		lscfttransactionRepository.save(LSaudittrailconfiguration.getObjsilentaudit());
     	}
@@ -396,40 +278,7 @@ public class AuditService {
 	}
 
 	public List<LSaudittrailconfiguration> SaveAuditconfigUser(List<LSaudittrailconfiguration> lsAudit) {
-//		List<LSaudittrailconfiguration> lsAudit1=LSaudittrailconfigurationRepository.findByLsusermaster(lsAudit.get(0).getLsusermaster());
-//		List<LSaudittrailconfiguration> temparray=new ArrayList<LSaudittrailconfiguration>();
-//		if(lsAudit1.size()==0) {
-//			temparray.addAll(lsAudit);
-//			LSaudittrailconfigurationRepository.save(temparray);
-//		}
-//		else {
-//		for(LSaudittrailconfiguration Objaudit1: lsAudit) {
-//		
-//		
-//		for(LSaudittrailconfiguration Objaudit2: lsAudit1) {
-//			if(Objaudit1.getSerialno() ==Objaudit2.getSerialno()) {
-//				if(Objaudit1.getManualaudittrail() !=Objaudit2.getManualaudittrail()) {
-//					temparray.add(Objaudit1);	
-//				}
-//			}
-//			
-//		}
-//		}
-//		LSaudittrailconfigurationRepository.save(temparray);
-//		}
-//		for(LSaudittrailconfiguration Objaudit3: temparray) {
-//			Objaudit3.getObjsilentaudit().setTableName("LSaudittrailconfiguration");
-//			lscfttransactionRepository.save(Objaudit3.getObjsilentaudit());	
-//		}
-//		if(lsAudit.get(0).getObjsilentaudit() != null)
-//    	{
-////			lsAudit.get(0).getObjsilentaudit().setModuleName("AuditTrail History");
-////			lsAudit.get(0).getObjsilentaudit().setComments("Audit saved successfully");
-////			lsAudit.get(0).getObjsilentaudit().setActions("Audit save");
-////			lsAudit.get(0).getObjsilentaudit().setSystemcoments("System Generated");
-//			lsAudit.get(0).getObjsilentaudit().setTableName("LSaudittrailconfiguration");
-//    		lscfttransactionRepository.save(lsAudit.get(0).getObjsilentaudit());
-//    	}
+
 		LSaudittrailconfigurationRepository.save(lsAudit);
 		lscfttransactionRepository.save(lsAudit.get(0).getObjsilentauditlst());
 		if(lsAudit.get(0).getObjuser()!=null) {
@@ -550,19 +399,7 @@ public class AuditService {
 		
 		List<Integer> lstserailno = objreviewdetails.stream().map(LSreviewdetails::getSerialno).collect(Collectors.toList());
 			if(objreviewdetails.get(0).getObjuser() != null) {
-//			LScfttransaction manualAudit=new LScfttransaction();
-//			Date date = new Date();
-//			
-//			manualAudit.setModuleName("Audit Trail");
-//			manualAudit.setComments("Reviewed History Successfully");
-//			manualAudit.setActions("Review History");
-//			manualAudit.setSystemcoments("User Generated");
-//			manualAudit.setTableName("LSreviewdetails");
-//			manualAudit.setManipulatetype("Review");
-//			manualAudit.setLsuserMaster(objreviewdetails.get(0).getLsusermaster());
-//			manualAudit.setLssitemaster(objreviewdetails.get(0).getLsusermaster().getLssitemaster());
-//			manualAudit.setTransactiondate(date);
-//    		lscfttransactionRepository.save(manualAudit);
+
 		}
 		return LSreviewdetailsRepository.findByserialnoIn(lstserailno);
 	}
@@ -573,22 +410,7 @@ public class AuditService {
 		
 		map.put("reviewDetails", GetReviewDetails(objreviewdetails));
 		map.put("cfttDeatils", cfttDeatils);
-//		if(objreviewdetails.get(0).getObjuser() != null) {
-//		LScfttransaction manualAudit=new LScfttransaction();
-//		Date date = new Date();
-//		
-//		manualAudit.setModuleName("Audit Trail");
-//		manualAudit.setComments("Reviewed History Successfully");
-//		manualAudit.setActions("Review History");
-//		manualAudit.setSystemcoments("User Generated");
-//		manualAudit.setTableName("LSreviewdetails");
-//		manualAudit.setManipulatetype("Review");
-//		manualAudit.setLsuserMaster(objreviewdetails.get(0).getLsusermaster().getUsercode());
-////		manualAudit.setLssitemaster(objreviewdetails.get(0).getLsusermaster().getLssitemaster());
-//		manualAudit.setLssitemaster(objreviewdetails.get(0).getLsusermaster().getLssitemaster().getSitecode());
-//		manualAudit.setTransactiondate(date);
-//		lscfttransactionRepository.save(manualAudit);
-//	}
+
 	if(objreviewdetails.get(0).getObjsilentaudit()!= null) {
 
 		objreviewdetails.get(0).getObjsilentaudit().setTableName("LSreviewdetails");

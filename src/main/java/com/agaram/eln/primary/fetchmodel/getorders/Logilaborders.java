@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.agaram.eln.primary.model.masters.Lsrepositories;
+import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
@@ -26,12 +28,15 @@ public class Logilaborders extends Logilabordermaster {
 	private LSsamplefile lssamplefile;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdtimestamp;
+	private String repositoryitemname;
+	private LSuserMaster assignedto;
+	private String repositoryname;
 	
 
 	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,
-			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp) {
+			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories) {
 		
 		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster);
 		 
@@ -51,8 +56,35 @@ public class Logilaborders extends Logilabordermaster {
 		this.lsuserMaster = lsuserMaster;
 		this.lssamplefile = objSampleFile;
 		this.createdtimestamp = createdtimestamp;
+		this.repositoryitemname =lsrepositoriesdata !=null ?lsrepositoriesdata.getRepositoryitemname():null;
+		this.assignedto =lsuserMaster;
+		this.repositoryname =lsrepositories !=null ?lsrepositories.getRepositoryname():null;
 	}
 	
+	public String getRepositoryitemname() {
+		return repositoryitemname;
+	}
+
+	public LSuserMaster getAssignedto() {
+		return assignedto;
+	}
+
+	public String getRepositoryname() {
+		return repositoryname;
+	}
+
+	public void setRepositoryitemname(String repositoryitemname) {
+		this.repositoryitemname = repositoryitemname;
+	}
+
+	public void setAssignedto(LSuserMaster assignedto) {
+		this.assignedto = assignedto;
+	}
+
+	public void setRepositoryname(String repositoryname) {
+		this.repositoryname = repositoryname;
+	}
+
 	public LSuserMaster getLsuserMaster() {
 		return lsuserMaster;
 	}

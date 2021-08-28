@@ -23,6 +23,7 @@ import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.general.SheetVersion;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -57,6 +58,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.basemaster.BaseMasterService;
+import com.agaram.eln.primary.service.masters.MasterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -131,6 +133,9 @@ public class FileService {
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
+	
+	@Autowired
+    private MasterService inventoryservice;
 
 	public LSfile InsertupdateSheet(LSfile objfile) {
 		Boolean Isnew = false;
@@ -495,6 +500,9 @@ public class FileService {
 		mapOrders.put("test", masterService.getTestmaster(objuser));
 		mapOrders.put("sample", masterService.getsamplemaster(objuser));
 		mapOrders.put("project", masterService.getProjectmaster(objuser));
+		Lsrepositories lsrepositories =new Lsrepositories();
+		lsrepositories.setSitecode(objuser.getLssitemaster().getSitecode());
+		mapOrders.put("inventories", inventoryservice.Getallrepositories(lsrepositories));
 		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSfiletest");
