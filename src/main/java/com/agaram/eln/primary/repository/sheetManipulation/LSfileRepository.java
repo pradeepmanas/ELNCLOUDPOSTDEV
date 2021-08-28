@@ -25,7 +25,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 //	@Query("select filecode, extension, filenameuser, testID, isactive, siteID, versionno, createby, createdate, filetypecode from lsfile where testID = ?1")
 //	public LSfile findByTest(Integer testid);
 	
-	public List<LSfile> findBylstestIn(List<LSfiletest> lsfiletest);
+	public List<Sheettemplateget> findBylstestIn(List<LSfiletest> lsfiletest);
 	
 	public List<LSfile> findByfilecodeGreaterThan(Integer filecode);
 	
@@ -53,7 +53,9 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	
 	public LSfile findByFilecodeAndApproved(Integer filecode, Integer Approved);
 	
-	public List<LSfile> findByCreatebyInAndLstestInAndFilecodeGreaterThan(List<LSuserMaster> lstusermaster,List<LSfiletest> lsfiletest, Integer filecode);
+	public List<Sheettemplateget> findByCreatebyInAndLstestInAndFilecodeGreaterThan(List<LSuserMaster> lstusermaster,List<LSfiletest> lsfiletest, Integer filecode);
+	
+	public Sheettemplateget findByCreatebyAndLstestInAndFilecodeGreaterThan(LSuserMaster lstusermaster,List<LSfiletest> lsfiletest, Integer filecode);
 	
 //	public  List<LSfile> findByFilenameuserNotAndRejectedNot(String filenameuser, Integer reject);
 	

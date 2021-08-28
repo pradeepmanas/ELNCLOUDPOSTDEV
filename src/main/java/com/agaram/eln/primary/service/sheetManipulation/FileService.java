@@ -389,8 +389,8 @@ public class FileService {
 		return objtest;
 	}
 
-	public List<LSfile> GetfilesOnTestcode(LSfiletest objtest) {
-		List<LSfile> lsfiles = new ArrayList<LSfile>();
+	public List<Sheettemplateget> GetfilesOnTestcode(LSfiletest objtest) {
+		List<Sheettemplateget> lsfiles = new ArrayList<Sheettemplateget>();
 		List<LSfiletest> lsfiletest = lSfiletestRepository.findByTestcodeAndTesttype(objtest.getTestcode(),
 				objtest.getTesttype());
 

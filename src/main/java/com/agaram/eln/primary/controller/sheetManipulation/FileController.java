@@ -116,7 +116,7 @@ public class FileController {
 	}
 	
 	@PostMapping("/GetfilesOnTestcode")
-	public List<LSfile> GetfilesOnTestcode(@RequestBody LSfiletest objtest)
+	public List<Sheettemplateget> GetfilesOnTestcode(@RequestBody LSfiletest objtest)
 	{
 		return fileService.GetfilesOnTestcode(objtest);
 	}
