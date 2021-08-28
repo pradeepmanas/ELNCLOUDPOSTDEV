@@ -1392,3 +1392,7 @@ AND table_name='lslogilablimsorderdetail';
    END IF;
 END
 $do$;
+
+update Lsrepositories set isexpiredate = false where isexpiredate IS NULL;
+
+
