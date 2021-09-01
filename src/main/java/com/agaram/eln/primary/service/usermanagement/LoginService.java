@@ -449,7 +449,7 @@ public class LoginService {
 			LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
 			objauditconfig.setLsusermaster(objExitinguser);
 			obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig));
-			obj.put("multiusergroupcode",objLSMultiusergroup.getLsusergroup());
+			obj.put("multiusergroupcode",objLSMultiusergroup.getLsusergroup().getUsergroupcode());
 		}
 		
 		return obj;
@@ -1571,7 +1571,7 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 			LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
 			objauditconfig.setLsusermaster(objExitinguser);
 			obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig));
-			obj.put("multiusergroupcode",objExitinguser.getMultiusergroupcode().get(0).getMultiusergroupcode());
+			obj.put("multiusergroupcode",objExitinguser.getMultiusergroupcode().get(0).getLsusergroup().getUsergroupcode());
 		}
 		
 		return obj;
@@ -1784,7 +1784,7 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 				LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
 				objauditconfig.setLsusermaster(objExitinguser);
 				obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig));
-				obj.put("multiusergroupcode",multiusergroupcode);
+				obj.put("multiusergroupcode",objLSMultiusergroup.getLsusergroup().getUsergroupcode());
 			}
 			
 			objExitinguser.getObjResponse().setInformation("usergroup switched successfully ");
