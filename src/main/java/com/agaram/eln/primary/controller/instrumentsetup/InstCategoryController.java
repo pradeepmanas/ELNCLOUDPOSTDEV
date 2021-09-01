@@ -84,7 +84,7 @@ public class InstCategoryController {
     @PostMapping(value = "/updateInstCategoryStatus")
     public ResponseEntity<Object> deleteInstCategory( final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject) 
     {
-		  final ObjectMapper mapper = new ObjectMapper();	
+//		  final ObjectMapper mapper = new ObjectMapper();	
 		  final Boolean saveAuditTrail = (Boolean)mapObject.get("saveAuditTrail");
 		  
 		  return categoryService.deleteInstCategory((Integer) mapObject.get("instcatkey"), saveAuditTrail, 

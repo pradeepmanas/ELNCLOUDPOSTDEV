@@ -59,12 +59,13 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
-import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
+//import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserActions;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
@@ -96,7 +97,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
 import com.agaram.eln.primary.repository.templates.LsMappedTemplateRepository;
 import com.agaram.eln.primary.repository.templates.LsUnmappedTemplateRepository;
-import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
+//import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -217,8 +218,8 @@ public class InstrumentService {
 	@Autowired
 	private CloudOrderAttachmentRepository CloudOrderAttachmentRepository;
 
-	@Autowired
-	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
+//	@Autowired
+//	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
 
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
@@ -252,19 +253,12 @@ public class InstrumentService {
 
 		objorder.setLsworkflow(lsworkflowRepository
 				.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
-		
-//		ZonedDateTime utc = ZonedDateTime.now(ZoneOffset.UTC);
-//		System.out.print(utc.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-		
-//		objorder.setCreatedtimestamp(new Date());
 		objorder.setOrderflag("N");
-		logger.info("InsertELNOrder : " + objorder);
+		
 		String Content = "";
-		logger.info("InsertELNOrder getLssamplefile(): " + objorder.getLssamplefile());
 		if (objorder.getLssamplefile() == null) {
 			LSsamplefile objsamplefile = new LSsamplefile();
 			if (objorder.getLsfile() != null) {
-				logger.info("InsertELNOrder getLsfile() : " + objorder.getLsfile());
 				if (objorder.getIsmultitenant() == 1) {
 					CloudSheetCreation file = cloudSheetCreationRepository
 							.findById((long) objorder.getLsfile().getFilecode());
@@ -284,76 +278,60 @@ public class InstrumentService {
 				}
 
 			}
-			logger.info("InsertELNOrder objsamplefile : " + objsamplefile);
 			objsamplefile.setCreatedate(new Date());
-			logger.info("InsertELNOrder objsamplefile : " + objorder.getTestcode());
-			logger.info("InsertELNOrder objsamplefile : " + objorder.getBatchcode());
 			objsamplefile.setTestid(objorder.getTestcode());
 			objsamplefile.setBatchcode(objorder.getBatchcode());
 			objsamplefile.setProcessed(0);
-			logger.info("InsertELNOrder objsamplefile : " + objsamplefile);
 			objorder.setLssamplefile(objsamplefile);
 		} else {
-			logger.info("InsertELNOrder  objorder.getLssamplefile().getTempfilecontent() : "
-					+ objorder.getLssamplefile().getFilecontent());
 			Content = objorder.getLssamplefile().getFilecontent();
 		}
 
 		objorder.getLssamplefile().setFilecontent(null);
-
 		lssamplefileRepository.save(objorder.getLssamplefile());
 
-		// kumaresan
 		if (objorder.getAssignedto() != null) {
 			objorder.setLockeduser(objorder.getAssignedto().getUsercode());
 		}
 
 		lslogilablimsorderdetailRepository.save(objorder);
-		String Batchid = "ELN" + objorder.getBatchcode();
-		logger.info("InsertELNOrder Batchid : " + Batchid);
 		lssamplefileRepository.setbatchcodeOnsamplefile(objorder.getBatchcode(),
 				objorder.getLssamplefile().getFilesamplecode());
-		if (objorder.getFiletype() == 3) {
-			Batchid = "RESEARCH" + objorder.getBatchcode();
-			logger.info("InsertELNOrder Batchid : " + Batchid);
-		} else if (objorder.getFiletype() == 4) {
-			Batchid = "EXCEL" + objorder.getBatchcode();
-			logger.info("InsertELNOrder Batchid : " + Batchid);
-		} else if (objorder.getFiletype() == 5) {
-			Batchid = "VALIDATE" + objorder.getBatchcode();
-			logger.info("InsertELNOrder Batchid : " + Batchid);
-		}
-		lslogilablimsorderdetailRepository.setbatchidBybatchcode(Batchid, objorder.getBatchcode());
-		objorder.setBatchid(Batchid);
-		logger.info("InsertELNOrder objorder : " + objorder);
+		
+//		String Batchid = "ELN" + objorder.getBatchcode();
+//		
+//		if (objorder.getFiletype() == 3) {
+//			Batchid = "RESEARCH" + objorder.getBatchcode();
+//		} else if (objorder.getFiletype() == 4) {
+//			Batchid = "EXCEL" + objorder.getBatchcode();
+//		} else if (objorder.getFiletype() == 5) {
+//			Batchid = "VALIDATE" + objorder.getBatchcode();
+//		}
+//		lslogilablimsorderdetailRepository.setbatchidBybatchcode(Batchid, objorder.getBatchcode());
+//		objorder.setBatchid(Batchid);
 
 		List<LSlimsorder> lsorder = new ArrayList<LSlimsorder>();
 		String Limsorder = objorder.getBatchcode().toString();
-		logger.info("InsertELNOrder Limsorder : " + Limsorder);
 
 		if (objorder.getLsfile() != null && objorder.getLsfile().getLsmethods() != null
 				&& objorder.getLsfile().getLsmethods().size() > 0) {
 			int methodindex = 0;
 			for (LSfilemethod objmethod : objorder.getLsfile().getLsmethods()) {
-				logger.info("InsertELNOrder objmethod : " + objmethod);
 				LSlimsorder objLimsOrder = new LSlimsorder();
 				String order = "";
 				if (methodindex < 10) {
 					order = Limsorder.concat("0" + methodindex);
-					logger.info("InsertELNOrder order : " + methodindex);
 				} else {
 					order = Limsorder.concat("" + methodindex);
 				}
 				objLimsOrder.setOrderid(Long.parseLong(order));
-				objLimsOrder.setBatchid(Batchid);
+				objLimsOrder.setBatchid(objorder.getBatchid());
 				objLimsOrder.setMethodcode(objmethod.getMethodid());
 				objLimsOrder.setInstrumentcode(objmethod.getInstrumentid());
 				objLimsOrder.setTestcode(objorder.getTestcode() != null ? objorder.getTestcode().toString() : null);
-//				objLimsOrder.setCreatedtimestamp(new Date());
 				objLimsOrder.setOrderflag("N");
 
 				lsorder.add(objLimsOrder);
-				logger.info("InsertELNOrder objLimsOrder : " + objLimsOrder);
 				methodindex++;
 			}
 
@@ -366,9 +344,8 @@ public class InstrumentService {
 				objLimsOrder.setInstrumentcode(lsfilemethod.getInstrumentid());
 			}
 			objLimsOrder.setOrderid(Long.parseLong(Limsorder.concat("00")));
-			objLimsOrder.setBatchid(Batchid);
+			objLimsOrder.setBatchid(objorder.getBatchid());
 			objLimsOrder.setTestcode(objorder.getTestcode() != null ? objorder.getTestcode().toString() : null);
-//			objLimsOrder.setCreatedtimestamp(new Date());
 			objLimsOrder.setOrderflag("N");
 
 			lslimsorderRepository.save(objLimsOrder);
@@ -390,8 +367,6 @@ public class InstrumentService {
 		}
 
 		updatenotificationfororder(objorder);
-
-		logger.info("InsertELNOrder order : " + objorder);
 
 		return objorder;
 	}
@@ -436,19 +411,6 @@ public class InstrumentService {
 								+ objorder.getObjLoggeduser().getUsername() + "\", \"currentworkflowcode\":\""
 								+ objorder.getLsworkflow().getWorkflowcode() + "\"}";
 					}
-
-					/*
-					 * Details
-					 * ="{\"ordercode\":\""+objorder.getBatchcode()+"\", \"order\":\""+objorder.
-					 * getBatchid() +"\", \"previousworkflow\":\""+""
-					 * +"\", \"previousworkflowcode\":\""+ -1
-					 * +"\", \"currentworkflow\":\""+objorder.getLsworkflow().getWorkflowname()
-					 * +"\", \"currentworkflowcode\":\""+objorder.getLsworkflow().getWorkflowcode()+
-					 * "\"}";
-					 */
-
-					logger.info("Notification Type : " + Notifiction);
-					logger.info("Notification Details : " + Details);
 
 					if (objorder.getAssignedto() == null) {
 						List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
@@ -1772,20 +1734,23 @@ public class InstrumentService {
 
 	public Map<String, Object> GetWorkflowanduseronUsercode(LSuserMaster usercode) {
 		LSuserMaster objuser = lsuserMasterRepository.findByusercode(usercode.getUsercode());
-		LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
-		objLSMultiusergroup = LSMultiusergroupRepositery.findBymultiusergroupcode(usercode.getMultiusergroups());
-		objuser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+//		LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
+//		objLSMultiusergroup = LSMultiusergroupRepositery.findBymultiusergroupcode(usercode.getMultiusergroups());
+//		objuser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+		
+		LSusergroup lsusergroup = usercode.getLsusergrouptrans();
 		
 		Map<String, Object> maplogindetails = new HashMap<String, Object>();
-		maplogindetails.put("workflow", GetWorkflowonuser(objLSMultiusergroup));
+		maplogindetails.put("workflow", GetWorkflowonuser(lsusergroup));
 		maplogindetails.put("user", objuser);
 		return maplogindetails;
 	}
 	
-	public List<LSworkflow> GetWorkflowonuser(LSMultiusergroup objLSMultiusergroup)
+	public List<LSworkflow> GetWorkflowonuser(LSusergroup lsusergroup)
 	{
 		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
-				.findBylsusergroup(objLSMultiusergroup.getLsusergroup());
+				.findBylsusergroup(lsusergroup);
+		
 		List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
 		
 		return lsworkflow;

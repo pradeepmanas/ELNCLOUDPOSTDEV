@@ -38,12 +38,16 @@ public class Logilaborders extends Logilabordermaster {
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories) {
 		
-		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster);
+		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag);
 		 
-		LSsamplefile objSampleFile = new LSsamplefile();
-		objSampleFile.setFilesamplecode(lssamplefile.getFilesamplecode());
-		objSampleFile.setModifieddate(lssamplefile.getModifieddate());
-		objSampleFile.setCreatedate(lssamplefile.getCreatedate());
+		if(lssamplefile != null)
+		{
+			LSsamplefile objSampleFile = new LSsamplefile();
+			objSampleFile.setFilesamplecode(lssamplefile.getFilesamplecode());
+			objSampleFile.setModifieddate(lssamplefile.getModifieddate());
+			objSampleFile.setCreatedate(lssamplefile.getCreatedate());
+			this.lssamplefile = objSampleFile;
+		}
 		
 		this.orderflag = orderflag;
 		this.approvelstatus = approvelstatus;
@@ -54,7 +58,7 @@ public class Logilaborders extends Logilabordermaster {
 		this.filecode = lsfile != null ? lsfile.getFilecode() : -1;
 		this.filetype = filetype;
 		this.lsuserMaster = lsuserMaster;
-		this.lssamplefile = objSampleFile;
+		
 		this.createdtimestamp = createdtimestamp;
 		this.repositoryitemname =lsrepositoriesdata !=null ?lsrepositoriesdata.getRepositoryitemname():null;
 		this.assignedto =lsuserMaster;

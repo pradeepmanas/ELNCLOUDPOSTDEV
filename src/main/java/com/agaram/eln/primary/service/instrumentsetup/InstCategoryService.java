@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.builder.Diff;
 import org.apache.commons.lang3.builder.DiffResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -16,14 +15,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.agaram.eln.primary.repository.instrumentsetup.InstCategoryRepository;
-//import com.agaram.lleln.cfrpart11.cfrtransaction.CfrTransactionService;
-import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 //import com.agaram.lleln.jaxb.ReadWriteXML;
 //import com.agaram.lleln.page.Page;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.instrumentsetup.InstCategoryRepository;
+//import com.agaram.lleln.cfrpart11.cfrtransaction.CfrTransactionService;
+import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 //import com.agaram.lleln.users.CreatedUser;
 //import com.agaram.lleln.util.EnumerationInfo;
@@ -73,6 +72,8 @@ public class InstCategoryService {
 			//Conflict =409 - Duplicate entry
   			return new ResponseEntity<>("Duplicate Entry - " + categoryByName.get().getInstcatname(), 
   					 HttpStatus.CONFLICT);
+//			return new ResponseEntity<>("Duplicate Entry", 
+// 					 HttpStatus.OK);
 		}
 		else
 		{	

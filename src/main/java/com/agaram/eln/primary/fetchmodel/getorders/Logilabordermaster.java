@@ -17,10 +17,12 @@ public class Logilabordermaster {
 	private String filename;
 	private String projectname;
 	private String samplename;
+	private Integer filetype;
+	private String orderflag;
 	
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow
 			, String testname, LSfile lsfile, LSsamplemaster lssamplemaster,
-			LSprojectmaster lsprojectmaster)
+			LSprojectmaster lsprojectmaster, Integer filetype, String orderflag)
 	{
 		this.batchcode = batchcode;
 		this.batchid = batchid;
@@ -29,6 +31,8 @@ public class Logilabordermaster {
 		this.filename = lsfile != null ? lsfile.getFilenameuser() : null;
 		this.projectname = lsprojectmaster != null ? lsprojectmaster.getProjectname() : null;
 		this.samplename = lssamplemaster != null ? lssamplemaster.getSamplename() : null;
+		this.filetype = filetype;
+		this.orderflag = orderflag;
 	}
 	
 	public Long getBatchcode() {
@@ -38,7 +42,17 @@ public class Logilabordermaster {
 		this.batchcode = batchcode;
 	}
 	public String getBatchid() {
-		return batchid;
+		String Batchid = "ELN" + this.batchcode;
+		
+		if (this.filetype == 3) {
+			Batchid = "RESEARCH" + this.batchcode;
+		} else if (this.filetype == 4) {
+			Batchid = "EXCEL" + this.batchcode;
+		} else if (this.filetype == 5) {
+			Batchid = "VALIDATE" + this.batchcode;
+		}
+		
+		return Batchid;
 	}
 	public void setBatchid(String batchid) {
 		this.batchid = batchid;
@@ -112,6 +126,22 @@ public class Logilabordermaster {
 
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+
+	public Integer getFiletype() {
+		return filetype;
+	}
+
+	public void setFiletype(Integer filetype) {
+		this.filetype = filetype;
+	}
+
+	public String getOrderflag() {
+		return orderflag;
+	}
+
+	public void setOrderflag(String orderflag) {
+		this.orderflag = orderflag;
 	}
 	
 }

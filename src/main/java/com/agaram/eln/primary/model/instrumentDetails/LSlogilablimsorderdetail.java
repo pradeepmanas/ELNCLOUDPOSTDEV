@@ -317,11 +317,32 @@ public class LSlogilablimsorderdetail {
 	}
 
 	public String getBatchid() {
-		return this.batchid;
+		String Batchid = "ELN" + this.batchcode;
+		
+		if (this.filetype == 3) {
+			Batchid = "RESEARCH" + this.batchcode;
+		} else if (this.filetype == 4) {
+			Batchid = "EXCEL" + this.batchcode;
+		} else if (this.filetype == 5) {
+			Batchid = "VALIDATE" + this.batchcode;
+		}
+		
+		return Batchid;
 	}
 
 	public void setBatchid(String batchid) {
-		this.batchid = batchid;
+		
+		String Batchid = "ELN" + this.batchcode;
+	
+		if (this.filetype == 3) {
+			Batchid = "RESEARCH" + this.batchcode;
+		} else if (this.filetype == 4) {
+			Batchid = "EXCEL" + this.batchcode;
+		} else if (this.filetype == 5) {
+			Batchid = "VALIDATE" + this.batchcode;
+		}
+		
+		this.batchid = Batchid;
 	}
 
 	public Integer getFiletype() {

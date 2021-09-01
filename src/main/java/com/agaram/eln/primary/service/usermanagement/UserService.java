@@ -18,7 +18,6 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.notification.Email;
-import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSactiveUser;
@@ -752,11 +751,13 @@ public class UserService {
 	
 	public Map<String, Object> GetUserRightsonUser(LSuserMaster objUser)
 	{
-		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objUser.getUsercode());
-		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
-		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objUser.getMultiusergroups());
-		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
-		LSusergroup lsusergroup = objupdateduser.getLsusergroup();
+//		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objUser.getUsercode());
+//		LSMultiusergroup  objLSMultiusergroup =new LSMultiusergroup();
+//		objLSMultiusergroup =LSMultiusergroupRepositery.findBymultiusergroupcode(objUser.getMultiusergroups());
+//		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+		
+		LSusergroup lsusergroup = objUser.getLsusergrouptrans();
+		
 		Map<String, Object> maprights = new HashMap<String, Object>();
 		if(lsusergroup.getUsergroupcode()==null) {
 			List<LSusergrouprightsmaster> lstUserrightsmaster = lsusergrouprightsmasterRepository.findAll();
@@ -879,10 +880,10 @@ public class UserService {
     	}
 		if(Objclass.getSitecode() == 0) {
 //			return lSusergroupRepository.findByusergroupstatusAndUsergroupnameNot("A","Administrator");
-			return lSusergroupRepository.findByusergroupstatusAndUsergroupnameNotOrderByUsergroupcodeAsc("A","Administrator");
+			return lSusergroupRepository.findByUsergroupnameNotOrderByUsergroupcodeAsc("Administrator");
 		}
 //		return lSusergroupRepository.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(),"Administrator");
-		return lSusergroupRepository.findBylssitemasterAndUsergroupstatusAndUsergroupnameNotOrderByUsergroupcodeAsc(Objclass.getSitecode(),"A","Administrator");
+		return lSusergroupRepository.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeAsc(Objclass.getSitecode(),"Administrator");
 	}
 	
 	public List<LSusergroup> GetUserGroupSiteWise(LSSiteMaster Objclass) {

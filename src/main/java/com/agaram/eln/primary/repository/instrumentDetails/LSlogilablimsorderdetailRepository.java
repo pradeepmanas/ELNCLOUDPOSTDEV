@@ -425,7 +425,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	 * @param todate
 	 * @return
 	 */
-	public List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween(String orderflag,
+	public List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc(String orderflag,
 			List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 
 	public List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc(
@@ -446,10 +446,10 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	 * @param todate
 	 * @return
 	 */
-	public List<Logilaborders> findByOrderflagAndLssamplefileInAndCreatedtimestampBetween(String orderflag,
+	public List<Logilaborders> findByOrderflagAndLssamplefileInAndCreatedtimestampBetweenOrderByBatchcodeDesc(String orderflag,
 			List<LSsamplefile> lssamplefile, Date fromdate, Date todate);
 	
-	public List<Logilaborders> findByOrderflagAndCreatedtimestampBetween(String orderflag, Date fromdate, Date todate);
+	public List<Logilaborders> findByOrderflagAndCreatedtimestampBetweenOrderByBatchcodeDesc(String orderflag, Date fromdate, Date todate);
 
 	public List<Logilaborders> findByOrderflagAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			String orderflag, Integer approvelstatus, Integer approved, Date fromdate,
