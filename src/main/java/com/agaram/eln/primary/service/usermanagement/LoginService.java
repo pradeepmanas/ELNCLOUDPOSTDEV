@@ -177,6 +177,12 @@ public class LoginService {
 			    if(Password.equals(objuser.getsPassword()) && objExitinguser.getUserstatus()!="Locked" && objExitinguser.getUserretirestatus() ==0)
 			    {
 			    	
+			    	String encryptionStr = objExitinguser.getPassword()+"_"+objExitinguser.getUsername()+objExitinguser.getLssitemaster().getSitename();
+					
+					String encryptPassword =  AESEncryption.encrypt(encryptionStr);
+					
+					obj.put("encryptedpassword", encryptPassword);
+			    	
 			    	String status = objExitinguser.getUserstatus();
 			    	String groupstatus=objExitinguser.getLsusergroup().getUsergroupstatus();
 			    	if(status.equals("Deactive"))
@@ -1285,16 +1291,16 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 	    	{   
 				objClass.getObjsilentaudit().setActions("Warning");
 				objClass.getObjsilentaudit().setComments(objClass.getUsername().getUsername()+" "+"made attempt to create existing site name");
-				objClass.getObjsilentaudit().setTableName("LSusergroup");
-	    		lscfttransactionRepository.save(objClass.getObjsilentaudit());
+				objClass.getObjsilentaudit().setTableName("LSSiteMaster");
+
 	    	}
 //			manual audit
 			if(objClass.getObjuser() != null)
 	    	{
 				objClass.getObjmanualaudit().setActions("Warning");
-				objClass.getObjmanualaudit().setTableName("LScfttransaction");
+				objClass.getObjmanualaudit().setTableName("LSSiteMaster");
 				objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-	    		lscfttransactionRepository.save(objClass.getObjmanualaudit());
+	    		
 	    	}
 			return objClass;
 		}
@@ -1302,7 +1308,7 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 			if(objClass.getObjsilentaudit() != null)
 	    	{
 				objClass.getObjsilentaudit().setTableName("LSSiteMaster");
-	    		lscfttransactionRepository.save(objClass.getObjsilentaudit());
+//	    		lscfttransactionRepository.save(objClass.getObjsilentaudit());
 	    	}
 			
 			if(objClass.getObjuser() != null) {
@@ -1311,25 +1317,11 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 //					objClass.getObjmanualaudit().setActions("Warning");
 					objClass.getObjmanualaudit().setTableName("LSSiteMaster");
 					objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-		    		lscfttransactionRepository.save(objClass.getObjmanualaudit());
-//					Date date = new Date();
-//			
-//					objClass.getObjmanualaudit().setTableName("LSSiteMaster");
-//					objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-//					objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster().getUsercode());
-//					objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster().getSitecode());
-//					objClass.getObjmanualaudit().setTransactiondate(date);
-//		    		lscfttransactionRepository.save(objClass.getObjmanualaudit());
+		    		
+
 				}
 			}
 			
-//			objClass = lSSiteMasterRepository.findBysitecode(objClass.getSitecode());
-//			if(objClass.getIstatus()==1) {
-//			objClass.setIstatus(-1);
-//			}
-//			else	{
-//				objClass.setIstatus(1);
-//				}
 			lSSiteMasterRepository.save(objClass);
 			objClass.setResponse(new Response());
 			objClass.getResponse().setStatus(true);
@@ -1353,25 +1345,15 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 		if(objClass.getObjsilentaudit() != null)
     	{
 			objClass.getObjsilentaudit().setTableName("LSSiteMaster");
-    		lscfttransactionRepository.save(objClass.getObjsilentaudit());
     	}
 		
 		//Manual Audit
 		if(objClass.getObjuser() != null) {
 			if(objClass.getObjmanualaudit() != null)
 	    	{
-//				objClass.getObjmanualaudit().setActions("Warning");
 				objClass.getObjmanualaudit().setTableName("LSSiteMaster");
 				objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-	    		lscfttransactionRepository.save(objClass.getObjmanualaudit());
-//				Date date = new Date();
-//				
-//				objClass.getObjmanualaudit().setTableName("LSSiteMaster");
-//				objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-//				objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster().getUsercode());
-//				objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster().getSitecode());
-//				objClass.getObjmanualaudit().setTransactiondate(date);
-//	    		lscfttransactionRepository.save(objClass.getObjmanualaudit());
+	    		
 			}
 		}
 		return objClass;
@@ -1784,6 +1766,7 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 				LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
 				objauditconfig.setLsusermaster(objExitinguser);
 				obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig));
+//				obj.put("multiusergroupcode",objLSMultiusergroup.getLsusergroup().getUsergroupcode());
 				obj.put("multiusergroupcode",objLSMultiusergroup.getLsusergroup().getUsergroupcode());
 			}
 			

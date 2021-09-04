@@ -56,4 +56,6 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	 @Modifying
 	 @Query("update LSuserMaster u set u.password = ?1,u.passwordstatus = ?2 where u.usercode = ?3")
 	 void setpasswordandpasswordstatusByusercode(String password,Integer integer, Integer usercode);
+	 
+	 public List<LSuserMaster> findByUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(List<Integer> usercode, Integer userretirestatus);
 }

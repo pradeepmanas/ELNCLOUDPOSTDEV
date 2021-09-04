@@ -3351,9 +3351,13 @@ public class ReportsService {
 			Collections.reverse(Pending);
 			
 //			List<LSlogilablimsorderdetail> Completed = lslogilablimsorderdetailRepository.findByOrderflag("R");
+//			List<LSlogilablimsorderdetail> Completed = lslogilablimsorderdetailRepository
+//				.findByFiletypeAndOrderflagOrderByBatchcodeDesc((int) objorder.get("filetype"),"R");
+//			Collections.reverse(Completed);
+			
 			List<LSlogilablimsorderdetail> Completed = lslogilablimsorderdetailRepository
-				.findByFiletypeAndOrderflagOrderByBatchcodeDesc((int) objorder.get("filetype"),"R");
-			Collections.reverse(Completed);
+					.findByFiletypeAndOrderflagOrderByBatchcodeAsc((int) objorder.get("filetype"),"R");
+				Collections.reverse(Completed);
 			mapOrders.put("Pending", Pending);
 			mapOrders.put("Completed", Completed);
 		} else {
@@ -3379,9 +3383,13 @@ public class ReportsService {
 					.findByFiletypeAndOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc(
 							(int) objorder.get("filetype"), "N", lstproject, lsworkflow);
 			
+//			 Completed = lslogilablimsorderdetailRepository
+//					.findByFiletypeAndOrderflagAndLsprojectmasterInOrderByBatchcodeDesc((int) objorder.get("filetype"),
+//							"R", lstproject);
+			 
 			 Completed = lslogilablimsorderdetailRepository
-					.findByFiletypeAndOrderflagAndLsprojectmasterInOrderByBatchcodeDesc((int) objorder.get("filetype"),
-							"R", lstproject);
+						.findByFiletypeAndOrderflagAndLsprojectmasterInOrderByBatchcodeAsc((int) objorder.get("filetype"),
+								"R", lstproject);
 			}
 			Collections.reverse(Pending);
 			Collections.reverse(Completed);
@@ -3405,7 +3413,9 @@ public class ReportsService {
 	public Map<String, Object> getSheetLSfileLst(Map<String, Object> argMap) {
 		Map<String, Object> MapObj = new HashMap<String, Object>();
 
-		List<LSfile> LSfileLst = LSfileRepositoryObj.findByApproved(1);
+//		List<LSfile> LSfileLst = LSfileRepositoryObj.findByApproved(1);
+		List<LSfile> LSfileLst = LSfileRepositoryObj.findByApprovedOrderByCreatedateDesc(1);
+		
 		for(LSfile LSfileObj: LSfileLst) {
 			if(LSfileObj.getFilecontent() == null) {
 				if((int)argMap.get("isMultitenant") == 1) {
@@ -3472,7 +3482,9 @@ public class ReportsService {
 //				new TypeReference<LSuserMaster>() {
 //				});
 //		List<LSdocreports> LSDocReportsLst = LSdocreportsRepositoryObj.findAllByIsTemplateAndIsdraftAndSheetfilecodeStringAndIsmultiplesheetAndLssitemasterAndFileNameIsNotNull(1, 0, sheetCode, ismultiplesheet, LSuserMasterObj.getLssitemaster().getSitecode());
-		List<LSdocreports> LSDocReportsLst = LSdocreportsRepositoryObj.findAllByIsTemplateAndIsdraftAndSheetfilecodeStringAndIsmultiplesheetAndLssitemasterAndFileNameIsNotNull(1, 0, sheetCode, ismultiplesheet, sitecode);
+//		List<LSdocreports> LSDocReportsLst = LSdocreportsRepositoryObj.findAllByIsTemplateAndIsdraftAndSheetfilecodeStringAndIsmultiplesheetAndLssitemasterAndFileNameIsNotNull(1, 0, sheetCode, ismultiplesheet, sitecode);
+		List<LSdocreports> LSDocReportsLst = LSdocreportsRepositoryObj.findAllByIsTemplateAndIsdraftAndSheetfilecodeStringAndIsmultiplesheetAndLssitemasterAndFileNameIsNotNullOrderByCreatedateDesc(1, 0, sheetCode, ismultiplesheet, sitecode);
+		
 		MapObj.put("LSDocReportsLst", LSDocReportsLst);
 		return MapObj;
 	}

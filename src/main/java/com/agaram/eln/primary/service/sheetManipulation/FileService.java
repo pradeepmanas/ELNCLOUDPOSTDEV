@@ -208,13 +208,13 @@ public class FileService {
 		if (objfile.getObjsilentaudit() != null) {
 
 			objfile.getObjsilentaudit().setTableName("LSfile");
-			lscfttransactionRepository.save(objfile.getObjsilentaudit());
+//			lscfttransactionRepository.save(objfile.getObjsilentaudit());
 		}
 
 		if (objfile.getObjuser() != null) {
 			objfile.getObjmanualaudit().setComments(objfile.getObjuser().getComments());
 			objfile.getObjmanualaudit().setTableName("LSfile");
-			lscfttransactionRepository.save(objfile.getObjmanualaudit());
+//			lscfttransactionRepository.save(objfile.getObjmanualaudit());
 		}
 
 		objfile.setResponse(new Response());
@@ -325,17 +325,18 @@ public class FileService {
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 		
-		if (!lstfile.isEmpty() && lstfile.size() > 0) {
-
-			int i = 0;
-
-			while (i < lstfile.size()) {
-
-				lstfile.get(i).setVersioncout(lsfileversionRepository.countByFilecode(lstfile.get(i).getFilecode()));
-
-				i++;
-			}
-		}
+		/*
+		 * if (!lstfile.isEmpty() && lstfile.size() > 0) {
+		 * 
+		 * int i = 0;
+		 * 
+		 * while (i < lstfile.size()) {
+		 * 
+		 * lstfile.get(i).setVersioncout(lsfileversionRepository.countByFilecode(lstfile
+		 * .get(i).getFilecode()));
+		 * 
+		 * i++; } }
+		 */
 
 		return lstfile;
 	}
@@ -367,20 +368,19 @@ public class FileService {
 	public LSfiletest UpdateFiletest(LSfiletest objtest) {
 		if (objtest.getLSfileparameter() != null) {
 			lSfileparameterRepository.save(objtest.getLSfileparameter());
-
 		}
 
 		lSfiletestRepository.save(objtest);
 
 		if (objtest.getObjsilentaudit() != null) {
 			objtest.getObjsilentaudit().setTableName("LSfiletest");
-			lscfttransactionRepository.save(objtest.getObjsilentaudit());
+//			lscfttransactionRepository.save(objtest.getObjsilentaudit());
 		}
 		// Manual Audit
 		if (objtest.getObjuser() != null) {
 			objtest.getObjmanualaudit().setComments(objtest.getObjuser().getComments());
 			objtest.getObjmanualaudit().setTableName("LSfiletest");
-			lscfttransactionRepository.save(objtest.getObjmanualaudit());
+//			lscfttransactionRepository.save(objtest.getObjmanualaudit());
 		}
 
 		objtest.setResponse(new Response());
@@ -487,7 +487,7 @@ public class FileService {
 
 			if (objflow.getObjsilentaudit() != null) {
 				objflow.getObjsilentaudit().setTableName("LSworkflow");
-				lscfttransactionRepository.save(objflow.getObjsilentaudit());
+//				lscfttransactionRepository.save(objflow.getObjsilentaudit());
 			}
 		}
 
@@ -706,6 +706,7 @@ public class FileService {
 
 		Long BatchID = null;
 		int usercode = 0;
+		@SuppressWarnings("unused")
 		LScfttransaction cfttransaction;
 		ObjectMapper objMapper = new ObjectMapper();
 
@@ -719,7 +720,7 @@ public class FileService {
 		if (objMap.containsKey("objsilentaudit")) {
 
 			cfttransaction = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
-			lscfttransactionRepository.save(cfttransaction);
+//			lscfttransactionRepository.save(cfttransaction);
 
 		}
 		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findByBatchcode(BatchID);

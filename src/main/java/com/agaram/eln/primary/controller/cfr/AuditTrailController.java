@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfrreasons;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -87,31 +90,6 @@ public class AuditTrailController {
 	@PostMapping("/SaveAuditconfigUser")
 	public List<LSaudittrailconfiguration> SaveAuditconfigUser(@RequestBody List<LSaudittrailconfiguration> lsAudit)
 	{
-        if(lsAudit.get(0).getObjuser() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(lsAudit.get(0).getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				lsAudit.get(0).setLsuserMaster(userClass);
-				
-				return auditService.SaveAuditconfigUser(lsAudit);
-			}
-			else
-			{
-				lsAudit.get(0).getObjsilentauditlst().get(0).setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",lsAudit.get(0).getObjsilentauditlst().get(0));
-				map.put("objmanualaudit",lsAudit.get(0).getObjmanualaudit());
-				map.put("objUser",lsAudit.get(0).getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				lsAudit.get(0).setResponse(new Response());
-				lsAudit.get(0).getResponse().setStatus(false);
-				lsAudit.get(0).getResponse().setInformation("ID_VALIDATION");
-				return lsAudit;
-			}
-			
-		}
 		return auditService.SaveAuditconfigUser(lsAudit);
 	}
 
@@ -250,9 +228,37 @@ public class AuditTrailController {
 			}
 		return auditService.exportData(objuser);
 	}
+	
 	@PostMapping("/AuditConfigurationrecord")
 	public LScfttransaction AuditConfigurationrecord(@RequestBody Map<String, Object> objmanualaudit) throws ParseException
 	{
 		return auditService.AuditConfigurationrecord(objmanualaudit);
+	}
+	
+	@PostMapping("/silentandmanualRecordHandler")
+	public LScfttransaction silentandmanualRecordHandler(@RequestBody Map<String, Object> mapObj) throws ParseException
+	{
+		return auditService.silentandmanualRecordHandler(mapObj);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@PostMapping("/checkManualAudit")
+	public Map<String, Object> checkManualAudit(@RequestBody Map<String, Object> reqMap) throws ParseException {
+		Map<String, Object> rMap = new HashMap<>();
+		
+		Map<String, Object> vMap =(Map<String, Object>) reqMap.get("manualAuditPass");
+		
+		LoggedUser objuser = new ObjectMapper().convertValue(vMap.get("objuser"), new TypeReference<LoggedUser>() {
+		});
+
+		if (commonfunction.checkuseronmanualaudit(objuser.getEncryptedpassword(), objuser.getsPassword())) {
+			rMap.put("audit", true);
+			rMap.put("objuser", reqMap.get("valuePass"));
+			return rMap;
+		}
+		
+		rMap.put("audit", false);
+		rMap.put("objuser", reqMap.get("valuePass"));
+		return rMap;
 	}
 }

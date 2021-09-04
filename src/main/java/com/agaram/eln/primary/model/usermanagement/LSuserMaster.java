@@ -126,6 +126,28 @@ public class LSuserMaster {
 	@Transient
 	private String token;
 	
+	@Transient
+	private String userloginlink;
+	
+	@Transient
+	private String encryptedpassword;
+	
+	public String getEncryptedpassword() {
+		return encryptedpassword;
+	}
+
+	public void setEncryptedpassword(String encryptedpassword) {
+		this.encryptedpassword = encryptedpassword;
+	}
+	
+	public String getUserloginlink() {
+		return userloginlink;
+	}
+
+	public void setUserloginlink(String userloginlink) {
+		this.userloginlink = userloginlink;
+	}
+
 	public LSusergroup getLsusergrouptrans() {
 		return lsusergrouptrans;
 	}

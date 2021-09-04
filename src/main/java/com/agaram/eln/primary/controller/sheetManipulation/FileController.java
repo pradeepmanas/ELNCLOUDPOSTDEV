@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
-import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -38,31 +38,6 @@ public class FileController {
 	@PostMapping("/InsertupdateSheet")
 	public LSfile InsertupdateSheet(@RequestBody LSfile objfile)
 	{
-         if(objfile.getObjuser() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objfile.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				objfile.setLSuserMaster(userClass);
-				
-				return fileService.InsertupdateSheet(objfile);
-			}
-			else
-			{
-				objfile.getObjsilentaudit().setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objfile.getObjsilentaudit());
-				map.put("objmanualaudit",objfile.getObjmanualaudit());
-				map.put("objUser",objfile.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objfile.setResponse(new Response());
-				objfile.getResponse().setStatus(false);
-				objfile.getResponse().setInformation("ID_VALIDATION");
-				return objfile;
-			}
-			
-		}
 		return fileService.InsertupdateSheet(objfile);
 	}
 	
@@ -87,31 +62,31 @@ public class FileController {
 	@PostMapping("/UpdateFiletest")
 	public LSfiletest UpdateFiletest(@RequestBody LSfiletest objtest)
 	{
-		if(objtest.getObjuser() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objtest.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				objtest.setLSuserMaster(userClass);
-				
-				return fileService.UpdateFiletest(objtest);
-			}
-			else
-			{
-				objtest.getObjsilentaudit().setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objtest.getObjsilentaudit());
-				map.put("objmanualaudit",objtest.getObjmanualaudit());
-				map.put("objUser",objtest.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objtest.setResponse(new Response());
-				objtest.getResponse().setStatus(false);
-				objtest.getResponse().setInformation("ID_VALIDATION");
-				return objtest;
-			}
-			
-		}
+//		if(objtest.getObjuser() != null) {
+//			
+//			LSuserMaster userClass = auditService.CheckUserPassWord(objtest.getObjuser());
+//			
+//			if(userClass.getObjResponse().getStatus()) {
+//				
+//				objtest.setLSuserMaster(userClass);
+//				
+//				return fileService.UpdateFiletest(objtest);
+//			}
+//			else
+//			{
+//				objtest.getObjsilentaudit().setComments("Entered invalid username and password");
+//				Map<String, Object> map=new HashMap<>();
+//				map.put("objsilentaudit",objtest.getObjsilentaudit());
+//				map.put("objmanualaudit",objtest.getObjmanualaudit());
+//				map.put("objUser",objtest.getObjuser());
+//				auditService.AuditConfigurationrecord(map);
+//				objtest.setResponse(new Response());
+//				objtest.getResponse().setStatus(false);
+//				objtest.getResponse().setInformation("ID_VALIDATION");
+//				return objtest;
+//			}
+//			
+//		}
 		return fileService.UpdateFiletest(objtest);
 	}
 	
@@ -131,29 +106,29 @@ public class FileController {
 	public List<LSworkflow> InsertUpdateWorkflow(@RequestBody List<LSworkflow> lstworkflow)
 	{
 		
-		if(lstworkflow.get(0).getObjuser()!= null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(lstworkflow.get(0).getObjuser());
-            if(userClass.getObjResponse().getStatus()) {
-				
-            	lstworkflow.get(0).setLSuserMaster(userClass);
-				
-            	return fileService.InsertUpdateWorkflow(lstworkflow);
-			}
-			else
-			{
-				lstworkflow.get(0).getObjsilentaudit().setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",lstworkflow.get(0).getObjsilentaudit());
-				map.put("objmanualaudit",lstworkflow.get(0).getObjmanualaudit());
-				map.put("objUser",lstworkflow.get(0).getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				lstworkflow.get(0).setResponse(new Response());
-				lstworkflow.get(0).getResponse().setStatus(false);
-				lstworkflow.get(0).getResponse().setInformation("ID_VALIDATION");
-				return lstworkflow;
-			}	
-		}
+//		if(lstworkflow.get(0).getObjuser()!= null) {
+//			
+//			LSuserMaster userClass = auditService.CheckUserPassWord(lstworkflow.get(0).getObjuser());
+//            if(userClass.getObjResponse().getStatus()) {
+//				
+//            	lstworkflow.get(0).setLSuserMaster(userClass);
+//				
+//            	return fileService.InsertUpdateWorkflow(lstworkflow);
+//			}
+//			else
+//			{
+//				lstworkflow.get(0).getObjsilentaudit().setComments("Entered invalid username and password");
+//				Map<String, Object> map=new HashMap<>();
+//				map.put("objsilentaudit",lstworkflow.get(0).getObjsilentaudit());
+//				map.put("objmanualaudit",lstworkflow.get(0).getObjmanualaudit());
+//				map.put("objUser",lstworkflow.get(0).getObjuser());
+//				auditService.AuditConfigurationrecord(map);
+//				lstworkflow.get(0).setResponse(new Response());
+//				lstworkflow.get(0).getResponse().setStatus(false);
+//				lstworkflow.get(0).getResponse().setInformation("ID_VALIDATION");
+//				return lstworkflow;
+//			}	
+//		}
 		return fileService.InsertUpdateWorkflow(lstworkflow);
 	}
 	

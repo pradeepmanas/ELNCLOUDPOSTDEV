@@ -43,18 +43,10 @@ public class LoggedUser {
 	private LScfttransaction objsilentaudit;
 	private LScfttransaction objmanualaudit;
 	private LSuserMaster lsusermaster;
+	
 	@Transient
 	private LoggedUser objuser;
 	
-
-	public Integer getTemplatefor() {
-		return templatefor;
-	}
-
-	public void setTemplatefor(Integer templatefor) {
-		this.templatefor = templatefor;
-	}
-
 	@Transient
 	private String sUserPassword;
 	
@@ -69,6 +61,25 @@ public class LoggedUser {
 
 	@Transient
 	private Integer multiusergroupcode;
+
+	@Transient
+	private String encryptedpassword;
+	
+	public Integer getTemplatefor() {
+		return templatefor;
+	}
+
+	public void setTemplatefor(Integer templatefor) {
+		this.templatefor = templatefor;
+	}
+	
+	public String getEncryptedpassword() {
+		return encryptedpassword;
+	}
+
+	public void setEncryptedpassword(String encryptedpassword) {
+		this.encryptedpassword = encryptedpassword;
+	}
 
 	public Integer getOrderfor() {
 		return orderfor;

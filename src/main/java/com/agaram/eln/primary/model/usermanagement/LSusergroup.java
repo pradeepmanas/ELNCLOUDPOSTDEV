@@ -106,6 +106,16 @@ public class LSusergroup {
 	@Transient
 	private Response response;
 	
+	@Transient
+	private String encryptedpassword;
+	
+	public String getEncryptedpassword() {
+		return encryptedpassword;
+	}
+
+	public void setEncryptedpassword(String encryptedpassword) {
+		this.encryptedpassword = encryptedpassword;
+	}
 	
 	public LScfttransaction getObjsilentaudit() {
 		return objsilentaudit;
@@ -147,13 +157,6 @@ public class LSusergroup {
 	public void setModifiedby(String modifiedby) {
 		this.modifiedby = modifiedby;
 	}
-
-//	public LSSiteMaster getLssitemaster() {
-//		return lssitemaster;
-//	}
-//	public void setLssitemaster(LSSiteMaster lssitemaster) {
-//		this.lssitemaster = lssitemaster;
-//	}
 
 	public LoggedUser getObjuser() {
 		return objuser;

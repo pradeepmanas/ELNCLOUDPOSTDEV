@@ -45,103 +45,103 @@ public class ProtocolController {
 	
 	@RequestMapping(value="/addProtocolMaster")
 	protected Map<String, Object> addProtocolMaster(@RequestBody Map<String, Object> argObj){
-		Map<String, Object> objMap = new HashMap<String, Object>();
-		LoggedUser objuser = new LoggedUser();
-		Response response = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-		LScfttransaction objsilentaudit = new LScfttransaction();
-		LScfttransaction objmanualaudit = new LScfttransaction();
-		
-			if(argObj.containsKey("objuser"))
-			{
-				objuser = mapper.convertValue(argObj.get("objuser"),LoggedUser.class);
-			}
-		
-			if(argObj.containsKey("objsilentaudit"))
-			{
-				objsilentaudit = mapper.convertValue(argObj.get("objsilentaudit"),LScfttransaction.class);
-			}
-			if(argObj.containsKey("objmanualaudit"))
-			{
-				objmanualaudit = mapper.convertValue(argObj.get("objmanualaudit"),LScfttransaction.class);
-			}
-            if(objuser.getsUsername() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
-			
-			if(userClass.getObjResponse().getStatus()) {
-				objMap = ProtocolMasterService.addProtocolMaster(argObj);
-			}
-			
-			else
-			{
-				objsilentaudit.setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objsilentaudit);
-				map.put("objmanualaudit",objmanualaudit);
-				map.put("objUser",objuser);
-				auditService.AuditConfigurationrecord(map);
-				
-				response.setStatus(false);
-				response.setInformation("ID_VALIDATION");
-				map.put("response",response);
-				return map;
-			 }
-            }
-            else {
-			objMap = ProtocolMasterService.addProtocolMaster(argObj);
-            }
-		return objMap;
+//		Map<String, Object> objMap = new HashMap<String, Object>();
+//		LoggedUser objuser = new LoggedUser();
+//		Response response = new Response();
+//		ObjectMapper mapper = new ObjectMapper();
+//		LScfttransaction objsilentaudit = new LScfttransaction();
+//		LScfttransaction objmanualaudit = new LScfttransaction();
+//		
+//			if(argObj.containsKey("objuser"))
+//			{
+//				objuser = mapper.convertValue(argObj.get("objuser"),LoggedUser.class);
+//			}
+//		
+//			if(argObj.containsKey("objsilentaudit"))
+//			{
+//				objsilentaudit = mapper.convertValue(argObj.get("objsilentaudit"),LScfttransaction.class);
+//			}
+//			if(argObj.containsKey("objmanualaudit"))
+//			{
+//				objmanualaudit = mapper.convertValue(argObj.get("objmanualaudit"),LScfttransaction.class);
+//			}
+//            if(objuser.getsUsername() != null) {
+//			
+//				LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
+//				
+//				if(userClass.getObjResponse().getStatus()) {
+//					objMap = ProtocolMasterService.addProtocolMaster(argObj);
+//				}
+//				
+//				else
+//				{
+//					objsilentaudit.setComments("Entered invalid username and password");
+//					Map<String, Object> map=new HashMap<>();
+//					map.put("objsilentaudit",objsilentaudit);
+//					map.put("objmanualaudit",objmanualaudit);
+//					map.put("objUser",objuser);
+//					auditService.AuditConfigurationrecord(map);
+//					
+//					response.setStatus(false);
+//					response.setInformation("ID_VALIDATION");
+//					map.put("response",response);
+//					return map;
+//				 }
+//            }
+//            else {
+		return ProtocolMasterService.addProtocolMaster(argObj);
+//            }
+//		return objMap;
 	}
 	@RequestMapping(value="/deleteProtocolMaster")
 	protected Map<String, Object> deleteProtocolMaster(@RequestBody Map<String, Object> argObj){
-		Map<String, Object> objMap = new HashMap<String, Object>();
-		LoggedUser objuser = new LoggedUser();
-		Response response = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-		LScfttransaction objsilentaudit = new LScfttransaction();
-		LScfttransaction objmanualaudit = new LScfttransaction();
-		
-			if(argObj.containsKey("objuser"))
-			{
-				objuser = mapper.convertValue(argObj.get("objuser"),LoggedUser.class);
-			}
-		
-			if(argObj.containsKey("objsilentaudit"))
-			{
-				objsilentaudit = mapper.convertValue(argObj.get("objsilentaudit"),LScfttransaction.class);
-			}
-			if(argObj.containsKey("objmanualaudit"))
-			{
-				objmanualaudit = mapper.convertValue(argObj.get("objmanualaudit"),LScfttransaction.class);
-			}
-            if(objuser.getsUsername() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
-			
-			if(userClass.getObjResponse().getStatus()) {
-		objMap = ProtocolMasterService.deleteProtocolMaster(argObj);
-	 }
-			
-			else
-			{
-				objsilentaudit.setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objsilentaudit);
-				map.put("objmanualaudit",objmanualaudit);
-				map.put("objUser",objuser);
-				auditService.AuditConfigurationrecord(map);
-				
-				response.setStatus(false);
-				response.setInformation("ID_VALIDATION");
-				map.put("response",response);
-				return map;
-			 }
-            }
-            else {
-            objMap = ProtocolMasterService.deleteProtocolMaster(argObj);
-            }
-		return objMap;
+//		Map<String, Object> objMap = new HashMap<String, Object>();
+//		LoggedUser objuser = new LoggedUser();
+//		Response response = new Response();
+//		ObjectMapper mapper = new ObjectMapper();
+//		LScfttransaction objsilentaudit = new LScfttransaction();
+//		LScfttransaction objmanualaudit = new LScfttransaction();
+//		
+//			if(argObj.containsKey("objuser"))
+//			{
+//				objuser = mapper.convertValue(argObj.get("objuser"),LoggedUser.class);
+//			}
+//		
+//			if(argObj.containsKey("objsilentaudit"))
+//			{
+//				objsilentaudit = mapper.convertValue(argObj.get("objsilentaudit"),LScfttransaction.class);
+//			}
+//			if(argObj.containsKey("objmanualaudit"))
+//			{
+//				objmanualaudit = mapper.convertValue(argObj.get("objmanualaudit"),LScfttransaction.class);
+//			}
+//            if(objuser.getsUsername() != null) {
+//			
+//			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
+//			
+//			if(userClass.getObjResponse().getStatus()) {
+//		objMap = ProtocolMasterService.deleteProtocolMaster(argObj);
+//	 }
+//			
+//			else
+//			{
+//				objsilentaudit.setComments("Entered invalid username and password");
+//				Map<String, Object> map=new HashMap<>();
+//				map.put("objsilentaudit",objsilentaudit);
+//				map.put("objmanualaudit",objmanualaudit);
+//				map.put("objUser",objuser);
+//				auditService.AuditConfigurationrecord(map);
+//				
+//				response.setStatus(false);
+//				response.setInformation("ID_VALIDATION");
+//				map.put("response",response);
+//				return map;
+//			 }
+//            }
+//            else {
+//            objMap = ProtocolMasterService.deleteProtocolMaster(argObj);
+//            }
+		return ProtocolMasterService.deleteProtocolMaster(argObj);
 	}
 	
 	@RequestMapping(value="/getProtocolMasterLst")
@@ -174,53 +174,53 @@ public class ProtocolController {
 	
 	@RequestMapping(value="/addProtocolStep")
 	protected Map<String, Object> addProtocolStep(@RequestBody Map<String, Object> argObj){
-		Map<String, Object> objMap = new HashMap<String, Object>();
-		LoggedUser objuser = new LoggedUser();
-		Response response = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-		LScfttransaction objsilentaudit = new LScfttransaction();
-		LScfttransaction objmanualaudit = new LScfttransaction();
-		
-			if(argObj.containsKey("objuser"))
-			{
-				objuser = mapper.convertValue(argObj.get("objuser"),LoggedUser.class);
-			}
-		
-			if(argObj.containsKey("objsilentaudit"))
-			{
-				objsilentaudit = mapper.convertValue(argObj.get("objsilentaudit"),LScfttransaction.class);
-			}
-			if(argObj.containsKey("objmanualaudit"))
-			{
-				objmanualaudit = mapper.convertValue(argObj.get("objmanualaudit"),LScfttransaction.class);
-			}
-            if(objuser.getsUsername() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
-			
-			if(userClass.getObjResponse().getStatus()) {
-				objMap = ProtocolMasterService.addProtocolStep(argObj);
-			}
-			
-			else
-			{
-				objsilentaudit.setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objsilentaudit);
-				map.put("objmanualaudit",objmanualaudit);
-				map.put("objUser",objuser);
-				auditService.AuditConfigurationrecord(map);
-				
-				response.setStatus(false);
-				response.setInformation("ID_VALIDATION");
-				map.put("response",response);
-				return map;
-			 }
-            }
-            else {
-            	objMap = ProtocolMasterService.addProtocolStep(argObj);
-            }
-		return objMap;
+//		Map<String, Object> objMap = new HashMap<String, Object>();
+//		LoggedUser objuser = new LoggedUser();
+//		Response response = new Response();
+//		ObjectMapper mapper = new ObjectMapper();
+//		LScfttransaction objsilentaudit = new LScfttransaction();
+//		LScfttransaction objmanualaudit = new LScfttransaction();
+//		
+//			if(argObj.containsKey("objuser"))
+//			{
+//				objuser = mapper.convertValue(argObj.get("objuser"),LoggedUser.class);
+//			}
+//		
+//			if(argObj.containsKey("objsilentaudit"))
+//			{
+//				objsilentaudit = mapper.convertValue(argObj.get("objsilentaudit"),LScfttransaction.class);
+//			}
+//			if(argObj.containsKey("objmanualaudit"))
+//			{
+//				objmanualaudit = mapper.convertValue(argObj.get("objmanualaudit"),LScfttransaction.class);
+//			}
+//            if(objuser.getsUsername() != null) {
+//			
+//			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
+//			
+//			if(userClass.getObjResponse().getStatus()) {
+//				objMap = ProtocolMasterService.addProtocolStep(argObj);
+//			}
+//			
+//			else
+//			{
+//				objsilentaudit.setComments("Entered invalid username and password");
+//				Map<String, Object> map=new HashMap<>();
+//				map.put("objsilentaudit",objsilentaudit);
+//				map.put("objmanualaudit",objmanualaudit);
+//				map.put("objUser",objuser);
+//				auditService.AuditConfigurationrecord(map);
+//				
+//				response.setStatus(false);
+//				response.setInformation("ID_VALIDATION");
+//				map.put("response",response);
+//				return map;
+//			 }
+//            }
+//            else {
+//            	objMap = ProtocolMasterService.addProtocolStep(argObj);
+//            }
+		return  ProtocolMasterService.addProtocolStep(argObj);
 	}
 	
 	@RequestMapping(value="/deleteProtocolStep")
@@ -232,52 +232,52 @@ public class ProtocolController {
 	
 	@RequestMapping(value="/sharewithteam")
 	protected Map<String, Object> sharewithteam(@RequestBody Map<String, Object> argObj){
-		Map<String, Object> objMap = new HashMap<String, Object>();
-		LoggedUser objuser = new LoggedUser();
-		ObjectMapper mapper = new ObjectMapper();
-		LScfttransaction objsilentaudit = new LScfttransaction();
-		LScfttransaction objmanualaudit = new LScfttransaction();
-		
-			if(argObj.containsKey("objuser"))
-			{
-				objuser = mapper.convertValue(argObj.get("objuser"),LoggedUser.class);
-			}
-		
-			if(argObj.containsKey("objsilentaudit"))
-			{
-				objsilentaudit = mapper.convertValue(argObj.get("objsilentaudit"),LScfttransaction.class);
-			}
-			if(argObj.containsKey("objmanualaudit"))
-			{
-				objmanualaudit = mapper.convertValue(argObj.get("objmanualaudit"),LScfttransaction.class);
-			}
-            if(objuser.getsUsername() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
-			
-			if(userClass.getObjResponse().getStatus()) {
-				objMap = ProtocolMasterService.sharewithteam(argObj);
-	        }
-			
-			else
-			{
-				objsilentaudit.setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objsilentaudit);
-				map.put("objmanualaudit",objmanualaudit);
-				map.put("objUser",objuser);
-				auditService.AuditConfigurationrecord(map);
-				
-			
-				map.put("status", false);
-				map.put("Information","ID_VALIDATION");
-				return map;
-			 }
-            }
-            else {
-		objMap = ProtocolMasterService.sharewithteam(argObj);
-            }
-		return objMap;
+//		Map<String, Object> objMap = new HashMap<String, Object>();
+//		LoggedUser objuser = new LoggedUser();
+//		ObjectMapper mapper = new ObjectMapper();
+//		LScfttransaction objsilentaudit = new LScfttransaction();
+//		LScfttransaction objmanualaudit = new LScfttransaction();
+//		
+//			if(argObj.containsKey("objuser"))
+//			{
+//				objuser = mapper.convertValue(argObj.get("objuser"),LoggedUser.class);
+//			}
+//		
+//			if(argObj.containsKey("objsilentaudit"))
+//			{
+//				objsilentaudit = mapper.convertValue(argObj.get("objsilentaudit"),LScfttransaction.class);
+//			}
+//			if(argObj.containsKey("objmanualaudit"))
+//			{
+//				objmanualaudit = mapper.convertValue(argObj.get("objmanualaudit"),LScfttransaction.class);
+//			}
+//            if(objuser.getsUsername() != null) {
+//			
+//			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
+//			
+//			if(userClass.getObjResponse().getStatus()) {
+//				objMap = ProtocolMasterService.sharewithteam(argObj);
+//	        }
+//			
+//			else
+//			{
+//				objsilentaudit.setComments("Entered invalid username and password");
+//				Map<String, Object> map=new HashMap<>();
+//				map.put("objsilentaudit",objsilentaudit);
+//				map.put("objmanualaudit",objmanualaudit);
+//				map.put("objUser",objuser);
+//				auditService.AuditConfigurationrecord(map);
+//				
+//			
+//				map.put("status", false);
+//				map.put("Information","ID_VALIDATION");
+//				return map;
+//			 }
+//            }
+//            else {
+//		objMap = ProtocolMasterService.sharewithteam(argObj);
+//            }
+		return ProtocolMasterService.sharewithteam(argObj);
 	}
 	
 	@RequestMapping(value="/updateworkflowforProtocol")

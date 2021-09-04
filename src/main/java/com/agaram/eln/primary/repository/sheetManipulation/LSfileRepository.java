@@ -112,4 +112,6 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenOrderByFilecodeDesc(Integer filecode,List<LSuserMaster> lstusermaster, Date fromdate, Date todate);
 	
 	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyAndCreatedateBetweenOrderByFilecodeDesc(Integer filecode, LSuserMaster lsusermaster,Date fromdate, Date todate);
+
+	public List<LSfile> findByApprovedOrderByCreatedateDesc(int i);
 }

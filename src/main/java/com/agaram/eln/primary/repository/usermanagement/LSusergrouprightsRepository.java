@@ -11,7 +11,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 
 public interface LSusergrouprightsRepository  extends JpaRepository<LSusergrouprights, Integer>{
 	public List<LSusergrouprights> findByModulename(String modulename);
-	public List<LSusergrouprights> findByusergroupid(LSusergroup lsusergroup);
+	public List<LSusergrouprights> findByUsergroupid(LSusergroup lsusergroup);
 	
 	 @Query("SELECT DISTINCT r.modulename FROM LSusergrouprights r where modulename !='User Group' and modulename !='User Master'")
 	// @Query("SELECT DISTINCT r.modulename FROM LSusergrouprights r")

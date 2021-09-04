@@ -30,6 +30,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsordersharedbyRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowgroupmapRepository;
@@ -101,6 +102,9 @@ public class DashBoardService {
 
 	@Autowired
 	private lSprotocolworkflowRepository lSprotocolworkflowRepository;
+	
+	@Autowired
+	private LsordersharedbyRepository lsordersharedbyRepository;
 
 	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser) {
 
@@ -234,11 +238,9 @@ public class DashBoardService {
 
 			long lstlimscompleted = lslogilablimsorderdetailRepository
 					.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "R", fromdate, todate);
-//			long lstCompletedordercount = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInOrderByBatchcodeDesc("R",lstproject);
 			long lstCompletedordercount = 0;
 			if (lstproject != null && lstproject.size() > 0) {
 
-//				lstCompletedordercount = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInOrderByBatchcodeDesc("R",lstproject,objuser.getUsercode());
 				lstCompletedordercount = lslogilablimsorderdetailRepository
 						.countByOrderflagAndLsprojectmasterInAndCompletedtimestampBetween("R", lstproject, fromdate,
 								todate);
@@ -252,10 +254,8 @@ public class DashBoardService {
 			long lstlimsprocess = lslogilablimsorderdetailRepository
 					.countByFiletypeAndOrderflagAndLssamplefileInAndCreatedtimestampBetween(0, "N", lssamplefile,
 							fromdate, todate);
-//			long orderinproject = lslogilablimsorderdetailRepository.countByOrderflagAndLssamplefileInAndLsprojectmasterIn("N", lssamplefile,lstproject);
 			List<Long> orderinproject = new ArrayList<Long>();
 			if (lstproject != null && lssamplefile != null && lstproject.size() > 0 && lssamplefile.size() > 0) {
-//				orderinproject = lslogilablimsorderdetailRepository.countByOrderflagAndLssamplefileInAndLsprojectmasterIn("N", lssamplefile,lstproject,objuser.getUsercode());
 				orderinproject = lslogilablimsorderdetailRepository
 						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDescInprogress(
 								"N", lstproject, 1, 1, "N", fromdate, todate);
@@ -263,10 +263,8 @@ public class DashBoardService {
 			mapOrders.put("orders", (lsorder + lstUserorder));
 			long lstlimspending = lslogilablimsorderdetailRepository
 					.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "N", fromdate, todate);
-//			long lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc("N",lstproject, lsworkflow);
 			long lstpending = 0;
 			if (lstproject != null && lsworkflow != null && lstproject.size() > 0 && lsworkflow.size() > 0) {
-//				lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc("N",lstproject, lsworkflow,objuser.getUsercode());
 				lstpending = lslogilablimsorderdetailRepository
 						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("N", lstproject, fromdate,
 								todate);
@@ -519,18 +517,6 @@ public class DashBoardService {
 				lsprotocolworkflow = lSprotocolworkflowRepository
 						.findByworkflowcode(lsprotocolworkflowgroupmap.get(0).getWorkflowcode());
 
-//				List<Protocoltemplateget> lstProtocolinWflow = LSProtocolMasterRepository
-//						.findByCreatedbyAndStatusAndLssitemasterAndCreatedateBetweenOrderByProtocolmastercodeDesc(
-//								objuser.getUsercode(), 1, objuser.getLssitemaster().getSitecode(), fromdate, todate);
-
-//				List<Protocoltemplateget> lstprotocolmasterInUser = LSProtocolMasterRepository
-//						.findByCreatedbyNotAndStatusAndLssitemasterAndLSprotocolworkflowAndCreatedateBetweenOrderByProtocolmastercodeDesc(
-//								objuser.getUsercode(), 1, objuser.getLssitemaster().getSitecode(), lsprotocolworkflow,
-//								fromdate, todate);
-
-//				lstprotocolmaster.addAll(lstProtocolinWflow);
-//				lstprotocolmaster.addAll(lstprotocolmasterInUser);
-
 				List<Protocoltemplateget> lstprotocolmasterInUser = LSProtocolMasterRepository
 						.findByCreatedbyOrLSprotocolworkflowAndStatusAndLssitemasterAndCreatedateBetweenOrderByProtocolmastercodeDesc(
 								objuser.getUsercode(), lsprotocolworkflow, 1, objuser.getLssitemaster().getSitecode(),
@@ -552,9 +538,6 @@ public class DashBoardService {
 		Date todate = objuser.getObjuser().getTodate();
 		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-//		LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
-//		objLSMultiusergroup = lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
-//		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 
 		if (objupdateduser.getUsername().equals("Administrator")) {
 			List<LSparsedparameters> lstparsedparam = lsparsedparametersRespository.getallrecords();
@@ -591,12 +574,7 @@ public class DashBoardService {
 	public Map<String, Object> Getdashboardactivities(LSuserMaster objuser) {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
-		// LSuserMaster objupdateduser =
-		// lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-//		LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
-//		objLSMultiusergroup = lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
-//		objupdateduser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 
 		if (objuser.getUsername().equals("Administrator")) {
 			mapOrders.put("activities",
@@ -615,11 +593,25 @@ public class DashBoardService {
 
 		return mapOrders;
 	}
+	
+	public Map<String, Object> Getordersharebyme(LSuserMaster objuser) {
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		mapOrders.put("orders", lsordersharedbyRepository.findBySharebyunifiedidAndSharedonBetweenOrUnsharedonBetween(objuser.getUnifieduserid(),fromdate, todate,fromdate, todate));
+		
+		return mapOrders;
+	}
 
 	public List<LSactivity> GetActivitiesonLazy(LSactivity objactivities) {
 		List<LSactivity> lstactivities = new ArrayList<LSactivity>();
 		lstactivities = lsactivityRepository
 				.findTop20ByActivitycodeLessThanOrderByActivitycodeDesc(objactivities.getActivitycode());
 		return lstactivities;
+	}
+	
+	public Logilabordermaster Getorder(LSlogilablimsorderdetail objorder)
+	{
+		return lslogilablimsorderdetailRepository.findFirst1ByBatchcode(objorder.getBatchcode());
 	}
 }

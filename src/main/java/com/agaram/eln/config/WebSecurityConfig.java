@@ -72,6 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		// dont authenticate this particular request
 		.authorizeRequests().antMatchers("/authenticate").permitAll().
 		antMatchers("/multitenant/otpvarification").permitAll().
+		antMatchers("/registerMail").permitAll().
 		antMatchers("/multitenant/sendotp").permitAll().
 		antMatchers("/Login/LoadSite").permitAll().
 		antMatchers("/Login/LoadDomain").permitAll().

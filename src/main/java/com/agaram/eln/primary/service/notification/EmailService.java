@@ -2,8 +2,17 @@ package com.agaram.eln.primary.service.notification;
 
 import java.util.Random;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
+import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -118,14 +127,74 @@ public class EmailService {
 			helper.setSubject(email.getSubject());
 			helper.setFrom(from);
 			helper.setTo(to);
+//			
+//			boolean html = true;
+//			helper.setText(email.getMailcontent(), html);
+//				
+//			
+//			mailSender.send(message);
+//			
+////			EmailRepository.save(email);
 			
-			boolean html = true;
-			helper.setText(email.getMailcontent(), html);
-				
+//			Message message =mailSender.createMimeMessage();
+//			
+//			 Message message = new MimeMessage(session);
+
+	         // Set From: header field of the header.
+//	         message.setFrom(new InternetAddress(from));
+//
+//	         // Set To: header field of the header.
+//	         message.setRecipients(Message.RecipientType.TO,
+//	            InternetAddress.parse(to));
+
+	         // Set Subject: header field
+	         message.setSubject(email.getSubject());
+
+	         // This mail has 2 part, the BODY and the embedded image
+	         MimeMultipart multipart = new MimeMultipart("related");
+
+	         // first part (the html)
+	         BodyPart messageBodyPart = new MimeBodyPart();
+//	         String htmlText = "<H1>Hello</H1><img src=\"cid:image\"  style ='margin-left: 200px; width: 16%;border: 3px;'><br><br>"
+//	         		+ "<img src=\"cid:seconimage\"  style ='margin-left: 200px; width: 16%;border: 3px;'>";
+	         
+	         String htmlText = email.getMailcontent();
+	         
+	         messageBodyPart.setContent(htmlText, "text/html");
+	         // add it
+	         multipart.addBodyPart(messageBodyPart);
+	         
+	         
+	         
+	         messageBodyPart = new MimeBodyPart();
+	         DataSource fds1= new FileDataSource
+	           ("D:/WORKING FOLDER/ELN/branches/ELN 6.6/ELNCLOUDPOST/src/main/resources/images/Logilab ELN_vertical.jpg");
+	         messageBodyPart.setDataHandler(new DataHandler(fds1));
+	         messageBodyPart.addHeader("Content-ID","<image>");
+	         // add it
+	         multipart.addBodyPart(messageBodyPart);
+
+
+	         // second part (the image)
+	         messageBodyPart = new MimeBodyPart();
+	         DataSource fds = new FileDataSource(
+	            "D:/WORKING FOLDER/ELN/branches/ELN 6.6/ELNCLOUDPOST/src/main/resources/images/AgaramTechnologies_vertical.jpg");
+
+	         messageBodyPart.setDataHandler(new DataHandler(fds));
+	         messageBodyPart.setHeader("Content-ID", "<seconimage>");
+
+	         // add image to the multipart
+	         multipart.addBodyPart(messageBodyPart);
+	         
+	      
+	         // put everything together
+	         message.setContent(multipart);
+	         // Send message
+	         mailSender.send(message);
+	         EmailRepository.save(email);
 			
-			mailSender.send(message);
 			
-			EmailRepository.save(email);
+			
 			
 			return email;
 		}

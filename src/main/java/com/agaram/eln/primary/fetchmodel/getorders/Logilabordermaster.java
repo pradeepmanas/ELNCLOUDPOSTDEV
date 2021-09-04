@@ -9,6 +9,7 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 
 public class Logilabordermaster {
 	private Long batchcode;
+	@SuppressWarnings("unused")
 	private String batchid;
 	List<LSworkflow> lstworkflow;
 	private boolean canuserprocess;
@@ -19,6 +20,7 @@ public class Logilabordermaster {
 	private String samplename;
 	private Integer filetype;
 	private String orderflag;
+	
 	
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow
 			, String testname, LSfile lsfile, LSsamplemaster lssamplemaster,

@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.controller.basemaster;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
-import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.Lselninstrumentmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
@@ -22,7 +20,6 @@ import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.basemaster.BaseMasterService;
-import com.agaram.eln.primary.service.cfr.AuditService;
 
 @RestController
 @RequestMapping(value = "/Basemaster", method = RequestMethod.POST)
@@ -30,9 +27,6 @@ public class BaseMasterController {
 	
 	@Autowired
     private BaseMasterService masterService;
-	
-	@Autowired
-	private AuditService auditService;
 	
 	/**
 	 *For Get Masters
@@ -71,95 +65,18 @@ public class BaseMasterController {
 	@PostMapping("/InsertupdateTest")
 	public LStestmasterlocal InsertupdateTest(@RequestBody LStestmasterlocal objClass)
 	{
-		if(objClass.getObjuser() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objClass.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				objClass.setLSuserMaster(userClass);
-				
-				return masterService.InsertupdateTest(objClass);
-			}
-			else
-			{
-				objClass.getObjsilentaudit().setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objClass.getObjsilentaudit());
-				map.put("objmanualaudit",objClass.getObjmanualaudit());
-				map.put("objUser",objClass.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objClass.setResponse(new Response());
-				objClass.getResponse().setStatus(false);
-				objClass.getResponse().setInformation("ID_VALIDATION");
-				return objClass;
-			}
-			
-		}
-		
 		return masterService.InsertupdateTest(objClass);
 	}
 	
 	@PostMapping("/InsertupdateSample")
 	public LSsamplemaster InsertupdateSample(@RequestBody LSsamplemaster objClass)
 	{
-		if(objClass.getObjuser() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objClass.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				objClass.setLSuserMaster(userClass);
-				
-				return masterService.InsertupdateSample(objClass);
-			}
-			else
-			{
-				objClass.getObjsilentaudit().setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objClass.getObjsilentaudit());
-				map.put("objmanualaudit",objClass.getObjmanualaudit());
-				map.put("objUser",objClass.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objClass.setResponse(new Response());
-				objClass.getResponse().setStatus(false);
-				objClass.getResponse().setInformation("ID_VALIDATION");
-				return objClass;
-			}
-			
-		}
 		return masterService.InsertupdateSample(objClass);
 	}
 	
 	@PostMapping("/InsertupdateProject")
 	public LSprojectmaster InsertupdateProject(@RequestBody LSprojectmaster objClass)
 	{
-		if(objClass.getObjuser() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objClass.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				objClass.setLSuserMaster(userClass);
-				
-				return masterService.InsertupdateProject(objClass);
-			}
-			else
-			{
-				objClass.getObjsilentaudit().setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objClass.getObjsilentaudit());
-				map.put("objmanualaudit",objClass.getObjmanualaudit());
-				map.put("objUser",objClass.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objClass.setResponse(new Response());
-				objClass.getResponse().setStatus(false);
-				objClass.getResponse().setInformation("ID_VALIDATION");
-				return objClass;
-			}
-			
-		}
-		
 		return masterService.InsertupdateProject(objClass);
 	}
 	
@@ -171,30 +88,7 @@ public class BaseMasterController {
 	
 	@PostMapping("/InsertupdateInstrument")
 	public Lselninstrumentmaster InsertupdateInstrument(@RequestBody Lselninstrumentmaster objClass) {
-               if(objClass.getObjuser() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objClass.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				objClass.setLSuserMaster(userClass);
-				
-				return masterService.InsertupdateInstrument(objClass);
-			}
-			else
-			{
-				objClass.getObjsilentaudit().setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objClass.getObjsilentaudit());
-				map.put("objmanualaudit",objClass.getObjmanualaudit());
-				map.put("objUser",objClass.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objClass.setResponse(new Response());
-				objClass.getResponse().setStatus(false);
-				objClass.getResponse().setInformation("ID_VALIDATION");
-				return objClass;
-			}
-}
+               
 		return masterService.InsertupdateInstrument(objClass);
 	}
 	

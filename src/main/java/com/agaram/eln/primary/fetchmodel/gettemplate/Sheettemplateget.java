@@ -1,9 +1,8 @@
 package com.agaram.eln.primary.fetchmodel.gettemplate;
 
-import java.util.Date;
-import java.util.List;
 
-import com.agaram.eln.primary.model.sheetManipulation.LSfileversion;
+import java.util.Date;
+
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public class Sheettemplateget {
@@ -18,9 +17,14 @@ public class Sheettemplateget {
 	private LSuserMaster modifiedby;
 	private String filecontent;
 	private long versioncout;
+	
+//	private List<LSfileversion> lstfileversion;
+//	private LSfileversion lsfileversion;
 
 	public Sheettemplateget(Integer filecode, String filenameuser, Date createdate, LSuserMaster createby,
-			LSuserMaster modifiedby, Integer approved, Integer rejected) {
+			LSuserMaster modifiedby, Integer approved, Integer rejected
+//			,LSfileversion lsfileversion
+			) {
 		
 		LSuserMaster createdUser = new LSuserMaster();
 		
@@ -44,8 +48,32 @@ public class Sheettemplateget {
 		this.createby = createdUser;
 		this.createdate = createdate;
 		this.modifiedby = modifiedUser;
-
+		
+//		this.lsfileversion = lsfileversion;
 	}
+
+//	public List<LSfileversion> getLstfileversion() {
+//		return lstfileversion;
+//	}
+
+//	public void setLstfileversion(List<LSfileversion> lstfileversion) {
+//		if(lstfileversion != null && this.lsfileversion !=null && lstfileversion.size() >0)
+//		{
+//			if(lstfileversion.contains(this.lsfileversion))
+//			{
+//				this.setVersioncout(lstfileversion.size());
+//			}
+//			else
+//			{
+//				this.setVersioncout(0);
+//			}
+//		}
+//		else
+//		{
+//			this.setVersioncout(0);
+//		}
+//		this.lsfileversion = null;
+//	}
 
 	public long getVersioncout() {
 		return versioncout;

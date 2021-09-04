@@ -414,17 +414,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public List<Logilaborders> findByOrderflagAndFiletypeAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String orderflag, Integer filetype, Date fromdate, Date todate);
 
-	/**
-	 * Added by sathishkumar chandrasekar 
-	 * 
-	 * for filter orders on dashboard users
-	 * 
-	 * @param orderflag
-	 * @param lstproject
-	 * @param fromdate
-	 * @param todate
-	 * @return
-	 */
 	public List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc(String orderflag,
 			List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 
@@ -436,16 +425,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			String orderflag, List<LSprojectmaster> lstproject, Integer approvelstatus, Integer approved, Date fromdate,
 			Date todate);
 	
-	/**
-	 * Added by sathishkumar chandrasekar 
-	 * 
-	 * for filter orders on dashboard Administrator 
-	 * 
-	 * @param orderflag
-	 * @param fromdate
-	 * @param todate
-	 * @return
-	 */
 	public List<Logilaborders> findByOrderflagAndLssamplefileInAndCreatedtimestampBetweenOrderByBatchcodeDesc(String orderflag,
 			List<LSsamplefile> lssamplefile, Date fromdate, Date todate);
 	
@@ -454,4 +433,11 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public List<Logilaborders> findByOrderflagAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			String orderflag, Integer approvelstatus, Integer approved, Date fromdate,
 			Date todate);
+
+	public List<LSlogilablimsorderdetail> findByFiletypeAndOrderflagAndLsprojectmasterInOrderByBatchcodeAsc(int i,
+			String string, List<LSprojectmaster> lstproject);
+
+	public List<LSlogilablimsorderdetail> findByFiletypeAndOrderflagOrderByBatchcodeAsc(int i, String string);
+	
+	public Logilaborders findFirst1ByBatchcode(Long batchcode);
 }

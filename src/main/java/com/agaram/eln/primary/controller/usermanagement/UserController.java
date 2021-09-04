@@ -74,31 +74,6 @@ public class UserController {
 	@PostMapping("/InsertUpdateUserGroup")
 	public LSusergroup InsertUpdateUserGroup(@RequestBody LSusergroup objusergroup)
 	{
-		if(objusergroup.getObjuser() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objusergroup.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				objusergroup.setLSuserMaster(userClass);
-				
-				return userService.InsertUpdateUserGroup(objusergroup);
-			}
-			else
-			{
-				objusergroup.getObjsilentaudit().setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objusergroup.getObjsilentaudit());
-				map.put("objmanualaudit",objusergroup.getObjmanualaudit());
-				map.put("objUser",objusergroup.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objusergroup.setResponse(new Response());
-				objusergroup.getResponse().setStatus(false);
-				objusergroup.getResponse().setInformation("ID_VALIDATION");
-				return objusergroup;
-			}
-			
-		}
 		return userService.InsertUpdateUserGroup(objusergroup);
 	}
 	
@@ -154,49 +129,26 @@ public class UserController {
 //	{
 //		return userService.ActDeactUserGroup(objusergroup);
 //	}
-	
+
 	/**
 	 * UserMaster
 	 * 
 	 * @param objuser
 	 * @return
-	 * @throws MessagingException 
+	 * @throws MessagingException
 	 */
 	@PostMapping("/InsertUpdateUser")
-	public LSuserMaster InsertUpdateUser(@RequestBody LSuserMaster objusermaster) throws MessagingException
-	{
-		if(objusermaster.getObjuser() != null) {
-			if(objusermaster.getUserstatus().trim() == "Active") {
-				objusermaster.setUserstatus("A");
-			} else if(objusermaster.getUserstatus().trim() == "Deactive") {
-				objusermaster.setUserstatus("D");
-			}
-			else {
-				objusermaster.setUserstatus("Locked");
-			}
-			LSuserMaster userClass = auditService.CheckUserPassWord(objusermaster.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-//				objusermaster.setUserClass(userClass);
-				
-				return userService.InsertUpdateUser(objusermaster);
-			}
-			else
-			{
-				objusermaster.getObjsilentaudit().setComments("Entered invalid username and password");
-//				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objusermaster.getObjsilentaudit());
-				map.put("objmanualaudit",objusermaster.getObjmanualaudit());
-				map.put("objUser",objusermaster.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objusermaster.setResponse(new Response());
-				objusermaster.getResponse().setStatus(false);
-				objusermaster.getResponse().setInformation("ID_VALIDATION");
-				return objusermaster;
-			}
-			
-		}
+	public LSuserMaster InsertUpdateUser(@RequestBody LSuserMaster objusermaster) throws MessagingException {
+//		if (objusermaster.getObjuser() != null) {
+//			if (objusermaster.getUserstatus().trim() == "Active") {
+//				objusermaster.setUserstatus("A");
+//			} else if (objusermaster.getUserstatus().trim() == "Deactive") {
+//				objusermaster.setUserstatus("D");
+//			} else {
+//				objusermaster.setUserstatus("Locked");
+//			}
+//			return userService.InsertUpdateUser(objusermaster);
+//		}
 		return userService.InsertUpdateUser(objusermaster);
 	}
 	
@@ -258,31 +210,6 @@ public class UserController {
 	@PostMapping("/InsertUpdateTeam")
 	public LSusersteam InsertUpdateTeam(@RequestBody LSusersteam objteam)
 	{
-		if(objteam.getObjuser() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objteam.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				objteam.setModifieduserMaster(userClass);
-				
-				return userService.InsertUpdateTeam(objteam);
-			}
-			else
-			{
-				objteam.getObjsilentaudit().setComments("Entered invalid username and password");
-//				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objteam.getObjsilentaudit());
-				map.put("objmanualaudit",objteam.getObjmanualaudit());
-				map.put("objUser",objteam.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objteam.setResponse(new Response());
-				objteam.getResponse().setStatus(false);
-				objteam.getResponse().setInformation("ID_VALIDATION");
-				return objteam;
-			}
-			
-		}
 		return userService.InsertUpdateTeam(objteam);
 	}
 	
@@ -313,30 +240,6 @@ public class UserController {
 	@PostMapping("/SaveUserRights")
 	public List<LSusergrouprights> SaveUserRights(@RequestBody List<LSusergrouprights> lsrights)
 	{
-		if(lsrights.get(0).getObjuser() != null) {
-		
-		LSuserMaster userClass = auditService.CheckUserPassWord(lsrights.get(0).getObjuser());
-        if(userClass.getObjResponse().getStatus()) {
-			
-        	lsrights.get(0).setLsuserMaster(userClass);
-			
-        	return userService.SaveUserRights(lsrights);
-		}
-		else
-		{
-			lsrights.get(0).getObjsilentaudit().setComments("Entered invalid username and password");
-			map.put("objsilentaudit",lsrights.get(0).getObjsilentaudit());
-			map.put("objmanualaudit",lsrights.get(0).getObjmanualaudit());
-			map.put("objUser",lsrights.get(0).getObjuser());
-			auditService.AuditConfigurationrecord(map);
-        lsrights.get(0).setResponse(new Response());
-        lsrights.get(0).getResponse().setStatus(false);
-        lsrights.get(0).getResponse().setInformation("ID_VALIDATION");
-			return lsrights;
-		}
-		
-		
-	}
 		return userService.SaveUserRights(lsrights);
 	}
 	
@@ -361,30 +264,6 @@ public class UserController {
 	@PostMapping("/PasswordpolicySave")
 	public LSPasswordPolicy PasswordpolicySave(@RequestBody LSPasswordPolicy lspasswordpolicy)
 	{
-			if(lspasswordpolicy.getObjuser() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(lspasswordpolicy.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				lspasswordpolicy.setLsusermaster(userClass);
-				
-				return userService.PasswordpolicySave(lspasswordpolicy);
-			}
-			else
-			{
-				lspasswordpolicy.getObjsilentaudit().setComments("Entered invalid username and password");
-				map.put("objsilentaudit",lspasswordpolicy.getObjsilentaudit());
-				map.put("objmanualaudit",lspasswordpolicy.getObjmanualaudit());
-				map.put("objUser",lspasswordpolicy.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				lspasswordpolicy.setResponse(new Response());
-				lspasswordpolicy.getResponse().setStatus(false);
-				lspasswordpolicy.getResponse().setInformation("ID_VALIDATION");
-				return lspasswordpolicy;
-			}
-			
-		}
 		return userService.PasswordpolicySave(lspasswordpolicy);
 	}
 	
@@ -592,5 +471,11 @@ public class UserController {
 	public Lsusersettings updateUserDateFormat(@RequestBody Lsusersettings objuser)
 	{
 		return userService.updateUserDateFormat(objuser);
+	}
+	
+	@PostMapping("/GetAllActiveUsers")
+	public List<LSuserMaster> GetAllActiveUsers(@RequestBody LSuserMaster objusergroup)
+	{
+		return userService.GetAllActiveUsers(objusergroup);
 	}
 }

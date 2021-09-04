@@ -38,6 +38,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
 @Service
 @EnableJpaRepositories(basePackageClasses = LScfrreasonsRepository.class)
 public class AuditService {
@@ -151,6 +152,7 @@ public class AuditService {
 		return objClass;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public List<LScfttransaction> GetCFRTransactions(Map<String, Object> objCFRFilter) throws ParseException
 	{
 		List<LScfttransaction> list = new ArrayList<LScfttransaction>();
@@ -280,10 +282,9 @@ public class AuditService {
 	public List<LSaudittrailconfiguration> SaveAuditconfigUser(List<LSaudittrailconfiguration> lsAudit) {
 
 		LSaudittrailconfigurationRepository.save(lsAudit);
-		lscfttransactionRepository.save(lsAudit.get(0).getObjsilentauditlst());
+//		lscfttransactionRepository.save(lsAudit.get(0).getObjsilentauditlst());
 		if(lsAudit.get(0).getObjuser()!=null) {
 			lsAudit.get(0).getObjmanualaudit().setComments(lsAudit.get(0).getObjuser().getComments());
-			lscfttransactionRepository.save(lsAudit.get(0).getObjmanualaudit());	
 		}
 		lsAudit.get(0).setResponse(new Response());
 		lsAudit.get(0).getResponse().setStatus(true);
@@ -460,7 +461,6 @@ public class AuditService {
 				LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(sitecode);
 				LSuserMaster objuser= lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemaster(username, objsite);
 				cfttransaction.setLsuserMaster(objuser.getUsercode());
-//				cfttransaction.setLssitemaster(objuser.getLssitemaster());
 				cfttransaction.setLssitemaster(objuser.getLssitemaster().getSitecode());
 				cfttransaction.setUsername(username);
 			}
@@ -483,6 +483,30 @@ public class AuditService {
 		cfttransaction.getObjResponse().setInformation("");
 
 		return cfttransaction;
-	} 
+	}
+
+	public LScfttransaction silentandmanualRecordHandler(Map<String, Object> mapObj) {
+		
+		ObjectMapper objMapper= new ObjectMapper();
+		LScfttransaction cfttransaction=new LScfttransaction();
+		
+//		silent audit
+		if(mapObj.containsKey("objsilentaudit")) {
+			cfttransaction = objMapper.convertValue(mapObj.get("objsilentaudit"), LScfttransaction.class);
+			lscfttransactionRepository.save(cfttransaction);
+		}
+//		manual audit
+		if(mapObj.containsKey("objmanualaudit")) {
+			LScfttransaction objmanualaudit=new LScfttransaction();
+			objmanualaudit = objMapper.convertValue(mapObj.get("objmanualaudit"), LScfttransaction.class);
+			lscfttransactionRepository.save(objmanualaudit);
+		}
+			
+		cfttransaction.setObjResponse(new Response());
+		cfttransaction.getObjResponse().setStatus(true);
+		cfttransaction.getObjResponse().setInformation("");
+
+		return cfttransaction;
+	}
 	
 }

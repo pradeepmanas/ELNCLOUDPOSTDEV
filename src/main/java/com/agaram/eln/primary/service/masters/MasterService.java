@@ -15,8 +15,6 @@ import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.model.usermanagement.LSusersteam;
-import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
@@ -75,6 +73,7 @@ public class MasterService {
 
 	public Lsrepositoriesdata Saverepositorydata(Lsrepositoriesdata lsrepositoriesdata) {
 		Response objResponse = new Response();
+		@SuppressWarnings("unused")
 		Lsrepositoriesdata lsrepodata = null;
 
 		if (lsrepositoriesdata.getRepositorydatacode() != null) {

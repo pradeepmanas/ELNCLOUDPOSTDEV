@@ -293,22 +293,25 @@ public class InstrumentService {
 		if (objorder.getAssignedto() != null) {
 			objorder.setLockeduser(objorder.getAssignedto().getUsercode());
 		}
+		
+		lslogilablimsorderdetailRepository.save(objorder);
+		
+		String Batchid = "ELN" + objorder.getBatchcode();
+		
+		if (objorder.getFiletype() == 3) {
+			Batchid = "RESEARCH" + objorder.getBatchcode();
+		} else if (objorder.getFiletype() == 4) {
+			Batchid = "EXCEL" + objorder.getBatchcode();
+		} else if (objorder.getFiletype() == 5) {
+			Batchid = "VALIDATE" + objorder.getBatchcode();
+		}
+		lslogilablimsorderdetailRepository.setbatchidBybatchcode(Batchid, objorder.getBatchcode());
+		objorder.setBatchid(Batchid);
 
 		lslogilablimsorderdetailRepository.save(objorder);
+		
 		lssamplefileRepository.setbatchcodeOnsamplefile(objorder.getBatchcode(),
 				objorder.getLssamplefile().getFilesamplecode());
-		
-//		String Batchid = "ELN" + objorder.getBatchcode();
-//		
-//		if (objorder.getFiletype() == 3) {
-//			Batchid = "RESEARCH" + objorder.getBatchcode();
-//		} else if (objorder.getFiletype() == 4) {
-//			Batchid = "EXCEL" + objorder.getBatchcode();
-//		} else if (objorder.getFiletype() == 5) {
-//			Batchid = "VALIDATE" + objorder.getBatchcode();
-//		}
-//		lslogilablimsorderdetailRepository.setbatchidBybatchcode(Batchid, objorder.getBatchcode());
-//		objorder.setBatchid(Batchid);
 
 		List<LSlimsorder> lsorder = new ArrayList<LSlimsorder>();
 		String Limsorder = objorder.getBatchcode().toString();
@@ -354,12 +357,12 @@ public class InstrumentService {
 		if (objorder.getObjuser() != null) {
 			objorder.getObjmanualaudit().setComments(objorder.getObjuser().getComments());
 			objorder.getObjmanualaudit().setTableName("LSlogilablimsorderdetail");
-			lscfttransactionRepository.save(objorder.getObjmanualaudit());
+//			lscfttransactionRepository.save(objorder.getObjmanualaudit());
 		}
 
 		if (objorder.getObjsilentaudit() != null) {
 			objorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-			lscfttransactionRepository.save(objorder.getObjsilentaudit());
+//			lscfttransactionRepository.save(objorder.getObjsilentaudit());
 		}
 
 		if (objorder.getLssamplefile() != null) {
@@ -821,7 +824,7 @@ public class InstrumentService {
 
 		if (objorder.getObjsilentaudit() != null) {
 			objorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-			lscfttransactionRepository.save(objorder.getObjsilentaudit());
+//			lscfttransactionRepository.save(objorder.getObjsilentaudit());
 		}
 
 		long pendingcount = 0;
@@ -1562,7 +1565,7 @@ public class InstrumentService {
 		}
 		if (objorder.getObjsilentaudit() != null) {
 			objorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-			lscfttransactionRepository.save(objorder.getObjsilentaudit());
+//			lscfttransactionRepository.save(objorder.getObjsilentaudit());
 		}
 
 		long sharedbycount = 0;
@@ -1759,7 +1762,7 @@ public class InstrumentService {
 	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder) {
 		if (objorder.getObjsilentaudit() != null) {
 			objorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-			lscfttransactionRepository.save(objorder.getObjsilentaudit());
+//			lscfttransactionRepository.save(objorder.getObjsilentaudit());
 		}
 
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository
@@ -1886,21 +1889,16 @@ public class InstrumentService {
 	}
 
 	public LSsamplefile SaveResultfile(LSsamplefile objfile) {
-		// Updatesamplefileversion(objfile);
+		
 		Integer lastversionindex = objfile.getLssamplefileversion().size() - 1;
-//		String Contentversion = objfile.getLssamplefileversion().get(lastversionindex).getFilecontent();
-//		objfile.getLssamplefileversion().get(lastversionindex).setFilecontent(null);
-//		lssamplefileversionRepository.save(objfile.getLssamplefileversion());
-//		updateorderversioncontent(Contentversion,objfile.getLssamplefileversion().get(lastversionindex));
-//		objfile.setProcessed(1);
+
 		String Contentversion;
 		if (lastversionindex == -1) {
 			Contentversion = objfile.getFilecontent();
 			lastversionindex = 0;
 			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
 		} else {
-			// Contentversion =
-			// objfile.getLssamplefileversion().get(lastversionindex).getFilecontent();
+			
 			Contentversion = objfile.getFilecontent();
 			objfile.getLssamplefileversion().get(lastversionindex).setFilecontent(null);
 			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
@@ -1937,13 +1935,13 @@ public class InstrumentService {
 
 		if (objfile.getObjsilentaudit() != null) {
 			objfile.getObjsilentaudit().setTableName("LSsamplefile");
-			lscfttransactionRepository.save(objfile.getObjsilentaudit());
+//			lscfttransactionRepository.save(objfile.getObjsilentaudit());
 		}
 		// manual audit
 		if (objfile.getObjuser() != null) {
 			objfile.getObjmanualaudit().setComments(objfile.getObjuser().getComments());
-			objfile.getObjmanualaudit().setTableName("LSlogilablimsorderdetail");
-			lscfttransactionRepository.save(objfile.getObjmanualaudit());
+			objfile.getObjmanualaudit().setTableName("LSsamplefile");
+//			lscfttransactionRepository.save(objfile.getObjmanualaudit());
 		}
 		objfile.setResponse(new Response());
 		objfile.getResponse().setStatus(true);
@@ -2132,13 +2130,13 @@ public class InstrumentService {
 		if (objorder.getObjsilentaudit() != null) {
 
 			objorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-			lscfttransactionRepository.save(objorder.getObjsilentaudit());
+//			lscfttransactionRepository.save(objorder.getObjsilentaudit());
 		}
 		// manual audit
 		if (objorder.getObjuser() != null) {
 			objorder.getObjmanualaudit().setComments(objorder.getObjuser().getComments());
 			objorder.getObjmanualaudit().setTableName("LSlogilablimsorderdetail");
-			lscfttransactionRepository.save(objorder.getObjmanualaudit());
+//			lscfttransactionRepository.save(objorder.getObjmanualaudit());
 		}
 		updatenotificationfororder(objorder);
 		objorder.setResponse(new Response());

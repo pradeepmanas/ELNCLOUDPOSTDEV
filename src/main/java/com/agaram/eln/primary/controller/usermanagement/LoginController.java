@@ -346,30 +346,6 @@ public class LoginController {
 	@PostMapping("/InsertupdateSite")
 	public LSSiteMaster InsertupdateSite(@RequestBody LSSiteMaster objClass)
 	{
-		if(objClass.getObjuser() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objClass.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				objClass.setLSuserMaster(userClass);
-				
-				return loginService.InsertupdateSite(objClass);
-			}
-			else
-			{
-				Map<String, Object> map=new HashMap<>();
-				objClass.getObjsilentaudit().setComments("Entered invalid username and password");
-				map.put("objsilentaudit",objClass.getObjsilentaudit());
-				map.put("objmanualaudit",objClass.getObjmanualaudit());
-				map.put("objUser",objClass.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objClass.setResponse(new Response());
-				objClass.getResponse().setStatus(false);
-				objClass.getResponse().setInformation("ID_VALIDATION");
-				return objClass;
-			}		
-		}
 		return loginService.InsertupdateSite(objClass);
 	}
 	
