@@ -70,6 +70,9 @@ public class Lsordershareto {
 	private Integer ismultitenant;
 	
 	@Transient
+	private Long sharedbycode;
+	
+	@Transient
 	private LSlogilablimsorderdetail objorder;
 
 	public Long getSharetocode() {
@@ -223,6 +226,13 @@ public class Lsordershareto {
 	public void setObjorder(LSlogilablimsorderdetail objorder) {
 		this.objorder = objorder;
 	}
-	
+
+	public Long getSharedbycode() {
+		return sharedbycode;
+	}
+
+	public void setSharedbycode(Long sharedbycode) {
+		this.sharedbycode = sharedbycode;
+	}
 	
 }

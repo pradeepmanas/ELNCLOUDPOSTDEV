@@ -2591,6 +2591,7 @@ public class InstrumentService {
 
 		existingshare.setSharestatus(0);
 		existingshare.setUnsharedon(lsordershareto.getUnsharedon());
+		existingshare.setSharedbycode(lsordershareto.getSharedbycode());
 		lsordersharetoRepository.save(existingshare);
 
 		return existingshare;
