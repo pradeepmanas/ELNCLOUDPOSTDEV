@@ -144,4 +144,7 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 	List<Protocoltemplateget> findByCreatedbyAndStatusAndLssitemasterAndSharewithteamAndLSprotocolworkflowNotAndCreatedateBetween(
 			Integer createdby, Integer status, Integer site, Integer Sharewithteam,
 			LSprotocolworkflow lSprotocolworkflow, Date fDate, Date tDate);
+
+	List<Protocoltemplateget> findByCreatedbyOrLSprotocolworkflowAndStatusAndCreatedateBetweenOrderByProtocolmastercodeDesc(
+			Integer usercode, LSprotocolworkflow lsprotocolworkflow, int i, Date fromdate, Date todate);
 }

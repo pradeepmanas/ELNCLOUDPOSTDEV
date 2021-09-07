@@ -251,6 +251,23 @@ public class DatasourceService {
 		if (CustomerSubscription.getCustomer_subscription_id() != null) {
 
 			CustomerSubscriptionRepository.save(CustomerSubscription);
+
+			if (CustomerSubscription.getPlan_type() != null) {
+				DataSourceConfig getTenant = configRepo.findById(Long.valueOf(CustomerSubscription.getId()));
+				if (getTenant != null) {
+					getTenant.setPackagetype(
+							CustomerSubscription.getType().equalsIgnoreCase("Free") ? 3914465000000065045L
+									: CustomerSubscription.getType().equalsIgnoreCase("Standard") ? 3914465000000065049L
+											: 3914465000000065053L);
+					configRepo.save(getTenant);
+				} else {
+					objres.setStatus(false);
+					objres.setInformation("Please Pass CustomerSubscriptionID ");
+					CustomerSubscription.setObjResponse(objres);
+					return CustomerSubscription;
+				}
+			}
+
 			objres.setStatus(true);
 			objres.setInformation("Customer Subscription Successfully stored ");
 			CustomerSubscription.setObjResponse(objres);

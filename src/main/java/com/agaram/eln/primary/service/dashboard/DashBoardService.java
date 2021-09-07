@@ -524,9 +524,8 @@ public class DashBoardService {
 						.findByworkflowcode(lsprotocolworkflowgroupmap.get(0).getWorkflowcode());
 
 				List<Protocoltemplateget> lstprotocolmasterInUser = LSProtocolMasterRepository
-						.findByCreatedbyOrLSprotocolworkflowAndStatusAndLssitemasterAndCreatedateBetweenOrderByProtocolmastercodeDesc(
-								objuser.getUsercode(), lsprotocolworkflow, 1, objuser.getLssitemaster().getSitecode(),
-								fromdate, todate);
+						.findByCreatedbyOrLSprotocolworkflowAndStatusAndCreatedateBetweenOrderByProtocolmastercodeDesc(
+								objuser.getUsercode(), lsprotocolworkflow, 1, fromdate, todate);
 
 				lstprotocolmaster.addAll(lstprotocolmasterInUser);
 			}

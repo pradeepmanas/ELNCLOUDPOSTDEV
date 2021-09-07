@@ -20,7 +20,6 @@ import javax.persistence.Transient;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity

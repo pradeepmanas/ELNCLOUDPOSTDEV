@@ -57,7 +57,7 @@ public class DataSourceConfig implements Serializable {
 //	public void setCustomer_subscription_id(Long customer_subscription_id) {
 //		this.customer_subscription_id = customer_subscription_id;
 //	}
-	private int packagetype = 0;
+	private long packagetype = 0;
     private Date registereddate;
     private Date activateddate;
     private int validatenodays = 0;
@@ -283,10 +283,11 @@ public class DataSourceConfig implements Serializable {
 	public void setLoginfrom(int loginfrom) {
 		this.loginfrom = loginfrom;
 	}
-	public int getPackagetype() {
+	
+	public long getPackagetype() {
 		return packagetype;
 	}
-	public void setPackagetype(int packagetype) {
+	public void setPackagetype(long packagetype) {
 		this.packagetype = packagetype;
 	}
 	public Date getRegistereddate() {
