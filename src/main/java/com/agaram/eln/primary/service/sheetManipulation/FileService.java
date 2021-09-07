@@ -54,7 +54,6 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LssheetworkflowhistoryRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
-import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.basemaster.BaseMasterService;
@@ -118,9 +117,6 @@ public class FileService {
 
 	@Autowired
 	private LSsheetupdatesRepository lssheetupdatesRepository;
-
-	@Autowired
-	private LSuserMasterRepository lSuserMasterRepository;
 
 	@Autowired
 	private CloudSheetCreationRepository cloudSheetCreationRepository;
@@ -257,34 +253,33 @@ public class FileService {
 
 	public List<LSfile> GetSheets(LSuserMaster objuser) {
 		if (objuser.getUsername().equals("Administrator")) {
-			LSuserMaster user = lSuserMasterRepository.findByusercode(objuser.getUsercode());
-			if (objuser.getObjsilentaudit() != null) {
-				objuser.setObjsilentaudit(new LScfttransaction());
-				objuser.getObjsilentaudit().setModuleName("Sheet Creation");
-				objuser.getObjsilentaudit().setComments("Request to load Sheet Creation screen");
-				objuser.getObjsilentaudit().setActions("View / Load");
-				objuser.getObjsilentaudit().setSystemcoments("System Generated");
-				objuser.getObjsilentaudit().setTableName("LSuserMaster");
-				objuser.getObjsilentaudit().setManipulatetype("view");
-				objuser.getObjsilentaudit().setLsuserMaster(user.getUsercode());
-				objuser.getObjsilentaudit().setLssitemaster(user.getLssitemaster().getSitecode());
-				lscfttransactionRepository.save(objuser.getObjsilentaudit());
-			}
+			//			if (objuser.getObjsilentaudit() != null) {
+//				objuser.setObjsilentaudit(new LScfttransaction());
+//				objuser.getObjsilentaudit().setModuleName("Sheet Creation");
+//				objuser.getObjsilentaudit().setComments("Request to load Sheet Creation screen");
+//				objuser.getObjsilentaudit().setActions("View / Load");
+//				objuser.getObjsilentaudit().setSystemcoments("System Generated");
+//				objuser.getObjsilentaudit().setTableName("LSuserMaster");
+//				objuser.getObjsilentaudit().setManipulatetype("view");
+//				objuser.getObjsilentaudit().setLsuserMaster(user.getUsercode());
+//				objuser.getObjsilentaudit().setLssitemaster(user.getLssitemaster().getSitecode());
+//				lscfttransactionRepository.save(objuser.getObjsilentaudit());
+//			}
 			return lSfileRepository.getsheetGreaterthanone();
 		} else {
-			LSuserMaster user = lSuserMasterRepository.findByusercode(objuser.getUsercode());
-
-			objuser.setObjsilentaudit(new LScfttransaction());
-			objuser.getObjsilentaudit().setModuleName("Sheet Creation");
-			objuser.getObjsilentaudit().setComments("Request to load Sheet Creation screen");
-			objuser.getObjsilentaudit().setActions("View / Load");
-			objuser.getObjsilentaudit().setSystemcoments("System Generated");
-			objuser.getObjsilentaudit().setTableName("LSuserMaster");
-			objuser.getObjsilentaudit().setManipulatetype("view");
-			objuser.getObjsilentaudit().setLsuserMaster(user.getUsercode());
-			objuser.getObjsilentaudit().setLssitemaster(user.getLssitemaster().getSitecode());
-
-			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+//			LSuserMaster user = lSuserMasterRepository.findByusercode(objuser.getUsercode());
+//
+//			objuser.setObjsilentaudit(new LScfttransaction());
+//			objuser.getObjsilentaudit().setModuleName("Sheet Creation");
+//			objuser.getObjsilentaudit().setComments("Request to load Sheet Creation screen");
+//			objuser.getObjsilentaudit().setActions("View / Load");
+//			objuser.getObjsilentaudit().setSystemcoments("System Generated");
+//			objuser.getObjsilentaudit().setTableName("LSuserMaster");
+//			objuser.getObjsilentaudit().setManipulatetype("view");
+//			objuser.getObjsilentaudit().setLsuserMaster(user.getUsercode());
+//			objuser.getObjsilentaudit().setLssitemaster(user.getLssitemaster().getSitecode());
+//
+//			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 			return GetSheetsbyuser(objuser);
 		}
 	}
@@ -438,22 +433,22 @@ public class FileService {
 			lsworkflowRepository.save(flow);
 		}
 		// silent audit
-		if (lstworkflow.get(0).getObjsilentaudit() != null) {
-			lstworkflow.get(0).getObjsilentaudit().setTableName("lsworkflow");
-			lscfttransactionRepository.save(lstworkflow.get(0).getObjsilentaudit());
-		}
-		// Manual Audit
-		if (lstworkflow.get(0).getObjuser() != null) {
-//			Date date = new Date();
-
-			lstworkflow.get(0).getObjmanualaudit().setComments(lstworkflow.get(0).getObjuser().getComments());
-			lstworkflow.get(0).getObjmanualaudit().setTableName("LSworkflow");
-			lstworkflow.get(0).getObjmanualaudit().setLsuserMaster(lstworkflow.get(0).getLSuserMaster().getUsercode());
-			lstworkflow.get(0).getObjmanualaudit()
-					.setLssitemaster(lstworkflow.get(0).getLSuserMaster().getLssitemaster().getSitecode());
-//			lstworkflow.get(0).getObjmanualaudit().setTransactiondate(date);
-			lscfttransactionRepository.save(lstworkflow.get(0).getObjmanualaudit());
-		}
+//		if (lstworkflow.get(0).getObjsilentaudit() != null) {
+//			lstworkflow.get(0).getObjsilentaudit().setTableName("lsworkflow");
+//			lscfttransactionRepository.save(lstworkflow.get(0).getObjsilentaudit());
+//		}
+//		// Manual Audit
+//		if (lstworkflow.get(0).getObjuser() != null) {
+////			Date date = new Date();
+//
+//			lstworkflow.get(0).getObjmanualaudit().setComments(lstworkflow.get(0).getObjuser().getComments());
+//			lstworkflow.get(0).getObjmanualaudit().setTableName("LSworkflow");
+//			lstworkflow.get(0).getObjmanualaudit().setLsuserMaster(lstworkflow.get(0).getLSuserMaster().getUsercode());
+//			lstworkflow.get(0).getObjmanualaudit()
+//					.setLssitemaster(lstworkflow.get(0).getLSuserMaster().getLssitemaster().getSitecode());
+////			lstworkflow.get(0).getObjmanualaudit().setTransactiondate(date);
+//			lscfttransactionRepository.save(lstworkflow.get(0).getObjmanualaudit());
+//		}
 		lstworkflow.get(0).setResponse(new Response());
 		lstworkflow.get(0).getResponse().setStatus(true);
 		lstworkflow.get(0).getResponse().setInformation("ID_SHEETMSG");
@@ -535,20 +530,20 @@ public class FileService {
 
 		if (lSsheetworkflow.get(0).getObjsilentaudit() != null) {
 			lSsheetworkflow.get(0).getObjsilentaudit().setTableName("LSfiletest");
-			lscfttransactionRepository.save(lSsheetworkflow.get(0).getObjsilentaudit());
+//			lscfttransactionRepository.save(lSsheetworkflow.get(0).getObjsilentaudit());
 		}
 
-		if (lSsheetworkflow.get(0).getObjuser() != null) {
-
-
-			lSsheetworkflow.get(0).getObjmanualaudit().setComments(lSsheetworkflow.get(0).getObjuser().getComments());
-			lSsheetworkflow.get(0).getObjmanualaudit().setTableName("LSsheetworkflow");
-			lSsheetworkflow.get(0).getObjmanualaudit()
-					.setLsuserMaster(lSsheetworkflow.get(0).getLSuserMaster().getUsercode());
-			lSsheetworkflow.get(0).getObjmanualaudit()
-					.setLssitemaster(lSsheetworkflow.get(0).getLSuserMaster().getLssitemaster().getSitecode());
-			lscfttransactionRepository.save(lSsheetworkflow.get(0).getObjmanualaudit());
-		}
+//		if (lSsheetworkflow.get(0).getObjuser() != null) {
+//
+//
+//			lSsheetworkflow.get(0).getObjmanualaudit().setComments(lSsheetworkflow.get(0).getObjuser().getComments());
+//			lSsheetworkflow.get(0).getObjmanualaudit().setTableName("LSsheetworkflow");
+//			lSsheetworkflow.get(0).getObjmanualaudit()
+//					.setLsuserMaster(lSsheetworkflow.get(0).getObjuser().getUsercode());
+//			lSsheetworkflow.get(0).getObjmanualaudit()
+//					.setLssitemaster(lSsheetworkflow.get(0).getLSuserMaster().getLssitemaster().getSitecode());
+////			lscfttransactionRepository.save(lSsheetworkflow.get(0).getObjmanualaudit());
+//		}
 		lSsheetworkflow.get(0).setResponse(new Response());
 		lSsheetworkflow.get(0).getResponse().setStatus(true);
 		lSsheetworkflow.get(0).getResponse().setInformation("ID_SHEETMSG");

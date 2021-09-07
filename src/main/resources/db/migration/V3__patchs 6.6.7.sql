@@ -1386,6 +1386,8 @@ AND table_name='lslogilablimsorderdetail';
  	ALTER TABLE ONLY lslogilablimsorderdetail ADD CONSTRAINT fkjayf1kn6mm1gfpj451la8b88i FOREIGN KEY (lsrepositories_repositorycode) REFERENCES lsrepositories(repositorycode);
    END IF;
 END
+$do$;
+
 update Lsrepositories set isexpiredate = false where isexpiredate IS NULL;
 update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 1;
 update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 2;

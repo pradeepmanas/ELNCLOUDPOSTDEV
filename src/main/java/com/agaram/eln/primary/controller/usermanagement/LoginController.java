@@ -75,92 +75,86 @@ public class LoginController {
 	
 	@PostMapping("/ChangePassword")
 	public LSuserMaster ChangePassword(@RequestBody LoggedUser objuser) {
-		LSuserMaster userClass=new LSuserMaster();
-            if(objuser.getObjuser() != null) {
-			
-			 userClass = auditService.CheckUserPassWord(objuser.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				objuser.setLsusermaster(userClass);
-				
-				return loginService.ChangePassword(objuser);
-			}
-			else
-			{
-				Map<String, Object> map=new HashMap<>();
-				objuser.getObjsilentaudit().setComments("Entered invalid username and password");
-				map.put("objsilentaudit",objuser.getObjsilentaudit());
-				map.put("objmanualaudit",objuser.getObjmanualaudit());
-				map.put("objUser",objuser.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				userClass.setObjResponse(new Response());
-				userClass.getObjResponse().setStatus(false);
-				userClass.getObjResponse().setInformation("ID_VALIDATION");
-				return userClass;
-			}
-			
-		}
+//		LSuserMaster userClass=new LSuserMaster();
+//            if(objuser.getObjuser() != null) {
+//			
+//			 userClass = auditService.CheckUserPassWord(objuser.getObjuser());
+//			
+//			if(userClass.getObjResponse().getStatus()) {
+//				
+//				objuser.setLsusermaster(userClass);
+//				
+//				return loginService.ChangePassword(objuser);
+//			}
+//			else
+//			{
+//				Map<String, Object> map=new HashMap<>();
+//				objuser.getObjsilentaudit().setComments("Entered invalid username and password");
+//				map.put("objsilentaudit",objuser.getObjsilentaudit());
+//				map.put("objmanualaudit",objuser.getObjmanualaudit());
+//				map.put("objUser",objuser.getObjuser());
+//				auditService.AuditConfigurationrecord(map);
+//				userClass.setObjResponse(new Response());
+//				userClass.getObjResponse().setStatus(false);
+//				userClass.getObjResponse().setInformation("ID_VALIDATION");
+//				return userClass;
+//			}
+//			
+//		}
 		return loginService.ChangePassword(objuser);
 	}
 	
 	@PostMapping("/InsertUpdateDomain")
 	public LSdomainMaster InsertupdateDomain(@RequestBody LSdomainMaster objClass)
 	{
-		if(objClass.getObjuser() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objClass.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				objClass.setLSuserMaster(userClass);
-				
-				return loginService.InsertupdateDomain(objClass);
-			}
-			else
-			{
-				Map<String, Object> map=new HashMap<>();
-				objClass.getObjsilentaudit().setComments("Entered invalid username and password");
-				map.put("objsilentaudit",objClass.getObjsilentaudit());
-				map.put("objmanualaudit",objClass.getObjmanualaudit());
-				map.put("objUser",objClass.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objClass.setResponse(new Response());
-				objClass.getResponse().setStatus(false);
-				objClass.getResponse().setInformation("ID_VALIDATION");
-				return objClass;
-			}
-			
-		}
-		return loginService.InsertupdateDomain(objClass);
-	}
-	
-	@PostMapping("/importADSScreen")
-	public LSuserMaster importADSScreen(@RequestBody LSuserMaster objClass)
-	{
-		if(objClass.getObjuser() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objClass.getObjuser());
-			
-			if(userClass.getObjResponse().getStatus()) {
-				
-				return loginService.importADSScreen(objClass);
-			}
-			else
-			{
+//		if(objClass.getObjuser() != null) {
+//			
+//			LSuserMaster userClass = auditService.CheckUserPassWord(objClass.getObjuser());
+//			
+//			if(userClass.getObjResponse().getStatus()) {
+//				
+//				objClass.setLSuserMaster(userClass);
+//				
+//				return loginService.InsertupdateDomain(objClass);
+//			}
+//			else
+//			{
 //				Map<String, Object> map=new HashMap<>();
 //				objClass.getObjsilentaudit().setComments("Entered invalid username and password");
 //				map.put("objsilentaudit",objClass.getObjsilentaudit());
 //				map.put("objmanualaudit",objClass.getObjmanualaudit());
 //				map.put("objUser",objClass.getObjuser());
 //				auditService.AuditConfigurationrecord(map);
-				objClass.setResponse(new Response());
-				objClass.getResponse().setStatus(false);
-				objClass.getResponse().setInformation("Username And PassWord invalid");
-				return objClass;
-			}
-			
-		}
+//				objClass.setResponse(new Response());
+//				objClass.getResponse().setStatus(false);
+//				objClass.getResponse().setInformation("ID_VALIDATION");
+//				return objClass;
+//			}
+//			
+//		}
+		return loginService.InsertupdateDomain(objClass);
+	}
+	
+	@PostMapping("/importADSScreen")
+	public LSuserMaster importADSScreen(@RequestBody LSuserMaster objClass)
+	{
+//		if(objClass.getObjuser() != null) {
+//			
+//			LSuserMaster userClass = auditService.CheckUserPassWord(objClass.getObjuser());
+//			
+//			if(userClass.getObjResponse().getStatus()) {
+//				
+//				return loginService.importADSScreen(objClass);
+//			}
+//			else
+//			{
+//				objClass.setResponse(new Response());
+//				objClass.getResponse().setStatus(false);
+//				objClass.getResponse().setInformation("Username And PassWord invalid");
+//				return objClass;
+//			}
+//			
+//		}
 		return loginService.importADSScreen(objClass);
 	}
 	

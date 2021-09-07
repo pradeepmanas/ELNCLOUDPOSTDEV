@@ -3366,7 +3366,7 @@ public class ReportsService {
 			List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
 					.findBylsusergroup(LsuserMasterObj.getLsusergroup());
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
-			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
+			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 //			List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
 			List<LSlogilablimsorderdetail> Pending = new ArrayList<LSlogilablimsorderdetail>();
 			List<LSlogilablimsorderdetail> Completed = new ArrayList<LSlogilablimsorderdetail>();

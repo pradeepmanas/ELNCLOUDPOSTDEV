@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "LSMultiusergroup")
 public class LSMultiusergroup {
@@ -17,10 +19,9 @@ public class LSMultiusergroup {
 	@Basic(optional = false)
 	@Column(name = "multiusergroupcode") 
 	private int multiusergroupcode;
-//	public void setMultiusergroupcode(int multiusergroupcode) {
-//		this.multiusergroupcode = multiusergroupcode;
-//	}
+
 	@Column(name = "usercode")
+//	@JsonBackReference
 	private Integer usercode;
 	@ManyToOne 
 	private LSusergroup lsusergroup;
@@ -32,12 +33,7 @@ public class LSMultiusergroup {
 	public void setDefaultusergroup(Integer defaultusergroup) {
 		this.defaultusergroup = defaultusergroup;
 	}
-//	public Integer getMultiusergroupcode() {
-//		return multiusergroupcode;
-//	}
-//	public void setMultiusergroupcode(Integer multiusergroupcode) {
-//		this.multiusergroupcode = multiusergroupcode;
-//	}
+
 	public Integer getUsercode() {
 		return usercode;
 	}

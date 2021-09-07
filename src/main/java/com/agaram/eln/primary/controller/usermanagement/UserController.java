@@ -272,6 +272,7 @@ public class UserController {
 	{
 		return userService.GetPasswordPolicy(lspasswordpolicy);
 	}
+	
 	@PostMapping("/GetPasswordPolicySitewise")
 	public LSPasswordPolicy GetPasswordPolicySitewise(@RequestBody LSPasswordPolicy objpwd) {
 

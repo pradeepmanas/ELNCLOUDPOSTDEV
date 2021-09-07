@@ -12,7 +12,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -122,8 +121,8 @@ public class UserService {
 			objusergroup.getResponse().setInformation("ID_EXIST");
 			if (objusergroup.getObjsilentaudit() != null) {
 				objusergroup.getObjsilentaudit().setActions("Warning");
-				objusergroup.getObjsilentaudit().setComments(
-						objusergroup.getCreateby().getUsername() + " " + "made attempt to create existing group name");
+//				objusergroup.getObjsilentaudit().setComments(
+//						objusergroup.getCreateby().getUsername() + " " + "made attempt to create existing group name");
 				objusergroup.getObjsilentaudit().setTableName("LSusergroup");
 			}
 //			manual audit
@@ -141,8 +140,8 @@ public class UserService {
 			objusergroup.getResponse().setInformation("ID_EXIST");
 			if (objusergroup.getObjsilentaudit() != null) {
 				objusergroup.getObjsilentaudit().setActions("Warning");
-				objusergroup.getObjsilentaudit().setComments(
-						objusergroup.getCreateby().getUsername() + " " + "made attempt to create existing group name");
+//				objusergroup.getObjsilentaudit().setComments(
+//						objusergroup.getCreateby().getUsername() + " " + "made attempt to create existing group name");
 				objusergroup.getObjsilentaudit().setTableName("LSusergroup");
 //				lscfttransactionRepository.save(objusergroup.getObjsilentaudit());
 			}
@@ -1004,7 +1003,7 @@ public class UserService {
 							+ ">Click here to Logilab ELN Login page</a></b><br><br>"
 							+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
 							+ "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
-							+ "<img src=\"cid:seconimage\"  style ='width:120px; height:100px;border: 3px;'"
+							+ "<img src=\"cid:seconimage\"  style ='width:120px; height:120px;border: 3px;'"
 							+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
 							+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
 
@@ -1059,4 +1058,5 @@ public class UserService {
 		lstuser.add(objuser.getUsercode());
 		return lsuserMasterRepository.findByUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(lstuser,0);
 	}
+	
 }

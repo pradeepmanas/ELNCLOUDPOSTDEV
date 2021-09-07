@@ -19,6 +19,8 @@ import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
@@ -109,6 +111,7 @@ public class LSuserMaster {
 	
 	@OneToMany
 	@JoinColumn(name="usercode")
+//	@JsonManagedReference
 	private List<LSMultiusergroup> multiusergroupcode;
 	
 	@Transient
@@ -131,6 +134,12 @@ public class LSuserMaster {
 	
 	@Transient
 	private String encryptedpassword;
+	
+	@Transient
+	List<LSprojectmaster> lstproject;
+	
+	@Transient
+	List<LSworkflow> lstworkflow;
 	
 	public String getEncryptedpassword() {
 		return encryptedpassword;
@@ -464,6 +473,22 @@ public class LSuserMaster {
 
 	public void setUnifieduserid(String unifieduserid) {
 		this.unifieduserid = unifieduserid;
+	}
+
+	public List<LSprojectmaster> getLstproject() {
+		return lstproject;
+	}
+
+	public void setLstproject(List<LSprojectmaster> lstproject) {
+		this.lstproject = lstproject;
+	}
+
+	public List<LSworkflow> getLstworkflow() {
+		return lstworkflow;
+	}
+
+	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+		this.lstworkflow = lstworkflow;
 	}
 	
 	

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
+import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Protocoltemplateget;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
@@ -31,6 +32,7 @@ import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharedbyRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsordersharetoRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowgroupmapRepository;
@@ -105,6 +107,9 @@ public class DashBoardService {
 	
 	@Autowired
 	private LsordersharedbyRepository lsordersharedbyRepository;
+	
+	@Autowired
+	private LsordersharetoRepository lsordersharetoRepository;
 
 	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser) {
 
@@ -134,7 +139,7 @@ public class DashBoardService {
 					.findBylsusergroup(objupdateduser.getLsusergroup());
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 
-			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
+			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 			long lstUserorder = lslogilablimsorderdetailRepository
 					.countByLsprojectmasterInOrderByBatchcodeDesc(lstproject);
@@ -231,7 +236,7 @@ public class DashBoardService {
 					.findBylsusergroup(objupdateduser.getLsusergroup());
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 
-			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
+			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 			long lstUserorder = lslogilablimsorderdetailRepository
 					.countByLsprojectmasterInAndCreatedtimestampBetween(lstproject, fromdate, todate);
@@ -321,10 +326,7 @@ public class DashBoardService {
 
 		} else {
 
-			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
-			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
-
-			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+			List<LSprojectmaster> lstproject = objuser.getLstproject();
 
 			long lstUserorder = 0;
 			if (lstproject != null && lstproject.size() > 0) {
@@ -407,13 +409,16 @@ public class DashBoardService {
 
 		} else {
 
-			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
-			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
-			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
-
-			List<LSworkflow> lstworkflow = instrumentService.GetWorkflowonuser(objuser.getLsusergrouptrans());
-
+//			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
+//			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+//			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+			
+			List<LSprojectmaster> lstproject = objuser.getLstproject();
 			List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
+			
+			if(lstproject != null)
+			{
+				List<LSworkflow> lstworkflow = objuser.getLstworkflow();
 
 			if (objuser.getObjuser().getOrderselectiontype() == 1) {
 				lstorders = lslogilablimsorderdetailRepository
@@ -434,6 +439,7 @@ public class DashBoardService {
 			}
 
 			lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
+			}
 
 			mapOrders.put("orderlst", lstorders);
 		}
@@ -598,11 +604,20 @@ public class DashBoardService {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		mapOrders.put("orders", lsordersharedbyRepository.findBySharebyunifiedidAndSharedonBetweenOrUnsharedonBetween(objuser.getUnifieduserid(),fromdate, todate,fromdate, todate));
+		mapOrders.put("orders", lsordersharedbyRepository.findBySharebyunifiedidAndSharedonBetweenOrSharebyunifiedidAndUnsharedonBetween(objuser.getUnifieduserid(),fromdate, todate,objuser.getUnifieduserid(), fromdate, todate));
 		
 		return mapOrders;
 	}
 
+	public Map<String, Object> Getordersharetome(LSuserMaster objuser) {
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		mapOrders.put("orders", lsordersharetoRepository.findBySharetounifiedidAndSharedonBetweenAndSharestatus(objuser.getUnifieduserid(),fromdate, todate, 1));
+		
+		return mapOrders;
+	}
+	
 	public List<LSactivity> GetActivitiesonLazy(LSactivity objactivities) {
 		List<LSactivity> lstactivities = new ArrayList<LSactivity>();
 		lstactivities = lsactivityRepository
@@ -612,6 +627,25 @@ public class DashBoardService {
 	
 	public Logilabordermaster Getorder(LSlogilablimsorderdetail objorder)
 	{
-		return lslogilablimsorderdetailRepository.findFirst1ByBatchcode(objorder.getBatchcode());
+		List<LSworkflow> lstworkflow = instrumentService.GetWorkflowonuser(objorder.getLsuserMaster().getLsusergrouptrans());
+		Logilaborders objupdatedorder = lslogilablimsorderdetailRepository.findFirst1ByBatchcode(objorder.getBatchcode());
+		objupdatedorder.setLstworkflow(lstworkflow);
+		return objupdatedorder;
+	}
+	
+	public Map<String, Object> Getordersinuserworkflow(LSuserMaster objuser)
+	{
+		List<LSprojectmaster> lstproject = objuser.getLstproject();
+		List<LSworkflow> lstworkflow = objuser.getLstworkflow();
+		
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		
+		List<Logilabordermaster> lstorders = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween("N", lstproject ,lstworkflow, fromdate, todate);
+		lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
+		mapOrders.put("orders", lstorders);
+		
+		return mapOrders;
 	}
 }

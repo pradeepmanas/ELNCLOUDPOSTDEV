@@ -571,7 +571,7 @@ public class DatasourceService {
 								+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
 								+ "Regards,</p>"
 								+ "<b>Agaram Technologies Private Limited</b><br><br>"
-								+ "<img src=\"cid:seconimage\"  style ='width:120px; height:100px;border: 3px;'"
+								+ "<img src=\"cid:seconimage\"  style ='width:120px; height:120px;border: 3px;'"
 								+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
 								+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
 //				emailService.sendmailOPT(email);
@@ -591,7 +591,7 @@ public class DatasourceService {
 							+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
 							+ "Regards,</p>"
 							+ "<b>Agaram Technologies Private Limited</b><br><br>"
-							+ "<img src=\"cid:seconimage\"  style ='width:120px; height:100px;border: 3px;'"
+							+ "<img src=\"cid:seconimage\"  style ='width:120px; height:120px;border: 3px;'"
 							+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
 							+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
 			emailService.sendEmail(email);
@@ -694,7 +694,7 @@ public class DatasourceService {
 									+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
 									+ "Regards,</p>"
 									+ "<b>Agaram Technologies Private Limited</b><br><br>"
-									+ "<img src=\"cid:seconimage\"  style ='width:120px; height:100px;border: 3px;'"
+									+ "<img src=\"cid:seconimage\"  style ='width:120px; height:120px;border: 3px;'"
 									+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
 									+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
 					
@@ -723,7 +723,7 @@ public class DatasourceService {
 								+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
 								+ "Regards,</p>"
 								+ "<b>Agaram Technologies Private Limited</b><br><br>"
-								+ "<img src=\"cid:seconimage\"  style ='width:120px; height:100px;border: 3px;'"
+								+ "<img src=\"cid:seconimage\"  style ='width:120px; height:120px;border: 3px;'"
 								+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
 								+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
 				
@@ -812,7 +812,7 @@ public class DatasourceService {
 								+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
 								+ "Regards,</p>"
 								+ "<b>Agaram Technologies Private Limited</b><br><br>"
-								+ "<img src=\"cid:seconimage\"  style ='width:120px; height:100px;border: 3px;'"
+								+ "<img src=\"cid:seconimage\"  style ='width:120px; height:120px;border: 3px;'"
 								+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
 								+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
 				
@@ -833,7 +833,7 @@ public class DatasourceService {
 							+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
 							+ "Regards,</p>"
 							+ "<b>Agaram Technologies Private Limited</b><br><br>"
-							+ "<img src=\"cid:seconimage\"  style ='width:120px; height:100px;border: 3px;'"
+							+ "<img src=\"cid:seconimage\"  style ='width:120px; height:120px;border: 3px;'"
 							+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
 							+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
 			

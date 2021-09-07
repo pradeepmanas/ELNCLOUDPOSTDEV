@@ -251,14 +251,23 @@ public class AuditTrailController {
 		LoggedUser objuser = new ObjectMapper().convertValue(vMap.get("objuser"), new TypeReference<LoggedUser>() {
 		});
 
-		if (commonfunction.checkuseronmanualaudit(objuser.getEncryptedpassword(), objuser.getsPassword())) {
+		if(objuser.getLoggedfrom() == 1) {
+			
 			rMap.put("audit", true);
 			rMap.put("objuser", reqMap.get("valuePass"));
 			return rMap;
+			
 		}
-		
-		rMap.put("audit", false);
-		rMap.put("objuser", reqMap.get("valuePass"));
-		return rMap;
+		else {
+			if (commonfunction.checkuseronmanualaudit(objuser.getEncryptedpassword(), objuser.getsPassword())) {
+				rMap.put("audit", true);
+				rMap.put("objuser", reqMap.get("valuePass"));
+				return rMap;
+			}
+			
+			rMap.put("audit", false);
+			rMap.put("objuser", reqMap.get("valuePass"));
+			return rMap;
+		}
 	}
 }

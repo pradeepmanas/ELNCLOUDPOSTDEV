@@ -2,9 +2,6 @@ package com.agaram.eln.primary.fetchmodel.getorders;
 
 import java.util.Date;
 
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
@@ -26,8 +23,6 @@ public class Logilaborders extends Logilabordermaster {
 	private LSuserMaster lsuserMaster;
 	private Integer filetype;
 	private LSsamplefile lssamplefile;
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdtimestamp;
 	private String repositoryitemname;
 	private LSuserMaster assignedto;
 	private String repositoryname;
@@ -36,9 +31,10 @@ public class Logilaborders extends Logilabordermaster {
 	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,
-			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories) {
+			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Lsrepositoriesdata lsrepositoriesdata
+			,Lsrepositories lsrepositories) {
 		
-		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag);
+		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,createdtimestamp);
 		 
 		if(lssamplefile != null)
 		{
@@ -59,7 +55,6 @@ public class Logilaborders extends Logilabordermaster {
 		this.filetype = filetype;
 		this.lsuserMaster = lsuserMaster;
 		
-		this.createdtimestamp = createdtimestamp;
 		this.repositoryitemname =lsrepositoriesdata !=null ?lsrepositoriesdata.getRepositoryitemname():null;
 		this.assignedto =lsuserMaster;
 		this.repositoryname =lsrepositories !=null ?lsrepositories.getRepositoryname():null;
@@ -112,14 +107,6 @@ public class Logilaborders extends Logilabordermaster {
 
 	public void setLssamplefile(LSsamplefile lssamplefile) {
 		this.lssamplefile = lssamplefile;
-	}
-
-	public Date getCreatedtimestamp() {
-		return createdtimestamp;
-	}
-
-	public void setCreatedtimestamp(Date createdtimestamp) {
-		this.createdtimestamp = createdtimestamp;
 	}
 
 	public String getOrderflag() {

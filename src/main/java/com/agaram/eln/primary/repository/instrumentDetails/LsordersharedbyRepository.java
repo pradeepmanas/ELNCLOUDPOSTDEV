@@ -15,4 +15,6 @@ public interface LsordersharedbyRepository extends JpaRepository<Lsordersharedby
 	public long countBySharebyunifiedidAndOrdertypeAndSharestatusOrderBySharedbycodeDesc(String unifiedid, Integer ordertype, Integer sharestatus);
 	
 	public List<Lsordersharedby> findBySharebyunifiedidAndSharedonBetweenOrUnsharedonBetween(String unifiedid, Date fromdate, Date todate, Date unshrfromdate, Date unshrtodate);
+	
+	public List<Lsordersharedby> findBySharebyunifiedidAndSharedonBetweenOrSharebyunifiedidAndUnsharedonBetween(String unifiedid, Date fromdate, Date todate,String sharebyunifiedid, Date unshrfromdate, Date unshrtodate);
 }

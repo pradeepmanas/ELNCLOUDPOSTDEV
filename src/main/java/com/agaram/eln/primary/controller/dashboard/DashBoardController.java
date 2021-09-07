@@ -14,6 +14,7 @@ import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.service.dashboard.DashBoardService;
 
 @RestController
@@ -77,9 +78,21 @@ public class DashBoardController {
 		return dashBoardService.Getordersharebyme(objuser);
 	}
 	
+	@PostMapping("/Getordersharetome")
+	public Map<String, Object> Getordersharetome(@RequestBody LSuserMaster objuser) {
+		return dashBoardService.Getordersharetome(objuser);
+	}
+	
 	@PostMapping("/Getorder")
 	public Logilabordermaster Getorder(@RequestBody LSlogilablimsorderdetail objorder)
 	{
 		return dashBoardService.Getorder(objorder);
 	}
+	
+	@PostMapping("/Getordersinuserworkflow")
+	public Map<String, Object> Getordersinuserworkflow(@RequestBody LSuserMaster objuser)
+	{
+		return dashBoardService.Getordersinuserworkflow(objuser);
+	}
+	
 }

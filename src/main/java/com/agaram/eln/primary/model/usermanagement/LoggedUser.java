@@ -65,6 +65,17 @@ public class LoggedUser {
 	@Transient
 	private String encryptedpassword;
 	
+	@Transient
+	private Integer loggedfrom;
+	
+	public Integer getLoggedfrom() {
+		return loggedfrom;
+	}
+
+	public void setLoggedfrom(Integer loggedfrom) {
+		this.loggedfrom = loggedfrom;
+	}
+
 	public Integer getTemplatefor() {
 		return templatefor;
 	}

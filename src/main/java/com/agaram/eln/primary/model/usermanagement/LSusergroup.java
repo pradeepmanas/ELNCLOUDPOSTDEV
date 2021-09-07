@@ -40,8 +40,8 @@ public class LSusergroup {
 	@Column(columnDefinition = "char(50)")
 	private String modifiedby;
 	
-	@ManyToOne
-	private LSuserMaster createby;
+//	@ManyToOne
+//	private LSuserMaster createby;
 //	@ManyToOne
 //	private LSuserMaster modifieduser;
 	
@@ -61,12 +61,12 @@ public class LSusergroup {
 		this.modifiedon = modifiedon;
 	}
 	
-	public LSuserMaster getCreateby() {
-		return createby;
-	}
-	public void setCreateby(LSuserMaster createby) {
-		this.createby = createby;
-	}
+//	public LSuserMaster getCreateby() {
+//		return createby;
+//	}
+//	public void setCreateby(LSuserMaster createby) {
+//		this.createby = createby;
+//	}
 
 //	@ManyToOne
 //	@OneToOne
@@ -188,14 +188,14 @@ public class LSusergroup {
 //		this.modifieduser = modifieduser;
 //	}
 	public String getSitename() {
-		if(this.createby != null)
-		{
-			return this.createby.getSitename();
-		}
-		else
-		{
+//		if(this.l != null)
+//		{
+//			return this.createby.getSitename();
+//		}
+//		else
+//		{
 			return "";
-		}
+//		}
 	}
 	public void setSitename(String sitename) {
 		this.sitename = sitename;

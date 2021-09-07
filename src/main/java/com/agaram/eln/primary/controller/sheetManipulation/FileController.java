@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.controller.sheetManipulation;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
-import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
@@ -21,10 +19,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.model.usermanagement.LoggedUser;
-import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping(value = "/File")
@@ -32,9 +27,7 @@ public class FileController {
 	
 	@Autowired
     private FileService fileService;
-	@Autowired
-	private AuditService auditService;
-
+	
 	@PostMapping("/InsertupdateSheet")
 	public LSfile InsertupdateSheet(@RequestBody LSfile objfile)
 	{
@@ -159,31 +152,29 @@ public class FileController {
 	public List<LSsheetworkflow> InsertUpdatesheetWorkflow(@RequestBody List<LSsheetworkflow> lstsheetworkflow)
 	{
 		
-		if(lstsheetworkflow.get(0).getObjuser()!= null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(lstsheetworkflow.get(0).getObjuser());
-            if(userClass.getObjResponse().getStatus()) {
-				
-            	lstsheetworkflow.get(0).setLSuserMaster(userClass);
-				
-            	return fileService.InsertUpdatesheetWorkflow(lstsheetworkflow);
-			}
-			else
-			{
-				lstsheetworkflow.get(0).getObjsilentaudit().setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",lstsheetworkflow.get(0).getObjsilentaudit());
-				map.put("objmanualaudit",lstsheetworkflow.get(0).getObjmanualaudit());
-				map.put("objUser",lstsheetworkflow.get(0).getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				lstsheetworkflow.get(0).setResponse(new Response());
-				lstsheetworkflow.get(0).getResponse().setStatus(false);
-				lstsheetworkflow.get(0).getResponse().setInformation("ID_VALIDATION");
-				return lstsheetworkflow;
-			}
-			
-			
-		}
+//		if(lstsheetworkflow.get(0).getObjuser()!= null) {
+//			
+//			LSuserMaster userClass = auditService.CheckUserPassWord(lstsheetworkflow.get(0).getObjuser());
+//            if(userClass.getObjResponse().getStatus()) {
+//				
+//            	lstsheetworkflow.get(0).setLSuserMaster(userClass);
+//				
+//            	return fileService.InsertUpdatesheetWorkflow(lstsheetworkflow);
+//			}
+//			else
+//			{
+//				lstsheetworkflow.get(0).getObjsilentaudit().setComments("Entered invalid username and password");
+//				Map<String, Object> map=new HashMap<>();
+//				map.put("objsilentaudit",lstsheetworkflow.get(0).getObjsilentaudit());
+//				map.put("objmanualaudit",lstsheetworkflow.get(0).getObjmanualaudit());
+//				map.put("objUser",lstsheetworkflow.get(0).getObjuser());
+//				auditService.AuditConfigurationrecord(map);
+//				lstsheetworkflow.get(0).setResponse(new Response());
+//				lstsheetworkflow.get(0).getResponse().setStatus(false);
+//				lstsheetworkflow.get(0).getResponse().setInformation("ID_VALIDATION");
+//				return lstsheetworkflow;
+//			}			
+//		}
 		
 		return fileService.InsertUpdatesheetWorkflow(lstsheetworkflow);
 	}
@@ -207,97 +198,97 @@ public class FileController {
 	
 	@RequestMapping(value = "/lockorder")
 	public Map<String, Object> lockorder(@RequestBody Map<String, Object> objMap) throws Exception {
-		LoggedUser objuser = new LoggedUser();
-		Response response = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-		LScfttransaction objsilentaudit = new LScfttransaction();
-		LScfttransaction objmanualaudit = new LScfttransaction();
-		
-		if(objMap.containsKey("objuser"))
-		{
-			objuser = mapper.convertValue(objMap.get("objuser"),LoggedUser.class);
-		}
-		
-		if(objMap.containsKey("objsilentaudit"))
-		{
-			objsilentaudit = mapper.convertValue(objMap.get("objsilentaudit"),LScfttransaction.class);
-		}
-		if(objMap.containsKey("objmanualaudit"))
-		{
-			objmanualaudit = mapper.convertValue(objMap.get("objmanualaudit"),LScfttransaction.class);
-		}
-		
-		if(objuser.getsUsername() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
-			
-			if(userClass.getObjResponse().getStatus()) {
-				return fileService.lockorder(objMap);
-			}
-			else
-			{
-				objsilentaudit.setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objsilentaudit);
-				map.put("objmanualaudit",objmanualaudit);
-				map.put("objUser",objuser);
-				auditService.AuditConfigurationrecord(map);
-				
-				response.setStatus(false);
-				response.setInformation("ID_VALIDATION");
-				map.put("response",response);
-				return map;
-			}
-			
-		}
+//		LoggedUser objuser = new LoggedUser();
+//		Response response = new Response();
+//		ObjectMapper mapper = new ObjectMapper();
+//		LScfttransaction objsilentaudit = new LScfttransaction();
+//		LScfttransaction objmanualaudit = new LScfttransaction();
+//		
+//		if(objMap.containsKey("objuser"))
+//		{
+//			objuser = mapper.convertValue(objMap.get("objuser"),LoggedUser.class);
+//		}
+//		
+//		if(objMap.containsKey("objsilentaudit"))
+//		{
+//			objsilentaudit = mapper.convertValue(objMap.get("objsilentaudit"),LScfttransaction.class);
+//		}
+//		if(objMap.containsKey("objmanualaudit"))
+//		{
+//			objmanualaudit = mapper.convertValue(objMap.get("objmanualaudit"),LScfttransaction.class);
+//		}
+//		
+//		if(objuser.getsUsername() != null) {
+//			
+//			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
+//			
+//			if(userClass.getObjResponse().getStatus()) {
+//				return fileService.lockorder(objMap);
+//			}
+//			else
+//			{
+//				objsilentaudit.setComments("Entered invalid username and password");
+//				Map<String, Object> map=new HashMap<>();
+//				map.put("objsilentaudit",objsilentaudit);
+//				map.put("objmanualaudit",objmanualaudit);
+//				map.put("objUser",objuser);
+//				auditService.AuditConfigurationrecord(map);
+//				
+//				response.setStatus(false);
+//				response.setInformation("ID_VALIDATION");
+//				map.put("response",response);
+//				return map;
+//			}
+//			
+//		}
 		return fileService.lockorder(objMap);
 	}
 	
 	@RequestMapping(value = "/unlockorder")
 	public Map<String, Object> unlockorder(@RequestBody Map<String, Object> objMap) throws Exception {
-		LoggedUser objuser = new LoggedUser();
-		Response response = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-		LScfttransaction objsilentaudit = new LScfttransaction();
-		LScfttransaction objmanualaudit = new LScfttransaction();
-		
-		if(objMap.containsKey("objuser"))
-		{
-			objuser = mapper.convertValue(objMap.get("objuser"),LoggedUser.class);
-		}
-		
-		if(objMap.containsKey("objsilentaudit"))
-		{
-			objsilentaudit = mapper.convertValue(objMap.get("objsilentaudit"),LScfttransaction.class);
-		}
-		if(objMap.containsKey("objmanualaudit"))
-		{
-			objmanualaudit = mapper.convertValue(objMap.get("objmanualaudit"),LScfttransaction.class);
-		}
-		
-		if(objuser.getsUsername() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
-			
-			if(userClass.getObjResponse().getStatus()) {
-				return fileService.unlockorder(objMap);
-			}
-			else
-			{
-				objsilentaudit.setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objsilentaudit);
-				map.put("objmanualaudit",objmanualaudit);
-				map.put("objUser",objuser);
-				auditService.AuditConfigurationrecord(map);
-				
-				response.setStatus(false);
-				response.setInformation("ID_VALIDATION");
-				map.put("response",response);
-				return map;
-			}
-			
-		}
+//		LoggedUser objuser = new LoggedUser();
+//		Response response = new Response();
+//		ObjectMapper mapper = new ObjectMapper();
+//		LScfttransaction objsilentaudit = new LScfttransaction();
+//		LScfttransaction objmanualaudit = new LScfttransaction();
+//		
+//		if(objMap.containsKey("objuser"))
+//		{
+//			objuser = mapper.convertValue(objMap.get("objuser"),LoggedUser.class);
+//		}
+//		
+//		if(objMap.containsKey("objsilentaudit"))
+//		{
+//			objsilentaudit = mapper.convertValue(objMap.get("objsilentaudit"),LScfttransaction.class);
+//		}
+//		if(objMap.containsKey("objmanualaudit"))
+//		{
+//			objmanualaudit = mapper.convertValue(objMap.get("objmanualaudit"),LScfttransaction.class);
+//		}
+//		
+//		if(objuser.getsUsername() != null) {
+//			
+//			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
+//			
+//			if(userClass.getObjResponse().getStatus()) {
+//				return fileService.unlockorder(objMap);
+//			}
+//			else
+//			{
+//				objsilentaudit.setComments("Entered invalid username and password");
+//				Map<String, Object> map=new HashMap<>();
+//				map.put("objsilentaudit",objsilentaudit);
+//				map.put("objmanualaudit",objmanualaudit);
+//				map.put("objUser",objuser);
+//				auditService.AuditConfigurationrecord(map);
+//				
+//				response.setStatus(false);
+//				response.setInformation("ID_VALIDATION");
+//				map.put("response",response);
+//				return map;
+//			}
+//			
+//		}
 		return fileService.unlockorder(objMap);
 	}
 	
@@ -322,7 +313,7 @@ public class FileController {
 	@PostMapping(value = "/getSheetOrder")
 	public List<LSlogilablimsorderdetail> getSheetOrder(@RequestBody LSlogilablimsorderdetail objClass) throws Exception 
 	{	
-			return fileService.getSheetOrder(objClass);
+		return fileService.getSheetOrder(objClass);
 	}
 	
 	@PostMapping(value = "/getfileoncode")

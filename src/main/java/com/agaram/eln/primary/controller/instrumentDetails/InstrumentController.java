@@ -39,6 +39,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
 import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
@@ -124,14 +125,14 @@ public class InstrumentController {
 	public Map<String, Object> Getorderbytypeandflag(@RequestBody LSlogilablimsorderdetail objorder) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
-//			instrumentService.Getorderbytypeandflag(objorder, mapOrders);
+
 			instrumentService.GetorderbytypeandflagOrdersonly(objorder, mapOrders);
 		} else {
 			if (objorder.getFiletype().equals(0)) {
-//				instrumentService.Getorderbytypeandflag(objorder, mapOrders);
+
 				instrumentService.GetorderbytypeandflagOrdersonly(objorder, mapOrders);
 			} else {
-//				instrumentService.Getorderbytypeandflaganduser(objorder,mapOrders);
+
 				instrumentService.GetorderbytypeandflaganduserOrdersonly(objorder, mapOrders);
 			}
 		}
@@ -204,28 +205,28 @@ public class InstrumentController {
 
 	@PostMapping("/SaveResultfile")
 	public LSsamplefile SaveResultfile(@RequestBody LSsamplefile objfile) {
-		if (objfile.getObjuser() != null) {
-
-			LSuserMaster userClass = auditService.CheckUserPassWord(objfile.getObjuser());
-			if (userClass.getObjResponse().getStatus()) {
-
-				objfile.setLsuserMaster(userClass);
-
-				return instrumentService.SaveResultfile(objfile);
-			} else {
-				objfile.getObjsilentaudit().setComments("Entered invalid username and password");
-				Map<String, Object> map = new HashMap<>();
-				map.put("objsilentaudit", objfile.getObjsilentaudit());
-				map.put("objmanualaudit", objfile.getObjmanualaudit());
-				map.put("objUser", objfile.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objfile.setResponse(new Response());
-				objfile.getResponse().setStatus(false);
-				objfile.getResponse().setInformation("ID_VALIDATION");
-				return objfile;
-			}
-
-		}
+//		if (objfile.getObjuser() != null) {
+//
+//			LSuserMaster userClass = auditService.CheckUserPassWord(objfile.getObjuser());
+//			if (userClass.getObjResponse().getStatus()) {
+//
+//				objfile.setLsuserMaster(userClass);
+//
+//				return instrumentService.SaveResultfile(objfile);
+//			} else {
+//				objfile.getObjsilentaudit().setComments("Entered invalid username and password");
+//				Map<String, Object> map = new HashMap<>();
+//				map.put("objsilentaudit", objfile.getObjsilentaudit());
+//				map.put("objmanualaudit", objfile.getObjmanualaudit());
+//				map.put("objUser", objfile.getObjuser());
+//				auditService.AuditConfigurationrecord(map);
+//				objfile.setResponse(new Response());
+//				objfile.getResponse().setStatus(false);
+//				objfile.getResponse().setInformation("ID_VALIDATION");
+//				return objfile;
+//			}
+//
+//		}
 		return instrumentService.SaveResultfile(objfile);
 	}
 
@@ -647,6 +648,18 @@ public class InstrumentController {
 		}
 
 		return jsonString;
+	}
+	
+	@PostMapping("/Getuserworkflow")
+	public List<Integer> Getuserworkflow(@RequestBody LSusergroup lsusergroup)
+	{
+		return instrumentService.Getuserworkflow(lsusergroup);
+	}
+	
+	@PostMapping("/Getuserprojects")
+	public List<Integer> Getuserprojects(@RequestBody LSuserMaster objuser)
+	{
+		return instrumentService.Getuserprojects(objuser);
 	}
 
 }

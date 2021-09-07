@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.fetchmodel.getorders;
 
+import java.util.Date;
 import java.util.List;
 
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
@@ -12,29 +13,30 @@ public class Logilabordermaster {
 	@SuppressWarnings("unused")
 	private String batchid;
 	List<LSworkflow> lstworkflow;
+	private Integer workflowcode;
 	private boolean canuserprocess;
-	private LSworkflow lsworkflow;
 	private String testname;
 	private String filename;
 	private String projectname;
 	private String samplename;
 	private Integer filetype;
 	private String orderflag;
-	
+	private Date createdtimestamp;
 	
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow
 			, String testname, LSfile lsfile, LSsamplemaster lssamplemaster,
-			LSprojectmaster lsprojectmaster, Integer filetype, String orderflag)
+			LSprojectmaster lsprojectmaster, Integer filetype, String orderflag, Date createdtimestamp)
 	{
 		this.batchcode = batchcode;
 		this.batchid = batchid;
-		this.lsworkflow = lsworkflow;
+		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
 		this.testname = testname;
 		this.filename = lsfile != null ? lsfile.getFilenameuser() : null;
 		this.projectname = lsprojectmaster != null ? lsprojectmaster.getProjectname() : null;
 		this.samplename = lssamplemaster != null ? lssamplemaster.getSamplename() : null;
 		this.filetype = filetype;
 		this.orderflag = orderflag;
+		this.createdtimestamp = createdtimestamp;
 	}
 	
 	public Long getBatchcode() {
@@ -59,29 +61,32 @@ public class Logilabordermaster {
 	public void setBatchid(String batchid) {
 		this.batchid = batchid;
 	}
-	public LSworkflow getLsworkflow() {
-		return lsworkflow;
+	
+	public Integer getWorkflowcode() {
+		return workflowcode;
 	}
 
-	public void setLsworkflow(LSworkflow lsworkflow) {
-		this.lsworkflow = lsworkflow;
+	public void setWorkflowcode(Integer workflowcode) {
+		this.workflowcode = workflowcode;
 	}
+
 	public List<LSworkflow> getLstworkflow() {
 		return lstworkflow;
 	}
 
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
 		
-		if(lstworkflow != null && this.lsworkflow !=null && lstworkflow.size() >0)
+		if(lstworkflow != null && this.workflowcode !=null && lstworkflow.size() >0)
 		{
-			if(lstworkflow.contains(this.lsworkflow))
-			{
-				this.setCanuserprocess(true);
-			}
-			else
-			{
-				this.setCanuserprocess(false);
-			}
+			this.setCanuserprocess(lstworkflow.stream().map(LSworkflow::getWorkflowcode).anyMatch(this.workflowcode::equals));
+//			if(lstworkflow.contains(this.workflowcode))
+//			{
+//				this.setCanuserprocess(true);
+//			}
+//			else
+//			{
+//				this.setCanuserprocess(false);
+//			}
 		}
 		else
 		{
@@ -145,5 +150,14 @@ public class Logilabordermaster {
 	public void setOrderflag(String orderflag) {
 		this.orderflag = orderflag;
 	}
+
+	public Date getCreatedtimestamp() {
+		return createdtimestamp;
+	}
+
+	public void setCreatedtimestamp(Date createdtimestamp) {
+		this.createdtimestamp = createdtimestamp;
+	}
+	
 	
 }

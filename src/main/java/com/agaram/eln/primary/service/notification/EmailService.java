@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.notification;
 
+import java.io.File;
 import java.util.Random;
 
 import javax.activation.DataHandler;
@@ -167,8 +168,9 @@ public class EmailService {
 	         
 	         
 	         messageBodyPart = new MimeBodyPart();
+	   	  String userDirectory = new File("").getAbsolutePath();
 	         DataSource fds1= new FileDataSource
-	           ("D:/WORKING FOLDER/ELN/branches/ELN 6.6/ELNCLOUDPOST/src/main/resources/images/Logilab ELN_vertical.jpg");
+	           (userDirectory+"/src/main/resources/images/Logilab ELN_vertical.jpg");
 	         messageBodyPart.setDataHandler(new DataHandler(fds1));
 	         messageBodyPart.addHeader("Content-ID","<image>");
 	         // add it
@@ -178,7 +180,7 @@ public class EmailService {
 	         // second part (the image)
 	         messageBodyPart = new MimeBodyPart();
 	         DataSource fds = new FileDataSource(
-	            "D:/WORKING FOLDER/ELN/branches/ELN 6.6/ELNCLOUDPOST/src/main/resources/images/AgaramTechnologies_vertical.jpg");
+	        		 userDirectory+"/src/main/resources/images/AgaramTechnologies_vertical.jpg");
 
 	         messageBodyPart.setDataHandler(new DataHandler(fds));
 	         messageBodyPart.setHeader("Content-ID", "<seconimage>");
