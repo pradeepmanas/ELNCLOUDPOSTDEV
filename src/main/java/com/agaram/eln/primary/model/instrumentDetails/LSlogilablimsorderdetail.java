@@ -95,24 +95,17 @@ public class LSlogilablimsorderdetail {
 	
 	@ManyToOne
 	private LSfile lsfile;
+	
+	@Transient
+	List<LSworkflow> lstworkflow;
+	
 	@OneToMany
 	@JoinColumn(name="batchcode")
 	private List<LsOrderattachments> lsOrderattachments;
-	public List<LsOrderattachments> getLsOrderattachments() {
-		return lsOrderattachments;
-	}
-	public void setLsOrderattachments(List<LsOrderattachments> lsOrderattachments) {
-		this.lsOrderattachments = lsOrderattachments;
-	}
+	
 	@Transient
 	LScfttransaction objmanualaudit;
 	
-	public LScfttransaction getObjmanualaudit() {
-		return objmanualaudit;
-	}
-	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
-		this.objmanualaudit = objmanualaudit;
-	}
 	@ManyToOne
 	private LSuserMaster lsuserMaster;
 	
@@ -137,14 +130,12 @@ public class LSlogilablimsorderdetail {
 	@JoinColumn(name="batchcode")
 	private List<Lsbatchdetails> lsbatchdetails;
 	
-
 	
 	@ManyToOne
 	private Lsrepositoriesdata lsrepositoriesdata;
 	
 	@ManyToOne
 	private Lsrepositories lsrepositories;
-	
 	
 	@Transient
 	private List<LSlimsorder> lsLSlimsorder;
@@ -173,6 +164,19 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	private Integer ismultitenant;
 	
+	public List<LsOrderattachments> getLsOrderattachments() {
+		return lsOrderattachments;
+	}
+	public void setLsOrderattachments(List<LsOrderattachments> lsOrderattachments) {
+		this.lsOrderattachments = lsOrderattachments;
+	}
+	
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
 	
 	public Lsrepositoriesdata getLsrepositoriesdata() {
 		return lsrepositoriesdata;
@@ -188,6 +192,12 @@ public class LSlogilablimsorderdetail {
 		this.lsrepositories = lsrepositories;
 	}
 	
+	public List<LSworkflow> getLstworkflow() {
+		return lstworkflow;
+	}
+	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+		this.lstworkflow = lstworkflow;
+	}
 	public Integer getApproved() {
 		return approved;
 	}

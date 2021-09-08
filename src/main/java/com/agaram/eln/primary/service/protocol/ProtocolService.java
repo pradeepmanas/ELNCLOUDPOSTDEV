@@ -57,6 +57,7 @@ import com.agaram.eln.primary.repository.protocol.lSprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.basemaster.BaseMasterService;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
@@ -147,6 +148,9 @@ public class ProtocolService {
 
 	@Autowired
 	private LSprotocolstepversionRepository LSprotocolstepversionRepository;
+	
+	@Autowired
+	private LSusergroupRepository LSusergroupRepository;
 
 	public Map<String, Object> getProtocolMasterInit(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
@@ -220,7 +224,7 @@ public class ProtocolService {
 
 			LSprotocolworkflow lsprotocolworkflow = new LSprotocolworkflow();
 			if (LScfttransactionobj.getUsername().equalsIgnoreCase("Administrator")) {
-//				for need site vice filter on protocol for Administrator login
+
 				LSSiteMaster siteObj = new ObjectMapper().convertValue(argObj.get("lssitemaster"),
 						new TypeReference<LSSiteMaster>() {
 						});
@@ -228,30 +232,25 @@ public class ProtocolService {
 				LSprotocolmasterLst = LSProtocolMasterRepositoryObj.findByStatusAndLssitemaster(1,
 						siteObj.getSitecode());
 
-				// LSprotocolmasterLst = LSProtocolMasterRepositoryObj.findByStatus(1);
+				
 			} else {
 				LSprotocolmasterLst = LSProtocolMasterRepositoryObj.findByCreatedbyAndStatusAndLssitemaster(
 						LScfttransactionobj.getLsuserMaster(), 1, LScfttransactionobj.getLssitemaster());
-				// kumaresan
+				
 				if (argObj.containsKey("multiusergroups")) {
-//					LSusergroup lsusergroup= new ObjectMapper().convertValue(argObj.get("lsusergroup"),
-//							new TypeReference<LSusergroup>() {
-//							});
 
 					ObjectMapper objMapper = new ObjectMapper();
 					int lsusergroupcode = objMapper.convertValue(argObj.get("multiusergroups"), Integer.class);
-					LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
-					objLSMultiusergroup = LSMultiusergroupRepositery.findBymultiusergroupcode(lsusergroupcode);
-					LSusergroup lsusergroup = objLSMultiusergroup.getLsusergroup();
-//					List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap= LSprotocolworkflowgroupmapRepository.findBylsusergroup(lsusergroup);
+
+					LSusergroup lsusergroup = LSusergroupRepository.findOne(lsusergroupcode);
+
 					List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap = LSprotocolworkflowgroupmapRepository
 							.findBylsusergroupAndWorkflowcodeNotNull(lsusergroup);
-//					
+				
 					if (lsprotocolworkflowgroupmap != null && lsprotocolworkflowgroupmap.size() > 0) {
 						lsprotocolworkflow = lSprotocolworkflowRepository
 								.findByworkflowcode(lsprotocolworkflowgroupmap.get(0).getWorkflowcode());
 
-//						List<LSprotocolmaster> LSprotocolmasterLst1 = LSProtocolMasterRepositoryObj.findByStatusAndLssitemasterAndLSprotocolworkflowAndCreatedbyNot(1, LScfttransactionobj.getLssitemaster(),lsprotocolworkflow ,LScfttransactionobj.getLsuserMaster());
 						List<LSprotocolmaster> LSprotocolmasterLst1 = LSProtocolMasterRepositoryObj
 								.findByStatusAndLssitemasterAndLSprotocolworkflowAndCreatedbyNotAndSharewithteam(1,
 										LScfttransactionobj.getLssitemaster(), lsprotocolworkflow,
@@ -274,13 +273,10 @@ public class ProtocolService {
 			if (teamCodeLst.size() > 0) {
 				List<LSuserMaster> lsusermasterLst = LSuserteammappingRepositoryObj
 						.getLsuserMasterByTeamcode(teamCodeLst);
-//					LSprotocolmasterLst.get(0).setCreateby(lsusermasterLst);
+
 				if (lsusermasterLst.size() > 0) {
 					for (LSuserMaster lsusermasterObj : lsusermasterLst) {
-//						if(lsusermasterObj.getUsercode() != LScfttransactionobj.getLsuserMaster()) {
-						// List<LSprotocolmaster> LSprotocolmasterTempLst =
-						// LSProtocolMasterRepositoryObj.findByCreatedbyNotAndStatusAndLssitemasterAndSharewithteam(lsusermasterObj.getUsercode(),
-						// 1, lsusermasterObj.getLssitemaster().getSitecode(), 1);
+
 						List<LSprotocolmaster> LSprotocolmasterTempLst = new ArrayList<>();
 						if (lsprotocolworkflow.getWorkflowname() != null) {
 							LSprotocolmasterTempLst = LSProtocolMasterRepositoryObj
@@ -300,8 +296,6 @@ public class ProtocolService {
 					}
 				}
 			}
-			// Collections.sort(LSprotocolmasterLst);
-			// Collections.sort(LSprotocolmasterLst, Collections.reverseOrder());
 
 			LSprotocolmasterLst = LSprotocolmasterLst.stream().distinct().collect(Collectors.toList());
 
@@ -941,11 +935,15 @@ public class ProtocolService {
 
 			if (argObj.containsKey("multiusergroups")) {
 
-				LSusergroup lsusergroup = new LSusergroup();
-				LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
-				int multiusergroupscode = new ObjectMapper().convertValue(argObj.get("multiusergroups"), Integer.class);
-				objLSMultiusergroup = LSMultiusergroupRepositery.findBymultiusergroupcode(multiusergroupscode);
-				lsusergroup = objLSMultiusergroup.getLsusergroup();
+//				LSusergroup lsusergroup = new LSusergroup();
+////				LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
+////				int multiusergroupscode = new ObjectMapper().convertValue(argObj.get("multiusergroups"), Integer.class);
+////				objLSMultiusergroup = LSMultiusergroupRepositery.findBymultiusergroupcode(multiusergroupscode);
+////				lsusergroup = objLSMultiusergroup.getLsusergroup();
+				
+				int lsusergroupcode = objMapper.convertValue(argObj.get("multiusergroups"), Integer.class);
+
+				LSusergroup lsusergroup = LSusergroupRepository.findOne(lsusergroupcode);
 
 				List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap = LSprotocolworkflowgroupmapRepository
 						.findBylsusergroupAndWorkflowcodeNotNull(lsusergroup);

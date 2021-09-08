@@ -47,7 +47,6 @@ import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepositor
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
-import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 
 @Service
 public class DashBoardService {
@@ -86,9 +85,6 @@ public class DashBoardService {
 
 	@Autowired
 	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
-
-	@Autowired
-	private InstrumentService instrumentService;
 
 	@Autowired
 	private LSfileRepository lsfileRepository;
@@ -408,10 +404,6 @@ public class DashBoardService {
 			}
 
 		} else {
-
-//			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
-//			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
-//			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 			
 			List<LSprojectmaster> lstproject = objuser.getLstproject();
 			List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
@@ -456,16 +448,15 @@ public class DashBoardService {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
-		objLSMultiusergroup = lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
-		objuser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
+//		LSMultiusergroup objLSMultiusergroup =  lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
+//		objuser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 
 		List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository
 				.findByCreatedtimestampBetween(fromdate, todate);
 
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+//			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
 		mapOrders.put("orderlst", lstorders);
@@ -626,7 +617,8 @@ public class DashBoardService {
 	
 	public Logilabordermaster Getorder(LSlogilablimsorderdetail objorder)
 	{
-		List<LSworkflow> lstworkflow = instrumentService.GetWorkflowonuser(objorder.getLsuserMaster().getLsusergrouptrans());
+//		List<LSworkflow> lstworkflow = instrumentService.GetWorkflowonuser(objorder.getLsuserMaster().getLsusergrouptrans());
+		List<LSworkflow> lstworkflow = objorder.getLstworkflow();
 		Logilaborders objupdatedorder = lslogilablimsorderdetailRepository.findFirst1ByBatchcode(objorder.getBatchcode());
 		objupdatedorder.setLstworkflow(lstworkflow);
 		return objupdatedorder;

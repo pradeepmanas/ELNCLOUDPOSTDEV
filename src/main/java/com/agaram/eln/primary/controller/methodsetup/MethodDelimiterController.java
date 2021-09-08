@@ -67,7 +67,10 @@ public class MethodDelimiterController {
 		  final MethodDelimiter methodDelimiter = mapper.convertValue(mapObject.get("methoddelimiter"), MethodDelimiter.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
+//		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
+		  String strUserKey = (String) mapObject.get("doneByUserKey");
+		  
+		  final int doneByUserKey = Integer.parseInt(strUserKey);
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
 		  
 		  return methodDelimiterService.updateMethodDelimiter(methodDelimiter, site, comments, 
@@ -87,8 +90,12 @@ public class MethodDelimiterController {
 		  final int methodDelimiterKey = mapper.convertValue(mapObject.get("methoddelimiterkey"), Integer.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
+//		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
+		  
+		  String strUserKey = (String) mapObject.get("doneByUserKey");
+		  
+		  final int doneByUserKey = Integer.parseInt(strUserKey);
 		  
 		  return methodDelimiterService.deleteMethodDelimiter(methodDelimiterKey, site, comments, doneByUserKey, saveAuditTrail,  request);
 	  }

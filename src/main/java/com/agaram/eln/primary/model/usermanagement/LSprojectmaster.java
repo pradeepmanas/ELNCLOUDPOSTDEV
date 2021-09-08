@@ -19,15 +19,39 @@ public class LSprojectmaster {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Basic(optional = false)
-	@Column(name = "projectcode") 
+	@Column(name = "projectcode")
 	private Integer projectcode;
-	
+
 	@Column(columnDefinition = "varchar(100)")
 	private String projectname;
 	private Integer status;
 	@ManyToOne
 	private LSSiteMaster lssitemaster;
 
+	@ManyToOne
+	private LSusersteam lsusersteam;
+
+	@Transient
+	private String teamname;
+
+	@Transient
+	private Response response;
+
+	@Transient
+	LScfttransaction objsilentaudit;
+
+	@Transient
+	LScfttransaction objmanualaudit;
+
+	@Transient
+	LoggedUser objuser;
+
+	@Transient
+	LSuserMaster LSuserMaster;
+
+	@ManyToOne
+	private LSuserMaster modifiedby;
+	
 	public LSSiteMaster getLssitemaster() {
 		return lssitemaster;
 	}
@@ -35,20 +59,6 @@ public class LSprojectmaster {
 	public void setLssitemaster(LSSiteMaster lssitemaster) {
 		this.lssitemaster = lssitemaster;
 	}
-	@ManyToOne
-	private LSusersteam lsusersteam;
-	
-	@Transient
-	private String teamname;
-	
-	@Transient
-	private Response response;
-	
-	@Transient
-	LScfttransaction objsilentaudit;
-	
-	@Transient
-	LScfttransaction objmanualaudit;
 	
 	public LScfttransaction getObjmanualaudit() {
 		return objmanualaudit;
@@ -57,15 +67,7 @@ public class LSprojectmaster {
 	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
 		this.objmanualaudit = objmanualaudit;
 	}
-	@Transient
-	LoggedUser objuser;
-	
-	@Transient
-	LSuserMaster LSuserMaster;
-	
-	@ManyToOne
-	private	LSuserMaster modifiedby;
-	
+
 	public LoggedUser getObjuser() {
 		return objuser;
 	}
@@ -89,41 +91,54 @@ public class LSprojectmaster {
 	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
 		this.objsilentaudit = objsilentaudit;
 	}
-	
+
 	public Response getResponse() {
 		return response;
 	}
+
 	public void setResponse(Response response) {
 		this.response = response;
 	}
+
 	public Integer getProjectcode() {
 		return projectcode;
 	}
+
 	public void setProjectcode(Integer projectcode) {
 		this.projectcode = projectcode;
 	}
+
 	public String getProjectname() {
 		return projectname;
 	}
+
 	public void setProjectname(String projectname) {
 		this.projectname = projectname;
 	}
+
 	public Integer getStatus() {
 		return status;
 	}
+
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
+
 	public LSusersteam getLsusersteam() {
 		return lsusersteam;
 	}
+
 	public void setLsusersteam(LSusersteam lsusersteam) {
 		this.lsusersteam = lsusersteam;
 	}
-	
+
 	public String getTeamname() {
-		return this.lsusersteam.getTeamname();
+		if (this.lsusersteam != null && this.lsusersteam.getTeamname() != null) {
+			return this.lsusersteam.getTeamname();
+		}
+		return "";
 	}
+
 	public void setTeamname(String teamname) {
 		this.teamname = teamname;
 	}
@@ -135,6 +150,5 @@ public class LSprojectmaster {
 	public void setModifiedby(LSuserMaster modifiedby) {
 		this.modifiedby = modifiedby;
 	}
-	
-	
+
 }

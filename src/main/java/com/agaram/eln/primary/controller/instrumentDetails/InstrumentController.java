@@ -65,28 +65,7 @@ public class InstrumentController {
 
 	@PostMapping("/InsertELNOrder")
 	public LSlogilablimsorderdetail InsertELNOrder(@RequestBody LSlogilablimsorderdetail objorder) {
-//		if (objorder.getObjuser() != null) {
-//
-//			LSuserMaster userClass = auditService.CheckUserPassWord(objorder.getObjuser());
-//			if (userClass.getObjResponse().getStatus()) {
-//
-//				objorder.setLsuserMaster(userClass);
-//
-//				return instrumentService.InsertELNOrder(objorder);
-//			} else {
-//				objorder.getObjsilentaudit().setComments("Entered invalid username and password");
-//				Map<String, Object> map = new HashMap<>();
-//				map.put("objsilentaudit", objorder.getObjsilentaudit());
-//				map.put("objmanualaudit", objorder.getObjmanualaudit());
-//				map.put("objUser", objorder.getObjuser());
-//				auditService.AuditConfigurationrecord(map);
-//				objorder.setResponse(new Response());
-//				objorder.getResponse().setStatus(false);
-//				objorder.getResponse().setInformation("ID_VALIDATION");
-//				return objorder;
-//			}
-//
-//		}
+
 		return instrumentService.InsertELNOrder(objorder);
 	}
 

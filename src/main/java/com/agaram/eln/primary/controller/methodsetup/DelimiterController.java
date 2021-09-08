@@ -73,8 +73,12 @@ public class DelimiterController {
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
+//		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
+		  
+		  String strUserKey = (String) mapObject.get("doneByUserKey");
+		  
+		  final int doneByUserKey = Integer.parseInt(strUserKey);
 		  
 		  return delimitersService.updateDelimiters(delimiters, site, comments, 
 				  saveAuditTrail,  request, doneByUserKey);
@@ -93,8 +97,12 @@ public class DelimiterController {
 		  final int delimiterKey = mapper.convertValue(mapObject.get("delimiterkey"), Integer.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
+//		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
+		  
+		  String strUserKey = (String) mapObject.get("doneByUserKey");
+		  
+		  final int doneByUserKey = Integer.parseInt(strUserKey);
 		  
 		  return delimitersService.deleteDelimters(delimiterKey, site, comments, doneByUserKey, saveAuditTrail, request);
 	  }
