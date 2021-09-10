@@ -1675,16 +1675,12 @@ public class ProtocolService {
 			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),
 					new TypeReference<LScfttransaction>() {
 					});
-//			LSlogilabprotocoldetail newProtocolOrderObj = new ObjectMapper().
-//					convertValue(argObj.get("ProtocolOrderObj"),new TypeReference<LSlogilabprotocoldetail>(){});
+
 
 			ObjectMapper objm = new ObjectMapper();
 			int multitenent = objm.convertValue(argObj.get("ismultitenant"), Integer.class);
 
-			// kumaresan
-//			List<LSlogilabprotocolsteps> LSprotocolsteplst = 
-//					LSlogilabprotocolstepsRepository.findByProtocolordercode(newProtocolOrderObj.getProtocolordercode());
-//			List<LSlogilabprotocolsteps> LSprotocolstepLst = new ArrayList<LSlogilabprotocolsteps>();
+
 			long ipInt = ((Number) argObj.get("protocolmastercode")).longValue();
 			List<LSlogilabprotocolsteps> LSprotocolsteplst = LSlogilabprotocolstepsRepository
 					.findByProtocolordercode(ipInt);
@@ -1754,7 +1750,7 @@ public class ProtocolService {
 					});
 			LSlogilabprotocolstepsRepository.save(LSlogilabprotocolstepsObj);
 
-			mapOrders = getProtocolOrderStepLst(argMap);
+//			mapOrders = getProtocolOrderStepLst(argMap);
 			LScfttransactionobj.setTableName("lslogilabprotocolsteps");
 			lscfttransactionRepository.save(LScfttransactionobj);
 		}
