@@ -1743,7 +1743,7 @@ public class InstrumentService {
 		}
 
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository
-				.findByBatchcode(objorder.getBatchcode());
+				.findOne(objorder.getBatchcode());
 
 		if (objupdatedorder.getLockeduser() != null) {
 			objupdatedorder.setIsLock(1);
@@ -1992,8 +1992,7 @@ public class InstrumentService {
 	}
 
 	public LSlogilablimsorderdetail Getupdatedorder(LSlogilablimsorderdetail objorder) {
-		LSlogilablimsorderdetail objupdated = lslogilablimsorderdetailRepository
-				.findByBatchcode(objorder.getBatchcode());
+		LSlogilablimsorderdetail objupdated = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 		objupdated.setLsLSlimsorder(lSlimsorderRepository.findBybatchid(objorder.getBatchid()));
 
 		if (objorder.getFiletype() == 0) {
@@ -2022,7 +2021,7 @@ public class InstrumentService {
 	public Map<String, Object> Getorderforlink(LSlogilablimsorderdetail objorder) {
 		Map<String, Object> mapOrder = new HashMap<String, Object>();
 		LSlogilablimsorderdetail objupdated = lslogilablimsorderdetailRepository
-				.findByBatchcode(objorder.getBatchcode());
+				.findOne(objorder.getBatchcode());
 
 		if (objupdated.getLockeduser() != null) {
 			objupdated.setIsLock(1);
@@ -2123,7 +2122,7 @@ public class InstrumentService {
 	}
 
 	public LSlogilablimsorderdetail updateworflowforOrder(LSlogilablimsorderdetail objorder) {
-		LSlogilablimsorderdetail lsOrder = lslogilablimsorderdetailRepository.findByBatchcode(objorder.getBatchcode());
+		LSlogilablimsorderdetail lsOrder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 
 		updatenotificationfororderworkflow(objorder, lsOrder.getLsworkflow());
 
@@ -2268,7 +2267,7 @@ public class InstrumentService {
 	}
 
 	public LSlogilablimsorderdetail updateVersionandWorkflowhistory(LSlogilablimsorderdetail objorder) {
-		objorder = lslogilablimsorderdetailRepository.findByBatchcode(objorder.getBatchcode());
+		objorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 //		if(objorder.getLssamplefile() != null)
 //		{
 //			objorder.getLssamplefile().setLssamplefileversion(lssamplefileversionRepository.getfileversiononbatchcode(objorder.getBatchcode()));
@@ -2307,7 +2306,7 @@ public class InstrumentService {
 	public LSlogilablimsorderdetail Uploadattachments(MultipartFile file, Long batchcode, String filename,
 			String fileexe, Integer usercode, Date currentdate, Integer islargefile) throws IOException {
 
-		LSlogilablimsorderdetail objorder = lslogilablimsorderdetailRepository.findByBatchcode(batchcode);
+		LSlogilablimsorderdetail objorder = lslogilablimsorderdetailRepository.findOne(batchcode);
 
 		LsOrderattachments objattachment = new LsOrderattachments();
 
@@ -2357,7 +2356,7 @@ public class InstrumentService {
 	public LSlogilablimsorderdetail CloudUploadattachments(MultipartFile file, Long batchcode, String filename,
 			String fileexe, Integer usercode, Date currentdate, Integer islargefile) throws IOException {
 
-		LSlogilablimsorderdetail objorder = lslogilablimsorderdetailRepository.findByBatchcode(batchcode);
+		LSlogilablimsorderdetail objorder = lslogilablimsorderdetailRepository.findOne(batchcode);
 
 		LsOrderattachments objattachment = new LsOrderattachments();
 
