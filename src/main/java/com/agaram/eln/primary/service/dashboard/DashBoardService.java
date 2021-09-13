@@ -619,7 +619,7 @@ public class DashBoardService {
 	{
 //		List<LSworkflow> lstworkflow = instrumentService.GetWorkflowonuser(objorder.getLsuserMaster().getLsusergrouptrans());
 		List<LSworkflow> lstworkflow = objorder.getLstworkflow();
-		Logilaborders objupdatedorder = lslogilablimsorderdetailRepository.findFirst1ByBatchcode(objorder.getBatchcode());
+		Logilaborders objupdatedorder = lslogilablimsorderdetailRepository.findByBatchcode(objorder.getBatchcode());
 		objupdatedorder.setLstworkflow(lstworkflow);
 		return objupdatedorder;
 	}

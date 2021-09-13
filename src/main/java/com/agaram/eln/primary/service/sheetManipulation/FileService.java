@@ -718,7 +718,7 @@ public class FileService {
 //			lscfttransactionRepository.save(cfttransaction);
 
 		}
-		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findByBatchcode(BatchID);
+		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findOne(BatchID);
 		Integer sLockeduser = 0;
 		if (orderDetail != null) {
 			sLockeduser = orderDetail.getLockeduser();
@@ -762,7 +762,7 @@ public class FileService {
 			lscfttransactionRepository.save(cfttransaction);
 
 		}
-		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findByBatchcode(BatchID);
+		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findOne(BatchID);
 
 		if (orderDetail != null) {
 

@@ -814,7 +814,7 @@ public class RestService {
 			
 			long batchcode = ((Number) objMap.get("batchcode")).longValue();
 			
-			LSlogilablimsorderdetail objorder = LSlogilablimsorderdetailRepository.findByBatchcode(batchcode);
+			LSlogilablimsorderdetail objorder = LSlogilablimsorderdetailRepository.findOne(batchcode);
 			
 			String Batchid=(String) objMap.get("Batch");
 			
