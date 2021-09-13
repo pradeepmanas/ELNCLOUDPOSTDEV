@@ -617,10 +617,8 @@ public class DashBoardService {
 	
 	public Logilabordermaster Getorder(LSlogilablimsorderdetail objorder)
 	{
-//		List<LSworkflow> lstworkflow = instrumentService.GetWorkflowonuser(objorder.getLsuserMaster().getLsusergrouptrans());
-		List<LSworkflow> lstworkflow = objorder.getLstworkflow();
 		Logilaborders objupdatedorder = lslogilablimsorderdetailRepository.findByBatchcode(objorder.getBatchcode());
-		objupdatedorder.setLstworkflow(lstworkflow);
+		objupdatedorder.setLstworkflow(objorder.getLstworkflow());
 		return objupdatedorder;
 	}
 	
