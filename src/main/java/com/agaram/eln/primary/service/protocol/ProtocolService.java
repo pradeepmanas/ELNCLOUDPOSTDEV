@@ -549,19 +549,41 @@ public class ProtocolService {
 			}
 
 //				}
+//			if (argObj.containsKey("modifiedsamplestep")) {
+//				LSprotocolsampleupdates sample = new ObjectMapper().convertValue(argObj.get("modifiedsamplestep"),
+//						new TypeReference<LSprotocolsampleupdates>() {
+//						});
+//				sample.setProtocolstepcode(LSprotocolstepObj.getProtocolstepcode());
+//				sample.setProtocolmastercode(LSprotocolstepObj.getProtocolmastercode());
+//				LSprotocolsampleupdatesRepository.save(sample);
+//			}
 			if (argObj.containsKey("modifiedsamplestep")) {
-				LSprotocolsampleupdates sample = new ObjectMapper().convertValue(argObj.get("modifiedsamplestep"),
-						new TypeReference<LSprotocolsampleupdates>() {
+				List<LSprotocolsampleupdates> lsprotocolsampleupdates =  new ObjectMapper().convertValue(argObj.get("modifiedsamplestep"),
+						new TypeReference<List<LSprotocolsampleupdates>>() {
 						});
-				sample.setProtocolstepcode(LSprotocolstepObj.getProtocolstepcode());
-				sample.setProtocolmastercode(LSprotocolstepObj.getProtocolmastercode());
-				LSprotocolsampleupdatesRepository.save(sample);
+				for(LSprotocolsampleupdates lSprotocolsampleupdates :lsprotocolsampleupdates) {	
+					
+					LSprotocolsampleupdates sample = lSprotocolsampleupdates;
+//					if(sample.getProtocolstepcode() != null) {
+						sample.setProtocolstepcode(LSprotocolstepObj.getProtocolstepcode());
+						sample.setProtocolmastercode(LSprotocolstepObj.getProtocolmastercode());
+//					}
+					LSprotocolsampleupdatesRepository.save(sample);
+				}	
+			
 			}
 			if (argObj.containsKey("repositorydata")) {
-				Lsrepositoriesdata lsrepositoriesdata = new ObjectMapper().convertValue(argObj.get("repositorydata"),
-						new TypeReference<Lsrepositoriesdata>() {
+				List<Lsrepositoriesdata> lsrepositoriesdata =  new ObjectMapper().convertValue(argObj.get("repositorydata"),
+						new TypeReference<List<Lsrepositoriesdata>>() {
 						});
-				LsrepositoriesdataRepository.save(lsrepositoriesdata);
+//				Lsrepositoriesdata lsrepositoriesdata = new ObjectMapper().convertValue(argObj.get("repositorydata"),
+//						new TypeReference<Lsrepositoriesdata>() {
+//						});
+				for(Lsrepositoriesdata lsrepositoriesdataobj :lsrepositoriesdata) {	
+					LsrepositoriesdataRepository.save(lsrepositoriesdataobj);
+				}
+				
+				
 			}
 			response.setStatus(true);
 			response.setInformation("");
@@ -1616,21 +1638,33 @@ public class ProtocolService {
 				mongoTemplate.insert(LsLogilabprotocolstepInfoObj);
 			}
 		}
-
 		if (argObj.containsKey("modifiedsamplestep")) {
-			LSprotocolordersampleupdates sample = new ObjectMapper().convertValue(argObj.get("modifiedsamplestep"),
-					new TypeReference<LSprotocolordersampleupdates>() {
+//			LSprotocolordersampleupdates sample = new ObjectMapper().convertValue(argObj.get("modifiedsamplestep"),
+//					new TypeReference<LSprotocolordersampleupdates>() {
+//					});
+			List<LSprotocolordersampleupdates> lsprotocolordersampleupdates =  new ObjectMapper().convertValue(argObj.get("modifiedsamplestep"),
+					new TypeReference<List<LSprotocolordersampleupdates>>() {
 					});
-			sample.setProtocolstepcode(LSprotocolstepObj.getProtocolstepcode());
-			sample.setProtocolmastercode(LSprotocolstepObj.getProtocolmastercode());
+			for(LSprotocolordersampleupdates sample :lsprotocolordersampleupdates) {	
+				sample.setProtocolstepcode(LSprotocolstepObj.getProtocolstepcode());
+				sample.setProtocolmastercode(LSprotocolstepObj.getProtocolmastercode());
+				lsprotocolordersampleupdatesRepository.save(sample);
+			}
+			
 //			 LSprotocolsampleupdatesRepository.save(sample);
-			lsprotocolordersampleupdatesRepository.save(sample);
+			
 		}
 		if (argObj.containsKey("repositorydata")) {
-			Lsrepositoriesdata lsrepositoriesdata = new ObjectMapper().convertValue(argObj.get("repositorydata"),
-					new TypeReference<Lsrepositoriesdata>() {
+//			Lsrepositoriesdata lsrepositoriesdata = new ObjectMapper().convertValue(argObj.get("repositorydata"),
+//					new TypeReference<Lsrepositoriesdata>() {
+//					});
+			List<Lsrepositoriesdata> lsrepositoriesdata =  new ObjectMapper().convertValue(argObj.get("repositorydata"),
+					new TypeReference<List<Lsrepositoriesdata>>() {
 					});
-			LsrepositoriesdataRepository.save(lsrepositoriesdata);
+			for(Lsrepositoriesdata lsrepositoriesdataobj :lsrepositoriesdata) {	
+				LsrepositoriesdataRepository.save(lsrepositoriesdataobj);
+			}
+			
 		}
 
 		List<LSlogilabprotocolsteps> LSprotocolsteplst = LSlogilabprotocolstepsRepository
