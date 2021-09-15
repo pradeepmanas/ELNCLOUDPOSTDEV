@@ -391,8 +391,7 @@ public class InstrumentController {
 
 		jsonString = instrumentService.getsampledata();
 		try {
-			// JSONParser jsonParser = new JSONParser();
-			@SuppressWarnings("unused")
+		
 			JSONObject jsonObject = new JSONObject(jsonString);
 			JSONArray jsonArray = jsonObject.getJSONArray("sheets");
 
@@ -418,9 +417,6 @@ public class InstrumentController {
 
 			jsonString = jsonObject.toString();
 
-			// JSONObject addedObj = (JSONObject) jsonObject.get("Added");
-
-			// JSONArray jsonArray = new JSONArray(jsonString);
 			System.out.println("\n\njsonArray: " + jsonArray);
 		} catch (JSONException e) {
 			e.printStackTrace();

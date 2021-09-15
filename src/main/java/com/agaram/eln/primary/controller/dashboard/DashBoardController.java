@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.fetchmodel.getmasters.Repositorymaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
@@ -92,6 +93,12 @@ public class DashBoardController {
 	public Map<String, Object> Getordersinuserworkflow(@RequestBody LSuserMaster objuser)
 	{
 		return dashBoardService.Getordersinuserworkflow(objuser);
+	}
+	
+	@RequestMapping("/Getallrepositories")
+	public List<Repositorymaster> Getallrepositories(@RequestBody LSuserMaster objuser)
+	{
+		return dashBoardService.Getallrepositories(objuser);
 	}
 	
 }

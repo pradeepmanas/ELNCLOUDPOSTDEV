@@ -2,13 +2,17 @@ package com.agaram.eln.primary.service.masters;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.fetchmodel.getmasters.Repositorymaster;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
@@ -180,5 +184,33 @@ public class MasterService {
 			logger.error("updatenotificationfororder : " + e.getMessage());
 		}
 		return null;
+	}
+
+	public Map<String, Object> getrepositoryfields(Lsrepositories repositorymaster) {
+		
+		Lsrepositories repository = lsrepositoriesRepository.findByRepositorycode(repositorymaster.getRepositorycode());
+		
+		Map<String, Object> rMap = new HashMap<>();
+		
+		String jsonFieldstring = repository.getRepositoryfields();
+		
+		String jsonFieldReturnstring = commonfunction.getJSONFieldsoninventory(jsonFieldstring);
+		
+		Repositorymaster repomaster = lsrepositoriesRepository.findByrepositorycode(repositorymaster.getRepositorycode());
+		
+		repomaster.setJsonFieldString(jsonFieldReturnstring);
+		
+		rMap.put("inventoryMaster",repomaster);
+		
+		rMap.put("repositoryData",lsrepositoriesdataRepository.findByRepositorycodeAndItemstatusOrderByRepositorydatacodeDesc(
+				repositorymaster.getRepositorycode(), 1));
+		
+		return rMap;
+	}
+
+	public List<Lsrepositoriesdata> GetrepositoriesdataonFilter(Lsrepositoriesdata lsrepositoriesdata) {
+		
+		return lsrepositoriesdataRepository.findByRepositorycodeAndItemstatusAndAddedonBetweenOrderByRepositorydatacodeDesc(
+				lsrepositoriesdata.getRepositorycode(), 1,lsrepositoriesdata.getFromdate(),lsrepositoriesdata.getTodate());
 	}
 }

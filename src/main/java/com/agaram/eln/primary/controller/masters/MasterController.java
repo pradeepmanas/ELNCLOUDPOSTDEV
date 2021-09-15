@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.controller.masters;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,5 +67,17 @@ public class MasterController {
 	public Response pushnotificationforinventory(@RequestBody List<Lsrepositoriesdata>  lsrepositoriesdata)
 	{
 		return masterService.pushnotificationforinventory(lsrepositoriesdata);
+	}
+	
+	@RequestMapping("/getrepositoryfields")
+	public Map<String,Object> getrepositoryfields(@RequestBody Lsrepositories repositorymaster)
+	{
+		return masterService.getrepositoryfields(repositorymaster);
+	}
+	
+	@RequestMapping("/GetrepositoriesdataonFilter")
+	public List<Lsrepositoriesdata> GetrepositoriesdataonFilter(@RequestBody Lsrepositoriesdata lsrepositoriesdata)
+	{
+		return masterService.GetrepositoriesdataonFilter(lsrepositoriesdata);
 	}
 }

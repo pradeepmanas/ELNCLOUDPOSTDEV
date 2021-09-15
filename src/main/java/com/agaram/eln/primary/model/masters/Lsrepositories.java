@@ -48,6 +48,9 @@ public class Lsrepositories {
 	
 	private String isonexpireddatefield;
 	
+	@Transient
+	Response objResponse;
+	
 	public String getIsonexpireddatefield() {
 		return isonexpireddatefield;
 	}
@@ -55,9 +58,6 @@ public class Lsrepositories {
 	public void setIsonexpireddatefield(String isonexpireddatefield) {
 		this.isonexpireddatefield = isonexpireddatefield;
 	}
-
-	@Transient
-	Response objResponse;
 
 	public Integer getRepositorycode() {
 		return repositorycode;

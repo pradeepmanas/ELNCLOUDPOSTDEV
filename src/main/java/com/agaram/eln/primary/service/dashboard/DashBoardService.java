@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.fetchmodel.getmasters.Repositorymaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
@@ -33,6 +34,7 @@ import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharedbyRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharetoRepository;
+import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowgroupmapRepository;
@@ -106,6 +108,9 @@ public class DashBoardService {
 	
 	@Autowired
 	private LsordersharetoRepository lsordersharetoRepository;
+	
+	@Autowired
+	private LsrepositoriesRepository LsrepositoriesRepository;
 
 	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser) {
 
@@ -637,4 +642,14 @@ public class DashBoardService {
 		
 		return mapOrders;
 	}
+
+	public List<Repositorymaster> Getallrepositories(LSuserMaster objuser) {
+		
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		
+		return LsrepositoriesRepository.findBySitecodeAndAddedonBetweenOrderByRepositorycodeAsc(objuser.getLssitemaster().getSitecode(),fromdate,todate);
+	}
+	
+	
 }

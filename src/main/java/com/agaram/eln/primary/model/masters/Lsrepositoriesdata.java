@@ -51,6 +51,11 @@ public class Lsrepositoriesdata {
 	@Transient
 	private Integer expireddatecount;
 	
+	@Transient
+	private Date fromdate;
+	
+	@Transient
+	private Date todate;
 	
 	public Integer getRepositorydatacode() {
 		return repositorydatacode;
@@ -148,5 +153,19 @@ public class Lsrepositoriesdata {
 		this.repositoryuniqueid = repositoryuniqueid;
 	}
 
-	
+	public Date getFromdate() {
+		return fromdate;
+	}
+
+	public void setFromdate(Date fromdate) {
+		this.fromdate = fromdate;
+	}
+
+	public Date getTodate() {
+		return todate;
+	}
+
+	public void setTodate(Date todate) {
+		this.todate = todate;
+	}
 }
