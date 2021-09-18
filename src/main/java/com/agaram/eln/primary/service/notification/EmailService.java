@@ -7,10 +7,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.BodyPart;
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
@@ -29,202 +26,186 @@ import com.agaram.eln.primary.repository.notification.EmailRepository;
 @EnableJpaRepositories(basePackageClasses = EmailRepository.class)
 public class EmailService {
 
-		@Autowired
-	    private JavaMailSender mailSender;
+	@Autowired
+	private JavaMailSender mailSender;
 
-		@Autowired
-		private EmailRepository EmailRepository;
-		
-		@Autowired
-	    private org.springframework.core.env.Environment env;
-		
+	@Autowired
+	private EmailRepository EmailRepository;
 
-		public Email sendPlainTextEmail(Email email) throws MessagingException {
-		
-			String from = env.getProperty("spring.mail.username");
-			String to = email.getMailto();
-			MimeMessage message = mailSender.createMimeMessage();
-			MimeMessageHelper helper = new MimeMessageHelper(message);
-			 
-			helper.setSubject("This is an OTP verification email");
-			helper.setFrom(from);
-			helper.setTo(to);
-			
-			 Random rnd = new Random();
-			 int number = rnd.nextInt(999999);
-			 String ch=String.format("%06d", number);
-			 number= Integer.parseInt(ch); 
-			 
-			 //email.setOptcode(number);
-			 
-			boolean html = true;
-			helper.setText("<b>Dear Customer</b>,<br><i>use code <b>"+number+"</b> to login our account Never share your OTP with anyone</i>", html);
-			
-			mailSender.send(message);
-			
-			EmailRepository.save(email);
-			
-	//		model.addAttribute("message", "A plain text email has been sent");
-			return email;
-			
-		}
-		
-		public Email sendusernamepassemail(Email email) throws MessagingException {
-			boolean valid =true;
-			String from = env.getProperty("spring.mail.username");
-			String to = email.getMailto();
-			MimeMessage message = mailSender.createMimeMessage();
-			MimeMessageHelper helper = new MimeMessageHelper(message);
-			 
-			helper.setSubject("Username and Password");
-			helper.setFrom(from);
-			helper.setTo(to);
-			
-			 // lower limit for LowerCase Letters 
-	        int lowerLimit = 97; 
-	  
-	        // lower limit for LowerCase Letters 
-	        int upperLimit = 122; 
-	  
-	        Random random = new Random(); 
-	        int n = 6; 
-	        // Create a StringBuffer to store the result 
-	        StringBuffer r = new StringBuffer(n); 
-	  
-	        for (int i = 0; i < n; i++) { 
-	            int nextRandomChar = lowerLimit 
-	                                 + (int)(random.nextFloat() 
-	                                         * (upperLimit - lowerLimit + 1));  
-	            r.append((char)nextRandomChar); 
-	        } 
-	        String pass=r.toString();
-	        // return the resultant string 
-	       System.out.println(pass);
-	       
-	       String passwordtenant=AESEncryption.encrypt(pass);
-	      // email.setPassword(passwordtenant);
-			 
-			boolean html = true;
-		//	helper.setText("<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"+email.getTenantid()+"</b><br><b>Password:\t\t"+pass+"</b>", html);
-			
-			
+	@Autowired
+	private org.springframework.core.env.Environment env;
+
+	public Email sendPlainTextEmail(Email email) throws MessagingException {
+
+		String from = env.getProperty("spring.mail.username");
+		String to = email.getMailto();
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message);
+
+		helper.setSubject("This is an OTP verification email");
+		helper.setFrom(from);
+		helper.setTo(to);
+
+		Random rnd = new Random();
+		int number = rnd.nextInt(999999);
+		String ch = String.format("%06d", number);
+		number = Integer.parseInt(ch);
+
+		// email.setOptcode(number);
+
+		boolean html = true;
+		helper.setText("<b>Dear Customer</b>,<br><i>use code <b>" + number
+				+ "</b> to login our account Never share your OTP with anyone</i>", html);
+
+		mailSender.send(message);
+
+		EmailRepository.save(email);
+
+		// model.addAttribute("message", "A plain text email has been sent");
+		return email;
+
+	}
+
+	public Email sendusernamepassemail(Email email) throws MessagingException {
 	
-			mailSender.send(message);
-			
-			//String username=email.getTenantid();
-			//DataSourceConfigRepository.setverifiedemailandtenantpassword(valid,passwordtenant,username);
-	
-			//EmailRepository.setpasswordBytenantid(email.getPassword(),email.getTenantid());
-			return email;
+		String from = env.getProperty("spring.mail.username");
+		String to = email.getMailto();
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message);
+
+		helper.setSubject("Username and Password");
+		helper.setFrom(from);
+		helper.setTo(to);
+
+		// lower limit for LowerCase Letters
+		int lowerLimit = 97;
+
+		// lower limit for LowerCase Letters
+		int upperLimit = 122;
+
+		Random random = new Random();
+		int n = 6;
+		// Create a StringBuffer to store the result
+		StringBuffer r = new StringBuffer(n);
+
+		for (int i = 0; i < n; i++) {
+			int nextRandomChar = lowerLimit + (int) (random.nextFloat() * (upperLimit - lowerLimit + 1));
+			r.append((char) nextRandomChar);
+		}
+		String pass = r.toString();
+		// return the resultant string
+		System.out.println(pass);
+
+		String passwordtenant = AESEncryption.encrypt(pass);
+		// email.setPassword(passwordtenant);
+
+		boolean html = true;
+		// helper.setText("<b>Dear Customer</b>,<br><i>This is for your username and
+		// password</i><br><b>UserName:\t\t"+email.getTenantid()+"</b><br><b>Password:\t\t"+pass+"</b>",
+		// html);
+
+		mailSender.send(message);
+
+		// String username=email.getTenantid();
+		// DataSourceConfigRepository.setverifiedemailandtenantpassword(valid,passwordtenant,username);
+
+		// EmailRepository.setpasswordBytenantid(email.getPassword(),email.getTenantid());
+		return email;
+	}
+
+	public Email sendEmail(Email email) throws MessagingException {
+		String from = env.getProperty("spring.mail.username");
+		String to = email.getMailto();
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message);
+
+		helper.setSubject(email.getSubject());
+		helper.setFrom(from);
+		helper.setTo(to);
+
+		// Set Subject: header field
+		message.setSubject(email.getSubject());
+
+		// This mail has 2 part, the BODY and the embedded image
+		MimeMultipart multipart = new MimeMultipart("related");
+
+		// first part (the html)
+		BodyPart messageBodyPart = new MimeBodyPart();
+
+		String htmlText = email.getMailcontent();
+
+		messageBodyPart.setContent(htmlText, "text/html");
+		// add it
+		multipart.addBodyPart(messageBodyPart);
+
+		messageBodyPart = new MimeBodyPart();
+		
+		String userDirectory = "";
+		DataSource fds;
+		if(System.getProperty("os.name").contains("Linux")) {
+			userDirectory = "/src/main/resources/images/Logilab ELN_vertical.jpg";
+			DataSource fds1 = new FileDataSource(userDirectory);
+			messageBodyPart.setDataHandler(new DataHandler(fds1));
+			fds = new FileDataSource("/src/main/resources/images/AgaramTechnologies_vertical.jpg");
+			messageBodyPart.addHeader("Content-ID", "<image>");
+		}else {
+			userDirectory = new File("").getAbsolutePath();
+			DataSource fds1 = new FileDataSource(userDirectory + "/src/main/resources/images/Logilab ELN_vertical.jpg");
+			messageBodyPart.setDataHandler(new DataHandler(fds1));
+			fds = new FileDataSource(
+					userDirectory + "/src/main/resources/images/AgaramTechnologies_vertical.jpg");
+			messageBodyPart.addHeader("Content-ID", "<image>");
 		}
 		
-		public Email sendEmail(Email email) throws MessagingException
-		{
-			String from = env.getProperty("spring.mail.username");
-			String to = email.getMailto();
-			MimeMessage message = mailSender.createMimeMessage();
-			MimeMessageHelper helper = new MimeMessageHelper(message);
-			 
-			helper.setSubject(email.getSubject());
-			helper.setFrom(from);
-			helper.setTo(to);
-//			
-//			boolean html = true;
-//			helper.setText(email.getMailcontent(), html);
-//				
-//			
-//			mailSender.send(message);
-//			
-////			EmailRepository.save(email);
-			
-//			Message message =mailSender.createMimeMessage();
-//			
-//			 Message message = new MimeMessage(session);
-
-	         // Set From: header field of the header.
-//	         message.setFrom(new InternetAddress(from));
-//
-//	         // Set To: header field of the header.
-//	         message.setRecipients(Message.RecipientType.TO,
-//	            InternetAddress.parse(to));
-
-	         // Set Subject: header field
-	         message.setSubject(email.getSubject());
-
-	         // This mail has 2 part, the BODY and the embedded image
-	         MimeMultipart multipart = new MimeMultipart("related");
-
-	         // first part (the html)
-	         BodyPart messageBodyPart = new MimeBodyPart();
-//	         String htmlText = "<H1>Hello</H1><img src=\"cid:image\"  style ='margin-left: 200px; width: 16%;border: 3px;'><br><br>"
-//	         		+ "<img src=\"cid:seconimage\"  style ='margin-left: 200px; width: 16%;border: 3px;'>";
-	         
-	         String htmlText = email.getMailcontent();
-	         
-	         messageBodyPart.setContent(htmlText, "text/html");
-	         // add it
-	         multipart.addBodyPart(messageBodyPart);
-	         
-	         
-	         
-	         messageBodyPart = new MimeBodyPart();
-	   	  String userDirectory = new File("").getAbsolutePath();
-	         DataSource fds1= new FileDataSource
-	           (userDirectory+"/src/main/resources/images/Logilab ELN_vertical.jpg");
-	         messageBodyPart.setDataHandler(new DataHandler(fds1));
-	         messageBodyPart.addHeader("Content-ID","<image>");
-	         // add it
-	         multipart.addBodyPart(messageBodyPart);
-
-
-	         // second part (the image)
-	         messageBodyPart = new MimeBodyPart();
-	         DataSource fds = new FileDataSource(
-	        		 userDirectory+"/src/main/resources/images/AgaramTechnologies_vertical.jpg");
-
-	         messageBodyPart.setDataHandler(new DataHandler(fds));
-	         messageBodyPart.setHeader("Content-ID", "<seconimage>");
-
-	         // add image to the multipart
-	         multipart.addBodyPart(messageBodyPart);
-	         
-	      
-	         // put everything together
-	         message.setContent(multipart);
-	         // Send message
-	         mailSender.send(message);
-	         EmailRepository.save(email);
-			
-			
-			
-			
-			return email;
-		}
+		System.out.print("resource absolute path 1001)" + new File("").getAbsolutePath());
+		System.out.print("resource absolute path 1001)" + userDirectory+"/src/main/resources/images/Logilab ELN_vertical.jpg");
 		
-		
-		public Email sendmailOPT(Email email) throws MessagingException {
-			
-			String from = env.getProperty("spring.mail.username");
-			String to = email.getMailto();
-			MimeMessage message = mailSender.createMimeMessage();
-			MimeMessageHelper helper = new MimeMessageHelper(message);
-			 
-			helper.setSubject(email.getSubject());
-			helper.setFrom(from);
-			helper.setTo(to);
-			
-			 
-			boolean html = true;
+		// add it
+		multipart.addBodyPart(messageBodyPart);
 
-			helper.setText(email.getMailcontent(), html);
-			
-			mailSender.send(message);
-			
-			EmailRepository.save(email);
-			
-	//		model.addAttribute("message", "A plain text email has been sent");
-			return email;
-			
-		}
+		// second part (the image)
+		messageBodyPart = new MimeBodyPart();
+//		DataSource fds = new FileDataSource(
+//				userDirectory + "/src/main/resources/images/AgaramTechnologies_vertical.jpg");
+
+		
+		messageBodyPart.setDataHandler(new DataHandler(fds));
+		messageBodyPart.setHeader("Content-ID", "<seconimage>");
+
+		// add image to the multipart
+		multipart.addBodyPart(messageBodyPart);
+
+		// put everything together
+		message.setContent(multipart);
+		// Send message
+		mailSender.send(message);
+		EmailRepository.save(email);
+
+		return email;
+	}
+
+	public Email sendmailOPT(Email email) throws MessagingException {
+
+		String from = env.getProperty("spring.mail.username");
+		String to = email.getMailto();
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message);
+
+		helper.setSubject(email.getSubject());
+		helper.setFrom(from);
+		helper.setTo(to);
+
+		boolean html = true;
+
+		helper.setText(email.getMailcontent(), html);
+
+		mailSender.send(message);
+
+		EmailRepository.save(email);
+
+		// model.addAttribute("message", "A plain text email has been sent");
+		return email;
+
+	}
 
 }
