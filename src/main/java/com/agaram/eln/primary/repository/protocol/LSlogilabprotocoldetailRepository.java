@@ -3,7 +3,10 @@ package com.agaram.eln.primary.repository.protocol;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -41,4 +44,15 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	long countByOrderflagAndCreatedtimestampBetween(String orderflg, Date fromdate, Date todate);
 	
 	long countByCreatedtimestampBetween(Date fromdate, Date todate);
+	List<LSlogilabprotocoldetail> findTop10ByProtocoltypeAndOrderflagOrderByCreatedtimestampDesc(Integer protocoltype,
+			String string);
+	int countByProtocoltypeAndOrderflag(Integer protocoltype, String string);
+	
+	
+	@Transactional
+	@Modifying
+	@Query(value = "select * from "
+			+ "LSlogilabprotocoldetail where protocoltype = ?1 and orderflag = ?2  ORDER BY createdtimestamp DESC offset 10 row", nativeQuery = true)
+	List<LSlogilabprotocoldetail> getProtocoltypeAndOrderflag(Integer protocoltype, String string);
+
 }

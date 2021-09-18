@@ -136,6 +136,11 @@ public class ProtocolController {
 	protected Map<String, Object> getProtocolOrderList(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail) {
 		return ProtocolMasterService.getProtocolOrderList(LSlogilabprotocoldetail);
 	}
+	
+	@RequestMapping(value = "/getreminProtocolOrderList")
+	protected Map<String, Object> getreminProtocolOrderList(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail) {
+		return ProtocolMasterService.getreminProtocolOrderList(LSlogilabprotocoldetail);
+	}
 
 	@RequestMapping(value = "/updateProtocolOrderStep")
 	protected Map<String, Object> updateProtocolOrderStep(@RequestBody Map<String, Object> argObj) {
