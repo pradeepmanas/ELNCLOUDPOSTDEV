@@ -24,7 +24,7 @@ import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 @Table(name = "Lselninstrumentmaster")
 public class Lselninstrumentmaster {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Basic(optional = false)
 	@Column(name = "instrumentcode")
 	private Integer instrumentcode;

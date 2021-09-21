@@ -20,7 +20,7 @@ import org.hibernate.annotations.Type;
 public class Lselninstrumentfields {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Basic(optional = false)
 	@Column(name = "fieldcode")
 	private Integer fieldcode;

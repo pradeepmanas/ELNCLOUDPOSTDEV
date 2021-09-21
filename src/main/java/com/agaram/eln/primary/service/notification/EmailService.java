@@ -7,11 +7,15 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.BodyPart;
+import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,11 +25,14 @@ import org.springframework.stereotype.Service;
 import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.repository.notification.EmailRepository;
+import com.agaram.eln.primary.service.report.ReportsService;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = EmailRepository.class)
 public class EmailService {
 
+	static final Logger logger = Logger.getLogger(EmailService.class.getName());
+	
 	@Autowired
 	private JavaMailSender mailSender;
 
@@ -67,7 +74,7 @@ public class EmailService {
 	}
 
 	public Email sendusernamepassemail(Email email) throws MessagingException {
-	
+		boolean valid = true;
 		String from = env.getProperty("spring.mail.username");
 		String to = email.getMailto();
 		MimeMessage message = mailSender.createMimeMessage();
@@ -138,44 +145,36 @@ public class EmailService {
 		// add it
 		multipart.addBodyPart(messageBodyPart);
 
-		messageBodyPart = new MimeBodyPart();
-		
-		System.out.print("resource absolute path 1001)" + new File("").getAbsolutePath());
-		System.out.print("resource absolute path 1001)" + "/src/main/resources/images/Logilab ELN_vertical.jpg");
-		
-		String userDirectory = "";
-		DataSource fds;
-		if(System.getProperty("os.name").contains("Linux")) {
-			userDirectory = new File("").getAbsolutePath();
-			DataSource fds1 =new FileDataSource(userDirectory + "/src/main/resources/images/Logilab ELN_vertical.jpg");
-			messageBodyPart.setDataHandler(new DataHandler(fds1));
-			fds = new FileDataSource(userDirectory+"/src/main/resources/images/AgaramTechnologies_vertical.jpg");
-			messageBodyPart.addHeader("Content-ID", "<image>");
-		}else {
-			userDirectory = new File("").getAbsolutePath();
-			DataSource fds1 = new FileDataSource(userDirectory + "/src/main/resources/images/Logilab ELN_vertical.jpg");
-			messageBodyPart.setDataHandler(new DataHandler(fds1));
-			fds = new FileDataSource(userDirectory + "/src/main/resources/images/AgaramTechnologies_vertical.jpg");
-			messageBodyPart.addHeader("Content-ID", "<image>");
-		}
-		
-		// add it
-		multipart.addBodyPart(messageBodyPart);
+		/*
+		 * messageBodyPart = new MimeBodyPart(); String userDirectory = new
+		 * File("").getAbsolutePath(); DataSource fds1 = new
+		 * FileDataSource(userDirectory +
+		 * "/src/main/resources/images/Logilab ELN_vertical.jpg");
+		 * messageBodyPart.setDataHandler(new DataHandler(fds1));
+		 * messageBodyPart.addHeader("Content-ID", "<image>");
+		 * multipart.addBodyPart(messageBodyPart);
+		 */
 
 		// second part (the image)
-		messageBodyPart = new MimeBodyPart();
-		
-		messageBodyPart.setDataHandler(new DataHandler(fds));
-		messageBodyPart.setHeader("Content-ID", "<seconimage>");
-
-		// add image to the multipart
-		multipart.addBodyPart(messageBodyPart);
+		/*
+		 * messageBodyPart = new MimeBodyPart(); DataSource fds = new FileDataSource(
+		 * userDirectory +
+		 * "/src/main/resources/images/AgaramTechnologies_vertical.jpg");
+		 * 
+		 * messageBodyPart.setDataHandler(new DataHandler(fds));
+		 * messageBodyPart.setHeader("Content-ID", "<seconimage>");
+		 * 
+		 * // add image to the multipart multipart.addBodyPart(messageBodyPart);
+		 */
 
 		// put everything together
 		message.setContent(multipart);
 		// Send message
 		mailSender.send(message);
 		EmailRepository.save(email);
+		
+		
+		logger.info("java mail path --->"+new File("").getAbsolutePath());
 
 		return email;
 	}
@@ -199,9 +198,7 @@ public class EmailService {
 
 		EmailRepository.save(email);
 
-		// model.addAttribute("message", "A plain text email has been sent");
 		return email;
 
 	}
-
 }
