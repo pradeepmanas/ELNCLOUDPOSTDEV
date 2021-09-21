@@ -2906,7 +2906,7 @@ public class InstrumentService {
 		List<Integer> lstteamusercode = new ArrayList<Integer>();
 		if(lstteammap != null && lstteammap.size()>0)
 		{
-			List<LSuserMaster> lstusers = lstteammap.stream().map(LSuserteammapping::getLsuserMaster).collect(Collectors.toList());
+			List<LSuserMaster> lstusers = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteamcode);
 			if(lstusers != null && lstusers.size() >0)
 			{
 				lstteamusercode= lstusers.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
