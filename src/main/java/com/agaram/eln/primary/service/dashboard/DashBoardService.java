@@ -636,9 +636,16 @@ public class DashBoardService {
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		
+		if(lstproject != null)
+		{
 		List<Logilabordermaster> lstorders = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween("N", lstproject ,lstworkflow, fromdate, todate);
 		lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
 		mapOrders.put("orders", lstorders);
+		}
+		else
+		{
+			mapOrders.put("orders", new ArrayList<Logilabordermaster>());
+		}
 		
 		return mapOrders;
 	}
