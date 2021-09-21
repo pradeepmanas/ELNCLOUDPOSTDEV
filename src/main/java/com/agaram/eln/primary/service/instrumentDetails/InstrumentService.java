@@ -2884,8 +2884,9 @@ public class InstrumentService {
 		return lstworkflow;
 	}
 	
-	public List<Integer> Getuserprojects(LSuserMaster objuser)
+	public Map<String, Object> Getuserprojects(LSuserMaster objuser)
 	{
+		Map<String, Object> objmap = new HashMap<>();
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 		List<LSprojectmaster> lstprojectmaster = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
@@ -2896,7 +2897,27 @@ public class InstrumentService {
 			lstproject = lstprojectmaster.stream().map(LSprojectmaster::getProjectcode).collect(Collectors.toList());
 		}
 		
-		return lstproject;
+		List<Integer> lstteamcode = new ArrayList<Integer>();
+		if(lstteam != null && lstteam.size() >0)
+		{
+			lstteamcode= lstteam.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
+		}
+		
+		List<Integer> lstteamusercode = new ArrayList<Integer>();
+		if(lstteammap != null && lstteammap.size()>0)
+		{
+			List<LSuserMaster> lstusers = lstteammap.stream().map(LSuserteammapping::getLsuserMaster).collect(Collectors.toList());
+			if(lstusers != null && lstusers.size() >0)
+			{
+				lstteamusercode= lstusers.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
+			}
+		}
+		
+		
+		objmap.put("project", lstproject);
+		objmap.put("team", lstteamcode);
+		objmap.put("teamuser", lstteamusercode);
+		return objmap;
 	}
 
 }

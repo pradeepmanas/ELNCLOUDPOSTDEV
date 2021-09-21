@@ -140,34 +140,30 @@ public class EmailService {
 
 		messageBodyPart = new MimeBodyPart();
 		
+		System.out.print("resource absolute path 1001)" + new File("").getAbsolutePath());
+		System.out.print("resource absolute path 1001)" + "/src/main/resources/images/Logilab ELN_vertical.jpg");
+		
 		String userDirectory = "";
 		DataSource fds;
 		if(System.getProperty("os.name").contains("Linux")) {
-			userDirectory = "/src/main/resources/images/Logilab ELN_vertical.jpg";
-			DataSource fds1 = new FileDataSource(userDirectory);
+			userDirectory = new File("").getAbsolutePath();
+			DataSource fds1 =new FileDataSource(userDirectory + "/src/main/resources/images/Logilab ELN_vertical.jpg");
 			messageBodyPart.setDataHandler(new DataHandler(fds1));
-			fds = new FileDataSource("/src/main/resources/images/AgaramTechnologies_vertical.jpg");
+			fds = new FileDataSource(userDirectory+"/src/main/resources/images/AgaramTechnologies_vertical.jpg");
 			messageBodyPart.addHeader("Content-ID", "<image>");
 		}else {
 			userDirectory = new File("").getAbsolutePath();
 			DataSource fds1 = new FileDataSource(userDirectory + "/src/main/resources/images/Logilab ELN_vertical.jpg");
 			messageBodyPart.setDataHandler(new DataHandler(fds1));
-			fds = new FileDataSource(
-					userDirectory + "/src/main/resources/images/AgaramTechnologies_vertical.jpg");
+			fds = new FileDataSource(userDirectory + "/src/main/resources/images/AgaramTechnologies_vertical.jpg");
 			messageBodyPart.addHeader("Content-ID", "<image>");
 		}
-		
-		System.out.print("resource absolute path 1001)" + new File("").getAbsolutePath());
-		System.out.print("resource absolute path 1001)" + userDirectory+"/src/main/resources/images/Logilab ELN_vertical.jpg");
 		
 		// add it
 		multipart.addBodyPart(messageBodyPart);
 
 		// second part (the image)
 		messageBodyPart = new MimeBodyPart();
-//		DataSource fds = new FileDataSource(
-//				userDirectory + "/src/main/resources/images/AgaramTechnologies_vertical.jpg");
-
 		
 		messageBodyPart.setDataHandler(new DataHandler(fds));
 		messageBodyPart.setHeader("Content-ID", "<seconimage>");

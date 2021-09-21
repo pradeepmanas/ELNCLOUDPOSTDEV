@@ -211,6 +211,12 @@ public class ProtocolService {
 
 		return mapObj;
 	}
+	
+	public List <LSprotocolmaster> getprotocol(LSuserMaster objusers)
+	{
+		List<Integer> lstuser = objusers.getObjuser().getTeamuserscode();
+		return LSProtocolMasterRepositoryObj.findByCreatedbyInAndLssitemaster(lstuser, objusers.getLssitemaster().getSitecode());
+	}
 
 	public Map<String, Object> getLSProtocolMasterLst(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
@@ -1599,7 +1605,7 @@ public class ProtocolService {
 		int completedcount =LSlogilabprotocoldetailRepository.countByProtocoltypeAndOrderflag(lSlogilabprotocoldetail.getProtocoltype(), "R");
 		List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository.findTop10ByProtocoltypeAndOrderflagOrderByCreatedtimestampDesc(lSlogilabprotocoldetail.getProtocoltype(), "R");
 		
-		List<LSlogilabprotocoldetail> lstPendingOrder1 = LSlogilabprotocoldetailRepository.getProtocoltypeAndOrderflag(lSlogilabprotocoldetail.getProtocoltype(), "N");
+//		List<LSlogilabprotocoldetail> lstPendingOrder1 = LSlogilabprotocoldetailRepository.getProtocoltypeAndOrderflag(lSlogilabprotocoldetail.getProtocoltype(), "N");
 		
 //		List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
 //				.findByProtocoltypeAndOrderflag(lSlogilabprotocoldetail.getProtocoltype(), "R");

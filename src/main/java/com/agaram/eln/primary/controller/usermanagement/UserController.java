@@ -479,4 +479,10 @@ public class UserController {
 	{
 		return userService.GetAllActiveUsers(objusergroup);
 	}
+	
+	@PostMapping("/getUserPrefrences")
+	public Lsusersettings getUserPrefrences(@RequestBody LSuserMaster objuser)
+	{
+		return userService.getUserPrefrences(objuser);
+	}
 }

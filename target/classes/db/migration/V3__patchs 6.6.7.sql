@@ -1309,7 +1309,6 @@ update lsaudittrailconfigmaster set manualaudittrail = 0;
 
 ALTER TABLE IF Exists Lsrepositories ADD COLUMN IF NOT EXISTS isexpiredate boolean;
 
-
 ALTER TABLE IF Exists lsrepositories ADD COLUMN IF NOT EXISTS isonexpireddatefield varchar(250);
 
 ALTER TABLE IF Exists lsordersampleupdate ADD COLUMN IF NOT EXISTS createdbyusername character varying(255);
@@ -1330,15 +1329,11 @@ BEGIN
    SELECT relkind
    FROM   pg_class
    WHERE  relname = 'lsusersettings_userid_seq'  
-   -- sequence name, optionally schema-qualified
    INTO  _kind;
-
-   IF NOT FOUND THEN       -- name is free
+   IF NOT FOUND THEN  
       CREATE SEQUENCE lsusersettings_userid_seq;
-   ELSIF _kind = 'S' THEN  -- sequence exists
-      -- do nothing?
-   ELSE                    -- object name exists for different kind
-      -- do something!
+   ELSIF _kind = 'S' THEN 
+   ELSE                  
    END IF;
 END
 $do$;
@@ -1394,5 +1389,8 @@ END
 $do$;
 
 update Lsrepositories set isexpiredate = false where isexpiredate IS NULL;
-
-
+update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 1;
+update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 2;
+update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 10;
+update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 38;
+update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 40;

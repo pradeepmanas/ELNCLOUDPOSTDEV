@@ -472,17 +472,17 @@ public class DashBoardService {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapSheets = new HashMap<String, Object>();
+		List<LSuserMaster> lstteamuser = objuser.getObjuser().getTeamusers();
 
 		if (objuser.getUsername().equals("Administrator")) {
 			mapSheets.put("Sheets", lsfileRepository
 					.findByCreatedateBetweenAndFilecodeGreaterThanOrderByFilecodeDesc(fromdate, todate, 1));
 		} else {
 			List<Sheettemplateget> lstsheets = new ArrayList<Sheettemplateget>();
-			List<Integer> lstteammap = lsuserteammappingRepository
-					.getTeamcodeByLsuserMaster4postgressandsql(objuser.getUsercode());
+//			List<Integer> lstteammap = lsuserteammappingRepository
+//					.getTeamcodeByLsuserMaster4postgressandsql(objuser.getUsercode());
 
-			if (lstteammap.size() > 0) {
-				List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
+			if (lstteamuser != null && lstteamuser.size() > 0) {
 				lstteamuser.add(objuser);
 				lstsheets = lsfileRepository
 						.findByFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenOrderByFilecodeDesc(1, lstteamuser,

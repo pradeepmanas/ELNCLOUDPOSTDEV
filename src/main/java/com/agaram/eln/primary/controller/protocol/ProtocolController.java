@@ -236,4 +236,10 @@ public class ProtocolController {
 	public Map<String, Object> GetProtocolTemplateVerionLst(@RequestBody Map<String, Object> argObj) {
 		return ProtocolMasterService.GetProtocolTemplateVerionLst(argObj);
 	}
+	
+	@PostMapping("/getprotocols")
+	public List <LSprotocolmaster> getprotocols(@RequestBody LSuserMaster objusers)
+	{
+		return ProtocolMasterService.getprotocol(objusers);
+	}
 }

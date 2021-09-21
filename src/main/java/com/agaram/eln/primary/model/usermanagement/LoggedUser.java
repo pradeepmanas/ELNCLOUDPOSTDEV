@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.model.usermanagement;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Transient;
 
@@ -67,6 +68,15 @@ public class LoggedUser {
 	
 	@Transient
 	private Integer loggedfrom;
+	
+	@Transient
+	private List<LSuserMaster> teamusers;
+	
+	@Transient
+	private List<Integer> teamuserscode;
+	
+	@Transient
+	private LSusergroup lsusergroup;
 	
 	public Integer getLoggedfrom() {
 		return loggedfrom;
@@ -356,6 +366,30 @@ public class LoggedUser {
 
 	public void setOrderselectiontype(Integer orderselectiontype) {
 		this.orderselectiontype = orderselectiontype;
+	}
+
+	public List<LSuserMaster> getTeamusers() {
+		return teamusers;
+	}
+
+	public void setTeamusers(List<LSuserMaster> teamusers) {
+		this.teamusers = teamusers;
+	}
+
+	public List<Integer> getTeamuserscode() {
+		return teamuserscode;
+	}
+
+	public void setTeamuserscode(List<Integer> teamuserscode) {
+		this.teamuserscode = teamuserscode;
+	}
+
+	public LSusergroup getLsusergroup() {
+		return lsusergroup;
+	}
+
+	public void setLsusergroup(LSusergroup lsusergroup) {
+		this.lsusergroup = lsusergroup;
 	}
 		
 	

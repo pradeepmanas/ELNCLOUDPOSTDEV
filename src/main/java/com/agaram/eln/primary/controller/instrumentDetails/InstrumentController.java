@@ -632,7 +632,7 @@ public class InstrumentController {
 	}
 	
 	@PostMapping("/Getuserprojects")
-	public List<Integer> Getuserprojects(@RequestBody LSuserMaster objuser)
+	public Map<String, Object> Getuserprojects(@RequestBody LSuserMaster objuser)
 	{
 		return instrumentService.Getuserprojects(objuser);
 	}

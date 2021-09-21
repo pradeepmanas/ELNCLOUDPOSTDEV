@@ -587,7 +587,6 @@ public class UserService {
 		if (objclass.getSitecode() == 0) {
 			List<LSusersteam> obj = new ArrayList<LSusersteam>();
 			obj = lsusersteamRepository.findBystatus(1);
-//			obj.get(0).getLsuserMaster().get(0).setLsuserMaster(lsuserMasterRepository.findByusernameNot("Administrator"));
 			List<LSuserMaster> user = lsuserMasterRepository.findByusernameNot("Administrator");
 			map.put("obj", obj);
 			map.put("user", user);
@@ -665,7 +664,6 @@ public class UserService {
 			if (((LSusergrouprights) lsrights.get(0)).getObjsilentaudit() != null) {
 			
 				((LSusergrouprights) lsrights.get(0)).getObjsilentaudit().setTableName("LSuserMaster");
-//				lscfttransactionRepository.save(((LSusergrouprights) lsrights.get(0)).getObjsilentaudit());
 			}
 
 			lsusergrouprightsRepository.save(lsrights);
@@ -726,10 +724,9 @@ public class UserService {
 			lscfttransactionRepository.save(Objclass.getObjsilentaudit());
 		}
 		if (Objclass.getSitecode() == 0) {
-//			return lSusergroupRepository.findByusergroupstatusAndUsergroupnameNot("A","Administrator");
 			return lSusergroupRepository.findByUsergroupnameNotOrderByUsergroupcodeAsc("Administrator");
 		}
-//		return lSusergroupRepository.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(),"Administrator");
+		
 		return lSusergroupRepository
 				.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeAsc(Objclass.getSitecode(), "Administrator");
 	}
@@ -816,7 +813,6 @@ public class UserService {
 		if (objpwd.getObjuser() != null) {
 			objpwd.getObjmanualaudit().setComments(objpwd.getObjuser().getComments());
 			objpwd.getObjmanualaudit().setTableName("LSPasswordPolicy");
-//			lscfttransactionRepository.save(objpwd.getObjmanualaudit());
 		}
 		objpwd.setResponse(new Response());
 		objpwd.getResponse().setStatus(true);
@@ -828,9 +824,7 @@ public class UserService {
 	public LSPasswordPolicy GetPasswordPolicy(LSPasswordPolicy objpwd) {
 
 		if (objpwd.getObjsilentaudit() != null) {
-		
 			objpwd.getObjsilentaudit().setTableName("LSPasswordPolicy");
-//			lscfttransactionRepository.save(objpwd.getObjsilentaudit());
 		}
 		LSPasswordPolicy policy = new LSPasswordPolicy();
 		if (objpwd.getLssitemaster() != null) {
@@ -952,44 +946,13 @@ public class UserService {
 
 		if (objusermaster.getIsmultitenant() != null && objusermaster.getMultitenantusercount() != null
 				&& objusermaster.getIsmultitenant() == 1) {
-//			int passwordstatus=1;
 			String password = Generatetenantpassword();
 			String passwordadmin = AESEncryption.encrypt(password);
 			LSuserMaster lsuserMaster = new LSuserMaster();
-//			lsuserMaster.setPassword(passwordadmin);
 			objusermaster.setPassword(passwordadmin);
-//			objusermaster.setPasswordstatus(passwordstatus);
 			Email email = new Email();
 			email.setMailto(objusermaster.getEmailid());
 			email.setSubject("ELN User Credentials");
-//			email.setMailcontent("<b>Dear Customer</b>,<br>"
-//					+ "<i>You have successfully create user</i><br>"
-////					+ "<i>Your organisation ID is <b>"+Tenant.getTenantid()+"</b>.</i><br>"
-//					+ "<i>This is for your username and password.</i><br>"
-//					+ "<b>UserName:\t\t "+objusermaster.getUsername()+" </b><br><b>Password:\t\t"+password+"</b>");
-//			email.setMailcontent("As requested, a new user has been created.<br><br>"
-//					+ "The following are the details of the user:<br><br>"
-//					+ "User Name:\t\t "+objusermaster.getUsername()+"<br><br>"
-//							+ "Password:\t\t"+password+"<br><br>"
-//									+ "Please enter the above password in the Old password field, followed by entering a password of your choice in �New Password� and �Confirm <br>"
-//									+ "Password� fields to complete the user setup.<br><br>"
-//									+ "This message has been sent by Agaram Technologies Private Limited for using Logilab ELN on Azure Cloud.");
-
-//			email.setMailcontent("<html>\r\n" + 
-//					"<body><table >\r\n" + 
-//					"        <tr>\r\n" + 
-//					"            <td style='backgroud-color:#000;'>\r\n" + 
-//					"       <img src='cid:identifier1234'> "+
-//					"            </td>\r\n" + 
-//					"        </tr>\r\n" + 
-//					"    </table></body>\r\n" + 
-//					"</html>");
-
-//			email.setMailcontent("<td width=\"100%\" align=\"center\" style=\"background-image: url(D:/WORKING FOLDER/ELN/branches/ELN 6.6/ELNCLOUDPOST/src/main/resources/images/AgaramTechnologies_vertical.jpg); background-repeat: no-repeat; background-size: cover; background-color:#fcd539;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"></td>");
-//			
-//			email.setMailcontent( "\"<H1>Hello</H1><img src=\"cid:image\"  style ='margin-left: 200px; width: 16%;border: 3px;'><br><br>\"\r\n" + 
-//					"//	         		+ \"<img src=\"cid:seconimage\"  style ='margin-left: 200px; width: 16%;border: 3px;'>\"");
-//			
 
 			email.setMailcontent(
 					"<b>Dear Customer,</b><br><center><img src=\"cid:image\"  style =width:120px; height:100px border: 3px;'></center><br><br>"
@@ -1029,10 +992,8 @@ public class UserService {
 			lscfttransactionRepository.save(objusergroup.getObjsilentaudit());
 		}
 		if (objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
-//			return lsuserMasterRepository.findByusernameNot("Administrator");
 			return lsuserMasterRepository.findByusernameNot("Administrator");
 		}
-//		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator",objusergroup.getLssitemaster());
 		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objusergroup.getLssitemaster());
 	}
 
@@ -1059,4 +1020,7 @@ public class UserService {
 		return lsuserMasterRepository.findByUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(lstuser,0);
 	}
 	
+	public Lsusersettings getUserPrefrences(LSuserMaster objuser) {
+		return LsusersettingsRepository.findByUsercode(objuser.getUsercode());
+	}
 }

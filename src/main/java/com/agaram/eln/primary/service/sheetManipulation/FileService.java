@@ -253,48 +253,20 @@ public class FileService {
 
 	public List<LSfile> GetSheets(LSuserMaster objuser) {
 		if (objuser.getUsername().equals("Administrator")) {
-			//			if (objuser.getObjsilentaudit() != null) {
-//				objuser.setObjsilentaudit(new LScfttransaction());
-//				objuser.getObjsilentaudit().setModuleName("Sheet Creation");
-//				objuser.getObjsilentaudit().setComments("Request to load Sheet Creation screen");
-//				objuser.getObjsilentaudit().setActions("View / Load");
-//				objuser.getObjsilentaudit().setSystemcoments("System Generated");
-//				objuser.getObjsilentaudit().setTableName("LSuserMaster");
-//				objuser.getObjsilentaudit().setManipulatetype("view");
-//				objuser.getObjsilentaudit().setLsuserMaster(user.getUsercode());
-//				objuser.getObjsilentaudit().setLssitemaster(user.getLssitemaster().getSitecode());
-//				lscfttransactionRepository.save(objuser.getObjsilentaudit());
-//			}
 			return lSfileRepository.getsheetGreaterthanone();
 		} else {
-//			LSuserMaster user = lSuserMasterRepository.findByusercode(objuser.getUsercode());
-//
-//			objuser.setObjsilentaudit(new LScfttransaction());
-//			objuser.getObjsilentaudit().setModuleName("Sheet Creation");
-//			objuser.getObjsilentaudit().setComments("Request to load Sheet Creation screen");
-//			objuser.getObjsilentaudit().setActions("View / Load");
-//			objuser.getObjsilentaudit().setSystemcoments("System Generated");
-//			objuser.getObjsilentaudit().setTableName("LSuserMaster");
-//			objuser.getObjsilentaudit().setManipulatetype("view");
-//			objuser.getObjsilentaudit().setLsuserMaster(user.getUsercode());
-//			objuser.getObjsilentaudit().setLssitemaster(user.getLssitemaster().getSitecode());
-//
-//			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 			return GetSheetsbyuser(objuser);
 		}
 	}
 
 	public List<LSfile> GetSheetsbyuser(LSuserMaster objuser) {
 		List<LSfile> lstfile = new ArrayList<LSfile>();
-		List<Integer> lstteammap = lsuserteammappingRepository
-				.getTeamcodeByLsuserMaster4postgressandsql(objuser.getUsercode());
+		List<LSuserMaster> lstteamuser = objuser.getObjuser().getTeamusers();
 
-		if (lstteammap.size() > 0) {
-			List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
+		if (lstteamuser != null && lstteamuser.size() > 0) {
 			lstteamuser.add(objuser);
 			lstfile = lSfileRepository.getsheetGreaterthanOneAndCreatedByUserIN(lstteamuser);
 		} else {
-			List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
 			lstteamuser.add(objuser);
 			lstfile = lSfileRepository.getsheetGreaterthanOneAndCreatedByUserIN(lstteamuser);
 		}
@@ -303,15 +275,12 @@ public class FileService {
 
 	public List<Sheettemplateget> GetSheetsbyuseronDetailview(LSuserMaster objuser) {
 		List<Sheettemplateget> lstfile = new ArrayList<Sheettemplateget>();
-		List<Integer> lstteammap = lsuserteammappingRepository
-				.getTeamcodeByLsuserMaster4postgressandsql(objuser.getUsercode());
+		List<LSuserMaster> lstteamuser = objuser.getObjuser().getTeamusers();
 
-		if (lstteammap.size() > 0) {
-			List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
+		if (lstteamuser != null && lstteamuser.size() > 0) {
 			lstteamuser.add(objuser);
 			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1, lstteamuser);
 		} else {
-			List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
 			lstteamuser.add(objuser);
 			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1, lstteamuser);
 		}
@@ -319,19 +288,6 @@ public class FileService {
 			objuser.getObjsilentaudit().setTableName("LSfile");
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
-		
-		/*
-		 * if (!lstfile.isEmpty() && lstfile.size() > 0) {
-		 * 
-		 * int i = 0;
-		 * 
-		 * while (i < lstfile.size()) {
-		 * 
-		 * lstfile.get(i).setVersioncout(lsfileversionRepository.countByFilecode(lstfile
-		 * .get(i).getFilecode()));
-		 * 
-		 * i++; } }
-		 */
 
 		return lstfile;
 	}
