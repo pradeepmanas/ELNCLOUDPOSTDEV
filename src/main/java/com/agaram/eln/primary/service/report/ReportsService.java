@@ -587,8 +587,8 @@ public class ReportsService {
 			String sheetfilecodeString = "";
 
 			LScfttransaction LScfttransactionobj = new LScfttransaction();
-			LSuserMaster lsusermaster = new LSuserMaster();
-			
+
+
 			if (argObj.containsKey("type")) {
 				if ((int) argObj.get("type") == 1) {
 					docType = 1;
@@ -606,36 +606,34 @@ public class ReportsService {
 				}
 			}
 			if (docType == 1) {
-				if(System.getProperty("os.name").contains("Linux")) {
+				if (System.getProperty("os.name").contains("Linux")) {
 					filePath += "/templates";
-				}
-				else
-				{
+				} else {
 					filePath += "\\templates";
 				}
 			}
 			File newFile = new File(filePath);
-			if(!newFile.exists()) {
+			if (!newFile.exists()) {
 				newFile.mkdir();
 			}
-			//newFile = new File(filePath, filename);
-			newFile = new File (filePath, filename);
+			// newFile = new File(filePath, filename);
+			newFile = new File(filePath, filename);
 //			if(System.getProperty("os.name").contains("Linux")) {
 ////				newFile.createNewFile();
 //				Files.createFile(newFile.toPath());
 //			}else {
-				FileOutputStream fos = new FileOutputStream(newFile);
-				new XWPFDocument().write(fos);
-				fos.close();
+			FileOutputStream fos = new FileOutputStream(newFile);
+			new XWPFDocument().write(fos);
+			fos.close();
 //			}
-			if(env.getProperty("fileReceiver") != null) {
+			if (env.getProperty("fileReceiver") != null) {
 				int httpfileStatus = uploadSingleFile(newFile.getAbsolutePath(), docType);
-				if(httpfileStatus == 200) {
+				if (httpfileStatus == 200) {
 					objMap.put("fileFullPath", "");
-				}else {
+				} else {
 					objMap.put("fileFullPath", newFile.getAbsolutePath());
 				}
-			}else {
+			} else {
 				objMap.put("fileFullPath", newFile.getAbsolutePath());
 			}
 			objMap.put("fileName", "New Document.docx");
@@ -652,7 +650,12 @@ public class ReportsService {
 				if (argObj.get("lssitecode") != null) {
 //				lsusermaster = new ObjectMapper().convertValue(argObj.get("Lsusermaster"),new TypeReference<LSuserMaster>(){});
 //				LSDocReportobj.setLssitemaster(lsusermaster.getLssitemaster().getSitecode());
-				LSDocReportobj.setLssitemaster((Integer) argObj.get("lssitecode"));
+					
+					String sSitecode = (String) argObj.get("lssitecode");
+					
+					int site = Integer.parseInt(sSitecode);
+
+					LSDocReportobj.setLssitemaster(site);
 				}
 			}
 			LSDocReportobj.setExtention("docx");

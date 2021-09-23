@@ -17,6 +17,7 @@ public class Logilaborders extends Logilabordermaster {
 	private Integer approvelstatus;
 	private Integer lockeduser;
 	private Integer testcode;
+	private String batchid;
 	private LSsamplemaster lssamplemaster;
 	private LSprojectmaster lsprojectmaster;
 	private Integer filecode;
@@ -54,6 +55,7 @@ public class Logilaborders extends Logilabordermaster {
 		this.filecode = lsfile != null ? lsfile.getFilecode() : -1;
 		this.filetype = filetype;
 		this.lsuserMaster = lsuserMaster;
+		this.batchid=batchid;
 		
 		this.repositoryitemname =lsrepositoriesdata !=null ?lsrepositoriesdata.getRepositoryitemname():null;
 		this.assignedto =lsuserMaster;
@@ -165,7 +167,11 @@ public class Logilaborders extends Logilabordermaster {
 		this.filecode = filecode;
 	}
 
-	
-	
-	
+	public String getBatchid() {
+		return batchid;
+	}
+
+	public void setBatchid(String batchid) {
+		this.batchid = batchid;
+	}
 }

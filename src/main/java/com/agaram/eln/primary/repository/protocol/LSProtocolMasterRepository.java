@@ -149,4 +149,7 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			Integer usercode, LSprotocolworkflow lsprotocolworkflow, int i, Date fromdate, Date todate);
 	
 	List<LSprotocolmaster> findByCreatedbyInAndLssitemaster(List<Integer> createdby, Integer site);
+
+	List<LSprotocolmaster> findByCreatedbyInAndLssitemasterOrderByCreatedateDesc(List<Integer> lstuser,
+			Integer sitecode);
 }

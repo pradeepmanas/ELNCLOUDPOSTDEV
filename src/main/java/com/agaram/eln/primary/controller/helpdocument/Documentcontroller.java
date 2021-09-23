@@ -112,4 +112,10 @@ public class Documentcontroller {
 	public ResponseEntity<InputStreamResource> helpdownload(@PathVariable String fileid) throws IOException {
 		return helpdocumentservice.helpdownload(fileid);
 	}
+	
+	@PostMapping("/getnodeonpage")
+	public Helptittle getnodeonpage(@RequestBody Helptittle objhelp)
+	{
+		return helpdocumentservice.getnodeonpage(objhelp.getPage());
+	}
 }

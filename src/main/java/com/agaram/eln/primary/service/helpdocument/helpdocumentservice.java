@@ -312,4 +312,9 @@ public class helpdocumentservice {
        
         return objupdatehelp;
 	}
+	
+	public Helptittle getnodeonpage(String page)
+	{
+		return helptittleRepository.findFirst1ByPageOrderByNodecodeDesc(page);
+	}
 }

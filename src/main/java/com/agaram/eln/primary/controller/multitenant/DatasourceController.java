@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.controller.multitenant;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -37,12 +38,12 @@ public class DatasourceController {
 	}
 
 	@PostMapping("/Registertenant")
-	public DataSourceConfig Registertenant(@RequestBody DataSourceConfig Tenantname) throws MessagingException {
+	public DataSourceConfig Registertenant(@RequestBody DataSourceConfig Tenantname)
+			throws MessagingException, IOException {
 
 		return datasourceService.Registertenant(Tenantname);
 	}
 
-	// kumu
 	@PostMapping("/Registertenantid")
 	public DataSourceConfig Registertenantid(MultipartHttpServletRequest request, HttpServletResponse response)
 			throws Exception {
@@ -52,20 +53,16 @@ public class DatasourceController {
 				new TypeReference<Map<String, Object>>() {
 				});
 
-//		DataSourceConfig Tenantname = objMap.readValue(request.getParameter("tenantID"), new TypeReference<DataSourceConfig>() {}) ;
-
-		System.out.println(request.getParameter("tenantID"));
 		Response objres = new Response();
-//		Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
+
 		DataSourceConfig Tenantname = objMap.convertValue(argObj, new TypeReference<DataSourceConfig>() {
 		});
-//		Tenantname = objMap.convertValue(argObj.get("CustomerSubscription"),  new TypeReference<DataSourceConfig>() {}) ;
+
 		CustomerSubscription CustomerSubscription = objMap.convertValue(argObj.get("CustomerSubscription"),
 				new TypeReference<CustomerSubscription>() {
 				});
 		Tenantname.setCustomerSubscription(CustomerSubscription);
-		// System.out.println(Tenantname);
-//	return null;
+
 		String password = "agaram";
 		String tenantID = AESEncryption.decrypt(request.getHeader("password"));
 		if (password.equals(tenantID)) {
@@ -88,17 +85,12 @@ public class DatasourceController {
 		Map<String, Object> argObj = objMap.readValue(request.getParameter("customer_subscription_id"),
 				new TypeReference<Map<String, Object>>() {
 				});
-//		System.out.println(request.getParameter("tenantID"));
+
 		Response objres = new Response();
-//		Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
-//		DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
+
 		CustomerSubscription CustomerSubscription = objMap.convertValue(argObj,
 				new TypeReference<CustomerSubscription>() {
 				});
-
-		// CustomerSubscription CustomerSubscription = objMap.convertValue(argObj, new
-		// TypeReference<CustomerSubscription>() {}) ;
-//		System.out.println(Tenantname);
 
 		String password = "agaram";
 		String tenantID = AESEncryption.decrypt(request.getHeader("password"));
@@ -122,20 +114,16 @@ public class DatasourceController {
 		Map<String, Object> argObj = objMap.readValue(request.getParameter("Registerinvoice"),
 				new TypeReference<Map<String, Object>>() {
 				});
-//		System.out.println(request.getParameter("tenantID"));
+
 		Response objres = new Response();
-//		Map<String, Object> argObj = objMap.readValue(request.getParameter("tenantID"), new TypeReference<Map<String, Object>>() {}) ;
-//		DataSourceConfig Tenantname = objMap.convertValue(argObj,  new TypeReference<DataSourceConfig>() {}) ;
+
 		Invoice Invoice = objMap.convertValue(argObj, new TypeReference<Invoice>() {
 		});
 		CustomerSubscription CustomerSubscription = objMap.convertValue(argObj.get("CustomerSubscription"),
 				new TypeReference<CustomerSubscription>() {
 				});
-//		Invoice.setCustomer_subscription_id(CustomerSubscription.getCustomer_subscription_id());
+
 		Invoice.setCustomerSubscription(CustomerSubscription);
-		// CustomerSubscription CustomerSubscription = objMap.convertValue(argObj, new
-		// TypeReference<CustomerSubscription>() {}) ;
-//		System.out.println(Tenantname);
 
 		String password = "agaram";
 		String tenantID = AESEncryption.decrypt(request.getHeader("password"));
@@ -148,7 +136,6 @@ public class DatasourceController {
 			Invoice.setObjResponse(objres);
 			return Invoice;
 		}
-//		
 	}
 
 	@PostMapping("/Getalltenant")
@@ -196,7 +183,7 @@ public class DatasourceController {
 	}
 
 	@PostMapping("/sendotp")
-	public DataSourceConfig sendotp(@RequestBody DataSourceConfig objtenant) throws MessagingException {
+	public DataSourceConfig sendotp(@RequestBody DataSourceConfig objtenant) throws MessagingException, IOException {
 
 		return datasourceService.sendotp(objtenant);
 	}
@@ -227,7 +214,8 @@ public class DatasourceController {
 	}
 
 	@PostMapping("/updatetenantadminpassword")
-	public DataSourceConfig updatetenantadminpassword(@RequestBody DataSourceConfig Tenant) throws MessagingException {
+	public DataSourceConfig updatetenantadminpassword(@RequestBody DataSourceConfig Tenant)
+			throws MessagingException, IOException {
 		return datasourceService.updatetenantadminpassword(Tenant);
 	}
 
@@ -242,7 +230,14 @@ public class DatasourceController {
 	}
 
 	@PostMapping("/Remindertenant")
-	public DataSourceConfig Remindertenant(@RequestBody DataSourceConfig Tenantname) throws MessagingException {
+	public DataSourceConfig Remindertenant(@RequestBody DataSourceConfig Tenantname)
+			throws MessagingException, IOException {
 		return datasourceService.Remindertenant(Tenantname);
+	}
+	
+	@PostMapping("/updateTenantPlan")
+	public DataSourceConfig updateTenantPlan(@RequestBody DataSourceConfig tenantDetails)
+			throws Exception {
+		return datasourceService.updateTenantPlan(tenantDetails);
 	}
 }

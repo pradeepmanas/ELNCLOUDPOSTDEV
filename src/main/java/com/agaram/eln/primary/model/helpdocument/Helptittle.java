@@ -26,6 +26,8 @@ public class Helptittle {
 	
 	private Integer nodeindex;
 	
+	private String page;
+	
 	@Transient
 	Response objResponse;
 
@@ -67,6 +69,14 @@ public class Helptittle {
 
 	public void setNodeindex(Integer nodeindex) {
 		this.nodeindex = nodeindex;
+	}
+
+	public String getPage() {
+		return page;
+	}
+
+	public void setPage(String page) {
+		this.page = page;
 	}
 	
 	

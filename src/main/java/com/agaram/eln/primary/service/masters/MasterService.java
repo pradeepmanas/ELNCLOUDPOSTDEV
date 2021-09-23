@@ -138,20 +138,21 @@ public class MasterService {
 			Response Response = new Response();
 			List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 			for (int i = 0; i < lsrepositoriesdata.size(); i++) {
-				obj = lsnotificationRepository.findByRepositorycodeAndRepositorydatacode(
+				Details = "{\"repositorycode\":\"" + lsrepositoriesdata.get(i).getRepositorycode()
+						+ "\", \"repositorydatacode\":\"" + lsrepositoriesdata.get(i).getRepositorydatacode()
+						+ "\", \"usercode\":\"" + lsrepositoriesdata.get(i).getUsercode()
+						+ "\", \"repositoryitemname\":\"" + lsrepositoriesdata.get(i).getRepositoryitemname()
+						+ "\", \"repositoryuniqueid\":\"" + lsrepositoriesdata.get(i).getRepositoryuniqueid()
+						+ "\", \"expireddatecount\":\"" + lsrepositoriesdata.get(i).getExpireddatecount() + "\"}";
+				obj = lsnotificationRepository.findByRepositorycodeAndRepositorydatacodeAndNotificationdetils(
 						lsrepositoriesdata.get(i).getRepositorycode(),
-						lsrepositoriesdata.get(i).getRepositorydatacode());
+						lsrepositoriesdata.get(i).getRepositorydatacode(),Details);
 				if (lsrepositoriesdata.get(i).getRepositorycode() != null
 						&& lsrepositoriesdata.get(i).getRepositorydatacode() != null && obj == null) {
 
 					Notifiction = "EXPIREDINVENTORY";
 
-					Details = "{\"repositorycode\":\"" + lsrepositoriesdata.get(i).getRepositorycode()
-							+ "\", \"repositorydatacode\":\"" + lsrepositoriesdata.get(i).getRepositorydatacode()
-							+ "\", \"usercode\":\"" + lsrepositoriesdata.get(i).getUsercode()
-							+ "\", \"repositoryitemname\":\"" + lsrepositoriesdata.get(i).getRepositoryitemname()
-							+ "\", \"repositoryuniqueid\":\"" + lsrepositoriesdata.get(i).getRepositoryuniqueid()
-							+ "\", \"expireddatecount\":\"" + lsrepositoriesdata.get(i).getExpireddatecount() + "\"}";
+					
 
 					Date date = new Date();
 					LSuserMaster LSuserMaster = new LSuserMaster();

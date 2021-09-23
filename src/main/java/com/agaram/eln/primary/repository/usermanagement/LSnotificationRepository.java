@@ -23,4 +23,6 @@ public interface LSnotificationRepository extends JpaRepository<LSnotification, 
 	@Query("update LSnotification o set o.isnewnotification = 0 where o.notifationto = ?1 and notificationcode <= ?2")
 	void updatenotificationstatus(LSuserMaster lsuserMaster, Long notificationcode);
 	public LSnotification findByRepositorycodeAndRepositorydatacode(Integer repositorycode, Integer repositorydatacode);
+	public LSnotification findByRepositorycodeAndRepositorydatacodeAndNotificationdetils(Integer repositorycode,
+			Integer repositorydatacode, String details);
 }

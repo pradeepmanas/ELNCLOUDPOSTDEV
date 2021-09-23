@@ -1394,3 +1394,11 @@ update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 2;
 update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 10;
 update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 38;
 update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 40;
+
+update lsusergrouprightsmaster set modulename='Sheet Templates' where orderno=10;
+update lsusergrouprights set modulename='Sheet Templates'  where displaytopic='Sheet Creation';
+
+update lsusergrouprightsmaster set modulename='Protocol Templates' where orderno=50;
+update lsusergrouprights set modulename='Protocol Templates' where modulename='Protocols';
+
+INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (51, 'Protocol Templates', 'Protocol Templates', '0', 'NA', 'NA', 'NA', '0,0,0',51) ON CONFLICT(orderno)DO NOTHING;
