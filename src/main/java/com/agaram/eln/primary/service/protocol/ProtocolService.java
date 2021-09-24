@@ -1618,6 +1618,23 @@ public class ProtocolService {
 
 		return lstOrder;
 	}
+
+	public Map<String, Object> getProtocolOrderListfortabchange(LSlogilabprotocoldetail lSlogilabprotocoldetail) {
+		Map<String, Object> lstOrder = new HashMap<String, Object>();
+
+		if(lSlogilabprotocoldetail.getOrderflag().equals("N")) {
+			List<LSlogilabprotocoldetail> lstPendingOrder = LSlogilabprotocoldetailRepository.findTop10ByProtocoltypeAndOrderflagOrderByCreatedtimestampDesc(lSlogilabprotocoldetail.getProtocoltype(), "N");
+			int pendingcount =LSlogilabprotocoldetailRepository.countByProtocoltypeAndOrderflag(lSlogilabprotocoldetail.getProtocoltype(), "N");
+			lstOrder.put("lstPendingOrder", lstPendingOrder);
+			lstOrder.put("pendingcount", pendingcount);
+		}else if(lSlogilabprotocoldetail.getOrderflag().equals("R")) {
+			int completedcount =LSlogilabprotocoldetailRepository.countByProtocoltypeAndOrderflag(lSlogilabprotocoldetail.getProtocoltype(), "R");
+			List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository.findTop10ByProtocoltypeAndOrderflagOrderByCreatedtimestampDesc(lSlogilabprotocoldetail.getProtocoltype(), "R");
+			lstOrder.put("lstCompletedOrder", lstCompletedOrder);			
+			lstOrder.put("completedcount", completedcount);
+		}
+		return lstOrder;
+	}
 	
 	
 	public Map<String, Object> getreminProtocolOrderList(LSlogilabprotocoldetail lSlogilabprotocoldetail) {
@@ -1633,9 +1650,17 @@ public class ProtocolService {
 
 		return lstOrder;
 	}
-	
-	
-
+	public Map<String, Object> getreminProtocolOrderListontab(LSlogilabprotocoldetail lSlogilabprotocoldetail) {
+		Map<String, Object> lstOrder = new HashMap<String, Object>();
+		if(lSlogilabprotocoldetail.getOrderflag().equals("N")) {
+			List<LSlogilabprotocoldetail> lstreminingPendingOrder = LSlogilabprotocoldetailRepository.getProtocoltypeAndOrderflag(lSlogilabprotocoldetail.getProtocoltype(), "N");	
+			lstOrder.put("lstreminingPendingOrder", lstreminingPendingOrder);
+		}else if(lSlogilabprotocoldetail.getOrderflag().equals("R")) {
+			List<LSlogilabprotocoldetail> lstreminingCompletedOrder = LSlogilabprotocoldetailRepository.getProtocoltypeAndOrderflag(lSlogilabprotocoldetail.getProtocoltype(), "R");
+			lstOrder.put("lstreminingCompletedOrder", lstreminingCompletedOrder);
+		}
+		return lstOrder;
+	}
 	public Map<String, Object> updateProtocolOrderStep(Map<String, Object> argObj) {	Map<String, Object> mapObj = new HashMap<String, Object>();
 
 	LSlogilabprotocolsteps LSprotocolstepObj = new ObjectMapper().convertValue(argObj.get("ProtocolOrderStepObj"),

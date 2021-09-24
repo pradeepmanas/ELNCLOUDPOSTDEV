@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.config.ADS_Connection;
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -369,5 +370,15 @@ public class LoginController {
 	@PostMapping("/Switchusergroup")
 	public Map<String, Object> Switchusergroup(@RequestBody LSuserMaster lsuserMaster) throws Exception {
 		return loginService.Switchusergroup(lsuserMaster);
+	}
+	
+	@PostMapping("/serverDateFormat")
+	public Map<String, Object> serverDateFormat(@RequestBody LSuserMaster lsuserMaster) throws Exception {
+		
+		Map<String, Object> rMap = new HashMap<>();
+		
+		rMap.put("serverDateFormat", commonfunction.getServerDateFormat());
+		
+		return rMap;
 	}
 }

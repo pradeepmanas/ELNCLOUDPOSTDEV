@@ -44,7 +44,6 @@ import com.agaram.eln.primary.repository.usermanagement.LSactiveUserRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSdomainMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
-import com.agaram.eln.primary.repository.usermanagement.LsusersettingsRepository;
 import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
 import com.agaram.eln.primary.service.cfr.AuditService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,7 +51,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSSiteMasterRepository.class)
-//@EnableJpaRepositories(basePackageClasses = LSDomainMasterRepository.class)
+
 public class LoginService {
 
 	@Autowired
@@ -96,8 +95,6 @@ public class LoginService {
 	@Autowired
 	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
 	
-	@Autowired
-	private LsusersettingsRepository LsusersettingsRepository;
 	
 	static final Logger logger = Logger.getLogger(LoginService.class.getName());
 	

@@ -137,9 +137,20 @@ public class ProtocolController {
 		return ProtocolMasterService.getProtocolOrderList(LSlogilabprotocoldetail);
 	}
 	
+	
+	@RequestMapping(value = "/getProtocolOrderListfortabchange")
+	protected Map<String, Object> getProtocolOrderListfortabchange(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail) {
+		return ProtocolMasterService.getProtocolOrderListfortabchange(LSlogilabprotocoldetail);
+	}
+	
 	@RequestMapping(value = "/getreminProtocolOrderList")
 	protected Map<String, Object> getreminProtocolOrderList(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail) {
 		return ProtocolMasterService.getreminProtocolOrderList(LSlogilabprotocoldetail);
+	}
+	
+	@RequestMapping(value = "/getreminProtocolOrderListontab")
+	protected Map<String, Object> getreminProtocolOrderListontab(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail) {
+		return ProtocolMasterService.getreminProtocolOrderListontab(LSlogilabprotocoldetail);
 	}
 
 	@RequestMapping(value = "/updateProtocolOrderStep")

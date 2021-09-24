@@ -1,9 +1,14 @@
 package com.agaram.eln.primary.commonfunction;
 
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -81,5 +86,30 @@ public class commonfunction {
 		}
 
 		return jsonReturnString;
+	}
+	
+	public static String getServerDateFormat() throws ParseException {
+
+		Date newDate = new SimpleDateFormat("yyyy/dd/MM hh:mm:ss").parse("4444/31/12 23:58:57");
+
+		Locale locale = Locale.getDefault();
+		DateFormat datetimeFormatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
+
+		String dateSString = datetimeFormatter.format(newDate);
+		dateSString = dateSString.replaceAll("31", "dd");
+		dateSString = dateSString.replaceAll("12", "MM");
+		dateSString = dateSString.replaceAll("Dec", "MMM");
+		dateSString = dateSString.replaceAll("4444", "yyyy");
+		dateSString = dateSString.replaceAll("44", "yy");
+		dateSString = dateSString.replaceAll("11", "hh");
+		dateSString = dateSString.replaceAll("23", "hh");
+		dateSString = dateSString.replaceAll("58", "mm");
+		dateSString = dateSString.replaceAll("57", "ss");
+		dateSString = dateSString.replaceAll(" AM", "");
+		dateSString = dateSString.replaceAll(" PM", "");
+
+		dateSString = "MM-dd-yyyy hh:mm:ss";
+
+		return dateSString;
 	}
 }
