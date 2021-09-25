@@ -67,7 +67,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private Date completedtimestamp;
 	
 	@ManyToOne
-	private LSprotocolmaster Lsprotocolmaster;
+	private LSprotocolmaster lsprotocolmaster;
 	
 	@ManyToOne
 	private LSuserMaster lsuserMaster;
@@ -131,11 +131,11 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	}
 
 	public LSprotocolmaster getLsprotocolmaster() {
-		return Lsprotocolmaster;
+		return lsprotocolmaster;
 	}
 
 	public void setLsprotocolmaster(LSprotocolmaster lsprotocolmaster) {
-		this.Lsprotocolmaster = lsprotocolmaster;
+		this.lsprotocolmaster = lsprotocolmaster;
 	}
 
 	public LSuserMaster getLsuserMaster() {
