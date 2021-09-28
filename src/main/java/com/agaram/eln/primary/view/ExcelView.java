@@ -153,7 +153,7 @@ public class ExcelView extends AbstractXlsxView{
 	      				 { 	      						 
       						 Cell cell =  row.createCell(cellNum);
       	        			 cell.setCellStyle(dateCellStyle);
-      	        			//cell.setCellValue(dateFormat.format(dataEntry.getValue()));
+      	        			cell.setCellValue((String)dataEntry.getValue());
 	      				 }
 	       				 else
 	       				 {

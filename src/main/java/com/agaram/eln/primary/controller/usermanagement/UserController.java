@@ -32,6 +32,7 @@ import com.agaram.eln.config.SMTPMailvalidation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudProfilePicture;
 import com.agaram.eln.primary.model.fileManipulation.ProfilePicture;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSactiveUser;
@@ -106,6 +107,12 @@ public class UserController {
 	public List<LSusergroup> GetUserGroup(@RequestBody LSuserMaster objusermaster)
 	{
 	  return userService.GetUserGroup(objusermaster);
+	}
+	//usercode
+	@PostMapping("/getMultiUserGroup")
+	public List<LSMultiusergroup> getMultiUserGroup(@RequestBody LSuserMaster objusermaster)
+	{
+	  return userService.getMultiUserGroup(objusermaster);
 	}
 	
 	@PostMapping("/GetActiveUserGroup")

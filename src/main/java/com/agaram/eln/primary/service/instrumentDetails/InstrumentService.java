@@ -52,6 +52,7 @@ import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
@@ -1914,12 +1915,6 @@ public class InstrumentService {
 			objfile.getObjsilentaudit().setTableName("LSsamplefile");
 //			lscfttransactionRepository.save(objfile.getObjsilentaudit());
 		}
-		// manual audit
-		if (objfile.getObjuser() != null) {
-			objfile.getObjmanualaudit().setComments(objfile.getObjuser().getComments());
-			objfile.getObjmanualaudit().setTableName("LSsamplefile");
-//			lscfttransactionRepository.save(objfile.getObjmanualaudit());
-		}
 		objfile.setResponse(new Response());
 		objfile.getResponse().setStatus(true);
 		objfile.getResponse().setInformation("ID_DUMMY1");
@@ -2268,19 +2263,8 @@ public class InstrumentService {
 
 	public LSlogilablimsorderdetail updateVersionandWorkflowhistory(LSlogilablimsorderdetail objorder) {
 		objorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
-//		if(objorder.getLssamplefile() != null)
-//		{
-//			objorder.getLssamplefile().setLssamplefileversion(lssamplefileversionRepository.getfileversiononbatchcode(objorder.getBatchcode()));
-//		}
-//		else
-//		{
-//			LSsamplefile objsample = new LSsamplefile();
-//			objsample.setLssamplefileversion(lssamplefileversionRepository.getfileversiononbatchcode(objorder.getBatchcode()));
-//			objorder.setLssamplefile(objsample);
-//		}
-//		
-//		objorder.setLsorderworkflowhistory(lsorderworkflowhistoryRepositroy.findByBatchcodeOrderByHistorycode(objorder.getBatchcode()));
-
+		objorder.setObjsilentaudit(new LScfttransaction());
+		objorder.setObjmanualaudit(new LScfttransaction());
 		return objorder;
 	}
 

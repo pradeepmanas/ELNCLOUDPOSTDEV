@@ -18,6 +18,7 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.notification.Email;
+import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSactiveUser;
@@ -252,6 +253,10 @@ public class UserService {
 
 		return lSusergroupRepository.findByusergroupnameNotOrderByUsergroupcodeAsc("Administrator");
 	}
+	
+	
+	
+	
 
 //	public LSusergroup ActDeactUserGroup(LSusergroup objusergroup) 
 //	{
@@ -1022,5 +1027,10 @@ public class UserService {
 	
 	public Lsusersettings getUserPrefrences(LSuserMaster objuser) {
 		return LsusersettingsRepository.findByUsercode(objuser.getUsercode());
+	}
+
+	public List<LSMultiusergroup> getMultiUserGroup(LSuserMaster objusermaster) {
+		
+		return LSMultiusergroupRepositery.findByusercode(objusermaster.getUsercode());
 	}
 }
