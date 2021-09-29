@@ -154,11 +154,14 @@ public class PdfView extends AbstractPdfView {
 						}
 
 					}
+					if(para != null)
+       			 {
 					PdfPCell cell = new PdfPCell(para);
 					cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 					cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 					table.addCell(cell);
 					document.add(table);
+       			 }
 				}
 
 				if (dataEntry.getKey().equalsIgnoreCase("parsedXML")

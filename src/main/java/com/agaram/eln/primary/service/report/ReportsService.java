@@ -3475,8 +3475,10 @@ public class ReportsService {
 		Map<String, Object> MapObj = new HashMap<String, Object>();
 		String sheetCode = (String) argMap.get("FileCodeString");
 		int ismultiplesheet = (int) argMap.get("ismultiplesheet");
+		String sSitecode = (String) argMap.get("lssitecode");
 		
-		int sitecode =(int) argMap.get("lssitecode");
+		int sitecode = Integer.parseInt(sSitecode);
+//		int sitecode =(int) argMap.get("lssitecode");
 //		LScfttransaction LScfttransactionobj = new ObjectMapper().convertValue(argMap.get("objsilentaudit"),
 //				new TypeReference<LScfttransaction>() {
 //				});

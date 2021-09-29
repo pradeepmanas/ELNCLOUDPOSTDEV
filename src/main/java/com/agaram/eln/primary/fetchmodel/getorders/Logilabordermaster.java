@@ -1,7 +1,9 @@
 package com.agaram.eln.primary.fetchmodel.getorders;
 
 import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
@@ -22,6 +24,7 @@ public class Logilabordermaster {
 	private Integer filetype;
 	private String orderflag;
 	private Date createdtimestamp;
+	private LSworkflow lsworkflow;
 	
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow
 			, String testname, LSfile lsfile, LSsamplemaster lssamplemaster,
@@ -74,19 +77,51 @@ public class Logilabordermaster {
 		return lstworkflow;
 	}
 
-	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+//	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+//		
+//		if(lstworkflow != null && this.workflowcode !=null && lstworkflow.size() >0)
+//		{
+//			this.setCanuserprocess(lstworkflow.stream().map(LSworkflow::getWorkflowcode).anyMatch(this.workflowcode::equals));
+////			if(lstworkflow.contains(this.workflowcode))
+////			{
+////				this.setCanuserprocess(true);
+////			}
+////			else
+////			{
+////				this.setCanuserprocess(false);
+////			}
+//		}
+//		else
+//		{
+//			this.setCanuserprocess(false);
+//		}
+//		this.lstworkflow = null;
+//	}
+public void setLstworkflow(List<LSworkflow> lstworkflow) {
 		
-		if(lstworkflow != null && this.workflowcode !=null && lstworkflow.size() >0)
+		if(lstworkflow != null && this.lsworkflow !=null && lstworkflow.size() >0)
 		{
-			this.setCanuserprocess(lstworkflow.stream().map(LSworkflow::getWorkflowcode).anyMatch(this.workflowcode::equals));
-//			if(lstworkflow.contains(this.workflowcode))
-//			{
-//				this.setCanuserprocess(true);
-//			}
-//			else
-//			{
-//				this.setCanuserprocess(false);
-//			}
+			//if(lstworkflow.contains(this.lsworkflow))
+			
+			List<Integer> lstworkflowcode = new ArrayList<Integer>();
+			if(lstworkflow != null && lstworkflow.size() >0)
+			{
+				lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+			
+			
+			if(lstworkflowcode.contains(this.lsworkflow.getWorkflowcode()))
+			{
+				this.setCanuserprocess(true);
+			}
+			else
+			{
+				this.setCanuserprocess(false);
+			}
+			}
+			else
+			{
+				this.setCanuserprocess(false);
+			}
 		}
 		else
 		{

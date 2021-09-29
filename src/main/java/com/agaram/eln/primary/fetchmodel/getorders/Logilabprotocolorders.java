@@ -20,11 +20,14 @@ public class Logilabprotocolorders {
 	private String samplename;
 	private LSprotocolmaster lsprotocolmaster;
 	private String projectname;
+	private String protocolmastername;
+
+	private String keyword;
 
 	public Logilabprotocolorders(Long protocolordercode, String protoclordername, String orderflag,
-			Integer protocoltype, Date createdtimestamp, Date completedtimestamp
-//			, LSprotocolmaster lsprotocolmaster
-			,LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster
+			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
+			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster
+
 			) {
 
 		this.protocolordercode = protocolordercode;
@@ -33,11 +36,30 @@ public class Logilabprotocolorders {
 		this.protocoltype = protocoltype;
 		this.createdtimestamp = createdtimestamp;
 		this.completedtimestamp = completedtimestamp;
+		this.protocolmastername = lsprotocolmaster != null ? lsprotocolmaster.getProtocolmastername() : "";
 //		this.Lsprotocolmaster = Lsprotocolmaster;
 		this.samplename = lssamplemaster != null ? lssamplemaster.getSamplename():"";
 		this.projectname = lsprojectmaster != null ? lsprojectmaster.getProjectname():"";
+		this.keyword = keyword;
 	}
 
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+
+	public String getProtocolmastername() {
+		return protocolmastername;
+	}
+
+	public void setProtocolmastername(String protocolmastername) {
+		this.protocolmastername = protocolmastername;
+	}
+
+	
 	public String getSamplename() {
 		return samplename;
 	}
