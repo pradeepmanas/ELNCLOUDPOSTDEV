@@ -515,6 +515,15 @@ public class ProtocolService {
 							.findById(LSprotocolstepObj.getProtocolstepcode());
 					updateLSprotocolstepInfo.setLsprotocolstepInfo(LSprotocolstepObj.getLsprotocolstepInfo());
 					CloudLSprotocolstepInfoRepository.save(updateLSprotocolstepInfo);
+					
+				LSprotocolmaster protocolmaster =LSProtocolMasterRepositoryObj.findByprotocolmastercode(LSprotocolstepObj.getProtocolmastercode());
+				mapObj.put("protocolmaster", protocolmaster);
+				List<LSprotocolversion> LSprotocolversionlst = lsprotocolversionRepository
+						.findByprotocolmastercode(LSprotocolstepObj.getProtocolmastercode());
+				
+				Collections.sort(LSprotocolversionlst, Collections.reverseOrder());
+				
+				mapObj.put("LSprotocolversionlst", LSprotocolversionlst);
 				}
 
 			} else {

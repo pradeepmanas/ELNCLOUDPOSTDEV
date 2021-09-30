@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
@@ -84,4 +83,6 @@ public interface InstMasterRepository extends JpaRepository<InstrumentMaster, In
 	  * @return list of instruments 
 	  */
 	 List<InstrumentMaster> findBySiteAndInstcategoryAndStatus(final LSSiteMaster site, final InstrumentCategory instCategory, final int status);
+
+	List<InstrumentMaster> findByStatusAndSite(int i, LSSiteMaster site);
 }

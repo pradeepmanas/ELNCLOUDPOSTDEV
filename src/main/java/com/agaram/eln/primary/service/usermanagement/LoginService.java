@@ -158,7 +158,12 @@ public class LoginService {
 		if(objExitinguser != null)
 		{
 
-			objExitinguser.setLsusergroup(objuser.getLsusergroup());
+			if (objuser.getLsusergroup() == null) {
+
+				objExitinguser.setLsusergroup(LSusergroupRepository.findOne(objuser.getMultiusergroupcode()));
+			} else {
+				objExitinguser.setLsusergroup(objuser.getLsusergroup());
+			}
 			
 //			obj.put("usersettings", LsusersettingsRepository.findByUsercode(objExitinguser.getUsercode()));
 			
@@ -398,7 +403,7 @@ public class LoginService {
 				return obj;
 			}
 			
-			obj.put("multiusergroupcode",objuser.getLsusergroup().getUsergroupcode());
+			obj.put("multiusergroupcode", objuser.getMultiusergroupcode());
 		} 
 		else
 		{

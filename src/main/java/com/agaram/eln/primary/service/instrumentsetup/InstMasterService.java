@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.service.instrumentsetup;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,20 +7,13 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.builder.Diff;
 import org.apache.commons.lang3.builder.DiffResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//import com.agaram.lleln.cfrpart11.cfrtransaction.CfrTransactionService;
-//import com.agaram.lleln.jaxb.ReadWriteXML;
-//import com.agaram.lleln.page.Page;
-import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.model.instrumentsetup.FileSettings;
 import com.agaram.eln.primary.model.instrumentsetup.InstMethod;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
@@ -31,6 +23,10 @@ import com.agaram.eln.primary.model.instrumentsetup.InstrumentType;
 import com.agaram.eln.primary.model.instrumentsetup.Rs232Settings;
 import com.agaram.eln.primary.model.instrumentsetup.TcpSettings;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+//import com.agaram.lleln.cfrpart11.cfrtransaction.CfrTransactionService;
+//import com.agaram.lleln.jaxb.ReadWriteXML;
+//import com.agaram.lleln.page.Page;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.instrumentsetup.InstCategoryRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMethodRepository;
@@ -39,6 +35,7 @@ import com.agaram.eln.primary.repository.instrumentsetup.InstTypeRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 //import com.agaram.lleln.users.CreatedUser;
 //import com.agaram.lleln.util.EnumerationInfo;
+import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 
 /**
  * This Service class is used to access the InstMasterRepository to fetch details
@@ -348,8 +345,9 @@ public class InstMasterService {
     @Transactional
     public ResponseEntity<Object> getInstMaster(final LSSiteMaster site) 
     {        	    	
-    	return new ResponseEntity<>(masterRepo.findByStatusAndSite(1, site, 
-    			new Sort(Sort.Direction.DESC, "instmastkey")), HttpStatus.OK);    
+//    	return new ResponseEntity<>(masterRepo.findByStatusAndSite(1, site, 
+//    			new Sort(Sort.Direction.DESC, "instmastkey")), HttpStatus.OK);  
+    	return new ResponseEntity<>(masterRepo.findByStatusAndSite(1, site), HttpStatus.OK);
     }
     
     

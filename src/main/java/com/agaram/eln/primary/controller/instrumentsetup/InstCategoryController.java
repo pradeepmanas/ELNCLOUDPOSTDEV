@@ -49,7 +49,11 @@ public class InstCategoryController {
     {
        final ObjectMapper mapper = new ObjectMapper();		
        final InstrumentCategory category = mapper.convertValue(mapObject.get("instCategory"), InstrumentCategory.class);
-       final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
+       
+//       final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
+       
+       final Boolean saveAuditTrail = false;
+       
        //final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
 	  
        return  categoryService.createInstCategory(category, saveAuditTrail, request);
@@ -85,7 +89,8 @@ public class InstCategoryController {
     public ResponseEntity<Object> deleteInstCategory( final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject) 
     {
 	
-		  final Boolean saveAuditTrail = (Boolean)mapObject.get("saveAuditTrail");
+//		  final Boolean saveAuditTrail = (Boolean)mapObject.get("saveAuditTrail");
+    		final Boolean saveAuditTrail = false;
 		  
 		  String strUserKey = (String) mapObject.get("doneByUserKey");
 		  
