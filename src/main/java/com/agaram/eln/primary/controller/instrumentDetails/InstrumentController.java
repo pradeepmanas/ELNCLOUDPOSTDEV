@@ -552,8 +552,8 @@ public class InstrumentController {
 
 	// normal
 	@RequestMapping(path = "/download/{param}/{fileid}", method = RequestMethod.GET)
-	public ResponseEntity<InputStreamResource> downloadNonCloud(@PathVariable String param, @PathVariable String fileid,
-			@PathVariable String tenant) throws IOException {
+	public ResponseEntity<InputStreamResource> downloadNonCloud(@PathVariable String param, @PathVariable String fileid
+			) throws IOException {
 
 		return instrumentService.downloadattachments(param, fileid);
 	}

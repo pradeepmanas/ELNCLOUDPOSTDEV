@@ -24,12 +24,13 @@ public class Logilabordermaster {
 	private Integer filetype;
 	private String orderflag;
 	private Date createdtimestamp;
+	private Date completedtimestamp;
+	@SuppressWarnings("unused")
 	private LSworkflow lsworkflow;
-	
-	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow
-			, String testname, LSfile lsfile, LSsamplemaster lssamplemaster,
-			LSprojectmaster lsprojectmaster, Integer filetype, String orderflag, Date createdtimestamp)
-	{
+
+	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
+			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,
+			Date createdtimestamp, Date completedtimestamp) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -40,17 +41,20 @@ public class Logilabordermaster {
 		this.filetype = filetype;
 		this.orderflag = orderflag;
 		this.createdtimestamp = createdtimestamp;
+		this.completedtimestamp = completedtimestamp;
 	}
-	
+
 	public Long getBatchcode() {
 		return batchcode;
 	}
+
 	public void setBatchcode(Long batchcode) {
 		this.batchcode = batchcode;
 	}
+
 	public String getBatchid() {
 		String Batchid = "ELN" + this.batchcode;
-		
+
 		if (this.filetype == 3) {
 			Batchid = "RESEARCH" + this.batchcode;
 		} else if (this.filetype == 4) {
@@ -58,13 +62,14 @@ public class Logilabordermaster {
 		} else if (this.filetype == 5) {
 			Batchid = "VALIDATE" + this.batchcode;
 		}
-		
+
 		return Batchid;
 	}
+
 	public void setBatchid(String batchid) {
 		this.batchid = batchid;
 	}
-	
+
 	public Integer getWorkflowcode() {
 		return workflowcode;
 	}
@@ -97,37 +102,35 @@ public class Logilabordermaster {
 //		}
 //		this.lstworkflow = null;
 //	}
-public void setLstworkflow(List<LSworkflow> lstworkflow) {
-		
-		if(lstworkflow != null && this.lsworkflow !=null && lstworkflow.size() >0)
-		{
-			//if(lstworkflow.contains(this.lsworkflow))
-			
+	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+
+		if (lstworkflow != null  && this.workflowcode !=null && lstworkflow.size() > 0) {
+			// if(lstworkflow.contains(this.lsworkflow))
+
 			List<Integer> lstworkflowcode = new ArrayList<Integer>();
-			if(lstworkflow != null && lstworkflow.size() >0)
-			{
+			if (lstworkflow != null && lstworkflow.size() > 0) {
 				lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
-			
-			
-			if(lstworkflowcode.contains(this.lsworkflow.getWorkflowcode()))
-			{
-				this.setCanuserprocess(true);
-			}
-			else
-			{
+
+				if (lstworkflowcode.contains(this.workflowcode)) {
+					this.setCanuserprocess(true);
+				} else {
+					this.setCanuserprocess(false);
+				}
+			} else {
 				this.setCanuserprocess(false);
 			}
-			}
-			else
-			{
-				this.setCanuserprocess(false);
-			}
-		}
-		else
-		{
+		} else {
 			this.setCanuserprocess(false);
 		}
 		this.lstworkflow = null;
+	}
+
+	public Date getCompletedtimestamp() {
+		return completedtimestamp;
+	}
+
+	public void setCompletedtimestamp(Date completedtimestamp) {
+		this.completedtimestamp = completedtimestamp;
 	}
 
 	public boolean isCanuserprocess() {
@@ -137,7 +140,7 @@ public void setLstworkflow(List<LSworkflow> lstworkflow) {
 	public void setCanuserprocess(boolean canuserprocess) {
 		this.canuserprocess = canuserprocess;
 	}
-	
+
 	public String getTestname() {
 		return testname;
 	}
@@ -145,7 +148,7 @@ public void setLstworkflow(List<LSworkflow> lstworkflow) {
 	public void setTestname(String testname) {
 		this.testname = testname;
 	}
-	
+
 	public String getProjectname() {
 		return projectname;
 	}
@@ -161,7 +164,7 @@ public void setLstworkflow(List<LSworkflow> lstworkflow) {
 	public void setSamplename(String samplename) {
 		this.samplename = samplename;
 	}
-	
+
 	public String getFilename() {
 		return filename;
 	}
@@ -193,6 +196,5 @@ public void setLstworkflow(List<LSworkflow> lstworkflow) {
 	public void setCreatedtimestamp(Date createdtimestamp) {
 		this.createdtimestamp = createdtimestamp;
 	}
-	
-	
+
 }

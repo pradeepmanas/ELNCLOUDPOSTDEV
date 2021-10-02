@@ -2121,7 +2121,11 @@ public class ReportsService {
 				boolean fileLoaded = false;
 				String HashKey = UUID.randomUUID().toString();
 				if (lstSelectedData.size() == 1) {
-					List<LSdocreports> LSdocreportsLst = LSdocreportsRepositoryObj.findByIsreportAndLssitemaster(1, lsusermaster.getLssitemaster().getSitecode());
+					Integer site = mapper.convertValue(obj.get("sitecode"), Integer.class);
+
+					List<LSdocreports> LSdocreportsLst = LSdocreportsRepositoryObj.findByIsreportAndLssitemaster(1,
+							site);
+					
 //					fileName = templateName + "_" + lstSelectedData.get(0).getBatchid();
 					fileName = "Report_";
 					if(LSdocreportsLst.size() < 10) {

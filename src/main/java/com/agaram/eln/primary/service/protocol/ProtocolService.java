@@ -534,6 +534,17 @@ public class ProtocolService {
 				update.set("content", LSprotocolstepObj.getLsprotocolstepInfo());
 
 				mongoTemplate.upsert(query, update, LSprotocolstepInfo.class);
+				
+				if (LSprotocolstepObj.getNewStep() != 1) {
+					LSprotocolmaster protocolmaster =LSProtocolMasterRepositoryObj.findByprotocolmastercode(LSprotocolstepObj.getProtocolmastercode());
+					mapObj.put("protocolmaster", protocolmaster);
+					List<LSprotocolversion> LSprotocolversionlst = lsprotocolversionRepository
+							.findByprotocolmastercode(LSprotocolstepObj.getProtocolmastercode());
+					
+					Collections.sort(LSprotocolversionlst, Collections.reverseOrder());
+					
+					mapObj.put("LSprotocolversionlst", LSprotocolversionlst);
+				}
 			}
 
 			List<LSprotocolstep> tempLSprotocolstepLst = LSProtocolStepRepositoryObj
@@ -704,13 +715,14 @@ public class ProtocolService {
 
 				LSprotocolstepversion protocolStep = LSprotocolstepversionRepository.findByprotocolstepcodeAndVersionno(
 						lSprotocolstepObj.getProtocolstepcode(), protocolMaster.getVersionno());
-
+				if(protocolStep != null) {
 				Query query = new Query(Criteria.where("id").is(protocolStep.getProtocolstepversioncode()));
 
 				Update update = new Update();
 				update.set("content", lSprotocolstepObj.getLsprotocolstepInfo());
 
 				mongoTemplate.upsert(query, update, LSprotocolversionstepInfo.class);
+				}
 			}
 		}
 	}
@@ -2032,8 +2044,19 @@ if(protocolStep != null) {
 				LSprotocolstep.setCreatedbyusername(LsuserMasterObj.getUsername());
 				LSprotocolstep.setCreateddate(new Date());
 				LSprotocolstep.setSitecode(LScfttransactionobj.getLssitemaster());
+				LSprotocolstep.setNewStep(1);
 			}
 			LSProtocolStepRepositoryObj.save(LSprotocolstep);
+			
+			if (multitenent == 1) {
+
+				updateCloudProtocolVersion(LSprotocolstep.getProtocolmastercode(),
+						LSprotocolstep.getProtocolstepcode(), LSprotocolstep.getLsprotocolstepInfo(),
+						LSprotocolstep.getNewStep(), LScfttransactionobj, LSprotocolstep);
+						
+			}else {
+				updateCloudProtocolVersiononSQL(LSprotocolstep, LScfttransactionobj);
+			}
 			
 			List<LSprotocolsampleupdates> sampleupdatelst = new ArrayList<LSprotocolsampleupdates>();
 			if (LSprotocolstep.getProtocolstepcode() != null) {

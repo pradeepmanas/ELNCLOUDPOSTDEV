@@ -32,10 +32,10 @@ public class Logilaborders extends Logilabordermaster {
 	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,
-			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Lsrepositoriesdata lsrepositoriesdata
-			,Lsrepositories lsrepositories) {
+			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
+			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories) {
 		
-		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,createdtimestamp);
+		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,createdtimestamp,completedtimestamp);
 		 
 		if(lssamplefile != null)
 		{
