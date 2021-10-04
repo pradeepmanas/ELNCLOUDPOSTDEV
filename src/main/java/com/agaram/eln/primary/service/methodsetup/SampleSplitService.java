@@ -59,7 +59,7 @@ public class SampleSplitService {
 	 * @param mapObject [Map] object holding details of site, comments, sample split techniques, ...
 	 * @return response object with updated 'Method' detail.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	@Transactional
 	public ResponseEntity<Object> saveSampleSplit(final HttpServletRequest request, final Map<String, Object> mapObject)
 	{		
@@ -67,7 +67,10 @@ public class SampleSplitService {
 		
 		final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-		final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
+		
+		String someValue =  (String) mapObject.get("doneByUserKey");
+		
+		final int doneByUserKey = Integer.parseInt(someValue);
 //		final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
 		final int methodKey = (Integer) mapObject.get("methodKey");
 		final String comments = (String) mapObject.get("comments");

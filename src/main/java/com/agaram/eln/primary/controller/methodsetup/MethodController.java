@@ -82,7 +82,8 @@ public class MethodController {
 		  final Method method = mapper.convertValue(mapObject.get("methodmaster"), Method.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
+		  String someValue =  (String) mapObject.get("doneByUserKey");
+		  final int doneByUserKey = Integer.parseInt(someValue);
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
 		  
 		  return methodService.updateMethod(method, site, doneByUserKey, comments, 
@@ -103,7 +104,8 @@ public class MethodController {
 		  final int methodKey = mapper.convertValue(mapObject.get("methodkey"), Integer.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
+		  String someValue =  (String) mapObject.get("doneByUserKey");
+		  final int doneByUserKey = Integer.parseInt(someValue);
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
 		  
 		  return methodService.deleteMethod(methodKey, site, comments, doneByUserKey,

@@ -4,19 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-
-import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.model.methodsetup.CommonFunction;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.ParserBlock;
@@ -29,11 +26,12 @@ import com.agaram.eln.primary.model.methodsetup.SampleTextSplit;
 import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserTechnique;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserIgnoreCharsRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserMethodRepository;
-import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * This Service class holds methods that is used to invoke the respective classes
@@ -236,7 +234,9 @@ public class ParserSetupService {
 		
 		final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-		final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
+		String someValue =  (String) mapObject.get("doneByUserKey");
+		
+		final int doneByUserKey = Integer.parseInt(someValue);
 //		final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
 		final int methodKey = (Integer) mapObject.get("methodKey");
 		final String comments = (String) mapObject.get("comments"); 
