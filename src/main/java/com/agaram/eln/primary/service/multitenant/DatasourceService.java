@@ -226,21 +226,51 @@ public class DatasourceService {
 			for (int i = 0; i < mails.length; i++) {
 				Email email = new Email();
 				email.setMailto(mails[i]);
-				email.setSubject("UsrName and PassWord");
+				email.setSubject("Tenant Username & Password");
+//				email.setMailcontent(
+//						"<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"
+//								+ Tenantname.getTenantid() + "</b><br><b>Password:\t\t" + password
+//								+ "</b><br><b><a href=" + Tenantname.getLoginpath() + ">click here to login</a></b>");
+//				emailService.sendEmail(email);
 				email.setMailcontent(
-						"<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"
-								+ Tenantname.getTenantid() + "</b><br><b>Password:\t\t" + password
-								+ "</b><br><b><a href=" + Tenantname.getLoginpath() + ">click here to login</a></b>");
+						"<b>Dear Customer,</b><br><center><img src=\"cid:image\"  style =width:120px; height:100px border: 3px;'></center><br><br>"
+								+ "<p><p>Thanks for Registering your Organization in Logilab ELN.</p>Please use below mentioned Username and password for Tenant Login.<br><br>"
+								+ "Click the URL mentioned below to generate the OTP for verifying the Organization.<br><br>"
+								+ "Once the verification is completed, you will receive an email with the ELN Administrator login details.<br><br>"
+								+ "<b style='margin-left: 76px;'>Username:</b>\t\t " + Tenantname.getTenantid()
+								+ "<br><br>" + "<b style='margin-left: 76px;'>Password &nbsp;:</b>\t\t" + password
+								+ "<br><br>" + "<b style='margin-left: 76px;'><a href=" + Tenantname.getLoginpath()
+								+ ">Click here to Tenant Login</a></b><br><br>"
+								+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
+								+ "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
+								+ "<img src=\"cid:seconimage\"  style ='width:120px; height:100px;border: 3px;'"
+								+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
+								+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
 				emailService.sendEmail(email);
 			}
 		} else {
 			Email email = new Email();
 			email.setMailto(Tenantname.getUseremail());
-			email.setSubject("UsrName and PassWord");
+			email.setSubject("Tenant Username & Password");
+//			email.setMailcontent(
+//					"<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"
+//							+ Tenantname.getTenantid() + "</b><br><b>Password:\t\t" + password + "</b><br><b><a href="
+//							+ Tenantname.getLoginpath() + ">click here to login</a></b>");
+//			emailService.sendEmail(email);
 			email.setMailcontent(
-					"<b>Dear Customer</b>,<br><i>This is for your username and password</i><br><b>UserName:\t\t"
-							+ Tenantname.getTenantid() + "</b><br><b>Password:\t\t" + password + "</b><br><b><a href="
-							+ Tenantname.getLoginpath() + ">click here to login</a></b>");
+					"<b>Dear Customer,</b><br><center><img src=\"cid:image\"  style =width:120px; height:100px border: 3px;'></center><br><br>"
+							+ "<p><p>Thanks for Registering your Organization in Logilab ELN.</p>Please use below mentioned Username and password for Tenant Login.<br><br>"
+							+ "Click the URL mentioned below to generate the OTP for verifying the Organization.<br><br>"
+							+ "Once the verification is completed, you will receive an email with the ELN Administrator login details.<br><br>"
+							+ "<b style='margin-left: 76px;'>Username:</b>\t\t " + Tenantname.getTenantid() + "<br><br>"
+							+ "<b style='margin-left: 76px;'>Password &nbsp;:</b>\t\t" + password + "<br><br>"
+							+ "<b style='margin-left: 76px;'><a href=" + Tenantname.getLoginpath()
+							+ ">Click here to Tenant Login</a></b><br><br>"
+							+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
+							+ "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
+							+ "<img src=\"cid:seconimage\"  style ='width:120px; height:100px;border: 3px;'"
+							+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
+							+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
 			emailService.sendEmail(email);
 		}
 
