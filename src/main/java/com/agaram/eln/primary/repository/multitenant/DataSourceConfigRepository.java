@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import com.agaram.eln.primary.fetchtenantsource.Datasourcemaster;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
 
 public interface DataSourceConfigRepository extends JpaRepository<DataSourceConfig, Long> {
@@ -35,7 +36,10 @@ public interface DataSourceConfigRepository extends JpaRepository<DataSourceConf
 //	DataSourceConfig findBycustomersubscriptionid(Long customer_subscription_id);
 
 	List<DataSourceConfig> findByInitialize(boolean initiated);
-
+	
+	List<Datasourcemaster> findByinitialize(boolean initiated);
+	
+	List<Datasourcemaster> findBytenantid(String tenantid);
 	
 	@Transactional
 	@Modifying

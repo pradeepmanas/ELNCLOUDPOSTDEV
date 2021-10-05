@@ -1394,3 +1394,13 @@ update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 2;
 update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 10;
 update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 38;
 update lsaudittrailconfigmaster set manualaudittrail = 1 where serialno = 40;
+
+update lsusergrouprightsmaster set modulename='Sheet Templates' where orderno=10;
+update lsusergrouprights set modulename='Sheet Templates'  where displaytopic='Sheet Creation';
+
+update lsusergrouprightsmaster set modulename='Protocol Templates' where orderno=50;
+update lsusergrouprights set modulename='Protocol Templates' where modulename='Protocols';
+
+INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (51, 'Protocol Templates', 'Protocol Templates', '0', 'NA', 'NA', 'NA', '0,0,0',51) ON CONFLICT(orderno)DO NOTHING;
+
+DO$do$DECLARE   _kind "char";BEGIN   SELECT relkind   FROM   pg_class   WHERE  relname = 'lsprotocolworkflow_workflowcode_seq'        INTO  _kind;   IF NOT FOUND THEN        CREATE SEQUENCE lsprotocolworkflow_workflowcode_seq;	  	  ALTER SEQUENCE lsprotocolworkflow_workflowcode_seq OWNED BY lsprotocolworkflow.workflowcode;   ELSIF _kind = 'S' THEN         ELSE                      END IF;END$do$;

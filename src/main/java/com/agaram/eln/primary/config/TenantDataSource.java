@@ -1,13 +1,6 @@
 package com.agaram.eln.primary.config;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +8,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
@@ -23,16 +15,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.agaram.eln.primary.fetchtenantsource.Datasourcemaster;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
-import com.agaram.eln.primary.service.report.ReportsService;
 
 @Primary
 @Component
 public class TenantDataSource implements Serializable {
 	
-	static final Logger logger = Logger.getLogger(TenantDataSource.class.getName());
-
     private HashMap<String, DataSource> dataSources = new HashMap<>();
     
     public HashMap<String, DataSource> archivedataSources = new HashMap<>();
@@ -42,7 +32,8 @@ public class TenantDataSource implements Serializable {
     @Autowired
     private DataSourceConfigRepository configRepo;
     
-    @Autowired
+    @SuppressWarnings("unused")
+	@Autowired
 	private Environment env;
 
     public DataSource getDataSource(String name, String arcivedb) {
@@ -73,11 +64,13 @@ public class TenantDataSource implements Serializable {
 
 	@PostConstruct
     public Map<String, DataSource> getAll() {
-        List<DataSourceConfig> configList = configRepo.findByInitialize(true);
-        logger.info("Get all datasource");
+//		agaramtech.onmicrosoft.com
+		//List<Datasourcemaster> configList = configRepo.findBytenantid("agaramtech.onmicrosoft.com");
+        List<Datasourcemaster> configList = configRepo.findByinitialize(true);
+//        logger.info("Get all datasource");
         Map<String, DataSource> result = new HashMap<>();
         try {
-	        for (DataSourceConfig config : configList) {
+	        for (Datasourcemaster config : configList) {
 	            DataSource dataSource = getDataSource(config.getName(), config.getArchivename());
 	            result.put(config.getName(), dataSource); 
 	            
@@ -88,7 +81,7 @@ public class TenantDataSource implements Serializable {
 	        }
         }
         catch(Exception e) {
-        	logger.error(e.getLocalizedMessage());
+//        	logger.error(e.getLocalizedMessage());
         }
         return result;
     }
