@@ -1439,18 +1439,6 @@ public class ProtocolService {
 			lSprotocolworkflow.get(0).getObjsilentaudit().setTableName("lSprotocolworkflow");
 		}
 
-		if (lSprotocolworkflow.get(0).getObjuser() != null) {
-
-			lSprotocolworkflow.get(0).getObjmanualaudit()
-					.setComments(lSprotocolworkflow.get(0).getObjuser().getComments());
-			lSprotocolworkflow.get(0).getObjmanualaudit().setTableName("lSprotocolworkflow");
-			lSprotocolworkflow.get(0).getObjmanualaudit()
-					.setLsuserMaster(lSprotocolworkflow.get(0).getObjsilentaudit().getLsuserMaster());
-			lSprotocolworkflow.get(0).getObjmanualaudit()
-					.setLssitemaster(lSprotocolworkflow.get(0).getLssitemaster().getSitecode());
-
-//			lscfttransactionRepository.save(lSprotocolworkflow.get(0).getObjmanualaudit());
-		}
 		lSprotocolworkflow.get(0).setResponse(new Response());
 		lSprotocolworkflow.get(0).getResponse().setStatus(true);
 		lSprotocolworkflow.get(0).getResponse().setInformation("ID_SHEETMSG");

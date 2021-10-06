@@ -353,12 +353,12 @@ public class DataSourceConfig implements Serializable {
 	public long getPackagetype() {
 
 		int plantype = 0;
-		
+
 		if (this.packagetype == 3914465000000065049L) {
 			plantype = 2;
 		} else if (this.packagetype == 3914465000000065053L) {
 			plantype = 3;
-		}else {
+		} else if (this.packagetype == 3914465000000065045L) {
 			plantype = 1;
 		}
 

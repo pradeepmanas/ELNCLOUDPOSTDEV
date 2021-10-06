@@ -502,13 +502,7 @@ public class UserService {
 				objteam.getObjsilentaudit().setTableName("LSusersteam");
 
 			}
-//			manual audit
-			if (objteam.getObjuser() != null) {
-				objteam.getObjmanualaudit().setActions("Warning");
-				objteam.getObjmanualaudit().setTableName("LSusersteam");
-				objteam.getObjmanualaudit().setComments(objteam.getObjuser().getComments());
 
-			}
 			return objteam;
 		} else if (objteam.getStatus() == -1) {
 
@@ -526,13 +520,6 @@ public class UserService {
 							+ "made attempt to delete existing team associated with orders");
 					objteam.getObjsilentaudit().setTableName("LSusersteam");
 				}
-//					manual audit
-				if (objteam.getObjuser() != null) {
-					objteam.getObjmanualaudit().setActions("Warning");
-					objteam.getObjmanualaudit().setTableName("LSusersteam");
-					objteam.getObjmanualaudit().setComments(objteam.getObjuser().getComments());
-
-				}
 				return objteam;
 			} else {
 				lsusersteamRepository.save(objteam);
@@ -543,19 +530,7 @@ public class UserService {
 			if (objteam.getObjsilentaudit() != null) {
 				objteam.getObjsilentaudit().setTableName("LSuserteam");
 			}
-//			//Manual Audit
-			if (objteam.getObjuser() != null) {
 
-				if (objteam.getObjmanualaudit() != null) {
-					objteam.getObjmanualaudit().setTableName("LSuserteam");
-					objteam.getObjmanualaudit().setComments(objteam.getObjuser().getComments());
-
-					objteam.getObjmanualaudit().setLsuserMaster(objteam.getModifieduserMaster().getUsercode());
-					objteam.getObjmanualaudit()
-							.setLssitemaster(objteam.getModifieduserMaster().getLssitemaster().getSitecode());
-
-				}
-			}
 			return objteam;
 		}
 
@@ -574,7 +549,6 @@ public class UserService {
 
 		if (objteam.getObjsilentaudit() != null) {
 			objteam.getObjsilentaudit().setTableName("LSuserteam");
-			lscfttransactionRepository.save(objteam.getObjsilentaudit());
 		}
 
 		return objteam;
