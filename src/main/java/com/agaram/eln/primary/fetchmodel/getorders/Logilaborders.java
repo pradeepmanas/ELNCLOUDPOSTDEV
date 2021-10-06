@@ -31,7 +31,7 @@ public class Logilaborders extends Logilabordermaster {
 
 	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
-			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,
+			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,LSuserMaster assignedto,
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories) {
 		
@@ -58,7 +58,7 @@ public class Logilaborders extends Logilabordermaster {
 		this.batchid=batchid;
 		
 		this.repositoryitemname =lsrepositoriesdata !=null ?lsrepositoriesdata.getRepositoryitemname():null;
-		this.assignedto =lsuserMaster;
+		this.assignedto =assignedto;
 		this.repositoryname =lsrepositories !=null ?lsrepositories.getRepositoryname():null;
 	}
 	

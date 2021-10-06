@@ -321,4 +321,10 @@ public class FileController {
 	{
 		return fileService.getfileoncode(objfile);
 	}
+	
+	@PostMapping(value = "/getfilemasteroncode")
+	public Sheettemplateget getfilemasteroncode(@RequestBody LSfile objfile)
+	{
+		return fileService.getfilemasteroncode(objfile);
+	}
 }

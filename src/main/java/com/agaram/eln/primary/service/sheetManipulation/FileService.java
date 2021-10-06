@@ -952,4 +952,9 @@ public class FileService {
 
 		return objreturnfile;
 	}
+	
+	public Sheettemplateget getfilemasteroncode(LSfile objfile) {
+		Sheettemplateget objreturnfile = lSfileRepository.findByFilecode(objfile.getFilecode());
+		return objreturnfile;
+	}
 }
