@@ -806,15 +806,7 @@ public class LoginService {
 				objClass.getObjsilentaudit().setActions("Warning");
 				objClass.getObjsilentaudit().setComments(objClass.getObjsilentaudit().getUsername()+" "+"made attempt to create existing domain name");
 				objClass.getObjsilentaudit().setTableName("LSusergroup");
-	    		lscfttransactionRepository.save(objClass.getObjsilentaudit());
-	    	}
-//			manual audit
-			if(objClass.getObjuser() != null)
-	    	{
-				objClass.getObjmanualaudit().setActions("Warning");
-				objClass.getObjmanualaudit().setTableName("LScfttransaction");
-				objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-	    		lscfttransactionRepository.save(objClass.getObjmanualaudit());
+	    		
 	    	}
 			return objClass;
 		}
@@ -823,35 +815,9 @@ public class LoginService {
 
 			if(objClass.getObjsilentaudit() != null)
 	    	{
-				//objClass.getObjsilentaudit().setModuleName("UserManagement");
-				//objClass.getObjsilentaudit().setComments("Insert Domain Successfully");
-				//objClass.getObjsilentaudit().setActions("Insert Domain");
-				//objClass.getObjsilentaudit().setSystemcoments("System Generated");
 				objClass.getObjsilentaudit().setTableName("LSdomainMaster");
-	    		lscfttransactionRepository.save(objClass.getObjsilentaudit());
+
 	    	}
-			
-			if(objClass.getObjuser() != null) {
-				//LScfttransaction manualAudit=new LScfttransaction();
-				if(objClass.getObjmanualaudit() != null)
-		    	{
-				
-//				Date date = new Date();
-				
-				//manualAudit.setModuleName("UserManagement");
-				//manualAudit.setComments("Insert Domain Successfully");
-				//manualAudit.setActions("Insert Domain");
-				//manualAudit.setSystemcoments("User Generated");
-				objClass.getObjmanualaudit().setTableName("LSdomainMaster");
-				objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-				//manualAudit.setManipulatetype("Insert");
-				objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster().getUsercode());
-				objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster().getSitecode());
-//				objClass.getObjmanualaudit().setTransactiondate(date);
-	    		lscfttransactionRepository.save(objClass.getObjmanualaudit());
-			}
-			}
-			
 			
 			objClass = lSDomainMasterRepository.findOne(objClass.getDomaincode());
 			objClass.setDomainstatus(-1);
@@ -859,8 +825,6 @@ public class LoginService {
 			objClass.setResponse(new Response());
 			objClass.getResponse().setStatus(true);
 			objClass.getResponse().setInformation("ID_DOMAINDEL");
-			
-			
 			
 			return objClass;
 		}
@@ -871,35 +835,8 @@ public class LoginService {
 		//silent AuditTrail
 		if(objClass.getObjsilentaudit() != null)
     	{
-			//objClass.getObjsilentaudit().setModuleName("UserManagement");
-			//objClass.getObjsilentaudit().setComments("Insert Domain Successfully");
-			//objClass.getObjsilentaudit().setActions("Insert Domain");
-			//objClass.getObjsilentaudit().setSystemcoments("System Generated");
 			objClass.getObjsilentaudit().setTableName("LSdomainMaster");
-    		lscfttransactionRepository.save(objClass.getObjsilentaudit());
     	}
-		
-		//Manual Audit
-		if(objClass.getObjuser() != null) {
-			//LScfttransaction manualAudit=new LScfttransaction();
-			if(objClass.getObjmanualaudit() != null)
-	    	{
-			
-//			Date date = new Date();
-			
-			//manualAudit.setModuleName("UserManagement");
-			//manualAudit.setComments("Insert Domain Successfully");
-			//manualAudit.setActions("Insert Domain");
-			//manualAudit.setSystemcoments("User Generated");
-			objClass.getObjmanualaudit().setTableName("LSdomainMaster");
-			objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-			//manualAudit.setManipulatetype("Insert");
-			objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster().getUsercode());
-			objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster().getSitecode());
-//			objClass.getObjmanualaudit().setTransactiondate(date);
-    		lscfttransactionRepository.save(objClass.getObjmanualaudit());
-		}
-		}
 		return objClass;
 	}
 
