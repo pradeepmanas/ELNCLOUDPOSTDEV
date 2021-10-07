@@ -77,7 +77,7 @@ public class AESEncryption {
             String key = "1234567812345678";
             String iv = "1234567812345678";
 
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
             IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 
@@ -103,7 +103,7 @@ public class AESEncryption {
             Decoder decoder = Base64.getDecoder();   
              byte[] encrypted1 = decoder.decode(strToDecrypt);
 
-            Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
             SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
             IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 
