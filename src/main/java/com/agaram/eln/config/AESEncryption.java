@@ -81,7 +81,7 @@ public class AESEncryption {
             SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
             IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 
-            cipher.init(Cipher.ENCRYPT_MODE, keyspec, ivspec);
+            cipher.init(Cipher.ENCRYPT_MODE, keyspec);
 
             originalString = Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
             System.out.println();
@@ -107,7 +107,7 @@ public class AESEncryption {
             SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
             IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 
-            cipher.init(Cipher.DECRYPT_MODE, keyspec, ivspec);
+            cipher.init(Cipher.DECRYPT_MODE, keyspec);
 
             byte[] original = cipher.doFinal(encrypted1);
             originalString = new String(original);
