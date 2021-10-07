@@ -941,12 +941,12 @@ public class FileService {
 			if (objfile.getIsmultitenant() == 1) {
 				CloudSheetCreation file = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
 				if (file != null) {
-					objreturnfile.setFilecontent(file.getContent());
+					objreturnfile.setFilecontent(AESEncryption.encryptcontant(file.getContent()));
 				}
 			} else {
 				SheetCreation file = mongoTemplate.findById(objfile.getFilecode(), SheetCreation.class);
 				if (file != null) {
-					objreturnfile.setFilecontent(file.getContent());
+					objreturnfile.setFilecontent(AESEncryption.encryptcontant(file.getContent()));
 				}
 			}
 		}
