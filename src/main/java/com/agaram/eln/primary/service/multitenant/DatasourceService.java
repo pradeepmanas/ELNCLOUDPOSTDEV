@@ -290,6 +290,9 @@ public class DatasourceService {
 							CustomerSubscription.getType().equalsIgnoreCase("Free") ? 3914465000000065045L
 									: CustomerSubscription.getType().equalsIgnoreCase("Standard") ? 3914465000000065049L
 											: 3914465000000065053L);
+					
+					getTenant.setNoofusers(CustomerSubscription.getNumber_of_users());
+					
 					configRepo.save(getTenant);
 				} else {
 					objres.setStatus(false);

@@ -446,4 +446,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	
 	List<Logilabordermaster> findByOrderflagAndLssamplefileInAndCreatedtimestampBetween(String string,
 			List<LSsamplefile> lssamplefile, Date fromdate, Date todate);
+
+	List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetween(List<LSprojectmaster> lstproject,
+			Date fromdate, Date todate);
 }

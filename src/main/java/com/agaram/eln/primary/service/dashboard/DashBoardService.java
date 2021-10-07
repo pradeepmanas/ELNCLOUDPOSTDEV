@@ -302,6 +302,7 @@ public class DashBoardService {
 		return mapOrders;
 	}
 
+	@SuppressWarnings("unused")
 	public Map<String, Object> Getdashboardordercount(LSuserMaster objuser) {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
@@ -327,108 +328,52 @@ public class DashBoardService {
 
 		} else {
 
-//			List<LSprojectmaster> lstproject = objuser.getLstproject();
-//
-//			long lstUserorder = 0;
-//			if (lstproject != null && lstproject.size() > 0) {
-//				lstUserorder = lslogilablimsorderdetailRepository
-//						.countByLsprojectmasterInOrFiletypeAndCreatedtimestampBetween(lstproject, 0, fromdate, todate);
-//			} else {
-//				lstUserorder = lslogilablimsorderdetailRepository.countByFiletypeAndCreatedtimestampBetween(0, fromdate,
-//						todate);
-//			}
-//
-//			long lstlimscompleted = 0;
-//			if (lstproject != null && lstproject.size() > 0) {
-//				lstlimscompleted = lslogilablimsorderdetailRepository
-//						.countByOrderflagAndLsprojectmasterInOrFiletypeAndCompletedtimestampBetween("R", lstproject, 0,
-//								fromdate, todate);
-//			} else {
-//				lstlimscompleted = lslogilablimsorderdetailRepository
-//						.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "R", fromdate, todate);
-//			}
-//
-//			long lstlimsprocess = lslogilablimsorderdetailRepository
-//					.countByFiletypeAndOrderflagAndLssamplefileInAndCreatedtimestampBetween(0, "N", lssamplefile,
-//							fromdate, todate);
-//			long lstordersinprogress = 0;
-//			if (lstproject != null && lssamplefile != null && lstproject.size() > 0 && lssamplefile.size() > 0) {
-//
-//				lstordersinprogress = lslogilablimsorderdetailRepository
-//						.countByOrderflagAndLsprojectmasterInAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-//								"N", lstproject, 1, 1, fromdate, todate);
-//			}
-//
-//			long lstpending = 0;
-//			if (lstproject != null && lstproject.size() > 0) {
-//				lstpending = lslogilablimsorderdetailRepository
-//						.countByOrderflagAndLsprojectmasterInOrFiletypeAndCreatedtimestampBetween("N", lstproject, 0,
-//								fromdate, todate);
-//			} else {
-//				lstpending = lslogilablimsorderdetailRepository.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0,
-//						"N", fromdate, todate);
-//			}
-//
-//			mapOrders.put("orders", (lstUserorder));
-//			mapOrders.put("pendingorder", (lstpending + lstordersinprogress));
-//			mapOrders.put("completedorder", (lstlimscompleted));
-//			mapOrders.put("onproces", lstlimsprocess + lstordersinprogress);
 			List<LSprojectmaster> lstproject = objuser.getLstproject();
 
 			long lstUserorder = 0;
 			if (lstproject != null && lstproject.size() > 0) {
 				lstUserorder = lslogilablimsorderdetailRepository
 						.countByLsprojectmasterInAndCreatedtimestampBetween(lstproject, fromdate, todate);
-						//.countByLsprojectmasterInOrFiletypeAndCreatedtimestampBetween(lstproject, 0, fromdate, todate);
+
 			} else {
-				//lstUserorder = lslogilablimsorderdetailRepository.countByFiletypeAndCreatedtimestampBetween(0, fromdate,
-				lstUserorder = lslogilablimsorderdetailRepository.countByCreatedtimestampBetween( fromdate,
-						todate);
+
+				lstUserorder = lslogilablimsorderdetailRepository.countByCreatedtimestampBetween(fromdate, todate);
 			}
 
 			long lstlimscompleted = 0;
 			if (lstproject != null && lstproject.size() > 0) {
 				lstlimscompleted = lslogilablimsorderdetailRepository
-						.countByOrderflagAndLsprojectmasterInAndCompletedtimestampBetween("R", lstproject, 
-						//.countByOrderflagAndLsprojectmasterInOrFiletypeAndCompletedtimestampBetween("R", lstproject, 0,
-								fromdate, todate);
+						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("R", lstproject,fromdate, todate);
 			} else {
-				lstlimscompleted = lslogilablimsorderdetailRepository
-						.countByOrderflagAndCreatedtimestampBetween( "R", fromdate, todate);
-						//.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0, "R", fromdate, todate);
+				lstlimscompleted = lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetween("R",
+						fromdate, todate);
+
 			}
 
-			long lstlimsprocess = lslogilablimsorderdetailRepository
-					.countByOrderflagAndLssamplefileInAndCreatedtimestampBetween( "N", lssamplefile,
-					//.countByFiletypeAndOrderflagAndLssamplefileInAndCreatedtimestampBetween(0, "N", lssamplefile,
-							fromdate, todate);
 			long lstordersinprogress = 0;
 			if (lstproject != null && lssamplefile != null && lstproject.size() > 0 && lssamplefile.size() > 0) {
 
 				lstordersinprogress = lslogilablimsorderdetailRepository
 						.countByOrderflagAndLsprojectmasterInAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 								"N", lstproject, 1, 1, fromdate, todate);
+
 			}
 
 			long lstpending = 0;
 			if (lstproject != null && lstproject.size() > 0) {
 				lstpending = lslogilablimsorderdetailRepository
-						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("N", lstproject, 
-						//.countByOrderflagAndLsprojectmasterInOrFiletypeAndCreatedtimestampBetween("N", lstproject, 0,
-								fromdate, todate);
+						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("N", lstproject, fromdate,
+								todate);
 			} else {
-				//lstpending = lslogilablimsorderdetailRepository.countByFiletypeAndOrderflagAndCreatedtimestampBetween(0,
-				lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetween(
-						"N", fromdate, todate);
+			
+				lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetween("N",
+						fromdate, todate);
 			}
 
 			mapOrders.put("orders", (lstUserorder));
-			//mapOrders.put("pendingorder", (lstpending + lstordersinprogress));
-			mapOrders.put("pendingorder", (lstpending ));
+			mapOrders.put("pendingorder", (lstpending));
 			mapOrders.put("completedorder", (lstlimscompleted));
-			//mapOrders.put("onproces", lstlimsprocess + lstordersinprogress);
-			mapOrders.put("onproces", lstlimsprocess );
-
+			mapOrders.put("onproces", lstordersinprogress);
 
 		}
 
@@ -440,6 +385,7 @@ public class DashBoardService {
 		return mapOrders;
 	}
 
+	@SuppressWarnings("unused")
 	public Map<String, Object> Getdashboardorders(LSuserMaster objuser) {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
@@ -460,42 +406,40 @@ public class DashBoardService {
 						.findByOrderflagAndCreatedtimestampBetweenOrderByBatchcodeDesc("N", fromdate, todate));
 			} else if (objuser.getObjuser().getOrderselectiontype() == 4) {
 				mapOrders.put("orderlst",
-						lslogilablimsorderdetailRepository.findByOrderflagAndLssamplefileInAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-								"N", lssamplefile, fromdate, todate));
+						lslogilablimsorderdetailRepository
+								.findByOrderflagAndLssamplefileInAndCreatedtimestampBetweenOrderByBatchcodeDesc("N",
+										lssamplefile, fromdate, todate));
 			}
 
 		} else {
-			
+
 			List<LSprojectmaster> lstproject = objuser.getLstproject();
 			List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
-			List<Logilabordermaster> lstordersIn = new ArrayList<Logilabordermaster>();
-			if(lstproject != null)
-			{
+			if (lstproject != null) {
 				List<LSworkflow> lstworkflow = objuser.getLstworkflow();
 
-			if (objuser.getObjuser().getOrderselectiontype() == 1) {
-				lstorders = lslogilablimsorderdetailRepository
-						.findByLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc(lstproject, fromdate,
-								todate);
-			} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
+				if (objuser.getObjuser().getOrderselectiontype() == 1) {
+					lstorders = lslogilablimsorderdetailRepository
+							.findByLsprojectmasterInAndCreatedtimestampBetween(lstproject, fromdate, todate);
+
+				} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
 				lstorders = lslogilablimsorderdetailRepository
 						.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc("R", lstproject, fromdate,
 								todate);
-			} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
-				lstorders = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc("N", lstproject, fromdate,
-								todate);
-			} else if (objuser.getObjuser().getOrderselectiontype() == 4) {
-//				lstorders = lslogilablimsorderdetailRepository
-//						.findByOrderflagAndLsprojectmasterInAndApprovelstatusAndApprovedAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-//								"N", lstproject, 1, 1, fromdate, todate);
-				lstorders = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLssamplefileInAndCreatedtimestampBetween( "N", lssamplefile,
-						//.countByFiletypeAndOrderflagAndLssamplefileInAndCreatedtimestampBetween(0, "N", lssamplefile,
-								fromdate, todate);
-			}
+				
+				} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
+					lstorders = lslogilablimsorderdetailRepository
+							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc("N",
+									lstproject, fromdate, todate);
+				} else if (objuser.getObjuser().getOrderselectiontype() == 4) {
 
-			lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
+					lstorders = lslogilablimsorderdetailRepository
+							.findByOrderflagAndLssamplefileInAndCreatedtimestampBetween("N", lssamplefile, fromdate,
+									todate);
+
+				}
+
+				lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
 			}
 
 			mapOrders.put("orderlst", lstorders);

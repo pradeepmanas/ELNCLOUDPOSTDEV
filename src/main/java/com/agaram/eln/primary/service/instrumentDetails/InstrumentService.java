@@ -1277,7 +1277,7 @@ public class InstrumentService {
 		long myorderpendingcount = 0;
 		long myordercompletedcount = 0;
 
-		if (lstproject.size() > 0) {
+		if (lstproject != null && lstproject.size() > 0) {
 			List<Integer> lstprojectcode = lstproject.stream().map(LSprojectmaster::getProjectcode).collect(Collectors.toList());
 
 			if (objorder.getOrderflag().equals("N")) {
