@@ -77,11 +77,11 @@ public class AESEncryption {
             String key = "1234567812345678";
             String iv = "1234567812345678";
 
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
             SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
             IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 
-            cipher.init(Cipher.ENCRYPT_MODE, keyspec);
+            cipher.init(Cipher.ENCRYPT_MODE, keyspec, ivspec);
 
             originalString = Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
             System.out.println();
@@ -103,11 +103,11 @@ public class AESEncryption {
             Decoder decoder = Base64.getDecoder();   
              byte[] encrypted1 = decoder.decode(strToDecrypt);
 
-            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+            Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
             SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
             IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 
-            cipher.init(Cipher.DECRYPT_MODE, keyspec);
+            cipher.init(Cipher.DECRYPT_MODE, keyspec, ivspec);
 
             byte[] original = cipher.doFinal(encrypted1);
             originalString = new String(original);
