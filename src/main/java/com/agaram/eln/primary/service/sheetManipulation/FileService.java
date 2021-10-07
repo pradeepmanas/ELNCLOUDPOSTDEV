@@ -15,7 +15,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
 
-import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
@@ -941,12 +940,12 @@ public class FileService {
 			if (objfile.getIsmultitenant() == 1) {
 				CloudSheetCreation file = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
 				if (file != null) {
-					objreturnfile.setFilecontent(AESEncryption.encryptcontant(file.getContent()));
+					objreturnfile.setFilecontent(file.getContent());
 				}
 			} else {
 				SheetCreation file = mongoTemplate.findById(objfile.getFilecode(), SheetCreation.class);
 				if (file != null) {
-					objreturnfile.setFilecontent(AESEncryption.encryptcontant(file.getContent()));
+					objreturnfile.setFilecontent(file.getContent());
 				}
 			}
 		}
