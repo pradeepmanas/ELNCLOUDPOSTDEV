@@ -639,7 +639,7 @@ public class ProtocolService {
 
 			while (i < lstVersStep.size()) {
 
-				if (lstVersStep.get(i).getProtocolstepcode() == lSprotocolstepObj.getProtocolstepcode()) {
+				if (lstVersStep.get(i).getProtocolstepcode().equals(lSprotocolstepObj.getProtocolstepcode())) {
 
 					LSprotocolversionstepInfo LsLogilabprotocolstepInfoObj = new LSprotocolversionstepInfo();
 
@@ -2302,5 +2302,14 @@ public class ProtocolService {
 			}
 		}
 		return mapObj;
+	}
+	
+public LSlogilabprotocoldetail getsingleprotocolorder(LSlogilabprotocoldetail objusers) {
+		
+		if(objusers.getProtocolordercode()!=null && objusers.getProtoclordername()!=null) {
+			return	LSlogilabprotocoldetailRepository.findByProtocolordercodeAndProtoclordername(objusers.getProtocolordercode(),objusers.getProtoclordername());
+		}
+		return objusers;
+	
 	}
 }

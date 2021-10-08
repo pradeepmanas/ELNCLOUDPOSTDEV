@@ -253,4 +253,10 @@ public class ProtocolController {
 	{
 		return ProtocolMasterService.getprotocol(objusers);
 	}
+	
+	@PostMapping("/getsingleprotocolorder")
+	public LSlogilabprotocoldetail getsingleprotocolorder(@RequestBody LSlogilabprotocoldetail objusers)
+	{
+		return ProtocolMasterService.getsingleprotocolorder(objusers);
+	}
 }

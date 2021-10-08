@@ -59,4 +59,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	List<LSlogilabprotocoldetail> findByLsprotocolmaster(@Param("protocolmastercodeArray") List<LSprotocolmaster> protocolmastercodeArray);
 
 
+	LSlogilabprotocoldetail findByProtocolordercodeAndProtoclordername(Long protocolordercode, String protoclordername);
+
+
 }

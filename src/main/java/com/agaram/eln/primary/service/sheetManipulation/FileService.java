@@ -286,8 +286,10 @@ public class FileService {
 		}
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSfile");
-			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+//			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
+		
+		lstfile.forEach(objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
 
 		return lstfile;
 	}
@@ -955,6 +957,9 @@ public class FileService {
 	
 	public Sheettemplateget getfilemasteroncode(LSfile objfile) {
 		Sheettemplateget objreturnfile = lSfileRepository.findByFilecode(objfile.getFilecode());
+		
+		objreturnfile.setVersioncout(lsfileversionRepository.countByFilecode(objfile.getFilecode()));
+		
 		return objreturnfile;
 	}
 }
