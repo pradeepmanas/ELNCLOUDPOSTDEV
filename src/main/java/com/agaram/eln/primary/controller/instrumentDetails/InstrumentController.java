@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
@@ -635,6 +636,18 @@ public class InstrumentController {
 	public Map<String, Object> Getuserprojects(@RequestBody LSuserMaster objuser)
 	{
 		return instrumentService.Getuserprojects(objuser);
+	}
+	
+	@PostMapping("/Getinitialorders")
+	public Map<String, Object> Getinitialorders(@RequestBody LSlogilablimsorderdetail objorder)
+	{
+		return instrumentService.Getinitialorders(objorder);
+	}
+	
+	@PostMapping("/Getremainingorders")
+	public List<Logilabordermaster> Getremainingorders(@RequestBody LSlogilablimsorderdetail objorder)
+	{
+		return instrumentService.Getremainingorders(objorder);
 	}
 
 }

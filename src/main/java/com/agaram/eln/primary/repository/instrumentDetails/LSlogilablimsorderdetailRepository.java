@@ -453,4 +453,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public List<Logilabordermaster> findFirst20ByBatchcodeGreaterThanOrderByBatchcodeDesc(Long batchcode);
 	
 	public List<Logilabordermaster> findFirst20ByBatchcodeGreaterThanAndLsprojectmasterInOrderByBatchcodeDesc(Long batchcode, List<LSprojectmaster> lstproject);
+
+	public Long countByLsprojectmasterIn(List<LSprojectmaster> lstproject);
 }

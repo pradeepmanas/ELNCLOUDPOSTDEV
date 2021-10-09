@@ -2909,14 +2909,27 @@ public class InstrumentService {
 	{
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
-			
+			mapOrders.put("orders", Getadministratororder(objorder));
+			mapOrders.put("ordercount", lslogilablimsorderdetailRepository.count());
 		}
 		else
 		{
-		
+			mapOrders.put("orders", Getuserorder(objorder));
+			mapOrders.put("ordercount", lslogilablimsorderdetailRepository.countByLsprojectmasterIn(objorder.getLsuserMaster().getLstproject()));
 		}
 
 		return mapOrders;
+	}
+	
+	public List<Logilabordermaster> Getremainingorders(LSlogilablimsorderdetail objorder)
+	{
+		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
+			return Getadministratororder(objorder);
+		}
+		else
+		{
+			return Getuserorder(objorder);
+		}
 	}
 	
 	public List<Logilabordermaster> Getadministratororder(LSlogilablimsorderdetail objorder)
