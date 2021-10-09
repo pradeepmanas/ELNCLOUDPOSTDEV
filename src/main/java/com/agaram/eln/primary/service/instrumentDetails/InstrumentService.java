@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -2902,6 +2903,39 @@ public class InstrumentService {
 		objmap.put("team", lstteamcode);
 		objmap.put("teamuser", lstteamusercode);
 		return objmap;
+	}
+	
+	public Map<String, Object> Getinitialorders(LSlogilablimsorderdetail objorder)
+	{
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
+			
+		}
+		else
+		{
+		
+		}
+
+		return mapOrders;
+	}
+	
+	public List<Logilabordermaster> Getadministratororder(LSlogilablimsorderdetail objorder)
+	{
+		List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
+		lstorders = lslogilablimsorderdetailRepository.findFirst20ByBatchcodeGreaterThanOrderByBatchcodeDesc(objorder.getBatchcode());
+		return lstorders;
+	}
+	
+	public List<Logilabordermaster> Getuserorder(LSlogilablimsorderdetail objorder)
+	{
+		List<LSprojectmaster> lstproject = objorder.getLsuserMaster().getLstproject();
+		List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
+		if (lstproject != null) {
+			List<LSworkflow> lstworkflow = objorder.getLsuserMaster().getLstworkflow();
+			lstorders = lslogilablimsorderdetailRepository.findFirst20ByBatchcodeGreaterThanAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getBatchcode(),lstproject);
+			lstorders.forEach(objord -> objord.setLstworkflow(lstworkflow));
+		}
+		return lstorders;
 	}
 
 }
