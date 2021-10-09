@@ -2935,7 +2935,14 @@ public class InstrumentService {
 	public List<Logilabordermaster> Getadministratororder(LSlogilablimsorderdetail objorder)
 	{
 		List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
-		lstorders = lslogilablimsorderdetailRepository.findFirst20ByBatchcodeLessThanOrderByBatchcodeDesc(objorder.getBatchcode());
+		if(objorder.getBatchcode() == 0)
+		{
+			lstorders = lslogilablimsorderdetailRepository.findFirst20ByOrderByBatchcodeDesc();
+		}
+		else
+		{
+			lstorders = lslogilablimsorderdetailRepository.findFirst20ByBatchcodeLessThanOrderByBatchcodeDesc(objorder.getBatchcode());
+		}
 		return lstorders;
 	}
 	
@@ -2945,7 +2952,14 @@ public class InstrumentService {
 		List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
 		if (lstproject != null) {
 			List<LSworkflow> lstworkflow = objorder.getLsuserMaster().getLstworkflow();
-			lstorders = lslogilablimsorderdetailRepository.findFirst20ByBatchcodeLessThanAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getBatchcode(),lstproject);
+			if(objorder.getBatchcode() == 0)
+			{
+				lstorders = lslogilablimsorderdetailRepository.findFirst20ByLsprojectmasterInOrderByBatchcodeDesc(lstproject);
+			}
+			else
+			{
+				lstorders = lslogilablimsorderdetailRepository.findFirst20ByBatchcodeLessThanAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getBatchcode(),lstproject);
+			}
 			lstorders.forEach(objord -> objord.setLstworkflow(lstworkflow));
 		}
 		return lstorders;

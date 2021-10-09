@@ -2348,7 +2348,14 @@ public List<LSlogilabprotocoldetail> Getremainingorders(LSlogilabprotocoldetail 
 public List<LSlogilabprotocoldetail> Getadministratororder(LSlogilabprotocoldetail objorder)
 {
 	List<LSlogilabprotocoldetail> lstorders = new ArrayList<LSlogilabprotocoldetail>();
+	if(objorder.getProtocolordercode() == 0)
+	{
+		lstorders = LSlogilabprotocoldetailRepository.findFirst20ByOrderByProtocolordercodeDesc();
+	}
+	else
+	{
 	lstorders = LSlogilabprotocoldetailRepository.findFirst20ByProtocolordercodeLessThanOrderByProtocolordercodeDesc(objorder.getProtocolordercode());
+	}
 	return lstorders;
 }
 
@@ -2357,7 +2364,14 @@ public List<LSlogilabprotocoldetail> Getuserorder(LSlogilabprotocoldetail objord
 	List<LSprojectmaster> lstproject = objorder.getLsuserMaster().getLstproject();
 	List<LSlogilabprotocoldetail> lstorders = new ArrayList<LSlogilabprotocoldetail>();
 	if (lstproject != null) {
+		if(objorder.getProtocolordercode() == 0)
+		{
+			lstorders = LSlogilabprotocoldetailRepository.findFirst20ByLsprojectmasterInOrderByProtocolordercodeDesc(lstproject);
+		}
+		else
+		{
 		lstorders = LSlogilabprotocoldetailRepository.findFirst20ByProtocolordercodeLessThanAndLsprojectmasterInOrderByProtocolordercodeDesc(objorder.getProtocolordercode(),lstproject);
+		}
 	}
 	return lstorders;
 }
