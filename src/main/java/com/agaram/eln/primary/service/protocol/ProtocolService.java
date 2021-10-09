@@ -18,11 +18,13 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolstepInfo;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolversionstep;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
@@ -40,7 +42,9 @@ import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowhistory;
 import com.agaram.eln.primary.model.protocols.LsLogilabprotocolstepInfo;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
@@ -2312,4 +2316,49 @@ public LSlogilabprotocoldetail getsingleprotocolorder(LSlogilabprotocoldetail ob
 		return objusers;
 	
 	}
+
+
+public Map<String, Object> Getinitialorders(LSlogilabprotocoldetail objorder)
+{
+	Map<String, Object> mapOrders = new HashMap<String, Object>();
+	if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
+		mapOrders.put("orders", Getadministratororder(objorder));
+		mapOrders.put("ordercount", LSlogilabprotocoldetailRepository.count());
+	}
+	else
+	{
+		mapOrders.put("orders", Getuserorder(objorder));
+		mapOrders.put("ordercount", LSlogilabprotocoldetailRepository.countByLsprojectmasterIn(objorder.getLsuserMaster().getLstproject()));
+	}
+
+	return mapOrders;
+}
+
+public List<LSlogilabprotocoldetail> Getremainingorders(LSlogilabprotocoldetail objorder)
+{
+	if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
+		return Getadministratororder(objorder);
+	}
+	else
+	{
+		return Getuserorder(objorder);
+	}
+}
+
+public List<LSlogilabprotocoldetail> Getadministratororder(LSlogilabprotocoldetail objorder)
+{
+	List<LSlogilabprotocoldetail> lstorders = new ArrayList<LSlogilabprotocoldetail>();
+	lstorders = LSlogilabprotocoldetailRepository.findFirst20ByProtocolordercodeGreaterThanOrderByProtocolordercodeDesc(objorder.getProtocolordercode());
+	return lstorders;
+}
+
+public List<LSlogilabprotocoldetail> Getuserorder(LSlogilabprotocoldetail objorder)
+{
+	List<LSprojectmaster> lstproject = objorder.getLsuserMaster().getLstproject();
+	List<LSlogilabprotocoldetail> lstorders = new ArrayList<LSlogilabprotocoldetail>();
+	if (lstproject != null) {
+		lstorders = LSlogilabprotocoldetailRepository.findFirst20ByProtocolordercodeGreaterThanAndLsprojectmasterInOrderByProtocolordercodeDesc(objorder.getProtocolordercode(),lstproject);
+	}
+	return lstorders;
+}
 }

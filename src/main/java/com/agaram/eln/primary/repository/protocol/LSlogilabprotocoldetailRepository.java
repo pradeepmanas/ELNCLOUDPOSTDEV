@@ -10,9 +10,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 
 public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogilabprotocoldetail, Long>{
 
@@ -61,5 +63,9 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	LSlogilabprotocoldetail findByProtocolordercodeAndProtoclordername(Long protocolordercode, String protoclordername);
 
+	public List<LSlogilabprotocoldetail> findFirst20ByProtocolordercodeGreaterThanOrderByProtocolordercodeDesc(Long protocolordercode);
+	
+	public List<LSlogilabprotocoldetail> findFirst20ByProtocolordercodeGreaterThanAndLsprojectmasterInOrderByProtocolordercodeDesc(Long protocolordercode, List<LSprojectmaster> lstproject);
 
+	public Long countByLsprojectmasterIn(List<LSprojectmaster> lstproject);
 }
