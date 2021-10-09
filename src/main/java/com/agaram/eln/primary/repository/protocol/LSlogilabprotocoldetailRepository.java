@@ -63,9 +63,9 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	LSlogilabprotocoldetail findByProtocolordercodeAndProtoclordername(Long protocolordercode, String protoclordername);
 
-	public List<LSlogilabprotocoldetail> findFirst20ByProtocolordercodeGreaterThanOrderByProtocolordercodeDesc(Long protocolordercode);
+	public List<LSlogilabprotocoldetail> findFirst20ByProtocolordercodeLessThanOrderByProtocolordercodeDesc(Long protocolordercode);
 	
-	public List<LSlogilabprotocoldetail> findFirst20ByProtocolordercodeGreaterThanAndLsprojectmasterInOrderByProtocolordercodeDesc(Long protocolordercode, List<LSprojectmaster> lstproject);
+	public List<LSlogilabprotocoldetail> findFirst20ByProtocolordercodeLessThanAndLsprojectmasterInOrderByProtocolordercodeDesc(Long protocolordercode, List<LSprojectmaster> lstproject);
 
 	public Long countByLsprojectmasterIn(List<LSprojectmaster> lstproject);
 }
