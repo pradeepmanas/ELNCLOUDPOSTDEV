@@ -259,4 +259,16 @@ public class ProtocolController {
 	{
 		return ProtocolMasterService.getsingleprotocolorder(objusers);
 	}
+	
+	@PostMapping("/Getinitialorders")
+	public Map<String, Object> Getinitialorders(@RequestBody LSlogilabprotocoldetail objorder)
+	{
+		return ProtocolMasterService.Getinitialorders(objorder);
+	}
+	
+	@PostMapping("/Getremainingorders")
+	public List<LSlogilabprotocoldetail> Getremainingorders(@RequestBody LSlogilabprotocoldetail objorder)
+	{
+		return ProtocolMasterService.Getremainingorders(objorder);
+	}
 }
