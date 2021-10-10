@@ -968,8 +968,8 @@ public class FileService {
 	public Map<String, Object> Getinitialsheet(LSfile objfile){
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		if (objfile.getLSuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
-			mapOrders.put("orders", Getadministratorsheets(objfile));
-			mapOrders.put("ordercount", lSfileRepository.countByFilecodeGreaterThan(1));
+			mapOrders.put("template", Getadministratorsheets(objfile));
+			mapOrders.put("templatecount", lSfileRepository.countByFilecodeGreaterThan(1));
 		}
 		else
 		{
@@ -977,13 +977,13 @@ public class FileService {
 
 			if (lstteamuser != null && lstteamuser.size() > 0) {
 				lstteamuser.add(objfile.getLSuserMaster());
-				mapOrders.put("ordercount", lSfileRepository.countByCreatebyIn(lstteamuser));
+				mapOrders.put("templatecount", lSfileRepository.countByCreatebyIn(lstteamuser));
 			}
 			else
 			{
-				mapOrders.put("ordercount", lSfileRepository.countByCreateby(objfile.getLSuserMaster()));
+				mapOrders.put("templatecount", lSfileRepository.countByCreateby(objfile.getLSuserMaster()));
 			}
-			mapOrders.put("orders", Getusersheets(objfile));
+			mapOrders.put("template", Getusersheets(objfile));
 			
 		}
 		return mapOrders;
