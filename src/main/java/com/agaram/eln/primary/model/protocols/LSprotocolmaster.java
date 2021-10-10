@@ -14,6 +14,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+
 @Entity
 @Table(name="LSprotocolmaster")
 public class LSprotocolmaster implements Comparable<LSprotocolmaster>{
@@ -53,6 +55,10 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster>{
 	
 	@Transient
 	private List<LSprotocolversion> lsprotocolversion;
+	
+	@Transient
+	LSuserMaster LSuserMaster;
+	
 	public Integer getRejected() {
 		return rejected;
 	}
@@ -184,4 +190,12 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster>{
 	public int compareTo(LSprotocolmaster o) {
 		return this.getProtocolmastercode().compareTo(o.getProtocolmastercode());
 	}
+	public LSuserMaster getLSuserMaster() {
+		return LSuserMaster;
+	}
+	public void setLSuserMaster(LSuserMaster lSuserMaster) {
+		LSuserMaster = lSuserMaster;
+	}
+	
+	
 }

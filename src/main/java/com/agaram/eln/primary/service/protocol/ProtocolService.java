@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
+import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolstepInfo;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolversionstep;
@@ -42,6 +43,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowhistory;
 import com.agaram.eln.primary.model.protocols.LsLogilabprotocolstepInfo;
+import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
@@ -2374,5 +2376,84 @@ public List<LSlogilabprotocoldetail> Getuserorder(LSlogilabprotocoldetail objord
 		}
 	}
 	return lstorders;
+}
+
+public Map<String, Object> Getinitialtemplates(LSprotocolmaster objprotocol){
+	Map<String, Object> mapOrders = new HashMap<String, Object>();
+	if (objprotocol.getLSuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
+		mapOrders.put("template", Getadministratortemplates(objprotocol));
+		mapOrders.put("templatecount", LSProtocolMasterRepositoryObj.count());
+	}
+	else
+	{
+		List<Integer> lstteamuser = objprotocol.getLSuserMaster().getObjuser().getTeamuserscode();
+
+		if (lstteamuser != null && lstteamuser.size() > 0) {
+			lstteamuser.add(objprotocol.getLSuserMaster().getUsercode());
+			mapOrders.put("templatecount", LSProtocolMasterRepositoryObj.countByCreatedbyIn(lstteamuser));
+		}
+		else
+		{
+			mapOrders.put("templatecount", LSProtocolMasterRepositoryObj.countByCreatedby(objprotocol.getLSuserMaster().getUsercode()));
+		}
+		mapOrders.put("template", Getusertemplates(objprotocol));
+		
+	}
+	return mapOrders;
+}
+
+public List<LSprotocolmaster> Getremainingtemplates(LSprotocolmaster objprotocol)
+{
+	if (objprotocol.getLSuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
+		return Getadministratortemplates(objprotocol);
+	}
+	else
+	{
+		return Getusertemplates(objprotocol);
+	}
+}
+
+public List<LSprotocolmaster> Getadministratortemplates(LSprotocolmaster objprotocol)
+{
+	List<LSprotocolmaster> lstprotocols = new ArrayList<LSprotocolmaster>();
+	if(objprotocol.getProtocolmastercode() == 0)
+	{
+		lstprotocols = LSProtocolMasterRepositoryObj.findFirst20ByOrderByProtocolmastercodeDesc();
+	}
+	else
+	{
+		lstprotocols = LSProtocolMasterRepositoryObj.findFirst20ByProtocolmastercodeLessThanOrderByProtocolmastercodeDesc(objprotocol.getProtocolmastercode());
+	}
+	return lstprotocols;
+}
+
+public List<LSprotocolmaster> Getusertemplates(LSprotocolmaster objprotocol)
+{
+	List<LSprotocolmaster> lstprotocols = new ArrayList<LSprotocolmaster>();
+	List<Integer> lstteamuser = objprotocol.getLSuserMaster().getObjuser().getTeamuserscode();
+		if(objprotocol.getProtocolmastercode() == 0)
+		{
+			if (lstteamuser != null && lstteamuser.size() > 0) {
+				lstteamuser.add(objprotocol.getLSuserMaster().getUsercode());
+				lstprotocols = LSProtocolMasterRepositoryObj.findFirst20ByCreatedbyInOrderByProtocolmastercodeDesc(lstteamuser);
+			}
+			else
+			{
+				lstprotocols = LSProtocolMasterRepositoryObj.findFirst20ByCreatedbyOrderByProtocolmastercodeDesc(objprotocol.getLSuserMaster().getUsercode());
+			}
+		}
+		else
+		{
+			if (lstteamuser != null && lstteamuser.size() > 0) {
+				lstteamuser.add(objprotocol.getLSuserMaster().getUsercode());
+				lstprotocols = LSProtocolMasterRepositoryObj.findFirst20ByProtocolmastercodeLessThanAndCreatedbyInOrderByProtocolmastercodeDesc(objprotocol.getProtocolmastercode(),lstteamuser);
+			}
+			else
+			{
+				lstprotocols = LSProtocolMasterRepositoryObj.findFirst20ByProtocolmastercodeLessThanAndCreatedbyOrderByProtocolmastercodeDesc(objprotocol.getProtocolmastercode(),objprotocol.getLSuserMaster().getUsercode());
+			}
+		}
+	
+	return lstprotocols;
 }
 }

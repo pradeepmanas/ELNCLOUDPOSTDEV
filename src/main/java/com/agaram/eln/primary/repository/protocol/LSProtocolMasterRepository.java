@@ -155,4 +155,20 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	List<LSprotocolmaster> findByCreatedbyInAndStatusAndLssitemasterOrderByCreatedateDesc(List<Integer> lstuser, int i,
 			Integer sitecode);
+	
+	Long countByCreatedbyIn(List<Integer> lstuser);
+	
+	Long countByCreatedby(Integer usercode);
+	
+	List<LSprotocolmaster> findFirst20ByOrderByProtocolmastercodeDesc();
+	
+	List<LSprotocolmaster> findFirst20ByProtocolmastercodeLessThanOrderByProtocolmastercodeDesc(Integer protocolcode);
+	
+	List<LSprotocolmaster> findFirst20ByCreatedbyInOrderByProtocolmastercodeDesc(List<Integer> lstuser);
+	
+	List<LSprotocolmaster> findFirst20ByCreatedbyOrderByProtocolmastercodeDesc(Integer usercode);
+	
+	List<LSprotocolmaster> findFirst20ByProtocolmastercodeLessThanAndCreatedbyInOrderByProtocolmastercodeDesc(Integer protocolcode, List<Integer> lstuser);
+	
+	List<LSprotocolmaster> findFirst20ByProtocolmastercodeLessThanAndCreatedbyOrderByProtocolmastercodeDesc(Integer protocolcode, Integer lsuser);
 }

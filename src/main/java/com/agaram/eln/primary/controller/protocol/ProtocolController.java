@@ -271,4 +271,16 @@ public class ProtocolController {
 	{
 		return ProtocolMasterService.Getremainingorders(objorder);
 	}
+	
+	@PostMapping("/Getinitialtemplates")
+	public Map<String, Object> Getinitialtemplates(@RequestBody LSprotocolmaster objorder)
+	{
+		return ProtocolMasterService.Getinitialtemplates(objorder);
+	}
+	
+	@PostMapping("/Getremainingtemplates")
+	public List<LSprotocolmaster> Getremainingtemplates(@RequestBody LSprotocolmaster objorder)
+	{
+		return ProtocolMasterService.Getremainingtemplates(objorder);
+	}
 }
