@@ -327,4 +327,14 @@ public class FileController {
 	{
 		return fileService.getfilemasteroncode(objfile);
 	}
+	
+	@PostMapping(value = "/Getinitialsheet")
+	public Map<String, Object> Getinitialsheet(@RequestBody LSfile objfile){
+		return fileService.Getinitialsheet(objfile);
+	}
+	
+	@PostMapping(value = "/Getremainingsheets")
+	public List<Sheettemplateget> Getremainingsheets(@RequestBody LSfile objfile){
+		return fileService.Getremainingsheets(objfile);
+	}
 }

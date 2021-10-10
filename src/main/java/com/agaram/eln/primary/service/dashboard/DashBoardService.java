@@ -483,8 +483,6 @@ public class DashBoardService {
 					.findByCreatedateBetweenAndFilecodeGreaterThanOrderByFilecodeDesc(fromdate, todate, 1));
 		} else {
 			List<Sheettemplateget> lstsheets = new ArrayList<Sheettemplateget>();
-//			List<Integer> lstteammap = lsuserteammappingRepository
-//					.getTeamcodeByLsuserMaster4postgressandsql(objuser.getUsercode());
 
 			if (lstteamuser != null && lstteamuser.size() > 0) {
 				lstteamuser.add(objuser);

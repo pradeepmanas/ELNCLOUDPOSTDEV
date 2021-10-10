@@ -24,6 +24,7 @@ import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.general.SheetVersion;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -33,6 +34,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
@@ -961,5 +963,84 @@ public class FileService {
 		objreturnfile.setVersioncout(lsfileversionRepository.countByFilecode(objfile.getFilecode()));
 		
 		return objreturnfile;
+	}
+	
+	public Map<String, Object> Getinitialsheet(LSfile objfile){
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		if (objfile.getLSuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
+			mapOrders.put("orders", Getadministratorsheets(objfile));
+			mapOrders.put("ordercount", lSfileRepository.countByFilecodeGreaterThan(1));
+		}
+		else
+		{
+			List<LSuserMaster> lstteamuser = objfile.getLSuserMaster().getObjuser().getTeamusers();
+
+			if (lstteamuser != null && lstteamuser.size() > 0) {
+				lstteamuser.add(objfile.getLSuserMaster());
+				mapOrders.put("ordercount", lSfileRepository.countByCreatebyIn(lstteamuser));
+			}
+			else
+			{
+				mapOrders.put("ordercount", lSfileRepository.countByCreateby(objfile.getLSuserMaster()));
+			}
+			mapOrders.put("orders", Getusersheets(objfile));
+			
+		}
+		return mapOrders;
+	}
+	
+	public List<Sheettemplateget> Getremainingsheets(LSfile objfile)
+	{
+		if (objfile.getLSuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
+			return Getadministratorsheets(objfile);
+		}
+		else
+		{
+			return Getusersheets(objfile);
+		}
+	}
+	
+	public List<Sheettemplateget> Getadministratorsheets(LSfile objfile)
+	{
+		List<Sheettemplateget> lstsheets = new ArrayList<Sheettemplateget>();
+		if(objfile.getFilecode() == 0)
+		{
+			lstsheets = lSfileRepository.findFirst20ByFilecodeGreaterThanOrderByFilecodeDesc(1);
+		}
+		else
+		{
+			lstsheets = lSfileRepository.findFirst20ByFilecodeGreaterThanAndFilecodeLessThanOrderByFilecodeDesc(1,objfile.getFilecode());
+		}
+		return lstsheets;
+	}
+
+	public List<Sheettemplateget> Getusersheets(LSfile objfile)
+	{
+		List<Sheettemplateget> lstsheets = new ArrayList<Sheettemplateget>();
+		List<LSuserMaster> lstteamuser = objfile.getLSuserMaster().getObjuser().getTeamusers();
+			if(objfile.getFilecode() == 0)
+			{
+				if (lstteamuser != null && lstteamuser.size() > 0) {
+					lstteamuser.add(objfile.getLSuserMaster());
+					lstsheets = lSfileRepository.findFirst20ByCreatebyInOrderByFilecodeDesc(lstteamuser);
+				}
+				else
+				{
+					lstsheets = lSfileRepository.findFirst20ByCreatebyOrderByFilecodeDesc(objfile.getLSuserMaster());
+				}
+			}
+			else
+			{
+				if (lstteamuser != null && lstteamuser.size() > 0) {
+					lstteamuser.add(objfile.getLSuserMaster());
+					lstsheets = lSfileRepository.findFirst20ByFilecodeLessThanAndCreatebyInOrderByFilecodeDesc(objfile.getFilecode(),lstteamuser);
+				}
+				else
+				{
+					lstsheets = lSfileRepository.findFirst20ByFilecodeLessThanAndCreatebyOrderByFilecodeDesc(objfile.getFilecode(),objfile.getLSuserMaster());
+				}
+			}
+		
+		return lstsheets;
 	}
 }
