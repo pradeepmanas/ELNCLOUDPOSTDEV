@@ -134,4 +134,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	public List<Sheettemplateget> findFirst20ByFilecodeLessThanAndCreatebyInOrderByFilecodeDesc(Integer filecode, List<LSuserMaster> lstusermaster);
 	
 	public List<Sheettemplateget> findFirst20ByFilecodeLessThanAndCreatebyOrderByFilecodeDesc(Integer filecode, LSuserMaster lsusermaster);
+
+	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(int filecode,
+			LSuserMaster objuser);
 }

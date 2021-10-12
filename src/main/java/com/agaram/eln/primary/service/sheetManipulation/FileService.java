@@ -283,8 +283,9 @@ public class FileService {
 			lstteamuser.add(objuser);
 			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1, lstteamuser);
 		} else {
-			lstteamuser.add(objuser);
-			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1, lstteamuser);
+//			lstteamuser.add(objuser);
+//			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1, lstteamuser);
+			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1, objuser);
 		}
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSfile");

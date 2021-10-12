@@ -23,6 +23,7 @@ public class LScfrreasons {
 	@Basic(optional = false)
 	@Column(name = "reasoncode") 
 	private Integer reasoncode;
+	
 	@Column(columnDefinition = "varchar(255)")
 	private String comments;
 	

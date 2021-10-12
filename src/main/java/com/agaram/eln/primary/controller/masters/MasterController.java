@@ -1,18 +1,28 @@
 package com.agaram.eln.primary.controller.masters;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.archieve.LsProjectarchieve;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.service.masters.MasterService;
 
 @RestController
@@ -80,4 +90,34 @@ public class MasterController {
 	{
 		return masterService.GetrepositoriesdataonFilter(lsrepositoriesdata);
 	}
+	
+	@RequestMapping("/archiveproject")
+	public LsProjectarchieve archiveproject(@RequestBody LSprojectmaster lsprojectmaster)
+	{
+		return masterService.archiveproject(lsprojectmaster);
+	}
+	
+	@RequestMapping("/Importprojectarchieve")
+	public LsProjectarchieve Importprojectarchieve(@RequestBody LsProjectarchieve lsprojectarchieve) throws IOException
+	{
+		return masterService.Importprojectarchieve(lsprojectarchieve);
+	}
+	
+	@RequestMapping("/GetArchievedprojectsonsite")
+	public List<LsProjectarchieve> GetArchievedprojectsonsite(@RequestBody LSSiteMaster lssitemaster)
+	{
+		return masterService.GetArchievedprojectsonsite(lssitemaster);
+	}
+	
+	@PostMapping("/Downloadarchievedproject")
+	public ResponseEntity<InputStreamResource> Downloadarchievedproject(
+			@RequestBody LsProjectarchieve lsprojectarchieve) throws IllegalStateException, IOException {
+
+		HttpHeaders header = new HttpHeaders();
+		header.set("Content-Disposition", "attachment; filename="+lsprojectarchieve.getProjectname());
+		return new ResponseEntity<>(
+				new InputStreamResource(masterService.Downloadarchievedproject(lsprojectarchieve)), header,
+				HttpStatus.OK);
+	}
+
 }

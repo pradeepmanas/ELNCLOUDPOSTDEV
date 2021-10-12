@@ -150,7 +150,9 @@ public class LoginService {
 		LSuserMaster objExitinguser = new LSuserMaster();
 		
 		String username = objuser.getsUsername();
-		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(username,"0");
+		LSSiteMaster objsiteobj = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
+//		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(username,"0");
+		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndLoginfrom(username,objsiteobj,"0");
 		
 		
 		LSPasswordPolicy lockcount =objExitinguser!=null? LSPasswordPolicyRepository.findTopByAndLssitemasterOrderByPolicycodeDesc(objExitinguser.getLssitemaster()):null;
@@ -453,7 +455,8 @@ public class LoginService {
 		LSuserMaster objExitinguser = new LSuserMaster();
 		String username = objuser.getsUsername();
 //		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(username,"0");
-		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndUserretirestatusNot(username,"0",1);
+		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
+		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndUserretirestatusNot(username,objsite,"0",1);
 		
 		if(objExitinguser != null)
 		{
@@ -508,7 +511,9 @@ public class LoginService {
 		LSuserMaster objExitinguser = new LSuserMaster();
 		String username = objuser.getsUsername();
 //		objExitinguser = lSuserMasterRepository.findByusername(username);
-		objExitinguser = lSuserMasterRepository.findByusernameIgnoreCase(username);
+		LSSiteMaster objsiteobj = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
+//		objExitinguser = lSuserMasterRepository.findByusernameIgnoreCase(username);
+		objExitinguser = lSuserMasterRepository.findByusernameIgnoreCaseAndLssitemaster(username,objsiteobj);
 //		objExitinguser = lSuserMasterRepository.findByusercode(objuser.getUserID());
 		
 		List<LSPasswordHistoryDetails> listofpwd = new ArrayList<LSPasswordHistoryDetails>();
@@ -1565,6 +1570,26 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 
 		
 		LSPasswordPolicy policydays= LSPasswordPolicyRepository.findByLssitemaster(objuser.getLssitemaster());
+		if(policydays == null) {
+			LSSiteMaster lssitemaster =new LSSiteMaster();
+			lssitemaster.setSitecode(1);
+			LSPasswordPolicy lspasswordPolicy =LSPasswordPolicyRepository.findByLssitemaster(lssitemaster);
+			
+			LSPasswordPolicy objPassword = new LSPasswordPolicy();
+			objPassword.setComplexpasswrd(lspasswordPolicy.getComplexpasswrd());
+			objPassword.setLockpolicy(lspasswordPolicy.getLockpolicy());
+			objPassword.setMaxpasswrdlength(lspasswordPolicy.getMaxpasswrdlength());
+			objPassword.setMincapitalchar(lspasswordPolicy.getMincapitalchar());
+			objPassword.setMinspecialchar(lspasswordPolicy.getMinspecialchar());
+			objPassword.setMinnumericchar(lspasswordPolicy.getMinnumericchar());
+			objPassword.setMinpasswrdlength(lspasswordPolicy.getMinpasswrdlength());
+			objPassword.setMinsmallchar(lspasswordPolicy.getMinsmallchar());
+			objPassword.setPasswordexpiry(lspasswordPolicy.getPasswordexpiry());
+			objPassword.setPasswordhistory(lspasswordPolicy.getPasswordhistory());
+			objPassword.setLssitemaster(objuser.getLssitemaster());
+			LSPasswordPolicyRepository.save(objPassword);
+			policydays= LSPasswordPolicyRepository.findByLssitemaster(objuser.getLssitemaster());
+		}
 		Calendar c = Calendar.getInstance(); 
 		c.add(Calendar.DATE, policydays.getPasswordexpiry());
 		
@@ -1652,21 +1677,16 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 		int multiusergroupcode =lsuserMaster.getMultiusergroupcode().get(0).getMultiusergroupcode();
 		LSMultiusergroup objLSMultiusergroup = LSMultiusergroupRepositery.findBymultiusergroupcode(multiusergroupcode);
 
-		LSuserMaster objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(lsuserMaster.getUsername(),"0");
+//		LSuserMaster objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(lsuserMaster.getUsername(),"0");
+		LSuserMaster objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemaster(lsuserMaster.getUsername(),lsuserMaster.getLssitemaster());
 		objExitinguser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		objExitinguser.setObjResponse(new Response());
 		if(objLSMultiusergroup != null) {
-			
-			
 			
 			if(lsuserMaster.getObjsilentaudit() != null)
 	    	{
 				lsuserMaster.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
 				lsuserMaster.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-
-
-
-
 				lsuserMaster.getObjsilentaudit().setManipulatetype("Password");
 				lsuserMaster.getObjsilentaudit().setTableName("LSuserMaster");
 	    		lscfttransactionRepository.save(lsuserMaster.getObjsilentaudit());

@@ -58,4 +58,16 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	 void setpasswordandpasswordstatusByusercode(String password,Integer integer, Integer usercode);
 	 
 	 public List<LSuserMaster> findByUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(List<Integer> usercode, Integer userretirestatus);
+
+	public Object findByLssitemasterAndUsernameIgnoreCase(LSSiteMaster lssitemaster, String username);
+
+	public LSuserMaster findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndUserretirestatusNot(String username,
+			LSSiteMaster objsite, String string, int i);
+
+	public LSuserMaster findByUsernameIgnoreCaseAndLssitemasterAndLoginfrom(String username, LSSiteMaster objsite,
+			String string);
+
+	public LSuserMaster findByusernameIgnoreCaseAndLssitemaster(String username, LSSiteMaster objsiteobj);
+
+
 }

@@ -297,7 +297,7 @@ public class UserService {
 		}
 
 		if (objusermaster.getUsercode() == null
-				&& lsuserMasterRepository.findByusernameIgnoreCase(objusermaster.getUsername()) != null) {
+				&& lsuserMasterRepository.findByLssitemasterAndUsernameIgnoreCase(objusermaster.getLssitemaster(),objusermaster.getUsername()) != null) {
 
 			objusermaster.setResponse(new Response());
 			objusermaster.getResponse().setStatus(false);

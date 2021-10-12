@@ -25,4 +25,6 @@ public interface LSPasswordPolicyRepository extends JpaRepository<LSPasswordPoli
 	public LSPasswordPolicy findTopByAndLssitemasterOrderByPolicycodeDesc(LSSiteMaster lsSiteMaster);
 
 	public LSPasswordPolicy findByLssitemaster(LSSiteMaster lsSiteMaster);
+
+	public LSPasswordPolicy findTopByOrderByPolicycodeDesc();
 }

@@ -70,4 +70,8 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	public List<LSlogilabprotocoldetail> findFirst20ByLsprojectmasterInOrderByProtocolordercodeDesc(List<LSprojectmaster> lstproject);
 
 	public Long countByLsprojectmasterIn(List<LSprojectmaster> lstproject);
+	
+	public Integer deleteByLsprojectmaster(LSprojectmaster lsproject);
+	
+	public List<LSlogilabprotocoldetail> findByLsprojectmasterOrderByProtocolordercodeDesc(LSprojectmaster lsproject);
 }

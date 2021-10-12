@@ -335,20 +335,22 @@ public class DashBoardService {
 				lstUserorder = lslogilablimsorderdetailRepository
 						.countByLsprojectmasterInAndCreatedtimestampBetween(lstproject, fromdate, todate);
 
-			} else {
-
-				lstUserorder = lslogilablimsorderdetailRepository.countByCreatedtimestampBetween(fromdate, todate);
 			}
+//			else {
+//
+//				lstUserorder = lslogilablimsorderdetailRepository.countByCreatedtimestampBetween(fromdate, todate);
+//			}
 
 			long lstlimscompleted = 0;
 			if (lstproject != null && lstproject.size() > 0) {
 				lstlimscompleted = lslogilablimsorderdetailRepository
 						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("R", lstproject,fromdate, todate);
-			} else {
-				lstlimscompleted = lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetween("R",
-						fromdate, todate);
-
-			}
+			} 
+//			else {
+//				lstlimscompleted = lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetween("R",
+//						fromdate, todate);
+//
+//			}
 
 			long lstordersinprogress = 0;
 			if (lstproject != null && lssamplefile != null && lstproject.size() > 0 && lssamplefile.size() > 0) {
@@ -364,11 +366,12 @@ public class DashBoardService {
 				lstpending = lslogilablimsorderdetailRepository
 						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("N", lstproject, fromdate,
 								todate);
-			} else {
-			
-				lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetween("N",
-						fromdate, todate);
-			}
+			} 
+//			else {
+//			
+//				lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetween("N",
+//						fromdate, todate);
+//			}
 
 			mapOrders.put("orders", (lstUserorder));
 			mapOrders.put("pendingorder", (lstpending));

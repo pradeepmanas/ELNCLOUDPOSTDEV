@@ -47,7 +47,7 @@ public class LSprojectmaster {
 	LoggedUser objuser;
 
 	@Transient
-	LSuserMaster LSuserMaster;
+	LSuserMaster lsusermaster;
 
 	@ManyToOne
 	private LSuserMaster modifiedby;
@@ -76,12 +76,12 @@ public class LSprojectmaster {
 		this.objuser = objuser;
 	}
 
-	public LSuserMaster getLSuserMaster() {
-		return LSuserMaster;
+	public LSuserMaster getLsusermaster() {
+		return lsusermaster;
 	}
 
-	public void setLSuserMaster(LSuserMaster lSuserMaster) {
-		LSuserMaster = lSuserMaster;
+	public void setLsusermaster(LSuserMaster lsusermaster) {
+		this.lsusermaster = lsusermaster;
 	}
 
 	public LScfttransaction getObjsilentaudit() {
