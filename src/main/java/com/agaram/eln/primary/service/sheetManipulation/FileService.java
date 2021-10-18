@@ -137,87 +137,87 @@ public class FileService {
 
 	public LSfile InsertupdateSheet(LSfile objfile) {
 		Boolean Isnew = false;
-//		String Content = objfile.getFilecontent();
-//		if (objfile.getFilecode() == null
-//				&& lSfileRepository.findByfilenameuserIgnoreCase(objfile.getFilenameuser()) != null) {
-//
-//			objfile.setResponse(new Response());
-//			objfile.getResponse().setStatus(false);
-//			objfile.getResponse().setInformation("ID_SHEET");
-//
-//			return objfile;
-//
-//		}
-//
-//		if (objfile.getLssheetworkflow() == null) {
-//			objfile.setLssheetworkflow(lssheetworkflowRepository
-//					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objfile.getLssitemaster()));
-//		}
-//
-//		if (objfile.getFilecode() != null && objfile.getFilecode() > 0) {
-//			UpdateSheetversion(objfile);
-//
-//			lSfilemethodRepository.deleteByfilecode(objfile.getFilecode());
-//			List<Integer> lstestparamcode = new ArrayList<Integer>();
-//			for (LSfileparameter param : objfile.getLsparameter()) {
-//				if (param.getFileparametercode() != null) {
-//					lstestparamcode.add(param.getFileparametercode());
-//				}
-//			}
-//
-//			if (lstestparamcode.size() > 0) {
-//				lSfileparameterRepository.deleteByFilecodeAndFileparametercodeNotIn(objfile.getFilecode(),
-//						lstestparamcode);
-//			}
-//
-//			Isnew = false;
-//		} else {
-//			Isnew = true;
-//
-//			objfile.setVersionno(0);
-//		}
-//
-//		if (objfile.getLstest().size() > 0) {
-//			lSfiletestRepository.save(objfile.getLstest());
-//		}
-//
-//		if (objfile.getLsmethods().size() > 0) {
-//			lSfilemethodRepository.save(objfile.getLsmethods());
-//		}
-//
-//		if (objfile.getLsparameter().size() > 0) {
-//			lSfileparameterRepository.save(objfile.getLsparameter());
-//		}
-//
-//		if (objfile.getObjActivity() != null) {
-//
-//			lsactivityRepository.save(objfile.getObjActivity());
-//		}
-//		if (objfile.getModifiedlist() != null) {
-//
-//			lssheetupdatesRepository.save(objfile.getModifiedlist());
-//		}
-//
-//		objfile.setFilecontent(null);
-//		lSfileRepository.save(objfile);
-//
-//		updatefilecontent(Content, objfile, Isnew);
-//
-//		if (objfile.getObjsilentaudit() != null) {
-//
-//			objfile.getObjsilentaudit().setTableName("LSfile");
-//		}
-//
-//		if (objfile.getObjuser() != null) {
-//			objfile.getObjmanualaudit().setComments(objfile.getObjuser().getComments());
-//			objfile.getObjmanualaudit().setTableName("LSfile");
-//		}
-//
-//		objfile.setResponse(new Response());
-//		objfile.getResponse().setStatus(true);
-//		objfile.getResponse().setInformation("ID_SHEETMSG");
-//
-//		updatenotificationforsheet(objfile, true, null);
+		String Content = objfile.getFilecontent();
+		if (objfile.getFilecode() == null
+				&& lSfileRepository.findByfilenameuserIgnoreCase(objfile.getFilenameuser()) != null) {
+
+			objfile.setResponse(new Response());
+			objfile.getResponse().setStatus(false);
+			objfile.getResponse().setInformation("ID_SHEET");
+
+			return objfile;
+
+		}
+
+		if (objfile.getLssheetworkflow() == null) {
+			objfile.setLssheetworkflow(lssheetworkflowRepository
+					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objfile.getLssitemaster()));
+		}
+
+		if (objfile.getFilecode() != null && objfile.getFilecode() > 0) {
+			UpdateSheetversion(objfile);
+
+			lSfilemethodRepository.deleteByfilecode(objfile.getFilecode());
+			List<Integer> lstestparamcode = new ArrayList<Integer>();
+			for (LSfileparameter param : objfile.getLsparameter()) {
+				if (param.getFileparametercode() != null) {
+					lstestparamcode.add(param.getFileparametercode());
+				}
+			}
+
+			if (lstestparamcode.size() > 0) {
+				lSfileparameterRepository.deleteByFilecodeAndFileparametercodeNotIn(objfile.getFilecode(),
+						lstestparamcode);
+			}
+
+			Isnew = false;
+		} else {
+			Isnew = true;
+
+			objfile.setVersionno(0);
+		}
+
+		if (objfile.getLstest().size() > 0) {
+			lSfiletestRepository.save(objfile.getLstest());
+		}
+
+		if (objfile.getLsmethods().size() > 0) {
+			lSfilemethodRepository.save(objfile.getLsmethods());
+		}
+
+		if (objfile.getLsparameter().size() > 0) {
+			lSfileparameterRepository.save(objfile.getLsparameter());
+		}
+
+		if (objfile.getObjActivity() != null) {
+
+			lsactivityRepository.save(objfile.getObjActivity());
+		}
+		if (objfile.getModifiedlist() != null) {
+
+			lssheetupdatesRepository.save(objfile.getModifiedlist());
+		}
+
+		objfile.setFilecontent(null);
+		lSfileRepository.save(objfile);
+
+		updatefilecontent(Content, objfile, Isnew);
+
+		if (objfile.getObjsilentaudit() != null) {
+
+			objfile.getObjsilentaudit().setTableName("LSfile");
+		}
+
+		if (objfile.getObjuser() != null) {
+			objfile.getObjmanualaudit().setComments(objfile.getObjuser().getComments());
+			objfile.getObjmanualaudit().setTableName("LSfile");
+		}
+
+		objfile.setResponse(new Response());
+		objfile.getResponse().setStatus(true);
+		objfile.getResponse().setInformation("ID_SHEETMSG");
+
+		updatenotificationforsheet(objfile, true, null);
 
 		return objfile;
 	}
