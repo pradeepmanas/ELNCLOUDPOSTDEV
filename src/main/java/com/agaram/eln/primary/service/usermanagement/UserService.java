@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.service.usermanagement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -251,7 +252,7 @@ public class UserService {
 
 //		return lSusergroupRepository.findByusergroupnameNotOrderByUsergroupcodeDesc("Administrator");
 
-		return lSusergroupRepository.findByusergroupnameNotOrderByUsergroupcodeAsc("Administrator");
+		return lSusergroupRepository.findByusergroupnameNotOrderByUsergroupcodeDesc("Administrator");
 	}
 	
 	
@@ -271,10 +272,12 @@ public class UserService {
 		}
 		if (objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
 //			return lsuserMasterRepository.findByusernameNot("Administrator");
-			return lsuserMasterRepository.findByusernameNotAndUserretirestatusNot("Administrator", 1);
+			return lsuserMasterRepository.findByusernameNotAndUserretirestatusNotOrderByCreateddateDesc("Administrator", 1);
 		}
 //		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator",objusergroup.getLssitemaster());
-		return lsuserMasterRepository.findByUsernameNotAndUserretirestatusNotAndLssitemaster("Administrator", 1,
+//		return lsuserMasterRepository.findByUsernameNotAndUserretirestatusNotAndLssitemaster("Administrator", 1,
+//				objusergroup.getLssitemaster());
+		return lsuserMasterRepository.findByUsernameNotAndUserretirestatusNotAndLssitemasterOrderByCreateddateDesc("Administrator", 1,
 				objusergroup.getLssitemaster());
 	}
 
@@ -284,9 +287,10 @@ public class UserService {
 			lscfttransactionRepository.save(objclass.getObjsilentaudit());
 		}
 		if (objclass.getSitecode() == 0) {
-			return lsuserMasterRepository.findByusernameNot("Administrator");
+			return lsuserMasterRepository.findByusernameNotAndUserretirestatusNotOrderByCreateddateDesc("Administrator",1);
 		}
-		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objclass);
+//		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objclass);
+		return lsuserMasterRepository.findByUsernameNotAndUserretirestatusNotAndLssitemasterOrderByCreateddateDesc("Administrator",1, objclass);
 	}
 
 	public LSuserMaster InsertUpdateUser(LSuserMaster objusermaster) throws MessagingException {
@@ -633,7 +637,8 @@ public class UserService {
 		return maprights;
 	}
 
-	public List<LSusergrouprights> SaveUserRights(List<LSusergrouprights> lsrights) {
+	public List<LSusergrouprights> SaveUserRights(LSusergrouprights[] lsrites) {
+		List<LSusergrouprights> lsrights = Arrays.asList(lsrites);
 		if (lsrights.get(0).getUsergroupid() == null) {
 			lsrights.get(0).setResponse(new Response());
 			lsrights.get(0).getResponse().setStatus(false);
@@ -703,11 +708,11 @@ public class UserService {
 			lscfttransactionRepository.save(Objclass.getObjsilentaudit());
 		}
 		if (Objclass.getSitecode() == 0) {
-			return lSusergroupRepository.findByUsergroupnameNotOrderByUsergroupcodeAsc("Administrator");
+			return lSusergroupRepository.findByUsergroupnameNotOrderByUsergroupcodeDesc("Administrator");
 		}
 		
 		return lSusergroupRepository
-				.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeAsc(Objclass.getSitecode(), "Administrator");
+				.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(), "Administrator");
 	}
 
 	public List<LSusergroup> GetUserGroupSiteWise(LSSiteMaster Objclass) {

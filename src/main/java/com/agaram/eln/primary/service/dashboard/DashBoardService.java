@@ -102,13 +102,13 @@ public class DashBoardService {
 
 	@Autowired
 	private lSprotocolworkflowRepository lSprotocolworkflowRepository;
-	
+
 	@Autowired
 	private LsordersharedbyRepository lsordersharedbyRepository;
-	
+
 	@Autowired
 	private LsordersharetoRepository lsordersharetoRepository;
-	
+
 	@Autowired
 	private LsrepositoriesRepository LsrepositoriesRepository;
 
@@ -140,7 +140,8 @@ public class DashBoardService {
 					.findBylsusergroup(objupdateduser.getLsusergroup());
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 
-			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
+			List<LSworkflow> lsworkflow = lsworkflowRepository
+					.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 			long lstUserorder = lslogilablimsorderdetailRepository
 					.countByLsprojectmasterInOrderByBatchcodeDesc(lstproject);
@@ -237,7 +238,8 @@ public class DashBoardService {
 					.findBylsusergroup(objupdateduser.getLsusergroup());
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 
-			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
+			List<LSworkflow> lsworkflow = lsworkflowRepository
+					.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 			long lstUserorder = lslogilablimsorderdetailRepository
 					.countByLsprojectmasterInAndCreatedtimestampBetween(lstproject, fromdate, todate);
@@ -344,8 +346,9 @@ public class DashBoardService {
 			long lstlimscompleted = 0;
 			if (lstproject != null && lstproject.size() > 0) {
 				lstlimscompleted = lslogilablimsorderdetailRepository
-						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("R", lstproject,fromdate, todate);
-			} 
+						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("R", lstproject, fromdate,
+								todate);
+			}
 //			else {
 //				lstlimscompleted = lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetween("R",
 //						fromdate, todate);
@@ -366,7 +369,7 @@ public class DashBoardService {
 				lstpending = lslogilablimsorderdetailRepository
 						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("N", lstproject, fromdate,
 								todate);
-			} 
+			}
 //			else {
 //			
 //				lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetween("N",
@@ -426,10 +429,10 @@ public class DashBoardService {
 							.findByLsprojectmasterInAndCreatedtimestampBetween(lstproject, fromdate, todate);
 
 				} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
-				lstorders = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc("R", lstproject, fromdate,
-								todate);
-				
+					lstorders = lslogilablimsorderdetailRepository
+							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc("R",
+									lstproject, fromdate, todate);
+
 				} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
 					lstorders = lslogilablimsorderdetailRepository
 							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc("N",
@@ -460,18 +463,23 @@ public class DashBoardService {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-//		LSMultiusergroup objLSMultiusergroup =  lsMultiusergroupRepositery.findBymultiusergroupcode(objuser.getMultiusergroups());
-//		objuser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 
-		List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository
-				.findByCreatedtimestampBetween(fromdate, todate);
+		List<Logilabprotocolorders> lstorders = new ArrayList<Logilabprotocolorders>();
 
-		if (objuser.getObjsilentaudit() != null) {
-			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-//			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+		if (objuser.getObjuser().getOrderselectiontype() == 1) {
+			lstorders = LSlogilabprotocoldetailRepository.findByCreatedtimestampBetween(fromdate, todate);
+
+		} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
+			lstorders = LSlogilabprotocoldetailRepository.findByOrderflagAndCreatedtimestampBetween("R", fromdate,
+					todate);
+
+		} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
+			lstorders = LSlogilabprotocoldetailRepository.findByOrderflagAndCreatedtimestampBetween("N", fromdate,
+					todate);
 		}
 
 		mapOrders.put("orderlst", lstorders);
+
 		return mapOrders;
 	}
 
@@ -599,13 +607,15 @@ public class DashBoardService {
 
 		return mapOrders;
 	}
-	
+
 	public Map<String, Object> Getordersharebyme(LSuserMaster objuser) {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		mapOrders.put("orders", lsordersharedbyRepository.findBySharebyunifiedidAndSharedonBetweenOrSharebyunifiedidAndUnsharedonBetween(objuser.getUnifieduserid(),fromdate, todate,objuser.getUnifieduserid(), fromdate, todate));
-		
+		mapOrders.put("orders", lsordersharedbyRepository
+				.findBySharebyunifiedidAndSharedonBetweenOrSharebyunifiedidAndUnsharedonBetween(
+						objuser.getUnifieduserid(), fromdate, todate, objuser.getUnifieduserid(), fromdate, todate));
+
 		return mapOrders;
 	}
 
@@ -613,55 +623,52 @@ public class DashBoardService {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		mapOrders.put("orders", lsordersharetoRepository.findBySharetounifiedidAndSharedonBetweenAndSharestatus(objuser.getUnifieduserid(),fromdate, todate, 1));
-		
+		mapOrders.put("orders", lsordersharetoRepository.findBySharetounifiedidAndSharedonBetweenAndSharestatus(
+				objuser.getUnifieduserid(), fromdate, todate, 1));
+
 		return mapOrders;
 	}
-	
+
 	public List<LSactivity> GetActivitiesonLazy(LSactivity objactivities) {
 		List<LSactivity> lstactivities = new ArrayList<LSactivity>();
 		lstactivities = lsactivityRepository
 				.findTop20ByActivitycodeLessThanOrderByActivitycodeDesc(objactivities.getActivitycode());
 		return lstactivities;
 	}
-	
-	public Logilabordermaster Getorder(LSlogilablimsorderdetail objorder)
-	{
+
+	public Logilabordermaster Getorder(LSlogilablimsorderdetail objorder) {
 		Logilaborders objupdatedorder = lslogilablimsorderdetailRepository.findByBatchcode(objorder.getBatchcode());
 		objupdatedorder.setLstworkflow(objorder.getLstworkflow());
 		return objupdatedorder;
 	}
-	
-	public Map<String, Object> Getordersinuserworkflow(LSuserMaster objuser)
-	{
+
+	public Map<String, Object> Getordersinuserworkflow(LSuserMaster objuser) {
 		List<LSprojectmaster> lstproject = objuser.getLstproject();
 		List<LSworkflow> lstworkflow = objuser.getLstworkflow();
-		
+
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		
-		if(lstproject != null)
-		{
-		List<Logilabordermaster> lstorders = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween("N", lstproject ,lstworkflow, fromdate, todate);
-		lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
-		mapOrders.put("orders", lstorders);
-		}
-		else
-		{
+
+		if (lstproject != null) {
+			List<Logilabordermaster> lstorders = lslogilablimsorderdetailRepository
+					.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween("N", lstproject,
+							lstworkflow, fromdate, todate);
+			lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
+			mapOrders.put("orders", lstorders);
+		} else {
 			mapOrders.put("orders", new ArrayList<Logilabordermaster>());
 		}
-		
+
 		return mapOrders;
 	}
 
 	public List<Repositorymaster> Getallrepositories(LSuserMaster objuser) {
-		
+
 //		Date fromdate = objuser.getObjuser().getFromdate();
 //		Date todate = objuser.getObjuser().getTodate();
-		
+
 		return LsrepositoriesRepository.findBysitecodeOrderByRepositorycodeAsc(objuser.getLssitemaster().getSitecode());
 	}
-	
-	
+
 }

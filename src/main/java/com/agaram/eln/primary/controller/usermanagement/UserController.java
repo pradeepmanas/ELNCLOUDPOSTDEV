@@ -245,7 +245,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/SaveUserRights")
-	public List<LSusergrouprights> SaveUserRights(@RequestBody List<LSusergrouprights> lsrights)
+	public List<LSusergrouprights> SaveUserRights(@RequestBody LSusergrouprights[] lsrights)
 	{
 		return userService.SaveUserRights(lsrights);
 	}

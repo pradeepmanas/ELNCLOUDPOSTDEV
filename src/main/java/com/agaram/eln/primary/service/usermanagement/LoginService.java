@@ -466,42 +466,23 @@ public class LoginService {
 		    if(Password == null ){
 		    	objExitinguser.getObjResponse().setInformation("GenerateNewPassword");
 		    	objExitinguser.getObjResponse().setStatus(true);
-		    	objuser.getObjsilentaudit().setActions("Warning");
-				objuser.getObjsilentaudit().setComments("User"+" "+objuser.getsUsername()+ " "+"does not have the password to login, rendered to create password");
-				objuser.getObjsilentaudit().setTableName("LSuserMaster");
-				objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
-//				objuser.getObjsilentaudit().setTransactiondate(new Date());
-				objuser.getObjsilentaudit().setSystemcoments("System Generated");
-				objuser.getObjsilentaudit().setModuleName(ModuleName);
-					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-		    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-		    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
+		    	
 		    }
 		    else {
 		    	objExitinguser.getObjResponse().setInformation("Valid user and password exist");
-		    	objExitinguser.getObjResponse().setStatus(false);
+		    	objExitinguser.getObjResponse().setStatus(true);
 		    } 
 		}
 		else
 		{
-			LSuserMaster objusermaster = lSuserMasterRepository.findByusercode(1);
+//			LSuserMaster objusermaster = lSuserMasterRepository.findByusercode(1);
 			
 			objExitinguser = new LSuserMaster();
 			objExitinguser.setUserstatus("");
 			objExitinguser.setObjResponse(new Response());
 			objExitinguser.getObjResponse().setInformation("Invalid user");
 			objExitinguser.getObjResponse().setStatus(false);
-			objuser.getObjsilentaudit().setActions("Warning");
-			objuser.getObjsilentaudit().setComments("User"+" "+objuser.getsUsername()+ " "+"does not exist");
-			objuser.getObjsilentaudit().setTableName("LSuserMaster");
-			objuser.getObjsilentaudit().setUsername(objusermaster.getUsername());
-//			objuser.getObjsilentaudit().setTransactiondate(new Date());
-			objuser.getObjsilentaudit().setSystemcoments("System Generated");
-			objuser.getObjsilentaudit().setModuleName(ModuleName);
-			objuser.getObjsilentaudit().setLsuserMaster(objusermaster.getUsercode());
-//	    			objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-			objuser.getObjsilentaudit().setLssitemaster(Integer.parseInt(objuser.getsSiteCode()));
-    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
 		}
 		return objExitinguser;
 	}

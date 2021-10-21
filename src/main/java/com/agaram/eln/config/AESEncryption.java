@@ -70,14 +70,13 @@ public class AESEncryption {
     
     public static String encryptcontant(String strToEncrypt) 
     {
-
-        String originalString = "";
+    	String originalString = "";
     	try
         {
             String key = "1234567812345678";
             String iv = "1234567812345678";
 
-            Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
             IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 
