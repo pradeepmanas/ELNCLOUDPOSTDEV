@@ -291,7 +291,13 @@ public class DatasourceService {
 									: CustomerSubscription.getType().equalsIgnoreCase("Standard") ? 3914465000000065049L
 											: 3914465000000065053L);
 					
+					if(CustomerSubscription.getType().equalsIgnoreCase("cancel")) {
+						getTenant.setIsenable(false);
+					}
+					
 					getTenant.setNoofusers(CustomerSubscription.getNumber_of_users());
+					
+				
 					
 					configRepo.save(getTenant);
 				} else {
@@ -914,6 +920,34 @@ public class DatasourceService {
 		}
 
 		return tenantDetails;
+	}
+
+	public DataSourceConfig afterotpverified(DataSourceConfig objtenant) {
+		Email email = new Email();
+		try {
+		email.setMailto(env.getProperty("spring.mail.username"));
+		email.setSubject("UserName and PassWord");
+
+		email.setMailcontent(
+				"<b>Dear ELN System Admin,</b><br><center><img src=\"cid:image\"  style =width:120px; height:100px border: 3px;'></center><br><br>"
+						+ "<p><p>A customer has registered and completed the verification in ELN System with the following Tenant </p>details:<br><br>"
+						+ "<b style='margin-left: 76px;'>User Name: </b>\t\t " +objtenant.getTenantid()  + "<br><br>"
+								+ "<b style='margin-left: 76px;'>Email id: </b>\t\t " +objtenant.getUseremail()  + "<br><br>"
+						+ "<p>Please initiate the activation of Admin user for the above mentioned Tenant in ELN system so that<br><br><br>"
+						+ "<p>the customer can receive the email with ELN Admin Credentials.<br><br><br>"
+						+ "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
+						+ "<img src=\"cid:seconimage\"  style ='width:120px; height:120px;border: 3px;'"
+						+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
+						+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
+	
+			emailService.sendEmail(email);
+			return objtenant;
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
 	}
 
 }

@@ -1,10 +1,12 @@
 package com.agaram.eln.primary.service.sheetManipulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -36,6 +38,7 @@ import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
@@ -386,8 +389,9 @@ public class FileService {
 		return lsfiles;
 	}
 
-	public List<LSworkflow> InsertUpdateWorkflow(List<LSworkflow> lstworkflow) {
-		for (LSworkflow flow : lstworkflow) {
+	public List<LSworkflow> InsertUpdateWorkflow(LSworkflow[] workflow) {
+		List<LSworkflow> lstworkflow1 = Arrays.asList(workflow);
+		for (LSworkflow flow : lstworkflow1) {
 			lsworkflowgroupmappingRepository.save(flow.getLsworkflowgroupmapping());
 			lsworkflowRepository.save(flow);
 		}
@@ -408,11 +412,11 @@ public class FileService {
 ////			lstworkflow.get(0).getObjmanualaudit().setTransactiondate(date);
 //			lscfttransactionRepository.save(lstworkflow.get(0).getObjmanualaudit());
 //		}
-		lstworkflow.get(0).setResponse(new Response());
-		lstworkflow.get(0).getResponse().setStatus(true);
-		lstworkflow.get(0).getResponse().setInformation("ID_SHEETMSG");
+		lstworkflow1.get(0).setResponse(new Response());
+		lstworkflow1.get(0).getResponse().setStatus(true);
+		lstworkflow1.get(0).getResponse().setInformation("ID_SHEETMSG");
 
-		return lstworkflow;
+		return lstworkflow1;
 	}
 
 	public List<LSworkflow> GetWorkflow(LSworkflow objflow) {
@@ -480,8 +484,9 @@ public class FileService {
 		return mapOrders;
 	}
 
-	public List<LSsheetworkflow> InsertUpdatesheetWorkflow(List<LSsheetworkflow> lSsheetworkflow) {
-
+	public List<LSsheetworkflow> InsertUpdatesheetWorkflow(LSsheetworkflow[] sheetworkflow) {
+		
+		List<LSsheetworkflow> lSsheetworkflow = Arrays.asList(sheetworkflow);
 		for (LSsheetworkflow flow : lSsheetworkflow) {
 			lssheetworkflowgroupmapRepository.save(flow.getLssheetworkflowgroupmap());
 			lssheetworkflowRepository.save(flow);

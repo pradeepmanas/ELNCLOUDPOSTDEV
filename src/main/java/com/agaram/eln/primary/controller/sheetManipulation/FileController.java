@@ -96,7 +96,7 @@ public class FileController {
 	}
 	
 	@PostMapping("/InsertUpdateWorkflow")
-	public List<LSworkflow> InsertUpdateWorkflow(@RequestBody List<LSworkflow> lstworkflow)
+	public List<LSworkflow> InsertUpdateWorkflow(@RequestBody LSworkflow[] workflow)
 	{
 		
 //		if(lstworkflow.get(0).getObjuser()!= null) {
@@ -122,7 +122,7 @@ public class FileController {
 //				return lstworkflow;
 //			}	
 //		}
-		return fileService.InsertUpdateWorkflow(lstworkflow);
+		return fileService.InsertUpdateWorkflow(workflow);
 	}
 	
 	@PostMapping("/GetWorkflow")
@@ -149,7 +149,7 @@ public class FileController {
 	}
 	
 	@PostMapping("/InsertUpdatesheetWorkflow")
-	public List<LSsheetworkflow> InsertUpdatesheetWorkflow(@RequestBody List<LSsheetworkflow> lstsheetworkflow)
+	public List<LSsheetworkflow> InsertUpdatesheetWorkflow(@RequestBody LSsheetworkflow[] sheetworkflow)
 	{
 		
 //		if(lstsheetworkflow.get(0).getObjuser()!= null) {
@@ -176,7 +176,7 @@ public class FileController {
 //			}			
 //		}
 		
-		return fileService.InsertUpdatesheetWorkflow(lstsheetworkflow);
+		return fileService.InsertUpdatesheetWorkflow(sheetworkflow);
 	}
 	
 	@PostMapping("/GetsheetWorkflow")

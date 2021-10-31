@@ -1,15 +1,35 @@
 package com.agaram.eln.primary.controller.protocol;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
@@ -109,9 +129,8 @@ public class ProtocolController {
 	}
 
 	@PostMapping("/InsertUpdatesheetWorkflow")
-	public List<LSprotocolworkflow> InsertUpdatesheetWorkflow(
-			@RequestBody List<LSprotocolworkflow> LSprotocolworkflow) {
-		return ProtocolMasterService.InsertUpdatesheetWorkflow(LSprotocolworkflow);
+	public List<LSprotocolworkflow> InsertUpdatesheetWorkflow(@RequestBody LSprotocolworkflow[] protocolworkflow) {
+		return ProtocolMasterService.InsertUpdatesheetWorkflow(protocolworkflow);
 	}
 
 	@PostMapping("/Deletesheetworkflow")
@@ -282,5 +301,75 @@ public class ProtocolController {
 	public List<LSprotocolmaster> Getremainingtemplates(@RequestBody LSprotocolmaster objorder)
 	{
 		return ProtocolMasterService.Getremainingtemplates(objorder);
+	}
+	
+	@PostMapping("/uploadprotocols")
+	public boolean uploadprotocols(@RequestParam Map<String, Object> body)
+	{
+		return ProtocolMasterService.uploadprotocols(body);
+//		return true;
+	}
+	
+	@PostMapping("/loadprotocolfiles")
+	public boolean loadprotocolfiles(@RequestParam Map<String, String> body)
+	{
+		return true;
+	}
+	
+	@PostMapping("/uploadprotocolsfile")
+	public Map<String, Object> uploadprotocolsfile(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolstepcode") Integer protocolstepcode, 
+			@RequestParam("protocolmastercode") Integer protocolmastercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl)
+	{
+	
+		return ProtocolMasterService.uploadprotocolsfile(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl );
+	}
+	
+	@PostMapping("/Uploadprotocolimage")
+	public Map<String, Object> Uploadprotocolimage(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolstepcode") Integer protocolstepcode, 
+			@RequestParam("protocolmastercode") Integer protocolmastercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl)
+	{
+		return ProtocolMasterService.Uploadprotocolimage(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl );
+	}
+	
+	@RequestMapping(value = "downloadprotocolimage/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadprotocolimage(@PathVariable String fileid
+			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+		ByteArrayInputStream bis = ProtocolMasterService.downloadprotocolimage(fileid, tenant);
+		
+	    HttpHeaders header = new HttpHeaders();
+	    header.setContentType(MediaType.parseMediaType("image/png"));
+	    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+	    
+	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "downloadprotocolfile/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadprotocolfile(@PathVariable String fileid
+			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+		ByteArrayInputStream bis = ProtocolMasterService.downloadprotocolfile(fileid, tenant);
+		
+	    HttpHeaders header = new HttpHeaders();
+	    header.setContentType(MediaType.parseMediaType("image/png"));
+	    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+	    
+	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+	}
+	
+	@PostMapping("/removeprotocolimage")
+	public boolean removeprotocolimage(@RequestBody Map<String, String> body)
+	{
+		return ProtocolMasterService.removeprotocolimage(body);
 	}
 }

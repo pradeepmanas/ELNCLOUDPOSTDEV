@@ -193,6 +193,12 @@ public class DatasourceController {
 
 		return datasourceService.otpvarification(objtenant);
 	}
+	
+	@PostMapping("/afterotpverified")
+	public DataSourceConfig afterotpverified(@RequestBody DataSourceConfig objtenant) throws MessagingException {
+
+		return datasourceService.afterotpverified(objtenant);
+	}
 
 	@PostMapping("/checkusermail")
 	public Map<String, Object> checkusermail(@RequestBody DataSourceConfig DataSourceConfig) throws MessagingException {

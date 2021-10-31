@@ -3,6 +3,7 @@ package com.agaram.eln.primary.service.cfr;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -279,8 +280,8 @@ public class AuditService {
 		return maprAuditConfig;
 	}
 
-	public List<LSaudittrailconfiguration> SaveAuditconfigUser(List<LSaudittrailconfiguration> lsAudit) {
-
+	public List<LSaudittrailconfiguration> SaveAuditconfigUser(LSaudittrailconfiguration[] lsAuditary) {
+		List<LSaudittrailconfiguration> lsAudit = Arrays.asList(lsAuditary);
 		LSaudittrailconfigurationRepository.save(lsAudit);
 //		lscfttransactionRepository.save(lsAudit.get(0).getObjsilentauditlst());
 		if(lsAudit.get(0).getObjuser()!=null) {

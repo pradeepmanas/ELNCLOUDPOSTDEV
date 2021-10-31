@@ -62,6 +62,9 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
     	mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 //    	mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
     	System.out.println(inputMessage.getHeaders().get("authorization").get(0));
+    	String contenttype = inputMessage.getHeaders().get("Content-Type").get(0);
+    	String encoding = inputMessage.getHeaders().get("accept-encoding").get(0);
+    	
     	
     	String decryptionkey = "1234567812345678";
 //    	if(inputMessage.getHeaders().get("authorization") != null && 
@@ -83,7 +86,15 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 //    		decryptionkey = "1234567812345678";
 //    	}
     	
-    	return mapper.readValue(decrypt(inputMessage.getBody(), decryptionkey), clazz);
+    	if(contenttype.equalsIgnoreCase("application/json;charset=UTF-8") && encoding.equalsIgnoreCase("gzip, deflate"))
+    	{
+    		return mapper.readValue(decrypt(inputMessage.getBody(), decryptionkey), clazz);
+    	}
+    	else
+    	{
+    		return mapper.readValue(inputMessage.getBody(), clazz);
+    	}
+    	
     }
 
     @Override
@@ -94,6 +105,7 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
     	mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     	//mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 //    	System.out.println("write "+ outputMessage.getHeaders().get("authorization").get(0));
+    	
     	outputMessage.getBody().write(encrypt(mapper.writeValueAsBytes(o)));
     }
 

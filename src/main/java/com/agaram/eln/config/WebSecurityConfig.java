@@ -72,6 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		// dont authenticate this particular request
 		.authorizeRequests().antMatchers("/authenticate").permitAll().
 		antMatchers("/multitenant/otpvarification").permitAll().
+		antMatchers("/multitenant/afterotpverified").permitAll().
 		antMatchers("/registerMail").permitAll().
 		antMatchers("/multitenant/sendotp").permitAll().
 		antMatchers("/Login/LoadSite").permitAll().
@@ -144,6 +145,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/User/validatemailaddress").permitAll().
 		antMatchers("/Login/limsloginusertokengenarate").permitAll().
 		antMatchers("/multitenant/Registerinvoice").permitAll().
+		antMatchers("/protocol/downloadprotocolimage/{fileid}/{tenant}/{filename}/{extension}").permitAll().
+		antMatchers("/protocol/downloadprotocolfile/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		// all other requests need to be authenticated
 		anyRequest().authenticated().and().
 		// make sure we use stateless session; session won't be used to

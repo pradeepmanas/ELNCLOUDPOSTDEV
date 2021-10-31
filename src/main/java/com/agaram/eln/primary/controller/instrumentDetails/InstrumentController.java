@@ -1,20 +1,36 @@
 package com.agaram.eln.primary.controller.instrumentDetails;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +40,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.model.cfr.LSactivity;
@@ -44,7 +62,9 @@ import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
 import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
+import com.google.gson.Gson;
 import com.mongodb.gridfs.GridFSDBFile;
+import com.sun.prism.Image;
 
 @RestController
 @RequestMapping(value = "/Instrument")
@@ -649,5 +669,6 @@ public class InstrumentController {
 	{
 		return instrumentService.Getremainingorders(objorder);
 	}
-
+	
+	
 }

@@ -36,7 +36,15 @@ public class LSprotocolstep {
 	private Integer newStep;
 	@Transient
 	private Integer versionno;
+	@Transient
+	public String lsprotocolstepInformation;
 	
+	public String getLsprotocolstepInformation() {
+		return lsprotocolstepInformation;
+	}
+	public void setLsprotocolstepInformation(String lsprotocolstepInformation) {
+		this.lsprotocolstepInformation = lsprotocolstepInformation;
+	}
 	public Integer getVersionno() {
 		return versionno;
 	}

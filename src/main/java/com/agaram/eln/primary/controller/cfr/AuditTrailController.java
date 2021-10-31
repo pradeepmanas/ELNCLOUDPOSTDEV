@@ -88,7 +88,7 @@ public class AuditTrailController {
 	}
 	
 	@PostMapping("/SaveAuditconfigUser")
-	public List<LSaudittrailconfiguration> SaveAuditconfigUser(@RequestBody List<LSaudittrailconfiguration> lsAudit)
+	public List<LSaudittrailconfiguration> SaveAuditconfigUser(@RequestBody LSaudittrailconfiguration[] lsAudit)
 	{
 		return auditService.SaveAuditconfigUser(lsAudit);
 	}
