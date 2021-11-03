@@ -665,10 +665,12 @@ public class DashBoardService {
 
 	public List<Repositorymaster> Getallrepositories(LSuserMaster objuser) {
 
-//		Date fromdate = objuser.getObjuser().getFromdate();
-//		Date todate = objuser.getObjuser().getTodate();
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
 
-		return LsrepositoriesRepository.findBysitecodeOrderByRepositorycodeAsc(objuser.getLssitemaster().getSitecode());
+//		return LsrepositoriesRepository.findBysitecodeOrderByRepositorycodeAsc(objuser.getLssitemaster().getSitecode());
+		
+		return LsrepositoriesRepository.findBySitecodeAndAddedonBetweenOrderByRepositorycodeAsc(objuser.getLssitemaster().getSitecode(),fromdate,todate);
 	}
 
 }

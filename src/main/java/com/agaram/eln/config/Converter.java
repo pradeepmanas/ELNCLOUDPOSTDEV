@@ -61,7 +61,7 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
     	mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     	mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 //    	mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-    	System.out.println(inputMessage.getHeaders().get("authorization").get(0));
+//    	System.out.println(inputMessage.getHeaders().get("authorization").get(0));
     	String contenttype = inputMessage.getHeaders().get("Content-Type").get(0);
     	String encoding = inputMessage.getHeaders().get("accept-encoding").get(0);
     	

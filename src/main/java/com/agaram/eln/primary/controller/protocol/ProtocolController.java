@@ -304,7 +304,7 @@ public class ProtocolController {
 	}
 	
 	@PostMapping("/uploadprotocols")
-	public boolean uploadprotocols(@RequestParam Map<String, Object> body)
+	public Map<String, Object> uploadprotocols(@RequestParam Map<String, Object> body)
 	{
 		return ProtocolMasterService.uploadprotocols(body);
 //		return true;

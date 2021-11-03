@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.cfr.LSactivity;
@@ -53,7 +56,7 @@ import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
-
+import com.agaram.eln.primary.model.protocols.LSprotocolimages;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
@@ -1798,9 +1801,12 @@ public class InstrumentService {
 		objupdatedorder.setLsLSlimsorder(lSlimsorderRepository.findBybatchid(objupdatedorder.getBatchid()));
 
 		LSsamplefile LSsamplefile = objupdatedorder.getLssamplefile();
-		List<LSsamplefileversion> LSsamplefileversion = lssamplefileversionRepository
-				.findByFilesamplecodeOrderByVersionnoDesc(LSsamplefile);
-		objupdatedorder.getLssamplefile().setLssamplefileversion(LSsamplefileversion);
+		if(LSsamplefile != null) {
+			 if(LSsamplefile.getFilesamplecode() != null) {
+				 List<LSsamplefileversion> LSsamplefileversion=	lssamplefileversionRepository.findByFilesamplecodeOrderByVersionnoDesc(LSsamplefile);
+				 objupdatedorder.getLssamplefile().setLssamplefileversion(LSsamplefileversion); 
+			 } 
+		 }
 
 		if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
 			if (objupdatedorder.getLsworkflow()
@@ -2963,6 +2969,47 @@ public class InstrumentService {
 			lstorders.forEach(objord -> objord.setLstworkflow(lstworkflow));
 		}
 		return lstorders;
+	}
+	
+	public Map<String, Object> uploadsheetimages(MultipartFile file, String originurl)
+	{
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+			String id = null;
+			try {
+				id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "sheetimages");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		map.put("link", originurl+"/Instrument/downloadsheetimages/"+id
+		+"/"+TenantContext.getCurrentTenant()+"/"+FilenameUtils.removeExtension(file.getOriginalFilename())+"/"+FilenameUtils.getExtension(file.getOriginalFilename()));
+		return map;
+	}
+	
+	public ByteArrayInputStream downloadsheetimages(String fileid, String tenant)
+	{
+		TenantContext.setCurrentTenant(tenant);
+		byte[] data = null;
+		try {
+			data = StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(fileid,tenant+"sheetimages"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ByteArrayInputStream bis = new ByteArrayInputStream(data);
+		
+		return bis;
+	}
+	
+	public Response removesheetimage(Map<String, String> body) {
+		Response objresponse = new Response();
+		String filid = body.get("fileid");
+		cloudFileManipulationservice.deletecloudFile(filid, "sheetimages");
+		objresponse.setStatus(true);
+		return objresponse;
 	}
 
 }

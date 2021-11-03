@@ -14,6 +14,8 @@ public interface LsrepositoriesRepository extends JpaRepository<Lsrepositories, 
 	
 	public List<Repositorymaster> findBysitecodeOrderByRepositorycodeAsc(Integer sitecode);
 	
+	public List<Lsrepositories> findBysitecodeAndAddedonBetweenOrderByRepositorycodeAsc(Integer sitecode,Date fromdate,Date todate);
+	
 	public List<Repositorymaster> findBySitecodeAndAddedonBetweenOrderByRepositorycodeAsc(Integer sitecode,Date fromdate,Date todate);
 	
 	public Lsrepositories findByRepositorycode(Integer repositorycode);

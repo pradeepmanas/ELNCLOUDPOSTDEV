@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.service.masters;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +35,7 @@ import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.archieve.LsProjectarchieveRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
@@ -43,7 +43,6 @@ import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
-import com.agaram.eln.primary.repository.archieve.LsProjectarchieveRepository;
 import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -89,7 +88,15 @@ public class MasterService {
     private Environment env;
 
 	public List<Lsrepositories> Getallrepositories(Lsrepositories lsrepositories) {
-		return lsrepositoriesRepository.findBySitecodeOrderByRepositorycodeAsc(lsrepositories.getSitecode());
+		return lsrepositoriesRepository.
+				findBySitecodeOrderByRepositorycodeAsc
+				(lsrepositories.getSitecode());
+	}
+	
+	public List<Lsrepositories> Getallrepositoriesondashboard(Lsrepositories lsrepositories) {
+		return lsrepositoriesRepository.
+				findBysitecodeAndAddedonBetweenOrderByRepositorycodeAsc
+				(lsrepositories.getSitecode(),lsrepositories.getFromdate(),lsrepositories.getTodate());
 	}
 
 	public Lsrepositories Saverepository(Lsrepositories lsrepositories) {

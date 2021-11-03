@@ -51,6 +51,28 @@ public class Lsrepositories {
 	@Transient
 	Response objResponse;
 	
+	@Transient
+	private Date fromdate;
+	
+	@Transient
+	private Date todate;
+	
+	public Date getFromdate() {
+		return fromdate;
+	}
+
+	public void setFromdate(Date fromdate) {
+		this.fromdate = fromdate;
+	}
+
+	public Date getTodate() {
+		return todate;
+	}
+
+	public void setTodate(Date todate) {
+		this.todate = todate;
+	}
+
 	public String getIsonexpireddatefield() {
 		return isonexpireddatefield;
 	}

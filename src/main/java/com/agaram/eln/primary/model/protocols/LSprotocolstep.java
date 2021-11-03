@@ -11,6 +11,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.agaram.eln.primary.model.general.Response;
+
 @Entity
 @Table(name="LSprotocolstep")
 public class LSprotocolstep {
@@ -39,6 +41,15 @@ public class LSprotocolstep {
 	@Transient
 	public String lsprotocolstepInformation;
 	
+	@Transient
+	private Response response;
+	
+	public Response getResponse() {
+		return response;
+	}
+	public void setResponse(Response response) {
+		this.response = response;
+	}
 	public String getLsprotocolstepInformation() {
 		return lsprotocolstepInformation;
 	}

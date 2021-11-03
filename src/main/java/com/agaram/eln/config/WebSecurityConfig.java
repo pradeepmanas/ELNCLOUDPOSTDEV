@@ -147,6 +147,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/multitenant/Registerinvoice").permitAll().
 		antMatchers("/protocol/downloadprotocolimage/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolfile/{fileid}/{tenant}/{filename}/{extension}").permitAll().
+		antMatchers("/Instrument/downloadsheetimages/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		// all other requests need to be authenticated
 		anyRequest().authenticated().and().
 		// make sure we use stateless session; session won't be used to
