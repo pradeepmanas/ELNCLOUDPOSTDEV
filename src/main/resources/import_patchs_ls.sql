@@ -50,5 +50,5 @@ update LSaudittrailconfigmaster set ordersequnce= 64 where serialno=65;
 --END
 --$do$;
 
-ALTER TABLE IF Exists Helptittle ADD COLUMN IF NOT EXISTS page character varying(100);
+ALTER TABLE IF Exists Helptittle ADD COLUMN IF NOT EXISTS page varying(255);
 
