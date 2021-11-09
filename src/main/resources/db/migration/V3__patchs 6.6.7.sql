@@ -1403,4 +1403,256 @@ update lsusergrouprights set modulename='Protocol Templates' where modulename='P
 
 INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (51, 'Protocol Templates', 'Protocol Templates', '0', 'NA', 'NA', 'NA', '0,0,0',51) ON CONFLICT(orderno)DO NOTHING;
 
-DO$do$DECLARE   _kind "char";BEGIN   SELECT relkind   FROM   pg_class   WHERE  relname = 'lsprotocolworkflow_workflowcode_seq'        INTO  _kind;   IF NOT FOUND THEN        CREATE SEQUENCE lsprotocolworkflow_workflowcode_seq;	  	  ALTER SEQUENCE lsprotocolworkflow_workflowcode_seq OWNED BY lsprotocolworkflow.workflowcode;   ELSIF _kind = 'S' THEN         ELSE                      END IF;END$do$;
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsprotocolworkflow_workflowcode_seq'  
+   
+   INTO  _kind;
+
+   IF NOT FOUND THEN  
+      CREATE SEQUENCE lsprotocolworkflow_workflowcode_seq;
+	  
+	  ALTER SEQUENCE lsprotocolworkflow_workflowcode_seq OWNED BY lsprotocolworkflow.workflowcode;
+   ELSIF _kind = 'S' THEN 
+     
+   ELSE                   
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsprojectarchieve_projectarchievecode_seq'  
+   -- sequence name, optionally schema-qualified
+   INTO  _kind;
+
+   IF NOT FOUND THEN       -- name is free
+      CREATE SEQUENCE lsprojectarchieve_projectarchievecode_seq;
+   ELSIF _kind = 'S' THEN  -- sequence exists
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.lsprojectarchieve
+(
+    projectarchievecode integer NOT NULL DEFAULT nextval('lsprojectarchieve_projectarchievecode_seq'::regclass),
+    filenameuuid character varying(100) COLLATE pg_catalog."default",
+    modifieddate timestamp without time zone,
+    projectname character varying(100) COLLATE pg_catalog."default",
+    archieveby_usercode integer,
+    lssitemaster_sitecode integer,
+    CONSTRAINT lsprojectarchieve_pkey PRIMARY KEY (projectarchievecode),
+    CONSTRAINT fk99ywhbq3f2trkoli6fg6777e6 FOREIGN KEY (lssitemaster_sitecode)
+        REFERENCES public.lssitemaster (sitecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkk2v7dy4b1qd0v24yv3yqe3frk FOREIGN KEY (archieveby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprojectarchieve
+    OWNER to postgres;
+
+
+DO
+$do$
+DECLARE
+   counter integer := 0;
+BEGIN
+  select count(*) into counter from lsusergrouprightsmaster where sequenceorder =33 and modulename ='User Master';
+
+   IF counter=0 THEN       -- name is free
+INSERT into LSusergrouprightsmaster (orderno, displaytopic, modulename, sallow, screate, sdelete,sedit, status,sequenceorder)
+VALUES (52, 'Retire', 'User Master', '0', 'NA', 'NA', 'NA', '0,0,0',33);
+   END IF;
+END
+$do$;
+
+do $$
+declare 
+   counter1 integer := 0;
+     orderno1 integer :=0;
+  sequenceorder1 integer :=0;
+  checkv integer :=0;
+  i integer :=0;
+  samecode integer :=0;
+  sampleorderno integer :=0;
+begin
+
+ select count(*) into samecode from lsusergrouprightsmaster where sequenceorder =33;
+ select count(*)into checkv from lsusergrouprightsmaster where sequenceorder >= 33 and modulename !='User Master';
+--       raise notice 'Counter %', samecode;
+-- 	    raise notice 'Counter %', checkv;
+   IF samecode =2 THEN		
+ while i < checkv loop
+ select orderno into orderno1 from lsusergrouprightsmaster where sequenceorder >=33 and modulename !='User Master' order by sequenceorder desc offset i  limit 1; 
+ select sequenceorder into sequenceorder1 from lsusergrouprightsmaster where sequenceorder >=33 and modulename !='User Master' order by sequenceorder desc offset i  limit 1; 
+   raise notice 'orderno1 %', orderno1;
+
+raise notice 'Counter %', sequenceorder1;
+ sequenceorder1 := sequenceorder1+1;
+     update lsusergrouprightsmaster set sequenceorder=sequenceorder1 where orderno=orderno1;
+raise notice 'Counter %', sequenceorder1;
+ i := i + 1;
+--   IF samecode =2 and sequenceorder1 =33 THEN	
+--    select count(*) into samecode from lsusergrouprightsmaster where sequenceorder =33;
+--   END IF;
+  end loop;
+    END IF;
+
+end$$;
+
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolstepinformation
+(
+    id integer NOT NULL,
+    lsprotocolstepinfo jsonb,
+    CONSTRAINT lsprotocolstepinformation_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolstepinformation
+    OWNER to postgres;
+    
+CREATE TABLE IF NOT EXISTS public.lsprotocolfiles
+(
+    protocolstepfilecode integer NOT NULL,
+    extension character varying(255) COLLATE pg_catalog."default",
+    fileid character varying(255) COLLATE pg_catalog."default",
+    filename character varying(255) COLLATE pg_catalog."default",
+    protocolmastercode integer,
+    protocolstepcode integer,
+    protocolstepname character varying(255) COLLATE pg_catalog."default",
+    stepno integer,
+    CONSTRAINT lsprotocolfiles_pkey PRIMARY KEY (protocolstepfilecode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolfiles
+    OWNER to postgres;
+    
+    
+ CREATE TABLE IF NOT EXISTS public.lsprotocolimages
+(
+    protocolstepimagecode integer NOT NULL,
+    extension character varying(255) COLLATE pg_catalog."default",
+    fileid character varying(255) COLLATE pg_catalog."default",
+    protocolmastercode integer,
+    protocolstepcode integer,
+    protocolstepname character varying(255) COLLATE pg_catalog."default",
+    stepno integer,
+    filename character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT lsprotocolimages_pkey PRIMARY KEY (protocolstepimagecode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolimages
+    OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'temporaryfilestorage_uploadedcode_seq'  
+   -- sequence name, optionally schema-qualified
+   INTO  _kind;
+
+   IF NOT FOUND THEN       -- name is free
+      CREATE SEQUENCE temporaryfilestorage_uploadedcode_seq;
+   ELSIF _kind = 'S' THEN  -- sequence exists
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.temporaryfilestorage
+(
+	uploadedcode integer NOT NULL DEFAULT nextval('temporaryfilestorage_uploadedcode_seq'::regclass),
+	uploadedbydate timestamp NOT NULL,
+	modifieduser character varying(100),
+	id character varying(100),
+	sitecode integer
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.temporaryfilestorage
+    OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'filestoragecontent_storagecode_seq'  
+   -- sequence name, optionally schema-qualified
+   INTO  _kind;
+
+   IF NOT FOUND THEN       -- name is free
+      CREATE SEQUENCE filestoragecontent_storagecode_seq;
+   ELSIF _kind = 'S' THEN  -- sequence exists
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.filestoragecontent
+(
+	storagecode integer NOT NULL DEFAULT nextval('filestoragecontent_storagecode_seq'::regclass),
+	modifieddate timestamp NOT NULL,
+	modifieduser character varying(100),
+	id character varying(100),
+	imguniqueid character varying(100),
+	filecode integer,
+	versionno integer,
+	sitecode integer
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.filestoragecontent
+    OWNER to postgres;
+    
+ALTER TABLE IF Exists filestoragecontent ADD COLUMN IF NOT EXISTS imguniqueid character varying(100);    
+    

@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.controller.instrumentDetails;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,6 +39,7 @@ import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
+import com.agaram.eln.primary.model.sheetManipulation.filestoragecontent;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
@@ -653,9 +653,12 @@ public class InstrumentController {
 	}
 	
 	@PostMapping("/uploadsheetimages")
-	public Map<String, Object> uploadsheetimages(@RequestParam("file") MultipartFile file,@RequestParam("originurl") String originurl)
+	public Map<String, Object> uploadsheetimages(
+			@RequestParam("file") MultipartFile file,@RequestParam("originurl") String originurl,
+			@RequestParam("username") String username,
+			@RequestParam("sitecode") String sitecode)
 	{
-		return instrumentService.uploadsheetimages(file, originurl);
+		return instrumentService.uploadsheetimages(file, originurl,username,sitecode);
 	}
 	
 	@RequestMapping(value = "downloadsheetimages/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
@@ -677,5 +680,11 @@ public class InstrumentController {
 	public Response removesheetimage(@RequestBody Map<String, String> body)
 	{
 		return instrumentService.removesheetimage(body);
+	}
+	
+	@PostMapping("/updateFileStorageonsheets")
+	public Boolean updateFileStorageonsheets(@RequestBody filestoragecontent[] objorder)
+	{
+		return instrumentService.updateFileStorageonsheets(objorder);
 	}
 }

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -56,12 +57,13 @@ import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
-import com.agaram.eln.primary.model.protocols.LSprotocolimages;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
+import com.agaram.eln.primary.model.sheetManipulation.filestoragecontent;
+import com.agaram.eln.primary.model.sheetManipulation.temporaryfilestorage;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 //import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
@@ -100,6 +102,8 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSsampleresultReposit
 import com.agaram.eln.primary.repository.sheetManipulation.LStestparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.filestoragecontentRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.temporaryfilestorageRepository;
 import com.agaram.eln.primary.repository.templates.LsMappedTemplateRepository;
 import com.agaram.eln.primary.repository.templates.LsUnmappedTemplateRepository;
 //import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
@@ -223,8 +227,11 @@ public class InstrumentService {
 	@Autowired
 	private CloudOrderAttachmentRepository CloudOrderAttachmentRepository;
 
-//	@Autowired
-//	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
+	@Autowired
+	private temporaryfilestorageRepository temporaryfilestorageRepository;
+	
+	@Autowired
+	private filestoragecontentRepository filestoragecontentRepository;
 
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
@@ -2971,13 +2978,25 @@ public class InstrumentService {
 		return lstorders;
 	}
 	
-	public Map<String, Object> uploadsheetimages(MultipartFile file, String originurl)
+	public Map<String, Object> uploadsheetimages(MultipartFile file, String originurl, String username,String sitecode)
 	{
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 			String id = null;
 			try {
 				id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "sheetimages");
+				
+//				System.out.print(System.getProperty("java.io.tmpdir")+id);
+				
+				temporaryfilestorage tempFile = new temporaryfilestorage();
+				
+				tempFile.setId(id);
+//				tempFile.setUploadedby(System.getProperty("java.io.tmpdir")+id);	
+				tempFile.setSitecode(Integer.parseInt(sitecode));
+				tempFile.setModifieduser(username);
+				tempFile.setUploadedbydate(new Date());	
+				
+				temporaryfilestorageRepository.save(tempFile);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -3010,6 +3029,32 @@ public class InstrumentService {
 		cloudFileManipulationservice.deletecloudFile(filid, "sheetimages");
 		objresponse.setStatus(true);
 		return objresponse;
+	}
+
+	public Boolean updateFileStorageonsheets(filestoragecontent[] objFilelst1) {
+		
+		List<filestoragecontent> lsfilestorage = Arrays.asList(objFilelst1);
+		
+		List<temporaryfilestorage> lstTempfile = new ArrayList<temporaryfilestorage>();
+		
+		for (filestoragecontent fileObj : lsfilestorage) {
+			
+			fileObj.setModifieddate(new Date());
+			
+			fileObj.setImguniqueid(fileObj.getId()+"_"+fileObj.getVersionno());
+			
+			filestoragecontentRepository.save(fileObj);
+			
+			temporaryfilestorage temfile = temporaryfilestorageRepository.findById(fileObj.getId());
+			
+			if(temfile!= null) {
+				lstTempfile.add(temfile);	
+			}
+		}
+		
+		temporaryfilestorageRepository.delete(lstTempfile);
+		
+		return true;
 	}
 
 }

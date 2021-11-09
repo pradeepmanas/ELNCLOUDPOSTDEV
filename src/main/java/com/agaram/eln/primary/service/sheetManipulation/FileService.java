@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.compress.utils.Lists;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -26,7 +26,7 @@ import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.general.SheetVersion;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
-import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -36,9 +36,9 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
-import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
+
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
+
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
@@ -820,15 +820,15 @@ public class FileService {
 			}
 
 			lsfileversionRepository.save(objfile.getLsfileversion());
-			if (objfile.getModifiedlist().get(0).getObjsilentaudit() != null) {
-				// objpwd.getObjsilentaudit().setModuleName("UserManagement");
-				objfile.getModifiedlist().get(0).getObjsilentaudit()
-						.setComments("Sheet" + " " + objfile.getFilenameuser() + " " + " was versioned to version_"
-								+ Versionnumber + " " + "by the user" + " " + objfile.getCreateby().getUsername());
-			
-				objfile.getModifiedlist().get(0).getObjsilentaudit().setTableName("LSfile");
-				lscfttransactionRepository.save(objfile.getModifiedlist().get(0).getObjsilentaudit());
-			}
+//			if (objfile.getModifiedlist().get(0).getObjsilentaudit() != null) {
+//				// objpwd.getObjsilentaudit().setModuleName("UserManagement");
+//				objfile.getModifiedlist().get(0).getObjsilentaudit()
+//						.setComments("Sheet" + " " + objfile.getFilenameuser() + " " + " was versioned to version_"
+//								+ Versionnumber + " " + "by the user" + " " + objfile.getCreateby().getUsername());
+//			
+//				objfile.getModifiedlist().get(0).getObjsilentaudit().setTableName("LSfile");
+//				lscfttransactionRepository.save(objfile.getModifiedlist().get(0).getObjsilentaudit());
+//			}
 
 			String Content = "";
 

@@ -45,16 +45,23 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	long countByOrderflagAndCreatedtimestampBetween(String orderflg, Date fromdate, Date todate);
 	
 	long countByCreatedtimestampBetween(Date fromdate, Date todate);
-	List<LSlogilabprotocoldetail> findTop10ByProtocoltypeAndOrderflagOrderByCreatedtimestampDesc(Integer protocoltype,
-			String string);
+//	List<LSlogilabprotocoldetail> findTop10ByProtocoltypeAndOrderflagOrderByCreatedtimestampDesc(Integer protocoltype,
+//			String string);
 	int countByProtocoltypeAndOrderflag(Integer protocoltype, String string);
 	
+	
+//	@Transactional
+//	@Modifying
+//	@Query(value = "select * from "
+//			+ "LSlogilabprotocoldetail where protocoltype = ?1 and orderflag = ?2  ORDER BY createdtimestamp DESC offset 10 row", nativeQuery = true)
+//	List<LSlogilabprotocoldetail> getProtocoltypeAndOrderflag(Integer protocoltype, String string);
 	
 	@Transactional
 	@Modifying
 	@Query(value = "select * from "
-			+ "LSlogilabprotocoldetail where protocoltype = ?1 and orderflag = ?2  ORDER BY createdtimestamp DESC offset 10 row", nativeQuery = true)
-	List<LSlogilabprotocoldetail> getProtocoltypeAndOrderflag(Integer protocoltype, String string);
+			+ "LSlogilabprotocoldetail where protocoltype = ?1 and orderflag = ?2 and createdtimestamp BETWEEN ?3 and ?4  ORDER BY createdtimestamp DESC offset 10 row", nativeQuery = true)
+	List<LSlogilabprotocoldetail> getProtocoltypeAndOrderflagAndCreatedtimestampBetween(Integer protocoltype, String string,Date fromdate, Date todate);
+
 	
 	@Query("select lsorder from LSlogilabprotocoldetail lsorder where lsorder.lsprotocolmaster IN (:protocolmastercodeArray)") 
 	List<LSlogilabprotocoldetail> findByLsprotocolmaster(@Param("protocolmastercodeArray") List<LSprotocolmaster> protocolmastercodeArray);
@@ -76,4 +83,12 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 
 	List<Logilabprotocolorders> findByOrderflagAndCreatedtimestampBetween(String string, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findTop10ByProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			Integer protocoltype, String string, Date fromdate, Date todate);
+
+
+	int countByProtocoltypeAndOrderflagAndCreatedtimestampBetween(Integer protocoltype, String string, Date fromdate,
+			Date todate);
 }
