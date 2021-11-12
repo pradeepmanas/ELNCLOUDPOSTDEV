@@ -1047,4 +1047,11 @@ public class FileService {
 		
 		return lstsheets;
 	}
+
+	public LSfile UpdateFilecontent(LSfile objfile) {
+		
+		updatefilecontent(objfile.getFilecontent(), objfile, false);
+		
+		return null;
+	}
 }

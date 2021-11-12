@@ -34,6 +34,12 @@ public class FileController {
 		return fileService.InsertupdateSheet(objfile);
 	}
 	
+	@PostMapping("/UpdateFilecontent")
+	public LSfile UpdateFilecontent(@RequestBody LSfile objfile)
+	{
+		return fileService.UpdateFilecontent(objfile);
+	}
+	
 	@PostMapping("/GetSheets")
 	public List<LSfile> GetSheets(@RequestBody LSuserMaster objuser)
 	{

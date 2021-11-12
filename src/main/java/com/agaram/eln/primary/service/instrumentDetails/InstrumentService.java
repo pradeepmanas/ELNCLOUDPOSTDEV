@@ -3041,7 +3041,7 @@ public class InstrumentService {
 			
 			fileObj.setModifieddate(new Date());
 			
-			fileObj.setImguniqueid(fileObj.getId()+"_"+fileObj.getVersionno());
+//			fileObj.setImguniqueid(fileObj.getId()+"_"+fileObj.getVersionno());
 			
 			filestoragecontentRepository.save(fileObj);
 			

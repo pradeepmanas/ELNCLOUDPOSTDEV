@@ -36,6 +36,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 		final String requestTokenHeader = request.getHeader("Authorization");
 		
+		
+		
 		String path =request.getRequestURI();
 		int index =path.lastIndexOf("/");
 		String substringtenant= path.substring(index+1);
