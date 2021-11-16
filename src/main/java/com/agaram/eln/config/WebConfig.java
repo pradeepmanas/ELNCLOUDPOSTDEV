@@ -31,6 +31,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(new Converter());
-        converters.add(new ResourceHttpMessageConverter());
+       // converters.add(new ResourceHttpMessageConverter());
     }
 }
