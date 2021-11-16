@@ -86,14 +86,16 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 //    		decryptionkey = "1234567812345678";
 //    	}
     	
-    	if(contenttype.equalsIgnoreCase("application/json;charset=UTF-8") && encoding.equalsIgnoreCase("gzip, deflate"))
-    	{
+//    	  System.out.println("Encoding for print :" + encoding );
+    	
+//    	if(contenttype.equalsIgnoreCase("application/json;charset=UTF-8") && encoding.equalsIgnoreCase("gzip, deflate"))
+//    	{
     		return mapper.readValue(decrypt(inputMessage.getBody(), decryptionkey), clazz);
-    	}
-    	else
-    	{
-    		return mapper.readValue(inputMessage.getBody(), clazz);
-    	}
+//    	}
+//    	else
+//    	{
+//    		return mapper.readValue(inputMessage.getBody(), clazz);
+//    	}
     	
     }
 

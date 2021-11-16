@@ -241,17 +241,7 @@ public class UserService {
 	}
 
 	public List<LSusergroup> GetUserGroup(LSuserMaster objusergroup) {
-		if (objusergroup.getObjsilentaudit() != null) {
-			// objusergroup.getObjsilentaudit().setModuleName("UserManagement");
-			// objusergroup.getObjsilentaudit().setComments("Allow to view UserGroup");
-			// objusergroup.getObjsilentaudit().setActions("Allow to view");
-			// objusergroup.getObjsilentaudit().setSystemcoments("System Generated");
-			objusergroup.getObjsilentaudit().setTableName("LSusergroup");
-			lscfttransactionRepository.save(objusergroup.getObjsilentaudit());
-		}
-
-//		return lSusergroupRepository.findByusergroupnameNotOrderByUsergroupcodeDesc("Administrator");
-
+		
 		return lSusergroupRepository.findByusergroupnameNotOrderByUsergroupcodeDesc("Administrator");
 	}
 	

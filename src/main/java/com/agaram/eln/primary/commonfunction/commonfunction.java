@@ -112,4 +112,28 @@ public class commonfunction {
 
 		return dateSString;
 	}
+	
+	public static String getMIMEtypeonextension(String extension)
+	{
+		String mediatype = "image/jpeg";
+	    switch (extension) {
+	    case "jpg":
+	    	mediatype = "image/jpeg";
+	      break;
+	    case "docx":
+	    	mediatype = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+	      break;
+	    case "mp3":
+	    	mediatype = "audio/mp3";
+	      break;
+	    case "pdf":
+	    	mediatype = "application/pdf";
+	      break;
+	      
+	    default:
+	    	mediatype = "image/jpeg";
+	  }
+	    
+	    return mediatype;
+	}
 }

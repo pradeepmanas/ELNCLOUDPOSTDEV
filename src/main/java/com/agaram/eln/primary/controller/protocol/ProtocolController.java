@@ -31,9 +31,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocolsteps;
+import com.agaram.eln.primary.model.protocols.LSprotocolfiles;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
@@ -311,9 +313,9 @@ public class ProtocolController {
 	}
 	
 	@PostMapping("/loadprotocolfiles")
-	public boolean loadprotocolfiles(@RequestParam Map<String, String> body)
+	public List<LSprotocolfiles> loadprotocolfiles(@RequestParam Map<String, String> body)
 	{
-		return true;
+		return ProtocolMasterService.loadprotocolfiles(body);
 	}
 	
 	@PostMapping("/uploadprotocolsfile")
@@ -361,7 +363,8 @@ public class ProtocolController {
 		ByteArrayInputStream bis = ProtocolMasterService.downloadprotocolfile(fileid, tenant);
 		
 	    HttpHeaders header = new HttpHeaders();
-	    header.setContentType(MediaType.parseMediaType("image/png"));
+	    String mediatype = commonfunction.getMIMEtypeonextension(extension);
+	    header.setContentType(MediaType.parseMediaType(mediatype));
 	    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
 	    
 	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);

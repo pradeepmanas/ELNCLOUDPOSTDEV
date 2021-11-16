@@ -104,6 +104,7 @@ public class LoginService {
         return result;
     }
 	
+	
 	public List<LSSiteMaster> LoadSiteMaster() {
         return lSSiteMasterRepository.findByOrderBySitecodeAsc();
     }
@@ -1065,18 +1066,10 @@ public class LoginService {
 	}
 
 	public List<LSdomainMaster> LoadDomainMaster(LSSiteMaster objsite) {
-		
-		if(objsite.getObjsilentaudit() != null)
-    	{
-			//objsite.getObjsilentaudit().setModuleName("UserManagement");
-			//objsite.getObjsilentaudit().setComments("Allow to view Domain");
-			//objsite.getObjsilentaudit().setActions("view");
-			//objsite.getObjsilentaudit().setSystemcoments("System Generated");
-			objsite.getObjsilentaudit().setTableName("LSSiteMaster");
-    		lscfttransactionRepository.save(objsite.getObjsilentaudit());
-    	}
-		
 		return lSDomainMasterRepository.findBylssitemasterAndDomainstatus(objsite,1);
+	}
+public List<LSdomainMaster> LoadDomainMasterAdmin(LSSiteMaster objsite) {
+		return lSDomainMasterRepository.findAll();
 	}
 public LSuserMaster validateuser(LSuserMaster objClass) {
 	LSuserMaster objuser = new LSuserMaster();

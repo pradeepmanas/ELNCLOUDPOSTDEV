@@ -44,6 +44,8 @@ public class LoginController {
 		return loginService.loadSite();
 	}
 	
+	
+	
 	@GetMapping("/LoadSiteMaster")
 	public List<LSSiteMaster> LoadSiteMaster(HttpServletRequest request) {
 		return loginService.LoadSiteMaster();
@@ -324,6 +326,10 @@ public class LoginController {
 	@PostMapping("/LoadDomainMaster")
 	public List<LSdomainMaster> LoadDomainMaster(@RequestBody LSSiteMaster objsite) {
 		return loginService.LoadDomainMaster(objsite);
+	}
+	@PostMapping("/LoadDomainMasterAdmin")
+	public List<LSdomainMaster> LoadDomainMasterAdmin(@RequestBody LSSiteMaster objsite) {
+		return loginService.LoadDomainMasterAdmin(objsite);
 	}
 	
 	@PostMapping("/Validateuser")

@@ -25,6 +25,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.config.TenantContext;
@@ -2756,5 +2757,16 @@ public class ProtocolService {
 			mapObj.put("response", response);
 		}
 		return mapObj;
+	}
+	
+	public List<LSprotocolfiles> loadprotocolfiles(Map<String, String> body)
+	{
+		List<LSprotocolfiles> lstfiles = new ArrayList<LSprotocolfiles>();
+		ObjectMapper object = new ObjectMapper();
+		Integer protocolmastercode = object.convertValue(body.get("protocolmastercode"), Integer.class);
+		Integer protocolstepcode = object.convertValue(body.get("protocolstepcode"), Integer.class);
+		
+		lstfiles = lsprotocolfilesRepository.findByProtocolmastercodeAndProtocolstepcodeOrderByProtocolstepfilecodeDesc(protocolmastercode, protocolstepcode);
+		return lstfiles;
 	}
 }
