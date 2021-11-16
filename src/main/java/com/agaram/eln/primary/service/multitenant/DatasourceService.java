@@ -14,8 +14,10 @@ import java.util.Random;
 
 import javax.mail.MessagingException;
 import javax.sql.DataSource;
+import java.sql.Connection;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.core.env.Environment;
@@ -72,7 +74,7 @@ public class DatasourceService {
 
 	@Autowired
 	private InvoiceRepository InvoiceRepository;
-
+	
 	public DataSourceConfig Validatetenant(DataSourceConfig Tenantname) {
 
 		// DataSourceConfig objdatasource =
@@ -85,6 +87,17 @@ public class DatasourceService {
 			if (objdatasource.isInitialize() && objdatasource.isIsenable()) {
 				objreponse.setStatus(true);
 				objdatasource.setObjResponse(objreponse);
+				
+//				try {
+//					Connection con = dataSourceBasedMultiTenantConnectionProviderImpl.getConnection(objdatasource.getName());
+//					if(con.isClosed())
+//					{
+//						objreponse.setStatus(false);
+//					}
+//				} catch (SQLException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			} else if (!objdatasource.isInitialize()) {
 				objreponse.setInformation("ID_ORGREGINPROGRESS");
 				objreponse.setStatus(false);

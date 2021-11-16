@@ -77,6 +77,7 @@ public class TenantDataSource implements Serializable {
 	            Flyway flyway = Flyway.configure().dataSource(dataSource).load();
 	            flyway.repair();
 	            flyway.migrate();
+	       
 	
 	        }
         }

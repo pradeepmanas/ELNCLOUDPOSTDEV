@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
+import org.hibernate.HibernateException;
 import org.hibernate.engine.jdbc.connections.spi.AbstractDataSourceBasedMultiTenantConnectionProviderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -32,6 +33,9 @@ public class DataSourceBasedMultiTenantConnectionProviderImpl extends AbstractDa
     private Map<String, DataSource> map = new HashMap<>();
 
     boolean init = false;
+    
+    @Autowired
+    private DataSource dataSource;
 
     @PostConstruct
     public void load() {
@@ -40,6 +44,7 @@ public class DataSourceBasedMultiTenantConnectionProviderImpl extends AbstractDa
 
     @Override
     protected DataSource selectAnyDataSource() {
+    	dataSource= map.get(DEFAULT_TENANT_ID);
         return map.get(DEFAULT_TENANT_ID);
     }
 
@@ -50,7 +55,8 @@ public class DataSourceBasedMultiTenantConnectionProviderImpl extends AbstractDa
             TenantDataSource tenantDataSource = context.getBean(TenantDataSource.class);
             map.putAll(tenantDataSource.getAll());
         }
-        return map.get(tenantIdentifier) != null ? map.get(tenantIdentifier) : map.get(DEFAULT_TENANT_ID);
+        dataSource= map.get(tenantIdentifier) != null ? map.get(tenantIdentifier) : map.get(DEFAULT_TENANT_ID);
+        return dataSource;
     }
     
     @Override
@@ -65,5 +71,12 @@ public class DataSourceBasedMultiTenantConnectionProviderImpl extends AbstractDa
         }
     	return true;
     }
+    
+    @Override
+    public Connection getAnyConnection() throws SQLException {
+      return dataSource.getConnection();
+    }
+    
+    
     
 }

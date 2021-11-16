@@ -88,14 +88,14 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
     	
 //    	  System.out.println("Encoding for print :" + encoding );
     	
-//    	if(contenttype.equalsIgnoreCase("application/json;charset=UTF-8") && encoding.equalsIgnoreCase("gzip, deflate"))
-//    	{
+    	if(contenttype.equalsIgnoreCase("application/json;charset=UTF-8") && encoding.equalsIgnoreCase("gzip, deflate"))
+    	{
     		return mapper.readValue(decrypt(inputMessage.getBody(), decryptionkey), clazz);
-//    	}
-//    	else
-//    	{
-//    		return mapper.readValue(inputMessage.getBody(), clazz);
-//    	}
+    	}
+    	else
+    	{
+    		return mapper.readValue(inputMessage.getBody(), clazz);
+    	}
     	
     }
 
