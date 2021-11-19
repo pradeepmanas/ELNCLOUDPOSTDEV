@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.model.protocols;
 
+import java.beans.Transient;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -24,10 +25,47 @@ public class LSprotocolsampleupdates {
 	public String protocolsampleusedDetail;
 	public Integer protocolstepcode;
 	public Integer protocolmastercode;
+	public Integer index;
+	public Integer usedquantity;
+	public Integer repositorydatacode;
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date createddate;
 	public Integer usercode;
+	public Integer status;
+	public String consumefieldkey;
 	
+
+	public String getConsumefieldkey() {
+		return consumefieldkey;
+	}
+	public void setConsumefieldkey(String consumefieldkey) {
+		this.consumefieldkey = consumefieldkey;
+	}
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	public Integer getRepositorydatacode() {
+		return repositorydatacode;
+	}
+	public void setRepositorydatacode(Integer repositorydatacode) {
+		this.repositorydatacode = repositorydatacode;
+	}
+	public Integer getUsedquantity() {
+		return usedquantity;
+	}
+	public void setUsedquantity(Integer usedquantity) {
+		this.usedquantity = usedquantity;
+	}
+	public Integer getIndex() {
+		return index;
+	}
+	public void setIndex(Integer index) {
+		this.index = index;
+	}
+
 	public Integer getProtocolsamplecode() {
 		return protocolsamplecode;
 	}

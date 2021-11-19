@@ -2,24 +2,16 @@ package com.agaram.eln.primary.controller.protocol;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,10 +21,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocolsteps;
 import com.agaram.eln.primary.model.protocols.LSprotocolfiles;
@@ -374,5 +366,29 @@ public class ProtocolController {
 	public boolean removeprotocolimage(@RequestBody Map<String, String> body)
 	{
 		return ProtocolMasterService.removeprotocolimage(body);
+	}
+	
+	@PostMapping("/reducecunsumablefield")
+	public List<Lsrepositoriesdata> reducecunsumablefield(@RequestBody Lsrepositoriesdata[] lsrepositoriesdata)
+	{
+		return ProtocolMasterService.reducecunsumablefield(lsrepositoriesdata);
+	}
+	
+	@RequestMapping(value = "/protocolsampleupdates")
+	protected Map<String, Object> protocolsampleupdates(@RequestBody LSprotocolsampleupdates lsprotocolsampleupdates) {
+
+		return ProtocolMasterService.protocolsampleupdates(lsprotocolsampleupdates);
+	}
+	
+	@RequestMapping(value = "/getrepositoriesdata")
+	protected List<Lsrepositoriesdata> getrepositoriesdata(@RequestBody Integer[] lsrepositoriesdata) {
+
+		return ProtocolMasterService.getrepositoriesdata(lsrepositoriesdata);
+	}
+	
+	@RequestMapping(value = "/updateprotocolsampleupdates")
+	protected Map<String, Object> updateprotocolsampleupdates(@RequestBody LSprotocolsampleupdates[] lsprotocolsampleupdates) {
+
+		return ProtocolMasterService.updateprotocolsampleupdates(lsprotocolsampleupdates);
 	}
 }

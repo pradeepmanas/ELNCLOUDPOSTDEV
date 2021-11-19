@@ -58,6 +58,7 @@ import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
+import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolstepInfoRepository;
@@ -2184,7 +2185,7 @@ public class ProtocolService {
 		List<LSprotocolsampleupdates> sampleupdatelst = new ArrayList<LSprotocolsampleupdates>();
 		if (LSprotocolstep.getProtocolstepcode() != null) {
 			sampleupdatelst = LSprotocolsampleupdatesRepository
-					.findByprotocolstepcode(LSprotocolstep.getProtocolstepcode());
+					.findByprotocolstepcodeAndIndexIsNotNullAndStatus(LSprotocolstep.getProtocolstepcode(),1);
 		}
 		return sampleupdatelst;
 	}
@@ -2758,15 +2759,55 @@ public class ProtocolService {
 		}
 		return mapObj;
 	}
+
+	public List<Lsrepositoriesdata> reducecunsumablefield(Lsrepositoriesdata[] lsrepositoriesdata) {
+		List<Lsrepositoriesdata> lsrepositoriesdataobj = Arrays.asList(lsrepositoriesdata);
+		for(Lsrepositoriesdata data:lsrepositoriesdataobj) {
+			LsrepositoriesdataRepository.save(lsrepositoriesdataobj);
+		}
+
+//	Response response =new Response();
+//	response.setStatus(true);
+//	lsrepositoriesdata.setObjResponse(response);
+		return lsrepositoriesdataobj;
+	}
+	
+
+
+	public Map<String, Object> protocolsampleupdates(LSprotocolsampleupdates lsprotocolsampleupdates) {
+		Map<String, Object> obj =new HashMap<String, Object>();
+				LSprotocolsampleupdatesRepository.save(lsprotocolsampleupdates);
+			List<LSprotocolsampleupdates> lsprotocolsamplelist = LSprotocolsampleupdatesRepository.findByprotocolstepcodeAndProtocolmastercodeAndIndexIsNotNullAndStatus(lsprotocolsampleupdates.getProtocolstepcode(),lsprotocolsampleupdates.getProtocolmastercode(),1);
+			obj.put("lsprotocolsampleupdates", lsprotocolsampleupdates);
+			obj.put("lsprotocolsamplelist", lsprotocolsamplelist);
+			return obj;
+	}
+
+	public List<Lsrepositoriesdata> getrepositoriesdata(Integer[] lsrepositoriesdata) {
+		List<Integer> lsrepositoriesdataobj = Arrays.asList(lsrepositoriesdata);
+		List<Lsrepositoriesdata> returnlst=new ArrayList<Lsrepositoriesdata>();
+		for(Integer lsrepositoriesdatacode:lsrepositoriesdataobj) {
+			List<Lsrepositoriesdata> lst= LsrepositoriesdataRepository.findByRepositorydatacode(lsrepositoriesdatacode);
+			returnlst.add(lst.get(0));
+		}
+//		 lst= LsrepositoriesdataRepository.getRepositorydatacode(lsrepositoriesdataobj);
+		return returnlst;
+	}
+
+	public Map<String, Object> updateprotocolsampleupdates(LSprotocolsampleupdates[] lsprotocolsampleupdates) {
+		List<LSprotocolsampleupdates> lsrepositoriesdataobj = Arrays.asList(lsprotocolsampleupdates);
+		Map<String, Object> obj =new HashMap<String, Object>();
+		LSprotocolsampleupdatesRepository.save(lsrepositoriesdataobj);
+	List<LSprotocolsampleupdates> lsprotocolsamplelist = LSprotocolsampleupdatesRepository.findByprotocolstepcodeAndProtocolmastercodeAndIndexIsNotNullAndStatus(lsrepositoriesdataobj.get(0).getProtocolstepcode(),lsrepositoriesdataobj.get(0).getProtocolmastercode(),1);
+//	obj.put("lsprotocolsampleupdates", lsrepositoriesdataobj);
+	obj.put("lsprotocolsamplelist", lsprotocolsamplelist);
+	return obj;
+	}
 	
 	public List<LSprotocolfiles> loadprotocolfiles(Map<String, String> body)
 	{
-		List<LSprotocolfiles> lstfiles = new ArrayList<LSprotocolfiles>();
-		ObjectMapper object = new ObjectMapper();
-		Integer protocolmastercode = object.convertValue(body.get("protocolmastercode"), Integer.class);
-		Integer protocolstepcode = object.convertValue(body.get("protocolstepcode"), Integer.class);
+		List<LSprotocolfiles> lst = new ArrayList<LSprotocolfiles>();
 		
-		lstfiles = lsprotocolfilesRepository.findByProtocolmastercodeAndProtocolstepcodeOrderByProtocolstepfilecodeDesc(protocolmastercode, protocolstepcode);
-		return lstfiles;
+		return lst;
 	}
 }
