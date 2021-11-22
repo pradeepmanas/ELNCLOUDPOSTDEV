@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "filestoragecontent")
@@ -38,6 +39,9 @@ public class filestoragecontent {
 	private Integer versionno;
 	
 	private Integer sitecode;
+	
+	@Transient
+	private String tenantid;
 
 	public Integer getStoragecode() {
 		return storagecode;
@@ -49,6 +53,14 @@ public class filestoragecontent {
 
 	public Date getModifieddate() {
 		return modifieddate;
+	}
+
+	public String getTenantid() {
+		return tenantid;
+	}
+
+	public void setTenantid(String tenantid) {
+		this.tenantid = tenantid;
 	}
 
 	public void setModifieddate(Date modifieddate) {

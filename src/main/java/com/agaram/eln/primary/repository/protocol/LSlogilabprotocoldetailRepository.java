@@ -13,7 +13,9 @@ import org.springframework.data.repository.query.Param;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogilabprotocoldetail, Long>{
 
@@ -62,10 +64,25 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			+ "LSlogilabprotocoldetail where protocoltype = ?1 and orderflag = ?2 and createdtimestamp BETWEEN ?3 and ?4  ORDER BY createdtimestamp DESC offset 10 row", nativeQuery = true)
 	List<LSlogilabprotocoldetail> getProtocoltypeAndOrderflagAndCreatedtimestampBetween(Integer protocoltype, String string,Date fromdate, Date todate);
 
+	@Transactional
+	@Modifying
+	@Query(value = "select * from "
+			+ "LSlogilabprotocoldetail where protocoltype = ?1 and lsprotocolworkflow_workflowcode =?2 and orderflag = ?3 "
+			+ "and createdtimestamp BETWEEN ?4 and ?5  ORDER BY createdtimestamp DESC offset 10 row", nativeQuery = true)
+	List<LSlogilabprotocoldetail> getProtocoltypeAndLsprotocolworkflowAndOrderflagAndCreatedtimestampBetween
+	(Integer protocoltype,Integer workflowcode, String string,Date fromdate, Date todate);
+
 	
 	@Query("select lsorder from LSlogilabprotocoldetail lsorder where lsorder.lsprotocolmaster IN (:protocolmastercodeArray)") 
 	List<LSlogilabprotocoldetail> findByLsprotocolmaster(@Param("protocolmastercodeArray") List<LSprotocolmaster> protocolmastercodeArray);
 
+	@Transactional
+	@Modifying
+	@Query("update LSlogilabprotocoldetail set lSprotocolworkflow = :workflow, approved= :approved , rejected= :rejected "
+			+ "where protocolordercode in (:protocolordercode)")
+	public void updateFileWorkflow(@Param("workflow") LSprotocolworkflow lsprotocolworkflow,
+			@Param("approved") Integer approved, @Param("rejected") Integer rejected,
+			@Param("protocolordercode") Long protocolordercode);
 
 	LSlogilabprotocoldetail findByProtocolordercodeAndProtoclordername(Long protocolordercode, String protoclordername);
 
@@ -90,5 +107,35 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 
 	int countByProtocoltypeAndOrderflagAndCreatedtimestampBetween(Integer protocoltype, String string, Date fromdate,
+			Date todate);
+
+	int countByOrderflagAndCreatedtimestampBetween(Integer protocoltype, String string, Date fromdate,
+			Date todate);
+
+	List<LSlogilabprotocoldetail> findTop10ByProtocoltypeAndOrderflagAndLSprotocolworkflowAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			Integer protocoltype, String string, LSprotocolworkflow lsprotocolworkflow, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findTop10ByOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			String string, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findTop10ByOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			String string, LSuserMaster lsusermaster, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findTop10ByOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			String string, LSuserMaster lsuserMaster, LSuserMaster assignedto, Date fromdate, Date todate);
+
+
+	int countByOrderflagAndLsuserMasterAndCreatedtimestampBetween(String string, LSuserMaster lsuserMaster,
+			Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findTop10ByOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			String string, LSuserMaster lsuserMaster, Date fromdate, Date todate);
+
+
+	int countByOrderflagAndAssignedtoAndCreatedtimestampBetween(String string, LSuserMaster assignedto, Date fromdate,
 			Date todate);
 }

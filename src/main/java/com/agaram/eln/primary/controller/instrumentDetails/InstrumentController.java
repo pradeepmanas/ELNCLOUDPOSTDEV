@@ -666,6 +666,10 @@ public class InstrumentController {
 	public ResponseEntity<InputStreamResource> downloadsheetimages(@PathVariable String fileid
 			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
 		
+//		String[] words=fileid.split("_");
+//		
+//		System.out.print(words[0]);
+		
 		ByteArrayInputStream bis = instrumentService.downloadsheetimages(fileid, tenant);
 		
 	    HttpHeaders header = new HttpHeaders();
@@ -686,5 +690,11 @@ public class InstrumentController {
 	public Boolean updateFileStorageonsheets(@RequestBody filestoragecontent[] objorder)
 	{
 		return instrumentService.updateFileStorageonsheets(objorder);
+	}
+	
+	@PostMapping("/updatesheetimageonversion")
+	public Boolean updatesheetimageonversion(@RequestBody filestoragecontent[] objorder)
+	{
+		return instrumentService.updatesheetimageonversion(objorder);
 	}
 }

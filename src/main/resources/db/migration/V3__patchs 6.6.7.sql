@@ -1665,3 +1665,76 @@ ALTER TABLE IF Exists LSprotocolsampleupdates ADD COLUMN IF NOT EXISTS repositor
 ALTER TABLE IF Exists LSprotocolsampleupdates ADD COLUMN IF NOT EXISTS status integer;  
     
 ALTER TABLE IF Exists LSprotocolsampleupdates ADD COLUMN IF NOT EXISTS consumefieldkey varchar(250);
+
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS lsprotocolworkflow_workflowcode integer;
+
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS approved integer;
+
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS rejected integer;
+
+CREATE TABLE IF NOT EXISTS public.lsusersignature
+(
+    id integer NOT NULL,
+    image bytea,
+    name character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT lsusersignature_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS sitecode integer;
+
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS assignedto_usercode integer;
+
+
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolorderimages
+(
+    protocolorderstepimagecode integer NOT NULL,
+    extension character varying(255) COLLATE pg_catalog."default",
+    fileid character varying(255) COLLATE pg_catalog."default",
+    filename character varying(255) COLLATE pg_catalog."default",
+  protocolordercode bigint,
+    protocolorderstepcode integer,
+    protocolstepname character varying(255) COLLATE pg_catalog."default",
+    stepno integer,
+    oldfileid character varying(255) COLLATE pg_catalog."default",
+    src jsonb,
+     oldsrc jsonb,
+    CONSTRAINT lsprotocolorderimages_pkey PRIMARY KEY (protocolorderstepimagecode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolorderimages
+    OWNER to postgres;
+    
+    
+    ALTER TABLE IF Exists LSprotocolimages ADD COLUMN IF NOT EXISTS  src jsonb;
+	
+	
+	CREATE TABLE IF NOT EXISTS public.lsprotocolorderfiles
+(
+    protocolorderstepfilecode integer NOT NULL,
+    extension character varying(255) COLLATE pg_catalog."default",
+    fileid character varying(255) COLLATE pg_catalog."default",
+    filename character varying(255) COLLATE pg_catalog."default",
+    protocolordercode bigint,
+    protocolorderstepcode integer,
+    protocolstepname character varying(255) COLLATE pg_catalog."default",
+    stepno integer,
+    CONSTRAINT lsprotocolorderfiles_pkey PRIMARY KEY (protocolorderstepfilecode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolorderfiles
+    OWNER to postgres;
+    
+    ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS assignedto_usercode integer;

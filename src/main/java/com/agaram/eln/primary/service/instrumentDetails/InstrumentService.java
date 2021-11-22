@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.service.instrumentDetails;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -3007,7 +3008,7 @@ public class InstrumentService {
 		return map;
 	}
 	
-	public ByteArrayInputStream downloadsheetimages(String fileid, String tenant)
+	public ByteArrayInputStream downloadsheetimages(String fileid, String tenant) throws FileNotFoundException, IOException
 	{
 		TenantContext.setCurrentTenant(tenant);
 		byte[] data = null;
@@ -3057,4 +3058,32 @@ public class InstrumentService {
 		return true;
 	}
 
+	public Boolean updatesheetimageonversion(filestoragecontent[] objorder) {
+		
+		List<filestoragecontent> lsfilestorage = Arrays.asList(objorder);
+		
+		for (filestoragecontent fileObj : lsfilestorage) {
+			
+			TenantContext.setCurrentTenant(fileObj.getTenantid());
+			@SuppressWarnings("unused")
+			byte[] data = null;
+			try {
+				
+				String[] fileuid = fileObj.getId().split("_");
+				
+				data = StreamUtils.copyToByteArray(cloudFileManipulationservice
+						.updateversionCloudFile(fileuid[0],fileObj.getTenantid()+"sheetimages",fileuid[1]));
+			
+//				return true;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		
+		
+		return true;
+	}
 }

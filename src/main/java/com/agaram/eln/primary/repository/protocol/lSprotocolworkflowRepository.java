@@ -13,4 +13,5 @@ public interface lSprotocolworkflowRepository extends JpaRepository<LSprotocolwo
 	public LSprotocolworkflow findByworkflowcode(Integer workflowcode);
 	public LSprotocolworkflow findTopByAndLssitemasterOrderByWorkflowcodeAsc(LSSiteMaster lssitemaster);
 	
+	
 }

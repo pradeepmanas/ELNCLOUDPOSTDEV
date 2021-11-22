@@ -29,6 +29,7 @@ import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocolsteps;
 import com.agaram.eln.primary.model.protocols.LSprotocolfiles;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.protocols.LSprotocolorderfiles;
 import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
@@ -116,11 +117,20 @@ public class ProtocolController {
 		objMap = ProtocolMasterService.updateworkflowforProtocol(objClass);
 		return objMap;
 	}
+	
+	@RequestMapping(value = "/updateworkflowforProtocolorder")
+	protected Map<String, Object> updateworkflowforProtocolorder(@RequestBody LSlogilabprotocoldetail objClass) {
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		objMap = ProtocolMasterService.updateworkflowforProtocolorder(objClass);
+		return objMap;
+	}
 
 	@PostMapping("/GetProtocolWorkflow")
 	public List<LSprotocolworkflow> GetProtocolWorkflow(@RequestBody LSprotocolworkflow objclass) {
 		return ProtocolMasterService.GetProtocolWorkflow(objclass);
 	}
+	
+
 
 	@PostMapping("/InsertUpdatesheetWorkflow")
 	public List<LSprotocolworkflow> InsertUpdatesheetWorkflow(@RequestBody LSprotocolworkflow[] protocolworkflow) {
@@ -241,7 +251,7 @@ public class ProtocolController {
 	}
 
 	@RequestMapping("/GetProtocolResourcesQuantitylst")
-	public List<LSprotocolsampleupdates> GetProtocolResourcesQuantitylst(@RequestBody LSprotocolstep LSprotocolstep) {
+	public Map<String, Object> GetProtocolResourcesQuantitylst(@RequestBody LSprotocolstep LSprotocolstep) {
 		return ProtocolMasterService.GetProtocolResourcesQuantitylst(LSprotocolstep);
 	}
 
@@ -391,4 +401,84 @@ public class ProtocolController {
 
 		return ProtocolMasterService.updateprotocolsampleupdates(lsprotocolsampleupdates);
 	}
+	
+	@PostMapping("/uploadprotocolsordersstep")
+	public Map<String, Object> uploadprotocolsordersstep(@RequestParam Map<String, Object> body)
+	{
+		return ProtocolMasterService.uploadprotocolsordersstep(body);
+//		return true;
+	}
+	
+	@RequestMapping(value = "downloadprotocolorderimage/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadprotocolorderimage(@PathVariable String fileid
+			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+		ByteArrayInputStream bis = ProtocolMasterService.downloadprotocolorderimage(fileid, tenant);
+		
+	    HttpHeaders header = new HttpHeaders();
+	    header.setContentType(MediaType.parseMediaType("image/png"));
+	    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+	    
+	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "downloadprotocolorderfiles/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadprotocolorderfiles(@PathVariable String fileid
+			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+		ByteArrayInputStream bis = ProtocolMasterService.downloadprotocolorderfiles(fileid, tenant);
+		
+	    HttpHeaders header = new HttpHeaders();
+	    header.setContentType(MediaType.parseMediaType("image/png"));
+	    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+	    
+	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+	}
+
+	@PostMapping("/Getprotocollinksignature")
+	public Map<String, Object> Getprotocollinksignature(@RequestBody Map<String, String> body)
+	{
+		return ProtocolMasterService.Getprotocollinksignature(body);
+	}
+	
+	@PostMapping("/Uploadprotocolorderimage")
+	public Map<String, Object> Uploadprotocolorderimage(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolorderstepcode") Integer protocolorderstepcode, 
+			@RequestParam("protocolordercode") Long protocolordercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl)
+	{
+		return ProtocolMasterService.Uploadprotocolorderimage(file, protocolorderstepcode,protocolordercode,stepno,protocolstepname,originurl );
+	}
+
+	
+	
+	@PostMapping("/uploadprotocolsorderfile")
+	public Map<String, Object> uploadprotocolsorderfile(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolorderstepcode") Integer protocolorderstepcode, 
+			@RequestParam("protocolordercode") Long protocolordercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl)
+	{
+	
+		return ProtocolMasterService.uploadprotocolsorderfile(file, protocolorderstepcode,protocolordercode,stepno,protocolstepname,originurl );
+	}
+	
+	@PostMapping("/removeprotocoorderlimage")
+	public boolean removeprotocoorderlimage(@RequestBody Map<String, String> body)
+	{
+		return ProtocolMasterService.removeprotocoorderlimage(body);
+	}
+	
+	@PostMapping("/loadprotocolorderfiles")
+	public List<LSprotocolorderfiles> loadprotocolorderfiles(@RequestParam Map<String, String> body)
+	{
+		return ProtocolMasterService.loadprotocolorderfiles(body);
+	}
+
+
 }

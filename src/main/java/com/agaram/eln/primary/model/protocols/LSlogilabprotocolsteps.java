@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.model.protocols;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +11,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import com.agaram.eln.primary.model.general.Response;
 
 @Entity
 @Table(name="LSlogilabprotocolsteps")
@@ -38,6 +41,34 @@ public class LSlogilabprotocolsteps {
 	@Transient
 	private Integer versionno;
 	
+	@Transient
+	public String lsprotocolstepInformation;
+	
+	@Transient
+	private Response response;
+	
+	@Transient
+	private List<LSprotocolorderimages> lsprotocolorderimages;
+	
+	
+	public List<LSprotocolorderimages> getLsprotocolorderimages() {
+		return lsprotocolorderimages;
+	}
+	public void setLsprotocolorderimages(List<LSprotocolorderimages> lsprotocolorderimages) {
+		this.lsprotocolorderimages = lsprotocolorderimages;
+	}
+	public Response getResponse() {
+		return response;
+	}
+	public void setResponse(Response response) {
+		this.response = response;
+	}
+	public String getLsprotocolstepInformation() {
+		return lsprotocolstepInformation;
+	}
+	public void setLsprotocolstepInformation(String lsprotocolstepInformation) {
+		this.lsprotocolstepInformation = lsprotocolstepInformation;
+	}
 	@Transient 
 	private Integer protocolstepversioncode;
 	

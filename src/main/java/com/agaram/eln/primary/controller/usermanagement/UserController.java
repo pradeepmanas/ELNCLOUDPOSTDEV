@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.config.SMTPMailvalidation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudProfilePicture;
+import com.agaram.eln.primary.model.cloudFileManip.CloudUserSignature;
 import com.agaram.eln.primary.model.fileManipulation.ProfilePicture;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
@@ -317,6 +318,21 @@ public class UserController {
 		}
         return profilePicture;
     }
+	
+	@PostMapping("/CloudUploadusersignature")
+    public CloudUserSignature CloudUploadusersignature(@RequestParam("file") MultipartFile file, @RequestParam("usercode") Integer usercode
+    		, @RequestParam("username") String username , @RequestParam("date") Date currentdate) {
+        
+		CloudUserSignature usersignature = new CloudUserSignature();
+        try {
+        	usersignature = cloudFileManipulationservice.addusersignature(usercode, username, file,currentdate);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return usersignature;
+    }
+
 
 	@PostMapping("/Getprofilepic")
     public ProfilePicture Getprofilepic(@RequestBody ProfilePicture profilePicture)
@@ -382,6 +398,30 @@ public class UserController {
 		else
 		{
 			data = StreamUtils.copyToByteArray(new ClassPathResource("images/userimg.jpg").getInputStream());
+		}
+		ByteArrayInputStream bis = new ByteArrayInputStream(data);
+		
+	    HttpHeaders header = new HttpHeaders();
+	    header.setContentType(MediaType.parseMediaType("image/png"));
+	    header.set("Content-Disposition", "attachment; filename=gg.pdf");
+	    
+	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "Cloudsignatur/{fileid}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> Cloudsignatur(@PathVariable Integer fileid) throws IllegalStateException, IOException {
+		CloudUserSignature objsignature = cloudFileManipulationservice.getSignature(fileid);
+		
+		byte[] data = null;
+		
+		if(objsignature != null)
+		{
+			data = objsignature.getImage().getData();
+		}
+		else
+		{
+			data = StreamUtils.copyToByteArray(new ClassPathResource("images/nosignature.png").getInputStream());
 		}
 		ByteArrayInputStream bis = new ByteArrayInputStream(data);
 		

@@ -1,11 +1,15 @@
 package com.agaram.eln.primary.service.cloudFileManip;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.UUID;
 
+import org.apache.commons.io.FileUtils;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +22,13 @@ import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderAttachment;
 import com.agaram.eln.primary.model.cloudFileManip.CloudProfilePicture;
+import com.agaram.eln.primary.model.cloudFileManip.CloudUserSignature;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudProfilePictureRepository;
+import com.agaram.eln.primary.repository.cloudFileManip.CloudUserSignatureRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.OperationContext;
@@ -48,6 +54,9 @@ public class CloudFileManipulationservice {
  	
 	@Autowired
     private LSuserMasterRepository lsuserMasterRepository;
+	
+	@Autowired
+    private CloudUserSignatureRepository cloudusersignatureRepository;
 	
 	@Autowired
     private Environment env;
@@ -79,9 +88,24 @@ public class CloudFileManipulationservice {
     	return profile; 
     }
 	
+	public CloudUserSignature addusersignature(Integer usercode, String username, MultipartFile file,Date currentdate) throws IOException { 
+		CloudUserSignature usersignature = new CloudUserSignature();
+		usersignature.setId(usercode);
+		usersignature.setName(file.getName());
+		usersignature.setImage(
+          new Binary(BsonBinarySubType.BINARY, file.getBytes())); 
+		usersignature = cloudusersignatureRepository.save(usersignature); 
+		return usersignature;
+	}
+	
 	public CloudProfilePicture getPhoto(Integer id) { 
 		   
         return cloudProfilePictureRepository.findById(id); 
+    }
+	
+	public CloudUserSignature getSignature(Integer id) { 
+		   
+        return cloudusersignatureRepository.findOne(id); 
     }
     
     public Long deletePhoto(Integer id,LScfttransaction list) { 
@@ -421,6 +445,49 @@ public class CloudFileManipulationservice {
 	    
     }
  
+ public InputStream updateversionCloudFile(String fileid, String containername,String version) throws IOException{
+ 	
+	    CloudStorageAccount storageAccount;
+		CloudBlobClient blobClient = null;
+		CloudBlobContainer container=null;
+		CloudBlockBlob blob = null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+		try {    
+			// Parse the connection string and create a blob client to interact with Blob storage
+			storageAccount = CloudStorageAccount.parse(storageConnectionString);
+			blobClient = storageAccount.createCloudBlobClient();
+			container = blobClient.getContainerReference(containername);
+			
+			blob = container.getBlockBlobReference(fileid);
+			
+			File targetFile = new File(System.getProperty("java.io.tmpdir")+"/"+fileid+"_"+version);
+			
+			FileUtils.copyInputStreamToFile(blob.openInputStream(), targetFile);
+			
+			//Getting a blob reference
+			CloudBlockBlob blob1 = container.getBlockBlobReference(targetFile.getName());
+
+			//Creating blob and uploading file to it
+			System.out.println("Uploading the sample file ");
+			blob1.uploadFromFile(targetFile.getAbsolutePath());
+			
+			return blob.openInputStream();
+		}
+		catch (StorageException ex)
+		{
+			System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s", ex.getHttpStatusCode(), ex.getErrorCode()));
+			throw new IOException(String.format("Error returned from the service. Http code: %d and error code: %s", ex.getHttpStatusCode(), ex.getErrorCode()));
+		}
+		catch (Exception ex) 
+		{
+			System.out.println(ex.getMessage());
+		}
+		return null;
+	    
+ }
+
+
+ 
  public void deletecloudFile(String id, String containername) { 
  	CloudStorageAccount storageAccount;
 		CloudBlobClient blobClient = null;
@@ -445,4 +512,11 @@ public class CloudFileManipulationservice {
 			System.out.println(ex.getMessage());
 		}
  }
+
+public void updateVersiononFile(byte[] data,String fileid) throws Exception {
+	File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+fileid);
+    OutputStream outStream = new FileOutputStream(convFile);
+    outStream.write(data);
+	
+}
 }

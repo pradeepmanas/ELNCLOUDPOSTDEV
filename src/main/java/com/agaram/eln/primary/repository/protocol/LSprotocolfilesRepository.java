@@ -8,4 +8,6 @@ import com.agaram.eln.primary.model.protocols.LSprotocolfiles;
 
 public interface LSprotocolfilesRepository extends JpaRepository<LSprotocolfiles, Integer>{
 	public List<LSprotocolfiles> findByProtocolmastercodeAndProtocolstepcodeOrderByProtocolstepfilecodeDesc(Integer protocolcode, Integer stepcode);
+	List<LSprotocolfiles> findByProtocolstepcode(Integer protocolstepcode);
+
 }

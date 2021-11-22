@@ -15,84 +15,97 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 
 @Entity
-@Table(name="LSprotocolimages")
+@Table(name="LSprotocolorderimages")
 @TypeDefs({
     @TypeDef(name = "json", typeClass = JsonStringType.class),
     @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 })
-public class LSprotocolimages {
-	
+public class LSprotocolorderimages {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	public Integer protocolstepimagecode;
-	public Integer protocolstepcode;
-	public Integer protocolmastercode;
+	public Integer protocolorderstepimagecode;
+	public Integer protocolorderstepcode;
+	public Long protocolordercode;
 	public Integer stepno;
 	public String protocolstepname;
 	public String fileid;
+	public String oldfileid;
 	public String extension;
 	public String filename;
-	
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
 	public String src;
 	
+	@Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+	public String oldsrc;
+	
+	public String getOldsrc() {
+		return oldsrc;
+	}
+	public void setOldsrc(String oldsrc) {
+		this.oldsrc = oldsrc;
+	}
+	public String getOldfileid() {
+		return oldfileid;
+	}
+	public void setOldfileid(String oldfileid) {
+		this.oldfileid = oldfileid;
+	}
+	public Integer getProtocolorderstepimagecode() {
+		return protocolorderstepimagecode;
+	}
+	public Integer getProtocolorderstepcode() {
+		return protocolorderstepcode;
+	}
+	public Long getProtocolordercode() {
+		return protocolordercode;
+	}
+	public Integer getStepno() {
+		return stepno;
+	}
 	public String getSrc() {
 		return src;
 	}
 	public void setSrc(String src) {
 		this.src = src;
 	}
-	public Integer getProtocolstepimagecode() {
-		return protocolstepimagecode;
-	}
-	public void setProtocolstepimagecode(Integer protocolstepimagecode) {
-		this.protocolstepimagecode = protocolstepimagecode;
-	}
-	public Integer getProtocolstepcode() {
-		return protocolstepcode;
-	}
-	public void setProtocolstepcode(Integer protocolstepcode) {
-		this.protocolstepcode = protocolstepcode;
-	}
-	public Integer getProtocolmastercode() {
-		return protocolmastercode;
-	}
-	public void setProtocolmastercode(Integer protocolmastercode) {
-		this.protocolmastercode = protocolmastercode;
-	}
-	public Integer getStepno() {
-		return stepno;
-	}
-	public void setStepno(Integer stepno) {
-		this.stepno = stepno;
-	}
 	public String getProtocolstepname() {
 		return protocolstepname;
-	}
-	public void setProtocolstepname(String protocolstepname) {
-		this.protocolstepname = protocolstepname;
 	}
 	public String getFileid() {
 		return fileid;
 	}
-	public void setFileid(String fileid) {
-		this.fileid = fileid;
-	}
 	public String getExtension() {
 		return extension;
 	}
-	public void setExtension(String extension) {
-		this.extension = extension;
-	}
 	public String getFilename() {
 		return filename;
+	}
+	public void setProtocolorderstepimagecode(Integer protocolorderstepimagecode) {
+		this.protocolorderstepimagecode = protocolorderstepimagecode;
+	}
+	public void setProtocolorderstepcode(Integer protocolorderstepcode) {
+		this.protocolorderstepcode = protocolorderstepcode;
+	}
+	public void setProtocolordercode(Long protocolordercode) {
+		this.protocolordercode = protocolordercode;
+	}
+	public void setStepno(Integer stepno) {
+		this.stepno = stepno;
+	}
+	public void setProtocolstepname(String protocolstepname) {
+		this.protocolstepname = protocolstepname;
+	}
+	public void setFileid(String fileid) {
+		this.fileid = fileid;
+	}
+	public void setExtension(String extension) {
+		this.extension = extension;
 	}
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
 	
 	
-	
-
 }

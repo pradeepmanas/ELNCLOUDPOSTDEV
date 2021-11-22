@@ -22,21 +22,19 @@ import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 
 @Entity(name = "LSlogilabprotocoldetail")
 @Table(name = "LSlogilabprotocoldetail")
-public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldetail>{
+public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldetail> {
 	@Id
-	@SequenceGenerator(name = "orderGen", 
-	sequenceName = "orderDetail", 
-	initialValue = 1000000, allocationSize=1)
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "orderGen")
-	@Column(columnDefinition = "numeric(17,0)",name = "Protocolordercode") 
+	@SequenceGenerator(name = "orderGen", sequenceName = "orderDetail", initialValue = 1000000, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orderGen")
+	@Column(columnDefinition = "numeric(17,0)", name = "Protocolordercode")
 	private Long protocolordercode;
-	
-	@Column(columnDefinition = "varchar(250)",name = "Protocolordername") 
+
+	@Column(columnDefinition = "varchar(250)", name = "Protocolordername")
 	private String protoclordername;
-	
-	@Column(columnDefinition = "varchar(250)",name = "Keyword") 
+
+	@Column(columnDefinition = "varchar(250)", name = "Keyword")
 	private String keyword;
-	
+
 	public String getKeyword() {
 		return keyword;
 	}
@@ -46,7 +44,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	}
 
 	private String orderflag;
-	
+
 	public String getOrderflag() {
 		return orderflag;
 	}
@@ -57,44 +55,116 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@Column(name = "Protocoltype")
 	private Integer protocoltype;
-	
+
 	@Column(name = "CreatedTimeStamp")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdtimestamp;
-	
+
 	@Column(name = "CompletedTimeStamp")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date completedtimestamp;
-	
+
 	@ManyToOne
 	private LSprotocolmaster lsprotocolmaster;
-	
+
 	@ManyToOne
 	private LSuserMaster lsuserMaster;
-	
+
 	private Integer Testcode;
-	
+
 	@ManyToOne
 	private LSsamplemaster lssamplemaster;
-	
+
 	@ManyToOne
 	private LSprojectmaster lsprojectmaster;
+
+	@ManyToOne
+	private LSprotocolworkflow lSprotocolworkflow;
 	
+	@ManyToOne
+	private LSuserMaster assignedto;
+
 	@Transient
 	LoggedUser objuser;
-	
+
 	@Transient
 	LScfttransaction objmanualaudit;
-	
+
 	@Transient
 	LScfttransaction objsilentaudit;
-	
+
 	@Transient
 	private Date fromdate;
-	
+
 	@Transient
 	private Date todate;
 	
+//	@Transient
+//	private String tenantname;
+	
+	@Transient
+	private String originurl;
+
+	public String getOriginurl() {
+		return originurl;
+	}
+
+	public void setOriginurl(String originurl) {
+		this.originurl = originurl;
+	}
+
+//	public String getTenantname() {
+//		return tenantname;
+//	}
+//
+//	public void setTenantname(String tenantname) {
+//		this.tenantname = tenantname;
+//	}
+
+	private Integer approved;
+
+	private Integer rejected;
+	
+	private Integer sitecode;
+	
+	public Integer getSitecode() {
+		return sitecode;
+	}
+
+	public void setSitecode(Integer sitecode) {
+		this.sitecode = sitecode;
+	}
+
+	public Integer getApproved() {
+		return approved;
+	}
+
+	public void setApproved(Integer approved) {
+		this.approved = approved;
+	}
+
+	public LSuserMaster getAssignedto() {
+		return assignedto;
+	}
+	public void setAssignedto(LSuserMaster assignedto) {
+		this.assignedto = assignedto;
+	}
+	
+	public Integer getRejected() {
+		return rejected;
+	}
+
+	public void setRejected(Integer rejected) {
+		this.rejected = rejected;
+	}
+
+	public LSprotocolworkflow getlSprotocolworkflow() {
+		return lSprotocolworkflow;
+	}
+
+	public void setlSprotocolworkflow(LSprotocolworkflow lSprotocolworkflow) {
+		this.lSprotocolworkflow = lSprotocolworkflow;
+	}
 
 	public Date getFromdate() {
 		return fromdate;
