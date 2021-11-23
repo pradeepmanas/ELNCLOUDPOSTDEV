@@ -24,6 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocolsteps;
@@ -34,6 +37,9 @@ import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
+import com.agaram.eln.primary.model.protocols.Lsprotocolsharedby;
+import com.agaram.eln.primary.model.protocols.Lsprotocolshareto;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 
@@ -70,11 +76,25 @@ public class ProtocolController {
 		objMap = ProtocolMasterService.getLSProtocolMasterLst(argObj);
 		return objMap;
 	}
+	
+	@RequestMapping(value = "/getApprovedprotocolLst")
+	protected Map<String, Object> getApprovedprotocolLst(@RequestBody LSSiteMaster site) {
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		objMap = ProtocolMasterService.getApprovedprotocolLst(site);
+		return objMap;
+	}
 
 	@RequestMapping(value = "/getProtocolStepLst")
 	protected Map<String, Object> getProtocolStepLst(@RequestBody Map<String, Object> argObj) {
 		Map<String, Object> objMap = new HashMap<String, Object>();
 		objMap = ProtocolMasterService.getProtocolStepLst(argObj);
+		return objMap;
+	}
+	
+	@RequestMapping(value = "/getProtocolStepLstForShare")
+	protected Map<String, Object> getProtocolStepLstForShare(@RequestBody Map<String, Object> argObj) {
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		objMap = ProtocolMasterService.getProtocolStepLstForShare(argObj);
 		return objMap;
 	}
 
@@ -275,6 +295,12 @@ public class ProtocolController {
 	public List <LSprotocolmaster> getprotocols(@RequestBody LSuserMaster objusers)
 	{
 		return ProtocolMasterService.getprotocol(objusers);
+	}
+	
+	@PostMapping("/getProtocolcount")
+	public  Map<String, Object> getProtocolcount(@RequestBody LSuserMaster objusers)
+	{
+		return ProtocolMasterService.getProtocolcount(objusers);
 	}
 	
 	@PostMapping("/getsingleprotocolorder")
@@ -479,6 +505,53 @@ public class ProtocolController {
 	{
 		return ProtocolMasterService.loadprotocolorderfiles(body);
 	}
+	@PostMapping("/Insertshareprotocolorder")
+	public Lsprotocolordershareto Insertshareprotocolorder(@RequestBody Lsprotocolordershareto objprotocolordershareto) {
+		return ProtocolMasterService.Insertshareprotocolorder(objprotocolordershareto);
+	}
 
+	@PostMapping("/Insertshareprotocolorderby")
+	public Map<String, Object> Insertshareprotocolorderby(@RequestBody Lsprotocolordersharedby objprotocolordersharedby) {
+		return ProtocolMasterService.Insertshareprotocolorderby(objprotocolordersharedby);
+	}
+	
+	@PostMapping("/Getprotocolordersharedbyme")
+	public List<Lsprotocolordersharedby> Getprotocolordersharedbyme(@RequestBody Lsprotocolordersharedby objprotocolordersharedby) {
+		return ProtocolMasterService.Getprotocolordersharedbyme(objprotocolordersharedby);
+	}
+	
+	@PostMapping("/Getprotocolordersharedtome")
+	public List<Lsprotocolordershareto> Getprotocolordersharedtome(@RequestBody Lsprotocolordershareto objprotocolordershareto) {
+		return ProtocolMasterService.Getprotocolordersharedtome(objprotocolordershareto);
+	}
+	
+	@PostMapping("/Insertshareprotocol")
+	public Lsprotocolshareto Insertshareprotocol(@RequestBody Lsprotocolshareto objprotocolordershareto) {
+		return ProtocolMasterService.Insertshareprotocol(objprotocolordershareto);
+	}
+	
+	@PostMapping("/Insertshareprotocolby")
+	public Map<String, Object> Insertshareprotocolby(@RequestBody Lsprotocolsharedby objprotocolordersharedby) {
+		return ProtocolMasterService.Insertshareprotocolby(objprotocolordersharedby);
+	}
 
+	@PostMapping("/Getprotocolsharedbyme")
+	public List<Lsprotocolsharedby> Getprotocolsharedbyme(@RequestBody Lsprotocolsharedby objprotocolordersharedby) {
+		return ProtocolMasterService.Getprotocolsharedbyme(objprotocolordersharedby);
+	}
+	
+	@PostMapping("/Getprotocolsharedtome")
+	public List<Lsprotocolshareto> Getprotocolsharedtome(@RequestBody Lsprotocolshareto objprotocolordershareto) {
+		return ProtocolMasterService.Getprotocolsharedtome(objprotocolordershareto);
+	}
+	
+	@PostMapping("/Unshareorderby")
+	public Lsprotocolsharedby Unshareprotocolby(@RequestBody Lsprotocolshareto objordershareby) {
+		return ProtocolMasterService.Unshareprotocolby(objordershareby);
+	}
+	
+	@PostMapping("/Unshareorderto")
+	public Lsprotocolshareto Unshareorderto(@RequestBody Lsprotocolshareto lsordershareto) {
+		return ProtocolMasterService.Unshareorderto(lsordershareto);
+	}
 }

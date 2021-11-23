@@ -1738,3 +1738,110 @@ ALTER TABLE public.lsprotocolorderfiles
     OWNER to postgres;
     
     ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS assignedto_usercode integer;
+    
+    
+    CREATE TABLE IF NOT EXISTS public.lsprotocolordershareto
+(
+    sharetoprotocolordercode bigint NOT NULL,
+    protocoltype integer,
+    sharebyunifiedid character varying(250) COLLATE pg_catalog."default",
+    sharebyusername character varying(250) COLLATE pg_catalog."default",
+    sharedon timestamp without time zone,
+    shareitemdetails jsonb,
+    shareprotoclordername character varying(250) COLLATE pg_catalog."default",
+    shareprotocolordercode bigint,
+    sharerights integer NOT NULL,
+    sharestatus integer NOT NULL,
+    sharetounifiedid character varying(250) COLLATE pg_catalog."default",
+    sharetousername character varying(250) COLLATE pg_catalog."default",
+    unsharedon timestamp without time zone,
+    CONSTRAINT lsprotocolordershareto_pkey PRIMARY KEY (sharetoprotocolordercode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolordershareto
+    OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolordersharedby
+(
+    sharedbytoprotocolordercode bigint NOT NULL,
+    protocoltype integer,
+    sharebyunifiedid character varying(250) COLLATE pg_catalog."default",
+    sharebyusername character varying(250) COLLATE pg_catalog."default",
+    sharedon timestamp without time zone,
+    shareitemdetails jsonb,
+    sharemodifiedon timestamp without time zone,
+    shareprotoclordername character varying(250) COLLATE pg_catalog."default",
+    shareprotocolordercode bigint,
+    sharerights integer NOT NULL,
+    sharestatus integer NOT NULL,
+    sharetoprotocolordercode bigint,
+    sharetounifiedid character varying(250) COLLATE pg_catalog."default",
+    sharetousername character varying(250) COLLATE pg_catalog."default",
+    unsharedon timestamp without time zone,
+    CONSTRAINT lsprotocolordersharedby_pkey PRIMARY KEY (sharedbytoprotocolordercode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolordersharedby
+    OWNER to postgres;
+
+ALTER TABLE IF Exists lsprotocolstep ADD COLUMN IF NOT EXISTS modifiedusername varchar(250);
+
+ALTER TABLE IF Exists LSlogilabprotocolsteps ADD COLUMN IF NOT EXISTS modifiedusername varchar(250);
+
+ CREATE TABLE IF NOT EXISTS public.lsprotocolshareto
+(
+    sharetoprotocolcode bigint NOT NULL,
+    sharebyunifiedid character varying(250) COLLATE pg_catalog."default",
+    sharebyusername character varying(250) COLLATE pg_catalog."default",
+    sharedon timestamp without time zone,
+    shareitemdetails jsonb,
+    shareprotocolname character varying(250) COLLATE pg_catalog."default",
+    shareprotocolcode bigint,
+    sharerights integer NOT NULL,
+    sharestatus integer NOT NULL,
+    sharetounifiedid character varying(250) COLLATE pg_catalog."default",
+    sharetousername character varying(250) COLLATE pg_catalog."default",
+    unsharedon timestamp without time zone,
+    CONSTRAINT lsprotocolshareto_pkey PRIMARY KEY (sharetoprotocolcode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.Lsprotocolshareto
+    OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolsharedby
+(
+    sharedbytoprotocolcode bigint NOT NULL,
+    sharebyunifiedid character varying(250) COLLATE pg_catalog."default",
+    sharebyusername character varying(250) COLLATE pg_catalog."default",
+    sharedon timestamp without time zone,
+    shareitemdetails jsonb,
+    sharemodifiedon timestamp without time zone,
+    shareprotocolname character varying(250) COLLATE pg_catalog."default",
+    shareprotocolcode bigint,
+    sharerights integer NOT NULL,
+    sharestatus integer NOT NULL,
+    sharetoprotocolcode bigint,
+    sharetounifiedid character varying(250) COLLATE pg_catalog."default",
+    sharetousername character varying(250) COLLATE pg_catalog."default",
+    unsharedon timestamp without time zone,
+    CONSTRAINT lsprotocolsharedby_pkey PRIMARY KEY (sharedbytoprotocolcode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolsharedby
+    OWNER to postgres;

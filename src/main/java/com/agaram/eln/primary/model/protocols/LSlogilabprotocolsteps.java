@@ -26,6 +26,7 @@ public class LSlogilabprotocolsteps {
 	public Integer stepno;
 	public String protocolstepname;
 	public Integer createdby;
+	public String modifiedusername;
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date createddate;
 	public Integer status;
@@ -51,6 +52,12 @@ public class LSlogilabprotocolsteps {
 	private List<LSprotocolorderimages> lsprotocolorderimages;
 	
 	
+	public String getModifiedusername() {
+		return modifiedusername;
+	}
+	public void setModifiedusername(String modifiedusername) {
+		this.modifiedusername = modifiedusername;
+	}
 	public List<LSprotocolorderimages> getLsprotocolorderimages() {
 		return lsprotocolorderimages;
 	}

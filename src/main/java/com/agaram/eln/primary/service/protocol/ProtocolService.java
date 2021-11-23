@@ -37,6 +37,9 @@ import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolversionstep;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
@@ -58,6 +61,8 @@ import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowhistory;
 import com.agaram.eln.primary.model.protocols.LsLogilabprotocolstepInfo;
+import com.agaram.eln.primary.model.protocols.Lsprotocolsharedby;
+import com.agaram.eln.primary.model.protocols.Lsprotocolshareto;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -68,6 +73,8 @@ import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolstepInfoRe
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolversionstepRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLsLogilabprotocolstepInfoRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.LSprotocolstepInformationRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharedbyRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharetoRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
@@ -85,6 +92,8 @@ import com.agaram.eln.primary.repository.protocol.LSprotocolupdatesRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolversionRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowhistoryRepository;
+import com.agaram.eln.primary.repository.protocol.LsprotocolsharedbyRepository;
+import com.agaram.eln.primary.repository.protocol.LsprotocolsharetoRepository;
 import com.agaram.eln.primary.repository.protocol.lSprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -202,6 +211,18 @@ public class ProtocolService {
 	@Autowired
 	private Environment env;
 
+	@Autowired
+	private LsprotocolordersharedbyRepository lsprotocolordersharedbyRepository;
+
+	@Autowired
+	private LsprotocolordersharetoRepository lsprotocolordersharetoRepository;
+
+	@Autowired
+	private LsprotocolsharetoRepository LsprotocolsharetoRepository;
+
+	@Autowired
+	private LsprotocolsharedbyRepository LsprotocolsharedbyRepository;
+
 	public Map<String, Object> getProtocolMasterInit(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		LScfttransaction LScfttransactionobj = new LScfttransaction();
@@ -270,6 +291,22 @@ public class ProtocolService {
 		return LSprotocolmaster;
 	}
 
+	public Map<String, Object> getProtocolcount(LSuserMaster objusers) {
+		
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+		
+		List<Integer> lstuser = objusers.getObjuser().getTeamuserscode();
+		
+		mapObj.put("templatecount", 
+				LSProtocolMasterRepositoryObj.countByCreatedbyInAndStatusAndLssitemasterOrderByCreatedateDesc(lstuser,1,objusers.getLssitemaster().getSitecode()));
+		mapObj.put("sharedbyme", 
+				LsprotocolsharedbyRepository.countBySharebyunifiedidAndSharestatusOrderBySharedbytoprotocolcodeDesc(objusers.getSharebyunifiedid(),1));
+		mapObj.put("sharedtome", 
+				LsprotocolsharetoRepository.countBySharetounifiedidAndSharestatusOrderBySharetoprotocolcodeDesc(objusers.getSharetounifiedid(),1));
+		
+		return mapObj;
+	}
+	
 	public Map<String, Object> getLSProtocolMasterLst(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		LScfttransaction LScfttransactionobj = new LScfttransaction();
@@ -365,6 +402,18 @@ public class ProtocolService {
 		return mapObj;
 	}
 
+	public Map<String, Object> getApprovedprotocolLst(LSSiteMaster site) {
+
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+
+		List<LSprotocolmaster> LSprotocolmasterLst = LSProtocolMasterRepositoryObj
+				.findByStatusAndApprovedAndLssitemaster(1, 1, site.getSitecode());
+
+		mapObj.put("protocolLst", LSprotocolmasterLst);
+
+		return mapObj;
+	}
+
 	public Map<String, Object> getProtocolStepLst(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		@SuppressWarnings("unused")
@@ -426,6 +475,70 @@ public class ProtocolService {
 		return mapObj;
 	}
 
+	public Map<String, Object> getProtocolStepLstForShare(Map<String, Object> argObj) {
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+		@SuppressWarnings("unused")
+		LScfttransaction LScfttransactionobj = new LScfttransaction();
+
+		if (argObj.containsKey("objsilentaudit")) {
+
+			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),
+					new TypeReference<LScfttransaction>() {
+					});
+
+			List<LSprotocolstep> LSprotocolsteplst = LSProtocolStepRepositoryObj
+					.findByProtocolmastercodeAndStatus(argObj.get("protocolmastercode"), 1);
+			List<LSprotocolstep> LSprotocolstepLst = new ArrayList<LSprotocolstep>();
+
+			ObjectMapper objm = new ObjectMapper();
+
+			int multitenent = objm.convertValue(argObj.get("ismultitenant"), Integer.class);
+			int protocolmastercode = objm.convertValue(argObj.get("protocolmastercode"), Integer.class);
+
+			List<LSprotocolversion> LSprotocolversionlst = lsprotocolversionRepository
+					.findByprotocolmastercode(protocolmastercode);
+
+			Collections.sort(LSprotocolversionlst, Collections.reverseOrder());
+
+			// List<CloudLSprotocolversionstep> LSprotocolversionlst =
+			// CloudLSprotocolversionstepRepository.findByprotocolmastercode(protocolmastercode);
+
+			for (LSprotocolstep LSprotocolstepObj1 : LSprotocolsteplst) {
+				if (multitenent == 1) {
+					CloudLSprotocolstepInfo newLSprotocolstepInfo = CloudLSprotocolstepInfoRepository
+							.findById(LSprotocolstepObj1.getProtocolstepcode());
+					if (newLSprotocolstepInfo != null) {
+						LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
+					}
+					LSprotocolstepInformation newobj = lsprotocolstepInformationRepository
+							.findById(LSprotocolstepObj1.getProtocolstepcode());
+					if (newobj != null) {
+						LSprotocolstepObj1.setLsprotocolstepInformation(newobj.getLsprotocolstepInfo());
+					}
+				} else {
+					LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate
+							.findById(LSprotocolstepObj1.getProtocolstepcode(), LSprotocolstepInfo.class);
+					if (newLSprotocolstepInfo != null) {
+						LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+					}
+				}
+
+				LSprotocolstepLst.add(LSprotocolstepObj1);
+			}
+			if (LSprotocolsteplst != null) {
+				mapObj.put("protocolstepLst", LSprotocolstepLst);
+				mapObj.put("LSprotocolversionlst", LSprotocolversionlst);
+			} else {
+				mapObj.put("protocolstepLst", new ArrayList<>());
+				mapObj.put("LSprotocolversionlst", new ArrayList<>());
+			}
+		}
+		mapObj.put("SelectedProtocol", LSProtocolMasterRepositoryObj.findFirstByProtocolmastercode((Integer) argObj.get("protocolmastercode")));
+		return mapObj;
+	}
+
+	
+	
 	public Map<String, Object> getAllProtocolStepLst(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 
@@ -1573,7 +1686,6 @@ public class ProtocolService {
 					lSlogilabprotocoldetail.setLsuserMaster(null);
 				}
 
-
 				List<LSprotocolstep> lstSteps = LSProtocolStepRepositoryObj.findByProtocolmastercode(
 						lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode());
 
@@ -1581,16 +1693,14 @@ public class ProtocolService {
 						new TypeReference<List<LSlogilabprotocolsteps>>() {
 						});
 
-		
-
 				for (LSlogilabprotocolsteps LSprotocolstepObj1 : lststep1) {
 
+					LSprotocolstepObj1.setModifiedusername(null);
 					LSprotocolstepObj1.setProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
 					LSprotocolstepObj1.setOrderstepflag("N");
 
 					LSlogilabprotocolstepsRepository.save(LSprotocolstepObj1);
 
-			
 					List<LSprotocolimages> objimg = new ArrayList<>();
 					List<LSprotocolfiles> objfile = new ArrayList<>();
 					objfile = lsprotocolfilesRepository
@@ -1607,20 +1717,20 @@ public class ProtocolService {
 									lSlogilabprotocoldetail, LSprotocolstepObj1);
 						}
 					} catch (IOException e) {
-				
+
 						e.printStackTrace();
 					}
 
 					if (lSlogilabprotocoldetail.getIsmultitenant() == 1) {
-					
+
 						LSprotocolstepInformation lsprotocolstepInformation = lsprotocolstepInformationRepository
 								.findById(LSprotocolstepObj1.getProtocolstepcode());
 						if (lsprotocolstepInformation != null) {
 							String stepinfo = lsprotocolstepInformation.getLsprotocolstepInfo();
 							stepinfo = stepinfo.replaceAll("<p>", "<p contenteditable='false' >");
-							stepinfo = stepinfo.replaceAll("<p contenteditable='false'><br></p>", "<p><br></p>");
-							
-							LSprotocolstepObj1.setLsprotocolstepInfo(stepinfo);
+							String stepinfono = stepinfo.replaceAll("<p contenteditable='false' ><br></p>", "<p><br></p>");
+
+							LSprotocolstepObj1.setLsprotocolstepInfo(stepinfono);
 						}
 
 						CloudLsLogilabprotocolstepInfo CloudLSprotocolstepInfoObj = new CloudLsLogilabprotocolstepInfo();
@@ -1628,7 +1738,7 @@ public class ProtocolService {
 						CloudLSprotocolstepInfoObj.setLsprotocolstepInfo(LSprotocolstepObj1.getLsprotocolstepInfo());
 						CloudLsLogilabprotocolstepInfoRepository.save(CloudLSprotocolstepInfoObj);
 					} else {
-						
+
 						LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate
 								.findById(LSprotocolstepObj1.getProtocolstepcode(), LSprotocolstepInfo.class);
 						if (newLSprotocolstepInfo != null) {
@@ -1641,7 +1751,6 @@ public class ProtocolService {
 						LsLogilabprotocolstepInfoObj.setContent(LSprotocolstepObj1.getLsprotocolstepInfo());
 						mongoTemplate.insert(LsLogilabprotocolstepInfoObj);
 
-			
 					}
 				}
 
@@ -1699,7 +1808,6 @@ public class ProtocolService {
 			containerfororder.createIfNotExists(BlobContainerPublicAccessType.CONTAINER, new BlobRequestOptions(),
 					new OperationContext());
 
-
 			for (LSprotocolfiles LSprotocolfiles : objimg) {
 
 				containerforprotocol = blobClient
@@ -1710,9 +1818,7 @@ public class ProtocolService {
 
 				FileUtils.copyInputStreamToFile(blob.openInputStream(), targetFile);
 
-
 				CloudBlockBlob blob1 = containerfororder.getBlockBlobReference(targetFile.getName());
-
 
 				System.out.println("Uploading the sample file ");
 				blob1.uploadFromFile(targetFile.getAbsolutePath());
@@ -1727,7 +1833,6 @@ public class ProtocolService {
 				objorderimag.setStepno(LSprotocolfiles.getStepno());
 				objorderimag.setFilename(LSprotocolfiles.getFilename());
 
-
 				lsprotocolorderfilesRepository.save(objorderimag);
 
 			}
@@ -1741,10 +1846,8 @@ public class ProtocolService {
 			System.out.println(ex.getMessage());
 		}
 
-
 	}
 
-	@SuppressWarnings("finally")
 	public void updateprotocolorderimages(List<LSprotocolimages> objimg, String findcontainername, String insertcontain,
 			LSlogilabprotocoldetail lSlogilabprotocoldetail, LSlogilabprotocolsteps lslogilabprotocolsteps)
 			throws IOException {
@@ -1763,11 +1866,9 @@ public class ProtocolService {
 				containerfororder = blobClient
 						.getContainerReference(TenantContext.getCurrentTenant() + findcontainername);
 
-
 				System.out.println("Creating container: " + containerfororder.getName());
 				containerfororder.createIfNotExists(BlobContainerPublicAccessType.CONTAINER, new BlobRequestOptions(),
 						new OperationContext());
-
 
 				for (LSprotocolimages LSprotocolimagesobj : objimg) {
 
@@ -1778,23 +1879,16 @@ public class ProtocolService {
 					File targetFile = new File(
 							System.getProperty("java.io.tmpdir") + "/" + LSprotocolimagesobj.getFileid());
 
-					try
-					{
+					try {
 						FileUtils.copyInputStreamToFile(blob.openInputStream(), targetFile);
-					}
-					catch(Exception e)
-					{
+					} catch (Exception e) {
 						continue;
-					}
-					finally 
-					{
-						
+					} finally {
+
 					}
 
-			
 					CloudBlockBlob blob1 = containerfororder.getBlockBlobReference(targetFile.getName());
 
-				
 					System.out.println("Uploading the sample file ");
 					blob1.uploadFromFile(targetFile.getAbsolutePath());
 
@@ -1834,7 +1928,6 @@ public class ProtocolService {
 
 		}
 
-
 	}
 
 	public Map<String, Object> getProtocolOrderList(LSlogilabprotocoldetail lSlogilabprotocoldetail) {
@@ -1860,7 +1953,7 @@ public class ProtocolService {
 				.findOne(lSlogilabprotocoldetail.getObjuser().getMultiusergroupcode());
 
 		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
-				.findBylsusergroup(userGroup);
+				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
 
 		List<LSlogilabprotocoldetail> lstPendingOrder = new ArrayList<>();
 
@@ -1869,9 +1962,12 @@ public class ProtocolService {
 					.findByworkflowcode(lsworkflowgroupmapping.get(0).getWorkflowcode());
 
 			lstPendingOrder = LSlogilabprotocoldetailRepository
-					.findTop10ByProtocoltypeAndOrderflagAndLSprotocolworkflowAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
-							lSlogilabprotocoldetail.getProtocoltype(), "N", lsprotocolworkflow,
-							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
+					.findTop10ByProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+							lSlogilabprotocoldetail.getProtocoltype(), "N", lSlogilabprotocoldetail.getFromdate(),
+							lSlogilabprotocoldetail.getTodate());
+
+			lstPendingOrder.forEach(objorder -> objorder
+					.setCanuserprocess(lsprotocolworkflow.equals(objorder.getlSprotocolworkflow()) ? true : false));
 		}
 
 		int pendingcount = LSlogilabprotocoldetailRepository.countByProtocoltypeAndOrderflagAndCreatedtimestampBetween(
@@ -1913,7 +2009,7 @@ public class ProtocolService {
 					.findOne(lSlogilabprotocoldetail.getObjuser().getMultiusergroupcode());
 
 			List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
-					.findBylsusergroup(userGroup);
+					.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
 
 			List<LSlogilabprotocoldetail> lstPendingOrder = new ArrayList<>();
 
@@ -1922,9 +2018,12 @@ public class ProtocolService {
 						.findByworkflowcode(lsworkflowgroupmapping.get(0).getWorkflowcode());
 
 				lstPendingOrder = LSlogilabprotocoldetailRepository
-						.findTop10ByProtocoltypeAndOrderflagAndLSprotocolworkflowAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
-								lSlogilabprotocoldetail.getProtocoltype(), "N", lsprotocolworkflow,
-								lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
+						.findTop10ByProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+								lSlogilabprotocoldetail.getProtocoltype(), "N", lSlogilabprotocoldetail.getFromdate(),
+								lSlogilabprotocoldetail.getTodate());
+
+				lstPendingOrder.forEach(objorder -> objorder
+						.setCanuserprocess(lsprotocolworkflow.equals(objorder.getlSprotocolworkflow()) ? true : false));
 			}
 
 			int pendingcount = LSlogilabprotocoldetailRepository
@@ -2010,7 +2109,7 @@ public class ProtocolService {
 				.findOne(lSlogilabprotocoldetail.getObjuser().getMultiusergroupcode());
 
 		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
-				.findBylsusergroup(userGroup);
+				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
 
 		List<LSlogilabprotocoldetail> lstreminingPendingOrder = new ArrayList<>();
 
@@ -2019,9 +2118,11 @@ public class ProtocolService {
 					.findByworkflowcode(lsworkflowgroupmapping.get(0).getWorkflowcode());
 
 			lstreminingPendingOrder = LSlogilabprotocoldetailRepository
-					.getProtocoltypeAndLsprotocolworkflowAndOrderflagAndCreatedtimestampBetween(
-							lSlogilabprotocoldetail.getProtocoltype(), lsprotocolworkflow.getWorkflowcode(), "N",
-							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
+					.getProtocoltypeAndOrderflagAndCreatedtimestampBetween(lSlogilabprotocoldetail.getProtocoltype(),
+							"N", lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
+
+			lstreminingPendingOrder.forEach(objorder -> objorder
+					.setCanuserprocess(lsprotocolworkflow.equals(objorder.getlSprotocolworkflow()) ? true : false));
 		}
 
 		List<LSlogilabprotocoldetail> lstreminingCompletedOrder = LSlogilabprotocoldetailRepository
@@ -2044,7 +2145,7 @@ public class ProtocolService {
 					.findOne(lSlogilabprotocoldetail.getObjuser().getMultiusergroupcode());
 
 			List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
-					.findBylsusergroup(userGroup);
+					.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
 
 			List<LSlogilabprotocoldetail> lstreminingPendingOrder = new ArrayList<>();
 
@@ -2053,9 +2154,12 @@ public class ProtocolService {
 						.findByworkflowcode(lsworkflowgroupmapping.get(0).getWorkflowcode());
 
 				lstreminingPendingOrder = LSlogilabprotocoldetailRepository
-						.getProtocoltypeAndLsprotocolworkflowAndOrderflagAndCreatedtimestampBetween(
-								lSlogilabprotocoldetail.getProtocoltype(), lsprotocolworkflow.getWorkflowcode(), "N",
-								lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
+						.getProtocoltypeAndOrderflagAndCreatedtimestampBetween(
+								lSlogilabprotocoldetail.getProtocoltype(), "N", lSlogilabprotocoldetail.getFromdate(),
+								lSlogilabprotocoldetail.getTodate());
+
+				lstreminingPendingOrder.forEach(objorder -> objorder
+						.setCanuserprocess(lsprotocolworkflow.equals(objorder.getlSprotocolworkflow()) ? true : false));
 			}
 
 			lstOrder.put("lstreminingPendingOrder", lstreminingPendingOrder);
@@ -2866,7 +2970,7 @@ public class ProtocolService {
 		try {
 			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "protocolimages");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 
@@ -2960,6 +3064,8 @@ public class ProtocolService {
 							.findByProtocolmastercodeAndProtocolstepcodeAndStatus(protocolmastercode, protocolstepcode,
 									1);
 					LSprotocolstepObj.setProtocolstepname(protocolstepname);
+					String modifiedusername=object.convertValue(body.get("modifiedusername"), String.class);
+					LSprotocolstepObj.setModifiedusername(modifiedusername);
 					LSProtocolStepRepositoryObj.save(LSprotocolstepObj);
 					lsprotocolstepInformationRepository.save(obj);
 				} else if (NewStep == 1) {
@@ -3135,6 +3241,7 @@ public class ProtocolService {
 		return lst;
 	}
 
+	@SuppressWarnings("unused")
 	public Map<String, Object> Getprotocollinksignature(Map<String, String> body) {
 		Map<String, Object> obj = new HashMap<String, Object>();
 		ObjectMapper object = new ObjectMapper();
@@ -3142,7 +3249,7 @@ public class ProtocolService {
 		String originurl = object.convertValue(body.get("originurl"), String.class);
 		String protocolstepname = object.convertValue(body.get("protocolstepname"), String.class);
 		Integer protocolmastercode = object.convertValue(body.get("protocolmastercode"), Integer.class);
-		Long protocolordercode= new Long(protocolmastercode);
+		Long protocolordercode = new Long(protocolmastercode);
 		Integer stepno = object.convertValue(body.get("stepno"), Integer.class);
 		Integer protocolstepcode = object.convertValue(body.get("protocolstepcode"), Integer.class);
 		Integer usercode = object.convertValue(body.get("usercode"), Integer.class);
@@ -3167,21 +3274,17 @@ public class ProtocolService {
 		String fileName = "signature.png";
 		CustomMultipartFile customMultipartFile = new CustomMultipartFile(data, fileName);
 
-		if(signaturefrom == 1)
-		{
-			obj = Uploadprotocolimage(customMultipartFile, protocolstepcode, protocolmastercode, stepno, protocolstepname,
-				originurl);
-		}
-		else
-		{
-			obj = Uploadprotocolorderimage(customMultipartFile, protocolstepcode, protocolordercode, stepno, protocolstepname,
-					originurl);
+		if (signaturefrom == 1) {
+			obj = Uploadprotocolimage(customMultipartFile, protocolstepcode, protocolmastercode, stepno,
+					protocolstepname, originurl);
+		} else {
+			obj = Uploadprotocolorderimage(customMultipartFile, protocolstepcode, protocolordercode, stepno,
+					protocolstepname, originurl);
 		}
 
 		return obj;
 	}
 
-	@SuppressWarnings("unused")
 	public Map<String, Object> uploadprotocolsordersstep(Map<String, Object> body) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		Response response = new Response();
@@ -3211,6 +3314,8 @@ public class ProtocolService {
 						.findByProtocolorderstepcode(protocolorderstepcode);
 				lslogilabprotocolsteps.setProtocolstepname(protocolstepname);
 				lslogilabprotocolsteps.setOrderstepflag(orderstepflag);
+				String modifiedusername=object.convertValue(body.get("modifiedusername"), String.class);
+				lslogilabprotocolsteps.setModifiedusername(modifiedusername);
 				LSlogilabprotocolstepsRepository.save(lslogilabprotocolsteps);
 			} else {
 				List<LSlogilabprotocolsteps> LSlogilabprotocolstepslist = LSlogilabprotocolstepsRepository
@@ -3345,6 +3450,7 @@ public class ProtocolService {
 
 		return bis;
 	}
+
 	public Map<String, Object> Uploadprotocolorderimage(MultipartFile file, Integer protocolorderstepcode,
 			Long protocolordercode, Integer stepno, String protocolstepname, String originurl) {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -3420,10 +3526,129 @@ public class ProtocolService {
 		ObjectMapper object = new ObjectMapper();
 		Long protocolordercode = object.convertValue(body.get("protocolordercode"), Long.class);
 		int protocolorderstepcode = object.convertValue(body.get("protocolorderstepcode"), Integer.class);
-		lst = lsprotocolorderfilesRepository.findByProtocolordercodeAndProtocolorderstepcodeOrderByProtocolorderstepfilecodeDesc(
-				protocolordercode, protocolorderstepcode);
+		lst = lsprotocolorderfilesRepository
+				.findByProtocolordercodeAndProtocolorderstepcodeOrderByProtocolorderstepfilecodeDesc(protocolordercode,
+						protocolorderstepcode);
 		return lst;
 	}
+
+	public Lsprotocolordershareto Insertshareprotocolorder(Lsprotocolordershareto objprotocolordershareto) {
+		Lsprotocolordershareto existingshare = lsprotocolordersharetoRepository
+				.findBySharebyunifiedidAndSharetounifiedidAndProtocoltypeAndShareprotocolordercode(
+						objprotocolordershareto.getSharebyunifiedid(), objprotocolordershareto.getSharetounifiedid(),
+						objprotocolordershareto.getProtocoltype(), objprotocolordershareto.getShareprotocolordercode());
+		if (existingshare != null) {
+			objprotocolordershareto.setSharetoprotocolordercode(existingshare.getSharetoprotocolordercode());
+			// objordershareto.setSharedon(existingshare.getSharedon());
+		}
+
+		lsprotocolordersharetoRepository.save(objprotocolordershareto);
+
+		return objprotocolordershareto;
+	}
+
+	public Map<String, Object> Insertshareprotocolorderby(Lsprotocolordersharedby objprotocolordersharedby) {
+		Map<String, Object> map = new HashMap<>();
+		Lsprotocolordersharedby existingshare = lsprotocolordersharedbyRepository
+				.findBySharebyunifiedidAndSharetounifiedidAndProtocoltypeAndShareprotocolordercode(
+						objprotocolordersharedby.getSharebyunifiedid(), objprotocolordersharedby.getSharetounifiedid(),
+						objprotocolordersharedby.getProtocoltype(),
+						objprotocolordersharedby.getShareprotocolordercode());
+		if (existingshare != null) {
+			objprotocolordersharedby.setSharedbytoprotocolordercode(existingshare.getSharedbytoprotocolordercode());
+
+		}
+		lsprotocolordersharedbyRepository.save(objprotocolordersharedby);
+		return map;
+	}
+
+	public List<Lsprotocolordersharedby> Getprotocolordersharedbyme(Lsprotocolordersharedby objprotocolordersharedby) {
+		List<Lsprotocolordersharedby> obj = lsprotocolordersharedbyRepository
+				.findBySharebyunifiedidAndProtocoltypeAndSharestatusOrderBySharedbytoprotocolordercodeDesc(
+						objprotocolordersharedby.getSharebyunifiedid(), objprotocolordersharedby.getProtocoltype(), 1);
+
+
+		return obj;
+	}
+
+	public List<Lsprotocolordershareto> Getprotocolordersharedtome(Lsprotocolordershareto objprotocolordershareto) {
+		List<Lsprotocolordershareto> obj = lsprotocolordersharetoRepository
+				.findBySharetounifiedidAndProtocoltypeAndSharestatusOrderBySharetoprotocolordercodeDesc(
+						objprotocolordershareto.getSharetounifiedid(), objprotocolordershareto.getProtocoltype(), 1);
+		return obj;
+	}
 	
-	
+	public Lsprotocolshareto Insertshareprotocol(Lsprotocolshareto objprotocolordershareto) {
+
+		Lsprotocolshareto existingshare = LsprotocolsharetoRepository
+				.findBySharebyunifiedidAndSharetounifiedidAndShareprotocolcode(
+						objprotocolordershareto.getSharebyunifiedid(), objprotocolordershareto.getSharetounifiedid(),
+						objprotocolordershareto.getShareprotocolcode());
+
+		if (existingshare != null) {
+			objprotocolordershareto.setShareprotocolcode(existingshare.getShareprotocolcode());
+		}
+
+		LsprotocolsharetoRepository.save(objprotocolordershareto);
+
+		return objprotocolordershareto;
+	}
+
+	public Map<String, Object> Insertshareprotocolby(Lsprotocolsharedby objprotocolordersharedby) {
+		Map<String, Object> map = new HashMap<>();
+
+		Lsprotocolsharedby existingshare = LsprotocolsharedbyRepository
+				.findBySharebyunifiedidAndSharetounifiedidAndShareprotocolcode(
+						objprotocolordersharedby.getSharebyunifiedid(), objprotocolordersharedby.getSharetounifiedid(),
+						objprotocolordersharedby.getShareprotocolcode());
+
+		if (existingshare != null) {
+			objprotocolordersharedby.setSharedbytoprotocolcode(existingshare.getSharedbytoprotocolcode());
+		}
+
+		LsprotocolsharedbyRepository.save(objprotocolordersharedby);
+
+		return map;
+	}
+
+	public List<Lsprotocolsharedby> Getprotocolsharedbyme(Lsprotocolsharedby objprotocolordersharedby) {
+
+		List<Lsprotocolsharedby> obj = LsprotocolsharedbyRepository
+				.findBySharebyunifiedidAndSharestatusOrderBySharedbytoprotocolcodeDesc(
+						objprotocolordersharedby.getSharebyunifiedid(), 1);
+
+		return obj;
+	}
+
+	public List<Lsprotocolshareto> Getprotocolsharedtome(Lsprotocolshareto objprotocolordershareto) {
+		List<Lsprotocolshareto> obj = LsprotocolsharetoRepository
+				.findBySharetounifiedidAndSharestatusOrderBySharetoprotocolcodeDesc(
+						objprotocolordershareto.getSharetounifiedid(), 1);
+		return obj;
+	}
+
+	public Lsprotocolsharedby Unshareprotocolby(Lsprotocolshareto objordershareby) {
+		
+		Lsprotocolsharedby existingshare = LsprotocolsharedbyRepository.findByshareprotocolcode(objordershareby.getShareprotocolcode());
+
+		existingshare.setSharestatus(0);
+		existingshare.setUnsharedon(objordershareby.getUnsharedon());
+		
+		LsprotocolsharedbyRepository.save(existingshare);
+
+		return existingshare;
+	}
+
+	public Lsprotocolshareto Unshareorderto(Lsprotocolshareto lsordershareto) {
+		Lsprotocolshareto existingshare = LsprotocolsharetoRepository.findBysharetoprotocolcode(lsordershareto.getSharetoprotocolcode());
+
+		existingshare.setSharestatus(0);
+		existingshare.setUnsharedon(lsordershareto.getUnsharedon());
+		existingshare.setShareprotocolcode(lsordershareto.getShareprotocolcode());
+		
+		LsprotocolsharetoRepository.save(existingshare);
+
+		return existingshare;
+	}
+
 }

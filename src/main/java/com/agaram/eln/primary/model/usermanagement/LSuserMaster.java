@@ -135,6 +135,12 @@ public class LSuserMaster {
 	private String encryptedpassword;
 	
 	@Transient
+	private String sharebyunifiedid;
+	
+	@Transient
+	private String sharetounifiedid;
+	
+	@Transient
 	List<LSprojectmaster> lstproject;
 	
 	@Transient
@@ -164,6 +170,22 @@ public class LSuserMaster {
 		this.lsusergrouptrans = lsusergrouptrans;
 	}
 	
+	public String getSharebyunifiedid() {
+		return sharebyunifiedid;
+	}
+
+	public void setSharebyunifiedid(String sharebyunifiedid) {
+		this.sharebyunifiedid = sharebyunifiedid;
+	}
+
+	public String getSharetounifiedid() {
+		return sharetounifiedid;
+	}
+
+	public void setSharetounifiedid(String sharetounifiedid) {
+		this.sharetounifiedid = sharetounifiedid;
+	}
+
 	public Integer getMultiusergroups() {
 		return multiusergroups;
 	}

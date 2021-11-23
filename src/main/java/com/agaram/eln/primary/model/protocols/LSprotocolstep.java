@@ -33,6 +33,7 @@ public class LSprotocolstep {
 	@Transient
 	private Integer ismultitenant;
 	public String createdbyusername;
+	public String modifiedusername;
 	public Integer sitecode;
 	@Transient
 	private Integer newStep;
@@ -44,6 +45,12 @@ public class LSprotocolstep {
 	@Transient
 	private Response response;
 	
+	public String getModifiedusername() {
+		return modifiedusername;
+	}
+	public void setModifiedusername(String modifiedusername) {
+		this.modifiedusername = modifiedusername;
+	}
 	public Response getResponse() {
 		return response;
 	}

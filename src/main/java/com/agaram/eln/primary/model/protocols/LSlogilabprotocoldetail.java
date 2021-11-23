@@ -105,6 +105,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private String originurl;
 
+	@Transient
+	private Boolean canuserprocess;
+	
+	public Boolean getCanuserprocess() {
+		return canuserprocess;
+	}
+
+	public void setCanuserprocess(Boolean canuserprocess) {
+		this.canuserprocess = canuserprocess;
+	}
+
 	public String getOriginurl() {
 		return originurl;
 	}
