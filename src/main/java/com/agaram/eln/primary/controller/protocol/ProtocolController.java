@@ -554,4 +554,14 @@ public class ProtocolController {
 	public Lsprotocolshareto Unshareorderto(@RequestBody Lsprotocolshareto lsordershareto) {
 		return ProtocolMasterService.Unshareorderto(lsordershareto);
 	}
+	
+	@PostMapping("/Unshareprotocolorderby")
+	public Lsprotocolordersharedby Unshareprotocolorderby(@RequestBody Lsprotocolordersharedby objprotocolordersharedby) {
+		return ProtocolMasterService.Unshareprotocolorderby(objprotocolordersharedby);
+	}
+
+	@PostMapping("/Unshareprotocolorderto")
+	public Lsprotocolordershareto Unshareprotocolorderto(@RequestBody Lsprotocolordershareto objprotocolordershareto) {
+		return ProtocolMasterService.Unshareprotocolorderto(objprotocolordershareto);
+	}
 }

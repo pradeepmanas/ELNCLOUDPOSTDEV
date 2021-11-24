@@ -70,6 +70,57 @@ public class Lsprotocolordershareto {
 	
 	@Transient
 	private LSlogilabprotocoldetail lslogilabprotocoldetail;
+	
+	@Transient
+	private Long sharedbytoprotocolordercode;
+
+	public LSuserMaster getObjLoggeduser() {
+		return objLoggeduser;
+	}
+
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+
+	public Integer getIsmultitenant() {
+		return ismultitenant;
+	}
+
+	public LSlogilabprotocoldetail getLslogilabprotocoldetail() {
+		return lslogilabprotocoldetail;
+	}
+
+	public Long getSharedbytoprotocolordercode() {
+		return sharedbytoprotocolordercode;
+	}
+
+	public void setObjLoggeduser(LSuserMaster objLoggeduser) {
+		this.objLoggeduser = objLoggeduser;
+	}
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
+
+	public void setIsmultitenant(Integer ismultitenant) {
+		this.ismultitenant = ismultitenant;
+	}
+
+	public void setLslogilabprotocoldetail(LSlogilabprotocoldetail lslogilabprotocoldetail) {
+		this.lslogilabprotocoldetail = lslogilabprotocoldetail;
+	}
+
+	public void setSharedbytoprotocolordercode(Long sharedbytoprotocolordercode) {
+		this.sharedbytoprotocolordercode = sharedbytoprotocolordercode;
+	}
 
 	public Long getSharetoprotocolordercode() {
 		return sharetoprotocolordercode;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 
 public interface LsprotocolordersharedbyRepository extends JpaRepository<Lsprotocolordersharedby, Integer>{
@@ -16,5 +17,9 @@ public interface LsprotocolordersharedbyRepository extends JpaRepository<Lsproto
 
 	List<Lsprotocolordersharedby> findBySharebyunifiedidAndProtocoltypeAndSharestatus(String sharebyunifiedid,
 			Integer protocoltype, int i);
+
+	Lsprotocolordersharedby findBySharedbytoprotocolordercode(Long sharedbytoprotocolordercode);
+
+//	Lsprotocolordersharedby findOne(Long sharedbytoprotocolordercode);
 
 }

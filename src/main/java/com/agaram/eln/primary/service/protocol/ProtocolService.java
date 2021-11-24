@@ -37,6 +37,7 @@ import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolversionstep;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
@@ -3650,5 +3651,29 @@ public class ProtocolService {
 
 		return existingshare;
 	}
+	
+	
+	public Lsprotocolordersharedby Unshareprotocolorderby(Lsprotocolordersharedby objprotocolordersharedby) {
+	Lsprotocolordersharedby existingshare = lsprotocolordersharedbyRepository.findBySharedbytoprotocolordercode(objprotocolordersharedby.getSharedbytoprotocolordercode());
+
+	existingshare.setSharestatus(0);
+	existingshare.setUnsharedon(objprotocolordersharedby.getUnsharedon());
+	lsprotocolordersharedbyRepository.save(existingshare);
+
+	return existingshare;
+	
+
+}
+
+public Lsprotocolordershareto Unshareprotocolorderto(Lsprotocolordershareto objprotocolordershareto) {
+	Lsprotocolordershareto existingshare = lsprotocolordersharetoRepository.findBySharetoprotocolordercode(objprotocolordershareto.getSharetoprotocolordercode());
+
+	existingshare.setSharestatus(0);
+	existingshare.setUnsharedon(objprotocolordershareto.getUnsharedon());
+	existingshare.setSharedbytoprotocolordercode(objprotocolordershareto.getSharedbytoprotocolordercode());
+	lsprotocolordersharetoRepository.save(existingshare);
+
+	return existingshare;
+}
 
 }
