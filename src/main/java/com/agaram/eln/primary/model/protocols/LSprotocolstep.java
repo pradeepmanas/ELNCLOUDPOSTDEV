@@ -2,6 +2,7 @@ package com.agaram.eln.primary.model.protocols;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,7 +34,9 @@ public class LSprotocolstep {
 	@Transient
 	private Integer ismultitenant;
 	public String createdbyusername;
-	public String modifiedusername;
+	@Column(columnDefinition = "nvarchar(255)")
+	private String modifiedusername;
+//	public String modifiedusername;
 	public Integer sitecode;
 	@Transient
 	private Integer newStep;

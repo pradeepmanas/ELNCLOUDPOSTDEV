@@ -27,6 +27,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
@@ -47,6 +48,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappin
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 
@@ -84,6 +86,9 @@ public class DashBoardService {
 
 	@Autowired
 	private LSuserMasterRepository lsuserMasterRepository;
+	
+	@Autowired
+	private LSusergroupRepository LSusergroupRepository;
 
 	@Autowired
 	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
@@ -478,6 +483,19 @@ public class DashBoardService {
 					todate);
 		}
 
+		LSusergroup userGroup = LSusergroupRepository.findOne(objuser.getObjuser().getMultiusergroupcode());
+
+		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
+				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
+
+		if (lsworkflowgroupmapping != null && lsworkflowgroupmapping.size() > 0) {
+			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
+					.findByworkflowcode(lsworkflowgroupmapping.get(0).getWorkflowcode());
+
+			lstorders.forEach(objorder -> objorder
+					.setCanuserprocess(lsprotocolworkflow.equals(objorder.getlSprotocolworkflow()) ? true : false));
+		}
+		
 		mapOrders.put("orderlst", lstorders);
 
 		return mapOrders;

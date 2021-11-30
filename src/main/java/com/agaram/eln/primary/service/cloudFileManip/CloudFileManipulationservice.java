@@ -445,7 +445,7 @@ public class CloudFileManipulationservice {
 	    
     }
  
- public InputStream updateversionCloudFile(String fileid, String containername,String version) throws IOException{
+ public InputStream updateversionCloudFile(String fileid, String containername,String newfieldid) throws IOException{
  	
 	    CloudStorageAccount storageAccount;
 		CloudBlobClient blobClient = null;
@@ -460,7 +460,7 @@ public class CloudFileManipulationservice {
 			
 			blob = container.getBlockBlobReference(fileid);
 			
-			File targetFile = new File(System.getProperty("java.io.tmpdir")+"/"+fileid+"_"+version);
+			File targetFile = new File(System.getProperty("java.io.tmpdir")+"/"+newfieldid);
 			
 			FileUtils.copyInputStreamToFile(blob.openInputStream(), targetFile);
 			
@@ -484,6 +484,59 @@ public class CloudFileManipulationservice {
 		}
 		return null;
 	    
+ }
+ 
+ public InputStream movestreamstocontainer(InputStream InputStream, String containername,String fileid) throws IOException{
+	 	
+	    CloudStorageAccount storageAccount;
+		CloudBlobClient blobClient = null;
+		CloudBlobContainer container=null;
+		CloudBlockBlob blob = null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+		try {    
+			// Parse the connection string and create a blob client to interact with Blob storage
+			storageAccount = CloudStorageAccount.parse(storageConnectionString);
+			blobClient = storageAccount.createCloudBlobClient();
+			container = blobClient.getContainerReference(containername);
+			
+			File targetFile = new File(System.getProperty("java.io.tmpdir")+"/"+fileid);
+			
+			FileUtils.copyInputStreamToFile(InputStream, targetFile);
+			
+			//Getting a blob reference
+			blob = container.getBlockBlobReference(targetFile.getName());
+
+			//Creating blob and uploading file to it
+			System.out.println("Uploading the sample file ");
+			blob.uploadFromFile(targetFile.getAbsolutePath());
+			
+			return blob.openInputStream();
+		}
+		catch (StorageException ex)
+		{
+			System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s", ex.getHttpStatusCode(), ex.getErrorCode()));
+			throw new IOException(String.format("Error returned from the service. Http code: %d and error code: %s", ex.getHttpStatusCode(), ex.getErrorCode()));
+		}
+		catch (Exception ex) 
+		{
+			System.out.println(ex.getMessage());
+		}
+		return null;
+	    
+}
+ 
+ public boolean movefiletoanothercontainerandremove(String fromcontainer, String tocontainer, String fileid)
+ {
+	 try {
+		InputStream stream = retrieveCloudFile(fileid,fromcontainer);
+		movestreamstocontainer(stream, tocontainer, fileid);
+		deleteFile(fileid,fromcontainer);
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	 
+	 return true;
  }
 
 
@@ -512,6 +565,32 @@ public class CloudFileManipulationservice {
 			System.out.println(ex.getMessage());
 		}
  }
+ 
+ public void deleteFile(String id, String containername) { 
+	 	CloudStorageAccount storageAccount;
+			CloudBlobClient blobClient = null;
+			CloudBlobContainer container=null;
+			CloudBlockBlob blob = null;
+			String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+			try {    
+				// Parse the connection string and create a blob client to interact with Blob storage
+				storageAccount = CloudStorageAccount.parse(storageConnectionString);
+				blobClient = storageAccount.createCloudBlobClient();
+				container = blobClient.getContainerReference(containername);
+				
+				
+				blob = container.getBlockBlobReference(id);
+				blob.deleteIfExists();
+			}
+			catch (StorageException ex)
+			{
+				System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s", ex.getHttpStatusCode(), ex.getErrorCode()));
+			}
+			catch (Exception ex) 
+			{
+				System.out.println(ex.getMessage());
+			}
+	 }
 
 public void updateVersiononFile(byte[] data,String fileid) throws Exception {
 	File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+fileid);

@@ -24,14 +24,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.general.Response;
-import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocolsteps;
 import com.agaram.eln.primary.model.protocols.LSprotocolfiles;
+import com.agaram.eln.primary.model.protocols.LSprotocolfilesContent;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderfiles;
 import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
@@ -39,6 +40,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolstep;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.Lsprotocolsharedby;
 import com.agaram.eln.primary.model.protocols.Lsprotocolshareto;
+import com.agaram.eln.primary.model.protocols.ProtocolImage;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
@@ -564,4 +566,96 @@ public class ProtocolController {
 	public Lsprotocolordershareto Unshareprotocolorderto(@RequestBody Lsprotocolordershareto objprotocolordershareto) {
 		return ProtocolMasterService.Unshareprotocolorderto(objprotocolordershareto);
 	}
+	
+	@PostMapping("/countsherorders")
+	public Map<String, Object> countsherorders(@RequestBody Lsprotocolordersharedby Lsprotocolordersharedby) {
+		return ProtocolMasterService.countsherorders(Lsprotocolordersharedby);
+	}
+	
+	@PostMapping("/UpdateProtocoltest")
+	public LSprotocolmastertest UpdateProtocoltest(@RequestBody LSprotocolmastertest objtest)
+	{
+		return ProtocolMasterService.UpdateProtocoltest(objtest);
+	}
+	
+	@RequestMapping(value = "/getProtocolOnTestcode")
+	protected List<LSprotocolmaster> getProtocolOnTestcode(@RequestBody LSprotocolmastertest objClass) {
+
+		return ProtocolMasterService.getProtocolOnTestcode(objClass);
+	}
+	
+	@PostMapping("/Uploadprotocolimagesql")
+	public Map<String, Object> Uploadprotocolimagesql(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolstepcode") Integer protocolstepcode, 
+			@RequestParam("protocolmastercode") Integer protocolmastercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl) throws IOException
+	{
+		return ProtocolMasterService.Uploadprotocolimagesql(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl );
+	}
+	
+	@RequestMapping(value = "downloadprotocolimagesql/{fileid}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadprotocolimagesql(@PathVariable String fileid
+			, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+		ProtocolImage objprofile =  ProtocolMasterService.downloadprotocolimagesql(fileid);
+		
+		byte[] data = null;
+		
+		if(objprofile != null)
+		{
+			data = objprofile.getImage().getData();
+			ByteArrayInputStream bis = new ByteArrayInputStream(data);	
+		    HttpHeaders header = new HttpHeaders();
+		    header.setContentType(MediaType.parseMediaType("image/png"));
+		    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+		    
+		    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+		}else {
+			
+		
+		return null;
+		}
+	
+	}
+	
+	@PostMapping("/uploadprotocolsfilesql")
+	public Map<String, Object> uploadprotocolsfilesql(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolstepcode") Integer protocolstepcode, 
+			@RequestParam("protocolmastercode") Integer protocolmastercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl) throws IOException
+	{
+	
+		return ProtocolMasterService.uploadprotocolsfilesql(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl );
+	}
+	
+	@RequestMapping(value = "downloadprotocolfilesql/{fileid}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadprotocolfilesql(@PathVariable String fileid
+		, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+		LSprotocolfilesContent lsprotocolfilesContent = ProtocolMasterService.downloadprotocolfilesql(fileid);
+		
+		byte[] data = null;
+		
+		if(lsprotocolfilesContent != null)
+		{
+			data = lsprotocolfilesContent.getFile().getData();
+			ByteArrayInputStream bis = new ByteArrayInputStream(data);	
+		    HttpHeaders header = new HttpHeaders();
+		    header.setContentType(MediaType.parseMediaType("image/png"));
+		    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+		    
+		    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+		}else {
+			
+		
+		return null;
+		}
+	}
+
 }

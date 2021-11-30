@@ -108,6 +108,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private Boolean canuserprocess;
 	
+	@Transient
+	private String unifielduserid;
+	
+	public String getUnifielduserid() {
+		return unifielduserid;
+	}
+
+	public void setUnifielduserid(String unifielduserid) {
+		this.unifielduserid = unifielduserid;
+	}
+
 	public Boolean getCanuserprocess() {
 		return canuserprocess;
 	}

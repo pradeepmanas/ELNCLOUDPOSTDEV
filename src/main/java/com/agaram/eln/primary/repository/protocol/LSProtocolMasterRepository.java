@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.agaram.eln.primary.fetchmodel.gettemplate.Protocoltemplateget;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 
 public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmaster, Integer> {
@@ -176,4 +177,11 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	Long countByCreatedbyInAndStatusAndLssitemasterOrderByCreatedateDesc(List<Integer> lstuser, int i,
 			Integer sitecode);
+
+//	List<LSprotocolmaster> findByStatusAndLssitemasterAndlstestIn(int i, Integer sitecode,
+//			List<LSprotocolmastertest> lsfiletest);
+
+//	List<LSprotocolmaster> findByStatusAndlstestIn(int i, List<LSprotocolmastertest> lsfiletest);
+
+	List<LSprotocolmaster> findByLstestInAndStatus(List<LSprotocolmastertest> lsfiletest,int i);
 }

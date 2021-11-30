@@ -39,7 +39,6 @@ import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
-import com.agaram.eln.primary.model.sheetManipulation.filestoragecontent;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
@@ -680,21 +679,42 @@ public class InstrumentController {
 		
 	}
 	
+	
+	@RequestMapping(value = "downloadsheetimagestemp/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadsheetimagestemp(@PathVariable String fileid
+			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+//		String[] words=fileid.split("_");
+//		
+//		System.out.print(words[0]);
+		
+		ByteArrayInputStream bis = instrumentService.downloadsheetimagestemp(fileid, tenant);
+		
+	    HttpHeaders header = new HttpHeaders();
+	    header.setContentType(MediaType.parseMediaType("image/png"));
+	    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+	    
+	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+		
+	}
+	
 	@PostMapping("/removesheetimage")
 	public Response removesheetimage(@RequestBody Map<String, String> body)
 	{
 		return instrumentService.removesheetimage(body);
 	}
 	
-	@PostMapping("/updateFileStorageonsheets")
-	public Boolean updateFileStorageonsheets(@RequestBody filestoragecontent[] objorder)
+	@PostMapping("/updatesheetimagesforversion")
+	public boolean updatesheetimagesforversion(@RequestBody List<Map<String,String>> lstfiles)
 	{
-		return instrumentService.updateFileStorageonsheets(objorder);
+		return instrumentService.updatesheetimagesforversion(lstfiles);
 	}
 	
-	@PostMapping("/updatesheetimageonversion")
-	public Boolean updatesheetimageonversion(@RequestBody filestoragecontent[] objorder)
+	@PostMapping("/deletesheetimagesforversion")
+	public boolean deletesheetimagesforversion(@RequestBody List<Map<String,String>> lstfiles)
 	{
-		return instrumentService.updatesheetimageonversion(objorder);
+		return instrumentService.deletesheetimagesforversion(lstfiles);
 	}
+	
 }

@@ -1,8 +1,12 @@
 package com.agaram.eln.primary.fetchmodel.getorders;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 
@@ -23,14 +27,21 @@ public class Logilabprotocolorders {
 	private String protocolmastername;
 
 	private String keyword;
+	
+	List<LSprotocolworkflow> lstworkflow;
+	private LSprotocolworkflow lSprotocolworkflow;
+	private Integer workflowcode;
+	private boolean canuserprocess;
 
 	public Logilabprotocolorders(Long protocolordercode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
+			LSprotocolworkflow lSprotocolworkflow,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,String keyword) {
 
 		this.protocolordercode = protocolordercode;
 		this.protoclordername = protoclordername;
 		this.orderflag = orderflag;
+		this.workflowcode = lSprotocolworkflow != null ? lSprotocolworkflow.getWorkflowcode() : null;
 		this.protocoltype = protocoltype;
 		this.createdtimestamp = createdtimestamp;
 		this.completedtimestamp = completedtimestamp;
@@ -56,7 +67,22 @@ public class Logilabprotocolorders {
 		this.protocolmastername = protocolmastername;
 	}
 
-	
+	public LSprotocolworkflow getlSprotocolworkflow() {
+		return lSprotocolworkflow;
+	}
+
+	public void setlSprotocolworkflow(LSprotocolworkflow lSprotocolworkflow) {
+		this.lSprotocolworkflow = lSprotocolworkflow;
+	}
+
+	public Integer getWorkflowcode() {
+		return workflowcode;
+	}
+
+	public void setWorkflowcode(Integer workflowcode) {
+		this.workflowcode = workflowcode;
+	}
+
 	public String getSamplename() {
 		return samplename;
 	}
@@ -127,5 +153,39 @@ public class Logilabprotocolorders {
 
 	public void setLsprotocolmaster(LSprotocolmaster lsprotocolmaster) {
 		this.lsprotocolmaster = lsprotocolmaster;
+	}
+	
+	public List<LSprotocolworkflow> getLstworkflow() {
+		return lstworkflow;
+	}
+	
+	public void setLstworkflow(List<LSprotocolworkflow> lstworkflow) {
+
+		if (lstworkflow != null  && this.workflowcode !=null && lstworkflow.size() > 0) {
+
+			List<Integer> lstworkflowcode = new ArrayList<Integer>();
+			if (lstworkflow != null && lstworkflow.size() > 0) {
+				lstworkflowcode = lstworkflow.stream().map(LSprotocolworkflow::getWorkflowcode).collect(Collectors.toList());
+
+				if (lstworkflowcode.contains(this.workflowcode)) {
+					this.setCanuserprocess(true);
+				} else {
+					this.setCanuserprocess(false);
+				}
+			} else {
+				this.setCanuserprocess(false);
+			}
+		} else {
+			this.setCanuserprocess(false);
+		}
+		this.lstworkflow = null;
+	}
+
+	public boolean isCanuserprocess() {
+		return canuserprocess;
+	}
+
+	public void setCanuserprocess(boolean canuserprocess) {
+		this.canuserprocess = canuserprocess;
 	}
 }

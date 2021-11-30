@@ -25,7 +25,7 @@ public class LSprotocolsampleupdates {
 	public String protocolsampleusedDetail;
 	public Integer protocolstepcode;
 	public Integer protocolmastercode;
-	public Integer index;
+	public Integer indexof;
 	public Integer usedquantity;
 	public Integer repositorydatacode;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -60,10 +60,10 @@ public class LSprotocolsampleupdates {
 		this.usedquantity = usedquantity;
 	}
 	public Integer getIndex() {
-		return index;
+		return indexof;
 	}
-	public void setIndex(Integer index) {
-		this.index = index;
+	public void setIndex(Integer indexof) {
+		this.indexof = indexof;
 	}
 
 	public Integer getProtocolsamplecode() {

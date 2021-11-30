@@ -63,8 +63,6 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
-import com.agaram.eln.primary.model.sheetManipulation.filestoragecontent;
-import com.agaram.eln.primary.model.sheetManipulation.temporaryfilestorage;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 //import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
@@ -103,8 +101,6 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSsampleresultReposit
 import com.agaram.eln.primary.repository.sheetManipulation.LStestparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
-import com.agaram.eln.primary.repository.sheetManipulation.filestoragecontentRepository;
-import com.agaram.eln.primary.repository.sheetManipulation.temporaryfilestorageRepository;
 import com.agaram.eln.primary.repository.templates.LsMappedTemplateRepository;
 import com.agaram.eln.primary.repository.templates.LsUnmappedTemplateRepository;
 //import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
@@ -227,12 +223,6 @@ public class InstrumentService {
 
 	@Autowired
 	private CloudOrderAttachmentRepository CloudOrderAttachmentRepository;
-
-	@Autowired
-	private temporaryfilestorageRepository temporaryfilestorageRepository;
-	
-	@Autowired
-	private filestoragecontentRepository filestoragecontentRepository;
 
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
@@ -2985,25 +2975,14 @@ public class InstrumentService {
 		
 			String id = null;
 			try {
-				id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "sheetimages");
+				id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "sheetimagestemp");
 				
-//				System.out.print(System.getProperty("java.io.tmpdir")+id);
-				
-				temporaryfilestorage tempFile = new temporaryfilestorage();
-				
-				tempFile.setId(id);
-//				tempFile.setUploadedby(System.getProperty("java.io.tmpdir")+id);	
-				tempFile.setSitecode(Integer.parseInt(sitecode));
-				tempFile.setModifieduser(username);
-				tempFile.setUploadedbydate(new Date());	
-				
-				temporaryfilestorageRepository.save(tempFile);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-		map.put("link", originurl+"/Instrument/downloadsheetimages/"+id
+		map.put("link", originurl+"/Instrument/downloadsheetimagestemp/"+id
 		+"/"+TenantContext.getCurrentTenant()+"/"+FilenameUtils.removeExtension(file.getOriginalFilename())+"/"+FilenameUtils.getExtension(file.getOriginalFilename()));
 		return map;
 	}
@@ -3014,6 +2993,48 @@ public class InstrumentService {
 		byte[] data = null;
 		try {
 			data = StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(fileid,tenant+"sheetimages"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			data = null;
+		}
+		
+		if(data == null)
+		{
+			String[] arrOffiledid = fileid.split("_", 2);
+			String Originalfieldid = arrOffiledid[0];
+			try {
+				data = StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(Originalfieldid,tenant+"sheetimages"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				data = null;
+			}
+			
+			if(data == null)
+			{
+				try {
+					data = StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(Originalfieldid,tenant+"sheetimagestemp"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					data = null;
+				}
+			}
+		}
+		
+		
+		ByteArrayInputStream bis = new ByteArrayInputStream(data);
+		
+		return bis;
+	}
+	
+	public ByteArrayInputStream downloadsheetimagestemp(String fileid, String tenant) throws FileNotFoundException, IOException
+	{
+		TenantContext.setCurrentTenant(tenant);
+		byte[] data = null;
+		try {
+			data = StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(fileid,tenant+"sheetimagestemp"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -3032,58 +3053,46 @@ public class InstrumentService {
 		return objresponse;
 	}
 
-	public Boolean updateFileStorageonsheets(filestoragecontent[] objFilelst1) {
+	
+	public boolean updatesheetimagesforversion(List<Map<String,String>> lstfiles)
+	{
+		for (Map<String,String> fileObj : lstfiles) {
+		String copyfrom = fileObj.get("copyfrom");
+		String copyto  = fileObj.get("copyto");
+		String isnew = fileObj.get("isnew");
 		
-		List<filestoragecontent> lsfilestorage = Arrays.asList(objFilelst1);
-		
-		List<temporaryfilestorage> lstTempfile = new ArrayList<temporaryfilestorage>();
-		
-		for (filestoragecontent fileObj : lsfilestorage) {
-			
-			fileObj.setModifieddate(new Date());
-			
-//			fileObj.setImguniqueid(fileObj.getId()+"_"+fileObj.getVersionno());
-			
-			filestoragecontentRepository.save(fileObj);
-			
-			temporaryfilestorage temfile = temporaryfilestorageRepository.findById(fileObj.getId());
-			
-			if(temfile!= null) {
-				lstTempfile.add(temfile);	
-			}
+		if(isnew.equals("true"))
+		{
+			cloudFileManipulationservice.movefiletoanothercontainerandremove(TenantContext.getCurrentTenant()+"sheetimagestemp",
+					TenantContext.getCurrentTenant()+"sheetimages",copyfrom);
 		}
 		
-		temporaryfilestorageRepository.delete(lstTempfile);
+		try {
+			cloudFileManipulationservice.updateversionCloudFile(copyfrom,TenantContext.getCurrentTenant()+"sheetimages",copyto);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}
 		
 		return true;
 	}
-
-	public Boolean updatesheetimageonversion(filestoragecontent[] objorder) {
+	
+	public boolean deletesheetimagesforversion(List<Map<String,String>> lstfiles)
+	{
+		for (Map<String,String> fileObj : lstfiles) {
+			String fileid = fileObj.get("fieldid");
 		
-		List<filestoragecontent> lsfilestorage = Arrays.asList(objorder);
-		
-		for (filestoragecontent fileObj : lsfilestorage) {
+			cloudFileManipulationservice.deleteFile(fileid, TenantContext.getCurrentTenant()+"sheetimages");
 			
-			TenantContext.setCurrentTenant(fileObj.getTenantid());
-			@SuppressWarnings("unused")
-			byte[] data = null;
-			try {
-				
-				String[] fileuid = fileObj.getId().split("_");
-				
-				data = StreamUtils.copyToByteArray(cloudFileManipulationservice
-						.updateversionCloudFile(fileuid[0],fileObj.getTenantid()+"sheetimages",fileuid[1]));
+			String[] arrOffiledid = fileid.split("_", 2);
+			String Originalfieldid = arrOffiledid[0];
 			
-//				return true;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			cloudFileManipulationservice.deleteFile(Originalfieldid, TenantContext.getCurrentTenant()+"sheetimages");
+			
+			cloudFileManipulationservice.deleteFile(Originalfieldid, TenantContext.getCurrentTenant()+"sheetimagestemp");
 			
 		}
-		
-		
-		
 		return true;
 	}
 }

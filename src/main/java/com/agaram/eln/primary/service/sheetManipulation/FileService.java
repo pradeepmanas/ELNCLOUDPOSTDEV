@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -26,7 +25,6 @@ import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.general.SheetVersion;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
-
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -34,11 +32,11 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetupdates;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
+import com.agaram.eln.primary.model.sheetManipulation.Lsfilesharedby;
+import com.agaram.eln.primary.model.sheetManipulation.Lsfileshareto;
 import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
-
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
@@ -57,6 +55,8 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowReposi
 import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LsfilesharedbyRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LsfilesharetoRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LssheetworkflowhistoryRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
@@ -130,13 +130,19 @@ public class FileService {
 	private CloudSheetVersionRepository cloudSheetVersionRepository;
 
 	@Autowired
+	private LsfilesharetoRepository LsfilesharetoRepository;
+
+	@Autowired
+	private LsfilesharedbyRepository LsfilesharedbyRepository;
+
+	@Autowired
 	GridFsOperations gridFsOps;
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
-	
+
 	@Autowired
-    private MasterService inventoryservice;
+	private MasterService inventoryservice;
 
 	public LSfile InsertupdateSheet(LSfile objfile) {
 		Boolean Isnew = false;
@@ -251,11 +257,12 @@ public class FileService {
 				mongoTemplate.upsert(query, update, SheetCreation.class);
 			}
 		}
-		
+
 	}
 
 	public List<LSfile> GetSheets(LSuserMaster objuser) {
-		if (objuser.getUsername().equals("Administrator")) {
+		
+		if ( objuser.getUsername() != null &&  objuser.getUsername().equals("Administrator")) {
 			return lSfileRepository.getsheetGreaterthanone();
 		} else {
 			return GetSheetsbyuser(objuser);
@@ -284,18 +291,33 @@ public class FileService {
 			lstteamuser.add(objuser);
 			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1, lstteamuser);
 		} else {
-//			lstteamuser.add(objuser);
-//			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1, lstteamuser);
+
 			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1, objuser);
 		}
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSfile");
-//			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
 		}
-		
-		lstfile.forEach(objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
+
+		lstfile.forEach(
+				objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
 
 		return lstfile;
+	}
+
+	public Map<String, Object> getSheetscount(LSuserMaster objusers) {
+
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+
+		List<LSuserMaster> lstteamuser = objusers.getObjuser().getTeamusers();
+
+		mapObj.put("templatecount", lSfileRepository.countByCreatebyIn(lstteamuser));
+		mapObj.put("sharedbyme",
+				LsfilesharedbyRepository.countBySharebyunifiedidAndSharestatus(objusers.getSharebyunifiedid(), 1));
+		mapObj.put("sharedtome",
+				LsfilesharetoRepository.countBySharetounifiedidAndSharestatus(objusers.getSharetounifiedid(), 1));
+
+		return mapObj;
 	}
 
 	public List<LSfile> GetApprovedSheets(Integer approvelstatus, LSuserMaster objuser) {
@@ -323,22 +345,12 @@ public class FileService {
 	}
 
 	public LSfiletest UpdateFiletest(LSfiletest objtest) {
+		
 		if (objtest.getLSfileparameter() != null) {
 			lSfileparameterRepository.save(objtest.getLSfileparameter());
 		}
 
 		lSfiletestRepository.save(objtest);
-
-		if (objtest.getObjsilentaudit() != null) {
-			objtest.getObjsilentaudit().setTableName("LSfiletest");
-//			lscfttransactionRepository.save(objtest.getObjsilentaudit());
-		}
-		// Manual Audit
-		if (objtest.getObjuser() != null) {
-			objtest.getObjmanualaudit().setComments(objtest.getObjuser().getComments());
-			objtest.getObjmanualaudit().setTableName("LSfiletest");
-//			lscfttransactionRepository.save(objtest.getObjmanualaudit());
-		}
 
 		objtest.setResponse(new Response());
 		objtest.getResponse().setStatus(true);
@@ -377,8 +389,7 @@ public class FileService {
 				if (file != null) {
 					lsfiles.get(0).setFilecontent(file.getContent());
 				}
-			}
-			else {
+			} else {
 				SheetCreation file = mongoTemplate.findById(lsfiles.get(0).getFilecode(), SheetCreation.class);
 				if (file != null) {
 					lsfiles.get(0).setFilecontent(file.getContent());
@@ -458,7 +469,7 @@ public class FileService {
 		mapOrders.put("test", masterService.getTestmaster(objuser));
 		mapOrders.put("sample", masterService.getsamplemaster(objuser));
 		mapOrders.put("project", masterService.getProjectmaster(objuser));
-		Lsrepositories lsrepositories =new Lsrepositories();
+		Lsrepositories lsrepositories = new Lsrepositories();
 		lsrepositories.setSitecode(objuser.getLssitemaster().getSitecode());
 		mapOrders.put("inventories", inventoryservice.Getallrepositories(lsrepositories));
 		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
@@ -485,7 +496,7 @@ public class FileService {
 	}
 
 	public List<LSsheetworkflow> InsertUpdatesheetWorkflow(LSsheetworkflow[] sheetworkflow) {
-		
+
 		List<LSsheetworkflow> lSsheetworkflow = Arrays.asList(sheetworkflow);
 		for (LSsheetworkflow flow : lSsheetworkflow) {
 			lssheetworkflowgroupmapRepository.save(flow.getLssheetworkflowgroupmap());
@@ -848,7 +859,6 @@ public class FileService {
 		}
 		objfile.setVersionno(Versionnumber);
 
-
 		return true;
 	}
 
@@ -960,98 +970,147 @@ public class FileService {
 
 		return objreturnfile;
 	}
-	
+
 	public Sheettemplateget getfilemasteroncode(LSfile objfile) {
 		Sheettemplateget objreturnfile = lSfileRepository.findByFilecode(objfile.getFilecode());
-		
+
 		objreturnfile.setVersioncout(lsfileversionRepository.countByFilecode(objfile.getFilecode()));
-		
+
 		return objreturnfile;
 	}
-	
-	public Map<String, Object> Getinitialsheet(LSfile objfile){
+
+	public Map<String, Object> Getinitialsheet(LSfile objfile) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		if (objfile.getLSuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 			mapOrders.put("template", Getadministratorsheets(objfile));
 			mapOrders.put("templatecount", lSfileRepository.countByFilecodeGreaterThan(1));
-		}
-		else
-		{
+		} else {
 			List<LSuserMaster> lstteamuser = objfile.getLSuserMaster().getObjuser().getTeamusers();
 
 			if (lstteamuser != null && lstteamuser.size() > 0) {
 				lstteamuser.add(objfile.getLSuserMaster());
 				mapOrders.put("templatecount", lSfileRepository.countByCreatebyIn(lstteamuser));
-			}
-			else
-			{
+			} else {
 				mapOrders.put("templatecount", lSfileRepository.countByCreateby(objfile.getLSuserMaster()));
 			}
 			mapOrders.put("template", Getusersheets(objfile));
-			
+
 		}
 		return mapOrders;
 	}
-	
-	public List<Sheettemplateget> Getremainingsheets(LSfile objfile)
-	{
+
+	public List<Sheettemplateget> Getremainingsheets(LSfile objfile) {
 		if (objfile.getLSuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 			return Getadministratorsheets(objfile);
-		}
-		else
-		{
+		} else {
 			return Getusersheets(objfile);
 		}
 	}
-	
-	public List<Sheettemplateget> Getadministratorsheets(LSfile objfile)
-	{
+
+	public List<Sheettemplateget> Getadministratorsheets(LSfile objfile) {
 		List<Sheettemplateget> lstsheets = new ArrayList<Sheettemplateget>();
-		if(objfile.getFilecode() == 0)
-		{
+		if (objfile.getFilecode() == 0) {
 			lstsheets = lSfileRepository.findFirst20ByFilecodeGreaterThanOrderByFilecodeDesc(1);
-		}
-		else
-		{
-			lstsheets = lSfileRepository.findFirst20ByFilecodeGreaterThanAndFilecodeLessThanOrderByFilecodeDesc(1,objfile.getFilecode());
+		} else {
+			lstsheets = lSfileRepository.findFirst20ByFilecodeGreaterThanAndFilecodeLessThanOrderByFilecodeDesc(1,
+					objfile.getFilecode());
 		}
 		return lstsheets;
 	}
 
-	public List<Sheettemplateget> Getusersheets(LSfile objfile)
-	{
+	public List<Sheettemplateget> Getusersheets(LSfile objfile) {
 		List<Sheettemplateget> lstsheets = new ArrayList<Sheettemplateget>();
 		List<LSuserMaster> lstteamuser = objfile.getLSuserMaster().getObjuser().getTeamusers();
-			if(objfile.getFilecode() == 0)
-			{
-				if (lstteamuser != null && lstteamuser.size() > 0) {
-					lstteamuser.add(objfile.getLSuserMaster());
-					lstsheets = lSfileRepository.findFirst20ByCreatebyInOrderByFilecodeDesc(lstteamuser);
-				}
-				else
-				{
-					lstsheets = lSfileRepository.findFirst20ByCreatebyOrderByFilecodeDesc(objfile.getLSuserMaster());
-				}
+		if (objfile.getFilecode() == 0) {
+			if (lstteamuser != null && lstteamuser.size() > 0) {
+				lstteamuser.add(objfile.getLSuserMaster());
+				lstsheets = lSfileRepository.findFirst20ByCreatebyInOrderByFilecodeDesc(lstteamuser);
+			} else {
+				lstsheets = lSfileRepository.findFirst20ByCreatebyOrderByFilecodeDesc(objfile.getLSuserMaster());
 			}
-			else
-			{
-				if (lstteamuser != null && lstteamuser.size() > 0) {
-					lstteamuser.add(objfile.getLSuserMaster());
-					lstsheets = lSfileRepository.findFirst20ByFilecodeLessThanAndCreatebyInOrderByFilecodeDesc(objfile.getFilecode(),lstteamuser);
-				}
-				else
-				{
-					lstsheets = lSfileRepository.findFirst20ByFilecodeLessThanAndCreatebyOrderByFilecodeDesc(objfile.getFilecode(),objfile.getLSuserMaster());
-				}
+		} else {
+			if (lstteamuser != null && lstteamuser.size() > 0) {
+				lstteamuser.add(objfile.getLSuserMaster());
+				lstsheets = lSfileRepository.findFirst20ByFilecodeLessThanAndCreatebyInOrderByFilecodeDesc(
+						objfile.getFilecode(), lstteamuser);
+			} else {
+				lstsheets = lSfileRepository.findFirst20ByFilecodeLessThanAndCreatebyOrderByFilecodeDesc(
+						objfile.getFilecode(), objfile.getLSuserMaster());
 			}
-		
+		}
+
 		return lstsheets;
 	}
 
 	public LSfile UpdateFilecontent(LSfile objfile) {
-		
+
 		updatefilecontent(objfile.getFilecontent(), objfile, false);
-		
+
 		return null;
+	}
+
+	public Lsfileshareto Insertsharefile(Lsfileshareto objprotocolordershareto) {
+
+		Lsfileshareto existingshare = LsfilesharetoRepository.findBySharebyunifiedidAndSharetounifiedidAndSharefilecode(
+				objprotocolordershareto.getSharebyunifiedid(), objprotocolordershareto.getSharetounifiedid(),
+				objprotocolordershareto.getSharefilecode());
+
+		if (existingshare != null) {
+			objprotocolordershareto.setSharetofilecode(existingshare.getSharetofilecode());
+		}
+
+		LsfilesharetoRepository.save(objprotocolordershareto);
+
+		return objprotocolordershareto;
+	}
+
+	public Map<String, Object> Insertsharefileby(Lsfilesharedby objprotocolordersharedby) {
+		Map<String, Object> map = new HashMap<>();
+
+		Lsfilesharedby existingshare = LsfilesharedbyRepository
+				.findBySharebyunifiedidAndSharetounifiedidAndSharefilecode(
+						objprotocolordersharedby.getSharebyunifiedid(), objprotocolordersharedby.getSharetounifiedid(),
+						objprotocolordersharedby.getSharefilecode());
+
+		if (existingshare != null) {
+			objprotocolordersharedby.setSharedbytofilecode(existingshare.getSharedbytofilecode());
+		}
+
+		LsfilesharedbyRepository.save(objprotocolordersharedby);
+
+		return map;
+	}
+
+	public List<Lsfilesharedby> Getfilesharedbyme(Lsfilesharedby lsordersharedby) {
+		return LsfilesharedbyRepository.findBySharebyunifiedidAndSharestatusOrderBySharedbytofilecodeDesc(
+				lsordersharedby.getSharebyunifiedid(), 1);
+	}
+
+	public List<Lsfileshareto> Getfilesharetome(Lsfileshareto lsordershareto) {
+		return LsfilesharetoRepository.findBySharetounifiedidAndSharestatusOrderBySharetofilecodeDesc(
+				lsordershareto.getSharetounifiedid(), 1);
+	}
+
+	public Lsfilesharedby Unsharefileby(Lsfilesharedby objordershareby) {
+		
+		Lsfilesharedby existingshare = LsfilesharedbyRepository.findBySharedbytofilecode(objordershareby.getSharedbytofilecode());
+
+		existingshare.setSharestatus(0);
+		existingshare.setUnsharedon(objordershareby.getUnsharedon());
+		LsfilesharedbyRepository.save(existingshare);
+
+		return existingshare;
+	}
+
+	public Lsfileshareto Unsharefileto(Lsfileshareto lsordershareto) {
+		
+		Lsfileshareto existingshare = LsfilesharetoRepository.findBySharetofilecode(lsordershareto.getSharetofilecode());
+
+		existingshare.setSharestatus(0);
+		existingshare.setUnsharedon(lsordershareto.getUnsharedon());
+		existingshare.setSharedbytofilecode(lsordershareto.getSharedbytofilecode());
+		LsfilesharetoRepository.save(existingshare);
+
+		return existingshare;
 	}
 }

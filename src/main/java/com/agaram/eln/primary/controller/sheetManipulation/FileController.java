@@ -17,6 +17,8 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
+import com.agaram.eln.primary.model.sheetManipulation.Lsfilesharedby;
+import com.agaram.eln.primary.model.sheetManipulation.Lsfileshareto;
 import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
@@ -56,6 +58,12 @@ public class FileController {
 	public List<Sheettemplateget> GetSheetsbyuseronDetailview(@RequestBody LSuserMaster objuser)
 	{
 		return fileService.GetSheetsbyuseronDetailview(objuser);
+	}
+	
+	@PostMapping("/getSheetscount")
+	public  Map<String, Object> getSheetscount(@RequestBody LSuserMaster objusers)
+	{
+		return fileService.getSheetscount(objusers);
 	}
 	
 	@PostMapping("/UpdateFiletest")
@@ -342,5 +350,35 @@ public class FileController {
 	@PostMapping(value = "/Getremainingsheets")
 	public List<Sheettemplateget> Getremainingsheets(@RequestBody LSfile objfile){
 		return fileService.Getremainingsheets(objfile);
+	}
+	
+	@PostMapping("/Insertsharefile")
+	public Lsfileshareto Insertsharefile(@RequestBody Lsfileshareto objprotocolordershareto) {
+		return fileService.Insertsharefile(objprotocolordershareto);
+	}
+	
+	@PostMapping("/Insertsharefileby")
+	public Map<String, Object> Insertsharefileby(@RequestBody Lsfilesharedby objprotocolordersharedby) {
+		return fileService.Insertsharefileby(objprotocolordersharedby);
+	}
+	
+	@PostMapping("/Getfilesharedbyme")
+	public List<Lsfilesharedby> Getfilesharedbyme(@RequestBody Lsfilesharedby lsordersharedby) {
+		return fileService.Getfilesharedbyme(lsordersharedby);
+	}
+
+	@PostMapping("/Getfilesharetome")
+	public List<Lsfileshareto> Getfilesharetome(@RequestBody Lsfileshareto lsordershareto) {
+		return fileService.Getfilesharetome(lsordershareto);
+	}
+	
+	@PostMapping("/Unsharefileby")
+	public Lsfilesharedby Unsharefileby(@RequestBody Lsfilesharedby objordershareby) {
+		return fileService.Unsharefileby(objordershareby);
+	}
+
+	@PostMapping("/Unsharefileto")
+	public Lsfileshareto Unsharefileto(@RequestBody Lsfileshareto lsordershareto) {
+		return fileService.Unsharefileto(lsordershareto);
 	}
 }

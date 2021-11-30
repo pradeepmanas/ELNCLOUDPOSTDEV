@@ -20,9 +20,9 @@ public interface LSprotocolsampleupdatesRepository  extends JpaRepository<LSprot
 //	public List<LSprotocolsampleupdates> findByprotocolstepcodeAndProtocolmastercodeAndIndexIsNotNull(
 //			Integer protocolstepcode, Integer protocolmastercode);
 
-	public List<LSprotocolsampleupdates> findByprotocolstepcodeAndProtocolmastercodeAndIndexIsNotNullAndStatus(
+	public List<LSprotocolsampleupdates> findByprotocolstepcodeAndProtocolmastercodeAndIndexofIsNotNullAndStatus(
 			Integer protocolstepcode, Integer protocolmastercode, int i);
 
-	public List<LSprotocolsampleupdates> findByprotocolstepcodeAndIndexIsNotNullAndStatus(Integer protocolstepcode,
+	public List<LSprotocolsampleupdates> findByprotocolstepcodeAndIndexofIsNotNullAndStatus(Integer protocolstepcode,
 			int i);
 }
