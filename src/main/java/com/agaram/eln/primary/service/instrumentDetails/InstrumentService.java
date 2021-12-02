@@ -5,16 +5,19 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +43,9 @@ import com.agaram.eln.primary.model.cloudFileManip.CloudOrderAttachment;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderVersion;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
+import com.agaram.eln.primary.model.fileManipulation.Fileimages;
+import com.agaram.eln.primary.model.fileManipulation.Fileimagestemp;
+import com.agaram.eln.primary.model.fileManipulation.LSfileimages;
 import com.agaram.eln.primary.model.fileManipulation.OrderAttachment;
 import com.agaram.eln.primary.model.general.OrderCreation;
 import com.agaram.eln.primary.model.general.OrderVersion;
@@ -80,6 +86,9 @@ import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepo
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderCreationRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderVersionRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationRepository;
+import com.agaram.eln.primary.repository.fileManipulation.FileimagesRepository;
+import com.agaram.eln.primary.repository.fileManipulation.FileimagestempRepository;
+import com.agaram.eln.primary.repository.fileManipulation.LSfileimagesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSfieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlimsorderRepository;
@@ -224,6 +233,15 @@ public class InstrumentService {
 	@Autowired
 	private CloudOrderAttachmentRepository CloudOrderAttachmentRepository;
 
+	@Autowired
+	private LSfileimagesRepository LSfileimagesRepository;
+
+	@Autowired
+	private FileimagesRepository FileimagesRepository;
+
+	@Autowired
+	private FileimagestempRepository FileimagestempRepository;
+
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
 		List<String> lsInst = new ArrayList<String>();
@@ -257,7 +275,7 @@ public class InstrumentService {
 		objorder.setLsworkflow(lsworkflowRepository
 				.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
 		objorder.setOrderflag("N");
-		
+
 		String Content = "";
 		if (objorder.getLssamplefile() == null) {
 			LSsamplefile objsamplefile = new LSsamplefile();
@@ -296,11 +314,11 @@ public class InstrumentService {
 		if (objorder.getAssignedto() != null) {
 			objorder.setLockeduser(objorder.getAssignedto().getUsercode());
 		}
-		
+
 		lslogilablimsorderdetailRepository.save(objorder);
-		
+
 		String Batchid = "ELN" + objorder.getBatchcode();
-		
+
 		if (objorder.getFiletype() == 3) {
 			Batchid = "RESEARCH" + objorder.getBatchcode();
 		} else if (objorder.getFiletype() == 4) {
@@ -312,7 +330,7 @@ public class InstrumentService {
 		objorder.setBatchid(Batchid);
 
 		lslogilablimsorderdetailRepository.save(objorder);
-		
+
 		lssamplefileRepository.setbatchcodeOnsamplefile(objorder.getBatchcode(),
 				objorder.getLssamplefile().getFilesamplecode());
 
@@ -1263,11 +1281,11 @@ public class InstrumentService {
 
 	public List<Logilaborders> GetorderbytypeandflaganduserOrdersonly(LSlogilablimsorderdetail objorder,
 			Map<String, Object> mapOrders) {
-		
+
 		List<LSprojectmaster> lstproject = objorder.getLsuserMaster().getLstproject();
 		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		List<Long> lstBatchcode = new ArrayList<Long>();
-		
+
 		List<LSworkflow> lstworkflow = GetWorkflowonuser(objorder.getLsuserMaster().getLsusergrouptrans());
 
 		long pendingcount = 0;
@@ -1280,7 +1298,8 @@ public class InstrumentService {
 		long myordercompletedcount = 0;
 
 		if (lstproject != null && lstproject.size() > 0) {
-			List<Integer> lstprojectcode = lstproject.stream().map(LSprojectmaster::getProjectcode).collect(Collectors.toList());
+			List<Integer> lstprojectcode = lstproject.stream().map(LSprojectmaster::getProjectcode)
+					.collect(Collectors.toList());
 
 			if (objorder.getOrderflag().equals("N")) {
 				if (objorder.getSearchCriteria() != null
@@ -1541,7 +1560,7 @@ public class InstrumentService {
 			}
 
 		}
-		
+
 		if (objorder.getObjsilentaudit() != null) {
 			objorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
 		}
@@ -1559,7 +1578,7 @@ public class InstrumentService {
 		}
 
 		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(lstworkflow));
-		
+
 		mapOrders.put("orders", lstorder);
 		mapOrders.put("pendingcount", pendingcount);
 		mapOrders.put("completedcount", completedcount);
@@ -1710,7 +1729,8 @@ public class InstrumentService {
 	public List<LSworkflow> GetWorkflowonUser(LSuserMaster objuser) {
 		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
 				.findBylsusergroup(objuser.getLsusergroup());
-		List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
+		List<LSworkflow> lsworkflow = lsworkflowRepository
+				.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 		return lsworkflow;
 	}
@@ -1720,22 +1740,22 @@ public class InstrumentService {
 //		LSMultiusergroup objLSMultiusergroup = new LSMultiusergroup();
 //		objLSMultiusergroup = LSMultiusergroupRepositery.findBymultiusergroupcode(usercode.getMultiusergroups());
 //		objuser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
-		
+
 		LSusergroup lsusergroup = usercode.getLsusergrouptrans();
-		
+
 		Map<String, Object> maplogindetails = new HashMap<String, Object>();
 		maplogindetails.put("workflow", GetWorkflowonuser(lsusergroup));
 		maplogindetails.put("user", objuser);
 		return maplogindetails;
 	}
-	
-	public List<LSworkflow> GetWorkflowonuser(LSusergroup lsusergroup)
-	{
+
+	public List<LSworkflow> GetWorkflowonuser(LSusergroup lsusergroup) {
 		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
 				.findBylsusergroup(lsusergroup);
-		
-		List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
-		
+
+		List<LSworkflow> lsworkflow = lsworkflowRepository
+				.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
+
 		return lsworkflow;
 	}
 
@@ -1745,8 +1765,7 @@ public class InstrumentService {
 //			lscfttransactionRepository.save(objorder.getObjsilentaudit());
 		}
 
-		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository
-				.findOne(objorder.getBatchcode());
+		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 
 		if (objupdatedorder.getLockeduser() != null) {
 			objupdatedorder.setIsLock(1);
@@ -1799,12 +1818,13 @@ public class InstrumentService {
 		objupdatedorder.setLsLSlimsorder(lSlimsorderRepository.findBybatchid(objupdatedorder.getBatchid()));
 
 		LSsamplefile LSsamplefile = objupdatedorder.getLssamplefile();
-		if(LSsamplefile != null) {
-			 if(LSsamplefile.getFilesamplecode() != null) {
-				 List<LSsamplefileversion> LSsamplefileversion=	lssamplefileversionRepository.findByFilesamplecodeOrderByVersionnoDesc(LSsamplefile);
-				 objupdatedorder.getLssamplefile().setLssamplefileversion(LSsamplefileversion); 
-			 } 
-		 }
+		if (LSsamplefile != null) {
+			if (LSsamplefile.getFilesamplecode() != null) {
+				List<LSsamplefileversion> LSsamplefileversion = lssamplefileversionRepository
+						.findByFilesamplecodeOrderByVersionnoDesc(LSsamplefile);
+				objupdatedorder.getLssamplefile().setLssamplefileversion(LSsamplefileversion);
+			}
+		}
 
 		if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
 			if (objupdatedorder.getLsworkflow()
@@ -1872,7 +1892,7 @@ public class InstrumentService {
 	}
 
 	public LSsamplefile SaveResultfile(LSsamplefile objfile) {
-		
+
 		Integer lastversionindex = objfile.getLssamplefileversion().size() - 1;
 
 		String Contentversion;
@@ -1881,7 +1901,7 @@ public class InstrumentService {
 			lastversionindex = 0;
 			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
 		} else {
-			
+
 			Contentversion = objfile.getFilecontent();
 			objfile.getLssamplefileversion().get(lastversionindex).setFilecontent(null);
 			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
@@ -2020,8 +2040,7 @@ public class InstrumentService {
 
 	public Map<String, Object> Getorderforlink(LSlogilablimsorderdetail objorder) {
 		Map<String, Object> mapOrder = new HashMap<String, Object>();
-		LSlogilablimsorderdetail objupdated = lslogilablimsorderdetailRepository
-				.findOne(objorder.getBatchcode());
+		LSlogilablimsorderdetail objupdated = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 
 		if (objupdated.getLockeduser() != null) {
 			objupdated.setIsLock(1);
@@ -2499,7 +2518,7 @@ public class InstrumentService {
 						objordershareto.getOrdertype(), objordershareto.getSharebatchcode());
 		if (existingshare != null) {
 			objordershareto.setSharetocode(existingshare.getSharetocode());
-			//objordershareto.setSharedon(existingshare.getSharedon());
+			// objordershareto.setSharedon(existingshare.getSharedon());
 		}
 
 		lsordersharetoRepository.save(objordershareto);
@@ -2515,7 +2534,7 @@ public class InstrumentService {
 						objordershareby.getOrdertype(), objordershareby.getSharebatchcode());
 		if (existingshare != null) {
 			objordershareby.setSharedbycode(existingshare.getSharedbycode());
-			//objordershareby.setSharedon(existingshare.getSharedon());
+			// objordershareby.setSharedon(existingshare.getSharedon());
 		}
 		lsordersharedbyRepository.save(objordershareby);
 
@@ -2855,166 +2874,151 @@ public class InstrumentService {
 
 		return Content;
 	}
-	
 
-	public List<Integer> Getuserworkflow(LSusergroup lsusergroup)
-	{
+	public List<Integer> Getuserworkflow(LSusergroup lsusergroup) {
 		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
 				.findBylsusergroup(lsusergroup);
-		
+
 		List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
-		
+
 		List<Integer> lstworkflow = new ArrayList<Integer>();
-		if(lsworkflow != null && lsworkflow.size() >0)
-		{
+		if (lsworkflow != null && lsworkflow.size() > 0) {
 			lstworkflow = lsworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
 		}
-		
+
 		return lstworkflow;
 	}
-	
-	public Map<String, Object> Getuserprojects(LSuserMaster objuser)
-	{
+
+	public Map<String, Object> Getuserprojects(LSuserMaster objuser) {
 		Map<String, Object> objmap = new HashMap<>();
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 		List<LSprojectmaster> lstprojectmaster = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
-		
+
 		List<Integer> lstproject = new ArrayList<Integer>();
-		if(lstprojectmaster != null && lstprojectmaster.size() >0)
-		{
+		if (lstprojectmaster != null && lstprojectmaster.size() > 0) {
 			lstproject = lstprojectmaster.stream().map(LSprojectmaster::getProjectcode).collect(Collectors.toList());
 		}
-		
+
 		List<Integer> lstteamcode = new ArrayList<Integer>();
-		if(lstteam != null && lstteam.size() >0)
-		{
-			lstteamcode= lstteam.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
+		if (lstteam != null && lstteam.size() > 0) {
+			lstteamcode = lstteam.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
 		}
-		
+
 		List<Integer> lstteamusercode = new ArrayList<Integer>();
-		if(lstteammap != null && lstteammap.size()>0)
-		{
+		if (lstteammap != null && lstteammap.size() > 0) {
 			List<LSuserMaster> lstusers = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteamcode);
-			if(lstusers != null && lstusers.size() >0)
-			{
-				lstteamusercode= lstusers.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
+			if (lstusers != null && lstusers.size() > 0) {
+				lstteamusercode = lstusers.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
 			}
 		}
-		
-		
+
 		objmap.put("project", lstproject);
 		objmap.put("team", lstteamcode);
 		objmap.put("teamuser", lstteamusercode);
 		return objmap;
 	}
-	
-	public Map<String, Object> Getinitialorders(LSlogilablimsorderdetail objorder)
-	{
+
+	public Map<String, Object> Getinitialorders(LSlogilablimsorderdetail objorder) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 			mapOrders.put("orders", Getadministratororder(objorder));
 			mapOrders.put("ordercount", lslogilablimsorderdetailRepository.count());
-		}
-		else
-		{
+		} else {
 			mapOrders.put("orders", Getuserorder(objorder));
-			mapOrders.put("ordercount", lslogilablimsorderdetailRepository.countByLsprojectmasterIn(objorder.getLsuserMaster().getLstproject()));
+			mapOrders.put("ordercount", lslogilablimsorderdetailRepository
+					.countByLsprojectmasterIn(objorder.getLsuserMaster().getLstproject()));
 		}
 
 		return mapOrders;
 	}
-	
-	public List<Logilabordermaster> Getremainingorders(LSlogilablimsorderdetail objorder)
-	{
+
+	public List<Logilabordermaster> Getremainingorders(LSlogilablimsorderdetail objorder) {
 		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 			return Getadministratororder(objorder);
-		}
-		else
-		{
+		} else {
 			return Getuserorder(objorder);
 		}
 	}
-	
-	public List<Logilabordermaster> Getadministratororder(LSlogilablimsorderdetail objorder)
-	{
+
+	public List<Logilabordermaster> Getadministratororder(LSlogilablimsorderdetail objorder) {
 		List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
-		if(objorder.getBatchcode() == 0)
-		{
+		if (objorder.getBatchcode() == 0) {
 			lstorders = lslogilablimsorderdetailRepository.findFirst20ByOrderByBatchcodeDesc();
-		}
-		else
-		{
-			lstorders = lslogilablimsorderdetailRepository.findFirst20ByBatchcodeLessThanOrderByBatchcodeDesc(objorder.getBatchcode());
+		} else {
+			lstorders = lslogilablimsorderdetailRepository
+					.findFirst20ByBatchcodeLessThanOrderByBatchcodeDesc(objorder.getBatchcode());
 		}
 		return lstorders;
 	}
-	
-	public List<Logilabordermaster> Getuserorder(LSlogilablimsorderdetail objorder)
-	{
+
+	public List<Logilabordermaster> Getuserorder(LSlogilablimsorderdetail objorder) {
 		List<LSprojectmaster> lstproject = objorder.getLsuserMaster().getLstproject();
 		List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
 		if (lstproject != null) {
 			List<LSworkflow> lstworkflow = objorder.getLsuserMaster().getLstworkflow();
-			if(objorder.getBatchcode() == 0)
-			{
-				lstorders = lslogilablimsorderdetailRepository.findFirst20ByLsprojectmasterInOrderByBatchcodeDesc(lstproject);
-			}
-			else
-			{
-				lstorders = lslogilablimsorderdetailRepository.findFirst20ByBatchcodeLessThanAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getBatchcode(),lstproject);
+			if (objorder.getBatchcode() == 0) {
+				lstorders = lslogilablimsorderdetailRepository
+						.findFirst20ByLsprojectmasterInOrderByBatchcodeDesc(lstproject);
+			} else {
+				lstorders = lslogilablimsorderdetailRepository
+						.findFirst20ByBatchcodeLessThanAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getBatchcode(),
+								lstproject);
 			}
 			lstorders.forEach(objord -> objord.setLstworkflow(lstworkflow));
 		}
 		return lstorders;
 	}
-	
-	public Map<String, Object> uploadsheetimages(MultipartFile file, String originurl, String username,String sitecode)
-	{
+
+	public Map<String, Object> uploadsheetimages(MultipartFile file, String originurl, String username,
+			String sitecode) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		
-			String id = null;
-			try {
-				id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "sheetimagestemp");
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		map.put("link", originurl+"/Instrument/downloadsheetimagestemp/"+id
-		+"/"+TenantContext.getCurrentTenant()+"/"+FilenameUtils.removeExtension(file.getOriginalFilename())+"/"+FilenameUtils.getExtension(file.getOriginalFilename()));
+
+		String id = null;
+		try {
+			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "sheetimagestemp");
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		map.put("link",
+				originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + TenantContext.getCurrentTenant() + "/"
+						+ FilenameUtils.removeExtension(file.getOriginalFilename()) + "/"
+						+ FilenameUtils.getExtension(file.getOriginalFilename()));
 		return map;
 	}
-	
-	public ByteArrayInputStream downloadsheetimages(String fileid, String tenant) throws FileNotFoundException, IOException
-	{
+
+	public ByteArrayInputStream downloadsheetimages(String fileid, String tenant)
+			throws FileNotFoundException, IOException {
 		TenantContext.setCurrentTenant(tenant);
 		byte[] data = null;
 		try {
-			data = StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(fileid,tenant+"sheetimages"));
+			data = StreamUtils
+					.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "sheetimages"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			data = null;
 		}
-		
-		if(data == null)
-		{
+
+		if (data == null) {
 			String[] arrOffiledid = fileid.split("_", 2);
 			String Originalfieldid = arrOffiledid[0];
 			try {
-				data = StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(Originalfieldid,tenant+"sheetimages"));
+				data = StreamUtils.copyToByteArray(
+						cloudFileManipulationservice.retrieveCloudFile(Originalfieldid, tenant + "sheetimages"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				data = null;
 			}
-			
-			if(data == null)
-			{
+
+			if (data == null) {
 				try {
-					data = StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(Originalfieldid,tenant+"sheetimagestemp"));
+					data = StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(Originalfieldid,
+							tenant + "sheetimagestemp"));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -3022,29 +3026,29 @@ public class InstrumentService {
 				}
 			}
 		}
-		
-		
+
 		ByteArrayInputStream bis = new ByteArrayInputStream(data);
-		
+
 		return bis;
 	}
-	
-	public ByteArrayInputStream downloadsheetimagestemp(String fileid, String tenant) throws FileNotFoundException, IOException
-	{
+
+	public ByteArrayInputStream downloadsheetimagestemp(String fileid, String tenant)
+			throws FileNotFoundException, IOException {
 		TenantContext.setCurrentTenant(tenant);
 		byte[] data = null;
 		try {
-			data = StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(fileid,tenant+"sheetimagestemp"));
+			data = StreamUtils.copyToByteArray(
+					cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "sheetimagestemp"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		ByteArrayInputStream bis = new ByteArrayInputStream(data);
-		
+
 		return bis;
 	}
-	
+
 	public Response removesheetimage(Map<String, String> body) {
 		Response objresponse = new Response();
 		String filid = body.get("fileid");
@@ -3053,45 +3057,133 @@ public class InstrumentService {
 		return objresponse;
 	}
 
-	
-	public boolean updatesheetimagesforversion(List<Map<String,String>> lstfiles)
-	{
-		for (Map<String,String> fileObj : lstfiles) {
-		String copyfrom = fileObj.get("copyfrom");
-		String copyto  = fileObj.get("copyto");
-		String isnew = fileObj.get("isnew");
-		
-		if(isnew.equals("true"))
-		{
-			cloudFileManipulationservice.movefiletoanothercontainerandremove(TenantContext.getCurrentTenant()+"sheetimagestemp",
-					TenantContext.getCurrentTenant()+"sheetimages",copyfrom);
+	public boolean updatesheetimagesforversion(List<Map<String, String>> lstfiles) {
+		for (Map<String, String> fileObj : lstfiles) {
+			String copyfrom = fileObj.get("copyfrom");
+			String copyto = fileObj.get("copyto");
+			String isnew = fileObj.get("isnew");
+
+			if (isnew.equals("true")) {
+				cloudFileManipulationservice.movefiletoanothercontainerandremove(
+						TenantContext.getCurrentTenant() + "sheetimagestemp",
+						TenantContext.getCurrentTenant() + "sheetimages", copyfrom);
+			}
+
+			try {
+				cloudFileManipulationservice.updateversionCloudFile(copyfrom,
+						TenantContext.getCurrentTenant() + "sheetimages", copyto);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		
-		try {
-			cloudFileManipulationservice.updateversionCloudFile(copyfrom,TenantContext.getCurrentTenant()+"sheetimages",copyto);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		}
-		
+
 		return true;
 	}
-	
-	public boolean deletesheetimagesforversion(List<Map<String,String>> lstfiles)
-	{
-		for (Map<String,String> fileObj : lstfiles) {
+
+	public boolean deletesheetimagesforversion(List<Map<String, String>> lstfiles) {
+		for (Map<String, String> fileObj : lstfiles) {
 			String fileid = fileObj.get("fieldid");
-		
-			cloudFileManipulationservice.deleteFile(fileid, TenantContext.getCurrentTenant()+"sheetimages");
-			
+
+			cloudFileManipulationservice.deleteFile(fileid, TenantContext.getCurrentTenant() + "sheetimages");
+
 			String[] arrOffiledid = fileid.split("_", 2);
 			String Originalfieldid = arrOffiledid[0];
-			
-			cloudFileManipulationservice.deleteFile(Originalfieldid, TenantContext.getCurrentTenant()+"sheetimages");
-			
-			cloudFileManipulationservice.deleteFile(Originalfieldid, TenantContext.getCurrentTenant()+"sheetimagestemp");
-			
+
+			cloudFileManipulationservice.deleteFile(Originalfieldid, TenantContext.getCurrentTenant() + "sheetimages");
+
+			cloudFileManipulationservice.deleteFile(Originalfieldid,
+					TenantContext.getCurrentTenant() + "sheetimagestemp");
+
+		}
+		return true;
+	}
+
+	public Map<String, Object> uploadsheetimagesSql(MultipartFile file, String originurl, String username,
+			String sitecode) throws IOException {
+
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		UUID objGUID = UUID.randomUUID();
+		String randomUUIDString = objGUID.toString();
+
+		LSfileimages fileObj = new LSfileimages();
+		fileObj.setExtension(FilenameUtils.getExtension(file.getOriginalFilename()));
+		fileObj.setFileid(randomUUIDString);
+
+		LSfileimagesRepository.save(fileObj);
+
+		Fileimagestemp fileImg = new Fileimagestemp();
+
+		fileImg.setId(fileObj.getFileimagecode());
+		fileImg.setFileid(randomUUIDString);
+		fileImg.setFile(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+		fileImg = FileimagestempRepository.insert(fileImg);
+
+		map.put("link",
+				originurl + "/Instrument/downloadsheetimagestempsql/" + randomUUIDString + "/"
+						+ FilenameUtils.removeExtension(file.getOriginalFilename()) + "/"
+						+ FilenameUtils.getExtension(file.getOriginalFilename()));
+
+		return map;
+	}
+
+	public Fileimagestemp downloadsheetimagestempsql(String fileid) {
+		return FileimagestempRepository.findByFileid(fileid);
+	}
+
+	public Fileimages downloadsheetimagessql(String fileid) {
+		return FileimagesRepository.findByFileid(fileid);
+	}
+
+	public boolean updatesheetimagesforversionSql(List<Map<String, String>> lstfiles) throws IOException {
+		for (Map<String, String> fileObj : lstfiles) {
+			String fileid = fileObj.get("copyfrom");
+			String newFileid = fileObj.get("copyto");
+			String isnew = fileObj.get("isnew");
+
+			if (isnew.equals("true")) {
+
+				Fileimagestemp oldFile = FileimagestempRepository.findByFileid(fileid);
+
+				Fileimages newFile = new Fileimages();
+
+				newFile.setFile(oldFile.getFile());
+				newFile.setFileid(fileid);
+				newFile.setId(oldFile.getId());
+
+				FileimagesRepository.save(newFile);
+				FileimagestempRepository.delete(oldFile.getFileid());
+
+			}
+			Fileimagestemp oldFile = FileimagestempRepository.findByFileid(fileid);
+
+			Fileimages newFile = new Fileimages();
+
+			newFile.setFile(oldFile.getFile());
+			newFile.setFileid(newFileid);
+			newFile.setId(oldFile.getId());
+
+			FileimagesRepository.save(newFile);
+
+		}
+
+		return true;
+	}
+
+	public boolean deletesheetimagesforversionSql(List<Map<String, String>> lstfiles) {
+		for (Map<String, String> fileObj : lstfiles) {
+
+			String fileid = fileObj.get("fieldid");
+
+			FileimagesRepository.delete(fileid);
+
+			String[] arrOffiledid = fileid.split("_", 2);
+			String Originalfieldid = arrOffiledid[0];
+
+			FileimagesRepository.delete(Originalfieldid);
+			FileimagestempRepository.delete(Originalfieldid);
+
 		}
 		return true;
 	}

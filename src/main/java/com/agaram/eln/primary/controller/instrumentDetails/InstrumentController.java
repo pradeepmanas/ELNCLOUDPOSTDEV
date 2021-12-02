@@ -28,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.model.cfr.LSactivity;
+import com.agaram.eln.primary.model.fileManipulation.Fileimages;
+import com.agaram.eln.primary.model.fileManipulation.Fileimagestemp;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSresultdetails;
@@ -393,7 +395,7 @@ public class InstrumentController {
 
 		jsonString = instrumentService.getsampledata();
 		try {
-		
+
 			JSONObject jsonObject = new JSONObject(jsonString);
 			JSONArray jsonArray = jsonObject.getJSONArray("sheets");
 
@@ -554,8 +556,8 @@ public class InstrumentController {
 
 	// normal
 	@RequestMapping(path = "/download/{param}/{fileid}", method = RequestMethod.GET)
-	public ResponseEntity<InputStreamResource> downloadNonCloud(@PathVariable String param, @PathVariable String fileid
-			) throws IOException {
+	public ResponseEntity<InputStreamResource> downloadNonCloud(@PathVariable String param, @PathVariable String fileid)
+			throws IOException {
 
 		return instrumentService.downloadattachments(param, fileid);
 	}
@@ -626,95 +628,147 @@ public class InstrumentController {
 
 		return jsonString;
 	}
-	
+
 	@PostMapping("/Getuserworkflow")
-	public List<Integer> Getuserworkflow(@RequestBody LSusergroup lsusergroup)
-	{
+	public List<Integer> Getuserworkflow(@RequestBody LSusergroup lsusergroup) {
 		return instrumentService.Getuserworkflow(lsusergroup);
 	}
-	
+
 	@PostMapping("/Getuserprojects")
-	public Map<String, Object> Getuserprojects(@RequestBody LSuserMaster objuser)
-	{
+	public Map<String, Object> Getuserprojects(@RequestBody LSuserMaster objuser) {
 		return instrumentService.Getuserprojects(objuser);
 	}
-	
+
 	@PostMapping("/Getinitialorders")
-	public Map<String, Object> Getinitialorders(@RequestBody LSlogilablimsorderdetail objorder)
-	{
+	public Map<String, Object> Getinitialorders(@RequestBody LSlogilablimsorderdetail objorder) {
 		return instrumentService.Getinitialorders(objorder);
 	}
-	
+
 	@PostMapping("/Getremainingorders")
-	public List<Logilabordermaster> Getremainingorders(@RequestBody LSlogilablimsorderdetail objorder)
-	{
+	public List<Logilabordermaster> Getremainingorders(@RequestBody LSlogilablimsorderdetail objorder) {
 		return instrumentService.Getremainingorders(objorder);
 	}
-	
+
 	@PostMapping("/uploadsheetimages")
-	public Map<String, Object> uploadsheetimages(
-			@RequestParam("file") MultipartFile file,@RequestParam("originurl") String originurl,
-			@RequestParam("username") String username,
-			@RequestParam("sitecode") String sitecode)
-	{
-		return instrumentService.uploadsheetimages(file, originurl,username,sitecode);
+	public Map<String, Object> uploadsheetimages(@RequestParam("file") MultipartFile file,
+			@RequestParam("originurl") String originurl, @RequestParam("username") String username,
+			@RequestParam("sitecode") String sitecode) {
+		return instrumentService.uploadsheetimages(file, originurl, username, sitecode);
 	}
-	
+
 	@RequestMapping(value = "downloadsheetimages/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
 	@GetMapping
-	public ResponseEntity<InputStreamResource> downloadsheetimages(@PathVariable String fileid
-			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
-		
-//		String[] words=fileid.split("_");
-//		
-//		System.out.print(words[0]);
-		
+	public ResponseEntity<InputStreamResource> downloadsheetimages(@PathVariable String fileid,
+			@PathVariable String tenant, @PathVariable String filename, @PathVariable String extension)
+			throws IllegalStateException, IOException {
+
 		ByteArrayInputStream bis = instrumentService.downloadsheetimages(fileid, tenant);
-		
-	    HttpHeaders header = new HttpHeaders();
-	    header.setContentType(MediaType.parseMediaType("image/png"));
-	    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
-	    
-	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
-		
+
+		HttpHeaders header = new HttpHeaders();
+		header.setContentType(MediaType.parseMediaType("image/png"));
+		header.set("Content-Disposition", "attachment; filename=" + filename + "." + extension);
+
+		return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+
 	}
-	
-	
+
 	@RequestMapping(value = "downloadsheetimagestemp/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
 	@GetMapping
-	public ResponseEntity<InputStreamResource> downloadsheetimagestemp(@PathVariable String fileid
-			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
-		
+	public ResponseEntity<InputStreamResource> downloadsheetimagestemp(@PathVariable String fileid,
+			@PathVariable String tenant, @PathVariable String filename, @PathVariable String extension)
+			throws IllegalStateException, IOException {
+
 //		String[] words=fileid.split("_");
 //		
 //		System.out.print(words[0]);
-		
+
 		ByteArrayInputStream bis = instrumentService.downloadsheetimagestemp(fileid, tenant);
-		
-	    HttpHeaders header = new HttpHeaders();
-	    header.setContentType(MediaType.parseMediaType("image/png"));
-	    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
-	    
-	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
-		
+
+		HttpHeaders header = new HttpHeaders();
+		header.setContentType(MediaType.parseMediaType("image/png"));
+		header.set("Content-Disposition", "attachment; filename=" + filename + "." + extension);
+
+		return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+
 	}
-	
+
 	@PostMapping("/removesheetimage")
-	public Response removesheetimage(@RequestBody Map<String, String> body)
-	{
+	public Response removesheetimage(@RequestBody Map<String, String> body) {
 		return instrumentService.removesheetimage(body);
 	}
-	
+
 	@PostMapping("/updatesheetimagesforversion")
-	public boolean updatesheetimagesforversion(@RequestBody List<Map<String,String>> lstfiles)
-	{
+	public boolean updatesheetimagesforversion(@RequestBody List<Map<String, String>> lstfiles) {
 		return instrumentService.updatesheetimagesforversion(lstfiles);
 	}
-	
+
 	@PostMapping("/deletesheetimagesforversion")
-	public boolean deletesheetimagesforversion(@RequestBody List<Map<String,String>> lstfiles)
-	{
+	public boolean deletesheetimagesforversion(@RequestBody List<Map<String, String>> lstfiles) {
 		return instrumentService.deletesheetimagesforversion(lstfiles);
 	}
-	
+
+	@PostMapping("/uploadsheetimagesSql")
+	public Map<String, Object> uploadsheetimagesSql(@RequestParam("file") MultipartFile file,
+			@RequestParam("originurl") String originurl, @RequestParam("username") String username,
+			@RequestParam("sitecode") String sitecode) throws IOException {
+		return instrumentService.uploadsheetimagesSql(file, originurl, username, sitecode);
+	}
+
+	@RequestMapping(value = "downloadsheetimagessql/{fileid}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadsheetimagessql(@PathVariable String fileid,
+			@PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+
+		Fileimages objprofile = instrumentService.downloadsheetimagessql(fileid);
+
+		byte[] data = null;
+
+		if (objprofile != null) {
+			data = objprofile.getFile().getData();
+			ByteArrayInputStream bis = new ByteArrayInputStream(data);
+			HttpHeaders header = new HttpHeaders();
+			header.setContentType(MediaType.parseMediaType("image/png"));
+			header.set("Content-Disposition", "attachment; filename=" + filename + "." + extension);
+
+			return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+		} else {
+
+			return null;
+		}
+
+	}
+
+	@RequestMapping(value = "downloadsheetimagestempsql/{fileid}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadsheetimagestempsql(@PathVariable String fileid,
+			@PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+
+		Fileimagestemp objprofile = instrumentService.downloadsheetimagestempsql(fileid);
+
+		byte[] data = null;
+
+		if (objprofile != null) {
+			data = objprofile.getFile().getData();
+			ByteArrayInputStream bis = new ByteArrayInputStream(data);
+			HttpHeaders header = new HttpHeaders();
+			header.setContentType(MediaType.parseMediaType("image/png"));
+			header.set("Content-Disposition", "attachment; filename=" + filename + "." + extension);
+
+			return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+		} else {
+
+			return null;
+		}
+
+	}
+
+	@PostMapping("/updatesheetimagesforversionSql")
+	public boolean updatesheetimagesforversionSql(@RequestBody List<Map<String, String>> lstfiles) throws IOException {
+		return instrumentService.updatesheetimagesforversionSql(lstfiles);
+	}
+
+	@PostMapping("/deletesheetimagesforversionSql")
+	public boolean deletesheetimagesforversionSql(@RequestBody List<Map<String, String>> lstfiles) {
+		return instrumentService.deletesheetimagesforversionSql(lstfiles);
+	}
 }

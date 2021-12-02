@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.JsonProcessingException;
+import com.agaram.eln.primary.model.protocols.ProtocolorderImage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -639,6 +641,63 @@ public class ProtocolController {
 		, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
 		
 		LSprotocolfilesContent lsprotocolfilesContent = ProtocolMasterService.downloadprotocolfilesql(fileid);
+		
+		byte[] data = null;
+		
+		if(lsprotocolfilesContent != null)
+		{
+			data = lsprotocolfilesContent.getFile().getData();
+			ByteArrayInputStream bis = new ByteArrayInputStream(data);	
+		    HttpHeaders header = new HttpHeaders();
+		    header.setContentType(MediaType.parseMediaType("image/png"));
+		    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+		    
+		    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+		}else {
+			
+		
+		return null;
+		}
+	}
+	
+	@PostMapping("/removeprotocolimagesql")
+	public boolean removeprotocolimagesql(@RequestBody Map<String, String> body)
+	{
+		return ProtocolMasterService.removeprotocolimagesql(body);
+	}
+	
+	@RequestMapping(value = "downloadprotocolorderimagesql/{fileid}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadprotocolorderimagesql(@PathVariable String fileid
+			, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+		ProtocolorderImage objprofile =  ProtocolMasterService.downloadprotocolorderimagesql(fileid);
+		
+		byte[] data = null;
+		
+		if(objprofile != null)
+		{
+			data = objprofile.getImage().getData();
+			ByteArrayInputStream bis = new ByteArrayInputStream(data);	
+		    HttpHeaders header = new HttpHeaders();
+		    header.setContentType(MediaType.parseMediaType("image/png"));
+		    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+		    
+		    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+		}else {
+			
+		
+		return null;
+		}
+	
+	}
+	
+	@RequestMapping(value = "downloadprotocolorderfilesql/{fileid}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadprotocolorderfilesql(@PathVariable String fileid
+		, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+		LSprotocolfilesContent lsprotocolfilesContent = ProtocolMasterService.downloadprotocolorderfilesql(fileid);
 		
 		byte[] data = null;
 		

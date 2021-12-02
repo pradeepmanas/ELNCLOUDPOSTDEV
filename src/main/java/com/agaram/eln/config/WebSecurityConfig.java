@@ -148,10 +148,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/protocol/downloadprotocolimage/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolfile/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		antMatchers("/Instrument/downloadsheetimages/{fileid}/{tenant}/{filename}/{extension}").permitAll().
+		antMatchers("/Instrument/downloadsheetimagestemp/{fileid}/{tenant}/{filename}/{extension}").permitAll().
+		antMatchers("/Instrument/downloadsheetimagessql/{fileid}/{filename}/{extension}").permitAll().
+		antMatchers("/Instrument/downloadsheetimagestempsql/{fileid}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolorderimage/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolorderfiles/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolimagesql/{fileid}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolfilesql/{fileid}/{filename}/{extension}").permitAll().
+		antMatchers("/protocol/downloadprotocolorderimagesql/{fileid}/{filename}/{extension}").permitAll().
+		antMatchers("/protocol/downloadprotocolorderfilesql/{fileid}/{filename}/{extension}").permitAll().
 		// all other requests need to be authenticated
 		anyRequest().authenticated().and().
 		// make sure we use stateless session; session won't be used to

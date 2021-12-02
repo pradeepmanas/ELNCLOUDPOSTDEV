@@ -19,6 +19,13 @@ public class LSprotocolorderfiles {
 	public String fileid;
 	public String extension;
 	public String filename;
+	public String oldfileid;
+	public String getOldfileid() {
+		return oldfileid;
+	}
+	public void setOldfileid(String oldfileid) {
+		this.oldfileid = oldfileid;
+	}
 	public Integer getProtocolorderstepfilecode() {
 		return protocolorderstepfilecode;
 	}

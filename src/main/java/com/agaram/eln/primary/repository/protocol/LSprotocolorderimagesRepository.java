@@ -9,5 +9,6 @@ import com.agaram.eln.primary.model.protocols.LSprotocolorderimages;
 public interface LSprotocolorderimagesRepository extends JpaRepository<LSprotocolorderimages, Integer>{
 
 	List<LSprotocolorderimages> findByProtocolorderstepcode(Integer protocolorderstepcode);
+	List findByProtocolordercodeAndProtocolorderstepcode(Long protocolordercode, Integer protocolorderstepcode);
 
 }
