@@ -59,13 +59,14 @@ public class LSprotocolsampleupdates {
 	public void setUsedquantity(Integer usedquantity) {
 		this.usedquantity = usedquantity;
 	}
-	public Integer getIndex() {
+
+
+	public Integer getIndexof() {
 		return indexof;
 	}
-	public void setIndex(Integer indexof) {
+	public void setIndexof(Integer indexof) {
 		this.indexof = indexof;
 	}
-
 	public Integer getProtocolsamplecode() {
 		return protocolsamplecode;
 	}

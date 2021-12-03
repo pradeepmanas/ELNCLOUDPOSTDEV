@@ -14,10 +14,8 @@ import java.util.Random;
 
 import javax.mail.MessagingException;
 import javax.sql.DataSource;
-import java.sql.Connection;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.core.env.Environment;
@@ -74,7 +72,7 @@ public class DatasourceService {
 
 	@Autowired
 	private InvoiceRepository InvoiceRepository;
-	
+
 	public DataSourceConfig Validatetenant(DataSourceConfig Tenantname) {
 
 		// DataSourceConfig objdatasource =
@@ -87,7 +85,7 @@ public class DatasourceService {
 			if (objdatasource.isInitialize() && objdatasource.isIsenable()) {
 				objreponse.setStatus(true);
 				objdatasource.setObjResponse(objreponse);
-				
+
 //				try {
 //					Connection con = dataSourceBasedMultiTenantConnectionProviderImpl.getConnection(objdatasource.getName());
 //					if(con.isClosed())
@@ -303,15 +301,13 @@ public class DatasourceService {
 							CustomerSubscription.getType().equalsIgnoreCase("Free") ? 3914465000000065045L
 									: CustomerSubscription.getType().equalsIgnoreCase("Standard") ? 3914465000000065049L
 											: 3914465000000065053L);
-					
-					if(CustomerSubscription.getType().equalsIgnoreCase("cancel")) {
+
+					if (CustomerSubscription.getType().equalsIgnoreCase("cancel")) {
 						getTenant.setIsenable(false);
 					}
-					
+
 					getTenant.setNoofusers(CustomerSubscription.getNumber_of_users());
-					
-				
-					
+
 					configRepo.save(getTenant);
 				} else {
 					objres.setStatus(false);
@@ -517,25 +513,25 @@ public class DatasourceService {
 
 				Date passwordexp = objExitinguser.getPasswordexpirydate();
 				if (Password.equals(objuser.getsPassword()) && objExitinguser.getUserstatus() != "Locked") {
-					objExitinguser.setLsusergroup(objExitinguser.getMultiusergroupcode().get(0).getLsusergroup());
-					String status = objExitinguser.getUserstatus();
-					String groupstatus = objExitinguser.getLsusergroup().getUsergroupstatus();
+//					objExitinguser.setLsusergroup(objExitinguser.getMultiusergroupcode().get(0).getLsusergroup());
+//					String status = objExitinguser.getUserstatus();
+//					String groupstatus = objExitinguser.getLsusergroup().getUsergroupstatus();
 
-					if (status.equals("Deactive")) {
-						objExitinguser.getObjResponse().setInformation("ID_NOTACTIVE");
-						objExitinguser.getObjResponse().setStatus(false);
-						obj.put("user", objExitinguser);
-						return obj;
-					} else if (groupstatus.trim().equals("Deactive")) {
-						objExitinguser.getObjResponse().setInformation("ID_GRPNOACT");
-						objExitinguser.getObjResponse().setStatus(false);
-
-						obj.put("user", objExitinguser);
-						return obj;
-					} else {
-						objExitinguser.getObjResponse().setStatus(true);
-						obj.put("user", objExitinguser);
-					}
+//					if (status.equals("Deactive")) {
+//						objExitinguser.getObjResponse().setInformation("ID_NOTACTIVE");
+//						objExitinguser.getObjResponse().setStatus(false);
+//						obj.put("user", objExitinguser);
+//						return obj;
+//					} else if (groupstatus.trim().equals("Deactive")) {
+//						objExitinguser.getObjResponse().setInformation("ID_GRPNOACT");
+//						objExitinguser.getObjResponse().setStatus(false);
+//
+//						obj.put("user", objExitinguser);
+//						return obj;
+//					} else {
+					objExitinguser.getObjResponse().setStatus(true);
+					obj.put("user", objExitinguser);
+//					}
 				} else if (!Password.equals(objuser.getsPassword()) || objExitinguser.getLockcount() == 5
 						|| objExitinguser.getUserstatus() == "Locked") {
 					if (!username.trim().toLowerCase().equals("administrator")) {
@@ -865,7 +861,6 @@ public class DatasourceService {
 
 	public DataSourceConfig Remindertenant(DataSourceConfig Tenantname) throws MessagingException, IOException {
 
-
 		if (!Tenantname.getAdministratormailid().equals("")) {
 
 			String mails[] = { Tenantname.getUseremail(), Tenantname.getAdministratormailid() };
@@ -876,7 +871,6 @@ public class DatasourceService {
 				email.setMailcontent(
 						"<b>Dear Customer</b>,<br><i>You need to validate your OTP before organization initiated </i><br><b>Your OTP validation path <br><b><a href="
 								+ Tenantname.getLoginpath() + ">click here to validate OTP</a></b>");
-
 
 				email.setMailcontent(
 						"<b>Dear Customer,</b><br><center><img src=\"cid:image\"  style =width:120px; height:100px border: 3px;'></center><br><br>"
@@ -917,50 +911,85 @@ public class DatasourceService {
 		if (tenantDetails.getPlantype() != null) {
 
 			Integer plantType = tenantDetails.getPlantype();
-			
-			if(plantType ==3 ){
+
+			if (plantType == 3) {
 				tenantDetails.setPackagetype(3914465000000065053L);
-			}
-			else if(plantType ==2 ){
+			} else if (plantType == 2) {
 				tenantDetails.setPackagetype(3914465000000065049L);
-			}
-			else {
+			} else {
 				tenantDetails.setPackagetype(3914465000000065045L);
 			}
-			
+
 			configRepo.save(tenantDetails);
-			
+
 		}
 
 		return tenantDetails;
 	}
 
 	public DataSourceConfig afterotpverified(DataSourceConfig objtenant) {
+
+		List<LSuserMaster> lstUsr = lsuserMasterRepository
+				.findByusernameNotAndUserretirestatusNotOrderByCreateddateDesc("Administrator", 1);
+
+		if (lstUsr != null && lstUsr.size() > 0) {
+			for(LSuserMaster user : lstUsr ) {
+			
+				Email email = new Email();
+				try {
+					email.setMailto(user.getEmailid());
+					email.setSubject("UserName and PassWord");
+
+					email.setMailcontent(
+							"<b>Dear ELN System Admin,</b><br><center><img src=\"cid:image\"  style =width:120px; height:100px border: 3px;'></center><br><br>"
+									+ "<p><p>A customer has registered and completed the verification in ELN System with the following Tenant </p>details:<br><br>"
+									+ "<b style='margin-left: 76px;'>User Name: </b>\t\t " + objtenant.getTenantid()
+									+ "<br><br>" + "<b style='margin-left: 76px;'>Email id: </b>\t\t "
+									+ objtenant.getUseremail() + "<br><br>"
+									+ "<p>Please initiate the activation of Admin user for the above mentioned Tenant in ELN system so that<br><br><br>"
+									+ "<p>the customer can receive the email with ELN Admin Credentials.<br><br><br>"
+									+ "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
+									+ "<img src=\"cid:seconimage\"  style ='width:120px; height:120px;border: 3px;'"
+									+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
+									+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
+
+					emailService.sendEmail(email);
+
+				} catch (MessagingException e) {
+
+					e.printStackTrace();
+				}
+				
+			}
+		}
+
 		Email email = new Email();
 		try {
-		email.setMailto(env.getProperty("spring.mail.username"));
-		email.setSubject("UserName and PassWord");
+			email.setMailto(env.getProperty("spring.mail.username"));
+			email.setSubject("UserName and PassWord");
 
-		email.setMailcontent(
-				"<b>Dear ELN System Admin,</b><br><center><img src=\"cid:image\"  style =width:120px; height:100px border: 3px;'></center><br><br>"
-						+ "<p><p>A customer has registered and completed the verification in ELN System with the following Tenant </p>details:<br><br>"
-						+ "<b style='margin-left: 76px;'>User Name: </b>\t\t " +objtenant.getTenantid()  + "<br><br>"
-								+ "<b style='margin-left: 76px;'>Email id: </b>\t\t " +objtenant.getUseremail()  + "<br><br>"
-						+ "<p>Please initiate the activation of Admin user for the above mentioned Tenant in ELN system so that<br><br><br>"
-						+ "<p>the customer can receive the email with ELN Admin Credentials.<br><br><br>"
-						+ "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
-						+ "<img src=\"cid:seconimage\"  style ='width:120px; height:120px;border: 3px;'"
-						+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
-						+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
-	
+			email.setMailcontent(
+					"<b>Dear ELN System Admin,</b><br><center><img src=\"cid:image\"  style =width:120px; height:100px border: 3px;'></center><br><br>"
+							+ "<p><p>A customer has registered and completed the verification in ELN System with the following Tenant </p>details:<br><br>"
+							+ "<b style='margin-left: 76px;'>User Name: </b>\t\t " + objtenant.getTenantid()
+							+ "<br><br>" + "<b style='margin-left: 76px;'>Email id: </b>\t\t "
+							+ objtenant.getUseremail() + "<br><br>"
+							+ "<p>Please initiate the activation of Admin user for the above mentioned Tenant in ELN system so that<br><br><br>"
+							+ "<p>the customer can receive the email with ELN Admin Credentials.<br><br><br>"
+							+ "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
+							+ "<img src=\"cid:seconimage\"  style ='width:120px; height:120px;border: 3px;'"
+							+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
+							+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
+
 			emailService.sendEmail(email);
-			return objtenant;
+
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
-		return null;
-		
+
+		return objtenant;
+
 	}
 
 }

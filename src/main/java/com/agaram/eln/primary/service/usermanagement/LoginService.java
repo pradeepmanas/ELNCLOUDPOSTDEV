@@ -1032,14 +1032,10 @@ public class LoginService {
 		List<LSusergroup> listGroup = new ArrayList<>();
 		try {
 			listDomain = ADSServerDomainLoad();
-			listGroup = ADSGroupnameLoad();
+			listGroup = ADSGroupnameLoad(Objclass.getLssitemaster());
 			rtnObjMap.put("oResObj", listDomain);
 			rtnObjMap.put("oResObj1", listGroup);
-			if(Objclass.getObjsilentaudit() != null)
-	    	{
-				Objclass.getObjsilentaudit().setTableName("LSuserMaster");
-	    		lscfttransactionRepository.save(Objclass.getObjsilentaudit());
-	    	}
+			
 
 		} catch (Exception ex) {
 			
@@ -1047,9 +1043,9 @@ public class LoginService {
 		return rtnObjMap;
 	}
 
-	public List<LSusergroup> ADSGroupnameLoad() {	
+	public List<LSusergroup> ADSGroupnameLoad(LSSiteMaster Objclass) {	
 		
-		return LSusergroupRepository.findByOrderByUsergroupcodeDesc();
+		return LSusergroupRepository.findBylssitemasterOrderByUsergroupcodeDesc(Objclass.getSitecode());
 	
 	}
 

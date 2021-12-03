@@ -1577,7 +1577,7 @@ TABLESPACE pg_default;
 ALTER TABLE public.lsprotocolimages
     OWNER to postgres;
 
-ALTER TABLE IF Exists LSprotocolsampleupdates ADD COLUMN IF NOT EXISTS index integer;  
+ALTER TABLE IF Exists LSprotocolsampleupdates ADD COLUMN IF NOT EXISTS indexof integer;  
 
 ALTER TABLE IF Exists LSprotocolsampleupdates ADD COLUMN IF NOT EXISTS usedquantity integer;    
 
@@ -1838,6 +1838,15 @@ ALTER TABLE public.LSprotocolmastertest
     OWNER to postgres;
     
     
-    ALTER TABLE IF Exists LSprotocolsampleupdates RENAME COLUMN index TO indexof;  
     
-    ALTER TABLE IF Exists LSprotocolorderfiles ADD COLUMN IF NOT EXISTS oldfileid varchar(250);
+ALTER TABLE IF Exists LSprotocolorderfiles ADD COLUMN IF NOT EXISTS oldfileid character varying(255);
+    
+ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS indexof Integer;
+     
+ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS status Integer;
+      
+ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS consumefieldkey varchar(250);
+
+ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS usedquantity Integer;
+
+ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS repositorydatacode Integer;

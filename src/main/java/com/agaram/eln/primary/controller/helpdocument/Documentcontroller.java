@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.controller.helpdocument;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -117,5 +118,32 @@ public class Documentcontroller {
 	public Helptittle getnodeonpage(@RequestBody Helptittle objhelp)
 	{
 		return helpdocumentservice.getnodeonpage(objhelp.getPage());
+	}
+	
+	@PostMapping("/uploadhelpimages")
+	public Map<String, Object> uploadhelpimages(@RequestParam("file") MultipartFile file,
+			@RequestParam("originurl") String originurl)
+	{
+		return helpdocumentservice.uploadhelpimages(file, originurl);
+	}
+	
+	@RequestMapping(value = "downloadhelpimage/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadhelpimage(@PathVariable String fileid
+			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+		ByteArrayInputStream bis = helpdocumentservice.downloadhelpimage(fileid, tenant);
+		
+	    HttpHeaders header = new HttpHeaders();
+	    header.setContentType(MediaType.parseMediaType("image/png"));
+	    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+	    
+	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+	}
+	
+	@PostMapping("/removehelpimage")
+	public boolean removehelpimage(@RequestBody Map<String, String> body)
+	{
+		return helpdocumentservice.removehelpimage(body);
 	}
 }

@@ -28,9 +28,45 @@ public class LSprotocolordersampleupdates {
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date createddate;
 	public Integer usercode;
+	public Integer repositorydatacode;
 	@Column(columnDefinition = "numeric(17,0)",name = "Protocolordercode") 
 	private Long protocolordercode;
+	public Integer indexof;
+	public Integer status;
+	public String consumefieldkey;
+	public Integer usedquantity;
 	
+	
+	public Integer getRepositorydatacode() {
+		return repositorydatacode;
+	}
+	public void setRepositorydatacode(Integer repositorydatacode) {
+		this.repositorydatacode = repositorydatacode;
+	}
+	public Integer getIndexof() {
+		return indexof;
+	}
+	public Integer getStatus() {
+		return status;
+	}
+	public String getConsumefieldkey() {
+		return consumefieldkey;
+	}
+	public Integer getUsedquantity() {
+		return usedquantity;
+	}
+	public void setIndexof(Integer indexof) {
+		this.indexof = indexof;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	public void setConsumefieldkey(String consumefieldkey) {
+		this.consumefieldkey = consumefieldkey;
+	}
+	public void setUsedquantity(Integer usedquantity) {
+		this.usedquantity = usedquantity;
+	}
 	public Integer getProtocolsamplecode() {
 		return protocolsamplecode;
 	}

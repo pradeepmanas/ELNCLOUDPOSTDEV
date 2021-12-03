@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.helpdocument;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +11,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.List;
 
-
+import org.apache.commons.io.FilenameUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -21,14 +22,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.helpdocument.Helpdocument;
 import com.agaram.eln.primary.model.helpdocument.Helptittle;
+import com.agaram.eln.primary.model.protocols.LSprotocolorderimages;
 import com.agaram.eln.primary.repository.helpdocument.HelpdocumentRepository;
 import com.agaram.eln.primary.repository.helpdocument.HelptittleRepository;
+import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 import com.microsoft.azure.storage.CloudStorageAccount;
@@ -61,6 +65,8 @@ public class helpdocumentservice {
 	@Autowired
 	private FileManipulationservice fileManipulationservice;
 	
+	@Autowired
+	private CloudFileManipulationservice cloudFileManipulationservice;
 	
 	@Autowired
     private Environment env;
@@ -143,12 +149,12 @@ public class helpdocumentservice {
 		if(objupdatehelp != null)
 		{
 			objhelp.setId(objupdatehelp.getId());
-			if(objupdatehelp.getFiletype()==1) {
+//			if(objupdatehelp.getFiletype()==1) {
 				objhelp.setFiletype(0);
-			}
-			else {
-				objhelp.setFiletype(1);
-			}
+//			}
+//			else {
+//				objhelp.setFiletype(1);
+//			}
 			
 		}
 		
@@ -316,5 +322,44 @@ public class helpdocumentservice {
 	public Helptittle getnodeonpage(String page)
 	{
 		return helptittleRepository.findFirst1ByPageOrderByNodecodeDesc(page);
+	}
+	
+	public Map<String, Object> uploadhelpimages(MultipartFile file, String originurl) {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		String id = null;
+		try {
+			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		map.put("link", originurl + "/helpdocument/downloadhelpimage/" + id + "/"
+				+ TenantContext.getCurrentTenant() + "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + FilenameUtils.getExtension(file.getOriginalFilename()));
+
+		return map;
+	}
+	
+	public ByteArrayInputStream downloadhelpimage(String fileid, String tenant) {
+		TenantContext.setCurrentTenant(tenant);
+		byte[] data = null;
+		try {
+			data = StreamUtils.copyToByteArray(
+					cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + ""));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		ByteArrayInputStream bis = new ByteArrayInputStream(data);
+
+		return bis;
+	}
+	
+	public boolean removehelpimage(Map<String, String> body) {
+		String filid = body.get("fileid");
+		cloudFileManipulationservice.deleteFile(filid, "main");
+		return true;
 	}
 }

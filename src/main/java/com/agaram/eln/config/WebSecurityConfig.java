@@ -85,6 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/Login/LinkLogin").permitAll().
 		antMatchers("/User/InsertUpdateUserGroup").permitAll().
 		antMatchers("/User/InsertUpdateUser").permitAll().
+		antMatchers("/User/GetUsers").permitAll().
 		antMatchers("/AuditTrail/AuditConfigurationrecord").permitAll().
 		antMatchers("/User/GetPasswordPolicySitewise").permitAll().
 		antMatchers("/User/Createcentraliseduser").permitAll().
@@ -157,6 +158,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/protocol/downloadprotocolfilesql/{fileid}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolorderimagesql/{fileid}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolorderfilesql/{fileid}/{filename}/{extension}").permitAll().
+		antMatchers("/helpdocument/downloadhelpimage/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		// all other requests need to be authenticated
 		anyRequest().authenticated().and().
 		// make sure we use stateless session; session won't be used to

@@ -285,7 +285,7 @@ public class ProtocolController {
 	}
 
 	@RequestMapping("/GetProtocolorderResourcesQuantitylst")
-	public List<LSprotocolordersampleupdates> GetProtocolorderResourcesQuantitylst(
+	public  Map<String, Object> GetProtocolorderResourcesQuantitylst(
 			@RequestBody LSlogilabprotocolsteps LSlogilabprotocolsteps) {
 		return ProtocolMasterService.GetProtocolorderResourcesQuantitylst(LSlogilabprotocolsteps);
 	}
@@ -420,6 +420,12 @@ public class ProtocolController {
 		return ProtocolMasterService.protocolsampleupdates(lsprotocolsampleupdates);
 	}
 	
+	@RequestMapping(value = "/protocolordersampleupdates")
+	protected Map<String, Object> protocolordersampleupdates(@RequestBody LSprotocolordersampleupdates lsprotocolordersampleupdates) {
+
+		return ProtocolMasterService.protocolordersampleupdates(lsprotocolordersampleupdates);
+	}
+	
 	@RequestMapping(value = "/getrepositoriesdata")
 	protected List<Lsrepositoriesdata> getrepositoriesdata(@RequestBody Integer[] lsrepositoriesdata) {
 
@@ -430,6 +436,12 @@ public class ProtocolController {
 	protected Map<String, Object> updateprotocolsampleupdates(@RequestBody LSprotocolsampleupdates[] lsprotocolsampleupdates) {
 
 		return ProtocolMasterService.updateprotocolsampleupdates(lsprotocolsampleupdates);
+	}
+	
+	@RequestMapping(value = "/updateprotocolordersampleupdates")
+	protected Map<String, Object> updateprotocolordersampleupdates(@RequestBody LSprotocolordersampleupdates[] lsprotocolordersampleupdates) {
+
+		return ProtocolMasterService.updateprotocolordersampleupdates(lsprotocolordersampleupdates);
 	}
 	
 	@PostMapping("/uploadprotocolsordersstep")
@@ -716,5 +728,7 @@ public class ProtocolController {
 		return null;
 		}
 	}
+	
+
 
 }

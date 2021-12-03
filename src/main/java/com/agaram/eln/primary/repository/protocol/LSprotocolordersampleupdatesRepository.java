@@ -11,4 +11,14 @@ import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
 		public List<LSprotocolordersampleupdates> findByprotocolordercode(Long protocolordercode);
 
 		public List<LSprotocolordersampleupdates> findByprotocolordercodeAndProtocolstepcode(Long protocolordercode,Integer protocolstepcode);
+
+		public List<LSprotocolordersampleupdates> findByProtocolordercodeAndProtocolstepcodeAndIndexofIsNotNullAndStatus(
+				Long protocolordercode, Integer protocolstepcode, int i);
+
+		public List<LSprotocolordersampleupdates> findByProtocolstepcodeAndIndexofIsNotNullAndStatus(
+				 Integer protocolstepcode, int i);
+
+
+
+	
 }
