@@ -86,16 +86,16 @@ public class DatasourceService {
 				objreponse.setStatus(true);
 				objdatasource.setObjResponse(objreponse);
 
-//				try {
-//					Connection con = dataSourceBasedMultiTenantConnectionProviderImpl.getConnection(objdatasource.getName());
-//					if(con.isClosed())
-//					{
-//						objreponse.setStatus(false);
-//					}
-//				} catch (SQLException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				try {
+					Connection con = dataSourceBasedMultiTenantConnectionProviderImpl.getConnection(objdatasource.getName());
+					if(con.isClosed())
+					{
+						objreponse.setStatus(false);
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} else if (!objdatasource.isInitialize()) {
 				objreponse.setInformation("ID_ORGREGINPROGRESS");
 				objreponse.setStatus(false);

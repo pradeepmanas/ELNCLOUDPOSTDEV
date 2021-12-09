@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -41,9 +40,34 @@ public class InstMasterController {
 	  * @param siteObj [Map] Object with 'Site' object as a key
      * @return list of active instruments.
      */
-    @PostMapping(value = "/getInstMaster")
+    @SuppressWarnings("unchecked")
+	@PostMapping(value = "/getInstMaster")
     public ResponseEntity<Object> getInstMaster(@Valid @RequestBody Map<String, LSSiteMaster> siteObj) {
-        return  masterService.getInstMaster(siteObj.get("site"));
+    	@SuppressWarnings("unchecked")
+		Map<String, Object> obj = (Map<String, Object>) siteObj.get("inputData");
+    	Map<String, Object> objsite = null ;
+    	if(obj == null)
+    	{
+    		objsite = (Map<String, Object>) siteObj.get("site");
+    		//return  masterService.getInstMaster(siteObj.get("site"));
+    		LSSiteMaster site = new LSSiteMaster();
+    		int nSitecode = (int) objsite.get("sitecode");
+    		site.setSitecode(nSitecode);
+            
+    		return  masterService.getInstMaster(site);
+    	}
+    	else
+    	{
+    		objsite = (Map<String, Object>) obj.get("site");
+    	
+    	LSSiteMaster site = new LSSiteMaster();
+    	String sSitecode = (String) objsite.get("sitecode");
+		
+		int sitecode = Integer.parseInt(sSitecode);
+		site.setSitecode(sitecode);
+        //return  masterService.getInstMaster(siteObj.get("site"));
+		return  masterService.getInstMaster(site);
+    	}
     }
  
     /**

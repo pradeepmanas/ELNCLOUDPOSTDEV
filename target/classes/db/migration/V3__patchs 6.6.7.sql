@@ -1577,86 +1577,7 @@ TABLESPACE pg_default;
 ALTER TABLE public.lsprotocolimages
     OWNER to postgres;
 
-DO
-$do$
-DECLARE
-   _kind "char";
-BEGIN
-   SELECT relkind
-   FROM   pg_class
-   WHERE  relname = 'temporaryfilestorage_uploadedcode_seq'  
-   -- sequence name, optionally schema-qualified
-   INTO  _kind;
-
-   IF NOT FOUND THEN       -- name is free
-      CREATE SEQUENCE temporaryfilestorage_uploadedcode_seq;
-   ELSIF _kind = 'S' THEN  -- sequence exists
-      -- do nothing?
-   ELSE                    -- object name exists for different kind
-      -- do something!
-   END IF;
-END
-$do$;
-
-CREATE TABLE IF NOT EXISTS public.temporaryfilestorage
-(
-	uploadedcode integer NOT NULL DEFAULT nextval('temporaryfilestorage_uploadedcode_seq'::regclass),
-	uploadedbydate timestamp NOT NULL,
-	modifieduser character varying(100),
-	id character varying(100),
-	sitecode integer
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
-
-ALTER TABLE public.temporaryfilestorage
-    OWNER to postgres;
-
-DO
-$do$
-DECLARE
-   _kind "char";
-BEGIN
-   SELECT relkind
-   FROM   pg_class
-   WHERE  relname = 'filestoragecontent_storagecode_seq'  
-   -- sequence name, optionally schema-qualified
-   INTO  _kind;
-
-   IF NOT FOUND THEN       -- name is free
-      CREATE SEQUENCE filestoragecontent_storagecode_seq;
-   ELSIF _kind = 'S' THEN  -- sequence exists
-      -- do nothing?
-   ELSE                    -- object name exists for different kind
-      -- do something!
-   END IF;
-END
-$do$;
-
-CREATE TABLE IF NOT EXISTS public.filestoragecontent
-(
-	storagecode integer NOT NULL DEFAULT nextval('filestoragecontent_storagecode_seq'::regclass),
-	modifieddate timestamp NOT NULL,
-	modifieduser character varying(100),
-	id character varying(100),
-	imguniqueid character varying(100),
-	filecode integer,
-	versionno integer,
-	sitecode integer
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
-
-ALTER TABLE public.filestoragecontent
-    OWNER to postgres;
-    
-ALTER TABLE IF Exists filestoragecontent ADD COLUMN IF NOT EXISTS imguniqueid character varying(100); 
-
-ALTER TABLE IF Exists LSprotocolsampleupdates ADD COLUMN IF NOT EXISTS index integer;  
+ALTER TABLE IF Exists LSprotocolsampleupdates ADD COLUMN IF NOT EXISTS indexof integer;  
 
 ALTER TABLE IF Exists LSprotocolsampleupdates ADD COLUMN IF NOT EXISTS usedquantity integer;    
 
@@ -1845,3 +1766,87 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.lsprotocolsharedby
     OWNER to postgres;
+
+ CREATE TABLE IF NOT EXISTS public.lsfileshareto
+(
+    sharetofilecode bigint NOT NULL,
+    sharebyunifiedid character varying(250) COLLATE pg_catalog."default",
+    sharebyusername character varying(250) COLLATE pg_catalog."default",
+    sharedon timestamp without time zone,
+    shareitemdetails jsonb,
+    sharefilename character varying(250) COLLATE pg_catalog."default",
+    sharefilecode bigint,
+    sharerights integer NOT NULL,
+    sharestatus integer NOT NULL,
+    sharetounifiedid character varying(250) COLLATE pg_catalog."default",
+    sharetousername character varying(250) COLLATE pg_catalog."default",
+    unsharedon timestamp without time zone,
+    CONSTRAINT lsfileshareto_pkey PRIMARY KEY (sharetofilecode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsfileshareto
+    OWNER to postgres;
+	
+CREATE TABLE IF NOT EXISTS public.lsfilesharedby
+(
+    sharedbytofilecode bigint NOT NULL,
+    sharebyunifiedid character varying(250) COLLATE pg_catalog."default",
+    sharebyusername character varying(250) COLLATE pg_catalog."default",
+    sharedon timestamp without time zone,
+    shareitemdetails jsonb,
+    sharemodifiedon timestamp without time zone,
+    sharefilename character varying(250) COLLATE pg_catalog."default",
+    sharefilecode bigint,
+    sharerights integer NOT NULL,
+    sharestatus integer NOT NULL,
+    sharetofilecode bigint,
+    sharetounifiedid character varying(250) COLLATE pg_catalog."default",
+    sharetousername character varying(250) COLLATE pg_catalog."default",
+    unsharedon timestamp without time zone,
+    CONSTRAINT lsfilesharedby_pkey PRIMARY KEY (sharedbytofilecode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsfilesharedby
+    OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.LSprotocolmastertest
+(
+    protocoltestcode integer NOT NULL,
+    protocolmastercode integer,
+    testcode integer,
+    testtype integer,
+    CONSTRAINT LSprotocolmastertest_pkey PRIMARY KEY (protocoltestcode),
+	CONSTRAINT fkpms1rp8lpcg8ol5obwqurjw35 FOREIGN KEY (protocolmastercode)
+        REFERENCES public.LSprotocolmaster (protocolmastercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.LSprotocolmastertest
+    OWNER to postgres;
+    
+    
+    
+ALTER TABLE IF Exists LSprotocolorderfiles ADD COLUMN IF NOT EXISTS oldfileid character varying(255);
+    
+ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS indexof Integer;
+     
+ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS status Integer;
+      
+ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS consumefieldkey varchar(250);
+
+ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS usedquantity Integer;
+
+ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS repositorydatacode Integer;

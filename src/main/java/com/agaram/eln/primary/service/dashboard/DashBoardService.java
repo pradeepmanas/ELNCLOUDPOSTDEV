@@ -489,11 +489,39 @@ public class DashBoardService {
 				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
 
 		if (lsworkflowgroupmapping != null && lsworkflowgroupmapping.size() > 0) {
-			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
-					.findByworkflowcode(lsworkflowgroupmapping.get(0).getWorkflowcode());
+//			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
+//					.findByworkflowcode(lsworkflowgroupmapping.get(0).getWorkflowcode());
 
-			lstorders.forEach(objorder -> objorder
-					.setCanuserprocess(lsprotocolworkflow.equals(objorder.getlSprotocolworkflow()) ? true : false));
+			List<LSprotocolworkflow> lsprotocolworkflow = lSprotocolworkflowRepository
+					.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
+			
+			lstorders.forEach((objorder) -> {
+
+				if (lsprotocolworkflow != null && objorder.getlSprotocolworkflow() != null
+						&& lsprotocolworkflow.size() > 0) {
+					// if(lstworkflow.contains(this.lsworkflow))
+
+					List<Integer> lstprotocolworkflowcode = new ArrayList<Integer>();
+					if (lsprotocolworkflow != null && lsprotocolworkflow.size() > 0) {
+						lstprotocolworkflowcode = lsprotocolworkflow.stream().map(LSprotocolworkflow::getWorkflowcode)
+								.collect(Collectors.toList());
+
+						if (lstprotocolworkflowcode.contains(objorder.getlSprotocolworkflow().getWorkflowcode())) {
+							objorder.setCanuserprocess(true);
+						} else {
+							objorder.setCanuserprocess(false);
+						}
+					} else {
+						objorder.setCanuserprocess(false);
+					}
+				} else {
+					objorder.setCanuserprocess(false);
+				}
+			});
+
+			
+//			lstorders.forEach(objorder -> objorder
+//					.setCanuserprocess(lsprotocolworkflow.equals(objorder.getlSprotocolworkflow()) ? true : false));
 		}
 		
 		mapOrders.put("orderlst", lstorders);

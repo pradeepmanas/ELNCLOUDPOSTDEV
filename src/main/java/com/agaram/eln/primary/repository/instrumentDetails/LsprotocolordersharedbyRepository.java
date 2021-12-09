@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.instrumentDetails;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,16 +13,24 @@ public interface LsprotocolordersharedbyRepository extends JpaRepository<Lsproto
 	Lsprotocolordersharedby findBySharebyunifiedidAndSharetounifiedidAndProtocoltypeAndShareprotocolordercode(
 			String sharebyunifiedid, String sharetounifiedid, Integer protocoltype, Long shareprotocolordercode);
 
-	List<Lsprotocolordersharedby> findBySharebyunifiedidAndProtocoltypeAndSharestatusOrderBySharedbytoprotocolordercodeDesc(
-			String sharebyunifiedid, Integer protocoltype, int i);
+//	List<Lsprotocolordersharedby> findBySharebyunifiedidAndProtocoltypeAndSharestatusOrderBySharedbytoprotocolordercodeDesc(
+//			String sharebyunifiedid, Integer protocoltype, int i);
+	
+	
 
 	List<Lsprotocolordersharedby> findBySharebyunifiedidAndProtocoltypeAndSharestatus(String sharebyunifiedid,
 			Integer protocoltype, int i);
 
 	Lsprotocolordersharedby findBySharedbytoprotocolordercode(Long sharedbytoprotocolordercode);
 
-	int countBySharebyunifiedidAndProtocoltypeAndSharestatusOrderBySharedbytoprotocolordercodeDesc(
-			String unifielduserid, Integer protocoltype, int i);
+//	int countBySharebyunifiedidAndProtocoltypeAndSharestatusOrderBySharedbytoprotocolordercodeDesc(
+//			String unifielduserid, Integer protocoltype, int i);
+
+	List<Lsprotocolordersharedby> findBySharebyunifiedidAndProtocoltypeAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
+			String sharebyunifiedid, Integer protocoltype, int i, Date fromdate, Date todate);
+
+	int countBySharebyunifiedidAndProtocoltypeAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
+			String sharebyunifiedid, Integer protocoltype, int i, Date fromdate, Date fromdate2);
 
 //	Lsprotocolordersharedby findOne(Long sharedbytoprotocolordercode);
 

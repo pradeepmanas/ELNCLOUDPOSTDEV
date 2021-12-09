@@ -324,18 +324,28 @@ public class helpdocumentservice {
 		return helptittleRepository.findFirst1ByPageOrderByNodecodeDesc(page);
 	}
 	
-	public Map<String, Object> uploadhelpimages(MultipartFile file, String originurl) {
+	public Map<String, Object> uploadhelpimages(MultipartFile file, String originurl,String ismultitenant) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		String id = null;
+		String downloadservice ="downloadhelpimage";
 		try {
-			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "");
+			if(ismultitenant.equals("1"))
+			{
+				id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "");
+				downloadservice ="downloadhelpimage";
+			}
+			else
+			{
+				id = fileManipulationservice.storeLargeattachment("help", file);
+				downloadservice ="downloadhelpimageonprim";
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		map.put("link", originurl + "/helpdocument/downloadhelpimage/" + id + "/"
+		map.put("link", originurl + "/helpdocument/"+downloadservice+"/" + id + "/"
 				+ TenantContext.getCurrentTenant() + "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + FilenameUtils.getExtension(file.getOriginalFilename()));
 
 		return map;
@@ -357,9 +367,23 @@ public class helpdocumentservice {
 		return bis;
 	}
 	
+	public GridFSDBFile downloadhelpimageonprim(String fileid) throws IllegalStateException, IOException
+	{
+		return fileManipulationservice.retrieveLargeFile(fileid);
+	}
+	
 	public boolean removehelpimage(Map<String, String> body) {
 		String filid = body.get("fileid");
-		cloudFileManipulationservice.deleteFile(filid, "main");
+		String ismultitenant = body.get("ismultitenant");
+		if(ismultitenant.equals("1"))
+		{
+			cloudFileManipulationservice.deleteFile(filid, "main");
+		}
+		else
+		{
+			fileManipulationservice.deletelargeattachments(filid);
+		}
+		
 		return true;
 	}
 }

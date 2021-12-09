@@ -159,6 +159,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/protocol/downloadprotocolorderimagesql/{fileid}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolorderfilesql/{fileid}/{filename}/{extension}").permitAll().
 		antMatchers("/helpdocument/downloadhelpimage/{fileid}/{tenant}/{filename}/{extension}").permitAll().
+		antMatchers("/Instrument/Getuserworkflow").permitAll().
+		antMatchers("/Instrument/Getuserprojects").permitAll().
+		antMatchers("/User/GetUserRightsonUser").permitAll().
+		antMatchers("/AuditTrail/GetAuditconfigUser").permitAll().
+		antMatchers("/protocol/downloadprotocolvideo/{fileid}/{tenant}/{filename}/{extension}").permitAll().
+		antMatchers("/protocol/downloadprotocolvideosql/{fileid}/{filename}/{extension}").permitAll().
+		antMatchers("/protocol/downloadprotocolordervideo/{fileid}/{tenant}/{filename}/{extension}").permitAll().
+		antMatchers("/protocol/downloadprotocolordervideosql/{fileid}/{filename}/{extension}").permitAll().
 		// all other requests need to be authenticated
 		anyRequest().authenticated().and().
 		// make sure we use stateless session; session won't be used to

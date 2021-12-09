@@ -8,6 +8,9 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonProcessingException;
 import com.agaram.eln.primary.model.protocols.ProtocolorderImage;
+import com.agaram.eln.primary.model.protocols.Protocolordervideos;
+import com.agaram.eln.primary.model.protocols.Protocolvideos;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +40,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderfiles;
 import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
+import com.agaram.eln.primary.model.protocols.LSprotocolorderworkflowhistory;
 import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
@@ -176,6 +180,13 @@ public class ProtocolController {
 	protected Map<String, Object> addProtocolOrder(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail) {
 
 		return ProtocolMasterService.addProtocolOrder(LSlogilabprotocoldetail);
+
+	}
+	
+	@RequestMapping(value = "/addProtocolOrderafter")
+	protected Map<String, Object> addProtocolOrderafter(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail) {
+
+		return ProtocolMasterService.addProtocolOrderafter(LSlogilabprotocoldetail);
 
 	}
 
@@ -496,7 +507,16 @@ public class ProtocolController {
 		return ProtocolMasterService.Uploadprotocolorderimage(file, protocolorderstepcode,protocolordercode,stepno,protocolstepname,originurl );
 	}
 
-	
+	@PostMapping("/Uploadprotocolorderimagesql")
+	public Map<String, Object> Uploadprotocolorderimagesql(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolorderstepcode") Integer protocolorderstepcode, 
+			@RequestParam("protocolordercode") Long protocolordercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl) throws IOException 
+	{
+		return ProtocolMasterService.Uploadprotocolorderimagesql(file, protocolorderstepcode,protocolordercode,stepno,protocolstepname,originurl );
+	}
 	
 	@PostMapping("/uploadprotocolsorderfile")
 	public Map<String, Object> uploadprotocolsorderfile(@RequestParam("file") MultipartFile file,
@@ -508,6 +528,18 @@ public class ProtocolController {
 	{
 	
 		return ProtocolMasterService.uploadprotocolsorderfile(file, protocolorderstepcode,protocolordercode,stepno,protocolstepname,originurl );
+	}
+	
+	@PostMapping("/uploadprotocolsorderfilesql")
+	public Map<String, Object> uploadprotocolsfilesql(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolorderstepcode") Integer protocolorderstepcode, 
+			@RequestParam("protocolordercode") Long protocolordercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl) throws IOException
+	{
+	
+		return ProtocolMasterService.uploadprotocolsorderfilesql(file, protocolorderstepcode,protocolordercode,stepno,protocolstepname,originurl );
 	}
 	
 	@PostMapping("/removeprotocoorderlimage")
@@ -678,6 +710,12 @@ public class ProtocolController {
 		return ProtocolMasterService.removeprotocolimagesql(body);
 	}
 	
+	@PostMapping("/removeprotocoorderlimagesql")
+	public boolean removeprotocoorderlimagesql(@RequestBody Map<String, String> body)
+	{
+		return ProtocolMasterService.removeprotocoorderlimagesql(body);
+	}
+	
 	@RequestMapping(value = "downloadprotocolorderimagesql/{fileid}/{filename}/{extension}", method = RequestMethod.GET)
 	@GetMapping
 	public ResponseEntity<InputStreamResource> downloadprotocolorderimagesql(@PathVariable String fileid
@@ -729,6 +767,168 @@ public class ProtocolController {
 		}
 	}
 	
+	@RequestMapping(value = "/getProtocolOrderworkflowhistoryList")
+	protected List<LSprotocolorderworkflowhistory> getProtocolOrderworkflowhistoryList(@RequestBody LSprotocolorderworkflowhistory lsprotocolorderworkflowhistory) {
+		return ProtocolMasterService.getProtocolOrderworkflowhistoryList(lsprotocolorderworkflowhistory);
+	}
+	
+	
+	@PostMapping("/uploadvideo")
+	public Map<String, Object> uploadvideo(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolstepcode") Integer protocolstepcode, 
+			@RequestParam("protocolmastercode") Integer protocolmastercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl)
+	{
+	
+		return ProtocolMasterService.uploadvideo(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl );
 
+	}
+	
+	@PostMapping("/uploadprotocolordervideo")
+	public Map<String, Object> uploadprotocolordervideo(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolorderstepcode") Integer protocolorderstepcode, 
+			@RequestParam("protocolordercode") Long protocolordercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl)
+	{
+		return ProtocolMasterService.uploadprotocolordervideo(file, protocolorderstepcode,protocolordercode,stepno,protocolstepname,originurl );
+	}
+	
+	
+	@PostMapping("/uploadprotocolordervideosql")
+	public Map<String, Object> uploadprotocolordervideosql(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolorderstepcode") Integer protocolorderstepcode, 
+			@RequestParam("protocolordercode") Long protocolordercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl) throws IOException
+	{
+		return ProtocolMasterService.uploadprotocolordervideosql(file, protocolorderstepcode,protocolordercode,stepno,protocolstepname,originurl );
+	}
+	
+	
+	@RequestMapping(value = "downloadprotocolordervideo/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadprotocolordervideo(@PathVariable String fileid
+			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+		ByteArrayInputStream bis = ProtocolMasterService.downloadprotocolordervideo(fileid, tenant);
+		
+	    HttpHeaders header = new HttpHeaders();
+	    header.setContentType(MediaType.parseMediaType("image/png"));
+	    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+	    
+	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "downloadprotocolvideo/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadprotocolvideo(@PathVariable String fileid
+			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+		ByteArrayInputStream bis = ProtocolMasterService.downloadprotocolvideo(fileid, tenant);
+		
+	    HttpHeaders header = new HttpHeaders();
+	    String mediatype = commonfunction.getMIMEtypeonextension(extension);
+	    header.setContentType(MediaType.parseMediaType(mediatype));
+	    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+	    
+	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+	}
+	
+	@PostMapping("/removeprotocolvideo")
+	public boolean removeprotocolvideo(@RequestBody Map<String, String> body)
+	{
+		return ProtocolMasterService.removeprotocolvideo(body);
+	}
+	
+	@PostMapping("/removeprotocolordervideo")
+	public boolean removeprotocolordervideo(@RequestBody Map<String, String> body)
+	{
+		return ProtocolMasterService.removeprotocolordervideo(body);
+	}
+	@PostMapping("/uploadvideosql")
+	public Map<String, Object> uploadvideosql(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolstepcode") Integer protocolstepcode, 
+			@RequestParam("protocolmastercode") Integer protocolmastercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl) throws IOException
+	{
+		return ProtocolMasterService.uploadvideosql(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl );
+	}
+	
+	
+	@RequestMapping(value = "downloadprotocolordervideosql/{fileid}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadprotocolordervideosql(@PathVariable String fileid
+			, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+		Protocolordervideos objprofile =  ProtocolMasterService.downloadprotocolordervideosql(fileid);
+		
+		byte[] data = null;
+		
+		if(objprofile != null)
+		{
+			data = objprofile.getVideo().getData();
+			ByteArrayInputStream bis = new ByteArrayInputStream(data);	
+		    HttpHeaders header = new HttpHeaders();
+		    header.setContentType(MediaType.parseMediaType("image/png"));
+		    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+		    
+		    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+		}else {
+			
+		
+		return null;
+		}
+	
+	}
+	
+	@RequestMapping(value = "downloadprotocolvideosql/{fileid}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadprotocolvideosql(@PathVariable String fileid
+			, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+		
+		Protocolvideos objprofile =  ProtocolMasterService.downloadprotocolvideosql(fileid);
+		
+		byte[] data = null;
+		
+		if(objprofile != null)
+		{
+			data = objprofile.getVideo().getData();
+			ByteArrayInputStream bis = new ByteArrayInputStream(data);	
+		    HttpHeaders header = new HttpHeaders();
+		    header.setContentType(MediaType.parseMediaType("image/png"));
+		    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
+		    
+		    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+		}else {
+			
+		
+		return null;
+		}
+	
+	}
+	
+	@PostMapping("/removeprotocolvideossql")
+	public boolean removeprotocolvideossql(@RequestBody Map<String, String> body)
+	{
+		return ProtocolMasterService.removeprotocolvideossql(body);
+	}
 
+	@PostMapping("/removeprotocolordervideossql")
+	public boolean removeprotocolordervideossql(@RequestBody Map<String, String> body)
+	{
+		return ProtocolMasterService.removeprotocolordervideossql(body);
+	}
+	
+	@RequestMapping(value = "/getprojectteam")
+	protected boolean getprojectteam(@RequestBody LSuserMaster objClass) {
+
+		return ProtocolMasterService.getprojectteam(objClass);
+	}
 }

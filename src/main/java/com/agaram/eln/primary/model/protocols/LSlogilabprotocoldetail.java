@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.model.protocols;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -81,6 +82,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@ManyToOne
 	private LSprotocolworkflow lSprotocolworkflow;
 	
+//	@Transient
+//	private Integer lStprotocolworkflow;
+//	
+//	public Integer getlStprotocolworkflow() {
+//		return lStprotocolworkflow;
+//	}
+//
+//	public void setlStprotocolworkflow(LSprotocolworkflow lStprotocolworkflow) {
+//		this.lStprotocolworkflow = lSprotocolworkflow != null ? lSprotocolworkflow.getWorkflowcode() : null;
+//	}
+
 	@ManyToOne
 	private LSuserMaster assignedto;
 
@@ -111,6 +123,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private String unifielduserid;
 	
+	@Transient
+	private List<LSprotocolorderworkflowhistory> lsprotocolorderworkflowhistory;
+	
+	public List<LSprotocolorderworkflowhistory> getLsprotocolorderworkflowhistory() {
+		return lsprotocolorderworkflowhistory;
+	}
+
+	public void setLsprotocolorderworkflowhistory(List<LSprotocolorderworkflowhistory> lsprotocolorderworkflowhistory) {
+		this.lsprotocolorderworkflowhistory = lsprotocolorderworkflowhistory;
+	}
+
 	public String getUnifielduserid() {
 		return unifielduserid;
 	}
@@ -149,6 +172,16 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	
 	private Integer sitecode;
 	
+	private Integer createby;
+	
+	public Integer getCreateby() {
+		return createby;
+	}
+
+	public void setCreateby(Integer createby) {
+		this.createby = createby;
+	}
+
 	public Integer getSitecode() {
 		return sitecode;
 	}

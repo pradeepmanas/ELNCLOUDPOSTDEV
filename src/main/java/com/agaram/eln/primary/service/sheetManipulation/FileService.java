@@ -261,8 +261,8 @@ public class FileService {
 	}
 
 	public List<LSfile> GetSheets(LSuserMaster objuser) {
-		
-		if ( objuser.getUsername() != null &&  objuser.getUsername().equals("Administrator")) {
+
+		if (objuser.getUsername() != null && objuser.getUsername().equals("Administrator")) {
 			return lSfileRepository.getsheetGreaterthanone();
 		} else {
 			return GetSheetsbyuser(objuser);
@@ -345,7 +345,7 @@ public class FileService {
 	}
 
 	public LSfiletest UpdateFiletest(LSfiletest objtest) {
-		
+
 		if (objtest.getLSfileparameter() != null) {
 			lSfileparameterRepository.save(objtest.getLSfileparameter());
 		}
@@ -1092,8 +1092,9 @@ public class FileService {
 	}
 
 	public Lsfilesharedby Unsharefileby(Lsfilesharedby objordershareby) {
-		
-		Lsfilesharedby existingshare = LsfilesharedbyRepository.findBySharedbytofilecode(objordershareby.getSharedbytofilecode());
+
+		Lsfilesharedby existingshare = LsfilesharedbyRepository
+				.findBySharedbytofilecode(objordershareby.getSharedbytofilecode());
 
 		existingshare.setSharestatus(0);
 		existingshare.setUnsharedon(objordershareby.getUnsharedon());
@@ -1103,8 +1104,9 @@ public class FileService {
 	}
 
 	public Lsfileshareto Unsharefileto(Lsfileshareto lsordershareto) {
-		
-		Lsfileshareto existingshare = LsfilesharetoRepository.findBySharetofilecode(lsordershareto.getSharetofilecode());
+
+		Lsfileshareto existingshare = LsfilesharetoRepository
+				.findBySharetofilecode(lsordershareto.getSharetofilecode());
 
 		existingshare.setSharestatus(0);
 		existingshare.setUnsharedon(lsordershareto.getUnsharedon());
@@ -1112,5 +1114,35 @@ public class FileService {
 		LsfilesharetoRepository.save(existingshare);
 
 		return existingshare;
+	}
+
+	public Boolean updateSharedFile(Lsfilesharedby lsordersharedby) {
+		Lsfilesharedby lsfile = LsfilesharedbyRepository
+				.findBySharedbytofilecode(lsordersharedby.getSharedbytofilecode());
+
+		if (lsfile != null) {
+
+			lsfile.setShareitemdetails(lsordersharedby.getShareitemdetails());
+
+			LsfilesharedbyRepository.save(lsfile);
+
+		}
+
+		return true;
+	}
+
+	public Boolean updateSharedToFile(Lsfileshareto lsordersharedby) {
+
+		Lsfileshareto lsfile = LsfilesharetoRepository.findBySharetofilecode(lsordersharedby.getSharetofilecode());
+
+		if (lsfile != null) {
+
+			lsfile.setShareitemdetails(lsordersharedby.getShareitemdetails());
+
+			LsfilesharetoRepository.save(lsfile);
+
+		}
+
+		return true;
 	}
 }

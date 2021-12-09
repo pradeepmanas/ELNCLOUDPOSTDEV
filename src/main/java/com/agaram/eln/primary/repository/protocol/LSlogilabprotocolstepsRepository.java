@@ -17,4 +17,6 @@ public interface LSlogilabprotocolstepsRepository extends JpaRepository<LSlogila
 	List<LSlogilabprotocolsteps> findByProtocolordercodeAndStatusAndStepno(long ipInt, int i, int j);
 	List<LSlogilabprotocolsteps> findByProtocolordercodeAndStatusAndStepnoNot(long ipInt, int i, int j);
 	int countByProtocolordercodeAndStatus(long ipInt, int i);
+	List<LSlogilabprotocolsteps> findByProtocolordercodeAndProtocolmastercode(Long protocolordercode,
+			Integer protocolmastercode);
 }

@@ -2876,6 +2876,7 @@ public class InstrumentService {
 	}
 
 	public List<Integer> Getuserworkflow(LSusergroup lsusergroup) {
+		if(lsusergroup != null) {
 		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
 				.findBylsusergroup(lsusergroup);
 
@@ -2887,9 +2888,14 @@ public class InstrumentService {
 		}
 
 		return lstworkflow;
+		}else {
+			List<Integer> lstworkflow = new ArrayList<Integer>();
+			return lstworkflow;
+		}
 	}
 
 	public Map<String, Object> Getuserprojects(LSuserMaster objuser) {
+		if(objuser.getUsercode() != null) {
 		Map<String, Object> objmap = new HashMap<>();
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
@@ -2917,6 +2923,10 @@ public class InstrumentService {
 		objmap.put("team", lstteamcode);
 		objmap.put("teamuser", lstteamusercode);
 		return objmap;
+		}else {
+			Map<String, Object> objmap = new HashMap<>();
+			return objmap;
+		}
 	}
 
 	public Map<String, Object> Getinitialorders(LSlogilablimsorderdetail objorder) {

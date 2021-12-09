@@ -17,10 +17,9 @@ import javax.persistence.Transient;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
-@Entity(name = "LSprotocolworkflowhistory")
-@Table(name = "LSprotocolworkflowhistory")
-public class LSprotocolworkflowhistory {
-		
+@Entity(name = "LSprotocolorderworkflowhistory")
+@Table(name = "LSprotocolorderworkflowhistory")
+public class LSprotocolorderworkflowhistory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Basic(optional = false)
@@ -30,8 +29,8 @@ public class LSprotocolworkflowhistory {
 	@Column(name = "approvelstatus") 
 	private Integer approvelstatus;
 	
-	@Column(name = "protocolmastercode")
-	private Integer protocolmastercode;
+	@Column(name = "protocolordercode")
+	private Integer protocolordercode;
 	
 	@Column(columnDefinition = "varchar(250)")
 	private String action;
@@ -39,21 +38,7 @@ public class LSprotocolworkflowhistory {
 	@Column(columnDefinition = "varchar(250)")
 	private String comment;
 	
-
 	
-	@Transient
-	LScfttransaction objsilentaudit;
-	
-
-
-	public LScfttransaction getObjsilentaudit() {
-		return objsilentaudit;
-	}
-
-	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
-		this.objsilentaudit = objsilentaudit;
-	}
-
 	@ManyToOne 
 	private LSuserMaster createby;
 	
@@ -64,20 +49,23 @@ public class LSprotocolworkflowhistory {
 	@ManyToOne
 	private LSprotocolworkflow currentworkflow;
 
+	
+	@Transient
+	LScfttransaction objsilentaudit;
+
+
 	public Integer getHistorycode() {
 		return historycode;
 	}
 
-	public void setHistorycode(Integer historycode) {
-		this.historycode = historycode;
-	}
 
 	public Integer getApprovelstatus() {
 		return approvelstatus;
 	}
 
-	public void setApprovelstatus(Integer approvelstatus) {
-		this.approvelstatus = approvelstatus;
+
+	public Integer getProtocolordercode() {
+		return protocolordercode;
 	}
 
 
@@ -85,49 +73,73 @@ public class LSprotocolworkflowhistory {
 		return action;
 	}
 
-	public void setAction(String action) {
-		this.action = action;
-	}
 
 	public String getComment() {
 		return comment;
 	}
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
 
 	public LSuserMaster getCreateby() {
 		return createby;
 	}
 
-	public void setCreateby(LSuserMaster createby) {
-		this.createby = createby;
-	}
 
 	public Date getCreatedate() {
 		return createdate;
 	}
 
-	public void setCreatedate(Date createdate) {
-		this.createdate = createdate;
-	}
-
-	public Integer getProtocolmastercode() {
-		return protocolmastercode;
-	}
-
-	public void setProtocolmastercode(Integer protocolmastercode) {
-		this.protocolmastercode = protocolmastercode;
-	}
 
 	public LSprotocolworkflow getCurrentworkflow() {
 		return currentworkflow;
 	}
 
+
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+
+	public void setHistorycode(Integer historycode) {
+		this.historycode = historycode;
+	}
+
+
+	public void setApprovelstatus(Integer approvelstatus) {
+		this.approvelstatus = approvelstatus;
+	}
+
+
+	public void setProtocolordercode(Integer protocolordercode) {
+		this.protocolordercode = protocolordercode;
+	}
+
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+
+	public void setCreateby(LSuserMaster createby) {
+		this.createby = createby;
+	}
+
+
+	public void setCreatedate(Date createdate) {
+		this.createdate = createdate;
+	}
+
+
 	public void setCurrentworkflow(LSprotocolworkflow currentworkflow) {
 		this.currentworkflow = currentworkflow;
 	}
 
-	
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
 }

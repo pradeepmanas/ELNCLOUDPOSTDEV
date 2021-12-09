@@ -73,6 +73,28 @@ public class Lsprotocolordershareto {
 	
 	@Transient
 	private Long sharedbytoprotocolordercode;
+	
+	@Transient
+	private Date fromdate;
+
+	@Transient
+	private Date todate;
+
+	public Date getFromdate() {
+		return fromdate;
+	}
+
+	public Date getTodate() {
+		return todate;
+	}
+
+	public void setFromdate(Date fromdate) {
+		this.fromdate = fromdate;
+	}
+
+	public void setTodate(Date todate) {
+		this.todate = todate;
+	}
 
 	public LSuserMaster getObjLoggeduser() {
 		return objLoggeduser;

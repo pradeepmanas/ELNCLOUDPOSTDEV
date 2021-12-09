@@ -1850,3 +1850,76 @@ ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS cons
 ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS usedquantity Integer;
 
 ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS repositorydatacode Integer;
+
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS createby Integer;
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolorderworkflowhistory
+(
+    historycode integer NOT NULL,
+    action character varying(250) COLLATE pg_catalog."default",
+    approvelstatus integer,
+    comment character varying(250) COLLATE pg_catalog."default",
+    createdate timestamp without time zone,
+    protocolordercode integer,
+    createby_usercode integer,
+    currentworkflow_workflowcode integer,
+    CONSTRAINT lsprotocolorderworkflowhistory_pkey PRIMARY KEY (historycode),
+    CONSTRAINT fk5ypng9qblkh4kupixpjujvqqs FOREIGN KEY (createby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk900cvb1r5g22s8lq8jenwcmgy FOREIGN KEY (currentworkflow_workflowcode)
+        REFERENCES public.lsprotocolworkflow (workflowcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolorderworkflowhistory
+    OWNER to postgres;
+    
+INSERT into LSusergrouprights (orderno,createdby, createdon, displaytopic, modifiedby, modifiedon, modulename, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) VALUES (52,N'administrator', CAST(N'2020-02-21T14:50:55.727' AS date), 'Retire', NULL, NULL, 'User Master', '1', '1', 'NA', 'NA', 1, 1) ON CONFLICT(orderno)DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolvideos
+(
+    protocolstepvideoscode integer NOT NULL,
+    extension character varying(255) COLLATE pg_catalog."default",
+    fileid character varying(255) COLLATE pg_catalog."default",
+    filename character varying(255) COLLATE pg_catalog."default",
+    protocolmastercode integer,
+    protocolstepcode integer,
+    protocolstepname character varying(255) COLLATE pg_catalog."default",
+    stepno integer,
+    CONSTRAINT lsprotocolvideos_pkey PRIMARY KEY (protocolstepvideoscode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolvideos
+    OWNER to postgres;  
+    
+    
+CREATE TABLE IF NOT EXISTS  public.lsprotocolordervideos
+(
+    protocolorderstepvideoscode integer NOT NULL,
+    extension character varying(255) COLLATE pg_catalog."default",
+    fileid character varying(255) COLLATE pg_catalog."default",
+    filename character varying(255) COLLATE pg_catalog."default",
+    protocolordercode bigint,
+    protocolorderstepcode integer,
+    protocolstepname character varying(255) COLLATE pg_catalog."default",
+    stepno integer,
+    CONSTRAINT lsprotocolordervideos_pkey PRIMARY KEY (protocolorderstepvideoscode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolordervideos
+    OWNER to postgres;  

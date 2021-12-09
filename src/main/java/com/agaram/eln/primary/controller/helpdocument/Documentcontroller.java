@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.model.helpdocument.Helpdocument;
 import com.agaram.eln.primary.model.helpdocument.Helptittle;
 import com.agaram.eln.primary.service.helpdocument.helpdocumentservice;
+import com.mongodb.gridfs.GridFSDBFile;
 import com.nimbusds.oauth2.sdk.http.HTTPRequest;
 
 
@@ -122,15 +123,15 @@ public class Documentcontroller {
 	
 	@PostMapping("/uploadhelpimages")
 	public Map<String, Object> uploadhelpimages(@RequestParam("file") MultipartFile file,
-			@RequestParam("originurl") String originurl)
+			@RequestParam("originurl") String originurl, @RequestParam String ismultitenant)
 	{
-		return helpdocumentservice.uploadhelpimages(file, originurl);
+		return helpdocumentservice.uploadhelpimages(file, originurl, ismultitenant);
 	}
 	
 	@RequestMapping(value = "downloadhelpimage/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
 	@GetMapping
 	public ResponseEntity<InputStreamResource> downloadhelpimage(@PathVariable String fileid
-			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension ) throws IllegalStateException, IOException {
 		
 		ByteArrayInputStream bis = helpdocumentservice.downloadhelpimage(fileid, tenant);
 		
@@ -139,6 +140,21 @@ public class Documentcontroller {
 	    header.set("Content-Disposition", "attachment; filename="+filename+"."+extension);
 	    
 	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "downloadhelpimageonprim/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> downloadhelpimageonprim(@PathVariable String fileid
+			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension)
+			throws IllegalStateException, IOException {
+		GridFSDBFile gridFsFile = helpdocumentservice.downloadhelpimageonprim(fileid);
+
+		HttpHeaders header = new HttpHeaders();
+		header.setContentType(MediaType.parseMediaType(gridFsFile.getContentType()));
+		header.setContentLength(gridFsFile.getLength());
+		header.set("Content-Disposition", "attachment; filename="+filename+"."+extension+"");
+
+		return new ResponseEntity<>(new InputStreamResource(gridFsFile.getInputStream()), header, HttpStatus.OK);
 	}
 	
 	@PostMapping("/removehelpimage")

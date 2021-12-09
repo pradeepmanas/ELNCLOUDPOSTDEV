@@ -15,5 +15,6 @@ public interface LSprotocolworkflowgroupmapRepository extends JpaRepository<LSpr
 	public List<LSprotocolworkflowgroupmap> findBylsusergroupAndWorkflowcodeNotNull(LSusergroup lsusergroup);
 
 	public List<LSprotocolworkflowgroupmap> findBylsusergroupAndWorkflowcodeNotNull(int lsusergroup);
+
 	
 }

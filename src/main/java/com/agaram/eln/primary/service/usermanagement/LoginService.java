@@ -48,73 +48,70 @@ import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
 import com.agaram.eln.primary.service.cfr.AuditService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 @Service
 @EnableJpaRepositories(basePackageClasses = LSSiteMasterRepository.class)
 
 public class LoginService {
 
 	@Autowired
-    private LSSiteMasterRepository lSSiteMasterRepository;
+	private LSSiteMasterRepository lSSiteMasterRepository;
 	@Autowired
 	private LSdomainMasterRepository lSDomainMasterRepository;
 	@Autowired
 	private LSuserMasterRepository lSuserMasterRepository;
 	@Autowired
 	private LScfttransactionRepository lscfttransactionRepository;
-	
+
 	@Autowired
 	private LSactiveUserRepository lsactiveUserRepository;
-	
+
 	@Autowired
 	private LSusergroupRepository LSusergroupRepository;
-	
+
 	@Autowired
 	private LSPasswordHistoryDetailsRepository LSPasswordHistoryDetailsRepository;
-	
+
 	@Autowired
 	private LSPasswordPolicyRepository LSPasswordPolicyRepository;
-	
+
 	@Autowired
-    private UserService userService;
-	
+	private UserService userService;
+
 	@Autowired
 	private AuditService auditService;
-	
+
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
-	
+
 	@Autowired
 	private LSuserMasterRepository lsuserMasterRepository;
-	
+
 	private String ModuleName = "UserManagement";
-	
+
 	@Autowired
 	private JwtUserDetailsService userDetailsService;
-	
+
 	@Autowired
 	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
-	
-	
+
 	static final Logger logger = Logger.getLogger(LoginService.class.getName());
-	
+
 	public List<LSSiteMaster> loadSite() {
-        List<LSSiteMaster> result = new ArrayList<LSSiteMaster>();
-        lSSiteMasterRepository.findByIstatus(1).forEach(result::add);
-        return result;
-    }
-	
-	
+		List<LSSiteMaster> result = new ArrayList<LSSiteMaster>();
+		lSSiteMasterRepository.findByIstatus(1).forEach(result::add);
+		return result;
+	}
+
 	public List<LSSiteMaster> LoadSiteMaster() {
-        return lSSiteMasterRepository.findByOrderBySitecodeAsc();
-    }
+		return lSSiteMasterRepository.findByOrderBySitecodeAsc();
+	}
 
 	public List<LSdomainMaster> loadDomain(LSSiteMaster objsite) {
-        List<LSdomainMaster> result = new ArrayList<LSdomainMaster>();
-        result = lSDomainMasterRepository.findBylssitemaster(objsite);
-        return result;
-    }
-	
+		List<LSdomainMaster> result = new ArrayList<LSdomainMaster>();
+		result = lSDomainMasterRepository.findBylssitemaster(objsite);
+		return result;
+	}
+
 //	private static final Map<String, String> DATE_FORMAT_REGEXPS = new HashMap<String, String>() {{
 //        put("^\\d{8}$", "yyyyMMdd");
 //        put("^\\d{1,2}-\\d{1,2}-\\d{4}$", "dd-MM-yyyy");
@@ -143,23 +140,24 @@ public class LoginService {
 //        put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMM yyyy HH:mm:ss");
 //        put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
 //    }};
-	
+
 	@SuppressWarnings("unused")
-	public Map<String, Object> Login(LoggedUser objuser) throws Exception
-	{
+	public Map<String, Object> Login(LoggedUser objuser) throws Exception {
 		Map<String, Object> obj = new HashMap<>();
 		LSuserMaster objExitinguser = new LSuserMaster();
-		
+
 		String username = objuser.getsUsername();
 		LSSiteMaster objsiteobj = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
-//		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(username,"0");
-		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndLoginfrom(username,objsiteobj,"0");
-		
-		
-		LSPasswordPolicy lockcount =objExitinguser!=null? LSPasswordPolicyRepository.findTopByAndLssitemasterOrderByPolicycodeDesc(objExitinguser.getLssitemaster()):null;
-	
-		if(objExitinguser != null)
-		{
+//		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(username, "0");
+		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndLoginfrom(username,
+				objsiteobj, "0");
+
+		LSPasswordPolicy lockcount = objExitinguser != null
+				? LSPasswordPolicyRepository
+						.findTopByAndLssitemasterOrderByPolicycodeDesc(objExitinguser.getLssitemaster())
+				: null;
+
+		if (objExitinguser != null) {
 
 			if (objuser.getLsusergroup() == null) {
 
@@ -167,323 +165,174 @@ public class LoginService {
 			} else {
 				objExitinguser.setLsusergroup(objuser.getLsusergroup());
 			}
-			
-//			obj.put("usersettings", LsusersettingsRepository.findByUsercode(objExitinguser.getUsercode()));
-			
+
 			objExitinguser.setObjResponse(new Response());
 			objExitinguser.setObjsilentaudit(new LScfttransaction());
-			
-			if((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode())
-					|| objuser.getsUsername().equalsIgnoreCase("Administrator")) 
-			{
+
+			if ((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode())
+					|| objuser.getsUsername().equalsIgnoreCase("Administrator")) {
 				String Password = AESEncryption.decrypt(objExitinguser.getPassword());
 				System.out.println(" password: " + Password);
-			    
-			    Date passwordexp=objExitinguser.getPasswordexpirydate();
-			    if(Password.equals(objuser.getsPassword()) && objExitinguser.getUserstatus()!="Locked" && objExitinguser.getUserretirestatus() ==0)
-			    {
-			    	
-			    	String encryptionStr = objExitinguser.getPassword()+"_"+objExitinguser.getUsername()+objExitinguser.getLssitemaster().getSitename();
-					
-					String encryptPassword =  AESEncryption.encrypt(encryptionStr);
-					
-					obj.put("encryptedpassword", encryptPassword);
-			    	
-			    	String status = objExitinguser.getUserstatus();
-			    	String groupstatus=objExitinguser.getLsusergrouptrans().getUsergroupstatus();
-			    	if(status.equals("Deactive"))
-			    	{
-			    		objExitinguser.getObjResponse().setInformation("ID_NOTACTIVE");
-						objExitinguser.getObjResponse().setStatus(false);
-   
-//						objuser.getObjsilentaudit().setActions("Warning");
-//						objuser.getObjsilentaudit().setComments(objExitinguser.getUsername()+" "+"was not active to login");
-//						objuser.getObjsilentaudit().setTableName("LSuserMaster");
-//						objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
-//						objuser.getObjsilentaudit().setSystemcoments("System Generated");
-//						objuser.getObjsilentaudit().setModuleName(ModuleName);
-//						objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-//			    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//				    		
-//				    	lscfttransactionRepository.save(objuser.getObjsilentaudit());
-						obj.put("user", objExitinguser);
-						return obj;
-			    	}
-			    	else if(groupstatus.trim().equals("Deactive")) 
-			    	{
-			    		objExitinguser.getObjResponse().setInformation("ID_GRPNOACT");
-						objExitinguser.getObjResponse().setStatus(false);
-						  
-//						objuser.getObjsilentaudit().setActions("Warning");
-//						objuser.getObjsilentaudit().setComments("Currently group was not active for the user"+" "+objExitinguser.getUsername()+" "+"to login");
-//						objuser.getObjsilentaudit().setTableName("LSusergroup");
-//						objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
-//						objuser.getObjsilentaudit().setSystemcoments("System Generated");
-//						objuser.getObjsilentaudit().setModuleName(ModuleName);
-//						objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-//						objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//				    	lscfttransactionRepository.save(objuser.getObjsilentaudit());
-				    	
-						obj.put("user", objExitinguser);
-						return obj;
-			    	}
-			    	else
-			    	{
-		    		
-			    		if(!username.trim().toLowerCase().equals("administrator")) {
-			    			Date date = new Date();
 
-					 	   boolean comp1= objExitinguser.getPasswordexpirydate().compareTo(date) > 0;
-						   boolean  comp2= objExitinguser.getPasswordexpirydate().compareTo(date) < 0;
-						   boolean  comp3= objExitinguser.getPasswordexpirydate().compareTo(date) ==0;
-			    		if(comp3== true  ||(comp1==false && comp2== true)) {
-				    			objExitinguser.setPassword(null);
-				    			lSuserMasterRepository.save(objExitinguser);
-				    			objExitinguser.getObjResponse().setInformation("ID_EXPIRY");
+				Date passwordexp = objExitinguser.getPasswordexpirydate();
+				if (Password.equals(objuser.getsPassword()) && objExitinguser.getUserstatus() != "Locked"
+						&& objExitinguser.getUserretirestatus() == 0) {
+
+					String encryptionStr = objExitinguser.getPassword() + "_" + objExitinguser.getUsername()
+							+ objExitinguser.getLssitemaster().getSitename();
+
+					String encryptPassword = AESEncryption.encrypt(encryptionStr);
+
+					obj.put("encryptedpassword", encryptPassword);
+
+					String status = objExitinguser.getUserstatus();
+					String groupstatus = objExitinguser.getLsusergrouptrans().getUsergroupstatus();
+					if (status.equals("Deactive")) {
+						objExitinguser.getObjResponse().setInformation("ID_NOTACTIVE");
+						objExitinguser.getObjResponse().setStatus(false);
+
+						obj.put("user", objExitinguser);
+						return obj;
+					} else if (groupstatus.trim().equals("Deactive")) {
+						objExitinguser.getObjResponse().setInformation("ID_GRPNOACT");
+						objExitinguser.getObjResponse().setStatus(false);
+
+						obj.put("user", objExitinguser);
+						return obj;
+					} else {
+
+						if (!username.trim().toLowerCase().equals("administrator")) {
+							Date date = new Date();
+
+							boolean comp1 = objExitinguser.getPasswordexpirydate().compareTo(date) > 0;
+							boolean comp2 = objExitinguser.getPasswordexpirydate().compareTo(date) < 0;
+							boolean comp3 = objExitinguser.getPasswordexpirydate().compareTo(date) == 0;
+							if (comp3 == true || (comp1 == false && comp2 == true)) {
+								objExitinguser.setPassword(null);
+								lSuserMasterRepository.save(objExitinguser);
+								objExitinguser.getObjResponse().setInformation("ID_EXPIRY");
 								objExitinguser.getObjResponse().setStatus(false);
-								  
-//								objuser.getObjsilentaudit().setActions("Warning");
-//								objuser.getObjsilentaudit().setComments("Password was expired for "+""+objExitinguser.getUsername());
-//								objuser.getObjsilentaudit().setTableName("LSuserMaster");
-//								objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
-//								objuser.getObjsilentaudit().setSystemcoments("System Generated");
-//								objuser.getObjsilentaudit().setModuleName(ModuleName);
-//								objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-//					    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//					    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
 								obj.put("user", objExitinguser);
 								return obj;
-				    		}
-				    		else {
-						    	objExitinguser.getObjResponse().setStatus(true);
-						    	
-//						    	if(objuser.getObjsilentaudit() != null)
-//						    	{
-//						    		objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-//						    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//						    		objuser.getObjsilentaudit().setTableName("LSactiveuser");
-//						    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-//						    		
-//						    		LSactiveUser objactiveuser = new LSactiveUser();
-//						    	 	objactiveuser.setLsusermaster(objExitinguser);
-//						    	 	objactiveuser.setLssitemaster(objExitinguser.getLssitemaster());
-//						    	 	objactiveuser.setTimestamp(objuser.getLogindate());
-//						    	 	lsactiveUserRepository.save(objactiveuser);
-//						    	
-//						    	}
-					    	
-				    		}
-			    		}
-				    		else {
-					    	objExitinguser.getObjResponse().setStatus(true);
-					    	
-//					    	if(objuser.getObjsilentaudit() != null)
-//					    	{
-//					    		objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-//					    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//					    		objuser.getObjsilentaudit().setModuleName(ModuleName);
-//					    		objuser.getObjsilentaudit().setTableName("LSactiveuser");
-//					    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-//					    		
-//					    		LSactiveUser objactiveuser = new LSactiveUser();
-//					    	 	objactiveuser.setLsusermaster(objExitinguser);
-//					    	 	objactiveuser.setLssitemaster(objExitinguser.getLssitemaster());
-//					    	 	objactiveuser.setTimestamp(objuser.getLogindate());
-//					    	
-//					    	}
-					    	
-				    		}
-				    	}
-			    	}
-			    else if(objExitinguser.getUserretirestatus() !=0) {
-			    	
-			    	objExitinguser.getObjResponse().setInformation("ID_RETIREDUSER");
+							} else {
+								objExitinguser.getObjResponse().setStatus(true);
+
+							}
+						} else {
+							objExitinguser.getObjResponse().setStatus(true);
+
+						}
+					}
+				} else if (objExitinguser.getUserretirestatus() != 0) {
+
+					objExitinguser.getObjResponse().setInformation("ID_RETIREDUSER");
 					objExitinguser.getObjResponse().setStatus(false);
-//  
-//					objuser.getObjsilentaudit().setActions("Warning");
-//					objuser.getObjsilentaudit().setComments(objExitinguser.getUsername()+" "+"user was Retired");
-//					objuser.getObjsilentaudit().setTableName("LSuserMaster");
-//					objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
-//					objuser.getObjsilentaudit().setSystemcoments("System Generated");
-//					objuser.getObjsilentaudit().setModuleName(ModuleName);
-//					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-//		    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//			    		
-//			    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
 					obj.put("user", objExitinguser);
 					return obj;
-			    	
-			    }
-			    
-			    	else if(!Password.equals(objuser.getsPassword()) 
-			    				|| objExitinguser.getLockcount() == 5 
-			    					|| objExitinguser.getUserstatus()=="Locked") {
-				    	if(!username.trim().toLowerCase().equals("administrator")) 
-				    	{
-					    	Integer count= objExitinguser.getLockcount()==null?0: objExitinguser.getLockcount();
-					    	count++;
-					    	if(count.equals(lockcount.getLockpolicy())) {
-					    		objExitinguser.setUserstatus("Locked");
-					    		objExitinguser.setLockcount(count++);
-							objExitinguser.getObjResponse().setInformation("ID_LOCKED");
-							objExitinguser.getObjResponse().setStatus(false);
-							  
-//							objuser.getObjsilentaudit().setActions("Warning");
-//							objuser.getObjsilentaudit().setComments("User Account was locked,"+objExitinguser.getUsername()+ " "+"entered incorrect password many times.");
-//							objuser.getObjsilentaudit().setTableName("LSuserMaster");
-//							objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
-//							objuser.getObjsilentaudit().setSystemcoments("System Generated");
-//							objuser.getObjsilentaudit().setModuleName(ModuleName);
-//								objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-//					    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//					    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-							lSuserMasterRepository.save(objExitinguser);
-					    	}
-					    	else if(count<lockcount.getLockpolicy()) {
-					    		objExitinguser.setLockcount(count++);
-								objExitinguser.getObjResponse().setInformation("ID_INVALID");
-								objExitinguser.getObjResponse().setStatus(false);
-								  
-//								objuser.getObjsilentaudit().setActions("Warning");
-//								objuser.getObjsilentaudit().setComments(objExitinguser.getUsername()+ " "+"entered incorrect password");
-//								objuser.getObjsilentaudit().setTableName("LSuserMaster");
-//								objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
-//								objuser.getObjsilentaudit().setSystemcoments("System Generated");
-//								objuser.getObjsilentaudit().setModuleName(ModuleName);
-//								objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-//					    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//					    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-								lSuserMasterRepository.save(objExitinguser);
-					    	}
-					    	else {
-							objExitinguser.getObjResponse().setInformation("ID_LOCKED");
-							objExitinguser.getObjResponse().setStatus(false);
-							 
-//							objuser.getObjsilentaudit().setActions("Warning");
-//							objuser.getObjsilentaudit().setComments("User Account was locked,"+objExitinguser.getUsername()+ " "+"entered incorrect password many times.");
-//							objuser.getObjsilentaudit().setTableName("LSuserMaster");
-//							objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
-//							objuser.getObjsilentaudit().setSystemcoments("System Generated");
-//							objuser.getObjsilentaudit().setModuleName(ModuleName);
-//								objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-//					    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//					    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-					    	
-					    	}
-				    	}
-				    	else {
-				    		objExitinguser.getObjResponse().setInformation("ID_INVALID");
-							objExitinguser.getObjResponse().setStatus(false);
-						
-//							objuser.getObjsilentaudit().setActions("Warning");
-//							objuser.getObjsilentaudit().setComments(objExitinguser.getUsername()+ " "+"entered incorrect password");
-//							objuser.getObjsilentaudit().setTableName("LSuserMaster");
-//							objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
-//							objuser.getObjsilentaudit().setSystemcoments("System Generated");
-//							objuser.getObjsilentaudit().setModuleName(ModuleName);
-//								objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-//					    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//					    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-					    	
-				    	}
+
 				}
-			}
-			else {
+
+				else if (!Password.equals(objuser.getsPassword()) || objExitinguser.getLockcount() == 5
+						|| objExitinguser.getUserstatus() == "Locked") {
+					if (!username.trim().toLowerCase().equals("administrator")) {
+						Integer count = objExitinguser.getLockcount() == null ? 0 : objExitinguser.getLockcount();
+						count++;
+						if (count.equals(lockcount.getLockpolicy())) {
+							objExitinguser.setUserstatus("Locked");
+							objExitinguser.setLockcount(count++);
+							objExitinguser.getObjResponse().setInformation("ID_LOCKED");
+							objExitinguser.getObjResponse().setStatus(false);
+
+							lSuserMasterRepository.save(objExitinguser);
+						} else if (count < lockcount.getLockpolicy()) {
+							objExitinguser.setLockcount(count++);
+							objExitinguser.getObjResponse().setInformation("ID_INVALID");
+							objExitinguser.getObjResponse().setStatus(false);
+
+							lSuserMasterRepository.save(objExitinguser);
+						} else {
+							objExitinguser.getObjResponse().setInformation("ID_LOCKED");
+							objExitinguser.getObjResponse().setStatus(false);
+
+						}
+					} else {
+						objExitinguser.getObjResponse().setInformation("ID_INVALID");
+						objExitinguser.getObjResponse().setStatus(false);
+
+					}
+				}
+			} else {
 				objExitinguser.getObjResponse().setInformation("ID_SITEVALID");
 				objExitinguser.getObjResponse().setStatus(false);
-				 
-//				objuser.getObjsilentaudit().setActions("Warning");
-//					objuser.getObjsilentaudit().setComments(objExitinguser.getUsername()+ " "+"does not belongs to the site");
-//					objuser.getObjsilentaudit().setTableName("LSuserMaster");
-//					objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
-//					objuser.getObjsilentaudit().setSystemcoments("System Generated");
-//					objuser.getObjsilentaudit().setModuleName(ModuleName);
-//					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-//		    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//		    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-		    	
+
 				obj.put("user", objExitinguser);
 				return obj;
 			}
-			
+
 			obj.put("multiusergroupcode", objuser.getMultiusergroupcode());
-		} 
-		else
-		{
+		} else {
 			LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
 			objExitinguser = lSuserMasterRepository.findByusernameAndLssitemaster("Administrator", objsite);
 			objExitinguser.setObjResponse(new Response());
 			objExitinguser.getObjResponse().setInformation("ID_NOTEXIST");
 			objExitinguser.getObjResponse().setStatus(false);
-		  
-//			objuser.getObjsilentaudit().setActions("Warning");
-//			objuser.getObjsilentaudit().setComments("User"+" "+objuser.getsUsername()+ " "+"does not exist");
-//			objuser.getObjsilentaudit().setTableName("LSusergroup");
-//			objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
-//			objuser.getObjsilentaudit().setSystemcoments("System Generated");
-//			objuser.getObjsilentaudit().setModuleName(ModuleName);
-//			objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-//    		objuser.getObjsilentaudit().setLssitemaster(Integer.parseInt(objuser.getsSiteCode()));
-//    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-	    	
+
 		}
-		
+
 		obj.put("user", objExitinguser);
-//		if(objExitinguser.getLsusergroup() != null)
-//		{
-//			obj.put("userrights", userService.GetUserRightsonGroup(objExitinguser.getLsusergroup()));
-//			LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
-//			objauditconfig.setLsusermaster(objExitinguser);
-//			obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig));
-//			
-//		}
-		
+
 		return obj;
 	}
-	
+
 	public Boolean Updatepassword(int UserId, String Password) {
 		LSuserMaster objuserforupdate = lSuserMasterRepository.findByusercode(UserId);
 		objuserforupdate.setPassword(AESEncryption.encrypt(Password));
 		lSuserMasterRepository.save(objuserforupdate);
-		
-		//lSuserMasterRepository.setpasswordByusercode("new", objExitinguser.getUsercode());
-		
+
 		return true;
 	}
 
 	public LSuserMaster CheckUserAndPassword(LoggedUser objuser) {
-		
+
 		LSuserMaster objExitinguser = new LSuserMaster();
 		String username = objuser.getsUsername();
-//		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(username,"0");
-		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
-		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndUserretirestatusNot(username,objsite,"0",1);
-		
-		if(objExitinguser != null)
-		{
-			String Password = AESEncryption.decrypt(objExitinguser.getPassword());
-		    objExitinguser.setObjResponse(new Response());
-		    
-		    if(Password == null ){
-		    	objExitinguser.getObjResponse().setInformation("GenerateNewPassword");
-		    	objExitinguser.getObjResponse().setStatus(true);
-		    	
-		    }
-		    else {
-		    	objExitinguser.getObjResponse().setInformation("Valid user and password exist");
-		    	objExitinguser.getObjResponse().setStatus(true);
-		    } 
-		}
-		else
-		{
-//			LSuserMaster objusermaster = lSuserMasterRepository.findByusercode(1);
-			
-			objExitinguser = new LSuserMaster();
-			objExitinguser.setUserstatus("");
-			objExitinguser.setObjResponse(new Response());
-			objExitinguser.getObjResponse().setInformation("Invalid user");
-			objExitinguser.getObjResponse().setStatus(false);
 
+		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
+		objExitinguser = lSuserMasterRepository
+				.findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndUserretirestatusNot(username, objsite, "0", 1);
+
+		if (objExitinguser != null) {
+			String Password = AESEncryption.decrypt(objExitinguser.getPassword());
+			objExitinguser.setObjResponse(new Response());
+
+			if (Password == null) {
+				objExitinguser.getObjResponse().setInformation("GenerateNewPassword");
+				objExitinguser.getObjResponse().setStatus(true);
+
+			} else {
+				objExitinguser.getObjResponse().setInformation("Valid user and password exist");
+				objExitinguser.getObjResponse().setStatus(true);
+			}
+		} else {
+			
+			objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(username,"0");
+			
+			if (objExitinguser != null) {
+				objExitinguser = new LSuserMaster();
+				objExitinguser.setUserstatus("");
+				objExitinguser.setObjResponse(new Response());
+				objExitinguser.getObjResponse().setInformation("User is not present on the site.");
+				objExitinguser.getObjResponse().setStatus(false);
+
+			} else {
+				objExitinguser = new LSuserMaster();
+				objExitinguser.setUserstatus("");
+				objExitinguser.setObjResponse(new Response());
+				objExitinguser.getObjResponse().setInformation("Invalid user");
+				objExitinguser.getObjResponse().setStatus(false);
+			}
 		}
 		return objExitinguser;
 	}
@@ -495,139 +344,126 @@ public class LoginService {
 //		objExitinguser = lSuserMasterRepository.findByusername(username);
 		LSSiteMaster objsiteobj = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
 //		objExitinguser = lSuserMasterRepository.findByusernameIgnoreCase(username);
-		objExitinguser = lSuserMasterRepository.findByusernameIgnoreCaseAndLssitemaster(username,objsiteobj);
+		objExitinguser = lSuserMasterRepository.findByusernameIgnoreCaseAndLssitemaster(username, objsiteobj);
 //		objExitinguser = lSuserMasterRepository.findByusercode(objuser.getUserID());
-		
+
 		List<LSPasswordHistoryDetails> listofpwd = new ArrayList<LSPasswordHistoryDetails>();
 		LSPasswordHistoryDetails objectpwd = new LSPasswordHistoryDetails();
-		List<LSPasswordHistoryDetails> result= new ArrayList<LSPasswordHistoryDetails>();
+		List<LSPasswordHistoryDetails> result = new ArrayList<LSPasswordHistoryDetails>();
 //		List<LSPasswordPolicy> passHistorycount = LSPasswordPolicyRepository.findAll();
-		LSPasswordPolicy passHistorycount = LSPasswordPolicyRepository.findByLssitemaster(objExitinguser.getLssitemaster());
+		LSPasswordPolicy passHistorycount = LSPasswordPolicyRepository
+				.findByLssitemaster(objExitinguser.getLssitemaster());
 
+		listofpwd = LSPasswordHistoryDetailsRepository
+				.findTop5ByAndLsusermasterInOrderByPasswordcodeDesc(objExitinguser);
 
-		 listofpwd = LSPasswordHistoryDetailsRepository.findTop5ByAndLsusermasterInOrderByPasswordcodeDesc(objExitinguser);
-
-		if(objExitinguser != null)
-		{
+		if (objExitinguser != null) {
 			objExitinguser.setObjResponse(new Response());
-		    
-		    String newpassword=AESEncryption.encrypt(objuser.getsNewPassword());
-		  if(listofpwd.size()!=0)  {
-			  if(listofpwd.size()> passHistorycount.getPasswordhistory()) {
-		 listofpwd.subList( passHistorycount.getPasswordhistory(),listofpwd.size()).clear();
-			  }
-		 result = listofpwd.stream().filter(LSPasswordHistoryDetails -> newpassword.equals(LSPasswordHistoryDetails.getPassword()))
-	                .collect(Collectors.toList());
-		  }
-		 if(result.size()!=0) {
+
+			String newpassword = AESEncryption.encrypt(objuser.getsNewPassword());
+			if (listofpwd.size() != 0) {
+				if (listofpwd.size() > passHistorycount.getPasswordhistory()) {
+					listofpwd.subList(passHistorycount.getPasswordhistory(), listofpwd.size()).clear();
+				}
+				result = listofpwd.stream()
+						.filter(LSPasswordHistoryDetails -> newpassword.equals(LSPasswordHistoryDetails.getPassword()))
+						.collect(Collectors.toList());
+			}
+			if (result.size() != 0) {
 				objExitinguser.getObjResponse().setInformation("ID_HISTORY");
 				objExitinguser.getObjResponse().setStatus(false);
-				if(objuser.getObjsilentaudit() != null)
-		    	{
-		    		objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-		    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+				if (objuser.getObjsilentaudit() != null) {
+					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
+					objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
 //		    		objuser.getObjsilentaudit().setModuleName(ModuleName);
-		    		objuser.getObjsilentaudit().setComments(objuser.getsUsername()+" "+"entered password does not reach the history range");
+					objuser.getObjsilentaudit().setComments(
+							objuser.getsUsername() + " " + "entered password does not reach the history range");
 //		    		objuser.getObjsilentaudit().setActions("PassWord Created");
 //		    		objuser.getObjsilentaudit().setSystemcoments("System Generated");
-		    		objuser.getObjsilentaudit().setManipulatetype("Password");
-		    		objuser.getObjsilentaudit().setTableName("LSPasswordHistoryDetails");
-		    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-		    		
-		    	}
+					objuser.getObjsilentaudit().setManipulatetype("Password");
+					objuser.getObjsilentaudit().setTableName("LSPasswordHistoryDetails");
+					lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
+				}
 				return objExitinguser;
 
-		 }
-		 
-		 String existingpassword = AESEncryption.decrypt(objExitinguser.getPassword());
-		 if(objuser.getsOLDPassword().equals(existingpassword) && objuser.getsOLDPassword() !="")
-		 {
-			 if(objuser.getsNewPassword().equals(objuser.getsConfirmPassword()))
-					 {
-			 objectpwd.setPassword(AESEncryption.encrypt(objuser.getsNewPassword()));
-				objectpwd.setPasswordcreatedate(new Date());
-				objectpwd.setLsusermaster(objExitinguser);
-				LSPasswordHistoryDetailsRepository.save(objectpwd);
-				
-				objExitinguser.setPassword(AESEncryption.encrypt(objuser.getsNewPassword()));
-				objExitinguser.setPasswordexpirydate(objuser.getPasswordexpirydate());
-				objExitinguser.setPasswordstatus(0);
-				lSuserMasterRepository.save(objExitinguser);
-				
-				objExitinguser.getObjResponse().setInformation("ID_SUCCESSMSG");
-				objExitinguser.getObjResponse().setStatus(true);
-				
-				if(objuser.getObjsilentaudit() != null)
-		    	{
-		    		objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-		    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+			}
+
+			String existingpassword = AESEncryption.decrypt(objExitinguser.getPassword());
+			if (objuser.getsOLDPassword().equals(existingpassword) && objuser.getsOLDPassword() != "") {
+				if (objuser.getsNewPassword().equals(objuser.getsConfirmPassword())) {
+					objectpwd.setPassword(AESEncryption.encrypt(objuser.getsNewPassword()));
+					objectpwd.setPasswordcreatedate(new Date());
+					objectpwd.setLsusermaster(objExitinguser);
+					LSPasswordHistoryDetailsRepository.save(objectpwd);
+
+					objExitinguser.setPassword(AESEncryption.encrypt(objuser.getsNewPassword()));
+					objExitinguser.setPasswordexpirydate(objuser.getPasswordexpirydate());
+					objExitinguser.setPasswordstatus(0);
+					lSuserMasterRepository.save(objExitinguser);
+
+					objExitinguser.getObjResponse().setInformation("ID_SUCCESSMSG");
+					objExitinguser.getObjResponse().setStatus(true);
+
+					if (objuser.getObjsilentaudit() != null) {
+						objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
+						objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
 //		    		objuser.getObjsilentaudit().setModuleName(ModuleName);
 //		    		objuser.getObjsilentaudit().setComments("PassWord Created Successfully");
 //		    		objuser.getObjsilentaudit().setActions("PassWord Created");
 //		    		objuser.getObjsilentaudit().setSystemcoments("System Generated");
-		    		objuser.getObjsilentaudit().setManipulatetype("Password");
-		    		objuser.getObjsilentaudit().setTableName("LSuserMaster");
-		    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-		    		
-		    	}
-				
-					 }
-				else
-				{
+						objuser.getObjsilentaudit().setManipulatetype("Password");
+						objuser.getObjsilentaudit().setTableName("LSuserMaster");
+						lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
+					}
+
+				} else {
 					objExitinguser.getObjResponse().setInformation("ID_NOTMATCH");
 					objExitinguser.getObjResponse().setStatus(false);
 				}
-		 }
-		 else if((!objuser.getsOLDPassword().equals(existingpassword)) && (existingpassword!=null))
-			{
+			} else if ((!objuser.getsOLDPassword().equals(existingpassword)) && (existingpassword != null)) {
 				objExitinguser.getObjResponse().setInformation("ID_NOTOLDPASSMATCH");
 				objExitinguser.getObjResponse().setStatus(false);
-			}
-			 else if(objuser.getsNewPassword().equals(objuser.getsConfirmPassword()) && objuser.getsOLDPassword() =="") {
-				
+			} else if (objuser.getsNewPassword().equals(objuser.getsConfirmPassword())
+					&& objuser.getsOLDPassword() == "") {
 
 				objectpwd.setPassword(AESEncryption.encrypt(objuser.getsNewPassword()));
 				objectpwd.setPasswordcreatedate(new Date());
 				objectpwd.setLsusermaster(objExitinguser);
 				LSPasswordHistoryDetailsRepository.save(objectpwd);
-				
+
 				objExitinguser.setPassword(AESEncryption.encrypt(objuser.getsNewPassword()));
 				objExitinguser.setPasswordexpirydate(objuser.getPasswordexpirydate());
 				lSuserMasterRepository.save(objExitinguser);
-				
+
 				objExitinguser.getObjResponse().setInformation("ID_SUCCESSMSG");
 				objExitinguser.getObjResponse().setStatus(true);
-				
-				if(objuser.getObjsilentaudit() != null)
-		    	{
-		    		objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-		    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+
+				if (objuser.getObjsilentaudit() != null) {
+					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
+					objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
 //		    		objuser.getObjsilentaudit().setModuleName(ModuleName);
 //		    		objuser.getObjsilentaudit().setComments("PassWord Created Successfully");
 //		    		objuser.getObjsilentaudit().setActions("PassWord Created");
 //		    		objuser.getObjsilentaudit().setSystemcoments("System Generated");
-		    		objuser.getObjsilentaudit().setManipulatetype("Password");
-		    		objuser.getObjsilentaudit().setTableName("LSuserMaster");
-		    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-		    		
-		    	}
-				
-				
-			}
-			else
-			{
+					objuser.getObjsilentaudit().setManipulatetype("Password");
+					objuser.getObjsilentaudit().setTableName("LSuserMaster");
+					lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
+				}
+
+			} else {
 				objExitinguser.getObjResponse().setInformation("ID_NOTMATCH");
 				objExitinguser.getObjResponse().setStatus(false);
 			}
-		}
-		else
-		{
+		} else {
 			objExitinguser.getObjResponse().setInformation("ID_INVALID");
 			objExitinguser.getObjResponse().setStatus(false);
 		}
 		return objExitinguser;
 	}
-	
+
 //		public Boolean Logout(LSuserMaster lsuserMaster)
 //		{
 //			if(lsuserMaster.getObjsilentaudit() != null)
@@ -645,11 +481,9 @@ public class LoginService {
 //			lsactiveUserRepository.deleteBylsusermaster(lsuserMaster);
 //			return true;
 //		}
-	
-	public Boolean Logout(LSuserMaster lsuserMaster)
-	{
-		if(lsuserMaster.getObjsilentaudit() != null)
-		{
+
+	public Boolean Logout(LSuserMaster lsuserMaster) {
+		if (lsuserMaster.getObjsilentaudit() != null) {
 			lsuserMaster.getObjsilentaudit().setLsuserMaster(lsuserMaster.getUsercode());
 			lsuserMaster.getObjsilentaudit().setLssitemaster(lsuserMaster.getObjsilentaudit().getLssitemaster());
 			lsuserMaster.getObjsilentaudit().setModuleName(ModuleName);
@@ -662,118 +496,114 @@ public class LoginService {
 		}
 		lsactiveUserRepository.deleteBylsusermaster(lsuserMaster);
 		return true;
-	}	
-		
-		@SuppressWarnings({ "unused" })
-		public LSuserMaster ChangePassword(LoggedUser objuser) {
+	}
+
+	@SuppressWarnings({ "unused" })
+	public LSuserMaster ChangePassword(LoggedUser objuser) {
 		LSuserMaster objExitinguser = new LSuserMaster();
-		
+
 		LSPasswordHistoryDetails objectpwd = new LSPasswordHistoryDetails();
 //		LSPasswordHistoryDetails passTopRecord=LSPasswordHistoryDetailsRepository.findTopByOrderByPasswordcodeDesc();
 		List<LSPasswordHistoryDetails> listofpwd = new ArrayList<LSPasswordHistoryDetails>();
 //		LSPasswordHistoryDetails objectpwd = new LSPasswordHistoryDetails();
-		List<LSPasswordHistoryDetails> result= new ArrayList<LSPasswordHistoryDetails>();
-	
-//		Integer diff=0;
-		 
-		String username = objuser.getsUsername();
-		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(objuser.getLsusermaster().getLssitemaster().getSitecode());
-		objExitinguser = lSuserMasterRepository.findByusernameAndLssitemaster(username, objsite);
-		LSPasswordPolicy passHistorycount =  LSPasswordPolicyRepository.findByLssitemaster(objExitinguser.getLssitemaster());
-//		 
-		 listofpwd = LSPasswordHistoryDetailsRepository.findTop5ByAndLsusermasterInOrderByPasswordcodeDesc(objExitinguser);
+		List<LSPasswordHistoryDetails> result = new ArrayList<LSPasswordHistoryDetails>();
 
-		if(objExitinguser != null)
-		{
+//		Integer diff=0;
+
+		String username = objuser.getsUsername();
+		LSSiteMaster objsite = lSSiteMasterRepository
+				.findBysitecode(objuser.getLsusermaster().getLssitemaster().getSitecode());
+		objExitinguser = lSuserMasterRepository.findByusernameAndLssitemaster(username, objsite);
+		LSPasswordPolicy passHistorycount = LSPasswordPolicyRepository
+				.findByLssitemaster(objExitinguser.getLssitemaster());
+//		 
+		listofpwd = LSPasswordHistoryDetailsRepository
+				.findTop5ByAndLsusermasterInOrderByPasswordcodeDesc(objExitinguser);
+
+		if (objExitinguser != null) {
 			objExitinguser.setObjResponse(new Response());
-			
+
 			String Password = AESEncryption.decrypt(objExitinguser.getPassword());
-		    objExitinguser.setObjResponse(new Response());
-		    
-		    String newpassword=AESEncryption.encrypt(objuser.getsNewPassword());
+			objExitinguser.setObjResponse(new Response());
+
+			String newpassword = AESEncryption.encrypt(objuser.getsNewPassword());
 //		   LSPasswordHistoryDetails list=LSPasswordHistoryDetailsRepository.findTopByPasswordOrderByPasswordcodeDesc(newpassword);
-		   if(listofpwd.size()!=0)  {
-				  if(listofpwd.size()> passHistorycount.getPasswordhistory()) {
-			 listofpwd.subList( passHistorycount.getPasswordhistory(),listofpwd.size()).clear();
-				  }
-			 result = listofpwd.stream().filter(LSPasswordHistoryDetails -> newpassword.equals(LSPasswordHistoryDetails.getPassword()))
-		                .collect(Collectors.toList());
-			  }
+			if (listofpwd.size() != 0) {
+				if (listofpwd.size() > passHistorycount.getPasswordhistory()) {
+					listofpwd.subList(passHistorycount.getPasswordhistory(), listofpwd.size()).clear();
+				}
+				result = listofpwd.stream()
+						.filter(LSPasswordHistoryDetails -> newpassword.equals(LSPasswordHistoryDetails.getPassword()))
+						.collect(Collectors.toList());
+			}
 //		   if(list!=null) {
 //			   diff =passTopRecord.getPasswordcode()-list.getPasswordcode();
 //		   }
-		    if(!Password.equals(objuser.getsPassword()))
-		    {
-		    	objExitinguser.getObjResponse().setInformation("ID_EXIST");
+			if (!Password.equals(objuser.getsPassword())) {
+				objExitinguser.getObjResponse().setInformation("ID_EXIST");
 				objExitinguser.getObjResponse().setStatus(false);
-				if(objuser.getObjsilentaudit() != null)
-		    	{
-		    		objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-		    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-		    		objuser.getObjsilentaudit().setComments(objuser.getsUsername()+" "+"entered existing password incorrectly");
-		    		objuser.getObjsilentaudit().setManipulatetype("Password");
-		    		objuser.getObjsilentaudit().setTableName("LSuserMaster");
-		    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-		    		
-		    	}
-				return objExitinguser;
-		    }
-//			if(!diff.equals(passHistorycount.getPasswordhistory()) && diff<=passHistorycount.getPasswordhistory() && diff!=0) {
-		    if(result.size()!=0) {	
-				objExitinguser.getObjResponse().setInformation("ID_HISTORY");
-				objExitinguser.getObjResponse().setStatus(false);
-				if(objuser.getObjsilentaudit() != null)
-		    	{
-		    		objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-		    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//		    		objuser.getObjsilentaudit().setModuleName(ModuleName);
-		    		objuser.getObjsilentaudit().setComments(objuser.getsUsername()+" "+"entered password does not reach the history range");
-//		    		objuser.getObjsilentaudit().setActions("PassWord Created");
-//		    		objuser.getObjsilentaudit().setSystemcoments("System Generated");
-		    		objuser.getObjsilentaudit().setManipulatetype("Password");
-		    		objuser.getObjsilentaudit().setTableName("LSPasswordHistoryDetails");
-		    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-		    		
-		    	}
+				if (objuser.getObjsilentaudit() != null) {
+					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
+					objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+					objuser.getObjsilentaudit()
+							.setComments(objuser.getsUsername() + " " + "entered existing password incorrectly");
+					objuser.getObjsilentaudit().setManipulatetype("Password");
+					objuser.getObjsilentaudit().setTableName("LSuserMaster");
+					lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
+				}
 				return objExitinguser;
 			}
-			if(objuser.getsNewPassword().equals(objuser.getsConfirmPassword())) {
-				
+//			if(!diff.equals(passHistorycount.getPasswordhistory()) && diff<=passHistorycount.getPasswordhistory() && diff!=0) {
+			if (result.size() != 0) {
+				objExitinguser.getObjResponse().setInformation("ID_HISTORY");
+				objExitinguser.getObjResponse().setStatus(false);
+				if (objuser.getObjsilentaudit() != null) {
+					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
+					objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+//		    		objuser.getObjsilentaudit().setModuleName(ModuleName);
+					objuser.getObjsilentaudit().setComments(
+							objuser.getsUsername() + " " + "entered password does not reach the history range");
+//		    		objuser.getObjsilentaudit().setActions("PassWord Created");
+//		    		objuser.getObjsilentaudit().setSystemcoments("System Generated");
+					objuser.getObjsilentaudit().setManipulatetype("Password");
+					objuser.getObjsilentaudit().setTableName("LSPasswordHistoryDetails");
+					lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
+				}
+				return objExitinguser;
+			}
+			if (objuser.getsNewPassword().equals(objuser.getsConfirmPassword())) {
+
 				objExitinguser.setPassword(AESEncryption.encrypt(objuser.getsNewPassword()));
 				lSuserMasterRepository.save(objExitinguser);
-				
+
 				objectpwd.setPassword(AESEncryption.encrypt(objuser.getsNewPassword()));
 				objectpwd.setPasswordcreatedate(new Date());
 				objectpwd.setLsusermaster(objuser.getLsusermaster());
 				LSPasswordHistoryDetailsRepository.save(objectpwd);
-				
+
 				objExitinguser.getObjResponse().setInformation("ID_CHANGESUC");
 				objExitinguser.getObjResponse().setStatus(true);
-				
-				if(objuser.getObjsilentaudit() != null)
-		    	{
-		    		objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-		    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+
+				if (objuser.getObjsilentaudit() != null) {
+					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
+					objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
 //		    		objuser.getObjsilentaudit().setModuleName(ModuleName);
 //		    		objuser.getObjsilentaudit().setComments("PassWord Created Successfully");
 //		    		objuser.getObjsilentaudit().setActions("PassWord Created");
-		    		objuser.getObjsilentaudit().setSystemcoments("System Generated");
+					objuser.getObjsilentaudit().setSystemcoments("System Generated");
 //		    		objuser.getObjsilentaudit().setManipulatetype("Password");
-		    		objuser.getObjsilentaudit().setTableName("LSuserMaster");
-		    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-		    		
-		    	
-			}
-			
-			}
-			else
-			{
+					objuser.getObjsilentaudit().setTableName("LSuserMaster");
+					lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
+				}
+
+			} else {
 				objExitinguser.getObjResponse().setInformation("ID_NOTMATCH");
 				objExitinguser.getObjResponse().setStatus(false);
 			}
-		}
-		else
-		{
+		} else {
 			objExitinguser.getObjResponse().setInformation("ID_INVALID");
 			objExitinguser.getObjResponse().setStatus(false);
 		}
@@ -781,56 +611,51 @@ public class LoginService {
 	}
 
 	public LSdomainMaster InsertupdateDomain(LSdomainMaster objClass) {
-		
+
 		objClass.setResponse(new Response());
-		if(objClass.getDomaincode() == null && lSDomainMasterRepository.findByDomainnameIgnoreCaseAndDomainstatus(objClass.getDomainname(),1) != null)
-		{
+		if (objClass.getDomaincode() == null && lSDomainMasterRepository
+				.findByDomainnameIgnoreCaseAndDomainstatus(objClass.getDomainname(), 1) != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
 //			silent audit
-			if(objClass.getObjsilentaudit() != null)
-	    	{   
+			if (objClass.getObjsilentaudit() != null) {
 				objClass.getObjsilentaudit().setActions("Warning");
-				objClass.getObjsilentaudit().setComments(objClass.getObjsilentaudit().getUsername()+" "+"made attempt to create existing domain name");
+				objClass.getObjsilentaudit().setComments(objClass.getObjsilentaudit().getUsername() + " "
+						+ "made attempt to create existing domain name");
 				objClass.getObjsilentaudit().setTableName("LSusergroup");
-	    		
-	    	}
-			return objClass;
-		}
-		else if(objClass.getDomaincode() != null && objClass.getDomainstatus() != 1) {
-			
 
-			if(objClass.getObjsilentaudit() != null)
-	    	{
+			}
+			return objClass;
+		} else if (objClass.getDomaincode() != null && objClass.getDomainstatus() != 1) {
+
+			if (objClass.getObjsilentaudit() != null) {
 				objClass.getObjsilentaudit().setTableName("LSdomainMaster");
 
-	    	}
-			
+			}
+
 			objClass = lSDomainMasterRepository.findOne(objClass.getDomaincode());
 			objClass.setDomainstatus(-1);
 			lSDomainMasterRepository.save(objClass);
 			objClass.setResponse(new Response());
 			objClass.getResponse().setStatus(true);
 			objClass.getResponse().setInformation("ID_DOMAINDEL");
-			
+
 			return objClass;
 		}
 		lSDomainMasterRepository.save(objClass);
 		objClass.getResponse().setStatus(true);
 		objClass.getResponse().setInformation("");
-		
-		//silent AuditTrail
-		if(objClass.getObjsilentaudit() != null)
-    	{
+
+		// silent AuditTrail
+		if (objClass.getObjsilentaudit() != null) {
 			objClass.getObjsilentaudit().setTableName("LSdomainMaster");
-    	}
+		}
 		return objClass;
 	}
 
 	public LSuserMaster importADSScreen(LSuserMaster objClass) {
-		//silent AuditTrail
-		if(objClass.getObjsilentaudit() != null)
-		{
+		// silent AuditTrail
+		if (objClass.getObjsilentaudit() != null) {
 			objClass.getObjsilentaudit().setModuleName("UserManagement");
 			objClass.getObjsilentaudit().setComments("Import ADSscreen Successfully");
 			objClass.getObjsilentaudit().setActions("View / Load");
@@ -839,11 +664,11 @@ public class LoginService {
 			lscfttransactionRepository.save(objClass.getObjsilentaudit());
 		}
 
-		//Manual Audit
-		if(objClass.getObjuser() != null) {
-			LScfttransaction manualAudit=new LScfttransaction();
+		// Manual Audit
+		if (objClass.getObjuser() != null) {
+			LScfttransaction manualAudit = new LScfttransaction();
 			Date date = new Date();
-			
+
 			manualAudit.setModuleName("UserManagement");
 			manualAudit.setComments("Import ADSscreen Successfully");
 			manualAudit.setActions("View / Load");
@@ -858,17 +683,17 @@ public class LoginService {
 		objClass.setResponse(new Response());
 		objClass.getResponse().setStatus(false);
 		objClass.getResponse().setInformation("Username and password invalid");
-		
-		return objClass;								
+
+		return objClass;
 	}
 
 	public Response ADSDomainServerConnection(Map<String, Object> objMap) {
-		
-		Response res=new Response();
-		
+
+		Response res = new Response();
+
 		Map<String, Object> objCredentials = new HashMap<>();
-		
-		ObjectMapper objMapper= new ObjectMapper();
+
+		ObjectMapper objMapper = new ObjectMapper();
 		String sUsername = (String) objMap.get("sUsername");
 		String sPassword = (String) objMap.get("sPassword");
 		String sDomain = ((String) objMap.get("sDomain")).trim();
@@ -881,25 +706,24 @@ public class LoginService {
 			}
 
 //			String url = "ldap://" + sDomain + ".com";
-			String userName =  sUsername ;
+			String userName = sUsername;
 			String password = sPassword;
-			
+
 //			userName = userName.replace("\\", "/");
-			
+
 			objCredentials.put("sServerUserName", userName);
 			objCredentials.put("sPassword", password);
 			objCredentials.put("sDomainName", sDomain);
-			
+
 //			Boolean isConnect = ADS_Connection.CheckLDAPConnection(url, userName, password);
 			Boolean isConnect = ADS_Connection.CheckDomainLDAPConnection(objCredentials);
-			
 
 			if (isConnect) {
 				res.setInformation("ID_CONNECTSUCC");
 				res.setStatus(true);
-			
+
 				LScfttransaction cfttransaction;
-				if(objMap.containsKey("objsilentaudit")) {
+				if (objMap.containsKey("objsilentaudit")) {
 					cfttransaction = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
 					lscfttransactionRepository.save(cfttransaction);
 				}
@@ -921,53 +745,54 @@ public class LoginService {
 	}
 
 	public Map<String, Object> addImportADSUsers(Map<String, Object> objMap) {
-		
-		Map<String, Object> rtnMap=new HashMap<>();
+
+		Map<String, Object> rtnMap = new HashMap<>();
 		boolean isCompleted = false;
-	
+
 		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> lstAdsUsers = (List<Map<String, Object>>) objMap.get("ADSUsers");	
-		ObjectMapper objMapper= new ObjectMapper();
-		
+		List<Map<String, Object>> lstAdsUsers = (List<Map<String, Object>>) objMap.get("ADSUsers");
+		ObjectMapper objMapper = new ObjectMapper();
+
 		if (!lstAdsUsers.isEmpty()) {
-			
+
 			@SuppressWarnings("unchecked")
 			Map<String, Object> uGroup = (Map<String, Object>) objMap.get("userGroup");
 			@SuppressWarnings("unchecked")
 			Map<String, Object> uSite = (Map<String, Object>) uGroup.get("lssitemaster");
-			
+
 			LSusergroup userGroup = LSusergroupRepository.findOne((Integer) uGroup.get("usergroupcode"));
 			LSSiteMaster sSiteCode = lSSiteMasterRepository.findBysitecode((Integer) uSite.get("sitecode"));
-			
+
 			rtnMap.put("LSusergroup", userGroup);
 			rtnMap.put("LSSiteMaster", sSiteCode);
-			
-			List<LSuserMaster> lstUsers=new ArrayList<>();
-			
+
+			List<LSuserMaster> lstUsers = new ArrayList<>();
+
 			@SuppressWarnings("unchecked")
 			Map<String, Object> sObject = (Map<String, Object>) objMap.get("objsilentaudit");
 			@SuppressWarnings("unchecked")
 			Map<String, Object> master = (Map<String, Object>) sObject.get("lsuserMaster");
-			
+
 			String sCreateBy = (String) master.get("username");
 			String sRepeatedUser = "";
-			
+
 			for (int u = 0; u < lstAdsUsers.size(); u++) {
 				String sUserDomainID = (String) lstAdsUsers.get(u).get("DomainUserID");
-				
-				List<LSuserMaster> lstUserName=lSuserMasterRepository.findByUsernameAndLssitemaster(sUserDomainID, sSiteCode);
-				
-				LSuserMaster lsUser=new LSuserMaster();
-				
+
+				List<LSuserMaster> lstUserName = lSuserMasterRepository.findByUsernameAndLssitemaster(sUserDomainID,
+						sSiteCode);
+
+				LSuserMaster lsUser = new LSuserMaster();
+
 				if (lstUserName.isEmpty()) {
-					
+
 					String sUserFullName = (String) lstAdsUsers.get(u).get("UserName");
 					int sApprove = Integer.parseInt((String) lstAdsUsers.get(u).get("sApprove"));
 
 					String sUserStatus = "I";
 					if (sApprove == 1)
 						sUserStatus = "A";
-					
+
 					lsUser.setCreatedby(sCreateBy);
 					lsUser.setLockcount(0);
 					lsUser.setLsusergroup(userGroup);
@@ -975,11 +800,10 @@ public class LoginService {
 					lsUser.setUsername(sUserDomainID);
 					lsUser.setUserstatus(sUserStatus);
 					lsUser.setLssitemaster(sSiteCode);
-				} 
-				else {
-					if(sRepeatedUser.length() > 0) {
+				} else {
+					if (sRepeatedUser.length() > 0) {
 						sRepeatedUser += (String) ", " + sUserDomainID;
-					}else {
+					} else {
 						sRepeatedUser = (String) sUserDomainID;
 					}
 				}
@@ -988,18 +812,17 @@ public class LoginService {
 			rtnMap.put("sRepeatedUser", sRepeatedUser);
 			if (lstUsers.size() > 0) {
 				lSuserMasterRepository.save(lstUsers);
-				
+
 				isCompleted = true;
-				
-				
+
 				LScfttransaction cfttransaction;
-				if(objMap.containsKey("objsilentaudit")) {
+				if (objMap.containsKey("objsilentaudit")) {
 					cfttransaction = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
 					lscfttransactionRepository.save(cfttransaction);
 				}
 			} else {
 				isCompleted = false;
-				if(objMap.containsKey("objsilentaudit")) {
+				if (objMap.containsKey("objsilentaudit")) {
 					LScfttransaction silentaudit;
 					silentaudit = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
 					silentaudit.setComments("Error in saving imported user");
@@ -1009,21 +832,20 @@ public class LoginService {
 				}
 			}
 		}
-		if(isCompleted==false) {
-		if(objMap.containsKey("objsilentaudit")) {
-			LScfttransaction silentaudit;
-			silentaudit = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
-			silentaudit.setComments("Failed to import the user");
-			silentaudit.setActions("Warning");
-			silentaudit.setTableName("LSuserMaster");
-			lscfttransactionRepository.save(silentaudit);
-		}
+		if (isCompleted == false) {
+			if (objMap.containsKey("objsilentaudit")) {
+				LScfttransaction silentaudit;
+				silentaudit = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
+				silentaudit.setComments("Failed to import the user");
+				silentaudit.setActions("Warning");
+				silentaudit.setTableName("LSuserMaster");
+				lscfttransactionRepository.save(silentaudit);
+			}
 		}
 		rtnMap.put("isCompleted", isCompleted);
-		
+
 		return rtnMap;
 
-		
 	}
 
 	public Map<String, Object> ADSServerDomainCombo(LSuserMaster Objclass) {
@@ -1035,132 +857,118 @@ public class LoginService {
 			listGroup = ADSGroupnameLoad(Objclass.getLssitemaster());
 			rtnObjMap.put("oResObj", listDomain);
 			rtnObjMap.put("oResObj1", listGroup);
-			
 
 		} catch (Exception ex) {
-			
+
 		}
 		return rtnObjMap;
 	}
 
-	public List<LSusergroup> ADSGroupnameLoad(LSSiteMaster Objclass) {	
-		
+	public List<LSusergroup> ADSGroupnameLoad(LSSiteMaster Objclass) {
+
 		return LSusergroupRepository.findBylssitemasterOrderByUsergroupcodeDesc(Objclass.getSitecode());
-	
+
 	}
 
 	public List<LSdomainMaster> ADSServerDomainLoad() {
-		
-		return lSDomainMasterRepository.findBycategoriesAndDomainstatus("server",1);
+
+		return lSDomainMasterRepository.findBycategoriesAndDomainstatus("server", 1);
 	}
 
 	public List<LSuserMaster> UserMasterDetails(LSusergroup sUserGroupID, LSSiteMaster sSiteCode) {
-		
-		List<LSuserMaster> lstUsers = lSuserMasterRepository.findByLssitemasterAndLsusergroup(sSiteCode,sUserGroupID);
-		
+
+		List<LSuserMaster> lstUsers = lSuserMasterRepository.findByLssitemasterAndLsusergroup(sSiteCode, sUserGroupID);
+
 		return lstUsers;
 	}
 
 	public List<LSdomainMaster> LoadDomainMaster(LSSiteMaster objsite) {
-		return lSDomainMasterRepository.findBylssitemasterAndDomainstatus(objsite,1);
+		return lSDomainMasterRepository.findBylssitemasterAndDomainstatus(objsite, 1);
 	}
-public List<LSdomainMaster> LoadDomainMasterAdmin(LSSiteMaster objsite) {
+
+	public List<LSdomainMaster> LoadDomainMasterAdmin(LSSiteMaster objsite) {
 		return lSDomainMasterRepository.findAll();
 	}
-public LSuserMaster validateuser(LSuserMaster objClass) {
-	LSuserMaster objuser = new LSuserMaster();
-	LSuserMaster objExitinguser = new LSuserMaster();
-	String username = objClass.getUsername();
-	String usergroupname = objClass.getLsusergroup().getUsergroupname();
-	objExitinguser = lSuserMasterRepository.findByusernameAndLssitemaster(username, objClass.getLssitemaster());
-	objuser.setObjResponse(new Response());
-	if(objExitinguser != null)
-	{
-		if(usergroupname.equalsIgnoreCase(objExitinguser.getLsusergroup().getUsergroupname())) {
-			String Password = AESEncryption.decrypt(objExitinguser.getPassword());
-			
-		    if(Password.equals(objClass.getPassword()) && objExitinguser.getUserstatus()!="Locked")
-		    {
-		    	objuser.getObjResponse().setStatus(true);
-		    	objuser.setUsername(AESEncryption.encrypt(objExitinguser.getUsername()));
-		    	objuser.setPassword(objExitinguser.getPassword());
-		    }
-		    else if(!Password.equals(objClass.getPassword()))
-		    {
-		    	objuser.getObjResponse().setStatus(false);
-				objuser.getObjResponse().setInformation("Password mismatch");
-		    }
-		    else
-		    {
-		    	objuser.getObjResponse().setStatus(false);
-				objuser.getObjResponse().setInformation("User Locked");
-		    }
-		}else {
-			/*LSusergroup usergroup = LSusergroupRepository.findByusergroupname(usergroupname);
-			
-			if(usergroup== null) {
+
+	public LSuserMaster validateuser(LSuserMaster objClass) {
+		LSuserMaster objuser = new LSuserMaster();
+		LSuserMaster objExitinguser = new LSuserMaster();
+		String username = objClass.getUsername();
+		String usergroupname = objClass.getLsusergroup().getUsergroupname();
+		objExitinguser = lSuserMasterRepository.findByusernameAndLssitemaster(username, objClass.getLssitemaster());
+		objuser.setObjResponse(new Response());
+		if (objExitinguser != null) {
+			if (usergroupname.equalsIgnoreCase(objExitinguser.getLsusergroup().getUsergroupname())) {
+				String Password = AESEncryption.decrypt(objExitinguser.getPassword());
+
+				if (Password.equals(objClass.getPassword()) && objExitinguser.getUserstatus() != "Locked") {
+					objuser.getObjResponse().setStatus(true);
+					objuser.setUsername(AESEncryption.encrypt(objExitinguser.getUsername()));
+					objuser.setPassword(objExitinguser.getPassword());
+				} else if (!Password.equals(objClass.getPassword())) {
+					objuser.getObjResponse().setStatus(false);
+					objuser.getObjResponse().setInformation("Password mismatch");
+				} else {
+					objuser.getObjResponse().setStatus(false);
+					objuser.getObjResponse().setInformation("User Locked");
+				}
+			} else {
+				/*
+				 * LSusergroup usergroup =
+				 * LSusergroupRepository.findByusergroupname(usergroupname);
+				 * 
+				 * if(usergroup== null) { objuser.getObjResponse().setStatus(false);
+				 * objuser.getObjResponse().
+				 * setInformation("user group are not matched , contact Administrator"); return
+				 * objuser; } else { objExitinguser.setLsusergroup(usergroup);
+				 * lsuserMasterRepository.save(objExitinguser); }
+				 */
 				objuser.getObjResponse().setStatus(false);
-				objuser.getObjResponse().setInformation("user group are not matched , contact Administrator");
+				objuser.getObjResponse()
+						.setInformation("Group name is Mismatched for this Username in ELN Application");
 				return objuser;
 			}
-			else {
-				objExitinguser.setLsusergroup(usergroup);
-				lsuserMasterRepository.save(objExitinguser);
-			}*/
+
+			/*
+			 * String Password = AESEncryption.decrypt(objExitinguser.getPassword());
+			 * 
+			 * if(Password.equals(objClass.getPassword()) &&
+			 * objExitinguser.getUserstatus()!="Locked") {
+			 * objuser.getObjResponse().setStatus(true);
+			 * objuser.setUsername(AESEncryption.encrypt(objExitinguser.getUsername()));
+			 * objuser.setPassword(objExitinguser.getPassword()); } else
+			 * if(!Password.equals(objClass.getPassword())) {
+			 * objuser.getObjResponse().setStatus(false);
+			 * objuser.getObjResponse().setInformation("Password mismatch"); } else {
+			 * objuser.getObjResponse().setStatus(false);
+			 * objuser.getObjResponse().setInformation("User Locked"); }
+			 */
+		} else {
 			objuser.getObjResponse().setStatus(false);
-			objuser.getObjResponse().setInformation("Group name is Mismatched for this Username in ELN Application");
-			return objuser;
+			objuser.getObjResponse().setInformation("Invalid user");
 		}
-		
-		/*String Password = AESEncryption.decrypt(objExitinguser.getPassword());
-		
-	    if(Password.equals(objClass.getPassword()) && objExitinguser.getUserstatus()!="Locked")
-	    {
-	    	objuser.getObjResponse().setStatus(true);
-	    	objuser.setUsername(AESEncryption.encrypt(objExitinguser.getUsername()));
-	    	objuser.setPassword(objExitinguser.getPassword());
-	    }
-	    else if(!Password.equals(objClass.getPassword()))
-	    {
-	    	objuser.getObjResponse().setStatus(false);
-			objuser.getObjResponse().setInformation("Password mismatch");
-	    }
-	    else
-	    {
-	    	objuser.getObjResponse().setStatus(false);
-			objuser.getObjResponse().setInformation("User Locked");
-	    }*/
+		return objuser;
 	}
-	else
-	{
-		objuser.getObjResponse().setStatus(false);
-		objuser.getObjResponse().setInformation("Invalid user");
-	}
-	return objuser;
-}
-	
+
 	public LSuserMaster LinkLogin(LSuserMaster objClass) {
 		LSuserMaster objuser = new LSuserMaster();
 		LSuserMaster objExitinguser = new LSuserMaster();
-		
-		//String password =AESEncryption.decrypt(objClass.getPassword());
-		String username =AESEncryption.decrypt(objClass.getUsername());
-		
-		//String username =objClass.getUsername();
-		String password =objClass.getPassword();
-		
-		objExitinguser = lSuserMasterRepository.findByUsernameAndPassword(username,password);
-		
-		if(objExitinguser != null)
-		{
-			//objuser = objExitinguser;
+
+		// String password =AESEncryption.decrypt(objClass.getPassword());
+		String username = AESEncryption.decrypt(objClass.getUsername());
+
+		// String username =objClass.getUsername();
+		String password = objClass.getPassword();
+
+		objExitinguser = lSuserMasterRepository.findByUsernameAndPassword(username, password);
+
+		if (objExitinguser != null) {
+			// objuser = objExitinguser;
 			objExitinguser.setObjResponse(new Response());
 			objExitinguser.getObjResponse().setStatus(true);
-			
+
 			return objExitinguser;
-		}
-		else
-		{
+		} else {
 			objuser.setObjResponse(new Response());
 			objuser.getObjResponse().setStatus(false);
 			objuser.getObjResponse().setInformation("Invalid user");
@@ -1171,160 +979,149 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 
 	public LSSiteMaster InsertupdateSite(LSSiteMaster objClass) {
 		objClass.setResponse(new Response());
-		if(objClass.getSitecode() == null && lSSiteMasterRepository.findBySitenameIgnoreCaseAndIstatus(objClass.getSitename(),1) != null)
-		{
+		if (objClass.getSitecode() == null
+				&& lSSiteMasterRepository.findBySitenameIgnoreCaseAndIstatus(objClass.getSitename(), 1) != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
 //			silent audit
-			if(objClass.getObjsilentaudit() != null)
-	    	{   
+			if (objClass.getObjsilentaudit() != null) {
 				objClass.getObjsilentaudit().setActions("Warning");
-				objClass.getObjsilentaudit().setComments(objClass.getUsername().getUsername()+" "+"made attempt to create existing site name");
+				objClass.getObjsilentaudit().setComments(
+						objClass.getUsername().getUsername() + " " + "made attempt to create existing site name");
 				objClass.getObjsilentaudit().setTableName("LSSiteMaster");
 
-	    	}
+			}
 //			manual audit
-			if(objClass.getObjuser() != null)
-	    	{
+			if (objClass.getObjuser() != null) {
 				objClass.getObjmanualaudit().setActions("Warning");
 				objClass.getObjmanualaudit().setTableName("LSSiteMaster");
 				objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-	    		
-	    	}
+
+			}
 			return objClass;
-		}
-		else if(objClass.getSitecode() != null && objClass.getSitecode() != 1) {
-			if(objClass.getObjsilentaudit() != null)
-	    	{
+		} else if (objClass.getSitecode() != null && objClass.getSitecode() != 1) {
+			if (objClass.getObjsilentaudit() != null) {
 				objClass.getObjsilentaudit().setTableName("LSSiteMaster");
 //	    		lscfttransactionRepository.save(objClass.getObjsilentaudit());
-	    	}
-			
-			if(objClass.getObjuser() != null) {
-				if(objClass.getObjmanualaudit() != null)
-		    	{
+			}
+
+			if (objClass.getObjuser() != null) {
+				if (objClass.getObjmanualaudit() != null) {
 //					objClass.getObjmanualaudit().setActions("Warning");
 					objClass.getObjmanualaudit().setTableName("LSSiteMaster");
 					objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-		    		
 
 				}
 			}
-			
+
 			lSSiteMasterRepository.save(objClass);
 			objClass.setResponse(new Response());
 			objClass.getResponse().setStatus(true);
 			objClass.getResponse().setInformation("ID_DOMAINDEL");
-			
+
 			return objClass;
 		}
-		if(objClass.getSitecode()==null) {
-			List<LSSiteMaster> site= new ArrayList<LSSiteMaster>();
-			site=lSSiteMasterRepository.findAll();
-			if(site.size()==1) {
+		if (objClass.getSitecode() == null) {
+			List<LSSiteMaster> site = new ArrayList<LSSiteMaster>();
+			site = lSSiteMasterRepository.findAll();
+			if (site.size() == 1) {
 				objClass.setSitecode(2);
 			}
 		}
-		
+
 		lSSiteMasterRepository.save(objClass);
 		objClass.getResponse().setStatus(true);
 		objClass.getResponse().setInformation("");
-		
-		//silent AuditTrail
-		if(objClass.getObjsilentaudit() != null)
-    	{
+
+		// silent AuditTrail
+		if (objClass.getObjsilentaudit() != null) {
 			objClass.getObjsilentaudit().setTableName("LSSiteMaster");
-    	}
-		
-		//Manual Audit
-		if(objClass.getObjuser() != null) {
-			if(objClass.getObjmanualaudit() != null)
-	    	{
+		}
+
+		// Manual Audit
+		if (objClass.getObjuser() != null) {
+			if (objClass.getObjmanualaudit() != null) {
 				objClass.getObjmanualaudit().setTableName("LSSiteMaster");
 				objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-	    		
+
 			}
 		}
 		return objClass;
 	}
-	
+
 	@SuppressWarnings("unused")
-	public Map<String, Object> azureauthenticatelogin(LoggedUser objuser)
-	{
+	public Map<String, Object> azureauthenticatelogin(LoggedUser objuser) {
 		Map<String, Object> obj = new HashMap<>();
 		LSuserMaster objExitinguser = new LSuserMaster();
-		
+
 		String username = objuser.getsUsername();
 		LSSiteMaster objsite = new LSSiteMaster(Integer.parseInt(objuser.getsSiteCode()));
-		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(username,"1", objsite);
-		
-		if(objExitinguser != null)
-		{
+		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(username, "1",
+				objsite);
+
+		if (objExitinguser != null) {
 			objExitinguser.setObjResponse(new Response());
 			objExitinguser.setObjsilentaudit(new LScfttransaction());
-			if((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode()) && objExitinguser.getUserretirestatus() ==0 ) 
-			{
-				
-			    if(objExitinguser.getUserstatus()!="Locked")
-			    {
-			    	
-			    	String status = objExitinguser.getUserstatus();
-			    	
+			if ((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode())
+					&& objExitinguser.getUserretirestatus() == 0) {
+
+				if (objExitinguser.getUserstatus() != "Locked") {
+
+					String status = objExitinguser.getUserstatus();
+
 //			    	if(objExitinguser.getLsusergroup() == null)
 //			    	{
-			    		 List<LSMultiusergroup> LSMultiusergroup = new ArrayList<LSMultiusergroup>();
-						
-			    		 LSMultiusergroup =LSMultiusergroupRepositery.findByusercode(objExitinguser.getUsercode());
-			    		
-			    		objExitinguser.setLsusergroup(LSMultiusergroup.get(0).getLsusergroup());
+					List<LSMultiusergroup> LSMultiusergroup = new ArrayList<LSMultiusergroup>();
+
+					LSMultiusergroup = LSMultiusergroupRepositery.findByusercode(objExitinguser.getUsercode());
+
+					objExitinguser.setLsusergroup(LSMultiusergroup.get(0).getLsusergroup());
 //			    	}
-			    	
-			    	String groupstatus=objExitinguser.getLsusergroup().getUsergroupstatus();
-			    	if(status.equals("Deactive"))
-			    	{
-			    		objExitinguser.getObjResponse().setInformation("ID_NOTACTIVE");
+
+					String groupstatus = objExitinguser.getLsusergroup().getUsergroupstatus();
+					if (status.equals("Deactive")) {
+						objExitinguser.getObjResponse().setInformation("ID_NOTACTIVE");
 						objExitinguser.getObjResponse().setStatus(false);
 						objuser.getObjsilentaudit().setActions("Warning");
-						objuser.getObjsilentaudit().setComments(objExitinguser.getUsername()+" "+"was not active to login");
+						objuser.getObjsilentaudit()
+								.setComments(objExitinguser.getUsername() + " " + "was not active to login");
 						objuser.getObjsilentaudit().setTableName("LSuserMaster");
 						objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
 						objuser.getObjsilentaudit().setSystemcoments("System Generated");
 						objuser.getObjsilentaudit().setModuleName(ModuleName);
 						objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-			    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-				    		
-				    	lscfttransactionRepository.save(objuser.getObjsilentaudit());
-				    		
+						objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+
+						lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
 						obj.put("user", objExitinguser);
 						return obj;
-			    	}
-			    	else if(groupstatus.trim().equals("Deactive")) 
-			    	{
-			    		objExitinguser.getObjResponse().setInformation("ID_GRPNOACT");
+					} else if (groupstatus.trim().equals("Deactive")) {
+						objExitinguser.getObjResponse().setInformation("ID_GRPNOACT");
 						objExitinguser.getObjResponse().setStatus(false);
-						  
+
 						objuser.getObjsilentaudit().setActions("Warning");
-						objuser.getObjsilentaudit().setComments("Currently group was not active for the user"+" "+objExitinguser.getUsername()+" "+"to login");
+						objuser.getObjsilentaudit().setComments("Currently group was not active for the user" + " "
+								+ objExitinguser.getUsername() + " " + "to login");
 						objuser.getObjsilentaudit().setTableName("LSusergroup");
 						objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
 						objuser.getObjsilentaudit().setSystemcoments("System Generated");
 						objuser.getObjsilentaudit().setModuleName(ModuleName);
 						objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
 						objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-				    	lscfttransactionRepository.save(objuser.getObjsilentaudit());
-				    	
+						lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
 						obj.put("user", objExitinguser);
 						return obj;
-			    	}
-			    	else
-			    	{
-		    		
-			    		try {
-							Date newDate = new SimpleDateFormat( "yyyy/dd/MM hh:mm:ss" ).parse( "4444/31/12 23:58:57" );
+					} else {
+
+						try {
+							Date newDate = new SimpleDateFormat("yyyy/dd/MM hh:mm:ss").parse("4444/31/12 23:58:57");
 							System.out.println(newDate);
 							Locale locale = Locale.getDefault();
-							DateFormat datetimeFormatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
-							
+							DateFormat datetimeFormatter = DateFormat.getDateTimeInstance(DateFormat.SHORT,
+									DateFormat.SHORT, locale);
+
 							String dateSString = datetimeFormatter.format(newDate);
 							dateSString = dateSString.replaceAll("31", "dd");
 							dateSString = dateSString.replaceAll("12", "MM");
@@ -1338,142 +1135,136 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 							dateSString = dateSString.replaceAll(" AM", "");
 							dateSString = dateSString.replaceAll(" PM", "");
 							logger.info(dateSString);
-							dateSString="MM-dd-yyyy hh:mm:ss";
-		                	objExitinguser.setDFormat(dateSString);
+							dateSString = "MM-dd-yyyy hh:mm:ss";
+							objExitinguser.setDFormat(dateSString);
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
-			    	
-			    			
-						    	objExitinguser.getObjResponse().setStatus(true);
-						    	
-						    	if(objuser.getObjsilentaudit() != null)
-						    	{
-						    		objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-						    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-						    		objuser.getObjsilentaudit().setModuleName(ModuleName);
-						    		objuser.getObjsilentaudit().setComments("User Logged in Successfully");
-						    		objuser.getObjsilentaudit().setActions("Login Success");
-						    		objuser.getObjsilentaudit().setSystemcoments("System Generated");
-						    		objuser.getObjsilentaudit().setManipulatetype("Login");
-						    		objuser.getObjsilentaudit().setTableName("LSactiveuser");
-						    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-						    		
-						    		LSactiveUser objactiveuser = new LSactiveUser();
-						    	 	objactiveuser.setLsusermaster(objExitinguser);
-						    	 	objactiveuser.setLssitemaster(objExitinguser.getLssitemaster());
-						    	 	objactiveuser.setTimestamp(objuser.getLogindate());
-						    		
-						    	 	lsactiveUserRepository.save(objactiveuser);
-						    	
-						    	}
-				    		
-				    	}
-			    	}
-			    	
-			}
-			else if(objExitinguser.getUserretirestatus() !=0) {
-				
 
-		    	String status = objExitinguser.getUserstatus();
-		    	String groupstatus=objExitinguser.getLsusergroup().getUsergroupstatus();
-		    	
-		    		objExitinguser.getObjResponse().setInformation("ID_RETIREDUSER");
-					objExitinguser.getObjResponse().setStatus(false);
-					objuser.getObjsilentaudit().setActions("Warning");
-					objuser.getObjsilentaudit().setComments(objExitinguser.getUsername()+" "+" user was retired");
-					objuser.getObjsilentaudit().setTableName("LSuserMaster");
-					objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
-					objuser.getObjsilentaudit().setSystemcoments("System Generated");
-					objuser.getObjsilentaudit().setModuleName(ModuleName);
-					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-		    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-			    		
-			    	lscfttransactionRepository.save(objuser.getObjsilentaudit());
-			    		
-					obj.put("user", objExitinguser);
-					return obj;
-				
-			
+						objExitinguser.getObjResponse().setStatus(true);
+
+						if (objuser.getObjsilentaudit() != null) {
+							objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
+							objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+							objuser.getObjsilentaudit().setModuleName(ModuleName);
+							objuser.getObjsilentaudit().setComments("User Logged in Successfully");
+							objuser.getObjsilentaudit().setActions("Login Success");
+							objuser.getObjsilentaudit().setSystemcoments("System Generated");
+							objuser.getObjsilentaudit().setManipulatetype("Login");
+							objuser.getObjsilentaudit().setTableName("LSactiveuser");
+							lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
+							LSactiveUser objactiveuser = new LSactiveUser();
+							objactiveuser.setLsusermaster(objExitinguser);
+							objactiveuser.setLssitemaster(objExitinguser.getLssitemaster());
+							objactiveuser.setTimestamp(objuser.getLogindate());
+
+							lsactiveUserRepository.save(objactiveuser);
+
+						}
+
+					}
+				}
+
+			} else if (objExitinguser.getUserretirestatus() != 0) {
+
+				String status = objExitinguser.getUserstatus();
+				String groupstatus = objExitinguser.getLsusergroup().getUsergroupstatus();
+
+				objExitinguser.getObjResponse().setInformation("ID_RETIREDUSER");
+				objExitinguser.getObjResponse().setStatus(false);
+				objuser.getObjsilentaudit().setActions("Warning");
+				objuser.getObjsilentaudit().setComments(objExitinguser.getUsername() + " " + " user was retired");
+				objuser.getObjsilentaudit().setTableName("LSuserMaster");
+				objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
+				objuser.getObjsilentaudit().setSystemcoments("System Generated");
+				objuser.getObjsilentaudit().setModuleName(ModuleName);
+				objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
+				objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+
+				lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
+				obj.put("user", objExitinguser);
+				return obj;
+
 			}
-			
+
 			else {
 				objExitinguser.getObjResponse().setInformation("ID_SITEVALID");
 				objExitinguser.getObjResponse().setStatus(false);
-				 
+
 				objuser.getObjsilentaudit().setActions("Warning");
-					objuser.getObjsilentaudit().setComments(objExitinguser.getUsername()+ " "+"does not belongs to the site");
-					objuser.getObjsilentaudit().setTableName("LSuserMaster");
-					objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
-					objuser.getObjsilentaudit().setSystemcoments("System Generated");
-					objuser.getObjsilentaudit().setModuleName(ModuleName);
-					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-		    		objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-		    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-		    	
+				objuser.getObjsilentaudit()
+						.setComments(objExitinguser.getUsername() + " " + "does not belongs to the site");
+				objuser.getObjsilentaudit().setTableName("LSuserMaster");
+				objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
+				objuser.getObjsilentaudit().setSystemcoments("System Generated");
+				objuser.getObjsilentaudit().setModuleName(ModuleName);
+				objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
+				objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+				lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
 				obj.put("user", objExitinguser);
 				return obj;
 			}
 		}
-		    
-		else
-		{
+
+		else {
 			objExitinguser = lSuserMasterRepository.findByusernameAndLssitemaster("Administrator", objsite);
 			objExitinguser.setObjResponse(new Response());
 			objExitinguser.getObjResponse().setInformation("ID_NOTEXIST");
 			objExitinguser.getObjResponse().setStatus(false);
-		  
+
 			objuser.getObjsilentaudit().setActions("Warning");
-			objuser.getObjsilentaudit().setComments("User"+" "+objuser.getsUsername()+ " "+"does not exist");
+			objuser.getObjsilentaudit().setComments("User" + " " + objuser.getsUsername() + " " + "does not exist");
 			objuser.getObjsilentaudit().setTableName("LSusergroup");
 			objuser.getObjsilentaudit().setUsername(objExitinguser.getUsername());
 			objuser.getObjsilentaudit().setSystemcoments("System Generated");
 			objuser.getObjsilentaudit().setModuleName(ModuleName);
 			objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-    		objuser.getObjsilentaudit().setLssitemaster(Integer.parseInt(objuser.getsSiteCode()));
-    		lscfttransactionRepository.save(objuser.getObjsilentaudit());
-	    	
+			objuser.getObjsilentaudit().setLssitemaster(Integer.parseInt(objuser.getsSiteCode()));
+			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+
 		}
-		
+
 		obj.put("user", objExitinguser);
-		if(objExitinguser.getLsusergroup() != null)
-		{
+		if (objExitinguser.getLsusergroup() != null) {
 			obj.put("userrights", userService.GetUserRightsonGroup(objExitinguser.getLsusergroup()));
 			LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
 			objauditconfig.setLsusermaster(objExitinguser);
 			obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig));
-			obj.put("multiusergroupcode",objExitinguser.getMultiusergroupcode().get(0).getLsusergroup().getUsergroupcode());
+			obj.put("multiusergroupcode",
+					objExitinguser.getMultiusergroupcode().get(0).getLsusergroup().getUsergroupcode());
 		}
-		
+
 		return obj;
 
 	}
-	
-	public LSuserMaster createuserforazure(LSuserMaster objuser)
-	{
-		LSuserMaster userDetails = lsuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(objuser.getUsername(),"1",objuser.getLssitemaster());
 
-		if(userDetails == null)
-		{
-			if(objuser.getIsmultitenant() != null && objuser.getMultitenantusercount() != null && objuser.getIsmultitenant() == 1)
-			{
+	public LSuserMaster createuserforazure(LSuserMaster objuser) {
+		LSuserMaster userDetails = lsuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(
+				objuser.getUsername(), "1", objuser.getLssitemaster());
+
+		if (userDetails == null) {
+			if (objuser.getIsmultitenant() != null && objuser.getMultitenantusercount() != null
+					&& objuser.getIsmultitenant() == 1) {
 //				if(lsuserMasterRepository.countByusercodeNot(1) >= objuser.getMultitenantusercount())
-					if(lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1,1) >= objuser.getMultitenantusercount())
-				{
+				if (lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1, 1) >= objuser
+						.getMultitenantusercount()) {
 					Response objResponse = new Response();
 					objResponse.setStatus(false);
 					objResponse.setInformation("ID_USERCOUNTEXCEEDS");
 					objuser.setObjResponse(objResponse);
-					
+
 					return objuser;
 				}
 			}
-			LSusergroup objaadsgroup = LSusergroupRepository.findByusergroupnameAndLssitemaster("Azure aads", objuser.getLssitemaster().getSitecode());
+			LSusergroup objaadsgroup = LSusergroupRepository.findByusergroupnameAndLssitemaster("Azure aads",
+					objuser.getLssitemaster().getSitecode());
 			LSusergroup objgroup = new LSusergroup();
-			LSMultiusergroup LSMultiusergroup =new LSMultiusergroup();
-			if(objaadsgroup == null)
-			{
-				
+			LSMultiusergroup LSMultiusergroup = new LSMultiusergroup();
+			if (objaadsgroup == null) {
+
 				objgroup.setUsergroupname("Azure aads");
 				objgroup.setLssitemaster(objuser.getLssitemaster().getSitecode());
 				objgroup.setCreatedby(objuser.getUsername());
@@ -1481,46 +1272,41 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 				objgroup.setCreatedon(objuser.getCreateddate());
 				objgroup.setModifiedon(objuser.getCreateddate());
 				objgroup.setUsergroupstatus("A");
-				
+
 				LSusergroupRepository.save(objgroup);
-				
+
 				objuser.setLsusergroup(objgroup);
 				LSMultiusergroup.setLsusergroup(objgroup);
-			}
-			else
-			{
+			} else {
 				objuser.setLsusergroup(objaadsgroup);
 				LSMultiusergroup.setLsusergroup(objaadsgroup);
 			}
-			
+
 			objuser.setCreatedby(objuser.getUsername());
 			objuser.setModifiedby(objuser.getUsername());
 			objuser.setUserstatus("A");
 			objuser.setLockcount(0);
 			objuser.setUserretirestatus(0);
 			objuser.setPassword(objuser.getToken());
-			
+
 			Response objResponse = new Response();
 			objResponse.setStatus(true);
 			objuser.setObjResponse(objResponse);
 			objuser.setLoginfrom("1");
-			
-			
-			 List<LSMultiusergroup> LSMultiusergroup1 = new ArrayList<LSMultiusergroup>();
-			 LSMultiusergroup1.add(LSMultiusergroup);
-			 objuser.setMultiusergroupcode(LSMultiusergroup1);
+
+			List<LSMultiusergroup> LSMultiusergroup1 = new ArrayList<LSMultiusergroup>();
+			LSMultiusergroup1.add(LSMultiusergroup);
+			objuser.setMultiusergroupcode(LSMultiusergroup1);
 			LSMultiusergroupRepositery.save(objuser.getMultiusergroupcode());
 			lsuserMasterRepository.save(objuser);
-			
-			
-			String unifieduser = objuser.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "")+"u"+objuser.getUsercode()+"s"+objuser.getLssitemaster().getSitecode()+
-					objuser.getUnifieduserid();
-			
+
+			String unifieduser = objuser.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "") + "u"
+					+ objuser.getUsercode() + "s" + objuser.getLssitemaster().getSitecode()
+					+ objuser.getUnifieduserid();
+
 			objuser.setUnifieduserid(unifieduser);
 			lsuserMasterRepository.save(objuser);
-		}
-		else
-		{
+		} else {
 			objuser = userDetails;
 			Response objResponse = new Response();
 			objResponse.setStatus(true);
@@ -1528,23 +1314,24 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 			objuser.setUnifieduserid(userDetails.getUnifieduserid());
 			objuser.setObjResponse(objResponse);
 		}
-		
+
 		return objuser;
 	}
-	
+
 	public ResponseEntity<?> azureusertokengenrate(LSuserMaster objuser) throws Exception {
 
-		if(objuser.getUsername() == null) return null;
-		
-		LSuserMaster userDetails = lsuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(objuser.getUsername(),"1",objuser.getLssitemaster());
+		if (objuser.getUsername() == null)
+			return null;
 
-		
-		LSPasswordPolicy policydays= LSPasswordPolicyRepository.findByLssitemaster(objuser.getLssitemaster());
-		if(policydays == null) {
-			LSSiteMaster lssitemaster =new LSSiteMaster();
+		LSuserMaster userDetails = lsuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(
+				objuser.getUsername(), "1", objuser.getLssitemaster());
+
+		LSPasswordPolicy policydays = LSPasswordPolicyRepository.findByLssitemaster(objuser.getLssitemaster());
+		if (policydays == null) {
+			LSSiteMaster lssitemaster = new LSSiteMaster();
 			lssitemaster.setSitecode(1);
-			LSPasswordPolicy lspasswordPolicy =LSPasswordPolicyRepository.findByLssitemaster(lssitemaster);
-			
+			LSPasswordPolicy lspasswordPolicy = LSPasswordPolicyRepository.findByLssitemaster(lssitemaster);
+
 			LSPasswordPolicy objPassword = new LSPasswordPolicy();
 			objPassword.setComplexpasswrd(lspasswordPolicy.getComplexpasswrd());
 			objPassword.setLockpolicy(lspasswordPolicy.getLockpolicy());
@@ -1558,19 +1345,18 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 			objPassword.setPasswordhistory(lspasswordPolicy.getPasswordhistory());
 			objPassword.setLssitemaster(objuser.getLssitemaster());
 			LSPasswordPolicyRepository.save(objPassword);
-			policydays= LSPasswordPolicyRepository.findByLssitemaster(objuser.getLssitemaster());
+			policydays = LSPasswordPolicyRepository.findByLssitemaster(objuser.getLssitemaster());
 		}
-		Calendar c = Calendar.getInstance(); 
+		Calendar c = Calendar.getInstance();
 		c.add(Calendar.DATE, policydays.getPasswordexpiry());
-		
-		if(userDetails == null)
-		{
-			
-			LSusergroup objaadsgroup = LSusergroupRepository.findByusergroupnameAndLssitemaster("Azure aads", objuser.getLssitemaster().getSitecode());
+
+		if (userDetails == null) {
+
+			LSusergroup objaadsgroup = LSusergroupRepository.findByusergroupnameAndLssitemaster("Azure aads",
+					objuser.getLssitemaster().getSitecode());
 			LSusergroup objgroup = new LSusergroup();
-			if(objaadsgroup == null)
-			{
-				
+			if (objaadsgroup == null) {
+
 				objgroup.setUsergroupname("Azure aads");
 				objgroup.setLssitemaster(objuser.getLssitemaster().getSitecode());
 				objgroup.setCreatedby(objuser.getUsername());
@@ -1578,16 +1364,14 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 				objgroup.setCreatedon(objuser.getCreateddate());
 				objgroup.setModifiedon(objuser.getCreateddate());
 				objgroup.setUsergroupstatus("A");
-				
+
 				LSusergroupRepository.save(objgroup);
-				
+
 				objuser.setLsusergroup(objgroup);
-			}
-			else
-			{
+			} else {
 				objuser.setLsusergroup(objaadsgroup);
 			}
-			
+
 			objuser.setCreatedby(objuser.getUsername());
 			objuser.setModifiedby(objuser.getUsername());
 			objuser.setUserstatus("A");
@@ -1595,23 +1379,23 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 			objuser.setUserretirestatus(0);
 			objuser.setPassword(objuser.getToken());
 			objuser.setPasswordexpirydate(c.getTime());
-		
+
 			objuser.setLoginfrom("1");
 			lsuserMasterRepository.save(objuser);
-		}
-		else
-		{
+		} else {
 			objuser.setPassword(objuser.getToken());
 			userDetails.setPassword(objuser.getToken());
-			objuser.setPasswordexpirydate(userDetails.getPasswordexpirydate()==null? c.getTime(): userDetails.getPasswordexpirydate());
-			userDetails.setPasswordexpirydate(userDetails.getPasswordexpirydate()==null? c.getTime(): userDetails.getPasswordexpirydate());
+			objuser.setPasswordexpirydate(
+					userDetails.getPasswordexpirydate() == null ? c.getTime() : userDetails.getPasswordexpirydate());
+			userDetails.setPasswordexpirydate(
+					userDetails.getPasswordexpirydate() == null ? c.getTime() : userDetails.getPasswordexpirydate());
 			lsuserMasterRepository.save(userDetails);
 		}
-		
-		String Tokenuser = objuser.getUsername() +"["+objuser.getLssitemaster().getSitecode()+"]";
-		
+
+		String Tokenuser = objuser.getUsername() + "[" + objuser.getLssitemaster().getSitecode() + "]";
+
 		final UserDetails userDetailstoken = userDetailsService.loadUserByUsername(Tokenuser);
-		
+
 		final String token = jwtTokenUtil.generateToken(userDetailstoken);
 
 		return ResponseEntity.ok(new JwtResponse(token));
@@ -1619,66 +1403,62 @@ public LSuserMaster validateuser(LSuserMaster objClass) {
 
 	public ResponseEntity<?> createAuthenticationToken(LSuserMaster objuser) throws Exception {
 
-		String Tokenuser = objuser.getUsername() +"["+objuser.getLssitemaster().getSitecode()+"]";
-		
-		final UserDetails userDetails = userDetailsService
-				.loadUserByUsername(Tokenuser);
+		String Tokenuser = objuser.getUsername() + "[" + objuser.getLssitemaster().getSitecode() + "]";
+
+		final UserDetails userDetails = userDetailsService.loadUserByUsername(Tokenuser);
 
 		final String token = jwtTokenUtil.generateToken(userDetails);
 
 		return ResponseEntity.ok(new JwtResponse(token));
 	}
-	
+
 	public ResponseEntity<?> limsloginusertokengenarate(LSuserMaster objClass) {
-		
-		String Tokenuser = objClass.getUsername() +"["+objClass.getLssitemaster().getSitecode()+"]";
-		
-		final UserDetails userDetails = userDetailsService
-				.loadUserByUsername(Tokenuser);
+
+		String Tokenuser = objClass.getUsername() + "[" + objClass.getLssitemaster().getSitecode() + "]";
+
+		final UserDetails userDetails = userDetailsService.loadUserByUsername(Tokenuser);
 
 		final String token = jwtTokenUtil.generateToken(userDetails);
 
 		return ResponseEntity.ok(new JwtResponse(token));
-		
+
 	}
 
 	public Map<String, Object> Switchusergroup(LSuserMaster lsuserMaster) {
 		Map<String, Object> obj = new HashMap<>();
-		int multiusergroupcode =lsuserMaster.getMultiusergroupcode().get(0).getMultiusergroupcode();
+		int multiusergroupcode = lsuserMaster.getMultiusergroupcode().get(0).getMultiusergroupcode();
 		LSMultiusergroup objLSMultiusergroup = LSMultiusergroupRepositery.findBymultiusergroupcode(multiusergroupcode);
 
 //		LSuserMaster objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(lsuserMaster.getUsername(),"0");
-		LSuserMaster objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemaster(lsuserMaster.getUsername(),lsuserMaster.getLssitemaster());
+		LSuserMaster objExitinguser = lSuserMasterRepository
+				.findByUsernameIgnoreCaseAndLssitemaster(lsuserMaster.getUsername(), lsuserMaster.getLssitemaster());
 		objExitinguser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		objExitinguser.setObjResponse(new Response());
-		if(objLSMultiusergroup != null) {
-			
-			if(lsuserMaster.getObjsilentaudit() != null)
-	    	{
+		if (objLSMultiusergroup != null) {
+
+			if (lsuserMaster.getObjsilentaudit() != null) {
 				lsuserMaster.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
 				lsuserMaster.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
 				lsuserMaster.getObjsilentaudit().setManipulatetype("Password");
 				lsuserMaster.getObjsilentaudit().setTableName("LSuserMaster");
-	    		lscfttransactionRepository.save(lsuserMaster.getObjsilentaudit());
-	    		
-	    	}
-			
+				lscfttransactionRepository.save(lsuserMaster.getObjsilentaudit());
+
+			}
+
 			obj.put("user", objExitinguser);
-			if(objExitinguser.getLsusergroup() != null)
-			{
+			if (objExitinguser.getLsusergroup() != null) {
 				obj.put("userrights", userService.GetUserRightsonGroup(objExitinguser.getLsusergroup()));
 				LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
 				objauditconfig.setLsusermaster(objExitinguser);
 				obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig));
 
-				obj.put("multiusergroupcode",objLSMultiusergroup.getLsusergroup().getUsergroupcode());
+				obj.put("multiusergroupcode", objLSMultiusergroup.getLsusergroup().getUsergroupcode());
 			}
-			
+
 			objExitinguser.getObjResponse().setInformation("usergroup switched successfully ");
 			objExitinguser.getObjResponse().setStatus(true);
 		}
-		
-		
+
 		return obj;
 	}
 }
