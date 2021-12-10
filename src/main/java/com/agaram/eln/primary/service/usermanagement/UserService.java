@@ -950,7 +950,7 @@ public class UserService {
 		lstuser.add(1);
 		lstuser.add(objuser.getUsercode());
 		return lsuserMasterRepository
-				.findByUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(lstuser, 0);
+				.findByLssitemasterAndUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(objuser.getLssitemaster(),lstuser, 0);
 	}
 
 	public Lsusersettings getUserPrefrences(LSuserMaster objuser) {

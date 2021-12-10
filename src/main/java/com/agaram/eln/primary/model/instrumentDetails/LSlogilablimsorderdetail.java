@@ -97,6 +97,9 @@ public class LSlogilablimsorderdetail {
 	private LSfile lsfile;
 	
 	@Transient
+	List<LSprojectmaster> lstproject;
+	
+	@Transient
 	List<LSworkflow> lstworkflow;
 	
 	@OneToMany
@@ -184,7 +187,13 @@ public class LSlogilablimsorderdetail {
 	public void setLsrepositoriesdata(Lsrepositoriesdata lsrepositoriesdata) {
 		this.lsrepositoriesdata = lsrepositoriesdata;
 	}
-	
+	public List<LSprojectmaster> getLstproject() {
+		return lstproject;
+	}
+
+	public void setLstproject(List<LSprojectmaster> lstproject) {
+		this.lstproject = lstproject;
+	}
 	public Lsrepositories getLsrepositories() {
 		return lsrepositories;
 	}

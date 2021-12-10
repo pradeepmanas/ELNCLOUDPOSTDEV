@@ -1282,11 +1282,13 @@ public class InstrumentService {
 	public List<Logilaborders> GetorderbytypeandflaganduserOrdersonly(LSlogilablimsorderdetail objorder,
 			Map<String, Object> mapOrders) {
 
-		List<LSprojectmaster> lstproject = objorder.getLsuserMaster().getLstproject();
+		List<LSprojectmaster> lstproject = objorder.getLstproject();
 		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		List<Long> lstBatchcode = new ArrayList<Long>();
 
-		List<LSworkflow> lstworkflow = GetWorkflowonuser(objorder.getLsuserMaster().getLsusergrouptrans());
+//		List<LSworkflow> lstworkflow = GetWorkflowonuser(objorder.getLsuserMaster().getLsusergrouptrans());
+		
+		List<LSworkflow> lstworkflow = objorder.getLstworkflow();
 
 		long pendingcount = 0;
 		long completedcount = 0;
