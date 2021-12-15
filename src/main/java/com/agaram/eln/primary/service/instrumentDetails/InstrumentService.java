@@ -1929,10 +1929,10 @@ public class InstrumentService {
 	public LSsamplefile SaveResultfile(LSsamplefile objfile) {
 
 		
-		Integer lastversionindex = objfile.getVersionno() - 1;
+		Integer lastversionindex =  objfile.getVersionno() != null ? objfile.getVersionno() - 1:0;
 		
 		boolean versionexist = true;
-		if(objfile.getLssamplefileversion().get(lastversionindex) == null)
+		if(objfile.getLssamplefileversion().size() <= 0)
 		{
 			versionexist = false;
 			lastversionindex = 0;
