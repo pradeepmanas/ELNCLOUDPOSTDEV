@@ -22,6 +22,7 @@ import com.agaram.eln.primary.model.sheetManipulation.Lsfileshareto;
 import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
+import com.agaram.eln.primary.model.sheetManipulation.Notification;
 
 @RestController
 @RequestMapping(value = "/File")
@@ -370,5 +371,9 @@ public class FileController {
 	@PostMapping("/updateSharedToFile")
 	public Boolean updateSharedToFile(@RequestBody Lsfileshareto lsordersharedby) {
 		return fileService.updateSharedToFile(lsordersharedby);
+	}
+	@PostMapping("/ValidateNotification")
+	public Notification ValidateNotification(@RequestBody Notification objnotification) {
+		return fileService.ValidateNotification(objnotification);
 	}
 }

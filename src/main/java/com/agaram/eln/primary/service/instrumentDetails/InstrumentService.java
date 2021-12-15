@@ -307,6 +307,16 @@ public class InstrumentService {
 		} else {
 			Content = objorder.getLssamplefile().getFilecontent();
 		}
+		
+		if(objorder.getLssamplefile().getLssamplefileversion() != null)
+		{
+
+			String Contentversion = objorder.getLssamplefile().getLssamplefileversion().get(0).getFilecontent();
+			 objorder.getLssamplefile().getLssamplefileversion().get(0).setFilecontent(null);
+			lssamplefileversionRepository.save(objorder.getLssamplefile().getLssamplefileversion());
+			updateorderversioncontent(Contentversion, objorder.getLssamplefile().getLssamplefileversion().get(0),
+					objorder.getIsmultitenant());
+		}
 
 		objorder.getLssamplefile().setFilecontent(null);
 		lssamplefileRepository.save(objorder.getLssamplefile());
@@ -1814,6 +1824,29 @@ public class InstrumentService {
 
 		return objupdatedorder;
 	}
+	
+	private String GetSamplefileconent(LSsamplefile lssamplefile, Integer ismultitenant)
+	{
+		String content = "";
+		
+		if (lssamplefile != null) {
+			if (ismultitenant == 1) {
+				CloudOrderCreation file = cloudOrderCreationRepository
+						.findById((long) lssamplefile.getFilesamplecode());
+				if (file != null) {
+					content = file.getContent();
+				}
+			} else {
+				OrderCreation file = mongoTemplate.findById(lssamplefile.getFilesamplecode(),
+						OrderCreation.class);
+				if (file != null) {
+					content = file.getContent();
+				}
+			}
+		}
+		
+		return content;
+	}
 
 	public LSlogilablimsorderdetail GetdetailorderStatus(LSlogilablimsorderdetail objupdatedorder) {
 
@@ -1895,38 +1928,66 @@ public class InstrumentService {
 
 	public LSsamplefile SaveResultfile(LSsamplefile objfile) {
 
-		Integer lastversionindex = objfile.getLssamplefileversion().size() - 1;
+		
+		Integer lastversionindex = objfile.getVersionno() - 1;
+		
+		if(objfile.isDoversion())
+		{
+			
+			Integer perviousversion = -1;
+			if(objfile.getVersionno() >= 2)
+			{
+				perviousversion = objfile.getVersionno() - 2;
+			}
+			
+//			if (lastversionindex == -1) {
+//				Contentversion = objfile.getFilecontent();
+//				lastversionindex = 0;
+//				lssamplefileversionRepository.save(objfile.getLssamplefileversion());
+//			} else {
+//			
+			String Contentversion = GetSamplefileconent(objfile,objfile.getIsmultitenant());
+				objfile.getLssamplefileversion().get(lastversionindex).setFilecontent(null);
+				lssamplefileversionRepository.save(objfile.getLssamplefileversion());
+				updateorderversioncontent(objfile.getFilecontent(), objfile.getLssamplefileversion().get(lastversionindex),
+						objfile.getIsmultitenant());
+				if(perviousversion >-1)
+				{
+				updateorderversioncontent(Contentversion, objfile.getLssamplefileversion().get(perviousversion),
+						objfile.getIsmultitenant());
+				}
+				
+				//objfile.setVersionno(objfile.getVersionno()+1);
+//			}
+			
 
-		String Contentversion;
-		if (lastversionindex == -1) {
-			Contentversion = objfile.getFilecontent();
-			lastversionindex = 0;
-			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
-		} else {
-
-			Contentversion = objfile.getFilecontent();
-			objfile.getLssamplefileversion().get(lastversionindex).setFilecontent(null);
-			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
-			updateorderversioncontent(Contentversion, objfile.getLssamplefileversion().get(lastversionindex),
+//			if (objfile.getLssamplefileversion() != null ) {
+//				if (objfile.getObjActivity().getObjsilentaudit() != null) {
+//					String versionname = "";
+//					if (objfile.getLssamplefileversion().size() > 0) {
+//						versionname = objfile.getLssamplefileversion().get(lastversionindex).getVersionname();
+//					} else {
+//						versionname = "version_1";
+//					}
+//
+//					objfile.getObjActivity().getObjsilentaudit()
+//							.setComments("Order ID: ELN" + objfile.getFilesamplecode() + " " + " was versioned to" + " "
+//									+ versionname + " " + "by the user" + " " + objfile.getModifiedby().getUsername());
+//					objfile.getObjActivity().getObjsilentaudit().setTableName("LSfile");
+//					lscfttransactionRepository.save(objfile.getObjActivity().getObjsilentaudit());
+//				}
+//			}
+		}
+		else
+		{
+			updateorderversioncontent(objfile.getFilecontent(), objfile.getLssamplefileversion().get(lastversionindex),
 					objfile.getIsmultitenant());
 		}
+		
 		objfile.setProcessed(1);
-		if (objfile.getLssamplefileversion() != null) {
-			if (objfile.getObjActivity().getObjsilentaudit() != null) {
-				String versionname = "";
-				if (objfile.getLssamplefileversion().size() > 0) {
-					versionname = objfile.getLssamplefileversion().get(lastversionindex).getVersionname();
-				} else {
-					versionname = "version_1";
-				}
-
-				objfile.getObjActivity().getObjsilentaudit()
-						.setComments("Order ID: ELN" + objfile.getFilesamplecode() + " " + " was versioned to" + " "
-								+ versionname + " " + "by the user" + " " + objfile.getModifiedby().getUsername());
-				objfile.getObjActivity().getObjsilentaudit().setTableName("LSfile");
-				lscfttransactionRepository.save(objfile.getObjActivity().getObjsilentaudit());
-			}
-		}
+		
+		
+		
 		String Content = objfile.getFilecontent();
 		objfile.setFilecontent(null);
 		lssamplefileRepository.save(objfile);
@@ -2899,7 +2960,7 @@ public class InstrumentService {
 	public Map<String, Object> Getuserprojects(LSuserMaster objuser) {
 		if(objuser.getUsercode() != null) {
 		Map<String, Object> objmap = new HashMap<>();
-		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
+		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findByLsuserMasterAndTeamcodeNotNull(objuser);
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 		List<LSprojectmaster> lstprojectmaster = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 

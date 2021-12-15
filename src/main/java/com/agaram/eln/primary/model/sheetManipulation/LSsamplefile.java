@@ -110,6 +110,8 @@ public class LSsamplefile {
 	LScfttransaction objmanualaudit;
 	@Transient
 	private String contentparameter;
+	@Transient
+	private boolean doversion;
 	
 	@Transient
 	private Integer ismultitenant;
@@ -258,6 +260,12 @@ public class LSsamplefile {
 	}
 	public void setIsmultitenant(Integer ismultitenant) {
 		this.ismultitenant = ismultitenant;
+	}
+	public boolean isDoversion() {
+		return doversion;
+	}
+	public void setDoversion(boolean doversion) {
+		this.doversion = doversion;
 	}
 	
 	

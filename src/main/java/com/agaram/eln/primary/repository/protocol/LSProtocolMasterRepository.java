@@ -184,4 +184,7 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 //	List<LSprotocolmaster> findByStatusAndlstestIn(int i, List<LSprotocolmastertest> lsfiletest);
 
 	List<LSprotocolmaster> findByLstestInAndStatus(List<LSprotocolmastertest> lsfiletest,int i);
+
+	List<LSprotocolmaster> findByCreatedbyInAndStatusAndLssitemasterOrderByCreatedateDesc(Integer usercode, int i,
+			Integer sitecode);
 }

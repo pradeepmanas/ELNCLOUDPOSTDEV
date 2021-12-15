@@ -116,6 +116,9 @@ public class DashBoardService {
 
 	@Autowired
 	private LsrepositoriesRepository LsrepositoriesRepository;
+	
+	@Autowired
+	LSuserteammappingRepository LSuserteammappingRepositoryObj;
 
 	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser) {
 
@@ -487,6 +490,9 @@ public class DashBoardService {
 
 		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
 				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
+		
+		List<LSuserteammapping> LSuserteammapping = LSuserteammappingRepositoryObj
+				.findByLsuserMasterAndTeamcodeNotNull(objuser);
 
 		if (lsworkflowgroupmapping != null && lsworkflowgroupmapping.size() > 0) {
 //			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
@@ -494,34 +500,42 @@ public class DashBoardService {
 
 			List<LSprotocolworkflow> lsprotocolworkflow = lSprotocolworkflowRepository
 					.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
+		
+			lstorders.forEach(objorder -> objorder.setLstworkflow(lsprotocolworkflow));
 			
-			lstorders.forEach((objorder) -> {
-
-				if (lsprotocolworkflow != null && objorder.getlSprotocolworkflow() != null
-						&& lsprotocolworkflow.size() > 0) {
-					// if(lstworkflow.contains(this.lsworkflow))
-
-					List<Integer> lstprotocolworkflowcode = new ArrayList<Integer>();
-					if (lsprotocolworkflow != null && lsprotocolworkflow.size() > 0) {
-						lstprotocolworkflowcode = lsprotocolworkflow.stream().map(LSprotocolworkflow::getWorkflowcode)
-								.collect(Collectors.toList());
-
-						if (lstprotocolworkflowcode.contains(objorder.getlSprotocolworkflow().getWorkflowcode())) {
-							objorder.setCanuserprocess(true);
-						} else {
-							objorder.setCanuserprocess(false);
-						}
-					} else {
-						objorder.setCanuserprocess(false);
-					}
-				} else {
-					objorder.setCanuserprocess(false);
-				}
-			});
+//			lstorders.forEach((objorder) -> {
+//
+//				if (lsprotocolworkflow != null && objorder.getlSprotocolworkflow() != null
+//						&& lsprotocolworkflow.size() > 0) {
+//					// if(lstworkflow.contains(this.lsworkflow))
+//
+//					List<Integer> lstprotocolworkflowcode = new ArrayList<Integer>();
+//					if (lsprotocolworkflow != null && lsprotocolworkflow.size() > 0) {
+//						lstprotocolworkflowcode = lsprotocolworkflow.stream().map(LSprotocolworkflow::getWorkflowcode)
+//								.collect(Collectors.toList());
+//
+//						if (lstprotocolworkflowcode.contains(objorder.getlSprotocolworkflow().getWorkflowcode())) {
+//							objorder.setCanuserprocess(true);
+//						} else {
+//							objorder.setCanuserprocess(false);
+//						}
+//					} else {
+//						objorder.setCanuserprocess(false);
+//					}
+//				} else {
+//					objorder.setCanuserprocess(false);
+//				}
+//			});
 
 			
 //			lstorders.forEach(objorder -> objorder
 //					.setCanuserprocess(lsprotocolworkflow.equals(objorder.getlSprotocolworkflow()) ? true : false));
+		}else if(LSuserteammapping != null && LSuserteammapping.size() > 0) {
+			
+			lstorders.forEach(objorder -> objorder
+			.setCanuserprocess(false));
+			
+		
 		}
 		
 		mapOrders.put("orderlst", lstorders);

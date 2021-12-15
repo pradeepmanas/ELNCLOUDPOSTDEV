@@ -34,7 +34,7 @@ public class LSprotocolstep {
 	@Transient
 	private Integer ismultitenant;
 	public String createdbyusername;
-	@Column(columnDefinition = "nvarchar(255)")
+//	@Column(columnDefinition = "nvarchar(255)")
 	private String modifiedusername;
 //	public String modifiedusername;
 	public Integer sitecode;

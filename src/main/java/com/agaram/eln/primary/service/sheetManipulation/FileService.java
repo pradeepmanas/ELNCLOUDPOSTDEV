@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.service.sheetManipulation;
 
 import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.Lsfilesharedby;
 import com.agaram.eln.primary.model.sheetManipulation.Lsfileshareto;
 import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
+import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
@@ -58,6 +60,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappin
 import com.agaram.eln.primary.repository.sheetManipulation.LsfilesharedbyRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LsfilesharetoRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LssheetworkflowhistoryRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
@@ -143,6 +146,9 @@ public class FileService {
 
 	@Autowired
 	private MasterService inventoryservice;
+	
+	@Autowired
+	private NotificationRepository NotificationRepository;
 
 	public LSfile InsertupdateSheet(LSfile objfile) {
 		Boolean Isnew = false;
@@ -181,9 +187,8 @@ public class FileService {
 
 			Isnew = false;
 		} else {
+			UpdateSheetversion(objfile);
 			Isnew = true;
-
-			objfile.setVersionno(0);
 		}
 
 		if (objfile.getLstest().size() > 0) {
@@ -854,9 +859,51 @@ public class FileService {
 					Content = file.getContent();
 				}
 			}
-
-			updatefileversioncontent(Content, objversion, objfile.getIsmultitenant());
+			
+			updatefileversioncontent(Content, objLatestversion, objfile.getIsmultitenant());
+			updatefileversioncontent(objfile.getFilecontent(), objversion, objfile.getIsmultitenant());
 		}
+		else if(Versionnumber == 0)
+		{
+			Versionnumber++;
+			LSfileversion objversion = new LSfileversion();
+
+			objversion.setApproved(objesixting.getApproved());
+			objversion.setCreateby(objesixting.getCreateby());
+			objversion.setCreatedate(objesixting.getCreatedate());
+			objversion.setExtension(objesixting.getExtension());
+			if(objesixting.getFilecode() != null)
+			{
+				objversion.setFilecode(objesixting.getFilecode());
+			}
+			// objversion.setFilecontent(objesixting.getFilecontent());
+			objversion.setFilenameuser(objesixting.getFilenameuser());
+			objversion.setFilenameuuid(objesixting.getFilenameuuid());
+			objversion.setIsactive(objesixting.getIsactive());
+			objversion.setLssheetworkflow(objesixting.getLssheetworkflow());
+			objversion.setLssitemaster(objesixting.getLssitemaster());
+			objversion.setModifiedby(objfile.getModifiedby());
+			objversion.setModifieddate(objfile.getModifieddate());
+			objversion.setRejected(objesixting.getRejected());
+			objversion.setVersionno(Versionnumber);
+			
+			if (objfile.getLsfileversion() != null) {
+				objfile.getLsfileversion().add(objversion);
+			} else {
+				List<LSfileversion> lstversion = new ArrayList<LSfileversion>();
+				lstversion.add(objversion);
+				objfile.setLsfileversion(lstversion);
+			}
+
+			lsfileversionRepository.save(objfile.getLsfileversion());
+			
+			updatefileversioncontent(objfile.getFilecontent(), objversion, objfile.getIsmultitenant());
+		}
+		else
+		{
+			updatefileversioncontent(objfile.getFilecontent(), objLatestversion, objfile.getIsmultitenant());
+		}
+		
 		objfile.setVersionno(Versionnumber);
 
 		return true;
@@ -1144,5 +1191,11 @@ public class FileService {
 		}
 
 		return true;
+	}
+
+	public Notification ValidateNotification(Notification objnotification) {
+		NotificationRepository.save(objnotification);
+		return null;
+		
 	}
 }

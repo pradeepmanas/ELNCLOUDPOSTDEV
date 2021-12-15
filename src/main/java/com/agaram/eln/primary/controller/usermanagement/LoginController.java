@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.controller.usermanagement;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import com.agaram.eln.config.ADS_Connection;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSdomainMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -387,4 +389,10 @@ public class LoginController {
 		
 		return rMap;
 	}
+	// added for notification
+		@PostMapping("/Loginnotification")
+		public Notification Loginnotification(@RequestBody Notification objNotification) throws ParseException {
+			return loginService.Loginnotification(objNotification);
+		}
+		// added for notification
 }

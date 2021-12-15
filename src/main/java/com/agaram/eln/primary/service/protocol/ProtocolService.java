@@ -340,9 +340,17 @@ public class ProtocolService {
 
 	public List<LSprotocolmaster> getprotocol(LSuserMaster objusers) {
 		List<Integer> lstuser = objusers.getObjuser().getTeamuserscode();
-		List<LSprotocolmaster> LSprotocolmaster = LSProtocolMasterRepositoryObj
-				.findByCreatedbyInAndStatusAndLssitemasterOrderByCreatedateDesc(lstuser, 1,
-						objusers.getLssitemaster().getSitecode());
+		List<LSprotocolmaster> LSprotocolmaster=new ArrayList<LSprotocolmaster>();	
+		if(lstuser.size()!=0) {
+		 LSprotocolmaster = LSProtocolMasterRepositoryObj
+					.findByCreatedbyInAndStatusAndLssitemasterOrderByCreatedateDesc(lstuser, 1,
+							objusers.getLssitemaster().getSitecode());
+		}else {
+			 LSprotocolmaster = LSProtocolMasterRepositoryObj
+					.findByCreatedbyInAndStatusAndLssitemasterOrderByCreatedateDesc(objusers.getUsercode(), 1,
+							objusers.getLssitemaster().getSitecode());
+		}
+	
 		return LSprotocolmaster;
 	}
 
@@ -1179,14 +1187,26 @@ public class ProtocolService {
 				lsprotocolversionRepository.save(versProto);
 			}
 
-			List<LSprotocolmaster> LSprotocolmasterLst = LSProtocolMasterRepositoryObj
-					.findByCreatedbyAndStatusAndLssitemaster(LScfttransactionobj.getLsuserMaster(), 1,
-							LScfttransactionobj.getLssitemaster());
+//			List<LSprotocolmaster> LSprotocolmasterLst = LSProtocolMasterRepositoryObj
+//					.findByCreatedbyAndStatusAndLssitemaster(LScfttransactionobj.getLsuserMaster(), 1,
+//							LScfttransactionobj.getLssitemaster());
 			List<LSprotocolmaster> AddedLSprotocolmasterObj = LSProtocolMasterRepositoryObj
 					.findByStatusAndLssitemasterAndProtocolmastername(1, LScfttransactionobj.getLssitemaster(),
 							newProtocolMasterObj.getProtocolmastername());
 
 			LSprotocolworkflow lsprotocolworkflow = new LSprotocolworkflow();
+			List<LSprotocolmaster> LSprotocolmasterLst=new ArrayList<LSprotocolmaster>();	
+			List<Integer> lstuser = new ObjectMapper().convertValue(argObj.get("teamuserscode"),ArrayList.class);
+			if(lstuser.size()!=0) {
+				 LSprotocolmasterLst = LSProtocolMasterRepositoryObj
+							.findByCreatedbyInAndStatusAndLssitemasterOrderByCreatedateDesc(lstuser, 1,
+									LScfttransactionobj.getLssitemaster());
+				}else {
+					int usercode = objMapper.convertValue(argObj.get("usercode"), Integer.class);
+					LSprotocolmasterLst = LSProtocolMasterRepositoryObj
+							.findByCreatedbyInAndStatusAndLssitemasterOrderByCreatedateDesc(usercode, 1,
+									LScfttransactionobj.getLssitemaster());
+				}
 
 			if (argObj.containsKey("multiusergroups")) {
 
@@ -1207,19 +1227,19 @@ public class ProtocolService {
 					lsprotocolworkflow = lSprotocolworkflowRepository
 							.findByworkflowcode(lsprotocolworkflowgroupmap.get(0).getWorkflowcode());
 
-					List<LSprotocolmaster> LSprotocolmasterLst1 = LSProtocolMasterRepositoryObj
-							.findByStatusAndLssitemasterAndLSprotocolworkflowAndCreatedbyNot(1,
-									LScfttransactionobj.getLssitemaster(), lsprotocolworkflow,
-									LScfttransactionobj.getLsuserMaster());
-
-					LSprotocolmasterLst.addAll(LSprotocolmasterLst1);
-
-					List<LSprotocolmaster> LSprotocolmasterLst2 = LSProtocolMasterRepositoryObj
-							.findByStatusAndLssitemasterAndLSprotocolworkflowNotAndCreatedbyNotAndSharewithteamAndApproved(
-									1, LScfttransactionobj.getLssitemaster(), lsprotocolworkflow,
-									LScfttransactionobj.getLsuserMaster(), 0, 0);
-
-					LSprotocolmasterLst.addAll(LSprotocolmasterLst2);
+//					List<LSprotocolmaster> LSprotocolmasterLst1 = LSProtocolMasterRepositoryObj
+//							.findByStatusAndLssitemasterAndLSprotocolworkflowAndCreatedbyNot(1,
+//									LScfttransactionobj.getLssitemaster(), lsprotocolworkflow,
+//									LScfttransactionobj.getLsuserMaster());
+//
+//					LSprotocolmasterLst.addAll(LSprotocolmasterLst1);
+//
+//					List<LSprotocolmaster> LSprotocolmasterLst2 = LSProtocolMasterRepositoryObj
+//							.findByStatusAndLssitemasterAndLSprotocolworkflowNotAndCreatedbyNotAndSharewithteamAndApproved(
+//									1, LScfttransactionobj.getLssitemaster(), lsprotocolworkflow,
+//									LScfttransactionobj.getLsuserMaster(), 0, 0);
+//
+//					LSprotocolmasterLst.addAll(LSprotocolmasterLst2);
 				}
 			}
 			List<LSprotocolstep> LSprotocolsteplst = LSProtocolStepRepositoryObj
@@ -1770,6 +1790,9 @@ public class ProtocolService {
 
 						e.printStackTrace();
 					}
+					
+					updateCloudProtocolorderVersion(lSlogilabprotocoldetail,LSprotocolstepObj1);
+					
 				} else {
 					if (objimg.size() != 0) {
 						updateprotocolorderimagesforsql(objimg, lSlogilabprotocoldetail, LSprotocolstepObj1);
@@ -1784,6 +1807,14 @@ public class ProtocolService {
 		}
 		return null;
 
+	}
+	
+	void updateCloudProtocolorderVersion(LSlogilabprotocoldetail lslogilabprotocoldetail,LSlogilabprotocolsteps LSprotocolstepObj1){
+		if (lslogilabprotocoldetail.getApproved() != null && lslogilabprotocoldetail.getApproved() == 1) {
+			
+		}else {
+			
+		}
 	}
 
 	public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabprotocoldetail) {
@@ -1853,10 +1884,10 @@ public class ProtocolService {
 								.findById(LSprotocolstepObj1.getProtocolstepcode());
 						if (lsprotocolstepInformation != null && lSlogilabprotocoldetail.getProtocoltype() == 1) {
 							String stepinfo = lsprotocolstepInformation.getLsprotocolstepInfo();
-							stepinfo = stepinfo.replaceAll("<p>", "<p contenteditable='false' >");
-							String stepinfono = stepinfo.replaceAll("<p contenteditable='false' ><br></p>",
+							stepinfo = stepinfo.replaceAll("<p>", "<p contenteditable='false'>");
+							String stepinfono = stepinfo.replaceAll("<p contenteditable='false'><br></p>",
 									"<p><br></p>");
-
+						
 							LSprotocolstepObj1.setLsprotocolstepInfo(stepinfono);
 						} else {
 							LSprotocolstepObj1.setLsprotocolstepInfo(lsprotocolstepInformation.getLsprotocolstepInfo());
@@ -2401,7 +2432,7 @@ public class ProtocolService {
 					lSlogilabprotocoldetail.getTodate());
 //			lstPendingOrder.forEach(objorder -> objorder
 //					.setCanuserprocess(lsprotocolworkflow.equals(objorder.getlSprotocolworkflow()) ? true : false));
-		} else if (LSuserteammapping != null && LSuserteammapping.size() > 0) {
+		} else if (LSuserteammapping != null && LSuserteammapping.size() == 0) {
 			lstPendingOrder = LSlogilabprotocoldetailRepository
 					.findTop10ByProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), "N", lSlogilabprotocoldetail.getFromdate(),

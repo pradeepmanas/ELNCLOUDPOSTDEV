@@ -1923,3 +1923,28 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.lsprotocolordervideos
     OWNER to postgres;  
+
+	CREATE TABLE IF NOT EXISTS public.notification
+(
+    notificationid bigint NOT NULL,
+    addedby character varying(255) COLLATE pg_catalog."default",
+    addedon timestamp without time zone,
+    cautiondate timestamp without time zone,
+    currentdate timestamp without time zone,
+    description character varying(255) COLLATE pg_catalog."default",
+    duedate timestamp without time zone,
+    intervals character varying(255) COLLATE pg_catalog."default",
+    orderid character varying(255) COLLATE pg_catalog."default",
+    status integer,
+    usercode integer,
+    CONSTRAINT notification_pkey PRIMARY KEY (notificationid)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.notification
+    OWNER to postgres;
+
+INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) VALUES (58, NULL, NULL, 19, 3, 1, 'G1', 'ID_GENERAL', '19', 'ID_GENERAL', 19, 'ID_GENERAL', 'G19', 'Notification', 1) on conflict (fieldcode) do nothing;

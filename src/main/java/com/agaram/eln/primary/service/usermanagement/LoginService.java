@@ -26,22 +26,28 @@ import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.jwt.JwtResponse;
+import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordHistoryDetails;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSactiveUser;
 import com.agaram.eln.primary.model.usermanagement.LSdomainMaster;
+import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordHistoryDetailsRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordPolicyRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSactiveUserRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSdomainMasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
 import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
@@ -93,6 +99,21 @@ public class LoginService {
 
 	@Autowired
 	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
+	
+	//added for notification
+	@Autowired
+	private NotificationRepository NotificationRepository;
+	
+	@Autowired
+	private LSnotificationRepository LSnotificationRepository;
+	
+	@Autowired
+	private LSfileRepository lSfileRepository;
+	
+	@Autowired
+	private LSsheetworkflowRepository lssheetworkflowRepository;
+	
+	//added for notification
 
 	static final Logger logger = Logger.getLogger(LoginService.class.getName());
 
@@ -1461,4 +1482,87 @@ public class LoginService {
 
 		return obj;
 	}
+
+	// added for notification
+	public Notification Loginnotification(Notification objNotification) throws ParseException {
+		
+		Integer usercode = objNotification.getUsercode();
+		String addedby = objNotification.getAddedby();
+	
+		
+		Date currentdate = objNotification.getCurrentdate();
+				    
+		
+		List<Notification> codelist = NotificationRepository
+				.findByUsercode(objNotification.getUsercode());
+		
+				
+				int i = 0;
+				boolean value = false;
+		while (i < codelist.size()) {
+		   		  
+			 value=isSameDay(currentdate, codelist.get(i).getCautiondate());
+			 
+			
+		LSnotification LSnotification=new LSnotification();
+		
+		LSuserMaster LSuserMaster =new LSuserMaster(); /*to get the value*/
+		LSuserMaster.setUsercode(codelist.get(i).getUsercode());
+		
+		LSuserMaster objLSuserMaster = new LSuserMaster();/*to return the value this obj is created*/
+		objLSuserMaster = userService.getUserOnCode(LSuserMaster);	 
+		
+
+		
+			objNotification.setLssheetworkflow(lssheetworkflowRepository
+					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objNotification.getLssitemaster()));
+		
+	String Details = "{\"description\":\"" + codelist.get(i).getDescription() + "\",\"orderid\" :\"" + codelist.get(i).getOrderid() + "\"}";
+			
+			
+//		LSfile LSfile = new LSfile();
+//	
+//		LSfile=fileService.getfileoncode(LSfile)
+//		
+//		
+//		Details = "{\"ordercode\":\"" + objFile.getFilecode() + "\", \"order\":\""
+//				+ objFile.getFilenameuser() + "\", \"previousworkflow\":\"" + previousworkflowname
+//				+ "\", \"previousworkflowcode\":\"" + perviousworkflowcode + "\", \"currentworkflow\":\""
+//				+ objFile.getLssheetworkflow().getWorkflowname() + "\", \"currentworkflowcode\":\""
+//				+ objFile.getLssheetworkflow().getWorkflowcode() + "\"}";
+//		
+						
+		
+			 if(codelist.get(i).getStatus() == 1 && value ) {
+						
+					LSnotification.setIsnewnotification(1);
+					LSnotification.setNotification("CAUTIONALERT");
+			        LSnotification.setNotificationdate(objNotification.getCurrentdate());
+			//		LSnotification.setNotificationdetils(codelist.get(i).getOrderid());
+        			LSnotification.setNotificationdetils(Details);
+					LSnotification.setNotificationpath("/registertask");
+					LSnotification.setNotifationfrom(objLSuserMaster);
+					LSnotification.setNotifationto(objLSuserMaster);
+					LSnotification.setRepositorycode(0);
+					LSnotification.setRepositorydatacode(0);
+					
+					
+					codelist.get(i).setStatus(0);
+					LSnotificationRepository.save(LSnotification);
+					NotificationRepository.save(codelist.get(i));
+				
+				}
+			 
+			 i++;
+		}
+		
+	return null;
+	
+	}
+	
+	 public boolean isSameDay(Date date1, Date date2) {
+	    SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+	    return fmt.format(date1).equals(fmt.format(date2));
+	}
+	// added for notification
 }

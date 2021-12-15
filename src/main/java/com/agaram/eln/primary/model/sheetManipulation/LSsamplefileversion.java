@@ -112,7 +112,7 @@ public class LSsamplefileversion {
 		this.versionno = versionno;
 	}
 	public String getVersionname() {
-		return "version_"+this.getVersionno();
+		return ""+this.getVersionno();
 	}
 	public void setVersionname(String versionname) {
 		this.versionname = versionname;
