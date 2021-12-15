@@ -1931,7 +1931,27 @@ public class InstrumentService {
 		
 		Integer lastversionindex = objfile.getVersionno() - 1;
 		
-		if(objfile.isDoversion())
+		boolean versionexist = true;
+		if(objfile.getLssamplefileversion().get(lastversionindex) == null)
+		{
+			versionexist = false;
+			lastversionindex = 0;
+			LSsamplefileversion lsversion = new LSsamplefileversion();
+			lsversion.setVersionname("1");
+			lsversion.setVersionno(1);
+			lsversion.setBatchcode(objfile.getBatchcode());
+			lsversion.setTestid(objfile.getTestid());
+			lsversion.setCreatedate(objfile.getCreatedate());
+			lsversion.setCreateby(objfile.getCreateby());
+			lsversion.setModifieddate(objfile.getModifieddate());
+			lsversion.setModifiedby(objfile.getModifiedby());
+			objfile.getLssamplefileversion().add(lsversion);
+			
+			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
+			
+		}
+		
+		if(objfile.isDoversion() && versionexist)
 		{
 			
 			Integer perviousversion = -1;
