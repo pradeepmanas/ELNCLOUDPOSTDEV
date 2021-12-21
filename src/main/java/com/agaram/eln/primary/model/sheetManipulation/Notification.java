@@ -30,7 +30,9 @@ public class Notification {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date addedon;
 	
-	private String orderid;
+	//private Integer orderid;
+	
+	private Long orderid;
 	
 	private String addedby;
 		
@@ -55,10 +57,16 @@ public class Notification {
 	private LSuserMaster lsusermaster;
 
 	@Transient
-	private LSSiteMaster Lssitemaster;
+	private Integer sitecode;
 	
 	@Transient
 	private LSsheetworkflow lssheetworkflow;
+	
+//	@Transient
+//	private Integer workflowcode;
+//	
+//	@Transient
+//	private String workflowname;
 	
 	public Long getNotificationid() {
 		return notificationid;
@@ -75,12 +83,14 @@ public class Notification {
 	public void setAddedon(Date addedon) {
 		this.addedon = addedon;
 	}
+	
 
-	public String getOrderid() {
+
+	public Long getOrderid() {
 		return orderid;
 	}
 
-	public void setOrderid(String orderid) {
+	public void setOrderid(Long orderid) {
 		this.orderid = orderid;
 	}
 
@@ -156,12 +166,12 @@ public class Notification {
 		this.lsusermaster = lsusermaster;
 	}
 
-	public LSSiteMaster getLssitemaster() {
-		return Lssitemaster;
+	public Integer getSitecode() {
+		return sitecode;
 	}
 
-	public void setLssitemaster(LSSiteMaster lssitemaster) {
-		Lssitemaster = lssitemaster;
+	public void setSitecode(Integer sitecode) {
+		this.sitecode = sitecode;
 	}
 
 	public LSsheetworkflow getLssheetworkflow() {
@@ -172,6 +182,22 @@ public class Notification {
 		this.lssheetworkflow = lssheetworkflow;
 	}
 
-	
+//	public Integer getWorkflowcode() {
+//		return workflowcode;
+//	}
+//
+//	public void setWorkflowcode(Integer workflowcode) {
+//		this.workflowcode = workflowcode;
+//	}
+//
+//	public String getWorkflowname() {
+//		return workflowname;
+//	}
+//
+//	public void setWorkflowname(String workflowname) {
+//		this.workflowname = workflowname;
+//	}
+
+
 	
 }

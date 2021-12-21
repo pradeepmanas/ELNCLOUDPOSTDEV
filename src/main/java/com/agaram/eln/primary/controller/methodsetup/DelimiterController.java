@@ -36,9 +36,23 @@ public class DelimiterController {
 	  */
 	@PostMapping(value = "/getDelimiters")
 	public ResponseEntity<Object> getActiveDelimiters(@RequestBody Map<String, Object> mapObject) {	
+//		final ObjectMapper mapper = new ObjectMapper();	
+//		final String sortBy = mapper.convertValue(mapObject.get("sortOrder"), String.class); 
+//		return delimitersService.getActiveDelimiters(sortBy);
 		final ObjectMapper mapper = new ObjectMapper();	
-		final String sortBy = mapper.convertValue(mapObject.get("sortOrder"), String.class); 
-		return delimitersService.getActiveDelimiters(sortBy);
+        Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
+  	 if(obj == null)
+  	 {
+  		 
+  		 final String sortBy = mapper.convertValue(mapObject.get("sortOrder"), String.class);
+  		 return delimitersService.getActiveDelimiters(sortBy);
+  	 }
+  	 else
+  	 {
+  		 final String sortBy = (String) obj.get("sortOrder");
+  			//final String sortBy = mapper.convertValue(mapObject.get("sortOrder"), String.class); 
+  			return delimitersService.getActiveDelimiters(sortBy);	 
+  	 }
 	}
 	
 	/**

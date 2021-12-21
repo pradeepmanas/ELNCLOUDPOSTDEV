@@ -307,12 +307,11 @@ public class InstrumentService {
 		} else {
 			Content = objorder.getLssamplefile().getFilecontent();
 		}
-		
-		if(objorder.getLssamplefile().getLssamplefileversion() != null)
-		{
+
+		if (objorder.getLssamplefile().getLssamplefileversion() != null) {
 
 			String Contentversion = objorder.getLssamplefile().getLssamplefileversion().get(0).getFilecontent();
-			 objorder.getLssamplefile().getLssamplefileversion().get(0).setFilecontent(null);
+			objorder.getLssamplefile().getLssamplefileversion().get(0).setFilecontent(null);
 			lssamplefileversionRepository.save(objorder.getLssamplefile().getLssamplefileversion());
 			updateorderversioncontent(Contentversion, objorder.getLssamplefile().getLssamplefileversion().get(0),
 					objorder.getIsmultitenant());
@@ -1297,7 +1296,7 @@ public class InstrumentService {
 		List<Long> lstBatchcode = new ArrayList<Long>();
 
 //		List<LSworkflow> lstworkflow = GetWorkflowonuser(objorder.getLsuserMaster().getLsusergrouptrans());
-		
+
 		List<LSworkflow> lstworkflow = objorder.getLstworkflow();
 
 		long pendingcount = 0;
@@ -1824,11 +1823,10 @@ public class InstrumentService {
 
 		return objupdatedorder;
 	}
-	
-	private String GetSamplefileconent(LSsamplefile lssamplefile, Integer ismultitenant)
-	{
+
+	private String GetSamplefileconent(LSsamplefile lssamplefile, Integer ismultitenant) {
 		String content = "";
-		
+
 		if (lssamplefile != null) {
 			if (ismultitenant == 1) {
 				CloudOrderCreation file = cloudOrderCreationRepository
@@ -1837,14 +1835,13 @@ public class InstrumentService {
 					content = file.getContent();
 				}
 			} else {
-				OrderCreation file = mongoTemplate.findById(lssamplefile.getFilesamplecode(),
-						OrderCreation.class);
+				OrderCreation file = mongoTemplate.findById(lssamplefile.getFilesamplecode(), OrderCreation.class);
 				if (file != null) {
 					content = file.getContent();
 				}
 			}
 		}
-		
+
 		return content;
 	}
 
@@ -1928,12 +1925,10 @@ public class InstrumentService {
 
 	public LSsamplefile SaveResultfile(LSsamplefile objfile) {
 
-		
-		Integer lastversionindex =  objfile.getVersionno() != null ? objfile.getVersionno() - 1:0;
-		
+		Integer lastversionindex = objfile.getVersionno() != null ? objfile.getVersionno() - 1 : 0;
+
 		boolean versionexist = true;
-		if(objfile.getLssamplefileversion().size() <= 0)
-		{
+		if (objfile.getLssamplefileversion().size() <= 0) {
 			versionexist = false;
 			lastversionindex = 0;
 			LSsamplefileversion lsversion = new LSsamplefileversion();
@@ -1946,40 +1941,36 @@ public class InstrumentService {
 			lsversion.setModifieddate(objfile.getModifieddate());
 			lsversion.setModifiedby(objfile.getModifiedby());
 			objfile.getLssamplefileversion().add(lsversion);
-			
+
 			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
-			
+
 		}
-		
-		if(objfile.isDoversion() && versionexist)
-		{
-			
+
+		if (objfile.isDoversion() && versionexist) {
+
 			Integer perviousversion = -1;
-			if(objfile.getVersionno() >= 2)
-			{
+			if (objfile.getVersionno() != null && objfile.getVersionno() >= 2) {
 				perviousversion = objfile.getVersionno() - 2;
 			}
-			
+
 //			if (lastversionindex == -1) {
 //				Contentversion = objfile.getFilecontent();
 //				lastversionindex = 0;
 //				lssamplefileversionRepository.save(objfile.getLssamplefileversion());
 //			} else {
 //			
-			String Contentversion = GetSamplefileconent(objfile,objfile.getIsmultitenant());
-				objfile.getLssamplefileversion().get(lastversionindex).setFilecontent(null);
-				lssamplefileversionRepository.save(objfile.getLssamplefileversion());
-				updateorderversioncontent(objfile.getFilecontent(), objfile.getLssamplefileversion().get(lastversionindex),
-						objfile.getIsmultitenant());
-				if(perviousversion >-1)
-				{
+			String Contentversion = GetSamplefileconent(objfile, objfile.getIsmultitenant());
+			objfile.getLssamplefileversion().get(lastversionindex).setFilecontent(null);
+			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
+			updateorderversioncontent(objfile.getFilecontent(), objfile.getLssamplefileversion().get(lastversionindex),
+					objfile.getIsmultitenant());
+			if (perviousversion > -1) {
 				updateorderversioncontent(Contentversion, objfile.getLssamplefileversion().get(perviousversion),
 						objfile.getIsmultitenant());
-				}
-				
-				//objfile.setVersionno(objfile.getVersionno()+1);
+			}
+
+			// objfile.setVersionno(objfile.getVersionno()+1);
 //			}
-			
 
 //			if (objfile.getLssamplefileversion() != null ) {
 //				if (objfile.getObjActivity().getObjsilentaudit() != null) {
@@ -1997,17 +1988,13 @@ public class InstrumentService {
 //					lscfttransactionRepository.save(objfile.getObjActivity().getObjsilentaudit());
 //				}
 //			}
-		}
-		else
-		{
+		} else {
 			updateorderversioncontent(objfile.getFilecontent(), objfile.getLssamplefileversion().get(lastversionindex),
 					objfile.getIsmultitenant());
 		}
-		
+
 		objfile.setProcessed(1);
-		
-		
-		
+
 		String Content = objfile.getFilecontent();
 		objfile.setFilecontent(null);
 		lssamplefileRepository.save(objfile);
@@ -2019,10 +2006,6 @@ public class InstrumentService {
 			lsactivityRepository.save(objfile.getObjActivity());
 		}
 
-		if (objfile.getObjsilentaudit() != null) {
-			objfile.getObjsilentaudit().setTableName("LSsamplefile");
-//			lscfttransactionRepository.save(objfile.getObjsilentaudit());
-		}
 		objfile.setResponse(new Response());
 		objfile.getResponse().setStatus(true);
 		objfile.getResponse().setInformation("ID_DUMMY1");
@@ -2224,21 +2207,23 @@ public class InstrumentService {
 	}
 
 	public LSlogilablimsorderdetail updateworflowforOrder(LSlogilablimsorderdetail objorder) {
+		
 		LSlogilablimsorderdetail lsOrder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 
 		updatenotificationfororderworkflow(objorder, lsOrder.getLsworkflow());
 
 		lsorderworkflowhistoryRepositroy.save(objorder.getLsorderworkflowhistory());
+		
 		lslogilablimsorderdetailRepository.save(objorder);
 
 //		silent audit
-		if (objorder.getLsorderworkflowhistory().get(objorder.getLsorderworkflowhistory().size() - 1)
-				.getObjsilentaudit() != null) {
-			objorder.getLsorderworkflowhistory().get(objorder.getLsorderworkflowhistory().size() - 1)
-					.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-			lscfttransactionRepository.save(objorder.getLsorderworkflowhistory()
-					.get(objorder.getLsorderworkflowhistory().size() - 1).getObjsilentaudit());
-		}
+//		if (objorder.getLsorderworkflowhistory().get(objorder.getLsorderworkflowhistory().size() - 1)
+//				.getObjsilentaudit() != null) {
+//			objorder.getLsorderworkflowhistory().get(objorder.getLsorderworkflowhistory().size() - 1)
+//					.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+//			lscfttransactionRepository.save(objorder.getLsorderworkflowhistory()
+//					.get(objorder.getLsorderworkflowhistory().size() - 1).getObjsilentaudit());
+//		}
 		return objorder;
 	}
 
@@ -2959,54 +2944,56 @@ public class InstrumentService {
 	}
 
 	public List<Integer> Getuserworkflow(LSusergroup lsusergroup) {
-		if(lsusergroup != null) {
-		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
-				.findBylsusergroup(lsusergroup);
+		if (lsusergroup != null) {
+			List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
+					.findBylsusergroup(lsusergroup);
 
-		List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
+			List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingIn(lsworkflowgroupmapping);
 
-		List<Integer> lstworkflow = new ArrayList<Integer>();
-		if (lsworkflow != null && lsworkflow.size() > 0) {
-			lstworkflow = lsworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
-		}
+			List<Integer> lstworkflow = new ArrayList<Integer>();
+			if (lsworkflow != null && lsworkflow.size() > 0) {
+				lstworkflow = lsworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+			}
 
-		return lstworkflow;
-		}else {
+			return lstworkflow;
+		} else {
 			List<Integer> lstworkflow = new ArrayList<Integer>();
 			return lstworkflow;
 		}
 	}
 
 	public Map<String, Object> Getuserprojects(LSuserMaster objuser) {
-		if(objuser.getUsercode() != null) {
-		Map<String, Object> objmap = new HashMap<>();
-		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findByLsuserMasterAndTeamcodeNotNull(objuser);
-		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
-		List<LSprojectmaster> lstprojectmaster = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+		if (objuser.getUsercode() != null) {
+			Map<String, Object> objmap = new HashMap<>();
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+			List<LSprojectmaster> lstprojectmaster = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 
-		List<Integer> lstproject = new ArrayList<Integer>();
-		if (lstprojectmaster != null && lstprojectmaster.size() > 0) {
-			lstproject = lstprojectmaster.stream().map(LSprojectmaster::getProjectcode).collect(Collectors.toList());
-		}
-
-		List<Integer> lstteamcode = new ArrayList<Integer>();
-		if (lstteam != null && lstteam.size() > 0) {
-			lstteamcode = lstteam.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
-		}
-
-		List<Integer> lstteamusercode = new ArrayList<Integer>();
-		if (lstteammap != null && lstteammap.size() > 0) {
-			List<LSuserMaster> lstusers = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteamcode);
-			if (lstusers != null && lstusers.size() > 0) {
-				lstteamusercode = lstusers.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
+			List<Integer> lstproject = new ArrayList<Integer>();
+			if (lstprojectmaster != null && lstprojectmaster.size() > 0) {
+				lstproject = lstprojectmaster.stream().map(LSprojectmaster::getProjectcode)
+						.collect(Collectors.toList());
 			}
-		}
 
-		objmap.put("project", lstproject);
-		objmap.put("team", lstteamcode);
-		objmap.put("teamuser", lstteamusercode);
-		return objmap;
-		}else {
+			List<Integer> lstteamcode = new ArrayList<Integer>();
+			if (lstteam != null && lstteam.size() > 0) {
+				lstteamcode = lstteam.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
+			}
+
+			List<Integer> lstteamusercode = new ArrayList<Integer>();
+			if (lstteammap != null && lstteammap.size() > 0) {
+				List<LSuserMaster> lstusers = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteamcode);
+				if (lstusers != null && lstusers.size() > 0) {
+					lstteamusercode = lstusers.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
+				}
+			}
+
+			objmap.put("project", lstproject);
+			objmap.put("team", lstteamcode);
+			objmap.put("teamuser", lstteamusercode);
+			return objmap;
+		} else {
 			Map<String, Object> objmap = new HashMap<>();
 			return objmap;
 		}

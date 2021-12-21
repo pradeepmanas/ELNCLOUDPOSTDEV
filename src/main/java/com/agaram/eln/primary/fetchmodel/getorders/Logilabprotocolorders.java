@@ -10,7 +10,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 
-public class Logilabprotocolorders {
+public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{ 
 
 	private Long protocolordercode;
 	private String protoclordername;
@@ -187,5 +187,10 @@ public class Logilabprotocolorders {
 
 	public void setCanuserprocess(boolean canuserprocess) {
 		this.canuserprocess = canuserprocess;
+	}
+
+	@Override
+	public int compareTo(Logilabprotocolorders o) {
+		return this.getProtocolordercode().compareTo(o.getProtocolordercode());
 	}
 }

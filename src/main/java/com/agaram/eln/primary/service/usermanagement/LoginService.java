@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import com.agaram.eln.config.ADS_Connection;
 import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.config.JwtTokenUtil;
+import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
@@ -38,6 +40,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
@@ -53,6 +56,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
 import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
 import com.agaram.eln.primary.service.cfr.AuditService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSSiteMasterRepository.class)
@@ -112,6 +116,12 @@ public class LoginService {
 	
 	@Autowired
 	private LSsheetworkflowRepository lssheetworkflowRepository;
+	
+	@Autowired
+	private LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
+	
+//	@Autowired
+//	private commonfunction commonfunction;
 	
 	//added for notification
 
@@ -1495,13 +1505,15 @@ public class LoginService {
 		
 		List<Notification> codelist = NotificationRepository
 				.findByUsercode(objNotification.getUsercode());
-		
+			
 				
 				int i = 0;
 				boolean value = false;
 		while (i < codelist.size()) {
 		   		  
-			 value=isSameDay(currentdate, codelist.get(i).getCautiondate());
+			value=commonfunction.isSameDay( currentdate,  codelist.get(i).getCautiondate());
+			
+//			 value=isSameDay(currentdate, codelist.get(i).getCautiondate());
 			 
 			
 		LSnotification LSnotification=new LSnotification();
@@ -1512,25 +1524,26 @@ public class LoginService {
 		LSuserMaster objLSuserMaster = new LSuserMaster();/*to return the value this obj is created*/
 		objLSuserMaster = userService.getUserOnCode(LSuserMaster);	 
 		
+		
+		Logilaborders batchid = lslogilablimsorderdetailRepository
+				.findByBatchcode(codelist.get(i).getOrderid());
+		
+		objNotification.setLssheetworkflow(lssheetworkflowRepository
+		.findByLssitemaster_sitecode(objNotification.getSitecode()));
+			
 
 		
-			objNotification.setLssheetworkflow(lssheetworkflowRepository
-					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objNotification.getLssitemaster()));
+	String previousworkflowname = "";
+	int perviousworkflowcode = -1;
+	
+			
+//	String Details = "{\"description\":\"" + codelist.get(i).getDescription() + "\",\"orderid\" :\"" + codelist.get(i).getOrderid() + "\",\"Batchid\" :\"" +batchid.getBatchid()+"\", \""
+//			+ "previousworkflow\":\""+ previousworkflowname +"\",\"previousworkflowcode\":\""+ perviousworkflowcode +"\",\"currentworkflow\":\""+objNotification.getLssheetworkflow().getWorkflowname() + "\","
+//			+ "currentworkflowcode\":\""+ objNotification.getLssheetworkflow().getWorkflowcode() + "\"}";
+	
+	String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\"" +batchid.getBatchid()+"\",\"description\":\"" + codelist.get(i).getDescription() + "\", \""
+			+ "previousworkflow\":\""+ previousworkflowname +"\",\"previousworkflowcode\":\""+ perviousworkflowcode +"\",\"currentworkflowcode\":\""+objNotification.getLssheetworkflow().getWorkflowcode() + "\"}";
 		
-	String Details = "{\"description\":\"" + codelist.get(i).getDescription() + "\",\"orderid\" :\"" + codelist.get(i).getOrderid() + "\"}";
-			
-			
-//		LSfile LSfile = new LSfile();
-//	
-//		LSfile=fileService.getfileoncode(LSfile)
-//		
-//		
-//		Details = "{\"ordercode\":\"" + objFile.getFilecode() + "\", \"order\":\""
-//				+ objFile.getFilenameuser() + "\", \"previousworkflow\":\"" + previousworkflowname
-//				+ "\", \"previousworkflowcode\":\"" + perviousworkflowcode + "\", \"currentworkflow\":\""
-//				+ objFile.getLssheetworkflow().getWorkflowname() + "\", \"currentworkflowcode\":\""
-//				+ objFile.getLssheetworkflow().getWorkflowcode() + "\"}";
-//		
 						
 		
 			 if(codelist.get(i).getStatus() == 1 && value ) {
@@ -1538,8 +1551,7 @@ public class LoginService {
 					LSnotification.setIsnewnotification(1);
 					LSnotification.setNotification("CAUTIONALERT");
 			        LSnotification.setNotificationdate(objNotification.getCurrentdate());
-			//		LSnotification.setNotificationdetils(codelist.get(i).getOrderid());
-        			LSnotification.setNotificationdetils(Details);
+					LSnotification.setNotificationdetils(Details);
 					LSnotification.setNotificationpath("/registertask");
 					LSnotification.setNotifationfrom(objLSuserMaster);
 					LSnotification.setNotifationto(objLSuserMaster);
@@ -1559,10 +1571,8 @@ public class LoginService {
 	return null;
 	
 	}
+
 	
-	 public boolean isSameDay(Date date1, Date date2) {
-	    SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
-	    return fmt.format(date1).equals(fmt.format(date2));
-	}
+	
 	// added for notification
 }

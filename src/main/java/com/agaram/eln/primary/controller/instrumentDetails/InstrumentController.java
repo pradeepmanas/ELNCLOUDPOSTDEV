@@ -107,7 +107,7 @@ public class InstrumentController {
 	@PostMapping("/Getorderbytypeandflag")
 	public Map<String, Object> Getorderbytypeandflag(@RequestBody LSlogilablimsorderdetail objorder) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
+		if (objorder.getLsuserMaster().getUsername() != null && objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 
 			instrumentService.GetorderbytypeandflagOrdersonly(objorder, mapOrders);
 		} else {

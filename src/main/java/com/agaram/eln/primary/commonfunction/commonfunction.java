@@ -2,6 +2,7 @@ package com.agaram.eln.primary.commonfunction;
 
 
 import java.text.DateFormat;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -135,5 +136,9 @@ public class commonfunction {
 	  }
 	    
 	    return mediatype;
+	}
+	public static boolean isSameDay(Date date1, Date date2) {
+	    SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+	    return fmt.format(date1).equals(fmt.format(date2));
 	}
 }

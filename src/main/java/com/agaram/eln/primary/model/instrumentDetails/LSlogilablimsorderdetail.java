@@ -161,6 +161,15 @@ public class LSlogilablimsorderdetail {
 	@Column(name = "approved") 
 	private Integer approved;
 	
+	@Transient
+	private Integer rejected;
+	
+	public Integer getRejected() {
+		return rejected;
+	}
+	public void setRejected(Integer rejected) {
+		this.rejected = rejected;
+	}
 	@ManyToOne
 	private LSuserMaster assignedto;
 	

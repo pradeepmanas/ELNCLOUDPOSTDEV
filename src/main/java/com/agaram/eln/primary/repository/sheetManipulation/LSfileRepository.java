@@ -14,6 +14,7 @@ import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 
@@ -137,5 +138,9 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 
 	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(int filecode,
 			LSuserMaster objuser);
+	
+	public List<Sheettemplateget> findByApprovedAndLssitemasterAndFilecodeGreaterThan(Integer approvelstatus,LSSiteMaster lssitemaster, Integer filecode);
+
+	public List<Sheettemplateget> findByLssitemasterAndFilecodeGreaterThan(LSSiteMaster site, int j);
 
 }

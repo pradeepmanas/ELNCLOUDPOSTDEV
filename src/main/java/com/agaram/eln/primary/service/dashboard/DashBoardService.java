@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.service.dashboard;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -86,7 +87,7 @@ public class DashBoardService {
 
 	@Autowired
 	private LSuserMasterRepository lsuserMasterRepository;
-	
+
 	@Autowired
 	private LSusergroupRepository LSusergroupRepository;
 
@@ -116,7 +117,7 @@ public class DashBoardService {
 
 	@Autowired
 	private LsrepositoriesRepository LsrepositoriesRepository;
-	
+
 	@Autowired
 	LSuserteammappingRepository LSuserteammappingRepositoryObj;
 
@@ -429,6 +430,7 @@ public class DashBoardService {
 
 			List<LSprojectmaster> lstproject = objuser.getLstproject();
 			List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
+
 			if (lstproject != null) {
 				List<LSworkflow> lstworkflow = objuser.getLstworkflow();
 
@@ -445,6 +447,7 @@ public class DashBoardService {
 					lstorders = lslogilablimsorderdetailRepository
 							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc("N",
 									lstproject, fromdate, todate);
+
 				} else if (objuser.getObjuser().getOrderselectiontype() == 4) {
 
 					lstorders = lslogilablimsorderdetailRepository
@@ -455,7 +458,7 @@ public class DashBoardService {
 
 				lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
 			}
-
+			Collections.sort(lstorders, Collections.reverseOrder());
 			mapOrders.put("orderlst", lstorders);
 		}
 
@@ -490,7 +493,7 @@ public class DashBoardService {
 
 		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
 				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
-		
+
 		List<LSuserteammapping> LSuserteammapping = LSuserteammappingRepositoryObj
 				.findByLsuserMasterAndTeamcodeNotNull(objuser);
 
@@ -500,44 +503,15 @@ public class DashBoardService {
 
 			List<LSprotocolworkflow> lsprotocolworkflow = lSprotocolworkflowRepository
 					.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
-		
-			lstorders.forEach(objorder -> objorder.setLstworkflow(lsprotocolworkflow));
-			
-//			lstorders.forEach((objorder) -> {
-//
-//				if (lsprotocolworkflow != null && objorder.getlSprotocolworkflow() != null
-//						&& lsprotocolworkflow.size() > 0) {
-//					// if(lstworkflow.contains(this.lsworkflow))
-//
-//					List<Integer> lstprotocolworkflowcode = new ArrayList<Integer>();
-//					if (lsprotocolworkflow != null && lsprotocolworkflow.size() > 0) {
-//						lstprotocolworkflowcode = lsprotocolworkflow.stream().map(LSprotocolworkflow::getWorkflowcode)
-//								.collect(Collectors.toList());
-//
-//						if (lstprotocolworkflowcode.contains(objorder.getlSprotocolworkflow().getWorkflowcode())) {
-//							objorder.setCanuserprocess(true);
-//						} else {
-//							objorder.setCanuserprocess(false);
-//						}
-//					} else {
-//						objorder.setCanuserprocess(false);
-//					}
-//				} else {
-//					objorder.setCanuserprocess(false);
-//				}
-//			});
 
-			
-//			lstorders.forEach(objorder -> objorder
-//					.setCanuserprocess(lsprotocolworkflow.equals(objorder.getlSprotocolworkflow()) ? true : false));
-		}else if(LSuserteammapping != null && LSuserteammapping.size() > 0) {
-			
-			lstorders.forEach(objorder -> objorder
-			.setCanuserprocess(false));
-			
-		
+			lstorders.forEach(objorder -> objorder.setLstworkflow(lsprotocolworkflow));
+
+		} else if (LSuserteammapping != null && LSuserteammapping.size() > 0) {
+
+			lstorders.forEach(objorder -> objorder.setCanuserprocess(false));
+
 		}
-		
+		Collections.sort(lstorders, Collections.reverseOrder());
 		mapOrders.put("orderlst", lstorders);
 
 		return mapOrders;
@@ -729,8 +703,9 @@ public class DashBoardService {
 		Date todate = objuser.getObjuser().getTodate();
 
 //		return LsrepositoriesRepository.findBysitecodeOrderByRepositorycodeAsc(objuser.getLssitemaster().getSitecode());
-		
-		return LsrepositoriesRepository.findBySitecodeAndAddedonBetweenOrderByRepositorycodeAsc(objuser.getLssitemaster().getSitecode(),fromdate,todate);
+
+		return LsrepositoriesRepository.findBySitecodeAndAddedonBetweenOrderByRepositorycodeAsc(
+				objuser.getLssitemaster().getSitecode(), fromdate, todate);
 	}
 
 }

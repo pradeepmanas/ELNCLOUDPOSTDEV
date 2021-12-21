@@ -10,7 +10,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 
-public class Logilabordermaster {
+public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private Long batchcode;
 	@SuppressWarnings("unused")
 	private String batchid;
@@ -195,6 +195,11 @@ public class Logilabordermaster {
 
 	public void setCreatedtimestamp(Date createdtimestamp) {
 		this.createdtimestamp = createdtimestamp;
+	}
+
+	@Override
+	public int compareTo(Logilabordermaster o) {
+		return this.getBatchcode().compareTo(o.getBatchcode());
 	}
 
 }
