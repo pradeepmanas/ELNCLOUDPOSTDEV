@@ -306,6 +306,11 @@ public class ProtocolController {
 		return ProtocolMasterService.GetProtocolTemplateVerionLst(argObj);
 	}
 	
+	@RequestMapping("/GetProtocolorderVerionLst")
+	public Map<String, Object> GetProtocolorderVerionLst(@RequestBody Map<String, Object> argObj) {
+		return ProtocolMasterService.GetProtocolorderVerionLst(argObj);
+	}
+	
 	@PostMapping("/getprotocols")
 	public List <LSprotocolmaster> getprotocols(@RequestBody LSuserMaster objusers)
 	{
@@ -349,7 +354,7 @@ public class ProtocolController {
 	}
 	
 	@PostMapping("/uploadprotocols")
-	public Map<String, Object> uploadprotocols(@RequestParam Map<String, Object> body)
+	public Map<String, Object> uploadprotocols(@RequestBody Map<String, Object> body)
 	{
 		return ProtocolMasterService.uploadprotocols(body);
 //		return true;
@@ -456,7 +461,7 @@ public class ProtocolController {
 	}
 	
 	@PostMapping("/uploadprotocolsordersstep")
-	public Map<String, Object> uploadprotocolsordersstep(@RequestParam Map<String, Object> body)
+	public Map<String, Object> uploadprotocolsordersstep(@RequestBody Map<String, Object> body)
 	{
 		return ProtocolMasterService.uploadprotocolsordersstep(body);
 //		return true;

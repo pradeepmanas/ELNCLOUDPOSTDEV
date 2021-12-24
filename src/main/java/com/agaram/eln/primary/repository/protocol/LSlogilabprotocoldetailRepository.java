@@ -167,5 +167,8 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Integer protocoltype, String string, LSuserMaster lsuserMaster, Date fromdate, Date todate);
 
 
+	LSlogilabprotocoldetail findByProtocolordercode(Long protocolordercode);
+
+
 
 }

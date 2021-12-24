@@ -30,8 +30,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	public long countByFiletypeAndOrderflagOrderByBatchcodeDesc(Integer filetype, String orderflag);
 
-	//public LSlogilablimsorderdetail findByBatchcode(Long batchcode);
-
 	public List<LSlogilablimsorderdetail> findByBatchcodeAndBatchid(Long batchcode, String batchid);
 
 	public LSlogilablimsorderdetail findByBatchid(String Batchid);
@@ -439,8 +437,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	public List<LSlogilablimsorderdetail> findByFiletypeAndOrderflagOrderByBatchcodeAsc(int i, String string);
 	
-	public Logilaborders findByBatchcode(Long batchcode);
-	
+    public Logilaborders findByBatchcode(Long batchcode);	
 	public List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween(
 			String orderflag, List<LSprojectmaster> lstproject, List<LSworkflow> lsworkflow, Date fromdate, Date todate);
 	
@@ -463,4 +460,21 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public List<LSlogilablimsorderdetail> findByLsprojectmasterOrderByBatchcodeDesc(LSprojectmaster lsproject);
 	
 	public Integer deleteByLsprojectmaster(LSprojectmaster lsproject);
+
+	List<LSlogilablimsorderdetail> findByFiletypeAndApprovelstatusAndOrderflagOrderByBatchcodeDesc(int i, int j,
+			String string);
+
+	List<LSlogilablimsorderdetail> findByFiletypeAndApprovelstatusAndOrderflagAndLsprojectmasterInOrderByBatchcodeAsc(
+			int i, int j, String string, List<LSprojectmaster> lstproject);
+
+	//Logilaborders findByBatchcode(Long batchcode);
+
+	
+
+
+
+
+
+
+	
 }

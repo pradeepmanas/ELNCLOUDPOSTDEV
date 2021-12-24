@@ -1,27 +1,14 @@
 package com.agaram.eln.config;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
-import javax.inject.Inject;
+//import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -33,40 +20,47 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Component
 public class Converter extends AbstractHttpMessageConverter<Object> {
 
-    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+	public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
-    @Inject
-    private ObjectMapper objectMapper;
+//	@Inject
+//	private ObjectMapper objectMapper;
 
-    public Converter(){
-    	super(MediaType.APPLICATION_JSON_UTF8,
-                new MediaType("application", "*+json", DEFAULT_CHARSET));
-    }
+	public Converter() {
+		super(MediaType.APPLICATION_JSON_UTF8, new MediaType("application", "*+json", DEFAULT_CHARSET));
+	}
 
-    @Override
-    protected boolean supports(Class<?> clazz) {
-        return true;
-    }
+	@Override
+	protected boolean supports(Class<?> clazz) {
+		return true;
+	}
 
-    @Override
-    protected Object readInternal(Class<? extends Object> clazz,
-                                  HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
-    	ObjectMapper mapper = new ObjectMapper();
-    	mapper.setSerializationInclusion(Include.NON_NULL);
-    	mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    	mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	@Override
+	protected Object readInternal(Class<? extends Object> clazz, HttpInputMessage inputMessage)
+			throws IOException, HttpMessageNotReadableException {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 //    	mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 //    	System.out.println(inputMessage.getHeaders().get("authorization").get(0));
-    	String contenttype = inputMessage.getHeaders().get("Content-Type").get(0);
-    	String encoding = inputMessage.getHeaders().get("accept-encoding").get(0);
-    	
-    	
-    	String decryptionkey = "1234567812345678";
+		String contenttype = inputMessage.getHeaders().get("Content-Type").get(0);
+		String encoding = inputMessage.getHeaders().get("accept-encoding").get(0);
+//		String contendencoding = inputMessage.getHeaders().get("content-encoding");
+
+		String contendencoding ="";
+		
+		if(inputMessage.getHeaders().containsKey("content-encoding")) {
+			contendencoding = inputMessage.getHeaders().get("content-encoding").get(0);
+			System.out.println("content-encoding header : " + contendencoding);
+		}else {
+			contendencoding = "normal";
+		}
+		
+		String decryptionkey = "1234567812345678";
 //    	if(inputMessage.getHeaders().get("authorization") != null && 
 //    			inputMessage.getHeaders().get("authorization").size()>0 && 
 //    			!inputMessage.getHeaders().get("authorization").get(0).equals("undefined"))
@@ -85,49 +79,48 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 //    	{
 //    		decryptionkey = "1234567812345678";
 //    	}
-    	
+
 //    	  System.out.println("Encoding for print :" + encoding );
-    	System.out.println("contant type :" + contenttype );
-    	System.out.println("encoding :" + encoding );
-    	if(contenttype.equalsIgnoreCase("application/json;charset=UTF-8") && (
-    			encoding.equalsIgnoreCase("gzip, deflate")||encoding.equalsIgnoreCase("gzip, deflate, br")))
-    	{
-    		System.out.println("come decryption");
-    		return mapper.readValue(decrypt(inputMessage.getBody(), decryptionkey), clazz);
-    	}
-    	else
-    	{
-    		System.out.println("normal");
-    		return mapper.readValue(inputMessage.getBody(), clazz);
-    	}
-    	
-    }
+		System.out.println("contant type :" + contenttype);
+		System.out.println("encoding :" + encoding);
+		if (contenttype.equalsIgnoreCase("application/json;charset=UTF-8")
+				&& (encoding.equalsIgnoreCase("gzip, deflate") || encoding.equalsIgnoreCase("gzip, deflate, br"))
+				&& contendencoding.equalsIgnoreCase("gzip")) {
+			System.out.println("come decryption");
+			return mapper.readValue(decrypt(inputMessage.getBody(), decryptionkey), clazz);
+		} else {
+			System.out.println("normal");
+			return mapper.readValue(inputMessage.getBody(), clazz);
+		}
 
-    @Override
-    protected void writeInternal(Object o, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-    	ObjectMapper mapper = new ObjectMapper();
-    	mapper.setSerializationInclusion(Include.NON_NULL);
-    	mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    	mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    	//mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+	}
+
+	@Override
+	protected void writeInternal(Object o, HttpOutputMessage outputMessage)
+			throws IOException, HttpMessageNotWritableException {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		// mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 //    	System.out.println("write "+ outputMessage.getHeaders().get("authorization").get(0));
-    	
-    	outputMessage.getBody().write(encrypt(mapper.writeValueAsBytes(o)));
-    }
 
-    private InputStream decrypt(InputStream inputStream, String key){
-    	
-    	InputStream in;
-    	byte[] bytes = null;
+		outputMessage.getBody().write(encrypt(mapper.writeValueAsBytes(o)));
+	}
+
+	private InputStream decrypt(InputStream inputStream, String key) {
+
+		InputStream in;
+		byte[] bytes = null;
 		try {
 			in = new GZIPInputStream(inputStream);
-		
+
 			bytes = IOUtils.toByteArray(in);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-        
+
 //        StringBuilder requestParamString = new StringBuilder();
 //        try (Reader reader = new BufferedReader(new InputStreamReader
 //                (inputStream, Charset.forName(StandardCharsets.UTF_8.name())))) {
@@ -139,7 +132,7 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 //            e.printStackTrace();
 //        }
 //        try {
-     
+
 //            JSONObject requestJsonObject = new
 //                    JSONObject(requestParamString.toString().replace("\n", ""));
 
@@ -155,19 +148,18 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 //        } catch (JSONException err) {
 //            return inputStream;
 //        }
-		
-		return new ByteArrayInputStream(bytes);
-    }
 
-    private byte[] encrypt(byte[] bytesToEncrypt){
+		return new ByteArrayInputStream(bytes);
+	}
+
+	private byte[] encrypt(byte[] bytesToEncrypt) {
 //        String apiJsonResponse = new String(bytesToEncrypt);
 //
 //        String encryptedString = AESEncryption.encryptcontant(apiJsonResponse);
 //        if (encryptedString != null) {
 //           
 //            Map<String, String> hashMap = new HashMap<>();
-           
-            
+
 //        	try { 	
 //    		ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
 //    		DeflaterOutputStream outputStream = new DeflaterOutputStream(arrayOutputStream);
@@ -180,12 +172,12 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 //    	} catch (IOException e) {
 //    	    throw new RuntimeException(e);
 //    	  }
-            
+
 //        } else
 //        {
-            return bytesToEncrypt;
+		return bytesToEncrypt;
 //        }
-        
+
 //        return encryptedString.getBytes();
-    }
+	}
 }

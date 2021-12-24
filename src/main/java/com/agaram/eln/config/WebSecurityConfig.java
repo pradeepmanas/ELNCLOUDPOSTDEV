@@ -146,6 +146,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/User/validatemailaddress").permitAll().
 		antMatchers("/Login/limsloginusertokengenarate").permitAll().
 		antMatchers("/multitenant/Registerinvoice").permitAll().
+		antMatchers("/Lims/getSheetsFromELN").permitAll().
 		antMatchers("/protocol/downloadprotocolimage/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolfile/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		antMatchers("/Instrument/downloadsheetimages/{fileid}/{tenant}/{filename}/{extension}").permitAll().

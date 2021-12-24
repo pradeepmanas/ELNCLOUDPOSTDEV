@@ -1948,3 +1948,73 @@ ALTER TABLE public.notification
     OWNER to postgres;
 
 INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) VALUES (58, NULL, NULL, 19, 3, 1, 'G1', 'ID_GENERAL', '19', 'ID_GENERAL', 19, 'ID_GENERAL', 'G19', 'Notification', 1) on conflict (fieldcode) do nothing;
+
+ALTER TABLE if exists notification alter column  orderid Type numeric;
+
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS versionno Integer;
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolorderstepversion
+(
+    protocolorderstepversioncode integer NOT NULL,
+    approved integer,
+    createdate timestamp without time zone,
+    createdbyusername character varying(120) COLLATE pg_catalog."default",
+    protocolmastercode integer,
+    protocolordercode bigint,
+    protocolorderstepcode integer,
+    protocolstepname character varying(255) COLLATE pg_catalog."default",
+    rejected integer,
+    sharewithteam integer,
+    status integer,
+    stepno integer,
+    versionname character varying(255) COLLATE pg_catalog."default",
+    versionno integer,
+    CONSTRAINT lsprotocolorderstepversion_pkey PRIMARY KEY (protocolorderstepversioncode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolorderstepversion
+    OWNER to postgres;
+		
+CREATE TABLE IF NOT EXISTS public.cloudlsprotocolorderversionstep
+(
+    idversioncode integer NOT NULL,
+    lsprotocolstepinfo jsonb,
+    protocolordercode bigint,
+    protocolorderstepversioncode integer,
+    status integer,
+    versionname character varying(100) COLLATE pg_catalog."default",
+    versionno integer,
+    CONSTRAINT cloudlsprotocolorderversionstep_pkey PRIMARY KEY (idversioncode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.cloudlsprotocolorderversionstep
+    OWNER to postgres;
+	
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolorderversion
+(
+    protocolorderversioncode integer NOT NULL,
+    createdate timestamp without time zone,
+    createdbyusername character varying(255) COLLATE pg_catalog."default",
+    protocolordercode bigint,
+    status integer,
+    versionname character varying(255) COLLATE pg_catalog."default",
+    versionno integer,
+    CONSTRAINT lsprotocolorderversion_pkey PRIMARY KEY (protocolorderversioncode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolorderversion
+    OWNER to postgres;
+	
