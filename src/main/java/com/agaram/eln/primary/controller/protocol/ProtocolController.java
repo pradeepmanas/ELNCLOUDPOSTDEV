@@ -6,10 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonProcessingException;
-import com.agaram.eln.primary.model.protocols.ProtocolorderImage;
-import com.agaram.eln.primary.model.protocols.Protocolordervideos;
-import com.agaram.eln.primary.model.protocols.Protocolvideos;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -47,6 +44,10 @@ import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.Lsprotocolsharedby;
 import com.agaram.eln.primary.model.protocols.Lsprotocolshareto;
 import com.agaram.eln.primary.model.protocols.ProtocolImage;
+import com.agaram.eln.primary.model.protocols.ProtocolorderImage;
+import com.agaram.eln.primary.model.protocols.Protocolordervideos;
+import com.agaram.eln.primary.model.protocols.Protocolvideos;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
@@ -935,5 +936,16 @@ public class ProtocolController {
 	protected boolean getprojectteam(@RequestBody LSuserMaster objClass) {
 
 		return ProtocolMasterService.getprojectteam(objClass);
+	}
+	
+	@RequestMapping(value = "/skipprotocolstep")
+	protected LSlogilabprotocolsteps skipprotocolstep(@RequestBody LSlogilabprotocolsteps lslogilabprotocolsteps) {
+
+		return ProtocolMasterService.skipprotocolstep(lslogilabprotocolsteps);
+	}
+	
+	@GetMapping("/gettaskmaster")
+	public List<LStestmasterlocal> gettaskmaster(HttpServletRequest request) {
+		return ProtocolMasterService.gettaskmaster();
 	}
 }

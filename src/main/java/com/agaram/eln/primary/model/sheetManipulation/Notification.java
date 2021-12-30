@@ -32,6 +32,7 @@ public class Notification {
 	
 	//private Integer orderid;
 	
+	@Column(columnDefinition = "numeric(17,0)",name = "orderid") 
 	private Long orderid;
 	
 	private String addedby;

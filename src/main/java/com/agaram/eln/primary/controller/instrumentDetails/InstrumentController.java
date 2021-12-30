@@ -35,6 +35,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSresultdetails;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
+import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
@@ -107,7 +108,8 @@ public class InstrumentController {
 	@PostMapping("/Getorderbytypeandflag")
 	public Map<String, Object> Getorderbytypeandflag(@RequestBody LSlogilablimsorderdetail objorder) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		if (objorder.getLsuserMaster().getUsername() != null && objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
+		if (objorder.getLsuserMaster().getUsername() != null
+				&& objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 
 			instrumentService.GetorderbytypeandflagOrdersonly(objorder, mapOrders);
 		} else {
@@ -771,4 +773,17 @@ public class InstrumentController {
 	public boolean deletesheetimagesforversionSql(@RequestBody List<Map<String, String>> lstfiles) {
 		return instrumentService.deletesheetimagesforversionSql(lstfiles);
 	}
+	
+	@PostMapping("/UploadLimsFile")
+	public Map<String, Object> UploadLimsFile(@RequestParam("file") MultipartFile file,
+			@RequestParam("order") Long batchcode, @RequestParam("filename") String filename) throws IOException {
+		return instrumentService.UploadLimsFile(file, batchcode, filename);
+	}
+	
+	@PostMapping("/downloadSheetFromELN")
+	public LsSheetorderlimsrefrence downloadSheetFromELN(@RequestBody LsSheetorderlimsrefrence objattachments)
+			throws IllegalStateException, IOException {
+		return instrumentService.downloadSheetFromELN(objattachments);
+	}
+
 }

@@ -39,6 +39,14 @@ public class LSlogilabprotocolsteps {
 	private Integer newStep;
 	private Integer sitecode;
 	private String orderstepflag;
+	
+	public Integer skipdata;
+	public Integer getSkipdata() {
+		return skipdata;
+	}
+	public void setSkipdata(Integer skipdata) {
+		this.skipdata = skipdata;
+	}
 	@Transient
 	private Integer versionno;
 	

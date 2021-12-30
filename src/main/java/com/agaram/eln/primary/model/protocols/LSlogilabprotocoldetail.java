@@ -113,9 +113,20 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private Date todate;
 	
+	@Transient
+	private String testname;
+	
 //	@Transient
 //	private String tenantname;
 	
+	public String getTestname() {
+		return testname;
+	}
+
+	public void setTestname(String testname) {
+		this.testname = testname;
+	}
+
 	@Transient
 	private String originurl;
 

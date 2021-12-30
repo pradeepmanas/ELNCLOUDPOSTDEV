@@ -34,7 +34,10 @@ public class SampleExtractController {
 	@PostMapping(value = "/getSampleExtractByMethod")
 	public ResponseEntity<Object> getSampleExtractByMethod(@Valid @RequestBody Map<String, Object> mapObject)
 	{    	
-		final int methodKey = (Integer) mapObject.get("methodKey");
+		//final int methodKey = (Integer) mapObject.get("methodKey");
+		Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
+    	   	
+		final int methodKey = (Integer) obj.get("methodKey");
 		return extractService.getSampleExtractByMethod(methodKey);
 	}
 

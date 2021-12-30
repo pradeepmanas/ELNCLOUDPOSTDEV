@@ -9,11 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
+import com.agaram.eln.primary.model.fileManipulation.SheetorderlimsRefrence;
+import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.repository.instrumentDetails.LsSheetorderlimsrefrenceRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfiletestRepository;
+import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 
 @Service
 public class limsintegarationservice {
@@ -23,6 +27,12 @@ public class limsintegarationservice {
 
 	@Autowired
 	private LSfiletestRepository LSfiletestRepository;
+	
+	@Autowired
+	private LsSheetorderlimsrefrenceRepository LsSheetorderlimsrefrenceRepository;
+	
+	@Autowired
+	private FileManipulationservice fileManipulationservice;
 
 	public Map<String, Object> getSheets(LStestmaster objTest) {
 
@@ -53,5 +63,25 @@ public class limsintegarationservice {
 
 		return map;
 
+	}
+
+	public LsSheetorderlimsrefrence downloadSheetFromELN(LsSheetorderlimsrefrence objattachments) {
+
+		System.out.print("Sheet download lims call service " + objattachments);
+
+		LsSheetorderlimsrefrence objSheet = LsSheetorderlimsrefrenceRepository
+				.findFirst1BybatchcodeOrderByRefrencecodeDesc(objattachments.getBatchcode());
+		
+		if(objSheet != null) {
+		
+			SheetorderlimsRefrence objfile = fileManipulationservice.LimsretrieveELNsheet(objSheet);
+
+			if (objfile != null) {
+				objattachments.setFile(objfile.getFile());
+			}
+			
+		}
+
+		return objattachments;
 	}
 }

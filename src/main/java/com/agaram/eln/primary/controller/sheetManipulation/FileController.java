@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.controller.sheetManipulation;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -7,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.general.Response;
@@ -372,8 +375,15 @@ public class FileController {
 	public Boolean updateSharedToFile(@RequestBody Lsfileshareto lsordersharedby) {
 		return fileService.updateSharedToFile(lsordersharedby);
 	}
+	
 	@PostMapping("/ValidateNotification")
 	public Notification ValidateNotification(@RequestBody Notification objnotification) {
 		return fileService.ValidateNotification(objnotification);
+	}
+	
+	@PostMapping("/UploadLimsFile")
+	public Map<String, Object> UploadLimsFile(@RequestParam("file") MultipartFile file,
+			@RequestParam("order") Long batchcode, @RequestParam("filename") String filename) throws IOException {
+		return fileService.UploadLimsFile(file, batchcode, filename);
 	}
 }

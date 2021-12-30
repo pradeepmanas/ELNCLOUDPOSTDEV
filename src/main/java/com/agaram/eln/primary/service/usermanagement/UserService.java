@@ -312,7 +312,10 @@ public class UserService {
 				updateUser.setUserfullname(objusermaster.getUserfullname());
 				updateUser.setEmailid(objusermaster.getEmailid());
 				updateUser.setUnifieduserid(objusermaster.getUnifieduserid());
+
 			}
+
+			objusermaster.setCreateddate(updateUser.getCreateddate());
 
 			lsuserMasterRepository.save(updateUser);
 

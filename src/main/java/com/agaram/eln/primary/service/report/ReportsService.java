@@ -415,6 +415,7 @@ public class ReportsService {
 						} catch (IOException ex) {
 							logger.info(ex.getLocalizedMessage());
 							status = false;
+							System.out.print("report service ID_DOCXSURLNOTFOUND 418");
 							statusMsg = "ID_DOCXSURLNOTFOUND";
 						}
 					}
@@ -441,11 +442,11 @@ public class ReportsService {
 				if (fileContent.equals("working")) {
 					status = true;
 					String filePath = "";
-					if (System.getProperty("os.name") == "Linux") {
-						filePath = new File("").getAbsolutePath();
-					} else {
+//					if (System.getProperty("os.name") == "Linux") {
+//						filePath = new File("").getAbsolutePath();
+//					} else {
 						filePath = getDocxAbsolutePath() + "/link.txt";
-					}
+//					}
 					File linkFile = new File(filePath);
 					if (linkFile.exists()) {
 						fileContent = new BufferedReader(new InputStreamReader(new FileInputStream(linkFile))).lines()
@@ -454,10 +455,12 @@ public class ReportsService {
 							status = true;
 						} else {
 							status = false;
+							System.out.print("report service ID_DOCXSURLNOTFOUND 458");
 							statusMsg = "ID_DOCXSURLNOTFOUND";
 						}
 					} else {
 						status = false;
+						System.out.print("report service ID_DOCXSURLNOTFOUND 463");
 						statusMsg = "ID_DOCXSURLNOTFOUND";
 					}
 				} else {
@@ -476,6 +479,7 @@ public class ReportsService {
 							} catch (IOException e) {
 								logger.info(e.getLocalizedMessage());
 								status = false;
+								System.out.print("report service ID_DOCXSURLNOTFOUND 482");
 								statusMsg = "ID_DOCXSURLNOTFOUND";
 							}
 							if (status) {
@@ -486,6 +490,7 @@ public class ReportsService {
 									status = true;
 								} else {
 									status = false;
+									System.out.print("report service ID_DOCXSURLNOTFOUND 493");
 									statusMsg = "ID_DOCXSURLNOTFOUND";
 								}
 							}
@@ -506,6 +511,7 @@ public class ReportsService {
 			if (FileType.equals("api")) {
 				statusMsg = "ID_DOCXSAPINOTFOUND";
 			} else if (FileType.equals("url")) {
+				System.out.print("report service ID_DOCXSURLNOTFOUND 509");
 				statusMsg = "ID_DOCXSURLNOTFOUND";
 			}
 		}

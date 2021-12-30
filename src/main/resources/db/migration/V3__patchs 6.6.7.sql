@@ -1949,7 +1949,7 @@ ALTER TABLE public.notification
 
 INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) VALUES (58, NULL, NULL, 19, 3, 1, 'G1', 'ID_GENERAL', '19', 'ID_GENERAL', 19, 'ID_GENERAL', 'G19', 'Notification', 1) on conflict (fieldcode) do nothing;
 
-ALTER TABLE if exists notification alter column  orderid Type numeric;
+ ALTER TABLE IF Exists notification alter column  orderid Type numeric(17,0)USING orderid::numeric(17,0);
 
 ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS versionno Integer;
 
@@ -2017,4 +2017,9 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.lsprotocolorderversion
     OWNER to postgres;
+    
+  ALTER TABLE IF Exists lslogilabprotocolsteps ADD COLUMN IF NOT EXISTS skipdata Integer;  
+  
+  
+
 	

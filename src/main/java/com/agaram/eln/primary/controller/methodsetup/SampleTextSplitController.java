@@ -33,7 +33,10 @@ public class SampleTextSplitController {
 	@PostMapping(value = "/getSampleTextSplitByMethod")
 	public ResponseEntity<Object> getSampleTextSplitByMethod(@Valid @RequestBody Map<String, Object> mapObject)
 	{    	
-		final int methodKey = (Integer) mapObject.get("methodKey");
+		//final int methodKey = (Integer) mapObject.get("methodKey");
+		Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
+    	  	
+		final int methodKey = (Integer) obj.get("methodKey");
 		return textSplitService.getSampleTextSplitByMethod(methodKey);
 	}
 

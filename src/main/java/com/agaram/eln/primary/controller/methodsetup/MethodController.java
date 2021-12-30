@@ -131,7 +131,9 @@ public class MethodController {
 	  @PostMapping(value = "/getFileData")
 	  public ResponseEntity<Object> getFileData(@Valid @RequestBody Map<String, Object> mapObject){
 		  final ObjectMapper mapper = new ObjectMapper();
-		  final String fileName = mapper.convertValue(mapObject.get("rawDataFileName"), String.class);
+		  //final String fileName = mapper.convertValue(mapObject.get("rawDataFileName"), String.class);
+		  Map<String, Object> objinput = (Map<String, Object>) mapObject.get("inputData");
+		  final String fileName = (String) objinput.get("rawDataFileName");
 		  return new ResponseEntity<>(methodService.getFileData(fileName), HttpStatus.OK);
 	  }	  
 	  

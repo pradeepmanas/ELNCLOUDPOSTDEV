@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.sheetManipulation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import java.util.Arrays;
@@ -16,15 +17,18 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetVersion;
+import com.agaram.eln.primary.model.fileManipulation.SheetorderlimsRefrence;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.general.SheetVersion;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
@@ -46,6 +50,7 @@ import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetVersionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsSheetorderlimsrefrenceRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsorderworkflowhistoryRepositroy;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
@@ -65,6 +70,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.basemaster.BaseMasterService;
+import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.masters.MasterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -149,6 +155,12 @@ public class FileService {
 	
 	@Autowired
 	private NotificationRepository NotificationRepository;
+	
+	@Autowired
+	private LsSheetorderlimsrefrenceRepository lssheetorderlimsrefrenceRepository;
+	
+	@Autowired
+	private FileManipulationservice fileManipulationservice;
 
 	public LSfile InsertupdateSheet(LSfile objfile) {
 		Boolean Isnew = false;
@@ -492,11 +504,6 @@ public class FileService {
 		mapOrders.put("test", masterService.getTestmaster(objuser));
 		mapOrders.put("sheets", GetApprovedSheets(1, objuser));
 
-//		silent audit
-		if (objuser.getObjsilentaudit() != null) {
-			objuser.getObjsilentaudit().setTableName("LSfiletest");
-			lscfttransactionRepository.save(objuser.getObjsilentaudit());
-		}
 		return mapOrders;
 	}
 
@@ -1197,5 +1204,38 @@ public class FileService {
 		NotificationRepository.save(objnotification);
 		return null;
 		
+	}
+	
+	public Map<String, Object> UploadLimsFile(MultipartFile file, Long batchcode, String filename)
+			throws IOException {
+		
+		System.out.print("Inside UploadLimsFile");
+		
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+
+		LsSheetorderlimsrefrence objattachment = new LsSheetorderlimsrefrence();
+
+		SheetorderlimsRefrence objfile = fileManipulationservice.storeLimsSheetRefrence(file);
+
+		if (objfile != null) {
+			objattachment.setFileid(objfile.getId());
+			
+			System.out.print("Inside UploadLimsFile filecode value "+batchcode.intValue());
+			
+			LSfile classFile = lSfileRepository.findByfilecode(batchcode.intValue());
+			classFile.setFilenameuuid(objfile.getId());
+			classFile.setExtension(".pdf");
+			
+			lSfileRepository.save(classFile);
+		}
+
+		objattachment.setFilename(filename);
+		objattachment.setBatchcode(batchcode);
+
+		lssheetorderlimsrefrenceRepository.save(objattachment);
+		
+		mapObj.put("elnSheet", objattachment);
+		
+		return mapObj;
 	}
 }
