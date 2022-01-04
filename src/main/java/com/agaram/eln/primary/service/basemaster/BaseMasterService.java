@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
+import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.Lselninstrumentfields;
 import com.agaram.eln.primary.model.instrumentDetails.Lselninstrumentmaster;
@@ -19,6 +20,9 @@ import com.agaram.eln.primary.model.inventory.LSequipmentmap;
 import com.agaram.eln.primary.model.inventory.LSinstrument;
 import com.agaram.eln.primary.model.inventory.LSmaterial;
 import com.agaram.eln.primary.model.inventory.LSmaterialmap;
+import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
+import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
@@ -38,6 +42,8 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSsamplemasterReposit
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
+import com.agaram.eln.primary.service.protocol.ProtocolService;
+import com.agaram.eln.primary.service.sheetManipulation.FileService;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSsamplemasterRepository.class)
@@ -64,6 +70,8 @@ public class BaseMasterService {
 	@Autowired
 	private LStestmasterRepository lstestmasterRepository;
 
+	@Autowired
+	ProtocolService ProtocolMasterService;
 //	@Autowired
 //    private MaterialService materialService;
 
@@ -84,18 +92,53 @@ public class BaseMasterService {
 
 	@Autowired
 	private LSlogilablimsorderdetailRepository LSlogilablimsorderdetailRepository;
+	
+	@Autowired
+	private FileService fileService;
 
 	@SuppressWarnings("unused")
 	private String ModuleName = "Base Master";
 
 	public List<Testmaster> getTestmaster(LSuserMaster objClass) {
-//		silent audit
-		if (objClass.getObjsilentaudit() != null) {
-			objClass.getObjsilentaudit().setTableName("LStestmasterlocal");
-			lscfttransactionRepository.save(objClass.getObjsilentaudit());
-		}
 
 		return lStestmasterlocalRepository.findBystatusAndLssitemaster(1, objClass.getLssitemaster());
+	}
+	
+	public Map<String, Object> getTestwithsheet(LSuserMaster objClass) {
+		Map<String, Object> map =new HashMap<String, Object>();
+		
+		List<Testmaster> lstTest = lStestmasterlocalRepository.findBystatusAndLssitemaster(1, objClass.getLssitemaster());
+		
+		map.put("Test", lstTest);
+		
+		LSfiletest objTest = new LSfiletest();
+		
+		List<Sheettemplateget> lstSheet = new ArrayList<Sheettemplateget>();
+		
+		List<LSprotocolmaster> lstP = new ArrayList<LSprotocolmaster>();
+		
+		if(lstTest != null && lstTest.size()>0) {
+			
+			objTest.setTestcode(lstTest.get(0).getTestcode());
+			objTest.setTesttype(1);
+			objTest.setIsmultitenant(objClass.getIsmultitenant());
+			objTest.setObjLoggeduser(objClass);
+			
+			lstSheet = fileService.GetfilesOnTestcode(objTest);
+			
+			LSprotocolmastertest obj1 = new LSprotocolmastertest();
+			
+			obj1.setTestcode(lstTest.get(0).getTestcode());
+			obj1.setTesttype(1);
+			obj1.setObjLoggeduser(objClass);
+			
+			lstP = ProtocolMasterService.getProtocolOnTestcode(obj1);
+			
+		}
+		map.put("Protocol", lstP);
+		map.put("Sheet", lstSheet);
+		
+		return map;
 	}
 
 	public List<LStestmaster> getLimsTestMaster(LSuserMaster objClass) {
@@ -462,4 +505,6 @@ public class BaseMasterService {
 	public LStestmaster GetTestonID(LStestmaster objtest) {
 		return lstestmasterRepository.findByntestcode(objtest.getNtestcode());
 	}
+
+	
 }

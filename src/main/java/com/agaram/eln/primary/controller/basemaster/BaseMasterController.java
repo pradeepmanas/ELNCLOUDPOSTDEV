@@ -40,6 +40,11 @@ public class BaseMasterController {
 		return masterService.getTestmaster(objClass);
 	}
 	
+	@RequestMapping("/getTestwithsheet")
+	public Map<String, Object> getTestwithsheet(@RequestBody LSuserMaster objClass) {
+		return masterService.getTestwithsheet(objClass);
+	}
+	
 	@RequestMapping("/getLimsTestMaster")
 	public List<LStestmaster> getLimsTestMaster(@RequestBody LSuserMaster objClass) {
 		return masterService.getLimsTestMaster(objClass);

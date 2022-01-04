@@ -399,7 +399,7 @@ public class FileService {
 			}
 		}
 
-		if (lsfiles != null && lsfiles.size() == 1) {
+		if (lsfiles != null && lsfiles.size() > 0) {
 
 			if (objtest.getIsmultitenant() == 1) {
 				CloudSheetCreation file = cloudSheetCreationRepository.findById((long) lsfiles.get(0).getFilecode());

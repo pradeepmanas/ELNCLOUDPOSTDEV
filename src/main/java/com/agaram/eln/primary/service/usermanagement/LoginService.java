@@ -41,7 +41,6 @@ import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
-import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
@@ -56,7 +55,6 @@ import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
 import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
 import com.agaram.eln.primary.service.cfr.AuditService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSSiteMasterRepository.class)
@@ -103,27 +101,27 @@ public class LoginService {
 
 	@Autowired
 	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
-	
-	//added for notification
+
+	// added for notification
 	@Autowired
 	private NotificationRepository NotificationRepository;
-	
+
 	@Autowired
 	private LSnotificationRepository LSnotificationRepository;
-	
-	@Autowired
-	private LSfileRepository lSfileRepository;
-	
+
+//	@Autowired
+//	private LSfileRepository lSfileRepository;
+
 	@Autowired
 	private LSsheetworkflowRepository lssheetworkflowRepository;
-	
+
 	@Autowired
 	private LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
-	
+
 //	@Autowired
 //	private commonfunction commonfunction;
-	
-	//added for notification
+
+	// added for notification
 
 	static final Logger logger = Logger.getLogger(LoginService.class.getName());
 
@@ -347,9 +345,9 @@ public class LoginService {
 				objExitinguser.getObjResponse().setStatus(true);
 			}
 		} else {
-			
-			objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(username,"0");
-			
+
+			objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(username, "0");
+
 			if (objExitinguser != null) {
 				objExitinguser = new LSuserMaster();
 				objExitinguser.setUserstatus("");
@@ -1307,9 +1305,12 @@ public class LoginService {
 				LSusergroupRepository.save(objgroup);
 
 				objuser.setLsusergroup(objgroup);
+
 				LSMultiusergroup.setLsusergroup(objgroup);
+				LSMultiusergroup.setDefaultusergroup(objgroup.getUsergroupcode());
 			} else {
 				objuser.setLsusergroup(objaadsgroup);
+				LSMultiusergroup.setDefaultusergroup(objaadsgroup.getUsergroupcode());
 				LSMultiusergroup.setLsusergroup(objaadsgroup);
 			}
 
@@ -1328,6 +1329,7 @@ public class LoginService {
 			List<LSMultiusergroup> LSMultiusergroup1 = new ArrayList<LSMultiusergroup>();
 			LSMultiusergroup1.add(LSMultiusergroup);
 			objuser.setMultiusergroupcode(LSMultiusergroup1);
+
 			LSMultiusergroupRepositery.save(objuser.getMultiusergroupcode());
 			lsuserMasterRepository.save(objuser);
 
@@ -1495,84 +1497,72 @@ public class LoginService {
 
 	// added for notification
 	public Notification Loginnotification(Notification objNotification) throws ParseException {
-		
-		Integer usercode = objNotification.getUsercode();
-		String addedby = objNotification.getAddedby();
-	
-		
-		Date currentdate = objNotification.getCurrentdate();
-				    
-		
-		List<Notification> codelist = NotificationRepository
-				.findByUsercode(objNotification.getUsercode());
-			
-				
-				int i = 0;
-				boolean value = false;
-		while (i < codelist.size()) {
-		   		  
-			value=commonfunction.isSameDay( currentdate,  codelist.get(i).getCautiondate());
-			
-//			 value=isSameDay(currentdate, codelist.get(i).getCautiondate());
-			 
-			
-		LSnotification LSnotification=new LSnotification();
-		
-		LSuserMaster LSuserMaster =new LSuserMaster(); /*to get the value*/
-		LSuserMaster.setUsercode(codelist.get(i).getUsercode());
-		
-		LSuserMaster objLSuserMaster = new LSuserMaster();/*to return the value this obj is created*/
-		objLSuserMaster = userService.getUserOnCode(LSuserMaster);	 
-		
-		
-		Logilaborders batchid = lslogilablimsorderdetailRepository
-				.findByBatchcode(codelist.get(i).getOrderid());
-		
-		objNotification.setLssheetworkflow(lssheetworkflowRepository
-		.findByLssitemaster_sitecode(objNotification.getSitecode()));
-			
 
-		
-	String previousworkflowname = "";
-	int perviousworkflowcode = -1;
-	
-			
+//		Integer usercode = objNotification.getUsercode();
+//		String addedby = objNotification.getAddedby();
+
+		Date currentdate = objNotification.getCurrentdate();
+
+		List<Notification> codelist = NotificationRepository.findByUsercode(objNotification.getUsercode());
+
+		int i = 0;
+		boolean value = false;
+		while (i < codelist.size()) {
+
+			value = commonfunction.isSameDay(currentdate, codelist.get(i).getCautiondate());
+
+//			 value=isSameDay(currentdate, codelist.get(i).getCautiondate());
+
+			LSnotification LSnotification = new LSnotification();
+
+			LSuserMaster LSuserMaster = new LSuserMaster(); /* to get the value */
+			LSuserMaster.setUsercode(codelist.get(i).getUsercode());
+
+			LSuserMaster objLSuserMaster = new LSuserMaster();/* to return the value this obj is created */
+			objLSuserMaster = userService.getUserOnCode(LSuserMaster);
+
+			Logilaborders batchid = lslogilablimsorderdetailRepository.findByBatchcode(codelist.get(i).getOrderid());
+
+			objNotification.setLssheetworkflow(
+					lssheetworkflowRepository.findByLssitemaster_sitecode(objNotification.getSitecode()));
+
+			String previousworkflowname = "";
+			int perviousworkflowcode = -1;
+
 //	String Details = "{\"description\":\"" + codelist.get(i).getDescription() + "\",\"orderid\" :\"" + codelist.get(i).getOrderid() + "\",\"Batchid\" :\"" +batchid.getBatchid()+"\", \""
 //			+ "previousworkflow\":\""+ previousworkflowname +"\",\"previousworkflowcode\":\""+ perviousworkflowcode +"\",\"currentworkflow\":\""+objNotification.getLssheetworkflow().getWorkflowname() + "\","
 //			+ "currentworkflowcode\":\""+ objNotification.getLssheetworkflow().getWorkflowcode() + "\"}";
-	
-	String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\"" +batchid.getBatchid()+"\",\"description\":\"" + codelist.get(i).getDescription() + "\", \""
-			+ "previousworkflow\":\""+ previousworkflowname +"\",\"previousworkflowcode\":\""+ perviousworkflowcode +"\",\"currentworkflowcode\":\""+objNotification.getLssheetworkflow().getWorkflowcode() + "\"}";
-		
-						
-		
-			 if(codelist.get(i).getStatus() == 1 && value ) {
-						
-					LSnotification.setIsnewnotification(1);
-					LSnotification.setNotification("CAUTIONALERT");
-			        LSnotification.setNotificationdate(objNotification.getCurrentdate());
-					LSnotification.setNotificationdetils(Details);
-					LSnotification.setNotificationpath("/registertask");
-					LSnotification.setNotifationfrom(objLSuserMaster);
-					LSnotification.setNotifationto(objLSuserMaster);
-					LSnotification.setRepositorycode(0);
-					LSnotification.setRepositorydatacode(0);
-					
-					
-					codelist.get(i).setStatus(0);
-					LSnotificationRepository.save(LSnotification);
-					NotificationRepository.save(codelist.get(i));
-				
-				}
-			 
-			 i++;
+
+			String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\""
+					+ batchid.getBatchid() + "\",\"description\":\"" + codelist.get(i).getDescription() + "\", \""
+					+ "previousworkflow\":\"" + previousworkflowname + "\",\"previousworkflowcode\":\""
+					+ perviousworkflowcode + "\",\"currentworkflowcode\":\""
+					+ objNotification.getLssheetworkflow().getWorkflowcode() + "\"}";
+
+			if (codelist.get(i).getStatus() == 1 && value) {
+
+				LSnotification.setIsnewnotification(1);
+				LSnotification.setNotification("CAUTIONALERT");
+				LSnotification.setNotificationdate(objNotification.getCurrentdate());
+				LSnotification.setNotificationdetils(Details);
+				LSnotification.setNotificationpath("/registertask");
+				LSnotification.setNotifationfrom(objLSuserMaster);
+				LSnotification.setNotifationto(objLSuserMaster);
+				LSnotification.setRepositorycode(0);
+				LSnotification.setRepositorydatacode(0);
+
+				codelist.get(i).setStatus(0);
+				LSnotificationRepository.save(LSnotification);
+				NotificationRepository.save(codelist.get(i));
+
+			}
+
+			i++;
 		}
-		
-	return null;
-	
+
+		return null;
+
 	}
 
-	
-	
 	// added for notification
 }
