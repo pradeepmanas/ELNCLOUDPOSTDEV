@@ -29,6 +29,7 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserActions;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
+import com.agaram.eln.primary.model.usermanagement.LSusergroupedcolumns;
 import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.model.usermanagement.LSusergrouprightsmaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
@@ -47,6 +48,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepositor
 import com.agaram.eln.primary.repository.usermanagement.LSuserActionsRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSusergroupedcolumnsRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
@@ -114,6 +116,9 @@ public class UserService {
 
 	@Autowired
 	private LsusersettingsRepository LsusersettingsRepository;
+	
+	@Autowired
+	LSusergroupedcolumnsRepository lsusergroupedcolumnsRepository;
 
 	public LSusergroup InsertUpdateUserGroup(LSusergroup objusergroup) {
 		if (lSusergroupRepository.findByusergroupnameIgnoreCaseAndLssitemaster(objusergroup.getUsergroupname(),
@@ -919,5 +924,15 @@ public class UserService {
 	public List<LSMultiusergroup> getMultiUserGroup(LSuserMaster objusermaster) {
 
 		return LSMultiusergroupRepositery.findByusercode(objusermaster.getUsercode());
+	}
+	
+	public LSusergroupedcolumns setGroupedcolumn(LSusergroupedcolumns objgroupped)
+	{
+		return lsusergroupedcolumnsRepository.save(objgroupped);
+	}
+	
+	public LSusergroupedcolumns getGroupedcolumn(LSusergroupedcolumns objgroupped)
+	{
+		return lsusergroupedcolumnsRepository.findByUsercodeAndSitecodeAndGridname(objgroupped.getUsercode(), objgroupped.getSitecode(), objgroupped.getGridname());
 	}
 }

@@ -2019,7 +2019,46 @@ ALTER TABLE public.lsprotocolorderversion
     OWNER to postgres;
     
   ALTER TABLE IF Exists lslogilabprotocolsteps ADD COLUMN IF NOT EXISTS skipdata Integer;  
+
   
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsusergroupedcolumns_usergroupedcolcode_seq'  
+   INTO  _kind;
+   IF NOT FOUND THEN  
+      CREATE SEQUENCE lsusergroupedcolumns_usergroupedcolcode_seq;
+   ELSIF _kind = 'S' THEN 
+   ELSE                  
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.lsusergroupedcolumns
+(
+    usergroupedcolcode integer NOT NULL DEFAULT nextval('lsusergroupedcolumns_usergroupedcolcode_seq'::regclass),
+    gridcolumns text COLLATE pg_catalog."default",
+    gridname character varying(100) COLLATE pg_catalog."default",
+    sitecode integer,
+    usercode integer,
+    CONSTRAINT lsusergroupedcolumns_pkey PRIMARY KEY (usergroupedcolcode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsusergroupedcolumns
+    OWNER to postgres;
+    
+update lsusergrouprightsmaster set displaytopic ='Task Master' where displaytopic ='Test Master' and modulename = 'Base Master';
+
+update lsusergrouprights set displaytopic ='Task Master' where displaytopic = 'Test Master' and modulename = 'Base Master';
+ 
   
 
 	

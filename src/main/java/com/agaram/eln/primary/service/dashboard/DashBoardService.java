@@ -321,11 +321,11 @@ public class DashBoardService {
 		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
 
 		if (objuser.getObjuser().getOrderfor() != 1) {
-			mapOrders.put("orders", LSlogilabprotocoldetailRepository.countByCreatedtimestampBetween(fromdate, todate));
+			mapOrders.put("orders", LSlogilabprotocoldetailRepository.countBySitecodeAndCreatedtimestampBetween(objuser.getLssitemaster().getSitecode(),fromdate, todate));
 			mapOrders.put("pendingorder", LSlogilabprotocoldetailRepository
-					.countByOrderflagAndCreatedtimestampBetween("N", fromdate, todate));
+					.countByOrderflagAndSitecodeAndCreatedtimestampBetween("N",objuser.getLssitemaster().getSitecode(), fromdate, todate));
 			mapOrders.put("completedorder", LSlogilabprotocoldetailRepository
-					.countByOrderflagAndCreatedtimestampBetween("R", fromdate, todate));
+					.countByOrderflagAndSitecodeAndCreatedtimestampBetween("R",objuser.getLssitemaster().getSitecode(), fromdate, todate));
 			mapOrders.put("onproces", 0);
 		} else if (objuser.getUsername().equals("Administrator") && objuser.getObjuser().getOrderfor() == 1) {
 			mapOrders.put("orders",
@@ -478,14 +478,14 @@ public class DashBoardService {
 		List<Logilabprotocolorders> lstorders = new ArrayList<Logilabprotocolorders>();
 
 		if (objuser.getObjuser().getOrderselectiontype() == 1) {
-			lstorders = LSlogilabprotocoldetailRepository.findByCreatedtimestampBetween(fromdate, todate);
+			lstorders = LSlogilabprotocoldetailRepository.findBySitecodeAndCreatedtimestampBetween(objuser.getLssitemaster().getSitecode(),fromdate, todate);
 
 		} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
-			lstorders = LSlogilabprotocoldetailRepository.findByOrderflagAndCreatedtimestampBetween("R", fromdate,
+			lstorders = LSlogilabprotocoldetailRepository.findByOrderflagAndSitecodeAndCreatedtimestampBetween("R",objuser.getLssitemaster().getSitecode(), fromdate,
 					todate);
 
 		} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
-			lstorders = LSlogilabprotocoldetailRepository.findByOrderflagAndCreatedtimestampBetween("N", fromdate,
+			lstorders = LSlogilabprotocoldetailRepository.findByOrderflagAndSitecodeAndCreatedtimestampBetween("N",objuser.getLssitemaster().getSitecode(), fromdate,
 					todate);
 		}
 

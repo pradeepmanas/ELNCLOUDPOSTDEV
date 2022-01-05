@@ -42,6 +42,7 @@ import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSuserActions;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
+import com.agaram.eln.primary.model.usermanagement.LSusergroupedcolumns;
 import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
@@ -531,5 +532,17 @@ public class UserController {
 	public Lsusersettings getUserPrefrences(@RequestBody LSuserMaster objuser)
 	{
 		return userService.getUserPrefrences(objuser);
+	}
+	
+	@PostMapping("/setGroupedcolumn")
+	public LSusergroupedcolumns setGroupedcolumn(@RequestBody LSusergroupedcolumns objgroupped)
+	{
+		return userService.setGroupedcolumn(objgroupped);
+	}
+	
+	@PostMapping("/getGroupedcolumn")
+	public LSusergroupedcolumns getGroupedcolumn(@RequestBody LSusergroupedcolumns objgroupped)
+	{
+		return userService.getGroupedcolumn(objgroupped);
 	}
 }
