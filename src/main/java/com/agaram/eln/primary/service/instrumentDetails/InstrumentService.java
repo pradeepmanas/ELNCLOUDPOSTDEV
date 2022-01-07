@@ -69,6 +69,7 @@ import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.ParserBlock;
 import com.agaram.eln.primary.model.methodsetup.ParserField;
+import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
@@ -130,6 +131,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserBlockRepository;
+import com.agaram.eln.primary.repository.methodsetup.SubParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
@@ -154,6 +156,8 @@ public class InstrumentService {
 	private ParserBlockRepository lsParserBlockRepository;
 	@Autowired
 	private ParserFieldRepository lsParserRepository;
+	@Autowired
+	private SubParserFieldRepository lsSubParserRepository;
 	@Autowired
 	private LSfieldsRepository lSfieldsRepository;
 	@Autowired
@@ -283,7 +287,7 @@ public class InstrumentService {
 			List<Method> elnMethod=lsMethodRepository.findAll();
 			List<ParserBlock> ParserBlock=lsParserBlockRepository.findAll();
 			List<ParserField> ParserField=lsParserRepository.findAll();
-			
+			List<SubParserField> SubParserField=lsSubParserRepository.findAll();
 			obj.put("Generalfields", Generalfields);
 			obj.put("Instruments", Instruments);
 			obj.put("Instrmaster", InstrMaster);
@@ -294,9 +298,22 @@ public class InstrumentService {
 			obj.put("ELNMethods", elnMethod);
 			obj.put("ParserBlock", ParserBlock);
 			obj.put("ParserField", ParserField);
+			obj.put("SubParserField", SubParserField);
 		} else {
 			List<LSfields> Generalfields = lSfieldsRepository.findBymethodname("ID_GENERAL");
+			
+			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findAll();
+			List<Method> elnMethod=lsMethodRepository.findAll();
+			List<ParserBlock> ParserBlock=lsParserBlockRepository.findAll();
+			List<ParserField> ParserField=lsParserRepository.findAll();
+			List<SubParserField> SubParserField=lsSubParserRepository.findAll();
 			obj.put("Generalfields", Generalfields);
+			
+			obj.put("Instrmaster", InstrMaster);
+			obj.put("ELNMethods", elnMethod);
+			obj.put("ParserBlock", ParserBlock);
+			obj.put("ParserField", ParserField);
+			obj.put("SubParserField", SubParserField);
 		}
 
 		obj.put("Methods", Methods);

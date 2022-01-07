@@ -485,7 +485,10 @@ public class MethodService {
 	           fis.read(bytesArray); //read file into bytes[]
 	           fis.close();	
 	           
-	          rawDataText = new String(bytesArray, StandardCharsets.ISO_8859_1);		
+	          rawDataText = new String(bytesArray, StandardCharsets.ISO_8859_1);	
+	          if (ext.equalsIgnoreCase("pdf")) {
+	          rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+	          }
            }
            
            return rawDataText;

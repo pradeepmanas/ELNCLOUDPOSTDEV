@@ -37,7 +37,10 @@ public class ParserSetupController {
 	@PostMapping(value = "/getParserData")
 	public ResponseEntity<Object> getParserData(@Valid @RequestBody Map<String, Object> mapObject)
 	{    	
-		final int methodKey = (Integer) mapObject.get("methodKey");
+		//final int methodKey = (Integer) mapObject.get("methodKey");
+        Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
+    	   	
+		final int methodKey = (Integer) obj.get("methodKey");
 		return parserService.getParserData(methodKey, false, null);
 	}
 	
@@ -74,7 +77,11 @@ public class ParserSetupController {
 	public ResponseEntity<Object> getParserFieldTechniqueListByMethodKey(final HttpServletRequest request, 
 			@Valid @RequestBody Map<String, Object> mapObject){
 		final ObjectMapper mapper = new ObjectMapper();		 
-		final int methodKey = mapper.convertValue(mapObject.get("methodKey"), Integer.class);
+		//final int methodKey = mapper.convertValue(mapObject.get("methodKey"), Integer.class);
+        Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
+    	            	
+    	
+		final int methodKey = (Integer) obj.get("methodKey");
 		 
 		return parserService.getParserFieldTechniqueList(methodKey);
 	}
