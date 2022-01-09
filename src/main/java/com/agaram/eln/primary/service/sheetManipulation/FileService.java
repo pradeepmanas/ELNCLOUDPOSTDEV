@@ -41,6 +41,7 @@ import com.agaram.eln.primary.model.sheetManipulation.Lsfilesharedby;
 import com.agaram.eln.primary.model.sheetManipulation.Lsfileshareto;
 import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
+
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
@@ -165,17 +166,20 @@ public class FileService {
 	public LSfile InsertupdateSheet(LSfile objfile) {
 		Boolean Isnew = false;
 		String Content = objfile.getFilecontent();
+		
 		if (objfile.getFilecode() == null
-				&& lSfileRepository.findByfilenameuserIgnoreCase(objfile.getFilenameuser()) != null) {
-
+				&& lSfileRepository.findByfilenameuserIgnoreCaseAndLssitemaster(objfile.getFilenameuser(),objfile.getLssitemaster()) != null)
+								
+				{
+			
 			objfile.setResponse(new Response());
 			objfile.getResponse().setStatus(false);
 			objfile.getResponse().setInformation("ID_SHEET");
 
-			return objfile;
-
-		}
-
+			return objfile;			
+	}
+	
+		
 		if (objfile.getLssheetworkflow() == null) {
 			objfile.setLssheetworkflow(lssheetworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objfile.getLssitemaster()));

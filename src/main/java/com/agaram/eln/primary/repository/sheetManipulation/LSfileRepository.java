@@ -148,4 +148,11 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	public List<LSfile> findByFilecodeGreaterThanAndApprovedAndLssitemasterOrderByCreatedateDesc(int i, int j,
 			LSSiteMaster site);
 
+	public List<LSfile> findBylssitemaster_sitecode(Integer sitecode);
+
+	public Object findByfilenameuserIgnoreCaseAndLssitemaster(String filenameuser, LSSiteMaster lssitemaster);
+
+
+
+
 }
