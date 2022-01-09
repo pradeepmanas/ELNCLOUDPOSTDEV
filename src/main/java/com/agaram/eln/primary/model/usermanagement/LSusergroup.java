@@ -139,7 +139,12 @@ public class LSusergroup {
 		this.usergroupname = usergroupname;
 	}
 	public String getUsergroupstatus() {
-		return usergroupstatus.trim().equals("A") || usergroupstatus.trim().equals("Active")?"Active":"Deactive";
+		String usergroup = "";
+		if(usergroupstatus != null)
+		{
+			usergroup = usergroupstatus.trim().equals("A") || usergroupstatus.trim().equals("Active")?"Active":"Deactive";
+		}
+		return usergroup;
 	}
 	public void setUsergroupstatus(String usergroupstatus) {
 		this.usergroupstatus = usergroupstatus;
