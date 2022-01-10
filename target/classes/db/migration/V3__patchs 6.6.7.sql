@@ -1850,3 +1850,215 @@ ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS cons
 ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS usedquantity Integer;
 
 ALTER TABLE IF Exists LSprotocolordersampleupdates ADD COLUMN IF NOT EXISTS repositorydatacode Integer;
+
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS createby Integer;
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolorderworkflowhistory
+(
+    historycode integer NOT NULL,
+    action character varying(250) COLLATE pg_catalog."default",
+    approvelstatus integer,
+    comment character varying(250) COLLATE pg_catalog."default",
+    createdate timestamp without time zone,
+    protocolordercode integer,
+    createby_usercode integer,
+    currentworkflow_workflowcode integer,
+    CONSTRAINT lsprotocolorderworkflowhistory_pkey PRIMARY KEY (historycode),
+    CONSTRAINT fk5ypng9qblkh4kupixpjujvqqs FOREIGN KEY (createby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk900cvb1r5g22s8lq8jenwcmgy FOREIGN KEY (currentworkflow_workflowcode)
+        REFERENCES public.lsprotocolworkflow (workflowcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolorderworkflowhistory
+    OWNER to postgres;
+    
+INSERT into LSusergrouprights (orderno,createdby, createdon, displaytopic, modifiedby, modifiedon, modulename, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) VALUES (52,N'administrator', CAST(N'2020-02-21T14:50:55.727' AS date), 'Retire', NULL, NULL, 'User Master', '1', '1', 'NA', 'NA', 1, 1) ON CONFLICT(orderno)DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolvideos
+(
+    protocolstepvideoscode integer NOT NULL,
+    extension character varying(255) COLLATE pg_catalog."default",
+    fileid character varying(255) COLLATE pg_catalog."default",
+    filename character varying(255) COLLATE pg_catalog."default",
+    protocolmastercode integer,
+    protocolstepcode integer,
+    protocolstepname character varying(255) COLLATE pg_catalog."default",
+    stepno integer,
+    CONSTRAINT lsprotocolvideos_pkey PRIMARY KEY (protocolstepvideoscode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolvideos
+    OWNER to postgres;  
+    
+    
+CREATE TABLE IF NOT EXISTS  public.lsprotocolordervideos
+(
+    protocolorderstepvideoscode integer NOT NULL,
+    extension character varying(255) COLLATE pg_catalog."default",
+    fileid character varying(255) COLLATE pg_catalog."default",
+    filename character varying(255) COLLATE pg_catalog."default",
+    protocolordercode bigint,
+    protocolorderstepcode integer,
+    protocolstepname character varying(255) COLLATE pg_catalog."default",
+    stepno integer,
+    CONSTRAINT lsprotocolordervideos_pkey PRIMARY KEY (protocolorderstepvideoscode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolordervideos
+    OWNER to postgres;  
+
+	CREATE TABLE IF NOT EXISTS public.notification
+(
+    notificationid bigint NOT NULL,
+    addedby character varying(255) COLLATE pg_catalog."default",
+    addedon timestamp without time zone,
+    cautiondate timestamp without time zone,
+    currentdate timestamp without time zone,
+    description character varying(255) COLLATE pg_catalog."default",
+    duedate timestamp without time zone,
+    intervals character varying(255) COLLATE pg_catalog."default",
+    orderid character varying(255) COLLATE pg_catalog."default",
+    status integer,
+    usercode integer,
+    CONSTRAINT notification_pkey PRIMARY KEY (notificationid)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.notification
+    OWNER to postgres;
+
+INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) VALUES (58, NULL, NULL, 19, 3, 1, 'G1', 'ID_GENERAL', '19', 'ID_GENERAL', 19, 'ID_GENERAL', 'G19', 'Notification', 1) on conflict (fieldcode) do nothing;
+
+ ALTER TABLE IF Exists notification alter column  orderid Type numeric(17,0)USING orderid::numeric(17,0);
+
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS versionno Integer;
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolorderstepversion
+(
+    protocolorderstepversioncode integer NOT NULL,
+    approved integer,
+    createdate timestamp without time zone,
+    createdbyusername character varying(120) COLLATE pg_catalog."default",
+    protocolmastercode integer,
+    protocolordercode bigint,
+    protocolorderstepcode integer,
+    protocolstepname character varying(255) COLLATE pg_catalog."default",
+    rejected integer,
+    sharewithteam integer,
+    status integer,
+    stepno integer,
+    versionname character varying(255) COLLATE pg_catalog."default",
+    versionno integer,
+    CONSTRAINT lsprotocolorderstepversion_pkey PRIMARY KEY (protocolorderstepversioncode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolorderstepversion
+    OWNER to postgres;
+		
+CREATE TABLE IF NOT EXISTS public.cloudlsprotocolorderversionstep
+(
+    idversioncode integer NOT NULL,
+    lsprotocolstepinfo jsonb,
+    protocolordercode bigint,
+    protocolorderstepversioncode integer,
+    status integer,
+    versionname character varying(100) COLLATE pg_catalog."default",
+    versionno integer,
+    CONSTRAINT cloudlsprotocolorderversionstep_pkey PRIMARY KEY (idversioncode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.cloudlsprotocolorderversionstep
+    OWNER to postgres;
+	
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolorderversion
+(
+    protocolorderversioncode integer NOT NULL,
+    createdate timestamp without time zone,
+    createdbyusername character varying(255) COLLATE pg_catalog."default",
+    protocolordercode bigint,
+    status integer,
+    versionname character varying(255) COLLATE pg_catalog."default",
+    versionno integer,
+    CONSTRAINT lsprotocolorderversion_pkey PRIMARY KEY (protocolorderversioncode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolorderversion
+    OWNER to postgres;
+    
+  ALTER TABLE IF Exists lslogilabprotocolsteps ADD COLUMN IF NOT EXISTS skipdata Integer;  
+
+  
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsusergroupedcolumns_usergroupedcolcode_seq'  
+   INTO  _kind;
+   IF NOT FOUND THEN  
+      CREATE SEQUENCE lsusergroupedcolumns_usergroupedcolcode_seq;
+   ELSIF _kind = 'S' THEN 
+   ELSE                  
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.lsusergroupedcolumns
+(
+    usergroupedcolcode integer NOT NULL DEFAULT nextval('lsusergroupedcolumns_usergroupedcolcode_seq'::regclass),
+    gridcolumns text COLLATE pg_catalog."default",
+    gridname character varying(100) COLLATE pg_catalog."default",
+    sitecode integer,
+    usercode integer,
+    CONSTRAINT lsusergroupedcolumns_pkey PRIMARY KEY (usergroupedcolcode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsusergroupedcolumns
+    OWNER to postgres;
+    
+update lsusergrouprightsmaster set displaytopic ='Task Master' where displaytopic ='Test Master' and modulename = 'Base Master';
+
+update lsusergrouprights set displaytopic ='Task Master' where displaytopic = 'Test Master' and modulename = 'Base Master';
+ 
+  
+
+	

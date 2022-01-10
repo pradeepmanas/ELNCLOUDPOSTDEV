@@ -442,11 +442,11 @@ public class ReportsService {
 				if (fileContent.equals("working")) {
 					status = true;
 					String filePath = "";
-//					if (System.getProperty("os.name") == "Linux") {
-//						filePath = new File("").getAbsolutePath();
-//					} else {
+					if (System.getProperty("os.name") == "Linux") {
+						filePath = new File("").getAbsolutePath();
+					} else {
 						filePath = getDocxAbsolutePath() + "/link.txt";
-//					}
+					}
 					File linkFile = new File(filePath);
 					if (linkFile.exists()) {
 						fileContent = new BufferedReader(new InputStreamReader(new FileInputStream(linkFile))).lines()
