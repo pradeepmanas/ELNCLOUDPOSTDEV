@@ -442,13 +442,13 @@ public class ReportsService {
 				if (fileContent.equals("working")) {
 					status = true;
 					String filePath = "";
-					statusMsg = System.getProperty("os.name");
+//					statusMsg = System.getProperty("os.name");
 					if (System.getProperty("os.name") == "Linux"|| System.getProperty("os.name") == "LINUX") {
 						filePath = new File("").getAbsolutePath();
-						//statusMsg = "ID_DOCXSURLNOTFOUND 3 L";
+						statusMsg = "ID_DOCXSURLNOTFOUND 3 L";
 					} else {
 						filePath = getDocxAbsolutePath() + "/link.txt";
-					//	statusMsg = "ID_DOCXSURLNOTFOUND 3 M";
+						statusMsg = "ID_DOCXSURLNOTFOUND 3 M";
 					}
 					File linkFile = new File(filePath);
 					if (linkFile.exists()) {
