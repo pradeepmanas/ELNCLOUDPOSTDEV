@@ -1187,7 +1187,7 @@ public class ProtocolService {
 				newProtocolMasterObj.setCreatedate(new Date());
 				newProtocolMasterObj.setLssitemaster(LScfttransactionobj.getLssitemaster());
 				newProtocolMasterObj.setCreatedbyusername(LsuserMasterObj.getUsername());
-				newProtocolMasterObj.setVersionno(0);
+				newProtocolMasterObj.setVersionno(1);
 				LSSiteMaster lssitemaster = LSSiteMasterRepository
 						.findBysitecode(LScfttransactionobj.getLssitemaster());
 				LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
@@ -1936,7 +1936,7 @@ public class ProtocolService {
 								stepinfo = stepinfo.replaceAll("<p>", "<p contenteditable='false'>");
 								String stepinfono = stepinfo.replaceAll("<p contenteditable='false'><br></p>",
 										"<p><br></p>");
-
+								stepinfono = stepinfo.substring(0,1) + "<p><br></p>" + stepinfo.substring(1, stepinfo.length()-1) + "<p><br></p>\"";
 								LSprotocolstepObj1.setLsprotocolstepInfo(stepinfono);
 							} else {
 								LSprotocolstepObj1
