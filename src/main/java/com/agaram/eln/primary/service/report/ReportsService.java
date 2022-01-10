@@ -440,7 +440,7 @@ public class ReportsService {
 					statusMsg = "ID_DOCXSAPINOTFOUND";
 				}
 			} else if (FileType.equals("url")) {
-//				statusMsg = "reach 3";
+				statusMsg = "reach 3";
 				String fileContent = new BufferedReader(new InputStreamReader(stream)).lines()
 						.collect(Collectors.joining("\n"));
 				logger.info(fileContent);
@@ -448,7 +448,7 @@ public class ReportsService {
 				if (fileContent.equals("working")) {
 					status = true;
 					String filePath = "";
-//					statusMsg = System.getProperty("os.name");
+					statusMsg = System.getProperty("os.name");
 					if (System.getProperty("os.name").contains("Linux") || System.getProperty("os.name").contains("LINUX")) {
 						filePath = new File("").getAbsolutePath();
 					} else {
