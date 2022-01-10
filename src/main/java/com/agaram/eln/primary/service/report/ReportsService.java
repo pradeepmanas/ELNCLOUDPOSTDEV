@@ -449,15 +449,15 @@ public class ReportsService {
 					}
 					File linkFile = new File(filePath);
 					if (linkFile.exists()) {
-						fileContent = new BufferedReader(new InputStreamReader(new FileInputStream(linkFile))).lines()
-								.collect(Collectors.joining("\n"));
-						if (fileContent.contains("working")||fileContent.contains("WORKING")) {
+//						fileContent = new BufferedReader(new InputStreamReader(new FileInputStream(linkFile))).lines()
+//								.collect(Collectors.joining("\n"));
+//						if (fileContent.contains("working")||fileContent.contains("WORKING")) {
 							status = true;
-						} else {
-							status = false;
-							System.out.print("report service ID_DOCXSURLNOTFOUND 458");
-							statusMsg = "ID_DOCXSURLNOTFOUND";
-						}
+//						} else {
+//							status = false;
+//							System.out.print("report service ID_DOCXSURLNOTFOUND 458");
+//							statusMsg = "ID_DOCXSURLNOTFOUND";
+//						}
 					} else {
 						status = false;
 						System.out.print("report service ID_DOCXSURLNOTFOUND 463");
