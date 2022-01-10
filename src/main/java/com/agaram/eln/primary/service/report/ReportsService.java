@@ -445,7 +445,7 @@ public class ReportsService {
 						.collect(Collectors.joining("\n"));
 				logger.info(fileContent);
 				statusMsg = fileContent;
-				if (fileContent.equals("working")) {
+				if (fileContent.contains("working")||fileContent.contains("WORKING")) {
 					status = true;
 					String filePath = "";
 					statusMsg = System.getProperty("os.name");
@@ -458,7 +458,8 @@ public class ReportsService {
 					if (linkFile.exists()) {
 						fileContent = new BufferedReader(new InputStreamReader(new FileInputStream(linkFile))).lines()
 								.collect(Collectors.joining("\n"));
-						if (fileContent.equals("working")) {
+						
+						if (fileContent.contains("working")||fileContent.contains("WORKING")) {
 							status = true;
 							statusMsg = "reach 4";
 						} else {
