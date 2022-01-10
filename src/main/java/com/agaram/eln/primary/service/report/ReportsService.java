@@ -384,8 +384,10 @@ public class ReportsService {
 		InputStream stream = null;
 		HttpsURLConnection connectionSSL = null;
 		HttpURLConnection connection = null;
+		statusMsg = "reach 1";
 		try {
 			try {
+				statusMsg = "reach 2";
 				if (downloadUri.contains("https")) {
 					SSLContext sc = SSLContext.getInstance("SSL");
 					sc.init(null, trustAllCerts, new java.security.SecureRandom());
@@ -436,6 +438,7 @@ public class ReportsService {
 					statusMsg = "ID_DOCXSAPINOTFOUND";
 				}
 			} else if (FileType.equals("url")) {
+				statusMsg = "reach 3";
 				String fileContent = new BufferedReader(new InputStreamReader(stream)).lines()
 						.collect(Collectors.joining("\n"));
 				logger.info(fileContent);
@@ -454,6 +457,7 @@ public class ReportsService {
 								.collect(Collectors.joining("\n"));
 						if (fileContent.equals("working")) {
 							status = true;
+							statusMsg = "reach 4";
 						} else {
 							status = false;
 							System.out.print("report service ID_DOCXSURLNOTFOUND 458");
@@ -476,6 +480,7 @@ public class ReportsService {
 									fw.write("working");
 									fw.close();
 									status = true;
+									statusMsg = "reach 5";
 								}
 							} catch (IOException e) {
 								logger.info(e.getLocalizedMessage());
@@ -501,11 +506,16 @@ public class ReportsService {
 					}
 				}
 			}
+			
+			statusMsg = "reach 6";
 			if (downloadUri.contains("https")) {
+				statusMsg = "reach 7";
 				connectionSSL.disconnect();
 			} else {
+				statusMsg = "reach 8";
 				connection.disconnect();
 			}
+			statusMsg = "reach 9";
 		} catch (NoSuchAlgorithmException | KeyManagementException | IOException e) {
 			logger.error(e.getLocalizedMessage());
 			status = false;
@@ -513,8 +523,8 @@ public class ReportsService {
 				statusMsg = "ID_DOCXSAPINOTFOUND";
 			} else if (FileType.equals("url")) {
 				System.out.print("report service ID_DOCXSURLNOTFOUND 509");
-				statusMsg = "ID_DOCXSURLNOTFOUND 6";
-				statusMsg= e.getLocalizedMessage();
+//				statusMsg = "ID_DOCXSURLNOTFOUND 6";
+//				statusMsg= e.getLocalizedMessage();
 			}
 		}
 		rtnObj.put("status", status);
