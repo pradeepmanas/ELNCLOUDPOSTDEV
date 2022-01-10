@@ -203,7 +203,7 @@ public class FileService {
 
 			Isnew = false;
 		} else {
-			UpdateSheetversion(objfile);
+			
 			Isnew = true;
 		}
 
@@ -230,6 +230,11 @@ public class FileService {
 
 		objfile.setFilecontent(null);
 		lSfileRepository.save(objfile);
+		
+		if(Isnew)
+		{
+			UpdateSheetversion(objfile);
+		}
 
 		updatefilecontent(Content, objfile, Isnew);
 

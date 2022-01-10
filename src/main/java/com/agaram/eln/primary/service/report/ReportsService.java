@@ -386,7 +386,6 @@ public class ReportsService {
 		HttpURLConnection connection = null;
 		try {
 			try {
-				statusMsg = "reach 2";
 				if (downloadUri.contains("https")) {
 					SSLContext sc = SSLContext.getInstance("SSL");
 					sc.init(null, trustAllCerts, new java.security.SecureRandom());
@@ -506,7 +505,6 @@ public class ReportsService {
 			} else {
 				connection.disconnect();
 			}
-			statusMsg = "reach 9";
 		} catch (NoSuchAlgorithmException | KeyManagementException | IOException e) {
 			logger.error(e.getLocalizedMessage());
 			status = false;
@@ -514,9 +512,7 @@ public class ReportsService {
 				statusMsg = "ID_DOCXSAPINOTFOUND";
 			} else if (FileType.equals("url")) {
 				System.out.print("report service ID_DOCXSURLNOTFOUND 509");
-//				statusMsg = "ID_DOCXSURLNOTFOUND 6";
-//				statusMsg= e.getLocalizedMessage();
-			}
+				statusMsg = "ID_DOCXSURLNOTFOUND";			}
 		}
 		rtnObj.put("status", status);
 		rtnObj.put("statusMsg", statusMsg);
