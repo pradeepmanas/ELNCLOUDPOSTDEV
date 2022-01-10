@@ -442,6 +442,7 @@ public class ReportsService {
 				String fileContent = new BufferedReader(new InputStreamReader(stream)).lines()
 						.collect(Collectors.joining("\n"));
 				logger.info(fileContent);
+				statusMsg = fileContent;
 				if (fileContent.equals("working")) {
 					status = true;
 					String filePath = "";
