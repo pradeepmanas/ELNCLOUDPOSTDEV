@@ -443,7 +443,7 @@ public class ReportsService {
 					status = true;
 					String filePath = "";
 					statusMsg = System.getProperty("os.name");
-					if (System.getProperty("os.name") == "Linux") {
+					if (System.getProperty("os.name") == "Linux"|| System.getProperty("os.name") == "LINUX") {
 						filePath = new File("").getAbsolutePath();
 						//statusMsg = "ID_DOCXSURLNOTFOUND 3 L";
 					} else {
