@@ -514,6 +514,7 @@ public class ReportsService {
 			} else if (FileType.equals("url")) {
 				System.out.print("report service ID_DOCXSURLNOTFOUND 509");
 				statusMsg = "ID_DOCXSURLNOTFOUND 6";
+				statusMsg= e.getLocalizedMessage();
 			}
 		}
 		rtnObj.put("status", status);
