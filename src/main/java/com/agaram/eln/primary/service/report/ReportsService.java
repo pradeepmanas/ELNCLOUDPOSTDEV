@@ -384,10 +384,8 @@ public class ReportsService {
 		InputStream stream = null;
 		HttpsURLConnection connectionSSL = null;
 		HttpURLConnection connection = null;
-		statusMsg = "reach 1";
 		try {
 			try {
-				statusMsg = "reach 2";
 				if (downloadUri.contains("https")) {
 					SSLContext sc = SSLContext.getInstance("SSL");
 					sc.init(null, trustAllCerts, new java.security.SecureRandom());
@@ -395,12 +393,10 @@ public class ReportsService {
 					URL url = new URL(downloadUri);
 					connectionSSL = (HttpsURLConnection) url.openConnection();
 					stream = connectionSSL.getInputStream();
-					statusMsg = stream.toString() + "https";
 				} else {
 					URL url = new URL(downloadUri);
 					connection = (HttpURLConnection) url.openConnection();
 					stream = connection.getInputStream();
-					statusMsg = stream.toString() + "http";
 				}
 			} catch (FileNotFoundException e) {
 				logger.error(e.getLocalizedMessage());
@@ -420,7 +416,7 @@ public class ReportsService {
 							logger.info(ex.getLocalizedMessage());
 							status = false;
 							System.out.print("report service ID_DOCXSURLNOTFOUND 418");
-							statusMsg = "ID_DOCXSURLNOTFOUND 1";
+							statusMsg = "ID_DOCXSURLNOTFOUND";
 						}
 					}
 				}
@@ -440,11 +436,8 @@ public class ReportsService {
 					statusMsg = "ID_DOCXSAPINOTFOUND";
 				}
 			} else if (FileType.equals("url")) {
-				statusMsg = "reach 3";
 				String fileContent = new BufferedReader(new InputStreamReader(stream)).lines()
 						.collect(Collectors.joining("\n"));
-				logger.info(fileContent);
-				statusMsg = fileContent;
 				if (fileContent.contains("working")||fileContent.contains("WORKING")) {
 					status = true;
 					String filePath = "";
@@ -454,26 +447,22 @@ public class ReportsService {
 						filePath = getDocxAbsolutePath() + "/link.txt";
 					}
 					File linkFile = new File(filePath);
-					statusMsg = "get file"+linkFile;
+					
 					if (linkFile.exists()) {
-						statusMsg="file exists";
 						fileContent = new BufferedReader(new InputStreamReader(new FileInputStream(linkFile))).lines()
 								.collect(Collectors.joining("\n"));
 						
-						statusMsg=fileContent;
-						
 						if (fileContent.contains("working")||fileContent.contains("WORKING")) {
 							status = true;
-							statusMsg = "reach 4";
 						} else {
 							status = false;
 							System.out.print("report service ID_DOCXSURLNOTFOUND 458");
-							statusMsg = "ID_DOCXSURLNOTFOUND 2";
+							statusMsg = "ID_DOCXSURLNOTFOUND";
 						}
 					} else {
 						status = false;
 						System.out.print("report service ID_DOCXSURLNOTFOUND 463");
-						statusMsg = "ID_DOCXSURLNOTFOUND 3";
+						statusMsg = "ID_DOCXSURLNOTFOUND";
 					}
 				} else {
 					String FIlePath = getDocxAbsolutePath();
@@ -487,13 +476,12 @@ public class ReportsService {
 									fw.write("working");
 									fw.close();
 									status = true;
-									statusMsg = "reach 5";
 								}
 							} catch (IOException e) {
 								logger.info(e.getLocalizedMessage());
 								status = false;
 								System.out.print("report service ID_DOCXSURLNOTFOUND 482");
-								statusMsg = "ID_DOCXSURLNOTFOUND 4";
+								statusMsg = "ID_DOCXSURLNOTFOUND";
 							}
 							if (status) {
 								fileContent = new BufferedReader(new InputStreamReader(stream)).lines()
@@ -504,7 +492,7 @@ public class ReportsService {
 								} else {
 									status = false;
 									System.out.print("report service ID_DOCXSURLNOTFOUND 493");
-									statusMsg = "ID_DOCXSURLNOTFOUND 5";
+									statusMsg = "ID_DOCXSURLNOTFOUND";
 								}
 							}
 						}
@@ -514,15 +502,11 @@ public class ReportsService {
 				}
 			}
 			
-			statusMsg = "reach 6";
 			if (downloadUri.contains("https")) {
-				statusMsg = "reach 7";
 				connectionSSL.disconnect();
 			} else {
-				statusMsg = "reach 8";
 				connection.disconnect();
 			}
-			statusMsg = "reach 9";
 		} catch (NoSuchAlgorithmException | KeyManagementException | IOException e) {
 			logger.error(e.getLocalizedMessage());
 			status = false;
@@ -530,8 +514,7 @@ public class ReportsService {
 				statusMsg = "ID_DOCXSAPINOTFOUND";
 			} else if (FileType.equals("url")) {
 				System.out.print("report service ID_DOCXSURLNOTFOUND 509");
-//				statusMsg = "ID_DOCXSURLNOTFOUND 6";
-//				statusMsg= e.getLocalizedMessage();
+				statusMsg = "ID_DOCXSURLNOTFOUND";
 			}
 		}
 		rtnObj.put("status", status);
