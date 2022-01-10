@@ -450,15 +450,17 @@ public class ReportsService {
 					String filePath = "";
 					if (System.getProperty("os.name").contains("Linux") || System.getProperty("os.name").contains("LINUX")) {
 						filePath = new File("").getAbsolutePath();
-						statusMsg = "reach linux "+filePath;
 					} else {
 						filePath = getDocxAbsolutePath() + "/link.txt";
-						statusMsg = "reach windows "+filePath;
 					}
 					File linkFile = new File(filePath);
+					statusMsg = "get file"+linkFile;
 					if (linkFile.exists()) {
+						statusMsg="file exists";
 						fileContent = new BufferedReader(new InputStreamReader(new FileInputStream(linkFile))).lines()
 								.collect(Collectors.joining("\n"));
+						
+						statusMsg=fileContent;
 						
 						if (fileContent.contains("working")||fileContent.contains("WORKING")) {
 							status = true;
