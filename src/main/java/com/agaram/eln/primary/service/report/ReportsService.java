@@ -395,10 +395,12 @@ public class ReportsService {
 					URL url = new URL(downloadUri);
 					connectionSSL = (HttpsURLConnection) url.openConnection();
 					stream = connectionSSL.getInputStream();
+					statusMsg = stream.toString() + "https";
 				} else {
 					URL url = new URL(downloadUri);
 					connection = (HttpURLConnection) url.openConnection();
 					stream = connection.getInputStream();
+					statusMsg = stream.toString() + "http";
 				}
 			} catch (FileNotFoundException e) {
 				logger.error(e.getLocalizedMessage());
@@ -438,7 +440,7 @@ public class ReportsService {
 					statusMsg = "ID_DOCXSAPINOTFOUND";
 				}
 			} else if (FileType.equals("url")) {
-				statusMsg = "reach 3";
+//				statusMsg = "reach 3";
 				String fileContent = new BufferedReader(new InputStreamReader(stream)).lines()
 						.collect(Collectors.joining("\n"));
 				logger.info(fileContent);
