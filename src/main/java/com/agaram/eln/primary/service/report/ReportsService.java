@@ -416,7 +416,7 @@ public class ReportsService {
 							logger.info(ex.getLocalizedMessage());
 							status = false;
 							System.out.print("report service ID_DOCXSURLNOTFOUND 418");
-							statusMsg = "ID_DOCXSURLNOTFOUND";
+							statusMsg = "ID_DOCXSURLNOTFOUND 1";
 						}
 					}
 				}
@@ -456,12 +456,12 @@ public class ReportsService {
 						} else {
 							status = false;
 							System.out.print("report service ID_DOCXSURLNOTFOUND 458");
-							statusMsg = "ID_DOCXSURLNOTFOUND";
+							statusMsg = "ID_DOCXSURLNOTFOUND 2";
 						}
 					} else {
 						status = false;
 						System.out.print("report service ID_DOCXSURLNOTFOUND 463");
-						statusMsg = "ID_DOCXSURLNOTFOUND";
+						statusMsg = "ID_DOCXSURLNOTFOUND 3";
 					}
 				} else {
 					String FIlePath = getDocxAbsolutePath();
@@ -480,7 +480,7 @@ public class ReportsService {
 								logger.info(e.getLocalizedMessage());
 								status = false;
 								System.out.print("report service ID_DOCXSURLNOTFOUND 482");
-								statusMsg = "ID_DOCXSURLNOTFOUND";
+								statusMsg = "ID_DOCXSURLNOTFOUND 4";
 							}
 							if (status) {
 								fileContent = new BufferedReader(new InputStreamReader(stream)).lines()
@@ -491,7 +491,7 @@ public class ReportsService {
 								} else {
 									status = false;
 									System.out.print("report service ID_DOCXSURLNOTFOUND 493");
-									statusMsg = "ID_DOCXSURLNOTFOUND";
+									statusMsg = "ID_DOCXSURLNOTFOUND 5";
 								}
 							}
 						}
@@ -512,7 +512,7 @@ public class ReportsService {
 				statusMsg = "ID_DOCXSAPINOTFOUND";
 			} else if (FileType.equals("url")) {
 				System.out.print("report service ID_DOCXSURLNOTFOUND 509");
-				statusMsg = "ID_DOCXSURLNOTFOUND";
+				statusMsg = "ID_DOCXSURLNOTFOUND 6";
 			}
 		}
 		rtnObj.put("status", status);
