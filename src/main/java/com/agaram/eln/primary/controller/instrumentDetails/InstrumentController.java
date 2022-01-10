@@ -785,5 +785,10 @@ public class InstrumentController {
 			throws IllegalStateException, IOException {
 		return instrumentService.downloadSheetFromELN(objattachments);
 	}
+	
+	@PostMapping("/GetLimsorderid")
+	public Map<String, Object> GetLimsorderid(@RequestBody String orderid) {
+		return instrumentService.GetLimsorderid(orderid);
+	}
 
 }

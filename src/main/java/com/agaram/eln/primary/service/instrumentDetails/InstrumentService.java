@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -65,13 +64,12 @@ import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
-import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
+import com.agaram.eln.primary.model.masters.Lsrepositories;
+import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.ParserBlock;
 import com.agaram.eln.primary.model.methodsetup.ParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserField;
-import com.agaram.eln.primary.model.masters.Lsrepositories;
-import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
@@ -111,8 +109,11 @@ import com.agaram.eln.primary.repository.instrumentDetails.LsordersharedbyReposi
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharetoRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsorderworkflowhistoryRepositroy;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
-import com.agaram.eln.primary.repository.instrumentsetup.InstCategoryRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
+import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
+import com.agaram.eln.primary.repository.methodsetup.ParserBlockRepository;
+import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
+import com.agaram.eln.primary.repository.methodsetup.SubParserFieldRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSparsedparametersRespository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
@@ -129,10 +130,6 @@ import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepositor
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
-import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
-import com.agaram.eln.primary.repository.methodsetup.ParserBlockRepository;
-import com.agaram.eln.primary.repository.methodsetup.SubParserFieldRepository;
-import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -3353,6 +3350,22 @@ public class InstrumentService {
 		}
 
 		return objattachments;
+	}
+
+	public Map<String, Object> GetLimsorderid(String orderid) {
+		
+		Map<String, Object> map = new HashMap<>(); 
+		
+		LSlogilablimsorderdetail objOrder = lslogilablimsorderdetailRepository.findByBatchid(orderid);
+		
+		if(objOrder != null) {
+			map.put("ordercode", objOrder.getBatchcode());
+		}
+		else {
+			map.put("ordercode", -1);
+		}
+		
+		return map;
 	}
 
 }

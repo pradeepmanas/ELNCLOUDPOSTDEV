@@ -93,7 +93,9 @@ public class Repositorymaster {
 				Map<String, Object> mapObj = new HashMap<>();
 
 				if (rowobj.get("fieldname").equals("Inventory id") || rowobj.get("fieldname").equals("Name")
-						|| rowobj.get("fieldname").equals("Added by") || rowobj.get("fieldname").equals("Added on")) {
+						|| rowobj.get("fieldname").equals("Added by") || rowobj.get("fieldname").equals("Added on")||
+						rowobj.get("fieldname").equals("Inventory ID") || rowobj.get("fieldname").equals("Inventory Name")
+						|| rowobj.get("fieldname").equals("Azure ID")) {
 
 					
 
