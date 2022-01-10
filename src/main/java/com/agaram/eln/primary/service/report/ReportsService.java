@@ -444,8 +444,10 @@ public class ReportsService {
 					String filePath = "";
 					if (System.getProperty("os.name") == "Linux") {
 						filePath = new File("").getAbsolutePath();
+						statusMsg = "ID_DOCXSURLNOTFOUND 3 L";
 					} else {
 						filePath = getDocxAbsolutePath() + "/link.txt";
+						statusMsg = "ID_DOCXSURLNOTFOUND 3 M";
 					}
 					File linkFile = new File(filePath);
 					if (linkFile.exists()) {
@@ -461,7 +463,7 @@ public class ReportsService {
 					} else {
 						status = false;
 						System.out.print("report service ID_DOCXSURLNOTFOUND 463");
-						statusMsg = "ID_DOCXSURLNOTFOUND 3";
+//						statusMsg = "ID_DOCXSURLNOTFOUND 3";
 					}
 				} else {
 					String FIlePath = getDocxAbsolutePath();
