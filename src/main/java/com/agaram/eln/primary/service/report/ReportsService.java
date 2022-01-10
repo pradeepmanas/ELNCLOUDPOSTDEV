@@ -448,11 +448,12 @@ public class ReportsService {
 				if (fileContent.contains("working")||fileContent.contains("WORKING")) {
 					status = true;
 					String filePath = "";
-					statusMsg = System.getProperty("os.name");
 					if (System.getProperty("os.name").contains("Linux") || System.getProperty("os.name").contains("LINUX")) {
 						filePath = new File("").getAbsolutePath();
+						statusMsg = "reach linux "+filePath;
 					} else {
 						filePath = getDocxAbsolutePath() + "/link.txt";
+						statusMsg = "reach windows "+filePath;
 					}
 					File linkFile = new File(filePath);
 					if (linkFile.exists()) {
