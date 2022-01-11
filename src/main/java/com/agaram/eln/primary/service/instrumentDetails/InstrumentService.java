@@ -46,6 +46,7 @@ import com.agaram.eln.primary.model.fileManipulation.Fileimages;
 import com.agaram.eln.primary.model.fileManipulation.Fileimagestemp;
 import com.agaram.eln.primary.model.fileManipulation.LSfileimages;
 import com.agaram.eln.primary.model.fileManipulation.OrderAttachment;
+import com.agaram.eln.primary.model.fileManipulation.ResultorderlimsRefrence;
 import com.agaram.eln.primary.model.fileManipulation.SheetorderlimsRefrence;
 import com.agaram.eln.primary.model.general.OrderCreation;
 import com.agaram.eln.primary.model.general.OrderVersion;
@@ -60,6 +61,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LSresultdetails;
 import com.agaram.eln.primary.model.instrumentDetails.LsMethodFields;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
+import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
@@ -77,7 +79,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
-//import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
+
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
@@ -124,7 +126,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
 import com.agaram.eln.primary.repository.templates.LsMappedTemplateRepository;
 import com.agaram.eln.primary.repository.templates.LsUnmappedTemplateRepository;
-//import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
+import com.agaram.eln.primary.repository.instrumentDetails.LsResultlimsOrderrefrenceRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -266,6 +268,9 @@ public class InstrumentService {
 
 	@Autowired
 	private LsSheetorderlimsrefrenceRepository lssheetorderlimsrefrenceRepository;
+	
+	@Autowired
+	private LsResultlimsOrderrefrenceRepository LsResultlimsOrderrefrenceRepository;
 
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
@@ -1920,6 +1925,8 @@ public class InstrumentService {
 			objupdatedorder
 					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
 		}
+		
+		
 
 		return objupdatedorder;
 	}
@@ -2229,6 +2236,8 @@ public class InstrumentService {
 		objorder.getLsparsedparameters().forEach((param) -> param.setBatchcode(objorder.getBatchcode()));
 		lsparsedparametersRespository.save(objorder.getLsparsedparameters());
 		lsorderworkflowhistoryRepositroy.save(objorder.getLsorderworkflowhistory());
+		List<LsOrderattachments> lstattach =lsOrderattachmentsRepository.findByBatchcodeOrderByAttachmentcodeDesc(objorder.getBatchcode());
+		objorder.setLsOrderattachments(lstattach);
 		lslogilablimsorderdetailRepository.save(objorder);
 
 		if (objorder.getLssamplefile() != null) {
@@ -3366,6 +3375,32 @@ public class InstrumentService {
 		}
 		
 		return map;
+	}
+	
+	public Map<String, Object> UploadLimsResultFile(MultipartFile file, Long batchcode, String filename) throws IOException {
+
+		System.out.print("Inside UploadLimsFile");
+
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+
+		LsResultlimsOrderrefrence objattachment = new LsResultlimsOrderrefrence();
+
+		ResultorderlimsRefrence objfile = fileManipulationservice.storeResultLimsSheetRefrence(file);
+
+		if (objfile != null) {
+			objattachment.setFileid(objfile.getId());
+
+			System.out.print("Inside UploadLimsFile filecode value " + batchcode.intValue());
+		}
+
+		objattachment.setFilename(filename);
+		objattachment.setBatchid(filename);
+
+		LsResultlimsOrderrefrenceRepository.save(objattachment);
+
+		mapObj.put("elnSheet", objattachment);
+
+		return mapObj;
 	}
 
 }

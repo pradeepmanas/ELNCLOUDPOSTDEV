@@ -2058,6 +2058,9 @@ ALTER TABLE public.lsusergroupedcolumns
 update lsusergrouprightsmaster set displaytopic ='Task Master' where displaytopic ='Test Master' and modulename = 'Base Master';
 
 update lsusergrouprights set displaytopic ='Task Master' where displaytopic = 'Test Master' and modulename = 'Base Master';
+
+
+ALTER TABLE IF Exists Lsrepositories ADD COLUMN IF NOT EXISTS unit varchar(250);
  
   
 

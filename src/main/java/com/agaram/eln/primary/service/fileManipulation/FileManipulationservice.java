@@ -16,13 +16,16 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.fileManipulation.OrderAttachment;
 import com.agaram.eln.primary.model.fileManipulation.ProfilePicture;
+import com.agaram.eln.primary.model.fileManipulation.ResultorderlimsRefrence;
 import com.agaram.eln.primary.model.fileManipulation.SheetorderlimsRefrence;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
+import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.fileManipulation.OrderAttachmentRepository;
 import com.agaram.eln.primary.repository.fileManipulation.ProfilePictureRepository;
+import com.agaram.eln.primary.repository.fileManipulation.ResultorderlimsRefrenceRepository;
 import com.agaram.eln.primary.repository.fileManipulation.SheetorderlimsRefrenceRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.mongodb.BasicDBObject;
@@ -48,6 +51,9 @@ public class FileManipulationservice {
 
 	@Autowired
 	private LSuserMasterRepository lsuserMasterRepository;
+	
+	@Autowired
+	private ResultorderlimsRefrenceRepository ResultorderlimsRefrenceRepository;
 
 	public ProfilePicture addPhoto(Integer usercode, MultipartFile file, Date currentdate) throws IOException {
 
@@ -146,10 +152,30 @@ public class FileManipulationservice {
 
 		return objattachment;
 	}
+	
+	public ResultorderlimsRefrence storeResultLimsSheetRefrence(MultipartFile file) throws IOException {
+		UUID objGUID = UUID.randomUUID();
+		String randomUUIDString = objGUID.toString();
+
+		ResultorderlimsRefrence objattachment = new ResultorderlimsRefrence();
+		objattachment.setId(randomUUIDString);
+		objattachment.setFile(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+
+		objattachment = ResultorderlimsRefrenceRepository.insert(objattachment);
+
+		return objattachment;
+	}
 
 	public SheetorderlimsRefrence LimsretrieveELNsheet(LsSheetorderlimsrefrence objattachment) {
 
 		SheetorderlimsRefrence objfile = sheetorderlimsRefrenceRepository.findById(objattachment.getFileid());
+
+		return objfile;
+	}
+	
+	public ResultorderlimsRefrence LimsretrieveResultELNsheet(LsResultlimsOrderrefrence objattachment) {
+
+		ResultorderlimsRefrence objfile = ResultorderlimsRefrenceRepository.findById(objattachment.getFileid());
 
 		return objfile;
 	}

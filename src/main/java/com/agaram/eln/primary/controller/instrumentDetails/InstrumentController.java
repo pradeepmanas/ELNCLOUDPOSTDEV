@@ -790,5 +790,12 @@ public class InstrumentController {
 	public Map<String, Object> GetLimsorderid(@RequestBody String orderid) {
 		return instrumentService.GetLimsorderid(orderid);
 	}
+	
+	
+	@PostMapping("/UploadLimsResultFile")
+	public Map<String, Object> UploadLimsResultFile(@RequestParam("file") MultipartFile file,
+			@RequestParam("order") Long batchcode, @RequestParam("filename") String filename) throws IOException {
+		return instrumentService.UploadLimsResultFile(file, batchcode, filename);
+	}
 
 }
