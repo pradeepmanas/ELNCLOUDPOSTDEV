@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -847,8 +848,8 @@ public class LoginService {
 	}
 
 	public List<LSusergroup> ADSGroupnameLoad(LSSiteMaster Objclass) {
-
-		return LSusergroupRepository.findByUsergroupstatusAndLssitemasterOrderByUsergroupcodeDesc("Active",Objclass.getSitecode());
+		List<String> status = Arrays.asList("A", "Active");
+		return LSusergroupRepository.findByLssitemasterAndUsergroupstatusInOrderByUsergroupcodeDesc(Objclass.getSitecode(),status);
 
 	}
 

@@ -634,12 +634,13 @@ public class UserService {
 			Objclass.getObjsilentaudit().setTableName("LSusergroup");
 			lscfttransactionRepository.save(Objclass.getObjsilentaudit());
 		}
+		List<String> status = Arrays.asList("A", "Active");
 		if (Objclass.getSitecode() == 0) {
-			return lSusergroupRepository.findByUsergroupstatusAndUsergroupnameNotOrderByUsergroupcodeDesc("A","Administrator");
+			return lSusergroupRepository.findByUsergroupnameNotAndUsergroupstatusInOrderByUsergroupcodeDesc("Administrator",status);
 		}
 		
 		List<LSusergroup> lstusergroup = lSusergroupRepository
-				.findBylssitemasterAndUsergroupstatusAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(), "A", "Administrator");
+				.findBylssitemasterAndUsergroupnameNotAndUsergroupstatusInOrderByUsergroupcodeDesc(Objclass.getSitecode(), "Administrator", status);
 
 		return lstusergroup;
 	}
