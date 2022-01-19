@@ -1952,16 +1952,26 @@ public class ProtocolService {
 						LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate
 								.findById(LSprotocolstepObj1.getProtocolstepcode(), LSprotocolstepInfo.class);
 //		
-						@SuppressWarnings("unchecked")
-						List<LSprotocolorderimages> lsprotocolorderimages = lsprotocolorderimagesRepository
-								.findByProtocolordercodeAndProtocolorderstepcode(
-										lSlogilabprotocoldetail.getProtocolordercode(),
-										LSprotocolstepObj1.getProtocolorderstepcode());
-
-						List<LSprotocolorderfiles> lsprotocolorderfile = lsprotocolorderfilesRepository
-								.findByProtocolordercodeAndProtocolorderstepcodeOrderByProtocolorderstepfilecodeDesc(
-										lSlogilabprotocoldetail.getProtocolordercode(),
-										LSprotocolstepObj1.getProtocolorderstepcode());
+//						@SuppressWarnings("unchecked")
+//						List<LSprotocolorderimages> lsprotocolorderimages = lsprotocolorderimagesRepository
+//								.findByProtocolordercodeAndProtocolorderstepcode(
+//										lSlogilabprotocoldetail.getProtocolordercode(),
+//										LSprotocolstepObj1.getProtocolorderstepcode());
+//
+//						List<LSprotocolorderfiles> lsprotocolorderfile = lsprotocolorderfilesRepository
+//								.findByProtocolordercodeAndProtocolorderstepcodeOrderByProtocolorderstepfilecodeDesc(
+//										lSlogilabprotocoldetail.getProtocolordercode(),
+//										LSprotocolstepObj1.getProtocolorderstepcode());
+						
+						List<LSprotocolimages> objimg = new ArrayList<>();
+						List<LSprotocolfiles> objfile = new ArrayList<>();
+						List<LSprotocolvideos> objvideo = new ArrayList<>();
+						objfile = lsprotocolfilesRepository.findByProtocolstepcode(LSprotocolstepObj1.getProtocolstepcode());
+						objimg = lsprotocolimagesRepository.findByProtocolstepcode(LSprotocolstepObj1.getProtocolstepcode());
+						objvideo = lsprotocolvideosRepository.findByProtocolstepcode(LSprotocolstepObj1.getProtocolstepcode());
+						
+						
+						
 						if (newLSprotocolstepInfo != null) {
 							LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
 						}
@@ -1969,30 +1979,78 @@ public class ProtocolService {
 						String jsonObject = new JsonParser().parse(newLSprotocolstepInfo.getContent()).getAsString();
 						String stepinfono = "";
 						if (lSlogilabprotocoldetail.getProtocoltype() == 1) {
-							String stepinfo = jsonObject.replaceAll("<p>", "<p contenteditable='false' >");
-							stepinfono = stepinfo.replaceAll("<p contenteditable='false' ><br></p>", "<p><br></p>");
+//							String stepinfo = jsonObject.replaceAll("<p>", "<p contenteditable='false' >");
+//							stepinfono = stepinfo.replaceAll("<p contenteditable='false' ><br></p>", "<p><br></p>");
+							
+							String stepinfo = jsonObject;
+							stepinfo = stepinfo.replaceAll("<p>", "<p contenteditable='false' >");
+							 stepinfono = stepinfo.replaceAll("<p contenteditable='false' ><br></p>", "<p><br></p>");
+							stepinfono ="<p><br></p>" + stepinfo.substring(0, stepinfo.length()) + "<p><br></p>";
+							LSprotocolstepObj1.setLsprotocolstepInfo(stepinfono);
 						} else {
-							stepinfono = jsonObject;
+//							stepinfono = jsonObject;
+							LSprotocolstepObj1.setLsprotocolstepInfo(jsonObject);
 						}
-						if (lsprotocolorderimages.size() != 0) {
-							for (LSprotocolorderimages LSprotocolorderimages : lsprotocolorderimages) {
-								String finalinfo = stepinfono.replaceAll(LSprotocolorderimages.getOldfileid(),
-										LSprotocolorderimages.getFileid());
-//							lslogilabprotocolsteps.setLsprotocolstepInfo(stepinfono);
-								stepinfono = finalinfo;
-
+						
+						if (objimg.size() != 0) {
+							for (LSprotocolimages img:objimg) {
+							if(img.getFileid()!=null) {
+								String id = img.getFileid() + lSlogilabprotocoldetail.getProtoclordername();
+								
+								String con=LSprotocolstepObj1.getLsprotocolstepInfo();
+								String finalinfo = con.replaceAll(img.getFileid(),
+										id);
+								
 								LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
 							}
-						}
-						if (lsprotocolorderfile.size() != 0) {
-							for (LSprotocolorderfiles LSprotocolorderfiles : lsprotocolorderfile) {
-								String finalinfo = stepinfono.replaceAll(LSprotocolorderfiles.getOldfileid(),
-										LSprotocolorderfiles.getFileid());
-								stepinfono = finalinfo;
-
-								LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
+								
 							}
 						}
+						if (objfile.size() != 0) {
+							for(LSprotocolfiles file:objfile) {
+								if(file.getFileid()!=null) {
+									String id = file.getFileid() + lSlogilabprotocoldetail.getProtoclordername();
+									
+									String con=LSprotocolstepObj1.getLsprotocolstepInfo();
+									String finalinfo = con.replaceAll(file.getFileid(),
+											id);
+									
+									LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
+								}
+							}
+							
+						}
+						if (objvideo.size() != 0) {
+							for(LSprotocolvideos video:objvideo) {
+								if(video.getFileid()!=null) {
+									String id = video.getFileid() + lSlogilabprotocoldetail.getProtoclordername();
+									
+									String con=LSprotocolstepObj1.getLsprotocolstepInfo();
+									String finalinfo = con.replaceAll(video.getFileid(),
+											id);
+									LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
+								}
+							}
+						}				
+//						if (lsprotocolorderimages.size() != 0) {
+//							for (LSprotocolorderimages LSprotocolorderimages : lsprotocolorderimages) {
+//								String finalinfo = stepinfono.replaceAll(LSprotocolorderimages.getOldfileid(),
+//										LSprotocolorderimages.getFileid());
+////							lslogilabprotocolsteps.setLsprotocolstepInfo(stepinfono);
+//								stepinfono = finalinfo;
+//
+//								LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
+//							}
+//						}
+//						if (lsprotocolorderfile.size() != 0) {
+//							for (LSprotocolorderfiles LSprotocolorderfiles : lsprotocolorderfile) {
+//								String finalinfo = stepinfono.replaceAll(LSprotocolorderfiles.getOldfileid(),
+//										LSprotocolorderfiles.getFileid());
+//								stepinfono = finalinfo;
+//
+//								LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
+//							}
+//						}
 						LsLogilabprotocolstepInfo LsLogilabprotocolstepInfoObj = new LsLogilabprotocolstepInfo();
 						Gson g = new Gson();
 						String str = g.toJson(LSprotocolstepObj1.getLsprotocolstepInfo());
@@ -4166,6 +4224,7 @@ public class ProtocolService {
 					LSprotocolorderversionstepInfo.setStepcode(LSlogilabprotocolsteps.getProtocolorderstepcode());
 					LSprotocolorderversionstepInfo.setId(protoorderVersStep.getProtocolorderstepversioncode());
 					LSprotocolorderversionstepInfo.setVersionno(lslogilabprotocoldetail.getVersionno());
+					if (protocolorderstepcode != null && str != null) {
 					if (protocolorderstepcode.equals(LSlogilabprotocolsteps.getProtocolorderstepcode())) {
 //						obj.setLsprotocolstepInfo(str);
 						LSprotocolorderversionstepInfo.setContent(str);
@@ -4174,6 +4233,14 @@ public class ProtocolService {
 //								.findById(LSlogilabprotocolsteps.getProtocolorderstepcode());
 //						obj.setLsprotocolstepInfo(cloudLsLogilabprotocolstepInfo.getLsprotocolstepInfo());
 
+						LsLogilabprotocolstepInfo newLSprotocolstepInfo = mongoTemplate.findById(
+								LSlogilabprotocolsteps.getProtocolorderstepcode(), LsLogilabprotocolstepInfo.class);
+						if (newLSprotocolstepInfo != null) {
+//							LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+							LSprotocolorderversionstepInfo.setContent(newLSprotocolstepInfo.getContent());
+						}
+					}}else {
+						
 						LsLogilabprotocolstepInfo newLSprotocolstepInfo = mongoTemplate.findById(
 								LSlogilabprotocolsteps.getProtocolorderstepcode(), LsLogilabprotocolstepInfo.class);
 						if (newLSprotocolstepInfo != null) {

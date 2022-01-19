@@ -128,6 +128,12 @@ public class UserController {
 	{
 	  return userService.GetSiteWiseUserGroup(objclass);
 	}
+	
+	@PostMapping("/GetSiteWiseActiveUserGroup")
+	public List<LSusergroup> GetSiteWiseActiveUserGroup(@RequestBody LSSiteMaster Objclass) {
+		return userService.GetSiteWiseActiveUserGroup(Objclass);
+	}
+	
 	@PostMapping("/GetUserGroupSiteWise")
 	public List<LSusergroup> GetUserGroupSiteWise(@RequestBody LSSiteMaster objclass)
 	{
@@ -546,3 +552,4 @@ public class UserController {
 		return userService.getGroupedcolumn(objgroupped);
 	}
 }
+

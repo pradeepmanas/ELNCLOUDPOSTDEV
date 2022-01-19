@@ -139,11 +139,27 @@ public class InstMasterController {
     @PostMapping(value = "/getInstListByCategoryAndSite")
     public ResponseEntity<Object> getInstListByCategoryAndSite(@Valid @RequestBody Map<String, Object> mapObject) {
     
-    	  final ObjectMapper mapper = new ObjectMapper();	
-    	  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-    	  final InstrumentCategory instCategory = mapper.convertValue(mapObject.get("instCategory"), InstrumentCategory.class);
-		  
-		  return masterService.getInstListByCategoryAndSite(instCategory, site);
+//    	  final ObjectMapper mapper = new ObjectMapper();	
+//    	  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
+//    	  final InstrumentCategory instCategory = mapper.convertValue(mapObject.get("instCategory"), InstrumentCategory.class);
+//		  
+//		  return masterService.getInstListByCategoryAndSite(instCategory, site);
+    	final ObjectMapper mapper = new ObjectMapper();	
+        Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
+  	 if(obj == null)
+  	 {
+  		 
+  		final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
+  		final InstrumentCategory instCategory = mapper.convertValue(mapObject.get("instCategory"), InstrumentCategory.class);
+  		return masterService.getInstListByCategoryAndSite(instCategory, site);
+  	 }
+  	 else
+  	 {
+  		 
+  		final LSSiteMaster site = mapper.convertValue(obj.get("site"), LSSiteMaster.class);
+  		final InstrumentCategory instCategory = mapper.convertValue(obj.get("instCategory"), InstrumentCategory.class);
+  		return masterService.getInstListByCategoryAndSite(instCategory, site);	 
+  	 }
     }
 }
 

@@ -20,14 +20,12 @@ import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import org.apache.log4j.Logger;
 
-
-
 public class ADS_Connection {
-	
+
 	static final Logger logger = Logger.getLogger(ADS_Connection.class.getName());
 	static final String INITIAL_CONTEXT_FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
 	static final String SECURITY_AUTHENTICATION = "simple";
-	
+
 	public static boolean CheckLDAPConnection(String Url, String user_name, String user_password) {
 		try {
 			Hashtable<String, String> env1 = new Hashtable<>();
@@ -48,11 +46,11 @@ public class ADS_Connection {
 				return false;
 			}
 		} catch (Exception ex) {
-			
+
 		}
 		return false;
 	}
-	
+
 	public static Map<String, List<Map<String, String>>> importADSGroups(Map<String, Object> objCredentials) {
 		Map<String, List<Map<String, String>>> rtnListMap = new HashMap<>();
 
@@ -100,14 +98,14 @@ public class ADS_Connection {
 
 		return rtnListMap;
 	}
-	
+
 	public static Hashtable<String, String> setLDAPCredential(Map<String, Object> objCredentials) {
-	
+
 		Hashtable<String, String> envObject = new Hashtable<>();
 		envObject.put(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY);
 		envObject.put(Context.SECURITY_AUTHENTICATION, SECURITY_AUTHENTICATION);
 		envObject.put(Context.SECURITY_PRINCIPAL, (String) objCredentials.get("sServerUserName"));
-		
+
 		envObject.put(Context.SECURITY_CREDENTIALS, (String) objCredentials.get("sPassword"));
 		envObject.put(Context.PROVIDER_URL, "ldap://" + objCredentials.get("sDomainName") + ":3268");
 
@@ -171,32 +169,57 @@ public class ADS_Connection {
 		return rtnListMap;
 	}
 
+	public static Boolean CheckDomainLDAPConnection(Map<String, Object> objCredentials) {
 
-public static Boolean CheckDomainLDAPConnection(Map<String,Object> objCredentials) {
+		boolean isConnect = false;
+		Map<String, Object> errMsg = new HashMap<>();
+		try {
+			DirContext context = new InitialDirContext(setLDAPCredential(objCredentials));
+			isConnect = true;
+			context.close();
 
-	boolean isConnect = false;
-	Map<String,Object> errMsg = new HashMap<>();
-	try {
-	DirContext context = new InitialDirContext(setLDAPCredential(objCredentials));
-	isConnect = true;
-	context.close();
-	
-	} catch (AuthenticationNotSupportedException ex) {
-		errMsg.put("error", "The authentication is not supported by the server");
-		logger.error("The authentication is not supported by the server");
-	} catch (AuthenticationException ex) {
-		errMsg.put("error", "Incorrect username or password");
-		logger.error("Incorrect username or password");
-	} catch (NamingException ex) {
-		errMsg.put("error", "Unknown Host...Check Domainname");
-		logger.error("Unknown Host...check Domainname");
-	}
-	catch (Exception ex) {
-		errMsg.put("error", "Error in creating Context");
-		logger.error("Error in creating Context");
-	}
-		errMsg.put("connect",isConnect);
-		
+		} catch (AuthenticationNotSupportedException ex) {
+			errMsg.put("error", "The authentication is not supported by the server");
+			logger.error("The authentication is not supported by the server");
+		} catch (AuthenticationException ex) {
+			errMsg.put("error", "Incorrect username or password");
+			logger.error("Incorrect username or password");
+		} catch (NamingException ex) {
+			errMsg.put("error", "Unknown Host...Check Domainname");
+			logger.error("Unknown Host...check Domainname");
+		} catch (Exception ex) {
+			errMsg.put("error", "Error in creating Context");
+			logger.error("Error in creating Context");
+		}
+		errMsg.put("connect", isConnect);
+
 		return isConnect;
+	}
+
+	public static Map<String, Object> CheckDomainLDAPConnection4Msg(Map<String, Object> objCredentials) {
+
+		boolean isConnect = false;
+		Map<String, Object> map = new HashMap<>();
+		try {
+			DirContext context = new InitialDirContext(setLDAPCredential(objCredentials));
+			isConnect = true;
+			context.close();
+
+		} catch (AuthenticationNotSupportedException ex) {
+			map.put("Msg", "The authentication is not supported by the server");
+			logger.error("The authentication is not supported by the server");
+		} catch (AuthenticationException ex) {
+			map.put("Msg", "Incorrect username or password");
+			logger.error("Incorrect username or password");
+		} catch (NamingException ex) {
+			map.put("Msg", "Unknown Host...Check Domainname");
+			logger.error("Unknown Host...check Domainname");
+		} catch (Exception ex) {
+			map.put("Msg", "Error in creating Context");
+			logger.error("Error in creating Context");
+		}
+		map.put("connect", isConnect);
+
+		return map;
 	}
 }

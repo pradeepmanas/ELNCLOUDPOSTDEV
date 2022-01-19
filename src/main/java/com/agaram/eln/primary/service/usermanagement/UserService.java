@@ -627,6 +627,22 @@ public class UserService {
 		return lSusergroupRepository
 				.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(), "Administrator");
 	}
+	
+	public List<LSusergroup> GetSiteWiseActiveUserGroup(LSSiteMaster Objclass) {
+
+		if (Objclass.getObjsilentaudit() != null) {
+			Objclass.getObjsilentaudit().setTableName("LSusergroup");
+			lscfttransactionRepository.save(Objclass.getObjsilentaudit());
+		}
+		if (Objclass.getSitecode() == 0) {
+			return lSusergroupRepository.findByUsergroupstatusAndUsergroupnameNotOrderByUsergroupcodeDesc("A","Administrator");
+		}
+		
+		List<LSusergroup> lstusergroup = lSusergroupRepository
+				.findBylssitemasterAndUsergroupstatusAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(), "A", "Administrator");
+
+		return lstusergroup;
+	}
 
 	public List<LSusergroup> GetUserGroupSiteWise(LSSiteMaster Objclass) {
 
@@ -936,3 +952,5 @@ public class UserService {
 		return lsusergroupedcolumnsRepository.findByUsercodeAndSitecodeAndGridname(objgroupped.getUsercode(), objgroupped.getSitecode(), objgroupped.getGridname());
 	}
 }
+
+

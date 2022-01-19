@@ -54,7 +54,6 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
 import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
 import com.agaram.eln.primary.service.cfr.AuditService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSSiteMasterRepository.class)
@@ -675,40 +674,10 @@ public class LoginService {
 		objClass.getResponse().setStatus(true);
 		objClass.getResponse().setInformation("");
 
-		// silent AuditTrail
-		if (objClass.getObjsilentaudit() != null) {
-			objClass.getObjsilentaudit().setTableName("LSdomainMaster");
-		}
 		return objClass;
 	}
 
 	public LSuserMaster importADSScreen(LSuserMaster objClass) {
-		// silent AuditTrail
-		if (objClass.getObjsilentaudit() != null) {
-			objClass.getObjsilentaudit().setModuleName("UserManagement");
-			objClass.getObjsilentaudit().setComments("Import ADSscreen Successfully");
-			objClass.getObjsilentaudit().setActions("View / Load");
-			objClass.getObjsilentaudit().setSystemcoments("System Generated");
-			objClass.getObjsilentaudit().setTableName("LSuserMaster");
-			lscfttransactionRepository.save(objClass.getObjsilentaudit());
-		}
-
-		// Manual Audit
-		if (objClass.getObjuser() != null) {
-			LScfttransaction manualAudit = new LScfttransaction();
-			Date date = new Date();
-
-			manualAudit.setModuleName("UserManagement");
-			manualAudit.setComments("Import ADSscreen Successfully");
-			manualAudit.setActions("View / Load");
-			manualAudit.setSystemcoments("User Generated");
-			manualAudit.setTableName("LSuserMaster");
-			manualAudit.setManipulatetype("Insert");
-//			manualAudit.setLsuserMaster(objClass);
-//			manualAudit.setLssitemaster(objClass.getLssitemaster());
-			manualAudit.setTransactiondate(date);
-			lscfttransactionRepository.save(manualAudit);
-		}
 		objClass.setResponse(new Response());
 		objClass.getResponse().setStatus(false);
 		objClass.getResponse().setInformation("Username and password invalid");
@@ -722,7 +691,7 @@ public class LoginService {
 
 		Map<String, Object> objCredentials = new HashMap<>();
 
-		ObjectMapper objMapper = new ObjectMapper();
+//		ObjectMapper objMapper = new ObjectMapper();
 		String sUsername = (String) objMap.get("sUsername");
 		String sPassword = (String) objMap.get("sPassword");
 		String sDomain = ((String) objMap.get("sDomain")).trim();
@@ -734,38 +703,29 @@ public class LoginService {
 				sDomain = sDomainAry[0];
 			}
 
-//			String url = "ldap://" + sDomain + ".com";
 			String userName = sUsername;
 			String password = sPassword;
-
-//			userName = userName.replace("\\", "/");
 
 			objCredentials.put("sServerUserName", userName);
 			objCredentials.put("sPassword", password);
 			objCredentials.put("sDomainName", sDomain);
 
 //			Boolean isConnect = ADS_Connection.CheckLDAPConnection(url, userName, password);
-			Boolean isConnect = ADS_Connection.CheckDomainLDAPConnection(objCredentials);
+//			Boolean isConnect = ADS_Connection.CheckDomainLDAPConnection(objCredentials);
+
+			Map<String, Object> connectMap = ADS_Connection.CheckDomainLDAPConnection4Msg(objCredentials);
+
+			Boolean isConnect = (Boolean) connectMap.get("connect");
 
 			if (isConnect) {
 				res.setInformation("ID_CONNECTSUCC");
 				res.setStatus(true);
 
-				LScfttransaction cfttransaction;
-				if (objMap.containsKey("objsilentaudit")) {
-					cfttransaction = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
-					lscfttransactionRepository.save(cfttransaction);
-				}
 			} else {
-				res.setInformation("ID_CONNECTFAIL");
+				res.setInformation((String) connectMap.get("Msg"));
 				res.setStatus(false);
-				LScfttransaction silentaudit;
-				silentaudit = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
-				silentaudit.setComments("Failed to connect domain server");
-				silentaudit.setActions("Warning");
-				silentaudit.setTableName("LSuserMaster");
-				lscfttransactionRepository.save(silentaudit);
 			}
+
 		} catch (Exception ex) {
 			res.setInformation("ID_CONNECTFAIL");
 			res.setStatus(false);
@@ -780,17 +740,17 @@ public class LoginService {
 
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> lstAdsUsers = (List<Map<String, Object>>) objMap.get("ADSUsers");
-		ObjectMapper objMapper = new ObjectMapper();
+//		ObjectMapper objMapper = new ObjectMapper();
 
 		if (!lstAdsUsers.isEmpty()) {
 
 			@SuppressWarnings("unchecked")
 			Map<String, Object> uGroup = (Map<String, Object>) objMap.get("userGroup");
-			@SuppressWarnings("unchecked")
-			Map<String, Object> uSite = (Map<String, Object>) uGroup.get("lssitemaster");
+
+			Integer siteCode = (Integer) uGroup.get("lssitemaster");
 
 			LSusergroup userGroup = LSusergroupRepository.findOne((Integer) uGroup.get("usergroupcode"));
-			LSSiteMaster sSiteCode = lSSiteMasterRepository.findBysitecode((Integer) uSite.get("sitecode"));
+			LSSiteMaster sSiteCode = lSSiteMasterRepository.findBysitecode(siteCode);
 
 			rtnMap.put("LSusergroup", userGroup);
 			rtnMap.put("LSSiteMaster", sSiteCode);
@@ -799,10 +759,10 @@ public class LoginService {
 
 			@SuppressWarnings("unchecked")
 			Map<String, Object> sObject = (Map<String, Object>) objMap.get("objsilentaudit");
-			@SuppressWarnings("unchecked")
-			Map<String, Object> master = (Map<String, Object>) sObject.get("lsuserMaster");
 
-			String sCreateBy = (String) master.get("username");
+			LSuserMaster uMaster = lsuserMasterRepository.findByusercode((Integer) sObject.get("lsuserMaster"));
+
+			String sCreateBy = uMaster.getUsername();
 			String sRepeatedUser = "";
 
 			for (int u = 0; u < lstAdsUsers.size(); u++) {
@@ -818,17 +778,33 @@ public class LoginService {
 					String sUserFullName = (String) lstAdsUsers.get(u).get("UserName");
 					int sApprove = Integer.parseInt((String) lstAdsUsers.get(u).get("sApprove"));
 
-					String sUserStatus = "I";
+					String sUserStatus = "D";
 					if (sApprove == 1)
 						sUserStatus = "A";
 
 					lsUser.setCreatedby(sCreateBy);
+					lsUser.setCreateddate(new Date());
 					lsUser.setLockcount(0);
-					lsUser.setLsusergroup(userGroup);
 					lsUser.setUserfullname(sUserFullName);
 					lsUser.setUsername(sUserDomainID);
 					lsUser.setUserstatus(sUserStatus);
 					lsUser.setLssitemaster(sSiteCode);
+					lsUser.setPasswordstatus(0);
+					lsUser.setUserretirestatus(0);
+
+					List<LSMultiusergroup> lstGroup = new ArrayList<LSMultiusergroup>();
+
+					LSMultiusergroup objGroup = new LSMultiusergroup();
+					objGroup.setDefaultusergroup(1);
+					objGroup.setLsusergroup(userGroup);
+
+					lstGroup.add(objGroup);
+
+					lsUser.setMultiusergroupcode(lstGroup);
+
+					LSMultiusergroupRepositery.save(lsUser.getMultiusergroupcode());
+					lsuserMasterRepository.save(lsUser);
+
 				} else {
 					if (sRepeatedUser.length() > 0) {
 						sRepeatedUser += (String) ", " + sUserDomainID;
@@ -844,31 +820,8 @@ public class LoginService {
 
 				isCompleted = true;
 
-				LScfttransaction cfttransaction;
-				if (objMap.containsKey("objsilentaudit")) {
-					cfttransaction = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
-					lscfttransactionRepository.save(cfttransaction);
-				}
 			} else {
 				isCompleted = false;
-				if (objMap.containsKey("objsilentaudit")) {
-					LScfttransaction silentaudit;
-					silentaudit = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
-					silentaudit.setComments("Error in saving imported user");
-					silentaudit.setActions("Warning");
-					silentaudit.setTableName("LSuserMaster");
-					lscfttransactionRepository.save(silentaudit);
-				}
-			}
-		}
-		if (isCompleted == false) {
-			if (objMap.containsKey("objsilentaudit")) {
-				LScfttransaction silentaudit;
-				silentaudit = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
-				silentaudit.setComments("Failed to import the user");
-				silentaudit.setActions("Warning");
-				silentaudit.setTableName("LSuserMaster");
-				lscfttransactionRepository.save(silentaudit);
 			}
 		}
 		rtnMap.put("isCompleted", isCompleted);
@@ -895,7 +848,7 @@ public class LoginService {
 
 	public List<LSusergroup> ADSGroupnameLoad(LSSiteMaster Objclass) {
 
-		return LSusergroupRepository.findBylssitemasterOrderByUsergroupcodeDesc(Objclass.getSitecode());
+		return LSusergroupRepository.findByUsergroupstatusAndLssitemasterOrderByUsergroupcodeDesc("Active",Objclass.getSitecode());
 
 	}
 
