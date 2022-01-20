@@ -683,3 +683,11 @@ INSERT INTO delimiter (delimitername,actualdelimiter,status,usercode) SELECT 'Sl
 update LSusergrouprightsmaster set status='0,0,0' where orderno=53;
 
 update LSusergrouprightsmaster set sedit='NA' where orderno in (54,55,56);
+
+INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder)VALUES (59, 'Assigned Orders', 'Register Task Orders & Execute', '0', 'NA', 'NA', 'NA', '1,0,0',62) ON CONFLICT(orderno)DO NOTHING;
+
+INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (60, 'My Orders', 'Register Task Orders & Execute', '0', 'NA', 'NA', 'NA', '1,0,0',63) ON CONFLICT(orderno)DO NOTHING;
+
+INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (61, 'Orders Shared By Me', 'Register Task Orders & Execute', '0', 'NA', 'NA', 'NA', '1,0,0',64) ON CONFLICT(orderno)DO NOTHING;
+
+INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (62, 'Orders Shared To Me', 'Register Task Orders & Execute', '0', 'NA', 'NA', 'NA', '1,0,0',65)ON CONFLICT(orderno)DO NOTHING;

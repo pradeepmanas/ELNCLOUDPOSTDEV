@@ -558,27 +558,9 @@ public class UserService {
 			lsrights.get(0).getResponse().setInformation("ID_USERRYTSERR");
 			return lsrights;
 		} else {
-			if (((LSusergrouprights) lsrights.get(0)).getObjsilentaudit() != null) {
-
-				((LSusergrouprights) lsrights.get(0)).getObjsilentaudit().setTableName("LSuserMaster");
-			}
 
 			lsusergrouprightsRepository.save(lsrights);
-			// Manual Audit
-			if (lsrights.get(0).getObjuser() != null) {
-
-				if (lsrights.get(0).getObjmanualaudit() != null) {
-
-					lsrights.get(0).getObjmanualaudit().setComments(lsrights.get(0).getObjuser().getComments());
-					lsrights.get(0).getObjmanualaudit().setTableName("LSuserMaster");
-					// manualAudit.setManipulatetype("Insert");
-					lsrights.get(0).getObjmanualaudit()
-							.setLsuserMaster(lsrights.get(0).getObjmanualaudit().getLsuserMaster());
-					lsrights.get(0).getObjmanualaudit()
-							.setLssitemaster(lsrights.get(0).getObjmanualaudit().getLssitemaster());
-
-				}
-			}
+			
 			lsrights.get(0).setResponse(new Response());
 			lsrights.get(0).getResponse().setStatus(true);
 			lsrights.get(0).getResponse().setInformation("ID_ALERT");

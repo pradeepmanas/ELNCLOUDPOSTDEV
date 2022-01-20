@@ -2116,13 +2116,13 @@ public class ReportsService {
 		sequenceTagList = new HashMap<String, List<Map<String, Object>>>();
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-//			List<LSlogilablimsorderdetail> lstSelectedData = mapper.convertValue(obj.get("OrderData"),
-//					new TypeReference<List<LSlogilablimsorderdetail>>() {
-//					});
+			List<LSlogilablimsorderdetail> lstSelectedData = mapper.convertValue(obj.get("OrderData"),
+					new TypeReference<List<LSlogilablimsorderdetail>>() {
+					});
 			long batchcode = mapper.convertValue(obj.get("batchcode"), long.class);
 			String batchid = mapper.convertValue(obj.get("batchid"), String.class);
-			List<LSlogilablimsorderdetail> lstSelectedData = lslogilablimsorderdetailRepository
-					.findByBatchcodeAndBatchid(batchcode, batchid);
+//			List<LSlogilablimsorderdetail> lstSelectedData = lslogilablimsorderdetailRepository
+//					.findByBatchcodeAndBatchid(batchcode, batchid);
 
 			LSdocreports LSdocreportsObj = mapper.convertValue(obj.get("templateRecords"),
 					new TypeReference<LSdocreports>() {
@@ -2152,7 +2152,7 @@ public class ReportsService {
 				File newFile = null;
 				boolean fileLoaded = false;
 				String HashKey = UUID.randomUUID().toString();
-				if (lstSelectedData.size() == 1) {
+//				if (lstSelectedData.size() == 1) {
 					Integer site = mapper.convertValue(obj.get("sitecode"), Integer.class);
 
 					List<LSdocreports> LSdocreportsLst = LSdocreportsRepositoryObj.findByIsreportAndLssitemaster(1,
@@ -2174,9 +2174,9 @@ public class ReportsService {
 					if (newFile.exists()) {
 						fileName = HashKey;
 					}
-				} else {
-					fileName = HashKey;
-				}
+//				} else {
+//					fileName = HashKey;
+//				}
 				logger.info("handleOrderandTemplate() fileName: " + fileName);
 				String path = filePath + "\\templates";
 				if (System.getProperty("os.name").contains("Linux") || System.getProperty("os.name").contains("LINUX")) {
