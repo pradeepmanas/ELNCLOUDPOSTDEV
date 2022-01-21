@@ -139,6 +139,20 @@ public class DatasourceService {
 		Tenantname.setTenantpassword(passwordtenant);
 
 		configRepo.save(Tenantname);
+		
+		if(Tenantname.getId() != null) {
+			String Databasename = Tenantname.getTenantid().toLowerCase().replaceAll("[^a-zA-Z0-9]", "") + Tenantname.getId();
+			Tenantname.setName(Databasename);
+			Tenantname.setArchivename(Databasename + "archive");
+			Tenantname.setUrl(gettenanturlDataBasename(Databasename));
+			Tenantname.setArchiveurl(gettenanturlDataBasename(Databasename + "archive"));
+			Tenantname.setDriverClassName(env.getProperty("app.datasource.eln.driverClassName"));
+			Tenantname.setUsername(env.getProperty("app.datasource.eln.username"));
+			Tenantname.setPassword(env.getProperty("app.datasource.eln.password"));
+			configRepo.save(Tenantname);
+		}
+		
+		
 
 //		Email email = new Email();
 

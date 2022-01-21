@@ -181,6 +181,9 @@ public class ReportsService {
 
 	@Autowired
 	private CloudOrderCreationRepository CloudOrderCreationRepository;
+	
+	@Autowired
+	private CloudOrderCreationRepository cloudOrderCreationRepository;
 
 	LSConfiguration FTPConfig = new LSConfiguration();
 
@@ -3388,7 +3391,9 @@ public class ReportsService {
 	}
 
 	public Map<String, Object> Getorderbytype(Map<String, Object> objorder) {
+		ObjectMapper objm = new ObjectMapper();
 
+	
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		LSuserMaster LsuserMasterObj = LSuserMasterRepositoryObj
 				.findByusercode((int) objorder.get("lsuserMasterUserCode"));
@@ -3436,7 +3441,25 @@ public class ReportsService {
 
 			Collections.reverse(Pending);
 			Collections.reverse(Completed);
-
+			
+			if(objorder.containsKey("isMultitenant")) {
+			int multitenent = objm.convertValue(objorder.get("isMultitenant"), Integer.class);
+			for(LSlogilablimsorderdetail LSlogilablimsorderdetail:Completed) {
+				
+				if(multitenent ==1) {
+				
+				CloudOrderCreation file = cloudOrderCreationRepository
+						.findById((long) LSlogilablimsorderdetail.getLssamplefile().getFilesamplecode());
+				
+				LSlogilablimsorderdetail.getLssamplefile().setFilecontent(file.getContent());
+				
+				}else {
+					OrderCreation file = mongoTemplate.findById(LSlogilablimsorderdetail.getLssamplefile().getFilesamplecode(),
+							OrderCreation.class);
+					LSlogilablimsorderdetail.getLssamplefile().setFilecontent(file.getContent());
+				}
+			}
+			}
 			mapOrders.put("Pending", Pending);
 
 			mapOrders.put("Completed", Completed);
