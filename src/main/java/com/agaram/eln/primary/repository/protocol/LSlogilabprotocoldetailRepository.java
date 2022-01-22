@@ -213,5 +213,26 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date todate);
 
 
+	int countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoNotAndCreatedtimestampBetween(Integer protocoltype,
+			Integer sitecode, String string, LSuserMaster lsuserMaster, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			Integer protocoltype, Integer sitecode, String string, LSuserMaster lsuserMaster, Date fromdate,
+			Date todate);
+
+
+
+
+	int countByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween(
+			Integer protocoltype, Integer sitecode, String string, LSuserMaster lsuserMaster, LSuserMaster assignedto,
+			Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findTop10ByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			Integer protocoltype, Integer sitecode, String string, LSuserMaster lsuserMaster, LSuserMaster assignedto,
+			Date fromdate, Date todate);
+
+
 
 }

@@ -1006,7 +1006,7 @@ public class ProtocolService {
 //					CloudLSprotocolstepInfo newLSprotocolstepInfo = CloudLSprotocolstepInfoRepository
 //							.findById(protocolstepcode);
 					LSprotocolstepInformation newLSprotocolstepInfo = lsprotocolstepInformationRepository
-							.findById(protocolstepcode);
+							.findById(protoVersStep.getProtocolmastercode());
 					if (newLSprotocolstepInfo != null) {
 						cloudStepVersion.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
 					}
@@ -2722,9 +2722,10 @@ public class ProtocolService {
 			lstOrder.put("myordercount", completedcount);
 		} else if (lSlogilabprotocoldetail.getOrderflag().equals("A")) {
 			int completedcount = (int) LSlogilabprotocoldetailRepository
-					.countByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndCreatedtimestampBetween(
+					.countByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
-							lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getFromdate(),
+							lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getAssignedto(),
+							lSlogilabprotocoldetail.getFromdate(),
 							lSlogilabprotocoldetail.getTodate());
 
 //			List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
@@ -2733,9 +2734,10 @@ public class ProtocolService {
 //							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 
 			List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
-					.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+					.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
-							lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getFromdate(),
+							lSlogilabprotocoldetail.getLsuserMaster(),lSlogilabprotocoldetail.getAssignedto(), 
+							lSlogilabprotocoldetail.getFromdate(),
 							lSlogilabprotocoldetail.getTodate());
 
 			lstOrder.put("lstAssignedOrder", lstCompletedOrder);

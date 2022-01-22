@@ -713,4 +713,6 @@ INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sall
 INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) SELECT 'Site Master','UserManagement','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'Site Master' and modulename = 'UserManagement' and usergroupid_usergroupcode = 1);
 
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS filecode int;
+
+ALTER TABLE IF Exists NOTIFICATION ADD COLUMN IF NOT EXISTS batchid varchar(250);
 

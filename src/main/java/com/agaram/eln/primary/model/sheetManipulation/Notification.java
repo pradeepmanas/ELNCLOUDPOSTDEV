@@ -63,11 +63,10 @@ public class Notification {
 	@Transient
 	private LSsheetworkflow lssheetworkflow;
 	
-//	@Transient
-//	private Integer workflowcode;
-//	
-//	@Transient
-//	private String workflowname;
+	
+	@Column(columnDefinition = "varchar(250)",name = "BatchID") 
+	private String batchid;
+
 	
 	public Long getNotificationid() {
 		return notificationid;
@@ -183,21 +182,14 @@ public class Notification {
 		this.lssheetworkflow = lssheetworkflow;
 	}
 
-//	public Integer getWorkflowcode() {
-//		return workflowcode;
-//	}
-//
-//	public void setWorkflowcode(Integer workflowcode) {
-//		this.workflowcode = workflowcode;
-//	}
-//
-//	public String getWorkflowname() {
-//		return workflowname;
-//	}
-//
-//	public void setWorkflowname(String workflowname) {
-//		this.workflowname = workflowname;
-//	}
+	public String getBatchid() {
+		return batchid;
+	}
+
+	public void setBatchid(String batchid) {
+		this.batchid = batchid;
+	}
+
 
 
 	
