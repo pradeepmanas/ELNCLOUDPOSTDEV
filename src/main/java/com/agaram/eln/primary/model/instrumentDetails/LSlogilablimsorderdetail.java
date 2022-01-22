@@ -164,6 +164,8 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	private Integer rejected;
 	
+	private Integer filecode;
+	
 	public Integer getRejected() {
 		return rejected;
 	}
@@ -299,6 +301,12 @@ public class LSlogilablimsorderdetail {
 		return instrumentname;
 	}
 
+	public Integer getFilecode() {
+		return filecode;
+	}
+	public void setFilecode(Integer filecode) {
+		this.filecode = filecode;
+	}
 	public void setInstrumentname(String instrumentname) {
 		this.instrumentname = instrumentname;
 	}

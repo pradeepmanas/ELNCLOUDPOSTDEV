@@ -72,6 +72,7 @@ import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.ParserBlock;
 import com.agaram.eln.primary.model.methodsetup.ParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserField;
+import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
@@ -79,6 +80,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
+import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
@@ -268,9 +270,12 @@ public class InstrumentService {
 
 	@Autowired
 	private LsSheetorderlimsrefrenceRepository lssheetorderlimsrefrenceRepository;
-	
+
 	@Autowired
 	private LsResultlimsOrderrefrenceRepository LsResultlimsOrderrefrenceRepository;
+
+	@Autowired
+	private LSfileRepository LSfileRepository;
 
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
@@ -285,11 +290,11 @@ public class InstrumentService {
 			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findAll();
 			List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
 			List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
-			
-			List<Method> elnMethod=lsMethodRepository.findAll();
-			List<ParserBlock> ParserBlock=lsParserBlockRepository.findAll();
-			List<ParserField> ParserField=lsParserRepository.findAll();
-			List<SubParserField> SubParserField=lsSubParserRepository.findAll();
+
+			List<Method> elnMethod = lsMethodRepository.findAll();
+			List<ParserBlock> ParserBlock = lsParserBlockRepository.findAll();
+			List<ParserField> ParserField = lsParserRepository.findAll();
+			List<SubParserField> SubParserField = lsSubParserRepository.findAll();
 			obj.put("Generalfields", Generalfields);
 			obj.put("Instruments", Instruments);
 			obj.put("Instrmaster", InstrMaster);
@@ -303,14 +308,14 @@ public class InstrumentService {
 			obj.put("SubParserField", SubParserField);
 		} else {
 			List<LSfields> Generalfields = lSfieldsRepository.findBymethodname("ID_GENERAL");
-			
+
 			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findAll();
-			List<Method> elnMethod=lsMethodRepository.findAll();
-			List<ParserBlock> ParserBlock=lsParserBlockRepository.findAll();
-			List<ParserField> ParserField=lsParserRepository.findAll();
-			List<SubParserField> SubParserField=lsSubParserRepository.findAll();
+			List<Method> elnMethod = lsMethodRepository.findAll();
+			List<ParserBlock> ParserBlock = lsParserBlockRepository.findAll();
+			List<ParserField> ParserField = lsParserRepository.findAll();
+			List<SubParserField> SubParserField = lsSubParserRepository.findAll();
 			obj.put("Generalfields", Generalfields);
-			
+
 			obj.put("Instrmaster", InstrMaster);
 			obj.put("ELNMethods", elnMethod);
 			obj.put("ParserBlock", ParserBlock);
@@ -1925,8 +1930,6 @@ public class InstrumentService {
 			objupdatedorder
 					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
 		}
-		
-		
 
 		return objupdatedorder;
 	}
@@ -2236,7 +2239,8 @@ public class InstrumentService {
 		objorder.getLsparsedparameters().forEach((param) -> param.setBatchcode(objorder.getBatchcode()));
 		lsparsedparametersRespository.save(objorder.getLsparsedparameters());
 		lsorderworkflowhistoryRepositroy.save(objorder.getLsorderworkflowhistory());
-		List<LsOrderattachments> lstattach =lsOrderattachmentsRepository.findByBatchcodeOrderByAttachmentcodeDesc(objorder.getBatchcode());
+		List<LsOrderattachments> lstattach = lsOrderattachmentsRepository
+				.findByBatchcodeOrderByAttachmentcodeDesc(objorder.getBatchcode());
 		objorder.setLsOrderattachments(lstattach);
 		lslogilablimsorderdetailRepository.save(objorder);
 
@@ -2893,10 +2897,10 @@ public class InstrumentService {
 			try {
 				gridFsFile = retrieveLargeFile(fileid);
 			} catch (IllegalStateException e) {
-				
+
 				e.printStackTrace();
 			} catch (IOException e) {
-				
+
 				e.printStackTrace();
 			}
 			System.out.println(gridFsFile.getContentType());
@@ -3324,10 +3328,9 @@ public class InstrumentService {
 		}
 		return true;
 	}
-	
-	public Map<String, Object> UploadLimsFile(MultipartFile file, Long batchcode, String filename)
-			throws IOException {
-		
+
+	public Map<String, Object> UploadLimsFile(MultipartFile file, Long batchcode, String filename) throws IOException {
+
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 
 		LsSheetorderlimsrefrence objattachment = new LsSheetorderlimsrefrence();
@@ -3343,9 +3346,9 @@ public class InstrumentService {
 //		objattachment.setTestcode(testcode);
 
 		lssheetorderlimsrefrenceRepository.save(objattachment);
-		
+
 		mapObj.put("elnSheet", objattachment);
-		
+
 		return mapObj;
 	}
 
@@ -3362,22 +3365,96 @@ public class InstrumentService {
 	}
 
 	public Map<String, Object> GetLimsorderid(String orderid) {
-		
-		Map<String, Object> map = new HashMap<>(); 
-		
+
+		Map<String, Object> map = new HashMap<>();
+
 		LSlogilablimsorderdetail objOrder = lslogilablimsorderdetailRepository.findByBatchid(orderid);
-		
-		if(objOrder != null) {
+
+		if (objOrder != null) {
 			map.put("ordercode", objOrder.getBatchcode());
-		}
-		else {
+		} else {
 			map.put("ordercode", -1);
 		}
-		
+
 		return map;
 	}
-	
-	public Map<String, Object> UploadLimsResultFile(MultipartFile file, Long batchcode, String filename) throws IOException {
+
+	public Map<String, Object> GetorderforlinkLIMS(LSlogilablimsorderdetail objorder) {
+
+		Map<String, Object> mapOrder = new HashMap<String, Object>();
+
+		LSlogilablimsorderdetail objupdated = lslogilablimsorderdetailRepository.findByBatchid(objorder.getBatchid());
+
+		if (objupdated.getLockeduser() != null) {
+			objupdated.setIsLock(1);
+		} else {
+			objupdated.setIsLock(0);
+		}
+
+		if (objupdated.getLockeduser() != null && objorder.getObjLoggeduser() != null
+				&& objupdated.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
+			objupdated.setIsLockbycurrentuser(1);
+		} else {
+			objupdated.setIsLockbycurrentuser(0);
+		}
+
+		if (objupdated.getFiletype() != 0 && objupdated.getOrderflag().toString().trim().equals("N")) {
+			if (objupdated.getLsworkflow().equals(lsworkflowRepository
+					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster()))) {
+				objupdated.setIsFinalStep(1);
+			} else {
+				objupdated.setIsFinalStep(0);
+			}
+		}
+
+		if (objupdated.getFiletype() == 0) {
+			objupdated.setLstestparameter(lStestparameterRepository.findByntestcode(objupdated.getTestcode()));
+		}
+
+		if (objupdated.getLssamplefile() != null) {
+			if (objorder.getIsmultitenant() == 1) {
+				CloudOrderCreation file = cloudOrderCreationRepository
+						.findById((long) objupdated.getLssamplefile().getFilesamplecode());
+				if (file != null) {
+					objupdated.getLssamplefile().setFilecontent(file.getContent());
+				}
+			} else {
+				OrderCreation file = mongoTemplate.findById(objupdated.getLssamplefile().getFilesamplecode(),
+						OrderCreation.class);
+				if (file != null) {
+					objupdated.getLssamplefile().setFilecontent(file.getContent());
+				}
+			}
+		}
+
+		LSfile objFile = LSfileRepository.findByfilecode(objupdated.getFilecode());
+
+		objupdated.setLsfile(objFile);
+
+		if (objupdated.getLsfile() != null) {
+			if (objorder.getIsmultitenant() == 1) {
+				Long filecode = new Long(objupdated.getFilecode());
+				CloudSheetCreation file = cloudSheetCreationRepository.findById(filecode);
+				if (file != null) {
+					objupdated.getLsfile().setFilecontent(file.getContent());
+				}
+			} else {
+				SheetCreation file = mongoTemplate.findById(objupdated.getFilecode(), SheetCreation.class);
+				if (file != null) {
+					objupdated.getLsfile().setFilecontent(file.getContent());
+				}
+			}
+		}
+
+		mapOrder.put("order", objupdated);
+		mapOrder.put("version",
+				lssamplefileversionRepository.findByFilesamplecodeOrderByVersionnoDesc(objupdated.getLssamplefile()));
+
+		return mapOrder;
+	}
+
+	public Map<String, Object> UploadLimsResultFile(MultipartFile file, Long batchcode, String filename)
+			throws IOException {
 
 		System.out.print("Inside UploadLimsFile");
 

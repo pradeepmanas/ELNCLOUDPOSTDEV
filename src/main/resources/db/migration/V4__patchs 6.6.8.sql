@@ -710,4 +710,7 @@ INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sall
 
 INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) select 'Research Activity Order', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', '1', 'NA', 'NA', 1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'Research Activity Order' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1);
 
-INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) SELECT 'Site Master','UserManagement','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'Site Master' and modulename = 'UserManagement' and usergroupid_usergroupcode = 1);
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) SELECT 'Site Master','UserManagement','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'Site Master' and modulename = 'UserManagement' and usergroupid_usergroupcode = 1);
+
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS filecode int;
+

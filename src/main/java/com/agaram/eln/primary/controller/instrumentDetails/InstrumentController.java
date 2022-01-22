@@ -791,6 +791,10 @@ public class InstrumentController {
 		return instrumentService.GetLimsorderid(orderid);
 	}
 	
+	@PostMapping("/GetorderforlinkLIMS")
+	public Map<String, Object> GetorderforlinkLIMS(@RequestBody LSlogilablimsorderdetail objorder) {
+		return instrumentService.GetorderforlinkLIMS(objorder);
+	}
 	
 	@PostMapping("/UploadLimsResultFile")
 	public Map<String, Object> UploadLimsResultFile(@RequestParam("file") MultipartFile file,
