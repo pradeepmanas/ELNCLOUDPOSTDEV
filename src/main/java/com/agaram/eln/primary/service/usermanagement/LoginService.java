@@ -1459,12 +1459,15 @@ public class LoginService {
 
 		List<Notification> codelist = NotificationRepository.findByUsercode(objNotification.getUsercode());
 
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		
+		//List<Notification> checklist = NotificationRepository.findByUsercode(objNotification.getUsercode());
+		
 		int i = 0;
 		boolean value = false;
 		while (i < codelist.size()) {
 
 			value = commonfunction.isSameDay(currentdate, codelist.get(i).getCautiondate());
-
 
 			LSnotification LSnotification = new LSnotification();
 
@@ -1474,27 +1477,28 @@ public class LoginService {
 			LSuserMaster objLSuserMaster = new LSuserMaster();/* to return the value this obj is created */
 			objLSuserMaster = userService.getUserOnCode(LSuserMaster);
 
-			Logilaborders batchid = lslogilablimsorderdetailRepository.findByBatchcode(codelist.get(i).getOrderid());
+			//Logilaborders batchid = lslogilablimsorderdetailRepository.findByBatchcode(codelist.get(i).getOrderid());
 			
 			
-			if (objNotification.getLssheetworkflow() == null) {
-				objNotification.setLssheetworkflow(lssheetworkflowRepository
-						.findTopByAndLssitemaster_sitecodeOrderByWorkflowcodeAsc(objNotification.getSitecode()));
-			}
-						
+//			if (objNotification.getLssheetworkflow() == null) {
+//				objNotification.setLssheetworkflow(lssheetworkflowRepository
+//						.findTopByAndLssitemaster_sitecodeOrderByWorkflowcodeAsc(objNotification.getSitecode()));
+//			}
+//						
 		
-			String previousworkflowname = "";
-			int perviousworkflowcode = -1;
+//			String previousworkflowname = "";
+//			int perviousworkflowcode = -1;
 
 
+//			String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\""
+//					+ batchid.getBatchid() + "\",\"description\":\"" + codelist.get(i).getDescription() + "\", \""
+//					+ "previousworkflow\":\"" + previousworkflowname + "\",\"previousworkflowcode\":\""
+//					+ perviousworkflowcode + "\",\"currentworkflowcode\":\""
+//					+ objNotification.getLssheetworkflow().getWorkflowcode() + "\"}";
+									
 			String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\""
-					+ batchid.getBatchid() + "\",\"description\":\"" + codelist.get(i).getDescription() + "\", \""
-					+ "previousworkflow\":\"" + previousworkflowname + "\",\"previousworkflowcode\":\""
-					+ perviousworkflowcode + "\",\"currentworkflowcode\":\""
-					+ objNotification.getLssheetworkflow().getWorkflowcode() + "\"}";
-
-			
-			
+					+ codelist.get(i).getBatchid() + "\",\"description\":\"" + codelist.get(i).getDescription() + "\"}";
+	
 			if (codelist.get(i).getStatus() == 1 && value) {
 
 				LSnotification.setIsnewnotification(1);
@@ -1508,16 +1512,18 @@ public class LoginService {
 				LSnotification.setRepositorydatacode(0);
 
 				codelist.get(i).setStatus(0);
-				LSnotificationRepository.save(LSnotification);
-				NotificationRepository.save(codelist.get(i));
-
-			}
-
-			i++;
-			
-			
+				lstnotifications.add(LSnotification);
+				
+				//checklist.add(codelist.get(i));
+			   //	NotificationRepository.save(codelist.get(i));
 		}
 
+			i++;
+	}
+
+		LSnotificationRepository.save(lstnotifications);
+		NotificationRepository.save(codelist);
+		
 		return null;
 
 	}

@@ -2113,7 +2113,7 @@ public class ProtocolService {
 					.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 			lstPendingOrder = LSlogilabprotocoldetailRepository
-					.findByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+					.findByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 
@@ -2145,18 +2145,18 @@ public class ProtocolService {
 			});
 
 			pendingcount = LSlogilabprotocoldetailRepository
-					.countByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetween(
+					.countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetween(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 		} else if (LSuserteammapping != null && LSuserteammapping.size() > 0) {
 			lstPendingOrder = LSlogilabprotocoldetailRepository
-					.findByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+					.findByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 			lstPendingOrder.forEach(objorder -> objorder.setCanuserprocess(false));
 
 			pendingcount = LSlogilabprotocoldetailRepository
-					.countByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetween(
+					.countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetween(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 		}
@@ -2520,7 +2520,7 @@ public class ProtocolService {
 					.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 			lstPendingOrder = LSlogilabprotocoldetailRepository
-					.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+					.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 
@@ -2549,20 +2549,20 @@ public class ProtocolService {
 			});
 
 			pendingcount = LSlogilabprotocoldetailRepository
-					.countByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetween(
+					.countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetween(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 //			lstPendingOrder.forEach(objorder -> objorder
 //					.setCanuserprocess(lsprotocolworkflow.equals(objorder.getlSprotocolworkflow()) ? true : false));
 		} else if (LSuserteammapping != null && LSuserteammapping.size() == 0) {
 			lstPendingOrder = LSlogilabprotocoldetailRepository
-					.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+					.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 			lstPendingOrder.forEach(objorder -> objorder.setCanuserprocess(false));
 
 			pendingcount = LSlogilabprotocoldetailRepository
-					.countByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetween(
+					.countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetween(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 		}
@@ -2639,7 +2639,7 @@ public class ProtocolService {
 						.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 				lstPendingOrder = LSlogilabprotocoldetailRepository
-						.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+						.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 								lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 								lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 
@@ -2670,18 +2670,18 @@ public class ProtocolService {
 				});
 
 				pendingcount = LSlogilabprotocoldetailRepository
-						.countByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetween(
+						.countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetween(
 								lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 								lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 			} else if (LSuserteammapping != null && LSuserteammapping.size() > 0) {
 				lstPendingOrder = LSlogilabprotocoldetailRepository
-						.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+						.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 								lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 								lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 				lstPendingOrder.forEach(objorder -> objorder.setCanuserprocess(false));
 
 				pendingcount = LSlogilabprotocoldetailRepository
-						.countByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetween(
+						.countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetween(
 								lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 								lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 			}

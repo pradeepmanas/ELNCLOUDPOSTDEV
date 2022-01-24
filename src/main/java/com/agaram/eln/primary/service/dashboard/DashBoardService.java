@@ -478,14 +478,14 @@ public class DashBoardService {
 		List<Logilabprotocolorders> lstorders = new ArrayList<Logilabprotocolorders>();
 
 		if (objuser.getObjuser().getOrderselectiontype() == 1) {
-			lstorders = LSlogilabprotocoldetailRepository.findBySitecodeAndCreatedtimestampBetween(objuser.getLssitemaster().getSitecode(),fromdate, todate);
+			lstorders = LSlogilabprotocoldetailRepository.findBySitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull(objuser.getLssitemaster().getSitecode(),fromdate, todate);
 
 		} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
-			lstorders = LSlogilabprotocoldetailRepository.findByOrderflagAndSitecodeAndCreatedtimestampBetween("R",objuser.getLssitemaster().getSitecode(), fromdate,
+			lstorders = LSlogilabprotocoldetailRepository.findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull("R",objuser.getLssitemaster().getSitecode(), fromdate,
 					todate);
 
 		} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
-			lstorders = LSlogilabprotocoldetailRepository.findByOrderflagAndSitecodeAndCreatedtimestampBetween("N",objuser.getLssitemaster().getSitecode(), fromdate,
+			lstorders = LSlogilabprotocoldetailRepository.findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull("N",objuser.getLssitemaster().getSitecode(), fromdate,
 					todate);
 		}
 

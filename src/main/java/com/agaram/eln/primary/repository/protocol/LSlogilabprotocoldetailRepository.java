@@ -61,7 +61,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	@Transactional
 	@Modifying
 	@Query(value = "select * from "
-			+ "LSlogilabprotocoldetail where protocoltype = ?1 and sitecode=?2 and orderflag = ?3 and createdtimestamp BETWEEN ?4 and ?5  ORDER BY createdtimestamp DESC offset 10 row", nativeQuery = true)
+			+ "LSlogilabprotocoldetail where protocoltype = ?1 and sitecode=?2 and orderflag = ?3 and createdtimestamp BETWEEN ?4 and ?5 and assignedto_usercode IS NULL  ORDER BY createdtimestamp DESC offset 10 row", nativeQuery = true)
 	List<LSlogilabprotocoldetail> getProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetween(Integer protocoltype, Integer sitecode, String string,Date fromdate, Date todate);
 
 	@Transactional
@@ -195,14 +195,16 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date todate);
 
 
-	List<LSlogilabprotocoldetail> findByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
-			Integer protocoltype, Integer sitecode, String string, Date fromdate, Date todate);
+//	List<LSlogilabprotocoldetail> findByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+//			Integer protocoltype, Integer sitecode, String string, Date fromdate, Date todate);
 
 
-	List<Logilabprotocolorders> findBySitecodeAndCreatedtimestampBetween(Integer sitecode, Date fromdate, Date todate);
+//	List<Logilabprotocolorders> findBySitecodeAndCreatedtimestampBetween(Integer sitecode, Date fromdate, Date todate);
+	
+	List<Logilabprotocolorders> findBySitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull(Integer sitecode, Date fromdate, Date todate);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndCreatedtimestampBetween(String string, Integer sitecode,
+	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull(String string, Integer sitecode,
 			Date fromdate, Date todate);
 
 
@@ -213,15 +215,16 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date todate);
 
 
-	int countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoNotAndCreatedtimestampBetween(Integer protocoltype,
-			Integer sitecode, String string, LSuserMaster lsuserMaster, Date fromdate, Date todate);
+	List<LSlogilabprotocoldetail> findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			Integer protocoltype, Integer sitecode, String string, Date fromdate, Date todate);
 
 
-	List<LSlogilabprotocoldetail> findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
-			Integer protocoltype, Integer sitecode, String string, LSuserMaster lsuserMaster, Date fromdate,
-			Date todate);
+	int countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetween(Integer protocoltype,
+			Integer sitecode, String string, Date fromdate, Date todate);
 
 
+	List<LSlogilabprotocoldetail> findByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByCreatedtimestampDesc(
+			Integer protocoltype, Integer sitecode, String string, Date fromdate, Date todate);
 
 
 	int countByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween(

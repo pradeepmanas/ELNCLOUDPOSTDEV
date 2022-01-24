@@ -870,6 +870,8 @@ public class UserService {
 			lsuserMasterRepository.setpasswordandpasswordstatusByusercode(objusermaster.getPassword(),
 					objusermaster.getPasswordstatus(), objusermaster.getUsercode());
 		}
+	
+		
 		return objusermaster;
 
 	}

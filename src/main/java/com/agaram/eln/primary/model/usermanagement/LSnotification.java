@@ -124,4 +124,6 @@ public class LSnotification {
 	public void setNotificationdate(Date notificationdate) {
 		this.notificationdate = notificationdate;
 	}
+
+	
 }
