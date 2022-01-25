@@ -454,8 +454,6 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.lsprotocolorderworkflowhistory
     OWNER to postgres;
-    
-INSERT into LSusergrouprights (orderno,createdby, createdon, displaytopic, modifiedby, modifiedon, modulename, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) VALUES (52,N'administrator', CAST(N'2020-02-21T14:50:55.727' AS date), 'Retire', NULL, NULL, 'User Master', '1', '1', 'NA', 'NA', 1, 1) ON CONFLICT(orderno)DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS public.lsprotocolvideos
 (
@@ -692,27 +690,47 @@ INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, s
 
 INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (62, 'Orders Shared To Me', 'Register Task Orders & Execute', '0', 'NA', 'NA', 'NA', '1,0,0',65)ON CONFLICT(orderno)DO NOTHING;
 
-INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) SELECT 'Assigned Orders', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', 'NA', 'NA', 'NA', 1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'Assigned Orders' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1);
+delete FROM LSusergrouprights WHERE displaytopic = 'Assigned Orders' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) values ('Assigned Orders', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', 'NA', 'NA', 'NA', 1,1);
 
-INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) SELECT 'My Orders', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', 'NA', 'NA', 'NA', 1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'My Orders' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1);
+delete FROM LSusergrouprights WHERE displaytopic = 'My Orders' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) values ('My Orders', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', 'NA', 'NA', 'NA', 1,1 );
 
-INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) SELECT 'Orders Shared By Me', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', 'NA', 'NA', 'NA', 1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'Orders Shared By Me' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1);
+delete FROM LSusergrouprights WHERE displaytopic = 'Orders Shared By Me' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) values ( 'Orders Shared By Me', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', 'NA', 'NA', 'NA', 1,1 );
 
-INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) SELECT 'Orders Shared To Me', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', 'NA', 'NA', 'NA', 1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'Orders Shared To Me' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1);
+delete FROM LSusergrouprights WHERE displaytopic = 'Orders Shared To Me' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) values ( 'Orders Shared To Me', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', 'NA', 'NA', 'NA', 1,1);
 
-INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) select 'Pending Work', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', '1', 'NA', 'NA', 1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'Pending Work' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1);
+delete FROM LSusergrouprights WHERE displaytopic = 'Pending Work' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) values ( 'Pending Work', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', '1', 'NA', 'NA', 1,1);
 
-INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) select 'Completed Work', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', '1', 'NA', 'NA', 1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'Completed Work' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1);
+delete FROM LSusergrouprights WHERE displaytopic = 'Completed Work' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) values ( 'Completed Work', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', '1', 'NA', 'NA', 1,1 );
 
-INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) select 'Sheet Evaluation', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', '1', 'NA', 'NA', 1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'Sheet Evaluation' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1);
+delete FROM LSusergrouprights WHERE displaytopic = 'Sheet Evaluation' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) values ( 'Sheet Evaluation', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', '1', 'NA', 'NA', 1,1 );
 
-INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) select 'ELN Task Order', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', '1', 'NA', 'NA', 1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'ELN Task Order' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1);
+delete FROM LSusergrouprights WHERE displaytopic = 'ELN Task Order' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) values ( 'ELN Task Order', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', '1', 'NA', 'NA', 1,1);
 
-INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) select 'Research Activity Order', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', '1', 'NA', 'NA', 1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'Research Activity Order' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1);
+delete FROM LSusergrouprights WHERE displaytopic = 'Research Activity Order' and modulename = 'Register Task Orders & Execute' and usergroupid_usergroupcode = 1;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) values ( 'Research Activity Order', 'Register Task Orders & Execute', 'administrator', CAST('2020-02-21T14:50:55.727' AS date), '1', '1', 'NA', 'NA', 1,1);
 
-INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) SELECT 'Site Master','UserManagement','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1 WHERE NOT EXISTS (SELECT displaytopic FROM LSusergrouprights WHERE displaytopic = 'Site Master' and modulename = 'UserManagement' and usergroupid_usergroupcode = 1);
+delete FROM LSusergrouprights WHERE displaytopic = 'Site Master' and modulename = 'UserManagement' and usergroupid_usergroupcode = 1;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) values ( 'Site Master','UserManagement','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1);
+
+delete FROM LSusergrouprights WHERE displaytopic = 'Retire' and modulename = 'User Master' and usergroupid_usergroupcode = 1;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode) values ( 'Retire','User Master','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','NA','NA',1,1 );
 
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS filecode int;
 
 ALTER TABLE IF Exists NOTIFICATION ADD COLUMN IF NOT EXISTS batchid varchar(250);
-
+
+delete FROM LSusergrouprights WHERE displaytopic = 'Create Archive' and modulename = 'AuditTrail History' and usergroupid_usergroupcode = 1;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode,usergroupid_usergroupcode) values ( 'Create Archive','AuditTrail History','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1 );
+
+delete FROM LSusergrouprights WHERE displaytopic = 'Review' and modulename = 'AuditTrail History' and usergroupid_usergroupcode = 1;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode,usergroupid_usergroupcode) values ( 'Review','AuditTrail History','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1);
+
+update lslogilabprotocoldetail set completedtimestamp = current_timestamp where  orderflag='R' and completedtimestamp IS NULL;
