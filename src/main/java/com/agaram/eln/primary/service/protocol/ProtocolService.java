@@ -1810,6 +1810,7 @@ public class ProtocolService {
 	}
 
 	public Map<String, Object> addProtocolOrderafter(LSlogilabprotocoldetail lSlogilabprotocoldetail) {
+		Map<String,Object>lstOrder =new HashMap<String, Object>();
 		if (lSlogilabprotocoldetail.getProtocolordercode() != null) {
 //		List<LSprotocolstep> lstSteps = LSProtocolStepRepositoryObj.findByProtocolmastercode(
 //				lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode());
@@ -1858,8 +1859,93 @@ public class ProtocolService {
 					}
 				}
 			}
+			
+			int myordercount = (int) LSlogilabprotocoldetailRepository
+					.countByProtocoltypeAndSitecodeAndAssignedtoAndCreatedtimestampBetween(
+							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
+							lSlogilabprotocoldetail.getAssignedto(), lSlogilabprotocoldetail.getFromdate(),
+							lSlogilabprotocoldetail.getTodate());
+
+//			int assignedcount = LSlogilabprotocoldetailRepository
+//					.countByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween(
+//							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
+//							lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getAssignedto(),
+//							lSlogilabprotocoldetail.getFromdate(),
+//							lSlogilabprotocoldetail.getTodate());
+			
+			int assignedcount = LSlogilabprotocoldetailRepository
+					.countByProtocoltypeAndSitecodeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween(
+							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), 
+							lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getAssignedto(),
+							lSlogilabprotocoldetail.getFromdate(),
+							lSlogilabprotocoldetail.getTodate());
+
+			int sharedbymecount = lsprotocolordersharedbyRepository
+					.countBySharebyunifiedidAndProtocoltypeAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
+							lSlogilabprotocoldetail.getUnifielduserid(), lSlogilabprotocoldetail.getProtocoltype(), 1,
+							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
+
+			int sheredtomecount = lsprotocolordersharetoRepository
+					.countBySharetounifiedidAndProtocoltypeAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(
+							lSlogilabprotocoldetail.getUnifielduserid(), lSlogilabprotocoldetail.getProtocoltype(), 1,
+							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
+			
+			
+			
+			if (lSlogilabprotocoldetail.getOrderflag().equals("M")) {
+				int completedcount = (int) LSlogilabprotocoldetailRepository
+						.countByProtocoltypeAndSitecodeAndAssignedtoAndCreatedtimestampBetween(
+								lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
+								lSlogilabprotocoldetail.getAssignedto(), lSlogilabprotocoldetail.getFromdate(),
+								lSlogilabprotocoldetail.getTodate());
+
+				List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
+						.findByProtocoltypeAndSitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+								lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
+								lSlogilabprotocoldetail.getAssignedto(), lSlogilabprotocoldetail.getFromdate(),
+								lSlogilabprotocoldetail.getTodate());
+
+				lstOrder.put("lstMyOrder", lstCompletedOrder);
+				lstOrder.put("myordercount", completedcount);
+			} else if (lSlogilabprotocoldetail.getOrderflag().equals("A")) {
+				int completedcount = (int) LSlogilabprotocoldetailRepository
+//						.countByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween(
+						.countByProtocoltypeAndSitecodeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween(
+								lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
+								lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getAssignedto(),
+								lSlogilabprotocoldetail.getFromdate(),
+								lSlogilabprotocoldetail.getTodate());
+
+//				List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
+//						.findTop10ByOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc("N",
+//								lSlogilabprotocoldetail.getLsuserMaster(),lSlogilabprotocoldetail.getAssignedto(),
+//								lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
+
+				List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
+//						.findByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+						.findByProtocoltypeAndSitecodeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+								lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
+								lSlogilabprotocoldetail.getLsuserMaster(),lSlogilabprotocoldetail.getAssignedto(), 
+								lSlogilabprotocoldetail.getFromdate(),
+								lSlogilabprotocoldetail.getTodate());
+
+				lstOrder.put("lstAssignedOrder", lstCompletedOrder);
+				lstOrder.put("assignedordercount", completedcount);
+			}
+			
+			
+//			lstOrder.put("lstPendingOrder", lstPendingOrder);
+//			lstOrder.put("lstCompletedOrder", lstCompletedOrder);
+//			lstOrder.put("pendingcount", pendingcount);
+//			lstOrder.put("completedcount", completedcount);
+			lstOrder.put("myordercount", myordercount);
+			lstOrder.put("assignedordercount", assignedcount);
+			lstOrder.put("sharedbymecount", sharedbymecount);
+			lstOrder.put("sheredtomecount", sheredtomecount);
+			
+			
 		}
-		return null;
+		return lstOrder;
 
 	}
 
@@ -2113,9 +2199,10 @@ public class ProtocolService {
 					.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 			lstPendingOrder = LSlogilabprotocoldetailRepository
-					.findByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByCreatedtimestampDesc(
+//					findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc
+					.findByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
-							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
+							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getCreatedtimestamp());
 
 //			lstPendingOrder.forEach(objorder -> objorder
 //					.setCanuserprocess(lsprotocolworkflow.equals(objorder.getlSprotocolworkflow()) ? true : false));
@@ -2150,7 +2237,7 @@ public class ProtocolService {
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 		} else if (LSuserteammapping != null && LSuserteammapping.size() > 0) {
 			lstPendingOrder = LSlogilabprotocoldetailRepository
-					.findByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByCreatedtimestampDesc(
+					.findByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 			lstPendingOrder.forEach(objorder -> objorder.setCanuserprocess(false));
@@ -2497,7 +2584,7 @@ public class ProtocolService {
 //						lSlogilabprotocoldetail.getProtocoltype(), "R");
 
 		List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
-				.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+				.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 						lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "R",
 						lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 
@@ -2571,21 +2658,25 @@ public class ProtocolService {
 //				lSlogilabprotocoldetail.getProtocoltype(), "N", lSlogilabprotocoldetail.getFromdate(),
 //				lSlogilabprotocoldetail.getTodate());
 		int completedcount = LSlogilabprotocoldetailRepository
-				.countByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetween(
+//				.countByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetween(
+				.countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetween(
 						lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "R",
 						lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 
 		int myordercount = (int) LSlogilabprotocoldetailRepository
-				.countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoAndCreatedtimestampBetween(
-						lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
+				.countByProtocoltypeAndSitecodeAndAssignedtoAndCreatedtimestampBetween(
+						lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
 						lSlogilabprotocoldetail.getAssignedto(), lSlogilabprotocoldetail.getFromdate(),
 						lSlogilabprotocoldetail.getTodate());
 
 		int assignedcount = (int) LSlogilabprotocoldetailRepository
-				.countByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndCreatedtimestampBetween(
-						lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
+//				.countByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween
+				.countByProtocoltypeAndSitecodeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween
+				(
+//				.countByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndCreatedtimestampBetween(
+						lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
 //				.countByOrderflagAndCreatebyAndCreatedtimestampBetween("N",
-						lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getFromdate(),
+						lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getAssignedto(), lSlogilabprotocoldetail.getFromdate(),
 						lSlogilabprotocoldetail.getTodate());
 
 		int sharedbymecount = lsprotocolordersharedbyRepository
@@ -2696,25 +2787,38 @@ public class ProtocolService {
 //			lstOrder.put("pendingcount", pendingcount);
 		} else if (lSlogilabprotocoldetail.getOrderflag().equals("R")) {
 			int completedcount = LSlogilabprotocoldetailRepository
-					.countByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetween(
+					.countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetween(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "R",
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 			List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
-					.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+//					.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetweenOrderByCompletedtimestampDesc(
+					.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "R",
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 			lstOrder.put("lstCompletedOrder", lstCompletedOrder);
 			lstOrder.put("completedcount", completedcount);
 		} else if (lSlogilabprotocoldetail.getOrderflag().equals("M")) {
+//			int completedcount = (int) LSlogilabprotocoldetailRepository
+//					.countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoAndCreatedtimestampBetween(
+//							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
+//							lSlogilabprotocoldetail.getAssignedto(), lSlogilabprotocoldetail.getFromdate(),
+//							lSlogilabprotocoldetail.getTodate());
+			
 			int completedcount = (int) LSlogilabprotocoldetailRepository
-					.countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoAndCreatedtimestampBetween(
-							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
+					.countByProtocoltypeAndSitecodeAndAssignedtoAndCreatedtimestampBetween(
+							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
 							lSlogilabprotocoldetail.getAssignedto(), lSlogilabprotocoldetail.getFromdate(),
 							lSlogilabprotocoldetail.getTodate());
 
+//			List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
+//					.findByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+//							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
+//							lSlogilabprotocoldetail.getAssignedto(), lSlogilabprotocoldetail.getFromdate(),
+//							lSlogilabprotocoldetail.getTodate());
+			
 			List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
-					.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
-							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
+					.findByProtocoltypeAndSitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
 							lSlogilabprotocoldetail.getAssignedto(), lSlogilabprotocoldetail.getFromdate(),
 							lSlogilabprotocoldetail.getTodate());
 
@@ -2722,24 +2826,44 @@ public class ProtocolService {
 			lstOrder.put("myordercount", completedcount);
 		} else if (lSlogilabprotocoldetail.getOrderflag().equals("A")) {
 			int completedcount = (int) LSlogilabprotocoldetailRepository
-					.countByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween(
-							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
+//					.countByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween(
+					.countByProtocoltypeAndSitecodeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween(
+							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
 							lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getAssignedto(),
 							lSlogilabprotocoldetail.getFromdate(),
 							lSlogilabprotocoldetail.getTodate());
-
+			
+			
+//			int completedcount = (int) LSlogilabprotocoldetailRepository
+//					.countByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween(
+//							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "R",
+//							lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getAssignedto(),
+//							lSlogilabprotocoldetail.getFromdate(),
+//							lSlogilabprotocoldetail.getTodate());
+//			completedcount=completedcount+pendingcount;
 //			List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
 //					.findTop10ByOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc("N",
 //							lSlogilabprotocoldetail.getLsuserMaster(),lSlogilabprotocoldetail.getAssignedto(),
 //							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 
 			List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
-					.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
-							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
+//					.findByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+					.findByProtocoltypeAndSitecodeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(		
+					lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
 							lSlogilabprotocoldetail.getLsuserMaster(),lSlogilabprotocoldetail.getAssignedto(), 
 							lSlogilabprotocoldetail.getFromdate(),
 							lSlogilabprotocoldetail.getTodate());
-
+			
+			
+//			List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
+//					.findByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+//							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "R",
+//							lSlogilabprotocoldetail.getLsuserMaster(),lSlogilabprotocoldetail.getAssignedto(), 
+//							lSlogilabprotocoldetail.getFromdate(),
+//							lSlogilabprotocoldetail.getTodate());
+//			if(lstCompletedOrder.size()!=0) {
+//			lstCompletedOrder.addAll(0, lstpendingOrder);
+//			}
 			lstOrder.put("lstAssignedOrder", lstCompletedOrder);
 			lstOrder.put("assignedordercount", completedcount);
 		}
