@@ -948,4 +948,10 @@ public class ProtocolController {
 	public List<LStestmasterlocal> gettaskmaster(HttpServletRequest request) {
 		return ProtocolMasterService.gettaskmaster();
 	}
+	
+	@RequestMapping(value = "/getswitchdata")
+	protected Map<String,Object> getswitchdata(@RequestBody LSlogilabprotocoldetail lslogilabprotocoldetail ) {
+
+		return ProtocolMasterService.getswitchdata(lslogilabprotocoldetail);
+	}
 }
