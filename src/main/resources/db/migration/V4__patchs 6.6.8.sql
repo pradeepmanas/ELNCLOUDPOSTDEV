@@ -640,10 +640,9 @@ INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, s
 INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (56, 'Method Master', 'Parser', '0', '0', '0', '0', '1,1,1',58) ON CONFLICT(orderno)DO NOTHING;
 
 update lsusergrouprightsmaster set displaytopic ='New Step' where orderno=50;
-update lsusergrouprightsmaster set sallow='0',screate='0',sdelete='0',sedit='0',status='1,1,1' where orderno=51;
 
 update lsusergrouprights set displaytopic ='New Step' where modulename='Protocol Templates' and displaytopic ='New';
-update lsusergrouprights set sallow='0',screate='0',sdelete='0',sedit='0' where modulename='Protocol Templates' and displaytopic ='Protocol Templates';
+
 
 INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (57, 'Export to pdf', 'Protocol Templates', '0', '0', 'NA', 'NA', '1,0,0',53) ON CONFLICT(orderno)DO NOTHING;
 

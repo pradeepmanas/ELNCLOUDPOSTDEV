@@ -2235,7 +2235,7 @@ public class ProtocolService {
 					.countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetween(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
-		} else if (LSuserteammapping != null && LSuserteammapping.size() > 0) {
+		} else if (LSuserteammapping != null && LSuserteammapping.size() == 0) {
 			lstPendingOrder = LSlogilabprotocoldetailRepository
 					.findByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
@@ -2764,7 +2764,7 @@ public class ProtocolService {
 						.countByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetween(
 								lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
 								lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
-			} else if (LSuserteammapping != null && LSuserteammapping.size() > 0) {
+			} else if (LSuserteammapping != null && LSuserteammapping.size() == 0) {
 				lstPendingOrder = LSlogilabprotocoldetailRepository
 						.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 								lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
@@ -2946,7 +2946,7 @@ public class ProtocolService {
 					objorder.setCanuserprocess(false);
 				}
 			});
-		} else if (LSuserteammapping != null && LSuserteammapping.size() > 0) {
+		} else if (LSuserteammapping != null && LSuserteammapping.size() == 0) {
 			lstreminingPendingOrder = LSlogilabprotocoldetailRepository
 					.getProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetween(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
@@ -3019,7 +3019,7 @@ public class ProtocolService {
 					}
 				});
 
-			} else if (LSuserteammapping != null && LSuserteammapping.size() > 0) {
+			} else if (LSuserteammapping != null && LSuserteammapping.size() == 0) {
 				lstreminingPendingOrder = LSlogilabprotocoldetailRepository
 						.getProtocoltypeAndSitecodeAndOrderflagAndCreatedtimestampBetween(
 								lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "N",
@@ -3635,8 +3635,8 @@ public class ProtocolService {
 		int multitenent = objm.convertValue(argObj.get("ismultitenant"), Integer.class);
 		int countforstep = 0;
 		List<LSprotocolorderstepversion> LSprotocolorderstepversion = lsprotocolorderstepversionRepository
-				.findByProtocolordercodeAndVersionnoOrderByVersionno(versionMaster.getProtocolordercode(),
-						versionMaster.getVersionno());
+				.findByProtocolordercodeAndVersionnoAndStatusOrderByVersionno(versionMaster.getProtocolordercode(),
+						versionMaster.getVersionno(),1);
 		countforstep = LSlogilabprotocolstepsRepository
 				.countByProtocolordercodeAndStatus(versionMaster.getProtocolordercode(), 1);
 		mapObj.put("countforstep", countforstep);
@@ -4292,7 +4292,8 @@ public class ProtocolService {
 		LSlogilabprotocoldetail lslogilabprotocoldetail = LSlogilabprotocoldetailRepository
 				.findByProtocolordercode(protocolordercode);
 		List<LSlogilabprotocolsteps> Lslogilabprotocolsteps = LSlogilabprotocolstepsRepository
-				.findByProtocolordercode(protocolordercode);
+//				.findByProtocolordercode(protocolordercode);
+				.findByProtocolordercodeAndStatus(protocolordercode,1);
 		if (isversion) {
 			LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(sitecode);
 			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository

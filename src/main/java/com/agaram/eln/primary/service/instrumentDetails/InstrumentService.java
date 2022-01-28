@@ -1984,6 +1984,8 @@ public class InstrumentService {
 	public LSsamplefile SaveResultfile(LSsamplefile objfile) {
 
 		Integer lastversionindex = objfile.getVersionno() != null ? objfile.getVersionno() - 1 : 0;
+		
+//		Integer lastversionindex = objfile.getVersionno() != null ? objfile.getVersionno() : 0;
 
 		boolean versionexist = true;
 		if (objfile.getLssamplefileversion().size() <= 0) {
@@ -2022,10 +2024,10 @@ public class InstrumentService {
 			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
 			updateorderversioncontent(objfile.getFilecontent(), objfile.getLssamplefileversion().get(lastversionindex),
 					objfile.getIsmultitenant());
-			if (perviousversion > -1) {
-				updateorderversioncontent(Contentversion, objfile.getLssamplefileversion().get(perviousversion),
-						objfile.getIsmultitenant());
-			}
+//			if (perviousversion > -1) {
+//				updateorderversioncontent(Contentversion, objfile.getLssamplefileversion().get(perviousversion),
+//						objfile.getIsmultitenant());
+//			}
 
 			// objfile.setVersionno(objfile.getVersionno()+1);
 //			}
