@@ -357,7 +357,7 @@ public class InstrumentService {
 				}
 
 			}
-			objsamplefile.setCreatedate(new Date());
+//			objsamplefile.setCreatedate(new Date());
 			objsamplefile.setTestid(objorder.getTestcode());
 			objsamplefile.setBatchcode(objorder.getBatchcode());
 			objsamplefile.setProcessed(0);
@@ -1996,9 +1996,9 @@ public class InstrumentService {
 			lsversion.setVersionno(1);
 			lsversion.setBatchcode(objfile.getBatchcode());
 			lsversion.setTestid(objfile.getTestid());
-			lsversion.setCreatedate(objfile.getCreatedate());
+//			lsversion.setCreatedate(objfile.getCreatedate());
 			lsversion.setCreateby(objfile.getCreateby());
-			lsversion.setModifieddate(objfile.getModifieddate());
+//			lsversion.setModifieddate(objfile.getModifieddate());
 			lsversion.setModifiedby(objfile.getModifiedby());
 			objfile.getLssamplefileversion().add(lsversion);
 

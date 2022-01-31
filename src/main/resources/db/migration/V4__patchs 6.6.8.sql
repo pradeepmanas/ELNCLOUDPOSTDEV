@@ -733,3 +733,5 @@ delete FROM LSusergrouprights WHERE displaytopic = 'Review' and modulename = 'Au
 INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode,usergroupid_usergroupcode) values ( 'Review','AuditTrail History','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1);
 
 update lslogilabprotocoldetail set completedtimestamp = current_timestamp where  orderflag='R' and completedtimestamp IS NULL;
+
+update lsusergrouprights set sallow='1',screate='1',sdelete='1',sedit='1' where modulename='Protocol Templates' and displaytopic ='Protocol Templates';
