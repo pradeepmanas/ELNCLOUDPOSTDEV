@@ -266,6 +266,9 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	List<LStestparameter> lstestparameter;
 	
+	@Transient
+	private Boolean noworkflow = false;
+	
 	public LSlogilablimsorderdetail()
 	{
 		
@@ -659,6 +662,12 @@ public class LSlogilablimsorderdetail {
 	}
 	public void setIsmultitenant(Integer ismultitenant) {
 		this.ismultitenant = ismultitenant;
+	}
+	public Boolean getNoworkflow() {
+		return noworkflow;
+	}
+	public void setNoworkflow(Boolean noworkflow) {
+		this.noworkflow = noworkflow;
 	}
 
 	
