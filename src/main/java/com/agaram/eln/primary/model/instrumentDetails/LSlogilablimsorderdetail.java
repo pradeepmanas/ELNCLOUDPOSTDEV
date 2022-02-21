@@ -106,6 +106,9 @@ public class LSlogilablimsorderdetail {
 	@JoinColumn(name="batchcode")
 	private List<LsOrderattachments> lsOrderattachments;
 	
+	@Column(columnDefinition = "varchar(250)",name = "Keyword") 
+	private String keyword;
+	
 	@Transient
 	LScfttransaction objmanualaudit;
 	
@@ -265,9 +268,6 @@ public class LSlogilablimsorderdetail {
 	
 	@Transient
 	List<LStestparameter> lstestparameter;
-	
-	@Transient
-	private Boolean noworkflow = false;
 	
 	public LSlogilablimsorderdetail()
 	{
@@ -663,11 +663,11 @@ public class LSlogilablimsorderdetail {
 	public void setIsmultitenant(Integer ismultitenant) {
 		this.ismultitenant = ismultitenant;
 	}
-	public Boolean getNoworkflow() {
-		return noworkflow;
+	public String getKeyword() {
+		return keyword;
 	}
-	public void setNoworkflow(Boolean noworkflow) {
-		this.noworkflow = noworkflow;
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 
 	

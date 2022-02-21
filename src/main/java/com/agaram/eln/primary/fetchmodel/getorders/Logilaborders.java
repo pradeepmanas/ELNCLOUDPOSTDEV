@@ -17,6 +17,7 @@ public class Logilaborders extends Logilabordermaster {
 	private Integer approvelstatus;
 	private Integer lockeduser;
 	private Integer testcode;
+	@SuppressWarnings("unused")
 	private String batchid;
 	private LSsamplemaster lssamplemaster;
 	private LSprojectmaster lsprojectmaster;

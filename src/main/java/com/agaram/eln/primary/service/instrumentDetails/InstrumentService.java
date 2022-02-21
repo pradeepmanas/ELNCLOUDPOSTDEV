@@ -330,11 +330,8 @@ public class InstrumentService {
 
 	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder) {
 
-		
-	//	if(!objorder.getNoworkflow()) {
-			objorder.setLsworkflow(lsworkflowRepository
-					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
-		//}
+		objorder.setLsworkflow(lsworkflowRepository
+				.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
 		objorder.setOrderflag("N");
 
 		String Content = "";

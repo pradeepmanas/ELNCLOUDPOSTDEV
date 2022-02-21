@@ -38,8 +38,6 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	public String createdbyusername;
 	@Column(name = "lssitemaster_sitecode")
 	private Integer lssitemaster;
-	
-	private Integer defaulttemplate;
 
 	@Transient
 	private String createdateprotocol;
@@ -65,14 +63,6 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	@OneToMany
 	@JoinColumn(name = "protocolmastercode")
 	private List<LSprotocolmastertest> lstest;
-
-	public Integer getDefaulttemplate() {
-		return defaulttemplate;
-	}
-
-	public void setDefaulttemplate(Integer defaulttemplate) {
-		this.defaulttemplate = defaulttemplate;
-	}
 
 	public Integer getRejected() {
 		return rejected;

@@ -11,4 +11,7 @@ public interface LSprotocolstepversionRepository extends JpaRepository<LSprotoco
 	
 	LSprotocolstepversion findByprotocolstepcodeAndVersionno(Integer protocolstepcode,Integer versionno);
 
+	List<LSprotocolstepversion> findByprotocolmastercodeAndVersionnoAndStatus(Integer protocolmastercode,
+			Integer versionno, int i);
+
 }

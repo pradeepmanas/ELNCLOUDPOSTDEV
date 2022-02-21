@@ -735,3 +735,11 @@ INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sall
 update lslogilabprotocoldetail set completedtimestamp = current_timestamp where  orderflag='R' and completedtimestamp IS NULL;
 
 update lsusergrouprights set sallow='1',screate='1',sdelete='1',sedit='1' where modulename='Protocol Templates' and displaytopic ='Protocol Templates';
+
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS Keyword varchar(250);
+
+update lsusergrouprights set sallow='1',screate='1',sdelete='1',sedit='1' where modulename='Protocol Templates' and displaytopic ='Protocol Templates';
+
+update lsusergrouprights set sallow='1',screate='1' where modulename='Protocol Templates' and displaytopic ='New Step' and screate='NA';
+
+update lsusergrouprightsmaster set sallow='0',screate='0',sdelete='0',sedit='0' where modulename = 'Protocol Templates' and displaytopic ='Protocol Templates';

@@ -1,6 +1,8 @@
 package com.agaram.eln.primary.controller.usermanagement;
 
 import java.io.ByteArrayInputStream;
+
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +34,7 @@ import com.agaram.eln.config.SMTPMailvalidation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudProfilePicture;
 import com.agaram.eln.primary.model.cloudFileManip.CloudUserSignature;
 import com.agaram.eln.primary.model.fileManipulation.ProfilePicture;
+import com.agaram.eln.primary.model.fileManipulation.UserSignature;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
@@ -66,6 +69,10 @@ public class UserController {
 	
 	@Autowired
 	private CloudFileManipulationservice cloudFileManipulationservice;
+	
+//	@Autowired
+//	private UserSignature UserSignature;
+	
 	/**
 	 * UserGroup
 	 * 
@@ -313,19 +320,6 @@ public class UserController {
     }
 	
 	
-	@PostMapping("/CloudUploadprofilepic")
-    public CloudProfilePicture CloudUploadprofilepic(@RequestParam("file") MultipartFile file, @RequestParam("usercode") Integer usercode, @RequestParam("date") Date currentdate) {
-        
-		CloudProfilePicture profilePicture = new CloudProfilePicture();
-        try {
-        	profilePicture = cloudFileManipulationservice.addPhoto(usercode, file,currentdate);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        return profilePicture;
-    }
-	
 	@PostMapping("/CloudUploadusersignature")
     public CloudUserSignature CloudUploadusersignature(@RequestParam("file") MultipartFile file, @RequestParam("usercode") Integer usercode
     		, @RequestParam("username") String username , @RequestParam("date") Date currentdate) {
@@ -438,6 +432,44 @@ public class UserController {
 	    
 	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "ELNSignature/{fileid}", method = RequestMethod.GET)
+	@GetMapping
+	public ResponseEntity<InputStreamResource> ELNSignature(@PathVariable Integer fileid) throws IllegalStateException, IOException {
+		UserSignature objprofile = fileManipulationservice.getsignature(fileid);
+		
+		byte[] data = null;
+		
+		if(objprofile != null)
+		{
+			data = objprofile.getImage().getData();
+		}
+		else
+		{
+			data = StreamUtils.copyToByteArray(new ClassPathResource("images/userimg.jpg").getInputStream());
+		}
+		ByteArrayInputStream bis = new ByteArrayInputStream(data);
+		
+	    HttpHeaders header = new HttpHeaders();
+	    header.setContentType(MediaType.parseMediaType("image/png"));
+	    header.set("Content-Disposition", "attachment; filename=gg.pdf");
+	    
+	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+	}
+	
+	@PostMapping("/UploadELNUserSignature")
+    public UserSignature UploadELNUserSignature1(@RequestParam("file") MultipartFile file, @RequestParam("usercode") Integer usercode, @RequestParam("date") Date currentdate) {
+        
+		UserSignature UserSignature = new UserSignature();
+        try {
+        	UserSignature = fileManipulationservice.addsignature(usercode, file,currentdate);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return UserSignature;
+    }
+	
 	
 	@RequestMapping("/Getnotification")
 	public Map<String, Object> Getnotification(@RequestBody LSuserMaster lsuserMaster)

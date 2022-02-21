@@ -271,9 +271,5 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Integer protocoltype, Integer sitecode, LSuserMaster assignedto, Date fromdate, Date todate);
 
 
-	List<LSlogilabprotocoldetail> findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCompletedtimestampDesc(
-			Integer protocoltype, Integer sitecode, String string, Date fromdate, Date todate);
-
-
 
 }

@@ -32,6 +32,8 @@ public interface LsprotocolordersharedbyRepository extends JpaRepository<Lsproto
 	int countBySharebyunifiedidAndProtocoltypeAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
 			String sharebyunifiedid, Integer protocoltype, int i, Date fromdate, Date fromdate2);
 
+	Lsprotocolordersharedby findByShareprotocolordercodeAndSharestatus(Long shareprotocolordercode, int i);
+
 //	Lsprotocolordersharedby findOne(Long sharedbytoprotocolordercode);
 
 }

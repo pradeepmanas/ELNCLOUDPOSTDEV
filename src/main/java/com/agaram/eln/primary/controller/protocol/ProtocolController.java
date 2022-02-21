@@ -502,6 +502,12 @@ public class ProtocolController {
 		return ProtocolMasterService.Getprotocollinksignature(body);
 	}
 	
+	@PostMapping("/Getprotocollinksignaturesql")
+	public Map<String, Object> Getprotocollinksignaturesql(@RequestBody Map<String, String> body)
+	{
+		return ProtocolMasterService.Getprotocollinksignaturesql(body);
+	}
+	
 	@PostMapping("/Uploadprotocolorderimage")
 	public Map<String, Object> Uploadprotocolorderimage(@RequestParam("file") MultipartFile file,
 			@RequestParam("protocolorderstepcode") Integer protocolorderstepcode, 
@@ -953,5 +959,18 @@ public class ProtocolController {
 	protected Map<String,Object> getswitchdata(@RequestBody LSlogilabprotocoldetail lslogilabprotocoldetail ) {
 
 		return ProtocolMasterService.getswitchdata(lslogilabprotocoldetail);
+	}
+	
+	
+	@RequestMapping(value = "/updatesharetomeorder")
+	protected  Map<String,Object> updatesharetomeorder(@RequestBody Lsprotocolordershareto Lsprotocolordershareto ) {
+
+		return ProtocolMasterService.updatesharetomeorder(Lsprotocolordershareto);
+	}
+	
+	@RequestMapping(value = "/updatesharebymemeorder")
+	protected  Map<String,Object> updatesharebymemeorder(@RequestBody Lsprotocolordersharedby Lsprotocolordersharedby ) {
+
+		return ProtocolMasterService.updatesharebymemeorder(Lsprotocolordersharedby);
 	}
 }
