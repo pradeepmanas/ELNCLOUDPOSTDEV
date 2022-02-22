@@ -24,7 +24,6 @@ import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
-import com.agaram.eln.primary.repository.cloudFileManip.CloudUserSignatureRepository;
 import com.agaram.eln.primary.repository.fileManipulation.OrderAttachmentRepository;
 import com.agaram.eln.primary.repository.fileManipulation.ProfilePictureRepository;
 import com.agaram.eln.primary.repository.fileManipulation.ResultorderlimsRefrenceRepository;
@@ -59,9 +58,6 @@ public class FileManipulationservice {
 	private ResultorderlimsRefrenceRepository ResultorderlimsRefrenceRepository;
 	
 	@Autowired
-	private CloudUserSignatureRepository CloudUserSignatureRepository;
-	
-	@Autowired
 	private UserSignatureRepository UserSignatureRepository;
 
 	public ProfilePicture addPhoto(Integer usercode, MultipartFile file, Date currentdate) throws IOException {
@@ -90,6 +86,7 @@ public class FileManipulationservice {
 	}
 
 	
+	@SuppressWarnings("unused")
 	public UserSignature addsignature(Integer usercode, MultipartFile file, Date currentdate) throws IOException {
 
 		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
@@ -131,7 +128,7 @@ public class FileManipulationservice {
 	
 	public UserSignature getSignature(Integer id) { 
 		   
-        return UserSignatureRepository.findOne(id); 
+        return UserSignatureRepository.findById(id); 
     }
 	
 	

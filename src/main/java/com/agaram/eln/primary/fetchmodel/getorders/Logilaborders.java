@@ -19,6 +19,7 @@ public class Logilaborders extends Logilabordermaster {
 	private Integer testcode;
 	@SuppressWarnings("unused")
 	private String batchid;
+	private String keyword;
 	private LSsamplemaster lssamplemaster;
 	private LSprojectmaster lsprojectmaster;
 	private Integer filecode;
@@ -34,7 +35,7 @@ public class Logilaborders extends Logilabordermaster {
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,LSuserMaster assignedto,
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
-			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories) {
+			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword) {
 		
 		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,createdtimestamp,completedtimestamp);
 		 
@@ -58,6 +59,7 @@ public class Logilaborders extends Logilabordermaster {
 		this.lsuserMaster = lsuserMaster;
 		this.batchid=batchid;
 		this.batchcode = batchcode;
+		this.keyword=keyword != null ? keyword :"";
 		
 		this.repositoryitemname =lsrepositoriesdata !=null ?lsrepositoriesdata.getRepositoryitemname():null;
 		this.assignedto =assignedto;
@@ -78,6 +80,22 @@ public class Logilaborders extends Logilabordermaster {
 
 	public void setRepositoryitemname(String repositoryitemname) {
 		this.repositoryitemname = repositoryitemname;
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+
+	public Long getBatchcode() {
+		return batchcode;
+	}
+
+	public void setBatchcode(Long batchcode) {
+		this.batchcode = batchcode;
 	}
 
 	public void setAssignedto(LSuserMaster assignedto) {
