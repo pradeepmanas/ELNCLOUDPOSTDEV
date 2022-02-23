@@ -39,6 +39,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
@@ -339,17 +340,49 @@ public class InstrumentController {
 		return instrumentService.CloudUploadattachments(file, batchcode, filename, fileexe, usercode, currentdate,
 				islargefile);
 	}
+	
+	@PostMapping("/CloudELNFileUploadattachments")
+	public LSlogilablimsorderdetail CloudELNFileUploadattachments(@RequestParam("file") MultipartFile file,
+			@RequestParam("order") Long batchcode, @RequestParam("filename") String filename,
+			@RequestParam("fileexe") String fileexe, @RequestParam("usercode") Integer usercode,
+			@RequestParam("date") Date currentdate, @RequestParam("islargefile") Integer islargefile,@RequestParam("methodkey") Integer methodkey)
+			throws IOException {
+		return instrumentService.CloudELNFileUploadattachments(file, batchcode, filename, fileexe, usercode, currentdate,
+				islargefile,methodkey);
+	}
+	
+	@PostMapping("/Uploadelnfileattachments")
+	public LSlogilablimsorderdetail Uploadelnfileattachments(@RequestParam("file") MultipartFile file,
+			@RequestParam("order") Long batchcode, @RequestParam("filename") String filename,
+			@RequestParam("fileexe") String fileexe, @RequestParam("usercode") Integer usercode,
+			@RequestParam("date") Date currentdate, @RequestParam("islargefile") Integer islargefile)
+			throws IOException {
+		return instrumentService.Uploadelnfileattachments(file, batchcode, filename, fileexe, usercode, currentdate,
+				islargefile);
+	}
 
 	@PostMapping("/downloadattachments")
 	public LsOrderattachments downloadattachments(@RequestBody LsOrderattachments objattachments)
 			throws IllegalStateException, IOException {
 		return instrumentService.downloadattachments(objattachments);
 	}
+	
+	@PostMapping("/downloadparserattachments")
+	public ELNFileAttachments downloadparserattachments(@RequestBody ELNFileAttachments objattachments)
+			throws IllegalStateException, IOException {
+		return instrumentService.downloadparserattachments(objattachments);
+	}
 
 	@PostMapping("/Clouddownloadattachments")
 	public LsOrderattachments Clouddownloadattachments(@RequestBody LsOrderattachments objattachments)
 			throws IllegalStateException, IOException {
 		return instrumentService.Clouddownloadattachments(objattachments);
+	}
+	
+	@PostMapping("/Cloudparserdownloadattachments")
+	public LsOrderattachments Cloudparserdownloadattachments(@RequestBody LsOrderattachments objattachments)
+			throws IllegalStateException, IOException {
+		return instrumentService.Cloudparserdownloadattachments(objattachments);
 	}
 
 	@RequestMapping(value = "attachment/{fileid}", method = RequestMethod.GET)
@@ -555,6 +588,13 @@ public class InstrumentController {
 
 		return instrumentService.downloadattachmentsNonCloud(param, fileid);
 	}
+	
+	@RequestMapping(path = "/downloadparserNonCloud/{param}/{fileid}/{tenant}", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> downloadparser(@PathVariable String param, @PathVariable String fileid,
+			@PathVariable String tenant) throws IOException {
+
+		return instrumentService.downloadparserattachmentsNonCloud(param, fileid);
+	}
 
 	// normal
 	@RequestMapping(path = "/download/{param}/{fileid}", method = RequestMethod.GET)
@@ -563,6 +603,20 @@ public class InstrumentController {
 
 		return instrumentService.downloadattachments(param, fileid);
 	}
+	
+	@RequestMapping(path = "/downloadparser/{param}/{fileid}", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> downloadparserNonCloud(@PathVariable String param, @PathVariable String fileid)
+			throws IOException {
+
+		return instrumentService.downloadelnparserattachments(param, fileid);
+	}
+	
+//	@RequestMapping(path = "/downloadparser/{param}/{fileid}", method = RequestMethod.GET)
+//	public ResponseEntity<InputStreamResource> downloadparserattachNonCloud(@PathVariable String param, @PathVariable String fileid)
+//			throws IOException {
+//
+//		return instrumentService.downloadparserattachments(param, fileid);
+//	}
 
 	@RequestMapping("/GetOrderResourcesQuantitylst")
 	public List<LsOrderSampleUpdate> GetOrderResourcesQuantitylst(@RequestBody LsOrderSampleUpdate objorder) {

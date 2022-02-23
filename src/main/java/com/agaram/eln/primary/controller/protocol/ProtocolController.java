@@ -502,12 +502,6 @@ public class ProtocolController {
 		return ProtocolMasterService.Getprotocollinksignature(body);
 	}
 	
-	@PostMapping("/Getprotocollinksignaturesql")
-	public Map<String, Object> Getprotocollinksignaturesql(@RequestBody Map<String, String> body)
-	{
-		return ProtocolMasterService.Getprotocollinksignaturesql(body);
-	}
-	
 	@PostMapping("/Uploadprotocolorderimage")
 	public Map<String, Object> Uploadprotocolorderimage(@RequestParam("file") MultipartFile file,
 			@RequestParam("protocolorderstepcode") Integer protocolorderstepcode, 
@@ -972,5 +966,11 @@ public class ProtocolController {
 	protected  Map<String,Object> updatesharebymemeorder(@RequestBody Lsprotocolordersharedby Lsprotocolordersharedby ) {
 
 		return ProtocolMasterService.updatesharebymemeorder(Lsprotocolordersharedby);
+	}
+	
+	@PostMapping("/Getprotocollinksignaturesql")
+	public Map<String, Object> Getprotocollinksignaturesql(@RequestBody Map<String, String> body)
+	{
+		return ProtocolMasterService.Getprotocollinksignaturesql(body);
 	}
 }

@@ -116,7 +116,7 @@ public class UserService {
 
 	@Autowired
 	private LsusersettingsRepository LsusersettingsRepository;
-	
+
 	@Autowired
 	LSusergroupedcolumnsRepository lsusergroupedcolumnsRepository;
 
@@ -126,7 +126,7 @@ public class UserService {
 			objusergroup.setResponse(new Response());
 			objusergroup.getResponse().setStatus(false);
 			objusergroup.getResponse().setInformation("ID_EXIST");
-			
+
 			return objusergroup;
 		} else if (objusergroup.getUsergroupcode() != null && lSusergroupRepository
 				.findByusergroupnameIgnoreCaseAndUsergroupcodeNotAndLssitemaster(objusergroup.getUsergroupname(),
@@ -134,15 +134,15 @@ public class UserService {
 			objusergroup.setResponse(new Response());
 			objusergroup.getResponse().setStatus(false);
 			objusergroup.getResponse().setInformation("ID_EXIST");
-			
+
 			return objusergroup;
 		}
-		
-		if(objusergroup.getUsergroupcode() != null) {
-			LSusergroup objGroup = lSusergroupRepository.findOne(objusergroup.getUsergroupcode());	
+
+		if (objusergroup.getUsergroupcode() != null) {
+			LSusergroup objGroup = lSusergroupRepository.findOne(objusergroup.getUsergroupcode());
 			objusergroup.setCreatedon(objGroup.getCreatedon());
 		}
-		
+
 		lSusergroupRepository.save(objusergroup);
 		objusergroup.setResponse(new Response());
 		objusergroup.getResponse().setStatus(true);
@@ -264,10 +264,10 @@ public class UserService {
 					.setUserretirestatus(objusermaster.getUserretirestatus() == 1 ? objusermaster.getUserretirestatus()
 							: updateUser.getUserretirestatus());
 			if (objusermaster.getMultiusergroupcode() != null && objusermaster.getUsercode() != null) {
-				if (!objusermaster.isSameusertologin()) {
-					LSMultiusergroupRepositery.deleteByusercode(objusermaster.getUsercode());
-					LSMultiusergroupRepositery.save(objusermaster.getMultiusergroupcode());
-				}
+//				if (!objusermaster.isSameusertologin()) {
+				LSMultiusergroupRepositery.deleteByusercode(objusermaster.getUsercode());
+				LSMultiusergroupRepositery.save(objusermaster.getMultiusergroupcode());
+//				}
 
 				updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A" : "D");
 				updateUser.setUserfullname(objusermaster.getUserfullname());
@@ -560,7 +560,7 @@ public class UserService {
 		} else {
 
 			lsusergrouprightsRepository.save(lsrights);
-			
+
 			lsrights.get(0).setResponse(new Response());
 			lsrights.get(0).getResponse().setStatus(true);
 			lsrights.get(0).getResponse().setInformation("ID_ALERT");
@@ -609,7 +609,7 @@ public class UserService {
 		return lSusergroupRepository
 				.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(), "Administrator");
 	}
-	
+
 	public List<LSusergroup> GetSiteWiseActiveUserGroup(LSSiteMaster Objclass) {
 
 		if (Objclass.getObjsilentaudit() != null) {
@@ -618,11 +618,13 @@ public class UserService {
 		}
 		List<String> status = Arrays.asList("A", "Active");
 		if (Objclass.getSitecode() == 0) {
-			return lSusergroupRepository.findByUsergroupnameNotAndUsergroupstatusInOrderByUsergroupcodeDesc("Administrator",status);
+			return lSusergroupRepository
+					.findByUsergroupnameNotAndUsergroupstatusInOrderByUsergroupcodeDesc("Administrator", status);
 		}
-		
+
 		List<LSusergroup> lstusergroup = lSusergroupRepository
-				.findBylssitemasterAndUsergroupnameNotAndUsergroupstatusInOrderByUsergroupcodeDesc(Objclass.getSitecode(), "Administrator", status);
+				.findBylssitemasterAndUsergroupnameNotAndUsergroupstatusInOrderByUsergroupcodeDesc(
+						Objclass.getSitecode(), "Administrator", status);
 
 		return lstusergroup;
 	}
@@ -870,8 +872,7 @@ public class UserService {
 			lsuserMasterRepository.setpasswordandpasswordstatusByusercode(objusermaster.getPassword(),
 					objusermaster.getPasswordstatus(), objusermaster.getUsercode());
 		}
-	
-		
+
 		return objusermaster;
 
 	}
@@ -915,7 +916,8 @@ public class UserService {
 		lstuser.add(1);
 		lstuser.add(objuser.getUsercode());
 		return lsuserMasterRepository
-				.findByLssitemasterAndUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(objuser.getLssitemaster(),lstuser, 0);
+				.findByLssitemasterAndUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(
+						objuser.getLssitemaster(), lstuser, 0);
 	}
 
 	public Lsusersettings getUserPrefrences(LSuserMaster objuser) {
@@ -926,16 +928,13 @@ public class UserService {
 
 		return LSMultiusergroupRepositery.findByusercode(objusermaster.getUsercode());
 	}
-	
-	public LSusergroupedcolumns setGroupedcolumn(LSusergroupedcolumns objgroupped)
-	{
+
+	public LSusergroupedcolumns setGroupedcolumn(LSusergroupedcolumns objgroupped) {
 		return lsusergroupedcolumnsRepository.save(objgroupped);
 	}
-	
-	public LSusergroupedcolumns getGroupedcolumn(LSusergroupedcolumns objgroupped)
-	{
-		return lsusergroupedcolumnsRepository.findByUsercodeAndSitecodeAndGridname(objgroupped.getUsercode(), objgroupped.getSitecode(), objgroupped.getGridname());
+
+	public LSusergroupedcolumns getGroupedcolumn(LSusergroupedcolumns objgroupped) {
+		return lsusergroupedcolumnsRepository.findByUsercodeAndSitecodeAndGridname(objgroupped.getUsercode(),
+				objgroupped.getSitecode(), objgroupped.getGridname());
 	}
 }
-
-

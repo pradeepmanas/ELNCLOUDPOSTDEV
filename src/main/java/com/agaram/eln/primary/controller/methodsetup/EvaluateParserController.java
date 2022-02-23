@@ -14,12 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
+import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
 import com.agaram.eln.primary.payload.Response;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.service.fileuploaddownload.FileStorageService;
 import com.agaram.eln.primary.service.methodsetup.EvaluateParserService;
 import com.agaram.eln.primary.service.methodsetup.MethodService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.List;;
 
 /**
  * This controller is used to dispatch the input request to its relevant method to access
@@ -68,7 +72,15 @@ public class EvaluateParserController {
     public ResponseEntity<Object> uploadFileandevaluateParser(@RequestParam("file") MultipartFile file, @RequestParam("method") String method, @RequestParam("site") String sitecode) {
         String fileName = fileStorageService.storeFile(file);
         
-        final ObjectMapper mapper = new ObjectMapper();		 
+        final ObjectMapper mapper = new ObjectMapper();
+        if(method.indexOf(",")>0)
+        {
+        	method=method.substring(0,method.indexOf(","));
+        }
+        if(sitecode.indexOf(",")>0)
+        {
+        	sitecode=sitecode.substring(0,sitecode.indexOf(","));
+        }
 		final int methodKey = Integer.parseInt(method);
 		final LSSiteMaster site = lssiteMasterRepository.findOne(Integer.parseInt(sitecode));
 //		mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
@@ -102,5 +114,17 @@ public class EvaluateParserController {
 		 final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 		 final Integer methodKey = mapper.convertValue(mapObject.get("methodKey"), Integer.class);
 		 return parserService.getMethodFieldList(methodKey, site, null);
+	}
+	
+//	@PostMapping(value = "/insertELNResultDetails")
+//	public ResponseEntity<Object> insertELNResultDetails(@RequestBody List<ELNResultDetails> lstResultDetails) {	
+//		 final ObjectMapper mapper = new ObjectMapper();		
+//		 //final ELNResultDetails elnresults = mapper.convertValue(mapObject.get("elnresultdetails"), ELNResultDetails.class);
+//		 return parserService.insertELNResultDetails(lstResultDetails, null);
+//	}
+	@PostMapping("/insertELNResultDetails")
+	public List<ELNResultDetails> insertELNResultDetails(@RequestBody ELNResultDetails[] lsresultDetails)
+	{
+		return parserService.insertELNResultDetails(lsresultDetails);
 	}
 }

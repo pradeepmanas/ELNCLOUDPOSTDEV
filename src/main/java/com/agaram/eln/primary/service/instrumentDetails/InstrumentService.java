@@ -61,6 +61,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LSresultdetails;
 import com.agaram.eln.primary.model.instrumentDetails.LsMethodFields;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
+import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
 import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
@@ -118,6 +119,7 @@ import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserBlockRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.SubParserFieldRepository;
+import com.agaram.eln.primary.repository.methodsetup.ELNFileAttachmentsRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSparsedparametersRespository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
@@ -216,6 +218,9 @@ public class InstrumentService {
 
 	@Autowired
 	private LsOrderattachmentsRepository lsOrderattachmentsRepository;
+	
+	@Autowired
+	private ELNFileAttachmentsRepository elnFileattachmentsRepository;
 
 	@Autowired
 	private LSnotificationRepository lsnotificationRepository;
@@ -330,8 +335,11 @@ public class InstrumentService {
 
 	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder) {
 
-		objorder.setLsworkflow(lsworkflowRepository
-				.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
+		
+	//	if(!objorder.getNoworkflow()) {
+			objorder.setLsworkflow(lsworkflowRepository
+					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
+		//}
 		objorder.setOrderflag("N");
 
 		String Content = "";
@@ -2549,7 +2557,116 @@ public class InstrumentService {
 
 		return objorder;
 	}
+	
+	public LSlogilablimsorderdetail CloudELNFileUploadattachments(MultipartFile file, Long batchcode, String filename,
+			String fileexe, Integer usercode, Date currentdate, Integer islargefile,Integer methodkey) throws IOException {
 
+		LSlogilablimsorderdetail objorder = lslogilablimsorderdetailRepository.findOne(batchcode);
+
+		ELNFileAttachments objattachment = new ELNFileAttachments();
+
+		if (islargefile == 0) {
+			CloudOrderAttachment objfile = cloudFileManipulationservice.storeattachment(file);
+			if (objfile != null) {
+				objattachment.setFileid(objfile.getFileid());
+			}
+		}
+
+		objattachment.setFilename(filename);
+		objattachment.setFileextension(fileexe);
+		objattachment.setCreateby(lsuserMasterRepository.findByusercode(usercode));
+		objattachment.setCreatedate(currentdate);
+		objattachment.setBatchcode(objorder.getBatchcode());
+		objattachment.setIslargefile(islargefile);
+		objattachment.setMethodkey(methodkey);
+
+		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
+		String name = username.getUsername();
+		LScfttransaction list = new LScfttransaction();
+		list.setModuleName("Register Task Orders & Execute");
+		list.setComments(
+				name + " " + "Uploaded the attachement in Order ID: " + objorder.getBatchid() + " " + "successfully");
+		list.setActions("Insert");
+		list.setSystemcoments("System Generated");
+		list.setTableName("profile");
+		list.setTransactiondate(currentdate);
+		list.setLsuserMaster(usercode);
+		lscfttransactionRepository.save(list);
+		if (objorder != null && objorder.getELNFileAttachments() != null) {
+			objorder.getELNFileAttachments().add(objattachment);
+		} else {
+			objorder.setELNFileAttachments(new ArrayList<ELNFileAttachments>());
+			objorder.getELNFileAttachments().add(objattachment);
+		}
+
+		elnFileattachmentsRepository.save(objorder.getELNFileAttachments());
+
+		if (islargefile == 1) {
+			String filenameval = "attach_"
+					+ objorder.getBatchcode() + "_" + objorder.getLsOrderattachments()
+							.get(objorder.getLsOrderattachments().lastIndexOf(objattachment)).getAttachmentcode()
+					+ "_" + filename;
+			String id = cloudFileManipulationservice.storeLargeattachment(filenameval, file);
+			if (id != null) {
+				objattachment.setFileid(id);
+			}
+
+			elnFileattachmentsRepository.save(objorder.getELNFileAttachments());
+		}
+
+		return objorder;
+	}
+
+	public LSlogilablimsorderdetail Uploadelnfileattachments(MultipartFile file, Long batchcode, String filename,
+			String fileexe, Integer usercode, Date currentdate, Integer islargefile) throws IOException {
+
+		LSlogilablimsorderdetail objorder = lslogilablimsorderdetailRepository.findOne(batchcode);
+
+		ELNFileAttachments objattachment = new ELNFileAttachments();
+
+		if (islargefile == 0) {
+			OrderAttachment objfile = fileManipulationservice.storeattachment(file);
+			if (objfile != null) {
+				objattachment.setFileid(objfile.getId());
+			}
+		} else {
+			String id = fileManipulationservice.storeLargeattachment(filename, file);
+			if (id != null) {
+				objattachment.setFileid(id);
+			}
+		}
+
+		objattachment.setFilename(filename);
+		objattachment.setFileextension(fileexe);
+		objattachment.setCreateby(lsuserMasterRepository.findByusercode(usercode));
+		objattachment.setCreatedate(currentdate);
+		objattachment.setBatchcode(objorder.getBatchcode());
+		objattachment.setIslargefile(islargefile);
+
+		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
+		String name = username.getUsername();
+		LScfttransaction list = new LScfttransaction();
+		list.setModuleName("Register Task Orders & Execute");
+		list.setComments(
+				name + " " + "Uploaded the attachement in Order ID: " + objorder.getBatchid() + " " + "successfully");
+		list.setActions("Insert");
+		list.setSystemcoments("System Generated");
+		list.setTableName("profile");
+		list.setTransactiondate(currentdate);
+		list.setLsuserMaster(usercode);
+		lscfttransactionRepository.save(list);
+		if (objorder != null && objorder.getELNFileAttachments() != null) {
+			objorder.getELNFileAttachments().add(objattachment);
+		} else {
+			objorder.setELNFileAttachments(new ArrayList<ELNFileAttachments>());
+			objorder.getELNFileAttachments().add(objattachment);
+		}
+
+		elnFileattachmentsRepository.save(objorder.getELNFileAttachments());
+
+		return objorder;
+	}
+	
 	public LsOrderattachments downloadattachments(LsOrderattachments objattachments) {
 		OrderAttachment objfile = fileManipulationservice.retrieveFile(objattachments);
 		if (objfile != null) {
@@ -2564,7 +2681,35 @@ public class InstrumentService {
 		return objattachments;
 	}
 
+	public ELNFileAttachments downloadparserattachments(ELNFileAttachments objattachments) {
+		OrderAttachment objfile = fileManipulationservice.retrieveFile(objattachments);
+		if (objfile != null) {
+			objattachments.setFile(objfile.getFile());
+
+		}
+//		silent audit
+		if (objattachments.getObjsilentaudit() != null) {
+			objattachments.getObjsilentaudit().setTableName("ELNFileAttachments");
+			lscfttransactionRepository.save(objattachments.getObjsilentaudit());
+		}
+		return objattachments;
+	}
+	
 	public LsOrderattachments Clouddownloadattachments(LsOrderattachments objattachments) {
+		CloudOrderAttachment objfile = cloudFileManipulationservice.retrieveFile(objattachments);
+		if (objfile != null) {
+			objattachments.setFile(objfile.getFile());
+
+		}
+//		silent audit
+		if (objattachments.getObjsilentaudit() != null) {
+			objattachments.getObjsilentaudit().setTableName("LsOrderattachments");
+			lscfttransactionRepository.save(objattachments.getObjsilentaudit());
+		}
+		return objattachments;
+	}
+	
+	public LsOrderattachments Cloudparserdownloadattachments(LsOrderattachments objattachments) {
 		CloudOrderAttachment objfile = cloudFileManipulationservice.retrieveFile(objattachments);
 		if (objfile != null) {
 			objattachments.setFile(objfile.getFile());
@@ -2858,6 +3003,73 @@ public class InstrumentService {
 		return null;
 
 	}
+	
+	public ResponseEntity<InputStreamResource> downloadparserattachmentsNonCloud(String param, String fileid)
+			throws IOException {
+
+		if (param == null) {
+			return null;
+		}
+
+		ELNFileAttachments objattach = elnFileattachmentsRepository.findFirst1ByfileidOrderByAttachmentcodeDesc(fileid);
+		HttpHeaders header = new HttpHeaders();
+		header.set("Content-Disposition", "attachment; filename=" + objattach.getFilename());
+
+		if (Integer.parseInt(param) == 0) {
+			CloudOrderAttachment objfile = CloudOrderAttachmentRepository.findByFileid(fileid);
+//			OrderAttachment objfile = fileManipulationservice.retrieveFile(objattach);
+
+			InputStreamResource resource = null;
+			byte[] content = objfile.getFile().getData();
+			int size = content.length;
+			InputStream is = null;
+			try {
+				is = new ByteArrayInputStream(content);
+				resource = new InputStreamResource(is);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (is != null)
+						is.close();
+				} catch (Exception ex) {
+
+				}
+			}
+
+			header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			header.setContentLength(size);
+			return new ResponseEntity<>(resource, header, HttpStatus.OK);
+		} else if (Integer.parseInt(param) == 1) {
+			InputStream fileDtream = cloudFileManipulationservice.retrieveLargeFile(fileid);
+
+			InputStreamResource resource = null;
+			byte[] content = IOUtils.toByteArray(fileDtream);
+			int size = content.length;
+			InputStream is = null;
+			try {
+				is = new ByteArrayInputStream(content);
+				resource = new InputStreamResource(is);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (is != null)
+						is.close();
+				} catch (Exception ex) {
+
+				}
+			}
+
+			header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			header.setContentLength(size);
+			return new ResponseEntity<>(resource, header, HttpStatus.OK);
+
+		}
+
+		return null;
+
+	}
 
 	public ResponseEntity<InputStreamResource> downloadattachments(String param, String fileid) {
 
@@ -2866,6 +3078,116 @@ public class InstrumentService {
 		}
 
 		LsOrderattachments objattach = lsOrderattachmentsRepository.findFirst1ByfileidOrderByAttachmentcodeDesc(fileid);
+		HttpHeaders header = new HttpHeaders();
+		header.set("Content-Disposition", "attachment; filename=" + objattach.getFilename());
+
+		if (Integer.parseInt(param) == 0) {
+			OrderAttachment objfile = fileManipulationservice.retrieveFile(objattach);
+
+			InputStreamResource resource = null;
+			byte[] content = objfile.getFile().getData();
+			int size = content.length;
+			InputStream is = null;
+			try {
+				is = new ByteArrayInputStream(content);
+				resource = new InputStreamResource(is);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (is != null)
+						is.close();
+				} catch (Exception ex) {
+
+				}
+			}
+
+			header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			header.setContentLength(size);
+			return new ResponseEntity<>(resource, header, HttpStatus.OK);
+		} else if (Integer.parseInt(param) == 1) {
+			GridFSDBFile gridFsFile = null;
+
+			try {
+				gridFsFile = retrieveLargeFile(fileid);
+			} catch (IllegalStateException e) {
+
+				e.printStackTrace();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+			System.out.println(gridFsFile.getContentType());
+			header.setContentType(MediaType.parseMediaType(gridFsFile.getContentType()));
+			header.setContentLength(gridFsFile.getLength());
+			return new ResponseEntity<>(new InputStreamResource(gridFsFile.getInputStream()), header, HttpStatus.OK);
+		}
+		return null;
+
+	}
+	
+	public ResponseEntity<InputStreamResource> downloadelnparserattachments(String param, String fileid) {
+
+		if (param == null) {
+			return null;
+		}
+
+		ELNFileAttachments objattach = elnFileattachmentsRepository.findFirst1ByfileidOrderByAttachmentcodeDesc(fileid);
+		HttpHeaders header = new HttpHeaders();
+		header.set("Content-Disposition", "attachment; filename=" + objattach.getFilename());
+
+		if (Integer.parseInt(param) == 0) {
+			OrderAttachment objfile = fileManipulationservice.retrieveFile(objattach);
+
+			InputStreamResource resource = null;
+			byte[] content = objfile.getFile().getData();
+			int size = content.length;
+			InputStream is = null;
+			try {
+				is = new ByteArrayInputStream(content);
+				resource = new InputStreamResource(is);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (is != null)
+						is.close();
+				} catch (Exception ex) {
+
+				}
+			}
+
+			header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			header.setContentLength(size);
+			return new ResponseEntity<>(resource, header, HttpStatus.OK);
+		} else if (Integer.parseInt(param) == 1) {
+			GridFSDBFile gridFsFile = null;
+
+			try {
+				gridFsFile = retrieveLargeFile(fileid);
+			} catch (IllegalStateException e) {
+
+				e.printStackTrace();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+			System.out.println(gridFsFile.getContentType());
+			header.setContentType(MediaType.parseMediaType(gridFsFile.getContentType()));
+			header.setContentLength(gridFsFile.getLength());
+			return new ResponseEntity<>(new InputStreamResource(gridFsFile.getInputStream()), header, HttpStatus.OK);
+		}
+		return null;
+
+	}
+	
+	public ResponseEntity<InputStreamResource> downloadparserattachments(String param, String fileid) {
+
+		if (param == null) {
+			return null;
+		}
+
+		ELNFileAttachments objattach = elnFileattachmentsRepository.findFirst1ByfileidOrderByAttachmentcodeDesc(fileid);
 		HttpHeaders header = new HttpHeaders();
 		header.set("Content-Disposition", "attachment; filename=" + objattach.getFilename());
 

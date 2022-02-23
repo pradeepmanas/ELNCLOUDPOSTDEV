@@ -42,7 +42,6 @@ public class Notification {
 	private String intervals;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	
 	private Date cautiondate;
 	
 	private String description;

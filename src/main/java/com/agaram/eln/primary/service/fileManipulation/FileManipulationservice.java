@@ -22,6 +22,7 @@ import com.agaram.eln.primary.model.fileManipulation.UserSignature;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
+import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.fileManipulation.OrderAttachmentRepository;
@@ -56,10 +57,10 @@ public class FileManipulationservice {
 	
 	@Autowired
 	private ResultorderlimsRefrenceRepository ResultorderlimsRefrenceRepository;
-	
+
 	@Autowired
 	private UserSignatureRepository UserSignatureRepository;
-
+	
 	public ProfilePicture addPhoto(Integer usercode, MultipartFile file, Date currentdate) throws IOException {
 
 		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
@@ -86,7 +87,6 @@ public class FileManipulationservice {
 	}
 
 	
-	@SuppressWarnings("unused")
 	public UserSignature addsignature(Integer usercode, MultipartFile file, Date currentdate) throws IOException {
 
 		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
@@ -119,19 +119,16 @@ public class FileManipulationservice {
 		return UserSignatureRepository.deleteById(id);
 	}
 
+	public UserSignature getsignature(Integer id) {
 
+		return UserSignatureRepository.findById(id);
+	}
+	
 	public ProfilePicture getPhoto(Integer id) {
 
 		return profilePictureRepository.findById(id);
 	}
 
-	
-	public UserSignature getSignature(Integer id) { 
-		   
-        return UserSignatureRepository.findById(id); 
-    }
-	
-	
 	public Long deletePhoto(Integer id, LScfttransaction list) {
 		list.setTableName("ProfilePicture");
 		lscfttransactionRepository.save(list);
@@ -163,13 +160,18 @@ public class FileManipulationservice {
 		return randomUUIDString;
 	}
 
-	public OrderAttachment retrieveFile(LsOrderattachments objattachment) {
+	public OrderAttachment retrieveFile(LsOrderattachments objattach) {
 
-		OrderAttachment objfile = orderAttachmentRepository.findById(objattachment.getFileid());
+		OrderAttachment objfile = orderAttachmentRepository.findById(objattach.getFileid());
 
 		return objfile;
 	}
+	public OrderAttachment retrieveFile(ELNFileAttachments objattach) {
 
+		OrderAttachment objfile = orderAttachmentRepository.findById(objattach.getFileid());
+
+		return objfile;
+	}
 	public GridFSDBFile retrieveLargeFile(String fileid) throws IllegalStateException, IOException {
 		GridFSDBFile file = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
 		if (file == null) {
@@ -225,11 +227,5 @@ public class FileManipulationservice {
 		ResultorderlimsRefrence objfile = ResultorderlimsRefrenceRepository.findById(objattachment.getFileid());
 
 		return objfile;
-	}
-
-
-	public UserSignature getsignature(Integer id) {
-
-		return UserSignatureRepository.findById(id);
 	}
 }

@@ -31,6 +31,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
+import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
 
 @Entity(name = "LSlogilablimsorderdetail")
 @Table(name = "LSlogilablimsorderdetail")
@@ -90,6 +91,15 @@ public class LSlogilablimsorderdetail {
 	@Column(columnDefinition = "varchar(100)",name = "InstrumentCode")
 	private String instrumentcode;
 	
+	@Column(columnDefinition = "varchar(250)",name = "Keyword") 
+	private String keyword;
+	
+	public String getKeyword() {
+		return keyword;
+	}
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
 	@ManyToOne
 	private LSworkflow lsworkflow;
 	
@@ -106,8 +116,9 @@ public class LSlogilablimsorderdetail {
 	@JoinColumn(name="batchcode")
 	private List<LsOrderattachments> lsOrderattachments;
 	
-	@Column(columnDefinition = "varchar(250)",name = "Keyword") 
-	private String keyword;
+	@OneToMany
+	@JoinColumn(name="batchcode")
+	private List<ELNFileAttachments> ELNFileAttachments;
 	
 	@Transient
 	LScfttransaction objmanualaudit;
@@ -186,6 +197,13 @@ public class LSlogilablimsorderdetail {
 	}
 	public void setLsOrderattachments(List<LsOrderattachments> lsOrderattachments) {
 		this.lsOrderattachments = lsOrderattachments;
+	}
+	
+	public List<ELNFileAttachments> getELNFileAttachments() {
+		return ELNFileAttachments;
+	}
+	public void setELNFileAttachments(List<ELNFileAttachments> ELNFileAttachments) {
+		this.ELNFileAttachments = ELNFileAttachments;
 	}
 	
 	public LScfttransaction getObjmanualaudit() {
@@ -268,6 +286,9 @@ public class LSlogilablimsorderdetail {
 	
 	@Transient
 	List<LStestparameter> lstestparameter;
+	
+	@Transient
+	private Boolean noworkflow = false;
 	
 	public LSlogilablimsorderdetail()
 	{
@@ -663,11 +684,11 @@ public class LSlogilablimsorderdetail {
 	public void setIsmultitenant(Integer ismultitenant) {
 		this.ismultitenant = ismultitenant;
 	}
-	public String getKeyword() {
-		return keyword;
+	public Boolean getNoworkflow() {
+		return noworkflow;
 	}
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
+	public void setNoworkflow(Boolean noworkflow) {
+		this.noworkflow = noworkflow;
 	}
 
 	

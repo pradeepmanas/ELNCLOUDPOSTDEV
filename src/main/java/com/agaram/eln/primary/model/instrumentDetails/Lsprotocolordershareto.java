@@ -26,62 +26,70 @@ public class Lsprotocolordershareto {
 	@Basic(optional = false)
 	@Column(name = "sharetoprotocolordercode")
 	private Long sharetoprotocolordercode;
-
+	
 	@Column(columnDefinition = "varchar(250)")
 	private String sharebyunifiedid;
 	@Column(columnDefinition = "varchar(250)")
 	private String sharetounifiedid;
-
+	
 	@Column(columnDefinition = "varchar(250)")
 	private String sharebyusername;
-
+	
 	@Column(columnDefinition = "varchar(250)")
 	private String sharetousername;
-
+	
 	private Long shareprotocolordercode;
 	@Column(columnDefinition = "varchar(250)")
 	private String shareprotoclordername;
-
+	
 	@Type(type = "jsonb")
-	@Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb")
 	private String shareitemdetails;
-
+	
 	private Date sharedon;
-
+	
 	private Date unsharedon;
-	private int sharerights = 0;
-
-	private int sharestatus = 0;
-
+	private int sharerights =0;
+	
+	private int sharestatus =0;
+	
 	@Column(name = "Protocoltype")
 	private Integer protocoltype;
-
+	
 	@Transient
 	LSuserMaster objLoggeduser;
-
+	
 	@Transient
 	LScfttransaction objsilentaudit;
-
+	
 	@Transient
 	LScfttransaction objmanualaudit;
-
+	
 	@Transient
 	private Integer ismultitenant;
-
+	
 	@Transient
 	private LSlogilabprotocoldetail lslogilabprotocoldetail;
-
+	
 	@Transient
 	private Long sharedbytoprotocolordercode;
-
+	
 	@Transient
 	private Date fromdate;
 
 	@Transient
 	private Date todate;
-
+	
 	@Transient
 	private String orderflag;
+
+	public String getOrderflag() {
+		return orderflag;
+	}
+
+	public void setOrderflag(String orderflag) {
+		this.orderflag = orderflag;
+	}
 
 	public Date getFromdate() {
 		return fromdate;
@@ -167,6 +175,7 @@ public class Lsprotocolordershareto {
 		return sharetousername;
 	}
 
+	
 	public String getShareitemdetails() {
 		return shareitemdetails;
 	}
@@ -211,6 +220,8 @@ public class Lsprotocolordershareto {
 		this.sharetousername = sharetousername;
 	}
 
+	
+
 	public Long getShareprotocolordercode() {
 		return shareprotocolordercode;
 	}
@@ -250,13 +261,5 @@ public class Lsprotocolordershareto {
 	public void setProtocoltype(Integer protocoltype) {
 		this.protocoltype = protocoltype;
 	}
-
-	public String getOrderflag() {
-		return orderflag;
-	}
-
-	public void setOrderflag(String orderflag) {
-		this.orderflag = orderflag;
-	}
-
+	
 }

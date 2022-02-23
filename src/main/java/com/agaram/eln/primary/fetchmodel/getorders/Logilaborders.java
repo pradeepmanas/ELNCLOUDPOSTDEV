@@ -82,6 +82,18 @@ public class Logilaborders extends Logilabordermaster {
 		this.repositoryitemname = repositoryitemname;
 	}
 
+	public void setAssignedto(LSuserMaster assignedto) {
+		this.assignedto = assignedto;
+	}
+
+	public void setRepositoryname(String repositoryname) {
+		this.repositoryname = repositoryname;
+	}
+
+	public LSuserMaster getLsuserMaster() {
+		return lsuserMaster;
+	}
+
 	public String getKeyword() {
 		return keyword;
 	}
@@ -96,18 +108,6 @@ public class Logilaborders extends Logilabordermaster {
 
 	public void setBatchcode(Long batchcode) {
 		this.batchcode = batchcode;
-	}
-
-	public void setAssignedto(LSuserMaster assignedto) {
-		this.assignedto = assignedto;
-	}
-
-	public void setRepositoryname(String repositoryname) {
-		this.repositoryname = repositoryname;
-	}
-
-	public LSuserMaster getLsuserMaster() {
-		return lsuserMaster;
 	}
 
 	public void setLsuserMaster(LSuserMaster lsuserMaster) {

@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.controller.sheetManipulation;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -377,7 +378,7 @@ public class FileController {
 	}
 	
 	@PostMapping("/ValidateNotification")
-	public Notification ValidateNotification(@RequestBody Notification objnotification) {
+	public Notification ValidateNotification(@RequestBody Notification objnotification)throws ParseException {
 		return fileService.ValidateNotification(objnotification);
 	}
 	

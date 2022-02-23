@@ -1,10 +1,13 @@
 package com.agaram.eln.primary.service.methodsetup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.methodsetup.CommonFunction;
 import com.agaram.eln.primary.model.methodsetup.CustomField;
 import com.agaram.eln.primary.model.methodsetup.GeneralField;
@@ -24,7 +28,10 @@ import com.agaram.eln.primary.model.methodsetup.ParserTechnique;
 import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserTechnique;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
+import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
+import com.agaram.eln.primary.repository.methodsetup.ELNResultDetailsRepository;
 
 /**
  * This Service class holds methods that is used to validate the Parser result
@@ -38,6 +45,9 @@ public class EvaluateParserService {
 	
 	@Autowired
 	MethodRepository methodRepo;
+	
+	@Autowired
+	ELNResultDetailsRepository elnResultRepo;
 	
 	@Autowired
 	ParserSetupService parserSetupService;
@@ -343,6 +353,26 @@ public class EvaluateParserService {
 			parsedFieldList.add(techData);
 		}
 		return parsedFieldList;
+	}
+	
+	
+	
+
+//@Transactional
+//public ResponseEntity<Object> insertELNResultDetails(final List<ELNResultDetails> elnResultDetails,  final HttpServletRequest request)
+//{	
+//	final List<ELNResultDetails> savedelnResults = elnResultRepo.save(elnResultDetails);
+//	return new ResponseEntity<>( savedelnResults, HttpStatus.OK);
+//}
+	
+	public List<ELNResultDetails> insertELNResultDetails(ELNResultDetails[] lsresults) {
+		List<ELNResultDetails> lselnresults = Arrays.asList(lsresults);
+		
+
+		elnResultRepo.save(lselnresults);
+			
+		return lselnresults;
+
 	}
 	
 }

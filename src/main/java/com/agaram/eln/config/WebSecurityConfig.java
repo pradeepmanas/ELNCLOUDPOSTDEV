@@ -106,7 +106,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/Instrument/Getorderforlink").permitAll().
 		antMatchers("/Instrument/getmetatag").permitAll().
 		antMatchers("/Instrument/downloadNonCloud/{param}/{fileid}/{tenant}").permitAll().
+		antMatchers("/Instrument/downloadparserNonCloud/{param}/{fileid}/{tenant}").permitAll().
 		antMatchers("/Instrument/download/{param}/{fileid}").permitAll().
+		antMatchers("/Instrument/downloadparser/{param}/{fileid}").permitAll().
 		antMatchers("/Instrument/Sharedcloudattachment").permitAll().
 		antMatchers("/multitenant/Registertenant").permitAll().
 		antMatchers("/multitenant/Registertenantid").permitAll().

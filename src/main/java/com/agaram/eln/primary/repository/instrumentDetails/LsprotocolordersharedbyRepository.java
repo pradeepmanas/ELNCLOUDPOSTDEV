@@ -34,6 +34,8 @@ public interface LsprotocolordersharedbyRepository extends JpaRepository<Lsproto
 
 	Lsprotocolordersharedby findByShareprotocolordercodeAndSharestatus(Long shareprotocolordercode, int i);
 
+//	Lsprotocolordersharedby findByShareprotocolordercode(Long shareprotocolordercode);
+
 //	Lsprotocolordersharedby findOne(Long sharedbytoprotocolordercode);
 
 }

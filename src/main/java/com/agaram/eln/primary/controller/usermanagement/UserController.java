@@ -1,8 +1,6 @@
 package com.agaram.eln.primary.controller.usermanagement;
 
 import java.io.ByteArrayInputStream;
-
-
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -69,10 +67,6 @@ public class UserController {
 	
 	@Autowired
 	private CloudFileManipulationservice cloudFileManipulationservice;
-	
-//	@Autowired
-//	private UserSignature UserSignature;
-	
 	/**
 	 * UserGroup
 	 * 
@@ -161,16 +155,7 @@ public class UserController {
 	 */
 	@PostMapping("/InsertUpdateUser")
 	public LSuserMaster InsertUpdateUser(@RequestBody LSuserMaster objusermaster) throws MessagingException {
-//		if (objusermaster.getObjuser() != null) {
-//			if (objusermaster.getUserstatus().trim() == "Active") {
-//				objusermaster.setUserstatus("A");
-//			} else if (objusermaster.getUserstatus().trim() == "Deactive") {
-//				objusermaster.setUserstatus("D");
-//			} else {
-//				objusermaster.setUserstatus("Locked");
-//			}
-//			return userService.InsertUpdateUser(objusermaster);
-//		}
+
 		return userService.InsertUpdateUser(objusermaster);
 	}
 	
@@ -319,6 +304,19 @@ public class UserController {
         return profilePicture;
     }
 	
+	
+	@PostMapping("/CloudUploadprofilepic")
+    public CloudProfilePicture CloudUploadprofilepic(@RequestParam("file") MultipartFile file, @RequestParam("usercode") Integer usercode, @RequestParam("date") Date currentdate) {
+        
+		CloudProfilePicture profilePicture = new CloudProfilePicture();
+        try {
+        	profilePicture = cloudFileManipulationservice.addPhoto(usercode, file,currentdate);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return profilePicture;
+    }
 	
 	@PostMapping("/CloudUploadusersignature")
     public CloudUserSignature CloudUploadusersignature(@RequestParam("file") MultipartFile file, @RequestParam("usercode") Integer usercode
@@ -469,7 +467,6 @@ public class UserController {
 		}
         return UserSignature;
     }
-	
 	
 	@RequestMapping("/Getnotification")
 	public Map<String, Object> Getnotification(@RequestBody LSuserMaster lsuserMaster)
