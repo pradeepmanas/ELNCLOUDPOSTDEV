@@ -820,3 +820,6 @@ update lsusergrouprightsmaster set sallow='0',screate='0',sdelete='0',sedit='0' 
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS Keyword varchar(250);
 
 update lsfile set filenameuser = 'Default Template' where filecode = 1;
+
+delete from LSpreferences where tasksettings ='WebParser';
+insert into LSpreferences (serialno,tasksettings,valuesettings) values(1,'WebParser','InActive');

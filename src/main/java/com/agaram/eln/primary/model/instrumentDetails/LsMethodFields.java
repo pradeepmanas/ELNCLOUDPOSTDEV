@@ -7,6 +7,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
+import com.agaram.eln.primary.model.webParser.Lswebparsermethod;
+
 @Entity(name = "LsMethodFields")
 @Table(name = "T23FIELDS")
 public class LsMethodFields {
@@ -184,5 +186,26 @@ public class LsMethodFields {
 		this.bytecoltype = bytecoltype;
 	}
 	
+	public LsMethodFields(Integer parserfieldkey,String parserfieldname,String fieldid,Lswebparsermethod method)
+	{
+		
+		if(parserfieldkey != null) {
+			this.fieldkey = parserfieldkey.toString();
+		}
+		if(parserfieldname != null) {
+			this.fieldname = parserfieldname;
+		}
+		if(method != null) {
+			
+			this.instrumentid = method.getInstmaster().getInstrumentcode();
+			this.methodname = method.getMethodname();
+		}
+		
+		
+	}
 	
+	public LsMethodFields()
+	{
+		
+	}
 }

@@ -8,5 +8,7 @@ import com.agaram.eln.primary.model.cfr.LSpreferences;
 
 public interface LSpreferencesRepository extends JpaRepository<LSpreferences,Integer>{
 	public List<LSpreferences> findByserialnoIn(List<Integer> lstserailno );
+
+	public LSpreferences findBySerialno(int i);
 }
 

@@ -1885,13 +1885,15 @@ public class ProtocolService {
 //							lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getAssignedto(),
 //							lSlogilabprotocoldetail.getFromdate(),
 //							lSlogilabprotocoldetail.getTodate());
-
+if(lSlogilabprotocoldetail.getAssignedto()!=null) {
 			int assignedcount = LSlogilabprotocoldetailRepository
 					.countByProtocoltypeAndSitecodeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetween(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
 							lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getAssignedto(),
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
-
+			
+			lstOrder.put("assignedordercount", assignedcount);
+}
 			int sharedbymecount = lsprotocolordersharedbyRepository
 					.countBySharebyunifiedidAndProtocoltypeAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
 							lSlogilabprotocoldetail.getUnifielduserid(), lSlogilabprotocoldetail.getProtocoltype(), 1,
@@ -1946,7 +1948,7 @@ public class ProtocolService {
 //			lstOrder.put("pendingcount", pendingcount);
 //			lstOrder.put("completedcount", completedcount);
 			lstOrder.put("myordercount", myordercount);
-			lstOrder.put("assignedordercount", assignedcount);
+			
 			lstOrder.put("sharedbymecount", sharedbymecount);
 			lstOrder.put("sheredtomecount", sheredtomecount);
 

@@ -11,6 +11,8 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
+import com.agaram.eln.primary.model.webParser.Lswebparsermethod;
+
 @Entity(name = "LSinstruments")
 @Table(name = "T06INSTRUMENTS")
 public class LSinstruments {
@@ -256,5 +258,19 @@ public class LSinstruments {
 		this.strlectrodeno = strlectrodeno;
 	}
 	
+	public LSinstruments(Lswebparsermethod method)
+	{
+		
+		if(method != null) {
+			
+			this.strinstid = method.getInstmaster().getInstrumentcode();
+			this.strinstrumentname = method.getInstmaster().getInstrumentname();
+		}
+		
+	}
 	
+	public LSinstruments()
+	{
+		
+	}
 }

@@ -38,6 +38,7 @@ import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderAttachment;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderVersion;
@@ -93,6 +94,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
+import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderCreationRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderVersionRepository;
@@ -138,6 +140,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
+import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
 
@@ -218,7 +221,7 @@ public class InstrumentService {
 
 	@Autowired
 	private LsOrderattachmentsRepository lsOrderattachmentsRepository;
-	
+
 	@Autowired
 	private ELNFileAttachmentsRepository elnFileattachmentsRepository;
 
@@ -281,6 +284,12 @@ public class InstrumentService {
 
 	@Autowired
 	private LSfileRepository LSfileRepository;
+	
+	@Autowired
+	private LSpreferencesRepository LSpreferencesRepository;
+	
+	@Autowired
+	private WebparserService parserService;
 
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
@@ -328,18 +337,25 @@ public class InstrumentService {
 			obj.put("SubParserField", SubParserField);
 		}
 
-		obj.put("Methods", Methods);
+		LSpreferences objPrefrence = LSpreferencesRepository.findBySerialno(1);
+
+		if (objPrefrence.getValuesettings().equalsIgnoreCase("Active")) {
+
+			obj.put("Methods", parserService.getwebparsemethods());
+			obj.put("Instruments", parserService.getwebparserInstruments());
+		} else {
+			obj.put("Methods", Methods);
+		}
 
 		return obj;
 	}
 
 	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder) {
 
-		
-	//	if(!objorder.getNoworkflow()) {
-			objorder.setLsworkflow(lsworkflowRepository
-					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
-		//}
+		// if(!objorder.getNoworkflow()) {
+		objorder.setLsworkflow(lsworkflowRepository
+				.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
+		// }
 		objorder.setOrderflag("N");
 
 		String Content = "";
@@ -1992,7 +2008,7 @@ public class InstrumentService {
 	public LSsamplefile SaveResultfile(LSsamplefile objfile) {
 
 		Integer lastversionindex = objfile.getVersionno() != null ? objfile.getVersionno() - 1 : 0;
-		
+
 //		Integer lastversionindex = objfile.getVersionno() != null ? objfile.getVersionno() : 0;
 
 		boolean versionexist = true;
@@ -2557,9 +2573,10 @@ public class InstrumentService {
 
 		return objorder;
 	}
-	
+
 	public LSlogilablimsorderdetail CloudELNFileUploadattachments(MultipartFile file, Long batchcode, String filename,
-			String fileexe, Integer usercode, Date currentdate, Integer islargefile,Integer methodkey) throws IOException {
+			String fileexe, Integer usercode, Date currentdate, Integer islargefile, Integer methodkey)
+			throws IOException {
 
 		LSlogilablimsorderdetail objorder = lslogilablimsorderdetailRepository.findOne(batchcode);
 
@@ -2666,7 +2683,7 @@ public class InstrumentService {
 
 		return objorder;
 	}
-	
+
 	public LsOrderattachments downloadattachments(LsOrderattachments objattachments) {
 		OrderAttachment objfile = fileManipulationservice.retrieveFile(objattachments);
 		if (objfile != null) {
@@ -2694,7 +2711,7 @@ public class InstrumentService {
 		}
 		return objattachments;
 	}
-	
+
 	public LsOrderattachments Clouddownloadattachments(LsOrderattachments objattachments) {
 		CloudOrderAttachment objfile = cloudFileManipulationservice.retrieveFile(objattachments);
 		if (objfile != null) {
@@ -2708,7 +2725,7 @@ public class InstrumentService {
 		}
 		return objattachments;
 	}
-	
+
 	public LsOrderattachments Cloudparserdownloadattachments(LsOrderattachments objattachments) {
 		CloudOrderAttachment objfile = cloudFileManipulationservice.retrieveFile(objattachments);
 		if (objfile != null) {
@@ -3003,7 +3020,7 @@ public class InstrumentService {
 		return null;
 
 	}
-	
+
 	public ResponseEntity<InputStreamResource> downloadparserattachmentsNonCloud(String param, String fileid)
 			throws IOException {
 
@@ -3125,7 +3142,7 @@ public class InstrumentService {
 		return null;
 
 	}
-	
+
 	public ResponseEntity<InputStreamResource> downloadelnparserattachments(String param, String fileid) {
 
 		if (param == null) {
@@ -3180,7 +3197,7 @@ public class InstrumentService {
 		return null;
 
 	}
-	
+
 	public ResponseEntity<InputStreamResource> downloadparserattachments(String param, String fileid) {
 
 		if (param == null) {

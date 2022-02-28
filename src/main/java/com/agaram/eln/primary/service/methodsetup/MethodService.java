@@ -199,12 +199,22 @@ public class MethodService {
 	{	  		
 		final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);		
 		final InstrumentMaster instMaster = instMastRepo.findOne(method.getInstmaster().getInstmastkey());
+		
+		 final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(method.getMethodkey(), 1);
+		 
+		 if(methodByKey.isPresent()) {		   
+
+		
 		if (instMaster != null) 
 		{
+
 			final Optional<Method> methodByName = methodRepo.findByMethodnameAndInstmasterAndStatus(
 					method.getMethodname(), instMaster, 1);
+			
+		
 			if (methodByName.isPresent())
-			{
+              {
+				 
 				if(methodByName.get().getMethodkey().equals(method.getMethodkey()))
 		    	{   
 				//copy of object for using 'Diffable' to compare objects
@@ -237,6 +247,31 @@ public class MethodService {
 		  					 HttpStatus.CONFLICT);      		
 				}
 		   }
+			
+			
+			else
+	    	{			    		
+	    		//copy of object for using 'Diffable' to compare objects
+    			final Method methodBeforeSave = new Method(methodByKey.get());
+    			
+	    		//Updating fields with a new delimiter name
+    			
+	    		final Method savedMethod = methodRepo.save(method);
+	    		
+	    		if (saveAuditTrail)
+    			{
+	    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
+	    			
+//	    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
+//							"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
+    			}
+	    		
+	    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
+	    	}	
+			   }
+			
+			
+			
 		   else
 		   {
 			   //Invalid methodkey		   
@@ -258,8 +293,7 @@ public class MethodService {
 			}
   			return new ResponseEntity<>("Invalid Instrument", HttpStatus.NOT_FOUND);
 		}
-   }		
-		
+   }	
 	/**
 	 * This method is used to delete selected Method object based on its primary key.
 	 * Need to validate that sample splitting /parsing is not done for that Method before deleting.
