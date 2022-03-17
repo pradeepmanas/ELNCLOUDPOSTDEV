@@ -74,5 +74,10 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 
 	public List<LSuserMaster> findByusernameNotAndUserretirestatusNotOrderByCreateddateDesc(String string, int i);
 
+	public List<LSuserMaster> findByUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(
+			List<Integer> lstuser, int i);
+
+	public Long countByusercodeNotAndUserretirestatusNotAndLssitemaster(int i, int j, LSSiteMaster objsite);
+
 
 }

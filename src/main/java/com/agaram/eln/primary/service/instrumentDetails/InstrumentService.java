@@ -63,6 +63,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LsMethodFields;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
+import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
 import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
@@ -122,6 +123,7 @@ import com.agaram.eln.primary.repository.methodsetup.ParserBlockRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.SubParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.ELNFileAttachmentsRepository;
+import com.agaram.eln.primary.repository.methodsetup.ELNResultDetailsRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSparsedparametersRespository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
@@ -290,6 +292,9 @@ public class InstrumentService {
 	
 	@Autowired
 	private WebparserService parserService;
+		
+	@Autowired
+	private ELNResultDetailsRepository ELNResultDetailsRepository;
 
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
@@ -337,9 +342,9 @@ public class InstrumentService {
 			obj.put("SubParserField", SubParserField);
 		}
 
-		LSpreferences objPrefrence = LSpreferencesRepository.findBySerialno(1);
+	LSpreferences objPrefrence = LSpreferencesRepository.findBySerialno(1);
 
-		if (objPrefrence.getValuesettings().equalsIgnoreCase("Active")) {
+	if (objPrefrence.getValuesettings().equalsIgnoreCase("Active")) {
 
 			obj.put("Methods", parserService.getwebparsemethods());
 			obj.put("Instruments", parserService.getwebparserInstruments());
@@ -1958,23 +1963,46 @@ public class InstrumentService {
 		return objupdatedorder;
 	}
 
-	public List<LSresultdetails> GetResults(LSlogilablimsorderdetail objorder) {
-		List<LSresultdetails> lsResults = new ArrayList<LSresultdetails>();
-		List<LSlimsorder> lsLogilaborders = lslimsorderRepository.findBybatchid(objorder.getBatchid());
-		List<String> lsorderno = new ArrayList<String>();
+	//parser
+	
+		public Map<String, Object> GetResults(LSlogilablimsorderdetail objorder) {
+			Map<String, Object> mapOrders = new HashMap<String, Object>();
+			
+			List<LSresultdetails> lsResults = new ArrayList<LSresultdetails>();
+			List<LSlimsorder> lsLogilaborders = lslimsorderRepository.findBybatchid(objorder.getBatchid());
+			List<String> lsorderno = new ArrayList<String>();
 
-		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
-			int i = 0;
+			if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
+				int i = 0;
 
-			while (lsLogilaborders.size() > i) {
-				lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
-				i++;
+				while (lsLogilaborders.size() > i) {
+					lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
+					i++;
+				}
 			}
-		}
-		lsResults = lsresultdetailsRepository.findBylimsreferencecodeIn(lsorderno);
+			lsResults = lsresultdetailsRepository.findBylimsreferencecodeIn(lsorderno);
+			
+			mapOrders.put("SDMSResults", lsResults);
 
-		return lsResults;
-	}
+			
+			List<ELNResultDetails> ELNResults = new ArrayList<ELNResultDetails>();
+			List<LSlogilablimsorderdetail> lslogilablimsorderdetail = lslogilablimsorderdetailRepository.findBybatchcode(objorder.getBatchcode());
+			List<Long> batchcode = new ArrayList<Long>();
+
+			if (lslogilablimsorderdetail != null && lslogilablimsorderdetail.size() > 0) {
+				int i = 0;
+
+				while (lslogilablimsorderdetail.size() > i) {
+					batchcode.add(lslogilablimsorderdetail.get(i).getBatchcode());
+					i++;
+				}
+			}
+			ELNResults = ELNResultDetailsRepository.findBybatchcode(batchcode);
+			
+			mapOrders.put("ELNResults", ELNResults);
+			
+			return mapOrders;
+		}
 
 	public void updateorderversioncontent(String Content, LSsamplefileversion objfile, Integer ismultitenant) {
 		if (ismultitenant == 1) {

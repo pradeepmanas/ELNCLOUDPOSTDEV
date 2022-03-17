@@ -93,9 +93,9 @@ public class FileService {
 	private LSusersteamRepository LSusersteamRepository;
 	@Autowired
 	private LSworkflowRepository lsworkflowRepository;
-	
+
 	@Autowired
-	
+
 	private LSnotificationRepository LSnotificationRepository;
 
 	@Autowired
@@ -154,33 +154,33 @@ public class FileService {
 
 	@Autowired
 	private MasterService inventoryservice;
-	
+
 	@Autowired
 	private NotificationRepository NotificationRepository;
-	
+
 	@Autowired
 	private LsSheetorderlimsrefrenceRepository lssheetorderlimsrefrenceRepository;
-	
+
 	@Autowired
 	private FileManipulationservice fileManipulationservice;
 
 	public LSfile InsertupdateSheet(LSfile objfile) {
 		Boolean Isnew = false;
 		String Content = objfile.getFilecontent();
-		
+
 		if (objfile.getFilecode() == null
-				&& lSfileRepository.findByfilenameuserIgnoreCaseAndLssitemaster(objfile.getFilenameuser(),objfile.getLssitemaster()) != null)
-								
-				{
-			
+				&& lSfileRepository.findByfilenameuserIgnoreCaseAndLssitemaster(objfile.getFilenameuser(),
+						objfile.getLssitemaster()) != null)
+
+		{
+
 			objfile.setResponse(new Response());
 			objfile.getResponse().setStatus(false);
 			objfile.getResponse().setInformation("ID_SHEET");
 
-			return objfile;			
-	}
-	
-		
+			return objfile;
+		}
+
 		if (objfile.getLssheetworkflow() == null) {
 			objfile.setLssheetworkflow(lssheetworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objfile.getLssitemaster()));
@@ -204,7 +204,7 @@ public class FileService {
 
 			Isnew = false;
 		} else {
-			
+
 			Isnew = true;
 		}
 
@@ -231,9 +231,8 @@ public class FileService {
 
 		objfile.setFilecontent(null);
 		lSfileRepository.save(objfile);
-		
-		if(Isnew)
-		{
+
+		if (Isnew) {
 			UpdateSheetversion(objfile);
 		}
 
@@ -493,11 +492,10 @@ public class FileService {
 	public Map<String, Object> GetMastersfororders(LSuserMaster objuser) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 
-		
 		mapOrders.put("test", masterService.getTestmaster(objuser));
 		mapOrders.put("sample", masterService.getsamplemaster(objuser));
 		mapOrders.put("project", masterService.getProjectmaster(objuser));
-						
+
 		Lsrepositories lsrepositories = new Lsrepositories();
 		lsrepositories.setSitecode(objuser.getLssitemaster().getSitecode());
 		mapOrders.put("inventories", inventoryservice.Getallrepositories(lsrepositories));
@@ -700,22 +698,16 @@ public class FileService {
 
 		Long BatchID = null;
 		int usercode = 0;
-		@SuppressWarnings("unused")
-		LScfttransaction cfttransaction;
-		ObjectMapper objMapper = new ObjectMapper();
-
+		String username = "";
+		;
 		if (objMap.containsKey("Batch")) {
 			BatchID = Long.valueOf((Integer) objMap.get("Batch"));
 		}
 		if (objMap.containsKey("usercode")) {
 			usercode = (Integer) objMap.get("usercode");
 		}
-
-		if (objMap.containsKey("objsilentaudit")) {
-
-			cfttransaction = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
-//			lscfttransactionRepository.save(cfttransaction);
-
+		if (objMap.containsKey("username")) {
+			username = (String) objMap.get("username");
 		}
 		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findOne(BatchID);
 		Integer sLockeduser = 0;
@@ -725,6 +717,7 @@ public class FileService {
 			if (sLockeduser == null || sLockeduser == 0) {
 
 				orderDetail.setLockeduser(usercode);
+				orderDetail.setLockedusername(username);
 
 				LSlogilablimsorderdetailRepository.save(orderDetail);
 
@@ -749,23 +742,17 @@ public class FileService {
 	@SuppressWarnings("null")
 	public Map<String, Object> unlockorder(Map<String, Object> objMap) throws Exception {
 		Long BatchID = null;
-		LScfttransaction cfttransaction;
-		ObjectMapper objMapper = new ObjectMapper();
 
 		if (objMap.containsKey("Batch")) {
 			BatchID = Long.valueOf((Integer) objMap.get("Batch"));
 		}
-		if (objMap.containsKey("objsilentaudit")) {
 
-			cfttransaction = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
-			lscfttransactionRepository.save(cfttransaction);
-
-		}
 		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findOne(BatchID);
 
 		if (orderDetail != null) {
 
 			orderDetail.setLockeduser(null);
+			orderDetail.setLockedusername(null);
 
 			LSlogilablimsorderdetailRepository.save(orderDetail);
 
@@ -878,12 +865,10 @@ public class FileService {
 					Content = file.getContent();
 				}
 			}
-			
+
 			updatefileversioncontent(Content, objLatestversion, objfile.getIsmultitenant());
 			updatefileversioncontent(objfile.getFilecontent(), objversion, objfile.getIsmultitenant());
-		}
-		else if(Versionnumber == 0)
-		{
+		} else if (Versionnumber == 0) {
 			Versionnumber++;
 			LSfileversion objversion = new LSfileversion();
 
@@ -891,8 +876,7 @@ public class FileService {
 			objversion.setCreateby(objesixting.getCreateby());
 			objversion.setCreatedate(objesixting.getCreatedate());
 			objversion.setExtension(objesixting.getExtension());
-			if(objesixting.getFilecode() != null)
-			{
+			if (objesixting.getFilecode() != null) {
 				objversion.setFilecode(objesixting.getFilecode());
 			}
 			// objversion.setFilecontent(objesixting.getFilecontent());
@@ -905,7 +889,7 @@ public class FileService {
 			objversion.setModifieddate(objfile.getModifieddate());
 			objversion.setRejected(objesixting.getRejected());
 			objversion.setVersionno(Versionnumber);
-			
+
 			if (objfile.getLsfileversion() != null) {
 				objfile.getLsfileversion().add(objversion);
 			} else {
@@ -915,14 +899,12 @@ public class FileService {
 			}
 
 			lsfileversionRepository.save(objfile.getLsfileversion());
-			
+
 			updatefileversioncontent(objfile.getFilecontent(), objversion, objfile.getIsmultitenant());
-		}
-		else
-		{
+		} else {
 			updatefileversioncontent(objfile.getFilecontent(), objLatestversion, objfile.getIsmultitenant());
 		}
-		
+
 		objfile.setVersionno(Versionnumber);
 
 		return true;
@@ -1212,18 +1194,17 @@ public class FileService {
 		return true;
 	}
 
-	public Notification ValidateNotification(Notification objnotification)throws ParseException {
-				
+	public Notification ValidateNotification(Notification objnotification) throws ParseException {
+
 		NotificationRepository.save(objnotification);
 		return null;
-		
+
 	}
 
-	public Map<String, Object> UploadLimsFile(MultipartFile file, Long batchcode, String filename)
-			throws IOException {
-		
+	public Map<String, Object> UploadLimsFile(MultipartFile file, Long batchcode, String filename) throws IOException {
+
 		System.out.print("Inside UploadLimsFile");
-		
+
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 
 		LsSheetorderlimsrefrence objattachment = new LsSheetorderlimsrefrence();
@@ -1232,13 +1213,13 @@ public class FileService {
 
 		if (objfile != null) {
 			objattachment.setFileid(objfile.getId());
-			
-			System.out.print("Inside UploadLimsFile filecode value "+batchcode.intValue());
-			
+
+			System.out.print("Inside UploadLimsFile filecode value " + batchcode.intValue());
+
 			LSfile classFile = lSfileRepository.findByfilecode(batchcode.intValue());
 			classFile.setFilenameuuid(objfile.getId());
 			classFile.setExtension(".pdf");
-			
+
 			lSfileRepository.save(classFile);
 		}
 
@@ -1246,9 +1227,9 @@ public class FileService {
 		objattachment.setBatchcode(batchcode);
 
 		lssheetorderlimsrefrenceRepository.save(objattachment);
-		
+
 		mapObj.put("elnSheet", objattachment);
-		
+
 		return mapObj;
 	}
 }

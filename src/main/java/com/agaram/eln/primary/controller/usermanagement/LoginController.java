@@ -22,6 +22,7 @@ import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSactiveUser;
 import com.agaram.eln.primary.model.usermanagement.LSdomainMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
@@ -54,6 +55,11 @@ public class LoginController {
 	@PostMapping("/Login")
 	public Map<String, Object> Login(@RequestBody LoggedUser objuser) throws Exception {
 		return loginService.Login(objuser);
+	}
+	
+	@PostMapping("/ActiveUserEntry")
+	public LSactiveUser activeUserEntry(@RequestBody LSactiveUser objsite) {
+		return loginService.activeUserEntry(objsite);
 	}
 
 	@PostMapping("/CheckUserAndPassword")

@@ -973,4 +973,11 @@ public class ProtocolController {
 	{
 		return ProtocolMasterService.Getprotocollinksignaturesql(body);
 	}
+	
+	@RequestMapping(value = "/addProtocolOrderafterfirstofter")
+	protected Map<String, Object> addProtocolOrderafterfirstofter(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail) {
+
+		return ProtocolMasterService.addProtocolOrderafterfirstofter(LSlogilabprotocoldetail);
+
+	}
 }

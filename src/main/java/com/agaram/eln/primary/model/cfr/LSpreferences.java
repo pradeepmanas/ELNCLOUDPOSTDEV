@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.model.cfr;
 
 import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,22 +20,22 @@ public class LSpreferences {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Basic(optional = false)
 	private Integer serialno;
-	@Column(columnDefinition = "varchar(100)")
 	private String tasksettings;
-	@Column(columnDefinition = "varchar(100)")
 	private String valuesettings;
+	private String valueencrypted;
 	
 	@Transient
 	LScfttransaction objsilentaudit;
-	
+
 	@Transient
 	private Response response;
-	
+
 	@Transient
 	LoggedUser objuser;
-	
+
 	@Transient
 	private LSuserMaster lsusermaster;
+	
 	public LScfttransaction getObjsilentaudit() {
 		return objsilentaudit;
 	}
@@ -80,6 +79,10 @@ public class LSpreferences {
 	public void setValuesettings(String valuesettings) {
 		this.valuesettings = valuesettings;
 	}
-	
-	
+	public String getValueencrypted() {
+		return valueencrypted;
+	}
+	public void setValueencrypted(String valueencrypted) {
+		this.valueencrypted = valueencrypted;
+	}
 }

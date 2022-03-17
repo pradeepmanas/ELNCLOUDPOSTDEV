@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.protocol;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -273,6 +274,12 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	List<LSlogilabprotocoldetail> findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCompletedtimestampDesc(
 			Integer protocoltype, Integer sitecode, String string, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByProtocolordercodeInAndOrderflag(ArrayList<Long> log, String orderflag);
+
+
+
 
 
 

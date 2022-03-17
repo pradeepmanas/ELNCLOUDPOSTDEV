@@ -580,5 +580,11 @@ public class UserController {
 	{
 		return userService.getGroupedcolumn(objgroupped);
 	}
+	
+	@PostMapping("/getUsersManinFormLicenseStatus")
+	public Boolean getUsersManinFrameLicenseStatus(@RequestBody LSSiteMaster objsite)
+	{
+		return userService.getUsersManinFrameLicenseStatus(objsite);
+	}
 }
 

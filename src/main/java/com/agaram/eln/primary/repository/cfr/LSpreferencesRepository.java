@@ -10,5 +10,9 @@ public interface LSpreferencesRepository extends JpaRepository<LSpreferences,Int
 	public List<LSpreferences> findByserialnoIn(List<Integer> lstserailno );
 
 	public LSpreferences findBySerialno(int i);
+	
+	public LSpreferences findByTasksettings(String Task);
+
+	public LSpreferences findByTasksettingsAndValuesettings(String string, String string2);
 }
 

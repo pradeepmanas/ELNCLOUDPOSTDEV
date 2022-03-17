@@ -184,11 +184,18 @@ public class InstrumentController {
 		return instrumentService.GetdetailorderStatus(objupdatedorder);
 	}
 
+//	@PostMapping("/GetResults")
+//	public List<LSresultdetails> GetResults(@RequestBody LSlogilablimsorderdetail objorder) {
+//		return instrumentService.GetResults(objorder);
+//	}
+
+	
 	@PostMapping("/GetResults")
-	public List<LSresultdetails> GetResults(@RequestBody LSlogilablimsorderdetail objorder) {
+	public Map<String, Object> GetResults(@RequestBody LSlogilablimsorderdetail objorder) {
 		return instrumentService.GetResults(objorder);
 	}
-
+	
+	
 	@PostMapping("/SaveResultfile")
 	public LSsamplefile SaveResultfile(@RequestBody LSsamplefile objfile) {
 //		if (objfile.getObjuser() != null) {

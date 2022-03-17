@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -24,6 +25,7 @@ import org.apache.commons.lang3.builder.Diffable;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.Range;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -61,6 +63,9 @@ public class ELNResultDetails implements Serializable, Diffable<ELNResultDetails
 	@Column(name = "methodkey")
 	private Integer methodkey;	
 	
+	@Column(name = "parserfieldkey")
+	private Integer parserfieldkey;	
+	
 	@Column(name = "parserblockkey")
 	private Integer parserblockkey;
 	
@@ -87,6 +92,28 @@ public class ELNResultDetails implements Serializable, Diffable<ELNResultDetails
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "sitecode", nullable = false)
 	private LSSiteMaster site;
+	
+	@Transient
+	LScfttransaction objsilentaudit;
+	
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+	
+	@Transient
+	LScfttransaction objmanualaudit;
+	
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
 		
 	@XmlAttribute	
 	public Integer getResultid() {
@@ -113,6 +140,15 @@ public class ELNResultDetails implements Serializable, Diffable<ELNResultDetails
 
 	public void setFilerefname(String filerefname) {
 		this.filerefname = filerefname;
+	}
+	
+	@XmlElement	
+	public Integer getParserfieldkey() {
+		return parserfieldkey;
+	}
+
+	public void setParserfieldkey(Integer parserfieldkey) {
+		this.parserfieldkey = parserfieldkey;
 	}
 
 	@XmlElement	

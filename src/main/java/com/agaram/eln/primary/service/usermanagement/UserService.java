@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.notification.Email;
@@ -61,6 +62,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 @EnableJpaRepositories(basePackageClasses = LSusergroupRepository.class)
 public class UserService {
+	
+	@Autowired
+	private com.agaram.eln.primary.repository.cfr.LSpreferencesRepository LSpreferencesRepository;
 
 	@Autowired
 	private LSusergroupRepository lSusergroupRepository;
@@ -426,6 +430,8 @@ public class UserService {
 			List<LSlogilablimsorderdetail> order = new ArrayList<LSlogilablimsorderdetail>();
 			List<LSprojectmaster> projcode = new ArrayList<LSprojectmaster>();
 			projcode = LSprojectmasterRepository.findByLsusersteam(objteam);
+			if(projcode.size() > 0)
+			{
 			order = LSlogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIn("N", projcode);
 			if (order.size() > 0) {
 				objteam.setResponse(new Response());
@@ -439,6 +445,14 @@ public class UserService {
 				}
 				return objteam;
 			} else {
+				lsusersteamRepository.save(objteam);
+				objteam.setResponse(new Response());
+				objteam.getResponse().setStatus(true);
+				objteam.getResponse().setInformation("ID_SUCCESSMSG");
+			}
+			}
+			else
+			{
 				lsusersteamRepository.save(objteam);
 				objteam.setResponse(new Response());
 				objteam.getResponse().setStatus(true);
@@ -915,9 +929,9 @@ public class UserService {
 		List<Integer> lstuser = new ArrayList<Integer>();
 		lstuser.add(1);
 		lstuser.add(objuser.getUsercode());
+
 		return lsuserMasterRepository
-				.findByLssitemasterAndUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(
-						objuser.getLssitemaster(), lstuser, 0);
+				.findByUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(lstuser, 0);
 	}
 
 	public Lsusersettings getUserPrefrences(LSuserMaster objuser) {
@@ -936,5 +950,37 @@ public class UserService {
 	public LSusergroupedcolumns getGroupedcolumn(LSusergroupedcolumns objgroupped) {
 		return lsusergroupedcolumnsRepository.findByUsercodeAndSitecodeAndGridname(objgroupped.getUsercode(),
 				objgroupped.getSitecode(), objgroupped.getGridname());
+	}
+
+	public Boolean getUsersManinFrameLicenseStatus(LSSiteMaster objsite) {
+
+		Boolean bool = true;
+		
+		LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser",
+				"Active"); 
+
+		if (objPrefrence != null) {
+			
+			String dvalue = objPrefrence.getValueencrypted();
+
+			String sConcurrentUsers = AESEncryption.decrypt(dvalue);
+
+			sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
+
+			int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
+
+			Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNotAndLssitemaster(1, 1,objsite);
+
+			if (userCount < nConcurrentUsers) {
+				
+				bool = true;
+
+			}else {
+				bool = false;
+			}
+			return bool;
+		}
+
+		return bool;
 	}
 }

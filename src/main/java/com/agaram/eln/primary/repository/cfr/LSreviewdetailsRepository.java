@@ -10,6 +10,8 @@ public interface LSreviewdetailsRepository extends JpaRepository<LSreviewdetails
 	
 		public List<LSreviewdetails> findByserialnoIn(List<Integer> lstserailno);
 
+		public List<LSreviewdetails> findByAuditserialnoIn(List<Integer> lstserailno);
+
 
 
 

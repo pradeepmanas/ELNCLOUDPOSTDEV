@@ -34,6 +34,9 @@ public interface ELNResultDetailsRepository extends JpaRepository<ELNResultDetai
 	//List<ELNResultDetails> findByStatus(final Sort sort);
 	
 	List<ELNResultDetails> findBySiteAndStatus(final LSSiteMaster site, final int status, final Sort sort);
+
+	List<ELNResultDetails> findBybatchcode(List<Long> batchcode);
+	
 	
 }
 

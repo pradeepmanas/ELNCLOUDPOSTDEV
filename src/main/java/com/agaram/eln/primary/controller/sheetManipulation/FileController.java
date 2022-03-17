@@ -202,97 +202,13 @@ public class FileController {
 
 	@RequestMapping(value = "/lockorder")
 	public Map<String, Object> lockorder(@RequestBody Map<String, Object> objMap) throws Exception {
-//		LoggedUser objuser = new LoggedUser();
-//		Response response = new Response();
-//		ObjectMapper mapper = new ObjectMapper();
-//		LScfttransaction objsilentaudit = new LScfttransaction();
-//		LScfttransaction objmanualaudit = new LScfttransaction();
-//		
-//		if(objMap.containsKey("objuser"))
-//		{
-//			objuser = mapper.convertValue(objMap.get("objuser"),LoggedUser.class);
-//		}
-//		
-//		if(objMap.containsKey("objsilentaudit"))
-//		{
-//			objsilentaudit = mapper.convertValue(objMap.get("objsilentaudit"),LScfttransaction.class);
-//		}
-//		if(objMap.containsKey("objmanualaudit"))
-//		{
-//			objmanualaudit = mapper.convertValue(objMap.get("objmanualaudit"),LScfttransaction.class);
-//		}
-//		
-//		if(objuser.getsUsername() != null) {
-//			
-//			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
-//			
-//			if(userClass.getObjResponse().getStatus()) {
-//				return fileService.lockorder(objMap);
-//			}
-//			else
-//			{
-//				objsilentaudit.setComments("Entered invalid username and password");
-//				Map<String, Object> map=new HashMap<>();
-//				map.put("objsilentaudit",objsilentaudit);
-//				map.put("objmanualaudit",objmanualaudit);
-//				map.put("objUser",objuser);
-//				auditService.AuditConfigurationrecord(map);
-//				
-//				response.setStatus(false);
-//				response.setInformation("ID_VALIDATION");
-//				map.put("response",response);
-//				return map;
-//			}
-//			
-//		}
+
 		return fileService.lockorder(objMap);
 	}
 
 	@RequestMapping(value = "/unlockorder")
 	public Map<String, Object> unlockorder(@RequestBody Map<String, Object> objMap) throws Exception {
-//		LoggedUser objuser = new LoggedUser();
-//		Response response = new Response();
-//		ObjectMapper mapper = new ObjectMapper();
-//		LScfttransaction objsilentaudit = new LScfttransaction();
-//		LScfttransaction objmanualaudit = new LScfttransaction();
-//		
-//		if(objMap.containsKey("objuser"))
-//		{
-//			objuser = mapper.convertValue(objMap.get("objuser"),LoggedUser.class);
-//		}
-//		
-//		if(objMap.containsKey("objsilentaudit"))
-//		{
-//			objsilentaudit = mapper.convertValue(objMap.get("objsilentaudit"),LScfttransaction.class);
-//		}
-//		if(objMap.containsKey("objmanualaudit"))
-//		{
-//			objmanualaudit = mapper.convertValue(objMap.get("objmanualaudit"),LScfttransaction.class);
-//		}
-//		
-//		if(objuser.getsUsername() != null) {
-//			
-//			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
-//			
-//			if(userClass.getObjResponse().getStatus()) {
-//				return fileService.unlockorder(objMap);
-//			}
-//			else
-//			{
-//				objsilentaudit.setComments("Entered invalid username and password");
-//				Map<String, Object> map=new HashMap<>();
-//				map.put("objsilentaudit",objsilentaudit);
-//				map.put("objmanualaudit",objmanualaudit);
-//				map.put("objUser",objuser);
-//				auditService.AuditConfigurationrecord(map);
-//				
-//				response.setStatus(false);
-//				response.setInformation("ID_VALIDATION");
-//				map.put("response",response);
-//				return map;
-//			}
-//			
-//		}
+
 		return fileService.unlockorder(objMap);
 	}
 
@@ -376,12 +292,12 @@ public class FileController {
 	public Boolean updateSharedToFile(@RequestBody Lsfileshareto lsordersharedby) {
 		return fileService.updateSharedToFile(lsordersharedby);
 	}
-	
+
 	@PostMapping("/ValidateNotification")
-	public Notification ValidateNotification(@RequestBody Notification objnotification)throws ParseException {
+	public Notification ValidateNotification(@RequestBody Notification objnotification) throws ParseException {
 		return fileService.ValidateNotification(objnotification);
 	}
-	
+
 	@PostMapping("/UploadLimsFile")
 	public Map<String, Object> UploadLimsFile(@RequestParam("file") MultipartFile file,
 			@RequestParam("order") Long batchcode, @RequestParam("filename") String filename) throws IOException {

@@ -16,6 +16,9 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
+import com.agaram.eln.primary.model.masters.Lsrepositories;
+import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -82,6 +85,12 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@ManyToOne
 	private LSprotocolworkflow lSprotocolworkflow;
 	
+	@ManyToOne
+	private Lsrepositoriesdata lsrepositoriesdata;
+	
+	@ManyToOne
+	private Lsrepositories lsrepositories;
+	
 //	@Transient
 //	private Integer lStprotocolworkflow;
 //	
@@ -123,6 +132,22 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		return testname;
 	}
 
+	public Lsrepositoriesdata getLsrepositoriesdata() {
+		return lsrepositoriesdata;
+	}
+
+	public Lsrepositories getLsrepositories() {
+		return lsrepositories;
+	}
+
+	public void setLsrepositoriesdata(Lsrepositoriesdata lsrepositoriesdata) {
+		this.lsrepositoriesdata = lsrepositoriesdata;
+	}
+
+	public void setLsrepositories(Lsrepositories lsrepositories) {
+		this.lsrepositories = lsrepositories;
+	}
+
 	public void setTestname(String testname) {
 		this.testname = testname;
 	}
@@ -136,12 +161,34 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private String unifielduserid;
 	
+	public List<CloudLsLogilabprotocolstepInfo> getCloudLsLogilabprotocolstepInfo() {
+		return CloudLsLogilabprotocolstepInfo;
+	}
+
+	public void setCloudLsLogilabprotocolstepInfo(List<CloudLsLogilabprotocolstepInfo> cloudLsLogilabprotocolstepInfo) {
+		CloudLsLogilabprotocolstepInfo = cloudLsLogilabprotocolstepInfo;
+	}
+
 	@Transient
 	private List<LSprotocolorderworkflowhistory> lsprotocolorderworkflowhistory;
 	
 	@Transient
 	private Integer register;
 	
+	@Transient
+	private List<CloudLsLogilabprotocolstepInfo> CloudLsLogilabprotocolstepInfo;
+	
+	@Transient
+	private List<LsLogilabprotocolstepInfo> LsLogilabprotocolstepInfo;
+	
+	public List<LsLogilabprotocolstepInfo> getLsLogilabprotocolstepInfo() {
+		return LsLogilabprotocolstepInfo;
+	}
+
+	public void setLsLogilabprotocolstepInfo(List<LsLogilabprotocolstepInfo> lsLogilabprotocolstepInfo) {
+		LsLogilabprotocolstepInfo = lsLogilabprotocolstepInfo;
+	}
+
 	public Integer getVersionno() {
 		return versionno;
 	}

@@ -62,6 +62,7 @@ public class BaseMasterService {
 	private LSprojectmasterRepository lSprojectmasterRepository;
 
 	@Autowired
+	
 	private LSmaterialmapRepository lSmaterialmapRepository;
 	@Autowired
 	private LSequipmentmapRepository lSequipmentmapRepository;
@@ -505,6 +506,5 @@ public class BaseMasterService {
 	public LStestmaster GetTestonID(LStestmaster objtest) {
 		return lstestmasterRepository.findByntestcode(objtest.getNtestcode());
 	}
-
 	
 }

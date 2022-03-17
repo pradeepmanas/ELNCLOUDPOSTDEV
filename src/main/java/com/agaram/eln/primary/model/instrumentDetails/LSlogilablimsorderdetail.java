@@ -69,6 +69,8 @@ public class LSlogilablimsorderdetail {
 	private Integer approvelstatus;
 	@Column(name = "lockeduser") 
 	private Integer lockeduser;
+	@Column(columnDefinition = "varchar(50)",name = "lockedusername") 
+	private String lockedusername;
 	
 	private Integer testcode;
 	private String testname;
@@ -690,6 +692,10 @@ public class LSlogilablimsorderdetail {
 	public void setNoworkflow(Boolean noworkflow) {
 		this.noworkflow = noworkflow;
 	}
-
-	
+	public String getLockedusername() {
+		return lockedusername;
+	}
+	public void setLockedusername(String lockedusername) {
+		this.lockedusername = lockedusername;
+	}
 }

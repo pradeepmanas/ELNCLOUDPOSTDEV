@@ -83,7 +83,6 @@ public class InstMasterService {
 	@Autowired
 	InstMethodRepository instMethodRepo;
 	
-	
 	/**
      * This method is used to add new instrument master.
      * @param master [InstrumentMaster] -  holding details of all fields in 'InstrumentMaster' Pojo.
@@ -220,15 +219,117 @@ public class InstMasterService {
      * @return Response entity relevant to update response
      */
     @Transactional
+//    public ResponseEntity<Object> updateInstMaster(final InstrumentMaster master,
+//    		final boolean saveAuditTrial, final String comments, final HttpServletRequest request) {
+//    	
+//    	final Optional<InstrumentMaster> instrumentByCode = masterRepo.findByInstrumentcodeAndSiteAndStatus(
+//    			master.getInstrumentcode(), master.getSite(), 1);
+//    	
+//    	if (instrumentByCode.isPresent())
+// 	    {		    		
+//    		final List<InstMethod> methodList = instMethodRepo.findByInstmasterAndStatus(instrumentByCode.get(), 1);
+//        	
+//    		boolean isEditable = false;
+//    		if (methodList.isEmpty()) {
+//    			//instrument not associated with Method setup
+//    			isEditable = true;
+//    		}
+//    		else {
+//    			//instrument associated with method setup
+//    			if (master.getInsttype().getInsttypekey().equals(instrumentByCode.get().getInsttype().getInsttypekey())) {
+//    				//valid to edit instrument
+//    				isEditable = true;
+//    			}
+//    			else {
+//    				//invalid to edit associated instrument if its instrumenttype changed
+//    				isEditable = false;
+//    			}
+//    		}
+//    		
+//    		if (isEditable) {
+//	     		//instrument already available		
+//	     		if (instrumentByCode.get().getInstmastkey().equals(master.getInstmastkey()))
+//	     		{   
+//	     			final InstrumentMaster instrumentToSave = instrumentByCode.get();
+//	     			
+//	     			//copy of instrumentToSave object for using 'Diffable' to compare objects
+//	     			final InstrumentMaster instrumentBeforeSave = new InstrumentMaster(instrumentToSave); 
+//	
+//	     			/*
+//	     			 *  Update other fields with existing instrument code
+//	     			 *  ok=200
+//	     			 */
+//	            	
+//	            	final InstrumentType instType = typeRepo.findOne(
+//	            				master.getInsttype().getInsttypekey());
+//	            	instrumentToSave.setInsttype(instType);
+//	            	
+//	            	final InstrumentCategory instCategory = categoryRepo.findOne(
+//	            			master.getInstcategory().getInstcatkey()); 
+//	            	instrumentToSave.setInstcategory(instCategory);       	   	
+//	            	
+//	            	instrumentToSave.setElectrodeno(master.getElectrodeno());        	
+//	            	instrumentToSave.setInstiopno(master.getInstiopno());
+//	            	instrumentToSave.setInstmake(master.getInstmake());
+//	            	instrumentToSave.setInstmodel(master.getInstmodel());
+//	            	instrumentToSave.setInstrumentname(master.getInstrumentname());
+//	            	instrumentToSave.setInstused(master.getInstused());
+//	     			
+//	     			final InstrumentMaster savedInstrument = masterRepo.save(instrumentToSave);     		
+//	     			
+//	     			if (saveAuditTrial)
+//	     			{
+//	     				final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedInstrument);
+//	     				
+////	     				final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
+////	     				cfrTransService.saveCfrTransaction(page, actionType, "Edit", comments, 
+////	     						page.getModule().getSite(), xmlData, instrumentToSave.getCreatedby(), request.getRemoteAddr());
+//	     				
+//	     			}     			
+//	     			
+//	     			if (instrumentBeforeSave.getInsttype().getInsttypekey() != master.getInsttype().getInsttypekey())
+//	       			{		       		 
+//	  	       		    //-----start --deleting existing datasource settings based on instrument type
+//		       			deleteInstTypeSettings(instrumentBeforeSave);
+//		       			
+//		       			saveInstTypeSettings(savedInstrument);    	       			
+//	       			}
+//	     			
+//	 	       		return new ResponseEntity<>(savedInstrument, HttpStatus.OK);   	     		
+//	     		}
+//	     		else
+//	     		{ 	
+//	     			//Conflict =409 - Duplicate entry
+//	     			return new ResponseEntity<>("Duplicate Entry - " + master.getInstrumentcode(), 
+//	     					 HttpStatus.CONFLICT);      			
+//	     		}
+//    		}
+//     		else {
+//     			return new ResponseEntity<>(master.getInstrumentcode(), HttpStatus.IM_USED);//status code - 226
+//     		}
+//     	}
+//     	else
+//     	{
+//     		return new ResponseEntity<>("Instrument not found", HttpStatus.NOT_FOUND);
+//     	}	
+//          
+//    }
+//    
+    
+    
+    
     public ResponseEntity<Object> updateInstMaster(final InstrumentMaster master,
     		final boolean saveAuditTrial, final String comments, final HttpServletRequest request) {
-    	
+    	    	    	
     	final Optional<InstrumentMaster> instrumentByCode = masterRepo.findByInstrumentcodeAndSiteAndStatus(
-    			master.getInstrumentcode(), master.getSite(), 1);
+   			master.getInstrumentcode(), master.getSite(), 1);
     	
-    	if (instrumentByCode.isPresent())
+    	final Optional<InstrumentMaster> instrumentBykey = masterRepo.findByInstmastkeyAndSiteAndStatus(
+    			master.getInstmastkey(), master.getSite(), 1);
+    	
+    	if (instrumentBykey.isPresent())
  	    {		    		
-    		final List<InstMethod> methodList = instMethodRepo.findByInstmasterAndStatus(instrumentByCode.get(), 1);
+    		final List<InstMethod> methodList = instMethodRepo.findByInstmasterAndStatus(instrumentBykey.get(), 1);
         	
     		boolean isEditable = false;
     		if (methodList.isEmpty()) {
@@ -237,7 +338,7 @@ public class InstMasterService {
     		}
     		else {
     			//instrument associated with method setup
-    			if (master.getInsttype().getInsttypekey().equals(instrumentByCode.get().getInsttype().getInsttypekey())) {
+    			if (master.getInsttype().getInsttypekey().equals(instrumentBykey.get().getInsttype().getInsttypekey())) {
     				//valid to edit instrument
     				isEditable = true;
     			}
@@ -248,6 +349,11 @@ public class InstMasterService {
     		}
     		
     		if (isEditable) {
+    			//instrument name should be unique
+    			if(instrumentByCode.isPresent())
+				{
+    				
+				
 	     		//instrument already available		
 	     		if (instrumentByCode.get().getInstmastkey().equals(master.getInstmastkey()))
 	     		{   
@@ -304,6 +410,24 @@ public class InstMasterService {
 	     			return new ResponseEntity<>("Duplicate Entry - " + master.getInstrumentcode(), 
 	     					 HttpStatus.CONFLICT);      			
 	     		}
+		}
+    			else
+    			{
+    				//copy of object for using 'Diffable' to compare objects
+	    			final InstrumentMaster instrumentBeforeSave = new InstrumentMaster(instrumentBykey.get());
+	    			
+		    		//Updating fields with a new delimiter name
+	    			
+		    		final InstrumentMaster savedMethod = masterRepo.save(master);
+		    		
+//		    		if (saveAuditTrail)
+//	    			{
+//		    			final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedMethod);
+//		    			
+//	    			}
+		    		
+		    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);	
+    			}
     		}
      		else {
      			return new ResponseEntity<>(master.getInstrumentcode(), HttpStatus.IM_USED);//status code - 226
@@ -315,6 +439,13 @@ public class InstMasterService {
      	}	
           
     }
+    
+    
+    
+    
+    
+    
+    
     
     /**
      * This method is used to delete the assigned type settings for a specific instrument
@@ -363,74 +494,169 @@ public class InstMasterService {
      * @param request [HttpServletRequest] Request object to ip address of remote client
      * @return response entity with deleted entity and status
      */
+//    @Transactional
+//    public ResponseEntity<Object> deleteInstMaster(final Integer instMastKey, final boolean saveAuditTrial,
+//  		   final String comments, final Integer userKey, final HttpServletRequest request) {
+//       
+//    	//This should be done only if the instrument is not binded in method setup
+//    	final InstrumentMaster instMaster = masterRepo.findOne(instMastKey);
+//        
+//    	if (instMaster != null) {
+//        	final InstrumentMaster masterObj = instMaster;
+//        	
+//        	// final Integer userInstListCount = 0;
+//       	
+////         	masterRepo.getAdminExcludedAssignedInstrumentsCount(instMastKey, 
+////        			instMaster.getSite().getSitecode());
+//        	        	
+//        	// final List<InstMethod> methodList = instMethodRepo.findByInstmasterAndStatus(instMaster, 1);
+//        	
+//        	//        	if (userInstListCount > 0 || !methodList.isEmpty())
+//        	//        	{        		
+//        		//Instrument assigned with rights or method setup
+//        		//Has child relation
+//        	//      		return new ResponseEntity<>(masterObj.getInstrumentcode(), HttpStatus.IM_USED);//status code - 226
+//        	// }
+//        	// else
+//        	// {        
+//        		
+//        		final InstrumentMaster instrumentBeforeSave = new InstrumentMaster(masterObj); 
+//	        	//Deleting existing 'Instrumenttype' settings record 
+//	        	deleteInstTypeSettings(masterObj);
+//	        	
+//	        	//---start -to delete this  instrument associated for 'Administrator' in 'InstrumentRights' by changing status to '-1'. 
+//	        	final LSSiteMaster site = masterObj.getSite();    	
+//	        	 //Administrator id has to be used  	
+//	        	final LSuserMaster user =  userRepo.findOne(1);
+//	        			
+//	        	final LSSiteMaster userSite =  user.getLssitemaster();
+//	        				        	
+//	        	final Optional<InstrumentRights> rightsList = rightsRepo.findByMasterAndUsersite(masterObj, userSite);
+//	        	
+//		        if (rightsList.isPresent()) {
+//		        	final InstrumentRights rights =  rightsList.get();        	
+//		        	rights.setStatus(-1);        	  	
+//		        	rightsRepo.save(rights);
+//	        	}
+//	        	//---end
+//            
+//	        	masterObj.setStatus(-1);	        	
+//	            final InstrumentMaster savedInstrument = masterRepo.save(masterObj);    
+//	            
+//	            if (saveAuditTrial)
+//     			{
+//     				final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedInstrument);
+////     				final CreatedUser createdUser = getCreatedUserByKey(userKey);	
+////     				
+////     				final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
+////     				cfrTransService.saveCfrTransaction(page, actionType, "Delete", comments, 
+////     						page.getModule().getSite(), xmlData, createdUser, request.getRemoteAddr());
+//     				
+//     			}     	
+//	            	
+//	            return new ResponseEntity<>(savedInstrument, HttpStatus.OK);//status code - 200   
+//	         //        	}
+//        } 
+//        else {
+//           return new ResponseEntity<>("Instrument not found", HttpStatus.NOT_FOUND);
+//        }
+//        
+//    }
+//    
+    
+    
     @Transactional
     public ResponseEntity<Object> deleteInstMaster(final Integer instMastKey, final boolean saveAuditTrial,
-  		   final String comments, final Integer userKey, final HttpServletRequest request) {
-       
-    	//This should be done only if the instrument is not binded in method setup
-    	final InstrumentMaster instMaster = masterRepo.findOne(instMastKey);
-        
-    	if (instMaster != null) {
-        	final InstrumentMaster masterObj = instMaster;
-        	
-        	// final Integer userInstListCount = 0;
-       	
-//         	masterRepo.getAdminExcludedAssignedInstrumentsCount(instMastKey, 
-//        			instMaster.getSite().getSitecode());
-        	        	
-        	// final List<InstMethod> methodList = instMethodRepo.findByInstmasterAndStatus(instMaster, 1);
-        	
-        	//        	if (userInstListCount > 0 || !methodList.isEmpty())
-        	//        	{        		
-        		//Instrument assigned with rights or method setup
-        		//Has child relation
-        	//      		return new ResponseEntity<>(masterObj.getInstrumentcode(), HttpStatus.IM_USED);//status code - 226
-        	// }
-        	// else
-        	// {        
-        		
-        		final InstrumentMaster instrumentBeforeSave = new InstrumentMaster(masterObj); 
-	        	//Deleting existing 'Instrumenttype' settings record 
-	        	deleteInstTypeSettings(masterObj);
-	        	
-	        	//---start -to delete this  instrument associated for 'Administrator' in 'InstrumentRights' by changing status to '-1'. 
-	        	final LSSiteMaster site = masterObj.getSite();    	
-	        	 //Administrator id has to be used  	
-	        	final LSuserMaster user =  userRepo.findOne(1);
-	        			
-	        	final LSSiteMaster userSite =  user.getLssitemaster();
-	        				        	
-	        	final Optional<InstrumentRights> rightsList = rightsRepo.findByMasterAndUsersite(masterObj, userSite);
-	        	
-		        if (rightsList.isPresent()) {
-		        	final InstrumentRights rights =  rightsList.get();        	
-		        	rights.setStatus(-1);        	  	
-		        	rightsRepo.save(rights);
-	        	}
-	        	//---end
-            
-	        	masterObj.setStatus(-1);	        	
-	            final InstrumentMaster savedInstrument = masterRepo.save(masterObj);    
-	            
-	            if (saveAuditTrial)
-     			{
-     				final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedInstrument);
-//     				final CreatedUser createdUser = getCreatedUserByKey(userKey);	
-//     				
-//     				final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
-//     				cfrTransService.saveCfrTransaction(page, actionType, "Delete", comments, 
-//     						page.getModule().getSite(), xmlData, createdUser, request.getRemoteAddr());
-     				
-     			}     	
-	            	
-	            return new ResponseEntity<>(savedInstrument, HttpStatus.OK);//status code - 200   
-	         //        	}
-        } 
-        else {
-           return new ResponseEntity<>("Instrument not found", HttpStatus.NOT_FOUND);
-        }
-        
-    }
+    		   final String comments, final Integer userKey, final HttpServletRequest request) {
+         
+      	//This should be done only if the instrument is not binded in method setup
+      	final InstrumentMaster instMaster = masterRepo.findOne(instMastKey);
+      	
+                	
+      	final List<InstMethod> methodList = instMethodRepo.findByInstmasterAndStatus(instMaster, 1);
+          
+//      	if (instMaster != null) {
+      	
+       if (methodList.isEmpty()) {
+     	  
+      	
+          	final InstrumentMaster masterObj = instMaster;
+          	
+          	// final Integer userInstListCount = 0;
+         	
+//           	masterRepo.getAdminExcludedAssignedInstrumentsCount(instMastKey, 
+//          			instMaster.getSite().getSitecode());
+          	        	
+          	// final List<InstMethod> methodList = instMethodRepo.findByInstmasterAndStatus(instMaster, 1);
+          	
+          	//        	if (userInstListCount > 0 || !methodList.isEmpty())
+          	//        	{        		
+          		//Instrument assigned with rights or method setup
+          		//Has child relation
+          	//      		return new ResponseEntity<>(masterObj.getInstrumentcode(), HttpStatus.IM_USED);//status code - 226
+          	// }
+          	// else
+          	// {        
+          		
+          		final InstrumentMaster instrumentBeforeSave = new InstrumentMaster(masterObj); 
+  	        	//Deleting existing 'Instrumenttype' settings record 
+  	        	deleteInstTypeSettings(masterObj);
+  	        	
+  	        	//---start -to delete this  instrument associated for 'Administrator' in 'InstrumentRights' by changing status to '-1'. 
+  	        	final LSSiteMaster site = masterObj.getSite();    	
+  	        	 //Administrator id has to be used  	
+  	        	final LSuserMaster user =  userRepo.findOne(1);
+  	        			
+  	        	final LSSiteMaster userSite =  user.getLssitemaster();
+  	        				        	
+  	        	final Optional<InstrumentRights> rightsList = rightsRepo.findByMasterAndUsersite(masterObj, userSite);
+  	        	
+  		        if (rightsList.isPresent()) {
+  		        	final InstrumentRights rights =  rightsList.get();        	
+  		        	rights.setStatus(-1);        	  	
+  		        	rightsRepo.save(rights);
+  	        	}
+  	        	//---end
+              
+  	        	masterObj.setStatus(-1);	        	
+  	            final InstrumentMaster savedInstrument = masterRepo.save(masterObj);    
+  	            
+  	            if (saveAuditTrial)
+       			{
+       				final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedInstrument);
+//       				final CreatedUser createdUser = getCreatedUserByKey(userKey);	
+//       				
+//       				final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
+//       				cfrTransService.saveCfrTransaction(page, actionType, "Delete", comments, 
+//       						page.getModule().getSite(), xmlData, createdUser, request.getRemoteAddr());
+       				
+       			}     	
+  	            	
+  	            return new ResponseEntity<>(savedInstrument, HttpStatus.OK);//status code - 200   
+  	                	}
+       // } 
+      	
+      	 else {
+ 			   //Associated with Method master
+ 			   if (saveAuditTrial)
+ 			   {
+ 				   final String sysComments = "Delete Failed as instrument -" +instMaster.getInstrumentname()+ " is associated with Method master";
+ 	   			
+// 					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
+// 							"Delete", sysComments, 
+// 							site, "", createdUser, request.getRemoteAddr());
+ 			   }
+ 			   return new ResponseEntity<>(instMaster.getInstrumentname() , HttpStatus.IM_USED);//status code - 226		    		
+ 		   }
+      	} 
+      	
+//          else {
+//             return new ResponseEntity<>("Instrument not found", HttpStatus.NOT_FOUND);
+//          }
+          
+    //  }
+    
+    
     
     /**
      * This method is used to fetch instrument list based on site and instrument category.

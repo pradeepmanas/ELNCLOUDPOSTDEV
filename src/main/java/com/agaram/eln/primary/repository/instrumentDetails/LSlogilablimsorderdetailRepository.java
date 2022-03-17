@@ -467,8 +467,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	List<LSlogilablimsorderdetail> findByFiletypeAndApprovelstatusAndOrderflagAndLsprojectmasterInOrderByBatchcodeAsc(
 			int i, int j, String string, List<LSprojectmaster> lstproject);
 
-	//Logilaborders findByBatchcode(Long batchcode);
 
+	List<LSlogilablimsorderdetail> findBybatchcode(Long batchcode);
 	
 
 

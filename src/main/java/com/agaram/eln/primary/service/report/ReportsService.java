@@ -3517,35 +3517,73 @@ public class ReportsService {
 //		int fileCode = (int) argMap.get("SheetFileCode");
 		List<LSfile> LSfilelst = new ArrayList<LSfile>();
 		String fileCode = (String) argMap.get("SheetFileCode");
+		String multitenent = (String) argMap.get("isMultitenant");
+		int isMultitenant = Integer.parseInt(multitenent);
 
 		if (fileCode.contains(",")) {
-			String[] fileCodeArray = fileCode.split(", ");
-			for (int arrayIndex = 0; arrayIndex < fileCodeArray.length; arrayIndex++) {
-//				LSfilelst.add(
-//						LSfileRepositoryObj.findByFilecodeAndApproved(Integer.parseInt(fileCodeArray[arrayIndex]), 1));
-				LSfile objFile = LSfileRepositoryObj.findByFilecodeAndApproved(Integer.parseInt(fileCodeArray[arrayIndex]), 1);
-				
-				CloudSheetCreation file = cloudSheetCreationRepository.findById((long)Integer.parseInt(fileCodeArray[arrayIndex]));
+
+			if (isMultitenant == 1) {
+				String[] fileCodeArray = fileCode.split(", ");
+				for (int arrayIndex = 0; arrayIndex < fileCodeArray.length; arrayIndex++) {
+//					LSfilelst.add(
+//							LSfileRepositoryObj.findByFilecodeAndApproved(Integer.parseInt(fileCodeArray[arrayIndex]), 1));
+					LSfile objFile = LSfileRepositoryObj
+							.findByFilecodeAndApproved(Integer.parseInt(fileCodeArray[arrayIndex]), 1);
+
+					CloudSheetCreation file = cloudSheetCreationRepository
+							.findById((long) Integer.parseInt(fileCodeArray[arrayIndex]));
+					if (file != null) {
+						objFile.setFilecontent(file.getContent());
+					}
+
+					LSfilelst.add(objFile);
+
+				}
+			} else {
+				String[] fileCodeArray = fileCode.split(", ");
+				for (int arrayIndex = 0; arrayIndex < fileCodeArray.length; arrayIndex++) {
+
+					LSfile objFile = LSfileRepositoryObj
+							.findByFilecodeAndApproved(Integer.parseInt(fileCodeArray[arrayIndex]), 1);
+
+					SheetCreation sheetcreationObj = mongoTemplate.findById(Integer.parseInt(fileCodeArray[arrayIndex]),
+							SheetCreation.class);
+					if (sheetcreationObj != null) {
+						objFile.setFilecontent(sheetcreationObj.getContent());
+					}
+
+					LSfilelst.add(objFile);
+
+				}
+			}
+
+		} else {
+			if (isMultitenant == 1) {
+				LSfile objFile = LSfileRepositoryObj.findByFilecodeAndApproved(Integer.parseInt(fileCode), 1);
+				CloudSheetCreation file = cloudSheetCreationRepository.findById((long) objFile.getFilecode());
 				if (file != null) {
 					objFile.setFilecontent(file.getContent());
 				}
-				
 				LSfilelst.add(objFile);
-				
+			} else {
+				LSfile objFile = LSfileRepositoryObj.findByFilecodeAndApproved(Integer.parseInt(fileCode), 1);
+				SheetCreation sheetcreationObj = mongoTemplate.findById(objFile.getFilecode(), SheetCreation.class);
+				if (sheetcreationObj != null) {
+					objFile.setFilecontent(sheetcreationObj.getContent());
+				}
+				LSfilelst.add(objFile);
 			}
-		} else {
 //			LSfilelst.add(LSfileRepositoryObj.findByFilecodeAndApproved(Integer.parseInt(fileCode), 1));
-			
-			LSfile objFile = LSfileRepositoryObj.findByFilecodeAndApproved(Integer.parseInt(fileCode), 1);
-			
-			CloudSheetCreation file = cloudSheetCreationRepository.findById((long)Integer.parseInt(fileCode));
-			if (file != null) {
-				objFile.setFilecontent(file.getContent());
-			}
-			
-			LSfilelst.add(objFile);
-			
+
+//			LSfile objFile = LSfileRepositoryObj.findByFilecodeAndApproved(Integer.parseInt(fileCode), 1);
+//			
+//			CloudSheetCreation file = cloudSheetCreationRepository.findById((long)Integer.parseInt(fileCode));
+//			if (file != null) {
+//				objFile.setFilecontent(file.getContent());
+//			}
+
 		}
+
 		MapObj.put("fileObj", LSfilelst);
 		return MapObj;
 	}

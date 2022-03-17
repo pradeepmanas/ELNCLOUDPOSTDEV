@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "LSnotification")
@@ -36,7 +38,9 @@ public class LSnotification {
 	
 	private int isnewnotification;
 	
-	@Column(columnDefinition = "date",name = "CreatedTimeStamp")
+//	@Column(columnDefinition = "date",name = "CreatedTimeStamp")
+	@Column(name = "CreatedTimeStamp")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date notificationdate;
 	
 	@Column(name = "repositorydatacode")

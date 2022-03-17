@@ -379,12 +379,15 @@ public class AuditService {
 
 	public List<LSreviewdetails> GetReviewDetails(List<LSreviewdetails> objreviewdetails) {
 
-		List<Integer> lstserailno = objreviewdetails.stream().map(LSreviewdetails::getSerialno)
+//		List<Integer> lstserailno = objreviewdetails.stream().map(LSreviewdetails::getSerialno)
+//				.collect(Collectors.toList());
+		List<Integer> lstserailno = objreviewdetails.stream().map(LSreviewdetails::getAuditserialno)
 				.collect(Collectors.toList());
 		if (objreviewdetails.get(0).getObjuser() != null) {
 
 		}
-		return LSreviewdetailsRepository.findByserialnoIn(lstserailno);
+//		return LSreviewdetailsRepository.findByserialnoIn(lstserailno);
+		return LSreviewdetailsRepository.findByAuditserialnoIn(lstserailno);
 	}
 
 	public Map<String, Object> GetReviewDetails12(LSreviewdetails[] objreview1) {
