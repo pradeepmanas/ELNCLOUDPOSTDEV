@@ -90,6 +90,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
+import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -105,6 +106,7 @@ import com.agaram.eln.primary.repository.report.LSdocreportsversionHistoryReposi
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
@@ -184,6 +186,8 @@ public class ReportsService {
 	
 	@Autowired
 	private CloudOrderCreationRepository cloudOrderCreationRepository;
+	@Autowired
+	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
 
 	LSConfiguration FTPConfig = new LSConfiguration();
 
@@ -2072,7 +2076,7 @@ public class ReportsService {
 						List<Map<String, Object>> TagLst = getTagInfofromSheet(LsSampleFiles.getFilecontent());
 						logger.info("handleOrderandTemplate() sheetProps" + TagLst);
 						for (Map<String, Object> SingleTag : TagLst) {
-							replaceDocxTagWithCell(SingleTag, document, SheetName);
+							replaceDocxTagWithCell(TagLst, document, SheetName,SingleTag);
 						}
 					}
 				}
@@ -2271,14 +2275,15 @@ public class ReportsService {
 						if (!excelData.isEmpty()) {
 							List<Map<String, Object>> TagLst = getTagInfofromSheet(excelData);
 							logger.info("handleOrderandTemplate() sheetProps" + TagLst);
+//							for (Map<String, Object> SingleTag : TagLst) {
+//								replaceDocxTagWithCell(SingleTag, document, SheetName);
+//							}
 							for (Map<String, Object> SingleTag : TagLst) {
-								replaceDocxTagWithCell(SingleTag, document, SheetName);
+								replaceDocxTagWithCell(TagLst, document, SheetName,SingleTag);
 							}
 						}
 					}
-					if (!sequenceTagList.isEmpty()) {
-						replaceDocxTagWithSequenceData(sequenceTagList, document);
-					}
+					
 					FileOutputStream fos = new FileOutputStream(newFile);
 					document.write(fos);
 					document.close();
@@ -2500,13 +2505,11 @@ public class ReportsService {
 							List<Map<String, Object>> TagLst = getTagInfofromSheet(excelData);
 							logger.info("handleOrderandTemplate() sheetProps" + TagLst);
 							for (Map<String, Object> SingleTag : TagLst) {
-								replaceDocxTagWithCell(SingleTag, document, SheetName);
+								replaceDocxTagWithCell(TagLst, document, SheetName,SingleTag);
 							}
 						}
 					}
-					if (!sequenceTagList.isEmpty()) {
-						replaceDocxTagWithSequenceData(sequenceTagList, document);
-					}
+					
 					FileOutputStream fos = new FileOutputStream(newFile);
 					document.write(fos);
 					document.close();
@@ -2689,14 +2692,29 @@ public class ReportsService {
 		}
 	}
 
-	public void replaceDocxTagWithCell(Map<String, Object> SingleTagObj, XWPFDocument document, String SheetName) {
+	public void replaceDocxTagWithCell(List<Map<String, Object>> SingleTagObj1, XWPFDocument document, String SheetName,Map<String, Object> SingleTag) {
 		boolean isDone = false;
+		Map<String, Object> SingleTagObj =new HashMap<String, Object>();
 		if (!isDone) {
 			for (XWPFParagraph para : document.getParagraphs()) {
 				// String Tag = getTagsfromDocx(para);
 				List<String> TagLst = getTagsfromDocx(para);
+		
 //				logger.info("replaceDocxTagWithCell TagLst: "+ TagLst.toString()+" "+SingleTagObj.get("tagname"));
 				for (String Tag : TagLst) {
+			
+					for (Map<String, Object> SingleTagObj2 : SingleTagObj1) {
+						String stringtagname =(String) SingleTagObj2.get("tagname");
+						stringtagname = stringtagname.replace(" ", "_");
+						stringtagname = SheetName + "_" + stringtagname;
+
+							if (Tag.equals("<<" + stringtagname + ">>")) {
+								SingleTagObj.putAll(SingleTagObj2);
+
+						}else if(Tag.equals("<<$" + stringtagname + "$>>")){
+							SingleTagObj.putAll(SingleTagObj2);
+						}
+					}
 					System.out.println("replaceDocxTagWithCell" + Tag);
 					if (!Tag.isEmpty()) {
 						String TagNameST = (String) SingleTagObj.get("tagname");
@@ -2729,6 +2747,9 @@ public class ReportsService {
 							SequenceTagLstTemp.add(tagData);
 							sequenceTagList.put(newKey, SequenceTagLstTemp);
 //							}
+							if (!sequenceTagList.isEmpty()) {
+								replaceDocxTagWithSequenceData(sequenceTagList, document);
+							}
 						}
 					}
 				}
@@ -2742,6 +2763,19 @@ public class ReportsService {
 							// String Tag = getTagsfromDocx(para);
 							List<String> TagLst = getTagsfromDocx(para);
 							for (String Tag : TagLst) {
+								
+								for (Map<String, Object> SingleTagObj2 : SingleTagObj1) {
+									String stringtagname =(String) SingleTagObj2.get("tagname");
+									stringtagname = stringtagname.replace(" ", "_");
+									stringtagname = SheetName + "_" + stringtagname;
+										if (Tag.equals("<<" + stringtagname + ">>")) {
+											SingleTagObj.putAll(SingleTagObj2);
+									}else if(Tag.equals("<<$" + stringtagname + "$>>")){
+										SingleTagObj.putAll(SingleTagObj2);
+									}
+								}
+								
+								
 								System.out.println("replaceDocxTagWithCell" + Tag);
 								if (!Tag.isEmpty()) {
 									String TagNameST = (String) SingleTagObj.get("tagname");
@@ -2774,6 +2808,9 @@ public class ReportsService {
 										SequenceTagLstTemp.add(tagData);
 										sequenceTagList.put(newKey, SequenceTagLstTemp);
 //										}
+										if (!sequenceTagList.isEmpty()) {
+											replaceDocxTagWithSequenceData(sequenceTagList, document);
+										}
 									}
 								}
 							}
@@ -3412,15 +3449,16 @@ public class ReportsService {
 		} else {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(LsuserMasterObj);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+			List <LSMultiusergroup> objtemp = LSMultiusergroupRepositery.findByusercode(LsuserMasterObj.getUsercode());
 			List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
-					.findBylsusergroup(LsuserMasterObj.getLsusergroup());
+					.findBylsusergroup(objtemp.get(0).getLsusergroup());
+			
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 			List<LSworkflow> lsworkflow = lsworkflowRepository
 					.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 			List<LSlogilablimsorderdetail> Pending = new ArrayList<LSlogilablimsorderdetail>();
 			List<LSlogilablimsorderdetail> Completed = new ArrayList<LSlogilablimsorderdetail>();
-
 			if ((int) objorder.get("filetype") == 0) {
 				Pending = lslogilablimsorderdetailRepository
 						.findByFiletypeAndOrderflagOrderByBatchcodeDesc((int) objorder.get("filetype"), "N");

@@ -12,10 +12,20 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
+
 import com.agaram.eln.primary.model.general.Response;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import com.vladmihalcea.hibernate.type.json.JsonStringType;
 
 @Entity
 @Table(name="LSprotocolstep")
+@TypeDefs({
+    @TypeDef(name = "json", typeClass = JsonStringType.class),
+    @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+})
 public class LSprotocolstep {
 
 	@Id
@@ -38,6 +48,17 @@ public class LSprotocolstep {
 	private String modifiedusername;
 //	public String modifiedusername;
 	public Integer sitecode;
+	
+	@Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+	public String timer;
+	public String getTimer() {
+		return timer;
+	}
+	public void setTimer(String timer) {
+		this.timer = timer;
+	}
+
 	@Transient
 	private Integer newStep;
 	@Transient

@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.instrumentsetup;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -210,55 +211,116 @@ public class InstCategoryService {
      * @return Response entity object relevant to delete response
      */
 	@Transactional
-    public ResponseEntity<Object> deleteInstCategory(final Integer categoryKey, final boolean saveAuditTrial,
- 		   final String comments, final Integer userKey, final HttpServletRequest request) 
-	{
-        final InstrumentCategory category = categoryRepo.findOne(categoryKey);
-        
-        if (category != null) {
-        	final InstrumentCategory categoryObj = category;
-        	
-        	//if (categoryObj.getInstcatname().equalsIgnoreCase("General"))
-        	if (categoryObj.getInstcatkey() == 1)
-        	{
-        		//Default Category cannot be deleted
-        		return new ResponseEntity<>(categoryObj.getInstcatname(), HttpStatus.LOCKED);//status code - 423
-        	}
-        	else {
-        		List<InstrumentMaster> instMasterList = instMasterRepo.findByInstcategoryAndStatus(categoryObj, 1);
-        		if (instMasterList.size() > 0) {
-        	
-	        		//Has child relation
-	        		return new ResponseEntity<>(categoryObj.getInstcatname(), HttpStatus.IM_USED);//status code - 226
-	        	}        	
-	        	else
-	        	{
-	        		//copy of category object for using 'Diffable' to compare objects
-	 			    final InstrumentCategory categoryBeforeSave = new InstrumentCategory(categoryObj); 		
-	 			   
-	        		//No child mapping
-		        	categoryObj.setStatus(-1);
-		        	final InstrumentCategory savedCategory = categoryRepo.save(categoryObj);
-		        	
-		        	if (saveAuditTrial)
-	     			{
-	     				final String xmlData = convertCategoryToXML(categoryBeforeSave, savedCategory);
-//	     				final CreatedUser createdUser = getCreatedUserByKey(userKey);	
+//    public ResponseEntity<Object> deleteInstCategory(final Integer categoryKey, final boolean saveAuditTrial,
+// 		   final String comments, final Integer userKey, final HttpServletRequest request) 
+//	{
+//        final InstrumentCategory category = categoryRepo.findOne(categoryKey);
+//        
+//        if (category != null) {
+//        	final InstrumentCategory categoryObj = category;
+//        	
+//        	//if (categoryObj.getInstcatname().equalsIgnoreCase("General"))
+//        	if (categoryObj.getInstcatkey() == 1)
+//        	{
+//        		//Default Category cannot be deleted
+//        		return new ResponseEntity<>(categoryObj.getInstcatname(), HttpStatus.LOCKED);//status code - 423
+//        	}
+//        	else {
+//        		List<InstrumentMaster> instMasterList = instMasterRepo.findByInstcategoryAndStatus(categoryObj, 1);
+//        		if (instMasterList.size() > 0) {
+//        	
+//	        		//Has child relation
+//	        		return new ResponseEntity<>(categoryObj.getInstcatname(), HttpStatus.IM_USED);//status code - 226
+//	        	}        	
+//	        	else
+//	        	{
+//	        		//copy of category object for using 'Diffable' to compare objects
+//	 			    final InstrumentCategory categoryBeforeSave = new InstrumentCategory(categoryObj); 		
+//	 			   
+//	        		//No child mapping
+//		        	categoryObj.setStatus(-1);
+//		        	final InstrumentCategory savedCategory = categoryRepo.save(categoryObj);
+//		        	
+//		        	if (saveAuditTrial)
+//	     			{
+//	     				final String xmlData = convertCategoryToXML(categoryBeforeSave, savedCategory);
+////	     				final CreatedUser createdUser = getCreatedUserByKey(userKey);	
+////	     				
+////	     				final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
+////	     				cfrTransService.saveCfrTransaction(page, actionType, "Delete", comments, 
+////	     						page.getModule().getSite(), xmlData, createdUser, request.getRemoteAddr());
 //	     				
-//	     				final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
-//	     				cfrTransService.saveCfrTransaction(page, actionType, "Delete", comments, 
-//	     						page.getModule().getSite(), xmlData, createdUser, request.getRemoteAddr());
-	     				
-	     			}
-		        	        	
-		        	return new ResponseEntity<>(categoryObj, HttpStatus.OK);
+//	     			}
+//		        	        	
+//		        	return new ResponseEntity<>(categoryObj, HttpStatus.OK);
+//	        	}
+//        	}
+//        } else {
+//            return new ResponseEntity<>("Instrument Category not found", HttpStatus.NOT_FOUND);
+//        }
+//           
+//    }
+	
+	public ResponseEntity<Object> deleteInstCategory(final Integer categoryKey, final boolean saveAuditTrial,
+	 		   final String comments, final Integer userKey, final HttpServletRequest request) 
+		{
+			Map<String, Object> mapOrders = new HashMap<String, Object>();
+	        final InstrumentCategory category = categoryRepo.findOne(categoryKey);
+	        
+	        ArrayList<String> InstrumentCategory = new ArrayList<String>();
+	        
+	        if (category != null) {
+	        	final InstrumentCategory categoryObj = category;
+	        	
+	        	//if (categoryObj.getInstcatname().equalsIgnoreCase("General"))
+	        	if (categoryObj.getInstcatkey() == 1)
+	        	{
+	        	      		         	        	
+	        		
+	        	//	return new ResponseEntity<>(categoryObj.getInstcatname() + " - Default Category Cannot be deleted!", HttpStatus.LOCKED);//status code - 423
+	        		
+	        		//Default Category cannot be d
+	  			   return new ResponseEntity<>(categoryObj.getInstcatname() , HttpStatus.LOCKED);//status code - 423
+	  			      
+	        		
 	        	}
-        	}
-        } else {
-            return new ResponseEntity<>("Instrument Category not found", HttpStatus.NOT_FOUND);
-        }
-           
-    }
+	        	else {
+	        		List<InstrumentMaster> instMasterList = instMasterRepo.findByInstcategoryAndStatus(categoryObj, 1);
+	        		if (instMasterList.size() > 0) {
+	        	        		        			
+		        		//return new ResponseEntity<>(categoryObj.getInstcatname(), HttpStatus.IM_USED);//status code - 226
+		        		
+		        		//Has child relation
+		        		return new ResponseEntity<>(categoryObj.getInstcatname(), HttpStatus.LOCKED);
+		        	}        	
+		        	else
+		        	{
+		        		//copy of category object for using 'Diffable' to compare objects
+		 			    final InstrumentCategory categoryBeforeSave = new InstrumentCategory(categoryObj); 		
+		 			   
+		        		//No child mapping
+			        	categoryObj.setStatus(-1);
+			        	final InstrumentCategory savedCategory = categoryRepo.save(categoryObj);
+			        	
+			        	if (saveAuditTrial)
+		     			{
+		     				final String xmlData = convertCategoryToXML(categoryBeforeSave, savedCategory);
+//		     				final CreatedUser createdUser = getCreatedUserByKey(userKey);	
+//		     				
+//		     				final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
+//		     				cfrTransService.saveCfrTransaction(page, actionType, "Delete", comments, 
+//		     						page.getModule().getSite(), xmlData, createdUser, request.getRemoteAddr());
+		     				
+		     			}
+			        	        	
+			        	return new ResponseEntity<>(categoryObj, HttpStatus.OK);
+		        	}
+	        	}
+	        } else {
+	            return new ResponseEntity<>("Instrument Category not found", HttpStatus.NOT_FOUND);
+	        }
+	           
+	    }
     
     /**
 	 * This method is used to convert the category entity to xml with the difference in object

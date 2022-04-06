@@ -871,8 +871,8 @@ ALTER TABLE IF Exists LSreviewdetails ADD COLUMN IF NOT EXISTS auditusername var
 ALTER TABLE IF Exists LSreviewdetails ADD COLUMN IF NOT EXISTS action varchar(250);
 
 INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (65, 'Inventory', 'Base Master', '0', '0', '0', '0', '1,1,1',70) ON CONFLICT(orderno)DO NOTHING;
-INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (66, 'Add repository', 'Inventory', 'NA', '0', 'NA', 'NA', '1,0,0',71) ON CONFLICT(orderno)DO NOTHING;
-INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (67, 'Edit repository', 'Inventory', 'NA', '0', 'NA', 'NA', '1,0,0',71) ON CONFLICT(orderno)DO NOTHING;
+INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (66, 'Add repository', 'Inventory', '0', '0', 'NA', 'NA', '1,0,0',71) ON CONFLICT(orderno)DO NOTHING;
+INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (67, 'Edit repository', 'Inventory', '0', '0', 'NA', 'NA', '1,0,0',71) ON CONFLICT(orderno)DO NOTHING;
 INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (68, 'Instrument Category', 'Parser', '0', '0', '0', '0', '1,1,1',72) ON CONFLICT(orderno)DO NOTHING;
 
 update lsusergrouprightsmaster set sedit = '0' where modulename = 'Parser' and displaytopic != 'Parser';
@@ -914,3 +914,19 @@ insert into lsaudittrailconfigmaster values(74,0,'Base Master',71,'Inventory','E
 insert into lsaudittrailconfigmaster values(75,0,'Base Master',72,'Inventory','Delete')ON CONFLICT(serialno)DO NOTHING;
 
 insert into lsaudittrailconfigmaster values(76,0,'Register Orders & Execute',8,'Register Orders & Execute','Parse Data')ON CONFLICT(serialno)DO NOTHING;
+
+update LSusergrouprightsmaster set sallow = '0' where displaytopic = 'Add repository' and sallow= 'NA';
+update LSusergrouprightsmaster set sallow = '0' where displaytopic = 'Edit repository' and sallow= 'NA';
+
+update LSusergrouprights set sallow = '0' where displaytopic = 'Add repository' and sallow= 'NA';
+update LSusergrouprights set sallow = '0' where displaytopic = 'Edit repository' and sallow= 'NA';
+
+update lsusergrouprightsmaster set displaytopic = 'Audit trail configuration' where displaytopic = 'Audit Trail Configuration';
+update lsusergrouprightsmaster set displaytopic = 'Audit trail history' where displaytopic = 'Audit Trail History';
+
+update lsusergrouprights set displaytopic = 'Audit trail configuration' where displaytopic = 'Audit Trail Configuration';
+update lsusergrouprights set displaytopic = 'Audit trail history' where displaytopic = 'Audit Trail History';
+
+ALTER TABLE IF Exists lsprotocolstep ADD COLUMN IF NOT EXISTS   timer jsonb;
+
+ALTER TABLE IF Exists lslogilabprotocolsteps ADD COLUMN IF NOT EXISTS   timer jsonb;

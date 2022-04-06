@@ -3,6 +3,7 @@ package com.agaram.eln.primary.model.protocols;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,10 +13,20 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
+
 import com.agaram.eln.primary.model.general.Response;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import com.vladmihalcea.hibernate.type.json.JsonStringType;
 
 @Entity
 @Table(name="LSlogilabprotocolsteps")
+@TypeDefs({
+    @TypeDef(name = "json", typeClass = JsonStringType.class),
+    @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+})
 public class LSlogilabprotocolsteps {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -39,6 +50,16 @@ public class LSlogilabprotocolsteps {
 	private Integer newStep;
 	private Integer sitecode;
 	private String orderstepflag;
+	
+	@Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+	public String timer;
+	public String getTimer() {
+		return timer;
+	}
+	public void setTimer(String timer) {
+		this.timer = timer;
+	}
 	
 	public Integer skipdata;
 	public Integer getSkipdata() {

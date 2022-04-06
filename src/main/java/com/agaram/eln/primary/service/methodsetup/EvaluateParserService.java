@@ -32,6 +32,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
 import com.agaram.eln.primary.repository.methodsetup.ELNResultDetailsRepository;
+import com.agaram.eln.primary.repository.methodsetup.LSResultFieldValuesRepository;
 
 /**
  * This Service class holds methods that is used to validate the Parser result
@@ -60,6 +61,9 @@ public class EvaluateParserService {
 	
 	@Autowired
 	CustomFieldService customFieldService;
+	//srimathi
+		@Autowired
+		LSResultFieldValuesRepository resultfieldvaluesrepo;
 	
    /**
     * This method is used  to retrieve list of Method entities for the specified site
@@ -368,11 +372,15 @@ public class EvaluateParserService {
 	public List<ELNResultDetails> insertELNResultDetails(ELNResultDetails[] lsresults) {
 		List<ELNResultDetails> lselnresults = Arrays.asList(lsresults);
 		
-
+		for (int i = 0 ; i<lselnresults.size();i++)
+		{
+		resultfieldvaluesrepo.save(lselnresults.get(i).getLsresultfieldvalues());
+		}
+		
 		elnResultRepo.save(lselnresults);
-			
 		return lselnresults;
 
 	}
+
 	
 }

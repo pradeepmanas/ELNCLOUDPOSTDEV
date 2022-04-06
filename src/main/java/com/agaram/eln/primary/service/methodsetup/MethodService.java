@@ -194,6 +194,107 @@ public class MethodService {
 	 * @return Response of updated method master entity
 	 */
 	@Transactional
+//	public ResponseEntity<Object> updateMethod(final Method method, final LSSiteMaster site, final int doneByUserKey, 
+//			   final String comments, final boolean saveAuditTrail, final HttpServletRequest request)
+//	{	  		
+//		final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);		
+//		final InstrumentMaster instMaster = instMastRepo.findOne(method.getInstmaster().getInstmastkey());
+//		
+//		 final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(method.getMethodkey(), 1);
+//		 
+//		 if(methodByKey.isPresent()) {		   
+//
+//		
+//		if (instMaster != null) 
+//		{
+//
+//			final Optional<Method> methodByName = methodRepo.findByMethodnameAndInstmasterAndStatus(
+//					method.getMethodname(), instMaster, 1);
+//			
+//		
+//			if (methodByName.isPresent())
+//              {
+//				 
+//				if(methodByName.get().getMethodkey().equals(method.getMethodkey()))
+//		    	{   
+//				//copy of object for using 'Diffable' to compare objects
+//	    			final Method methodBeforeSave = new Method(methodByName.get());
+//	    			
+//					method.setInstmaster(instMaster);		    			
+//		    		final Method savedMethod = methodRepo.save(method);
+//		    		
+//		    		if (saveAuditTrail)
+//	    			{
+//		    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
+//		    			
+////		    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
+////								"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
+//	    			}
+//		    		
+//		    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);	
+//		    	}
+//				else {
+//					//Conflict =409 - Duplicate entry
+//	    			if (saveAuditTrail == true)
+//	    			{						
+//	    				final String sysComments = "Update Failed for duplicate method name - "+ method.getMethodname();
+//	    				
+////	    				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
+////	    						"Create", sysComments, site, "",createdUser, request.getRemoteAddr());
+//	    			}
+//	    			
+//	    			return new ResponseEntity<>("Duplicate Entry - " + method.getMethodname() + " - " + instMaster.getInstrumentcode(), 
+//		  					 HttpStatus.CONFLICT);      		
+//				}
+//		   }
+//			
+//			
+//			else
+//	    	{			    		
+//	    		//copy of object for using 'Diffable' to compare objects
+//    			final Method methodBeforeSave = new Method(methodByKey.get());
+//    			
+//	    		//Updating fields with a new delimiter name
+//    			
+//	    		final Method savedMethod = methodRepo.save(method);
+//	    		
+//	    		if (saveAuditTrail)
+//    			{
+//	    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
+//	    			
+////	    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
+////							"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
+//    			}
+//	    		
+//	    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
+//	    	}	
+//			   }
+//			
+//			
+//			
+//		   else
+//		   {
+//			   //Invalid methodkey		   
+//			   if (saveAuditTrail) {				
+////					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
+////							"Edit", "Update Failed - Method Not Found", site, "", createdUser, request.getRemoteAddr());
+//	   		    }			
+//				return new ResponseEntity<>("Update Failed - Method Not Found", HttpStatus.NOT_FOUND);
+//		   }
+//		}
+//		else {
+//			//Instrument not found
+//			if (saveAuditTrail == true)
+//			{		
+////				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
+////						"Edit", "Update Failed", site, "",
+////						createdUser, request.getRemoteAddr());
+//
+//			}
+//  			return new ResponseEntity<>("Invalid Instrument", HttpStatus.NOT_FOUND);
+//		}
+//   }	
+	
 	public ResponseEntity<Object> updateMethod(final Method method, final LSSiteMaster site, final int doneByUserKey, 
 			   final String comments, final boolean saveAuditTrail, final HttpServletRequest request)
 	{	  		
@@ -213,7 +314,7 @@ public class MethodService {
 			
 		
 			if (methodByName.isPresent())
-              {
+           {
 				 
 				if(methodByName.get().getMethodkey().equals(method.getMethodkey()))
 		    	{   
@@ -252,19 +353,19 @@ public class MethodService {
 			else
 	    	{			    		
 	    		//copy of object for using 'Diffable' to compare objects
-    			final Method methodBeforeSave = new Method(methodByKey.get());
-    			
+ 			final Method methodBeforeSave = new Method(methodByKey.get());
+ 			
 	    		//Updating fields with a new delimiter name
-    			
+ 			
 	    		final Method savedMethod = methodRepo.save(method);
 	    		
 	    		if (saveAuditTrail)
-    			{
+ 			{
 	    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
 	    			
 //	    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
 //							"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
-    			}
+ 			}
 	    		
 	    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
 	    	}	
@@ -291,9 +392,10 @@ public class MethodService {
 //						createdUser, request.getRemoteAddr());
 
 			}
-  			return new ResponseEntity<>("Invalid Instrument", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Invalid Instrument", HttpStatus.NOT_FOUND);
 		}
-   }	
+}	
+	
 	/**
 	 * This method is used to delete selected Method object based on its primary key.
 	 * Need to validate that sample splitting /parsing is not done for that Method before deleting.

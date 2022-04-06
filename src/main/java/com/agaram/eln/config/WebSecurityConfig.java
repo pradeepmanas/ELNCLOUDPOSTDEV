@@ -134,7 +134,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 //		antMatchers("/").permitAll().
 		antMatchers("/User/profile/*").permitAll().
 		antMatchers("/User/Cloudprofile/*").permitAll().
-		antMatchers("/User/CloudUploadprofilepic").permitAll().
 		antMatchers("/Login/Logout").permitAll().
 		antMatchers("/Instrument/Unshareorderto").permitAll().
 		antMatchers("/User/GetUserslocal").permitAll().

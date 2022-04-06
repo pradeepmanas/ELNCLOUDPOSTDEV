@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
+import com.agaram.eln.primary.model.methodsetup.LSResultFieldValues;
 import com.agaram.eln.primary.payload.Response;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.service.fileuploaddownload.FileStorageService;
@@ -127,4 +128,12 @@ public class EvaluateParserController {
 	{
 		return parserService.insertELNResultDetails(lsresultDetails);
 	}
+	//srimathi
+//		@PostMapping("/insertLSResultFieldValues")
+//		public List<LSResultFieldValues> insertLSResultFieldValues(@RequestBody LSResultFieldValues[] objresultDetails)
+//		{
+//			return parserService.insertLSResultFieldValues(objresultDetails);
+//		}
+//		
+		
 }

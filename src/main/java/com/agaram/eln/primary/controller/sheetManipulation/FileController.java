@@ -259,7 +259,7 @@ public class FileController {
 	}
 
 	@PostMapping("/Insertsharefileby")
-	public Map<String, Object> Insertsharefileby(@RequestBody Lsfilesharedby objprotocolordersharedby) {
+	public Lsfilesharedby Insertsharefileby(@RequestBody Lsfilesharedby objprotocolordersharedby) {
 		return fileService.Insertsharefileby(objprotocolordersharedby);
 	}
 

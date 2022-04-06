@@ -6,4 +6,6 @@ import com.agaram.eln.primary.model.protocols.Protocolordervideos;
 
 public interface ProtocolordervideosRepository extends MongoRepository<Protocolordervideos, String>{
 
+	Protocolordervideos findByFileid(String fileid);
+
 }

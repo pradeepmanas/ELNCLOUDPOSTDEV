@@ -79,5 +79,7 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 
 	public Long countByusercodeNotAndUserretirestatusNotAndLssitemaster(int i, int j, LSSiteMaster objsite);
 
+	public List<LSuserMaster> findByusercodeInAndUserretirestatusNot(List<Integer> usercode, int i);
+
 
 }

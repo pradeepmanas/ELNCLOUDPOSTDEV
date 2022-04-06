@@ -50,6 +50,7 @@ import com.agaram.eln.primary.model.protocols.Protocolvideos;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 
 @RestController
@@ -980,4 +981,19 @@ public class ProtocolController {
 		return ProtocolMasterService.addProtocolOrderafterfirstofter(LSlogilabprotocoldetail);
 
 	}
+	
+	
+//	@RequestMapping(value = "/getlistofusersforworkflow")
+//	protected List<LSuserMaster> getlistofusersforworkflow(@RequestBody LSusergroup[] usergroupcode) {
+//
+//		return ProtocolMasterService.getlistofusersforworkflow(usergroupcode);
+//	}
+//	
+//	
+//	@RequestMapping(value = "/updatetimeronstep")
+//	protected LSprotocolstep updatetimeronstep(@RequestBody Map<String, Object> argObj) {
+//
+//		return ProtocolMasterService.updatetimeronstep(argObj);
+//	}
+	
 }

@@ -75,21 +75,21 @@ public class LSlogilablimsorderdetail {
 	private Integer testcode;
 	private String testname;
 	
-	//columnDefinition = "nchar(10)",
+
 	@Column(columnDefinition = "char(10)",name = "OrderFlag")
 	private String orderflag;
-	//columnDefinition = "date",
+
 	@Column(name = "CreatedTimeStamp")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdtimestamp;
-	//columnDefinition = "date",
+	
 	@Column(name = "CompletedTimeStamp")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date completedtimestamp;
-	//columnDefinition = "varchar(100)",
+
 	@Column(columnDefinition = "varchar(100)",name = "MethodCode")
 	private String methodcode;
-	//columnDefinition = "varchar(100)",
+
 	@Column(columnDefinition = "varchar(100)",name = "InstrumentCode")
 	private String instrumentcode;
 	

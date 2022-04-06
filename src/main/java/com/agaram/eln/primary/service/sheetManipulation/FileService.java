@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
-import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetVersion;
 import com.agaram.eln.primary.model.fileManipulation.SheetorderlimsRefrence;
@@ -72,8 +72,6 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingReposit
 import com.agaram.eln.primary.service.basemaster.BaseMasterService;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.masters.MasterService;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSfileRepository.class)
@@ -651,7 +649,11 @@ public class FileService {
 								objnotify.setIsnewnotification(1);
 								objnotify.setNotificationpath("/sheetcreation");
 
-								lstnotifications.add(objnotify);
+								if (!lstnotifications.contains(objnotify)) {
+
+									lstnotifications.add(objnotify);
+
+								}
 							}
 						}
 					}
@@ -681,11 +683,18 @@ public class FileService {
 								objnotify.setIsnewnotification(1);
 								objnotify.setNotificationpath("/sheetcreation");
 
-								lstnotifications.add(objnotify);
+								if (!lstnotifications.contains(objnotify)) {
+
+									lstnotifications.add(objnotify);
+
+								}
+
 							}
 						}
 					}
 				}
+
+				lstnotifications = lstnotifications.stream().distinct().collect(Collectors.toList());
 
 				LSnotificationRepository.save(lstnotifications);
 			}
@@ -1112,8 +1121,8 @@ public class FileService {
 		return objprotocolordershareto;
 	}
 
-	public Map<String, Object> Insertsharefileby(Lsfilesharedby objprotocolordersharedby) {
-		Map<String, Object> map = new HashMap<>();
+	public Lsfilesharedby Insertsharefileby(Lsfilesharedby objprotocolordersharedby) {
+	
 
 		Lsfilesharedby existingshare = LsfilesharedbyRepository
 				.findBySharebyunifiedidAndSharetounifiedidAndSharefilecode(
@@ -1126,7 +1135,7 @@ public class FileService {
 
 		LsfilesharedbyRepository.save(objprotocolordersharedby);
 
-		return map;
+		return existingshare;
 	}
 
 	public List<Lsfilesharedby> Getfilesharedbyme(Lsfilesharedby lsordersharedby) {

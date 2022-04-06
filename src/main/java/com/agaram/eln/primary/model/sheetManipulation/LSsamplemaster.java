@@ -32,13 +32,6 @@ public class LSsamplemaster {
 	@ManyToOne
 	private LSSiteMaster lssitemaster;
 
-	public LSSiteMaster getLssitemaster() {
-		return lssitemaster;
-	}
-
-	public void setLssitemaster(LSSiteMaster lssitemaster) {
-		this.lssitemaster = lssitemaster;
-	}
 	@Transient
 	private Response response;
 	
@@ -51,6 +44,20 @@ public class LSsamplemaster {
 	@ManyToOne
 	private LSuserMaster modifiedby;
 	
+	@Transient
+	LoggedUser objuser;
+	
+	@Transient
+	LSuserMaster LSuserMaster;
+	
+	public LSSiteMaster getLssitemaster() {
+		return lssitemaster;
+	}
+
+	public void setLssitemaster(LSSiteMaster lssitemaster) {
+		this.lssitemaster = lssitemaster;
+	}
+	
 	public LScfttransaction getObjmanualaudit() {
 		return objmanualaudit;
 	}
@@ -58,14 +65,7 @@ public class LSsamplemaster {
 	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
 		this.objmanualaudit = objmanualaudit;
 	}
-	@Transient
-	LoggedUser objuser;
 	
-	@Transient
-	LSuserMaster LSuserMaster;
-	
-	
-
 	public LSuserMaster getLSuserMaster() {
 		return LSuserMaster;
 	}

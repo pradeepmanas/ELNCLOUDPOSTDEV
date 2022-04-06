@@ -172,9 +172,9 @@ public class LoginService {
 		LSuserMaster objExitinguser = new LSuserMaster();
 
 		String username = objuser.getsUsername();
-		
+
 		LSSiteMaster objsiteobj = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
-		
+
 		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndLoginfrom(username,
 				objsiteobj, "0");
 
@@ -890,36 +890,11 @@ public class LoginService {
 					objuser.getObjResponse().setInformation("User Locked");
 				}
 			} else {
-				/*
-				 * LSusergroup usergroup =
-				 * LSusergroupRepository.findByusergroupname(usergroupname);
-				 * 
-				 * if(usergroup== null) { objuser.getObjResponse().setStatus(false);
-				 * objuser.getObjResponse().
-				 * setInformation("user group are not matched , contact Administrator"); return
-				 * objuser; } else { objExitinguser.setLsusergroup(usergroup);
-				 * lsuserMasterRepository.save(objExitinguser); }
-				 */
 				objuser.getObjResponse().setStatus(false);
 				objuser.getObjResponse()
 						.setInformation("Group name is Mismatched for this Username in ELN Application");
 				return objuser;
 			}
-
-			/*
-			 * String Password = AESEncryption.decrypt(objExitinguser.getPassword());
-			 * 
-			 * if(Password.equals(objClass.getPassword()) &&
-			 * objExitinguser.getUserstatus()!="Locked") {
-			 * objuser.getObjResponse().setStatus(true);
-			 * objuser.setUsername(AESEncryption.encrypt(objExitinguser.getUsername()));
-			 * objuser.setPassword(objExitinguser.getPassword()); } else
-			 * if(!Password.equals(objClass.getPassword())) {
-			 * objuser.getObjResponse().setStatus(false);
-			 * objuser.getObjResponse().setInformation("Password mismatch"); } else {
-			 * objuser.getObjResponse().setStatus(false);
-			 * objuser.getObjResponse().setInformation("User Locked"); }
-			 */
 		} else {
 			objuser.getObjResponse().setStatus(false);
 			objuser.getObjResponse().setInformation("Invalid user");
@@ -1531,6 +1506,38 @@ public class LoginService {
 		}
 
 		return objsite;
+	}
+
+	public LSuserMaster ValidateuserAndPassword(LoggedUser objuser) {
+		LSuserMaster objExitinguser = new LSuserMaster();
+		String username = objuser.getsUsername();
+		String userPassword = objuser.getsPassword();
+		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
+		objExitinguser = lSuserMasterRepository
+				.findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndUserretirestatusNot(username, objsite, "0", 1);
+
+		if (objExitinguser != null) {
+			
+			String Password = AESEncryption.decrypt(objExitinguser.getPassword());
+			
+			objExitinguser.setObjResponse(new Response());
+
+			if (Password.equals(userPassword)) {
+				objExitinguser.getObjResponse().setInformation("Valid user and password");
+				objExitinguser.getObjResponse().setStatus(true);
+			} else {
+				objExitinguser.getObjResponse().setInformation("invalid password");
+				objExitinguser.getObjResponse().setStatus(false);
+			}
+		} else {
+			objExitinguser = new LSuserMaster();
+			objExitinguser.setUserstatus("");
+			objExitinguser.setObjResponse(new Response());
+			objExitinguser.getObjResponse().setInformation("Invalid user");
+			objExitinguser.getObjResponse().setStatus(false);
+
+		}
+		return objExitinguser;
 	}
 
 }

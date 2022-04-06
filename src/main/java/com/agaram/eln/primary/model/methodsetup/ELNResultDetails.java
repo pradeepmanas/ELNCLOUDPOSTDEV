@@ -2,6 +2,7 @@ package com.agaram.eln.primary.model.methodsetup;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -96,6 +98,10 @@ public class ELNResultDetails implements Serializable, Diffable<ELNResultDetails
 	@Transient
 	LScfttransaction objsilentaudit;
 	
+	@OneToMany
+	@JoinColumn(name="resultid")
+	private List<LSResultFieldValues> lsresultfieldvalues;
+	
 	public LScfttransaction getObjsilentaudit() {
 		return objsilentaudit;
 	}
@@ -158,6 +164,15 @@ public class ELNResultDetails implements Serializable, Diffable<ELNResultDetails
 
 	public void setMethodkey(Integer methodkey) {
 		this.methodkey = methodkey;
+	}
+
+	@XmlElement	
+	public List<LSResultFieldValues> getLsresultfieldvalues() {
+		return lsresultfieldvalues;
+	}
+
+	public void setLsresultfieldvalues(List<LSResultFieldValues> lsresultfieldvalues) {
+		this.lsresultfieldvalues = lsresultfieldvalues;
 	}
 
 	@XmlElement	

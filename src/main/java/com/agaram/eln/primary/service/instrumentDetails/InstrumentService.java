@@ -2033,6 +2033,7 @@ public class InstrumentService {
 		// objfile.setFilecontent(Content);
 	}
 
+	@SuppressWarnings("unused")
 	public LSsamplefile SaveResultfile(LSsamplefile objfile) {
 
 		Integer lastversionindex = objfile.getVersionno() != null ? objfile.getVersionno() - 1 : 0;
@@ -2647,6 +2648,7 @@ public class InstrumentService {
 		elnFileattachmentsRepository.save(objorder.getELNFileAttachments());
 
 		if (islargefile == 1) {
+			@SuppressWarnings("unlikely-arg-type")
 			String filenameval = "attach_"
 					+ objorder.getBatchcode() + "_" + objorder.getLsOrderattachments()
 							.get(objorder.getLsOrderattachments().lastIndexOf(objattachment)).getAttachmentcode()

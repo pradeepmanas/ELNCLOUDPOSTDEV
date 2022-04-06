@@ -36,7 +36,6 @@ public class LoginController {
 	@Autowired
 	private LoginService loginService;
 
-
 	@GetMapping("/LoadSite")
 	public List<LSSiteMaster> loadSite(HttpServletRequest request) {
 		return loginService.loadSite();
@@ -56,7 +55,7 @@ public class LoginController {
 	public Map<String, Object> Login(@RequestBody LoggedUser objuser) throws Exception {
 		return loginService.Login(objuser);
 	}
-	
+
 	@PostMapping("/ActiveUserEntry")
 	public LSactiveUser activeUserEntry(@RequestBody LSactiveUser objsite) {
 		return loginService.activeUserEntry(objsite);
@@ -211,10 +210,14 @@ public class LoginController {
 		return rMap;
 	}
 
-	// added for notification
 	@PostMapping("/Loginnotification")
 	public Notification Loginnotification(@RequestBody Notification objNotification) throws ParseException {
 		return loginService.Loginnotification(objNotification);
 	}
-	// added for notification
+
+	@PostMapping("/ValidateuserAndPassword")
+	public LSuserMaster ValidateuserAndPassword(@RequestBody LoggedUser objuser) {
+		return loginService.ValidateuserAndPassword(objuser);
+	}
+
 }

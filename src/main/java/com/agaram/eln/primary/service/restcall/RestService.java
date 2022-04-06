@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.restcall;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 //import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
@@ -367,6 +369,7 @@ public class RestService {
 		final String url = env.getProperty("limsbaseservice.url")+Service;
 
 	    RestTemplate restTemplate = new RestTemplate();
+	    restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 	    
 	    String result = restTemplate.postForObject(url, map, String.class);
 	    
