@@ -61,7 +61,7 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 
 	public Object findByLssitemasterAndUsernameIgnoreCase(LSSiteMaster lssitemaster, String username);
 
-	public LSuserMaster findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndUserretirestatusNot(String username,
+	public List<LSuserMaster> findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndUserretirestatusNot(String username,
 			LSSiteMaster objsite, String string, int i);
 
 	public LSuserMaster findByUsernameIgnoreCaseAndLssitemasterAndLoginfrom(String username, LSSiteMaster objsite,
@@ -80,6 +80,9 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	public Long countByusercodeNotAndUserretirestatusNotAndLssitemaster(int i, int j, LSSiteMaster objsite);
 
 	public List<LSuserMaster> findByusercodeInAndUserretirestatusNot(List<Integer> usercode, int i);
+
+	public List<LSuserMaster> findByUsernameIgnoreCaseAndLoginfromAndUserretirestatusNotOrderByCreateddateDesc(
+			String username, String string, int i);
 
 
 }

@@ -927,6 +927,102 @@ update lsusergrouprightsmaster set displaytopic = 'Audit trail history' where di
 update lsusergrouprights set displaytopic = 'Audit trail configuration' where displaytopic = 'Audit Trail Configuration';
 update lsusergrouprights set displaytopic = 'Audit trail history' where displaytopic = 'Audit Trail History';
 
+delete from lsusergrouprightsmaster where modulename = 'Register Task Orders & Execute' and displaytopic in ('Assigned Orders','My Orders');
+delete from lsusergrouprights where modulename = 'Register Task Orders & Execute' and displaytopic in ('Assigned Orders','My Orders');
+
 ALTER TABLE IF Exists lsprotocolstep ADD COLUMN IF NOT EXISTS   timer jsonb;
 
 ALTER TABLE IF Exists lslogilabprotocolsteps ADD COLUMN IF NOT EXISTS   timer jsonb;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lssheetorderstructure_directorycode_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN       
+      CREATE SEQUENCE lssheetorderstructure_directorycode_seq;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.lssheetorderstructure
+(
+    directorycode bigint NOT NULL DEFAULT nextval('lssheetorderstructure_directorycode_seq'::regclass),
+    datecreated timestamp without time zone,
+    datemodified timestamp without time zone,
+    icon character varying(255) COLLATE pg_catalog."default",
+    length integer,
+    parentdircode bigint,
+    path character varying(255) COLLATE pg_catalog."default",
+    size integer,
+    CONSTRAINT lssheetorderstructure_pkey PRIMARY KEY (directorycode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lssheetorderstructure
+    OWNER to postgres;
+
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS directorycode bigint;
+ALTER TABLE IF Exists lssheetorderstructure ADD COLUMN IF NOT EXISTS directoryname character varying(255);
+
+insert into lssheetorderstructure(datecreated, datemodified, parentdircode, path, size, directoryname ) 
+values (NOW(),NOW(),-1,'Sheet/my order', 124, 'my order');
+
+update lslogilablimsorderdetail set directorycode = 1;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsresultfieldvalues_sno_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN       
+      CREATE SEQUENCE lsresultfieldvalues_sno_seq;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+
+CREATE TABLE IF NOT EXISTS public.lsresultfieldvalues
+(
+    sno integer NOT NULL DEFAULT nextval('lsresultfieldvalues_sno_seq'::regclass),
+    fieldname character varying(100) COLLATE pg_catalog."default",
+    fieldvalue character varying(100) COLLATE pg_catalog."default",
+    resseqno integer,
+    resultid integer,
+    CONSTRAINT lsresultfieldvalues_pkey PRIMARY KEY (sno),
+    CONSTRAINT fk6awbvwq8363r0pdi4dmsf6g58 FOREIGN KEY (resultid)
+        REFERENCES public.elnresultdetails (resultid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsresultfieldvalues
+    OWNER to postgres;
+    
+ALTER TABLE IF Exists elnresultdetails ADD COLUMN IF NOT EXISTS parserfieldkey integer;
+    

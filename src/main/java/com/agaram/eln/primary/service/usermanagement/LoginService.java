@@ -350,44 +350,44 @@ public class LoginService {
 		return true;
 	}
 
-	public LSuserMaster CheckUserAndPassword(LoggedUser objuser) {
-
-		LSuserMaster objExitinguser = new LSuserMaster();
-		String username = objuser.getsUsername();
+	public List<LSuserMaster>  CheckUserAndPassword(LoggedUser objuser) {
+	List<LSuserMaster> objExitinguser =new ArrayList<LSuserMaster>();
+			String username = objuser.getsUsername();
 
 		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
 		objExitinguser = lSuserMasterRepository
 				.findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndUserretirestatusNot(username, objsite, "0", 1);
 
-		if (objExitinguser != null) {
-			String Password = AESEncryption.decrypt(objExitinguser.getPassword());
-			objExitinguser.setObjResponse(new Response());
+		if (objExitinguser.size()!=0) {
+			String Password = AESEncryption.decrypt(objExitinguser.get(0).getPassword());
+			objExitinguser.get(0).setObjResponse(new Response());
 
 			if (Password == null) {
-				objExitinguser.getObjResponse().setInformation("GenerateNewPassword");
-				objExitinguser.getObjResponse().setStatus(true);
+				objExitinguser.get(0).getObjResponse().setInformation("GenerateNewPassword");
+				objExitinguser.get(0).getObjResponse().setStatus(true);
 
 			} else {
-				objExitinguser.getObjResponse().setInformation("Valid user and password exist");
-				objExitinguser.getObjResponse().setStatus(true);
+				objExitinguser.get(0).getObjResponse().setInformation("Valid user and password exist");
+				objExitinguser.get(0).getObjResponse().setStatus(true);
 			}
 		} else {
 
-			objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(username, "0");
+			objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndUserretirestatusNotOrderByCreateddateDesc(username, "0",1);
 
-			if (objExitinguser != null) {
-				objExitinguser = new LSuserMaster();
-				objExitinguser.setUserstatus("");
-				objExitinguser.setObjResponse(new Response());
-				objExitinguser.getObjResponse().setInformation("User is not present on the site.");
-				objExitinguser.getObjResponse().setStatus(false);
+			if (objExitinguser.size()!=0) {
+//				objExitinguser = new LSuserMaster();
+				objExitinguser.get(0).setUserstatus("");
+				objExitinguser.get(0).setObjResponse(new Response());
+				objExitinguser.get(0).getObjResponse().setInformation("User is not present on the site.");
+				objExitinguser.get(0).getObjResponse().setStatus(false);
 
 			} else {
-				objExitinguser = new LSuserMaster();
-				objExitinguser.setUserstatus("");
-				objExitinguser.setObjResponse(new Response());
-				objExitinguser.getObjResponse().setInformation("Invalid user");
-				objExitinguser.getObjResponse().setStatus(false);
+				LSuserMaster objExitinguser1 = new LSuserMaster();
+				objExitinguser1.setUserstatus("");
+				objExitinguser1.setObjResponse(new Response());
+				objExitinguser1.getObjResponse().setInformation("Invalid user");
+				objExitinguser1.getObjResponse().setStatus(false);
+				objExitinguser.add(objExitinguser1);
 			}
 		}
 		return objExitinguser;
@@ -935,36 +935,10 @@ public class LoginService {
 				&& lSSiteMasterRepository.findBySitenameIgnoreCaseAndIstatus(objClass.getSitename(), 1) != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
-//			silent audit
-			if (objClass.getObjsilentaudit() != null) {
-				objClass.getObjsilentaudit().setActions("Warning");
-				objClass.getObjsilentaudit().setComments(
-						objClass.getUsername().getUsername() + " " + "made attempt to create existing site name");
-				objClass.getObjsilentaudit().setTableName("LSSiteMaster");
 
-			}
-//			manual audit
-			if (objClass.getObjuser() != null) {
-				objClass.getObjmanualaudit().setActions("Warning");
-				objClass.getObjmanualaudit().setTableName("LSSiteMaster");
-				objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-
-			}
 			return objClass;
 		} else if (objClass.getSitecode() != null && objClass.getSitecode() != 1) {
-			if (objClass.getObjsilentaudit() != null) {
-				objClass.getObjsilentaudit().setTableName("LSSiteMaster");
-//	    		lscfttransactionRepository.save(objClass.getObjsilentaudit());
-			}
-
-			if (objClass.getObjuser() != null) {
-				if (objClass.getObjmanualaudit() != null) {
-//					objClass.getObjmanualaudit().setActions("Warning");
-					objClass.getObjmanualaudit().setTableName("LSSiteMaster");
-					objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-
-				}
-			}
+			
 
 			lSSiteMasterRepository.save(objClass);
 			objClass.setResponse(new Response());
@@ -985,19 +959,6 @@ public class LoginService {
 		objClass.getResponse().setStatus(true);
 		objClass.getResponse().setInformation("");
 
-		// silent AuditTrail
-		if (objClass.getObjsilentaudit() != null) {
-			objClass.getObjsilentaudit().setTableName("LSSiteMaster");
-		}
-
-		// Manual Audit
-		if (objClass.getObjuser() != null) {
-			if (objClass.getObjmanualaudit() != null) {
-				objClass.getObjmanualaudit().setTableName("LSSiteMaster");
-				objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-
-			}
-		}
 		return objClass;
 	}
 
@@ -1508,33 +1469,34 @@ public class LoginService {
 		return objsite;
 	}
 
-	public LSuserMaster ValidateuserAndPassword(LoggedUser objuser) {
-		LSuserMaster objExitinguser = new LSuserMaster();
+	public List <LSuserMaster> ValidateuserAndPassword(LoggedUser objuser) {
+		List <LSuserMaster> objExitinguser = new ArrayList<LSuserMaster>();
 		String username = objuser.getsUsername();
 		String userPassword = objuser.getsPassword();
 		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
 		objExitinguser = lSuserMasterRepository
 				.findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndUserretirestatusNot(username, objsite, "0", 1);
 
-		if (objExitinguser != null) {
+		if (objExitinguser.size()!=0) {
 			
-			String Password = AESEncryption.decrypt(objExitinguser.getPassword());
+			String Password = AESEncryption.decrypt(objExitinguser.get(0).getPassword());
 			
-			objExitinguser.setObjResponse(new Response());
+			objExitinguser.get(0).setObjResponse(new Response());
 
 			if (Password.equals(userPassword)) {
-				objExitinguser.getObjResponse().setInformation("Valid user and password");
-				objExitinguser.getObjResponse().setStatus(true);
+				objExitinguser.get(0).getObjResponse().setInformation("Valid user and password");
+				objExitinguser.get(0).getObjResponse().setStatus(true);
 			} else {
-				objExitinguser.getObjResponse().setInformation("invalid password");
-				objExitinguser.getObjResponse().setStatus(false);
+				objExitinguser.get(0).getObjResponse().setInformation("invalid password");
+				objExitinguser.get(0).getObjResponse().setStatus(false);
 			}
 		} else {
-			objExitinguser = new LSuserMaster();
-			objExitinguser.setUserstatus("");
-			objExitinguser.setObjResponse(new Response());
-			objExitinguser.getObjResponse().setInformation("Invalid user");
-			objExitinguser.getObjResponse().setStatus(false);
+			LSuserMaster objExitinguser1 = new LSuserMaster();
+			objExitinguser1.setUserstatus("");
+			objExitinguser1.setObjResponse(new Response());
+			objExitinguser1.getObjResponse().setInformation("Invalid user");
+			objExitinguser1.getObjResponse().setStatus(false);
+			objExitinguser.add(objExitinguser1);
 
 		}
 		return objExitinguser;

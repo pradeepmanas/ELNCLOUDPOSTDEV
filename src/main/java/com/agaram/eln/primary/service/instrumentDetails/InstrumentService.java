@@ -31,6 +31,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.config.TenantContext;
@@ -54,6 +55,7 @@ import com.agaram.eln.primary.model.general.OrderVersion;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.general.SheetCreation;
+import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSfields;
 import com.agaram.eln.primary.model.instrumentDetails.LSinstruments;
 import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
@@ -103,6 +105,7 @@ import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationReposi
 import com.agaram.eln.primary.repository.fileManipulation.FileimagesRepository;
 import com.agaram.eln.primary.repository.fileManipulation.FileimagestempRepository;
 import com.agaram.eln.primary.repository.fileManipulation.LSfileimagesRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSSheetOrderStructureRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSfieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlimsorderRepository;
@@ -295,6 +298,9 @@ public class InstrumentService {
 		
 	@Autowired
 	private ELNResultDetailsRepository ELNResultDetailsRepository;
+	
+	@Autowired
+	private LSSheetOrderStructureRepository lsSheetOrderStructureRepository;
 
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
@@ -1879,8 +1885,9 @@ public class InstrumentService {
 		}
 
 		if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
-			if (objupdatedorder.getLsworkflow().equals(lsworkflowRepository
-					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster()))) {
+			LSworkflow objlastworkflow = lsworkflowRepository
+					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
+			if (objlastworkflow != null && objupdatedorder.getLsworkflow().equals(objlastworkflow)) {
 				objupdatedorder.setIsFinalStep(1);
 			} else {
 				objupdatedorder.setIsFinalStep(0);
@@ -3850,5 +3857,32 @@ public class InstrumentService {
 
 		return mapObj;
 	}
+	
+	public LSSheetOrderStructure Insertnewdirectory(LSSheetOrderStructure objdir)
+	{
+		lsSheetOrderStructureRepository.save(objdir);
+		return objdir;
+	}
 
+	public List<LSSheetOrderStructure> Getfoldersfororders(LSSheetOrderStructure objdir)
+	{
+		List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
+		lstdir = lsSheetOrderStructureRepository.findAll();
+		if(lstdir != null && lstdir.size() >0)
+		{
+			lstdir.get(0).setLsorderitems(lslogilablimsorderdetailRepository.findByDirectorycodeOrderByBatchcodeDesc(lstdir.get(0).getDirectorycode()));
+		}
+		return lstdir;
+	}
+	
+	public LSlogilablimsorderdetail UpdateFolderfororder(LSlogilablimsorderdetail order)
+	{
+		lslogilablimsorderdetailRepository.updatedirectory(order.getDirectorycode(), order.getBatchcode());
+		return order;
+	}
+	
+	public List<Logilaborders> Getordersondirectory(LSSheetOrderStructure objdir)
+	{
+		return lslogilablimsorderdetailRepository.findByDirectorycodeOrderByBatchcodeDesc(objdir.getDirectorycode());
+	}
 }

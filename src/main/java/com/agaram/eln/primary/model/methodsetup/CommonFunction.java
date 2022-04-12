@@ -398,7 +398,99 @@ public class CommonFunction {
 	 * @param ignoreList [List] list  of characters from ParserIgnoreChars to be ignored in parsed data
 	 * @return list of sample data
 	 */
+//	public List<List<String>> getMvfData (final List<ParserTechnique> parsingTechniques, final String blockData,
+//			final String delimiter, final List<ParserIgnoreChars> ignoreList){
+//		final List<List<String>> splittedDataArray = splittingRawdataAsArray(blockData);
+//		
+//		List<String> rawDataBlockArray = new ArrayList<String>();
+//		for (List<String> strList :splittedDataArray){
+//			final String rowData = String.join("", strList);
+//			rawDataBlockArray.add(rowData);
+//		 }
+//
+//	    List<List<String>> dataBlock = new ArrayList<List<String>>() ;
+//	    if (parsingTechniques.size() > 0) {
+//
+//	    int actualRowEnd = 0;
+//	    int realRowEnd = 0;	 
+//        int actualColStart = parsingTechniques.get(0).getCol();
+//        int actualColEnd = parsingTechniques.get(0).getCol() + parsingTechniques.get(0).getCols();
+//        int dataBlockRowStart = parsingTechniques.get(0).getRow();      
+//	    int actualRowStart = parsingTechniques.get(1).getRow();	   
+//	    int realRowStart   = getIndex(rawDataBlockArray, parsingTechniques.get(1).getIdentificationtext(), parsingTechniques.get(0).getRows());
+//	
+//	    if (parsingTechniques.get(2).getRow() == actualRowStart) {
+//            actualRowEnd = parsingTechniques.get(2).getRow();
+//            realRowEnd = realRowStart;
+//        } 
+//	    else {
+//            actualRowEnd = parsingTechniques.get(2).getRow();
+//            realRowEnd = getIndex(rawDataBlockArray, parsingTechniques.get(2).getIdentificationtext(), parsingTechniques.get(0).getRows());
+//        }
+//	      
+//        if (parsingTechniques.size() == 4 && parsingTechniques.get(3) != null) {
+//            if (actualRowStart == realRowStart) {
+//                actualColEnd = rawDataBlockArray.get(dataBlockRowStart)
+//                		 .indexOf(parsingTechniques.get(3).getIdentificationtext());
+//            } else {
+//                int diffStartRow = realRowStart - actualRowStart;
+//                actualColEnd = rawDataBlockArray.get(dataBlockRowStart + diffStartRow)
+//                		.indexOf(parsingTechniques.get(3).getIdentificationtext());
+//            }
+//        }
+//   
+//        int row = parsingTechniques.get(0).getRow();   
+//        int rows = parsingTechniques.get(0).getRows();
+//	           
+//         if (actualRowStart == realRowStart && actualRowEnd == realRowEnd && realRowStart == realRowEnd)
+//         {
+//        	//Single value field
+//        	final int dataStartIndex = rawDataBlockArray.get(row).indexOf(parsingTechniques.get(1).getIdentificationtext().trim())
+//        								+ parsingTechniques.get(1).getIdentificationtext().length();	        	
+//        	final int dataEndIndex = rawDataBlockArray.get(row).indexOf(parsingTechniques.get(2).getIdentificationtext().trim());
+//        	
+//        	final List<String> strList = new ArrayList<String>();
+//        	final List<List<String>> strList1 = new ArrayList<List<String>>();        	
+//        	strList.add(String.join("", Arrays.asList(rawDataBlockArray.get(row).split("")).subList(dataStartIndex, dataEndIndex)).trim());
+//           	strList1.add(strList);
+//        	dataBlock = strList1;      
+//    	
+//         } 
+//         else 
+//         {
+//        	//all cases of MutiValue field and 1 single value field with different row start and row end
+//        	
+//            if (actualRowStart == realRowStart && actualRowEnd == realRowEnd) {	
+//            	     	
+//                dataBlock = getDataBlock(rawDataBlockArray, row, row+rows, actualColStart, actualColEnd, 
+//                		delimiter, parsingTechniques, ignoreList);
+//            } 
+//            else if (actualRowStart == realRowStart) {
+//                        	
+//            	if (actualRowEnd >= realRowEnd - (actualRowEnd - (row+rows))) {
+//            		dataBlock = getDataBlock(rawDataBlockArray, row, row+(realRowEnd-row), 
+//            				actualColStart, actualColEnd, delimiter, parsingTechniques, ignoreList); 
+//            	}
+//            	else {
+//            		dataBlock = getDataBlock(rawDataBlockArray, row, realRowEnd,
+//            					actualColStart, actualColEnd, delimiter, parsingTechniques, ignoreList); 
+//            	}
+//                
+//            }
+//            else 
+//            {
+//            	   	            	
+//                dataBlock = getDataBlock(rawDataBlockArray, realRowStart + (row - actualRowStart), 
+//                			realRowEnd - (actualRowEnd - (row + rows)),                		
+//                		actualColStart, actualColEnd, delimiter, parsingTechniques, ignoreList); 
+//            }
+//	       }
+//	    }
+//	    return dataBlock;
+//	}
+	
 	public List<List<String>> getMvfData (final List<ParserTechnique> parsingTechniques, final String blockData,
+
 			final String delimiter, final List<ParserIgnoreChars> ignoreList){
 		final List<List<String>> splittedDataArray = splittingRawdataAsArray(blockData);
 		
@@ -425,23 +517,40 @@ public class CommonFunction {
         } 
 	    else {
             actualRowEnd = parsingTechniques.get(2).getRow();
-            realRowEnd = getIndex(rawDataBlockArray, parsingTechniques.get(2).getIdentificationtext(), parsingTechniques.get(0).getRows());
+            //realRowEnd = getIndex(rawDataBlockArray, parsingTechniques.get(2).getIdentificationtext(), parsingTechniques.get(0).getRows());
+            realRowEnd = parsingTechniques.get(2).getRow();
         }
 	      
+	    
+        int col = parsingTechniques.get(2).getCol(); 
+        int cols = parsingTechniques.get(2).getCols(); 
+        
+        
         if (parsingTechniques.size() == 4 && parsingTechniques.get(3) != null) {
             if (actualRowStart == realRowStart) {
-                actualColEnd = rawDataBlockArray.get(dataBlockRowStart)
-                		 .indexOf(parsingTechniques.get(3).getIdentificationtext());
-            } else {
+//                actualColEnd = rawDataBlockArray.get(dataBlockRowStart)
+//                		 .indexOf(parsingTechniques.get(3).getIdentificationtext());
+            	actualColEnd = actualColEnd;
+            }
+            else if (realRowStart > actualRowStart) {
                 int diffStartRow = realRowStart - actualRowStart;
                 actualColEnd = rawDataBlockArray.get(dataBlockRowStart + diffStartRow)
                 		.indexOf(parsingTechniques.get(3).getIdentificationtext());
             }
+            //newly added scinario
+            else{
+           	 int diffStartRow = actualRowStart - realRowStart ;
+//                actualColEnd = rawDataBlockArray.get(dataBlockRowStart + diffStartRow)
+//                		.indexOf(parsingTechniques.get(3).getIdentificationtext());
+                actualColEnd =col+cols;
+           }
         }
    
         int row = parsingTechniques.get(0).getRow();   
         int rows = parsingTechniques.get(0).getRows();
 	           
+        
+        
          if (actualRowStart == realRowStart && actualRowEnd == realRowEnd && realRowStart == realRowEnd)
          {
         	//Single value field
@@ -465,6 +574,12 @@ public class CommonFunction {
                 dataBlock = getDataBlock(rawDataBlockArray, row, row+rows, actualColStart, actualColEnd, 
                 		delimiter, parsingTechniques, ignoreList);
             } 
+            //multiple fields ---- newly added scinario
+            else if (actualRowStart > realRowStart && actualRowEnd == realRowEnd) {
+            	dataBlock = getDataBlock(rawDataBlockArray, row, row+rows, actualColStart, actualColEnd, 
+                		delimiter, parsingTechniques, ignoreList);
+            }
+            
             else if (actualRowStart == realRowStart) {
                         	
             	if (actualRowEnd >= realRowEnd - (actualRowEnd - (row+rows))) {

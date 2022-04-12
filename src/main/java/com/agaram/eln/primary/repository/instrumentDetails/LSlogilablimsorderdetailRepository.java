@@ -470,8 +470,12 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	List<LSlogilablimsorderdetail> findBybatchcode(Long batchcode);
 	
+	public List<Logilaborders> findByDirectorycodeOrderByBatchcodeDesc(Long directorycode);
 
-
+	@Transactional
+	@Modifying
+	@Query("update LSlogilablimsorderdetail o set o.directorycode = ?1 where o.batchcode = ?2")
+	void updatedirectory(Long directorycode , Long batchcode);
 
 
 

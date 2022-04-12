@@ -658,13 +658,13 @@ public class MethodService {
 	 **/  
    @SuppressWarnings("unchecked")
    @Transactional
-   public ResponseEntity<Object> createCopyMethod(final HttpServletRequest request, final Map<String, Object> mapObject){
+   public ResponseEntity<Object> createCopyMethod(final HttpServletRequest request, final Map<String, Object> mapObject, final int doneByUserKey){
 	   
 	   final ObjectMapper mapper = new ObjectMapper();
 	   
 	   final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 	   final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-	   final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
+	 //  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
 	   //final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
 	   final int methodKey= (Integer) mapObject.get("methodKey");
 	   final String methodName= (String) mapObject.get("methodName");

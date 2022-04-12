@@ -27,10 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
+import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.fileManipulation.Fileimages;
 import com.agaram.eln.primary.model.fileManipulation.Fileimagestemp;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
@@ -861,5 +863,26 @@ public class InstrumentController {
 			@RequestParam("order") Long batchcode, @RequestParam("filename") String filename) throws IOException {
 		return instrumentService.UploadLimsResultFile(file, batchcode, filename);
 	}
+	
+	@RequestMapping("/Insertnewdirectory")
+	public LSSheetOrderStructure Insertnewdirectory(@RequestBody LSSheetOrderStructure objdir) {
+		return instrumentService.Insertnewdirectory(objdir);
+	}
 
+	@RequestMapping("/Getfoldersfororders")
+	public List<LSSheetOrderStructure> Getfoldersfororders(@RequestBody LSSheetOrderStructure objdir) {
+		return instrumentService.Getfoldersfororders(objdir);
+	}
+	
+	@RequestMapping("/UpdateFolderfororder")
+	public LSlogilablimsorderdetail UpdateFolderfororder(@RequestBody LSlogilablimsorderdetail order)
+	{
+		return instrumentService.UpdateFolderfororder(order);
+	}
+	
+	@RequestMapping("/Getordersondirectory")
+	public List<Logilaborders> Getordersondirectory(@RequestBody LSSheetOrderStructure objdir)
+	{
+		return instrumentService.Getordersondirectory(objdir);
+	}
 }

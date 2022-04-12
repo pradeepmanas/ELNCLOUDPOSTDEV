@@ -182,6 +182,8 @@ public class LSlogilablimsorderdetail {
 	
 	private Integer filecode;
 	
+	private Long directorycode;
+	
 	public Integer getRejected() {
 		return rejected;
 	}
@@ -698,4 +700,12 @@ public class LSlogilablimsorderdetail {
 	public void setLockedusername(String lockedusername) {
 		this.lockedusername = lockedusername;
 	}
+	public Long getDirectorycode() {
+		return directorycode;
+	}
+	public void setDirectorycode(Long directorycode) {
+		this.directorycode = directorycode;
+	}
+	
+	
 }

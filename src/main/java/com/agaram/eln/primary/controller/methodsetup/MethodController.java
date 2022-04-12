@@ -147,10 +147,14 @@ public class MethodController {
 	 * loaded. 
 	 * @return response object with copied Method entity.
 	 */
-	@PostMapping(value = "/createCopyMethod")
-	public ResponseEntity<Object> createCopyMethod(final HttpServletRequest request, 
-				@Valid @RequestBody Map<String, Object> mapObject) {	
-		 return methodService.createCopyMethod(request, mapObject);
+	  public ResponseEntity<Object> createCopyMethod(final HttpServletRequest request, 
+				@Valid @RequestBody Map<String, Object> mapObject) {
+		
+		String strUserKey = (String) mapObject.get("doneByUserKey");
+		  
+		  final int doneByUserKey = Integer.parseInt(strUserKey);
+		  
+		 return methodService.createCopyMethod(request, mapObject,doneByUserKey);
 	}
 	
 	/**

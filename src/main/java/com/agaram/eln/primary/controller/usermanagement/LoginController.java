@@ -62,7 +62,7 @@ public class LoginController {
 	}
 
 	@PostMapping("/CheckUserAndPassword")
-	public LSuserMaster CheckUserAndPassword(@RequestBody LoggedUser objuser) {
+	public List<LSuserMaster>  CheckUserAndPassword(@RequestBody LoggedUser objuser) {
 		return loginService.CheckUserAndPassword(objuser);
 	}
 
@@ -216,7 +216,7 @@ public class LoginController {
 	}
 
 	@PostMapping("/ValidateuserAndPassword")
-	public LSuserMaster ValidateuserAndPassword(@RequestBody LoggedUser objuser) {
+	public List <LSuserMaster> ValidateuserAndPassword(@RequestBody LoggedUser objuser) {
 		return loginService.ValidateuserAndPassword(objuser);
 	}
 
