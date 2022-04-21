@@ -12,4 +12,6 @@ public interface LSprotocolorderversionRepository extends JpaRepository<LSprotoc
 
 	List<LSprotocolorderversion> findByProtocolordercodeOrderByVersionnoDesc(long ipInt);
 
+	List<LSprotocolorderversion> findByProtocolordercodeAndStatus(Long protocolordercode, int i);
+
 }

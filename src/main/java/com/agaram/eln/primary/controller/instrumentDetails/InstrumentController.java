@@ -885,4 +885,10 @@ public class InstrumentController {
 	{
 		return instrumentService.Getordersondirectory(objdir);
 	}
+	
+	@RequestMapping("/UpdateFolderfororders")
+	public List<LSlogilablimsorderdetail> UpdateFolderfororder(@RequestBody LSlogilablimsorderdetail[] order)
+	{
+		return instrumentService.UpdateFolderfororder(order);
+	}
 }

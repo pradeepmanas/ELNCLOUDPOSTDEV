@@ -125,9 +125,21 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private String testname;
 	
+	@Transient
+	private String createdbyusername;
+
+	
 //	@Transient
 //	private String tenantname;
 	
+	public String getCreatedbyusername() {
+		return createdbyusername;
+	}
+
+	public void setCreatedbyusername(String createdbyusername) {
+		this.createdbyusername = createdbyusername;
+	}
+
 	public String getTestname() {
 		return testname;
 	}

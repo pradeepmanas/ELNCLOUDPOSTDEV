@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +32,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.config.TenantContext;
@@ -64,8 +64,6 @@ import com.agaram.eln.primary.model.instrumentDetails.LSresultdetails;
 import com.agaram.eln.primary.model.instrumentDetails.LsMethodFields;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
-import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
-import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
 import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
@@ -73,6 +71,8 @@ import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
+import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.ParserBlock;
 import com.agaram.eln.primary.model.methodsetup.ParserField;
@@ -85,8 +85,6 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
-import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
-
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
@@ -114,6 +112,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSresultdetailsReposi
 import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsResultlimsOrderrefrenceRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsSheetorderlimsrefrenceRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstrumentmasterRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharedbyRepository;
@@ -121,12 +120,13 @@ import com.agaram.eln.primary.repository.instrumentDetails.LsordersharetoReposit
 import com.agaram.eln.primary.repository.instrumentDetails.LsorderworkflowhistoryRepositroy;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
+import com.agaram.eln.primary.repository.methodsetup.ELNFileAttachmentsRepository;
+import com.agaram.eln.primary.repository.methodsetup.ELNResultDetailsRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserBlockRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.SubParserFieldRepository;
-import com.agaram.eln.primary.repository.methodsetup.ELNFileAttachmentsRepository;
-import com.agaram.eln.primary.repository.methodsetup.ELNResultDetailsRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSparsedparametersRespository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
@@ -137,7 +137,6 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
 import com.agaram.eln.primary.repository.templates.LsMappedTemplateRepository;
 import com.agaram.eln.primary.repository.templates.LsUnmappedTemplateRepository;
-import com.agaram.eln.primary.repository.instrumentDetails.LsResultlimsOrderrefrenceRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -3878,6 +3877,17 @@ public class InstrumentService {
 	public LSlogilablimsorderdetail UpdateFolderfororder(LSlogilablimsorderdetail order)
 	{
 		lslogilablimsorderdetailRepository.updatedirectory(order.getDirectorycode(), order.getBatchcode());
+		return order;
+	}
+	
+	public List<LSlogilablimsorderdetail> UpdateFolderfororder(LSlogilablimsorderdetail[] orderary)
+	{
+		List<LSlogilablimsorderdetail > order = Arrays.asList(orderary);
+		if(order.size()>0)
+		{
+			List<Long> lstorders = order.stream().map(LSlogilablimsorderdetail::getBatchcode).collect(Collectors.toList());
+			lslogilablimsorderdetailRepository.updatedirectory(order.get(0).getDirectorycode(), lstorders);
+		}
 		return order;
 	}
 	

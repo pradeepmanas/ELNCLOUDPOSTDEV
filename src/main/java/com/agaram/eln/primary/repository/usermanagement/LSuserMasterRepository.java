@@ -43,7 +43,7 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	 
 	 public LSuserMaster findByUsernameIgnoreCaseAndLssitemaster(String username, LSSiteMaster lssitemaster);
 	 
-	 public LSuserMaster findByUsernameIgnoreCaseAndLssitemasterAndUserretirestatusNot(String username, LSSiteMaster lssitemaster,Integer userretirestatus);
+	 public List<LSuserMaster> findByUsernameIgnoreCaseAndLssitemasterAndUserretirestatusNot(String username, LSSiteMaster lssitemaster,Integer userretirestatus);
 	 
 	 public LSuserMaster findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(String username, String loginform, LSSiteMaster lssitemaster);
 	

@@ -350,15 +350,15 @@ public class LoginService {
 		return true;
 	}
 
-	public List<LSuserMaster>  CheckUserAndPassword(LoggedUser objuser) {
-	List<LSuserMaster> objExitinguser =new ArrayList<LSuserMaster>();
-			String username = objuser.getsUsername();
+	public List<LSuserMaster> CheckUserAndPassword(LoggedUser objuser) {
+		List<LSuserMaster> objExitinguser = new ArrayList<LSuserMaster>();
+		String username = objuser.getsUsername();
 
 		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
 		objExitinguser = lSuserMasterRepository
 				.findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndUserretirestatusNot(username, objsite, "0", 1);
 
-		if (objExitinguser.size()!=0) {
+		if (objExitinguser.size() != 0) {
 			String Password = AESEncryption.decrypt(objExitinguser.get(0).getPassword());
 			objExitinguser.get(0).setObjResponse(new Response());
 
@@ -372,9 +372,10 @@ public class LoginService {
 			}
 		} else {
 
-			objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndUserretirestatusNotOrderByCreateddateDesc(username, "0",1);
+			objExitinguser = lSuserMasterRepository
+					.findByUsernameIgnoreCaseAndLoginfromAndUserretirestatusNotOrderByCreateddateDesc(username, "0", 1);
 
-			if (objExitinguser.size()!=0) {
+			if (objExitinguser.size() != 0) {
 //				objExitinguser = new LSuserMaster();
 				objExitinguser.get(0).setUserstatus("");
 				objExitinguser.get(0).setObjResponse(new Response());
@@ -938,7 +939,6 @@ public class LoginService {
 
 			return objClass;
 		} else if (objClass.getSitecode() != null && objClass.getSitecode() != 1) {
-			
 
 			lSSiteMasterRepository.save(objClass);
 			objClass.setResponse(new Response());
@@ -1469,19 +1469,27 @@ public class LoginService {
 		return objsite;
 	}
 
-	public List <LSuserMaster> ValidateuserAndPassword(LoggedUser objuser) {
-		List <LSuserMaster> objExitinguser = new ArrayList<LSuserMaster>();
+	public List<LSuserMaster> ValidateuserAndPassword(LoggedUser objuser) {
+		List<LSuserMaster> objExitinguser = new ArrayList<LSuserMaster>();
 		String username = objuser.getsUsername();
 		String userPassword = objuser.getsPassword();
 		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
-		objExitinguser = lSuserMasterRepository
-				.findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndUserretirestatusNot(username, objsite, "0", 1);
+		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndUserretirestatusNot(username,
+				objsite, 1);
 
-		if (objExitinguser.size()!=0) {
-			
-			String Password = AESEncryption.decrypt(objExitinguser.get(0).getPassword());
-			
+		if (!objExitinguser.isEmpty()) {
+
 			objExitinguser.get(0).setObjResponse(new Response());
+
+			if (objuser.getLoggedfrom() == 1) {
+
+				objExitinguser.get(0).getObjResponse().setInformation("Valid user and password");
+				objExitinguser.get(0).getObjResponse().setStatus(true);
+				return objExitinguser;
+
+			}
+
+			String Password = AESEncryption.decrypt(objExitinguser.get(0).getPassword());
 
 			if (Password.equals(userPassword)) {
 				objExitinguser.get(0).getObjResponse().setInformation("Valid user and password");

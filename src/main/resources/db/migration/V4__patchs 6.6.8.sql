@@ -1025,4 +1025,6 @@ ALTER TABLE public.lsresultfieldvalues
     OWNER to postgres;
     
 ALTER TABLE IF Exists elnresultdetails ADD COLUMN IF NOT EXISTS parserfieldkey integer;
+
+ALTER TABLE IF Exists lsprotocolorderversion ADD COLUMN IF NOT EXISTS createdby integer;
     

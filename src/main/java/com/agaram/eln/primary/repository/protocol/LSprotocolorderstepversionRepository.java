@@ -19,4 +19,6 @@ public interface LSprotocolorderstepversionRepository extends JpaRepository<LSpr
 	List<LSprotocolorderstepversion> findByProtocolordercodeAndVersionnoAndStatusOrderByVersionno(
 			Long protocolordercode, Integer versionno, int i);
 
+	int countByProtocolordercodeAndStatusAndVersionno(Long protocolordercode, int i, Integer versionno);
+
 }

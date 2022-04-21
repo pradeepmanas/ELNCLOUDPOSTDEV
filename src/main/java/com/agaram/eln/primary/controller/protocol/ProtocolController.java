@@ -50,7 +50,6 @@ import com.agaram.eln.primary.model.protocols.Protocolvideos;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 
 @RestController
@@ -273,6 +272,14 @@ public class ProtocolController {
 		objMap = ProtocolMasterService.GetProtocolTransactionDetails(LSprotocolmaster);
 		return objMap;
 	}
+	
+	@PostMapping("/GetProtocolorderVersionDetails")
+	public Map<String, Object> GetProtocolorderVersionDetails(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail) {
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		objMap = ProtocolMasterService.GetProtocolorderVersionDetails(LSlogilabprotocoldetail);
+		return objMap;
+	}
+	
 //	@RequestMapping(value="/addProtocolOrderStep")
 //	protected Map<String, Object> addProtocolOrderStep(@RequestBody Map<String, Object> argObj){
 //		Map<String, Object> objMap = new HashMap<String, Object>();

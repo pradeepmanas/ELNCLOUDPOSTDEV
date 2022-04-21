@@ -34,6 +34,16 @@ public class LSprotocolorderversion {
 	private Integer versionno;
 	
 	private String versionname;
+	
+	public Integer createdby;
+
+	public Integer getCreatedby() {
+		return createdby;
+	}
+
+	public void setCreatedby(Integer createdby) {
+		this.createdby = createdby;
+	}
 
 	public Integer getProtocolorderversioncode() {
 		return protocolorderversioncode;
