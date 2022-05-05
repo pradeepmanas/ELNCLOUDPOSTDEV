@@ -75,7 +75,7 @@ public class HibernateConfig {
     
     @Bean
 	@Primary
-	@ConfigurationProperties("app.datasource.eln.configuration")
+	@ConfigurationProperties("app.datasource.eln.hikari")
 	public DataSource elnDataSource() {
 	    return elnDataSourceProperties().initializeDataSourceBuilder()
 	            .type(HikariDataSource.class).build();

@@ -39,6 +39,9 @@ public class LSSheetOrderStructure {
     private Integer length;
     private Long parentdircode;
     
+    @Transient
+    private Long dircodetomove;
+    
 //    @OneToMany
 //	@JoinColumn(name="directorycode")
     @Transient
@@ -155,6 +158,14 @@ public class LSSheetOrderStructure {
 
 	public void setParentdircode(Long parentdircode) {
 		this.parentdircode = parentdircode;
+	}
+
+	public Long getDircodetomove() {
+		return dircodetomove;
+	}
+
+	public void setDircodetomove(Long dircodetomove) {
+		this.dircodetomove = dircodetomove;
 	}
     
     

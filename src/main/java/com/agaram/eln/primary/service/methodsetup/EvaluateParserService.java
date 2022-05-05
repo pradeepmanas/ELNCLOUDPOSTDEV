@@ -287,79 +287,171 @@ public class EvaluateParserService {
 	 * @param ignoreList [List] holding ParserIgnoreChars entity list that will be ignored in parsed data
 	 * @return map object holding field id and its parsed data
 	 */
+//	private List<MethodFieldTechnique> getFieldData(final List<MethodFieldTechnique> blockFieldList,
+//				final String blockData,
+//				final List<ParserIgnoreChars> ignoreList) {
+//		final CommonFunction commonFunction = new CommonFunction();		
+//		
+//		final List<MethodFieldTechnique> parsedFieldList = new ArrayList<MethodFieldTechnique>();
+//		for(MethodFieldTechnique methodFieldTech: blockFieldList) {
+//			
+//			final MethodFieldTechnique techData = new MethodFieldTechnique(methodFieldTech);
+//		
+//			List<List<String>> dataBlock = commonFunction.getMvfData(methodFieldTech.getParsertechniques(), blockData, 
+//				methodFieldTech.getParserfield().getMethoddelimiter().getDelimiter().getActualdelimiter(), ignoreList);
+//			
+//			if (!methodFieldTech.getSubparsertechniques().isEmpty()) {
+//				for(final SubParserTechnique subParserTechnique : methodFieldTech.getSubparsertechniques())
+//				{
+//					 if(subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("merge")){
+////	                     dataBlock = commonFunction.mergeFields(dataBlock, 0, 0, 0, 0, subParserTechnique, 0);
+//						 dataBlock = commonFunction.mergeFields(dataBlock, subParserTechnique);
+//	                 }
+//	                 else if (subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("split")){
+////	                	 dataBlock =  commonFunction.splitField(dataBlock, 0, 0, 0, 0, subParserTechnique, 0);
+//	                	 dataBlock =  commonFunction.splitField(dataBlock, subParserTechnique);	                	 
+//	                 }
+//	                 else if (subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("shift")) 
+//	                 {
+//	                	 dataBlock =  commonFunction.shiftFieldParserFunction(dataBlock, 0, 0, 0, subParserTechnique.getInputfields(), "","",0, true);
+//	                 }
+//				}
+//			
+//			}
+//			
+//			final List<String> fieldData = new ArrayList<String>();
+//			
+//			if(methodFieldTech.getFieldtype().equalsIgnoreCase("SubParserField")) {
+//				for(final SubParserField subParserField :methodFieldTech.getSubparserfields())
+//				{
+//					if (subParserField.getFieldid().equals(methodFieldTech.getFieldid()))
+//                    {               
+//                        if (subParserField.getSubparserfieldtype().equalsIgnoreCase("col")) {
+//                        	for(final List<String> rowData : dataBlock) {
+//                        		if (rowData.size() <= Integer.parseInt(subParserField.getSubparserfieldposition())){
+//                        			fieldData.add("");
+//                        		}
+//                        		else {
+//                        			fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
+//                        		}
+//                        	}
+//                        } 
+//                        else if (subParserField.getSubparserfieldtype().equalsIgnoreCase("cell")) {
+//                         	final String cellData = dataBlock.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[1]))
+//                        			.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[0]));
+//                        	fieldData.add(cellData);                        	
+//                        }
+//                    }
+//				}				
+//				techData.setParseddata(fieldData);
+//			}
+//			else
+//			{				
+//				for (List<String> dataList : dataBlock) {
+//					for (String data : dataList) {
+//						fieldData.add(data);
+//					}
+//				}
+//				techData.setParseddata(fieldData);
+//			}
+//			parsedFieldList.add(techData);
+//		}
+//		return parsedFieldList;
+//	}
+//	
 	private List<MethodFieldTechnique> getFieldData(final List<MethodFieldTechnique> blockFieldList,
-				final String blockData,
-				final List<ParserIgnoreChars> ignoreList) {
-		final CommonFunction commonFunction = new CommonFunction();		
+			final String blockData,
+			final List<ParserIgnoreChars> ignoreList) {
+	final CommonFunction commonFunction = new CommonFunction();		
+	
+	final List<MethodFieldTechnique> parsedFieldList = new ArrayList<MethodFieldTechnique>();
+	for(MethodFieldTechnique methodFieldTech: blockFieldList) {
 		
-		final List<MethodFieldTechnique> parsedFieldList = new ArrayList<MethodFieldTechnique>();
-		for(MethodFieldTechnique methodFieldTech: blockFieldList) {
-			
-			final MethodFieldTechnique techData = new MethodFieldTechnique(methodFieldTech);
+		final MethodFieldTechnique techData = new MethodFieldTechnique(methodFieldTech);
+	
+		List<List<String>> dataBlock = commonFunction.getMvfData(methodFieldTech.getParsertechniques(), blockData, 
+			methodFieldTech.getParserfield().getMethoddelimiter().getDelimiter().getActualdelimiter(), ignoreList);
 		
-			List<List<String>> dataBlock = commonFunction.getMvfData(methodFieldTech.getParsertechniques(), blockData, 
-				methodFieldTech.getParserfield().getMethoddelimiter().getDelimiter().getActualdelimiter(), ignoreList);
-			
-			if (!methodFieldTech.getSubparsertechniques().isEmpty()) {
-				for(final SubParserTechnique subParserTechnique : methodFieldTech.getSubparsertechniques())
-				{
-					 if(subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("merge")){
-//	                     dataBlock = commonFunction.mergeFields(dataBlock, 0, 0, 0, 0, subParserTechnique, 0);
-						 dataBlock = commonFunction.mergeFields(dataBlock, subParserTechnique);
-	                 }
-	                 else if (subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("split")){
-//	                	 dataBlock =  commonFunction.splitField(dataBlock, 0, 0, 0, 0, subParserTechnique, 0);
-	                	 dataBlock =  commonFunction.splitField(dataBlock, subParserTechnique);	                	 
-	                 }
-	                 else if (subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("shift")) 
-	                 {
-	                	 dataBlock =  commonFunction.shiftFieldParserFunction(dataBlock, 0, 0, 0, subParserTechnique.getInputfields(), "","",0, true);
-	                 }
-				}
-			
+		if (!methodFieldTech.getSubparsertechniques().isEmpty()) {
+			for(final SubParserTechnique subParserTechnique : methodFieldTech.getSubparsertechniques())
+			{
+				 if(subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("merge")){
+//                     dataBlock = commonFunction.mergeFields(dataBlock, 0, 0, 0, 0, subParserTechnique, 0);
+					 dataBlock = commonFunction.mergeFields(dataBlock, subParserTechnique);
+                 }
+                 else if (subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("split")){
+//                	 dataBlock =  commonFunction.splitField(dataBlock, 0, 0, 0, 0, subParserTechnique, 0);
+                	 dataBlock =  commonFunction.splitField(dataBlock, subParserTechnique);	                	 
+                 }
+                 else if (subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("shift")) 
+                 {
+                	 dataBlock =  commonFunction.shiftFieldParserFunction(dataBlock, 0, 0, 0, subParserTechnique.getInputfields(), "","",0, true);
+                 }
 			}
-			
-			final List<String> fieldData = new ArrayList<String>();
-			
-			if(methodFieldTech.getFieldtype().equalsIgnoreCase("SubParserField")) {
-				for(final SubParserField subParserField :methodFieldTech.getSubparserfields())
-				{
-					if (subParserField.getFieldid().equals(methodFieldTech.getFieldid()))
-                    {               
-                        if (subParserField.getSubparserfieldtype().equalsIgnoreCase("col")) {
-                        	for(final List<String> rowData : dataBlock) {
-                        		if (rowData.size() <= Integer.parseInt(subParserField.getSubparserfieldposition())){
-                        			fieldData.add("");
-                        		}
-                        		else {
-                        			fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
-                        		}
-                        	}
-                        } 
-                        else if (subParserField.getSubparserfieldtype().equalsIgnoreCase("cell")) {
-                         	final String cellData = dataBlock.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[1]))
-                        			.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[0]));
-                        	fieldData.add(cellData);                        	
-                        }
-                    }
-				}				
-				techData.setParseddata(fieldData);
-			}
-			else
-			{				
-				for (List<String> dataList : dataBlock) {
-					for (String data : dataList) {
-						fieldData.add(data);
-					}
-				}
-				techData.setParseddata(fieldData);
-			}
-			parsedFieldList.add(techData);
+		
 		}
-		return parsedFieldList;
+		
+		else {
+//       	 dataBlock =  commonFunction.splitField(dataBlock, 0, 0, 0, 0, subParserTechnique, 0);
+			for(final SubParserField subParserField : methodFieldTech.getSubparserfields())
+			{
+       	     dataBlock =  commonFunction.datablockspilt(dataBlock, subParserField);	  
+			}
+        }
+		
+		final List<String> fieldData = new ArrayList<String>();
+		
+		if(methodFieldTech.getFieldtype().equalsIgnoreCase("SubParserField")) {
+			for(final SubParserField subParserField :methodFieldTech.getSubparserfields())
+			{
+				if (subParserField.getFieldid().equals(methodFieldTech.getFieldid()))
+                {               
+                    if (subParserField.getSubparserfieldtype().equalsIgnoreCase("col")) {
+                    	for(final List<String> rowData : dataBlock) {
+                    		                    		
+                    		if (rowData.size() <= Integer.parseInt(subParserField.getSubparserfieldposition())){
+                    			fieldData.add("");
+                    		}
+                    		
+                    		else {
+                    			if(methodFieldTech.getSubparsertechniques().isEmpty()) {
+                    			rowData.remove(0);
+                    			fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
+                    		}
+                    			else
+                    			{
+                    				
+                    				fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
+                    			
+                    			
+                    			}
+                    		}
+                    	}
+                      }
+                    else if (subParserField.getSubparserfieldtype().equalsIgnoreCase("cell")) {
+                     	final String cellData = dataBlock.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[1]))
+                    			.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[0]));
+                    	fieldData.add(cellData);                        	
+                    }
+                }
+			}				
+			techData.setParseddata(fieldData);
+		}
+		else
+		{				
+			for (List<String> dataList : dataBlock) {
+				for (String data : dataList) {
+					fieldData.add(data);
+				}
+			}
+			techData.setParseddata(fieldData);
+		}
+		parsedFieldList.add(techData);
 	}
-	
-	
+	return parsedFieldList;
+}
+
+
 	
 
 //@Transactional

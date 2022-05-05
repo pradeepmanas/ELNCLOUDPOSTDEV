@@ -32,6 +32,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.config.TenantContext;
@@ -2013,7 +2014,11 @@ public class InstrumentService {
 	public void updateorderversioncontent(String Content, LSsamplefileversion objfile, Integer ismultitenant) {
 		if (ismultitenant == 1) {
 			CloudOrderVersion objsavefile = new CloudOrderVersion();
+			if(objfile.getFilesamplecodeversion() != null) {
 			objsavefile.setId((long) objfile.getFilesamplecodeversion());
+			}else {
+				objsavefile.setId(1);
+			}
 			objsavefile.setContent(Content);
 
 			cloudOrderVersionRepository.save(objsavefile);
@@ -3894,5 +3899,30 @@ public class InstrumentService {
 	public List<Logilaborders> Getordersondirectory(LSSheetOrderStructure objdir)
 	{
 		return lslogilablimsorderdetailRepository.findByDirectorycodeOrderByBatchcodeDesc(objdir.getDirectorycode());
+	}
+	
+	public List<LSSheetOrderStructure> Deletedirectories(LSSheetOrderStructure[] directories)
+	{
+		List<LSSheetOrderStructure> lstdirectories = Arrays.asList(directories);
+		
+		lstdirectories.forEach(structure ->{
+			if(structure.getParentdircode() == -2)
+			{
+				lsSheetOrderStructureRepository.delete(structure.getDirectorycode());
+				lslogilablimsorderdetailRepository.updateparentdirectory(structure.getDircodetomove(), structure.getDirectorycode() );
+			}
+			else
+			{
+				lsSheetOrderStructureRepository.updatedirectory(structure.getParentdircode(), structure.getPath(), structure.getDirectorycode());
+			}
+		});
+		
+		return lstdirectories;
+	}
+	
+	public LSSheetOrderStructure Movedirectory(LSSheetOrderStructure directory)
+	{
+		lsSheetOrderStructureRepository.updatedirectory(directory.getParentdircode(), directory.getPath(), directory.getDirectorycode());
+		return directory;
 	}
 }

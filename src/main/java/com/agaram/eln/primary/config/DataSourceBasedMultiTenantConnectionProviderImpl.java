@@ -57,6 +57,7 @@ public class DataSourceBasedMultiTenantConnectionProviderImpl extends AbstractDa
             map.putAll(tenantDataSource.getAll());
         }
         dataSource= map.get(tenantIdentifier) != null ? map.get(tenantIdentifier) : map.get(DEFAULT_TENANT_ID);
+        
         return dataSource;
     }
     

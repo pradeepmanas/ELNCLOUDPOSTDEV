@@ -426,14 +426,21 @@ public class UserService {
 
 			return objteam;
 		} else if (objteam.getStatus() == -1) {
-
+			List<LSprojectmaster> team = new ArrayList<LSprojectmaster>();
+			team = LSprojectmasterRepository.findByLsusersteam(objteam); 
+//			List<LSprojectmaster> findByLsusersteam(LSusersteam lsusersteam);
 			List<LSlogilablimsorderdetail> order = new ArrayList<LSlogilablimsorderdetail>();
 			List<LSprojectmaster> projcode = new ArrayList<LSprojectmaster>();
 			projcode = LSprojectmasterRepository.findByLsusersteam(objteam);
 			if(projcode.size() > 0)
 			{
 			order = LSlogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIn("N", projcode);
-			if (order.size() > 0) {
+			if(team.get(0).getStatus() == 1) {
+				objteam.setResponse(new Response());
+				objteam.getResponse().setStatus(false);
+				objteam.getResponse().setInformation("IDS_TEAMPROGRESS");	
+			}
+			else if (order.size() > 0) {
 				objteam.setResponse(new Response());
 				objteam.getResponse().setStatus(false);
 				objteam.getResponse().setInformation("IDS_TEAMINPROGRESS");
@@ -667,6 +674,7 @@ public class UserService {
 			objExitinguser.setObjResponse(new Response());
 
 			if (objuser.getIsmultitenant() == 1) {
+				if (Password.equals(objuser.getsPassword())) {
 				objExitinguser.getObjResponse().setStatus(true);
 
 				LScfttransaction manualAudit = new LScfttransaction();
@@ -682,6 +690,10 @@ public class UserService {
 				manualAudit.setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
 				manualAudit.setTransactiondate(date);
 				lscfttransactionRepository.save(manualAudit);
+				}else {
+					objExitinguser.getObjResponse().setInformation("Invalid password");
+					objExitinguser.getObjResponse().setStatus(false);
+				}
 			} else {
 				if (Password.equals(objuser.getsPassword())) {
 					objExitinguser.getObjResponse().setStatus(true);

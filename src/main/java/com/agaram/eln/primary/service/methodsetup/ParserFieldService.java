@@ -81,9 +81,15 @@ public class ParserFieldService {
 			cloneListBeforeSave	= listBeforeSave.stream().map(ParserField::new).collect(Collectors.toList());
 		}
 	
-		final List<ParserField> savedList  = parserFieldRepo.save(listToSave);
+		
+		if(!listToSave.isEmpty()) {
+			final List<ParserField> savedList  = parserFieldRepo.save(listToSave);
+			returnObject.put("ParserFieldListAfterSave", savedList);
+		}
+		
+		
 		returnObject.put("ParserFieldListBeforeSave", cloneListBeforeSave);
-		returnObject.put("ParserFieldListAfterSave", savedList);
+		
 		
 		return returnObject;
 		

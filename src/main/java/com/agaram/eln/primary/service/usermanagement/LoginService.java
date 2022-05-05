@@ -599,6 +599,9 @@ public class LoginService {
 			if (objuser.getsNewPassword().equals(objuser.getsConfirmPassword())) {
 
 				objExitinguser.setPassword(AESEncryption.encrypt(objuser.getsNewPassword()));
+				if(objuser.getPasswordexpirydate()!=null) {
+					objExitinguser.setPasswordexpirydate(objuser.getPasswordexpirydate());
+				}
 				lSuserMasterRepository.save(objExitinguser);
 
 				objectpwd.setPassword(AESEncryption.encrypt(objuser.getsNewPassword()));

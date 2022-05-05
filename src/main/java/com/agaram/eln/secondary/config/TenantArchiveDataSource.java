@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.secondary.repository.multitenant.DataSourceConfigRepository;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import com.agaram.eln.primary.config.TenantDataSource;
 import com.agaram.eln.secondary.model.multitenant.DataSourceConfig;
 
@@ -58,13 +60,22 @@ public class TenantArchiveDataSource implements Serializable {
         DataSourceConfig config = new DataSourceConfig();
         		//configRepo.findByArchivename(name);
         if (config != null) {
-            DataSourceBuilder factory = DataSourceBuilder
-                    .create().driverClassName(config.getDriverClassName())
-                    .username(config.getUsername())
-                    .password(config.getPassword())
-                    .url(config.getArchiveurl());
-            DataSource ds = factory.build();     
-            return ds;
+//            DataSourceBuilder factory = DataSourceBuilder
+//                    .create().driverClassName(config.getDriverClassName())
+//                    .username(config.getUsername())
+//                    .password(config.getPassword())
+//                    .url(config.getArchiveurl());
+//            DataSource ds = factory.build();     
+//            return ds;
+        	 HikariConfig configuration = new HikariConfig();
+             configuration.setDriverClassName(config.getDriverClassName());
+             configuration.setJdbcUrl(config.getArchiveurl());
+             configuration.setUsername(config.getUsername());
+             configuration.setPassword(config.getPassword());
+             configuration.setMaximumPoolSize(1);
+             
+             HikariDataSource dataSource = new HikariDataSource(configuration);
+             return dataSource;
         }
         return null;
     }   

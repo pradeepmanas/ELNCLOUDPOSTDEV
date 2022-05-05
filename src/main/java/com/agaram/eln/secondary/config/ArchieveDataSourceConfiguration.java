@@ -68,7 +68,7 @@ public class ArchieveDataSourceConfiguration {
 	    return new DataSourceProperties();
 	}
 	@Bean
-	@ConfigurationProperties("app.datasource.archive.configuration")
+	@ConfigurationProperties("app.datasource.archive.hikari")
 	public DataSource archiveDataSource() {
 	    return archieveDataSourceProperties().initializeDataSourceBuilder()
 	            .type(BasicDataSource.class).build();

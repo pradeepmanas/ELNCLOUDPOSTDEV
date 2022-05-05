@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 import com.agaram.eln.primary.fetchtenantsource.Datasourcemaster;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 @Primary
 @Component
@@ -74,9 +76,9 @@ public class TenantDataSource implements Serializable {
 	            DataSource dataSource = getDataSource(config.getName(), config.getArchivename());
 	            result.put(config.getName(), dataSource); 
 	            
-	            Flyway flyway = Flyway.configure().dataSource(dataSource).load();
-	            flyway.repair();
-	            flyway.migrate();
+//	            Flyway flyway = Flyway.configure().dataSource(dataSource).load();
+//	            flyway.repair();
+//	            flyway.migrate();
 	       
 	
 	        }
@@ -90,13 +92,33 @@ public class TenantDataSource implements Serializable {
     private DataSource createDataSource(String name) {
         DataSourceConfig config = configRepo.findByName(name);
         if (config != null) {
-            DataSourceBuilder factory = DataSourceBuilder
-                    .create().driverClassName(config.getDriverClassName())
-                    .username(config.getUsername())
-                    .password(config.getPassword())
-                    .url(config.getUrl());
-            DataSource ds = factory.build();     
-            return ds;
+//            DataSourceBuilder factory = DataSourceBuilder
+//                    .create().driverClassName(config.getDriverClassName())
+//                    .username(config.getUsername())
+//                    .password(config.getPassword())
+//                    .url(config.getUrl());
+//            
+//            DataSource ds = factory.build();     
+//            
+//            
+//            return ds;
+            
+            HikariConfig configuration = new HikariConfig();
+            configuration.setDriverClassName(config.getDriverClassName());
+            configuration.setJdbcUrl(config.getUrl());
+            configuration.setUsername(config.getUsername());
+            configuration.setPassword(config.getPassword());
+            configuration.setMaximumPoolSize(2);
+            configuration.setPoolName(config.getUrl());
+            // Like this you can configure multiple properties here 
+            
+        HikariDataSource dataSource = new HikariDataSource(configuration);
+        
+        Flyway flyway = Flyway.configure().dataSource(dataSource).load();
+        flyway.repair();
+        flyway.migrate();
+        
+        return dataSource;
         }
         return null;
     }   
@@ -104,13 +126,25 @@ public class TenantDataSource implements Serializable {
     private DataSource createarchiveDataSource(String name) {
         DataSourceConfig config = configRepo.findByArchivename(name);
         if (config != null) {
-            DataSourceBuilder factory = DataSourceBuilder
-                    .create().driverClassName(config.getDriverClassName())
-                    .username(config.getUsername())
-                    .password(config.getPassword())
-                    .url(config.getArchiveurl());
-            DataSource ds = factory.build();     
-            return ds;
+//            DataSourceBuilder factory = DataSourceBuilder
+//                    .create().driverClassName(config.getDriverClassName())
+//                    .username(config.getUsername())
+//                    .password(config.getPassword())
+//                    .url(config.getArchiveurl());
+//            DataSource ds = factory.build();     
+//            return ds;
+        	
+        	 HikariConfig configuration = new HikariConfig();
+             configuration.setDriverClassName(config.getDriverClassName());
+             configuration.setJdbcUrl(config.getArchiveurl());
+             configuration.setUsername(config.getUsername());
+             configuration.setPassword(config.getPassword());
+             configuration.setMaximumPoolSize(1);
+             configuration.setPoolName(config.getArchiveurl());
+             // Like this you can configure multiple properties here 
+             
+         HikariDataSource dataSource = new HikariDataSource(configuration);
+         return dataSource;
         }
         return null;
     }   

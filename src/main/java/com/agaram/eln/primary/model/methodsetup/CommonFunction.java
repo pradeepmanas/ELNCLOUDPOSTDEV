@@ -342,14 +342,14 @@ public class CommonFunction {
 	 */
 	private String replaceEOL(final String stringData) {	
 //		 return stringData
-//		            .replace("\n","â†µ")
-//		            .replace("\r", "â†µ")
-//		            .replace("\f", "â™€");
+//		            .replace("\n","Ã¢â€ Âµ")
+//		            .replace("\r", "Ã¢â€ Âµ")
+//		            .replace("\f", "Ã¢â„¢â‚¬");
 //		 
 		 return stringData
-		            .replace("\n","↵↵")
-		            .replace("\r", "↵↵")
-		            .replace("\f", "â™€");
+		            .replace("\n","â†µâ†µ")
+		            .replace("\r", "â†µâ†µ")
+		            .replace("\f", "Ã¢â„¢â‚¬");
 		 
 		
 	}
@@ -615,6 +615,42 @@ public class CommonFunction {
 	 * @param ignoreList [List] holding ParserIgnoreChars entity list that will be ignored in parsed data
 	 * @return nested list of string data containing parsed data
 	 */
+//	private  List<List<String>> getDataBlock (List<String> rawDataBlockArray, final int row, final int rows, 
+//			 final int actualColStart, final int actualColEnd, final String delimiter, 
+//			 final List<ParserTechnique> parsingTechniques,	 final List<ParserIgnoreChars> ignoreList){
+//		 
+//		 List<List<String>> outputList = new ArrayList<List<String>>();
+//		
+//		 int dataStartIndex = 0;
+//		 if (parsingTechniques.get(0).getRow() == parsingTechniques.get(1).getRow()) {
+//			 dataStartIndex = rawDataBlockArray.get(row).indexOf(parsingTechniques.get(1).getIdentificationtext().trim())
+//						+ parsingTechniques.get(1).getIdentificationtext().length();;
+//		 }
+//		 else {
+//			 dataStartIndex = actualColStart;
+//		 }
+//
+//		 for (String data:  rawDataBlockArray.subList(row, rows)) {		
+//
+//			 final int endIndex = actualColEnd <= data.length() ?actualColEnd :data.length();
+//			 if (dataStartIndex<=endIndex) {
+//			 String extractedString = data.substring(dataStartIndex, endIndex);
+//			 for (ParserIgnoreChars ignoreCharacter :ignoreList) {
+//				 extractedString = extractedString.replace(ignoreCharacter.getIgnorechars(), "");
+//			 }
+//			 String trimmedData = extractedString.trim();
+//			 
+//			 if (trimmedData.length() > 0) {
+//				 String[] str = trimmedData.split(delimiter!= "None" ? delimiter: "ChummaKizhi");
+//				 outputList.add(Arrays.asList(str));
+//			 }					
+//		 }
+//		 }
+//
+//		 return outputList;
+//     }
+	
+	
 	private  List<List<String>> getDataBlock (List<String> rawDataBlockArray, final int row, final int rows, 
 			 final int actualColStart, final int actualColEnd, final String delimiter, 
 			 final List<ParserTechnique> parsingTechniques,	 final List<ParserIgnoreChars> ignoreList){
@@ -630,25 +666,34 @@ public class CommonFunction {
 			 dataStartIndex = actualColStart;
 		 }
 
+		 
+			 
 		 for (String data:  rawDataBlockArray.subList(row, rows)) {		
 
 			 final int endIndex = actualColEnd <= data.length() ?actualColEnd :data.length();
 			 if (dataStartIndex<=endIndex) {
 			 String extractedString = data.substring(dataStartIndex, endIndex);
-			 for (ParserIgnoreChars ignoreCharacter :ignoreList) {
-				 extractedString = extractedString.replace(ignoreCharacter.getIgnorechars(), "");
-			 }
+			// for (ParserIgnoreChars ignoreCharacter :ignoreList) {
+			//	 extractedString = extractedString.replace(ignoreCharacter.getIgnorechars(), "");
+				 extractedString = extractedString.replace("↵↵", "");
+			// }
 			 String trimmedData = extractedString.trim();
 			 
 			 if (trimmedData.length() > 0) {
-				 String[] str = trimmedData.split(delimiter!= "None" ? delimiter: "ChummaKizhi");
-				 outputList.add(Arrays.asList(str));
-			 }					
+				 //String[] str = trimmedData.split(delimiter!= "None" ? delimiter: "ChummaKizhi");
+				 String[] str = trimmedData.split(".");
+				 //outputList.add(Arrays.asList(str));
+				 outputList.add(Arrays.asList(trimmedData));
+			 }		
+			 
 		 }
 		 }
 
 		 return outputList;
-     }
+    }
+	
+	
+	
 	
 //	private int forLoopMinMax(final List<Integer> rowColumnCount)  {
 //	    // let min = rowColumnCount[0] 
@@ -681,7 +726,7 @@ public class CommonFunction {
 	 * @param variableRC [String] column, row number of sub parser field position
 	 * @return nested list of string data after  applying technique
 	 */
-	public List<List<String>> mergeFields (final List<List<String>> dataBlock, final SubParserTechnique subParserTechnique)
+    public List<List<String>> mergeFields (final List<List<String>> dataBlock, final SubParserTechnique subParserTechnique)
 	{
 
 		final String delimiterChar = subParserTechnique.getMethoddelimiter().getDelimiter().getActualdelimiter();
@@ -690,28 +735,53 @@ public class CommonFunction {
 		final List<Integer> rowColumnCount =  dataBlock.stream().map((item) -> item.size()).collect(Collectors.toList());
 		Integer max = rowColumnCount.stream().max(Integer::compare).get();
 		
+		
+		int idx=0;
+		
 		for(List<String> rowValues : dataBlock) {
 			
+		
 			List<String> currentRowValues = new ArrayList<>(rowValues);
+			
+			List<String[]> splitFieldArray = currentRowValues.stream().map((item) -> item.split("\t")).collect(Collectors.toList());
+				
+			
+			
+			List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));
+			
+			List<String> splitFieldsrow = new ArrayList<>(splitFields);
+						
 			StringJoiner mergeFields = new StringJoiner(delimiterChar);
 
 			for (String extractColumnIndex : subParserTechnique.getInputfields().split(",")) {
-				mergeFields.add(rowValues.get(Integer.parseInt(extractColumnIndex)).toString());
-	        }
-
+				mergeFields.add
+				(splitFields.get
+						(Integer.parseInt(extractColumnIndex)).toString());
+			}
+			
 			if (rowValues.size() != max) {
 	            for (int i=rowValues.size(); i<max; i++) {
-	            	addToList(currentRowValues, Stream.of(" "));
+	            	addToList(splitFieldsrow, Stream.of(" "));
 	            }
 	        };
-	        addToList(currentRowValues, Stream.of(mergeFields.toString()));
-	        dataBlockWithMergedFields.add(currentRowValues);
-		}
+	        
+	        //working fine
+//	        splitFields.forEach((item) -> addToList(currentRowValues, Stream.of(mergeFields.toString())));
+//	        dataBlockWithMergedFields.add(splitFields);
 
+	        //working fine
+//	        addToList(currentRowValues, Stream.of(mergeFields.toString()));
+//	        dataBlockWithMergedFields.add(currentRowValues);			
+	  
+	        addToList(splitFieldsrow, Stream.of(mergeFields.toString()));
+	        dataBlockWithMergedFields.add(splitFieldsrow);			
+	  
+	}
 		return dataBlockWithMergedFields;
 
 	}
 	
+		
 	
 //	public List<List<String>> mergeFields (final List<List<String>> dataBlock, final int row, final int col, 
 //			final int sheetIndex, final int currentKey, final SubParserTechnique subParserTechnique, 
@@ -851,6 +921,41 @@ public class CommonFunction {
 //	    }
 //	   return dataToBind;
 //	}
+	
+/* for evaluate parser */	
+	public List<List<String>> datablockspilt (final List<List<String>> dataBlock, final SubParserField subParserField)
+	{
+
+		final String delimiterChar = subParserField.getParserfield().getMethoddelimiter().getDelimiter().getActualdelimiter();
+		List<List<String>> dataBlockWithSplittedFields = new ArrayList<List<String>>();
+		
+		final List<Integer> rowColumnCount =  dataBlock.stream().map((item) -> item.size()).collect(Collectors.toList());
+		Integer max = rowColumnCount.stream().max(Integer::compare).get();
+		
+		List<String> extractColumn = dataBlock.stream().map(item -> item.get(Integer.parseInt(subParserField.getSubparserfieldposition()))).collect(Collectors.toList());
+		List<String[]> splitFieldArray = extractColumn.stream().map((item) -> item.split(delimiterChar)).collect(Collectors.toList());
+		
+		int idx=0;
+		for(List<String> rowValues : dataBlock) {
+			
+			List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));
+			List<String> currentRowValues = new ArrayList<>(rowValues);
+			
+			if (rowValues.size() != max) {
+	            for (int i=rowValues.size(); i<max; i++) {
+	            	addToList(currentRowValues, Stream.of(" "));
+	            }
+	        };
+	        splitFields.forEach((item) -> addToList(currentRowValues, Stream.of(item)));
+			idx++;
+			dataBlockWithSplittedFields.add(currentRowValues);
+		}
+
+		return dataBlockWithSplittedFields;
+
+	}
+	
+	
 	
 	/**
 	 * This method is used to apply 'Shift' sub parsing technique to the data block

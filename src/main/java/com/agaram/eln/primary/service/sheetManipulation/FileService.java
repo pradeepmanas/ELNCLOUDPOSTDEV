@@ -922,7 +922,11 @@ public class FileService {
 	public void updatefileversioncontent(String Content, LSfileversion objfile, Integer ismultitenant) {
 		if (ismultitenant == 1) {
 			CloudSheetVersion objsavefile = new CloudSheetVersion();
-			objsavefile.setId((long) objfile.getFileversioncode());
+			if(objfile.getFileversioncode() != null) {
+				objsavefile.setId((long) objfile.getFileversioncode());	
+			}else {
+				objsavefile.setId(1);	
+			}
 			objsavefile.setContent(Content);
 			cloudSheetVersionRepository.save(objsavefile);
 		} else {

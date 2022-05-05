@@ -891,4 +891,16 @@ public class InstrumentController {
 	{
 		return instrumentService.UpdateFolderfororder(order);
 	}
+	
+	@RequestMapping("/Deletedirectories")
+	public List<LSSheetOrderStructure> Deletedirectories(@RequestBody LSSheetOrderStructure[] directories)
+	{
+		return instrumentService.Deletedirectories(directories);
+	}
+	
+	@RequestMapping("/Movedirectory")
+	public LSSheetOrderStructure Movedirectory(@RequestBody LSSheetOrderStructure directory)
+	{
+		return instrumentService.Movedirectory(directory);
+	}
 }

@@ -482,6 +482,11 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	@Modifying
 	@Query("update LSlogilablimsorderdetail o set o.directorycode = ?1 where o.batchcode in (?2)")
 	void updatedirectory(Long directorycode , List<Long> batchcode);
+	
+	@Transactional
+	@Modifying
+	@Query("update LSlogilablimsorderdetail o set o.directorycode = ?1 where o.directorycode = ?2")
+	void updateparentdirectory(Long newdirectorycode , Long olddirectorycode);
 
 	
 }
