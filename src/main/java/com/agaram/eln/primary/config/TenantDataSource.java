@@ -108,7 +108,7 @@ public class TenantDataSource implements Serializable {
             configuration.setJdbcUrl(config.getUrl());
             configuration.setUsername(config.getUsername());
             configuration.setPassword(config.getPassword());
-            configuration.setMaximumPoolSize(2);
+            configuration.setMaximumPoolSize(5);
             configuration.setPoolName(config.getUrl());
             // Like this you can configure multiple properties here 
             
