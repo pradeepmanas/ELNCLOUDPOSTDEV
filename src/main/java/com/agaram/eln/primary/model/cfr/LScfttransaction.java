@@ -85,6 +85,24 @@ public class LScfttransaction {
 //	@Transient
 //	LoggedUser objuser;
 	
+	@Transient
+	private Date fromdate;
+
+	public Date getFromdate() {
+		return fromdate;
+	}
+	public void setFromdate(Date fromdate) {
+		this.fromdate = fromdate;
+	}
+	public Date getTodate() {
+		return todate;
+	}
+	public void setTodate(Date todate) {
+		this.todate = todate;
+	}
+	@Transient
+	private Date todate;
+	
 	public String getUsername() {
 		return username;
 	}

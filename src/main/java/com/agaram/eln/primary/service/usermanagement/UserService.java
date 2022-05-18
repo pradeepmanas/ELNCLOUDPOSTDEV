@@ -674,23 +674,34 @@ public class UserService {
 			objExitinguser.setObjResponse(new Response());
 
 			if (objuser.getIsmultitenant() == 1) {
-				if (Password.equals(objuser.getsPassword())) {
-				objExitinguser.getObjResponse().setStatus(true);
 
-				LScfttransaction manualAudit = new LScfttransaction();
-				Date date = new Date();
+				if (objuser.getLoggedfrom() != null && objuser.getLoggedfrom() == 1) {
 
-				manualAudit.setModuleName("Register Task Orders & Execute");
-				manualAudit.setComments(objuser.getsComments());
-				manualAudit.setActions("E-Signature");
-				manualAudit.setSystemcoments("User Generated");
-				manualAudit.setTableName("E-Signature");
-				manualAudit.setManipulatetype("E-Signature");
-				manualAudit.setLsuserMaster(objExitinguser.getUsercode());
-				manualAudit.setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-				manualAudit.setTransactiondate(date);
-				lscfttransactionRepository.save(manualAudit);
-				}else {
+					objExitinguser.getObjResponse().setInformation("Valid user");
+					objExitinguser.getObjResponse().setStatus(true);
+					return objExitinguser;
+				}
+
+				if (Password.equals(objuser.getsPassword()) && !objuser.getsComments().isEmpty()) {
+
+					objExitinguser.getObjResponse().setStatus(true);
+
+					LScfttransaction manualAudit = new LScfttransaction();
+
+					manualAudit.setModuleName("Register Task Orders & Execute");
+					manualAudit.setComments(objuser.getsComments());
+					manualAudit.setActions("view");
+					manualAudit.setSystemcoments("User Generated");
+					manualAudit.setTableName("Lsusermaster");
+					manualAudit.setManipulatetype("view");
+					manualAudit.setLsuserMaster(objExitinguser.getUsercode());
+					manualAudit.setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+					manualAudit.setTransactiondate(objuser.getLogindate());
+					lscfttransactionRepository.save(manualAudit);
+				} else if (objuser.getsComments().isEmpty()) {
+					objExitinguser.getObjResponse().setInformation("IDS_INVALIDCOMMENTS");
+					objExitinguser.getObjResponse().setStatus(false);
+				} else {
 					objExitinguser.getObjResponse().setInformation("Invalid password");
 					objExitinguser.getObjResponse().setStatus(false);
 				}
@@ -699,17 +710,16 @@ public class UserService {
 					objExitinguser.getObjResponse().setStatus(true);
 
 					LScfttransaction manualAudit = new LScfttransaction();
-					Date date = new Date();
 
 					manualAudit.setModuleName("Register Task Orders & Execute");
 					manualAudit.setComments(objuser.getsComments());
-					manualAudit.setActions("E-Signature");
+					manualAudit.setActions("view");
 					manualAudit.setSystemcoments("User Generated");
-					manualAudit.setTableName("E-Signature");
-					manualAudit.setManipulatetype("E-Signature");
+					manualAudit.setTableName("Lsusermaster");
+					manualAudit.setManipulatetype("view");
 					manualAudit.setLsuserMaster(objExitinguser.getUsercode());
 					manualAudit.setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-					manualAudit.setTransactiondate(date);
+					manualAudit.setTransactiondate(objuser.getLogindate());
 					lscfttransactionRepository.save(manualAudit);
 				} else {
 					objExitinguser.getObjResponse().setInformation("Invalid password");
@@ -725,7 +735,7 @@ public class UserService {
 
 		return objExitinguser;
 	}
-
+	
 	public LSPasswordPolicy PasswordpolicySave(LSPasswordPolicy objpwd) {
 
 		lSpasswordpolicyRepository.save(objpwd);

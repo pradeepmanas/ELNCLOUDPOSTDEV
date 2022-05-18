@@ -864,6 +864,11 @@ public class InstrumentController {
 		return instrumentService.UploadLimsResultFile(file, batchcode, filename);
 	}
 	
+	@RequestMapping("/Insertdirectory")
+	public LSSheetOrderStructure Insertdirectory(@RequestBody LSSheetOrderStructure objdir) {
+		return instrumentService.Insertdirectory(objdir);
+	}
+	
 	@RequestMapping("/Insertnewdirectory")
 	public LSSheetOrderStructure Insertnewdirectory(@RequestBody LSSheetOrderStructure objdir) {
 		return instrumentService.Insertnewdirectory(objdir);
@@ -898,9 +903,19 @@ public class InstrumentController {
 		return instrumentService.Deletedirectories(directories);
 	}
 	
+	@RequestMapping("/getMoveDirectory")
+	public LSSheetOrderStructure getMoveDirectory(@RequestBody LSSheetOrderStructure objdir) {
+		return instrumentService.getMoveDirectory(objdir);
+	}
+	
 	@RequestMapping("/Movedirectory")
 	public LSSheetOrderStructure Movedirectory(@RequestBody LSSheetOrderStructure directory)
 	{
 		return instrumentService.Movedirectory(directory);
+	}
+	
+	@PostMapping("/getlsorderfileversion")
+	public List<LSsamplefileversion> getlsorderfileversion(@RequestBody LSsamplefile objfile) {
+		return instrumentService.getlsorderfileversion(objfile);
 	}
 }

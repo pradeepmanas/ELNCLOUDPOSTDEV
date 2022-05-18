@@ -237,7 +237,7 @@ public class AuditService {
 			while (list.size() > i) {
 				int k = 0;
 				while (userDetails.size() > k) {
-					if (list.get(i).getLsuserMaster() == userDetails.get(k).getUsercode()) {
+					if (list.get(i).getLsuserMaster()!=null  && list.get(i).getLsuserMaster().equals(userDetails.get(k).getUsercode())) {
 						String username = userDetails.get(k).getUsername();
 						list.get(i).setUsername(username);
 					}
@@ -497,4 +497,111 @@ public class AuditService {
 		return cfttransaction;
 	}
 
+	
+	@SuppressWarnings("rawtypes")
+	public List<LScfttransaction> GetCFRTransactionsdid(Map<String, Object> objCFRFilter) throws ParseException {
+		List<LScfttransaction> list = new ArrayList<LScfttransaction>();
+		LScfttransaction cfttransaction;
+
+		if (objCFRFilter.containsKey("user") && objCFRFilter.containsKey("module") && objCFRFilter.containsKey("system")
+				&& objCFRFilter.containsKey("fromdate") && objCFRFilter.containsKey("todate")) {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> objuser = (Map<String, Object>) objCFRFilter.get("user");
+			ObjectMapper objMapper = new ObjectMapper();
+			LScfttransaction lscfttransaction = objMapper.convertValue(objCFRFilter.get("LScfttransaction"),
+					LScfttransaction.class);
+			Integer Usercode = (Integer) objuser.get("usercode");
+			String module = (String) objCFRFilter.get("module");
+			@SuppressWarnings("unchecked")
+			Map<String, String> system = (Map) objCFRFilter.get("system");
+
+			String Audit = (String) system.get("Audit");
+			if (system.get("Audit").equals("All") || system.get("Audit").equals("User Generated")
+					|| system.get("Audit").equals("System Generated")) {
+				Audit = (String) system.get("Audit");
+			} else {
+				Audit = (String) system.get("name");
+			}
+			if (objCFRFilter.containsKey("objsilentaudit")) {
+
+				cfttransaction = objMapper.convertValue(objCFRFilter.get("objsilentaudit"), LScfttransaction.class);
+				LSuserMaster usercode = lSuserMasterRepository.findByusercode(
+						cfttransaction.getLsuserMaster() != null ? cfttransaction.getLsuserMaster() : null);
+				cfttransaction.setLsuserMaster(usercode.getUsercode());
+				lscfttransactionRepository.save(cfttransaction);
+
+			}
+//			Date fromdate = new SimpleDateFormat("dd/MM/yyyy").parse((String) objCFRFilter.get("fromdate"));
+//			Date todate = new SimpleDateFormat("dd/MM/yyyy").parse((String) objCFRFilter.get("todate"));
+
+			if (Usercode == -1 && module.equals("All") && Audit.equals("All")) {
+				list = lscfttransactionRepository.findByTransactiondateBetweenOrderBySerialnoDesc(
+						lscfttransaction.getFromdate(), lscfttransaction.getTodate());
+			}
+
+			else if (Usercode != -1 && module.equals("All") && Audit.equals("All"))// user code filter
+			{
+				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
+//				list = lscfttransactionRepository.findByLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(objuserselected, fromdate, todate);
+				list = lscfttransactionRepository.findByLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(
+						objuserselected.getUsercode(), lscfttransaction.getFromdate(), lscfttransaction.getTodate());
+			} else if (Usercode == -1 && !module.equals("All") && Audit.equals("All"))// module filter
+			{
+				list = lscfttransactionRepository.findByModuleNameAndTransactiondateBetweenOrderBySerialnoDesc(module,
+						lscfttransaction.getFromdate(), lscfttransaction.getTodate());
+			} else if (Usercode != -1 && !module.equals("All") && Audit.equals("All"))// user code and moduel name
+			{
+				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
+				list = lscfttransactionRepository
+						.findByModuleNameAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(module,
+								objuserselected.getUsercode(), lscfttransaction.getFromdate(),
+								lscfttransaction.getTodate());
+			}
+			// kumaresan
+			else if (Usercode == -1 && !Audit.equals("All") && module.equals("All"))// Audit type filter
+			{
+
+				list = lscfttransactionRepository.findBysystemcomentsAndTransactiondateBetweenOrderBySerialnoDesc(Audit,
+						lscfttransaction.getFromdate(), lscfttransaction.getTodate());
+			} else if (Usercode == -1 && !Audit.equals("All") && !module.equals("All"))// audit+module
+			{
+				list = lscfttransactionRepository
+						.findBysystemcomentsAndModuleNameAndTransactiondateBetweenOrderBySerialnoDesc(Audit, module,
+								lscfttransaction.getFromdate(), lscfttransaction.getTodate());
+			} else if (Usercode != -1 && !Audit.equals("All") && module.equals("All")) {
+				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
+				list = lscfttransactionRepository
+						.findBysystemcomentsAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(Audit,
+								objuserselected.getUsercode(), lscfttransaction.getFromdate(),
+								lscfttransaction.getTodate());
+			} else if (Usercode != -1 && !Audit.equals("All") && !module.equals("All")) {
+				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
+				list = lscfttransactionRepository
+						.findBysystemcomentsAndModuleNameAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(
+								Audit, module, objuserselected.getUsercode(), lscfttransaction.getFromdate(),
+								lscfttransaction.getTodate());
+			}
+		}
+
+		if (list.size() > 0) {
+			int i = 0;
+
+			List<LSuserMaster> userDetails = lSuserMasterRepository.findAll();
+
+			while (list.size() > i) {
+				int k = 0;
+				while (userDetails.size() > k) {
+					if (list.get(i).getLsuserMaster() != null
+							&& list.get(i).getLsuserMaster().equals(userDetails.get(k).getUsercode())) {
+						String username = userDetails.get(k).getUsername();
+						list.get(i).setUsername(username);
+					}
+					k++;
+				}
+				i++;
+			}
+		}
+
+		return list;
+	}
 }

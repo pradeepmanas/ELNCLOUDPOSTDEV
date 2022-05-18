@@ -537,7 +537,7 @@ public class MethodService {
 		   File file = null;
 		   final String ext = FilenameUtils.getExtension(fileName); 
 		   String rawDataText="";
-		 
+		   		   		 
 		   if (ext.equalsIgnoreCase("pdf")) {		
 		   //if (fileName.toLowerCase().endsWith(".pdf")) {
 			   //final String filePath = "uploads/"+fileName.substring(0, fileName.lastIndexOf(".")) +".txt";
@@ -572,8 +572,10 @@ public class MethodService {
 				        parser.parse();
 				        cosDoc = parser.getDocument();
 				        pdfStripper = new PDFTextStripper();
+				        pdfStripper.setSortByPosition( true );
+				              			       
 				        pdDoc = new PDDocument(cosDoc);
-				        pdfStripper.setAddMoreFormatting(true);
+				    //    pdfStripper.setAddMoreFormatting(true);
 				        pdfStripper.setWordSeparator("\t");
 				        pdfStripper.setSuppressDuplicateOverlappingText(true);
 				        Matrix matrix = new Matrix();
@@ -581,6 +583,7 @@ public class MethodService {
 				        pdfStripper.setTextLineMatrix(matrix);
 				   
 				        parsedText = pdfStripper.getText(pdDoc);
+				        
 				        
 				        if (!file.exists()) {
 				            file.createNewFile();
@@ -624,7 +627,8 @@ public class MethodService {
 	          rawDataText = new String(bytesArray, StandardCharsets.ISO_8859_1);	
 	          if (ext.equalsIgnoreCase("pdf")) {
 	          rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-	          }
+	          
+	           }
            }
            
            return rawDataText;

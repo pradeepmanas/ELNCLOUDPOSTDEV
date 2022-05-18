@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import java.util.stream.IntStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -32,7 +32,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.config.TenantContext;
@@ -289,16 +288,16 @@ public class InstrumentService {
 
 	@Autowired
 	private LSfileRepository LSfileRepository;
-	
+
 	@Autowired
 	private LSpreferencesRepository LSpreferencesRepository;
-	
+
 	@Autowired
 	private WebparserService parserService;
-		
+
 	@Autowired
 	private ELNResultDetailsRepository ELNResultDetailsRepository;
-	
+
 	@Autowired
 	private LSSheetOrderStructureRepository lsSheetOrderStructureRepository;
 
@@ -332,7 +331,7 @@ public class InstrumentService {
 			obj.put("ParserField", ParserField);
 			obj.put("SubParserField", SubParserField);
 		} else {
-			List<LSfields> Generalfields = lSfieldsRepository.findBymethodname("ID_GENERAL");
+			List<LSfields> Generalfields = lSfieldsRepository.findByisactiveAndMethodname(1, "ID_GENERAL");
 
 			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findAll();
 			List<Method> elnMethod = lsMethodRepository.findAll();
@@ -348,9 +347,9 @@ public class InstrumentService {
 			obj.put("SubParserField", SubParserField);
 		}
 
-	LSpreferences objPrefrence = LSpreferencesRepository.findBySerialno(1);
+		LSpreferences objPrefrence = LSpreferencesRepository.findBySerialno(1);
 
-	if (objPrefrence.getValuesettings().equalsIgnoreCase("Active")) {
+		if (objPrefrence.getValuesettings().equalsIgnoreCase("Active")) {
 
 			obj.put("Methods", parserService.getwebparsemethods());
 			obj.put("Instruments", parserService.getwebparserInstruments());
@@ -503,6 +502,9 @@ public class InstrumentService {
 					&& objorder.getLsprojectmaster().getLsusersteam() != null) {
 				LSusersteam objteam = lsusersteamRepository
 						.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode());
+
+				LSuserMaster obj = lsuserMasterRepository.findByusercode(objorder.getObjLoggeduser().getUsercode());
+
 				if (objteam.getLsuserteammapping() != null && objteam.getLsuserteammapping().size() > 0) {
 					String Details = "";
 					String Notifiction = "";
@@ -545,8 +547,7 @@ public class InstrumentService {
 							if (objorder.getLsuserMaster().getUsercode() != lstusers.get(i).getLsuserMaster()
 									.getUsercode()) {
 								LSnotification objnotify = new LSnotification();
-								objnotify.setNotifationfrom(objorder.getLsuserMaster());
-								objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
+								objnotify.setNotifationfrom(obj);
 								objnotify.setNotificationdate(objorder.getCreatedtimestamp());
 								objnotify.setNotification(Notifiction);
 								objnotify.setNotificationdetils(Details);
@@ -560,7 +561,8 @@ public class InstrumentService {
 						lsnotificationRepository.save(lstnotifications);
 					} else {
 						LSnotification objnotify = new LSnotification();
-						objnotify.setNotifationfrom(objorder.getLsuserMaster());
+//						objnotify.setNotifationfrom(objorder.getLsuserMaster());
+						objnotify.setNotifationfrom(obj);
 						objnotify.setNotifationto(objorder.getAssignedto());
 						objnotify.setNotificationdate(objorder.getCreatedtimestamp());
 						objnotify.setNotification(Notifiction);
@@ -580,6 +582,9 @@ public class InstrumentService {
 		try {
 			String Details = "";
 			String Notifiction = "";
+
+			LSuserMaster obj = lsuserMasterRepository.findByusercode(objorder.getObjLoggeduser().getUsercode());
+
 			if (objorder.getApprovelstatus() != null) {
 				LSusersteam objteam = lsusersteamRepository
 						.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode());
@@ -595,7 +600,8 @@ public class InstrumentService {
 				int perviousworkflowcode = previousworkflow != null ? previousworkflow.getWorkflowcode() : -1;
 				String previousworkflowname = previousworkflow != null ? previousworkflow.getWorkflowname() : "";
 
-				if (previousworkflowname.equals(objorder.getLsworkflow().getWorkflowname())) {
+				if (previousworkflowname.equals(objorder.getLsworkflow().getWorkflowname())
+						&& objorder.getApprovelstatus() == 1) {
 					Notifiction = "ORDERFINALAPPROVAL";
 				}
 
@@ -610,9 +616,9 @@ public class InstrumentService {
 				for (int i = 0; i < lstusers.size(); i++) {
 					if (objorder.getObjLoggeduser().getUsercode() != lstusers.get(i).getLsuserMaster().getUsercode()) {
 						LSnotification objnotify = new LSnotification();
-						objnotify.setNotifationfrom(objorder.getLsuserMaster());
+						objnotify.setNotifationfrom(obj);
 						objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
-						objnotify.setNotificationdate(objorder.getCreatedtimestamp());
+						objnotify.setNotificationdate(objorder.getModifidate());
 						objnotify.setNotification(Notifiction);
 						objnotify.setNotificationdetils(Details);
 						objnotify.setIsnewnotification(1);
@@ -1970,53 +1976,53 @@ public class InstrumentService {
 		return objupdatedorder;
 	}
 
-	//parser
-	
-		public Map<String, Object> GetResults(LSlogilablimsorderdetail objorder) {
-			Map<String, Object> mapOrders = new HashMap<String, Object>();
-			
-			List<LSresultdetails> lsResults = new ArrayList<LSresultdetails>();
-			List<LSlimsorder> lsLogilaborders = lslimsorderRepository.findBybatchid(objorder.getBatchid());
-			List<String> lsorderno = new ArrayList<String>();
+	// parser
 
-			if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
-				int i = 0;
+	public Map<String, Object> GetResults(LSlogilablimsorderdetail objorder) {
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
 
-				while (lsLogilaborders.size() > i) {
-					lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
-					i++;
-				}
+		List<LSresultdetails> lsResults = new ArrayList<LSresultdetails>();
+		List<LSlimsorder> lsLogilaborders = lslimsorderRepository.findBybatchid(objorder.getBatchid());
+		List<String> lsorderno = new ArrayList<String>();
+
+		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
+			int i = 0;
+
+			while (lsLogilaborders.size() > i) {
+				lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
+				i++;
 			}
-			lsResults = lsresultdetailsRepository.findBylimsreferencecodeIn(lsorderno);
-			
-			mapOrders.put("SDMSResults", lsResults);
-
-			
-			List<ELNResultDetails> ELNResults = new ArrayList<ELNResultDetails>();
-			List<LSlogilablimsorderdetail> lslogilablimsorderdetail = lslogilablimsorderdetailRepository.findBybatchcode(objorder.getBatchcode());
-			List<Long> batchcode = new ArrayList<Long>();
-
-			if (lslogilablimsorderdetail != null && lslogilablimsorderdetail.size() > 0) {
-				int i = 0;
-
-				while (lslogilablimsorderdetail.size() > i) {
-					batchcode.add(lslogilablimsorderdetail.get(i).getBatchcode());
-					i++;
-				}
-			}
-			ELNResults = ELNResultDetailsRepository.findBybatchcode(batchcode);
-			
-			mapOrders.put("ELNResults", ELNResults);
-			
-			return mapOrders;
 		}
+		lsResults = lsresultdetailsRepository.findBylimsreferencecodeIn(lsorderno);
+
+		mapOrders.put("SDMSResults", lsResults);
+
+		List<ELNResultDetails> ELNResults = new ArrayList<ELNResultDetails>();
+		List<LSlogilablimsorderdetail> lslogilablimsorderdetail = lslogilablimsorderdetailRepository
+				.findBybatchcode(objorder.getBatchcode());
+		List<Long> batchcode = new ArrayList<Long>();
+
+		if (lslogilablimsorderdetail != null && lslogilablimsorderdetail.size() > 0) {
+			int i = 0;
+
+			while (lslogilablimsorderdetail.size() > i) {
+				batchcode.add(lslogilablimsorderdetail.get(i).getBatchcode());
+				i++;
+			}
+		}
+		ELNResults = ELNResultDetailsRepository.findBybatchcode(batchcode);
+
+		mapOrders.put("ELNResults", ELNResults);
+
+		return mapOrders;
+	}
 
 	public void updateorderversioncontent(String Content, LSsamplefileversion objfile, Integer ismultitenant) {
 		if (ismultitenant == 1) {
 			CloudOrderVersion objsavefile = new CloudOrderVersion();
-			if(objfile.getFilesamplecodeversion() != null) {
-			objsavefile.setId((long) objfile.getFilesamplecodeversion());
-			}else {
+			if (objfile.getFilesamplecodeversion() != null) {
+				objsavefile.setId((long) objfile.getFilesamplecodeversion());
+			} else {
 				objsavefile.setId(1);
 			}
 			objsavefile.setContent(Content);
@@ -2047,9 +2053,11 @@ public class InstrumentService {
 	@SuppressWarnings("unused")
 	public LSsamplefile SaveResultfile(LSsamplefile objfile) {
 
-		Integer lastversionindex = objfile.getVersionno() != null ? objfile.getVersionno() - 1 : 0;
+		List<LSsamplefileversion> a = objfile.getLssamplefileversion();
+		Integer target = objfile.getVersionno();
 
-//		Integer lastversionindex = objfile.getVersionno() != null ? objfile.getVersionno() : 0;
+		Integer lastversionindex = IntStream.range(0, a.size()).filter(i -> target.equals(a.get(i).getVersionno()))
+				.findFirst().orElse(0);
 
 		boolean versionexist = true;
 		if (objfile.getLssamplefileversion().size() <= 0) {
@@ -2060,9 +2068,7 @@ public class InstrumentService {
 			lsversion.setVersionno(1);
 			lsversion.setBatchcode(objfile.getBatchcode());
 			lsversion.setTestid(objfile.getTestid());
-//			lsversion.setCreatedate(objfile.getCreatedate());
 			lsversion.setCreateby(objfile.getCreateby());
-//			lsversion.setModifieddate(objfile.getModifieddate());
 			lsversion.setModifiedby(objfile.getModifiedby());
 			objfile.getLssamplefileversion().add(lsversion);
 
@@ -3444,15 +3450,16 @@ public class InstrumentService {
 
 	public Map<String, Object> Getinitialorders(LSlogilablimsorderdetail objorder) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
-			mapOrders.put("orders", Getadministratororder(objorder));
-			mapOrders.put("ordercount", lslogilablimsorderdetailRepository.count());
-		} else {
-			mapOrders.put("orders", Getuserorder(objorder));
-			mapOrders.put("ordercount", lslogilablimsorderdetailRepository
-					.countByLsprojectmasterIn(objorder.getLsuserMaster().getLstproject()));
+		if (objorder.getLsuserMaster() != null && objorder.getLsuserMaster().getUsername() != null) {
+			if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
+				mapOrders.put("orders", Getadministratororder(objorder));
+				mapOrders.put("ordercount", lslogilablimsorderdetailRepository.count());
+			} else {
+				mapOrders.put("orders", Getuserorder(objorder));
+				mapOrders.put("ordercount", lslogilablimsorderdetailRepository
+						.countByLsprojectmasterIn(objorder.getLsuserMaster().getLstproject()));
+			}
 		}
-
 		return mapOrders;
 	}
 
@@ -3861,68 +3868,122 @@ public class InstrumentService {
 
 		return mapObj;
 	}
-	
-	public LSSheetOrderStructure Insertnewdirectory(LSSheetOrderStructure objdir)
-	{
+
+	public LSSheetOrderStructure Insertdirectory(LSSheetOrderStructure objdir) {
+		Response objResponse = new Response();
+		LSSheetOrderStructure lstdir = null;
+		if (objdir.getDirectorycode() != null) {
+			lstdir = lsSheetOrderStructureRepository.findByDirectorycodeAndParentdircodeAndDirectorynameNot(
+					objdir.getDirectorycode(), objdir.getParentdircode(), objdir.getDirectoryname());
+		} else {
+			lstdir = lsSheetOrderStructureRepository.findByParentdircodeAndDirectoryname(objdir.getParentdircode(),
+					objdir.getDirectoryname());
+		}
+		if (lstdir != null) {
+			objResponse.setStatus(false);
+			objResponse.setInformation("IDS_FolderExist");
+		} else {
+			objResponse.setStatus(true);
+			objResponse.setInformation("IDS_FolderAdded");
+		}
+		objdir.setResponse(objResponse);
+		return objdir;
+	}
+
+	public LSSheetOrderStructure Insertnewdirectory(LSSheetOrderStructure objdir) {
 		lsSheetOrderStructureRepository.save(objdir);
 		return objdir;
 	}
 
-	public List<LSSheetOrderStructure> Getfoldersfororders(LSSheetOrderStructure objdir)
-	{
+	public List<LSSheetOrderStructure> Getfoldersfororders(LSSheetOrderStructure objdir) {
 		List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 		lstdir = lsSheetOrderStructureRepository.findAll();
-		if(lstdir != null && lstdir.size() >0)
-		{
-			lstdir.get(0).setLsorderitems(lslogilablimsorderdetailRepository.findByDirectorycodeOrderByBatchcodeDesc(lstdir.get(0).getDirectorycode()));
+		if (lstdir != null && lstdir.size() > 0) {
+			lstdir.get(0).setLsorderitems(lslogilablimsorderdetailRepository
+					.findByDirectorycodeOrderByBatchcodeDesc(lstdir.get(0).getDirectorycode()));
 		}
 		return lstdir;
 	}
-	
-	public LSlogilablimsorderdetail UpdateFolderfororder(LSlogilablimsorderdetail order)
-	{
+
+	public LSlogilablimsorderdetail UpdateFolderfororder(LSlogilablimsorderdetail order) {
 		lslogilablimsorderdetailRepository.updatedirectory(order.getDirectorycode(), order.getBatchcode());
 		return order;
 	}
-	
-	public List<LSlogilablimsorderdetail> UpdateFolderfororder(LSlogilablimsorderdetail[] orderary)
-	{
-		List<LSlogilablimsorderdetail > order = Arrays.asList(orderary);
-		if(order.size()>0)
-		{
-			List<Long> lstorders = order.stream().map(LSlogilablimsorderdetail::getBatchcode).collect(Collectors.toList());
+
+	public List<LSlogilablimsorderdetail> UpdateFolderfororder(LSlogilablimsorderdetail[] orderary) {
+		List<LSlogilablimsorderdetail> order = Arrays.asList(orderary);
+		if (order.size() > 0) {
+			List<Long> lstorders = order.stream().map(LSlogilablimsorderdetail::getBatchcode)
+					.collect(Collectors.toList());
 			lslogilablimsorderdetailRepository.updatedirectory(order.get(0).getDirectorycode(), lstorders);
 		}
 		return order;
 	}
-	
-	public List<Logilaborders> Getordersondirectory(LSSheetOrderStructure objdir)
-	{
+
+	public List<Logilaborders> Getordersondirectory(LSSheetOrderStructure objdir) {
 		return lslogilablimsorderdetailRepository.findByDirectorycodeOrderByBatchcodeDesc(objdir.getDirectorycode());
 	}
-	
-	public List<LSSheetOrderStructure> Deletedirectories(LSSheetOrderStructure[] directories)
-	{
+
+	public List<LSSheetOrderStructure> Deletedirectories(LSSheetOrderStructure[] directories) {
 		List<LSSheetOrderStructure> lstdirectories = Arrays.asList(directories);
-		
-		lstdirectories.forEach(structure ->{
-			if(structure.getParentdircode() == -2)
-			{
+
+		lstdirectories.forEach(structure -> {
+			if (structure.getParentdircode() == -2) {
 				lsSheetOrderStructureRepository.delete(structure.getDirectorycode());
-				lslogilablimsorderdetailRepository.updateparentdirectory(structure.getDircodetomove(), structure.getDirectorycode() );
-			}
-			else
-			{
-				lsSheetOrderStructureRepository.updatedirectory(structure.getParentdircode(), structure.getPath(), structure.getDirectorycode());
+				lslogilablimsorderdetailRepository.updateparentdirectory(structure.getDircodetomove(),
+						structure.getDirectorycode());
+			} else {
+				lsSheetOrderStructureRepository.updatedirectory(structure.getParentdircode(), structure.getPath(),
+						structure.getDirectorycode(), structure.getDirectoryname());
 			}
 		});
-		
+
 		return lstdirectories;
 	}
-	
-	public LSSheetOrderStructure Movedirectory(LSSheetOrderStructure directory)
-	{
-		lsSheetOrderStructureRepository.updatedirectory(directory.getParentdircode(), directory.getPath(), directory.getDirectorycode());
+
+	public LSSheetOrderStructure getMoveDirectory(LSSheetOrderStructure objdir) {
+		Response objResponse = new Response();
+		LSSheetOrderStructure lstdir = null;
+		String dir = objdir.getDirectoryname();
+		if (objdir.getDirectorycode() != null) {
+			lstdir = lsSheetOrderStructureRepository.findByDirectorycodeAndParentdircodeAndDirectorynameNot(
+					objdir.getDirectorycode(), objdir.getParentdircode(), objdir.getDirectoryname());
+		} else {
+			lstdir = lsSheetOrderStructureRepository.findByParentdircodeAndDirectoryname(objdir.getParentdircode(),
+					objdir.getDirectoryname());
+		}
+		while (lstdir != null) {
+			if (dir.charAt(dir.length() - 1) == ')') {
+				char temp = dir.charAt(dir.length() - 2);
+				int n = Character.getNumericValue(temp);
+				n = n + 1;
+				dir = dir.substring(0, dir.length() - 2) + n + dir.substring(dir.length() - 1);
+				objdir.setDirectoryname(dir);
+			} else {
+				dir = dir + " (2)";
+				objdir.setDirectoryname(dir);
+			}
+			lstdir = lsSheetOrderStructureRepository.findByParentdircodeAndDirectoryname(objdir.getParentdircode(),
+					objdir.getDirectoryname());
+
+		}
+		objdir.setResponse(objResponse);
+		return objdir;
+	}
+
+	public LSSheetOrderStructure Movedirectory(LSSheetOrderStructure directory) {
+		lsSheetOrderStructureRepository.updatedirectory(directory.getParentdircode(), directory.getPath(),
+				directory.getDirectorycode(), directory.getDirectoryname());
 		return directory;
+	}
+
+	public List<LSsamplefileversion> getlsorderfileversion(LSsamplefile objfile) {
+		List<LSsamplefileversion> objList = new ArrayList<LSsamplefileversion>();
+		if (objfile.getFilesamplecode() != null) {
+
+			objList = lssamplefileversionRepository.findByFilesamplecodeOrderByVersionnoDesc(objfile);
+
+		}
+		return objList;
 	}
 }

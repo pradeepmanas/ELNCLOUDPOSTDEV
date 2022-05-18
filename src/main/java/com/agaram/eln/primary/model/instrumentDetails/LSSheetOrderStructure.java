@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
+import com.agaram.eln.primary.model.general.Response;
 
 @Entity
 @Table(name = "LSSheetOrderStructure")
@@ -166,6 +167,14 @@ public class LSSheetOrderStructure {
 
 	public void setDircodetomove(Long dircodetomove) {
 		this.dircodetomove = dircodetomove;
+	}
+	@Transient
+	private Response response;
+	public Response getResponse() {
+		return response;
+	}
+	public void setResponse(Response response) {
+		this.response = response;
 	}
     
     

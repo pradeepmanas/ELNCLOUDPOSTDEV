@@ -258,4 +258,10 @@ public class AuditTrailController {
 			return rMap;
 		}
 	}
+	
+	@PostMapping("/GetCFRTransactionsdid")
+	public List<LScfttransaction> GetCFRTransactionsdid(@RequestBody Map<String, Object> objCFRFilter)
+			throws ParseException {
+		return auditService.GetCFRTransactionsdid(objCFRFilter);
+	}
 }

@@ -11,4 +11,6 @@ public interface LSfieldsRepository extends JpaRepository<LSfields, Integer> {
 	public List<LSfields> findByisactive(Integer isactive);
 
 	public List<LSfields> findBymethodname(String methodname);
+
+	public List<LSfields> findByisactiveAndMethodname(int i, String string);
 }

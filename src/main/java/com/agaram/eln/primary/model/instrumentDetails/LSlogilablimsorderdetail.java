@@ -74,7 +74,17 @@ public class LSlogilablimsorderdetail {
 	
 	private Integer testcode;
 	private String testname;
+
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	Date modifidate;
 	
+	public Date getModifidate() {
+		return modifidate;
+	}
+	public void setModifidate(Date modifidate) {
+		this.modifidate = modifidate;
+	}
 
 	@Column(columnDefinition = "char(10)",name = "OrderFlag")
 	private String orderflag;
@@ -180,6 +190,16 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	private Integer rejected;
 	
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	Date modifidate;
+	
+	public Date getModifidate() {
+		return modifidate;
+	}
+	public void setModifidate(Date modifidate) {
+		this.modifidate = modifidate;
+	}
 	private Integer filecode;
 	
 	private Long directorycode;

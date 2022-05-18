@@ -279,6 +279,12 @@ public class MethodDelimiterService {
 		   
 		   if (parserFieldList.isEmpty() && subParserTechList.isEmpty()) {
 			   //copy of object for using 'Diffable' to compare objects
+			   
+			   if(methodDelimiterKey == 1) {
+				   return new ResponseEntity<>("Delete Failed -", HttpStatus.LOCKED);
+			   }
+			   else {
+			   
 			   final MethodDelimiter delimitersBeforeSave = new MethodDelimiter(delimiter); 
 	
 			   //Its not associated in transaction
@@ -296,6 +302,7 @@ public class MethodDelimiterService {
 			   
 			   return new ResponseEntity<>(savedDelimiters, HttpStatus.OK);  
 		   }
+		 }
 		   else {
 			   //Associated with ParserField or SubParserTechnique
 			   if (saveAuditTrial)
@@ -320,7 +327,7 @@ public class MethodDelimiterService {
 			return new ResponseEntity<>("Delete Failed - MethodDelimiter Not Found", HttpStatus.NOT_FOUND);
 	   }
   }  
-	  
+  
 	/**
 	 * This method is used to retrieve the 'Users' details based on the
 	 * input primary key- userKey.
