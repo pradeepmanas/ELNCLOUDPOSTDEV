@@ -96,8 +96,10 @@ public class MethodDelimiterController {
 		  String strUserKey = (String) mapObject.get("doneByUserKey");
 		  
 		  final int doneByUserKey = Integer.parseInt(strUserKey);
+
+		  final MethodDelimiter otherdetails = mapper.convertValue(mapObject.get("otherdetails"), MethodDelimiter.class);
 		  
-		  return methodDelimiterService.deleteMethodDelimiter(methodDelimiterKey, site, comments, doneByUserKey, saveAuditTrail,  request);
+		  return methodDelimiterService.deleteMethodDelimiter(methodDelimiterKey, site, comments, doneByUserKey, saveAuditTrail,  request , otherdetails);
 	  }
 
 }

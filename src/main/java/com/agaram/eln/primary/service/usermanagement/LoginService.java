@@ -167,7 +167,7 @@ public class LoginService {
 //    }};
 
 	@SuppressWarnings("unused")
-	public Map<String, Object> Login(LoggedUser objuser) throws Exception {
+	public Map<String, Object> Login(LoggedUser objuser) {
 		Map<String, Object> obj = new HashMap<>();
 		LSuserMaster objExitinguser = new LSuserMaster();
 

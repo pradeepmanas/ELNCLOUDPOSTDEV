@@ -152,15 +152,7 @@ public class LSfile {
 	@Transient
 	private Integer ismultitenant;
 	
-	@Transient
-	private Boolean isnewsheet;
-	
-	public Boolean getIsnewsheet() {
-		return isnewsheet;
-	}
-	public void setIsnewsheet(Boolean isnewsheet) {
-		this.isnewsheet = isnewsheet;
-	}
+
 	public Response getResponse() {
 		return response;
 	}

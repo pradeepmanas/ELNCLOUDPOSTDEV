@@ -44,4 +44,6 @@ public interface DelimiterRepository extends JpaRepository<Delimiter, Integer>{
 	 * @return delimiter entity based on delimiterkey
 	 */
 	Optional<Delimiter> findByDelimiterkeyAndStatus(final int delimterKey, final int status);
+
+	Optional<Delimiter> findByActualdelimiterAndStatus(String actualdelimiter, int i);
 }

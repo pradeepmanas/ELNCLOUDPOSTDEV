@@ -1,4 +1,6 @@
 package com.agaram.eln.primary.model.methodsetup;
+import javax.persistence.Transient;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -62,14 +64,18 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	@Range(min=-1, max=1)
 	@Column(name = "status")
 	private int status=1;	
-
+	
+	@Transient
+	private String username;
+	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "usercode", nullable = false)
 	private LSuserMaster createdby;
 	
 	@Column(name = "createddate")
 	private Date createddate;
-
+	
+	
 	@XmlAttribute	
 	public Integer getMethoddelimiterkey() {
 		return methoddelimiterkey;
@@ -124,7 +130,15 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	public void setCreateddate(Date createddate) {
 		this.createddate = createddate;
 	}
-	
+		
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -136,6 +150,7 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	       .append("status",this.status, obj.status)
 	       .append("createdby", this.createdby.getUsername(), obj.createdby.getUsername())
 	       .append("createddate", this.createddate, obj.createddate)
+	       .append("username", this.username, obj.username)
 	       .build();
 	}
 
@@ -152,6 +167,7 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 		this.status = methodDelimiter.status;
 		this.createdby = methodDelimiter.createdby;
 		this.createddate = methodDelimiter.createddate;
+		this.username = methodDelimiter.username;
 	}
 	
 	/**

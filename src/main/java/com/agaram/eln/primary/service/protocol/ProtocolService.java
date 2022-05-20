@@ -1215,8 +1215,10 @@ public class ProtocolService {
 				newProtocolMasterObj.setStatus((Integer) argObj.get("status"));
 				newProtocolMasterObj.setCreatedby((Integer) argObj.get("createdby"));
 				newProtocolMasterObj.setIsmultitenant((Integer) argObj.get("ismultitenant"));
-
-				newProtocolMasterObj.setCreatedate(new Date());
+				
+		
+				LSprotocolmaster obj =objMapper.convertValue(argObj.get("LSprotocolmaster"),LSprotocolmaster.class );
+				newProtocolMasterObj.setCreatedate(obj.getCreatedate());
 				newProtocolMasterObj.setLssitemaster(LScfttransactionobj.getLssitemaster());
 				newProtocolMasterObj.setCreatedbyusername(LsuserMasterObj.getUsername());
 				newProtocolMasterObj.setVersionno(1);

@@ -62,7 +62,7 @@ public class LoginController {
 	}
 
 	@PostMapping("/CheckUserAndPassword")
-	public List<LSuserMaster>  CheckUserAndPassword(@RequestBody LoggedUser objuser) {
+	public List<LSuserMaster>  CheckUserAndPassword(@RequestBody LoggedUser objuser)throws Exception {
 		return loginService.CheckUserAndPassword(objuser);
 	}
 

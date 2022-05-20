@@ -118,6 +118,8 @@ public class DelimiterController {
 		  
 		  final int doneByUserKey = Integer.parseInt(strUserKey);
 		  
-		  return delimitersService.deleteDelimters(delimiterKey, site, comments, doneByUserKey, saveAuditTrail, request);
+		  final Delimiter otherdetails = mapper.convertValue(mapObject.get("otherdetails"), Delimiter.class);
+	  		  
+		  return delimitersService.deleteDelimters(delimiterKey, site, comments, doneByUserKey, saveAuditTrail, request,otherdetails);
 	  }
 }
