@@ -34,7 +34,7 @@ public class FileDownloadController {
     private FileStorageService fileStorageService;
 
     @GetMapping("/downloadFile/{fileName:.+}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request)throws Exception {
         // Load file as Resource
         Resource resource = fileStorageService.loadFileAsResource(fileName);
 

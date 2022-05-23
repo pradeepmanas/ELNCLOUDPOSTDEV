@@ -33,7 +33,7 @@ public class DatasourceController {
 	private DatasourceService datasourceService;
 
 	@PostMapping("/Validatetenant")
-	public DataSourceConfig Validatetenant(@RequestBody DataSourceConfig Tenantname) {
+	public DataSourceConfig Validatetenant(@RequestBody DataSourceConfig Tenantname)throws Exception {
 		return datasourceService.Validatetenant(Tenantname);
 	}
 
@@ -139,32 +139,32 @@ public class DatasourceController {
 	}
 
 	@PostMapping("/Getalltenant")
-	public List<DataSourceConfig> Getalltenant(@RequestBody DataSourceConfig Tenantname) {
+	public List<DataSourceConfig> Getalltenant(@RequestBody DataSourceConfig Tenantname)throws Exception {
 		return datasourceService.Getalltenant();
 	}
 
 	@PostMapping("/Gettenantonid")
-	public DataSourceConfig Gettenantonid(@RequestBody DataSourceConfig Tenant) {
+	public DataSourceConfig Gettenantonid(@RequestBody DataSourceConfig Tenant)throws Exception {
 		return datasourceService.Gettenantonid(Tenant);
 	}
 
 	@PostMapping("/Updatetenant")
-	public DataSourceConfig Updatetenant(@RequestBody DataSourceConfig Tenant) {
+	public DataSourceConfig Updatetenant(@RequestBody DataSourceConfig Tenant)throws Exception {
 		return datasourceService.Updatetenant(Tenant);
 	}
 
 	@PostMapping("/Initiatetenant")
-	public DataSourceConfig Initiatetenant(@RequestBody DataSourceConfig Tenant) {
+	public DataSourceConfig Initiatetenant(@RequestBody DataSourceConfig Tenant)throws Exception {
 		return datasourceService.Initiatetenant(Tenant);
 	}
 
 	@PostMapping("/Updaprofiletetenant")
-	public int Updaprofiletetenant(@RequestBody DataSourceConfig Tenant) {
+	public int Updaprofiletetenant(@RequestBody DataSourceConfig Tenant)throws Exception {
 		return datasourceService.Updaprofiletetenant(Tenant);
 	}
 
 	@PostMapping("/login")
-	public Map<String, Object> login(@RequestBody LoggedUser objuser) {
+	public Map<String, Object> login(@RequestBody LoggedUser objuser)throws Exception {
 
 		return datasourceService.login(objuser);
 
@@ -214,7 +214,7 @@ public class DatasourceController {
 	}
 
 	@PostMapping("/Completeregistration")
-	public DataSourceConfig Completeregistration(@RequestBody DataSourceConfig DataSourceConfig) {
+	public DataSourceConfig Completeregistration(@RequestBody DataSourceConfig DataSourceConfig)throws Exception {
 
 		return datasourceService.Completeregistration(DataSourceConfig);
 	}
@@ -226,12 +226,12 @@ public class DatasourceController {
 	}
 
 	@PostMapping("/ValidatetenantByID")
-	public DataSourceConfig ValidatetenantByID(@RequestBody DataSourceConfig TenantID) {
+	public DataSourceConfig ValidatetenantByID(@RequestBody DataSourceConfig TenantID)throws Exception {
 		return datasourceService.ValidatetenantByID(TenantID);
 	}
 
 	@PostMapping("/ValidatetenantByName")
-	public DataSourceConfig ValidatetenantByName(@RequestBody DataSourceConfig TenantID) {
+	public DataSourceConfig ValidatetenantByName(@RequestBody DataSourceConfig TenantID)throws Exception {
 		return datasourceService.ValidatetenantByName(TenantID);
 	}
 

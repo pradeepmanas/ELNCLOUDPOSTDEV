@@ -34,7 +34,7 @@ public class MethodDelimiterController {
 	 * @return response entity with retrieved list of Method delimiters.
 	 */
 	@PostMapping(value = "/getMethodDelimiter")
-	public ResponseEntity<Object> getMethodDelimiter() {	
+	public ResponseEntity<Object> getMethodDelimiter()throws Exception {	
 		 return methodDelimiterService.getMethodDelimiterList();
 	}
 	
@@ -45,7 +45,7 @@ public class MethodDelimiterController {
 	   * @return response of Newly added MethodDelimiter entity
 	   */
 	  @PostMapping(value = "/createMethodDelimiter")
-	  public ResponseEntity<Object> createMethodDelimiter(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject) {
+	  public ResponseEntity<Object> createMethodDelimiter(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
 		  final ObjectMapper mapper = new ObjectMapper();		
 		  final MethodDelimiter methodDelimiter = mapper.convertValue(mapObject.get("methoddelimiter"), MethodDelimiter.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
@@ -62,7 +62,7 @@ public class MethodDelimiterController {
 	   * @return response entity with updated object
 	   */
 	  @PostMapping(value = "/updateMethodDelimiter")
-	  public ResponseEntity<Object> updateMethodDelimiter(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject) {
+	  public ResponseEntity<Object> updateMethodDelimiter(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
 		  final ObjectMapper mapper = new ObjectMapper();	
 		  final MethodDelimiter methodDelimiter = mapper.convertValue(mapObject.get("methoddelimiter"), MethodDelimiter.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
@@ -84,7 +84,7 @@ public class MethodDelimiterController {
 	   * @return response of deleted entity with its updated status.
 	   */
 	  @PostMapping(value = "/updateMethodDelimiterStatus")
-	  public ResponseEntity<Object> deleteMethodDelimiter(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject) {
+	  public ResponseEntity<Object> deleteMethodDelimiter(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
 		  final ObjectMapper mapper = new ObjectMapper();	
 		 
 		  final int methodDelimiterKey = mapper.convertValue(mapObject.get("methoddelimiterkey"), Integer.class);

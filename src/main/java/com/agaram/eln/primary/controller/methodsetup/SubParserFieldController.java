@@ -30,7 +30,7 @@ public class SubParserFieldController {
 	 * @return response object with list of active SubParserField entities
 	 */
 	@PostMapping(value = "/getSubParserFieldByMethodKey")
-	public ResponseEntity<Object> getSubParserFieldByMethodKey(@RequestBody Map<String, Object> mapObject){
+	public ResponseEntity<Object> getSubParserFieldByMethodKey(@RequestBody Map<String, Object> mapObject)throws Exception{
 		 final ObjectMapper mapper = new ObjectMapper();		 
 		 final int methodKey = mapper.convertValue(mapObject.get("methodKey"), Integer.class);
 		

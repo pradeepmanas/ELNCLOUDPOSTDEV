@@ -44,6 +44,9 @@ public class Lswebparserfield implements Serializable{
     @JoinColumn(name = "methodkey", nullable = false)
 	private Lswebparsermethod method;
 	
+	@Column(name="datatype")
+	private String datatype;
+	
 	@Transient
 	private ParserBlock parserblock;
 	

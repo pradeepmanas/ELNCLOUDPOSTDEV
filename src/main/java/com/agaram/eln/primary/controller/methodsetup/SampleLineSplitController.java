@@ -32,7 +32,7 @@ public class SampleLineSplitController {
 	 * @return response object with list of active SampleLineSplit entities
 	 */
 	@PostMapping(value = "/getSampleLineSplitByMethod")
-	public ResponseEntity<Object> getSampleLineSplitByMethod(@Valid @RequestBody Map<String, Object> mapObject)
+	public ResponseEntity<Object> getSampleLineSplitByMethod(@Valid @RequestBody Map<String, Object> mapObject)throws Exception
 	{    	
 		//final int methodKey = (Integer) mapObject.get("methodKey");
 		Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");

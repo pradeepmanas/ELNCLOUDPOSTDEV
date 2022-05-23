@@ -36,17 +36,17 @@ public class FileController {
 	private FileService fileService;
 
 	@PostMapping("/InsertupdateSheet")
-	public LSfile InsertupdateSheet(@RequestBody LSfile objfile) {
+	public LSfile InsertupdateSheet(@RequestBody LSfile objfile)throws Exception {
 		return fileService.InsertupdateSheet(objfile);
 	}
 
 	@PostMapping("/UpdateFilecontent")
-	public LSfile UpdateFilecontent(@RequestBody LSfile objfile) {
+	public LSfile UpdateFilecontent(@RequestBody LSfile objfile)throws Exception {
 		return fileService.UpdateFilecontent(objfile);
 	}
 
 	@PostMapping("/GetSheets")
-	public List<LSfile> GetSheets(@RequestBody LSuserMaster objuser) {
+	public List<LSfile> GetSheets(@RequestBody LSuserMaster objuser)throws Exception {
 		return fileService.GetSheets(objuser);
 	}
 
@@ -57,17 +57,17 @@ public class FileController {
 //	}
 
 	@PostMapping("/GetSheetsbyuseronDetailview")
-	public List<Sheettemplateget> GetSheetsbyuseronDetailview(@RequestBody LSuserMaster objuser) {
+	public List<Sheettemplateget> GetSheetsbyuseronDetailview(@RequestBody LSuserMaster objuser)throws Exception {
 		return fileService.GetSheetsbyuseronDetailview(objuser);
 	}
 
 	@PostMapping("/getSheetscount")
-	public Map<String, Object> getSheetscount(@RequestBody LSuserMaster objusers) {
+	public Map<String, Object> getSheetscount(@RequestBody LSuserMaster objusers)throws Exception {
 		return fileService.getSheetscount(objusers);
 	}
 
 	@PostMapping("/UpdateFiletest")
-	public LSfiletest UpdateFiletest(@RequestBody LSfiletest objtest) {
+	public LSfiletest UpdateFiletest(@RequestBody LSfiletest objtest)throws Exception {
 //		if(objtest.getObjuser() != null) {
 //			
 //			LSuserMaster userClass = auditService.CheckUserPassWord(objtest.getObjuser());
@@ -186,17 +186,17 @@ public class FileController {
 	}
 
 	@PostMapping("/GetsheetWorkflow")
-	public List<LSsheetworkflow> GetsheetWorkflow(@RequestBody LSsheetworkflow objuser) {
+	public List<LSsheetworkflow> GetsheetWorkflow(@RequestBody LSsheetworkflow objuser)throws Exception {
 		return fileService.GetsheetWorkflow(objuser);
 	}
 
 	@PostMapping("/Deletesheetworkflow")
-	public Response Deletesheetworkflow(@RequestBody LSsheetworkflow objflow) {
+	public Response Deletesheetworkflow(@RequestBody LSsheetworkflow objflow)throws Exception {
 		return fileService.Deletesheetworkflow(objflow);
 	}
 
 	@PostMapping("/updateworkflowforFile")
-	public LSfile updateworkflowforFile(@RequestBody LSfile objfile) {
+	public LSfile updateworkflowforFile(@RequestBody LSfile objfile)throws Exception {
 		return fileService.updateworkflowforFile(objfile);
 	}
 
@@ -213,17 +213,17 @@ public class FileController {
 	}
 
 	@PostMapping("/Getfileversions")
-	public List<LSfileversion> Getfileversions(@RequestBody LSfile objfile) {
+	public List<LSfileversion> Getfileversions(@RequestBody LSfile objfile)throws Exception {
 		return fileService.Getfileversions(objfile);
 	}
 
 	@PostMapping("/Getfileworkflowhistory")
-	public List<Lssheetworkflowhistory> Getfilehistory(@RequestBody LSfile objfile) {
+	public List<Lssheetworkflowhistory> Getfilehistory(@RequestBody LSfile objfile)throws Exception {
 		return fileService.Getfilehistory(objfile);
 	}
 
 	@PostMapping("/GetfileverContent")
-	public String GetfileverContent(@RequestBody LSfile objfile) {
+	public String GetfileverContent(@RequestBody LSfile objfile)throws Exception {
 		return fileService.GetfileverContent(objfile);
 	}
 
@@ -234,62 +234,62 @@ public class FileController {
 	}
 
 	@PostMapping(value = "/getfileoncode")
-	public LSfile getfileoncode(@RequestBody LSfile objfile) {
+	public LSfile getfileoncode(@RequestBody LSfile objfile)throws Exception {
 		return fileService.getfileoncode(objfile);
 	}
 
 	@PostMapping(value = "/getfilemasteroncode")
-	public Sheettemplateget getfilemasteroncode(@RequestBody LSfile objfile) {
+	public Sheettemplateget getfilemasteroncode(@RequestBody LSfile objfile)throws Exception {
 		return fileService.getfilemasteroncode(objfile);
 	}
 
 	@PostMapping(value = "/Getinitialsheet")
-	public Map<String, Object> Getinitialsheet(@RequestBody LSfile objfile) {
+	public Map<String, Object> Getinitialsheet(@RequestBody LSfile objfile)throws Exception {
 		return fileService.Getinitialsheet(objfile);
 	}
 
 	@PostMapping(value = "/Getremainingsheets")
-	public List<Sheettemplateget> Getremainingsheets(@RequestBody LSfile objfile) {
+	public List<Sheettemplateget> Getremainingsheets(@RequestBody LSfile objfile)throws Exception {
 		return fileService.Getremainingsheets(objfile);
 	}
 
 	@PostMapping("/Insertsharefile")
-	public Lsfileshareto Insertsharefile(@RequestBody Lsfileshareto objprotocolordershareto) {
+	public Lsfileshareto Insertsharefile(@RequestBody Lsfileshareto objprotocolordershareto)throws Exception {
 		return fileService.Insertsharefile(objprotocolordershareto);
 	}
 
 	@PostMapping("/Insertsharefileby")
-	public Lsfilesharedby Insertsharefileby(@RequestBody Lsfilesharedby objprotocolordersharedby) {
+	public Lsfilesharedby Insertsharefileby(@RequestBody Lsfilesharedby objprotocolordersharedby)throws Exception {
 		return fileService.Insertsharefileby(objprotocolordersharedby);
 	}
 
 	@PostMapping("/Getfilesharedbyme")
-	public List<Lsfilesharedby> Getfilesharedbyme(@RequestBody Lsfilesharedby lsordersharedby) {
+	public List<Lsfilesharedby> Getfilesharedbyme(@RequestBody Lsfilesharedby lsordersharedby)throws Exception {
 		return fileService.Getfilesharedbyme(lsordersharedby);
 	}
 
 	@PostMapping("/Getfilesharetome")
-	public List<Lsfileshareto> Getfilesharetome(@RequestBody Lsfileshareto lsordershareto) {
+	public List<Lsfileshareto> Getfilesharetome(@RequestBody Lsfileshareto lsordershareto)throws Exception {
 		return fileService.Getfilesharetome(lsordershareto);
 	}
 
 	@PostMapping("/Unsharefileby")
-	public Lsfilesharedby Unsharefileby(@RequestBody Lsfilesharedby objordershareby) {
+	public Lsfilesharedby Unsharefileby(@RequestBody Lsfilesharedby objordershareby)throws Exception {
 		return fileService.Unsharefileby(objordershareby);
 	}
 
 	@PostMapping("/Unsharefileto")
-	public Lsfileshareto Unsharefileto(@RequestBody Lsfileshareto lsordershareto) {
+	public Lsfileshareto Unsharefileto(@RequestBody Lsfileshareto lsordershareto)throws Exception {
 		return fileService.Unsharefileto(lsordershareto);
 	}
 
 	@PostMapping("/updateSharedFile")
-	public Boolean updateSharedFile(@RequestBody Lsfilesharedby lsordersharedby) {
+	public Boolean updateSharedFile(@RequestBody Lsfilesharedby lsordersharedby)throws Exception {
 		return fileService.updateSharedFile(lsordersharedby);
 	}
 
 	@PostMapping("/updateSharedToFile")
-	public Boolean updateSharedToFile(@RequestBody Lsfileshareto lsordersharedby) {
+	public Boolean updateSharedToFile(@RequestBody Lsfileshareto lsordersharedby)throws Exception {
 		return fileService.updateSharedToFile(lsordersharedby);
 	}
 

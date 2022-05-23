@@ -25,7 +25,7 @@ public class MaterialController {
 	
 	
 	@GetMapping("/GetSection")
-	public List<LSsection> getSection() {
+	public List<LSsection> getSection()throws Exception {
 		return materialService.getSection();
 	}
 	
@@ -37,22 +37,22 @@ public class MaterialController {
 	 */
 	
 	@RequestMapping("/getlsMaterial")
-	public List<LSmaterial> getlsMaterial(@RequestBody LSuserMaster objuser) {
+	public List<LSmaterial> getlsMaterial(@RequestBody LSuserMaster objuser)throws Exception {
 		return materialService.getlsMaterial(objuser);
 	}
 	
 	@RequestMapping("/getLsInstrument")
-	public List<LSinstrument> getLsInstrument(@RequestBody LSuserMaster objuser) {
+	public List<LSinstrument> getLsInstrument(@RequestBody LSuserMaster objuser)throws Exception {
 		return materialService.getLsInstrument(objuser);
 	}
 	
 	@RequestMapping("/getLsInstrumentMaster")
-	public List<LSinstrumentmaster> getLsInstrumentMaster(@RequestBody LSuserMaster objuser) {
+	public List<LSinstrumentmaster> getLsInstrumentMaster(@RequestBody LSuserMaster objuser)throws Exception {
 		return materialService.getLsInstrumentMaster(objuser);
 	}
 	
 	@RequestMapping("/getEquipmentDetails")
-	public Map<String, Object> getEquipmentDetails(@RequestBody Map<String, Object> objMap)
+	public Map<String, Object> getEquipmentDetails(@RequestBody Map<String, Object> objMap)throws Exception
 	{
 		return materialService.getEquipmentDetails(objMap);
 	}

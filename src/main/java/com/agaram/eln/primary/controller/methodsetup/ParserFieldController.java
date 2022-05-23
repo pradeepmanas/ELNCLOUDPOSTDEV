@@ -30,7 +30,7 @@ public class ParserFieldController {
 	 * @return response object with list of active ParserField entities
 	 */
 	@PostMapping(value = "/getParserFieldByMethodKey")
-	public ResponseEntity<Object> getParserFieldByMethodKey(@RequestBody Map<String, Object> mapObject){
+	public ResponseEntity<Object> getParserFieldByMethodKey(@RequestBody Map<String, Object> mapObject)throws Exception{
 		 final ObjectMapper mapper = new ObjectMapper();		 
 		 final int methodKey = mapper.convertValue(mapObject.get("methodKey"), Integer.class);
 		

@@ -35,7 +35,7 @@ public class ParserSetupController {
 	 * @return response object with list of extracted blockwise data.
 	 */
 	@PostMapping(value = "/getParserData")
-	public ResponseEntity<Object> getParserData(@Valid @RequestBody Map<String, Object> mapObject)
+	public ResponseEntity<Object> getParserData(@Valid @RequestBody Map<String, Object> mapObject)throws Exception
 	{    	
 		//final int methodKey = (Integer) mapObject.get("methodKey");
         Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
@@ -49,7 +49,7 @@ public class ParserSetupController {
 	 * @return response object with list of ParserMethod entities
 	 */
 	@PostMapping(value = "/getSubParserMethod")
-	public ResponseEntity<Object> getSubParserMethod(){    	
+	public ResponseEntity<Object> getSubParserMethod()throws Exception{    	
 		return parserService.getSubParserMethod();
 	}
 
@@ -62,7 +62,7 @@ public class ParserSetupController {
 	 */
 	@PostMapping(value = "/createParserSetup")
 	public ResponseEntity<Object> saveParserSetup(final HttpServletRequest request, 
-			@Valid @RequestBody Map<String, Object> mapObject)	{		
+			@Valid @RequestBody Map<String, Object> mapObject)throws Exception	{		
 		return parserService.saveParserData(request, mapObject);
 	}
 	
@@ -75,7 +75,7 @@ public class ParserSetupController {
 	 */
 	@PostMapping(value = "/getParserFieldTechniqueListByMethodKey")
 	public ResponseEntity<Object> getParserFieldTechniqueListByMethodKey(final HttpServletRequest request, 
-			@Valid @RequestBody Map<String, Object> mapObject){
+			@Valid @RequestBody Map<String, Object> mapObject)throws Exception{
 		final ObjectMapper mapper = new ObjectMapper();		 
 		//final int methodKey = mapper.convertValue(mapObject.get("methodKey"), Integer.class);
         Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");

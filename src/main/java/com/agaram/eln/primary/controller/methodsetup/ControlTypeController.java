@@ -25,7 +25,7 @@ public class ControlTypeController {
 	 * @return list of control types entities.
 	 */
 	@PostMapping(value = "/getControlType")
-	public ResponseEntity<Object> getControlType() {	
+	public ResponseEntity<Object> getControlType()throws Exception {	
 		 return controlTypeService.getControlType();
 	}
 

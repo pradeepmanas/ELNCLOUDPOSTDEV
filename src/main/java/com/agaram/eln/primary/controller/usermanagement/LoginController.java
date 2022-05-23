@@ -37,17 +37,17 @@ public class LoginController {
 	private LoginService loginService;
 
 	@GetMapping("/LoadSite")
-	public List<LSSiteMaster> loadSite(HttpServletRequest request) {
+	public List<LSSiteMaster> loadSite(HttpServletRequest request)throws Exception {
 		return loginService.loadSite();
 	}
 
 	@GetMapping("/LoadSiteMaster")
-	public List<LSSiteMaster> LoadSiteMaster(HttpServletRequest request) {
+	public List<LSSiteMaster> LoadSiteMaster(HttpServletRequest request)throws Exception {
 		return loginService.LoadSiteMaster();
 	}
 
 	@PostMapping("/LoadDomain")
-	public List<LSdomainMaster> LoadDomain(@RequestBody LSSiteMaster objsite) {
+	public List<LSdomainMaster> LoadDomain(@RequestBody LSSiteMaster objsite)throws Exception {
 		return loginService.loadDomain(objsite);
 	}
 
@@ -57,7 +57,7 @@ public class LoginController {
 	}
 
 	@PostMapping("/ActiveUserEntry")
-	public LSactiveUser activeUserEntry(@RequestBody LSactiveUser objsite) {
+	public LSactiveUser activeUserEntry(@RequestBody LSactiveUser objsite)throws Exception {
 		return loginService.activeUserEntry(objsite);
 	}
 
@@ -67,37 +67,37 @@ public class LoginController {
 	}
 
 	@PostMapping("/UpdatePassword")
-	public LSuserMaster UpdatePassword(@RequestBody LoggedUser objuser) {
+	public LSuserMaster UpdatePassword(@RequestBody LoggedUser objuser)throws Exception {
 		return loginService.UpdatePassword(objuser);
 	}
 
 	@PostMapping("/Logout")
-	public Boolean Logout(@RequestBody LSuserMaster lsuserMaster) {
+	public Boolean Logout(@RequestBody LSuserMaster lsuserMaster)throws Exception {
 		return loginService.Logout(lsuserMaster);
 	}
 
 	@PostMapping("/ChangePassword")
-	public LSuserMaster ChangePassword(@RequestBody LoggedUser objuser) {
+	public LSuserMaster ChangePassword(@RequestBody LoggedUser objuser)throws Exception {
 		return loginService.ChangePassword(objuser);
 	}
 
 	@PostMapping("/InsertUpdateDomain")
-	public LSdomainMaster InsertupdateDomain(@RequestBody LSdomainMaster objClass) {
+	public LSdomainMaster InsertupdateDomain(@RequestBody LSdomainMaster objClass)throws Exception {
 		return loginService.InsertupdateDomain(objClass);
 	}
 
 	@PostMapping("/importADSScreen")
-	public LSuserMaster importADSScreen(@RequestBody LSuserMaster objClass) {
+	public LSuserMaster importADSScreen(@RequestBody LSuserMaster objClass)throws Exception {
 		return loginService.importADSScreen(objClass);
 	}
 
 	@PostMapping(path = "/ADSDomainServerConnection")
-	public Response adsDomainServerConnection(@RequestBody Map<String, Object> objMap) {
+	public Response adsDomainServerConnection(@RequestBody Map<String, Object> objMap)throws Exception {
 		return loginService.ADSDomainServerConnection(objMap);
 	}
 
 	@RequestMapping(value = "/importADSGroups")
-	Map<String, Object> importADSGroups(@RequestBody Map<String, Object> objMap) {
+	Map<String, Object> importADSGroups(@RequestBody Map<String, Object> objMap)throws Exception {
 		Map<String, Object> rtnImportAdS = new HashMap<>();
 
 		rtnImportAdS.putAll(ADS_Connection.importADSGroups(objMap));
@@ -106,7 +106,7 @@ public class LoginController {
 	}
 
 	@RequestMapping(value = "/importADSUsersByGroup")
-	Map<String, List<Map<String, String>>> importADSUsers(@RequestBody Map<String, Object> objMap) {
+	Map<String, List<Map<String, String>>> importADSUsers(@RequestBody Map<String, Object> objMap)throws Exception {
 		Map<String, List<Map<String, String>>> rtnImportAdS = new HashMap<>();
 
 		rtnImportAdS.putAll(ADS_Connection.importADSUsersByGroup(objMap));
@@ -115,7 +115,7 @@ public class LoginController {
 	}
 
 	@RequestMapping(value = "/addImportADSUsers")
-	public Map<String, Object> addImportADSUsers(@RequestBody Map<String, Object> objMap) {
+	public Map<String, Object> addImportADSUsers(@RequestBody Map<String, Object> objMap)throws Exception {
 
 		Map<String, Object> rtnMap = new HashMap<>();
 		Map<String, Object> isCompleted = new HashMap<>();
@@ -141,7 +141,7 @@ public class LoginController {
 	}
 
 	@RequestMapping(path = "/ADSServerDomainCombo")
-	public Map<String, Object> adsServerDomainCombo(@RequestBody LSuserMaster Objclass) {
+	public Map<String, Object> adsServerDomainCombo(@RequestBody LSuserMaster Objclass)throws Exception {
 
 		Map<String, Object> objrtnMap = new HashMap<>();
 
@@ -151,27 +151,27 @@ public class LoginController {
 	}
 
 	@PostMapping("/LoadDomainMaster")
-	public List<LSdomainMaster> LoadDomainMaster(@RequestBody LSSiteMaster objsite) {
+	public List<LSdomainMaster> LoadDomainMaster(@RequestBody LSSiteMaster objsite)throws Exception {
 		return loginService.LoadDomainMaster(objsite);
 	}
 
 	@PostMapping("/LoadDomainMasterAdmin")
-	public List<LSdomainMaster> LoadDomainMasterAdmin(@RequestBody LSSiteMaster objsite) {
+	public List<LSdomainMaster> LoadDomainMasterAdmin(@RequestBody LSSiteMaster objsite)throws Exception {
 		return loginService.LoadDomainMasterAdmin(objsite);
 	}
 
 	@PostMapping("/Validateuser")
-	public LSuserMaster Validateuser(@RequestBody LSuserMaster objClass) {
+	public LSuserMaster Validateuser(@RequestBody LSuserMaster objClass)throws Exception {
 		return loginService.validateuser(objClass);
 	}
 
 	@PostMapping("/LinkLogin")
-	public LSuserMaster LinkLogin(@RequestBody LSuserMaster objClass) {
+	public LSuserMaster LinkLogin(@RequestBody LSuserMaster objClass)throws Exception {
 		return loginService.LinkLogin(objClass);
 	}
 
 	@PostMapping("/InsertupdateSite")
-	public LSSiteMaster InsertupdateSite(@RequestBody LSSiteMaster objClass) {
+	public LSSiteMaster InsertupdateSite(@RequestBody LSSiteMaster objClass)throws Exception {
 		return loginService.InsertupdateSite(objClass);
 	}
 
@@ -181,12 +181,12 @@ public class LoginController {
 	}
 
 	@PostMapping("/azureauthenticatelogin")
-	public Map<String, Object> azureauthenticatelogin(@RequestBody LoggedUser objClass) {
+	public Map<String, Object> azureauthenticatelogin(@RequestBody LoggedUser objClass)throws Exception {
 		return loginService.azureauthenticatelogin(objClass);
 	}
 
 	@PostMapping("/createuserforazure")
-	public LSuserMaster createuserforazure(@RequestBody LSuserMaster objClass) {
+	public LSuserMaster createuserforazure(@RequestBody LSuserMaster objClass)throws Exception {
 		return loginService.createuserforazure(objClass);
 	}
 
@@ -216,7 +216,7 @@ public class LoginController {
 	}
 
 	@PostMapping("/ValidateuserAndPassword")
-	public List <LSuserMaster> ValidateuserAndPassword(@RequestBody LoggedUser objuser) {
+	public List <LSuserMaster> ValidateuserAndPassword(@RequestBody LoggedUser objuser)throws Exception {
 		return loginService.ValidateuserAndPassword(objuser);
 	}
 

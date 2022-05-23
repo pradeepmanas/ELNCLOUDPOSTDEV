@@ -23,7 +23,7 @@ public class ConfigurationController {
 	static final Logger logger = Logger.getLogger(ReportsService.class.getName());
 	
 	@RequestMapping(value="/getAllConfigurations")
-	public Map<String, Object> getConfiguration(){
+	public Map<String, Object> getConfiguration()throws Exception{
 		Map<String, Object> rtnObj = new HashMap<String, Object>();
 		try {
 			rtnObj = objConfigurationService.getAllConfigurations();
@@ -34,7 +34,7 @@ public class ConfigurationController {
 	}
 	
 	@RequestMapping(value="/getConfigurationForFTP")
-	public Map<String, Object> getConfigurationForFTP(){
+	public Map<String, Object> getConfigurationForFTP()throws Exception{
 		Map<String, Object> rtnObj = new HashMap<String, Object>();
 		try {
 			rtnObj = objConfigurationService.getConfigurationForFTP();
@@ -45,7 +45,7 @@ public class ConfigurationController {
 	}
 	
 	@RequestMapping(value="/AddAllConfiguration")
-	public Map<String, Object> AddAllConfiguration(@RequestBody Map<String, Object> argMap){
+	public Map<String, Object> AddAllConfiguration(@RequestBody Map<String, Object> argMap)throws Exception{
 		Map<String, Object> rtnObj = new HashMap<String, Object>();
 		try {
 			rtnObj = objConfigurationService.AddAllConfiguration(argMap);
@@ -56,7 +56,7 @@ public class ConfigurationController {
 	}
 	
 	@RequestMapping(value = "/testConnection")
-	protected Map<String, Object> testConnection(@RequestBody Map<String, Object> argMap){
+	protected Map<String, Object> testConnection(@RequestBody Map<String, Object> argMap)throws Exception{
 		Map<String, Object> ObjMap = new HashMap<>();
 		try{
 			ObjMap = objConfigurationService.testConnection(argMap);
@@ -68,7 +68,7 @@ public class ConfigurationController {
 	}
 	
 	@RequestMapping(value = "/testFTPConnection")
-	protected Map<String, Object> testFTPConnection(@RequestBody Map<String, Object> argMap){
+	protected Map<String, Object> testFTPConnection(@RequestBody Map<String, Object> argMap)throws Exception{
 		Map<String, Object> ObjMap = new HashMap<>();
 		try{
 			ObjMap = objConfigurationService.testFTPConnection(argMap);
@@ -79,7 +79,7 @@ public class ConfigurationController {
 	}
 	
 	@RequestMapping(value = "/testUrlConnection")
-	protected Map<String, Object> testUrlConnection(@RequestBody Map<String, Object> argMap){
+	protected Map<String, Object> testUrlConnection(@RequestBody Map<String, Object> argMap)throws Exception{
 		Map<String, Object> ObjMap = new HashMap<>();
 		try{
 			ObjMap = objConfigurationService.testUrlConnection(argMap);

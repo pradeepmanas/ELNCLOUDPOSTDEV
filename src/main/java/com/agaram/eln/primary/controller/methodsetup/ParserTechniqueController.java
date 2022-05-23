@@ -30,7 +30,7 @@ public class ParserTechniqueController {
 	 * @return retrieve list of active ParserTechnique entities
 	 */
 	@PostMapping(value = "/getParserTechniqueByMethodKey")
-	public ResponseEntity<Object> getParserTechniqueByMethodKey(@RequestBody Map<String, Object> mapObject){
+	public ResponseEntity<Object> getParserTechniqueByMethodKey(@RequestBody Map<String, Object> mapObject)throws Exception{
 		 final ObjectMapper mapper = new ObjectMapper();		 
 		 final int methodKey = mapper.convertValue(mapObject.get("methodKey"), Integer.class);
 		

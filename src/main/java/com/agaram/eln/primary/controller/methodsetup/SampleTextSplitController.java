@@ -31,7 +31,7 @@ public class SampleTextSplitController {
 	 * @return response object with list of active SampleTextSplit entities
 	 */
 	@PostMapping(value = "/getSampleTextSplitByMethod")
-	public ResponseEntity<Object> getSampleTextSplitByMethod(@Valid @RequestBody Map<String, Object> mapObject)
+	public ResponseEntity<Object> getSampleTextSplitByMethod(@Valid @RequestBody Map<String, Object> mapObject)throws Exception
 	{    	
 		//final int methodKey = (Integer) mapObject.get("methodKey");
 		Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");

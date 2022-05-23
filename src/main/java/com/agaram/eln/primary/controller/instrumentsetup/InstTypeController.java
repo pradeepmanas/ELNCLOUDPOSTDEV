@@ -27,7 +27,7 @@ public class InstTypeController {
      * @return list of all instrument types
      */
     @RequestMapping(value = "/getInstType", method = RequestMethod.POST)
-    public List<InstrumentType> getInstType() {
+    public List<InstrumentType> getInstType()throws Exception {
         return  typeService.getInstType();
     }
 

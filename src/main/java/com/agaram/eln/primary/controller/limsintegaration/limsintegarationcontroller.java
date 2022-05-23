@@ -27,7 +27,7 @@ public class limsintegarationcontroller {
 	private limsintegarationservice limsintegarationservice;
 	
 	@PostMapping("/getSheetsFromELN")
-	public Map<String, Object> getSheets(@RequestBody LStestmaster objTest) {
+	public Map<String, Object> getSheets(@RequestBody LStestmaster objTest)throws Exception {
 		return limsintegarationservice.getSheets(objTest);
 	}
 	
@@ -44,12 +44,12 @@ public class limsintegarationcontroller {
 	}
 	
 	@PostMapping("/updateSheetsParameterForELN")
-	public Boolean updateSheetsParameterForELN(@RequestBody List<LSfileparameter> objattachments) {
+	public Boolean updateSheetsParameterForELN(@RequestBody List<LSfileparameter> objattachments)throws Exception {
 		return limsintegarationservice.updateSheetsParameterForELN(objattachments);
 	}
 	
 	@PostMapping("/getAttachmentsForLIMS")
-	public List<LsOrderattachments> getAttachmentsForLIMS(@RequestBody LSlimsorder objOrder) {
+	public List<LsOrderattachments> getAttachmentsForLIMS(@RequestBody LSlimsorder objOrder)throws Exception {
 		return limsintegarationservice.getAttachmentsForLIMS(objOrder);
 	}
 }

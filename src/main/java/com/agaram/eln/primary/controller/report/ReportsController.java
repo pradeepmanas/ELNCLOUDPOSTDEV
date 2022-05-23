@@ -288,7 +288,7 @@ public class ReportsController {
 
 	@PostMapping("/Getorderbytype")
 	//public Map<String, Object> Getorderbytype(@RequestBody LSlogilablimsorderdetail objorder)
-	public Map<String, Object> Getorderbytype(@RequestBody Map<String, Object> objorder)
+	public Map<String, Object> Getorderbytype(@RequestBody Map<String, Object> objorder)throws Exception
 	{
 		Map<String, Object> mapOrders = ObjReportsService.Getorderbytype(objorder);
 		return mapOrders;
@@ -320,7 +320,7 @@ public class ReportsController {
 	}
 	
 	@RequestMapping(value = "/handleOrderTemplate")
-	public Map<String, Object> handleOrderTemplate(@RequestBody Map<String, Object> obj) {
+	public Map<String, Object> handleOrderTemplate(@RequestBody Map<String, Object> obj)throws Exception {
 		Map<String, Object> ObjMap = new HashMap<String, Object>();
 		try {
 			Thread.sleep(2000);
@@ -374,7 +374,7 @@ public class ReportsController {
 	}
 	
 	@RequestMapping(value = "/cloudHandleOrderTemplate")
-	public Map<String, Object> cloudHandleOrderTemplate(@RequestBody Map<String, Object> obj) {
+	public Map<String, Object> cloudHandleOrderTemplate(@RequestBody Map<String, Object> obj)throws Exception {
 		Map<String, Object> ObjMap = new HashMap<String, Object>();
 		try {
 			Thread.sleep(2000);
@@ -428,14 +428,14 @@ public class ReportsController {
 	}
 	
 	@RequestMapping(value = "/getReportDocxonVersion")
-	public Map<String, Object> getReportDocxonVersion(@RequestBody Map<String, Object> obj) {
+	public Map<String, Object> getReportDocxonVersion(@RequestBody Map<String, Object> obj)throws Exception {
 		Map<String, Object> ObjMap = new HashMap<String, Object>();
 		ObjMap = ObjReportsService.getReportDocxonVersion(obj);
 		return ObjMap;
 	}
 	
 	@RequestMapping(value = "/createFIle")
-	public void createFIle() {
+	public void createFIle()throws Exception {
 		Map<String, Object> ObjMap = new HashMap<String, Object>();
 		ObjReportsService.createFIle();
 	}

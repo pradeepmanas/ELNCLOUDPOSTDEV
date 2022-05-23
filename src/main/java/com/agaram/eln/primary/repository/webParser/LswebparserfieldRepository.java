@@ -17,7 +17,7 @@ public interface LswebparserfieldRepository extends JpaRepository<Lswebparserfie
 	
 	 @Transactional
 	 @Modifying
-	 @Query("select new com.agaram.eln.primary.model.instrumentDetails.LsMethodFields (parserfieldkey ,parserfieldname ,fieldid, method) from Lswebparserfield c")
+	 @Query("select new com.agaram.eln.primary.model.instrumentDetails.LsMethodFields (parserfieldkey ,parserfieldname ,fieldid, datatype, method) from Lswebparserfield c")
 	 public List<LsMethodFields> getMethoFeilds();
 	 
 	 @Transactional

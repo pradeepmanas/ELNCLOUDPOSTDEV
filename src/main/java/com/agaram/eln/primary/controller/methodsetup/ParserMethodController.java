@@ -25,7 +25,7 @@ public class ParserMethodController {
 	  * @return list of ParserMethod entities
 	  */
 	@PostMapping(value = "/getParserMethod")
-	public ResponseEntity<Object> getParserMethod()	{
+	public ResponseEntity<Object> getParserMethod()throws Exception	{
 		return parserMethodService.getParserMethod();
 	}
 }

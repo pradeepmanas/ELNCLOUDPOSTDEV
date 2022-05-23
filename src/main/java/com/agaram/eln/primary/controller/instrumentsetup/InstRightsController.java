@@ -38,7 +38,7 @@ public class InstRightsController {
 	  * @return response object with saved list of instrument rights for the selected user
 	  */
 	@PostMapping(value = "/saveInstRights")
-	public ResponseEntity<Object> saveInstRights(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> rightsObject){
+	public ResponseEntity<Object> saveInstRights(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> rightsObject)throws Exception{
 		return rightsService.saveInstRights(rightsObject, request);
 	}
 	
@@ -50,7 +50,7 @@ public class InstRightsController {
 	  * @return response object with list of instrument rights for the selected user
 	  */
 	@PostMapping(value = "/getInstRightsByUser")
-	public ResponseEntity<Object> getInstRightsByUser(@Valid @RequestBody Map<String, Object> userObj) {
+	public ResponseEntity<Object> getInstRightsByUser(@Valid @RequestBody Map<String, Object> userObj)throws Exception {
 		
 	   final ObjectMapper mapper = new ObjectMapper();	
 	   final LSSiteMaster site = mapper.convertValue(userObj.get("site"), LSSiteMaster.class);

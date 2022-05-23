@@ -35,7 +35,7 @@ public class CustomFieldController {
 	 * @return response entity with retrieved list of custom fields.
 	 */
 	@PostMapping(value = "/getCustomField")
-	public ResponseEntity<Object> getCustomFieldByMethod(@Valid @RequestBody Map<String, Object> mapObject) {	
+	public ResponseEntity<Object> getCustomFieldByMethod(@Valid @RequestBody Map<String, Object> mapObject)throws Exception {	
 		 final ObjectMapper mapper = new ObjectMapper();		
 		 final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 		 return customFieldService.getCustomFieldBySite(site);
@@ -48,7 +48,7 @@ public class CustomFieldController {
 	   * @return response entity of newly added CustomField entity
 	   */
 	  @PostMapping(value = "/createCustomField")
-	  public ResponseEntity<Object> createCustomField(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject) {
+	  public ResponseEntity<Object> createCustomField(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
 		  final ObjectMapper mapper = new ObjectMapper();		
 		  final CustomField customField = mapper.convertValue(mapObject.get("customfield"), CustomField.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
@@ -65,7 +65,7 @@ public class CustomFieldController {
 	   * @return response entity of updated CustomField entity
 	   */
 	  @PostMapping(value = "/updateCustomField")
-	  public ResponseEntity<Object> updateCustomField(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject) {
+	  public ResponseEntity<Object> updateCustomField(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
 		  final ObjectMapper mapper = new ObjectMapper();	
 		  final CustomField customField = mapper.convertValue(mapObject.get("customfield"), CustomField.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
@@ -85,7 +85,7 @@ public class CustomFieldController {
 	   * @return Response Entity relevant to deleted entity 
 	   */
 	  @PostMapping(value = "/updateCustomFieldStatus")
-	  public ResponseEntity<Object> deleteCustomField(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject) {
+	  public ResponseEntity<Object> deleteCustomField(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
 		  final ObjectMapper mapper = new ObjectMapper();	
 		 
 		  final int customFieldKey = mapper.convertValue(mapObject.get("customfieldkey"), Integer.class);

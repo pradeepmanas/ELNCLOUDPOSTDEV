@@ -42,7 +42,7 @@ public class InstMasterController {
      */
     @SuppressWarnings("unchecked")
 	@PostMapping(value = "/getInstMaster")
-    public ResponseEntity<Object> getInstMaster(@Valid @RequestBody Map<String, LSSiteMaster> siteObj) {
+    public ResponseEntity<Object> getInstMaster(@Valid @RequestBody Map<String, LSSiteMaster> siteObj)throws Exception {
     	@SuppressWarnings("unchecked")
 		Map<String, Object> obj = (Map<String, Object>) siteObj.get("inputData");
     	Map<String, Object> objsite = null ;
@@ -78,7 +78,7 @@ public class InstMasterController {
      * @return response entity with newly added instrument master object
      */
     @PostMapping(value = "/createInstMaster")    
-    public ResponseEntity<Object> createInstrumentMaster(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)
+    public ResponseEntity<Object> createInstrumentMaster(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception
     {    		
 	      final ObjectMapper mapper = new ObjectMapper();		
 		  final InstrumentMaster master = mapper.convertValue(mapObject.get("instMaster"), InstrumentMaster.class);
@@ -97,7 +97,7 @@ public class InstMasterController {
      * @return response entity with updated 'instrument master' object
      */
     @PostMapping(value = "/updateInstMaster")
-    public ResponseEntity<Object> updateInstMaster(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject) {
+    public ResponseEntity<Object> updateInstMaster(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
     	
     	  final ObjectMapper mapper = new ObjectMapper();
     	 // mapper.registerModule(new JavaTimeModule());
@@ -117,7 +117,7 @@ public class InstMasterController {
      * @return Response Entity relevant to delete response 
      */
     @PostMapping(value = "/updateInstMasterStatus")
-    public ResponseEntity<Object> deleteInstMaster(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject) {
+    public ResponseEntity<Object> deleteInstMaster(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
     	
 //    	  final ObjectMapper mapper = new ObjectMapper();	
 		  final Boolean saveAuditTrail = (Boolean)mapObject.get("saveAuditTrail");
@@ -137,7 +137,7 @@ public class InstMasterController {
      * @return response object with list of instruments
      */
     @PostMapping(value = "/getInstListByCategoryAndSite")
-    public ResponseEntity<Object> getInstListByCategoryAndSite(@Valid @RequestBody Map<String, Object> mapObject) {
+    public ResponseEntity<Object> getInstListByCategoryAndSite(@Valid @RequestBody Map<String, Object> mapObject)throws Exception {
     
 //    	  final ObjectMapper mapper = new ObjectMapper();	
 //    	  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);

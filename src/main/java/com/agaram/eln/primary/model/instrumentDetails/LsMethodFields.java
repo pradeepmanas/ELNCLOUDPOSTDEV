@@ -186,7 +186,7 @@ public class LsMethodFields {
 		this.bytecoltype = bytecoltype;
 	}
 	
-	public LsMethodFields(Integer parserfieldkey,String parserfieldname,String fieldid,Lswebparsermethod method)
+	public LsMethodFields(Integer parserfieldkey,String parserfieldname,String fieldid,String datatype,Lswebparsermethod method)
 	{
 		
 		if(parserfieldkey != null) {
@@ -199,6 +199,11 @@ public class LsMethodFields {
 			
 			this.instrumentid = method.getInstmaster().getInstrumentcode();
 			this.methodname = method.getMethodname();
+		}
+		
+		if(datatype != null)
+		{
+			this.datatype = datatype;
 		}
 		
 		

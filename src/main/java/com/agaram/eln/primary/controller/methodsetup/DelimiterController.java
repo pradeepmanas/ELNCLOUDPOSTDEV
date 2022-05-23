@@ -35,7 +35,7 @@ public class DelimiterController {
 	  * @return list of active delimiters.
 	  */
 	@PostMapping(value = "/getDelimiters")
-	public ResponseEntity<Object> getActiveDelimiters(@RequestBody Map<String, Object> mapObject) {	
+	public ResponseEntity<Object> getActiveDelimiters(@RequestBody Map<String, Object> mapObject)throws Exception {	
 //		final ObjectMapper mapper = new ObjectMapper();	
 //		final String sortBy = mapper.convertValue(mapObject.get("sortOrder"), String.class); 
 //		return delimitersService.getActiveDelimiters(sortBy);
@@ -63,7 +63,7 @@ public class DelimiterController {
 	   * @return response of Newly added delimiter entity
 	   */
 	  @PostMapping(value = "/createDelimiters")
-	  public ResponseEntity<Object> createDelimiters(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject) {
+	  public ResponseEntity<Object> createDelimiters(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
 		  final ObjectMapper mapper = new ObjectMapper();		
 		  final Delimiter delimiters = mapper.convertValue(mapObject.get("delimiters"), Delimiter.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
@@ -81,7 +81,7 @@ public class DelimiterController {
 	   * @return response entity with updated object
 	   */
 	  @PostMapping(value = "/updateDelimiters")
-	  public ResponseEntity<Object> updateDelimiters(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject) {
+	  public ResponseEntity<Object> updateDelimiters(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
 		  final ObjectMapper mapper = new ObjectMapper();	
 		  final Delimiter delimiters = mapper.convertValue(mapObject.get("delimiters"), Delimiter.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
@@ -105,7 +105,7 @@ public class DelimiterController {
 	   * @return response of deleted entity with its updated status.
 	   */
 	  @PostMapping(value = "/updateDelimitersStatus")
-	  public ResponseEntity<Object> deleteDelimiters(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject) {
+	  public ResponseEntity<Object> deleteDelimiters(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
 		  final ObjectMapper mapper = new ObjectMapper();	
 		 
 		  final int delimiterKey = mapper.convertValue(mapObject.get("delimiterkey"), Integer.class);

@@ -25,7 +25,7 @@ public class AppMasterController {
 	 * @return list of appmaster entities.
 	 */
 	@PostMapping(value = "/getAppMaster")
-	public ResponseEntity<Object> getAppMaster() {	
+	public ResponseEntity<Object> getAppMaster()throws Exception {	
 		 return appMasterService.getAppMaster();
 	}
 

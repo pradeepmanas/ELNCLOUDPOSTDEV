@@ -35,7 +35,7 @@ public class ExportController {
 	 * @return response with content to download
 	 */
     @PostMapping(value="/exportFile", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ModelAndView exportFile( @RequestBody Map<String, Object> mapObject) {
+    public ModelAndView exportFile( @RequestBody Map<String, Object> mapObject)throws Exception {
     	
     	final ObjectMapper mapper = new ObjectMapper();	
     

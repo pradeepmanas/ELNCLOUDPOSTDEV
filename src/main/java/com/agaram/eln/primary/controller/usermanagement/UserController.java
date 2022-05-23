@@ -76,13 +76,13 @@ public class UserController {
 	Map<String, Object> map=new HashMap<>();
 	
 	@PostMapping("/InsertUpdateUserGroup")
-	public LSusergroup InsertUpdateUserGroup(@RequestBody LSusergroup objusergroup)
+	public LSusergroup InsertUpdateUserGroup(@RequestBody LSusergroup objusergroup)throws Exception
 	{
 		return userService.InsertUpdateUserGroup(objusergroup);
 	}
 	
 	@PostMapping("/InsertUpdateUserGroupFromSDMS")
-	public LSusergroup InsertUpdateUserGroupFromSDMS(@RequestBody LSusergroup objusergroup)
+	public LSusergroup InsertUpdateUserGroupFromSDMS(@RequestBody LSusergroup objusergroup)throws Exception
 	{
 		if(objusergroup.getObjuser() != null) {
 			
@@ -107,36 +107,36 @@ public class UserController {
 	}
 	
 	@PostMapping("/GetUserGroup")
-	public List<LSusergroup> GetUserGroup(@RequestBody LSuserMaster objusermaster)
+	public List<LSusergroup> GetUserGroup(@RequestBody LSuserMaster objusermaster)throws Exception
 	{
 	  return userService.GetUserGroup(objusermaster);
 	}
 	//usercode
 	@PostMapping("/getMultiUserGroup")
-	public List<LSMultiusergroup> getMultiUserGroup(@RequestBody LSuserMaster objusermaster)
+	public List<LSMultiusergroup> getMultiUserGroup(@RequestBody LSuserMaster objusermaster)throws Exception
 	{
 	  return userService.getMultiUserGroup(objusermaster);
 	}
 	
 	@PostMapping("/GetActiveUserGroup")
-	public List<LSusergroup> GetActiveUserGroup(@RequestBody LSuserMaster objusermaster)
+	public List<LSusergroup> GetActiveUserGroup(@RequestBody LSuserMaster objusermaster)throws Exception
 	{
 	  return userService.GetActiveUserGroup(objusermaster);
 	}
 
 	@PostMapping("/GetSiteWiseUserGroup")
-	public List<LSusergroup> GetSiteWiseUserGroup(@RequestBody LSSiteMaster objclass)
+	public List<LSusergroup> GetSiteWiseUserGroup(@RequestBody LSSiteMaster objclass)throws Exception
 	{
 	  return userService.GetSiteWiseUserGroup(objclass);
 	}
 	
 	@PostMapping("/GetSiteWiseActiveUserGroup")
-	public List<LSusergroup> GetSiteWiseActiveUserGroup(@RequestBody LSSiteMaster Objclass) {
+	public List<LSusergroup> GetSiteWiseActiveUserGroup(@RequestBody LSSiteMaster Objclass)throws Exception {
 		return userService.GetSiteWiseActiveUserGroup(Objclass);
 	}
 	
 	@PostMapping("/GetUserGroupSiteWise")
-	public List<LSusergroup> GetUserGroupSiteWise(@RequestBody LSSiteMaster objclass)
+	public List<LSusergroup> GetUserGroupSiteWise(@RequestBody LSSiteMaster objclass)throws Exception
 	{
 	  return userService.GetUserGroupSiteWise(objclass);
 	}
@@ -160,7 +160,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/InsertUpdateUserfromSDMS")
-	public LSuserMaster InsertUpdateUserfromSDMS(@RequestBody LSuserMaster objusermaster)
+	public LSuserMaster InsertUpdateUserfromSDMS(@RequestBody LSuserMaster objusermaster)throws Exception
 	{
 		if(objusermaster.getObjuser() != null) {
 			if(objusermaster.getUserstatus().trim() == "Active") {
@@ -192,19 +192,19 @@ public class UserController {
 	}
 	
 	@PostMapping("/ResetPassword")
-	public LSuserMaster ResetPassword(@RequestBody LSuserMaster objuser)
+	public LSuserMaster ResetPassword(@RequestBody LSuserMaster objuser)throws Exception
 	{
 		return userService.ResetPassword(objuser);
 	}
 	
 	@PostMapping("/GetUsers")
-	public List<LSuserMaster> GetUsers(@RequestBody LSuserMaster objusermaster)
+	public List<LSuserMaster> GetUsers(@RequestBody LSuserMaster objusermaster)throws Exception
 	{
 		return userService.GetUsers(objusermaster);
 	}
 	
 	@PostMapping("/GetUsersOnsite")
-	public List<LSuserMaster> GetUsersOnsite(@RequestBody LSSiteMaster objclass)
+	public List<LSuserMaster> GetUsersOnsite(@RequestBody LSSiteMaster objclass)throws Exception
 	{
 		return userService.GetUsersOnsite(objclass);
 	}
@@ -215,73 +215,73 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/InsertUpdateTeam")
-	public LSusersteam InsertUpdateTeam(@RequestBody LSusersteam objteam)
+	public LSusersteam InsertUpdateTeam(@RequestBody LSusersteam objteam)throws Exception
 	{
 		return userService.InsertUpdateTeam(objteam);
 	}
 	
 	@PostMapping("/GetUserTeam")
-	public List<LSusersteam> GetUserTeam(@RequestBody LSuserMaster LSuserMaster)
+	public List<LSusersteam> GetUserTeam(@RequestBody LSuserMaster LSuserMaster)throws Exception
 	{
 		return userService.GetUserTeam(LSuserMaster);
 	}
 	
 	@PostMapping("/GetUserTeamonSitevise")
-	public  Map<String,Object> GetUserTeamonSitevise(@RequestBody LSSiteMaster objclass)
+	public  Map<String,Object> GetUserTeamonSitevise(@RequestBody LSSiteMaster objclass)throws Exception
 	{
 		return userService.GetUserTeamonSitevise(objclass);
 	}
 	
 	@PostMapping("/GetUserRightsonGroup")
-	public Map<String, Object> GetUserRightsonGroup(@RequestBody LSusergroup lsusergroup)
+	public Map<String, Object> GetUserRightsonGroup(@RequestBody LSusergroup lsusergroup)throws Exception
 	{
 		return userService.GetUserRightsonGroup(lsusergroup);
 	}
 	
 	@PostMapping("/GetUserRightsonUser")
-	public Map<String, Object> GetUserRightsonUser(@RequestBody LSuserMaster objUser)
+	public Map<String, Object> GetUserRightsonUser(@RequestBody LSuserMaster objUser)throws Exception
 	{
 		return userService.GetUserRightsonUser(objUser);
 	}
 	
 	@PostMapping("/SaveUserRights")
-	public List<LSusergrouprights> SaveUserRights(@RequestBody LSusergrouprights[] lsrights)
+	public List<LSusergrouprights> SaveUserRights(@RequestBody LSusergrouprights[] lsrights)throws Exception
 	{
 		return userService.SaveUserRights(lsrights);
 	}
 	
 	@PostMapping("/GetActiveUsers")
-	public List<LSactiveUser> GetActiveUsers(@RequestBody LSuserMaster lsuserMaster)
+	public List<LSactiveUser> GetActiveUsers(@RequestBody LSuserMaster lsuserMaster)throws Exception
 	{
 		return userService.GetActiveUsers(lsuserMaster);
 	}
 	
 	@PostMapping("/GetActiveUsersOnsitewise")
-	public List<LSactiveUser> GetActiveUsersOnsitewise(@RequestBody LSSiteMaster objclass)
+	public List<LSactiveUser> GetActiveUsersOnsitewise(@RequestBody LSSiteMaster objclass)throws Exception
 	{
 		return userService.GetActiveUsersOnsitewise(objclass);
 	}
 	
 	@PostMapping("/ValidateSignature")
-	public LSuserMaster ValidateSignature(@RequestBody LoggedUser objuser) {
+	public LSuserMaster ValidateSignature(@RequestBody LoggedUser objuser)throws Exception {
 		return userService.ValidateSignature(objuser);
 	}
 
 	
 	@PostMapping("/PasswordpolicySave")
-	public LSPasswordPolicy PasswordpolicySave(@RequestBody LSPasswordPolicy lspasswordpolicy)
+	public LSPasswordPolicy PasswordpolicySave(@RequestBody LSPasswordPolicy lspasswordpolicy)throws Exception
 	{
 		return userService.PasswordpolicySave(lspasswordpolicy);
 	}
 	
 	@PostMapping("/GetPasswordPolicy")
-	public LSPasswordPolicy GetPasswordPolicy(@RequestBody LSPasswordPolicy lspasswordpolicy)
+	public LSPasswordPolicy GetPasswordPolicy(@RequestBody LSPasswordPolicy lspasswordpolicy)throws Exception
 	{
 		return userService.GetPasswordPolicy(lspasswordpolicy);
 	}
 	
 	@PostMapping("/GetPasswordPolicySitewise")
-	public LSPasswordPolicy GetPasswordPolicySitewise(@RequestBody LSPasswordPolicy objpwd) {
+	public LSPasswordPolicy GetPasswordPolicySitewise(@RequestBody LSPasswordPolicy objpwd)throws Exception {
 
 		
 		return userService.GetPasswordPolicySitewise(objpwd);
@@ -292,7 +292,8 @@ public class UserController {
 //		return  userService.GetPasswordPolicySitewise(objpwd);
 //	}
 	@PostMapping("/Uploadprofilepic")
-    public ProfilePicture Uploadprofilepic(@RequestParam("file") MultipartFile file, @RequestParam("usercode") Integer usercode, @RequestParam("date") Date currentdate) {
+    public ProfilePicture Uploadprofilepic(@RequestParam("file") MultipartFile file,
+    		@RequestParam("usercode") Integer usercode, @RequestParam("date") Date currentdate)throws Exception {
         
 		ProfilePicture profilePicture = new ProfilePicture();
         try {
@@ -306,7 +307,8 @@ public class UserController {
 	
 	
 	@PostMapping("/CloudUploadprofilepic")
-    public CloudProfilePicture CloudUploadprofilepic(@RequestParam("file") MultipartFile file, @RequestParam("usercode") Integer usercode, @RequestParam("date") Date currentdate) {
+    public CloudProfilePicture CloudUploadprofilepic(@RequestParam("file") MultipartFile file,
+    		@RequestParam("usercode") Integer usercode, @RequestParam("date") Date currentdate)throws Exception {
         
 		CloudProfilePicture profilePicture = new CloudProfilePicture();
         try {
@@ -320,7 +322,7 @@ public class UserController {
 	
 	@PostMapping("/CloudUploadusersignature")
     public CloudUserSignature CloudUploadusersignature(@RequestParam("file") MultipartFile file, @RequestParam("usercode") Integer usercode
-    		, @RequestParam("username") String username , @RequestParam("date") Date currentdate) {
+    		, @RequestParam("username") String username , @RequestParam("date") Date currentdate)throws Exception {
         
 		CloudUserSignature usersignature = new CloudUserSignature();
         try {
@@ -334,26 +336,26 @@ public class UserController {
 
 
 	@PostMapping("/Getprofilepic")
-    public ProfilePicture Getprofilepic(@RequestBody ProfilePicture profilePicture)
+    public ProfilePicture Getprofilepic(@RequestBody ProfilePicture profilePicture)throws Exception
     {
 		return fileManipulationservice.getPhoto(profilePicture.getId());
     }
 	
 	@PostMapping("/CloudGetprofilepic")
-    public CloudProfilePicture CloudGetprofilepic(@RequestBody CloudProfilePicture profilePicture)
+    public CloudProfilePicture CloudGetprofilepic(@RequestBody CloudProfilePicture profilePicture)throws Exception
     {
 		return cloudFileManipulationservice.getPhoto(profilePicture.getId());
     }
 	
 	@PostMapping("/DeleteProfilepic")
-    public ProfilePicture DeleteProfilepic(@RequestBody ProfilePicture profilePicture)
+    public ProfilePicture DeleteProfilepic(@RequestBody ProfilePicture profilePicture)throws Exception
     {
 		fileManipulationservice.deletePhoto(profilePicture.getId(),profilePicture.getObjsilentaudit());
 		return profilePicture;
     }
 	
 	@PostMapping("/CloudDeleteProfilepic")
-    public CloudProfilePicture CloudDeleteProfilepic(@RequestBody CloudProfilePicture profilePicture)
+    public CloudProfilePicture CloudDeleteProfilepic(@RequestBody CloudProfilePicture profilePicture)throws Exception
     {
 		cloudFileManipulationservice.deletePhoto(profilePicture.getId(),profilePicture.getObjsilentaudit());
 		return profilePicture;
@@ -456,7 +458,8 @@ public class UserController {
 	}
 	
 	@PostMapping("/UploadELNUserSignature")
-    public UserSignature UploadELNUserSignature1(@RequestParam("file") MultipartFile file, @RequestParam("usercode") Integer usercode, @RequestParam("date") Date currentdate) {
+    public UserSignature UploadELNUserSignature1(@RequestParam("file") MultipartFile file,
+    		@RequestParam("usercode") Integer usercode, @RequestParam("date") Date currentdate)throws Exception {
         
 		UserSignature UserSignature = new UserSignature();
         try {
@@ -469,46 +472,46 @@ public class UserController {
     }
 	
 	@RequestMapping("/Getnotification")
-	public Map<String, Object> Getnotification(@RequestBody LSuserMaster lsuserMaster)
+	public Map<String, Object> Getnotification(@RequestBody LSuserMaster lsuserMaster)throws Exception
 	{
 		return userService.Getnotification(lsuserMaster);
 	}
 	
 	@RequestMapping("/Updatenotificationread")
-	public Map<String, Object> Updatenotificationread(@RequestBody LSnotification lsnotification)
+	public Map<String, Object> Updatenotificationread(@RequestBody LSnotification lsnotification)throws Exception
 	{
 		return userService.Updatenotificationread(lsnotification);
 	}
 	
 	@RequestMapping("/GetnotificationonLazyload")
-	public Map<String, Object> GetnotificationonLazyload(@RequestBody LSnotification lsnotification)
+	public Map<String, Object> GetnotificationonLazyload(@RequestBody LSnotification lsnotification)throws Exception
 	{
 		return userService.GetnotificationonLazyload(lsnotification);
 	}
 	
 	@RequestMapping("/GetLatestnotification")
-	public Map<String, Object> GetLatestnotification(@RequestBody LSnotification lsnotification)
+	public Map<String, Object> GetLatestnotification(@RequestBody LSnotification lsnotification)throws Exception
 	{
 		return userService.GetLatestnotification(lsnotification);
 	}
 	
 	@PostMapping("/UpdateUseraction")
-	public LSuserActions UpdateUseraction(@RequestBody LSuserActions objuseractions) {
+	public LSuserActions UpdateUseraction(@RequestBody LSuserActions objuseractions)throws Exception {
 		return userService.UpdateUseraction(objuseractions);
 	}
 	
 	@PostMapping("/UpdatefreshUseraction")
-	public LSuserActions UpdatefreshUseraction(@RequestBody LSuserActions objuseractions) {
+	public LSuserActions UpdatefreshUseraction(@RequestBody LSuserActions objuseractions)throws Exception {
 		return userService.UpdatefreshUseraction(objuseractions);
 	}
 	
 	@GetMapping("/Loadtenantusergroups")
-	public List<LSusergroup> Loadtenantusergroups(HttpServletRequest request) {
+	public List<LSusergroup> Loadtenantusergroups(HttpServletRequest request)throws Exception {
 		return userService.Loadtenantusergroups();
 	}
 	
 	@GetMapping("/Createcentraliseduser")
-	public LScentralisedUsers Createcentraliseduser(@RequestBody LScentralisedUsers objctrluser)
+	public LScentralisedUsers Createcentraliseduser(@RequestBody LScentralisedUsers objctrluser)throws Exception
 	{
 		return userService.Createcentraliseduser(objctrluser);
 	}
@@ -521,30 +524,30 @@ public class UserController {
 	}
 
 	@GetMapping("/Getallcentraliseduser")
-	public List<LScentralisedUsers> Getallcentraliseduser(@RequestBody LScentralisedUsers objctrluser)
+	public List<LScentralisedUsers> Getallcentraliseduser(@RequestBody LScentralisedUsers objctrluser)throws Exception
 	{
 		return userService.Getallcentraliseduser(objctrluser);
 	}
 	
 	@GetMapping("/Getcentraliseduserbyid")
-	public LScentralisedUsers Getcentraliseduserbyid(@RequestBody LScentralisedUsers objctrluser) {
+	public LScentralisedUsers Getcentraliseduserbyid(@RequestBody LScentralisedUsers objctrluser)throws Exception {
 		return userService.Getcentraliseduserbyid(objctrluser);
 	}
 	
 	@PostMapping("/GetUserslocal")
-	public List<LSuserMaster> GetUserslocal(@RequestBody LSuserMaster objusermaster)
+	public List<LSuserMaster> GetUserslocal(@RequestBody LSuserMaster objusermaster)throws Exception
 	{
 		return userService.GetUserslocal(objusermaster);
 	}
 	
 	@PostMapping("/getUserOnCode")
-	public LSuserMaster getUserOnCode(@RequestBody LSuserMaster objuser)
+	public LSuserMaster getUserOnCode(@RequestBody LSuserMaster objuser)throws Exception
 	{
 		return userService.getUserOnCode(objuser);
 	}
 	
 	@PostMapping("/validatemailaddress")
-	public Response validatemailaddress(@RequestBody String mailaddress)
+	public Response validatemailaddress(@RequestBody String mailaddress)throws Exception
 	{
 		Response objresponse =  new Response();
 		objresponse.setStatus(SMTPMailvalidation.isAddressValid(mailaddress));
@@ -552,37 +555,37 @@ public class UserController {
 	}
 	
 	@PostMapping("/updateUserDateFormat")
-	public Lsusersettings updateUserDateFormat(@RequestBody Lsusersettings objuser)
+	public Lsusersettings updateUserDateFormat(@RequestBody Lsusersettings objuser)throws Exception
 	{
 		return userService.updateUserDateFormat(objuser);
 	}
 	
 	@PostMapping("/GetAllActiveUsers")
-	public List<LSuserMaster> GetAllActiveUsers(@RequestBody LSuserMaster objusergroup)
+	public List<LSuserMaster> GetAllActiveUsers(@RequestBody LSuserMaster objusergroup)throws Exception
 	{
 		return userService.GetAllActiveUsers(objusergroup);
 	}
 	
 	@PostMapping("/getUserPrefrences")
-	public Lsusersettings getUserPrefrences(@RequestBody LSuserMaster objuser)
+	public Lsusersettings getUserPrefrences(@RequestBody LSuserMaster objuser)throws Exception
 	{
 		return userService.getUserPrefrences(objuser);
 	}
 	
 	@PostMapping("/setGroupedcolumn")
-	public LSusergroupedcolumns setGroupedcolumn(@RequestBody LSusergroupedcolumns objgroupped)
+	public LSusergroupedcolumns setGroupedcolumn(@RequestBody LSusergroupedcolumns objgroupped)throws Exception
 	{
 		return userService.setGroupedcolumn(objgroupped);
 	}
 	
 	@PostMapping("/getGroupedcolumn")
-	public LSusergroupedcolumns getGroupedcolumn(@RequestBody LSusergroupedcolumns objgroupped)
+	public LSusergroupedcolumns getGroupedcolumn(@RequestBody LSusergroupedcolumns objgroupped)throws Exception
 	{
 		return userService.getGroupedcolumn(objgroupped);
 	}
 	
 	@PostMapping("/getUsersManinFormLicenseStatus")
-	public Boolean getUsersManinFrameLicenseStatus(@RequestBody LSSiteMaster objsite)
+	public Boolean getUsersManinFrameLicenseStatus(@RequestBody LSSiteMaster objsite)throws Exception
 	{
 		return userService.getUsersManinFrameLicenseStatus(objsite);
 	}

@@ -35,22 +35,22 @@ public class AuditTrailController {
 	private AuditService auditService;
 
 	@GetMapping("/GetReasons")
-	public List<LScfrreasons> getreasons(@RequestBody Map<String, Object> objMap) {
+	public List<LScfrreasons> getreasons(@RequestBody Map<String, Object> objMap)throws Exception {
 		return auditService.getreasons(objMap);
 	}
 
 	@GetMapping("/CFRTranUsername")
-	public List<LSuserMaster> CFRTranUsername(HttpServletRequest request) {
+	public List<LSuserMaster> CFRTranUsername(HttpServletRequest request)throws Exception {
 		return auditService.CFRTranUsername();
 	}
 
 	@GetMapping(path = "/CFRTranModuleName")
-	public List<String> CFRTranModuleName(HttpServletRequest request) {
+	public List<String> CFRTranModuleName(HttpServletRequest request)throws Exception {
 		return auditService.CFRTranModuleName();
 	}
 
 	@PostMapping("/InsertupdateReasons")
-	public LScfrreasons InsertupdateReasons(@RequestBody LScfrreasons objClass) {
+	public LScfrreasons InsertupdateReasons(@RequestBody LScfrreasons objClass)throws Exception {
 		if (objClass.getObjuser() != null) {
 
 			LSuserMaster userClass = auditService.CheckUserPassWord(objClass.getObjuser());
@@ -79,12 +79,12 @@ public class AuditTrailController {
 	}
 
 	@PostMapping("/GetAuditconfigUser")
-	public Map<String, Object> GetAuditconfigUser(@RequestBody LSaudittrailconfiguration LSaudittrailconfiguration) {
+	public Map<String, Object> GetAuditconfigUser(@RequestBody LSaudittrailconfiguration LSaudittrailconfiguration)throws Exception {
 		return auditService.GetAuditconfigUser(LSaudittrailconfiguration);
 	}
 
 	@PostMapping("/SaveAuditconfigUser")
-	public List<LSaudittrailconfiguration> SaveAuditconfigUser(@RequestBody LSaudittrailconfiguration[] lsAudit) {
+	public List<LSaudittrailconfiguration> SaveAuditconfigUser(@RequestBody LSaudittrailconfiguration[] lsAudit)throws Exception {
 		return auditService.SaveAuditconfigUser(lsAudit);
 	}
 
@@ -95,12 +95,12 @@ public class AuditTrailController {
 	}
 
 	@PostMapping("/CheckUserPassWord")
-	public LSuserMaster CheckUserPassWord(@RequestBody LoggedUser objuser) {
+	public LSuserMaster CheckUserPassWord(@RequestBody LoggedUser objuser)throws Exception {
 		return auditService.CheckUserPassWord(objuser);
 	}
 
 	@PostMapping("/ReviewBtnValidation")
-	public List<LSreviewdetails> ReviewBtnValidation(@RequestBody LSreviewdetails[] objreview) {
+	public List<LSreviewdetails> ReviewBtnValidation(@RequestBody LSreviewdetails[] objreview)throws Exception {
 
 //		if(objreview.get(0).getObjuser() != null) {
 //			
@@ -132,7 +132,7 @@ public class AuditTrailController {
 	}
 
 	@PostMapping("/GetReviewDetails")
-	public List<LSreviewdetails> GetReviewDetails(@RequestBody List<LSreviewdetails> objreviewdetails) {
+	public List<LSreviewdetails> GetReviewDetails(@RequestBody List<LSreviewdetails> objreviewdetails)throws Exception {
 
 		if (objreviewdetails.get(0).getObjuser() != null) {
 
@@ -151,7 +151,7 @@ public class AuditTrailController {
 	}
 
 	@PostMapping("/GetReviewDetails12")
-	public Map<String, Object> GetReviewDetails12(@RequestBody LSreviewdetails[] objreviewdetails) {
+	public Map<String, Object> GetReviewDetails12(@RequestBody LSreviewdetails[] objreviewdetails)throws Exception {
 		Response objResponse = new Response();
 		Map<String, Object> objreview = new HashMap<String, Object>();
 //		if(objreviewdetails.get(0).getObjuser() != null) {

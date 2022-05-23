@@ -39,7 +39,7 @@ public class Documentcontroller {
 	helpdocumentservice helpdocumentservice;
 	
 	@RequestMapping(value="/adddocument")
-	public Map<String, Object> adddocument(@RequestBody Map<String, Object> argObj ) {
+	public Map<String, Object> adddocument(@RequestBody Map<String, Object> argObj )throws Exception {
 		
 		return helpdocumentservice.adddocument(argObj);
 //		return argObj;
@@ -47,7 +47,7 @@ public class Documentcontroller {
 	}
 	
 	@GetMapping(value="/getdocumentcontent")
-	public Map<String, Object> getdocumentcontent(HttpServletRequest request){
+	public Map<String, Object> getdocumentcontent(HttpServletRequest request)throws Exception{
 		
 		return helpdocumentservice.getdocumentcontent();
 	
@@ -55,44 +55,44 @@ public class Documentcontroller {
 	}
 	
 	@GetMapping(value="/savenode")
-	public Helptittle savenode(@RequestBody Helptittle objhelp)
+	public Helptittle savenode(@RequestBody Helptittle objhelp)throws Exception
 	{
 		return helpdocumentservice.savenode(objhelp);
 	}
 
 	@GetMapping(value="/gethelpnodes")
-	public List<Helptittle> gethelpnodes(@RequestBody Helptittle objhelp)
+	public List<Helptittle> gethelpnodes(@RequestBody Helptittle objhelp)throws Exception
 	{
 		return helpdocumentservice.gethelpnodes(objhelp);
 	}
 	
 	@GetMapping(value="/getdocumentonid")
-	public Helpdocument getdocumentonid(@RequestBody Helpdocument objhelp)
+	public Helpdocument getdocumentonid(@RequestBody Helpdocument objhelp)throws Exception
 	{
 		return helpdocumentservice.getdocumentonid(objhelp);
 	}
 	
 	@GetMapping(value="/savedocument")
-	public Helpdocument savedocument(@RequestBody Helpdocument objhelp)
+	public Helpdocument savedocument(@RequestBody Helpdocument objhelp)throws Exception
 	{
 		return helpdocumentservice.savedocument(objhelp);
 	}
 	
 	@GetMapping(value="/sortNodesforhelp")
-	public List<Helptittle> sortNodesforhelp(@RequestBody List<Helptittle> objhelp)
+	public List<Helptittle> sortNodesforhelp(@RequestBody List<Helptittle> objhelp)throws Exception
 	{
 		return helpdocumentservice.sortNodesforhelp(objhelp);
 	}
 	
 	@PostMapping(value="/deletenode")
-	public List<Helptittle> deletenode(@RequestBody List<Helptittle> objhelp)
+	public List<Helptittle> deletenode(@RequestBody List<Helptittle> objhelp)throws Exception
 	{
 		return helpdocumentservice.deletenode(objhelp);
 		
 	}
 	
 	@PostMapping(value="/deletechildnode")
-	public Helptittle deletechildnode(@RequestBody Helptittle objhelp)
+	public Helptittle deletechildnode(@RequestBody Helptittle objhelp)throws Exception
 	{
 		return helpdocumentservice.deletechildnode(objhelp);
 		
@@ -116,14 +116,14 @@ public class Documentcontroller {
 	}
 	
 	@PostMapping("/getnodeonpage")
-	public Helptittle getnodeonpage(@RequestBody Helptittle objhelp)
+	public Helptittle getnodeonpage(@RequestBody Helptittle objhelp)throws Exception
 	{
 		return helpdocumentservice.getnodeonpage(objhelp.getPage());
 	}
 	
 	@PostMapping("/uploadhelpimages")
 	public Map<String, Object> uploadhelpimages(@RequestParam("file") MultipartFile file,
-			@RequestParam("originurl") String originurl, @RequestParam String ismultitenant)
+			@RequestParam("originurl") String originurl, @RequestParam String ismultitenant)throws Exception
 	{
 		return helpdocumentservice.uploadhelpimages(file, originurl, ismultitenant);
 	}
@@ -158,7 +158,7 @@ public class Documentcontroller {
 	}
 	
 	@PostMapping("/removehelpimage")
-	public boolean removehelpimage(@RequestBody Map<String, String> body)
+	public boolean removehelpimage(@RequestBody Map<String, String> body)throws Exception
 	{
 		return helpdocumentservice.removehelpimage(body);
 	}

@@ -34,7 +34,7 @@ public class FileUploadController {
 		return fileStorageService;
 	}
 
-	public void setFileStorageService(FileStorageService fileStorageService) {
+	public void setFileStorageService(FileStorageService fileStorageService)throws Exception {
 		this.fileStorageService = fileStorageService;
 	}
 
@@ -45,7 +45,7 @@ public class FileUploadController {
 	 * @return uploaded file name
 	 */
 	@PostMapping("/uploadFile")
-    public Response uploadFile(@RequestParam("file") MultipartFile file) {
+    public Response uploadFile(@RequestParam("file") MultipartFile file){
         String fileName = fileStorageService.storeFile(file);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -59,7 +59,7 @@ public class FileUploadController {
 
 	
     @PostMapping("/uploadMultipleFiles")
-    public List<Response> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
+    public List<Response> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files)throws Exception {
         return Arrays.asList(files)
                 .stream()
                 .map(file -> uploadFile(file))

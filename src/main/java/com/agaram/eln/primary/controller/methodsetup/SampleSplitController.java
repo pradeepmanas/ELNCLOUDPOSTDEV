@@ -34,7 +34,7 @@ public class SampleSplitController {
 	 */
 	@PostMapping(value = "/createSampleSplit")
 	public ResponseEntity<Object> saveSampleSplit(final HttpServletRequest request, 
-			@Valid @RequestBody Map<String, Object> mapObject)	{    		
+			@Valid @RequestBody Map<String, Object> mapObject)throws Exception	{    		
 		
 		return sampleSplitService.saveSampleSplit(request, mapObject);
 	}

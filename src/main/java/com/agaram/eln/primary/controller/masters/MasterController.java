@@ -31,73 +31,73 @@ public class MasterController {
 	MasterService masterService;
 	
 	@RequestMapping("/Getallrepositories")
-	public List<Lsrepositories> Getallrepositories(@RequestBody Lsrepositories lsrepositories)
+	public List<Lsrepositories> Getallrepositories(@RequestBody Lsrepositories lsrepositories)throws Exception
 	{
 		return masterService.Getallrepositories(lsrepositories);
 	}
 	
 	@RequestMapping("/Getallrepositoriesondashboard")
-	public List<Lsrepositories> Getallrepositoriesondashboard(@RequestBody Lsrepositories lsrepositories)
+	public List<Lsrepositories> Getallrepositoriesondashboard(@RequestBody Lsrepositories lsrepositories)throws Exception
 	{
 		return masterService.Getallrepositoriesondashboard(lsrepositories);
 	}
 	
 	@RequestMapping("/Saverepository")
-	public Lsrepositories Saverepository(@RequestBody Lsrepositories lsrepositories)
+	public Lsrepositories Saverepository(@RequestBody Lsrepositories lsrepositories)throws Exception
 	{
 		return masterService.Saverepository(lsrepositories);
 	}
 	
 	@RequestMapping("/Getallrepositoriesdata")
-	public List<Lsrepositoriesdata> Getallrepositoriesdata(@RequestBody Lsrepositoriesdata lsrepositoriesdata)
+	public List<Lsrepositoriesdata> Getallrepositoriesdata(@RequestBody Lsrepositoriesdata lsrepositoriesdata)throws Exception
 	{
 		return masterService.Getallrepositoriesdata(lsrepositoriesdata);
 	}
 	
 	@RequestMapping("/Saverepositorydata")
-	public Lsrepositoriesdata Saverepositorydata(@RequestBody Lsrepositoriesdata lsrepositoriesdata)
+	public Lsrepositoriesdata Saverepositorydata(@RequestBody Lsrepositoriesdata lsrepositoriesdata)throws Exception
 	{
 		return masterService.Saverepositorydata(lsrepositoriesdata);
 	}
 	
 	@RequestMapping("/GetupdatedRepositorydata")
-	public Lsrepositoriesdata GetupdatedRepositorydata(@RequestBody Lsrepositoriesdata lsrepositoriesdata)
+	public Lsrepositoriesdata GetupdatedRepositorydata(@RequestBody Lsrepositoriesdata lsrepositoriesdata)throws Exception
 	{
 		return masterService.GetupdatedRepositorydata(lsrepositoriesdata);
 	}
 	
 	@RequestMapping("/DeleteRepositorydata")
-	public Lsrepositoriesdata DeleteRepositorydata(@RequestBody Lsrepositoriesdata lsrepositoriesdata)
+	public Lsrepositoriesdata DeleteRepositorydata(@RequestBody Lsrepositoriesdata lsrepositoriesdata)throws Exception
 	{
 		return masterService.DeleteRepositorydata(lsrepositoriesdata);
 	}
 	
 	@RequestMapping("/getinventoryhistory")
-	public List<LsOrderSampleUpdate> getinventoryhistory(@RequestBody LsOrderSampleUpdate lsinventoryhistory)
+	public List<LsOrderSampleUpdate> getinventoryhistory(@RequestBody LsOrderSampleUpdate lsinventoryhistory)throws Exception
 	{
 		return masterService.getinventoryhistory(lsinventoryhistory);
 	}
 	
 	@RequestMapping("/pushnotificationforinventory")
-	public Response pushnotificationforinventory(@RequestBody List<Lsrepositoriesdata>  lsrepositoriesdata)
+	public Response pushnotificationforinventory(@RequestBody List<Lsrepositoriesdata>  lsrepositoriesdata)throws Exception
 	{
 		return masterService.pushnotificationforinventory(lsrepositoriesdata);
 	}
 	
 	@RequestMapping("/getrepositoryfields")
-	public Map<String,Object> getrepositoryfields(@RequestBody Lsrepositories repositorymaster)
+	public Map<String,Object> getrepositoryfields(@RequestBody Lsrepositories repositorymaster)throws Exception
 	{
 		return masterService.getrepositoryfields(repositorymaster);
 	}
 	
 	@RequestMapping("/GetrepositoriesdataonFilter")
-	public List<Lsrepositoriesdata> GetrepositoriesdataonFilter(@RequestBody Lsrepositoriesdata lsrepositoriesdata)
+	public List<Lsrepositoriesdata> GetrepositoriesdataonFilter(@RequestBody Lsrepositoriesdata lsrepositoriesdata)throws Exception
 	{
 		return masterService.GetrepositoriesdataonFilter(lsrepositoriesdata);
 	}
 	
 	@RequestMapping("/archiveproject")
-	public LsProjectarchieve archiveproject(@RequestBody LSprojectmaster lsprojectmaster)
+	public LsProjectarchieve archiveproject(@RequestBody LSprojectmaster lsprojectmaster)throws Exception
 	{
 		return masterService.archiveproject(lsprojectmaster);
 	}
@@ -109,7 +109,7 @@ public class MasterController {
 	}
 	
 	@RequestMapping("/GetArchievedprojectsonsite")
-	public List<LsProjectarchieve> GetArchievedprojectsonsite(@RequestBody LSSiteMaster lssitemaster)
+	public List<LsProjectarchieve> GetArchievedprojectsonsite(@RequestBody LSSiteMaster lssitemaster)throws Exception
 	{
 		return masterService.GetArchievedprojectsonsite(lssitemaster);
 	}

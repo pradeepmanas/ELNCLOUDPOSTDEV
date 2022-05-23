@@ -32,7 +32,7 @@ public class SampleExtractController {
 	 * @return response object with list of active SampleExtract entities
 	 */
 	@PostMapping(value = "/getSampleExtractByMethod")
-	public ResponseEntity<Object> getSampleExtractByMethod(@Valid @RequestBody Map<String, Object> mapObject)
+	public ResponseEntity<Object> getSampleExtractByMethod(@Valid @RequestBody Map<String, Object> mapObject)throws Exception
 	{    	
 		//final int methodKey = (Integer) mapObject.get("methodKey");
 		Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");

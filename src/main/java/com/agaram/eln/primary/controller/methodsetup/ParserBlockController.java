@@ -30,7 +30,7 @@ public class ParserBlockController {
 	 * @return retrieve list of active PaserBlock entities
 	 */
 	@PostMapping(value = "/getParserBlockByMethodKey")
-	public ResponseEntity<Object> getParserBlockByMethodKey(@RequestBody Map<String, Object> mapObject){
+	public ResponseEntity<Object> getParserBlockByMethodKey(@RequestBody Map<String, Object> mapObject)throws Exception{
 		 final ObjectMapper mapper = new ObjectMapper();		 
 		 final int methodKey = mapper.convertValue(mapObject.get("methodKey"), Integer.class);
 		
