@@ -1028,7 +1028,3 @@ ALTER TABLE IF Exists elnresultdetails ADD COLUMN IF NOT EXISTS parserfieldkey i
 
 ALTER TABLE IF Exists lsprotocolorderversion ADD COLUMN IF NOT EXISTS createdby integer;
     
-INSERT INTO methoddelimiter (createddate,status,usercode,delimiterkey,parsermethodkey) SELECT '2020-05-15 00:00:00.000',1,1,1,1 WHERE NOT EXISTS 
-(select * from methoddelimiter where methoddelimiterkey = 1);   
- 
-    
