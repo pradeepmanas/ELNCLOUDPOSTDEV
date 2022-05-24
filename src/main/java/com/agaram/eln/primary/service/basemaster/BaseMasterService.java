@@ -156,7 +156,7 @@ public class BaseMasterService {
 
 		if (objClass.getObjsilentaudit() != null) {
 			objClass.getObjsilentaudit().setTableName("LSsamplemaster");
-			lscfttransactionRepository.save(objClass.getObjsilentaudit());
+//			lscfttransactionRepository.save(objClass.getObjsilentaudit());
 		}
 
 		return lSsamplemasterRepository.findBystatusAndLssitemaster(1, objClass.getLssitemaster());
@@ -166,7 +166,7 @@ public class BaseMasterService {
 
 		if (objClass.getObjsilentaudit() != null) {
 			objClass.getObjsilentaudit().setTableName("LSprojectmaster");
-			lscfttransactionRepository.save(objClass.getObjsilentaudit());
+//			lscfttransactionRepository.save(objClass.getObjsilentaudit());
 		}
 
 		return lSprojectmasterRepository.findBystatusAndLssitemaster(1, objClass.getLssitemaster());
@@ -352,7 +352,7 @@ public class BaseMasterService {
 
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LStestmaster");
-			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+//			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 		return mapOrders;
 	}
@@ -444,7 +444,7 @@ public class BaseMasterService {
 //		silent audit
 		if (objClass.getObjsilentaudit() != null) {
 			objClass.getObjsilentaudit().setTableName("Lselninstrumentmaster");
-			lscfttransactionRepository.save(objClass.getObjsilentaudit());
+//			lscfttransactionRepository.save(objClass.getObjsilentaudit());
 		}
 		return obj;
 	}

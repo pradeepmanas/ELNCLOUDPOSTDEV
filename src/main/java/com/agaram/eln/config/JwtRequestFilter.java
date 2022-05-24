@@ -87,7 +87,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 		// Once we get the token validate it.
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
+			try {
 			UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
 
 			// if token is valid configure Spring Security to manually set
@@ -102,6 +102,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 				// that the current user is authenticated. So it passes the
 				// Spring Security Configurations successfully.
 				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+			}
+			}catch (Exception e) {
+				// TODO: handle exception
 			}
 		}
 		chain.doFilter(request, response);

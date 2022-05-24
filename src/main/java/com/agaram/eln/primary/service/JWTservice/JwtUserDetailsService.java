@@ -68,14 +68,22 @@ public class JwtUserDetailsService implements UserDetailsService {
 		}
 //		LSuserMaster user = userDao.findByUsernameIgnoreCaseAndLssitemasterAndUserretirestatusNot(usernamevalue, objsite,1);
 		
-		if (user == null) {
-			throw new UsernameNotFoundException("User not found with username: " + username);
+		try {
+			if (user == null) {
+				throw new UsernameNotFoundException("User not found with username: " + username);
+			}	
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		
+		if(user!=null) {
 		String Tokenuser = user.getUsername() +"["+user.getLssitemaster().getSitecode()+"]";
 		
 		return new org.springframework.security.core.userdetails.User(Tokenuser, user.getPassword(),
 				new ArrayList<>());
+	}
+
+	return null;
 	}
 
 	

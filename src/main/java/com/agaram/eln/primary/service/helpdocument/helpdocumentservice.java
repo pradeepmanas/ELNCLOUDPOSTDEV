@@ -321,7 +321,31 @@ public class helpdocumentservice {
 	
 	public Helptittle getnodeonpage(String page)
 	{
-		return helptittleRepository.findFirst1ByPageOrderByNodecodeDesc(page);
+		Helptittle objtitle = new Helptittle();
+		
+		if(page != null)
+		{
+			Response objResponse = new Response();
+			objtitle = helptittleRepository.findFirst1ByPageOrderByNodecodeDesc(page);
+			if(objtitle != null)
+			{
+				objResponse.setStatus(true);
+			}
+			else
+			{
+				objtitle = new Helptittle();
+				objResponse.setStatus(false);
+			}
+			objtitle.setObjResponse(objResponse);
+		}
+		else
+		{
+			Response objResponse = new Response();
+			objResponse.setStatus(false);;
+			objtitle.setObjResponse(objResponse);
+		}
+				
+		return objtitle;
 	}
 	
 	public Map<String, Object> uploadhelpimages(MultipartFile file, String originurl,String ismultitenant) {

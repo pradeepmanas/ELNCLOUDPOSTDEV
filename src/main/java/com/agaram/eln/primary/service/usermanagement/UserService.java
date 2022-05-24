@@ -538,7 +538,7 @@ public class UserService {
 		}
 		if (lsusergroup.getObjsilentaudit() != null) {
 			lsusergroup.getObjsilentaudit().setTableName("LSusergroup");
-			lscfttransactionRepository.save(lsusergroup.getObjsilentaudit());
+//			lscfttransactionRepository.save(lsusergroup.getObjsilentaudit());
 		}
 		return maprights;
 	}
@@ -593,7 +593,7 @@ public class UserService {
 	public List<LSactiveUser> GetActiveUsers(LSuserMaster objuser) {
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSuserMaster");
-			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+//			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 		return lsactiveUserRepository.findAll();
 
@@ -621,7 +621,7 @@ public class UserService {
 
 		if (Objclass.getObjsilentaudit() != null) {
 			Objclass.getObjsilentaudit().setTableName("LSusergroup");
-			lscfttransactionRepository.save(Objclass.getObjsilentaudit());
+//			lscfttransactionRepository.save(Objclass.getObjsilentaudit());
 		}
 		if (Objclass.getSitecode() == 0) {
 			return lSusergroupRepository.findByUsergroupnameNotOrderByUsergroupcodeDesc("Administrator");

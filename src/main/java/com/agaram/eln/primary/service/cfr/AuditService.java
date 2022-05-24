@@ -80,7 +80,7 @@ public class AuditService {
 		LScfttransaction cfttransaction;
 		if (objMap.containsKey("objsilentaudit") && objMap.containsKey("cfrsetting")) {
 			cfttransaction = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
-			lscfttransactionRepository.save(cfttransaction);
+//			lscfttransactionRepository.save(cfttransaction);
 		}
 		return result;
 	}
@@ -178,7 +178,7 @@ public class AuditService {
 				LSuserMaster usercode = lSuserMasterRepository.findByusercode(
 						cfttransaction.getLsuserMaster() != null ? cfttransaction.getLsuserMaster() : null);
 				cfttransaction.setLsuserMaster(usercode.getUsercode());
-				lscfttransactionRepository.save(cfttransaction);
+//				lscfttransactionRepository.save(cfttransaction);
 
 			}
 			Date fromdate = new SimpleDateFormat("dd/MM/yyyy").parse((String) objCFRFilter.get("fromdate"));
@@ -271,7 +271,7 @@ public class AuditService {
 		if (LSaudittrailconfiguration.getObjsilentaudit() != null) {
 
 			LSaudittrailconfiguration.getObjsilentaudit().setTableName("LSaudittrailconfiguration");
-			lscfttransactionRepository.save(LSaudittrailconfiguration.getObjsilentaudit());
+//			lscfttransactionRepository.save(LSaudittrailconfiguration.getObjsilentaudit());
 		}
 
 		return maprAuditConfig;
