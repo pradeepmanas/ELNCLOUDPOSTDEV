@@ -75,6 +75,12 @@ public class InstrumentController {
 
 		return instrumentService.InsertELNOrder(objorder);
 	}
+	
+	@PostMapping("/GetOrderonClose")
+	public Logilaborders GetOrderonClose(@RequestBody LSlogilablimsorderdetail objorder) {
+
+		return instrumentService.GetOrderonClose(objorder);
+	}
 
 	@PostMapping("/InsertActivities")
 	public LSactivity InsertActivities(@RequestBody LSactivity objActivity)throws Exception {

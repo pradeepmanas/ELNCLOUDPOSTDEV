@@ -273,11 +273,13 @@ public class LoginService {
 								return obj;
 							} else {
 								objExitinguser.getObjResponse().setStatus(true);
-
+								objExitinguser.setLockcount(0);
+								lSuserMasterRepository.save(objExitinguser);
 							}
 						} else {
 							objExitinguser.getObjResponse().setStatus(true);
-
+							objExitinguser.setLockcount(0);
+							lSuserMasterRepository.save(objExitinguser);
 						}
 					}
 				} else if (objExitinguser.getUserretirestatus() != 0) {

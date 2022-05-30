@@ -362,10 +362,9 @@ public class InstrumentService {
 
 	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder) {
 
-		// if(!objorder.getNoworkflow()) {
 		objorder.setLsworkflow(lsworkflowRepository
 				.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
-		// }
+
 		objorder.setOrderflag("N");
 
 		String Content = "";
@@ -391,7 +390,6 @@ public class InstrumentService {
 				}
 
 			}
-//			objsamplefile.setCreatedate(new Date());
 			objsamplefile.setTestid(objorder.getTestcode());
 			objsamplefile.setBatchcode(objorder.getBatchcode());
 			objsamplefile.setProcessed(0);
@@ -476,24 +474,24 @@ public class InstrumentService {
 			lslimsorderRepository.save(objLimsOrder);
 		}
 
-		if (objorder.getObjuser() != null) {
-			objorder.getObjmanualaudit().setComments(objorder.getObjuser().getComments());
-			objorder.getObjmanualaudit().setTableName("LSlogilablimsorderdetail");
-//			lscfttransactionRepository.save(objorder.getObjmanualaudit());
-		}
-
-		if (objorder.getObjsilentaudit() != null) {
-			objorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-//			lscfttransactionRepository.save(objorder.getObjsilentaudit());
-		}
-
 		if (objorder.getLssamplefile() != null) {
 			updateordercontent(Content, objorder.getLssamplefile(), objorder.getIsmultitenant());
 		}
 
 		updatenotificationfororder(objorder);
+		
+		objorder.setLstworkflow(objorder.getLstworkflow());
 
 		return objorder;
+	}
+	
+	public Logilaborders GetOrderonClose(LSlogilablimsorderdetail objorder) {
+
+		Logilaborders objOrder = lslogilablimsorderdetailRepository.findByBatchcode(objorder.getBatchcode());
+		
+		objOrder.setLstworkflow(objorder.getLstworkflow());
+
+		return objOrder;
 	}
 
 	public void updatenotificationfororder(LSlogilablimsorderdetail objorder) {

@@ -1,7 +1,9 @@
 package com.agaram.eln.primary.model.instrumentDetails;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -195,12 +197,12 @@ public class LSlogilablimsorderdetail {
 	
 	private Long directorycode;
 	
-	public Integer getRejected() {
-		return rejected;
-	}
-	public void setRejected(Integer rejected) {
-		this.rejected = rejected;
-	}
+//	public Integer getRejected() {
+//		return rejected;
+//	}
+//	public void setRejected(Integer rejected) {
+//		this.rejected = rejected;
+//	}
 	@ManyToOne
 	private LSuserMaster assignedto;
 	
@@ -251,9 +253,43 @@ public class LSlogilablimsorderdetail {
 	public List<LSworkflow> getLstworkflow() {
 		return lstworkflow;
 	}
+//	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+//		this.lstworkflow = lstworkflow;
+//	}
+	
+	@Transient
+	private boolean canuserprocess;
+	
+	public boolean isCanuserprocess() {
+		return canuserprocess;
+	}
+	public void setCanuserprocess(boolean canuserprocess) {
+		this.canuserprocess = canuserprocess;
+	}
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+		
+//		this.lstworkflow = lstworkflow;
+
+		if (this.lsworkflow != null && lstworkflow != null  && lstworkflow.size() > 0) {
+			List<Integer> lstworkflowcode = new ArrayList<Integer>();
+			if (lstworkflow != null && lstworkflow.size() > 0) {
+				lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+
+				if (lstworkflowcode.contains(this.lsworkflow.getWorkflowcode())) {
+					this.setCanuserprocess(true);
+				} else {
+					this.setCanuserprocess(false);
+				}
+			} else {
+				this.setCanuserprocess(false);
+			}
+		} else {
+			this.setCanuserprocess(false);
+		}
+		
 		this.lstworkflow = lstworkflow;
 	}
+	
 	public Integer getApproved() {
 		return approved;
 	}

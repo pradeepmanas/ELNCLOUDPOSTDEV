@@ -586,7 +586,7 @@ public class ReportsService {
 					new TypeReference<LScfttransaction>() {
 					});
 			LScfttransactionobj.setTableName("LSdocreports");
-			lscfttransactionRepository.save(LScfttransactionobj);
+//			lscfttransactionRepository.save(LScfttransactionobj);
 		}
 		if (argObj.containsKey("objmanualaudit")) {
 			if (argObj.get("objmanualaudit") != null) {
