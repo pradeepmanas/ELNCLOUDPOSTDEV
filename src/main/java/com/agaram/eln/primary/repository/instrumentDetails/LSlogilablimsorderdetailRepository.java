@@ -489,4 +489,5 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	void updateparentdirectory(Long newdirectorycode , Long olddirectorycode);
 
 	
+	List<LSlogilablimsorderdetail> findByAssignedto(Integer assignedto);
 }

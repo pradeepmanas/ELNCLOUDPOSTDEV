@@ -20,7 +20,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler
 	{
 		System.out.println("------Inside handleAnyException--------");
 
-//		ex.printStackTrace();
+		ex.printStackTrace();
 
 		ErrorMessage errorMessage = new ErrorMessage(301, ex.toString(), new Date());
 

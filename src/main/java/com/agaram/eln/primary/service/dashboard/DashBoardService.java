@@ -392,10 +392,10 @@ public class DashBoardService {
 
 		}
 
-		if (objuser.getObjsilentaudit() != null) {
-			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-			lscfttransactionRepository.save(objuser.getObjsilentaudit());
-		}
+//		if (objuser.getObjsilentaudit() != null) {
+//			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+//			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+//		}
 
 		return mapOrders;
 	}

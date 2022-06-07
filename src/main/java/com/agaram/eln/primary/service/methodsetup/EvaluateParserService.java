@@ -426,6 +426,7 @@ public class EvaluateParserService {
                     			
                     			}
                     		}
+                    		techData.setParseddata(fieldData);
                     	}
                       }
                     else if (subParserField.getSubparserfieldtype().equalsIgnoreCase("cell")) {

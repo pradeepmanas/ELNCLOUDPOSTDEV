@@ -924,4 +924,10 @@ public class InstrumentController {
 	public List<LSsamplefileversion> getlsorderfileversion(@RequestBody LSsamplefile objfile)throws Exception {
 		return instrumentService.getlsorderfileversion(objfile);
 	}
+	
+	@RequestMapping("/GetAssignedtoUserorders")
+	public List<LSlogilablimsorderdetail> GetAssignedtoUserorders(@RequestBody LSlogilablimsorderdetail order)throws Exception
+	{
+		return instrumentService.GetAssignedtoUserorders(order);
+	}
 }

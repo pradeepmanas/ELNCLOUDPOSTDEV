@@ -3984,4 +3984,12 @@ public class InstrumentService {
 		}
 		return objList;
 	}
+	
+	public List<LSlogilablimsorderdetail> GetAssignedtoUserorders(LSlogilablimsorderdetail orderary) {
+		List<LSlogilablimsorderdetail> order = Arrays.asList(orderary);
+		if (order.size() > 0) {
+			lslogilablimsorderdetailRepository.findByAssignedto(((LSlogilablimsorderdetail) order).getAssignedto().getUsercode());
+		}
+		return order;
+	}
 }

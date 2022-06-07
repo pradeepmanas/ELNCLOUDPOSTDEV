@@ -508,17 +508,17 @@ public class LoginService {
 	}
 
 	public Boolean Logout(LSuserMaster lsuserMaster) {
-		if (lsuserMaster.getObjsilentaudit() != null) {
-			lsuserMaster.getObjsilentaudit().setLsuserMaster(lsuserMaster.getUsercode());
-			lsuserMaster.getObjsilentaudit().setLssitemaster(lsuserMaster.getObjsilentaudit().getLssitemaster());
-			lsuserMaster.getObjsilentaudit().setModuleName(ModuleName);
-			lsuserMaster.getObjsilentaudit().setComments("User Logged out Successfully");
-			lsuserMaster.getObjsilentaudit().setActions("Logout Success");
-			lsuserMaster.getObjsilentaudit().setSystemcoments("System Generated");
-			lsuserMaster.getObjsilentaudit().setManipulatetype("Logout");
-			lsuserMaster.getObjsilentaudit().setTableName("LSuserMaster");
+//		if (lsuserMaster.getObjsilentaudit() != null) {
+//			lsuserMaster.getObjsilentaudit().setLsuserMaster(lsuserMaster.getUsercode());
+//			lsuserMaster.getObjsilentaudit().setLssitemaster(lsuserMaster.getObjsilentaudit().getLssitemaster());
+//			lsuserMaster.getObjsilentaudit().setModuleName(ModuleName);
+//			lsuserMaster.getObjsilentaudit().setComments(lsuserMaster.getUsername()+" Logged out Successfully");
+//			lsuserMaster.getObjsilentaudit().setActions("Logout Success");
+//			lsuserMaster.getObjsilentaudit().setSystemcoments("System Generated");
+//			lsuserMaster.getObjsilentaudit().setManipulatetype("Logout");
+//			lsuserMaster.getObjsilentaudit().setTableName("LSuserMaster");
 			lscfttransactionRepository.save(lsuserMaster.getObjsilentaudit());
-		}
+//		}
 		lsactiveUserRepository.deleteBylsusermaster(lsuserMaster);
 		return true;
 	}
