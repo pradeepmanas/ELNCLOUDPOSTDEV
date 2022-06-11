@@ -336,6 +336,15 @@ public class LSlogilablimsorderdetail {
 	private Date todate;
 	
 	@Transient
+	private Integer checked = 0;
+	
+	public Integer getChecked() {
+		return checked;
+	}
+	public void setChecked(Integer checked) {
+		this.checked = checked;
+	}
+	@Transient
 	List<LStestparameter> lstestparameter;
 	
 	@Transient

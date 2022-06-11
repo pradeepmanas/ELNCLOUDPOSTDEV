@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.repository.sheetManipulation;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +17,6 @@ public interface LSfilemethodRepository extends JpaRepository<LSfilemethod, Inte
 	public void deleteByfilecode(Integer filecode);
 	
 	public LSfilemethod findByFilecode(Integer filecode);
+	
+	public List<LSfilemethod> findByFilecodeOrderByFilemethodcode(Integer filecode);
 }

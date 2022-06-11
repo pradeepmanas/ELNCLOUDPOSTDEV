@@ -14,6 +14,7 @@ import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
+import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -44,7 +45,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterIn(String orderflag,
 			List<LSprojectmaster> lstproject);
 
-	public long countByOrderflag(String orderflag);
+//	public long countByOrderflag(String orderflag);
 
 	public long countByOrderflagAndLssamplefileIn(String orderflag, List<LSsamplefile> lssamplefile);
 
@@ -53,8 +54,11 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	public List<LSlogilablimsorderdetail> findByFiletypeAndOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc(
 			Integer filetype, String orderflag, List<LSprojectmaster> lstproject, List<LSworkflow> lsworkflow);
-
+	
 	public List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, List<LSworkflow> lsworkflow);
+	
+	public List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndLsworkflowInAndLockeduserIsNotNullOrderByBatchcodeDesc(
 			String orderflag, List<LSprojectmaster> lstproject, List<LSworkflow> lsworkflow);
 
 	public long countByOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc(String orderflag,
@@ -255,6 +259,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	public List<LSlogilablimsorderdetail> findByFiletypeAndOrderflagAndCompletedtimestampBetweenAndLssamplefileIn(
 			Integer filetype, String flag, Date fromdate, Date todate, List<LSsamplefile> idList);
+	
+	public List<LSlogilablimsorderdetail> findByOrderflagAndLockeduserIsNotNullOrderByBatchcodeDesc(String flag);
 
 	public List<LSlogilablimsorderdetail> findByFiletypeAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			Integer filetype, LSuserMaster assignedto, Date fromdate, Date todate);
@@ -295,7 +301,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public Long countByFiletypeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrderByBatchcodeDesc(
 			Integer filetype, String flag, LSuserMaster user, LSuserMaster assignedto, Date fromdate, Date todate);
 
-	// kumaresan
 	long countByFiletypeAndOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(Integer filetype,
 			String string, LSuserMaster lsuserMaster, Date fromdate, Date todate);
 
@@ -310,6 +315,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			List<LSprojectmaster> lstproject, Integer approvelstatus, Integer approved, String orderflag1);
 
 	public Long countByCreatedtimestampBetween(Date fromdate, Date todate);
+	
+	public Long countByOrderflag(String orderflag);
 
 	public long countByOrderflagAndCreatedtimestampBetween(String orderflag, Date fromdate, Date todate);
 
@@ -329,10 +336,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public long countByFiletypeAndOrderflagAndCreatedtimestampBetween(Integer filetype, String orderflag, Date fromdate,
 			Date todate);
 
-//	@Transactional
-//	@Modifying
-//	@Query(value = "select batchcode from"
-//			+ " LSlogilablimsorderdetail where orderflag = ?1 and lsprojectmaster_projectcode in (?2) and completedtimestamp BETWEEN (?3) AND (?4)", nativeQuery = true)
 	public long countByOrderflagAndLsprojectmasterInAndCompletedtimestampBetween(String orderflag,
 			List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 	
@@ -353,10 +356,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			String orderflag, List<LSprojectmaster> lstproject, Integer approvelstatus, Integer approved,
 			String orderflag1, Date fromdate, Date todate);
 
-//	@Transactional
-//	@Modifying
-//	@Query(value = "select batchcode from"
-//			+ " LSlogilablimsorderdetail where orderflag = ?1 and lsprojectmaster_projectcode in (?2) and createdtimestamp BETWEEN (?3) AND (?4)", nativeQuery = true)
 	public long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween(String orderflag,
 			List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 	
@@ -372,13 +371,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 
-	/**
-	 * Added by sathishkumar chandrasekar orders are loaded by quickly in sheet view
-	 * 
-	 * @param lssamplefile
-	 * @param filetype
-	 * @return
-	 */
 	public List<Logilaborders> findByLssamplefileInAndFiletypeOrderByBatchcodeDesc(List<LSsamplefile> lssamplefile,
 			Integer filetype);
 
@@ -487,7 +479,11 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	@Modifying
 	@Query("update LSlogilablimsorderdetail o set o.directorycode = ?1 where o.directorycode = ?2")
 	void updateparentdirectory(Long newdirectorycode , Long olddirectorycode);
-
 	
 	List<LSlogilablimsorderdetail> findByAssignedto(Integer assignedto);
+
+	List<LSlogilablimsorderdetail> findByLssamplemaster(LSsamplemaster objClass);
+
+	List<LSlogilablimsorderdetail> findByTestcode(Integer testcode);
+
 }

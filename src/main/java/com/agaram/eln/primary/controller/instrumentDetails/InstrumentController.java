@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.cfr.LSactivity;
+//import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.fileManipulation.Fileimages;
 import com.agaram.eln.primary.model.fileManipulation.Fileimagestemp;
 import com.agaram.eln.primary.model.general.Response;
@@ -80,6 +81,11 @@ public class InstrumentController {
 	public Logilaborders GetOrderonClose(@RequestBody LSlogilablimsorderdetail objorder) {
 
 		return instrumentService.GetOrderonClose(objorder);
+	}
+	
+	@PostMapping("/GetdOrderCount")
+	public Map<String, Object> getdOrderCount(@RequestBody LSuserMaster objuser)throws Exception {
+		return instrumentService.getdOrderCount(objuser);
 	}
 
 	@PostMapping("/InsertActivities")
@@ -929,5 +935,15 @@ public class InstrumentController {
 	public List<LSlogilablimsorderdetail> GetAssignedtoUserorders(@RequestBody LSlogilablimsorderdetail order)throws Exception
 	{
 		return instrumentService.GetAssignedtoUserorders(order);
+	}
+	
+	@PostMapping("/getLockedOrders")
+	private List<LSlogilablimsorderdetail> GetLockedOrders(@RequestBody LSlogilablimsorderdetail objorder) {
+		return instrumentService.GetLockedOrders(objorder);
+	}
+	
+	@PostMapping("/unLockedOrders")
+	private Response UnLockOrders(@RequestBody LSlogilablimsorderdetail[] lstOrder) {
+		return instrumentService.UnLockOrders(lstOrder);
 	}
 }

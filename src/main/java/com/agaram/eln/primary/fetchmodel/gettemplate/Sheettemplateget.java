@@ -15,7 +15,7 @@ public class Sheettemplateget {
 
 	private LSuserMaster createby;
 	private LSuserMaster modifiedby;
-	private String filecontent;
+//	private String filecontent;
 	private long versioncout;
 	
 //	private List<LSfileversion> lstfileversion;
@@ -139,12 +139,12 @@ public class Sheettemplateget {
 		this.filenameuser = filenameuser;
 	}
 
-	public String getFilecontent() {
-		return filecontent;
-	}
-
-	public void setFilecontent(String filecontent) {
-		this.filecontent = filecontent;
-	}
+//	public String getFilecontent() {
+//		return filecontent;
+//	}
+//
+//	public void setFilecontent(String filecontent) {
+//		this.filecontent = filecontent;
+//	}
 	
 }

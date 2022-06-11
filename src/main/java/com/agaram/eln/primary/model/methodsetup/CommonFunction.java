@@ -843,7 +843,43 @@ public class CommonFunction {
 	 * @param variableRC [String] column, row number of sub parser field position
 	 * @return nested list of string data after  applying technique
 	 */
-	public List<List<String>> splitField (final List<List<String>> dataBlock, 
+//	public List<List<String>> splitField (final List<List<String>> dataBlock, 
+//			final SubParserTechnique subParserTechnique){
+//	    
+//		final String delimiterChar = subParserTechnique.getMethoddelimiter().getDelimiter().getActualdelimiter();
+//		List<List<String>> dataBlockWithSplittedFields = new ArrayList<List<String>>();
+//		
+//		final List<Integer> rowColumnCount =  dataBlock.stream().map((item) -> item.size()).collect(Collectors.toList());
+//		Integer max = rowColumnCount.stream().max(Integer::compare).get();
+//		
+//		List<String> extractColumn = dataBlock.stream().map(item -> item.get(Integer.parseInt(subParserTechnique.getInputfields()))).collect(Collectors.toList());
+//		List<String[]> splitFieldArray = extractColumn.stream().map((item) -> item.split(delimiterChar)).collect(Collectors.toList());
+//		
+//		int idx=0;
+//		for(List<String> rowValues : dataBlock) {
+//			
+//			List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));
+//			List<String> currentRowValues = new ArrayList<>(rowValues);
+//			
+//			if (rowValues.size() != max) {
+//	            for (int i=rowValues.size(); i<max; i++) {
+//	            	addToList(currentRowValues, Stream.of(" "));
+//	            }
+//	        };
+//	        splitFields.forEach((item) -> addToList(currentRowValues, Stream.of(item)));
+//			idx++;
+//			dataBlockWithSplittedFields.add(currentRowValues);
+//		}
+//
+//		return dataBlockWithSplittedFields;
+//	}
+//
+//	
+	
+    //srimathi
+    
+    public List<List<String>> splitField (final List<List<String>> dataBlock, 
+
 			final SubParserTechnique subParserTechnique){
 	    
 		final String delimiterChar = subParserTechnique.getMethoddelimiter().getDelimiter().getActualdelimiter();
@@ -851,30 +887,52 @@ public class CommonFunction {
 		
 		final List<Integer> rowColumnCount =  dataBlock.stream().map((item) -> item.size()).collect(Collectors.toList());
 		Integer max = rowColumnCount.stream().max(Integer::compare).get();
-		
-		List<String> extractColumn = dataBlock.stream().map(item -> item.get(Integer.parseInt(subParserTechnique.getInputfields()))).collect(Collectors.toList());
-		List<String[]> splitFieldArray = extractColumn.stream().map((item) -> item.split(delimiterChar)).collect(Collectors.toList());
-		
+			
 		int idx=0;
+
+		
 		for(List<String> rowValues : dataBlock) {
 			
-			List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));
+			
 			List<String> currentRowValues = new ArrayList<>(rowValues);
+			List<String[]> splitFieldArray = currentRowValues.stream().map((item) -> item.split("\t")).collect(Collectors.toList());							
+			
+			List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));			
+			List<String> splitFieldsrow = new ArrayList<>(splitFields);
+						
+
+			for (String extractColumnIndex : subParserTechnique.getInputfields().split(",")) {
+			
+				String strSplit = splitFields.get(Integer.parseInt(extractColumnIndex));
+				
+				List<String> splittedarray = new ArrayList<>();
+				 String[] arrOfStr = strSplit.split(delimiterChar);
+				 for (String a : arrOfStr) {
+					 splitFieldsrow.add(a);
+				 }
+		
+			}
+			
+			List<String> splitFieldsvalue = Arrays.asList(splitFieldsrow.get(idx));
 			
 			if (rowValues.size() != max) {
 	            for (int i=rowValues.size(); i<max; i++) {
-	            	addToList(currentRowValues, Stream.of(" "));
+	            	addToList(splitFieldsrow, Stream.of(" "));
 	            }
 	        };
-	        splitFields.forEach((item) -> addToList(currentRowValues, Stream.of(item)));
-			idx++;
-			dataBlockWithSplittedFields.add(currentRowValues);
-		}
-
-		return dataBlockWithSplittedFields;
+			
+	  
+	        addToList(splitFieldsrow, Stream.of(splitFieldsrow.toString()));
+	        dataBlockWithSplittedFields.add(splitFieldsrow);			
+	  
 	}
-
-	
+		return dataBlockWithSplittedFields;	
+	}
+    
+    
+    
+    
+    
 //	public List<List<String>> splitField (final List<List<String>> dataBlock, final int row, 
 //			final int col, final int sheetIndex, final int currentKey, 
 //			final SubParserTechnique subParserTechnique, final int variableRC){

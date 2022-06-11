@@ -2227,9 +2227,10 @@ public class ProtocolService {
 			mapObj.put("AddedProtocol", lSlogilabprotocoldetail);
 		}
 
+//		LSusergroup userGroup = LSusergroupRepository
+//				.findOne(lSlogilabprotocoldetail.getObjuser().getMultiusergroupcode());
 		LSusergroup userGroup = LSusergroupRepository
-				.findOne(lSlogilabprotocoldetail.getObjuser().getMultiusergroupcode());
-
+				.findOne(lSlogilabprotocoldetail.getMultiusergroupcode());
 		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
 				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
 

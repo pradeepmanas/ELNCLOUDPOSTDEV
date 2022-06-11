@@ -1,8 +1,6 @@
 package com.agaram.eln.primary.commonfunction;
 
-
 import java.text.DateFormat;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,20 +18,19 @@ import com.agaram.eln.config.AESEncryption;
 
 public class commonfunction {
 
-	
-	public static boolean checkuseronmanualaudit(String myKey,String auditPassword) {
-		
+	public static boolean checkuseronmanualaudit(String myKey, String auditPassword) {
+
 		String encryptedpassword = AESEncryption.decrypt(myKey);
-		
+
 		String getPasscode = AESEncryption.decrypt(encryptedpassword.split("_", 0)[0]);
-		
-		if(auditPassword.equals(getPasscode)) {
+
+		if (auditPassword.equals(getPasscode)) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public static String getJSONFieldsoninventory(String jsonFieldstring) {
 
 		Map<String, Object> rMap = new HashMap<>();
@@ -47,8 +44,6 @@ public class commonfunction {
 			JSONArray jsonArrayStatic = jsonObject.getJSONArray("staticfields");
 
 			List<Map<String, Object>> lstfields = new ArrayList<>();
-			
-
 
 			jsonArrayStatic.forEach(rowitem -> {
 				JSONObject rowobj = (JSONObject) rowitem;
@@ -59,8 +54,6 @@ public class commonfunction {
 
 				lstfields.add(mapObj);
 			});
-			
-			
 
 			jsonArrayDynamic.forEach(rowitem -> {
 				JSONObject rowobj = (JSONObject) rowitem;
@@ -74,13 +67,12 @@ public class commonfunction {
 			});
 
 			rMap.put("inventoryFields", lstfields);
-			
+
 			JSONObject jsonObjectReturnString = new JSONObject();
-			
+
 			jsonObjectReturnString.put("inventoryFields", lstfields);
 
 			jsonReturnString = jsonObjectReturnString.toString();
-
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -88,7 +80,7 @@ public class commonfunction {
 
 		return jsonReturnString;
 	}
-	
+
 	public static String getServerDateFormat() throws ParseException {
 
 		Date newDate = new SimpleDateFormat("yyyy/dd/MM hh:mm:ss").parse("4444/31/12 23:58:57");
@@ -113,32 +105,107 @@ public class commonfunction {
 
 		return dateSString;
 	}
-	
-	public static String getMIMEtypeonextension(String extension)
-	{
+
+	public static String getMIMEtypeonextension(String extension) {
 		String mediatype = "image/jpeg";
-	    switch (extension) {
-	    case "jpg":
-	    	mediatype = "image/jpeg";
-	      break;
-	    case "docx":
-	    	mediatype = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-	      break;
-	    case "mp3":
-	    	mediatype = "audio/mp3";
-	      break;
-	    case "pdf":
-	    	mediatype = "application/pdf";
-	      break;
-	      
-	    default:
-	    	mediatype = "image/jpeg";
-	  }
-	    
-	    return mediatype;
+		switch (extension) {
+		case "jpg":
+			mediatype = "image/jpeg";
+			break;
+		case "docx":
+			mediatype = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+			break;
+		case "mp3":
+			mediatype = "audio/mp3";
+			break;
+		case "pdf":
+			mediatype = "application/pdf";
+			break;
+
+		default:
+			mediatype = "image/jpeg";
+		}
+
+		return mediatype;
 	}
+
 	public static boolean isSameDay(Date date1, Date date2) {
-	    SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
-	    return fmt.format(date1).equals(fmt.format(date2));
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+		return fmt.format(date1).equals(fmt.format(date2));
+	}
+
+	public static String getsheetdatawithfirstsheet(String jsonString) {
+//		try {
+//			// JSONParser jsonParser = new JSONParser();
+//			JSONObject jsonObject = new JSONObject(jsonString);
+//			JSONArray jsonArray = jsonObject.getJSONArray("sheets");
+//		
+//			jsonObject.put("sheets", new JSONArray("["+jsonArray.get(0).toString()+"]"));
+//
+//			jsonString = jsonObject.toString();
+//
+//		} catch (JSONException e) {
+//			e.printStackTrace();
+//		}
+		return jsonString;
+	}
+
+	public static Map<String, Object> getParamsAndValues(String jsonString) {
+
+		Map<String, Object> rtnMapObj = new HashMap<String, Object>();
+
+		try {
+
+			List<String> lstValues = new ArrayList<String>();
+			List<String> lstParams = new ArrayList<String>();
+
+			JSONObject jsonObject = new JSONObject(jsonString);
+			JSONArray jsonArray = jsonObject.getJSONArray("sheets");
+			jsonArray.forEach(rowitem -> {
+
+				JSONObject rowobj = (JSONObject) rowitem;
+				JSONArray jsonRowArray = rowobj.getJSONArray("rows");
+
+				jsonRowArray.forEach(cellitem -> {
+
+					JSONObject cellObj = (JSONObject) cellitem;
+					JSONArray jsonCellArray = cellObj.getJSONArray("cells");
+					jsonCellArray.forEach(objCell -> {
+
+						JSONObject objCellValue = (JSONObject) objCell;
+
+						if (objCellValue.has("value")) {
+							if (!objCellValue.has("formula")) {
+								String val = objCellValue.getString("value");
+								lstValues.add(val);
+							}else {
+								System.out.println(objCellValue.getString("value"));
+							}
+						}
+
+						if (objCellValue.has("tag")) {
+
+							JSONObject jsonTagObject = new JSONObject(objCellValue.getString("tag"));
+
+							if (jsonTagObject.has("ParameterName")) {
+								String tag = jsonTagObject.getString("ParameterName");
+								lstParams.add(tag);
+							}
+						}
+					});
+				});
+			});
+
+			String jsonValues = org.json.simple.JSONArray.toJSONString(lstValues);
+			String jsonParams = org.json.simple.JSONArray.toJSONString(lstParams);
+
+			rtnMapObj.put("values", jsonValues);
+			rtnMapObj.put("parameters", jsonParams);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return rtnMapObj;
 	}
 }

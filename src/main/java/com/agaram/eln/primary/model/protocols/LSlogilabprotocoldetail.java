@@ -38,6 +38,15 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@Column(columnDefinition = "varchar(250)", name = "Keyword")
 	private String keyword;
+	@Transient
+	private Integer multiusergroupcode;
+	public Integer getMultiusergroupcode() {
+		return multiusergroupcode;
+	}
+
+	public void setMultiusergroupcode(Integer multiusergroupcode) {
+		this.multiusergroupcode = multiusergroupcode;
+	}
 
 	public String getKeyword() {
 		return keyword;

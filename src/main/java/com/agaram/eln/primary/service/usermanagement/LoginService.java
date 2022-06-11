@@ -1343,12 +1343,13 @@ public class LoginService {
 		Map<String, Object> obj = new HashMap<>();
 		int multiusergroupcode = lsuserMaster.getMultiusergroupcode().get(0).getMultiusergroupcode();
 		LSMultiusergroup objLSMultiusergroup = LSMultiusergroupRepositery.findBymultiusergroupcode(multiusergroupcode);
-
+		String groupstatus = objLSMultiusergroup.getLsusergroup().getUsergroupstatus();
 //		LSuserMaster objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfrom(lsuserMaster.getUsername(),"0");
 		LSuserMaster objExitinguser = lSuserMasterRepository
 				.findByUsernameIgnoreCaseAndLssitemaster(lsuserMaster.getUsername(), lsuserMaster.getLssitemaster());
 		objExitinguser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		objExitinguser.setObjResponse(new Response());
+		
 		if (objLSMultiusergroup != null) {
 
 			if (lsuserMaster.getObjsilentaudit() != null) {
@@ -1361,6 +1362,7 @@ public class LoginService {
 			}
 
 			obj.put("user", objExitinguser);
+			if (groupstatus.trim().equals("Active")) {
 			if (objExitinguser.getLsusergroup() != null) {
 				obj.put("userrights", userService.GetUserRightsonGroup(objExitinguser.getLsusergroup()));
 				LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
@@ -1372,6 +1374,10 @@ public class LoginService {
 
 			objExitinguser.getObjResponse().setInformation("usergroup switched successfully ");
 			objExitinguser.getObjResponse().setStatus(true);
+			}else {
+				objExitinguser.getObjResponse().setInformation("ID_GRPNOACT");
+				objExitinguser.getObjResponse().setStatus(false);
+			}
 		}
 
 		return obj;

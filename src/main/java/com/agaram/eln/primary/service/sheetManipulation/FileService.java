@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetVersion;
@@ -405,7 +406,7 @@ public class FileService {
 			}
 		}
 
-		if (lsfiles != null && lsfiles.size() > 0) {
+		/*if (lsfiles != null && lsfiles.size() > 0) {
 
 			if (objtest.getIsmultitenant() == 1) {
 				CloudSheetCreation file = cloudSheetCreationRepository.findById((long) lsfiles.get(0).getFilecode());
@@ -418,7 +419,7 @@ public class FileService {
 					lsfiles.get(0).setFilecontent(file.getContent());
 				}
 			}
-		}
+		}*/
 
 		return lsfiles;
 	}
@@ -1025,12 +1026,12 @@ public class FileService {
 			if (objfile.getIsmultitenant() == 1) {
 				CloudSheetCreation file = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
 				if (file != null) {
-					objreturnfile.setFilecontent(file.getContent());
+					objreturnfile.setFilecontent(commonfunction.getsheetdatawithfirstsheet(file.getContent()));
 				}
 			} else {
 				SheetCreation file = mongoTemplate.findById(objfile.getFilecode(), SheetCreation.class);
 				if (file != null) {
-					objreturnfile.setFilecontent(file.getContent());
+					objreturnfile.setFilecontent(commonfunction.getsheetdatawithfirstsheet(file.getContent()));
 				}
 			}
 		}

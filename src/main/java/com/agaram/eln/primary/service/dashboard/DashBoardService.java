@@ -313,7 +313,6 @@ public class DashBoardService {
 		return mapOrders;
 	}
 
-	@SuppressWarnings("unused")
 	public Map<String, Object> Getdashboardordercount(LSuserMaster objuser) {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
@@ -321,11 +320,14 @@ public class DashBoardService {
 		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
 
 		if (objuser.getObjuser().getOrderfor() != 1) {
-			mapOrders.put("orders", LSlogilabprotocoldetailRepository.countBySitecodeAndCreatedtimestampBetween(objuser.getLssitemaster().getSitecode(),fromdate, todate));
-			mapOrders.put("pendingorder", LSlogilabprotocoldetailRepository
-					.countByOrderflagAndSitecodeAndCreatedtimestampBetween("N",objuser.getLssitemaster().getSitecode(), fromdate, todate));
-			mapOrders.put("completedorder", LSlogilabprotocoldetailRepository
-					.countByOrderflagAndSitecodeAndCreatedtimestampBetween("R",objuser.getLssitemaster().getSitecode(), fromdate, todate));
+			mapOrders.put("orders", LSlogilabprotocoldetailRepository.countBySitecodeAndCreatedtimestampBetween(
+					objuser.getLssitemaster().getSitecode(), fromdate, todate));
+			mapOrders.put("pendingorder",
+					LSlogilabprotocoldetailRepository.countByOrderflagAndSitecodeAndCreatedtimestampBetween("N",
+							objuser.getLssitemaster().getSitecode(), fromdate, todate));
+			mapOrders.put("completedorder",
+					LSlogilabprotocoldetailRepository.countByOrderflagAndSitecodeAndCreatedtimestampBetween("R",
+							objuser.getLssitemaster().getSitecode(), fromdate, todate));
 			mapOrders.put("onproces", 0);
 		} else if (objuser.getUsername().equals("Administrator") && objuser.getObjuser().getOrderfor() == 1) {
 			mapOrders.put("orders",
@@ -347,10 +349,6 @@ public class DashBoardService {
 						.countByLsprojectmasterInAndCreatedtimestampBetween(lstproject, fromdate, todate);
 
 			}
-//			else {
-//
-//				lstUserorder = lslogilablimsorderdetailRepository.countByCreatedtimestampBetween(fromdate, todate);
-//			}
 
 			long lstlimscompleted = 0;
 			if (lstproject != null && lstproject.size() > 0) {
@@ -358,11 +356,6 @@ public class DashBoardService {
 						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("R", lstproject, fromdate,
 								todate);
 			}
-//			else {
-//				lstlimscompleted = lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetween("R",
-//						fromdate, todate);
-//
-//			}
 
 			long lstordersinprogress = 0;
 			if (lstproject != null && lssamplefile != null && lstproject.size() > 0 && lssamplefile.size() > 0) {
@@ -379,11 +372,6 @@ public class DashBoardService {
 						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("N", lstproject, fromdate,
 								todate);
 			}
-//			else {
-//			
-//				lstpending = lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetween("N",
-//						fromdate, todate);
-//			}
 
 			mapOrders.put("orders", (lstUserorder));
 			mapOrders.put("pendingorder", (lstpending));
@@ -391,11 +379,6 @@ public class DashBoardService {
 			mapOrders.put("onproces", lstordersinprogress);
 
 		}
-
-//		if (objuser.getObjsilentaudit() != null) {
-//			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-//			lscfttransactionRepository.save(objuser.getObjsilentaudit());
-//		}
 
 		return mapOrders;
 	}
@@ -478,15 +461,18 @@ public class DashBoardService {
 		List<Logilabprotocolorders> lstorders = new ArrayList<Logilabprotocolorders>();
 
 		if (objuser.getObjuser().getOrderselectiontype() == 1) {
-			lstorders = LSlogilabprotocoldetailRepository.findBySitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull(objuser.getLssitemaster().getSitecode(),fromdate, todate);
+			lstorders = LSlogilabprotocoldetailRepository.findBySitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull(
+					objuser.getLssitemaster().getSitecode(), fromdate, todate);
 
 		} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
-			lstorders = LSlogilabprotocoldetailRepository.findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull("R",objuser.getLssitemaster().getSitecode(), fromdate,
-					todate);
+			lstorders = LSlogilabprotocoldetailRepository
+					.findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull("R",
+							objuser.getLssitemaster().getSitecode(), fromdate, todate);
 
 		} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
-			lstorders = LSlogilabprotocoldetailRepository.findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull("N",objuser.getLssitemaster().getSitecode(), fromdate,
-					todate);
+			lstorders = LSlogilabprotocoldetailRepository
+					.findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull("N",
+							objuser.getLssitemaster().getSitecode(), fromdate, todate);
 		}
 
 		LSusergroup userGroup = LSusergroupRepository.findOne(objuser.getObjuser().getMultiusergroupcode());

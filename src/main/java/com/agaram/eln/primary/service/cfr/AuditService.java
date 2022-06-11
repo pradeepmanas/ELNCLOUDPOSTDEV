@@ -75,13 +75,6 @@ public class AuditService {
 	public List<LScfrreasons> getreasons(Map<String, Object> objMap) {
 		List<LScfrreasons> result = new ArrayList<LScfrreasons>();
 		LScfrreasonsRepository.findAll().forEach(result::add);
-
-		ObjectMapper objMapper = new ObjectMapper();
-		LScfttransaction cfttransaction;
-		if (objMap.containsKey("objsilentaudit") && objMap.containsKey("cfrsetting")) {
-			cfttransaction = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
-//			lscfttransactionRepository.save(cfttransaction);
-		}
 		return result;
 	}
 
