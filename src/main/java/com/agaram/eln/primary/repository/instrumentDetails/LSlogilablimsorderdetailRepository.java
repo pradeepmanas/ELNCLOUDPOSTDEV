@@ -429,7 +429,10 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	public List<LSlogilablimsorderdetail> findByFiletypeAndOrderflagOrderByBatchcodeAsc(int i, String string);
 	
-    public Logilaborders findByBatchcode(Long batchcode);	
+    public Logilaborders findByBatchcode(Long batchcode);
+    
+    public Logilabordermaster findByBatchcodeOrderByBatchcodeAsc(Long batchcode);
+    
 	public List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween(
 			String orderflag, List<LSprojectmaster> lstproject, List<LSworkflow> lsworkflow, Date fromdate, Date todate);
 	

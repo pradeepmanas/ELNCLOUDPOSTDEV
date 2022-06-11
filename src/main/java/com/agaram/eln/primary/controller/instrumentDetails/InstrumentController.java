@@ -78,7 +78,7 @@ public class InstrumentController {
 	}
 	
 	@PostMapping("/GetOrderonClose")
-	public Logilaborders GetOrderonClose(@RequestBody LSlogilablimsorderdetail objorder) {
+	public Logilabordermaster GetOrderonClose(@RequestBody LSlogilablimsorderdetail objorder) {
 
 		return instrumentService.GetOrderonClose(objorder);
 	}

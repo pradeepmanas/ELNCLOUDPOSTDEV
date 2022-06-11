@@ -485,9 +485,9 @@ public class InstrumentService {
 		return objorder;
 	}
 
-	public Logilaborders GetOrderonClose(LSlogilablimsorderdetail objorder) {
+	public Logilabordermaster GetOrderonClose(LSlogilablimsorderdetail objorder) {
 
-		Logilaborders objOrder = lslogilablimsorderdetailRepository.findByBatchcode(objorder.getBatchcode());
+		Logilabordermaster objOrder = lslogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeAsc(objorder.getBatchcode());
 
 		objOrder.setLstworkflow(objorder.getLstworkflow());
 
