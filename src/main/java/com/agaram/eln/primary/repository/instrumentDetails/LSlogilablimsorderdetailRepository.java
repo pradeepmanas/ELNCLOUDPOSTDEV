@@ -482,11 +482,12 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	@Modifying
 	@Query("update LSlogilablimsorderdetail o set o.directorycode = ?1 where o.directorycode = ?2")
 	void updateparentdirectory(Long newdirectorycode , Long olddirectorycode);
-	
-	List<LSlogilablimsorderdetail> findByAssignedto(Integer assignedto);
 
 	List<LSlogilablimsorderdetail> findByLssamplemaster(LSsamplemaster objClass);
 
 	List<LSlogilablimsorderdetail> findByTestcode(Integer testcode);
+
+	List<LSlogilablimsorderdetail> findByOrderflagAndAssignedtoAndLockeduserIsNotNullOrderByBatchcodeDesc(String string,
+			LSuserMaster lSuserMaster);
 
 }

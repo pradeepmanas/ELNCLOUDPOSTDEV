@@ -176,10 +176,12 @@ public class commonfunction {
 
 						if (objCellValue.has("value")) {
 							if (!objCellValue.has("formula")) {
-								String val = objCellValue.getString("value");
-								lstValues.add(val);
-							}else {
-								System.out.println(objCellValue.getString("value"));
+								try {
+									String val = objCellValue.getString("value");
+									lstValues.add(val);
+								} catch (Exception e) {
+									System.out.println(e.getMessage());
+								}
 							}
 						}
 
@@ -188,8 +190,12 @@ public class commonfunction {
 							JSONObject jsonTagObject = new JSONObject(objCellValue.getString("tag"));
 
 							if (jsonTagObject.has("ParameterName")) {
-								String tag = jsonTagObject.getString("ParameterName");
-								lstParams.add(tag);
+								try {
+									String tag = jsonTagObject.getString("ParameterName");
+									lstParams.add(tag);
+								} catch (Exception e) {
+									System.out.println(e.getMessage());
+								}
 							}
 						}
 					});

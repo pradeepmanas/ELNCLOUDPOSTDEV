@@ -904,9 +904,9 @@ public class InstrumentController {
 	}
 	
 	@RequestMapping("/UpdateFolderfororders")
-	public List<LSlogilablimsorderdetail> UpdateFolderfororder(@RequestBody LSlogilablimsorderdetail[] order)throws Exception
+	public List<LSlogilablimsorderdetail> UpdateFolderfororders(@RequestBody LSlogilablimsorderdetail[] order)throws Exception
 	{
-		return instrumentService.UpdateFolderfororder(order);
+		return instrumentService.UpdateFolderfororders(order);
 	}
 	
 	@RequestMapping("/Deletedirectories")

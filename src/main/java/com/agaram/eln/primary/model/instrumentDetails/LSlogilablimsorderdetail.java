@@ -258,7 +258,7 @@ public class LSlogilablimsorderdetail {
 //	}
 	
 	@Transient
-	private boolean canuserprocess;
+	private boolean canuserprocess;	
 	
 	public boolean isCanuserprocess() {
 		return canuserprocess;
@@ -266,6 +266,7 @@ public class LSlogilablimsorderdetail {
 	public void setCanuserprocess(boolean canuserprocess) {
 		this.canuserprocess = canuserprocess;
 	}
+	
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
 		
 //		this.lstworkflow = lstworkflow;

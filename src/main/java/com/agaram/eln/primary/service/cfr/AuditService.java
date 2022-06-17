@@ -126,16 +126,16 @@ public class AuditService {
 		}
 		// Manual Audit
 		if (objClass.getObjuser() != null) {
-			objClass.getObjmanualaudit().setTableName("LScfrreasons");
-			objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
-			objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster().getUsercode());
-			objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster().getSitecode());
-			lscfttransactionRepository.save(objClass.getObjmanualaudit());
+//			objClass.getObjmanualaudit().setTableName("LScfrreasons");
+		objClass.getObjmanualaudit().setComments(objClass.getObjuser().getComments());
+//			objClass.getObjmanualaudit().setLsuserMaster(objClass.getLSuserMaster().getUsercode());
+//			objClass.getObjmanualaudit().setLssitemaster(objClass.getLSuserMaster().getLssitemaster().getSitecode());
+			//lscfttransactionRepository.save(objClass.getObjmanualaudit());
 		}
 
-		if (objClass.getObjsilentaudit() != null) {
+		else if(objClass.getObjsilentaudit() != null) {
 			objClass.getObjsilentaudit().setTableName("LScfrreasons");
-			lscfttransactionRepository.save(objClass.getObjsilentaudit());
+		lscfttransactionRepository.save(objClass.getObjsilentaudit());
 			return objClass;
 		}
 
