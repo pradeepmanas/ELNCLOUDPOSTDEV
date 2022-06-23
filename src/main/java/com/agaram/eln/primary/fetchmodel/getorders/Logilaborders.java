@@ -17,7 +17,6 @@ public class Logilaborders extends Logilabordermaster {
 	private Integer approvelstatus;
 	private Integer lockeduser;
 	private Integer testcode;
-	@SuppressWarnings("unused")
 	private String batchid;
 	private String keyword;
 	private LSsamplemaster lssamplemaster;
@@ -38,7 +37,7 @@ public class Logilaborders extends Logilabordermaster {
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode) {
 		
-		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,createdtimestamp,completedtimestamp);
+		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,createdtimestamp,completedtimestamp,keyword);
 		 
 		if(lssamplefile != null)
 		{
@@ -67,6 +66,7 @@ public class Logilaborders extends Logilabordermaster {
 		this.repositoryname =lsrepositories !=null ?lsrepositories.getRepositoryname():null;
 		this.directorycode = directorycode;
 	}
+	
 	
 	public String getRepositoryitemname() {
 		return repositoryitemname;
@@ -214,6 +214,4 @@ public class Logilaborders extends Logilabordermaster {
 	public void setDirectorycode(Long directorycode) {
 		this.directorycode = directorycode;
 	}
-	
-	
 }

@@ -50,47 +50,6 @@ public class RestController {
 	
 	@RequestMapping(value = "/exportsdmslabsheetdetail")
 	public Response getUpdateSdmslabsheetDetail(@RequestBody Map<String, Object> objMap) throws Exception {
-		
-		LoggedUser objuser = new LoggedUser();
-		Response objResponse = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-		LScfttransaction objsilentaudit = new LScfttransaction();
-		LScfttransaction objmanualaudit = new LScfttransaction();
-		if(objMap.containsKey("objuser"))
-		{
-			objuser = mapper.convertValue(objMap.get("objuser"),LoggedUser.class);
-		}
-		
-		if(objMap.containsKey("objsilentaudit"))
-		{
-			objsilentaudit = mapper.convertValue(objMap.get("objsilentaudit"),LScfttransaction.class);
-		}
-		if(objMap.containsKey("objmanualaudit"))
-		{
-			objmanualaudit = mapper.convertValue(objMap.get("objmanualaudit"),LScfttransaction.class);
-		}
-		
-		if(objuser.getsUsername() != null) {
-			
-			LSuserMaster userClass = auditService.CheckUserPassWord(objuser);
-			
-			if(userClass.getObjResponse().getStatus()) {
-				return restService.getUpdateSdmslabsheetDetail(objMap);
-			}
-			else
-			{
-				objsilentaudit.setComments("Entered invalid username and password");
-				Map<String, Object> map=new HashMap<>();
-				map.put("objsilentaudit",objsilentaudit);
-				map.put("objmanualaudit",objmanualaudit);
-				map.put("objUser",objuser);
-				auditService.AuditConfigurationrecord(map);
-				objResponse.setStatus(false);
-				objResponse.setInformation("ID_VALIDATION");
-				return objResponse;
-			}
-			
-		}
 		return restService.getUpdateSdmslabsheetDetail(objMap);
 	}
 	

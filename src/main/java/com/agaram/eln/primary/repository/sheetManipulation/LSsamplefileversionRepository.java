@@ -23,4 +23,5 @@ public interface LSsamplefileversionRepository  extends JpaRepository<LSsamplefi
 			+ ",createdate, modifieddate,modifiedby ) from "
 			+ "LSsamplefileversion where batchcode = ?1 ORDER BY filesamplecodeversion DESC")
 	public List<LSsamplefileversion> getfileversiononbatchcode(long batchcode);
+	public LSsamplefileversion findByBatchcodeAndVersionno(Long batchcode, int i);
 }

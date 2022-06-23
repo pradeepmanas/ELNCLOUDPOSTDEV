@@ -1013,10 +1013,10 @@ public class FileService {
 	}
 
 	public LSfile getfileoncode(LSfile objfile) {
-		if (objfile.getObjsilentaudit() != null) {
-			objfile.getObjsilentaudit().setTableName("LSfile");
-			lscfttransactionRepository.save(objfile.getObjsilentaudit());
-		}
+//		if (objfile.getObjsilentaudit() != null) {
+//			objfile.getObjsilentaudit().setTableName("LSfile");
+//			lscfttransactionRepository.save(objfile.getObjsilentaudit());
+//		}
 
 		LSfile objreturnfile = lSfileRepository.findByfilecode(objfile.getFilecode());
 		List<LSsheetupdates> list = lssheetupdatesRepository.findByfilecode(objfile.getFilecode());

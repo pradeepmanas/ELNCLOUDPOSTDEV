@@ -376,6 +376,7 @@ public class InstrumentService {
 		objorder.setOrderflag("N");
 
 		String Content = "";
+		String defaultContent = "{\"activeSheet\":\"Sheet1\",\"sheets\":[{\"name\":\"Sheet1\",\"rows\":[],\"columns\":[],\"selection\":\"A1:A1\",\"activeCell\":\"A1:A1\",\"frozenRows\":0,\"frozenColumns\":0,\"showGridLines\":true,\"gridLinesColor\":null,\"mergedCells\":[],\"hyperlinks\":[],\"defaultCellStyle\":{\"fontFamily\":\"Arial\",\"fontSize\":\"12\"},\"drawings\":[]}],\"names\":[],\"columnWidth\":64,\"rowHeight\":20,\"images\":[],\"charts\":[],\"tags\":[],\"fieldcount\":0,\"Batchcoordinates\":{\"resultdirection\":1,\"parameters\":[]}}";
 
 		if (objorder.getLsfile() != null) {
 			if (objorder.getIsmultitenant() == 1) {
@@ -395,6 +396,10 @@ public class InstrumentService {
 				}
 			}
 
+		}
+
+		if (Content == null || Content.equals("")) {
+			Content = defaultContent;
 		}
 
 		if (objorder.getLssamplefile().getLssamplefileversion() != null) {
@@ -1904,10 +1909,10 @@ public class InstrumentService {
 	}
 
 	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder) {
-		if (objorder.getObjsilentaudit() != null) {
-			objorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+//		if (objorder.getObjsilentaudit() != null) {
+//			objorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
 //			lscfttransactionRepository.save(objorder.getObjsilentaudit());
-		}
+		// }
 
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 
@@ -1980,7 +1985,10 @@ public class InstrumentService {
 	}
 
 	public LSlogilablimsorderdetail GetdetailorderStatus(LSlogilablimsorderdetail objupdatedorder) {
-
+//		if (objupdatedorder.getObjsilentaudit() != null) {
+//			objupdatedorder.getObjsilentaudit().setTableName("LSfile");
+//			lscfttransactionRepository.save(objupdatedorder.getObjsilentaudit());
+//		}
 		objupdatedorder.setLsLSlimsorder(lSlimsorderRepository.findBybatchid(objupdatedorder.getBatchid()));
 
 		LSsamplefile LSsamplefile = objupdatedorder.getLssamplefile();
@@ -2219,6 +2227,7 @@ public class InstrumentService {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public LSlogilablimsorderdetail UpdateLimsOrder(LSlogilablimsorderdetail objorder) {
 		List<LSlimsorder> lstorder = lslimsorderRepository.findBybatchid(objorder.getBatchid());
 		
@@ -2233,17 +2242,38 @@ public class InstrumentService {
 		objorder.getLssamplefile().setBatchcode(objorder.getBatchcode());
 		lslimsorderRepository.save(lstorder);
 		
-//		String Content = objorder.getLssamplefile().getFilecontent();
 		objorder.getLsfile().setIsmultitenant(objorder.getIsmultitenant());
+		
 		String contString = getfileoncode(objorder.getLsfile());
 		objorder.getLsfile().setFilecontent(contString);
 		
 		objorder.setFilecode(objorder.getLsfile().getFilecode());
 		
-		lslogilablimsorderdetailRepository.save(objorder);
-		
 		objorder.getLssamplefile().setFilecontent(null);
 		lssamplefileRepository.save(objorder.getLssamplefile());
+		
+		lslogilablimsorderdetailRepository.save(objorder);
+		
+		LSsamplefileversion  objverionfile= lssamplefileversionRepository
+				.findByBatchcodeAndVersionno(objorder.getBatchcode(), 1);
+		
+		LSsamplefile objfile = objorder.getLssamplefile();
+		
+		if (objverionfile == null && !contString.equals("") && contString != null) {
+
+			LSsamplefileversion objVersion = new LSsamplefileversion();
+			objVersion.setVersionname("1");
+			objVersion.setVersionno(1);
+			objVersion.setBatchcode(objfile.getBatchcode());
+			objVersion.setTestid(objfile.getTestid());
+			objVersion.setCreateby(objfile.getCreateby());
+			objVersion.setModifiedby(objfile.getModifiedby());
+			objVersion.setFilesamplecode(objfile);
+			lssamplefileversionRepository.save(objVersion);
+			objfile.getLssamplefileversion().add(objVersion);
+			updateorderversioncontent(contString, objVersion, objorder.getIsmultitenant());
+
+		}
 
 		if (objorder.getLssamplefile() != null) {
 			updateordercontent(contString, objorder.getLssamplefile(), objorder.getIsmultitenant());
@@ -2252,7 +2282,7 @@ public class InstrumentService {
 
 		return objorder;
 	}
-	
+
 	public String getfileoncode(LSfile objfile) {
 
 		String content = "";
@@ -4057,8 +4087,8 @@ public class InstrumentService {
 	}
 
 	public List<LSlogilablimsorderdetail> GetAssignedtoUserorders(LSlogilablimsorderdetail order) {
-			return lslogilablimsorderdetailRepository
-					.findByOrderflagAndAssignedtoAndLockeduserIsNotNullOrderByBatchcodeDesc("N",order.getLsuserMaster());
+		return lslogilablimsorderdetailRepository
+				.findByOrderflagAndAssignedtoAndLockeduserIsNotNullOrderByBatchcodeDesc("N", order.getLsuserMaster());
 	}
 
 	public List<LSlogilablimsorderdetail> GetLockedOrders(LSlogilablimsorderdetail objorder) {
