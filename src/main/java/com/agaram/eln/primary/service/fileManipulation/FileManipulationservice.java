@@ -89,8 +89,8 @@ public class FileManipulationservice {
 	
 	public UserSignature addsignature(Integer usercode, MultipartFile file, Date currentdate) throws IOException {
 
-		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
-		String name = username.getUsername();
+//		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
+//		String name = username.getUsername();
 		LScfttransaction list = new LScfttransaction();
 		list.setModuleName("UserManagement");
 		//list.setComments(name + " " + "Uploaded the profile picture successfully");

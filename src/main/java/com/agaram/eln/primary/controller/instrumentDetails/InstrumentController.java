@@ -49,7 +49,6 @@ import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
-import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 import com.mongodb.gridfs.GridFSDBFile;
 
@@ -62,9 +61,6 @@ public class InstrumentController {
 
 	@Autowired
 	private LSsamplefileRepository lssamplefileRepository;
-
-	@Autowired
-	private AuditService auditService;
 
 	@PostMapping("/GetInstrumentParameters")
 	public Map<String, Object> getInstrumentparameters(@RequestBody LSSiteMaster lssiteMaster)throws Exception {
@@ -197,11 +193,6 @@ public class InstrumentController {
 		return instrumentService.GetdetailorderStatus(objupdatedorder);
 	}
 
-//	@PostMapping("/GetResults")
-//	public List<LSresultdetails> GetResults(@RequestBody LSlogilablimsorderdetail objorder) {
-//		return instrumentService.GetResults(objorder);
-//	}
-
 	
 	@PostMapping("/GetResults")
 	public Map<String, Object> GetResults(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
@@ -211,55 +202,13 @@ public class InstrumentController {
 	
 	@PostMapping("/SaveResultfile")
 	public LSsamplefile SaveResultfile(@RequestBody LSsamplefile objfile)throws Exception {
-//		if (objfile.getObjuser() != null) {
-//
-//			LSuserMaster userClass = auditService.CheckUserPassWord(objfile.getObjuser());
-//			if (userClass.getObjResponse().getStatus()) {
-//
-//				objfile.setLsuserMaster(userClass);
-//
-//				return instrumentService.SaveResultfile(objfile);
-//			} else {
-//				objfile.getObjsilentaudit().setComments("Entered invalid username and password");
-//				Map<String, Object> map = new HashMap<>();
-//				map.put("objsilentaudit", objfile.getObjsilentaudit());
-//				map.put("objmanualaudit", objfile.getObjmanualaudit());
-//				map.put("objUser", objfile.getObjuser());
-//				auditService.AuditConfigurationrecord(map);
-//				objfile.setResponse(new Response());
-//				objfile.getResponse().setStatus(false);
-//				objfile.getResponse().setInformation("ID_VALIDATION");
-//				return objfile;
-//			}
-//
-//		}
+
 		return instrumentService.SaveResultfile(objfile);
 	}
 
 	@PostMapping("/UpdateLimsOrder")
 	public LSlogilablimsorderdetail UpdateLimsOrder(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
-		if (objorder.getObjuser() != null) {
-
-			LSuserMaster userClass = auditService.CheckUserPassWord(objorder.getObjuser());
-			if (userClass.getObjResponse().getStatus()) {
-
-				objorder.setLsuserMaster(userClass);
-
-				return instrumentService.UpdateLimsOrder(objorder);
-			} else {
-				objorder.getObjsilentaudit().setComments("Entered invalid username and password");
-				Map<String, Object> map = new HashMap<>();
-				map.put("objsilentaudit", objorder.getObjsilentaudit());
-				map.put("objmanualaudit", objorder.getObjmanualaudit());
-				map.put("objUser", objorder.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objorder.setResponse(new Response());
-				objorder.getResponse().setStatus(false);
-				objorder.getResponse().setInformation("ID_VALIDATION");
-				return objorder;
-			}
-
-		}
+		
 		return instrumentService.UpdateLimsOrder(objorder);
 	}
 
@@ -273,36 +222,8 @@ public class InstrumentController {
 		return instrumentService.Getorderforlink(objorder);
 	}
 
-//	@PostMapping("/GetLimsOrder")
-//	public Map<String, Object> GetLimsOrder(@RequestBody LSlimsorder clsOrder)
-//	{
-//		return instrumentService.GetLimsOrder(clsOrder);
-//	}
-
 	@PostMapping("/CompleteOrder")
 	public LSlogilablimsorderdetail CompleteOrder(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
-//		if (objorder.getObjuser() != null) {
-//
-//			LSuserMaster userClass = auditService.CheckUserPassWord(objorder.getObjuser());
-//			if (userClass.getObjResponse().getStatus()) {
-//
-//				objorder.setLsuserMaster(userClass);
-//
-//				return instrumentService.CompleteOrder(objorder);
-//			} else {
-//				objorder.getObjsilentaudit().setComments("Entered invalid username and password");
-//				Map<String, Object> map = new HashMap<>();
-//				map.put("objsilentaudit", objorder.getObjsilentaudit());
-//				map.put("objmanualaudit", objorder.getObjmanualaudit());
-//				map.put("objUser", objorder.getObjuser());
-//				auditService.AuditConfigurationrecord(map);
-//				objorder.setResponse(new Response());
-//				objorder.getResponse().setStatus(false);
-//				objorder.getResponse().setInformation("ID_VALIDATION");
-//				return objorder;
-//			}
-//
-//		}
 		return instrumentService.CompleteOrder(objorder);
 	}
 
@@ -362,7 +283,7 @@ public class InstrumentController {
 	}
 	
 	@PostMapping("/CloudELNFileUploadattachments")
-	public LSlogilablimsorderdetail CloudELNFileUploadattachments(@RequestParam("file") MultipartFile file,
+	public Map<String, Object> CloudELNFileUploadattachments(@RequestParam("file") MultipartFile file,
 			@RequestParam("order") Long batchcode, @RequestParam("filename") String filename,
 			@RequestParam("fileexe") String fileexe, @RequestParam("usercode") Integer usercode,
 			@RequestParam("date") Date currentdate, @RequestParam("islargefile") Integer islargefile,@RequestParam("methodkey") Integer methodkey)
@@ -372,11 +293,13 @@ public class InstrumentController {
 	}
 	
 	@PostMapping("/Uploadelnfileattachments")
-	public LSlogilablimsorderdetail Uploadelnfileattachments(@RequestParam("file") MultipartFile file,
+	public Map<String, Object> Uploadelnfileattachments(@RequestParam("file") MultipartFile file,
 			@RequestParam("order") Long batchcode, @RequestParam("filename") String filename,
 			@RequestParam("fileexe") String fileexe, @RequestParam("usercode") Integer usercode,
 			@RequestParam("date") Date currentdate, @RequestParam("islargefile") Integer islargefile)
 			throws IOException {
+//		return instrumentService.Uploadelnfileattachments(file, batchcode, filename, fileexe, usercode, currentdate,
+//				islargefile);
 		return instrumentService.Uploadelnfileattachments(file, batchcode, filename, fileexe, usercode, currentdate,
 				islargefile);
 	}
@@ -417,10 +340,6 @@ public class InstrumentController {
 		header.set("Content-Disposition", "attachment; filename=gg.pdf");
 
 		return new ResponseEntity<>(new InputStreamResource(gridFsFile.getInputStream()), header, HttpStatus.OK);
-//	    return ResponseEntity.ok()
-//	            .contentLength(gridFsFile.getLength())
-//	            .contentType(MediaType.parseMediaType(gridFsFile.getContentType()))
-//	            .body(new InputStreamResource(gridFsFile.getInputStream()));
 	}
 
 	@PostMapping("/cloudattachment")
@@ -630,13 +549,6 @@ public class InstrumentController {
 
 		return instrumentService.downloadelnparserattachments(param, fileid);
 	}
-	
-//	@RequestMapping(path = "/downloadparser/{param}/{fileid}", method = RequestMethod.GET)
-//	public ResponseEntity<InputStreamResource> downloadparserattachNonCloud(@PathVariable String param, @PathVariable String fileid)
-//			throws IOException {
-//
-//		return instrumentService.downloadparserattachments(param, fileid);
-//	}
 
 	@RequestMapping("/GetOrderResourcesQuantitylst")
 	public List<LsOrderSampleUpdate> GetOrderResourcesQuantitylst(@RequestBody LsOrderSampleUpdate objorder)throws Exception {
@@ -753,10 +665,6 @@ public class InstrumentController {
 	public ResponseEntity<InputStreamResource> downloadsheetimagestemp(@PathVariable String fileid,
 			@PathVariable String tenant, @PathVariable String filename, @PathVariable String extension)
 			throws IllegalStateException, IOException {
-
-//		String[] words=fileid.split("_");
-//		
-//		System.out.print(words[0]);
 
 		ByteArrayInputStream bis = instrumentService.downloadsheetimagestemp(fileid, tenant);
 

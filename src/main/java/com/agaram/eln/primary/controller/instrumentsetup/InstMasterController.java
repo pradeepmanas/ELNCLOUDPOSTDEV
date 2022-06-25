@@ -41,20 +41,21 @@ public class InstMasterController {
      * @return list of active instruments.
      */
     @SuppressWarnings("unchecked")
-	@PostMapping(value = "/getInstMaster")
+    @PostMapping(value = "/getInstMaster")
     public ResponseEntity<Object> getInstMaster(@Valid @RequestBody Map<String, LSSiteMaster> siteObj)throws Exception {
-    	@SuppressWarnings("unchecked")
+   // 	@SuppressWarnings("unchecked")
 		Map<String, Object> obj = (Map<String, Object>) siteObj.get("inputData");
     	Map<String, Object> objsite = null ;
     	if(obj == null)
     	{
     		objsite = (Map<String, Object>) siteObj.get("site");
-    		//return  masterService.getInstMaster(siteObj.get("site"));
     		LSSiteMaster site = new LSSiteMaster();
-    		int nSitecode = (int) objsite.get("sitecode");
-    		site.setSitecode(nSitecode);
-            
+    		//int nSitecode = (int) objsite.get("sitecode");
+    		String sSitecode =  (String) objsite.get("sitecode");
+    		int sitecode = Integer.parseInt(sSitecode);
+    		site.setSitecode(sitecode);
     		return  masterService.getInstMaster(site);
+    
     	}
     	else
     	{

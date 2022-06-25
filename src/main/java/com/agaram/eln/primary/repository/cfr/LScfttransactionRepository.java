@@ -161,4 +161,20 @@ public interface LScfttransactionRepository extends JpaRepository<LScfttransacti
 //			"lc.transactiondate between ?4 and ?5 and \r\n" + 
 //			"lc.systemcoments = ?1 and ls.modulename = ?2 and lc.usercode = ?3", nativeQuery=true)
 //	List<Map<String, Object>> findBysystemcomentsAndModuleNameAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(String Audit,String ModuleName,Integer objuser,Date fromDate, Date toDate);
+	List<LScfttransaction> findByLssitemasterAndSystemcomentsAndModuleNameAndTransactiondateBetweenOrderBySerialnoDesc(
+			Integer site, String audit, String module, Date fromdate, Date todate);
+	List<LScfttransaction> findByLssitemasterAndSystemcomentsAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(
+			Integer site, String audit, Integer usercode, Date fromdate, Date todate);
+	List<LScfttransaction> findByLssitemasterAndSystemcomentsAndModuleNameAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(
+			Integer site, String audit, String module, Integer usercode, Date fromdate, Date todate);
+	List<LScfttransaction> findByLssitemasterAndSystemcomentsAndTransactiondateBetweenOrderBySerialnoDesc(Integer site,
+			String audit, Date fromdate, Date todate);
+	List<LScfttransaction> findByLssitemasterAndModuleNameAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(
+			Integer site, String module, Integer usercode, Date fromdate, Date todate);
+	List<LScfttransaction> findByLssitemasterAndModuleNameAndTransactiondateBetweenOrderBySerialnoDesc(Integer site,
+			String module, Date fromdate, Date todate);
+	List<LScfttransaction> findByLssitemasterAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(Integer site,
+			Integer usercode, Date fromdate, Date todate);
+	List<LScfttransaction> findByLssitemasterAndTransactiondateBetweenOrderBySerialnoDesc(Integer site, Date fromdate,
+			Date todate);
 }

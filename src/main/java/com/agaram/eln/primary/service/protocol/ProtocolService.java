@@ -1968,7 +1968,7 @@ public class ProtocolService {
 		if (lSlogilabprotocoldetail != null) {
 			lSlogilabprotocoldetail.setVersionno(0);
 
-			if (lSlogilabprotocoldetail.getProtocoltype() == 2 && lSlogilabprotocoldetail.getTestcode() == -2) {
+			if (lSlogilabprotocoldetail.getProtocoltype() == 2 && lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode()==-2) {
 				LSprotocolmaster lsprotocolmasterobj = LSProtocolMasterRepositoryObj.findByDefaulttemplate(1);
 				if (lsprotocolmasterobj == null) {
 					LSprotocolmaster lsprotocolmaster = new LSprotocolmaster();

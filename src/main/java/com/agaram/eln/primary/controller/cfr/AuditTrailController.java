@@ -51,29 +51,6 @@ public class AuditTrailController {
 
 	@PostMapping("/InsertupdateReasons")
 	public LScfrreasons InsertupdateReasons(@RequestBody LScfrreasons objClass)throws Exception {
-		if (objClass.getObjuser() != null) {
-
-			LSuserMaster userClass = auditService.CheckUserPassWord(objClass.getObjuser());
-
-			if (userClass.getObjResponse().getStatus()) {
-
-				objClass.setLSuserMaster(userClass);
-
-				return auditService.InsertupdateReasons(objClass);
-			} else {
-				objClass.getObjsilentaudit().setComments("Entered invalid username and password");
-				Map<String, Object> map = new HashMap<>();
-				map.put("objsilentaudit", objClass.getObjsilentaudit());
-				map.put("objmanualaudit", objClass.getObjmanualaudit());
-				map.put("objUser", objClass.getObjuser());
-				auditService.AuditConfigurationrecord(map);
-				objClass.setResponse(new Response());
-				objClass.getResponse().setStatus(false);
-				objClass.getResponse().setInformation("ID_VALIDATION");
-				return objClass;
-			}
-
-		}
 
 		return auditService.InsertupdateReasons(objClass);
 	}
@@ -102,32 +79,6 @@ public class AuditTrailController {
 	@PostMapping("/ReviewBtnValidation")
 	public List<LSreviewdetails> ReviewBtnValidation(@RequestBody LSreviewdetails[] objreview)throws Exception {
 
-//		if(objreview.get(0).getObjuser() != null) {
-//			
-//			LSuserMaster userClass = auditService.CheckUserPassWord(objreview.get(0).getObjuser());
-//			
-//			if(userClass.getObjResponse().getStatus()) {
-//				
-//				objreview.get(0).setLsusermaster(userClass);
-
-//				return auditService.ReviewBtnValidation(objreview);
-//			}
-//			else
-//			{
-//				objreview.get(0).getObjsilentaudit().setComments("Entered invalid username and password");
-//				Map<String, Object> map=new HashMap<>();
-//				map.put("objsilentaudit",objreview.get(0).getObjsilentaudit());
-//				map.put("objmanualaudit",objreview.get(0).getObjmanualaudit());
-//				map.put("objUser",objreview.get(0).getObjuser());
-//				auditService.AuditConfigurationrecord(map);
-//				objreview.get(0).setResponse(new Response());
-//				objreview.get(0).getResponse().setStatus(false);
-//				objreview.get(0).getResponse().setInformation("ID_VALIDATION");
-//				return objreview;
-//			}
-//			
-//		}
-
 		return auditService.ReviewBtnValidation(objreview);
 	}
 
@@ -154,35 +105,6 @@ public class AuditTrailController {
 	public Map<String, Object> GetReviewDetails12(@RequestBody LSreviewdetails[] objreviewdetails)throws Exception {
 		Response objResponse = new Response();
 		Map<String, Object> objreview = new HashMap<String, Object>();
-//		if(objreviewdetails.get(0).getObjuser() != null) {
-//			
-//			LSuserMaster userClass = auditService.CheckUserPassWord(objreviewdetails.get(0).getObjuser());
-//			
-//			if(userClass.getObjResponse().getStatus()) {
-//				
-//				objreviewdetails.get(0).setLsusermaster(userClass);
-//				objreview.put("transaction", auditService.GetReviewDetails12(objreviewdetails));
-//				objResponse.setStatus(true);
-//				objreview.put("objResponse",objResponse);
-//				return objreview;
-//			}
-//			
-//			else
-//			{
-//				
-//				objreviewdetails.get(0).getObjsilentaudit().setComments("Entered invalid username and password");
-//				Map<String, Object> map=new HashMap<>();
-//			  	map.put("objsilentaudit",objreviewdetails.get(0).getObjsilentaudit());
-//			  	map.put("objmanualaudit",objreviewdetails.get(0).getObjmanualaudit());
-//			    map.put("objUser",objreviewdetails.get(0).getObjuser());
-//		     	auditService.AuditConfigurationrecord(map);
-//				objResponse.setStatus(false);
-//				objResponse.setInformation("ID_VALIDATION");
-//				objreview.put("objResponse",objResponse);
-//				return objreview;
-//			}
-//			
-//		}
 
 		objreview.put("transaction", auditService.GetReviewDetails12(objreviewdetails));
 		objResponse.setStatus(true);
