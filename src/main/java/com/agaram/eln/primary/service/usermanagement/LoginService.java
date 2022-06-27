@@ -508,17 +508,6 @@ public class LoginService {
 	}
 
 	public Boolean Logout(LSuserMaster lsuserMaster) {
-//		if (lsuserMaster.getObjsilentaudit() != null) {
-//			lsuserMaster.getObjsilentaudit().setLsuserMaster(lsuserMaster.getUsercode());
-//			lsuserMaster.getObjsilentaudit().setLssitemaster(lsuserMaster.getObjsilentaudit().getLssitemaster());
-//			lsuserMaster.getObjsilentaudit().setModuleName(ModuleName);
-//			lsuserMaster.getObjsilentaudit().setComments(lsuserMaster.getUsername()+" Logged out Successfully");
-//			lsuserMaster.getObjsilentaudit().setActions("Logout Success");
-//			lsuserMaster.getObjsilentaudit().setSystemcoments("System Generated");
-//			lsuserMaster.getObjsilentaudit().setManipulatetype("Logout");
-//			lsuserMaster.getObjsilentaudit().setTableName("LSuserMaster");
-			lscfttransactionRepository.save(lsuserMaster.getObjsilentaudit());
-//		}
 		lsactiveUserRepository.deleteBylsusermaster(lsuserMaster);
 		return true;
 	}
@@ -528,12 +517,10 @@ public class LoginService {
 		LSuserMaster objExitinguser = new LSuserMaster();
 
 		LSPasswordHistoryDetails objectpwd = new LSPasswordHistoryDetails();
-//		LSPasswordHistoryDetails passTopRecord=LSPasswordHistoryDetailsRepository.findTopByOrderByPasswordcodeDesc();
-		List<LSPasswordHistoryDetails> listofpwd = new ArrayList<LSPasswordHistoryDetails>();
-//		LSPasswordHistoryDetails objectpwd = new LSPasswordHistoryDetails();
-		List<LSPasswordHistoryDetails> result = new ArrayList<LSPasswordHistoryDetails>();
 
-//		Integer diff=0;
+		List<LSPasswordHistoryDetails> listofpwd = new ArrayList<LSPasswordHistoryDetails>();
+
+		List<LSPasswordHistoryDetails> result = new ArrayList<LSPasswordHistoryDetails>();
 
 		String username = objuser.getsUsername();
 		LSSiteMaster objsite = lSSiteMasterRepository
@@ -541,7 +528,7 @@ public class LoginService {
 		objExitinguser = lSuserMasterRepository.findByusernameAndLssitemaster(username, objsite);
 		LSPasswordPolicy passHistorycount = LSPasswordPolicyRepository
 				.findByLssitemaster(objExitinguser.getLssitemaster());
-//		 
+
 		listofpwd = LSPasswordHistoryDetailsRepository
 				.findTop5ByAndLsusermasterInOrderByPasswordcodeDesc(objExitinguser);
 
@@ -552,7 +539,6 @@ public class LoginService {
 			objExitinguser.setObjResponse(new Response());
 
 			String newpassword = AESEncryption.encrypt(objuser.getsNewPassword());
-//		   LSPasswordHistoryDetails list=LSPasswordHistoryDetailsRepository.findTopByPasswordOrderByPasswordcodeDesc(newpassword);
 			if (listofpwd.size() != 0) {
 				if (listofpwd.size() > passHistorycount.getPasswordhistory()) {
 					listofpwd.subList(passHistorycount.getPasswordhistory(), listofpwd.size()).clear();
@@ -561,9 +547,7 @@ public class LoginService {
 						.filter(LSPasswordHistoryDetails -> newpassword.equals(LSPasswordHistoryDetails.getPassword()))
 						.collect(Collectors.toList());
 			}
-//		   if(list!=null) {
-//			   diff =passTopRecord.getPasswordcode()-list.getPasswordcode();
-//		   }
+
 			if (!Password.equals(objuser.getsPassword())) {
 				objExitinguser.getObjResponse().setInformation("ID_EXIST");
 				objExitinguser.getObjResponse().setStatus(false);
@@ -579,18 +563,17 @@ public class LoginService {
 				}
 				return objExitinguser;
 			}
-//			if(!diff.equals(passHistorycount.getPasswordhistory()) && diff<=passHistorycount.getPasswordhistory() && diff!=0) {
 			if (result.size() != 0) {
 				objExitinguser.getObjResponse().setInformation("ID_HISTORY");
 				objExitinguser.getObjResponse().setStatus(false);
 				if (objuser.getObjsilentaudit() != null) {
 					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
 					objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//		    		objuser.getObjsilentaudit().setModuleName(ModuleName);
+
 					objuser.getObjsilentaudit().setComments(
 							objuser.getsUsername() + " " + "entered password does not reach the history range");
-//		    		objuser.getObjsilentaudit().setActions("PassWord Created");
-//		    		objuser.getObjsilentaudit().setSystemcoments("System Generated");
+
+
 					objuser.getObjsilentaudit().setManipulatetype("Password");
 					objuser.getObjsilentaudit().setTableName("LSPasswordHistoryDetails");
 					lscfttransactionRepository.save(objuser.getObjsilentaudit());
@@ -617,11 +600,11 @@ public class LoginService {
 				if (objuser.getObjsilentaudit() != null) {
 					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
 					objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-//		    		objuser.getObjsilentaudit().setModuleName(ModuleName);
-//		    		objuser.getObjsilentaudit().setComments("PassWord Created Successfully");
-//		    		objuser.getObjsilentaudit().setActions("PassWord Created");
+
+
+
 					objuser.getObjsilentaudit().setSystemcoments("System Generated");
-//		    		objuser.getObjsilentaudit().setManipulatetype("Password");
+
 					objuser.getObjsilentaudit().setTableName("LSuserMaster");
 					lscfttransactionRepository.save(objuser.getObjsilentaudit());
 
@@ -1386,17 +1369,11 @@ public class LoginService {
 	// added for notification
 	public Notification Loginnotification(Notification objNotification) throws ParseException {
 
-//		Integer usercode = objNotification.getUsercode();
-//		String addedby = objNotification.getAddedby();
-
 		Date currentdate = objNotification.getCurrentdate();
 
 		List<Notification> codelist = NotificationRepository.findByUsercode(objNotification.getUsercode());
 
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-
-		// List<Notification> checklist =
-		// NotificationRepository.findByUsercode(objNotification.getUsercode());
 
 		int i = 0;
 		boolean value = false;
@@ -1411,24 +1388,6 @@ public class LoginService {
 
 			LSuserMaster objLSuserMaster = new LSuserMaster();/* to return the value this obj is created */
 			objLSuserMaster = userService.getUserOnCode(LSuserMaster);
-
-			// Logilaborders batchid =
-			// lslogilablimsorderdetailRepository.findByBatchcode(codelist.get(i).getOrderid());
-
-//			if (objNotification.getLssheetworkflow() == null) {
-//				objNotification.setLssheetworkflow(lssheetworkflowRepository
-//						.findTopByAndLssitemaster_sitecodeOrderByWorkflowcodeAsc(objNotification.getSitecode()));
-//			}
-//						
-
-//			String previousworkflowname = "";
-//			int perviousworkflowcode = -1;
-
-//			String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\""
-//					+ batchid.getBatchid() + "\",\"description\":\"" + codelist.get(i).getDescription() + "\", \""
-//					+ "previousworkflow\":\"" + previousworkflowname + "\",\"previousworkflowcode\":\""
-//					+ perviousworkflowcode + "\",\"currentworkflowcode\":\""
-//					+ objNotification.getLssheetworkflow().getWorkflowcode() + "\"}";
 
 			String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\""
 					+ codelist.get(i).getBatchid() + "\",\"description\":\"" + codelist.get(i).getDescription() + "\"}";
@@ -1447,9 +1406,6 @@ public class LoginService {
 
 				codelist.get(i).setStatus(0);
 				lstnotifications.add(LSnotification);
-
-				// checklist.add(codelist.get(i));
-				// NotificationRepository.save(codelist.get(i));
 			}
 
 			i++;

@@ -710,7 +710,7 @@ public class ReportsService {
 						LScfttransactionManualobj.setComments((String) objuser.get("comments"));
 					}
 					LScfttransactionManualobj.setTableName("LSdocreports");
-					lscfttransactionRepository.save(LScfttransactionManualobj);
+					//lscfttransactionRepository.save(LScfttransactionManualobj);
 				}
 			}
 			objMap.put("status", Status);
@@ -1574,7 +1574,7 @@ public class ReportsService {
 							LScfttransactionManualobj.setComments((String) objuser.get("comments"));
 						}
 						LScfttransactionManualobj.setTableName("LSdocreports");
-						lscfttransactionRepository.save(LScfttransactionManualobj);
+						//lscfttransactionRepository.save(LScfttransactionManualobj);
 					}
 				}
 				if (LScfttransactionobj != null) {
