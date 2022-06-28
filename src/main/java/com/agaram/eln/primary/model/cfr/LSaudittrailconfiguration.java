@@ -144,5 +144,12 @@ public class LSaudittrailconfiguration {
 		this.serialno = serialno;
 	}
 	
+	private Integer ordersequnce;
 	
+	public Integer getOrdersequnce() {
+		return ordersequnce;
+	}
+	public void setOrdersequnce(Integer ordersequnce) {
+		this.ordersequnce = ordersequnce;
+	}
 }
