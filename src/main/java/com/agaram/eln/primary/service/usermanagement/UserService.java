@@ -740,6 +740,13 @@ public class UserService {
 	
 	public LSPasswordPolicy PasswordpolicySave(LSPasswordPolicy objpwd) {
 
+		if(objpwd.getComplexpasswrd() == 0) {
+			objpwd.setMincapitalchar(0);
+			objpwd.setMinsmallchar(0);
+			objpwd.setMinnumericchar(0);
+			objpwd.setMinspecialchar(0);
+		}
+		
 		lSpasswordpolicyRepository.save(objpwd);
 
 		if (objpwd.getObjsilentaudit() != null) {

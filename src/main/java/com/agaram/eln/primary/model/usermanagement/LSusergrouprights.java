@@ -74,6 +74,16 @@ public class LSusergrouprights {
 	@Transient
 	private Response response;
 	
+	private Integer sequenceorder;
+	
+	public Integer getSequenceorder() {
+		return sequenceorder;
+	}
+
+	public void setSequenceorder(Integer sequenceorder) {
+		this.sequenceorder = sequenceorder;
+	}
+	
 	public LSuserMaster getLsuserMaster() {
 		return lsuserMaster;
 	}
