@@ -64,13 +64,15 @@ public class EvaluateParserController {
 		final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 //		mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
 		final String rawData =  mapper.convertValue(mapObject.get("rawData"), String.class);
+		final String tenant =  mapper.convertValue(mapObject.get("X-TenantID"), String.class);
 //		System.out.println("rawData:"+ rawData);
 		
-		return parserService.evaluateParser(methodKey, site, rawData);
+		return parserService.evaluateParser(methodKey, site, rawData,tenant);
 	}
 	
 	@PostMapping("/uploadFileandevaluateParser")
-    public ResponseEntity<Object> uploadFileandevaluateParser(@RequestParam("file") MultipartFile file, @RequestParam("method") String method, @RequestParam("site") String sitecode)throws Exception {
+    public ResponseEntity<Object> uploadFileandevaluateParser(@RequestParam("file") MultipartFile file, @RequestParam("method") String method,
+    		@RequestParam("site") String sitecode,@RequestParam("X-TenantID") String tenant)throws Exception {
         String fileName = fileStorageService.storeFile(file);
         
         final ObjectMapper mapper = new ObjectMapper();
@@ -85,9 +87,13 @@ public class EvaluateParserController {
 		final int methodKey = Integer.parseInt(method);
 		final LSSiteMaster site = lssiteMasterRepository.findOne(Integer.parseInt(sitecode));
 //		mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
-		final String rawData =  methodservice.getFileData(fileName);
+		
+		final String rawData =  methodservice.getFileData(fileName,tenant);
+
+		//final String rawData =  methodservice.getFileData(fileName);
         
-        return parserService.evaluateParser(methodKey, site, rawData);
+        return parserService.evaluateParser(methodKey, site, rawData,tenant);
+      //  return parserService.evaluateParser(methodKey, site);
 	}
 	
 	/**
@@ -100,7 +106,8 @@ public class EvaluateParserController {
 	public ResponseEntity<Object> getLabSheetMethodList(@Valid @RequestBody Map<String, Object> mapObject)throws Exception {	
 		 final ObjectMapper mapper = new ObjectMapper();		
 		 final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-		 return parserService.getLabSheetMethodList(site);
+		 final String tenant = mapper.convertValue(mapObject.get("X-TenantID"), String.class);
+		 return parserService.getLabSheetMethodList(site,tenant);
 	}
 	
 	/**
@@ -114,7 +121,9 @@ public class EvaluateParserController {
 		 final ObjectMapper mapper = new ObjectMapper();		
 		 final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 		 final Integer methodKey = mapper.convertValue(mapObject.get("methodKey"), Integer.class);
-		 return parserService.getMethodFieldList(methodKey, site, null);
+		 final String tenant =  mapper.convertValue(mapObject.get("X-TenantID"), String.class);
+		
+		 return parserService.getMethodFieldList(methodKey, site, null,tenant);
 	}
 	
 //	@PostMapping(value = "/insertELNResultDetails")

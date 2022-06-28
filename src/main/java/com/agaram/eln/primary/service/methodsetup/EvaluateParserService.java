@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.service.methodsetup;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -71,10 +73,12 @@ public class EvaluateParserService {
     * general fields for the first Method available in the list.
     * @param site [Site] object for which list is to be fetched
     * @return list of Method entities
+ * @throws IOException 
+ * @throws FileNotFoundException 
     */
    @SuppressWarnings({ "unchecked" })
    @Transactional
-   public ResponseEntity<Object> getLabSheetMethodList(final LSSiteMaster site){
+   public ResponseEntity<Object> getLabSheetMethodList(final LSSiteMaster site ,final String tenant) throws FileNotFoundException, IOException{
 	   
 	   final List<Method> methodList = methodRepo.findByParserAndSiteAndStatus(1, site, 1);
 	   final Map<String, Object> returnObject = new HashMap<String, Object>();
@@ -84,7 +88,7 @@ public class EvaluateParserService {
 		 
 	   	   final Method method = methodList.get(0);	   	  	 
 	   	   
-	   	   final Map<String, Object> methodData =  (Map<String, Object>)getMethodFieldList(method.getMethodkey(), site, "").getBody();
+	   	   final Map<String, Object> methodData =  (Map<String, Object>)getMethodFieldList(method.getMethodkey(), site, "",tenant).getBody();
       	   returnObject.putAll(methodData);
 	   	   
 		   final List<GeneralField> generalFieldList = (List<GeneralField>)generalFieldService.getGeneralFieldBySite(site).getBody();
@@ -101,11 +105,13 @@ public class EvaluateParserService {
 	    * @param site [Site] object for which the fields are to be fetched
 	    * @param rawData [String] raw data source to be used in case of stringcontent
 	    * @return list of fields relating the method and the site.
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	    */
 	   @SuppressWarnings({ "unchecked" })
 	   @Transactional
 	   public ResponseEntity<Object> getMethodFieldList(final int methodKey, final LSSiteMaster site, 
-			   final String rawData){
+			   final String rawData,final String tenant) throws FileNotFoundException, IOException{
 		   
 		   final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);
 		   if (methodByKey.isPresent()) {
@@ -197,9 +203,13 @@ public class EvaluateParserService {
 			   final List<CustomField> customFieldList = (List<CustomField>) customFieldService.getCustomFieldByMethod(methodByKey.get()).getBody();
 			   returnObject.put("PDCustomFieldList", customFieldList); 
 
+//			   final Map<String, List<List<MethodFieldTechnique>>> outputMap = parseDataForInstFields(blockMap, methodByKey.get().getMethodkey(), 
+//				   		rawData, ignoreList,tenant);
+//			   returnObject.put("PDInstFieldDataMap", outputMap);  	
+			   
 			   final Map<String, List<List<MethodFieldTechnique>>> outputMap = parseDataForInstFields(blockMap, methodByKey.get().getMethodkey(), 
-				   		rawData, ignoreList);
-			   returnObject.put("PDInstFieldDataMap", outputMap);  		  
+				   		rawData, ignoreList,tenant);
+			   returnObject.put("PDInstFieldDataMap", outputMap); 
 		   
 			   return new ResponseEntity<>(returnObject, HttpStatus.OK);
 		   }
@@ -208,21 +218,24 @@ public class EvaluateParserService {
 		   } 		    
 	   }
 	
+
 	/**
 	 * This method is used to used to evaluate the parser for the provided file content.
 	 * @param methodKey [int] Method key from which the techniques are to applied
 	 * @param site [Site] for which the evaluate parser is handled
 	 * @param rawDataContent [String] raw data source to be used in case of stringcontent
 	 * @return map object holding parsed data
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public ResponseEntity<Object> evaluateParser(final int methodKey, final LSSiteMaster site, final String rawDataContent)
+	public ResponseEntity<Object> evaluateParser(final int methodKey, final LSSiteMaster site, final String rawDataContent,final String tenant) throws FileNotFoundException, IOException
 	{
 		final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);				   
 		if(methodByKey.isPresent()) 
 		{			
-			final Map<String, Object> parserObjectMap = (Map<String, Object>) getMethodFieldList(methodKey, site, rawDataContent).getBody();
+			final Map<String, Object> parserObjectMap = (Map<String, Object>) getMethodFieldList(methodKey, site, rawDataContent,tenant).getBody();
 		
 			final Map<String, List<List<MethodFieldTechnique>>> parsedData = (Map<String, List<List<MethodFieldTechnique>>>) parserObjectMap.get("PDInstFieldDataMap");
 			return new ResponseEntity<>(parsedData, HttpStatus.OK);
@@ -241,13 +254,15 @@ public class EvaluateParserService {
 	 * @param rawDataContent [String] raw data source to be used in case of contenttype=stringcontent
 	 * @param ignoreList [List] holding ParserIgnoreChars entity list that will be ignored in parsed data
 	 * @return map object holding field id and its parsed data
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, List<List<MethodFieldTechnique>>> parseDataForInstFields(final Map<String, List<MethodFieldTechnique>> blockMap,
-			final int methodKey, final String rawDataContent, final List<ParserIgnoreChars> ignoreList) {
+			final int methodKey, final String rawDataContent, final List<ParserIgnoreChars> ignoreList ,String tenant) throws FileNotFoundException, IOException {
 		
 		final Map <String, Object> extractedBlock =  (Map <String, Object>) parserSetupService.getParserData(
-				methodKey, true, rawDataContent).getBody();
+				methodKey, true, rawDataContent, tenant).getBody();
 		
 		final Map<String, List<List<MethodFieldTechnique>>> outputDataMap =  new HashMap<String, List<List<MethodFieldTechnique>>>();
 		

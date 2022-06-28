@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.model.protocols;
 
 import javax.persistence.Entity;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;

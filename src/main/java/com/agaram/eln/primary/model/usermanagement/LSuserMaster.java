@@ -146,6 +146,17 @@ public class LSuserMaster {
 	@Transient
 	List<LSworkflow> lstworkflow;
 	
+	@Transient
+	private boolean reset;
+	
+	public boolean isReset() {
+		return reset;
+	}
+
+	public void setReset(boolean reset) {
+		this.reset = reset;
+	}
+
 	public String getEncryptedpassword() {
 		return encryptedpassword;
 	}

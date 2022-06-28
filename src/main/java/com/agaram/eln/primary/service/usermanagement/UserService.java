@@ -262,7 +262,9 @@ public class UserService {
 				&& objusermaster.getLsusergroup() == null) {
 			LSuserMaster updateUser = lsuserMasterRepository.findOne(objusermaster.getUsercode());
 			updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A" : "D");
-//			updateUser.setPassword(objusermaster.getPassword());
+			if(!isnewuser && objusermaster.isReset()) {
+				updateUser.setPassword(objusermaster.getPassword());
+			}
 			updateUser.setLockcount(objusermaster.getLockcount());
 			updateUser
 					.setUserretirestatus(objusermaster.getUserretirestatus() == 1 ? objusermaster.getUserretirestatus()

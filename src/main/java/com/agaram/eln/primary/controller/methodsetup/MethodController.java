@@ -1,15 +1,18 @@
 package com.agaram.eln.primary.controller.methodsetup;
 
+
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.model.methodsetup.Method;
@@ -107,9 +110,13 @@ public class MethodController {
 		  String someValue =  (String) mapObject.get("doneByUserKey");
 		  final int doneByUserKey = Integer.parseInt(someValue);
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
+		  final Method otherdetails = mapper.convertValue(mapObject.get("otherdetails"), Method.class);
 		  
 		  return methodService.deleteMethod(methodKey, site, comments, doneByUserKey,
-				  saveAuditTrail, request);
+				  saveAuditTrail, request,otherdetails);
+		  
+//		  return methodService.deleteMethod(methodKey, site, comments, doneByUserKey,
+//				  saveAuditTrail, request);
 	  }
 	  
 	  /**
@@ -129,13 +136,44 @@ public class MethodController {
 	   * @return byte array of txt file
 	   */
 	  @PostMapping(value = "/getFileData")
-	  public ResponseEntity<Object> getFileData(@Valid @RequestBody Map<String, Object> mapObject)throws Exception{
+
+
+		  public String getFileData(@Valid @RequestBody Map<String, Object> mapObject)throws Exception{
+		  
+		//  public ResponseEntity<Object> getFileData(@Valid @RequestBody Map<String, Object> mapObject)throws Exception{
+		  
 		  final ObjectMapper mapper = new ObjectMapper();
-		  //final String fileName = mapper.convertValue(mapObject.get("rawDataFileName"), String.class);
+		
 		  Map<String, Object> objinput = (Map<String, Object>) mapObject.get("inputData");
 		  final String fileName = (String) objinput.get("rawDataFileName");
-		  return new ResponseEntity<>(methodService.getFileData(fileName), HttpStatus.OK);
+	
+
+		  String tenant = (String) objinput.get("X-TenantID");
+		  
+		//  return methodService.getFileData(fileName, tenant, HttpStatus.OK);
+
+		  return methodService.getFileData(fileName, tenant);
+	
+
 	  }	  
+	
+	  
+//	  @PostMapping(value = "/getFileData")
+//		  public ResponseEntity<Object> getFileData(@Valid @RequestBody Map<String, Object> mapObject)throws Exception{
+//
+//		
+//			  final ObjectMapper mapper = new ObjectMapper();
+//		
+//			  Map<String, Object> objinput = (Map<String, Object>) mapObject.get("inputData");
+//			  final String fileName = (String) objinput.get("rawDataFileName");
+//			  return new ResponseEntity<>(methodService.getFileData(fileName),HttpStatus.OK);
+//
+//
+//		  }	
+	  
+	  
+	  	  
+	  
 	  
 	
 	/**
@@ -147,6 +185,7 @@ public class MethodController {
 	 * loaded. 
 	 * @return response object with copied Method entity.
 	 */
+	  @PostMapping(value = "/createCopyMethod")
 	  public ResponseEntity<Object> createCopyMethod(final HttpServletRequest request, 
 				@Valid @RequestBody Map<String, Object> mapObject)throws Exception {
 		

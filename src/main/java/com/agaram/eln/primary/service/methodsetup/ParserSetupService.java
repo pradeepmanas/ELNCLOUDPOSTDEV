@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.service.methodsetup;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,17 +102,20 @@ public class ParserSetupService {
 	 * 								  false - extracted block is used as input for ParserSetup
 	 * @param rawDataContent [String] raw data source to be used 
 	 * @return map object holding block name and list of extracted blockwise data.
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public ResponseEntity<Object> getParserData(final int methodKey, final Boolean evaluateParser,
-			final String rawDataContent)
+			final String rawDataContent,final String tenant) throws FileNotFoundException, IOException
 	{		
 		final Method method = (Method)methodService.findById(methodKey).getBody();
+	//	String tenant = null;
 		
 		String rawDataText = "";
 		if (rawDataContent == null || rawDataContent.isEmpty()) {
-			rawDataText = methodService.getFileData(method.getInstrawdataurl());   
+			rawDataText = methodService.getFileData(method.getInstrawdataurl(),tenant);   
 		}
 		else {
 			rawDataText = rawDataContent;   

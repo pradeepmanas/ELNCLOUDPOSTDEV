@@ -41,7 +41,8 @@ public class ParserSetupController {
         Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
     	   	
 		final int methodKey = (Integer) obj.get("methodKey");
-		return parserService.getParserData(methodKey, false, null);
+		String tenant = (String) obj.get("X-TenantID");
+		return parserService.getParserData(methodKey, false, null,tenant);
 	}
 	
 	/**
