@@ -108,14 +108,138 @@ public class ParserSetupService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public ResponseEntity<Object> getParserData(final int methodKey, final Boolean evaluateParser,
-			final String rawDataContent,final String tenant) throws FileNotFoundException, IOException
+    final String rawDataContent,final String tenant,final int isMultitenant) throws FileNotFoundException, IOException
 	{		
 		final Method method = (Method)methodService.findById(methodKey).getBody();
 	//	String tenant = null;
 		
 		String rawDataText = "";
 		if (rawDataContent == null || rawDataContent.isEmpty()) {
+			if(isMultitenant != 0) {
 			rawDataText = methodService.getFileData(method.getInstrawdataurl(),tenant);   
+			}
+			else
+			{
+				rawDataText = methodService.getSQLFileData(method.getInstrawdataurl());
+			}
+		}
+		else {
+			rawDataText = rawDataContent;   
+		}		   
+		
+		if (method.getSamplesplit() == null || method.getSamplesplit() == 0) {
+			final Map <String, Object> extractedBlock = new HashMap<String, Object>();
+            	 extractedBlock.put("TextBlock_1", "$$BEGINSAMPLE$$\n"+rawDataText+"\n$$ENDSAMPLE$$");			
+
+			 return new ResponseEntity<>(extractedBlock, HttpStatus.OK);
+		}
+		else {
+			
+			final StringBuffer dataBuffer = new StringBuffer();
+			dataBuffer.append("$$BEGINSAMPLE$$\n");
+			dataBuffer.append(rawDataText);
+			dataBuffer.append("\n$$ENDSAMPLE$$");
+			
+			String rawData = dataBuffer.toString();	
+		
+			final List<SampleTextSplit> textSplitList = (List<SampleTextSplit>)textSplitService.getSampleTextSplitByMethod(methodKey).getBody();
+			final List<SampleLineSplit> lineSplitList = (List<SampleLineSplit>)lineSplitService.getSampleLineSplitByMethod(methodKey).getBody();
+			final List<SampleExtract> extractList = (List<SampleExtract>)sampleExtractService.getSampleExtractByMethod(methodKey).getBody();
+					
+			final CommonFunction commonFunction = new CommonFunction();		
+			
+			final List<SampleTextSplit> removeSTSList = new ArrayList<SampleTextSplit>(); 
+			final List<SampleLineSplit> removeSLSList	= new ArrayList<SampleLineSplit>();
+			final List<SampleTextSplit> extractSTSList = new ArrayList<SampleTextSplit>(); 
+			final List<SampleLineSplit> extractSLSList	= new ArrayList<SampleLineSplit>();
+						
+	        if (!textSplitList.isEmpty()) {
+	        	textSplitList.forEach(item -> {
+	        		if (item.getRemoveorextracttext() == 0 )
+	        			removeSTSList.add(item);
+	        			else
+	        				extractSTSList.add(item);         			
+	        	});
+	        }
+	        if (!lineSplitList.isEmpty()) {
+	        	lineSplitList.forEach(item -> {
+	        		if (item.getRemoveorextractlines() == 0 )
+	        			removeSLSList.add(item);
+	        		else
+	        			extractSLSList.add(item);
+	        	});
+	        }
+	     
+	        if (removeSTSList.size() > 0 || removeSLSList.size() > 0) {
+	            rawData = commonFunction.removeRawData(rawData, removeSTSList, removeSLSList);
+	        }
+	        String removedData = rawData;
+	        final Map <String, Object> extractedBlock = new HashMap<String, Object>();
+	        if (!extractSTSList.isEmpty()){
+	        	for (SampleTextSplit item :extractSTSList) {
+	        		//final List<String> rawDataList = new ArrayList<String>();
+					final String extractedData = "$$BEGINSAMPLE$$\n"+commonFunction.extractRawDataBySTS(removedData,item, dataBuffer.toString())+"\n$$ENDSAMPLE$$";
+	                //rawDataList.add(extractedData);
+	        		extractedBlock.put(item.getExtractblock(), extractedData);
+	            }
+	        }
+	       
+	        if (!extractSLSList.isEmpty()){
+	        	for (SampleLineSplit item :extractSLSList) {	        		
+	        		final String extractedData = "$$BEGINSAMPLE$$\n"+commonFunction.extractRawDataBySLS(removedData,item, dataBuffer.toString())+"\n$$ENDSAMPLE$$";
+	        		
+	        		extractedBlock.put(item.getExtractblock(), extractedData);
+	            }
+	        }	      	
+	    
+	        if (!extractList.isEmpty()) {        	
+	        
+	            extractList.forEach(item -> {            	
+	            	 final String extractBlock = item.getSampletextsplit() != null ? item.getSampletextsplit().getExtractblock()
+	                         : item.getSamplelinesplit().getExtractblock();
+	            	
+	            	 List<String> rawDataList = new ArrayList<String>();
+	                 if( item.getExtracttextorlines() == 0){
+	                     rawDataList = commonFunction.applyMatchTextExtract((String)extractedBlock.get(extractBlock), item);
+	                 }
+	                 else { 
+	                	 rawDataList = commonFunction.applyAbsoluteLinesExtract((String)extractedBlock.get(extractBlock), item);
+	                 }
+	                
+	                 if (evaluateParser) {
+	                	extractedBlock.replace(extractBlock, rawDataList);
+	                 }
+	                 else {
+	                	 extractedBlock.replace(extractBlock, rawDataList.get(0));
+	                 }
+	            });
+	        }
+         
+	        return new ResponseEntity<>(extractedBlock, HttpStatus.OK);
+		}
+	}	
+	
+	
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public ResponseEntity<Object> getSQLParserData(final int methodKey, final Boolean evaluateParser,
+    final String rawDataContent,final int isMultitenant) throws FileNotFoundException, IOException
+	{		
+		final Method method = (Method)methodService.findById(methodKey).getBody();
+	//	String tenant = null;
+		
+		String rawDataText = "";
+		if (rawDataContent == null || rawDataContent.isEmpty()) {
+//			if(isMultitenant != 0) {
+//			rawDataText = methodService.getFileData(method.getInstrawdataurl(),tenant);   
+//			}
+		//	else
+		//	{
+				rawDataText = methodService.getSQLFileData(method.getInstrawdataurl());
+		//	}
 		}
 		else {
 			rawDataText = rawDataContent;   

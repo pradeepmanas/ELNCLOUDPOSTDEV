@@ -18,7 +18,8 @@ public class CloudParserFile {
 	public String fileid;
 	public String extension;
 	public String filename;
-	private Binary file;
+	public String originalfilename;
+	//private Binary file;
 	 
 	public Integer getParserfilecode() {
 		return parserfilecode;
@@ -44,15 +45,18 @@ public class CloudParserFile {
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
-	public Binary getFile() {
-		return file;
+//	public Binary getFile() {
+//		return file;
+//	}
+//	public void setFile(Binary file) {
+//		this.file = file;
+//	}
+	public String getOriginalfilename() {
+		return originalfilename;
 	}
-	public void setFile(Binary file) {
-		this.file = file;
+	public void setOriginalfilename(String originalfilename) {
+		this.originalfilename = originalfilename;
 	}
 
 	
-	
-	
-
 }

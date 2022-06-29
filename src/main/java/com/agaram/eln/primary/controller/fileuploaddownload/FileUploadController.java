@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.controller.fileuploaddownload;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,11 +44,15 @@ public class FileUploadController {
 	 * returns its file name
 	 * @param file [MultipartFile]
 	 * @return uploaded file name
+	 * @throws IOException 
 	 */
 	@PostMapping("/uploadFile")
-    public Response uploadFile(@RequestParam("file") MultipartFile file){
-        String fileName = fileStorageService.storeFile(file);
-
+    public Response uploadFile(@RequestParam("file") MultipartFile file ,@RequestParam("tenant") String tenant,
+    		@RequestParam("isMultitenant") Integer isMultitenant,@RequestParam("originalfilename") String originalfilename) throws IOException{
+		
+		
+        String fileName = fileStorageService.storeFile(file,tenant, isMultitenant,originalfilename);
+		
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
                 .path(fileName)
@@ -56,13 +61,28 @@ public class FileUploadController {
         return new Response(fileName, fileDownloadUri,
                 file.getContentType(), file.getSize());
     }
-
 	
-    @PostMapping("/uploadMultipleFiles")
-    public List<Response> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files)throws Exception {
-        return Arrays.asList(files)
-                .stream()
-                .map(file -> uploadFile(file))
-                .collect(Collectors.toList());
+	@PostMapping("/sqluploadFile")
+    public Response sqluploadFile(@RequestParam("file") MultipartFile file ,@RequestParam("tenant") String tenant,
+    		@RequestParam("isMultitenant") Integer isMultitenant,@RequestParam("originalfilename") String originalfilename){
+		
+		
+        String fileName = fileStorageService.storeSQLFile(file,tenant, isMultitenant,originalfilename);
+		
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/downloadFile/")
+                .path(fileName)
+                .toUriString();
+
+        return new Response(fileName, fileDownloadUri,
+                file.getContentType(), file.getSize());
     }
+	
+//    @PostMapping("/uploadMultipleFiles")
+//    public List<Response> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files)throws Exception {
+//        return Arrays.asList(files)
+//                .stream()
+//                .map(file -> uploadFile(file))
+//                .collect(Collectors.toList());
+//    }
 }

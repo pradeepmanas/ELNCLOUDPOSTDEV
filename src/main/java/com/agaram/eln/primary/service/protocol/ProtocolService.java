@@ -510,14 +510,14 @@ public class ProtocolService {
 
 	public Map<String, Object> getProtocolStepLst(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
-		@SuppressWarnings("unused")
-		LScfttransaction LScfttransactionobj = new LScfttransaction();
+//		@SuppressWarnings("unused")
+//		LScfttransaction LScfttransactionobj = new LScfttransaction();
 
-		if (argObj.containsKey("objsilentaudit")) {
+		if (argObj.containsKey("protocolmastercode")) {
 
-			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),
-					new TypeReference<LScfttransaction>() {
-					});
+//			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),
+//					new TypeReference<LScfttransaction>() {
+//					});
 
 			List<LSprotocolstep> LSprotocolsteplst = LSProtocolStepRepositoryObj
 					.findByProtocolmastercodeAndStatus(argObj.get("protocolmastercode"), 1);
@@ -757,11 +757,11 @@ public class ProtocolService {
 			CloudLSprotocolstepInfo CloudLSprotocolstepInfoObj = new CloudLSprotocolstepInfo();
 
 			if (LSprotocolstepObj.getIsmultitenant() == 1) {
-
+    LScfttransaction objaudit1=new LScfttransaction();
 				updateCloudProtocolVersion(LSprotocolstepObj.getProtocolmastercode(),
 						LSprotocolstepObj.getProtocolstepcode(), LSprotocolstepObj.getLsprotocolstepInfo(),
 						LSprotocolstepObj.getNewStep(), LScfttransactionobj.getLssitemaster(), LSprotocolstepObj,
-						LsuserMasterObj.getUsername(), LsuserMasterObj.getUsercode());
+						LsuserMasterObj.getUsername(), LsuserMasterObj.getUsercode(),objaudit1);
 
 				if (LSprotocolstepObj.getNewStep() == 1) {
 					CloudLSprotocolstepInfoObj.setId(LSprotocolstepObj.getProtocolstepcode());
@@ -984,7 +984,7 @@ public class ProtocolService {
 
 	private void updateCloudProtocolVersion(Integer protocolmastercode, Integer protocolstepcode,
 			String lsprotocolstepInfo, Integer newStep, Integer sitecode, LSprotocolstep lSprotocolstepObj,
-			String usercode, Integer usercode1) {
+			String usercode, Integer usercode1,LScfttransaction objaudit1) {
 
 		LSprotocolmaster protocolMaster = LSProtocolMasterRepositoryObj.findByprotocolmastercode(protocolmastercode);
 		List<LSprotocolstep> lststep = LSProtocolStepRepositoryObj.findByProtocolmastercode(protocolmastercode);
@@ -1061,7 +1061,10 @@ public class ProtocolService {
 				versProto.setCreatedby(usercode1);
 			}
 			lsprotocolversionRepository.save(versProto);
-
+            if(objaudit1.getLssitemaster() != null)
+            {
+            	lscfttransactionRepository.save(objaudit1);
+            }
 		} else {
 
 			if (newStep == 1) {
@@ -4153,10 +4156,14 @@ public class ProtocolService {
 //					if(body.containsKey("newProtocolstepObj")) {
 //					int 	
 //					}
-
+					LScfttransaction objaudit=new LScfttransaction();
+                    if(body.get("objsilentaudit") != null)
+                    {
+                    objaudit= object.convertValue(body.get("objsilentaudit"), LScfttransaction.class);
+                    }
 					updateCloudProtocolVersion(protocolmastercode, LSprotocolstepObj.getProtocolstepcode(),
 							LSprotocolstepObj.getLsprotocolstepInformation(), NewStep, sitecode, LSprotocolstepObj,
-							username, usercode);
+							username, usercode,objaudit);
 
 //					if (NewStep != 1) {
 						LSprotocolmaster protocolmaster = LSProtocolMasterRepositoryObj

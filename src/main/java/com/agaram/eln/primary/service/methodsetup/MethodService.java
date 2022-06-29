@@ -1,12 +1,15 @@
 package com.agaram.eln.primary.service.methodsetup;
 
 
+import java.io.BufferedReader;
 import java.io.File;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
@@ -33,6 +36,11 @@ import org.apache.pdfbox.util.Matrix;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsOperations;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -45,8 +53,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.mock.web.MockMultipartFile;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
+
 import com.agaram.eln.primary.model.methodsetup.CustomField;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.ParserBlock;
@@ -68,6 +78,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.gridfs.GridFSDBFile;
 
 
 /**
@@ -118,6 +129,16 @@ public class MethodService {
     @Autowired
     private CloudParserFileRepository cloudparserfilerepository;
     
+	@Autowired
+	GridFsOperations gridFsOps;
+
+	@Autowired
+	private MongoTemplate mongoTemplate;
+
+	@Autowired
+	private GridFsTemplate gridFsTemplate;
+	
+	
     @Autowired
     private CloudFileManipulationservice cloudFileManipulationservice;
     
@@ -905,6 +926,7 @@ public class MethodService {
 //   
         
    public String getFileData(final String fileName,String tenant) throws FileNotFoundException, IOException
+
    {
 	   try
         {			
@@ -912,10 +934,12 @@ public class MethodService {
 		   final String ext = FilenameUtils.getExtension(fileName); 
 		   String rawDataText="";
 		   
+		   final String name = FilenameUtils.getBaseName(fileName);
+		   
 		   CloudParserFile obj = cloudparserfilerepository.findByfilename(fileName);
-		    String fileid = obj.fileid;
+		   String fileid = obj.fileid;
 			 
-		    file = stream2file(cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "parserfile"),fileName, ext);
+		   file = stream2file(cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "parserfile"),fileName, ext);
 		    
 		    if(file !=null)
 		    {
@@ -945,12 +969,11 @@ public class MethodService {
 					   
 					        parsedText = pdfStripper.getText(pdDoc);
 					      					        
-					        
+					        //converting into multipart file
 						        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
 						        		fileName, "text/plain", parsedText.getBytes());
 						        
 						        //storing file in blob
-						        
 						        String textid = null;
 					    		try {
 					    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
@@ -962,7 +985,7 @@ public class MethodService {
 					    		CloudParserFile objfile = new CloudParserFile();
 					    		objfile.setFileid(textid);
 					    		objfile.setExtension(".txt");
-					    		objfile.setFilename(fileName);
+					    		objfile.setFilename(name+".txt");
 					    			
 					    		cloudparserfilerepository.save(objfile);
 					    } catch (Exception e) {
@@ -979,11 +1002,9 @@ public class MethodService {
 					    }    
 					    
 					    rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);
-					    
-					    if (ext.equalsIgnoreCase("pdf")) {
-					          rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-					          
-					           }
+				 
+				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+					   
 			   }
 			   else
 			   {
@@ -1010,6 +1031,64 @@ public class MethodService {
        }
        return tempFile;
    }
+   
+   
+   public String getSQLFileData(String fileName) throws IOException {
+	
+		String Content = "";
+		  String rawDataText="";
+		final String ext = FilenameUtils.getExtension(fileName); 
+		
+	   String fileid = fileName;
+		GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
+		if (largefile == null) {
+			largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
+		}
+
+		if (largefile != null) {
+			
+			if (ext.equalsIgnoreCase("pdf")) {
+				
+				   String parsedText = "";
+				   PDFParser parser = null;
+				    PDDocument pdDoc = null;
+				    COSDocument cosDoc = null;
+				    PDFTextStripper pdfStripper;
+
+//				    try {
+				    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(largefile.getInputStream());
+				        parser = new PDFParser(raFile);
+				        parser.setLenient(true);
+				        parser.parse();
+				        cosDoc = parser.getDocument();
+				        pdfStripper = new PDFTextStripper();
+				        pdfStripper.setSortByPosition( true );
+				              			       
+				        pdDoc = new PDDocument(cosDoc);
+				        pdfStripper.setWordSeparator("\t");
+				        pdfStripper.setSuppressDuplicateOverlappingText(true);
+				        Matrix matrix = new Matrix();
+				        matrix.clone();
+				        pdfStripper.setTextLineMatrix(matrix);
+				   
+				        parsedText = pdfStripper.getText(pdDoc);
+				        
+				        rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);
+				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+			}
+			else
+			{
+			        rawDataText = new BufferedReader(
+					new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+							.collect(Collectors.joining("\n"));
+			
+		} 
+			}	
+		
+	
+		return rawDataText;
+   }  
+   
    
    /**
     * This method is used to get Method entity based on its primary key
@@ -1399,6 +1478,8 @@ public class MethodService {
 		   
 	   return new ResponseEntity<>(existingMethod, HttpStatus.OK);
    }
+
+
 
 
    

@@ -65,16 +65,24 @@ public class EvaluateParserController {
 //		mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
 		final String rawData =  mapper.convertValue(mapObject.get("rawData"), String.class);
 		final String tenant =  mapper.convertValue(mapObject.get("X-TenantID"), String.class);
+		final Integer isMultitenant = mapper.convertValue(mapObject.get("isMultitenant"), Integer.class);
 //		System.out.println("rawData:"+ rawData);
-		
-		return parserService.evaluateParser(methodKey, site, rawData,tenant);
+		if(isMultitenant != 0 ) {
+		return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant);
+		}
+		else
+		{
+			return parserService.evaluateSQLParser(methodKey, site, rawData,isMultitenant);
+		}
 	}
 	
 	@PostMapping("/uploadFileandevaluateParser")
     public ResponseEntity<Object> uploadFileandevaluateParser(@RequestParam("file") MultipartFile file, @RequestParam("method") String method,
-    		@RequestParam("site") String sitecode,@RequestParam("X-TenantID") String tenant)throws Exception {
-        String fileName = fileStorageService.storeFile(file);
-        
+    		@RequestParam("site") String sitecode,@RequestParam("X-TenantID") String tenant,@RequestParam ("isMultitenant") Integer isMultitenant,
+    		@RequestParam ("originalfilename") String originalfilename)throws Exception {
+		
+		if(isMultitenant != 0) {
+        String fileName = fileStorageService.storeFile(file,tenant,isMultitenant,originalfilename );
         final ObjectMapper mapper = new ObjectMapper();
         if(method.indexOf(",")>0)
         {
@@ -86,14 +94,29 @@ public class EvaluateParserController {
         }
 		final int methodKey = Integer.parseInt(method);
 		final LSSiteMaster site = lssiteMasterRepository.findOne(Integer.parseInt(sitecode));
-//		mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
 		
 		final String rawData =  methodservice.getFileData(fileName,tenant);
-
-		//final String rawData =  methodservice.getFileData(fileName);
-        
-        return parserService.evaluateParser(methodKey, site, rawData,tenant);
-      //  return parserService.evaluateParser(methodKey, site);
+		return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant);
+		}
+		else {
+		String fileName = fileStorageService.storeSQLFile(file,tenant,isMultitenant,originalfilename);
+		 final ObjectMapper mapper = new ObjectMapper();
+	        if(method.indexOf(",")>0)
+	        {
+	        	method=method.substring(0,method.indexOf(","));
+	        }
+	        if(sitecode.indexOf(",")>0)
+	        {
+	        	sitecode=sitecode.substring(0,sitecode.indexOf(","));
+	        }
+			final int methodKey = Integer.parseInt(method);
+			final LSSiteMaster site = lssiteMasterRepository.findOne(Integer.parseInt(sitecode));
+			final String rawData =  methodservice.getSQLFileData(fileName);
+			return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant);
+		}
+   
+  
+      
 	}
 	
 	/**
@@ -107,7 +130,8 @@ public class EvaluateParserController {
 		 final ObjectMapper mapper = new ObjectMapper();		
 		 final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 		 final String tenant = mapper.convertValue(mapObject.get("X-TenantID"), String.class);
-		 return parserService.getLabSheetMethodList(site,tenant);
+		 final Integer isMultitenant = mapper.convertValue(mapObject.get("isMultitenant"), Integer.class);
+		 return parserService.getLabSheetMethodList(site,tenant,isMultitenant);
 	}
 	
 	/**
@@ -122,8 +146,10 @@ public class EvaluateParserController {
 		 final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 		 final Integer methodKey = mapper.convertValue(mapObject.get("methodKey"), Integer.class);
 		 final String tenant =  mapper.convertValue(mapObject.get("X-TenantID"), String.class);
+		 
+		 final Integer isMultitenant =  mapper.convertValue(mapObject.get("isMultitenant"), Integer.class);
 		
-		 return parserService.getMethodFieldList(methodKey, site, null,tenant);
+		 return parserService.getMethodFieldList(methodKey, site, null,tenant,isMultitenant);
 	}
 	
 //	@PostMapping(value = "/insertELNResultDetails")

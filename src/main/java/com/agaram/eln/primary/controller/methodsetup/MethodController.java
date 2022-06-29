@@ -136,9 +136,7 @@ public class MethodController {
 	   * @return byte array of txt file
 	   */
 	  @PostMapping(value = "/getFileData")
-
-
-		  public String getFileData(@Valid @RequestBody Map<String, Object> mapObject)throws Exception{
+      public String getFileData(@Valid @RequestBody Map<String, Object> mapObject)throws Exception{
 		  
 		//  public ResponseEntity<Object> getFileData(@Valid @RequestBody Map<String, Object> mapObject)throws Exception{
 		  
@@ -146,16 +144,24 @@ public class MethodController {
 		
 		  Map<String, Object> objinput = (Map<String, Object>) mapObject.get("inputData");
 		  final String fileName = (String) objinput.get("rawDataFileName");
-	
-
-		  String tenant = (String) objinput.get("X-TenantID");
+	      String tenant = (String) objinput.get("X-TenantID");
+	      Integer isMultitenant = (Integer)objinput.get("isMultitenant");
 		  
 		//  return methodService.getFileData(fileName, tenant, HttpStatus.OK);
+		
+	
+			if(isMultitenant != 0) {
+				  return methodService.getFileData(fileName, tenant);
+				  }
+				else
+				{
+				 return methodService.getSQLFileData(fileName);
+				}
+		}
 
-		  return methodService.getFileData(fileName, tenant);
+	 
 	
 
-	  }	  
 	
 	  
 //	  @PostMapping(value = "/getFileData")

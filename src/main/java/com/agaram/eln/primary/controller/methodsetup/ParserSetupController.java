@@ -42,7 +42,10 @@ public class ParserSetupController {
     	   	
 		final int methodKey = (Integer) obj.get("methodKey");
 		String tenant = (String) obj.get("X-TenantID");
-		return parserService.getParserData(methodKey, false, null,tenant);
+		final int isMultitenant = (Integer) obj.get("isMultitenant");
+
+		return parserService.getParserData(methodKey, false, null,tenant,isMultitenant);
+
 	}
 	
 	/**

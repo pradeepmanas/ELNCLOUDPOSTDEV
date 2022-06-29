@@ -2276,10 +2276,31 @@ public class ReportsService {
 									.findById((long) SelectedDataObj.getLssamplefile().getFilesamplecode());
 							excelData = file.getContent();
 						} else {
-							OrderCreation file = mongoTemplate.findById(
-									SelectedDataObj.getLssamplefile().getFilesamplecode(), OrderCreation.class);
-							excelData = file.getContent();
-						}
+//							OrderCreation file = mongoTemplate.findById(
+//							SelectedDataObj.getLssamplefile().getFilesamplecode(), OrderCreation.class);
+//					excelData = file.getContent();
+
+					String fileid = "order_" + SelectedDataObj.getLssamplefile().getFilesamplecode();
+					GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
+					if (largefile == null) {
+						largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
+					}
+//					String filecontent;
+					if (largefile != null) {
+						String filecontent = new BufferedReader(
+								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+										.collect(Collectors.joining("\n"));
+						excelData = filecontent;
+
+					} else {
+						OrderCreation file = mongoTemplate.findById(
+								SelectedDataObj.getLssamplefile().getFilesamplecode(), OrderCreation.class);
+						excelData = file.getContent();
+						
+					}
+//				
+					
+				}
 						if (!excelData.isEmpty()) {
 							List<Map<String, Object>> TagLst = getTagInfofromSheet(excelData);
 							logger.info("handleOrderandTemplate() sheetProps" + TagLst);
@@ -2505,10 +2526,31 @@ public class ReportsService {
 						if (LsSampleFiles.getFilecontent() != null) {
 							excelData = LsSampleFiles.getFilecontent();
 						} else {
-							OrderCreation file = mongoTemplate.findById(
-									SelectedDataObj.getLssamplefile().getFilesamplecode(), OrderCreation.class);
-							excelData = file.getContent();
-						}
+//							OrderCreation file = mongoTemplate.findById(
+//							SelectedDataObj.getLssamplefile().getFilesamplecode(), OrderCreation.class);
+//					excelData = file.getContent();
+
+					String fileid = "order_" + SelectedDataObj.getLssamplefile().getFilesamplecode();
+					GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
+					if (largefile == null) {
+						largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
+					}
+//					String filecontent;
+					if (largefile != null) {
+						String filecontent = new BufferedReader(
+								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+										.collect(Collectors.joining("\n"));
+						excelData = filecontent;
+
+					} else {
+						OrderCreation file = mongoTemplate.findById(
+								SelectedDataObj.getLssamplefile().getFilesamplecode(), OrderCreation.class);
+						excelData = file.getContent();
+						
+					}
+//				
+					
+				}
 						if (!excelData.isEmpty()) {
 							List<Map<String, Object>> TagLst = getTagInfofromSheet(excelData);
 							logger.info("handleOrderandTemplate() sheetProps" + TagLst);
@@ -3594,12 +3636,33 @@ public class ReportsService {
 
 					LSfile objFile = LSfileRepositoryObj
 							.findByFilecodeAndApproved(Integer.parseInt(fileCodeArray[arrayIndex]), 1);
-
-					SheetCreation sheetcreationObj = mongoTemplate.findById(Integer.parseInt(fileCodeArray[arrayIndex]),
-							SheetCreation.class);
-					if (sheetcreationObj != null) {
-						objFile.setFilecontent(sheetcreationObj.getContent());
+					
+					String fileid = "file_" + fileCode;
+					GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
+					if (largefile == null) {
+						largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
 					}
+
+					if (largefile != null) {
+						String filecontent = new BufferedReader(
+								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+										.collect(Collectors.joining("\n"));
+						objFile.setFilecontent(filecontent);
+					} 
+					
+					else {
+
+						SheetCreation file = mongoTemplate.findById(objFile.getFilecode(), SheetCreation.class);
+						if (file != null) {
+							objFile.setFilecontent(file.getContent());
+						}
+					}
+
+//					SheetCreation sheetcreationObj = mongoTemplate.findById(Integer.parseInt(fileCodeArray[arrayIndex]),
+//							SheetCreation.class);
+//					if (sheetcreationObj != null) {
+//						objFile.setFilecontent(sheetcreationObj.getContent());
+//					}
 
 					LSfilelst.add(objFile);
 
@@ -3615,12 +3678,35 @@ public class ReportsService {
 				}
 				LSfilelst.add(objFile);
 			} else {
+
 				LSfile objFile = LSfileRepositoryObj.findByFilecodeAndApproved(Integer.parseInt(fileCode), 1);
-				SheetCreation sheetcreationObj = mongoTemplate.findById(objFile.getFilecode(), SheetCreation.class);
-				if (sheetcreationObj != null) {
-					objFile.setFilecontent(sheetcreationObj.getContent());
+				String fileid = "file_" + objFile.getFilecode();
+				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
+				if (largefile == null) {
+					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
 				}
+
+				if (largefile != null) {
+					String filecontent = new BufferedReader(
+							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+									.collect(Collectors.joining("\n"));
+					objFile.setFilecontent(filecontent);
+				} else 
+				{
+					SheetCreation sheetcreationObj = mongoTemplate.findById(objFile.getFilecode(), SheetCreation.class);
+//					if (sheetcreationObj != null) {
+//						objFile.setFilecontent(sheetcreationObj.getContent());
+//					}
+//					LSfilelst.add(objFile);
+				}
+
 				LSfilelst.add(objFile);
+//				
+//				SheetCreation sheetcreationObj = mongoTemplate.findById(objFile.getFilecode(), SheetCreation.class);
+//				if (sheetcreationObj != null) {
+//					objFile.setFilecontent(sheetcreationObj.getContent());
+//				}
+//				LSfilelst.add(objFile);
 			}
 
 		}
