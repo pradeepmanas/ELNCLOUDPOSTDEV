@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -39,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "methoddelimiter")
-@XmlType(propOrder = { "methoddelimiterkey", "parsermethod", "delimiter", "status", "createdby", "createddate"})
+@XmlType(propOrder = { "methoddelimiterkey", "parsermethod", "delimiter", "status", "createdby", "createddate","transactiondate"})
 @Entity
 @Table(name = "methoddelimiter")
 public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>{
@@ -67,6 +69,10 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	
 	@Transient
 	private String username;
+	
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	Date transactiondate;
 	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "usercode", nullable = false)
@@ -139,6 +145,15 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 		this.username = username;
 	}
 
+	
+	public Date getTransactiondate() {
+		return transactiondate;
+	}
+
+	public void setTransactiondate(Date transactiondate) {
+		this.transactiondate = transactiondate;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -151,6 +166,7 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	       .append("createdby", this.createdby.getUsername(), obj.createdby.getUsername())
 	       .append("createddate", this.createddate, obj.createddate)
 	       .append("username", this.username, obj.username)
+	       .append("transactiondate", this.transactiondate, obj.transactiondate)
 	       .build();
 	}
 
@@ -168,6 +184,7 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 		this.createdby = methodDelimiter.createdby;
 		this.createddate = methodDelimiter.createddate;
 		this.username = methodDelimiter.username;
+		this.transactiondate = methodDelimiter.transactiondate;
 	}
 	
 	/**

@@ -673,10 +673,10 @@ public class CommonFunction {
 			 final int endIndex = actualColEnd <= data.length() ?actualColEnd :data.length();
 			 if (dataStartIndex<=endIndex) {
 			 String extractedString = data.substring(dataStartIndex, endIndex);
-			// for (ParserIgnoreChars ignoreCharacter :ignoreList) {
-			//	 extractedString = extractedString.replace(ignoreCharacter.getIgnorechars(), "");
-				 extractedString = extractedString.replace("↵↵", "");
-			// }
+			 for (ParserIgnoreChars ignoreCharacter :ignoreList) {
+				 extractedString = extractedString.replace(ignoreCharacter.getIgnorechars(), "");
+				// extractedString = extractedString.replace("↵↵", "");
+			 }
 			 String trimmedData = extractedString.trim();
 			 
 			 if (trimmedData.length() > 0) {

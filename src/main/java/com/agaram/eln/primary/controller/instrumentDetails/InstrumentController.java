@@ -854,4 +854,10 @@ public class InstrumentController {
 	private Response UnLockOrders(@RequestBody LSlogilablimsorderdetail[] lstOrder) {
 		return instrumentService.UnLockOrders(lstOrder);
 	}
+	
+	@RequestMapping(value = "/GetSheetorderversions")
+	public Map<String, Object> GetSheetorderversions(@RequestBody Map<String, Object> objMap) throws Exception {
+
+		return instrumentService.GetSheetorderversions(objMap);
+	}
 }

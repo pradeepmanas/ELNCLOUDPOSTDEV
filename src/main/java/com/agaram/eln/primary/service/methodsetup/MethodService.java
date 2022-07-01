@@ -199,10 +199,11 @@ public class MethodService {
 					LScfttransaction.setLssitemaster(site.getSitecode());
 					LScfttransaction.setLsuserMaster(methodMaster.getCreatedby().getUsercode());
 					LScfttransaction.setManipulatetype("View/Load");
-					LScfttransaction.setModuleName("Method Delimiter");
+					LScfttransaction.setModuleName("Method Master");
 					LScfttransaction.setTransactiondate(methodMaster.getCreateddate());
 					LScfttransaction.setUsername(methodMaster.getUsername());
 					LScfttransaction.setTableName("Method");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 				}
@@ -229,14 +230,15 @@ public class MethodService {
 	                LScfttransaction LScfttransaction = new LScfttransaction();
 					
 					LScfttransaction.setActions("Insert");
-					LScfttransaction.setComments(methodMaster.getUsername() +"added method "+methodMaster.getMethodname());
+					LScfttransaction.setComments(methodMaster.getMethodname()+" was created by "+methodMaster.getUsername());
 					LScfttransaction.setLssitemaster(site.getSitecode());
 					LScfttransaction.setLsuserMaster(methodMaster.getCreatedby().getUsercode());
 					LScfttransaction.setManipulatetype("View/Load");
-					LScfttransaction.setModuleName("Method Delimiter");
+					LScfttransaction.setModuleName("Method Master");
 					LScfttransaction.setTransactiondate(methodMaster.getCreateddate());
 					LScfttransaction.setUsername(methodMaster.getUsername());
 					LScfttransaction.setTableName("Method");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 					
@@ -265,6 +267,7 @@ public class MethodService {
 					LScfttransaction.setTransactiondate(methodMaster.getCreateddate());
 					LScfttransaction.setUsername(methodMaster.getUsername());
 					LScfttransaction.setTableName("Method");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 			}
@@ -426,14 +429,15 @@ public class MethodService {
 		    			 LScfttransaction LScfttransaction = new LScfttransaction();
 							
 							LScfttransaction.setActions("Update");
-							LScfttransaction.setComments(method.getUsername()+"edited method"+method.getMethodname());
+							LScfttransaction.setComments(method.getMethodname()+" was updated by "+method.getUsername());
 							LScfttransaction.setLssitemaster(site.getSitecode());
 							LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
 							LScfttransaction.setManipulatetype("View/Load");
-							LScfttransaction.setModuleName("Method Delimiter");
+							LScfttransaction.setModuleName("Method Master");
 							LScfttransaction.setTransactiondate(method.getCreateddate());
 							LScfttransaction.setUsername(method.getUsername());
 							LScfttransaction.setTableName("Method");
+							LScfttransaction.setSystemcoments("System Generated");
 							
 							lscfttransactionrepo.save(LScfttransaction);
 	    			}
@@ -456,10 +460,11 @@ public class MethodService {
 	 					LScfttransaction.setLssitemaster(site.getSitecode());
 	 					LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
 	 					LScfttransaction.setManipulatetype("View/Load");
-	 					LScfttransaction.setModuleName("Method Delimiter");
+	 					LScfttransaction.setModuleName("Method Master");
 	 					LScfttransaction.setTransactiondate(method.getCreateddate());
 	 					LScfttransaction.setUsername(method.getUsername());
 	 					LScfttransaction.setTableName("Method");
+	 					LScfttransaction.setSystemcoments("System Generated");
 	 					
 	 					lscfttransactionrepo.save(LScfttransaction);
 	 					
@@ -490,14 +495,15 @@ public class MethodService {
 	    			 LScfttransaction LScfttransaction = new LScfttransaction();
 	 					
 	 					LScfttransaction.setActions("Update");
-	 					LScfttransaction.setComments(" Failed for duplicate method name - "+ method.getMethodname());
+	 					LScfttransaction.setComments(method.getMethodname()+" was updated by "+method.getUsername());
 	 					LScfttransaction.setLssitemaster(site.getSitecode());
 	 					LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
 	 					LScfttransaction.setManipulatetype("View/Load");
-	 					LScfttransaction.setModuleName("Method Delimiter");
+	 					LScfttransaction.setModuleName("Method Master");
 	 					LScfttransaction.setTransactiondate(method.getCreateddate());
 	 					LScfttransaction.setUsername(method.getUsername());
 	 					LScfttransaction.setTableName("Method");
+	 					LScfttransaction.setSystemcoments("System Generated");
 	 					
 	 					lscfttransactionrepo.save(LScfttransaction);
 			}
@@ -522,10 +528,11 @@ public class MethodService {
 					LScfttransaction.setLssitemaster(site.getSitecode());
 					LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
 					LScfttransaction.setManipulatetype("View/Load");
-					LScfttransaction.setModuleName("Method Delimiter");
+					LScfttransaction.setModuleName("Method Master");
 					LScfttransaction.setTransactiondate(method.getCreateddate());
 					LScfttransaction.setUsername(method.getUsername());
 					LScfttransaction.setTableName("Method");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 	   		    }			
@@ -546,10 +553,11 @@ public class MethodService {
 					LScfttransaction.setLssitemaster(site.getSitecode());
 					LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
 					LScfttransaction.setManipulatetype("View/Load");
-					LScfttransaction.setModuleName("Method Delimiter");
+					LScfttransaction.setModuleName("Method Master");
 					LScfttransaction.setTransactiondate(method.getCreateddate());
 					LScfttransaction.setUsername(method.getUsername());
 					LScfttransaction.setTableName("Method");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 
@@ -594,14 +602,15 @@ public class MethodService {
 					   LScfttransaction LScfttransaction = new LScfttransaction();
 						
 						LScfttransaction.setActions("Delete"); 
-						LScfttransaction.setComments("Delete Failed as method - "+ method.getMethodname() + " is associated samlesplit/parser");
+						LScfttransaction.setComments("Associated - "+ method.getMethodname());
 						LScfttransaction.setLssitemaster(site.getSitecode());
 						LScfttransaction.setLsuserMaster(doneByUserKey);
 						LScfttransaction.setManipulatetype("View/Load");
-						LScfttransaction.setModuleName("Method");
-						LScfttransaction.setTransactiondate(otherdetails.getCreateddate());
+						LScfttransaction.setModuleName("Method Master");
+						LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
 						LScfttransaction.setUsername(otherdetails.getUsername());
 						LScfttransaction.setTableName("Method");
+						LScfttransaction.setSystemcoments("System Generated");
 						
 						lscfttransactionrepo.save(LScfttransaction);
 						
@@ -622,14 +631,15 @@ public class MethodService {
 		    			 LScfttransaction LScfttransaction = new LScfttransaction();
 							
 							LScfttransaction.setActions("Delete"); 
-							LScfttransaction.setComments(otherdetails.getUsername() +" deleted method" + method.getMethodname());
+							LScfttransaction.setComments(method.getMethodname()+" was deleted by "+otherdetails.getUsername());
 							LScfttransaction.setLssitemaster(site.getSitecode());
 							LScfttransaction.setLsuserMaster(doneByUserKey);
 							LScfttransaction.setManipulatetype("View/Load");
-							LScfttransaction.setModuleName("Method");
-							LScfttransaction.setTransactiondate(otherdetails.getCreateddate());
+							LScfttransaction.setModuleName("Method Master");
+							LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
 							LScfttransaction.setUsername(otherdetails.getUsername());
 							LScfttransaction.setTableName("Method");
+							LScfttransaction.setSystemcoments("System Generated");
 							
 							lscfttransactionrepo.save(LScfttransaction);
 	    			}

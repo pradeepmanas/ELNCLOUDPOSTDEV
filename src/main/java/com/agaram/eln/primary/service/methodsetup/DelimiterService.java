@@ -92,15 +92,16 @@ public class DelimiterService {
 		   final LSuserMaster createdUser = getCreatedUserByKey(delimiters.getCreatedby().getUsercode());
 	    	if(delimiterByName.isPresent())
 	    	{
-	    		LScfttransaction LScfttransaction = new LScfttransaction();
+	    		
 	    		//Conflict = 409 - Duplicate entry
 	    		if (saveAuditTrial == true)
 				{						
 					final String comments = "Create Failed for duplicate delimiter name -"+ delimiters.getDelimitername();
 					
-
+					LScfttransaction LScfttransaction = new LScfttransaction();
+					
 					LScfttransaction.setActions("Insert");
-					LScfttransaction.setComments("Create Failed for duplicate Delimiter -"+ delimiters.getDelimitername() );
+					LScfttransaction.setComments("Duplicate Entry -"+ delimiters.getDelimitername() );
 					LScfttransaction.setLssitemaster(site.getSitecode());
 					LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
 					LScfttransaction.setManipulatetype("View/Load");
@@ -108,6 +109,7 @@ public class DelimiterService {
 					LScfttransaction.setTransactiondate(delimiters.getCreateddate());
 					LScfttransaction.setUsername(delimiters.getUsername());
 					LScfttransaction.setTableName("delimiter");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 					
@@ -133,11 +135,10 @@ public class DelimiterService {
 				{   			
 					final Map<String, String> fieldMap = new HashMap<String, String>();
 					fieldMap.put("createdby", "loginid");
-					
-					
+										
 					
 					LScfttransaction.setActions("Insert");
-					LScfttransaction.setComments("user :"+ delimiters.getUsername() +"added Delimiter -" +delimiters.getActualdelimiter());
+					LScfttransaction.setComments(delimiters.getActualdelimiter()+ " was created by  "+delimiters.getUsername());
 					LScfttransaction.setLssitemaster(site.getSitecode());
 					LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
 					LScfttransaction.setManipulatetype("View/Load");
@@ -145,6 +146,7 @@ public class DelimiterService {
 					LScfttransaction.setTransactiondate(delimiters.getCreateddate());
 					LScfttransaction.setUsername(delimiters.getUsername());
 					LScfttransaction.setTableName("delimiter");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 					
@@ -172,8 +174,191 @@ public class DelimiterService {
      * @return Response of updated Delimiters entity
 	 */
    @Transactional
+//   public ResponseEntity<Object> updateDelimiters(final Delimiter delimiters, final LSSiteMaster site,
+//
+//		   final String comments, final boolean saveAuditTrail, 
+//		   final HttpServletRequest request, final int doneByUserKey)
+//   {	   
+//	   final Optional<Delimiter> delimiterByKey = delimitersRepo.findByDelimiterkeyAndStatus(delimiters.getDelimiterkey(), 1);
+//	   
+//	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
+//	   
+//	   if(delimiterByKey.isPresent()) {		   
+//
+//		   final List<MethodDelimiter> methodDelimiterList = methodDelimiterRepo.findByDelimiterAndStatus(delimiterByKey.get(), 1);
+//		   
+//		   if (methodDelimiterList.isEmpty()) {
+//			   final Optional<Delimiter> delimiterByName = delimitersRepo
+//	 				 .findByDelimiternameAndStatus(delimiters.getDelimitername(), 1);   
+//			   final Optional<Delimiter> actualdelimiterByName = delimitersRepo
+//		 				 .findByActualdelimiterAndStatus(delimiters.getActualdelimiter(), 1);
+//					   
+//			  	//Delimiters name should be unique
+//				if(delimiterByName.isPresent())
+//				{
+//				    //Delimiters already available with this name	    		
+//				    if (delimiterByName.get().getDelimiterkey().equals(delimiters.getDelimiterkey()) &&
+//				    		actualdelimiterByName.get().getDelimiterkey().equals(delimiters.getDelimiterkey()))
+//				    	{   		    			
+//				    						    					    			
+//				    	
+//				    		
+//			    			if (saveAuditTrail)
+//			    			{
+//				    			//final String xmlData = convertDelimterObjectToXML(delimitersBeforeSave, savedDelimiters);
+//				    			
+//				    		    LScfttransaction LScfttransaction = new LScfttransaction();
+//				    			LScfttransaction.setActions("update");
+//								LScfttransaction.setComments(delimiterByKey.get().getActualdelimiter() +" was updated to "+delimiters.getActualdelimiter());
+//								LScfttransaction.setLssitemaster(site.getSitecode());
+//								LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
+//								LScfttransaction.setManipulatetype("View/Load");
+//								LScfttransaction.setModuleName("Delimiter");
+//								LScfttransaction.setTransactiondate(delimiters.getCreateddate());
+//								LScfttransaction.setUsername(delimiters.getCreatedby().getUserfullname());
+//								LScfttransaction.setTableName("Delimiter");
+//								LScfttransaction.setSystemcoments("System Generated");
+//								
+//								lscfttransactionrepo.save(LScfttransaction);
+//														    			
+//				    		}
+//			    			//copy of object for using 'Diffable' to compare objects
+//				    		final Delimiter delimitersBeforeSave = new Delimiter(delimiterByName.get());
+//				    			
+//				    		// Updating fields with existing delimter name
+//				    		//  Updating rest of the fields other than delimiter name		    			
+//				    		final Delimiter savedDelimiters = delimitersRepo.save(delimiters);
+//				    			
+//				       		return new ResponseEntity<>(savedDelimiters, HttpStatus.OK);     		
+//			    		}
+//			    		else
+//			    		{ 	
+//			    			
+//			    	
+//			    			
+//			    			//Conflict =409 - Duplicate entry
+//			    			if (saveAuditTrail == true)
+//			    			{		
+//			    			    LScfttransaction LScfttransaction = new LScfttransaction();
+   
+//			    				LScfttransaction.setActions("update");
+//								LScfttransaction.setComments("Duplicate Entry "+delimiters.getActualdelimiter());
+//								LScfttransaction.setLssitemaster(site.getSitecode());
+//								LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
+//								LScfttransaction.setManipulatetype("View/Load");
+//								LScfttransaction.setModuleName("delimiter");
+//								LScfttransaction.setTransactiondate(delimiters.getCreateddate());
+//								LScfttransaction.setUsername(delimiters.getCreatedby().getUserfullname());
+//								LScfttransaction.setTableName("delimiters");
+//								LScfttransaction.setSystemcoments("System Generated");
+//								
+//								lscfttransactionrepo.save(LScfttransaction);
+//								
+//			    				
+//			    				
+//			    				final String sysComments = "Update Failed for duplicate delimiter name -"+ delimiters.getDelimitername();
+//			    				
+////			    				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
+////			    						"Create", sysComments, site, "",createdUser, request.getRemoteAddr());
+//			    			}
+//			    			
+//			    			return new ResponseEntity<>("Duplicate Entry ",HttpStatus.CONFLICT);      			
+//			    		}
+//			    	}
+//			    	else
+//			    	{			    		
+//			    					    		
+//			    		LScfttransaction LScfttransaction = new LScfttransaction();
+//			    		
+//			    		if (saveAuditTrail)
+//		    			{
+//			    		//	final String xmlData = convertDelimterObjectToXML(delimiterBeforeSave, savedMethod);
+//			    			
+//			    			LScfttransaction.setActions("update");
+//							LScfttransaction.setComments(delimiterByKey.get().getDelimitername() 
+//									+" was updated to "+delimiters.getDelimitername());
+//							LScfttransaction.setLssitemaster(site.getSitecode());
+//							LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
+//							LScfttransaction.setManipulatetype("View/Load");
+//							LScfttransaction.setModuleName("delimiter");
+//							LScfttransaction.setTransactiondate(delimiters.getCreateddate());
+//							LScfttransaction.setUsername(delimiters.getCreatedby().getUserfullname());
+//							LScfttransaction.setTableName("delimiters");
+//							LScfttransaction.setSystemcoments("System Generated");
+//							
+//							lscfttransactionrepo.save(LScfttransaction);
+//					
+//			    			
+//			    			
+////			    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
+////									"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
+//		    			}
+//			    		//copy of object for using 'Diffable' to compare objects
+//		    			final Delimiter delimiterBeforeSave = new Delimiter(delimiterByKey.get());
+//		    			
+//			    		//Updating fields with a new delimiter name
+//		    			
+//			    		final Delimiter savedMethod = delimitersRepo.save(delimiters);
+//			    		
+//			    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
+//			    	}	
+//		   		}
+//		   		else {
+//		   			//Associated with child- cannot be updated
+//		   			LScfttransaction LScfttransaction = new LScfttransaction();
+//		   			if (saveAuditTrail)
+//				    {
+//					   final String sysComments = "Update Failed as delimiter - "+ delimiterByKey.get().getDelimitername() + " is associated with Method Delimiter";
+//		   			
+////						cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
+////								"Edit", sysComments, 
+////								site, "", createdUser, request.getRemoteAddr());
+//					   
+//
+//						LScfttransaction.setActions("update");
+//						LScfttransaction.setComments("Associated "+ delimiterByKey.get().getDelimitername() );
+//						LScfttransaction.setLssitemaster(site.getSitecode());
+//						LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
+//						LScfttransaction.setManipulatetype("View/Load");
+//						LScfttransaction.setModuleName("Delimiter");
+//						LScfttransaction.setTransactiondate(delimiters.getCreateddate());
+//						LScfttransaction.setUsername(delimiters.getCreatedby().getUserfullname());
+//						LScfttransaction.setTableName("Delimiter");
+//						LScfttransaction.setSystemcoments("System Generated");
+//						
+//						lscfttransactionrepo.save(LScfttransaction);
+//					   
+//				   }
+//				   return new ResponseEntity<>(delimiterByKey.get().getDelimitername() , HttpStatus.IM_USED);//status code - 226		    		
+//		   		}
+//		   }
+//		   else
+//		   {
+//			   //Invalid delimiterkey		   
+////			   if (saveAuditTrail) {				
+////					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
+////							"Edit", "Update Failed - Delimiter Not Found", site, "", createdUser, request.getRemoteAddr());
+////	   		    }			
+//	   			LScfttransaction LScfttransaction = new LScfttransaction();
+//
+//			    LScfttransaction.setActions("update");
+//				LScfttransaction.setComments("Update Failed - Delimiter Not Found");
+//				LScfttransaction.setLssitemaster(site.getSitecode());
+//				LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
+//				LScfttransaction.setManipulatetype("View/Load");
+//				LScfttransaction.setModuleName("Delimiter");
+//				LScfttransaction.setTransactiondate(delimiters.getCreateddate());
+//				LScfttransaction.setUsername(delimiters.getCreatedby().getUserfullname());
+//				LScfttransaction.setTableName("Delimiter");
+//				LScfttransaction.setSystemcoments("System Generated");
+//				
+//				lscfttransactionrepo.save(LScfttransaction);
+//				return new ResponseEntity<>("Update Failed - Delimiter Not Found", HttpStatus.NOT_FOUND);
+//		   }
+//   }   
+   
+   
    public ResponseEntity<Object> updateDelimiters(final Delimiter delimiters, final LSSiteMaster site,
-
 		   final String comments, final boolean saveAuditTrail, 
 		   final HttpServletRequest request, final int doneByUserKey)
    {	   
@@ -188,37 +373,34 @@ public class DelimiterService {
 		   if (methodDelimiterList.isEmpty()) {
 			   final Optional<Delimiter> delimiterByName = delimitersRepo
 	 				 .findByDelimiternameAndStatus(delimiters.getDelimitername(), 1);   
-			   final Optional<Delimiter> actualdelimiterByName = delimitersRepo
-		 				 .findByActualdelimiterAndStatus(delimiters.getActualdelimiter(), 1);
 					   
 			  	//Delimiters name should be unique
 				if(delimiterByName.isPresent())
 				{
 				    //Delimiters already available with this name	    		
-				    if (delimiterByName.get().getDelimiterkey().equals(delimiters.getDelimiterkey()) &&
-				    		actualdelimiterByName.get().getDelimiterkey().equals(delimiters.getDelimiterkey()))
+				    if (delimiterByName.get().getDelimiterkey().equals(delimiters.getDelimiterkey()))
 				    	{   		    			
-				    						    					    			
-				    		LScfttransaction LScfttransaction = new LScfttransaction();
-				    		
+				    					    					    			
 			    			if (saveAuditTrail)
 			    			{
 				    			//final String xmlData = convertDelimterObjectToXML(delimitersBeforeSave, savedDelimiters);
+				    					    			
+//				    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(), 
+//				    					"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());		
 				    			
-				    			
-				    			LScfttransaction.setActions("update");
-								LScfttransaction.setComments(delimiters.getCreatedby().getUserfullname()+" Edited Actual Delimiter From : "+delimiterByKey.get().getActualdelimiter() 
-										+" to "+delimiters.getActualdelimiter());
+				    			LScfttransaction LScfttransaction = new LScfttransaction();
+				    			LScfttransaction.setActions("Update");
+								LScfttransaction.setComments(delimiterByKey.get().getActualdelimiter() +" was updated to "+delimiters.getActualdelimiter());
 								LScfttransaction.setLssitemaster(site.getSitecode());
 								LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
 								LScfttransaction.setManipulatetype("View/Load");
 								LScfttransaction.setModuleName("Delimiter");
-								LScfttransaction.setTransactiondate(delimiters.getCreateddate());
-								LScfttransaction.setUsername(delimiters.getCreatedby().getUserfullname());
+								LScfttransaction.setTransactiondate(delimiters.getTransactiondate());
+								LScfttransaction.setUsername(delimiters.getUsername());
 								LScfttransaction.setTableName("Delimiter");
+								LScfttransaction.setSystemcoments("System Generated");
 								
 								lscfttransactionrepo.save(LScfttransaction);
-														    			
 				    		}
 			    			//copy of object for using 'Diffable' to compare objects
 				    		final Delimiter delimitersBeforeSave = new Delimiter(delimiterByName.get());
@@ -226,69 +408,66 @@ public class DelimiterService {
 				    		// Updating fields with existing delimter name
 				    		//  Updating rest of the fields other than delimiter name		    			
 				    		final Delimiter savedDelimiters = delimitersRepo.save(delimiters);
-				    			
 				       		return new ResponseEntity<>(savedDelimiters, HttpStatus.OK);     		
 			    		}
 			    		else
 			    		{ 	
-			    			
-			    			LScfttransaction LScfttransaction = new LScfttransaction();
-			    			
 			    			//Conflict =409 - Duplicate entry
 			    			if (saveAuditTrail == true)
-			    			{		
-			    				
-			    				LScfttransaction.setActions("update");
-								LScfttransaction.setComments("Duplicate Entry ");
-								LScfttransaction.setLssitemaster(site.getSitecode());
-								LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
-								LScfttransaction.setManipulatetype("View/Load");
-								LScfttransaction.setModuleName("delimiter");
-								LScfttransaction.setTransactiondate(delimiters.getCreateddate());
-								LScfttransaction.setUsername(delimiters.getCreatedby().getUserfullname());
-								LScfttransaction.setTableName("delimiters");
-								
-								lscfttransactionrepo.save(LScfttransaction);
-								
-			    				
-			    				
+			    			{						
 			    				final String sysComments = "Update Failed for duplicate delimiter name -"+ delimiters.getDelimitername();
 			    				
 //			    				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //			    						"Create", sysComments, site, "",createdUser, request.getRemoteAddr());
+			    				
+			    				 LScfttransaction LScfttransaction = new LScfttransaction();
+			    				   
+				    				LScfttransaction.setActions("Update");
+									LScfttransaction.setComments("Duplicate Entry "+delimiters.getActualdelimiter());
+									LScfttransaction.setLssitemaster(site.getSitecode());
+									LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
+									LScfttransaction.setManipulatetype("View/Load");
+									LScfttransaction.setModuleName("Delimiter");
+									LScfttransaction.setTransactiondate(delimiters.getTransactiondate());
+									LScfttransaction.setUsername(delimiters.getUsername());
+									LScfttransaction.setTableName("Delimiter");
+									LScfttransaction.setSystemcoments("System Generated");
+									
+									lscfttransactionrepo.save(LScfttransaction);
+			    				 
 			    			}
 			    			
-			    			return new ResponseEntity<>("Duplicate Entry " , 
+			    			return new ResponseEntity<>("Duplicate Entry - " + delimiters.getDelimitername(), 
 			    					 HttpStatus.CONFLICT);      			
 			    		}
 			    	}
 			    	else
 			    	{			    		
-			    					    		
-			    		LScfttransaction LScfttransaction = new LScfttransaction();
 			    		
 			    		if (saveAuditTrail)
 		    			{
-			    		//	final String xmlData = convertDelimterObjectToXML(delimiterBeforeSave, savedMethod);
-			    			
-			    			LScfttransaction.setActions("update");
-							LScfttransaction.setComments(delimiters.getCreatedby().getUserfullname() +" edited Delimiter Name From : "+delimiterByKey.get().getDelimitername() 
-									+" to "+delimiters.getDelimitername());
-							LScfttransaction.setLssitemaster(site.getSitecode());
-							LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
-							LScfttransaction.setManipulatetype("View/Load");
-							LScfttransaction.setModuleName("delimiter");
-							LScfttransaction.setTransactiondate(delimiters.getCreateddate());
-							LScfttransaction.setUsername(delimiters.getCreatedby().getUserfullname());
-							LScfttransaction.setTableName("delimiters");
-							
-							lscfttransactionrepo.save(LScfttransaction);
-					
-			    			
+			    			//final String xmlData = convertDelimterObjectToXML(delimiterBeforeSave, savedMethod);
 			    			
 //			    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
 //									"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
+			    			 LScfttransaction LScfttransaction = new LScfttransaction();
+			    			 
+			    			LScfttransaction.setActions("Update");
+							LScfttransaction.setComments(delimiterByKey.get().getDelimitername() 
+									+" was updated to "+delimiters.getDelimitername());
+							LScfttransaction.setLssitemaster(site.getSitecode());
+							LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
+							LScfttransaction.setManipulatetype("View/Load");
+							LScfttransaction.setModuleName("Delimiter");
+							LScfttransaction.setTransactiondate(delimiters.getTransactiondate());
+							LScfttransaction.setUsername(delimiters.getUsername());
+							LScfttransaction.setTableName("Delimiter");
+							LScfttransaction.setSystemcoments("System Generated");
+							
+							lscfttransactionrepo.save(LScfttransaction);
+//					
 		    			}
+			    		
 			    		//copy of object for using 'Diffable' to compare objects
 		    			final Delimiter delimiterBeforeSave = new Delimiter(delimiterByKey.get());
 		    			
@@ -301,7 +480,6 @@ public class DelimiterService {
 		   		}
 		   		else {
 		   			//Associated with child- cannot be updated
-		   			LScfttransaction LScfttransaction = new LScfttransaction();
 		   			if (saveAuditTrail)
 				    {
 					   final String sysComments = "Update Failed as delimiter - "+ delimiterByKey.get().getDelimitername() + " is associated with Method Delimiter";
@@ -309,20 +487,20 @@ public class DelimiterService {
 //						cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //								"Edit", sysComments, 
 //								site, "", createdUser, request.getRemoteAddr());
+					   LScfttransaction LScfttransaction = new LScfttransaction();
 					   
-
-						LScfttransaction.setActions("update");
-						LScfttransaction.setComments("Update Failed as delimiter - "+ delimiterByKey.get().getDelimitername() + " is associated with Method Delimiter");
+					   LScfttransaction.setActions("Update");
+						LScfttransaction.setComments("Associated "+ delimiterByKey.get().getDelimitername() );
 						LScfttransaction.setLssitemaster(site.getSitecode());
 						LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
 						LScfttransaction.setManipulatetype("View/Load");
 						LScfttransaction.setModuleName("Delimiter");
-						LScfttransaction.setTransactiondate(delimiters.getCreateddate());
-						LScfttransaction.setUsername(delimiters.getCreatedby().getUserfullname());
+						LScfttransaction.setTransactiondate(delimiters.getTransactiondate());
+						LScfttransaction.setUsername(delimiters.getUsername());
 						LScfttransaction.setTableName("Delimiter");
+						LScfttransaction.setSystemcoments("System Generated");
 						
 						lscfttransactionrepo.save(LScfttransaction);
-					   
 				   }
 				   return new ResponseEntity<>(delimiterByKey.get().getDelimitername() , HttpStatus.IM_USED);//status code - 226		    		
 		   		}
@@ -334,22 +512,10 @@ public class DelimiterService {
 //					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //							"Edit", "Update Failed - Delimiter Not Found", site, "", createdUser, request.getRemoteAddr());
 //	   		    }			
-	   			LScfttransaction LScfttransaction = new LScfttransaction();
-
-			    LScfttransaction.setActions("update");
-				LScfttransaction.setComments("Update Failed - Delimiter Not Found");
-				LScfttransaction.setLssitemaster(site.getSitecode());
-				LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
-				LScfttransaction.setManipulatetype("View/Load");
-				LScfttransaction.setModuleName("Delimiter");
-				LScfttransaction.setTransactiondate(delimiters.getCreateddate());
-				LScfttransaction.setUsername(delimiters.getCreatedby().getUserfullname());
-				LScfttransaction.setTableName("Delimiter");
-				
-				lscfttransactionrepo.save(LScfttransaction);
 				return new ResponseEntity<>("Update Failed - Delimiter Not Found", HttpStatus.NOT_FOUND);
 		   }
-   }   
+   }
+   
    
    /**
 	 * This method is used to delete the selected Delimiters entity with its primary key.
@@ -388,14 +554,15 @@ public class DelimiterService {
 			    	LScfttransaction LScfttransaction = new LScfttransaction();
 			    	  
 			    	LScfttransaction.setActions("Delete");
-					LScfttransaction.setComments(otherdetails.getUsername() +" requested to delete the delimiter :" + delimiter.getDelimitername());
+					LScfttransaction.setComments(delimiter.getDelimitername()+" was deleted by "+otherdetails.getUsername());
 					LScfttransaction.setLssitemaster(site.getSitecode());
 					LScfttransaction.setLsuserMaster(2);
 					LScfttransaction.setManipulatetype("View/Load");
-					LScfttransaction.setModuleName("delimiter");
-					LScfttransaction.setTransactiondate(otherdetails.getCreateddate());
+					LScfttransaction.setModuleName("Delimiter");
+					LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
 					LScfttransaction.setUsername(otherdetails.getUsername());
 					LScfttransaction.setTableName("Delimiter");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 			    	
@@ -431,10 +598,11 @@ public class DelimiterService {
 					LScfttransaction.setLssitemaster(site.getSitecode());
 					LScfttransaction.setLsuserMaster(2);
 					LScfttransaction.setManipulatetype("View/Load");
-					LScfttransaction.setModuleName("delimiter");
-					LScfttransaction.setTransactiondate(otherdetails.getCreateddate());
+					LScfttransaction.setModuleName("Delimiter");
+					LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
 					LScfttransaction.setUsername(otherdetails.getUsername());
 					LScfttransaction.setTableName("Delimiter");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 			    	
@@ -458,10 +626,11 @@ public class DelimiterService {
 				LScfttransaction.setLssitemaster(site.getSitecode());
 				LScfttransaction.setLsuserMaster(2);
 				LScfttransaction.setManipulatetype("View/Load");
-				LScfttransaction.setModuleName("delimiter");
-				LScfttransaction.setTransactiondate(otherdetails.getCreateddate());
+				LScfttransaction.setModuleName("Delimiter");
+				LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
 				LScfttransaction.setUsername(otherdetails.getUsername());
 				LScfttransaction.setTableName("Delimiter");
+				LScfttransaction.setSystemcoments("System Generated");
 				
 				lscfttransactionrepo.save(LScfttransaction);
 			   

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
+import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.service.instrumentsetup.InstMasterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -120,16 +121,16 @@ public class InstMasterController {
     @PostMapping(value = "/updateInstMasterStatus")
     public ResponseEntity<Object> deleteInstMaster(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
     	
-//    	  final ObjectMapper mapper = new ObjectMapper();	
+    	  final ObjectMapper mapper = new ObjectMapper();	
 		  final Boolean saveAuditTrail = (Boolean)mapObject.get("saveAuditTrail");
 		 // final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
 		  
 		  String strUserKey = (String) mapObject.get("doneByUserKey");
 		  
 		  final int doneByUserKey = Integer.parseInt(strUserKey);
-		  
+		  final  InstrumentMaster  otherdetails = mapper.convertValue(mapObject.get("otherdetails"), InstrumentMaster.class);
 		  return masterService.deleteInstMaster((Integer) mapObject.get("instmastkey"), saveAuditTrail, 
-				   (String)mapObject.get("comments"),doneByUserKey,  request);
+				   (String)mapObject.get("comments"),doneByUserKey,  request,otherdetails);
     }
     
     /**

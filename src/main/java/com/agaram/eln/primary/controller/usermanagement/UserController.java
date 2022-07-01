@@ -111,7 +111,7 @@ public class UserController {
 	{
 	  return userService.GetUserGroup(objusermaster);
 	}
-	//usercode
+	
 	@PostMapping("/getMultiUserGroup")
 	public List<LSMultiusergroup> getMultiUserGroup(@RequestBody LSuserMaster objusermaster)throws Exception
 	{

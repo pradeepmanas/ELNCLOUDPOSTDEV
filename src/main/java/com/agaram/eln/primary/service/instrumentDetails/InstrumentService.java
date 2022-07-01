@@ -311,6 +311,8 @@ public class InstrumentService {
 
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
+	
+
 
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
@@ -434,6 +436,7 @@ public class InstrumentService {
 
 		if (objorder.getAssignedto() != null) {
 			objorder.setLockeduser(objorder.getAssignedto().getUsercode());
+			objorder.setLockedusername(objorder.getAssignedto().getUsername());
 		}
 
 		lslogilablimsorderdetailRepository.save(objorder);
@@ -4219,13 +4222,11 @@ public class InstrumentService {
 
 	public List<LSlogilablimsorderdetail> GetLockedOrders(LSlogilablimsorderdetail objorder) {
 		if (objorder.getLsuserMaster().getUsername().equalsIgnoreCase("Administrator")) {
-			return lslogilablimsorderdetailRepository.findByOrderflagAndLockeduserIsNotNullOrderByBatchcodeDesc("N");
-//			return LSlogilablimsorderdetailMibatisRepositoryObj.findByOrderByBatchcodeDesc();
+			return lslogilablimsorderdetailRepository.findByOrderflagAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc("N");
 		} else {
 			return lslogilablimsorderdetailRepository
-					.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndLockeduserIsNotNullOrderByBatchcodeDesc("N",
+					.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc("N",
 							objorder.getLstproject(), objorder.getLstworkflow());
-//			return LSlogilablimsorderdetailMibatisRepositoryObj.findByOrderByBatchcodeDesc();
 		}
 	}
 
@@ -4257,6 +4258,20 @@ public class InstrumentService {
 		}
 
 		return objResponse;
+	}
+	
+	public Map<String, Object> GetSheetorderversions(Map<String, Object> objMap) {
+		// TODO Auto-generated method stub
+		int filecode = (int) objMap.get("filesamplecode");
+		
+		Map<String, Object> objmap = new HashMap<>();
+		LSsamplefile objfile= new LSsamplefile();
+		objfile.setFilesamplecode(filecode);
+		List<LSsamplefileversion> lstfilesamle  = lssamplefileversionRepository.findByFilesamplecodeOrderByVersionnoDesc(objfile);
+				
+		objmap.put("lsorderversion", lstfilesamle);
+		return  objmap;
+		
 	}
 
 }

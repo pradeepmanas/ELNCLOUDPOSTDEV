@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.instrumentsetup.FileSettings;
 import com.agaram.eln.primary.model.instrumentsetup.InstMethod;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
@@ -27,6 +28,7 @@ import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 //import com.agaram.lleln.jaxb.ReadWriteXML;
 //import com.agaram.lleln.page.Page;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstCategoryRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMethodRepository;
@@ -83,6 +85,11 @@ public class InstMasterService {
 	@Autowired
 	InstMethodRepository instMethodRepo;
 	
+
+	@Autowired
+	LScfttransactionRepository lscfttransactionrepo;
+	
+	
 	/**
      * This method is used to add new instrument master.
      * @param master [InstrumentMaster] -  holding details of all fields in 'InstrumentMaster' Pojo.
@@ -101,6 +108,22 @@ public class InstMasterService {
 		if (masterByCode.isPresent())
 		{
 			//Conflict =409 - Duplicate entry
+			
+			LScfttransaction LScfttransaction = new LScfttransaction();
+			
+			LScfttransaction.setActions("Insert");
+			LScfttransaction.setComments("Duplicate Entry -"+ master.getInstrumentcode() );
+			LScfttransaction.setLssitemaster(master.getSite().getSitecode());
+			LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
+			LScfttransaction.setManipulatetype("Insert");
+			LScfttransaction.setModuleName("Instruments");
+			LScfttransaction.setTransactiondate(master.getCreateddate());
+			LScfttransaction.setUsername(master.getUsername());
+			LScfttransaction.setTableName("instrumentmaster");
+			LScfttransaction.setSystemcoments("System Generated");
+			
+			lscfttransactionrepo.save(LScfttransaction);
+			
   			return new ResponseEntity<>("Duplicate Entry - " + masterByCode.get().getInstrumentcode(), 
   					 HttpStatus.CONFLICT);
 		}    		
@@ -137,6 +160,21 @@ public class InstMasterService {
 //				
 //				cfrTransService.saveCfrTransaction(page, actionType, "Create", "", page.getModule().getSite(),
 //						xmlData, createdUser, request.getRemoteAddr());
+				
+				LScfttransaction LScfttransaction = new LScfttransaction();
+				
+				LScfttransaction.setActions("Insert");
+				LScfttransaction.setComments(master.getInstrumentcode() +" was created by "+master.getUsername() );
+				LScfttransaction.setLssitemaster(master.getSite().getSitecode());
+				LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
+				LScfttransaction.setManipulatetype("Insert");
+				LScfttransaction.setModuleName("Instruments");
+				LScfttransaction.setTransactiondate(master.getCreateddate());
+				LScfttransaction.setUsername(master.getUsername());
+				LScfttransaction.setTableName("instrumentmaster");
+				LScfttransaction.setSystemcoments("System Generated");
+				
+				lscfttransactionrepo.save(LScfttransaction);
 		
 			}			
 			return new ResponseEntity<>( savedMaster, HttpStatus.OK);
@@ -315,12 +353,12 @@ public class InstMasterService {
 //          
 //    }
 //    
-    
-    
+        
     
     public ResponseEntity<Object> updateInstMaster(final InstrumentMaster master,
     		final boolean saveAuditTrial, final String comments, final HttpServletRequest request) {
-    	    	    	
+    	    
+    	Boolean saveAuditTrail = true;
     	final Optional<InstrumentMaster> instrumentByCode = masterRepo.findByInstrumentcodeAndSiteAndStatus(
    			master.getInstrumentcode(), master.getSite(), 1);
     	
@@ -367,6 +405,24 @@ public class InstMasterService {
 	     			 *  ok=200
 	     			 */
 	            	
+	     			if (saveAuditTrail)
+	    			{
+	     			LScfttransaction LScfttransaction = new LScfttransaction();
+					
+					LScfttransaction.setActions("Update");
+					LScfttransaction.setComments(instrumentByCode.get().getInstrumentname()+" was updated to "+master.getInstrumentname());
+					LScfttransaction.setLssitemaster(master.getSite().getSitecode());
+					LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
+					LScfttransaction.setManipulatetype("Insert");
+					LScfttransaction.setModuleName("Instruments");
+					LScfttransaction.setTransactiondate(master.getTransactiondate());
+					LScfttransaction.setUsername(master.getUsername());
+					LScfttransaction.setTableName("instrumentmaster");
+					LScfttransaction.setSystemcoments("System Generated");
+					
+					lscfttransactionrepo.save(LScfttransaction);
+	    			}
+	     			
 	            	final InstrumentType instType = typeRepo.findOne(
 	            				master.getInsttype().getInsttypekey());
 	            	instrumentToSave.setInsttype(instType);
@@ -386,7 +442,7 @@ public class InstMasterService {
 	     			
 	     			if (saveAuditTrial)
 	     			{
-	     				final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedInstrument);
+	     			//	final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedInstrument);
 	     				
 //	     				final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
 //	     				cfrTransService.saveCfrTransaction(page, actionType, "Edit", comments, 
@@ -407,29 +463,84 @@ public class InstMasterService {
 	     		else
 	     		{ 	
 	     			//Conflict =409 - Duplicate entry
+	     			if (saveAuditTrail)
+	    			{
+	     			LScfttransaction LScfttransaction = new LScfttransaction();
+					
+					LScfttransaction.setActions("Update");
+					LScfttransaction.setComments("Duplicate Entry - " + master.getInstrumentcode());
+					LScfttransaction.setLssitemaster(master.getSite().getSitecode());
+					LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
+					LScfttransaction.setManipulatetype("Insert");
+					LScfttransaction.setModuleName("Instruments");
+					LScfttransaction.setTransactiondate(master.getTransactiondate());
+					LScfttransaction.setUsername(master.getUsername());
+					LScfttransaction.setTableName("instrumentmaster");
+					LScfttransaction.setSystemcoments("System Generated");
+					
+					lscfttransactionrepo.save(LScfttransaction);
+	    			}
 	     			return new ResponseEntity<>("Duplicate Entry - " + master.getInstrumentcode(), 
 	     					 HttpStatus.CONFLICT);      			
 	     		}
-		}
+		} 
     			else
     			{
-    				//copy of object for using 'Diffable' to compare objects
+    				
+		    		if (saveAuditTrail == true)
+	    			{
+		    			//final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedMethod);
+		    			
+		    			LScfttransaction LScfttransaction = new LScfttransaction();
+						
+						LScfttransaction.setActions("Update");
+						LScfttransaction.setComments(instrumentBykey.get().getInstrumentcode()+" was updated to "+master.getInstrumentcode() );
+						LScfttransaction.setLssitemaster(master.getSite().getSitecode());
+						LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
+						LScfttransaction.setManipulatetype("Insert");
+						LScfttransaction.setModuleName("Instruments");
+						LScfttransaction.setTransactiondate(master.getTransactiondate());
+						LScfttransaction.setUsername(master.getUsername());
+						LScfttransaction.setTableName("instrumentmaster");
+						LScfttransaction.setSystemcoments("System Generated");
+						
+						lscfttransactionrepo.save(LScfttransaction);
+		    			
+	    			}
+		    		
+		    		//copy of object for using 'Diffable' to compare objects
 	    			final InstrumentMaster instrumentBeforeSave = new InstrumentMaster(instrumentBykey.get());
 	    			
 		    		//Updating fields with a new delimiter name
 	    			
 		    		final InstrumentMaster savedMethod = masterRepo.save(master);
 		    		
-//		    		if (saveAuditTrail)
-//	    			{
-//		    			final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedMethod);
-//		    			
-//	    			}
-		    		
 		    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);	
     			}
     		}
      		else {
+     			
+     			if (saveAuditTrail)
+    			{
+	    			//final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedMethod);
+	    			
+	    			LScfttransaction LScfttransaction = new LScfttransaction();
+					
+					LScfttransaction.setActions("Update");
+					LScfttransaction.setComments("Associated : "+master.getInstrumentcode());
+					LScfttransaction.setLssitemaster(master.getSite().getSitecode());
+					LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
+					LScfttransaction.setManipulatetype("Insert");
+					LScfttransaction.setModuleName("Instruments");
+					LScfttransaction.setTransactiondate(master.getTransactiondate());
+					LScfttransaction.setUsername(master.getUsername());
+					LScfttransaction.setTableName("instrumentmaster");
+					LScfttransaction.setSystemcoments("System Generated");
+					
+					lscfttransactionrepo.save(LScfttransaction);
+	    			
+    			}
+     			
      			return new ResponseEntity<>(master.getInstrumentcode(), HttpStatus.IM_USED);//status code - 226
      		}
      	}
@@ -438,10 +549,7 @@ public class InstMasterService {
      		return new ResponseEntity<>("Instrument not found", HttpStatus.NOT_FOUND);
      	}	
           
-    }
-    
-    
-    
+    }    
     
     
     
@@ -492,6 +600,7 @@ public class InstMasterService {
      * @param userKey [int] primary key of logged-in user who done this task
      * @param page [Page] entity relating to 'InstrumentMaster'
      * @param request [HttpServletRequest] Request object to ip address of remote client
+     * @param LScfttransaction 
      * @return response entity with deleted entity and status
      */
 //    @Transactional
@@ -565,38 +674,35 @@ public class InstMasterService {
 //    
     
     
-    @Transactional
+  //  @Transactional
     public ResponseEntity<Object> deleteInstMaster(final Integer instMastKey, final boolean saveAuditTrial,
-    		   final String comments, final Integer userKey, final HttpServletRequest request) {
+    		   final String comments, final Integer userKey, final HttpServletRequest request,InstrumentMaster otherdetails) {
          
+    	boolean saveAuditTrial1 = true;
       	//This should be done only if the instrument is not binded in method setup
       	final InstrumentMaster instMaster = masterRepo.findOne(instMastKey);
-      	
-                	
+                   	
       	final List<InstMethod> methodList = instMethodRepo.findByInstmasterAndStatus(instMaster, 1);
-          
-//      	if (instMaster != null) {
-      	
+            	
        if (methodList.isEmpty()) {
-     	  
+     	
+    	   LScfttransaction LScfttransaction = new LScfttransaction();
+			
+			LScfttransaction.setActions("Delete");
+			LScfttransaction.setComments(instMaster.getInstrumentcode()+" was deleted by "+otherdetails.getUsername());
+			LScfttransaction.setLssitemaster(instMaster.getSite().getSitecode());
+			LScfttransaction.setLsuserMaster(instMaster.getCreatedby().getUsercode());
+			LScfttransaction.setManipulatetype("Insert");
+			LScfttransaction.setModuleName("Instruments");
+			LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
+			LScfttransaction.setUsername(otherdetails.getUsername());
+			LScfttransaction.setTableName("instrumentmaster");
+			LScfttransaction.setSystemcoments("System Generated");
+			
+			lscfttransactionrepo.save(LScfttransaction);
       	
           	final InstrumentMaster masterObj = instMaster;
-          	
-          	// final Integer userInstListCount = 0;
          	
-//           	masterRepo.getAdminExcludedAssignedInstrumentsCount(instMastKey, 
-//          			instMaster.getSite().getSitecode());
-          	        	
-          	// final List<InstMethod> methodList = instMethodRepo.findByInstmasterAndStatus(instMaster, 1);
-          	
-          	//        	if (userInstListCount > 0 || !methodList.isEmpty())
-          	//        	{        		
-          		//Instrument assigned with rights or method setup
-          		//Has child relation
-          	//      		return new ResponseEntity<>(masterObj.getInstrumentcode(), HttpStatus.IM_USED);//status code - 226
-          	// }
-          	// else
-          	// {        
           		
           		final InstrumentMaster instrumentBeforeSave = new InstrumentMaster(masterObj); 
   	        	//Deleting existing 'Instrumenttype' settings record 
@@ -616,21 +722,11 @@ public class InstMasterService {
   		        	rights.setStatus(-1);        	  	
   		        	rightsRepo.save(rights);
   	        	}
-  	        	//---end
-              
-  	        	masterObj.setStatus(-1);	        	
-  	            final InstrumentMaster savedInstrument = masterRepo.save(masterObj);    
+  	        	//---end          
   	            
-  	            if (saveAuditTrial)
-       			{
-       				final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedInstrument);
-//       				final CreatedUser createdUser = getCreatedUserByKey(userKey);	
-//       				
-//       				final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
-//       				cfrTransService.saveCfrTransaction(page, actionType, "Delete", comments, 
-//       						page.getModule().getSite(), xmlData, createdUser, request.getRemoteAddr());
-       				
-       			}     	
+  	       	masterObj.setStatus(-1);	        	
+	            final InstrumentMaster savedInstrument = masterRepo.save(masterObj);    
+	        
   	            	
   	            return new ResponseEntity<>(savedInstrument, HttpStatus.OK);//status code - 200   
   	                	}
@@ -638,13 +734,32 @@ public class InstMasterService {
       	
       	 else {
  			   //Associated with Method master
- 			   if (saveAuditTrial)
+ 			   if (saveAuditTrial1)
  			   {
  				   final String sysComments = "Delete Failed as instrument -" +instMaster.getInstrumentname()+ " is associated with Method master";
  	   			
 // 					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 // 							"Delete", sysComments, 
 // 							site, "", createdUser, request.getRemoteAddr());
+ 				  if (saveAuditTrial1)
+ 	    			{
+ 	    				
+ 	                 LScfttransaction LScfttransaction = new LScfttransaction();
+ 						
+ 						LScfttransaction.setActions("Delete");
+ 						LScfttransaction.setComments("Associated : "+instMaster.getInstrumentcode());
+ 						LScfttransaction.setLssitemaster(instMaster.getSite().getSitecode());
+ 						LScfttransaction.setLsuserMaster(instMaster.getCreatedby().getUsercode());
+ 						LScfttransaction.setManipulatetype("Insert");
+ 						LScfttransaction.setModuleName("Instruments");
+ 						LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
+ 						LScfttransaction.setUsername(otherdetails.getUsername());
+ 						LScfttransaction.setTableName("instrumentmaster");
+ 						LScfttransaction.setSystemcoments("System Generated");
+ 						
+ 						lscfttransactionrepo.save(LScfttransaction);
+ 	    				
+ 	    			}  
  			   }
  			   return new ResponseEntity<>(instMaster.getInstrumentname() , HttpStatus.IM_USED);//status code - 226		    		
  		   }

@@ -941,8 +941,16 @@ public class UserService {
 		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objusergroup.getLssitemaster());
 	}
 
-	public LSuserMaster getUserOnCode(LSuserMaster objuser) {
-		return lsuserMasterRepository.findByusercode(objuser.getUsercode());
+	public LSuserMaster getUserOnCode(LSuserMaster objuser) {LSuserMaster objExitinguser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
+	
+		String encryptionStr = objExitinguser.getPassword() + "_" + objExitinguser.getUsername()
+		+ objExitinguser.getLssitemaster().getSitename();
+	
+		String encryptPassword = AESEncryption.encrypt(encryptionStr);
+		
+		objExitinguser.setEncryptedpassword(encryptPassword);
+		
+		return objExitinguser;
 	}
 
 	public Lsusersettings updateUserDateFormat(Lsusersettings objuser) {

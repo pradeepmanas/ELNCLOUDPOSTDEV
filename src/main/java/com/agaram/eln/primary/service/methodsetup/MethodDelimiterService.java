@@ -116,6 +116,7 @@ public class MethodDelimiterService {
 					LScfttransaction.setTransactiondate(methodDelimiterByDelimiter.get().getCreateddate());
 					LScfttransaction.setUsername(methodDelimiterByDelimiter.get().getCreatedby().getUserfullname());
 					LScfttransaction.setTableName("Methoddelimiter");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 					
@@ -145,9 +146,10 @@ public class MethodDelimiterService {
 					LScfttransaction LScfttransaction = new LScfttransaction();
 					
 					LScfttransaction.setActions("Insert"); 
-					LScfttransaction.setComments(methodDelimiter.getCreatedby().getUsername()+" Added Method Delimiter " + 
-							methodDelimiter.getDelimiter().getDelimitername()
-		  					+" for " + methodDelimiter.getParsermethod().getParsermethodname());
+					LScfttransaction.setComments(methodDelimiter.getDelimiter().getDelimitername()
+		  					+" for " + methodDelimiter.getParsermethod().getParsermethodname() +" was creadted by " + 
+							methodDelimiter.getCreatedby().getUsername());
+							
 					LScfttransaction.setLssitemaster(site.getSitecode());
 					LScfttransaction.setLsuserMaster(methodDelimiter.getCreatedby().getUsercode());
 					LScfttransaction.setManipulatetype("View/Load");
@@ -155,6 +157,7 @@ public class MethodDelimiterService {
 					LScfttransaction.setTransactiondate(methodDelimiter.getCreateddate());
 					LScfttransaction.setUsername(methodDelimiter.getCreatedby().getUsername());
 					LScfttransaction.setTableName("Methoddelimiter");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 					
@@ -247,9 +250,10 @@ public class MethodDelimiterService {
 									LScfttransaction.setLsuserMaster(methodDelimiter.getCreatedby().getUsercode());
 									LScfttransaction.setManipulatetype("View/Load");
 									LScfttransaction.setModuleName("Method Delimiter");
-									LScfttransaction.setTransactiondate(methodDelimiter.getCreateddate());
-									LScfttransaction.setUsername(methodDelimiter.getCreatedby().getUsername());
+									LScfttransaction.setTransactiondate(methodDelimiter.getTransactiondate());
+									LScfttransaction.setUsername(methodDelimiter.getUsername());
 									LScfttransaction.setTableName("Methoddelimiter");
+									LScfttransaction.setSystemcoments("System Generated");
 									
 									lscfttransactionrepo.save(LScfttransaction);
 									
@@ -273,14 +277,15 @@ public class MethodDelimiterService {
 				    			LScfttransaction LScfttransaction = new LScfttransaction();
 								
 								LScfttransaction.setActions("Update"); 
-								LScfttransaction.setComments(methodDelimiter.getCreatedby().getUsername()+" Editted Method Delimiter " + " From " + methodDelimiterByKey.get().getDelimiter().getDelimitername() + " To " + delimiter.getDelimitername());
+								LScfttransaction.setComments(methodDelimiterByKey.get().getDelimiter().getDelimitername() + " was updated To " + delimiter.getDelimitername());
 								LScfttransaction.setLssitemaster(site.getSitecode());
 								LScfttransaction.setLsuserMaster(methodDelimiter.getCreatedby().getUsercode());
 								LScfttransaction.setManipulatetype("View/Load");
 								LScfttransaction.setModuleName("Method Delimiter");
-								LScfttransaction.setTransactiondate(methodDelimiter.getCreateddate());
-								LScfttransaction.setUsername(methodDelimiter.getCreatedby().getUsername());
+								LScfttransaction.setTransactiondate(methodDelimiter.getTransactiondate());
+								LScfttransaction.setUsername(methodDelimiter.getUsername());
 								LScfttransaction.setTableName("Methoddelimiter");
+								LScfttransaction.setSystemcoments("System Generated");
 								
 								lscfttransactionrepo.save(LScfttransaction);
 								
@@ -311,9 +316,10 @@ public class MethodDelimiterService {
 						LScfttransaction.setLsuserMaster(methodDelimiter.getCreatedby().getUsercode());
 						LScfttransaction.setManipulatetype("View/Load");
 						LScfttransaction.setModuleName("Method Delimiter");
-						LScfttransaction.setTransactiondate(methodDelimiter.getCreateddate());
-						LScfttransaction.setUsername(methodDelimiter.getCreatedby().getUsername());
+						LScfttransaction.setTransactiondate(methodDelimiter.getTransactiondate());
+						LScfttransaction.setUsername(methodDelimiter.getUsername());
 						LScfttransaction.setTableName("Methoddelimiter");
+						LScfttransaction.setSystemcoments("System Generated");
 						
 						lscfttransactionrepo.save(LScfttransaction);
 						
@@ -337,9 +343,10 @@ public class MethodDelimiterService {
 				LScfttransaction.setLsuserMaster(methodDelimiter.getCreatedby().getUsercode());
 				LScfttransaction.setManipulatetype("View/Load");
 				LScfttransaction.setModuleName("Method Delimiter");
-				LScfttransaction.setTransactiondate(methodDelimiter.getCreateddate());
-				LScfttransaction.setUsername(methodDelimiter.getCreatedby().getUsername());
+				LScfttransaction.setTransactiondate(methodDelimiter.getTransactiondate());
+				LScfttransaction.setUsername(methodDelimiter.getUsername());
 				LScfttransaction.setTableName("Methoddelimiter");
+				LScfttransaction.setSystemcoments("System Generated");
 				
 				lscfttransactionrepo.save(LScfttransaction);
 				
@@ -387,9 +394,10 @@ public class MethodDelimiterService {
 					LScfttransaction.setLsuserMaster(doneByUserKey);
 					LScfttransaction.setManipulatetype("View/Load");
 					LScfttransaction.setModuleName("Method Delimiter");
-					LScfttransaction.setTransactiondate(otherdetails.getCreateddate());
+					LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
 					LScfttransaction.setUsername(otherdetails.getUsername());
 					LScfttransaction.setTableName("Methoddelimiter");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 				   
@@ -409,14 +417,15 @@ public class MethodDelimiterService {
                    LScfttransaction LScfttransaction = new LScfttransaction();
 					
 					LScfttransaction.setActions("Delete"); 
-					LScfttransaction.setComments(otherdetails.getUsername() +" requested to delete methodDelimiter : "+ delimiterByKey.get().getDelimiter().getDelimitername());
+					LScfttransaction.setComments( delimiterByKey.get().getDelimiter().getDelimitername()+" was deleted by "+otherdetails.getUsername());
 					LScfttransaction.setLssitemaster(site.getSitecode());
 					LScfttransaction.setLsuserMaster(doneByUserKey);
 					LScfttransaction.setManipulatetype("View/Load");
 					LScfttransaction.setModuleName("Method Delimiter");
-					LScfttransaction.setTransactiondate(otherdetails.getCreateddate());
+					LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
 					LScfttransaction.setUsername(otherdetails.getUsername());
 					LScfttransaction.setTableName("Methoddelimiter");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 			    				    	
@@ -444,14 +453,15 @@ public class MethodDelimiterService {
                   LScfttransaction LScfttransaction = new LScfttransaction();
 					
 					LScfttransaction.setActions("Delete"); 
-					LScfttransaction.setComments("MethodDelimiter Associated : " +delimiter.getParsermethod().getParsermethodname() +"-" + delimiter.getDelimiter().getDelimitername());
+					LScfttransaction.setComments("Associated : " +delimiter.getParsermethod().getParsermethodname() +"-" + delimiter.getDelimiter().getDelimitername());
 					LScfttransaction.setLssitemaster(site.getSitecode());
 					LScfttransaction.setLsuserMaster(doneByUserKey);
 					LScfttransaction.setManipulatetype("View/Load");
 					LScfttransaction.setModuleName("Method Delimiter");
-					LScfttransaction.setTransactiondate(otherdetails.getCreateddate());
+					LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
 					LScfttransaction.setUsername(otherdetails.getUsername());
 					LScfttransaction.setTableName("Methoddelimiter");
+					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
 				   
@@ -476,7 +486,7 @@ public class MethodDelimiterService {
 				LScfttransaction.setLsuserMaster(doneByUserKey);
 				LScfttransaction.setManipulatetype("View/Load");
 				LScfttransaction.setModuleName("Method Delimiter");
-				LScfttransaction.setTransactiondate(otherdetails.getCreateddate());
+				LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
 				LScfttransaction.setUsername(otherdetails.getUsername());
 				LScfttransaction.setTableName("Methoddelimiter");
 				
