@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.builder.DiffResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -584,9 +585,9 @@ public class InstMasterService {
     @Transactional
     public ResponseEntity<Object> getInstMaster(final LSSiteMaster site) 
     {        	    	
-//    	return new ResponseEntity<>(masterRepo.findByStatusAndSite(1, site, 
-//    			new Sort(Sort.Direction.DESC, "instmastkey")), HttpStatus.OK);  
-    	return new ResponseEntity<>(masterRepo.findByStatusAndSite(1, site), HttpStatus.OK);
+    	return new ResponseEntity<>(masterRepo.findByStatusAndSite(1, site, 
+    			new Sort(Sort.Direction.DESC, "instmastkey")), HttpStatus.OK);  
+    	//return new ResponseEntity<>(masterRepo.findByStatusAndSite(1, site), HttpStatus.OK);
     }
     
     
@@ -834,6 +835,7 @@ public class InstMasterService {
 		createdUser.setUsercode(createdBy.getUsercode());
    		
    		return createdUser;
-   	}   	
+   	}
+
    	
 }
