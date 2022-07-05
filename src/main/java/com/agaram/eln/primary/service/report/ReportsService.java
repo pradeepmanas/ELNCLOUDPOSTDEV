@@ -652,6 +652,7 @@ public class ReportsService {
 //			}
 			if (env.getProperty("fileReceiver") != null) {
 				int httpfileStatus = uploadSingleFile(newFile.getAbsolutePath(), docType);
+				objMap.put("httpstatus", httpfileStatus);
 				if (httpfileStatus == 200) {
 					objMap.put("fileFullPath", "");
 				} else {

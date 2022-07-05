@@ -31,6 +31,8 @@ import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
+import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
@@ -41,6 +43,8 @@ import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRe
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolordersampleupdatesRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolsampleupdatesRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
@@ -71,32 +75,35 @@ public class MasterService {
 
 	@Autowired
 	private LSnotificationRepository lsnotificationRepository;
-	
+
 	@Autowired
 	private LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
-	
+
 	@Autowired
 	private LsProjectarchieveRepository LsProjectarchieveRepository;
-	
+
 	@Autowired
 	private LSlogilabprotocoldetailRepository lslogilabprotocoldetailRepository;
-	
+
 	@Autowired
 	private LSprojectmasterRepository lsprojectmasterRepository;
-	
+
 	@Autowired
-    private Environment env;
+	private LSprotocolsampleupdatesRepository lsprotocolsampleupdatesRepository;
+
+	@Autowired
+	private LSprotocolordersampleupdatesRepository LSprotocolordersampleupdatesRepository;
+
+	@Autowired
+	private Environment env;
 
 	public List<Lsrepositories> Getallrepositories(Lsrepositories lsrepositories) {
-		return lsrepositoriesRepository.
-				findBySitecodeOrderByRepositorycodeAsc
-				(lsrepositories.getSitecode());
+		return lsrepositoriesRepository.findBySitecodeOrderByRepositorycodeAsc(lsrepositories.getSitecode());
 	}
-	
+
 	public List<Lsrepositories> Getallrepositoriesondashboard(Lsrepositories lsrepositories) {
-		return lsrepositoriesRepository.
-				findBysitecodeAndAddedonBetweenOrderByRepositorycodeAsc
-				(lsrepositories.getSitecode(),lsrepositories.getFromdate(),lsrepositories.getTodate());
+		return lsrepositoriesRepository.findBysitecodeAndAddedonBetweenOrderByRepositorycodeAsc(
+				lsrepositories.getSitecode(), lsrepositories.getFromdate(), lsrepositories.getTodate());
 	}
 
 	public Lsrepositories Saverepository(Lsrepositories lsrepositories) {
@@ -173,13 +180,29 @@ public class MasterService {
 		return lsrepositoriesdata;
 	}
 
-	public List<LsOrderSampleUpdate> getinventoryhistory(LsOrderSampleUpdate lsordersamplUpdate) {
+	public List<Object> getinventoryhistory(LsOrderSampleUpdate lsordersamplUpdate) {
 //		List<LsOrderSampleUpdate>	lsordersamplUpdateobj =LsOrderSampleUpdateRepository.findByRepositorycodeAndRepositorydatacodeAndQuantityusedNotAndHistorydetailsNotNull(lsordersamplUpdate.getRepositorycode(),lsordersamplUpdate.getRepositorydatacode(),0);
+//		Map<String, Object> obj = new HashMap<>();
+		List<Object> obj1 = new ArrayList<Object>();
 		List<LsOrderSampleUpdate> lsordersamplUpdateobj = LsOrderSampleUpdateRepository
 				.findByRepositorycodeAndRepositorydatacodeAndQuantityusedNotAndHistorydetailsNotNull(
 						lsordersamplUpdate.getRepositorycode(), lsordersamplUpdate.getRepositorydatacode(), 0);
 
-		return lsordersamplUpdateobj;
+		List<LSprotocolsampleupdates> lsprotocolsampleupdates = lsprotocolsampleupdatesRepository
+				.findByRepositorydatacodeAndUsedquantityNotAndStatus(
+					 lsordersamplUpdate.getRepositorydatacode(), 0, 0);
+		List<LSprotocolordersampleupdates> lsprotocolordersampleupdates = LSprotocolordersampleupdatesRepository
+				.findByRepositorydatacodeAndUsedquantityAndStatus(
+						 lsordersamplUpdate.getRepositorydatacode(), 0, 0);
+//		obj.put("lsordersamplUpdateobj", lsordersamplUpdateobj);
+//		obj.put("lsprotocolsampleupdates", lsprotocolsampleupdates);
+//		obj.put("lsprotocolordersampleupdates", lsprotocolordersampleupdates);
+		obj1.addAll(lsprotocolordersampleupdates);
+		obj1.addAll(lsprotocolsampleupdates);
+		obj1.addAll(lsordersamplUpdateobj);
+		
+		return obj1;
+
 	}
 
 	public Response pushnotificationforinventory(List<Lsrepositoriesdata> lsrepositoriesdata) {
@@ -199,13 +222,11 @@ public class MasterService {
 						+ "\", \"expireddatecount\":\"" + lsrepositoriesdata.get(i).getExpireddatecount() + "\"}";
 				obj = lsnotificationRepository.findByRepositorycodeAndRepositorydatacodeAndNotificationdetils(
 						lsrepositoriesdata.get(i).getRepositorycode(),
-						lsrepositoriesdata.get(i).getRepositorydatacode(),Details);
+						lsrepositoriesdata.get(i).getRepositorydatacode(), Details);
 				if (lsrepositoriesdata.get(i).getRepositorycode() != null
 						&& lsrepositoriesdata.get(i).getRepositorydatacode() != null && obj == null) {
 
 					Notifiction = "EXPIREDINVENTORY";
-
-					
 
 					Date date = new Date();
 					LSuserMaster LSuserMaster = new LSuserMaster();
@@ -241,39 +262,42 @@ public class MasterService {
 	}
 
 	public Map<String, Object> getrepositoryfields(Lsrepositories repositorymaster) {
-		
+
 		Lsrepositories repository = lsrepositoriesRepository.findByRepositorycode(repositorymaster.getRepositorycode());
-		
+
 		Map<String, Object> rMap = new HashMap<>();
-		
+
 		String jsonFieldstring = repository.getRepositoryfields();
-		
+
 		String jsonFieldReturnstring = commonfunction.getJSONFieldsoninventory(jsonFieldstring);
-		
-		Repositorymaster repomaster = lsrepositoriesRepository.findByrepositorycode(repositorymaster.getRepositorycode());
-		
+
+		Repositorymaster repomaster = lsrepositoriesRepository
+				.findByrepositorycode(repositorymaster.getRepositorycode());
+
 		repomaster.setJsonFieldString(jsonFieldReturnstring);
-		
-		rMap.put("inventoryMaster",repomaster);
-		
-		rMap.put("repositoryData",lsrepositoriesdataRepository.findByRepositorycodeAndItemstatusOrderByRepositorydatacodeDesc(
-				repositorymaster.getRepositorycode(), 1));
-		
+
+		rMap.put("inventoryMaster", repomaster);
+
+		rMap.put("repositoryData",
+				lsrepositoriesdataRepository.findByRepositorycodeAndItemstatusOrderByRepositorydatacodeDesc(
+						repositorymaster.getRepositorycode(), 1));
+
 		return rMap;
 	}
 
 	public List<Lsrepositoriesdata> GetrepositoriesdataonFilter(Lsrepositoriesdata lsrepositoriesdata) {
-		
-		return lsrepositoriesdataRepository.findByRepositorycodeAndItemstatusAndAddedonBetweenOrderByRepositorydatacodeDesc(
-				lsrepositoriesdata.getRepositorycode(), 1,lsrepositoriesdata.getFromdate(),lsrepositoriesdata.getTodate());
+
+		return lsrepositoriesdataRepository
+				.findByRepositorycodeAndItemstatusAndAddedonBetweenOrderByRepositorydatacodeDesc(
+						lsrepositoriesdata.getRepositorycode(), 1, lsrepositoriesdata.getFromdate(),
+						lsrepositoriesdata.getTodate());
 	}
-	
+
 	@Transactional
-	public LsProjectarchieve archiveproject(LSprojectmaster lsprojectmaster)
-	{
+	public LsProjectarchieve archiveproject(LSprojectmaster lsprojectmaster) {
 		CloudStorageAccount storageAccount;
 		CloudBlobClient blobClient = null;
-		CloudBlobContainer container=null;
+		CloudBlobContainer container = null;
 		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
 
 		LsProjectarchieve objarchieve = new LsProjectarchieve();
@@ -281,173 +305,163 @@ public class MasterService {
 		objresponse.setStatus(true);
 		objarchieve.setResponse(objresponse);
 		UUID objGUID = UUID.randomUUID();
-        String randomUUIDString = objGUID.toString();
+		String randomUUIDString = objGUID.toString();
 		Gson gson = new GsonBuilder().create();
 		try {
-			
-			// Parse the connection string and create a blob client to interact with Blob storage
+
+			// Parse the connection string and create a blob client to interact with Blob
+			// storage
 			storageAccount = CloudStorageAccount.parse(storageConnectionString);
 			blobClient = storageAccount.createCloudBlobClient();
-			container = blobClient.getContainerReference(TenantContext.getCurrentTenant()+"projectarchieve");
+			container = blobClient.getContainerReference(TenantContext.getCurrentTenant() + "projectarchieve");
 
-			container.createIfNotExists(BlobContainerPublicAccessType.CONTAINER, new BlobRequestOptions(), new OperationContext());		    
+			container.createIfNotExists(BlobContainerPublicAccessType.CONTAINER, new BlobRequestOptions(),
+					new OperationContext());
 
-			Writer writer = new FileWriter(System.getProperty("java.io.tmpdir")+"/"+randomUUIDString+".json");
-			
+			Writer writer = new FileWriter(System.getProperty("java.io.tmpdir") + "/" + randomUUIDString + ".json");
+
 			ProjectArchieve archieveproject = Getprojectdetails(lsprojectmaster);
-			
-	        gson.toJson(archieveproject, writer);
-	        writer.flush(); //flush data to file   <---
-	        writer.close(); 
-			
-			//Getting a blob reference
-			CloudBlockBlob blob = container.getBlockBlobReference(randomUUIDString+".json");
 
-			blob.uploadFromFile(System.getProperty("java.io.tmpdir")+"/"+randomUUIDString+".json");
-			
+			gson.toJson(archieveproject, writer);
+			writer.flush(); // flush data to file <---
+			writer.close();
+
+			// Getting a blob reference
+			CloudBlockBlob blob = container.getBlockBlobReference(randomUUIDString + ".json");
+
+			blob.uploadFromFile(System.getProperty("java.io.tmpdir") + "/" + randomUUIDString + ".json");
+
 			lslogilablimsorderdetailRepository.deleteByLsprojectmaster(lsprojectmaster);
 			lslogilabprotocoldetailRepository.deleteByLsprojectmaster(lsprojectmaster);
 			lsprojectmasterRepository.delete(lsprojectmaster.getProjectcode());
-			
+
 			objarchieve.setArchieveby(lsprojectmaster.getLsusermaster());
-			objarchieve.setFilenameuuid(randomUUIDString+".json");
+			objarchieve.setFilenameuuid(randomUUIDString + ".json");
 			objarchieve.setModifieddate(lsprojectmaster.getObjuser().getTodate());
 			objarchieve.setProjectname(lsprojectmaster.getProjectname());
 			objarchieve.setLssitemaster(lsprojectmaster.getLsusermaster().getLssitemaster());
-			
+
 			LsProjectarchieveRepository.save(objarchieve);
-		} 
-		catch (StorageException ex)
-		{
-			System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s", ex.getHttpStatusCode(), ex.getErrorCode()));
+		} catch (StorageException ex) {
+			System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s",
+					ex.getHttpStatusCode(), ex.getErrorCode()));
 			objresponse.setStatus(false);
 			objarchieve.setResponse(objresponse);
-		}
-		catch (Exception ex) 
-		{
+		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 			objresponse.setStatus(false);
 			objarchieve.setResponse(objresponse);
-		}
-		finally 
-		{
+		} finally {
 			System.out.println("The program has completed successfully.");
-			System.out.println("Press the 'Enter' key while in the console to delete the sample files, example container, and exit the application.");
+			System.out.println(
+					"Press the 'Enter' key while in the console to delete the sample files, example container, and exit the application.");
 
-		
 		}
-		
+
 		return objarchieve;
 	}
-	
-	
-	public ProjectArchieve Getprojectdetails(LSprojectmaster lsprojectmaster)
-	{
+
+	public ProjectArchieve Getprojectdetails(LSprojectmaster lsprojectmaster) {
 		ProjectArchieve objProjectArchieve = new ProjectArchieve();
-		
+
 		objProjectArchieve.setLsprojectmaster(lsprojectmasterRepository.findOne(lsprojectmaster.getProjectcode()));
-		
-		objProjectArchieve.setLstlslogilablimsorderdetail(lslogilablimsorderdetailRepository.findByLsprojectmasterOrderByBatchcodeDesc(lsprojectmaster));
-		
-		objProjectArchieve.setLstlslogilabprotocoldetail(lslogilabprotocoldetailRepository.findByLsprojectmasterOrderByProtocolordercodeDesc(lsprojectmaster));
-		
+
+		objProjectArchieve.setLstlslogilablimsorderdetail(
+				lslogilablimsorderdetailRepository.findByLsprojectmasterOrderByBatchcodeDesc(lsprojectmaster));
+
+		objProjectArchieve.setLstlslogilabprotocoldetail(
+				lslogilabprotocoldetailRepository.findByLsprojectmasterOrderByProtocolordercodeDesc(lsprojectmaster));
+
 		return objProjectArchieve;
 	}
-	
-	@Transactional
-	public LsProjectarchieve Importprojectarchieve(LsProjectarchieve lsprojectarchieve) throws IOException
-	{
-		
-		Gson gson = new GsonBuilder().create();
-		 CloudStorageAccount storageAccount;
-			CloudBlobClient blobClient = null;
-			CloudBlobContainer container=null;
-			CloudBlockBlob blob = null;
-			Response objresponse = new Response();
-			objresponse.setStatus(true);
-			lsprojectarchieve.setResponse(objresponse);
-			
-			String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
-			try {    
-				// Parse the connection string and create a blob client to interact with Blob storage
-				storageAccount = CloudStorageAccount.parse(storageConnectionString);
-				blobClient = storageAccount.createCloudBlobClient();
-				container = blobClient.getContainerReference(TenantContext.getCurrentTenant()+"projectarchieve");
-				
-				blob = container.getBlockBlobReference(lsprojectarchieve.getFilenameuuid());
-				blob.openInputStream();
-				
-				String result = IOUtils.toString(blob.openInputStream(), StandardCharsets.UTF_8);
-				
-				ProjectArchieve objproject = new ProjectArchieve();
-				
-				objproject = gson.fromJson(result, objproject.getClass());
 
-				LSprojectmaster objprojetc = lsprojectmasterRepository.save(objproject.getLsprojectmaster());
-				List<LSlogilablimsorderdetail> lstsheetorders = objproject.getLstlslogilablimsorderdetail();
-				if(lstsheetorders != null && lstsheetorders.size() >0)
-				{
-					lstsheetorders.forEach(objorder -> objorder.setLsprojectmaster(objprojetc));
-					lslogilablimsorderdetailRepository.save(lstsheetorders);
-				}
-				List<LSlogilabprotocoldetail> lstprotocolorders = objproject.getLstlslogilabprotocoldetail();
-				if(lstprotocolorders != null && lstprotocolorders.size() >0)
-				{
-					lstprotocolorders.forEach(objorder -> objorder.setLsprojectmaster(objprojetc));
-					lslogilabprotocoldetailRepository.save(lstprotocolorders);
-				}
-				
-				LsProjectarchieveRepository.delete(lsprojectarchieve.getProjectarchievecode());
-				System.out.println(objproject.getLsprojectmaster().getProjectname());
-				
+	@Transactional
+	public LsProjectarchieve Importprojectarchieve(LsProjectarchieve lsprojectarchieve) throws IOException {
+
+		Gson gson = new GsonBuilder().create();
+		CloudStorageAccount storageAccount;
+		CloudBlobClient blobClient = null;
+		CloudBlobContainer container = null;
+		CloudBlockBlob blob = null;
+		Response objresponse = new Response();
+		objresponse.setStatus(true);
+		lsprojectarchieve.setResponse(objresponse);
+
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+		try {
+			// Parse the connection string and create a blob client to interact with Blob
+			// storage
+			storageAccount = CloudStorageAccount.parse(storageConnectionString);
+			blobClient = storageAccount.createCloudBlobClient();
+			container = blobClient.getContainerReference(TenantContext.getCurrentTenant() + "projectarchieve");
+
+			blob = container.getBlockBlobReference(lsprojectarchieve.getFilenameuuid());
+			blob.openInputStream();
+
+			String result = IOUtils.toString(blob.openInputStream(), StandardCharsets.UTF_8);
+
+			ProjectArchieve objproject = new ProjectArchieve();
+
+			objproject = gson.fromJson(result, objproject.getClass());
+
+			LSprojectmaster objprojetc = lsprojectmasterRepository.save(objproject.getLsprojectmaster());
+			List<LSlogilablimsorderdetail> lstsheetorders = objproject.getLstlslogilablimsorderdetail();
+			if (lstsheetorders != null && lstsheetorders.size() > 0) {
+				lstsheetorders.forEach(objorder -> objorder.setLsprojectmaster(objprojetc));
+				lslogilablimsorderdetailRepository.save(lstsheetorders);
 			}
-			catch (StorageException ex)
-			{
-				System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s", ex.getHttpStatusCode(), ex.getErrorCode()));
-				objresponse.setStatus(false);
-				lsprojectarchieve.setResponse(objresponse);
-				throw new IOException(String.format("Error returned from the service. Http code: %d and error code: %s", ex.getHttpStatusCode(), ex.getErrorCode()));
+			List<LSlogilabprotocoldetail> lstprotocolorders = objproject.getLstlslogilabprotocoldetail();
+			if (lstprotocolorders != null && lstprotocolorders.size() > 0) {
+				lstprotocolorders.forEach(objorder -> objorder.setLsprojectmaster(objprojetc));
+				lslogilabprotocoldetailRepository.save(lstprotocolorders);
 			}
-			catch (Exception ex) 
-			{
-				System.out.println(ex.getMessage());
-				objresponse.setStatus(false);
-				lsprojectarchieve.setResponse(objresponse);
-			}
-		
+
+			LsProjectarchieveRepository.delete(lsprojectarchieve.getProjectarchievecode());
+			System.out.println(objproject.getLsprojectmaster().getProjectname());
+
+		} catch (StorageException ex) {
+			System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s",
+					ex.getHttpStatusCode(), ex.getErrorCode()));
+			objresponse.setStatus(false);
+			lsprojectarchieve.setResponse(objresponse);
+			throw new IOException(String.format("Error returned from the service. Http code: %d and error code: %s",
+					ex.getHttpStatusCode(), ex.getErrorCode()));
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+			objresponse.setStatus(false);
+			lsprojectarchieve.setResponse(objresponse);
+		}
+
 		return lsprojectarchieve;
 	}
-	
-	public List<LsProjectarchieve> GetArchievedprojectsonsite(LSSiteMaster lssitemaster)
-	{
+
+	public List<LsProjectarchieve> GetArchievedprojectsonsite(LSSiteMaster lssitemaster) {
 		return LsProjectarchieveRepository.findByLssitemasterOrderByProjectarchievecodeDesc(lssitemaster);
 	}
-	
-	public InputStream Downloadarchievedproject(LsProjectarchieve lsprojectarchieve) throws IOException
-	{
-		 CloudStorageAccount storageAccount;
-			CloudBlobClient blobClient = null;
-			CloudBlobContainer container=null;
-			CloudBlockBlob blob = null;
-			String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
-			try {    
-				// Parse the connection string and create a blob client to interact with Blob storage
-				storageAccount = CloudStorageAccount.parse(storageConnectionString);
-				blobClient = storageAccount.createCloudBlobClient();
-				container = blobClient.getContainerReference(TenantContext.getCurrentTenant()+"projectarchieve");
-				
-				blob = container.getBlockBlobReference(lsprojectarchieve.getFilenameuuid());
-				return blob.openInputStream();
-			}
-			catch (StorageException ex)
-			{
-				System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s", ex.getHttpStatusCode(), ex.getErrorCode()));
-				throw new IOException(String.format("Error returned from the service. Http code: %d and error code: %s", ex.getHttpStatusCode(), ex.getErrorCode()));
-			}
-			catch (Exception ex) 
-			{
-				System.out.println(ex.getMessage());
-			}
-			return null;
+
+	public InputStream Downloadarchievedproject(LsProjectarchieve lsprojectarchieve) throws IOException {
+		CloudStorageAccount storageAccount;
+		CloudBlobClient blobClient = null;
+		CloudBlobContainer container = null;
+		CloudBlockBlob blob = null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+		try {
+			// Parse the connection string and create a blob client to interact with Blob
+			// storage
+			storageAccount = CloudStorageAccount.parse(storageConnectionString);
+			blobClient = storageAccount.createCloudBlobClient();
+			container = blobClient.getContainerReference(TenantContext.getCurrentTenant() + "projectarchieve");
+
+			blob = container.getBlockBlobReference(lsprojectarchieve.getFilenameuuid());
+			return blob.openInputStream();
+		} catch (StorageException ex) {
+			System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s",
+					ex.getHttpStatusCode(), ex.getErrorCode()));
+			throw new IOException(String.format("Error returned from the service. Http code: %d and error code: %s",
+					ex.getHttpStatusCode(), ex.getErrorCode()));
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+		return null;
 	}
 }

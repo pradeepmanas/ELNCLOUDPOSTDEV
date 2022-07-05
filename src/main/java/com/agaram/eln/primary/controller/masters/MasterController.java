@@ -73,7 +73,7 @@ public class MasterController {
 	}
 	
 	@RequestMapping("/getinventoryhistory")
-	public List<LsOrderSampleUpdate> getinventoryhistory(@RequestBody LsOrderSampleUpdate lsinventoryhistory)throws Exception
+	public List<Object> getinventoryhistory(@RequestBody LsOrderSampleUpdate lsinventoryhistory)throws Exception
 	{
 		return masterService.getinventoryhistory(lsinventoryhistory);
 	}

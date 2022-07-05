@@ -946,7 +946,7 @@ public class MethodService {
 		   
 		   final String name = FilenameUtils.getBaseName(fileName);
 		   
-		   CloudParserFile obj = cloudparserfilerepository.findByfilename(fileName);
+		   CloudParserFile obj = cloudparserfilerepository.findTop1Byfilename(fileName);
 		   String fileid = obj.fileid;
 			 
 		   file = stream2file(cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "parserfile"),fileName, ext);

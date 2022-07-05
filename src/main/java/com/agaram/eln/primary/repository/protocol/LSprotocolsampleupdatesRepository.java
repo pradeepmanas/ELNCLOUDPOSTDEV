@@ -25,4 +25,8 @@ public interface LSprotocolsampleupdatesRepository  extends JpaRepository<LSprot
 
 	public List<LSprotocolsampleupdates> findByprotocolstepcodeAndIndexofIsNotNullAndStatus(Integer protocolstepcode,
 			int i);
+
+
+	public List<LSprotocolsampleupdates> findByRepositorydatacodeAndUsedquantityNotAndStatus(Integer repositorydatacode,
+			int i, int j);
 }

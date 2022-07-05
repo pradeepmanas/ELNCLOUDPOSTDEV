@@ -81,7 +81,7 @@ public class EvaluateParserController {
     		@RequestParam("site") String sitecode,@RequestParam("X-TenantID") String tenant,@RequestParam ("isMultitenant") Integer isMultitenant,
     		@RequestParam ("originalfilename") String originalfilename)throws Exception {
 		
-		if(isMultitenant != 0) {
+	//	if(isMultitenant != 0) {
         String fileName = fileStorageService.storeFile(file,tenant,isMultitenant,originalfilename );
         final ObjectMapper mapper = new ObjectMapper();
         if(method.indexOf(",")>0)
@@ -97,8 +97,53 @@ public class EvaluateParserController {
 		
 		final String rawData =  methodservice.getFileData(fileName,tenant);
 		return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant);
-		}
-		else {
+//		}
+//		else {
+//		String fileName = fileStorageService.storeSQLFile(file,tenant,isMultitenant,originalfilename);
+//		 final ObjectMapper mapper = new ObjectMapper();
+//	        if(method.indexOf(",")>0)
+//	        {
+//	        	method=method.substring(0,method.indexOf(","));
+//	        }
+//	        if(sitecode.indexOf(",")>0)
+//	        {
+//	        	sitecode=sitecode.substring(0,sitecode.indexOf(","));
+//	        }
+//			final int methodKey = Integer.parseInt(method);
+//			final LSSiteMaster site = lssiteMasterRepository.findOne(Integer.parseInt(sitecode));
+//			final String rawData =  methodservice.getSQLFileData(fileName);
+//			return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant);
+//		}
+   
+  
+      
+	}
+	
+	
+	
+	@PostMapping("/uploadELNFileandevaluateParser")
+    public ResponseEntity<Object> uploadELNFileandevaluateParser(@RequestParam("file") MultipartFile file, @RequestParam("method") String method,
+    		@RequestParam("site") String sitecode,@RequestParam("X-TenantID") String tenant,@RequestParam ("isMultitenant") Integer isMultitenant,
+    		@RequestParam ("originalfilename") String originalfilename)throws Exception {
+		
+		//if(isMultitenant != 0) {
+//        String fileName = fileStorageService.storeFile(file,tenant,isMultitenant,originalfilename );
+//        final ObjectMapper mapper = new ObjectMapper();
+//        if(method.indexOf(",")>0)
+//        {
+//        	method=method.substring(0,method.indexOf(","));
+//        }
+//        if(sitecode.indexOf(",")>0)
+//        {
+//        	sitecode=sitecode.substring(0,sitecode.indexOf(","));
+//        }
+//		final int methodKey = Integer.parseInt(method);
+//		final LSSiteMaster site = lssiteMasterRepository.findOne(Integer.parseInt(sitecode));
+//		
+//		final String rawData =  methodservice.getFileData(fileName,tenant);
+//		return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant);
+	//	}
+		//else {
 		String fileName = fileStorageService.storeSQLFile(file,tenant,isMultitenant,originalfilename);
 		 final ObjectMapper mapper = new ObjectMapper();
 	        if(method.indexOf(",")>0)
@@ -117,8 +162,7 @@ public class EvaluateParserController {
    
   
       
-	}
-	
+//	}
 	/**
 	   * This method is used to retrieve list of active methods for which parsing
 	   * is done for the specified site

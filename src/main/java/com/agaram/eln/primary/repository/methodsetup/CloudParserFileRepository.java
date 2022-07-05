@@ -11,9 +11,6 @@ public interface CloudParserFileRepository extends JpaRepository<CloudParserFile
 
 	public CloudParserFile findByfilename(String fileName);
 
-	
-
-	
-	
+	public CloudParserFile findTop1Byfilename(String fileName);
 
 }
