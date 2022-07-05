@@ -618,8 +618,7 @@ public class ReportsService {
 					sheetfilecodeString = (String) argObj.get("FileCode");
 				}
 			}
-//			String uniquefilename = UUID.randomUUID().toString();
-			String uniquefilename = "3ccd8082-e6e3-449c-a02f-4cc639de84f5";
+			String uniquefilename = UUID.randomUUID().toString();
 			String filename = uniquefilename + "." + "docx";
 			String filePath = getDocxAbsolutePath();
 			if (argObj.containsKey("objsilentaudit")) {
@@ -653,7 +652,6 @@ public class ReportsService {
 //			}
 			if (env.getProperty("fileReceiver") != null) {
 				int httpfileStatus = uploadSingleFile(newFile.getAbsolutePath(), docType);
-				objMap.put("httpstatus", httpfileStatus);
 				if (httpfileStatus == 200) {
 					objMap.put("fileFullPath", "");
 				} else {
