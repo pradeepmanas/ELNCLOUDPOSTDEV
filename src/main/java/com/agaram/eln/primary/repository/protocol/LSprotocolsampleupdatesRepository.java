@@ -27,6 +27,8 @@ public interface LSprotocolsampleupdatesRepository  extends JpaRepository<LSprot
 			int i);
 
 
-	public List<LSprotocolsampleupdates> findByRepositorydatacodeAndUsedquantityNotAndStatus(Integer repositorydatacode,
-			int i, int j);
+
+
+	public List<LSprotocolsampleupdates> findByRepositorydatacodeAndUsedquantityNotAndStatusOrderByProtocolsamplecodeDesc(
+			Integer repositorydatacode, int i, int j);
 }

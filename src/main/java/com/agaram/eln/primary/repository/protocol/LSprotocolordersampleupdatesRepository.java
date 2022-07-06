@@ -19,7 +19,9 @@ import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
 		public List<LSprotocolordersampleupdates> findByProtocolstepcodeAndIndexofIsNotNullAndStatus(
 				 Integer protocolstepcode, int i);
 
-		public List<LSprotocolordersampleupdates> findByRepositorydatacodeAndUsedquantityAndStatus(
+		
+
+		public List<LSprotocolordersampleupdates> findByRepositorydatacodeAndUsedquantityNotAndStatusOrderByProtocolsamplecodeDesc(
 				Integer repositorydatacode, int i, int j);
 
 

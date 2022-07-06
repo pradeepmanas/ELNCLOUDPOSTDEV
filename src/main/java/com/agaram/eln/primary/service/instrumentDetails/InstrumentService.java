@@ -2206,9 +2206,10 @@ public class InstrumentService {
 			objVersion.setVersionno(1);
 			objVersion.setBatchcode(objfile.getBatchcode());
 			objVersion.setTestid(objfile.getTestid());
-			objVersion.setCreateby(objfile.getCreateby());
-			objVersion.setModifiedby(objfile.getModifiedby());
+			objVersion.setCreatebyuser(objorder.getLsuserMaster());
+			objVersion.setModifiedby(objorder.getLsuserMaster());
 			objVersion.setFilesamplecode(objfile);
+			objVersion.setCreatedate(objorder.getCreatedtimestamp());
 			lssamplefileversionRepository.save(objVersion);
 			objfile.getLssamplefileversion().add(objVersion);
 			updateorderversioncontent(contString, objVersion, objorder.getIsmultitenant());

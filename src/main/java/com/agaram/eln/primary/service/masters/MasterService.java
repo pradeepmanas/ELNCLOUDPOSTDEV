@@ -185,21 +185,22 @@ public class MasterService {
 //		Map<String, Object> obj = new HashMap<>();
 		List<Object> obj1 = new ArrayList<Object>();
 		List<LsOrderSampleUpdate> lsordersamplUpdateobj = LsOrderSampleUpdateRepository
-				.findByRepositorycodeAndRepositorydatacodeAndQuantityusedNotAndHistorydetailsNotNull(
+				.findByRepositorycodeAndRepositorydatacodeAndQuantityusedNotAndHistorydetailsNotNullOrderByOrdersamplecodeDesc(
 						lsordersamplUpdate.getRepositorycode(), lsordersamplUpdate.getRepositorydatacode(), 0);
 
 		List<LSprotocolsampleupdates> lsprotocolsampleupdates = lsprotocolsampleupdatesRepository
-				.findByRepositorydatacodeAndUsedquantityNotAndStatus(
-					 lsordersamplUpdate.getRepositorydatacode(), 0, 0);
+				.findByRepositorydatacodeAndUsedquantityNotAndStatusOrderByProtocolsamplecodeDesc(
+					 lsordersamplUpdate.getRepositorydatacode(), 0, 1);
 		List<LSprotocolordersampleupdates> lsprotocolordersampleupdates = LSprotocolordersampleupdatesRepository
-				.findByRepositorydatacodeAndUsedquantityAndStatus(
-						 lsordersamplUpdate.getRepositorydatacode(), 0, 0);
+				.findByRepositorydatacodeAndUsedquantityNotAndStatusOrderByProtocolsamplecodeDesc(
+						 lsordersamplUpdate.getRepositorydatacode(), 0, 1);
 //		obj.put("lsordersamplUpdateobj", lsordersamplUpdateobj);
 //		obj.put("lsprotocolsampleupdates", lsprotocolsampleupdates);
 //		obj.put("lsprotocolordersampleupdates", lsprotocolordersampleupdates);
+		obj1.addAll(lsordersamplUpdateobj);
 		obj1.addAll(lsprotocolordersampleupdates);
 		obj1.addAll(lsprotocolsampleupdates);
-		obj1.addAll(lsordersamplUpdateobj);
+		
 		
 		return obj1;
 

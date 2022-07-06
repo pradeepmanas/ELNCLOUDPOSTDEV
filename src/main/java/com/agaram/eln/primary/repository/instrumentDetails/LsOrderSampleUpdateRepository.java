@@ -11,7 +11,9 @@ public interface LsOrderSampleUpdateRepository extends JpaRepository<LsOrderSamp
 
 	public List<LsOrderSampleUpdate> findByOrdersampleusedDetail(String ordersampleusedDetail);
 
-	public List<LsOrderSampleUpdate> findByRepositorycodeAndRepositorydatacodeAndQuantityusedNotAndHistorydetailsNotNull(
+
+
+	public List<LsOrderSampleUpdate> findByRepositorycodeAndRepositorydatacodeAndQuantityusedNotAndHistorydetailsNotNullOrderByOrdersamplecodeDesc(
 			Integer repositorycode, Integer repositorydatacode, int i);
 
 }

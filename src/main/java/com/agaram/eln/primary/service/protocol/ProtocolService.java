@@ -5598,6 +5598,7 @@ public class ProtocolService {
 				CloudLsLogilabprotocolstepInfoRepository
 						.save(lSlogilabprotocoldetail.getCloudLsLogilabprotocolstepInfo());
 				obj.put("true", true);
+				obj.put("addprotocl", lSlogilabprotocoldetail);
 			} else {
 				obj.put("false", false);
 			}
@@ -5608,6 +5609,7 @@ public class ProtocolService {
 					update.set("content", object.getContent());
 					mongoTemplate.upsert(query, update, LsLogilabprotocolstepInfo.class);
 				}
+				obj.put("addprotocl", lSlogilabprotocoldetail);
 				obj.put("true", true);
 			} else {
 				obj.put("false", false);
