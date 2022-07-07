@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,9 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
 import com.agaram.eln.primary.model.methodsetup.LSResultFieldValues;
 import com.agaram.eln.primary.payload.Response;
+import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.service.fileuploaddownload.FileStorageService;
 import com.agaram.eln.primary.service.methodsetup.EvaluateParserService;
@@ -48,6 +51,9 @@ public class EvaluateParserController {
 	@Autowired
     private LSSiteMasterRepository lssiteMasterRepository;
 
+	@Autowired
+	LScfttransactionRepository lscfttransactionrepo;
+	
 
 	/**
 	 * This method is used to  evaluate parser  for the specified method and site.
@@ -68,18 +74,20 @@ public class EvaluateParserController {
 		final Integer isMultitenant = mapper.convertValue(mapObject.get("isMultitenant"), Integer.class);
 //		System.out.println("rawData:"+ rawData);
 		if(isMultitenant != 0 ) {
-		return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant);
+		return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant,request);
+		// parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant);
 		}
 		else
 		{
-			return parserService.evaluateSQLParser(methodKey, site, rawData,isMultitenant);
-		}
+			return parserService.evaluateSQLParser(methodKey, site, rawData,isMultitenant,request);
+			}
+		// parserService.evaluateSQLParser(methodKey, site, rawD);
 	}
 	
 	@PostMapping("/uploadFileandevaluateParser")
     public ResponseEntity<Object> uploadFileandevaluateParser(@RequestParam("file") MultipartFile file, @RequestParam("method") String method,
     		@RequestParam("site") String sitecode,@RequestParam("X-TenantID") String tenant,@RequestParam ("isMultitenant") Integer isMultitenant,
-    		@RequestParam ("originalfilename") String originalfilename)throws Exception {
+    		@RequestParam ("originalfilename") String originalfilename,final HttpServletRequest request)throws Exception {
 		
 	//	if(isMultitenant != 0) {
         String fileName = fileStorageService.storeFile(file,tenant,isMultitenant,originalfilename );
@@ -96,7 +104,7 @@ public class EvaluateParserController {
 		final LSSiteMaster site = lssiteMasterRepository.findOne(Integer.parseInt(sitecode));
 		
 		final String rawData =  methodservice.getFileData(fileName,tenant);
-		return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant);
+		return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant,request);
 //		}
 //		else {
 //		String fileName = fileStorageService.storeSQLFile(file,tenant,isMultitenant,originalfilename);
@@ -124,7 +132,7 @@ public class EvaluateParserController {
 	@PostMapping("/uploadELNFileandevaluateParser")
     public ResponseEntity<Object> uploadELNFileandevaluateParser(@RequestParam("file") MultipartFile file, @RequestParam("method") String method,
     		@RequestParam("site") String sitecode,@RequestParam("X-TenantID") String tenant,@RequestParam ("isMultitenant") Integer isMultitenant,
-    		@RequestParam ("originalfilename") String originalfilename)throws Exception {
+    		@RequestParam ("originalfilename") String originalfilename,final HttpServletRequest request)throws Exception {
 		
 		//if(isMultitenant != 0) {
 //        String fileName = fileStorageService.storeFile(file,tenant,isMultitenant,originalfilename );
@@ -157,7 +165,7 @@ public class EvaluateParserController {
 			final int methodKey = Integer.parseInt(method);
 			final LSSiteMaster site = lssiteMasterRepository.findOne(Integer.parseInt(sitecode));
 			final String rawData =  methodservice.getSQLFileData(fileName);
-			return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant);
+			return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant,request);
 		}
    
   

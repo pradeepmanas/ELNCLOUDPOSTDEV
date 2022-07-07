@@ -155,6 +155,7 @@ import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
+import java.util.Date;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
@@ -346,13 +347,25 @@ public class InstrumentService {
 		} else {
 			List<LSfields> Generalfields = lSfieldsRepository.findByisactiveAndMethodname(1, "ID_GENERAL");
 
-			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findAll();
-			List<Method> elnMethod = lsMethodRepository.findAll();
+			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatus(1);
+			
+			List<Method> elnMethod = lsMethodRepository.findByStatus(1);
 			List<ParserBlock> ParserBlock = lsParserBlockRepository.findAll();
 			List<ParserField> ParserField = lsParserRepository.findAll();
 			List<SubParserField> SubParserField = lsSubParserRepository.findAll();
 			obj.put("Generalfields", Generalfields);
 
+
+			
+			
+					List<ParserField> filteredList = ParserField.stream()
+				      .filter(filterParser -> SubParserField.stream()
+				        .anyMatch(filterSubParser -> filterParser.getParserfieldkey().equals(filterSubParser.getParserfield().getParserfieldkey())
+				        ))
+				        .collect(Collectors.toList());
+
+					ParserField.removeAll(filteredList);
+					
 			obj.put("Instrmaster", InstrMaster);
 			obj.put("ELNMethods", elnMethod);
 			obj.put("ParserBlock", ParserBlock);

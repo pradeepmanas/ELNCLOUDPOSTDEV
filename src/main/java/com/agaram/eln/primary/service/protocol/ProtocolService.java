@@ -3336,7 +3336,7 @@ public class ProtocolService {
 			LSlogilabprotocoldetailRepository.save(argMap);
 			mapOrders.put("curentprotocolorder", argMap);
 
-			lscfttransactionRepository.save(LScfttransactionobj);
+//			lscfttransactionRepository.save(LScfttransactionobj);
 		}
 		return mapOrders;
 	}

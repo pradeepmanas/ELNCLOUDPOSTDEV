@@ -86,4 +86,6 @@ public interface MethodRepository extends JpaRepository<Method, Integer>{
 //	Optional<Method> findBySiteMethodnameAndInstmasterAndStatus(final Site site, final String methodName, final InstrumentMaster instMaster, final int status);
 
 	List<Method> findByMethodkey(final int methodKey);
+
+	List<Method> findByStatus(int i);
 }

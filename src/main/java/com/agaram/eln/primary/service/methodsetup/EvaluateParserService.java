@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.methodsetup.CommonFunction;
 import com.agaram.eln.primary.model.methodsetup.CustomField;
@@ -33,6 +35,7 @@ import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
+import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.methodsetup.ELNResultDetailsRepository;
 import com.agaram.eln.primary.repository.methodsetup.LSResultFieldValuesRepository;
 
@@ -66,6 +69,9 @@ public class EvaluateParserService {
 	//srimathi
 		@Autowired
 		LSResultFieldValuesRepository resultfieldvaluesrepo;
+		
+		@Autowired
+		LScfttransactionRepository LScfttransactionRepository;
 	
    /**
     * This method is used  to retrieve list of Method entities for the specified site
@@ -347,7 +353,7 @@ public class EvaluateParserService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public ResponseEntity<Object> evaluateParser(final int methodKey, final LSSiteMaster site, final String rawDataContent,final String tenant,
-			final Integer isMultitenant) throws FileNotFoundException, IOException
+			final Integer isMultitenant,final HttpServletRequest request) throws FileNotFoundException, IOException
 	{
 		final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);				   
 		if(methodByKey.isPresent()) 
@@ -355,6 +361,22 @@ public class EvaluateParserService {
 			final Map<String, Object> parserObjectMap = (Map<String, Object>) getMethodFieldList(methodKey, site, rawDataContent,tenant,isMultitenant).getBody();
 		
 			final Map<String, List<List<MethodFieldTechnique>>> parsedData = (Map<String, List<List<MethodFieldTechnique>>>) parserObjectMap.get("PDInstFieldDataMap");
+						
+			Date date = new Date();
+			LScfttransaction LScfttransaction = new LScfttransaction();
+			LScfttransaction.setActions("Insert");
+			LScfttransaction.setComments("Evaluate Parser for Method : "+methodByKey.get().getMethodname());
+			LScfttransaction.setLssitemaster(site.getSitecode());
+			LScfttransaction.setLsuserMaster(1);
+			LScfttransaction.setManipulatetype("View/Load");
+			LScfttransaction.setModuleName("Method Master");
+			LScfttransaction.setUsername(methodByKey.get().getCreatedby().getUserfullname());
+
+			LScfttransaction.setTransactiondate(date);
+			LScfttransaction.setTableName("SampleExtract");
+			LScfttransaction.setSystemcoments("System Generated");
+			
+			LScfttransactionRepository.save(LScfttransaction);
 			return new ResponseEntity<>(parsedData, HttpStatus.OK);
 			
 		}
@@ -366,7 +388,7 @@ public class EvaluateParserService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public ResponseEntity<Object> evaluateSQLParser(final int methodKey, final LSSiteMaster site, final String rawDataContent,
-			final Integer isMultitenant) throws FileNotFoundException, IOException
+			final Integer isMultitenant,final HttpServletRequest request) throws FileNotFoundException, IOException
 	{
 		final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);				   
 		if(methodByKey.isPresent()) 
