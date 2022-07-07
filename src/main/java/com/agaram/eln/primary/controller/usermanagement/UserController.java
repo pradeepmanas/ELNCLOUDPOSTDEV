@@ -495,6 +495,12 @@ public class UserController {
 		return userService.GetLatestnotification(lsnotification);
 	}
 	
+	@RequestMapping("/GetLatestnotificationcount")
+	public Map<String, Object> GetLatestnotificationcount(@RequestBody LSnotification lsnotification)throws Exception
+	{
+		return userService.GetLatestnotificationcount(lsnotification);
+	}
+	
 	@PostMapping("/UpdateUseraction")
 	public LSuserActions UpdateUseraction(@RequestBody LSuserActions objuseractions)throws Exception {
 		return userService.UpdateUseraction(objuseractions);

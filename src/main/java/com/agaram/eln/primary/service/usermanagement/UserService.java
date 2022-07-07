@@ -857,6 +857,15 @@ public class UserService {
 
 		return objresmap;
 	}
+	
+	public Map<String, Object> GetLatestnotificationcount(LSnotification lsnotification) {
+		Map<String, Object> objresmap = new HashMap<String, Object>();
+
+		objresmap.put("newnotificationcount",
+				lsnotificationRepository.countByNotifationtoAndIsnewnotification(lsnotification.getNotifationto(), 1));
+
+		return objresmap;
+	}
 
 	public LSuserActions UpdateUseraction(LSuserActions objuseractions) {
 		return lsuserActionsRepository.save(objuseractions);

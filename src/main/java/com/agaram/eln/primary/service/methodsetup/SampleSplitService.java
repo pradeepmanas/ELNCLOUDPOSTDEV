@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.methodsetup;
 
+//import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,15 +15,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.SampleExtract;
 import com.agaram.eln.primary.model.methodsetup.SampleLineSplit;
 import com.agaram.eln.primary.model.methodsetup.SampleTextSplit;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Date;
 
 
 /**
@@ -49,6 +53,9 @@ public class SampleSplitService {
 	
 	@Autowired	
 	SampleExtractService sampleExtractService;
+
+	@Autowired
+	LScfttransactionRepository lscfttransactionrepo;
 	
 	/**
 	 * This method receives input details from the controller that contains all information
@@ -74,10 +81,23 @@ public class SampleSplitService {
 //		final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
 		final int methodKey = (Integer) mapObject.get("methodKey");
 		final String comments = (String) mapObject.get("comments");
-	
+		
+		
+		
 		final Map<String, SampleTextSplit> textSplitMap = mapper.convertValue(mapObject.get("sampleTextSplitList"), Map.class);		
 		final Map<String, SampleLineSplit> lineSplitMap = mapper.convertValue(mapObject.get("sampleLineSplitList"), Map.class);		
 		final Map<String, SampleExtract> sampleExtractMap = mapper.convertValue(mapObject.get("sampleExtractList"), Map.class);
+	
+		
+//		final Collection<SampleTextSplit> textSplitMap1 = textSplitMap.values();
+//		final List<SampleTextSplit> listToSave = mapper.convertValue(textSplitList1, 
+//			  	new TypeReference<List<SampleTextSplit>>() {});		
+//		
+//		final List<Integer> idList = new ArrayList<Integer>();
+//		
+//		listToSave.forEach(item->{
+//			
+//		}
 		
 		final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 		final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);
@@ -85,9 +105,12 @@ public class SampleSplitService {
 		{
 			final Method method = methodByKey.get();
 			mapObject.put("createdUser", createdUser);
+			
 			final Map<String, Object> savedObjectMap = saveSampleSplitTechniques(createdUser, textSplitMap, lineSplitMap, sampleExtractMap, method, mapper);			
 	
 		    Integer sampleSplit = null; 
+			
+		    Date currentDateTime = new Date();
 		   
 		    if(((List<SampleTextSplit>)savedObjectMap.get("TextListAfterSave")).isEmpty() 
 		    		&& ((List<SampleLineSplit>)savedObjectMap.get("LineListAfterSave")).isEmpty()
@@ -103,6 +126,7 @@ public class SampleSplitService {
 		    	List<SampleTextSplit> textCountList = textList.stream().filter(item-> item.getStatus() == 1).collect(Collectors.toList());
 		    	List<SampleLineSplit> lineCountList = lineList.stream().filter(item->item.getStatus() == 1).collect(Collectors.toList());
 		    	List<SampleExtract> extractCountList = extractList.stream().filter(item->item.getStatus() == 1).collect(Collectors.toList());
+		    	
 		    	
 		    	if (textCountList.size() == 0 && lineCountList.size() == 0 && extractCountList.size() == 0) {
 		    		sampleSplit = 0;
@@ -156,6 +180,23 @@ public class SampleSplitService {
 //				}
 //				cfrTransService.saveCfrTransaction(page, actionType, action, message, 
 //							site, xmlDataBuffer.toString(), createdUser, request.getRemoteAddr());
+
+				
+				LScfttransaction LScfttransaction = new LScfttransaction();
+				LScfttransaction.setActions("Insert");
+				LScfttransaction.setComments("Sample Split Done");
+				LScfttransaction.setLssitemaster(site.getSitecode());
+				LScfttransaction.setLsuserMaster(doneByUserKey);
+				LScfttransaction.setManipulatetype("View/Load");
+				LScfttransaction.setModuleName("Method Master");
+				LScfttransaction.setUsername(createdUser.getUsername());
+
+				LScfttransaction.setTransactiondate(currentDateTime);
+				LScfttransaction.setTableName("SampleExtract");
+				LScfttransaction.setSystemcoments("System Generated");
+				
+				lscfttransactionrepo.save(LScfttransaction);
+				
 			}
 			return new ResponseEntity<>(savedMethod, HttpStatus.OK);	
 		}

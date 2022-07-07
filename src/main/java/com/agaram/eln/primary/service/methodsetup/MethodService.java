@@ -1339,6 +1339,21 @@ public class MethodService {
 //		    	auditMethodCopy(methodBeforeSave, updatedMethod, request, savedSampleSplitMap, savedParserMap, customFieldListBS,
 //		    			savedCustomFieldList, createdUser, comments, site);				
 //			}
+	    	
+			LScfttransaction LScfttransaction = new LScfttransaction();
+			LScfttransaction.setActions("Insert");
+			LScfttransaction.setComments("Method copied from : "+methodByKey.get().getMethodname()+" to "+methodName);
+			LScfttransaction.setLssitemaster(site.getSitecode());
+			LScfttransaction.setLsuserMaster(doneByUserKey);
+			LScfttransaction.setManipulatetype("View/Load");
+			LScfttransaction.setModuleName("Method Master");
+			LScfttransaction.setUsername(createdUser.getUsername());
+
+			LScfttransaction.setTransactiondate(date);
+			LScfttransaction.setTableName("SampleExtract");
+			LScfttransaction.setSystemcoments("System Generated");
+			
+			lscfttransactionrepo.save(LScfttransaction);
 		    return new ResponseEntity<>(savedMethod, HttpStatus.OK);
 		  
 	   }
