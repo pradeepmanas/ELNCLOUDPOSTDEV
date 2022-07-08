@@ -990,6 +990,20 @@ public class ProtocolController {
 
 	}
 	
+	@RequestMapping(value = "/updateprotocolstepno")
+	protected List<LSprotocolstep> updateprotocolstepno(@RequestBody LSprotocolstep[] lSprotocolstep)throws Exception {
+
+		return ProtocolMasterService.updateprotocolstepno(lSprotocolstep);
+
+	}
+	
+	@RequestMapping(value = "/updateprotocolstepnoonorder")
+	protected List<LSlogilabprotocolsteps> updateprotocolstepnoonorder(@RequestBody LSlogilabprotocolsteps[] LSlogilabprotocolsteps)throws Exception {
+
+		return ProtocolMasterService.updateprotocolstepnoonorder(LSlogilabprotocolsteps);
+
+	}
+	
 	
 //	@RequestMapping(value = "/getlistofusersforworkflow")
 //	protected List<LSuserMaster> getlistofusersforworkflow(@RequestBody LSusergroup[] usergroupcode) {

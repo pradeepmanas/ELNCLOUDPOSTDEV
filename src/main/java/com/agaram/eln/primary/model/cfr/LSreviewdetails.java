@@ -28,7 +28,7 @@ public class LSreviewdetails {
 	private String reviewedstatus;
 	@Column(columnDefinition = "varchar(100)")
 	private String reviewcomments;
-	@Column(columnDefinition = "varchar(100)")
+	@Column(columnDefinition = "varchar(250)")
 	private String reviewedby;
 //	@Column(columnDefinition = "date")
 	@Temporal(TemporalType.TIMESTAMP)

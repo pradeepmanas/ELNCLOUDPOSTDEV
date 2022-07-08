@@ -1143,6 +1143,28 @@ public class MethodService {
 	   
 	   if (methodByKey.isPresent() && instMaster != null) {		 
 		   
+		   if(methodName.equals(methodByKey.get().getMethodname()))
+		   {
+               if(saveAuditTrail) {			   
+			   LScfttransaction LScfttransaction = new LScfttransaction();
+			   
+				LScfttransaction.setActions("Update");
+				LScfttransaction.setComments("Duplicate Entry "+methodByKey.get().getMethodname());
+				LScfttransaction.setLssitemaster(site.getSitecode());
+				LScfttransaction.setLsuserMaster(doneByUserKey);
+				LScfttransaction.setManipulatetype("View/Load");
+				LScfttransaction.setModuleName("Method Master");
+				LScfttransaction.setTransactiondate(date);
+				LScfttransaction.setUsername(createdUser.getUsername());
+				LScfttransaction.setTableName("Method");
+				LScfttransaction.setSystemcoments("System Generated");
+				
+				lscfttransactionrepo.save(LScfttransaction);
+                }
+			   return new ResponseEntity<>("Duplicate Entry - " + methodByKey.get().getMethodname() +" method cannot be copied", 
+  					 HttpStatus.CONFLICT); 
+		   }
+		   else {
 		   final Method methodBeforeSave = new Method(methodByKey.get());
 		   
 		   //Making entry in 'method' table for the selected instrument
@@ -1355,7 +1377,7 @@ public class MethodService {
 			
 			lscfttransactionrepo.save(LScfttransaction);
 		    return new ResponseEntity<>(savedMethod, HttpStatus.OK);
-		  
+		   }
 	   }
 	   else {
 		   

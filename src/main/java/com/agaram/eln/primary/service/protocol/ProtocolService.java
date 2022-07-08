@@ -5628,6 +5628,24 @@ public class ProtocolService {
 	
 	}
 
+	public List<LSprotocolstep> updateprotocolstepno(LSprotocolstep[] lSprotocolstep) {
+		List<LSprotocolstep> LSprotocolstepobj = Arrays.asList(lSprotocolstep);
+		if(lSprotocolstep != null) {
+			LSProtocolStepRepositoryObj.save(LSprotocolstepobj);
+		}
+		
+		return LSprotocolstepobj;
+	}
+
+	public List<LSlogilabprotocolsteps> updateprotocolstepnoonorder(LSlogilabprotocolsteps[] lSlogilabprotocolsteps) {
+		List<LSlogilabprotocolsteps> LSprotocolstepobj = Arrays.asList(lSlogilabprotocolsteps);
+		if(LSprotocolstepobj != null) {
+			LSlogilabprotocolstepsRepository.save(LSprotocolstepobj);
+		}
+		
+		return LSprotocolstepobj;
+	}
+
 //	public List<LSuserMaster> getlistofusersforworkflow(LSusergroup[] usergroupcode) {
 //		List<LSusergroup> usergroupcodelist = Arrays.asList(usergroupcode);
 //		List<LSuserMaster> userslist = new ArrayList<LSuserMaster>();
