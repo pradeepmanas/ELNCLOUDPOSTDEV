@@ -181,7 +181,7 @@ public class LSlogilablimsorderdetail {
 	private String filename;
 	
 	@Transient
-	private int isLock;
+	private Integer isLock;
 	
 	@Transient
 	private String nbatchcode;
@@ -307,10 +307,10 @@ public class LSlogilablimsorderdetail {
 	}
 
 	@Transient
-	private int isLockbycurrentuser;
+	private Integer isLockbycurrentuser;
 	
 	@Transient
-	private int isFinalStep;
+	private Integer isFinalStep;
 	
 	@Transient
 	LSuserMaster objLoggeduser;
@@ -615,30 +615,30 @@ public class LSlogilablimsorderdetail {
 		this.samplename = samplename;
 	}
 
-	public int getIsLock() {
+	public Integer getIsLock() {
 		return isLock;
 	}
-
-	public void setIsLock(int isLock) {
-		this.isLock = isLock;
+	public Integer getRejected() {
+		return rejected;
 	}
-
-	public int getIsLockbycurrentuser() {
+	public Integer getIsLockbycurrentuser() {
 		return isLockbycurrentuser;
 	}
-
-	public void setIsLockbycurrentuser(int isLockbycurrentuser) {
-		this.isLockbycurrentuser = isLockbycurrentuser;
-	}
-
-	public int getIsFinalStep() {
+	public Integer getIsFinalStep() {
 		return isFinalStep;
 	}
-
-	public void setIsFinalStep(int isFinalStep) {
+	public void setIsLock(Integer isLock) {
+		this.isLock = isLock;
+	}
+	public void setRejected(Integer rejected) {
+		this.rejected = rejected;
+	}
+	public void setIsLockbycurrentuser(Integer isLockbycurrentuser) {
+		this.isLockbycurrentuser = isLockbycurrentuser;
+	}
+	public void setIsFinalStep(Integer isFinalStep) {
 		this.isFinalStep = isFinalStep;
 	}
-
 	public LSsamplefile getLssamplefile() {
 		return lssamplefile;
 	}
