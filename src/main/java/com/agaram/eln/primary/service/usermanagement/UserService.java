@@ -555,7 +555,7 @@ public class UserService {
 			maprights.put("new", true);
 			maprights.put("rights", lstUserrightsmaster);
 		} else {
-			List<LSusergrouprights> lstUserrights = lsusergrouprightsRepository.findByUsergroupid(lsusergroup);
+			List<LSusergrouprights> lstUserrights = lsusergrouprightsRepository.getrightsonUsergroupid(lsusergroup);
 			if (lstUserrights != null && lstUserrights.size() > 0) {
 				maprights.put("new", false);
 				maprights.put("rights", lstUserrights);
