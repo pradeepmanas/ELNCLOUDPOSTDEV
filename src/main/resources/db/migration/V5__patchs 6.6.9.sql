@@ -105,8 +105,6 @@ insert into lsaudittrailconfigmaster values(78,0,'Protocol Order And Register',7
 insert into lsaudittrailconfigmaster values(79,0,'Protocol Order And Register',75,'Protocol Order And Register','Save')ON CONFLICT(serialno)DO NOTHING;
 insert into lsaudittrailconfigmaster values(80,0,'Protocol Order And Register',77,'Protocol Order And Register','Complete task')ON CONFLICT(serialno)DO NOTHING;
 
-
-
 update LSusergrouprightsmaster set sallow = '0' where displaytopic = 'Add repository' and sallow= 'NA';
 update LSusergrouprightsmaster set sallow = '0' where displaytopic = 'Edit repository' and sallow= 'NA';
 
@@ -125,6 +123,7 @@ delete from lsusergrouprights where modulename = 'Register Task Orders & Execute
 ALTER TABLE IF Exists lsprotocolstep ADD COLUMN IF NOT EXISTS   timer jsonb;
 
 ALTER TABLE IF Exists lslogilabprotocolsteps ADD COLUMN IF NOT EXISTS   timer jsonb;
+
 
 DO
 $do$
@@ -174,57 +173,13 @@ values (NOW(),NOW(),-1,'Sheet/my order', 124, 'my order');
 
 update lslogilablimsorderdetail set directorycode = 1;
 
-DO
-$do$
-DECLARE
-   _kind "char";
-BEGIN
-   SELECT relkind
-   FROM   pg_class
-   WHERE  relname = 'lsresultfieldvalues_sno_seq' 
-   INTO  _kind;
 
-   IF NOT FOUND THEN       
-      CREATE SEQUENCE lsresultfieldvalues_sno_seq;
-   ELSIF _kind = 'S' THEN  
-      -- do nothing?
-   ELSE                    -- object name exists for different kind
-      -- do something!
-   END IF;
-END
-$do$;
-
-
-CREATE TABLE IF NOT EXISTS public.lsresultfieldvalues
-(
-    sno integer NOT NULL DEFAULT nextval('lsresultfieldvalues_sno_seq'::regclass),
-    fieldname character varying(100) COLLATE pg_catalog."default",
-    fieldvalue character varying(100) COLLATE pg_catalog."default",
-    resseqno integer,
-    resultid integer,
-    CONSTRAINT lsresultfieldvalues_pkey PRIMARY KEY (sno),
-    CONSTRAINT fk6awbvwq8363r0pdi4dmsf6g58 FOREIGN KEY (resultid)
-        REFERENCES public.elnresultdetails (resultid) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
-
-ALTER TABLE public.lsresultfieldvalues
-    OWNER to postgres;
-    
 ALTER TABLE IF Exists elnresultdetails ADD COLUMN IF NOT EXISTS parserfieldkey integer;
 
 ALTER TABLE IF Exists lsprotocolorderversion ADD COLUMN IF NOT EXISTS createdby integer;
     
-INSERT into LSusergrouprightsmaster (orderno, displaytopic, modulename, sallow, screate, sdelete,sedit, status,sequenceorder) SELECT 78, 'Unlock Orders', 'Base Master', '0', 'NA', 'NA', '0', '0,0,1',73WHERE NOT EXISTS (select * from LSusergrouprightsmaster where displaytopic = 'Unlock Orders'); 
-
-INSERT into LSusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode) SELECT 'Unlock Orders', 'Base Master', 'administrator', '1', 'NA', 'NA', '1', 1,1  WHERE NOT EXISTS (select * from LSusergrouprights where displaytopic = 'Unlock Orders' and usergroupid_usergroupcode = 1); 
-
 ALTER TABLE IF Exists LSusergrouprights ADD COLUMN IF NOT EXISTS sequenceorder integer;
+
  
 update LSusergrouprightsmaster set sequenceorder = 1 where modulename = 'Dash Board';
 update LSusergrouprightsmaster set sequenceorder = 2 where modulename = 'Register Task Orders & Execute';
@@ -296,6 +251,11 @@ ALTER TABLE public.cloudparserfile
     OWNER to postgres;
 
 
+update LSusergrouprightsmaster set displaytopic = 'Pending Work' where displaytopic = 'Pending' and sequenceorder = 3;
+update LSusergrouprightsmaster set displaytopic = 'Completed Work' where displaytopic = 'Completed' and sequenceorder = 3;
+update LSusergrouprights set displaytopic = 'Pending Work' where displaytopic = 'Pending' and sequenceorder = 3;
+update LSusergrouprights set displaytopic = 'Completed Work' where displaytopic = 'Completed' and sequenceorder = 3;
+
 DO
 $do$
 DECLARE
@@ -327,11 +287,9 @@ END IF;
 END
 $do$;
 
+INSERT into LSusergrouprightsmaster (orderno, displaytopic, modulename, sallow, screate, sdelete,sedit, status,sequenceorder) SELECT 78, 'Unlock Orders', 'Base Master', '0', 'NA', 'NA', '0', '0,0,1',73 WHERE NOT EXISTS (select * from LSusergrouprightsmaster where displaytopic = 'Unlock Orders'); 
 
-update LSusergrouprightsmaster set displaytopic = 'Pending Work' where displaytopic = 'Pending' and sequenceorder = 3;
-update LSusergrouprightsmaster set displaytopic = 'Completed Work' where displaytopic = 'Completed' and sequenceorder = 3;
-update LSusergrouprights set displaytopic = 'Pending Work' where displaytopic = 'Pending' and sequenceorder = 3;
-update LSusergrouprights set displaytopic = 'Completed Work' where displaytopic = 'Completed' and sequenceorder = 3;
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode) SELECT 'Unlock Orders', 'Base Master', 'administrator', '1', 'NA', 'NA', '1', 1,1  WHERE NOT EXISTS (select * from LSusergrouprights where displaytopic = 'Unlock Orders' and usergroupid_usergroupcode = 1); 
 
 INSERT into LSusergrouprightsmaster (orderno, displaytopic, modulename, sallow, screate, sdelete,sedit, status,sequenceorder) SELECT 80, 'Orders Shared By Me', 'Protocol Order And Register', '0', 'NA', 'NA', '0', '0,0,1',3 WHERE NOT EXISTS (select * from LSusergrouprightsmaster where displaytopic = 'Orders Shared By Me' and modulename = 'Protocol Order And Register'); 
 
@@ -350,3 +308,135 @@ ALTER TABLE IF Exists lsprotocolsampleupdates ADD COLUMN IF NOT EXISTS unit varc
 update LSusergrouprightsmaster set sedit='0' where displaytopic = 'User Group' and modulename= 'UserManagement';
 
 ALTER TABLE LSreviewdetails ALTER COLUMN reviewcomments TYPE varchar(250);
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsresultfieldvalues_sno_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN       
+      CREATE SEQUENCE lsresultfieldvalues_sno_seq;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+
+CREATE TABLE IF NOT EXISTS public.lsresultfieldvalues
+(
+    sno integer NOT NULL DEFAULT nextval('lsresultfieldvalues_sno_seq'::regclass),
+    fieldname character varying(100) COLLATE pg_catalog."default",
+    fieldvalue character varying(100) COLLATE pg_catalog."default",
+    resseqno integer,
+    resultid integer,
+    CONSTRAINT lsresultfieldvalues_pkey PRIMARY KEY (sno)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsresultfieldvalues
+    OWNER to postgres;
+    
+    -- Table: public.elnfileattachments
+
+-- DROP TABLE IF EXISTS public.elnfileattachments;
+
+CREATE TABLE IF NOT EXISTS public.elnfileattachments
+(
+    attachmentcode bigint NOT NULL,
+    batchcode numeric(17,0),
+    createdate timestamp without time zone,
+    fileextension character varying(10) COLLATE pg_catalog."default",
+    fileid character varying(250) COLLATE pg_catalog."default",
+    filename character varying(250) COLLATE pg_catalog."default",
+    islargefile integer,
+    methodkey integer,
+    modifieddate timestamp without time zone,
+    createby_usercode integer,
+    modifiedby_usercode integer,
+    CONSTRAINT elnfileattachments_pkey PRIMARY KEY (attachmentcode),
+    CONSTRAINT fk1jd5ua7hdqnjmyy9lkcffmaiq FOREIGN KEY (createby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fknejj0mrkl68yn315an2hk10mv FOREIGN KEY (modifiedby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.elnfileattachments
+    OWNER to postgres;
+
+
+ALTER TABLE IF Exists lsprotocolmaster ADD COLUMN IF NOT EXISTS defaulttemplate integer;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'elnresultdetails_resultid_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN       
+      CREATE SEQUENCE elnresultdetails_resultid_seq;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+    
+CREATE TABLE IF NOT EXISTS public.elnresultdetails
+(
+    resultid integer NOT NULL DEFAULT nextval('elnresultdetails_resultid_seq'::regclass),
+    batchcode numeric(17,0) NOT NULL,
+    createddate timestamp without time zone,
+    filerefname character varying(255) COLLATE pg_catalog."default",
+    methodkey integer,
+    paramname character varying(255) COLLATE pg_catalog."default",
+    parserblockkey integer,
+    results character varying(255) COLLATE pg_catalog."default",
+    seqnumber integer,
+    usercode integer NOT NULL,
+    sitecode integer NOT NULL,
+    status integer,
+    parserfieldkey integer,
+    CONSTRAINT elnresultdetails_pkey PRIMARY KEY (resultid),
+    CONSTRAINT fk3e3wxpn9p7uaf7bi93lpl65kx FOREIGN KEY (sitecode)
+        REFERENCES public.lssitemaster (sitecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkb74gvmqkxraf9nd715upaiwvn FOREIGN KEY (usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT elnresultdetails_status_check CHECK (status <= 1 AND status >= '-1'::integer)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.elnresultdetails
+    OWNER to postgres;    
+
+
