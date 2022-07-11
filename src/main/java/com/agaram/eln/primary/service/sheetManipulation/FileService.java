@@ -585,6 +585,8 @@ public class FileService {
 							+ "\", \"previousworkflowcode\":\"" + perviousworkflowcode + "\", \"currentworkflow\":\""
 							+ objFile.getLssheetworkflow().getWorkflowname() + "\", \"currentworkflowcode\":\""
 							+ objFile.getLssheetworkflow().getWorkflowcode() + "\"}";
+					
+					List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
 
 					for (int i = 0; i < objteam.size(); i++) {
 						LSusersteam objteam1 = LSusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
@@ -595,6 +597,9 @@ public class FileService {
 
 							if (objFile.getObjLoggeduser().getUsercode() != lstusers.get(j).getLsuserMaster()
 									.getUsercode()) {
+								if(lstnotified.contains(lstusers.get(j).getLsuserMaster()))continue;
+								
+								lstnotified.add(lstusers.get(j).getLsuserMaster());
 								LSnotification objnotify = new LSnotification();
 								if (IsNewsheet) {
 									objnotify.setNotificationdate(objFile.getCreatedate());
@@ -623,6 +628,8 @@ public class FileService {
 							+ objFile.getLssheetworkflow().getWorkflowname() + "\", \"currentworkflowcode\":\""
 							+ objFile.getLssheetworkflow().getWorkflowcode() + "\"}";
 
+					List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
+					
 					for (int i = 0; i < objteam.size(); i++) {
 						LSusersteam objteam1 = LSusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
 
@@ -632,7 +639,9 @@ public class FileService {
 
 							if (objFile.getLSuserMaster().getUsercode() != lstusers.get(j).getLsuserMaster()
 									.getUsercode()) {
-
+								if(lstnotified.contains(lstusers.get(j).getLsuserMaster()))continue;
+								
+								lstnotified.add(lstusers.get(j).getLsuserMaster());
 								LSnotification objnotify = new LSnotification();
 								if (IsNewsheet) {
 									objnotify.setNotificationdate(objFile.getCreatedate());
