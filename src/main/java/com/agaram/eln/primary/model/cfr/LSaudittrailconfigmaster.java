@@ -58,6 +58,10 @@ public class LSaudittrailconfigmaster {
 	public void setTaskname(String taskname) {
 		this.taskname = taskname;
 	}
+	public void operate() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 	

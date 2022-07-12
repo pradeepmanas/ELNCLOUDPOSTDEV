@@ -200,5 +200,10 @@ public class LSusergrouprights {
 	public void setModifiedon(Date modifiedon) {
 		this.modifiedon = modifiedon;
 	}
+
+	public void operate() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

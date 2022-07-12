@@ -176,13 +176,14 @@ public class FileService {
 
 	public LSfile InsertupdateSheet(LSfile objfile) {
 		Boolean Isnew = false;
-		String Content = objfile.getFilecontent();
+		
+		String rawString = objfile.getFilecontent();
+		byte[] bytes = rawString.getBytes(StandardCharsets.UTF_16);
 
-		if (objfile.getFilecode() == null
-				&& lSfileRepository.findByfilenameuserIgnoreCaseAndLssitemaster(objfile.getFilenameuser(),
-						objfile.getLssitemaster()) != null)
+		String Content = new String(bytes, StandardCharsets.UTF_16);
 
-		{
+		if (objfile.getFilecode() == null && lSfileRepository.findByfilenameuserIgnoreCaseAndLssitemaster(objfile.getFilenameuser(),
+						objfile.getLssitemaster()) != null) {
 
 			objfile.setResponse(new Response());
 			objfile.getResponse().setStatus(false);
@@ -248,16 +249,6 @@ public class FileService {
 
 		updatefilecontent(Content, objfile, Isnew);
 
-		if (objfile.getObjsilentaudit() != null) {
-
-			objfile.getObjsilentaudit().setTableName("LSfile");
-		}
-
-		if (objfile.getObjuser() != null) {
-			objfile.getObjmanualaudit().setComments(objfile.getObjuser().getComments());
-			objfile.getObjmanualaudit().setTableName("LSfile");
-		}
-
 		objfile.setResponse(new Response());
 		objfile.getResponse().setStatus(true);
 		objfile.getResponse().setInformation("ID_SHEETMSG");
@@ -281,7 +272,7 @@ public class FileService {
 			if (largefile != null) {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
-			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes()), fileid);
+			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes()), fileid, StandardCharsets.UTF_16);
 		}
 
 	}
@@ -904,7 +895,7 @@ public class FileService {
 			if (largefile != null) {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
-			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes()), fileid);
+			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes()), fileid, StandardCharsets.UTF_16);
 
 		}
 	}

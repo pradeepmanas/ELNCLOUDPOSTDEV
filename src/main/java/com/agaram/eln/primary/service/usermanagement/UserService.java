@@ -62,7 +62,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 @EnableJpaRepositories(basePackageClasses = LSusergroupRepository.class)
 public class UserService {
-	
+
 	@Autowired
 	private com.agaram.eln.primary.repository.cfr.LSpreferencesRepository LSpreferencesRepository;
 
@@ -262,7 +262,7 @@ public class UserService {
 				&& objusermaster.getLsusergroup() == null) {
 			LSuserMaster updateUser = lsuserMasterRepository.findOne(objusermaster.getUsercode());
 			updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A" : "D");
-			if(!isnewuser && objusermaster.isReset()) {
+			if (!isnewuser && objusermaster.isReset()) {
 				updateUser.setPassword(objusermaster.getPassword());
 			}
 			updateUser.setLockcount(objusermaster.getLockcount());
@@ -429,39 +429,35 @@ public class UserService {
 			return objteam;
 		} else if (objteam.getStatus() == -1) {
 			List<LSprojectmaster> team = new ArrayList<LSprojectmaster>();
-			team = LSprojectmasterRepository.findByLsusersteam(objteam); 
+			team = LSprojectmasterRepository.findByLsusersteam(objteam);
 //			List<LSprojectmaster> findByLsusersteam(LSusersteam lsusersteam);
 			List<LSlogilablimsorderdetail> order = new ArrayList<LSlogilablimsorderdetail>();
 			List<LSprojectmaster> projcode = new ArrayList<LSprojectmaster>();
 			projcode = LSprojectmasterRepository.findByLsusersteam(objteam);
-			if(projcode.size() > 0)
-			{
-			order = LSlogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIn("N", projcode);
-			if(team.get(0).getStatus() == 1) {
-				objteam.setResponse(new Response());
-				objteam.getResponse().setStatus(false);
-				objteam.getResponse().setInformation("IDS_TEAMPROGRESS");	
-			}
-			else if (order.size() > 0) {
-				objteam.setResponse(new Response());
-				objteam.getResponse().setStatus(false);
-				objteam.getResponse().setInformation("IDS_TEAMINPROGRESS");
-				if (objteam.getObjsilentaudit() != null) {
-					objteam.getObjsilentaudit().setActions("Warning");
-					objteam.getObjsilentaudit().setComments(objteam.getModifiedby().getUsername() + " "
-							+ "made attempt to delete existing team associated with orders");
-					objteam.getObjsilentaudit().setTableName("LSusersteam");
+			if (projcode.size() > 0) {
+				order = LSlogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIn("N", projcode);
+				if (team.get(0).getStatus() == 1) {
+					objteam.setResponse(new Response());
+					objteam.getResponse().setStatus(false);
+					objteam.getResponse().setInformation("IDS_TEAMPROGRESS");
+				} else if (order.size() > 0) {
+					objteam.setResponse(new Response());
+					objteam.getResponse().setStatus(false);
+					objteam.getResponse().setInformation("IDS_TEAMINPROGRESS");
+					if (objteam.getObjsilentaudit() != null) {
+						objteam.getObjsilentaudit().setActions("Warning");
+						objteam.getObjsilentaudit().setComments(objteam.getModifiedby().getUsername() + " "
+								+ "made attempt to delete existing team associated with orders");
+						objteam.getObjsilentaudit().setTableName("LSusersteam");
+					}
+					return objteam;
+				} else {
+					lsusersteamRepository.save(objteam);
+					objteam.setResponse(new Response());
+					objteam.getResponse().setStatus(true);
+					objteam.getResponse().setInformation("ID_SUCCESSMSG");
 				}
-				return objteam;
 			} else {
-				lsusersteamRepository.save(objteam);
-				objteam.setResponse(new Response());
-				objteam.getResponse().setStatus(true);
-				objteam.getResponse().setInformation("ID_SUCCESSMSG");
-			}
-			}
-			else
-			{
 				lsusersteamRepository.save(objteam);
 				objteam.setResponse(new Response());
 				objteam.getResponse().setStatus(true);
@@ -517,59 +513,164 @@ public class UserService {
 	}
 
 	public Map<String, Object> GetUserRightsonGroup(LSusergroup lsusergroup) {
+
 		Map<String, Object> maprights = new HashMap<String, Object>();
+		
+		LSpreferences objpref = LSpreferencesRepository.findByTasksettingsAndValuesettings("ELNparser", "0");
+
 		if (lsusergroup.getUsergroupcode() == null) {
 			List<LSusergrouprightsmaster> lstUserrightsmaster = lsusergrouprightsmasterRepository
 					.findByOrderBySequenceorder();
 			maprights.put("new", true);
-			maprights.put("rights", lstUserrightsmaster);
+
+			if (objpref != null) {
+
+				List<LSusergrouprightsmaster> remLst = new ArrayList<LSusergrouprightsmaster>();
+
+				lstUserrightsmaster.stream().filter(item -> item.getModulename().equalsIgnoreCase("Parser"))
+						.forEach(item -> {
+							item.operate();
+							remLst.add(item);
+						});
+
+				lstUserrightsmaster.removeAll(remLst);
+
+				maprights.put("rights", lstUserrightsmaster);
+			} else {
+				maprights.put("rights", lstUserrightsmaster);
+			}
 		} else {
 			List<LSusergrouprights> lstUserrights = lsusergrouprightsRepository.findByUsergroupid(lsusergroup);
 			List<LSusergrouprightsmaster> lstUserrightsmasterlst = lsusergrouprightsmasterRepository
 					.findByOrderBySequenceorder();
 			if (lstUserrights != null && lstUserrights.size() > 0 && lstUserrights.size() > 10) {
 				maprights.put("new", false);
-				maprights.put("rights", lstUserrights);
-				maprights.put("masterrights", lstUserrightsmasterlst);
+				
+				if (objpref != null) {
+
+					List<LSusergrouprightsmaster> remLst = new ArrayList<LSusergrouprightsmaster>();
+
+					lstUserrightsmasterlst.stream().filter(item -> item.getModulename().equalsIgnoreCase("Parser"))
+							.forEach(item -> {
+								item.operate();
+								remLst.add(item);
+							});
+
+					lstUserrightsmasterlst.removeAll(remLst);
+					
+					List<LSusergrouprights> remRightsLst = new ArrayList<LSusergrouprights>();
+					
+					lstUserrights.stream().filter(item -> item.getModulename().equalsIgnoreCase("Parser"))
+					.forEach(item -> {
+						item.operate();
+						remRightsLst.add(item);
+					});
+
+					lstUserrights.removeAll(remRightsLst);
+
+					maprights.put("rights", lstUserrights);
+					maprights.put("masterrights", lstUserrightsmasterlst);
+				} else {
+					maprights.put("rights", lstUserrights);
+					maprights.put("masterrights", lstUserrightsmasterlst);
+				}
+				
 			} else {
 				List<LSusergrouprightsmaster> lstUserrightsmaster = lsusergrouprightsmasterRepository
 						.findByOrderBySequenceorder();
 				maprights.put("new", true);
-				maprights.put("rights", lstUserrightsmaster);
+				if (objpref != null) {
+
+					List<LSusergrouprightsmaster> remLst = new ArrayList<LSusergrouprightsmaster>();
+
+					lstUserrightsmaster.stream().filter(item -> item.getModulename().equalsIgnoreCase("Parser"))
+							.forEach(item -> {
+								item.operate();
+								remLst.add(item);
+							});
+
+					lstUserrightsmaster.removeAll(remLst);
+
+					maprights.put("rights", lstUserrightsmaster);
+				} else {
+					maprights.put("rights", lstUserrightsmaster);
+				}
 			}
 		}
-		if (lsusergroup.getObjsilentaudit() != null) {
-			lsusergroup.getObjsilentaudit().setTableName("LSusergroup");
-//			lscfttransactionRepository.save(lsusergroup.getObjsilentaudit());
-		}
+
 		return maprights;
 	}
 
 	public Map<String, Object> GetUserRightsonUser(LSuserMaster objUser) {
 
+		Map<String, Object> maprights = new HashMap<String, Object>();
 		LSusergroup lsusergroup = objUser.getLsusergrouptrans();
 
-		Map<String, Object> maprights = new HashMap<String, Object>();
+		LSpreferences objpref = LSpreferencesRepository.findByTasksettingsAndValuesettings("ELNparser", "0");
+
 		if (lsusergroup.getUsergroupcode() == null) {
 			List<LSusergrouprightsmaster> lstUserrightsmaster = lsusergrouprightsmasterRepository.findAll();
 			maprights.put("new", true);
-			maprights.put("rights", lstUserrightsmaster);
+			if (objpref != null) {
+
+				List<LSusergrouprightsmaster> remLst = new ArrayList<LSusergrouprightsmaster>();
+
+				lstUserrightsmaster.stream().filter(item -> item.getModulename().equalsIgnoreCase("Parser"))
+						.forEach(item -> {
+							item.operate();
+							remLst.add(item);
+						});
+
+				lstUserrightsmaster.removeAll(remLst);
+
+				maprights.put("rights", lstUserrightsmaster);
+			} else {
+				maprights.put("rights", lstUserrightsmaster);
+			}
 		} else {
 			List<LSusergrouprights> lstUserrights = lsusergrouprightsRepository.getrightsonUsergroupid(lsusergroup);
 			if (lstUserrights != null && lstUserrights.size() > 0) {
 				maprights.put("new", false);
-				maprights.put("rights", lstUserrights);
+				if (objpref != null) {
+
+					List<LSusergrouprights> remLst = new ArrayList<LSusergrouprights>();
+
+					lstUserrights.stream().filter(item -> item.getModulename().equalsIgnoreCase("Parser"))
+							.forEach(item -> {
+								item.operate();
+								remLst.add(item);
+							});
+
+					lstUserrights.removeAll(remLst);
+
+					maprights.put("rights", lstUserrights);
+				} else {
+					maprights.put("rights", lstUserrights);
+				}
 
 			} else {
 				List<LSusergrouprightsmaster> lstUserrightsmaster = lsusergrouprightsmasterRepository.findAll();
 				maprights.put("new", true);
-				maprights.put("rights", lstUserrightsmaster);
+
+				if (objpref != null) {
+
+					List<LSusergrouprightsmaster> remLst = new ArrayList<LSusergrouprightsmaster>();
+
+					lstUserrightsmaster.stream().filter(item -> item.getModulename().equalsIgnoreCase("Parser"))
+							.forEach(item -> {
+								item.operate();
+								remLst.add(item);
+							});
+
+					lstUserrightsmaster.removeAll(remLst);
+
+					maprights.put("rights", lstUserrightsmaster);
+				} else {
+					maprights.put("rights", lstUserrightsmaster);
+				}
 			}
 		}
-		if (lsusergroup.getObjsilentaudit() != null) {
 
-			lsusergroup.getObjsilentaudit().setTableName("LSusergroup");
-		}
 		return maprights;
 	}
 
@@ -593,10 +694,7 @@ public class UserService {
 	}
 
 	public List<LSactiveUser> GetActiveUsers(LSuserMaster objuser) {
-		if (objuser.getObjsilentaudit() != null) {
-			objuser.getObjsilentaudit().setTableName("LSuserMaster");
-//			lscfttransactionRepository.save(objuser.getObjsilentaudit());
-		}
+
 		return lsactiveUserRepository.findAll();
 
 	}
@@ -737,16 +835,16 @@ public class UserService {
 
 		return objExitinguser;
 	}
-	
+
 	public LSPasswordPolicy PasswordpolicySave(LSPasswordPolicy objpwd) {
 
-		if(objpwd.getComplexpasswrd() == 0) {
+		if (objpwd.getComplexpasswrd() == 0) {
 			objpwd.setMincapitalchar(0);
 			objpwd.setMinsmallchar(0);
 			objpwd.setMinnumericchar(0);
 			objpwd.setMinspecialchar(0);
 		}
-		
+
 		lSpasswordpolicyRepository.save(objpwd);
 
 		if (objpwd.getObjsilentaudit() != null) {
@@ -857,7 +955,7 @@ public class UserService {
 
 		return objresmap;
 	}
-	
+
 	public Map<String, Object> GetLatestnotificationcount(LSnotification lsnotification) {
 		Map<String, Object> objresmap = new HashMap<String, Object>();
 
@@ -950,15 +1048,16 @@ public class UserService {
 		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objusergroup.getLssitemaster());
 	}
 
-	public LSuserMaster getUserOnCode(LSuserMaster objuser) {LSuserMaster objExitinguser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
-	
+	public LSuserMaster getUserOnCode(LSuserMaster objuser) {
+		LSuserMaster objExitinguser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
+
 		String encryptionStr = objExitinguser.getPassword() + "_" + objExitinguser.getUsername()
-		+ objExitinguser.getLssitemaster().getSitename();
-	
+				+ objExitinguser.getLssitemaster().getSitename();
+
 		String encryptPassword = AESEncryption.encrypt(encryptionStr);
-		
+
 		objExitinguser.setEncryptedpassword(encryptPassword);
-		
+
 		return objExitinguser;
 	}
 
@@ -1003,12 +1102,12 @@ public class UserService {
 	public Boolean getUsersManinFrameLicenseStatus(LSSiteMaster objsite) {
 
 		Boolean bool = true;
-		
+
 		LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser",
-				"Active"); 
+				"Active");
 
 		if (objPrefrence != null) {
-			
+
 			String dvalue = objPrefrence.getValueencrypted();
 
 			String sConcurrentUsers = AESEncryption.decrypt(dvalue);
@@ -1017,13 +1116,14 @@ public class UserService {
 
 			int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
 
-			Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNotAndLssitemaster(1, 1,objsite);
+			Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNotAndLssitemaster(1, 1,
+					objsite);
 
 			if (userCount < nConcurrentUsers) {
-				
+
 				bool = true;
 
-			}else {
+			} else {
 				bool = false;
 			}
 			return bool;

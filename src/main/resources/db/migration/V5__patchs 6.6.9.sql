@@ -439,4 +439,21 @@ TABLESPACE pg_default;
 ALTER TABLE public.elnresultdetails
     OWNER to postgres;    
 
+delete from LSpreferences where tasksettings ='ELNparser';
+insert into LSpreferences (serialno,tasksettings,valuesettings) values(4,'ELNparser','1');
+
+DO
+$do$
+declare
+  resultvalues integer :=0;
+begin
+
+SELECT count(*) into resultvalues FROM
+information_schema.table_constraints WHERE constraint_name='fk6awbvwq8363r0pdi4dmsf6g58'
+AND table_name='lsresultfieldvalues';
+ IF resultvalues =0 THEN
+ 	ALTER TABLE ONLY lsresultfieldvalues ADD CONSTRAINT fk6awbvwq8363r0pdi4dmsf6g58 FOREIGN KEY (resultid) REFERENCES elnresultdetails(resultid);
+   END IF;
+END
+$do$;  
 

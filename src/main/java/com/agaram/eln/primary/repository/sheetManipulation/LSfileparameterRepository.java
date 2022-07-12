@@ -20,4 +20,6 @@ public interface LSfileparameterRepository extends JpaRepository<LSfileparameter
 	@Modifying
 	@Query("delete from LSfileparameter where filecode = ?1 and fileparametercode not in (?2)")
 	public void deleteByFilecodeAndFileparametercodeNotIn(Integer filecode, List<Integer> lsfileParametercode);
+
+	public List<LSfileparameter> findByFilecodeOrderByFileparametercode(Integer filecode);
 }

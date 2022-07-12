@@ -152,4 +152,8 @@ public class LSaudittrailconfiguration {
 	public void setOrdersequnce(Integer ordersequnce) {
 		this.ordersequnce = ordersequnce;
 	}
+	public void operate() {
+		// TODO Auto-generated method stub
+		
+	}
 }

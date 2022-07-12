@@ -134,4 +134,7 @@ public class LSusergrouprightsmaster {
 		this.sequenceorder = sequenceorder;
 	}
 	
+	public void operate() {
+		// TODO Auto-generated method stub		
+	}
 }

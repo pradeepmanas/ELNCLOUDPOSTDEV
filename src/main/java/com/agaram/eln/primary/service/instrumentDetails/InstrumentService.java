@@ -85,6 +85,7 @@ import com.agaram.eln.primary.model.methodsetup.ParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
+import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
@@ -134,6 +135,7 @@ import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.SubParserFieldRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSfileparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSparsedparametersRespository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileversionRepository;
@@ -155,7 +157,6 @@ import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
-import java.util.Date;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
@@ -181,6 +182,8 @@ public class InstrumentService {
 	private LSfieldsRepository lSfieldsRepository;
 	@Autowired
 	private LSfilemethodRepository LSfilemethodRepository;
+	@Autowired
+	private LSfileparameterRepository LSfileparameterRepository;
 	@Autowired
 	private LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
 	@Autowired
@@ -2060,7 +2063,7 @@ public class InstrumentService {
 			if (largefile != null) {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
-			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes()), fileid);
+			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes()), fileid, StandardCharsets.UTF_16);
 
 		}
 	}
@@ -2171,7 +2174,7 @@ public class InstrumentService {
 			if (largefile != null) {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
-			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes()), fileid);
+			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes()), fileid, StandardCharsets.UTF_16);
 		}
 	}
 
@@ -2181,6 +2184,11 @@ public class InstrumentService {
 		List<LSfilemethod> methodlst = LSfilemethodRepository
 				.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode());
 
+		List<LSfileparameter> paramlst = LSfileparameterRepository
+				.findByFilecodeOrderByFileparametercode(objorder.getLsfile().getFilecode());
+		
+		objorder.getLsfile().setLsparameter(paramlst);
+		
 		if (!methodlst.isEmpty()) {
 			objorder.setInstrumentcode(methodlst.get(0).getInstrumentid());
 			objorder.setMethodcode(methodlst.get(0).getMethodid());

@@ -822,12 +822,13 @@ public class RestService {
 			String Batchid=(String) objMap.get("Batch");
 			
 			LSlimsorder limsOrder=LSlimsorderRepository.findFirstByBatchidOrderByOrderidDesc(Batchid);
-//			LSlimsorder limsOrder=LSlimsorderRepository.findByBatchid(Batchid);
 		 	
 		 	Long order = limsOrder.getOrderid();
 		 	Integer testcode = Integer.valueOf(objMap.get("testcode").toString());
 		 	
 		 	List<LSsampleresult> lstResult = LSsampleresultRepository.findByBatchcodeAndTestcode(batchcode, testcode);
+		 	
+			System.out.print("parameter : " + lstResult);
 		 	
 		 	if(!lstResult.isEmpty()) {
 		 		

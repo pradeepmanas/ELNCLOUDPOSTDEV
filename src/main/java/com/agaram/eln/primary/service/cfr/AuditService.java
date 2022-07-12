@@ -23,11 +23,11 @@ import com.agaram.eln.primary.model.cfr.LSaudittrailconfigmaster;
 import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfrreasons;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.cfr.LSreviewdetails;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.cfr.LSaudittrailconfigmasterRepository;
 import com.agaram.eln.primary.repository.cfr.LSaudittrailconfigurationRepository;
@@ -86,7 +86,17 @@ public class AuditService {
 
 	public List<String> CFRTranModuleName() {
 		List<String> result = LSusergrouprightsRepository.findDistinctmodulename();
-		return result;
+
+		LSpreferences objpref = LSpreferencesRepository.findByTasksettingsAndValuesettings("ELNparser", "0");
+
+		if (objpref != null) {
+
+			result.removeIf(x -> x.contains("Parser"));
+
+			return result;
+		} else {
+			return result;
+		}
 	}
 
 	public LScfrreasons InsertupdateReasons(LScfrreasons objClass) {
@@ -217,25 +227,62 @@ public class AuditService {
 	public Map<String, Object> GetAuditconfigUser(LSaudittrailconfiguration LSaudittrailconfiguration) {
 
 		Map<String, Object> maprAuditConfig = new HashMap<String, Object>();
+
+		LSpreferences objpref = LSpreferencesRepository.findByTasksettingsAndValuesettings("ELNparser", "0");
+
 		List<LSaudittrailconfiguration> lstAudit = LSaudittrailconfigurationRepository
 				.findByLsusermaster(LSaudittrailconfiguration.getLsusermaster());
 		List<LSaudittrailconfigmaster> lstAuditmaster = LSaudittrailconfigmasterRepository.findByOrderByOrdersequnce();
 
 		if (lstAudit != null && lstAudit.size() > 0) {
 			maprAuditConfig.put("new", false);
-			maprAuditConfig.put("AuditConfig", lstAudit);
-			maprAuditConfig.put("AuditConfigmaster", lstAuditmaster);
+			if (objpref != null) {
+
+				List<LSaudittrailconfiguration> remLst = new ArrayList<LSaudittrailconfiguration>();
+
+				lstAudit.stream().filter(item -> item.getModulename().equalsIgnoreCase("Parser")).forEach(item -> {
+					item.operate();
+					remLst.add(item);
+				});
+
+				lstAudit.removeAll(remLst);
+
+				List<LSaudittrailconfigmaster> remMasLst = new ArrayList<LSaudittrailconfigmaster>();
+
+				lstAuditmaster.stream().filter(item -> item.getModulename().equalsIgnoreCase("Parser"))
+						.forEach(item -> {
+							item.operate();
+							remMasLst.add(item);
+						});
+
+				lstAuditmaster.removeAll(remMasLst);
+
+				maprAuditConfig.put("AuditConfig", lstAudit);
+				maprAuditConfig.put("AuditConfigmaster", lstAuditmaster);
+			} else {
+				maprAuditConfig.put("AuditConfig", lstAudit);
+				maprAuditConfig.put("AuditConfigmaster", lstAuditmaster);
+			}
 		} else {
 			List<LSaudittrailconfigmaster> lstAuditConfigmaster = LSaudittrailconfigmasterRepository
 					.findByOrderByOrdersequnce();
 			maprAuditConfig.put("new", true);
-			maprAuditConfig.put("AuditConfig", lstAuditConfigmaster);
-		}
+			if (objpref != null) {
 
-		if (LSaudittrailconfiguration.getObjsilentaudit() != null) {
+				List<LSaudittrailconfigmaster> remMasLst = new ArrayList<LSaudittrailconfigmaster>();
 
-			LSaudittrailconfiguration.getObjsilentaudit().setTableName("LSaudittrailconfiguration");
-//			lscfttransactionRepository.save(LSaudittrailconfiguration.getObjsilentaudit());
+				lstAuditConfigmaster.stream().filter(item -> item.getModulename().equalsIgnoreCase("Parser"))
+						.forEach(item -> {
+							item.operate();
+							remMasLst.add(item);
+						});
+
+				lstAuditConfigmaster.removeAll(remMasLst);
+
+				maprAuditConfig.put("AuditConfig", lstAuditConfigmaster);
+			} else {
+				maprAuditConfig.put("AuditConfig", lstAuditConfigmaster);
+			}
 		}
 
 		return maprAuditConfig;
@@ -440,7 +487,6 @@ public class AuditService {
 	@SuppressWarnings("rawtypes")
 	public List<LScfttransaction> GetCFRTransactionsdid(Map<String, Object> objCFRFilter) throws ParseException {
 		List<LScfttransaction> list = new ArrayList<LScfttransaction>();
-	
 
 		if (objCFRFilter.containsKey("user") && objCFRFilter.containsKey("module") && objCFRFilter.containsKey("system")
 				&& objCFRFilter.containsKey("fromdate") && objCFRFilter.containsKey("todate")) {
