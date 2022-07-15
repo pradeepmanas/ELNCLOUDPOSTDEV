@@ -214,4 +214,43 @@ public class commonfunction {
 
 		return rtnMapObj;
 	}
+	
+	public static List<String> getTagValues(String jsonString) {
+
+		List<String> lstTags = new ArrayList<String>();
+
+		try {
+
+			JSONObject jsonObject = new JSONObject(jsonString);
+			JSONArray jsonArray = jsonObject.getJSONArray("sheets");
+			jsonArray.forEach(rowitem -> {
+
+				JSONObject rowobj = (JSONObject) rowitem;
+				JSONArray jsonRowArray = rowobj.getJSONArray("rows");
+
+				jsonRowArray.forEach(cellitem -> {
+
+					JSONObject cellObj = (JSONObject) cellitem;
+					JSONArray jsonCellArray = cellObj.getJSONArray("cells");
+					jsonCellArray.forEach(objCell -> {
+
+						JSONObject objCellValue = (JSONObject) objCell;
+
+						if (objCellValue.has("tag")) {
+
+							String tag = objCellValue.getString("tag");
+
+							lstTags.add(tag);
+						}
+					});
+				});
+			});
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return lstTags;
+	}
+
 }

@@ -496,4 +496,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndLsworkflowInAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String string, List<LSprojectmaster> lstproject, List<LSworkflow> lstworkflow);
 
+	List<Logilaborders> findByOrderflagOrderByBatchcodeDesc(String string);
+
 }
