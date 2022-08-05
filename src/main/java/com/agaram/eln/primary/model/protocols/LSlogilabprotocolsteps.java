@@ -80,16 +80,7 @@ public class LSlogilabprotocolsteps {
 	@Transient
 	private List<LSprotocolorderimages> lsprotocolorderimages;
 	
-	@Transient
-	private Integer multitenent;
 	
-	
-	public Integer getMultitenent() {
-		return multitenent;
-	}
-	public void setMultitenent(Integer multitenent) {
-		this.multitenent = multitenent;
-	}
 	public String getModifiedusername() {
 		return modifiedusername;
 	}

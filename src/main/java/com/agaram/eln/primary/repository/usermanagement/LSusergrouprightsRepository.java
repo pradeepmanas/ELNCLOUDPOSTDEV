@@ -15,7 +15,6 @@ import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 public interface LSusergrouprightsRepository  extends JpaRepository<LSusergrouprights, Integer>{
 	public List<LSusergrouprights> findByModulename(String modulename);
 	public List<LSusergrouprights> findByUsergroupid(LSusergroup lsusergroup);
-	public List<LSusergrouprights> findByDisplaytopic(String displaytopic);
 	
 	 @Query("SELECT DISTINCT r.modulename FROM LSusergrouprights r where modulename !='User Group' and modulename !='User Master'")
 	// @Query("SELECT DISTINCT r.modulename FROM LSusergrouprights r")
@@ -25,7 +24,5 @@ public interface LSusergrouprightsRepository  extends JpaRepository<LSusergroupr
 	@Modifying
 	@Query("select o from LSusergrouprights o where o.usergroupid= ?1 ORDER BY o.sequenceorder DESC")
 	 public List<LSusergrouprights> getrightsonUsergroupid(LSusergroup lsusergroup);
-	 @Query("SELECT r.displaytopic FROM LSusergrouprights r")
-     public List<String> findBydisplaytopic();
 
 }

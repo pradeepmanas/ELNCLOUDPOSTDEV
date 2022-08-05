@@ -18,7 +18,6 @@ public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster
 	public List<Integer> findProjectcodeByLsusersteamIn(List<LSusersteam> lsusersteam);
 	
 	public List<LSprojectmaster> findByLsusersteam(LSusersteam lsusersteam);
-	public List<LSprojectmaster> findProjectcodeAndProjectnameBystatusAndLssitemaster(Integer status,LSSiteMaster lssitemaster);
 	public List<Projectmaster> findBystatusAndLssitemaster(Integer status,LSSiteMaster lssitemaster);
 	public LSprojectmaster findByProjectnameAndStatusAndLssitemaster(String projectname, Integer status,LSSiteMaster lssitemaster);
 	public LSprojectmaster findByProjectnameAndStatusAndProjectcodeNotAndLssitemaster(String projectname, Integer status, Integer Projectcode,LSSiteMaster lssitemaster);
@@ -26,7 +25,5 @@ public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster
 			LSSiteMaster lssitemaster);
 	public LSprojectmaster findByProjectnameIgnoreCaseAndStatusAndProjectcodeNotAndLssitemaster(String projectname, Integer status,
 			Integer projectcode, LSSiteMaster lssitemaster);
-	public List<LSprojectmaster> findProjectcodeAndProjectnameBystatusAndLssitemaster(int status,
-			LSSiteMaster lssitemaster);
 	
 }

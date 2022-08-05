@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
-import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 
@@ -32,11 +31,11 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,
-			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal) {
+			Date createdtimestamp, Date completedtimestamp,String keyword) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
-		this.testname = lstestmasterlocal != null ? lstestmasterlocal.getTestname() : testname;
+		this.testname = testname;
 		this.filename = lsfile != null ? lsfile.getFilenameuser() : null;
 		this.projectname = lsprojectmaster != null ? lsprojectmaster.getProjectname() : null;
 		this.samplename = lssamplemaster != null ? lssamplemaster.getSamplename() : null;

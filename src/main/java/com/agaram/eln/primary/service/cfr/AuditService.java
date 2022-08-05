@@ -98,20 +98,7 @@ public class AuditService {
 			return result;
 		}
 	}
-	public List<String> CFRTranScreenName() {
-		List<String> result = LSusergrouprightsRepository.findBydisplaytopic();
 
-		LSpreferences objpref = LSpreferencesRepository.findByTasksettingsAndValuesettings("ELNparser", "0");
-
-		if (objpref != null) {
-
-			result.removeIf(x -> x.contains("Parser"));
-
-			return result;
-		} else {
-			return result;
-		}
-	}
 	public LScfrreasons InsertupdateReasons(LScfrreasons objClass) {
 
 		objClass.setResponse(new Response());

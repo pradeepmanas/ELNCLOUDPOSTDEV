@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
@@ -52,15 +51,5 @@ public class limsintegarationcontroller {
 	@PostMapping("/getAttachmentsForLIMS")
 	public List<LsOrderattachments> getAttachmentsForLIMS(@RequestBody LSlimsorder objOrder)throws Exception {
 		return limsintegarationservice.getAttachmentsForLIMS(objOrder);
-	}
-	
-	@PostMapping("/getOrdersFromELN")
-	public List<Logilaborders> getOrdersFromELN(@RequestBody Map<String, Object> obj)throws Exception {
-		return limsintegarationservice.getOrdersFromELN(obj);
-	}
-	
-	@PostMapping("/getOrderTagFromELN")
-	public List<String> getOrderTagFromELN(@RequestBody Map<String, Object> obj)throws Exception {
-		return limsintegarationservice.getOrderTagFromELN(obj);
 	}
 }

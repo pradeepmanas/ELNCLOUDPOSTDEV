@@ -48,10 +48,7 @@ public class AuditTrailController {
 	public List<String> CFRTranModuleName(HttpServletRequest request)throws Exception {
 		return auditService.CFRTranModuleName();
 	}
-	@GetMapping(path = "/CFRTranScreenName")
-	public List<String> CFRTranScreenName(HttpServletRequest request)throws Exception {
-		return auditService.CFRTranScreenName();
-	}
+
 	@PostMapping("/InsertupdateReasons")
 	public LScfrreasons InsertupdateReasons(@RequestBody LScfrreasons objClass)throws Exception {
 

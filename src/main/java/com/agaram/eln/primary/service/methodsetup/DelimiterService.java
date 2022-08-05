@@ -358,7 +358,6 @@ public class DelimiterService {
 //   }   
    
    
-   
    public ResponseEntity<Object> updateDelimiters(final Delimiter delimiters, final LSSiteMaster site,
 		   final String comments, final boolean saveAuditTrail, 
 		   final HttpServletRequest request, final int doneByUserKey)
@@ -368,8 +367,6 @@ public class DelimiterService {
 	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
 	   if(delimiterByKey.isPresent()) {		   
-
-//		   if(delimiterByKey.get().getDefaultvalue() == null) { 
 
 		   final List<MethodDelimiter> methodDelimiterList = methodDelimiterRepo.findByDelimiterAndStatus(delimiterByKey.get(), 1);
 		   
@@ -508,10 +505,6 @@ public class DelimiterService {
 				   return new ResponseEntity<>(delimiterByKey.get().getDelimitername() , HttpStatus.IM_USED);//status code - 226		    		
 		   		}
 		   }
-//		   else {
-//			   return new ResponseEntity<>(delimiterByKey.get().getDelimitername(), HttpStatus.LOCKED);
-//		      }
-//		   }
 		   else
 		   {
 			   //Invalid delimiterkey		   
@@ -522,7 +515,7 @@ public class DelimiterService {
 				return new ResponseEntity<>("Update Failed - Delimiter Not Found", HttpStatus.NOT_FOUND);
 		   }
    }
-      
+   
    
    /**
 	 * This method is used to delete the selected Delimiters entity with its primary key.
@@ -546,8 +539,6 @@ public class DelimiterService {
 	   
 	   if(delimiterByKey.isPresent()) {
 
-		   if(delimiterByKey.get().getDefaultvalue() == null) {
-			   		   
 		   final Delimiter delimiter = delimiterByKey.get();
 		   
 		   final List<MethodDelimiter> methodDelimiterList = methodDelimiterRepo.findByDelimiterAndStatus(delimiter, 1);
@@ -618,10 +609,6 @@ public class DelimiterService {
 			   }
 			   return new ResponseEntity<>(delimiter.getDelimitername() , HttpStatus.IM_USED);//status code - 226	
 			   
-		   }
-		 }
-		   else {
-			   return new ResponseEntity<>(delimiterByKey.get().getDelimitername(), HttpStatus.LOCKED);
 		   }
 	   }
 	   else

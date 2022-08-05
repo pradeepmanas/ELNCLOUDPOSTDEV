@@ -83,7 +83,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@ManyToOne
 	private LSuserMaster lsuserMaster;
 
-	private Integer testcode;
+	private Integer Testcode;
 
 	@ManyToOne
 	private LSsamplemaster lssamplemaster;
@@ -393,14 +393,12 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.lsuserMaster = lsuserMaster;
 	}
 
-
-
 	public Integer getTestcode() {
-		return testcode;
+		return Testcode;
 	}
 
 	public void setTestcode(Integer testcode) {
-		this.testcode = testcode;
+		Testcode = testcode;
 	}
 
 	public LSsamplemaster getLssamplemaster() {

@@ -40,7 +40,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "delimiter")
 @XmlType(propOrder = { "delimiterkey", "delimitername", "actualdelimiter", 
-		 "status", "createdby", "createddate" , "username","transactiondate","defaultvalue"})
+		 "status", "createdby", "createddate" , "username","transactiondate"})
 @Entity
 @Table(name = "delimiter")
 public class Delimiter implements Serializable, Diffable<Delimiter>{
@@ -67,10 +67,7 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 
 	@Transient
 	private String username;
-
-	@Column(name = "defaultvalue")
-	private Integer defaultvalue;	
-		
+	
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
 	Date transactiondate;
@@ -116,14 +113,6 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 
 	public void setStatus(int status) {
 		this.status = status;
-	}
-
-	public Integer getDefaultvalue() {
-		return defaultvalue;
-	}
-
-	public void setDefaultvalue(Integer defaultvalue) {
-		this.defaultvalue = defaultvalue;
 	}
 
 	@XmlElement	
@@ -176,7 +165,6 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	       .append("createddate", this.createddate, obj.createddate)
 	       .append("username", this.username, obj.username)
 	       .append("transactiondate", this.transactiondate, obj.transactiondate)
-	       .append("defaultvalue", this.defaultvalue, obj.defaultvalue)
 	       .build();
 	}
 
@@ -195,7 +183,6 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 		this.createddate = delimiter.createddate;
 		this.username = delimiter.username;
 		this.transactiondate = delimiter.transactiondate;
-		this.defaultvalue = delimiter.defaultvalue;
 	}
 	
 	/**
