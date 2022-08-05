@@ -15,6 +15,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -26,8 +27,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	@Query("update LSlogilablimsorderdetail o set o.batchid = ?1 where o.batchcode = ?2")
 	void setbatchidBybatchcode(String batchid, Long batchcode);
 
-	public List<LSlogilablimsorderdetail> findByFiletypeAndOrderflagOrderByBatchcodeDesc(Integer filetype,
-			String orderflag);
+	public List<LSlogilablimsorderdetail> findByFiletypeAndOrderflagOrderByBatchcodeDesc(Integer filetype,String orderflag);
 
 	public long countByFiletypeAndOrderflagOrderByBatchcodeDesc(Integer filetype, String orderflag);
 
@@ -466,6 +466,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	List<LSlogilablimsorderdetail> findBybatchcode(Long batchcode);
 	
 	public List<Logilaborders> findByDirectorycodeOrderByBatchcodeDesc(Long directorycode);
+	
+	public List<Logilaborders> findByOrderflagOrderByBatchcodeDesc(String orderflag);
 
 	@Transactional
 	@Modifying
@@ -495,5 +497,10 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndLsworkflowInAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String string, List<LSprojectmaster> lstproject, List<LSworkflow> lstworkflow);
+	
+
+	List<Logilaborders> findByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(Integer orderdisplaytype, List<LSprojectmaster> lstproject);
+	
+	List<Logilaborders> findByOrderdisplaytypeAndLssamplemasterInAndTestcodeIsNotNull(Integer orderdisplaytype, List<LSsamplemaster> lstsample);
 
 }

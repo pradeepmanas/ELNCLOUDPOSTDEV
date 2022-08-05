@@ -795,8 +795,8 @@ public class InstrumentController {
 	}
 
 	@RequestMapping("/Getfoldersfororders")
-	public List<LSSheetOrderStructure> Getfoldersfororders(@RequestBody LSSheetOrderStructure objdir)throws Exception {
-		return instrumentService.Getfoldersfororders(objdir);
+	public Map<String, Object> Getfoldersfororders(@RequestBody LSuserMaster objusermaster)throws Exception {
+		return instrumentService.Getfoldersfororders(objusermaster);
 	}
 	
 	@RequestMapping("/UpdateFolderfororder")
