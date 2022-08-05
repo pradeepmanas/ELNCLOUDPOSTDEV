@@ -28,17 +28,20 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 
 	private String keyword;
 	
+	private Integer Testcode;
+	
 	List<LSprotocolworkflow> lstworkflow;
 	private LSprotocolworkflow lSprotocolworkflow;
 	private Integer workflowcode;
 	private boolean canuserprocess;
 
-	public Logilabprotocolorders(Long protocolordercode, String protoclordername, String orderflag,
+	public Logilabprotocolorders(Long protocolordercode,Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
 			LSprotocolworkflow lSprotocolworkflow,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,String keyword) {
 
 		this.protocolordercode = protocolordercode;
+		this.Testcode =Testcode;
 		this.protoclordername = protoclordername;
 		this.orderflag = orderflag;
 		this.workflowcode = lSprotocolworkflow != null ? lSprotocolworkflow.getWorkflowcode() : null;
@@ -49,6 +52,14 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 		this.samplename = lssamplemaster != null ? lssamplemaster.getSamplename():"";
 		this.projectname = lsprojectmaster != null ? lsprojectmaster.getProjectname():"";
 		this.keyword = keyword;
+	}
+
+	public Integer getTestcode() {
+		return Testcode;
+	}
+
+	public void setTestcode(Integer testcode) {
+		Testcode = testcode;
 	}
 
 	public String getKeyword() {
