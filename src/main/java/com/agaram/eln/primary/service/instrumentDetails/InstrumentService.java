@@ -41,6 +41,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
+import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
+import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.cfr.LSactivity;
@@ -88,6 +90,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
+import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
@@ -139,6 +142,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSfileparameterReposi
 import com.agaram.eln.primary.repository.sheetManipulation.LSparsedparametersRespository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileversionRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSsamplemasterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsampleresultRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
@@ -154,6 +158,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingReposit
 //import com.agaram.eln.primary.repository4mibatis.LSlogilablimsorderdetailMibatisRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
+import com.agaram.eln.primary.service.usermanagement.UserService;
 import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
@@ -312,12 +317,16 @@ public class InstrumentService {
 
 	@Autowired
 	private LSSheetOrderStructureRepository lsSheetOrderStructureRepository;
+	
+	@Autowired
+	private LSsamplemasterRepository lssamplemasterrepository;
 
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
 	
-
-
+	@Autowired
+    private UserService userService;
+	
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
 		List<String> lsInst = new ArrayList<String>();
@@ -4145,14 +4154,47 @@ public class InstrumentService {
 		return objdir;
 	}
 
-	public List<LSSheetOrderStructure> Getfoldersfororders(LSSheetOrderStructure objdir) {
+	public Map<String, Object> Getfoldersfororders(LSuserMaster objusermaster) {
+		
+		Map<String, Object> mapfolders = new HashMap<String, Object>();
+		
 		List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 		lstdir = lsSheetOrderStructureRepository.findAll();
-		if (lstdir != null && lstdir.size() > 0) {
-			lstdir.get(0).setLsorderitems(lslogilablimsorderdetailRepository
-					.findByDirectorycodeOrderByBatchcodeDesc(lstdir.get(0).getDirectorycode()));
+//		if (lstdir != null && lstdir.size() > 0) {
+//			lstdir.get(0).setLsorderitems(lslogilablimsorderdetailRepository
+//					.findByDirectorycodeOrderByBatchcodeDesc(lstdir.get(0).getDirectorycode()));
+//		}
+		
+		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findProjectcodeAndProjectnameBystatusAndLssitemaster(1,objusermaster.getLssitemaster());
+		if(lstproject != null && lstproject.size()>0)
+		{
+			List<Logilaborders> lstorders = lslogilablimsorderdetailRepository.findByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(1,lstproject);
+			mapfolders.put("tests", lstorders != null ?lstorders : new ArrayList<Logilaborders>());
+			mapfolders.put("projects", lstproject);
 		}
-		return lstdir;
+		else
+		{
+			mapfolders.put("tests", new ArrayList<Logilaborders>());
+			mapfolders.put("projects", new ArrayList<Projectmaster>());
+		}
+		
+		List<LSsamplemaster> lstsample = lssamplemasterrepository.findSamplecodeAndSamplenameBystatusAndLssitemaster(1,objusermaster.getLssitemaster());
+		if(lstsample != null && lstsample.size() >0)
+		{
+			List<Logilaborders> lstorders = lslogilablimsorderdetailRepository.findByOrderdisplaytypeAndLssamplemasterInAndTestcodeIsNotNull(2,lstsample);
+			mapfolders.put("sampletests", lstorders != null ?lstorders : new ArrayList<Logilaborders>());
+			mapfolders.put("samples", lstsample);
+		}
+		else
+		{
+			mapfolders.put("sampletests", new ArrayList<Logilaborders>());
+			mapfolders.put("samples", new ArrayList<Samplemaster>());
+		}
+		
+		mapfolders.put("users",userService.GetUsers(objusermaster));
+		mapfolders.put("directory", lstdir);
+		
+		return mapfolders;
 	}
 
 	public LSlogilablimsorderdetail UpdateFolderfororder(LSlogilablimsorderdetail order) {

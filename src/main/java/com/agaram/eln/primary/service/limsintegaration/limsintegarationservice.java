@@ -60,16 +60,16 @@ public class limsintegarationservice {
 
 	@Autowired
 	private LsResultlimsOrderrefrenceRepository LsResultlimsOrderrefrenceRepository;
-	
+
 	@Autowired
 	private LSfileparameterRepository lSfileparameterRepository;
-	
+
 	@Autowired
 	private LSlogilablimsorderdetailRepository LSlogilablimsorderdetailRepository;
-	
+
 	@Autowired
 	private LsOrderattachmentsRepository LsOrderattachmentsRepository;
-	
+
 	@Autowired
 	private CloudOrderCreationRepository cloudOrderCreationRepository;
 
@@ -114,8 +114,8 @@ public class limsintegarationservice {
 
 	public LsSheetorderlimsrefrence downloadSheetFromELN(LsSheetorderlimsrefrence objattachments) {
 
-		System.out.print("Sheet download lims call service " + objattachments);
-/// batch code means file code
+		//System.out.print("Sheet download lims call service " + objattachments);
+		/// batch code means file code
 		LsSheetorderlimsrefrence objSheet = LsSheetorderlimsrefrenceRepository
 				.findFirst1BybatchcodeOrderByRefrencecodeDesc(objattachments.getBatchcode());
 
@@ -167,22 +167,23 @@ public class limsintegarationservice {
 	}
 
 	public List<LsOrderattachments> getAttachmentsForLIMS(LSlimsorder objOrder) {
-		
+
 //		LSlimsorder limsOrder = LSlimsorderRepository.findByBatchid(objOrder.getBatchid());
-		
-		LSlogilablimsorderdetail orderClass =LSlogilablimsorderdetailRepository.findByBatchid(objOrder.getBatchid());
-		
+
+		LSlogilablimsorderdetail orderClass = LSlogilablimsorderdetailRepository.findByBatchid(objOrder.getBatchid());
+
 		List<LsOrderattachments> lstAttachments = new ArrayList<LsOrderattachments>();
-		
-		if(orderClass != null) {
-		
-			lstAttachments = LsOrderattachmentsRepository.findByBatchcodeOrderByAttachmentcodeDesc(orderClass.getBatchcode());
-			
+
+		if (orderClass != null) {
+
+			lstAttachments = LsOrderattachmentsRepository
+					.findByBatchcodeOrderByAttachmentcodeDesc(orderClass.getBatchcode());
+
 		}
-		
+
 		return lstAttachments;
 	}
-	
+
 	public List<Logilaborders> getOrdersFromELN(Map<String, Object> obj) {
 
 		List<Logilaborders> orderlst = new ArrayList<Logilaborders>();
@@ -243,4 +244,5 @@ public class limsintegarationservice {
 
 		return objlstStr;
 	}
+
 }

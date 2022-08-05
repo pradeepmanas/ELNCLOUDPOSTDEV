@@ -28,6 +28,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LStestparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
@@ -149,6 +150,9 @@ public class LSlogilablimsorderdetail {
 	@ManyToOne
 	private LSsamplefile lssamplefile;
 	
+	@ManyToOne
+	private LStestmasterlocal lstestmasterlocal;
+	
 	@OneToMany
 	@JoinColumn(name="batchcode")
 	private List<LSparsedparameters> lsparsedparameters;
@@ -208,6 +212,8 @@ public class LSlogilablimsorderdetail {
 	
 	@Transient
 	private Integer ismultitenant;
+	
+	private Integer orderdisplaytype;
 	
 	public List<LsOrderattachments> getLsOrderattachments() {
 		return lsOrderattachments;
@@ -576,6 +582,10 @@ public class LSlogilablimsorderdetail {
 	}
 
 	public String getTestname() {
+		if(this.lstestmasterlocal != null)
+		{
+			return this.lstestmasterlocal.getTestname();
+		}
 		return testname;
 	}
 
@@ -762,6 +772,18 @@ public class LSlogilablimsorderdetail {
 	}
 	public void setDirectorycode(Long directorycode) {
 		this.directorycode = directorycode;
+	}
+	public Integer getOrderdisplaytype() {
+		return orderdisplaytype;
+	}
+	public void setOrderdisplaytype(Integer orderdisplaytype) {
+		this.orderdisplaytype = orderdisplaytype;
+	}
+	public LStestmasterlocal getLstestmasterlocal() {
+		return lstestmasterlocal;
+	}
+	public void setLstestmasterlocal(LStestmasterlocal lstestmasterlocal) {
+		this.lstestmasterlocal = lstestmasterlocal;
 	}
 	
 	

@@ -214,7 +214,7 @@ public class commonfunction {
 
 		return rtnMapObj;
 	}
-	
+
 	public static List<String> getTagValues(String jsonString) {
 
 		List<String> lstTags = new ArrayList<String>();
@@ -252,5 +252,4 @@ public class commonfunction {
 
 		return lstTags;
 	}
-
 }
