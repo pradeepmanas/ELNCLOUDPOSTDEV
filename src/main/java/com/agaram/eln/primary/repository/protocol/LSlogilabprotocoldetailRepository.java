@@ -41,7 +41,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	
 //	List<Logilabprotocolorders> findByCreatedtimestampBetween(Date fromdate, Date todate);
 
-	List<Logilabprotocolorders> findByProtocoltype(Integer protocotype);
+//	List<Logilabprotocolorders> findByProtocoltype(Integer protocotype);
 	
 	long countByOrderflag(String orderflg);
 	
