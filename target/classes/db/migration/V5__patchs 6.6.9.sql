@@ -1,3 +1,4 @@
+
 update lsfile set filenameuser = 'Default Template' where filecode = 1;
 
 update lsusergrouprights set sallow='1',screate='1',sdelete='1',sedit='1' where modulename='Protocol Templates' and displaytopic ='Protocol Templates';
@@ -105,8 +106,6 @@ insert into lsaudittrailconfigmaster values(78,0,'Protocol Order And Register',7
 insert into lsaudittrailconfigmaster values(79,0,'Protocol Order And Register',75,'Protocol Order And Register','Save')ON CONFLICT(serialno)DO NOTHING;
 insert into lsaudittrailconfigmaster values(80,0,'Protocol Order And Register',77,'Protocol Order And Register','Complete task')ON CONFLICT(serialno)DO NOTHING;
 
-
-
 update LSusergrouprightsmaster set sallow = '0' where displaytopic = 'Add repository' and sallow= 'NA';
 update LSusergrouprightsmaster set sallow = '0' where displaytopic = 'Edit repository' and sallow= 'NA';
 
@@ -125,6 +124,7 @@ delete from lsusergrouprights where modulename = 'Register Task Orders & Execute
 ALTER TABLE IF Exists lsprotocolstep ADD COLUMN IF NOT EXISTS   timer jsonb;
 
 ALTER TABLE IF Exists lslogilabprotocolsteps ADD COLUMN IF NOT EXISTS   timer jsonb;
+
 
 DO
 $do$
@@ -169,65 +169,12 @@ ALTER TABLE public.lssheetorderstructure
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS directorycode bigint;
 ALTER TABLE IF Exists lssheetorderstructure ADD COLUMN IF NOT EXISTS directoryname character varying(255);
 
-insert into lssheetorderstructure(datecreated, datemodified, parentdircode, path, size, directoryname ) 
-values (NOW(),NOW(),-1,'Sheet/my order', 124, 'my order');
-
-update lslogilablimsorderdetail set directorycode = 1;
-
-DO
-$do$
-DECLARE
-   _kind "char";
-BEGIN
-   SELECT relkind
-   FROM   pg_class
-   WHERE  relname = 'lsresultfieldvalues_sno_seq' 
-   INTO  _kind;
-
-   IF NOT FOUND THEN       
-      CREATE SEQUENCE lsresultfieldvalues_sno_seq;
-   ELSIF _kind = 'S' THEN  
-      -- do nothing?
-   ELSE                    -- object name exists for different kind
-      -- do something!
-   END IF;
-END
-$do$;
-
-
-CREATE TABLE IF NOT EXISTS public.lsresultfieldvalues
-(
-    sno integer NOT NULL DEFAULT nextval('lsresultfieldvalues_sno_seq'::regclass),
-    fieldname character varying(100) COLLATE pg_catalog."default",
-    fieldvalue character varying(100) COLLATE pg_catalog."default",
-    resseqno integer,
-    resultid integer,
-    CONSTRAINT lsresultfieldvalues_pkey PRIMARY KEY (sno),
-    CONSTRAINT fk6awbvwq8363r0pdi4dmsf6g58 FOREIGN KEY (resultid)
-        REFERENCES public.elnresultdetails (resultid) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
-
-ALTER TABLE public.lsresultfieldvalues
-    OWNER to postgres;
-    
 ALTER TABLE IF Exists elnresultdetails ADD COLUMN IF NOT EXISTS parserfieldkey integer;
 
 ALTER TABLE IF Exists lsprotocolorderversion ADD COLUMN IF NOT EXISTS createdby integer;
     
-INSERT INTO methoddelimiter (createddate,status,usercode,delimiterkey,parsermethodkey) SELECT '2020-05-15 00:00:00.000',1,1,1,1 WHERE NOT EXISTS 
-(select * from methoddelimiter where methoddelimiterkey = 1);   
-
-INSERT into LSusergrouprightsmaster (orderno, displaytopic, modulename, sallow, screate, sdelete,sedit, status,sequenceorder) SELECT 78, 'Unlock Orders', 'Base Master', '0', 'NA', 'NA', '0', '0,0,1',73WHERE NOT EXISTS (select * from LSusergrouprightsmaster where displaytopic = 'Unlock Orders'); 
-
-INSERT into LSusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode) SELECT 'Unlock Orders', 'Base Master', 'administrator', '1', 'NA', 'NA', '1', 1,1  WHERE NOT EXISTS (select * from LSusergrouprights where displaytopic = 'Unlock Orders' and usergroupid_usergroupcode = 1); 
-
 ALTER TABLE IF Exists LSusergrouprights ADD COLUMN IF NOT EXISTS sequenceorder integer;
+
  
 update LSusergrouprightsmaster set sequenceorder = 1 where modulename = 'Dash Board';
 update LSusergrouprightsmaster set sequenceorder = 2 where modulename = 'Register Task Orders & Execute';
@@ -298,31 +245,52 @@ TABLESPACE pg_default;
 ALTER TABLE public.cloudparserfile
     OWNER to postgres;
 
-DO
-$do$
-DECLARE
-    counter integer := 0;
-BEGIN
-  select count(*) into counter from methoddelimiter where methoddelimiterkey = 1;
-
-   IF counter=0 THEN       -- name is free
-INSERT into methoddelimiter (createddate, status, usercode, delimiterkey, parsermethodkey)
-SELECT 1, CAST(N'2020-05-15 00:00:00.000' AS DateTime),1,1,1,1
-WHERE NOT EXISTS (select * from methoddelimiter where methoddelimiterkey = 1); 
-   END IF;
-END
-$do$;
 
 update LSusergrouprightsmaster set displaytopic = 'Pending Work' where displaytopic = 'Pending' and sequenceorder = 3;
 update LSusergrouprightsmaster set displaytopic = 'Completed Work' where displaytopic = 'Completed' and sequenceorder = 3;
 update LSusergrouprights set displaytopic = 'Pending Work' where displaytopic = 'Pending' and sequenceorder = 3;
 update LSusergrouprights set displaytopic = 'Completed Work' where displaytopic = 'Completed' and sequenceorder = 3;
 
-INSERT into LSusergrouprightsmaster (orderno, displaytopic, modulename, sallow, screate, sdelete,sedit, status,sequenceorder) SELECT 80, 'Orders Shared By Me', 'Protocol Order And Register', '0', 'NA', 'NA', '0', '0,0,1',3 WHERE NOT EXISTS (select * from LSusergrouprightsmaster where displaytopic = 'Orders Shared By Me' and modulename = 'Protocol Order And Register'); 
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 1;
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey)
+SELECT 1,1,1,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 1); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from delimiter where delimitername='None';
+
+   IF counter=0 THEN       -- name is free
+INSERT into delimiter (delimitername,actualdelimiter,status,usercode) 
+SELECT 'None', 'None', 1, 1 WHERE NOT EXISTS (SELECT delimitername FROM delimiter WHERE delimitername = 'None'); 
+ELSE
+update delimiter set actualdelimiter = 'None' where delimitername='None' and status=1;
+END IF;
+END
+$do$;
+
+INSERT into LSusergrouprightsmaster (orderno, displaytopic, modulename, sallow, screate, sdelete,sedit, status,sequenceorder) SELECT 78, 'Unlock Orders', 'Base Master', '0', 'NA', 'NA', '0', '0,0,1',73 WHERE NOT EXISTS (select * from LSusergrouprightsmaster where displaytopic = 'Unlock Orders'); 
+
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode) SELECT 'Unlock Orders', 'Base Master', 'administrator', '1', 'NA', 'NA', '1', 1,1  WHERE NOT EXISTS (select * from LSusergrouprights where displaytopic = 'Unlock Orders' and usergroupid_usergroupcode = 1); 
+
+INSERT into LSusergrouprightsmaster (orderno, displaytopic, modulename, sallow, screate, sdelete,sedit, status,sequenceorder) SELECT 80, 'Orders Shared By Me', 'Protocol Order And Register', '0', 'NA', 'NA', '0', '0,0,1',3 WHERE NOT EXISTS (select * from LSusergrouprightsmaster where displaytopic = 'Orders Shared By Me' and modulename = 'Protocol Order And Register') ON CONFLICT(orderno)DO NOTHING; 
 
 INSERT into LSusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,sequenceorder) SELECT 'Orders Shared By Me', 'Protocol Order And Register', 'administrator', '1', 'NA', 'NA', '1', 1,1,3  WHERE NOT EXISTS (select * from LSusergrouprights where displaytopic = 'Orders Shared By Me' and modulename = 'Protocol Order And Register' and usergroupid_usergroupcode = 1); 
 
-INSERT into LSusergrouprightsmaster (orderno, displaytopic, modulename, sallow, screate, sdelete,sedit, status,sequenceorder) SELECT 81, 'Orders Shared To Me', 'Protocol Order And Register', '0', 'NA', 'NA', '0', '0,0,1',3 WHERE NOT EXISTS (select * from LSusergrouprightsmaster where displaytopic = 'Orders Shared To Me' and modulename = 'Protocol Order And Register'); 
+INSERT into LSusergrouprightsmaster (orderno, displaytopic, modulename, sallow, screate, sdelete,sedit, status,sequenceorder) SELECT 81, 'Orders Shared To Me', 'Protocol Order And Register', '0', 'NA', 'NA', '0', '0,0,1',3 WHERE NOT EXISTS (select * from LSusergrouprightsmaster where displaytopic = 'Orders Shared To Me' and modulename = 'Protocol Order And Register')ON CONFLICT(orderno)DO NOTHING; 
 
 INSERT into LSusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,sequenceorder) SELECT 'Orders Shared To Me', 'Protocol Order And Register', 'administrator', '1', 'NA', 'NA', '1', 1,1,3  WHERE NOT EXISTS (select * from LSusergrouprights where displaytopic = 'Orders Shared To Me' and modulename = 'Protocol Order And Register' and usergroupid_usergroupcode = 1);
 
@@ -330,5 +298,462 @@ delete from LSaudittrailconfigmaster where modulename = 'Parser' ;
 
 ALTER TABLE IF Exists lsprotocolordersampleupdates ADD COLUMN IF NOT EXISTS unit varchar(250);
 
-
 ALTER TABLE IF Exists lsprotocolsampleupdates ADD COLUMN IF NOT EXISTS unit varchar(250);
+
+update LSusergrouprightsmaster set sedit='0' where displaytopic = 'User Group' and modulename= 'UserManagement';
+
+ALTER TABLE LSreviewdetails ALTER COLUMN reviewcomments TYPE varchar(250);
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsresultfieldvalues_sno_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN       
+      CREATE SEQUENCE lsresultfieldvalues_sno_seq;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+
+CREATE TABLE IF NOT EXISTS public.lsresultfieldvalues
+(
+    sno integer NOT NULL DEFAULT nextval('lsresultfieldvalues_sno_seq'::regclass),
+    fieldname character varying(100) COLLATE pg_catalog."default",
+    fieldvalue character varying(100) COLLATE pg_catalog."default",
+    resseqno integer,
+    resultid integer,
+    CONSTRAINT lsresultfieldvalues_pkey PRIMARY KEY (sno)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsresultfieldvalues
+    OWNER to postgres;
+    
+    -- Table: public.elnfileattachments
+
+-- DROP TABLE IF EXISTS public.elnfileattachments;
+
+CREATE TABLE IF NOT EXISTS public.elnfileattachments
+(
+    attachmentcode bigint NOT NULL,
+    batchcode numeric(17,0),
+    createdate timestamp without time zone,
+    fileextension character varying(10) COLLATE pg_catalog."default",
+    fileid character varying(250) COLLATE pg_catalog."default",
+    filename character varying(250) COLLATE pg_catalog."default",
+    islargefile integer,
+    methodkey integer,
+    modifieddate timestamp without time zone,
+    createby_usercode integer,
+    modifiedby_usercode integer,
+    CONSTRAINT elnfileattachments_pkey PRIMARY KEY (attachmentcode),
+    CONSTRAINT fk1jd5ua7hdqnjmyy9lkcffmaiq FOREIGN KEY (createby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fknejj0mrkl68yn315an2hk10mv FOREIGN KEY (modifiedby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.elnfileattachments
+    OWNER to postgres;
+
+
+ALTER TABLE IF Exists lsprotocolmaster ADD COLUMN IF NOT EXISTS defaulttemplate integer;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'elnresultdetails_resultid_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN       
+      CREATE SEQUENCE elnresultdetails_resultid_seq;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+    
+CREATE TABLE IF NOT EXISTS public.elnresultdetails
+(
+    resultid integer NOT NULL DEFAULT nextval('elnresultdetails_resultid_seq'::regclass),
+    batchcode numeric(17,0) NOT NULL,
+    createddate timestamp without time zone,
+    filerefname character varying(255) COLLATE pg_catalog."default",
+    methodkey integer,
+    paramname character varying(255) COLLATE pg_catalog."default",
+    parserblockkey integer,
+    results character varying(255) COLLATE pg_catalog."default",
+    seqnumber integer,
+    usercode integer NOT NULL,
+    sitecode integer NOT NULL,
+    status integer,
+    parserfieldkey integer,
+    CONSTRAINT elnresultdetails_pkey PRIMARY KEY (resultid),
+    CONSTRAINT fk3e3wxpn9p7uaf7bi93lpl65kx FOREIGN KEY (sitecode)
+        REFERENCES public.lssitemaster (sitecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkb74gvmqkxraf9nd715upaiwvn FOREIGN KEY (usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT elnresultdetails_status_check CHECK (status <= 1 AND status >= '-1'::integer)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.elnresultdetails
+    OWNER to postgres;    
+
+delete from LSpreferences where tasksettings ='ELNparser';
+insert into LSpreferences (serialno,tasksettings,valuesettings) values(4,'ELNparser','1');
+
+DO
+$do$
+declare
+  resultvalues integer :=0;
+begin
+
+SELECT count(*) into resultvalues FROM
+information_schema.table_constraints WHERE constraint_name='fk6awbvwq8363r0pdi4dmsf6g58'
+AND table_name='lsresultfieldvalues';
+ IF resultvalues =0 THEN
+ 	ALTER TABLE ONLY lsresultfieldvalues ADD CONSTRAINT fk6awbvwq8363r0pdi4dmsf6g58 FOREIGN KEY (resultid) REFERENCES elnresultdetails(resultid);
+   END IF;
+END
+$do$;  
+
+update lsusergrouprightsmaster set modulename='Parser', sequenceorder=12 where displaytopic='Instrument Master'and modulename='Base Master';
+
+update lsusergrouprights set modulename='Parser',sequenceorder=12 where displaytopic='Instrument Master'and modulename='Base Master';
+
+update lslogilablimsorderdetail set directorycode = null where directorycode in (select directorycode from lssheetorderstructure where directoryname = 'my order');
+delete from lssheetorderstructure where parentdircode in (select directorycode from lssheetorderstructure where directoryname = 'my order');
+delete from lssheetorderstructure where directoryname = 'my order';
+
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS orderdisplaytype integer;
+
+update LSlogilablimsorderdetail set orderdisplaytype = 1 where orderdisplaytype is null;
+
+CREATE TABLE IF NOT EXISTS public.samplestoragelocation
+(
+    samplestoragelocationkey integer NOT NULL,
+    createdby text COLLATE pg_catalog."default" NOT NULL,
+    createddate timestamp without time zone NOT NULL,
+    samplestoragelocationname character varying COLLATE pg_catalog."default" NOT NULL,
+    sitekey integer NOT NULL,
+    status integer NOT NULL,
+    CONSTRAINT samplestoragelocation_pkey PRIMARY KEY (samplestoragelocationkey)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.samplestoragelocation
+    OWNER to postgres;
+	
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'samplestoragelocation_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE samplestoragelocation_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.samplestorageversion
+(
+    samplestorageversionkey integer NOT NULL,
+    approvalstatus integer NOT NULL,
+    createdby text COLLATE pg_catalog."default" NOT NULL,
+    createddate timestamp without time zone NOT NULL,
+    jsonbresult jsonb NOT NULL,
+    versionno integer NOT NULL,
+    samplestoragelocationkey integer NOT NULL,
+    CONSTRAINT samplestorageversion_pkey PRIMARY KEY (samplestorageversionkey),
+    CONSTRAINT fk5g5vdy68mma3qj12crvewwu8b FOREIGN KEY (samplestoragelocationkey)
+        REFERENCES public.samplestoragelocation (samplestoragelocationkey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.samplestorageversion
+    OWNER to postgres;
+	
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'samplestorageversion_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE samplestorageversion_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS lstestmasterlocal_testcode integer;
+	
+DO
+$do$
+declare
+  testcodelocal integer :=0;
+begin
+
+SELECT count(*) into testcodelocal FROM
+information_schema.table_constraints WHERE constraint_name='fkoc0h7d2l44ol5jm8h12mghlf0'
+AND table_name='lslogilablimsorderdetail';
+ IF testcodelocal =0 THEN
+ 	ALTER TABLE ONLY lslogilablimsorderdetail ADD CONSTRAINT fkoc0h7d2l44ol5jm8h12mghlf0 FOREIGN KEY (lstestmasterlocal_testcode) REFERENCES lstestmasterlocal(testcode);
+   END IF;
+END
+$do$;
+
+update lslogilablimsorderdetail set lstestmasterlocal_testcode = testcode where filetype != 0 and (select count(*) from lstestmasterlocal where testcode = testcode) > 0 and lstestmasterlocal_testcode is null;
+
+update lsusergrouprightsmaster set modulename = 'IDS_MDL_DASHBOARD' where sequenceorder = 1;
+update lsusergrouprightsmaster set modulename = 'IDS_MDL_ORDERS' where sequenceorder IN(2,3);
+update lsusergrouprightsmaster set modulename = 'IDS_MDL_TEMPLATES' where sequenceorder IN(4,5);
+update lsusergrouprightsmaster set modulename = 'IDS_MDL_SETUP' where sequenceorder IN(7,9,8);
+update lsusergrouprightsmaster set modulename = 'IDS_MDL_AUDITTRAIL' where sequenceorder=10;
+update lsusergrouprightsmaster set modulename = 'IDS_MDL_MASTERS' where sequenceorder IN(6,13);
+update lsusergrouprightsmaster set modulename = 'IDS_MDL_REPORTS' where sequenceorder=11;
+update lsusergrouprightsmaster set modulename = 'IDS_MDL_PARSER' where sequenceorder=12;
+
+update lsusergrouprights set modulename = 'IDS_MDL_DASHBOARD' where sequenceorder = 1;
+update lsusergrouprights set modulename = 'IDS_MDL_MASTERS' where sequenceorder IN(6,13);
+update lsusergrouprights set modulename = 'IDS_MDL_ORDERS' where sequenceorder IN(2,3);
+update lsusergrouprights  set modulename = 'IDS_MDL_TEMPLATES' where sequenceorder IN(4,5);
+update lsusergrouprights set modulename = 'IDS_MDL_SETUP' where sequenceorder IN(7,9,8);
+update lsusergrouprights set modulename = 'IDS_MDL_AUDITTRAIL' where sequenceorder=10;
+update lsusergrouprights set modulename = 'IDS_MDL_MASTERS' where sequenceorder IN(6,13);
+update lsusergrouprights set modulename = 'IDS_MDL_REPORTS' where sequenceorder=11;
+update lsusergrouprights set modulename = 'IDS_MDL_PARSER' where sequenceorder=12;
+
+update lsaudittrailconfiguration set modulename = 'IDS_MDL_ORDERS' where ordersequnce IN (2,1);
+update lsaudittrailconfiguration set modulename = 'IDS_MDL_MASTERS' where ordersequnce=6;
+update lsaudittrailconfiguration set modulename = 'IDS_MDL_SETUP' where ordersequnce=7;
+update lsaudittrailconfiguration set modulename = 'IDS_MDL_AUDITTRAIL' where ordersequnce=10;
+update lsaudittrailconfiguration set modulename = 'IDS_MDL_TEMPLATES' where ordersequnce IN(4,5,3);
+update lsaudittrailconfiguration set modulename = 'IDS_MDL_REPORTS' where ordersequnce=11;
+update lsaudittrailconfiguration set modulename = 'IDS_MDL_PARSER' where ordersequnce=12;
+
+
+update lsaudittrailconfigmaster set modulename = 'IDS_MDL_ORDERS' where ordersequnce IN (2,1);
+update lsaudittrailconfigmaster set modulename = 'IDS_MDL_MASTERS' where ordersequnce=6;
+update lsaudittrailconfigmaster set modulename = 'IDS_MDL_SETUP' where ordersequnce=7;
+update lsaudittrailconfigmaster set modulename = 'IDS_MDL_AUDITTRAIL' where ordersequnce=10;
+update lsaudittrailconfigmaster set modulename = 'IDS_MDL_TEMPLATES' where ordersequnce IN(4,5,3);
+update lsaudittrailconfigmaster set modulename = 'IDS_MDL_REPORTS' where ordersequnce=11;
+update lsaudittrailconfigmaster set modulename = 'IDS_MDL_PARSER' where ordersequnce=12;
+
+
+
+-- Table: public.lsmaterialcategorytype
+
+-- DROP TABLE IF EXISTS public.lsmaterialcategorytype;
+
+CREATE TABLE IF NOT EXISTS public.lsmaterialcategorytype
+(
+    materialtypecode integer NOT NULL,
+    defaultstatus integer,
+    sitecode integer,
+    status integer,
+    materialtypename character varying(100) COLLATE pg_catalog."default",
+    CONSTRAINT lsmaterialcategorytype_pkey PRIMARY KEY (materialtypecode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.lsmaterialcategorytype
+    OWNER to postgres;
+	
+	
+	drop table IF EXISTS lsmaterialcategorytype;
+	
+	-- Table: public.materialtype
+
+-- DROP TABLE IF EXISTS public.materialtype;
+
+
+CREATE TABLE IF NOT EXISTS public.materialtype
+(
+    nmaterialtypecode integer NOT NULL,
+    jsondata jsonb,
+    ndefaultstatus smallint NOT NULL DEFAULT 4,
+    nsitecode smallint NOT NULL DEFAULT '-1'::integer,
+    nstatus smallint NOT NULL DEFAULT 1,
+    CONSTRAINT materialtype_pkey PRIMARY KEY (nmaterialtypecode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.materialtype
+    OWNER to postgres;
+	
+
+INSERT INTO public.materialtype(
+	nmaterialtypecode, jsondata, ndefaultstatus, nsitecode, nstatus)
+	VALUES (1,'{
+  "prefix": "V",
+  "sdescription": "Volumetric Type",
+  "needSectionwise": 3,
+  "smaterialtypename": {
+    "en-US": "Volumetric Type",
+    "ru-RU": "Объемный тип",
+    "tg-TG": "Навъи ҳаҷмӣ"
+  },
+  "ismaterialSectionneed": 4
+}' , 4, -1, 1) ON CONFLICT(nmaterialtypecode)DO NOTHING; 
+
+INSERT INTO public.materialtype(
+	nmaterialtypecode, jsondata, ndefaultstatus, nsitecode, nstatus)
+	VALUES (2,'{
+  "prefix": "M",
+  "sdescription": "Material Inventory Type",
+  "needSectionwise": 3,
+  "smaterialtypename": {
+    "en-US": "Material Inventory Type",
+    "ru-RU": "Тип инвентаризации материалов",
+    "tg-TG": "Навъи инвентаризатсияи мавод"
+  },
+  "ismaterialSectionneed": 3
+}' , 4, -1, 1) ON CONFLICT(nmaterialtypecode)DO NOTHING; 
+
+INSERT INTO public.materialtype(
+	nmaterialtypecode, jsondata, ndefaultstatus, nsitecode, nstatus)
+	VALUES (3,'{
+  "prefix": "S",
+  "sdescription": "Standared Type",
+  "needSectionwise": 3,
+  "smaterialtypename": {
+    "en-US": "Standard Type",
+    "ru-RU": "Стандартный тип",
+    "tg-TG": "Навъи стандартӣ"
+  },
+  "ismaterialSectionneed": 3
+}' , 4, -1, 1) ON CONFLICT(nmaterialtypecode)DO NOTHING;
+
+
+-- Table: public.materialcategory
+
+-- DROP TABLE IF EXISTS public.materialcategory;
+
+CREATE TABLE IF NOT EXISTS public.materialcategory
+(
+    nmaterialcatcode integer NOT NULL,
+    nactivestatus smallint NOT NULL DEFAULT 1,
+    nbarcode integer NOT NULL DEFAULT '-1'::integer,
+    ncategorybasedflow smallint NOT NULL DEFAULT 4,
+    ndefaultstatus smallint NOT NULL DEFAULT 4,
+    needsectionwise smallint,
+    nmaterialtypecode smallint NOT NULL,
+    nsitecode smallint NOT NULL DEFAULT '-1'::integer,
+    nstatus smallint NOT NULL DEFAULT 1,
+    nuserrolecode integer NOT NULL,
+    sdescription character varying(255) COLLATE pg_catalog."default",
+    smaterialcatname character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT materialcategory_pkey PRIMARY KEY (nmaterialcatcode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.materialcategory
+    OWNER to postgres;
+
+INSERT INTO public.materialcategory(
+nmaterialcatcode, nmaterialtypecode, nuserrolecode, nbarcode, ncategorybasedflow, nactivestatus, needsectionwise, smaterialcatname, sdescription, ndefaultstatus, nsitecode, nstatus)
+VALUES ( 1,	1,	-1,	-1,	4,	0,	4,	'matc-01',null,4,	-1,	1) ON CONFLICT(nmaterialcatcode)DO NOTHING ;
+    
+INSERT INTO public.materialcategory(
+nmaterialcatcode, nmaterialtypecode, nuserrolecode, nbarcode, ncategorybasedflow, nactivestatus, needsectionwise, smaterialcatname, sdescription, ndefaultstatus, nsitecode, nstatus)
+VALUES (2,1,-1,-1,4,0,4,'matc-02',null,4,-1,1) ON CONFLICT(nmaterialcatcode)DO NOTHING ;
+
+INSERT INTO public.materialcategory(
+nmaterialcatcode, nmaterialtypecode, nuserrolecode, nbarcode, ncategorybasedflow, nactivestatus, needsectionwise, smaterialcatname, sdescription, ndefaultstatus, nsitecode, nstatus)
+VALUES (2,1,-1,-1,4,0,4,'matc-02',null,4,-1,1) ON CONFLICT(nmaterialcatcode)DO NOTHING ;
+    
+INSERT INTO public.materialcategory(
+nmaterialcatcode, nmaterialtypecode, nuserrolecode, nbarcode, ncategorybasedflow, nactivestatus, needsectionwise, smaterialcatname, sdescription, ndefaultstatus, nsitecode, nstatus)
+VALUES (3,1,-1,	-1,	4,	0,	3,	'matc-03',null,4,-1,1) ON CONFLICT(nmaterialcatcode)DO NOTHING ;
+    
+INSERT INTO public.materialcategory(
+nmaterialcatcode, nmaterialtypecode, nuserrolecode, nbarcode, ncategorybasedflow, nactivestatus, needsectionwise, smaterialcatname, sdescription, ndefaultstatus, nsitecode, nstatus)
+VALUES (4,3,-1,	-1,	4,	0,	3,	'Matc-01',null,4,-1,1) ON CONFLICT(nmaterialcatcode)DO NOTHING ;
+	
+ALTER TABLE IF Exists delimiter ADD COLUMN IF NOT EXISTS defaultvalue integer;
+
+update delimiter set defaultvalue = 1 where delimitername='None'and defaultvalue is null;
+
+update delimiter set defaultvalue = 1 where delimitername='Result without space'and defaultvalue is null;
+
+update delimiter set defaultvalue = 1 where delimitername='Result with space'and defaultvalue is null;
+
+update delimiter set defaultvalue = 1 where delimitername='Colon' and defaultvalue is null;
+
+update delimiter set defaultvalue = 1 where delimitername='Comma'  and defaultvalue is null;
+
+update delimiter set defaultvalue = 1 where delimitername='Space' and defaultvalue is null;
+
+update delimiter set defaultvalue = 1 where delimitername='Split Dot' and defaultvalue is null;
+
+update delimiter set defaultvalue = 1 where delimitername='Merge Dot' and defaultvalue is null;
+
+update delimiter set defaultvalue = 1 where delimitername='Slash' and defaultvalue is null;
