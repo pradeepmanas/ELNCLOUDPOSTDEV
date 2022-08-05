@@ -15,6 +15,7 @@ public interface LSsamplemasterRepository extends JpaRepository<LSsamplemaster, 
 	public LSsamplemaster findBySamplenameAndStatusAndSamplecodeNot(String samplename, Integer status, Integer samplecode);
 	
 	public List<Samplemaster> findBystatusAndLssitemaster(Integer status,LSSiteMaster lssitemaster);
+	public List<LSsamplemaster> findSamplecodeAndSamplenameBystatusAndLssitemaster(Integer status,LSSiteMaster lssitemaster);
 	public LSsamplemaster findBySamplenameAndStatusAndLssitemaster(String samplename, Integer status,LSSiteMaster lssitemaster);
 	public LSsamplemaster findBySamplenameAndStatusAndSamplecodeNotAndLssitemaster(String samplename, Integer status, Integer samplecode,LSSiteMaster lssitemaster);
 	public LSsamplemaster findBySamplenameIgnoreCaseAndStatusAndSamplecodeNotAndLssitemaster(String samplename,Integer status,
