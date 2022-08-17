@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.methodsetup;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,9 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
+import com.agaram.eln.primary.model.methodsetup.MethodFieldTechnique;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.methodsetup.DelimiterRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodDelimiterRepository;
@@ -125,10 +128,21 @@ public class DelimiterService {
 	    		delimiters.setCreatedby(createdUser);
 	    			
 	    		final Delimiter savedPolicy = delimitersRepo.save(delimiters);
+	    		savedPolicy.setDisplayvalue(savedPolicy.getDelimitername());
+	    		savedPolicy.setScreenname("Delimiter");
 	    		
+//	    		Map<String, Object> mapObj = new HashMap<String, Object>();
+//
+//	    		mapObj.put("actualdelimiter",savedPolicy.getActualdelimiter());
+//	    		mapObj.put("createdby",savedPolicy.getCreatedby());
+//                mapObj.put("createddate",savedPolicy.getCreateddate());
+//	    		mapObj.put("delimiterkey",savedPolicy.getDelimiterkey());
+//	    		mapObj.put("delimitername",savedPolicy.getDelimitername());   		
+//	    		mapObj.put("status",savedPolicy.getStatus());
+//	    		mapObj.put("displayvalue", savedPolicy.getDelimitername());
+//	    		mapObj.put("screenname","Delimiter" );
+//                mapObj.put("displayvalue", savedPolicy.getActualdelimiter());
 
-				//List<LScfttransaction> lscfttransaction = new ArrayList<LScfttransaction>();
-				
 	    		LScfttransaction LScfttransaction = new LScfttransaction();
 	    		
 	    		if (saveAuditTrial)
@@ -368,6 +382,8 @@ public class DelimiterService {
 	   
 	   if(delimiterByKey.isPresent()) {		   
 
+//		   if(delimiterByKey.get().getDefaultvalue() == null) { 
+
 		   final List<MethodDelimiter> methodDelimiterList = methodDelimiterRepo.findByDelimiterAndStatus(delimiterByKey.get(), 1);
 		   
 		   if (methodDelimiterList.isEmpty()) {
@@ -408,6 +424,22 @@ public class DelimiterService {
 				    		// Updating fields with existing delimter name
 				    		//  Updating rest of the fields other than delimiter name		    			
 				    		final Delimiter savedDelimiters = delimitersRepo.save(delimiters);
+				    		
+				    		savedDelimiters.setDisplayvalue(savedDelimiters.getActualdelimiter());
+				    		savedDelimiters.setScreenname("Delimiter");
+				    		
+//				    		Map<String, Object> mapObj = new HashMap<String, Object>();
+//
+//				    		mapObj.put("actualdelimiter",savedDelimiters.getActualdelimiter());
+//				    		mapObj.put("createdby",savedDelimiters.getCreatedby());
+//				    		mapObj.put("createddate",savedDelimiters.getCreateddate());
+//				    		mapObj.put("delimiterkey",savedDelimiters.getDelimiterkey());
+//				    		mapObj.put("delimitername",savedDelimiters.getDelimitername());
+//				    		mapObj.put("status",savedDelimiters.getStatus());
+//				    	//	mapObj.put("displayvalue", savedDelimiters.getDelimitername());
+//				    		mapObj.put("displayvalue", savedDelimiters.getActualdelimiter());
+
+
 				       		return new ResponseEntity<>(savedDelimiters, HttpStatus.OK);     		
 			    		}
 			    		else
@@ -475,6 +507,20 @@ public class DelimiterService {
 		    			
 			    		final Delimiter savedMethod = delimitersRepo.save(delimiters);
 			    		
+			    		savedMethod.setDisplayvalue(savedMethod.getDelimitername());
+			    		savedMethod.setScreenname("Delimiter");
+			    		
+//			    		Map<String, Object> mapObj = new HashMap<String, Object>();
+//
+//			    	
+//			    		mapObj.put("actualdelimiter",savedMethod.getActualdelimiter());
+//			    		mapObj.put("createdby",savedMethod.getCreatedby());
+//                        mapObj.put("createddate",savedMethod.getCreateddate());
+//			    		mapObj.put("delimiterkey",savedMethod.getDelimiterkey());
+//			    		mapObj.put("delimitername",savedMethod.getDelimitername());
+//			    		mapObj.put("status",savedMethod.getStatus());
+//			    		mapObj.put("displayvalue", savedMethod.getDelimitername());
+
 			    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
 			    	}	
 		   		}
@@ -505,6 +551,10 @@ public class DelimiterService {
 				   return new ResponseEntity<>(delimiterByKey.get().getDelimitername() , HttpStatus.IM_USED);//status code - 226		    		
 		   		}
 		   }
+//		   else {
+//			   return new ResponseEntity<>(delimiterByKey.get().getDelimitername(), HttpStatus.LOCKED);
+//		      }
+//		   }
 		   else
 		   {
 			   //Invalid delimiterkey		   
@@ -539,6 +589,8 @@ public class DelimiterService {
 	   
 	   if(delimiterByKey.isPresent()) {
 
+		   if(delimiterByKey.get().getDefaultvalue() == null) {
+			   		   
 		   final Delimiter delimiter = delimiterByKey.get();
 		   
 		   final List<MethodDelimiter> methodDelimiterList = methodDelimiterRepo.findByDelimiterAndStatus(delimiter, 1);
@@ -579,6 +631,20 @@ public class DelimiterService {
 				   delimiter.setStatus(-1);
 				   final Delimiter savedDelimiters = delimitersRepo.save(delimiter);  
 				   
+				   savedDelimiters.setDisplayvalue(savedDelimiters.getDelimitername());
+				   savedDelimiters.setScreenname("Delimiter");
+		    		
+//		    		
+//					Map<String, Object> mapObj = new HashMap<String, Object>();
+//
+//		    		mapObj.put("actualdelimiter",savedDelimiters.getActualdelimiter());
+//		    		mapObj.put("createdby",savedDelimiters.getCreatedby());
+//		    		mapObj.put("createddate",savedDelimiters.getCreateddate());
+//		    		mapObj.put("delimiterkey",savedDelimiters.getDelimiterkey());
+//		    		mapObj.put("delimitername",savedDelimiters.getDelimitername());	    		
+//		    		mapObj.put("status",savedDelimiters.getStatus());
+//		    		mapObj.put("displayvalue", savedDelimiters.getDelimitername());
+
 			   return new ResponseEntity<>(savedDelimiters, HttpStatus.OK);  
 		   }
 		   else {
@@ -609,6 +675,10 @@ public class DelimiterService {
 			   }
 			   return new ResponseEntity<>(delimiter.getDelimitername() , HttpStatus.IM_USED);//status code - 226	
 			   
+		   }
+		 }
+		   else {
+			   return new ResponseEntity<>(delimiterByKey.get().getDelimitername(), HttpStatus.LOCKED);
 		   }
 	   }
 	   else

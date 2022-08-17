@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -72,8 +73,15 @@ public class Lsordershareto {
 	@Transient
 	private Long sharedbycode;
 	
-	@Transient
-	private LSlogilablimsorderdetail objorder;
+
+	@ManyToOne
+	private LSlogilablimsorderdetail order;
+	
+	@ManyToOne
+	private LSuserMaster usersharedby;
+	
+	@ManyToOne
+	private LSuserMaster usersharedon;
 
 	public Long getSharetocode() {
 		return sharetocode;
@@ -219,14 +227,6 @@ public class Lsordershareto {
 		this.ismultitenant = ismultitenant;
 	}
 
-	public LSlogilablimsorderdetail getObjorder() {
-		return objorder;
-	}
-
-	public void setObjorder(LSlogilablimsorderdetail objorder) {
-		this.objorder = objorder;
-	}
-
 	public Long getSharedbycode() {
 		return sharedbycode;
 	}
@@ -234,5 +234,30 @@ public class Lsordershareto {
 	public void setSharedbycode(Long sharedbycode) {
 		this.sharedbycode = sharedbycode;
 	}
+
+	public LSlogilablimsorderdetail getOrder() {
+		return order;
+	}
+
+	public void setOrder(LSlogilablimsorderdetail order) {
+		this.order = order;
+	}
+
+	public LSuserMaster getUsersharedby() {
+		return usersharedby;
+	}
+
+	public void setUsersharedby(LSuserMaster usersharedby) {
+		this.usersharedby = usersharedby;
+	}
+
+	public LSuserMaster getUsersharedon() {
+		return usersharedon;
+	}
+
+	public void setUsersharedon(LSuserMaster usersharedon) {
+		this.usersharedon = usersharedon;
+	}
+	
 	
 }

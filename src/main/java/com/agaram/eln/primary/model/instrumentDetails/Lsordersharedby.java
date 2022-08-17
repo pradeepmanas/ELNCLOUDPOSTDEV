@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -73,8 +74,14 @@ public class Lsordersharedby {
 	@Transient
 	private Integer ismultitenant;
 	
-	@Transient
-	private LSlogilablimsorderdetail objorder;
+	@ManyToOne
+	private LSlogilablimsorderdetail order;
+	
+	@ManyToOne
+	private LSuserMaster usersharedby;
+	
+	@ManyToOne
+	private LSuserMaster usersharedon;
 
 	public Long getSharedbycode() {
 		return sharedbycode;
@@ -228,12 +235,28 @@ public class Lsordersharedby {
 		this.ismultitenant = ismultitenant;
 	}
 
-	public LSlogilablimsorderdetail getObjorder() {
-		return objorder;
+	public LSlogilablimsorderdetail getOrder() {
+		return order;
 	}
 
-	public void setObjorder(LSlogilablimsorderdetail objorder) {
-		this.objorder = objorder;
+	public void setOrder(LSlogilablimsorderdetail order) {
+		this.order = order;
 	}
-	
+
+	public LSuserMaster getUsersharedby() {
+		return usersharedby;
+	}
+
+	public void setUsersharedby(LSuserMaster usersharedby) {
+		this.usersharedby = usersharedby;
+	}
+
+	public LSuserMaster getUsersharedon() {
+		return usersharedon;
+	}
+
+	public void setUsersharedon(LSuserMaster usersharedon) {
+		this.usersharedon = usersharedon;
+	}
+
 }

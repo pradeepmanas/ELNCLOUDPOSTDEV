@@ -189,4 +189,6 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			Integer sitecode);
 
 	LSprotocolmaster findByDefaulttemplate(int i);
+
+	List<LSprotocolmaster> findByProtocolmastercodeIn(List<Integer> listobjfilecode);
 }

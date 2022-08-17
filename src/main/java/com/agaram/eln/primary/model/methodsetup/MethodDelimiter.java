@@ -41,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "methoddelimiter")
-@XmlType(propOrder = { "methoddelimiterkey", "parsermethod", "delimiter", "status", "createdby", "createddate","transactiondate"})
+@XmlType(propOrder = { "methoddelimiterkey", "parsermethod", "delimiter", "status", "createdby", "createddate","transactiondate","screenname","displayvalue"})
 @Entity
 @Table(name = "methoddelimiter")
 public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>{
@@ -73,6 +73,15 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
 	Date transactiondate;
+	
+	@Transient
+	@Column(name = "displayvalue")
+	private String displayvalue;
+
+	@Transient
+	@Column(name = "screenname")
+	private String screenname;
+
 	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "usercode", nullable = false)
@@ -153,6 +162,23 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	public void setTransactiondate(Date transactiondate) {
 		this.transactiondate = transactiondate;
 	}
+	
+
+	public String getDisplayvalue() {
+		return displayvalue;
+	}
+
+	public void setDisplayvalue(String displayvalue) {
+		this.displayvalue = displayvalue;
+	}
+
+	public String getScreenname() {
+		return screenname;
+	}
+
+	public void setScreenname(String screenname) {
+		this.screenname = screenname;
+	}
 
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
@@ -167,6 +193,9 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	       .append("createddate", this.createddate, obj.createddate)
 	       .append("username", this.username, obj.username)
 	       .append("transactiondate", this.transactiondate, obj.transactiondate)
+	       .append("displayvalue", this.displayvalue, obj.displayvalue)
+	       .append("screenname", this.screenname, obj.screenname)
+
 	       .build();
 	}
 
@@ -185,6 +214,9 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 		this.createddate = methodDelimiter.createddate;
 		this.username = methodDelimiter.username;
 		this.transactiondate = methodDelimiter.transactiondate;
+		this.displayvalue = methodDelimiter.displayvalue;
+        this.screenname = methodDelimiter.screenname;
+
 	}
 	
 	/**

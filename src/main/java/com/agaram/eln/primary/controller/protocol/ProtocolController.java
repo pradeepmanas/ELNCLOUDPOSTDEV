@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
@@ -1003,7 +1004,13 @@ public class ProtocolController {
 		return ProtocolMasterService.updateprotocolstepnoonorder(LSlogilabprotocolsteps);
 
 	}
-	
+	@RequestMapping(value = "/getprotocolperticulerstep/{protocolstepcodeorordercode}/{multitenant}/{protocoltype}", method = RequestMethod.GET)
+	@GetMapping
+	protected LSprotocolstepInformation getprotocolperticulerstep(@PathVariable Integer protocolstepcodeorordercode,@PathVariable Integer multitenant,@PathVariable Integer protocoltype)throws Exception {
+
+		return ProtocolMasterService.getprotocolperticulerstep(protocolstepcodeorordercode,multitenant,protocoltype);
+
+	}
 	
 //	@RequestMapping(value = "/getlistofusersforworkflow")
 //	protected List<LSuserMaster> getlistofusersforworkflow(@RequestBody LSusergroup[] usergroupcode) {

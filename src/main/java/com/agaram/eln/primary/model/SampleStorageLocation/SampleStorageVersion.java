@@ -1,4 +1,4 @@
-package com.agaram.eln.primary.model.SampleStorageLocation;
+package com.agaram.eln.primary.model.samplestoragelocation;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 

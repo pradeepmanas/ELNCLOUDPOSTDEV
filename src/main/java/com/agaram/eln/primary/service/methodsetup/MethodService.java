@@ -214,7 +214,11 @@ public class MethodService {
 			{							
 				methodMaster.setCreatedby(createdUser);
 				methodMaster.setInstmaster(instMaster);					
-				final Method savedMethod = methodRepo.save(methodMaster);					
+				final Method savedMethod = methodRepo.save(methodMaster);
+				
+				savedMethod.setDisplayvalue(savedMethod.getMethodname());
+				savedMethod.setScreenname("Methodmaster");
+				
 				if (saveAuditTrail == true)
 				{
 					final Map<String, String> fieldMap = new HashMap<String, String>();
@@ -244,6 +248,26 @@ public class MethodService {
 					
 				}
 			
+//	    		Map<String, Object> mapObj = new HashMap<String, Object>();
+//   		
+//	    		
+//	    		mapObj.put("createdby",savedMethod.getCreatedby());
+//                mapObj.put("createddate",savedMethod.getCreateddate());
+//            	mapObj.put("filename", savedMethod.getFilename());
+//            	mapObj.put("instmaster", savedMethod.getInstmaster());
+//            	mapObj.put("Instrawdataurl", savedMethod.getInstrawdataurl());
+//            	mapObj.put("methodkey",savedMethod.getMethodkey());
+//            	mapObj.put("methodname",savedMethod.getMethodname());
+//            	mapObj.put("status",savedMethod.getStatus());
+//            	mapObj.put("site", savedMethod.getSite());
+            			
+	    	
+	    	//	mapObj.put("parser", savedMethod.getParser());
+	    	//	mapObj.put("samplesplit", savedMethod.getSamplesplit());
+//	    		mapObj.put("displayvalue", savedMethod.getMethodname());
+//	    		mapObj.put("screenname", "Methodmaster");
+	    	    		
+	    		
 				return new ResponseEntity<>( savedMethod, HttpStatus.OK);			
 			}
 		}
@@ -419,6 +443,9 @@ public class MethodService {
 					method.setInstmaster(instMaster);		    			
 		    		final Method savedMethod = methodRepo.save(method);
 		    		
+		    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
+		    		savedMethod.setScreenname("Methodmaster");
+		    		
 		    		if (saveAuditTrail)
 	    			{
 		    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
@@ -485,6 +512,10 @@ public class MethodService {
 			
 	    		final Method savedMethod = methodRepo.save(method);
 	    		
+	    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
+				savedMethod.setScreenname("Methodmaster");
+				
+	    		
 	    		if (saveAuditTrail)
 			{
 	    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
@@ -508,6 +539,26 @@ public class MethodService {
 	 					lscfttransactionrepo.save(LScfttransaction);
 			}
 	    		
+	    		
+//	    		Map<String, Object> mapObj = new HashMap<String, Object>();
+//
+//	    		mapObj.put("createdby",savedMethod.getCreatedby());
+//                mapObj.put("createddate",savedMethod.getCreateddate());
+//            	mapObj.put("filename", savedMethod.getFilename());
+//            	mapObj.put("instmaster", savedMethod.getInstmaster());
+//            	mapObj.put("instrawdataurl", savedMethod.getInstrawdataurl());
+//            	mapObj.put("methodkey",savedMethod.getMethodkey());
+//            	mapObj.put("methodname",savedMethod.getMethodname());
+//            	mapObj.put("status",savedMethod.getStatus());
+//            	mapObj.put("site", savedMethod.getSite());
+//            			
+//	    	
+//	    		mapObj.put("parser", savedMethod.getParser());
+//	    		mapObj.put("samplesplit", savedMethod.getSamplesplit());
+//	    		mapObj.put("displayvalue", savedMethod.getMethodname());
+//	    		mapObj.put("screenname", "Methodmaster");
+	    	    		
+
 	    		
 	    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
 	    	}	
@@ -651,6 +702,29 @@ public class MethodService {
 					   method.setStatus(-1);
 					   final Method savedMethod = methodRepo.save(method);   
 					   
+					   savedMethod.setDisplayvalue(savedMethod.getMethodname());
+					   savedMethod.setScreenname("Methodmaster");
+						
+//			    		Map<String, Object> mapObj = new HashMap<String, Object>();
+//		    	
+//			    		mapObj.put("createdby",savedMethod.getCreatedby());
+//		                mapObj.put("createddate",savedMethod.getCreateddate());
+//		            	mapObj.put("filename", savedMethod.getFilename());
+//		            	mapObj.put("instmaster", savedMethod.getInstmaster());
+//		            	mapObj.put("Instrawdataurl", savedMethod.getInstrawdataurl());
+//		            	mapObj.put("methodkey",savedMethod.getMethodkey());
+//		            	mapObj.put("methodname",savedMethod.getMethodname());
+//		            	mapObj.put("status",savedMethod.getStatus());
+//		            	mapObj.put("site", savedMethod.getSite());
+//		            			
+//			    	
+//			    		mapObj.put("parser", savedMethod.getParser());
+//			    		mapObj.put("samplesplit", savedMethod.getSamplesplit());
+//			    		mapObj.put("displayvalue", savedMethod.getMethodname());
+//			    		mapObj.put("screenname", "Methodmaster");
+			    	    		
+			    		
+			    					    		
 				   return new ResponseEntity<>(savedMethod, HttpStatus.OK); 
 			   }
 		   }
@@ -1140,7 +1214,7 @@ public class MethodService {
 	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
 	   Date date = new Date();
-	   
+
 	   if (methodByKey.isPresent() && instMaster != null) {		 
 		   
 		   if(methodName.equals(methodByKey.get().getMethodname()))
@@ -1379,6 +1453,7 @@ public class MethodService {
 		    return new ResponseEntity<>(savedMethod, HttpStatus.OK);
 		   }
 	   }
+	 
 	   else {
 		   
 //		   final String actionType = EnumerationInfo.CFRActionType.SYSTEM.getActionType();
@@ -1387,8 +1462,9 @@ public class MethodService {
 //						site, "", createdUser, request.getRemoteAddr());
 //			
 		   return new ResponseEntity<>("Method/Instrument Not Found", HttpStatus.NOT_FOUND);
-	   }	   
-   }
+	   }	
+   } 
+
    
    /**
     * This method is used to audit trail the 'Copy Method'.

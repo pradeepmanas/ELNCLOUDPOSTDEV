@@ -43,8 +43,10 @@ import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
+import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
+import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 //import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -76,6 +78,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
@@ -85,12 +88,14 @@ import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.ParserBlock;
 import com.agaram.eln.primary.model.methodsetup.ParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserField;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
@@ -128,6 +133,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.Lselninstrumentmaster
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharedbyRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharetoRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsorderworkflowhistoryRepositroy;
+import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolOrderStructureRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.methodsetup.ELNFileAttachmentsRepository;
@@ -136,6 +142,7 @@ import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserBlockRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.SubParserFieldRepository;
+import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileparameterRepository;
@@ -144,6 +151,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepositor
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileversionRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplemasterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsampleresultRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
@@ -326,6 +334,15 @@ public class InstrumentService {
 	
 	@Autowired
     private UserService userService;
+	
+	@Autowired
+	private LsprotocolOrderStructureRepository lsprotocolorderStructurerepository;
+	
+	@Autowired
+	private LSlogilabprotocoldetailRepository  LSlogilabprotocoldetailRepository;
+	
+	@Autowired
+	private LStestmasterlocalRepository lstestmasterlocalRepository;
 	
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
@@ -3190,7 +3207,7 @@ public class InstrumentService {
 
 		objorder = lsordersharedbyRepository.findOne(objorder.getSharedbycode());
 
-		objorder.setObjorder(objorgorder);
+//		objorder.setObjorder(objorgorder);
 
 		return objorder;
 	}
@@ -3209,7 +3226,7 @@ public class InstrumentService {
 
 		// objorder= lsordersharetoRepository.findOne(objorder.getSharetocode());
 
-		objorder.setObjorder(objorgorder);
+//		objorder.setObjorder(objorgorder);
 
 		return objorder;
 	}
@@ -4159,7 +4176,8 @@ public class InstrumentService {
 		Map<String, Object> mapfolders = new HashMap<String, Object>();
 		
 		List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
-		lstdir = lsSheetOrderStructureRepository.findAll();
+//		lstdir = lsSheetOrderStructureRepository.findAll();
+		lstdir = lsSheetOrderStructureRepository.selectfoldersonuseunion(objusermaster.getLssitemaster().getSitecode(),1,objusermaster.getUsercode());
 //		if (lstdir != null && lstdir.size() > 0) {
 //			lstdir.get(0).setLsorderitems(lslogilablimsorderdetailRepository
 //					.findByDirectorycodeOrderByBatchcodeDesc(lstdir.get(0).getDirectorycode()));
@@ -4336,6 +4354,188 @@ public class InstrumentService {
 		objmap.put("lsorderversion", lstfilesamle);
 		return  objmap;
 		
+	}
+	
+	public Map<String, Object> Getfoldersforprotocolorders(LSuserMaster objusermaster) {
+
+		Map<String, Object> mapfolders = new HashMap<String, Object>();
+		
+		List<Lsprotocolorderstructure> lstdir = new ArrayList<Lsprotocolorderstructure>();
+		lstdir = lsprotocolorderStructurerepository.findAll();
+//		if (lstdir != null && lstdir.size() > 0) {
+//			lstdir.get(0).setLsorderitems(lslogilablimsorderdetailRepository
+//					.findByDirectorycodeOrderByBatchcodeDesc(lstdir.get(0).getDirectorycode()));
+//		}
+		List<Testmaster> lstest=lstestmasterlocalRepository.findBystatusAndLssitemaster(1, objusermaster.getLssitemaster());
+		if(lstest!=null && lstest.size()>0) {
+			mapfolders.put("lstest", lstest);
+		}
+		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findProjectcodeAndProjectnameBystatusAndLssitemaster(1,objusermaster.getLssitemaster());
+		if(lstproject != null && lstproject.size()>0)
+		{
+			List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository.findByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(1,lstproject);
+			mapfolders.put("tests", lstorders != null ?lstorders : new ArrayList<Logilaborders>());
+			mapfolders.put("projects", lstproject);
+		}
+		else
+		{
+			mapfolders.put("tests", new ArrayList<Logilaborders>());
+			mapfolders.put("projects", new ArrayList<Projectmaster>());
+		}
+		
+		List<LSsamplemaster> lstsample = lssamplemasterrepository.findSamplecodeAndSamplenameBystatusAndLssitemaster(1,objusermaster.getLssitemaster());
+		if(lstsample != null && lstsample.size() >0)
+		{
+			List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository.findByOrderdisplaytypeAndLssamplemasterInAndTestcodeIsNotNull(2,lstsample);
+			mapfolders.put("sampletests", lstorders != null ?lstorders : new ArrayList<Logilaborders>());
+			mapfolders.put("samples", lstsample);
+		}
+		else
+		{
+			mapfolders.put("sampletests", new ArrayList<Logilaborders>());
+			mapfolders.put("samples", new ArrayList<Samplemaster>());
+		}
+		
+		mapfolders.put("users",userService.GetUsers(objusermaster));
+		mapfolders.put("directory", lstdir);
+//		
+		return mapfolders;
+//	
+	}
+	
+	public Map<String, Object> Getuserorders(Map<String, LSuserMaster> objusers) {
+		Map<String, Object> mapuserorders = new HashMap<String, Object>();
+		ObjectMapper mapper = new ObjectMapper();
+		LSuserMaster lsloginuser = mapper.convertValue( objusers.get("loginuser"), LSuserMaster.class);
+		LSuserMaster lsselecteduser = mapper.convertValue(objusers.get("selecteduser"), LSuserMaster.class);
+		Integer directory =  mapper.convertValue( objusers.get("directorycode"), Integer.class);
+		if(lsloginuser.getUsercode() == lsselecteduser.getUsercode())
+		{
+			mapuserorders.put("assigned", lslogilablimsorderdetailRepository.findByAssignedtoOrderByBatchcodeDesc(lsloginuser));
+			mapuserorders.put("sharebyme", lsordersharedbyRepository.findByUsersharedbyAndSharestatusOrderBySharedbycodeDesc(lsselecteduser, 1));
+			mapuserorders.put("sharetome", lsordersharetoRepository.findByUsersharedonAndSharestatusOrderBySharetocodeDesc(lsselecteduser, 1));
+		}
+		else
+		{
+			mapuserorders.put("assigned", lslogilablimsorderdetailRepository.findByAssignedtoAndLsuserMasterOrderByBatchcodeDesc(lsselecteduser,lsloginuser));
+			mapuserorders.put("sharebyme", lsordersharedbyRepository.findByUsersharedbyAndUsersharedonAndSharestatusOrderBySharedbycodeDesc(lsloginuser, lsselecteduser,  1));
+		}
+		
+		mapuserorders.put("directorycode",directory);
+		
+		return mapuserorders;
+	}
+
+	public Lsprotocolorderstructure Insertdirectoryonprotocol(Lsprotocolorderstructure objdir) {
+
+		Response objResponse = new Response();
+		Lsprotocolorderstructure lstdir = null;
+		if (objdir.getDirectorycode() != null) {
+			lstdir = lsprotocolorderStructurerepository.findByDirectorycodeAndParentdircodeAndDirectorynameNot(
+					objdir.getDirectorycode(), objdir.getParentdircode(), objdir.getDirectoryname());
+		} else {
+			lstdir = lsprotocolorderStructurerepository.findByParentdircodeAndDirectoryname(objdir.getParentdircode(),
+					objdir.getDirectoryname());
+		}
+		if (lstdir != null) {
+			objResponse.setStatus(false);
+			objResponse.setInformation("IDS_FolderExist");
+		} else {
+			objResponse.setStatus(true);
+			objResponse.setInformation("IDS_FolderAdded");
+		}
+		objdir.setResponse(objResponse);
+		return objdir;
+	
+	
+	}
+
+	public Lsprotocolorderstructure Insertnewdirectoryonprotocol(Lsprotocolorderstructure objdir) {
+
+		lsprotocolorderStructurerepository.save(objdir);
+		return objdir;
+	
+	}
+
+	public List<Lsprotocolorderstructure> Deletedirectoriesonprotocol(Lsprotocolorderstructure[] directories) {
+
+		List<Lsprotocolorderstructure> lstdirectories = Arrays.asList(directories);
+
+		lstdirectories.forEach(structure -> {
+			if (structure.getParentdircode() == -2) {
+				lsprotocolorderStructurerepository.delete(structure.getDirectorycode());
+				LSlogilabprotocoldetailRepository.updateparentdirectory(structure.getDircodetomove(),
+						structure.getDirectorycode());
+			} else {
+				lsprotocolorderStructurerepository.updatedirectory(structure.getParentdircode(), structure.getPath(),
+						structure.getDirectorycode(), structure.getDirectoryname());
+			}
+		});
+
+		return lstdirectories;
+	
+	}
+
+	public Lsprotocolorderstructure Movedirectoryonprotocolorder(Lsprotocolorderstructure directory) {
+
+		lsprotocolorderStructurerepository.updatedirectory(directory.getParentdircode(), directory.getPath(),
+				directory.getDirectorycode(), directory.getDirectoryname());
+		return directory;
+	
+	}
+
+	public Lsprotocolorderstructure getMoveDirectoryonprotocolorder(Lsprotocolorderstructure objdir) {
+
+		Response objResponse = new Response();
+		Lsprotocolorderstructure lstdir = null;
+		String dir = objdir.getDirectoryname();
+		if (objdir.getDirectorycode() != null) {
+			lstdir = lsprotocolorderStructurerepository.findByDirectorycodeAndParentdircodeAndDirectorynameNot(
+					objdir.getDirectorycode(), objdir.getParentdircode(), objdir.getDirectoryname());
+		} else {
+			lstdir = lsprotocolorderStructurerepository.findByParentdircodeAndDirectoryname(objdir.getParentdircode(),
+					objdir.getDirectoryname());
+		}
+		while (lstdir != null) {
+			if (dir.charAt(dir.length() - 1) == ')') {
+				char temp = dir.charAt(dir.length() - 2);
+				int n = Character.getNumericValue(temp);
+				n = n + 1;
+				dir = dir.substring(0, dir.length() - 2) + n + dir.substring(dir.length() - 1);
+				objdir.setDirectoryname(dir);
+			} else {
+				dir = dir + " (2)";
+				objdir.setDirectoryname(dir);
+			}
+			lstdir = lsprotocolorderStructurerepository.findByParentdircodeAndDirectoryname(objdir.getParentdircode(),
+					objdir.getDirectoryname());
+
+		}
+		objdir.setResponse(objResponse);
+		return objdir;
+	
+	}
+
+	public List<LSlogilabprotocoldetail> UpdateFolderforprotocolorders(LSlogilabprotocoldetail[] orderary) {
+
+		List<LSlogilabprotocoldetail> order = Arrays.asList(orderary);
+		if (order.size() > 0) {
+			List<Long> lstorders = order.stream().map(LSlogilabprotocoldetail::getProtocolordercode)
+					.collect(Collectors.toList());
+			LSlogilabprotocoldetailRepository.updatedirectory(order.get(0).getDirectorycode(), lstorders);
+		}
+		return order;
+	
+	}
+
+	public List<Logilabprotocolorders> Getprotocolordersondirectory(LSSheetOrderStructure objdir) {
+
+		return LSlogilabprotocoldetailRepository.findByDirectorycodeOrderByProtocolordercodeDesc(objdir.getDirectorycode());
+	}
+
+	public List<LSlogilabprotocoldetail> GetAssignedtoUserordersforprotocol(LSlogilabprotocoldetail order) {
+		return LSlogilabprotocoldetailRepository
+				.findByOrderflagAndAssignedtoOrderByProtocolordercodeDesc("N", order.getLsuserMaster());
 	}
 
 }

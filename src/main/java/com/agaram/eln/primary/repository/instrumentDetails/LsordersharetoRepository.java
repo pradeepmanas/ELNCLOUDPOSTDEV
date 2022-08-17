@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public interface LsordersharetoRepository extends JpaRepository<Lsordershareto,Long>{
 	public List<Lsordershareto> findBySharetounifiedidAndOrdertypeAndSharestatusOrderBySharetocodeDesc(String unifiedid, Integer ordertype, Integer sharestatus);
@@ -14,4 +15,6 @@ public interface LsordersharetoRepository extends JpaRepository<Lsordershareto,L
 	public long countBySharetounifiedidAndOrdertypeAndSharestatusOrderBySharetocodeDesc(String unifiedid, Integer ordertype, Integer sharestatus);
 	
 	public List<Lsordershareto> findBySharetounifiedidAndSharedonBetweenAndSharestatus(String unifiedid, Date fromdate, Date todate, Integer sharestatus);
+	
+	public List<Lsordershareto> findByUsersharedonAndSharestatusOrderBySharetocodeDesc(LSuserMaster lssharedto, Integer sharestatus);
 }

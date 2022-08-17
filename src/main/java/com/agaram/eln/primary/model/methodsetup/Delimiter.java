@@ -40,7 +40,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "delimiter")
 @XmlType(propOrder = { "delimiterkey", "delimitername", "actualdelimiter", 
-		 "status", "createdby", "createddate" , "username","transactiondate","defaultvalue"})
+		 "status", "createdby", "createddate" , "username","transactiondate","defaultvalue","displayvalue","screenname"})
 @Entity
 @Table(name = "delimiter")
 public class Delimiter implements Serializable, Diffable<Delimiter>{
@@ -82,6 +82,14 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	@Column(name = "createddate")
 	private Date createddate;	
 		
+	@Transient
+	@Column(name = "displayvalue")
+	private String displayvalue;
+
+	@Transient
+	@Column(name = "screenname")
+	private String screenname;
+
 	@XmlAttribute	
 	public Integer getDelimiterkey() {
 		return delimiterkey;
@@ -163,6 +171,23 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 		this.transactiondate = transactiondate;
 	}
 
+	
+	public String getDisplayvalue() {
+		return displayvalue;
+	}
+
+	public void setDisplayvalue(String displayvalue) {
+		this.displayvalue = displayvalue;
+	}
+
+	public String getScreenname() {
+		return screenname;
+	}
+
+	public void setScreenname(String screenname) {
+		this.screenname = screenname;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -177,6 +202,9 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	       .append("username", this.username, obj.username)
 	       .append("transactiondate", this.transactiondate, obj.transactiondate)
 	       .append("defaultvalue", this.defaultvalue, obj.defaultvalue)
+	       .append("displayvalue", this.displayvalue, obj.displayvalue)
+           .append("screenname", this.screenname, obj.screenname)
+
 	       .build();
 	}
 
@@ -196,6 +224,9 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 		this.username = delimiter.username;
 		this.transactiondate = delimiter.transactiondate;
 		this.defaultvalue = delimiter.defaultvalue;
+		this.displayvalue = delimiter.displayvalue;
+		this.screenname = delimiter.screenname;
+
 	}
 	
 	/**

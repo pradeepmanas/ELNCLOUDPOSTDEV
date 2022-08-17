@@ -15,6 +15,7 @@ import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
+import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -279,8 +280,29 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	List<LSlogilabprotocoldetail> findByProtocolordercodeInAndOrderflag(ArrayList<Long> log, String orderflag);
 
 
+	List<Logilabprotocolorders> findByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(int i,
+			List<LSprojectmaster> lstproject);
 
 
+	List<Logilabprotocolorders> findByOrderdisplaytypeAndLssamplemasterInAndTestcodeIsNotNull(int i,
+			List<LSsamplemaster> lstsample);
+
+	@Transactional
+	@Modifying
+	@Query("update LSlogilabprotocoldetail o set o.directorycode = ?1 where o.directorycode = ?2")
+	void updateparentdirectory(Long newdirectorycode , Long olddirectorycode);
+
+	@Transactional
+	@Modifying
+	@Query("update LSlogilabprotocoldetail o set o.directorycode = ?1 where o.protocolordercode in (?2)")
+	void updatedirectory(Long directorycode , List<Long> protocolordercode);
+
+
+	List<Logilabprotocolorders> findByDirectorycodeOrderByProtocolordercodeDesc(Long directorycode);
+
+
+	List<LSlogilabprotocoldetail> findByOrderflagAndAssignedtoOrderByProtocolordercodeDesc(String string,
+			LSuserMaster lsuserMaster);
 
 
 }

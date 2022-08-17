@@ -5646,6 +5646,22 @@ public class ProtocolService {
 		return LSprotocolstepobj;
 	}
 
+	public LSprotocolstepInformation getprotocolperticulerstep
+	(Integer InteInteprotocolstepcodeorordercode,Integer multitenant,Integer protocoltype) {
+		LSprotocolstepInformation newobj =new LSprotocolstepInformation();
+		if (multitenant == 1) {
+				 newobj = lsprotocolstepInformationRepository.findById(InteInteprotocolstepcodeorordercode);
+		} else {
+			LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate
+					.findById(InteInteprotocolstepcodeorordercode, LSprotocolstepInfo.class);
+			if (newLSprotocolstepInfo != null) {
+				newobj.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+
+			}
+		}
+		return newobj;
+	}
+
 //	public List<LSuserMaster> getlistofusersforworkflow(LSusergroup[] usergroupcode) {
 //		List<LSusergroup> usergroupcodelist = Arrays.asList(usergroupcode);
 //		List<LSuserMaster> userslist = new ArrayList<LSuserMaster>();

@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
+import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 //import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.fileManipulation.Fileimages;
@@ -40,8 +41,10 @@ import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
@@ -860,4 +863,59 @@ public class InstrumentController {
 
 		return instrumentService.GetSheetorderversions(objMap);
 	}
+	@RequestMapping("/Getfoldersforprotocolorders")
+	public Map<String, Object> Getfoldersforprotocolorders(@RequestBody LSuserMaster objusermaster)throws Exception {
+		return instrumentService.Getfoldersforprotocolorders(objusermaster);
+	}
+	
+	@RequestMapping("/Insertdirectoryonprotocol")
+	public Lsprotocolorderstructure Insertdirectoryonprotocol(@RequestBody Lsprotocolorderstructure objdir)throws Exception {
+		return instrumentService.Insertdirectoryonprotocol(objdir);
+	}
+	
+	@RequestMapping("/Insertnewdirectoryonprotocol")
+	public Lsprotocolorderstructure Insertnewdirectoryonprotocol(@RequestBody Lsprotocolorderstructure objdir)throws Exception {
+		return instrumentService.Insertnewdirectoryonprotocol(objdir);
+	}
+	
+	@RequestMapping("/Deletedirectoriesonprotocol")
+	public List<Lsprotocolorderstructure> Deletedirectoriesonprotocol(@RequestBody Lsprotocolorderstructure[] directories)throws Exception
+	{
+		return instrumentService.Deletedirectoriesonprotocol(directories);
+	}
+	
+	@RequestMapping("/Movedirectoryonprotocolorder")
+	public Lsprotocolorderstructure Movedirectoryonprotocolorder(@RequestBody Lsprotocolorderstructure directory)throws Exception
+	{
+		return instrumentService.Movedirectoryonprotocolorder(directory);
+	}
+	
+	@RequestMapping("/getMoveDirectoryonprotocolorder")
+	public Lsprotocolorderstructure getMoveDirectoryonprotocolorder(@RequestBody Lsprotocolorderstructure objdir)throws Exception {
+		return instrumentService.getMoveDirectoryonprotocolorder(objdir);
+	}
+	
+	@RequestMapping("/UpdateFolderforprotocolorders")
+	public List<LSlogilabprotocoldetail> UpdateFolderforprotocolorders(@RequestBody LSlogilabprotocoldetail[] order)throws Exception
+	{
+		return instrumentService.UpdateFolderforprotocolorders(order);
+	}
+
+	@RequestMapping("/Getprotocolordersondirectory")
+	public List<Logilabprotocolorders> Getprotocolordersondirectory(@RequestBody LSSheetOrderStructure objdir)throws Exception
+	{
+		return instrumentService.Getprotocolordersondirectory(objdir);
+	}
+	
+	@RequestMapping("/GetAssignedtoUserordersforprotocol")
+	public List<LSlogilabprotocoldetail> GetAssignedtoUserordersforprotocol(@RequestBody LSlogilabprotocoldetail order)throws Exception
+	{
+		return instrumentService.GetAssignedtoUserordersforprotocol(order);
+	}
+	
+	@RequestMapping("/Getuserorders")
+	public Map<String, Object> Getuserorders(@RequestBody Map<String, LSuserMaster> objusers)throws Exception {
+		return instrumentService.Getuserorders(objusers);
+	}
+	
 }

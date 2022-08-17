@@ -1,9 +1,11 @@
-package com.agaram.eln.primary.model.Material;
+package com.agaram.eln.primary.model.material;
 
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -16,6 +18,7 @@ public class MaterialCategory implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "nmaterialcatcode")
 	private Integer nmaterialcatcode;
 
@@ -23,22 +26,22 @@ public class MaterialCategory implements Serializable{
 	private Integer nmaterialtypecode = -1;
 
 	@Column(name = "needSectionwise")
-	private short needSectionwise;
+	private Integer needSectionwise;
 
 	@Column(name = "nuserrolecode", nullable = false)
-	private int nuserrolecode;
+	private Integer nuserrolecode;
 
 	@ColumnDefault("-1")
 	@Column(name = "nbarcode", nullable = false)
-	private int nbarcode = -1;
+	private Integer nbarcode = -1;
 
 	@ColumnDefault("4")
 	@Column(name = "ncategorybasedflow", nullable = false)
-	private short ncategorybasedflow = 4;
+	private Integer ncategorybasedflow = 4;
 
 	@ColumnDefault("1")
 	@Column(name = "nactivestatus", nullable = false)
-	private short nactivestatus;
+	private Integer nactivestatus;
 
 	@Column(name = "smaterialcatname", length = 100, nullable = false)
 	private String smaterialcatname;
@@ -48,30 +51,30 @@ public class MaterialCategory implements Serializable{
 
 	@ColumnDefault("4")
 	@Column(name = "ndefaultstatus", nullable = false)
-	private short ndefaultstatus = 4;
+	private Integer ndefaultstatus = 4;
 
 	@ColumnDefault("-1")
 	@Column(name = "nsitecode", nullable = false)
-	private short nsitecode = -1;
+	private Integer nsitecode = -1;
 
 	@ColumnDefault("1")
 	@Column(name = "nstatus", nullable = false)
-	private short nstatus = 1;
+	private Integer nstatus = 1;
 	private transient String sneedSectionwise;
 
 	private transient String sdisplaystatus;
 
 	private transient String sbarcodename;
-	private transient int nsuppliercode;
-	private transient int nsuppliermatrixcode;
+	private transient Integer nsuppliercode;
+	private transient Integer nsuppliermatrixcode;
 	private transient String scategorybasedflow;
 	private transient String smaterialtypename;
 	private transient boolean needSectionwisedisabled;
-	private transient int nproductcatcode;
+	private transient Integer nproductcatcode;
 	private transient String sproductcatname;
 
 
-	public int getNsuppliercode() {
+	public Integer getNsuppliercode() {
 		return nsuppliercode;
 	}
 
@@ -83,15 +86,15 @@ public class MaterialCategory implements Serializable{
 		this.scategorybasedflow = scategorybasedflow;
 	}
 
-	public void setNsuppliercode(int nsuppliercode) {
+	public void setNsuppliercode(Integer nsuppliercode) {
 		this.nsuppliercode = nsuppliercode;
 	}
 
-	public int getNsuppliermatrixcode() {
+	public Integer getNsuppliermatrixcode() {
 		return nsuppliermatrixcode;
 	}
 
-	public void setNsuppliermatrixcode(int nsuppliermatrixcode) {
+	public void setNsuppliermatrixcode(Integer nsuppliermatrixcode) {
 		this.nsuppliermatrixcode = nsuppliermatrixcode;
 	}
 
@@ -111,43 +114,43 @@ public class MaterialCategory implements Serializable{
 		this.nmaterialtypecode = nmaterialtypecode;
 	}
 
-	public short getNeedSectionwise() {
+	public Integer getNeedSectionwise() {
 		return needSectionwise;
 	}
 
-	public void setNeedSectionwise(short needSectionwise) {
+	public void setNeedSectionwise(Integer needSectionwise) {
 		this.needSectionwise = needSectionwise;
 	}
 
-	public int getNuserrolecode() {
+	public Integer getNuserrolecode() {
 		return nuserrolecode;
 	}
 
-	public void setNuserrolecode(int nuserrolecode) {
+	public void setNuserrolecode(Integer nuserrolecode) {
 		this.nuserrolecode = nuserrolecode;
 	}
 
-	public int getNbarcode() {
+	public Integer getNbarcode() {
 		return nbarcode;
 	}
 
-	public void setNbarcode(int nbarcode) {
+	public void setNbarcode(Integer nbarcode) {
 		this.nbarcode = nbarcode;
 	}
 
-	public short getNcategorybasedflow() {
+	public Integer getNcategorybasedflow() {
 		return ncategorybasedflow;
 	}
 
-	public void setNcategorybasedflow(short ncategorybasedflow) {
+	public void setNcategorybasedflow(Integer ncategorybasedflow) {
 		this.ncategorybasedflow = ncategorybasedflow;
 	}
 
-	public short getNactivestatus() {
+	public Integer getNactivestatus() {
 		return nactivestatus;
 	}
 
-	public void setNactivestatus(short nactivestatus) {
+	public void setNactivestatus(Integer nactivestatus) {
 		this.nactivestatus = nactivestatus;
 	}
 
@@ -167,27 +170,27 @@ public class MaterialCategory implements Serializable{
 		this.sdescription = sdescription;
 	}
 
-	public short getNdefaultstatus() {
+	public Integer getNdefaultstatus() {
 		return ndefaultstatus;
 	}
 
-	public void setNdefaultstatus(short ndefaultstatus) {
+	public void setNdefaultstatus(Integer ndefaultstatus) {
 		this.ndefaultstatus = ndefaultstatus;
 	}
 
-	public short getNsitecode() {
+	public Integer getNsitecode() {
 		return nsitecode;
 	}
 
-	public void setNsitecode(short nsitecode) {
+	public void setNsitecode(Integer nsitecode) {
 		this.nsitecode = nsitecode;
 	}
 
-	public short getNstatus() {
+	public Integer getNstatus() {
 		return nstatus;
 	}
 
-	public void setNstatus(short nstatus) {
+	public void setNstatus(Integer nstatus) {
 		this.nstatus = nstatus;
 	}
 
@@ -231,11 +234,11 @@ public class MaterialCategory implements Serializable{
 		this.needSectionwisedisabled = needSectionwisedisabled;
 	}
 
-	public int getNproductcatcode() {
+	public Integer getNproductcatcode() {
 		return nproductcatcode;
 	}
 
-	public void setNproductcatcode(int nproductcatcode) {
+	public void setNproductcatcode(Integer nproductcatcode) {
 		this.nproductcatcode = nproductcatcode;
 	}
 

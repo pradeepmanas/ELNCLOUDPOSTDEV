@@ -84,6 +84,8 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private LSuserMaster lsuserMaster;
 
 	private Integer testcode;
+	
+	private Long directorycode;
 
 	@ManyToOne
 	private LSsamplemaster lssamplemaster;
@@ -115,6 +117,35 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private LSuserMaster assignedto;
 	
 	public Integer versionno = 1;
+	
+	private Integer orderdisplaytype;
+	
+	@Transient
+	List<LSprojectmaster> lstproject;
+
+	public List<LSprojectmaster> getLstproject() {
+		return lstproject;
+	}
+
+	public void setLstproject(List<LSprojectmaster> lstproject) {
+		this.lstproject = lstproject;
+	}
+
+	public Integer getOrderdisplaytype() {
+		return orderdisplaytype;
+	}
+
+	public void setOrderdisplaytype(Integer orderdisplaytype) {
+		this.orderdisplaytype = orderdisplaytype;
+	}
+
+	public Long getDirectorycode() {
+		return directorycode;
+	}
+
+	public void setDirectorycode(Long directorycode) {
+		this.directorycode = directorycode;
+	}
 
 	@Transient
 	LoggedUser objuser;

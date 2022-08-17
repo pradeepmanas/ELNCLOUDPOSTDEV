@@ -25,10 +25,14 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	private LSprotocolmaster lsprotocolmaster;
 	private String projectname;
 	private String protocolmastername;
+	private LSprojectmaster lsprojectmaster;
+
 
 	private String keyword;
 	
 	private Integer Testcode;
+	
+	private Long directorycode;
 	
 	List<LSprotocolworkflow> lstworkflow;
 	private LSprotocolworkflow lSprotocolworkflow;
@@ -38,8 +42,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	public Logilabprotocolorders(Long protocolordercode,Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
 			LSprotocolworkflow lSprotocolworkflow,
-			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,String keyword) {
-
+			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,String keyword,Long directorycode) {
+		
 		this.protocolordercode = protocolordercode;
 		this.Testcode =Testcode;
 		this.protoclordername = protoclordername;
@@ -52,6 +56,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 		this.samplename = lssamplemaster != null ? lssamplemaster.getSamplename():"";
 		this.projectname = lsprojectmaster != null ? lsprojectmaster.getProjectname():"";
 		this.keyword = keyword;
+		this.directorycode = directorycode;
+		this.lsprojectmaster = lsprojectmaster;
 	}
 
 	public Integer getTestcode() {
@@ -169,7 +175,13 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	public List<LSprotocolworkflow> getLstworkflow() {
 		return lstworkflow;
 	}
-	
+	public LSprojectmaster getLsprojectmaster() {
+		return lsprojectmaster;
+	}
+
+	public void setLsprojectmaster(LSprojectmaster lsprojectmaster) {
+		this.lsprojectmaster = lsprojectmaster;
+	}
 	public void setLstworkflow(List<LSprotocolworkflow> lstworkflow) {
 
 		if (lstworkflow != null  && this.workflowcode !=null && lstworkflow.size() > 0) {
@@ -190,6 +202,13 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 			this.setCanuserprocess(false);
 		}
 		this.lstworkflow = null;
+	}
+	public Long getDirectorycode() {
+		return directorycode;
+	}
+
+	public void setDirectorycode(Long directorycode) {
+		this.directorycode = directorycode;
 	}
 
 	public boolean isCanuserprocess() {

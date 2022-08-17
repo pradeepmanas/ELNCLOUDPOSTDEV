@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.dashboard;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -7,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +21,10 @@ import com.agaram.eln.primary.fetchmodel.gettemplate.Protocoltemplateget;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowgroupmap;
+import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
@@ -692,6 +696,24 @@ public class DashBoardService {
 
 		return LsrepositoriesRepository.findBySitecodeAndAddedonBetweenOrderByRepositorycodeAsc(
 				objuser.getLssitemaster().getSitecode(), fromdate, todate);
+	}
+
+	public Map<String,Object> Getapprovedsheet(Integer[] lsfile) {
+		ArrayList<Integer> listobjfilecode = new ArrayList<>(lsfile.length);
+//		listobjfilecode.ass
+	    Collections.addAll(listobjfilecode, lsfile);
+		Map<String,Object> obj =new HashMap<String,Object>();
+		if(listobjfilecode.get(0)==1) {
+			listobjfilecode.remove(0);
+			List<LSfile> fileobj = lsfileRepository.findByFilecodeIn(listobjfilecode);
+			obj.put("Sheet", fileobj);
+		}else {
+			listobjfilecode.remove(0);
+			List<LSprotocolmaster> protocolobj =LSProtocolMasterRepository.findByProtocolmastercodeIn(listobjfilecode);
+			obj.put("Protocol", protocolobj);
+		}
+		
+		return obj;
 	}
 
 }

@@ -42,7 +42,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "method")
 @XmlType(propOrder = { "methodkey", "methodname", "instmaster", "instrawdataurl",
-		"samplesplit", "parser", "site", "status", "createdby", "createddate","username","transactiondate"})
+		"samplesplit", "parser", "site", "status", "createdby", "createddate","username","transactiondate","filename","displayvalue","screenname"})
 @Entity
 @Table(name = "method")
 public class Method implements Serializable, Diffable<Method>{
@@ -66,6 +66,18 @@ public class Method implements Serializable, Diffable<Method>{
 	
 	@Column(name = "instrawdataurl")
 	private String instrawdataurl;	
+	
+	@Transient
+	@Column(name = "displayvalue")
+	private String displayvalue;
+
+	@Transient
+	@Column(name = "screenname")
+	private String screenname;
+
+	@Column(columnDefinition = "varchar(255)")
+	private String filename;	
+	
 	
 	@Column(name = "samplesplit")
 	private Integer samplesplit;
@@ -203,6 +215,32 @@ public class Method implements Serializable, Diffable<Method>{
 	public void setTransactiondate(Date transactiondate) {
 		this.transactiondate = transactiondate;
 	}
+	
+	
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+	
+
+	public String getDisplayvalue() {
+		return displayvalue;
+	}
+
+	public void setDisplayvalue(String displayvalue) {
+		this.displayvalue = displayvalue;
+	}
+
+	public String getScreenname() {
+		return screenname;
+	}
+
+	public void setScreenname(String screenname) {
+		this.screenname = screenname;
+	}
 
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
@@ -222,6 +260,10 @@ public class Method implements Serializable, Diffable<Method>{
 	       .append("createddate", this.createddate, obj.createddate)
 	       .append("username", this.username, obj.username)
 	       .append("transactiondate", this.transactiondate, obj.transactiondate)
+	       .append("filename", this.filename, obj.filename)
+	       .append("displayvalue", this.displayvalue, obj.displayvalue)
+	       .append("screenname", this.screenname, obj.screenname)
+
 	       .build();
 	}
 
@@ -255,6 +297,10 @@ public class Method implements Serializable, Diffable<Method>{
 		this.createddate = method.createddate;
 		this.username = method.username;
 		this.transactiondate=method.transactiondate;
+		this.filename=method.filename;
+		this.displayvalue=method.displayvalue;
+        this.screenname=method.screenname;
+
 	}
 	
 	/**
@@ -262,4 +308,6 @@ public class Method implements Serializable, Diffable<Method>{
 	 * default constructor also mandatory for a pojo
 	 */
 	public Method() {}
+
+	
 }

@@ -1,4 +1,4 @@
-package com.agaram.eln.primary.model.Material;
+package com.agaram.eln.primary.model.material;
 
 import java.io.Serializable;
 import java.util.Map;

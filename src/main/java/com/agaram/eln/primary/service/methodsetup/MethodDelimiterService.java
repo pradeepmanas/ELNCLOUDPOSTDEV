@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.service.methodsetup;
 
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,6 +137,21 @@ public class MethodDelimiterService {
 	    		methodDelimiter.setDelimiter(delimiter);
 	    			
 	    		final MethodDelimiter savedMethodDelimiter = methodDelimiterRepo.save(methodDelimiter);
+	    		savedMethodDelimiter.setDisplayvalue(savedMethodDelimiter.getParsermethod().getParsermethodname());
+	    		savedMethodDelimiter.setScreenname("MethodDelimiter");
+	    		
+//	    		Map<String, Object> mapObj = new HashMap<String, Object>();
+//
+//	    		mapObj.put("parsermethod",savedMethodDelimiter.getParsermethod());
+//	    		mapObj.put("createdby",savedMethodDelimiter.getCreatedby());
+//                mapObj.put("createddate",savedMethodDelimiter.getCreateddate());
+//	    		mapObj.put("transactiondate",new Date());
+//	    		mapObj.put("delimiter",savedMethodDelimiter.getDelimiter());   		
+//	    		mapObj.put("status",savedMethodDelimiter.getStatus());
+//	    		mapObj.put("methoddelimiterkey", savedMethodDelimiter.getMethoddelimiterkey());
+//	    		mapObj.put("username", savedMethodDelimiter.getUsername());
+//	    		mapObj.put("displayvalue", savedMethodDelimiter.getParsermethod().getParsermethodname());
+//	    		mapObj.put("screenname", "MethodDelimiter");
 	    		
 	    		if (saveAuditTrial)
 				{   			
@@ -295,6 +312,23 @@ public class MethodDelimiterService {
 			    			
 				    		final MethodDelimiter savedMethodDelimiter = methodDelimiterRepo.save(methodDelimiter);
 				    		
+				    		savedMethodDelimiter.setDisplayvalue(savedMethodDelimiter.getParsermethod().getParsermethodname());
+				    		savedMethodDelimiter.setScreenname("MethodDelimiter");
+				    		
+//				    		Map<String, Object> mapObj = new HashMap<String, Object>();
+//
+//
+//				    		mapObj.put("parsermethod",savedMethodDelimiter.getParsermethod());
+//				    		mapObj.put("createdby",savedMethodDelimiter.getCreatedby());
+//			                mapObj.put("createddate",savedMethodDelimiter.getCreateddate());
+//				    		mapObj.put("transactiondate",new Date());
+//				    		mapObj.put("delimiter",savedMethodDelimiter.getDelimiter());   		
+//				    		mapObj.put("status",savedMethodDelimiter.getStatus());
+//				    		mapObj.put("methoddelimiterkey", savedMethodDelimiter.getMethoddelimiterkey());
+//				    		mapObj.put("username", savedMethodDelimiter.getUsername());
+//				    		mapObj.put("displayvalue", savedMethodDelimiter.getParsermethod().getParsermethodname());
+//				    		mapObj.put("screenname", "MethodDelimiter");
+				    		
 				    		return new ResponseEntity<>(savedMethodDelimiter , HttpStatus.OK);			    		
 				    	}	
 		   		}
@@ -436,6 +470,24 @@ public class MethodDelimiterService {
 				   delimiter.setStatus(-1);
 				   final MethodDelimiter savedDelimiters = methodDelimiterRepo.save(delimiter);   
 			   
+				   savedDelimiters.setDisplayvalue(savedDelimiters.getParsermethod().getParsermethodname());
+				   savedDelimiters.setScreenname("MethodDelimiter");
+		    		
+		    		
+//		    		Map<String, Object> mapObj = new HashMap<String, Object>();
+//
+//
+//		    		mapObj.put("parsermethod",savedDelimiters.getParsermethod());
+//		    		mapObj.put("createdby",savedDelimiters.getCreatedby());
+//	                mapObj.put("createddate",savedDelimiters.getCreateddate());
+//		    		mapObj.put("transactiondate",new Date());
+//		    		mapObj.put("delimiter_name",savedDelimiters.getDelimiter().getDelimitername());   		
+//		    		mapObj.put("status",savedDelimiters.getStatus());
+//		    		mapObj.put("methoddelimiterkey",savedDelimiters.getMethoddelimiterkey());
+//		    		mapObj.put("username", savedDelimiters.getUsername());
+//		    		mapObj.put("displayvalue", savedDelimiters.getParsermethod().getParsermethodname());
+//		    		mapObj.put("screenname", "MethodDelimiter");
+		    		
 			   return new ResponseEntity<>(savedDelimiters, HttpStatus.OK);  
 		   }
 		 }

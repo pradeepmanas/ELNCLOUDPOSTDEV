@@ -3,6 +3,7 @@ package com.agaram.eln.primary.service.methodsetup;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +87,13 @@ public class ParserSetupService {
 	
 	@Autowired
 	ParserFieldRepository parserFieldRepo;
+	
+	@Autowired
+	SampleExtractService extractService;
+	
+	@Autowired
+	SampleSplitService sampleSplitService;
+	
 	
 	/**
 	 * This method is used to generate blockwise data from the raw data file.
@@ -358,6 +366,113 @@ public class ParserSetupService {
 	 */
 	@SuppressWarnings({ "unused", "unchecked" })
 	@Transactional
+//	public ResponseEntity<Object> saveParserData(final HttpServletRequest request, final Map<String, Object> mapObject) {
+//		final ObjectMapper mapper = new ObjectMapper();
+//		
+//		final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
+//		final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
+//		String someValue =  (String) mapObject.get("doneByUserKey");
+//		
+//		final int doneByUserKey = Integer.parseInt(someValue);
+////		final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
+//		final int methodKey = (Integer) mapObject.get("methodKey");
+//		final String comments = (String) mapObject.get("comments"); 
+//	
+//		final List<ParserBlock> parserBlockList = mapper.convertValue(mapObject.get("parserBlockList"),List.class);		
+//		final List<ParserField> parserFieldList = mapper.convertValue(mapObject.get("parserFieldList"),List.class);		
+//		final List<ParserTechnique> parserTechniqueList = mapper.convertValue(mapObject.get("parserTechniqueList"),List.class);
+//		final List<SubParserField> subParserFieldList = mapper.convertValue(mapObject.get("subParserFieldList"),List.class);	
+//		final List<SubParserTechnique> subParserTechniqueList = mapper.convertValue(mapObject.get("subParserTechniqueList"),List.class);		
+//		
+//		final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
+//		final Method method = (Method)methodService.findById(methodKey).getBody();
+//		
+//		final Map<String, Object> inputMap = new HashMap<String, Object>();
+//		inputMap.put("parserBlockList", parserBlockList);
+//		inputMap.put("parserFieldList", parserFieldList);
+//		inputMap.put("parserTechniqueList", parserTechniqueList);
+//		inputMap.put("subParserFieldList", subParserFieldList);
+//		inputMap.put("subParserTechniqueList", subParserTechniqueList);
+//		
+//		final Map<String, Object> savedParserMap = saveParserSetupEntities(method, createdUser, mapper, inputMap);
+//		Integer parser = null; 
+//	  
+//		if(((List<ParserBlock>)savedParserMap.get("ParserBlockListAfterSave")).isEmpty()) {
+//			parser = 0;
+//	    }
+//	    else {
+////	    	parser = 1;
+//	    	final List<ParserBlock> blockList = (List<ParserBlock>)savedParserMap.get("ParserBlockListAfterSave");
+//	    	final List<Integer> blockKeyList = blockList.stream().map(item->item.getParserblockkey()).collect(Collectors.toList());
+//	    	final List<ParserField> fieldList = parserFieldRepo.findByParserblockInAndStatus(blockList, 1);
+//			if (fieldList.isEmpty()) {
+//				parser = 0;
+//			}
+//			else {
+//				parser = 1;
+//			}
+//	    }
+//	    
+//	    Method savedMethod = method;
+//	    if(parser != method.getParser()){
+//	    	method.setParser(parser);
+//	    	savedMethod = methodRepo.save(method);
+//	    } 
+//		    
+//		if (saveAuditTrail)
+//		{
+//			final StringBuffer xmlDataBuffer = new StringBuffer();				 
+//			final Map<String, String> xmlMap = getXMLData(savedParserMap);
+//	    	
+//			String blockXML = (String) xmlMap.get("blockXML");
+//	    	String parserFieldXML = (String) xmlMap.get("parserFieldXML");
+//	    	String parserTechniqueXML = (String) xmlMap.get("parserTechniqueXML");
+//	    	String subParserFieldXML = (String) xmlMap.get("subParserFieldXML");
+//	    	String subParserTechXML = (String) xmlMap.get("subParserTechXML");
+//	    			    
+//			if (blockXML.length() != 0 && blockXML.contains("<?xml")){
+//				blockXML = blockXML.substring(blockXML.indexOf("?>")+2);
+//				blockXML = blockXML.replace("<parserblocks>", "").replace("</parserblocks>", "");									
+//			}
+//			if (parserFieldXML.length() != 0 && parserFieldXML.contains("<?xml")){
+//				parserFieldXML = parserFieldXML.substring(parserFieldXML.indexOf("?>")+2);
+//				parserFieldXML = parserFieldXML.replace("<parserfields>", "").replace("</parserfields>", "");
+//				
+//			}
+//			if (parserTechniqueXML.length() != 0 && parserTechniqueXML.contains("<?xml")){
+//				parserTechniqueXML = parserTechniqueXML.substring(parserTechniqueXML.indexOf("?>")+2);
+//				parserTechniqueXML = parserTechniqueXML.replace("<parsertechniques>", "").replace("</parsertechniques>", "");
+//			}
+//			if (subParserTechXML.length() != 0 && subParserTechXML.contains("<?xml")){
+//				subParserTechXML = subParserTechXML.substring(subParserTechXML.indexOf("?>")+2);
+//				subParserTechXML = subParserTechXML.replace("<subparsertechniques>", "").replace("</subparsertechniques>", "");
+//			}
+//			if (subParserFieldXML.length() != 0 && subParserFieldXML.contains("<?xml")){
+//				subParserFieldXML = subParserFieldXML.substring(subParserFieldXML.indexOf("?>")+2);
+//				subParserFieldXML = subParserFieldXML.replace("<subparserfields>", "").replace("</subparserfields>", "");
+//			}
+//						
+//			xmlDataBuffer.append("<?xml version=\"1.0\" encoding=\"UTF-16\"?><combinedxml>" + blockXML + parserFieldXML + 
+//					parserTechniqueXML + subParserTechXML + subParserFieldXML + "</combinedxml>");				
+//			
+//			String message = "";
+//			String action = "Edit";
+////			String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
+////			if (comments ==  null || comments.length() == 0)
+////			{
+////				actionType = EnumerationInfo.CFRActionType.SYSTEM.getActionType();
+////				action = "Create";
+////			}
+////			else
+////			{
+////				message = comments;
+////			}
+////			cfrTransService.saveCfrTransaction(page, actionType, action, message, 
+////						site, xmlDataBuffer.toString(), createdUser, request.getRemoteAddr());
+//		}
+//		return new ResponseEntity<>(method, HttpStatus.OK);
+//	}
+
 	public ResponseEntity<Object> saveParserData(final HttpServletRequest request, final Map<String, Object> mapObject) {
 		final ObjectMapper mapper = new ObjectMapper();
 		
@@ -376,8 +491,15 @@ public class ParserSetupService {
 		final List<SubParserField> subParserFieldList = mapper.convertValue(mapObject.get("subParserFieldList"),List.class);	
 		final List<SubParserTechnique> subParserTechniqueList = mapper.convertValue(mapObject.get("subParserTechniqueList"),List.class);		
 		
+		
+		   final List<SampleTextSplit> textList = (List<SampleTextSplit>) textSplitService.getSampleTextSplitByMethod(methodKey).getBody();		   
+		   final List<SampleLineSplit> lineList = (List<SampleLineSplit>) lineSplitService.getSampleLineSplitByMethod(methodKey).getBody();		   
+		   final List<SampleExtract> extractList = (List<SampleExtract>) extractService.getSampleExtractByMethod(methodKey).getBody();		   
+
+
 		final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 		final Method method = (Method)methodService.findById(methodKey).getBody();
+		
 		
 		final Map<String, Object> inputMap = new HashMap<String, Object>();
 		inputMap.put("parserBlockList", parserBlockList);
@@ -386,6 +508,9 @@ public class ParserSetupService {
 		inputMap.put("subParserFieldList", subParserFieldList);
 		inputMap.put("subParserTechniqueList", subParserTechniqueList);
 		
+		   Date date = new Date();
+
+		   
 		final Map<String, Object> savedParserMap = saveParserSetupEntities(method, createdUser, mapper, inputMap);
 		Integer parser = null; 
 	  
@@ -405,12 +530,30 @@ public class ParserSetupService {
 			}
 	    }
 	    
-	    Method savedMethod = method;
+		 Method savedMethod = method;
 	    if(parser != method.getParser()){
 	    	method.setParser(parser);
-	    	savedMethod = methodRepo.save(method);
+           savedMethod = methodRepo.save(method);
+			//final Method savedMethod = methodRepo.save(method);
+
 	    } 
 		    
+  	
+	    	Integer sampleSplit = null; 
+			 
+	          if (textList.isEmpty()		   
+			      && lineList.isEmpty()		   
+			      && extractList.isEmpty()) {
+			    	sampleSplit = 0;
+	        	  }else {
+			    	sampleSplit = 1;
+				 }		    
+			
+			 savedMethod.setSamplesplit(sampleSplit);
+	    	final Method updatedMethod = methodRepo.save(savedMethod);
+	    	
+	//}
+				   	    
 		if (saveAuditTrail)
 		{
 			final StringBuffer xmlDataBuffer = new StringBuffer();				 
@@ -464,7 +607,7 @@ public class ParserSetupService {
 		}
 		return new ResponseEntity<>(method, HttpStatus.OK);
 	}
-	
+
 	/**
 	 * This method is used to save all Parser setup entries by invoking its appropriate class.
 	 * @param method [Method] object for which Parsing is done

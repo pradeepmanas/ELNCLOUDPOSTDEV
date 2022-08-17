@@ -41,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @XmlRootElement  (name = "instrumentmaster")
 @XmlType(propOrder = { "instmastkey", "instrumentcode", "site","instrumentname","instused",
 		"insttype","instcategory","instmake","instmodel","instiopno","electrodeno",
-		 "status", "createdby", "createddate","username","transactiondate"})
+		 "status", "createdby", "createddate","username","transactiondate","displayvalue","screenname"})
 @Entity
 @Table(name = "instrumentmaster")
 public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster> {
@@ -87,6 +87,17 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 	@Temporal(TemporalType.TIMESTAMP)
 	Date transactiondate;
 	
+	
+	@Transient
+	@Column(name = "displayvalue")
+	private String displayvalue;
+
+	@Transient
+	@Column(name = "screenname")
+	private String screenname;
+
+
+
 	@Column(name = "instmodel")
 	private String instmodel;
 	
@@ -250,6 +261,23 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 		this.transactiondate = transactiondate;
 	}
 
+	
+	public String getDisplayvalue() {
+		return displayvalue;
+	}
+
+	public void setDisplayvalue(String displayvalue) {
+		this.displayvalue = displayvalue;
+	}
+
+	public String getScreenname() {
+		return screenname;
+	}
+
+	public void setScreenname(String screenname) {
+		this.screenname = screenname;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -271,6 +299,9 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 	       .append("createddate", this.createddate, obj.createddate)
 	       .append("username", this.username, obj.username)
 	       .append("transactiondate", this.transactiondate, obj.transactiondate)
+	       .append("displayvalue", this.displayvalue, obj.displayvalue)
+           .append("screenname", this.screenname, obj.screenname)
+
 	       .build();
 	}
 
@@ -297,6 +328,9 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 		this.createddate = instMaster.createddate;
 		this.username = instMaster.username;
 		this.transactiondate = instMaster.transactiondate;
+		this.displayvalue = instMaster.displayvalue;
+		this.screenname = instMaster.screenname;
+
 	}
 	
 	/**

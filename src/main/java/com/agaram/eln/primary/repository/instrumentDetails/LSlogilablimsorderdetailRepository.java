@@ -491,6 +491,10 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	List<LSlogilablimsorderdetail> findByOrderflagAndAssignedtoAndLockeduserIsNotNullOrderByBatchcodeDesc(String string,
 			LSuserMaster lSuserMaster);
+	
+	List<LSlogilablimsorderdetail> findByAssignedtoAndLockeduserIsNotNullOrderByBatchcodeDesc(LSuserMaster lSuserMaster);
+	List<LSlogilablimsorderdetail> findByAssignedtoOrderByBatchcodeDesc(LSuserMaster lSuserMaster);
+	List<LSlogilablimsorderdetail> findByAssignedtoAndLsuserMasterOrderByBatchcodeDesc(LSuserMaster lsselecteduser, LSuserMaster lsloginuser);
 
 	List<LSlogilablimsorderdetail> findByOrderflagAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String string);

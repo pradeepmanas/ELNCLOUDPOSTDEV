@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.instrumentsetup;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,6 +146,9 @@ public class InstMasterService {
 			   	
 	   		saveAdminInstRights(savedMaster);
 			
+	   		savedMaster.setDisplayvalue(savedMaster.getInstrumentname());
+	   		savedMaster.setScreenname("Instrument");
+	   		
 			if (saveAuditTrial == true)
 			{
 			
@@ -178,7 +182,9 @@ public class InstMasterService {
 				lscfttransactionrepo.save(LScfttransaction);
 		
 			}			
-			return new ResponseEntity<>( savedMaster, HttpStatus.OK);
+			
+
+    		return new ResponseEntity<>( savedMaster, HttpStatus.OK);
 		}	    	
     }
 	
@@ -439,8 +445,12 @@ public class InstMasterService {
 	            	instrumentToSave.setInstrumentname(master.getInstrumentname());
 	            	instrumentToSave.setInstused(master.getInstused());
 	     			
-	     			final InstrumentMaster savedInstrument = masterRepo.save(instrumentToSave);     		
+	     			final InstrumentMaster savedInstrument = masterRepo.save(instrumentToSave);     
 	     			
+	     			savedInstrument.setDisplayvalue(savedInstrument.getInstrumentname());
+	     			savedInstrument.setScreenname("Instrument");
+	     			
+
 	     			if (saveAuditTrial)
 	     			{
 	     			//	final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedInstrument);
@@ -516,6 +526,10 @@ public class InstMasterService {
 	    			
 		    		final InstrumentMaster savedMethod = masterRepo.save(master);
 		    		
+		    		savedMethod.setDisplayvalue(savedMethod.getInstrumentcode());
+		    		savedMethod.setScreenname("Instrument");
+
+
 		    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);	
     			}
     		}
@@ -725,9 +739,12 @@ public class InstMasterService {
   	        	}
   	        	//---end          
   	            
-  	       	masterObj.setStatus(-1);	        	
+  	       	    masterObj.setStatus(-1);	        	
 	            final InstrumentMaster savedInstrument = masterRepo.save(masterObj);    
 	        
+	            savedInstrument.setDisplayvalue(savedInstrument.getInstrumentname());
+	            savedInstrument.setScreenname("Instrument");
+
   	            	
   	            return new ResponseEntity<>(savedInstrument, HttpStatus.OK);//status code - 200   
   	                	}
