@@ -729,7 +729,7 @@ AND table_name='lsordersharedby';
 END
 $do$;  
 
-UPDATE lsordersharedby set order_batchcode = sharebatchcode, usersharedby_usercode = (select usercode from lsusermaster where username = sharebyusername), usersharedon_usercode = (select usercode from lsusermaster where username = sharetousername) where order_batchcode is null and usersharedby_usercode is null and  usersharedby_usercode is null;
+UPDATE lsordersharedby set order_batchcode = sharebatchcode, usersharedby_usercode = (select usercode from lsusermaster where username = sharebyusername fetch first 1 rows only), usersharedon_usercode = (select usercode from lsusermaster where username = sharetousername fetch first 1 rows only) where order_batchcode is null and usersharedby_usercode is null and  usersharedby_usercode is null;
 
 ALTER TABLE IF Exists lsordershareto ADD COLUMN IF NOT EXISTS order_batchcode numeric(17,0);
 
@@ -754,7 +754,7 @@ AND table_name='lsordershareto';
 END
 $do$;  
 
-UPDATE lsordershareto set order_batchcode = sharebatchcode, usersharedby_usercode = (select usercode from lsusermaster where username = sharebyusername), usersharedon_usercode = (select usercode from lsusermaster where username = sharetousername) where order_batchcode is null and usersharedby_usercode is null and  usersharedby_usercode is null;
+UPDATE lsordershareto set order_batchcode = sharebatchcode, usersharedby_usercode = (select usercode from lsusermaster where username = sharebyusername fetch first 1 rows only), usersharedon_usercode = (select usercode from lsusermaster where username = sharetousername fetch first 1 rows only) where order_batchcode is null and usersharedby_usercode is null and  usersharedby_usercode is null;
 
 update LSusergrouprightsmaster set displaytopic='IDS_TSK_ASSIGNEDORDERS' where displaytopic='Assigned Orders';
 update LSusergrouprightsmaster set displaytopic='IDS_TSK_MYORDERS' where displaytopic='My Orders';
