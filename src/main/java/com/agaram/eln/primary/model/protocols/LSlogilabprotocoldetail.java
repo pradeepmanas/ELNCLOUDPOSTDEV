@@ -20,6 +20,7 @@ import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
@@ -97,6 +98,23 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private LSprotocolworkflow lSprotocolworkflow;
 	
 	@ManyToOne
+	private LSworkflow lsworkflow;
+	
+	
+	@Transient
+	List<LSworkflow> lstworkflow;
+	
+	private Integer viewoption;
+	
+	public List<LSworkflow> getLstworkflow() {
+		return lstworkflow;
+	}
+
+	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+		this.lstworkflow = lstworkflow;
+	}
+
+	@ManyToOne
 	private Lsrepositoriesdata lsrepositoriesdata;
 	
 	@ManyToOne
@@ -120,6 +138,14 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	
 	private Integer orderdisplaytype;
 	
+	public LSworkflow getLsworkflow() {
+		return lsworkflow;
+	}
+
+	public void setLsworkflow(LSworkflow lsworkflow) {
+		this.lsworkflow = lsworkflow;
+	}
+
 	@Transient
 	List<LSprojectmaster> lstproject;
 
@@ -488,5 +514,13 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Override
 	public int compareTo(LSlogilabprotocoldetail o) {
 		return this.getProtocolordercode().compareTo(o.getProtocolordercode());
+	}
+
+	public Integer getViewoption() {
+		return viewoption;
+	}
+
+	public void setViewoption(Integer viewoption) {
+		this.viewoption = viewoption;
 	}
 }

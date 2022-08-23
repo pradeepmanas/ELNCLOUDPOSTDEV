@@ -15,6 +15,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity(name = "LSprotocolworkflowhistory")
@@ -63,6 +64,19 @@ public class LSprotocolworkflowhistory {
 	
 	@ManyToOne
 	private LSprotocolworkflow currentworkflow;
+	
+	@ManyToOne
+	private LSsheetworkflow lssheetworkflow;
+	
+	
+
+	public LSsheetworkflow getLssheetworkflow() {
+		return lssheetworkflow;
+	}
+
+	public void setLssheetworkflow(LSsheetworkflow lssheetworkflow) {
+		this.lssheetworkflow = lssheetworkflow;
+	}
 
 	public Integer getHistorycode() {
 		return historycode;

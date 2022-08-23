@@ -4171,22 +4171,19 @@ public class InstrumentService {
 		return objdir;
 	}
 
-	public Map<String, Object> Getfoldersfororders(LSuserMaster objusermaster) {
+	public Map<String, Object> Getfoldersfororders(LSlogilablimsorderdetail objorder) {
 		
 		Map<String, Object> mapfolders = new HashMap<String, Object>();
 		
 		List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
-//		lstdir = lsSheetOrderStructureRepository.findAll();
-		lstdir = lsSheetOrderStructureRepository.selectfoldersonuseunion(objusermaster.getLssitemaster().getSitecode(),1,objusermaster.getUsercode());
-//		if (lstdir != null && lstdir.size() > 0) {
-//			lstdir.get(0).setLsorderitems(lslogilablimsorderdetailRepository
-//					.findByDirectorycodeOrderByBatchcodeDesc(lstdir.get(0).getDirectorycode()));
-//		}
+		lstdir = lsSheetOrderStructureRepository.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(objorder.getLsuserMaster().getLssitemaster(),2,objorder.getLsuserMaster(),1);
+
 		
-		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findProjectcodeAndProjectnameBystatusAndLssitemaster(1,objusermaster.getLssitemaster());
-		if(lstproject != null && lstproject.size()>0)
+		if(objorder.getLstproject() != null && objorder.getLstproject().size()>0)
 		{
+			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findAll(objorder.getLstproject().stream().map(LSprojectmaster::getProjectcode).collect(Collectors.toList()));
 			List<Logilaborders> lstorders = lslogilablimsorderdetailRepository.findByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(1,lstproject);
+//			lstorders.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
 			mapfolders.put("tests", lstorders != null ?lstorders : new ArrayList<Logilaborders>());
 			mapfolders.put("projects", lstproject);
 		}
@@ -4196,10 +4193,11 @@ public class InstrumentService {
 			mapfolders.put("projects", new ArrayList<Projectmaster>());
 		}
 		
-		List<LSsamplemaster> lstsample = lssamplemasterrepository.findSamplecodeAndSamplenameBystatusAndLssitemaster(1,objusermaster.getLssitemaster());
+		List<LSsamplemaster> lstsample = lssamplemasterrepository.findSamplecodeAndSamplenameBystatusAndLssitemaster(1,objorder.getLsuserMaster().getLssitemaster());
 		if(lstsample != null && lstsample.size() >0)
 		{
-			List<Logilaborders> lstorders = lslogilablimsorderdetailRepository.findByOrderdisplaytypeAndLssamplemasterInAndTestcodeIsNotNull(2,lstsample);
+			List<Logilaborders> lstorders = lslogilablimsorderdetailRepository.findByOrderdisplaytypeAndLssamplemasterInAndViewoptionAndTestcodeIsNotNullOrOrderdisplaytypeAndLsuserMasterAndViewoptionAndLssamplemasterInAndTestcodeIsNotNull
+					(2,lstsample,1,2,objorder.getLsuserMaster(),2,lstsample);
 			mapfolders.put("sampletests", lstorders != null ?lstorders : new ArrayList<Logilaborders>());
 			mapfolders.put("samples", lstsample);
 		}
@@ -4209,7 +4207,7 @@ public class InstrumentService {
 			mapfolders.put("samples", new ArrayList<Samplemaster>());
 		}
 		
-		mapfolders.put("users",userService.GetUsers(objusermaster));
+		mapfolders.put("users",userService.GetUsers(objorder.getLsuserMaster()));
 		mapfolders.put("directory", lstdir);
 		
 		return mapfolders;
@@ -4361,11 +4359,8 @@ public class InstrumentService {
 		Map<String, Object> mapfolders = new HashMap<String, Object>();
 		
 		List<Lsprotocolorderstructure> lstdir = new ArrayList<Lsprotocolorderstructure>();
-		lstdir = lsprotocolorderStructurerepository.findAll();
-//		if (lstdir != null && lstdir.size() > 0) {
-//			lstdir.get(0).setLsorderitems(lslogilablimsorderdetailRepository
-//					.findByDirectorycodeOrderByBatchcodeDesc(lstdir.get(0).getDirectorycode()));
-//		}
+		lstdir = lsprotocolorderStructurerepository.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(objusermaster.getLssitemaster(),2,objusermaster,1);
+
 		List<Testmaster> lstest=lstestmasterlocalRepository.findBystatusAndLssitemaster(1, objusermaster.getLssitemaster());
 		if(lstest!=null && lstest.size()>0) {
 			mapfolders.put("lstest", lstest);
@@ -4386,8 +4381,10 @@ public class InstrumentService {
 		List<LSsamplemaster> lstsample = lssamplemasterrepository.findSamplecodeAndSamplenameBystatusAndLssitemaster(1,objusermaster.getLssitemaster());
 		if(lstsample != null && lstsample.size() >0)
 		{
-			List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository.findByOrderdisplaytypeAndLssamplemasterInAndTestcodeIsNotNull(2,lstsample);
-			mapfolders.put("sampletests", lstorders != null ?lstorders : new ArrayList<Logilaborders>());
+			List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository.findByOrderdisplaytypeAndLssamplemasterInAndViewoptionAndTestcodeIsNotNullOrOrderdisplaytypeAndLsuserMasterAndViewoptionAndLssamplemasterInAndTestcodeIsNotNull
+					(2,lstsample,1,2,objusermaster,2,lstsample);
+//			List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository.findByOrderdisplaytypeAndLssamplemasterInAndTestcodeIsNotNull(2,lstsample);
+			mapfolders.put("sampletests", lstorders != null ?lstorders : new ArrayList<Logilabprotocolorders>());
 			mapfolders.put("samples", lstsample);
 		}
 		else
@@ -4537,5 +4534,7 @@ public class InstrumentService {
 		return LSlogilabprotocoldetailRepository
 				.findByOrderflagAndAssignedtoOrderByProtocolordercodeDesc("N", order.getLsuserMaster());
 	}
+
+
 
 }

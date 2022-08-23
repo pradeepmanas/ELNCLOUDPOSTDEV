@@ -43,32 +43,41 @@ public class Lsprotocolorderstructure {
 	private Integer length;
 	private Long parentdircode;
 
-	public Integer createdby;
-	public String createdbyusername;
+	@ManyToOne
+	public LSuserMaster createdby;
 
 	@ManyToOne
 	private LSuserMaster modifiedby;
 
-	private Integer sitecode;
+	@ManyToOne
+	private LSSiteMaster sitemaster;
 
-	private Integer onlytome;
+	private Integer viewoption;
 
-	private Integer tothesite;
 
-	public Integer getCreatedby() {
+
+	public LSuserMaster getCreatedby() {
 		return createdby;
 	}
 
-	public void setCreatedby(Integer createdby) {
+	public void setCreatedby(LSuserMaster createdby) {
 		this.createdby = createdby;
 	}
 
-	public String getCreatedbyusername() {
-		return createdbyusername;
+	public LSSiteMaster getSitemaster() {
+		return sitemaster;
 	}
 
-	public void setCreatedbyusername(String createdbyusername) {
-		this.createdbyusername = createdbyusername;
+	public void setSitemaster(LSSiteMaster sitemaster) {
+		this.sitemaster = sitemaster;
+	}
+
+	public Integer getViewoption() {
+		return viewoption;
+	}
+
+	public void setViewoption(Integer viewoption) {
+		this.viewoption = viewoption;
 	}
 
 	public LSuserMaster getModifiedby() {
@@ -77,30 +86,6 @@ public class Lsprotocolorderstructure {
 
 	public void setModifiedby(LSuserMaster modifiedby) {
 		this.modifiedby = modifiedby;
-	}
-
-	public Integer getSitecode() {
-		return sitecode;
-	}
-
-	public void setSitecode(Integer sitecode) {
-		this.sitecode = sitecode;
-	}
-
-	public Integer getOnlytome() {
-		return onlytome;
-	}
-
-	public void setOnlytome(Integer onlytome) {
-		this.onlytome = onlytome;
-	}
-
-	public Integer getTothesite() {
-		return tothesite;
-	}
-
-	public void setTothesite(Integer tothesite) {
-		this.tothesite = tothesite;
 	}
 
 	@Transient

@@ -81,6 +81,7 @@ import com.agaram.eln.primary.model.protocols.ProtocolorderImage;
 import com.agaram.eln.primary.model.protocols.Protocolordervideos;
 import com.agaram.eln.primary.model.protocols.Protocolvideos;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -127,7 +128,9 @@ import com.agaram.eln.primary.repository.protocol.ProtocolorderImageRepository;
 import com.agaram.eln.primary.repository.protocol.ProtocolordervideosRepository;
 import com.agaram.eln.primary.repository.protocol.ProtocolvideosRepository;
 import com.agaram.eln.primary.repository.protocol.lSprotocolworkflowRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
@@ -301,6 +304,12 @@ public class ProtocolService {
 
 	@Autowired
 	private FileManipulationservice fileManipulationservice;
+	
+	@Autowired
+	private LSworkflowRepository lsworkflowRepository;
+	
+	@Autowired
+	private LSsheetworkflowRepository lssheetworkflowRepository;
 
 //	@Autowired
 //	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
@@ -1227,9 +1236,13 @@ public class ProtocolService {
 				newProtocolMasterObj.setVersionno(1);
 				LSSiteMaster lssitemaster = LSSiteMasterRepository
 						.findBysitecode(LScfttransactionobj.getLssitemaster());
-				LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
-						.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
-				newProtocolMasterObj.setlSprotocolworkflow(lsprotocolworkflow);
+//				LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
+//						.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
+				if (newProtocolMasterObj.getLssheetworkflow() == null) {
+					newProtocolMasterObj.setLssheetworkflow(lssheetworkflowRepository
+							.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster));
+				}
+//				newProtocolMasterObj.setlSprotocolworkflow(lsprotocolworkflow);
 			}
 			LSProtocolMasterRepositoryObj.save(newProtocolMasterObj);
 
@@ -1692,13 +1705,13 @@ public class ProtocolService {
 			approved = objClass.getApproved();
 		}
 
-		LSProtocolMasterRepositoryObj.updateFileWorkflow(objClass.getlSprotocolworkflow(), approved,
+		LSProtocolMasterRepositoryObj.updateFileWorkflow(objClass.getLssheetworkflow(), approved,
 				objClass.getRejected(), objClass.getProtocolmastercode());
 
 		LSprotocolmaster LsProto = LSProtocolMasterRepositoryObj
 				.findFirstByProtocolmastercode(objClass.getProtocolmastercode());
 
-		LsProto.setlSprotocolworkflow(objClass.getlSprotocolworkflow());
+		LsProto.setLssheetworkflow(objClass.getLssheetworkflow());
 		if (LsProto.getApproved() == null) {
 			LsProto.setApproved(0);
 		}
@@ -1719,12 +1732,14 @@ public class ProtocolService {
 			approved = objClass.getApproved();
 		}
 
-		LSlogilabprotocoldetailRepository.updateFileWorkflow(objClass.getlSprotocolworkflow(), approved,
+//		LSlogilabprotocoldetailRepository.updateFileWorkflow(objClass.getlSprotocolworkflow(), approved,
+//				objClass.getRejected(), objClass.getProtocolordercode());
+		LSlogilabprotocoldetailRepository.updateFileWorkflow(objClass.getLsworkflow(), approved,
 				objClass.getRejected(), objClass.getProtocolordercode());
 
 		LSlogilabprotocoldetail LsProto = LSlogilabprotocoldetailRepository.findOne(objClass.getProtocolordercode());
 
-		LsProto.setlSprotocolworkflow(objClass.getlSprotocolworkflow());
+		LsProto.setLsworkflow(objClass.getLsworkflow());
 		if (LsProto.getApproved() == null) {
 			LsProto.setApproved(0);
 		}
@@ -1733,21 +1748,22 @@ public class ProtocolService {
 		List<LSlogilabprotocoldetail> LSlogilabprotocoldetail = new ArrayList<LSlogilabprotocoldetail>();
 		LSlogilabprotocoldetail.add(objClass);
 		LSusergroup userGroup = LSusergroupRepository.findOne(objClass.getObjuser().getMultiusergroupcode());
+		
+		List<LSworkflow> lstworkflow = objClass.getLstworkflow();
 
-		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
-				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
-		@SuppressWarnings("unused")
-		List<LSuserteammapping> LSuserteammapping = LSuserteammappingRepositoryObj
-				.findByLsuserMasterAndTeamcodeNotNull(objClass.getLsuserMaster());
-		List<LSprotocolworkflow> lsprotocolworkflow = lSprotocolworkflowRepository
-				.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
-		if (lsworkflowgroupmapping != null && lsworkflowgroupmapping.size() > 0) {
+//		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
+//				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
+//		List<LSuserteammapping> LSuserteammapping = LSuserteammappingRepositoryObj
+//				.findByLsuserMasterAndTeamcodeNotNull(objClass.getLsuserMaster());
+//		List<LSprotocolworkflow> lsprotocolworkflow = lSprotocolworkflowRepository
+//				.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
+		if (lstworkflow != null && lstworkflow.size() > 0) {
 			LSlogilabprotocoldetail.forEach((objorder) -> {
-				if (lsprotocolworkflow != null && objorder.getlSprotocolworkflow() != null
-						&& lsprotocolworkflow.size() > 0) {
+				if (lstworkflow != null && objorder.getLsworkflow() != null
+						&& lstworkflow.size() > 0) {
 					List<Integer> lstprotocolworkflowcode = new ArrayList<Integer>();
-					if (lsprotocolworkflow != null && lsprotocolworkflow.size() > 0) {
-						lstprotocolworkflowcode = lsprotocolworkflow.stream().map(LSprotocolworkflow::getWorkflowcode)
+					if (lstworkflow != null && lstworkflow.size() > 0) {
+						lstprotocolworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode)
 								.collect(Collectors.toList());
 
 						if (lstprotocolworkflowcode.contains(objorder.getlSprotocolworkflow().getWorkflowcode())) {
@@ -2222,8 +2238,8 @@ public class ProtocolService {
 
 				LSSiteMaster site = LSSiteMasterRepository.findBysitecode(lSlogilabprotocoldetail.getSitecode());
 
-				lSlogilabprotocoldetail.setlSprotocolworkflow(
-						lSprotocolworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(site));
+				lSlogilabprotocoldetail.setLsworkflow(
+						lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(site));
 
 				LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
 			}
@@ -2234,18 +2250,16 @@ public class ProtocolService {
 //				.findOne(lSlogilabprotocoldetail.getObjuser().getMultiusergroupcode());
 		LSusergroup userGroup = LSusergroupRepository
 				.findOne(lSlogilabprotocoldetail.getMultiusergroupcode());
-		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
-				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
-
+//		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
+//				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
+		List<LSworkflow> lstworkflow = lSlogilabprotocoldetail.getLstworkflow();
 		List<LSlogilabprotocoldetail> lstPendingOrder = new ArrayList<>();
 		List<LSuserteammapping> LSuserteammapping = LSuserteammappingRepositoryObj
 				.findByLsuserMasterAndTeamcodeNotNull(lSlogilabprotocoldetail.getLsuserMaster());
 		int pendingcount = 0;
-		if (lsworkflowgroupmapping != null && lsworkflowgroupmapping.size() > 0) {
-//			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
-//					.findByworkflowcode(lsworkflowgroupmapping.get(0).getWorkflowcode());
-			List<LSprotocolworkflow> lsprotocolworkflow = lSprotocolworkflowRepository
-					.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
+		if (lstworkflow != null && lstworkflow.size() > 0) {
+//			List<LSprotocolworkflow> lsprotocolworkflow = lSprotocolworkflowRepository
+//					.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 			lstPendingOrder = LSlogilabprotocoldetailRepository
 //					findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc
@@ -2258,16 +2272,15 @@ public class ProtocolService {
 
 			lstPendingOrder.forEach((objorder) -> {
 
-				if (lsprotocolworkflow != null && objorder.getlSprotocolworkflow() != null
-						&& lsprotocolworkflow.size() > 0) {
+				if (lstworkflow != null && objorder.getLsworkflow() != null
+						&& lstworkflow.size() > 0) {
 					// if(lstworkflow.contains(this.lsworkflow))
 
 					List<Integer> lstprotocolworkflowcode = new ArrayList<Integer>();
-					if (lsprotocolworkflow != null && lsprotocolworkflow.size() > 0) {
-						lstprotocolworkflowcode = lsprotocolworkflow.stream().map(LSprotocolworkflow::getWorkflowcode)
-								.collect(Collectors.toList());
+					if (lstworkflow != null && lstworkflow.size() > 0) {
+						lstprotocolworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
 
-						if (lstprotocolworkflowcode.contains(objorder.getlSprotocolworkflow().getWorkflowcode())) {
+						if (lstprotocolworkflowcode.contains(objorder.getLsworkflow().getWorkflowcode())) {
 							objorder.setCanuserprocess(true);
 						} else {
 							objorder.setCanuserprocess(false);
@@ -2640,20 +2653,21 @@ public class ProtocolService {
 		LSusergroup userGroup = LSusergroupRepository
 				.findOne(lSlogilabprotocoldetail.getObjuser().getMultiusergroupcode());
 
-		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
-				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
+//		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
+//				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
+		
+		List<LSworkflow> lstworkflow = lSlogilabprotocoldetail.getLstworkflow();
 
 		List<LSlogilabprotocoldetail> lstPendingOrder = new ArrayList<>();
 
 		List<LSuserteammapping> LSuserteammapping = LSuserteammappingRepositoryObj
 				.findByLsuserMasterAndTeamcodeNotNull(lSlogilabprotocoldetail.getLsuserMaster());
 		int pendingcount = 0;
-		if (lsworkflowgroupmapping != null && lsworkflowgroupmapping.size() > 0) {
-//			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
-//					.findByworkflowcode(lsworkflowgroupmapping.get(0).getWorkflowcode());
+		if (lstworkflow != null && lstworkflow.size() > 0) {
 
-			List<LSprotocolworkflow> lsprotocolworkflow = lSprotocolworkflowRepository
-					.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
+
+//			List<LSprotocolworkflow> lsprotocolworkflow = lSprotocolworkflowRepository
+//					.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 			lstPendingOrder = LSlogilabprotocoldetailRepository
 					.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
@@ -2662,16 +2676,16 @@ public class ProtocolService {
 
 			lstPendingOrder.forEach((objorder) -> {
 
-				if (lsprotocolworkflow != null && objorder.getlSprotocolworkflow() != null
-						&& lsprotocolworkflow.size() > 0) {
+				if (lstworkflow != null && objorder.getLsworkflow()  != null
+						&& lstworkflow.size() > 0) {
 					// if(lstworkflow.contains(this.lsworkflow))
 
 					List<Integer> lstprotocolworkflowcode = new ArrayList<Integer>();
-					if (lsprotocolworkflow != null && lsprotocolworkflow.size() > 0) {
-						lstprotocolworkflowcode = lsprotocolworkflow.stream().map(LSprotocolworkflow::getWorkflowcode)
-								.collect(Collectors.toList());
+					if (lstworkflow != null && lstworkflow.size() > 0) {
+						lstprotocolworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+		
 
-						if (lstprotocolworkflowcode.contains(objorder.getlSprotocolworkflow().getWorkflowcode())) {
+						if (lstprotocolworkflowcode.contains(objorder.getLsworkflow().getWorkflowcode())) {
 							objorder.setCanuserprocess(true);
 						} else {
 							objorder.setCanuserprocess(false);
@@ -2762,8 +2776,10 @@ public class ProtocolService {
 			LSusergroup userGroup = LSusergroupRepository
 					.findOne(lSlogilabprotocoldetail.getObjuser().getMultiusergroupcode());
 
-			List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
-					.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
+//			List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
+//					.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
+			
+			List<LSworkflow> lstworkflow = lSlogilabprotocoldetail.getLstworkflow();
 
 			List<LSlogilabprotocoldetail> lstPendingOrder = new ArrayList<>();
 
@@ -2771,12 +2787,9 @@ public class ProtocolService {
 					.findByLsuserMasterAndTeamcodeNotNull(lSlogilabprotocoldetail.getLsuserMaster());
 			int pendingcount = 0;
 
-			if (lsworkflowgroupmapping != null && lsworkflowgroupmapping.size() > 0) {
-//				LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
-//						.findByworkflowcode(lsworkflowgroupmapping.get(0).getWorkflowcode());
-
-				List<LSprotocolworkflow> lsprotocolworkflow = lSprotocolworkflowRepository
-						.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
+			if (lstworkflow != null && lstworkflow.size() > 0) {
+//				List<LSprotocolworkflow> lsprotocolworkflow = lSprotocolworkflowRepository
+//						.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 				lstPendingOrder = LSlogilabprotocoldetailRepository
 						.findTop10ByProtocoltypeAndSitecodeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
@@ -2787,16 +2800,15 @@ public class ProtocolService {
 //						.setCanuserprocess(lsprotocolworkflow.equals(objorder.getlSprotocolworkflow()) ? true : false));
 				lstPendingOrder.forEach((objorder) -> {
 
-					if (lsprotocolworkflow != null && objorder.getlSprotocolworkflow() != null
-							&& lsprotocolworkflow.size() > 0) {
+					if (lstworkflow != null && objorder.getLsworkflow() != null
+							&& lstworkflow.size() > 0) {
 						// if(lstworkflow.contains(this.lsworkflow))
 
 						List<Integer> lstprotocolworkflowcode = new ArrayList<Integer>();
-						if (lsprotocolworkflow != null && lsprotocolworkflow.size() > 0) {
-							lstprotocolworkflowcode = lsprotocolworkflow.stream()
-									.map(LSprotocolworkflow::getWorkflowcode).collect(Collectors.toList());
+						if (lstworkflow != null && lstworkflow.size() > 0) {
+							lstprotocolworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
 
-							if (lstprotocolworkflowcode.contains(objorder.getlSprotocolworkflow().getWorkflowcode())) {
+							if (lstprotocolworkflowcode.contains(objorder.getLsworkflow().getWorkflowcode())) {
 								objorder.setCanuserprocess(true);
 							} else {
 								objorder.setCanuserprocess(false);

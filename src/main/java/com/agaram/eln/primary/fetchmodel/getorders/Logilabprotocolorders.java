@@ -34,15 +34,18 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	
 	private Long directorycode;
 	
+	private Integer createby;
+	
 	List<LSprotocolworkflow> lstworkflow;
 	private LSprotocolworkflow lSprotocolworkflow;
 	private Integer workflowcode;
 	private boolean canuserprocess;
+	private LSsamplemaster lssamplemaster;
 
 	public Logilabprotocolorders(Long protocolordercode,Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
 			LSprotocolworkflow lSprotocolworkflow,
-			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,String keyword,Long directorycode) {
+			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,String keyword,Long directorycode,Integer createby) {
 		
 		this.protocolordercode = protocolordercode;
 		this.Testcode =Testcode;
@@ -58,6 +61,24 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 		this.keyword = keyword;
 		this.directorycode = directorycode;
 		this.lsprojectmaster = lsprojectmaster;
+		this.createby =createby;
+		this.lssamplemaster= lssamplemaster != null ? lssamplemaster:null;
+	}
+
+	public LSsamplemaster getLssamplemaster() {
+		return lssamplemaster;
+	}
+
+	public void setLssamplemaster(LSsamplemaster lssamplemaster) {
+		this.lssamplemaster = lssamplemaster;
+	}
+
+	public Integer getCreateby() {
+		return createby;
+	}
+
+	public void setCreateby(Integer createby) {
+		this.createby = createby;
 	}
 
 	public Integer getTestcode() {

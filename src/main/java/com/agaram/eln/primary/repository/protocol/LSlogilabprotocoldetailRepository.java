@@ -16,6 +16,7 @@ import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -80,9 +81,9 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	@Transactional
 	@Modifying
-	@Query("update LSlogilabprotocoldetail set lSprotocolworkflow = :workflow, approved= :approved , rejected= :rejected "
+	@Query("update LSlogilabprotocoldetail set lsworkflow = :workflow, approved= :approved , rejected= :rejected "
 			+ "where protocolordercode in (:protocolordercode)")
-	public void updateFileWorkflow(@Param("workflow") LSprotocolworkflow lsprotocolworkflow,
+	public void updateFileWorkflow(@Param("workflow") LSworkflow lSworkflow,
 			@Param("approved") Integer approved, @Param("rejected") Integer rejected,
 			@Param("protocolordercode") Long protocolordercode);
 
@@ -303,6 +304,11 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	List<LSlogilabprotocoldetail> findByOrderflagAndAssignedtoOrderByProtocolordercodeDesc(String string,
 			LSuserMaster lsuserMaster);
+
+
+	List<Logilabprotocolorders> findByOrderdisplaytypeAndLssamplemasterInAndViewoptionAndTestcodeIsNotNullOrOrderdisplaytypeAndLsuserMasterAndViewoptionAndLssamplemasterInAndTestcodeIsNotNull(
+			int i, List<LSsamplemaster> lstsample, int j, int k, LSuserMaster objusermaster, int l,
+			List<LSsamplemaster> lstsample2);
 
 
 }

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public interface LSSheetOrderStructureRepository extends JpaRepository<LSSheetOrderStructure, Long> {
 	@Transactional
@@ -27,10 +28,5 @@ public interface LSSheetOrderStructureRepository extends JpaRepository<LSSheetOr
 	LSSheetOrderStructure findByDirectorycodeAndParentdircodeAndDirectorynameNot(Long directorycode, Long parentdircode,
 			String directoryname);
 
-	@Transactional
-	@Modifying
-	@Query(value = "select * from "
-			+ "LSSheetOrderStructure where sitecode = ?1 and onlytome isnull and tothesite isnull UNION select * from LSSheetOrderStructure where sitecode=?1 and onlytome=?3 UNION select * from LSSheetOrderStructure where sitecode=?1 and tothesite=?2", nativeQuery = true)
-
-	List<LSSheetOrderStructure> selectfoldersonuseunion(Integer sitecode, int i,Integer usercode);
+	List<LSSheetOrderStructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(LSSiteMaster site,Integer siteviewopt,LSuserMaster createduser,Integer userviewopt);
 }

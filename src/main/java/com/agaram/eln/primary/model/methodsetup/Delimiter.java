@@ -28,6 +28,7 @@ import org.apache.commons.lang3.builder.Diffable;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.Range;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -40,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "delimiter")
 @XmlType(propOrder = { "delimiterkey", "delimitername", "actualdelimiter", 
-		 "status", "createdby", "createddate" , "username","transactiondate","defaultvalue","displayvalue","screenname"})
+		 "status", "createdby", "createddate" , "username","transactiondate","defaultvalue","displayvalue","screenname","objsilentaudit"})
 @Entity
 @Table(name = "delimiter")
 public class Delimiter implements Serializable, Diffable<Delimiter>{
@@ -71,6 +72,9 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	@Column(name = "defaultvalue")
 	private Integer defaultvalue;	
 		
+	@Transient
+	private LScfttransaction objsilentaudit;
+
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
 	Date transactiondate;
@@ -188,6 +192,15 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 		this.screenname = screenname;
 	}
 
+	
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -204,6 +217,8 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	       .append("defaultvalue", this.defaultvalue, obj.defaultvalue)
 	       .append("displayvalue", this.displayvalue, obj.displayvalue)
            .append("screenname", this.screenname, obj.screenname)
+           .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
+
 
 	       .build();
 	}
@@ -226,6 +241,9 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 		this.defaultvalue = delimiter.defaultvalue;
 		this.displayvalue = delimiter.displayvalue;
 		this.screenname = delimiter.screenname;
+		
+		this.objsilentaudit = delimiter.objsilentaudit;
+
 
 	}
 	

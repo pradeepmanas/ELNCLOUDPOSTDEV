@@ -798,8 +798,8 @@ public class InstrumentController {
 	}
 
 	@RequestMapping("/Getfoldersfororders")
-	public Map<String, Object> Getfoldersfororders(@RequestBody LSuserMaster objusermaster)throws Exception {
-		return instrumentService.Getfoldersfororders(objusermaster);
+	public Map<String, Object> Getfoldersfororders(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
+		return instrumentService.Getfoldersfororders(objorder);
 	}
 	
 	@RequestMapping("/UpdateFolderfororder")

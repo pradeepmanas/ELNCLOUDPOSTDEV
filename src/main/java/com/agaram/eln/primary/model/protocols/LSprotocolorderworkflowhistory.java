@@ -15,6 +15,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity(name = "LSprotocolorderworkflowhistory")
@@ -48,8 +49,21 @@ public class LSprotocolorderworkflowhistory {
 	
 	@ManyToOne
 	private LSprotocolworkflow currentworkflow;
+	
+	@ManyToOne
+	private LSworkflow lsworkflow;
 
 	
+	public LSworkflow getLsworkflow() {
+		return lsworkflow;
+	}
+
+
+	public void setLsworkflow(LSworkflow lsworkflow) {
+		this.lsworkflow = lsworkflow;
+	}
+
+
 	@Transient
 	LScfttransaction objsilentaudit;
 

@@ -11,11 +11,13 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
+import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -505,6 +507,14 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	List<Logilaborders> findByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(Integer orderdisplaytype, List<LSprojectmaster> lstproject);
 	
-	List<Logilaborders> findByOrderdisplaytypeAndLssamplemasterInAndTestcodeIsNotNull(Integer orderdisplaytype, List<LSsamplemaster> lstsample);
+	@Transactional
+	@Modifying
+	@Query(value = "select lstestmasterlocal_testcode from"
+			+ " LSlogilablimsorderdetail where  orderdisplaytype = ?1 and lsprojectmaster_projectcode in (?2)", nativeQuery = true)
+	public List<LStestmasterlocal> getLstestmasterlocalByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(Integer orderdisplaytype, List<LSprojectmaster> lstproject);
+	
+	
+	List<Logilaborders> findByOrderdisplaytypeAndLssamplemasterInAndViewoptionAndTestcodeIsNotNullOrOrderdisplaytypeAndLsuserMasterAndViewoptionAndLssamplemasterInAndTestcodeIsNotNull
+	(Integer orderdisplaytype, List<LSsamplemaster> lstsample,Integer siteview,Integer orderdisplayuser,LSuserMaster lsloginuser,Integer userview,List<LSsamplemaster> lstsampleuser);
 
 }

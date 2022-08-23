@@ -15,6 +15,7 @@ import com.agaram.eln.primary.fetchmodel.gettemplate.Protocoltemplateget;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
+import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 
 public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmaster, Integer> {
 
@@ -73,9 +74,9 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	@Transactional
 	@Modifying
-	@Query("update LSprotocolmaster set lSprotocolworkflow = :workflow, approved= :approved , rejected= :rejected "
+	@Query("update LSprotocolmaster set lssheetworkflow = :workflow, approved= :approved , rejected= :rejected "
 			+ "where protocolmastercode in (:protocolmastercode)")
-	public void updateFileWorkflow(@Param("workflow") LSprotocolworkflow lsprotocolworkflow,
+	public void updateFileWorkflow(@Param("workflow") LSsheetworkflow lSsheetworkflow,
 			@Param("approved") Integer approved, @Param("rejected") Integer rejected,
 			@Param("protocolmastercode") Integer protocolmastercode);
 

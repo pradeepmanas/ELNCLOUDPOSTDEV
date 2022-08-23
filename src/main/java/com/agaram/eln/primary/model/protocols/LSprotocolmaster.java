@@ -16,6 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
@@ -46,6 +47,9 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 
 	@ManyToOne
 	private LSprotocolworkflow lSprotocolworkflow;
+	
+	@ManyToOne 
+	private LSsheetworkflow lssheetworkflow;
 
 	private Integer approved;
 
@@ -76,6 +80,14 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 
 	public Integer getRejected() {
 		return rejected;
+	}
+
+	public LSsheetworkflow getLssheetworkflow() {
+		return lssheetworkflow;
+	}
+
+	public void setLssheetworkflow(LSsheetworkflow lssheetworkflow) {
+		this.lssheetworkflow = lssheetworkflow;
 	}
 
 	public void setRejected(Integer rejected) {

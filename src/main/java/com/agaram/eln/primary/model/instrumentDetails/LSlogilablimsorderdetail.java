@@ -215,6 +215,8 @@ public class LSlogilablimsorderdetail {
 	
 	private Integer orderdisplaytype;
 	
+	private Integer viewoption;
+	
 	public List<LsOrderattachments> getLsOrderattachments() {
 		return lsOrderattachments;
 	}
@@ -784,6 +786,12 @@ public class LSlogilablimsorderdetail {
 	}
 	public void setLstestmasterlocal(LStestmasterlocal lstestmasterlocal) {
 		this.lstestmasterlocal = lstestmasterlocal;
+	}
+	public Integer getViewoption() {
+		return viewoption;
+	}
+	public void setViewoption(Integer viewoption) {
+		this.viewoption = viewoption;
 	}
 	
 	

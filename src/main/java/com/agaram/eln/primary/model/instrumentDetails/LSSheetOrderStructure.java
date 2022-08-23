@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
@@ -45,33 +46,19 @@ public class LSSheetOrderStructure {
 	@Transient
 	private Long dircodetomove;
 
-	public Integer createdby;
-	public String createdbyusername;
+	@ManyToOne
+	public LSuserMaster createdby;
 
 	@ManyToOne
 	private LSuserMaster modifiedby;
 
-	private Integer sitecode;
+	@ManyToOne
+	private LSSiteMaster sitemaster;
 
-	private Integer onlytome;
-
-	private Integer tothesite;
-
-	public Integer getCreatedby() {
-		return createdby;
-	}
-
-	public void setCreatedby(Integer createdby) {
-		this.createdby = createdby;
-	}
-
-	public String getCreatedbyusername() {
-		return createdbyusername;
-	}
-
-	public void setCreatedbyusername(String createdbyusername) {
-		this.createdbyusername = createdbyusername;
-	}
+	private Integer viewoption;
+	
+	@Transient
+	private List<Logilaborders> lsorderitems;
 
 	public LSuserMaster getModifiedby() {
 		return modifiedby;
@@ -80,35 +67,6 @@ public class LSSheetOrderStructure {
 	public void setModifiedby(LSuserMaster modifiedby) {
 		this.modifiedby = modifiedby;
 	}
-
-	public Integer getSitecode() {
-		return sitecode;
-	}
-
-	public void setSitecode(Integer sitecode) {
-		this.sitecode = sitecode;
-	}
-
-	public Integer getOnlytome() {
-		return onlytome;
-	}
-
-	public void setOnlytome(Integer onlytome) {
-		this.onlytome = onlytome;
-	}
-
-	public Integer getTothesite() {
-		return tothesite;
-	}
-
-	public void setTothesite(Integer tothesite) {
-		this.tothesite = tothesite;
-	}
-
-	// @OneToMany
-//	@JoinColumn(name="directorycode")
-	@Transient
-	private List<Logilaborders> lsorderitems;
 
 	public Long getDirectorycode() {
 		return directorycode;
@@ -239,6 +197,30 @@ public class LSSheetOrderStructure {
 
 	public void setResponse(Response response) {
 		this.response = response;
+	}
+
+	public LSuserMaster getCreatedby() {
+		return createdby;
+	}
+
+	public void setCreatedby(LSuserMaster createdby) {
+		this.createdby = createdby;
+	}
+
+	public LSSiteMaster getSitemaster() {
+		return sitemaster;
+	}
+
+	public void setSitemaster(LSSiteMaster sitemaster) {
+		this.sitemaster = sitemaster;
+	}
+
+	public Integer getViewoption() {
+		return viewoption;
+	}
+
+	public void setViewoption(Integer viewoption) {
+		this.viewoption = viewoption;
 	}
 
 }
