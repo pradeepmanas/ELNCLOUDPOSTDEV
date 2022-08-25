@@ -918,4 +918,10 @@ public class InstrumentController {
 		return instrumentService.Getuserorders(objusers);
 	}
 	
+	@RequestMapping("/UpdatesingleFolderforprotocolorder")
+	public LSlogilabprotocoldetail UpdatesingleFolderforprotocolorder(@RequestBody LSlogilabprotocoldetail order)throws Exception
+	{
+		return instrumentService.UpdatesingleFolderforprotocolorder(order);
+	}
+	
 }

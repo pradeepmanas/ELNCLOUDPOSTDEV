@@ -99,7 +99,7 @@ public class AuditService {
 		}
 	}
 	public List<String> CFRTranScreenName() {
-		List<String> result = LSusergrouprightsRepository.findBydisplaytopic();
+		List<String> result = LSaudittrailconfigmasterRepository.findAllByOrderByScreennameAsc();
 
 		LSpreferences objpref = LSpreferencesRepository.findByTasksettingsAndValuesettings("ELNparser", "0");
 

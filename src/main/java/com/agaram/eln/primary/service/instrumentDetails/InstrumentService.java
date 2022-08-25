@@ -4535,6 +4535,11 @@ public class InstrumentService {
 				.findByOrderflagAndAssignedtoOrderByProtocolordercodeDesc("N", order.getLsuserMaster());
 	}
 
+	public LSlogilabprotocoldetail UpdatesingleFolderforprotocolorder(LSlogilabprotocoldetail order) {
+		LSlogilabprotocoldetailRepository.updatesingledirectory(order.getDirectorycode(), order.getProtocolordercode());
+		return order;
+	}
+
 
 
 }

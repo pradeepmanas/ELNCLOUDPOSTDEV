@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public interface LsprotocolordersharetoRepository extends JpaRepository<Lsprotocolordershareto, Integer>{
 
@@ -39,6 +40,10 @@ public interface LsprotocolordersharetoRepository extends JpaRepository<Lsprotoc
 
 
 	Lsprotocolordershareto findBySharetoprotocolordercodeAndSharestatus(Long sharetoprotocolordercode, int i);
+
+
+
+	Object findBySharetounifiedidAndSharestatusOrderBySharetoprotocolordercodeDesc(LSuserMaster lsselecteduser, int i);
 
 
 

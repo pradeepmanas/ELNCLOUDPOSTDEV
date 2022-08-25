@@ -298,17 +298,19 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	@Query("update LSlogilabprotocoldetail o set o.directorycode = ?1 where o.protocolordercode in (?2)")
 	void updatedirectory(Long directorycode , List<Long> protocolordercode);
 
-
-	List<Logilabprotocolorders> findByDirectorycodeOrderByProtocolordercodeDesc(Long directorycode);
-
-
-	List<LSlogilabprotocoldetail> findByOrderflagAndAssignedtoOrderByProtocolordercodeDesc(String string,
-			LSuserMaster lsuserMaster);
+	
+	@Transactional
+	@Modifying
+	@Query("update LSlogilabprotocoldetail o set o.directorycode = ?1 where o.protocolordercode = ?2")
+	void updatesingledirectory(Long directorycode , Long batchcode);
 
 
 	List<Logilabprotocolorders> findByOrderdisplaytypeAndLssamplemasterInAndViewoptionAndTestcodeIsNotNullOrOrderdisplaytypeAndLsuserMasterAndViewoptionAndLssamplemasterInAndTestcodeIsNotNull(
 			int i, List<LSsamplemaster> lstsample, int j, int k, LSuserMaster objusermaster, int l,
 			List<LSsamplemaster> lstsample2);
+
+
+	Object findByAssignedtoOrderByBatchcodeDesc(LSuserMaster lsloginuser);
 
 
 }
