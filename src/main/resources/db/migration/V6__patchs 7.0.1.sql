@@ -832,10 +832,6 @@ update lsusergrouprightsmaster set displaytopic = 'IDS_SCN_PROTOCOLTEMPLATE' whe
 update LSusergrouprightsmaster set displaytopic='IDS_TSK_ASSIGNEDORDERS' where displaytopic='Assigned Orders';
 update LSusergrouprightsmaster set displaytopic='IDS_TSK_MYORDERS' where displaytopic='My Orders';
 update LSusergrouprightsmaster set modulename='IDS_MDL_ORDERS' where modulename='Register Task Orders & Execute';
-<<<<<<< HEAD
-=======
-update lsusergrouprightsmaster set displaytopic = 'IDS_SCN_PASSWORDPOLICY' where orderno =43;
->>>>>>> 164649c3b6607eb1d6ca9cc4b26275ece051d751
 update lsusergrouprightsmaster set displaytopic='IDS_TSK_ORDERSHAREDBYMEPROTOCOL' where orderno=80;
 update lsusergrouprightsmaster set displaytopic='IDS_TSK_ORDERSHAREDTOMEPROTOCOL' where orderno=81;
 update lsusergrouprightsmaster set displaytopic='IDS_TSK_PENDINGWORKPROTOCOL' where orderno=46;
@@ -916,10 +912,7 @@ update lsusergrouprights set displaytopic='IDS_SCN_INSTRUMENTMASTER' where displ
 update lsusergrouprights set displaytopic='IDS_SCN_INSTRUMENTCATEGORY' where displaytopic='IDS_TSK_INSTRUMENTCATEGORY';
 update lsusergrouprights set displaytopic = 'IDS_TSK_NEWDOCUMENT' where displaytopic='New Document';
 update lsusergrouprights set displaytopic = 'IDS_SCN_REPORTS' where displaytopic='IDS_SCN_REPORT';
-<<<<<<< HEAD
 update lsusergrouprights set displaytopic = 'IDS_TSK_ACTDEACTUSERMASTER' where screenname='IDS_SCN_USERMASTER';
-=======
->>>>>>> 164649c3b6607eb1d6ca9cc4b26275ece051d751
 
 update lsaudittrailconfigmaster set screenname='IDS_SCN_SHEETORDERS' where screenname='Register Orders & Execute';
 update lsaudittrailconfigmaster set screenname='IDS_SCN_SHEETTEMPLATES' where screenname='Sheet Creation';
@@ -986,10 +979,7 @@ update lsaudittrailconfigmaster set taskname = 'IDS_TSK_COMPLETETASK' where task
 update lsaudittrailconfigmaster set taskname = 'IDS_TSK_DELETE' where taskname ='Delete';
 update lsaudittrailconfigmaster set taskname = 'IDS_TSK_ADDNEWGROUP' where taskname='ADD NEW GROUP';
 update lsaudittrailconfigmaster set taskname = 'IDS_TSK_EDIT' where taskname='Edit';
-<<<<<<< HEAD
 
-=======
->>>>>>> 164649c3b6607eb1d6ca9cc4b26275ece051d751
 update lsaudittrailconfigmaster set taskname = 'IDS_TSK_ACTDEACT' where taskname ='Active/Deactive';
 update lsaudittrailconfigmaster set taskname = 'IDS_TSK_ADDUSER' where taskname='ADD USER';
 update lsaudittrailconfigmaster set taskname = 'IDS_TSK_UNLOCK' where taskname ='Unlock';
@@ -1064,7 +1054,7 @@ update lsaudittrailconfigmaster set modulename = 'IDS_MDL_PARSER' where orderseq
 update lsusergrouprights set displaytopic = 'IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_TSK_UNLOCKORDERS';
 update lsusergrouprightsmaster set displaytopic = 'IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_TSK_UNLOCKORDERS';
 
-INSERT into LSusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (82, 'IDS_SCN_TEMPLATEMAPPING', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '1,0,0',4) ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (82, 'IDS_SCN_TEMPLATEMAPPING', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '1,0,0',4) ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (83, 'IDS_TSK_PROTOCOLTEMPSHARETOME', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '0,0,1',4) ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (84, 'IDS_TSK_PROTOCOLTEMPSHAREBYME', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '0,0,1',4) ON CONFLICT(orderno)DO NOTHING;
 
@@ -1076,7 +1066,6 @@ update lsusergrouprightsmaster set screenname='IDS_SCN_SHEETORDERS' where ordern
 update lsusergrouprightsmaster set screenname='IDS_SCN_PROTOCOLORDERS' where orderno in (46,47,48,49,80,81);
 update lsusergrouprightsmaster set screenname='IDS_SCN_SHEETTEMPLATE' where orderno in (10,69,70);
 update lsusergrouprightsmaster set screenname='IDS_SCN_PROTOCOLTEMPLATE' where orderno in (50,51,57,83,84);
-<<<<<<< HEAD
 update lsusergrouprightsmaster set screenname='IDS_SCN_TEMPLATEMAPPING' where orderno in (14,15,71,72,82);
 update lsusergrouprightsmaster set screenname='IDS_SCN_TASKMASTER' where orderno=11;
 update lsusergrouprightsmaster set screenname='IDS_SCN_PROJECTMASTER' where orderno=12;
@@ -1117,6 +1106,3 @@ update lsusergrouprights set displaytopic='IDS_SCN_DOMAIN' where displaytopic='I
 update lsusergrouprightsmaster set sequenceorder=7 where modulename='IDS_MDL_SETUP';
 update lsusergrouprights set sequenceorder=7 where modulename='IDS_MDL_SETUP';
 update LSusergrouprights set displaytopic ='IDS_TSK_CREATEARCHIVE' where displaytopic='Create Archive';
-=======
-update lsusergrouprightsmaster set screenname='IDS_SCN_TEMPLATEMAPPING' where orderno in (14,15,71,72,82);
->>>>>>> 164649c3b6607eb1d6ca9cc4b26275ece051d751
