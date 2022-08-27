@@ -523,7 +523,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			+ " where lstestmasterlocal_testcode is not null and lssamplemaster_samplecode is not null and lssamplemaster_samplecode in (?1)", nativeQuery = true)
 	public List<Object> getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(List<Integer> lssamplecode);
 	
-	public List<LSlogilablimsorderdetail> findByLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(LSprojectmaster lsproject,LStestmasterlocal lstest, Date fromdate, Date todate);
+	public List<LSlogilablimsorderdetail> findByLsprojectmasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(LSprojectmaster lsproject,LStestmasterlocal lstest,Integer displaytype, Date fromdate, Date todate);
 	
-	public List<LSlogilablimsorderdetail> findByLssamplemasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(LSsamplemaster lssample,LStestmasterlocal lstest, Date fromdate, Date todate);
+	public List<LSlogilablimsorderdetail> findByLssamplemasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(LSsamplemaster lssample,LStestmasterlocal lstest,Integer displaytype, Date fromdate, Date todate);
 }

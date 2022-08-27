@@ -4552,8 +4552,8 @@ public class InstrumentService {
 		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
-		lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-				objorder.getLsprojectmaster(),objorder.getLstestmasterlocal(),fromdate,todate);
+		lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+				objorder.getLsprojectmaster(),objorder.getLstestmasterlocal(),1,fromdate,todate);
 		return lstorder;
 	}
 	
@@ -4562,8 +4562,8 @@ public class InstrumentService {
 		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
-		lstorder = lslogilablimsorderdetailRepository.findByLssamplemasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-				objorder.getLssamplemaster(),objorder.getLstestmasterlocal(),fromdate,todate);
+		lstorder = lslogilablimsorderdetailRepository.findByLssamplemasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+				objorder.getLssamplemaster(),objorder.getLstestmasterlocal(),2,fromdate,todate);
 		return lstorder;
 	}
 
