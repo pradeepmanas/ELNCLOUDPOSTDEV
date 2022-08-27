@@ -29,6 +29,8 @@ public class LSusergrouprights {
 	@Column(columnDefinition = "varchar(100)")
 	private String modulename;
 	@Column(columnDefinition = "varchar(100)")
+	private String screenname;
+	@Column(columnDefinition = "varchar(100)")
 	private String displaytopic;
 	@Column(columnDefinition = "char(10)")
 	private String screate;
@@ -199,6 +201,16 @@ public class LSusergrouprights {
 	}
 	public void setModifiedon(Date modifiedon) {
 		this.modifiedon = modifiedon;
+	}
+
+	
+
+	public String getScreenname() {
+		return screenname;
+	}
+
+	public void setScreenname(String screenname) {
+		this.screenname = screenname;
 	}
 
 	public void operate() {

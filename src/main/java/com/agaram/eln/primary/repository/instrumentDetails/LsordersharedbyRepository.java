@@ -19,7 +19,7 @@ public interface LsordersharedbyRepository extends JpaRepository<Lsordersharedby
 	
 	public List<Lsordersharedby> findBySharebyunifiedidAndSharedonBetweenOrSharebyunifiedidAndUnsharedonBetween(String unifiedid, Date fromdate, Date todate,String sharebyunifiedid, Date unshrfromdate, Date unshrtodate);
 	
-	public List<Lsordersharedby> findByUsersharedbyAndSharestatusOrderBySharedbycodeDesc(LSuserMaster lssharedby, Integer sharestatus);
+	public List<Lsordersharedby> findByUsersharedbyAndSharestatusAndSharedonBetweenOrderBySharedbycodeDesc(LSuserMaster lssharedby, Integer sharestatus, Date fromdate, Date todate);
 	
-	public List<Lsordersharedby> findByUsersharedbyAndUsersharedonAndSharestatusOrderBySharedbycodeDesc(LSuserMaster lssharedby, LSuserMaster lssharedto, Integer sharestatus);
+	public List<Lsordersharedby> findByUsersharedbyAndUsersharedonAndSharestatusAndSharedonBetweenOrderBySharedbycodeDesc(LSuserMaster lssharedby, LSuserMaster lssharedto, Integer sharestatus, Date fromdate, Date todate);
 }

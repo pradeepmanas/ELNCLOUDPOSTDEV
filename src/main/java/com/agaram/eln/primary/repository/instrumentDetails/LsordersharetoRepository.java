@@ -16,5 +16,5 @@ public interface LsordersharetoRepository extends JpaRepository<Lsordershareto,L
 	
 	public List<Lsordershareto> findBySharetounifiedidAndSharedonBetweenAndSharestatus(String unifiedid, Date fromdate, Date todate, Integer sharestatus);
 	
-	public List<Lsordershareto> findByUsersharedonAndSharestatusOrderBySharetocodeDesc(LSuserMaster lssharedto, Integer sharestatus);
+	public List<Lsordershareto> findByUsersharedonAndSharestatusAndSharedonBetweenOrderBySharetocodeDesc(LSuserMaster lssharedto, Integer sharestatus, Date fromdate, Date todate);
 }

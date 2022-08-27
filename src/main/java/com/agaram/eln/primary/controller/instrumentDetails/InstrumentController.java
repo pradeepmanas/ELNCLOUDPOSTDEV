@@ -918,4 +918,21 @@ public class InstrumentController {
 		return instrumentService.Getuserorders(objusers);
 	}
 	
+	@RequestMapping("/UpdatesingleFolderforprotocolorder")
+	public LSlogilabprotocoldetail UpdatesingleFolderforprotocolorder(@RequestBody LSlogilabprotocoldetail order)throws Exception
+	{
+		return instrumentService.UpdatesingleFolderforprotocolorder(order);
+	}
+	
+	@RequestMapping("/Getordersonproject")
+	public List<LSlogilablimsorderdetail> Getordersonproject(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
+	{
+		return instrumentService.Getordersonproject(objorder);
+	}
+	
+	@RequestMapping("/Getordersonsample")
+	public List<LSlogilablimsorderdetail> Getordersonsample(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
+	{
+		return instrumentService.Getordersonsample(objorder);
+	}
 }

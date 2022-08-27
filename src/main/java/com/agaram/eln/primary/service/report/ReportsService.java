@@ -1352,16 +1352,16 @@ public class ReportsService {
 						newFile = new File(filePath, haskKey + ".docx");
 					}
 					if (savedSuccessfully) {
-						if (obj.containsKey("objsilentaudit")) {
-							if (obj.get("objsilentaudit") != null) {
-//								LScfttransaction LScfttransactionobj = new ObjectMapper()
-//										.convertValue(obj.get("objsilentaudit"), new TypeReference<LScfttransaction>() {
-//										});
-								LScfttransactionobj.setSystemcoments("System Generated");
-								LScfttransactionobj.setTableName("LSdocreports");
-								lscfttransactionRepository.save(LScfttransactionobj);
-							}
-						}
+//						if (obj.containsKey("objsilentaudit")) {
+//							if (obj.get("objsilentaudit") != null) {
+////								LScfttransaction LScfttransactionobj = new ObjectMapper()
+////										.convertValue(obj.get("objsilentaudit"), new TypeReference<LScfttransaction>() {
+////										});
+//								LScfttransactionobj.setSystemcoments("System Generated");
+//								LScfttransactionobj.setTableName("LSdocreports");
+//								lscfttransactionRepository.save(LScfttransactionobj);
+//							}
+//						}
 						if (obj.containsKey("objmanualaudit")) {
 							if (obj.get("objmanualaudit") != null) {
 								LScfttransaction LScfttransactionManualobj = new ObjectMapper()

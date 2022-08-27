@@ -17,6 +17,7 @@ import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 
 @Entity
 @Table(name = "LSSheetOrderStructure")
@@ -59,6 +60,9 @@ public class LSSheetOrderStructure {
 	
 	@Transient
 	private List<Logilaborders> lsorderitems;
+	
+	@Transient
+	LoggedUser objuser;
 
 	public LSuserMaster getModifiedby() {
 		return modifiedby;
@@ -221,6 +225,14 @@ public class LSSheetOrderStructure {
 
 	public void setViewoption(Integer viewoption) {
 		this.viewoption = viewoption;
+	}
+
+	public LoggedUser getObjuser() {
+		return objuser;
+	}
+
+	public void setObjuser(LoggedUser objuser) {
+		this.objuser = objuser;
 	}
 
 }

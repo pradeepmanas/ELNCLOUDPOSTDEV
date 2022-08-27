@@ -15,6 +15,8 @@ public class LSusergrouprightsmaster {
 	private Integer orderno;
 	private String modulename;
 	@Column(columnDefinition = "varchar(100)")
+	private String screenname;
+	@Column(columnDefinition = "varchar(100)")
 	private String displaytopic;
 	@Column(columnDefinition = "char(10)")
 	private String screate;
@@ -133,7 +135,12 @@ public class LSusergrouprightsmaster {
 	public void setSequenceorder(Integer sequenceorder) {
 		this.sequenceorder = sequenceorder;
 	}
-	
+	public String getScreenname() {
+		return screenname;
+	}
+	public void setScreenname(String screenname) {
+		this.screenname = screenname;
+	}
 	public void operate() {
 		// TODO Auto-generated method stub		
 	}

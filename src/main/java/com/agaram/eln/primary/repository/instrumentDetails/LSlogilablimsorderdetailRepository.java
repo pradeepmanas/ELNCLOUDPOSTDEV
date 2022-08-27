@@ -11,12 +11,10 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
-import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
-import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
@@ -467,7 +465,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	List<LSlogilablimsorderdetail> findBybatchcode(Long batchcode);
 	
-	public List<Logilaborders> findByDirectorycodeOrderByBatchcodeDesc(Long directorycode);
+	public List<Logilaborders> findByDirectorycodeAndCreatedtimestampBetweenOrderByBatchcodeDesc(Long directorycode, Date fromdate, Date todate);
 	
 	public List<Logilaborders> findByOrderflagOrderByBatchcodeDesc(String orderflag);
 
@@ -495,8 +493,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			LSuserMaster lSuserMaster);
 	
 	List<LSlogilablimsorderdetail> findByAssignedtoAndLockeduserIsNotNullOrderByBatchcodeDesc(LSuserMaster lSuserMaster);
-	List<LSlogilablimsorderdetail> findByAssignedtoOrderByBatchcodeDesc(LSuserMaster lSuserMaster);
-	List<LSlogilablimsorderdetail> findByAssignedtoAndLsuserMasterOrderByBatchcodeDesc(LSuserMaster lsselecteduser, LSuserMaster lsloginuser);
+	List<LSlogilablimsorderdetail> findByAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(LSuserMaster lSuserMaster, Date fromdate, Date todate);
+	List<LSlogilablimsorderdetail> findByAssignedtoAndLsuserMasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(LSuserMaster lsselecteduser, LSuserMaster lsloginuser, Date fromdate, Date todate);
 
 	List<LSlogilablimsorderdetail> findByOrderflagAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String string);
@@ -505,16 +503,27 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			String string, List<LSprojectmaster> lstproject, List<LSworkflow> lstworkflow);
 	
 
-	List<Logilaborders> findByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(Integer orderdisplaytype, List<LSprojectmaster> lstproject);
+	List<Logilaborders> findByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(Integer orderdisplaytype, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 	
 	@Transactional
 	@Modifying
-	@Query(value = "select lstestmasterlocal_testcode from"
-			+ " LSlogilablimsorderdetail where  orderdisplaytype = ?1 and lsprojectmaster_projectcode in (?2)", nativeQuery = true)
-	public List<LStestmasterlocal> getLstestmasterlocalByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(Integer orderdisplaytype, List<LSprojectmaster> lstproject);
+	@Query(value = "select distinct lstestmasterlocal_testcode, lsprojectmaster_projectcode, (select testname from lstestmasterlocal where testcode =  lstestmasterlocal_testcode)  from lslogilablimsorderdetail"
+			+ " where lstestmasterlocal_testcode is not null and lsprojectmaster_projectcode is not null and lsprojectmaster_projectcode in (?1)", nativeQuery = true)
+	public List<Object> getLstestmasterlocalByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(List<Integer> lsprojectcode);
 	
 	
-	List<Logilaborders> findByOrderdisplaytypeAndLssamplemasterInAndViewoptionAndTestcodeIsNotNullOrOrderdisplaytypeAndLsuserMasterAndViewoptionAndLssamplemasterInAndTestcodeIsNotNull
-	(Integer orderdisplaytype, List<LSsamplemaster> lstsample,Integer siteview,Integer orderdisplayuser,LSuserMaster lsloginuser,Integer userview,List<LSsamplemaster> lstsampleuser);
+	List<Logilaborders> findByOrderdisplaytypeAndLssamplemasterInAndViewoptionAndTestcodeIsNotNullOrOrderdisplaytypeAndLsuserMasterAndViewoptionAndLssamplemasterInAndTestcodeIsNotNullAndCreatedtimestampBetweenOrderByBatchcodeDesc
+	(Integer orderdisplaytype, List<LSsamplemaster> lstsample,Integer siteview,Integer orderdisplayuser,LSuserMaster lsloginuser,Integer userview,List<LSsamplemaster> lstsampleuser, Date fromdate, Date todate);
 
+	public List<LSlogilablimsorderdetail> findDistinctLstestmasterlocalByLsprojectmasterNotNullAndLstestmasterlocalNotNull();
+	
+	@Transactional
+	@Modifying
+	@Query(value = "select distinct lstestmasterlocal_testcode, lssamplemaster_samplecode, (select testname from lstestmasterlocal where testcode =  lstestmasterlocal_testcode)  from lslogilablimsorderdetail"
+			+ " where lstestmasterlocal_testcode is not null and lssamplemaster_samplecode is not null and lssamplemaster_samplecode in (?1)", nativeQuery = true)
+	public List<Object> getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(List<Integer> lssamplecode);
+	
+	public List<LSlogilablimsorderdetail> findByLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(LSprojectmaster lsproject,LStestmasterlocal lstest, Date fromdate, Date todate);
+	
+	public List<LSlogilablimsorderdetail> findByLssamplemasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(LSsamplemaster lssample,LStestmasterlocal lstest, Date fromdate, Date todate);
 }
