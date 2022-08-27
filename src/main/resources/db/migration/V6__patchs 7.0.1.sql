@@ -1054,9 +1054,9 @@ update lsaudittrailconfigmaster set modulename = 'IDS_MDL_PARSER' where orderseq
 update lsusergrouprights set displaytopic = 'IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_TSK_UNLOCKORDERS';
 update lsusergrouprightsmaster set displaytopic = 'IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_TSK_UNLOCKORDERS';
 
-INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (82, 'IDS_SCN_TEMPLATEMAPPING', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '1,0,0',4) WHERE NOT EXISTS(select * from lsusergrouprightsmaster where orderno=82) ON CONFLICT(orderno)DO NOTHING;
-INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (83, 'IDS_TSK_PROTOCOLTEMPSHARETOME', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '0,0,1',4)  WHERE NOT EXISTS(select * from lsusergrouprightsmaster where orderno=83) ON CONFLICT(orderno)DO NOTHING;
-INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (84, 'IDS_TSK_PROTOCOLTEMPSHAREBYME', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '0,0,1',4) WHERE NOT EXISTS(select * from lsusergrouprightsmaster where orderno=84) ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (82, 'IDS_SCN_TEMPLATEMAPPING', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '1,0,0',4) ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (83, 'IDS_TSK_PROTOCOLTEMPSHARETOME', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '0,0,1',4) ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (84, 'IDS_TSK_PROTOCOLTEMPSHAREBYME', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '0,0,1',4) ON CONFLICT(orderno)DO NOTHING;
 
 ALTER TABLE IF Exists lsusergrouprightsmaster ADD COLUMN IF NOT EXISTS screenname character varying(255);
 ALTER TABLE IF Exists lsusergrouprights ADD COLUMN IF NOT EXISTS screenname character varying(100);
