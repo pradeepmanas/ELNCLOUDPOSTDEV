@@ -912,7 +912,7 @@ update lsusergrouprights set displaytopic='IDS_SCN_INSTRUMENTMASTER' where displ
 update lsusergrouprights set displaytopic='IDS_SCN_INSTRUMENTCATEGORY' where displaytopic='IDS_TSK_INSTRUMENTCATEGORY';
 update lsusergrouprights set displaytopic = 'IDS_TSK_NEWDOCUMENT' where displaytopic='New Document';
 update lsusergrouprights set displaytopic = 'IDS_SCN_REPORTS' where displaytopic='IDS_SCN_REPORT';
-update lsusergrouprights set displaytopic = 'IDS_TSK_ACTDEACTUSERMASTER' where screenname='IDS_SCN_USERMASTER';
+
 
 update lsaudittrailconfigmaster set screenname='IDS_SCN_SHEETORDERS' where screenname='Register Orders & Execute';
 update lsaudittrailconfigmaster set screenname='IDS_SCN_SHEETTEMPLATES' where screenname='Sheet Creation';
@@ -1054,9 +1054,9 @@ update lsaudittrailconfigmaster set modulename = 'IDS_MDL_PARSER' where orderseq
 update lsusergrouprights set displaytopic = 'IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_TSK_UNLOCKORDERS';
 update lsusergrouprightsmaster set displaytopic = 'IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_TSK_UNLOCKORDERS';
 
-INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (82, 'IDS_SCN_TEMPLATEMAPPING', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '1,0,0',4) ON CONFLICT(orderno)DO NOTHING;
-INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (83, 'IDS_TSK_PROTOCOLTEMPSHARETOME', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '0,0,1',4) ON CONFLICT(orderno)DO NOTHING;
-INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (84, 'IDS_TSK_PROTOCOLTEMPSHAREBYME', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '0,0,1',4) ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (82, 'IDS_SCN_TEMPLATEMAPPING', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '1,0,0',4) WHERE NOT EXISTS(select * from lsusergrouprightsmaster where orderno=82) ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (83, 'IDS_TSK_PROTOCOLTEMPSHARETOME', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '0,0,1',4)  WHERE NOT EXISTS(select * from lsusergrouprightsmaster where orderno=83) ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (84, 'IDS_TSK_PROTOCOLTEMPSHAREBYME', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '0,0,1',4) WHERE NOT EXISTS(select * from lsusergrouprightsmaster where orderno=84) ON CONFLICT(orderno)DO NOTHING;
 
 ALTER TABLE IF Exists lsusergrouprightsmaster ADD COLUMN IF NOT EXISTS screenname character varying(255);
 ALTER TABLE IF Exists lsusergrouprights ADD COLUMN IF NOT EXISTS screenname character varying(100);
@@ -1106,3 +1106,4 @@ update lsusergrouprights set displaytopic='IDS_SCN_DOMAIN' where displaytopic='I
 update lsusergrouprightsmaster set sequenceorder=7 where modulename='IDS_MDL_SETUP';
 update lsusergrouprights set sequenceorder=7 where modulename='IDS_MDL_SETUP';
 update lsusergrouprights set displaytopic ='IDS_TSK_CREATEARCHIVE' where displaytopic='Create Archive';
+update lsusergrouprights set displaytopic = 'IDS_TSK_ACTDEACTUSERMASTER' where screenname='IDS_SCN_USERMASTER';
