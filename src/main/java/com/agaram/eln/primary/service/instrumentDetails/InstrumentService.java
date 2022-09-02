@@ -37,14 +37,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
-import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
@@ -96,7 +94,6 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
-import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
@@ -135,6 +132,8 @@ import com.agaram.eln.primary.repository.instrumentDetails.LsordersharedbyReposi
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharetoRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsorderworkflowhistoryRepositroy;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolOrderStructureRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharedbyRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharetoRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.methodsetup.ELNFileAttachmentsRepository;
@@ -167,6 +166,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingReposit
 //import com.agaram.eln.primary.repository4mibatis.LSlogilablimsorderdetailMibatisRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
+import com.agaram.eln.primary.service.sheetManipulation.FileService;
 import com.agaram.eln.primary.service.usermanagement.UserService;
 import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -345,6 +345,16 @@ public class InstrumentService {
 	@Autowired
 	private LStestmasterlocalRepository lstestmasterlocalRepository;
 	
+	@Autowired
+	private FileService fileService;
+	
+	@Autowired
+	private LsprotocolordersharedbyRepository lsprotocolordersharedbyRepository;
+	
+	@Autowired
+	private LsprotocolordersharetoRepository lsprotocolordersharetoRepository;
+	
+	
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
 		List<String> lsInst = new ArrayList<String>();
@@ -427,6 +437,8 @@ public class InstrumentService {
 		String defaultContent = "{\"activeSheet\":\"Sheet1\",\"sheets\":[{\"name\":\"Sheet1\",\"rows\":[],\"columns\":[],\"selection\":\"A1:A1\",\"activeCell\":\"A1:A1\",\"frozenRows\":0,\"frozenColumns\":0,\"showGridLines\":true,\"gridLinesColor\":null,\"mergedCells\":[],\"hyperlinks\":[],\"defaultCellStyle\":{\"fontFamily\":\"Arial\",\"fontSize\":\"12\"},\"drawings\":[]}],\"names\":[],\"columnWidth\":64,\"rowHeight\":20,\"images\":[],\"charts\":[],\"tags\":[],\"fieldcount\":0,\"Batchcoordinates\":{\"resultdirection\":1,\"parameters\":[]}}";
 
 		if (objorder.getLsfile() != null) {
+			if(objorder.getLsfile().getApproved() ==1)
+			{
 			if (objorder.getIsmultitenant() == 1) {
 				CloudSheetCreation file = cloudSheetCreationRepository
 						.findById((long) objorder.getLsfile().getFilecode());
@@ -459,6 +471,16 @@ public class InstrumentService {
 					}
 				}
 
+			}
+			}
+			else
+			{
+				
+				Integer lastapprovedvesrion = objorder.getLsfile().getVersionno()>1? (objorder.getLsfile().getVersionno()-1):objorder.getLsfile().getVersionno();
+				objorder.getLsfile().setVersionno(lastapprovedvesrion);
+				objorder.getLsfile().setIsmultitenant(objorder.getIsmultitenant());
+				objorder.getLsfile().setIsmultitenant(objorder.getIsmultitenant());
+				Content = fileService.GetfileverContent(objorder.getLsfile());
 			}
 
 		}
@@ -4177,7 +4199,7 @@ public class InstrumentService {
 		Map<String, Object> mapfolders = new HashMap<String, Object>();
 		
 		List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
-		lstdir = lsSheetOrderStructureRepository.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(objorder.getLsuserMaster().getLssitemaster(),2,objorder.getLsuserMaster(),1);
+		lstdir = lsSheetOrderStructureRepository.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(objorder.getLsuserMaster().getLssitemaster(),1,objorder.getLsuserMaster(),2);
 
 		if(objorder.getLstproject() != null && objorder.getLstproject().size()>0)
 		{
@@ -4233,7 +4255,8 @@ public class InstrumentService {
 	public List<Logilaborders> Getordersondirectory(LSSheetOrderStructure objdir) {
 		Date fromdate = objdir.getObjuser().getFromdate();
 		Date todate = objdir.getObjuser().getTodate();
-		return lslogilablimsorderdetailRepository.findByDirectorycodeAndCreatedtimestampBetweenOrderByBatchcodeDesc(objdir.getDirectorycode(),fromdate,todate);
+		return lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+				objdir.getDirectorycode(),1,fromdate,todate,objdir.getDirectorycode(),2,objdir.getCreatedby(),fromdate,todate);
 	}
 
 	public List<LSSheetOrderStructure> Deletedirectories(LSSheetOrderStructure[] directories) {
@@ -4358,23 +4381,23 @@ public class InstrumentService {
 		
 	}
 	
-	public Map<String, Object> Getfoldersforprotocolorders(LSuserMaster objusermaster) {
+	public Map<String, Object> Getfoldersforprotocolorders(LSlogilabprotocoldetail objusermaster) {
 
 		Map<String, Object> mapfolders = new HashMap<String, Object>();
 		
 		List<Lsprotocolorderstructure> lstdir = new ArrayList<Lsprotocolorderstructure>();
-		lstdir = lsprotocolorderStructurerepository.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(objusermaster.getLssitemaster(),2,objusermaster,1);
+		lstdir = lsprotocolorderStructurerepository.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(objusermaster.getLsuserMaster().getLssitemaster(),1,objusermaster.getLsuserMaster(),2);
 
-		List<Testmaster> lstest=lstestmasterlocalRepository.findBystatusAndLssitemaster(1, objusermaster.getLssitemaster());
-		if(lstest!=null && lstest.size()>0) {
-			mapfolders.put("lstest", lstest);
-		}
-		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findProjectcodeAndProjectnameBystatusAndLssitemaster(1,objusermaster.getLssitemaster());
-		if(lstproject != null && lstproject.size()>0)
+		
+		if(objusermaster.getLstproject() != null && objusermaster.getLstproject().size()>0)
 		{
-			List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository.findByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(1,lstproject);
-			mapfolders.put("tests", lstorders != null ?lstorders : new ArrayList<Logilaborders>());
+			List<Integer> lsprojectcode = objusermaster.getLstproject().stream().map(LSprojectmaster::getProjectcode).collect(Collectors.toList());
+			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findAll(lsprojectcode);
+			List<Object> lsttest = LSlogilabprotocoldetailRepository.getLstestmasterlocalByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(lsprojectcode);
+//			lstorders.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
+			mapfolders.put("tests", lsttest);
 			mapfolders.put("projects", lstproject);
+
 		}
 		else
 		{
@@ -4382,13 +4405,14 @@ public class InstrumentService {
 			mapfolders.put("projects", new ArrayList<Projectmaster>());
 		}
 		
-		List<LSsamplemaster> lstsample = lssamplemasterrepository.findSamplecodeAndSamplenameBystatusAndLssitemaster(1,objusermaster.getLssitemaster());
+		
+		List<LSsamplemaster> lstsample = lssamplemasterrepository.findSamplecodeAndSamplenameBystatusAndLssitemaster(1,objusermaster.getLsuserMaster().getLssitemaster());
 		if(lstsample != null && lstsample.size() >0)
 		{
-			List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository.findByOrderdisplaytypeAndLssamplemasterInAndViewoptionAndTestcodeIsNotNullOrOrderdisplaytypeAndLsuserMasterAndViewoptionAndLssamplemasterInAndTestcodeIsNotNull
-					(2,lstsample,1,2,objusermaster,2,lstsample);
-//			List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository.findByOrderdisplaytypeAndLssamplemasterInAndTestcodeIsNotNull(2,lstsample);
-			mapfolders.put("sampletests", lstorders != null ?lstorders : new ArrayList<Logilabprotocolorders>());
+			List<Integer> lssamplecode = lstsample.stream().map(LSsamplemaster::getSamplecode).collect(Collectors.toList());
+			List<Object> lsttest = LSlogilabprotocoldetailRepository.getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(lssamplecode);
+		
+			mapfolders.put("sampletests", lsttest);
 			mapfolders.put("samples", lstsample);
 		}
 		else
@@ -4397,7 +4421,7 @@ public class InstrumentService {
 			mapfolders.put("samples", new ArrayList<Samplemaster>());
 		}
 		
-		mapfolders.put("users",userService.GetUsers(objusermaster));
+		mapfolders.put("users",userService.GetUsers(objusermaster.getLsuserMaster()));
 		mapfolders.put("directory", lstdir);
 //		
 		return mapfolders;
@@ -4532,14 +4556,12 @@ public class InstrumentService {
 	
 	}
 
-	public List<Logilabprotocolorders> Getprotocolordersondirectory(LSSheetOrderStructure objdir) {
+	public List<LSlogilabprotocoldetail> Getprotocolordersondirectory(LSSheetOrderStructure objdir) {
+		
 
-		return LSlogilabprotocoldetailRepository.findByDirectorycodeOrderByProtocolordercodeDesc(objdir.getDirectorycode());
-	}
-
-	public List<LSlogilabprotocoldetail> GetAssignedtoUserordersforprotocol(LSlogilabprotocoldetail order) {
-		return LSlogilabprotocoldetailRepository
-				.findByOrderflagAndAssignedtoOrderByProtocolordercodeDesc("N", order.getLsuserMaster());
+		Date fromdate = objdir.getObjuser().getFromdate();
+		Date todate = objdir.getObjuser().getTodate();
+		return LSlogilabprotocoldetailRepository.findByDirectorycodeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(objdir.getDirectorycode(),fromdate,todate);
 	}
 
 	public LSlogilabprotocoldetail UpdatesingleFolderforprotocolorder(LSlogilabprotocoldetail order) {
@@ -4562,9 +4584,58 @@ public class InstrumentService {
 		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
-		lstorder = lslogilablimsorderdetailRepository.findByLssamplemasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-				objorder.getLssamplemaster(),objorder.getLstestmasterlocal(),2,fromdate,todate);
+		lstorder = lslogilablimsorderdetailRepository.findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+				objorder.getLssamplemaster(),1,objorder.getLstestmasterlocal(),2,fromdate,todate,objorder.getLssamplemaster(),2,objorder.getLsuserMaster(),objorder.getLstestmasterlocal(),2,fromdate,todate);
 		return lstorder;
+	}
+	
+	public List<LSlogilablimsorderdetail> Getorderbyflaganduser(LSlogilablimsorderdetail objorder)
+	{
+		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
+		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
+		lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+				 objorder.getOrderflag(), lstproject, objorder.getFromdate(),objorder.getTodate());
+		return lstorder;
+	}
+
+	public List<LSlogilabprotocoldetail> Getprotocolordersonproject(LSlogilabprotocoldetail objorder) {
+
+		List<LSlogilabprotocoldetail> lstorder = new ArrayList<LSlogilabprotocoldetail>();
+		Date fromdate = objorder.getFromdate();
+		Date todate = objorder.getTodate();
+		lstorder = LSlogilabprotocoldetailRepository.findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+				objorder.getLsprojectmaster(),objorder.getTestcode(),1,fromdate,todate);
+		return lstorder;
+	
+	}
+
+	public Map<String, Object> Getuserprotocolorders(Map<String, LSuserMaster> objusers) {
+		Map<String, Object> mapuserorders = new HashMap<String, Object>();
+		
+		ObjectMapper mapper = new ObjectMapper();
+		LSuserMaster lsloginuser = mapper.convertValue( objusers.get("loginuser"), LSuserMaster.class);
+		LSuserMaster lsselecteduser = mapper.convertValue(objusers.get("selecteduser"), LSuserMaster.class);
+		Date fromdate = lsselecteduser.getObjuser().getFromdate();
+		Date todate = lsselecteduser.getObjuser().getTodate();
+		Integer directory =  mapper.convertValue( objusers.get("directorycode"), Integer.class);
+		LSuserMaster lsselectedfulluser =lsuserMasterRepository.findByusercode(lsselecteduser.getUsercode());
+		if(lsloginuser.getUsercode() == lsselecteduser.getUsercode())
+		{
+			mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsloginuser, fromdate,todate));
+			mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(), 1, fromdate,todate));
+			mapuserorders.put("sharetome", lsprotocolordersharetoRepository.findBySharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(), 1, fromdate,todate));
+		}
+		else
+		{
+			mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsselectedfulluser,lsloginuser, fromdate,todate));
+			mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndSharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsloginuser.getUnifieduserid(), lsselectedfulluser.getUnifieduserid(),  1, fromdate,todate));
+		}
+		
+		mapuserorders.put("directorycode",directory);
+		
+		return mapuserorders;
 	}
 
 }

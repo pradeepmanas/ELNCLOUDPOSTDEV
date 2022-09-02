@@ -17,12 +17,13 @@ public class Sheettemplateget {
 	private LSuserMaster modifiedby;
 //	private String filecontent;
 	private long versioncout;
+	private Integer versionno;
 	
 //	private List<LSfileversion> lstfileversion;
 //	private LSfileversion lsfileversion;
 
 	public Sheettemplateget(Integer filecode, String filenameuser, Date createdate, LSuserMaster createby,
-			LSuserMaster modifiedby, Integer approved, Integer rejected
+			LSuserMaster modifiedby, Integer approved, Integer rejected,Integer versionno
 //			,LSfileversion lsfileversion
 			) {
 		
@@ -48,7 +49,7 @@ public class Sheettemplateget {
 		this.createby = createdUser;
 		this.createdate = createdate;
 		this.modifiedby = modifiedUser;
-		
+		this.versionno=versionno;
 //		this.lsfileversion = lsfileversion;
 	}
 
@@ -77,6 +78,14 @@ public class Sheettemplateget {
 
 	public long getVersioncout() {
 		return versioncout;
+	}
+
+	public Integer getVersionno() {
+		return versionno;
+	}
+
+	public void setVersionno(Integer versionno) {
+		this.versionno = versionno;
 	}
 
 	public void setVersioncout(long versioncout) {

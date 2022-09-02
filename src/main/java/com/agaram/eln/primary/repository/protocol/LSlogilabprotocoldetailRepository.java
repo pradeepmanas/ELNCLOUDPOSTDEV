@@ -304,16 +304,48 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	@Query("update LSlogilabprotocoldetail o set o.directorycode = ?1 where o.protocolordercode = ?2")
 	void updatesingledirectory(Long directorycode , Long batchcode);
 
-	List<Logilabprotocolorders> findByDirectorycodeOrderByProtocolordercodeDesc(Long directorycode);
-
-
-	List<LSlogilabprotocoldetail> findByOrderflagAndAssignedtoOrderByProtocolordercodeDesc(String string,
-			LSuserMaster lsuserMaster);
-
 
 	List<Logilabprotocolorders> findByOrderdisplaytypeAndLssamplemasterInAndViewoptionAndTestcodeIsNotNullOrOrderdisplaytypeAndLsuserMasterAndViewoptionAndLssamplemasterInAndTestcodeIsNotNull(
 			int i, List<LSsamplemaster> lstsample, int j, int k, LSuserMaster objusermaster, int l,
 			List<LSsamplemaster> lstsample2);
 
 
+	List<Logilabprotocolorders> findByAssignedtoOrderByProtocolordercodeDesc(LSuserMaster lsloginuser);
+
+
+	List<Logilabprotocolorders> findByAssignedtoAndLsuserMasterOrderByProtocolordercodeDesc(LSuserMaster lsselecteduser,
+			LSuserMaster lsloginuser);
+
+	
+	@Transactional
+	@Modifying
+	@Query(value = "select distinct LSlogilabprotocoldetail.testcode, LSlogilabprotocoldetail.lsprojectmaster_projectcode, (select testname from lstestmasterlocal where testcode =  LSlogilabprotocoldetail.testcode)as testname  from LSlogilabprotocoldetail as LSlogilabprotocoldetail"
+			+ " where LSlogilabprotocoldetail.testcode is not null and LSlogilabprotocoldetail.lsprojectmaster_projectcode is not null and LSlogilabprotocoldetail.lsprojectmaster_projectcode in (?1)", nativeQuery = true)
+	public List<Object> getLstestmasterlocalByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(List<Integer> lsprojectcode);
+
+	@Transactional
+	@Modifying
+	@Query(value = "select distinct LSlogilabprotocoldetail.testcode, LSlogilabprotocoldetail.lssamplemaster_samplecode, (select testname from lstestmasterlocal where testcode =  LSlogilabprotocoldetail.testcode)  from LSlogilabprotocoldetail as LSlogilabprotocoldetail"
+			+ " where LSlogilabprotocoldetail.testcode is not null and LSlogilabprotocoldetail.lssamplemaster_samplecode is not null and LSlogilabprotocoldetail.lssamplemaster_samplecode in (?1)", nativeQuery = true)
+	public List<Object> getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(List<Integer> lssamplecode);
+
+
+	List<Logilabprotocolorders> findByDirectorycodeOrderByProtocolordercodeDesc(Long directorycode);
+
+
+	List<LSlogilabprotocoldetail> findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			LSprojectmaster lsprojectmaster, Integer testcode, int i, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			Long directorycode, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByAssignedtoAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(LSuserMaster lsloginuser,
+			Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByAssignedtoAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			LSuserMaster lsselecteduser, LSuserMaster lsloginuser, Date fromdate, Date todate);
+	
 }

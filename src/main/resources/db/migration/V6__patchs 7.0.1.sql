@@ -102,7 +102,7 @@ AND table_name='lslogilablimsorderdetail';
 END
 $do$;
 
-update lslogilablimsorderdetail set lstestmasterlocal_testcode = testcode where filetype != 0 and (select count(*) from lstestmasterlocal where testcode = testcode) > 0 and lstestmasterlocal_testcode is null and testcode > 0;
+update lslogilablimsorderdetail set lstestmasterlocal_testcode = testcode where filetype != 0 and (select count(*) from lstestmasterlocal where testcode = testcode) > 0 and lstestmasterlocal_testcode is null;
 
 	-- Table: public.materialtype
 
@@ -839,7 +839,7 @@ update lsusergrouprightsmaster set displaytopic='IDS_TSK_COMPLETEDWORK' where or
 update lsusergrouprightsmaster set displaytopic='IDS_TSK_ACTDEACTUSERMASTER' where orderno=22;
 update lsusergrouprightsmaster set displaytopic='IDS_SCN_PROTOCOLTEMPLATE' where orderno=51;
 update lsusergrouprightsmaster set displaytopic='IDS_SCN_INSTRUMENTMASTER' where displaytopic='IDS_TSK_INSTRUMENTMASTER';
-update lsusergrouprightsmaster set displaytopic='IDS_SCN_INSTRUMENTCATEGORY' where displaytopic='IDS_TSK_INSTRUMENTCATEGORY';
+
 update lsusergrouprightsmaster set displaytopic = 'IDS_SCN_REPORTS' where displaytopic='IDS_SCN_REPORT';
 update lsusergrouprightsmaster set displaytopic='IDS_TSK_COMPLETEDWORKPROTOCOL' where orderno=47;
 
@@ -891,7 +891,6 @@ update lsusergrouprights set displaytopic = 'IDS_TSK_REVIEW' where displaytopic=
 update lsusergrouprights set displaytopic = 'IDS_TSK_GENERATEREPORT' where displaytopic='Generate Reports';
 update lsusergrouprights set displaytopic = 'IDS_TSK_TEMPLATEDESIGN' where displaytopic='Template Designing';
 update lsusergrouprights set displaytopic = 'IDS_TSK_LIMSTASKORDER' where displaytopic='LIMS Task Order';
-update lsusergrouprights set displaytopic = 'IDS_SCN_PROTOCOLTEMPLATE' where displaytopic='Protocol Templates';
 update lsusergrouprights set displaytopic = 'IDS_SCN_SHEETTEMPLATE' where displaytopic='Sheet Templates';
 update lsusergrouprights set displaytopic = 'IDS_TSK_EXPORTPDF' where displaytopic='Export to pdf';
 update lsusergrouprights set displaytopic = 'IDS_TSK_PROTOCOL' where displaytopic='Protocol';
@@ -1107,3 +1106,112 @@ update lsusergrouprightsmaster set sequenceorder=7 where modulename='IDS_MDL_SET
 update lsusergrouprights set sequenceorder=7 where modulename='IDS_MDL_SETUP';
 update lsusergrouprights set displaytopic ='IDS_TSK_CREATEARCHIVE' where displaytopic='Create Archive';
 update lsusergrouprights set displaytopic = 'IDS_TSK_ACTDEACTUSERMASTER' where screenname='IDS_SCN_USERMASTER';
+update lsusergrouprights set displaytopic='IDS_SCN_AUDITTRAILHIS' where displaytopic='IDS_SCN_AUDITTRAILHISTORY';
+update lsusergrouprightsmaster set displaytopic='IDS_SCN_AUDITTRAILHIS' where displaytopic='IDS_SCN_AUDITTRAILHISTORY';
+
+update lsusergrouprightsmaster set displaytopic='IDS_TSK_TEMPLATEOVERVIEW' where displaytopic='IDS_TSK_PARAMETEROVERVIEW';
+update lsusergrouprightsmaster set displaytopic='IDS_SCN_DASHBOARD' where displaytopic='IDS_TSK_PARAMETERUSAGE';
+update lsusergrouprights set displaytopic='IDS_TSK_TEMPLATEOVERVIEW' where displaytopic='IDS_TSK_PARAMETEROVERVIEW';
+update lsusergrouprights set displaytopic='IDS_SCN_DASHBOARD' where displaytopic='IDS_TSK_PARAMETERUSAGE';
+
+delete from lsusergrouprightsmaster where orderno=4;
+delete from lsusergrouprightsmaster where orderno=42;
+delete from lsusergrouprightsmaster where orderno=44;
+
+
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (85, 'IDS_TSK_FOLDERCREATION', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',2,'IDS_SCN_SHEETORDERS') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (86, 'IDS_TSK_FOLDERCREATIONPROTOCOL', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',3,'IDS_SCN_PROTOCOLORDERS') ON CONFLICT(orderno)DO NOTHING;
+
+update lsusergrouprightsmaster set sequenceorder=1 where orderno=2;
+update lsusergrouprightsmaster set sequenceorder=2 where orderno=1;
+update lsusergrouprightsmaster set sequenceorder=3 where orderno=3;
+update lsusergrouprightsmaster set sequenceorder=4 where orderno=7;
+update lsusergrouprightsmaster set sequenceorder=5 where orderno=85;
+update lsusergrouprightsmaster set sequenceorder=6 where orderno=8;
+update lsusergrouprightsmaster set sequenceorder=7 where orderno=9;
+update lsusergrouprightsmaster set sequenceorder=8 where orderno=37;
+update lsusergrouprightsmaster set sequenceorder=9 where orderno=38;
+update lsusergrouprightsmaster set sequenceorder=10 where orderno=61;
+update lsusergrouprightsmaster set sequenceorder=11 where orderno=62;
+update lsusergrouprightsmaster set sequenceorder=12 where orderno=5;
+update lsusergrouprightsmaster set sequenceorder=13 where orderno=6;
+update lsusergrouprightsmaster set sequenceorder=14 where orderno=86;
+update lsusergrouprightsmaster set sequenceorder=15 where orderno=48;
+update lsusergrouprightsmaster set sequenceorder=16 where orderno=49;
+update lsusergrouprightsmaster set sequenceorder=17 where orderno=80;
+update lsusergrouprightsmaster set sequenceorder=18 where orderno=81;
+update lsusergrouprightsmaster set sequenceorder=19 where orderno=46;
+update lsusergrouprightsmaster set sequenceorder=20 where orderno=47;
+update lsusergrouprightsmaster set sequenceorder=21 where orderno=10;
+update lsusergrouprightsmaster set sequenceorder=22 where orderno=69;
+update lsusergrouprightsmaster set sequenceorder=23 where orderno=70;
+
+update lsusergrouprightsmaster set sequenceorder=24 where orderno=51;
+update lsusergrouprightsmaster set sequenceorder=25 where orderno=50;
+update lsusergrouprightsmaster set sequenceorder=26 where orderno=57;
+update lsusergrouprightsmaster set sequenceorder=27 where orderno=84;
+update lsusergrouprightsmaster set sequenceorder=28 where orderno=83;
+
+update lsusergrouprightsmaster set sequenceorder=29 where orderno=82;
+update lsusergrouprightsmaster set sequenceorder=30 where orderno=71;
+update lsusergrouprightsmaster set sequenceorder=31 where orderno=72;
+update lsusergrouprightsmaster set sequenceorder=32 where orderno=15;
+update lsusergrouprightsmaster set sequenceorder=33 where orderno=14;
+
+update lsusergrouprightsmaster set sequenceorder=34 where orderno=11;
+update lsusergrouprightsmaster set sequenceorder=35 where orderno=12;
+update lsusergrouprightsmaster set sequenceorder=36 where orderno=13;
+
+update lsusergrouprightsmaster set sequenceorder=37 where orderno=65;
+update lsusergrouprightsmaster set sequenceorder=38 where orderno=66;
+update lsusergrouprightsmaster set sequenceorder=39 where orderno=67;
+
+update lsusergrouprightsmaster set sequenceorder=40 where orderno=78;
+
+update lsusergrouprightsmaster set sequenceorder=41 where orderno=17;
+update lsusergrouprightsmaster set sequenceorder=42 where orderno=21;
+
+update lsusergrouprightsmaster set sequenceorder=43 where orderno=16;
+update lsusergrouprightsmaster set sequenceorder=44 where orderno=23;
+update lsusergrouprightsmaster set sequenceorder=45 where orderno=22;
+update lsusergrouprightsmaster set sequenceorder=46 where orderno=24;
+update lsusergrouprightsmaster set sequenceorder=47 where orderno=52;
+update lsusergrouprightsmaster set sequenceorder=48 where orderno=40;
+
+update lsusergrouprightsmaster set sequenceorder=49 where orderno=18;
+
+update lsusergrouprightsmaster set sequenceorder=50 where orderno=19;
+
+update lsusergrouprightsmaster set sequenceorder=51 where orderno=20;
+
+update lsusergrouprightsmaster set sequenceorder=52 where orderno=41;
+
+update lsusergrouprightsmaster set sequenceorder=53 where orderno=43;
+
+update lsusergrouprightsmaster set sequenceorder=54 where orderno=25;
+update lsusergrouprightsmaster set sequenceorder=55 where orderno=28;
+update lsusergrouprightsmaster set sequenceorder=56 where orderno=29;
+update lsusergrouprightsmaster set sequenceorder=57 where orderno=30;
+update lsusergrouprightsmaster set sequenceorder=58 where orderno=31;
+update lsusergrouprightsmaster set sequenceorder=59 where orderno=32;
+
+update lsusergrouprightsmaster set sequenceorder=60 where orderno=26;
+update lsusergrouprightsmaster set sequenceorder=61 where orderno=27;
+
+update lsusergrouprightsmaster set sequenceorder=62 where orderno=34;
+update lsusergrouprightsmaster set sequenceorder=63 where orderno=58;
+update lsusergrouprightsmaster set sequenceorder=64 where orderno=45;
+update lsusergrouprightsmaster set sequenceorder=65 where orderno=35;
+
+update lsusergrouprightsmaster set sequenceorder=66 where orderno=53;
+update lsusergrouprightsmaster set sequenceorder=67 where orderno=68;
+update lsusergrouprightsmaster set sequenceorder=68 where orderno=39;
+update lsusergrouprightsmaster set sequenceorder=69 where orderno=54;
+update lsusergrouprightsmaster set sequenceorder=70 where orderno=55;
+update lsusergrouprightsmaster set sequenceorder=71 where orderno=56;
+
+update lsusergrouprightsmaster set modulename = 'IDS_MDL_DASHBOARD' where sequenceorder IN (1,2,3);
+update lsusergrouprightsmaster set modulename = 'IDS_MDL_ORDERS' where sequenceorder IN(4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
+update lsusergrouprightsmaster set modulename = 'IDS_MDL_TEMPLATES' where sequenceorder IN(21,22,23,24,25,26,27,28,29,30,31,32,33);
+update lsusergrouprightsmaster set modulename = 'IDS_MDL_MASTERS' where sequenceorder IN(34,35,36,37,38,39,40);
+

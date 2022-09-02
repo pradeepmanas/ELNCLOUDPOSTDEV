@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -26,7 +27,8 @@ public interface LsprotocolOrderStructureRepository extends JpaRepository<Lsprot
 	void updatedirectory(Long parentdircode , String path, Long directorycode, String directoryname);
 
 	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-			LSSiteMaster lssitemaster, int i, LSuserMaster objusermaster, int j);
+			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j);
+
 
 
 	

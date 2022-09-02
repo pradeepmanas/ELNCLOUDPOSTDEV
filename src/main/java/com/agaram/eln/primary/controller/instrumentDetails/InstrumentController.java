@@ -864,7 +864,7 @@ public class InstrumentController {
 		return instrumentService.GetSheetorderversions(objMap);
 	}
 	@RequestMapping("/Getfoldersforprotocolorders")
-	public Map<String, Object> Getfoldersforprotocolorders(@RequestBody LSuserMaster objusermaster)throws Exception {
+	public Map<String, Object> Getfoldersforprotocolorders(@RequestBody LSlogilabprotocoldetail objusermaster)throws Exception {
 		return instrumentService.Getfoldersforprotocolorders(objusermaster);
 	}
 	
@@ -902,15 +902,15 @@ public class InstrumentController {
 	}
 
 	@RequestMapping("/Getprotocolordersondirectory")
-	public List<Logilabprotocolorders> Getprotocolordersondirectory(@RequestBody LSSheetOrderStructure objdir)throws Exception
+	public List<LSlogilabprotocoldetail> Getprotocolordersondirectory(@RequestBody LSSheetOrderStructure objdir)throws Exception
 	{
 		return instrumentService.Getprotocolordersondirectory(objdir);
 	}
 	
-	@RequestMapping("/GetAssignedtoUserordersforprotocol")
-	public List<LSlogilabprotocoldetail> GetAssignedtoUserordersforprotocol(@RequestBody LSlogilabprotocoldetail order)throws Exception
+	@RequestMapping("/Getuserprotocolorders")
+	public Map<String, Object> Getuserprotocolorders(@RequestBody Map<String, LSuserMaster> objusers)throws Exception
 	{
-		return instrumentService.GetAssignedtoUserordersforprotocol(order);
+		return instrumentService.Getuserprotocolorders(objusers);
 	}
 	
 	@RequestMapping("/Getuserorders")
@@ -934,5 +934,17 @@ public class InstrumentController {
 	public List<LSlogilablimsorderdetail> Getordersonsample(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
 	{
 		return instrumentService.Getordersonsample(objorder);
+	}
+	
+	@RequestMapping("/Getprotocolordersonproject")
+	public List<LSlogilabprotocoldetail> Getprotocolordersonproject(@RequestBody LSlogilabprotocoldetail objorder)throws Exception
+	{
+		return instrumentService.Getprotocolordersonproject(objorder);
+	}
+	
+	@RequestMapping("/Getorderbyflaganduser")
+	public List<LSlogilablimsorderdetail> Getorderbyflaganduser(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
+	{
+		return instrumentService.Getorderbyflaganduser(objorder);
 	}
 }

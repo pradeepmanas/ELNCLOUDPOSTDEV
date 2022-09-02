@@ -759,17 +759,17 @@ public class FileService {
 			objfile.setApproved(0);
 			objfile.setLssheetworkflow(objfirstworkflow);
 
-			if (objfile.getLstest().size() > 0) {
-				LSfiletest objlims = objfile.getLstest().get(0);
-				objlims.setTestcode(null);
-				objfile.getLstest().set(0, objlims);
-			}
-
-			if (objfile.getLstest().size() > 1) {
-				LSfiletest objelntest = objfile.getLstest().get(1);
-				objelntest.setTestcode(null);
-				objfile.getLstest().set(1, objelntest);
-			}
+//			if (objfile.getLstest().size() > 0) {
+//				LSfiletest objlims = objfile.getLstest().get(0);
+//				objlims.setTestcode(null);
+//				objfile.getLstest().set(0, objlims);
+//			}
+//
+//			if (objfile.getLstest().size() > 1) {
+//				LSfiletest objelntest = objfile.getLstest().get(1);
+//				objelntest.setTestcode(null);
+//				objfile.getLstest().set(1, objelntest);
+//			}
 
 			if (objfile.getObjsheetworkflowhistory() != null) {
 				objfile.getObjsheetworkflowhistory().setCurrentworkflow(objfirstworkflow);

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public interface LsprotocolordersharedbyRepository extends JpaRepository<Lsprotocolordersharedby, Integer>{
 
@@ -33,6 +34,13 @@ public interface LsprotocolordersharedbyRepository extends JpaRepository<Lsproto
 			String sharebyunifiedid, Integer protocoltype, int i, Date fromdate, Date fromdate2);
 
 	Lsprotocolordersharedby findByShareprotocolordercodeAndSharestatus(Long shareprotocolordercode, int i);
+
+	List<Lsprotocolordersharedby> findBySharebyunifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
+			String string, int i, Date fromdate, Date todate);
+
+	List<Lsprotocolordersharedby> findBySharebyunifiedidAndSharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
+			String unifieduserid, String unifieduserid2, int i, Date fromdate, Date todate);
+
 
 //	Lsprotocolordersharedby findByShareprotocolordercode(Long shareprotocolordercode);
 

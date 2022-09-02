@@ -525,5 +525,17 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	
 	public List<LSlogilablimsorderdetail> findByLsprojectmasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(LSprojectmaster lsproject,LStestmasterlocal lstest,Integer displaytype, Date fromdate, Date todate);
 	
-	public List<LSlogilablimsorderdetail> findByLssamplemasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(LSsamplemaster lssample,LStestmasterlocal lstest,Integer displaytype, Date fromdate, Date todate);
+	public List<LSlogilablimsorderdetail> findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			LSsamplemaster lssample,Integer siteview, LStestmasterlocal lstest,Integer displaytype, Date fromdate, Date todate,LSsamplemaster lsusersample,Integer userview,LSuserMaster lsloginuser, 
+			LStestmasterlocal lstestuser,Integer displaytypeuser, Date fromdateuser, Date todateuser);
+	
+	public List<LSlogilablimsorderdetail> findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			LSsamplemaster lssample,Integer siteview, LStestmasterlocal lstest,Integer displaytype, Date fromdate, Date todate);
+	
+	public List<Logilaborders> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(Long directorycode,
+			Integer siteview, Date fromdate, Date todate,Long directorycodeuser,Integer userview,LSuserMaster lsloginuser, Date fromdateuser, Date todateuser);
+	
+	public List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
+	
 }
