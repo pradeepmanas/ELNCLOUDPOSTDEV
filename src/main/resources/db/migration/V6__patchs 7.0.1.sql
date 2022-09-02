@@ -102,7 +102,7 @@ AND table_name='lslogilablimsorderdetail';
 END
 $do$;
 
-update lslogilablimsorderdetail set lstestmasterlocal_testcode = testcode where filetype != 0 and (select count(*) from lstestmasterlocal where testcode = testcode) > 0 and lstestmasterlocal_testcode is null;
+update lslogilablimsorderdetail set lstestmasterlocal_testcode = testcode where filetype != 0 and (select count(*) from lstestmasterlocal where testcode = testcode) > 0 and testcode >0 and lstestmasterlocal_testcode is null;
 
 	-- Table: public.materialtype
 
