@@ -522,10 +522,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	@Query(value = "select distinct lstestmasterlocal_testcode, lssamplemaster_samplecode, (select testname from lstestmasterlocal where testcode =  lstestmasterlocal_testcode)  from lslogilablimsorderdetail"
 			+ " where lstestmasterlocal_testcode is not null and lssamplemaster_samplecode is not null and lssamplemaster_samplecode in (?1)", nativeQuery = true)
 	public List<Object> getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(List<Integer> lssamplecode);
-	
-	public List<LSlogilablimsorderdetail> findByLsprojectmasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(LSprojectmaster lsproject,LStestmasterlocal lstest,Integer displaytype, Date fromdate, Date todate);
-	
-	public List<LSlogilablimsorderdetail> findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+		
+	public List<Logilaborders> findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			LSsamplemaster lssample,Integer siteview, LStestmasterlocal lstest,Integer displaytype, Date fromdate, Date todate,LSsamplemaster lsusersample,Integer userview,LSuserMaster lsloginuser, 
 			LStestmasterlocal lstestuser,Integer displaytypeuser, Date fromdateuser, Date todateuser);
 	
@@ -535,7 +533,14 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public List<Logilaborders> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(Long directorycode,
 			Integer siteview, Date fromdate, Date todate,Long directorycodeuser,Integer userview,LSuserMaster lsloginuser, Date fromdateuser, Date todateuser);
 	
-	public List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+	public List<Logilaborders> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String orderflag, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
+
+	List<Logilaborders> findByLsprojectmasterAndLstestmasterlocalAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			LSprojectmaster lsprojectmaster, LStestmasterlocal lstestmasterlocal, Integer filetype, Date fromdate,
+			Date todate);
+
+	List<Logilaborders> findByLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			LSprojectmaster lsprojectmaster, LStestmasterlocal lstestmasterlocal, Date fromdate, Date todate);
 	
 }

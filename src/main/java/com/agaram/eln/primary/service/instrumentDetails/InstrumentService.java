@@ -4569,19 +4569,25 @@ public class InstrumentService {
 		return order;
 	}
 
-	public List<LSlogilablimsorderdetail> Getordersonproject(LSlogilablimsorderdetail objorder)
+	public List<Logilaborders> Getordersonproject(LSlogilablimsorderdetail objorder)
 	{
-		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
+		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
-		lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-				objorder.getLsprojectmaster(),objorder.getLstestmasterlocal(),1,fromdate,todate);
+		Integer  filetype = objorder.getFiletype();
+		if(filetype == -1) {
+			lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+					objorder.getLsprojectmaster(),objorder.getLstestmasterlocal(),fromdate,todate);
+		}else {
+			lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterAndLstestmasterlocalAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+					objorder.getLsprojectmaster(),objorder.getLstestmasterlocal(),filetype,fromdate,todate);
+		}
 		return lstorder;
 	}
 	
-	public List<LSlogilablimsorderdetail> Getordersonsample(LSlogilablimsorderdetail objorder)
+	public List<Logilaborders> Getordersonsample(LSlogilablimsorderdetail objorder)
 	{
-		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
+		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
 		lstorder = lslogilablimsorderdetailRepository.findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
@@ -4589,12 +4595,12 @@ public class InstrumentService {
 		return lstorder;
 	}
 	
-	public List<LSlogilablimsorderdetail> Getorderbyflaganduser(LSlogilablimsorderdetail objorder)
+	public List<Logilaborders> Getorderbyflaganduser(LSlogilablimsorderdetail objorder)
 	{
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
-		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
+		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 				 objorder.getOrderflag(), lstproject, objorder.getFromdate(),objorder.getTodate());
 		return lstorder;

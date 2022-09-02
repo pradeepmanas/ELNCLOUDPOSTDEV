@@ -925,13 +925,13 @@ public class InstrumentController {
 	}
 	
 	@RequestMapping("/Getordersonproject")
-	public List<LSlogilablimsorderdetail> Getordersonproject(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
+	public List<Logilaborders> Getordersonproject(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
 	{
 		return instrumentService.Getordersonproject(objorder);
 	}
 	
 	@RequestMapping("/Getordersonsample")
-	public List<LSlogilablimsorderdetail> Getordersonsample(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
+	public List<Logilaborders> Getordersonsample(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
 	{
 		return instrumentService.Getordersonsample(objorder);
 	}
@@ -943,7 +943,7 @@ public class InstrumentController {
 	}
 	
 	@RequestMapping("/Getorderbyflaganduser")
-	public List<LSlogilablimsorderdetail> Getorderbyflaganduser(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
+	public List<Logilaborders> Getorderbyflaganduser(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
 	{
 		return instrumentService.Getorderbyflaganduser(objorder);
 	}
