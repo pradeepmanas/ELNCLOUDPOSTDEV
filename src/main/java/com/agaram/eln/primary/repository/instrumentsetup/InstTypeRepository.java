@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.repository.instrumentsetup;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +15,7 @@ import com.agaram.eln.primary.model.instrumentsetup.InstrumentType;
  */
 @Repository
 public interface InstTypeRepository extends JpaRepository<InstrumentType, Integer>{
+
+	List<InstrumentType> findByStatus(int i);
 	
 }

@@ -626,25 +626,40 @@ public class EvaluateParserService {
                     		}
                     		
                     		else {
-                    			if(methodFieldTech.getSubparsertechniques().isEmpty()) {
+                    			//if(methodFieldTech.getSubparsertechniques().isEmpty()) {
                     			rowData.remove(0);
                     			fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
-                    		}
-                    			else
-                    			{
-                    				
-                    				fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
-                    			
-                    			
-                    			}
+                    		//}
+//                    			else
+//                    			{
+//                    				
+//                    				fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
+//                    			
+//                    			
+//                    			}
                     		}
                     		techData.setParseddata(fieldData);
                     	}
                       }
                     else if (subParserField.getSubparserfieldtype().equalsIgnoreCase("cell")) {
-                     	final String cellData = dataBlock.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[1]))
+                    	
+                    	if(methodFieldTech.getSubparsertechniques().isEmpty()) {
+                    		String cellData ="";
+                        	for(final List<String> rowData : dataBlock) {
+
+                        	rowData.remove(0);
+                    	    cellData = dataBlock.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[1]))
                     			.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[0]));
-                    	fieldData.add(cellData);                        	
+                        	}
+                    		fieldData.add(cellData);        
+
+                    	}
+//                    	else {
+//
+//                         	final String cellData = dataBlock.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[1]))
+//                        			.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[0]));
+//                        	fieldData.add(cellData);    
+//                    	}
                     }
                 }
 			}				

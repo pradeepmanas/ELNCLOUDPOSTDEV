@@ -36,5 +36,30 @@ public class MaterialController {
 		Integer nmaterialtypecode = (Integer) inputMap.get("nmaterialtypecode");
 		return (ResponseEntity<Object>) objMaterialService.getMaterialcombo(nmaterialtypecode);
 	}
+	
+	@RequestMapping(value = "/createMaterial", method = RequestMethod.POST)
+	public ResponseEntity<Object> createMaterial(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return objMaterialService.createMaterial(inputMap);
+	}
+	
+	@RequestMapping(value = "/getMaterialDetails", method = RequestMethod.POST)
+	public ResponseEntity<Object> getMaterialDetails(@RequestBody Map<String, Object> inputMap) throws Exception {
+		return objMaterialService.getMaterialDetails(inputMap);
+	}
+	
+//	@RequestMapping(value = "/deleteMaterial", method = RequestMethod.POST)
+//	public ResponseEntity<Object> deleteMaterial(@RequestBody Map<String, Object> inputMap) throws Exception {
+//		ObjectMapper objMapper = new ObjectMapper();
+//		final UserInfo userInfo = objMapper.convertValue(inputMap.get("userinfo"), UserInfo.class);
+//		requestContext.setUserInfo(userInfo);
+//		return objMaterialService.deleteMaterial(inputMap, userInfo);
+//	}
+
+//	@RequestMapping(value = "/getMaterialEdit", method = RequestMethod.POST)
+//	public ResponseEntity<Object> getMaterialEdit(@RequestBody Map<String, Object> inputMap) throws Exception {
+//		
+//		return objMaterialService.getMaterialEdit(inputMap);
+//	}
 
 }

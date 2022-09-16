@@ -410,6 +410,7 @@ public class MethodDelimiterService {
 	   
 	   if(delimiterByKey.isPresent()) {
 
+		   if(delimiterByKey.get().getDefaultvalue() == null) {
 		   final MethodDelimiter delimiter = delimiterByKey.get();
 		   
 		   final List<ParserField> parserFieldList = parserFieldRepo.findByMethoddelimiterAndStatus(delimiter, 1);
@@ -519,6 +520,10 @@ public class MethodDelimiterService {
 				   
 			   }
 			   return new ResponseEntity<>(delimiter.getParsermethod().getParsermethodname() +"-" + delimiter.getDelimiter().getDelimitername() , HttpStatus.IM_USED);//status code - 226		    		
+		   }
+	   }
+		   else {
+			   return new ResponseEntity<>(delimiterByKey.get().getParsermethod().getParsermethodname() +"-" + delimiterByKey.get().getDelimiter().getDelimitername(), HttpStatus.LOCKED);
 		   }
 	   }
 	   else

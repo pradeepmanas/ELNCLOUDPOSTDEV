@@ -207,7 +207,7 @@ public class UserService {
 
 	public List<LSusergroup> GetUserGroup(LSuserMaster objusergroup) {
 
-		return lSusergroupRepository.findByusergroupnameNotOrderByUsergroupcodeDesc("Administrator");
+		return lSusergroupRepository.findByOrderByUsergroupcodeDesc();
 	}
 
 //	public LSusergroup ActDeactUserGroup(LSusergroup objusergroup) 
@@ -220,12 +220,10 @@ public class UserService {
 
 		if (objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
 
-			return lsuserMasterRepository.findByusernameNotAndUserretirestatusNotOrderByCreateddateDesc("Administrator",
-					1);
+			return lsuserMasterRepository.findByUserretirestatusNotOrderByCreateddateDesc(1);
 		}
 
-		return lsuserMasterRepository.findByUsernameNotAndUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(
-				"Administrator", 1, objusergroup.getLssitemaster());
+		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1, objusergroup.getLssitemaster());
 	}
 
 	public List<LSuserMaster> GetUsersOnsite(LSSiteMaster objclass) {
@@ -724,11 +722,11 @@ public class UserService {
 //			lscfttransactionRepository.save(Objclass.getObjsilentaudit());
 		}
 		if (Objclass.getSitecode() == 0) {
-			return lSusergroupRepository.findByUsergroupnameNotOrderByUsergroupcodeDesc("Administrator");
+			return lSusergroupRepository.findByOrderByUsergroupcodeDesc();
 		}
 
 		return lSusergroupRepository
-				.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(), "Administrator");
+				.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(), "");
 	}
 
 	public List<LSusergroup> GetSiteWiseActiveUserGroup(LSSiteMaster Objclass) {
@@ -740,12 +738,12 @@ public class UserService {
 		List<String> status = Arrays.asList("A", "Active");
 		if (Objclass.getSitecode() == 0) {
 			return lSusergroupRepository
-					.findByUsergroupnameNotAndUsergroupstatusInOrderByUsergroupcodeDesc("Administrator", status);
+					.findByUsergroupstatusInOrderByUsergroupcodeDesc(status);
 		}
 
 		List<LSusergroup> lstusergroup = lSusergroupRepository
-				.findBylssitemasterAndUsergroupnameNotAndUsergroupstatusInOrderByUsergroupcodeDesc(
-						Objclass.getSitecode(), "Administrator", status);
+				.findBylssitemasterAndUsergroupstatusInOrderByUsergroupcodeDesc(
+						Objclass.getSitecode(), status);
 
 		return lstusergroup;
 	}
@@ -912,11 +910,16 @@ public class UserService {
 
 	public Map<String, Object> Getnotification(LSuserMaster lsuserMaster) {
 		Map<String, Object> objresmap = new HashMap<String, Object>();
-
+        Integer notifyfor = lsuserMaster.getObjuser().getFiltertype();
 		objresmap.put("newnotificationcount",
 				lsnotificationRepository.countByNotifationtoAndIsnewnotification(lsuserMaster, 1));
 		objresmap.put("notification",
-				lsnotificationRepository.findFirst10ByNotifationtoOrderByNotificationcodeDesc(lsuserMaster));
+				lsnotificationRepository.findFirst10ByNotifationtoAndNotificationforOrderByNotificationcodeDesc(lsuserMaster,notifyfor));
+		
+		objresmap.put("mynotificationcount",
+				lsnotificationRepository.countByNotifationtoAndIsnewnotificationAndNotificationfor(lsuserMaster, 1,1));
+		objresmap.put("teamnotificationcount",
+				lsnotificationRepository.countByNotifationtoAndIsnewnotificationAndNotificationfor(lsuserMaster, 1,2));
 
 		return objresmap;
 	}
@@ -926,8 +929,11 @@ public class UserService {
 
 		lsnotificationRepository.updatenotificationstatus(lsnotification.getNotifationto(),
 				lsnotification.getNotificationcode());
+		
+		lsnotification.setIsnewnotification(0);
 
-		objresmap = GetLatestnotification(lsnotification);
+		objresmap = Getnotification(lsnotification.getNotifationto());
+		objresmap.put("currentnotify", lsnotification);
 
 		return objresmap;
 	}
@@ -937,8 +943,8 @@ public class UserService {
 
 		objresmap.put("notification",
 				lsnotificationRepository
-						.findFirst10ByNotifationtoAndNotificationcodeLessThanOrderByNotificationcodeDesc(
-								lsnotification.getNotifationto(), lsnotification.getNotificationcode()));
+						.findFirst10ByNotifationtoAndNotificationcodeLessThanAndNotificationforOrderByNotificationcodeDesc(
+								lsnotification.getNotifationto(), lsnotification.getNotificationcode(),lsnotification.getNotificationfor()));
 
 		return objresmap;
 	}
@@ -1131,4 +1137,11 @@ public class UserService {
 
 		return bool;
 	}
+	
+	public Boolean Notificationmarkallasread(LSuserMaster lsuserMaster) {
+        lsnotificationRepository.updatenotificationstatusforall(lsuserMaster);
+
+		return true;
+	}
+	
 }

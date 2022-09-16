@@ -49,16 +49,6 @@ public class Lsrepositories {
 	private String isonexpireddatefield;
 	
 	private String unit;
-	
-	
-	
-	public String getUnit() {
-		return unit;
-	}
-
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
 
 	@Transient
 	Response objResponse;
@@ -69,6 +59,14 @@ public class Lsrepositories {
 	@Transient
 	private Date todate;
 	
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+
 	public Date getFromdate() {
 		return fromdate;
 	}

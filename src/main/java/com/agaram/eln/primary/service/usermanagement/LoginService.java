@@ -1476,5 +1476,24 @@ public class LoginService {
 		}
 		return objExitinguser;
 	}
+	
+	
+	public Map<String, Object> CheckUserPassword(LoggedUser objuser) {
+
+		Map<String, Object> obj = new HashMap<>();
+		if(objuser.getsPassword()!=null) {
+			String password = objuser.getsPassword();
+			String Password = AESEncryption.decrypt(password);
+			obj.put("password",Password);
+			System.out.println(" password: " + Password);
+		}else if(objuser.getIsmultitenant()!=null) {
+			String kumu =objuser.getIsmultitenant().toString();
+			String  Password1 = AESEncryption.encrypt(kumu);
+			System.out.println(" passwordint: " + Password1);
+			obj.put("passwordint",Password1);
+		}
+		return obj;
+		
+	}
 
 }

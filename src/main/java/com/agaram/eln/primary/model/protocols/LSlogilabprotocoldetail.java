@@ -104,6 +104,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	List<LSworkflow> lstworkflow;
 	
+	@Transient
+	Integer searchCriteriaType;
+	
+	public Integer getSearchCriteriaType() {
+		return searchCriteriaType;
+	}
+
+	public void setSearchCriteriaType(Integer searchCriteriaType) {
+		this.searchCriteriaType = searchCriteriaType;
+	}
+
 	private Integer viewoption;
 	
 	public List<LSworkflow> getLstworkflow() {

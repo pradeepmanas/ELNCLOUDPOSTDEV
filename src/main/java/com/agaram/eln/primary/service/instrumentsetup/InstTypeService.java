@@ -25,7 +25,9 @@ public class InstTypeService {
      * This method is used to retrieve list of instrument types
      * @return list of instrument types.
      */
-    public List<InstrumentType> getInstType() {     	
-    	return typeRepo.findAll();
+    public List<InstrumentType> getInstType() {     
+    	//return typeRepo.findAll();
+
+    	return typeRepo.findByStatus(1);
     }
 }

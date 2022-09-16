@@ -18,6 +18,7 @@ import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
+import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 
 @Entity
 @Table(name = "Lsprotocolorderstructure")
@@ -51,6 +52,39 @@ public class Lsprotocolorderstructure {
 
 	@ManyToOne
 	private LSSiteMaster sitemaster;
+	
+	@Transient
+	LoggedUser objuser;
+	
+	@Transient
+	private Integer protocoltype;
+	
+	@Transient
+	Integer searchCriteriaType;
+
+	public Integer getSearchCriteriaType() {
+		return searchCriteriaType;
+	}
+
+	public void setSearchCriteriaType(Integer searchCriteriaType) {
+		this.searchCriteriaType = searchCriteriaType;
+	}
+
+	public LoggedUser getObjuser() {
+		return objuser;
+	}
+
+	public void setObjuser(LoggedUser objuser) {
+		this.objuser = objuser;
+	}
+
+	public Integer getProtocoltype() {
+		return protocoltype;
+	}
+
+	public void setProtocoltype(Integer protocoltype) {
+		this.protocoltype = protocoltype;
+	}
 
 	private Integer viewoption;
 

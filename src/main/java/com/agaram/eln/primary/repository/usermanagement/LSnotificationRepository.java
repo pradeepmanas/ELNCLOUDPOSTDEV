@@ -13,15 +13,24 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public interface LSnotificationRepository extends JpaRepository<LSnotification, Long> {
 	public Long countByNotifationtoAndIsnewnotification(LSuserMaster lsuserMaster, Integer isnew);
+	public Long countByNotifationtoAndIsnewnotificationAndNotificationfor(LSuserMaster lsuserMaster, Integer isnew,Integer notificationfor);
 	public List<LSnotification> findFirst10ByNotifationtoOrderByNotificationcodeDesc(LSuserMaster lsuserMaster);
+	public List<LSnotification> findFirst10ByNotifationtoAndNotificationforOrderByNotificationcodeDesc(LSuserMaster lsuserMaster,Integer notificationfor);
 	public Long countByNotifationtoAndIsnewnotificationAndNotificationcodeGreaterThan(LSuserMaster lsuserMaster, Integer isnew, Long notificationcode);
 	public List<LSnotification> findByNotifationtoAndNotificationcodeGreaterThanOrderByNotificationcodeDesc(LSuserMaster lsuserMaster, Long notificationcode);
 	public List<LSnotification> findFirst10ByNotifationtoAndNotificationcodeLessThanOrderByNotificationcodeDesc(LSuserMaster lsuserMaster, Long notificationcode);
+	public List<LSnotification> findFirst10ByNotifationtoAndNotificationcodeLessThanAndNotificationforOrderByNotificationcodeDesc(LSuserMaster lsuserMaster, Long notificationcode,Integer notificationfor);
 	
 	@Transactional
 	@Modifying
-	@Query("update LSnotification o set o.isnewnotification = 0 where o.notifationto = ?1 and notificationcode <= ?2")
+	@Query("update LSnotification o set o.isnewnotification = 0 where o.notifationto = ?1 and notificationcode = ?2")
 	void updatenotificationstatus(LSuserMaster lsuserMaster, Long notificationcode);
+	
+	@Transactional
+	@Modifying
+	@Query("update LSnotification o set o.isnewnotification = 0 where o.notifationto = ?1 ")
+	void updatenotificationstatusforall(LSuserMaster lsuserMaster);
+	
 	public LSnotification findByRepositorycodeAndRepositorydatacode(Integer repositorycode, Integer repositorydatacode);
 	public LSnotification findByRepositorycodeAndRepositorydatacodeAndNotificationdetils(Integer repositorycode,
 			Integer repositorydatacode, String details);

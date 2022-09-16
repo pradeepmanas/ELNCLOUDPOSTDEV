@@ -606,6 +606,7 @@ public class FileService {
 								objnotify.setNotificationdetils(Details);
 								objnotify.setIsnewnotification(1);
 								objnotify.setNotificationpath("/sheetcreation");
+								objnotify.setNotificationfor(2);
 
 								lstnotifications.add(objnotify);
 							}
@@ -648,7 +649,8 @@ public class FileService {
 								objnotify.setNotificationdetils(Details);
 								objnotify.setIsnewnotification(1);
 								objnotify.setNotificationpath("/sheetcreation");
-
+								objnotify.setNotificationfor(2);
+								
 								lstnotifications.add(objnotify);
 							}
 						}

@@ -5,10 +5,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.agaram.eln.primary.model.masters.Lsrepositories;
+import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{ 
 
@@ -36,6 +39,12 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	
 	private Integer createby;
 	
+	private String repositoryitemname;
+	private LSuserMaster assignedto;
+	private String repositoryname;
+	
+
+
 	List<LSprotocolworkflow> lstworkflow;
 	private LSprotocolworkflow lSprotocolworkflow;
 	private Integer workflowcode;
@@ -45,7 +54,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	public Logilabprotocolorders(Long protocolordercode,Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
 			LSprotocolworkflow lSprotocolworkflow,
-			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,String keyword,Long directorycode,Integer createby) {
+			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,String keyword,Long directorycode,Integer createby,LSuserMaster assignedto,Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories) {
 		
 		this.protocolordercode = protocolordercode;
 		this.Testcode =Testcode;
@@ -62,7 +71,11 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 		this.directorycode = directorycode;
 		this.lsprojectmaster = lsprojectmaster;
 		this.createby =createby;
+		this.assignedto =assignedto;
 		this.lssamplemaster= lssamplemaster != null ? lssamplemaster:null;
+		this.repositoryitemname =lsrepositoriesdata !=null ?lsrepositoriesdata.getRepositoryitemname():null;
+		this.repositoryname =lsrepositories !=null ?lsrepositories.getRepositoryname():null;
+		this.directorycode = directorycode;
 	}
 
 	public LSsamplemaster getLssamplemaster() {
@@ -198,6 +211,30 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	}
 	public LSprojectmaster getLsprojectmaster() {
 		return lsprojectmaster;
+	}
+	
+	public String getRepositoryitemname() {
+		return repositoryitemname;
+	}
+
+	public void setRepositoryitemname(String repositoryitemname) {
+		this.repositoryitemname = repositoryitemname;
+	}
+
+	public LSuserMaster getAssignedto() {
+		return assignedto;
+	}
+
+	public void setAssignedto(LSuserMaster assignedto) {
+		this.assignedto = assignedto;
+	}
+
+	public String getRepositoryname() {
+		return repositoryname;
+	}
+
+	public void setRepositoryname(String repositoryname) {
+		this.repositoryname = repositoryname;
 	}
 
 	public void setLsprojectmaster(LSprojectmaster lsprojectmaster) {

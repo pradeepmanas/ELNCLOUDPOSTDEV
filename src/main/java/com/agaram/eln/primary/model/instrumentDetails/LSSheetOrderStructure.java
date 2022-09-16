@@ -47,6 +47,10 @@ public class LSSheetOrderStructure {
 	@Transient
 	private Long dircodetomove;
 
+	
+	@Transient
+	private Integer filetype;
+	
 	@ManyToOne
 	public LSuserMaster createdby;
 
@@ -186,6 +190,14 @@ public class LSSheetOrderStructure {
 
 	public Long getDircodetomove() {
 		return dircodetomove;
+	}
+
+	public Integer getFiletype() {
+		return filetype;
+	}
+
+	public void setFiletype(Integer filetype) {
+		this.filetype = filetype;
 	}
 
 	public void setDircodetomove(Long dircodetomove) {

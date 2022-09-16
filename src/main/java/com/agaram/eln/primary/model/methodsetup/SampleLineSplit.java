@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,7 +38,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 @XmlRootElement  (name = "samplelinesplit")
 @XmlType(propOrder = { "samplelinesplitkey", "method","removeorextractlines", "centertext",
 		"excludecentertext", "centertextrowindex", "centertextoccurrenceno", "toplines", "bottomlines", "repeatlines",
-		"extractblock", "status", "createdby", "createddate", "type"
+		"extractblock", "status", "createdby", "createddate", "type","blocktype"
 		})
 @Entity
 @Table(name = "samplelinesplit")
@@ -82,6 +83,11 @@ public class SampleLineSplit implements Serializable, Diffable<SampleLineSplit>{
 	private String extractblock;
 	
 	private transient String type = "sampleLineSplit";
+	
+	@Transient
+	@Column(name = "blocktype")
+	private String blocktype;
+
 	
 	@Range(min=-1, max=1)
 	@Column(name = "status")
@@ -227,6 +233,15 @@ public class SampleLineSplit implements Serializable, Diffable<SampleLineSplit>{
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	
+	public String getBlocktype() {
+		return blocktype;
+	}
+
+	public void setBlocktype(String blocktype) {
+		this.blocktype = blocktype;
 	}
 
 	/**

@@ -18,7 +18,15 @@ public class Unit {
 	private Integer nsitecode;
 	@Column(name = "ndefaultstatus")
 	private Integer ndefaultstatus;
+	@Column(name = "sunitname")
+	private String sunitname;
 	
+	public String getSunitname() {
+		return sunitname;
+	}
+	public void setSunitname(String sunitname) {
+		this.sunitname = sunitname;
+	}
 	public Integer getNunitcode() {
 		return nunitcode;
 	}

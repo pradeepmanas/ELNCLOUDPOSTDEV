@@ -29,6 +29,8 @@ import com.agaram.eln.primary.model.archieve.LsProjectarchieve;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
+import com.agaram.eln.primary.model.masters.Lslogbooks;
+import com.agaram.eln.primary.model.masters.Lslogbooksdata;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
@@ -41,6 +43,8 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.archieve.LsProjectarchieveRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository;
+import com.agaram.eln.primary.repository.masters.LslogbooksRepository;
+import com.agaram.eln.primary.repository.masters.LslogbooksdataRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
@@ -67,6 +71,9 @@ public class MasterService {
 	static final Logger logger = Logger.getLogger(InstrumentService.class.getName());
 	@Autowired
 	private LsrepositoriesRepository lsrepositoriesRepository;
+	
+	@Autowired
+	private LslogbooksRepository lslogbooksRepository;
 
 	@Autowired
 	private LsrepositoriesdataRepository lsrepositoriesdataRepository;
@@ -94,6 +101,9 @@ public class MasterService {
 
 	@Autowired
 	private LSprotocolordersampleupdatesRepository LSprotocolordersampleupdatesRepository;
+	
+	@Autowired
+	private LslogbooksdataRepository lslogbooksdataRepository;
 
 	@Autowired
 	private Environment env;
@@ -244,7 +254,8 @@ public class MasterService {
 					objnotify.setNotificationpath("/masters");
 					objnotify.setRepositorycode(lsrepositoriesdata.get(i).getRepositorycode());
 					objnotify.setRepositorydatacode(lsrepositoriesdata.get(i).getRepositorydatacode());
-
+					objnotify.setNotificationfor(1);
+					
 					lstnotifications.add(objnotify);
 				}
 
@@ -465,5 +476,75 @@ public class MasterService {
 			System.out.println(ex.getMessage());
 		}
 		return null;
+	}
+	
+	public List<Lslogbooks> Getalllogbooks(Lslogbooks lslogbooks) {
+		return lslogbooksRepository.findBySitecodeOrderByLogbookcodeAsc(lslogbooks.getSitecode());
+	}
+	
+	public Lslogbooks Savelogbook(Lslogbooks lslogbooks) {
+		Response objResponse = new Response();
+		Lslogbooks objrepo = null;
+		if (lslogbooks.getLogbookcode() != null) {
+			objrepo = lslogbooksRepository.findByLogbooknameAndSitecodeAndLogbookcodeNot(
+					lslogbooks.getLogbookname(), lslogbooks.getSitecode(),
+					lslogbooks.getLogbookcode());
+		} else {
+			objrepo = lslogbooksRepository.findByLogbooknameAndSitecode(lslogbooks.getLogbookname(),
+					lslogbooks.getSitecode());
+		}
+
+		if (objrepo != null) {
+			objResponse.setStatus(false);
+			objResponse.setInformation("Logbook already exists");
+		} else {
+			objResponse.setStatus(true);
+			lslogbooksRepository.save(lslogbooks);
+		}
+
+		lslogbooks.setObjResponse(objResponse);
+		return lslogbooks;
+	}
+	
+	public List<Lslogbooksdata> Getalllogbookdata(Lslogbooksdata lslogbooksdata) {
+		return lslogbooksdataRepository.findByLogbookcodeAndSitecodeAndItemstatusOrderByLogbookdatacodeDesc(
+				lslogbooksdata.getLogbookcode(), lslogbooksdata.getSitecode(), 1);
+	}
+	
+	public Lslogbooksdata GetupdatedLogbookdata(Lslogbooksdata lslogbooksdata) {
+		lslogbooksdata = lslogbooksdataRepository.findOne(lslogbooksdata.getLogbookdatacode());
+		return lslogbooksdata;
+	}
+	
+	public Lslogbooksdata DeleteLogbookdata(Lslogbooksdata lslogbooksdata) {
+		lslogbooksdata = lslogbooksdataRepository.findOne(lslogbooksdata.getLogbookdatacode());
+		lslogbooksdata.setItemstatus(0);
+		lslogbooksdataRepository.save(lslogbooksdata);
+
+		return lslogbooksdata;
+	}
+	
+	public Lslogbooksdata Savelogbookdata(Lslogbooksdata lslogbooksdata) {
+		Response objResponse = new Response();
+		@SuppressWarnings("unused")
+		Lslogbooksdata lsrepodata = null;
+
+		if (lslogbooksdata.getLogbookdatacode() != null) {
+			lsrepodata = lslogbooksdataRepository
+					.findByLogbookcodeAndLogbookitemnameAndSitecodeAndLogbookdatacodeNot(
+							lslogbooksdata.getLogbookcode(), lslogbooksdata.getLogbookitemname(),
+							lslogbooksdata.getSitecode(), lslogbooksdata.getLogbookdatacode());
+		} else {
+			lsrepodata = lslogbooksdataRepository.findByLogbookcodeAndLogbookitemnameAndSitecode(
+					lslogbooksdata.getLogbookcode(), lslogbooksdata.getLogbookitemname(),
+					lslogbooksdata.getSitecode());
+
+		}
+
+		objResponse.setStatus(true);
+		lslogbooksdataRepository.save(lslogbooksdata);
+
+		lslogbooksdata.setObjResponse(objResponse);
+		return lslogbooksdata;
 	}
 }

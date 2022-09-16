@@ -41,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "methoddelimiter")
-@XmlType(propOrder = { "methoddelimiterkey", "parsermethod", "delimiter", "status", "createdby", "createddate","transactiondate","screenname","displayvalue"})
+@XmlType(propOrder = { "methoddelimiterkey", "parsermethod", "delimiter", "status", "createdby", "createddate","transactiondate","screenname","displayvalue","defaultvalue"})
 @Entity
 @Table(name = "methoddelimiter")
 public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>{
@@ -82,6 +82,10 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	@Column(name = "screenname")
 	private String screenname;
 
+
+	@Column(name = "defaultvalue")
+	private Integer defaultvalue;	
+		
 	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "usercode", nullable = false)
@@ -180,6 +184,16 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 		this.screenname = screenname;
 	}
 
+	
+	
+	public Integer getDefaultvalue() {
+		return defaultvalue;
+	}
+
+	public void setDefaultvalue(Integer defaultvalue) {
+		this.defaultvalue = defaultvalue;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -195,6 +209,8 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	       .append("transactiondate", this.transactiondate, obj.transactiondate)
 	       .append("displayvalue", this.displayvalue, obj.displayvalue)
 	       .append("screenname", this.screenname, obj.screenname)
+	       .append("defaultvalue", this.defaultvalue, obj.defaultvalue)
+
 
 	       .build();
 	}
@@ -216,6 +232,8 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 		this.transactiondate = methodDelimiter.transactiondate;
 		this.displayvalue = methodDelimiter.displayvalue;
         this.screenname = methodDelimiter.screenname;
+        this.defaultvalue = methodDelimiter.defaultvalue;
+
 
 	}
 	

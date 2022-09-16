@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.agaram.eln.primary.model.archieve.LsProjectarchieve;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
+import com.agaram.eln.primary.model.masters.Lslogbooks;
+import com.agaram.eln.primary.model.masters.Lslogbooksdata;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -124,5 +126,40 @@ public class MasterController {
 				new InputStreamResource(masterService.Downloadarchievedproject(lsprojectarchieve)), header,
 				HttpStatus.OK);
 	}
+	
+	@RequestMapping("/Getalllogbooks")
+	public List<Lslogbooks> Getalllogbooks(@RequestBody Lslogbooks lslogbooks)throws Exception
+	{
+		return masterService.Getalllogbooks(lslogbooks);
+	}
 
+	@RequestMapping("/Savelogbook")
+	public Lslogbooks Savelogbook(@RequestBody Lslogbooks lslogbooks)throws Exception
+	{
+		return masterService.Savelogbook(lslogbooks);
+	}
+	
+	@RequestMapping("/Getalllogbookdata")
+	public List<Lslogbooksdata> Getalllogbookdata(@RequestBody Lslogbooksdata lslogbooksdata)throws Exception
+	{
+		return masterService.Getalllogbookdata(lslogbooksdata);
+	}
+	
+	@RequestMapping("/GetupdatedLogbookdata")
+	public Lslogbooksdata GetupdatedLogbookdata(@RequestBody Lslogbooksdata lslogbooksdata)throws Exception
+	{
+		return masterService.GetupdatedLogbookdata(lslogbooksdata);
+	}
+	
+	@RequestMapping("/DeleteLogbookdata")
+	public Lslogbooksdata DeleteLogbookdata(@RequestBody Lslogbooksdata lslogbooksdata)throws Exception
+	{
+		return masterService.DeleteLogbookdata(lslogbooksdata);
+	}
+	
+	@RequestMapping("/Savelogbookdata")
+	public Lslogbooksdata Savelogbookdata(@RequestBody Lslogbooksdata lslogbooksdata)throws Exception
+	{
+		return masterService.Savelogbookdata(lslogbooksdata);
+	}
 }

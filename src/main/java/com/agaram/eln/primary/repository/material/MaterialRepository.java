@@ -9,5 +9,14 @@ import com.agaram.eln.primary.model.material.Material;
 public interface MaterialRepository  extends JpaRepository<Material, Integer>{
 
 	List<Material> findByNmaterialcatcode(Integer nmaterialcatcode);
+	
+	List<Integer> findByNmaterialcodeAndNstatus(Integer nmaterialcode,Integer i);
+	
+	Material findByNstatusAndNmaterialcode(Integer nstatus,Integer nmaterialcode);
+	
+	Material findBySmaterialname(String smaterialname);
 
+	Material findBySmaterialnameAndNstatus(String string, Integer i);
+
+	List<Material> findByNmaterialcatcodeAndNmaterialtypecodeAndNstatus(Integer nmaterialcatcode, Integer nmaterialtypecode, int i);
 }

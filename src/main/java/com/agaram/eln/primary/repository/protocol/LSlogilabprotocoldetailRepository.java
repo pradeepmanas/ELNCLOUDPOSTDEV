@@ -319,25 +319,25 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	
 	@Transactional
 	@Modifying
-	@Query(value = "select distinct LSlogilabprotocoldetail.testcode, LSlogilabprotocoldetail.lsprojectmaster_projectcode, (select testname from lstestmasterlocal where testcode =  LSlogilabprotocoldetail.testcode)as testname  from LSlogilabprotocoldetail as LSlogilabprotocoldetail"
-			+ " where LSlogilabprotocoldetail.testcode is not null and LSlogilabprotocoldetail.lsprojectmaster_projectcode is not null and LSlogilabprotocoldetail.lsprojectmaster_projectcode in (?1)", nativeQuery = true)
-	public List<Object> getLstestmasterlocalByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(List<Integer> lsprojectcode);
+	@Query(value = "select distinct LSlogilabprotocoldetail.testcode, LSlogilabprotocoldetail.lsprojectmaster_projectcode, CAST((select testname from lstestmasterlocal where testcode =  LSlogilabprotocoldetail.testcode) as varchar(10))as testname  from LSlogilabprotocoldetail as LSlogilabprotocoldetail"
+			+ " where LSlogilabprotocoldetail.testcode is not null and assignedto_usercode is null and LSlogilabprotocoldetail.lsprojectmaster_projectcode is not null and LSlogilabprotocoldetail.lsprojectmaster_projectcode in (?1)", nativeQuery = true)
+	public ArrayList<List<Object>>  getLstestmasterlocalByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(List<Integer> lsprojectcode);
 
 	@Transactional
 	@Modifying
-	@Query(value = "select distinct LSlogilabprotocoldetail.testcode, LSlogilabprotocoldetail.lssamplemaster_samplecode, (select testname from lstestmasterlocal where testcode =  LSlogilabprotocoldetail.testcode)  from LSlogilabprotocoldetail as LSlogilabprotocoldetail"
-			+ " where LSlogilabprotocoldetail.testcode is not null and LSlogilabprotocoldetail.lssamplemaster_samplecode is not null and LSlogilabprotocoldetail.lssamplemaster_samplecode in (?1)", nativeQuery = true)
-	public List<Object> getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(List<Integer> lssamplecode);
+	@Query(value = "select distinct LSlogilabprotocoldetail.testcode, LSlogilabprotocoldetail.lssamplemaster_samplecode, CAST((select testname from lstestmasterlocal where testcode =  LSlogilabprotocoldetail.testcode) as varchar(10))as testname from LSlogilabprotocoldetail as LSlogilabprotocoldetail"
+			+ " where LSlogilabprotocoldetail.testcode is not null and assignedto_usercode is null and LSlogilabprotocoldetail.lssamplemaster_samplecode is not null and LSlogilabprotocoldetail.lssamplemaster_samplecode in (?1)", nativeQuery = true)
+	public ArrayList<List<Object>>  getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(List<Integer> lssamplecode);
 
 
 	List<Logilabprotocolorders> findByDirectorycodeOrderByProtocolordercodeDesc(Long directorycode);
 
 
-	List<LSlogilabprotocoldetail> findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+	List<LSlogilabprotocoldetail> findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 			LSprojectmaster lsprojectmaster, Integer testcode, int i, Date fromdate, Date todate);
 
 
-	List<LSlogilabprotocoldetail> findByDirectorycodeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 			Long directorycode, Date fromdate, Date todate);
 
 
@@ -347,5 +347,48 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	List<LSlogilabprotocoldetail> findByAssignedtoAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 			LSuserMaster lsselecteduser, LSuserMaster lsloginuser, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			LSsamplemaster lssamplemaster, int i, String testname, int j, Date fromdate, Date todate,
+			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode, int l, Date fromdate2,
+			Date todate2);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Integer protocoltype, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndAssignedtoIsNullAndProtocoltypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			Long directorycode, Integer protocoltype, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndProtocoltypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			LSprojectmaster lsprojectmaster, Integer testcode, Integer protocoltype, int i, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndProtocoltypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			LSsamplemaster lssamplemaster, int i, String testname, int j, Date fromdate, Date todate,
+			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode, int l,
+			Integer protocoltype, Date fromdate2, Date todate2);
+
+
+	List<LSlogilabprotocoldetail> findByProtocolordercodeIn(ArrayList<Long> log);
+
+
+	List<LSlogilabprotocoldetail> findByProtocolordercodeInAndProtocoltype(ArrayList<Long> log, Integer protocoltype);
+	
+	
+	@Transactional
+	@Modifying
+	@Query(value = "select protocolordercode from "
+			+ "LSlogilabprotocoldetail where assignedto_usercode = ?1 and createdtimestamp BETWEEN ?2 and ?3 order by protocolordercode desc", nativeQuery = true)
+	List<Integer> getAssignedtoAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(LSuserMaster lsloginuser,
+			Date fromdate, Date todate);
+
 	
 }

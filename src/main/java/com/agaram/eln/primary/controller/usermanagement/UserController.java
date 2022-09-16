@@ -595,5 +595,11 @@ public class UserController {
 	{
 		return userService.getUsersManinFrameLicenseStatus(objsite);
 	}
+	
+	@RequestMapping("/Notificationmarkallasread")
+	public Boolean Notificationmarkallasread(@RequestBody LSuserMaster lsuserMaster)throws Exception
+	{
+		return userService.Notificationmarkallasread(lsuserMaster);
+	}
 }
 

@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -38,7 +39,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 @XmlType(propOrder = { "sampletextsplitkey", "method", "removeorextracttext", 
 		"begintext", "excludebegintext", "begintextrowindex", "begintextoccurrenceno",
 		"endtext", "excludeendtext", "endtextrowindex", "endtextoccurrenceno", "repeattext", 
-		 "extractblock","status", "createdby", "createddate", "type"//, "sampleextracts"
+		 "extractblock","status", "createdby", "createddate", "type","blocktype"//, "sampleextracts"
 		 })
 @Entity
 @Table(name = "sampletextsplit")
@@ -89,6 +90,9 @@ public class SampleTextSplit implements Serializable, Diffable<SampleTextSplit>{
 	private String extractblock;
 	
 	private transient String type = "sampleTextSplit";
+	
+	@Column(name = "blocktype")
+	private String blocktype;
 	
 	@Range(min=-1, max=1)
 	@Column(name = "status")
@@ -254,6 +258,15 @@ public class SampleTextSplit implements Serializable, Diffable<SampleTextSplit>{
 		this.type = type;
 	}
 
+	
+	public String getBlocktype() {
+		return blocktype;
+	}
+
+	public void setBlocktype(String blocktype) {
+		this.blocktype = blocktype;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -276,6 +289,8 @@ public class SampleTextSplit implements Serializable, Diffable<SampleTextSplit>{
 	       .append("status",this.status, obj.status)
 	       .append("createdby", this.createdby.getUsername(), obj.createdby.getUsername())
 	       .append("createddate", this.createddate, obj.createddate)
+	       .append("blocktype", this.blocktype, obj.blocktype)
+
 	       .build();
 	}
 	
@@ -303,6 +318,7 @@ public class SampleTextSplit implements Serializable, Diffable<SampleTextSplit>{
 		this.sampletextsplitkey = sampleTextSplit.sampletextsplitkey;
 		this.status = sampleTextSplit.status;		
 		this.extractblock = sampleTextSplit.extractblock;
+		this.blocktype=sampleTextSplit.blocktype;
 	}
 	
 	/**

@@ -119,8 +119,8 @@ public class ParserSetupService {
     final String rawDataContent,final String tenant,final int isMultitenant) throws FileNotFoundException, IOException
 	{		
 		final Method method = (Method)methodService.findById(methodKey).getBody();
-	//	String tenant = null;
-		
+
+		final String a ="";
 		String rawDataText = "";
 		if (rawDataContent == null || rawDataContent.isEmpty()) {
 			if(isMultitenant != 0) {
@@ -181,17 +181,32 @@ public class ParserSetupService {
 	        if (removeSTSList.size() > 0 || removeSLSList.size() > 0) {
 	            rawData = commonFunction.removeRawData(rawData, removeSTSList, removeSLSList);
 	        }
-	        String removedData = rawData;
+
+	        ArrayList< Map <String, Object>> names = new ArrayList< Map <String, Object>>();
+
 	        final Map <String, Object> extractedBlock = new HashMap<String, Object>();
+
+	        String removedData = rawData;
 	        if (!extractSTSList.isEmpty()){
 	        	for (SampleTextSplit item :extractSTSList) {
-	        		//final List<String> rawDataList = new ArrayList<String>();
+	        
+	        
+	    	      //  final Map <String, Object> extractedBlock1 = new HashMap<String, Object>();
+
 					final String extractedData = "$$BEGINSAMPLE$$\n"+commonFunction.extractRawDataBySTS(removedData,item, dataBuffer.toString())+"\n$$ENDSAMPLE$$";
-	                //rawDataList.add(extractedData);
+	             
 	        		extractedBlock.put(item.getExtractblock(), extractedData);
-	            }
+	        	//	extractedBlock.put("Blocktype", item.getBlocktype());
+	        	//	names.add(extractedBlock1)	;
+	        	//	extractedBlock.put("extractedBlock1", extractedBlock1);
+	        		
+	        	 //   a = (String)extractedBlock.get(extractedBlock1);
+
+	            }	        	
+
 	        }
 	       
+	        
 	        if (!extractSLSList.isEmpty()){
 	        	for (SampleLineSplit item :extractSLSList) {	        		
 	        		final String extractedData = "$$BEGINSAMPLE$$\n"+commonFunction.extractRawDataBySLS(removedData,item, dataBuffer.toString())+"\n$$ENDSAMPLE$$";
@@ -205,20 +220,36 @@ public class ParserSetupService {
 	            extractList.forEach(item -> {            	
 	            	 final String extractBlock = item.getSampletextsplit() != null ? item.getSampletextsplit().getExtractblock()
 	                         : item.getSamplelinesplit().getExtractblock();
+	            	 
+
+//	            	 final String extractBlock = item.getSampletextsplit() != null ? item.getSampletextsplit().getBlocktype()
+//	                         : item.getSamplelinesplit().getBlocktype();
 	            	
 	            	 List<String> rawDataList = new ArrayList<String>();
 	                 if( item.getExtracttextorlines() == 0){
 	                     rawDataList = commonFunction.applyMatchTextExtract((String)extractedBlock.get(extractBlock), item);
+
 	                 }
 	                 else { 
 	                	 rawDataList = commonFunction.applyAbsoluteLinesExtract((String)extractedBlock.get(extractBlock), item);
+
 	                 }
 	                
 	                 if (evaluateParser) {
 	                	extractedBlock.replace(extractBlock, rawDataList);
+	               //     numbers.put("Second", value);
+
 	                 }
 	                 else {
+	                	 int i =0 ;
 	                	 extractedBlock.replace(extractBlock, rawDataList.get(0));
+	     	       // 	for (i=0 ; i<=names.size();i++) {	        		
+
+	                	 //   i.put("extractBlock", rawDataList);
+		                //	i.replace(extractBlock, rawDataList);
+                         //names.replace(extractBlock, rawDataList);
+	     	        	//}
+
 	                 }
 	            });
 	        }

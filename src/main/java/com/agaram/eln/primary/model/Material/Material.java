@@ -1,10 +1,11 @@
 package com.agaram.eln.primary.model.material;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -18,26 +19,46 @@ public class Material implements Serializable{
 	
 	@Id
 	@Column(name = "nmaterialcode")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer nmaterialcode;
 	
 	private Integer nmaterialcatcode;
-
+	private Integer ntransactionstatus;
+	
 	@Column(name = "nstatus")
-	private short nstatus;
+	private Integer nstatus;
+	
+	@Column(name = "nmaterialtypecode")
+	private Integer nmaterialtypecode;
 	
 	@Type(type = "jsonb")
 	@Column(name = "jsondata", columnDefinition = "jsonb")
-	private Map<String, Object> jsondata;
+	private String jsondata;
 	
 	@Type(type = "jsonb")
 	@Column(name = "jsonuidata", columnDefinition = "jsonb")
-	private Map<String, Object> jsonuidata;
-	private transient String smaterialname;
+	private String jsonuidata;
+	
+	@Column(name = "smaterialname")
+	private String smaterialname;
+	
 	private transient String sunitname;
 	private transient short needsection;
 	private transient int nproductcode;
 	private transient String sproductname;
 	
+	public Integer getNmaterialtypecode() {
+		return nmaterialtypecode;
+	}
+	public void setNmaterialtypecode(Integer nmaterialtypecode) {
+		this.nmaterialtypecode = nmaterialtypecode;
+	}
+	public Integer getNtransactionstatus() {
+		return ntransactionstatus;
+	}
+	public void setNtransactionstatus(Integer ntransactionstatus) {
+		this.ntransactionstatus = ntransactionstatus;
+	}
 	public Integer getNmaterialcatcode() {
 		return nmaterialcatcode;
 	}
@@ -50,22 +71,22 @@ public class Material implements Serializable{
 	public void setNmaterialcode(Integer nmaterialcode) {
 		this.nmaterialcode = nmaterialcode;
 	}
-	public short getNstatus() {
+	public Integer getNstatus() {
 		return nstatus;
 	}
-	public void setNstatus(short nstatus) {
+	public void setNstatus(Integer nstatus) {
 		this.nstatus = nstatus;
 	}
-	public Map<String, Object> getJsondata() {
+	public String getJsondata() {
 		return jsondata;
 	}
-	public void setJsondata(Map<String, Object> jsondata) {
+	public void setJsondata(String jsondata) {
 		this.jsondata = jsondata;
 	}
-	public Map<String, Object> getJsonuidata() {
+	public String getJsonuidata() {
 		return jsonuidata;
 	}
-	public void setJsonuidata(Map<String, Object> jsonuidata) {
+	public void setJsonuidata(String jsonuidata) {
 		this.jsonuidata = jsonuidata;
 	}
 	public String getSmaterialname() {

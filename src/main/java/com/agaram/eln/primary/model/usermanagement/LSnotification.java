@@ -38,6 +38,8 @@ public class LSnotification {
 	
 	private int isnewnotification;
 	
+	private int notificationfor;
+	
 //	@Column(columnDefinition = "date",name = "CreatedTimeStamp")
 	@Column(name = "CreatedTimeStamp")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -127,6 +129,14 @@ public class LSnotification {
 
 	public void setNotificationdate(Date notificationdate) {
 		this.notificationdate = notificationdate;
+	}
+
+	public int getNotificationfor() {
+		return notificationfor;
+	}
+
+	public void setNotificationfor(int notificationfor) {
+		this.notificationfor = notificationfor;
 	}
 
 	

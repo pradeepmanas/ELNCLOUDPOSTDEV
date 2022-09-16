@@ -41,6 +41,8 @@ public interface LSusergroupRepository extends JpaRepository<LSusergroup, Intege
 	
 	public List<LSusergroup> findBylssitemasterAndUsergroupnameNotAndUsergroupstatusInOrderByUsergroupcodeDesc(Integer objclass,
 			String string, List<String> userstatus);
+	
+	public List<LSusergroup> findBylssitemasterAndUsergroupstatusInOrderByUsergroupcodeDesc(Integer objclass,List<String> userstatus);
 
 
 	public List<LSusergroup> findByUsergroupnameNotOrderByUsergroupcodeAsc(String usergroupname);
@@ -61,5 +63,7 @@ public interface LSusergroupRepository extends JpaRepository<LSusergroup, Intege
 	public List<LSusergroup> findByLssitemasterAndUsergroupstatusInOrderByUsergroupcodeDesc(Integer sitecode,List<String> usergroupstatus);
 
 	public List<LSusergroup> findByUsergroupnameNotAndUsergroupstatusInOrderByUsergroupcodeDesc( String string, List<String> usergroupstatus);
+	
+	public List<LSusergroup> findByUsergroupstatusInOrderByUsergroupcodeDesc(List<String> usergroupstatus);
 
 }

@@ -22,5 +22,10 @@ public interface LsordersharedbyRepository extends JpaRepository<Lsordersharedby
 	public List<Lsordersharedby> findByUsersharedbyAndSharestatusAndSharedonBetweenOrderBySharedbycodeDesc(LSuserMaster lssharedby, Integer sharestatus, Date fromdate, Date todate);
 	
 	public List<Lsordersharedby> findByUsersharedbyAndUsersharedonAndSharestatusAndSharedonBetweenOrderBySharedbycodeDesc(LSuserMaster lssharedby, LSuserMaster lssharedto, Integer sharestatus, Date fromdate, Date todate);
+	
+	public List<Lsordersharedby> findByUsersharedbyAndOrdertypeAndSharestatusAndSharedonBetweenOrderBySharedbycodeDesc(LSuserMaster lsselecteduser, Integer filetype, int i, Date fromdate, Date todate);
+	public List<Lsordersharedby> findByUsersharedbyAndUsersharedonAndOrdertypeAndSharestatusAndSharedonBetweenOrderBySharedbycodeDesc(
+			LSuserMaster lsloginuser, LSuserMaster lsselecteduser, Integer filetype, int i, Date fromdate, Date todate);
+			
 
 }

@@ -219,5 +219,9 @@ public class LoginController {
 	public List <LSuserMaster> ValidateuserAndPassword(@RequestBody LoggedUser objuser)throws Exception {
 		return loginService.ValidateuserAndPassword(objuser);
 	}
-
+	//for check password
+			@PostMapping("/CheckUserPassword")
+			public Map<String, Object>  CheckUserPassword(@RequestBody LoggedUser objuser)throws Exception {
+				return loginService.CheckUserPassword(objuser);
+			}
 }

@@ -36,5 +36,7 @@ public interface SubParserFieldRepository extends JpaRepository<SubParserField, 
 //			+ " ON m.methodkey = pb.method.methodkey AND m.methodkey = ?1 and spf.status=1" )
 //	List<SubParserField> getSubParserFieldByMethodKey(final int methodKey);
 	
-	List<SubParserField> findByParserfieldInAndStatus(final List<ParserField> parserfield, final int status);           
+	List<SubParserField> findByParserfieldInAndStatus(final List<ParserField> parserfield, final int status);
+
+	List<SubParserField> findByStatus(int i);           
 }
