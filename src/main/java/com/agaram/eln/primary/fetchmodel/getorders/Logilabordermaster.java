@@ -26,7 +26,6 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private String orderflag;
 	private Date createdtimestamp;
 	private Date completedtimestamp;
-	@SuppressWarnings("unused")
 	private LSworkflow lsworkflow;
 	private String keyword;
 
@@ -45,6 +44,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.createdtimestamp = createdtimestamp;
 		this.completedtimestamp = completedtimestamp;
 		this.keyword = keyword;
+		this.lsworkflow = lsworkflow;
 	}
 	
 	
@@ -213,4 +213,16 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	public int compareTo(Logilabordermaster o) {
 		return this.getBatchcode().compareTo(o.getBatchcode());
 	}
+
+
+	public LSworkflow getLsworkflow() {
+		return lsworkflow;
+	}
+
+
+	public void setLsworkflow(LSworkflow lsworkflow) {
+		this.lsworkflow = lsworkflow;
+	}
+	
+	
 }

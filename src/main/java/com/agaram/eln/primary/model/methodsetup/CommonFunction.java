@@ -727,6 +727,7 @@ public class CommonFunction {
 	 * @return nested list of string data after  applying technique
 	 */
     public List<List<String>> mergeFields (final List<List<String>> dataBlock, final SubParserTechnique subParserTechnique)
+
 	{
 
 		final String delimiterChar = subParserTechnique.getMethoddelimiter().getDelimiter().getActualdelimiter();

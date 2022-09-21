@@ -2,11 +2,13 @@ package com.agaram.eln.primary.service.methodsetup;
 
 
 import java.io.BufferedReader;
-import java.io.File;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.DiffResult;
@@ -78,7 +81,9 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.mongodb.gridfs.GridFSDBFile;
+
 
 
 /**
@@ -1024,7 +1029,9 @@ public class MethodService {
 		   String fileid = obj.fileid;
 			 
 		   file = stream2file(cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "parserfile"),fileName, ext);
-		    
+		   
+		   byte[] bytes = null;
+
 		    if(file !=null)
 		    {
 			   if (ext.equalsIgnoreCase("pdf")) {
@@ -1090,6 +1097,67 @@ public class MethodService {
 				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
 					   
 			   }
+			
+			   else if (ext.equalsIgnoreCase("csv")) {
+				   
+			//   File file = new File(path);
+				try {
+				FileReader fr = new FileReader(file);
+				// User BufferReader
+				BufferedReader br = new BufferedReader(fr);
+				String line = "";
+
+				String[] tempArr;
+				//create temp file     
+				final File tempFile = File.createTempFile(fileName, ext);
+				
+				// User FileWriter to write content to text file
+				FileWriter writer = new FileWriter(tempFile);
+				// Use while loop to check when file contains data
+				while ((line = br.readLine()) != null) {
+					tempArr = line.split(",");
+					// User for loop to iterate String Array and write data to text file
+					for (String str : tempArr) {
+						writer.write(str + " ");
+					}
+					// Write each line of CSV file to multiple lines
+					writer.write("\n");
+
+				}
+				writer.close();
+
+			    bytes = FileUtils.readFileToByteArray(tempFile);
+
+				
+				//converting into multipart file
+		        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
+		        		fileName, "text/plain", bytes);
+		        
+		        //storing file in blob
+		        String textid = null;
+	    		try {
+	    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
+	    		} catch (IOException e) {
+	    			// TODO Auto-generated catch block
+	    			e.printStackTrace();
+	    		}
+
+	    		CloudParserFile objfile = new CloudParserFile();
+	    		objfile.setFileid(textid);
+	    		objfile.setExtension(".txt");
+	    		objfile.setFilename(name+".txt");
+	    			
+	    		cloudparserfilerepository.save(objfile);
+
+	    		
+			    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
+				 
+		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+				}
+				catch (Exception e) {
+			        e.printStackTrace();
+			   }
+			 }
 			   else
 			   {
 				   rawDataText = new String(Files.readAllBytes(file.toPath()), StandardCharsets.ISO_8859_1);
@@ -1116,11 +1184,14 @@ public class MethodService {
        return tempFile;
    }
    
-   
-   public String getSQLFileData(String fileName) throws IOException {
+      
+      public String getSQLFileData(String fileName) throws IOException {
+
 	
 		String Content = "";
-		  String rawDataText="";
+		String rawDataText="";
+		byte[] bytes = null;
+
 		final String ext = FilenameUtils.getExtension(fileName); 
 		
 	   String fileid = fileName;
@@ -1160,6 +1231,46 @@ public class MethodService {
 				        rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);
 				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
 			}
+			   else if (ext.equalsIgnoreCase("csv")) {
+				
+				File templocfile = null;
+				templocfile = stream2file(largefile.getInputStream(),fileName, ext);
+			//   File file = new File(path);
+				try {
+				FileReader fr = new FileReader(templocfile);
+				// User BufferReader
+				BufferedReader br = new BufferedReader(fr);
+				String line = "";
+
+				String[] tempArr;
+				//create temp file     
+				final File tempFile = File.createTempFile(fileName, ext);
+				
+				// User FileWriter to write content to text file
+				FileWriter writer = new FileWriter(tempFile);
+				// Use while loop to check when file contains data
+				while ((line = br.readLine()) != null) {
+					tempArr = line.split(",");
+					// User for loop to iterate String Array and write data to text file
+					for (String str : tempArr) {
+						writer.write(str + " ");
+					}
+					// Write each line of CSV file to multiple lines
+					writer.write("\n");
+
+				}
+				writer.close();
+
+			    bytes = FileUtils.readFileToByteArray(tempFile);
+
+			    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
+				 
+		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+				}
+				catch (Exception e) {
+			        e.printStackTrace();
+			   }
+			 }
 			else
 			{
 			        rawDataText = new BufferedReader(
@@ -1172,8 +1283,7 @@ public class MethodService {
 	
 		return rawDataText;
    }  
-   
-   
+
    /**
     * This method is used to get Method entity based on its primary key
     * @param methodKey [int] primary key of method entity

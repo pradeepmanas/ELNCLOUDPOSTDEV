@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplatefortest;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetVersion;
@@ -344,6 +345,35 @@ public class FileService {
 			return GetApprovedSheetsbyuser(approvelstatus, objuser);
 		}
 	}
+	
+	public List<LSfile> GetApprovedSheetswithtestmap(Integer approvelstatus, LSuserMaster objuser) {
+		
+		List<LSfile> lstfile = new ArrayList<LSfile>();
+		
+		if (objuser.getUsername().equals("Administrator")) {
+			lstfile = lSfileRepository.findByFilecodeGreaterThanAndApprovedOrFilecodeGreaterThanAndVersionnoGreaterThanOrderByFilecodeDesc(-1,approvelstatus,-1,1);
+		} else {
+			
+			
+			List<Integer> lstteammap = lsuserteammappingRepository.getTeamcodeByLsuserMaster(objuser.getUsercode());
+
+			if (lstteammap.size() > 0) {
+				List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
+				lstteamuser.add(objuser);
+				lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndRejectedAndVersionnoGreaterThanOrderByFilecodeDesc
+						(-1,lstteamuser,0,approvelstatus,-1,lstteamuser,0,1 );
+			} else {
+				List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
+				lstteamuser.add(objuser);
+				lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndRejectedAndVersionnoGreaterThanOrderByFilecodeDesc
+						(-1,lstteamuser,0,approvelstatus,-1,lstteamuser,0,1 );
+			}
+			
+			
+		}
+		
+		return lstfile;
+	}
 
 	public List<LSfile> GetApprovedSheetsbyuser(Integer approvelstatus, LSuserMaster objuser) {
 		List<LSfile> lstfile = new ArrayList<LSfile>();
@@ -468,7 +498,18 @@ public class FileService {
 
 		mapOrders.put("limstest", masterService.getLimsTestMaster(objuser));
 		mapOrders.put("test", masterService.getTestmaster(objuser));
-		mapOrders.put("sheets", GetApprovedSheets(1, objuser));
+		
+		List<LSfile>  lstfiles = GetApprovedSheetswithtestmap(1, objuser);
+		List<Sheettemplatefortest> listfiles =  new ArrayList<Sheettemplatefortest>();
+		
+		if(lstfiles != null && lstfiles.size() >0)
+		{
+			listfiles = lstfiles.stream()
+                .map(lsfile -> new Sheettemplatefortest(lsfile.getFilecode(),lsfile.getFilenameuser(),lsfile.getLstest()))
+                .collect(Collectors.toList());
+		}
+		
+		mapOrders.put("sheets", listfiles);
 
 		return mapOrders;
 	}

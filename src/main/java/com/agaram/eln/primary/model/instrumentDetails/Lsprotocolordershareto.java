@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -80,7 +81,10 @@ public class Lsprotocolordershareto {
 	@Transient
 	private Date todate;
 	
-	@Transient
+	
+	@ManyToOne
+	private LSlogilabprotocoldetail protocolorders;
+	
 	private String orderflag;
 
 	public String getOrderflag() {
@@ -90,6 +94,15 @@ public class Lsprotocolordershareto {
 	public void setOrderflag(String orderflag) {
 		this.orderflag = orderflag;
 	}
+
+	public LSlogilabprotocoldetail getProtocolorders() {
+		return protocolorders;
+	}
+
+	public void setProtocolorders(LSlogilabprotocoldetail protocolorders) {
+		this.protocolorders = protocolorders;
+	}
+
 
 	public Date getFromdate() {
 		return fromdate;

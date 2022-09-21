@@ -4587,11 +4587,15 @@ public class InstrumentService {
 		Date todate = objdir.getObjuser().getTodate();
 		Integer protocoltype = objdir.getProtocoltype();
 		 List<LSlogilabprotocoldetail> retuobj=new ArrayList<LSlogilabprotocoldetail>();
-		if(protocoltype == -1) {
+		if(protocoltype == -1 && objdir.getOrderflag() == null) {
 			retuobj=LSlogilabprotocoldetailRepository.findByDirectorycodeAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(objdir.getDirectorycode(),fromdate,todate);
-		}else {
+		} else if (protocoltype != -1 && objdir.getOrderflag() != null) {
+			retuobj=LSlogilabprotocoldetailRepository.findByDirectorycodeAndAssignedtoIsNullAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(objdir.getDirectorycode(),protocoltype,objdir.getOrderflag(),fromdate,todate);	
+		}else if(protocoltype == -1 && objdir.getOrderflag() != null) {
+			retuobj=LSlogilabprotocoldetailRepository.findByDirectorycodeAndAssignedtoIsNullAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(objdir.getDirectorycode(),objdir.getOrderflag(),fromdate,todate);	
+		}
+		else if (protocoltype != -1 && objdir.getOrderflag() == null) {
 			retuobj=LSlogilabprotocoldetailRepository.findByDirectorycodeAndAssignedtoIsNullAndProtocoltypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(objdir.getDirectorycode(),protocoltype,fromdate,todate);
-			
 		}
 		List<Long> protocolordercode =new ArrayList<>();
 		if(retuobj.size()>0 && objdir.getSearchCriteriaType()!=null) {
@@ -4671,12 +4675,19 @@ public class InstrumentService {
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
 		Integer protocoltype = objorder.getProtocoltype();
-		if(protocoltype == -1) {
+		if(protocoltype == -1 && objorder.getOrderflag()==null) {
 		lstorder = LSlogilabprotocoldetailRepository.findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 				objorder.getLsprojectmaster(),objorder.getTestcode(),1,fromdate,todate);
-		}else {
+		}else if(protocoltype != -1 && objorder.getOrderflag()!=null) {
+			lstorder = LSlogilabprotocoldetailRepository.findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+					objorder.getLsprojectmaster(),objorder.getTestcode(),1,protocoltype,objorder.getOrderflag(),fromdate,todate);
+		}else if(protocoltype == -1 && objorder.getOrderflag()!=null) {
+			lstorder = LSlogilabprotocoldetailRepository.findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+					objorder.getLsprojectmaster(),objorder.getTestcode(),1,objorder.getOrderflag(),fromdate,todate);
+		}
+		else if(protocoltype != -1 && objorder.getOrderflag()==null) {
 			lstorder = LSlogilabprotocoldetailRepository.findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndProtocoltypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-					objorder.getLsprojectmaster(),objorder.getTestcode(),protocoltype,1,fromdate,todate);
+					objorder.getLsprojectmaster(),objorder.getTestcode(),1,protocoltype,fromdate,todate);
 		}
 		List<Long> protocolordercode =new ArrayList<>();
 		if(lstorder.size()>0 && objorder.getSearchCriteriaType()!=null) {
@@ -4702,6 +4713,7 @@ public class InstrumentService {
 		LSuserMaster lsselectedfulluser =lsuserMasterRepository.findByusercode(lsselecteduser.getUsercode());
 		if(lsloginuser.getUsercode() == lsselecteduser.getUsercode())
 		{
+			
 			mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsloginuser, fromdate,todate));
 			mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(), 1, fromdate,todate));
 			mapuserorders.put("sharetome", lsprotocolordersharetoRepository.findBySharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(), 1, fromdate,todate));
@@ -4710,7 +4722,7 @@ public class InstrumentService {
 		{
 			mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsselectedfulluser,lsloginuser, fromdate,todate));
 			mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndSharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsloginuser.getUnifieduserid(), lsselectedfulluser.getUnifieduserid(),  1, fromdate,todate));
-		}
+	}
 		
 		mapuserorders.put("directorycode",directory);
 		
@@ -4723,10 +4735,17 @@ public class InstrumentService {
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
 		Integer protocoltype = objorder.getProtocoltype();
-		if(protocoltype == -1) {
+		if(protocoltype == -1 && objorder.getOrderflag() == null) {
 			lstorder = LSlogilabprotocoldetailRepository.findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 					objorder.getLssamplemaster(),1,objorder.getTestname(),2,fromdate,todate,objorder.getLssamplemaster(),2,objorder.getLsuserMaster(),objorder.getTestcode(),2,fromdate,todate);
-		}else {
+		}else if (protocoltype != -1 && objorder.getOrderflag() != null) {
+			lstorder = LSlogilabprotocoldetailRepository.findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+					objorder.getLssamplemaster(),1,objorder.getTestname(),2,fromdate,todate,objorder.getLssamplemaster(),2,objorder.getLsuserMaster(),objorder.getTestcode(),2,protocoltype,objorder.getOrderflag(),fromdate,todate);	
+		}else if(protocoltype == -1 && objorder.getOrderflag() != null) {
+			lstorder = LSlogilabprotocoldetailRepository.findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+					objorder.getLssamplemaster(),1,objorder.getTestname(),2,fromdate,todate,objorder.getLssamplemaster(),2,objorder.getLsuserMaster(),objorder.getTestcode(),2,objorder.getOrderflag(),fromdate,todate);	
+		}
+		else if (protocoltype != -1 && objorder.getOrderflag() == null) {
 			lstorder = LSlogilabprotocoldetailRepository.findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndProtocoltypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 					objorder.getLssamplemaster(),1,objorder.getTestname(),2,fromdate,todate,objorder.getLssamplemaster(),2,objorder.getLsuserMaster(),objorder.getTestcode(),2,protocoltype,fromdate,todate);	
 		}
@@ -4753,7 +4772,8 @@ public class InstrumentService {
 		if(protocoltype == -1) {
 			lstorder = LSlogilabprotocoldetailRepository.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
 					 objorder.getOrderflag(), lstproject, fromdate,todate);
-		}else {
+		}
+		else {
 			lstorder = LSlogilabprotocoldetailRepository.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
 					 objorder.getOrderflag(), lstproject, protocoltype,fromdate,todate);
 		}

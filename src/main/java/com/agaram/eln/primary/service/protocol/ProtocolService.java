@@ -680,16 +680,16 @@ public class ProtocolService {
 				}
 			}
 			if(ordercode.size()>0) {
-				if(argObj.containsKey("protocoltype")) {
-					Integer protocoltype = obj.convertValue(argObj.get("protocoltype"), Integer.class);
-					List<LSlogilabprotocoldetail> LSlogilabprotocoldetailArray = LSlogilabprotocoldetailRepository
-							.findByProtocolordercodeInAndProtocoltype(ordercode, protocoltype);
-					if (LSlogilabprotocoldetailArray != null) {
-						mapObj.put("protocolorders", LSlogilabprotocoldetailArray);
-					} else {
-						mapObj.put("protocolorders", new ArrayList<>());
-					}
-				}else {
+//				if(argObj.containsKey("protocoltype")) {
+//					Integer protocoltype = obj.convertValue(argObj.get("protocoltype"), Integer.class);
+//					List<LSlogilabprotocoldetail> LSlogilabprotocoldetailArray = LSlogilabprotocoldetailRepository
+//							.findByProtocolordercodeInAndProtocoltype(ordercode, protocoltype);
+//					if (LSlogilabprotocoldetailArray != null) {
+//						mapObj.put("protocolorders", LSlogilabprotocoldetailArray);
+//					} else {
+//						mapObj.put("protocolorders", new ArrayList<>());
+//					}
+//				}else {
 					List<LSlogilabprotocoldetail> LSlogilabprotocoldetailArray = LSlogilabprotocoldetailRepository
 							.findByProtocolordercodeIn(ordercode);
 					if (LSlogilabprotocoldetailArray != null) {
@@ -697,7 +697,7 @@ public class ProtocolService {
 					} else {
 						mapObj.put("protocolorders", new ArrayList<>());
 					}
-				}
+//				}
 			}
 
 		

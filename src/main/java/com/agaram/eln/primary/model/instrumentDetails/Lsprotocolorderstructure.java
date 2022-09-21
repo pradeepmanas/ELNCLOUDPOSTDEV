@@ -61,6 +61,17 @@ public class Lsprotocolorderstructure {
 	
 	@Transient
 	Integer searchCriteriaType;
+	
+	@Transient
+	private String orderflag;
+
+	public String getOrderflag() {
+		return orderflag;
+	}
+
+	public void setOrderflag(String orderflag) {
+		this.orderflag = orderflag;
+	}
 
 	public Integer getSearchCriteriaType() {
 		return searchCriteriaType;
