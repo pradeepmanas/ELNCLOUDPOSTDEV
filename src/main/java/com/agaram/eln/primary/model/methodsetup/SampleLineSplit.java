@@ -38,8 +38,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 @XmlRootElement  (name = "samplelinesplit")
 @XmlType(propOrder = { "samplelinesplitkey", "method","removeorextractlines", "centertext",
 		"excludecentertext", "centertextrowindex", "centertextoccurrenceno", "toplines", "bottomlines", "repeatlines",
-		"extractblock", "status", "createdby", "createddate", "type","blocktype"
-		})
+		"extractblock", "status", "createdby", "createddate", "type"})
 @Entity
 @Table(name = "samplelinesplit")
 public class SampleLineSplit implements Serializable, Diffable<SampleLineSplit>{
@@ -84,9 +83,9 @@ public class SampleLineSplit implements Serializable, Diffable<SampleLineSplit>{
 	
 	private transient String type = "sampleLineSplit";
 	
-	@Transient
-	@Column(name = "blocktype")
-	private String blocktype;
+//	@Transient
+//	@Column(name = "blocktype")
+//	private String blocktype;
 
 	
 	@Range(min=-1, max=1)
@@ -236,13 +235,13 @@ public class SampleLineSplit implements Serializable, Diffable<SampleLineSplit>{
 	}
 
 	
-	public String getBlocktype() {
-		return blocktype;
-	}
-
-	public void setBlocktype(String blocktype) {
-		this.blocktype = blocktype;
-	}
+//	public String getBlocktype() {
+//		return blocktype;
+//	}
+//
+//	public void setBlocktype(String blocktype) {
+//		this.blocktype = blocktype;
+//	}
 
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  

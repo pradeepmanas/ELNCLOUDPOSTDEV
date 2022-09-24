@@ -39,7 +39,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 @XmlType(propOrder = { "sampletextsplitkey", "method", "removeorextracttext", 
 		"begintext", "excludebegintext", "begintextrowindex", "begintextoccurrenceno",
 		"endtext", "excludeendtext", "endtextrowindex", "endtextoccurrenceno", "repeattext", 
-		 "extractblock","status", "createdby", "createddate", "type","blocktype"//, "sampleextracts"
+		 "extractblock","status", "createdby", "createddate", "type"//, "sampleextracts"
 		 })
 @Entity
 @Table(name = "sampletextsplit")
@@ -91,8 +91,8 @@ public class SampleTextSplit implements Serializable, Diffable<SampleTextSplit>{
 	
 	private transient String type = "sampleTextSplit";
 	
-	@Column(name = "blocktype")
-	private String blocktype;
+//	@Column(name = "blocktype")
+//	private String blocktype;
 	
 	@Range(min=-1, max=1)
 	@Column(name = "status")
@@ -259,13 +259,13 @@ public class SampleTextSplit implements Serializable, Diffable<SampleTextSplit>{
 	}
 
 	
-	public String getBlocktype() {
-		return blocktype;
-	}
-
-	public void setBlocktype(String blocktype) {
-		this.blocktype = blocktype;
-	}
+//	public String getBlocktype() {
+//		return blocktype;
+//	}
+//
+//	public void setBlocktype(String blocktype) {
+//		this.blocktype = blocktype;
+//	}
 
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
@@ -289,7 +289,7 @@ public class SampleTextSplit implements Serializable, Diffable<SampleTextSplit>{
 	       .append("status",this.status, obj.status)
 	       .append("createdby", this.createdby.getUsername(), obj.createdby.getUsername())
 	       .append("createddate", this.createddate, obj.createddate)
-	       .append("blocktype", this.blocktype, obj.blocktype)
+	    //   .append("blocktype", this.blocktype, obj.blocktype)
 
 	       .build();
 	}
@@ -318,7 +318,7 @@ public class SampleTextSplit implements Serializable, Diffable<SampleTextSplit>{
 		this.sampletextsplitkey = sampleTextSplit.sampletextsplitkey;
 		this.status = sampleTextSplit.status;		
 		this.extractblock = sampleTextSplit.extractblock;
-		this.blocktype=sampleTextSplit.blocktype;
+	//	this.blocktype=sampleTextSplit.blocktype;
 	}
 	
 	/**
