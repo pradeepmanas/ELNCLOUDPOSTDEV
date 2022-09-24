@@ -159,6 +159,15 @@ public class FileManipulationservice {
 
 		return randomUUIDString;
 	}
+	
+	public String storeLargeattachmentwithpreuid(String title, MultipartFile file, String uuid) throws IOException {
+		DBObject metaData = new BasicDBObject();
+		metaData.put("title", title);
+
+		gridFsTemplate.store(file.getInputStream(), uuid, file.getContentType(), metaData);
+
+		return uuid;
+	}
 
 	public OrderAttachment retrieveFile(LsOrderattachments objattach) {
 

@@ -1106,24 +1106,48 @@ public class MethodService {
 				// User BufferReader
 				BufferedReader br = new BufferedReader(fr);
 				String line = "";
+		      //  String resultline;
+			      StringBuffer sb = new StringBuffer();
 
+				
 				String[] tempArr;
 				//create temp file     
 				final File tempFile = File.createTempFile(fileName, ext);
 				
 				// User FileWriter to write content to text file
 				FileWriter writer = new FileWriter(tempFile);
-				// Use while loop to check when file contains data
+			//	 Use while loop to check when file contains data
 				while ((line = br.readLine()) != null) {
 					tempArr = line.split(",");
 					// User for loop to iterate String Array and write data to text file
 					for (String str : tempArr) {
-						writer.write(str + " ");
+					//	writer.write(str + "\t ");[already written]
+						sb.append(str).append("\t");
+
 					}
+				      String appendedline = sb.toString();
+				    //  String resultline = appendedline.trim();
+				      String resultline = appendedline.replaceAll("\\s+$", "");
+
+				      writer.write(resultline);
+				      sb.setLength(0);
+				      appendedline ="";
+				      resultline="";
 					// Write each line of CSV file to multiple lines
 					writer.write("\n");
 
 				}
+				
+//				while ((line = br.readLine()) != null) {
+//					tempArr = line.split(",");
+//					// User for loop to iterate String Array and write data to text file
+//					for (String str : tempArr) {
+//						writer.write(str + "\t");
+//					}
+//					// Write each line of CSV file to multiple lines
+//					writer.write("\n");
+//
+//				}
 				writer.close();
 
 			    bytes = FileUtils.readFileToByteArray(tempFile);
@@ -1240,6 +1264,8 @@ public class MethodService {
 				FileReader fr = new FileReader(templocfile);
 				// User BufferReader
 				BufferedReader br = new BufferedReader(fr);
+			    StringBuffer sb = new StringBuffer();
+
 				String line = "";
 
 				String[] tempArr;
@@ -1253,8 +1279,18 @@ public class MethodService {
 					tempArr = line.split(",");
 					// User for loop to iterate String Array and write data to text file
 					for (String str : tempArr) {
-						writer.write(str + " ");
+					//	writer.write(str + "\t ");[already written]
+						sb.append(str).append("\t");
+
 					}
+				      String appendedline = sb.toString();
+				    //  String resultline = appendedline.trim();
+				      String resultline = appendedline.replaceAll("\\s+$", "");
+
+				      writer.write(resultline);
+				      sb.setLength(0);
+				      appendedline ="";
+				      resultline="";
 					// Write each line of CSV file to multiple lines
 					writer.write("\n");
 

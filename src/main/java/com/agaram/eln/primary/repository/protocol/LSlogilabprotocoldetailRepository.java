@@ -422,6 +422,32 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date fromdate2, Date todate2);
 
 
+	List<LSlogilabprotocoldetail> findByAssignedtoAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			LSuserMaster lsloginuser, Integer protocoltype, String orderflag, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByAssignedtoAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(LSuserMaster lsloginuser,
+			String orderflag, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByAssignedtoAndProtocoltypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			LSuserMaster lsloginuser, Integer protocoltype, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByAssignedtoAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			LSuserMaster lsselectedfulluser, Integer protocoltype, String orderflag, LSuserMaster lsloginuser,
+			Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByAssignedtoAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			LSuserMaster lsselectedfulluser, String orderflag, LSuserMaster lsloginuser, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByAssignedtoAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			LSuserMaster lsselectedfulluser, Integer protocoltype, LSuserMaster lsloginuser, Date fromdate,
+			Date todate);
+
+
 	
 
 

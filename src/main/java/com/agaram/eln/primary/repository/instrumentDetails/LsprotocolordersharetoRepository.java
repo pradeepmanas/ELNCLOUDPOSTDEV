@@ -1,11 +1,15 @@
 package com.agaram.eln.primary.repository.instrumentDetails;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import javax.transaction.Transactional;
 
-import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -50,6 +54,22 @@ public interface LsprotocolordersharetoRepository extends JpaRepository<Lsprotoc
 
 	List<Lsprotocolordershareto> findBySharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(
 			String string, int i, Date fromdate, Date todate);
+
+
+
+	Lsprotocolordershareto findByShareprotocolordercode(Long protocolordercode);
+
+
+
+	List<Lsprotocolordershareto> findBySharetounifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(
+			String unifieduserid, String orderflag, Date fromdate, int i, Date fromdate2, Date todate);
+
+
+
+	List<Lsprotocolordershareto> findBySharetounifiedidAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(
+			String unifieduserid, String orderflag, int i, Date fromdate, Date todate);
+	
+	
 
 
 

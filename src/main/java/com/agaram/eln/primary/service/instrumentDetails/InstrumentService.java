@@ -37,6 +37,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
@@ -70,6 +72,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LSinstruments;
 import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSresultdetails;
+import com.agaram.eln.primary.model.instrumentDetails.LSsheetfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LsMethodFields;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
@@ -77,6 +80,8 @@ import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
@@ -122,6 +127,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsReposito
 import com.agaram.eln.primary.repository.instrumentDetails.LSlimsorderRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSresultdetailsRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSsheetfolderfilesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
@@ -354,6 +360,9 @@ public class InstrumentService {
 	@Autowired
 	private LsprotocolordersharetoRepository lsprotocolordersharetoRepository;
 	
+	@Autowired
+	private LSsheetfolderfilesRepository lssheetfolderfilesRepository;
+	
 	
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
@@ -391,7 +400,7 @@ public class InstrumentService {
 			
 			List<Method> elnMethod = lsMethodRepository.findByStatus(1);
 			List<ParserBlock> ParserBlock = lsParserBlockRepository.findAll();
-			List<ParserField> ParserField = lsParserRepository.findAll();
+			List<ParserField> ParserField = lsParserRepository.findByStatus(1);
 		//	List<SubParserField> SubParserField = lsSubParserRepository.findAll();
 			List<SubParserField> SubParserField = lsSubParserRepository.findByStatus(1);
 			obj.put("Generalfields", Generalfields);
@@ -438,7 +447,7 @@ public class InstrumentService {
 		String defaultContent = "{\"activeSheet\":\"Sheet1\",\"sheets\":[{\"name\":\"Sheet1\",\"rows\":[],\"columns\":[],\"selection\":\"A1:A1\",\"activeCell\":\"A1:A1\",\"frozenRows\":0,\"frozenColumns\":0,\"showGridLines\":true,\"gridLinesColor\":null,\"mergedCells\":[],\"hyperlinks\":[],\"defaultCellStyle\":{\"fontFamily\":\"Arial\",\"fontSize\":\"12\"},\"drawings\":[]}],\"names\":[],\"columnWidth\":64,\"rowHeight\":20,\"images\":[],\"charts\":[],\"tags\":[],\"fieldcount\":0,\"Batchcoordinates\":{\"resultdirection\":1,\"parameters\":[]}}";
 
 		if (objorder.getLsfile() != null) {
-			if(objorder.getLsfile().getApproved() ==1)
+			if((objorder.getLsfile().getApproved()!=null && objorder.getLsfile().getApproved() ==1) || (objorder.getFiletype() == 5 ))
 			{
 			if (objorder.getIsmultitenant() == 1) {
 				CloudSheetCreation file = cloudSheetCreationRepository
@@ -476,12 +485,13 @@ public class InstrumentService {
 			}
 			else
 			{
-				
+				if(objorder.getFiletype() != 4 && objorder.getLsfile().getFilecode()!=1) {
 				Integer lastapprovedvesrion = objorder.getLsfile().getVersionno()>1? (objorder.getLsfile().getVersionno()-1):objorder.getLsfile().getVersionno();
 				objorder.getLsfile().setVersionno(lastapprovedvesrion);
 				objorder.getLsfile().setIsmultitenant(objorder.getIsmultitenant());
 				objorder.getLsfile().setIsmultitenant(objorder.getIsmultitenant());
 				Content = fileService.GetfileverContent(objorder.getLsfile());
+				}
 			}
 
 		}
@@ -3809,7 +3819,70 @@ public class InstrumentService {
 						+ FilenameUtils.getExtension(file.getOriginalFilename()));
 		return map;
 	}
+	
+	public Map<String,Object> uploadfilessheetfolder(MultipartFile file,String uid
+			,Long directorycode, String filefor, String tenantid,Integer ismultitenant, Integer usercode, Integer sitecode,Date createddate, Integer fileviewfor) throws IOException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		LSsheetfolderfiles objfile = new LSsheetfolderfiles();
+		objfile.setFilename(file.getOriginalFilename());
+		objfile.setDirectorycode(directorycode);
+		objfile.setFilefor(filefor);
+		Response response = validatefileexistonfolder(objfile);
+		if(response.getStatus())
+		{
+			String uuID = "";
+			if(ismultitenant ==1)
+			{
+				uuID = cloudFileManipulationservice.storecloudfilesreturnwithpreUUID(file, "sheetfolderfiles",uid);
+			}
+			else
+			{
+				uuID = fileManipulationservice.storeLargeattachmentwithpreuid(file.getOriginalFilename(), file,uid);
+			}
+			
+			LSsheetfolderfiles  lsfiles = new LSsheetfolderfiles();
+			lsfiles.setUuid(uuID);
+			lsfiles.setFilesize(file.getSize());
+			lsfiles.setDirectorycode(directorycode);
+			lsfiles.setFilename(file.getOriginalFilename());
+			LSuserMaster lsuser = new LSuserMaster();
+			lsuser.setUsercode(usercode);
+			lsfiles.setCreateby(lsuser);
+			LSSiteMaster lssite = new LSSiteMaster();
+			lssite.setSitecode(sitecode);
+			lsfiles.setLssitemaster(lssite);
+			lsfiles.setFilefor(filefor);
+			lsfiles.setCreatedtimestamp(createddate);
+			lsfiles.setFileviewfor(fileviewfor);
+			
+			lssheetfolderfilesRepository.save(lsfiles);
+			
+		}
+		else
+		{
+			response.setInformation("IDS_INFO_FILEEXIST");
+		}
+		map.put("res", response);
+		map.put("uid", uid);
+		return map;
+	}
 
+	public Map<String, Object> removefilessheetfolder(String uid
+			,Long directorycode, String filefor, String tenantid,Integer ismultitenant, Integer usercode, Integer sitecode,Date createddate, Integer fileviewfor) throws IOException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		lssheetfolderfilesRepository.deleteByUuid(uid);
+		if(ismultitenant == 1)
+		{
+			cloudFileManipulationservice.deletecloudFile(uid,"sheetfolderfiles");
+		}
+		else
+		{
+			fileManipulationservice.deletelargeattachments(uid);
+		}
+		map.put("uid", uid);
+		return map;
+	}
+	
 	public ByteArrayInputStream downloadsheetimages(String fileid, String tenant)
 			throws FileNotFoundException, IOException {
 		TenantContext.setCurrentTenant(tenant);
@@ -4701,7 +4774,7 @@ public class InstrumentService {
 	
 	}
 
-	public Map<String, Object> Getuserprotocolorders(Map<String, LSuserMaster> objusers) {
+	public Map<String, Object> Getuserprotocolorders(Map<String, Object> objusers) {
 		Map<String, Object> mapuserorders = new HashMap<String, Object>();
 		
 		ObjectMapper mapper = new ObjectMapper();
@@ -4711,18 +4784,50 @@ public class InstrumentService {
 		Date todate = lsselecteduser.getObjuser().getTodate();
 		Integer directory =  mapper.convertValue( objusers.get("directorycode"), Integer.class);
 		LSuserMaster lsselectedfulluser =lsuserMasterRepository.findByusercode(lsselecteduser.getUsercode());
+		Integer  protocoltype = mapper.convertValue(objusers.get("protocoltype"), Integer.class);
+		String Orderflag=null;
+		if(objusers.get("Orderflag") != null) {
+			 Orderflag=mapper.convertValue(objusers.get("Orderflag"), String.class);
+		}	
 		if(lsloginuser.getUsercode() == lsselecteduser.getUsercode())
-		{
+		{	
+			if(protocoltype == -1 && Orderflag == null) {
+				  mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsloginuser, fromdate,todate));
+					mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(), 1, fromdate,todate));
+					mapuserorders.put("sharetome", lsprotocolordersharetoRepository.findBySharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(), 1, fromdate,todate));
+
+			}else if (protocoltype != -1 && Orderflag != null) {
+				  mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsloginuser,protocoltype,Orderflag, fromdate,todate));
+					mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(),Orderflag, fromdate, 1, fromdate,todate));
+					mapuserorders.put("sharetome", lsprotocolordersharetoRepository.findBySharetounifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(),Orderflag, fromdate, 1, fromdate,todate));
+
+			}else if(protocoltype == -1 && Orderflag != null) {
+				  mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsloginuser,Orderflag, fromdate,todate));
+					mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(),Orderflag, 1, fromdate,todate));
+					mapuserorders.put("sharetome", lsprotocolordersharetoRepository.findBySharetounifiedidAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(),Orderflag, 1, fromdate,todate));
+			}else if (protocoltype != -1 && Orderflag == null) {
+				  mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndProtocoltypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsloginuser,protocoltype, fromdate,todate));
+					mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndProtocoltypeAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(),protocoltype, 1, fromdate,todate));
+					mapuserorders.put("sharetome", lsprotocolordersharetoRepository.findBySharetounifiedidAndProtocoltypeAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(),protocoltype, 1, fromdate,todate));
+			}
 			
-			mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsloginuser, fromdate,todate));
-			mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(), 1, fromdate,todate));
-			mapuserorders.put("sharetome", lsprotocolordersharetoRepository.findBySharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(lsselectedfulluser.getUnifieduserid(), 1, fromdate,todate));
-		}
+	  }
 		else
 		{
-			mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsselectedfulluser,lsloginuser, fromdate,todate));
-			mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndSharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsloginuser.getUnifieduserid(), lsselectedfulluser.getUnifieduserid(),  1, fromdate,todate));
-	}
+			if(protocoltype == -1 && Orderflag == null) {
+				mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsselectedfulluser,lsloginuser, fromdate,todate));
+				mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndSharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsloginuser.getUnifieduserid(), lsselectedfulluser.getUnifieduserid(),  1, fromdate,todate));
+			}else if (protocoltype != -1 && Orderflag != null) {
+				mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsselectedfulluser,protocoltype,Orderflag,lsloginuser, fromdate,todate));
+				mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndProtocoltypeAndOrderflagAndSharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsloginuser.getUnifieduserid(),protocoltype,Orderflag, lsselectedfulluser.getUnifieduserid(),  1, fromdate,todate));
+			}else if(protocoltype == -1 && Orderflag != null) {
+				mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsselectedfulluser,Orderflag,lsloginuser, fromdate,todate));
+				mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndOrderflagAndSharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsloginuser.getUnifieduserid(),Orderflag, lsselectedfulluser.getUnifieduserid(),  1, fromdate,todate));
+			}else if (protocoltype != -1 && Orderflag == null) {
+				mapuserorders.put("assigned", LSlogilabprotocoldetailRepository.findByAssignedtoAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(lsselectedfulluser,protocoltype,lsloginuser, fromdate,todate));
+				mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository.findBySharebyunifiedidAndProtocoltypeAndSharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(lsloginuser.getUnifieduserid(),protocoltype, lsselectedfulluser.getUnifieduserid(),  1, fromdate,todate));	
+			}
+			}
 		
 		mapuserorders.put("directorycode",directory);
 		
@@ -4787,5 +4892,25 @@ public class InstrumentService {
 		
 		return retuobjts;
 	}
-
+	
+	public List<LSsheetfolderfiles> Getfilesforfolder(LSsheetfolderfiles objfiles)throws Exception
+	{
+		List<LSsheetfolderfiles> lstfiles = new ArrayList<LSsheetfolderfiles>();
+		lstfiles = lssheetfolderfilesRepository.findByDirectorycodeAndFileforOrderByFolderfilecode(objfiles.getDirectorycode(),objfiles.getFilefor());
+		return lstfiles;
+	}
+	public Response validatefileexistonfolder(LSsheetfolderfiles objfile)
+	{
+		Response response = new Response();
+		long filecount = lssheetfolderfilesRepository.countByDirectorycodeAndFileforAndFilename(objfile.getDirectorycode(),objfile.getFilefor(),objfile.getFilename());
+		if(filecount>0)
+		{
+			response.setStatus(false);
+		}
+		else
+		{
+			response.setStatus(true);
+		}
+		return response;
+	}
 }

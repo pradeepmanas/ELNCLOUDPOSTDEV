@@ -36,6 +36,7 @@ import com.agaram.eln.primary.model.fileManipulation.Fileimagestemp;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.instrumentDetails.LSsheetfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
@@ -908,7 +909,7 @@ public class InstrumentController {
 	}
 	
 	@RequestMapping("/Getuserprotocolorders")
-	public Map<String, Object> Getuserprotocolorders(@RequestBody Map<String, LSuserMaster> objusers)throws Exception
+	public Map<String, Object> Getuserprotocolorders(@RequestBody Map<String, Object> objusers)throws Exception
 	{
 		return instrumentService.Getuserprotocolorders(objusers);
 	}
@@ -958,4 +959,37 @@ public class InstrumentController {
 	{
 		return instrumentService.Getprotocolorderbyflaganduser(objorder);
 	}
+	
+	@PostMapping("/uploadfilessheetfolder/{directorycode}/{filefor}/{tenantid}/{ismultitenant}/{usercode}/{sitecode}/{createddate}/{fileviewfor}")
+	public Map<String,Object> uploadfilessheetfolder(@RequestParam("files") MultipartFile files,@RequestParam("uid") String uid
+			,@PathVariable Long directorycode, @PathVariable String filefor, @PathVariable String tenantid
+			,@PathVariable Integer ismultitenant, @PathVariable Integer usercode, @PathVariable Integer sitecode
+			, @PathVariable Date createddate, @PathVariable Integer fileviewfor
+			)throws Exception {
+		return instrumentService.uploadfilessheetfolder(files,uid,directorycode,filefor,tenantid,
+				ismultitenant,usercode,sitecode,createddate,fileviewfor);
+	}
+	
+	@RequestMapping("/Getfilesforfolder")
+	public List<LSsheetfolderfiles> Getfilesforfolder(@RequestBody LSsheetfolderfiles objfiles)throws Exception
+	{
+		return instrumentService.Getfilesforfolder(objfiles);
+	}
+	
+	@PostMapping("/removefilessheetfolder/{directorycode}/{filefor}/{tenantid}/{ismultitenant}/{usercode}/{sitecode}/{createddate}/{fileviewfor}")
+	public Map<String, Object> removefilessheetfolder(@RequestParam("uid") String uid
+			,@PathVariable Long directorycode, @PathVariable String filefor, @PathVariable String tenantid
+			,@PathVariable Integer ismultitenant, @PathVariable Integer usercode, @PathVariable Integer sitecode
+			, @PathVariable Date createddate, @PathVariable Integer fileviewfor
+			)throws Exception {
+		return instrumentService.removefilessheetfolder(uid,directorycode,filefor,tenantid,
+				ismultitenant,usercode,sitecode,createddate,fileviewfor);
+	}
+	
+	@RequestMapping("/validatefileexistonfolder")
+	public Response validatefileexistonfolder(@RequestBody LSsheetfolderfiles objfile)throws Exception
+	{
+		return instrumentService.validatefileexistonfolder(objfile);
+	}
+	
 }

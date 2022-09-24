@@ -416,6 +416,57 @@ public class CloudFileManipulationservice {
         return randomUUIDString; //id.toString(); 
     }
     
+public String storecloudfilesreturnwithpreUUID(MultipartFile file, String containername, String uuid) throws IOException { 
+        
+    	//String bloburi="";
+		CloudStorageAccount storageAccount;
+		CloudBlobClient blobClient = null;
+		CloudBlobContainer container=null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+
+		
+		try {    
+			// Parse the connection string and create a blob client to interact with Blob storage
+			storageAccount = CloudStorageAccount.parse(storageConnectionString);
+			blobClient = storageAccount.createCloudBlobClient();
+			container = blobClient.getContainerReference(TenantContext.getCurrentTenant()+containername);
+
+			// Create the container if it does not exist with public access.
+			System.out.println("Creating container: " + container.getName());
+			container.createIfNotExists(BlobContainerPublicAccessType.CONTAINER, new BlobRequestOptions(), new OperationContext());		    
+
+			File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+uuid);
+			file.transferTo(convFile);
+
+			//Getting a blob reference
+			CloudBlockBlob blob = container.getBlockBlobReference(convFile.getName());
+
+			//Creating blob and uploading file to it
+			System.out.println("Uploading the sample file ");
+			blob.uploadFromFile(convFile.getAbsolutePath());
+			
+			//bloburi = blob.getName();
+
+		} 
+		catch (StorageException ex)
+		{
+			System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s", ex.getHttpStatusCode(), ex.getErrorCode()));
+		}
+		catch (Exception ex) 
+		{
+			System.out.println(ex.getMessage());
+		}
+		finally 
+		{
+			System.out.println("The program has completed successfully.");
+			System.out.println("Press the 'Enter' key while in the console to delete the sample files, example container, and exit the application.");
+
+		
+		}
+       
+        return uuid; //id.toString(); 
+    }
+    
  public InputStream retrieveCloudFile(String fileid, String containername) throws IOException{
     	
 	    CloudStorageAccount storageAccount;

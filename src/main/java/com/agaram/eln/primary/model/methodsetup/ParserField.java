@@ -39,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "parserfield")
 @XmlType(propOrder = { "parserfieldkey", "parserfieldname", "fieldid", "parserblock", "methoddelimiter",
-		"status", "createdby", "createddate"})
+		"status", "createdby", "createddate","datatype"})
 @Entity
 @Table(name = "parserfield")
 public class ParserField implements Serializable, Diffable<ParserField>{
@@ -77,6 +77,10 @@ public class ParserField implements Serializable, Diffable<ParserField>{
 	
 	@Column(name = "createddate")
 	private Date createddate;	
+			
+
+	@Column(name = "datatype" , columnDefinition = "varchar(50)")
+	private String datatype;	
 			
 	@XmlAttribute	
 	public Integer getParserfieldkey() {
@@ -151,6 +155,15 @@ public class ParserField implements Serializable, Diffable<ParserField>{
 		this.createddate = createddate;
 	}
 
+	
+	public String getDatatype() {
+		return datatype;
+	}
+
+	public void setDatatype(String datatype) {
+		this.datatype = datatype;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -165,6 +178,8 @@ public class ParserField implements Serializable, Diffable<ParserField>{
 	       .append("status",this.status, obj.status)
 	       .append("createdby", this.createdby.getUsername(), obj.createdby.getUsername())
 	       .append("createddate", this.createddate, obj.createddate)
+	       .append("datatype", this.datatype, obj.datatype)
+
 	       .build();
 	}
 
@@ -189,6 +204,8 @@ public class ParserField implements Serializable, Diffable<ParserField>{
 		this.status = parserField.status;
 		this.createdby = parserField.createdby;
 		this.createddate = parserField.createddate;
+		this.datatype = parserField.datatype;
+
 	}	
 	
 }

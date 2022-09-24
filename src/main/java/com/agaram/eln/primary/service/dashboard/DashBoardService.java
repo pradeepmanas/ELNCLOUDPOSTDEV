@@ -481,7 +481,7 @@ public class DashBoardService {
 
 		LSusergroup userGroup = LSusergroupRepository.findOne(objuser.getObjuser().getMultiusergroupcode());
 
-		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
+		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
 				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
 
 		List<LSuserteammapping> LSuserteammapping = LSuserteammappingRepositoryObj
@@ -491,8 +491,8 @@ public class DashBoardService {
 //			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
 //					.findByworkflowcode(lsworkflowgroupmapping.get(0).getWorkflowcode());
 
-			List<LSprotocolworkflow> lsprotocolworkflow = lSprotocolworkflowRepository
-					.findByLsprotocolworkflowgroupmapInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
+			List<LSworkflow> lsprotocolworkflow = lsworkflowRepository
+					.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
 
 			lstorders.forEach(objorder -> objorder.setLstworkflow(lsprotocolworkflow));
 

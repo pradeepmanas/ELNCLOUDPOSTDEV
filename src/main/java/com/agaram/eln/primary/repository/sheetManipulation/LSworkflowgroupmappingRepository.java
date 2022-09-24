@@ -13,5 +13,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 public interface LSworkflowgroupmappingRepository  extends JpaRepository<LSworkflowgroupmapping, Integer>{
 
 	public List<LSworkflowgroupmapping> findBylsusergroup(LSusergroup lsusergroup);
+
+	public List<LSworkflowgroupmapping> findBylsusergroupAndWorkflowcodeNotNull(LSusergroup userGroup);
 	
 }

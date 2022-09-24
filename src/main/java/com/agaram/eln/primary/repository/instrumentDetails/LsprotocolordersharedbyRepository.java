@@ -1,9 +1,14 @@
 package com.agaram.eln.primary.repository.instrumentDetails;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
@@ -40,6 +45,24 @@ public interface LsprotocolordersharedbyRepository extends JpaRepository<Lsproto
 
 	List<Lsprotocolordersharedby> findBySharebyunifiedidAndSharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
 			String unifieduserid, String unifieduserid2, int i, Date fromdate, Date todate);
+
+	Lsprotocolordersharedby findByShareprotocolordercode(Long protocolordercode);
+
+	List<Lsprotocolordersharedby> findBySharebyunifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
+			String unifieduserid, String orderflag, Date fromdate, int i, Date fromdate2, Date todate);
+
+	List<Lsprotocolordersharedby> findBySharebyunifiedidAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
+			String unifieduserid, String orderflag, int i, Date fromdate, Date todate);
+
+	List<Lsprotocolordersharedby>  findBySharebyunifiedidAndProtocoltypeAndOrderflagAndSharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
+			String unifieduserid, Integer protocoltype, String orderflag, String unifieduserid2, int i, Date fromdate,
+			Date todate);
+
+	List<Lsprotocolordersharedby> findBySharebyunifiedidAndOrderflagAndSharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
+			String unifieduserid, String orderflag, String unifieduserid2, int i, Date fromdate, Date todate);
+
+	List<Lsprotocolordersharedby> findBySharebyunifiedidAndProtocoltypeAndSharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
+			String unifieduserid, Integer protocoltype, String unifieduserid2, int i, Date fromdate, Date todate);
 
 
 //	Lsprotocolordersharedby findByShareprotocolordercode(Long shareprotocolordercode);

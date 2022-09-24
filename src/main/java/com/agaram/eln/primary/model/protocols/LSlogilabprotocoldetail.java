@@ -159,6 +159,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@Transient
 	List<LSprojectmaster> lstproject;
+	
+	@Transient
+	private Integer activekey;
+	
+	public Integer getActivekey() {
+		return activekey;
+	}
+
+	public void setActivekey(Integer activekey) {
+		this.activekey = activekey;
+	}
 
 	public List<LSprojectmaster> getLstproject() {
 		return lstproject;
