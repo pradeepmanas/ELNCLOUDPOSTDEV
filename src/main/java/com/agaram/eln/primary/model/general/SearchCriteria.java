@@ -15,7 +15,7 @@ public class SearchCriteria {
 
 	public String getContentsearch() {
 		return contentsearch;
-	}
+	}	
 
 	public void setContentsearch(String contentsearch) {
 		this.contentsearch = contentsearch;

@@ -992,4 +992,25 @@ public class InstrumentController {
 		return instrumentService.validatefileexistonfolder(objfile);
 	}
 	
+	@RequestMapping(path = "/downloadsheetfileforfolder/{multitenant}/{tenant}/{fileid}", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> downloadsheetfileforfolder(@PathVariable Integer multitenant,
+			@PathVariable String tenant, @PathVariable String fileid) throws IOException {
+
+		return instrumentService.downloadsheetfileforfolder(multitenant,tenant,fileid);
+	}
+	
+	@RequestMapping("/deletefilesforfolder/{directorycode}/{filefor}/{tenantid}/{ismultitenant}/{usercode}/{sitecode}/{createddate}/{fileviewfor}")
+	public Map<String, Object> deletefilesforfolder(@RequestBody LSsheetfolderfiles objfiles,@PathVariable Long directorycode, @PathVariable String filefor, @PathVariable String tenantid
+			,@PathVariable Integer ismultitenant, @PathVariable Integer usercode, @PathVariable Integer sitecode
+			, @PathVariable Date createddate, @PathVariable Integer fileviewfor)throws Exception
+	{
+		return instrumentService.removefilessheetfolder(objfiles.getUuid(),directorycode,filefor,tenantid,
+				ismultitenant,usercode,sitecode,createddate,fileviewfor);
+	}
+	
+	@RequestMapping("/Getaddedfilesforfolder")
+	public List<LSsheetfolderfiles> Getaddedfilesforfolder(@RequestBody List<String> lstuuid)throws Exception
+	{
+		return instrumentService.Getaddedfilesforfolder(lstuuid);
+	}
 }

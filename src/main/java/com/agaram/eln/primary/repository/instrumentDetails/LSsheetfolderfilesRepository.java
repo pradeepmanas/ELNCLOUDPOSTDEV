@@ -13,4 +13,7 @@ public interface LSsheetfolderfilesRepository  extends JpaRepository<LSsheetfold
  
  @Transactional
  public Long deleteByUuid(String uuid);
+ 
+ public LSsheetfolderfiles findByUuid(String uuid);
+ public List<LSsheetfolderfiles> findByUuidInOrderByFolderfilecode(List<String> lstuuid);
 }

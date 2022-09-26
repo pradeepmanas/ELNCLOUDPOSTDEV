@@ -1126,7 +1126,7 @@ public class InstrumentService {
 			idList = orders.stream().map(OrderCreation::getId).collect(Collectors.toList());
 		} else {
 			List<CloudOrderCreation> orders = new ArrayList<CloudOrderCreation>();
-			if (searchCriteria.getContentsearchtype() == 1) {
+			if (searchCriteria.getContentsearchtype() == 1 || searchCriteria.getContentsearchtype() == 3) {
 				orders = cloudOrderCreationRepository.findByContentvaluesequal(searchtext);
 			} else if (searchCriteria.getContentsearchtype() == 2) {
 				orders = cloudOrderCreationRepository.findByContentparameterequal(searchtext);
@@ -3870,6 +3870,7 @@ public class InstrumentService {
 	public Map<String, Object> removefilessheetfolder(String uid
 			,Long directorycode, String filefor, String tenantid,Integer ismultitenant, Integer usercode, Integer sitecode,Date createddate, Integer fileviewfor) throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("file", lssheetfolderfilesRepository.findByUuid(uid));
 		lssheetfolderfilesRepository.deleteByUuid(uid);
 		if(ismultitenant == 1)
 		{
@@ -4689,37 +4690,96 @@ public class InstrumentService {
 
 	public List<Logilaborders> Getordersonproject(LSlogilablimsorderdetail objorder)
 	{
+
+		
 		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
 		Integer  filetype = objorder.getFiletype();
-		if(filetype == -1) {
-			lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-					objorder.getLsprojectmaster(),objorder.getLstestmasterlocal(),fromdate,todate);
-		}else if(filetype == 4){
-			lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-					objorder.getLsprojectmaster(),filetype,fromdate,todate);
-		}
-		else{
-			lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterAndLstestmasterlocalAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-					objorder.getLsprojectmaster(),objorder.getLstestmasterlocal(),filetype,fromdate,todate);
-		}
+		if (objorder.getSearchCriteria().getContentsearchtype() != null && objorder.getSearchCriteria().getContentsearch() != null) {
+		lstorder =GetordersonFilter(objorder);	
+		
+		} else if (objorder.getSearchCriteria().getContentsearch() == null) {
+				if(filetype == null) {
+					lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+							objorder.getOrderflag(),objorder.getLsprojectmaster(),objorder.getLstestmasterlocal(),fromdate,todate);
+				}else if(filetype == -1 && objorder.getOrderflag() == null ) {
+					    lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+						objorder.getLsprojectmaster(),objorder.getLstestmasterlocal(),fromdate,todate);
+				}
+				else if(filetype == -1 && objorder.getOrderflag() != null) {
+					    lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+					    objorder.getOrderflag(),objorder.getLsprojectmaster(),objorder.getLstestmasterlocal(),fromdate,todate);
+				}
+				//get sheet orders
+				else if(filetype == 4){
+						lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+						objorder.getLsprojectmaster(),filetype,fromdate,todate);
+				}
+				else if(objorder.getOrderflag() == null)
+				{
+						lstorder = lslogilablimsorderdetailRepository.findByFiletypeAndLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+								filetype,objorder.getLsprojectmaster(),objorder.getLstestmasterlocal(),fromdate,todate);
+				}
+				else if (objorder.getOrderflag() != null && objorder.getApprovelstatus() != null && objorder.getApprovelstatus() == 3){
+					lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndApprovelstatusAndFiletypeAndLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+							objorder.getOrderflag(),objorder.getApprovelstatus(),filetype,objorder.getLsprojectmaster(),objorder.getLstestmasterlocal(),fromdate,todate);
+			}
+				else{
+					lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndFiletypeAndLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+							objorder.getOrderflag(),filetype,objorder.getLsprojectmaster(),objorder.getLstestmasterlocal(),fromdate,todate);
+			}
+		} 
+				
+		
+		
 		return lstorder;
 	}
 	
 	public List<Logilaborders> Getordersonsample(LSlogilablimsorderdetail objorder)
 	{
+
 		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
 		Integer filetype = objorder.getFiletype();
-		if(filetype == -1) {
-		    lstorder = lslogilablimsorderdetailRepository.findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-				objorder.getLssamplemaster(),1,objorder.getLstestmasterlocal(),2,fromdate,todate,objorder.getLssamplemaster(),2,objorder.getLsuserMaster(),objorder.getLstestmasterlocal(),2,fromdate,todate);
-		}else {
+		if (objorder.getSearchCriteria().getContentsearchtype() != null && objorder.getSearchCriteria().getContentsearch() != null) {
+			lstorder =GetordersonFilter(objorder);	
+			
+			} else if (objorder.getSearchCriteria().getContentsearch() == null) {
+				if(filetype == null) {
+					
+					 lstorder = lslogilablimsorderdetailRepository.findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+								objorder.getLssamplemaster(),1,objorder.getLstestmasterlocal(),2,fromdate,todate,objorder.getLssamplemaster(),2,objorder.getLsuserMaster(),objorder.getLstestmasterlocal(),filetype,2,fromdate,todate);	
+			
+				}else if(filetype == -1 && objorder.getOrderflag() == null) {
+		    lstorder = lslogilablimsorderdetailRepository.findByLssamplemasterAndViewoptionAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+				objorder.getLssamplemaster(),1,2,fromdate,todate,objorder.getLssamplemaster(),2,objorder.getLsuserMaster(),2,fromdate,todate);
+		}else if(filetype == -1 && objorder.getOrderflag() != null ) {
+			 lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+					 objorder.getOrderflag(),objorder.getLssamplemaster(),1,objorder.getLstestmasterlocal(),2,fromdate,todate,objorder.getLssamplemaster(),2,objorder.getLsuserMaster(),objorder.getLstestmasterlocal(),2,fromdate,todate);
+			   
+	}else if(filetype == 4){
+		
+		  lstorder = lslogilablimsorderdetailRepository.findByLssamplemasterAndViewoptionAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+					objorder.getLssamplemaster(),1,filetype,2,fromdate,todate,objorder.getLssamplemaster(),2,objorder.getLsuserMaster(),filetype,2,fromdate,todate);	
+
+}else if(objorder.getOrderflag() == null)
+{
+	 lstorder = lslogilablimsorderdetailRepository.findByLssamplemasterAndViewoptionAndLstestmasterlocalAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+				objorder.getLssamplemaster(),1,objorder.getLstestmasterlocal(),filetype,2,fromdate,todate,objorder.getLssamplemaster(),2,objorder.getLsuserMaster(),objorder.getLstestmasterlocal(),filetype,2,fromdate,todate);	
+
+}else if (objorder.getOrderflag() != null && objorder.getApprovelstatus() != null && objorder.getApprovelstatus() == 3){
+	lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndApprovelstatusAndLssamplemasterAndViewoptionAndLstestmasterlocalAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			objorder.getOrderflag(),objorder.getApprovelstatus(),objorder.getLssamplemaster(),1,objorder.getLstestmasterlocal(),filetype,2,fromdate,todate,objorder.getLssamplemaster(),2,objorder.getLsuserMaster(),objorder.getLstestmasterlocal(),filetype,2,fromdate,todate);	
+
+	}
+				
+				else {
             lstorder = lslogilablimsorderdetailRepository.findByLssamplemasterAndViewoptionAndLstestmasterlocalAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 						objorder.getLssamplemaster(),1,objorder.getLstestmasterlocal(),filetype,2,fromdate,todate,objorder.getLssamplemaster(),2,objorder.getLsuserMaster(),objorder.getLstestmasterlocal(),filetype,2,fromdate,todate);	
 		}
+	}
 		return lstorder;
 	}
 	
@@ -4912,5 +4972,123 @@ public class InstrumentService {
 			response.setStatus(true);
 		}
 		return response;
+	}
+	
+	public ResponseEntity<InputStreamResource> downloadsheetfileforfolder(Integer multitenant, String tenant, String fileid) throws IOException
+	{
+		HttpHeaders header = new HttpHeaders();
+		header.set("Content-Disposition", "attachment; filename=" + fileid);
+		
+		if(multitenant==1)
+		{
+			InputStream fileStream = cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "sheetfolderfiles");
+			InputStreamResource resource = null;
+			byte[] content = IOUtils.toByteArray(fileStream);
+			int size = content.length;
+			InputStream is = null;
+			try {
+				is = new ByteArrayInputStream(content);
+				resource = new InputStreamResource(is);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (is != null)
+						is.close();
+				} catch (Exception ex) {
+	
+				}
+			}
+	
+			header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			header.setContentLength(size);
+			return new ResponseEntity<>(resource, header, HttpStatus.OK);
+		}
+		else
+		{
+			GridFSDBFile gridFsFile = null;
+
+			try {
+				gridFsFile = retrieveLargeFile(fileid);
+			} catch (IllegalStateException e) {
+
+				e.printStackTrace();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+			System.out.println(gridFsFile.getContentType());
+			header.setContentType(MediaType.parseMediaType(gridFsFile.getContentType()));
+			header.setContentLength(gridFsFile.getLength());
+			return new ResponseEntity<>(new InputStreamResource(gridFsFile.getInputStream()), header, HttpStatus.OK);
+		}
+	}
+	
+	public List<LSsheetfolderfiles> Getaddedfilesforfolder(List<String> lstuuid)
+	{
+		List<LSsheetfolderfiles> lstfiles = new ArrayList<LSsheetfolderfiles>();
+		lstfiles = lssheetfolderfilesRepository.findByUuidInOrderByFolderfilecode(lstuuid);
+		return lstfiles;
+	}
+	public List<Logilaborders> GetordersonFilter(LSlogilablimsorderdetail objorder){
+		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
+		List<Long> lstBatchcode = new ArrayList<Long>();
+		List<Integer> lstsamplefilecode = new ArrayList<Integer>();
+		List<LSsamplefile> idList = new ArrayList<LSsamplefile>();
+		
+		if (objorder.getSearchCriteria().getContentsearchtype() != null && objorder.getSearchCriteria().getContentsearch() != null) {
+			
+	
+		if(objorder.getFiletype() == -1) {
+			lstBatchcode = lslogilablimsorderdetailRepository.getBatchcodeAndcreateddate(
+					objorder.getFromdate(), objorder.getTodate());
+		}else {
+			lstBatchcode = lslogilablimsorderdetailRepository.getBatchcodeonFiletypeAndcreateddate(
+					objorder.getFiletype(), objorder.getFromdate(), objorder.getTodate());
+		}
+	
+
+	if (lstBatchcode != null && lstBatchcode.size() > 0) {
+		lstsamplefilecode = lssamplefileRepository.getFilesamplecodeByBatchcodeIn(lstBatchcode);
+	}
+
+	if (lstsamplefilecode != null && lstsamplefilecode.size() > 0) {
+		idList = getsamplefileIds(lstsamplefilecode, objorder.getSearchCriteria(),
+				objorder.getIsmultitenant());
+		if (idList != null && idList.size() > 0) {
+
+			if(objorder.getFiletype() == -1) {
+				lstorder = lslogilablimsorderdetailRepository
+						.findByOrderflagAndCreatedtimestampBetweenAndLssamplefileIn(
+								objorder.getOrderflag(), objorder.getFromdate(),
+								objorder.getTodate(), idList);
+			}
+			else if(objorder.getFiletype() == -1 && objorder.getOrderflag() == null) {
+				lstorder = lslogilablimsorderdetailRepository
+						.findByCreatedtimestampBetweenAndLssamplefileIn(
+								 objorder.getFromdate(),
+								objorder.getTodate(), idList);
+			}
+			
+			else if(objorder.getOrderflag() == null )
+			{
+				lstorder = lslogilablimsorderdetailRepository
+						.findByFiletypeAndCreatedtimestampBetweenAndLssamplefileIn(
+								 objorder.getFiletype(), objorder.getFromdate(),
+								objorder.getTodate(), idList);
+			}else {
+				lstorder = lslogilablimsorderdetailRepository
+						.findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndLssamplefileIn(
+								objorder.getOrderflag(), objorder.getFiletype(), objorder.getFromdate(),
+								objorder.getTodate(), idList);
+			}
+			
+		}
+	}
+	
+		}
+		
+		return lstorder;
+		
 	}
 }

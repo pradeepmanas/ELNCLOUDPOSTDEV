@@ -561,6 +561,94 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	List<Logilaborders> findByLsprojectmasterAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			LSprojectmaster lsprojectmaster, Integer filetype, Date fromdate, Date todate);
+	@Transactional
+	@Modifying
+	@Query(value = "select batchcode from "
+			+ "LSlogilablimsorderdetail where  orderflag = ?1 and createdtimestamp BETWEEN ?2 and ?3 and assignedto_usercode IS NULL ORDER BY batchcode DESC", nativeQuery = true)
+	List<Long> getBatchcodeAndFlagandcreateddate(String orderflag, Date fromdate, Date todate);
+
+	List<Logilaborders> findByOrderflagAndCreatedtimestampBetweenAndLssamplefileIn(String orderflag, Date fromdate,
+			Date todate, List<LSsamplefile> idList);
+	@Transactional
+	@Modifying
+	@Query(value = "select batchcode from "
+			+ "LSlogilablimsorderdetail where createdtimestamp BETWEEN ?1 and ?2 and assignedto_usercode IS NULL ORDER BY batchcode DESC", nativeQuery = true)
+	List<Long> getBatchcodeAndcreateddate(Date fromdate, Date todate);
+	
+
+	@Transactional
+	@Modifying
+	@Query(value = "select batchcode from "
+			+ "LSlogilablimsorderdetail where filetype = ?1 and createdtimestamp BETWEEN ?2 and ?3 and assignedto_usercode IS NULL ORDER BY batchcode DESC", nativeQuery = true)
+	List<Long> getBatchcodeonFiletypeAndcreateddate(Integer filetype, Date fromdate, Date todate);
+
+	List<Logilaborders> findByFiletypeAndCreatedtimestampBetweenAndLssamplefileIn(Integer filetype, Date fromdate,
+			Date todate, List<LSsamplefile> idList);
+
+	List<Logilaborders> findByCreatedtimestampBetweenAndLssamplefileIn(Date fromdate, Date todate,
+			List<LSsamplefile> idList);
+
+	List<Logilaborders> findByOrderflagAndLsprojectmasterAndLstestmasterlocalAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String orderflag, LSprojectmaster lsprojectmaster, LStestmasterlocal lstestmasterlocal, Integer filetype,
+			Date fromdate, Date todate);
+
+	List<Logilaborders> findByOrderflagAndLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String orderflag, LSprojectmaster lsprojectmaster, LStestmasterlocal lstestmasterlocal, Date fromdate,
+			Date todate);
+
+	List<Logilaborders> findByLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String orderflag, LSprojectmaster lsprojectmaster, LStestmasterlocal lstestmasterlocal, Date fromdate,
+			Date todate);
+
+	List<Logilaborders> findByFiletypeAndLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			Integer filetype, LSprojectmaster lsprojectmaster, LStestmasterlocal lstestmasterlocal, Date fromdate,
+			Date todate);
+
+	List<Logilaborders> findByFiletypeAndLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			Integer filetype, String orderflag, LSprojectmaster lsprojectmaster, LStestmasterlocal lstestmasterlocal,
+			Date fromdate, Date todate);
+
+	List<Logilaborders> findByapprovelstatusAndLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			Integer approvelstatus, String orderflag, LSprojectmaster lsprojectmaster,
+			LStestmasterlocal lstestmasterlocal, Date fromdate, Date todate);
+
+	List<Logilaborders> findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			LSsamplemaster lssamplemaster, int i, LStestmasterlocal lstestmasterlocal, int j, Date fromdate,
+			Date todate, LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster,
+			LStestmasterlocal lstestmasterlocal2, Integer filetype, int l, Date fromdate2, Date todate2);
+
+	List<Logilaborders> findByLssamplemasterAndViewoptionAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			LSsamplemaster lssamplemaster, int i, int j, Date fromdate, Date todate, LSsamplemaster lssamplemaster2,
+			int k, LSuserMaster lsuserMaster, int l, Date fromdate2, Date todate2);
+
+	List<Logilaborders> findByOrderflagAndLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String orderflag, LSsamplemaster lssamplemaster, int i, LStestmasterlocal lstestmasterlocal, int j,
+			Date fromdate, Date todate, LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster,
+			LStestmasterlocal lstestmasterlocal2, int l, Date fromdate2, Date todate2);
+
+	List<Logilaborders> findByLssamplemasterAndViewoptionAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			LSsamplemaster lssamplemaster, int i, Integer filetype, int j, Date fromdate, Date todate,
+			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer filetype2, int l, Date fromdate2,
+			Date todate2);
+
+	List<Logilaborders> findByOrderflagAndApprovelstatusAndLssamplemasterAndViewoptionAndLstestmasterlocalAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndFiletypeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String orderflag, Integer approvelstatus, LSsamplemaster lssamplemaster, int i,
+			LStestmasterlocal lstestmasterlocal, Integer filetype, int j, Date fromdate, Date todate,
+			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, LStestmasterlocal lstestmasterlocal2,
+			Integer filetype2, int l, Date fromdate2, Date todate2);
+
+	List<Logilaborders> findByOrderflagAndFiletypeAndLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String orderflag, Integer filetype, LSprojectmaster lsprojectmaster, LStestmasterlocal lstestmasterlocal,
+			Date fromdate, Date todate);
+
+	List<Logilaborders> findByOrderflagAndApprovelstatusAndFiletypeAndLsprojectmasterAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String orderflag, Integer approvelstatus, Integer filetype, LSprojectmaster lsprojectmaster,
+			LStestmasterlocal lstestmasterlocal, Date fromdate, Date todate);
+
+
+
+
+
 
 	
 }

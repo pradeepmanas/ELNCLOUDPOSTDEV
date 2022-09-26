@@ -39,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "parserfield")
 @XmlType(propOrder = { "parserfieldkey", "parserfieldname", "fieldid", "parserblock", "methoddelimiter",
-		"status", "createdby", "createddate","datatype"})
+		"status", "createdby", "createddate","datatypekey"})
 @Entity
 @Table(name = "parserfield")
 public class ParserField implements Serializable, Diffable<ParserField>{
@@ -78,9 +78,10 @@ public class ParserField implements Serializable, Diffable<ParserField>{
 	@Column(name = "createddate")
 	private Date createddate;	
 			
-
-	@Column(name = "datatype" , columnDefinition = "varchar(50)")
-	private String datatype;	
+//new
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "datatypekey", nullable = false)
+	private DataType datatype;	
 			
 	@XmlAttribute	
 	public Integer getParserfieldkey() {
@@ -155,12 +156,13 @@ public class ParserField implements Serializable, Diffable<ParserField>{
 		this.createddate = createddate;
 	}
 
-	
-	public String getDatatype() {
+
+
+	public DataType getDatatype() {
 		return datatype;
 	}
 
-	public void setDatatype(String datatype) {
+	public void setDatatype(DataType datatype) {
 		this.datatype = datatype;
 	}
 
@@ -178,7 +180,7 @@ public class ParserField implements Serializable, Diffable<ParserField>{
 	       .append("status",this.status, obj.status)
 	       .append("createdby", this.createdby.getUsername(), obj.createdby.getUsername())
 	       .append("createddate", this.createddate, obj.createddate)
-	       .append("datatype", this.datatype, obj.datatype)
+	       .append("datatype", this.datatype.getDatatypename(), obj.datatype.getDatatypename())
 
 	       .build();
 	}
