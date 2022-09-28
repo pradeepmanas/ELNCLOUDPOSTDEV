@@ -149,6 +149,17 @@ public class commonfunction {
 //		}
 		return jsonString;
 	}
+	
+	public static Map<String, Object> getInventoryValuesFromJsonString(String jsonString,String objectKey) {
+		
+		Map<String, Object> rtnMapObj = new HashMap<String, Object>();
+		
+		JSONObject jsonObject = new JSONObject(jsonString);
+			
+		rtnMapObj.put("rtnObj", jsonObject.get(objectKey));
+			
+		return rtnMapObj;
+	}
 
 	public static Map<String, Object> getParamsAndValues(String jsonString) {
 
@@ -252,4 +263,6 @@ public class commonfunction {
 
 		return lstTags;
 	}
+
+
 }

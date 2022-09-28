@@ -2282,6 +2282,7 @@ public class InstrumentService {
 
 		if (objverionfile == null && !contString.equals("") && contString != null) {
 
+			List<LSsamplefileversion> lstSampleVersion = new ArrayList<LSsamplefileversion>();
 			LSsamplefileversion objVersion = new LSsamplefileversion();
 			objVersion.setVersionname("1");
 			objVersion.setVersionno(1);
@@ -2292,7 +2293,9 @@ public class InstrumentService {
 			objVersion.setFilesamplecode(objfile);
 			objVersion.setCreatedate(objorder.getCreatedtimestamp());
 			lssamplefileversionRepository.save(objVersion);
-			objfile.getLssamplefileversion().add(objVersion);
+//			objfile.getLssamplefileversion().add(objVersion);
+			lstSampleVersion.add(objverionfile);
+			objfile.setLssamplefileversion(lstSampleVersion);
 			updateorderversioncontent(contString, objVersion, objorder.getIsmultitenant());
 
 		}
@@ -4034,12 +4037,13 @@ public class InstrumentService {
 		for (Map<String, String> fileObj : lstfiles) {
 			String fileid = fileObj.get("copyfrom");
 			String newFileid = fileObj.get("copyto");
+			String oldfileid = fileObj.get("oldfileid");
 			String isnew = fileObj.get("isnew");
 
-			if (isnew.equals("true")) {
-
-				Fileimagestemp oldFile = FileimagestempRepository.findByFileid(fileid);
-
+			Fileimagestemp oldFile = FileimagestempRepository.findByFileid(fileid);
+			
+			if (isnew != null && isnew.equals("true")) {
+				
 				Fileimages newFile = new Fileimages();
 
 				newFile.setFile(oldFile.getFile());
@@ -4050,11 +4054,11 @@ public class InstrumentService {
 				FileimagestempRepository.delete(oldFile.getFileid());
 
 			}
-			Fileimagestemp oldFile = FileimagestempRepository.findByFileid(fileid);
-
+			Fileimages oldVerFile = FileimagesRepository.findByFileid(oldfileid);
+			
 			Fileimages newFile = new Fileimages();
 
-			newFile.setFile(oldFile.getFile());
+			newFile.setFile(oldVerFile.getFile());
 			newFile.setFileid(newFileid);
 			newFile.setId(oldFile.getId());
 
@@ -4784,23 +4788,44 @@ public class InstrumentService {
 	}
 	
 	public List<Logilaborders> Getorderbyflaganduser(LSlogilablimsorderdetail objorder)
-	{
-		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
-		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
-		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
-		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
-		Date fromdate = objorder.getFromdate();
-		Date todate = objorder.getTodate();
-		Integer filetype = objorder.getFiletype();
-		if(filetype == -1) {
-			lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-					 objorder.getOrderflag(), lstproject, fromdate,todate);
-		}else {
-			lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-					 objorder.getOrderflag(), lstproject, filetype,fromdate,todate);
+		{
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+			List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
+			Date fromdate = objorder.getFromdate();
+			Date todate = objorder.getTodate();
+			Integer filetype = objorder.getFiletype();
+	
+			if (objorder.getSearchCriteria().getContentsearchtype() != null
+					&& objorder.getSearchCriteria().getContentsearch() != null) {
+				lstorder = GetordersonFilter(objorder);
+	
+			} else if (objorder.getSearchCriteria().getContentsearch() == null) {
+	
+				if (filetype == -1 && objorder.getOrderflag() == null) {
+					lstorder = lslogilablimsorderdetailRepository
+							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+									objorder.getOrderflag(), lstproject, fromdate, todate);
+				} else if (filetype == -1 && objorder.getOrderflag() != null) {
+					lstorder = lslogilablimsorderdetailRepository
+							.findByOrderflagAndOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+									objorder.getOrderflag(), objorder.getOrderflag(), lstproject, fromdate, todate);
+				} else if (objorder.getOrderflag() != null && objorder.getApprovelstatus() != null
+						&& objorder.getApprovelstatus() == 3) {
+					lstorder = lslogilablimsorderdetailRepository
+							.findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+									objorder.getOrderflag(), objorder.getApprovelstatus(), lstproject, filetype, fromdate,
+									todate);
+				} else {
+					lstorder = lslogilablimsorderdetailRepository
+							.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+									objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
+				}
+			}
+			lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
+			return lstorder;
 		}
-		return lstorder;
-	}
 
 	public Map<String,Object> Getprotocolordersonproject(LSlogilabprotocoldetail objorder) {
 		Map<String,Object> retuobjts =new HashMap<>();
@@ -4953,12 +4978,19 @@ public class InstrumentService {
 		return retuobjts;
 	}
 	
-	public List<LSsheetfolderfiles> Getfilesforfolder(LSsheetfolderfiles objfiles)throws Exception
+	public List<LSsheetfolderfiles> Getfilesforfolder(LSsheetfolderfiles objfiles) throws Exception
 	{
+
 		List<LSsheetfolderfiles> lstfiles = new ArrayList<LSsheetfolderfiles>();
+		
+			
 		lstfiles = lssheetfolderfilesRepository.findByDirectorycodeAndFileforOrderByFolderfilecode(objfiles.getDirectorycode(),objfiles.getFilefor());
+
 		return lstfiles;
 	}
+	
+
+
 	public Response validatefileexistonfolder(LSsheetfolderfiles objfile)
 	{
 		Response response = new Response();

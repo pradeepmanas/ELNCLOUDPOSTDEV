@@ -235,6 +235,43 @@ public class RestService {
 	    
 		return result;
 	}
+	
+	public String forSyncOrderFromLims() throws Exception{
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		final String url = env.getProperty("limsbaseservice.url")+"lslimsService/getsdmslabsheetmaster";		
+
+	    RestTemplate restTemplate = new RestTemplate();
+	    
+	    String result = restTemplate.postForObject(url, map, String.class);
+	    
+	    ObjectMapper mapper = new ObjectMapper();
+
+		List<LSlimsorder> mapLimsOrder = mapper.readValue(result,
+				new TypeReference<List<LSlimsorder>>() {
+				});
+		
+		List<LSlogilablimsorderdetail> mapOrderDetail = mapper.readValue(result,
+				new TypeReference<List<LSlogilablimsorderdetail>>() {
+				});
+	    
+	    map.put("LimsOrder", mapLimsOrder);
+	    map.put("LimsOrderDetail", mapOrderDetail);
+	    
+	    boolean bool = insertLimsOrder(map);
+	    
+	    bool = InsertLimsOrderDetail(map);
+	    
+	    if(bool) {
+	    	result="success";
+	    }
+	    else {
+	    	result="Failure";
+	    }
+	    
+		return result;
+	}
 
 	@SuppressWarnings("unchecked")
 	private boolean insertLimsOrder(Map<String, Object> mapObj) {

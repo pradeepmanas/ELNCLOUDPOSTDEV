@@ -1,9 +1,5 @@
 package com.agaram.eln.primary.model.material;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,17 +7,13 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @Entity
-@Table(name = "period")
-public class Period {
-
+@Table(name = "materialgrade")
+public class MaterialGrade {
+	
 	@Id
-	@Column(name = "nperiodcode")
-	private Integer nperiodcode;
+	@Column(name = "nmaterialgradecode")
+	private Integer nmaterialgradecode;
 	@Type(type = "jsonb")
 	@Column(name = "jsondata", columnDefinition = "jsonb")
 	private String jsondata;
@@ -31,53 +23,34 @@ public class Period {
 	private Integer nsitecode;
 	@Column(name = "nstatus")
 	private Integer nstatus;
-
-	public Integer getNperiodcode() {
-		return nperiodcode;
+	
+	public Integer getNmaterialgradecode() {
+		return nmaterialgradecode;
 	}
-
-	public void setNperiodcode(Integer nperiodcode) {
-		this.nperiodcode = nperiodcode;
+	public void setNmaterialgradecode(Integer nmaterialgradecode) {
+		this.nmaterialgradecode = nmaterialgradecode;
 	}
-
-	public Map<String, Object> getJsondata() throws JsonParseException, JsonMappingException, IOException {
-
-		if (jsondata.isEmpty()) {
-			Map<String, Object> resObj = new HashMap<String, Object>();
-
-			return resObj;
-		}
-
-		@SuppressWarnings("unchecked")
-		Map<String, Object> resObj = new ObjectMapper().readValue(jsondata, Map.class);
-
-		return resObj;
+	public String getJsondata() {
+		return jsondata;
 	}
-
 	public void setJsondata(String jsondata) {
 		this.jsondata = jsondata;
 	}
-
 	public Integer getNdefaultstatus() {
 		return ndefaultstatus;
 	}
-
 	public void setNdefaultstatus(Integer ndefaultstatus) {
 		this.ndefaultstatus = ndefaultstatus;
 	}
-
 	public Integer getNsitecode() {
 		return nsitecode;
 	}
-
 	public void setNsitecode(Integer nsitecode) {
 		this.nsitecode = nsitecode;
 	}
-
 	public Integer getNstatus() {
 		return nstatus;
 	}
-
 	public void setNstatus(Integer nstatus) {
 		this.nstatus = nstatus;
 	}

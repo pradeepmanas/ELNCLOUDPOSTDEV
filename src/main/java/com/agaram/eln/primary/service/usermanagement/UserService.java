@@ -1097,11 +1097,16 @@ public class UserService {
 	}
 
 	public LSusergroupedcolumns setGroupedcolumn(LSusergroupedcolumns objgroupped) {
+		LSusergroupedcolumns objexist = getGroupedcolumn(objgroupped); 
+		if(objexist!=null)
+		{
+			objgroupped.setUsergroupedcolcode(objexist.getUsergroupedcolcode());
+		}
 		return lsusergroupedcolumnsRepository.save(objgroupped);
 	}
 
 	public LSusergroupedcolumns getGroupedcolumn(LSusergroupedcolumns objgroupped) {
-		return lsusergroupedcolumnsRepository.findByUsercodeAndSitecodeAndGridname(objgroupped.getUsercode(),
+		return lsusergroupedcolumnsRepository.findFirstByUsercodeAndSitecodeAndGridname(objgroupped.getUsercode(),
 				objgroupped.getSitecode(), objgroupped.getGridname());
 	}
 

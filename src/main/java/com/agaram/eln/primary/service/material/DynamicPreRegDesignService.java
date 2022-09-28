@@ -6,26 +6,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
-import com.agaram.eln.primary.model.material.MaterialCategory;
-import com.agaram.eln.primary.model.material.Period;
-import com.agaram.eln.primary.model.material.Section;
-import com.agaram.eln.primary.model.material.Unit;
-import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
-import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
-import com.agaram.eln.primary.model.webParser.Lswebparserfield;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
+import com.agaram.eln.primary.repository.material.MaterialGradeRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 
 @Service
 public class DynamicPreRegDesignService {
@@ -38,15 +32,19 @@ public class DynamicPreRegDesignService {
 	SectionRepository sectionRepository;
 	@Autowired
 	PeriodRepository periodRepository;
+	@Autowired
+	MaterialGradeRepository materialGradeRepository;
 
+	@SuppressWarnings({ "unchecked", "unused" })
 	public ResponseEntity<Object> getComboValues(Map<String, Object> inputMap) throws JsonProcessingException {
 		String tableName = "";
-		final ObjectMapper objmapper = new ObjectMapper();
 		List<Map<String, Object>> srcData = (List<Map<String, Object>>) inputMap.get("parentcolumnlist");
+
 		Map<String, Object> childData = (Map<String, Object>) inputMap.get("childcolumnlist");
 		Map<String, Object> parameters = (Map<String, Object>) inputMap.get("parameters");
 		String getJSONKeysQuery = "";
 
+		@SuppressWarnings("unused")
 		List<Map<String, Object>> filterQueryComponentsQueries = null;
 
 		Map<String, Object> returnObject = new HashMap<>();
@@ -84,31 +82,32 @@ public class DynamicPreRegDesignService {
 			switch (tableName) {
 			case "unit":
 				data = unitRepository.findByNstatus(1);
-				System.out.println("Unit");
 				break;
 			case "section":
 				data = sectionRepository.findByNstatus(1);
-				System.out.println("section");
 				break;
-			default:
-				data= periodRepository.findByNstatus(1);
-				System.out.println("period");
+			case "materialgrade":
+				data = materialGradeRepository.findByNstatus(1);
+				break;
+//			case "period":
+//				data = periodRepository.findByNstatus(1);
+//				break;
 			}
 			System.out.println(data);
 
 			String label = (String) srcData.get(i).get("label");
-			
-			List<Map<String, Object>> lstJsonData = new ArrayList<Map<String,Object>>();
-			
-			if(!data.isEmpty()) {
-				
-				 data.stream().peek(obj -> {
+
+			List<Map<String, Object>> lstJsonData = new ArrayList<Map<String, Object>>();
+
+			if (!data.isEmpty()) {
+
+				data.stream().peek(obj -> {
 					Map<String, Object> childValue = new HashMap<>();
-					
+
 					childValue.put("jsondata", obj);
 					
 					lstJsonData.add(childValue);
-					
+
 				}).collect(Collectors.toList());
 			}
 
@@ -118,7 +117,7 @@ public class DynamicPreRegDesignService {
 		return new ResponseEntity<>(returnObject, HttpStatus.OK);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	public ResponseEntity<Object> getChildValues(Map<String, Object> inputMap) throws JsonProcessingException {
 		String tableName = "";
 		final ObjectMapper objmapper = new ObjectMapper();
@@ -166,18 +165,18 @@ public class DynamicPreRegDesignService {
 				data = materialCategoryRepository.findByNstatus(1);
 				break;
 			}
-			
-			List<Map<String, Object>> lstJsonData = new ArrayList<Map<String,Object>>();
-			
-			if(!data.isEmpty()) {
-				
-				 data.stream().peek(obj -> {
+
+			List<Map<String, Object>> lstJsonData = new ArrayList<Map<String, Object>>();
+
+			if (!data.isEmpty()) {
+
+				data.stream().peek(obj -> {
 					Map<String, Object> childValue = new HashMap<>();
-					
+
 					childValue.put("jsondata", obj);
-					
+
 					lstJsonData.add(childValue);
-					
+
 				}).collect(Collectors.toList());
 			}
 

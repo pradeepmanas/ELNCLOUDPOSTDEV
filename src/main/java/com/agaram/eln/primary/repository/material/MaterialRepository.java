@@ -19,4 +19,6 @@ public interface MaterialRepository  extends JpaRepository<Material, Integer>{
 	Material findBySmaterialnameAndNstatus(String string, Integer i);
 
 	List<Material> findByNmaterialcatcodeAndNmaterialtypecodeAndNstatus(Integer nmaterialcatcode, Integer nmaterialtypecode, int i);
+
+//	Material findBynstatusAndnmaterialcode(int i, Integer integer);
 }

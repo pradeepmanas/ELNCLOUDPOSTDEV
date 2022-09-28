@@ -14,6 +14,7 @@ import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.model.instrumentDetails.Lselninstrumentmaster;
+import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
@@ -59,13 +60,7 @@ public class BaseMasterController {
 	public List<Projectmaster> getProjectmaster(@RequestBody LSuserMaster objClass)throws Exception {
 		return masterService.getProjectmaster(objClass);
 	}
-	
-	/**
-	 *For Insert/Update/Delete Masters
-	 * 
-	 * @param Class
-	 * @return List<class>
-	 */
+
 	
 	@PostMapping("/InsertupdateTest")
 	public LStestmasterlocal InsertupdateTest(@RequestBody LStestmasterlocal objClass)throws Exception
@@ -106,5 +101,16 @@ public class BaseMasterController {
 	public LStestmaster GetTestonID(@RequestBody LStestmaster objtest)throws Exception
 	{
 		return masterService.GetTestonID(objtest);
+	}
+	
+	@RequestMapping("/getUnitmaster")
+	public List<Unit> getUnitmaster(@RequestBody LSuserMaster objClass)throws Exception {
+		return masterService.getUnitmaster(objClass);
+	}
+	
+	@PostMapping("/InsertupdateUnit")
+	public Unit InsertupdateUnit(@RequestBody Unit objClass)throws Exception
+	{
+		return masterService.InsertupdateUnit(objClass);
 	}
 }

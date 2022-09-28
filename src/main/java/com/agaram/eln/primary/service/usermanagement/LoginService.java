@@ -1126,7 +1126,7 @@ public class LoginService {
 			obj.put("userrights", userService.GetUserRightsonGroup(objExitinguser.getLsusergroup()));
 			LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
 			objauditconfig.setLsusermaster(objExitinguser);
-			obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig));
+			obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig.getLsusermaster()));
 			obj.put("multiusergroupcode",
 					objExitinguser.getMultiusergroupcode().get(0).getLsusergroup().getUsergroupcode());
 		}
@@ -1350,7 +1350,7 @@ public class LoginService {
 				obj.put("userrights", userService.GetUserRightsonGroup(objExitinguser.getLsusergroup()));
 				LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
 				objauditconfig.setLsusermaster(objExitinguser);
-				obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig));
+				obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig.getLsusermaster()));
 
 				obj.put("multiusergroupcode", objLSMultiusergroup.getLsusergroup().getUsergroupcode());
 			}

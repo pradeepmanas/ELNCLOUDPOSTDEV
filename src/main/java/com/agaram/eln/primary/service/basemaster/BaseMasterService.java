@@ -21,6 +21,7 @@ import com.agaram.eln.primary.model.inventory.LSequipmentmap;
 import com.agaram.eln.primary.model.inventory.LSinstrument;
 import com.agaram.eln.primary.model.inventory.LSmaterial;
 import com.agaram.eln.primary.model.inventory.LSmaterialmap;
+import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -29,7 +30,6 @@ import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
@@ -39,6 +39,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.Lselninstrumentmappin
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstrumentmasterRepository;
 import com.agaram.eln.primary.repository.inventory.LSequipmentmapRepository;
 import com.agaram.eln.primary.repository.inventory.LSmaterialmapRepository;
+import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplemasterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
@@ -67,15 +68,14 @@ public class BaseMasterService {
 	private LSmaterialmapRepository lSmaterialmapRepository;
 	@Autowired
 	private LSequipmentmapRepository lSequipmentmapRepository;
-	@Autowired
-	private LScfttransactionRepository lscfttransactionRepository;
+
 	@Autowired
 	private LStestmasterRepository lstestmasterRepository;
 
 	@Autowired
 	ProtocolService ProtocolMasterService;
-//	@Autowired
-//    private MaterialService materialService;
+	@Autowired
+    private UnitRepository unitRepository;
 
 	@Autowired
 	private LselninstrumentfieldsRepository lselninstrumentfieldsRepository;
@@ -145,30 +145,16 @@ public class BaseMasterService {
 	}
 
 	public List<LStestmaster> getLimsTestMaster(LSuserMaster objClass) {
-		if (objClass.getObjsilentaudit() != null) {
-			objClass.getObjsilentaudit().setTableName("LStestmaster");
-			lscfttransactionRepository.save(objClass.getObjsilentaudit());
-		}
 
 		return lstestmasterRepository.findAll();
 	}
 
 	public List<Samplemaster> getsamplemaster(LSuserMaster objClass) {
 
-		if (objClass.getObjsilentaudit() != null) {
-			objClass.getObjsilentaudit().setTableName("LSsamplemaster");
-//			lscfttransactionRepository.save(objClass.getObjsilentaudit());
-		}
-
 		return lSsamplemasterRepository.findBystatusAndLssitemaster(1, objClass.getLssitemaster());
 	}
 
 	public List<Projectmaster> getProjectmaster(LSuserMaster objClass) {
-
-		if (objClass.getObjsilentaudit() != null) {
-			objClass.getObjsilentaudit().setTableName("LSprojectmaster");
-//			lscfttransactionRepository.save(objClass.getObjsilentaudit());
-		}
 
 		return lSprojectmasterRepository.findBystatusAndLssitemaster(1, objClass.getLssitemaster());
 	}
@@ -433,6 +419,29 @@ public class BaseMasterService {
 
 	public LStestmaster GetTestonID(LStestmaster objtest) {
 		return lstestmasterRepository.findByntestcode(objtest.getNtestcode());
+	}
+
+	public List<Unit> getUnitmaster(LSuserMaster objClass) {
+
+		return unitRepository.findByNstatusOrderByNunitcodeDesc(1);
+	}
+	
+	public Unit InsertupdateUnit(Unit objClass) {
+		
+		if(objClass.getNunitcode() == -1) {
+			
+			objClass = unitRepository.save(objClass);
+			
+		}else {
+			Unit objUnit = unitRepository.findOne(objClass.getNunitcode());
+			
+			objUnit.setSunitname(objClass.getSunitname());
+			objUnit.setSdescription(objClass.getSdescription());
+			
+			objClass = unitRepository.save(objUnit);
+		}
+		
+		return objClass;
 	}
 
 }

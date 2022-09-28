@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.controller.restcall;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
-import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.restcall.RestService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping(value = "/Restcall", method = RequestMethod.POST)
@@ -36,6 +31,11 @@ public class RestController {
 	@PostMapping("/ImportLimsOrder")
 	public String ImportLimsOrder(@RequestBody String str) throws Exception {
 		return restService.ImportLimsOrder(str);
+	}
+	
+	@PostMapping("/forSyncOrderFromLims")
+	public String forSyncOrderFromLims(@RequestBody Map<String, Object> map) throws Exception {
+		return restService.forSyncOrderFromLims();
 	}
 	
 	@RequestMapping(value = "/importLIMSTable")

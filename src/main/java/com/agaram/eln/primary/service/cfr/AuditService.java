@@ -237,14 +237,14 @@ public class AuditService {
 		return list;
 	}
 
-	public Map<String, Object> GetAuditconfigUser(LSaudittrailconfiguration LSaudittrailconfiguration) {
+	public Map<String, Object> GetAuditconfigUser(LSuserMaster LSaudittrailconfiguration) {
 
 		Map<String, Object> maprAuditConfig = new HashMap<String, Object>();
 
 		LSpreferences objpref = LSpreferencesRepository.findByTasksettingsAndValuesettings("ELNparser", "0");
 
-		List<LSaudittrailconfiguration> lstAudit = LSaudittrailconfigurationRepository
-				.findByLsusermaster(LSaudittrailconfiguration.getLsusermaster());
+		List<LSaudittrailconfiguration> lstAudit = LSaudittrailconfigurationRepository.findByLsusermaster(LSaudittrailconfiguration);
+		
 		List<LSaudittrailconfigmaster> lstAuditmaster = LSaudittrailconfigmasterRepository.findByOrderByOrdersequnce();
 
 		if (lstAudit != null && lstAudit.size() > 0) {

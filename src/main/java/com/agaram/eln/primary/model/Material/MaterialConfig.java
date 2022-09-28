@@ -26,7 +26,7 @@ public class MaterialConfig implements Serializable{
 	private List<Object> jsondata;
 
 	@Column(name = "nstatus")
-	private short nstatus;
+	private Integer nstatus;
 
 	public Integer getNformcode() {
 		return nformcode;
@@ -60,11 +60,11 @@ public class MaterialConfig implements Serializable{
 		this.jsondata = jsondata;
 	}
 
-	public short getNstatus() {
+	public Integer getNstatus() {
 		return nstatus;
 	}
 
-	public void setNstatus(short nstatus) {
+	public void setNstatus(Integer nstatus) {
 		this.nstatus = nstatus;
 	}
 }

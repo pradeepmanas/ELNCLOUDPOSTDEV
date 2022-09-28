@@ -150,12 +150,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/multitenant/Registerinvoice").permitAll().
 		antMatchers("/Lims/getSheetsFromELN").permitAll().
 		antMatchers("/Lims/downloadSheetFromELN").permitAll().
+		antMatchers("/Restcall/forSyncOrderFromLims").permitAll().
 		antMatchers("/protocol/downloadprotocolimage/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolfile/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		antMatchers("/Instrument/downloadsheetimages/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		antMatchers("/Instrument/downloadsheetimagestemp/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		antMatchers("/Instrument/downloadsheetimagessql/{fileid}/{filename}/{extension}").permitAll().
-		antMatchers("/Instrument/downloadsheetimagestempsql/{fileid}/{filename}/{extension}").permitAll().
+		antMatchers("/Instrument/downloadsheetimagessqltempsql/{fileid}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolorderimage/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolorderfiles/{fileid}/{tenant}/{filename}/{extension}").permitAll().
 		antMatchers("/protocol/downloadprotocolimagesql/{fileid}/{filename}/{extension}").permitAll().

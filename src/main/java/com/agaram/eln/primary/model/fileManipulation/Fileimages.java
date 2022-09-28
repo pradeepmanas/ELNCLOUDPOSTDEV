@@ -8,9 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Fileimages {
 
 	@Id
-	private Integer id;
-
 	private String fileid;
+	
+	private Integer id;
 
 	private Binary file;
 

@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.service.material;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
@@ -27,22 +27,21 @@ public class MaterialCategoryService {
 	MaterialCategoryRepository MaterialCategoryRepository;
 
 	public ResponseEntity<Object> getMaterialType(Map<String, Object> inputMap) {
-		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
-		List<MaterialType> lstgetMaterialType = MaterialTypeRepository.findAll();
-		objmap.put("getMaterialType", lstgetMaterialType);
-		return new ResponseEntity<>(objmap, HttpStatus.OK);
+		List<MaterialType> lstgetMaterialType = MaterialTypeRepository.findByNstatus(1);
+		return new ResponseEntity<>(lstgetMaterialType, HttpStatus.OK);
 	}
 
 	public ResponseEntity<Object> getMaterialCategory(Map<String, Object> inputMap) {
 
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
-		List<MaterialCategory> lstgetMaterialCategory = MaterialCategoryRepository.findAll();
+		List<Object> lstgetMaterialCategory = MaterialCategoryRepository.findByNstatus(1);
 		objmap.put("getMaterialCategory", lstgetMaterialCategory);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
+	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> createMaterialCategory(Map<String, Object> inputMap) throws Exception {
 		ObjectMapper objmapper = new ObjectMapper();
 		Map<String, Object> returnmsg = new HashMap<>();
@@ -133,17 +132,54 @@ public class MaterialCategoryService {
 //		return null;
 	}
 
-//	public ResponseEntity<Object> createMaterialCategory(Map<String, Object> inputMap) {
-//		int materialcatcode =inputMap.get(inputMap)
-//		String materialcatname = inputMap.getSmaterialcatname();
-//		List<MaterialCategory> lstgetMaterialCategory =MaterialCategoryRepository.findByNmaterialcatcodeAndSmaterialcatname(materialcatcode,materialcatname);
-//		if (lstgetMaterialCategory.isEmpty()) {
-//			return null;	
-//		}
-//		else {
-//		
-//		}
-//		return null;
-//	}
+	public ResponseEntity<Object> getActiveMaterialCategoryById(int nmaterialcatcode) {
 
+//		MaterialCategory objMaterialCategory = new MaterialCategory();
+
+//		Integer needSectionCheck = jdbcTemplate
+//				.queryForObject("select count(*) from materialinventory where (jsondata->'nmaterialcatcode')::int"
+//						+ "  in (select nmaterialcatcode from materialcategory where  nmaterialcatcode="
+//						+ nmaterialcatcode + " and nstatus="+Enumeration.TransactionStatus.ACTIVE.gettransactionstatus()
+//						+") and nstatus="+Enumeration.TransactionStatus.ACTIVE.gettransactionstatus(), Integer.class);
+
+		final MaterialCategory objMaterialCategory = MaterialCategoryRepository
+				.findByNmaterialcatcodeAndNstatus(nmaterialcatcode, 1);
+
+//		objMaterialCategory = (MaterialCategory) jdbcQueryForObject(strQuery, MaterialCategory.class);
+//		if (needSectionCheck > 0) {
+//			objMaterialCategory.setNeedSectionwisedisabled(true);
+//		}
+//		return (MaterialCategory)  objMaterialCategory;
+
+		if (objMaterialCategory == null) {
+			return new ResponseEntity<>(objMaterialCategory, HttpStatus.EXPECTATION_FAILED);
+		}
+
+		return new ResponseEntity<>(objMaterialCategory, HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> deleteMaterialCategory(MaterialCategory materialCategory) {
+
+		Map<String, Object> inputMap = new HashMap<>();
+
+		final ObjectMapper objmapper = new ObjectMapper();
+
+		final ResponseEntity<Object> materialCategoryByID = getActiveMaterialCategoryById(
+				materialCategory.getNmaterialcatcode());
+
+		if (materialCategoryByID == null) {
+			return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+		} else {
+
+			final MaterialCategory objMaterialCategory = objmapper.convertValue(materialCategoryByID.getBody(),
+					MaterialCategory.class);
+
+			objMaterialCategory.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
+			
+			MaterialCategoryRepository.save(objMaterialCategory);
+
+			return getMaterialCategory(inputMap);
+
+		}
+	}
 }

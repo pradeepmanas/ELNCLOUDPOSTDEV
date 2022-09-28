@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
-import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 //import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.fileManipulation.Fileimages;
@@ -726,7 +725,7 @@ public class InstrumentController {
 
 	}
 
-	@RequestMapping(value = "downloadsheetimagestempsql/{fileid}/{filename}/{extension}", method = RequestMethod.GET)
+	@RequestMapping(value = "downloadsheetimagessqltempsql/{fileid}/{filename}/{extension}", method = RequestMethod.GET)
 	@GetMapping
 	public ResponseEntity<InputStreamResource> downloadsheetimagestempsql(@PathVariable String fileid,
 			@PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {

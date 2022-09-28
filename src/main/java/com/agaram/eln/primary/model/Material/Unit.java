@@ -1,7 +1,10 @@
 package com.agaram.eln.primary.model.material;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -11,6 +14,8 @@ public class Unit {
 	
 	@Id
 	@Column(name = "nunitcode")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Basic(optional = false)
 	private Integer nunitcode;
 	@Column(name = "nstatus")
 	private Integer nstatus;
@@ -20,6 +25,8 @@ public class Unit {
 	private Integer ndefaultstatus;
 	@Column(name = "sunitname")
 	private String sunitname;
+	@Column(name = "sdescription")
+	private String sdescription;
 	
 	public String getSunitname() {
 		return sunitname;
@@ -51,4 +58,10 @@ public class Unit {
 	public void setNdefaultstatus(Integer ndefaultstatus) {
 		this.ndefaultstatus = ndefaultstatus;
 	}
+	public String getSdescription() {
+		return sdescription;
+	}
+	public void setSdescription(String sdescription) {
+		this.sdescription = sdescription;
+	}	
 }

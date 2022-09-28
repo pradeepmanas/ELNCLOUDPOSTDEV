@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialCategory;
@@ -80,45 +81,47 @@ public class MaterialService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> getMaterialByTypeCode(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
+	public ResponseEntity<Object> getMaterialByTypeCode(Map<String, Object> inputMap)
+			throws JsonParseException, JsonMappingException, IOException {
 
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-		
-		
-		final List<Material> lstMaterial = materialRepository.
-				findByNmaterialcatcodeAndNmaterialtypecodeAndNstatus(
-						(Integer)inputMap.get("nmaterialcatcode"),(Integer)inputMap.get("nmaterialtypecode"),1);
-		
+
+		final List<Material> lstMaterial = materialRepository.findByNmaterialcatcodeAndNmaterialtypecodeAndNstatus(
+				(Integer) inputMap.get("nmaterialcatcode"), (Integer) inputMap.get("nmaterialtypecode"), 1);
+
 		if (lstMaterial != null) {
-			
+
 			if (inputMap.containsKey("nmaterialcatcode")) {
 
 				objmap.put("Material", lstMaterial);
-				
+
 				List<Map<String, Object>> lstMatObject = new ArrayList<Map<String, Object>>();
 
 				objmap.put("tabScreen", "IDS_MATERIALSECTION");
 
 				if (!lstMaterial.isEmpty()) {
+
+					Map<String, Object> selectedMaterial = new ObjectMapper()
+							.readValue(lstMaterial.get(lstMaterial.size() - 1).getJsonuidata(), Map.class);
 					
-					Map<String,Object> selectedMaterial = new ObjectMapper().readValue(lstMaterial.get(lstMaterial.size() - 1).getJsonuidata(), Map.class);
-					
+					selectedMaterial.put("nmaterialcode", (int) lstMaterial.get(lstMaterial.size() - 1).getNmaterialcode());
+
 					objmap.put("SelectedMaterial", selectedMaterial);
 					objmap.put("nmaterialcode", (int) lstMaterial.get(lstMaterial.size() - 1).getNmaterialcode());
-					
+
 					lstMaterial.stream().peek(f -> {
-										
+
 						try {
-							Map<String,Object> result = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
-						
+							Map<String, Object> result = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
+
 							lstMatObject.add(result);
 						} catch (IOException e) {
-							
+
 							e.printStackTrace();
 						}
-						
+
 					}).collect(Collectors.toList());
-					
+
 					objmap.put("Material", lstMatObject);
 				} else {
 					objmap.put("SelectedMaterial", lstMaterial);
@@ -131,8 +134,9 @@ public class MaterialService {
 				List<MaterialCategory> objLstMaterialCategory = new ArrayList<>();
 
 				if (inputMap.containsKey("nmaterialcatcode")) {
-					objLstMaterialCategory = materialCategoryRepository
-							.findByNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
+					MaterialCategory objMaterialCategory = materialCategoryRepository.findByNmaterialcatcodeAndNstatus((Integer) inputMap.get("nmaterialcatcode"), 1);
+
+					objLstMaterialCategory.add(objMaterialCategory);
 				} else {
 					objLstMaterialCategory = materialCategoryRepository
 							.findByNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
@@ -146,7 +150,7 @@ public class MaterialService {
 						objmap.put("SelectedMaterialCategory", lstMaterialCategory.get(0));
 					}
 				}
-				
+
 //				List<MappedTemplateFieldPropsMaterial> lstMappedTemplate = 
 //						mappedTemplateFieldPropsMaterialRepository.findByNmaterialconfigcode(1);
 //				
@@ -159,9 +163,9 @@ public class MaterialService {
 //				designChildObject.put("value", lstMappedTemplate.get(0).getJsondata());
 //				
 //				designObject.put("jsondata", designChildObject);
-				
-				objmap.put("DesignMappedFeilds",getTemplateDesignForMaterial(1,23));
- 
+
+				objmap.put("DesignMappedFeilds", getTemplateDesignForMaterial(1, 23));
+
 			} else {
 
 				List<MaterialType> lstMaterialType = materialTypeRepository
@@ -182,18 +186,19 @@ public class MaterialService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> createMaterial(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
+	public ResponseEntity<Object> createMaterial(Map<String, Object> inputMap)
+			throws JsonParseException, JsonMappingException, IOException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		JSONObject actionType = new JSONObject();
 		JSONArray jsonUidataarray = new JSONArray();
 		new ObjectMapper();
-		
+
 		JSONObject jsonObject = new JSONObject(inputMap.get("materialJson").toString());
 		JSONObject jsonuidata = new JSONObject(inputMap.get("jsonuidata").toString());
-		
+
 		String strJsonObj = inputMap.get("materialJson").toString();
 		String strJsonUiData = inputMap.get("jsonuidata").toString();
-		
+
 		inputMap.get("DateList");
 
 		final Material ObjMatNamecheck = materialRepository
@@ -206,19 +211,19 @@ public class MaterialService {
 		} else {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
-		
+
 		Material objMaterial = new Material();
-		
+
 		objMaterial.setNmaterialcatcode((Integer) jsonObject.get("nmaterialcatcode"));
 		objMaterial.setSmaterialname(jsonObject.getString("Material Name"));
-		objMaterial.setNmaterialtypecode((Integer)jsonObject.get("nmaterialtypecode"));
+		objMaterial.setNmaterialtypecode((Integer) jsonObject.get("nmaterialtypecode"));
 		objMaterial.setNstatus(1);
 		objMaterial.setNtransactionstatus((Integer) inputMap.get("ntransactionstatus"));
 		objMaterial.setJsondata(strJsonObj);
 		objMaterial.setJsonuidata(strJsonUiData);
 
 		materialRepository.save(objMaterial);
-		
+
 //		if ((int) inputMap.get("needsectionwise") == Enumeration.TransactionStatus.YES.gettransactionstatus()) {
 //			jsonObject = new JSONObject(inputMap.get("materialSectionJson").toString());
 //			jsonObject.put("nmaterialcode", objMaterial.getNmaterialcode());
@@ -243,78 +248,87 @@ public class MaterialService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> getMaterialDetails(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
+	public ResponseEntity<Object> getMaterialDetails(Map<String, Object> inputMap)
+			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objmapper = new ObjectMapper();
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
-		final Material objMatDetails = materialRepository.findByNstatusAndNmaterialcode(1,(Integer) inputMap.get("nmaterialcode"));
-		
+		final Material objMatDetails = materialRepository.findByNstatusAndNmaterialcode(1,
+				(Integer) inputMap.get("nmaterialcode"));
+
 		Map<String, Object> objMaterial = objmapper.readValue(objMatDetails.getJsonuidata(),
-				new TypeReference<Map<String, Object>>() { });
+				new TypeReference<Map<String, Object>>() {
+				});
 		
-		List<Map<String, Object>> lstMaterial = new LinkedList<Map<String,Object>>();
-		
+		objMaterial.put("nmaterialcode", objMatDetails.getNmaterialcode());
+
+		List<Map<String, Object>> lstMaterial = new LinkedList<Map<String, Object>>();
+//
 		lstMaterial.add(0, objMaterial);
-		
-		objmap.put("SelectedMaterial", lstMaterial.get(lstMaterial.size() - 1));
-		
+
+		objmap.put("SelectedMaterial", lstMaterial);
+
 //		objmap.putAll((Map<String, Object>) objMaterialSectionDAO
 //				.getMaterialSectionByMaterialCode((int) inputMap.get("nmaterialcode"), inputMap).getBody());
 		objmap.put("nmaterialcode", inputMap.get("nmaterialcode"));
 //		objmap.putAll((Map<String, Object>) getMaterialSafetyInstructions(objmap).getBody());
 //		objmap.putAll((Map<String, Object>) getMaterialFile((int) inputMap.get("nmaterialcode"), userInfo));
 		objmap.putAll((Map<String, Object>) getMaterialcombo((int) inputMap.get("nmaterialtypecode")).getBody());
-		objmap.put("DesignMappedFeilds", getTemplateDesignForMaterial(1,23));
+		objmap.put("DesignMappedFeilds", getTemplateDesignForMaterial(1, 23));
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
-	public Map<String, Object> getTemplateDesignForMaterial(int nmaterialconfigcode, int nformcode){
+	public Map<String, Object> getTemplateDesignForMaterial(int nmaterialconfigcode, int nformcode) {
 
-		List<MappedTemplateFieldPropsMaterial> lstMappedTemplate = 
-				mappedTemplateFieldPropsMaterialRepository.findByNmaterialconfigcode(1);
-		
-		Map<String,Object> designObject = new HashMap<String, Object>();
-		
-		Map<String,Object> designChildObject = new HashMap<String, Object>();
-		
+		List<MappedTemplateFieldPropsMaterial> lstMappedTemplate = mappedTemplateFieldPropsMaterialRepository
+				.findByNmaterialconfigcode(1);
+
+		Map<String, Object> designObject = new HashMap<String, Object>();
+
+		Map<String, Object> designChildObject = new HashMap<String, Object>();
+
 		designChildObject.put("type", "jsonb");
 		designChildObject.put("null", true);
 		designChildObject.put("value", lstMappedTemplate.get(0).getJsondata());
-		
+
 		designObject.put("jsondata", designChildObject);
-		
+
 		return designObject;
-	} 
-	
-//	public ResponseEntity<Object> getMaterialEdit(Map<String, Object> inputMap) {
-//		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-//		ObjectMapper objmapper = new ObjectMapper();
-//		List<Map<String, Object>> lstMaterial = new ArrayList<Map<String, Object>>();
-//		List<Integer> lstcount = new ArrayList<Integer>();
-////		List<MappedTemplateFieldPropsMaterial> lstsearchFields = new LinkedList<>();
+	}
+
+	public ResponseEntity<Object> getMaterialEdit(Map<String, Object> inputMap)
+			throws JsonParseException, JsonMappingException, IOException {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		ObjectMapper objmapper = new ObjectMapper();
+		List<Map<String, Object>> lstMaterial = new ArrayList<Map<String, Object>>();
+		List<Integer> lstcount = new ArrayList<Integer>();
+//		List<MappedTemplateFieldPropsMaterial> lstsearchFields = new LinkedList<>();
 //		List<String> lstsearchField = new LinkedList()<String>();
 //		List<String> submittedDateFeilds = new LinkedList<String>();
-//
-//		String type = (int) inputMap.get("nmaterialtypecode") == Enumeration.TransactionStatus.STANDARDTYPE
-//				.gettransactionstatus() ? "MaterialStandard"
-//						: (int) inputMap.get("nmaterialtypecode") == Enumeration.TransactionStatus.VOLUMETRICTYPE
-//								.gettransactionstatus() ? "MaterialVolumetric" : "MaterialMaterialInventory";
-//		
-//		int typeCode = (int) inputMap.get("nmaterialtypecode") == Enumeration.TransactionStatus.STANDARDTYPE
-//				.gettransactionstatus() ? 1
-//						: (int) inputMap.get("nmaterialtypecode") == Enumeration.TransactionStatus.VOLUMETRICTYPE
-//								.gettransactionstatus() ? 2 : 3;
-//		
-//		lstcount = materialRepository.findByNmaterialcodeAndNstatus((Integer)inputMap.get("nmaterialcode"),-1);
-//		
-//		if (lstcount.size() == 0) {
-//			
+
+		String type = (int) inputMap.get("nmaterialtypecode") == Enumeration.TransactionStatus.STANDARDTYPE
+				.gettransactionstatus() ? "MaterialStandard"
+						: (int) inputMap.get("nmaterialtypecode") == Enumeration.TransactionStatus.VOLUMETRICTYPE
+								.gettransactionstatus() ? "MaterialVolumetric" : "MaterialMaterialInventory";
+
+		int typeCode = (int) inputMap.get("nmaterialtypecode") == Enumeration.TransactionStatus.STANDARDTYPE
+				.gettransactionstatus() ? 1
+						: (int) inputMap.get("nmaterialtypecode") == Enumeration.TransactionStatus.VOLUMETRICTYPE
+								.gettransactionstatus() ? 2 : 3;
+
+		lstcount = materialRepository.findByNmaterialcodeAndNstatus((Integer) inputMap.get("nmaterialcode"), -1);
+
+		if (lstcount.size() == 0) {
+
 //			String selectionKeyName1 = "select (jsondata->'" + userInfo.getNformcode() + "'->'" + type
 //					+ "datefields')::jsonb as jsondata from mappedtemplatefieldpropsmaterial  where   nstatus="
 //					+ Enumeration.TransactionStatus.ACTIVE.gettransactionstatus() + " and nmaterialconfigcode="
 //					+ typeCode;
 //			
 //			lstsearchFields = jdbcTemplate.query(selectionKeyName1, new MappedTemplateFieldPropsMaterial());
+//			
+//			MappedTemplateFieldPropsMaterial objMaterialFieldPropsMaterial = 
+//					mappedTemplateFieldPropsMaterialRepository.findByNmaterialconfigcodeAndNstatus(typeCode,1);
 //
 //			JSONArray objarray = new JSONArray(lstsearchFields.get(0).getJsondata());
 //			for (int i = 0; i < objarray.length(); i++) {
@@ -324,13 +338,17 @@ public class MaterialService {
 //				}
 //			}
 //			objmap.put("DateFeildsMaterial", lstsearchField);
-//
+
 //			String query1 = " select json_agg(a.jsondata) from(select jsondata||json_build_object('needsectionwise',mc.needsectionwise)::jsonb as jsondata  from  material m,materialcategory"
 //					+ " mc where m.nstatus=" + Enumeration.TransactionStatus.ACTIVE.gettransactionstatus()
 //					+ " and m.nmaterialcode in (" + inputMap.get("nmaterialcode")
 //					+ ") and (jsondata->'nmaterialcatcode')::int=mc.nmaterialcatcode)a;";
-//			// List<Material> objMaterial = jdbcTemplate.query(query1, new Material());
+			// List<Material> objMaterial = jdbcTemplate.query(query1, new Material());
 //			String objMaterial = jdbcTemplate.queryForObject(query1, String.class);
+
+			final Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,
+					(Integer) inputMap.get("nmaterialcode"));
+
 //			lstMaterial = objmapper.convertValue(
 //					getSiteLocalTimeFromUTCForRegTmplate(objMaterial, userInfo, true,
 //							(int) inputMap.get("nmaterialtypecode") == Enumeration.TransactionStatus.STANDARDTYPE
@@ -352,14 +370,18 @@ public class MaterialService {
 //			if (!submittedDateFeilds.isEmpty()) {
 //				objmap.put("MaterialDateFeild", submittedDateFeilds);
 //			}
-//
-//			objmap.put("EditedMaterial", lstMaterial);
-//			return new ResponseEntity<>(objmap, HttpStatus.OK);
-//		} else {
-//			return new ResponseEntity<>(
-//					commonFunction.getMultilingualMessage("IDS_ALREADYDELETED", userInfo.getSlanguagefilename()),
-//					HttpStatus.CONFLICT);
-//		}
-//	}
+
+			Map<String, Object> objMaterialMap = objmapper.readValue(objMaterial.getJsonuidata(),
+					new TypeReference<Map<String, Object>>() {
+					});
+
+			lstMaterial.add(0, objMaterialMap);
+
+			objmap.put("EditedMaterial", lstMaterial);
+			return new ResponseEntity<>(objmap, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+	}
 
 }

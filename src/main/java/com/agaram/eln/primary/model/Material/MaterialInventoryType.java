@@ -9,76 +9,57 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity
-@Table(name = "period")
-public class Period {
-
+@Table(name = "materialinventorytype")
+public class MaterialInventoryType {
 	@Id
-	@Column(name = "nperiodcode")
-	private Integer nperiodcode;
-	@Type(type = "jsonb")
+	@Column(name = "ninventorytypecode")
+	private Integer ninventorytypecode;
 	@Column(name = "jsondata", columnDefinition = "jsonb")
 	private String jsondata;
-	@Column(name = "ndefaultstatus")
-	private Integer ndefaultstatus;
-	@Column(name = "nsitecode")
-	private Integer nsitecode;
 	@Column(name = "nstatus")
 	private Integer nstatus;
-
-	public Integer getNperiodcode() {
-		return nperiodcode;
+	@Column(name = "ndefaultstatus")
+	private Integer ndefaultstatus;
+	
+	public Integer getNinventorytypecode() {
+		return ninventorytypecode;
 	}
-
-	public void setNperiodcode(Integer nperiodcode) {
-		this.nperiodcode = nperiodcode;
+	public void setNinventorytypecode(Integer ninventorytypecode) {
+		this.ninventorytypecode = ninventorytypecode;
 	}
-
-	public Map<String, Object> getJsondata() throws JsonParseException, JsonMappingException, IOException {
-
-		if (jsondata.isEmpty()) {
+	public Map<String,Object> getJsondata() throws JsonParseException, JsonMappingException, IOException {
+		
+		if(jsondata.isEmpty()) {
 			Map<String, Object> resObj = new HashMap<String, Object>();
-
+			
 			return resObj;
 		}
-
 		@SuppressWarnings("unchecked")
 		Map<String, Object> resObj = new ObjectMapper().readValue(jsondata, Map.class);
-
+		
 		return resObj;
 	}
-
+	
 	public void setJsondata(String jsondata) {
 		this.jsondata = jsondata;
 	}
-
-	public Integer getNdefaultstatus() {
-		return ndefaultstatus;
-	}
-
-	public void setNdefaultstatus(Integer ndefaultstatus) {
-		this.ndefaultstatus = ndefaultstatus;
-	}
-
-	public Integer getNsitecode() {
-		return nsitecode;
-	}
-
-	public void setNsitecode(Integer nsitecode) {
-		this.nsitecode = nsitecode;
-	}
-
 	public Integer getNstatus() {
 		return nstatus;
 	}
-
 	public void setNstatus(Integer nstatus) {
 		this.nstatus = nstatus;
 	}
+	public Integer getNdefaultstatus() {
+		return ndefaultstatus;
+	}
+	public void setNdefaultstatus(Integer ndefaultstatus) {
+		this.ndefaultstatus = ndefaultstatus;
+	}
+	
+	
 }

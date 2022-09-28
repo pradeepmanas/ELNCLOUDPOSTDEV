@@ -113,9 +113,9 @@ CREATE TABLE IF NOT EXISTS public.materialtype
 (
     nmaterialtypecode integer NOT NULL,
     jsondata jsonb,
-    ndefaultstatus smallint NOT NULL DEFAULT 4,
-    nsitecode smallint NOT NULL DEFAULT '-1'::integer,
-    nstatus smallint NOT NULL DEFAULT 1,
+    ndefaultstatus integer NOT NULL DEFAULT 4,
+    nsitecode integer NOT NULL DEFAULT '-1'::integer,
+    nstatus integer NOT NULL DEFAULT 1,
     CONSTRAINT materialtype_pkey PRIMARY KEY (nmaterialtypecode)
 )
 WITH (
@@ -274,12 +274,30 @@ CREATE TABLE IF NOT EXISTS public.period
 
 TABLESPACE pg_default;
 
-ALTER TABLE public.period
-    OWNER to postgres;
+ALTER TABLE public.period OWNER to postgres;
 	
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'section_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE section_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;   
+    
 CREATE TABLE IF NOT EXISTS public.section
 (
-    nsectioncode integer NOT NULL,
+    nsectioncode integer  Not NULL DEFAULT nextval('section_sequence'::regclass),
     ssectionname character varying(100) NOT NULL,
     sdescription character varying(255) ,
     ndefaultstatus integer NOT NULL DEFAULT 4,
@@ -290,12 +308,30 @@ CREATE TABLE IF NOT EXISTS public.section
 
 TABLESPACE pg_default;
 
-ALTER TABLE public.section
-    OWNER to postgres;
-	
+ALTER TABLE public.section  OWNER to postgres;
+    
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'unit_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE unit_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;   
+    
 CREATE TABLE IF NOT EXISTS public.unit
 (
-    nunitcode integer NOT NULL,
+    nunitcode integer Not NULL DEFAULT nextval('unit_sequence'::regclass),
     sunitname character varying(100) NOT NULL,
     sdescription character varying(255) ,
     ndefaultstatus integer NOT NULL DEFAULT 4,
@@ -306,8 +342,8 @@ CREATE TABLE IF NOT EXISTS public.unit
 
 TABLESPACE pg_default;
 
-ALTER TABLE public.unit
-    OWNER to postgres;
+ALTER TABLE public.unit OWNER to postgres;
+
 
 DO
 $do$
@@ -1105,7 +1141,6 @@ update lsusergrouprights set displaytopic='IDS_SCN_DOMAIN' where displaytopic='I
 update lsusergrouprightsmaster set sequenceorder=7 where modulename='IDS_MDL_SETUP';
 update lsusergrouprights set sequenceorder=7 where modulename='IDS_MDL_SETUP';
 update lsusergrouprights set displaytopic ='IDS_TSK_CREATEARCHIVE' where displaytopic='Create Archive';
-update lsusergrouprights set displaytopic = 'IDS_TSK_ACTDEACTUSERMASTER' where screenname='IDS_SCN_USERMASTER';
 update lsusergrouprights set displaytopic='IDS_SCN_AUDITTRAILHIS' where displaytopic='IDS_SCN_AUDITTRAILHISTORY';
 update lsusergrouprightsmaster set displaytopic='IDS_SCN_AUDITTRAILHIS' where displaytopic='IDS_SCN_AUDITTRAILHISTORY';
 
@@ -1812,3 +1847,1178 @@ ALTER TABLE public.lssheetfolderfiles
     
 
  ALTER TABLE IF Exists ParserField ADD COLUMN IF NOT EXISTS datatype varchar(50);
+ 
+ Do
+ $do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'datatype_datatypekey_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN       
+      CREATE SEQUENCE datatype_datatypekey_seq;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+ CREATE TABLE IF NOT EXISTS public.datatype
+(
+    datatypekey integer NOT NULL DEFAULT nextval('datatype_datatypekey_seq'::regclass),
+    datatypename character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT datatype_pkey PRIMARY KEY (datatypekey)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.datatype
+    OWNER to postgres;
+    
+ ALTER TABLE IF Exists ParserField Drop COLUMN IF EXISTS datatype;
+ 
+ ALTER TABLE IF Exists ParserField ADD COLUMN IF NOT EXISTS datatypekey integer;
+ 
+DO
+$do$
+declare
+  resultvalues integer :=0;
+begin
+
+SELECT count(*) into resultvalues FROM
+information_schema.table_constraints WHERE constraint_name='fk6xm923bww44i2t95jw2b8keo4'
+AND table_name='parserfield';
+ IF resultvalues =0 THEN
+ 	ALTER TABLE ONLY parserfield ADD CONSTRAINT fk6xm923bww44i2t95jw2b8keo4 FOREIGN KEY (datatypekey) REFERENCES datatype (datatypekey);
+   END IF;
+END
+$do$;  
+
+    
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from datatype where datatypename = 'string';
+
+   IF counter=0 THEN       -- name is free
+insert into datatype (datatypekey,datatypename)SELECT 1,'string'
+WHERE NOT EXISTS (select * from datatype where datatypename = 'string'); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from datatype where datatypename = 'Integer';
+
+   IF counter=0 THEN       -- name is free
+insert into datatype (datatypekey,datatypename)SELECT 2,'Integer'
+WHERE NOT EXISTS (select * from datatype where datatypename = 'Integer'); 
+   END IF;
+END
+$do$;
+ 
+ 
+ DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'materialinventory_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE materialinventory_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.materialinventory
+(
+    nmaterialinventorycode integer NOT NULL DEFAULT nextval('materialinventory_sequence'::regclass),
+    nmaterialcode integer NOT NULL,
+    nmaterialcatcode integer NOT NULL,
+    nmaterialtypecode integer NOT NULL,
+    ntransactionstatus integer NOT NULL,
+    nsectioncode integer NOT NULL,
+    jsondata jsonb NOT NULL,
+    jsonuidata jsonb NOT NULL,
+    nstatus integer NOT NULL DEFAULT 1,
+    CONSTRAINT materialinventory_pkey PRIMARY KEY (nmaterialinventorycode)
+    --CONSTRAINT material_nmaterialcode FOREIGN KEY (nmaterialcode)
+    --REFERENCES public.material (nmaterialcode) MATCH SIMPLE
+    --ON UPDATE NO ACTION
+    --ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.materialinventory OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.transactionstatus
+(
+    ntranscode integer NOT NULL,
+    stransstatus character varying(50) NOT NULL,
+    jsondata jsonb NOT NULL,
+    nstatus integer NOT NULL DEFAULT 1,
+    CONSTRAINT transactionstatus_pkey PRIMARY KEY (ntranscode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.transactionstatus OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.materialinventorytype
+(
+    ninventorytypecode Integer NOT NULL,
+    jsondata jsonb NOT NULL,
+    ndefaultstatus Integer NOT NULL DEFAULT 1,
+    nstatus Integer NOT NULL DEFAULT 1,
+    CONSTRAINT materialinventorytype_pkey PRIMARY KEY (ninventorytypecode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.materialinventorytype OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'materialgrade_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE materialgrade_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;
+    
+CREATE TABLE IF NOT EXISTS public.materialgrade
+(
+    nmaterialgradecode Integer NOT NULL DEFAULT nextval('materialgrade_sequence'::regclass),
+    jsondata jsonb NOT NULL,
+    ndefaultstatus Integer NOT NULL DEFAULT 4,
+    nsitecode Integer NOT NULL DEFAULT '-1'::integer,
+    nstatus Integer NOT NULL DEFAULT 1,
+    CONSTRAINT materialgrade_pkey PRIMARY KEY (nmaterialgradecode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.materialgrade OWNER to postgres; 
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'material_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE material_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.material
+(
+    nmaterialcode integer NOT NULL DEFAULT nextval('material_sequence'::regclass), 
+    nmaterialcatcode integer NOT NULL,
+    nmaterialtypecode integer NOT NULL,
+    ntransactionstatus integer NOT NULL,
+    smaterialname character varying(100) NOT NULL,
+    jsondata jsonb NOT NULL,
+    jsonuidata jsonb NOT NULL,
+    nstatus integer NOT NULL DEFAULT 1,
+    CONSTRAINT material_pkey PRIMARY KEY (nmaterialcode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.material OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.mappedtemplatefieldpropsmaterial
+(
+    nmappedtemplatefieldpropmaterialcode integer NOT NULL,
+    nmaterialconfigcode integer NOT NULL,
+    jsondata jsonb NOT NULL,
+    nstatus integer NOT NULL DEFAULT 1,
+    CONSTRAINT mappedtemplatefieldpropsmaterial_pkey PRIMARY KEY (nmappedtemplatefieldpropmaterialcode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.mappedtemplatefieldpropsmaterial OWNER to postgres;
+
+INSERT INTO public.unit(
+nunitcode, sunitname, sdescription, ndefaultstatus, nsitecode, nstatus)
+VALUES (1, 'ml', '', 1, 1, 1)on conflict (nunitcode) do nothing;
+
+INSERT INTO public.unit(
+nunitcode, sunitname, sdescription, ndefaultstatus, nsitecode, nstatus)
+VALUES (2, 'kg', '', 1, 1, 1)on conflict (nunitcode) do nothing;
+
+INSERT INTO public.section(
+nsectioncode, ssectionname, sdescription, ndefaultstatus, nsitecode, nstatus)
+VALUES (1, 'A', '', 1, 1, 1)on conflict (nsectioncode) do nothing;
+
+INSERT INTO public.section(
+nsectioncode, ssectionname, sdescription, ndefaultstatus, nsitecode, nstatus)
+VALUES (2, 'B', '', 1, 1, 1)on conflict (nsectioncode) do nothing;
+
+insert into period values(-1,'{
+    "ndata": -1,
+    "nmaxlength": 0,
+    "speriodname": {
+        "en-US": "NA",
+        "ru-RU": "нет данных",
+        "tg-TG": "НА"
+    },
+    "sdescription": "NA"
+}',4,-1,1)on conflict (nperiodcode) do nothing;
+
+insert into period values(1,'{
+    "ndata": 1,
+    "nmaxlength": 5,
+    "speriodname": {
+        "en-US": "Minutes",
+        "ru-RU": "Минуты",
+        "tg-TG": "Дакикахо"
+    },
+    "sdescription": ""
+}',4,-1,1)on conflict (nperiodcode) do nothing;
+
+insert into materialgrade values(1,'{
+    "sdescription": "",
+    "smaterialgradename": "A"
+}',4,-1,1)on conflict (nmaterialgradecode) do nothing;
+
+insert into materialgrade values(2,'{
+    "sdescription": "",
+    "smaterialgradename": "B"
+}',4,-1,1)on conflict (nmaterialgradecode) do nothing;
+
+insert into materialconfig values(1,1,40,'[
+    {
+        "id": "pv1OWbsMYq",
+        "type": "row",
+        "children": [
+            {
+                "id": "Nybc4TT-jv",
+                "type": "column",
+                "children": [
+                    {
+                        "id": "wwi4eC9iw",
+                        "type": "component",
+                        "label": "Material Category",
+                        "parent": "materialtype",
+                        "source": "materialcategory",
+                        "inputtype": "combo",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Material Category",
+                            "ru-RU": "Категория материала",
+                            "tg-TG": "Категорияи мавод"
+                        },
+                        "valuemember": "nmaterialcatcode",
+                        "componentcode": 3,
+                        "componentname": "Combo Box",
+                        "displaymember": "smaterialcatname"
+                    },
+                    {
+                        "type": "component",
+                        "label": "Material Name",
+                        "inputtype": "textinput",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Standard Name",
+                            "ru-RU": "Стандартное имя",
+                            "tg-TG": "Номи стандартӣ"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "type": "component",
+                        "label": "Basic Unit",
+                        "source": "unit",
+                        "inputtype": "combo",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Basic Unit",
+                            "ru-RU": "Базовая единица",
+                            "tg-TG": "Воҳиди асосӣ"
+                        },
+                        "valuemember": "nunitcode",
+                        "displaymember": "sunitname",
+                        "nstandardtype": 3
+                    },
+                    {
+                        "type": "component",
+                        "label": "Prefix",
+                        "inputtype": "textinput",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Prefix",
+                            "ru-RU": "Префикс",
+                            "tg-TG": "Префикс"
+                        },
+                        "sdisplayname": "sprefix",
+                        "sfieldlength": 10
+                    },
+                    {
+                        "type": "component",
+                        "label": "Quarantine",
+                        "inputtype": "toggle",
+                        "displayname": {
+                            "en-US": "Quarantine",
+                            "ru-RU": "Карантин",
+                            "tg-TG": "Карантин"
+                        },
+                        "sdisplayname": "stransstatus",
+                        "nstandardtype": 3
+                    }
+                ]
+            },
+            {
+                "type": "column",
+                "children": [
+                    {
+                        "label": "Section",
+                        "source": "section",
+                        "readonly": false,
+                        "inputtype": "combo",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Section",
+                            "ru-RU": "Раздел",
+                            "tg-TG": "Ҷудокунӣ"
+                        },
+                        "valuemember": "nsectioncode",
+                        "displaymember": "ssectionname",
+                        "nsqlquerycode": 2,
+                        "nstandardtype": 3
+                    },
+                    {
+                        "max": 99999999,
+                        "min": 0,
+                        "type": "component",
+                        "label": "Reorder Level",
+                        "readonly": false,
+                        "inputtype": "Numeric",
+                        "precision": 4,
+                        "displayname": {
+                            "en-US": "Reorder Level",
+                            "ru-RU": "Уровень повторного заказа",
+                            "tg-TG": "Сатҳи азнавсозӣ"
+                        },
+                        "sdisplayname": "nreorderlevel",
+                        "sfieldlength": 8,
+                        "nstandardtype": 3
+                    },
+                    {
+                        "id": "-yskhHhld",
+                        "type": "component",
+                        "label": "Expiry Validations",
+                        "inputtype": "radio",
+                        "displayname": {
+                            "en-US": "Expiry Validations",
+                            "ru-RU": "Проверка истечения срока действия",
+                            "tg-TG": "Санҷишҳои мӯҳлат"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": "No Expiry",
+                                    "text": "No Expiry",
+                                    "defaultchecked": "No Expiry"
+                                },
+                                {
+                                    "id": "Expiry date",
+                                    "text": "Expiry date"
+                                },
+                                {
+                                    "id": "Expiry policy",
+                                    "text": "Expiry policy"
+                                }
+                            ]
+                        },
+                        "componentcode": 7,
+                        "componentname": "Multiple Choice"
+                    },
+                    {
+                        "type": "componentrow",
+                        "children": [
+                            {
+                                "max": 99999999,
+                                "min": 0,
+                                "type": "component",
+                                "label": "Expiry Policy Days",
+                                "readonly": false,
+                                "inputtype": "Numeric",
+                                "displayname": {
+                                    "en-US": "Expiry Policy Days",
+                                    "ru-RU": "Срок действия полиса дней",
+                                    "tg-TG": "Рӯзҳои сиёсати мӯҳлат"
+                                },
+                                "sdisplayname": "speriodexpiry",
+                                "sfieldlength": 8
+                            },
+                            {
+                                "type": "component",
+                                "label": "Expiry Policy Period",
+                                "source": "period",
+                                "inputtype": "combo",
+                                "displayname": {
+                                    "en-US": "Expiry Policy Period",
+                                    "ru-RU": "Срок действия полиса",
+                                    "tg-TG": "Мӯҳлати ба охир расидани сиёсати"
+                                },
+                                "valuemember": "nperiodcode",
+                                "displaymember": "speriodname",
+                                "nsqlquerycode": 1,
+                                "isMultiLingual": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "component",
+                        "label": "Open Expiry Need",
+                        "inputtype": "toggle",
+                        "displayname": {
+                            "en-US": "Open Expiry Need",
+                            "ru-RU": "Открыть истечение срока действия",
+                            "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"
+                        },
+                        "sdisplayname": "stransstatus",
+                        "nstandardtype": 4
+                    },
+                    {
+                        "type": "componentrow",
+                        "children": [
+                            {
+                                "max": 99999999,
+                                "min": 0,
+                                "type": "component",
+                                "label": "Open Expiry",
+                                "readonly": false,
+                                "inputtype": "Numeric",
+                                "displayname": {
+                                    "en-US": "Open Expiry",
+                                    "ru-RU": "Открытый срок действия",
+                                    "tg-TG": "Муддатро кушоед"
+                                },
+                                "sdisplayname": "speriodopen",
+                                "sfieldlength": 8
+                            },
+                            {
+                                "type": "component",
+                                "label": "Open Expiry Period",
+                                "source": "period",
+                                "inputtype": "combo",
+                                "displayname": {
+                                    "en-US": "Open Expiry Period",
+                                    "ru-RU": "Открытый срок действия",
+                                    "tg-TG": "Мӯҳлати кушодани мӯҳлат"
+                                },
+                                "valuemember": "nperiodcode",
+                                "displaymember": "speriodname",
+                                "nsqlquerycode": 1,
+                                "isMultiLingual": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "component",
+                        "label": "Next Validation Need",
+                        "inputtype": "toggle",
+                        "displayname": {
+                            "en-US": "Next Validation Need",
+                            "ru-RU": "Следующая Потребность В Проверке",
+                            "tg-TG": "Минбаъда Зарурати Ба Санҷиши"
+                        },
+                        "sdisplayname": "stransstatus",
+                        "nstandardtype": 4,
+                        "defaultchecked": 4
+                    },
+                    {
+                        "type": "componentrow",
+                        "children": [
+                            {
+                                "max": 99999999,
+                                "min": 0,
+                                "type": "component",
+                                "label": "Next Validation",
+                                "readonly": false,
+                                "inputtype": "Numeric",
+                                "displayname": {
+                                    "en-US": "Next Validation",
+                                    "ru-RU": "Следующая проверка",
+                                    "tg-TG": "Оянда санҷиши"
+                                },
+                                "sdisplayname": "speriodopen",
+                                "sfieldlength": 8
+                            },
+                            {
+                                "type": "component",
+                                "label": "Next Validation Period",
+                                "source": "period",
+                                "inputtype": "combo",
+                                "displayname": {
+                                    "en-US": "Next Validation Period",
+                                    "ru-RU": "Следующий Период Проверки",
+                                    "tg-TG": "Баъдӣ Давраи Санҷиши"
+                                },
+                                "valuemember": "nperiodcode",
+                                "displaymember": "speriodname",
+                                "nsqlquerycode": 1,
+                                "isMultiLingual": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "component",
+                        "label": "Remarks",
+                        "inputtype": "textarea",
+                        "displayname": {
+                            "en-US": "Remarks",
+                            "ru-RU": "Примечания",
+                            "tg-TG": "Мулохизахо"
+                        },
+                        "sdisplayname": "sremarks",
+                        "sfieldlength": 255,
+                        "nstandardtype": 3
+                    }
+                ]
+            }
+        ]
+    }
+]',1)on conflict(nmaterialconfigcode)do nothing;
+
+   
+insert into materialconfig values(2,1,138,'[
+    {
+        "id": "pv1OWbsMYq",
+        "type": "row",
+        "children": [
+            {
+                "id": "Nybc4TT-jv",
+                "type": "column",
+                "children": [
+                    {
+                        "label": "Internal Reference",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Internal Reference",
+                            "ru-RU": "Внутренняя ссылка",
+                            "tg-TG": "Маълумоти дохилӣ"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Batch No.",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Batch No.",
+                            "ru-RU": "Серия №.",
+                            "tg-TG": "Рақами партия"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Lot No.",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Lot No.",
+                            "ru-RU": "Много не.",
+                            "tg-TG": "Лот №"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Reference Number",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Reference Number",
+                            "ru-RU": "Справочный номер",
+                            "tg-TG": "Рақами истинод"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Container ID",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Container ID",
+                            "ru-RU": "Идентификатор контейнера",
+                            "tg-TG": "ID контейнер"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Storage Location",
+                        "source": "storagelocation",
+                        "readonly": false,
+                        "inputtype": "combo",
+                        "displayname": {
+                            "en-US": "Storage Location",
+                            "ru-RU": "Место хранения",
+                            "tg-TG": "Ҷойгоҳи нигаҳдорӣ"
+                        },
+                        "valuemember": "nstoragelocationcode",
+                        "displaymember": "sstoragelocationname",
+                        "nstandardtype": 3
+                    },
+                    {
+                        "label": "Supplier",
+                        "source": "supplier",
+                        "readonly": false,
+                        "inputtype": "combo",
+                        "displayname": {
+                            "en-US": "Supplier",
+                            "ru-RU": "Поставщик",
+                            "tg-TG": "Таъминкунанда"
+                        },
+                        "valuemember": "nsuppliercode",
+                        "displaymember": "ssuppliername",
+                        "nstandardtype": 3
+                    },
+                    {
+                        "label": "Manufacturer",
+                        "source": "manufacturer",
+                        "readonly": false,
+                        "inputtype": "combo",
+                        "displayname": {
+                            "en-US": "Manufacturer",
+                            "ru-RU": "Производитель",
+                            "tg-TG": "Истеҳсолкунанда"
+                        },
+                        "valuemember": "nmanufcode",
+                        "displaymember": "smanufname",
+                        "nstandardtype": 3
+                    }
+                ]
+            },
+            {
+                "type": "column",
+                "children": [
+                    {
+                        "label": "Section",
+                        "source": "section",
+                        "readonly": false,
+                        "inputtype": "combo",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Section",
+                            "ru-RU": "Раздел",
+                            "tg-TG": "Ҷудокунӣ"
+                        },
+                        "valuemember": "nsectioncode",
+                        "displaymember": "ssectionname",
+                        "nsqlquerycode": 4,
+                        "nstandardtype": 3
+                    },
+                    {
+                        "type": "componentrow",
+                        "children": [
+                            {
+                                "max": 99999999,
+                                "min": 0,
+                                "type": "component",
+                                "label": "Received Quantity",
+                                "readonly": false,
+                                "inputtype": "Numeric",
+                                "mandatory": 3,
+                                "precision": 3,
+                                "displayname": {
+                                    "en-US": "Received Quantity",
+                                    "ru-RU": "Полученное количество",
+                                    "tg-TG": "Миқдори гирифташуда"
+                                },
+                                "sdisplayname": "nqtyreceived",
+                                "sfieldlength": 8,
+                                "nstandardtype": 3,
+                                "fieldsForExpandedGrid": true
+                            },
+                            {
+                                "type": "component",
+                                "label": "Unit",
+                                "parent": "unit",
+                                "source": "unit",
+                                "readonly": true,
+                                "inputtype": "combo",
+                                "displayname": {
+                                    "en-US": "Unit",
+                                    "ru-RU": "Ед. изм",
+                                    "tg-TG": "Воҳиди"
+                                },
+                                "valuemember": "nunitcode",
+                                "displaymember": "sunitname",
+                                "nstandardtype": 3
+                            }
+                        ]
+                    },
+                    {
+                        "label": "Grade",
+                        "source": "materialgrade",
+                        "readonly": false,
+                        "inputtype": "combo",
+                        "displayname": {
+                            "en-US": "Grade",
+                            "ru-RU": "Оценка",
+                            "tg-TG": "Синф"
+                        },
+                        "valuemember": "nmaterialgradecode",
+                        "displaymember": "smaterialgradename",
+                        "nstandardtype": 3
+                    },
+                    {
+                        "max": 99999999,
+                        "min": 0,
+                        "type": "component",
+                        "label": "Cost",
+                        "readonly": false,
+                        "inputtype": "Numeric",
+                        "displayname": {
+                            "en-US": "Cost",
+                            "ru-RU": "Расходы",
+                            "tg-TG": "Арзиш"
+                        },
+                        "sfieldlength": 8
+                    },
+                    {
+                        "label": "Date Of Manufacturer",
+                        "inputtype": "date",
+                        "displayname": {
+                            "en-US": "Date Of Manufacturer",
+                            "ru-RU": "Дата изготовления",
+                            "tg-TG": "Санаи Истеҳсолкунанда"
+                        }
+                    },
+                    {
+                        "label": "Received Date & Time",
+                        "inputtype": "date",
+                        "displayname": {
+                            "en-US": "Received Date & Time",
+                            "ru-RU": "Дата и время получения",
+                            "tg-TG": "Сана ва вақти қабулшуда"
+                        }
+                    },
+                    {
+                        "label": "Expiry Date & Time",
+                        "inputtype": "date",
+                        "displayname": {
+                            "en-US": "Expiry Date & Time",
+                            "ru-RU": "Дата и время истечения срока действия",
+                            "tg-TG": "Санаи ба охир расидан ва вақт"
+                        }
+                    },
+                    {
+                        "label": "Remarks",
+                        "readonly": false,
+                        "inputtype": "textarea",
+                        "displayname": {
+                            "en-US": "Remarks",
+                            "ru-RU": "Примечания",
+                            "tg-TG": "Мулохизахо"
+                        },
+                        "sfieldlength": 255
+                    }
+                ]
+            }
+        ]
+    }
+]',1)on conflict(nmaterialconfigcode)do nothing;
+
+insert into materialconfig values(3,-1,138,'[
+    {
+        "id": "pv1OWbsMYq",
+        "type": "row",
+        "children": [
+            {
+                "id": "Nybc4TT-jv",
+                "type": "column",
+                "children": [
+                    {
+                        "child": [
+                            {
+                                "label": "Transaction Type",
+                                "childPath": "0-0-1-0",
+                                "isMultiLingual": true,
+                                "tablecolumnname": "ntranscode"
+                            }
+                        ],
+                        "label": "Inventory Transaction Type",
+                        "parent": true,
+                        "source": "materialinventorytype",
+                        "readonly": false,
+                        "inputtype": "combo",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Inventory Transaction Type",
+                            "ru-RU": "Тип транзакции инвентаря",
+                            "tg-TG": "Навъи муомилоти инвентаризатсия"
+                        },
+                        "valuemember": "ninventorytypecode",
+                        "displaymember": "sinventorytypename",
+                        "fieldsForGrid": true,
+                        "nstandardtype": 3,
+                        "isMultiLingual": true
+                    },
+                    {
+                        "label": "Transaction Type",
+                        "parent": false,
+                        "source": "transactionstatus",
+                        "readonly": false,
+                        "inputtype": "combo",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Transaction Type",
+                            "ru-RU": "Тип операции",
+                            "tg-TG": "Навъи транзаксия"
+                        },
+                        "valuemember": "ntranscode",
+                        "defaultvalues": [
+                            {
+                                "1": "48,72"
+                            },
+                            {
+                                "2": "47,33"
+                            }
+                        ],
+                        "displaymember": "stransdisplaystatus",
+                        "fieldsForGrid": true,
+                        "nstandardtype": 3,
+                        "isMultiLingual": true,
+                        "parentprimarycode": "ninventorytypecode",
+                        "Inventory Transaction Type": [
+                            {
+                                "label": "Transaction Type",
+                                "source": "transactionstatus",
+                                "valuemember": "ntranscode",
+                                "defaultvalues": [
+                                    {
+                                        "1": "48,72"
+                                    },
+                                    {
+                                        "2": "47,33"
+                                    }
+                                ],
+                                "displaymember": "stransdisplaystatus",
+                                "parentprimarycode": "ninventorytypecode"
+                            }
+                        ]
+                    },
+                    {
+                        "label": "Available Quantity/Unit",
+                        "readonly": true,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Available Quantity/Unit",
+                            "ru-RU": "Доступное количество/единица",
+                            "tg-TG": "Миқдор/Воҳиди дастрас"
+                        },
+                        "sfieldlength": 100,
+                        "needAccordian": true,
+                        "fieldsForExpandedGrid": true
+                    },
+                    {
+                        "max": 99999999,
+                        "min": 0,
+                        "type": "component",
+                        "label": "Received Quantity",
+                        "readonly": false,
+                        "inputtype": "Numeric",
+                        "mandatory": 3,
+                        "precision": 3,
+                        "displayname": {
+                            "en-US": "Quantity",
+                            "ru-RU": "Количество",
+                            "tg-TG": "Миқдор"
+                        },
+                        "sdisplayname": "nqtyreceived",
+                        "sfieldlength": 8,
+                        "nstandardtype": 3,
+                        "fieldsForExpandedGrid": true
+                    },
+                    {
+                        "label": "Section",
+                        "parent": true,
+                        "source": "section",
+                        "readonly": false,
+                        "inputtype": "combo",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Section",
+                            "ru-RU": "Раздел",
+                            "tg-TG": "Ҷудокунӣ"
+                        },
+                        "valuemember": "nsectioncode",
+                        "displaymember": "ssectionname",
+                        "nsqlquerycode": 3,
+                        "nstandardtype": 3,
+                        "fieldsForExpandedGrid": true
+                    },
+                    {
+                        "label": "Comments",
+                        "readonly": false,
+                        "inputtype": "textarea",
+                        "displayname": {
+                            "en-US": "Comments",
+                            "ru-RU": "Комментарии",
+                            "tg-TG": "Шарҳҳо"
+                        },
+                        "sfieldlength": 255,
+                        "fieldsForExpandedGrid": true
+                    },
+                    {
+                        "nprecision": "11,3"
+                    }
+                ]
+            }
+        ]
+    }
+]',1)on conflict(nmaterialconfigcode)do nothing;
+
+insert into mappedtemplatefieldpropsmaterial 
+values(1,1,'{
+        "ListMasterProps": [
+            {
+                "mainField": "Material Name",
+                "firstField": "Reorder Level"
+            }
+        ],
+        "searchFieldList": [
+            {
+                "searchFieldList": "Material Name"
+            }
+        ],
+        "MaterialViewFields": [
+            {
+                "1": {
+                    "en-US": "Material Category",
+                    "ru-RU": "Категория материала",
+                    "tg-TG": "Категорияи мавод"
+                },
+                "2": "Material Category"
+            },
+            {
+                "1": {
+                    "en-US": "Standard Name",
+                    "ru-RU": "Стандартное имя",
+                    "tg-TG": "Номи стандартӣ"
+                },
+                "2": "Material Name"
+            },
+            {
+                "1": {
+                    "en-US": "Basic Unit",
+                    "ru-RU": "Базовая единица",
+                    "tg-TG": "Воҳиди асосӣ"
+                },
+                "2": "Basic Unit"
+            },
+            {
+                "1": {
+                    "en-US": "Prefix",
+                    "ru-RU": "Префикс",
+                    "tg-TG": "Префикс"
+                },
+                "2": "Prefix"
+            },
+            {
+                "1": {
+                    "en-US": "Quarantine",
+                    "ru-RU": "Карантин",
+                    "tg-TG": "Карантин"
+                },
+                "2": "Quarantine"
+            },
+            {
+                "1": {
+                    "en-US": "Reorder Level",
+                    "ru-RU": "Уровень повторного заказа",
+                    "tg-TG": "Сатҳи азнавсозӣ"
+                },
+                "2": "Reorder Level"
+            },
+            {
+                "1": {
+                    "en-US": "Expiry Validations",
+                    "ru-RU": "Проверка истечения срока действия",
+                    "tg-TG": "Санҷишҳои мӯҳлат"
+                },
+                "2": "Expiry Validations"
+            },
+            {
+                "1": {
+                    "en-US": "Expiry Policy Days",
+                    "ru-RU": "Срок действия полиса дней",
+                    "tg-TG": "Рӯзҳои сиёсати мӯҳлат"
+                },
+                "2": "Expiry Policy Days"
+            },
+            {
+                "1": {
+                    "en-US": "Expiry Policy Period",
+                    "ru-RU": "Срок действия полиса",
+                    "tg-TG": "Мӯҳлати ба охир расидани сиёсати"
+                },
+                "2": "Expiry Policy Period"
+            },
+            {
+                "1": {
+                    "en-US": "Open Expiry Need",
+                    "ru-RU": "Открыть истечение срока действия",
+                    "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"
+                },
+                "2": "Open Expiry Need"
+            },
+            {
+                "1": {
+                    "en-US": "Open Expiry",
+                    "ru-RU": "Открытый срок действия",
+                    "tg-TG": "Муддатро кушоед"
+                },
+                "2": "Open Expiry"
+            },
+            {
+                "1": {
+                    "en-US": "Open Expiry Period",
+                    "ru-RU": "Открытый срок действия",
+                    "tg-TG": "Мӯҳлати кушодани мӯҳлат"
+                },
+                "2": "Open Expiry Period"
+            },
+            {
+                "1": {
+                    "en-US": "Remarks",
+                    "ru-RU": "Примечания",
+                    "tg-TG": "Мулохизахо"
+                },
+                "2": "Remarks"
+            },
+            {
+                "1": {
+                    "en-US": "Next Validation Need",
+                    "ru-RU": "Следующая Потребность В Проверке",
+                    "tg-TG": "Минбаъда Зарурати Ба Санҷиши"
+                },
+                "2": "Next Validation Need"
+            },
+            {
+                "1": {
+                    "en-US": "Next Validation",
+                    "ru-RU": "Следующая проверка",
+                    "tg-TG": "Оянда санҷиши"
+                },
+                "2": "Next Validation"
+            },
+            {
+                "1": {
+                    "en-US": "Next Validation Period",
+                    "ru-RU": "Следующий Период Проверки",
+                    "tg-TG": "Баъдӣ Давраи Санҷиши"
+                },
+                "2": "Next Validation Period"
+            }
+        ],
+        "MaterialStandarddatefields": [
+            {
+                "1": {
+                    "en-US": "Expiry Date & Time",
+                    "ru-RU": "Дата и время истечения срока действия",
+                    "tg-TG": "Санаи ба охир расидан ва вақт"
+                },
+                "2": "Expiry Date & Time",
+                "dateonly": true
+            }
+        ]
+    }', 1)on conflict (nmappedtemplatefieldpropmaterialcode)do nothing;
+
+insert into transactionstatus values(47,'Receive','{
+    "salertdisplaystatus": {
+        "en-US": "Received",
+        "ru-RU": "Получила",
+        "tg-TG": "Гирифтанд"
+    },
+    "stransdisplaystatus": {
+        "en-US": "Received",
+        "ru-RU": "Получила",
+        "tg-TG": "Гирифтанд"
+    },
+    "sactiondisplaystatus": {
+        "en-US": "Receive",
+        "ru-RU": "Получать",
+        "tg-TG": "Гирифтан"
+    }
+}',1)on conflict(ntranscode)do nothing;
+
+insert into transactionstatus values(48,'Issue','{
+    "salertdisplaystatus": {
+        "en-US": "Issued",
+        "ru-RU": "Изданный",
+        "tg-TG": "Нашр шуда"
+    },
+    "stransdisplaystatus": {
+        "en-US": "Issued",
+        "ru-RU": "Изданный",
+        "tg-TG": "Нашр шуда"
+    },
+    "sactiondisplaystatus": {
+        "en-US": "Issue",
+        "ru-RU": "Проблема",
+        "tg-TG": "Чоп"
+    }
+}',1)on conflict(ntranscode)do nothing;
+
+insert into materialinventorytype values(1,'{
+    "sinventorytypename": {
+        "en-US": "Inhouse",
+        "ru-RU": "Внутренний",
+        "tg-TG": "Дар хона"
+    }
+}',3,1)on conflict(ninventorytypecode)do nothing;
+
+insert into materialinventorytype values(2,'{
+    "sinventorytypename": {
+        "en-US": "Outside",
+        "ru-RU": "За пределами",
+        "tg-TG": "Дар берун"
+    }
+}',4,1)on conflict(ninventorytypecode)do nothing;

@@ -10,4 +10,6 @@ import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 public interface MappedTemplateFieldPropsMaterialRepository extends JpaRepository<MappedTemplateFieldPropsMaterial, Integer>{
 	
 	public List<MappedTemplateFieldPropsMaterial> findByNmaterialconfigcode(Integer nmaterialconfigcode);
+
+	public MappedTemplateFieldPropsMaterial findByNmaterialconfigcodeAndNstatus(int typeCode, int i);
 }

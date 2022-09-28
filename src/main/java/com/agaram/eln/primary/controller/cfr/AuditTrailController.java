@@ -59,7 +59,7 @@ public class AuditTrailController {
 	}
 
 	@PostMapping("/GetAuditconfigUser")
-	public Map<String, Object> GetAuditconfigUser(@RequestBody LSaudittrailconfiguration LSaudittrailconfiguration)throws Exception {
+	public Map<String, Object> GetAuditconfigUser(@RequestBody LSuserMaster LSaudittrailconfiguration)throws Exception {
 		return auditService.GetAuditconfigUser(LSaudittrailconfiguration);
 	}
 

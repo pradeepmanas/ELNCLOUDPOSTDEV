@@ -645,6 +645,13 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			String orderflag, Integer approvelstatus, Integer filetype, LSprojectmaster lsprojectmaster,
 			LStestmasterlocal lstestmasterlocal, Date fromdate, Date todate);
 
+	List<Logilaborders> findByOrderflagAndOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+			String orderflag, String orderflag2, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
+
+	List<Logilaborders> findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+			String orderflag, Integer approvelstatus, List<LSprojectmaster> lstproject, Integer filetype, Date fromdate,
+			Date todate);
+
 
 
 

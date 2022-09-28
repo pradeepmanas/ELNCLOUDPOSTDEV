@@ -56,10 +56,10 @@ public class MaterialController {
 //		return objMaterialService.deleteMaterial(inputMap, userInfo);
 //	}
 
-//	@RequestMapping(value = "/getMaterialEdit", method = RequestMethod.POST)
-//	public ResponseEntity<Object> getMaterialEdit(@RequestBody Map<String, Object> inputMap) throws Exception {
-//		
-//		return objMaterialService.getMaterialEdit(inputMap);
-//	}
+	@RequestMapping(value = "/getMaterialEdit", method = RequestMethod.POST)
+	public ResponseEntity<Object> getMaterialEdit(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return objMaterialService.getMaterialEdit(inputMap);
+	}
 
 }
