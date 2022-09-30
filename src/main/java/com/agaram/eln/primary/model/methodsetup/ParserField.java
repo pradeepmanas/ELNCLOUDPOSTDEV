@@ -79,8 +79,8 @@ public class ParserField implements Serializable, Diffable<ParserField>{
 	private Date createddate;	
 			
 //new
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "datatypekey", nullable = false)
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "datatypekey")
 	private DataType datatype;	
 			
 	@XmlAttribute	

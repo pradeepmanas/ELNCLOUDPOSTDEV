@@ -64,6 +64,17 @@ public class Lsprotocolorderstructure {
 	
 	@Transient
 	private String orderflag;
+	
+	@Transient
+	private Integer rejected;
+
+	public Integer getRejected() {
+		return rejected;
+	}
+
+	public void setRejected(Integer rejected) {
+		this.rejected = rejected;
+	}
 
 	public String getOrderflag() {
 		return orderflag;

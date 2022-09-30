@@ -1012,4 +1012,16 @@ public class InstrumentController {
 	{
 		return instrumentService.Getaddedfilesforfolder(lstuuid);
 	}
+	
+	@RequestMapping("/UpdateFolderforfiles")
+	public List<LSsheetfolderfiles> UpdateFolderforfiles(@RequestBody LSsheetfolderfiles[] files)throws Exception
+	{
+		return instrumentService.UpdateFolderforfiles(files);
+	}
+	
+	@RequestMapping("/UpdateFolderforfile")
+	public LSsheetfolderfiles UpdateFolderforfile(@RequestBody LSsheetfolderfiles file)throws Exception
+	{
+		return instrumentService.UpdateFolderforfile(file);
+	}
 }

@@ -3,6 +3,8 @@ package com.agaram.eln.primary.repository.instrumentDetails;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.agaram.eln.primary.model.instrumentDetails.LSsheetfolderfiles;
@@ -16,4 +18,14 @@ public interface LSsheetfolderfilesRepository  extends JpaRepository<LSsheetfold
  
  public LSsheetfolderfiles findByUuid(String uuid);
  public List<LSsheetfolderfiles> findByUuidInOrderByFolderfilecode(List<String> lstuuid);
+ 
+ @Transactional
+	@Modifying
+	@Query("update LSsheetfolderfiles o set o.directorycode = ?1 where o.folderfilecode = ?2")
+	void updatedirectory(Long directorycode , Integer folderfilecode);
+ 
+ @Transactional
+	@Modifying
+	@Query("update LSsheetfolderfiles o set o.directorycode = ?1 where o.folderfilecode in (?2)")
+	void updatedirectory(Long directorycode , List<Integer> folderfilecode);
 }
