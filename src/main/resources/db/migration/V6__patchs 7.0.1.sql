@@ -1126,26 +1126,22 @@ update lsusergrouprightsmaster set screenname='IDS_SCN_INSTRUMENTMASTER' where o
 update lsusergrouprightsmaster set screenname='IDS_SCN_INSTRUMENTCATEGORY' where orderno=68;
 update lsusergrouprightsmaster set screenname='IDS_SCN_TEMPLATEWORKFLOW' where orderno=41;
 update lsusergrouprightsmaster set screenname='IDS_SCN_ORDERWORKLOW' where orderno=20;
-update lsusergrouprightsmaster set sequenceorder=6 where orderno in (66,67);
+
 
 update lsusergrouprightsmaster set status='1,0,0' where orderno=66;
 update lsusergrouprightsmaster set sallow='0',screate='NA',sdelete='NA',sedit='NA' where orderno=22;
 
 update lsusergrouprightsmaster set displaytopic='IDS_SCN_TEMPLATEWORKFLOW' where displaytopic='IDS_SCN_SHEETWORKFLOW';
 update lsusergrouprights set displaytopic='IDS_SCN_TEMPLATEWORKFLOW' where displaytopic='IDS_SCN_SHEETWORKFLOW';
-update lsusergrouprightsmaster set displaytopic='IDS_SCN_ACTIVEUSER' where displaytopic='IDS_TSK_ACTIVEUSER';
 update lsusergrouprights set displaytopic='IDS_SCN_ACTIVEUSER' where displaytopic='IDS_TSK_ACTIVEUSER';
-update lsusergrouprightsmaster set displaytopic='IDS_SCN_DOMAIN' where displaytopic='IDS_TSK_DOMAIN';
 update lsusergrouprights set displaytopic='IDS_SCN_DOMAIN' where displaytopic='IDS_TSK_DOMAIN';
 
-update lsusergrouprightsmaster set sequenceorder=7 where modulename='IDS_MDL_SETUP';
-update lsusergrouprights set sequenceorder=7 where modulename='IDS_MDL_SETUP';
+
 update lsusergrouprights set displaytopic ='IDS_TSK_CREATEARCHIVE' where displaytopic='Create Archive';
 update lsusergrouprights set displaytopic='IDS_SCN_AUDITTRAILHIS' where displaytopic='IDS_SCN_AUDITTRAILHISTORY';
 update lsusergrouprightsmaster set displaytopic='IDS_SCN_AUDITTRAILHIS' where displaytopic='IDS_SCN_AUDITTRAILHISTORY';
 
 update lsusergrouprightsmaster set displaytopic='IDS_TSK_TEMPLATEOVERVIEW' where displaytopic='IDS_TSK_PARAMETEROVERVIEW';
-update lsusergrouprightsmaster set displaytopic='IDS_SCN_DASHBOARD' where displaytopic='IDS_TSK_PARAMETERUSAGE';
 update lsusergrouprights set displaytopic='IDS_TSK_TEMPLATEOVERVIEW' where displaytopic='IDS_TSK_PARAMETEROVERVIEW';
 update lsusergrouprights set displaytopic='IDS_SCN_DASHBOARD' where displaytopic='IDS_TSK_PARAMETERUSAGE';
 
@@ -1157,119 +1153,20 @@ delete from lsusergrouprightsmaster where orderno=44;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (85, 'IDS_TSK_FOLDERCREATION', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',2,'IDS_SCN_SHEETORDERS') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (86, 'IDS_TSK_FOLDERCREATIONPROTOCOL', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',3,'IDS_SCN_PROTOCOLORDERS') ON CONFLICT(orderno)DO NOTHING;
 
-update lsusergrouprightsmaster set sequenceorder=1 where orderno=2;
-update lsusergrouprightsmaster set sequenceorder=2 where orderno=1;
-update lsusergrouprightsmaster set sequenceorder=3 where orderno=3;
-update lsusergrouprightsmaster set sequenceorder=4 where orderno=7;
-update lsusergrouprightsmaster set sequenceorder=5 where orderno=85;
-update lsusergrouprightsmaster set sequenceorder=6 where orderno=8;
-update lsusergrouprightsmaster set sequenceorder=7 where orderno=9;
-update lsusergrouprightsmaster set sequenceorder=8 where orderno=37;
-update lsusergrouprightsmaster set sequenceorder=9 where orderno=38;
-update lsusergrouprightsmaster set sequenceorder=10 where orderno=61;
-update lsusergrouprightsmaster set sequenceorder=11 where orderno=62;
-update lsusergrouprightsmaster set sequenceorder=12 where orderno=5;
-update lsusergrouprightsmaster set sequenceorder=13 where orderno=6;
-update lsusergrouprightsmaster set sequenceorder=14 where orderno=86;
-update lsusergrouprightsmaster set sequenceorder=15 where orderno=48;
-update lsusergrouprightsmaster set sequenceorder=16 where orderno=49;
-update lsusergrouprightsmaster set sequenceorder=17 where orderno=80;
-update lsusergrouprightsmaster set sequenceorder=18 where orderno=81;
-update lsusergrouprightsmaster set sequenceorder=19 where orderno=46;
-update lsusergrouprightsmaster set sequenceorder=20 where orderno=47;
-update lsusergrouprightsmaster set sequenceorder=21 where orderno=10;
-update lsusergrouprightsmaster set sequenceorder=22 where orderno=69;
-update lsusergrouprightsmaster set sequenceorder=23 where orderno=70;
-
-update lsusergrouprightsmaster set sequenceorder=24 where orderno=51;
-update lsusergrouprightsmaster set sequenceorder=25 where orderno=50;
-update lsusergrouprightsmaster set sequenceorder=26 where orderno=57;
-update lsusergrouprightsmaster set sequenceorder=27 where orderno=84;
-update lsusergrouprightsmaster set sequenceorder=28 where orderno=83;
-
-update lsusergrouprightsmaster set sequenceorder=29 where orderno=82;
-update lsusergrouprightsmaster set sequenceorder=30 where orderno=71;
-update lsusergrouprightsmaster set sequenceorder=31 where orderno=72;
-update lsusergrouprightsmaster set sequenceorder=32 where orderno=15;
-update lsusergrouprightsmaster set sequenceorder=33 where orderno=14;
-
-update lsusergrouprightsmaster set sequenceorder=34 where orderno=11;
-update lsusergrouprightsmaster set sequenceorder=35 where orderno=12;
-update lsusergrouprightsmaster set sequenceorder=36 where orderno=13;
-
-update lsusergrouprightsmaster set sequenceorder=37 where orderno=65;
-update lsusergrouprightsmaster set sequenceorder=38 where orderno=66;
-update lsusergrouprightsmaster set sequenceorder=39 where orderno=67;
-
-update lsusergrouprightsmaster set sequenceorder=40 where orderno=78;
-
-update lsusergrouprightsmaster set sequenceorder=41 where orderno=17;
-update lsusergrouprightsmaster set sequenceorder=42 where orderno=21;
-
-update lsusergrouprightsmaster set sequenceorder=43 where orderno=16;
-update lsusergrouprightsmaster set sequenceorder=44 where orderno=23;
-update lsusergrouprightsmaster set sequenceorder=45 where orderno=22;
-update lsusergrouprightsmaster set sequenceorder=46 where orderno=24;
-update lsusergrouprightsmaster set sequenceorder=47 where orderno=52;
-update lsusergrouprightsmaster set sequenceorder=48 where orderno=40;
-
-update lsusergrouprightsmaster set sequenceorder=49 where orderno=18;
-
-update lsusergrouprightsmaster set sequenceorder=50 where orderno=19;
-
-update lsusergrouprightsmaster set sequenceorder=51 where orderno=20;
-
-update lsusergrouprightsmaster set sequenceorder=52 where orderno=41;
-
-update lsusergrouprightsmaster set sequenceorder=53 where orderno=43;
-
-update lsusergrouprightsmaster set sequenceorder=54 where orderno=25;
-update lsusergrouprightsmaster set sequenceorder=55 where orderno=28;
-update lsusergrouprightsmaster set sequenceorder=56 where orderno=29;
-update lsusergrouprightsmaster set sequenceorder=57 where orderno=30;
-update lsusergrouprightsmaster set sequenceorder=58 where orderno=31;
-update lsusergrouprightsmaster set sequenceorder=59 where orderno=32;
-
-update lsusergrouprightsmaster set sequenceorder=60 where orderno=26;
-update lsusergrouprightsmaster set sequenceorder=61 where orderno=27;
-
-update lsusergrouprightsmaster set sequenceorder=62 where orderno=34;
-update lsusergrouprightsmaster set sequenceorder=63 where orderno=58;
-update lsusergrouprightsmaster set sequenceorder=64 where orderno=45;
-update lsusergrouprightsmaster set sequenceorder=65 where orderno=35;
-
-update lsusergrouprightsmaster set sequenceorder=66 where orderno=53;
-update lsusergrouprightsmaster set sequenceorder=67 where orderno=68;
-update lsusergrouprightsmaster set sequenceorder=68 where orderno=39;
-update lsusergrouprightsmaster set sequenceorder=69 where orderno=54;
-update lsusergrouprightsmaster set sequenceorder=70 where orderno=55;
-update lsusergrouprightsmaster set sequenceorder=71 where orderno=56;
-
-update lsusergrouprightsmaster set modulename = 'IDS_MDL_DASHBOARD' where sequenceorder IN (1,2,3);
-update lsusergrouprightsmaster set modulename = 'IDS_MDL_ORDERS' where sequenceorder IN(4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
-update lsusergrouprightsmaster set modulename = 'IDS_MDL_TEMPLATES' where sequenceorder IN(21,22,23,24,25,26,27,28,29,30,31,32,33);
-update lsusergrouprightsmaster set modulename = 'IDS_MDL_MASTERS' where sequenceorder IN(34,35,36,37,38,39,40);
-
 update lsaudittrailconfigmaster set screenname='IDS_SCN_TEMPLATEWORKFLOW'  where screenname='IDS_SCN_SHEETWORKFLOW';
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (87, 'IDS_TSK_DASHBOARDINVENTORY', 'IDS_MDL_DASHBOARD', '0', 'NA', 'NA', 'NA', '0,0,0',4,'IDS_SCN_DASHBOARD') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (88, 'IDS_TSK_SHEETTEMPEXPORT', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '0,0,0',22,'IDS_SCN_SHEETTEMPLATE') ON CONFLICT(orderno)DO NOTHING;
 
-update lsusergrouprightsmaster set sdelete='NA' where displaytopic='IDS_SCN_PROTOCOLTEMPLATE';
+update lsusergrouprightsmaster set sdelete='NA' where displaytopic in ('IDS_SCN_PROTOCOLTEMPLATE','IDS_SCN_INVENTORY');
 update lsusergrouprightsmaster set status='1,1,0' where displaytopic='IDS_SCN_PROTOCOLTEMPLATE';
-update lsusergrouprights set sdelete='NA' where displaytopic='IDS_SCN_PROTOCOLTEMPLATE';
+update lsusergrouprights set sdelete='NA' where displaytopic in ('IDS_SCN_PROTOCOLTEMPLATE','IDS_SCN_INVENTORY');
 
 update lsusergrouprightsmaster set sedit='1' where orderno in (11,12,13);
-update lsusergrouprights set sedit='1' where displaytopic='IDS_SCN_TASKMASTER';
-update lsusergrouprights set sedit='1' where displaytopic='IDS_SCN_PROJECTMASTER';
-update lsusergrouprights set sedit='1' where displaytopic='IDS_SCN_SAMPLEMASTER';
-update lsusergrouprightsmaster set sdelete='NA' where displaytopic='IDS_SCN_INVENTORY';
-update lsusergrouprights set sdelete='NA' where displaytopic='IDS_SCN_INVENTORY';
+update lsusergrouprights set sedit='1' where displaytopic in ('IDS_SCN_TASKMASTER','IDS_SCN_PROJECTMASTER','IDS_SCN_SAMPLEMASTER');
 update lsusergrouprightsmaster set screate='NA' where orderno in (66,67);
-update lsusergrouprights set screate='NA' where displaytopic='IDS_TSK_ADDREPO';
-update lsusergrouprights set screate='NA' where displaytopic='IDS_TSK_EDITREPO';
 update lsusergrouprights set screate='NA', sedit='NA' where displaytopic='IDS_TSK_ACTDEACTUSERMASTER';
-update lsusergrouprights set screate ='NA' where displaytopic in ('IDS_SCN_ORDERWORKLOW','IDS_SCN_AUDITTRAILCONFIG','IDS_TSK_IMPORTADS','IDS_SCN_TEMPLATEWORKFLOW','IDS_SCN_PASSWORDPOLICY');
-update lsusergrouprightsmaster set screate='NA' where orderno IN (20,27,40,41,43);
+update lsusergrouprights set screate ='NA' where displaytopic in ('IDS_SCN_ORDERWORKLOW','IDS_SCN_AUDITTRAILCONFIG','IDS_TSK_IMPORTADS','IDS_SCN_TEMPLATEWORKFLOW','IDS_SCN_PASSWORDPOLICY','IDS_TSK_ADDREPO','IDS_TSK_EDITREPO','IDS_TSK_NEWSTEP','IDS_TSK_EXPORTPDF','IDS_SCN_USERRIGHTS','IDS_SCN_REPORTS','IDS_TSK_NEWDOCUMENT','IDS_TSK_NEWTEMP','IDS_TSK_GENERATEREPORT');
+update lsusergrouprightsmaster set screate='NA' where orderno IN (20,27,40,41,43,50,57,58,45,35,5,6,46,47);
 update lsusergrouprightsmaster set sdelete='NA' where orderno in (19,26);
 update lsusergrouprights set sdelete='NA' where screenname in ('IDS_SCN_CFRSETTINGS','IDS_SCN_PROJECTTEAM');
 
@@ -1278,126 +1175,10 @@ INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, s
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (91, 'IDS_TSK_MOVEORDERS', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',14,'IDS_SCN_SHEETORDERS') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (92, 'IDS_TSK_MOVEORDERSPROTOCOL', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',21,'IDS_SCN_PROTOCOLORDERS') ON CONFLICT(orderno)DO NOTHING;
 
-update lsusergrouprightsmaster set sequenceorder=5 where orderno=7;
-update lsusergrouprightsmaster set sequenceorder=6 where orderno=85;
-update lsusergrouprightsmaster set sequenceorder=7 where orderno=8;
-update lsusergrouprightsmaster set sequenceorder=8 where orderno=9;
-update lsusergrouprightsmaster set sequenceorder=9 where orderno=37;
-update lsusergrouprightsmaster set sequenceorder=10 where orderno=38;
-update lsusergrouprightsmaster set sequenceorder=11 where orderno=61;
-update lsusergrouprightsmaster set sequenceorder=12 where orderno=62;
-update lsusergrouprightsmaster set sequenceorder=13 where orderno=5;
-update lsusergrouprightsmaster set sequenceorder=14 where orderno=6;
-update lsusergrouprightsmaster set sequenceorder=15 where orderno=91;
-
-update lsusergrouprightsmaster set sequenceorder=16 where orderno=86;
-update lsusergrouprightsmaster set sequenceorder=17 where orderno=48;
-update lsusergrouprightsmaster set sequenceorder=18 where orderno=49;
-update lsusergrouprightsmaster set sequenceorder=19 where orderno=80;
-update lsusergrouprightsmaster set sequenceorder=20 where orderno=81;
-update lsusergrouprightsmaster set sequenceorder=21 where orderno=46;
-update lsusergrouprightsmaster set sequenceorder=22 where orderno=47;
-update lsusergrouprightsmaster set sequenceorder=23 where orderno=92;
-
-update lsusergrouprightsmaster set sequenceorder=24 where orderno=10;
-update lsusergrouprightsmaster set sequenceorder=25 where orderno=69;
-update lsusergrouprightsmaster set sequenceorder=26 where orderno=70;
-update lsusergrouprightsmaster set sequenceorder=27 where orderno=88;
-
-update lsusergrouprightsmaster set sequenceorder=28 where orderno=51;
-update lsusergrouprightsmaster set sequenceorder=29 where orderno=50;
-update lsusergrouprightsmaster set sequenceorder=30 where orderno=57;
-update lsusergrouprightsmaster set sequenceorder=31 where orderno=84;
-update lsusergrouprightsmaster set sequenceorder=32 where orderno=83;
-
-update lsusergrouprightsmaster set sequenceorder=33 where orderno=82;
-update lsusergrouprightsmaster set sequenceorder=34 where orderno=71;
-update lsusergrouprightsmaster set sequenceorder=35 where orderno=72;
-update lsusergrouprightsmaster set sequenceorder=36 where orderno=15;
-update lsusergrouprightsmaster set sequenceorder=37 where orderno=14;
-
-update lsusergrouprightsmaster set sequenceorder=38 where orderno=11;
-update lsusergrouprightsmaster set sequenceorder=39 where orderno=12;
-update lsusergrouprightsmaster set sequenceorder=40 where orderno=13;
-
-update lsusergrouprightsmaster set sequenceorder=41 where orderno=65;
-update lsusergrouprightsmaster set sequenceorder=42 where orderno=66;
-update lsusergrouprightsmaster set sequenceorder=43 where orderno=67;
-
-update lsusergrouprightsmaster set sequenceorder=44 where orderno=78;
-
-update lsusergrouprightsmaster set sequenceorder=45 where orderno=17;
-update lsusergrouprightsmaster set sequenceorder=46 where orderno=21;
-
-update lsusergrouprightsmaster set sequenceorder=47 where orderno=16;
-update lsusergrouprightsmaster set sequenceorder=48 where orderno=23;
-update lsusergrouprightsmaster set sequenceorder=49 where orderno=22;
-update lsusergrouprightsmaster set sequenceorder=50 where orderno=24;
-update lsusergrouprightsmaster set sequenceorder=51 where orderno=52;
-update lsusergrouprightsmaster set sequenceorder=52 where orderno=40;
-
-update lsusergrouprightsmaster set sequenceorder=53 where orderno=18;
-
-update lsusergrouprightsmaster set sequenceorder=54 where orderno=19;
-
-update lsusergrouprightsmaster set sequenceorder=55 where orderno=20;
-
-update lsusergrouprightsmaster set sequenceorder=56 where orderno=41;
-
-update lsusergrouprightsmaster set sequenceorder=57 where orderno=43;
-
-update lsusergrouprightsmaster set sequenceorder=58 where orderno=25;
-update lsusergrouprightsmaster set sequenceorder=59 where orderno=28;
-update lsusergrouprightsmaster set sequenceorder=60 where orderno=29;
-update lsusergrouprightsmaster set sequenceorder=61 where orderno=30;
-update lsusergrouprightsmaster set sequenceorder=62 where orderno=31;
-update lsusergrouprightsmaster set sequenceorder=63 where orderno=32;
-
-update lsusergrouprightsmaster set sequenceorder=64 where orderno=26;
-update lsusergrouprightsmaster set sequenceorder=65 where orderno=27;
-
-update lsusergrouprightsmaster set sequenceorder=66 where orderno=34;
-update lsusergrouprightsmaster set sequenceorder=67 where orderno=58;
-update lsusergrouprightsmaster set sequenceorder=68 where orderno=45;
-update lsusergrouprightsmaster set sequenceorder=69 where orderno=35;
-update lsusergrouprightsmaster set sequenceorder=70 where orderno=90;
-update lsusergrouprightsmaster set sequenceorder=71 where orderno=89;
-
-update lsusergrouprightsmaster set sequenceorder=72 where orderno=53;
-update lsusergrouprightsmaster set sequenceorder=73 where orderno=68;
-update lsusergrouprightsmaster set sequenceorder=74 where orderno=39;
-update lsusergrouprightsmaster set sequenceorder=75 where orderno=54;
-update lsusergrouprightsmaster set sequenceorder=76 where orderno=55;
-update lsusergrouprightsmaster set sequenceorder=77 where orderno=56;
-
-update lsusergrouprightsmaster set modulename = 'IDS_MDL_DASHBOARD' where sequenceorder IN (1,2,3,4);
-update lsusergrouprightsmaster set modulename = 'IDS_MDL_ORDERS' where sequenceorder IN(5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23);
-update lsusergrouprightsmaster set modulename = 'IDS_MDL_TEMPLATES' where sequenceorder IN(24,25,26,27,28,29,30,31,32,33,34,35,36,37);
-update lsusergrouprightsmaster set modulename = 'IDS_MDL_MASTERS' where sequenceorder IN(38,39,40,41,42,43,44);
-
-update lsaudittrailconfigmaster set screenname='IDS_SCN_TEMPLATEWORKFLOW'  where screenname='IDS_SCN_SHEETWORKFLOW';
-INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (87, 'IDS_TSK_DASHBOARDINVENTORY', 'IDS_MDL_DASHBOARD', '0', 'NA', 'NA', 'NA', '0,0,0',4,'IDS_SCN_DASHBOARD') ON CONFLICT(orderno)DO NOTHING;
-INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (88, 'IDS_TSK_SHEETTEMPEXPORT', 'IDS_MDL_TEMPLATES', '0', 'NA', 'NA', 'NA', '0,0,0',22,'IDS_SCN_SHEETTEMPLATE') ON CONFLICT(orderno)DO NOTHING;
-
-update lsusergrouprightsmaster set sdelete='NA' where displaytopic='IDS_SCN_PROTOCOLTEMPLATE';
-update lsusergrouprightsmaster set status='1,1,0' where displaytopic='IDS_SCN_PROTOCOLTEMPLATE';
-update lsusergrouprights set sdelete='NA' where displaytopic='IDS_SCN_PROTOCOLTEMPLATE';
-
-update lsusergrouprightsmaster set screate='NA' where orderno in (50,57);
-update lsusergrouprights set screate='NA' where displaytopic in ('IDS_TSK_NEWSTEP','IDS_TSK_EXPORTPDF');
-
-update lsusergrouprightsmaster set screate='NA' where displaytopic='IDS_SCN_USERRIGHTS';
-update lsusergrouprights set screate='NA' where displaytopic='IDS_SCN_USERRIGHTS';
-update lsusergrouprightsmaster set screate='NA' where displaytopic='IDS_SCN_REPORTS';
-update lsusergrouprights set screate='NA' where displaytopic='IDS_SCN_REPORTS';
-update lsusergrouprightsmaster set screate='NA' where orderno in (58,45,35);
-update lsusergrouprights set screate='NA' where displaytopic in ('IDS_TSK_NEWDOCUMENT','IDS_TSK_NEWTEMP','IDS_TSK_GENERATEREPORT');
-update lsusergrouprights set modulename='IDS_MDL_DASHBOARD' where displaytopic='IDS_TSK_DASHBOARDINVENTORY';
-update lsusergrouprightsmaster set modulename='IDS_MDL_ORDERS' where displaytopic='IDS_TSK_MOVEORDERSPROTOCOL';
-update lsusergrouprights set modulename='IDS_MDL_ORDERS' where displaytopic='IDS_TSK_MOVEORDERSPROTOCOL';
-update lsusergrouprights set modulename='IDS_MDL_TEMPLATES' where displaytopic in ('IDS_TSK_SHEET','IDS_TSK_PROTOCOL','IDS_TSK_ELNANDRESEARCH','IDS_TSK_LIMSTESTORDER');
+update lsusergrouprightsmaster set screate='NA' where displaytopic in ('IDS_SCN_USERRIGHTS','IDS_SCN_REPORTS');
+update lsusergrouprights set modulename='IDS_MDL_TEMPLATES' where displaytopic in ('IDS_TSK_SHEET','IDS_TSK_PROTOCOL','IDS_TSK_ELNANDRESEARCH','IDS_TSK_LIMSTESTORDER','IDS_TSK_MOVEORDERSPROTOCOL');
 update lsusergrouprightsmaster set modulename='IDS_MDL_TEMPLATES' where orderno in (14,15,71,72);
-update lsusergrouprightsmaster set modulename='IDS_MDL_ORDERS' where orderno in (46,47);
+update lsusergrouprightsmaster set modulename='IDS_MDL_ORDERS' where orderno in (46,47) and displaytopic='IDS_TSK_MOVEORDERSPROTOCOL';
 update lsusergrouprights set modulename='IDS_MDL_ORDERS' where displaytopic in ('IDS_TSK_PENDINGWORKPROTOCOL','IDS_TSK_COMPLETEDWORKPROTOCOL');
 update lsusergrouprightsmaster set modulename='IDS_MDL_SETUP' where orderno in (16,17,18,20,21,23,22,24,52,40,43,19,41);
 
@@ -1493,7 +1274,7 @@ ALTER TABLE IF Exists lsnotification ADD COLUMN IF NOT EXISTS notificationfor in
 update lsusermaster set createdby='Administrator' where usercode=1;
 
 update lsusergrouprights set modulename='IDS_MDL_SETUP' where displaytopic in ('IDS_SCN_USERGROUP','IDS_TSK_ACTDEACT','IDS_SCN_ORDERWORKLOW','IDS_SCN_TEMPLATEWORKFLOW','IDS_SCN_PASSWORDPOLICY','IDS_SCN_PROJECTTEAM','IDS_SCN_USERRIGHTS');
-update lsusergrouprights set modulename='IDS_MDL_DASHBOARD' where displaytopic in ('IDS_TSK_TEMPLATEOVERVIEW','IDS_SCN_DASHBOARD','IDS_TSK_ACTIVITIES','IDS_TSK_ORDEROVERVIEW');
+update lsusergrouprights set modulename='IDS_MDL_DASHBOARD' where displaytopic in ('IDS_TSK_TEMPLATEOVERVIEW','IDS_SCN_DASHBOARD','IDS_TSK_ACTIVITIES','IDS_TSK_ORDEROVERVIEW','IDS_TSK_DASHBOARDINVENTORY');
 update lsusergrouprights set modulename='IDS_MDL_REPORTS' where displaytopic IN ('IDS_TSK_NEWTEMP','IDS_TSK_NEWDOCUMENT');
 update lsusergrouprights set modulename='IDS_MDL_PARSER' where displaytopic in ('IDS_SCN_INSTRUMENTMASTER','IDS_SCN_PARSER','IDS_SCN_METHODDELIMITER','IDS_SCN_DELIMITER');
 update lsusergrouprights set modulename='IDS_MDL_TEMPLATES' where displaytopic in ('IDS_TSK_TEMPLATESHAREDTOME','IDS_TSK_TEMPLATESHAREDBYME','IDS_TSK_EXPORTPDF','IDS_TSK_NEWSTEP','IDS_SCN_SHEETTEMPLATE','IDS_SCN_PROTOCOLTEMPLATE');
@@ -1504,15 +1285,11 @@ INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, s
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (95, 'IDS_SCN_LOGBOOK', 'IDS_MDL_MASTERS', '0', 'NA', 'NA', 'NA', '1,0,1',44,'IDS_SCN_LOGBOOK') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (96, 'IDS_TSK_SHEETORDEREXPORT', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '0,0,0',15,'IDS_SCN_SHEETORDERS') ON CONFLICT(orderno)DO NOTHING;
 
-update lsusergrouprightsmaster set screate='NA' where orderno in (5,6,46,47);
+
 update lsusergrouprights set modulename='IDS_MDL_MASTERS' where displaytopic in ('IDS_TSK_ADDREPO','IDS_TSK_EDITREPO','IDS_SCN_UNLOCKORDERS','IDS_SCN_TASKMASTER','IDS_SCN_SAMPLEMASTER','IDS_SCN_PROJECTMASTER','IDS_SCN_INVENTORY','IDS_SCN_LOGBOOK');
 
-update lsusergrouprightsmaster set screate='0' where screenname='IDS_SCN_LOGBOOK';
-update lsusergrouprights set screate='0' where screenname='IDS_SCN_LOGBOOK';
-update lsusergrouprightsmaster set sedit='0'  where screenname='IDS_SCN_LOGBOOK';
-update lsusergrouprights set sedit='0'  where screenname='IDS_SCN_LOGBOOK';
-update lsusergrouprightsmaster set sdelete='0'  where screenname='IDS_SCN_LOGBOOK';
-update lsusergrouprights set sdelete='0'  where screenname='IDS_SCN_LOGBOOK';
+update lsusergrouprightsmaster set screate='0',sedit=0,sdelete=0 where screenname='IDS_SCN_LOGBOOK';
+update lsusergrouprights set screate='0',sedit=0,sdelete=0 where screenname='IDS_SCN_LOGBOOK';
 
 update lsusergrouprightsmaster set screate='1' where orderno in (71,72);
 update lsusergrouprights set screate='1' where displaytopic in ('IDS_TSK_SHEET','IDS_TSK_PROTOCOL');
@@ -1522,7 +1299,7 @@ delete from lsusergrouprightsmaster where orderno in (15,82);
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (97, 'IDS_TSK_ADDLOGBOOK', 'IDS_MDL_MASTERS', '0', 'NA', 'NA', 'NA', '1,0,0',44,'IDS_SCN_LOGBOOK') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (98, 'IDS_TSK_EDITLOGBOOK', 'IDS_MDL_MASTERS', '0', 'NA', 'NA', 'NA', '1,0,0',44,'IDS_SCN_LOGBOOK') ON CONFLICT(orderno)DO NOTHING;
 
-delete from lsusergrouprights where displaytopic IN ('IDS_SCN_TEMPLATEMAPPING','IDS_TSK_ELNANDRESEARCH');
+
 
 ALTER TABLE IF Exists lsprotocolordersharedby ADD COLUMN IF NOT EXISTS protocolorders_protocolordercode numeric(17,0);
 
@@ -1750,6 +1527,7 @@ update lsusergrouprights set sequenceorder=77 where displaytopic ='IDS_SCN_INSTR
 update lsusergrouprights set sequenceorder=78 where displaytopic ='IDS_SCN_DELIMITER' and usergroupid_usergroupcode=1;
 update lsusergrouprights set sequenceorder=79 where displaytopic ='IDS_SCN_METHODDELIMITER' and usergroupid_usergroupcode=1;
 update lsusergrouprights set sequenceorder=80 where displaytopic ='IDS_SCN_METHODMASTER' and usergroupid_usergroupcode=1;
+
 
 
 delete from lsusergrouprights where displaytopic IN ('IDS_SCN_TEMPLATEMAPPING','IDS_TSK_ELNANDRESEARCH');
@@ -3022,3 +2800,657 @@ insert into materialinventorytype values(2,'{
         "tg-TG": "Дар берун"
     }
 }',4,1)on conflict(ninventorytypecode)do nothing;
+
+
+
+update lsusergrouprightsmaster set sequenceorder=1 where orderno =2;
+update lsusergrouprightsmaster set sequenceorder=2 where orderno =1;
+update lsusergrouprightsmaster set sequenceorder=3 where orderno =3;
+update lsusergrouprightsmaster set sequenceorder=4 where orderno =87;
+update lsusergrouprightsmaster set sequenceorder=5 where orderno =7;
+update lsusergrouprightsmaster set sequenceorder=6 where orderno =93;
+update lsusergrouprightsmaster set sequenceorder=7 where orderno =85;
+update lsusergrouprightsmaster set sequenceorder=8 where orderno =8;
+update lsusergrouprightsmaster set sequenceorder=9 where orderno =9;
+update lsusergrouprightsmaster set sequenceorder=10 where orderno =37;
+update lsusergrouprightsmaster set sequenceorder=11 where orderno =38;
+update lsusergrouprightsmaster set sequenceorder=12 where orderno =61;
+update lsusergrouprightsmaster set sequenceorder=13 where orderno =62;
+update lsusergrouprightsmaster set sequenceorder=14 where orderno =96;
+update lsusergrouprightsmaster set sequenceorder=15 where orderno =91;
+update lsusergrouprightsmaster set sequenceorder=16 where orderno =86;
+update lsusergrouprightsmaster set sequenceorder=17 where orderno =94;
+update lsusergrouprightsmaster set sequenceorder=18 where orderno =48;
+update lsusergrouprightsmaster set sequenceorder=19 where orderno =49;
+update lsusergrouprightsmaster set sequenceorder=20 where orderno =80;
+update lsusergrouprightsmaster set sequenceorder=21 where orderno =81;
+update lsusergrouprightsmaster set sequenceorder=22 where orderno =92;
+update lsusergrouprightsmaster set sequenceorder=23 where orderno =10;
+update lsusergrouprightsmaster set sequenceorder=24 where orderno =69;
+update lsusergrouprightsmaster set sequenceorder=25 where orderno =70;
+update lsusergrouprightsmaster set sequenceorder=26 where orderno =88;
+update lsusergrouprightsmaster set sequenceorder=27 where orderno =51;
+update lsusergrouprightsmaster set sequenceorder=28 where orderno =50;
+update lsusergrouprightsmaster set sequenceorder=29 where orderno =57;
+update lsusergrouprightsmaster set sequenceorder=30 where orderno =84;
+update lsusergrouprightsmaster set sequenceorder=31 where orderno =83;
+update lsusergrouprightsmaster set sequenceorder=32 where orderno =71;
+update lsusergrouprightsmaster set sequenceorder=33 where orderno =72;
+update lsusergrouprightsmaster set sequenceorder=34 where orderno =14;
+update lsusergrouprightsmaster set sequenceorder=35 where orderno =11;
+update lsusergrouprightsmaster set sequenceorder=36 where orderno =12;
+update lsusergrouprightsmaster set sequenceorder=37 where orderno =13;
+update lsusergrouprightsmaster set sequenceorder=38 where orderno =65;
+update lsusergrouprightsmaster set sequenceorder=39 where orderno =66;
+update lsusergrouprightsmaster set sequenceorder=40 where orderno =67;
+update lsusergrouprightsmaster set sequenceorder=41 where orderno =78;
+update lsusergrouprightsmaster set sequenceorder=42 where orderno =95;
+update lsusergrouprightsmaster set sequenceorder=43 where orderno =97;
+update lsusergrouprightsmaster set sequenceorder=44 where orderno =98;
+update lsusergrouprightsmaster set sequenceorder=45 where orderno =17;
+update lsusergrouprightsmaster set sequenceorder=46 where orderno =21;
+update lsusergrouprightsmaster set sequenceorder=47 where orderno =16;
+update lsusergrouprightsmaster set sequenceorder=48 where orderno =23;
+update lsusergrouprightsmaster set sequenceorder=49 where orderno =22;
+update lsusergrouprightsmaster set sequenceorder=50 where orderno =24;
+update lsusergrouprightsmaster set sequenceorder=51 where orderno =52;
+update lsusergrouprightsmaster set sequenceorder=52 where orderno =40;
+update lsusergrouprightsmaster set sequenceorder=53 where orderno =18;
+update lsusergrouprightsmaster set sequenceorder=54 where orderno =19;
+update lsusergrouprightsmaster set sequenceorder=55 where orderno =20;
+update lsusergrouprightsmaster set sequenceorder=56 where orderno =41;
+update lsusergrouprightsmaster set sequenceorder=57 where orderno =43;
+update lsusergrouprightsmaster set sequenceorder=58 where orderno =25;
+update lsusergrouprightsmaster set sequenceorder=59 where orderno =28;
+update lsusergrouprightsmaster set sequenceorder=60 where orderno =29;
+update lsusergrouprightsmaster set sequenceorder=61 where orderno =30;
+update lsusergrouprightsmaster set sequenceorder=62 where orderno =31;
+update lsusergrouprightsmaster set sequenceorder=63 where orderno =32;
+update lsusergrouprightsmaster set sequenceorder=64 where orderno =26;
+update lsusergrouprightsmaster set sequenceorder=65 where orderno =27;
+update lsusergrouprightsmaster set sequenceorder=66 where orderno =34;
+update lsusergrouprightsmaster set sequenceorder=67 where orderno =58;
+update lsusergrouprightsmaster set sequenceorder=68 where orderno =45;
+update lsusergrouprightsmaster set sequenceorder=69 where orderno =35;
+update lsusergrouprightsmaster set sequenceorder=70 where orderno =90;
+update lsusergrouprightsmaster set sequenceorder=71 where orderno =89;
+update lsusergrouprightsmaster set sequenceorder=72 where orderno =53;
+update lsusergrouprightsmaster set sequenceorder=73 where orderno =68;
+update lsusergrouprightsmaster set sequenceorder=74 where orderno =39;
+update lsusergrouprightsmaster set sequenceorder=75 where orderno =54;
+update lsusergrouprightsmaster set sequenceorder=76 where orderno =55;
+update lsusergrouprightsmaster set sequenceorder=77 where orderno =56;
+
+update lsusergrouprights set screate='1',sedit='1',sdelete='1' where displaytopic='IDS_SCN_LOGBOOK' and usergroupid_usergroupcode!=1;
+update lsusergrouprights set screate='1',sedit='1',sdelete='1' where displaytopic='IDS_SCN_USERMASTER' and usergroupid_usergroupcode!=1;
+update lsusergrouprights set sallow='1' where displaytopic in ('IDS_TSK_UNLOCK','IDS_SCN_USERMASTER','IDS_TSK_RESETPASSWORD','IDS_TSK_RETIRE','IDS_TSK_IMPORTADS') and usergroupid_usergroupcode!=1;
+
+update lsusergrouprightsmaster set modulename='IDS_MDL_DASHBOARD' where orderno in (1,3,87);
+update lsusergrouprightsmaster set modulename='IDS_MDL_ORDERS' where orderno in (7,8,9,37,38,61,62,93,85);
+update lsusergrouprightsmaster set modulename='IDS_MDL_MASTERS' where orderno=78;
+update lsusergrouprights set modulename='IDS_MDL_ORDERS' where displaytopic='IDS_TSK_MOVEORDERSPROTOCOL';
+update lsusergrouprightsmaster set screate=0 where orderno in (34,71,72);
+update lsusergrouprightsmaster set sedit=0 where orderno in (11,12,13);
+update lsusergrouprightsmaster set sdelete=0 where orderno=26;
+
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(81,0,'IDS_MDL_MASTERS',6,'IDS_SCN_LOGBOOK','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(82,0,'IDS_MDL_MASTERS',6,'IDS_SCN_LOGBOOK','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(83,0,'IDS_MDL_MASTERS',6,'IDS_SCN_LOGBOOK','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(84,0,'IDS_MDL_PARSER',12,'IDS_SCN_INSTRUMENTCATEGORY','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(85,0,'IDS_MDL_PARSER',12,'IDS_SCN_INSTRUMENTCATEGORY','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(86,0,'IDS_MDL_PARSER',12,'IDS_SCN_INSTRUMENTMASTER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(87,0,'IDS_MDL_PARSER',12,'IDS_SCN_INSTRUMENTMASTER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(88,0,'IDS_MDL_PARSER',12,'IDS_SCN_INSTRUMENTMASTER','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(89,0,'IDS_MDL_PARSER',12,'IDS_SCN_DELIMITER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(90,0,'IDS_MDL_PARSER',12,'IDS_SCN_DELIMITER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(91,0,'IDS_MDL_PARSER',12,'IDS_SCN_DELIMITER','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+Insert into LSaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(92,0,'IDS_MDL_PARSER',12,'IDS_SCN_METHODDELIMITER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into LSaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(93,0,'IDS_MDL_PARSER',12,'IDS_SCN_METHODDELIMITER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into LSaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(94,0,'IDS_MDL_PARSER',12,'IDS_SCN_METHODDELIMITER','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+Insert into LSaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(95,0,'IDS_MDL_PARSER',12,'IDS_SCN_METHODMASTER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into LSaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(96,0,'IDS_MDL_PARSER',12,'IDS_SCN_METHODMASTER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into LSaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(97,0,'IDS_MDL_PARSER',12,'IDS_SCN_METHODMASTER','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+
+insert into materialconfig values(4,-1,40,'[
+    {
+        "id": "pv1OWbsMYq",
+        "type": "row",
+        "children": [
+            {
+                "id": "Nybc4TT-jv",
+                "type": "column",
+                "children": [
+                    {
+                        "label": "Inflammable",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "Inflammable",
+                            "ru-RU": "легковоспламеняющийся",
+                            "tg-TG": "оташгиранда"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 1,
+                                    "text": "Inflammable"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "label": "Keep Refrigerated",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "Keep Refrigerated",
+                            "ru-RU": "Хранить в холодильнике",
+                            "tg-TG": "Дар яхдон нигоҳ доред"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 2,
+                                    "text": "Keep Refrigerated"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "label": "No Acids",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "No Acids",
+                            "ru-RU": "Без кислот",
+                            "tg-TG": "Кислотаҳо нест"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 3,
+                                    "text": "No Acids"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "label": "No Bases",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "No Bases",
+                            "ru-RU": "Нет баз",
+                            "tg-TG": "Не асос"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 4,
+                                    "text": "No Bases"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "label": "No Oxidizer",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "No Oxidizer",
+                            "ru-RU": "Нет окислителя",
+                            "tg-TG": "Оксидизатор нест"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 5,
+                                    "text": "No Oxidizer"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "label": "Corrosive",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "Corrosive",
+                            "ru-RU": "Коррозионный",
+                            "tg-TG": "Коррозия"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 6,
+                                    "text": "Corrosive"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "label": "Hazardous",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "Hazardous",
+                            "ru-RU": "Опасный",
+                            "tg-TG": "Хатарнок"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 7,
+                                    "text": "Hazardous"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "inputtype": 5,
+                        "squestion": "Safety Properties(NFPA Rating)",
+                        "displayname": {
+                            "en-US": "Safety Properties(NFPA Rating)",
+                            "ru-RU": "Свойства безопасности (рейтинг NFPA)",
+                            "tg-TG": "Хусусиятҳои бехатарӣ (Рейтинги NFPA)"
+                        }
+                    },
+                    {
+                        "label": "Health",
+                        "readonly": false,
+                        "inputtype": "textarea",
+                        "displayname": {
+                            "en-US": "Health",
+                            "ru-RU": "Здоровье",
+                            "tg-TG": "Тандурустй"
+                        },
+                        "sfieldlength": 255
+                    },
+                    {
+                        "label": "Reactivity",
+                        "readonly": false,
+                        "inputtype": "textarea",
+                        "displayname": {
+                            "en-US": "Reactivity",
+                            "ru-RU": "Реактивность",
+                            "tg-TG": "Реактивӣ"
+                        },
+                        "sfieldlength": 255
+                    }
+                ]
+            },
+            {
+                "type": "column",
+                "children": [
+                    {
+                        "label": "Avoid Exposure To Lights",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "Avoid Exposure To Lights",
+                            "ru-RU": "Избегайте воздействия света",
+                            "tg-TG": "Аз таъсири чароғҳо худдорӣ намоед"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 8,
+                                    "text": "Avoid Exposure To Lights"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "label": "Personal Protective Equipment",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "Personal Protective Equipment",
+                            "ru-RU": "Средства индивидуальной защиты",
+                            "tg-TG": "Таҷҳизоти муҳофизати шахсӣ"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 9,
+                                    "text": "Personal Protective Equipment"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "label": "Keep Frozen",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "Keep Frozen",
+                            "ru-RU": "Держите замороженным",
+                            "tg-TG": "Нигоҳ доштани яхкардашуда"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 10,
+                                    "text": "Keep Frozen"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "label": "Keep Dessicated",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "Keep Dessicated",
+                            "ru-RU": "Держите высушенным",
+                            "tg-TG": "Дессикатсияро нигоҳ доред"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 11,
+                                    "text": "Keep Dessicated"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "label": "Clothing",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "Clothing",
+                            "ru-RU": "Одежда",
+                            "tg-TG": "Либос"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 12,
+                                    "text": "Clothing"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "label": "Goggles",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "Goggles",
+                            "ru-RU": "очки для плавания",
+                            "tg-TG": "Айнак"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 13,
+                                    "text": "Goggles"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "label": "Gloves",
+                        "inputtype": "checkbox",
+                        "displayname": {
+                            "en-US": "Gloves",
+                            "ru-RU": "Перчатки",
+                            "tg-TG": "Дастпӯшакҳо"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": 14,
+                                    "text": "Gloves"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "inputtype": 5,
+                        "squestion": "  "
+                    },
+                    {
+                        "label": "Flammable",
+                        "readonly": false,
+                        "inputtype": "textarea",
+                        "displayname": {
+                            "en-US": "Flammable",
+                            "ru-RU": "легковоспламеняющийся",
+                            "tg-TG": "Даргиранда"
+                        },
+                        "sfieldlength": 255
+                    },
+                    {
+                        "label": "Specific",
+                        "readonly": false,
+                        "inputtype": "textarea",
+                        "displayname": {
+                            "en-US": "Specific",
+                            "ru-RU": "Конкретный",
+                            "tg-TG": "мушаххас"
+                        },
+                        "sfieldlength": 255
+                    }
+                ]
+            }
+        ]
+    }
+]',1);
+
+insert into materialconfig values(5,-1,40,'[
+    {
+        "id": "pv1OWbsMYq",
+        "type": "row",
+        "children": [
+            {
+                "id": "Nybc4TT-jv",
+                "type": "column",
+                "children": [
+                    {
+                        "label": "Structural Formula",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Structural Formula",
+                            "ru-RU": "Структурная формула",
+                            "tg-TG": "Формула сохторӣ"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Physical Description",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Physical Description",
+                            "ru-RU": "Физическое описание",
+                            "tg-TG": "Тавсифи физикӣ"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Boiling Point",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Boiling Point",
+                            "ru-RU": "Точка кипения",
+                            "tg-TG": "Нуқтаи ҷӯш"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Melting Point",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Melting Point",
+                            "ru-RU": "Температура плавления",
+                            "tg-TG": "Нуқтаи обшавӣ"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Molecular Weight",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Molecular Weight",
+                            "ru-RU": "Молекулярный вес",
+                            "tg-TG": "Вазни молекулавӣ"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Standard Specific Gravity",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Standard Specific Gravity",
+                            "ru-RU": "Стандартный удельный вес",
+                            "tg-TG": "Вазни хоси стандартӣ"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Structural Purity",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Structural Purity",
+                            "ru-RU": "Структурная чистота",
+                            "tg-TG": "Тозагии сохторӣ"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Standard Length",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Standard Length",
+                            "ru-RU": "Стандартная длина",
+                            "tg-TG": "Дарозии стандартӣ"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Gas Number",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Gas Number",
+                            "ru-RU": "Номер газа",
+                            "tg-TG": "Рақами газ"
+                        },
+                        "sfieldlength": 100
+                    }
+                ]
+            },
+            {
+                "type": "column",
+                "children": [
+                    {
+                        "label": "Bulk Density",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Bulk Density",
+                            "ru-RU": "Объемная плотность",
+                            "tg-TG": "Зичии масса"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Date of Standardization",
+                        "dateonly": true,
+                        "timeonly": false,
+                        "inputtype": "date",
+                        "displayname": {
+                            "en-US": "Date of Standardization",
+                            "ru-RU": "Дата стандартизации",
+                            "tg-TG": "Санаи стандартизатсия"
+                        }
+                    },
+                    {
+                        "inputtype": 5,
+                        "squestion": "Assay",
+                        "displayname": {
+                            "en-US": "Assay",
+                            "ru-RU": "анализ",
+                            "tg-TG": "Таҳлил"
+                        }
+                    },
+                    {
+                        "label": "As is Basis1",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "As is Basis",
+                            "ru-RU": "Как основа",
+                            "tg-TG": "Тавре ки Basis аст"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Dried/Andydrous Basis1",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Dried/Andydrous Basis",
+                            "ru-RU": "Сухая/андроидная основа",
+                            "tg-TG": "Асоси хушк/андидроз"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "inputtype": 5,
+                        "squestion": "Purity By Mass Balance",
+                        "displayname": {
+                            "en-US": "Purity By Mass Balance",
+                            "ru-RU": "Чистота по балансу массы",
+                            "tg-TG": "Покӣ аз рӯи тавозуни омма"
+                        }
+                    },
+                    {
+                        "label": "As is Basis2",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "As is Basis",
+                            "ru-RU": "Как основа",
+                            "tg-TG": "Тавре ки Basis аст"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Dried/Andydrous Basis2",
+                        "readonly": false,
+                        "inputtype": "textinput",
+                        "displayname": {
+                            "en-US": "Dried/Andydrous Basis",
+                            "ru-RU": "Сухая/андроидная основа",
+                            "tg-TG": "Асоси хушк/андидроз"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "label": "Direction of Use",
+                        "readonly": false,
+                        "inputtype": "textarea",
+                        "displayname": {
+                            "en-US": "Direction of Use",
+                            "ru-RU": "Направление использования",
+                            "tg-TG": "Самти истифода"
+                        },
+                        "sfieldlength": 255
+                    },
+                    {
+                        "label": "Comments",
+                        "readonly": false,
+                        "inputtype": "textarea",
+                        "displayname": {
+                            "en-US": "Comments",
+                            "ru-RU": "Комментарии",
+                            "tg-TG": "Шарҳҳо"
+                        },
+                        "sfieldlength": 255
+                    }
+                ]
+            }
+        ]
+    }
+]',1);
+
+ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS retirestatus integer;
+ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS userstatus character varying(10);

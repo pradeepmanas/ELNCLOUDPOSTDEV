@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.material;
 
+//import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -175,11 +176,49 @@ public class MaterialCategoryService {
 					MaterialCategory.class);
 
 			objMaterialCategory.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
-			
+
 			MaterialCategoryRepository.save(objMaterialCategory);
 
 			return getMaterialCategory(inputMap);
 
+		}
+	}
+
+	public ResponseEntity<Object> updateMaterialCategory(MaterialCategory materialCategory) {
+
+		Map<String, Object> inputMap = new HashMap<>();
+
+		final MaterialCategory objMaterialCategory = MaterialCategoryRepository
+				.findByNmaterialcatcodeAndNstatus(materialCategory.getNmaterialcatcode(), 1);
+
+//		final List<String> multilingualIDList = new ArrayList<>();
+//		final List<Object> listAfterUpdate = new ArrayList<>();
+//		final List<Object> listBeforeUpdate = new ArrayList<>();
+
+		if (objMaterialCategory == null) {
+			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYDELETED.getreturnstatus(),
+					HttpStatus.EXPECTATION_FAILED);
+		} else {
+
+			final MaterialCategory materialCategoryObj = MaterialCategoryRepository
+					.findBySmaterialcatnameAndNmaterialcatcodeAndNstatus(materialCategory.getSmaterialcatname(),
+							materialCategory.getNmaterialcatcode(), 1);
+
+			if (materialCategoryObj != null) {
+
+				materialCategoryObj.setSmaterialcatname(materialCategory.getSmaterialcatname());
+				materialCategoryObj.setSdescription(materialCategory.getSdescription());
+				materialCategoryObj.setNdefaultstatus(materialCategory.getNdefaultstatus());
+				materialCategoryObj.setNmaterialtypecode(materialCategory.getNmaterialtypecode());
+				materialCategoryObj.setSmaterialtypename(materialCategory.getSmaterialtypename());
+
+				MaterialCategoryRepository.save(materialCategoryObj);
+
+				return getMaterialCategory(inputMap);
+			} else {
+				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
+						HttpStatus.CONFLICT);
+			}
 		}
 	}
 }

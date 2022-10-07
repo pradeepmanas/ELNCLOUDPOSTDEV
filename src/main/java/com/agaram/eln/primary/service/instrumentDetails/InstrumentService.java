@@ -4954,12 +4954,8 @@ public class InstrumentService {
 		LSuserMaster lsselectedfulluser = lsuserMasterRepository.findByusercode(lsselecteduser.getUsercode());
 		Integer protocoltype = mapper.convertValue(objusers.get("protocoltype"), Integer.class);
 		String Orderflag = null;
-		Integer reject =0;
 		if (objusers.get("Orderflag") != null) {
 			Orderflag = mapper.convertValue(objusers.get("Orderflag"), String.class);
-		}
-		if(objusers.containsKey("reject")) {
-			reject =mapper.convertValue(objusers.get("reject"), Integer.class);
 		}
 		if (lsloginuser.getUsercode() == lsselecteduser.getUsercode()) {
 			if (protocoltype == -1 && Orderflag == null) {
@@ -4975,32 +4971,16 @@ public class InstrumentService {
 								lsselectedfulluser.getUnifieduserid(), 1, fromdate, todate));
 
 			} else if (protocoltype != -1 && Orderflag != null) {
-				if(reject!=0) {
-					
-					mapuserorders.put("assigned", LSlogilabprotocoldetailRepository
-							.findByAssignedtoAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-									lsloginuser, protocoltype, Orderflag, fromdate, todate));
-					mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository
-							.findBySharebyunifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
-									lsselectedfulluser.getUnifieduserid(), Orderflag, fromdate, 1, fromdate, todate));
-					mapuserorders.put("sharetome", lsprotocolordersharetoRepository
-							.findBySharetounifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(
-									lsselectedfulluser.getUnifieduserid(), Orderflag, fromdate, 1, fromdate, todate));
+				mapuserorders.put("assigned", LSlogilabprotocoldetailRepository
+						.findByAssignedtoAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+								lsloginuser, protocoltype, Orderflag, fromdate, todate));
+				mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository
+						.findBySharebyunifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
+								lsselectedfulluser.getUnifieduserid(),protocoltype, Orderflag, 1, fromdate, todate));
+				mapuserorders.put("sharetome", lsprotocolordersharetoRepository
+						.findBySharetounifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(
+								lsselectedfulluser.getUnifieduserid(),protocoltype, Orderflag, 1, fromdate, todate));
 
-					
-				}else {
-					mapuserorders.put("assigned", LSlogilabprotocoldetailRepository
-							.findByAssignedtoAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-									lsloginuser, protocoltype, Orderflag, fromdate, todate));
-					mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository
-							.findBySharebyunifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
-									lsselectedfulluser.getUnifieduserid(), Orderflag, fromdate, 1, fromdate, todate));
-					mapuserorders.put("sharetome", lsprotocolordersharetoRepository
-							.findBySharetounifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(
-									lsselectedfulluser.getUnifieduserid(), Orderflag, fromdate, 1, fromdate, todate));
-
-				}
-			
 			} else if (protocoltype == -1 && Orderflag != null) {
 				mapuserorders.put("assigned",
 						LSlogilabprotocoldetailRepository
@@ -5066,7 +5046,6 @@ public class InstrumentService {
 
 		return mapuserorders;
 	}
-
 	public Map<String, Object> Getprotocolordersonsample(LSlogilabprotocoldetail objorder) {
 		List<LSlogilabprotocoldetail> lstorder = new ArrayList<LSlogilabprotocoldetail>();
 		Map<String, Object> retuobjts = new HashMap<>();

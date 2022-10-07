@@ -68,7 +68,7 @@ public class MaterialCategory implements Serializable{
 	private transient Integer nsuppliercode;
 	private transient Integer nsuppliermatrixcode;
 	private transient String scategorybasedflow;
-	private transient String smaterialtypename;
+	private String smaterialtypename;
 	private transient boolean needSectionwisedisabled;
 	private transient Integer nproductcatcode;
 	private transient String sproductcatname;

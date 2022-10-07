@@ -36,6 +36,14 @@ public class MaterialCategoryController {
 		return materialcategoryservice.createMaterialCategory(inputMap);
 	}
 
+	@PostMapping(value = "/updateMaterialCategory")
+	public ResponseEntity<Object> updateMaterialCategory(@RequestBody Map<String, Object> inputMap) throws Exception {
+		final ObjectMapper objmapper = new ObjectMapper();
+		final MaterialCategory materialCategory = objmapper.convertValue(inputMap.get("materialcategory"),MaterialCategory.class);
+		
+		return materialcategoryservice.updateMaterialCategory(materialCategory);
+	}
+	
 	@PostMapping(value = "/getActiveMaterialCategoryById")
 	public ResponseEntity<Object> getActiveMaterialCategoryById(@RequestBody Map<String, Object> inputMap)throws Exception {
 		

@@ -48,8 +48,7 @@ public interface LsprotocolordersharedbyRepository extends JpaRepository<Lsproto
 
 	Lsprotocolordersharedby findByShareprotocolordercode(Long protocolordercode);
 
-	List<Lsprotocolordersharedby> findBySharebyunifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
-			String unifieduserid, String orderflag, Date fromdate, int i, Date fromdate2, Date todate);
+
 
 	List<Lsprotocolordersharedby> findBySharebyunifiedidAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
 			String unifieduserid, String orderflag, int i, Date fromdate, Date todate);
@@ -63,6 +62,11 @@ public interface LsprotocolordersharedbyRepository extends JpaRepository<Lsproto
 
 	List<Lsprotocolordersharedby> findBySharebyunifiedidAndProtocoltypeAndSharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
 			String unifieduserid, Integer protocoltype, String unifieduserid2, int i, Date fromdate, Date todate);
+
+	List<Lsprotocolordersharedby> findBySharebyunifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
+			String unifieduserid, Integer protocoltype, String orderflag, int i, Date fromdate, Date todate);
+
+
 
 
 //	Lsprotocolordersharedby findByShareprotocolordercode(Long shareprotocolordercode);

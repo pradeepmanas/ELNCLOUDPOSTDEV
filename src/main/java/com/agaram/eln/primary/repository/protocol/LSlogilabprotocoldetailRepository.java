@@ -487,6 +487,10 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date todate);
 
 
+	List<LSlogilabprotocoldetail> findByAssignedtoAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			LSuserMaster lsloginuser, Integer protocoltype, String string, int i, Date fromdate, Date todate);
+
+
 	
 
 

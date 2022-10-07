@@ -43,14 +43,41 @@ public class Lslogbooks {
 	@Transient
 	Response objResponse;
 	
+	
+	public Integer getRetirestatus() {
+		return retirestatus;
+	}
+
+	public void setRetirestatus(Integer retirestatus) {
+		this.retirestatus = retirestatus;
+	}
+
 	@Transient
 	private Date fromdate;
 	
 	@Transient
 	private Date todate;
 
+	@Column(name = "retirestatus")
+	private Integer retirestatus;
 	public Integer getLogbookcode() {
 		return logbookcode;
+	}
+	@Column(columnDefinition = "varchar(10)")
+	private String userstatus;
+	
+	public String getUserstatus() {
+		if(userstatus != null)
+		{
+		return  userstatus.trim().equals("A")?"Active":"Retired";
+		}
+		else
+		{
+			return "";
+		}
+	}
+	public void setUserstatus(String userstatus) {
+		this.userstatus = userstatus;
 	}
 
 	public void setLogbookcode(Integer logbookcode) {
