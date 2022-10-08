@@ -116,6 +116,17 @@ public class LSuserMaster {
 	@Transient
 	private Integer multiusergroups;
 	
+	public Integer getIdletime() {
+		return idletime;
+	}
+
+	public void setIdletime(Integer idletime) {
+		this.idletime = idletime;
+	}
+
+	@Transient
+	private Integer idletime;
+	
 	@Column(columnDefinition = "varchar(500)")
 	private String unifieduserid;
 	

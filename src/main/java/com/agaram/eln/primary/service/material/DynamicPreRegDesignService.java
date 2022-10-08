@@ -44,7 +44,7 @@ public class DynamicPreRegDesignService {
 		Map<String, Object> parameters = (Map<String, Object>) inputMap.get("parameters");
 		String getJSONKeysQuery = "";
 
-		@SuppressWarnings("unused")
+		
 		List<Map<String, Object>> filterQueryComponentsQueries = null;
 
 		Map<String, Object> returnObject = new HashMap<>();
@@ -124,12 +124,17 @@ public class DynamicPreRegDesignService {
 		List<Map<String, Object>> srcData = (List<Map<String, Object>>) inputMap.get("parentcolumnlist");
 		Map<String, Object> childData = (Map<String, Object>) inputMap.get("childcolumnlist");
 		Map<String, Object> parameters = (Map<String, Object>) inputMap.get("parameters");
+		Map<String, Object> parentData = (Map<String, Object>) inputMap.get("parentdata");
+		
 		String getJSONKeysQuery = "";
 
+		String valuememberData = "";
+		
 		List<Map<String, Object>> filterQueryComponentsQueries = null;
 
 		Map<String, Object> returnObject = new HashMap<>();
 		for (int i = 0; i < srcData.size(); i++) {
+			String valuemember = (String) inputMap.get("valuemember");
 			String sourceName = (String) srcData.get(i).get("source");
 			String conditionString = srcData.get(i).containsKey("conditionstring")
 					? (String) srcData.get(i).get("conditionstring")
@@ -156,11 +161,32 @@ public class DynamicPreRegDesignService {
 
 			}
 
+			valuememberData = valuemember;
 			tableName = sourceName.toLowerCase();
 
 			List<Object> data = new ArrayList<Object>();
+			
+			String defaultvalues = "";
+			if (srcData.get(i).containsKey("defaultvalues")) {
+				List<Map<String, Object>> defaulvalueslst = (List<Map<String, Object>>) srcData.get(i)
+						.get("defaultvalues");
+				for (int j = 0; j < defaulvalueslst.size(); j++) {
+					if (defaulvalueslst.get(j)
+							.containsKey(parentData.get(srcData.get(i).get("parentprimarycode")).toString())) {
+						defaultvalues = " in ( " + defaulvalueslst.get(j)
+								.get(parentData.get(srcData.get(i).get("parentprimarycode")).toString()).toString()
+								+ " )";
+					}
+				}
+
+			} else {
+				defaultvalues =  parentData.get(valuememberData)+"";
+			}
 
 			switch (tableName) {
+			case "unit":
+				data = unitRepository.findByNstatusAndNunitcodeOrderByNunitcode(1,Integer.parseInt(defaultvalues));
+				break;
 			case "materialcategory":
 				data = materialCategoryRepository.findByNstatus(1);
 				break;

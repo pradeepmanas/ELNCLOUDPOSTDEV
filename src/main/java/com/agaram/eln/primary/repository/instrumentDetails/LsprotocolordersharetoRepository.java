@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -71,6 +72,10 @@ public interface LsprotocolordersharetoRepository extends JpaRepository<Lsprotoc
 
 	List<Lsprotocolordershareto> findBySharetounifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(
 			String unifieduserid, Integer protocoltype, String orderflag, int i, Date fromdate, Date todate);
+
+
+
+	List<Lsprotocolordersharedby> findByShareprotocolordercodeIn(ArrayList<Long> ordercode);
 
 
 

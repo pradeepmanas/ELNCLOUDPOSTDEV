@@ -24,6 +24,9 @@ public class MaterialGrade {
 	@Column(name = "nstatus")
 	private Integer nstatus;
 	
+//	@Transient
+	private String smaterialgradename;
+			
 	public Integer getNmaterialgradecode() {
 		return nmaterialgradecode;
 	}
@@ -53,5 +56,11 @@ public class MaterialGrade {
 	}
 	public void setNstatus(Integer nstatus) {
 		this.nstatus = nstatus;
+	}
+	public String getSmaterialgradename() {
+		return smaterialgradename;
+	}
+	public void setSmaterialgradename(String smaterialgradename) {
+		this.smaterialgradename = smaterialgradename;
 	}
 }

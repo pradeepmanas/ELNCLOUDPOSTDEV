@@ -66,6 +66,8 @@ public interface LsprotocolordersharedbyRepository extends JpaRepository<Lsproto
 	List<Lsprotocolordersharedby> findBySharebyunifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
 			String unifieduserid, Integer protocoltype, String orderflag, int i, Date fromdate, Date todate);
 
+	List<Lsprotocolordersharedby> findByShareprotocolordercodeIn(ArrayList<Long> ordercode);
+
 
 
 

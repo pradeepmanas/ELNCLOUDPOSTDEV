@@ -19,4 +19,6 @@ public interface UnitRepository extends JpaRepository<Unit, Integer>{
 
 	public Unit findByNunitcodeAndSunitnameAndNstatus(Integer nunitcode, String sunitname, int i);
 
+	public List<Object> findByNstatusAndNunitcodeOrderByNunitcode(int i, int parseInt);
+
 }

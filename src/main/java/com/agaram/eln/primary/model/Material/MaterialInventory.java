@@ -1,10 +1,14 @@
 package com.agaram.eln.primary.model.material;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -31,16 +35,39 @@ public class MaterialInventory {
 	@Column(name = "nstatus")
 	private Integer nstatus;
 	
-	@Column(name = "jsondata", columnDefinition = "jsonb")
+	@Column(name = "jsondata")
 	private String jsondata;
 	
-	@Column(name = "jsonuidata", columnDefinition = "jsonb")
+	@Column(name = "jsonuidata")
 	private String jsonuidata;
 	
 	private transient String sinventoryid;
 	private transient String savailablequatity;
 	private transient String sunitname;
 	
+	@OneToMany
+	@JoinColumn(name="nmaterialinventorycode")
+	private List<MaterialInventoryTransaction> materialInventoryTransactions;
+	
+	public List<MaterialInventoryTransaction> getMaterialInventoryTransactions() {
+		return materialInventoryTransactions;
+	}
+	public void setMaterialInventoryTransactions(List<MaterialInventoryTransaction> materialInventoryTransactions) {
+		this.materialInventoryTransactions = materialInventoryTransactions;
+	}
+	
+	public Integer getNmaterialinventorycode() {
+		return nmaterialinventorycode;
+	}
+	public void setNmaterialinventorycode(Integer nmaterialinventorycode) {
+		this.nmaterialinventorycode = nmaterialinventorycode;
+	}
+	public Integer getNmaterialcode() {
+		return nmaterialcode;
+	}
+	public void setNmaterialcode(Integer nmaterialcode) {
+		this.nmaterialcode = nmaterialcode;
+	}
 	public Integer getNmaterialcatcode() {
 		return nmaterialcatcode;
 	}
@@ -64,21 +91,6 @@ public class MaterialInventory {
 	}
 	public void setNtransactionstatus(Integer ntransactionstatus) {
 		this.ntransactionstatus = ntransactionstatus;
-	}
-	public void setNmaterialinventorycode(Integer nmaterialinventorycode) {
-		this.nmaterialinventorycode = nmaterialinventorycode;
-	}
-	public int getNmaterialinventorycode() {
-		return nmaterialinventorycode;
-	}
-	public void setNmaterialinventorycode(int nmaterialinventorycode) {
-		this.nmaterialinventorycode = nmaterialinventorycode;
-	}
-	public Integer getNmaterialcode() {
-		return nmaterialcode;
-	}
-	public void setNmaterialcode(Integer nmaterialcode) {
-		this.nmaterialcode = nmaterialcode;
 	}
 	public Integer getNstatus() {
 		return nstatus;

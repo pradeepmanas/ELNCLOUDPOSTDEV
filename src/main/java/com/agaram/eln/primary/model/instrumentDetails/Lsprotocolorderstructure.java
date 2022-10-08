@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
@@ -67,6 +68,11 @@ public class Lsprotocolorderstructure {
 	
 	@Transient
 	private Integer rejected;
+	
+	@Transient
+	List<LSworkflow> lstworkflow;
+
+
 
 	public Integer getRejected() {
 		return rejected;
@@ -272,5 +278,11 @@ public class Lsprotocolorderstructure {
 	public void setLogilabprotocolorders(List<Logilabprotocolorders> logilabprotocolorders) {
 		this.logilabprotocolorders = logilabprotocolorders;
 	}
+	public List<LSworkflow> getLstworkflow() {
+		return lstworkflow;
+	}
 
+	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+		this.lstworkflow = lstworkflow;
+	}
 }

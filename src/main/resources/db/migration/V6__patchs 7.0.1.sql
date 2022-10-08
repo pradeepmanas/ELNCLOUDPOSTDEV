@@ -1732,18 +1732,14 @@ CREATE TABLE IF NOT EXISTS public.materialinventory
 (
     nmaterialinventorycode integer NOT NULL DEFAULT nextval('materialinventory_sequence'::regclass),
     nmaterialcode integer NOT NULL,
-    nmaterialcatcode integer NOT NULL,
-    nmaterialtypecode integer NOT NULL,
     ntransactionstatus integer NOT NULL,
+	nmaterialcatcode integer NOT NULL,
+	nmaterialtypecode integer NOT NULL,
     nsectioncode integer NOT NULL,
-    jsondata jsonb NOT NULL,
-    jsonuidata jsonb NOT NULL,
+    jsondata text NOT NULL,
+    jsonuidata text NOT NULL,
     nstatus integer NOT NULL DEFAULT 1,
     CONSTRAINT materialinventory_pkey PRIMARY KEY (nmaterialinventorycode)
-    --CONSTRAINT material_nmaterialcode FOREIGN KEY (nmaterialcode)
-    --REFERENCES public.material (nmaterialcode) MATCH SIMPLE
-    --ON UPDATE NO ACTION
-    --ON DELETE NO ACTION
 )
 
 TABLESPACE pg_default;
@@ -1899,12 +1895,12 @@ insert into period values(1,'{
 insert into materialgrade values(1,'{
     "sdescription": "",
     "smaterialgradename": "A"
-}',4,-1,1)on conflict (nmaterialgradecode) do nothing;
+}',4,-1,1,'A')on conflict (nmaterialgradecode) do nothing;
 
 insert into materialgrade values(2,'{
     "sdescription": "",
     "smaterialgradename": "B"
-}',4,-1,1)on conflict (nmaterialgradecode) do nothing;
+}',4,-1,1,'B')on conflict (nmaterialgradecode) do nothing;
 
 insert into materialconfig values(1,1,40,'[
     {
@@ -3225,7 +3221,7 @@ insert into materialconfig values(4,-1,40,'[
             }
         ]
     }
-]',1);
+]',1)on conflict(nmaterialconfigcode)do nothing;
 
 insert into materialconfig values(5,-1,40,'[
     {
@@ -3450,7 +3446,341 @@ insert into materialconfig values(5,-1,40,'[
             }
         ]
     }
-]',1);
+]',1)on conflict(nmaterialconfigcode)do nothing;
 
 ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS retirestatus integer;
 ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS userstatus character varying(10);
+
+update materialconfig set jsondata = '[
+    {
+        "id": "pv1OWbsMYq",
+        "type": "row",
+        "children": [
+            {
+                "id": "Nybc4TT-jv",
+                "type": "column",
+                "children": [
+                    {
+                        "id": "wwi4eC9iw",
+                        "type": "component",
+                        "label": "Material Category",
+                        "parent": "materialtype",
+                        "source": "materialcategory",
+                        "inputtype": "combo",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Material Category",
+                            "ru-RU": "Категория материала",
+                            "tg-TG": "Категорияи мавод"
+                        },
+                        "valuemember": "nmaterialcatcode",
+                        "componentcode": 3,
+                        "componentname": "Combo Box",
+                        "displaymember": "smaterialcatname"
+                    },
+                    {
+                        "type": "component",
+                        "label": "Material Name",
+                        "inputtype": "textinput",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Standard Name",
+                            "ru-RU": "Стандартное имя",
+                            "tg-TG": "Номи стандартӣ"
+                        },
+                        "sfieldlength": 100
+                    },
+                    {
+                        "type": "component",
+                        "label": "Basic Unit",
+                        "source": "unit",
+                        "inputtype": "combo",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Basic Unit",
+                            "ru-RU": "Базовая единица",
+                            "tg-TG": "Воҳиди асосӣ"
+                        },
+                        "valuemember": "nunitcode",
+                        "displaymember": "sunitname",
+                        "nstandardtype": 3
+                    },
+                    {
+                        "type": "component",
+                        "label": "Prefix",
+                        "inputtype": "textinput",
+                        "mandatory": 3,
+                        "displayname": {
+                            "en-US": "Prefix",
+                            "ru-RU": "Префикс",
+                            "tg-TG": "Префикс"
+                        },
+                        "sdisplayname": "sprefix",
+                        "sfieldlength": 10
+                    },
+                    {
+                        "type": "component",
+                        "label": "Quarantine",
+                        "inputtype": "toggle",
+                        "displayname": {
+                            "en-US": "Quarantine",
+                            "ru-RU": "Карантин",
+                            "tg-TG": "Карантин"
+                        },
+                        "sdisplayname": "stransstatus",
+                        "nstandardtype": 3
+                    }
+                ]
+            },
+            {
+                "type": "column",
+                "children": [
+                    {
+                        "max": 99999999,
+                        "min": 0,
+                        "type": "component",
+                        "label": "Reorder Level",
+                        "readonly": false,
+                        "inputtype": "Numeric",
+                        "precision": 4,
+                        "displayname": {
+                            "en-US": "Reorder Level",
+                            "ru-RU": "Уровень повторного заказа",
+                            "tg-TG": "Сатҳи азнавсозӣ"
+                        },
+                        "sdisplayname": "nreorderlevel",
+                        "sfieldlength": 8,
+                        "nstandardtype": 3
+                    },
+                    {
+                        "id": "-yskhHhld",
+                        "type": "component",
+                        "label": "Expiry Validations",
+                        "inputtype": "radio",
+                        "displayname": {
+                            "en-US": "Expiry Validations",
+                            "ru-RU": "Проверка истечения срока действия",
+                            "tg-TG": "Санҷишҳои мӯҳлат"
+                        },
+                        "radioOptions": {
+                            "tags": [
+                                {
+                                    "id": "No Expiry",
+                                    "text": "No Expiry",
+                                    "defaultchecked": "No Expiry"
+                                },
+                                {
+                                    "id": "Expiry date",
+                                    "text": "Expiry date"
+                                },
+                                {
+                                    "id": "Expiry policy",
+                                    "text": "Expiry policy"
+                                }
+                            ]
+                        },
+                        "componentcode": 7,
+                        "componentname": "Multiple Choice"
+                    },
+                    {
+                        "type": "componentrow",
+                        "children": [
+                            {
+                                "max": 99999999,
+                                "min": 0,
+                                "type": "component",
+                                "label": "Expiry Policy Days",
+                                "readonly": false,
+                                "inputtype": "Numeric",
+                                "displayname": {
+                                    "en-US": "Expiry Policy Days",
+                                    "ru-RU": "Срок действия полиса дней",
+                                    "tg-TG": "Рӯзҳои сиёсати мӯҳлат"
+                                },
+                                "sdisplayname": "speriodexpiry",
+                                "sfieldlength": 8
+                            },
+                            {
+                                "type": "component",
+                                "label": "Expiry Policy Period",
+                                "source": "period",
+                                "inputtype": "combo",
+                                "displayname": {
+                                    "en-US": "Expiry Policy Period",
+                                    "ru-RU": "Срок действия полиса",
+                                    "tg-TG": "Мӯҳлати ба охир расидани сиёсати"
+                                },
+                                "valuemember": "nperiodcode",
+                                "displaymember": "speriodname",
+                                "nsqlquerycode": 1,
+                                "isMultiLingual": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "component",
+                        "label": "Open Expiry Need",
+                        "inputtype": "toggle",
+                        "displayname": {
+                            "en-US": "Open Expiry Need",
+                            "ru-RU": "Открыть истечение срока действия",
+                            "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"
+                        },
+                        "sdisplayname": "stransstatus",
+                        "nstandardtype": 4
+                    },
+                    {
+                        "type": "componentrow",
+                        "children": [
+                            {
+                                "max": 99999999,
+                                "min": 0,
+                                "type": "component",
+                                "label": "Open Expiry",
+                                "readonly": false,
+                                "inputtype": "Numeric",
+                                "displayname": {
+                                    "en-US": "Open Expiry",
+                                    "ru-RU": "Открытый срок действия",
+                                    "tg-TG": "Муддатро кушоед"
+                                },
+                                "sdisplayname": "speriodopen",
+                                "sfieldlength": 8
+                            },
+                            {
+                                "type": "component",
+                                "label": "Open Expiry Period",
+                                "source": "period",
+                                "inputtype": "combo",
+                                "displayname": {
+                                    "en-US": "Open Expiry Period",
+                                    "ru-RU": "Открытый срок действия",
+                                    "tg-TG": "Мӯҳлати кушодани мӯҳлат"
+                                },
+                                "valuemember": "nperiodcode",
+                                "displaymember": "speriodname",
+                                "nsqlquerycode": 1,
+                                "isMultiLingual": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "component",
+                        "label": "Next Validation Need",
+                        "inputtype": "toggle",
+                        "displayname": {
+                            "en-US": "Next Validation Need",
+                            "ru-RU": "Следующая Потребность В Проверке",
+                            "tg-TG": "Минбаъда Зарурати Ба Санҷиши"
+                        },
+                        "sdisplayname": "stransstatus",
+                        "nstandardtype": 4,
+                        "defaultchecked": 4
+                    },
+                    {
+                        "type": "componentrow",
+                        "children": [
+                            {
+                                "max": 99999999,
+                                "min": 0,
+                                "type": "component",
+                                "label": "Next Validation",
+                                "readonly": false,
+                                "inputtype": "Numeric",
+                                "displayname": {
+                                    "en-US": "Next Validation",
+                                    "ru-RU": "Следующая проверка",
+                                    "tg-TG": "Оянда санҷиши"
+                                },
+                                "sdisplayname": "speriodopen",
+                                "sfieldlength": 8
+                            },
+                            {
+                                "type": "component",
+                                "label": "Next Validation Period",
+                                "source": "period",
+                                "inputtype": "combo",
+                                "displayname": {
+                                    "en-US": "Next Validation Period",
+                                    "ru-RU": "Следующий Период Проверки",
+                                    "tg-TG": "Баъдӣ Давраи Санҷиши"
+                                },
+                                "valuemember": "nperiodcode",
+                                "displaymember": "speriodname",
+                                "nsqlquerycode": 1,
+                                "isMultiLingual": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "component",
+                        "label": "Remarks",
+                        "inputtype": "textarea",
+                        "displayname": {
+                            "en-US": "Remarks",
+                            "ru-RU": "Примечания",
+                            "tg-TG": "Мулохизахо"
+                        },
+                        "sdisplayname": "sremarks",
+                        "sfieldlength": 255,
+                        "nstandardtype": 3
+                    }
+                ]
+            }
+        ]
+    }
+]' where nformcode = 40;
+
+ALTER TABLE IF Exists materialinventory ALTER COLUMN jsondata TYPE text;
+ALTER TABLE IF Exists materialinventory ALTER COLUMN jsonuidata TYPE text;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'materialinventorytransaction_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE materialinventorytransaction_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.materialinventorytransaction
+(
+    nmaterialinventtranscode integer NOT NULL DEFAULT nextval('materialinventorytransaction_sequence'::regclass), 
+    nmaterialinventorycode integer NOT NULL,
+    ninventorytranscode integer NOT NULL,
+    ntransactiontype integer NOT NULL,
+    nsectioncode integer NOT NULL,
+    nresultusedmaterialcode integer NOT NULL,
+    nqtyreceived numeric NOT NULL,
+    nqtyissued numeric NOT NULL,
+    jsondata text NOT NULL,
+    jsonuidata text NOT NULL,
+    nsitecode integer NOT NULL DEFAULT 1,
+    nstatus integer NOT NULL DEFAULT 1,
+    CONSTRAINT materialinventorytransaction_pkey PRIMARY KEY (nmaterialinventtranscode),
+    CONSTRAINT fknok3att985drj90p3b41qn888 FOREIGN KEY (nmaterialinventorycode)
+        REFERENCES public.materialinventory (nmaterialinventorycode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.materialinventorytransaction OWNER to postgres;
+
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(98,0,'IDS_MDL_ORDERS',1,'IDS_SCN_SHEETORDERS','IDS_TSK_EXPORT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(99,0,'IDS_MDL_ORDERS',1,'IDS_SCN_SHEETORDERS','IDS_TSK_EXPORTASJSON') ON CONFLICT(serialno)DO NOTHING;
+
+ALTER TABLE IF Exists lspasswordpolicy ADD COLUMN IF NOT EXISTS idletime integer;
+
+update LSpasswordpolicy set idletime=15 where idletime is null;

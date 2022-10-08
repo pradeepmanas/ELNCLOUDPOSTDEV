@@ -224,6 +224,7 @@ public class LoginService {
 
 			objExitinguser.setObjResponse(new Response());
 			objExitinguser.setObjsilentaudit(new LScfttransaction());
+			objExitinguser.setIdletime(lockcount.getIdletime());
 
 			if ((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode())
 					|| objuser.getsUsername().equalsIgnoreCase("Administrator")) {
@@ -959,10 +960,16 @@ public class LoginService {
 		LSSiteMaster objsite = new LSSiteMaster(Integer.parseInt(objuser.getsSiteCode()));
 		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(username, "1",
 				objsite);
+		
+		LSPasswordPolicy lockcount = objExitinguser != null
+				? LSPasswordPolicyRepository
+						.findTopByAndLssitemasterOrderByPolicycodeDesc(objExitinguser.getLssitemaster())
+				: null;
 
 		if (objExitinguser != null) {
 			objExitinguser.setObjResponse(new Response());
 			objExitinguser.setObjsilentaudit(new LScfttransaction());
+			objExitinguser.setIdletime(lockcount.getIdletime());
 			if ((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode())
 					&& objExitinguser.getUserretirestatus() == 0) {
 

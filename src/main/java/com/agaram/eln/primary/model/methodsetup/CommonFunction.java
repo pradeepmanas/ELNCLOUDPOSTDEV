@@ -1,7 +1,9 @@
 package com.agaram.eln.primary.model.methodsetup;
 
 import java.util.ArrayList;
+
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,12 +11,15 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.http.ResponseEntity;
+
 import com.agaram.eln.primary.model.methodsetup.ParserIgnoreChars;
 import com.agaram.eln.primary.model.methodsetup.ParserTechnique;
 import com.agaram.eln.primary.model.methodsetup.SampleExtract;
 import com.agaram.eln.primary.model.methodsetup.SampleLineSplit;
 import com.agaram.eln.primary.model.methodsetup.SampleTextSplit;
 import com.agaram.eln.primary.model.methodsetup.SubParserTechnique;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 
 /**
  * This class is used to apply sample split techniques for the raw data file of a method which is provided
@@ -379,15 +384,32 @@ public class CommonFunction {
 	 * @param idText [String] identification text for which index is to be found
 	 * @param rows [int]
 	 * @return index value of identification text in list
+	 * @throws Exception 
 	 */
-	private int getIndex(List<String> rawDataBlockArray, final String idText, final int rows) {
+	private int getIndex(List<String> rawDataBlockArray, final String idText, final int rows){
+	//	public ResponseEntity<Object> getIndex(List<String> rawDataBlockArray, final String idText, final int rows ,final HttpServletRequest request)
+			
+			
+			
 		final String blockText = String.join("\n",rawDataBlockArray).trim();	
 		
-		final String d = '"'+ blockText.substring(0, blockText.indexOf(idText)) +'"';	
+		final int index = blockText.indexOf(idText);
+	//	final String d = '"'+ blockText.substring(0, blockText.indexOf(idText)) +'"';	
+
+		
+		if (index == -1) {
+			//throw new Exception ("Wrong File");
+			return index;
+		}
+		
+		else {   
+		final String d = '"'+ blockText.substring(0, index) +'"';	
+
 	    final String[] d1 = d.split("\n");
 	    final int realIndex = d1.length-1; 
 		return realIndex;
-	   
+		}
+	//	return new ResponseEntity<>(realIndex , HttpStatus.OK);	
 	}
 
 	/**
@@ -397,6 +419,7 @@ public class CommonFunction {
 	 * @param delimiter [String] delimiter string based on which  the data block is to be splitted
 	 * @param ignoreList [List] list  of characters from ParserIgnoreChars to be ignored in parsed data
 	 * @return list of sample data
+	 * @throws Exception 
 	 */
 //	public List<List<String>> getMvfData (final List<ParserTechnique> parsingTechniques, final String blockData,
 //			final String delimiter, final List<ParserIgnoreChars> ignoreList){
@@ -494,6 +517,18 @@ public class CommonFunction {
 			final String delimiter, final List<ParserIgnoreChars> ignoreList){
 		final List<List<String>> splittedDataArray = splittingRawdataAsArray(blockData);
 		
+
+	    List<List<String>> indexfailure = new ArrayList<List<String>>() ;
+    	final List<List<String>> newstrList = new ArrayList<List<String>>();        	
+
+    	//final List<List<String>> strList1 = new ArrayList<List<String>>();        	
+    	//strList.add(String.join("", Arrays.asList(rawDataBlockArray.get(row).split("")).subList(dataStartIndex, dataEndIndex)).trim());
+    //	Collection<? extends List<java.lang.String>> mm = null;
+   // 	newstrList.addAll(mm);
+    	indexfailure = newstrList;      
+
+
+
 		List<String> rawDataBlockArray = new ArrayList<String>();
 
 		for (List<String> strList :splittedDataArray){
@@ -513,6 +548,11 @@ public class CommonFunction {
 	    int actualRowStart = parsingTechniques.get(1).getRow();	   
 	    int realRowStart   = getIndex(rawDataBlockArray, parsingTechniques.get(1).getIdentificationtext(), parsingTechniques.get(0).getRows());
 	
+	    if(realRowStart != -1) {
+	//    final List<Integer> indexes = (List<Integer>)getIndex(rawDataBlockArray, parsingTechniques.get(1).getIdentificationtext(), parsingTechniques.get(0).getRows(), request);
+	    
+	//    final List<Integer> indexes = new ArrayList<Integer>();
+
 	    if (parsingTechniques.get(2).getRow() == actualRowStart) {
             actualRowEnd = parsingTechniques.get(2).getRow();
             realRowEnd = realRowStart;
@@ -602,10 +642,20 @@ public class CommonFunction {
                 		actualColStart, actualColEnd, delimiter, parsingTechniques, ignoreList); 
             }
 	       }
+	      }
+	    else {
+	    	return indexfailure;
+	      }
 	    }
 	    return dataBlock;
 	}
 	
+	
+	private List<List<String>> String(int i) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/**
 	 * This method is used to parse data from the data block in cases where there has no end column match.
 	 * @param rawDataBlockArray [List] of rows of the data block

@@ -7,8 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
-
 @Entity
 @Table(name = "materialinventorytransaction")
 public class MaterialInventoryTransaction {
@@ -27,12 +25,14 @@ public class MaterialInventoryTransaction {
 	private Double nqtyreceived;
 	private Double nqtyissued;
 	
-	@Type(type = "jsonb")
-	@Column(name = "jsondata", columnDefinition = "jsonb")
+//	@Type(type = "jsonb")
+	@Column(name = "jsondata")
 	private String jsondata;
-	@Type(type = "jsonb")
-	@Column(name = "jsonuidata", columnDefinition = "jsonb")
+//	@Type(type = "jsonb")
+	@Column(name = "jsonuidata")
 	private String jsonuidata;
+	
+	private Integer nsitecode;
 	
 	public Integer getNmaterialinventtranscode() {
 		return nmaterialinventtranscode;
@@ -99,5 +99,11 @@ public class MaterialInventoryTransaction {
 	}
 	public void setJsonuidata(String jsonuidata) {
 		this.jsonuidata = jsonuidata;
+	}
+	public Integer getNsitecode() {
+		return nsitecode;
+	}
+	public void setNsitecode(Integer nsitecode) {
+		this.nsitecode = nsitecode;
 	}
 }

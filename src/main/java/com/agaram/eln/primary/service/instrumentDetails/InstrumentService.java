@@ -37,8 +37,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
@@ -157,7 +155,6 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepositor
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileversionRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplemasterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsampleresultRepository;
-import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
@@ -172,9 +169,11 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingReposit
 //import com.agaram.eln.primary.repository4mibatis.LSlogilablimsorderdetailMibatisRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
+import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
 import com.agaram.eln.primary.service.usermanagement.UserService;
 import com.agaram.eln.primary.service.webParser.WebparserService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
 
@@ -348,8 +347,8 @@ public class InstrumentService {
 	@Autowired
 	private LSlogilabprotocoldetailRepository LSlogilabprotocoldetailRepository;
 
-	@Autowired
-	private LStestmasterlocalRepository lstestmasterlocalRepository;
+//	@Autowired
+//	private LStestmasterlocalRepository lstestmasterlocalRepository;
 
 	@Autowired
 	private FileService fileService;
@@ -362,6 +361,9 @@ public class InstrumentService {
 
 	@Autowired
 	private LSsheetfolderfilesRepository lssheetfolderfilesRepository;
+	
+	@Autowired
+	ProtocolService ProtocolMasterService;
 
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
@@ -377,11 +379,20 @@ public class InstrumentService {
 			List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
 			List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
 
-			List<Method> elnMethod = lsMethodRepository.findAll();
-			List<ParserBlock> ParserBlock = lsParserBlockRepository.findAll();
-			List<ParserField> ParserField = lsParserRepository.findAll();
-			List<SubParserField> SubParserField = lsSubParserRepository.findAll();
+			List<Method> elnMethod = lsMethodRepository.findByStatus(1);
+			List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatus(1);
+			List<ParserField> ParserField = lsParserRepository.findByStatus(1);
+			List<SubParserField> SubParserField = lsSubParserRepository.findByStatus(1);
 			obj.put("Generalfields", Generalfields);
+			
+			List<ParserField> filteredList = ParserField.stream()
+					.filter(filterParser -> SubParserField.stream()
+							.anyMatch(filterSubParser -> filterParser.getParserfieldkey()
+									.equals(filterSubParser.getParserfield().getParserfieldkey())))
+					.collect(Collectors.toList());
+
+			ParserField.removeAll(filteredList);
+
 			obj.put("Instruments", Instruments);
 			obj.put("Instrmaster", InstrMaster);
 			obj.put("elninstrument", lselninstrumentmasterRepository
@@ -398,7 +409,7 @@ public class InstrumentService {
 			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatus(1);
 
 			List<Method> elnMethod = lsMethodRepository.findByStatus(1);
-			List<ParserBlock> ParserBlock = lsParserBlockRepository.findAll();
+			List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatus(1);
 			List<ParserField> ParserField = lsParserRepository.findByStatus(1);
 			// List<SubParserField> SubParserField = lsSubParserRepository.findAll();
 			List<SubParserField> SubParserField = lsSubParserRepository.findByStatus(1);
@@ -4323,7 +4334,7 @@ public class InstrumentService {
 		Date fromdate = objdir.getObjuser().getFromdate();
 		Date todate = objdir.getObjuser().getTodate();
 		Integer filetype = objdir.getFiletype();
-		if (filetype == -1) {
+		if (filetype != null && filetype == -1) {
 			return lslogilablimsorderdetailRepository
 					.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 							objdir.getDirectorycode(), 1, fromdate, todate, objdir.getDirectorycode(), 2,
@@ -4705,6 +4716,7 @@ public class InstrumentService {
 					.findByDirectorycodeAndAssignedtoIsNullAndProtocoltypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 							objdir.getDirectorycode(), protocoltype, fromdate, todate);
 		}
+		retuobj.forEach(objorderDetail -> objorderDetail.setLstworkflow(objdir.getLstworkflow()));
 		List<Long> protocolordercode = new ArrayList<>();
 		if (retuobj.size() > 0 && objdir.getSearchCriteriaType() != null) {
 			protocolordercode = retuobj.stream().map(LSlogilabprotocoldetail::getProtocolordercode)
@@ -4804,6 +4816,13 @@ public class InstrumentService {
 						.findByLssamplemasterAndViewoptionAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 								objorder.getLssamplemaster(), 1, 2, fromdate, todate, objorder.getLssamplemaster(), 2,
 								objorder.getLsuserMaster(), 2, fromdate, todate);
+				
+			}else if(filetype == 0){
+				
+				lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+						 objorder.getOrderflag(),  filetype,fromdate,todate);
+			}
+				
 			} else if (filetype == -1 && objorder.getOrderflag() != null) {
 				lstorder = lslogilablimsorderdetailRepository
 						.findByOrderflagAndLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
@@ -4847,7 +4866,7 @@ public class InstrumentService {
 								objorder.getLssamplemaster(), 1, objorder.getLstestmasterlocal(), filetype, 2, fromdate,
 								todate, objorder.getLssamplemaster(), 2, objorder.getLsuserMaster(),
 								objorder.getLstestmasterlocal(), filetype, 2, fromdate, todate);
-			}
+			
 		}
 		return lstorder;
 	}
@@ -4930,6 +4949,7 @@ public class InstrumentService {
 					.findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndProtocoltypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 							objorder.getLsprojectmaster(), objorder.getTestcode(), 1, protocoltype, fromdate, todate);
 		}
+		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
 		List<Long> protocolordercode = new ArrayList<>();
 		if (lstorder.size() > 0 && objorder.getSearchCriteriaType() != null) {
 			protocolordercode = lstorder.stream().map(LSlogilabprotocoldetail::getProtocolordercode)
@@ -4957,6 +4977,8 @@ public class InstrumentService {
 		if (objusers.get("Orderflag") != null) {
 			Orderflag = mapper.convertValue(objusers.get("Orderflag"), String.class);
 		}
+		
+	
 		if (lsloginuser.getUsercode() == lsselecteduser.getUsercode()) {
 			if (protocoltype == -1 && Orderflag == null) {
 				mapuserorders.put("assigned",
@@ -5041,6 +5063,40 @@ public class InstrumentService {
 								fromdate, todate));
 			}
 		}
+		
+		if(objusers.containsKey("searchCriteriaType")) {
+			List<Long> protocolordercodeonassigned = new ArrayList<>();
+			List<Long> protocolordercodesharebyme = new ArrayList<>();
+			List<Long> protocolordercodesharetome = new ArrayList<>();
+			List<Map<String, Object>> passmap=new ArrayList<Map<String, Object>>();
+			Map<String, Object> passorderlistmap=new HashMap<String, Object>();
+		if (mapuserorders.get("assigned") != null) {
+			List<LSlogilabprotocoldetail> obj =mapper.convertValue(mapuserorders.get("assigned"), new TypeReference<List<LSlogilabprotocoldetail>>() {
+			} );
+			protocolordercodeonassigned = obj.stream().map(LSlogilabprotocoldetail::getProtocolordercode)
+					.collect(Collectors.toList());
+			passorderlistmap.put("assigned", protocolordercodeonassigned);
+		
+		}
+		if (mapuserorders.get("sharebyme") != null) {
+			List<Lsprotocolordersharedby> obj =mapper.convertValue(mapuserorders.get("sharebyme"), new TypeReference<List<Lsprotocolordersharedby>>() {
+			} );
+			protocolordercodesharebyme = obj.stream().map(Lsprotocolordersharedby::getShareprotocolordercode)
+					.collect(Collectors.toList());
+			passorderlistmap.put("sharebyme", protocolordercodesharebyme);
+		}
+		
+		if (mapuserorders.get("sharetome") != null) {
+			List<Lsprotocolordershareto> obj =mapper.convertValue(mapuserorders.get("sharetome"), new TypeReference<List<Lsprotocolordershareto>>() {
+			} );
+			protocolordercodesharetome = obj.stream().map(Lsprotocolordershareto::getShareprotocolordercode)
+					.collect(Collectors.toList());
+			passorderlistmap.put("sharetome", protocolordercodesharetome);
+		}
+		passmap.add(passorderlistmap);
+		mapuserorders=ProtocolMasterService.getAllProtocolStepLstonsharedorder(mapper.convertValue(objusers.get("ismultitenant"), Integer.class),mapper.convertValue(objusers.get("searchcontent"), String.class),mapper.convertValue(objusers.get("sitecode"), Integer.class),passmap);
+		
+		}
 
 		mapuserorders.put("directorycode", directory);
 
@@ -5096,6 +5152,7 @@ public class InstrumentService {
 							objorder.getLssamplemaster(), 2, objorder.getLsuserMaster(), objorder.getTestcode(), 2,
 							protocoltype, fromdate, todate);
 		}
+		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
 		List<Long> protocolordercode = new ArrayList<>();
 		if (lstorder.size() > 0 && objorder.getSearchCriteriaType() != null) {
 			protocolordercode = lstorder.stream().map(LSlogilabprotocoldetail::getProtocolordercode)
@@ -5139,6 +5196,7 @@ public class InstrumentService {
 			}
 		
 		}
+		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
 		List<Long> protocolordercode = new ArrayList<>();
 		if (lstorder.size() > 0 && objorder.getSearchCriteriaType() != null) {
 			protocolordercode = lstorder.stream().map(Logilabprotocolorders::getProtocolordercode)

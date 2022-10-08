@@ -42,6 +42,15 @@ public class LSPasswordPolicy {
 	private Integer minspecialchar;
 	//@Column(name = "ncomplexpasswrd")
 	private Integer complexpasswrd;
+	@Column(name = "idletime")
+	private Integer idletime;
+	public Integer getIdletime() {
+		return idletime;
+	}
+
+	public void setIdletime(Integer idletime) {
+		this.idletime = idletime;
+	}
 	//@Column(name = "ndbbased")
 	private Integer dbbased;
 	@Transient

@@ -1,7 +1,9 @@
 package com.agaram.eln.primary.model.protocols;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -122,7 +124,26 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	}
 
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+//		this.lstworkflow = lstworkflow;
+		if (this.lsworkflow != null && lstworkflow != null  && lstworkflow.size() > 0) {
+			List<Integer> lstworkflowcode = new ArrayList<Integer>();
+			if (lstworkflow != null && lstworkflow.size() > 0) {
+				lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+
+				if (lstworkflowcode.contains(this.lsworkflow.getWorkflowcode())) {
+					this.setCanuserprocess(true);
+				} else {
+					this.setCanuserprocess(false);
+				}
+			} else {
+				this.setCanuserprocess(false);
+			}
+		} else {
+			this.setCanuserprocess(false);
+		}
+		
 		this.lstworkflow = lstworkflow;
+	
 	}
 
 	@ManyToOne
@@ -149,6 +170,10 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	
 	private Integer orderdisplaytype;
 	
+
+	@Transient
+	List<LSprojectmaster> lstproject;
+	
 	public LSworkflow getLsworkflow() {
 		return lsworkflow;
 	}
@@ -157,9 +182,6 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.lsworkflow = lsworkflow;
 	}
 
-	@Transient
-	List<LSprojectmaster> lstproject;
-	
 	@Transient
 	private Integer activekey;
 	
