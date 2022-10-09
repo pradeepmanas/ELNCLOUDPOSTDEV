@@ -1892,6 +1892,8 @@ insert into period values(1,'{
     "sdescription": ""
 }',4,-1,1)on conflict (nperiodcode) do nothing;
 
+ALTER TABLE IF Exists materialgrade ADD COLUMN IF NOT EXISTS smaterialgradename character varying(50);
+
 insert into materialgrade values(1,'{
     "sdescription": "",
     "smaterialgradename": "A"
