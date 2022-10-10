@@ -289,7 +289,7 @@ public class MaterialInventoryService {
 //		objmap.putAll((Map<String, Object>) getMaterialInventoryAdd((int) inputMap.get("nmaterialtypecode"), userInfo)
 //				.getBody());
 
-		objmap.put("DesignMappedFeilds", getTemplateDesignForMaterial(2, 138));
+		objmap.put("DesignMappedFeilds", getTemplateDesignForMaterial(1, 138));
 
 		List<Integer> lstParams = new ArrayList<Integer>();
 //		List<Map<String, Object>> lstTransactionStatus = new ArrayList<Map<String, Object>>();
@@ -298,22 +298,6 @@ public class MaterialInventoryService {
 		lstParams.add(48);
 
 		List<TransactionStatus> lstTransStatus = transactionStatusRepository.findByNstatusAndNtranscodeIn(1, lstParams);
-
-//		lstTransStatus.stream().peek(f -> {
-//			
-//			try {
-//				Map<String, Object> resObj = new ObjectMapper().convertValue(f, Map.class);
-//				
-//				resObj.put("jsondata", new ObjectMapper().readValue(f.getJsondata(), Map.class));
-//				
-//				lstTransactionStatus.add(resObj);
-//				
-//			} catch (Exception e) {
-//				
-//				e.printStackTrace();
-//			}
-//
-//		}).collect(Collectors.toList());
 
 		objmap.put("TransactionType", lstTransStatus);
 		lstParams = new ArrayList<Integer>();
@@ -327,7 +311,7 @@ public class MaterialInventoryService {
 		System.out.println(lstMaterialInventoryType);
 		objmap.put("MaterialInventoryType", lstMaterialInventoryType);
 
-//		objmap.put("DesignMappedFeildsQuantityTransaction", getTemplateDesignForMaterial(9, userInfo.getNformcode()));
+		objmap.put("DesignMappedFeildsQuantityTransaction", getTemplateDesignForMaterial(9, 138));
 
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 
@@ -338,13 +322,13 @@ public class MaterialInventoryService {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		List<Map<String, Object>> lstMaterialInventoryTrans = new ArrayList<Map<String, Object>>();
 		
-//		List<List<Object>> lstMaterialConfig = new ArrayList<List<Object>>();
+		List<MaterialConfig> lstMaterialConfig = new ArrayList<MaterialConfig>();
 		
 		MaterialInventoryTransaction objInventoryTransaction = materialInventoryTransactionRepository.findByNmaterialinventorycode(nmaterialinventorycode);
 		
-//		MaterialConfig objMaterialConfig = materialConfigRepository.findByNformcodeAndNmaterialtypecodeAndNstatus(138,-1,1);
-//		
-//		lstMaterialConfig.add(objMaterialConfig.getJsondata());
+		MaterialConfig objMaterialConfig = materialConfigRepository.findByNformcodeAndNmaterialtypecodeAndNstatus(138,-1,1);
+		
+		lstMaterialConfig.add(objMaterialConfig);
 		
 		Map<String, Object> mapJsonData = new ObjectMapper().readValue(objInventoryTransaction.getJsonuidata(), Map.class);
 		
@@ -355,7 +339,7 @@ public class MaterialInventoryService {
 		mapJsonData.put("Received Quantity", objInventoryTransaction.getNqtyreceived());
 		
 		lstMaterialInventoryTrans.add(mapJsonData);
-//		objmap.put("QuantityTransactionTemplate", lstMaterialConfig);
+		objmap.put("QuantityTransactionTemplate", lstMaterialConfig);
 		objmap.put("MaterialInventoryTrans", lstMaterialInventoryTrans);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
@@ -363,7 +347,7 @@ public class MaterialInventoryService {
 	public Map<String, Object> getTemplateDesignForMaterial(int nmaterialconfigcode, int nformcode) {
 
 		List<MappedTemplateFieldPropsMaterial> lstMappedTemplate = mappedTemplateFieldPropsMaterialRepository
-				.findByNmaterialconfigcode(1);
+				.findByNmaterialconfigcode(nmaterialconfigcode);
 
 		Map<String, Object> designObject = new HashMap<String, Object>();
 
@@ -372,6 +356,14 @@ public class MaterialInventoryService {
 		designChildObject.put("type", "jsonb");
 		designChildObject.put("null", true);
 		designChildObject.put("value", lstMappedTemplate.get(0).getJsondata());
+		
+		if(nmaterialconfigcode == 9) {
+			Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(lstMappedTemplate.get(0).getJsondata(),"138");
+			
+			JSONObject jsonObject =(JSONObject) objContent.get("rtnObj");
+			
+			designChildObject.put("value", jsonObject.toString());
+		}
 
 		designObject.put("jsondata", designChildObject);
 

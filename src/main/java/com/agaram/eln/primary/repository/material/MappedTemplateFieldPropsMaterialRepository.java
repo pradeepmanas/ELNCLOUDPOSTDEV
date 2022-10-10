@@ -12,4 +12,6 @@ public interface MappedTemplateFieldPropsMaterialRepository extends JpaRepositor
 	public List<MappedTemplateFieldPropsMaterial> findByNmaterialconfigcode(Integer nmaterialconfigcode);
 
 	public MappedTemplateFieldPropsMaterial findByNmaterialconfigcodeAndNstatus(int typeCode, int i);
+
+	
 }

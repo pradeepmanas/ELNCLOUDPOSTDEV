@@ -1988,6 +1988,8 @@ public class InstrumentService {
 			objupdatedorder
 					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
 		}
+		
+		objupdatedorder.setCanuserprocess(objorder.isCanuserprocess());
 
 		if (objupdatedorder.getLssamplefile() != null) {
 			if (objorder.getIsmultitenant() == 1) {
