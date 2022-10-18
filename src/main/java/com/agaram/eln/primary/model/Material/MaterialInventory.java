@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.model.material;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.json.JSONObject;
+
+import com.agaram.eln.primary.commonfunction.commonfunction;
 
 @Entity
 @Table(name="materialinventory")
@@ -111,6 +116,14 @@ public class MaterialInventory {
 		this.jsonuidata = jsonuidata;
 	}
 	public String getSinventoryid() {
+		
+		Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(this.jsondata,"Inventory ID");
+		
+		if(objContent.containsKey("rtnObj")) {
+			
+			return sinventoryid = (String) objContent.get("rtnObj");
+		}
+		
 		return sinventoryid;
 	}
 	public void setSinventoryid(String sinventoryid) {

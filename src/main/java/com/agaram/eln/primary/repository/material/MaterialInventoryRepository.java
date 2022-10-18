@@ -14,6 +14,10 @@ public interface MaterialInventoryRepository extends JpaRepository<MaterialInven
 	int countByNmaterialcodeAndNstatus(Integer integer, int i);
 
 	List<MaterialInventory> findByNmaterialcode(Integer integer);
+
+	MaterialInventory findByNmaterialinventorycode(Integer integer);
+
+	List<MaterialInventory> findByNmaterialcodeOrderByNmaterialinventorycode(Integer nmaterialcode);
 	
 	
 

@@ -31,6 +31,14 @@ public class Material implements Serializable{
 	@Column(name = "nmaterialtypecode")
 	private Integer nmaterialtypecode;
 	
+	private String sprefix;
+	
+	public String getSprefix() {
+		return sprefix;
+	}
+	public void setSprefix(String sprefix) {
+		this.sprefix = sprefix;
+	}
 	@Type(type = "jsonb")
 	@Column(name = "jsondata", columnDefinition = "jsonb")
 	private String jsondata;

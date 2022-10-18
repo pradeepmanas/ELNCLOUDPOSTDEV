@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.agaram.eln.primary.model.methodsetup.CommonFunction;
+import com.agaram.eln.primary.model.methodsetup.DataType;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.ParserBlock;
 import com.agaram.eln.primary.model.methodsetup.ParserField;
@@ -28,8 +29,10 @@ import com.agaram.eln.primary.model.methodsetup.SampleLineSplit;
 import com.agaram.eln.primary.model.methodsetup.SampleTextSplit;
 import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserTechnique;
+
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.methodsetup.DataTypeRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserIgnoreCharsRepository;
@@ -93,6 +96,9 @@ public class ParserSetupService {
 	
 	@Autowired
 	SampleSplitService sampleSplitService;
+
+	@Autowired
+	DataTypeRepository datatypeRepo;
 	
 	
 	/**
@@ -137,7 +143,9 @@ public class ParserSetupService {
 		
 		if (method.getSamplesplit() == null || method.getSamplesplit() == 0) {
 			final Map <String, Object> extractedBlock = new HashMap<String, Object>();
+            //	 extractedBlock.put("TextBlock_1", "$$BEGINSAMPLE$$\n"+rawDataText+"\n$$ENDSAMPLE$$");	
             	 extractedBlock.put("TextBlock_1", "$$BEGINSAMPLE$$\n"+rawDataText+"\n$$ENDSAMPLE$$");			
+
 
 			 return new ResponseEntity<>(extractedBlock, HttpStatus.OK);
 		}
@@ -780,6 +788,11 @@ public class ParserSetupService {
 		final List<ParserTechnique> parserTechniqueList = (List<ParserTechnique>)parserTechniqueService.getParserTechniqueByMethodKey(methodKey).getBody();
 		final List<SubParserField> subParserFieldList = (List<SubParserField>)subParserFieldService.getSubParserFieldByMethodKey(methodKey).getBody();
 		final List<SubParserTechnique> subParserTechniqueList = (List<SubParserTechnique>)subParserTechniqueService.getSubParserTechniqueByMethodKey(methodKey).getBody();
+		
+		//sri
+
+		final List<DataType> datatypeList = datatypeRepo.findAll();
+
         final List<ParserIgnoreChars> ignoreList = parserIgnoreRepo.findAll();		
 		   
 		final Map<String, Object> returnObject = new HashMap<String, Object>();
@@ -788,6 +801,8 @@ public class ParserSetupService {
 		returnObject.put("ParserTechniqueList", parserTechniqueList);
 		returnObject.put("SubParserFieldList", subParserFieldList);
 		returnObject.put("SubParserTechniqueList", subParserTechniqueList);	
+		returnObject.put("DataTypeList", datatypeList);	
+
 		returnObject.put("PDIgnoreCharsList", ignoreList);
 
 		return new ResponseEntity<> (returnObject, HttpStatus.OK);

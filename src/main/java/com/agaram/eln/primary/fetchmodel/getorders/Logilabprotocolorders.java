@@ -43,6 +43,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	private String repositoryitemname;
 	private LSuserMaster assignedto;
 	private String repositoryname;
+	private Integer approved;
+	private Integer rejected;
 	
 
 
@@ -56,7 +58,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	public Logilabprotocolorders(Long protocolordercode,Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
 			LSprotocolworkflow lSprotocolworkflow,
-			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,String keyword,Long directorycode,Integer createby,LSuserMaster assignedto,Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,LSworkflow lsworkflow) {
+			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,String keyword,Long directorycode,Integer createby,LSuserMaster assignedto,Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,LSworkflow lsworkflow, Integer approved,Integer rejected) {
 		
 		this.protocolordercode = protocolordercode;
 		this.Testcode =Testcode;
@@ -79,6 +81,25 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 		this.repositoryname =lsrepositories !=null ?lsrepositories.getRepositoryname():null;
 		this.directorycode = directorycode;
 		this.LSorderworkflow=lsworkflow;
+		this.lsprotocolmaster=lsprotocolmaster;
+		this.approved=approved;
+		this.rejected=rejected;
+	}
+
+	public Integer getApproved() {
+		return approved;
+	}
+
+	public void setApproved(Integer approved) {
+		this.approved = approved;
+	}
+
+	public Integer getRejected() {
+		return rejected;
+	}
+
+	public void setRejected(Integer rejected) {
+		this.rejected = rejected;
 	}
 
 	public LSworkflow getLSorderworkflow() {

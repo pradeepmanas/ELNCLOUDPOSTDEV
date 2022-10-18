@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -92,7 +93,7 @@ public class MaterialInventoryService {
 
 			List<MaterialConfig> lstMaterialConfig = materialConfigRepository
 					.findByNmaterialtypecodeAndNformcode(lstMaterialType.get(0).getNmaterialtypecode(), 138);
-			
+
 			objmap.put("selectedTemplate", lstMaterialConfig);
 
 			objmap.put("nmaterialtypecode", lstMaterialType.get(0).getNmaterialtypecode());
@@ -160,10 +161,10 @@ public class MaterialInventoryService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> getMaterialInventoryByID(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
+	public ResponseEntity<Object> getMaterialInventoryByID(Map<String, Object> inputMap) throws Exception {
 
 		Map<String, Object> objmap = new HashMap<String, Object>();
-		
+
 		List<Map<String, Object>> lstMaterialInventory = new ArrayList<Map<String, Object>>();
 
 		if (inputMap.containsKey("nmaterialcode")) {
@@ -178,7 +179,7 @@ public class MaterialInventoryService {
 					Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
 
 					resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-					
+
 					lstMaterialInventory.add(resObj);
 
 				} catch (IOException e) {
@@ -195,10 +196,13 @@ public class MaterialInventoryService {
 				if (!(inputMap.containsKey("nflag"))) {
 
 					objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(lstMaterialInventory.size() - 1));
-					inputMap.put("nsectioncode",lstMaterialInventory.get(lstMaterialInventory.size() - 1).get("nsectioncode"));
+					inputMap.put("nsectioncode",
+							lstMaterialInventory.get(lstMaterialInventory.size() - 1).get("nsectioncode"));
 
-					objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode((int) lstMaterialInventory
-									.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode"), inputMap).getBody());
+					objmap.putAll(
+							(Map<String, Object>) getQuantityTransactionByMaterialInvCode((int) lstMaterialInventory
+									.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode"), inputMap)
+											.getBody());
 //					objmap.putAll((Map<String, Object>) getMaterialFile((int) lstMaterialInventory
 //							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")));
 //					objmap.putAll((Map<String, Object>) getResultUsedMaterial((int) lstMaterialInventory
@@ -207,8 +211,9 @@ public class MaterialInventoryService {
 //							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")));
 
 				} else {
-					
-					MaterialInventory objMaterialInventory = materialInventoryRepository.findOne((Integer) inputMap.get("nmaterialinventorycode"));
+
+					MaterialInventory objMaterialInventory = materialInventoryRepository
+							.findOne((Integer) inputMap.get("nmaterialinventorycode"));
 
 					List<Map<String, Object>> lstMaterialInventory1 = new ArrayList<Map<String, Object>>();
 
@@ -231,11 +236,12 @@ public class MaterialInventoryService {
 //							});
 //					// Commented For JSONUIDATA
 					objmap.put("SelectedMaterialInventory", objMaterialInventory);
-					
+
 					inputMap.put("nsectioncode", objMaterialInventory.getNsectioncode());
-					
-					objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode((int) lstMaterialInventory1.get(0).get("nmaterialinventorycode"), inputMap).getBody());
-					
+
+					objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
+							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode"), inputMap).getBody());
+
 //					objmap.putAll((Map<String, Object>) getResultUsedMaterial(
 //							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode")).getBody());
 //					objmap.putAll((Map<String, Object>) getMaterialFile(
@@ -285,14 +291,18 @@ public class MaterialInventoryService {
 				objmap.put("SelectedMaterialCrumb", crumObjectMaterialCreated(lstMaterialCategory1));
 			}
 		}
-//		objmap.putAll((Map<String, Object>) getQuantityTransactionTemplate(userInfo).getBody());
-//		objmap.putAll((Map<String, Object>) getMaterialInventoryAdd((int) inputMap.get("nmaterialtypecode"), userInfo)
-//				.getBody());
+		objmap.putAll(
+				(Map<String, Object>) getQuantityTransactionTemplate(138, (Integer) inputMap.get("nmaterialtypecode"))
+						.getBody());
+		objmap.putAll((Map<String, Object>) getMaterialInventoryAdd((int) inputMap.get("nmaterialtypecode")).getBody());
 
-		objmap.put("DesignMappedFeilds", getTemplateDesignForMaterial(1, 138));
+		List<MaterialConfig> lstConfigs = (List<MaterialConfig>) objmap.get("selectedTemplate");
+
+		Integer configCode = lstConfigs.get(0).getNmaterialconfigcode();
+
+		objmap.put("DesignMappedFeilds", getTemplateDesignForMaterial(configCode, 138));
 
 		List<Integer> lstParams = new ArrayList<Integer>();
-//		List<Map<String, Object>> lstTransactionStatus = new ArrayList<Map<String, Object>>();
 
 		lstParams.add(47);
 		lstParams.add(48);
@@ -317,27 +327,44 @@ public class MaterialInventoryService {
 
 	}
 
+	private HttpEntity<Object> getMaterialInventoryAdd(int ntypecode) {
+		Map<String, Object> objmap = new HashMap<>();
+
+		List<MaterialConfig> lstMaterialConfig = materialConfigRepository
+				.findByNmaterialtypecodeAndNformcodeAndNstatus(ntypecode, 138, 1);
+
+		objmap.put("selectedTemplate", lstMaterialConfig);
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+
+	}
+
 	@SuppressWarnings("unchecked")
-	private HttpEntity<Object> getQuantityTransactionByMaterialInvCode(int nmaterialinventorycode, Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
+	public HttpEntity<Object> getQuantityTransactionByMaterialInvCode(int nmaterialinventorycode,
+			Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		List<Map<String, Object>> lstMaterialInventoryTrans = new ArrayList<Map<String, Object>>();
-		
+
 		List<MaterialConfig> lstMaterialConfig = new ArrayList<MaterialConfig>();
-		
-		MaterialInventoryTransaction objInventoryTransaction = materialInventoryTransactionRepository.findByNmaterialinventorycode(nmaterialinventorycode);
-		
-		MaterialConfig objMaterialConfig = materialConfigRepository.findByNformcodeAndNmaterialtypecodeAndNstatus(138,-1,1);
-		
+
+		List<MaterialInventoryTransaction> lstInventoryTransaction = materialInventoryTransactionRepository
+				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(nmaterialinventorycode);
+
+		MaterialConfig objMaterialConfig = materialConfigRepository.findByNformcodeAndNmaterialtypecodeAndNstatus(138,
+				-1, 1);
+
 		lstMaterialConfig.add(objMaterialConfig);
-		
-		Map<String, Object> mapJsonData = new ObjectMapper().readValue(objInventoryTransaction.getJsonuidata(), Map.class);
-		
-		Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(objInventoryTransaction.getJsonuidata(),"namountleft");		
+
+		Map<String, Object> mapJsonData = new ObjectMapper().readValue(lstInventoryTransaction.get(0).getJsonuidata(),
+				Map.class);
+
+		Map<String, Object> objContent = commonfunction
+				.getInventoryValuesFromJsonString(lstInventoryTransaction.get(0).getJsonuidata(), "namountleft");
 		mapJsonData.put("Available Quantity", objContent.get("rtnObj"));
-		objContent = commonfunction.getInventoryValuesFromJsonString(objInventoryTransaction.getJsonuidata(),"nqtyissued");
+		objContent = commonfunction.getInventoryValuesFromJsonString(lstInventoryTransaction.get(0).getJsonuidata(),
+				"nqtyissued");
 		mapJsonData.put("Issued Quantity", objContent.get("rtnObj"));
-		mapJsonData.put("Received Quantity", objInventoryTransaction.getNqtyreceived());
-		
+		mapJsonData.put("Received Quantity", lstInventoryTransaction.get(0).getNqtyreceived());
+
 		lstMaterialInventoryTrans.add(mapJsonData);
 		objmap.put("QuantityTransactionTemplate", lstMaterialConfig);
 		objmap.put("MaterialInventoryTrans", lstMaterialInventoryTrans);
@@ -356,14 +383,13 @@ public class MaterialInventoryService {
 		designChildObject.put("type", "jsonb");
 		designChildObject.put("null", true);
 		designChildObject.put("value", lstMappedTemplate.get(0).getJsondata());
-		
-		if(nmaterialconfigcode == 9) {
-			Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(lstMappedTemplate.get(0).getJsondata(),"138");
-			
-			JSONObject jsonObject =(JSONObject) objContent.get("rtnObj");
-			
-			designChildObject.put("value", jsonObject.toString());
-		}
+
+		Map<String, Object> objContent = commonfunction
+				.getInventoryValuesFromJsonString(lstMappedTemplate.get(0).getJsondata(), "138");
+
+		JSONObject jsonObject = (JSONObject) objContent.get("rtnObj");
+
+		designChildObject.put("value", jsonObject.toString());
 
 		designObject.put("jsondata", designChildObject);
 
@@ -380,14 +406,14 @@ public class MaterialInventoryService {
 		String materialName = (String) objContent.get("rtnObj");
 
 		objContent = commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Basic Unit");
-		
+
 		Map<String, Object> rtnUnitObj = new HashMap<>();
-		
-		JSONObject jsonUnitObject =(JSONObject) objContent.get("rtnObj");
-		
+
+		JSONObject jsonUnitObject = (JSONObject) objContent.get("rtnObj");
+
 		rtnUnitObj.put("label", jsonUnitObject.get("label"));
 		rtnUnitObj.put("value", jsonUnitObject.get("value"));
-		
+
 		objContent.put("isExpiryNeed", "No Expiry");
 		objContent.put("nmaterialcode", objmaterial.getNmaterialcode());
 		objContent.put("Material Name", materialName);
@@ -415,7 +441,6 @@ public class MaterialInventoryService {
 
 		JSONObject jsonuidata = new JSONObject(inputMap.get("jsonuidata").toString());
 		JSONObject jsonuidataTrans = new JSONObject(inputMap.get("jsonuidataTrans").toString());
-	
 
 		objmap.putAll((Map<String, Object>) getQuantityTransactionTemplate(138, -1).getBody());
 
@@ -430,7 +455,7 @@ public class MaterialInventoryService {
 
 		Material objGetMaterialJSON = materialRepository.findByNstatusAndNmaterialcode(1,
 				(Integer) inputMap.get("nmaterialcode"));
-		
+
 		MaterialType objGetMaterialTypeJSON = materialTypeRepository
 				.findByNmaterialtypecodeAndNstatus((Integer) jsonObject.get("nmaterialtypecode"), 1);
 
@@ -527,9 +552,11 @@ public class MaterialInventoryService {
 //		inputMap.put("nmaterialinventorycode", seqnomaterialinv);
 
 		JSONObject objmat = new JSONObject(objGetMaterialJSON.getJsondata());
-		
-		Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1, (Integer) inputMap.get("nmaterialcode"));
-		MaterialCategory objMaterialCategory = materialCategoryRepository.findByNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
+
+		Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,
+				(Integer) inputMap.get("nmaterialcode"));
+		MaterialCategory objMaterialCategory = materialCategoryRepository
+				.findByNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
 
 		if (objmat.has("Reusable")) {
 
@@ -552,30 +579,17 @@ public class MaterialInventoryService {
 				jsonObjectInvTrans.put("Received Quantity",
 						Enumeration.TransactionStatus.ACTIVE.gettransactionstatus());
 				jsonObjectInvTrans.put("nqtyissued", 0);
-				/*
-				 * jsonObjectInvTrans.put("namountleft",
-				 * jdbcTemplate.queryForObject("select Cast(" +
-				 * jsonObjectInvTrans.get("Received Quantity") + " as decimal (" +
-				 * objmap.get("sprecision") + "))", String.class));
-				 */
+				jsonObjectInvTrans.put("namountleft", Double.valueOf((Integer) jsonuidata.get("Received Quantity")));
 
 				jsonObject.put("Received Quantity", Enumeration.TransactionStatus.ACTIVE.gettransactionstatus());
 				jsonObject.put("nqtyissued", 0);
-				/*
-				 * jsonObject.put("namountleft", jdbcTemplate.queryForObject("select Cast(" +
-				 * jsonObject.get("Received Quantity") + " as decimal (" +
-				 * objmap.get("sprecision") + "))", String.class));
-				 */
+				jsonObject.put("namountleft", Double.valueOf((Integer) jsonuidata.get("Received Quantity")));
 				jsonObject.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVED.gettransactionstatus());
 				jsonObject = getmaterialquery(jsonObject, 1);
 
 				jsonuidata.put("Received Quantity", Enumeration.TransactionStatus.ACTIVE.gettransactionstatus());
 				jsonuidata.put("nqtyissued", 0);
-				/*
-				 * jsonuidata.put("namountleft", jdbcTemplate.queryForObject("select Cast(" +
-				 * jsonuidata.get("Received Quantity") + " as decimal (" +
-				 * objmap.get("sprecision") + "))", String.class));
-				 */
+				jsonuidata.put("namountleft", Double.valueOf((Integer) jsonuidata.get("Received Quantity")));
 				jsonuidata.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVED.gettransactionstatus());
 				jsonuidata = getmaterialquery(jsonuidata, 1);
 
@@ -600,11 +614,13 @@ public class MaterialInventoryService {
 					objSaveMaterialInventory.setJsonuidata(jsonuidata.toString());
 					objSaveMaterialInventory.setNstatus(Enumeration.TransactionStatus.ACTIVE.gettransactionstatus());
 					objSaveMaterialInventory.setNtransactionstatus((Integer) inputMap.get("ntransactionstatus"));
-					objSaveMaterialInventory.setNsectioncode((Integer) (inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode") : -1));
+					objSaveMaterialInventory.setNsectioncode(
+							(Integer) (inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode")
+									: -1));
 					objSaveMaterialInventory.setNmaterialcode((Integer) inputMap.get("nmaterialcode"));
 					objSaveMaterialInventory.setNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
 					objSaveMaterialInventory.setNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
-					
+
 					objSaveMaterialInventory = materialInventoryRepository.save(objSaveMaterialInventory);
 
 					if (strPrefix != null && !strPrefix.equals("")) {
@@ -617,21 +633,21 @@ public class MaterialInventoryService {
 
 					jsonObject.put("Inventory ID", strformat);
 					jsonuidata.put("Inventory ID", strformat);
-					
+
 					objSaveMaterialInventory.setJsondata(jsonObject.toString());
 					objSaveMaterialInventory.setJsonuidata(jsonuidata.toString());
-					
+
 					materialInventoryRepository.save(objSaveMaterialInventory);
 
 					jsonObjectInvTrans.put("Inventory ID", strformat);
 					jsonuidataTrans.put("Inventory ID", strformat);
 
-					if ((int) inputMap.get("needsectionwise") == Enumeration.TransactionStatus.YES
-							.gettransactionstatus()) {
-						jsonuidataTrans.put("Description", "received");
-					} else {
-						jsonuidataTrans.put("Description", "received");
-					}
+//					if ((int) inputMap.get("needsectionwise") == Enumeration.TransactionStatus.YES
+//							.gettransactionstatus()) {
+//						jsonuidataTrans.put("Description", "received");
+//					} else {
+					jsonuidataTrans.put("Description", "received");
+//					}
 
 					MaterialInventoryTransaction objTransaction = new MaterialInventoryTransaction();
 
@@ -641,7 +657,14 @@ public class MaterialInventoryService {
 					objTransaction.setNmaterialinventorycode(objSaveMaterialInventory.getNmaterialinventorycode());
 					objTransaction.setNinventorytranscode((Integer) jsonObjectInvTrans.get("ninventorytranscode"));
 					objTransaction.setNtransactiontype((Integer) jsonObjectInvTrans.get("ntransactiontype"));
-					objTransaction.setNsectioncode((Integer) (jsonObjectInvTrans.get("nsectioncode") != null ? (Integer) jsonObjectInvTrans.get("nsectioncode") != null : -1));
+					objTransaction.setNsectioncode((Integer) (jsonObjectInvTrans.get("nsectioncode") != null
+							? (Integer) jsonObjectInvTrans.get("nsectioncode")
+							: -1));
+					objTransaction.setNsitecode(-1);
+					objTransaction.setNresultusedmaterialcode(-1);
+					objTransaction
+							.setNqtyreceived(Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
+					objTransaction.setNqtyissued(Double.valueOf((Integer) jsonObjectInvTrans.get("nqtyissued")));
 
 					materialInventoryTransactionRepository.save(objTransaction);
 
@@ -656,24 +679,27 @@ public class MaterialInventoryService {
 		}
 
 		if (nflag == false) {
-			
+
 			MaterialInventory objSaveMaterialInventory = new MaterialInventory();
-			
+
 			objSaveMaterialInventory.setJsondata(jsonObject.toString());
 			objSaveMaterialInventory.setJsonuidata(jsonuidata.toString());
 			objSaveMaterialInventory.setNstatus(Enumeration.TransactionStatus.ACTIVE.gettransactionstatus());
 			objSaveMaterialInventory.setNtransactionstatus((Integer) inputMap.get("ntransactionstatus"));
-			objSaveMaterialInventory.setNsectioncode((Integer) (inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode") : -1));
+			objSaveMaterialInventory.setNsectioncode(
+					(Integer) (inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode") : -1));
 			objSaveMaterialInventory.setNmaterialcode((Integer) inputMap.get("nmaterialcode"));
 			objSaveMaterialInventory.setNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
 			objSaveMaterialInventory.setNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
-			
+
 			objSaveMaterialInventory = materialInventoryRepository.save(objSaveMaterialInventory);
-			
+
 			if (strPrefix != null && !strPrefix.equals("")) {
-				strformat = strtypePrefix + "/" + strPrefix + "/" + getfnFormat(objSaveMaterialInventory.getNmaterialinventorycode(), sformattype);
+				strformat = strtypePrefix + "/" + strPrefix + "/"
+						+ getfnFormat(objSaveMaterialInventory.getNmaterialinventorycode(), sformattype);
 			} else {
-				strformat = strtypePrefix + "/" + getfnFormat(objSaveMaterialInventory.getNmaterialinventorycode(), sformattype);
+				strformat = strtypePrefix + "/"
+						+ getfnFormat(objSaveMaterialInventory.getNmaterialinventorycode(), sformattype);
 			}
 			jsonObject.put("Inventory ID", strformat);
 			jsonObject.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVED.gettransactionstatus());
@@ -682,12 +708,11 @@ public class MaterialInventoryService {
 			jsonuidata.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVED.gettransactionstatus());
 			jsonuidata = getmaterialquery(jsonuidata, 1);
 
-			
 			objSaveMaterialInventory.setJsondata(jsonObject.toString());
 			objSaveMaterialInventory.setJsonuidata(jsonuidata.toString());
-			
-			 materialInventoryRepository.save(objSaveMaterialInventory);
-			
+
+			materialInventoryRepository.save(objSaveMaterialInventory);
+
 			inputMap.put("nmaterialinventorycode", objSaveMaterialInventory.getNmaterialinventorycode());
 			inputMap.put("ntranscode", inputMap.get("ntransactionstatus"));
 //			createMaterialInventoryhistory(inputMap);
@@ -698,11 +723,8 @@ public class MaterialInventoryService {
 //					getCurrentDateTimeOffset(userInfo.getStimezoneid()));
 			jsonObjectInvTrans.put("ninventorytranscode", Enumeration.TransactionStatus.OUTSIDE.gettransactionstatus());
 			jsonObjectInvTrans.put("nqtyissued", 0);
-			jsonObjectInvTrans.put("namountleft",100);
-//					jsonObjectInvTrans.put("namountleft",
-//					jdbcTemplate.queryForObject("select Cast(" + jsonObjectInvTrans.get("Received Quantity")
-//							+ " as decimal (" + objmap.get("sprecision") + "))", String.class));
-//			jsonuidataTrans.put("Inventory ID", strformat);
+			jsonObjectInvTrans.put("namountleft",
+					Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
 			jsonuidataTrans.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVE.gettransactionstatus());
 //			jsonuidataTrans.put("Transaction Date & Time", dtransactiondate);
 			jsonuidataTrans.put("Transaction Date & Time", new Date());
@@ -710,31 +732,32 @@ public class MaterialInventoryService {
 
 			jsonuidataTrans.put("ninventorytranscode", Enumeration.TransactionStatus.OUTSIDE.gettransactionstatus());
 			jsonuidataTrans.put("nqtyissued", 0);
-			jsonuidataTrans.put("namountleft",100);
-//			jsonuidataTrans.put("namountleft",
-//					jdbcTemplate.queryForObject("select Cast(" + jsonuidataTrans.get("Received Quantity")
-//							+ " as decimal (" + objmap.get("sprecision") + "))", String.class));
-			
-			if (inputMap.get("needsectionwise") != null && (int) inputMap.get("needsectionwise") == Enumeration.TransactionStatus.YES.gettransactionstatus()) {
-				jsonuidataTrans.put("Description","IDS_RECEIVED");
+			jsonuidataTrans.put("namountleft", Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
+
+			if (inputMap.get("needsectionwise") != null
+					&& (int) inputMap.get("needsectionwise") == Enumeration.TransactionStatus.YES
+							.gettransactionstatus()) {
+				jsonuidataTrans.put("Description", "IDS_RECEIVED");
 			} else {
-				jsonuidataTrans.put("Description","IDS_RECEIVED");
+				jsonuidataTrans.put("Description", "IDS_RECEIVED");
 			}
-			
+
 			MaterialInventoryTransaction objTransaction = new MaterialInventoryTransaction();
-			
+
 			objTransaction.setJsondata(jsonObjectInvTrans.toString());
 			objTransaction.setJsonuidata(jsonuidataTrans.toString());
 			objTransaction.setNstatus(Enumeration.TransactionStatus.ACTIVE.gettransactionstatus());
 			objTransaction.setNmaterialinventorycode(objSaveMaterialInventory.getNmaterialinventorycode());
 			objTransaction.setNinventorytranscode((Integer) jsonObjectInvTrans.get("ninventorytranscode"));
 			objTransaction.setNtransactiontype((Integer) jsonObjectInvTrans.get("ntransactiontype"));
-			objTransaction.setNsectioncode((Integer) (jsonObjectInvTrans.get("nsectioncode") != null ? (Integer) jsonObjectInvTrans.get("nsectioncode") : -1));
+			objTransaction.setNsectioncode((Integer) (jsonObjectInvTrans.get("nsectioncode") != null
+					? (Integer) jsonObjectInvTrans.get("nsectioncode")
+					: -1));
 			objTransaction.setNsitecode(-1);
 			objTransaction.setNresultusedmaterialcode(-1);
 			objTransaction.setNqtyreceived(Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
 			objTransaction.setNqtyissued(Double.valueOf((Integer) jsonObjectInvTrans.get("nqtyissued")));
-			
+
 			materialInventoryTransactionRepository.save(objTransaction);
 
 			jsonUidataarray.put(jsonuidata);
@@ -761,10 +784,10 @@ public class MaterialInventoryService {
 		String sprecision = "";
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
-		MaterialConfig objMaterialConfig = materialConfigRepository
+		List<MaterialConfig> lstMaterialConfig = materialConfigRepository
 				.findByNmaterialtypecodeAndNformcodeAndNstatus(materialtypecode, formcode, 1);
 
-		JSONArray Layout = new JSONArray(objMaterialConfig.getJsondata());
+		JSONArray Layout = new JSONArray(lstMaterialConfig.get(0).getJsondata());
 
 		for (int L = 0; L < Layout.length(); L++) {
 			JSONObject row = new JSONObject(Layout.get(L).toString());
@@ -793,9 +816,9 @@ public class MaterialInventoryService {
 	}
 
 	public JSONObject getmaterialquery(JSONObject objMaterialInventory, int nflag) throws Exception {
-		JSONObject objMatNextvalidationperiod = null;
-		JSONObject objMatOpenExpiryPeriod = null;
-		JSONObject objMatExpiryPolicyperiod = null;
+//		JSONObject objMatNextvalidationperiod = null;
+//		JSONObject objMatOpenExpiryPeriod = null;
+//		JSONObject objMatExpiryPolicyperiod = null;
 
 		List<Material> lstMaterial = new ArrayList<Material>();
 		Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,
@@ -803,7 +826,8 @@ public class MaterialInventoryService {
 
 		lstMaterial.add(objMaterial);
 
-		JSONObject objMat = new JSONObject(lstMaterial.get(0).getJsondata());
+//		JSONObject objMat = new JSONObject(lstMaterial.get(0).getJsondata());
+
 //		if (objMat.has("Next Validation Period")) {
 //			objMatNextvalidationperiod = new JSONObject(objMat.get("Next Validation Period").toString());
 //		}
@@ -983,5 +1007,256 @@ public class MaterialInventoryService {
 			}
 		}
 		return sFormat;
+	}
+
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<Object> getQuantityTransaction(Map<String, Object> inputMap) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		Map<String, Object> paramObj = new LinkedHashMap<String, Object>();
+		List<Map<String, Object>> lstMap = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> lstMapForParentCombo = new ArrayList<Map<String, Object>>();
+
+		String filterQueryComponents = "";
+//		ObjectMapper Objmapper = new ObjectMapper();
+		String sprecision = "";
+		String QtyTransactionpopup = "";
+//		String siteLabelName = "";
+//		int nprecision = 0;
+//		boolean nflag = false;
+		int ntransactiontype = 0;
+
+		List<MaterialConfig> lstMaterialConfig = materialConfigRepository
+				.findByNformcodeAndNmaterialtypecodeAndNstatusOrderByNmaterialconfigcode(138,
+						Enumeration.TransactionStatus.NA.gettransactionstatus(),
+						Enumeration.TransactionStatus.ACTIVE.gettransactionstatus());
+
+		int sourceSection = materialInventoryTransactionRepository
+				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(
+						(Integer) inputMap.get("nmaterialinventorycode"))
+				.get(0).getNsectioncode();
+
+		if ((int) inputMap.get("nflag") == 1) {
+
+			MaterialInventory objInventory = materialInventoryRepository
+					.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
+
+			int statusCheck = (Integer) commonfunction
+					.getInventoryValuesFromJsonString(objInventory.getJsondata(), "ntranscode").get("rtnObj");
+
+			if (statusCheck == Enumeration.TransactionStatus.RELEASED.gettransactionstatus()) {
+
+				JSONArray Layout = new JSONArray(lstMaterialConfig.get(0).getJsondata());
+
+				for (int L = 0; L < Layout.length(); L++) {
+					JSONObject row = new JSONObject(Layout.get(L).toString());
+					if (row.has("children")) {
+						JSONArray column = new JSONArray(row.get("children").toString());
+						for (int c = 0; c < column.length(); c++) {
+							JSONObject component = new JSONObject(column.get(c).toString());
+							if (component.has("children")) {
+								JSONArray maincomponent = new JSONArray(component.get("children").toString());
+								for (int m = 0; m < maincomponent.length(); m++) {
+									JSONObject feilds = new JSONObject(maincomponent.get(m).toString());
+									if (feilds.has("parent")) {
+										if ((boolean) feilds.get("parent") == true) {
+
+											lstMap.add(feilds.toMap());
+										} else if ((boolean) feilds.get("parent") == false) {
+											lstMapForParentCombo.add(feilds.toMap());
+										}
+									}
+									if (feilds.has("nprecision")) {
+										sprecision = feilds.getString("nprecision");
+									}
+									if (feilds.has("nsqlquerycode")) {
+
+										filterQueryComponents += feilds.get("nsqlquerycode").toString() + ',';
+									}
+								}
+							}
+						}
+					}
+				}
+
+				List<MappedTemplateFieldPropsMaterial> lstsearchField = new LinkedList<>();
+				List<String> lstsearchFields = new LinkedList<>();
+
+				@SuppressWarnings("unused")
+				MappedTemplateFieldPropsMaterial objFieldPropsMaterial = mappedTemplateFieldPropsMaterialRepository
+						.findByNmaterialconfigcodeAndNstatus(
+								Enumeration.TransactionStatus.ACTIVE.gettransactionstatus(), 1);
+
+				lstsearchField = (List<MappedTemplateFieldPropsMaterial>) commonfunction
+						.getInventoryValuesFromJsonString(objInventory.getJsondata(), "138").get("rtnObj");
+
+				JSONArray objarray = new JSONArray(lstsearchField.get(0).getJsondata());
+				for (int i = 0; i < objarray.length(); i++) {
+					JSONObject jsonobject = new JSONObject(objarray.get(i).toString());
+					if (jsonobject.has("2")) {
+						lstsearchFields.add((String) jsonobject.get("2"));
+					}
+				}
+				objmap.put("DateFeildsProperties", lstsearchFields);
+
+			} else {
+				return new ResponseEntity<>("IDS_SELECTRELEASEDINVENTORY", HttpStatus.CONFLICT);
+			}
+		}
+		if ((int) inputMap.get("nflag") == 1) {
+
+//			QtyTransactionpopup = getJdbcTemplate()
+//					.queryForObject("select  (COALESCE(Cast(Sum(mt.nqtyreceived)as decimal (" + sprecision + ")), 0) "
+//							+ " -COALESCE(Sum(mt.nqtyissued), 0) )::text"
+//							+ " as navailableqty from materialinventorytransaction mt,materialinventory mi "
+//							+ " where mi.nmaterialinventorycode = mt.nmaterialinventorycode and  mt.nmaterialinventorycode = "
+//							+ inputMap.get("nmaterialinventorycode") + " " + " and mi.nstatus = "
+//							+ Enumeration.TransactionStatus.ACTIVE.gettransactionstatus() + " and mt.nstatus= "
+//							+ Enumeration.TransactionStatus.ACTIVE.gettransactionstatus() + ""
+//							+ " and ((mi.jsondata->'ntranscode')::int != "
+//							+ Enumeration.TransactionStatus.RETIRED.gettransactionstatus() + " and mt.nsectioncode="
+//							+ sourceSection + "	and mt.nsitecode=" + userInfo.getNtranssitecode()
+//							+ " and (mi.jsondata->'ntranscode')::int != "
+//							+ Enumeration.TransactionStatus.EXPIRED.gettransactionstatus() + ")"
+//							+ " and (mi.jsondata->'ntransactiontype')::int !="
+//							+ Enumeration.TransactionStatus.USED.gettransactionstatus() + "; ", String.class);
+
+			objmap.put("navailableqty", QtyTransactionpopup);
+			objmap.put("parentcolumnlist", lstMap);
+			paramObj.put("nmaterialinventorycode", inputMap.get("nmaterialinventorycode"));
+			paramObj.put("nsitecode", 1);
+			objmap.put("filterQueryComponents", filterQueryComponents.substring(0, filterQueryComponents.length() - 1));
+			objmap.put("parameters", paramObj);
+			for (int i = 0; i < lstMapForParentCombo.size(); i++) {
+				objmap.put("childcolumnlist", lstMapForParentCombo.get(i));
+//				objmap.putAll(
+//						(Map<String, Object>) objDynamicPreRegDesignDAO.getComboValues(objmap, userInfo).getBody());
+			}
+			objmap.put("nprecision", sprecision.substring(sprecision.indexOf(",") + 1));
+			objmap.put("QuantityTransactionTemplate", lstMaterialConfig);
+		} else if ((int) inputMap.get("nflag") == 2) {
+			String transtypechange = "";
+			if (inputMap.containsKey("ntransactiontype")) {
+				ntransactiontype = (int) inputMap.get("ntransactiontype");
+			}
+
+			if (ntransactiontype == Enumeration.TransactionStatus.ISSUE.gettransactionstatus()) {
+
+//				transtypechange = getJdbcTemplate().queryForObject(
+//						"select  (COALESCE(Cast(Sum(mt.nqtyreceived)as decimal (" + inputMap.get("sprecision")
+//								+ ")), 0) " + " -COALESCE(Cast(Sum(mt.nqtyissued)as decimal ("
+//								+ inputMap.get("sprecision") + ")), 0))::text"
+//								+ " as navailableqty from materialinventorytransaction mt,materialinventory mi "
+//								+ " where mi.nmaterialinventorycode = mt.nmaterialinventorycode and  mt.nmaterialinventorycode = "
+//								+ inputMap.get("nmaterialinventorycode") + " " + " and mi.nstatus = "
+//								+ Enumeration.TransactionStatus.ACTIVE.gettransactionstatus() + " and mt.nstatus= "
+//								+ Enumeration.TransactionStatus.ACTIVE.gettransactionstatus() + ""
+//								+ " and ((mi.jsondata->'ntranscode')::int != "
+//								+ Enumeration.TransactionStatus.RETIRED.gettransactionstatus() + " and mt.nsectioncode="
+//								+ sourceSection + "	and mt.nsitecode=" + userInfo.getNtranssitecode()
+//								+ " and (mi.jsondata->'ntranscode')::int != "
+//								+ Enumeration.TransactionStatus.EXPIRED.gettransactionstatus() + ")"
+//								+ " and (mi.jsondata->'ntransactiontype')::int !="
+//								+ Enumeration.TransactionStatus.USED.gettransactionstatus() + "; ",
+//						String.class);
+
+			} else if (ntransactiontype == Enumeration.TransactionStatus.RETURN.gettransactionstatus()) {
+
+//				transtypechange = getJdbcTemplate().queryForObject(
+//						"select  (COALESCE(Cast(Sum(mt.nqtyreceived)as decimal (" + inputMap.get("sprecision")
+//								+ ")), 0 ) " + " - COALESCE(Cast(Sum(mt.nqtyissued)as decimal ("
+//								+ inputMap.get("sprecision") + ")), 0) )::text"
+//								+ " AS navailableqty from materialinventorytransaction mt,materialinventory mi "
+//								+ " where mi.nmaterialinventorycode = mt.nmaterialinventorycode and  mt.nmaterialinventorycode = "
+//								+ inputMap.get("nmaterialinventorycode") + " "
+//								+ " and (mt.jsondata->'ntransactiontype')::int in ("
+//								+ Enumeration.TransactionStatus.ISSUE.gettransactionstatus() + ", "
+//								+ Enumeration.TransactionStatus.RETURN.gettransactionstatus() + ", "
+//								+ Enumeration.TransactionStatus.RECEIVED.gettransactionstatus() + ")"
+//								+ " and mi.nstatus = " + Enumeration.TransactionStatus.ACTIVE.gettransactionstatus()
+//								+ " and mt.nstatus= " + Enumeration.TransactionStatus.ACTIVE.gettransactionstatus() + ""
+//								+ " and (mi.jsondata->'ntranscode')::int != "
+//								+ Enumeration.TransactionStatus.RETIRED.gettransactionstatus() + " and mt.nsectioncode="
+//								+ inputMap.get("sourceSection") + "	and mt.nsitecode=" + userInfo.getNtranssitecode()
+//								+ " and (mi.jsondata->'ntranscode')::int != "
+//								+ Enumeration.TransactionStatus.EXPIRED.gettransactionstatus() + ""
+//								+ " and (mt.jsondata->'ntransactiontype')::int !="
+//								+ Enumeration.TransactionStatus.USED.gettransactionstatus() + "; ",
+//						String.class);
+			}
+			objmap.put("navailableqty", transtypechange);
+		} else if ((int) inputMap.get("nflag") == 3) {
+			String transtypechange = "";
+			if (inputMap.containsKey("ntransactiontype")) {
+				ntransactiontype = (int) inputMap.get("ntransactiontype");
+			}
+			if (ntransactiontype == Enumeration.TransactionStatus.REJECTED.gettransactionstatus()) {
+//				transtypechange = getJdbcTemplate().queryForObject(
+//						"select  (COALESCE(Cast(Sum(mt.nqtyreceived)as decimal (" + inputMap.get("sprecision")
+//								+ ")), 0)" + "	 -COALESCE(Cast(Sum(mt.nqtyissued)as decimal ("
+//								+ inputMap.get("sprecision") + ")), 0) )::text"
+//								+ " as navailableqty from materialinventorytransaction mt,materialinventory mi "
+//								+ " where mi.nmaterialinventorycode = mt.nmaterialinventorycode and  mt.nmaterialinventorycode = "
+//								+ inputMap.get("nmaterialinventorycode") + " " + " and mi.nstatus = "
+//								+ Enumeration.TransactionStatus.ACTIVE.gettransactionstatus() + " and mt.nstatus= "
+//								+ Enumeration.TransactionStatus.ACTIVE.gettransactionstatus() + ""
+//								+ " and ((mi.jsondata->'ntranscode')::int != "
+//								+ Enumeration.TransactionStatus.RETIRED.gettransactionstatus() + " and mt.nsectioncode="
+//								+ sourceSection + "	and mt.nsitecode=" + userInfo.getNtranssitecode()
+//								+ " and (mi.jsondata->'ntranscode')::int != "
+//								+ Enumeration.TransactionStatus.EXPIRED.gettransactionstatus() + ")"
+//								+ " and (mt.jsondata->'ntransactiontype')::int !="
+//								+ Enumeration.TransactionStatus.USED.gettransactionstatus() + "; ",
+//						String.class);
+				objmap.put("navailableqty", transtypechange);
+
+			}
+//			transtypechange = getJdbcTemplate().queryForObject("select  (COALESCE(Cast(Sum(mt.nqtyreceived)as decimal ("
+//					+ inputMap.get("sprecision") + ")), 0)" + "	 -COALESCE(Cast(Sum(mt.nqtyissued)as decimal ("
+//					+ inputMap.get("sprecision") + ")), 0) )::text"
+//					+ " as navailableqty from materialinventorytransaction mt,materialinventory mi "
+//					+ " where mi.nmaterialinventorycode = mt.nmaterialinventorycode and  mt.nmaterialinventorycode = "
+//					+ inputMap.get("nmaterialinventorycode") + " " + " and mi.nstatus = "
+//					+ Enumeration.TransactionStatus.ACTIVE.gettransactionstatus() + " and mt.nstatus= "
+//					+ Enumeration.TransactionStatus.ACTIVE.gettransactionstatus() + ""
+//					+ " and ((mi.jsondata->'ntranscode')::int != "
+//					+ Enumeration.TransactionStatus.RETIRED.gettransactionstatus() + " and mt.nsectioncode="
+//					+ sourceSection + "	and mt.nsitecode=" + userInfo.getNtranssitecode()
+//					+ " and (mi.jsondata->'ntranscode')::int != "
+//					+ Enumeration.TransactionStatus.EXPIRED.gettransactionstatus() + ")"
+//					+ " and (mt.jsondata->'ntransactiontype')::int !="
+//					+ Enumeration.TransactionStatus.USED.gettransactionstatus() + "; ", String.class);
+			objmap.put("navailableqtyref", transtypechange);
+		}
+
+		objmap.put("sourceSection", sourceSection);
+		objmap.put("QuantityTransactionTemplate", lstMaterialConfig);
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<Object> getMaterialInventoryDetails(Map<String, Object> inputMap)
+			throws JsonParseException, JsonMappingException, IOException {
+
+		List<Map<String, Object>> lstMaterialInventory = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> lstMaterialInventory1 = new ArrayList<Map<String, Object>>();
+
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+
+		MaterialInventory objInventory = materialInventoryRepository
+				.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
+
+		lstMaterialInventory.add(new ObjectMapper().readValue(objInventory.getJsondata(), Map.class));
+
+		objmap.put("MaterialInventory", lstMaterialInventory);
+
+		lstMaterialInventory1.add(new ObjectMapper().readValue(objInventory.getJsondata(), Map.class));
+
+		objmap.put("SelectedMaterialInventory", lstMaterialInventory1.get(0));
+		inputMap.put("nsectioncode", lstMaterialInventory1.get(0).get("nsectioncode"));
+
+		objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
+				(int) inputMap.get("nmaterialinventorycode"), inputMap).getBody());
+
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 }

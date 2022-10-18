@@ -35,6 +35,7 @@ import com.agaram.eln.primary.model.fileManipulation.Fileimagestemp;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LSsheetfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
@@ -43,7 +44,9 @@ import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
 import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
+import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
@@ -51,6 +54,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
+import com.agaram.eln.primary.repository.methodsetup.CloudParserFileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
 import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 import com.mongodb.gridfs.GridFSDBFile;
@@ -92,6 +96,9 @@ public class InstrumentController {
 		return instrumentService.InsertActivities(objActivity);
 	}
 
+	@Autowired
+	CloudParserFileRepository cloudparserfilerepository;
+	
 	@PostMapping("/Getorderbytype")
 	public Map<String, Object> Getorderbytype(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
@@ -331,6 +338,7 @@ public class InstrumentController {
 		return instrumentService.Cloudparserdownloadattachments(objattachments);
 	}
 
+	
 	@RequestMapping(value = "attachment/{fileid}", method = RequestMethod.GET)
 	@GetMapping
 	public ResponseEntity<InputStreamResource> downloadlargeattachment(@PathVariable String fileid)
@@ -349,6 +357,7 @@ public class InstrumentController {
 	public ResponseEntity<InputStreamResource> downloadlargecloudattachment(
 			@RequestBody LsOrderattachments objattachments) throws IllegalStateException, IOException {
 
+
 		HttpHeaders header = new HttpHeaders();
 		header.set("Content-Disposition", "attachment; filename=gg.pdf");
 		return new ResponseEntity<>(
@@ -356,6 +365,19 @@ public class InstrumentController {
 				HttpStatus.OK);
 	}
 
+	@PostMapping("/parserattachment")
+	public ResponseEntity<InputStreamResource> parserattachment(
+			@RequestBody Method objattachments) throws IllegalStateException, IOException {
+
+		HttpHeaders header = new HttpHeaders();
+		header.set("Content-Disposition", "attachment; filename=gg.pdf");
+		
+       	CloudParserFile objfileuuid = cloudparserfilerepository.findByFilename(objattachments.getInstrawdataurl());
+
+		return new ResponseEntity<>(
+				new InputStreamResource(instrumentService.retrieveColudParserFile(objfileuuid.getFileid(),objattachments.getTenantid())), header,
+				HttpStatus.OK);
+	}
 	@PostMapping("/deleteattachments")
 	public LsOrderattachments deleteattachments(@RequestBody LsOrderattachments objattachments)throws Exception {
 		return instrumentService.deleteattachments(objattachments);
@@ -1023,5 +1045,78 @@ public class InstrumentController {
 	public LSsheetfolderfiles UpdateFolderforfile(@RequestBody LSsheetfolderfiles file)throws Exception
 	{
 		return instrumentService.UpdateFolderforfile(file);
+	}
+	
+	@RequestMapping("/Getordersonassignedandmyorders")
+	public List<Logilaborders> Getordersonassignedandmyorders(@RequestBody Map<String, Object>  objorder)throws Exception
+	{
+		return instrumentService.Getordersonassignedandmyorders(objorder);
+	}
+	
+	@RequestMapping("/Getusersharedorders")
+	public Map<String, Object> Getusersharedorders(@RequestBody Map<String, Object> objusers)throws Exception {
+		return instrumentService.Getusersharedorders(objusers);
+	}
+	
+	@RequestMapping("/Updateparentforfolder")
+	public List<LSSheetOrderStructure> Updateparentforfolder(@RequestBody LSSheetOrderStructure[] folders)throws Exception
+	{
+		return instrumentService.Updateparentforfolder(folders);
+	}
+	
+	@RequestMapping("/validateprotocolexistonfolder")
+	public Response validateprotocolexistonfolder(@RequestBody LSprotocolfolderfiles objfile)throws Exception
+	{
+		return instrumentService.validateprotocolexistonfolder(objfile);
+	}
+	
+	@PostMapping("/uploadfilesprotocolfolder/{directorycode}/{filefor}/{tenantid}/{ismultitenant}/{usercode}/{sitecode}/{createddate}/{fileviewfor}")
+	public Map<String,Object> uploadfilesprotocolfolder(@RequestParam("files") MultipartFile files,@RequestParam("uid") String uid
+			,@PathVariable Long directorycode, @PathVariable String filefor, @PathVariable String tenantid
+			,@PathVariable Integer ismultitenant, @PathVariable Integer usercode, @PathVariable Integer sitecode
+			, @PathVariable Date createddate, @PathVariable Integer fileviewfor
+			)throws Exception {
+		return instrumentService.uploadfilesprotocolfolder(files,uid,directorycode,filefor,tenantid,
+				ismultitenant,usercode,sitecode,createddate,fileviewfor);
+	}
+	
+	@RequestMapping("/Getfilesforprotocolfolder")
+	public List<LSprotocolfolderfiles> Getfilesforprotocolfolder(@RequestBody LSprotocolfolderfiles objfiles)throws Exception
+	{
+		return instrumentService.Getfilesforprotocolfolder(objfiles);
+	}
+	
+	@RequestMapping(path = "/downloadprotocolfileforfolder/{multitenant}/{tenant}/{fileid}", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> downloadprotocolfileforfolder(@PathVariable Integer multitenant,
+			@PathVariable String tenant, @PathVariable String fileid) throws IOException {
+
+		return instrumentService.downloadprotocolfileforfolder(multitenant,tenant,fileid);
+	}
+	
+	@RequestMapping("/deleteprotocolfilesforfolder/{directorycode}/{filefor}/{tenantid}/{ismultitenant}/{usercode}/{sitecode}/{createddate}/{fileviewfor}")
+	public Map<String, Object> deleteprotocolfilesforfolder(@RequestBody LSsheetfolderfiles objfiles,@PathVariable Long directorycode, @PathVariable String filefor, @PathVariable String tenantid
+			,@PathVariable Integer ismultitenant, @PathVariable Integer usercode, @PathVariable Integer sitecode
+			, @PathVariable Date createddate, @PathVariable Integer fileviewfor)throws Exception
+	{
+		return instrumentService.deleteprotocolfilesforfolder(objfiles.getUuid(),directorycode,filefor,tenantid,
+				ismultitenant,usercode,sitecode,createddate,fileviewfor);
+	}
+	
+	@RequestMapping("/UpdateprotocolFolderforfiles")
+	public List<LSprotocolfolderfiles> UpdateprotocolFolderforfiles(@RequestBody LSprotocolfolderfiles[] files)throws Exception
+	{
+		return instrumentService.UpdateprotocolFolderforfiles(files);
+	}
+	
+	@RequestMapping("/Updateprotocolparentforfolder")
+	public List<Lsprotocolorderstructure> Updateprotocolparentforfolder(@RequestBody Lsprotocolorderstructure[] folders)throws Exception
+	{
+		return instrumentService.Updateprotocolparentforfolder(folders);
+	}
+	
+	@RequestMapping("/UpdateprotocolFolderforfile")
+	public LSprotocolfolderfiles UpdateprotocolFolderforfile(@RequestBody LSprotocolfolderfiles file)throws Exception
+	{
+		return instrumentService.UpdateprotocolFolderforfile(file);
 	}
 }

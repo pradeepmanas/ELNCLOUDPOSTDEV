@@ -1013,18 +1013,16 @@ public class ProtocolController {
 	}
 	
 
+	@RequestMapping("/Getprotocolordersonassignedandmyorders")
+	public Map<String,Object> Getprotocolordersonassignedandmyorders(@RequestBody Map<String, Object>  objorder)throws Exception
+	{
+		return ProtocolMasterService.Getprotocolordersonassignedandmyorders(objorder);
+	}
 	
-//	@RequestMapping(value = "/getlistofusersforworkflow")
-//	protected List<LSuserMaster> getlistofusersforworkflow(@RequestBody LSusergroup[] usergroupcode) {
-//
-//		return ProtocolMasterService.getlistofusersforworkflow(usergroupcode);
-//	}
-//	
-//	
-//	@RequestMapping(value = "/updatetimeronstep")
-//	protected LSprotocolstep updatetimeronstep(@RequestBody Map<String, Object> argObj) {
-//
-//		return ProtocolMasterService.updatetimeronstep(argObj);
-//	}
+	@RequestMapping("/Getprotocolordersonshared")
+	public Map<String,Object> Getprotocolordersonshared(@RequestBody Map<String, Object>  objorder)throws Exception
+	{
+		return ProtocolMasterService.Getprotocolordersonshared(objorder);
+	}
 	
 }

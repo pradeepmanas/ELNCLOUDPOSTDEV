@@ -25,6 +25,7 @@ import org.apache.commons.lang3.builder.DiffBuilder;
 import org.apache.commons.lang3.builder.DiffResult;
 import org.apache.commons.lang3.builder.Diffable;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.bson.types.Binary;
 import org.hibernate.validator.constraints.Range;
 
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
@@ -75,6 +76,10 @@ public class Method implements Serializable, Diffable<Method>{
 	@Column(name = "screenname")
 	private String screenname;
 
+
+	@Transient
+	private String tenantid;
+	
 	@Column(columnDefinition = "varchar(255)")
 	private String filename;	
 	
@@ -242,6 +247,14 @@ public class Method implements Serializable, Diffable<Method>{
 		this.screenname = screenname;
 	}
 
+	public String getTenantid() {
+		return tenantid;
+	}
+
+	public void setTenantid(String tenantid) {
+		this.tenantid = tenantid;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -263,6 +276,10 @@ public class Method implements Serializable, Diffable<Method>{
 	       .append("filename", this.filename, obj.filename)
 	       .append("displayvalue", this.displayvalue, obj.displayvalue)
 	       .append("screenname", this.screenname, obj.screenname)
+
+	       .append("tenantid", this.tenantid, obj.tenantid)
+
+
 
 	       .build();
 	}
@@ -300,6 +317,9 @@ public class Method implements Serializable, Diffable<Method>{
 		this.filename=method.filename;
 		this.displayvalue=method.displayvalue;
         this.screenname=method.screenname;
+
+        this.tenantid=method.tenantid;
+
 
 	}
 	

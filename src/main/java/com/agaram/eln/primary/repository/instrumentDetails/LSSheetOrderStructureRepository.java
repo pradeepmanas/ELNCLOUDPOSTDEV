@@ -29,4 +29,7 @@ public interface LSSheetOrderStructureRepository extends JpaRepository<LSSheetOr
 			String directoryname);
 
 	List<LSSheetOrderStructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(LSSiteMaster site,Integer siteviewopt,LSuserMaster createduser,Integer userviewopt);
+	
+	List<LSSheetOrderStructure> findByDirectorycodeIn(List<Long> directorycode);
+	
 }

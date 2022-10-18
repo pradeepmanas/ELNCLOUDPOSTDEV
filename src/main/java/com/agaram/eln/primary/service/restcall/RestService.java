@@ -1,10 +1,12 @@
 package com.agaram.eln.primary.service.restcall;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -16,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.Lsbatchdetails;
 import com.agaram.eln.primary.model.inventory.LSinstrument;
@@ -36,6 +39,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LStestparameter;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlimsorderRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsbatchdetailsRepository;
 import com.agaram.eln.primary.repository.inventory.LSinstrumentRepository;
@@ -66,6 +70,8 @@ public class RestService {
 	private LStestparameterRepository LStestparameterRepository;
 	@Autowired
     private LSlimsorderRepository LSlimsorderRepository;
+	@Autowired
+    private LSlogilablimsorderRepository lslogilablimsorderRepository;
 	@Autowired
     private LSmaterialRepository LSmaterialRepository;
 	@Autowired
@@ -199,6 +205,43 @@ public class RestService {
 		return bool;
 	}
 
+//	public String ImportLimsOrder(String str) throws Exception{
+//		
+//		Map<String, Object> map = new HashMap<>();
+//		
+//		final String url = env.getProperty("limsbaseservice.url")+"lslimsService/getsdmslabsheetmaster";		
+//
+//	    RestTemplate restTemplate = new RestTemplate();
+//	    
+//	    String result = restTemplate.postForObject(url, map, String.class);
+//	    
+//	    ObjectMapper mapper = new ObjectMapper();
+//
+//		List<LSlimsorder> mapLimsOrder = mapper.readValue(result,
+//				new TypeReference<List<LSlimsorder>>() {
+//				});
+//		
+//		List<LSlogilablimsorderdetail> mapOrderDetail = mapper.readValue(result,
+//				new TypeReference<List<LSlogilablimsorderdetail>>() {
+//				});
+//	    
+//	    map.put("LimsOrder", mapLimsOrder);
+//	    map.put("LimsOrderDetail", mapOrderDetail);
+//	    
+//	    boolean bool = insertLimsOrder(map);
+//	    
+//	    bool = InsertLimsOrderDetail(map);
+//	    
+//	    if(bool) {
+//	    	result="success";
+//	    }
+//	    else {
+//	    	result="Failure";
+//	    }
+//	    
+//		return result;
+//	}
+	
 	public String ImportLimsOrder(String str) throws Exception{
 		
 		Map<String, Object> map = new HashMap<>();
@@ -211,8 +254,8 @@ public class RestService {
 	    
 	    ObjectMapper mapper = new ObjectMapper();
 
-		List<LSlimsorder> mapLimsOrder = mapper.readValue(result,
-				new TypeReference<List<LSlimsorder>>() {
+		List<LSlogilablimsorder> mapLimsOrder = mapper.readValue(result,
+				new TypeReference<List<LSlogilablimsorder>>() {
 				});
 		
 		List<LSlogilablimsorderdetail> mapOrderDetail = mapper.readValue(result,
@@ -228,12 +271,64 @@ public class RestService {
 	    
 	    if(bool) {
 	    	result="success";
+	    	final LSlogilablimsorderdetail objLSlogilablimsorder = (LSlogilablimsorderdetail) mapOrderDetail;
+
+			new Thread(() -> {
+				try {
+					System.out.println("inside the thread SDMS order call");
+					createLogilabLIMSOrder4SDMS(objLSlogilablimsorder);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}).start();
 	    }
 	    else {
 	    	result="Failure";
 	    }
 	    
 		return result;
+	}
+	
+	private void createLogilabLIMSOrder4SDMS(LSlogilablimsorderdetail objLSlogilablimsorder) throws IOException {
+		
+		List<LSlogilablimsorder> lstLSlogilablimsorder = lslogilablimsorderRepository.findBybatchid(objLSlogilablimsorder.getBatchid());
+		
+		List<Map<String, Object>> lstMaPObject = new ArrayList<Map<String, Object>>();
+		
+		lstLSlogilablimsorder.stream().peek(f -> {
+
+			if(f.getInstrumentcode() != null ) {
+				
+				Map<String, Object> objResMap = new HashMap<>();
+
+				objResMap.put("batchid",f.getBatchid());
+				objResMap.put("sampleid",f.getSampleid());
+				objResMap.put("testcode",f.getTestcode());
+				objResMap.put("methodcode",f.getMethodcode());
+				objResMap.put("instrumentcode",f.getInstrumentcode());
+				objResMap.put("instrumentname",f.getInstrumentname());
+				objResMap.put("orderid",f.getOrderid());
+
+				lstMaPObject.add(objResMap);
+			}
+
+		}).collect(Collectors.toList());
+		
+		if(!lstMaPObject.isEmpty())
+			sdmsServiceCalling("ftpviewdata/createLogilabLIMSOrder",lstMaPObject);
+	}
+
+    private String sdmsServiceCalling(String uri, List<Map<String, Object>> lstMaPObject) {
+		
+    	final String url = env.getProperty("sdms.template.service.url") + uri;
+
+		RestTemplate restTemplate = new RestTemplate();
+		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+		
+		String result = restTemplate.postForObject(url, lstMaPObject, String.class);
+	    
+	    return result;
+		
 	}
 	
 	public String forSyncOrderFromLims() throws Exception{
@@ -273,27 +368,56 @@ public class RestService {
 		return result;
 	}
 
+//	@SuppressWarnings("unchecked")
+//	private boolean insertLimsOrder(Map<String, Object> mapObj) {
+//		boolean bool=false;
+//		try {
+//			List<LSlimsorder> lstOrder = new ArrayList<LSlimsorder>();
+//			lstOrder=(List<LSlimsorder>) mapObj.get("LimsOrder");
+//			
+//			int i=0;
+//			
+//			while(lstOrder.size()>i) {
+//				if(LSlimsorderRepository.findByBatchid(lstOrder.get(i).getBatchid()) == null) {
+//					LSlimsorderRepository.save(lstOrder.get(i));
+//					
+//					LScfttransaction silentAudit=new LScfttransaction();
+//					
+//					silentAudit.setModuleName("Sheet View");
+//					silentAudit.setComments("Added LIMS Order");
+//					silentAudit.setActions("Added LIMS Order");
+//					silentAudit.setSystemcoments("System Generated");
+//					silentAudit.setTableName("LogiLABLimsOrder");
+//		    		lscfttransactionRepository.save(silentAudit);	
+//				}
+//				i++;
+//			}
+//			bool=updatesdsmaster(mapObj);
+//			if(bool) {
+//				bool=true;
+//			}else {
+//				bool=false;
+//			}
+//		}
+//		catch (Exception e) {
+//			bool=false;
+//			e.getMessage();
+//		}
+//		return bool;
+//	}
+	
 	@SuppressWarnings("unchecked")
 	private boolean insertLimsOrder(Map<String, Object> mapObj) {
 		boolean bool=false;
 		try {
-			List<LSlimsorder> lstOrder = new ArrayList<LSlimsorder>();
-			lstOrder=(List<LSlimsorder>) mapObj.get("LimsOrder");
+			List<LSlogilablimsorder> lstOrder = new ArrayList<LSlogilablimsorder>();
+			lstOrder=(List<LSlogilablimsorder>) mapObj.get("LimsOrder");
 			
 			int i=0;
 			
 			while(lstOrder.size()>i) {
-				if(LSlimsorderRepository.findByBatchid(lstOrder.get(i).getBatchid()) == null) {
-					LSlimsorderRepository.save(lstOrder.get(i));
-					
-					LScfttransaction silentAudit=new LScfttransaction();
-					
-					silentAudit.setModuleName("Sheet View");
-					silentAudit.setComments("Added LIMS Order");
-					silentAudit.setActions("Added LIMS Order");
-					silentAudit.setSystemcoments("System Generated");
-					silentAudit.setTableName("LogiLABLimsOrder");
-		    		lscfttransactionRepository.save(silentAudit);	
+				if(lslogilablimsorderRepository.findByBatchid(lstOrder.get(i).getBatchid()) == null) {
+					lslogilablimsorderRepository.save(lstOrder.get(i));
 				}
 				i++;
 			}
@@ -311,12 +435,59 @@ public class RestService {
 		return bool;
 	}
 
+//	@SuppressWarnings("unchecked")
+//	private boolean InsertLimsOrderDetail(Map<String, Object> mapObj) throws Exception{
+//		List<LSlogilablimsorderdetail> lstOrder = new ArrayList<LSlogilablimsorderdetail>();
+//		lstOrder=(List<LSlogilablimsorderdetail>) mapObj.get("LimsOrderDetail");
+//		List<LSlimsorder> limsOrder = new ArrayList<LSlimsorder>();
+//		limsOrder=(List<LSlimsorder>) mapObj.get("LimsOrder");
+//		
+//		int i=0;
+//		
+//		while(lstOrder.size()>i) {
+//			lstOrder.get(i).setLsworkflow(lsworkflowRepository.findTopByOrderByWorkflowcodeAsc());
+//			lstOrder.get(i).setFiletype(0);
+//			
+//			if(LSlogilablimsorderdetailRepository.findByBatchid(lstOrder.get(i).getBatchid()) == null) {
+//				LSlogilablimsorderdetailRepository.save(lstOrder.get(i));
+//				LScfttransaction silentAudit=new LScfttransaction();
+//				
+//				silentAudit.setModuleName("Sheet View");
+//				silentAudit.setComments("Insert LIMS Order Detail");
+//				silentAudit.setActions("Insert");
+//				silentAudit.setSystemcoments("System Generated");
+//				silentAudit.setTableName("LSlogilablimsorderdetail");
+//	    		lscfttransactionRepository.save(silentAudit);	
+//			}
+//			i++;
+//		}
+//		i=0;
+//		while(lstOrder.size()>i) {
+//			
+//			if(lstOrder.get(i).getNbatchcode() != null) {
+//				LSlimsorder lsOrder = LSlimsorderRepository.findFirstByBatchidOrderByOrderidDesc(lstOrder.get(i).getBatchid());
+//				LSlogilablimsorderdetail lsDetail = LSlogilablimsorderdetailRepository.findByBatchid(lstOrder.get(i).getBatchid());
+//				
+//				Lsbatchdetails lsBatch = new Lsbatchdetails();
+//				
+//				lsBatch.setBatchcode(lsDetail.getBatchcode());
+//				lsBatch.setSampleid(lstOrder.get(i).getSampleid());
+//				lsBatch.setOrderID(lsOrder.getOrderid());
+//				lsBatch.setLimsorderID(limsOrder.get(i).getOrderid());
+//				
+//				LsbatchdetailsRepository.save(lsBatch);
+//			}
+//			i++;
+//		}
+//		return true;
+//	} 
+	
 	@SuppressWarnings("unchecked")
 	private boolean InsertLimsOrderDetail(Map<String, Object> mapObj) throws Exception{
 		List<LSlogilablimsorderdetail> lstOrder = new ArrayList<LSlogilablimsorderdetail>();
 		lstOrder=(List<LSlogilablimsorderdetail>) mapObj.get("LimsOrderDetail");
-		List<LSlimsorder> limsOrder = new ArrayList<LSlimsorder>();
-		limsOrder=(List<LSlimsorder>) mapObj.get("LimsOrder");
+		List<LSlogilablimsorder> limsOrder = new ArrayList<LSlogilablimsorder>();
+		limsOrder=(List<LSlogilablimsorder>) mapObj.get("LimsOrder");
 		
 		int i=0;
 		
@@ -326,14 +497,6 @@ public class RestService {
 			
 			if(LSlogilablimsorderdetailRepository.findByBatchid(lstOrder.get(i).getBatchid()) == null) {
 				LSlogilablimsorderdetailRepository.save(lstOrder.get(i));
-				LScfttransaction silentAudit=new LScfttransaction();
-				
-				silentAudit.setModuleName("Sheet View");
-				silentAudit.setComments("Insert LIMS Order Detail");
-				silentAudit.setActions("Insert");
-				silentAudit.setSystemcoments("System Generated");
-				silentAudit.setTableName("LSlogilablimsorderdetail");
-	    		lscfttransactionRepository.save(silentAudit);	
 			}
 			i++;
 		}
@@ -341,7 +504,7 @@ public class RestService {
 		while(lstOrder.size()>i) {
 			
 			if(lstOrder.get(i).getNbatchcode() != null) {
-				LSlimsorder lsOrder = LSlimsorderRepository.findFirstByBatchidOrderByOrderidDesc(lstOrder.get(i).getBatchid());
+				LSlogilablimsorder lsOrder = lslogilablimsorderRepository.findFirstByBatchidOrderByOrderidDesc(lstOrder.get(i).getBatchid());
 				LSlogilablimsorderdetail lsDetail = LSlogilablimsorderdetailRepository.findByBatchid(lstOrder.get(i).getBatchid());
 				
 				Lsbatchdetails lsBatch = new Lsbatchdetails();
@@ -356,7 +519,48 @@ public class RestService {
 			i++;
 		}
 		return true;
-	} 
+	}
+	
+//	@SuppressWarnings("unchecked")
+//	private boolean updatesdsmaster(Map<String, Object> mapObj) throws Exception{
+//		@SuppressWarnings("unused")
+//		String result="";
+//		boolean bool=false;
+//		try {
+//			Map<String, Object> map = new HashMap<>();
+//			
+//			List<LSlimsorder> lstOrder = new ArrayList<LSlimsorder>();
+//			
+//			lstOrder=(List<LSlimsorder>) mapObj.get("LimsOrder");
+//			
+//			String getSql = "";
+//
+//			int i = 0;
+//			while (i < lstOrder.size()) {
+//				if (i == 0) {
+//					getSql += lstOrder.get(i).getOrderid();
+//				} else {
+//					getSql += "," + lstOrder.get(i).getOrderid();
+//				}
+//				i++;
+//			}
+//			
+//			map.put("ntransactiontestcode", getSql);
+//			
+//			final String url = env.getProperty("limsbaseservice.url")+"lslimsService/updateSdmsLabsheet";
+//			
+//		    RestTemplate restTemplate = new RestTemplate();
+//		    
+//		    result = restTemplate.postForObject(url, map, String.class);
+//		    
+//		    bool=true;
+//		}
+//		catch (Exception e) {
+//			result=e.getMessage();
+//			bool=false;
+//		} 
+//		return bool;
+//	}
 	
 	@SuppressWarnings("unchecked")
 	private boolean updatesdsmaster(Map<String, Object> mapObj) throws Exception{
@@ -366,9 +570,9 @@ public class RestService {
 		try {
 			Map<String, Object> map = new HashMap<>();
 			
-			List<LSlimsorder> lstOrder = new ArrayList<LSlimsorder>();
+			List<LSlogilablimsorder> lstOrder = new ArrayList<LSlogilablimsorder>();
 			
-			lstOrder=(List<LSlimsorder>) mapObj.get("LimsOrder");
+			lstOrder=(List<LSlogilablimsorder>) mapObj.get("LimsOrder");
 			
 			String getSql = "";
 
@@ -844,6 +1048,108 @@ public class RestService {
 		return bool;
 	}
 
+//	public Response getUpdateSdmslabsheetDetail(Map<String, Object> objMap) throws Exception {
+//		
+// 		Response res=new Response();
+//		
+//		if (objMap.containsKey("batchcode")) {
+//			
+//			Map<String, Object> map = new HashMap<>();
+//			
+//			long batchcode = ((Number) objMap.get("batchcode")).longValue();
+//			
+//			LSlogilablimsorderdetail objorder = LSlogilablimsorderdetailRepository.findOne(batchcode);
+//			
+//			String Batchid=(String) objMap.get("Batch");
+//			
+//			LSlimsorder limsOrder=LSlimsorderRepository.findFirstByBatchidOrderByOrderidDesc(Batchid);
+//		 	
+//		 	Long order = limsOrder.getOrderid();
+//		 	Integer testcode = Integer.valueOf(objMap.get("testcode").toString());
+//		 	
+//		 	List<LSsampleresult> lstResult = LSsampleresultRepository.findByBatchcodeAndTestcode(batchcode, testcode);
+//		 	
+//			System.out.print("parameter : " + lstResult);
+//		 	
+//		 	if(!lstResult.isEmpty()) {
+//		 		
+//		 		int i = 0;
+//
+//		 		List<Map<String, Object>> lssampleresult =  new ArrayList<Map<String, Object>>();
+//		 		
+//				while (i < lstResult.size()) {
+//
+//					Map<String, Object> lstMap = new HashMap<>();
+//					
+//					Integer ntestcode = lstResult.get(i).getTestcode();
+//					Integer ntestparametercode = lstResult.get(i).getParametercode();
+//					String sresult = lstResult.get(i).getResult();
+//					Long orderid = lstResult.get(i).getOrderid() == 0 ? order : lstResult.get(i).getOrderid();
+//					
+//					lstMap.put("ntestcode", ntestcode);
+//					lstMap.put("ntestparametercode",ntestparametercode);
+//					lstMap.put("sresult",sresult);
+//					lstMap.put("orderid",orderid);
+//
+//					lssampleresult.add(i, lstMap);
+//					
+//					i++;
+//				}
+//				
+//				map.put("lssampleresult", lssampleresult);
+//				
+//				final String url = env.getProperty("limsbaseservice.url")+"lslimsService/updateSdmsLabsheetDetail";
+//				
+//			    RestTemplate restTemplate = new RestTemplate();
+//			    
+//			    String result = restTemplate.postForObject(url, map, String.class);
+//			    
+//			    if(result.equals("success")) {
+//			    	res.setInformation("success");
+//			    	res.setStatus(true);
+//			    	
+//			    	return res;
+//			    }else {
+//			    	res.setInformation("ID_DUMMY2");
+//			    	res.setStatus(false);
+//			    	
+//			    	return res;
+//			    }
+//		 	}
+//		 	else {
+//		 		
+//		 		if(objorder.getOrderflag().trim().equals("N"))
+//		 		{
+//		 			res.setInformation("ID_NOTCOMPLETE");
+//		 		}
+//		 		else
+//		 		{
+//		 			res.setInformation("ID_NOPARAMETERS");
+//		 		}
+//		    	res.setStatus(false);
+//		    	
+//		    	return res;
+//		 	}
+//		}
+//		
+//		ObjectMapper objMapper= new ObjectMapper();
+//		LScfttransaction cfttransaction;
+//		if(objMap.containsKey("objsilentaudit")) {
+//			cfttransaction = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
+//			lscfttransactionRepository.save(cfttransaction);
+//		}
+//		if(objMap.containsKey("objuser")) {
+//			LoggedUser objuser=objMapper.convertValue(objMap.get("objuser"), LoggedUser.class);
+//			LScfttransaction manualcfrt = objMapper.convertValue(objMap.get("objmanualaudit"), LScfttransaction.class);
+//			manualcfrt.setComments(objuser.getComments());
+//			lscfttransactionRepository.save(manualcfrt);
+//		}
+//		res.setInformation("ID_INVALIDORDERCODE");
+//    	res.setStatus(false);
+//    	
+//    	return res;
+//	}
+	
 	public Response getUpdateSdmslabsheetDetail(Map<String, Object> objMap) throws Exception {
 		
  		Response res=new Response();
@@ -858,7 +1164,7 @@ public class RestService {
 			
 			String Batchid=(String) objMap.get("Batch");
 			
-			LSlimsorder limsOrder=LSlimsorderRepository.findFirstByBatchidOrderByOrderidDesc(Batchid);
+			LSlogilablimsorder limsOrder=lslogilablimsorderRepository.findFirstByBatchidOrderByOrderidDesc(Batchid);
 		 	
 		 	Long order = limsOrder.getOrderid();
 		 	Integer testcode = Integer.valueOf(objMap.get("testcode").toString());

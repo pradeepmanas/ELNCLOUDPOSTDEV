@@ -104,10 +104,6 @@ $do$;
 
 update lslogilablimsorderdetail set lstestmasterlocal_testcode = testcode where filetype != 0 and (select count(*) from lstestmasterlocal where testcode = testcode) > 0 and testcode >0 and lstestmasterlocal_testcode is null;
 
-	-- Table: public.materialtype
-
--- DROP TABLE IF EXISTS public.materialtype;
-
 
 CREATE TABLE IF NOT EXISTS public.materialtype
 (
@@ -123,54 +119,8 @@ WITH (
 )
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.materialtype
-    OWNER to postgres;
-	
+ALTER TABLE IF EXISTS public.materialtype OWNER to postgres;
 
-INSERT INTO public.materialtype(
-	nmaterialtypecode, jsondata, ndefaultstatus, nsitecode, nstatus)
-	VALUES (1,'{
-  "prefix": "V",
-  "sdescription": "Volumetric Type",
-  "needSectionwise": 3,
-  "smaterialtypename": {
-    "en-US": "Volumetric Type",
-    "ru-RU": "Объемный тип",
-    "tg-TG": "Навъи ҳаҷмӣ"
-  },
-  "ismaterialSectionneed": 4
-}' , 4, -1, 1) ON CONFLICT(nmaterialtypecode)DO NOTHING; 
-
-INSERT INTO public.materialtype(
-	nmaterialtypecode, jsondata, ndefaultstatus, nsitecode, nstatus)
-	VALUES (2,'{
-  "prefix": "M",
-  "sdescription": "Material Inventory Type",
-  "needSectionwise": 3,
-  "smaterialtypename": {
-    "en-US": "Material Inventory Type",
-    "ru-RU": "Тип инвентаризации материалов",
-    "tg-TG": "Навъи инвентаризатсияи мавод"
-  },
-  "ismaterialSectionneed": 3
-}' , 4, -1, 1) ON CONFLICT(nmaterialtypecode)DO NOTHING; 
-
-INSERT INTO public.materialtype(
-	nmaterialtypecode, jsondata, ndefaultstatus, nsitecode, nstatus)
-	VALUES (3,'{
-  "prefix": "S",
-  "sdescription": "Standared Type",
-  "needSectionwise": 3,
-  "smaterialtypename": {
-    "en-US": "Standard Type",
-    "ru-RU": "Стандартный тип",
-    "tg-TG": "Навъи стандартӣ"
-  },
-  "ismaterialSectionneed": 3
-}' , 4, -1, 1) ON CONFLICT(nmaterialtypecode)DO NOTHING;
-
-
-	
 ALTER TABLE IF Exists delimiter ADD COLUMN IF NOT EXISTS defaultvalue integer;
 
 update delimiter set defaultvalue = 1 where delimitername='None'and defaultvalue is null;
@@ -259,8 +209,7 @@ WITH (
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public.materialconfig
-    OWNER to postgres;
+ALTER TABLE public.materialconfig OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS public.period
 (
@@ -445,21 +394,7 @@ update lssheetorderstructure set createdbyusername = 'Administrator' where creat
 
 
 
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_ORDERS' where ordersequnce IN (2,1);
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_MASTERS' where ordersequnce=6;
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_SETUP' where ordersequnce=7;
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_AUDITTRAIL' where ordersequnce=10;
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_TEMPLATES' where ordersequnce IN(4,5,3);
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_REPORTS' where ordersequnce=11;
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_PARSER' where ordersequnce=12;
 
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_ORDERS' where ordersequnce IN (2,1);
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_MASTERS' where ordersequnce=6;
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_SETUP' where ordersequnce=7;
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_AUDITTRAIL' where ordersequnce=10;
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_TEMPLATES' where ordersequnce IN(4,5,3);
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_REPORTS' where ordersequnce=11;
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_PARSER' where ordersequnce=12;
 
 update lsaudittrailconfigmaster set screenname='IDS_SCN_SHEETORDERS' where screenname='Register Orders & Execute';
 update lsaudittrailconfigmaster set screenname='IDS_SCN_SHEETTEMPLATES' where screenname='Sheet Creation';
@@ -1070,22 +1005,6 @@ update lsaudittrailconfiguration set taskname = 'IDS_TSK_GENERATEREPORT' where t
 update lsaudittrailconfiguration set taskname = 'IDS_TSK_CONFIGURE' where taskname='Configure';
 update lsaudittrailconfiguration set taskname = 'IDS_TSK_DIRECTORYSAVE' where taskname='Directory Save';
 
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_ORDERS' where ordersequnce IN (2,1);
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_MASTERS' where ordersequnce=6;
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_SETUP' where ordersequnce=7;
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_AUDITTRAIL' where ordersequnce=10;
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_TEMPLATES' where ordersequnce IN(4,5,3);
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_REPORTS' where ordersequnce=11;
-update lsaudittrailconfiguration set modulename = 'IDS_MDL_PARSER' where ordersequnce=12;
-
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_ORDERS' where ordersequnce IN (2,1);
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_MASTERS' where ordersequnce=6;
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_SETUP' where ordersequnce=7;
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_AUDITTRAIL' where ordersequnce=10;
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_TEMPLATES' where ordersequnce IN(4,5,3);
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_REPORTS' where ordersequnce=11;
-update lsaudittrailconfigmaster set modulename = 'IDS_MDL_PARSER' where ordersequnce=12;
-
 update lsusergrouprights set displaytopic = 'IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_TSK_UNLOCKORDERS';
 update lsusergrouprightsmaster set displaytopic = 'IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_TSK_UNLOCKORDERS';
 
@@ -1164,7 +1083,7 @@ update lsusergrouprights set sdelete='NA' where displaytopic in ('IDS_SCN_PROTOC
 update lsusergrouprightsmaster set sedit='1' where orderno in (11,12,13);
 update lsusergrouprights set sedit='1' where displaytopic in ('IDS_SCN_TASKMASTER','IDS_SCN_PROJECTMASTER','IDS_SCN_SAMPLEMASTER');
 update lsusergrouprightsmaster set screate='NA' where orderno in (66,67);
-update lsusergrouprights set screate='NA', sedit='NA' where displaytopic='IDS_TSK_ACTDEACTUSERMASTER';
+update lsusergrouprights set screate='NA', sedit='NA' where displaytopic in ('IDS_TSK_ACTDEACTUSERMASTER','IDS_TSK_ORDEROVERVIEW','IDS_TSK_TEMPLATEOVERVIEW','IDS_TSK_ACTIVITIES','IDS_SCN_AUDITTRAILHIS');
 update lsusergrouprights set screate ='NA' where displaytopic in ('IDS_SCN_ORDERWORKLOW','IDS_SCN_AUDITTRAILCONFIG','IDS_TSK_IMPORTADS','IDS_SCN_TEMPLATEWORKFLOW','IDS_SCN_PASSWORDPOLICY','IDS_TSK_ADDREPO','IDS_TSK_EDITREPO','IDS_TSK_NEWSTEP','IDS_TSK_EXPORTPDF','IDS_SCN_USERRIGHTS','IDS_SCN_REPORTS','IDS_TSK_NEWDOCUMENT','IDS_TSK_NEWTEMP','IDS_TSK_GENERATEREPORT');
 update lsusergrouprightsmaster set screate='NA' where orderno IN (20,27,40,41,43,50,57,58,45,35,5,6,46,47);
 update lsusergrouprightsmaster set sdelete='NA' where orderno in (19,26);
@@ -1416,35 +1335,7 @@ INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ACTDEACTUSERMASTER', 'IDS_MDL_SETUP', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_USERMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ACTDEACTUSERMASTER' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_FOLDERCREATION', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_FOLDERCREATION' and usergroupid_usergroupcode = 1) ; 
 
-update lsusergrouprights set screenname='IDS_SCN_DASHBOARD' where displaytopic='IDS_SCN_DASHBOARD' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_DASHBOARD' where displaytopic in ('IDS_TSK_ORDEROVERVIEW','IDS_TSK_ACTIVITIES') and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic  in ('IDS_TSK_COMPLETEDWORK','IDS_TSK_ELNTASKORDER','IDS_TSK_RESEARCHACTIVITY','IDS_TSK_MANAGEEXCEL','IDS_TSK_SHEETEVALUATION','IDS_TSK_ORDERSHAREDBYME','IDS_TSK_ORDERSHAREDTOME','IDS_TSK_PENDINGWORK') and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS' where displaytopic in ('IDS_TSK_ELNPROTOCOL','IDS_TSK_DYNAMICPROTOCOL') and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_SHEETTEMPLATE' where displaytopic='IDS_SCN_SHEETTEMPLATE' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLTEMPLATE' where displaytopic='IDS_TSK_NEWSTEP' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_TEMPLATEMAPPING' where displaytopic='IDS_TSK_LIMSTESTORDER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_TASKMASTER' where displaytopic='IDS_SCN_TASKMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_PROJECTMASTER' where displaytopic='IDS_SCN_PROJECTMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_SAMPLEMASTER' where displaytopic='IDS_SCN_SAMPLEMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_SCN_UNLOCKORDERS' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_USERGROUP' where displaytopic='IDS_SCN_USERGROUP' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_USERGROUP' where displaytopic='IDS_TSK_ACTDEACT' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_USERMASTER' where displaytopic='IDS_TSK_ACTDEACTUSERMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_USERRIGHTS' where displaytopic='IDS_SCN_USERRIGHTS' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_PROJECTTEAM' where displaytopic='IDS_SCN_PROJECTTEAM' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_ORDERWORKLOW' where displaytopic='IDS_SCN_ORDERWORKLOW' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_TEMPLATEWORKFLOW' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_PASSWORDPOLICY' where displaytopic='IDS_SCN_PASSWORDPOLICY' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS' where displaytopic in ('IDS_SCN_AUDITTRAILHIS','IDS_TSK_REVIEWHISTORY','IDS_TSK_REVIEW','IDS_TSK_CREATEARCHIVE','IDS_TSK_OPENARCHIVE','IDS_TSK_EXPORT') and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILCONFIG' where displaytopic='IDS_SCN_AUDITTRAILCONFIG' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_CFRSETTINGS' where displaytopic='IDS_SCN_CFRSETTINGS' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_REPORTS' where displaytopic in ('IDS_SCN_REPORTS','IDS_TSK_GENERATEREPORT') and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_INSTRUMENTMASTER' where displaytopic='IDS_SCN_INSTRUMENTMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_TEMPLATEMAPPING' where displaytopic='IDS_TSK_LIMSTASKORDER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_REPORTS' where displaytopic='IDS_TSK_TEMPLATEDESIGN' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_SITEMASTER' where displaytopic='IDS_SCN_SITEMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_ACTIVEUSER' where displaytopic='IDS_SCN_ACTIVEUSER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_DOMAIN' where displaytopic='IDS_SCN_DOMAIN' and usergroupid_usergroupcode=1;
+
 
 update lsusergrouprights set sequenceorder=1 where displaytopic ='IDS_TSK_ORDEROVERVIEW' and usergroupid_usergroupcode=1;
 update lsusergrouprights set sequenceorder=2 where displaytopic ='IDS_TSK_TEMPLATEOVERVIEW' and usergroupid_usergroupcode=1;
@@ -1527,13 +1418,21 @@ update lsusergrouprights set sequenceorder=77 where displaytopic ='IDS_SCN_INSTR
 update lsusergrouprights set sequenceorder=78 where displaytopic ='IDS_SCN_DELIMITER' and usergroupid_usergroupcode=1;
 update lsusergrouprights set sequenceorder=79 where displaytopic ='IDS_SCN_METHODDELIMITER' and usergroupid_usergroupcode=1;
 update lsusergrouprights set sequenceorder=80 where displaytopic ='IDS_SCN_METHODMASTER' and usergroupid_usergroupcode=1;
-
+update lsusergrouprights set sequenceorder=81 where displaytopic ='IDS_SCN_UNITMASTER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=82 where displaytopic ='IDS_TSK_DOWNLOADPDFEXCEL' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=83 where displaytopic ='IDS_SCN_SECTIONMASTER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=84 where displaytopic ='IDS_TSK_DOWNLOADPDFEXCELSECTION' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=85 where displaytopic ='IDS_SCN_STORAGELOCATION' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=86 where displaytopic ='IDS_SCN_MATERIALCATEGORY' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=87 where displaytopic ='IDS_TSK_DOWNLOADMATERILACATEGORY' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=88 where displaytopic ='IDS_SCN_MATERIAL' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=89 where displaytopic ='IDS_SCN_MATERIALINVENTORY' and usergroupid_usergroupcode=1;
 
 
 delete from lsusergrouprights where displaytopic IN ('IDS_SCN_TEMPLATEMAPPING','IDS_TSK_ELNANDRESEARCH');
 
 update lsusergrouprights set modulename='IDS_MDL_ORDERS' where displaytopic in ('IDS_SCN_SHEETORDERS','IDS_TSK_FOLDERCREATION','IDS_TSK_ELNTASKORDER','IDS_TSK_RESEARCHACTIVITY','IDS_TSK_MANAGEEXCEL','IDS_TSK_SHEETEVALUATION','IDS_TSK_ORDERSHAREDBYME','IDS_TSK_ORDERSHAREDTOME','IDS_TSK_PENDINGWORK') and usergroupid_usergroupcode=1;
-update lsusergrouprights set screenname='IDS_SCN_USERMASTER' where displaytopic in ('IDS_TSK_UNLOCK','IDS_SCN_USERMASTER','IDS_TSK_RESETPASSWORD','IDS_TSK_RETIRE','IDS_TSK_IMPORTADS') and usergroupid_usergroupcode=1;
+update lsusergrouprights set screenname='IDS_SCN_USERMASTER' where displaytopic in ('IDS_TSK_UNLOCK','IDS_SCN_USERMASTER','IDS_TSK_RESETPASSWORD','IDS_TSK_RETIRE','IDS_TSK_IMPORTADS');
 update lsusergrouprights set sedit='1' where displaytopic='IDS_SCN_INSTRUMENTMASTER' and usergroupid_usergroupcode=1;
 
 delete from lsusergrouprightsmaster where orderno in (5,6,46,47);
@@ -1678,6 +1577,8 @@ AND table_name='parserfield';
    END IF;
 END
 $do$;  
+ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdby character varying(255);
+ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdon character varying(255);
 
     
 DO
@@ -1805,6 +1706,8 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.materialgrade OWNER to postgres; 
 
+ALTER TABLE IF Exists materialgrade ADD COLUMN IF NOT EXISTS smaterialgradename character varying(50);
+
 DO
 $do$
 DECLARE
@@ -1892,8 +1795,6 @@ insert into period values(1,'{
     "sdescription": ""
 }',4,-1,1)on conflict (nperiodcode) do nothing;
 
-ALTER TABLE IF Exists materialgrade ADD COLUMN IF NOT EXISTS smaterialgradename character varying(50);
-
 insert into materialgrade values(1,'{
     "sdescription": "",
     "smaterialgradename": "A"
@@ -1903,849 +1804,6 @@ insert into materialgrade values(2,'{
     "sdescription": "",
     "smaterialgradename": "B"
 }',4,-1,1,'B')on conflict (nmaterialgradecode) do nothing;
-
-insert into materialconfig values(1,1,40,'[
-    {
-        "id": "pv1OWbsMYq",
-        "type": "row",
-        "children": [
-            {
-                "id": "Nybc4TT-jv",
-                "type": "column",
-                "children": [
-                    {
-                        "id": "wwi4eC9iw",
-                        "type": "component",
-                        "label": "Material Category",
-                        "parent": "materialtype",
-                        "source": "materialcategory",
-                        "inputtype": "combo",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Material Category",
-                            "ru-RU": "Категория материала",
-                            "tg-TG": "Категорияи мавод"
-                        },
-                        "valuemember": "nmaterialcatcode",
-                        "componentcode": 3,
-                        "componentname": "Combo Box",
-                        "displaymember": "smaterialcatname"
-                    },
-                    {
-                        "type": "component",
-                        "label": "Material Name",
-                        "inputtype": "textinput",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Standard Name",
-                            "ru-RU": "Стандартное имя",
-                            "tg-TG": "Номи стандартӣ"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "type": "component",
-                        "label": "Basic Unit",
-                        "source": "unit",
-                        "inputtype": "combo",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Basic Unit",
-                            "ru-RU": "Базовая единица",
-                            "tg-TG": "Воҳиди асосӣ"
-                        },
-                        "valuemember": "nunitcode",
-                        "displaymember": "sunitname",
-                        "nstandardtype": 3
-                    },
-                    {
-                        "type": "component",
-                        "label": "Prefix",
-                        "inputtype": "textinput",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Prefix",
-                            "ru-RU": "Префикс",
-                            "tg-TG": "Префикс"
-                        },
-                        "sdisplayname": "sprefix",
-                        "sfieldlength": 10
-                    },
-                    {
-                        "type": "component",
-                        "label": "Quarantine",
-                        "inputtype": "toggle",
-                        "displayname": {
-                            "en-US": "Quarantine",
-                            "ru-RU": "Карантин",
-                            "tg-TG": "Карантин"
-                        },
-                        "sdisplayname": "stransstatus",
-                        "nstandardtype": 3
-                    }
-                ]
-            },
-            {
-                "type": "column",
-                "children": [
-                    {
-                        "label": "Section",
-                        "source": "section",
-                        "readonly": false,
-                        "inputtype": "combo",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Section",
-                            "ru-RU": "Раздел",
-                            "tg-TG": "Ҷудокунӣ"
-                        },
-                        "valuemember": "nsectioncode",
-                        "displaymember": "ssectionname",
-                        "nsqlquerycode": 2,
-                        "nstandardtype": 3
-                    },
-                    {
-                        "max": 99999999,
-                        "min": 0,
-                        "type": "component",
-                        "label": "Reorder Level",
-                        "readonly": false,
-                        "inputtype": "Numeric",
-                        "precision": 4,
-                        "displayname": {
-                            "en-US": "Reorder Level",
-                            "ru-RU": "Уровень повторного заказа",
-                            "tg-TG": "Сатҳи азнавсозӣ"
-                        },
-                        "sdisplayname": "nreorderlevel",
-                        "sfieldlength": 8,
-                        "nstandardtype": 3
-                    },
-                    {
-                        "id": "-yskhHhld",
-                        "type": "component",
-                        "label": "Expiry Validations",
-                        "inputtype": "radio",
-                        "displayname": {
-                            "en-US": "Expiry Validations",
-                            "ru-RU": "Проверка истечения срока действия",
-                            "tg-TG": "Санҷишҳои мӯҳлат"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": "No Expiry",
-                                    "text": "No Expiry",
-                                    "defaultchecked": "No Expiry"
-                                },
-                                {
-                                    "id": "Expiry date",
-                                    "text": "Expiry date"
-                                },
-                                {
-                                    "id": "Expiry policy",
-                                    "text": "Expiry policy"
-                                }
-                            ]
-                        },
-                        "componentcode": 7,
-                        "componentname": "Multiple Choice"
-                    },
-                    {
-                        "type": "componentrow",
-                        "children": [
-                            {
-                                "max": 99999999,
-                                "min": 0,
-                                "type": "component",
-                                "label": "Expiry Policy Days",
-                                "readonly": false,
-                                "inputtype": "Numeric",
-                                "displayname": {
-                                    "en-US": "Expiry Policy Days",
-                                    "ru-RU": "Срок действия полиса дней",
-                                    "tg-TG": "Рӯзҳои сиёсати мӯҳлат"
-                                },
-                                "sdisplayname": "speriodexpiry",
-                                "sfieldlength": 8
-                            },
-                            {
-                                "type": "component",
-                                "label": "Expiry Policy Period",
-                                "source": "period",
-                                "inputtype": "combo",
-                                "displayname": {
-                                    "en-US": "Expiry Policy Period",
-                                    "ru-RU": "Срок действия полиса",
-                                    "tg-TG": "Мӯҳлати ба охир расидани сиёсати"
-                                },
-                                "valuemember": "nperiodcode",
-                                "displaymember": "speriodname",
-                                "nsqlquerycode": 1,
-                                "isMultiLingual": true
-                            }
-                        ]
-                    },
-                    {
-                        "type": "component",
-                        "label": "Open Expiry Need",
-                        "inputtype": "toggle",
-                        "displayname": {
-                            "en-US": "Open Expiry Need",
-                            "ru-RU": "Открыть истечение срока действия",
-                            "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"
-                        },
-                        "sdisplayname": "stransstatus",
-                        "nstandardtype": 4
-                    },
-                    {
-                        "type": "componentrow",
-                        "children": [
-                            {
-                                "max": 99999999,
-                                "min": 0,
-                                "type": "component",
-                                "label": "Open Expiry",
-                                "readonly": false,
-                                "inputtype": "Numeric",
-                                "displayname": {
-                                    "en-US": "Open Expiry",
-                                    "ru-RU": "Открытый срок действия",
-                                    "tg-TG": "Муддатро кушоед"
-                                },
-                                "sdisplayname": "speriodopen",
-                                "sfieldlength": 8
-                            },
-                            {
-                                "type": "component",
-                                "label": "Open Expiry Period",
-                                "source": "period",
-                                "inputtype": "combo",
-                                "displayname": {
-                                    "en-US": "Open Expiry Period",
-                                    "ru-RU": "Открытый срок действия",
-                                    "tg-TG": "Мӯҳлати кушодани мӯҳлат"
-                                },
-                                "valuemember": "nperiodcode",
-                                "displaymember": "speriodname",
-                                "nsqlquerycode": 1,
-                                "isMultiLingual": true
-                            }
-                        ]
-                    },
-                    {
-                        "type": "component",
-                        "label": "Next Validation Need",
-                        "inputtype": "toggle",
-                        "displayname": {
-                            "en-US": "Next Validation Need",
-                            "ru-RU": "Следующая Потребность В Проверке",
-                            "tg-TG": "Минбаъда Зарурати Ба Санҷиши"
-                        },
-                        "sdisplayname": "stransstatus",
-                        "nstandardtype": 4,
-                        "defaultchecked": 4
-                    },
-                    {
-                        "type": "componentrow",
-                        "children": [
-                            {
-                                "max": 99999999,
-                                "min": 0,
-                                "type": "component",
-                                "label": "Next Validation",
-                                "readonly": false,
-                                "inputtype": "Numeric",
-                                "displayname": {
-                                    "en-US": "Next Validation",
-                                    "ru-RU": "Следующая проверка",
-                                    "tg-TG": "Оянда санҷиши"
-                                },
-                                "sdisplayname": "speriodopen",
-                                "sfieldlength": 8
-                            },
-                            {
-                                "type": "component",
-                                "label": "Next Validation Period",
-                                "source": "period",
-                                "inputtype": "combo",
-                                "displayname": {
-                                    "en-US": "Next Validation Period",
-                                    "ru-RU": "Следующий Период Проверки",
-                                    "tg-TG": "Баъдӣ Давраи Санҷиши"
-                                },
-                                "valuemember": "nperiodcode",
-                                "displaymember": "speriodname",
-                                "nsqlquerycode": 1,
-                                "isMultiLingual": true
-                            }
-                        ]
-                    },
-                    {
-                        "type": "component",
-                        "label": "Remarks",
-                        "inputtype": "textarea",
-                        "displayname": {
-                            "en-US": "Remarks",
-                            "ru-RU": "Примечания",
-                            "tg-TG": "Мулохизахо"
-                        },
-                        "sdisplayname": "sremarks",
-                        "sfieldlength": 255,
-                        "nstandardtype": 3
-                    }
-                ]
-            }
-        ]
-    }
-]',1)on conflict(nmaterialconfigcode)do nothing;
-
-   
-insert into materialconfig values(2,1,138,'[
-    {
-        "id": "pv1OWbsMYq",
-        "type": "row",
-        "children": [
-            {
-                "id": "Nybc4TT-jv",
-                "type": "column",
-                "children": [
-                    {
-                        "label": "Internal Reference",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Internal Reference",
-                            "ru-RU": "Внутренняя ссылка",
-                            "tg-TG": "Маълумоти дохилӣ"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Batch No.",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Batch No.",
-                            "ru-RU": "Серия №.",
-                            "tg-TG": "Рақами партия"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Lot No.",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Lot No.",
-                            "ru-RU": "Много не.",
-                            "tg-TG": "Лот №"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Reference Number",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Reference Number",
-                            "ru-RU": "Справочный номер",
-                            "tg-TG": "Рақами истинод"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Container ID",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Container ID",
-                            "ru-RU": "Идентификатор контейнера",
-                            "tg-TG": "ID контейнер"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Storage Location",
-                        "source": "storagelocation",
-                        "readonly": false,
-                        "inputtype": "combo",
-                        "displayname": {
-                            "en-US": "Storage Location",
-                            "ru-RU": "Место хранения",
-                            "tg-TG": "Ҷойгоҳи нигаҳдорӣ"
-                        },
-                        "valuemember": "nstoragelocationcode",
-                        "displaymember": "sstoragelocationname",
-                        "nstandardtype": 3
-                    },
-                    {
-                        "label": "Supplier",
-                        "source": "supplier",
-                        "readonly": false,
-                        "inputtype": "combo",
-                        "displayname": {
-                            "en-US": "Supplier",
-                            "ru-RU": "Поставщик",
-                            "tg-TG": "Таъминкунанда"
-                        },
-                        "valuemember": "nsuppliercode",
-                        "displaymember": "ssuppliername",
-                        "nstandardtype": 3
-                    },
-                    {
-                        "label": "Manufacturer",
-                        "source": "manufacturer",
-                        "readonly": false,
-                        "inputtype": "combo",
-                        "displayname": {
-                            "en-US": "Manufacturer",
-                            "ru-RU": "Производитель",
-                            "tg-TG": "Истеҳсолкунанда"
-                        },
-                        "valuemember": "nmanufcode",
-                        "displaymember": "smanufname",
-                        "nstandardtype": 3
-                    }
-                ]
-            },
-            {
-                "type": "column",
-                "children": [
-                    {
-                        "label": "Section",
-                        "source": "section",
-                        "readonly": false,
-                        "inputtype": "combo",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Section",
-                            "ru-RU": "Раздел",
-                            "tg-TG": "Ҷудокунӣ"
-                        },
-                        "valuemember": "nsectioncode",
-                        "displaymember": "ssectionname",
-                        "nsqlquerycode": 4,
-                        "nstandardtype": 3
-                    },
-                    {
-                        "type": "componentrow",
-                        "children": [
-                            {
-                                "max": 99999999,
-                                "min": 0,
-                                "type": "component",
-                                "label": "Received Quantity",
-                                "readonly": false,
-                                "inputtype": "Numeric",
-                                "mandatory": 3,
-                                "precision": 3,
-                                "displayname": {
-                                    "en-US": "Received Quantity",
-                                    "ru-RU": "Полученное количество",
-                                    "tg-TG": "Миқдори гирифташуда"
-                                },
-                                "sdisplayname": "nqtyreceived",
-                                "sfieldlength": 8,
-                                "nstandardtype": 3,
-                                "fieldsForExpandedGrid": true
-                            },
-                            {
-                                "type": "component",
-                                "label": "Unit",
-                                "parent": "unit",
-                                "source": "unit",
-                                "readonly": true,
-                                "inputtype": "combo",
-                                "displayname": {
-                                    "en-US": "Unit",
-                                    "ru-RU": "Ед. изм",
-                                    "tg-TG": "Воҳиди"
-                                },
-                                "valuemember": "nunitcode",
-                                "displaymember": "sunitname",
-                                "nstandardtype": 3
-                            }
-                        ]
-                    },
-                    {
-                        "label": "Grade",
-                        "source": "materialgrade",
-                        "readonly": false,
-                        "inputtype": "combo",
-                        "displayname": {
-                            "en-US": "Grade",
-                            "ru-RU": "Оценка",
-                            "tg-TG": "Синф"
-                        },
-                        "valuemember": "nmaterialgradecode",
-                        "displaymember": "smaterialgradename",
-                        "nstandardtype": 3
-                    },
-                    {
-                        "max": 99999999,
-                        "min": 0,
-                        "type": "component",
-                        "label": "Cost",
-                        "readonly": false,
-                        "inputtype": "Numeric",
-                        "displayname": {
-                            "en-US": "Cost",
-                            "ru-RU": "Расходы",
-                            "tg-TG": "Арзиш"
-                        },
-                        "sfieldlength": 8
-                    },
-                    {
-                        "label": "Date Of Manufacturer",
-                        "inputtype": "date",
-                        "displayname": {
-                            "en-US": "Date Of Manufacturer",
-                            "ru-RU": "Дата изготовления",
-                            "tg-TG": "Санаи Истеҳсолкунанда"
-                        }
-                    },
-                    {
-                        "label": "Received Date & Time",
-                        "inputtype": "date",
-                        "displayname": {
-                            "en-US": "Received Date & Time",
-                            "ru-RU": "Дата и время получения",
-                            "tg-TG": "Сана ва вақти қабулшуда"
-                        }
-                    },
-                    {
-                        "label": "Expiry Date & Time",
-                        "inputtype": "date",
-                        "displayname": {
-                            "en-US": "Expiry Date & Time",
-                            "ru-RU": "Дата и время истечения срока действия",
-                            "tg-TG": "Санаи ба охир расидан ва вақт"
-                        }
-                    },
-                    {
-                        "label": "Remarks",
-                        "readonly": false,
-                        "inputtype": "textarea",
-                        "displayname": {
-                            "en-US": "Remarks",
-                            "ru-RU": "Примечания",
-                            "tg-TG": "Мулохизахо"
-                        },
-                        "sfieldlength": 255
-                    }
-                ]
-            }
-        ]
-    }
-]',1)on conflict(nmaterialconfigcode)do nothing;
-
-insert into materialconfig values(3,-1,138,'[
-    {
-        "id": "pv1OWbsMYq",
-        "type": "row",
-        "children": [
-            {
-                "id": "Nybc4TT-jv",
-                "type": "column",
-                "children": [
-                    {
-                        "child": [
-                            {
-                                "label": "Transaction Type",
-                                "childPath": "0-0-1-0",
-                                "isMultiLingual": true,
-                                "tablecolumnname": "ntranscode"
-                            }
-                        ],
-                        "label": "Inventory Transaction Type",
-                        "parent": true,
-                        "source": "materialinventorytype",
-                        "readonly": false,
-                        "inputtype": "combo",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Inventory Transaction Type",
-                            "ru-RU": "Тип транзакции инвентаря",
-                            "tg-TG": "Навъи муомилоти инвентаризатсия"
-                        },
-                        "valuemember": "ninventorytypecode",
-                        "displaymember": "sinventorytypename",
-                        "fieldsForGrid": true,
-                        "nstandardtype": 3,
-                        "isMultiLingual": true
-                    },
-                    {
-                        "label": "Transaction Type",
-                        "parent": false,
-                        "source": "transactionstatus",
-                        "readonly": false,
-                        "inputtype": "combo",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Transaction Type",
-                            "ru-RU": "Тип операции",
-                            "tg-TG": "Навъи транзаксия"
-                        },
-                        "valuemember": "ntranscode",
-                        "defaultvalues": [
-                            {
-                                "1": "48,72"
-                            },
-                            {
-                                "2": "47,33"
-                            }
-                        ],
-                        "displaymember": "stransdisplaystatus",
-                        "fieldsForGrid": true,
-                        "nstandardtype": 3,
-                        "isMultiLingual": true,
-                        "parentprimarycode": "ninventorytypecode",
-                        "Inventory Transaction Type": [
-                            {
-                                "label": "Transaction Type",
-                                "source": "transactionstatus",
-                                "valuemember": "ntranscode",
-                                "defaultvalues": [
-                                    {
-                                        "1": "48,72"
-                                    },
-                                    {
-                                        "2": "47,33"
-                                    }
-                                ],
-                                "displaymember": "stransdisplaystatus",
-                                "parentprimarycode": "ninventorytypecode"
-                            }
-                        ]
-                    },
-                    {
-                        "label": "Available Quantity/Unit",
-                        "readonly": true,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Available Quantity/Unit",
-                            "ru-RU": "Доступное количество/единица",
-                            "tg-TG": "Миқдор/Воҳиди дастрас"
-                        },
-                        "sfieldlength": 100,
-                        "needAccordian": true,
-                        "fieldsForExpandedGrid": true
-                    },
-                    {
-                        "max": 99999999,
-                        "min": 0,
-                        "type": "component",
-                        "label": "Received Quantity",
-                        "readonly": false,
-                        "inputtype": "Numeric",
-                        "mandatory": 3,
-                        "precision": 3,
-                        "displayname": {
-                            "en-US": "Quantity",
-                            "ru-RU": "Количество",
-                            "tg-TG": "Миқдор"
-                        },
-                        "sdisplayname": "nqtyreceived",
-                        "sfieldlength": 8,
-                        "nstandardtype": 3,
-                        "fieldsForExpandedGrid": true
-                    },
-                    {
-                        "label": "Section",
-                        "parent": true,
-                        "source": "section",
-                        "readonly": false,
-                        "inputtype": "combo",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Section",
-                            "ru-RU": "Раздел",
-                            "tg-TG": "Ҷудокунӣ"
-                        },
-                        "valuemember": "nsectioncode",
-                        "displaymember": "ssectionname",
-                        "nsqlquerycode": 3,
-                        "nstandardtype": 3,
-                        "fieldsForExpandedGrid": true
-                    },
-                    {
-                        "label": "Comments",
-                        "readonly": false,
-                        "inputtype": "textarea",
-                        "displayname": {
-                            "en-US": "Comments",
-                            "ru-RU": "Комментарии",
-                            "tg-TG": "Шарҳҳо"
-                        },
-                        "sfieldlength": 255,
-                        "fieldsForExpandedGrid": true
-                    },
-                    {
-                        "nprecision": "11,3"
-                    }
-                ]
-            }
-        ]
-    }
-]',1)on conflict(nmaterialconfigcode)do nothing;
-
-insert into mappedtemplatefieldpropsmaterial 
-values(1,1,'{
-        "ListMasterProps": [
-            {
-                "mainField": "Material Name",
-                "firstField": "Reorder Level"
-            }
-        ],
-        "searchFieldList": [
-            {
-                "searchFieldList": "Material Name"
-            }
-        ],
-        "MaterialViewFields": [
-            {
-                "1": {
-                    "en-US": "Material Category",
-                    "ru-RU": "Категория материала",
-                    "tg-TG": "Категорияи мавод"
-                },
-                "2": "Material Category"
-            },
-            {
-                "1": {
-                    "en-US": "Standard Name",
-                    "ru-RU": "Стандартное имя",
-                    "tg-TG": "Номи стандартӣ"
-                },
-                "2": "Material Name"
-            },
-            {
-                "1": {
-                    "en-US": "Basic Unit",
-                    "ru-RU": "Базовая единица",
-                    "tg-TG": "Воҳиди асосӣ"
-                },
-                "2": "Basic Unit"
-            },
-            {
-                "1": {
-                    "en-US": "Prefix",
-                    "ru-RU": "Префикс",
-                    "tg-TG": "Префикс"
-                },
-                "2": "Prefix"
-            },
-            {
-                "1": {
-                    "en-US": "Quarantine",
-                    "ru-RU": "Карантин",
-                    "tg-TG": "Карантин"
-                },
-                "2": "Quarantine"
-            },
-            {
-                "1": {
-                    "en-US": "Reorder Level",
-                    "ru-RU": "Уровень повторного заказа",
-                    "tg-TG": "Сатҳи азнавсозӣ"
-                },
-                "2": "Reorder Level"
-            },
-            {
-                "1": {
-                    "en-US": "Expiry Validations",
-                    "ru-RU": "Проверка истечения срока действия",
-                    "tg-TG": "Санҷишҳои мӯҳлат"
-                },
-                "2": "Expiry Validations"
-            },
-            {
-                "1": {
-                    "en-US": "Expiry Policy Days",
-                    "ru-RU": "Срок действия полиса дней",
-                    "tg-TG": "Рӯзҳои сиёсати мӯҳлат"
-                },
-                "2": "Expiry Policy Days"
-            },
-            {
-                "1": {
-                    "en-US": "Expiry Policy Period",
-                    "ru-RU": "Срок действия полиса",
-                    "tg-TG": "Мӯҳлати ба охир расидани сиёсати"
-                },
-                "2": "Expiry Policy Period"
-            },
-            {
-                "1": {
-                    "en-US": "Open Expiry Need",
-                    "ru-RU": "Открыть истечение срока действия",
-                    "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"
-                },
-                "2": "Open Expiry Need"
-            },
-            {
-                "1": {
-                    "en-US": "Open Expiry",
-                    "ru-RU": "Открытый срок действия",
-                    "tg-TG": "Муддатро кушоед"
-                },
-                "2": "Open Expiry"
-            },
-            {
-                "1": {
-                    "en-US": "Open Expiry Period",
-                    "ru-RU": "Открытый срок действия",
-                    "tg-TG": "Мӯҳлати кушодани мӯҳлат"
-                },
-                "2": "Open Expiry Period"
-            },
-            {
-                "1": {
-                    "en-US": "Remarks",
-                    "ru-RU": "Примечания",
-                    "tg-TG": "Мулохизахо"
-                },
-                "2": "Remarks"
-            },
-            {
-                "1": {
-                    "en-US": "Next Validation Need",
-                    "ru-RU": "Следующая Потребность В Проверке",
-                    "tg-TG": "Минбаъда Зарурати Ба Санҷиши"
-                },
-                "2": "Next Validation Need"
-            },
-            {
-                "1": {
-                    "en-US": "Next Validation",
-                    "ru-RU": "Следующая проверка",
-                    "tg-TG": "Оянда санҷиши"
-                },
-                "2": "Next Validation"
-            },
-            {
-                "1": {
-                    "en-US": "Next Validation Period",
-                    "ru-RU": "Следующий Период Проверки",
-                    "tg-TG": "Баъдӣ Давраи Санҷиши"
-                },
-                "2": "Next Validation Period"
-            }
-        ],
-        "MaterialStandarddatefields": [
-            {
-                "1": {
-                    "en-US": "Expiry Date & Time",
-                    "ru-RU": "Дата и время истечения срока действия",
-                    "tg-TG": "Санаи ба охир расидан ва вақт"
-                },
-                "2": "Expiry Date & Time",
-                "dateonly": true
-            }
-        ]
-    }', 1)on conflict (nmappedtemplatefieldpropmaterialcode)do nothing;
 
 insert into transactionstatus values(47,'Receive','{
     "salertdisplaystatus": {
@@ -2880,8 +1938,6 @@ update lsusergrouprightsmaster set sequenceorder=76 where orderno =55;
 update lsusergrouprightsmaster set sequenceorder=77 where orderno =56;
 
 update lsusergrouprights set screate='1',sedit='1',sdelete='1' where displaytopic='IDS_SCN_LOGBOOK' and usergroupid_usergroupcode!=1;
-update lsusergrouprights set screate='1',sedit='1',sdelete='1' where displaytopic='IDS_SCN_USERMASTER' and usergroupid_usergroupcode!=1;
-update lsusergrouprights set sallow='1' where displaytopic in ('IDS_TSK_UNLOCK','IDS_SCN_USERMASTER','IDS_TSK_RESETPASSWORD','IDS_TSK_RETIRE','IDS_TSK_IMPORTADS') and usergroupid_usergroupcode!=1;
 
 update lsusergrouprightsmaster set modulename='IDS_MDL_DASHBOARD' where orderno in (1,3,87);
 update lsusergrouprightsmaster set modulename='IDS_MDL_ORDERS' where orderno in (7,8,9,37,38,61,62,93,85);
@@ -2910,828 +1966,8 @@ Insert into LSaudittrailconfigmaster (serialno,manualaudittrail,modulename,order
 Insert into LSaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(96,0,'IDS_MDL_PARSER',12,'IDS_SCN_METHODMASTER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
 Insert into LSaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(97,0,'IDS_MDL_PARSER',12,'IDS_SCN_METHODMASTER','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
 
-insert into materialconfig values(4,-1,40,'[
-    {
-        "id": "pv1OWbsMYq",
-        "type": "row",
-        "children": [
-            {
-                "id": "Nybc4TT-jv",
-                "type": "column",
-                "children": [
-                    {
-                        "label": "Inflammable",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "Inflammable",
-                            "ru-RU": "легковоспламеняющийся",
-                            "tg-TG": "оташгиранда"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 1,
-                                    "text": "Inflammable"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "label": "Keep Refrigerated",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "Keep Refrigerated",
-                            "ru-RU": "Хранить в холодильнике",
-                            "tg-TG": "Дар яхдон нигоҳ доред"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 2,
-                                    "text": "Keep Refrigerated"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "label": "No Acids",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "No Acids",
-                            "ru-RU": "Без кислот",
-                            "tg-TG": "Кислотаҳо нест"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 3,
-                                    "text": "No Acids"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "label": "No Bases",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "No Bases",
-                            "ru-RU": "Нет баз",
-                            "tg-TG": "Не асос"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 4,
-                                    "text": "No Bases"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "label": "No Oxidizer",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "No Oxidizer",
-                            "ru-RU": "Нет окислителя",
-                            "tg-TG": "Оксидизатор нест"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 5,
-                                    "text": "No Oxidizer"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "label": "Corrosive",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "Corrosive",
-                            "ru-RU": "Коррозионный",
-                            "tg-TG": "Коррозия"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 6,
-                                    "text": "Corrosive"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "label": "Hazardous",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "Hazardous",
-                            "ru-RU": "Опасный",
-                            "tg-TG": "Хатарнок"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 7,
-                                    "text": "Hazardous"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "inputtype": 5,
-                        "squestion": "Safety Properties(NFPA Rating)",
-                        "displayname": {
-                            "en-US": "Safety Properties(NFPA Rating)",
-                            "ru-RU": "Свойства безопасности (рейтинг NFPA)",
-                            "tg-TG": "Хусусиятҳои бехатарӣ (Рейтинги NFPA)"
-                        }
-                    },
-                    {
-                        "label": "Health",
-                        "readonly": false,
-                        "inputtype": "textarea",
-                        "displayname": {
-                            "en-US": "Health",
-                            "ru-RU": "Здоровье",
-                            "tg-TG": "Тандурустй"
-                        },
-                        "sfieldlength": 255
-                    },
-                    {
-                        "label": "Reactivity",
-                        "readonly": false,
-                        "inputtype": "textarea",
-                        "displayname": {
-                            "en-US": "Reactivity",
-                            "ru-RU": "Реактивность",
-                            "tg-TG": "Реактивӣ"
-                        },
-                        "sfieldlength": 255
-                    }
-                ]
-            },
-            {
-                "type": "column",
-                "children": [
-                    {
-                        "label": "Avoid Exposure To Lights",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "Avoid Exposure To Lights",
-                            "ru-RU": "Избегайте воздействия света",
-                            "tg-TG": "Аз таъсири чароғҳо худдорӣ намоед"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 8,
-                                    "text": "Avoid Exposure To Lights"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "label": "Personal Protective Equipment",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "Personal Protective Equipment",
-                            "ru-RU": "Средства индивидуальной защиты",
-                            "tg-TG": "Таҷҳизоти муҳофизати шахсӣ"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 9,
-                                    "text": "Personal Protective Equipment"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "label": "Keep Frozen",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "Keep Frozen",
-                            "ru-RU": "Держите замороженным",
-                            "tg-TG": "Нигоҳ доштани яхкардашуда"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 10,
-                                    "text": "Keep Frozen"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "label": "Keep Dessicated",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "Keep Dessicated",
-                            "ru-RU": "Держите высушенным",
-                            "tg-TG": "Дессикатсияро нигоҳ доред"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 11,
-                                    "text": "Keep Dessicated"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "label": "Clothing",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "Clothing",
-                            "ru-RU": "Одежда",
-                            "tg-TG": "Либос"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 12,
-                                    "text": "Clothing"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "label": "Goggles",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "Goggles",
-                            "ru-RU": "очки для плавания",
-                            "tg-TG": "Айнак"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 13,
-                                    "text": "Goggles"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "label": "Gloves",
-                        "inputtype": "checkbox",
-                        "displayname": {
-                            "en-US": "Gloves",
-                            "ru-RU": "Перчатки",
-                            "tg-TG": "Дастпӯшакҳо"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": 14,
-                                    "text": "Gloves"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "inputtype": 5,
-                        "squestion": "  "
-                    },
-                    {
-                        "label": "Flammable",
-                        "readonly": false,
-                        "inputtype": "textarea",
-                        "displayname": {
-                            "en-US": "Flammable",
-                            "ru-RU": "легковоспламеняющийся",
-                            "tg-TG": "Даргиранда"
-                        },
-                        "sfieldlength": 255
-                    },
-                    {
-                        "label": "Specific",
-                        "readonly": false,
-                        "inputtype": "textarea",
-                        "displayname": {
-                            "en-US": "Specific",
-                            "ru-RU": "Конкретный",
-                            "tg-TG": "мушаххас"
-                        },
-                        "sfieldlength": 255
-                    }
-                ]
-            }
-        ]
-    }
-]',1)on conflict(nmaterialconfigcode)do nothing;
-
-insert into materialconfig values(5,-1,40,'[
-    {
-        "id": "pv1OWbsMYq",
-        "type": "row",
-        "children": [
-            {
-                "id": "Nybc4TT-jv",
-                "type": "column",
-                "children": [
-                    {
-                        "label": "Structural Formula",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Structural Formula",
-                            "ru-RU": "Структурная формула",
-                            "tg-TG": "Формула сохторӣ"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Physical Description",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Physical Description",
-                            "ru-RU": "Физическое описание",
-                            "tg-TG": "Тавсифи физикӣ"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Boiling Point",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Boiling Point",
-                            "ru-RU": "Точка кипения",
-                            "tg-TG": "Нуқтаи ҷӯш"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Melting Point",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Melting Point",
-                            "ru-RU": "Температура плавления",
-                            "tg-TG": "Нуқтаи обшавӣ"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Molecular Weight",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Molecular Weight",
-                            "ru-RU": "Молекулярный вес",
-                            "tg-TG": "Вазни молекулавӣ"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Standard Specific Gravity",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Standard Specific Gravity",
-                            "ru-RU": "Стандартный удельный вес",
-                            "tg-TG": "Вазни хоси стандартӣ"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Structural Purity",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Structural Purity",
-                            "ru-RU": "Структурная чистота",
-                            "tg-TG": "Тозагии сохторӣ"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Standard Length",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Standard Length",
-                            "ru-RU": "Стандартная длина",
-                            "tg-TG": "Дарозии стандартӣ"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Gas Number",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Gas Number",
-                            "ru-RU": "Номер газа",
-                            "tg-TG": "Рақами газ"
-                        },
-                        "sfieldlength": 100
-                    }
-                ]
-            },
-            {
-                "type": "column",
-                "children": [
-                    {
-                        "label": "Bulk Density",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Bulk Density",
-                            "ru-RU": "Объемная плотность",
-                            "tg-TG": "Зичии масса"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Date of Standardization",
-                        "dateonly": true,
-                        "timeonly": false,
-                        "inputtype": "date",
-                        "displayname": {
-                            "en-US": "Date of Standardization",
-                            "ru-RU": "Дата стандартизации",
-                            "tg-TG": "Санаи стандартизатсия"
-                        }
-                    },
-                    {
-                        "inputtype": 5,
-                        "squestion": "Assay",
-                        "displayname": {
-                            "en-US": "Assay",
-                            "ru-RU": "анализ",
-                            "tg-TG": "Таҳлил"
-                        }
-                    },
-                    {
-                        "label": "As is Basis1",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "As is Basis",
-                            "ru-RU": "Как основа",
-                            "tg-TG": "Тавре ки Basis аст"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Dried/Andydrous Basis1",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Dried/Andydrous Basis",
-                            "ru-RU": "Сухая/андроидная основа",
-                            "tg-TG": "Асоси хушк/андидроз"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "inputtype": 5,
-                        "squestion": "Purity By Mass Balance",
-                        "displayname": {
-                            "en-US": "Purity By Mass Balance",
-                            "ru-RU": "Чистота по балансу массы",
-                            "tg-TG": "Покӣ аз рӯи тавозуни омма"
-                        }
-                    },
-                    {
-                        "label": "As is Basis2",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "As is Basis",
-                            "ru-RU": "Как основа",
-                            "tg-TG": "Тавре ки Basis аст"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Dried/Andydrous Basis2",
-                        "readonly": false,
-                        "inputtype": "textinput",
-                        "displayname": {
-                            "en-US": "Dried/Andydrous Basis",
-                            "ru-RU": "Сухая/андроидная основа",
-                            "tg-TG": "Асоси хушк/андидроз"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "label": "Direction of Use",
-                        "readonly": false,
-                        "inputtype": "textarea",
-                        "displayname": {
-                            "en-US": "Direction of Use",
-                            "ru-RU": "Направление использования",
-                            "tg-TG": "Самти истифода"
-                        },
-                        "sfieldlength": 255
-                    },
-                    {
-                        "label": "Comments",
-                        "readonly": false,
-                        "inputtype": "textarea",
-                        "displayname": {
-                            "en-US": "Comments",
-                            "ru-RU": "Комментарии",
-                            "tg-TG": "Шарҳҳо"
-                        },
-                        "sfieldlength": 255
-                    }
-                ]
-            }
-        ]
-    }
-]',1)on conflict(nmaterialconfigcode)do nothing;
-
 ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS retirestatus integer;
 ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS userstatus character varying(10);
-
-update materialconfig set jsondata = '[
-    {
-        "id": "pv1OWbsMYq",
-        "type": "row",
-        "children": [
-            {
-                "id": "Nybc4TT-jv",
-                "type": "column",
-                "children": [
-                    {
-                        "id": "wwi4eC9iw",
-                        "type": "component",
-                        "label": "Material Category",
-                        "parent": "materialtype",
-                        "source": "materialcategory",
-                        "inputtype": "combo",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Material Category",
-                            "ru-RU": "Категория материала",
-                            "tg-TG": "Категорияи мавод"
-                        },
-                        "valuemember": "nmaterialcatcode",
-                        "componentcode": 3,
-                        "componentname": "Combo Box",
-                        "displaymember": "smaterialcatname"
-                    },
-                    {
-                        "type": "component",
-                        "label": "Material Name",
-                        "inputtype": "textinput",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Standard Name",
-                            "ru-RU": "Стандартное имя",
-                            "tg-TG": "Номи стандартӣ"
-                        },
-                        "sfieldlength": 100
-                    },
-                    {
-                        "type": "component",
-                        "label": "Basic Unit",
-                        "source": "unit",
-                        "inputtype": "combo",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Basic Unit",
-                            "ru-RU": "Базовая единица",
-                            "tg-TG": "Воҳиди асосӣ"
-                        },
-                        "valuemember": "nunitcode",
-                        "displaymember": "sunitname",
-                        "nstandardtype": 3
-                    },
-                    {
-                        "type": "component",
-                        "label": "Prefix",
-                        "inputtype": "textinput",
-                        "mandatory": 3,
-                        "displayname": {
-                            "en-US": "Prefix",
-                            "ru-RU": "Префикс",
-                            "tg-TG": "Префикс"
-                        },
-                        "sdisplayname": "sprefix",
-                        "sfieldlength": 10
-                    },
-                    {
-                        "type": "component",
-                        "label": "Quarantine",
-                        "inputtype": "toggle",
-                        "displayname": {
-                            "en-US": "Quarantine",
-                            "ru-RU": "Карантин",
-                            "tg-TG": "Карантин"
-                        },
-                        "sdisplayname": "stransstatus",
-                        "nstandardtype": 3
-                    }
-                ]
-            },
-            {
-                "type": "column",
-                "children": [
-                    {
-                        "max": 99999999,
-                        "min": 0,
-                        "type": "component",
-                        "label": "Reorder Level",
-                        "readonly": false,
-                        "inputtype": "Numeric",
-                        "precision": 4,
-                        "displayname": {
-                            "en-US": "Reorder Level",
-                            "ru-RU": "Уровень повторного заказа",
-                            "tg-TG": "Сатҳи азнавсозӣ"
-                        },
-                        "sdisplayname": "nreorderlevel",
-                        "sfieldlength": 8,
-                        "nstandardtype": 3
-                    },
-                    {
-                        "id": "-yskhHhld",
-                        "type": "component",
-                        "label": "Expiry Validations",
-                        "inputtype": "radio",
-                        "displayname": {
-                            "en-US": "Expiry Validations",
-                            "ru-RU": "Проверка истечения срока действия",
-                            "tg-TG": "Санҷишҳои мӯҳлат"
-                        },
-                        "radioOptions": {
-                            "tags": [
-                                {
-                                    "id": "No Expiry",
-                                    "text": "No Expiry",
-                                    "defaultchecked": "No Expiry"
-                                },
-                                {
-                                    "id": "Expiry date",
-                                    "text": "Expiry date"
-                                },
-                                {
-                                    "id": "Expiry policy",
-                                    "text": "Expiry policy"
-                                }
-                            ]
-                        },
-                        "componentcode": 7,
-                        "componentname": "Multiple Choice"
-                    },
-                    {
-                        "type": "componentrow",
-                        "children": [
-                            {
-                                "max": 99999999,
-                                "min": 0,
-                                "type": "component",
-                                "label": "Expiry Policy Days",
-                                "readonly": false,
-                                "inputtype": "Numeric",
-                                "displayname": {
-                                    "en-US": "Expiry Policy Days",
-                                    "ru-RU": "Срок действия полиса дней",
-                                    "tg-TG": "Рӯзҳои сиёсати мӯҳлат"
-                                },
-                                "sdisplayname": "speriodexpiry",
-                                "sfieldlength": 8
-                            },
-                            {
-                                "type": "component",
-                                "label": "Expiry Policy Period",
-                                "source": "period",
-                                "inputtype": "combo",
-                                "displayname": {
-                                    "en-US": "Expiry Policy Period",
-                                    "ru-RU": "Срок действия полиса",
-                                    "tg-TG": "Мӯҳлати ба охир расидани сиёсати"
-                                },
-                                "valuemember": "nperiodcode",
-                                "displaymember": "speriodname",
-                                "nsqlquerycode": 1,
-                                "isMultiLingual": true
-                            }
-                        ]
-                    },
-                    {
-                        "type": "component",
-                        "label": "Open Expiry Need",
-                        "inputtype": "toggle",
-                        "displayname": {
-                            "en-US": "Open Expiry Need",
-                            "ru-RU": "Открыть истечение срока действия",
-                            "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"
-                        },
-                        "sdisplayname": "stransstatus",
-                        "nstandardtype": 4
-                    },
-                    {
-                        "type": "componentrow",
-                        "children": [
-                            {
-                                "max": 99999999,
-                                "min": 0,
-                                "type": "component",
-                                "label": "Open Expiry",
-                                "readonly": false,
-                                "inputtype": "Numeric",
-                                "displayname": {
-                                    "en-US": "Open Expiry",
-                                    "ru-RU": "Открытый срок действия",
-                                    "tg-TG": "Муддатро кушоед"
-                                },
-                                "sdisplayname": "speriodopen",
-                                "sfieldlength": 8
-                            },
-                            {
-                                "type": "component",
-                                "label": "Open Expiry Period",
-                                "source": "period",
-                                "inputtype": "combo",
-                                "displayname": {
-                                    "en-US": "Open Expiry Period",
-                                    "ru-RU": "Открытый срок действия",
-                                    "tg-TG": "Мӯҳлати кушодани мӯҳлат"
-                                },
-                                "valuemember": "nperiodcode",
-                                "displaymember": "speriodname",
-                                "nsqlquerycode": 1,
-                                "isMultiLingual": true
-                            }
-                        ]
-                    },
-                    {
-                        "type": "component",
-                        "label": "Next Validation Need",
-                        "inputtype": "toggle",
-                        "displayname": {
-                            "en-US": "Next Validation Need",
-                            "ru-RU": "Следующая Потребность В Проверке",
-                            "tg-TG": "Минбаъда Зарурати Ба Санҷиши"
-                        },
-                        "sdisplayname": "stransstatus",
-                        "nstandardtype": 4,
-                        "defaultchecked": 4
-                    },
-                    {
-                        "type": "componentrow",
-                        "children": [
-                            {
-                                "max": 99999999,
-                                "min": 0,
-                                "type": "component",
-                                "label": "Next Validation",
-                                "readonly": false,
-                                "inputtype": "Numeric",
-                                "displayname": {
-                                    "en-US": "Next Validation",
-                                    "ru-RU": "Следующая проверка",
-                                    "tg-TG": "Оянда санҷиши"
-                                },
-                                "sdisplayname": "speriodopen",
-                                "sfieldlength": 8
-                            },
-                            {
-                                "type": "component",
-                                "label": "Next Validation Period",
-                                "source": "period",
-                                "inputtype": "combo",
-                                "displayname": {
-                                    "en-US": "Next Validation Period",
-                                    "ru-RU": "Следующий Период Проверки",
-                                    "tg-TG": "Баъдӣ Давраи Санҷиши"
-                                },
-                                "valuemember": "nperiodcode",
-                                "displaymember": "speriodname",
-                                "nsqlquerycode": 1,
-                                "isMultiLingual": true
-                            }
-                        ]
-                    },
-                    {
-                        "type": "component",
-                        "label": "Remarks",
-                        "inputtype": "textarea",
-                        "displayname": {
-                            "en-US": "Remarks",
-                            "ru-RU": "Примечания",
-                            "tg-TG": "Мулохизахо"
-                        },
-                        "sdisplayname": "sremarks",
-                        "sfieldlength": 255,
-                        "nstandardtype": 3
-                    }
-                ]
-            }
-        ]
-    }
-]' where nformcode = 40;
 
 ALTER TABLE IF Exists materialinventory ALTER COLUMN jsondata TYPE text;
 ALTER TABLE IF Exists materialinventory ALTER COLUMN jsonuidata TYPE text;
@@ -3786,3 +2022,649 @@ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,order
 ALTER TABLE IF Exists lspasswordpolicy ADD COLUMN IF NOT EXISTS idletime integer;
 
 update LSpasswordpolicy set idletime=15 where idletime is null;
+
+delete from lsusergrouprights where displaytopic='IDS_SCN_DASHBOARD';
+
+update lsusergrouprights set modulename='IDS_MDL_ORDERS',screenname='IDS_SCN_PROTOCOLORDERS' where displaytopic in ('IDS_TSK_ELNPROTOCOL','IDS_TSK_DYNAMICPROTOCOL');
+update lsusergrouprights set modulename='IDS_MDL_AUDITTRAIL' where displaytopic in ('IDS_SCN_CFRSETTINGS','IDS_TSK_CREATEARCHIVE','IDS_TSK_REVIEWHISTORY','IDS_SCN_AUDITTRAILHIS');
+update lsusergrouprights set modulename='IDS_MDL_SETUP' where displaytopic  IN ('IDS_SCN_ACTIVEUSER','IDS_SCN_DOMAIN','IDS_TSK_IMPORTADS','IDS_TSK_RETIRE');
+update lsusergrouprights set modulename='IDS_MDL_ORDERS' where displaytopic in ('IDS_TSK_ORDERSHAREDBYME','IDS_TSK_ORDERSHAREDTOME','IDS_TSK_SHEETEVALUATION','IDS_TSK_ELNTASKORDER','IDS_TSK_RESEARCHACTIVITY','IDS_TSK_MANAGEEXCEL');
+
+
+update lsusergrouprights set screate='NA' where displaytopic in ('IDS_TSK_RESETPASSWORD','IDS_TSK_ORDERSHAREDBYME','IDS_TSK_ORDERSHAREDTOME','IDS_SCN_AUDITTRAILHIS');
+update lsusergrouprights set screate='NA',sedit='NA',sdelete='NA' where displaytopic in ('IDS_TSK_REVIEW','IDS_TSK_CREATEARCHIVE');
+delete from lsusergrouprights where displaytopic in ('IDS_SCN_ACTIVEUSER','IDS_SCN_DOMAIN') and usergroupid_usergroupcode!=1;
+
+
+update lsusergrouprights set screenname='IDS_SCN_DASHBOARD' where displaytopic='IDS_SCN_DASHBOARD';
+update lsusergrouprights set screenname='IDS_SCN_DASHBOARD' where displaytopic in ('IDS_TSK_ORDEROVERVIEW','IDS_TSK_ACTIVITIES');
+update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic  in ('IDS_TSK_COMPLETEDWORK','IDS_TSK_ELNTASKORDER','IDS_TSK_RESEARCHACTIVITY','IDS_TSK_MANAGEEXCEL','IDS_TSK_SHEETEVALUATION','IDS_TSK_ORDERSHAREDBYME','IDS_TSK_ORDERSHAREDTOME','IDS_TSK_PENDINGWORK');
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS' where displaytopic in ('IDS_TSK_ELNPROTOCOL','IDS_TSK_DYNAMICPROTOCOL');
+update lsusergrouprights set screenname='IDS_SCN_SHEETTEMPLATE' where displaytopic='IDS_SCN_SHEETTEMPLATE' ;
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLTEMPLATE' where displaytopic='IDS_TSK_NEWSTEP' ;
+update lsusergrouprights set screenname='IDS_SCN_TEMPLATEMAPPING' where displaytopic='IDS_TSK_LIMSTESTORDER' ;
+update lsusergrouprights set screenname='IDS_SCN_TASKMASTER' where displaytopic='IDS_SCN_TASKMASTER' ;
+update lsusergrouprights set screenname='IDS_SCN_PROJECTMASTER' where displaytopic='IDS_SCN_PROJECTMASTER' ;
+update lsusergrouprights set screenname='IDS_SCN_SAMPLEMASTER' where displaytopic='IDS_SCN_SAMPLEMASTER' ;
+update lsusergrouprights set screenname='IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_SCN_UNLOCKORDERS' ;
+update lsusergrouprights set screenname='IDS_SCN_USERGROUP' where displaytopic='IDS_SCN_USERGROUP' ;
+update lsusergrouprights set screenname='IDS_SCN_USERGROUP' where displaytopic='IDS_TSK_ACTDEACT' ;
+update lsusergrouprights set screenname='IDS_SCN_USERMASTER' where displaytopic  in ('IDS_TSK_ACTDEACTUSERMASTER','IDS_TSK_RETIRE','IDS_TSK_IMPORTADS') ;
+update lsusergrouprights set screenname='IDS_SCN_USERRIGHTS' where displaytopic='IDS_SCN_USERRIGHTS' ;
+update lsusergrouprights set screenname='IDS_SCN_PROJECTTEAM' where displaytopic='IDS_SCN_PROJECTTEAM' ;
+update lsusergrouprights set screenname='IDS_SCN_ORDERWORKLOW' where displaytopic='IDS_SCN_ORDERWORKLOW' ;
+update lsusergrouprights set screenname='IDS_SCN_TEMPLATEWORKFLOW' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW' ;
+update lsusergrouprights set screenname='IDS_SCN_PASSWORDPOLICY' where displaytopic='IDS_SCN_PASSWORDPOLICY' ;
+update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS' where displaytopic in ('IDS_SCN_AUDITTRAILHIS','IDS_TSK_REVIEWHISTORY','IDS_TSK_REVIEW','IDS_TSK_CREATEARCHIVE','IDS_TSK_OPENARCHIVE','IDS_TSK_EXPORT') ;
+update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILCONFIG' where displaytopic='IDS_SCN_AUDITTRAILCONFIG' ;
+update lsusergrouprights set screenname='IDS_SCN_CFRSETTINGS' where displaytopic='IDS_SCN_CFRSETTINGS' ;
+update lsusergrouprights set screenname='IDS_SCN_REPORTS' where displaytopic in ('IDS_SCN_REPORTS','IDS_TSK_GENERATEREPORT') ;
+update lsusergrouprights set screenname='IDS_SCN_INSTRUMENTMASTER' where displaytopic='IDS_SCN_INSTRUMENTMASTER' ;
+update lsusergrouprights set screenname='IDS_SCN_TEMPLATEMAPPING' where displaytopic='IDS_TSK_LIMSTASKORDER' ;
+update lsusergrouprights set screenname='IDS_SCN_REPORTS' where displaytopic='IDS_TSK_TEMPLATEDESIGN' ;
+update lsusergrouprights set screenname='IDS_SCN_SITEMASTER' where displaytopic='IDS_SCN_SITEMASTER' ;
+update lsusergrouprights set screenname='IDS_SCN_ACTIVEUSER' where displaytopic='IDS_SCN_ACTIVEUSER' ;
+update lsusergrouprights set screenname='IDS_SCN_DOMAIN' where displaytopic='IDS_SCN_DOMAIN' ;
+
+ALTER TABLE IF Exists lspasswordpolicy ADD COLUMN IF NOT EXISTS idletimeshowcheck integer;
+
+update lspasswordpolicy set idletimeshowcheck=0 where idletimeshowcheck is null;
+
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from datatype where datatypename = 'Number';
+
+   IF counter=0 THEN       -- name is free
+insert into datatype (datatypekey,datatypename)SELECT 3,'Number'
+WHERE NOT EXISTS (select * from datatype where datatypename = 'Number'); 
+   END IF;
+END
+$do$;
+ 
+delete from datatype where datatype.datatypename='Integer';
+
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (99, 'IDS_SCN_UNITMASTER', 'IDS_MDL_INVENTORY', '0', '0', '0', '0', '1,1,1',78,'IDS_SCN_UNITMASTER') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (100, 'IDS_TSK_DOWNLOADPDFEXCEL', 'IDS_MDL_INVENTORY', '0', 'NA', 'NA', 'NA', '0,0,0',79,'IDS_SCN_UNITMASTER') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (101, 'IDS_SCN_SECTIONMASTER', 'IDS_MDL_INVENTORY', '0', '0', '0', '0', '1,1,1',80,'IDS_SCN_SECTIONMASTER') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (102, 'IDS_TSK_DOWNLOADPDFEXCELSECTION', 'IDS_MDL_INVENTORY', '0', 'NA', 'NA', 'NA', '0,0,0',81,'IDS_SCN_SECTIONMASTER') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (103, 'IDS_SCN_STORAGELOCATION', 'IDS_MDL_INVENTORY', '0', '0', '0', '0', '1,1,1',82,'IDS_SCN_STORAGELOCATION') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (104, 'IDS_SCN_MATERIALCATEGORY', 'IDS_MDL_INVENTORY', '0', '0', '0', '0', '1,1,1',83,'IDS_SCN_MATERIALCATEGORY') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (105, 'IDS_TSK_DOWNLOADMATERILACATEGORY', 'IDS_MDL_INVENTORY', '0', 'NA', 'NA', 'NA', '0,0,0',84,'IDS_SCN_MATERIALCATEGORY') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (106, 'IDS_SCN_MATERIAL', 'IDS_MDL_INVENTORY', '0', '0', 'NA', 'NA', '1,0,0',85,'IDS_SCN_MATERIAL') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (107, 'IDS_SCN_MATERIALINVENTORY', 'IDS_MDL_INVENTORY', '0', '0', 'NA', 'NA', '1,0,0',86,'IDS_SCN_MATERIALINVENTORY') ON CONFLICT(orderno)DO NOTHING;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_UNITMASTER', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_UNITMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_UNITMASTER' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_DOWNLOADPDFEXCEL', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_UNITMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_DOWNLOADPDFEXCEL' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_SECTIONMASTER', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_SECTIONMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_SECTIONMASTER' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_DOWNLOADPDFEXCELSECTION', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SECTIONMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_DOWNLOADPDFEXCELSECTION' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_STORAGELOCATION', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_STORAGELOCATION'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_STORAGELOCATION' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_MATERIALCATEGORY', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_MATERIALCATEGORY'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_MATERIALCATEGORY' and usergroupid_usergroupcode = 1);
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_DOWNLOADMATERILACATEGORY', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_MATERIALCATEGORY'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_DOWNLOADMATERILACATEGORY' and usergroupid_usergroupcode = 1);  
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_MATERIAL', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', 'NA', 'NA', 1,1,'IDS_SCN_MATERIAL'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_MATERIAL' and usergroupid_usergroupcode = 1);
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_MATERIALINVENTORY', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', 'NA', 'NA', 1,1,'IDS_SCN_MATERIALINVENTORY'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_MATERIALINVENTORY' and usergroupid_usergroupcode = 1);  
+
+update lsfields set fieldorderno=1 where level04name='Notification' and level01code='G1';
+update lsfields set fieldorderno=2 where level04name='ComboBox' and level01code='G1';
+update lsfields set fieldorderno=3 where level04name='Current Date' and level01code='G1';
+update lsfields set fieldorderno=4 where level04name='Dynamic ComboBox' and level01code='G1';
+update lsfields set fieldorderno=5 where level04name='Loged User' and level01code='G1';
+update lsfields set fieldorderno=6 where level04name='Login Time' and level01code='G1';
+update lsfields set fieldorderno=7 where level04name='Mandatory Field' and level01code='G1';
+update lsfields set fieldorderno=8 where level04name='Manual Date' and level01code='G1';
+update lsfields set fieldorderno=9 where level04name='Manual Date & Time' and level01code='G1';
+update lsfields set fieldorderno=10 where level04name='Manual Field' and level01code='G1';
+update lsfields set fieldorderno=11 where level04name='Manual Time' and level01code='G1';
+update lsfields set fieldorderno=12 where level04name='Numeric Field' and level01code='G1';
+update lsfields set fieldorderno=13 where level04name='Order No' and level01code='G1';
+update lsfields set fieldorderno=14 where level04name='Project Master' and level01code='G1';
+update lsfields set fieldorderno=15 where level04name='Resource Detail' and level01code='G1';
+update lsfields set fieldorderno=16 where level04name='Sample Name' and level01code='G1';
+update lsfields set fieldorderno=17 where level04name='Signature' and level01code='G1';
+update lsfields set fieldorderno=18 where level04name='Test Name' and level01code='G1';
+
+
+INSERT INTO public.materialtype (nmaterialtypecode, jsondata, ndefaultstatus, nsitecode, nstatus) VALUES (-1, '{"sdescription": "NA", "smaterialtypename": {"en-US": "NA", "ru-RU": "нет данных", "tg-TG": "НА"}}', 4, -1, 1)on conflict (nmaterialtypecode) do nothing; 
+
+INSERT INTO public.materialtype (nmaterialtypecode, jsondata, ndefaultstatus, nsitecode, nstatus) VALUES (2, '{"prefix": "V", "sdescription": "Volumetric Type", "needSectionwise": 3, "smaterialtypename": {"en-US": "Volumetric Type", "ru-RU": "Объемный тип", "tg-TG": "Навъи ҳаҷмӣ"}, "ismaterialSectionneed": 4}', 4, -1, 1)on conflict (nmaterialtypecode) do nothing; 
+
+INSERT INTO public.materialtype (nmaterialtypecode, jsondata, ndefaultstatus, nsitecode, nstatus) VALUES (3, '{"prefix": "M", "sdescription": "Material Inventory Type", "needSectionwise": 3, "smaterialtypename": {"en-US": "Material Inventory Type", "ru-RU": "Тип инвентаризации материалов", "tg-TG": "Навъи инвентаризатсияи мавод"}, "ismaterialSectionneed": 3}', 4, -1, 1)on conflict (nmaterialtypecode) do nothing; 
+
+INSERT INTO public.materialtype (nmaterialtypecode, jsondata, ndefaultstatus, nsitecode, nstatus) VALUES (1, '{"prefix": "S", "sdescription": "Standared Type", "needSectionwise": 3, "smaterialtypename": {"en-US": "Standard Type", "ru-RU": "Стандартный тип", "tg-TG": "Навъи стандартӣ"}, "ismaterialSectionneed": 3}', 3, -1, 1)on conflict (nmaterialtypecode) do nothing; 
+
+INSERT INTO public.materialtype (nmaterialtypecode, jsondata, ndefaultstatus, nsitecode, nstatus) VALUES (4, '{"prefix": "I", "sdescription": "IQC Standard Material Type", "needSectionwise": 3, "smaterialtypename": {"en-US": "IQC Standard Material Type", "ru-RU": "Стандартный тип материала IQC", "tg-TG": "Стандарти намуди маводи IQC"}, "ismaterialSectionneed": 4}', 4, -1, 1)on conflict (nmaterialtypecode) do nothing; 
+
+INSERT INTO public.materialconfig (nmaterialconfigcode, nmaterialtypecode, nformcode, jsondata, nstatus) VALUES (4, 40, -1, '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"label": "Inflammable", "inputtype": "checkbox", "displayname": {"en-US": "Inflammable", "ru-RU": "легковоспламеняющийся", "tg-TG": "оташгиранда"}, "radioOptions": {"tags": [{"id": 1, "text": "Inflammable"}]}}, {"label": "Keep Refrigerated", "inputtype": "checkbox", "displayname": {"en-US": "Keep Refrigerated", "ru-RU": "Хранить в холодильнике", "tg-TG": "Дар яхдон нигоҳ доред"}, "radioOptions": {"tags": [{"id": 2, "text": "Keep Refrigerated"}]}}, {"label": "No Acids", "inputtype": "checkbox", "displayname": {"en-US": "No Acids", "ru-RU": "Без кислот", "tg-TG": "Кислотаҳо нест"}, "radioOptions": {"tags": [{"id": 3, "text": "No Acids"}]}}, {"label": "No Bases", "inputtype": "checkbox", "displayname": {"en-US": "No Bases", "ru-RU": "Нет баз", "tg-TG": "Не асос"}, "radioOptions": {"tags": [{"id": 4, "text": "No Bases"}]}}, {"label": "No Oxidizer", "inputtype": "checkbox", "displayname": {"en-US": "No Oxidizer", "ru-RU": "Нет окислителя", "tg-TG": "Оксидизатор нест"}, "radioOptions": {"tags": [{"id": 5, "text": "No Oxidizer"}]}}, {"label": "Corrosive", "inputtype": "checkbox", "displayname": {"en-US": "Corrosive", "ru-RU": "Коррозионный", "tg-TG": "Коррозия"}, "radioOptions": {"tags": [{"id": 6, "text": "Corrosive"}]}}, {"label": "Hazardous", "inputtype": "checkbox", "displayname": {"en-US": "Hazardous", "ru-RU": "Опасный", "tg-TG": "Хатарнок"}, "radioOptions": {"tags": [{"id": 7, "text": "Hazardous"}]}}, {"inputtype": 5, "squestion": "Safety Properties(NFPA Rating)", "displayname": {"en-US": "Safety Properties(NFPA Rating)", "ru-RU": "Свойства безопасности (рейтинг NFPA)", "tg-TG": "Хусусиятҳои бехатарӣ (Рейтинги NFPA)"}}, {"label": "Health", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Health", "ru-RU": "Здоровье", "tg-TG": "Тандурустй"}, "sfieldlength": 255}, {"label": "Reactivity", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Reactivity", "ru-RU": "Реактивность", "tg-TG": "Реактивӣ"}, "sfieldlength": 255}]}, {"type": "column", "children": [{"label": "Avoid Exposure To Lights", "inputtype": "checkbox", "displayname": {"en-US": "Avoid Exposure To Lights", "ru-RU": "Избегайте воздействия света", "tg-TG": "Аз таъсири чароғҳо худдорӣ намоед"}, "radioOptions": {"tags": [{"id": 8, "text": "Avoid Exposure To Lights"}]}}, {"label": "Personal Protective Equipment", "inputtype": "checkbox", "displayname": {"en-US": "Personal Protective Equipment", "ru-RU": "Средства индивидуальной защиты", "tg-TG": "Таҷҳизоти муҳофизати шахсӣ"}, "radioOptions": {"tags": [{"id": 9, "text": "Personal Protective Equipment"}]}}, {"label": "Keep Frozen", "inputtype": "checkbox", "displayname": {"en-US": "Keep Frozen", "ru-RU": "Держите замороженным", "tg-TG": "Нигоҳ доштани яхкардашуда"}, "radioOptions": {"tags": [{"id": 10, "text": "Keep Frozen"}]}}, {"label": "Keep Dessicated", "inputtype": "checkbox", "displayname": {"en-US": "Keep Dessicated", "ru-RU": "Держите высушенным", "tg-TG": "Дессикатсияро нигоҳ доред"}, "radioOptions": {"tags": [{"id": 11, "text": "Keep Dessicated"}]}}, {"label": "Clothing", "inputtype": "checkbox", "displayname": {"en-US": "Clothing", "ru-RU": "Одежда", "tg-TG": "Либос"}, "radioOptions": {"tags": [{"id": 12, "text": "Clothing"}]}}, {"label": "Goggles", "inputtype": "checkbox", "displayname": {"en-US": "Goggles", "ru-RU": "очки для плавания", "tg-TG": "Айнак"}, "radioOptions": {"tags": [{"id": 13, "text": "Goggles"}]}}, {"label": "Gloves", "inputtype": "checkbox", "displayname": {"en-US": "Gloves", "ru-RU": "Перчатки", "tg-TG": "Дастпӯшакҳо"}, "radioOptions": {"tags": [{"id": 14, "text": "Gloves"}]}}, {"inputtype": 5, "squestion": "  "}, {"label": "Flammable", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Flammable", "ru-RU": "легковоспламеняющийся", "tg-TG": "Даргиранда"}, "sfieldlength": 255}, {"label": "Specific", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Specific", "ru-RU": "Конкретный", "tg-TG": "мушаххас"}, "sfieldlength": 255}]}]}]', 1)on conflict(nmaterialconfigcode) do nothing;
+
+INSERT INTO public.materialconfig (nmaterialconfigcode, nmaterialtypecode, nformcode, jsondata, nstatus) VALUES (5, -1, 40, '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"label": "Structural Formula", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Structural Formula", "ru-RU": "Структурная формула", "tg-TG": "Формула сохторӣ"}, "sfieldlength": 100}, {"label": "Physical Description", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Physical Description", "ru-RU": "Физическое описание", "tg-TG": "Тавсифи физикӣ"}, "sfieldlength": 100}, {"label": "Boiling Point", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Boiling Point", "ru-RU": "Точка кипения", "tg-TG": "Нуқтаи ҷӯш"}, "sfieldlength": 100}, {"label": "Melting Point", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Melting Point", "ru-RU": "Температура плавления", "tg-TG": "Нуқтаи обшавӣ"}, "sfieldlength": 100}, {"label": "Molecular Weight", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Molecular Weight", "ru-RU": "Молекулярный вес", "tg-TG": "Вазни молекулавӣ"}, "sfieldlength": 100}, {"label": "Standard Specific Gravity", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Standard Specific Gravity", "ru-RU": "Стандартный удельный вес", "tg-TG": "Вазни хоси стандартӣ"}, "sfieldlength": 100}, {"label": "Structural Purity", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Structural Purity", "ru-RU": "Структурная чистота", "tg-TG": "Тозагии сохторӣ"}, "sfieldlength": 100}, {"label": "Standard Length", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Standard Length", "ru-RU": "Стандартная длина", "tg-TG": "Дарозии стандартӣ"}, "sfieldlength": 100}, {"label": "Gas Number", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Gas Number", "ru-RU": "Номер газа", "tg-TG": "Рақами газ"}, "sfieldlength": 100}]}, {"type": "column", "children": [{"label": "Bulk Density", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Bulk Density", "ru-RU": "Объемная плотность", "tg-TG": "Зичии масса"}, "sfieldlength": 100}, {"label": "Date of Standardization", "dateonly": true, "timeonly": false, "inputtype": "date", "displayname": {"en-US": "Date of Standardization", "ru-RU": "Дата стандартизации", "tg-TG": "Санаи стандартизатсия"}}, {"inputtype": 5, "squestion": "Assay", "displayname": {"en-US": "Assay", "ru-RU": "анализ", "tg-TG": "Таҳлил"}}, {"label": "As is Basis1", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "As is Basis", "ru-RU": "Как основа", "tg-TG": "Тавре ки Basis аст"}, "sfieldlength": 100}, {"label": "Dried/Andydrous Basis1", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Dried/Andydrous Basis", "ru-RU": "Сухая/андроидная основа", "tg-TG": "Асоси хушк/андидроз"}, "sfieldlength": 100}, {"inputtype": 5, "squestion": "Purity By Mass Balance", "displayname": {"en-US": "Purity By Mass Balance", "ru-RU": "Чистота по балансу массы", "tg-TG": "Покӣ аз рӯи тавозуни омма"}}, {"label": "As is Basis2", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "As is Basis", "ru-RU": "Как основа", "tg-TG": "Тавре ки Basis аст"}, "sfieldlength": 100}, {"label": "Dried/Andydrous Basis2", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Dried/Andydrous Basis", "ru-RU": "Сухая/андроидная основа", "tg-TG": "Асоси хушк/андидроз"}, "sfieldlength": 100}, {"label": "Direction of Use", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Direction of Use", "ru-RU": "Направление использования", "tg-TG": "Самти истифода"}, "sfieldlength": 255}, {"label": "Comments", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Comments", "ru-RU": "Комментарии", "tg-TG": "Шарҳҳо"}, "sfieldlength": 255}]}]}]', 1)on conflict(nmaterialconfigcode) do nothing;
+
+INSERT INTO public.materialconfig (nmaterialconfigcode, nmaterialtypecode, nformcode, jsondata, nstatus) VALUES (9, -1, 138, '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"child": [{"label": "Transaction Type", "childPath": "0-0-1-0", "isMultiLingual": true, "tablecolumnname": "ntranscode"}], "label": "Inventory Transaction Type", "parent": true, "source": "materialinventorytype", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Inventory Transaction Type", "ru-RU": "Тип транзакции инвентаря", "tg-TG": "Навъи муомилоти инвентаризатсия"}, "valuemember": "ninventorytypecode", "displaymember": "sinventorytypename", "fieldsForGrid": true, "nstandardtype": 3, "isMultiLingual": true}, {"label": "Transaction Type", "parent": false, "source": "transactionstatus", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Transaction Type", "ru-RU": "Тип операции", "tg-TG": "Навъи транзаксия"}, "valuemember": "ntranscode", "defaultvalues": [{"1": "48,72"}, {"2": "47,33"}], "displaymember": "stransdisplaystatus", "fieldsForGrid": true, "nstandardtype": 3, "isMultiLingual": true, "parentprimarycode": "ninventorytypecode", "Inventory Transaction Type": [{"label": "Transaction Type", "source": "transactionstatus", "valuemember": "ntranscode", "defaultvalues": [{"1": "48,72"}, {"2": "47,33"}], "displaymember": "stransdisplaystatus", "parentprimarycode": "ninventorytypecode"}]}, {"label": "Available Quantity/Unit", "readonly": true, "inputtype": "textinput", "displayname": {"en-US": "Available Quantity/Unit", "ru-RU": "Доступное количество/единица", "tg-TG": "Миқдор/Воҳиди дастрас"}, "sfieldlength": 100, "needAccordian": true, "fieldsForExpandedGrid": true}, {"max": 99999999, "min": 0, "type": "component", "label": "Received Quantity", "readonly": false, "inputtype": "Numeric", "mandatory": 3, "precision": 3, "displayname": {"en-US": "Quantity", "ru-RU": "Количество", "tg-TG": "Миқдор"}, "sdisplayname": "nqtyreceived", "sfieldlength": 8, "nstandardtype": 3, "fieldsForExpandedGrid": true}, {"label": "Section", "parent": true, "source": "section", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "valuemember": "nsectioncode", "displaymember": "ssectionname", "nsqlquerycode": 3, "nstandardtype": 3, "fieldsForExpandedGrid": true}, {"label": "Comments", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Comments", "ru-RU": "Комментарии", "tg-TG": "Шарҳҳо"}, "sfieldlength": 255, "fieldsForExpandedGrid": true}, {"nprecision": "11,3"}]}]}]', 1)on conflict(nmaterialconfigcode) do nothing;
+
+INSERT INTO public.materialconfig (nmaterialconfigcode, nmaterialtypecode, nformcode, jsondata, nstatus) VALUES (1, 1, 40, '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"id": "wwi4eC9iw", "type": "component", "label": "Material Category", "parent": "materialtype", "source": "materialcategory", "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Material Category", "ru-RU": "Категория материала", "tg-TG": "Категорияи мавод"}, "valuemember": "nmaterialcatcode", "componentcode": 3, "componentname": "Combo Box", "displaymember": "smaterialcatname"}, {"type": "component", "label": "Material Name", "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Standard Name", "ru-RU": "Стандартное имя", "tg-TG": "Номи стандартӣ"}, "sfieldlength": 100}, {"type": "component", "label": "Basic Unit", "source": "unit", "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Basic Unit", "ru-RU": "Базовая единица", "tg-TG": "Воҳиди асосӣ"}, "valuemember": "nunitcode", "displaymember": "sunitname", "nstandardtype": 3}, {"type": "component", "label": "Prefix", "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Prefix", "ru-RU": "Префикс", "tg-TG": "Префикс"}, "sdisplayname": "sprefix", "sfieldlength": 10}, {"type": "component", "label": "Quarantine", "inputtype": "toggle", "displayname": {"en-US": "Quarantine", "ru-RU": "Карантин", "tg-TG": "Карантин"}, "sdisplayname": "stransstatus", "nstandardtype": 3}]}, {"type": "column", "children": [{"label": "Section", "source": "section", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "valuemember": "nsectioncode", "displaymember": "ssectionname", "nsqlquerycode": 2, "nstandardtype": 3}, {"max": 99999999, "min": 0, "type": "component", "label": "Reorder Level", "readonly": false, "inputtype": "Numeric", "precision": 4, "displayname": {"en-US": "Reorder Level", "ru-RU": "Уровень повторного заказа", "tg-TG": "Сатҳи азнавсозӣ"}, "sdisplayname": "nreorderlevel", "sfieldlength": 8, "nstandardtype": 3}, {"id": "-yskhHhld", "type": "component", "label": "Expiry Validations", "inputtype": "radio", "displayname": {"en-US": "Expiry Validations", "ru-RU": "Проверка истечения срока действия", "tg-TG": "Санҷишҳои мӯҳлат"}, "radioOptions": {"tags": [{"id": "No Expiry", "text": "No Expiry", "defaultchecked": "No Expiry"}, {"id": "Expiry date", "text": "Expiry date"}, {"id": "Expiry policy", "text": "Expiry policy"}]}, "componentcode": 7, "componentname": "Multiple Choice"}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Expiry Policy Days", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Expiry Policy Days", "ru-RU": "Срок действия полиса дней", "tg-TG": "Рӯзҳои сиёсати мӯҳлат"}, "sdisplayname": "speriodexpiry", "sfieldlength": 8}, {"type": "component", "label": "Expiry Policy Period", "source": "period", "inputtype": "combo", "displayname": {"en-US": "Expiry Policy Period", "ru-RU": "Срок действия полиса", "tg-TG": "Мӯҳлати ба охир расидани сиёсати"}, "valuemember": "nperiodcode", "displaymember": "speriodname", "nsqlquerycode": 1, "isMultiLingual": true}]}, {"type": "component", "label": "Open Expiry Need", "inputtype": "toggle", "displayname": {"en-US": "Open Expiry Need", "ru-RU": "Открыть истечение срока действия", "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"}, "sdisplayname": "stransstatus", "nstandardtype": 4}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Open Expiry", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Open Expiry", "ru-RU": "Открытый срок действия", "tg-TG": "Муддатро кушоед"}, "sdisplayname": "speriodopen", "sfieldlength": 8}, {"type": "component", "label": "Open Expiry Period", "source": "period", "inputtype": "combo", "displayname": {"en-US": "Open Expiry Period", "ru-RU": "Открытый срок действия", "tg-TG": "Мӯҳлати кушодани мӯҳлат"}, "valuemember": "nperiodcode", "displaymember": "speriodname", "nsqlquerycode": 1, "isMultiLingual": true}]}, {"type": "component", "label": "Next Validation Need", "inputtype": "toggle", "displayname": {"en-US": "Next Validation Need", "ru-RU": "Следующая Потребность В Проверке", "tg-TG": "Минбаъда Зарурати Ба Санҷиши"}, "sdisplayname": "stransstatus", "nstandardtype": 4, "defaultchecked": 4}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Next Validation", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Next Validation", "ru-RU": "Следующая проверка", "tg-TG": "Оянда санҷиши"}, "sdisplayname": "speriodopen", "sfieldlength": 8}, {"type": "component", "label": "Next Validation Period", "source": "period", "inputtype": "combo", "displayname": {"en-US": "Next Validation Period", "ru-RU": "Следующий Период Проверки", "tg-TG": "Баъдӣ Давраи Санҷиши"}, "valuemember": "nperiodcode", "displaymember": "speriodname", "nsqlquerycode": 1, "isMultiLingual": true}]}, {"type": "component", "label": "Remarks", "inputtype": "textarea", "displayname": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "sdisplayname": "sremarks", "sfieldlength": 255, "nstandardtype": 3}]}]}]', 1)on conflict(nmaterialconfigcode) do nothing;
+
+INSERT INTO public.materialconfig (nmaterialconfigcode, nmaterialtypecode, nformcode, jsondata, nstatus) VALUES (2, 2, 40, '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"id": "wwi4eC9iw", "type": "component", "label": "Material Category", "parent": "materialtype", "source": "materialcategory", "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Material Category", "ru-RU": "Категория материала", "tg-TG": "Категорияи мавод"}, "valuemember": "nmaterialcatcode", "componentcode": 3, "componentname": "Combo Box", "displaymember": "smaterialcatname"}, {"type": "component", "label": "Material Name", "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Volumetric Name", "ru-RU": "Объемное имя", "tg-TG": "Номи ҳаҷмӣ"}, "sfieldlength": 100}, {"type": "component", "label": "Basic Unit", "source": "unit", "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Basic Unit", "ru-RU": "Базовая единица", "tg-TG": "Воҳиди асосӣ"}, "valuemember": "nunitcode", "displaymember": "sunitname", "nstandardtype": 3}, {"type": "component", "label": "Prefix", "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Prefix", "ru-RU": "Префикс", "tg-TG": "Префикс"}, "sdisplayname": "sprefix", "sfieldlength": 10}, {"type": "component", "label": "Quarantine", "inputtype": "toggle", "displayname": {"en-US": "Quarantine", "ru-RU": "Карантин", "tg-TG": "Карантин"}, "sdisplayname": "stransstatus", "nstandardtype": 3}]}, {"type": "column", "children": [{"label": "Section", "source": "section", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "valuemember": "nsectioncode", "displaymember": "ssectionname", "nsqlquerycode": 2, "nstandardtype": 3}, {"max": 99999999, "min": 0, "type": "component", "label": "Reorder Level", "readonly": false, "inputtype": "Numeric", "precision": 4, "displayname": {"en-US": "Reorder Level", "ru-RU": "Уровень повторного заказа", "tg-TG": "Сатҳи азнавсозӣ"}, "sdisplayname": "nreorderlevel", "sfieldlength": 8, "nstandardtype": 3}, {"id": "-yskhHhld", "type": "component", "label": "Expiry Validations", "inputtype": "radio", "displayname": {"en-US": "Expiry Validations", "ru-RU": "Проверка истечения срока действия", "tg-TG": "Санҷишҳои мӯҳлат"}, "radioOptions": {"tags": [{"id": "No Expiry", "text": "No Expiry", "defaultchecked": "No Expiry"}, {"id": "Expiry date", "text": "Expiry date"}, {"id": "Expiry policy", "text": "Expiry policy"}]}, "componentcode": 7, "componentname": "Multiple Choice"}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Expiry Policy Days", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Expiry Policy Days", "ru-RU": "Срок действия полиса дней", "tg-TG": "Рӯзҳои сиёсати мӯҳлат"}, "sdisplayname": "speriodexpiry", "sfieldlength": 8}, {"type": "component", "label": "Expiry Policy Period", "source": "period", "inputtype": "combo", "displayname": {"en-US": "Expiry Policy Period", "ru-RU": "Срок действия полиса", "tg-TG": "Мӯҳлати ба охир расидани сиёсати"}, "valuemember": "nperiodcode", "displaymember": "speriodname", "nsqlquerycode": 1, "isMultiLingual": true}]}, {"type": "component", "label": "Open Expiry Need", "inputtype": "toggle", "displayname": {"en-US": "Open Expiry Need", "ru-RU": "Открыть истечение срока действия", "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"}, "sdisplayname": "stransstatus", "nstandardtype": 4, "defaultchecked": 3}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Open Expiry", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Open Expiry", "ru-RU": "Открытый срок действия", "tg-TG": "Муддатро кушоед"}, "sdisplayname": "speriodopen", "sfieldlength": 8}, {"type": "component", "label": "Open Expiry Period", "source": "period", "inputtype": "combo", "displayname": {"en-US": "Open Expiry Period", "ru-RU": "Открытый срок действия", "tg-TG": "Мӯҳлати кушодани мӯҳлат"}, "valuemember": "nperiodcode", "displaymember": "speriodname", "nsqlquerycode": 1, "isMultiLingual": true}]}, {"type": "component", "label": "Next Validation Need", "inputtype": "toggle", "displayname": {"en-US": "Next Validation Need", "ru-RU": "Следующая Потребность В Проверке", "tg-TG": "Минбаъда Зарурати Ба Санҷиши"}, "sdisplayname": "stransstatus", "nstandardtype": 4, "defaultchecked": 4}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Next Validation", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Next Validation", "ru-RU": "Следующая проверка", "tg-TG": "Оянда санҷиши"}, "sdisplayname": "speriodopen", "sfieldlength": 8}, {"type": "component", "label": "Next Validation Period", "source": "period", "inputtype": "combo", "displayname": {"en-US": "Next Validation Period", "ru-RU": "Следующий Период Проверки", "tg-TG": "Баъдӣ Давраи Санҷиши"}, "valuemember": "nperiodcode", "displaymember": "speriodname", "nsqlquerycode": 1, "isMultiLingual": true}]}, {"type": "component", "label": "Remarks", "inputtype": "textarea", "displayname": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "sdisplayname": "sremarks", "sfieldlength": 255, "nstandardtype": 3}]}]}]', 1)on conflict(nmaterialconfigcode) do nothing;
+
+INSERT INTO public.materialconfig (nmaterialconfigcode, nmaterialtypecode, nformcode, jsondata, nstatus) VALUES (3, 3, 40, '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"id": "wwi4eC9iw", "type": "component", "label": "Material Category", "parent": "materialtype", "source": "materialcategory", "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Material Category", "ru-RU": "Категория материала", "tg-TG": "Категорияи мавод"}, "valuemember": "nmaterialcatcode", "componentcode": 3, "componentname": "Combo Box", "displaymember": "smaterialcatname"}, {"type": "component", "label": "Material Name", "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Material Name", "ru-RU": "Название материала", "tg-TG": "Номи мавод"}, "sfieldlength": 100}, {"type": "component", "label": "Material Synonym", "inputtype": "textinput", "displayname": {"en-US": "Material Synonym", "ru-RU": "Синоним материала", "tg-TG": "Синоними моддӣ"}, "sfieldlength": 100}, {"type": "component", "label": "Storage Condition", "source": "storagecondition", "inputtype": "combo", "displayname": {"en-US": "Storage Condition", "ru-RU": "Условия хранения", "tg-TG": "Ҳолати нигоҳдорӣ"}, "valuemember": "nstorageconditioncode", "displaymember": "sstorageconditionname", "nstandardtype": 4}, {"type": "component", "label": "Basic Unit", "source": "unit", "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Basic Unit", "ru-RU": "Базовая единица", "tg-TG": "Воҳиди асосӣ"}, "valuemember": "nunitcode", "displaymember": "sunitname", "nstandardtype": 3}, {"type": "component", "label": "Prefix", "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Prefix", "ru-RU": "Префикс", "tg-TG": "Префикс"}, "sdisplayname": "sprefix", "sfieldlength": 10}, {"type": "componentrow", "children": [{"type": "component", "label": "Quarantine", "inputtype": "toggle", "displayname": {"en-US": "Quarantine", "ru-RU": "Карантин", "tg-TG": "Карантин"}, "sdisplayname": "stransstatus", "nstandardtype": 3}, {"type": "component", "label": "Reusable", "inputtype": "toggle", "displayname": {"en-US": "Reusable", "ru-RU": "Многоразовый", "tg-TG": "Аз нав истифодашаванда"}, "sdisplayname": "stransstatus", "nstandardtype": 4}]}]}, {"type": "column", "children": [{"label": "Section", "source": "section", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "valuemember": "nsectioncode", "displaymember": "ssectionname", "nsqlquerycode": 2, "nstandardtype": 3}, {"max": 99999999, "min": 0, "type": "component", "label": "Reorder Level", "readonly": false, "inputtype": "Numeric", "precision": 4, "displayname": {"en-US": "Reorder Level", "ru-RU": "Уровень повторного заказа", "tg-TG": "Сатҳи азнавсозӣ"}, "sdisplayname": "nreorderlevel", "sfieldlength": 8, "nstandardtype": 3}, {"id": "-yskhHhld", "type": "component", "label": "Expiry Validations", "inputtype": "radio", "displayname": {"en-US": "Expiry Validations", "ru-RU": "Проверка истечения срока действия", "tg-TG": "Санҷишҳои мӯҳлат"}, "radioOptions": {"tags": [{"id": "No Expiry", "text": "No Expiry", "defaultchecked": "No Expiry"}, {"id": "Expiry date", "text": "Expiry date"}, {"id": "Expiry policy", "text": "Expiry policy"}]}, "componentcode": 7, "componentname": "Multiple Choice"}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Expiry Policy Days", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Expiry Policy Days", "ru-RU": "Срок действия полиса дней", "tg-TG": "Рӯзҳои сиёсати мӯҳлат"}, "sdisplayname": "speriodexpiry", "sfieldlength": 8}, {"type": "component", "label": "Expiry Policy Period", "source": "period", "inputtype": "combo", "displayname": {"en-US": "Expiry Policy Period", "ru-RU": "Срок действия полиса", "tg-TG": "Мӯҳлати ба охир расидани сиёсати"}, "valuemember": "nperiodcode", "displaymember": "speriodname", "nsqlquerycode": 1, "isMultiLingual": true}]}, {"type": "component", "label": "Open Expiry Need", "inputtype": "toggle", "displayname": {"en-US": "Open Expiry Need", "ru-RU": "Открыть истечение срока действия", "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"}, "sdisplayname": "stransstatus", "nstandardtype": 4, "defaultchecked": 3}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Open Expiry", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Open Expiry", "ru-RU": "Открытый срок действия", "tg-TG": "Муддатро кушоед"}, "sdisplayname": "speriodopen", "sfieldlength": 8}, {"type": "component", "label": "Open Expiry Period", "source": "period", "inputtype": "combo", "displayname": {"en-US": "Open Expiry Period", "ru-RU": "Открытый срок действия", "tg-TG": "Мӯҳлати кушодани мӯҳлат"}, "valuemember": "nperiodcode", "displaymember": "speriodname", "nsqlquerycode": 1, "isMultiLingual": true}]}, {"type": "component", "label": "Next Validation Need", "inputtype": "toggle", "displayname": {"en-US": "Next Validation Need", "ru-RU": "Следующая Потребность В Проверке", "tg-TG": "Минбаъда Зарурати Ба Санҷиши"}, "sdisplayname": "stransstatus", "nstandardtype": 4, "defaultchecked": 4}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Next Validation", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Next Validation", "ru-RU": "Следующая проверка", "tg-TG": "Оянда санҷиши"}, "sdisplayname": "speriodopen", "sfieldlength": 8}, {"type": "component", "label": "Next Validation Period", "source": "period", "inputtype": "combo", "displayname": {"en-US": "Next Validation Period", "ru-RU": "Следующий Период Проверки", "tg-TG": "Баъдӣ Давраи Санҷиши"}, "valuemember": "nperiodcode", "displaymember": "speriodname", "nsqlquerycode": 1, "isMultiLingual": true}]}]}]}]', 1)on conflict(nmaterialconfigcode) do nothing;
+
+INSERT INTO public.materialconfig (nmaterialconfigcode, nmaterialtypecode, nformcode, jsondata, nstatus) VALUES (10, 4, 40, '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"id": "wwi4eC9iw", "type": "component", "label": "Material Category", "parent": "materialtype", "source": "materialcategory", "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Material Category", "ru-RU": "Категория материала", "tg-TG": "Категорияи мавод"}, "valuemember": "nmaterialcatcode", "componentcode": 3, "componentname": "Combo Box", "displaymember": "smaterialcatname"}, {"type": "component", "label": "Material Name", "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "IQC Standard Material Name", "ru-RU": "Стандартный список материалов IQC", "tg-TG": "Стандартӣ номгӯи маводи IQC"}, "sfieldlength": 100}, {"type": "component", "label": "Material Synonym", "inputtype": "textinput", "displayname": {"en-US": "Material Synonym", "ru-RU": "Синоним материала", "tg-TG": "Синоними моддӣ"}, "sfieldlength": 100}, {"type": "component", "label": "Storage Condition", "source": "storagecondition", "inputtype": "combo", "displayname": {"en-US": "Storage Condition", "ru-RU": "Условия хранения", "tg-TG": "Ҳолати нигоҳдорӣ"}, "valuemember": "nstorageconditioncode", "displaymember": "sstorageconditionname", "nstandardtype": 4}, {"type": "component", "label": "Basic Unit", "source": "unit", "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Basic Unit", "ru-RU": "Базовая единица", "tg-TG": "Воҳиди асосӣ"}, "valuemember": "nunitcode", "displaymember": "sunitname", "nstandardtype": 3}, {"type": "component", "label": "Prefix", "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Prefix", "ru-RU": "Префикс", "tg-TG": "Префикс"}, "sdisplayname": "sprefix", "sfieldlength": 10}, {"type": "componentrow", "children": [{"type": "component", "label": "Quarantine", "inputtype": "toggle", "displayname": {"en-US": "Quarantine", "ru-RU": "Карантин", "tg-TG": "Карантин"}, "sdisplayname": "stransstatus", "nstandardtype": 3}, {"type": "component", "label": "Reusable", "inputtype": "toggle", "displayname": {"en-US": "Reusable", "ru-RU": "Многоразовый", "tg-TG": "Аз нав истифодашаванда"}, "sdisplayname": "stransstatus", "nstandardtype": 4}]}]}, {"type": "column", "children": [{"label": "Section", "source": "section", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "valuemember": "nsectioncode", "displaymember": "ssectionname", "nsqlquerycode": 2, "nstandardtype": 3}, {"max": 99999999, "min": 0, "type": "component", "label": "Reorder Level", "readonly": false, "inputtype": "Numeric", "precision": 4, "displayname": {"en-US": "Reorder Level", "ru-RU": "Уровень повторного заказа", "tg-TG": "Сатҳи азнавсозӣ"}, "sdisplayname": "nreorderlevel", "sfieldlength": 8, "nstandardtype": 3}, {"id": "-yskhHhld", "type": "component", "label": "Expiry Validations", "inputtype": "radio", "displayname": {"en-US": "Expiry Validations", "ru-RU": "Проверка истечения срока действия", "tg-TG": "Санҷишҳои мӯҳлат"}, "radioOptions": {"tags": [{"id": "No Expiry", "text": "No Expiry", "defaultchecked": "No Expiry"}, {"id": "Expiry date", "text": "Expiry date"}, {"id": "Expiry policy", "text": "Expiry policy"}]}, "componentcode": 7, "componentname": "Multiple Choice"}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Expiry Policy Days", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Expiry Policy Days", "ru-RU": "Срок действия полиса дней", "tg-TG": "Рӯзҳои сиёсати мӯҳлат"}, "sdisplayname": "speriodexpiry", "sfieldlength": 8}, {"type": "component", "label": "Expiry Policy Period", "source": "period", "inputtype": "combo", "displayname": {"en-US": "Expiry Policy Period", "ru-RU": "Срок действия полиса", "tg-TG": "Мӯҳлати ба охир расидани сиёсати"}, "valuemember": "nperiodcode", "displaymember": "speriodname", "nsqlquerycode": 1, "isMultiLingual": true}]}, {"type": "component", "label": "Open Expiry Need", "inputtype": "toggle", "displayname": {"en-US": "Open Expiry Need", "ru-RU": "Открыть истечение срока действия", "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"}, "sdisplayname": "stransstatus", "nstandardtype": 4, "defaultchecked": 3}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Open Expiry", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Open Expiry", "ru-RU": "Открытый срок действия", "tg-TG": "Муддатро кушоед"}, "sdisplayname": "speriodopen", "sfieldlength": 8}, {"type": "component", "label": "Open Expiry Period", "source": "period", "inputtype": "combo", "displayname": {"en-US": "Open Expiry Period", "ru-RU": "Открытый срок действия", "tg-TG": "Мӯҳлати кушодани мӯҳлат"}, "valuemember": "nperiodcode", "displaymember": "speriodname", "nsqlquerycode": 1, "isMultiLingual": true}]}, {"type": "component", "label": "Next Validation Need", "inputtype": "toggle", "displayname": {"en-US": "Next Validation Need", "ru-RU": "Следующая Потребность В Проверке", "tg-TG": "Минбаъда Зарурати Ба Санҷиши"}, "sdisplayname": "stransstatus", "nstandardtype": 4, "defaultchecked": 4}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Next Validation", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Next Validation", "ru-RU": "Следующая проверка", "tg-TG": "Оянда санҷиши"}, "sdisplayname": "speriodopen", "sfieldlength": 8}, {"type": "component", "label": "Next Validation Period", "source": "period", "inputtype": "combo", "displayname": {"en-US": "Next Validation Period", "ru-RU": "Следующий Период Проверки", "tg-TG": "Баъдӣ Давраи Санҷиши"}, "valuemember": "nperiodcode", "displaymember": "speriodname", "nsqlquerycode": 1, "isMultiLingual": true}]}]}]}]', 1)on conflict(nmaterialconfigcode) do nothing;
+
+INSERT INTO public.materialconfig (nmaterialconfigcode, nmaterialtypecode, nformcode, jsondata, nstatus) VALUES (11, 4, 138, '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"label": "Internal Reference", "readonly": false, "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Internal Reference", "ru-RU": "Внутренняя ссылка", "tg-TG": "Маълумоти дохилӣ"}, "sfieldlength": 100}, {"label": "Storage Condition", "source": "storagecondition", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Storage Condition", "ru-RU": "Условия хранения", "tg-TG": "Ҳолати нигоҳдорӣ"}, "valuemember": "nstorageconditioncode", "displaymember": "sstorageconditionname", "nstandardtype": 3}, {"label": "Batch No.", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Batch No.", "ru-RU": "Серия №.", "tg-TG": "Рақами партия"}, "sfieldlength": 100}, {"label": "Lot No.", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Lot No.", "ru-RU": "Много не.", "tg-TG": "Лот №"}, "sfieldlength": 100}, {"label": "Storage Location", "source": "storagelocation", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Storage Location", "ru-RU": "Место хранения", "tg-TG": "Ҷойгоҳи нигаҳдорӣ"}, "valuemember": "nstoragelocationcode", "displaymember": "sstoragelocationname", "nstandardtype": 3}, {"label": "Supplier", "source": "supplier", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Supplier", "ru-RU": "Поставщик", "tg-TG": "Таъминкунанда"}, "valuemember": "nsuppliercode", "displaymember": "ssuppliername", "nstandardtype": 3}, {"label": "Invoice Number", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Invoice Number", "ru-RU": "Номер счета", "tg-TG": "Рақами фактура"}, "sfieldlength": 50}, {"label": "Manufacturer", "source": "manufacturer", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Manufacturer", "ru-RU": "Производитель", "tg-TG": "Истеҳсолкунанда"}, "valuemember": "nmanufcode", "displaymember": "smanufname", "nstandardtype": 3}]}, {"type": "column", "children": [{"label": "Section", "source": "section", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "valuemember": "nsectioncode", "displaymember": "ssectionname", "nsqlquerycode": 4, "nstandardtype": 3}, {"type": "componentrow", "children": [{"max": 99, "min": 0, "type": "component", "label": "Received Quantity", "readonly": false, "inputtype": "Numeric", "mandatory": 3, "displayname": {"en-US": "Received Quantity", "ru-RU": "Полученное количество", "tg-TG": "Миқдори гирифташуда"}, "sdisplayname": "nqtyreceived", "sfieldlength": 8}, {"type": "component", "label": "Unit", "parent": "unit", "source": "unit", "readonly": true, "inputtype": "combo", "displayname": {"en-US": "Unit", "ru-RU": "Ед. изм", "tg-TG": "Воҳиди"}, "valuemember": "nunitcode", "displaymember": "sunitname", "nstandardtype": 3}]}, {"label": "Grade", "source": "materialgrade", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Grade", "ru-RU": "Оценка", "tg-TG": "Синф"}, "valuemember": "nmaterialgradecode", "displaymember": "smaterialgradename", "nstandardtype": 3}, {"max": 99999999, "min": 0, "type": "component", "label": "Cost", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Cost", "ru-RU": "Расходы", "tg-TG": "Арзиш"}, "sfieldlength": 8}, {"label": "Catalog Number", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Catalog Number", "ru-RU": "Номер каталога", "tg-TG": "Рақами каталог"}, "sfieldlength": 50}, {"label": "Date Of Manufacturer", "inputtype": "date", "displayname": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}}, {"label": "Received Date & Time", "inputtype": "date", "displayname": {"en-US": "Received Date & Time", "ru-RU": "Дата и время получения", "tg-TG": "Сана ва вақти қабулшуда"}}, {"label": "Expiry Date & Time", "inputtype": "date", "displayname": {"en-US": "Expiry Date & Times", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}}, {"label": "Remarks", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "sfieldlength": 255}]}]}]', 1)on conflict(nmaterialconfigcode) do nothing;
+
+INSERT INTO public.materialconfig (nmaterialconfigcode, nmaterialtypecode, nformcode, jsondata, nstatus) VALUES (8, 3, 138, '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"label": "Internal Reference", "readonly": false, "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Internal Reference", "ru-RU": "Внутренняя ссылка", "tg-TG": "Маълумоти дохилӣ"}, "sfieldlength": 100}, {"label": "Storage Condition", "source": "storagecondition", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Storage Condition", "ru-RU": "Условия хранения", "tg-TG": "Ҳолати нигоҳдорӣ"}, "valuemember": "nstorageconditioncode", "displaymember": "sstorageconditionname", "nstandardtype": 3}, {"label": "Batch No.", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Batch No.", "ru-RU": "Серия №.", "tg-TG": "Рақами партия"}, "sfieldlength": 100}, {"label": "Lot No.", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Lot No.", "ru-RU": "Много не.", "tg-TG": "Лот №"}, "sfieldlength": 100}, {"label": "Storage Location", "source": "storagelocation", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Storage Location", "ru-RU": "Место хранения", "tg-TG": "Ҷойгоҳи нигаҳдорӣ"}, "valuemember": "nstoragelocationcode", "displaymember": "sstoragelocationname", "nstandardtype": 3}, {"label": "Supplier", "source": "supplier", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Supplier", "ru-RU": "Поставщик", "tg-TG": "Таъминкунанда"}, "valuemember": "nsuppliercode", "displaymember": "ssuppliername", "nstandardtype": 3}, {"label": "Invoice Number", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Invoice Number", "ru-RU": "Номер счета", "tg-TG": "Рақами фактура"}, "sfieldlength": 50}, {"label": "Manufacturer", "source": "manufacturer", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Manufacturer", "ru-RU": "Производитель", "tg-TG": "Истеҳсолкунанда"}, "valuemember": "nmanufcode", "displaymember": "smanufname", "nstandardtype": 3}]}, {"type": "column", "children": [{"label": "Section", "source": "section", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "valuemember": "nsectioncode", "displaymember": "ssectionname", "nsqlquerycode": 4, "nstandardtype": 3}, {"type": "componentrow", "children": [{"max": 99, "min": 0, "type": "component", "label": "Received Quantity", "readonly": false, "inputtype": "Numeric", "mandatory": 3, "displayname": {"en-US": "Received Quantity", "ru-RU": "Полученное количество", "tg-TG": "Миқдори гирифташуда"}, "sdisplayname": "nqtyreceived", "sfieldlength": 8}, {"type": "component", "label": "Unit", "parent": "unit", "source": "unit", "readonly": true, "inputtype": "combo", "displayname": {"en-US": "Unit", "ru-RU": "Ед. изм", "tg-TG": "Воҳиди"}, "valuemember": "nunitcode", "displaymember": "sunitname", "nstandardtype": 3}]}, {"label": "Grade", "source": "materialgrade", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Grade", "ru-RU": "Оценка", "tg-TG": "Синф"}, "valuemember": "nmaterialgradecode", "displaymember": "smaterialgradename", "nstandardtype": 3}, {"max": 99999999, "min": 0, "type": "component", "label": "Cost", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Cost", "ru-RU": "Расходы", "tg-TG": "Арзиш"}, "sfieldlength": 8}, {"label": "Catalog Number", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Catalog Number", "ru-RU": "Номер каталога", "tg-TG": "Рақами каталог"}, "sfieldlength": 50}, {"label": "Date Of Manufacturer", "inputtype": "date", "displayname": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}}, {"label": "Received Date & Time", "inputtype": "date", "displayname": {"en-US": "Received Date & Time", "ru-RU": "Дата и время получения", "tg-TG": "Сана ва вақти қабулшуда"}}, {"label": "Expiry Date & Time", "inputtype": "date", "displayname": {"en-US": "Expiry Date & Times", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}}, {"label": "Remarks", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "sfieldlength": 255}]}]}]', 1)on conflict(nmaterialconfigcode) do nothing;
+
+INSERT INTO public.materialconfig (nmaterialconfigcode, nmaterialtypecode, nformcode, jsondata, nstatus) VALUES (6, 1, 138, '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"label": "Internal Reference", "readonly": false, "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Internal Reference", "ru-RU": "Внутренняя ссылка", "tg-TG": "Маълумоти дохилӣ"}, "sfieldlength": 100}, {"label": "Batch No.", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Batch No.", "ru-RU": "Серия №.", "tg-TG": "Рақами партия"}, "sfieldlength": 100}, {"label": "Lot No.", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Lot No.", "ru-RU": "Много не.", "tg-TG": "Лот №"}, "sfieldlength": 100}, {"label": "Reference Number", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Reference Number", "ru-RU": "Справочный номер", "tg-TG": "Рақами истинод"}, "sfieldlength": 100}, {"label": "Container ID", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Container ID", "ru-RU": "Идентификатор контейнера", "tg-TG": "ID контейнер"}, "sfieldlength": 100}, {"label": "Storage Location", "source": "storagelocation", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Storage Location", "ru-RU": "Место хранения", "tg-TG": "Ҷойгоҳи нигаҳдорӣ"}, "valuemember": "nstoragelocationcode", "displaymember": "sstoragelocationname", "nstandardtype": 3}, {"label": "Supplier", "source": "supplier", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Supplier", "ru-RU": "Поставщик", "tg-TG": "Таъминкунанда"}, "valuemember": "nsuppliercode", "displaymember": "ssuppliername", "nstandardtype": 3}, {"label": "Manufacturer", "source": "manufacturer", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Manufacturer", "ru-RU": "Производитель", "tg-TG": "Истеҳсолкунанда"}, "valuemember": "nmanufcode", "displaymember": "smanufname", "nstandardtype": 3}]}, {"type": "column", "children": [{"label": "Section", "source": "section", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "valuemember": "nsectioncode", "displaymember": "ssectionname", "nsqlquerycode": 4, "nstandardtype": 3}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Received Quantity", "readonly": false, "inputtype": "Numeric", "mandatory": 3, "precision": 3, "displayname": {"en-US": "Received Quantity", "ru-RU": "Полученное количество", "tg-TG": "Миқдори гирифташуда"}, "sdisplayname": "nqtyreceived", "sfieldlength": 8, "nstandardtype": 3, "fieldsForExpandedGrid": true}, {"type": "component", "label": "Unit", "parent": "unit", "source": "unit", "readonly": true, "inputtype": "combo", "displayname": {"en-US": "Unit", "ru-RU": "Ед. изм", "tg-TG": "Воҳиди"}, "valuemember": "nunitcode", "displaymember": "sunitname", "nstandardtype": 3}]}, {"label": "Grade", "source": "materialgrade", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Grade", "ru-RU": "Оценка", "tg-TG": "Синф"}, "valuemember": "nmaterialgradecode", "displaymember": "smaterialgradename", "nstandardtype": 3}, {"max": 99999999, "min": 0, "type": "component", "label": "Cost", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Cost", "ru-RU": "Расходы", "tg-TG": "Арзиш"}, "sfieldlength": 8}, {"label": "Date Of Manufacturer", "inputtype": "date", "displayname": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}}, {"label": "Received Date & Time", "inputtype": "date", "displayname": {"en-US": "Received Date & Time", "ru-RU": "Дата и время получения", "tg-TG": "Сана ва вақти қабулшуда"}}, {"label": "Expiry Date & Time", "inputtype": "date", "displayname": {"en-US": "Expiry Date & Time", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}}, {"label": "Remarks", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "sfieldlength": 255}]}]}]', 1)on conflict(nmaterialconfigcode) do nothing;
+
+INSERT INTO public.materialconfig (nmaterialconfigcode, nmaterialtypecode, nformcode, jsondata, nstatus) VALUES (7, 2, 138, '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"label": "Internal Reference", "readonly": false, "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Internal Reference", "ru-RU": "Внутренняя ссылка", "tg-TG": "Маълумоти дохилӣ"}, "sfieldlength": 100}, {"label": "Batch No.", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Batch No.", "ru-RU": "Серия №.", "tg-TG": "Рақами партия"}, "sfieldlength": 100}, {"label": "Reference Number", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Reference Number", "ru-RU": "Справочный номер", "tg-TG": "Рақами истинод"}, "sfieldlength": 100}, {"label": "Container ID", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Container ID", "ru-RU": "Идентификатор контейнера", "tg-TG": "ID контейнер"}, "sfieldlength": 100}, {"label": "Storage Location", "source": "storagelocation", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Storage Location", "ru-RU": "Место хранения", "tg-TG": "Ҷойгоҳи нигаҳдорӣ"}, "valuemember": "nstoragelocationcode", "displaymember": "sstoragelocationname", "nstandardtype": 3}, {"label": "Manufacturer", "source": "manufacturer", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Manufacturer", "ru-RU": "Производитель", "tg-TG": "Истеҳсолкунанда"}, "valuemember": "nmanufcode", "displaymember": "smanufname", "nstandardtype": 3}]}, {"type": "column", "children": [{"label": "Section", "source": "section", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "valuemember": "nsectioncode", "displaymember": "ssectionname", "nsqlquerycode": 4, "nstandardtype": 3}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Received Quantity", "readonly": false, "inputtype": "Numeric", "mandatory": 3, "displayname": {"en-US": "Received Quantity", "ru-RU": "Полученное количество", "tg-TG": "Миқдори гирифташуда"}, "sdisplayname": "nqtyreceived", "sfieldlength": 7}, {"type": "component", "label": "Unit", "parent": "unit", "source": "unit", "readonly": true, "inputtype": "combo", "displayname": {"en-US": "Unit", "ru-RU": "Ед. изм", "tg-TG": "Воҳиди"}, "valuemember": "nunitcode", "displaymember": "sunitname", "nstandardtype": 3}]}, {"label": "Grade", "source": "materialgrade", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Grade", "ru-RU": "Оценка", "tg-TG": "Синф"}, "valuemember": "nmaterialgradecode", "displaymember": "smaterialgradename", "nstandardtype": 3}, {"label": "Date Of Manufacturer", "inputtype": "date", "displayname": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}}, {"label": "Expiry Date & Time", "inputtype": "date", "displayname": {"en-US": "Expiry Date & Time", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}}, {"label": "Remarks", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "sfieldlength": 255}]}]}]', 1)on conflict(nmaterialconfigcode) do nothing;
+
+INSERT INTO public.mappedtemplatefieldpropsmaterial (nmappedtemplatefieldpropmaterialcode, nmaterialconfigcode, jsondata, nstatus) VALUES (2, 5, '{"40": {"MaterialSafetydatefields": [{"1": {"en-US": "Date of Standardization", "ru-RU": "Дата стандартизации", "tg-TG": "Санаи стандартизатсия"}, "2": "Date of Standardization", "dateonly": true}], "MaterialMsdsFiledatefields": [{"1": {"en-US": "Created Date & Time", "ru-RU": "Дата и время создания", "tg-TG": "Сана ва вақти таъсис"}, "2": "dcreateddate", "dateonly": false}]}}', 1)on conflict(nmappedtemplatefieldpropmaterialcode) do nothing;
+
+INSERT INTO public.mappedtemplatefieldpropsmaterial (nmappedtemplatefieldpropmaterialcode, nmaterialconfigcode, jsondata, nstatus) VALUES (1, 9, '{"138": {"ListMasterProps": [{"mainField": "Inventory ID", "firstField": "Section", "secondField": "status"}], "QuantityTransactionForGrid": [{"1": {"en-US": "Inventory ID", "ru-RU": "Идентификатор инвентаря", "tg-TG": "ID инвентаризатсия"}, "2": "Inventory ID"}, {"1": {"en-US": "Received Quantity", "ru-RU": "Полученное количество", "tg-TG": "Миқдори гирифташуда"}, "2": "Received Quantity"}, {"1": {"en-US": "Issued Quantity", "ru-RU": "Выпущенное количество", "tg-TG": "Миқдори нашршуда"}, "2": "Issued Quantity"}, {"1": {"en-US": "Description", "ru-RU": "Описание", "tg-TG": "Тавсифи"}, "2": "Description"}], "QuantityTransactiondatefields": [{"1": {"en-US": "Transaction Date & Time", "ru-RU": "Дата и время транзакции", "tg-TG": "Сана ва вақти муомилот"}, "2": "Transaction Date & Time", "dateonly": true}], "MaterialInventoryFiledatefields": [{"1": {"en-US": "Created Date & Time", "ru-RU": "Дата и время создания", "tg-TG": "Сана ва вақти таъсис"}, "2": "dcreateddate", "dateonly": false}], "QuantityTransactionForExpandedGrid": [{"1": {"en-US": "Inventory Transaction Type", "ru-RU": "Тип транзакции инвентаря", "tg-TG": "Навъи муомилоти инвентаризатсия"}, "2": "Inventory Transaction Type"}, {"1": {"en-US": "Transaction Date & Time", "ru-RU": "Дата и время транзакции", "tg-TG": "Сана ва вақти муомилот"}, "2": "Transaction Date & Time"}, {"1": {"en-US": "Transaction Type", "ru-RU": "Тип операции", "tg-TG": "Навъи транзаксия"}, "2": "Transaction Type"}, {"1": {"en-US": "Available Quantity", "ru-RU": "Доступное количество", "tg-TG": "Миқдори дастрас"}, "2": "Available Quantity"}, {"1": {"en-US": "Comments", "ru-RU": "Комментарии", "tg-TG": "Шарҳҳо"}, "2": "Comments"}, {"1": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "2": "Section"}]}}', 1)on conflict(nmappedtemplatefieldpropmaterialcode) do nothing;
+
+INSERT INTO public.mappedtemplatefieldpropsmaterial (nmappedtemplatefieldpropmaterialcode, nmaterialconfigcode, jsondata, nstatus) VALUES (7, 2, '{"40": {"ListMasterProps": [{"mainField": "Material Name", "firstField": "Reorder Level"}], "searchFieldList": [{"searchFieldList": "Material Name"}], "MaterialViewFields": [{"1": {"en-US": "Material Category", "ru-RU": "Категория материала", "tg-TG": "Категорияи мавод"}, "2": "Material Category"}, {"1": {"en-US": "Volumetric Name", "ru-RU": "Объемное имя", "tg-TG": "Номи ҳаҷмӣ"}, "2": "Material Name"}, {"1": {"en-US": "Basic Unit", "ru-RU": "Базовая единица", "tg-TG": "Воҳиди асосӣ"}, "2": "Basic Unit"}, {"1": {"en-US": "Prefix", "ru-RU": "Префикс", "tg-TG": "Префикс"}, "2": "Prefix"}, {"1": {"en-US": "Quarantine", "ru-RU": "Карантин", "tg-TG": "Карантин"}, "2": "Quarantine"}, {"1": {"en-US": "Reorder Level", "ru-RU": "Уровень повторного заказа", "tg-TG": "Сатҳи азнавсозӣ"}, "2": "Reorder Level"}, {"1": {"en-US": "Expiry Validations", "ru-RU": "Проверка истечения срока действия", "tg-TG": "Санҷишҳои мӯҳлат"}, "2": "Expiry Validations"}, {"1": {"en-US": "Expiry Policy Days", "ru-RU": "Срок действия полиса дней", "tg-TG": "Рӯзҳои сиёсати мӯҳлат"}, "2": "Expiry Policy Days"}, {"1": {"en-US": "Expiry Policy Period", "ru-RU": "Срок действия полиса", "tg-TG": "Мӯҳлати ба охир расидани сиёсати"}, "2": "Expiry Policy Period"}, {"1": {"en-US": "Open Expiry Need", "ru-RU": "Открыть истечение срока действия", "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"}, "2": "Open Expiry Need"}, {"1": {"en-US": "Open Expiry", "ru-RU": "Открытый срок действия", "tg-TG": "Муддатро кушоед"}, "2": "Open Expiry"}, {"1": {"en-US": "Open Expiry Period", "ru-RU": "Открытый срок действия", "tg-TG": "Мӯҳлати кушодани мӯҳлат"}, "2": "Open Expiry Period"}, {"1": {"en-US": "Next Validation Need", "ru-RU": "Следующая Потребность В Проверке", "tg-TG": "Минбаъда Зарурати Ба Санҷиши"}, "2": "Next Validation Need"}, {"1": {"en-US": "Next Validation", "ru-RU": "Следующая проверка", "tg-TG": "Оянда санҷиши"}, "2": "Next Validation"}, {"1": {"en-US": "Next Validation Period", "ru-RU": "Следующий Период Проверки", "tg-TG": "Баъдӣ Давраи Санҷиши"}, "2": "Next Validation Period"}, {"1": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "2": "Remarks"}], "Materialdatefields": [{"1": {"en-US": "Transaction Date & Time", "ru-RU": "Дата и время транзакции", "tg-TG": "Сана ва вақти муомилот"}, "2": "Transaction Date & Time", "dateonly": true}]}}', 1)on conflict(nmappedtemplatefieldpropmaterialcode) do nothing;
+
+INSERT INTO public.mappedtemplatefieldpropsmaterial (nmappedtemplatefieldpropmaterialcode, nmaterialconfigcode, jsondata, nstatus) VALUES (9, -1, '{"138": {"ResultEntryTransactiondatefields": [{"1": {"en-US": "Transaction Date & Time", "ru-RU": "Дата и время транзакции", "tg-TG": "Сана ва вақти муомилот"}, "2": "dtransactiondate", "dateonly": true}], "MaterialInventoryHistorydatefields": [{"1": {"en-US": "Transaction Date & Time", "ru-RU": "Дата и время транзакции", "tg-TG": "Сана ва вақти муомилот"}, "2": "dtransactiondate", "dateonly": false}]}}', 1)on conflict(nmappedtemplatefieldpropmaterialcode) do nothing;
+
+INSERT INTO public.mappedtemplatefieldpropsmaterial (nmappedtemplatefieldpropmaterialcode, nmaterialconfigcode, jsondata, nstatus) VALUES (10, 10, '{"40": {"ListMasterProps": [{"mainField": "Material Name", "firstField": "Reorder Level"}], "searchFieldList": [{"searchFieldList": "Material Name"}], "MaterialViewFields": [{"1": {"en-US": "Material Category", "ru-RU": "Категория материала", "tg-TG": "Категорияи мавод"}, "2": "Material Category"}, {"1": {"en-US": "IQC Standard Material Name", "ru-RU": "Стандартный список материалов IQC", "tg-TG": "Стандартӣ номгӯи маводи IQC"}, "2": "Material Name"}, {"1": {"en-US": "Material Synonym", "ru-RU": "Синоним материала", "tg-TG": "Синоними моддӣ"}, "2": "Material Synonym"}, {"1": {"en-US": "Storage Condition", "ru-RU": "Условия хранения", "tg-TG": "Ҳолати нигоҳдорӣ"}, "2": "Storage Condition"}, {"1": {"en-US": "Basic Unit", "ru-RU": "Базовая единица", "tg-TG": "Воҳиди асосӣ"}, "2": "Basic Unit"}, {"1": {"en-US": "Prefix", "ru-RU": "Префикс", "tg-TG": "Префикс"}, "2": "Prefix"}, {"1": {"en-US": "Quarantine", "ru-RU": "Карантин", "tg-TG": "Карантин"}, "2": "Quarantine"}, {"1": {"en-US": "Reusable", "ru-RU": "Многоразовый", "tg-TG": "Аз нав истифодашаванда"}, "2": "Reusable"}, {"1": {"en-US": "Reorder Level", "ru-RU": "Уровень повторного заказа", "tg-TG": "Сатҳи азнавсозӣ"}, "2": "Reorder Level"}, {"1": {"en-US": "Expiry Validations", "ru-RU": "Проверка истечения срока действия", "tg-TG": "Санҷишҳои мӯҳлат"}, "2": "Expiry Validations"}, {"1": {"en-US": "Expiry Policy Days", "ru-RU": "Срок действия полиса дней", "tg-TG": "Рӯзҳои сиёсати мӯҳлат"}, "2": "Expiry Policy Days"}, {"1": {"en-US": "Expiry Policy Period", "ru-RU": "Срок действия полиса", "tg-TG": "Мӯҳлати ба охир расидани сиёсати"}, "2": "Expiry Policy Period"}, {"1": {"en-US": "Open Expiry Need", "ru-RU": "Открыть истечение срока действия", "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"}, "2": "Open Expiry Need"}, {"1": {"en-US": "Open Expiry", "ru-RU": "Открытый срок действия", "tg-TG": "Муддатро кушоед"}, "2": "Open Expiry"}, {"1": {"en-US": "Open Expiry Period", "ru-RU": "Открытый срок действия", "tg-TG": "Мӯҳлати кушодани мӯҳлат"}, "2": "Open Expiry Period"}, {"1": {"en-US": "Next Validation Need", "ru-RU": "Следующая Потребность В Проверке", "tg-TG": "Минбаъда Зарурати Ба Санҷиши"}, "2": "Next Validation Need"}, {"1": {"en-US": "Next Validation", "ru-RU": "Следующая проверка", "tg-TG": "Оянда санҷиши"}, "2": "Next Validation"}, {"1": {"en-US": "Next Validation Period", "ru-RU": "Следующий Период Проверки", "tg-TG": "Баъдӣ Давраи Санҷиши"}, "2": "Next Validation Period"}], "Materialdatefields": [{"1": {"en-US": "Transaction Date & Time", "ru-RU": "Дата и время транзакции", "tg-TG": "Сана ва вақти муомилот"}, "2": "Transaction Date & Time", "dateonly": true}]}}', 1)on conflict(nmappedtemplatefieldpropmaterialcode) do nothing;
+
+INSERT INTO public.mappedtemplatefieldpropsmaterial (nmappedtemplatefieldpropmaterialcode, nmaterialconfigcode, jsondata, nstatus) VALUES (11, 11, '{"138": {"ListMasterProps": [{"mainField": "Inventory ID", "firstField": "Section", "secondField": "status"}], "searchFieldList": [{"searchFieldList": "Inventory ID"}], "MaterialInventoryViewFields": [{"1": {"en-US": "Inventory ID", "ru-RU": "Идентификатор инвентаря", "tg-TG": "ID инвентаризатсия"}, "2": "Inventory ID"}, {"1": {"en-US": "Internal Reference", "ru-RU": "Внутренняя ссылка", "tg-TG": "Маълумоти дохилӣ"}, "2": "Internal Reference"}, {"1": {"en-US": "Storage Condition", "ru-RU": "Условия хранения", "tg-TG": "Ҳолати нигоҳдорӣ"}, "2": "Storage Condition"}, {"1": {"en-US": "Batch No.", "ru-RU": "Серия №.", "tg-TG": "Рақами партия"}, "2": "Batch No."}, {"1": {"en-US": "Lot No.", "ru-RU": "Много не.", "tg-TG": "Лот №"}, "2": "Lot No."}, {"1": {"en-US": "Storage Location", "ru-RU": "Место хранения", "tg-TG": "Ҷойгоҳи нигаҳдорӣ"}, "2": "Storage Location"}, {"1": {"en-US": "Supplier", "ru-RU": "Поставщик", "tg-TG": "Таъминкунанда"}, "2": "Supplier"}, {"1": {"en-US": "Internal Prefix", "ru-RU": "Внутренний префикс", "tg-TG": "Префикси дохилӣ"}, "2": "Internal Prefix"}, {"1": {"en-US": "Invoice Number", "ru-RU": "Номер счета", "tg-TG": "Рақами фактура"}, "2": "Invoice Number"}, {"1": {"en-US": "Manufacturer", "ru-RU": "Производитель", "tg-TG": "Истеҳсолкунанда"}, "2": "Manufacturer"}, {"1": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "2": "Section"}, {"1": {"en-US": "Received Quantity", "ru-RU": "Полученное количество", "tg-TG": "Миқдори гирифташуда"}, "2": "Received Quantity"}, {"1": {"en-US": "Unit", "ru-RU": "Ед. изм", "tg-TG": "Воҳиди"}, "2": "Unit"}, {"1": {"en-US": "Grade", "ru-RU": "Оценка", "tg-TG": "Синф"}, "2": "Grade"}, {"1": {"en-US": "Cost", "ru-RU": "Расходы", "tg-TG": "Арзиш"}, "2": "Cost"}, {"1": {"en-US": "Catalog Number", "ru-RU": "Номер каталога", "tg-TG": "Рақами каталог"}, "2": "Catalog Number"}, {"1": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}, "2": "Date Of Manufacturer"}, {"1": {"en-US": "Received Date & Time", "ru-RU": "Дата и время получения", "tg-TG": "Сана ва вақти қабулшуда"}, "2": "Received Date & Time"}, {"1": {"en-US": "Expiry Date & Time", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}, "2": "Expiry Date & Time"}, {"1": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "2": "Remarks"}, {"1": {"en-US": "Open Date", "ru-RU": "Открытая дата", "tg-TG": "Санаи кушода"}, "2": "Open Date"}], "MaterialInvMaterialInventorydatefields": [{"1": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}, "2": "Date Of Manufacturer", "dateonly": false}, {"1": {"en-US": "Received Date & Time", "ru-RU": "Дата и время получения", "tg-TG": "Сана ва вақти қабулшуда"}, "2": "Received Date & Time", "dateonly": false}, {"1": {"en-US": "Expiry Date & Time", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}, "2": "Expiry Date & Time", "dateonly": false}, {"1": {"en-US": "Open Date", "ru-RU": "Открытая дата", "tg-TG": "Санаи кушода"}, "2": "Open Date", "dateonly": false}]}}', 1)on conflict(nmappedtemplatefieldpropmaterialcode) do nothing;
+
+INSERT INTO public.mappedtemplatefieldpropsmaterial (nmappedtemplatefieldpropmaterialcode, nmaterialconfigcode, jsondata, nstatus) VALUES (6, 1, '{"40": {"ListMasterProps": [{"mainField": "Material Name", "firstField": "Reorder Level"}], "searchFieldList": [{"searchFieldList": "Material Name"}], "MaterialViewFields": [{"1": {"en-US": "Material Category", "ru-RU": "Категория материала", "tg-TG": "Категорияи мавод"}, "2": "Material Category"}, {"1": {"en-US": "Standard Name", "ru-RU": "Стандартное имя", "tg-TG": "Номи стандартӣ"}, "2": "Material Name"}, {"1": {"en-US": "Basic Unit", "ru-RU": "Базовая единица", "tg-TG": "Воҳиди асосӣ"}, "2": "Basic Unit"}, {"1": {"en-US": "Prefix", "ru-RU": "Префикс", "tg-TG": "Префикс"}, "2": "Prefix"}, {"1": {"en-US": "Quarantine", "ru-RU": "Карантин", "tg-TG": "Карантин"}, "2": "Quarantine"}, {"1": {"en-US": "Reorder Level", "ru-RU": "Уровень повторного заказа", "tg-TG": "Сатҳи азнавсозӣ"}, "2": "Reorder Level"}, {"1": {"en-US": "Expiry Validations", "ru-RU": "Проверка истечения срока действия", "tg-TG": "Санҷишҳои мӯҳлат"}, "2": "Expiry Validations"}, {"1": {"en-US": "Expiry Policy Days", "ru-RU": "Срок действия полиса дней", "tg-TG": "Рӯзҳои сиёсати мӯҳлат"}, "2": "Expiry Policy Days"}, {"1": {"en-US": "Expiry Policy Period", "ru-RU": "Срок действия полиса", "tg-TG": "Мӯҳлати ба охир расидани сиёсати"}, "2": "Expiry Policy Period"}, {"1": {"en-US": "Open Expiry Need", "ru-RU": "Открыть истечение срока действия", "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"}, "2": "Open Expiry Need"}, {"1": {"en-US": "Open Expiry", "ru-RU": "Открытый срок действия", "tg-TG": "Муддатро кушоед"}, "2": "Open Expiry"}, {"1": {"en-US": "Open Expiry Period", "ru-RU": "Открытый срок действия", "tg-TG": "Мӯҳлати кушодани мӯҳлат"}, "2": "Open Expiry Period"}, {"1": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "2": "Remarks"}, {"1": {"en-US": "Next Validation Need", "ru-RU": "Следующая Потребность В Проверке", "tg-TG": "Минбаъда Зарурати Ба Санҷиши"}, "2": "Next Validation Need"}, {"1": {"en-US": "Next Validation", "ru-RU": "Следующая проверка", "tg-TG": "Оянда санҷиши"}, "2": "Next Validation"}, {"1": {"en-US": "Next Validation Period", "ru-RU": "Следующий Период Проверки", "tg-TG": "Баъдӣ Давраи Санҷиши"}, "2": "Next Validation Period"}], "MaterialStandarddatefields": [{"1": {"en-US": "Expiry Date & Time", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}, "2": "Expiry Date & Time", "dateonly": true}]}}', 1)on conflict(nmappedtemplatefieldpropmaterialcode) do nothing;
+
+INSERT INTO public.mappedtemplatefieldpropsmaterial (nmappedtemplatefieldpropmaterialcode, nmaterialconfigcode, jsondata, nstatus) VALUES (8, 3, '{"40": {"ListMasterProps": [{"mainField": "Material Name", "firstField": "Reorder Level"}], "searchFieldList": [{"searchFieldList": "Material Name"}], "MaterialViewFields": [{"1": {"en-US": "Material Category", "ru-RU": "Категория материала", "tg-TG": "Категорияи мавод"}, "2": "Material Category"}, {"1": {"en-US": "Material Name", "ru-RU": "Название материала", "tg-TG": "Номи мавод"}, "2": "Material Name"}, {"1": {"en-US": "Material Synonym", "ru-RU": "Синоним материала", "tg-TG": "Синоними моддӣ"}, "2": "Material Synonym"}, {"1": {"en-US": "Storage Condition", "ru-RU": "Условия хранения", "tg-TG": "Ҳолати нигоҳдорӣ"}, "2": "Storage Condition"}, {"1": {"en-US": "Basic Unit", "ru-RU": "Базовая единица", "tg-TG": "Воҳиди асосӣ"}, "2": "Basic Unit"}, {"1": {"en-US": "Prefix", "ru-RU": "Префикс", "tg-TG": "Префикс"}, "2": "Prefix"}, {"1": {"en-US": "Quarantine", "ru-RU": "Карантин", "tg-TG": "Карантин"}, "2": "Quarantine"}, {"1": {"en-US": "Reusable", "ru-RU": "Многоразовый", "tg-TG": "Аз нав истифодашаванда"}, "2": "Reusable"}, {"1": {"en-US": "Reorder Level", "ru-RU": "Уровень повторного заказа", "tg-TG": "Сатҳи азнавсозӣ"}, "2": "Reorder Level"}, {"1": {"en-US": "Expiry Validations", "ru-RU": "Проверка истечения срока действия", "tg-TG": "Санҷишҳои мӯҳлат"}, "2": "Expiry Validations"}, {"1": {"en-US": "Expiry Policy Days", "ru-RU": "Срок действия полиса дней", "tg-TG": "Рӯзҳои сиёсати мӯҳлат"}, "2": "Expiry Policy Days"}, {"1": {"en-US": "Expiry Policy Period", "ru-RU": "Срок действия полиса", "tg-TG": "Мӯҳлати ба охир расидани сиёсати"}, "2": "Expiry Policy Period"}, {"1": {"en-US": "Open Expiry Need", "ru-RU": "Открыть истечение срока действия", "tg-TG": "Эҳтиёҷоти мӯҳлатро кушоед"}, "2": "Open Expiry Need"}, {"1": {"en-US": "Open Expiry", "ru-RU": "Открытый срок действия", "tg-TG": "Муддатро кушоед"}, "2": "Open Expiry"}, {"1": {"en-US": "Open Expiry Period", "ru-RU": "Открытый срок действия", "tg-TG": "Мӯҳлати кушодани мӯҳлат"}, "2": "Open Expiry Period"}, {"1": {"en-US": "Next Validation Need", "ru-RU": "Следующая Потребность В Проверке", "tg-TG": "Минбаъда Зарурати Ба Санҷиши"}, "2": "Next Validation Need"}, {"1": {"en-US": "Next Validation", "ru-RU": "Следующая проверка", "tg-TG": "Оянда санҷиши"}, "2": "Next Validation"}, {"1": {"en-US": "Next Validation Period", "ru-RU": "Следующий Период Проверки", "tg-TG": "Баъдӣ Давраи Санҷиши"}, "2": "Next Validation Period"}], "Materialdatefields": [{"1": {"en-US": "Transaction Date & Time", "ru-RU": "Дата и время транзакции", "tg-TG": "Сана ва вақти муомилот"}, "2": "Transaction Date & Time", "dateonly": true}]}}', 1)on conflict(nmappedtemplatefieldpropmaterialcode) do nothing;
+
+INSERT INTO public.mappedtemplatefieldpropsmaterial (nmappedtemplatefieldpropmaterialcode, nmaterialconfigcode, jsondata, nstatus) VALUES (3, 6, '{"138": {"ListMasterProps": [{"mainField": "Inventory ID", "firstField": "Section", "secondField": "status"}], "searchFieldList": [{"searchFieldList": "Inventory ID"}], "MaterialInventoryViewFields": [{"1": {"en-US": "Inventory ID", "ru-RU": "Идентификатор инвентаря", "tg-TG": "ID инвентаризатсия"}, "2": "Inventory ID"}, {"1": {"en-US": "Internal Reference", "ru-RU": "Внутренняя ссылка", "tg-TG": "Маълумоти дохилӣ"}, "2": "Internal Reference"}, {"1": {"en-US": "Batch No.", "ru-RU": "Серия №.", "tg-TG": "Рақами партия"}, "2": "Batch No."}, {"1": {"en-US": "Lot No.", "ru-RU": "Много не.", "tg-TG": "Лот №"}, "2": "Lot No."}, {"1": {"en-US": "Reference Number", "ru-RU": "Справочный номер", "tg-TG": "Рақами истинод"}, "2": "Reference Number"}, {"1": {"en-US": "Container ID", "ru-RU": "Идентификатор контейнера", "tg-TG": "ID контейнер"}, "2": "Container ID"}, {"1": {"en-US": "Storage Location", "ru-RU": "Место хранения", "tg-TG": "Ҷойгоҳи нигаҳдорӣ"}, "2": "Storage Location"}, {"1": {"en-US": "Supplier", "ru-RU": "Поставщик", "tg-TG": "Таъминкунанда"}, "2": "Supplier"}, {"1": {"en-US": "Manufacturer", "ru-RU": "Производитель", "tg-TG": "Истеҳсолкунанда"}, "2": "Manufacturer"}, {"1": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "2": "Section"}, {"1": {"en-US": "Received Quantity", "ru-RU": "Полученное количество", "tg-TG": "Миқдори гирифташуда"}, "2": "Received Quantity"}, {"1": {"en-US": "Unit", "ru-RU": "Ед. изм", "tg-TG": "Воҳиди"}, "2": "Unit"}, {"1": {"en-US": "Grade", "ru-RU": "Оценка", "tg-TG": "Синф"}, "2": "Grade"}, {"1": {"en-US": "Cost", "ru-RU": "Расходы", "tg-TG": "Арзиш"}, "2": "Cost"}, {"1": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}, "2": "Date Of Manufacturer"}, {"1": {"en-US": "Received Date & Time", "ru-RU": "Дата и время получения", "tg-TG": "Сана ва вақти қабулшуда"}, "2": "Received Date & Time", "isDateFeild": true}, {"1": {"en-US": "Expiry Date & Time", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}, "2": "Expiry Date & Time", "isDateFeild": true}, {"1": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "2": "Remarks"}, {"1": {"en-US": "Open Date", "ru-RU": "Открытая дата", "tg-TG": "Санаи кушода"}, "2": "Open Date"}], "MaterialInvStandarddatefields": [{"1": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}, "2": "Date Of Manufacturer", "dateonly": false}, {"1": {"en-US": "Received Date & Time", "ru-RU": "Дата и время получения", "tg-TG": "Сана ва вақти қабулшуда"}, "2": "Received Date & Time", "dateonly": false}, {"1": {"en-US": "Expiry Date & Time", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}, "2": "Expiry Date & Time", "dateonly": false}, {"1": {"en-US": "Open Date", "ru-RU": "Открытая дата", "tg-TG": "Санаи кушода"}, "2": "Open Date", "dateonly": false}]}}', 1)on conflict(nmappedtemplatefieldpropmaterialcode) do nothing;
+
+INSERT INTO public.mappedtemplatefieldpropsmaterial (nmappedtemplatefieldpropmaterialcode, nmaterialconfigcode, jsondata, nstatus) VALUES (4, 7, '{"138": {"ListMasterProps": [{"mainField": "Inventory ID", "firstField": "Section", "secondField": "status"}], "searchFieldList": [{"searchFieldList": "Inventory ID"}], "MaterialInventoryViewFields": [{"1": {"en-US": "Inventory ID", "ru-RU": "Идентификатор инвентаря", "tg-TG": "ID инвентаризатсия"}, "2": "Inventory ID"}, {"1": {"en-US": "Internal Reference", "ru-RU": "Внутренняя ссылка", "tg-TG": "Маълумоти дохилӣ"}, "2": "Internal Reference"}, {"1": {"en-US": "Batch No.", "ru-RU": "Серия №.", "tg-TG": "Рақами партия"}, "2": "Batch No."}, {"1": {"en-US": "Reference Number", "ru-RU": "Справочный номер", "tg-TG": "Рақами истинод"}, "2": "Reference Number"}, {"1": {"en-US": "Container ID", "ru-RU": "Идентификатор контейнера", "tg-TG": "ID контейнер"}, "2": "Container ID"}, {"1": {"en-US": "Storage Location", "ru-RU": "Место хранения", "tg-TG": "Ҷойгоҳи нигаҳдорӣ"}, "2": "Storage Location"}, {"1": {"en-US": "Manufacturer", "ru-RU": "Производитель", "tg-TG": "Истеҳсолкунанда"}, "2": "Manufacturer"}, {"1": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "2": "Section"}, {"1": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}, "2": "Date Of Manufacturer"}, {"1": {"en-US": "Received Quantity", "ru-RU": "Полученное количество", "tg-TG": "Миқдори гирифташуда"}, "2": "Received Quantity"}, {"1": {"en-US": "Unit", "ru-RU": "Ед. изм", "tg-TG": "Воҳиди"}, "2": "Unit"}, {"1": {"en-US": "Grade", "ru-RU": "Оценка", "tg-TG": "Синф"}, "2": "Grade"}, {"1": {"en-US": "Expiry Date & Time", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}, "2": "Expiry Date & Time"}, {"1": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "2": "Remarks"}, {"1": {"en-US": "Open Date", "ru-RU": "Открытая дата", "tg-TG": "Санаи кушода"}, "2": "Open Date"}], "MaterialInvVolumetricdatefields": [{"1": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}, "2": "Date Of Manufacturer", "dateonly": false}, {"1": {"en-US": "Expiry Date & Time", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}, "2": "Expiry Date & Time", "dateonly": false}, {"1": {"en-US": "Open Date", "ru-RU": "Открытая дата", "tg-TG": "Санаи кушода"}, "2": "Open Date", "dateonly": false}]}}', 1)on conflict(nmappedtemplatefieldpropmaterialcode) do nothing;
+
+INSERT INTO public.mappedtemplatefieldpropsmaterial (nmappedtemplatefieldpropmaterialcode, nmaterialconfigcode, jsondata, nstatus) VALUES (5, 8, '{"138": {"ListMasterProps": [{"mainField": "Inventory ID", "firstField": "Section", "secondField": "status"}], "searchFieldList": [{"searchFieldList": "Inventory ID"}], "MaterialInventoryViewFields": [{"1": {"en-US": "Inventory ID", "ru-RU": "Идентификатор инвентаря", "tg-TG": "ID инвентаризатсия"}, "2": "Inventory ID"}, {"1": {"en-US": "Internal Reference", "ru-RU": "Внутренняя ссылка", "tg-TG": "Маълумоти дохилӣ"}, "2": "Internal Reference"}, {"1": {"en-US": "Storage Condition", "ru-RU": "Условия хранения", "tg-TG": "Ҳолати нигоҳдорӣ"}, "2": "Storage Condition"}, {"1": {"en-US": "Batch No.", "ru-RU": "Серия №.", "tg-TG": "Рақами партия"}, "2": "Batch No."}, {"1": {"en-US": "Lot No.", "ru-RU": "Много не.", "tg-TG": "Лот №"}, "2": "Lot No."}, {"1": {"en-US": "Storage Location", "ru-RU": "Место хранения", "tg-TG": "Ҷойгоҳи нигаҳдорӣ"}, "2": "Storage Location"}, {"1": {"en-US": "Supplier", "ru-RU": "Поставщик", "tg-TG": "Таъминкунанда"}, "2": "Supplier"}, {"1": {"en-US": "Internal Prefix", "ru-RU": "Внутренний префикс", "tg-TG": "Префикси дохилӣ"}, "2": "Internal Prefix"}, {"1": {"en-US": "Invoice Number", "ru-RU": "Номер счета", "tg-TG": "Рақами фактура"}, "2": "Invoice Number"}, {"1": {"en-US": "Manufacturer", "ru-RU": "Производитель", "tg-TG": "Истеҳсолкунанда"}, "2": "Manufacturer"}, {"1": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "2": "Section"}, {"1": {"en-US": "Received Quantity", "ru-RU": "Полученное количество", "tg-TG": "Миқдори гирифташуда"}, "2": "Received Quantity"}, {"1": {"en-US": "Unit", "ru-RU": "Ед. изм", "tg-TG": "Воҳиди"}, "2": "Unit"}, {"1": {"en-US": "Grade", "ru-RU": "Оценка", "tg-TG": "Синф"}, "2": "Grade"}, {"1": {"en-US": "Cost", "ru-RU": "Расходы", "tg-TG": "Арзиш"}, "2": "Cost"}, {"1": {"en-US": "Catalog Number", "ru-RU": "Номер каталога", "tg-TG": "Рақами каталог"}, "2": "Catalog Number"}, {"1": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}, "2": "Date Of Manufacturer"}, {"1": {"en-US": "Received Date & Time", "ru-RU": "Дата и время получения", "tg-TG": "Сана ва вақти қабулшуда"}, "2": "Received Date & Time"}, {"1": {"en-US": "Expiry Date & Time", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}, "2": "Expiry Date & Time"}, {"1": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "2": "Remarks"}, {"1": {"en-US": "Open Date", "ru-RU": "Открытая дата", "tg-TG": "Санаи кушода"}, "2": "Open Date"}], "MaterialInvMaterialInventorydatefields": [{"1": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}, "2": "Date Of Manufacturer", "dateonly": false}, {"1": {"en-US": "Received Date & Time", "ru-RU": "Дата и время получения", "tg-TG": "Сана ва вақти қабулшуда"}, "2": "Received Date & Time", "dateonly": false}, {"1": {"en-US": "Expiry Date & Time", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}, "2": "Expiry Date & Time", "dateonly": false}, {"1": {"en-US": "Open Date", "ru-RU": "Открытая дата", "tg-TG": "Санаи кушода"}, "2": "Open Date", "dateonly": false}]}}', 1)on conflict(nmappedtemplatefieldpropmaterialcode) do nothing;
+
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 2 and parsermethodkey =1; --resultwithoutspace for datablock
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,2,1,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 2 and parsermethodkey =1); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 3 and parsermethodkey =1;--resultoutspace for datablock
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,3,1,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 3 and parsermethodkey =1); 
+   END IF;
+END
+$do$;
+
+--for split
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 2 and parsermethodkey =7;--resultwithoutspace for split
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,2,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 2 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 3 and parsermethodkey =7;--resultwithspace for split
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,3,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 3 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 4 and parsermethodkey =7;--colon for split
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,4,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 4 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 5 and parsermethodkey =7;--comma for split
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,5,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 5 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 6 and parsermethodkey =7;--space for split
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,6,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 6 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 7 and parsermethodkey =7;--splitdot for split
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,7,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 7 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 8 and parsermethodkey =7;--mergedot for split
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,8,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 8 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 9 and parsermethodkey =7;--slash for split
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,9,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 9 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
+
+---merge
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 8 and parsermethodkey =6;--mergedot for merge
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,8,6,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 8 and parsermethodkey =6); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 9 and parsermethodkey =6;--slash for merge
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,9,6,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 9 and parsermethodkey =6); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 4 and parsermethodkey =6;--colon for merge
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,4,6,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 4 and parsermethodkey =6); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 5 and parsermethodkey =6;--comma for merge
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,5,6,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 5 and parsermethodkey =6); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 6 and parsermethodkey =6;--space for merge
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,6,6,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 6 and parsermethodkey =6); 
+   END IF;
+END
+$do$;
+
+update methoddelimiter set defaultvalue = 1 where defaultvalue is Null; 
+
+INSERT INTO delimiter (delimitername,actualdelimiter,status,usercode,defaultvalue) SELECT 'Tab', '\t', 1, 1,1 WHERE NOT EXISTS (SELECT delimitername FROM delimiter WHERE delimitername = 'Tab');
+
+CREATE TABLE IF NOT EXISTS public.lslogilablimsorder
+(
+    orderid numeric(17,0) NOT NULL,
+    batchid character varying(250) COLLATE pg_catalog."default",
+    completedtimestamp timestamp without time zone,
+    createdtimestamp timestamp without time zone,
+    instrumentcode character varying(100) COLLATE pg_catalog."default",
+    instrumentname character varying(100) COLLATE pg_catalog."default",
+    methodcode character varying(100) COLLATE pg_catalog."default",
+    orderflag character(10) COLLATE pg_catalog."default",
+    parserflag character(10) COLLATE pg_catalog."default",
+    replicateid character varying(100) COLLATE pg_catalog."default",
+    sampleid character varying(250) COLLATE pg_catalog."default",
+    testcode character varying(100) COLLATE pg_catalog."default",
+    CONSTRAINT lslogilablimsorder_pkey PRIMARY KEY (orderid)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.lslogilablimsorder
+    OWNER to postgres;
+    
+ INSERT INTO parserignorechars(ignorechars)SELECT 'â†' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†');
+ INSERT INTO parserignorechars(ignorechars)SELECT 'â' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â');
+ update lspasswordpolicy set idletimeshowcheck=1 where idletimeshowcheck=0;
+ 
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(100,0,'IDS_MDL_ORDERS',1,'IDS_SCN_SHEETORDERS','IDS_TSK_NEWFOLDER') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(101,0,'IDS_MDL_ORDERS',1,'IDS_SCN_SHEETORDERS','IDS_TSK_MOVEORDER') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(102,0,'IDS_MDL_ORDERS',1,'IDS_SCN_SHEETORDERS','IDS_TSK_UPLOAD') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(105,0,'IDS_MDL_ORDERS',1,'IDS_SCN_SHEETORDERS','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(107,0,'IDS_MDL_ORDERS',2,'IDS_SCN_PROTOCOLORDERS','IDS_TSK_OPEN') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(108,0,'IDS_MDL_ORDERS',2,'IDS_SCN_PROTOCOLORDERS','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(109,0,'IDS_MDL_ORDERS',2,'IDS_SCN_PROTOCOLORDERS','IDS_TSK_NEWFOLDER') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(111,0,'IDS_MDL_ORDERS',2,'IDS_SCN_PROTOCOLORDERS','IDS_TSK_UPLOAD') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(112,0,'IDS_MDL_ORDERS',2,'IDS_SCN_PROTOCOLORDERS','IDS_TSK_EXPORT') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(113,0,'IDS_MDL_TEMPLATES',3,'IDS_SCN_SHEETTEMPLATES','IDS_TSK_NEWTEMPLATE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(114,0,'IDS_MDL_TEMPLATES',3,'IDS_SCN_SHEETTEMPLATES','IDS_TSK_EXPORT') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(115,0,'IDS_MDL_MASTERS',6,'IDS_SCN_UNLOCKORDERS','IDS_TSK_UNLOCK') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(116,0,'IDS_MDL_SETUP',7,'IDS_SCN_USERMASTER','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(117,0,'IDS_MDL_AUDITTRAIL',10,'IDS_SCN_AUDITTRAILHIS','IDS_TSK_REVIEW') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(118,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_UNITMASTER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(119,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_UNITMASTER','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(120,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_SECTIONMASTER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(121,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_SECTIONMASTER','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(122,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_STORAGELOCATION','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(123,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_STORAGELOCATION','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(124,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_MATERIALCATEGORY','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(125,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_MATERIALCATEGORY','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(126,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_MATERIAL','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(127,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_MATERIAL','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(128,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_MATERIALINVENTORY','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(129,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_MATERIALINVENTORY','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+  Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(130,0,'IDS_MDL_ORDERS',2,'IDS_SCN_PROTOCOLORDERS','IDS_TSK_MOVEORDER') ON CONFLICT(serialno)DO NOTHING;
+
+ delete from lsaudittrailconfigmaster where serialno in (30,31,36,52,53);
+ 
+ update lsaudittrailconfigmaster set ordersequnce=1 where serialno=100;
+ update lsaudittrailconfigmaster set ordersequnce=2 where serialno=2;
+ update lsaudittrailconfigmaster set ordersequnce=3 where serialno=102;
+ update lsaudittrailconfigmaster set ordersequnce=4 where serialno=38;
+ update lsaudittrailconfigmaster set ordersequnce=5 where serialno=40;
+ update lsaudittrailconfigmaster set ordersequnce=6 where serialno=98;
+ update lsaudittrailconfigmaster set ordersequnce=7 where serialno=99;
+ update lsaudittrailconfigmaster set ordersequnce=8 where serialno=1;
+ update lsaudittrailconfigmaster set ordersequnce=9 where serialno=103;
+ update lsaudittrailconfigmaster set ordersequnce=10 where serialno=101;
+ update lsaudittrailconfigmaster set ordersequnce=11 where serialno=105;
+ update lsaudittrailconfigmaster set ordersequnce=12 where serialno=76;
+ update lsaudittrailconfigmaster set ordersequnce=13 where serialno=39;
+ update lsaudittrailconfigmaster set ordersequnce=14 where serialno=109;
+ update lsaudittrailconfigmaster set ordersequnce=15 where serialno=77;
+ update lsaudittrailconfigmaster set ordersequnce=16 where serialno=111;
+ update lsaudittrailconfigmaster set ordersequnce=17 where serialno=79;
+ update lsaudittrailconfigmaster set ordersequnce=18 where serialno=80;
+ update lsaudittrailconfigmaster set ordersequnce=19 where serialno=112;
+ update lsaudittrailconfigmaster set ordersequnce=20 where serialno=78;
+ update lsaudittrailconfigmaster set ordersequnce=21 where serialno=107;
+ update lsaudittrailconfigmaster set ordersequnce=22 where serialno=130;
+ update lsaudittrailconfigmaster set ordersequnce=23 where serialno=108;
+ update lsaudittrailconfigmaster set ordersequnce=24 where serialno=3;
+ update lsaudittrailconfigmaster set ordersequnce=25 where serialno=41;
+ update lsaudittrailconfigmaster set ordersequnce=26 where serialno=114;
+ update lsaudittrailconfigmaster set ordersequnce=27 where serialno=108;
+ update lsaudittrailconfigmaster set ordersequnce=28 where serialno=58;
+ update lsaudittrailconfigmaster set ordersequnce=29 where serialno=59;
+ update lsaudittrailconfigmaster set ordersequnce=30 where serialno=61;
+ update lsaudittrailconfigmaster set ordersequnce=31 where serialno=60;
+ update lsaudittrailconfigmaster set ordersequnce=32 where serialno=10;
+ update lsaudittrailconfigmaster set ordersequnce=33 where serialno=4;
+ update lsaudittrailconfigmaster set ordersequnce=34 where serialno=5;
+ update lsaudittrailconfigmaster set ordersequnce=35 where serialno=7;
+ update lsaudittrailconfigmaster set ordersequnce=36 where serialno=6;
+ update lsaudittrailconfigmaster set ordersequnce=37 where serialno=9;
+ update lsaudittrailconfigmaster set ordersequnce=38 where serialno=8;
+ update lsaudittrailconfigmaster set ordersequnce=39 where serialno=71;
+ update lsaudittrailconfigmaster set ordersequnce=40 where serialno=72;
+ update lsaudittrailconfigmaster set ordersequnce=41 where serialno=73;
+ update lsaudittrailconfigmaster set ordersequnce=42 where serialno=74;
+ update lsaudittrailconfigmaster set ordersequnce=43 where serialno=75;
+ update lsaudittrailconfigmaster set ordersequnce=44 where serialno=30;
+ update lsaudittrailconfigmaster set ordersequnce=45 where serialno=81;
+ update lsaudittrailconfigmaster set ordersequnce=46 where serialno=82;
+ update lsaudittrailconfigmaster set ordersequnce=47 where serialno=83;
+ update lsaudittrailconfigmaster set ordersequnce=48 where serialno=115;
+ update lsaudittrailconfigmaster set ordersequnce=49 where serialno=50;
+ update lsaudittrailconfigmaster set ordersequnce=50 where serialno=51;
+ update lsaudittrailconfigmaster set ordersequnce=51 where serialno=11;
+ update lsaudittrailconfigmaster set ordersequnce=52 where serialno=12;
+ update lsaudittrailconfigmaster set ordersequnce=53 where serialno=13;
+ update lsaudittrailconfigmaster set ordersequnce=54 where serialno=14;
+ update lsaudittrailconfigmaster set ordersequnce=55 where serialno=15;
+ update lsaudittrailconfigmaster set ordersequnce=56 where serialno=16;
+ update lsaudittrailconfigmaster set ordersequnce=57 where serialno=17;
+ update lsaudittrailconfigmaster set ordersequnce=58 where serialno=18;
+ update lsaudittrailconfigmaster set ordersequnce=59 where serialno=116;
+ update lsaudittrailconfigmaster set ordersequnce=60 where serialno=54;
+ update lsaudittrailconfigmaster set ordersequnce=61 where serialno=55;
+ update lsaudittrailconfigmaster set ordersequnce=62 where serialno=20;
+ update lsaudittrailconfigmaster set ordersequnce=63 where serialno=19;
+ update lsaudittrailconfigmaster set ordersequnce=64 where serialno=21;
+ update lsaudittrailconfigmaster set ordersequnce=65 where serialno=22;
+ update lsaudittrailconfigmaster set ordersequnce=66 where serialno=56;
+ update lsaudittrailconfigmaster set ordersequnce=67 where serialno=32;
+ update lsaudittrailconfigmaster set ordersequnce=68 where serialno=57;
+ update lsaudittrailconfigmaster set ordersequnce=69 where serialno=33;
+ update lsaudittrailconfigmaster set ordersequnce=70 where serialno=34;
+ update lsaudittrailconfigmaster set ordersequnce=71 where serialno=35;
+ update lsaudittrailconfigmaster set ordersequnce=72 where serialno=23;
+ update lsaudittrailconfigmaster set ordersequnce=73 where serialno=117;
+ update lsaudittrailconfigmaster set ordersequnce=74 where serialno=24;
+ update lsaudittrailconfigmaster set ordersequnce=75 where serialno=25;
+ update lsaudittrailconfigmaster set ordersequnce=76 where serialno=26;
+ update lsaudittrailconfigmaster set ordersequnce=77 where serialno=27;
+ update lsaudittrailconfigmaster set ordersequnce=78 where serialno=28;
+ update lsaudittrailconfigmaster set ordersequnce=79 where serialno=42;
+ update lsaudittrailconfigmaster set ordersequnce=80 where serialno=47;
+ update lsaudittrailconfigmaster set ordersequnce=81 where serialno=49;
+ update lsaudittrailconfigmaster set ordersequnce=82 where serialno=45;
+ update lsaudittrailconfigmaster set ordersequnce=83 where serialno=48;
+ update lsaudittrailconfigmaster set ordersequnce=84 where serialno=43;
+ update lsaudittrailconfigmaster set ordersequnce=85 where serialno=46;
+ update lsaudittrailconfigmaster set ordersequnce=86 where serialno=84;
+ update lsaudittrailconfigmaster set ordersequnce=87 where serialno=85;
+ update lsaudittrailconfigmaster set ordersequnce=88 where serialno=86;
+ update lsaudittrailconfigmaster set ordersequnce=89 where serialno=87;
+ update lsaudittrailconfigmaster set ordersequnce=90 where serialno=88;
+ update lsaudittrailconfigmaster set ordersequnce=91 where serialno=89;
+ update lsaudittrailconfigmaster set ordersequnce=92 where serialno=90;
+ update lsaudittrailconfigmaster set ordersequnce=93 where serialno=91;
+ update lsaudittrailconfigmaster set ordersequnce=94 where serialno=92;
+ update lsaudittrailconfigmaster set ordersequnce=95 where serialno=93;
+ update lsaudittrailconfigmaster set ordersequnce=96 where serialno=94;
+ update lsaudittrailconfigmaster set ordersequnce=97 where serialno=95;
+ update lsaudittrailconfigmaster set ordersequnce=98 where serialno=96;
+ update lsaudittrailconfigmaster set ordersequnce=99 where serialno=97;
+ update lsaudittrailconfigmaster set ordersequnce=100 where serialno=118;
+ update lsaudittrailconfigmaster set ordersequnce=101 where serialno=119;
+ update lsaudittrailconfigmaster set ordersequnce=102 where serialno=120;
+ update lsaudittrailconfigmaster set ordersequnce=103 where serialno=121;
+ update lsaudittrailconfigmaster set ordersequnce=104 where serialno=122;
+ update lsaudittrailconfigmaster set ordersequnce=105 where serialno=123;
+ update lsaudittrailconfigmaster set ordersequnce=106 where serialno=124;
+ update lsaudittrailconfigmaster set ordersequnce=107 where serialno=125;
+ update lsaudittrailconfigmaster set ordersequnce=108 where serialno=126;
+ update lsaudittrailconfigmaster set ordersequnce=109 where serialno=127;
+ update lsaudittrailconfigmaster set ordersequnce=110 where serialno=128;
+ update lsaudittrailconfigmaster set ordersequnce=111 where serialno=129;
+ 
+ update lsaudittrailconfigmaster set  modulename='IDS_MDL_ORDERS' where serialno in (102,38,40,76,98,99,103);
+ update lsaudittrailconfigmaster set modulename='IDS_MDL_ORDERS',screenname='IDS_SCN_SHEETORDERS' where serialno=101;
+ update lsaudittrailconfigmaster set screenname='IDS_SCN_INVENTORY' where screenname='IDS_SCN_REPOSITORY';
+ update lsaudittrailconfigmaster set taskname='IDS_TSK_ADDREPO' where serialno=71;
+ update lsaudittrailconfigmaster set taskname='IDS_TSK_EDITREPO' where serialno=72;
+ 
+update lsaudittrailconfiguration set ordersequnce=9 where taskname in ('IDS_TSK_ADDREPO','IDS_TSK_EDITREPO');
+update lsaudittrailconfiguration set ordersequnce=2 where taskname='IDS_TSK_MOVEORDER' and screenname='IDS_SCN_PROTOCOLORDERS';
+
+update lsaudittrailconfiguration set ordersequnce=1 where screenname='IDS_SCN_SHEETORDERS';
+update lsaudittrailconfiguration set ordersequnce=2 where screenname='IDS_SCN_PROTOCOLORDERS';
+update lsaudittrailconfiguration set ordersequnce=7 where screenname='IDS_SCN_PROJECTMASTER';
+update lsaudittrailconfiguration set ordersequnce=8 where screenname='IDS_SCN_SAMPLEMASTER';
+update lsaudittrailconfiguration set ordersequnce=9 where screenname='IDS_SCN_INVENTORY';
+update lsaudittrailconfiguration set ordersequnce=10 where screenname='IDS_SCN_LOGBOOK';
+update lsaudittrailconfiguration set ordersequnce=11 where screenname='IDS_SCN_UNLOCKORDERS';
+update lsaudittrailconfiguration set ordersequnce=12 where screenname='IDS_SCN_SITEMASTER';
+update lsaudittrailconfiguration set ordersequnce=13 where screenname='IDS_SCN_USERGROUP';
+update lsaudittrailconfiguration set ordersequnce=14 where screenname='IDS_SCN_USERMASTER';
+update lsaudittrailconfiguration set ordersequnce=15 where screenname='IDS_SCN_USERRIGHTS';
+update lsaudittrailconfiguration set ordersequnce=16 where screenname='IDS_SCN_PROJECTTEAM';
+update lsaudittrailconfiguration set ordersequnce=17 where screenname='IDS_SCN_ORDERWORKFLOW';
+update lsaudittrailconfiguration set ordersequnce=18 where screenname='IDS_SCN_TEMPLATEWORKFLOW';
+update lsaudittrailconfiguration set ordersequnce=19 where screenname='IDS_SCN_DOMAIN';
+update lsaudittrailconfiguration set ordersequnce=20 where screenname='IDS_SCN_PASSWORDPOLICY';
+update lsaudittrailconfiguration set ordersequnce=21 where screenname='IDS_SCN_AUDITTRAILHIS';
+update lsaudittrailconfiguration set ordersequnce=22 where screenname='IDS_SCN_CFRSETTINGS';
+update lsaudittrailconfiguration set ordersequnce=23 where screenname='IDS_SCN_AUDITTRAILCONFIG';
+update lsaudittrailconfiguration set ordersequnce=24 where screenname='IDS_SCN_REPORTS';
+update lsaudittrailconfiguration set ordersequnce=25 where modulename='IDS_MDL_PARSER';
+update lsaudittrailconfiguration set ordersequnce=26 where modulename='IDS_MDL_INVENTORY';
+
+update lsaudittrailconfiguration set modulename='IDS_MDL_ORDERS' where taskname in ('IDS_TSK_PARSEDATA','IDS_TSK_EXPORTASJSON','IDS_TSK_EXPORT','IDS_TSK_COMPLETETASK','IDS_TSK_SAVE','IDS_TSK_UPLOAD','IDS_TSK_OPEN') and screenname='IDS_SCN_SHEETORDERS';
+
+ 
+ DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsprotocolfolderfiles_folderfilecode_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE lsprotocolfolderfiles_folderfilecode_seq;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolfolderfiles
+(
+    folderfilecode integer NOT NULL DEFAULT nextval('lsprotocolfolderfiles_folderfilecode_seq'::regclass),
+    createdtimestamp timestamp without time zone,
+    directorycode numeric(17,0),
+    filefor character varying(255) COLLATE pg_catalog."default",
+    filename character varying(255) COLLATE pg_catalog."default",
+    filesize bigint,
+    fileviewfor integer,
+    uuid character varying(255) COLLATE pg_catalog."default",
+    createby_usercode integer,
+    lssitemaster_sitecode integer,
+    CONSTRAINT lsprotocolfolderfiles_pkey PRIMARY KEY (folderfilecode),
+    CONSTRAINT fk8kdlmvt6b6psoy9qwfkpdrsdq FOREIGN KEY (createby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fke9wk0li0eyx8n2j35serlvp6w FOREIGN KEY (lssitemaster_sitecode)
+        REFERENCES public.lssitemaster (sitecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolfolderfiles
+    OWNER to postgres;

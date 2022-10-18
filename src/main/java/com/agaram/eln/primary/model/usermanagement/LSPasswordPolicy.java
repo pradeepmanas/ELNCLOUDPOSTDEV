@@ -56,6 +56,17 @@ public class LSPasswordPolicy {
 	@Transient
 	LScfttransaction objmanualaudit;
 	
+	@Column(name = "idletimeshowcheck")
+	private Integer idletimeshowcheck;
+	
+	public Integer getIdletimeshowcheck() {
+		return idletimeshowcheck;
+	}
+
+	public void setIdletimeshowcheck(Integer idletimeshowcheck) {
+		this.idletimeshowcheck = idletimeshowcheck;
+	}
+
 	public LScfttransaction getObjmanualaudit() {
 		return objmanualaudit;
 	}

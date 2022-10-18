@@ -75,7 +75,7 @@ public interface LsprotocolordersharetoRepository extends JpaRepository<Lsprotoc
 
 
 
-	List<Lsprotocolordersharedby> findByShareprotocolordercodeIn(ArrayList<Long> ordercode);
+	List<Lsprotocolordershareto> findByShareprotocolordercodeIn(ArrayList<Long> ordercode);
 
 
 

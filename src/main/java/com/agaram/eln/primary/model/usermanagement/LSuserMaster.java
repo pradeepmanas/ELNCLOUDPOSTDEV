@@ -126,7 +126,17 @@ public class LSuserMaster {
 
 	@Transient
 	private Integer idletime;
+	@Transient
+	private Integer idletimeshowcheck;
 	
+	public Integer getIdletimeshowcheck() {
+		return idletimeshowcheck;
+	}
+
+	public void setIdletimeshowcheck(Integer idletimeshowcheck) {
+		this.idletimeshowcheck = idletimeshowcheck;
+	}
+
 	@Column(columnDefinition = "varchar(500)")
 	private String unifieduserid;
 	

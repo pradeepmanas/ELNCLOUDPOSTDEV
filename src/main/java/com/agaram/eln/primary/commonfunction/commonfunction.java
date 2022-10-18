@@ -3,6 +3,11 @@ package com.agaram.eln.primary.commonfunction;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -149,15 +154,17 @@ public class commonfunction {
 //		}
 		return jsonString;
 	}
-	
-	public static Map<String, Object> getInventoryValuesFromJsonString(String jsonString,String objectKey) {
-		
+
+	public static Map<String, Object> getInventoryValuesFromJsonString(String jsonString, String objectKey) {
+
 		Map<String, Object> rtnMapObj = new HashMap<String, Object>();
-		
+
 		JSONObject jsonObject = new JSONObject(jsonString);
-			
-		rtnMapObj.put("rtnObj", jsonObject.get(objectKey));
-			
+
+		if (jsonObject.has(objectKey)) {
+			rtnMapObj.put("rtnObj", jsonObject.get(objectKey));
+		}
+
 		return rtnMapObj;
 	}
 
@@ -264,5 +271,47 @@ public class commonfunction {
 		return lstTags;
 	}
 
+	public static int getCurrentDateTimeOffset(final String stimezoneid) throws Exception {
+
+		ZoneId zone = ZoneId.of(stimezoneid);
+		LocalDateTime dt = LocalDateTime.now();
+		ZonedDateTime zdt = dt.atZone(zone);
+		ZoneOffset offset = zdt.getOffset();
+
+		int offSet = offset.getTotalSeconds();
+
+		return offSet;
+	}
+
+	public static int getCurrentDateTimeOffsetFromDate(String Date, final String stimezoneid) throws Exception {
+
+		ZoneId zone = ZoneId.of(stimezoneid);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime dt = LocalDateTime.parse(Date, formatter);
+		ZonedDateTime zdt = dt.atZone(zone);
+		ZoneOffset offset = zdt.getOffset();
+
+		int offSet = offset.getTotalSeconds();
+
+		return offSet;
+	}
+
+	public static Object convertInputDateToUTCByZone(JSONObject jsonObj, final List<String> inputFieldList,
+			final boolean returnAsString) throws Exception {
+//		final ObjectMapper objMapper = new ObjectMapper();
+
+		final DateTimeFormatter dbPattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+		for (int i = 0; i < inputFieldList.size(); i++) {
+			String stringDate = (String) jsonObj.get(inputFieldList.get(i));
+			if (!stringDate.equals("")) {
+				stringDate = LocalDateTime.parse(stringDate, dbPattern).format(dbPattern);
+				jsonObj.put(inputFieldList.get(i), stringDate);
+			}
+
+		}
+
+		return jsonObj;
+	}
 
 }

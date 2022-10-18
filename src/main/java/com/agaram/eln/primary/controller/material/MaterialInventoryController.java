@@ -39,14 +39,24 @@ public class MaterialInventoryController {
 
 	@RequestMapping(value = "/getMaterialInventoryByID", method = RequestMethod.POST)
 	public ResponseEntity<Object> getMaterialInventoryByID(@RequestBody Map<String, Object> inputMap) throws Exception {
-		
+
 		return materialInventoryService.getMaterialInventoryByID(inputMap);
 	}
-	
+
 	@RequestMapping(value = "/createMaterialInventory", method = RequestMethod.POST)
 	public ResponseEntity<Object> createMaterialInventory(@RequestBody Map<String, Object> inputMap) throws Exception {
 
 		return materialInventoryService.createMaterialInventory(inputMap);
 	}
 
+	@RequestMapping(value = "/getQuantityTransaction", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getQuantityTransaction(@RequestBody Map<String, Object> inputMap) throws Exception {
+		return (ResponseEntity<Object>) materialInventoryService.getQuantityTransaction(inputMap);
+	}
+
+	@RequestMapping(value = "/getMaterialInventoryDetails", method = RequestMethod.POST)
+	public ResponseEntity<Object> getMaterialInventoryDetails(@RequestBody Map<String, Object> inputMap)
+			throws Exception {
+		return materialInventoryService.getMaterialInventoryDetails(inputMap);
+	}
 }

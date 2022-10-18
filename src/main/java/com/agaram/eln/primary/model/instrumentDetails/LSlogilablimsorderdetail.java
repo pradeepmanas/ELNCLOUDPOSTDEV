@@ -172,8 +172,11 @@ public class LSlogilablimsorderdetail {
 	@ManyToOne
 	private Lsrepositories lsrepositories;
 	
+//	@Transient
+//	private List<LSlimsorder> lsLSlimsorder;
+	
 	@Transient
-	private List<LSlimsorder> lsLSlimsorder;
+	private List<LSlogilablimsorder> lsLSlogilablimsorder;
 	
 	@Transient
 	private String projectname;
@@ -543,12 +546,20 @@ public class LSlogilablimsorderdetail {
 		this.lsprojectmaster = lsprojectmaster;
 	}
 
-	public List<LSlimsorder> getLsLSlimsorder() {
-		return lsLSlimsorder;
+//	public List<LSlimsorder> getLsLSlimsorder() {
+//		return lsLSlimsorder;
+//	}
+//
+//	public void setLsLSlimsorder(List<LSlimsorder> lsLSlimsorder) {
+//		this.lsLSlimsorder = lsLSlimsorder;
+//	}
+	
+	public List<LSlogilablimsorder> getLsLSlogilablimsorder() {
+		return lsLSlogilablimsorder;
 	}
-
-	public void setLsLSlimsorder(List<LSlimsorder> lsLSlimsorder) {
-		this.lsLSlimsorder = lsLSlimsorder;
+	
+	public void setLsLSlogilablimsorder(List<LSlogilablimsorder> lsLSlogilablimsorder) {
+		this.lsLSlogilablimsorder = lsLSlogilablimsorder;
 	}
 
 	public Integer getTestcode() {

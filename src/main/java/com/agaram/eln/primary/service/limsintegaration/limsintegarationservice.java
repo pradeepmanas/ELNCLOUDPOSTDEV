@@ -24,6 +24,7 @@ import com.agaram.eln.primary.model.fileManipulation.ResultorderlimsRefrence;
 import com.agaram.eln.primary.model.fileManipulation.SheetorderlimsRefrence;
 import com.agaram.eln.primary.model.general.OrderCreation;
 import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
@@ -166,7 +167,25 @@ public class limsintegarationservice {
 		return objattachments;
 	}
 
-	public List<LsOrderattachments> getAttachmentsForLIMS(LSlimsorder objOrder) {
+//	public List<LsOrderattachments> getAttachmentsForLIMS(LSlimsorder objOrder) {
+//
+////		LSlimsorder limsOrder = LSlimsorderRepository.findByBatchid(objOrder.getBatchid());
+//
+//		LSlogilablimsorderdetail orderClass = LSlogilablimsorderdetailRepository.findByBatchid(objOrder.getBatchid());
+//
+//		List<LsOrderattachments> lstAttachments = new ArrayList<LsOrderattachments>();
+//
+//		if (orderClass != null) {
+//
+//			lstAttachments = LsOrderattachmentsRepository
+//					.findByBatchcodeOrderByAttachmentcodeDesc(orderClass.getBatchcode());
+//
+//		}
+//
+//		return lstAttachments;
+//	}
+	
+	public List<LsOrderattachments> getAttachmentsForLIMS(LSlogilablimsorder objOrder) {
 
 //		LSlimsorder limsOrder = LSlimsorderRepository.findByBatchid(objOrder.getBatchid());
 

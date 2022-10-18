@@ -225,6 +225,7 @@ public class LoginService {
 			objExitinguser.setObjResponse(new Response());
 			objExitinguser.setObjsilentaudit(new LScfttransaction());
 			objExitinguser.setIdletime(lockcount.getIdletime());
+			objExitinguser.setIdletimeshowcheck(lockcount.getIdletimeshowcheck());
 
 			if ((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode())
 					|| objuser.getsUsername().equalsIgnoreCase("Administrator")) {
@@ -970,6 +971,7 @@ public class LoginService {
 			objExitinguser.setObjResponse(new Response());
 			objExitinguser.setObjsilentaudit(new LScfttransaction());
 			objExitinguser.setIdletime(lockcount.getIdletime());
+			objExitinguser.setIdletimeshowcheck(lockcount.getIdletimeshowcheck());
 			if ((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode())
 					&& objExitinguser.getUserretirestatus() == 0) {
 

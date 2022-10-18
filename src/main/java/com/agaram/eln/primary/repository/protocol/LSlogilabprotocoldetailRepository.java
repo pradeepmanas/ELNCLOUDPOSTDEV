@@ -491,6 +491,33 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			LSuserMaster lsloginuser, Integer protocoltype, String string, int i, Date fromdate, Date todate);
 
 
+	List<LSlogilabprotocoldetail> findBySitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			Integer sitecode, LSuserMaster assignedto, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByProtocoltypeAndOrderflagAndSitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			Integer protocoltype, String orderflag, Integer sitecode, LSuserMaster assignedto, Date fromdate,
+			Date todate);
+
+
+	List<LSlogilabprotocoldetail> findBySitecodeAndOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			Integer sitecode, String orderflag, LSuserMaster assignedto, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findBySitecodeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			Integer sitecode, LSuserMaster lsuserMaster, LSuserMaster assignedto, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByProtocoltypeAndOrderflagAndSitecodeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			Integer protocoltype, String orderflag, Integer sitecode, LSuserMaster lsuserMaster,
+			LSuserMaster assignedto, Date fromdate, Date todate);
+
+
+	List<LSlogilabprotocoldetail> findByOrderflagAndSitecodeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			String orderflag, Integer sitecode, LSuserMaster lsuserMaster, LSuserMaster assignedto, Date fromdate,
+			Date todate);
+
+
 	
 
 

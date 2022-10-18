@@ -29,6 +29,8 @@ public interface LsprotocolOrderStructureRepository extends JpaRepository<Lsprot
 	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j);
 
+	List<Lsprotocolorderstructure> findByDirectorycodeIn(List<Long> lstfoldersid);
+
 
 
 	
