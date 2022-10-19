@@ -25,7 +25,16 @@ public class Lslogbooks {
 	private Integer logbookcode;
 	
 	private String logbookname;
+	private String logbookcategory;
 	
+	public String getLogbookcategory() {
+		return logbookcategory;
+	}
+
+	public void setLogbookcategory(String logbookcategory) {
+		this.logbookcategory = logbookcategory;
+	}
+
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
 	private String logbookfields;
@@ -76,6 +85,23 @@ public class Lslogbooks {
 			return "";
 		}
 	}
+	private String reviewstatus;
+	
+	public String getReviewstatus() {
+		if(reviewstatus != null)
+		{
+		return  reviewstatus.trim().equals("R")?"Review":"";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public void setReviewstatus(String reviewstatus) {
+		this.reviewstatus = reviewstatus;
+	}
+
 	public void setUserstatus(String userstatus) {
 		this.userstatus = userstatus;
 	}
@@ -162,6 +188,16 @@ public class Lslogbooks {
 
 	public void setTodate(Date todate) {
 		this.todate = todate;
+	}
+	
+	@Transient
+	private boolean select;
+
+	public boolean isSelect() {
+		return select;
+	}
+	public void setSelect(boolean select) {
+		this.select = select;
 	}
 	
 	

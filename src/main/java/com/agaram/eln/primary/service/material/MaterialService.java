@@ -66,7 +66,7 @@ public class MaterialService {
 	public ResponseEntity<Object> getMaterialType() throws JsonParseException, JsonMappingException, IOException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
-		List<MaterialType> lstMaterialType = materialTypeRepository.findAll();
+		List<MaterialType> lstMaterialType = materialTypeRepository.findAllByOrderByNmaterialtypecode();
 
 		objmap.put("MaterialType", lstMaterialType);
 		objmap.put("SelectedMaterialType", lstMaterialType);

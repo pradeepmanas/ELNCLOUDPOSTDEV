@@ -50,7 +50,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 
 	List<LSworkflow> lstworkflow;
 	private LSprotocolworkflow lSprotocolworkflow;
-	private LSworkflow LSorderworkflow;
+	private LSworkflow lsworkflow;
 	private Integer workflowcode;
 	private boolean canuserprocess;
 	private LSsamplemaster lssamplemaster;
@@ -64,7 +64,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 		this.Testcode =Testcode;
 		this.protoclordername = protoclordername;
 		this.orderflag = orderflag;
-		this.workflowcode = lSprotocolworkflow != null ? lSprotocolworkflow.getWorkflowcode() : null;
+		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
 		this.protocoltype = protocoltype;
 		this.createdtimestamp = createdtimestamp;
 		this.completedtimestamp = completedtimestamp;
@@ -80,7 +80,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 		this.repositoryitemname =lsrepositoriesdata !=null ?lsrepositoriesdata.getRepositoryitemname():null;
 		this.repositoryname =lsrepositories !=null ?lsrepositories.getRepositoryname():null;
 		this.directorycode = directorycode;
-		this.LSorderworkflow=lsworkflow;
+		this.lsworkflow=lsworkflow;
 		this.lsprotocolmaster=lsprotocolmaster;
 		this.approved=approved;
 		this.rejected=rejected;
@@ -102,12 +102,14 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 		this.rejected = rejected;
 	}
 
-	public LSworkflow getLSorderworkflow() {
-		return LSorderworkflow;
+
+
+	public LSworkflow getLsworkflow() {
+		return lsworkflow;
 	}
 
-	public void setLSorderworkflow(LSworkflow lSorderworkflow) {
-		LSorderworkflow = lSorderworkflow;
+	public void setLsworkflow(LSworkflow lsworkflow) {
+		this.lsworkflow = lsworkflow;
 	}
 
 	public LSsamplemaster getLssamplemaster() {

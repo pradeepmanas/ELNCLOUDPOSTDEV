@@ -362,11 +362,11 @@ public class EvaluateParserService {
 		
 			final Map<String, List<List<MethodFieldTechnique>>> parsedData = (Map<String, List<List<MethodFieldTechnique>>>) parserObjectMap.get("PDInstFieldDataMap");
 			
-			if( parsedData.keySet().contains(null)) {
-				 //  if(outputMap.values().isEmpty()){ 
-				   return new ResponseEntity<>("wrong file ", HttpStatus.NOT_FOUND);
-			   }
-			else {
+//			if( parsedData.keySet().contains(null)) {
+//				 //  if(outputMap.values().isEmpty()){ 
+//				   return new ResponseEntity<>("wrong file ", HttpStatus.NOT_FOUND);
+//			   }
+		//	else {
 			Date date = new Date();
 			LScfttransaction LScfttransaction = new LScfttransaction();
 			LScfttransaction.setActions("Insert");
@@ -383,7 +383,7 @@ public class EvaluateParserService {
 			
 			LScfttransactionRepository.save(LScfttransaction);
 			return new ResponseEntity<>(parsedData, HttpStatus.OK);
-			}
+		//	}
 		}
 		else {
 			return new ResponseEntity<>("Method Not Found", HttpStatus.NOT_FOUND);
@@ -440,22 +440,19 @@ public class EvaluateParserService {
 				final String blockData = (String) extractedBlock.get(blockNameKey.split(",")[0]);
 				final List<MethodFieldTechnique> parsedData = getFieldData(blockFieldList, blockData, //parsedData, 
 						ignoreList);
-//				List<List<MethodFieldTechnique>> list = new ArrayList<List<MethodFieldTechnique>>();
-//				list.add(parsedData);
-//				outputDataMap.put(blockNameKey, list);
-				
-				if(!parsedData.isEmpty()){
+	
+				//if(!parsedData.isEmpty()){
 				List<List<MethodFieldTechnique>> list = new ArrayList<List<MethodFieldTechnique>>();
 				list.add(parsedData);
 				outputDataMap.put(blockNameKey, list);
-				}
-				else {
-					List<List<MethodFieldTechnique>> list = new ArrayList<List<MethodFieldTechnique>>();
-					list.add(parsedData);
-					final String emptykey = null; 
-					outputDataMap.put(emptykey,list);
+			//	}
+			//	else {
+//					List<List<MethodFieldTechnique>> list = new ArrayList<List<MethodFieldTechnique>>();
+//					list.add(parsedData);
+//					final String emptykey = null; 
+//					outputDataMap.put(emptykey,list);
 					
-				}
+			//	}
 		
 			}
 			else {
@@ -463,14 +460,14 @@ public class EvaluateParserService {
 				for (String blockData : (List<String>)extractedBlock.get(blockNameKey.split(",")[0])) {					
 					final List<MethodFieldTechnique> parsedData = getFieldData(blockFieldList, blockData, //parsedData, 
 							ignoreList);
-					if(!parsedData.isEmpty()){
+				//	if(!parsedData.isEmpty()){
 					list.add(parsedData);	
 					outputDataMap.put(blockNameKey, list);
 
-					}else {
-						final String emptykey = null; 
-						outputDataMap.put(emptykey,list);
-					}
+				//	}else {
+					//	final String emptykey = null; 
+					//	outputDataMap.put(emptykey,list);
+					//}
 				}
 			}			
 		}

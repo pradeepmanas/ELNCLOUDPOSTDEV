@@ -53,6 +53,21 @@ public class Lslogbooksdata {
 	
 	@Transient
 	private Date todate;
+	@Column(name = "logitemstatus")
+	private String logitemstatus;
+
+	public String getLogitemstatus() {
+		if(logitemstatus != null) {
+			return logitemstatus.trim().equals("A")?"Active":"Retired";
+		}else {
+			return "";
+		}
+		
+	}
+
+	public void setLogitemstatus(String logitemstatus) {
+		this.logitemstatus = logitemstatus;
+	}
 
 	public Integer getLogbookdatacode() {
 		return logbookdatacode;

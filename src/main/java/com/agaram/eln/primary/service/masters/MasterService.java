@@ -7,11 +7,13 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -26,6 +28,7 @@ import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchmodel.archieve.ProjectArchieve;
 import com.agaram.eln.primary.fetchmodel.getmasters.Repositorymaster;
 import com.agaram.eln.primary.model.archieve.LsProjectarchieve;
+import com.agaram.eln.primary.model.cfr.LSreviewdetails;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
@@ -479,7 +482,7 @@ public class MasterService {
 	}
 	
 	public List<Lslogbooks> Getalllogbooks(Lslogbooks lslogbooks) {
-		return lslogbooksRepository.findBySitecodeOrderByLogbookcodeAsc(lslogbooks.getSitecode());
+		return lslogbooksRepository.findBySitecodeOrderByLogbookcodeDesc(lslogbooks.getSitecode());
 	}
 	
 	public Lslogbooks Savelogbook(Lslogbooks lslogbooks) {
@@ -507,8 +510,8 @@ public class MasterService {
 	}
 	
 	public List<Lslogbooksdata> Getalllogbookdata(Lslogbooksdata lslogbooksdata) {
-		return lslogbooksdataRepository.findByLogbookcodeAndSitecodeAndItemstatusOrderByLogbookdatacodeDesc(
-				lslogbooksdata.getLogbookcode(), lslogbooksdata.getSitecode(), 1);
+		return lslogbooksdataRepository.findByLogbookcodeAndSitecodeOrderByLogbookdatacodeDesc(
+				lslogbooksdata.getLogbookcode(), lslogbooksdata.getSitecode());
 	}
 	
 	public Lslogbooksdata GetupdatedLogbookdata(Lslogbooksdata lslogbooksdata) {
@@ -519,6 +522,7 @@ public class MasterService {
 	public Lslogbooksdata DeleteLogbookdata(Lslogbooksdata lslogbooksdata) {
 		lslogbooksdata = lslogbooksdataRepository.findOne(lslogbooksdata.getLogbookdatacode());
 		lslogbooksdata.setItemstatus(0);
+		lslogbooksdata.setLogitemstatus("R");
 		lslogbooksdataRepository.save(lslogbooksdata);
 
 		return lslogbooksdata;
@@ -546,5 +550,18 @@ public class MasterService {
 
 		lslogbooksdata.setObjResponse(objResponse);
 		return lslogbooksdata;
+	}
+	public List<Lslogbooks> Reviewlogbook(Lslogbooks[] objreview1) {
+
+		List<Lslogbooks> objreview = Arrays.asList(objreview1);
+		lslogbooksRepository.save(objreview);
+		return objreview;
+	}
+	
+	public List<Lslogbooks> Retirelogbook(Lslogbooks[] objreview1) {
+
+		List<Lslogbooks> objreview = Arrays.asList(objreview1);
+		lslogbooksRepository.save(objreview);
+		return objreview;
 	}
 }

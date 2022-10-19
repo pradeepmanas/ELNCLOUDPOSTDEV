@@ -70,7 +70,7 @@ public class MaterialInventoryService {
 	public ResponseEntity<Object> getMaterialInventory() throws Exception {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
-		List<MaterialType> lstMaterialType = materialTypeRepository.findByNstatus(1);
+		List<MaterialType> lstMaterialType = materialTypeRepository.findAllByOrderByNmaterialtypecode();
 		objmap.put("MaterialType", lstMaterialType);
 
 		List<MaterialCategory> lstMaterialCategory = materialCategoryRepository
@@ -119,7 +119,7 @@ public class MaterialInventoryService {
 		if (!lstMaterialCategory.isEmpty()) {
 
 			List<Material> lstMaterial = materialRepository
-					.findByNmaterialcatcodeAndNmaterialtypecodeAndNstatus(nmaterialcatcode, nmaterialtypecode, 1);
+					.findByNmaterialcatcodeAndNmaterialtypecodeAndNstatus(lstMaterialCategory.get(0).getNmaterialcatcode(), nmaterialtypecode, 1);
 
 			lstMaterial.stream().peek(f -> {
 
@@ -170,7 +170,8 @@ public class MaterialInventoryService {
 		if (inputMap.containsKey("nmaterialcode")) {
 
 			List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository
-					.findByNmaterialcode((Integer) inputMap.get("nmaterialcode"));
+					.findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecode((Integer) inputMap.get("nmaterialcode"),
+							(Integer) inputMap.get("nmaterialcatcode"), (Integer) inputMap.get("nmaterialtypecode"));
 
 			objLstMaterialInventory.stream().peek(f -> {
 
@@ -349,23 +350,33 @@ public class MaterialInventoryService {
 		List<MaterialInventoryTransaction> lstInventoryTransaction = materialInventoryTransactionRepository
 				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(nmaterialinventorycode);
 
+		lstInventoryTransaction.stream().peek(f -> {
+
+			try {
+
+				Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
+				Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(f.getJsonuidata(),
+						"namountleft");
+				resObj.put("Available Quantity", objContent.get("rtnObj"));
+				objContent = commonfunction.getInventoryValuesFromJsonString(f.getJsonuidata(), "nqtyissued");
+				resObj.put("Issued Quantity", objContent.get("rtnObj"));
+				resObj.put("Received Quantity", f.getNqtyreceived());
+				resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
+
+				lstMaterialInventoryTrans.add(resObj);
+
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+
+		}).collect(Collectors.toList());
+
 		MaterialConfig objMaterialConfig = materialConfigRepository.findByNformcodeAndNmaterialtypecodeAndNstatus(138,
 				-1, 1);
 
 		lstMaterialConfig.add(objMaterialConfig);
 
-		Map<String, Object> mapJsonData = new ObjectMapper().readValue(lstInventoryTransaction.get(0).getJsonuidata(),
-				Map.class);
-
-		Map<String, Object> objContent = commonfunction
-				.getInventoryValuesFromJsonString(lstInventoryTransaction.get(0).getJsonuidata(), "namountleft");
-		mapJsonData.put("Available Quantity", objContent.get("rtnObj"));
-		objContent = commonfunction.getInventoryValuesFromJsonString(lstInventoryTransaction.get(0).getJsonuidata(),
-				"nqtyissued");
-		mapJsonData.put("Issued Quantity", objContent.get("rtnObj"));
-		mapJsonData.put("Received Quantity", lstInventoryTransaction.get(0).getNqtyreceived());
-
-		lstMaterialInventoryTrans.add(mapJsonData);
 		objmap.put("QuantityTransactionTemplate", lstMaterialConfig);
 		objmap.put("MaterialInventoryTrans", lstMaterialInventoryTrans);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
@@ -1245,13 +1256,17 @@ public class MaterialInventoryService {
 		MaterialInventory objInventory = materialInventoryRepository
 				.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
 
-		lstMaterialInventory.add(new ObjectMapper().readValue(objInventory.getJsondata(), Map.class));
+		Map<String, Object> resObj = new ObjectMapper().readValue(objInventory.getJsonuidata(), Map.class);
+
+		resObj.put("nmaterialinventorycode", (Integer) inputMap.get("nmaterialinventorycode"));
+		
+		lstMaterialInventory.add(resObj);
 
 		objmap.put("MaterialInventory", lstMaterialInventory);
 
 		lstMaterialInventory1.add(new ObjectMapper().readValue(objInventory.getJsondata(), Map.class));
 
-		objmap.put("SelectedMaterialInventory", lstMaterialInventory1.get(0));
+		objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(lstMaterialInventory.size() - 1));
 		inputMap.put("nsectioncode", lstMaterialInventory1.get(0).get("nsectioncode"));
 
 		objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(

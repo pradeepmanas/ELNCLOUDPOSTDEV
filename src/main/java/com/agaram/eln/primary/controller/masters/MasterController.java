@@ -162,4 +162,18 @@ public class MasterController {
 	{
 		return masterService.Savelogbookdata(lslogbooksdata);
 	}
+	
+	@PostMapping("/Reviewlogbook")
+	public List<Lslogbooks> Reviewlogbook(@RequestBody Lslogbooks[] objreview)throws Exception {
+
+		return masterService.Reviewlogbook(objreview);
+	}
+	
+	@PostMapping("/Retirelogbook")
+	public List<Lslogbooks> Retirelogbook(@RequestBody Lslogbooks[] objreview)throws Exception {
+
+		return masterService.Retirelogbook(objreview);
+	}
+	
+	
 }

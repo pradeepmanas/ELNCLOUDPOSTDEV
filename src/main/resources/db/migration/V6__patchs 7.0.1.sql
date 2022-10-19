@@ -2668,3 +2668,15 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.lsprotocolfolderfiles
     OWNER to postgres;
+    
+ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS logbookcategory character varying(255);
+update lslogbooks set logbookcategory='' where logbookcategory is null;
+
+ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS reviewstatus character varying(255);
+update lslogbooks set reviewstatus='' where reviewstatus is null;
+
+ALTER TABLE IF Exists lslogbooksdata ADD COLUMN IF NOT EXISTS logitemstatus character varying(255); 
+update lslogbooksdata set logitemstatus='A' where logitemstatus is null;
+
+update parserfield set datatypekey = 1 where datatypekey is Null;
+
