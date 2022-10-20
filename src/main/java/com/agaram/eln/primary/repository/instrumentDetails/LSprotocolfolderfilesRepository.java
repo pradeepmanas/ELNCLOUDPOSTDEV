@@ -31,4 +31,6 @@ public interface LSprotocolfolderfilesRepository extends JpaRepository<LSprotoco
 		@Query("update LSprotocolfolderfiles o set o.directorycode = ?1 where o.folderfilecode = ?2")
 		void updatedirectory(Long directorycode , Integer folderfilecode);
 
+	public List<LSprotocolfolderfiles> findByUuidInOrderByFolderfilecode(List<String> lstuuid);
+
 }

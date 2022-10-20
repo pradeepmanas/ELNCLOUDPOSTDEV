@@ -2249,7 +2249,18 @@ public class InstrumentService {
 	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder) {
 
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
+		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository.findBybatchid(objorder.getBatchid());
+		List<String> lsorderno = new ArrayList<String>();
 
+		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
+			int i = 0;
+
+			while (lsLogilaborders.size() > i) {
+				lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
+				i++;
+			}
+		}
+		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
 		if (objupdatedorder.getLockeduser() != null) {
 			objupdatedorder.setIsLock(1);
 		} else {
@@ -5630,20 +5641,20 @@ public class InstrumentService {
 		if (protocoltype == -1 && objorder.getOrderflag() == null) {
 			lstorder = LSlogilabprotocoldetailRepository
 					.findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-							objorder.getLssamplemaster(), 1, objorder.getTestname(), 2, fromdate, todate,
+							objorder.getLssamplemaster(), 1, objorder.getTestcode(), 2, fromdate, todate,
 							objorder.getLssamplemaster(), 2, objorder.getLsuserMaster(), objorder.getTestcode(), 2,
 							fromdate, todate);
 		} else if (protocoltype != -1 && objorder.getOrderflag() != null) {
 			if (objorder.getRejected() != null) {
 				lstorder = LSlogilabprotocoldetailRepository
 						.findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-								objorder.getLssamplemaster(), 1, objorder.getTestname(), 2, fromdate, todate,
+								objorder.getLssamplemaster(), 1, objorder.getTestcode(), 2, fromdate, todate,
 								objorder.getLssamplemaster(), 2, objorder.getLsuserMaster(), objorder.getTestcode(), 2,
 								protocoltype, objorder.getOrderflag(), 1, fromdate, todate);
 			} else {
 				lstorder = LSlogilabprotocoldetailRepository
 						.findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-								objorder.getLssamplemaster(), 1, objorder.getTestname(), 2, fromdate, todate,
+								objorder.getLssamplemaster(), 1, objorder.getTestcode(), 2, fromdate, todate,
 								objorder.getLssamplemaster(), 2, objorder.getLsuserMaster(), objorder.getTestcode(), 2,
 								protocoltype, objorder.getOrderflag(), fromdate, todate);
 			}
@@ -5652,21 +5663,21 @@ public class InstrumentService {
 			if (objorder.getRejected() != null) {
 				lstorder = LSlogilabprotocoldetailRepository
 						.findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndOrderflagAndRejectedAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-								objorder.getLssamplemaster(), 1, objorder.getTestname(), 2, fromdate, todate,
+								objorder.getLssamplemaster(), 1, objorder.getTestcode(), 2, fromdate, todate,
 								objorder.getLssamplemaster(), 2, objorder.getLsuserMaster(), objorder.getTestcode(), 2,
 								objorder.getOrderflag(), 1, fromdate, todate);
 
 			} else {
 				lstorder = LSlogilabprotocoldetailRepository
 						.findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-								objorder.getLssamplemaster(), 1, objorder.getTestname(), 2, fromdate, todate,
+								objorder.getLssamplemaster(), 1, objorder.getTestcode(), 2, fromdate, todate,
 								objorder.getLssamplemaster(), 2, objorder.getLsuserMaster(), objorder.getTestcode(), 2,
 								objorder.getOrderflag(), fromdate, todate);
 			}
 		} else if (protocoltype != -1 && objorder.getOrderflag() == null) {
 			lstorder = LSlogilabprotocoldetailRepository
 					.findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndProtocoltypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-							objorder.getLssamplemaster(), 1, objorder.getTestname(), 2, fromdate, todate,
+							objorder.getLssamplemaster(), 1, objorder.getTestcode(), 2, fromdate, todate,
 							objorder.getLssamplemaster(), 2, objorder.getLsuserMaster(), objorder.getTestcode(), 2,
 							protocoltype, fromdate, todate);
 		}
@@ -5993,9 +6004,13 @@ public class InstrumentService {
 			if(existinglist != null)
 			{
 			existinglist = existinglist.stream().map(folder -> {
-				Optional<LSSheetOrderStructure> objfolder = lstfolders.stream().filter(argfolder -> argfolder.getDirectorycode() == folder.getDirectorycode()).findFirst();
-				folder.setParentdircode(objfolder.get().getParentdircode());
-				folder.setPath(objfolder.get().getPath());
+				Long directorycode = folder.getDirectorycode();
+				Optional<LSSheetOrderStructure> objfolder = lstfolders.stream().filter(argfolder -> argfolder.getDirectorycode().equals(directorycode)).findFirst();
+				if(objfolder != null)
+				{
+					folder.setParentdircode(objfolder.get().getParentdircode());
+					folder.setPath(objfolder.get().getPath());
+				}
 			return folder;
 			})
 		    .collect(Collectors.toList());
@@ -6167,5 +6182,11 @@ public class InstrumentService {
 	public LSprotocolfolderfiles UpdateprotocolFolderforfile(LSprotocolfolderfiles file) {
 		lsprotocolfolderfilesRepository.updatedirectory(file.getDirectorycode(), file.getFolderfilecode());
 		return file;
+	}
+
+	public List<LSprotocolfolderfiles> Getaddedprotocolfilesforfolder(List<String> lstuuid) {
+		List<LSprotocolfolderfiles> lstfiles = new ArrayList<LSprotocolfolderfiles>();
+		lstfiles = lsprotocolfolderfilesRepository.findByUuidInOrderByFolderfilecode(lstuuid);
+		return lstfiles;
 	}
 }

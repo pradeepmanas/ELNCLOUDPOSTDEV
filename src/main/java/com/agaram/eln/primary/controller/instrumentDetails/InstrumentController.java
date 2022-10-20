@@ -1119,4 +1119,10 @@ public class InstrumentController {
 	{
 		return instrumentService.UpdateprotocolFolderforfile(file);
 	}
+	
+	@RequestMapping("/Getaddedprotocolfilesforfolder")
+	public List<LSprotocolfolderfiles> Getaddedprotocolfilesforfolder(@RequestBody List<String> lstuuid)throws Exception
+	{
+		return instrumentService.Getaddedprotocolfilesforfolder(lstuuid);
+	}
 }

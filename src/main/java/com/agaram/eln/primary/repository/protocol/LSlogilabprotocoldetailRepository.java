@@ -350,8 +350,8 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 
 	List<LSlogilabprotocoldetail> findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			LSsamplemaster lssamplemaster, int i, String testname, int j, Date fromdate, Date todate,
-			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode, int l, Date fromdate2,
+			LSsamplemaster lssamplemaster, int i, Integer testcode, int j, Date fromdate, Date todate,
+			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode1, int l, Date fromdate2,
 			Date todate2);
 
 
@@ -370,8 +370,8 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	
 
 	List<LSlogilabprotocoldetail> findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndProtocoltypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			LSsamplemaster lssamplemaster, int i, String testname, int j, Date fromdate, Date todate,
-			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode, int l,
+			LSsamplemaster lssamplemaster, int i, Integer testcode, int j, Date fromdate, Date todate,
+			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode1, int l,
 			Integer protocoltype, Date fromdate2, Date todate2);
 
 
@@ -411,14 +411,14 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 
 	List<LSlogilabprotocoldetail> findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			LSsamplemaster lssamplemaster, int i, String testname, int j, Date fromdate, Date todate,
-			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode, int l,
+			LSsamplemaster lssamplemaster, int i, Integer testcode, int j, Date fromdate, Date todate,
+			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode1, int l,
 			Integer protocoltype, String orderflag, Date fromdate2, Date todate2);
 
 
 	List<LSlogilabprotocoldetail> findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndOrderflagAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			LSsamplemaster lssamplemaster, int i, String testname, int j, Date fromdate, Date todate,
-			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode, int l, String orderflag,
+			LSsamplemaster lssamplemaster, int i, Integer testcode, int j, Date fromdate, Date todate,
+			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode1, int l, String orderflag,
 			Date fromdate2, Date todate2);
 
 
@@ -467,14 +467,14 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 
 	List<LSlogilabprotocoldetail> findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			LSsamplemaster lssamplemaster, int i, String testname, int j, Date fromdate, Date todate,
-			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode, int l,
+			LSsamplemaster lssamplemaster, int i, Integer testcode, int j, Date fromdate, Date todate,
+			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode1, int l,
 			Integer protocoltype, String orderflag, int m, Date fromdate2, Date todate2);
 
 
 	List<LSlogilabprotocoldetail> findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndOrderflagAndRejectedAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			LSsamplemaster lssamplemaster, int i, String testname, int j, Date fromdate, Date todate,
-			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode, int l, String orderflag,
+			LSsamplemaster lssamplemaster, int i, Integer testcode, int j, Date fromdate, Date todate,
+			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode1, int l, String orderflag,
 			int m, Date fromdate2, Date todate2);
 
 
