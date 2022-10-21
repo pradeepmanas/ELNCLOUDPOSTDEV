@@ -583,13 +583,13 @@ public class ReportsService {
 		rtnObj.put("DocxDirectoryLst", getDocxDirectoryLst(LScfttransactionobj));
 		rtnObj.put("DocxReportLst", getLSdocreportsLst("all", LScfttransactionobj));
 
-		if (LScfttransactionobj != null) {
-			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),
-					new TypeReference<LScfttransaction>() {
-					});
-			LScfttransactionobj.setTableName("LSdocreports");
-//			lscfttransactionRepository.save(LScfttransactionobj);
-		}
+//		if (LScfttransactionobj != null) {
+//			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),
+//					new TypeReference<LScfttransaction>() {
+//					});
+//			LScfttransactionobj.setTableName("LSdocreports");
+////			lscfttransactionRepository.save(LScfttransactionobj);
+//		}
 		if (argObj.containsKey("objmanualaudit")) {
 			if (argObj.get("objmanualaudit") != null) {
 				LScfttransaction LScfttransactionManualobj = new ObjectMapper()

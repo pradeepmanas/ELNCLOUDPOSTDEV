@@ -2922,6 +2922,23 @@ public class InstrumentService {
 		} else {
 			objupdated.setIsLock(0);
 		}
+		
+		if(objupdated.getLsprojectmaster() != null )	
+		{
+			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+			if(objorder.getLstworkflow() != null && lstworkflowcode.contains(objupdated.getLsworkflow().getWorkflowcode()))
+			{
+				objupdated.setCanuserprocess(true);
+			}
+			else
+			{
+				objupdated.setCanuserprocess(false);
+			}
+		}
+		else
+		{
+			objupdated.setCanuserprocess(true);
+		}
 
 		if (objupdated.getLockeduser() != null && objorder.getObjLoggeduser() != null
 				&& objupdated.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
@@ -2942,7 +2959,7 @@ public class InstrumentService {
 		if (objupdated.getFiletype() == 0) {
 			objupdated.setLstestparameter(lStestparameterRepository.findByntestcode(objupdated.getTestcode()));
 		}
-
+		
 		if (objupdated.getLssamplefile() != null) {
 
 			if (objorder.getIsmultitenant() == 1) {

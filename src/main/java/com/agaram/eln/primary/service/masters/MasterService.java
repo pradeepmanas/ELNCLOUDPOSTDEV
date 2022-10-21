@@ -482,7 +482,7 @@ public class MasterService {
 	}
 	
 	public List<Lslogbooks> Getalllogbooks(Lslogbooks lslogbooks) {
-		return lslogbooksRepository.findBySitecodeOrderByLogbookcodeDesc(lslogbooks.getSitecode());
+		return lslogbooksRepository.findBySitecodeOrderByLogbookcodeAsc(lslogbooks.getSitecode());
 	}
 	
 	public Lslogbooks Savelogbook(Lslogbooks lslogbooks) {
