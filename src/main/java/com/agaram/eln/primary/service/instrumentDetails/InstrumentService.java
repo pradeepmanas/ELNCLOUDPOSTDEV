@@ -2251,7 +2251,7 @@ public class InstrumentService {
 	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder) {
 
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
-		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository.findBybatchid(objorder.getBatchid());
+		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository.findBybatchid(objupdatedorder.getBatchid());
 		List<String> lsorderno = new ArrayList<String>();
 
 		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
@@ -2291,7 +2291,22 @@ public class InstrumentService {
 					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
 		}
 
-		objupdatedorder.setCanuserprocess(objorder.isCanuserprocess());
+		if(objupdatedorder.getLsprojectmaster() != null )	
+		{
+			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+			if(objorder.getLstworkflow() != null && lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode()))
+			{
+				objupdatedorder.setCanuserprocess(true);
+			}
+			else
+			{
+				objupdatedorder.setCanuserprocess(false);
+			}
+		}
+		else
+		{
+			objupdatedorder.setCanuserprocess(true);
+		}
 
 		if (objupdatedorder.getLssamplefile() != null) {
 			if (objorder.getIsmultitenant() == 1) {
