@@ -18,12 +18,12 @@ public class Sheettemplateget {
 //	private String filecontent;
 	private long versioncout;
 	private Integer versionno;
-	
+	private String category;
 //	private List<LSfileversion> lstfileversion;
 //	private LSfileversion lsfileversion;
 
 	public Sheettemplateget(Integer filecode, String filenameuser, Date createdate, LSuserMaster createby,
-			LSuserMaster modifiedby, Integer approved, Integer rejected,Integer versionno
+			LSuserMaster modifiedby, Integer approved, Integer rejected,Integer versionno,String category
 //			,LSfileversion lsfileversion
 			) {
 		
@@ -50,6 +50,7 @@ public class Sheettemplateget {
 		this.createdate = createdate;
 		this.modifiedby = modifiedUser;
 		this.versionno=versionno;
+		this.category =category;
 //		this.lsfileversion = lsfileversion;
 	}
 
@@ -78,6 +79,14 @@ public class Sheettemplateget {
 
 	public long getVersioncout() {
 		return versioncout;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	public Integer getVersionno() {

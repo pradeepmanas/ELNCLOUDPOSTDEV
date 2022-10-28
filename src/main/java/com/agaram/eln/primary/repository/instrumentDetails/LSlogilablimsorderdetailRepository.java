@@ -668,6 +668,29 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	List<Logilaborders> findByAssignedtoAndOrderflagAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			LSuserMaster lsuserMaster, String orderflag, Date fromdate, Date todate);
 
+	List<Logilaborders> findByOrderflagAndTestcodeAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+			String orderflag, Integer testcode, List<LSprojectmaster> lstproject, Integer filetype, Date fromdate,
+			Date todate);
+
+	List<Logilaborders> findByOrderflagAndTestcodeAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+			String orderflag, LStestmasterlocal lstestmasterlocal, List<LSprojectmaster> lstproject, Integer filetype,
+			Date fromdate, Date todate);
+
+	List<Logilaborders> findByOrderflagAndTestcodeAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+			String orderflag, Integer testcode, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
+
+	List<Logilaborders> findByOrderflagAndTestcodeAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+			String orderflag, Integer testcode, Integer approvelstatus, List<LSprojectmaster> lstproject,
+			Integer filetype, Date fromdate, Date todate);
+
+	List<Logilaborders> findByOrderflagAndLsprojectmasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Integer filetype, LSprojectmaster lsprojectmaster,
+			Date fromdate, Date todate);
+
+	List<Logilaborders> findByOrderflagAndTestcodeAndLsprojectmasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+			String orderflag, Integer testcode, List<LSprojectmaster> lstproject, Integer filetype,
+			LSprojectmaster lsprojectmaster, Date fromdate, Date todate);
+
 
 
 

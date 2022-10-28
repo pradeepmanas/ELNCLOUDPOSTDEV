@@ -56,6 +56,8 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	private Integer rejected;
 
 	public Integer versionno = 0;
+	
+	private String category;
 
 	@Transient
 	private List<LSprotocolworkflowhistory> lsprotocolworkflowhistory;
@@ -263,4 +265,11 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 		this.lstest = lstest;
 	}
 
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
 }

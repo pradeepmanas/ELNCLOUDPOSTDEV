@@ -462,7 +462,7 @@ public class InstrumentService {
 
 		if (lssiteMaster.getIsmultitenant() != 1) {
 			List<LSfields> Generalfields = lSfieldsRepository.findByisactive(1);
-			List<LSinstruments> Instruments = lSinstrumentsRepository.findAll();
+//			List<LSinstruments> Instruments = lSinstrumentsRepository.findAll();
 //			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findAll();
 //			List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
 //			List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
@@ -472,7 +472,7 @@ public class InstrumentService {
 //			List<ParserField> ParserField = lsParserRepository.findAll();
 //			List<SubParserField> SubParserField = lsSubParserRepository.findAll();
 			obj.put("Generalfields", Generalfields);
-			obj.put("Instruments", Instruments);
+//			obj.put("Instruments", Instruments);
 //			obj.put("Instrmaster", InstrMaster);
 			obj.put("elninstrument", lselninstrumentmasterRepository
 					.findBylssitemasterAndStatusOrderByInstrumentcodeDesc(lssiteMaster, 1));
@@ -794,6 +794,7 @@ public class InstrumentService {
 					objLimsOrder.setInstrumentcode(objmethod.getInstrumentid());
 					objLimsOrder.setTestcode(objorder.getTestcode() != null ? objorder.getTestcode().toString() : null);
 					objLimsOrder.setOrderflag("N");
+					objLimsOrder.setCreatedtimestamp(objorder.getCreatedtimestamp());
 
 					lsorder.add(objLimsOrder);
 
@@ -812,6 +813,7 @@ public class InstrumentService {
 				objLimsOrder.setBatchid(objorder.getBatchid());
 				objLimsOrder.setTestcode(objorder.getTestcode() != null ? objorder.getTestcode().toString() : null);
 				objLimsOrder.setOrderflag("N");
+				objLimsOrder.setCreatedtimestamp(objorder.getCreatedtimestamp());
 
 				lslogilablimsorderRepository.save(objLimsOrder);
 				lsorder.add(objLimsOrder);
@@ -2817,6 +2819,17 @@ public class InstrumentService {
 			}
 
 		}
+		
+		final LSlogilablimsorderdetail objLSlogilablimsorder = objorder;
+
+		new Thread(() -> {
+			try {
+				System.out.println("inside the thread SDMS order call");
+				createLogilabLIMSOrder4SDMS(objLSlogilablimsorder);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
 
 		return objorder;
 	}
@@ -4404,7 +4417,38 @@ public class InstrumentService {
 		map.put("uid", uid);
 		return map;
 	}
+	
+	public Map<String, Object> removemultifilessheetfolder(LSsheetfolderfiles[] files, Long directorycode, String filefor, String tenantid,
 
+			Integer ismultitenant, Integer usercode, Integer sitecode, Date createddate, Integer fileviewfor)
+			throws IOException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		List<LSsheetfolderfiles> lstfile = Arrays.asList(files);
+		if (lstfile.size() > 0) {
+			List<String> lstfilesid = lstfile.stream().map(LSsheetfolderfiles::getUuid)
+					.collect(Collectors.toList());
+		  
+			lssheetfolderfilesRepository.deleteByUuidIn(lstfilesid);
+
+			for(String uuididex : lstfilesid ) {			
+
+			if (ismultitenant == 1) {
+			cloudFileManipulationservice.deletecloudFile(uuididex, "sheetfolderfiles");
+			} else {
+				fileManipulationservice.deletelargeattachments(uuididex);
+			}
+			
+		  }
+			
+		}		
+
+		map.put("lstfilesid", lstfile);
+		return map;
+	}
+
+
+	
 	public ByteArrayInputStream downloadsheetimages(String fileid, String tenant)
 			throws FileNotFoundException, IOException {
 		TenantContext.setCurrentTenant(tenant);
@@ -4890,6 +4934,21 @@ public class InstrumentService {
 		return lstdirectories;
 	}
 
+	public List<LSSheetOrderStructure> Deletemultidirectories(LSSheetOrderStructure[] directories) {
+		List<LSSheetOrderStructure> lstdirectories = Arrays.asList(directories);
+
+		lstdirectories.forEach(structure -> {
+		if (structure.getParentdircode() == -2) {
+			lsSheetOrderStructureRepository.delete(structure.getDirectorycode());
+			lslogilablimsorderdetailRepository.updateparentdirectory(structure.getDircodetomove(),
+					structure.getDirectorycode());
+		} else {
+			lsSheetOrderStructureRepository.updatedirectory(structure.getParentdircode(), structure.getPath(),
+					structure.getDirectorycode(), structure.getDirectoryname());
+		}
+		});
+		return lstdirectories;
+	}
 	public LSSheetOrderStructure getMoveDirectory(LSSheetOrderStructure objdir) {
 		Response objResponse = new Response();
 		LSSheetOrderStructure lstdir = null;
@@ -5412,6 +5471,7 @@ public class InstrumentService {
 		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
+		Integer testcode =objorder.getTestcode();
 		Integer filetype = objorder.getFiletype();
 
 		if (objorder.getSearchCriteria().getContentsearchtype() != null
@@ -5440,8 +5500,20 @@ public class InstrumentService {
 						.findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 								objorder.getOrderflag(), objorder.getApprovelstatus(), lstproject, filetype, fromdate,
 								todate);
-			} else {
+			} else if(testcode != null && testcode != -1 && objorder.getLsprojectmaster() == null){
 				lstorder = lslogilablimsorderdetailRepository
+						.findByOrderflagAndTestcodeAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+								objorder.getOrderflag(),testcode, lstproject, filetype, fromdate, todate);
+				
+			}else if(objorder.getLsprojectmaster() != null && objorder.getLsprojectmaster().getProjectcode() != -1){
+				lstorder = lslogilablimsorderdetailRepository
+						.findByOrderflagAndLsprojectmasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+								objorder.getOrderflag(), lstproject, filetype,objorder.getLsprojectmaster(), fromdate, todate);
+			}
+			
+			else
+			{
+					lstorder = lslogilablimsorderdetailRepository
 						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
 			}
@@ -5849,6 +5921,7 @@ public class InstrumentService {
 	public List<LSsheetfolderfiles> Getaddedfilesforfolder(List<String> lstuuid) {
 		List<LSsheetfolderfiles> lstfiles = new ArrayList<LSsheetfolderfiles>();
 		lstfiles = lssheetfolderfilesRepository.findByUuidInOrderByFolderfilecode(lstuuid);
+
 		return lstfiles;
 	}
 

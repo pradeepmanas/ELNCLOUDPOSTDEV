@@ -28,4 +28,9 @@ public interface LSsheetfolderfilesRepository  extends JpaRepository<LSsheetfold
 	@Modifying
 	@Query("update LSsheetfolderfiles o set o.directorycode = ?1 where o.folderfilecode in (?2)")
 	void updatedirectory(Long directorycode , List<Integer> folderfilecode);
+
+ @Transactional 
+public void deleteByUuidIn(List<String> lstfilesid);
+ 
+
 }

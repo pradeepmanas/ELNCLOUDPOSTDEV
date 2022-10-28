@@ -1025,4 +1025,17 @@ public class ProtocolController {
 		return ProtocolMasterService.Getprotocolordersonshared(objorder);
 	}
 	
+	@RequestMapping(value = "/impoertjsonforprotocol")
+	protected List<LSprotocolstep> impoertjsonforprotocol(@RequestBody LSprotocolstep[] argObj)throws Exception {
+
+		return ProtocolMasterService.impoertjsonforprotocol(argObj);
+	
+	}
+	
+	@PostMapping("/deleteprotocolstepversion")
+	public Map<String, Object> deleteprotocolstepversion(@RequestBody LSprotocolstep body)throws Exception
+	{
+		return ProtocolMasterService.deleteprotocolstepversion(body);
+//		return true;
+	}
 }

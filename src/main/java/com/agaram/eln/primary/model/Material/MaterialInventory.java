@@ -12,8 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.json.JSONObject;
-
 import com.agaram.eln.primary.commonfunction.commonfunction;
 
 @Entity

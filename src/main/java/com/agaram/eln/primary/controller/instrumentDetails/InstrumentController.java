@@ -291,7 +291,6 @@ public class InstrumentController {
 		return instrumentService.CloudUploadattachments(file, batchcode, filename, fileexe, usercode, currentdate,
 				islargefile);
 	}
-	
 	@PostMapping("/CloudELNFileUploadattachments")
 	public Map<String, Object> CloudELNFileUploadattachments(@RequestParam("file") MultipartFile file,
 			@RequestParam("order") Long batchcode, @RequestParam("filename") String filename,
@@ -301,7 +300,7 @@ public class InstrumentController {
 		return instrumentService.CloudELNFileUploadattachments(file, batchcode, filename, fileexe, usercode, currentdate,
 				islargefile,methodkey);
 	}
-	
+
 	@PostMapping("/Uploadelnfileattachments")
 	public Map<String, Object> Uploadelnfileattachments(@RequestParam("file") MultipartFile file,
 			@RequestParam("order") Long batchcode, @RequestParam("filename") String filename,
@@ -848,6 +847,12 @@ public class InstrumentController {
 		return instrumentService.Deletedirectories(directories);
 	}
 	
+	@RequestMapping("/Deletemultidirectories")
+	public List<LSSheetOrderStructure> Deletemultidirectories(@RequestBody LSSheetOrderStructure[] directories)throws Exception
+	{
+		return instrumentService.Deletemultidirectories(directories);
+	}
+	
 	@RequestMapping("/getMoveDirectory")
 	public LSSheetOrderStructure getMoveDirectory(@RequestBody LSSheetOrderStructure objdir)throws Exception {
 		return instrumentService.getMoveDirectory(objdir);
@@ -1026,6 +1031,15 @@ public class InstrumentController {
 			, @PathVariable Date createddate, @PathVariable Integer fileviewfor)throws Exception
 	{
 		return instrumentService.removefilessheetfolder(objfiles.getUuid(),directorycode,filefor,tenantid,
+				ismultitenant,usercode,sitecode,createddate,fileviewfor);
+	}
+	
+	@RequestMapping("/deletemultifilesforfolder/{directorycode}/{filefor}/{tenantid}/{ismultitenant}/{usercode}/{sitecode}/{createddate}/{fileviewfor}")
+	public Map<String, Object> deletemultifilesforfolder(@RequestBody LSsheetfolderfiles[] objfiles,@PathVariable Long directorycode, @PathVariable String filefor, @PathVariable String tenantid
+			,@PathVariable Integer ismultitenant, @PathVariable Integer usercode, @PathVariable Integer sitecode
+			, @PathVariable Date createddate, @PathVariable Integer fileviewfor)throws Exception
+	{
+		return instrumentService.removemultifilessheetfolder(objfiles,directorycode,filefor,tenantid,
 				ismultitenant,usercode,sitecode,createddate,fileviewfor);
 	}
 	

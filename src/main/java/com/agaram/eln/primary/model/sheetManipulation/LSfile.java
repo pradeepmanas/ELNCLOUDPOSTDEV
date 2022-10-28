@@ -102,6 +102,8 @@ public class LSfile {
 	private Integer approved;
 	private Integer rejected;
 	
+	private String category;
+	
 	@Transient
 	LSuserMaster objLoggeduser;
 	
@@ -353,6 +355,12 @@ public class LSfile {
 	}
 	public void setIsmultitenant(Integer ismultitenant) {
 		this.ismultitenant = ismultitenant;
+	}
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
 	}
 	
 	
