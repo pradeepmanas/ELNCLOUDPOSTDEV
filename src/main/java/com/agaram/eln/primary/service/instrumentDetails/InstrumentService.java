@@ -2291,7 +2291,7 @@ public class InstrumentService {
 					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
 		}
 
-		if(objupdatedorder.getLsprojectmaster() != null )	
+		if(objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow()!= null )	
 		{
 			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
 			if(objorder.getLstworkflow() != null && lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode()))
