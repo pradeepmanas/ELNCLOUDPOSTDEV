@@ -1139,4 +1139,11 @@ public class InstrumentController {
 	{
 		return instrumentService.Getaddedprotocolfilesforfolder(lstuuid);
 	}
+	
+	@PostMapping("/cancelsheetorder")
+	public LSlogilablimsorderdetail cancelsheetorder(@RequestBody LSlogilablimsorderdetail body)throws Exception
+	{
+		return instrumentService.cancelprotocolorder(body);
+//		return true;
+	}
 }

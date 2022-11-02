@@ -6316,4 +6316,12 @@ public class InstrumentService {
 		lstfiles = lsprotocolfolderfilesRepository.findByUuidInOrderByFolderfilecode(lstuuid);
 		return lstfiles;
 	}
+
+	public LSlogilablimsorderdetail cancelprotocolorder(LSlogilablimsorderdetail body) {
+		
+		LSlogilablimsorderdetail obj =lslogilablimsorderdetailRepository.findByBatchid(body.getBatchid());
+		obj.setOrdercancell(body.getOrdercancell());
+		lslogilablimsorderdetailRepository.save(obj);
+		return body;
+	}
 }

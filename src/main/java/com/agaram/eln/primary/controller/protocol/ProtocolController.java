@@ -38,6 +38,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderfiles;
 import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
+import com.agaram.eln.primary.model.protocols.LSprotocolorderstephistory;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderworkflowhistory;
 import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
@@ -233,10 +234,9 @@ public class ProtocolController {
 	}
 
 	@RequestMapping(value = "/startStep")
-	protected Map<String, Object> startStep(@RequestBody LSuserMaster objuser)throws Exception {
-		Map<String, Object> objMap = new HashMap<String, Object>();
-		objMap = ProtocolMasterService.startStep(objuser);
-		return objMap;
+	protected LSprotocolorderstephistory startStep(@RequestBody LSprotocolorderstephistory objuser)throws Exception {
+	
+		return  ProtocolMasterService.startStep(objuser);
 	}
 
 	@RequestMapping(value = "/updateStepStatus")
@@ -1038,4 +1038,20 @@ public class ProtocolController {
 		return ProtocolMasterService.deleteprotocolstepversion(body);
 //		return true;
 	}
+	
+	
+	@PostMapping("/cancelprotocolorder")
+	public LSlogilabprotocoldetail cancelprotocolorder(@RequestBody LSlogilabprotocoldetail body)throws Exception
+	{
+		return ProtocolMasterService.cancelprotocolorder(body);
+//		return true;
+	}
+	
+	
+	@RequestMapping(value = "/getprotocolstephistory")
+	protected  List<LSprotocolorderstephistory> getprotocolstephistory(@RequestBody LSprotocolorderstephistory objuser)throws Exception {
+	
+		return  ProtocolMasterService.getprotocolstephistory(objuser);
+	}
+
 }

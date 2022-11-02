@@ -40,6 +40,19 @@ public class LSusersteam {
 	@Transient
 	LScfttransaction Objmanualaudit;
 	
+	
+	@Transient
+	private LSuserMaster selectedrecord;
+	
+
+	public LSuserMaster getSelectedrecord() {
+		return selectedrecord;
+	}
+
+	public void setSelectedrecord(LSuserMaster selectedrecord) {
+		this.selectedrecord = selectedrecord;
+	}
+
 	@Column(columnDefinition = "date")
 	private Date createdate;
 
@@ -76,7 +89,12 @@ public class LSusersteam {
 	
 	@Transient
 	LScfttransaction objsilentaudit;
+
 	
+	
+
+	
+
 	
 
 	public LSuserMaster getModifieduserMaster() {
@@ -174,6 +192,26 @@ public class LSusersteam {
 
 	public void setModifiedby(LSuserMaster modifiedby) {
 		this.modifiedby = modifiedby;
+	}
+
+	public LSMultiusergroup getObjLoggeduser() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int size() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public LSusersteam get(int i) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public java.util.Date getCreatedtimestamp() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

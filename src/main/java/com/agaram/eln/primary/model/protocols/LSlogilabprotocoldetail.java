@@ -103,6 +103,9 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private LSworkflow lsworkflow;
 	
 	
+	private Integer ordercancell;
+	
+	
 	@Transient
 	List<LSworkflow> lstworkflow;
 	
@@ -566,5 +569,13 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	public void setViewoption(Integer viewoption) {
 		this.viewoption = viewoption;
+	}
+
+	public Integer getOrdercancell() {
+		return ordercancell;
+	}
+
+	public void setOrdercancell(Integer ordercancell) {
+		this.ordercancell = ordercancell;
 	}
 }

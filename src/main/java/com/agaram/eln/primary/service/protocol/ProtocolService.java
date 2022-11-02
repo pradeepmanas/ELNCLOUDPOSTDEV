@@ -1,7 +1,5 @@
 package com.agaram.eln.primary.service.protocol;
 
-import static org.hamcrest.CoreMatchers.containsString;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +42,6 @@ import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolversionstep;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.fileManipulation.UserSignature;
-import com.agaram.eln.primary.model.general.OrderCreation;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
@@ -61,6 +58,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolorderfiles;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderfilesContent;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderimages;
 import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
+import com.agaram.eln.primary.model.protocols.LSprotocolorderstephistory;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderstepversion;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderversion;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderversionstepInfo;
@@ -84,6 +82,7 @@ import com.agaram.eln.primary.model.protocols.ProtocolImage;
 import com.agaram.eln.primary.model.protocols.ProtocolorderImage;
 import com.agaram.eln.primary.model.protocols.Protocolordervideos;
 import com.agaram.eln.primary.model.protocols.Protocolvideos;
+import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -114,6 +113,7 @@ import com.agaram.eln.primary.repository.protocol.LSprotocolorderfilesContentRep
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderfilesRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderimagesRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolordersampleupdatesRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolorderstephistoryRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderstepversionRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderversionRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolordervideosRepository;
@@ -314,6 +314,9 @@ public class ProtocolService {
 
 	@Autowired
 	private LSsheetworkflowRepository lssheetworkflowRepository;
+
+	@Autowired
+	private LSprotocolorderstephistoryRepository lsprotocolorderstephistoryRepository;
 
 //	@Autowired
 //	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
@@ -984,11 +987,15 @@ public class ProtocolService {
 						&& lSprotocolstepObj.getNewStep() == 1)) {
 
 			LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(sitecode);
-			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
+//			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
+//					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
+
+			LSsheetworkflow lssheetworkflow = lssheetworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
 
 			protocolMaster.setApproved(0);
-			protocolMaster.setlSprotocolworkflow(lsprotocolworkflow);
+//			protocolMaster.setlSprotocolworkflow(lsprotocolworkflow);
+			protocolMaster.setLssheetworkflow(lssheetworkflow);
 			protocolMaster.setVersionno(protocolMaster.getVersionno() + 1);
 
 			LSProtocolMasterRepositoryObj.save(protocolMaster);
@@ -1087,11 +1094,15 @@ public class ProtocolService {
 				|| (protocolMaster.getApproved() != null && protocolMaster.getApproved() == 1 && newStep == 1)) {
 
 			LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(sitecode);
-			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
+//			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
+//					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);.
+
+			LSsheetworkflow lssheetworkflow = lssheetworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
 
 			protocolMaster.setApproved(0);
-			protocolMaster.setlSprotocolworkflow(lsprotocolworkflow);
+//			protocolMaster.setlSprotocolworkflow(lsprotocolworkflow);
+			protocolMaster.setLssheetworkflow(lssheetworkflow);
 			protocolMaster.setVersionno(protocolMaster.getVersionno() + 1);
 
 			LSProtocolMasterRepositoryObj.save(protocolMaster);
@@ -1157,7 +1168,7 @@ public class ProtocolService {
 				versProto.setCreatedby(usercode1);
 			}
 			lsprotocolversionRepository.save(versProto);
-			if (objaudit1 !=null && objaudit1.getLssitemaster() != null) {
+			if (objaudit1 != null && objaudit1.getLssitemaster() != null) {
 				lscfttransactionRepository.save(objaudit1);
 			}
 		} else {
@@ -1214,8 +1225,8 @@ public class ProtocolService {
 		LSProtocolStepRepositoryObj.save(deleteprotocolstep);
 //		}
 
-//		List<LSprotocolstep> tempLSprotocolstepLst = LSProtocolStepRepositoryObj
-//				.findByProtocolmastercodeAndStatus((Integer) argObj.get("protocolmastercode"), 1);
+		List<LSprotocolstep> tempLSprotocolstepLst = LSProtocolStepRepositoryObj
+				.findByProtocolmastercodeAndStatus((Integer) argObj.get("protocolmastercode"), 1);
 //		List<LSprotocolstep> LSprotocolstepLst = new ArrayList<LSprotocolstep>();
 //		for (LSprotocolstep LSprotocolstepObj1 : tempLSprotocolstepLst) {
 //
@@ -1238,6 +1249,7 @@ public class ProtocolService {
 //
 //			LSprotocolstepLst.add(LSprotocolstepObj1);
 //		}
+		mapObj.put("protocoloverallstepLst", tempLSprotocolstepLst);
 		mapObj.put("protocolstepLst", deleteprotocolstep);
 
 		return mapObj;
@@ -3234,13 +3246,15 @@ public class ProtocolService {
 		return mapOrders;
 	}
 
-	public Map<String, Object> startStep(LSuserMaster objuser) {
-		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		if (objuser.getObjsilentaudit() != null) {
-			objuser.getObjsilentaudit().setTableName("lslogilabprotocolsteps");
-			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+	public LSprotocolorderstephistory startStep(LSprotocolorderstephistory objuser) {
+
+		if (objuser.getCreateby().getObjsilentaudit() != null) {
+			objuser.getCreateby().getObjsilentaudit().setTableName("lslogilabprotocolsteps");
+			lscfttransactionRepository.save(objuser.getCreateby().getObjsilentaudit());
 		}
-		return mapOrders;
+
+		lsprotocolorderstephistoryRepository.save(objuser);
+		return objuser;
 	}
 
 	public Map<String, Object> updateStepStatus(Map<String, Object> argMap) {
@@ -5834,20 +5848,35 @@ public class ProtocolService {
 		if (body.getIsmultitenant() == 1) {
 			updateCloudProtocolVersion(body.getProtocolmastercode(), body.getProtocolstepcode(), null, 0,
 					body.getSitecode(), null, body.getCreatedbyusername(), body.getCreatedby(), null);
-		}else {
-			updateCloudProtocolVersiononSQL(body, body.getSitecode(),  body.getCreatedbyusername(), body.getCreatedby());
+		} else {
+			updateCloudProtocolVersiononSQL(body, body.getSitecode(), body.getCreatedbyusername(), body.getCreatedby());
 		}
 		List<LSprotocolversion> LSprotocolversionlst = lsprotocolversionRepository
 				.findByprotocolmastercode(body.getProtocolmastercode());
 
 		Collections.sort(LSprotocolversionlst, Collections.reverseOrder());
-		
+
 		LSprotocolmaster protocolmaster = LSProtocolMasterRepositoryObj
 				.findByprotocolmastercode(body.getProtocolmastercode());
 		mapObj.put("protocolmaster", protocolmaster);
 
 		mapObj.put("LSprotocolversionlst", LSprotocolversionlst);
 		return mapObj;
+	}
+
+	public LSlogilabprotocoldetail cancelprotocolorder(LSlogilabprotocoldetail body) {
+
+		LSlogilabprotocoldetail obj = LSlogilabprotocoldetailRepository
+				.findByProtocolordercode(body.getProtocolordercode());
+		obj.setOrdercancell(body.getOrdercancell());
+		LSlogilabprotocoldetailRepository.save(obj);
+		return body;
+	}
+
+	public List<LSprotocolorderstephistory> getprotocolstephistory(LSprotocolorderstephistory objuser) {
+		List<LSprotocolorderstephistory> rtobj = lsprotocolorderstephistoryRepository
+				.findByProtocolordercode(objuser.getProtocolordercode());
+		return rtobj;
 	}
 
 }

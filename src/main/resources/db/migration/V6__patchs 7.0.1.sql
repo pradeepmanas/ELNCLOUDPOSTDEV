@@ -392,7 +392,26 @@ update lssheetorderstructure set sitecode = 1 where sitecode is null;
 update lssheetorderstructure set createdby = 1 where createdby is null;
 update lssheetorderstructure set createdbyusername = 'Administrator' where createdbyusername is null;
 
+update lsaudittrailconfigmaster set modulename='IDS_MDL_ORDERS' where modulename in ('Register Orders & Execute','Protocol Order And Register');
+update lsaudittrailconfigmaster set modulename='IDS_MDL_TEMPLATES' where modulename in ('Protocols','Sheet Creation','Sheet Setting');
+update lsaudittrailconfigmaster set modulename='IDS_MDL_MASTERS' where modulename ='Base Master';
+update lsaudittrailconfigmaster set modulename='IDS_MDL_SETUP' where modulename ='User Management';
+update lsaudittrailconfigmaster set modulename='IDS_MDL_AUDITTRAIL' where modulename ='Audit Trail';
+update lsaudittrailconfigmaster set modulename='IDS_MDL_REPORTS' where modulename ='Reports';
 
+
+update lsusergrouprights set modulename='IDS_MDL_SETUP' where modulename in ('UserManagement','User Master');
+update lsusergrouprights set modulename='IDS_MDL_ORDERS' where modulename ='Protocol Order And Register';
+update lsusergrouprights set modulename='IDS_MDL_PARSER' where modulename='Parser';
+update lsusergrouprights set modulename='IDS_MDL_REPORTS' where modulename='Reports';
+update lsusergrouprightsmaster set modulename='IDS_MDL_DASHBOARD' where modulename='Dash Board';
+update lsusergrouprightsmaster set modulename='IDS_MDL_ORDERS' where modulename='Protocol Order And Register';
+update lsusergrouprightsmaster set modulename='IDS_MDL_TEMPLATES' where modulename='Templates';
+update lsusergrouprightsmaster set modulename='IDS_MDL_AUDITTRAIL' where modulename='AuditTrail History';
+update lsusergrouprightsmaster set modulename='IDS_MDL_PARSER' where modulename='Parser';
+update lsusergrouprights set modulename='IDS_MDL_MASTERS' where modulename in ('Base Master','Inventory');
+update lsusergrouprightsmaster set modulename='IDS_MDL_REPORTS' where modulename='Reports';
+update lsusergrouprightsmaster set modulename='IDS_MDL_MASTERS' where modulename in ('Base Master','Inventory');
 
 
 
@@ -1033,6 +1052,8 @@ update lsusergrouprightsmaster set screenname='IDS_SCN_ORDERWORKLOW' where order
 
 update lsusergrouprightsmaster set status='1,0,0' where orderno=66;
 update lsusergrouprightsmaster set sallow='0',screate='NA',sdelete='NA',sedit='NA' where orderno=22;
+update lsusergrouprightsmaster set status='0,0,0' where orderno in (85,61,62,91);
+update lsusergrouprights set modulename='IDS_MDL_ORDERS' where screenname='IDS_SCN_SHEETORDERS';
 
 update lsusergrouprightsmaster set displaytopic='IDS_SCN_TEMPLATEWORKFLOW' where displaytopic='IDS_SCN_SHEETWORKFLOW';
 update lsusergrouprights set displaytopic='IDS_SCN_TEMPLATEWORKFLOW' where displaytopic='IDS_SCN_SHEETWORKFLOW';
@@ -1064,11 +1085,10 @@ update lsusergrouprightsmaster set sdelete='NA' where displaytopic in ('IDS_SCN_
 update lsusergrouprightsmaster set status='1,1,0' where displaytopic='IDS_SCN_PROTOCOLTEMPLATE';
 update lsusergrouprights set sdelete='NA' where displaytopic in ('IDS_SCN_PROTOCOLTEMPLATE','IDS_SCN_INVENTORY');
 
-update lsusergrouprightsmaster set sedit='1' where orderno in (11,12,13);
-update lsusergrouprights set sedit='1' where displaytopic in ('IDS_SCN_TASKMASTER','IDS_SCN_PROJECTMASTER','IDS_SCN_SAMPLEMASTER');
+
 update lsusergrouprightsmaster set screate='NA' where orderno in (66,67);
 update lsusergrouprights set screate='NA', sedit='NA' where displaytopic in ('IDS_TSK_ACTDEACTUSERMASTER','IDS_TSK_ORDEROVERVIEW','IDS_TSK_TEMPLATEOVERVIEW','IDS_TSK_ACTIVITIES','IDS_SCN_AUDITTRAILHIS');
-update lsusergrouprights set screate ='NA' where displaytopic in ('IDS_SCN_ORDERWORKLOW','IDS_SCN_AUDITTRAILCONFIG','IDS_TSK_IMPORTADS','IDS_SCN_TEMPLATEWORKFLOW','IDS_SCN_PASSWORDPOLICY','IDS_TSK_ADDREPO','IDS_TSK_EDITREPO','IDS_TSK_NEWSTEP','IDS_TSK_EXPORTPDF','IDS_SCN_USERRIGHTS','IDS_SCN_REPORTS','IDS_TSK_NEWDOCUMENT','IDS_TSK_NEWTEMP','IDS_TSK_GENERATEREPORT');
+update lsusergrouprights set screate ='NA' where displaytopic in ('IDS_SCN_ORDERWORKLOW','IDS_SCN_AUDITTRAILCONFIG','IDS_TSK_IMPORTADS','IDS_SCN_TEMPLATEWORKFLOW','IDS_SCN_PASSWORDPOLICY','IDS_TSK_ADDREPO','IDS_TSK_EDITREPO','IDS_TSK_NEWSTEP','IDS_TSK_EXPORTPDF','IDS_SCN_USERRIGHTS','IDS_TSK_NEWDOCUMENT','IDS_TSK_NEWTEMP','IDS_TSK_GENERATEREPORT');
 update lsusergrouprightsmaster set screate='NA' where orderno IN (20,27,40,41,43,50,57,58,45,35,5,6,46,47);
 update lsusergrouprightsmaster set sdelete='NA' where orderno in (19,26);
 update lsusergrouprights set sdelete='NA' where screenname in ('IDS_SCN_CFRSETTINGS','IDS_SCN_PROJECTTEAM');
@@ -1078,14 +1098,15 @@ INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, s
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (91, 'IDS_TSK_MOVEORDERS', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',14,'IDS_SCN_SHEETORDERS') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (92, 'IDS_TSK_MOVEORDERSPROTOCOL', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',21,'IDS_SCN_PROTOCOLORDERS') ON CONFLICT(orderno)DO NOTHING;
 
-update lsusergrouprightsmaster set screate='NA' where displaytopic in ('IDS_SCN_USERRIGHTS','IDS_SCN_REPORTS');
+update lsusergrouprightsmaster set screate='NA' where displaytopic in ('IDS_SCN_USERRIGHTS');
 update lsusergrouprights set modulename='IDS_MDL_TEMPLATES' where displaytopic in ('IDS_TSK_SHEET','IDS_TSK_PROTOCOL','IDS_TSK_ELNANDRESEARCH','IDS_TSK_LIMSTESTORDER','IDS_TSK_MOVEORDERSPROTOCOL');
 update lsusergrouprightsmaster set modulename='IDS_MDL_TEMPLATES' where orderno in (14,15,71,72);
 update lsusergrouprightsmaster set modulename='IDS_MDL_ORDERS' where orderno in (46,47) and displaytopic='IDS_TSK_MOVEORDERSPROTOCOL';
 update lsusergrouprights set modulename='IDS_MDL_ORDERS' where displaytopic in ('IDS_TSK_PENDINGWORKPROTOCOL','IDS_TSK_COMPLETEDWORKPROTOCOL');
 update lsusergrouprightsmaster set modulename='IDS_MDL_SETUP' where orderno in (16,17,18,20,21,23,22,24,52,40,43,19,41);
 
-update lsusergrouprightsmaster set status='1,1,1' where orderno=39;
+
+update lsusergrouprightsmaster set status='0,0,0' where orderno in (45,58,35,89,90);
 
 update lsaudittrailconfigmaster set screenname='IDS_SCN_REPORTS' where modulename='IDS_MDL_REPORTS';
 update lsaudittrailconfiguration set screenname='IDS_SCN_REPORTS' where modulename='IDS_MDL_REPORTS';
@@ -1192,7 +1213,6 @@ INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, s
 update lsusergrouprights set modulename='IDS_MDL_MASTERS' where displaytopic in ('IDS_TSK_ADDREPO','IDS_TSK_EDITREPO','IDS_SCN_UNLOCKORDERS','IDS_SCN_TASKMASTER','IDS_SCN_SAMPLEMASTER','IDS_SCN_PROJECTMASTER','IDS_SCN_INVENTORY');
 
 
-update lsusergrouprights set screate='0',sedit=0,sdelete=0 where screenname='IDS_SCN_LOGBOOK';
 
 update lsusergrouprightsmaster set screate='1' where orderno in (71,72);
 update lsusergrouprights set screate='1' where displaytopic in ('IDS_TSK_SHEET','IDS_TSK_PROTOCOL');
@@ -1203,7 +1223,7 @@ INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, s
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (98, 'IDS_TSK_EDITLOGBOOK', 'IDS_MDL_LOGBOOK', '0', 'NA', 'NA', 'NA', '0,0,0',44,'IDS_SCN_LOGBOOK') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (95, 'IDS_SCN_LOGBOOK', 'IDS_MDL_LOGBOOK', '0', 'NA', 'NA', 'NA', '0,0,0',44,'IDS_SCN_LOGBOOK') ON CONFLICT(orderno)DO NOTHING;
 update lsusergrouprightsmaster set screate='0',sedit=0,sdelete=0 where screenname='IDS_SCN_LOGBOOK';
-
+update lsusergrouprightsmaster set status='1,1,1' where displaytopic='IDS_SCN_LOGBOOK';
 ALTER TABLE IF Exists lsprotocolordersharedby ADD COLUMN IF NOT EXISTS protocolorders_protocolordercode numeric(17,0);
 
 ALTER TABLE IF Exists lsprotocolordershareto ADD COLUMN IF NOT EXISTS protocolorders_protocolordercode numeric(17,0);
@@ -1330,8 +1350,8 @@ delete from lsusergrouprights where displaytopic in ('IDS_TSK_PENDINGWORKPROTOCO
 update lsusergrouprightsmaster set sedit='NA' where orderno in (80,81);
 update lsusergrouprightsmaster set sdelete='1' where orderno=26;
 update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_CFRSETTINGS';
-update lsusergrouprightsmaster set screate='1' where orderno=34;
-update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_REPORTS';
+update lsusergrouprightsmaster set screate='0' where orderno=34;
+
 update lsusergrouprightsmaster set screate='NA',sedit='NA',sdelete='NA' where orderno in (97,98);
 update lsusergrouprights set screate='NA',sedit='NA',sdelete='NA' where displaytopic in ('IDS_TSK_ADDLOGBOOK','IDS_TSK_EDITLOGBOOK');
 update lsusergrouprights set screate='1',sedit='1',sdelete='1' where displaytopic='IDS_SCN_LOGBOOK' and usergroupid_usergroupcode=1;
@@ -1755,9 +1775,10 @@ update lsusergrouprightsmaster set modulename='IDS_MDL_DASHBOARD' where orderno 
 update lsusergrouprightsmaster set modulename='IDS_MDL_ORDERS' where orderno in (7,8,9,37,38,61,62,93,85);
 update lsusergrouprightsmaster set modulename='IDS_MDL_MASTERS' where orderno=78;
 update lsusergrouprights set modulename='IDS_MDL_ORDERS' where displaytopic='IDS_TSK_MOVEORDERSPROTOCOL';
-update lsusergrouprightsmaster set screate=0 where orderno in (34,71,72);
+update lsusergrouprightsmaster set screate=0 where orderno in (71,72);
 update lsusergrouprightsmaster set sedit=0 where orderno in (11,12,13);
 update lsusergrouprightsmaster set sdelete=0 where orderno=26;
+update lsusergrouprightsmaster set status='1,1,1' where orderno in (39,11,12,13);
 
 delete from lsaudittrailconfigmaster where serialno in (81,82,83);
 Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(81,0,'IDS_MDL_LOGBOOK',6,'IDS_SCN_LOGBOOK','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
@@ -2742,8 +2763,6 @@ update lsaudittrailconfigmaster set modulename='IDS_MDL_SETUP' where taskname='I
  update lsaudittrailconfigmaster set ordersequnce=116 where serialno=82;
  update lsaudittrailconfigmaster set ordersequnce=117 where serialno=83;
  
-
-
 update lsusergrouprights set modulename='IDS_MDL_LOGBOOK' where screenname='IDS_SCN_LOGBBOK';
 update lsaudittrailconfiguration set modulename='IDS_MDL_LOGBOOK' where screenname='IDS_SCN_LOGBBOK';
 update lsaudittrailconfiguration set taskname='IDS_TSK_RETIRELOG' where screenname='IDS_SCN_LOGBOOK' and taskname='IDS_TSK_DELETE';
@@ -2772,14 +2791,18 @@ update lsaudittrailconfiguration set ordersequnce=20 where screenname='IDS_SCN_A
 update lsaudittrailconfiguration set ordersequnce=21 where screenname='IDS_SCN_CFRSETTINGS';
 update lsaudittrailconfiguration set ordersequnce=22 where screenname='IDS_SCN_AUDITTRAILCONFIG';
 update lsaudittrailconfiguration set ordersequnce=23 where screenname='IDS_SCN_REPORTS';
-update lsaudittrailconfiguration set ordersequnce=24 where modulename='IDS_MDL_PARSER';
-update lsaudittrailconfiguration set ordersequnce=25 where screenname='IDS_SCN_UNITMASTER';
-update lsaudittrailconfiguration set ordersequnce=26 where screenname='IDS_SCN_SECTIONMASTER';
-update lsaudittrailconfiguration set ordersequnce=27 where screenname='IDS_SCN_STORAGELOCATION';
-update lsaudittrailconfiguration set ordersequnce=28 where screenname='IDS_SCN_MATERIALCATEGORY';
-update lsaudittrailconfiguration set ordersequnce=29 where screenname='IDS_SCN_MATERIAL';
-update lsaudittrailconfiguration set ordersequnce=30 where modulename='IDS_SCN_MATERIALINVENTORY';
-update lsaudittrailconfiguration set ordersequnce=31 where modulename='IDS_MDL_LOGBOOK';
+update lsaudittrailconfiguration set ordersequnce=24 where screenname='IDS_SCN_INSTRUMENTCATEGORY';
+update lsaudittrailconfiguration set ordersequnce=25 where screenname='IDS_SCN_INSTRUMENTMATER';
+update lsaudittrailconfiguration set ordersequnce=26 where screenname='IDS_SCN_DELIMITER';
+update lsaudittrailconfiguration set ordersequnce=27 where screenname='IDS_SCN_METHODDELIMITER';
+update lsaudittrailconfiguration set ordersequnce=28 where screenname='IDS_SCN_METHODMASTER';
+update lsaudittrailconfiguration set ordersequnce=29 where screenname='IDS_SCN_UNITMASTER';
+update lsaudittrailconfiguration set ordersequnce=30 where screenname='IDS_SCN_SECTIONMASTER';
+update lsaudittrailconfiguration set ordersequnce=31 where screenname='IDS_SCN_STORAGELOCATION';
+update lsaudittrailconfiguration set ordersequnce=32 where screenname='IDS_SCN_MATERIALCATEGORY';
+update lsaudittrailconfiguration set ordersequnce=33 where screenname='IDS_SCN_MATERIAL';
+update lsaudittrailconfiguration set ordersequnce=34 where screenname='IDS_SCN_MATERIALINVENTORY';
+update lsaudittrailconfiguration set ordersequnce=35 where screenname='IDS_SCN_LOGBOOK';
 
 
  DO
@@ -2847,3 +2870,59 @@ ALTER TABLE IF Exists lsprotocolmaster ADD COLUMN IF NOT EXISTS category charact
 
 ALTER TABLE IF Exists LSfile ADD COLUMN IF NOT EXISTS category character varying(255);
 
+ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS ordercancell integer;
+
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS ordercancell integer;
+
+
+ DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsprotocolorderstephistory_protocolorderstephistorycode_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE lsprotocolorderstephistory_protocolorderstephistorycode_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+    
+CREATE TABLE IF NOT EXISTS public.lsprotocolorderstephistory
+(
+    protocolorderstephistorycode integer NOT NULL DEFAULT nextval('lsprotocolorderstephistory_protocolorderstephistorycode_seq'::regclass),
+    action character varying(250) COLLATE pg_catalog."default",
+    comment character varying(250) COLLATE pg_catalog."default",
+    protocolordercode bigint,
+    protocolorderstepcode integer,
+    stependdate timestamp without time zone,
+    stepno integer,
+    stepskipeddate timestamp without time zone,
+    stepstartdate timestamp without time zone,
+    viewoption integer,
+    createby_usercode integer,
+    modifiedby_usercode integer,
+    CONSTRAINT lsprotocolorderstephistory_pkey PRIMARY KEY (protocolorderstephistorycode),
+    CONSTRAINT fkcw20pabmliwvfrn9on2qethrb FOREIGN KEY (modifiedby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkeo4a00cj4658t2q59p5hmba2w FOREIGN KEY (createby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsprotocolorderstephistory
+    OWNER to postgres;

@@ -204,7 +204,15 @@ public class LSlogilablimsorderdetail {
 	
 	private Long directorycode;
 	
-//	public Integer getRejected() {
+	private Integer ordercancell;
+	
+public Integer getOrdercancell() {
+		return ordercancell;
+	}
+	public void setOrdercancell(Integer ordercancell) {
+		this.ordercancell = ordercancell;
+	}
+	//	public Integer getRejected() {
 //		return rejected;
 //	}
 //	public void setRejected(Integer rejected) {

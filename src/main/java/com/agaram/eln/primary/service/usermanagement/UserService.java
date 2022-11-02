@@ -223,7 +223,8 @@ public class UserService {
 			return lsuserMasterRepository.findByUserretirestatusNotOrderByCreateddateDesc(1);
 		}
 
-		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1, objusergroup.getLssitemaster());
+		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1,
+				objusergroup.getLssitemaster());
 	}
 
 	public List<LSuserMaster> GetUsersOnsite(LSSiteMaster objclass) {
@@ -456,6 +457,7 @@ public class UserService {
 					objteam.getResponse().setInformation("ID_SUCCESSMSG");
 				}
 			} else {
+
 				lsusersteamRepository.save(objteam);
 				objteam.setResponse(new Response());
 				objteam.getResponse().setStatus(true);
@@ -472,6 +474,7 @@ public class UserService {
 		objteam.setResponse(new Response());
 		objteam.getResponse().setStatus(true);
 		objteam.getResponse().setInformation("ID_SUCCESSMSG");
+		updatenotificationforteam(objteam);
 
 		for (LSuserMaster objuser : objteam.getLsuserMaster()) {
 			LSuserteammapping objmap = new LSuserteammapping();
@@ -486,6 +489,46 @@ public class UserService {
 		}
 
 		return objteam;
+	}
+
+	private void updatenotificationforteam(LSusersteam objteam) {
+		String Details = "";
+		String Notifiction = "";
+		Notifiction = "TEAMCREATED";
+		LSusersteam userteam = lsusersteamRepository.findByteamcode(objteam.getTeamcode());
+		LSuserMaster lstusers = lsuserMasterRepository.findByusercode(objteam.getTeamcode());
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		for (int i = 0; i < objteam.getLsuserMaster().size(); i++) {
+			if (objteam.getLsuserMaster().size() > 1) {
+				Details = "{\"teamname\":\"" + objteam.getTeamname() + "\", \"team\":\"" + "\"}";
+				LSnotification objnotify = new LSnotification();
+				objnotify.setNotifationfrom(objteam.getModifiedby());
+				objnotify.setNotifationto(objteam.getLsuserMaster().get(i));
+				objnotify.setNotificationdate(objteam.getModifieddate());
+				objnotify.setNotification(Notifiction);
+				objnotify.setNotificationdetils(Details);
+				objnotify.setIsnewnotification(1);
+				objnotify.setNotificationpath("/masters");
+				objnotify.setNotificationfor(2);
+
+				lsnotificationRepository.save(objnotify);
+
+			}
+
+			else {
+				Details = "{\"teamname\":\"" + objteam.getTeamname() + "\", \"team\":\"" + "\"}";
+				LSnotification objnotify = new LSnotification();
+				objnotify.setNotifationfrom(objteam.getModifiedby());
+				objnotify.setNotifationto(objteam.getLsuserMaster().get(i));
+				objnotify.setNotificationdate(objteam.getModifieddate());
+				objnotify.setNotification(Notifiction);
+				objnotify.setNotificationdetils(Details);
+				objnotify.setIsnewnotification(1);
+				objnotify.setNotificationpath("/masters");
+				objnotify.setNotificationfor(1);
+				lsnotificationRepository.save(objnotify);
+			}
+		}
 	}
 
 	public List<LSusersteam> GetUserTeam(LSuserMaster LSuserMaster) {
@@ -513,7 +556,7 @@ public class UserService {
 	public Map<String, Object> GetUserRightsonGroup(LSusergroup lsusergroup) {
 
 		Map<String, Object> maprights = new HashMap<String, Object>();
-		
+
 		LSpreferences objpref = LSpreferencesRepository.findByTasksettingsAndValuesettings("ELNparser", "0");
 
 		if (lsusergroup.getUsergroupcode() == null) {
@@ -543,7 +586,7 @@ public class UserService {
 					.findByOrderBySequenceorder();
 			if (lstUserrights != null && lstUserrights.size() > 0 && lstUserrights.size() > 10) {
 				maprights.put("new", false);
-				
+
 				if (objpref != null) {
 
 					List<LSusergrouprightsmaster> remLst = new ArrayList<LSusergrouprightsmaster>();
@@ -555,14 +598,14 @@ public class UserService {
 							});
 
 					lstUserrightsmasterlst.removeAll(remLst);
-					
+
 					List<LSusergrouprights> remRightsLst = new ArrayList<LSusergrouprights>();
-					
+
 					lstUserrights.stream().filter(item -> item.getModulename().equalsIgnoreCase("Parser"))
-					.forEach(item -> {
-						item.operate();
-						remRightsLst.add(item);
-					});
+							.forEach(item -> {
+								item.operate();
+								remRightsLst.add(item);
+							});
 
 					lstUserrights.removeAll(remRightsLst);
 
@@ -572,7 +615,7 @@ public class UserService {
 					maprights.put("rights", lstUserrights);
 					maprights.put("masterrights", lstUserrightsmasterlst);
 				}
-				
+
 			} else {
 				List<LSusergrouprightsmaster> lstUserrightsmaster = lsusergrouprightsmasterRepository
 						.findByOrderBySequenceorder();
@@ -737,13 +780,11 @@ public class UserService {
 		}
 		List<String> status = Arrays.asList("A", "Active");
 		if (Objclass.getSitecode() == 0) {
-			return lSusergroupRepository
-					.findByUsergroupstatusInOrderByUsergroupcodeDesc(status);
+			return lSusergroupRepository.findByUsergroupstatusInOrderByUsergroupcodeDesc(status);
 		}
 
 		List<LSusergroup> lstusergroup = lSusergroupRepository
-				.findBylssitemasterAndUsergroupstatusInOrderByUsergroupcodeDesc(
-						Objclass.getSitecode(), status);
+				.findBylssitemasterAndUsergroupstatusInOrderByUsergroupcodeDesc(Objclass.getSitecode(), status);
 
 		return lstusergroup;
 	}
@@ -910,16 +951,16 @@ public class UserService {
 
 	public Map<String, Object> Getnotification(LSuserMaster lsuserMaster) {
 		Map<String, Object> objresmap = new HashMap<String, Object>();
-        Integer notifyfor = lsuserMaster.getObjuser().getFiltertype();
+		Integer notifyfor = lsuserMaster.getObjuser().getFiltertype();
 		objresmap.put("newnotificationcount",
 				lsnotificationRepository.countByNotifationtoAndIsnewnotification(lsuserMaster, 1));
-		objresmap.put("notification",
-				lsnotificationRepository.findFirst10ByNotifationtoAndNotificationforOrderByNotificationcodeDesc(lsuserMaster,notifyfor));
-		
+		objresmap.put("notification", lsnotificationRepository
+				.findFirst10ByNotifationtoAndNotificationforOrderByNotificationcodeDesc(lsuserMaster, notifyfor));
+
 		objresmap.put("mynotificationcount",
-				lsnotificationRepository.countByNotifationtoAndIsnewnotificationAndNotificationfor(lsuserMaster, 1,1));
+				lsnotificationRepository.countByNotifationtoAndIsnewnotificationAndNotificationfor(lsuserMaster, 1, 1));
 		objresmap.put("teamnotificationcount",
-				lsnotificationRepository.countByNotifationtoAndIsnewnotificationAndNotificationfor(lsuserMaster, 1,2));
+				lsnotificationRepository.countByNotifationtoAndIsnewnotificationAndNotificationfor(lsuserMaster, 1, 2));
 
 		return objresmap;
 	}
@@ -929,7 +970,7 @@ public class UserService {
 
 		lsnotificationRepository.updatenotificationstatus(lsnotification.getNotifationto(),
 				lsnotification.getNotificationcode());
-		
+
 		lsnotification.setIsnewnotification(0);
 
 		objresmap = Getnotification(lsnotification.getNotifationto());
@@ -941,10 +982,10 @@ public class UserService {
 	public Map<String, Object> GetnotificationonLazyload(LSnotification lsnotification) {
 		Map<String, Object> objresmap = new HashMap<String, Object>();
 
-		objresmap.put("notification",
-				lsnotificationRepository
-						.findFirst10ByNotifationtoAndNotificationcodeLessThanAndNotificationforOrderByNotificationcodeDesc(
-								lsnotification.getNotifationto(), lsnotification.getNotificationcode(),lsnotification.getNotificationfor()));
+		objresmap.put("notification", lsnotificationRepository
+				.findFirst10ByNotifationtoAndNotificationcodeLessThanAndNotificationforOrderByNotificationcodeDesc(
+						lsnotification.getNotifationto(), lsnotification.getNotificationcode(),
+						lsnotification.getNotificationfor()));
 
 		return objresmap;
 	}
@@ -1097,9 +1138,8 @@ public class UserService {
 	}
 
 	public LSusergroupedcolumns setGroupedcolumn(LSusergroupedcolumns objgroupped) {
-		LSusergroupedcolumns objexist = getGroupedcolumn(objgroupped); 
-		if(objexist!=null)
-		{
+		LSusergroupedcolumns objexist = getGroupedcolumn(objgroupped);
+		if (objexist != null) {
 			objgroupped.setUsergroupedcolcode(objexist.getUsergroupedcolcode());
 		}
 		return lsusergroupedcolumnsRepository.save(objgroupped);
@@ -1142,11 +1182,11 @@ public class UserService {
 
 		return bool;
 	}
-	
+
 	public Boolean Notificationmarkallasread(LSuserMaster lsuserMaster) {
-        lsnotificationRepository.updatenotificationstatusforall(lsuserMaster);
+		lsnotificationRepository.updatenotificationstatusforall(lsuserMaster);
 
 		return true;
 	}
-	
+
 }
