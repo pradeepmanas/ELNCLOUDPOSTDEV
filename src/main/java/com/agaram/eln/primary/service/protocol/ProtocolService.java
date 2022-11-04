@@ -86,6 +86,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
@@ -136,6 +137,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowReposi
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
@@ -155,7 +157,10 @@ import com.microsoft.azure.storage.blob.CloudBlockBlob;
 @Service
 @EnableJpaRepositories(basePackageClasses = LSProtocolMasterRepository.class)
 public class ProtocolService {
-
+	@Autowired
+	LSuserMasterRepository lsusermasterRepository;
+	@Autowired
+	LSnotificationRepository lsnotificationRepository;
 	@Autowired
 	LSProtocolMasterRepository LSProtocolMasterRepositoryObj;
 
@@ -1874,9 +1879,10 @@ public class ProtocolService {
 		mapObj.put("curentprotocolorder", LSlogilabprotocoldetail);
 		mapObj.put("ProtocolObj", LsProto);
 		mapObj.put("status", "success");
-
 		return mapObj;
 	}
+
+	
 
 	public List<LSprotocolworkflow> GetProtocolWorkflow(LSprotocolworkflow objclass) {
 		return lSprotocolworkflowRepository.findBylssitemaster(objclass.getLssitemaster());

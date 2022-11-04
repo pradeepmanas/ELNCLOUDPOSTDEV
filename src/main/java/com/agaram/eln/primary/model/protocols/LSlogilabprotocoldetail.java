@@ -43,6 +43,28 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private String keyword;
 	@Transient
 	private Integer multiusergroupcode;
+	@Transient
+	LoggedUser objuser;
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	Date modifidate;
+	
+	public Date getModifidate() {
+		return modifidate;
+	}
+
+	public void setModifidate(Date modifidate) {
+		this.modifidate = modifidate;
+	}
+
+	public LoggedUser getObjuser() {
+		return objuser;
+	}
+
+	public void setObjuser(LoggedUser objuser) {
+		this.objuser = objuser;
+	}
+
 	public Integer getMultiusergroupcode() {
 		return multiusergroupcode;
 	}
@@ -220,9 +242,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.directorycode = directorycode;
 	}
 
-	@Transient
-	LoggedUser objuser;
-
+	
 	@Transient
 	LScfttransaction objmanualaudit;
 
@@ -523,14 +543,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.lsprojectmaster = lsprojectmaster;
 	}
 
-	public LoggedUser getObjuser() {
-		return objuser;
-	}
-
-	public void setObjuser(LoggedUser objuser) {
-		this.objuser = objuser;
-	}
-
+	
 	public LScfttransaction getObjmanualaudit() {
 		return objmanualaudit;
 	}

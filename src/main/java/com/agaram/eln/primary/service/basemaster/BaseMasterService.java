@@ -89,7 +89,7 @@ public class BaseMasterService {
 	@Autowired
 	ProtocolService ProtocolMasterService;
 	@Autowired
-    private UnitRepository unitRepository;
+	private UnitRepository unitRepository;
 
 	@Autowired
 	private LselninstrumentfieldsRepository lselninstrumentfieldsRepository;
@@ -181,30 +181,31 @@ public class BaseMasterService {
 						1, objClass.getLssitemaster()) != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
-			
+
 			return objClass;
 		} else if (objClass.getTestcode() != null
 				&& lStestmasterlocalRepository.findByTestnameIgnoreCaseAndStatusAndTestcodeNotAndLssitemaster(
 						objClass.getTestname(), 1, objClass.getTestcode(), objClass.getLssitemaster()) != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
-			
+
 			return objClass;
 		}
-		
-		if(objClass.getStatus() == -1 && objClass.getTestcode() != null) {
-			
-			List<LSlogilablimsorderdetail> objOrderLst = LSlogilablimsorderdetailRepository.findByTestcode(objClass.getTestcode());
-			
-			if(!objOrderLst.isEmpty()) {
+
+		if (objClass.getStatus() == -1 && objClass.getTestcode() != null) {
+
+			List<LSlogilablimsorderdetail> objOrderLst = LSlogilablimsorderdetailRepository
+					.findByTestcode(objClass.getTestcode());
+
+			if (!objOrderLst.isEmpty()) {
 				objClass.getResponse().setStatus(false);
 				objClass.getResponse().setInformation("IDS_SAMPLETRANSACTION");
 
 				return objClass;
-			}	
-			
+			}
+
 		}
-		
+
 		lStestmasterlocalRepository.save(objClass);
 
 		if (objClass.getLSmaterial() != null) {
@@ -249,19 +250,20 @@ public class BaseMasterService {
 
 			return objClass;
 		}
-		
-		if(objClass.getStatus() == -1 && objClass.getSamplecode() != null) {
-			
-			List<LSlogilablimsorderdetail> objOrderLst = LSlogilablimsorderdetailRepository.findByLssamplemaster(objClass);
-			
-			if(!objOrderLst.isEmpty()) {
+
+		if (objClass.getStatus() == -1 && objClass.getSamplecode() != null) {
+
+			List<LSlogilablimsorderdetail> objOrderLst = LSlogilablimsorderdetailRepository
+					.findByLssamplemaster(objClass);
+
+			if (!objOrderLst.isEmpty()) {
 				objClass.getResponse().setStatus(false);
 				objClass.getResponse().setInformation("IDS_SAMPLETRANSACTION");
 
 				return objClass;
-			}	
+			}
 		}
-		
+
 		lSsamplemasterRepository.save(objClass);
 		objClass.getResponse().setStatus(true);
 		objClass.getResponse().setInformation("");
@@ -330,45 +332,35 @@ public class BaseMasterService {
 	private void updatenotificationforproject(LSprojectmaster objClass) {
 		String Details = "";
 		String Notifiction = "PROJECTCREATED";
-		
+
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-		
-		LSnotification notify=new LSnotification();
-		List<LSuserteammapping> objteam = LSuserteammappingRepository.findByteamcode(objClass.getLsusersteam().getTeamcode());
-		LSusersteam objteam1=new LSusersteam();
-		List<LSuserteammapping> lstusers = new ArrayList<LSuserteammapping>();
-		for (int i = 0; i < objteam.size(); i++) {
-			 objteam1 = LSusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
 
-			 lstusers = objteam1.getLsuserteammapping();
-		}
 		
+		List<LSuserteammapping> objteam =new ArrayList<LSuserteammapping>();
+		LSusersteam objteam1 = new LSusersteam();
 		
-			for (int j = 0; j < lstusers.size(); j++) {
-				Details = "{\"teamname\":\"" + objClass.getTeamname() + "\", \"projectname\":\"" + objClass.getProjectname()+"\"}";
-				
-				notify.setNotifationfrom(objClass.getModifiedby());
-				notify.setNotifationto(lstusers.get(j).getLsuserMaster());
-				notify.setNotificationdate(new Date());
-				notify.setNotification(Notifiction);
-				notify.setNotificationdetils(Details);
-				notify.setIsnewnotification(1);
-				notify.setNotificationpath("/projectmaster");
-				notify.setNotificationfor(1);
-				
-				lstnotifications.add(notify);
-				
-		
-			}
+		for (int i = 0; i < objClass.getLsusersteam().getLsuserteammapping().size(); i++) {
+			LSnotification notify = new LSnotification();
+			//objteam1 = LSusersteamRepository.findByteamcode(objClass.getLsusersteam().getTeamcode());
+		//LSuserteammappingRepository.findByUsercode();
+			Details = "{\"teamname\":\"" + objClass.getTeamname() + "\", \"projectname\":\"" + objClass.getProjectname()
+					+ "\"}";
+
+			notify.setNotifationfrom(objClass.getModifiedby());
+				notify.setNotifationto(objClass.getLsusersteam().getLsuserteammapping().get(i).getLsuserMaster());
+			notify.setNotificationdate(new Date());
+			notify.setNotification(Notifiction);
+			notify.setNotificationdetils(Details);
+			notify.setIsnewnotification(1);
+			notify.setNotificationpath("/projectmaster");
+			notify.setNotificationfor(1);
+
+			lstnotifications.add(notify);
 			LSnotificationRepository.save(lstnotifications);
-		}
-	
-		
-	
-			
 
-		
-	
+		}
+
+	}
 
 	public Map<String, Object> GetMastersforTestMaster(LSuserMaster objuser) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
@@ -482,22 +474,22 @@ public class BaseMasterService {
 
 		return unitRepository.findByNstatusOrderByNunitcodeDesc(1);
 	}
-	
+
 	public Unit InsertupdateUnit(Unit objClass) {
-		
-		if(objClass.getNunitcode() == -1) {
-			
+
+		if (objClass.getNunitcode() == -1) {
+
 			objClass = unitRepository.save(objClass);
-			
-		}else {
+
+		} else {
 			Unit objUnit = unitRepository.findOne(objClass.getNunitcode());
-			
+
 			objUnit.setSunitname(objClass.getSunitname());
 			objUnit.setSdescription(objClass.getSdescription());
-			
+
 			objClass = unitRepository.save(objUnit);
 		}
-		
+
 		return objClass;
 	}
 

@@ -101,7 +101,9 @@ public class LSuserMaster {
 	@Transient
 	LScfttransaction objsilentaudit;
 	
-	
+
+
+
 
 	@Transient
 	LScfttransaction Objmanualaudit;
@@ -141,6 +143,18 @@ public class LSuserMaster {
 	public void setIdletime(Integer idletime) {
 		this.idletime = idletime;
 	}
+	@Transient
+	private List<LSMultiusergroup> deleterole;
+	public List<LSMultiusergroup> getDeleterole() {
+		return deleterole;
+	}
+
+	public void setDeleterole(List<LSMultiusergroup> deleterole) {
+		this.deleterole = deleterole;
+	}
+
+
+
 
 	@Transient
 	private Integer idletime;
