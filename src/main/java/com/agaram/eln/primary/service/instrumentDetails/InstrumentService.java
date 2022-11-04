@@ -2531,7 +2531,7 @@ public class InstrumentService {
 	public LSsamplefile SaveResultfile(LSsamplefile objfile) {
 
 		List<LSsamplefileversion> a = objfile.getLssamplefileversion();
-		Integer target = objfile.getVersionno();
+		Integer target = objfile.getVersionno() == null ? 1 : objfile.getVersionno();
 
 		Integer lastversionindex = IntStream.range(0, a.size()).filter(i -> target.equals(a.get(i).getVersionno()))
 				.findFirst().orElse(0);

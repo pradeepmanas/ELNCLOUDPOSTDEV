@@ -20,6 +20,7 @@ import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.notification.Email;
+import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -288,7 +289,7 @@ public class UserService {
 			objusermaster.setResponse(new Response());
 			objusermaster.getResponse().setStatus(true);
 			objusermaster.getResponse().setInformation("ID_SUCCESSMSG");
-
+			updatenotificationforuserrole(objusermaster);
 			return objusermaster;
 		}
 
@@ -328,6 +329,30 @@ public class UserService {
 
 		return objusermaster;
 	}
+
+	private void updatenotificationforuserrole(LSuserMaster objusermaster) {
+		String Details = "";
+		String Notifiction = "";
+		Notifiction = "USERROLEADD";
+
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+
+//		if(objusermaster.getMultiusergroupcode().size()>1)
+
+		Details = "{\"role\":\"" + objusermaster.getMultiusergroupcode().get(0).getLsusergroup().getUsergroupname()
+				+ "\", \"site\":\"" +objusermaster.getSitename()+ "\"}";
+		LSnotification objnotify = new LSnotification();
+		objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
+		objnotify.setNotifationto(objusermaster);
+		objnotify.setNotificationdate(objusermaster.getModifieddate());
+		objnotify.setNotification(Notifiction);
+		objnotify.setNotificationdetils(Details);
+		objnotify.setNotificationfor(1);
+		objnotify.setNotificationpath("/Usermaster");
+		objnotify.setIsnewnotification(1);
+		lsnotificationRepository.save(objnotify);
+	}
+	// }
 
 	private String Generatetenantpassword() {
 
@@ -507,10 +532,10 @@ public class UserService {
 				objnotify.setNotificationdate(objteam.getModifieddate());
 				objnotify.setNotification(Notifiction);
 				objnotify.setNotificationdetils(Details);
-				objnotify.setIsnewnotification(1);
+				objnotify.setNotificationfor(1);
 				objnotify.setNotificationpath("/masters");
 				objnotify.setNotificationfor(2);
-
+				objnotify.setIsnewnotification(1);
 				lsnotificationRepository.save(objnotify);
 
 			}

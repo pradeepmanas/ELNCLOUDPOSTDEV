@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.model.sheetManipulation;
 
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -29,8 +33,17 @@ public class LSsamplemaster {
 	@Column(columnDefinition = "varchar(100)")
 	private String samplename;
 	private Integer status;
+	
+	private String samplecategory;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdate;
 	@ManyToOne
 	private LSSiteMaster lssitemaster;
+	
+	@ManyToOne
+	private LSuserMaster createby;
+
 
 	@Transient
 	private Response response;
@@ -121,6 +134,30 @@ public class LSsamplemaster {
 
 	public void setModifiedby(LSuserMaster modifiedby) {
 		this.modifiedby = modifiedby;
+	}
+
+	public String getSamplecategory() {
+		return samplecategory;
+	}
+
+	public void setSamplecategory(String samplecategory) {
+		this.samplecategory = samplecategory;
+	}
+
+	public Date getCreatedate() {
+		return createdate;
+	}
+
+	public void setCreatedate(Date createdate) {
+		this.createdate = createdate;
+	}
+
+	public LSuserMaster getCreateby() {
+		return createby;
+	}
+
+	public void setCreateby(LSuserMaster createby) {
+		this.createby = createby;
 	}
 	
 	

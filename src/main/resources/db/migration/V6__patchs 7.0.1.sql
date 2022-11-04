@@ -2926,3 +2926,46 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.lsprotocolorderstephistory
     OWNER to postgres;
+    
+    
+ALTER TABLE IF Exists lssamplemaster ADD COLUMN IF NOT EXISTS samplecategory character varying(255);
+
+ALTER TABLE IF Exists lssamplemaster ADD COLUMN IF NOT EXISTS createdate timestamp without time zone;
+
+ALTER TABLE IF Exists lssamplemaster ADD COLUMN IF NOT EXISTS  createby_usercode integer;
+
+DO
+$do$
+declare
+  resultvalues integer :=0;
+begin
+
+SELECT count(*) into resultvalues FROM
+information_schema.table_constraints WHERE constraint_name='fk88q928l57ed9lx1yxo3opl4a'
+AND table_name='lssamplemaster';
+ IF resultvalues =0 THEN
+ 	ALTER TABLE ONLY lssamplemaster ADD CONSTRAINT fk88q928l57ed9lx1yxo3opl4a FOREIGN KEY (createby_usercode) REFERENCES lsusermaster (usercode);
+   END IF;
+END
+$do$; 
+
+ALTER TABLE IF Exists lstestmasterlocal ADD COLUMN IF NOT EXISTS taskcategory character varying(255);
+
+ALTER TABLE IF Exists lstestmasterlocal ADD COLUMN IF NOT EXISTS createdate timestamp without time zone;
+
+ALTER TABLE IF Exists lstestmasterlocal ADD COLUMN IF NOT EXISTS  createby_usercode integer;
+
+DO
+$do$
+declare
+  resultvalues integer :=0;
+begin
+
+SELECT count(*) into resultvalues FROM
+information_schema.table_constraints WHERE constraint_name='fkjpbxy60g5p0bx5jj2dgrtn23u'
+AND table_name='lstestmasterlocal';
+ IF resultvalues =0 THEN
+ 	ALTER TABLE ONLY lstestmasterlocal ADD CONSTRAINT fkjpbxy60g5p0bx5jj2dgrtn23u FOREIGN KEY (createby_usercode) REFERENCES lsusermaster (usercode);
+   END IF;
+END
+$do$;

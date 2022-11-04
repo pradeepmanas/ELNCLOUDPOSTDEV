@@ -53,8 +53,7 @@ public class LSusersteam {
 		this.selectedrecord = selectedrecord;
 	}
 
-	@Column(columnDefinition = "date")
-	private Date createdate;
+	
 
 	@Column(columnDefinition = "date")
 	private Date modifieddate;
@@ -162,14 +161,7 @@ public class LSusersteam {
 		this.lsuserteammapping = lsuserteammapping;
 	}
 
-	public Date getCreatedate() {
-		return createdate;
-	}
-
-	public void setCreatedate(Date createdate) {
-		this.createdate = createdate;
-	}
-
+	
 	public Date getModifieddate() {
 		return modifieddate;
 	}
@@ -209,9 +201,5 @@ public class LSusersteam {
 		return null;
 	}
 
-	public java.util.Date getCreatedtimestamp() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 }

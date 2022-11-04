@@ -1,16 +1,38 @@
 package com.agaram.eln.primary.fetchmodel.getmasters;
 
+import java.util.Date;
+
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+
 public class Samplemaster {
 	
 	private Integer samplecode;
 	private String samplename;
+	private LSSiteMaster lssitemaster;
+	private String samplecategory;
+	private Date createdate;
+	private LSuserMaster createby;
 	
-	public Samplemaster(Integer samplecode, String samplename)
+	public Samplemaster(Integer samplecode, String samplename,LSSiteMaster lssitemaster,String samplecategory,Date createdate,
+			LSuserMaster createby)
 	{
 		this.samplecode = samplecode;
 		this.samplename = samplename;
+		this.lssitemaster=lssitemaster;
+		this.samplecategory=samplecategory;
+		this.createdate=createdate;
+		this.createby=createby;
 	}
 	
+	public LSuserMaster getCreateby() {
+		return createby;
+	}
+
+	public void setCreateby(LSuserMaster createby) {
+		this.createby = createby;
+	}
+
 	public Integer getSamplecode() {
 		return samplecode;
 	}
@@ -22,6 +44,30 @@ public class Samplemaster {
 	}
 	public void setSamplename(String samplename) {
 		this.samplename = samplename;
+	}
+
+	public LSSiteMaster getLssitemaster() {
+		return lssitemaster;
+	}
+
+	public void setLssitemaster(LSSiteMaster lssitemaster) {
+		this.lssitemaster = lssitemaster;
+	}
+
+	public String getSamplecategory() {
+		return samplecategory;
+	}
+
+	public void setSamplecategory(String samplecategory) {
+		this.samplecategory = samplecategory;
+	}
+
+	public Date getCreatedate() {
+		return createdate;
+	}
+
+	public void setCreatedate(Date createdate) {
+		this.createdate = createdate;
 	}
 	
 	

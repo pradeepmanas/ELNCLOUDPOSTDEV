@@ -53,6 +53,21 @@ public class LSuserMaster {
 	@Column(columnDefinition = "varchar(255)")
 	private String modifiedby;
 	
+	@Transient
+	private LSuserMaster loggedinuser;
+	
+	
+	public LSuserMaster getLoggedinuser() {
+		return loggedinuser;
+	}
+
+	public void setLoggedinuser(LSuserMaster loggedinuser) {
+		this.loggedinuser = loggedinuser;
+	}
+
+
+
+
 	@Column(name = "passwordstatus")
 	private Integer passwordstatus;
 	
@@ -73,7 +88,10 @@ public class LSuserMaster {
 	
 	@ManyToOne
 	private LSuserActions lsuserActions;
+
+
 	
+
 	@Transient
 	Response objResponse;
 	
@@ -83,8 +101,8 @@ public class LSuserMaster {
 	@Transient
 	LScfttransaction objsilentaudit;
 	
-	private Integer modifiedUser;
 	
+
 	@Transient
 	LScfttransaction Objmanualaudit;
 	
@@ -472,13 +490,7 @@ public class LSuserMaster {
 		this.sitename = sitename;
 	}
 
-	public Integer getModifiedUser() {
-		return modifiedUser;
-	}
-
-	public void setModifiedUser(Integer modifiedUser) {
-		this.modifiedUser = modifiedUser;
-	}
+	
 
 	public LSuserActions getLsuserActions() {
 		return lsuserActions;
@@ -543,6 +555,8 @@ public class LSuserMaster {
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
 		this.lstworkflow = lstworkflow;
 	}
+
+
 	
 	
 }

@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.model.sheetManipulation;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -12,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -48,6 +51,17 @@ public class LStestmasterlocal {
 	private List<LSequipmentmap> LSequipmentmap;
 	@Transient
 	private List<LSinstrument> LSinstrument;
+	
+	@ManyToOne
+	private LSuserMaster createby;
+	
+	
+	private String taskcategory;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdate;
+	
+	
 	
 	@Transient
 	private Response response;
@@ -167,6 +181,30 @@ public class LStestmasterlocal {
 
 	public void setModifiedby(LSuserMaster modifiedby) {
 		this.modifiedby = modifiedby;
+	}
+
+	public LSuserMaster getCreateby() {
+		return createby;
+	}
+
+	public void setCreateby(LSuserMaster createby) {
+		this.createby = createby;
+	}
+
+	public String getTaskcategory() {
+		return taskcategory;
+	}
+
+	public void setTaskcategory(String taskcategory) {
+		this.taskcategory = taskcategory;
+	}
+
+	public Date getCreatedate() {
+		return createdate;
+	}
+
+	public void setCreatedate(Date createdate) {
+		this.createdate = createdate;
 	}
 
 	

@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.service.basemaster;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
-
+import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
@@ -28,8 +29,11 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
+import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusersteam;
+import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
@@ -43,7 +47,10 @@ import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplemasterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
+
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
 
@@ -54,6 +61,13 @@ public class BaseMasterService {
 	/**
 	 * For Masters Repository
 	 */
+	@Autowired
+	private LSusersteamRepository LSusersteamRepository;
+	@Autowired
+	private LSuserteammappingRepository LSuserteammappingRepository;
+	@Autowired
+
+	private LSnotificationRepository LSnotificationRepository;
 	@Autowired
 	private LsMethodFieldsRepository lsMethodFieldsRepository;
 	@Autowired
@@ -103,7 +117,7 @@ public class BaseMasterService {
 
 	public List<Testmaster> getTestmaster(LSuserMaster objClass) {
 
-		return lStestmasterlocalRepository.findBystatusAndLssitemaster(1, objClass.getLssitemaster());
+		return lStestmasterlocalRepository.findBystatusAndLssitemasterOrderByTestcodeDesc(1, objClass.getLssitemaster());
 	}
 
 	public Map<String, Object> getTestwithsheet(LSuserMaster objClass) {
@@ -309,9 +323,52 @@ public class BaseMasterService {
 		lSprojectmasterRepository.save(objClass);
 		objClass.getResponse().setStatus(true);
 		objClass.getResponse().setInformation("");
-
+		updatenotificationforproject(objClass);
 		return objClass;
 	}
+
+	private void updatenotificationforproject(LSprojectmaster objClass) {
+		String Details = "";
+		String Notifiction = "PROJECTCREATED";
+		
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		
+		LSnotification notify=new LSnotification();
+		List<LSuserteammapping> objteam = LSuserteammappingRepository.findByteamcode(objClass.getLsusersteam().getTeamcode());
+		LSusersteam objteam1=new LSusersteam();
+		List<LSuserteammapping> lstusers = new ArrayList<LSuserteammapping>();
+		for (int i = 0; i < objteam.size(); i++) {
+			 objteam1 = LSusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
+
+			 lstusers = objteam1.getLsuserteammapping();
+		}
+		
+		
+			for (int j = 0; j < lstusers.size(); j++) {
+				Details = "{\"teamname\":\"" + objClass.getTeamname() + "\", \"projectname\":\"" + objClass.getProjectname()+"\"}";
+				
+				notify.setNotifationfrom(objClass.getModifiedby());
+				notify.setNotifationto(lstusers.get(j).getLsuserMaster());
+				notify.setNotificationdate(new Date());
+				notify.setNotification(Notifiction);
+				notify.setNotificationdetils(Details);
+				notify.setIsnewnotification(1);
+				notify.setNotificationpath("/projectmaster");
+				notify.setNotificationfor(1);
+				
+				lstnotifications.add(notify);
+				
+		
+			}
+			LSnotificationRepository.save(lstnotifications);
+		}
+	
+		
+	
+			
+
+		
+	
 
 	public Map<String, Object> GetMastersforTestMaster(LSuserMaster objuser) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
