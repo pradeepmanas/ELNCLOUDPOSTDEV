@@ -984,6 +984,7 @@ public class InstrumentService {
 									.getUsercode()) {
 								LSnotification objnotify = new LSnotification();
 								objnotify.setNotifationfrom(obj);
+								objnotify.setNotifationto(objorder.getLsuserMaster());
 								objnotify.setNotificationdate(objorder.getCreatedtimestamp());
 								objnotify.setNotification(Notifiction);
 								objnotify.setNotificationdetils(Details);
@@ -3057,11 +3058,54 @@ public class InstrumentService {
 		lsorderworkflowhistoryRepositroy.save(objorder.getLsorderworkflowhistory());
 
 		lslogilablimsorderdetailRepository.save(objorder);
-		
+		updatenotificationforworkflowapproval(objorder);
+
 		return objorder;
 	}
 
-	
+	private void updatenotificationforworkflowapproval(LSlogilablimsorderdetail objorder) {
+		String Details = "";
+		String Notifiction = "";
+		Notifiction = "";
+		LSuserMaster obj = lsuserMasterRepository.findByusercode(objorder.getObjLoggeduser().getUsercode());
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+
+		if (objorder.getApprovelstatus() != null) {
+			LSusersteam objteam = lsusersteamRepository
+					.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode());
+			if (objorder.getIsFinalStep() != 1) {
+				if (objorder.getApprovelstatus() == 1) {
+					Notifiction = "USERAPPROVAL";
+				} else if (objorder.getApprovelstatus() == 2) {
+					Notifiction = "USERRETURN";
+				} else if (objorder.getApprovelstatus() == 3) {
+					Notifiction = "USERREJECT";
+				}
+
+				List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
+				Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
+						+ "\", \"user\":\"" + objorder.getLsuserMaster().getUsername() + "\", \"comment\":\""
+						+ objorder.getComment() + "\"}";
+
+				for (int i = 0; i < lstusers.size(); i++) {
+					if (objorder.getObjLoggeduser().getUsercode() != lstusers.get(i).getLsuserMaster().getUsercode()) {
+						LSnotification objnotify = new LSnotification();
+						objnotify.setNotifationfrom(obj);
+						objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
+						objnotify.setNotificationdate(objorder.getModifidate());
+						objnotify.setNotification(Notifiction);
+						objnotify.setNotificationdetils(Details);
+						objnotify.setIsnewnotification(1);
+						objnotify.setNotificationpath("/registertask");
+						objnotify.setNotificationfor(1);
+						lstnotifications.add(objnotify);
+					}
+				}
+
+				lsnotificationRepository.save(lstnotifications);
+			}
+		}
+	}
 
 	public boolean Updatesamplefileversion(LSsamplefile objfile) {
 		int Versionnumber = 0;
@@ -5797,6 +5841,7 @@ public class InstrumentService {
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 		List<Logilabprotocolorders> lstorder = new ArrayList<Logilabprotocolorders>();
+		List<Logilabprotocolorders> lstorderondirectory = new ArrayList<Logilabprotocolorders>();
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
 		Integer protocoltype = objorder.getProtocoltype();
@@ -5805,21 +5850,36 @@ public class InstrumentService {
 			lstorder = LSlogilabprotocoldetailRepository
 					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
 							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate);
+			lstorderondirectory=LSlogilabprotocoldetailRepository
+					.findByOrderflagAndDirectorycodeAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+							objorder.getOrderflag(),objorder.getDirectorycode(), protocoltype, fromdate, todate);
 		} else if (objorder.getTestcode() == null && objorder.getLsprojectmaster() == null
 				&& objorder.getRejected() != null) {
 			lstorder = LSlogilabprotocoldetailRepository
 					.findByOrderflagAndRejectedAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
 							objorder.getOrderflag(), 1, lstproject, protocoltype, fromdate, todate);
+			
+			lstorderondirectory = LSlogilabprotocoldetailRepository
+					.findByOrderflagAndRejectedAndDirectorycodeAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+							objorder.getOrderflag(), 1,objorder.getDirectorycode(), protocoltype, fromdate, todate);
 		} else if (objorder.getTestcode() == null && objorder.getLsprojectmaster() != null
 				&& objorder.getRejected() == null) {
 			lstorder = LSlogilabprotocoldetailRepository
 					.findByOrderflagAndLsprojectmasterAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
 							objorder.getOrderflag(), objorder.getLsprojectmaster(), protocoltype, fromdate, todate);
+//			lstorderondirectory = LSlogilabprotocoldetailRepository
+//					.findByOrderflagAndDirectorycodeAndLsprojectmasterAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+//							objorder.getOrderflag(),objorder.getDirectorycode(), objorder.getLsprojectmaster(), protocoltype, fromdate, todate);
 		} else if (objorder.getTestcode() != null && objorder.getLsprojectmaster() == null
 				&& objorder.getRejected() == null) {
 			lstorder = LSlogilabprotocoldetailRepository
 					.findByOrderflagAndLsprojectmasterInAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
 							objorder.getOrderflag(), lstproject, objorder.getTestcode(), protocoltype, fromdate,
+							todate);
+			
+			lstorderondirectory = LSlogilabprotocoldetailRepository
+					.findByOrderflagAndDirectorycodeAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+							objorder.getOrderflag(),objorder.getDirectorycode() , objorder.getTestcode(), protocoltype, fromdate,
 							todate);
 		} else if (objorder.getTestcode() != null && objorder.getLsprojectmaster() != null
 				&& objorder.getRejected() == null) {
@@ -5833,6 +5893,11 @@ public class InstrumentService {
 					.findByOrderflagAndRejectedAndLsprojectmasterInAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
 							objorder.getOrderflag(), 1, lstproject, objorder.getTestcode(), protocoltype, fromdate,
 							todate);
+			
+			lstorderondirectory = LSlogilabprotocoldetailRepository
+					.findByOrderflagAndRejectedAndDirectorycodeAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+							objorder.getOrderflag(), 1,objorder.getDirectorycode(), lstproject, objorder.getTestcode(), protocoltype, fromdate,
+							todate);
 		} else if (objorder.getTestcode() == null && objorder.getLsprojectmaster() != null
 				&& objorder.getRejected() != null) {
 			lstorder = LSlogilabprotocoldetailRepository
@@ -5845,16 +5910,12 @@ public class InstrumentService {
 							objorder.getOrderflag(), 1, objorder.getLsprojectmaster(), objorder.getTestcode(),
 							protocoltype, fromdate, todate);
 		}
-//			if (objorder.getRejected() != null) {
-//				lstorder = LSlogilabprotocoldetailRepository
-//						.findByOrderflagAndRejectedAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
-//								objorder.getOrderflag(), 1, lstproject, protocoltype, fromdate, todate);
-//			} else {
-//				lstorder = LSlogilabprotocoldetailRepository
-//						.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
-//								objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate);
-//			}
 
+		if(lstorderondirectory.size()>0) {
+			lstorder.addAll(lstorderondirectory);
+		}
+		
+		
 		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
 		List<Long> protocolordercode = new ArrayList<>();
 		if (lstorder.size() > 0 && objorder.getSearchCriteriaType() != null) {

@@ -85,8 +85,8 @@ import com.agaram.eln.primary.model.protocols.Protocolvideos;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
@@ -136,6 +136,7 @@ import com.agaram.eln.primary.repository.protocol.lSprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -322,6 +323,9 @@ public class ProtocolService {
 
 	@Autowired
 	private LSprotocolorderstephistoryRepository lsprotocolorderstephistoryRepository;
+	
+	@Autowired
+	private LSworkflowgroupmappingRepository lsworkflowgroupmappingRepository;
 
 //	@Autowired
 //	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
@@ -3770,13 +3774,33 @@ public class ProtocolService {
 		return mapObj;
 	}
 
-	public LSlogilabprotocoldetail getsingleprotocolorder(LSlogilabprotocoldetail objusers) {
+	public List<LSlogilabprotocoldetail> getsingleprotocolorder(LSlogilabprotocoldetail objusers) {
+		List<LSlogilabprotocoldetail> rtobj =new ArrayList<>();
+		if (objusers.getProtocolordercode() != null) {
+			ArrayList<Long> obj=new ArrayList<>();
+			obj.add(objusers.getProtocolordercode());
+		 rtobj= LSlogilabprotocoldetailRepository.findByProtocolordercodeIn(
+					obj);
+		
+			LSusergroup userGroup = LSusergroupRepository.findOne(objusers.getMultiusergroupcode());
 
-		if (objusers.getProtocolordercode() != null && objusers.getProtoclordername() != null) {
-			return LSlogilabprotocoldetailRepository.findByProtocolordercodeAndProtoclordername(
-					objusers.getProtocolordercode(), objusers.getProtoclordername());
+			List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
+					.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
+	
+
+		if (lsworkflowgroupmapping != null && lsworkflowgroupmapping.size() > 0) {
+			List<LSworkflow> lsprotocolworkflow = lsworkflowRepository
+					.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
+	
+			rtobj.forEach(objorder -> objorder.setLstworkflow(lsprotocolworkflow));
+	
+			}else {
+				rtobj.forEach(objorder -> objorder.setCanuserprocess(false));
+			}
+		
+		return rtobj;
 		}
-		return objusers;
+		return rtobj;
 
 	}
 

@@ -303,4 +303,9 @@ public class FileController {
 			@RequestParam("order") Long batchcode, @RequestParam("filename") String filename) throws IOException {
 		return fileService.UploadLimsFile(file, batchcode, filename);
 	}
+	
+	@PostMapping(value = "/updatefilename")
+	public LSfile updatefilename(@RequestBody LSfile objfile)throws Exception {
+		return fileService.updatefilename(objfile);
+	}
 }

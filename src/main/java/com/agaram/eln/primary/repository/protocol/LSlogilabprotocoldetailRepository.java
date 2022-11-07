@@ -546,6 +546,28 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date fromdate, Date todate);
 
 
+	List<Logilabprotocolorders> findByOrderflagAndDirectorycodeAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+			String orderflag, Long directorycode, Integer protocoltype, Date fromdate, Date todate);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndRejectedAndDirectorycodeAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+			String orderflag, int i, Long directorycode, Integer protocoltype, Date fromdate, Date todate);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndDirectorycodeAndLsprojectmasterAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+			String orderflag, Long directorycode, LSprojectmaster lsprojectmaster, Integer protocoltype, Date fromdate,
+			Date todate);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndDirectorycodeAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+			String orderflag, Long directorycode, Integer testcode, Integer protocoltype, Date fromdate, Date todate);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndRejectedAndDirectorycodeAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+			String orderflag, int i, Long directorycode, List<LSprojectmaster> lstproject, Integer testcode,
+			Integer protocoltype, Date fromdate, Date todate);
+
+
 
 
 

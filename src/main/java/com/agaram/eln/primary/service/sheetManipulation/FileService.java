@@ -1278,4 +1278,9 @@ public class FileService {
 
 		return mapObj;
 	}
+
+	public LSfile updatefilename(LSfile objfile) {
+		lSfileRepository.save(objfile);
+		return objfile;
+	}
 }

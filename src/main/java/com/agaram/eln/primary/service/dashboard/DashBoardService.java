@@ -479,28 +479,29 @@ public class DashBoardService {
 							objuser.getLssitemaster().getSitecode(), fromdate, todate);
 		}
 
-		LSusergroup userGroup = LSusergroupRepository.findOne(objuser.getObjuser().getMultiusergroupcode());
+//		LSusergroup userGroup = LSusergroupRepository.findOne(objuser.getObjuser().getMultiusergroupcode());
 
-		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
-				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
+//		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
+//				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
+//
+//		List<LSuserteammapping> LSuserteammapping = LSuserteammappingRepositoryObj
+//				.findByLsuserMasterAndTeamcodeNotNull(objuser);
 
-		List<LSuserteammapping> LSuserteammapping = LSuserteammappingRepositoryObj
-				.findByLsuserMasterAndTeamcodeNotNull(objuser);
-
-		if (lsworkflowgroupmapping != null && lsworkflowgroupmapping.size() > 0) {
-//			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
-//					.findByworkflowcode(lsworkflowgroupmapping.get(0).getWorkflowcode());
-
-			List<LSworkflow> lsprotocolworkflow = lsworkflowRepository
-					.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
-
-			lstorders.forEach(objorder -> objorder.setLstworkflow(lsprotocolworkflow));
-
-		} else if (LSuserteammapping != null && LSuserteammapping.size() > 0) {
-
-			lstorders.forEach(objorder -> objorder.setCanuserprocess(false));
-
-		}
+//		if (lsworkflowgroupmapping != null && lsworkflowgroupmapping.size() > 0) {
+////			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
+////					.findByworkflowcode(lsworkflowgroupmapping.get(0).getWorkflowcode());
+//
+//			List<LSworkflow> lsprotocolworkflow = lsworkflowRepository
+//					.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmapping);
+//
+//			lstorders.forEach(objorder -> objorder.setLstworkflow(lsprotocolworkflow));
+//
+//		} else if (LSuserteammapping != null && LSuserteammapping.size() > 0) {
+//
+//			lstorders.forEach(objorder -> objorder.setCanuserprocess(false));
+//
+//		}
+		lstorders.forEach(objorderDetail -> objorderDetail.setLstworkflow(objuser.getLstworkflow()));
 		Collections.sort(lstorders, Collections.reverseOrder());
 		mapOrders.put("orderlst", lstorders);
 

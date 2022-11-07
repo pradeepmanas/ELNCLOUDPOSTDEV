@@ -334,7 +334,7 @@ public class ProtocolController {
 	}
 	
 	@PostMapping("/getsingleprotocolorder")
-	public LSlogilabprotocoldetail getsingleprotocolorder(@RequestBody LSlogilabprotocoldetail objusers)throws Exception
+	public List<LSlogilabprotocoldetail> getsingleprotocolorder(@RequestBody LSlogilabprotocoldetail objusers)throws Exception
 	{
 		return ProtocolMasterService.getsingleprotocolorder(objusers);
 	}

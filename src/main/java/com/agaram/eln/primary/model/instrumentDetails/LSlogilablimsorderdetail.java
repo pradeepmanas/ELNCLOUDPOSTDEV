@@ -109,6 +109,8 @@ public class LSlogilablimsorderdetail {
 	@Column(columnDefinition = "varchar(250)",name = "Keyword") 
 	private String keyword;
 	
+	@Transient
+	private String comment;
 	public String getKeyword() {
 		return keyword;
 	}
@@ -811,6 +813,12 @@ public Integer getOrdercancell() {
 	}
 	public void setViewoption(Integer viewoption) {
 		this.viewoption = viewoption;
+	}
+	public String getComment() {
+		return comment;
+	}
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 	
 	
