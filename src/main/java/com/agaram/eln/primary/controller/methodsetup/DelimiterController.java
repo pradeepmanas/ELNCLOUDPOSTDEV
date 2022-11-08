@@ -63,15 +63,15 @@ public class DelimiterController {
 	   * @return response of Newly added delimiter entity
 	   */
 	  @PostMapping(value = "/createDelimiters")
-	  public ResponseEntity<Object> createDelimiters(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
-		  final ObjectMapper mapper = new ObjectMapper();		
+	  public ResponseEntity<Object> createDelimiters(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {		  final ObjectMapper mapper = new ObjectMapper();		
 		  final Delimiter delimiters = mapper.convertValue(mapObject.get("delimiters"), Delimiter.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
+		  final Delimiter auditdetails = mapper.convertValue(mapObject.get("auditdetails"), Delimiter.class);
+
 		  
-		  return delimitersService
-				  .createDelimiters(delimiters, site, saveAuditTrail, request);
+		  return delimitersService.createDelimiters(delimiters,site,saveAuditTrail, auditdetails, request);
 	  }
 	  
 	  /**

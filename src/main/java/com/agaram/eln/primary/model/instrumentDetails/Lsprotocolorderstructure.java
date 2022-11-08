@@ -116,7 +116,15 @@ public class Lsprotocolorderstructure {
 
 	private Integer viewoption;
 
+	private Integer teamcode;
 
+	public Integer getTeamcode() {
+		return teamcode;
+	}
+
+	public void setTeamcode(Integer teamcode) {
+		this.teamcode = teamcode;
+	}
 
 	public LSuserMaster getCreatedby() {
 		return createdby;

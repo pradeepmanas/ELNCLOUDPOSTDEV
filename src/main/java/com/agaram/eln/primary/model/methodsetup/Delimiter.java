@@ -41,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "delimiter")
 @XmlType(propOrder = { "delimiterkey", "delimitername", "actualdelimiter", 
-		 "status", "createdby", "createddate" , "username","transactiondate","defaultvalue","displayvalue","screenname","objsilentaudit"})
+		 "status", "createdby", "createddate" , "username","transactiondate","defaultvalue","displayvalue","screenname","objsilentaudit","objmanualaudit"})
 @Entity
 @Table(name = "delimiter")
 public class Delimiter implements Serializable, Diffable<Delimiter>{
@@ -74,7 +74,10 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 		
 	@Transient
 	private LScfttransaction objsilentaudit;
-
+	
+	@Transient
+	LScfttransaction objmanualaudit;
+	
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
 	Date transactiondate;
@@ -200,8 +203,18 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
 		this.objsilentaudit = objsilentaudit;
 	}
+	
+
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
 
 	/**
+	 * 
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
 	@Override
@@ -218,6 +231,8 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	       .append("displayvalue", this.displayvalue, obj.displayvalue)
            .append("screenname", this.screenname, obj.screenname)
            .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
+           .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
+
 
 
 	       .build();

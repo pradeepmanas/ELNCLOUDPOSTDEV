@@ -2971,3 +2971,7 @@ END
 $do$;
 
 INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) VALUES (59, NULL, NULL, 19, 3, 1, 'G1', 'ID_GENERAL', '20', 'ID_GENERAL', 20, 'ID_GENERAL', 'G20', 'multiselect combobox', 1) on conflict (fieldcode) do nothing;
+
+update lsfields set isactive=1  where level04code='G14';
+
+ALTER TABLE IF Exists lsprotocolorderStructure ADD COLUMN IF NOT EXISTS  teamcode integer;

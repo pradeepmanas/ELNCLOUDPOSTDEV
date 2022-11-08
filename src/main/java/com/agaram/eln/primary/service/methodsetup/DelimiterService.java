@@ -86,10 +86,10 @@ public class DelimiterService {
 	 */
 	@Transactional
 	public ResponseEntity<Object> createDelimiters(final Delimiter delimiters, final LSSiteMaster site,
-
-			   final boolean saveAuditTrial, final HttpServletRequest request)
+			final Boolean saveAuditTrial,final Delimiter auditdetails,  final HttpServletRequest request)
 		{ 
 		   //Checking for Duplicate delimitername 
+	//	   boolean saveAuditTrial = true;
 		   final Optional<Delimiter> delimiterByName = delimitersRepo
 	 				 .findByDelimiternameAndStatus(delimiters.getDelimitername(), 1);
 		      
@@ -144,33 +144,33 @@ public class DelimiterService {
 //	    		mapObj.put("screenname","Delimiter" );
 //                mapObj.put("displayvalue", savedPolicy.getActualdelimiter());
 
-	    		LScfttransaction LScfttransaction = new LScfttransaction();
+	    //		LScfttransaction LScfttransaction = new LScfttransaction();
 	    		
-	    		if (saveAuditTrial)
-				{   			
+//	    		if (saveAuditTrial)
+//				{   			
 					final Map<String, String> fieldMap = new HashMap<String, String>();
 					fieldMap.put("createdby", "loginid");
 										
 					
-					LScfttransaction.setActions("Insert");
-					LScfttransaction.setComments(delimiters.getActualdelimiter()+ " was created by  "+delimiters.getUsername());
-					LScfttransaction.setLssitemaster(site.getSitecode());
-					LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
-					LScfttransaction.setManipulatetype("View/Load");
-					LScfttransaction.setModuleName("Delimiter");
-					LScfttransaction.setTransactiondate(delimiters.getCreateddate());
-					LScfttransaction.setUsername(delimiters.getUsername());
-					LScfttransaction.setTableName("delimiter");
-					LScfttransaction.setSystemcoments("System Generated");
-					
-					lscfttransactionrepo.save(LScfttransaction);
+//					LScfttransaction.setActions("Insert");
+//					LScfttransaction.setComments(delimiters.getActualdelimiter()+ " was created by  "+delimiters.getUsername());
+//					LScfttransaction.setLssitemaster(site.getSitecode());
+//					LScfttransaction.setLsuserMaster(delimiters.getCreatedby().getUsercode());
+//					LScfttransaction.setManipulatetype("View/Load");
+//					LScfttransaction.setModuleName("Delimiter");
+//					LScfttransaction.setTransactiondate(delimiters.getCreateddate());
+//					LScfttransaction.setUsername(delimiters.getUsername());
+//					LScfttransaction.setTableName("delimiter");
+//					LScfttransaction.setSystemcoments("System Generated");
+//					
+//					lscfttransactionrepo.save(LScfttransaction);
 					
 //					final String xmlData = readWriteXML.saveXML(savedPolicy, Delimiter.class, null, "individualpojo", fieldMap);
 //									
 //					final String actionType = EnumerationInfo.CFRActionType.SYSTEM.getActionType();
 //					cfrTransService.saveCfrTransaction(page, actionType, "Create", "", 
 //							site, xmlData, createdUser, request.getRemoteAddr());
-				}
+				//}
 	      		
 	    		return new ResponseEntity<>(savedPolicy , HttpStatus.OK);
 	    	} 
