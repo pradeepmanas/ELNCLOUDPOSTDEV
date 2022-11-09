@@ -76,6 +76,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LsfilesharetoReposito
 import com.agaram.eln.primary.repository.sheetManipulation.LssheetworkflowhistoryRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.basemaster.BaseMasterService;
@@ -88,7 +89,9 @@ import com.mongodb.gridfs.GridFSDBFile;
 public class FileService {
 
 	static final Logger logger = Logger.getLogger(FileService.class.getName());
-
+	@SuppressWarnings("unused")
+	@Autowired
+	private LSuserMasterRepository lsusermasterRepository;
 	@Autowired
 	private LSfileRepository lSfileRepository;
 	@Autowired
@@ -578,11 +581,12 @@ public class FileService {
 			lscfttransactionRepository.save(objfile.getLssheetworkflowhistory()
 					.get(objfile.getLssheetworkflowhistory().size() - 1).getObjsilentaudit());
 		}
-		updatenotificationforsheetworkflowapproval(objfile, false);
+		updatenotificationforsheetworkflowapproval(objfile, false, objcurrentfile.getLssheetworkflow(), false);
 		return objfile;
 	}
 
-	private void updatenotificationforsheetworkflowapproval(LSfile objfile, Boolean isNew) {
+	private void updatenotificationforsheetworkflowapproval(LSfile objfile, Boolean isNew,
+			LSsheetworkflow previousworkflow, Boolean IsNewsheet) {
 		List<LSuserteammapping> objteam = lsuserteammappingRepository
 				.findByTeamcodeNotNullAndLsuserMaster(objfile.getLSuserMaster());
 		LSnotification objnotify = new LSnotification();
@@ -590,54 +594,49 @@ public class FileService {
 			String Details = "";
 			String Notifiction = "";
 			List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-			if (objfile.getApproved() != 1 || !isNew) {
-				if (objfile.getApproved() == 0) {
-					Notifiction = "SHEETAPPROVAL";
-				} else if (objfile.getRejected() == 1) {
-					Notifiction = "SHEETAPPROVALREJECT";
-				} else if (objfile.getApproved() == 2) {
-					Notifiction = "SHEETAPPROVALRETURN";
-				}
-				List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
 
-				for (int i = 0; i < objteam.size(); i++) {
-					LSusersteam objteam1 = LSusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
+			if (objfile.getApproved() == 0) {
+				Notifiction = "SHEETAPPROVAL";
+			} else if (objfile.getRejected() == 1) {
+				Notifiction = "SHEETAPPROVALREJECT";
+			} else if (objfile.getApproved() == 2) {
+				Notifiction = "SHEETAPPROVALRETURN";
+			}
+			List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
 
-					List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
+			for (int i = 0; i < objteam.size(); i++) {
+				LSusersteam objteam1 = LSusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
 
-					for (int j = 0; j < lstusers.size(); j++) {
+				List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
 
-						if (objfile.getObjLoggeduser().getUsercode() != lstusers.get(j).getLsuserMaster()
-								.getUsercode()) {
-							if (lstnotified.contains(lstusers.get(j).getLsuserMaster()))
-								continue;
+				for (int j = 0; j < lstusers.size(); j++) {
 
-							lstnotified.add(lstusers.get(j).getLsuserMaster());
-							
-							if(objfile.getApproved() == 1)
-							{
-								objnotify.setNotifationto(objfile.getCreateby());
-								Notifiction = "SHEETAPPROVALSENT";
-							}
-							else
-							{
-								objnotify.setNotifationto(lstusers.get(j).getLsuserMaster());
-							}
-							Details = "{\"ordercode\":\"" + objfile.getFilecode() + "\", \"order\":\"" + objfile.getFilenameuser()
-							+ "\", \"username\":\""
+					if (objfile.getObjLoggeduser().getUsercode() != lstusers.get(j).getLsuserMaster().getUsercode()) {
+						if (lstnotified.contains(lstusers.get(j).getLsuserMaster()))
+							continue;
 
-							+ objfile.getLSuserMaster().getUsername() + "\"}";
-							objnotify.setNotifationfrom(objfile.getLSuserMaster());
-							objnotify.setNotificationdate(objfile.getCreatedate());
-							objnotify.setNotification(Notifiction);
-							objnotify.setNotificationdetils(Details);
-							objnotify.setIsnewnotification(1);
-							objnotify.setNotificationpath("/sheetcreation");
-							objnotify.setNotificationfor(1);
+						lstnotified.add(lstusers.get(j).getLsuserMaster());
 
-							lstnotifications.add(objnotify);
-
+						if (objfile.getApproved() == 1) {
+							objnotify.setNotifationto(objfile.getLSuserMaster());
+							Notifiction = "SHEETAPPROVALSENT";
+						} else {
+							objnotify.setNotifationto(lstusers.get(j).getLsuserMaster());
 						}
+						Details = "{\"ordercode\":\"" + objfile.getFilecode() + "\", \"order\":\""
+								+ objfile.getFilenameuser() + "\", \"username\":\""
+
+								+ objfile.getLSuserMaster().getUsername() + "\"}";
+						objnotify.setNotifationfrom(objfile.getLSuserMaster());
+						objnotify.setNotificationdate(objfile.getCreatedate());
+						objnotify.setNotification(Notifiction);
+						objnotify.setNotificationdetils(Details);
+						objnotify.setIsnewnotification(1);
+						objnotify.setNotificationpath("/sheetcreation");
+						objnotify.setNotificationfor(1);
+
+						lstnotifications.add(objnotify);
+
 					}
 				}
 			}
@@ -664,7 +663,7 @@ public class FileService {
 					if (objFile.getApproved() == 0) {
 						Notifiction = "SHEETMOVED";
 					}
-					if (objFile.getApproved() == 2) {
+					if (objFile.getApproved() == 2 && objFile.getRejected() != 1) {
 						Notifiction = "SHEETRETURNED";
 					} else if (objFile.getApproved() == 1) {
 						Notifiction = "SHEETAPPROVED";
@@ -1220,7 +1219,7 @@ public class FileService {
 		}
 
 		LsfilesharetoRepository.save(objprotocolordershareto);
-
+		updatenotificationforsheetshare(objprotocolordershareto);
 		return objprotocolordershareto;
 	}
 
@@ -1238,6 +1237,39 @@ public class FileService {
 		LsfilesharedbyRepository.save(objprotocolordersharedby);
 
 		return existingshare;
+	}
+
+	private void updatenotificationforsheetshare(Lsfileshareto objprotocolordershareto) {
+
+		String Details = "";
+		String Notifiction = "";
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+
+		Notifiction = "SHEETSHARE";
+		if (objprotocolordershareto.getSharerights() == 0) {
+			objprotocolordershareto.setReadorwrite("Read");
+			Details = "{\"shareduser\":\"" + objprotocolordershareto.getSharebyusername() + "\", \"privileges\":\""
+					+ objprotocolordershareto.getReadorwrite() + "\"}";
+
+		} else if (objprotocolordershareto.getSharerights() == 1) {
+			objprotocolordershareto.setReadorwrite("Read/write");
+			Details = "{\"shareduser\":\"" + objprotocolordershareto.getSharebyusername() + "\", \"privileges\":\""
+					+ objprotocolordershareto.getReadorwrite() + "\"}";
+		}
+
+		List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
+		LSnotification objnotify = new LSnotification();
+		objnotify.setNotifationfrom(objprotocolordershareto.getObjLoggeduser());
+		objnotify.setNotificationdate(objprotocolordershareto.getSharedon());
+		objnotify.setNotifationto(objprotocolordershareto.getSharetousercode());
+		objnotify.setNotification(Notifiction);
+		objnotify.setNotificationdetils(Details);
+		objnotify.setIsnewnotification(1);
+		objnotify.setNotificationpath("/sheetcreation");
+		objnotify.setNotificationfor(1);
+
+		lstnotifications.add(objnotify);
+		LSnotificationRepository.save(lstnotifications);
 	}
 
 	public List<Lsfilesharedby> Getfilesharedbyme(Lsfilesharedby lsordersharedby) {

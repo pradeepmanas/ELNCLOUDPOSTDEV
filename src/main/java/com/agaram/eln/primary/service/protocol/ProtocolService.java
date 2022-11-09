@@ -2081,9 +2081,9 @@ public class ProtocolService {
 				lSlogilabprotocoldetail.setProtoclordername(ProtocolOrderName);
 
 				lSlogilabprotocoldetail.setOrderflag("N");
-				if (lSlogilabprotocoldetail.getAssignedto() == null) {
-					lSlogilabprotocoldetail.setLsuserMaster(null);
-				}
+//				if (lSlogilabprotocoldetail.getAssignedto() == null) {
+//					lSlogilabprotocoldetail.setLsuserMaster(null);
+//				}
 
 //				List<LSprotocolstep> lstSteps = LSProtocolStepRepositoryObj.findByProtocolmastercode(
 //						lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode());

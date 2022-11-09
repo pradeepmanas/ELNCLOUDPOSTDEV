@@ -65,13 +65,13 @@ public class DelimiterController {
 	  @PostMapping(value = "/createDelimiters")
 	  public ResponseEntity<Object> createDelimiters(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {		  final ObjectMapper mapper = new ObjectMapper();		
 		  final Delimiter delimiters = mapper.convertValue(mapObject.get("delimiters"), Delimiter.class);
-		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
+		  final Boolean auditInput = mapper.convertValue(mapObject.get("auditInput"), Boolean.class);
 		  
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 		  final Delimiter auditdetails = mapper.convertValue(mapObject.get("auditdetails"), Delimiter.class);
 
 		  
-		  return delimitersService.createDelimiters(delimiters,site,saveAuditTrail, auditdetails, request);
+		  return delimitersService.createDelimiters(delimiters,site, auditdetails, request);
 	  }
 	  
 	  /**
@@ -84,18 +84,18 @@ public class DelimiterController {
 	  public ResponseEntity<Object> updateDelimiters(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
 		  final ObjectMapper mapper = new ObjectMapper();	
 		  final Delimiter delimiters = mapper.convertValue(mapObject.get("delimiters"), Delimiter.class);
-		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
+		  final Boolean auditInput = mapper.convertValue(mapObject.get("auditInput"), Boolean.class);
 		  
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 //		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
-		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
+	//	  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
 		  
 		  String strUserKey = (String) mapObject.get("doneByUserKey");
-		  
+		  final Delimiter auditdetails = mapper.convertValue(mapObject.get("auditdetails"), Delimiter.class);
+
 		  final int doneByUserKey = Integer.parseInt(strUserKey);
 		  
-		  return delimitersService.updateDelimiters(delimiters, site, comments, 
-				  saveAuditTrail,  request, doneByUserKey);
+		  return delimitersService.updateDelimiters(delimiters, site, doneByUserKey,auditdetails,request);
 	  }
 	  
 	  /**
@@ -109,7 +109,7 @@ public class DelimiterController {
 		  final ObjectMapper mapper = new ObjectMapper();	
 		 
 		  final int delimiterKey = mapper.convertValue(mapObject.get("delimiterkey"), Integer.class);
-		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
+		//  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 //		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
@@ -119,7 +119,9 @@ public class DelimiterController {
 		  final int doneByUserKey = Integer.parseInt(strUserKey);
 		  
 		  final Delimiter otherdetails = mapper.convertValue(mapObject.get("otherdetails"), Delimiter.class);
+		  final Delimiter auditdetails = mapper.convertValue(mapObject.get("auditdetails"), Delimiter.class);
+
 	  		  
-		  return delimitersService.deleteDelimters(delimiterKey, site, comments, doneByUserKey, saveAuditTrail, request,otherdetails);
+		  return delimitersService.deleteDelimters(delimiterKey, site, comments, doneByUserKey, request,otherdetails,auditdetails);
 	  }
 }

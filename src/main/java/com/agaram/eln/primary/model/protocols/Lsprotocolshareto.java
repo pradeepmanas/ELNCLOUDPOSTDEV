@@ -27,43 +27,63 @@ public class Lsprotocolshareto {
 	@Basic(optional = false)
 	@Column(name = "sharetoprotocolcode")
 	private Long sharetoprotocolcode;
-	
+
 	@Column(columnDefinition = "varchar(250)")
 	private String sharebyunifiedid;
 	@Column(columnDefinition = "varchar(250)")
 	private String sharetounifiedid;
-	
+
 	@Column(columnDefinition = "varchar(250)")
 	private String sharebyusername;
-	
+
 	@Column(columnDefinition = "varchar(250)")
 	private String sharetousername;
-	
+
 	private Long shareprotocolcode;
-	
+
 	@Column(columnDefinition = "varchar(250)")
 	private String shareprotocolname;
-	
+
 	@Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+	@Column(columnDefinition = "jsonb")
 	private String shareitemdetails;
-	
+
 	private Date sharedon;
-	
+
 	private Date unsharedon;
-	private int sharerights =0;
-	
-	private int sharestatus =0;
-	
+	private int sharerights = 0;
+
+	private int sharestatus = 0;
+
 	@Transient
 	LSuserMaster objLoggeduser;
-	
+
 	@Transient
 	LScfttransaction objsilentaudit;
-	
+
 	@Transient
 	LScfttransaction objmanualaudit;
-	
+	@Transient
+	private String readorwrite;
+	@Transient
+	LSuserMaster sharetousercode;
+
+	public String getReadorwrite() {
+		return readorwrite;
+	}
+
+	public void setReadorwrite(String readorwrite) {
+		this.readorwrite = readorwrite;
+	}
+
+	public LSuserMaster getSharetousercode() {
+		return sharetousercode;
+	}
+
+	public void setSharetousercode(LSuserMaster sharetousercode) {
+		this.sharetousercode = sharetousercode;
+	}
+
 	@Transient
 	private Integer ismultitenant;
 
@@ -83,7 +103,6 @@ public class Lsprotocolshareto {
 		return sharetousername;
 	}
 
-	
 	public String getShareitemdetails() {
 		return shareitemdetails;
 	}

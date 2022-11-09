@@ -111,6 +111,9 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private Integer testcode;
 	
 	private Long directorycode;
+	
+	private Integer teamcode;
+
 
 	@ManyToOne
 	private LSsamplemaster lssamplemaster;
@@ -590,5 +593,13 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	public void setOrdercancell(Integer ordercancell) {
 		this.ordercancell = ordercancell;
+	}
+
+	public Integer getTeamcode() {
+		return teamcode;
+	}
+
+	public void setTeamcode(Integer teamcode) {
+		this.teamcode = teamcode;
 	}
 }

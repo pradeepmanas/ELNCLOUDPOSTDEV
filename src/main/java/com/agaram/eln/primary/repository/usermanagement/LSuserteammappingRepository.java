@@ -2,6 +2,8 @@ package com.agaram.eln.primary.repository.usermanagement;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,5 +30,9 @@ public interface LSuserteammappingRepository  extends JpaRepository<LSuserteamma
 	public List<LSuserMaster> getLsuserMasterByTeamcode(@Param("teamCode") List<Integer> teamCode);
 
 	public List<LSuserteammapping> findByLsuserMasterAndTeamcodeNotNull(LSuserMaster objClass);
+
+	@Transactional
+	@Query("select l.teamcode from LSuserteammapping l where lsuserMaster=?2 and l.teamcode in (?1) ")
+	public List<Integer> getusermastercode(List<Integer> teamCode,LSuserMaster lsusermaster);
 
 }

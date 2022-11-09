@@ -2975,3 +2975,5 @@ INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypeco
 update lsfields set isactive=1  where level04code='G14';
 
 ALTER TABLE IF Exists lsprotocolorderStructure ADD COLUMN IF NOT EXISTS  teamcode integer;
+
+ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS  teamcode integer;

@@ -72,7 +72,8 @@ public class Lsprotocolorderstructure {
 	@Transient
 	List<LSworkflow> lstworkflow;
 
-
+	@Transient
+	private LSuserMaster lsuserMaster;
 
 	public Integer getRejected() {
 		return rejected;
@@ -292,5 +293,13 @@ public class Lsprotocolorderstructure {
 
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
 		this.lstworkflow = lstworkflow;
+	}
+
+	public LSuserMaster getLsuserMaster() {
+		return lsuserMaster;
+	}
+
+	public void setLsuserMaster(LSuserMaster lsuserMaster) {
+		this.lsuserMaster = lsuserMaster;
 	}
 }

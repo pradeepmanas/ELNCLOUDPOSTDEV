@@ -31,7 +31,7 @@ public class Lsfileshareto {
 
 	@Column(columnDefinition = "varchar(250)")
 	private String sharebyunifiedid;
-	
+
 	@Column(columnDefinition = "varchar(250)")
 	private String sharetounifiedid;
 
@@ -57,7 +57,8 @@ public class Lsfileshareto {
 	private int sharerights = 0;
 
 	private int sharestatus = 0;
-
+	@Transient
+	LSuserMaster sharetousercode;
 	@Transient
 	LSuserMaster objLoggeduser;
 
@@ -72,6 +73,24 @@ public class Lsfileshareto {
 
 	@Transient
 	private Long sharedbytofilecode;
+	@Transient
+	private String readorwrite;
+
+	public String getReadorwrite() {
+		return readorwrite;
+	}
+
+	public LSuserMaster getSharetousercode() {
+		return sharetousercode;
+	}
+
+	public void setSharetousercode(LSuserMaster sharetousercode) {
+		this.sharetousercode = sharetousercode;
+	}
+
+	public void setReadorwrite(String readorwrite) {
+		this.readorwrite = readorwrite;
+	}
 
 	public String getSharebyunifiedid() {
 		return sharebyunifiedid;
