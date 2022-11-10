@@ -67,6 +67,27 @@ public class LSSheetOrderStructure {
 	
 	@Transient
 	LoggedUser objuser;
+	
+	@Transient
+	private LSuserMaster lsuserMaster;
+	
+	private Integer teamcode;
+
+	public LSuserMaster getLsuserMaster() {
+		return lsuserMaster;
+	}
+
+	public void setLsuserMaster(LSuserMaster lsuserMaster) {
+		this.lsuserMaster = lsuserMaster;
+	}
+
+	public Integer getTeamcode() {
+		return teamcode;
+	}
+
+	public void setTeamcode(Integer teamcode) {
+		this.teamcode = teamcode;
+	}
 
 	public LSuserMaster getModifiedby() {
 		return modifiedby;

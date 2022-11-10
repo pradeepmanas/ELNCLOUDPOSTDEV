@@ -4890,12 +4890,24 @@ public class InstrumentService {
 	public Map<String, Object> Getfoldersfororders(LSlogilablimsorderdetail objorder) {
 
 		Map<String, Object> mapfolders = new HashMap<String, Object>();
-
+		
+		List<LSusersteam> lsusersteamobj = lsusersteamRepository
+				.findBylssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
+		List<Integer> teamcode = lsusersteamobj.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
+		List<Integer> LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode,
+				objorder.getLsuserMaster());
 		List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
-		lstdir = lsSheetOrderStructureRepository
-				.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-						objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2);
-
+		
+		
+		if (LSuserteammappingobj.size() == 0) {
+			lstdir = lsSheetOrderStructureRepository
+					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+							objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2);
+		} else {
+			lstdir = lsSheetOrderStructureRepository
+					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
+							objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,objorder.getLsuserMaster().getLssitemaster(), 3,LSuserteammappingobj);
+		}
 		if (objorder.getLstproject() != null && objorder.getLstproject().size() > 0) {
 			ArrayList<List<Object>> lsttest = new ArrayList<List<Object>>();
 			List<Integer> lsprojectcode = objorder.getLstproject().stream().map(LSprojectmaster::getProjectcode)
@@ -4952,17 +4964,38 @@ public class InstrumentService {
 		Date fromdate = objdir.getObjuser().getFromdate();
 		Date todate = objdir.getObjuser().getTodate();
 		Integer filetype = objdir.getFiletype();
+		List<LSusersteam> lsusersteamobj = lsusersteamRepository
+				.findBylssitemasterAndStatus(objdir.getLsuserMaster().getLssitemaster(), 1);
+		List<Integer> teamcode = lsusersteamobj.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
+		List<Integer> LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode,
+				objdir.getLsuserMaster());
 		if (filetype != null && filetype == -1) {
-			lstorder = lslogilablimsorderdetailRepository
-					.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-							objdir.getDirectorycode(), 1, fromdate, todate, objdir.getDirectorycode(), 2,
-							objdir.getCreatedby(), fromdate, todate);
-		} else {
-			lstorder = lslogilablimsorderdetailRepository
-					.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-							objdir.getDirectorycode(), 1, filetype, fromdate, todate, objdir.getDirectorycode(), 2,
-							objdir.getCreatedby(), filetype, fromdate, todate);
-		}
+			if(LSuserteammappingobj.size() == 0) {
+				lstorder = lslogilablimsorderdetailRepository
+						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getDirectorycode(), 2,
+								objdir.getCreatedby(), fromdate, todate);
+			}else {
+				lstorder = lslogilablimsorderdetailRepository
+						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndTeamcodeInOrderByBatchcodeDesc(
+								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getDirectorycode(), 2,
+								objdir.getCreatedby(), fromdate, todate,objdir.getDirectorycode(), 3, fromdate, todate,LSuserteammappingobj);
+			}
+			} else {
+				if(LSuserteammappingobj.size() == 0) {
+					lstorder = lslogilablimsorderdetailRepository
+							.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+									objdir.getDirectorycode(), 1, filetype, fromdate, todate, objdir.getDirectorycode(), 2,
+									objdir.getCreatedby(), filetype, fromdate, todate);
+
+				}else {
+					lstorder = lslogilablimsorderdetailRepository
+							.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndTeamcodeInOrderByBatchcodeDesc(
+									objdir.getDirectorycode(), 1, filetype, fromdate, todate, objdir.getDirectorycode(), 2,
+									objdir.getCreatedby(), filetype, fromdate, todate,objdir.getDirectorycode(), 3, filetype, fromdate, todate,LSuserteammappingobj);
+
+				}
+					}
 
 		lstorder.forEach(objorderDetail -> objorderDetail.setCanuserprocess(true));
 

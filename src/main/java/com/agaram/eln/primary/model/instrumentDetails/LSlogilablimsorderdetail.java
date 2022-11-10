@@ -40,181 +40,199 @@ import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
 @Table(name = "LSlogilablimsorderdetail")
 public class LSlogilablimsorderdetail {
 	@Id
-	@SequenceGenerator(name = "orderGen", sequenceName = "orderDetail", initialValue = 1000000, allocationSize=1)
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "orderGen")
-	@Column(columnDefinition = "numeric(17,0)",name = "batchcode") 
+	@SequenceGenerator(name = "orderGen", sequenceName = "orderDetail", initialValue = 1000000, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orderGen")
+	@Column(columnDefinition = "numeric(17,0)", name = "batchcode")
 	private Long batchcode;
 
-	//columnDefinition = "varchar(250)",
-	@Column(columnDefinition = "varchar(250)",name = "BatchID") 
+	// columnDefinition = "varchar(250)",
+	@Column(columnDefinition = "varchar(250)", name = "BatchID")
 	private String batchid;
 	@Transient
 	private SearchCriteria searchCriteria;
-	
+
 	public SearchCriteria getSearchCriteria() {
 		return searchCriteria;
 	}
+
 	public void setSearchCriteria(SearchCriteria searchCriteria) {
 		this.searchCriteria = searchCriteria;
 	}
-	@Column(name = "filetype") 
+
+	@Column(name = "filetype")
 	private Integer filetype;
 	@Transient
 	LoggedUser objuser;
-	
+
 	public LoggedUser getObjuser() {
 		return objuser;
 	}
+
 	public void setObjuser(LoggedUser objuser) {
 		this.objuser = objuser;
 	}
-	@Column(name = "approvelstatus") 
+
+	@Column(name = "approvelstatus")
 	private Integer approvelstatus;
-	@Column(name = "lockeduser") 
+	@Column(name = "lockeduser")
 	private Integer lockeduser;
-	@Column(columnDefinition = "varchar(50)",name = "lockedusername") 
+	@Column(columnDefinition = "varchar(50)", name = "lockedusername")
 	private String lockedusername;
-	
+
 	private Integer testcode;
 	private String testname;
 
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
 	Date modifidate;
-	
+
 	public Date getModifidate() {
 		return modifidate;
 	}
+
 	public void setModifidate(Date modifidate) {
 		this.modifidate = modifidate;
 	}
 
-	@Column(columnDefinition = "char(10)",name = "OrderFlag")
+	@Column(columnDefinition = "char(10)", name = "OrderFlag")
 	private String orderflag;
 
 	@Column(name = "CreatedTimeStamp")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdtimestamp;
-	
+
 	@Column(name = "CompletedTimeStamp")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date completedtimestamp;
 
-	@Column(columnDefinition = "varchar(100)",name = "MethodCode")
+	@Column(columnDefinition = "varchar(100)", name = "MethodCode")
 	private String methodcode;
 
-	@Column(columnDefinition = "varchar(100)",name = "InstrumentCode")
+	@Column(columnDefinition = "varchar(100)", name = "InstrumentCode")
 	private String instrumentcode;
-	
-	@Column(columnDefinition = "varchar(250)",name = "Keyword") 
+
+	@Column(columnDefinition = "varchar(250)", name = "Keyword")
 	private String keyword;
-	
+
 	@Transient
 	private String comment;
+
 	public String getKeyword() {
 		return keyword;
 	}
+
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
 	}
+
 	@ManyToOne
 	private LSworkflow lsworkflow;
-	
+
 	@ManyToOne
 	private LSfile lsfile;
-	
+
 	@Transient
 	List<LSprojectmaster> lstproject;
-	
+
 	@Transient
 	List<LSworkflow> lstworkflow;
-	
+
 	@OneToMany
-	@JoinColumn(name="batchcode")
+	@JoinColumn(name = "batchcode")
 	private List<LsOrderattachments> lsOrderattachments;
-	
+
 	@OneToMany
-	@JoinColumn(name="batchcode")
+	@JoinColumn(name = "batchcode")
 	private List<ELNFileAttachments> ELNFileAttachments;
-	
+
 	@Transient
 	LScfttransaction objmanualaudit;
-	
+
 	@ManyToOne
 	private LSuserMaster lsuserMaster;
-	
+
 	@ManyToOne
 	private LSsamplemaster lssamplemaster;
-	
+
 	@ManyToOne
 	private LSprojectmaster lsprojectmaster;
-	
+
 	@ManyToOne
 	private LSsamplefile lssamplefile;
-	
+
 	@ManyToOne
 	private LStestmasterlocal lstestmasterlocal;
-	
+
 	@OneToMany
-	@JoinColumn(name="batchcode")
+	@JoinColumn(name = "batchcode")
 	private List<LSparsedparameters> lsparsedparameters;
-	
+
 	@OneToMany
-	@JoinColumn(name="batchcode")
+	@JoinColumn(name = "batchcode")
 	private List<Lsorderworkflowhistory> lsorderworkflowhistory;
-	
+
 	@OneToMany
-	@JoinColumn(name="batchcode")
+	@JoinColumn(name = "batchcode")
 	private List<Lsbatchdetails> lsbatchdetails;
-	
-	
+
 	@ManyToOne
 	private Lsrepositoriesdata lsrepositoriesdata;
-	
+
 	@ManyToOne
 	private Lsrepositories lsrepositories;
-	
+
 //	@Transient
 //	private List<LSlimsorder> lsLSlimsorder;
-	
+
 	@Transient
 	private List<LSlogilablimsorder> lsLSlogilablimsorder;
-	
+
 	@Transient
 	private String projectname;
-	
+
 	@Transient
 	private String samplename;
-	
+
 	@Transient
 	private String filename;
-	
+
 	@Transient
 	private Integer isLock;
-	
+
 	@Transient
 	private String nbatchcode;
-	
-	@Column(name = "approved") 
+
+	@Column(name = "approved")
 	private Integer approved;
-	
+
 	@Transient
 	private Integer rejected;
-	
 
 	private Integer filecode;
-	
+
 	private Long directorycode;
-	
+
 	private Integer ordercancell;
-	
-public Integer getOrdercancell() {
+
+	private Integer teamcode;
+
+	public Integer getTeamcode() {
+		return teamcode;
+	}
+
+	public void setTeamcode(Integer teamcode) {
+		this.teamcode = teamcode;
+	}
+
+	public Integer getOrdercancell() {
 		return ordercancell;
 	}
+
 	public void setOrdercancell(Integer ordercancell) {
 		this.ordercancell = ordercancell;
 	}
-	//	public Integer getRejected() {
+
+	// public Integer getRejected() {
 //		return rejected;
 //	}
 //	public void setRejected(Integer rejected) {
@@ -222,41 +240,46 @@ public Integer getOrdercancell() {
 //	}
 	@ManyToOne
 	private LSuserMaster assignedto;
-	
+
 	@Transient
 	private Integer ismultitenant;
-	
+
 	private Integer orderdisplaytype;
-	
+
 	private Integer viewoption;
-	
+
 	public List<LsOrderattachments> getLsOrderattachments() {
 		return lsOrderattachments;
 	}
+
 	public void setLsOrderattachments(List<LsOrderattachments> lsOrderattachments) {
 		this.lsOrderattachments = lsOrderattachments;
 	}
-	
+
 	public List<ELNFileAttachments> getELNFileAttachments() {
 		return ELNFileAttachments;
 	}
+
 	public void setELNFileAttachments(List<ELNFileAttachments> ELNFileAttachments) {
 		this.ELNFileAttachments = ELNFileAttachments;
 	}
-	
+
 	public LScfttransaction getObjmanualaudit() {
 		return objmanualaudit;
 	}
+
 	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
 		this.objmanualaudit = objmanualaudit;
 	}
-	
+
 	public Lsrepositoriesdata getLsrepositoriesdata() {
 		return lsrepositoriesdata;
 	}
+
 	public void setLsrepositoriesdata(Lsrepositoriesdata lsrepositoriesdata) {
 		this.lsrepositoriesdata = lsrepositoriesdata;
 	}
+
 	public List<LSprojectmaster> getLstproject() {
 		return lstproject;
 	}
@@ -264,35 +287,38 @@ public Integer getOrdercancell() {
 	public void setLstproject(List<LSprojectmaster> lstproject) {
 		this.lstproject = lstproject;
 	}
+
 	public Lsrepositories getLsrepositories() {
 		return lsrepositories;
 	}
+
 	public void setLsrepositories(Lsrepositories lsrepositories) {
 		this.lsrepositories = lsrepositories;
 	}
-	
+
 	public List<LSworkflow> getLstworkflow() {
 		return lstworkflow;
 	}
 //	public void setLstworkflow(List<LSworkflow> lstworkflow) {
 //		this.lstworkflow = lstworkflow;
 //	}
-	
+
 	@Transient
-	private boolean canuserprocess;	
-	
+	private boolean canuserprocess;
+
 	public boolean isCanuserprocess() {
 		return canuserprocess;
 	}
+
 	public void setCanuserprocess(boolean canuserprocess) {
 		this.canuserprocess = canuserprocess;
 	}
-	
+
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
-		
+
 //		this.lstworkflow = lstworkflow;
 
-		if (this.lsworkflow != null && lstworkflow != null  && lstworkflow.size() > 0) {
+		if (this.lsworkflow != null && lstworkflow != null && lstworkflow.size() > 0) {
 			List<Integer> lstworkflowcode = new ArrayList<Integer>();
 			if (lstworkflow != null && lstworkflow.size() > 0) {
 				lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
@@ -308,13 +334,14 @@ public Integer getOrdercancell() {
 		} else {
 			this.setCanuserprocess(false);
 		}
-		
+
 		this.lstworkflow = lstworkflow;
 	}
-	
+
 	public Integer getApproved() {
 		return approved;
 	}
+
 	public void setApproved(Integer approved) {
 		this.approved = approved;
 	}
@@ -329,16 +356,16 @@ public Integer getOrdercancell() {
 
 	@Transient
 	private Integer isLockbycurrentuser;
-	
+
 	@Transient
 	private Integer isFinalStep;
-	
+
 	@Transient
 	LSuserMaster objLoggeduser;
-	
+
 	@Transient
 	LScfttransaction objsilentaudit;
-	
+
 	@Transient
 	private Long orderid;
 	@Transient
@@ -347,40 +374,41 @@ public Integer getOrdercancell() {
 	private String instrumentname;
 	@Transient
 	private String parserflag;
-	
+
 	@Transient
 	private Response response;
-	
+
 	@Transient
 	private Date fromdate;
-	
+
 	@Transient
 	private Date todate;
-	
+
 	@Transient
 	private Integer checked = 0;
-	
+
 	public Integer getChecked() {
 		return checked;
 	}
+
 	public void setChecked(Integer checked) {
 		this.checked = checked;
 	}
+
 	@Transient
 	List<LStestparameter> lstestparameter;
-	
+
 	@Transient
 	private Boolean noworkflow = false;
-	
-	public LSlogilablimsorderdetail()
-	{
-		
+
+	public LSlogilablimsorderdetail() {
+
 	}
-	
-	public LSlogilablimsorderdetail(Long batchcode, String batchid, Integer testcode, String testname
-			, Date createdtimestamp,Date completedtimestamp,Integer filetype, LSworkflow lsworkflow, String projectname, String samplename, String filename)
-	{
-		
+
+	public LSlogilablimsorderdetail(Long batchcode, String batchid, Integer testcode, String testname,
+			Date createdtimestamp, Date completedtimestamp, Integer filetype, LSworkflow lsworkflow, String projectname,
+			String samplename, String filename) {
+
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.testcode = testcode;
@@ -391,10 +419,10 @@ public Integer getOrdercancell() {
 		this.samplename = samplename;
 		this.filename = filename;
 		this.filetype = filetype;
-		this.completedtimestamp=completedtimestamp;
-		
+		this.completedtimestamp = completedtimestamp;
+
 	}
-	
+
 	public Response getResponse() {
 		return response;
 	}
@@ -410,9 +438,11 @@ public Integer getOrdercancell() {
 	public Integer getFilecode() {
 		return filecode;
 	}
+
 	public void setFilecode(Integer filecode) {
 		this.filecode = filecode;
 	}
+
 	public void setInstrumentname(String instrumentname) {
 		this.instrumentname = instrumentname;
 	}
@@ -441,7 +471,6 @@ public Integer getOrdercancell() {
 		this.orderid = orderid;
 	}
 
-		
 	public LScfttransaction getObjsilentaudit() {
 		return objsilentaudit;
 	}
@@ -460,7 +489,7 @@ public Integer getOrdercancell() {
 
 	public String getBatchid() {
 		String Batchid = "ELN" + this.batchcode;
-		
+
 		if (this.filetype == 3) {
 			Batchid = "RESEARCH" + this.batchcode;
 		} else if (this.filetype == 4) {
@@ -468,16 +497,16 @@ public Integer getOrdercancell() {
 		} else if (this.filetype == 5) {
 			Batchid = "VALIDATE" + this.batchcode;
 		}
-		
+
 		return Batchid;
 	}
 
 	public void setBatchid(String batchid) {
-		
+
 		String Batchid = "ELN" + this.batchcode;
-	
-		if(this.filetype != null) {
-		
+
+		if (this.filetype != null) {
+
 			if (this.filetype == 3) {
 				Batchid = "RESEARCH" + this.batchcode;
 			} else if (this.filetype == 4) {
@@ -485,9 +514,9 @@ public Integer getOrdercancell() {
 			} else if (this.filetype == 5) {
 				Batchid = "VALIDATE" + this.batchcode;
 			}
-			
+
 		}
-		
+
 		this.batchid = Batchid;
 	}
 
@@ -499,7 +528,6 @@ public Integer getOrdercancell() {
 		this.filetype = filetype;
 	}
 
-	
 	public LSworkflow getLsworkflow() {
 		return lsworkflow;
 	}
@@ -563,11 +591,11 @@ public Integer getOrdercancell() {
 //	public void setLsLSlimsorder(List<LSlimsorder> lsLSlimsorder) {
 //		this.lsLSlimsorder = lsLSlimsorder;
 //	}
-	
+
 	public List<LSlogilablimsorder> getLsLSlogilablimsorder() {
 		return lsLSlogilablimsorder;
 	}
-	
+
 	public void setLsLSlogilablimsorder(List<LSlogilablimsorder> lsLSlogilablimsorder) {
 		this.lsLSlogilablimsorder = lsLSlogilablimsorder;
 	}
@@ -605,8 +633,7 @@ public Integer getOrdercancell() {
 	}
 
 	public String getTestname() {
-		if(this.lstestmasterlocal != null)
-		{
+		if (this.lstestmasterlocal != null) {
 			return this.lstestmasterlocal.getTestname();
 		}
 		return testname;
@@ -617,15 +644,12 @@ public Integer getOrdercancell() {
 	}
 
 	public String getProjectname() {
-		if(projectname == null || projectname =="")
-		{
-			return this.lsprojectmaster != null? this.lsprojectmaster.getProjectname():"";
-		}
-		else
-		{		
+		if (projectname == null || projectname == "") {
+			return this.lsprojectmaster != null ? this.lsprojectmaster.getProjectname() : "";
+		} else {
 			return projectname;
 		}
-		
+
 	}
 
 	public void setProjectname(String projectname) {
@@ -633,13 +657,10 @@ public Integer getOrdercancell() {
 	}
 
 	public String getSamplename() {
-		
-		if(samplename == null || samplename =="")
-		{
-			return this.lssamplemaster != null ? this.lssamplemaster.getSamplename():"";
-		}
-		else
-		{
+
+		if (samplename == null || samplename == "") {
+			return this.lssamplemaster != null ? this.lssamplemaster.getSamplename() : "";
+		} else {
 			return samplename;
 		}
 	}
@@ -651,27 +672,35 @@ public Integer getOrdercancell() {
 	public Integer getIsLock() {
 		return isLock;
 	}
+
 	public Integer getRejected() {
 		return rejected;
 	}
+
 	public Integer getIsLockbycurrentuser() {
 		return isLockbycurrentuser;
 	}
+
 	public Integer getIsFinalStep() {
 		return isFinalStep;
 	}
+
 	public void setIsLock(Integer isLock) {
 		this.isLock = isLock;
 	}
+
 	public void setRejected(Integer rejected) {
 		this.rejected = rejected;
 	}
+
 	public void setIsLockbycurrentuser(Integer isLockbycurrentuser) {
 		this.isLockbycurrentuser = isLockbycurrentuser;
 	}
+
 	public void setIsFinalStep(Integer isFinalStep) {
 		this.isFinalStep = isFinalStep;
 	}
+
 	public LSsamplefile getLssamplefile() {
 		return lssamplefile;
 	}
@@ -745,12 +774,9 @@ public Integer getOrdercancell() {
 	}
 
 	public String getFilename() {
-		if(filename == null || filename =="")
-		{
-			return this.lsfile != null ? this.lsfile.getFilenameuser():"";
-		}
-		else
-		{
+		if (filename == null || filename == "") {
+			return this.lsfile != null ? this.lsfile.getFilenameuser() : "";
+		} else {
 			return filename;
 		}
 	}
@@ -766,60 +792,77 @@ public Integer getOrdercancell() {
 	public void setLsbatchdetails(List<Lsbatchdetails> lsbatchdetails) {
 		this.lsbatchdetails = lsbatchdetails;
 	}
+
 	public LSuserMaster getAssignedto() {
 		return assignedto;
 	}
+
 	public void setAssignedto(LSuserMaster assignedto) {
 		this.assignedto = assignedto;
 	}
+
 	public Integer getIsmultitenant() {
 		return ismultitenant;
 	}
+
 	public void setIsmultitenant(Integer ismultitenant) {
 		this.ismultitenant = ismultitenant;
 	}
+
 	public Boolean getNoworkflow() {
 		return noworkflow;
 	}
+
 	public void setNoworkflow(Boolean noworkflow) {
 		this.noworkflow = noworkflow;
 	}
+
 	public String getLockedusername() {
 		return lockedusername;
 	}
+
 	public void setLockedusername(String lockedusername) {
 		this.lockedusername = lockedusername;
 	}
+
 	public Long getDirectorycode() {
 		return directorycode;
 	}
+
 	public void setDirectorycode(Long directorycode) {
 		this.directorycode = directorycode;
 	}
+
 	public Integer getOrderdisplaytype() {
 		return orderdisplaytype;
 	}
+
 	public void setOrderdisplaytype(Integer orderdisplaytype) {
 		this.orderdisplaytype = orderdisplaytype;
 	}
+
 	public LStestmasterlocal getLstestmasterlocal() {
 		return lstestmasterlocal;
 	}
+
 	public void setLstestmasterlocal(LStestmasterlocal lstestmasterlocal) {
 		this.lstestmasterlocal = lstestmasterlocal;
 	}
+
 	public Integer getViewoption() {
 		return viewoption;
 	}
+
 	public void setViewoption(Integer viewoption) {
 		this.viewoption = viewoption;
 	}
+
 	public String getComment() {
 		return comment;
 	}
+
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	
-	
+
 }
