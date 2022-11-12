@@ -3065,46 +3065,72 @@ public class InstrumentService {
 
 	private void updatenotificationforworkflowapproval(LSlogilablimsorderdetail objorder) {
 		String Details = "";
-		String Notifiction = "";
-		Notifiction = "";
+		String Notification = "";
+
 		LSuserMaster obj = lsuserMasterRepository.findByusercode(objorder.getObjLoggeduser().getUsercode());
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		LSuserMaster createby = lsuserMasterRepository.findByusercode(objorder.getLsuserMaster().getUsercode());
 
-		if (objorder.getApprovelstatus() != null) {
+		if (objorder.getApprovelstatus() != null && objorder.getIsFinalStep() != 1) {
 			LSusersteam objteam = lsusersteamRepository
 					.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode());
-			if (objorder.getIsFinalStep() != 1) {
-				if (objorder.getApprovelstatus() == 1) {
-					Notifiction = "USERAPPROVAL";
-				} else if (objorder.getApprovelstatus() == 2) {
-					Notifiction = "USERRETURN";
-				} else if (objorder.getApprovelstatus() == 3) {
-					Notifiction = "USERREJECT";
-				}
 
-				List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
-				Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
-						+ "\", \"user\":\"" + objorder.getLsuserMaster().getUsername() + "\", \"comment\":\""
-						+ objorder.getComment() + "\"}";
-
-				for (int i = 0; i < lstusers.size(); i++) {
-					if (objorder.getObjLoggeduser().getUsercode() != lstusers.get(i).getLsuserMaster().getUsercode()) {
-						LSnotification objnotify = new LSnotification();
-						objnotify.setNotifationfrom(obj);
-						objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
-						objnotify.setNotificationdate(objorder.getModifidate());
-						objnotify.setNotification(Notifiction);
-						objnotify.setNotificationdetils(Details);
-						objnotify.setIsnewnotification(1);
-						objnotify.setNotificationpath("/registertask");
-						objnotify.setNotificationfor(1);
-						lstnotifications.add(objnotify);
-					}
-				}
-
-				lsnotificationRepository.save(lstnotifications);
+			if (objorder.getApprovelstatus() == 1) {
+				Notification = "USERAPPROVAL";
+			} else if (objorder.getApprovelstatus() == 2) {
+				Notification = "USERRETURN";
+			} else if (objorder.getApprovelstatus() == 3) {
+				Notification = "USERREJECT";
 			}
+
+			List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
+			Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
+					+ "\", \"user\":\"" + objorder.getLsuserMaster().getUsername() + "\", \"comment\":\""
+					+ objorder.getComment() + "\"}";
+
+			for (int i = 0; i < lstusers.size(); i++) {
+				if (objorder.getObjLoggeduser().getUsercode() != lstusers.get(i).getLsuserMaster().getUsercode()) {
+					LSnotification objnotify = new LSnotification();
+					objnotify.setNotifationfrom(obj);
+					if (objorder.getApprovelstatus() == 1 || objorder.getApprovelstatus() == 2) {
+						objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
+					} else {
+						objnotify.setNotifationto(createby);
+					}
+					objnotify.setNotificationdate(objorder.getModifidate());
+					objnotify.setNotification(Notification);
+					objnotify.setNotificationdetils(Details);
+					objnotify.setIsnewnotification(1);
+					objnotify.setNotificationpath("/registertask");
+					objnotify.setNotificationfor(1);
+					lstnotifications.add(objnotify);
+				}
+			}
+		} else {
+
+			if (objorder.getApprovelstatus() == 3 && objorder.getApproved() == null) {
+				Notification = "USERREJECT";
+			} else if (objorder.getApproved() == 1 && objorder.getRejected() == null) {
+				Notification = "SHEETORDERAPPROVED";
+			}
+			Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
+					+ "\", \"user\":\"" + objorder.getLsuserMaster().getUsername() + "\", \"comment\":\""
+					+ objorder.getComment() + "\"}";
+			LSnotification objnotify = new LSnotification();
+			objnotify.setNotifationfrom(obj);
+			objnotify.setNotifationto(createby);
+			objnotify.setNotificationdate(objorder.getModifidate());
+			objnotify.setNotification(Notification);
+			objnotify.setNotificationdetils(Details);
+			objnotify.setIsnewnotification(1);
+			objnotify.setNotificationpath("/registertask");
+			objnotify.setNotificationfor(1);
+			lstnotifications.add(objnotify);
+
 		}
+
+		lsnotificationRepository.save(lstnotifications);
+
 	}
 
 	public boolean Updatesamplefileversion(LSsamplefile objfile) {
@@ -4943,7 +4969,6 @@ public class InstrumentService {
 
 		return mapfolders;
 	}
-
 	public LSlogilablimsorderdetail UpdateFolderfororder(LSlogilablimsorderdetail order) {
 		lslogilablimsorderdetailRepository.updatedirectory(order.getDirectorycode(), order.getBatchcode());
 		return order;
@@ -5001,6 +5026,8 @@ public class InstrumentService {
 
 		return lstorder;
 	}
+
+
 
 	public List<LSSheetOrderStructure> Deletedirectories(LSSheetOrderStructure[] directories) {
 		List<LSSheetOrderStructure> lstdirectories = Arrays.asList(directories);
@@ -6037,6 +6064,7 @@ public class InstrumentService {
 
 		return retuobjts;
 	}
+	
 
 	public List<LSsheetfolderfiles> Getfilesforfolder(LSsheetfolderfiles objfiles) throws Exception {
 

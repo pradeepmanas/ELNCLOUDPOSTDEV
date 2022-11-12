@@ -377,6 +377,7 @@ public class InstrumentController {
 				new InputStreamResource(instrumentService.retrieveColudParserFile(objfileuuid.getFileid(),objattachments.getTenantid())), header,
 				HttpStatus.OK);
 	}
+	
 	@PostMapping("/deleteattachments")
 	public LsOrderattachments deleteattachments(@RequestBody LsOrderattachments objattachments)throws Exception {
 		return instrumentService.deleteattachments(objattachments);

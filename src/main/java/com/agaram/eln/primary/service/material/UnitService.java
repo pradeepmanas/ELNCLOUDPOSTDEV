@@ -22,6 +22,9 @@ public class UnitService {
 		final List<Unit> unitListByName = getUnitListByName(objUnit.getSunitname(), objUnit.getNsitecode());
 
 		if (unitListByName.isEmpty()) {
+			objUnit.setNdefaultstatus(1);
+			objUnit.setNsitecode(1);
+			objUnit.setNstatus(1);
 
 			unitRepository.save(objUnit);
 

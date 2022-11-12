@@ -56,7 +56,6 @@ public class LSuserMaster {
 	@Transient
 	private LSuserMaster loggedinuser;
 	
-	
 	public LSuserMaster getLoggedinuser() {
 		return loggedinuser;
 	}
@@ -64,9 +63,6 @@ public class LSuserMaster {
 	public void setLoggedinuser(LSuserMaster loggedinuser) {
 		this.loggedinuser = loggedinuser;
 	}
-
-
-
 
 	@Column(name = "passwordstatus")
 	private Integer passwordstatus;

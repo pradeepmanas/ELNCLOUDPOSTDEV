@@ -23,7 +23,6 @@ import com.agaram.eln.primary.model.cloudFileManip.CloudOrderCreation;
 import com.agaram.eln.primary.model.fileManipulation.ResultorderlimsRefrence;
 import com.agaram.eln.primary.model.fileManipulation.SheetorderlimsRefrence;
 import com.agaram.eln.primary.model.general.OrderCreation;
-import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
@@ -33,6 +32,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderCreationRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
@@ -41,6 +41,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LsSheetorderlimsrefre
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfiletestRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.mongodb.gridfs.GridFSDBFile;
 
@@ -73,6 +74,9 @@ public class limsintegarationservice {
 
 	@Autowired
 	private CloudOrderCreationRepository cloudOrderCreationRepository;
+	
+	@Autowired
+	private LSuserMasterRepository lsUserMasterRepository;
 
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
@@ -262,6 +266,11 @@ public class limsintegarationservice {
 		}
 
 		return objlstStr;
+	}
+
+	public List<LSuserMaster> getUsersFromELN() {
+		List<LSuserMaster> lstMasters = lsUserMasterRepository.findByusernameNotAndUserretirestatusNot("Administrator", 1);
+		return lstMasters;
 	}
 
 }

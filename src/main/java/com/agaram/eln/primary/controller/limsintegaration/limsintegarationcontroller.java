@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
-import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.limsintegaration.limsintegarationservice;
 
 @RestController
@@ -68,5 +68,10 @@ public class limsintegarationcontroller {
 	@PostMapping("/getOrderTagFromELN")
 	public List<String> getOrderTagFromELN(@RequestBody Map<String, Object> obj)throws Exception {
 		return limsintegarationservice.getOrderTagFromELN(obj);
+	}
+	
+	@PostMapping("/getUsersFromELN")
+	public List<LSuserMaster> getUsersFromELN(@RequestBody Map<String, Object> obj)throws Exception {
+		return limsintegarationservice.getUsersFromELN();
 	}
 }

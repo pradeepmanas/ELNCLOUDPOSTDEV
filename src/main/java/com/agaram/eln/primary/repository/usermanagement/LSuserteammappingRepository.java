@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 
@@ -34,5 +35,4 @@ public interface LSuserteammappingRepository  extends JpaRepository<LSuserteamma
 	@Transactional
 	@Query("select l.teamcode from LSuserteammapping l where lsuserMaster=?2 and l.teamcode in (?1) ")
 	public List<Integer> getusermastercode(List<Integer> teamCode,LSuserMaster lsusermaster);
-
 }
