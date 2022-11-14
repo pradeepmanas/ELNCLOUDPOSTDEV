@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
@@ -346,7 +347,7 @@ public class ProtocolController {
 	}
 	
 	@PostMapping("/Getremainingorders")
-	public List<LSlogilabprotocoldetail> Getremainingorders(@RequestBody LSlogilabprotocoldetail objorder)throws Exception
+	public List<Logilabprotocolorders> Getremainingorders(@RequestBody LSlogilabprotocoldetail objorder)throws Exception
 	{
 		return ProtocolMasterService.Getremainingorders(objorder);
 	}

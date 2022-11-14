@@ -144,8 +144,19 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	List<LSworkflow> lstworkflow;
 	
 	@Transient
+	private List<Long> lstdirectorycode;
+	
+	@Transient
 	Integer searchCriteriaType;
 	
+	public List<Long> getLstdirectorycode() {
+		return lstdirectorycode;
+	}
+
+	public void setLstdirectorycode(List<Long> lstdirectorycode) {
+		this.lstdirectorycode = lstdirectorycode;
+	}
+
 	public Integer getSearchCriteriaType() {
 		return searchCriteriaType;
 	}

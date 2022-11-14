@@ -207,6 +207,17 @@ public class LSlogilablimsorderdetail {
 
 	@Transient
 	private Integer rejected;
+	
+	@Transient
+	private List<Long> lstdirectorycode;
+
+	public List<Long> getLstdirectorycode() {
+		return lstdirectorycode;
+	}
+
+	public void setLstdirectorycode(List<Long> lstdirectorycode) {
+		this.lstdirectorycode = lstdirectorycode;
+	}
 
 	private Integer filecode;
 

@@ -701,6 +701,12 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			LSuserMaster createdby, Integer filetype2, Date fromdate2, Date todate2, Long directorycode3, int k,
 			Integer filetype3, Date fromdate3, Date todate3, List<Integer> lSuserteammappingobj);
 
+	List<Logilabordermaster> findFirst20ByLsprojectmasterInOrDirectorycodeInOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject, List<Long> directorycode);
+
+	List<Logilabordermaster> findFirst20ByBatchcodeLessThanAndLsprojectmasterInOrBatchcodeLessThanAndDirectorycodeInOrderByBatchcodeDesc(
+			Long batchcode, List<LSprojectmaster> lstproject, Long batchcode2, List<Long> directorycode);
+
 
 
 

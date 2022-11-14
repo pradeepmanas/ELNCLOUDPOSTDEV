@@ -4376,7 +4376,25 @@ public class InstrumentService {
 				mapOrders.put("orders", Getadministratororder(objorder));
 				mapOrders.put("ordercount", lslogilablimsorderdetailRepository.count());
 			} else {
-				mapOrders.put("orders", Getuserorder(objorder));
+				
+				List<LSusersteam> lsusersteamobj = lsusersteamRepository
+						.findBylssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
+				List<Integer> teamcode = lsusersteamobj.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
+				List<Integer> LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode,
+						objorder.getLsuserMaster());
+				List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
+				if (LSuserteammappingobj.size() == 0) {
+					lstdir = lsSheetOrderStructureRepository
+							.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+									objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2);
+				} else {
+					lstdir = lsSheetOrderStructureRepository
+							.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
+									objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,objorder.getLsuserMaster().getLssitemaster(), 3,LSuserteammappingobj);
+				}
+				List<Long> directorycode=lstdir.stream().map(LSSheetOrderStructure::getDirectorycode).collect(Collectors.toList());
+				mapOrders.put("directorycode",directorycode);
+				mapOrders.put("orders", Getuserorder(objorder,directorycode));
 				mapOrders.put("ordercount", lslogilablimsorderdetailRepository
 						.countByLsprojectmasterIn(objorder.getLsuserMaster().getLstproject()));
 			}
@@ -4388,7 +4406,7 @@ public class InstrumentService {
 		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 			return Getadministratororder(objorder);
 		} else {
-			return Getuserorder(objorder);
+			return Getuserorder(objorder,objorder.getLstdirectorycode());
 		}
 	}
 
@@ -4403,19 +4421,31 @@ public class InstrumentService {
 		return lstorders;
 	}
 
-	public List<Logilabordermaster> Getuserorder(LSlogilablimsorderdetail objorder) {
+	public List<Logilabordermaster> Getuserorder(LSlogilablimsorderdetail objorder,List<Long> directorycode) {
 		List<LSprojectmaster> lstproject = objorder.getLsuserMaster().getLstproject();
 		List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
 		if (lstproject != null) {
 			List<LSworkflow> lstworkflow = objorder.getLsuserMaster().getLstworkflow();
 			if (objorder.getBatchcode() == 0) {
-				lstorders = lslogilablimsorderdetailRepository
-						.findFirst20ByLsprojectmasterInOrderByBatchcodeDesc(lstproject);
-			} else {
-				lstorders = lslogilablimsorderdetailRepository
-						.findFirst20ByBatchcodeLessThanAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getBatchcode(),
-								lstproject);
-			}
+				if(directorycode.size()==0) {
+					lstorders = lslogilablimsorderdetailRepository
+							.findFirst20ByLsprojectmasterInOrderByBatchcodeDesc(lstproject);
+				}else {
+					lstorders = lslogilablimsorderdetailRepository
+							.findFirst20ByLsprojectmasterInOrDirectorycodeInOrderByBatchcodeDesc(lstproject,directorycode);
+				}
+				} else {
+					if(directorycode.size()==0) {
+						lstorders = lslogilablimsorderdetailRepository
+								.findFirst20ByBatchcodeLessThanAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getBatchcode(),
+										lstproject);
+					}else {
+						lstorders = lslogilablimsorderdetailRepository
+								.findFirst20ByBatchcodeLessThanAndLsprojectmasterInOrBatchcodeLessThanAndDirectorycodeInOrderByBatchcodeDesc(objorder.getBatchcode(),
+										lstproject,objorder.getBatchcode(),directorycode);
+
+					}
+						}
 			lstorders.forEach(objord -> objord.setLstworkflow(lstworkflow));
 		}
 		return lstorders;

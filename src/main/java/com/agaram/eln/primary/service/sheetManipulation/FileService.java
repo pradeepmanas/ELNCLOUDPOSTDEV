@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ import com.agaram.eln.primary.model.general.SheetVersion;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
+
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -1377,7 +1379,20 @@ public class FileService {
 	}
 
 	public LSfile updatefilename(LSfile objfile) {
+
+	    List<LSfile> fileByName = lSfileRepository.findByFilenameuserAndCategory(objfile.getFilenameuser(),objfile.getCategory());
+		
+		if(fileByName.isEmpty()) {
 		lSfileRepository.save(objfile);
 		return objfile;
+
+		}else {
+			objfile.setResponse(new Response());
+			objfile.getResponse().setStatus(false);
+			objfile.getResponse().setInformation("DUPLICATE SHEET NAME");
+
+		
+		return objfile;
+		}
 	}
 }

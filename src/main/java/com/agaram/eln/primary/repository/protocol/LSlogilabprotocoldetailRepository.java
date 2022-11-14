@@ -89,11 +89,11 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	LSlogilabprotocoldetail findByProtocolordercodeAndProtoclordername(Long protocolordercode, String protoclordername);
 
-	public List<LSlogilabprotocoldetail> findFirst20ByProtocolordercodeLessThanOrderByProtocolordercodeDesc(Long protocolordercode);
-	public List<LSlogilabprotocoldetail> findFirst20ByOrderByProtocolordercodeDesc();
+	public List<Logilabprotocolorders> findFirst20ByProtocolordercodeLessThanOrderByProtocolordercodeDesc(Long protocolordercode);
+	public List<Logilabprotocolorders> findFirst20ByOrderByProtocolordercodeDesc();
 	
-	public List<LSlogilabprotocoldetail> findFirst20ByProtocolordercodeLessThanAndLsprojectmasterInOrderByProtocolordercodeDesc(Long protocolordercode, List<LSprojectmaster> lstproject);
-	public List<LSlogilabprotocoldetail> findFirst20ByLsprojectmasterInOrderByProtocolordercodeDesc(List<LSprojectmaster> lstproject);
+	public List<Logilabprotocolorders> findFirst20ByProtocolordercodeLessThanAndLsprojectmasterInOrderByProtocolordercodeDesc(Long protocolordercode, List<LSprojectmaster> lstproject);
+	public List<Logilabprotocolorders> findFirst20ByLsprojectmasterInOrderByProtocolordercodeDesc(List<LSprojectmaster> lstproject);
 
 	public Long countByLsprojectmasterIn(List<LSprojectmaster> lstproject);
 	
@@ -620,6 +620,28 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Long directorycode, int i, Integer protocoltype, Date fromdate, Date todate, Long directorycode2, int j,
 			Integer protocoltype2, LSuserMaster createdby, Date fromdate2, Date todate2, Long directorycode3, int k,
 			Integer protocoltype3, Date fromdate3, Date todate3, List<Integer> lSuserteammappingobj);
+
+
+	List<Logilabprotocolorders> findByDirectorycodeInAndViewoptionAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeInAndViewoptionAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			List<Long> directorycode, int i, Date fromdate, Date todate, List<Long> directorycode2, int j,
+			LSuserMaster objuser, Date fromdate2, Date todate2);
+
+
+	List<Logilabprotocolorders> findByDirectorycodeInAndViewoptionAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeInAndViewoptionAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeInAndViewoptionAndAssignedtoIsNullAndCreatedtimestampBetweenAndTeamcodeInOrderByProtocolordercodeDesc(
+			List<Long> directorycode, int i, Date fromdate, Date todate, List<Long> directorycode2, int j,
+			LSuserMaster objuser, Date fromdate2, Date todate2, List<Long> directorycode3, int k, Date fromdate3,
+			Date todate3, List<Integer> teamcode);
+
+
+	List<Logilabprotocolorders> findFirst20ByLsprojectmasterInOrDirectorycodeInOrderByProtocolordercodeDesc(
+			List<LSprojectmaster> lstproject, List<Long> directorycode);
+
+	public Long countByLsprojectmasterInOrDirectorycodeIn(List<LSprojectmaster> lstproject, List<Long> directorycode);
+
+
+	List<Logilabprotocolorders> findFirst20ByProtocolordercodeLessThanAndLsprojectmasterInOrProtocolordercodeLessThanAndDirectorycodeInOrderByProtocolordercodeDesc(
+			Long protocolordercode, List<LSprojectmaster> lstproject, Long protocolordercode2,
+			List<Long> directorycode);
 
 
 

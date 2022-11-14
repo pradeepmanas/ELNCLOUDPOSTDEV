@@ -922,8 +922,8 @@ public class LoginService {
 
 	public LSSiteMaster InsertupdateSite(LSSiteMaster objClass) {
 		objClass.setResponse(new Response());
-		if (objClass.getSitecode() == null
-				&& lSSiteMasterRepository.findBySitenameIgnoreCaseAndIstatus(objClass.getSitename(), 1) != null) {
+		if ((objClass.getSitecode() == null || objClass.getSitecode() != null)
+				&& lSSiteMasterRepository.findBySitenameIgnoreCaseAndIstatus(objClass.getSitename(), 1).size()>0 ) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
 

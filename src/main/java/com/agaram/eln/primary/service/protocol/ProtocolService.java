@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.config.CustomMultipartFile;
 import com.agaram.eln.primary.config.TenantContext;
+import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudUserSignature;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolorderversionstep;
@@ -45,6 +46,7 @@ import com.agaram.eln.primary.model.fileManipulation.UserSignature;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
@@ -82,12 +84,10 @@ import com.agaram.eln.primary.model.protocols.ProtocolImage;
 import com.agaram.eln.primary.model.protocols.ProtocolorderImage;
 import com.agaram.eln.primary.model.protocols.Protocolordervideos;
 import com.agaram.eln.primary.model.protocols.Protocolvideos;
-import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
-import com.agaram.eln.primary.model.sheetManipulation.Lsfileshareto;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
@@ -102,6 +102,7 @@ import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolstepInfoRe
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolversionstepRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLsLogilabprotocolstepInfoRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.LSprotocolstepInformationRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolOrderStructureRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharedbyRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharetoRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
@@ -333,6 +334,12 @@ public class ProtocolService {
 
 	@Autowired
 	private LSworkflowgroupmappingRepository lsworkflowgroupmappingRepository;
+	
+	@Autowired
+	private LsprotocolOrderStructureRepository lsprotocolorderStructurerepository;
+	
+	@Autowired
+	private LSuserteammappingRepository lsuserteammappingRepository;
 
 //	@Autowired
 //	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
@@ -4165,24 +4172,45 @@ public class ProtocolService {
 			mapOrders.put("orders", Getadministratororder(objorder));
 			mapOrders.put("ordercount", LSlogilabprotocoldetailRepository.count());
 		} else {
-			mapOrders.put("orders", Getuserorder(objorder));
+			List<LSusersteam> lsusersteamobj = lsusersteamRepository
+					.findBylssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
+			List<Integer> teamcode = lsusersteamobj.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
+			List<Integer> LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode,
+					objorder.getLsuserMaster());
+			List<Lsprotocolorderstructure> lstdir = new ArrayList<Lsprotocolorderstructure>();
+			List<Long> directorycode=new ArrayList<Long>();
+			if (teamcode.size() == 0) {
+				lstdir = lsprotocolorderStructurerepository
+						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2);
+				 directorycode=lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode).collect(Collectors.toList());
+			}else {
+				lstdir = lsprotocolorderStructurerepository
+						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
+								objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
+								objorder.getLsuserMaster().getLssitemaster(), 3, LSuserteammappingobj);
+				 directorycode=lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode).collect(Collectors.toList());
+
+			}
+			mapOrders.put("directorycode",directorycode);
+			mapOrders.put("orders", Getuserorder(objorder,directorycode));
 			mapOrders.put("ordercount", LSlogilabprotocoldetailRepository
-					.countByLsprojectmasterIn(objorder.getLsuserMaster().getLstproject()));
+					.countByLsprojectmasterInOrDirectorycodeIn(objorder.getLsuserMaster().getLstproject(),directorycode));
 		}
 
 		return mapOrders;
 	}
 
-	public List<LSlogilabprotocoldetail> Getremainingorders(LSlogilabprotocoldetail objorder) {
+	public List<Logilabprotocolorders> Getremainingorders(LSlogilabprotocoldetail objorder) {
 		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 			return Getadministratororder(objorder);
 		} else {
-			return Getuserorder(objorder);
+			return Getuserorder(objorder,objorder.getLstdirectorycode());
 		}
 	}
 
-	public List<LSlogilabprotocoldetail> Getadministratororder(LSlogilabprotocoldetail objorder) {
-		List<LSlogilabprotocoldetail> lstorders = new ArrayList<LSlogilabprotocoldetail>();
+	public List<Logilabprotocolorders> Getadministratororder(LSlogilabprotocoldetail objorder) {
+		List<Logilabprotocolorders> lstorders = new ArrayList<Logilabprotocolorders>();
 		if (objorder.getProtocolordercode() == 0) {
 			lstorders = LSlogilabprotocoldetailRepository.findFirst20ByOrderByProtocolordercodeDesc();
 		} else {
@@ -4193,18 +4221,32 @@ public class ProtocolService {
 		return lstorders;
 	}
 
-	public List<LSlogilabprotocoldetail> Getuserorder(LSlogilabprotocoldetail objorder) {
+	public List<Logilabprotocolorders> Getuserorder(LSlogilabprotocoldetail objorder,List<Long> directorycode) {
 		List<LSprojectmaster> lstproject = objorder.getLsuserMaster().getLstproject();
-		List<LSlogilabprotocoldetail> lstorders = new ArrayList<LSlogilabprotocoldetail>();
+		List<Logilabprotocolorders> lstorders = new ArrayList<Logilabprotocolorders>();
 		if (lstproject != null) {
 			if (objorder.getProtocolordercode() == 0) {
-				lstorders = LSlogilabprotocoldetailRepository
-						.findFirst20ByLsprojectmasterInOrderByProtocolordercodeDesc(lstproject);
-			} else {
-				lstorders = LSlogilabprotocoldetailRepository
-						.findFirst20ByProtocolordercodeLessThanAndLsprojectmasterInOrderByProtocolordercodeDesc(
-								objorder.getProtocolordercode(), lstproject);
-			}
+				if(directorycode.size()==0) {
+					lstorders = LSlogilabprotocoldetailRepository
+							.findFirst20ByLsprojectmasterInOrderByProtocolordercodeDesc(lstproject);
+
+				}else {
+					lstorders = LSlogilabprotocoldetailRepository
+							.findFirst20ByLsprojectmasterInOrDirectorycodeInOrderByProtocolordercodeDesc(lstproject,directorycode);
+				}
+				} else {
+					if(directorycode.size()==0) {
+						lstorders = LSlogilabprotocoldetailRepository
+								.findFirst20ByProtocolordercodeLessThanAndLsprojectmasterInOrderByProtocolordercodeDesc(
+										objorder.getProtocolordercode(), lstproject);
+
+					}else {
+						lstorders = LSlogilabprotocoldetailRepository
+								.findFirst20ByProtocolordercodeLessThanAndLsprojectmasterInOrProtocolordercodeLessThanAndDirectorycodeInOrderByProtocolordercodeDesc(
+										objorder.getProtocolordercode(), lstproject,objorder.getProtocolordercode(),directorycode);
+
+					}
+						}
 		}
 		lstorders.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
 		return lstorders;

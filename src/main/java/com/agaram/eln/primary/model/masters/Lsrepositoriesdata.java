@@ -65,8 +65,8 @@ public class Lsrepositoriesdata {
 		return satus;
 	}
 
-	public void setSatus(Integer satus) {
-		if(satus==1) {
+	public void setSatus(String satus) {
+		if(this.itemstatus==1) {
 			this.satus = "Active";
 		}else {
 			this.satus = "Retireed";
