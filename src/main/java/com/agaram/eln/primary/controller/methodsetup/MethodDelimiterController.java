@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.service.methodsetup.MethodDelimiterService;
@@ -51,9 +52,11 @@ public class MethodDelimiterController {
 		  final MethodDelimiter methodDelimiter = mapper.convertValue(mapObject.get("methoddelimiter"), MethodDelimiter.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
+		  final MethodDelimiter auditdetails = mapper.convertValue(mapObject.get("auditdetails"), MethodDelimiter.class);
+
 		  
 		  return methodDelimiterService
-				  .createMethodDelimiter(methodDelimiter, site, saveAuditTrail, request);
+				  .createMethodDelimiter(methodDelimiter, site, request,auditdetails);
 	  }
 	  
 	  /**
@@ -74,8 +77,7 @@ public class MethodDelimiterController {
 		  final int doneByUserKey = Integer.parseInt(strUserKey);
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
 		  
-		  return methodDelimiterService.updateMethodDelimiter(methodDelimiter, site, comments, 
-				  saveAuditTrail, request, doneByUserKey);
+		  return methodDelimiterService.updateMethodDelimiter(methodDelimiter, site, comments,  request, doneByUserKey);
 	  }
 	  
 	  /**
@@ -100,7 +102,7 @@ public class MethodDelimiterController {
 
 		  final MethodDelimiter otherdetails = mapper.convertValue(mapObject.get("otherdetails"), MethodDelimiter.class);
 		  
-		  return methodDelimiterService.deleteMethodDelimiter(methodDelimiterKey, site, comments, doneByUserKey, saveAuditTrail,  request , otherdetails);
+		  return methodDelimiterService.deleteMethodDelimiter(methodDelimiterKey, site, comments, doneByUserKey,  request , otherdetails);
 	  }
 
 }

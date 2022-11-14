@@ -87,7 +87,7 @@ public class InstMasterController {
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  //final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
 		  
-		  return  masterService.createInstMaster(master, saveAuditTrail, request);
+		  return  masterService.createInstMaster(master, request);
    }
 
     /**
@@ -108,7 +108,7 @@ public class InstMasterController {
 //		  final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);	
 		  
-          return  masterService.updateInstMaster(master, saveAuditTrail, comments, request);
+          return  masterService.updateInstMaster(master, comments, request);
     }   
     
     /**
@@ -129,7 +129,7 @@ public class InstMasterController {
 		  
 		  final int doneByUserKey = Integer.parseInt(strUserKey);
 		  final  InstrumentMaster  otherdetails = mapper.convertValue(mapObject.get("otherdetails"), InstrumentMaster.class);
-		  return masterService.deleteInstMaster((Integer) mapObject.get("instmastkey"), saveAuditTrail, 
+		  return masterService.deleteInstMaster((Integer) mapObject.get("instmastkey"), 
 				   (String)mapObject.get("comments"),doneByUserKey,  request,otherdetails);
     }
     

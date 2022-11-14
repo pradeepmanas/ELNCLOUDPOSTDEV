@@ -551,7 +551,7 @@ public class LoginService {
 			}
 
 			if (!Password.equals(objuser.getsPassword())) {
-				objExitinguser.getObjResponse().setInformation("ID_EXIST");
+				objExitinguser.getObjResponse().setInformation("IDS_MSG_EXIST");
 				objExitinguser.getObjResponse().setStatus(false);
 				if (objuser.getObjsilentaudit() != null) {
 					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());

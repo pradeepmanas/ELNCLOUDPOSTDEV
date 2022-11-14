@@ -65,7 +65,7 @@ public class DelimiterController {
 	  @PostMapping(value = "/createDelimiters")
 	  public ResponseEntity<Object> createDelimiters(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {		  final ObjectMapper mapper = new ObjectMapper();		
 		  final Delimiter delimiters = mapper.convertValue(mapObject.get("delimiters"), Delimiter.class);
-		  final Boolean auditInput = mapper.convertValue(mapObject.get("auditInput"), Boolean.class);
+		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("auditInput"), Boolean.class);
 		  
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 		  final Delimiter auditdetails = mapper.convertValue(mapObject.get("auditdetails"), Delimiter.class);
@@ -85,7 +85,8 @@ public class DelimiterController {
 		  final ObjectMapper mapper = new ObjectMapper();	
 		  final Delimiter delimiters = mapper.convertValue(mapObject.get("delimiters"), Delimiter.class);
 		  final Boolean auditInput = mapper.convertValue(mapObject.get("auditInput"), Boolean.class);
-		  
+		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
+
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 //		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
 	//	  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
@@ -109,7 +110,7 @@ public class DelimiterController {
 		  final ObjectMapper mapper = new ObjectMapper();	
 		 
 		  final int delimiterKey = mapper.convertValue(mapObject.get("delimiterkey"), Integer.class);
-		//  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
+		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 //		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);

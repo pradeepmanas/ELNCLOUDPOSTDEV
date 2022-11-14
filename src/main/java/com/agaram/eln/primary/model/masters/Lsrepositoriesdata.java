@@ -57,6 +57,22 @@ public class Lsrepositoriesdata {
 	@Transient
 	private Date todate;
 	
+	@Transient
+	private String satus;
+	
+
+	public String getSatus() {
+		return satus;
+	}
+
+	public void setSatus(Integer satus) {
+		if(satus==1) {
+			this.satus = "Active";
+		}else {
+			this.satus = "Retireed";
+		}
+	}
+
 	public Integer getRepositorydatacode() {
 		return repositorydatacode;
 	}

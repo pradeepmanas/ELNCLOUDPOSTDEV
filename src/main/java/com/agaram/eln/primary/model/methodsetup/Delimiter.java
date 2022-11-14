@@ -2,6 +2,7 @@ package com.agaram.eln.primary.model.methodsetup;
 
 import java.io.Serializable;
 
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -258,7 +259,7 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 		this.screenname = delimiter.screenname;
 		
 		this.objsilentaudit = delimiter.objsilentaudit;
-
+		this.objmanualaudit = delimiter.objmanualaudit;
 
 	}
 	

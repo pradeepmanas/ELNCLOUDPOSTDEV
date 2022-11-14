@@ -28,6 +28,10 @@ public class SectionService {
 
 		if (sectionObjByName == null) {
 
+			section.setNdefaultstatus(1);
+			section.setNsitecode(1);
+			section.setNstatus(1);
+			
 			sectionRepository.save(section);
 
 			return getSection();

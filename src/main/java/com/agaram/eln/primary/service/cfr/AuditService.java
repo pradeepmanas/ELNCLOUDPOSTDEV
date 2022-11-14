@@ -518,7 +518,7 @@ public class AuditService {
 			LScfttransaction lscfttransaction = objMapper.convertValue(objCFRFilter.get("LScfttransaction"),
 					LScfttransaction.class);
 			Integer Usercode = (Integer) objuser.get("usercode");
-			Integer site = (Integer) objCFRFilter.get("sitecode");
+			Integer site = (Integer) lscfttransaction.getLssitemaster();
 			String module = (String) objCFRFilter.get("module");
 			@SuppressWarnings("unchecked")
 			Map<String, String> system = (Map) objCFRFilter.get("system");

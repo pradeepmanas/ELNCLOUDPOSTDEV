@@ -247,6 +247,9 @@ public class UserService {
 
 		if (objusermaster.getUsercode() == null) {
 			isnewuser = true;
+		}else {
+			LSuserMaster obj1 =lsuserMasterRepository.findByusercode(objusermaster.getUsercode());
+			
 		}
 
 		if (objusermaster.getUsercode() == null
@@ -326,6 +329,14 @@ public class UserService {
 		objusermaster.setResponse(new Response());
 		objusermaster.getResponse().setStatus(true);
 		objusermaster.getResponse().setInformation("ID_SUCCESSMSG");
+		
+		if (objusermaster.getUsercode() != null) {
+			LSuserMaster obj1 =lsuserMasterRepository.findByusercode(objusermaster.getUsercode());
+			if(obj1.getPasswordexpirydate()!=null) {
+				objusermaster.setPasswordexpirydate(obj1.getPasswordexpirydate());
+			}
+			
+		}
 
 		return objusermaster;
 	}
@@ -560,7 +571,9 @@ public class UserService {
 		if (LSuserMaster.getUsername().equalsIgnoreCase("Administrator")) {
 			return lsusersteamRepository.findBystatus(1);
 		}
+		else {		
 		return lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(), 1);
+	   }
 	}
 
 	public Map<String, Object> GetUserTeamonSitevise(LSSiteMaster objclass) {

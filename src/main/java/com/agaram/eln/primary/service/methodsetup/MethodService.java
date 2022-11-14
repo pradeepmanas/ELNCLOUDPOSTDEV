@@ -176,9 +176,9 @@ public class MethodService {
     * @return Response of newly added method entity
     */
 	@Transactional
-	public ResponseEntity<Object> createMethod(final Method methodMaster, final LSSiteMaster site,
-			final boolean saveAuditTrail, final HttpServletRequest request)
+	public ResponseEntity<Object> createMethod(final Method methodMaster, final LSSiteMaster site, final HttpServletRequest request)
 	{			
+		boolean saveAuditTrail=true;
 		final InstrumentMaster instMaster = instMastRepo.findOne(methodMaster.getInstmaster().getInstmastkey());
 		final LSuserMaster createdUser = getCreatedUserByKey(methodMaster.getCreatedby().getUsercode());
 		
@@ -224,8 +224,8 @@ public class MethodService {
 				savedMethod.setDisplayvalue(savedMethod.getMethodname());
 				savedMethod.setScreenname("Methodmaster");
 				
-				if (saveAuditTrail == true)
-				{
+//				if (saveAuditTrail == true)
+//				{
 					final Map<String, String> fieldMap = new HashMap<String, String>();
 					fieldMap.put("site", "sitename");				
 					fieldMap.put("createdby", "loginid");				
@@ -236,22 +236,22 @@ public class MethodService {
 //				    cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //							"Create", "", site, xmlData, createdUser, request.getRemoteAddr());
 					
-	                LScfttransaction LScfttransaction = new LScfttransaction();
+//	                LScfttransaction LScfttransaction = new LScfttransaction();
+//					
+//					LScfttransaction.setActions("Insert");
+//					LScfttransaction.setComments(methodMaster.getMethodname()+" was created by "+methodMaster.getUsername());
+//					LScfttransaction.setLssitemaster(site.getSitecode());
+//					LScfttransaction.setLsuserMaster(methodMaster.getCreatedby().getUsercode());
+//					LScfttransaction.setManipulatetype("View/Load");
+//					LScfttransaction.setModuleName("Method Master");
+//					LScfttransaction.setTransactiondate(methodMaster.getCreateddate());
+//					LScfttransaction.setUsername(methodMaster.getUsername());
+//					LScfttransaction.setTableName("Method");
+//					LScfttransaction.setSystemcoments("System Generated");
+//					
+//					lscfttransactionrepo.save(LScfttransaction);
 					
-					LScfttransaction.setActions("Insert");
-					LScfttransaction.setComments(methodMaster.getMethodname()+" was created by "+methodMaster.getUsername());
-					LScfttransaction.setLssitemaster(site.getSitecode());
-					LScfttransaction.setLsuserMaster(methodMaster.getCreatedby().getUsercode());
-					LScfttransaction.setManipulatetype("View/Load");
-					LScfttransaction.setModuleName("Method Master");
-					LScfttransaction.setTransactiondate(methodMaster.getCreateddate());
-					LScfttransaction.setUsername(methodMaster.getUsername());
-					LScfttransaction.setTableName("Method");
-					LScfttransaction.setSystemcoments("System Generated");
-					
-					lscfttransactionrepo.save(LScfttransaction);
-					
-				}
+			//	}
 			
 //	    		Map<String, Object> mapObj = new HashMap<String, Object>();
 //   		
@@ -420,8 +420,9 @@ public class MethodService {
 //   }	
 	
 	public ResponseEntity<Object> updateMethod(final Method method, final LSSiteMaster site, final int doneByUserKey, 
-			   final String comments, final boolean saveAuditTrail, final HttpServletRequest request)
+			    final HttpServletRequest request)
 	{	  		
+		boolean saveAuditTrail=true;
 		final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);		
 		final InstrumentMaster instMaster = instMastRepo.findOne(method.getInstmaster().getInstmastkey());
 		
@@ -451,28 +452,28 @@ public class MethodService {
 		    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
 		    		savedMethod.setScreenname("Methodmaster");
 		    		
-		    		if (saveAuditTrail)
-	    			{
-		    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
-		    			
-//		    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
-//								"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
-		    			
-		    			 LScfttransaction LScfttransaction = new LScfttransaction();
-							
-							LScfttransaction.setActions("Update");
-							LScfttransaction.setComments(method.getMethodname()+" was updated by "+method.getUsername());
-							LScfttransaction.setLssitemaster(site.getSitecode());
-							LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
-							LScfttransaction.setManipulatetype("View/Load");
-							LScfttransaction.setModuleName("Method Master");
-							LScfttransaction.setTransactiondate(method.getCreateddate());
-							LScfttransaction.setUsername(method.getUsername());
-							LScfttransaction.setTableName("Method");
-							LScfttransaction.setSystemcoments("System Generated");
-							
-							lscfttransactionrepo.save(LScfttransaction);
-	    			}
+//		    		if (saveAuditTrail)
+//	    			{
+//		    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
+//		    			
+////		    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
+////								"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
+//		    			
+//		    			 LScfttransaction LScfttransaction = new LScfttransaction();
+//							
+//							LScfttransaction.setActions("Update");
+//							LScfttransaction.setComments(method.getMethodname()+" was updated by "+method.getUsername());
+//							LScfttransaction.setLssitemaster(site.getSitecode());
+//							LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
+//							LScfttransaction.setManipulatetype("View/Load");
+//							LScfttransaction.setModuleName("Method Master");
+//							LScfttransaction.setTransactiondate(method.getCreateddate());
+//							LScfttransaction.setUsername(method.getUsername());
+//							LScfttransaction.setTableName("Method");
+//							LScfttransaction.setSystemcoments("System Generated");
+//							
+//							lscfttransactionrepo.save(LScfttransaction);
+//	    			}
 		    		
 		    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);	
 		    	}
@@ -637,9 +638,9 @@ public class MethodService {
 	 */
 	 @Transactional()
 	   public ResponseEntity<Object> deleteMethod(final int methodKey, 
-			   final LSSiteMaster site, final String comments, final int doneByUserKey, 
-			   final boolean saveAuditTrial, final HttpServletRequest request,final Method otherdetails)
+			   final LSSiteMaster site, final String comments, final int doneByUserKey, final HttpServletRequest request,final Method otherdetails)
 	   {	   
+		  boolean saveAuditTrial=true;
 		   final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);
 		   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 		   
@@ -677,28 +678,28 @@ public class MethodService {
 			   
 
 						   
-				    if (saveAuditTrial)
-	    			{				    	
-		    		// String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
-		    			
-		    			//final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
-//						cfrTransService.saveCfrTransaction(page, actionType, "Delete", comments, 
-//								site, xmlData, createdUser, request.getRemoteAddr());
-		    			 LScfttransaction LScfttransaction = new LScfttransaction();
-							
-							LScfttransaction.setActions("Delete"); 
-							LScfttransaction.setComments(method.getMethodname()+" was deleted by "+otherdetails.getUsername());
-							LScfttransaction.setLssitemaster(site.getSitecode());
-							LScfttransaction.setLsuserMaster(doneByUserKey);
-							LScfttransaction.setManipulatetype("View/Load");
-							LScfttransaction.setModuleName("Method Master");
-							LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
-							LScfttransaction.setUsername(otherdetails.getUsername());
-							LScfttransaction.setTableName("Method");
-							LScfttransaction.setSystemcoments("System Generated");
-							
-							lscfttransactionrepo.save(LScfttransaction);
-	    			}
+//				    if (saveAuditTrial)
+//	    			{				    	
+//		    		// String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
+//		    			
+//		    			//final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
+////						cfrTransService.saveCfrTransaction(page, actionType, "Delete", comments, 
+////								site, xmlData, createdUser, request.getRemoteAddr());
+//		    			 LScfttransaction LScfttransaction = new LScfttransaction();
+//							
+//							LScfttransaction.setActions("Delete"); 
+//							LScfttransaction.setComments(method.getMethodname()+" was deleted by "+otherdetails.getUsername());
+//							LScfttransaction.setLssitemaster(site.getSitecode());
+//							LScfttransaction.setLsuserMaster(doneByUserKey);
+//							LScfttransaction.setManipulatetype("View/Load");
+//							LScfttransaction.setModuleName("Method Master");
+//							LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
+//							LScfttransaction.setUsername(otherdetails.getUsername());
+//							LScfttransaction.setTableName("Method");
+//							LScfttransaction.setSystemcoments("System Generated");
+//							
+//							lscfttransactionrepo.save(LScfttransaction);
+//	    			}
 				    
 					   //copy of object for using 'Diffable' to compare objects
 					   final Method methodBeforeSave = new Method(method); 
@@ -1114,26 +1115,26 @@ public class MethodService {
 				//create temp file     
 				final File tempFile = File.createTempFile(fileName, ext);
 				
-				// User FileWriter to write content to text file
+			
 				FileWriter writer = new FileWriter(tempFile);
-			//	 Use while loop to check when file contains data
+		
 				while ((line = br.readLine()) != null) {
 					tempArr = line.split(",");
-					// User for loop to iterate String Array and write data to text file
+				
 					for (String str : tempArr) {
-					//	writer.write(str + "\t ");[already written]
+				
 						sb.append(str).append("\t");
 
 					}
 				      String appendedline = sb.toString();
-				    //  String resultline = appendedline.trim();
+				
 				      String resultline = appendedline.replaceAll("\\s+$", "");
 
 				      writer.write(resultline);
 				      sb.setLength(0);
 				      appendedline ="";
 				      resultline="";
-					// Write each line of CSV file to multiple lines
+				
 					writer.write("\n");
 
 				}
@@ -1142,7 +1143,7 @@ public class MethodService {
 //					tempArr = line.split(",");
 //					// User for loop to iterate String Array and write data to text file
 //					for (String str : tempArr) {
-//						writer.write(str + "\t");
+//						writer.write(str + ",");
 //					}
 //					// Write each line of CSV file to multiple lines
 //					writer.write("\n");

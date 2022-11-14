@@ -1145,6 +1145,6 @@ public class InstrumentController {
 	public LSlogilablimsorderdetail cancelsheetorder(@RequestBody LSlogilablimsorderdetail body)throws Exception
 	{
 		return instrumentService.cancelprotocolorder(body);
-//		return true;
+
 	}
 }

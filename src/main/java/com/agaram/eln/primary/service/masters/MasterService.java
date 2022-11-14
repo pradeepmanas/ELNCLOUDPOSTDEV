@@ -145,8 +145,16 @@ public class MasterService {
 	}
 
 	public List<Lsrepositoriesdata> Getallrepositoriesdata(Lsrepositoriesdata lsrepositoriesdata) {
-		return lsrepositoriesdataRepository.findByRepositorycodeAndSitecodeAndItemstatusOrderByRepositorydatacodeDesc(
-				lsrepositoriesdata.getRepositorycode(), lsrepositoriesdata.getSitecode(), 1);
+		if(lsrepositoriesdata.getItemstatus()!=null) {
+			List<Lsrepositoriesdata> reposotorydata = lsrepositoriesdataRepository.findByRepositorycodeAndSitecodeOrderByRepositorydatacodeDesc(
+					lsrepositoriesdata.getRepositorycode(), lsrepositoriesdata.getSitecode());
+			reposotorydata.forEach(objorderDetail -> objorderDetail.setSatus(objorderDetail.getItemstatus()));
+			return reposotorydata;
+		}else {
+			return lsrepositoriesdataRepository.findByRepositorycodeAndSitecodeAndItemstatusOrderByRepositorydatacodeDesc(
+					lsrepositoriesdata.getRepositorycode(), lsrepositoriesdata.getSitecode(), 1);
+		}
+	
 	}
 
 	public Lsrepositoriesdata Saverepositorydata(Lsrepositoriesdata lsrepositoriesdata) {

@@ -89,8 +89,9 @@ public class MethodDelimiterService {
 	 */
 	@Transactional
 	public ResponseEntity<Object> createMethodDelimiter(final MethodDelimiter methodDelimiter, final LSSiteMaster site,
-			   final boolean saveAuditTrial, final HttpServletRequest request)
+			    final HttpServletRequest request,final MethodDelimiter auditdetails)
 		{ 
+		    boolean saveAuditTrial = true;
 		   final ParserMethod parserMethod = parserMethodRepo.findOne(methodDelimiter.getParsermethod().getParsermethodkey());
 		   final Delimiter delimiter = delimiterRepo.findOne(methodDelimiter.getDelimiter().getDelimiterkey());
 		   
@@ -153,30 +154,30 @@ public class MethodDelimiterService {
 //	    		mapObj.put("displayvalue", savedMethodDelimiter.getParsermethod().getParsermethodname());
 //	    		mapObj.put("screenname", "MethodDelimiter");
 	    		
-	    		if (saveAuditTrial)
-				{   			
+//	    		if (saveAuditTrial)
+//				{   			
 					final Map<String, String> fieldMap = new HashMap<String, String>();
 					fieldMap.put("createdby", "loginid");
 					fieldMap.put("parsermethod", "parsermethodname");
 					fieldMap.put("delimiter", "delimitername");
 					
-					LScfttransaction LScfttransaction = new LScfttransaction();
-					
-					LScfttransaction.setActions("Insert"); 
-					LScfttransaction.setComments(methodDelimiter.getDelimiter().getDelimitername()
-		  					+" for " + methodDelimiter.getParsermethod().getParsermethodname() +" was creadted by " + 
-							methodDelimiter.getCreatedby().getUsername());
-							
-					LScfttransaction.setLssitemaster(site.getSitecode());
-					LScfttransaction.setLsuserMaster(methodDelimiter.getCreatedby().getUsercode());
-					LScfttransaction.setManipulatetype("View/Load");
-					LScfttransaction.setModuleName("Method Delimiter");
-					LScfttransaction.setTransactiondate(methodDelimiter.getCreateddate());
-					LScfttransaction.setUsername(methodDelimiter.getCreatedby().getUsername());
-					LScfttransaction.setTableName("Methoddelimiter");
-					LScfttransaction.setSystemcoments("System Generated");
-					
-					lscfttransactionrepo.save(LScfttransaction);
+//					LScfttransaction LScfttransaction = new LScfttransaction();
+//					
+//					LScfttransaction.setActions("Insert"); 
+//					LScfttransaction.setComments(methodDelimiter.getDelimiter().getDelimitername()
+//		  					+" for " + methodDelimiter.getParsermethod().getParsermethodname() +" was creadted by " + 
+//							methodDelimiter.getCreatedby().getUsername());
+//							
+//					LScfttransaction.setLssitemaster(site.getSitecode());
+//					LScfttransaction.setLsuserMaster(methodDelimiter.getCreatedby().getUsercode());
+//					LScfttransaction.setManipulatetype("View/Load");
+//					LScfttransaction.setModuleName("Method Delimiter");
+//					LScfttransaction.setTransactiondate(methodDelimiter.getCreateddate());
+//					LScfttransaction.setUsername(methodDelimiter.getCreatedby().getUsername());
+//					LScfttransaction.setTableName("Methoddelimiter");
+//					LScfttransaction.setSystemcoments("System Generated");
+//					
+//					lscfttransactionrepo.save(LScfttransaction);
 					
 					
 //					final String xmlData = readWriteXML.saveXML(savedMethodDelimiter, MethodDelimiter.class, null, "individualpojo", fieldMap);
@@ -184,7 +185,7 @@ public class MethodDelimiterService {
 //					final String actionType = EnumerationInfo.CFRActionType.SYSTEM.getActionType();
 //					cfrTransService.saveCfrTransaction(page, actionType, "Create", "", 
 //							site, xmlData, createdUser, request.getRemoteAddr());
-				}
+			//	}
 	      		
 	    		return new ResponseEntity<>(savedMethodDelimiter , HttpStatus.OK);
 	    	} 
@@ -204,9 +205,9 @@ public class MethodDelimiterService {
 	 */
    @Transactional
    public ResponseEntity<Object> updateMethodDelimiter(final MethodDelimiter methodDelimiter, final LSSiteMaster site,
-		   final String comments, final boolean saveAuditTrail,
-		   final HttpServletRequest request, final int doneByUserKey)
+		   final String comments, final HttpServletRequest request, final int doneByUserKey)
    {	   
+	   Boolean saveAuditTrail= true;
 	   final Optional<MethodDelimiter> methodDelimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatus(methodDelimiter.getMethoddelimiterkey(), 1);
 	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
@@ -284,29 +285,29 @@ public class MethodDelimiterService {
 				    		//copy of object for using 'Diffable' to compare objects
 			    			
 				    		
-				    		if (saveAuditTrail)
-			    			{
-//				    			final String xmlData = convertMethodDelimiterObjectToXML(delimiterBeforeSave, savedMethodDelimiter);
+//				    		if (saveAuditTrail)
+//			    			{
+////				    			final String xmlData = convertMethodDelimiterObjectToXML(delimiterBeforeSave, savedMethodDelimiter);
+////				    			
+////				    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
+////										"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
 //				    			
-//				    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
-//										"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
-				    			
-				    			LScfttransaction LScfttransaction = new LScfttransaction();
-								
-								LScfttransaction.setActions("Update"); 
-								LScfttransaction.setComments(methodDelimiterByKey.get().getDelimiter().getDelimitername() + " was updated To " + delimiter.getDelimitername());
-								LScfttransaction.setLssitemaster(site.getSitecode());
-								LScfttransaction.setLsuserMaster(methodDelimiter.getCreatedby().getUsercode());
-								LScfttransaction.setManipulatetype("View/Load");
-								LScfttransaction.setModuleName("Method Delimiter");
-								LScfttransaction.setTransactiondate(methodDelimiter.getTransactiondate());
-								LScfttransaction.setUsername(methodDelimiter.getUsername());
-								LScfttransaction.setTableName("Methoddelimiter");
-								LScfttransaction.setSystemcoments("System Generated");
-								
-								lscfttransactionrepo.save(LScfttransaction);
-								
-			    			}
+//				    			LScfttransaction LScfttransaction = new LScfttransaction();
+//								
+//								LScfttransaction.setActions("Update"); 
+//								LScfttransaction.setComments(methodDelimiterByKey.get().getDelimiter().getDelimitername() + " was updated To " + delimiter.getDelimitername());
+//								LScfttransaction.setLssitemaster(site.getSitecode());
+//								LScfttransaction.setLsuserMaster(methodDelimiter.getCreatedby().getUsercode());
+//								LScfttransaction.setManipulatetype("View/Load");
+//								LScfttransaction.setModuleName("Method Delimiter");
+//								LScfttransaction.setTransactiondate(methodDelimiter.getTransactiondate());
+//								LScfttransaction.setUsername(methodDelimiter.getUsername());
+//								LScfttransaction.setTableName("Methoddelimiter");
+//								LScfttransaction.setSystemcoments("System Generated");
+//								
+//								lscfttransactionrepo.save(LScfttransaction);
+//								
+//			    			}
 				    		
                             final MethodDelimiter delimiterBeforeSave = new MethodDelimiter(methodDelimiterByKey.get());
 			    			
@@ -402,9 +403,9 @@ public class MethodDelimiterService {
 	 */
   @Transactional
   public ResponseEntity<Object> deleteMethodDelimiter(final int methodDelimiterKey, 
-		   final LSSiteMaster site, final String comments, final int doneByUserKey, 
-		   final boolean saveAuditTrial, final HttpServletRequest request,final MethodDelimiter otherdetails)
+		   final LSSiteMaster site, final String comments, final int doneByUserKey, final HttpServletRequest request,final MethodDelimiter otherdetails)
  {	   
+	   Boolean saveAuditTrial = true;
 	   final Optional<MethodDelimiter> delimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatus(methodDelimiterKey, 1);
 	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
@@ -441,30 +442,30 @@ public class MethodDelimiterService {
 			   else {
 			   
 			  					   
-			    if (saveAuditTrial)
-				{				    	
-			    	//final String xmlData = convertMethodDelimiterObjectToXML(delimitersBeforeSave, savedDelimiters);
-	   			
-//			    	cfrTransService.saveCfrTransaction(page, 
-//							EnumerationInfo.CFRActionType.USER.getActionType(), "Delete", comments, 
-//							site, xmlData, createdUser, request.getRemoteAddr());
-			    	
-                   LScfttransaction LScfttransaction = new LScfttransaction();
-					
-					LScfttransaction.setActions("Delete"); 
-					LScfttransaction.setComments( delimiterByKey.get().getDelimiter().getDelimitername()+" was deleted by "+otherdetails.getUsername());
-					LScfttransaction.setLssitemaster(site.getSitecode());
-					LScfttransaction.setLsuserMaster(doneByUserKey);
-					LScfttransaction.setManipulatetype("View/Load");
-					LScfttransaction.setModuleName("Method Delimiter");
-					LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
-					LScfttransaction.setUsername(otherdetails.getUsername());
-					LScfttransaction.setTableName("Methoddelimiter");
-					LScfttransaction.setSystemcoments("System Generated");
-					
-					lscfttransactionrepo.save(LScfttransaction);
-			    				    	
-				}
+//			    if (saveAuditTrial)
+//				{				    	
+//			    	//final String xmlData = convertMethodDelimiterObjectToXML(delimitersBeforeSave, savedDelimiters);
+//	   			
+////			    	cfrTransService.saveCfrTransaction(page, 
+////							EnumerationInfo.CFRActionType.USER.getActionType(), "Delete", comments, 
+////							site, xmlData, createdUser, request.getRemoteAddr());
+//			    	
+//                   LScfttransaction LScfttransaction = new LScfttransaction();
+//					
+//					LScfttransaction.setActions("Delete"); 
+//					LScfttransaction.setComments( delimiterByKey.get().getDelimiter().getDelimitername()+" was deleted by "+otherdetails.getUsername());
+//					LScfttransaction.setLssitemaster(site.getSitecode());
+//					LScfttransaction.setLsuserMaster(doneByUserKey);
+//					LScfttransaction.setManipulatetype("View/Load");
+//					LScfttransaction.setModuleName("Method Delimiter");
+//					LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
+//					LScfttransaction.setUsername(otherdetails.getUsername());
+//					LScfttransaction.setTableName("Methoddelimiter");
+//					LScfttransaction.setSystemcoments("System Generated");
+//					
+//					lscfttransactionrepo.save(LScfttransaction);
+//			    				    	
+//				}
 			    final MethodDelimiter delimitersBeforeSave = new MethodDelimiter(delimiter); 
 				
 				   //Its not associated in transaction

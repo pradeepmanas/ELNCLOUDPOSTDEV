@@ -197,7 +197,18 @@ public class LSuserMaster {
 	
 	@Transient
 	private boolean reset;
+	@Transient
+	private boolean resendmail ;
 	
+	
+	public boolean isResendmail() {
+		return resendmail;
+	}
+
+	public void setResendmail(boolean resendmail) {
+		this.resendmail = resendmail;
+	}
+
 	public boolean isReset() {
 		return reset;
 	}

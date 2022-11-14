@@ -28,6 +28,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.Range;
 
 import com.agaram.eln.primary.model.methodsetup.InstantDateAdapter;
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.ParserMethod;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -41,7 +42,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "methoddelimiter")
-@XmlType(propOrder = { "methoddelimiterkey", "parsermethod", "delimiter", "status", "createdby", "createddate","transactiondate","screenname","displayvalue","defaultvalue"})
+@XmlType(propOrder = { "methoddelimiterkey", "parsermethod", "delimiter", "status", "createdby", "createddate","transactiondate",
+		"screenname","displayvalue","defaultvalue","objsilentaudit","objmanualaudit"})
 @Entity
 @Table(name = "methoddelimiter")
 public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>{
@@ -69,6 +71,12 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	
 	@Transient
 	private String username;
+	
+	@Transient
+	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	private LScfttransaction objmanualaudit;
 	
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
@@ -193,7 +201,22 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	public void setDefaultvalue(Integer defaultvalue) {
 		this.defaultvalue = defaultvalue;
 	}
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
 
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
+	
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -210,10 +233,14 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	       .append("displayvalue", this.displayvalue, obj.displayvalue)
 	       .append("screenname", this.screenname, obj.screenname)
 	       .append("defaultvalue", this.defaultvalue, obj.defaultvalue)
+	       .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
+           .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
 
 
 	       .build();
 	}
+
+	
 
 	/**
 	 * This constructor is mandatory for a pojo class to perform deep copy of
@@ -233,6 +260,9 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 		this.displayvalue = methodDelimiter.displayvalue;
         this.screenname = methodDelimiter.screenname;
         this.defaultvalue = methodDelimiter.defaultvalue;
+    	this.objsilentaudit = methodDelimiter.objsilentaudit;
+    	this.objmanualaudit = methodDelimiter.objmanualaudit;
+      
 
 
 	}

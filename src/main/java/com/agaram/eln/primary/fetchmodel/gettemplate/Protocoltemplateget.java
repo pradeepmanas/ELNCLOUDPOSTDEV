@@ -78,7 +78,7 @@ public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 		this.createdbyusername = createdbyusername;
 		this.createdate = createdate;
 		this.transactionstatus = (rejected != null && rejected == 1) ? "rejected"
-				: (approved == null ? "created" :approved == 1 ? "approved" : approved == 0 ? "initiated":"");
+				: (approved == null ? "created" :approved == 1 ? "approved" : approved == 0 ? "initiated":approved == 2?"return":"");
 	}
 
 	@Override

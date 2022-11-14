@@ -28,6 +28,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.bson.types.Binary;
 import org.hibernate.validator.constraints.Range;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.InstantDateAdapter;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -43,7 +44,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "method")
 @XmlType(propOrder = { "methodkey", "methodname", "instmaster", "instrawdataurl",
-		"samplesplit", "parser", "site", "status", "createdby", "createddate","username","transactiondate","filename","displayvalue","screenname"})
+		"samplesplit", "parser", "site", "status", "createdby", "createddate","username","transactiondate","filename","displayvalue","screenname","objsilentaudit","objmanualaudit"})
 @Entity
 @Table(name = "method")
 public class Method implements Serializable, Diffable<Method>{
@@ -76,7 +77,12 @@ public class Method implements Serializable, Diffable<Method>{
 	@Column(name = "screenname")
 	private String screenname;
 
-
+	@Transient
+	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	LScfttransaction objmanualaudit;
+	
 	@Transient
 	private String tenantid;
 	
@@ -255,6 +261,23 @@ public class Method implements Serializable, Diffable<Method>{
 		this.tenantid = tenantid;
 	}
 
+	
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -278,6 +301,8 @@ public class Method implements Serializable, Diffable<Method>{
 	       .append("screenname", this.screenname, obj.screenname)
 
 	       .append("tenantid", this.tenantid, obj.tenantid)
+           .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
+           .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
 
 
 
@@ -319,6 +344,8 @@ public class Method implements Serializable, Diffable<Method>{
         this.screenname=method.screenname;
 
         this.tenantid=method.tenantid;
+		this.objsilentaudit = method.objsilentaudit;
+		this.objmanualaudit = method.objmanualaudit;
 
 
 	}
