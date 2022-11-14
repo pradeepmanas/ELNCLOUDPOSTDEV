@@ -2,6 +2,7 @@ package com.agaram.eln.primary.repository.sheetManipulation;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -160,6 +161,8 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	public List<LSfile> findByFilecode(List<Integer> listobjfilecode);
 
 	public List<LSfile> findByFilecodeIn(List<Integer> listobjfilecode);
+
+	public List<LSfile> findByFilenameuserAndCategory(String filenameuser, String category);
 
 
 
