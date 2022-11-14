@@ -65,10 +65,10 @@ public class MethodController {
 	  public ResponseEntity<Object> createMethod(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception {
 		  final ObjectMapper mapper = new ObjectMapper();		
 		  final Method method = mapper.convertValue(mapObject.get("methodmaster"), Method.class);
-		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
+	//	  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 		  
-		  return methodService.createMethod(method, site, saveAuditTrail, request);
+		  return methodService.createMethod(method, site,request);
 	  }
 	  
 	  /**
@@ -88,10 +88,9 @@ public class MethodController {
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 		  String someValue =  (String) mapObject.get("doneByUserKey");
 		  final int doneByUserKey = Integer.parseInt(someValue);
-		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
+		//  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
 		  
-		  return methodService.updateMethod(method, site, doneByUserKey, comments, 
-				  saveAuditTrail, request);
+		  return methodService.updateMethod(method, site, doneByUserKey,request);
 	  }
 	  
 	  /**
@@ -113,8 +112,7 @@ public class MethodController {
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
 		  final Method otherdetails = mapper.convertValue(mapObject.get("otherdetails"), Method.class);
 		  
-		  return methodService.deleteMethod(methodKey, site, comments, doneByUserKey,
-				  saveAuditTrail, request,otherdetails);
+		  return methodService.deleteMethod(methodKey, site, comments, doneByUserKey, request,otherdetails);
 		  
 //		  return methodService.deleteMethod(methodKey, site, comments, doneByUserKey,
 //				  saveAuditTrail, request);
