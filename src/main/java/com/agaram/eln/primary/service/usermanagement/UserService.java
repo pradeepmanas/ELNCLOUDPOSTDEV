@@ -18,6 +18,7 @@ import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
@@ -238,8 +239,10 @@ public class UserService {
 					1);
 		}
 //		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objclass);
-		return lsuserMasterRepository.findByUsernameNotAndUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(
-				"Administrator", 1, objclass);
+//		return lsuserMasterRepository.findByUsernameNotAndUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(
+//				"Administrator", 1, objclass);
+		
+		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc( 1, objclass);
 	}
 
 	public LSuserMaster InsertUpdateUser(LSuserMaster objusermaster) throws MessagingException {
@@ -247,9 +250,9 @@ public class UserService {
 
 		if (objusermaster.getUsercode() == null) {
 			isnewuser = true;
-		}else {
-			LSuserMaster obj1 =lsuserMasterRepository.findByusercode(objusermaster.getUsercode());
-			
+		} else {
+			LSuserMaster obj1 = lsuserMasterRepository.findByusercode(objusermaster.getUsercode());
+
 		}
 
 		if (objusermaster.getUsercode() == null
@@ -293,6 +296,7 @@ public class UserService {
 			objusermaster.getResponse().setStatus(true);
 			objusermaster.getResponse().setInformation("ID_SUCCESSMSG");
 			updatenotificationforuserrole(objusermaster);
+
 			return objusermaster;
 		}
 
@@ -329,41 +333,71 @@ public class UserService {
 		objusermaster.setResponse(new Response());
 		objusermaster.getResponse().setStatus(true);
 		objusermaster.getResponse().setInformation("ID_SUCCESSMSG");
-		
+
 		if (objusermaster.getUsercode() != null) {
-			LSuserMaster obj1 =lsuserMasterRepository.findByusercode(objusermaster.getUsercode());
-			if(obj1.getPasswordexpirydate()!=null) {
+			LSuserMaster obj1 = lsuserMasterRepository.findByusercode(objusermaster.getUsercode());
+			if (obj1.getPasswordexpirydate() != null) {
 				objusermaster.setPasswordexpirydate(obj1.getPasswordexpirydate());
 			}
-			
+
 		}
 
 		return objusermaster;
 	}
 
+	@SuppressWarnings({ "unused", "unused" })
 	private void updatenotificationforuserrole(LSuserMaster objusermaster) {
 		String Details = "";
 		String Notifiction = "";
-		Notifiction = "USERROLEADD";
-
-		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-
-//		if(objusermaster.getMultiusergroupcode().size()>1)
-
-		Details = "{\"role\":\"" + objusermaster.getMultiusergroupcode().get(0).getLsusergroup().getUsergroupname()
-				+ "\", \"site\":\"" +objusermaster.getSitename()+ "\"}";
 		LSnotification objnotify = new LSnotification();
-		objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
-		objnotify.setNotifationto(objusermaster);
-		objnotify.setNotificationdate(objusermaster.getModifieddate());
-		objnotify.setNotification(Notifiction);
-		objnotify.setNotificationdetils(Details);
-		objnotify.setNotificationfor(1);
-		objnotify.setNotificationpath("/Usermaster");
-		objnotify.setIsnewnotification(1);
-		lsnotificationRepository.save(objnotify);
+
+		List<String> emptyarray = new ArrayList<>();
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		StringBuffer sb = new StringBuffer();
+
+		if(objusermaster.getUsernotify() != null) {
+			for (LSuserMaster rowValues : objusermaster.getUsernotify()) {
+			sb.append(rowValues.getUsergroupname()).append(",");
+		     }
+		}
+		String Detailwithcomma = sb.toString();
+		Details = "{\"role\":\"" + Detailwithcomma + "site:" +objusermaster.getSitename()+ "\"}";
+		if(objusermaster.getMultiusergroupcode() != null && objusermaster.getDeleterole() != null) {
+		if (objusermaster.getMultiusergroupcode().size() > objusermaster.getDeleterole().size()) {
+
+			Notifiction = "USERROLEADD";
+
+			LSnotification notify = new LSnotification();
+			objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
+			objnotify.setNotifationto(objusermaster);
+			objnotify.setNotificationdate(objusermaster.getModifieddate());
+			objnotify.setNotification(Notifiction);
+			objnotify.setNotificationdetils(Details);
+			objnotify.setNotificationfor(1);
+			objnotify.setNotificationpath("/Usermaster");
+			objnotify.setIsnewnotification(1);
+			lstnotifications.add(objnotify);
+		}
+
+		else {
+			Notifiction = "USERROLEREMOVE";
+
+			objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
+			objnotify.setNotifationto(objusermaster);
+			objnotify.setNotificationdate(objusermaster.getModifieddate());
+			objnotify.setNotification(Notifiction);
+			objnotify.setNotificationdetils(Details);
+			objnotify.setNotificationfor(1);
+			objnotify.setNotificationpath("/Usermaster");
+			objnotify.setIsnewnotification(1);
+
+		}
+		lsnotificationRepository.save(lstnotifications);
+	  }
+
 	}
-	// }
+
+//		List<LSuserMaster> usergroupname=objusermaster.getUsernotify();
 
 	private String Generatetenantpassword() {
 
@@ -1163,7 +1197,8 @@ public class UserService {
 		lstuser.add(objuser.getUsercode());
 
 		return lsuserMasterRepository
-				.findByLssitemasterAndUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(objuser.getLssitemaster(), lstuser, 0);
+				.findByLssitemasterAndUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(
+						objuser.getLssitemaster(), lstuser, 0);
 	}
 
 	public Lsusersettings getUserPrefrences(LSuserMaster objuser) {

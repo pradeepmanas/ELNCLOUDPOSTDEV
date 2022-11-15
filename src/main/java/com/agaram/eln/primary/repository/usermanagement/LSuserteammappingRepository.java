@@ -35,4 +35,6 @@ public interface LSuserteammappingRepository  extends JpaRepository<LSuserteamma
 	@Transactional
 	@Query("select l.teamcode from LSuserteammapping l where lsuserMaster=?2 and l.teamcode in (?1) ")
 	public List<Integer> getusermastercode(List<Integer> teamCode,LSuserMaster lsusermaster);
+
+	public List<LSuserteammapping> findByLsuserMasterAndTeamcodeNotNull(LSprotocolmaster newProtocolMasterObj);
 }

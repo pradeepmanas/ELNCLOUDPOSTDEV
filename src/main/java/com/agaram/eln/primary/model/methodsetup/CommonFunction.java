@@ -1017,37 +1017,6 @@ public class CommonFunction {
 
 		int idx=0;
 		
-		if(subParserTechnique.getParserfield().getMethoddelimiter().getDelimiter().getDelimitername().equals("None")) {
-			
-			 for(List<String> rowValues : dataBlock) {
-					
-					List<String> currentRowValues = new ArrayList<>(rowValues);
-					List<String[]> splitFieldArray = currentRowValues.stream().map((item) -> item.split("\t")).collect(Collectors.toList());							
-				//	List<String[]> splitFieldArray = currentRowValues.stream().map((item) -> item.split(delimiterChar)).collect(Collectors.toList());	
-					List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));			
-					List<String> splitFieldsrow = new ArrayList<>(splitFields);
-					
-					  StringBuffer sb = new StringBuffer();
-				      List<List<String>> splitFieldsvalue = Arrays.asList(splitFieldsrow);
-						for (List<String> row : splitFieldsvalue )
-						{
-							for(String row1 : row)
-							sb.append(row1).append("\t");
-						}
-					      String str = sb.toString();
-					      String trimmedstr = str.trim();
-					      List<String> presentrow = new ArrayList<String>();
-					      presentrow.add(trimmedstr);
-				   //     addToList(splitFieldsrow, Stream.of(splitFieldsrow.toString()));working fine , now changed for merge and split
-				   //     dataBlockWithSplittedFields.add(splitFieldsrow);			    		  
-					        splitFieldsrow.forEach((item) -> addToList(presentrow, Stream.of(item)));
-					        dataBlockWithSplittedFields.add(presentrow);			    
-				
-			 }
-			 
-				return dataBlockWithSplittedFields;	
-		}
-		else {
           for(List<String> rowValues : dataBlock) {
 						
 			List<String> currentRowValues = new ArrayList<>(rowValues);
@@ -1107,7 +1076,7 @@ public class CommonFunction {
 		        dataBlockWithSplittedFields.add(presentrow);			        
 	   } 
 		return dataBlockWithSplittedFields;	
-	 }		
+	
     
    } 
  

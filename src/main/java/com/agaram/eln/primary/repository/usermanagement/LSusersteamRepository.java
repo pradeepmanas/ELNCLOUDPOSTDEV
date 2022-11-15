@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflowgroupmap;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
@@ -17,4 +18,6 @@ public interface LSusersteamRepository  extends JpaRepository<LSusersteam, Integ
 	public Object findByTeamnameAndStatusAndLssitemaster(String teamname, int i, LSSiteMaster lssitemaster);
 	public LSusersteam findByteamcode(Integer teamcode);
 	public LSusersteam findByTeamnameIgnoreCaseAndStatusAndLssitemaster(String teamname, int i, LSSiteMaster lssitemaster);
+	public LSusersteam findByteamcode(LSsheetworkflowgroupmap lSsheetworkflowgroupmap);
+	public LSusersteam findByteamcode(LSusersteam lSusersteam);
 }

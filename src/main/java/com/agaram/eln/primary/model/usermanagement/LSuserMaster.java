@@ -21,7 +21,6 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 
-
 @Entity
 @Table(name = "LSusermaster")
 public class LSuserMaster {
@@ -30,13 +29,13 @@ public class LSuserMaster {
 	@Basic(optional = false)
 	@Column(name = "usercode")
 	private Integer usercode;
-	
+
 	@Column(columnDefinition = "varchar(255)")
 	private String userfullname;
 	@Column(columnDefinition = "varchar(255)")
 	private String username;
 	@Column(columnDefinition = "varchar(255)")
-	private	String password;
+	private String password;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastloggedon;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -52,10 +51,20 @@ public class LSuserMaster {
 	private String createdby;
 	@Column(columnDefinition = "varchar(255)")
 	private String modifiedby;
-	
+	@Transient
+	private List<LSuserMaster> usernotify;
+
 	@Transient
 	private LSuserMaster loggedinuser;
-	
+
+	public List<LSuserMaster> getUsernotify() {
+		return usernotify;
+	}
+
+	public void setUsernotify(List<LSuserMaster> usernotify) {
+		this.usernotify = usernotify;
+	}
+
 	public LSuserMaster getLoggedinuser() {
 		return loggedinuser;
 	}
@@ -66,10 +75,10 @@ public class LSuserMaster {
 
 	@Column(name = "passwordstatus")
 	private Integer passwordstatus;
-	
+
 	@Column(name = "userretirestatus")
 	private Integer userretirestatus;
-	
+
 	private Integer labsheet;
 	private String emailid;
 	private String profileimage;
@@ -78,60 +87,53 @@ public class LSuserMaster {
 
 	@ManyToOne
 	private LSusergroup lsusergroup;
-	
-	@ManyToOne 
+
+	@ManyToOne
 	private LSSiteMaster lssitemaster;
-	
+
 	@ManyToOne
 	private LSuserActions lsuserActions;
 
-
-	
-
 	@Transient
 	Response objResponse;
-	
+
 	@Transient
 	private String usergroupname;
-	
+
 	@Transient
 	LScfttransaction objsilentaudit;
-	
-
-
-
 
 	@Transient
 	LScfttransaction Objmanualaudit;
-	
+
 	@Transient
 	String DFormat = "dd/MM/yyyy";
-	
+
 	@Transient
 	private String sitename;
-	
+
 	@Transient
 	private boolean sameusertologin;
-	
+
 	private String loginfrom = "0";
-	
+
 	@Transient
 	private Integer ismultitenant;
-	
+
 	@Transient
 	private Integer multitenantusercount;
-	
+
 	@Transient
 	private LSusergroup lsusergrouptrans;
-	
+
 	@OneToMany
-	@JoinColumn(name="usercode")
+	@JoinColumn(name = "usercode")
 //	@JsonManagedReference
 	private List<LSMultiusergroup> multiusergroupcode;
-	
+
 	@Transient
 	private Integer multiusergroups;
-	
+
 	public Integer getIdletime() {
 		return idletime;
 	}
@@ -139,8 +141,10 @@ public class LSuserMaster {
 	public void setIdletime(Integer idletime) {
 		this.idletime = idletime;
 	}
+
 	@Transient
 	private List<LSMultiusergroup> deleterole;
+
 	public List<LSMultiusergroup> getDeleterole() {
 		return deleterole;
 	}
@@ -149,14 +153,11 @@ public class LSuserMaster {
 		this.deleterole = deleterole;
 	}
 
-
-
-
 	@Transient
 	private Integer idletime;
 	@Transient
 	private Integer idletimeshowcheck;
-	
+
 	public Integer getIdletimeshowcheck() {
 		return idletimeshowcheck;
 	}
@@ -167,40 +168,39 @@ public class LSuserMaster {
 
 	@Column(columnDefinition = "varchar(500)")
 	private String unifieduserid;
-	
+
 	@Transient
 	private Response response;
-	
+
 	@Transient
 	LoggedUser objuser;
-	
+
 	@Transient
 	private String token;
-	
+
 	@Transient
 	private String userloginlink;
-	
+
 	@Transient
 	private String encryptedpassword;
-	
+
 	@Transient
 	private String sharebyunifiedid;
-	
+
 	@Transient
 	private String sharetounifiedid;
-	
+
 	@Transient
 	List<LSprojectmaster> lstproject;
-	
+
 	@Transient
 	List<LSworkflow> lstworkflow;
-	
+
 	@Transient
 	private boolean reset;
 	@Transient
-	private boolean resendmail ;
-	
-	
+	private boolean resendmail;
+
 	public boolean isResendmail() {
 		return resendmail;
 	}
@@ -224,7 +224,7 @@ public class LSuserMaster {
 	public void setEncryptedpassword(String encryptedpassword) {
 		this.encryptedpassword = encryptedpassword;
 	}
-	
+
 	public String getUserloginlink() {
 		return userloginlink;
 	}
@@ -240,7 +240,7 @@ public class LSuserMaster {
 	public void setLsusergrouptrans(LSusergroup lsusergrouptrans) {
 		this.lsusergrouptrans = lsusergrouptrans;
 	}
-	
+
 	public String getSharebyunifiedid() {
 		return sharebyunifiedid;
 	}
@@ -264,7 +264,7 @@ public class LSuserMaster {
 	public void setMultiusergroups(Integer multiusergroups) {
 		this.multiusergroups = multiusergroups;
 	}
-	
+
 	public String getDFormat() {
 		return DFormat;
 	}
@@ -272,7 +272,7 @@ public class LSuserMaster {
 	public void setDFormat(String dFormat) {
 		DFormat = dFormat;
 	}
-	
+
 	public boolean isSameusertologin() {
 		return sameusertologin;
 	}
@@ -288,7 +288,7 @@ public class LSuserMaster {
 	public void setPasswordstatus(Integer passwordstatus) {
 		this.passwordstatus = passwordstatus;
 	}
-	
+
 	public Integer getUserretirestatus() {
 		return userretirestatus;
 	}
@@ -296,8 +296,7 @@ public class LSuserMaster {
 	public void setUserretirestatus(Integer userretirestatus) {
 		this.userretirestatus = userretirestatus;
 	}
-	
-	
+
 	public LScfttransaction getObjmanualaudit() {
 		return Objmanualaudit;
 	}
@@ -321,7 +320,7 @@ public class LSuserMaster {
 	public void setObjuser(LoggedUser objuser) {
 		this.objuser = objuser;
 	}
-	
+
 	public List<LSMultiusergroup> getMultiusergroupcode() {
 		return multiusergroupcode;
 	}
@@ -337,28 +336,31 @@ public class LSuserMaster {
 	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
 		this.objsilentaudit = objsilentaudit;
 	}
-	
+
 	public Integer getUsercode() {
 		return usercode;
 	}
-	
+
 	public void setUsercode(Integer usercode) {
 		this.usercode = usercode;
 	}
-	
+
 	public String getUserfullname() {
 		return userfullname;
 	}
+
 	public void setUserfullname(String userfullname) {
 		this.userfullname = userfullname;
 	}
+
 	public String getUsername() {
 		return username;
 	}
+
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
+
 	public String getPassword() {
 		return password;
 	}
@@ -370,97 +372,120 @@ public class LSuserMaster {
 	public Date getLastloggedon() {
 		return lastloggedon;
 	}
+
 	public void setLastloggedon(Date lastloggedon) {
 		this.lastloggedon = lastloggedon;
 	}
+
 	public Date getPasswordexpirydate() {
 		return passwordexpirydate;
 	}
+
 	public void setPasswordexpirydate(Date passwordexpirydate) {
 		this.passwordexpirydate = passwordexpirydate;
 	}
+
 	public String getUserstatus() {
-		if(userstatus != null)
-		{
+		if (userstatus != null) {
 			/*
 			 * if(userstatus.trim().equals("Locked")) { return "Locked"; } return
 			 * userstatus.trim().equals("A")?"Active":"Deactive";
 			 */
 //			return  userstatus.trim().equals("A")?"Active":"Deactive";
-			return  userstatus.trim().equals("A")?"Active":
-				userstatus.trim().equals("D")?"Deactive" : "Locked";
-		}
-		else
-		{
+			return userstatus.trim().equals("A") ? "Active" : userstatus.trim().equals("D") ? "Deactive" : "Locked";
+		} else {
 			return "";
 		}
 	}
+
 	public void setUserstatus(String userstatus) {
 		this.userstatus = userstatus;
 	}
+
 	public Integer getLockcount() {
 		return lockcount;
 	}
+
 	public void setLockcount(Integer lockcount) {
 		this.lockcount = lockcount;
 	}
+
 	public Date getCreateddate() {
 		return createddate;
 	}
+
 	public void setCreateddate(Date createddate) {
 		this.createddate = createddate;
 	}
+
 	public Date getModifieddate() {
 		return modifieddate;
 	}
+
 	public void setModifieddate(Date modifieddate) {
 		this.modifieddate = modifieddate;
 	}
+
 	public String getCreatedby() {
 		return createdby;
 	}
+
 	public void setCreatedby(String createdby) {
 		this.createdby = createdby;
 	}
+
 	public String getModifiedby() {
 		return modifiedby;
 	}
+
 	public void setModifiedby(String modifiedby) {
 		this.modifiedby = modifiedby;
 	}
+
 	public Integer getLabsheet() {
 		return labsheet;
 	}
+
 	public void setLabsheet(Integer labsheet) {
 		this.labsheet = labsheet;
 	}
+
 	public String getEmailid() {
 		return emailid;
 	}
+
 	public void setEmailid(String emailid) {
 		this.emailid = emailid;
 	}
+
 	public String getProfileimage() {
 		return profileimage;
 	}
+
 	public void setProfileimage(String profileimage) {
 		this.profileimage = profileimage;
 	}
+
 	public String getProfileimagename() {
 		return profileimagename;
 	}
+
 	public void setProfileimagename(String profileimagename) {
 		this.profileimagename = profileimagename;
 	}
+
 	public Integer getVerificationcode() {
 		return verificationcode;
 	}
+
 	public void setVerificationcode(Integer verificationcode) {
 		this.verificationcode = verificationcode;
 	}
+
 	public LSSiteMaster getLssitemaster() {
 		return lssitemaster;
 	}
+
 	public void setLssitemaster(LSSiteMaster lssitemaster) {
 		this.lssitemaster = lssitemaster;
 	}
@@ -482,14 +507,7 @@ public class LSuserMaster {
 	}
 
 	public String getUsergroupname() {
-		if(this.lsusergroup != null)
-		{
-			return this.lsusergroup.getUsergroupname();
-		}
-		else
-		{
-			return "";
-		}
+		return usergroupname;
 	}
 
 	public void setUsergroupname(String usergroupname) {
@@ -497,12 +515,9 @@ public class LSuserMaster {
 	}
 
 	public String getSitename() {
-		if(this.lssitemaster != null)
-		{
+		if (this.lssitemaster != null) {
 			return this.lssitemaster.getSitename();
-		}
-		else
-		{
+		} else {
 			return "";
 		}
 	}
@@ -510,8 +525,6 @@ public class LSuserMaster {
 	public void setSitename(String sitename) {
 		this.sitename = sitename;
 	}
-
-	
 
 	public LSuserActions getLsuserActions() {
 		return lsuserActions;
@@ -577,7 +590,4 @@ public class LSuserMaster {
 		this.lstworkflow = lstworkflow;
 	}
 
-
-	
-	
 }

@@ -1540,10 +1540,65 @@ public class ProtocolService {
 			mapObj.put("protocolmasterLst", LSprotocolmasterLst);
 			mapObj.put("AddedLSprotocolmasterObj", AddedLSprotocolmasterObj);
 			mapObj.put("response", response);
-
+			updatenotificationforprotocolcreation(newProtocolMasterObj,argObj, false);
 		}
 		return mapObj;
 	}
+
+	@SuppressWarnings("unchecked")
+	private void updatenotificationforprotocolcreation(LSprotocolmaster newProtocolMasterObj, Map<String, Object> argObj, Boolean Isnewprotocol) {
+		List<LSlogilabprotocoldetail> LSlogilabprotocoldetail = new ArrayList<LSlogilabprotocoldetail>();
+		LScfttransaction LScfttransactionobj = new LScfttransaction();
+		LSprotocolmaster LsProto = LSProtocolMasterRepositoryObj
+				.findFirstByProtocolmastercode(newProtocolMasterObj.getProtocolmastercode());
+
+		List<LSuserteammapping> objteam = LSuserteammappingRepositoryObj
+				.findByTeamcodeNotNullAndLsuserMaster(((LSprotocolmaster) argObj).getLSuserMaster());
+
+		List<Integer> lstuser = new ObjectMapper().convertValue(argObj.get("teamuserscode"), ArrayList.class);
+			String Details = "";
+			String Notifiction = "";
+			List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+			Notifiction = "PROTOCOLCREATED";
+			Details = "{\"ordercode\":\"" + newProtocolMasterObj.getProtocolmastercode() + "\", \"order\":\""
+					+ newProtocolMasterObj.getProtocolmastername() + "\", \"previousworkflow\":\"" + ""
+					+ "\", \"previousworkflowcode\":\"" + -1 + "\", \"currentworkflow\":\""
+					+ newProtocolMasterObj.getLssheetworkflow().getWorkflowname() + "\", \"currentworkflowcode\":\""
+					+ newProtocolMasterObj.getLssheetworkflow().getWorkflowcode() + "\"}";
+			List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
+
+			for (int i = 0; i < objteam.size(); i++) {
+				LSusersteam objteam1 = lsusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
+
+				List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
+
+				for (int j = 0; j < lstusers.size(); j++) {
+
+					if (newProtocolMasterObj.getLSuserMaster().getUsercode() != lstusers.get(j).getLsuserMaster()
+							.getUsercode()) {
+						if (lstnotified.contains(lstusers.get(j).getLsuserMaster()))
+							continue;
+
+						lstnotified.add(lstusers.get(j).getLsuserMaster());
+						LSnotification objnotify = new LSnotification();
+
+						objnotify.setNotificationdate(newProtocolMasterObj.getCreatedate());
+
+						objnotify.setNotifationfrom(newProtocolMasterObj.getLSuserMaster());
+						objnotify.setNotifationto(lstusers.get(j).getLsuserMaster());
+						objnotify.setNotificationdate(newProtocolMasterObj.getCreatedate());
+						objnotify.setNotification(Notifiction);
+						objnotify.setNotificationdetils(Details);
+						objnotify.setIsnewnotification(1);
+						objnotify.setNotificationpath("/protocols");
+						objnotify.setNotificationfor(2);
+						lstnotifications.add(objnotify);
+					}
+				}
+				lsnotificationRepository.save(lstnotifications);
+			}
+		}
+	
 
 	@SuppressWarnings({ "unused", "unchecked" })
 	private boolean UpdateProtocolversion(LSprotocolmaster newProtocolMasterObj1, Map<String, Object> argObj1,

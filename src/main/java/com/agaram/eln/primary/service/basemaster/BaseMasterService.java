@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
 import org.springframework.stereotype.Service;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
@@ -49,6 +51,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterRepositor
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
 
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
+
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
@@ -112,12 +115,14 @@ public class BaseMasterService {
 	@Autowired
 	private FileService fileService;
 
+	
 	@SuppressWarnings("unused")
 	private String ModuleName = "Base Master";
 
 	public List<Testmaster> getTestmaster(LSuserMaster objClass) {
 
 		return lStestmasterlocalRepository.findBystatusAndLssitemasterOrderByTestcodeDesc(1, objClass.getLssitemaster());
+	//	return lStestmasterlocalRepository.findBystatusAndLssitemaster(1, objClass.getLssitemaster());
 	}
 
 	public Map<String, Object> getTestwithsheet(LSuserMaster objClass) {
@@ -364,14 +369,17 @@ public class BaseMasterService {
 
 	public Map<String, Object> GetMastersforTestMaster(LSuserMaster objuser) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-
+		
 		mapOrders.put("test", getTestmaster(objuser));
 
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LStestmaster");
 //			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
-		return mapOrders;
+     	return mapOrders;
+	
+		
+		
 	}
 
 	public Lselninstrumentmaster InsertupdateInstrument(Lselninstrumentmaster objClass) {
