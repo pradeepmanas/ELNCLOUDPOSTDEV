@@ -184,7 +184,7 @@ public class MasterService {
 		objResponse.setStatus(true);
 		lsrepositoriesdataRepository.save(lsrepositoriesdata);
 //		}
-
+		lsrepositoriesdata.setSatus("");
 		lsrepositoriesdata.setObjResponse(objResponse);
 		return lsrepositoriesdata;
 	}

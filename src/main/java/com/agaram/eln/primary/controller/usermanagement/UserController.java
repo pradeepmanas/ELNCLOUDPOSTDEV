@@ -34,6 +34,7 @@ import com.agaram.eln.primary.model.cloudFileManip.CloudUserSignature;
 import com.agaram.eln.primary.model.fileManipulation.ProfilePicture;
 import com.agaram.eln.primary.model.fileManipulation.UserSignature;
 import com.agaram.eln.primary.model.general.Response;
+
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -52,6 +53,7 @@ import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.usermanagement.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping(value = "/User", method = RequestMethod.POST)
@@ -278,6 +280,21 @@ public class UserController {
 	public LSPasswordPolicy GetPasswordPolicy(@RequestBody LSPasswordPolicy lspasswordpolicy)throws Exception
 	{
 		return userService.GetPasswordPolicy(lspasswordpolicy);
+	}
+	
+	@PostMapping("/GetLoginPasswordPolicy")
+	public LSPasswordPolicy GetLoginPasswordPolicy(@RequestBody Map<String, Object> mapObject)throws Exception
+	{
+		final ObjectMapper mapper = new ObjectMapper();	
+        Map<String, Object> obj = (Map<String, Object>) mapObject.get("passObjDet");
+  
+    
+        String sitecode = (String) mapObject.get("sitecode");
+		  
+
+		  final int sitecodekey = Integer.parseInt(sitecode);
+		  
+		return userService.GetLoginPasswordPolicy(sitecodekey);
 	}
 	
 	@PostMapping("/GetPasswordPolicySitewise")

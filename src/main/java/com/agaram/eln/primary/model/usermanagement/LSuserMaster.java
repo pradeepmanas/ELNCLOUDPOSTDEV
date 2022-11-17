@@ -53,6 +53,8 @@ public class LSuserMaster {
 	private String modifiedby;
 	@Transient
 	private List<LSuserMaster> usernotify;
+	@Transient
+	private List<LSuserMaster> userroleremovenotify;
 
 	@Transient
 	private LSuserMaster loggedinuser;
@@ -588,6 +590,14 @@ public class LSuserMaster {
 
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
 		this.lstworkflow = lstworkflow;
+	}
+
+	public List<LSuserMaster> getUserroleremovenotify() {
+		return userroleremovenotify;
+	}
+
+	public void setUserroleremovenotify(List<LSuserMaster> userroleremovenotify) {
+		this.userroleremovenotify = userroleremovenotify;
 	}
 
 }

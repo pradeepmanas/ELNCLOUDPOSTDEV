@@ -241,8 +241,8 @@ public class UserService {
 //		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objclass);
 //		return lsuserMasterRepository.findByUsernameNotAndUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(
 //				"Administrator", 1, objclass);
-		
-		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc( 1, objclass);
+
+		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1, objclass);
 	}
 
 	public LSuserMaster InsertUpdateUser(LSuserMaster objusermaster) throws MessagingException {
@@ -350,54 +350,55 @@ public class UserService {
 		String Details = "";
 		String Notifiction = "";
 		LSnotification objnotify = new LSnotification();
-
-		List<String> emptyarray = new ArrayList<>();
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		StringBuffer sb = new StringBuffer();
 
-		if(objusermaster.getUsernotify() != null) {
-			for (LSuserMaster rowValues : objusermaster.getUsernotify()) {
-			sb.append(rowValues.getUsergroupname()).append(",");
-		     }
+		if (objusermaster.getMultiusergroupcode() != null && objusermaster.getDeleterole() != null) {
+			if (objusermaster.getMultiusergroupcode().size() > objusermaster.getDeleterole().size()) {
+				if (objusermaster.getUsernotify() != null) {
+					for (LSuserMaster rowValues : objusermaster.getUsernotify()) {
+						sb.append(rowValues.getUsergroupname()).append(",");
+					}
+				}
+				String Detailwithcomma = sb.toString();
+				Details = "{\"role\":\"" + Detailwithcomma + "site:" + objusermaster.getSitename() + "\"}";
+				Notifiction = "USERROLEADD";
+
+				objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
+				objnotify.setNotifationto(objusermaster);
+				objnotify.setNotificationdate(objusermaster.getModifieddate());
+				objnotify.setNotification(Notifiction);
+				objnotify.setNotificationdetils(Details);
+				objnotify.setNotificationfor(1);
+				objnotify.setNotificationpath("/Usermaster");
+				objnotify.setIsnewnotification(1);
+				lstnotifications.add(objnotify);
+			}
+
+			else {
+				if (objusermaster.getUserroleremovenotify() != null) {
+					for (LSuserMaster rowValues : objusermaster.getUserroleremovenotify()) {
+						sb.append(rowValues.getUsergroupname()).append(",");
+					}
+				}
+				String Detailwithcomma = sb.toString();
+				Details = "{\"role\":\"" + Detailwithcomma + "site:" + objusermaster.getSitename() + "\"}";
+				Notifiction = "USERROLEREMOVE";
+				objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
+				objnotify.setNotifationto(objusermaster);
+				objnotify.setNotificationdate(objusermaster.getModifieddate());
+				objnotify.setNotification(Notifiction);
+				objnotify.setNotificationdetils(Details);
+				objnotify.setNotificationfor(1);
+				objnotify.setNotificationpath("/Usermaster");
+				objnotify.setIsnewnotification(1);
+				lstnotifications.add(objnotify);
+			}
 		}
-		String Detailwithcomma = sb.toString();
-		Details = "{\"role\":\"" + Detailwithcomma + "site:" +objusermaster.getSitename()+ "\"}";
-		if(objusermaster.getMultiusergroupcode() != null && objusermaster.getDeleterole() != null) {
-		if (objusermaster.getMultiusergroupcode().size() > objusermaster.getDeleterole().size()) {
 
-			Notifiction = "USERROLEADD";
-
-			LSnotification notify = new LSnotification();
-			objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
-			objnotify.setNotifationto(objusermaster);
-			objnotify.setNotificationdate(objusermaster.getModifieddate());
-			objnotify.setNotification(Notifiction);
-			objnotify.setNotificationdetils(Details);
-			objnotify.setNotificationfor(1);
-			objnotify.setNotificationpath("/Usermaster");
-			objnotify.setIsnewnotification(1);
-			lstnotifications.add(objnotify);
-		}
-
-		else {
-			Notifiction = "USERROLEREMOVE";
-
-			objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
-			objnotify.setNotifationto(objusermaster);
-			objnotify.setNotificationdate(objusermaster.getModifieddate());
-			objnotify.setNotification(Notifiction);
-			objnotify.setNotificationdetils(Details);
-			objnotify.setNotificationfor(1);
-			objnotify.setNotificationpath("/Usermaster");
-			objnotify.setIsnewnotification(1);
-
-		}
 		lsnotificationRepository.save(lstnotifications);
-	  }
 
 	}
-
-//		List<LSuserMaster> usergroupname=objusermaster.getUsernotify();
 
 	private String Generatetenantpassword() {
 
@@ -604,10 +605,9 @@ public class UserService {
 	public List<LSusersteam> GetUserTeam(LSuserMaster LSuserMaster) {
 		if (LSuserMaster.getUsername().equalsIgnoreCase("Administrator")) {
 			return lsusersteamRepository.findBystatus(1);
+		} else {
+			return lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(), 1);
 		}
-		else {		
-		return lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(), 1);
-	   }
 	}
 
 	public Map<String, Object> GetUserTeamonSitevise(LSSiteMaster objclass) {
@@ -984,6 +984,25 @@ public class UserService {
 		} else {
 			policy = lSpasswordpolicyRepository.findTopByOrderByPolicycodeAsc();
 		}
+		return policy;
+
+	}
+	
+	public LSPasswordPolicy GetLoginPasswordPolicy( final int objuser) {
+
+
+		LSSiteMaster sitelist = new LSSiteMaster();
+		sitelist = LSSiteMasterRepository.findBysitecode(objuser);
+		
+		LSPasswordPolicy policy = new LSPasswordPolicy();
+//		if (objuser.get != null) {
+			policy = lSpasswordpolicyRepository.findTopByAndLssitemasterOrderByPolicycodeDesc(sitelist);
+//		} else {
+//			
+			//policy = lSpasswordpolicyRepository.findTopByOrderByPolicycodeAsc();
+		//	policy = lSpasswordpolicyRepository.findByLssitemaster(objuser.getSitecode());
+			
+	//	}
 		return policy;
 
 	}

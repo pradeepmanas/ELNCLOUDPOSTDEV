@@ -27,6 +27,7 @@ import com.agaram.eln.primary.model.inventory.LSmaterialmap;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
+import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
@@ -181,21 +182,25 @@ public class BaseMasterService {
 	public LStestmasterlocal InsertupdateTest(LStestmasterlocal objClass) {
 
 		objClass.setResponse(new Response());
-		if (objClass.getTestcode() == null
-				&& lStestmasterlocalRepository.findByTestnameIgnoreCaseAndStatusAndLssitemaster(objClass.getTestname(),
-						1, objClass.getLssitemaster()) != null) {
-			objClass.getResponse().setStatus(false);
-			objClass.getResponse().setInformation("ID_EXIST");
 
-			return objClass;
-		} else if (objClass.getTestcode() != null
-				&& lStestmasterlocalRepository.findByTestnameIgnoreCaseAndStatusAndTestcodeNotAndLssitemaster(
-						objClass.getTestname(), 1, objClass.getTestcode(), objClass.getLssitemaster()) != null) {
-			objClass.getResponse().setStatus(false);
-			objClass.getResponse().setInformation("ID_EXIST");
-
-			return objClass;
-		}
+//		if (objClass.getTestcode() == null
+//				&& lStestmasterlocalRepository.findByTestnameIgnoreCaseAndStatusAndLssitemaster(objClass.getTestname(),
+//						1, objClass.getLssitemaster()) != null) {
+//			objClass.getResponse().setStatus(false);
+//			objClass.getResponse().setInformation("ID_EXIST");
+//
+//			return objClass;
+//		} else if (objClass.getTestcode() != null
+//				//&& lStestmasterlocalRepository.findByTestnameIgnoreCaseAndStatusAndTestcodeNotAndLssitemaster(
+//				&& lStestmasterlocalRepository.findByTestnameIgnoreCaseAndTaskcategoryIgnoreCaseAndStatusAndTestcodeNotAndLssitemaster(
+//						objClass.getTestname(),objClass.getTaskcategory(), 1, objClass.getTestcode(), objClass.getLssitemaster()) != null) {	
+//		
+//			objClass.getResponse().setStatus(false);
+//			objClass.getResponse().setInformation("ID_EXIST");
+//			
+//
+//			return objClass;
+//		}
 
 		if (objClass.getStatus() == -1 && objClass.getTestcode() != null) {
 
@@ -240,21 +245,21 @@ public class BaseMasterService {
 	public LSsamplemaster InsertupdateSample(LSsamplemaster objClass) {
 
 		objClass.setResponse(new Response());
-		if (objClass.getSamplecode() == null
-				&& lSsamplemasterRepository.findBySamplenameIgnoreCaseAndStatusAndLssitemaster(objClass.getSamplename(),
-						1, objClass.getLssitemaster()) != null) {
-			objClass.getResponse().setStatus(false);
-			objClass.getResponse().setInformation("ID_EXIST");
-
-			return objClass;
-		} else if (objClass.getSamplecode() != null
-				&& lSsamplemasterRepository.findBySamplenameIgnoreCaseAndStatusAndSamplecodeNotAndLssitemaster(
-						objClass.getSamplename(), 1, objClass.getSamplecode(), objClass.getLssitemaster()) != null) {
-			objClass.getResponse().setStatus(false);
-			objClass.getResponse().setInformation("ID_EXIST");
-
-			return objClass;
-		}
+//		if (objClass.getSamplecode() == null
+//				&& lSsamplemasterRepository.findBySamplenameIgnoreCaseAndStatusAndLssitemaster(objClass.getSamplename(),
+//						1, objClass.getLssitemaster()) != null) {
+//			objClass.getResponse().setStatus(false);
+//			objClass.getResponse().setInformation("ID_EXIST");
+//
+//			return objClass;
+//		} else if (objClass.getSamplecode() != null
+//				&& lSsamplemasterRepository.findBySamplenameIgnoreCaseAndStatusAndSamplecodeNotAndLssitemaster(
+//						objClass.getSamplename(), 1, objClass.getSamplecode(), objClass.getLssitemaster()) != null) {
+//			objClass.getResponse().setStatus(false);
+//			objClass.getResponse().setInformation("ID_EXIST");
+//
+//			return objClass;
+//		}
 
 		if (objClass.getStatus() == -1 && objClass.getSamplecode() != null) {
 

@@ -67,6 +67,17 @@ public class Lsprotocolorderstructure {
 	private String orderflag;
 	
 	@Transient
+	private String teamname;
+	
+	public String getTeamname() {
+		return teamname;
+	}
+
+	public void setTeamname(String teamname) {
+		this.teamname = teamname;
+	}
+
+	@Transient
 	private Integer rejected;
 	
 	@Transient

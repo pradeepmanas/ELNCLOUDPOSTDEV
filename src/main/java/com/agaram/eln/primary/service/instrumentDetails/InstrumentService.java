@@ -179,6 +179,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
 
+import javassist.expr.NewArray;
+
 @Service
 @EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
 public class InstrumentService {
@@ -4376,10 +4378,11 @@ public class InstrumentService {
 				mapOrders.put("orders", Getadministratororder(objorder));
 				mapOrders.put("ordercount", lslogilablimsorderdetailRepository.count());
 			} else {
-				
+
 				List<LSusersteam> lsusersteamobj = lsusersteamRepository
 						.findBylssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
-				List<Integer> teamcode = lsusersteamobj.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
+				List<Integer> teamcode = lsusersteamobj.stream().map(LSusersteam::getTeamcode)
+						.collect(Collectors.toList());
 				List<Integer> LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode,
 						objorder.getLsuserMaster());
 				List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
@@ -4390,11 +4393,13 @@ public class InstrumentService {
 				} else {
 					lstdir = lsSheetOrderStructureRepository
 							.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
-									objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,objorder.getLsuserMaster().getLssitemaster(), 3,LSuserteammappingobj);
+									objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
+									objorder.getLsuserMaster().getLssitemaster(), 3, LSuserteammappingobj);
 				}
-				List<Long> directorycode=lstdir.stream().map(LSSheetOrderStructure::getDirectorycode).collect(Collectors.toList());
-				mapOrders.put("directorycode",directorycode);
-				mapOrders.put("orders", Getuserorder(objorder,directorycode));
+				List<Long> directorycode = lstdir.stream().map(LSSheetOrderStructure::getDirectorycode)
+						.collect(Collectors.toList());
+				mapOrders.put("directorycode", directorycode);
+				mapOrders.put("orders", Getuserorder(objorder, directorycode));
 				mapOrders.put("ordercount", lslogilablimsorderdetailRepository
 						.countByLsprojectmasterIn(objorder.getLsuserMaster().getLstproject()));
 			}
@@ -4406,7 +4411,7 @@ public class InstrumentService {
 		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 			return Getadministratororder(objorder);
 		} else {
-			return Getuserorder(objorder,objorder.getLstdirectorycode());
+			return Getuserorder(objorder, objorder.getLstdirectorycode());
 		}
 	}
 
@@ -4421,31 +4426,32 @@ public class InstrumentService {
 		return lstorders;
 	}
 
-	public List<Logilabordermaster> Getuserorder(LSlogilablimsorderdetail objorder,List<Long> directorycode) {
+	public List<Logilabordermaster> Getuserorder(LSlogilablimsorderdetail objorder, List<Long> directorycode) {
 		List<LSprojectmaster> lstproject = objorder.getLsuserMaster().getLstproject();
 		List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
 		if (lstproject != null) {
 			List<LSworkflow> lstworkflow = objorder.getLsuserMaster().getLstworkflow();
 			if (objorder.getBatchcode() == 0) {
-				if(directorycode.size()==0) {
+				if (directorycode.size() == 0) {
 					lstorders = lslogilablimsorderdetailRepository
 							.findFirst20ByLsprojectmasterInOrderByBatchcodeDesc(lstproject);
-				}else {
-					lstorders = lslogilablimsorderdetailRepository
-							.findFirst20ByLsprojectmasterInOrDirectorycodeInOrderByBatchcodeDesc(lstproject,directorycode);
-				}
 				} else {
-					if(directorycode.size()==0) {
-						lstorders = lslogilablimsorderdetailRepository
-								.findFirst20ByBatchcodeLessThanAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getBatchcode(),
-										lstproject);
-					}else {
-						lstorders = lslogilablimsorderdetailRepository
-								.findFirst20ByBatchcodeLessThanAndLsprojectmasterInOrBatchcodeLessThanAndDirectorycodeInOrderByBatchcodeDesc(objorder.getBatchcode(),
-										lstproject,objorder.getBatchcode(),directorycode);
+					lstorders = lslogilablimsorderdetailRepository
+							.findFirst20ByLsprojectmasterInOrDirectorycodeInOrderByBatchcodeDesc(lstproject,
+									directorycode);
+				}
+			} else {
+				if (directorycode.size() == 0) {
+					lstorders = lslogilablimsorderdetailRepository
+							.findFirst20ByBatchcodeLessThanAndLsprojectmasterInOrderByBatchcodeDesc(
+									objorder.getBatchcode(), lstproject);
+				} else {
+					lstorders = lslogilablimsorderdetailRepository
+							.findFirst20ByBatchcodeLessThanAndLsprojectmasterInOrBatchcodeLessThanAndDirectorycodeInOrderByBatchcodeDesc(
+									objorder.getBatchcode(), lstproject, objorder.getBatchcode(), directorycode);
 
-					}
-						}
+				}
+			}
 			lstorders.forEach(objord -> objord.setLstworkflow(lstworkflow));
 		}
 		return lstorders;
@@ -4946,15 +4952,16 @@ public class InstrumentService {
 	public Map<String, Object> Getfoldersfororders(LSlogilablimsorderdetail objorder) {
 
 		Map<String, Object> mapfolders = new HashMap<String, Object>();
-		
+
 		List<LSusersteam> lsusersteamobj = lsusersteamRepository
 				.findBylssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
 		List<Integer> teamcode = lsusersteamobj.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
-		List<Integer> LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode,
-				objorder.getLsuserMaster());
+		List<Integer> LSuserteammappingobj = new ArrayList<Integer>();
+		if (teamcode.size() > 0) {
+			LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode, objorder.getLsuserMaster());
+		}
 		List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
-		
-		
+
 		if (LSuserteammappingobj.size() == 0) {
 			lstdir = lsSheetOrderStructureRepository
 					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
@@ -4962,7 +4969,8 @@ public class InstrumentService {
 		} else {
 			lstdir = lsSheetOrderStructureRepository
 					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
-							objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,objorder.getLsuserMaster().getLssitemaster(), 3,LSuserteammappingobj);
+							objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
+							objorder.getLsuserMaster().getLssitemaster(), 3, LSuserteammappingobj);
 		}
 		if (objorder.getLstproject() != null && objorder.getLstproject().size() > 0) {
 			ArrayList<List<Object>> lsttest = new ArrayList<List<Object>>();
@@ -4994,11 +5002,18 @@ public class InstrumentService {
 			mapfolders.put("samples", new ArrayList<Samplemaster>());
 		}
 
+		List<LSusersteam> obj = lsusersteamRepository
+				.findBylssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
+
+		lstdir.forEach(e -> e.setTeamname(obj.stream().filter(a -> a.getTeamcode().equals(e.getTeamcode()))
+				.map(LSusersteam::getTeamname).findAny().orElse(null)));
+
 //		mapfolders.put("users", userService.GetUsers(objorder.getLsuserMaster()));
 		mapfolders.put("directory", lstdir);
 
 		return mapfolders;
 	}
+
 	public LSlogilablimsorderdetail UpdateFolderfororder(LSlogilablimsorderdetail order) {
 		lslogilablimsorderdetailRepository.updatedirectory(order.getDirectorycode(), order.getBatchcode());
 		return order;
@@ -5025,39 +5040,39 @@ public class InstrumentService {
 		List<Integer> LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode,
 				objdir.getLsuserMaster());
 		if (filetype != null && filetype == -1) {
-			if(LSuserteammappingobj.size() == 0) {
+			if (LSuserteammappingobj.size() == 0) {
 				lstorder = lslogilablimsorderdetailRepository
 						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getDirectorycode(), 2,
 								objdir.getCreatedby(), fromdate, todate);
-			}else {
+			} else {
 				lstorder = lslogilablimsorderdetailRepository
 						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndTeamcodeInOrderByBatchcodeDesc(
 								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getDirectorycode(), 2,
-								objdir.getCreatedby(), fromdate, todate,objdir.getDirectorycode(), 3, fromdate, todate,LSuserteammappingobj);
+								objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3, fromdate, todate,
+								LSuserteammappingobj);
 			}
+		} else {
+			if (LSuserteammappingobj.size() == 0) {
+				lstorder = lslogilablimsorderdetailRepository
+						.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+								objdir.getDirectorycode(), 1, filetype, fromdate, todate, objdir.getDirectorycode(), 2,
+								objdir.getCreatedby(), filetype, fromdate, todate);
+
 			} else {
-				if(LSuserteammappingobj.size() == 0) {
-					lstorder = lslogilablimsorderdetailRepository
-							.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-									objdir.getDirectorycode(), 1, filetype, fromdate, todate, objdir.getDirectorycode(), 2,
-									objdir.getCreatedby(), filetype, fromdate, todate);
+				lstorder = lslogilablimsorderdetailRepository
+						.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndTeamcodeInOrderByBatchcodeDesc(
+								objdir.getDirectorycode(), 1, filetype, fromdate, todate, objdir.getDirectorycode(), 2,
+								objdir.getCreatedby(), filetype, fromdate, todate, objdir.getDirectorycode(), 3,
+								filetype, fromdate, todate, LSuserteammappingobj);
 
-				}else {
-					lstorder = lslogilablimsorderdetailRepository
-							.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndTeamcodeInOrderByBatchcodeDesc(
-									objdir.getDirectorycode(), 1, filetype, fromdate, todate, objdir.getDirectorycode(), 2,
-									objdir.getCreatedby(), filetype, fromdate, todate,objdir.getDirectorycode(), 3, filetype, fromdate, todate,LSuserteammappingobj);
-
-				}
-					}
+			}
+		}
 
 		lstorder.forEach(objorderDetail -> objorderDetail.setCanuserprocess(true));
 
 		return lstorder;
 	}
-
-
 
 	public List<LSSheetOrderStructure> Deletedirectories(LSSheetOrderStructure[] directories) {
 		List<LSSheetOrderStructure> lstdirectories = Arrays.asList(directories);
@@ -5205,8 +5220,11 @@ public class InstrumentService {
 		List<LSusersteam> lsusersteamobj = lsusersteamRepository
 				.findBylssitemasterAndStatus(objusermaster.getLsuserMaster().getLssitemaster(), 1);
 		List<Integer> teamcode = lsusersteamobj.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
-		List<Integer> LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode,
-				objusermaster.getLsuserMaster());
+		List<Integer> LSuserteammappingobj = new ArrayList<Integer>();
+		if (teamcode.size() > 0) {
+			LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode,
+					objusermaster.getLsuserMaster());
+		}
 		List<Lsprotocolorderstructure> lstdir = new ArrayList<Lsprotocolorderstructure>();
 		if (LSuserteammappingobj.size() == 0) {
 			lstdir = lsprotocolorderStructurerepository
@@ -5250,6 +5268,12 @@ public class InstrumentService {
 		}
 
 //		mapfolders.put("users", userService.GetUsers(objusermaster.getLsuserMaster()));
+		List<LSusersteam> obj = lsusersteamRepository
+				.findBylssitemasterAndStatus(objusermaster.getLsuserMaster().getLssitemaster(), 1);
+
+		lstdir.forEach(e -> e.setTeamname(obj.stream().filter(a -> a.getTeamcode().equals(e.getTeamcode()))
+				.map(LSusersteam::getTeamname).findAny().orElse(null)));
+
 		mapfolders.put("directory", lstdir);
 //		
 		return mapfolders;
@@ -5437,90 +5461,96 @@ public class InstrumentService {
 						.findByDirectorycodeAndViewoptionAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getDirectorycode(), 2,
 								objdir.getCreatedby(), fromdate, todate);
-			}else {
+			} else {
 				retuobj = LSlogilabprotocoldetailRepository
 						.findByDirectorycodeAndViewoptionAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndAssignedtoIsNullAndCreatedtimestampBetweenAndTeamcodeInOrderByProtocolordercodeDesc(
 								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getDirectorycode(), 2,
-								objdir.getCreatedby(), fromdate, todate,objdir.getDirectorycode(),3,fromdate, todate,LSuserteammappingobj);
+								objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3, fromdate, todate,
+								LSuserteammappingobj);
 
 			}
 
 		} else if (protocoltype != -1 && objdir.getOrderflag() != null) {
-			if(LSuserteammappingobj.size() == 0) {
-			if (objdir.getRejected() != null) {
+			if (LSuserteammappingobj.size() == 0) {
+				if (objdir.getRejected() != null) {
 
-				retuobj = LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate, todate,
-								objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(), 1,
-								objdir.getCreatedby(), fromdate, todate);
+					retuobj = LSlogilabprotocoldetailRepository
+							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate,
+									todate, objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(), 1,
+									objdir.getCreatedby(), fromdate, todate);
+				} else {
+					retuobj = LSlogilabprotocoldetailRepository
+							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,
+									objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(),
+									objdir.getCreatedby(), fromdate, todate);
+				}
 			} else {
-				retuobj = LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,
-								objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(),
-								objdir.getCreatedby(), fromdate, todate);
-			}
-			}else {
 				if (objdir.getRejected() != null) {
 
 					retuobj = LSlogilabprotocoldetailRepository
 							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndAssignedtoIsNullAndCreatedtimestampBetweenAndTeamcodeInOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate, todate,
-									objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(), 1,
-									objdir.getCreatedby(), fromdate, todate,objdir.getDirectorycode(), 3, protocoltype, objdir.getOrderflag(), 1, fromdate, todate,LSuserteammappingobj);
+									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate,
+									todate, objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(), 1,
+									objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3, protocoltype,
+									objdir.getOrderflag(), 1, fromdate, todate, LSuserteammappingobj);
 				} else {
 					retuobj = LSlogilabprotocoldetailRepository
 							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenAndTeamcodeInOrderByProtocolordercodeDesc(
 									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,
 									objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(),
-									objdir.getCreatedby(), fromdate, todate,objdir.getDirectorycode(),3,protocoltype, objdir.getOrderflag(), fromdate, todate,LSuserteammappingobj);
-				}				
+									objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3, protocoltype,
+									objdir.getOrderflag(), fromdate, todate, LSuserteammappingobj);
+				}
 			}
 		} else if (protocoltype == -1 && objdir.getOrderflag() != null) {
-			if(LSuserteammappingobj.size() == 0) {
-			if (objdir.getRejected() != null) {
-				retuobj = LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,
-								objdir.getDirectorycode(), 2, objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate,
-								todate);
+			if (LSuserteammappingobj.size() == 0) {
+				if (objdir.getRejected() != null) {
+					retuobj = LSlogilabprotocoldetailRepository
+							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,
+									objdir.getDirectorycode(), 2, objdir.getOrderflag(), 1, objdir.getCreatedby(),
+									fromdate, todate);
+				} else {
+					retuobj = LSlogilabprotocoldetailRepository
+							.findByDirectorycodeAndViewoptionAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,
+									objdir.getDirectorycode(), 2, objdir.getOrderflag(), objdir.getCreatedby(),
+									fromdate, todate);
+				}
 			} else {
-				retuobj = LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,
-								objdir.getDirectorycode(), 2, objdir.getOrderflag(), objdir.getCreatedby(), fromdate,
-								todate);
-			}
-			}else {
 				if (objdir.getRejected() != null) {
 					retuobj = LSlogilabprotocoldetailRepository
 							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndAssignedtoIsNullAndCreatedtimestampBetweenAndTeamcodeInOrderByProtocolordercodeDesc(
 									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,
-									objdir.getDirectorycode(), 2, objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate,
-									todate,	objdir.getDirectorycode(), 3, objdir.getOrderflag(), 1, fromdate, todate,LSuserteammappingobj);
+									objdir.getDirectorycode(), 2, objdir.getOrderflag(), 1, objdir.getCreatedby(),
+									fromdate, todate, objdir.getDirectorycode(), 3, objdir.getOrderflag(), 1, fromdate,
+									todate, LSuserteammappingobj);
 				} else {
 					retuobj = LSlogilabprotocoldetailRepository
 							.findByDirectorycodeAndViewoptionAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,
-									objdir.getDirectorycode(), 2, objdir.getOrderflag(), objdir.getCreatedby(), fromdate,
-									todate,objdir.getDirectorycode(), 3, objdir.getOrderflag(),fromdate, todate,LSuserteammappingobj);
+									objdir.getDirectorycode(), 2, objdir.getOrderflag(), objdir.getCreatedby(),
+									fromdate, todate, objdir.getDirectorycode(), 3, objdir.getOrderflag(), fromdate,
+									todate, LSuserteammappingobj);
 				}
 
 			}
 		} else if (protocoltype != -1 && objdir.getOrderflag() == null) {
-			if(LSuserteammappingobj.size() == 0) {
+			if (LSuserteammappingobj.size() == 0) {
 				retuobj = LSlogilabprotocoldetailRepository
 						.findByDirectorycodeAndViewoptionAndProtocoltypeAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate, objdir.getDirectorycode(), 2,
-								protocoltype, objdir.getCreatedby(), fromdate, todate);
-			}else {
+								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate, objdir.getDirectorycode(),
+								2, protocoltype, objdir.getCreatedby(), fromdate, todate);
+			} else {
 				retuobj = LSlogilabprotocoldetailRepository
 						.findByDirectorycodeAndViewoptionAndProtocoltypeAndAssignedtoIsNullAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndAssignedtoIsNullAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndAssignedtoIsNullAndCreatedtimestampBetweenAndTeamcodeInOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate, objdir.getDirectorycode(), 2,
-								protocoltype, objdir.getCreatedby(), fromdate, todate,objdir.getDirectorycode(), 3, protocoltype, fromdate, todate,LSuserteammappingobj);
+								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate, objdir.getDirectorycode(),
+								2, protocoltype, objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3,
+								protocoltype, fromdate, todate, LSuserteammappingobj);
 			}
-	
+
 		}
 		retuobj.forEach(objorderDetail -> objorderDetail.setLstworkflow(objdir.getLstworkflow()));
 		List<Long> protocolordercode = new ArrayList<>();
@@ -6094,7 +6124,6 @@ public class InstrumentService {
 
 		return retuobjts;
 	}
-	
 
 	public List<LSsheetfolderfiles> Getfilesforfolder(LSsheetfolderfiles objfiles) throws Exception {
 
