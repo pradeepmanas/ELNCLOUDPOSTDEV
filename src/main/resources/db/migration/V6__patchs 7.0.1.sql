@@ -326,6 +326,7 @@ CREATE TABLE IF NOT EXISTS public.materialcategory
     nsitecode integer NOT NULL DEFAULT '-1'::integer,
     nstatus integer NOT NULL DEFAULT 1,
     nuserrolecode integer NOT NULL,
+    smaterialtypename character varying(255),
     sdescription character varying(255) COLLATE pg_catalog."default",
     smaterialcatname character varying(100) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT materialcategory_pkey PRIMARY KEY (nmaterialcatcode)
@@ -337,6 +338,8 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.materialcategory
     OWNER to postgres;
+
+ALTER TABLE IF Exists materialcategory ADD COLUMN IF NOT EXISTS smaterialtypename character varying(255);
 
 ALTER TABLE IF Exists lsprotocolorderstructure ADD COLUMN IF NOT EXISTS modifiedby_usercode integer;
 

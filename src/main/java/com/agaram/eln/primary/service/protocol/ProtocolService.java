@@ -1551,9 +1551,14 @@ public class ProtocolService {
 		LScfttransaction LScfttransactionobj = new LScfttransaction();
 		LSprotocolmaster LsProto = LSProtocolMasterRepositoryObj
 				.findFirstByProtocolmastercode(newProtocolMasterObj.getProtocolmastercode());
+		LSuserMaster lsusermaster = new ObjectMapper().convertValue(argObj.get("lsuserMaster"),new TypeReference<LSuserMaster>() {
+		});
+		newProtocolMasterObj.setLSuserMaster(lsusermaster);
+//		List<LSuserteammapping> objteam = LSuserteammappingRepositoryObj
+//				.findByTeamcodeNotNullAndLsuserMaster(((LSprotocolmaster) argObj).getLSuserMaster());
 
 		List<LSuserteammapping> objteam = LSuserteammappingRepositoryObj
-				.findByTeamcodeNotNullAndLsuserMaster(((LSprotocolmaster) argObj).getLSuserMaster());
+				.findByTeamcodeNotNullAndLsuserMaster(lsusermaster);
 
 		List<Integer> lstuser = new ObjectMapper().convertValue(argObj.get("teamuserscode"), ArrayList.class);
 			String Details = "";

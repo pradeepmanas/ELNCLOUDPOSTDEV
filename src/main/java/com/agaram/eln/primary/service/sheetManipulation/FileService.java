@@ -335,7 +335,10 @@ public class FileService {
 
 		List<LSuserMaster> lstteamuser = objusers.getObjuser().getTeamusers();
 
+		if(lstteamuser != null) {
 		mapObj.put("templatecount", lSfileRepository.countByCreatebyIn(lstteamuser));
+		}
+
 		mapObj.put("sharedbyme",
 				LsfilesharedbyRepository.countBySharebyunifiedidAndSharestatus(objusers.getSharebyunifiedid(), 1));
 		mapObj.put("sharedtome",
