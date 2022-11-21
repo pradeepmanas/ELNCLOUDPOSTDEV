@@ -571,6 +571,7 @@ public class UserService {
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		for (int i = 0; i < objteam.getLsuserMaster().size(); i++) {
 			if (objteam.getLsuserMaster().size() > 1) {
+				
 				Details = "{\"teamname\":\"" + objteam.getTeamname() + "\", \"team\":\"" + "\"}";
 				LSnotification objnotify = new LSnotification();
 				objnotify.setNotifationfrom(objteam.getModifiedby());
@@ -580,11 +581,12 @@ public class UserService {
 				objnotify.setNotificationdetils(Details);
 				objnotify.setNotificationfor(1);
 				objnotify.setNotificationpath("/masters");
-				objnotify.setNotificationfor(2);
+				objnotify.setNotificationfor(1);
 				objnotify.setIsnewnotification(1);
 				lsnotificationRepository.save(objnotify);
 
 			}
+			
 
 			else {
 				Details = "{\"teamname\":\"" + objteam.getTeamname() + "\", \"team\":\"" + "\"}";

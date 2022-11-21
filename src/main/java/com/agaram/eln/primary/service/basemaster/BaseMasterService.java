@@ -1,11 +1,14 @@
 package com.agaram.eln.primary.service.basemaster;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -16,6 +19,7 @@ import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.Lselninstrumentfields;
@@ -24,6 +28,8 @@ import com.agaram.eln.primary.model.inventory.LSequipmentmap;
 import com.agaram.eln.primary.model.inventory.LSinstrument;
 import com.agaram.eln.primary.model.inventory.LSmaterial;
 import com.agaram.eln.primary.model.inventory.LSmaterialmap;
+import com.agaram.eln.primary.model.masters.Lsrepositories;
+import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
@@ -57,6 +63,8 @@ import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
+import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
+import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSsamplemasterRepository.class)
@@ -116,6 +124,11 @@ public class BaseMasterService {
 	@Autowired
 	private FileService fileService;
 
+	@Autowired
+	private LsrepositoriesRepository LsrepositoriesRepository;
+
+	@Autowired
+	private LsrepositoriesdataRepository LsrepositoriesdataRepository;
 	
 	@SuppressWarnings("unused")
 	private String ModuleName = "Base Master";
@@ -505,5 +518,70 @@ public class BaseMasterService {
 
 		return objClass;
 	}
+	
+	public Map<String, Object> getLsrepositoriesLst(Map<String, Object> argMap) {
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+		LScfttransaction LScfttransactionobj = new LScfttransaction();
+		if (argMap.containsKey("objsilentaudit")) {
+			LScfttransactionobj = new ObjectMapper().convertValue(argMap.get("objsilentaudit"),
+					new TypeReference<LScfttransaction>() {
+					});
+			List<Lsrepositories> LsrepositoriesLst = LsrepositoriesRepository
+					.findBySitecodeOrderByRepositorycodeAsc(LScfttransactionobj.getLssitemaster());
+			if (LsrepositoriesLst.size() > 0) {
+				mapObj.put("LsrepositoriesLst", LsrepositoriesLst);
+//				List<Lsrepositoriesdata> LsrepositoriesdataLst=LsrepositoriesdataRepository.findByRepositorycodeAndSitecodeOrderByRepositorydatacodeDesc(LsrepositoriesLst.get(0).getRepositorycode(), LScfttransactionobj.getLssitemaster());
+				Map<String, Object> temp = new HashMap<>();
+				temp.put("objsilentaudit", LScfttransactionobj);
+				temp.put("LsrepositoriesObj", LsrepositoriesLst.get(0));
+				mapObj.putAll(getLsrepositoriesDataLst(temp));
+			} else {
+				mapObj.put("LsrepositoriesLst", LsrepositoriesLst);
+				mapObj.put("LsrepositoriesdataLst", new ArrayList<>());
+			}
+
+		}
+		return mapObj;
+	}
+	
+	public Map<String, Object> getLsrepositoriesDataLst(Map<String, Object> argMap) {
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+		LScfttransaction LScfttransactionobj = new LScfttransaction();
+		if (argMap.containsKey("objsilentaudit")) {
+			LScfttransactionobj = new ObjectMapper().convertValue(argMap.get("objsilentaudit"),
+					new TypeReference<LScfttransaction>() {
+					});
+			Lsrepositories LsrepositoriesLst = new ObjectMapper().convertValue(argMap.get("LsrepositoriesObj"),
+					new TypeReference<Lsrepositories>() {
+					});
+			if(LsrepositoriesLst != null) {
+				if (LsrepositoriesLst.getRepositorycode() > 0) {
+					List<Lsrepositoriesdata> LsrepositoriesdataLst = LsrepositoriesdataRepository
+							.findByRepositorycodeAndSitecodeAndItemstatusOrderByRepositorydatacodeDesc(
+									LsrepositoriesLst.getRepositorycode(), LScfttransactionobj.getLssitemaster(), 1);
+					mapObj.put("LsrepositoriesdataLst", LsrepositoriesdataLst);
+				} else {
+					mapObj.put("LsrepositoriesdataLst", new ArrayList<>());
+				}	
+			}else {
+				List<Lsrepositoriesdata> LsrepositoriesdataLst = LsrepositoriesdataRepository
+						.findByRepositoryitemname(
+								argMap.get("repositoryitemname"));
+				mapObj.put("LsrepositoriesdataLst", LsrepositoriesdataLst);
+			}
+			
+
+		}
+		return mapObj;
+	}
+
+	@SuppressWarnings("unused")
+	public List<Lsrepositoriesdata> reducecunsumablefield(Lsrepositoriesdata[] lsrepositoriesdata) {
+		List<Lsrepositoriesdata> lsrepositoriesdataobj = Arrays.asList(lsrepositoriesdata);
+		for (Lsrepositoriesdata data : lsrepositoriesdataobj) {
+			LsrepositoriesdataRepository.save(lsrepositoriesdataobj);
+		}
+		return lsrepositoriesdataobj;
+		}
 
 }

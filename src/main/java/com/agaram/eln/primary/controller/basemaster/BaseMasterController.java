@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.controller.basemaster;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.model.instrumentDetails.Lselninstrumentmaster;
+import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
@@ -113,4 +115,25 @@ public class BaseMasterController {
 	{
 		return masterService.InsertupdateUnit(objClass);
 	}
+	
+	@RequestMapping(value = "/getLsrepositoriesLst")
+	protected Map<String, Object> getLsrepositoriesLst(@RequestBody Map<String, Object> argMap)throws Exception {
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		objMap = masterService.getLsrepositoriesLst(argMap);
+		return objMap;
+	}
+	
+	@RequestMapping(value = "/getLsrepositoriesDataLst")
+	protected Map<String, Object> getLsrepositoriesDataLst(@RequestBody Map<String, Object> argMap)throws Exception {
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		objMap = masterService.getLsrepositoriesDataLst(argMap);
+		return objMap;
+	}
+	
+	@PostMapping("/reducecunsumablefield")
+	public List<Lsrepositoriesdata> reducecunsumablefield(@RequestBody Lsrepositoriesdata[] lsrepositoriesdata)throws Exception
+	{
+		return masterService.reducecunsumablefield(lsrepositoriesdata);
+	}
+	
 }

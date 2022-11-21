@@ -334,10 +334,10 @@ public class ProtocolService {
 
 	@Autowired
 	private LSworkflowgroupmappingRepository lsworkflowgroupmappingRepository;
-	
+
 	@Autowired
 	private LsprotocolOrderStructureRepository lsprotocolorderStructurerepository;
-	
+
 	@Autowired
 	private LSuserteammappingRepository lsuserteammappingRepository;
 
@@ -1540,70 +1540,59 @@ public class ProtocolService {
 			mapObj.put("protocolmasterLst", LSprotocolmasterLst);
 			mapObj.put("AddedLSprotocolmasterObj", AddedLSprotocolmasterObj);
 			mapObj.put("response", response);
-			updatenotificationforprotocolcreation(newProtocolMasterObj,argObj, false);
+			updatenotificationforprotocolcreation(newProtocolMasterObj, argObj, false);
 		}
 		return mapObj;
 	}
 
 	@SuppressWarnings("unchecked")
-	private void updatenotificationforprotocolcreation(LSprotocolmaster newProtocolMasterObj, Map<String, Object> argObj, Boolean Isnewprotocol) {
-		List<LSlogilabprotocoldetail> LSlogilabprotocoldetail = new ArrayList<LSlogilabprotocoldetail>();
-		LScfttransaction LScfttransactionobj = new LScfttransaction();
-		LSprotocolmaster LsProto = LSProtocolMasterRepositoryObj
-				.findFirstByProtocolmastercode(newProtocolMasterObj.getProtocolmastercode());
-		LSuserMaster lsusermaster = new ObjectMapper().convertValue(argObj.get("lsuserMaster"),new TypeReference<LSuserMaster>() {
-		});
+	private void updatenotificationforprotocolcreation(LSprotocolmaster newProtocolMasterObj,
+			Map<String, Object> argObj, Boolean Isnewprotocol) {
+		LSuserMaster lsusermaster = new ObjectMapper().convertValue(argObj.get("lsuserMaster"),
+				new TypeReference<LSuserMaster>() {
+				});
 		newProtocolMasterObj.setLSuserMaster(lsusermaster);
-//		List<LSuserteammapping> objteam = LSuserteammappingRepositoryObj
-//				.findByTeamcodeNotNullAndLsuserMaster(((LSprotocolmaster) argObj).getLSuserMaster());
-
 		List<LSuserteammapping> objteam = LSuserteammappingRepositoryObj
 				.findByTeamcodeNotNullAndLsuserMaster(lsusermaster);
+		String Details = "";
+		String Notifiction = "";
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		Notifiction = "PROTOCOLCREATED";
+		Details = "{\"order\":\"" + newProtocolMasterObj.getProtocolmastername() + "\", \"createduser\":\""
+				+ newProtocolMasterObj.getCreatedbyusername() + "\"}";
+		List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
 
-		List<Integer> lstuser = new ObjectMapper().convertValue(argObj.get("teamuserscode"), ArrayList.class);
-			String Details = "";
-			String Notifiction = "";
-			List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-			Notifiction = "PROTOCOLCREATED";
-			Details = "{\"ordercode\":\"" + newProtocolMasterObj.getProtocolmastercode() + "\", \"order\":\""
-					+ newProtocolMasterObj.getProtocolmastername() + "\", \"previousworkflow\":\"" + ""
-					+ "\", \"previousworkflowcode\":\"" + -1 + "\", \"currentworkflow\":\""
-					+ newProtocolMasterObj.getLssheetworkflow().getWorkflowname() + "\", \"currentworkflowcode\":\""
-					+ newProtocolMasterObj.getLssheetworkflow().getWorkflowcode() + "\"}";
-			List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
+		for (int i = 0; i < objteam.size(); i++) {
+			LSusersteam objteam1 = lsusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
 
-			for (int i = 0; i < objteam.size(); i++) {
-				LSusersteam objteam1 = lsusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
+			List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
 
-				List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
+			for (int j = 0; j < lstusers.size(); j++) {
 
-				for (int j = 0; j < lstusers.size(); j++) {
+				if (newProtocolMasterObj.getLSuserMaster().getUsercode() != lstusers.get(j).getLsuserMaster()
+						.getUsercode()) {
+					if (lstnotified.contains(lstusers.get(j).getLsuserMaster()))
+						continue;
 
-					if (newProtocolMasterObj.getLSuserMaster().getUsercode() != lstusers.get(j).getLsuserMaster()
-							.getUsercode()) {
-						if (lstnotified.contains(lstusers.get(j).getLsuserMaster()))
-							continue;
+					lstnotified.add(lstusers.get(j).getLsuserMaster());
+					LSnotification objnotify = new LSnotification();
 
-						lstnotified.add(lstusers.get(j).getLsuserMaster());
-						LSnotification objnotify = new LSnotification();
+					objnotify.setNotificationdate(newProtocolMasterObj.getCreatedate());
 
-						objnotify.setNotificationdate(newProtocolMasterObj.getCreatedate());
-
-						objnotify.setNotifationfrom(newProtocolMasterObj.getLSuserMaster());
-						objnotify.setNotifationto(lstusers.get(j).getLsuserMaster());
-						objnotify.setNotificationdate(newProtocolMasterObj.getCreatedate());
-						objnotify.setNotification(Notifiction);
-						objnotify.setNotificationdetils(Details);
-						objnotify.setIsnewnotification(1);
-						objnotify.setNotificationpath("/protocols");
-						objnotify.setNotificationfor(2);
-						lstnotifications.add(objnotify);
-					}
+					objnotify.setNotifationfrom(newProtocolMasterObj.getLSuserMaster());
+					objnotify.setNotifationto(lstusers.get(j).getLsuserMaster());
+					objnotify.setNotificationdate(newProtocolMasterObj.getCreatedate());
+					objnotify.setNotification(Notifiction);
+					objnotify.setNotificationdetils(Details);
+					objnotify.setIsnewnotification(1);
+					objnotify.setNotificationpath("/protocols");
+					objnotify.setNotificationfor(2);
+					lstnotifications.add(objnotify);
 				}
-				lsnotificationRepository.save(lstnotifications);
 			}
+			lsnotificationRepository.save(lstnotifications);
 		}
-	
+	}
 
 	@SuppressWarnings({ "unused", "unchecked" })
 	private boolean UpdateProtocolversion(LSprotocolmaster newProtocolMasterObj1, Map<String, Object> argObj1,
@@ -4238,24 +4227,26 @@ public class ProtocolService {
 			List<Integer> LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode,
 					objorder.getLsuserMaster());
 			List<Lsprotocolorderstructure> lstdir = new ArrayList<Lsprotocolorderstructure>();
-			List<Long> directorycode=new ArrayList<Long>();
+			List<Long> directorycode = new ArrayList<Long>();
 			if (teamcode.size() == 0) {
 				lstdir = lsprotocolorderStructurerepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
 								objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2);
-				 directorycode=lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode).collect(Collectors.toList());
-			}else {
+				directorycode = lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode)
+						.collect(Collectors.toList());
+			} else {
 				lstdir = lsprotocolorderStructurerepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
 								objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
 								objorder.getLsuserMaster().getLssitemaster(), 3, LSuserteammappingobj);
-				 directorycode=lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode).collect(Collectors.toList());
+				directorycode = lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode)
+						.collect(Collectors.toList());
 
 			}
-			mapOrders.put("directorycode",directorycode);
-			mapOrders.put("orders", Getuserorder(objorder,directorycode));
-			mapOrders.put("ordercount", LSlogilabprotocoldetailRepository
-					.countByLsprojectmasterInOrDirectorycodeIn(objorder.getLsuserMaster().getLstproject(),directorycode));
+			mapOrders.put("directorycode", directorycode);
+			mapOrders.put("orders", Getuserorder(objorder, directorycode));
+			mapOrders.put("ordercount", LSlogilabprotocoldetailRepository.countByLsprojectmasterInOrDirectorycodeIn(
+					objorder.getLsuserMaster().getLstproject(), directorycode));
 		}
 
 		return mapOrders;
@@ -4265,7 +4256,7 @@ public class ProtocolService {
 		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 			return Getadministratororder(objorder);
 		} else {
-			return Getuserorder(objorder,objorder.getLstdirectorycode());
+			return Getuserorder(objorder, objorder.getLstdirectorycode());
 		}
 	}
 
@@ -4281,32 +4272,34 @@ public class ProtocolService {
 		return lstorders;
 	}
 
-	public List<Logilabprotocolorders> Getuserorder(LSlogilabprotocoldetail objorder,List<Long> directorycode) {
+	public List<Logilabprotocolorders> Getuserorder(LSlogilabprotocoldetail objorder, List<Long> directorycode) {
 		List<LSprojectmaster> lstproject = objorder.getLsuserMaster().getLstproject();
 		List<Logilabprotocolorders> lstorders = new ArrayList<Logilabprotocolorders>();
 		if (lstproject != null) {
 			if (objorder.getProtocolordercode() == 0) {
-				if(directorycode.size()==0) {
+				if (directorycode.size() == 0) {
 					lstorders = LSlogilabprotocoldetailRepository
 							.findFirst20ByLsprojectmasterInOrderByProtocolordercodeDesc(lstproject);
 
-				}else {
-					lstorders = LSlogilabprotocoldetailRepository
-							.findFirst20ByLsprojectmasterInOrDirectorycodeInOrderByProtocolordercodeDesc(lstproject,directorycode);
-				}
 				} else {
-					if(directorycode.size()==0) {
-						lstorders = LSlogilabprotocoldetailRepository
-								.findFirst20ByProtocolordercodeLessThanAndLsprojectmasterInOrderByProtocolordercodeDesc(
-										objorder.getProtocolordercode(), lstproject);
+					lstorders = LSlogilabprotocoldetailRepository
+							.findFirst20ByLsprojectmasterInOrDirectorycodeInOrderByProtocolordercodeDesc(lstproject,
+									directorycode);
+				}
+			} else {
+				if (directorycode.size() == 0) {
+					lstorders = LSlogilabprotocoldetailRepository
+							.findFirst20ByProtocolordercodeLessThanAndLsprojectmasterInOrderByProtocolordercodeDesc(
+									objorder.getProtocolordercode(), lstproject);
 
-					}else {
-						lstorders = LSlogilabprotocoldetailRepository
-								.findFirst20ByProtocolordercodeLessThanAndLsprojectmasterInOrProtocolordercodeLessThanAndDirectorycodeInOrderByProtocolordercodeDesc(
-										objorder.getProtocolordercode(), lstproject,objorder.getProtocolordercode(),directorycode);
+				} else {
+					lstorders = LSlogilabprotocoldetailRepository
+							.findFirst20ByProtocolordercodeLessThanAndLsprojectmasterInOrProtocolordercodeLessThanAndDirectorycodeInOrderByProtocolordercodeDesc(
+									objorder.getProtocolordercode(), lstproject, objorder.getProtocolordercode(),
+									directorycode);
 
-					}
-						}
+				}
+			}
 		}
 		lstorders.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
 		return lstorders;

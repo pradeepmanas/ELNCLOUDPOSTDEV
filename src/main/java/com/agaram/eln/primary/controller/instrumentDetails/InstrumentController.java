@@ -1044,6 +1044,15 @@ public class InstrumentController {
 				ismultitenant,usercode,sitecode,createddate,fileviewfor);
 	}
 	
+	@RequestMapping("/deletemultifilesforfolderonprotocol/{directorycode}/{filefor}/{tenantid}/{ismultitenant}/{usercode}/{sitecode}/{createddate}/{fileviewfor}")
+	public Map<String, Object> deletemultifilesforfolderonprotocol(@RequestBody LSprotocolfolderfiles[] objfiles,@PathVariable Long directorycode, @PathVariable String filefor, @PathVariable String tenantid
+			,@PathVariable Integer ismultitenant, @PathVariable Integer usercode, @PathVariable Integer sitecode
+			, @PathVariable Date createddate, @PathVariable Integer fileviewfor)throws Exception
+	{
+		return instrumentService.removemultifilessheetfolderonprotocol(objfiles,directorycode,filefor,tenantid,
+				ismultitenant,usercode,sitecode,createddate,fileviewfor);
+	}
+	
 	@RequestMapping("/Getaddedfilesforfolder")
 	public List<LSsheetfolderfiles> Getaddedfilesforfolder(@RequestBody List<String> lstuuid)throws Exception
 	{

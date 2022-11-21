@@ -34,6 +34,8 @@ public interface LsrepositoriesdataRepository extends JpaRepository<Lsrepositori
 
 	public List<Lsrepositoriesdata> findByRepositorydatacode(Integer lsrepositoriesdatacode);
 
+	public List<Lsrepositoriesdata> findByRepositoryitemname(Object object);
+
 	public List<Lsrepositoriesdata> findByRepositorycodeAndSitecodeOrderByRepositorydatacodeDesc(Integer repositorycode,
 			Integer sitecode);
 	

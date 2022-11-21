@@ -6583,4 +6583,31 @@ public class InstrumentService {
 		lslogilablimsorderdetailRepository.save(obj);
 		return body;
 	}
+
+	public Map<String, Object> removemultifilessheetfolderonprotocol(LSprotocolfolderfiles[] files,
+			Long directorycode, String filefor, String tenantid, Integer ismultitenant, Integer usercode,
+			Integer sitecode, Date createddate, Integer fileviewfor) {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		List<LSprotocolfolderfiles> lstfile = Arrays.asList(files);
+		if (lstfile.size() > 0) {
+			List<String> lstfilesid = lstfile.stream().map(LSprotocolfolderfiles::getUuid).collect(Collectors.toList());
+
+			lsprotocolfolderfilesRepository.deleteByUuidIn(lstfilesid);
+
+			for (String uuididex : lstfilesid) {
+
+				if (ismultitenant == 1) {
+					cloudFileManipulationservice.deletecloudFile(uuididex, "protocolfolderfiles");
+				} else {
+					fileManipulationservice.deletelargeattachments(uuididex);
+				}
+
+			}
+
+		}
+
+		map.put("lstfilesid", lstfile);
+		return map;
+	}
 }

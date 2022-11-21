@@ -20,8 +20,8 @@ public class MaterialInventoryController {
 	private MaterialInventoryService materialInventoryService;
 
 	@RequestMapping(value = "/getMaterialInventory", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	
 	public ResponseEntity<Object> getMaterialInventory(@RequestBody Map<String, Object> inputMap) throws Exception {
-
 		return (ResponseEntity<Object>) materialInventoryService.getMaterialInventory();
 	}
 
@@ -58,5 +58,17 @@ public class MaterialInventoryController {
 	public ResponseEntity<Object> getMaterialInventoryDetails(@RequestBody Map<String, Object> inputMap)
 			throws Exception {
 		return materialInventoryService.getMaterialInventoryDetails(inputMap);
+	}
+
+	@RequestMapping(value = "/deleteMaterialInventory", method = RequestMethod.POST)
+	public ResponseEntity<Object> deleteMaterialInventory(@RequestBody Map<String, Object> inputMap) throws Exception {
+		return materialInventoryService.deleteMaterialInventory(inputMap);
+	}
+	
+	@RequestMapping(value = "/updateMaterialStatus", method = RequestMethod.POST)
+	public ResponseEntity<Object> updateMaterialStatus(@RequestBody Map<String, Object> inputMap) throws Exception{
+		
+			return materialInventoryService.updateMaterialStatus(inputMap);
+
 	}
 }

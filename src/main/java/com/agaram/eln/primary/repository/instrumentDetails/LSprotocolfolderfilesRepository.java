@@ -33,4 +33,7 @@ public interface LSprotocolfolderfilesRepository extends JpaRepository<LSprotoco
 
 	public List<LSprotocolfolderfiles> findByUuidInOrderByFolderfilecode(List<String> lstuuid);
 
+	 @Transactional 
+	public void deleteByUuidIn(List<String> lstfilesid);
+
 }

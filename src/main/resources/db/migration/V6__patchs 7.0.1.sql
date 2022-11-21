@@ -324,7 +324,7 @@ CREATE TABLE IF NOT EXISTS public.materialcategory
     needsectionwise integer,
     nmaterialtypecode integer NOT NULL,
     nsitecode integer NOT NULL DEFAULT '-1'::integer,
-    nstatus integer NOT NULL DEFAULT 1,
+    nstatus integer NOT NULL DEFAULT 1, 
     nuserrolecode integer NOT NULL,
     smaterialtypename character varying(255),
     sdescription character varying(255) COLLATE pg_catalog."default",
@@ -868,7 +868,6 @@ update lsusergrouprights set displaytopic = 'IDS_TSK_REVIEW' where displaytopic=
 update lsusergrouprights set displaytopic = 'IDS_TSK_GENERATEREPORT' where displaytopic='Generate Reports';
 update lsusergrouprights set displaytopic = 'IDS_TSK_TEMPLATEDESIGN' where displaytopic='Template Designing';
 update lsusergrouprights set displaytopic = 'IDS_TSK_LIMSTASKORDER' where displaytopic='LIMS Task Order';
-update lsusergrouprights set displaytopic = 'IDS_SCN_SHEETTEMPLATE' where displaytopic='Sheet Templates';
 update lsusergrouprights set displaytopic = 'IDS_TSK_EXPORTPDF' where displaytopic='Export to pdf';
 update lsusergrouprights set displaytopic = 'IDS_TSK_PROTOCOL' where displaytopic='Protocol';
 update lsusergrouprights set displaytopic = 'IDS_SCN_REPORTS' where displaytopic='Reports';
@@ -1102,7 +1101,8 @@ INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, s
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (92, 'IDS_TSK_MOVEORDERSPROTOCOL', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',21,'IDS_SCN_PROTOCOLORDERS') ON CONFLICT(orderno)DO NOTHING;
 
 update lsusergrouprightsmaster set screate='NA' where displaytopic in ('IDS_SCN_USERRIGHTS');
-update lsusergrouprights set modulename='IDS_MDL_TEMPLATES' where displaytopic in ('IDS_TSK_SHEET','IDS_TSK_PROTOCOL','IDS_TSK_ELNANDRESEARCH','IDS_TSK_LIMSTESTORDER','IDS_TSK_MOVEORDERSPROTOCOL');
+update lsusergrouprights set modulename='IDS_MDL_TEMPLATES' where displaytopic in ('IDS_TSK_SHEET','IDS_TSK_PROTOCOL','IDS_TSK_ELNANDRESEARCH','IDS_TSK_LIMSTESTORDER');
+update lsusergrouprights set modulename='IDS_MDL_ORDERS' where displaytopic='IDS_TSK_MOVEORDERSPROTOCOL';
 update lsusergrouprightsmaster set modulename='IDS_MDL_TEMPLATES' where orderno in (14,15,71,72);
 update lsusergrouprightsmaster set modulename='IDS_MDL_ORDERS' where orderno in (46,47) and displaytopic='IDS_TSK_MOVEORDERSPROTOCOL';
 update lsusergrouprights set modulename='IDS_MDL_ORDERS' where displaytopic in ('IDS_TSK_PENDINGWORKPROTOCOL','IDS_TSK_COMPLETEDWORKPROTOCOL');
@@ -1297,20 +1297,21 @@ update methoddelimiter set defaultvalue =1 where delimiterkey = 1 and parsermeth
 
 
 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_TEMPLATEOVERVIEW', 'IDS_MDL_DASHBOARD', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_DASHBOARD'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_TEMPLATEOVERVIEW' and usergroupid_usergroupcode = 1) ; 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) VALUES ('IDS_TSK_TEMPLATEOVERVIEW', 'IDS_MDL_DASHBOARD', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_DASHBOARD'); 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_DASHBOARDINVENTORY', 'IDS_MDL_DASHBOARD', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_DASHBOARD'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_DASHBOARDINVENTORY' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_NEWFOLDER', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_NEWFOLDER' and usergroupid_usergroupcode = 1) ; 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_MOVEORDERS', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_MOVEORDER' and usergroupid_usergroupcode = 1) ; 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_MOVEORDERS', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_MOVEORDERS' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_SHEETORDEREXPORT', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SHEETORDEREXPORT' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_FOLDERCREATIONPROTOCOL', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_FOLDERCREATIONPROTOCOL' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_PENDINGWORKPROTOCOL', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_PENDINGWORKPROTOCOL' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_COMPLETEDWORKPROTOCOL', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_COMPLETEDWORKPROTOCOL' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_MOVEORDERSPROTOCOL', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_MOVEORDERSPROTOCOL' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_TEMPLATESHAREDBYME', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETTEMPLATE'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_TEMPLATESHAREDBYME' and usergroupid_usergroupcode = 1) ; 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) VALUES ('IDS_SCN_SHEETTEMPLATE', 'IDS_MDL_TEMPLATES', 'administrator', '1', '1', 'NA', '1', 1,1,'IDS_SCN_SHEETTEMPLATE');
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_TEMPLATESHAREDTOME', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETTEMPLATE'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_TEMPLATESHAREDTOME' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_SHEETTEMPEXPORT', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETTEMPLATE'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SHEETTEMPEXPORT' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_PROTOCOLTEMPLATE', 'IDS_MDL_TEMPLATES', 'administrator', '1', '1', 'NA', '1', 1,1,'IDS_SCN_PROTOCOLTEMPLATE'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_PROTOCOLTEMPLATE' and usergroupid_usergroupcode = 1) ; 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_EXPORTPDF', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLTEMPLATE'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_EXPORTPDF' and usergroupid_usergroupcode = 1) ; 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) VALUES ('IDS_TSK_EXPORTPDF', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLTEMPLATE');
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_PROTOCOLTEMPSHAREBYME', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLTEMPLATE'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_PROTOCOLTEMPSHAREBYME' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_PROTOCOLTEMPSHARETOME', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLTEMPLATE'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_PROTOCOLTEMPSHARETOME' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_SHEET', 'IDS_MDL_TEMPLATES', 'administrator', '1', '1', 'NA', 'NA', 1,1,'IDS_SCN_TEMPLATEMAPPING'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SHEET' and usergroupid_usergroupcode = 1) ; 
@@ -1326,15 +1327,15 @@ INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_RESETPASSWORD', 'IDS_MDL_SETUP', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_USERMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_RESETPASSWORD' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_RETIRE', 'IDS_MDL_SETUP', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_USERMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_RETIRE' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_IMPORTADS', 'IDS_MDL_SETUP', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_USERMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_IMPORTADS' and usergroupid_usergroupcode = 1) ; 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_NEWDOCUMENT', 'IDS_MDL_REPORTS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_REPORTS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_NEWDOCUMENT' and usergroupid_usergroupcode = 1) ; 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) VALUES ('IDS_TSK_NEWDOCUMENT', 'IDS_MDL_REPORTS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_REPORTS'); 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_NEWTEMP', 'IDS_MDL_REPORTS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_REPORTS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_NEWTEMP' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_OPENREPORT', 'IDS_MDL_REPORTS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_REPORTS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_OPENREPORT' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_IMPORTDOCX', 'IDS_MDL_REPORTS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_REPORTS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_IMPORTDOCX' and usergroupid_usergroupcode = 1) ; 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_PARSER', 'IDS_MDL_PARSER', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PARSER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_PARSER' and usergroupid_usergroupcode = 1) ; 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) VALUES ('IDS_SCN_PARSER', 'IDS_MDL_PARSER', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PARSER'); 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_INSTRUMENTCATEGORY', 'IDS_MDL_PARSER', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_INSTRUMENTCATEGORY'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_INSTRUMENTCATEGORY' and usergroupid_usergroupcode = 1) ; 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_DELIMITER', 'IDS_MDL_PARSER', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_DELIMITER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_DELIMITER' and usergroupid_usergroupcode = 1) ; 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_METHODDELIMITER', 'IDS_MDL_PARSER', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_METHODDELIMITER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_METHODDELIMITER' and usergroupid_usergroupcode = 1) ; 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_METHODMASTER', 'IDS_MDL_PARSER', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_METHODMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_METHODMASTER' and usergroupid_usergroupcode = 1) ; 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) VALUES ('IDS_SCN_DELIMITER', 'IDS_MDL_PARSER', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_DELIMITER'); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) VALUES ('IDS_SCN_METHODDELIMITER', 'IDS_MDL_PARSER', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_METHODDELIMITER'); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) VALUES ('IDS_SCN_METHODMASTER', 'IDS_MDL_PARSER', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_METHODMASTER');
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_SHEETORDERS', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_SHEETORDERS' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_PROTOCOLORDERS', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ORDERSHAREDBYMEPROTOCOL', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ORDERSHAREDBYMEPROTOCOL' and usergroupid_usergroupcode = 1) ; 
@@ -1355,7 +1356,7 @@ update lsusergrouprightsmaster set sdelete='1' where orderno=26;
 update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_CFRSETTINGS';
 update lsusergrouprightsmaster set screate='0' where orderno=34;
 
-update lsusergrouprightsmaster set screate='NA',sedit='NA',sdelete='NA' where orderno in (97,98);
+update lsusergrouprightsmaster set screate='NA',sedit='NA',sdelete='NA' where orderno in (97,98,108,109);
 update lsusergrouprights set screate='NA',sedit='NA',sdelete='NA' where displaytopic in ('IDS_TSK_ADDLOGBOOK','IDS_TSK_EDITLOGBOOK');
 update lsusergrouprights set screate='1',sedit='1',sdelete='1' where displaytopic='IDS_SCN_LOGBOOK' and usergroupid_usergroupcode=1;
 
@@ -1868,8 +1869,8 @@ update lsusergrouprights set modulename='IDS_MDL_SETUP' where displaytopic  IN (
 update lsusergrouprights set modulename='IDS_MDL_ORDERS' where displaytopic in ('IDS_TSK_ORDERSHAREDBYME','IDS_TSK_ORDERSHAREDTOME','IDS_TSK_SHEETEVALUATION','IDS_TSK_ELNTASKORDER','IDS_TSK_RESEARCHACTIVITY','IDS_TSK_MANAGEEXCEL');
 
 
-update lsusergrouprights set screate='NA' where displaytopic in ('IDS_TSK_RESETPASSWORD','IDS_TSK_ORDERSHAREDBYME','IDS_TSK_ORDERSHAREDTOME','IDS_SCN_AUDITTRAILHIS');
-update lsusergrouprights set screate='NA',sedit='NA',sdelete='NA' where displaytopic in ('IDS_TSK_REVIEW','IDS_TSK_CREATEARCHIVE');
+update lsusergrouprights set screate='NA' where displaytopic in ('IDS_TSK_RESETPASSWORD','IDS_SCN_AUDITTRAILHIS');
+update lsusergrouprights set screate='NA',sedit='NA',sdelete='NA' where displaytopic in ('IDS_TSK_REVIEW','IDS_TSK_CREATEARCHIVE','IDS_TSK_ORDERSHAREDBYME','IDS_TSK_ORDERSHAREDTOME');
 delete from lsusergrouprights where displaytopic in ('IDS_SCN_ACTIVEUSER','IDS_SCN_DOMAIN') and usergroupid_usergroupcode!=1;
 
 
@@ -1898,10 +1899,10 @@ update lsusergrouprights set screenname='IDS_SCN_CFRSETTINGS' where displaytopic
 update lsusergrouprights set screenname='IDS_SCN_REPORTS' where displaytopic in ('IDS_SCN_REPORTS','IDS_TSK_GENERATEREPORT') ;
 update lsusergrouprights set screenname='IDS_SCN_INSTRUMENTMASTER' where displaytopic='IDS_SCN_INSTRUMENTMASTER' ;
 update lsusergrouprights set screenname='IDS_SCN_TEMPLATEMAPPING' where displaytopic='IDS_TSK_LIMSTASKORDER' ;
-update lsusergrouprights set screenname='IDS_SCN_REPORTS' where displaytopic='IDS_TSK_TEMPLATEDESIGN' ;
 update lsusergrouprights set screenname='IDS_SCN_SITEMASTER' where displaytopic='IDS_SCN_SITEMASTER' ;
 update lsusergrouprights set screenname='IDS_SCN_ACTIVEUSER' where displaytopic='IDS_SCN_ACTIVEUSER' ;
 update lsusergrouprights set screenname='IDS_SCN_DOMAIN' where displaytopic='IDS_SCN_DOMAIN' ;
+delete from lsusergrouprights where displaytopic='IDS_TSK_TEMPLATEDESIGN';
 
 ALTER TABLE IF Exists lspasswordpolicy ADD COLUMN IF NOT EXISTS idletimeshowcheck integer;
 
@@ -2048,98 +2049,6 @@ update lsusergrouprights set screate='NA',sedit='NA',  sdelete='NA' where displa
 update lsusergrouprights set screate='NA',sedit='NA', sdelete='NA' where displaytopic='IDS_TSK_REVIEWLOGBOOK';
 
 delete from lsusergrouprights where displaytopic ='IDS_TSK_LIMSTASKORDER';
-update lsusergrouprights set sequenceorder=1 where displaytopic ='IDS_TSK_ORDEROVERVIEW' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=2 where displaytopic ='IDS_TSK_TEMPLATEOVERVIEW' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=3 where displaytopic ='IDS_TSK_ACTIVITIES' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=4 where displaytopic ='IDS_TSK_DASHBOARDINVENTORY' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=5 where displaytopic ='IDS_SCN_SHEETORDERS' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=6 where displaytopic ='IDS_TSK_FOLDERCREATION' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=7 where displaytopic ='IDS_TSK_ELNTASKORDER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=8 where displaytopic ='IDS_TSK_RESEARCHACTIVITY' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=9 where displaytopic ='IDS_TSK_MANAGEEXCEL' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=10 where displaytopic ='IDS_TSK_SHEETEVALUATION' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=11 where displaytopic ='IDS_TSK_ORDERSHAREDBYME' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=12 where displaytopic ='IDS_TSK_ORDERSHAREDTOME' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=13 where displaytopic ='IDS_TSK_PENDINGWORK' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=14 where displaytopic ='IDS_TSK_COMPLETEDWORK' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=15 where displaytopic ='IDS_TSK_MOVEORDERS' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=15 where displaytopic ='IDS_TSK_SHEETORDEREXPORT' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=16 where displaytopic ='IDS_TSK_FOLDERCREATIONPROTOCOL' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=17 where displaytopic ='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=18 where displaytopic ='IDS_TSK_ELNPROTOCOL' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=19 where displaytopic ='IDS_TSK_DYNAMICPROTOCOL' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=20 where displaytopic ='IDS_TSK_ORDERSHAREDBYMEPROTOCOL' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=21 where displaytopic ='IDS_TSK_ORDERSHAREDTOMEPROTOCOL' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=22 where displaytopic ='IDS_TSK_PENDINGWORKPROTOCOL' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=23 where displaytopic ='IDS_TSK_COMPLETEDWORKPROTOCOL' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=24 where displaytopic ='IDS_TSK_MOVEORDERSPROTOCOL' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=25 where displaytopic ='IDS_SCN_SHEETTEMPLATE' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=26 where displaytopic ='IDS_TSK_TEMPLATESHAREDBYME' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=27 where displaytopic ='IDS_TSK_TEMPLATESHAREDTOME' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=28 where displaytopic ='IDS_TSK_SHEETTEMPEXPORT' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=29 where displaytopic ='IDS_SCN_PROTOCOLTEMPLATE' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=30 where displaytopic ='IDS_TSK_NEWSTEP' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=31 where displaytopic ='IDS_TSK_EXPORTPDF' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=32 where displaytopic ='IDS_TSK_PROTOCOLTEMPSHAREBYME' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=33 where displaytopic ='IDS_TSK_PROTOCOLTEMPSHARETOME' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=34 where displaytopic ='IDS_TSK_SHEET' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=35 where displaytopic ='IDS_TSK_PROTOCOL' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=36 where displaytopic ='IDS_TSK_LIMSTESTORDER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=37 where displaytopic ='IDS_SCN_TASKMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=38 where displaytopic ='IDS_SCN_PROJECTMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=39 where displaytopic ='IDS_SCN_SAMPLEMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=40 where displaytopic ='IDS_SCN_INVENTORY' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=41 where displaytopic ='IDS_TSK_ADDREPO' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=42 where displaytopic ='IDS_TSK_EDITREPO' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=43 where displaytopic ='IDS_SCN_UNLOCKORDERS' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=44 where displaytopic ='IDS_SCN_USERGROUP' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=45 where displaytopic ='IDS_TSK_ACTDEACT' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=46 where displaytopic ='IDS_SCN_USERMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=47 where displaytopic ='IDS_TSK_UNLOCK' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=48 where displaytopic ='IDS_TSK_ACTDEACTUSERMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=49 where displaytopic ='IDS_TSK_RESETPASSWORD' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=50 where displaytopic ='IDS_TSK_RETIRE' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=51 where displaytopic ='IDS_TSK_IMPORTADS' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=52 where displaytopic ='IDS_SCN_USERRIGHTS' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=53 where displaytopic ='IDS_SCN_PROJECTTEAM' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=54 where displaytopic ='IDS_SCN_ORDERWORKLOW' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=55 where displaytopic ='IDS_SCN_TEMPLATEWORKFLOW' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=56 where displaytopic ='IDS_SCN_PASSWORDPOLICY' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=57 where displaytopic ='IDS_SCN_AUDITTRAILHIS' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=58 where displaytopic ='IDS_TSK_REVIEWHISTORY' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=59 where displaytopic ='IDS_TSK_REVIEW' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=60 where displaytopic ='IDS_TSK_CREATEARCHIVE' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=61 where displaytopic ='IDS_TSK_OPENARCHIVE' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=62 where displaytopic ='IDS_TSK_EXPORT' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=63 where displaytopic ='IDS_SCN_CFRSETTINGS' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=64 where displaytopic ='IDS_SCN_AUDITTRAILCONFIG' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=65 where displaytopic ='IDS_SCN_REPORTS' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=66 where displaytopic ='IDS_TSK_NEWDOCUMENT' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=67 where displaytopic ='IDS_TSK_NEWTEMP' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=68 where displaytopic ='IDS_TSK_GENERATEREPORT' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=69 where displaytopic ='IDS_TSK_OPENREPORT' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=70 where displaytopic ='IDS_TSK_IMPORTDOCX' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=71 where displaytopic ='IDS_SCN_PARSER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=72 where displaytopic ='IDS_SCN_INSTRUMENTCATEGORY' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=73 where displaytopic ='IDS_SCN_INSTRUMENTMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=74 where displaytopic ='IDS_SCN_DELIMITER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=75 where displaytopic ='IDS_SCN_METHODDELIMITER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=76 where displaytopic ='IDS_SCN_METHODMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=77 where displaytopic ='IDS_SCN_UNITMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=78 where displaytopic ='IDS_TSK_DOWNLOADPDFEXCEL' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=79 where displaytopic ='IDS_SCN_SECTIONMASTER' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=80 where displaytopic ='IDS_TSK_DOWNLOADPDFEXCELSECTION' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=81 where displaytopic ='IDS_SCN_STORAGELOCATION' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=82 where displaytopic ='IDS_SCN_MATERIALCATEGORY' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=83 where displaytopic ='IDS_TSK_DOWNLOADMATERILACATEGORY' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=84 where displaytopic ='IDS_SCN_MATERIAL' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=85 where displaytopic ='IDS_SCN_MATERIALINVENTORY' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=86 where displaytopic ='IDS_SCN_LOGBOOK' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=87 where displaytopic ='IDS_TSK_ADDLOGBOOK' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=88 where displaytopic ='IDS_TSK_EDITLOGBOOK' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=89 where displaytopic ='IDS_TSK_RETIRELOGBOOK' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sequenceorder=90 where displaytopic ='IDS_TSK_REVIEWLOGBOOK' and usergroupid_usergroupcode=1;
-
 delete from lsusergrouprights where displaytopic='IDS_TSK_LIMSTESTORDER';
 delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_LIMSTESTORDER';
 
@@ -2770,6 +2679,7 @@ update lsusergrouprights set modulename='IDS_MDL_LOGBOOK' where screenname='IDS_
 update lsaudittrailconfiguration set modulename='IDS_MDL_LOGBOOK' where screenname='IDS_SCN_LOGBBOK';
 update lsaudittrailconfiguration set taskname='IDS_TSK_RETIRELOG' where screenname='IDS_SCN_LOGBOOK' and taskname='IDS_TSK_DELETE';
 update lsaudittrailconfigmaster set taskname='IDS_TSK_RETIRELOG' where serialno=83;
+delete from lsaudittrailconfigmaster where serialno=105;
 
 update lsaudittrailconfiguration set ordersequnce=1 where screenname='IDS_SCN_SHEETORDERS';
 update lsaudittrailconfiguration set ordersequnce=2 where screenname='IDS_SCN_PROTOCOLORDERS';
@@ -2795,7 +2705,7 @@ update lsaudittrailconfiguration set ordersequnce=21 where screenname='IDS_SCN_C
 update lsaudittrailconfiguration set ordersequnce=22 where screenname='IDS_SCN_AUDITTRAILCONFIG';
 update lsaudittrailconfiguration set ordersequnce=23 where screenname='IDS_SCN_REPORTS';
 update lsaudittrailconfiguration set ordersequnce=24 where screenname='IDS_SCN_INSTRUMENTCATEGORY';
-update lsaudittrailconfiguration set ordersequnce=25 where screenname='IDS_SCN_INSTRUMENTMATER';
+update lsaudittrailconfiguration set ordersequnce=25 where screenname='IDS_SCN_INSTRUMENTMASTER';
 update lsaudittrailconfiguration set ordersequnce=26 where screenname='IDS_SCN_DELIMITER';
 update lsaudittrailconfiguration set ordersequnce=27 where screenname='IDS_SCN_METHODDELIMITER';
 update lsaudittrailconfiguration set ordersequnce=28 where screenname='IDS_SCN_METHODMASTER';
@@ -2806,6 +2716,94 @@ update lsaudittrailconfiguration set ordersequnce=32 where screenname='IDS_SCN_M
 update lsaudittrailconfiguration set ordersequnce=33 where screenname='IDS_SCN_MATERIAL';
 update lsaudittrailconfiguration set ordersequnce=34 where screenname='IDS_SCN_MATERIALINVENTORY';
 update lsaudittrailconfiguration set ordersequnce=35 where screenname='IDS_SCN_LOGBOOK';
+
+update lsusergrouprights set sequenceorder=1 where displaytopic ='IDS_TSK_ORDEROVERVIEW' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=2 where displaytopic ='IDS_TSK_TEMPLATEOVERVIEW' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=3 where displaytopic ='IDS_TSK_ACTIVITIES' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=4 where displaytopic ='IDS_TSK_DASHBOARDINVENTORY' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=5 where displaytopic ='IDS_SCN_SHEETORDERS' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=6 where displaytopic ='IDS_TSK_FOLDERCREATION' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=7 where displaytopic ='IDS_TSK_ELNTASKORDER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=8 where displaytopic ='IDS_TSK_RESEARCHACTIVITY' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=9 where displaytopic ='IDS_TSK_MANAGEEXCEL' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=10 where displaytopic ='IDS_TSK_SHEETEVALUATION' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=11 where displaytopic ='IDS_TSK_ORDERSHAREDBYME' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=12 where displaytopic ='IDS_TSK_ORDERSHAREDTOME' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=13 where displaytopic ='IDS_TSK_MOVEORDERS' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=14 where displaytopic ='IDS_TSK_SHEETORDEREXPORT' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=15 where displaytopic ='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=16 where displaytopic ='IDS_TSK_FOLDERCREATIONPROTOCOL' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=17 where displaytopic ='IDS_TSK_ELNPROTOCOL' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=18 where displaytopic ='IDS_TSK_DYNAMICPROTOCOL' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=19 where displaytopic ='IDS_TSK_ORDERSHAREDBYMEPROTOCOL' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=20 where displaytopic ='IDS_TSK_ORDERSHAREDTOMEPROTOCOL' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=21 where displaytopic ='IDS_TSK_MOVEORDERSPROTOCOL' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=22 where displaytopic ='IDS_SCN_SHEETTEMPLATE' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=23 where displaytopic ='IDS_TSK_TEMPLATESHAREDBYME' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=24 where displaytopic ='IDS_TSK_TEMPLATESHAREDTOME' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=25 where displaytopic ='IDS_TSK_SHEETTEMPEXPORT' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=26 where displaytopic ='IDS_SCN_PROTOCOLTEMPLATE' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=27 where displaytopic ='IDS_TSK_NEWSTEP' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=28 where displaytopic ='IDS_TSK_EXPORTPDF' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=29 where displaytopic ='IDS_TSK_PROTOCOLTEMPSHAREBYME' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=30 where displaytopic ='IDS_TSK_PROTOCOLTEMPSHARETOME' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=31 where displaytopic ='IDS_TSK_SHEET' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=32 where displaytopic ='IDS_TSK_PROTOCOL' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=33 where displaytopic ='IDS_TSK_LIMSTESTORDER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=34 where displaytopic ='IDS_SCN_TASKMASTER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=35 where displaytopic ='IDS_SCN_PROJECTMASTER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=36 where displaytopic ='IDS_SCN_SAMPLEMASTER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=37 where displaytopic ='IDS_SCN_INVENTORY' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=38 where displaytopic ='IDS_TSK_ADDREPO' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=39 where displaytopic ='IDS_TSK_EDITREPO' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=40 where displaytopic ='IDS_SCN_UNLOCKORDERS' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=41 where displaytopic ='IDS_SCN_USERGROUP' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=42 where displaytopic ='IDS_TSK_ACTDEACT' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=43 where displaytopic ='IDS_SCN_USERMASTER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=44 where displaytopic ='IDS_TSK_UNLOCK' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=45 where displaytopic ='IDS_TSK_ACTDEACTUSERMASTER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=46 where displaytopic ='IDS_TSK_RESETPASSWORD' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=47 where displaytopic ='IDS_TSK_RETIRE' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=48 where displaytopic ='IDS_TSK_IMPORTADS' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=49 where displaytopic ='IDS_SCN_USERRIGHTS' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=50 where displaytopic ='IDS_SCN_PROJECTTEAM' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=51 where displaytopic ='IDS_SCN_ORDERWORKLOW' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=52 where displaytopic ='IDS_SCN_TEMPLATEWORKFLOW' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=53 where displaytopic ='IDS_SCN_PASSWORDPOLICY' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=54 where displaytopic ='IDS_SCN_AUDITTRAILHIS' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=55 where displaytopic ='IDS_TSK_REVIEWHISTORY' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=56 where displaytopic ='IDS_TSK_REVIEW' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=57 where displaytopic ='IDS_TSK_CREATEARCHIVE' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=58 where displaytopic ='IDS_TSK_OPENARCHIVE' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=59 where displaytopic ='IDS_TSK_EXPORT' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=60 where displaytopic ='IDS_SCN_CFRSETTINGS' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=61 where displaytopic ='IDS_SCN_AUDITTRAILCONFIG' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=62 where displaytopic ='IDS_SCN_REPORTS' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=63 where displaytopic ='IDS_TSK_NEWDOCUMENT' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=64 where displaytopic ='IDS_TSK_NEWTEMP' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=65 where displaytopic ='IDS_TSK_GENERATEREPORT' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=66 where displaytopic ='IDS_TSK_OPENREPORT' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=67 where displaytopic ='IDS_TSK_IMPORTDOCX' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=68 where displaytopic ='IDS_SCN_PARSER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=69 where displaytopic ='IDS_SCN_INSTRUMENTCATEGORY' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=70 where displaytopic ='IDS_SCN_INSTRUMENTMASTER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=71 where displaytopic ='IDS_SCN_DELIMITER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=72 where displaytopic ='IDS_SCN_METHODDELIMITER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=73 where displaytopic ='IDS_SCN_METHODMASTER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=74 where displaytopic ='IDS_SCN_UNITMASTER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=75 where displaytopic ='IDS_TSK_DOWNLOADPDFEXCEL' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=76 where displaytopic ='IDS_SCN_SECTIONMASTER' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=77 where displaytopic ='IDS_TSK_DOWNLOADPDFEXCELSECTION' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=78 where displaytopic ='IDS_SCN_STORAGELOCATION' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=79 where displaytopic ='IDS_SCN_MATERIALCATEGORY' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=80 where displaytopic ='IDS_TSK_DOWNLOADMATERILACATEGORY' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=81 where displaytopic ='IDS_SCN_MATERIAL' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=82 where displaytopic ='IDS_SCN_MATERIALINVENTORY' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=83 where displaytopic ='IDS_SCN_LOGBOOK' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=84 where displaytopic ='IDS_TSK_ADDLOGBOOK' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=85 where displaytopic ='IDS_TSK_EDITLOGBOOK' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=86 where displaytopic ='IDS_TSK_RETIRELOGBOOK' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sequenceorder=87 where displaytopic ='IDS_TSK_REVIEWLOGBOOK' and usergroupid_usergroupcode=1;
 
 
  DO
@@ -2984,3 +2982,15 @@ ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS  teamcode
 ALTER TABLE IF Exists lssheetOrderStructure ADD COLUMN IF NOT EXISTS  teamcode integer;
 
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS  teamcode integer;
+
+INSERT INTO transactionstatus (ntranscode, stransstatus, jsondata, nstatus) VALUES (47, 'Receive', '{"salertdisplaystatus": {"en-US": "Received", "ru-RU": "Получила", "tg-TG": "Гирифтанд"}, "stransdisplaystatus": {"en-US": "Received", "ru-RU": "Получила", "tg-TG": "Гирифтанд"}, "sactiondisplaystatus": {"en-US": "Receive", "ru-RU": "Получать", "tg-TG": "Гирифтан"}}', 1) on conflict(ntranscode) do nothing;
+
+INSERT INTO transactionstatus (ntranscode, stransstatus, jsondata, nstatus) VALUES (48, 'Issue', '{"salertdisplaystatus": {"en-US": "Issued", "ru-RU": "Изданный", "tg-TG": "Нашр шуда"}, "stransdisplaystatus": {"en-US": "Issued", "ru-RU": "Изданный", "tg-TG": "Нашр шуда"}, "sactiondisplaystatus": {"en-US": "Issue", "ru-RU": "Проблема", "tg-TG": "Чоп"}}', 1)on conflict(ntranscode) do nothing;
+
+INSERT INTO materialinventorytype (ninventorytypecode, jsondata, ndefaultstatus, nstatus) VALUES (1, '{"sinventorytypename": {"en-US": "Inhouse", "ru-RU": "Внутренний", "tg-TG": "Дар хона"}}', 3, 1)on conflict(ninventorytypecode) do nothing;
+
+INSERT INTO materialinventorytype (ninventorytypecode, jsondata, ndefaultstatus, nstatus) VALUES (2, '{"sinventorytypename": {"en-US": "Outside", "ru-RU": "За пределами", "tg-TG": "Дар берун"}}', 4, 1)on conflict(ninventorytypecode) do nothing;
+
+INSERT INTO materialgrade (nmaterialgradecode, jsondata, ndefaultstatus, nsitecode, nstatus, smaterialgradename) VALUES (1, '{"sdescription": "", "smaterialgradename": "A"}', 4, -1, 1, 'A')on conflict(nmaterialgradecode) do nothing;
+
+INSERT INTO materialgrade (nmaterialgradecode, jsondata, ndefaultstatus, nsitecode, nstatus, smaterialgradename) VALUES (2, '{"sdescription": "", "smaterialgradename": "B"}', 4, -1, 1, 'B')on conflict(nmaterialgradecode) do nothing;
