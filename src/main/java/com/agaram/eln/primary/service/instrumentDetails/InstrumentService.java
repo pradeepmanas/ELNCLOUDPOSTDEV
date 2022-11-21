@@ -3060,7 +3060,19 @@ public class InstrumentService {
 		lsorderworkflowhistoryRepositroy.save(objorder.getLsorderworkflowhistory());
 
 		lslogilablimsorderdetailRepository.save(objorder);
+	
 		updatenotificationforworkflowapproval(objorder);
+		
+		
+		if (objorder.getFiletype() != 0 && objorder.getOrderflag().toString().trim().equals("N")) {
+			LSworkflow objlastworkflow = lsworkflowRepository
+					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
+			if (objlastworkflow != null && objorder.getLsworkflow().getWorkflowcode()==objlastworkflow.getWorkflowcode()) {
+				objorder.setIsFinalStep(1);
+			} else {
+				objorder.setIsFinalStep(0);
+			}
+		}
 
 		return objorder;
 	}

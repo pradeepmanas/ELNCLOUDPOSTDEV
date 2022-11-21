@@ -924,10 +924,14 @@ public class LoginService {
 		objClass.setResponse(new Response());
 		if ((objClass.getSitecode() == null || objClass.getSitecode() != null)
 				&& lSSiteMasterRepository.findBySitenameIgnoreCaseAndIstatus(objClass.getSitename(), 1).size()>0 ) {
+			if(objClass.getIstatus() != 0) {
+			//lSSiteMasterRepository.save(objClass);	
+			
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
 
 			return objClass;
+			}
 		} else if (objClass.getSitecode() != null && objClass.getSitecode() != 1) {
 
 			lSSiteMasterRepository.save(objClass);

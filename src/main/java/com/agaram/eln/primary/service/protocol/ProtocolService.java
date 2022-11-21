@@ -2093,8 +2093,8 @@ public class ProtocolService {
 //				}
 //			});
 //		}
-
 		LSlogilabprotocoldetail.forEach(objorderDetail -> objorderDetail.setLstworkflow(lstworkflow));
+		LsProto.setLstworkflow(lstworkflow);
 		mapObj.put("curentprotocolorder", LSlogilabprotocoldetail);
 		mapObj.put("ProtocolObj", LsProto);
 		mapObj.put("status", "success");
