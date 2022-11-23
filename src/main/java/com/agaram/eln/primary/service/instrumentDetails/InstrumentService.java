@@ -5773,6 +5773,9 @@ public class InstrumentService {
 						.findByOrderflagAndLsprojectmasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 								objorder.getOrderflag(), lstproject, filetype, objorder.getLsprojectmaster(), fromdate,
 								todate);
+			} else if (filetype == 0 && objorder.getOrderflag() != null) {
+				lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+						objorder.getOrderflag(), filetype, fromdate, todate);
 			}
 
 			else {

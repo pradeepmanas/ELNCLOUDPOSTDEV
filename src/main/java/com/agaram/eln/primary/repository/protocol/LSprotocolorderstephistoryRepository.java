@@ -10,4 +10,6 @@ public interface LSprotocolorderstephistoryRepository extends JpaRepository<LSpr
 
 	List<LSprotocolorderstephistory> findByProtocolordercode(Long protocolordercode);
 
+	List<LSprotocolorderstephistory> findByBatchcode(Long batchcode);
+
 }

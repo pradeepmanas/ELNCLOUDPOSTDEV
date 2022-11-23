@@ -98,6 +98,20 @@ public class LSPasswordPolicy {
 	@Transient
 	Response objResponse;
 	
+	@Transient
+	public LSSiteMaster sitecode;
+	
+	
+	
+	
+	public LSSiteMaster getSitecode() {
+		return sitecode;
+	}
+
+	public void setSitecode(LSSiteMaster sitecode) {
+		this.sitecode = sitecode;
+	}
+
 	public LoggedUser getObjuser() {
 		return objuser;
 	}

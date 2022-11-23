@@ -1054,5 +1054,9 @@ public class ProtocolController {
 	
 		return  ProtocolMasterService.getprotocolstephistory(objuser);
 	}
-
+	@RequestMapping(value = "/updatetransactionhistory")
+	protected LSprotocolorderstephistory updatetransactionhistory(@RequestBody LSprotocolorderstephistory objuser)throws Exception {
+	
+		return  ProtocolMasterService.updatetransactionhistory(objuser);
+	}
 }

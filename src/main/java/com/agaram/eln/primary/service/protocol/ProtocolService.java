@@ -6389,9 +6389,23 @@ public class ProtocolService {
 	}
 
 	public List<LSprotocolorderstephistory> getprotocolstephistory(LSprotocolorderstephistory objuser) {
+		if(objuser.getProtocolordercode()!=null) {
 		List<LSprotocolorderstephistory> rtobj = lsprotocolorderstephistoryRepository
 				.findByProtocolordercode(objuser.getProtocolordercode());
 		return rtobj;
+		}else if(objuser.getBatchcode()!=null) {
+			List<LSprotocolorderstephistory> rtobj = lsprotocolorderstephistoryRepository
+					.findByBatchcode(objuser.getBatchcode());
+			return rtobj;
+		}
+		return null;
+	}
+
+	public LSprotocolorderstephistory updatetransactionhistory(LSprotocolorderstephistory objuser) {
+		if(objuser.getProtocolordercode()!=null || objuser.getBatchcode()!=null) {
+			lsprotocolorderstephistoryRepository.save(objuser);
+		}
+		return objuser;
 	}
 
 }

@@ -2,6 +2,8 @@ package com.agaram.eln.primary.fetchmodel.gettemplate;
 
 import java.util.Date;
 
+import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
+
 
 public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 	public Integer protocolmastercode;
@@ -11,6 +13,7 @@ public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 	public String createdbyusername;
 	public String transactionstatus;
 	private Date createdate;
+	private String lssheetworkflowname;
 
 	public Date getCreatedate() {
 		return createdate;
@@ -68,8 +71,16 @@ public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 		this.createdbyusername = createdbyusername;
 	}
 
+	public String getLssheetworkflowname() {
+		return lssheetworkflowname;
+	}
+
+	public void setLssheetworkflowname(String lssheetworkflowname) {
+		this.lssheetworkflowname = lssheetworkflowname;
+	}
+
 	public Protocoltemplateget(Integer protocolmastercode, String protocolmastername, Integer protocolstatus,
-			Integer status, String createdbyusername, Integer approved, Integer rejected,Date createdate) {
+			Integer status, String createdbyusername, Integer approved, Integer rejected,Date createdate,LSsheetworkflow lssheetworkflow) {
 
 		this.protocolmastercode = protocolmastercode;
 		this.protocolmastername = protocolmastername;
@@ -79,6 +90,7 @@ public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 		this.createdate = createdate;
 		this.transactionstatus = (rejected != null && rejected == 1) ? "rejected"
 				: (approved == null ? "created" :approved == 1 ? "approved" : approved == 0 ? "initiated":approved == 2?"return":"");
+		this.lssheetworkflowname=lssheetworkflow!=null?lssheetworkflow.getWorkflowname():null;
 	}
 
 	@Override

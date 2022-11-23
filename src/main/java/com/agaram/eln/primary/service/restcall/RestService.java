@@ -271,16 +271,16 @@ public class RestService {
 	    
 	    if(bool) {
 	    	result="success";
-	    	final LSlogilablimsorderdetail objLSlogilablimsorder = (LSlogilablimsorderdetail) mapOrderDetail;
-
-			new Thread(() -> {
-				try {
-					System.out.println("inside the thread SDMS order call");
-					createLogilabLIMSOrder4SDMS(objLSlogilablimsorder);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}).start();
+//	    	final LSlogilablimsorderdetail objLSlogilablimsorder = (LSlogilablimsorderdetail) mapOrderDetail;
+//
+//			new Thread(() -> {
+//				try {
+//					System.out.println("inside the thread SDMS order call");
+//					createLogilabLIMSOrder4SDMS(objLSlogilablimsorder);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}).start();
 	    }
 	    else {
 	    	result="Failure";

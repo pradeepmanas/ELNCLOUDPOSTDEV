@@ -28,6 +28,8 @@ public class LSprotocolorderstephistory {
 	
 	private Long protocolordercode;
 	
+	private Long batchcode;
+	
 	@ManyToOne 
 	private LSuserMaster createby;
 	
@@ -52,6 +54,14 @@ public class LSprotocolorderstephistory {
 	public Integer stepno;
 	
 	public Integer viewoption;
+
+	public Long getBatchcode() {
+		return batchcode;
+	}
+
+	public void setBatchcode(Long batchcode) {
+		this.batchcode = batchcode;
+	}
 
 	public Integer getProtocolorderstephistorycode() {
 		return protocolorderstephistorycode;

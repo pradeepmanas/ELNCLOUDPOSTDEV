@@ -162,7 +162,11 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 
 	public List<LSfile> findByFilecodeIn(List<Integer> listobjfilecode);
 
-	public List<LSfile> findByFilenameuserAndCategory(String filenameuser, String category);
+//	public List<LSfile> findByFilenameuserAndCategory(String filenameuser, String category);
+
+	public Object countByCreatebyIn(Integer sitecode);
+
+	public List<LSfile> findByFilecodeNotAndFilenameuser(Integer filecode, String filenameuser);
 
 
 

@@ -604,4 +604,10 @@ public class AuditService {
 
 		return list;
 	}
+
+	public List<LScfttransaction> silentandmanualRecordHandlerlist(LScfttransaction[] mapObj) {
+		List<LScfttransaction> obj= Arrays.asList(mapObj);
+		lscfttransactionRepository.save(obj);
+		return obj;
+	}
 }

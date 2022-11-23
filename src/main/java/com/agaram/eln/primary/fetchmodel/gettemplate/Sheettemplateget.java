@@ -3,6 +3,7 @@ package com.agaram.eln.primary.fetchmodel.gettemplate;
 
 import java.util.Date;
 
+import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public class Sheettemplateget {
@@ -19,11 +20,12 @@ public class Sheettemplateget {
 	private long versioncout;
 	private Integer versionno;
 	private String category;
+	private String lssheetworkflowname;
 //	private List<LSfileversion> lstfileversion;
 //	private LSfileversion lsfileversion;
 
 	public Sheettemplateget(Integer filecode, String filenameuser, Date createdate, LSuserMaster createby,
-			LSuserMaster modifiedby, Integer approved, Integer rejected,Integer versionno,String category
+			LSuserMaster modifiedby, Integer approved, Integer rejected,Integer versionno,String category,LSsheetworkflow lssheetworkflow
 //			,LSfileversion lsfileversion
 			) {
 		
@@ -51,6 +53,7 @@ public class Sheettemplateget {
 		this.modifiedby = modifiedUser;
 		this.versionno=versionno;
 		this.category =category;
+		this.lssheetworkflowname=lssheetworkflow!=null?lssheetworkflow.getWorkflowname():null;
 //		this.lsfileversion = lsfileversion;
 	}
 
@@ -79,6 +82,14 @@ public class Sheettemplateget {
 
 	public long getVersioncout() {
 		return versioncout;
+	}
+
+	public String getLssheetworkflowname() {
+		return lssheetworkflowname;
+	}
+
+	public void setLssheetworkflowname(String lssheetworkflowname) {
+		this.lssheetworkflowname = lssheetworkflowname;
 	}
 
 	public String getCategory() {

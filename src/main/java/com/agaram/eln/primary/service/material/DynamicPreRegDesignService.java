@@ -16,6 +16,7 @@ import com.agaram.eln.primary.repository.material.MaterialGradeRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
+import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageLocationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,6 +35,8 @@ public class DynamicPreRegDesignService {
 	PeriodRepository periodRepository;
 	@Autowired
 	MaterialGradeRepository materialGradeRepository;
+	@Autowired
+	SampleStorageLocationRepository sampleStorageLocationRepository;
 
 	@SuppressWarnings({ "unchecked", "unused" })
 	public ResponseEntity<Object> getComboValues(Map<String, Object> inputMap) throws JsonProcessingException {
@@ -89,11 +92,14 @@ public class DynamicPreRegDesignService {
 			case "materialgrade":
 				data = materialGradeRepository.findByNstatus(1);
 				break;
+			case "storagelocation":
+				data = sampleStorageLocationRepository.findByStatusOrderBySamplestoragelocationkeyDesc(1);
+				break;
 //			case "period":
 //				data = periodRepository.findByNstatus(1);
 //				break;
 			}
-			System.out.println(data);
+//			System.out.println(data);
 
 			String label = (String) srcData.get(i).get("label");
 

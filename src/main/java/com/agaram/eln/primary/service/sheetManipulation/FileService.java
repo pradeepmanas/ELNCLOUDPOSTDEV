@@ -1383,10 +1383,12 @@ public class FileService {
 
 	public LSfile updatefilename(LSfile objfile) {
 
-	    List<LSfile> fileByName = lSfileRepository.findByFilenameuserAndCategory(objfile.getFilenameuser(),objfile.getCategory());
+	    List<LSfile> fileByName = lSfileRepository.findByFilecodeNotAndFilenameuser(objfile.getFilecode(),objfile.getFilenameuser());
 		
 		if(fileByName.isEmpty()) {
 		lSfileRepository.save(objfile);
+		objfile.setResponse(new Response());
+		objfile.getResponse().setStatus(true);
 		return objfile;
 
 		}else {

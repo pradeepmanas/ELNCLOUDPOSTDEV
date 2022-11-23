@@ -20,6 +20,7 @@ public class CloudParserFile {
 	public String filename;
 	public String originalfilename;
 	//private Binary file;
+	public Integer version=1;
 	 
 	public Integer getParserfilecode() {
 		return parserfilecode;
@@ -56,6 +57,12 @@ public class CloudParserFile {
 	}
 	public void setOriginalfilename(String originalfilename) {
 		this.originalfilename = originalfilename;
+	}
+	public Integer getVersion() {
+		return version;
+	}
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 	

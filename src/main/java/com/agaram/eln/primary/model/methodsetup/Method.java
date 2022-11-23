@@ -69,6 +69,8 @@ public class Method implements Serializable, Diffable<Method>{
 	@Column(name = "instrawdataurl")
 	private String instrawdataurl;	
 	
+	public Integer version=1;
+
 	@Transient
 	@Column(name = "displayvalue")
 	private String displayvalue;
@@ -278,6 +280,15 @@ public class Method implements Serializable, Diffable<Method>{
 		this.objmanualaudit = objmanualaudit;
 	}
 
+	
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -303,6 +314,8 @@ public class Method implements Serializable, Diffable<Method>{
 	       .append("tenantid", this.tenantid, obj.tenantid)
            .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
            .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
+           .append("version", this.version, obj.version)
+
 
 
 
@@ -346,6 +359,8 @@ public class Method implements Serializable, Diffable<Method>{
         this.tenantid=method.tenantid;
 		this.objsilentaudit = method.objsilentaudit;
 		this.objmanualaudit = method.objmanualaudit;
+		
+		this.version = method.version;
 
 
 	}

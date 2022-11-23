@@ -2,6 +2,7 @@ package com.agaram.eln.primary.controller.methodsetup;
 
 import java.util.Map;
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -87,10 +88,10 @@ public class EvaluateParserController {
 	@PostMapping("/uploadFileandevaluateParser")
     public ResponseEntity<Object> uploadFileandevaluateParser(@RequestParam("file") MultipartFile file, @RequestParam("method") String method,
     		@RequestParam("site") String sitecode,@RequestParam("X-TenantID") String tenant,@RequestParam ("isMultitenant") Integer isMultitenant,
-    		@RequestParam ("originalfilename") String originalfilename,final HttpServletRequest request)throws Exception {
+    		@RequestParam ("originalfilename") String originalfilename,final HttpServletRequest request,@RequestParam ("version") Integer version)throws Exception {
 		
 	//	if(isMultitenant != 0) {
-        String fileName = fileStorageService.storeFile(file,tenant,isMultitenant,originalfilename );
+        String fileName = fileStorageService.storeFile(file,tenant,isMultitenant,originalfilename,version );
         final ObjectMapper mapper = new ObjectMapper();
         if(method.indexOf(",")>0)
         {

@@ -208,4 +208,11 @@ public class AuditTrailController {
 			throws ParseException {
 		return auditService.GetCFRTransactionsdid(objCFRFilter);
 	}
+		
+		@PostMapping("/silentandmanualRecordHandlerlist")
+		public List<LScfttransaction> silentandmanualRecordHandlerlist(@RequestBody LScfttransaction[] mapObj)
+				throws ParseException {
+			return auditService.silentandmanualRecordHandlerlist(mapObj);
+		}
+
 }

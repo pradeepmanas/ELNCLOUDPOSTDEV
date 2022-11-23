@@ -172,8 +172,8 @@ public class MaterialInventoryService {
 		if (inputMap.containsKey("nmaterialcode")) {
 
 			List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository
-					.findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecode((Integer) inputMap.get("nmaterialcode"),
-							(Integer) inputMap.get("nmaterialcatcode"), (Integer) inputMap.get("nmaterialtypecode"));
+					.findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNstatus((Integer) inputMap.get("nmaterialcode"),
+							(Integer) inputMap.get("nmaterialcatcode"), (Integer) inputMap.get("nmaterialtypecode"),1);
 
 			objLstMaterialInventory.stream().peek(f -> {
 
@@ -1277,17 +1277,17 @@ public class MaterialInventoryService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
-	@SuppressWarnings("null")
+	
 	public ResponseEntity<Object> deleteMaterialInventory(Map<String, Object> inputMap) throws Exception {
 
 		MaterialInventory objMaterialInventory = materialInventoryRepository
-				.findByNmaterialinventorycodeAndNstatus((Integer) inputMap.get("nmaterialinventorycode"), -1);
+				.findByNmaterialinventorycodeAndNstatus((Integer) inputMap.get("nmaterialinventorycode"), 1);
 
 		List<MaterialInventoryTransaction> lstTransactions = materialInventoryTransactionRepository
 				.findByNmaterialinventorycodeOrderByNmaterialinventtranscode(
 						(Integer) inputMap.get("nmaterialinventorycode"));
 
-		if (objMaterialInventory == null) {
+		if (objMaterialInventory != null) {
 
 			objMaterialInventory.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
 			materialInventoryRepository.save(objMaterialInventory);
@@ -1308,7 +1308,7 @@ public class MaterialInventoryService {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "null" })
+	@SuppressWarnings({ "unchecked" })
 	public ResponseEntity<Object> updateMaterialStatus(Map<String, Object> inputMap) throws Exception {
 		
 		JSONArray jsonAuditArraynew = new JSONArray();
@@ -1318,9 +1318,9 @@ public class MaterialInventoryService {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		List<String> lstDateField = new ArrayList<>();
 		MaterialInventory objMaterialInventory = materialInventoryRepository
-				.findByNmaterialinventorycodeAndNstatus((Integer) inputMap.get("nmaterialinventorycode"), -1);
+				.findByNmaterialinventorycodeAndNstatus((Integer) inputMap.get("nmaterialinventorycode"), 1);
 
-		if (objMaterialInventory == null) {
+		if (objMaterialInventory != null) {
 
 			jsonstr = objMaterialInventory.getJsondata();
 

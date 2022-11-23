@@ -37,6 +37,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import com.agaram.eln.primary.service.methodsetup.MethodService;
 
 
 @Service
@@ -60,7 +61,9 @@ public class FileStorageService {
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
 	
-
+	@Autowired
+    private MethodService methodservice;
+	
     @Autowired
     public FileStorageService(FileStorageProperties fileStorageProperties) {
         this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
@@ -74,7 +77,7 @@ public class FileStorageService {
     }
     
    
-    public String storeFile(MultipartFile file , String tenant , Integer isMultitenant,String originalfilename) throws IOException {
+    public String storeFile(MultipartFile file , String tenant , Integer isMultitenant,String originalfilename,Integer version) throws IOException {
       
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
       //  try {
@@ -96,11 +99,49 @@ public class FileStorageService {
             objfile.setExtension(FilenameUtils.getExtension(file.getOriginalFilename()));
     		objfile.setFilename(fileName);
     		objfile.setOriginalfilename(originalfilename);
+    		objfile.setVersion(version);
+
     		cloudparserfilerepository.save(objfile);
           
     		
     		
           return fileName;
+      //  } 
+//        catch (IOException e) {
+//            throw  FileStorageException("Could not store file " + fileName + ". Please try again!", e);
+//        }
+    }
+
+
+    public String storeimportFile(MultipartFile file , String tenant , Integer isMultitenant,String originalfilename,Integer version) throws IOException {
+        
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+      //  try {
+            // Check if the file's name contains invalid characters
+//            if(fileName.contains("..")) {
+//                throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
+//            }
+            String id = null;
+          
+    		try {
+    			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "parserfile");
+    		} catch (IOException e) {
+    			
+    			e.printStackTrace();
+    		}
+
+    		CloudParserFile objfile = new CloudParserFile();
+    		objfile.setFileid(id);
+            objfile.setExtension(FilenameUtils.getExtension(file.getOriginalFilename()));
+    		objfile.setFilename(fileName);
+    		objfile.setOriginalfilename(originalfilename);
+    		objfile.setVersion(version);
+
+    		cloudparserfilerepository.save(objfile);
+          
+    		//return methodService.getFileData(fileName, tenant);
+    		final String rawData =  methodservice.getFileData(fileName,tenant);
+          return rawData;
       //  } 
 //        catch (IOException e) {
 //            throw  FileStorageException("Could not store file " + fileName + ". Please try again!", e);
