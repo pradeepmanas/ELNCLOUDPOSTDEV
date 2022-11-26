@@ -69,7 +69,7 @@ public class Lsrepositoriesdata {
 		if(this.itemstatus==1) {
 			this.satus = "Active";
 		}else {
-			this.satus = "Retireed";
+			this.satus = "Retired";
 		}
 	}
 

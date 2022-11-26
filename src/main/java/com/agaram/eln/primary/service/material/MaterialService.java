@@ -262,16 +262,7 @@ public class MaterialService {
 
 		inputMap.put("nmaterialconfigcode", jsonuidata.get("nmaterialconfigcode"));
 		objmap.putAll((Map<String, Object>) getMaterialByTypeCode(inputMap).getBody());
-		// Audit For Add
-//		objmap.put("nregtypecode", -1);
-//
-//		objmap.put("nregsubtypecode", -1);
 		objmap.put("ndesigntemplatemappingcode", jsonuidata.get("nmaterialconfigcode"));
-//		actionType.put("Material", "IDS_ADDMATERIAL");
-//		jsonUidataarray.put(jsonuidata);
-//		lstaudit.add((Map<String, Object>) objmap.get("SelectedMaterial"));
-//		jsonAuditObject.put("Material", lstaudit);
-//		fnJsonArrayAudit(jsonAuditObject, null, actionType, objmap, false);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 

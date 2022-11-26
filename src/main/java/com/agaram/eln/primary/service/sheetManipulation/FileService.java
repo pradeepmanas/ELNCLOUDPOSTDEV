@@ -8,13 +8,9 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -40,7 +36,6 @@ import com.agaram.eln.primary.model.general.SheetVersion;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
-
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -108,7 +103,6 @@ public class FileService {
 	private LSworkflowRepository lsworkflowRepository;
 
 	@Autowired
-
 	private LSnotificationRepository LSnotificationRepository;
 
 	@Autowired
@@ -279,7 +273,7 @@ public class FileService {
 			if (largefile != null) {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
-			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes()), fileid, StandardCharsets.UTF_16);
+			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)), fileid, StandardCharsets.UTF_16);
 		}
 
 	}
@@ -1007,7 +1001,7 @@ public class FileService {
 			if (largefile != null) {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
-			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes()), fileid, StandardCharsets.UTF_16);
+			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)), fileid, StandardCharsets.UTF_16);
 
 		}
 	}
@@ -1262,7 +1256,7 @@ public class FileService {
 					+ objprotocolordershareto.getReadorwrite() + "\"}";
 		}
 
-		List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
+//		List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
 		LSnotification objnotify = new LSnotification();
 		objnotify.setNotifationfrom(objprotocolordershareto.getObjLoggeduser());
 		objnotify.setNotificationdate(objprotocolordershareto.getSharedon());

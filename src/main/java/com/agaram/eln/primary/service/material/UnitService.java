@@ -53,14 +53,15 @@ public class UnitService {
 			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYDELETED.getreturnstatus(),
 					HttpStatus.EXPECTATION_FAILED);
 		} else {
-//			final List<Unit> unitList = unitRepository.findBySunitnameAndNstatus(objUnit.getSunitname(), 1);
-//			if (unitList.isEmpty()) {
-			unitRepository.save(objUnit);
-			return getUnit();
-//			} else {
-//				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
-//						HttpStatus.CONFLICT);
-//			}
+			final List<Unit> unitList = getUnitListByName(objUnit.getSunitname(), objUnit.getNsitecode());
+			if (unitList.isEmpty()) {
+				unitRepository.save(objUnit);
+				return getUnit();
+			} 
+			else {
+				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
+						HttpStatus.CONFLICT);
+			}
 		}
 	}
 

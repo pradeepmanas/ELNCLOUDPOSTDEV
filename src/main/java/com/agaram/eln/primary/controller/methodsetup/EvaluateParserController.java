@@ -20,8 +20,10 @@ import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
 import com.agaram.eln.primary.model.methodsetup.LSResultFieldValues;
+import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.payload.Response;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
+import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.service.fileuploaddownload.FileStorageService;
 import com.agaram.eln.primary.service.methodsetup.EvaluateParserService;
@@ -55,6 +57,8 @@ public class EvaluateParserController {
 	@Autowired
 	LScfttransactionRepository lscfttransactionrepo;
 	
+	@Autowired
+	MethodRepository methodrepository;
 
 	/**
 	 * This method is used to  evaluate parser  for the specified method and site.
@@ -88,10 +92,13 @@ public class EvaluateParserController {
 	@PostMapping("/uploadFileandevaluateParser")
     public ResponseEntity<Object> uploadFileandevaluateParser(@RequestParam("file") MultipartFile file, @RequestParam("method") String method,
     		@RequestParam("site") String sitecode,@RequestParam("X-TenantID") String tenant,@RequestParam ("isMultitenant") Integer isMultitenant,
-    		@RequestParam ("originalfilename") String originalfilename,final HttpServletRequest request,@RequestParam ("version") Integer version)throws Exception {
+    		@RequestParam ("originalfilename") String originalfilename,final HttpServletRequest request)throws Exception {
+		
+		final int methodKey = Integer.parseInt(method);
+		List<Method> methodobj = methodrepository.findByMethodkey(methodKey);
 		
 	//	if(isMultitenant != 0) {
-        String fileName = fileStorageService.storeFile(file,tenant,isMultitenant,originalfilename,version );
+        String fileName = fileStorageService.storeFile(file,tenant,isMultitenant,originalfilename,methodobj.get(0).getVersion() );
         final ObjectMapper mapper = new ObjectMapper();
         if(method.indexOf(",")>0)
         {
@@ -101,7 +108,7 @@ public class EvaluateParserController {
         {
         	sitecode=sitecode.substring(0,sitecode.indexOf(","));
         }
-		final int methodKey = Integer.parseInt(method);
+		
 		final LSSiteMaster site = lssiteMasterRepository.findOne(Integer.parseInt(sitecode));
 		
 		final String rawData =  methodservice.getFileData(fileName,tenant);

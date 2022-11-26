@@ -69,7 +69,6 @@ import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSfields;
-import com.agaram.eln.primary.model.instrumentDetails.LSinstruments;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
@@ -112,7 +111,6 @@ import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
-import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderCreationRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderVersionRepository;
@@ -122,7 +120,6 @@ import com.agaram.eln.primary.repository.fileManipulation.FileimagestempReposito
 import com.agaram.eln.primary.repository.fileManipulation.LSfileimagesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSSheetOrderStructureRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSfieldsRepository;
-import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSprotocolfolderfilesRepository;
@@ -160,8 +157,6 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSsampleresultReposit
 import com.agaram.eln.primary.repository.sheetManipulation.LStestparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
-import com.agaram.eln.primary.repository.templates.LsMappedTemplateRepository;
-import com.agaram.eln.primary.repository.templates.LsUnmappedTemplateRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -173,13 +168,9 @@ import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservic
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
-import com.agaram.eln.primary.service.usermanagement.UserService;
-import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
-
-import javassist.expr.NewArray;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
@@ -189,10 +180,10 @@ public class InstrumentService {
 
 	@Autowired
 	private Environment env;
-	@Autowired
-	private LsMethodFieldsRepository lsMethodFieldsRepository;
-	@Autowired
-	private LSinstrumentsRepository lSinstrumentsRepository;
+//	@Autowired
+//	private LsMethodFieldsRepository lsMethodFieldsRepository;
+//	@Autowired
+//	private LSinstrumentsRepository lSinstrumentsRepository;
 	@Autowired
 	private InstMasterRepository lsInstMasterRepository;
 	@Autowired
@@ -271,11 +262,11 @@ public class InstrumentService {
 	@Autowired
 	private LSnotificationRepository lsnotificationRepository;
 
-	@Autowired
-	private LsMappedTemplateRepository LsMappedTemplateRepository;
-
-	@Autowired
-	private LsUnmappedTemplateRepository LsUnmappedTemplateRepository;
+//	@Autowired
+//	private LsMappedTemplateRepository LsMappedTemplateRepository;
+//
+//	@Autowired
+//	private LsUnmappedTemplateRepository LsUnmappedTemplateRepository;
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -328,11 +319,11 @@ public class InstrumentService {
 	@Autowired
 	private LSfileRepository LSfileRepository;
 
-	@Autowired
-	private LSpreferencesRepository LSpreferencesRepository;
-
-	@Autowired
-	private WebparserService parserService;
+//	@Autowired
+//	private LSpreferencesRepository LSpreferencesRepository;
+//
+//	@Autowired
+//	private WebparserService parserService;
 
 	@Autowired
 	private ELNResultDetailsRepository ELNResultDetailsRepository;
@@ -346,8 +337,8 @@ public class InstrumentService {
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
 
-	@Autowired
-	private UserService userService;
+//	@Autowired
+//	private UserService userService;
 
 	@Autowired
 	private LsprotocolOrderStructureRepository lsprotocolorderStructurerepository;
@@ -2522,7 +2513,7 @@ public class InstrumentService {
 			if (largefile != null) {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
-			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes()), fileid, StandardCharsets.UTF_16);
+			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)), fileid, StandardCharsets.UTF_16);
 
 		}
 	}
@@ -2627,13 +2618,13 @@ public class InstrumentService {
 
 				mongoTemplate.upsert(query, update, OrderCreation.class);
 			}
-
+			
 			String fileid = "order_" + objfile.getFilesamplecode();
 			GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
 			if (largefile != null) {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
-			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes()), fileid, StandardCharsets.UTF_16);
+			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)), fileid, StandardCharsets.UTF_16);
 		}
 	}
 

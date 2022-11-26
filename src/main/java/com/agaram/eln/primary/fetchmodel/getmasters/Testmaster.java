@@ -10,16 +10,26 @@ public class Testmaster {
 	private String taskcategory;
 	private Date createdate;
 	private LSuserMaster createby;
+	private String description;
 	
-	public Testmaster(Integer testcode, String testname,String taskcategory,Date createdate,LSuserMaster createby)
+	public Testmaster(Integer testcode, String testname,String taskcategory,Date createdate,LSuserMaster createby, String description)
 	{
 		this.testcode = testcode;
 		this.testname = testname;
 		this.taskcategory=taskcategory;
 		this.createdate=createdate;
 		this.createby=createby;
+		 this.description=description;
 	}
 	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public String getTaskcategory() {
 		return taskcategory;
 	}

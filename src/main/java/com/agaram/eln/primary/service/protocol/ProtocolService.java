@@ -1881,8 +1881,9 @@ public class ProtocolService {
 		if (LsProto.getApproved() == null) {
 			LsProto.setApproved(0);
 		}
-		lsprotocolworkflowhistoryRepository.save(objClass.getLsprotocolworkflowhistory());
-
+		List<LSprotocolworkflowhistory> obj=objClass.getLsprotocolworkflowhistory();
+		lsprotocolworkflowhistoryRepository.save(obj);
+		LsProto.setLsprotocolworkflowhistory(obj);
 		mapObj.put("ProtocolObj", LsProto);
 		mapObj.put("status", "success");
 		updatenotificationforprotocolworkflowapproval(objClass, LsProto.getLssheetworkflow());

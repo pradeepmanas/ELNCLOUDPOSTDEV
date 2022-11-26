@@ -38,7 +38,7 @@ public class LStestmasterlocal {
 	private Integer status;
 	@Column(columnDefinition = "varchar(100)")
 	private String testname;
-	
+	private String description;
 	
 	@OneToMany
 	@JoinColumn(name="testcode")
@@ -55,13 +55,17 @@ public class LStestmasterlocal {
 	@ManyToOne
 	private LSuserMaster createby;
 	
-	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	private String taskcategory;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdate;
-	
-	
 	
 	@Transient
 	private Response response;
