@@ -4,6 +4,7 @@ package com.agaram.eln.primary.controller.methodsetup;
 import java.util.Map;
 
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.model.methodsetup.Method;
+import com.agaram.eln.primary.model.methodsetup.MethodVersion;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.repository.methodsetup.MethodVersionRepository;
 import com.agaram.eln.primary.service.methodsetup.MethodService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,6 +36,9 @@ public class MethodController {
 	
 	@Autowired
 	MethodService methodService;
+	
+	@Autowired
+	MethodVersionRepository methodversionrepository;
 
 	/**
 	  * This method is used to retrieve list of active methods for the specified Site.
@@ -52,6 +58,18 @@ public class MethodController {
 		 return methodService.getActiveMethodBySite(site);
 	}
 	
+	
+	@PostMapping(value = "/getmethodversion")
+	public ResponseEntity<Object> getmethodversion(@Valid @RequestBody Map<String, Object> mapObject)throws Exception {	
+		 final ObjectMapper mapper = new ObjectMapper();		
+		// final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
+	        Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
+
+	        final int methodKey = (Integer) obj.get("methodKey");
+		// final MethodVersion methodkey = mapper.convertValue(mapObject.get("methodKey"), MethodVersion.class);
+
+		 return methodService.getmethodversion(methodKey);
+	}
 	/**
 	   * This method is used to add new Method entity.
 	   * The method name can be a duplicate name of any other method. Any active instrument of the site can be
@@ -67,7 +85,7 @@ public class MethodController {
 		  final Method method = mapper.convertValue(mapObject.get("methodmaster"), Method.class);
 	//	  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-		  
+
 		  return methodService.createMethod(method, site,request);
 	  }
 	  

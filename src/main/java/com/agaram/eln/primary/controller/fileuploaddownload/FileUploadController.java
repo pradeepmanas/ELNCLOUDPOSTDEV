@@ -1,22 +1,35 @@
 package com.agaram.eln.primary.controller.fileuploaddownload;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
+import org.codehaus.jackson.map.ser.PropertyBuilder.EmptyArrayChecker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.Method;
+import com.agaram.eln.primary.model.methodsetup.MethodVersion;
+import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.payload.Response;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
+import com.agaram.eln.primary.repository.methodsetup.MethodVersionRepository;
 import com.agaram.eln.primary.service.fileuploaddownload.FileStorageService;
+import com.agaram.eln.primary.service.methodsetup.MethodService;
 
 
 
@@ -37,6 +50,15 @@ public class FileUploadController {
     @Autowired
     private MethodRepository methodrepo; 
     
+    @Autowired
+    private MethodVersionRepository methodversionrepo; 
+    
+    @Autowired
+    private MethodService methodService; 
+    
+//    @Autowired
+//    private MethodVersion methodversion; 
+//    
     public FileStorageService getFileStorageService() {
 		return fileStorageService;
 	}
@@ -68,7 +90,9 @@ public class FileUploadController {
                 file.getContentType(), file.getSize());
     }
 	
+//	importFileversion
 	
+	@SuppressWarnings("unchecked")
 	@PostMapping("/uploadimportFile")
     public String uploadimportFile(@RequestParam("file") MultipartFile file ,@RequestParam("tenant") String tenant,
     		@RequestParam("isMultitenant") Integer isMultitenant,@RequestParam("originalfilename") String originalfilename,
@@ -78,11 +102,30 @@ public class FileUploadController {
     		) throws IOException{
 		
 		
+		List<Method> methodfile = methodrepo.findByFilenameAndMethodkey(filename,methodkey);
+	
+		if(methodfile.isEmpty())
+		{
 		List<Method> method = new ArrayList<Method>();
 		Method newobj = new Method();
+		MethodVersion obj = new MethodVersion();
 		
+		ArrayList<MethodVersion> methodversion = new ArrayList<MethodVersion>();
+	    methodversion =methodversionrepo.findByMethodkey(methodkey);
+		
+		obj.setFilename(filename);
+		obj.setMethodkey(methodkey);
+		obj.setInstrawdataurl(instrawdataurl);
+		obj.setVersion(version);
+		methodversionrepo.save(obj);	
+
 		method=methodrepo.findByMethodkey(methodkey);
 		
+
+		List <MethodVersion> metverobj = new ArrayList<MethodVersion>();
+		metverobj.add(obj);
+		metverobj.addAll(methodversion);
+				
 		newobj.setCreatedby(method.get(0).getCreatedby());
 		newobj.setCreateddate(method.get(0).getCreateddate());
 		newobj.setInstmaster(method.get(0).getInstmaster());
@@ -95,13 +138,21 @@ public class FileUploadController {
 		newobj.setSamplesplit(method.get(0).getSamplesplit());
 		newobj.setStatus(method.get(0).getStatus());
 		newobj.setVersion(version);
+		newobj.setMethodversion(metverobj);
 		
-		methodrepo.save(newobj);
+		methodrepo.save(newobj);	
 		
-		final String rawData = fileStorageService.storeimportFile(file,tenant, isMultitenant,originalfilename,version);
+		final String rawData = fileStorageService.storeimportFile(file,tenant, isMultitenant,originalfilename,version);	
 		
 		return rawData;
+		}
+		return null;
+		// return new Response(file.getContentType(), instrawdataurl, instrawdataurl, file.getSize());
     }
+	
+	
+
+	
 	
 	@PostMapping("/sqluploadFile")
     public Response sqluploadFile(@RequestParam("file") MultipartFile file ,@RequestParam("tenant") String tenant,

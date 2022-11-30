@@ -2050,9 +2050,14 @@ update lsusergrouprightsmaster set sequenceorder=90 where orderno =108;
 update lsusergrouprightsmaster set sequenceorder=91 where orderno =109;
 
 
-
+update lsusergrouprightsmaster set sedit='0',sdelete='0' where orderno=106;
+update lsusergrouprightsmaster set sedit='0',sdelete='0' where orderno=107;
+update lsusergrouprightsmaster set status='1,1,1' where orderno=106;
+update lsusergrouprightsmaster set status='1,1,1' where orderno=107;
 update lsusergrouprights set screate='NA',sedit='NA',  sdelete='NA' where displaytopic='IDS_TSK_RETIRELOGBOOK';
 update lsusergrouprights set screate='NA',sedit='NA', sdelete='NA' where displaytopic='IDS_TSK_REVIEWLOGBOOK';
+update lsusergrouprights set sedit='1', sdelete='1' where displaytopic='IDS_SCN_MATERIAL';
+update lsusergrouprights set sedit='1', sdelete='1' where displaytopic='IDS_SCN_MATERIALINVENTORY';
 
 delete from lsusergrouprights where displaytopic ='IDS_TSK_LIMSTASKORDER';
 delete from lsusergrouprights where displaytopic='IDS_TSK_LIMSTESTORDER';
@@ -2623,8 +2628,8 @@ update lsaudittrailconfigmaster set modulename='IDS_MDL_SETUP' where taskname='I
  update lsaudittrailconfigmaster set ordersequnce=58 where serialno=54;
  update lsaudittrailconfigmaster set ordersequnce=59 where serialno=55;
  update lsaudittrailconfigmaster set ordersequnce=60 where serialno=131;
- update lsaudittrailconfigmaster set ordersequnce=61 where serialno=20;
- update lsaudittrailconfigmaster set ordersequnce=62 where serialno=19;
+ update lsaudittrailconfigmaster set ordersequnce=61 where serialno=19;
+ update lsaudittrailconfigmaster set ordersequnce=62 where serialno=20;
  update lsaudittrailconfigmaster set ordersequnce=63 where serialno=21;
  update lsaudittrailconfigmaster set ordersequnce=64 where serialno=22;
  update lsaudittrailconfigmaster set ordersequnce=65 where serialno=56;
@@ -2874,6 +2879,7 @@ ALTER TABLE IF Exists lslogbooksdata ADD COLUMN IF NOT EXISTS logitemstatus char
 update lslogbooksdata set logitemstatus='A' where logitemstatus is null;
 
 update parserfield set datatypekey = 1 where datatypekey is Null;
+ALTER TABLE IF Exists lsprotocolmaster ADD COLUMN IF NOT EXISTS viewoption integer;
 
 ALTER TABLE IF Exists lsprotocolmaster ADD COLUMN IF NOT EXISTS category character varying(255);
 
@@ -3023,3 +3029,76 @@ update materialconfig set jsondata = '[{"id": "pv1OWbsMYq", "type": "row", "chil
 update materialconfig set jsondata = '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"label": "Internal Reference", "readonly": false, "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Internal Reference", "ru-RU": "Внутренняя ссылка", "tg-TG": "Маълумоти дохилӣ"}, "sfieldlength": 100}, {"label": "Batch No.", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Batch No.", "ru-RU": "Серия №.", "tg-TG": "Рақами партия"}, "sfieldlength": 100}, {"label": "Reference Number", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Reference Number", "ru-RU": "Справочный номер", "tg-TG": "Рақами истинод"}, "sfieldlength": 100}, {"label": "Container ID", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Container ID", "ru-RU": "Идентификатор контейнера", "tg-TG": "ID контейнер"}, "sfieldlength": 100}, {"label": "Storage Location", "source": "storagelocation", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Storage Location", "ru-RU": "Место хранения", "tg-TG": "Ҷойгоҳи нигаҳдорӣ"}, "valuemember": "nstoragelocationcode", "displaymember": "sstoragelocationname", "nstandardtype": 3}]}, {"type": "column", "children": [{"label": "Section", "source": "section", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "valuemember": "nsectioncode", "displaymember": "ssectionname", "nsqlquerycode": 4, "nstandardtype": 3}, {"type": "componentrow", "children": [{"max": 99999999, "min": 0, "type": "component", "label": "Received Quantity", "readonly": false, "inputtype": "Numeric", "mandatory": 3, "displayname": {"en-US": "Received Quantity", "ru-RU": "Полученное количество", "tg-TG": "Миқдори гирифташуда"}, "sdisplayname": "nqtyreceived", "sfieldlength": 7}, {"type": "component", "label": "Unit", "parent": "unit", "source": "unit", "readonly": true, "inputtype": "combo", "displayname": {"en-US": "Unit", "ru-RU": "Ед. изм", "tg-TG": "Воҳиди"}, "valuemember": "nunitcode", "displaymember": "sunitname", "nstandardtype": 3}]}, {"label": "Grade", "source": "materialgrade", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Grade", "ru-RU": "Оценка", "tg-TG": "Синф"}, "valuemember": "nmaterialgradecode", "displaymember": "smaterialgradename", "nstandardtype": 3}, {"label": "Date Of Manufacturer", "inputtype": "date", "displayname": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}}, {"label": "Expiry Date & Time", "inputtype": "date", "displayname": {"en-US": "Expiry Date & Time", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}}, {"label": "Remarks", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "sfieldlength": 255}]}]}]' where nformcode = 138 and nmaterialtypecode = 2;
 update materialconfig set jsondata = '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"label": "Internal Reference", "readonly": false, "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Internal Reference", "ru-RU": "Внутренняя ссылка", "tg-TG": "Маълумоти дохилӣ"}, "sfieldlength": 100}, {"label": "Storage Condition", "source": "storagecondition", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Storage Condition", "ru-RU": "Условия хранения", "tg-TG": "Ҳолати нигоҳдорӣ"}, "valuemember": "nstorageconditioncode", "displaymember": "sstorageconditionname", "nstandardtype": 3}, {"label": "Batch No.", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Batch No.", "ru-RU": "Серия №.", "tg-TG": "Рақами партия"}, "sfieldlength": 100}, {"label": "Lot No.", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Lot No.", "ru-RU": "Много не.", "tg-TG": "Лот №"}, "sfieldlength": 100}, {"label": "Storage Location", "source": "storagelocation", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Storage Location", "ru-RU": "Место хранения", "tg-TG": "Ҷойгоҳи нигаҳдорӣ"}, "valuemember": "nstoragelocationcode", "displaymember": "sstoragelocationname", "nstandardtype": 3}, {"label": "Supplier", "source": "supplier", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Supplier", "ru-RU": "Поставщик", "tg-TG": "Таъминкунанда"}, "valuemember": "nsuppliercode", "displaymember": "ssuppliername", "nstandardtype": 3}, {"label": "Invoice Number", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Invoice Number", "ru-RU": "Номер счета", "tg-TG": "Рақами фактура"}, "sfieldlength": 50}]}, {"type": "column", "children": [{"label": "Section", "source": "section", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "valuemember": "nsectioncode", "displaymember": "ssectionname", "nsqlquerycode": 4, "nstandardtype": 3}, {"type": "componentrow", "children": [{"max": 99, "min": 0, "type": "component", "label": "Received Quantity", "readonly": false, "inputtype": "Numeric", "mandatory": 3, "displayname": {"en-US": "Received Quantity", "ru-RU": "Полученное количество", "tg-TG": "Миқдори гирифташуда"}, "sdisplayname": "nqtyreceived", "sfieldlength": 8}, {"type": "component", "label": "Unit", "parent": "unit", "source": "unit", "readonly": true, "inputtype": "combo", "displayname": {"en-US": "Unit", "ru-RU": "Ед. изм", "tg-TG": "Воҳиди"}, "valuemember": "nunitcode", "displaymember": "sunitname", "nstandardtype": 3}]}, {"label": "Grade", "source": "materialgrade", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Grade", "ru-RU": "Оценка", "tg-TG": "Синф"}, "valuemember": "nmaterialgradecode", "displaymember": "smaterialgradename", "nstandardtype": 3}, {"max": 99999999, "min": 0, "type": "component", "label": "Cost", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Cost", "ru-RU": "Расходы", "tg-TG": "Арзиш"}, "sfieldlength": 8}, {"label": "Catalog Number", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Catalog Number", "ru-RU": "Номер каталога", "tg-TG": "Рақами каталог"}, "sfieldlength": 50}, {"label": "Date Of Manufacturer", "inputtype": "date", "displayname": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}}, {"label": "Received Date & Time", "inputtype": "date", "displayname": {"en-US": "Received Date & Time", "ru-RU": "Дата и время получения", "tg-TG": "Сана ва вақти қабулшуда"}}, {"label": "Expiry Date & Time", "inputtype": "date", "displayname": {"en-US": "Expiry Date & Times", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}}, {"label": "Remarks", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "sfieldlength": 255}]}]}]'  where nformcode = 138 and nmaterialtypecode = 3;
 update materialconfig set jsondata = '[{"id": "pv1OWbsMYq", "type": "row", "children": [{"id": "Nybc4TT-jv", "type": "column", "children": [{"label": "Internal Reference", "readonly": false, "inputtype": "textinput", "mandatory": 3, "displayname": {"en-US": "Internal Reference", "ru-RU": "Внутренняя ссылка", "tg-TG": "Маълумоти дохилӣ"}, "sfieldlength": 100}, {"label": "Storage Condition", "source": "storagecondition", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Storage Condition", "ru-RU": "Условия хранения", "tg-TG": "Ҳолати нигоҳдорӣ"}, "valuemember": "nstorageconditioncode", "displaymember": "sstorageconditionname", "nstandardtype": 3}, {"label": "Batch No.", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Batch No.", "ru-RU": "Серия №.", "tg-TG": "Рақами партия"}, "sfieldlength": 100}, {"label": "Lot No.", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Lot No.", "ru-RU": "Много не.", "tg-TG": "Лот №"}, "sfieldlength": 100}, {"label": "Storage Location", "source": "storagelocation", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Storage Location", "ru-RU": "Место хранения", "tg-TG": "Ҷойгоҳи нигаҳдорӣ"}, "valuemember": "nstoragelocationcode", "displaymember": "sstoragelocationname", "nstandardtype": 3}, {"label": "Invoice Number", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Invoice Number", "ru-RU": "Номер счета", "tg-TG": "Рақами фактура"}, "sfieldlength": 50}]}, {"type": "column", "children": [{"label": "Section", "source": "section", "readonly": false, "inputtype": "combo", "mandatory": 3, "displayname": {"en-US": "Section", "ru-RU": "Раздел", "tg-TG": "Ҷудокунӣ"}, "valuemember": "nsectioncode", "displaymember": "ssectionname", "nsqlquerycode": 4, "nstandardtype": 3}, {"type": "componentrow", "children": [{"max": 99, "min": 0, "type": "component", "label": "Received Quantity", "readonly": false, "inputtype": "Numeric", "mandatory": 3, "displayname": {"en-US": "Received Quantity", "ru-RU": "Полученное количество", "tg-TG": "Миқдори гирифташуда"}, "sdisplayname": "nqtyreceived", "sfieldlength": 8}, {"type": "component", "label": "Unit", "parent": "unit", "source": "unit", "readonly": true, "inputtype": "combo", "displayname": {"en-US": "Unit", "ru-RU": "Ед. изм", "tg-TG": "Воҳиди"}, "valuemember": "nunitcode", "displaymember": "sunitname", "nstandardtype": 3}]}, {"label": "Grade", "source": "materialgrade", "readonly": false, "inputtype": "combo", "displayname": {"en-US": "Grade", "ru-RU": "Оценка", "tg-TG": "Синф"}, "valuemember": "nmaterialgradecode", "displaymember": "smaterialgradename", "nstandardtype": 3}, {"max": 99999999, "min": 0, "type": "component", "label": "Cost", "readonly": false, "inputtype": "Numeric", "displayname": {"en-US": "Cost", "ru-RU": "Расходы", "tg-TG": "Арзиш"}, "sfieldlength": 8}, {"label": "Catalog Number", "readonly": false, "inputtype": "textinput", "displayname": {"en-US": "Catalog Number", "ru-RU": "Номер каталога", "tg-TG": "Рақами каталог"}, "sfieldlength": 50}, {"label": "Date Of Manufacturer", "inputtype": "date", "displayname": {"en-US": "Date Of Manufacturer", "ru-RU": "Дата изготовления", "tg-TG": "Санаи Истеҳсолкунанда"}}, {"label": "Received Date & Time", "inputtype": "date", "displayname": {"en-US": "Received Date & Time", "ru-RU": "Дата и время получения", "tg-TG": "Сана ва вақти қабулшуда"}}, {"label": "Expiry Date & Time", "inputtype": "date", "displayname": {"en-US": "Expiry Date & Times", "ru-RU": "Дата и время истечения срока действия", "tg-TG": "Санаи ба охир расидан ва вақт"}}, {"label": "Remarks", "readonly": false, "inputtype": "textarea", "displayname": {"en-US": "Remarks", "ru-RU": "Примечания", "tg-TG": "Мулохизахо"}, "sfieldlength": 255}]}]}]' where nformcode = 138 and nmaterialtypecode = 4;
+
+CREATE TABLE IF NOT EXISTS public.lslogbooksampleupdates
+(
+    logbooksamplecode integer NOT NULL,
+    consumefieldkey character varying(255) COLLATE pg_catalog."default",
+    createdbyusername character varying(255) COLLATE pg_catalog."default",
+    createddate timestamp without time zone,
+    indexof integer,
+    logbookcode integer,
+    logbooksample character varying(255) COLLATE pg_catalog."default",
+    logbooksampletype character varying(255) COLLATE pg_catalog."default",
+    logbooksampleuseddetail character varying(255) COLLATE pg_catalog."default",
+    repositorydatacode integer,
+    status integer,
+    unit character varying(255) COLLATE pg_catalog."default",
+    usedquantity integer,
+    usercode integer,
+    CONSTRAINT lslogbooksampleupdates_pkey PRIMARY KEY (logbooksamplecode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.lslogbooksampleupdates
+    OWNER to postgres;
+    
+     Do
+ $do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'methodversion_mvno_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN       
+      CREATE SEQUENCE methodversion_mvno_seq;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.methodversion
+(
+    mvno integer NOT NULL DEFAULT nextval('methodversion_mvno_seq'::regclass),
+    blobid character varying(255) COLLATE pg_catalog."default",
+    createddate timestamp without time zone,
+    filename character varying(255) COLLATE pg_catalog."default",
+    instrawdataurl character varying(255) COLLATE pg_catalog."default",
+    methodkey integer,
+    status integer,
+    version integer,
+    CONSTRAINT methodversion_pkey PRIMARY KEY (mvno),
+    CONSTRAINT fk8iusen0109oloyuaarcepkb94 FOREIGN KEY (methodkey)
+        REFERENCES public.method (methodkey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT methodversion_status_check CHECK (status >= '-1'::integer AND status <= 1)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.methodversion
+    OWNER to postgres;
+    
+    

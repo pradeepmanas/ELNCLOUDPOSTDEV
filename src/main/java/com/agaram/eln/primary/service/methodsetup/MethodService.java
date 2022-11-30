@@ -62,6 +62,7 @@ import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
 
 import com.agaram.eln.primary.model.methodsetup.CustomField;
 import com.agaram.eln.primary.model.methodsetup.Method;
+import com.agaram.eln.primary.model.methodsetup.MethodVersion;
 import com.agaram.eln.primary.model.methodsetup.ParserBlock;
 import com.agaram.eln.primary.model.methodsetup.ParserField;
 import com.agaram.eln.primary.model.methodsetup.ParserTechnique;
@@ -77,6 +78,7 @@ import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.methodsetup.CloudParserFileRepository;
 import com.agaram.eln.primary.repository.methodsetup.CustomFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
+import com.agaram.eln.primary.repository.methodsetup.MethodVersionRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
@@ -150,7 +152,8 @@ public class MethodService {
     @Autowired
 	LScfttransactionRepository lscfttransactionrepo;
 		
-    
+	@Autowired
+	MethodVersionRepository methodversionrepository;
     
 	/**
 	 * This method is used to retrieve list of active methods in the site.
@@ -164,6 +167,13 @@ public class MethodService {
 		return new ResponseEntity<>(methodList, HttpStatus.OK);
 	}
 	
+	@Transactional
+	public ResponseEntity<Object> getmethodversion(final int methodKey){
+		final List<MethodVersion> methodversionList =  methodversionrepository.findByMethodkeyOrderByVersionDesc(methodKey);
+	//	final List<MethodVersion> methodversionList =  methodversionrepository.findAll(new Sort(Sort.Direction.DESC, "methodkey"));
+		
+		return new ResponseEntity<>(methodversionList, HttpStatus.OK);
+	}
    /**
     * This method is used to add new Method entity.
     * The method name can be a duplicate name of any other method. Any active instrument of the site can be
@@ -220,6 +230,8 @@ public class MethodService {
 				methodMaster.setCreatedby(createdUser);
 				methodMaster.setInstmaster(instMaster);					
 				final Method savedMethod = methodRepo.save(methodMaster);
+				
+				List<MethodVersion> MethodVersion = methodversionrepository.save(methodMaster.getMethodversion());
 				
 				savedMethod.setDisplayvalue(savedMethod.getMethodname());
 				savedMethod.setScreenname("Methodmaster");

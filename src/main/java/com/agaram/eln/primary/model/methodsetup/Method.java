@@ -2,6 +2,7 @@ package com.agaram.eln.primary.model.methodsetup;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -71,6 +73,10 @@ public class Method implements Serializable, Diffable<Method>{
 	
 	public Integer version=1;
 
+	@OneToMany
+	@JoinColumn(name="methodkey")
+	private List<MethodVersion> methodversion;
+	
 	@Transient
 	@Column(name = "displayvalue")
 	private String displayvalue;
@@ -289,6 +295,15 @@ public class Method implements Serializable, Diffable<Method>{
 		this.version = version;
 	}
 
+	
+	public List<MethodVersion> getMethodversion() {
+		return methodversion;
+	}
+
+	public void setMethodversion(List<MethodVersion> methodversion) {
+		this.methodversion = methodversion;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -315,6 +330,7 @@ public class Method implements Serializable, Diffable<Method>{
            .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
            .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
            .append("version", this.version, obj.version)
+           .append("methodversion", this.getMethodversion(), obj.getMethodversion())
 
 
 
@@ -361,6 +377,7 @@ public class Method implements Serializable, Diffable<Method>{
 		this.objmanualaudit = method.objmanualaudit;
 		
 		this.version = method.version;
+		this.methodversion=method.methodversion;
 
 
 	}

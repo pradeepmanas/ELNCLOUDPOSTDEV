@@ -1055,6 +1055,7 @@ public class InstrumentController {
 	
 	@RequestMapping("/Getaddedfilesforfolder")
 	public List<LSsheetfolderfiles> Getaddedfilesforfolder(@RequestBody List<String> lstuuid)throws Exception
+	
 	{
 		return instrumentService.Getaddedfilesforfolder(lstuuid);
 	}
@@ -1156,4 +1157,10 @@ public class InstrumentController {
 		return instrumentService.cancelprotocolorder(body);
 
 	}
+	
+	@RequestMapping("/Getfoldersfordashboard")
+	public Map<String, Object> Getfoldersfordashboard(@RequestBody LSuserMaster objusermaster)throws Exception {
+		return instrumentService.Getfoldersfordashboard(objusermaster);
+	}
+	
 }

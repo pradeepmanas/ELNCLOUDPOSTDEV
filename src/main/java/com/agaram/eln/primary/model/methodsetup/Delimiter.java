@@ -71,13 +71,14 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	private String username;
 
 	@Column(name = "defaultvalue")
-	private Integer defaultvalue;	
-		
+	//public int defaultvalue;	
+	public Integer defaultvalue;
+	
 	@Transient
 	private LScfttransaction objsilentaudit;
 	
 	@Transient
-	LScfttransaction objmanualaudit;
+	private LScfttransaction objmanualaudit;
 	
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
@@ -134,17 +135,17 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 		this.status = status;
 	}
 
+	@XmlElement	
+	public LSuserMaster getCreatedby() {
+		return createdby;
+	}
+
 	public Integer getDefaultvalue() {
 		return defaultvalue;
 	}
 
 	public void setDefaultvalue(Integer defaultvalue) {
 		this.defaultvalue = defaultvalue;
-	}
-
-	@XmlElement	
-	public LSuserMaster getCreatedby() {
-		return createdby;
 	}
 
 	public void setCreatedby(LSuserMaster createdby) {
@@ -233,10 +234,7 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
            .append("screenname", this.screenname, obj.screenname)
            .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
            .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
-
-
-
-	       .build();
+           .build();
 	}
 
 	/**

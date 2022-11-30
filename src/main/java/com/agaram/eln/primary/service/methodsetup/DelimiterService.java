@@ -494,15 +494,15 @@ public class DelimiterService {
 			    		//	 LScfttransaction LScfttransaction = new LScfttransaction();
 			    			 
 			    	//	objsilentaudit.setActions("Update");
-			    		delimiters.getObjsilentaudit().setComments(delimiterByKey.get().getDelimitername() 
-									+" was updated to "+delimiters.getDelimitername());
+			    	//	delimiters.getObjsilentaudit().setComments(delimiterByKey.get().getDelimitername() 
+						//			+" was updated to "+delimiters.getDelimitername());
 			    	//	objsilentaudit.setLssitemaster(site.getSitecode());
 			    	//	objsilentaudit.setLsuserMaster(delimiters.getCreatedby().getUsercode());
 			    		//objsilentaudit.setManipulatetype("View/Load");
-			    		delimiters.getObjsilentaudit().setModuleName("Delimiter");
+			    	//	delimiters.getObjsilentaudit().setModuleName("Delimiter");
 			    	//	objsilentaudit.setTransactiondate(delimiters.getTransactiondate());
 			    	//	objsilentaudit.setUsername(delimiters.getUsername());
-			    		delimiters.getObjsilentaudit().setTableName("Delimiter");
+			    	//	delimiters.getObjsilentaudit().setTableName("Delimiter");
 			    	//	objsilentaudit.setSystemcoments("System Generated");
 //							
 //							lscfttransactionrepo.save(LScfttransaction);

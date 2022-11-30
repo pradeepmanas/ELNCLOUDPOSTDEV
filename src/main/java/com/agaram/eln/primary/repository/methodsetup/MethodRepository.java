@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.agaram.eln.primary.model.methodsetup.Method;
+import com.agaram.eln.primary.model.methodsetup.MethodVersion;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 
@@ -85,7 +86,14 @@ public interface MethodRepository extends JpaRepository<Method, Integer>{
 
 //	Optional<Method> findBySiteMethodnameAndInstmasterAndStatus(final Site site, final String methodName, final InstrumentMaster instMaster, final int status);
 
-	List<Method> findByMethodkey(final int methodKey);
 
 	List<Method> findByStatus(int i);
+
+	//List<Method> findByMethodkey(MethodVersion methodkey);
+
+	List<Method> findByMethodkey(Integer methodkey);
+
+	//List<Method> findByFilename(String filename);
+
+	List<Method> findByFilenameAndMethodkey(String filename, Integer methodkey);
 }

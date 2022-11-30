@@ -1062,7 +1062,7 @@ public class LoginService {
 							objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
 							objuser.getObjsilentaudit().setModuleName(ModuleName);
 							objuser.getObjsilentaudit().setComments("User Logged in Successfully");
-							objuser.getObjsilentaudit().setActions("Login Success");
+							objuser.getObjsilentaudit().setActions("IDS_TSK_LOGIN");
 							objuser.getObjsilentaudit().setSystemcoments("System Generated");
 							objuser.getObjsilentaudit().setManipulatetype("Login");
 							objuser.getObjsilentaudit().setTableName("LSactiveuser");

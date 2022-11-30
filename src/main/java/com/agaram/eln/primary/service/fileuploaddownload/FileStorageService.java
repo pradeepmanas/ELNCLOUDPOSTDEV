@@ -5,12 +5,15 @@ import java.io.ByteArrayInputStream;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,18 +169,19 @@ public class FileStorageService {
                 throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
             }
 
-            // Copy file to the target location (Replacing existing file with the same name)
-//            Path targetLocation = this.fileStorageLocation.resolve(fileName);
-//            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-         //   String id = null;
-                    
             String fileid = fileName;
 			GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
 			if (largefile != null) {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
-			gridFsTemplate.store(new ByteArrayInputStream(file.getBytes()), fileid);
+			//converting multipart file to string
+			ByteArrayInputStream stream = new   ByteArrayInputStream(file.getBytes());
+			String myString = IOUtils.toString(stream, "UTF-8");
+			
+		//	gridFsTemplate.store(new ByteArrayInputStream(file.getBytes()), fileid);
            
+			gridFsTemplate.store(new ByteArrayInputStream(myString.getBytes(StandardCharsets.UTF_8)), fileid);
+			
 			CloudParserFile objfile = new CloudParserFile();
     		objfile.setFileid(fileid);
    	        objfile.setExtension(FilenameUtils.getExtension(file.getOriginalFilename()));

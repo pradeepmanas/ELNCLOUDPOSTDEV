@@ -139,7 +139,7 @@ public class SampleStorageLocationService {
 				.findBySamplestoragelocationkey(sampleStorageLocationKey);
 
 		if (objStorageLocation != null) {
-//			objMap.put("sampleStorageLocation", objStorageLocation);
+
 			objMap.put("selectedSampleStorageLocation", objStorageLocation);
 
 			List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository

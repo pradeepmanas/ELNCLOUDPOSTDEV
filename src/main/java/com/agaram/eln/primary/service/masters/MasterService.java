@@ -32,6 +32,7 @@ import com.agaram.eln.primary.model.cfr.LSreviewdetails;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
+import com.agaram.eln.primary.model.masters.LSlogbooksampleupdates;
 import com.agaram.eln.primary.model.masters.Lslogbooks;
 import com.agaram.eln.primary.model.masters.Lslogbooksdata;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
@@ -46,6 +47,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.archieve.LsProjectarchieveRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository;
+import com.agaram.eln.primary.repository.masters.LSlogbooksampleupdatesRepository;
 import com.agaram.eln.primary.repository.masters.LslogbooksRepository;
 import com.agaram.eln.primary.repository.masters.LslogbooksdataRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
@@ -107,6 +109,9 @@ public class MasterService {
 	
 	@Autowired
 	private LslogbooksdataRepository lslogbooksdataRepository;
+	
+	@Autowired
+	private LSlogbooksampleupdatesRepository LSlogbooksampleupdatesRepository;
 
 	@Autowired
 	private Environment env;
@@ -216,12 +221,16 @@ public class MasterService {
 		List<LSprotocolordersampleupdates> lsprotocolordersampleupdates = LSprotocolordersampleupdatesRepository
 				.findByRepositorydatacodeAndUsedquantityNotAndStatusOrderByProtocolsamplecodeDesc(
 						 lsordersamplUpdate.getRepositorydatacode(), 0, 1);
+		List<LSlogbooksampleupdates> lslogbooksampleupdates = LSlogbooksampleupdatesRepository.findByRepositorydatacodeAndUsedquantityNotAndStatusOrderByLogbooksamplecodeDesc(
+				lsordersamplUpdate.getRepositorydatacode(),0,1);
+		
 //		obj.put("lsordersamplUpdateobj", lsordersamplUpdateobj);
 //		obj.put("lsprotocolsampleupdates", lsprotocolsampleupdates);
 //		obj.put("lsprotocolordersampleupdates", lsprotocolordersampleupdates);
 		obj1.addAll(lsordersamplUpdateobj);
 		obj1.addAll(lsprotocolordersampleupdates);
 		obj1.addAll(lsprotocolsampleupdates);
+		obj1.addAll(lslogbooksampleupdates);
 		
 		
 		return obj1;

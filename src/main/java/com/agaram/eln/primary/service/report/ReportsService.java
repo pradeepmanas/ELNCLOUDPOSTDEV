@@ -422,8 +422,8 @@ public class ReportsService {
 						} catch (IOException ex) {
 							logger.info(ex.getLocalizedMessage());
 							status = false;
-							System.out.print("report service ID_DOCXSURLNOTFOUND 418");
-							statusMsg = "ID_DOCXSURLNOTFOUND";
+							System.out.print("report service IDS_MSG_DOCXSURLNOTFOUND 418");
+							statusMsg = "IDS_MSG_DOCXSURLNOTFOUND";
 						}
 					}
 				}
@@ -440,7 +440,7 @@ public class ReportsService {
 					status = true;
 				} else {
 					status = false;
-					statusMsg = "ID_DOCXSAPINOTFOUND";
+					statusMsg = "IDS_MSG_DOCXSAPINOTFOUND";
 				}
 			} else if (FileType.equals("url")) {
 				String fileContent = new BufferedReader(new InputStreamReader(stream)).lines()
@@ -470,7 +470,7 @@ public class ReportsService {
 //						}
 					} else {
 						status = false;
-						System.out.print("report service ID_DOCXSURLNOTFOUND 463");
+						System.out.print("report service IDS_MSG_DOCXSURLNOTFOUND 463");
 					}
 				} else {
 					String FIlePath = getDocxAbsolutePath();
@@ -488,7 +488,7 @@ public class ReportsService {
 							} catch (IOException e) {
 								logger.info(e.getLocalizedMessage());
 								status = false;
-								System.out.print("report service ID_DOCXSURLNOTFOUND 482");
+								System.out.print("report service IDS_MSG_DOCXSURLNOTFOUND 482");
 							}
 							if (status) {
 								fileContent = new BufferedReader(new InputStreamReader(stream)).lines()
@@ -498,7 +498,7 @@ public class ReportsService {
 									status = true;
 								} else {
 									status = false;
-									System.out.print("report service ID_DOCXSURLNOTFOUND 493");
+									System.out.print("report service IDS_MSG_DOCXSURLNOTFOUND 493");
 								}
 							}
 						}
@@ -517,10 +517,10 @@ public class ReportsService {
 			logger.error(e.getLocalizedMessage());
 			status = false;
 			if (FileType.equals("api")) {
-				statusMsg = "ID_DOCXSAPINOTFOUND";
+				statusMsg = "IDS_MSG_DOCXSAPINOTFOUND";
 			} else if (FileType.equals("url")) {
-				System.out.print("report service ID_DOCXSURLNOTFOUND 509");
-				statusMsg = "ID_DOCXSURLNOTFOUND";
+				System.out.print("report service IDS_MSG_DOCXSURLNOTFOUND 509");
+				statusMsg = "IDS_MSG_DOCXSURLNOTFOUND";
 			}
 		}
 		rtnObj.put("status", status);
@@ -3694,9 +3694,9 @@ public class ReportsService {
 				} else 
 				{
 					SheetCreation sheetcreationObj = mongoTemplate.findById(objFile.getFilecode(), SheetCreation.class);
-//					if (sheetcreationObj != null) {
-//						objFile.setFilecontent(sheetcreationObj.getContent());
-//					}
+					if (sheetcreationObj != null) {
+						objFile.setFilecontent(sheetcreationObj.getContent());
+					}
 //					LSfilelst.add(objFile);
 				}
 

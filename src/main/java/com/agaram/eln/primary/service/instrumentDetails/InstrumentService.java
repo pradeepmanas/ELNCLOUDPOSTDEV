@@ -6616,4 +6616,53 @@ public class InstrumentService {
 		map.put("lstfilesid", lstfile);
 		return map;
 	}
+
+	public Map<String, Object> Getfoldersfordashboard(LSuserMaster lsusermaster) {
+		Map<String, Object> mapfolders = new HashMap<String, Object>();
+		List<LSusersteam> lsusersteamobj = lsusersteamRepository
+				.findBylssitemasterAndStatus(lsusermaster.getLssitemaster(), 1);
+		List<Integer> teamcode = lsusersteamobj.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
+		List<Integer> LSuserteammappingobj = new ArrayList<Integer>();
+		if (teamcode.size() > 0) {
+			LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode,
+					lsusermaster);
+		}
+		List<LSusersteam> obj = lsusersteamRepository
+				.findBylssitemasterAndStatus(lsusermaster.getLssitemaster(), 1);
+
+//		if(lsusermaster.getToken().equals("protocolorder")) {
+			List<Lsprotocolorderstructure> lstdirpro = new ArrayList<Lsprotocolorderstructure>();
+			if (LSuserteammappingobj.size() == 0) {
+				lstdirpro = lsprotocolorderStructurerepository
+						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2);
+			} else {
+				lstdirpro = lsprotocolorderStructurerepository
+						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1,lsusermaster, 2,
+								lsusermaster.getLssitemaster(), 3, LSuserteammappingobj);
+			}
+			lstdirpro.forEach(e -> e.setTeamname(obj.stream().filter(a -> a.getTeamcode().equals(e.getTeamcode()))
+					.map(LSusersteam::getTeamname).findAny().orElse(null)));
+			mapfolders.put("directorypro", lstdirpro);
+//		}else {
+			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
+
+			if (LSuserteammappingobj.size() == 0) {
+				lstdir = lsSheetOrderStructureRepository
+						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2);
+			} else {
+				lstdir = lsSheetOrderStructureRepository
+						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,
+								lsusermaster.getLssitemaster(), 3, LSuserteammappingobj);
+			}
+			lstdir.forEach(e -> e.setTeamname(obj.stream().filter(a -> a.getTeamcode().equals(e.getTeamcode()))
+					.map(LSusersteam::getTeamname).findAny().orElse(null)));
+			mapfolders.put("directory", lstdir);
+
+//		}
+		return mapfolders;
+	}
 }

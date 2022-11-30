@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.model.usermanagement;
 
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +27,23 @@ public class LSprojectmaster {
 	@Column(columnDefinition = "varchar(100)")
 	private String projectname;
 	private Integer status;
+	@Column(columnDefinition = "varchar(100)")
+	private String createdby;
+	//private String createdon;
+	
+	@Column(columnDefinition = "date")
+	private Date createdon;
+	
+	
+
+	public Date getCreatedon() {
+		return createdon;
+	}
+
+	public void setCreatedon(Date createdon) {
+		this.createdon = createdon;
+	}
+
 	@ManyToOne
 	private LSSiteMaster lssitemaster;
 
@@ -114,6 +133,15 @@ public class LSprojectmaster {
 
 	public void setProjectname(String projectname) {
 		this.projectname = projectname;
+	}
+	
+
+	public String getCreatedby() {
+		return createdby;
+	}
+
+	public void setCreatedby(String createdby) {
+		this.createdby = createdby;
 	}
 
 	public Integer getStatus() {

@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.model.instrumentDetails.Lselninstrumentmaster;
+import com.agaram.eln.primary.model.masters.LSlogbooksampleupdates;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
@@ -135,5 +135,12 @@ public class BaseMasterController {
 	{
 		return masterService.reducecunsumablefield(lsrepositoriesdata);
 	}
+	
+	@RequestMapping(value = "/logbooksampleupdates")
+	protected Map<String, Object> logbooksampleupdates(@RequestBody LSlogbooksampleupdates lslogbooksampleupdates)throws Exception {
+
+		return masterService.logbooksampleupdates(lslogbooksampleupdates);
+	}
+	
 	
 }

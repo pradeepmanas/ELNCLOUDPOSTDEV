@@ -43,8 +43,25 @@ public class ParserSetupController {
 		final int methodKey = (Integer) obj.get("methodKey");
 		String tenant = (String) obj.get("X-TenantID");
 		final int isMultitenant = (Integer) obj.get("isMultitenant");
-
+		
+		//String rawDataFileName = (String) obj.get("rawDataFileName");
 		return parserService.getParserData(methodKey, false, null,tenant,isMultitenant);
+
+	}
+	
+	@PostMapping(value = "/getversionParserData")
+	public ResponseEntity<Object> getversionParserData(@Valid @RequestBody Map<String, Object> mapObject)throws Exception
+	{    	
+		//final int methodKey = (Integer) mapObject.get("methodKey");
+        Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
+    	   	
+		final int methodKey = (Integer) obj.get("methodKey");
+		String tenant = (String) obj.get("X-TenantID");
+		final int isMultitenant = (Integer) obj.get("isMultitenant");
+		
+		String instrawdataurl = (String) obj.get("instrawdataurl");
+		//String rawDataFileName = (String) obj.get("rawDataFileName");
+		return parserService.getversionParserData(methodKey, false, null,tenant,isMultitenant,instrawdataurl);
 
 	}
 	
