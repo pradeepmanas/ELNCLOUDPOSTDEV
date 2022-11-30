@@ -59,7 +59,7 @@ public class BaseMasterController {
 	}
 	
 	@RequestMapping("/getProjectmaster")
-	public List<Projectmaster> getProjectmaster(@RequestBody LSuserMaster objClass)throws Exception {
+	public List<LSprojectmaster> getProjectmaster(@RequestBody LSuserMaster objClass)throws Exception {
 		return masterService.getProjectmaster(objClass);
 	}
 

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 
 public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster, Integer> {
@@ -29,5 +30,9 @@ public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster
 	public List<LSprojectmaster> findProjectcodeAndProjectnameBystatusAndLssitemaster(int status,
 			LSSiteMaster lssitemaster);
 	public List<LSprojectmaster> findProjectcodeAndProjectnameByLssitemasterIn(List<LSprojectmaster> lsproject);
+	public List<LSprojectmaster> findByLssitemaster(LSSiteMaster lssitemaster);
+
+	public Object findByProjectnameIgnoreCaseAndLssitemaster(String projectname, LSSiteMaster lssitemaster);
+	
 	
 }
