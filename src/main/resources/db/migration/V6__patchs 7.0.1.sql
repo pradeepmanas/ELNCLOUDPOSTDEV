@@ -2158,12 +2158,27 @@ $do$
 DECLARE
     counter integer := 0;
 BEGIN
-  select count(*) into counter from methoddelimiter where delimiterkey = 3 and parsermethodkey =1;--resultoutspace for datablock
+  select count(*) into counter from methoddelimiter where delimiterkey = 3 and parsermethodkey =1;--resultwithspace for datablock
 
    IF counter=0 THEN       -- name is free
 INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
 SELECT 1,1,3,1,1
 WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 3 and parsermethodkey =1); 
+   END IF;
+END
+$do$;
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 5 and parsermethodkey =1;--comma for datablock
+
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,5,1,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 5 and parsermethodkey =1); 
    END IF;
 END
 $do$;
@@ -3101,4 +3116,16 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.methodversion
     OWNER to postgres;
     
-    
+INSERT INTO parserignorechars(ignorechars)SELECT 'µ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'µ');
+INSERT INTO parserignorechars(ignorechars)SELECT 'µµ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'µµ');
+INSERT INTO parserignorechars(ignorechars)SELECT 'µµµ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'µµµ');
+INSERT INTO parserignorechars(ignorechars)SELECT 'µµµµ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'µµµµµ');
+INSERT INTO parserignorechars(ignorechars)SELECT 'µµµµµ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'µµµµµµ');
+
+ INSERT INTO parserignorechars(ignorechars)SELECT 'â†â†' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†â†');
+ INSERT INTO parserignorechars(ignorechars)SELECT 'â†â' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†â');
+ INSERT INTO parserignorechars(ignorechars)SELECT 'ââ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'ââ');
+ INSERT INTO parserignorechars(ignorechars)SELECT 'âââ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'âââ');
+   
+ INSERT INTO parserignorechars(ignorechars)SELECT 'âââ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†µ');
+  

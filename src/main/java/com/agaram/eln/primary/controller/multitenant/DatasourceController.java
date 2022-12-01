@@ -246,4 +246,10 @@ public class DatasourceController {
 			throws Exception {
 		return datasourceService.updateTenantPlan(tenantDetails);
 	}
+	
+	@PostMapping("/updateTenantLicence")
+	public DataSourceConfig updateTenantLicence(@RequestBody DataSourceConfig tenantDetails)
+			throws Exception {
+		return datasourceService.updateTenantLicence(tenantDetails);
+	}
 }

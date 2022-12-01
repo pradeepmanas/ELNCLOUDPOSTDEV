@@ -41,6 +41,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LsSheetorderlimsrefre
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfiletestRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.mongodb.gridfs.GridFSDBFile;
@@ -77,6 +78,9 @@ public class limsintegarationservice {
 	
 	@Autowired
 	private LSuserMasterRepository lsUserMasterRepository;
+	
+	@Autowired
+	private LSSiteMasterRepository lsSiteMasterRepository;
 
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
@@ -272,5 +276,9 @@ public class limsintegarationservice {
 		List<LSuserMaster> lstMasters = lsUserMasterRepository.findByusernameNotAndUserretirestatusNot("Administrator", 1);
 		return lstMasters;
 	}
-
+	
+	public List<LSSiteMaster> getSiteFromELN() {
+		List<LSSiteMaster> lstMasters = lsSiteMasterRepository.findByIstatus(1);
+		return lstMasters;
+	}
 }

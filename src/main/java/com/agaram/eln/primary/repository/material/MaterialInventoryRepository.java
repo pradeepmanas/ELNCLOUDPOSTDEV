@@ -8,23 +8,25 @@ import com.agaram.eln.primary.model.material.MaterialInventory;
 
 public interface MaterialInventoryRepository extends JpaRepository<MaterialInventory, Integer>{
 
-//	List<MaterialInventory> findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecode(Integer integer,
-//			Integer integer2, Integer integer3);
+	public int countByNmaterialcodeAndNstatus(Integer integer, int i);
 
-	int countByNmaterialcodeAndNstatus(Integer integer, int i);
+	public List<MaterialInventory> findByNmaterialcode(Integer integer);
 
-	List<MaterialInventory> findByNmaterialcode(Integer integer);
+	public MaterialInventory findByNmaterialinventorycode(Integer integer);
 
-	MaterialInventory findByNmaterialinventorycode(Integer integer);
+	public List<MaterialInventory> findByNmaterialcodeOrderByNmaterialinventorycode(Integer nmaterialcode);
 
-	List<MaterialInventory> findByNmaterialcodeOrderByNmaterialinventorycode(Integer nmaterialcode);
-
-	List<MaterialInventory> findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecode(Integer integer,
+	public List<MaterialInventory> findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecode(Integer integer,
 			Integer integer2, Integer integer3);
 
-	MaterialInventory findByNmaterialinventorycodeAndNstatus(Integer integer, int i);
+	public MaterialInventory findByNmaterialinventorycodeAndNstatus(Integer integer, int i);
 
-	List<MaterialInventory> findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNstatus(Integer integer,
+	public List<MaterialInventory> findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNstatus(Integer integer,
 			Integer integer2, Integer integer3, int i);
+
+	public List<MaterialInventory> findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(Integer nmaterialcode,
+			int i);
+
+	public MaterialInventory findByNmaterialinventorycodeAndNtransactionstatus(Integer nmaterialinventorycode, int i);
 
 }

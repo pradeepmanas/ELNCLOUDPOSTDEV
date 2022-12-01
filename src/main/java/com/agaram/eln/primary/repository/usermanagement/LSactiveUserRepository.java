@@ -15,4 +15,6 @@ public interface LSactiveUserRepository extends JpaRepository<LSactiveUser, Inte
 	public List<LSactiveUser> findBylssitemaster(LSSiteMaster lsSiteMaster);
 	@Transactional
 	public Long deleteBylsusermaster(LSuserMaster lsuserMaster);
+	@Transactional
+	public Long deleteByActiveusercode(Integer activeusercode);
 }

@@ -920,27 +920,6 @@ public class DatasourceService {
 		return Tenantname;
 	}
 
-	public DataSourceConfig updateTenantPlan(DataSourceConfig tenantDetails) {
-
-		if (tenantDetails.getPlantype() != null) {
-
-			Integer plantType = tenantDetails.getPlantype();
-
-			if (plantType == 3) {
-				tenantDetails.setPackagetype(3914465000000065053L);
-			} else if (plantType == 2) {
-				tenantDetails.setPackagetype(3914465000000065049L);
-			} else {
-				tenantDetails.setPackagetype(3914465000000065045L);
-			}
-
-			configRepo.save(tenantDetails);
-
-		}
-
-		return tenantDetails;
-	}
-
 	public DataSourceConfig afterotpverified(DataSourceConfig objtenant) {
 
 		List<LSuserMaster> lstUsr = lsuserMasterRepository
@@ -1004,6 +983,37 @@ public class DatasourceService {
 
 		return objtenant;
 
+	}
+	
+	public DataSourceConfig updateTenantPlan(DataSourceConfig tenantDetails) {
+
+		if (tenantDetails.getPlantype() != null) {
+
+			Integer plantType = tenantDetails.getPlantype();
+
+			if (plantType == 3) {
+				tenantDetails.setPackagetype(3914465000000065053L);
+			} else if (plantType == 2) {
+				tenantDetails.setPackagetype(3914465000000065049L);
+			} else {
+				tenantDetails.setPackagetype(3914465000000065045L);
+			}
+
+			configRepo.save(tenantDetails);
+
+		}
+
+		return tenantDetails;
+	}
+
+	public DataSourceConfig updateTenantLicence(DataSourceConfig tenantDetails) {
+
+		if (tenantDetails != null) {
+			tenantDetails.setLicencetype(tenantDetails.getLicencetype());
+			configRepo.save(tenantDetails);
+		}
+
+		return tenantDetails;
 	}
 
 }

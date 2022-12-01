@@ -79,8 +79,8 @@ public class TransactionService {
 
 						if (!lstMaterials.isEmpty()) {
 							lstMaterialInventories = materialInventoryRepository
-									.findByNmaterialcodeOrderByNmaterialinventorycode(
-											lstMaterials.get(0).getNmaterialcode());
+									.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(
+											lstMaterials.get(0).getNmaterialcode(),28);
 						}
 
 					}
@@ -102,8 +102,8 @@ public class TransactionService {
 
 					if (!lstMaterials.isEmpty()) {
 						lstMaterialInventories = materialInventoryRepository
-								.findByNmaterialcodeOrderByNmaterialinventorycode(
-										lstMaterials.get(0).getNmaterialcode());
+								.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(
+										lstMaterials.get(0).getNmaterialcode(),28);
 					}
 
 				}
@@ -118,7 +118,7 @@ public class TransactionService {
 
 				if (!lstMaterials.isEmpty()) {
 					lstMaterialInventories = materialInventoryRepository
-							.findByNmaterialcodeOrderByNmaterialinventorycode(lstMaterials.get(0).getNmaterialcode());
+							.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(lstMaterials.get(0).getNmaterialcode(),28);
 				}
 
 			} /**
@@ -129,17 +129,17 @@ public class TransactionService {
 				Integer nmaterialCode = (Integer) inputMap.get("nmaterialcode");
 
 				lstMaterialInventories = materialInventoryRepository
-						.findByNmaterialcodeOrderByNmaterialinventorycode(nmaterialCode);
+						.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(nmaterialCode,28);
 
 			} /**
-				 * in initial load all values by nmaterialcode
+				 * in initial load all values by nmaterialinventorycode
 				 */
 			else if ((Integer) inputMap.get("nFlag") == 5) {
 
 				Integer nmaterialinventorycode = (Integer) inputMap.get("nmaterialinventorycode");
 
 				lstMaterialInventories
-						.add(materialInventoryRepository.findByNmaterialinventorycode(nmaterialinventorycode));
+						.add(materialInventoryRepository.findByNmaterialinventorycodeAndNtransactionstatus(nmaterialinventorycode,28));
 
 			}
 		}

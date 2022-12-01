@@ -282,6 +282,7 @@ public class UserController {
 		return userService.GetPasswordPolicy(lspasswordpolicy);
 	}
 	
+	@SuppressWarnings({ "unused", "unchecked" })
 	@PostMapping("/GetLoginPasswordPolicy")
 	public LSPasswordPolicy GetLoginPasswordPolicy(@RequestBody Map<String, Object> mapObject)throws Exception
 	{
@@ -617,6 +618,12 @@ public class UserController {
 	public Boolean Notificationmarkallasread(@RequestBody LSuserMaster lsuserMaster)throws Exception
 	{
 		return userService.Notificationmarkallasread(lsuserMaster);
+	}
+	
+	@RequestMapping("/getActiveUserCount")
+	public Long getActiveUserCount(@RequestBody LSSiteMaster lsSiteMaster)throws Exception
+	{
+		return userService.getActiveUserCount(lsSiteMaster);
 	}
 }
 

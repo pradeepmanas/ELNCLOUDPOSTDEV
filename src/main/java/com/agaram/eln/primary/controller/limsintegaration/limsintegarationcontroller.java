@@ -18,6 +18,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.limsintegaration.limsintegarationservice;
 
@@ -73,5 +74,10 @@ public class limsintegarationcontroller {
 	@PostMapping("/getUsersFromELN")
 	public List<LSuserMaster> getUsersFromELN(@RequestBody Map<String, Object> obj)throws Exception {
 		return limsintegarationservice.getUsersFromELN();
+	}
+	
+	@PostMapping("/getSiteFromELN")
+	public List<LSSiteMaster> getSiteFromELN(@RequestBody Map<String, Object> obj)throws Exception {
+		return limsintegarationservice.getSiteFromELN();
 	}
 }

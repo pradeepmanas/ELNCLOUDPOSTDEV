@@ -221,32 +221,18 @@ public class MaterialInventoryService {
 
 				} else {
 
-					MaterialInventory objMaterialInventory = materialInventoryRepository
+					MaterialInventory objInventory = materialInventoryRepository
 							.findOne((Integer) inputMap.get("nmaterialinventorycode"));
 
 					List<Map<String, Object>> lstMaterialInventory1 = new ArrayList<Map<String, Object>>();
 
-//					lstMaterialInventory1 = objmapper.convertValue(getSiteLocalTimeFromUTCForRegTmplate(
-//							strMaterialInventory, userInfo, true,
-//							(int) inputMap.get("nmaterialtypecode") == Enumeration.TransactionStatus.STANDARDTYPE
-//									.gettransactionstatus()
-//											? 6
-//											: (int) inputMap.get(
-//													"nmaterialtypecode") == Enumeration.TransactionStatus.VOLUMETRICTYPE
-//															.gettransactionstatus() ? 7 : 8,
-//							(int) inputMap.get("nmaterialtypecode") == Enumeration.TransactionStatus.STANDARDTYPE
-//									.gettransactionstatus()
-//											? "MaterialInvStandard"
-//											: (int) inputMap.get(
-//													"nmaterialtypecode") == Enumeration.TransactionStatus.VOLUMETRICTYPE
-//															.gettransactionstatus() ? "MaterialInvVolumetric"
-//																	: "MaterialInvMaterialInventory"),
-//							new TypeReference<List<Map<String, Object>>>() {
-//							});
-//					// Commented For JSONUIDATA
-					objmap.put("SelectedMaterialInventory", objMaterialInventory);
+					Map<String, Object> resObj = new ObjectMapper().readValue(objInventory.getJsonuidata(), Map.class);
 
-					inputMap.put("nsectioncode", objMaterialInventory.getNsectioncode());
+					resObj.put("nmaterialinventorycode", (Integer) inputMap.get("nmaterialinventorycode"));
+
+					lstMaterialInventory1.add(resObj);
+
+					inputMap.put("nsectioncode", objInventory.getNsectioncode());
 
 					objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
 							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode"), inputMap).getBody());
@@ -1403,10 +1389,10 @@ public class MaterialInventoryService {
 				if (jsonint != Enumeration.TransactionStatus.EXPIRED.gettransactionstatus()) {
 					if (jsonint != Enumeration.TransactionStatus.RETIRED.gettransactionstatus()) {
 
-						TransactionStatus objTransactionStatus = transactionStatusRepository
-								.findOne(Enumeration.TransactionStatus.RETIRED.gettransactionstatus());
-
-						sdisplaystatus = (String) objTransactionStatus.getJsondata().get("stransdisplaystatus");
+//						TransactionStatus objTransactionStatus = transactionStatusRepository
+//								.findOne(Enumeration.TransactionStatus.RETIRED.gettransactionstatus());
+						
+						sdisplaystatus = "Retired";
 
 						jsonObject.put("ntranscode", Enumeration.TransactionStatus.RETIRED.gettransactionstatus());
 						jsonuidata.put("ntranscode", Enumeration.TransactionStatus.RETIRED.gettransactionstatus());
@@ -1419,7 +1405,7 @@ public class MaterialInventoryService {
 						materialInventoryRepository.save(objMaterialInventory);
 
 						inputMap.put("ntranscode", jsonObject.get("ntranscode"));
-//						createMaterialInventoryhistory(inputMap);
+
 						jsonAuditArraynew.put(jsonuidata);
 						actionType.put("materialinventory", "IDS_MATERIALINVENTORYRETIRED");
 					} else {

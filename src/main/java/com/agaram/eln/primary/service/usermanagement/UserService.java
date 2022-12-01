@@ -18,10 +18,8 @@ import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
-import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.notification.Email;
-import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -245,6 +243,7 @@ public class UserService {
 		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1, objclass);
 	}
 
+	@SuppressWarnings("unused")
 	public LSuserMaster InsertUpdateUser(LSuserMaster objusermaster) throws MessagingException {
 		boolean isnewuser = false;
 
@@ -345,7 +344,6 @@ public class UserService {
 		return objusermaster;
 	}
 
-	@SuppressWarnings({ "unused", "unused" })
 	private void updatenotificationforuserrole(LSuserMaster objusermaster) {
 		String Details = "";
 		String Notifiction = "";
@@ -562,6 +560,7 @@ public class UserService {
 		return objteam;
 	}
 
+	@SuppressWarnings("unused")
 	private void updatenotificationforteam(LSusersteam objteam) {
 		String Details = "";
 		String Notifiction = "";
@@ -1182,7 +1181,7 @@ public class UserService {
 			objusergroup.getObjsilentaudit().setTableName("LSuserMaster");
 			lscfttransactionRepository.save(objusergroup.getObjsilentaudit());
 		}
-		if (objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
+		if (objusergroup.getUsername() != null && objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
 			return lsuserMasterRepository.findByusernameNot("Administrator");
 		}
 		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objusergroup.getLssitemaster());
@@ -1281,6 +1280,13 @@ public class UserService {
 		lsnotificationRepository.updatenotificationstatusforall(lsuserMaster);
 
 		return true;
+	}
+
+	public Long getActiveUserCount(LSSiteMaster lsSiteMaster) {
+		
+		List<LSactiveUser> lstActiveUser = lsactiveUserRepository.findBylssitemaster(lsSiteMaster);
+		
+		return (long) lstActiveUser.size();
 	}
 
 }

@@ -510,7 +510,12 @@ public class LoginService {
 	}
 
 	public Boolean Logout(LSuserMaster lsuserMaster) {
-		lsactiveUserRepository.deleteBylsusermaster(lsuserMaster);
+		
+		if(lsuserMaster.getActiveusercode() != null) {
+			lsactiveUserRepository.deleteByActiveusercode(lsuserMaster.getActiveusercode());	
+		}else {
+			lsactiveUserRepository.deleteBylsusermaster(lsuserMaster);
+		}
 		return true;
 	}
 

@@ -85,6 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/Login/LinkLogin").permitAll().
 		antMatchers("/User/InsertUpdateUserGroup").permitAll().
 		antMatchers("/User/InsertUpdateUser").permitAll().
+		antMatchers("/User/getActiveUserCount").permitAll().
 		antMatchers("/User/GetUsers").permitAll().
 		antMatchers("/AuditTrail/AuditConfigurationrecord").permitAll().
 		antMatchers("/User/GetPasswordPolicySitewise").permitAll().

@@ -75,6 +75,16 @@ public class DataSourceConfig implements Serializable {
 
 	@Transient
 	private Integer plantype = 1;
+	
+	private Integer licencetype;
+
+	public Integer getLicencetype() {
+		return licencetype;
+	}
+
+	public void setLicencetype(Integer licencetype) {
+		this.licencetype = licencetype;
+	}
 
 	public Integer getPlantype() {
 		return plantype;

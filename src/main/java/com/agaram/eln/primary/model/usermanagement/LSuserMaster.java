@@ -57,6 +57,17 @@ public class LSuserMaster {
 	private List<LSuserMaster> userroleremovenotify;
 
 	@Transient
+	private Integer activeusercode;
+	
+	public Integer getActiveusercode() {
+		return activeusercode;
+	}
+
+	public void setActiveusercode(Integer activeusercode) {
+		this.activeusercode = activeusercode;
+	}
+
+	@Transient
 	private LSuserMaster loggedinuser;
 
 	public List<LSuserMaster> getUsernotify() {

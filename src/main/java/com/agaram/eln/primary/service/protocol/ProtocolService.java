@@ -3717,9 +3717,9 @@ public class ProtocolService {
 
 	public Map<String, Object> updateOrderStatus(LSlogilabprotocoldetail argMap) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		LScfttransaction LScfttransactionobj = new LScfttransaction();
-		if (argMap.getObjsilentaudit() != null) {
-			LScfttransactionobj = argMap.getObjsilentaudit();
+//		LScfttransaction LScfttransactionobj = new LScfttransaction();
+//		if (argMap.getObjsilentaudit() != null) {
+//			LScfttransactionobj = argMap.getObjsilentaudit();
 			if (argMap.getActivekey() != null && argMap.getActivekey() == 5) {
 				Lsprotocolordersharedby obj = lsprotocolordersharedbyRepository
 						.findByShareprotocolordercode(argMap.getProtocolordercode());
@@ -3736,11 +3736,11 @@ public class ProtocolService {
 			lslogilabprotocoldetail.setOrderflag(argMap.getOrderflag());
 			lslogilabprotocoldetail.setCompletedtimestamp(argMap.getCompletedtimestamp());
 			LSlogilabprotocoldetailRepository.save(lslogilabprotocoldetail);
-			LScfttransactionobj.setTableName("LSlogilabprotocoldetail");
+//			LScfttransactionobj.setTableName("LSlogilabprotocoldetail");
 			mapOrders.put("curentprotocolorder", argMap);
 
 //			lscfttransactionRepository.save(LScfttransactionobj);
-		}
+//		}
 		updatenotificationforprotocolorder(argMap);
 		return mapOrders;
 	}
