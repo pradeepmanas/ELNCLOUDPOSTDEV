@@ -101,6 +101,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
+import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
@@ -125,7 +126,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdet
 import com.agaram.eln.primary.repository.instrumentDetails.LSprotocolfolderfilesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSresultdetailsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSsheetfolderfilesRepository;
-import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
+//import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsResultlimsOrderrefrenceRepository;
@@ -157,6 +158,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSsampleresultReposit
 import com.agaram.eln.primary.repository.sheetManipulation.LStestparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -173,7 +175,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
 
 @Service
-@EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
+//@EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
 public class InstrumentService {
 
 	static final Logger logger = Logger.getLogger(InstrumentService.class.getName());
@@ -366,6 +368,9 @@ public class InstrumentService {
 
 	@Autowired
 	private LSprotocolfolderfilesRepository lsprotocolfolderfilesRepository;
+
+	@Autowired
+	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
 
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 //		Map<String, Object> obj = new HashMap<>();
@@ -2513,7 +2518,8 @@ public class InstrumentService {
 			if (largefile != null) {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
-			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)), fileid, StandardCharsets.UTF_16);
+			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)), fileid,
+					StandardCharsets.UTF_16);
 
 		}
 	}
@@ -2618,13 +2624,14 @@ public class InstrumentService {
 
 				mongoTemplate.upsert(query, update, OrderCreation.class);
 			}
-			
+
 			String fileid = "order_" + objfile.getFilesamplecode();
 			GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
 			if (largefile != null) {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
-			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)), fileid, StandardCharsets.UTF_16);
+			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)), fileid,
+					StandardCharsets.UTF_16);
 		}
 	}
 
@@ -3051,14 +3058,14 @@ public class InstrumentService {
 		lsorderworkflowhistoryRepositroy.save(objorder.getLsorderworkflowhistory());
 
 		lslogilablimsorderdetailRepository.save(objorder);
-	
+
 		updatenotificationforworkflowapproval(objorder);
-		
-		
+
 		if (objorder.getFiletype() != 0 && objorder.getOrderflag().toString().trim().equals("N")) {
 			LSworkflow objlastworkflow = lsworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
-			if (objlastworkflow != null && objorder.getLsworkflow().getWorkflowcode()==objlastworkflow.getWorkflowcode()) {
+			if (objlastworkflow != null
+					&& objorder.getLsworkflow().getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
 				objorder.setIsFinalStep(1);
 			} else {
 				objorder.setIsFinalStep(0);
@@ -3072,13 +3079,22 @@ public class InstrumentService {
 		String Details = "";
 		String Notification = "";
 
-		LSuserMaster obj = lsuserMasterRepository.findByusercode(objorder.getObjLoggeduser().getUsercode());
+		
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		LSuserMaster createby = lsuserMasterRepository.findByusercode(objorder.getLsuserMaster().getUsercode());
-
+		LSnotification objnotify = new LSnotification();
+		
+		for (int k = 0; k < objorder.getLsworkflow().getLsworkflowgroupmapping().size(); k++) {
+		List<LSMultiusergroup> userobj = lsMultiusergroupRepositery.findBylsusergroup(
+				objorder.getLsworkflow().getLsworkflowgroupmapping().get(k).getLsusergroup());
+		
+		List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode)
+				.collect(Collectors.toList());
+		List<LSuserMaster> objuser = lsuserMasterRepository
+				.findByusercodeInAndUserretirestatusNot(objnotifyuser, 1);
 		if (objorder.getApprovelstatus() != null && objorder.getIsFinalStep() != 1) {
-			LSusersteam objteam = lsusersteamRepository
-					.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode());
+			
+			for (int i = 0; i < objuser.size(); i++) {
 
 			if (objorder.getApprovelstatus() == 1) {
 				Notification = "USERAPPROVAL";
@@ -3087,54 +3103,57 @@ public class InstrumentService {
 			} else if (objorder.getApprovelstatus() == 3) {
 				Notification = "USERREJECT";
 			}
-
-			List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
+			objnotify.setNotifationto(objuser.get(i));
 			Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
-					+ "\", \"user\":\"" + objorder.getLsuserMaster().getUsername() + "\", \"comment\":\""
-					+ objorder.getComment() + "\"}";
-
-			for (int i = 0; i < lstusers.size(); i++) {
-				if (objorder.getObjLoggeduser().getUsercode() != lstusers.get(i).getLsuserMaster().getUsercode()) {
-					LSnotification objnotify = new LSnotification();
-					objnotify.setNotifationfrom(obj);
-					if (objorder.getApprovelstatus() == 1 || objorder.getApprovelstatus() == 2) {
-						objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
-					} else {
-						objnotify.setNotifationto(createby);
-					}
-					objnotify.setNotificationdate(objorder.getModifidate());
-					objnotify.setNotification(Notification);
-					objnotify.setNotificationdetils(Details);
-					objnotify.setIsnewnotification(1);
-					objnotify.setNotificationpath("/registertask");
-					objnotify.setNotificationfor(1);
-					lstnotifications.add(objnotify);
-				}
-			}
-		} else {
-
-			if (objorder.getApprovelstatus() == 3 && objorder.getApproved() == null) {
-				Notification = "USERREJECT";
-			} else if (objorder.getApproved() == 1 && objorder.getRejected() == null) {
-				Notification = "SHEETORDERAPPROVED";
-			}
-			Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
-					+ "\", \"user\":\"" + objorder.getLsuserMaster().getUsername() + "\", \"comment\":\""
-					+ objorder.getComment() + "\"}";
-			LSnotification objnotify = new LSnotification();
-			objnotify.setNotifationfrom(obj);
-			objnotify.setNotifationto(createby);
-			objnotify.setNotificationdate(objorder.getModifidate());
+			+ "\", \"user\":\"" + objorder.getLsuserMaster().getUsername() + "\", \"comment\":\""
+			+ objorder.getComment() + "\"}";
+			objnotify.setNotifationfrom(objorder.getLsuserMaster());
+			objnotify.setNotificationdate(objorder.getCreatedtimestamp());
 			objnotify.setNotification(Notification);
 			objnotify.setNotificationdetils(Details);
 			objnotify.setIsnewnotification(1);
 			objnotify.setNotificationpath("/registertask");
 			objnotify.setNotificationfor(1);
+
 			lstnotifications.add(objnotify);
-
+			}
 		}
+			else
+			{
+				for (int i = 0; i < objuser.size(); i++) {
 
-		lsnotificationRepository.save(lstnotifications);
+			if (createby.getUsercode() != userobj.get(i).getUsercode() && userobj.size() > 0
+					&&objorder.getObjLoggeduser().getUsercode()!=objorder.getLsuserMaster().getUsercode())
+
+			{
+			if (objorder.getApprovelstatus() == 3 && objorder.getApproved() == null) {
+				Notification = "USERREJECT";
+			} else if (objorder.getApproved() == 1 && objorder.getRejected() == null) {
+				
+				Notification = "SHEETORDERAPPROVED";
+			}
+				
+					
+					objnotify.setNotifationto(createby);
+					Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
+					+ "\", \"user\":\"" + objorder.getLsuserMaster().getUsername() + "\", \"comment\":\""
+					+ objorder.getComment() + "\"}";
+					objnotify.setNotifationfrom(objorder.getLsuserMaster());
+					objnotify.setNotificationdate(objorder.getCreatedtimestamp());
+					objnotify.setNotification(Notification);
+					objnotify.setNotificationdetils(Details);
+					objnotify.setIsnewnotification(1);
+					objnotify.setNotificationpath("/registertask");
+					objnotify.setNotificationfor(1);
+
+					lstnotifications.add(objnotify);
+				}
+			}
+			
+			
+			}
+			lsnotificationRepository.save(lstnotifications);
+			}
 
 	}
 
@@ -4472,11 +4491,13 @@ public class InstrumentService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		final String getExtn = FilenameUtils.getExtension(file.getOriginalFilename()) == "" ? "png" : FilenameUtils.getExtension(file.getOriginalFilename());
 
 		map.put("link",
 				originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + TenantContext.getCurrentTenant() + "/"
 						+ FilenameUtils.removeExtension(file.getOriginalFilename()) + "/"
-						+ FilenameUtils.getExtension(file.getOriginalFilename()));
+						+ getExtn);
 		return map;
 	}
 
@@ -5765,8 +5786,9 @@ public class InstrumentService {
 								objorder.getOrderflag(), lstproject, filetype, objorder.getLsprojectmaster(), fromdate,
 								todate);
 			} else if (filetype == 0 && objorder.getOrderflag() != null) {
-				lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-						objorder.getOrderflag(), filetype, fromdate, todate);
+				lstorder = lslogilablimsorderdetailRepository
+						.findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+								objorder.getOrderflag(), filetype, fromdate, todate);
 			}
 
 			else {
@@ -6590,9 +6612,9 @@ public class InstrumentService {
 		return body;
 	}
 
-	public Map<String, Object> removemultifilessheetfolderonprotocol(LSprotocolfolderfiles[] files,
-			Long directorycode, String filefor, String tenantid, Integer ismultitenant, Integer usercode,
-			Integer sitecode, Date createddate, Integer fileviewfor) {
+	public Map<String, Object> removemultifilessheetfolderonprotocol(LSprotocolfolderfiles[] files, Long directorycode,
+			String filefor, String tenantid, Integer ismultitenant, Integer usercode, Integer sitecode,
+			Date createddate, Integer fileviewfor) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		List<LSprotocolfolderfiles> lstfile = Arrays.asList(files);
@@ -6624,43 +6646,41 @@ public class InstrumentService {
 		List<Integer> teamcode = lsusersteamobj.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
 		List<Integer> LSuserteammappingobj = new ArrayList<Integer>();
 		if (teamcode.size() > 0) {
-			LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode,
-					lsusermaster);
+			LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode, lsusermaster);
 		}
-		List<LSusersteam> obj = lsusersteamRepository
-				.findBylssitemasterAndStatus(lsusermaster.getLssitemaster(), 1);
+		List<LSusersteam> obj = lsusersteamRepository.findBylssitemasterAndStatus(lsusermaster.getLssitemaster(), 1);
 
 //		if(lsusermaster.getToken().equals("protocolorder")) {
-			List<Lsprotocolorderstructure> lstdirpro = new ArrayList<Lsprotocolorderstructure>();
-			if (LSuserteammappingobj.size() == 0) {
-				lstdirpro = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2);
-			} else {
-				lstdirpro = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1,lsusermaster, 2,
-								lsusermaster.getLssitemaster(), 3, LSuserteammappingobj);
-			}
-			lstdirpro.forEach(e -> e.setTeamname(obj.stream().filter(a -> a.getTeamcode().equals(e.getTeamcode()))
-					.map(LSusersteam::getTeamname).findAny().orElse(null)));
-			mapfolders.put("directorypro", lstdirpro);
+		List<Lsprotocolorderstructure> lstdirpro = new ArrayList<Lsprotocolorderstructure>();
+		if (LSuserteammappingobj.size() == 0) {
+			lstdirpro = lsprotocolorderStructurerepository
+					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+							lsusermaster.getLssitemaster(), 1, lsusermaster, 2);
+		} else {
+			lstdirpro = lsprotocolorderStructurerepository
+					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
+							lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
+							LSuserteammappingobj);
+		}
+		lstdirpro.forEach(e -> e.setTeamname(obj.stream().filter(a -> a.getTeamcode().equals(e.getTeamcode()))
+				.map(LSusersteam::getTeamname).findAny().orElse(null)));
+		mapfolders.put("directorypro", lstdirpro);
 //		}else {
-			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
+		List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 
-			if (LSuserteammappingobj.size() == 0) {
-				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2);
-			} else {
-				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,
-								lsusermaster.getLssitemaster(), 3, LSuserteammappingobj);
-			}
-			lstdir.forEach(e -> e.setTeamname(obj.stream().filter(a -> a.getTeamcode().equals(e.getTeamcode()))
-					.map(LSusersteam::getTeamname).findAny().orElse(null)));
-			mapfolders.put("directory", lstdir);
+		if (LSuserteammappingobj.size() == 0) {
+			lstdir = lsSheetOrderStructureRepository
+					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+							lsusermaster.getLssitemaster(), 1, lsusermaster, 2);
+		} else {
+			lstdir = lsSheetOrderStructureRepository
+					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
+							lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
+							LSuserteammappingobj);
+		}
+		lstdir.forEach(e -> e.setTeamname(obj.stream().filter(a -> a.getTeamcode().equals(e.getTeamcode()))
+				.map(LSusersteam::getTeamname).findAny().orElse(null)));
+		mapfolders.put("directory", lstdir);
 
 //		}
 		return mapfolders;

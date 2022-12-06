@@ -20,7 +20,12 @@ public interface LSMultiusergroupRepositery extends JpaRepository<LSMultiusergro
 
 	public List<LSMultiusergroup> findBylsusergroupIn(List<LSusergroup> usergroupcodelist);
 
+	public List<LSMultiusergroup> findBylsusergroupAndUsercodeNot(LSusergroup lsusergroup, Integer usercode);
 
+	public List<LSMultiusergroup> findBylsusergroup(LSusergroup lsusergroup);
+
+	
+	
 
 	
 

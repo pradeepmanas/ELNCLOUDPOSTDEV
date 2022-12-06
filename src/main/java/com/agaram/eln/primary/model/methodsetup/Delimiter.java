@@ -78,6 +78,9 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	private LScfttransaction objsilentaudit;
 	
 	@Transient
+	public String info;
+	
+	@Transient
 	private LScfttransaction objmanualaudit;
 	
 	@Transient
@@ -215,6 +218,15 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 		this.objmanualaudit = objmanualaudit;
 	}
 
+	
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
 	/**
 	 * 
 	 * To find difference between two entity objects by implementing Diffable interface  
@@ -234,6 +246,8 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
            .append("screenname", this.screenname, obj.screenname)
            .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
            .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
+           .append("info", this.info, obj.info)
+           
            .build();
 	}
 
@@ -258,6 +272,7 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 		
 		this.objsilentaudit = delimiter.objsilentaudit;
 		this.objmanualaudit = delimiter.objmanualaudit;
+		this.info = delimiter.info;
 
 	}
 	

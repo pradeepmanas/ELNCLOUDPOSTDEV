@@ -801,38 +801,46 @@ public class CommonFunction {
 		for(List<String> singlerowValues : dataBlock) {
 						
 			List<String> currentsingleRow = new ArrayList<>(singlerowValues);
-			List<String[]> splittedArray = currentsingleRow.stream().map((item) -> item.split("\t")).collect(Collectors.toList());
-		
-
-			List<String> splitFieldsvales = Arrays.asList(splittedArray.get(id));
-			List<String> splitFieldsrow = new ArrayList<>(splitFieldsvales);
+			List<String> splitFieldsvales;
+			List<String> splitFieldsrow;
+			List<String[]> splittedArray;
+			 
+			 boolean test = currentsingleRow.get(0).contains(",");
+			 if(test == false) {
+			  splittedArray = currentsingleRow.stream().map((item) -> item.split("\t")).collect(Collectors.toList());
+			 }else {
+			  splittedArray = currentsingleRow.stream().map((item) -> item.split(",")).collect(Collectors.toList());
+			 }
+			 
+			 splitFieldsvales = Arrays.asList(splittedArray.get(id));
+			 splitFieldsrow = new ArrayList<>(splitFieldsvales);
 						
 			if(splitFieldsrow.size() > longest) {
 				longest = splitFieldsrow.size();
-			}
-		}	
-			
-		
+			}	
+		}
 		int idx=0;
 		
 		for(List<String> rowValues : dataBlock) {
 			
 		
 			List<String> currentRowValues = new ArrayList<>(rowValues);
+			boolean result = currentRowValues.get(0).contains(",");
 			
+			if(result == false) {
 			List<String[]> splitFieldArray = currentRowValues.stream().map((item) -> item.split("\t")).collect(Collectors.toList());
 				
 			
 			
 			List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));
 			
-			List<String> splitFieldsrow = new ArrayList<>(splitFields);
+			List<String> splitFieldsrows = new ArrayList<>(splitFields);
 			
 			List<String> emptyarray = new ArrayList<>();
 			
-			if(splitFieldsrow.size()<longest) {
-				for(int ind = splitFieldsrow.size(); ind < longest; ind++)
-					splitFieldsrow.add(" ");
+			if(splitFieldsrows.size()<longest) {
+				for(int ind = splitFieldsrows.size(); ind < longest; ind++)
+					splitFieldsrows.add(" ");
 				//addToList(splitFields, Stream.of(" "));
 				//  addToList(splitFieldsrow, Stream.of(emptyarray.toString()));
 			}
@@ -847,7 +855,7 @@ public class CommonFunction {
 		
 			if (rowValues.size() != max) {
 	            for (int i=rowValues.size(); i<max; i++) {
-	            	addToList(splitFieldsrow, Stream.of(" "));
+	            	addToList(splitFieldsrows, Stream.of(" "));
 	            }
 	        };
 	        
@@ -859,13 +867,13 @@ public class CommonFunction {
 //	        addToList(currentRowValues, Stream.of(mergeFields.toString()));
 //	        dataBlockWithMergedFields.add(currentRowValues);			
 	  
-	        addToList(splitFieldsrow, Stream.of(mergeFields.toString()));
+	        addToList(splitFieldsrows, Stream.of(mergeFields.toString()));
 //	        dataBlockWithMergedFields.add(splitFieldsrow);			
 	       
 		
 		      StringBuffer sb = new StringBuffer();
 
-	        List<List<String>> splitFieldsvalue = Arrays.asList(splitFieldsrow);
+	        List<List<String>> splitFieldsvalue = Arrays.asList(splitFieldsrows);
 
 			for (List<String> row : splitFieldsvalue )
 			{
@@ -880,16 +888,73 @@ public class CommonFunction {
 //	        splitFieldsrow.forEach((item) -> addToList(currentRowValues, Stream.of(item))); (dont change working fine)
   
 
-	        splitFieldsrow.forEach((item) -> addToList(presentrow, Stream.of(item)));
+	        splitFieldsrows.forEach((item) -> addToList(presentrow, Stream.of(item)));
 
 	        dataBlockWithMergedFields.add(presentrow);	
 
+   	   }else {
+   		List<String[]> splitFieldArray = currentRowValues.stream().map((item) -> item.split(",")).collect(Collectors.toList());
+		List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));
+		List<String> splitFieldsrows = new ArrayList<>(splitFields);
+		
+		List<String> emptyarray = new ArrayList<>();
+		
+		if(splitFieldsrows.size()<longest) {
+			for(int ind = splitFieldsrows.size(); ind < longest; ind++)
+				splitFieldsrows.add(" ");
+			//addToList(splitFields, Stream.of(" "));
+			//  addToList(splitFieldsrow, Stream.of(emptyarray.toString()));
+		}
+					
+		StringJoiner mergeFields = new StringJoiner(delimiterChar);
+		
+		for (String extractColumnIndex : subParserTechnique.getInputfields().split(",")) {
+			mergeFields.add
+			(splitFields.get
+					(Integer.parseInt(extractColumnIndex)).toString());
+		    }    
+	
+		if (rowValues.size() != max) {
+            for (int i=rowValues.size(); i<max; i++) {
+            	addToList(splitFieldsrows, Stream.of(" "));
+            }
+        };
+        
+        //old.working fine
+//        splitFields.forEach((item) -> addToList(currentRowValues, Stream.of(mergeFields.toString())));
+//        dataBlockWithMergedFields.add(splitFields);
 
-			
+        //old.working fine
+//        addToList(currentRowValues, Stream.of(mergeFields.toString()));
+//        dataBlockWithMergedFields.add(currentRowValues);			
+  
+        addToList(splitFieldsrows, Stream.of(mergeFields.toString()));
+//        dataBlockWithMergedFields.add(splitFieldsrow);			
+       
+	
+	      StringBuffer sb = new StringBuffer();
 
-	}
+        List<List<String>> splitFieldsvalue = Arrays.asList(splitFieldsrows);
+
+		for (List<String> row : splitFieldsvalue )
+		{
+			for(String row1 : row)
+			sb.append(row1).append(",");
+		}
+	      String str = sb.toString();
+	      String trimmedstr = str.trim();
+	      List<String> presentrow = new ArrayList<String>();
+	      presentrow.add(trimmedstr);
+	      
+//        splitFieldsrow.forEach((item) -> addToList(currentRowValues, Stream.of(item))); (dont change working fine)
+
+
+        splitFieldsrows.forEach((item) -> addToList(presentrow, Stream.of(item)));
+
+        dataBlockWithMergedFields.add(presentrow);	
+   	     }
+	   }
 		return dataBlockWithMergedFields;
-
 	}
 	
 		
@@ -1006,13 +1071,28 @@ public class CommonFunction {
        for(List<String> singlerowValues : dataBlock) {
 				
     	   List<String> currentsingleRow = new ArrayList<>(singlerowValues);
+    	   boolean test = currentsingleRow.get(0).contains(",");
+    	   
+           if(test == false) {
     	   List<String[]> splittedArray = currentsingleRow.stream().map((item) -> item.split("\t")).collect(Collectors.toList());
+           
     	   List<String> splitFieldsvales = Arrays.asList(splittedArray.get(id));
     	   List<String> splitFieldsrow = new ArrayList<>(splitFieldsvales);
-				
     	   if(splitFieldsrow.size() > longest) {
     		   longest = splitFieldsrow.size();
+    	       }
     	   }
+           else {
+    		   List<String[]> splittedArray = currentsingleRow.stream().map((item) -> item.split(",")).collect(Collectors.toList());
+               
+        	   List<String> splitFieldsvales = Arrays.asList(splittedArray.get(id));
+        	   List<String> splitFieldsrow = new ArrayList<>(splitFieldsvales);
+        	   if(splitFieldsrow.size() > longest) {
+        		   longest = splitFieldsrow.size();
+        	   }
+    	   }
+				
+    	   
        }	
 
 		int idx=0;
@@ -1020,6 +1100,9 @@ public class CommonFunction {
           for(List<String> rowValues : dataBlock) {
 						
 			List<String> currentRowValues = new ArrayList<>(rowValues);
+			 boolean test = currentRowValues.get(0).contains(",");
+			 if(test == false) {	 
+			 
 			List<String[]> splitFieldArray = currentRowValues.stream().map((item) -> item.split("\t")).collect(Collectors.toList());							
 		//	List<String[]> splitFieldArray = currentRowValues.stream().map((item) -> item.split(delimiterChar)).collect(Collectors.toList());	
 			List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));			
@@ -1073,7 +1156,65 @@ public class CommonFunction {
   
 		        splitFieldsrow.forEach((item) -> addToList(presentrow, Stream.of(item)));
 
-		        dataBlockWithSplittedFields.add(presentrow);			        
+		        dataBlockWithSplittedFields.add(presentrow);	
+             }
+			 else {
+            		List<String[]> splitFieldArray = currentRowValues.stream().map((item) -> item.split(",")).collect(Collectors.toList());							
+            		//	List<String[]> splitFieldArray = currentRowValues.stream().map((item) -> item.split(delimiterChar)).collect(Collectors.toList());	
+            			List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));			
+            			List<String> splitFieldsrow = new ArrayList<>(splitFields);
+            						
+            			List<String> emptyarray = new ArrayList<>();
+            			if(splitFieldsrow.size()<longest) {
+            				for(int ind = splitFieldsrow.size(); ind < longest; ind++)
+            					splitFieldsrow.add(" ");
+            				//addToList(splitFields, Stream.of(" "));
+            				 // addToList(splitFieldsrow, Stream.of(emptyarray.toString()));
+            			}
+            			                                                                                                                              
+            			for (String extractColumnIndex : subParserTechnique.getInputfields().split(",")) {
+            			                                                                                             
+            				String strSplit = splitFields.get(Integer.parseInt(extractColumnIndex));
+            				
+            				List<String> splittedarray = new ArrayList<>();
+            				 String[] arrOfStr = strSplit.split(delimiterChar);
+            				 for (String a : arrOfStr) {
+            					 splitFieldsrow.add(a);
+            				 }
+            		
+            			}
+            			
+            		//	List<String> splitFieldsvalue = Arrays.asList(splitFieldsrow.get(idx));
+            			
+            			if (rowValues.size() != max) {
+            	            for (int i=rowValues.size(); i<max; i++) {
+            	            	addToList(splitFieldsrow, Stream.of(" "));
+            	            }
+            	        };
+            		
+
+            		      StringBuffer sb = new StringBuffer();
+
+            	        List<List<String>> splitFieldsvalue = Arrays.asList(splitFieldsrow);
+
+            			for (List<String> row : splitFieldsvalue )
+            			{
+            				for(String row1 : row)
+            				sb.append(row1).append(",");
+            			}
+            		      String str = sb.toString();
+            		     // String trimmedstr = str.trim();
+            		      String trimmedstr = str.replaceAll(",$", "");
+            		      List<String> presentrow = new ArrayList<String>();
+            		      presentrow.add(trimmedstr);
+
+            	   //     addToList(splitFieldsrow, Stream.of(splitFieldsrow.toString()));working fine , now changed for merge and split
+            	   //     dataBlockWithSplittedFields.add(splitFieldsrow);			    
+              
+            		        splitFieldsrow.forEach((item) -> addToList(presentrow, Stream.of(item)));
+
+            		        dataBlockWithSplittedFields.add(presentrow);	
+		   }
 	   } 
 		return dataBlockWithSplittedFields;	
 	

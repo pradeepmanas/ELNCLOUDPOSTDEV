@@ -21,8 +21,8 @@ public class Lselninstfieldmapping {
 	
 	private Integer fieldcode;
 	
-	@ManyToOne 
-	private LsMethodFields lsMethodFields;
+//	@ManyToOne 
+//	private LsMethodFields lsMethodFields;
 
 	public Integer getInstfieldmapcode() {
 		return instfieldmapcode;
@@ -40,13 +40,13 @@ public class Lselninstfieldmapping {
 		this.fieldcode = fieldcode;
 	}
 
-	public LsMethodFields getLsMethodFields() {
-		return lsMethodFields;
-	}
-
-	public void setLsMethodFields(LsMethodFields lsMethodFields) {
-		this.lsMethodFields = lsMethodFields;
-	}
+//	public LsMethodFields getLsMethodFields() {
+//		return lsMethodFields;
+//	}
+//
+//	public void setLsMethodFields(LsMethodFields lsMethodFields) {
+//		this.lsMethodFields = lsMethodFields;
+//	}
 	
 	
 }

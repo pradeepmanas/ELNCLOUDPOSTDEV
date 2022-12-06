@@ -1135,12 +1135,14 @@ public class MethodService {
 				
 					for (String str : tempArr) {
 				
-						sb.append(str).append("\t");
+					//	sb.append(str).append("\t");
+						sb.append(str).append(",");
 
 					}
 				      String appendedline = sb.toString();
 				
-				      String resultline = appendedline.replaceAll("\\s+$", "");
+				    //  String resultline = appendedline.replaceAll("\\s+$", "");
+				      String resultline = appendedline.replaceAll(",$", "");
 
 				      writer.write(resultline);
 				      sb.setLength(0);

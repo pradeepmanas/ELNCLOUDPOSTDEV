@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
-import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
+//import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.Lsbatchdetails;
@@ -38,7 +38,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestparameter;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
-import com.agaram.eln.primary.repository.instrumentDetails.LSlimsorderRepository;
+//import com.agaram.eln.primary.repository.instrumentDetails.LSlimsorderRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsbatchdetailsRepository;
@@ -68,8 +68,8 @@ public class RestService {
     private LStestmasterRepository LStestmasterRepository;
 	@Autowired
 	private LStestparameterRepository LStestparameterRepository;
-	@Autowired
-    private LSlimsorderRepository LSlimsorderRepository;
+//	@Autowired
+//    private LSlimsorderRepository LSlimsorderRepository;
 	@Autowired
     private LSlogilablimsorderRepository lslogilablimsorderRepository;
 	@Autowired
@@ -331,7 +331,44 @@ public class RestService {
 		
 	}
 	
-	public String forSyncOrderFromLims() throws Exception{
+//	public String forSyncOrderFromLims() throws Exception{
+//		
+//		Map<String, Object> map = new HashMap<>();
+//		
+//		final String url = env.getProperty("limsbaseservice.url")+"lslimsService/getsdmslabsheetmaster";		
+//
+//	    RestTemplate restTemplate = new RestTemplate();
+//	    
+//	    String result = restTemplate.postForObject(url, map, String.class);
+//	    
+//	    ObjectMapper mapper = new ObjectMapper();
+//
+//		List<LSlimsorder> mapLimsOrder = mapper.readValue(result,
+//				new TypeReference<List<LSlimsorder>>() {
+//				});
+//		
+//		List<LSlogilablimsorderdetail> mapOrderDetail = mapper.readValue(result,
+//				new TypeReference<List<LSlogilablimsorderdetail>>() {
+//				});
+//	    
+//	    map.put("LimsOrder", mapLimsOrder);
+//	    map.put("LimsOrderDetail", mapOrderDetail);
+//	    
+//	    boolean bool = insertLimsOrder(map);
+//	    
+//	    bool = InsertLimsOrderDetail(map);
+//	    
+//	    if(bool) {
+//	    	result="success";
+//	    }
+//	    else {
+//	    	result="Failure";
+//	    }
+//	    
+//		return result;
+//	}
+    
+    public String forSyncOrderFromLims() throws Exception{
 		
 		Map<String, Object> map = new HashMap<>();
 		
@@ -343,8 +380,8 @@ public class RestService {
 	    
 	    ObjectMapper mapper = new ObjectMapper();
 
-		List<LSlimsorder> mapLimsOrder = mapper.readValue(result,
-				new TypeReference<List<LSlimsorder>>() {
+		List<LSlogilablimsorder> mapLimsOrder = mapper.readValue(result,
+				new TypeReference<List<LSlogilablimsorder>>() {
 				});
 		
 		List<LSlogilablimsorderdetail> mapOrderDetail = mapper.readValue(result,

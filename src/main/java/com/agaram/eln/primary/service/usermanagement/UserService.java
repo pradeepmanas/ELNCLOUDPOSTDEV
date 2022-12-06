@@ -1029,6 +1029,8 @@ public class UserService {
 			value.setMinsmallchar(0);
 			value.setMinnumericchar(0);
 			value.setMinspecialchar(0);
+			value.setIdletime(15);
+			value.setIdletimeshowcheck(1);
 			value.setLsusermaster(objpwd.getLsusermaster() != null ? objpwd.getLsusermaster() : user);
 			value.setLssitemaster(lSpasswordpolicyRepository.findByLssitemaster(objpwd.getLssitemaster()) == null
 					? objpwd.getLssitemaster()

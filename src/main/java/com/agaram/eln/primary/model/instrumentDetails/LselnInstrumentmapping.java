@@ -20,8 +20,8 @@ public class LselnInstrumentmapping {
 	
 	private Integer instrumentcode;
 	
-	@ManyToOne 
-	private LSinstruments lsinstruments;
+//	@ManyToOne 
+//	private LSinstruments lsinstruments;
 
 	public Integer getInstrumentmapcode() {
 		return instrumentmapcode;
@@ -39,11 +39,11 @@ public class LselnInstrumentmapping {
 		this.instrumentcode = instrumentcode;
 	}
 
-	public LSinstruments getLsinstruments() {
-		return lsinstruments;
-	}
-
-	public void setLsinstruments(LSinstruments lsinstruments) {
-		this.lsinstruments = lsinstruments;
-	}
+//	public LSinstruments getLsinstruments() {
+//		return lsinstruments;
+//	}
+//
+//	public void setLsinstruments(LSinstruments lsinstruments) {
+//		this.lsinstruments = lsinstruments;
+//	}
 }

@@ -45,9 +45,9 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
-import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
+//import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
-import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
+//import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstfieldmappingRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstrumentfieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstrumentmappingRepository;
@@ -83,8 +83,8 @@ public class BaseMasterService {
 	@Autowired
 
 	private LSnotificationRepository LSnotificationRepository;
-	@Autowired
-	private LsMethodFieldsRepository lsMethodFieldsRepository;
+//	@Autowired
+//	private LsMethodFieldsRepository lsMethodFieldsRepository;
 	@Autowired
 	private LStestmasterlocalRepository lStestmasterlocalRepository;
 	@Autowired
@@ -112,8 +112,8 @@ public class BaseMasterService {
 	@Autowired
 	private LselninstrumentmasterRepository lselninstrumentmasterRepository;
 
-	@Autowired
-	private LSinstrumentsRepository lSinstrumentsRepository;
+//	@Autowired
+//	private LSinstrumentsRepository lSinstrumentsRepository;
 
 	@Autowired
 	private LselninstrumentmappingRepository lselnInstrumentmappingRepository;
@@ -489,8 +489,8 @@ public class BaseMasterService {
 //		obj.put("elninstrument",lselninstrumentmasterRepository.findBystatusOrderByInstrumentcodeDesc(1));
 		obj.put("elninstrument", lselninstrumentmasterRepository
 				.findBylssitemasterAndStatusOrderByInstrumentcodeDesc(objClass.getLssitemaster(), 1));
-		obj.put("instrument", lSinstrumentsRepository.findAll());
-		obj.put("instrumentfields", lsMethodFieldsRepository.findByinstrumentidNotIn(lsInst));
+//		obj.put("instrument", lSinstrumentsRepository.findAll());
+//		obj.put("instrumentfields", lsMethodFieldsRepository.findByinstrumentidNotIn(lsInst));
 
 //		silent audit
 		if (objClass.getObjsilentaudit() != null) {

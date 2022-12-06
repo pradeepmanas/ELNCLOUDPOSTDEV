@@ -116,13 +116,12 @@ public class DelimiterController {
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
 		  
 		  String strUserKey = (String) mapObject.get("doneByUserKey");
-		  
 		  final int doneByUserKey = Integer.parseInt(strUserKey);
-		  
+		  final Delimiter delimiters = mapper.convertValue(mapObject.get("delimiters"), Delimiter.class);	  
 		  final Delimiter otherdetails = mapper.convertValue(mapObject.get("otherdetails"), Delimiter.class);
-		  final Delimiter auditdetails = mapper.convertValue(mapObject.get("auditdetails"), Delimiter.class);
+		
 
 	  		  
-		  return delimitersService.deleteDelimters(delimiterKey, site, comments, doneByUserKey, request,otherdetails,auditdetails);
+		  return delimitersService.deleteDelimters(delimiterKey, site, comments, doneByUserKey, request,otherdetails,delimiters);
 	  }
 }
