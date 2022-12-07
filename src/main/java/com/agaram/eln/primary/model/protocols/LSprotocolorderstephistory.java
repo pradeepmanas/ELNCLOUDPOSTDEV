@@ -12,7 +12,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity(name = "LSprotocolorderstephistory")
@@ -54,6 +56,28 @@ public class LSprotocolorderstephistory {
 	public Integer stepno;
 	
 	public Integer viewoption;
+	
+	@Transient
+	LScfttransaction objmanualaudit;
+
+	@Transient
+	LScfttransaction objsilentaudit;
+
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
+
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
 
 	public Long getBatchcode() {
 		return batchcode;

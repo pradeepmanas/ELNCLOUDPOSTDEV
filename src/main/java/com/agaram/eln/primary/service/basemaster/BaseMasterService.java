@@ -195,7 +195,7 @@ public class BaseMasterService {
 
 	public List<LSprojectmaster> getProjectmaster(LSuserMaster objClass) {
 
-		List<LSprojectmaster> projectlist= lSprojectmasterRepository.findByLssitemaster( objClass.getLssitemaster());
+		List<LSprojectmaster> projectlist= lSprojectmasterRepository.findByLssitemasterAndStatus( objClass.getLssitemaster(),1);
 		//return lSprojectmasterRepository.findByLssitemaster( objClass.getLssitemaster());
 		return projectlist;
 	}

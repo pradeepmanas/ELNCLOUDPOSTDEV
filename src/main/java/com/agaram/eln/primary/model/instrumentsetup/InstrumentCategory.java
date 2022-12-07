@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -35,7 +36,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
  */
 @XmlRootElement  (name = "instrumentcategory")
 @XmlType(propOrder = { "instcatkey", "instcatname",
-		 "status", "createdby", "createddate"})
+		 "status", "createdby", "createddate","info"})
 @Entity
 @Table(name = "instrumentcategory")
 public class InstrumentCategory implements Serializable, Diffable<InstrumentCategory>{
@@ -55,6 +56,9 @@ public class InstrumentCategory implements Serializable, Diffable<InstrumentCate
 	
 	@Column(name = "status")
 	private int status=1;
+	
+    @Transient 
+    public String info;
 	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "usercode", nullable = false)
@@ -109,6 +113,15 @@ public class InstrumentCategory implements Serializable, Diffable<InstrumentCate
 		this.createddate = createddate;
 	}
 
+	
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -119,6 +132,7 @@ public class InstrumentCategory implements Serializable, Diffable<InstrumentCate
 	       .append("status",this.status, obj.status)
 	       .append("createdby", this.createdby.getUsername(), obj.createdby.getUsername())
 	       .append("createddate", this.createddate, obj.createddate)
+	       .append("info", this.info, obj.info)
 	       .build();
 	}
 
@@ -134,6 +148,7 @@ public class InstrumentCategory implements Serializable, Diffable<InstrumentCate
 		this.status = instrumentCategory.status;
 		this.createdby = instrumentCategory.createdby;
 		this.createddate = instrumentCategory.createddate;
+		this.info = instrumentCategory.info;
 	}
 	
 	/**

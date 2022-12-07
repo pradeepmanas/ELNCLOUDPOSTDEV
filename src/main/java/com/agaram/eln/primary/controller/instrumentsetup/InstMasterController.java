@@ -129,8 +129,11 @@ public class InstMasterController {
 		  
 		  final int doneByUserKey = Integer.parseInt(strUserKey);
 		  final  InstrumentMaster  otherdetails = mapper.convertValue(mapObject.get("otherdetails"), InstrumentMaster.class);
+		  
+		  final  InstrumentMaster  instrumentMaster = mapper.convertValue(mapObject.get("instMaster"), InstrumentMaster.class);
+		  
 		  return masterService.deleteInstMaster((Integer) mapObject.get("instmastkey"), 
-				   (String)mapObject.get("comments"),doneByUserKey,  request,otherdetails);
+				   (String)mapObject.get("comments"),doneByUserKey,  request,otherdetails,instrumentMaster);
     }
     
     /**

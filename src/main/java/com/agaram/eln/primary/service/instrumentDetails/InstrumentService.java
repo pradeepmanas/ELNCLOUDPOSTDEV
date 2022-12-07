@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -704,7 +703,7 @@ public class InstrumentService {
 					if (largefile != null) {
 						String filecontent = new BufferedReader(
 								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-								.collect(Collectors.joining("\n"));
+										.collect(Collectors.joining("\n"));
 						Content = filecontent;
 					} else {
 
@@ -2322,7 +2321,7 @@ public class InstrumentService {
 				if (largefile != null) {
 					String filecontent = new BufferedReader(
 							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-							.collect(Collectors.joining("\n"));
+									.collect(Collectors.joining("\n"));
 					objupdatedorder.getLssamplefile().setFilecontent(filecontent);
 				} else {
 
@@ -2819,7 +2818,7 @@ public class InstrumentService {
 				if (largefile != null) {
 					String filecontent = new BufferedReader(
 							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-							.collect(Collectors.joining("\n"));
+									.collect(Collectors.joining("\n"));
 					objorder.getLssamplefile().setFilecontent(filecontent);
 				} else {
 
@@ -2870,7 +2869,7 @@ public class InstrumentService {
 				if (largefile != null) {
 					String filecontent = new BufferedReader(
 							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-							.collect(Collectors.joining("\n"));
+									.collect(Collectors.joining("\n"));
 					content = filecontent;
 				} else {
 
@@ -3001,7 +3000,7 @@ public class InstrumentService {
 				if (largefile != null) {
 					String filecontent = new BufferedReader(
 							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-							.collect(Collectors.joining("\n"));
+									.collect(Collectors.joining("\n"));
 					objupdated.getLssamplefile().setFilecontent(filecontent);
 				} else {
 
@@ -3079,65 +3078,33 @@ public class InstrumentService {
 		String Details = "";
 		String Notification = "";
 
-		
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		LSuserMaster createby = lsuserMasterRepository.findByusercode(objorder.getLsuserMaster().getUsercode());
 		LSnotification objnotify = new LSnotification();
-		
+
 		for (int k = 0; k < objorder.getLsworkflow().getLsworkflowgroupmapping().size(); k++) {
-		List<LSMultiusergroup> userobj = lsMultiusergroupRepositery.findBylsusergroup(
-				objorder.getLsworkflow().getLsworkflowgroupmapping().get(k).getLsusergroup());
-		
-		List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode)
-				.collect(Collectors.toList());
-		List<LSuserMaster> objuser = lsuserMasterRepository
-				.findByusercodeInAndUserretirestatusNot(objnotifyuser, 1);
-		if (objorder.getApprovelstatus() != null && objorder.getIsFinalStep() != 1) {
-			
-			for (int i = 0; i < objuser.size(); i++) {
+			List<LSMultiusergroup> userobj = lsMultiusergroupRepositery
+					.findBylsusergroup(objorder.getLsworkflow().getLsworkflowgroupmapping().get(k).getLsusergroup());
 
-			if (objorder.getApprovelstatus() == 1) {
-				Notification = "USERAPPROVAL";
-			} else if (objorder.getApprovelstatus() == 2) {
-				Notification = "USERRETURN";
-			} else if (objorder.getApprovelstatus() == 3) {
-				Notification = "USERREJECT";
-			}
-			objnotify.setNotifationto(objuser.get(i));
-			Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
-			+ "\", \"user\":\"" + objorder.getLsuserMaster().getUsername() + "\", \"comment\":\""
-			+ objorder.getComment() + "\"}";
-			objnotify.setNotifationfrom(objorder.getLsuserMaster());
-			objnotify.setNotificationdate(objorder.getCreatedtimestamp());
-			objnotify.setNotification(Notification);
-			objnotify.setNotificationdetils(Details);
-			objnotify.setIsnewnotification(1);
-			objnotify.setNotificationpath("/registertask");
-			objnotify.setNotificationfor(1);
+			List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode)
+					.collect(Collectors.toList());
+			List<LSuserMaster> objuser = lsuserMasterRepository.findByusercodeInAndUserretirestatusNot(objnotifyuser,
+					1);
+			if (objorder.getApprovelstatus() != null && objorder.getIsFinalStep() != 1) {
 
-			lstnotifications.add(objnotify);
-			}
-		}
-			else
-			{
 				for (int i = 0; i < objuser.size(); i++) {
 
-			if (createby.getUsercode() != userobj.get(i).getUsercode() && userobj.size() > 0
-					&&objorder.getObjLoggeduser().getUsercode()!=objorder.getLsuserMaster().getUsercode())
-
-			{
-			if (objorder.getApprovelstatus() == 3 && objorder.getApproved() == null) {
-				Notification = "USERREJECT";
-			} else if (objorder.getApproved() == 1 && objorder.getRejected() == null) {
-				
-				Notification = "SHEETORDERAPPROVED";
-			}
-				
-					
-					objnotify.setNotifationto(createby);
+					if (objorder.getApprovelstatus() == 1) {
+						Notification = "USERAPPROVAL";
+					} else if (objorder.getApprovelstatus() == 2) {
+						Notification = "USERRETURN";
+					} else if (objorder.getApprovelstatus() == 3) {
+						Notification = "USERREJECT";
+					}
+					objnotify.setNotifationto(objuser.get(i));
 					Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
-					+ "\", \"user\":\"" + objorder.getLsuserMaster().getUsername() + "\", \"comment\":\""
-					+ objorder.getComment() + "\"}";
+							+ "\", \"user\":\"" + objorder.getLsuserMaster().getUsername() + "\", \"comment\":\""
+							+ objorder.getComment() + "\"}";
 					objnotify.setNotifationfrom(objorder.getLsuserMaster());
 					objnotify.setNotificationdate(objorder.getCreatedtimestamp());
 					objnotify.setNotification(Notification);
@@ -3148,12 +3115,39 @@ public class InstrumentService {
 
 					lstnotifications.add(objnotify);
 				}
-			}
-			
-			
+			} else {
+				for (int i = 0; i < objuser.size(); i++) {
+
+					if (createby.getUsercode() != userobj.get(i).getUsercode() && userobj.size() > 0
+							&& objorder.getObjLoggeduser().getUsercode() != objorder.getLsuserMaster().getUsercode())
+
+					{
+						if (objorder.getApprovelstatus() == 3 && objorder.getApproved() == null) {
+							Notification = "USERREJECT";
+						} else if (objorder.getApproved() == 1 && objorder.getRejected() == null) {
+
+							Notification = "SHEETORDERAPPROVED";
+						}
+
+						objnotify.setNotifationto(createby);
+						Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\""
+								+ objorder.getBatchid() + "\", \"user\":\"" + objorder.getLsuserMaster().getUsername()
+								+ "\", \"comment\":\"" + objorder.getComment() + "\"}";
+						objnotify.setNotifationfrom(objorder.getLsuserMaster());
+						objnotify.setNotificationdate(objorder.getCreatedtimestamp());
+						objnotify.setNotification(Notification);
+						objnotify.setNotificationdetils(Details);
+						objnotify.setIsnewnotification(1);
+						objnotify.setNotificationpath("/registertask");
+						objnotify.setNotificationfor(1);
+
+						lstnotifications.add(objnotify);
+					}
+				}
+
 			}
 			lsnotificationRepository.save(lstnotifications);
-			}
+		}
 
 	}
 
@@ -3226,7 +3220,7 @@ public class InstrumentService {
 					if (largefile != null) {
 						String filecontent = new BufferedReader(
 								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-								.collect(Collectors.joining("\n"));
+										.collect(Collectors.joining("\n"));
 						Content = filecontent;
 					} else {
 
@@ -3260,7 +3254,7 @@ public class InstrumentService {
 					if (largefile != null) {
 						String filecontent = new BufferedReader(
 								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-								.collect(Collectors.joining("\n"));
+										.collect(Collectors.joining("\n"));
 						Content = filecontent;
 					} else {
 
@@ -4491,13 +4485,12 @@ public class InstrumentService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		final String getExtn = FilenameUtils.getExtension(file.getOriginalFilename()) == "" ? "png" : FilenameUtils.getExtension(file.getOriginalFilename());
 
-		map.put("link",
-				originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + TenantContext.getCurrentTenant() + "/"
-						+ FilenameUtils.removeExtension(file.getOriginalFilename()) + "/"
-						+ getExtn);
+		final String getExtn = FilenameUtils.getExtension(file.getOriginalFilename()) == "" ? "png"
+				: FilenameUtils.getExtension(file.getOriginalFilename());
+
+		map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + TenantContext.getCurrentTenant()
+				+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
 		return map;
 	}
 
@@ -4717,10 +4710,11 @@ public class InstrumentService {
 		fileImg.setFile(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
 		fileImg = FileimagestempRepository.insert(fileImg);
 
-		map.put("link",
-				originurl + "/Instrument/downloadsheetimagestempsql/" + randomUUIDString + "/"
-						+ FilenameUtils.removeExtension(file.getOriginalFilename()) + "/"
-						+ FilenameUtils.getExtension(file.getOriginalFilename()));
+		final String getExtn = FilenameUtils.getExtension(file.getOriginalFilename()) == "" ? "png"
+				: FilenameUtils.getExtension(file.getOriginalFilename());
+
+		map.put("link", originurl + "/Instrument/downloadsheetimagestempsql/" + randomUUIDString + "/"
+				+ FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
 
 		return map;
 	}
@@ -4899,7 +4893,7 @@ public class InstrumentService {
 				if (largefile != null) {
 					String filecontent = new BufferedReader(
 							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-							.collect(Collectors.joining("\n"));
+									.collect(Collectors.joining("\n"));
 					objupdated.getLssamplefile().setFilecontent(filecontent);
 				} else {
 

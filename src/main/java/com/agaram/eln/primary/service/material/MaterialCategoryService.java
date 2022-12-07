@@ -28,12 +28,12 @@ public class MaterialCategoryService {
 
 	public ResponseEntity<Object> getMaterialType(Map<String, Object> inputMap) {
 
-		List<MaterialType> lstgetMaterialType = MaterialTypeRepository.findByNstatus(1);
+		List<MaterialType> lstgetMaterialType = MaterialTypeRepository.findByNstatusOrderByNmaterialtypecode(1);
 		return new ResponseEntity<>(lstgetMaterialType, HttpStatus.OK);
 	}
 
 	public ResponseEntity<Object> getMaterialCategory(Map<String, Object> objmap) {
-		List<Object> lstgetMaterialCategory = MaterialCategoryRepository.findByNstatus(1);
+		List<Object> lstgetMaterialCategory = MaterialCategoryRepository.findByNstatusOrderByNmaterialcatcodeDesc(1);
 		return new ResponseEntity<>(lstgetMaterialCategory, HttpStatus.OK);
 	}
 

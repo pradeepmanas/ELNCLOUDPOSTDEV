@@ -70,6 +70,9 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	private int status=1;	
 	
 	@Transient
+	private String info;
+	
+	@Transient
 	private String username;
 	
 	@Transient
@@ -137,6 +140,15 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
 	}
 
 	@XmlElement	
@@ -235,6 +247,7 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	       .append("defaultvalue", this.defaultvalue, obj.defaultvalue)
 	       .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
            .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
+           .append("info", this.info, obj.info)
 
 
 	       .build();
@@ -262,6 +275,7 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
         this.defaultvalue = methodDelimiter.defaultvalue;
     	this.objsilentaudit = methodDelimiter.objsilentaudit;
     	this.objmanualaudit = methodDelimiter.objmanualaudit;
+    	this.info = methodDelimiter.info;
       
 
 

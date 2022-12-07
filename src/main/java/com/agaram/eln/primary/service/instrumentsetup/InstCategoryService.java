@@ -291,7 +291,9 @@ public class InstCategoryService {
 		        		//return new ResponseEntity<>(categoryObj.getInstcatname(), HttpStatus.IM_USED);//status code - 226
 		        		
 		        		//Has child relation
-		        		return new ResponseEntity<>(categoryObj.getInstcatname(), HttpStatus.LOCKED);
+	        			categoryObj.setInfo("IM_USED");
+		        		return new ResponseEntity<>(categoryObj, HttpStatus.IM_USED);
+		        		//return new ResponseEntity<>(method , HttpStatus.IM_USED)
 		        	}        	
 		        	else
 		        	{

@@ -207,22 +207,25 @@ public class MethodService {
 //							"Create", comments, site, "",
 //							createdUser, request.getRemoteAddr());
 					
-					LScfttransaction LScfttransaction = new LScfttransaction();
-					
-					LScfttransaction.setActions("Insert");
-					LScfttransaction.setComments("Duplicate Entry  -"+methodMaster.getMethodname());
-					LScfttransaction.setLssitemaster(site.getSitecode());
-					LScfttransaction.setLsuserMaster(methodMaster.getCreatedby().getUsercode());
-					LScfttransaction.setManipulatetype("View/Load");
-					LScfttransaction.setModuleName("Method Master");
-					LScfttransaction.setTransactiondate(methodMaster.getCreateddate());
-					LScfttransaction.setUsername(methodMaster.getUsername());
-					LScfttransaction.setTableName("Method");
-					LScfttransaction.setSystemcoments("System Generated");
-					
-					lscfttransactionrepo.save(LScfttransaction);
+//					LScfttransaction LScfttransaction = new LScfttransaction();
+//					
+//					LScfttransaction.setActions("Insert");
+//					LScfttransaction.setComments("Duplicate Entry  -"+methodMaster.getMethodname());
+//					LScfttransaction.setLssitemaster(site.getSitecode());
+//					LScfttransaction.setLsuserMaster(methodMaster.getCreatedby().getUsercode());
+//					LScfttransaction.setManipulatetype("View/Load");
+//					LScfttransaction.setModuleName("Method Master");
+//					LScfttransaction.setTransactiondate(methodMaster.getCreateddate());
+//					LScfttransaction.setUsername(methodMaster.getUsername());
+//					LScfttransaction.setTableName("Method");
+//					LScfttransaction.setSystemcoments("System Generated");
+//					
+//					lscfttransactionrepo.save(LScfttransaction);
 				}
-	  			return new ResponseEntity<>("Duplicate Entry - " + methodMaster.getMethodname() + " - " + instMaster.getInstrumentcode(), 
+				methodMaster.setInfo("Duplicate Entry - " + methodMaster.getMethodname() + " for inst : " + instMaster.getInstrumentcode());
+//	  			return new ResponseEntity<>("Duplicate Entry - " + methodMaster.getMethodname() + " - " + instMaster.getInstrumentcode(), 
+//	  					 HttpStatus.CONFLICT);
+				return new ResponseEntity<>(methodMaster, 
 	  					 HttpStatus.CONFLICT);
 			}
 			else
@@ -235,56 +238,14 @@ public class MethodService {
 				
 				savedMethod.setDisplayvalue(savedMethod.getMethodname());
 				savedMethod.setScreenname("Methodmaster");
-				
+				savedMethod.setObjsilentaudit(methodMaster.getObjsilentaudit());
 //				if (saveAuditTrail == true)
 //				{
 					final Map<String, String> fieldMap = new HashMap<String, String>();
 					fieldMap.put("site", "sitename");				
 					fieldMap.put("createdby", "loginid");				
 					fieldMap.put("instmaster", "instrumentcode");				
-					
-//					final String xmlData = readWriteXML.saveXML(savedMethod, Method.class, null, "individualpojo", fieldMap);
-//							
-//				    cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-//							"Create", "", site, xmlData, createdUser, request.getRemoteAddr());
-					
-//	                LScfttransaction LScfttransaction = new LScfttransaction();
-//					
-//					LScfttransaction.setActions("Insert");
-//					LScfttransaction.setComments(methodMaster.getMethodname()+" was created by "+methodMaster.getUsername());
-//					LScfttransaction.setLssitemaster(site.getSitecode());
-//					LScfttransaction.setLsuserMaster(methodMaster.getCreatedby().getUsercode());
-//					LScfttransaction.setManipulatetype("View/Load");
-//					LScfttransaction.setModuleName("Method Master");
-//					LScfttransaction.setTransactiondate(methodMaster.getCreateddate());
-//					LScfttransaction.setUsername(methodMaster.getUsername());
-//					LScfttransaction.setTableName("Method");
-//					LScfttransaction.setSystemcoments("System Generated");
-//					
-//					lscfttransactionrepo.save(LScfttransaction);
-					
-			//	}
-			
-//	    		Map<String, Object> mapObj = new HashMap<String, Object>();
-//   		
-//	    		
-//	    		mapObj.put("createdby",savedMethod.getCreatedby());
-//                mapObj.put("createddate",savedMethod.getCreateddate());
-//            	mapObj.put("filename", savedMethod.getFilename());
-//            	mapObj.put("instmaster", savedMethod.getInstmaster());
-//            	mapObj.put("Instrawdataurl", savedMethod.getInstrawdataurl());
-//            	mapObj.put("methodkey",savedMethod.getMethodkey());
-//            	mapObj.put("methodname",savedMethod.getMethodname());
-//            	mapObj.put("status",savedMethod.getStatus());
-//            	mapObj.put("site", savedMethod.getSite());
-            			
-	    	
-	    	//	mapObj.put("parser", savedMethod.getParser());
-	    	//	mapObj.put("samplesplit", savedMethod.getSamplesplit());
-//	    		mapObj.put("displayvalue", savedMethod.getMethodname());
-//	    		mapObj.put("screenname", "Methodmaster");
-	    	    		
-	    		
+
 				return new ResponseEntity<>( savedMethod, HttpStatus.OK);			
 			}
 		}
@@ -463,7 +424,7 @@ public class MethodService {
 		    		
 		    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
 		    		savedMethod.setScreenname("Methodmaster");
-		    		
+		    		savedMethod.setObjsilentaudit(method.getObjsilentaudit());
 //		    		if (saveAuditTrail)
 //	    			{
 //		    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
@@ -491,32 +452,34 @@ public class MethodService {
 		    	}
 				else {
 					//Conflict =409 - Duplicate entry
-	    			if (saveAuditTrail == true)
-	    			{						
-	    				final String sysComments = "Update Failed for duplicate method name - "+ method.getMethodname();
+//	    			if (saveAuditTrail == true)
+//	    			{						
+	    				//final String sysComments = "Update Failed for duplicate method name - "+ method.getMethodname();
 	    				
 //	    				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //	    						"Create", sysComments, site, "",createdUser, request.getRemoteAddr());
 	    				
-	    				 LScfttransaction LScfttransaction = new LScfttransaction();
+//	    				 LScfttransaction LScfttransaction = new LScfttransaction();
+//	 					
+//	 					LScfttransaction.setActions("Update");
+//	 					LScfttransaction.setComments(" Duplicate Entry method name - "+ method.getMethodname());
+//	 					LScfttransaction.setLssitemaster(site.getSitecode());
+//	 					LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
+//	 					LScfttransaction.setManipulatetype("View/Load");
+//	 					LScfttransaction.setModuleName("Method Master");
+//	 					LScfttransaction.setTransactiondate(method.getCreateddate());
+//	 					LScfttransaction.setUsername(method.getUsername());
+//	 					LScfttransaction.setTableName("Method");
+//	 					LScfttransaction.setSystemcoments("System Generated");
+//	 					
+//	 					lscfttransactionrepo.save(LScfttransaction);
 	 					
-	 					LScfttransaction.setActions("Update");
-	 					LScfttransaction.setComments(" Duplicate Entry method name - "+ method.getMethodname());
-	 					LScfttransaction.setLssitemaster(site.getSitecode());
-	 					LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
-	 					LScfttransaction.setManipulatetype("View/Load");
-	 					LScfttransaction.setModuleName("Method Master");
-	 					LScfttransaction.setTransactiondate(method.getCreateddate());
-	 					LScfttransaction.setUsername(method.getUsername());
-	 					LScfttransaction.setTableName("Method");
-	 					LScfttransaction.setSystemcoments("System Generated");
-	 					
-	 					lscfttransactionrepo.save(LScfttransaction);
-	 					
-	    			}
+	    		//	}
 	    			
-	    			return new ResponseEntity<>("Duplicate Entry - " + method.getMethodname() + " - " + instMaster.getInstrumentcode(), 
-		  					 HttpStatus.CONFLICT);      		
+					method.setInfo("Duplicate Entry - " + method.getMethodname() + " for inst " + instMaster.getInstrumentcode());
+//	    			return new ResponseEntity<>("Duplicate Entry - " + method.getMethodname() + " - " + instMaster.getInstrumentcode(), 
+//		  					 HttpStatus.CONFLICT);   
+	    			return new ResponseEntity<>(method, HttpStatus.CONFLICT);   
 				}
 		   }
 			
@@ -556,28 +519,7 @@ public class MethodService {
 	 					
 	 					lscfttransactionrepo.save(LScfttransaction);
 			}
-	    		
-	    		
-//	    		Map<String, Object> mapObj = new HashMap<String, Object>();
-//
-//	    		mapObj.put("createdby",savedMethod.getCreatedby());
-//                mapObj.put("createddate",savedMethod.getCreateddate());
-//            	mapObj.put("filename", savedMethod.getFilename());
-//            	mapObj.put("instmaster", savedMethod.getInstmaster());
-//            	mapObj.put("instrawdataurl", savedMethod.getInstrawdataurl());
-//            	mapObj.put("methodkey",savedMethod.getMethodkey());
-//            	mapObj.put("methodname",savedMethod.getMethodname());
-//            	mapObj.put("status",savedMethod.getStatus());
-//            	mapObj.put("site", savedMethod.getSite());
-//            			
-//	    	
-//	    		mapObj.put("parser", savedMethod.getParser());
-//	    		mapObj.put("samplesplit", savedMethod.getSamplesplit());
-//	    		mapObj.put("displayvalue", savedMethod.getMethodname());
-//	    		mapObj.put("screenname", "Methodmaster");
-	    	    		
 
-	    		
 	    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
 	    	}	
 			   }
@@ -650,7 +592,8 @@ public class MethodService {
 	 */
 	 @Transactional()
 	   public ResponseEntity<Object> deleteMethod(final int methodKey, 
-			   final LSSiteMaster site, final String comments, final int doneByUserKey, final HttpServletRequest request,final Method otherdetails)
+			   final LSSiteMaster site, final String comments, final int doneByUserKey, 
+			   final HttpServletRequest request,final Method otherdetails,final Method methodmaster)
 	   {	   
 		  boolean saveAuditTrial=true;
 		   final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);
@@ -668,51 +611,28 @@ public class MethodService {
 //						cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //								"Delete", sysComments, method.getSite(), "", createdUser, request.getRemoteAddr());
 					   
-					   LScfttransaction LScfttransaction = new LScfttransaction();
-						
-						LScfttransaction.setActions("Delete"); 
-						LScfttransaction.setComments("Associated - "+ method.getMethodname());
-						LScfttransaction.setLssitemaster(site.getSitecode());
-						LScfttransaction.setLsuserMaster(doneByUserKey);
-						LScfttransaction.setManipulatetype("View/Load");
-						LScfttransaction.setModuleName("Method Master");
-						LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
-						LScfttransaction.setUsername(otherdetails.getUsername());
-						LScfttransaction.setTableName("Method");
-						LScfttransaction.setSystemcoments("System Generated");
-						
-						lscfttransactionrepo.save(LScfttransaction);
+//					   LScfttransaction LScfttransaction = new LScfttransaction();
+//						
+//						LScfttransaction.setActions("Delete"); 
+//						LScfttransaction.setComments("Associated - "+ method.getMethodname());
+//						LScfttransaction.setLssitemaster(site.getSitecode());
+//						LScfttransaction.setLsuserMaster(doneByUserKey);
+//						LScfttransaction.setManipulatetype("View/Load");
+//						LScfttransaction.setModuleName("Method Master");
+//						LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
+//						LScfttransaction.setUsername(otherdetails.getUsername());
+//						LScfttransaction.setTableName("Method");
+//						LScfttransaction.setSystemcoments("System Generated");
+//						
+//						lscfttransactionrepo.save(LScfttransaction);
 						
 		    	    }
-				    return new ResponseEntity<>(method.getMethodname() , HttpStatus.IM_USED);//status code - 226	
+				    method.setInfo("Associated - "+ method.getMethodname());
+				 //   return new ResponseEntity<>(method.getMethodname() , HttpStatus.IM_USED);//status code - 226	
+				    return new ResponseEntity<>(method , HttpStatus.IM_USED);//status code - 226
 			   }
 			   else {
-			   
-
-						   
-//				    if (saveAuditTrial)
-//	    			{				    	
-//		    		// String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
-//		    			
-//		    			//final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
-////						cfrTransService.saveCfrTransaction(page, actionType, "Delete", comments, 
-////								site, xmlData, createdUser, request.getRemoteAddr());
-//		    			 LScfttransaction LScfttransaction = new LScfttransaction();
-//							
-//							LScfttransaction.setActions("Delete"); 
-//							LScfttransaction.setComments(method.getMethodname()+" was deleted by "+otherdetails.getUsername());
-//							LScfttransaction.setLssitemaster(site.getSitecode());
-//							LScfttransaction.setLsuserMaster(doneByUserKey);
-//							LScfttransaction.setManipulatetype("View/Load");
-//							LScfttransaction.setModuleName("Method Master");
-//							LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
-//							LScfttransaction.setUsername(otherdetails.getUsername());
-//							LScfttransaction.setTableName("Method");
-//							LScfttransaction.setSystemcoments("System Generated");
-//							
-//							lscfttransactionrepo.save(LScfttransaction);
-//	    			}
-				    
+			
 					   //copy of object for using 'Diffable' to compare objects
 					   final Method methodBeforeSave = new Method(method); 
 
@@ -722,27 +642,7 @@ public class MethodService {
 					   
 					   savedMethod.setDisplayvalue(savedMethod.getMethodname());
 					   savedMethod.setScreenname("Methodmaster");
-						
-//			    		Map<String, Object> mapObj = new HashMap<String, Object>();
-//		    	
-//			    		mapObj.put("createdby",savedMethod.getCreatedby());
-//		                mapObj.put("createddate",savedMethod.getCreateddate());
-//		            	mapObj.put("filename", savedMethod.getFilename());
-//		            	mapObj.put("instmaster", savedMethod.getInstmaster());
-//		            	mapObj.put("Instrawdataurl", savedMethod.getInstrawdataurl());
-//		            	mapObj.put("methodkey",savedMethod.getMethodkey());
-//		            	mapObj.put("methodname",savedMethod.getMethodname());
-//		            	mapObj.put("status",savedMethod.getStatus());
-//		            	mapObj.put("site", savedMethod.getSite());
-//		            			
-//			    	
-//			    		mapObj.put("parser", savedMethod.getParser());
-//			    		mapObj.put("samplesplit", savedMethod.getSamplesplit());
-//			    		mapObj.put("displayvalue", savedMethod.getMethodname());
-//			    		mapObj.put("screenname", "Methodmaster");
-			    	    		
-			    		
-			    					    		
+					   savedMethod.setObjsilentaudit(methodmaster.getObjsilentaudit());
 				   return new ResponseEntity<>(savedMethod, HttpStatus.OK); 
 			   }
 		   }

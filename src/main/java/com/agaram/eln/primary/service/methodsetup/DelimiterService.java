@@ -115,14 +115,15 @@ public class DelimiterService {
 	    		final Delimiter savedPolicy = delimitersRepo.save(delimiters);
 	    		savedPolicy.setDisplayvalue(savedPolicy.getDelimitername());
 	    		savedPolicy.setScreenname("Delimiter");
-
+	    		savedPolicy.setObjsilentaudit(delimiters.getObjsilentaudit());
+	    		
 					final Map<String, String> fieldMap = new HashMap<String, String>();
 					fieldMap.put("createdby", "loginid");
 										
 //					delimiters.getObjsilentaudit().setModuleName("Delimiter");
 //				    delimiters.getObjsilentaudit().setTableName("Delimiter");
 	      		
-	    		return new ResponseEntity<>(delimiters , HttpStatus.OK);
+	    		return new ResponseEntity<>(savedPolicy , HttpStatus.OK);
 	    	} 
 	   }  
 	

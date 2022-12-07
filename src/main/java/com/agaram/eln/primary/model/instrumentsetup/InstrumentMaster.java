@@ -26,6 +26,7 @@ import org.apache.commons.lang3.builder.DiffResult;
 import org.apache.commons.lang3.builder.Diffable;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.InstantDateAdapter;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -41,7 +42,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @XmlRootElement  (name = "instrumentmaster")
 @XmlType(propOrder = { "instmastkey", "instrumentcode", "site","instrumentname","instused",
 		"insttype","instcategory","instmake","instmodel","instiopno","electrodeno",
-		 "status", "createdby", "createddate","username","transactiondate","displayvalue","screenname"})
+		 "status", "createdby", "createddate","username","transactiondate","displayvalue","screenname","info","objmanualaudit","objsilentaudit"})
 @Entity
 @Table(name = "instrumentmaster")
 public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster> {
@@ -69,6 +70,12 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 	@Column(name = "instused")
 	private int instused;
 
+	@Transient
+	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	LScfttransaction objmanualaudit;
+	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "insttypekey", nullable = false)
 	private InstrumentType insttype;
@@ -82,6 +89,9 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 		
 	@Transient
 	private String username;
+	
+	@Transient
+	private String info;
 	
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
@@ -278,6 +288,31 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 		this.screenname = screenname;
 	}
 
+	
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -301,7 +336,9 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 	       .append("transactiondate", this.transactiondate, obj.transactiondate)
 	       .append("displayvalue", this.displayvalue, obj.displayvalue)
            .append("screenname", this.screenname, obj.screenname)
-
+           .append("info", this.info, obj.info)
+           .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
+           .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
 	       .build();
 	}
 
@@ -330,7 +367,9 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 		this.transactiondate = instMaster.transactiondate;
 		this.displayvalue = instMaster.displayvalue;
 		this.screenname = instMaster.screenname;
-
+		this.info = instMaster.info;
+		this.objsilentaudit = instMaster.objsilentaudit;
+		this.objmanualaudit = instMaster.objmanualaudit;
 	}
 	
 	/**

@@ -46,7 +46,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "method")
 @XmlType(propOrder = { "methodkey", "methodname", "instmaster", "instrawdataurl",
-		"samplesplit", "parser", "site", "status", "createdby", "createddate","username","transactiondate","filename","displayvalue","screenname","objsilentaudit","objmanualaudit"})
+		"samplesplit", "parser", "site", "status", "createdby", "createddate","username","transactiondate","filename","displayvalue",
+		"screenname","objsilentaudit","objmanualaudit","info"})
 @Entity
 @Table(name = "method")
 public class Method implements Serializable, Diffable<Method>{
@@ -87,6 +88,9 @@ public class Method implements Serializable, Diffable<Method>{
 
 	@Transient
 	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	private String info;
 	
 	@Transient
 	LScfttransaction objmanualaudit;
@@ -304,6 +308,14 @@ public class Method implements Serializable, Diffable<Method>{
 		this.methodversion = methodversion;
 	}
 
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -331,7 +343,7 @@ public class Method implements Serializable, Diffable<Method>{
            .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
            .append("version", this.version, obj.version)
            .append("methodversion", this.getMethodversion(), obj.getMethodversion())
-
+           .append("info", this.getInfo(), obj.getInfo())
 
 
 
@@ -378,6 +390,7 @@ public class Method implements Serializable, Diffable<Method>{
 		
 		this.version = method.version;
 		this.methodversion=method.methodversion;
+		this.info=method.info;
 
 
 	}

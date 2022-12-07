@@ -129,8 +129,8 @@ public class MethodController {
 		  final int doneByUserKey = Integer.parseInt(someValue);
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
 		  final Method otherdetails = mapper.convertValue(mapObject.get("otherdetails"), Method.class);
-		  
-		  return methodService.deleteMethod(methodKey, site, comments, doneByUserKey, request,otherdetails);
+		  final Method methodmaster = mapper.convertValue(mapObject.get("methodmaster"), Method.class);
+		  return methodService.deleteMethod(methodKey, site, comments, doneByUserKey, request,otherdetails,methodmaster);
 		  
 //		  return methodService.deleteMethod(methodKey, site, comments, doneByUserKey,
 //				  saveAuditTrail, request);

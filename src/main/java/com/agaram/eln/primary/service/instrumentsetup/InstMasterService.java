@@ -111,23 +111,26 @@ public class InstMasterService {
 		{
 			//Conflict =409 - Duplicate entry
 			
-			LScfttransaction LScfttransaction = new LScfttransaction();
+//			LScfttransaction LScfttransaction = new LScfttransaction();
+//			
+//			LScfttransaction.setActions("Insert");
+//			LScfttransaction.setComments("Duplicate Entry -"+ master.getInstrumentcode() );
+//			LScfttransaction.setLssitemaster(master.getSite().getSitecode());
+//			LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
+//			LScfttransaction.setManipulatetype("Insert");
+//			LScfttransaction.setModuleName("Instruments");
+//			LScfttransaction.setTransactiondate(master.getCreateddate());
+//			LScfttransaction.setUsername(master.getUsername());
+//			LScfttransaction.setTableName("instrumentmaster");
+//			LScfttransaction.setSystemcoments("System Generated");
+//			
+//			lscfttransactionrepo.save(LScfttransaction);
 			
-			LScfttransaction.setActions("Insert");
-			LScfttransaction.setComments("Duplicate Entry -"+ master.getInstrumentcode() );
-			LScfttransaction.setLssitemaster(master.getSite().getSitecode());
-			LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
-			LScfttransaction.setManipulatetype("Insert");
-			LScfttransaction.setModuleName("Instruments");
-			LScfttransaction.setTransactiondate(master.getCreateddate());
-			LScfttransaction.setUsername(master.getUsername());
-			LScfttransaction.setTableName("instrumentmaster");
-			LScfttransaction.setSystemcoments("System Generated");
+			master.setInfo("Duplicate Entry - " + masterByCode.get().getInstrumentcode());
 			
-			lscfttransactionrepo.save(LScfttransaction);
-			
-  			return new ResponseEntity<>("Duplicate Entry - " + masterByCode.get().getInstrumentcode(), 
-  					 HttpStatus.CONFLICT);
+//  			return new ResponseEntity<>("Duplicate Entry - " + masterByCode.get().getInstrumentcode(), 
+//  					 HttpStatus.CONFLICT);
+  			return new ResponseEntity<>(master,HttpStatus.CONFLICT);
 		}    		
 		else
 		{	
@@ -148,7 +151,7 @@ public class InstMasterService {
 			
 	   		savedMaster.setDisplayvalue(savedMaster.getInstrumentname());
 	   		savedMaster.setScreenname("Instrument");
-	   		
+	   		savedMaster.setObjsilentaudit(master.getObjsilentaudit());
 			if (saveAuditTrial == true)
 			{
 			
@@ -473,50 +476,53 @@ public class InstMasterService {
 	     		else
 	     		{ 	
 	     			//Conflict =409 - Duplicate entry
-	     			if (saveAuditTrail)
-	    			{
-	     			LScfttransaction LScfttransaction = new LScfttransaction();
-					
-					LScfttransaction.setActions("Update");
-					LScfttransaction.setComments("Duplicate Entry - " + master.getInstrumentcode());
-					LScfttransaction.setLssitemaster(master.getSite().getSitecode());
-					LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
-					LScfttransaction.setManipulatetype("Insert");
-					LScfttransaction.setModuleName("Instruments");
-					LScfttransaction.setTransactiondate(master.getTransactiondate());
-					LScfttransaction.setUsername(master.getUsername());
-					LScfttransaction.setTableName("instrumentmaster");
-					LScfttransaction.setSystemcoments("System Generated");
-					
-					lscfttransactionrepo.save(LScfttransaction);
-	    			}
-	     			return new ResponseEntity<>("Duplicate Entry - " + master.getInstrumentcode(), 
-	     					 HttpStatus.CONFLICT);      			
+//	     			if (saveAuditTrail)
+//	    			{
+//	     			LScfttransaction LScfttransaction = new LScfttransaction();
+//					
+//					LScfttransaction.setActions("Update");
+//					LScfttransaction.setComments("Duplicate Entry - " + master.getInstrumentcode());
+//					LScfttransaction.setLssitemaster(master.getSite().getSitecode());
+//					LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
+//					LScfttransaction.setManipulatetype("Insert");
+//					LScfttransaction.setModuleName("Instruments");
+//					LScfttransaction.setTransactiondate(master.getTransactiondate());
+//					LScfttransaction.setUsername(master.getUsername());
+//					LScfttransaction.setTableName("instrumentmaster");
+//					LScfttransaction.setSystemcoments("System Generated");
+//					
+//					lscfttransactionrepo.save(LScfttransaction);
+//	    			}
+	     			
+	     			master.setInfo("Duplicate Entry - " + master.getInstrumentcode());
+//	     			return new ResponseEntity<>("Duplicate Entry - " + master.getInstrumentcode(), 
+//	     					 HttpStatus.CONFLICT);   
+	     			return new ResponseEntity<>(master, HttpStatus.CONFLICT); 
 	     		}
 		} 
     			else
     			{
     				
-		    		if (saveAuditTrail == true)
-	    			{
-		    			//final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedMethod);
-		    			
-		    			LScfttransaction LScfttransaction = new LScfttransaction();
-						
-						LScfttransaction.setActions("Update");
-						LScfttransaction.setComments(instrumentBykey.get().getInstrumentcode()+" was updated to "+master.getInstrumentcode() );
-						LScfttransaction.setLssitemaster(master.getSite().getSitecode());
-						LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
-						LScfttransaction.setManipulatetype("Insert");
-						LScfttransaction.setModuleName("Instruments");
-						LScfttransaction.setTransactiondate(master.getTransactiondate());
-						LScfttransaction.setUsername(master.getUsername());
-						LScfttransaction.setTableName("instrumentmaster");
-						LScfttransaction.setSystemcoments("System Generated");
-						
-						lscfttransactionrepo.save(LScfttransaction);
-		    			
-	    			}
+//		    		if (saveAuditTrail == true)
+//	    			{
+//		    			//final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedMethod);
+//		    			
+//		    			LScfttransaction LScfttransaction = new LScfttransaction();
+//						
+//						LScfttransaction.setActions("Update");
+//						LScfttransaction.setComments(instrumentBykey.get().getInstrumentcode()+" was updated to "+master.getInstrumentcode() );
+//						LScfttransaction.setLssitemaster(master.getSite().getSitecode());
+//						LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
+//						LScfttransaction.setManipulatetype("Insert");
+//						LScfttransaction.setModuleName("Instruments");
+//						LScfttransaction.setTransactiondate(master.getTransactiondate());
+//						LScfttransaction.setUsername(master.getUsername());
+//						LScfttransaction.setTableName("instrumentmaster");
+//						LScfttransaction.setSystemcoments("System Generated");
+//						
+//						lscfttransactionrepo.save(LScfttransaction);
+//		    			
+//	    			}
 		    		
 		    		//copy of object for using 'Diffable' to compare objects
 	    			final InstrumentMaster instrumentBeforeSave = new InstrumentMaster(instrumentBykey.get());
@@ -527,35 +533,37 @@ public class InstMasterService {
 		    		
 		    		savedMethod.setDisplayvalue(savedMethod.getInstrumentcode());
 		    		savedMethod.setScreenname("Instrument");
-
+		    		savedMethod.setObjsilentaudit(master.getObjsilentaudit());
 
 		    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);	
     			}
     		}
      		else {
      			
-     			if (saveAuditTrail)
-    			{
-	    			//final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedMethod);
-	    			
-	    			LScfttransaction LScfttransaction = new LScfttransaction();
-					
-					LScfttransaction.setActions("Update");
-					LScfttransaction.setComments("Associated : "+master.getInstrumentcode());
-					LScfttransaction.setLssitemaster(master.getSite().getSitecode());
-					LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
-					LScfttransaction.setManipulatetype("Insert");
-					LScfttransaction.setModuleName("Instruments");
-					LScfttransaction.setTransactiondate(master.getTransactiondate());
-					LScfttransaction.setUsername(master.getUsername());
-					LScfttransaction.setTableName("instrumentmaster");
-					LScfttransaction.setSystemcoments("System Generated");
-					
-					lscfttransactionrepo.save(LScfttransaction);
-	    			
-    			}
+//     			if (saveAuditTrail)
+//    			{
+//	    			//final String xmlData = convertInstrumentMasterToXML(instrumentBeforeSave, savedMethod);
+//	    			
+//	    			LScfttransaction LScfttransaction = new LScfttransaction();
+//					
+//					LScfttransaction.setActions("Update");
+//					LScfttransaction.setComments("Associated : "+master.getInstrumentcode());
+//					LScfttransaction.setLssitemaster(master.getSite().getSitecode());
+//					LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
+//					LScfttransaction.setManipulatetype("Insert");
+//					LScfttransaction.setModuleName("Instruments");
+//					LScfttransaction.setTransactiondate(master.getTransactiondate());
+//					LScfttransaction.setUsername(master.getUsername());
+//					LScfttransaction.setTableName("instrumentmaster");
+//					LScfttransaction.setSystemcoments("System Generated");
+//					
+//					lscfttransactionrepo.save(LScfttransaction);
+//	    			
+//    			}
      			
-     			return new ResponseEntity<>(master.getInstrumentcode(), HttpStatus.IM_USED);//status code - 226
+     			master.setInfo("Associated : "+master.getInstrumentcode());
+     			//return new ResponseEntity<>(master.getInstrumentcode(), HttpStatus.IM_USED);//status code - 226
+     			return new ResponseEntity<>(master, HttpStatus.IM_USED);//status code - 226
      		}
      	}
      	else
@@ -690,7 +698,7 @@ public class InstMasterService {
     
   //  @Transactional
     public ResponseEntity<Object> deleteInstMaster(final Integer instMastKey,
-    		   final String comments, final Integer userKey, final HttpServletRequest request,InstrumentMaster otherdetails) {
+    		   final String comments, final Integer userKey, final HttpServletRequest request,InstrumentMaster otherdetails,InstrumentMaster instrumentMaster) {
          
     	boolean saveAuditTrial1 = true;
       	//This should be done only if the instrument is not binded in method setup
@@ -743,7 +751,7 @@ public class InstMasterService {
 	        
 	            savedInstrument.setDisplayvalue(savedInstrument.getInstrumentname());
 	            savedInstrument.setScreenname("Instrument");
-
+	            savedInstrument.setObjsilentaudit(instrumentMaster.getObjsilentaudit());
   	            	
   	            return new ResponseEntity<>(savedInstrument, HttpStatus.OK);//status code - 200   
   	                	}
@@ -758,27 +766,30 @@ public class InstMasterService {
 // 					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 // 							"Delete", sysComments, 
 // 							site, "", createdUser, request.getRemoteAddr());
- 				  if (saveAuditTrial1)
- 	    			{
+// 				  if (saveAuditTrial1)
+// 	    			{
+// 	    				
+// 	                 LScfttransaction LScfttransaction = new LScfttransaction();
+// 						
+// 						LScfttransaction.setActions("Delete");
+// 						LScfttransaction.setComments("Associated : "+instMaster.getInstrumentcode());
+// 						LScfttransaction.setLssitemaster(instMaster.getSite().getSitecode());
+// 						LScfttransaction.setLsuserMaster(instMaster.getCreatedby().getUsercode());
+// 						LScfttransaction.setManipulatetype("Insert");
+// 						LScfttransaction.setModuleName("Instruments");
+// 						LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
+// 						LScfttransaction.setUsername(otherdetails.getUsername());
+// 						LScfttransaction.setTableName("instrumentmaster");
+// 						LScfttransaction.setSystemcoments("System Generated");
+// 						
+// 						lscfttransactionrepo.save(LScfttransaction);
  	    				
- 	                 LScfttransaction LScfttransaction = new LScfttransaction();
- 						
- 						LScfttransaction.setActions("Delete");
- 						LScfttransaction.setComments("Associated : "+instMaster.getInstrumentcode());
- 						LScfttransaction.setLssitemaster(instMaster.getSite().getSitecode());
- 						LScfttransaction.setLsuserMaster(instMaster.getCreatedby().getUsercode());
- 						LScfttransaction.setManipulatetype("Insert");
- 						LScfttransaction.setModuleName("Instruments");
- 						LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
- 						LScfttransaction.setUsername(otherdetails.getUsername());
- 						LScfttransaction.setTableName("instrumentmaster");
- 						LScfttransaction.setSystemcoments("System Generated");
- 						
- 						lscfttransactionrepo.save(LScfttransaction);
- 	    				
- 	    			}  
+ 	    		//	}  
+ 				  instMaster.setInfo("Associated : "+instMaster.getInstrumentcode());
+ 				  instMaster.setObjsilentaudit(instrumentMaster.getObjsilentaudit());
  			   }
- 			   return new ResponseEntity<>(instMaster.getInstrumentname() , HttpStatus.IM_USED);//status code - 226		    		
+ 			 //  return new ResponseEntity<>(instMaster.getInstrumentname() , HttpStatus.IM_USED);//status code - 226		
+ 			  return new ResponseEntity<>(instMaster , HttpStatus.IM_USED);//status code - 226	
  		   }
       	} 
       	

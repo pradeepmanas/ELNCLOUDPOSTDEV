@@ -33,6 +33,7 @@ public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster
 	public List<LSprojectmaster> findByLssitemaster(LSSiteMaster lssitemaster);
 
 	public Object findByProjectnameIgnoreCaseAndLssitemaster(String projectname, LSSiteMaster lssitemaster);
+	public List<LSprojectmaster> findByLssitemasterAndStatus(LSSiteMaster lssitemaster, int i);
 	
 	
 }
