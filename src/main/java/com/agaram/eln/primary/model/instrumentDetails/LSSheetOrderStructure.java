@@ -74,6 +74,17 @@ public class LSSheetOrderStructure {
 	@Transient
 	private String teamname;
 	
+	@Transient
+	private List<LSuserMaster> lstuserMaster;
+	
+	public List<LSuserMaster> getLstuserMaster() {
+		return lstuserMaster;
+	}
+
+	public void setLstuserMaster(List<LSuserMaster> lstuserMaster) {
+		this.lstuserMaster = lstuserMaster;
+	}
+	
 	public String getTeamname() {
 		return teamname;
 	}

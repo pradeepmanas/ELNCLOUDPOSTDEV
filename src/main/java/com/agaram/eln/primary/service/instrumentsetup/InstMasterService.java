@@ -102,7 +102,7 @@ public class InstMasterService {
      */
 	@Transactional
     public ResponseEntity<Object> createInstMaster(final InstrumentMaster master,
-    		 final HttpServletRequest request) 
+    		 final HttpServletRequest request,InstrumentMaster auditdetails) 
     {      	
 		boolean saveAuditTrial=true;
 		final Optional<InstrumentMaster> masterByCode = masterRepo.findByInstrumentcodeAndSiteAndStatus(
@@ -127,7 +127,8 @@ public class InstMasterService {
 //			lscfttransactionrepo.save(LScfttransaction);
 			
 			master.setInfo("Duplicate Entry - " + masterByCode.get().getInstrumentcode());
-			
+ 			master.setObjsilentaudit(auditdetails.getObjsilentaudit());
+
 //  			return new ResponseEntity<>("Duplicate Entry - " + masterByCode.get().getInstrumentcode(), 
 //  					 HttpStatus.CONFLICT);
   			return new ResponseEntity<>(master,HttpStatus.CONFLICT);
@@ -151,7 +152,7 @@ public class InstMasterService {
 			
 	   		savedMaster.setDisplayvalue(savedMaster.getInstrumentname());
 	   		savedMaster.setScreenname("Instrument");
-	   		savedMaster.setObjsilentaudit(master.getObjsilentaudit());
+	   		savedMaster.setObjsilentaudit(auditdetails.getObjsilentaudit());
 			if (saveAuditTrial == true)
 			{
 			
@@ -365,7 +366,7 @@ public class InstMasterService {
 //    
         
     
-    public ResponseEntity<Object> updateInstMaster(final InstrumentMaster master, final String comments, final HttpServletRequest request) {
+    public ResponseEntity<Object> updateInstMaster(final InstrumentMaster master, final String comments, final HttpServletRequest request,InstrumentMaster auditdetails) {
     	    
     	Boolean saveAuditTrail = true;
     	final Optional<InstrumentMaster> instrumentByCode = masterRepo.findByInstrumentcodeAndSiteAndStatus(
@@ -451,6 +452,8 @@ public class InstMasterService {
 	     			
 	     			savedInstrument.setDisplayvalue(savedInstrument.getInstrumentname());
 	     			savedInstrument.setScreenname("Instrument");
+	     			savedInstrument.setObjsilentaudit(auditdetails.getObjsilentaudit());
+
 	     			
 
 //	     			if (saveAuditTrial)
@@ -495,6 +498,8 @@ public class InstMasterService {
 //	    			}
 	     			
 	     			master.setInfo("Duplicate Entry - " + master.getInstrumentcode());
+	     			master.setObjsilentaudit(auditdetails.getObjsilentaudit());
+
 //	     			return new ResponseEntity<>("Duplicate Entry - " + master.getInstrumentcode(), 
 //	     					 HttpStatus.CONFLICT);   
 	     			return new ResponseEntity<>(master, HttpStatus.CONFLICT); 
@@ -533,7 +538,7 @@ public class InstMasterService {
 		    		
 		    		savedMethod.setDisplayvalue(savedMethod.getInstrumentcode());
 		    		savedMethod.setScreenname("Instrument");
-		    		savedMethod.setObjsilentaudit(master.getObjsilentaudit());
+		    		savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());
 
 		    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);	
     			}
@@ -562,6 +567,7 @@ public class InstMasterService {
 //    			}
      			
      			master.setInfo("Associated : "+master.getInstrumentcode());
+     			master.setObjsilentaudit(auditdetails.getObjsilentaudit());
      			//return new ResponseEntity<>(master.getInstrumentcode(), HttpStatus.IM_USED);//status code - 226
      			return new ResponseEntity<>(master, HttpStatus.IM_USED);//status code - 226
      		}
@@ -698,7 +704,7 @@ public class InstMasterService {
     
   //  @Transactional
     public ResponseEntity<Object> deleteInstMaster(final Integer instMastKey,
-    		   final String comments, final Integer userKey, final HttpServletRequest request,InstrumentMaster otherdetails,InstrumentMaster instrumentMaster) {
+    		   final String comments, final Integer userKey, final HttpServletRequest request,InstrumentMaster otherdetails,InstrumentMaster auditdetails) {
          
     	boolean saveAuditTrial1 = true;
       	//This should be done only if the instrument is not binded in method setup
@@ -751,7 +757,7 @@ public class InstMasterService {
 	        
 	            savedInstrument.setDisplayvalue(savedInstrument.getInstrumentname());
 	            savedInstrument.setScreenname("Instrument");
-	            savedInstrument.setObjsilentaudit(instrumentMaster.getObjsilentaudit());
+	            savedInstrument.setObjsilentaudit(auditdetails.getObjsilentaudit());
   	            	
   	            return new ResponseEntity<>(savedInstrument, HttpStatus.OK);//status code - 200   
   	                	}
@@ -786,7 +792,7 @@ public class InstMasterService {
  	    				
  	    		//	}  
  				  instMaster.setInfo("Associated : "+instMaster.getInstrumentcode());
- 				  instMaster.setObjsilentaudit(instrumentMaster.getObjsilentaudit());
+ 				  instMaster.setObjsilentaudit(auditdetails.getObjsilentaudit());
  			   }
  			 //  return new ResponseEntity<>(instMaster.getInstrumentname() , HttpStatus.IM_USED);//status code - 226		
  			  return new ResponseEntity<>(instMaster , HttpStatus.IM_USED);//status code - 226	

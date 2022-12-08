@@ -149,6 +149,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	Integer searchCriteriaType;
 	
+	@Transient
+	private List<LSuserMaster> lstuserMaster;
+	
+	public List<LSuserMaster> getLstuserMaster() {
+		return lstuserMaster;
+	}
+
+	public void setLstuserMaster(List<LSuserMaster> lstuserMaster) {
+		this.lstuserMaster = lstuserMaster;
+	}
+
 	public List<Long> getLstdirectorycode() {
 		return lstdirectorycode;
 	}

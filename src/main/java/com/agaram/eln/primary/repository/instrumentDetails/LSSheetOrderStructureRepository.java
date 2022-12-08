@@ -32,8 +32,10 @@ public interface LSSheetOrderStructureRepository extends JpaRepository<LSSheetOr
 	
 	List<LSSheetOrderStructure> findByDirectorycodeIn(List<Long> directorycode);
 
-	List<LSSheetOrderStructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
+	List<LSSheetOrderStructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j, LSSiteMaster lssitemaster2, int k,
-			List<Integer> lSuserteammappingobj);
+			List<LSuserMaster> lstuserMaster);
+
+
 	
 }

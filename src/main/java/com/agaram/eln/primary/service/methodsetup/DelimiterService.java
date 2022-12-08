@@ -104,9 +104,8 @@ public class DelimiterService {
 //	  			return new ResponseEntity<>("Duplicate Entry - " + delimiters.getDelimitername(), 
 //	  					 HttpStatus.CONFLICT);
 	    		delimiters.setInfo("Duplicate Entry - " + delimiters.getDelimitername());
-	    		
-	  			return new ResponseEntity<>(delimiters, 
-	  					 HttpStatus.CONFLICT);
+	    		delimiters.setObjsilentaudit(auditdetails.getObjsilentaudit());
+	  			return new ResponseEntity<>(delimiters, HttpStatus.CONFLICT);
 	    	}
 	    	else
 	    	{    		
@@ -115,7 +114,7 @@ public class DelimiterService {
 	    		final Delimiter savedPolicy = delimitersRepo.save(delimiters);
 	    		savedPolicy.setDisplayvalue(savedPolicy.getDelimitername());
 	    		savedPolicy.setScreenname("Delimiter");
-	    		savedPolicy.setObjsilentaudit(delimiters.getObjsilentaudit());
+	    		savedPolicy.setObjsilentaudit(auditdetails.getObjsilentaudit());
 	    		
 					final Map<String, String> fieldMap = new HashMap<String, String>();
 					fieldMap.put("createdby", "loginid");
@@ -364,7 +363,7 @@ public class DelimiterService {
 				    		savedDelimiters.setDisplayvalue(savedDelimiters.getActualdelimiter());
 				    		savedDelimiters.setScreenname("Delimiter");
 
-				    		savedDelimiters.setObjsilentaudit(delimiters.getObjsilentaudit());
+				    		savedDelimiters.setObjsilentaudit(auditdetails.getObjsilentaudit());
 
 				    		
 				       		return new ResponseEntity<>(savedDelimiters, HttpStatus.OK);     		
@@ -372,12 +371,10 @@ public class DelimiterService {
 			    		else
 			    		{ 	
 			    			//Conflict =409 - Duplicate entry
-			    			if (saveAuditTrail == true)
-			    			{						
-			    				final String sysComments = "Update Failed for duplicate delimiter name -"+ delimiters.getDelimitername();
-			    				 
-			    			}
+			    		
 			    			delimiters.setInfo("Duplicate Entry - " + delimiters.getDelimitername());
+			    			delimiters.setObjsilentaudit(auditdetails.getObjsilentaudit());
+			    			
 			    			return new ResponseEntity<>(delimiters, 
 			    					 HttpStatus.CONFLICT);      			
 			    		}
@@ -395,19 +392,16 @@ public class DelimiterService {
 			    		
 			    		savedMethod.setDisplayvalue(savedMethod.getDelimitername());
 			    		savedMethod.setScreenname("Delimiter");
-			    		savedMethod.setObjsilentaudit(delimiters.getObjsilentaudit());
+			    		savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());
 
 			    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
 			    	}	
 		   		}
 		   		else {
 		   			//Associated with child- cannot be updated
-		   			if (saveAuditTrail)
-				    {
-					   final String sysComments = "Update Failed as delimiter - "+ delimiterByKey.get().getDelimitername() + " is associated with Method Delimiter";
-		  
-					   delimiters.setInfo("Delimiter Associated - " + delimiters.getDelimitername());
-				   }
+		   			
+		   			delimiters.setInfo("Delimiter Associated - " + delimiters.getDelimitername());
+		   			delimiters.setObjsilentaudit(auditdetails.getObjsilentaudit());
 				   return new ResponseEntity<>(delimiters, HttpStatus.IM_USED);//status code - 226		    		
 		   		}
 		   }
@@ -438,7 +432,7 @@ public class DelimiterService {
   public ResponseEntity<Object> deleteDelimters(final int delimiterKey, 
 
 		   final LSSiteMaster site, final String comments, final int doneByUserKey,  
-		   final HttpServletRequest request, Delimiter otherdetails,Delimiter delimiters)
+		   final HttpServletRequest request, Delimiter otherdetails,Delimiter auditdetails)
  {	   
 	  Boolean saveAuditTrial = true;
 	   final Optional<Delimiter> delimiterByKey = delimitersRepo.findByDelimiterkeyAndStatus(delimiterKey, 1);
@@ -463,20 +457,16 @@ public class DelimiterService {
 				   
 				   savedDelimiters.setDisplayvalue(savedDelimiters.getDelimitername());
 				   savedDelimiters.setScreenname("Delimiter");
-				   savedDelimiters.setObjmanualaudit(delimiters.getObjmanualaudit());
-				   savedDelimiters.setObjsilentaudit(delimiters.getObjsilentaudit());
+				   //savedDelimiters.setObjmanualaudit(delimiters.getObjmanualaudit());
+				   savedDelimiters.setObjsilentaudit(auditdetails.getObjsilentaudit());
 
 			   return new ResponseEntity<>(savedDelimiters, HttpStatus.OK);  
 		   }
 		   else {
 			   //Associated with Method Delimiter
-			   if (saveAuditTrial)
-			   {
-
-				   delimiter.setObjmanualaudit(delimiters.getObjmanualaudit());
-				   delimiter.setObjsilentaudit(delimiters.getObjsilentaudit());
-				   delimiter.setInfo("Delimiter : " +delimiter.getDelimitername()+ " is used");
-			   }
+			
+			   delimiter.setObjsilentaudit(auditdetails.getObjsilentaudit());
+			   delimiter.setInfo("Delimiter : " +delimiter.getDelimitername()+ " is used");
 			 //  return new ResponseEntity<>(delimiter.getDelimitername() , HttpStatus.IM_USED);//status code - 226	
 			   return new ResponseEntity<>(delimiter , HttpStatus.IM_USED);//status code - 226	
 			   

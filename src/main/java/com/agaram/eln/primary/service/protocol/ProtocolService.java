@@ -4247,14 +4247,10 @@ public class ProtocolService {
 			mapOrders.put("orders", Getadministratororder(objorder));
 			mapOrders.put("ordercount", LSlogilabprotocoldetailRepository.count());
 		} else {
-			List<LSusersteam> lsusersteamobj = lsusersteamRepository
-					.findBylssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
-			List<Integer> teamcode = lsusersteamobj.stream().map(LSusersteam::getTeamcode).collect(Collectors.toList());
-			List<Integer> LSuserteammappingobj = lsuserteammappingRepository.getusermastercode(teamcode,
-					objorder.getLsuserMaster());
+			
 			List<Lsprotocolorderstructure> lstdir = new ArrayList<Lsprotocolorderstructure>();
 			List<Long> directorycode = new ArrayList<Long>();
-			if (teamcode.size() == 0) {
+			if (objorder.getLstuserMaster().size() == 0) {
 				lstdir = lsprotocolorderStructurerepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
 								objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2);
@@ -4262,9 +4258,9 @@ public class ProtocolService {
 						.collect(Collectors.toList());
 			} else {
 				lstdir = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
+						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
 								objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
-								objorder.getLsuserMaster().getLssitemaster(), 3, LSuserteammappingobj);
+								objorder.getLsuserMaster().getLssitemaster(), 3, objorder.getLstuserMaster());
 				directorycode = lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode)
 						.collect(Collectors.toList());
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
+import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.service.instrumentsetup.InstMasterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -86,8 +87,9 @@ public class InstMasterController {
 		  final InstrumentMaster master = mapper.convertValue(mapObject.get("instMaster"), InstrumentMaster.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  //final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
-		  
-		  return  masterService.createInstMaster(master, request);
+		  final InstrumentMaster auditdetails = mapper.convertValue(mapObject.get("auditdetails"), InstrumentMaster.class);
+
+		  return  masterService.createInstMaster(master, request,auditdetails);
    }
 
     /**
@@ -107,8 +109,9 @@ public class InstMasterController {
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 //		  final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);	
-		  
-          return  masterService.updateInstMaster(master, comments, request);
+		  final InstrumentMaster auditdetails = mapper.convertValue(mapObject.get("auditdetails"), InstrumentMaster.class);
+
+          return  masterService.updateInstMaster(master, comments, request,auditdetails);
     }   
     
     /**
@@ -130,10 +133,11 @@ public class InstMasterController {
 		  final int doneByUserKey = Integer.parseInt(strUserKey);
 		  final  InstrumentMaster  otherdetails = mapper.convertValue(mapObject.get("otherdetails"), InstrumentMaster.class);
 		  
-		  final  InstrumentMaster  instrumentMaster = mapper.convertValue(mapObject.get("instMaster"), InstrumentMaster.class);
-		  
+		//  final  InstrumentMaster  instrumentMaster = mapper.convertValue(mapObject.get("instMaster"), InstrumentMaster.class);
+		  final InstrumentMaster auditdetails = mapper.convertValue(mapObject.get("auditdetails"), InstrumentMaster.class);
+
 		  return masterService.deleteInstMaster((Integer) mapObject.get("instmastkey"), 
-				   (String)mapObject.get("comments"),doneByUserKey,  request,otherdetails,instrumentMaster);
+				   (String)mapObject.get("comments"),doneByUserKey,  request,otherdetails,auditdetails);
     }
     
     /**

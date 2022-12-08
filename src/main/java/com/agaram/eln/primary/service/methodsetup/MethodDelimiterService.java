@@ -89,7 +89,7 @@ public class MethodDelimiterService {
 	 */
 	@Transactional
 	public ResponseEntity<Object> createMethodDelimiter(final MethodDelimiter methodDelimiter, final LSSiteMaster site,
-			    final HttpServletRequest request)
+			    final HttpServletRequest request,MethodDelimiter auditdetails)
 		{ 
 		    boolean saveAuditTrial = true;
 		   final ParserMethod parserMethod = parserMethodRepo.findOne(methodDelimiter.getParsermethod().getParsermethodkey());
@@ -129,6 +129,8 @@ public class MethodDelimiterService {
 	    			
 	    			methodDelimiter.setInfo("Duplicate Entry - " + methodDelimiterByDelimiter.get().getDelimiter().getDelimitername()
 	  					+" for " + methodDelimiterByDelimiter.get().getParsermethod().getParsermethodname());
+
+	    			methodDelimiter.setObjsilentaudit(auditdetails.getObjsilentaudit());
 				}
 //	  			return new ResponseEntity<>("Duplicate Entry - " + methodDelimiterByDelimiter.get().getDelimiter().getDelimitername()
 //	  					+" for " + methodDelimiterByDelimiter.get().getParsermethod().getParsermethodname(), 
@@ -145,53 +147,14 @@ public class MethodDelimiterService {
 	    		savedMethodDelimiter.setDisplayvalue(savedMethodDelimiter.getParsermethod().getParsermethodname());
 	    		savedMethodDelimiter.setScreenname("MethodDelimiter");
 	    	//	savedMethodDelimiter.setObjmanualaudit(methodDelimiter.getObjmanualaudit());
-	    	//	savedMethodDelimiter.setObjsilentaudit(methodDelimiter.getObjsilentaudit());
+	    		savedMethodDelimiter.setObjsilentaudit(auditdetails.getObjsilentaudit());
 	    		
-//	    		Map<String, Object> mapObj = new HashMap<String, Object>();
-//
-//	    		mapObj.put("parsermethod",savedMethodDelimiter.getParsermethod());
-//	    		mapObj.put("createdby",savedMethodDelimiter.getCreatedby());
-//                mapObj.put("createddate",savedMethodDelimiter.getCreateddate());
-//	    		mapObj.put("transactiondate",new Date());
-//	    		mapObj.put("delimiter",savedMethodDelimiter.getDelimiter());   		
-//	    		mapObj.put("status",savedMethodDelimiter.getStatus());
-//	    		mapObj.put("methoddelimiterkey", savedMethodDelimiter.getMethoddelimiterkey());
-//	    		mapObj.put("username", savedMethodDelimiter.getUsername());
-//	    		mapObj.put("displayvalue", savedMethodDelimiter.getParsermethod().getParsermethodname());
-//	    		mapObj.put("screenname", "MethodDelimiter");
-	    		
-//	    		if (saveAuditTrial)
-//				{   			
+		
 					final Map<String, String> fieldMap = new HashMap<String, String>();
 					fieldMap.put("createdby", "loginid");
 					fieldMap.put("parsermethod", "parsermethodname");
 					fieldMap.put("delimiter", "delimitername");
-					
-//					LScfttransaction LScfttransaction = new LScfttransaction();
-//					
-//					LScfttransaction.setActions("Insert"); 
-//					LScfttransaction.setComments(methodDelimiter.getDelimiter().getDelimitername()
-//		  					+" for " + methodDelimiter.getParsermethod().getParsermethodname() +" was creadted by " + 
-//							methodDelimiter.getCreatedby().getUsername());
-//							
-//					LScfttransaction.setLssitemaster(site.getSitecode());
-//					LScfttransaction.setLsuserMaster(methodDelimiter.getCreatedby().getUsercode());
-//					LScfttransaction.setManipulatetype("View/Load");
-//					LScfttransaction.setModuleName("Method Delimiter");
-//					LScfttransaction.setTransactiondate(methodDelimiter.getCreateddate());
-//					LScfttransaction.setUsername(methodDelimiter.getCreatedby().getUsername());
-//					LScfttransaction.setTableName("Methoddelimiter");
-//					LScfttransaction.setSystemcoments("System Generated");
-//					
-//					lscfttransactionrepo.save(LScfttransaction);
-					
-					
-//					final String xmlData = readWriteXML.saveXML(savedMethodDelimiter, MethodDelimiter.class, null, "individualpojo", fieldMap);
-//									
-//					final String actionType = EnumerationInfo.CFRActionType.SYSTEM.getActionType();
-//					cfrTransService.saveCfrTransaction(page, actionType, "Create", "", 
-//							site, xmlData, createdUser, request.getRemoteAddr());
-			//	}
+		
 	      		
 	    		return new ResponseEntity<>(savedMethodDelimiter , HttpStatus.OK);
 	    	} 
@@ -211,7 +174,7 @@ public class MethodDelimiterService {
 	 */
    @Transactional
    public ResponseEntity<Object> updateMethodDelimiter(final MethodDelimiter methodDelimiter, final LSSiteMaster site,
-		   final String comments, final HttpServletRequest request, final int doneByUserKey)
+		   final String comments, final HttpServletRequest request, final int doneByUserKey,MethodDelimiter auditdetails)
    {	   
 	   Boolean saveAuditTrail= true;
 	   final Optional<MethodDelimiter> methodDelimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatus(methodDelimiter.getMethoddelimiterkey(), 1);
@@ -261,7 +224,7 @@ public class MethodDelimiterService {
 				    		
 				    			methodDelimiter.setInfo("Duplicate Entry - " + methodDelimiterByDelimiter.get().getDelimiter().getDelimitername() +" for Delimiter : " + methodDelimiterByDelimiter.get().getParsermethod().getParsermethodname());
 				    			
-				    			
+				    			methodDelimiter.setObjsilentaudit(auditdetails.getObjsilentaudit());
 //				    			return new ResponseEntity<>("Duplicate Entry - " + methodDelimiterByDelimiter.get().getDelimiter().getDelimitername() +" for Delimiter : " + methodDelimiterByDelimiter.get().getParsermethod().getParsermethodname(),
 //				    					HttpStatus.CONFLICT);    
 				    			return new ResponseEntity<>(methodDelimiter,HttpStatus.CONFLICT);  
@@ -278,13 +241,13 @@ public class MethodDelimiterService {
 				    		
 				    		savedMethodDelimiter.setDisplayvalue(savedMethodDelimiter.getParsermethod().getParsermethodname());
 				    		savedMethodDelimiter.setScreenname("MethodDelimiter");
-				    		savedMethodDelimiter.setObjsilentaudit(methodDelimiter.getObjsilentaudit());
+				    		savedMethodDelimiter.setObjsilentaudit(auditdetails.getObjsilentaudit());
 	
 				    		return new ResponseEntity<>(savedMethodDelimiter , HttpStatus.OK);			    		
 				    	}	
 		   		}
 		   		else {
-		   		 //Not Eligible to update as associated with some child
+		   		 //Not Eligible to update as associated with some childR
 		   			if (saveAuditTrail)
 		   			{
 					   final String sysComments = "Update Failed as methoddelimiter is associated with either ParserField /SubParserTechnique";
@@ -310,6 +273,8 @@ public class MethodDelimiterService {
 						
 				   }
 		   			methodDelimiter.setInfo(methodDelimiterByKey.get().getParsermethod().getParsermethodname() +"-" + methodDelimiterByKey.get().getDelimiter().getDelimitername());
+
+	    			methodDelimiter.setObjsilentaudit(auditdetails.getObjsilentaudit());
 //				   return new ResponseEntity<>(methodDelimiterByKey.get().getParsermethod().getParsermethodname() +"-" + methodDelimiterByKey.get().getDelimiter().getDelimitername() ,
 //						   HttpStatus.IM_USED);//status code - 226
 		   			return new ResponseEntity<>(methodDelimiter ,HttpStatus.IM_USED);//status code - 226
@@ -356,7 +321,7 @@ public class MethodDelimiterService {
 	 */
   @Transactional
   public ResponseEntity<Object> deleteMethodDelimiter(final int methodDelimiterKey, 
-		   final LSSiteMaster site, final String comments, final int doneByUserKey, final HttpServletRequest request,final MethodDelimiter otherdetails,MethodDelimiter methodDelimiter)
+		   final LSSiteMaster site, final String comments, final int doneByUserKey, final HttpServletRequest request,final MethodDelimiter otherdetails,MethodDelimiter auditdetails)
  {	   
 	   Boolean saveAuditTrial = true;
 	   final Optional<MethodDelimiter> delimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatus(methodDelimiterKey, 1);
@@ -404,37 +369,37 @@ public class MethodDelimiterService {
 				   savedDelimiters.setDisplayvalue(savedDelimiters.getParsermethod().getParsermethodname());
 				   savedDelimiters.setScreenname("MethodDelimiter");
 		    		
-				   savedDelimiters.setObjsilentaudit(methodDelimiter.getObjsilentaudit());
+				   savedDelimiters.setObjsilentaudit(auditdetails.getObjsilentaudit());
 
 			   return new ResponseEntity<>(savedDelimiters, HttpStatus.OK);  
 		   }
 		 }
 		   else {
 			   //Associated with ParserField or SubParserTechnique
-			   if (saveAuditTrial)
-			   {
-	
-                  LScfttransaction LScfttransaction = new LScfttransaction();
-					
-					LScfttransaction.setActions("Delete"); 
-					LScfttransaction.setComments("Associated : " +delimiter.getParsermethod().getParsermethodname() +"-" + delimiter.getDelimiter().getDelimitername());
-					LScfttransaction.setLssitemaster(site.getSitecode());
-					LScfttransaction.setLsuserMaster(doneByUserKey);
-					LScfttransaction.setManipulatetype("View/Load");
-					LScfttransaction.setModuleName("Method Delimiter");
-					LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
-					LScfttransaction.setUsername(otherdetails.getUsername());
-					LScfttransaction.setTableName("Methoddelimiter");
-					LScfttransaction.setSystemcoments("System Generated");
-					
-					lscfttransactionrepo.save(LScfttransaction);
-			   }
+//			   if (saveAuditTrial)
+//			   {
+//	
+//                  LScfttransaction LScfttransaction = new LScfttransaction();
+//					
+//					LScfttransaction.setActions("Delete"); 
+//					LScfttransaction.setComments("Associated : " +delimiter.getParsermethod().getParsermethodname() +"-" + delimiter.getDelimiter().getDelimitername());
+//					LScfttransaction.setLssitemaster(site.getSitecode());
+//					LScfttransaction.setLsuserMaster(doneByUserKey);
+//					LScfttransaction.setManipulatetype("View/Load");
+//					LScfttransaction.setModuleName("Method Delimiter");
+//					LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
+//					LScfttransaction.setUsername(otherdetails.getUsername());
+//					LScfttransaction.setTableName("Methoddelimiter");
+//					LScfttransaction.setSystemcoments("System Generated");
+//					
+//					lscfttransactionrepo.save(LScfttransaction);
+//			   }
 			   delimiter.setInfo("Associated : " + delimiter.getParsermethod().getParsermethodname() +"-" + delimiter.getDelimiter().getDelimitername());
+			   delimiter.setObjsilentaudit(auditdetails.getObjsilentaudit());
 			   
 //			   return new ResponseEntity<>(delimiter.getParsermethod().getParsermethodname() +"-" + delimiter.getDelimiter().getDelimitername() ,
 //					   HttpStatus.IM_USED);//status code - 226	
-			   return new ResponseEntity<>(delimiter ,
-					   HttpStatus.IM_USED);//status code - 226	
+			   return new ResponseEntity<>(delimiter ,HttpStatus.IM_USED);//status code - 226	
 		   }
 	   }
 		   else {

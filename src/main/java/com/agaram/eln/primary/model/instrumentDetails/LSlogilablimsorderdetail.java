@@ -85,6 +85,17 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
 	Date modifidate;
+	
+	@Transient
+	private List<LSuserMaster> lstuserMaster;
+	
+	public List<LSuserMaster> getLstuserMaster() {
+		return lstuserMaster;
+	}
+
+	public void setLstuserMaster(List<LSuserMaster> lstuserMaster) {
+		this.lstuserMaster = lstuserMaster;
+	}
 
 	public Date getModifidate() {
 		return modifidate;

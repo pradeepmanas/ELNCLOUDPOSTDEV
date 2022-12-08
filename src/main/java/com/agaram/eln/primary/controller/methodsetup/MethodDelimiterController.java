@@ -52,11 +52,11 @@ public class MethodDelimiterController {
 		  final MethodDelimiter methodDelimiter = mapper.convertValue(mapObject.get("methoddelimiter"), MethodDelimiter.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-		  //final MethodDelimiter auditdetails = mapper.convertValue(mapObject.get("auditdetails"), MethodDelimiter.class);
+		  final MethodDelimiter auditdetails = mapper.convertValue(mapObject.get("auditdetails"), MethodDelimiter.class);
 
 		  
 		  return methodDelimiterService
-				  .createMethodDelimiter(methodDelimiter, site, request);
+				  .createMethodDelimiter(methodDelimiter, site, request,auditdetails);
 	  }
 	  
 	  /**
@@ -76,8 +76,9 @@ public class MethodDelimiterController {
 		  
 		  final int doneByUserKey = Integer.parseInt(strUserKey);
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
+		  final MethodDelimiter auditdetails = mapper.convertValue(mapObject.get("auditdetails"), MethodDelimiter.class);
 		  
-		  return methodDelimiterService.updateMethodDelimiter(methodDelimiter, site, comments,  request, doneByUserKey);
+		  return methodDelimiterService.updateMethodDelimiter(methodDelimiter, site, comments,  request, doneByUserKey,auditdetails);
 	  }
 	  
 	  /**
@@ -91,7 +92,7 @@ public class MethodDelimiterController {
 		  final ObjectMapper mapper = new ObjectMapper();	
 		 
 		  final int methodDelimiterKey = mapper.convertValue(mapObject.get("methoddelimiterkey"), Integer.class);
-		  final MethodDelimiter methodDelimiter = mapper.convertValue(mapObject.get("methoddelimiter"), MethodDelimiter.class);
+		  final MethodDelimiter auditdetails = mapper.convertValue(mapObject.get("auditdetails"), MethodDelimiter.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 //		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
@@ -103,7 +104,7 @@ public class MethodDelimiterController {
 
 		  final MethodDelimiter otherdetails = mapper.convertValue(mapObject.get("otherdetails"), MethodDelimiter.class);
 		  
-		  return methodDelimiterService.deleteMethodDelimiter(methodDelimiterKey, site, comments, doneByUserKey,  request , otherdetails,methodDelimiter);
+		  return methodDelimiterService.deleteMethodDelimiter(methodDelimiterKey, site, comments, doneByUserKey,  request , otherdetails,auditdetails);
 	  }
 
 }

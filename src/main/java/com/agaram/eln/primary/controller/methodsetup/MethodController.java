@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.MethodVersion;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -85,8 +86,9 @@ public class MethodController {
 		  final Method method = mapper.convertValue(mapObject.get("methodmaster"), Method.class);
 	//	  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
 		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
+		  final Method auditdetails = mapper.convertValue(mapObject.get("auditdetails"), Method.class);
 
-		  return methodService.createMethod(method, site,request);
+		  return methodService.createMethod(method, site,request,auditdetails);
 	  }
 	  
 	  /**
@@ -107,8 +109,9 @@ public class MethodController {
 		  String someValue =  (String) mapObject.get("doneByUserKey");
 		  final int doneByUserKey = Integer.parseInt(someValue);
 		//  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
-		  
-		  return methodService.updateMethod(method, site, doneByUserKey,request);
+		  final Method auditdetails = mapper.convertValue(mapObject.get("auditdetails"), Method.class);
+
+		  return methodService.updateMethod(method, site, doneByUserKey,request,auditdetails);
 	  }
 	  
 	  /**
@@ -129,8 +132,10 @@ public class MethodController {
 		  final int doneByUserKey = Integer.parseInt(someValue);
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
 		  final Method otherdetails = mapper.convertValue(mapObject.get("otherdetails"), Method.class);
-		  final Method methodmaster = mapper.convertValue(mapObject.get("methodmaster"), Method.class);
-		  return methodService.deleteMethod(methodKey, site, comments, doneByUserKey, request,otherdetails,methodmaster);
+		 // final Method methodmaster = mapper.convertValue(mapObject.get("methodmaster"), Method.class);
+		  final Method auditdetails = mapper.convertValue(mapObject.get("auditdetails"), Method.class);
+
+		  return methodService.deleteMethod(methodKey, site, comments, doneByUserKey, request,otherdetails,auditdetails);
 		  
 //		  return methodService.deleteMethod(methodKey, site, comments, doneByUserKey,
 //				  saveAuditTrail, request);

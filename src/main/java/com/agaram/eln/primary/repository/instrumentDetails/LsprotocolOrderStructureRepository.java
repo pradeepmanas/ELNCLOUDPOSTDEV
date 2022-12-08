@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
@@ -35,9 +36,13 @@ public interface LsprotocolOrderStructureRepository extends JpaRepository<Lsprot
 	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j);
 
-	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndTeamcodeInOrderByDirectorycode(
+	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j, LSSiteMaster lssitemaster2, int k,
-			List<Integer> lSuserteammappingobj);
+			List<LSuserMaster> lstuserMaster);
+
+
+
+
 
 
 

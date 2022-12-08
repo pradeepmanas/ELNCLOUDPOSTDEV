@@ -186,7 +186,7 @@ public class MethodService {
     * @return Response of newly added method entity
     */
 	@Transactional
-	public ResponseEntity<Object> createMethod(final Method methodMaster, final LSSiteMaster site, final HttpServletRequest request)
+	public ResponseEntity<Object> createMethod(final Method methodMaster, final LSSiteMaster site, final HttpServletRequest request,Method auditdetails)
 	{			
 		boolean saveAuditTrail=true;
 		final InstrumentMaster instMaster = instMastRepo.findOne(methodMaster.getInstmaster().getInstmastkey());
@@ -223,10 +223,11 @@ public class MethodService {
 //					lscfttransactionrepo.save(LScfttransaction);
 				}
 				methodMaster.setInfo("Duplicate Entry - " + methodMaster.getMethodname() + " for inst : " + instMaster.getInstrumentcode());
+				methodMaster.setObjsilentaudit(auditdetails.getObjsilentaudit());
+
 //	  			return new ResponseEntity<>("Duplicate Entry - " + methodMaster.getMethodname() + " - " + instMaster.getInstrumentcode(), 
 //	  					 HttpStatus.CONFLICT);
-				return new ResponseEntity<>(methodMaster, 
-	  					 HttpStatus.CONFLICT);
+				return new ResponseEntity<>(methodMaster, HttpStatus.CONFLICT);
 			}
 			else
 			{							
@@ -238,7 +239,7 @@ public class MethodService {
 				
 				savedMethod.setDisplayvalue(savedMethod.getMethodname());
 				savedMethod.setScreenname("Methodmaster");
-				savedMethod.setObjsilentaudit(methodMaster.getObjsilentaudit());
+				savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());
 //				if (saveAuditTrail == true)
 //				{
 					final Map<String, String> fieldMap = new HashMap<String, String>();
@@ -393,7 +394,7 @@ public class MethodService {
 //   }	
 	
 	public ResponseEntity<Object> updateMethod(final Method method, final LSSiteMaster site, final int doneByUserKey, 
-			    final HttpServletRequest request)
+			    final HttpServletRequest request,Method auditdetails)
 	{	  		
 		boolean saveAuditTrail=true;
 		final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);		
@@ -424,7 +425,7 @@ public class MethodService {
 		    		
 		    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
 		    		savedMethod.setScreenname("Methodmaster");
-		    		savedMethod.setObjsilentaudit(method.getObjsilentaudit());
+		    		savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());
 //		    		if (saveAuditTrail)
 //	    			{
 //		    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
@@ -477,6 +478,7 @@ public class MethodService {
 	    		//	}
 	    			
 					method.setInfo("Duplicate Entry - " + method.getMethodname() + " for inst " + instMaster.getInstrumentcode());
+					method.setObjsilentaudit(auditdetails.getObjsilentaudit());
 //	    			return new ResponseEntity<>("Duplicate Entry - " + method.getMethodname() + " - " + instMaster.getInstrumentcode(), 
 //		  					 HttpStatus.CONFLICT);   
 	    			return new ResponseEntity<>(method, HttpStatus.CONFLICT);   
@@ -494,31 +496,33 @@ public class MethodService {
 	    		final Method savedMethod = methodRepo.save(method);
 	    		
 	    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
+	    		savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());
+
 				savedMethod.setScreenname("Methodmaster");
 				
 	    		
-	    		if (saveAuditTrail)
-			{
-	    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
-	    			
-//	    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
-//							"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
-	    			
-	    			 LScfttransaction LScfttransaction = new LScfttransaction();
-	 					
-	 					LScfttransaction.setActions("Update");
-	 					LScfttransaction.setComments(method.getMethodname()+" was updated by "+method.getUsername());
-	 					LScfttransaction.setLssitemaster(site.getSitecode());
-	 					LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
-	 					LScfttransaction.setManipulatetype("View/Load");
-	 					LScfttransaction.setModuleName("Method Master");
-	 					LScfttransaction.setTransactiondate(method.getCreateddate());
-	 					LScfttransaction.setUsername(method.getUsername());
-	 					LScfttransaction.setTableName("Method");
-	 					LScfttransaction.setSystemcoments("System Generated");
-	 					
-	 					lscfttransactionrepo.save(LScfttransaction);
-			}
+//	    		if (saveAuditTrail)
+//			{
+//	    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
+//	    			
+////	    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
+////							"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
+//	    			
+//	    			 LScfttransaction LScfttransaction = new LScfttransaction();
+//	 					
+//	 					LScfttransaction.setActions("Update");
+//	 					LScfttransaction.setComments(method.getMethodname()+" was updated by "+method.getUsername());
+//	 					LScfttransaction.setLssitemaster(site.getSitecode());
+//	 					LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
+//	 					LScfttransaction.setManipulatetype("View/Load");
+//	 					LScfttransaction.setModuleName("Method Master");
+//	 					LScfttransaction.setTransactiondate(method.getCreateddate());
+//	 					LScfttransaction.setUsername(method.getUsername());
+//	 					LScfttransaction.setTableName("Method");
+//	 					LScfttransaction.setSystemcoments("System Generated");
+//	 					
+//	 					lscfttransactionrepo.save(LScfttransaction);
+//			}
 
 	    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
 	    	}	
@@ -593,7 +597,7 @@ public class MethodService {
 	 @Transactional()
 	   public ResponseEntity<Object> deleteMethod(final int methodKey, 
 			   final LSSiteMaster site, final String comments, final int doneByUserKey, 
-			   final HttpServletRequest request,final Method otherdetails,final Method methodmaster)
+			   final HttpServletRequest request,final Method otherdetails,Method auditdetails)
 	   {	   
 		  boolean saveAuditTrial=true;
 		   final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);
@@ -628,6 +632,8 @@ public class MethodService {
 						
 		    	    }
 				    method.setInfo("Associated - "+ method.getMethodname());
+				    method.setObjsilentaudit(auditdetails.getObjsilentaudit());
+				    
 				 //   return new ResponseEntity<>(method.getMethodname() , HttpStatus.IM_USED);//status code - 226	
 				    return new ResponseEntity<>(method , HttpStatus.IM_USED);//status code - 226
 			   }
@@ -642,7 +648,7 @@ public class MethodService {
 					   
 					   savedMethod.setDisplayvalue(savedMethod.getMethodname());
 					   savedMethod.setScreenname("Methodmaster");
-					   savedMethod.setObjsilentaudit(methodmaster.getObjsilentaudit());
+					   savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());
 				   return new ResponseEntity<>(savedMethod, HttpStatus.OK); 
 			   }
 		   }

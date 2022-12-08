@@ -85,6 +85,19 @@ public class Lsprotocolorderstructure {
 
 	@Transient
 	private LSuserMaster lsuserMaster;
+	
+	@Transient
+	private Integer[] lstuserMaster;
+	
+
+
+	public Integer[] getLstuserMaster() {
+		return lstuserMaster;
+	}
+
+	public void setLstuserMaster(Integer[] lstuserMaster) {
+		this.lstuserMaster = lstuserMaster;
+	}
 
 	public Integer getRejected() {
 		return rejected;
