@@ -59,4 +59,6 @@ public interface DataSourceConfigRepository extends JpaRepository<DataSourceConf
 
 	List<DataSourceConfig> findAllByOrderByIdDesc();
 
+	List<DataSourceConfig> findByPackagetype(long l);
+
 }

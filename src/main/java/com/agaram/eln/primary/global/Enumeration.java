@@ -1,7 +1,7 @@
 package com.agaram.eln.primary.global;
 
 public class Enumeration {
-	public static final String DELIM = ".";
+
 
 	public enum TransactionStatus {
 		NA(-1), ALL(0), DELETED(-1), ACTIVE(1), DEACTIVE(2), YES(3), NO(4), LOCK(5), UNLOCK(6), RETIRED(7), DRAFT(8),

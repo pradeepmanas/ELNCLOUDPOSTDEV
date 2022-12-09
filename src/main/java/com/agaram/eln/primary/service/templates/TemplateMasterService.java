@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -41,7 +40,7 @@ public class TemplateMasterService {
 	@Autowired
 	private Environment env;
 	
-	static final Logger logger = Logger.getLogger(TemplateMasterService.class.getName());
+
 	
 	ObjectMapper mapper = new ObjectMapper();
 	
@@ -214,7 +213,7 @@ public class TemplateMasterService {
 			
 			final String url = env.getProperty("sdms.template.service.url")+Service;
 			
-			logger.info("Template service Url : "+url);
+		
 
 		    RestTemplate restTemplate = new RestTemplate();
 		    
@@ -223,7 +222,7 @@ public class TemplateMasterService {
 		    return result;	
 		}
 		catch(Exception e) {
-			logger.error("Error SDMSservice : "+e.getMessage());
+			
 		}
 		return result;
 	}

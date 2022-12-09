@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,7 +177,7 @@ import com.mongodb.gridfs.GridFSDBFile;
 //@EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
 public class InstrumentService {
 
-	static final Logger logger = Logger.getLogger(InstrumentService.class.getName());
+
 
 	@Autowired
 	private Environment env;
@@ -1009,7 +1009,7 @@ public class InstrumentService {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("updatenotificationfororder : " + e.getMessage());
+			
 		}
 	}
 
@@ -1066,7 +1066,7 @@ public class InstrumentService {
 				lsnotificationRepository.save(lstnotifications);
 			}
 		} catch (Exception e) {
-			logger.error("updatenotificationfororderworkflow : " + e.getMessage());
+			
 		}
 	}
 
@@ -1117,7 +1117,7 @@ public class InstrumentService {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("updatenotificationfororder : " + e.getMessage());
+			
 		}
 	}
 

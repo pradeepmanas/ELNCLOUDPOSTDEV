@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -87,7 +86,7 @@ import com.mongodb.gridfs.GridFSDBFile;
 @EnableJpaRepositories(basePackageClasses = LSfileRepository.class)
 public class FileService {
 
-	static final Logger logger = Logger.getLogger(FileService.class.getName());
+
 	@SuppressWarnings("unused")
 	@Autowired
 	private LSuserMasterRepository lsusermasterRepository;
@@ -672,7 +671,7 @@ public class FileService {
 			List<LSuserteammapping> objteam = lsuserteammappingRepository
 					.findByTeamcodeNotNullAndLsuserMaster(objFile.getLSuserMaster());
 
-			logger.info("objteam : " + objteam);
+		
 			if (objteam != null && objteam.size() > 0) {
 				String Details = "";
 				String Notifiction = "";
@@ -785,7 +784,7 @@ public class FileService {
 				LSnotificationRepository.save(lstnotifications);
 			}
 		} catch (Exception e) {
-			logger.error("updatenotificationforsheet : " + e.getMessage());
+			
 		}
 	}
 

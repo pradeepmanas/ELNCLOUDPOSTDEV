@@ -9,4 +9,6 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public interface LSaudittrailconfigurationRepository extends JpaRepository<LSaudittrailconfiguration, Integer> {
 	public List<LSaudittrailconfiguration> findByLsusermaster(LSuserMaster lsusermaster);
+
+	
 }

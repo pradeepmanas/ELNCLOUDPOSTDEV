@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-import org.apache.log4j.Logger;
+
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -125,7 +125,7 @@ import net.minidev.json.parser.JSONParser;
 @EnableJpaRepositories(basePackageClasses = LSdocreportsRepository.class)
 public class ReportsService {
 
-	static final Logger logger = Logger.getLogger(ReportsService.class.getName());
+
 
 	@Autowired
 	private LSdocreportsRepository LSdocreportsRepositoryObj;
@@ -221,7 +221,7 @@ public class ReportsService {
 		if (filePath == "") {
 			if (System.getProperty("os.name").contains("Linux") || System.getProperty("os.name").contains("LINUX")) {
 				System.out.print("reportgetAbsolutePath()" + new File("").getAbsolutePath().toString());
-				logger.info("reportgetAbsolutePath()" + new File("").getAbsolutePath().toString());
+			
 				filePath = "/home/site/wwwroot/webapps/ELNdocuments";
 				File newFile = new File(filePath);
 				if (!newFile.exists()) {
@@ -294,14 +294,14 @@ public class ReportsService {
 				}
 				client.setFileType(FTP.BINARY_FILE_TYPE);
 				client.setAutodetectUTF8(true);
-				logger.info("handleFTP() FTP connection Status: " + client.isConnected());
+			
 				String filePath = getDocxAbsolutePath();
 				File absolutePathFile = new File(filePath, filename);
 				if (type.equals("load")) {
 					FTPFile[] FileLst = client.listFiles();
 					FTPFile sFTPFile = new FTPFile();
 					for (FTPFile SingleFile : FileLst) {
-						logger.info("handleFTP() File List : " + SingleFile.getName());
+						
 						if (((String) SingleFile.getName()).equals(filename)) {
 							sFTPFile = SingleFile;
 							break;
@@ -309,22 +309,22 @@ public class ReportsService {
 					}
 					if (sFTPFile.isValid()) {
 						status = true;
-						logger.info("handleFTP() File Found in FTP : " + sFTPFile.getName());
+						
 						if (absolutePathFile.exists()) {
-							logger.info("handleFTP() Exist in : " + absolutePathFile.getAbsolutePath());
+							
 							absolutePathFile.delete();
-							logger.info("handleFTP() Exist File deleted ");
+							
 						}
 						fos = new FileOutputStream(absolutePathFile);
 						client.retrieveFile(filename, fos);
 						fos.close();
-						logger.info("handleFTP() File Retrived " + filename);
+					
 					} else {
 						errMsg = "Requested file not found in FTP";
 					}
 				} else if (type.equals("save")) {
 					if (absolutePathFile.exists()) {
-						logger.info("handleFTP() File Found: " + absolutePathFile.getAbsolutePath());
+					
 						fis = new FileInputStream(absolutePathFile);
 						client.storeFile(filename, fis);
 						fis.close();
@@ -332,18 +332,18 @@ public class ReportsService {
 						status = true;
 					} else {
 						errMsg = "Requested file not found";
-						logger.error("handleFTP() File Not Found: " + absolutePathFile.getAbsolutePath());
+					
 						status = false;
 					}
 				}
 				client.logout();
 				client.disconnect();
 			} else {
-				logger.error("handleFTP() FTP Login failed ");
+				
 				status = false;
 			}
 		} catch (IOException e) {
-			logger.error(e.getLocalizedMessage());
+		
 			status = false;
 		}
 		rtnObj.put("status", status);
@@ -366,7 +366,7 @@ public class ReportsService {
 				out.flush();
 				out.close();
 			} catch (Exception e) {
-				logger.error(e.getMessage());
+			
 			}
 
 			rtnObj.put("status", "success");
@@ -406,7 +406,7 @@ public class ReportsService {
 					stream = connection.getInputStream();
 				}
 			} catch (FileNotFoundException e) {
-				logger.error(e.getLocalizedMessage());
+				
 				String FIlePath = getDocxAbsolutePath();
 				if (new File(FIlePath).exists()) {
 					File newFile = new File(FIlePath + "/link.txt");
@@ -420,7 +420,7 @@ public class ReportsService {
 								status = true;
 							}
 						} catch (IOException ex) {
-							logger.info(ex.getLocalizedMessage());
+						
 							status = false;
 							System.out.print("report service IDS_MSG_DOCXSURLNOTFOUND 418");
 							statusMsg = "IDS_MSG_DOCXSURLNOTFOUND";
@@ -445,7 +445,7 @@ public class ReportsService {
 			} else if (FileType.equals("url")) {
 				String fileContent = new BufferedReader(new InputStreamReader(stream)).lines()
 						.collect(Collectors.joining("\n"));
-				logger.info(fileContent);
+			
 				if (fileContent.contains("working") || fileContent.contains("WORKING")) {
 					status = true;
 					String filePath = "";
@@ -486,14 +486,14 @@ public class ReportsService {
 									status = true;
 								}
 							} catch (IOException e) {
-								logger.info(e.getLocalizedMessage());
+							
 								status = false;
 								System.out.print("report service IDS_MSG_DOCXSURLNOTFOUND 482");
 							}
 							if (status) {
 								fileContent = new BufferedReader(new InputStreamReader(stream)).lines()
 										.collect(Collectors.joining("\n"));
-								logger.info(fileContent);
+							
 								if (fileContent.equals("working")) {
 									status = true;
 								} else {
@@ -514,7 +514,7 @@ public class ReportsService {
 				connection.disconnect();
 			}
 		} catch (NoSuchAlgorithmException | KeyManagementException | IOException e) {
-			logger.error(e.getLocalizedMessage());
+			
 			status = false;
 			if (FileType.equals("api")) {
 				statusMsg = "IDS_MSG_DOCXSAPINOTFOUND";
@@ -692,7 +692,7 @@ public class ReportsService {
 			LSDocReportobj.setStatus(1);
 			LSDocReportobj.setIsmultiplesheet(0);
 			LSDocReportobj.setDocdirectorycode(0);
-			logger.info("createNewReportDocx() Data LSDocReportobj" + LSDocReportobj);
+			
 			LSdocreportsRepositoryObj.save(LSDocReportobj);
 			Status = "success";
 			if (argObj.containsKey("objsilentaudit")) {
@@ -717,13 +717,12 @@ public class ReportsService {
 				}
 			}
 			objMap.put("status", Status);
-			logger.info("createNewReportDocx() Success");
-			logger.info(newFile.getAbsolutePath());
+		
 		} catch (IOException e) {
 			e.printStackTrace();
 			Status = "failed";
 			objMap.put("error", e.getMessage());
-			logger.error(e.getMessage());
+			
 			objMap.put("status", e.getMessage());
 		}
 		return objMap;
@@ -809,13 +808,13 @@ public class ReportsService {
 						LSDocReportsObj.setDocdirectorycode(LSdocdirectoryObj.getDocdirectorycode());
 				}
 				if ((int) jsonObj.get("status") == 2) {
-					logger.info("saveDocxsReport() > status:2 ");
+				
 					String downloadUri = (String) jsonObj.get("url");
-					logger.info("saveDocxsReport() downloadUri: " + downloadUri);
+				
 					InputStream stream;
 					HttpsURLConnection connectionSSL = null;
 					HttpURLConnection connection = null;
-					logger.info("saveDocxsReport() downloadUri: " + downloadUri);
+			
 					if (downloadUri.contains("https")) {
 						SSLContext sc = SSLContext.getInstance("SSL");
 						sc.init(null, trustAllCerts, new java.security.SecureRandom());
@@ -830,7 +829,7 @@ public class ReportsService {
 					}
 
 					if (!originalFilePath.isEmpty()) {
-						logger.info("saveDocxsReport() originalFilePath: " + originalFilePath);
+						
 						if (LSDocReportsObj.getStreamid() != null) {
 							if (!LSDocReportsObj.getStreamid().isEmpty())
 								gridFsTemplate
@@ -890,8 +889,7 @@ public class ReportsService {
 
 						if (((String) FileStatus.get("status")).equals("success") && LScfttransactionobj != null) {
 							File toBeDeleted = new File(originalFilePath);
-							logger.info("saveDocxsReport() > status:2 to be Deleted path after upload:"
-									+ toBeDeleted.getAbsolutePath());
+						
 							if (toBeDeleted.exists()) {
 								toBeDeleted.delete();
 							}
@@ -903,13 +901,11 @@ public class ReportsService {
 						if (LSDocReportsObj.getFileName() == null) {
 							filePath = getDocxAbsolutePath();
 							File toBeDeleted = new File(filePath, jsonObj.get("key") + ".docx");
-							logger.info(
-									"saveDocxsReport() > status:4 to be Deleted path:" + toBeDeleted.getAbsolutePath());
+							
 							if (toBeDeleted.exists()) {
 								boolean FileStatus = toBeDeleted.delete();
 								LSdocreportsRepositoryObj.delete(LSDocReportsObj);
-								logger.info("docSave() temp File deleted Status " + FileStatus);
-								logger.info("saveDocxsReport() > status:4 ");
+					
 							}
 						} else {
 							if (LSDocReportsObj.getIsreport() == 1 && LSDocReportsObj.getStreamid() == null) {
@@ -925,19 +921,16 @@ public class ReportsService {
 									if (((String) FileStatus.get("status")).equals("success")) {
 										fis.close();
 										newFile.delete();
-										logger.info("saveDocxsReport() > status:4 Deleted Name:"
-												+ LSDocReportsObj.getFileName());
+									
 									}
 								}
 							} else {
 								File newFile = new File(filePath, jsonObj.get("key") + ".docx");
 								if (newFile.exists()) {
 									newFile.delete();
-									logger.info("saveDocxsReport() > status:4 Deleted Name:"
-											+ LSDocReportsObj.getFileName());
+									
 								} else {
-									logger.info("saveDocxsReport() > status:4 not Deleted Name:"
-											+ LSDocReportsObj.getFileName());
+								
 								}
 							}
 						}
@@ -948,7 +941,7 @@ public class ReportsService {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+		
 		}
 	}
 
@@ -1030,13 +1023,13 @@ public class ReportsService {
 							LSDocReportsObj.setDocdirectorycode(LSdocdirectoryObj.getDocdirectorycode());
 					}
 					if ((int) jsonObj.get("status") == 2) {
-						logger.info("saveDocxsReport() > status:2 ");
+					
 						String downloadUri = (String) jsonObj.get("url");
-						logger.info("saveDocxsReport() downloadUri: " + downloadUri);
+					
 						InputStream stream;
 						HttpsURLConnection connectionSSL = null;
 						HttpURLConnection connection = null;
-						logger.info("saveDocxsReport() downloadUri: " + downloadUri);
+						
 						if (downloadUri.contains("https")) {
 							SSLContext sc = SSLContext.getInstance("SSL");
 							sc.init(null, trustAllCerts, new java.security.SecureRandom());
@@ -1051,7 +1044,7 @@ public class ReportsService {
 						}
 
 						if (!originalFilePath.isEmpty()) {
-							logger.info("saveDocxsReport() originalFilePath: " + originalFilePath);
+							
 							if (LSDocReportsObj.getStreamid() != null) {
 								if (!LSDocReportsObj.getStreamid().isEmpty())
 									// gridFsTemplate.delete(Query.query(Criteria.where("_id").is(LSDocReportsObj.getStreamid())));
@@ -1114,8 +1107,7 @@ public class ReportsService {
 
 							if (!LSDocReportsObj.getStreamid().equals("") && LScfttransactionobj != null) {
 								File toBeDeleted = new File(originalFilePath);
-								logger.info("saveDocxsReport() > status:2 to be Deleted path after upload:"
-										+ toBeDeleted.getAbsolutePath());
+						
 								if (toBeDeleted.exists()) {
 									toBeDeleted.delete();
 								}
@@ -1127,13 +1119,11 @@ public class ReportsService {
 							if (LSDocReportsObj.getFileName() == null) {
 								filePath = getDocxAbsolutePath();
 								File toBeDeleted = new File(filePath, jsonObj.get("key") + ".docx");
-								logger.info("saveDocxsReport() > status:4 to be Deleted path:"
-										+ toBeDeleted.getAbsolutePath());
+							
 								if (toBeDeleted.exists()) {
 									boolean FileStatus = toBeDeleted.delete();
 									LSdocreportsRepositoryObj.delete(LSDocReportsObj);
-									logger.info("docSave() temp File deleted Status " + FileStatus);
-									logger.info("saveDocxsReport() > status:4 ");
+								
 								}
 							} else {
 								if (LSDocReportsObj.getIsreport() == 1 && LSDocReportsObj.getStreamid() == null) {
@@ -1149,19 +1139,16 @@ public class ReportsService {
 										if (((String) FileStatus.get("status")).equals("success")) {
 											fis.close();
 											newFile.delete();
-											logger.info("saveDocxsReport() > status:4 Deleted Name:"
-													+ LSDocReportsObj.getFileName());
+										
 										}
 									}
 								} else {
 									File newFile = new File(filePath, jsonObj.get("key") + ".docx");
 									if (newFile.exists()) {
 										newFile.delete();
-										logger.info("saveDocxsReport() > status:4 Deleted Name:"
-												+ LSDocReportsObj.getFileName());
+									
 									} else {
-										logger.info("saveDocxsReport() > status:4 not Deleted Name:"
-												+ LSDocReportsObj.getFileName());
+										
 									}
 								}
 							}
@@ -1173,7 +1160,7 @@ public class ReportsService {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+		
 		}
 	}
 
@@ -1189,7 +1176,7 @@ public class ReportsService {
 			MultipartFile multiFile = request.getFile(itrator.next());
 			String uniquefilename = UUID.randomUUID().toString();
 			if (isMultipart) {
-				logger.info("headers = 'content-type!=multipart/form-data'");
+				
 				System.out.println("File Length:" + multiFile.getBytes().length);
 				System.out.println("File Type:" + multiFile.getContentType());
 				String fileName = multiFile.getOriginalFilename();
@@ -1224,7 +1211,7 @@ public class ReportsService {
 				LSDocReportobj.setIsTemplate(0);
 				LSDocReportobj.setStatus(1);
 				LSDocReportobj.setDocdirectorycode(0);
-				logger.info("createNewReportDocx() Data LSDocReport" + LSDocReportobj);
+				
 //				hibernateInsertSingleTable(LSDocReportobj);
 				LSdocreportsRepositoryObj.save(LSDocReportobj);
 				if (argObj.containsKey("objsilentaudit")) {
@@ -1296,7 +1283,7 @@ public class ReportsService {
 								});
 					}
 				}
-				logger.info("updateReportDocxName LSDocReportsLst 1st" + LSDocReportObj);
+			
 				File newFile;
 				if (LSDocReportObj != null) {
 //					oldFIleHashName = LSDocReportObj.getFileHashName();
@@ -1317,7 +1304,7 @@ public class ReportsService {
 						LSDocReportObj1.setLssitemaster(LScfttransactionobj.getLssitemaster());
 						LSDocReportObj1.setCreatedate(new Date());
 						LSdocreportsRepositoryObj.save(LSDocReportObj1);
-						logger.info("updateReportDocxName SaveAs LSDocReportsLst: " + LSDocReportObj1);
+						
 						LSDocReportObj.setFileHashName(saveAsHashKey);
 						LSdocreportsRepositoryObj.save(LSDocReportObj);
 						if (LSDocReportObj.getIsTemplate() == 1) {
@@ -1343,10 +1330,7 @@ public class ReportsService {
 						LSDocReportObj.setIsdraft(0);
 						LSDocReportObj.setFileName((String) obj.get("fileName"));
 						LSDocReportObj.setDocdirectorycode((int) obj.get("docdirectorycode"));
-						logger.info("updateReportDocxName Save LSDocReportsLst setFileName: "
-								+ (String) obj.get("fileName") + " setDocdirectoryCode: "
-								+ (int) obj.get("docdirectorycode") + " IsTemplate: " + obj.get("SaveAsTemplate")
-								+ " where docReportsCode: " + LSDocReportObj.getDocReportsCode());
+					
 						LSdocreportsRepositoryObj.save(LSDocReportObj);
 						savedSuccessfully = true;
 						newFile = new File(filePath, haskKey + ".docx");
@@ -1390,7 +1374,7 @@ public class ReportsService {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			
 		}
 		return rtnobjMap;
 	}
@@ -1405,9 +1389,9 @@ public class ReportsService {
 				LSdocreports = LSdocreportsRepositoryObj.findByIsTemplateAndStatus(1, 1);
 			}
 			objMap.put("LSDocReportsLst", LSdocreports);
-			logger.info("getLSdocreportsLst" + LSdocreports);
+		
 		} catch (Exception e) {
-			logger.error("getLSdocreportsLst" + e.getMessage());
+			
 		}
 		return objMap;
 	}
@@ -1426,9 +1410,9 @@ public class ReportsService {
 						LScfttransactionobj.getLssitemaster());
 			}
 			objMap.put("LSDocReportsLst", LSdocreports);
-			logger.info("getLSdocreportsLst" + LSdocreports);
+			
 		} catch (Exception e) {
-			logger.error("getLSdocreportsLst" + e.getMessage());
+			
 		}
 		return objMap;
 	}
@@ -1494,9 +1478,9 @@ public class ReportsService {
 //				LSdocdirectoryLst.add(LSdocdirectoryObj);
 //			}
 			objMap.put("LSDocDirectoryLst", LSdocdirectoryLst);
-			logger.info("getDocxDirectoryLst" + LSdocdirectoryLst);
+			
 		} catch (Exception e) {
-			logger.error("getDocxDirectoryLst" + e.getMessage());
+			
 		}
 		return objMap;
 	}
@@ -1517,9 +1501,9 @@ public class ReportsService {
 			}
 
 			objMap.put("LSDocDirectoryLst", LSdocdirectoryLst);
-			logger.info("getDocxDirectoryLst" + LSdocdirectoryLst);
+			
 		} catch (Exception e) {
-			logger.error("getDocxDirectoryLst" + e.getMessage());
+		
 		}
 		return objMap;
 	}
@@ -1565,7 +1549,7 @@ public class ReportsService {
 				ObjLSDocDirectory.setCreatedate(new Date());
 				ObjLSDocDirectory.setCreatedby(LScfttransactionobj.getLsuserMaster());
 				ObjLSDocDirectory.setLssitemaster(LScfttransactionobj.getLssitemaster());
-				logger.info("addDocxDirectory() Data ObjLSDocDirectory" + ObjLSDocDirectory);
+				
 				LSdocdirectoryRepositoryObj.save(ObjLSDocDirectory);
 				rtnobjMap.put("status", "success");
 
@@ -1597,7 +1581,7 @@ public class ReportsService {
 			rtnobjMap.putAll(getDocxDirectoryLst());
 			rtnobjMap.putAll(getLSdocreportsLst("all"));
 		} catch (Exception e) {
-			logger.error("addDocxDirectory" + e.getMessage());
+			
 		}
 		return rtnobjMap;
 	}
@@ -1620,7 +1604,7 @@ public class ReportsService {
 			LSdocdirectory ObjLSDocDirectory = new ObjectMapper().convertValue(tempObj,
 					new TypeReference<LSdocdirectory>() {
 					});
-			logger.info("addDocxDirectory() Data ObjLSDocDirectory" + ObjLSDocDirectory);
+			
 			LSdocdirectoryRepositoryObj.save(ObjLSDocDirectory);
 			rtnobjMap.put("status", "success");
 
@@ -1646,7 +1630,7 @@ public class ReportsService {
 			rtnobjMap.putAll(getDocxDirectoryLst());
 			rtnobjMap.putAll(getLSdocreportsLst("all"));
 		} catch (Exception e) {
-			logger.error("addDocxDirectory" + e.getMessage());
+			
 		}
 		return rtnobjMap;
 	}
@@ -1668,7 +1652,7 @@ public class ReportsService {
 			tempObj.remove("indent");
 			LSdocreports ObjLSdocreports = new ObjectMapper().convertValue(tempObj, new TypeReference<LSdocreports>() {
 			});
-			logger.info("addDocxDirectory() Data ObjLSDocDirectory" + ObjLSdocreports);
+			
 			LSdocreportsRepositoryObj.save(ObjLSdocreports);
 			rtnobjMap.put("status", "success");
 
@@ -1694,7 +1678,7 @@ public class ReportsService {
 			rtnobjMap.putAll(getDocxDirectoryLst());
 			rtnobjMap.putAll(getLSdocreportsLst("all"));
 		} catch (Exception e) {
-			logger.error("addDocxDirectory" + e.getMessage());
+			
 		}
 		return rtnobjMap;
 	}
@@ -1786,7 +1770,7 @@ public class ReportsService {
 			}
 //			}
 		} catch (Exception e) {
-			logger.error("getReportDocxInfo" + e.getMessage());
+		
 		}
 		return rtnobjMap;
 	}
@@ -1835,7 +1819,7 @@ public class ReportsService {
 						out.close();
 						status = true;
 					} catch (Exception e) {
-						logger.error(e.getMessage());
+						
 					}
 					if (status) {
 						filePresent = true;
@@ -1892,7 +1876,7 @@ public class ReportsService {
 			}
 //			}
 		} catch (Exception e) {
-			logger.error("getReportDocxInfo" + e.getMessage());
+			
 		}
 		return rtnobjMap;
 	}
@@ -1918,11 +1902,11 @@ public class ReportsService {
 		Map<String, Object> objMap = new HashMap<String, Object>();
 		try {
 			try {
-				logger.info("updateDocxReportOrder() wating for 2 sec");
+			
 				java.util.concurrent.TimeUnit.SECONDS.sleep(2);
-				logger.info("updateDocxReportOrder() finished wating for 2 sec");
+			
 			} catch (InterruptedException e) {
-				logger.error("updateDocxReportOrder() InterruptedException " + e);
+				
 			}
 			ObjectMapper mapper = new ObjectMapper();
 			List<LSlogilablimsorderdetail> lstSelectedData = mapper.convertValue(obj.get("selectedData"),
@@ -1939,10 +1923,10 @@ public class ReportsService {
 				FileName = (String) obj.get("Hashkey");
 			}
 			String filePath = getDocxAbsolutePath();
-			logger.info("updateDocxReportOrder() Hashkey " + (String) obj.get("Hashkey"));
+		
 			LSdocreports LSDocReportobj = LSdocreportsRepositoryObj
 					.findFirstByFileHashNameAndStatus((String) obj.get("Hashkey"), 1);
-			logger.info("updateDocxReportOrder() LSDocReportsLst from Query " + LSDocReportobj);
+		
 			String NewFileName = "";
 			String NewHashKey = UUID.randomUUID().toString();
 			LSdocdirectory LSdocdirectoryObj = LSdocdirectoryRepositoryObj
@@ -1954,7 +1938,7 @@ public class ReportsService {
 			} else {
 				LSDocReportobj.setFileHashName(NewHashKey);
 			}
-			logger.info("updateDocxReportOrder() LSDocReportobj updated based on condition " + LSDocReportobj);
+		
 			File newFile = null;
 			if (lstSelectedData.size() == 1 && LSDocReportobj.getFileName() == null) {
 				NewFileName = lstSelectedData.get(0).getBatchid();
@@ -1964,15 +1948,15 @@ public class ReportsService {
 //				NewFileName = (String) obj.get("Hashkey") ;
 				NewFileName = NewHashKey;
 			}
-			logger.info("updateDocxReportOrder() NewFileName " + NewFileName);
+			
 			if ((new File(filePath, FileName + ".docx")).exists() && !FileName.equals(NewFileName)) {
 				File oldFile = new File(filePath, FileName + ".docx");
 				newFile = new File(filePath, NewFileName + ".docx");
 				oldFile.renameTo(newFile);
-				logger.info("updateDocxReportOrder() exists newFile " + newFile);
+			
 				if (oldFile.exists()) {
 					oldFile.delete();
-					logger.info("updateDocxReportOrder() deleted old File " + oldFile);
+				
 				}
 			} else {
 				newFile = new File(filePath, NewFileName + ".docx");
@@ -1983,16 +1967,16 @@ public class ReportsService {
 					File oldFile = new File(filePath, FileName + ".docx");
 					if (oldFile.exists()) {
 						oldFile.delete();
-						logger.info("updateDocxReportOrder() deleted old File " + oldFile);
+					
 					}
-					logger.info("updateDocxReportOrder() newFile created" + newFile);
+				
 				}
 			}
 			XWPFDocument document = new XWPFDocument(new FileInputStream(newFile));
 			FileOutputStream out = new FileOutputStream(newFile);
 			for (LSlogilablimsorderdetail SelectedDataObj : lstSelectedData) {
 				LSsamplefile LsSampleFiles = (LSsamplefile) SelectedDataObj.getLssamplefile();// QueryForList(squery);
-				logger.info("updateDocxReportOrder() LsSampleFiles" + LsSampleFiles);
+			
 				if (!LsSampleFiles.getFilecontent().isEmpty()) {
 					String blobData = LsSampleFiles.getFilecontent();
 					Map<String, Object> sheetProps = getTaggedDataFromSheet(blobData);
@@ -2002,8 +1986,7 @@ public class ReportsService {
 			document.createParagraph();
 			document.write(out);
 			out.close();
-			logger.info("updateDocxReportOrder() file Creation and Updation Done");
-
+	
 			objMap.put("fileFullPath", newFile.getAbsolutePath());
 			objMap.put("fileName", NewFileName);
 			objMap.put("fileOriginalPath", "reports/" + NewFileName + ".docx");
@@ -2015,13 +1998,13 @@ public class ReportsService {
 			} else {
 				LSDocReportobj.setFileName(NewFileName);
 			}
-			logger.info("updateDocxReportOrder() Update LSDocReportobj " + LSDocReportobj);
+			
 			LSdocreportsRepositoryObj.save(LSDocReportobj);
 
-			logger.info("updateDocxReportOrder status: Done");
+		
 
 		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
+			
 		}
 		return objMap;
 	}
@@ -2035,8 +2018,7 @@ public class ReportsService {
 			List<LSlogilablimsorderdetail> lstSelectedData = mapper.convertValue(obj.get("OrderData"),
 					new TypeReference<List<LSlogilablimsorderdetail>>() {
 					});
-			logger.info("handleOrderandTemplate() templateData: " + templateData);
-			logger.info("handleOrderandTemplate() lstSelectedData: " + lstSelectedData);
+		
 			String fileName = "";
 			String templateName = (String) templateData.get("fileName");
 			String filePath = getDocxAbsolutePath();
@@ -2052,7 +2034,7 @@ public class ReportsService {
 			} else {
 				fileName = HashKey;
 			}
-			logger.info("handleOrderandTemplate() fileName: " + fileName);
+	
 			File loadFile = new File(filePath, templateName + ".docx");
 			if (!loadFile.exists()) {
 				if (isftpAvailable()) {
@@ -2075,14 +2057,14 @@ public class ReportsService {
 				newFile = new File(filePath, fileName + ".docx");
 				FileInputStream fis = new FileInputStream(loadFile);
 				XWPFDocument document = new XWPFDocument(fis);
-				logger.info("handleOrderandTemplate() Reading Paragraphs Done");
+			
 				for (LSlogilablimsorderdetail SelectedDataObj : lstSelectedData) {
 					String SheetName = SelectedDataObj.getLsfile().getFilenameuser();
 					LSsamplefile LsSampleFiles = (LSsamplefile) SelectedDataObj.getLssamplefile();// QueryForList(squery);
-					logger.info("updateDocxReportOrder() LsSampleFiles" + LsSampleFiles);
+				
 					if (!LsSampleFiles.getFilecontent().isEmpty()) {
 						List<Map<String, Object>> TagLst = getTagInfofromSheet(LsSampleFiles.getFilecontent());
-						logger.info("handleOrderandTemplate() sheetProps" + TagLst);
+					
 						for (Map<String, Object> SingleTag : TagLst) {
 							replaceDocxTagWithCell(TagLst, document, SheetName, SingleTag);
 						}
@@ -2106,7 +2088,7 @@ public class ReportsService {
 				LSDocReportobj.setDocdirectorycode(LSdocdirectoryObj.getDocdirectorycode());
 				LSDocReportobj.setIsTemplate(0);
 				LSDocReportobj.setStatus(1);
-				logger.info("handleOrderandTemplate() Data LSDocReport" + LSDocReportobj);
+			
 				LSdocreportsRepositoryObj.save(LSDocReportobj);
 
 				objMap.put("fileFullPath", newFile.getAbsolutePath());
@@ -2114,12 +2096,12 @@ public class ReportsService {
 				objMap.put("fileOriginalPath", "reports/" + fileName + ".docx");
 				objMap.put("hashKey", HashKey);
 			} else {
-				logger.info("File not fount");
+				
 				objMap.put("status", "ID_REQUESTEDTEMPLATENOTFOUND");
 			}
-			logger.info("handleOrderandTemplate() status: Done");
+		
 		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
+		
 		}
 		return objMap;
 	}
@@ -2157,8 +2139,7 @@ public class ReportsService {
 				}
 			}
 			if (LSdocreportsObj != null) {
-				logger.info("handleOrderandTemplate() templateData: " + LSdocreportsObj);
-				logger.info("handleOrderandTemplate() lstSelectedData: " + lstSelectedData);
+			
 				String fileName = "";
 				@SuppressWarnings("unused")
 				String templateName = LSdocreportsObj.getFileName();
@@ -2191,7 +2172,7 @@ public class ReportsService {
 //				} else {
 //					fileName = HashKey;
 //				}
-				logger.info("handleOrderandTemplate() fileName: " + fileName);
+			
 				String path = filePath + "\\templates";
 				if (System.getProperty("os.name").contains("Linux")
 						|| System.getProperty("os.name").contains("LINUX")) {
@@ -2221,7 +2202,7 @@ public class ReportsService {
 						out.close();
 						fileLoaded = true;
 					} catch (Exception e) {
-						logger.error(e.getMessage());
+					
 					}
 //					if(fileStatus.get("status") == "success") {
 //						fileLoaded = true;
@@ -2248,7 +2229,7 @@ public class ReportsService {
 							out.close();
 							fileLoaded = true;
 						} catch (Exception e) {
-							logger.error(e.getMessage());
+							
 						}
 //						if(status) {
 //							fileLoaded = true;
@@ -2262,11 +2243,11 @@ public class ReportsService {
 					newFile = new File(filePath, HashKey + ".docx");
 					FileInputStream fis = new FileInputStream(loadFile);
 					XWPFDocument document = new XWPFDocument(fis);
-					logger.info("handleOrderandTemplate() Reading Paragraphs Done");
+				
 					for (LSlogilablimsorderdetail SelectedDataObj : lstSelectedData) {
 						String SheetName = SelectedDataObj.getLsfile().getFilenameuser();
 						LSsamplefile LsSampleFiles = (LSsamplefile) SelectedDataObj.getLssamplefile();// QueryForList(squery);
-						logger.info("updateDocxReportOrder() LsSampleFiles" + LsSampleFiles);
+					
 						String excelData = "";
 						if (LsSampleFiles.getFilecontent() != null) {
 							excelData = LsSampleFiles.getFilecontent();
@@ -2303,7 +2284,7 @@ public class ReportsService {
 				}
 						if (!excelData.isEmpty()) {
 							List<Map<String, Object>> TagLst = getTagInfofromSheet(excelData);
-							logger.info("handleOrderandTemplate() sheetProps" + TagLst);
+						
 //							for (Map<String, Object> SingleTag : TagLst) {
 //								replaceDocxTagWithCell(SingleTag, document, SheetName);
 //							}
@@ -2361,7 +2342,7 @@ public class ReportsService {
 					LSDocReportobj.setCreatedate(new Date());
 					LSDocReportobj.setSheetfilecodeString("");
 					LSDocReportobj.setStatus(1);
-					logger.info("handleOrderandTemplate() Data LSDocReport" + LSDocReportobj);
+				
 					LSdocreportsRepositoryObj.save(LSDocReportobj);
 
 					Map<String, Object> newDocx = new HashMap<String, Object>();
@@ -2405,16 +2386,16 @@ public class ReportsService {
 						}
 					}
 				} else {
-					logger.info("File not fount");
+				
 					objMap.put("status", "ID_REQUESTEDTEMPLATENOTFOUND");
 				}
-				logger.info("handleOrderandTemplate() status: Done");
+			
 			} else {
-				logger.info("Template not found for selected Order");
+				
 				objMap.put("status", "ID_TEMPLATENOTFOUNDFORSELECTEDORDER");
 			}
 		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
+		
 		}
 		return objMap;
 	}
@@ -2450,8 +2431,7 @@ public class ReportsService {
 				}
 			}
 			if (LSdocreportsObj != null) {
-				logger.info("handleOrderandTemplate() templateData: " + LSdocreportsObj);
-				logger.info("handleOrderandTemplate() lstSelectedData: " + lstSelectedData);
+			
 				String fileName = "";
 				@SuppressWarnings("unused")
 				String templateName = LSdocreportsObj.getFileName();
@@ -2482,7 +2462,7 @@ public class ReportsService {
 				} else {
 					fileName = HashKey;
 				}
-				logger.info("handleOrderandTemplate() fileName: " + fileName);
+				
 				File loadFile = new File(filePath + "\\templates");
 				if (!loadFile.exists()) {
 					loadFile.mkdir();
@@ -2517,11 +2497,11 @@ public class ReportsService {
 					newFile = new File(filePath, HashKey + ".docx");
 					FileInputStream fis = new FileInputStream(loadFile);
 					XWPFDocument document = new XWPFDocument(fis);
-					logger.info("handleOrderandTemplate() Reading Paragraphs Done");
+				
 					for (LSlogilablimsorderdetail SelectedDataObj : lstSelectedData) {
 						String SheetName = SelectedDataObj.getLsfile().getFilenameuser();
 						LSsamplefile LsSampleFiles = (LSsamplefile) SelectedDataObj.getLssamplefile();// QueryForList(squery);
-						logger.info("updateDocxReportOrder() LsSampleFiles" + LsSampleFiles);
+					
 						String excelData = "";
 						if (LsSampleFiles.getFilecontent() != null) {
 							excelData = LsSampleFiles.getFilecontent();
@@ -2553,7 +2533,7 @@ public class ReportsService {
 				}
 						if (!excelData.isEmpty()) {
 							List<Map<String, Object>> TagLst = getTagInfofromSheet(excelData);
-							logger.info("handleOrderandTemplate() sheetProps" + TagLst);
+						
 							for (Map<String, Object> SingleTag : TagLst) {
 								replaceDocxTagWithCell(TagLst, document, SheetName, SingleTag);
 							}
@@ -2609,7 +2589,7 @@ public class ReportsService {
 					LSDocReportobj.setCreatedate(new Date());
 					LSDocReportobj.setSheetfilecodeString("");
 					LSDocReportobj.setStatus(1);
-					logger.info("handleOrderandTemplate() Data LSDocReport" + LSDocReportobj);
+				
 					LSdocreportsRepositoryObj.save(LSDocReportobj);
 					Map<String, Object> newDocx = new HashMap<String, Object>();
 					if (env.getProperty("fileReceiver") != null) {
@@ -2652,16 +2632,16 @@ public class ReportsService {
 						}
 					}
 				} else {
-					logger.info("File not fount");
+					
 					objMap.put("status", "ID_REQUESTEDTEMPLATENOTFOUND");
 				}
-				logger.info("handleOrderandTemplate() status: Done");
+			
 			} else {
-				logger.info("Template not found for selected Order");
+			
 				objMap.put("status", "ID_TEMPLATENOTFOUNDFORSELECTEDORDER");
 			}
 		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
+		
 		}
 		return objMap;
 	}
@@ -2671,7 +2651,7 @@ public class ReportsService {
 		boolean isDone = false;
 		if (!isDone) {
 			for (Map.Entry<String, List<Map<String, Object>>> sequenceDataTagObj : sequenceDataTag.entrySet()) {
-				logger.info("replaceDocxTagWithSequenceData -> getKey :" + sequenceDataTagObj.getKey());
+			
 				String tagname = sequenceDataTagObj.getKey();
 				List<Map<String, Object>> tagListObj = sequenceDataTagObj.getValue();
 				for (XWPFParagraph para : document.getParagraphs()) {
@@ -2684,7 +2664,7 @@ public class ReportsService {
 									if (tagListObj.size() == 1) {
 										Map<String, Object> dataObj = (Map<String, Object>) tagListObj.get(0)
 												.get("0_0"); // (Map<String, Object>) tagData.get("0_0");
-										logger.info("value: " + dataObj.get("value"));
+									
 										String value = "";
 										if (dataObj.get("value") instanceof String) {
 											value = (String) dataObj.get("value");
@@ -2714,7 +2694,7 @@ public class ReportsService {
 												XWPFTableCell sheetRowCell = sheetRow.getCell(0);
 												Map<String, Object> dataObj = (Map<String, Object>) tagListObjEach
 														.get("0_0");
-												logger.info("value: " + dataObj.get("value"));
+										
 												String value = "";
 												if (dataObj.get("value") instanceof String) {
 													value = (String) dataObj.get("value");
@@ -2974,7 +2954,7 @@ public class ReportsService {
 										}
 										String key = rowIndex + "_" + cellIndex;
 										Map<String, Object> dataObj = (Map<String, Object>) tagData.get(key);
-										logger.info("isTable: " + isTable + " value: " + dataObj.get("value"));
+									
 										String value = "";
 										if (dataObj.get("value") instanceof String) {
 											value = (String) dataObj.get("value");
@@ -3040,7 +3020,7 @@ public class ReportsService {
 							}
 						} else {
 							Map<String, Object> dataObj = (Map<String, Object>) tagData.get("0_0");
-							logger.info("isTable: " + isTable + " value: " + dataObj.get("value"));
+						
 							String value = "";
 							if (dataObj.get("value") instanceof String) {
 								value = (String) dataObj.get("value");
@@ -3144,7 +3124,7 @@ public class ReportsService {
 		Object objMap = null;
 		try {
 			objMap = new JSONParser(JSONParser.MODE_PERMISSIVE).parse(excelData);
-			logger.info("getTagInfofromSheet SheetData objMap" + objMap);
+		
 			JSONObject sheetsDataObj = (JSONObject) objMap;
 			JSONArray tags = new JSONArray();
 			JSONArray sheets = (JSONArray) sheetsDataObj.get("sheets");
@@ -3183,7 +3163,7 @@ public class ReportsService {
 					}
 				}
 			}
-			logger.info("getTagInfofromSheet() MergeArrayObj: " + MergeArrayObj);
+		
 			if (sheetsDataObj.containsKey("tags")) {
 				tags = (JSONArray) sheetsDataObj.get("tags");
 //				sheets = (JSONArray) sheetsDataObj.get("sheets");
@@ -3268,7 +3248,7 @@ public class ReportsService {
 //				
 			}
 		} catch (Exception e) {
-			logger.error("getTagInfofromSheet() : " + e.getLocalizedMessage());
+			
 		}
 		return rtnTagData;
 	}
@@ -3288,7 +3268,7 @@ public class ReportsService {
 				withTag = true;
 				JSONArray tags = (JSONArray) sheetDataObj.get("tags");
 				int tagsCount = tags.size();
-				logger.info("getTaggedDataFromSheet : " + sheetDataObj);
+			
 				for (int i = 0; i < sheetsCount; i++) {
 					JSONObject sheetObj = (JSONObject) sheets.get(i);
 					for (int tagId = 0; tagId < tagsCount; tagId++) {
@@ -3377,12 +3357,12 @@ public class ReportsService {
 					}
 				}
 			}
-			logger.info("getDataFromSheet CellDatas " + CellDatas);
+		
 			sheetProps.put("CellData", CellDatas);
 			sheetProps.put("withTag", withTag);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getLocalizedMessage());
+			
 		}
 		return sheetProps;
 	}
@@ -3394,7 +3374,7 @@ public class ReportsService {
 			Map<Integer, Object> sheets = (Map<Integer, Object>) sheetProps.get("CellData");
 			boolean withTag = (boolean) sheetProps.get("withTag");
 			if (withTag) {
-				logger.info("updateSheetDatainDocx() withTag Sheets" + sheets);
+		
 				for (Entry<Integer, Object> SheetEntry : sheets.entrySet()) {
 
 					Map<Integer, Object> tagSet = (Map<Integer, Object>) SheetEntry.getValue();
@@ -3425,7 +3405,7 @@ public class ReportsService {
 									totalCellIndex++;
 								}
 								Map<String, Object> cellData = (Map<String, Object>) cellEntry.getValue();
-								logger.info("updateSheetDatainDocx() cellData" + cellData);
+						
 								if (cellData.get("value") instanceof String) {
 									sheetRowCell.setText((String) cellData.get("value"));
 								} else if (cellData.get("value") != null) {
@@ -3436,7 +3416,7 @@ public class ReportsService {
 					}
 				}
 			} else {
-				logger.info("updateSheetDatainDocx() withOutTag Sheets" + sheets);
+		
 				for (Entry<Integer, Object> SheetEntry : sheets.entrySet()) {
 					document.createParagraph();
 					XWPFTable table = document.createTable();
@@ -3473,7 +3453,7 @@ public class ReportsService {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("updateSheetDatainDocx() exception" + e);
+			
 		}
 	}
 
@@ -3759,7 +3739,7 @@ public class ReportsService {
 				LSdocreportsObj1.setIsTemplate(LSdocreportsObj.getIsTemplate());
 				LSdocreportsObj1.setStatus(LSdocreportsObj.getStatus());
 				LSdocreportsObj1.setSheetfilecodeString(LSdocreportsObj.getSheetfilecodeString());
-				logger.info("getReportDocxonVersion() Data LSDocReportobj" + LSdocreportsObj1);
+			
 				LSdocreportsRepositoryObj.save(LSdocreportsObj1);
 			}
 		} else {

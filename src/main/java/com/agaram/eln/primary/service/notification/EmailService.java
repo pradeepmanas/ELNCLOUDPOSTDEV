@@ -15,7 +15,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -31,7 +30,7 @@ import com.agaram.eln.primary.service.report.ReportsService;
 @EnableJpaRepositories(basePackageClasses = EmailRepository.class)
 public class EmailService {
 
-	static final Logger logger = Logger.getLogger(EmailService.class.getName());
+	
 	
 	@Autowired
 	private JavaMailSender mailSender;
@@ -174,7 +173,7 @@ public class EmailService {
 		EmailRepository.save(email);
 		
 		
-		logger.info("java mail path --->"+new File("").getAbsolutePath());
+		
 
 		return email;
 	}

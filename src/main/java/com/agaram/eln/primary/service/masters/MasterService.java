@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -73,7 +73,7 @@ import com.microsoft.azure.storage.blob.CloudBlockBlob;
 @EnableJpaRepositories(basePackageClasses = LsrepositoriesRepository.class)
 public class MasterService {
 
-	static final Logger logger = Logger.getLogger(InstrumentService.class.getName());
+
 	@Autowired
 	private LsrepositoriesRepository lsrepositoriesRepository;
 	
@@ -289,7 +289,7 @@ public class MasterService {
 		}
 
 		catch (Exception e) {
-			logger.error("updatenotificationfororder : " + e.getMessage());
+		
 		}
 		return null;
 	}

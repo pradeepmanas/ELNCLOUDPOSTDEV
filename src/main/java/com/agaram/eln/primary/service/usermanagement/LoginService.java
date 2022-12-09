@@ -13,7 +13,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.ResponseEntity;
@@ -119,7 +118,6 @@ public class LoginService {
 
 	// added for notification
 
-	static final Logger logger = Logger.getLogger(LoginService.class.getName());
 
 	public List<LSSiteMaster> loadSite() {
 		List<LSSiteMaster> result = new ArrayList<LSSiteMaster>();
@@ -1053,7 +1051,7 @@ public class LoginService {
 							dateSString = dateSString.replaceAll("57", "ss");
 							dateSString = dateSString.replaceAll(" AM", "");
 							dateSString = dateSString.replaceAll(" PM", "");
-							logger.info(dateSString);
+							
 							dateSString = "MM-dd-yyyy hh:mm:ss";
 							objExitinguser.setDFormat(dateSString);
 						} catch (ParseException e) {

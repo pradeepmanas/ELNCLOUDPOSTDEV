@@ -9,7 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,7 +39,7 @@ public class ReportsController {
 	@Autowired
 	private AuditService auditService;
 	
-	static final Logger logger = Logger.getLogger(ReportsService.class.getName());
+	
 
 	@RequestMapping(value = "/createNewReportDocx")
 	protected Map<String, Object> createNewDocxs(@RequestBody Map<String, Object> argObj) throws ServletException, IOException {
@@ -88,7 +88,7 @@ public class ReportsController {
 			mapObj = ObjReportsService.createNewReportDocx(argObj);
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			
 			mapObj.put("error", e.getMessage());
 		}
 		return mapObj;
@@ -99,9 +99,9 @@ public class ReportsController {
 			throws ServletException, IOException {
 		try {
 			ObjReportsService.saveDocxsReport(request, response);
-			logger.info("/saveDocxsReport -> success");
+			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			
 		}
 	}
 
@@ -110,9 +110,9 @@ public class ReportsController {
 			throws ServletException, IOException {
 		try {
 			ObjReportsService.cloudsaveDocxsReport(request, response);
-			logger.info("/saveDocxsReport -> success");
+			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			
 		}
 	}
 	
@@ -124,7 +124,7 @@ public class ReportsController {
 		Map<String, Object> argObj = objMap.readValue(request.getParameter("serviceObj"), new TypeReference<Map<String, Object>>() {}) ;
 		System.out.println(request.getParameter("serviceObj"));
 		map = ObjReportsService.uploadDocxFile(request, argObj);
-		logger.info("/uploadDocxFile -> success");
+		
 		return map;
 	}
 
@@ -175,7 +175,7 @@ public class ReportsController {
 			mapObj = ObjReportsService.updateReportDocxName(obj);
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			
 			mapObj.put("error", e.getMessage());
 		}
 		return mapObj;

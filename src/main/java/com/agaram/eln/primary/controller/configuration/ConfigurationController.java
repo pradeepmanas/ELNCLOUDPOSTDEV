@@ -3,7 +3,6 @@ package com.agaram.eln.primary.controller.configuration;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +19,7 @@ public class ConfigurationController {
 	@Autowired
 	ConfigurationService objConfigurationService;
 	
-	static final Logger logger = Logger.getLogger(ReportsService.class.getName());
+
 	
 	@RequestMapping(value="/getAllConfigurations")
 	public Map<String, Object> getConfiguration()throws Exception{
@@ -28,7 +27,7 @@ public class ConfigurationController {
 		try {
 			rtnObj = objConfigurationService.getAllConfigurations();
 		}catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
+		
 		}
 		return rtnObj;
 	}
@@ -39,7 +38,7 @@ public class ConfigurationController {
 		try {
 			rtnObj = objConfigurationService.getConfigurationForFTP();
 		}catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
+		
 		}
 		return rtnObj;
 	}
@@ -50,7 +49,7 @@ public class ConfigurationController {
 		try {
 			rtnObj = objConfigurationService.AddAllConfiguration(argMap);
 		}catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
+			
 		}
 		return rtnObj;
 	}
@@ -61,7 +60,7 @@ public class ConfigurationController {
 		try{
 			ObjMap = objConfigurationService.testConnection(argMap);
 		}catch(Exception e) {
-			logger.error(e.getLocalizedMessage());
+			
 			ObjMap.put("status", "fail");
 		}
 		return ObjMap;
@@ -73,7 +72,7 @@ public class ConfigurationController {
 		try{
 			ObjMap = objConfigurationService.testFTPConnection(argMap);
 		}catch(Exception e) {
-			logger.error(e.getLocalizedMessage());
+			
 		}
 		return ObjMap;
 	}
@@ -84,7 +83,7 @@ public class ConfigurationController {
 		try{
 			ObjMap = objConfigurationService.testUrlConnection(argMap);
 		}catch(Exception e) {
-			logger.error(e.getLocalizedMessage());
+		
 		}
 		return ObjMap;
 	}

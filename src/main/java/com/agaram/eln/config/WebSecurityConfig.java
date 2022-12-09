@@ -179,6 +179,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/Lims/getOrderTagFromELN").permitAll().
 		antMatchers("/Lims/getUsersFromELN").permitAll().
 		antMatchers("/Lims/getSiteFromELN").permitAll().
+		antMatchers("/multitenant/getPremiumTenant").permitAll().
+		antMatchers("/transaction/updateMaterialDynamicTable").permitAll().
+		antMatchers("/transaction/updateMappedTemplateFieldPropsMaterialTable").permitAll().
 		// all other requests need to be authenticated
 		anyRequest().authenticated().and().
 		// make sure we use stateless session; session won't be used to

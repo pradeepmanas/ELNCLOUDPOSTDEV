@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
+import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.service.material.TransactionService;
 
 @RestController
 @RequestMapping("/transaction")
 public class TransactionController {
-	
+
 	@Autowired
 	TransactionService transactionService;
 
@@ -23,16 +25,31 @@ public class TransactionController {
 
 		return transactionService.getLoadOnInventoryData(inputMap);
 	}
-	
+
 	@PostMapping(value = "/getInventoryTransaction")
 	public ResponseEntity<Object> getInventoryTransaction(@RequestBody Map<String, Object> inputMap) throws Exception {
 
 		return transactionService.getInventoryTransaction(inputMap);
 	}
-	
+
 	@PostMapping(value = "/createMaterialInventoryTrans")
-	public ResponseEntity<Object> createMaterialInventoryTrans(@RequestBody Map<String, Object> inputMap) throws Exception {
+	public ResponseEntity<Object> createMaterialInventoryTrans(@RequestBody Map<String, Object> inputMap)
+			throws Exception {
 
 		return transactionService.createMaterialInventoryTrans(inputMap);
+	}
+
+	@PostMapping(value = "/updateMaterialDynamicTable")
+	public ResponseEntity<Object> updateMaterialDynamicTable(@RequestBody MaterialConfig[] objLstClass)
+			throws Exception {
+
+		return transactionService.updateMaterialDynamicTable(objLstClass);
+	}
+	
+	@PostMapping(value = "/updateMappedTemplateFieldPropsMaterialTable")
+	public ResponseEntity<Object> updateMappedTemplateFieldPropsMaterialTable(@RequestBody MappedTemplateFieldPropsMaterial[] objLstClass)
+			throws Exception {
+
+		return transactionService.updateMappedTemplateFieldPropsMaterialTable(objLstClass);
 	}
 }

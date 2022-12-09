@@ -2,10 +2,12 @@ package com.agaram.eln.primary.service.material;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,12 +18,16 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
+import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialCategory;
+import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialInventoryTransaction;
 import com.agaram.eln.primary.model.material.MaterialType;
+import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
+import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
 import com.agaram.eln.primary.repository.material.MaterialInventoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialInventoryTransactionRepository;
 import com.agaram.eln.primary.repository.material.MaterialRepository;
@@ -35,6 +41,12 @@ public class TransactionService {
 
 	@Autowired
 	private MaterialTypeRepository materialTypeRepository;
+
+	@Autowired
+	private MaterialConfigRepository materialConfigRepository;
+	
+	@Autowired
+	private MappedTemplateFieldPropsMaterialRepository mappedTemplateFieldPropsMaterialRepository;
 
 	@Autowired
 	private MaterialCategoryRepository materialCategoryRepository;
@@ -80,7 +92,7 @@ public class TransactionService {
 						if (!lstMaterials.isEmpty()) {
 							lstMaterialInventories = materialInventoryRepository
 									.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(
-											lstMaterials.get(0).getNmaterialcode(),28);
+											lstMaterials.get(0).getNmaterialcode(), 28);
 						}
 
 					}
@@ -103,7 +115,7 @@ public class TransactionService {
 					if (!lstMaterials.isEmpty()) {
 						lstMaterialInventories = materialInventoryRepository
 								.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(
-										lstMaterials.get(0).getNmaterialcode(),28);
+										lstMaterials.get(0).getNmaterialcode(), 28);
 					}
 
 				}
@@ -118,7 +130,8 @@ public class TransactionService {
 
 				if (!lstMaterials.isEmpty()) {
 					lstMaterialInventories = materialInventoryRepository
-							.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(lstMaterials.get(0).getNmaterialcode(),28);
+							.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(
+									lstMaterials.get(0).getNmaterialcode(), 28);
 				}
 
 			} /**
@@ -129,7 +142,7 @@ public class TransactionService {
 				Integer nmaterialCode = (Integer) inputMap.get("nmaterialcode");
 
 				lstMaterialInventories = materialInventoryRepository
-						.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(nmaterialCode,28);
+						.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(nmaterialCode, 28);
 
 			} /**
 				 * in initial load all values by nmaterialinventorycode
@@ -138,8 +151,8 @@ public class TransactionService {
 
 				Integer nmaterialinventorycode = (Integer) inputMap.get("nmaterialinventorycode");
 
-				lstMaterialInventories
-						.add(materialInventoryRepository.findByNmaterialinventorycodeAndNtransactionstatus(nmaterialinventorycode,28));
+				lstMaterialInventories.add(materialInventoryRepository
+						.findByNmaterialinventorycodeAndNtransactionstatus(nmaterialinventorycode, 28));
 
 			}
 		}
@@ -391,4 +404,37 @@ public class TransactionService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
+	public ResponseEntity<Object> updateMaterialDynamicTable(MaterialConfig[] objLstClass)
+			throws JsonParseException, JsonMappingException, IOException {
+
+		List<MaterialConfig> lstConfig = Arrays.asList(objLstClass);
+
+		lstConfig.stream().peek(f -> {
+
+			MaterialConfig objConfig = new MaterialConfig();
+
+			objConfig.setNformcode(f.getNformcode());
+			objConfig.setNmaterialtypecode(f.getNmaterialtypecode());
+			objConfig.setNmaterialconfigcode(f.getNmaterialconfigcode());
+			objConfig.setNstatus(1);
+			objConfig.setJsondata(f.getJsondata());
+
+			materialConfigRepository.save(objConfig);
+
+		}).collect(Collectors.toList());
+
+		return new ResponseEntity<>("Material Configuration updated successfully", HttpStatus.OK);
+
+	}
+
+	public ResponseEntity<Object> updateMappedTemplateFieldPropsMaterialTable(
+			MappedTemplateFieldPropsMaterial[] objLstClass) {
+		
+		List<MappedTemplateFieldPropsMaterial> lstMappedProps = Arrays.asList(objLstClass);
+
+		mappedTemplateFieldPropsMaterialRepository.save(lstMappedProps);
+
+		return new ResponseEntity<>("Material Properties updated successfully", HttpStatus.OK);
+
+	}
 }

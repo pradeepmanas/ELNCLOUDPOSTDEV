@@ -1158,9 +1158,9 @@ public class InstrumentController {
 
 	}
 	
-	@RequestMapping("/Getfoldersfordashboard")
-	public Map<String, Object> Getfoldersfordashboard(@RequestBody LSuserMaster objusermaster)throws Exception {
-		return instrumentService.Getfoldersfordashboard(objusermaster);
-	}
+//	@RequestMapping("/Getfoldersfordashboard")
+//	public Map<String, Object> Getfoldersfordashboard(@RequestBody LSuserMaster objusermaster)throws Exception {
+//		return instrumentService.Getfoldersfordashboard(objusermaster);
+//	}
 	
 }

@@ -18,11 +18,10 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
-import org.apache.log4j.Logger;
 
 public class ADS_Connection {
 
-	static final Logger logger = Logger.getLogger(ADS_Connection.class.getName());
+	
 	static final String INITIAL_CONTEXT_FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
 	static final String SECURITY_AUTHENTICATION = "simple";
 
@@ -41,7 +40,7 @@ public class ADS_Connection {
 				// Connection succeeded
 				return true;
 			} catch (AuthenticationException e) {
-				logger.error("CheckLDAPConnection()-->" + e.getMessage());
+				
 				// Connection failed
 				return false;
 			}
@@ -78,22 +77,22 @@ public class ADS_Connection {
 			errMsg.put("error", "The authentication is not supported by the server");
 			lstGroups.add(errMsg);
 			rtnListMap.put("error", lstGroups);
-			logger.error("The authentication is not supported by the server");
+			
 		} catch (AuthenticationException ex) {
 			errMsg.put("error", "Incorrect username or password");
 			lstGroups.add(errMsg);
 			rtnListMap.put("error", lstGroups);
-			logger.error("Incorrect username or password");
+			
 		} catch (NamingException ex) {
 			errMsg.put("error", "Unknown Host...Check Domainname");
 			lstGroups.add(errMsg);
 			rtnListMap.put("error", lstGroups);
-			logger.error("Unknown Host...check Domainname");
+			
 		} catch (Exception ex) {
 			errMsg.put("error", "Error in creating Context");
 			lstGroups.add(errMsg);
 			rtnListMap.put("error", lstGroups);
-			logger.error("Error in creating Context");
+			
 		}
 
 		return rtnListMap;
@@ -149,22 +148,22 @@ public class ADS_Connection {
 			errMsg.put("error", "The authentication is not supported by the server");
 			lstUsers.add(errMsg);
 			rtnListMap.put("error", lstUsers);
-			logger.error("The authentication is not supported by the server");
+			
 		} catch (AuthenticationException ex) {
 			errMsg.put("error", "Incorrect username or password");
 			lstUsers.add(errMsg);
 			rtnListMap.put("error", lstUsers);
-			logger.error("Incorrect username or password");
+			
 		} catch (NamingException ex) {
 			errMsg.put("error", "Unknown Host...Check Domainname");
 			lstUsers.add(errMsg);
 			rtnListMap.put("error", lstUsers);
-			logger.error("Unknown Host...check Domainname");
+			
 		} catch (Exception ex) {
 			errMsg.put("error", "Error in creating Context");
 			lstUsers.add(errMsg);
 			rtnListMap.put("error", lstUsers);
-			logger.error("Error in creating Context");
+			
 		}
 		return rtnListMap;
 	}
@@ -180,16 +179,16 @@ public class ADS_Connection {
 
 		} catch (AuthenticationNotSupportedException ex) {
 			errMsg.put("error", "The authentication is not supported by the server");
-			logger.error("The authentication is not supported by the server");
+			
 		} catch (AuthenticationException ex) {
 			errMsg.put("error", "Incorrect username or password");
-			logger.error("Incorrect username or password");
+			
 		} catch (NamingException ex) {
 			errMsg.put("error", "Unknown Host...Check Domainname");
-			logger.error("Unknown Host...check Domainname");
+			
 		} catch (Exception ex) {
 			errMsg.put("error", "Error in creating Context");
-			logger.error("Error in creating Context");
+			
 		}
 		errMsg.put("connect", isConnect);
 
@@ -207,16 +206,16 @@ public class ADS_Connection {
 
 		} catch (AuthenticationNotSupportedException ex) {
 			map.put("Msg", "The authentication is not supported by the server");
-			logger.error("The authentication is not supported by the server");
+			
 		} catch (AuthenticationException ex) {
 			map.put("Msg", "Incorrect username or password");
-			logger.error("Incorrect username or password");
+			
 		} catch (NamingException ex) {
 			map.put("Msg", "Unknown Host...Check Domainname");
-			logger.error("Unknown Host...check Domainname");
+			
 		} catch (Exception ex) {
 			map.put("Msg", "Error in creating Context");
-			logger.error("Error in creating Context");
+			
 		}
 		map.put("connect", isConnect);
 

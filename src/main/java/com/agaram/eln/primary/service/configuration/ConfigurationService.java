@@ -27,7 +27,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
@@ -50,7 +50,7 @@ public class ConfigurationService {
 	@Autowired
 	private LScfttransactionRepository lscfttransactionRepository;
 
-	static final Logger logger = Logger.getLogger(ReportsService.class.getName());
+
 
 	public Map<String, Object> getAllConfigurations() {
 		Map<String, Object> rtnObj = new HashedMap<String, Object>();
@@ -65,7 +65,7 @@ public class ConfigurationService {
 			LSConfiguration objLSconfiguration = LSconfigurationRepositoryObj.findBySerialnoAndStatus(1, 1);
 			rtnObj.put("configuration", objLSconfiguration);
 		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
+		
 		}
 		return rtnObj;
 	}
@@ -88,14 +88,14 @@ public class ConfigurationService {
 		boolean status = false;
 		try {
 			String srcFolderPath = "";
-			logger.info("copyImgToDest() Started ");
+		
 			if (new File(new File("").getAbsolutePath() + "\\webapps").exists()) {
 				srcFolderPath = new File("").getAbsolutePath()
 						+ "\\webapps\\ELN-0.0.1-SNAPSHOT\\WEB-INF\\classes\\images";
 			} else {
 				srcFolderPath = new File("").getAbsolutePath() + "\\src\\main\\resources\\images";
 			}
-			logger.info("copyImgToDest() Logo srcFolderPath: " + srcFolderPath);
+			
 			File destFile = new File(destFolderPath);
 			File srcFile = new File(srcFolderPath + "\\" + fileName);
 			if (srcFile.exists()) {
@@ -113,10 +113,10 @@ public class ConfigurationService {
 				instream.close();
 				outStream.close();
 			} else {
-				logger.info("copyImgToDest() Logo images not found in  URL: " + srcFile.getAbsolutePath());
+			
 			}
 		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
+			
 		}
 		return status;
 	}
@@ -126,7 +126,7 @@ public class ConfigurationService {
 		LSConfiguration objLSConfiguration = getConfigurationForDocsPath();
 		if (objLSConfiguration == null) {
 			String filePath = new File("").getAbsolutePath() + "\\webapps\\ROOT\\ELNdocuments";
-			logger.info("getConfigurationForDocxInit() Logo filePath" + filePath);
+			
 			if (!new File(filePath + "\\favicon.ico").exists()) {
 				copyImgToDest("favicon.ico", filePath);
 				copyImgToDest("Logilab_ELN_vertical.png", filePath);
@@ -141,16 +141,16 @@ public class ConfigurationService {
 							fw.close();
 						}
 					} catch (IOException e) {
-						logger.info(e.getLocalizedMessage());
+						
 					}
 				}
-				logger.info("getConfigurationForDocxInit() Logo copied");
+				
 			} else {
-				logger.info("getConfigurationForDocxInit() Logo present");
+				
 			}
 		} else {
 			String filePath = objLSConfiguration.getConfigpath();
-			logger.info("getConfigurationForDocxInit() Logo filePath" + filePath);
+			
 			if (!new File(filePath + "\\favicon.ico").exists()) {
 				copyImgToDest("favicon.ico", filePath);
 				copyImgToDest("Logilab_ELN_vertical.png", filePath);
@@ -165,12 +165,12 @@ public class ConfigurationService {
 							fw.close();
 						}
 					} catch (IOException e) {
-						logger.info(e.getLocalizedMessage());
+						
 					}
 				}
-				logger.info("getConfigurationForDocxInit() Logo copied");
+				
 			} else {
-				logger.info("getConfigurationForDocxInit() Logo present");
+				
 			}
 		}
 		LSConfiguration onlyofficeapiConfigObj = LSconfigurationRepositoryObj
@@ -181,16 +181,15 @@ public class ConfigurationService {
 				.findByConfiggrouptypeAndConfigactiveAndStatus("ftp", 1, 1);
 		if (onlyofficeapiConfigObj != null) {
 			rtnObj.put("onlyofficeapiConfigObj", onlyofficeapiConfigObj);
-			logger.info(
-					"getConfigurationForDocxInit() onlyofficeapiConfigObj: " + onlyofficeapiConfigObj.getConfigpath());
+			
 		}
 		if (docxurlConfigObj != null) {
 			rtnObj.put("docxurlConfigObj", docxurlConfigObj);
-			logger.info("getConfigurationForDocxInit() docxurlConfigObj: " + docxurlConfigObj.getConfigpath());
+		
 		}
 		if (docxFTPConfigObj != null) {
 			rtnObj.put("docxFTPConfigObj", docxFTPConfigObj);
-			logger.info("getConfigurationForDocxInit() docxFTPConfigObj: " + docxFTPConfigObj.getConfigpath());
+			
 		}
 
 		return rtnObj;
@@ -350,7 +349,7 @@ public class ConfigurationService {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
+			
 		}
 		return rtnObj;
 	}
@@ -423,7 +422,7 @@ public class ConfigurationService {
 				}
 			}
 		} catch (MalformedURLException | NoSuchAlgorithmException | KeyManagementException e) {
-			logger.error(e.getLocalizedMessage());
+			
 			rtnObj.put("status", "fail");
 		}
 		return rtnObj;
@@ -444,7 +443,7 @@ public class ConfigurationService {
 			} else {
 				rtnObj.put("status", "fail");
 			}
-			logger.info("testFTPConnection() FTP Connection Status: " + loginStatus);
+		
 			if (argMap.containsKey("objsilentaudit")) {
 				if (argMap.get("objsilentaudit") != null) {
 					LScfttransaction LScfttransactionobj = new ObjectMapper().convertValue(argMap.get("objsilentaudit"),
@@ -459,7 +458,7 @@ public class ConfigurationService {
 				}
 			}
 		} catch (MalformedURLException e) {
-			logger.error("testFTPConnection(): " + e.getLocalizedMessage());
+		
 			rtnObj.put("status", "fail");
 		}
 		return rtnObj;
@@ -479,7 +478,7 @@ public class ConfigurationService {
 			InputStream stream;
 			HttpsURLConnection connectionSSL = null;
 			HttpURLConnection connection = null;
-			logger.info("saveDocxsReport() downloadUri: " + downloadUri);
+			
 			if (downloadUri.contains("https")) {
 				SSLContext sc = SSLContext.getInstance("SSL");
 				sc.init(null, trustAllCerts, new java.security.SecureRandom());
@@ -489,7 +488,7 @@ public class ConfigurationService {
 				stream = connectionSSL.getInputStream();
 				String fileContent = new BufferedReader(new InputStreamReader(stream)).lines()
 						.collect(Collectors.joining("\n"));
-				logger.info(fileContent);
+			
 				if (fileContent.equals("working")) {
 					status = "pass";
 				} else {
@@ -501,7 +500,7 @@ public class ConfigurationService {
 				stream = connection.getInputStream();
 				String fileContent = new BufferedReader(new InputStreamReader(stream)).lines()
 						.collect(Collectors.joining("\n"));
-				logger.info(fileContent);
+				
 				if (fileContent.equals("working")) {
 					status = "pass";
 				} else {
@@ -515,7 +514,7 @@ public class ConfigurationService {
 			}
 
 		} catch (Exception e) {
-			logger.info(e.getLocalizedMessage());
+		
 			status = "fail";
 			ObjMap.put("errorMsg", e.getLocalizedMessage() + " URL not found");
 		}
