@@ -52,6 +52,7 @@ import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 //import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderAttachment;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderVersion;
@@ -68,11 +69,13 @@ import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSfields;
+import com.agaram.eln.primary.model.instrumentDetails.LSinstruments;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LSresultdetails;
 import com.agaram.eln.primary.model.instrumentDetails.LSsheetfolderfiles;
+import com.agaram.eln.primary.model.instrumentDetails.LsMethodFields;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
@@ -110,6 +113,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
+import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderCreationRepository;
@@ -120,12 +124,13 @@ import com.agaram.eln.primary.repository.fileManipulation.FileimagestempReposito
 import com.agaram.eln.primary.repository.fileManipulation.LSfileimagesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSSheetOrderStructureRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSfieldsRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSprotocolfolderfilesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSresultdetailsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSsheetfolderfilesRepository;
-//import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsResultlimsOrderrefrenceRepository;
@@ -169,6 +174,7 @@ import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservic
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
+import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
@@ -181,10 +187,10 @@ public class InstrumentService {
 
 	@Autowired
 	private Environment env;
-//	@Autowired
-//	private LsMethodFieldsRepository lsMethodFieldsRepository;
-//	@Autowired
-//	private LSinstrumentsRepository lSinstrumentsRepository;
+	@Autowired
+	private LsMethodFieldsRepository lsMethodFieldsRepository;
+	@Autowired
+	private LSinstrumentsRepository lSinstrumentsRepository;
 	@Autowired
 	private InstMasterRepository lsInstMasterRepository;
 	@Autowired
@@ -320,11 +326,11 @@ public class InstrumentService {
 	@Autowired
 	private LSfileRepository LSfileRepository;
 
-//	@Autowired
-//	private LSpreferencesRepository LSpreferencesRepository;
-//
-//	@Autowired
-//	private WebparserService parserService;
+	@Autowired
+	private LSpreferencesRepository LSpreferencesRepository;
+
+	@Autowired
+	private WebparserService parserService;
 
 	@Autowired
 	private ELNResultDetailsRepository ELNResultDetailsRepository;
@@ -452,33 +458,33 @@ public class InstrumentService {
 
 	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 		Map<String, Object> obj = new HashMap<>();
-//		List<String> lsInst = new ArrayList<String>();
-//		lsInst.add("INST000");
-//		lsInst.add("LPRO");
-//		List<LsMethodFields> Methods = lsMethodFieldsRepository.findByinstrumentidNotIn(lsInst);
+		List<String> lsInst = new ArrayList<String>();
+		lsInst.add("INST000");
+		lsInst.add("LPRO");
+		List<LsMethodFields> Methods = lsMethodFieldsRepository.findByinstrumentidNotIn(lsInst);
 
 		if (lssiteMaster.getIsmultitenant() != 1) {
 			List<LSfields> Generalfields = lSfieldsRepository.findByisactive(1);
-//			List<LSinstruments> Instruments = lSinstrumentsRepository.findAll();
-//			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findAll();
+			List<LSinstruments> Instruments = lSinstrumentsRepository.findAll();
+			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findAll();
 //			List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
 //			List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
 //
-//			List<Method> elnMethod = lsMethodRepository.findAll();
-//			List<ParserBlock> ParserBlock = lsParserBlockRepository.findAll();
-//			List<ParserField> ParserField = lsParserRepository.findAll();
-//			List<SubParserField> SubParserField = lsSubParserRepository.findAll();
+			List<Method> elnMethod = lsMethodRepository.findAll();
+			List<ParserBlock> ParserBlock = lsParserBlockRepository.findAll();
+			List<ParserField> ParserField = lsParserRepository.findAll();
+			List<SubParserField> SubParserField = lsSubParserRepository.findAll();
 			obj.put("Generalfields", Generalfields);
-//			obj.put("Instruments", Instruments);
-//			obj.put("Instrmaster", InstrMaster);
+			obj.put("Instruments", Instruments);
+			obj.put("Instrmaster", InstrMaster);
 			obj.put("elninstrument", lselninstrumentmasterRepository
 					.findBylssitemasterAndStatusOrderByInstrumentcodeDesc(lssiteMaster, 1));
 //			obj.put("Mappedtemplates", MappedTemplate);
 //			obj.put("Unmappedtemplates", UnmappedTemplate);
-//			obj.put("ELNMethods", elnMethod);
-//			obj.put("ParserBlock", ParserBlock);
-//			obj.put("ParserField", ParserField);
-//			obj.put("SubParserField", SubParserField);
+			obj.put("ELNMethods", elnMethod);
+			obj.put("ParserBlock", ParserBlock);
+			obj.put("ParserField", ParserField);
+			obj.put("SubParserField", SubParserField);
 		} else {
 			List<LSfields> Generalfields = lSfieldsRepository.findByisactiveAndMethodname(1, "ID_GENERAL");
 
@@ -506,15 +512,15 @@ public class InstrumentService {
 			obj.put("SubParserField", SubParserField);
 		}
 
-//		LSpreferences objPrefrence = LSpreferencesRepository.findBySerialno(1);
+		LSpreferences objPrefrence = LSpreferencesRepository.findBySerialno(1);
 
-//		if (objPrefrence.getValuesettings().equalsIgnoreCase("Active")) {
-//
-//			obj.put("Methods", parserService.getwebparsemethods());
-//			obj.put("Instruments", parserService.getwebparserInstruments());
-//		} else {
-//			obj.put("Methods", Methods);
-//		}
+		if (objPrefrence.getValuesettings().equalsIgnoreCase("Active")) {
+
+			obj.put("Methods", parserService.getwebparsemethods());
+			obj.put("Instruments", parserService.getwebparserInstruments());
+		} else {
+			obj.put("Methods", Methods);
+		}
 
 		return obj;
 	}

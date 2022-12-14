@@ -1163,7 +1163,7 @@ public class LoginService {
 						.getMultitenantusercount()) {
 					Response objResponse = new Response();
 					objResponse.setStatus(false);
-					objResponse.setInformation("ID_USERCOUNTEXCEEDS");
+					objResponse.setInformation("IDS_MSG_USERCOUNTEXCEEDS");
 					objuser.setObjResponse(objResponse);
 
 					return objuser;
@@ -1433,7 +1433,10 @@ public class LoginService {
 		return null;
 
 	}
-
+	public Notification Resourcenotification(Notification objNotification) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	public LSactiveUser activeUserEntry(LSactiveUser objsite) {
 
 		LSuserMaster objUser = lsuserMasterRepository.findByusercode(objsite.getLsusermaster().getUsercode());
@@ -1511,5 +1514,7 @@ public class LoginService {
 		return obj;
 		
 	}
+
+	
 
 }

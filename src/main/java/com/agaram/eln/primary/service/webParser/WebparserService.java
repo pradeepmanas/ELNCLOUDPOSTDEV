@@ -12,6 +12,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.agaram.eln.primary.model.instrumentDetails.LSinstruments;
+import com.agaram.eln.primary.model.instrumentDetails.LsMethodFields;
 //import com.agaram.eln.primary.model.instrumentDetails.LSinstruments;
 //import com.agaram.eln.primary.model.instrumentDetails.LsMethodFields;
 import com.agaram.eln.primary.model.webParser.Lswebparserfield;
@@ -149,17 +151,17 @@ public class WebparserService {
 		return result;
 	}
 
-//	public List<LsMethodFields> getwebparsemethods() {
-//		List<LsMethodFields> lstObjMethod = LswebparserfieldRepository.getMethoFeilds();
-////		List<LsMethodFields> lstObjMethod = new ArrayList<LsMethodFields>();
-//		return lstObjMethod;
-//	}
-//
-//	public Object getwebparserInstruments() {
-//
-//		List<LSinstruments> lstObjMethod = LswebparserfieldRepository.getInstruments();
-////		List<LSinstruments> lstObjMethod = new ArrayList<LSinstruments>();
-//		return lstObjMethod;
-//	}
+	public List<LsMethodFields> getwebparsemethods() {
+		List<LsMethodFields> lstObjMethod = LswebparserfieldRepository.getMethoFeilds();
+//		List<LsMethodFields> lstObjMethod = new ArrayList<LsMethodFields>();
+		return lstObjMethod;
+	}
+
+	public Object getwebparserInstruments() {
+
+		List<LSinstruments> lstObjMethod = LswebparserfieldRepository.getInstruments();
+//		List<LSinstruments> lstObjMethod = new ArrayList<LSinstruments>();
+		return lstObjMethod;
+	}
 
 }

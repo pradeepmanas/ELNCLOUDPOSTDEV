@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.agaram.eln.primary.model.masters.LSlogbooksampleupdates;
-import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
+//import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
 
 public interface LSlogbooksampleupdatesRepository extends JpaRepository<LSlogbooksampleupdates, Integer> {
 

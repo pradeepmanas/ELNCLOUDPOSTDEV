@@ -132,17 +132,19 @@ public class BaseMasterService {
 
 	@Autowired
 	private LsrepositoriesdataRepository LsrepositoriesdataRepository;
-	
+
 	@Autowired
 	private LSlogbooksampleupdatesRepository LSlogbooksampleupdatesRepository;
-	
+
 	@SuppressWarnings("unused")
 	private String ModuleName = "Base Master";
 
 	public List<Testmaster> getTestmaster(LSuserMaster objClass) {
 
-		return lStestmasterlocalRepository.findBystatusAndLssitemasterOrderByTestcodeDesc(1, objClass.getLssitemaster());
-	//	return lStestmasterlocalRepository.findBystatusAndLssitemaster(1, objClass.getLssitemaster());
+		return lStestmasterlocalRepository.findBystatusAndLssitemasterOrderByTestcodeDesc(1,
+				objClass.getLssitemaster());
+		// return lStestmasterlocalRepository.findBystatusAndLssitemaster(1,
+		// objClass.getLssitemaster());
 	}
 
 	public Map<String, Object> getTestwithsheet(LSuserMaster objClass) {
@@ -195,8 +197,10 @@ public class BaseMasterService {
 
 	public List<LSprojectmaster> getProjectmaster(LSuserMaster objClass) {
 
-		List<LSprojectmaster> projectlist= lSprojectmasterRepository.findByLssitemasterAndStatus( objClass.getLssitemaster(),1);
-		//return lSprojectmasterRepository.findByLssitemaster( objClass.getLssitemaster());
+		List<LSprojectmaster> projectlist = lSprojectmasterRepository
+				.findByLssitemasterAndStatus(objClass.getLssitemaster(), 1);
+		// return lSprojectmasterRepository.findByLssitemaster(
+		// objClass.getLssitemaster());
 		return projectlist;
 	}
 
@@ -204,14 +208,7 @@ public class BaseMasterService {
 
 		objClass.setResponse(new Response());
 
-//		if (objClass.getTestcode() == null
-//				&& lStestmasterlocalRepository.findByTestnameIgnoreCaseAndStatusAndLssitemaster(objClass.getTestname(),
-//						1, objClass.getLssitemaster()) != null) {
-//			objClass.getResponse().setStatus(false);
-//			objClass.getResponse().setInformation("ID_EXIST");
-//
-//			return objClass;
-//		} else if (objClass.getTestcode() != null
+//		else if (objClass.getTestcode() != null
 //				//&& lStestmasterlocalRepository.findByTestnameIgnoreCaseAndStatusAndTestcodeNotAndLssitemaster(
 //				&& lStestmasterlocalRepository.findByTestnameIgnoreCaseAndTaskcategoryIgnoreCaseAndStatusAndTestcodeNotAndLssitemaster(
 //						objClass.getTestname(),objClass.getTaskcategory(), 1, objClass.getTestcode(), objClass.getLssitemaster()) != null) {	
@@ -235,6 +232,18 @@ public class BaseMasterService {
 				return objClass;
 			}
 
+		} else if (objClass.getTestcode() == null && lStestmasterlocalRepository.findByTestnameIgnoreCaseAndStatusAndLssitemaster(
+				objClass.getTestname().trim(), 1, objClass.getLssitemaster()) != null) {
+			objClass.getResponse().setStatus(false);
+			objClass.getResponse().setInformation("ID_EXIST");
+
+			return objClass;
+		}else if(objClass.getTestcode() != null && lStestmasterlocalRepository.findBytestcodeNotAndTestnameIgnoreCaseAndStatusAndLssitemaster(
+				objClass.getTestcode(),objClass.getTestname().trim(), 1, objClass.getLssitemaster()) != null) {
+			objClass.getResponse().setStatus(false);
+			objClass.getResponse().setInformation("ID_EXIST");
+
+			return objClass;
 		}
 
 		lStestmasterlocalRepository.save(objClass);
@@ -266,21 +275,7 @@ public class BaseMasterService {
 	public LSsamplemaster InsertupdateSample(LSsamplemaster objClass) {
 
 		objClass.setResponse(new Response());
-//		if (objClass.getSamplecode() == null
-//				&& lSsamplemasterRepository.findBySamplenameIgnoreCaseAndStatusAndLssitemaster(objClass.getSamplename(),
-//						1, objClass.getLssitemaster()) != null) {
-//			objClass.getResponse().setStatus(false);
-//			objClass.getResponse().setInformation("ID_EXIST");
-//
-//			return objClass;
-//		} else if (objClass.getSamplecode() != null
-//				&& lSsamplemasterRepository.findBySamplenameIgnoreCaseAndStatusAndSamplecodeNotAndLssitemaster(
-//						objClass.getSamplename(), 1, objClass.getSamplecode(), objClass.getLssitemaster()) != null) {
-//			objClass.getResponse().setStatus(false);
-//			objClass.getResponse().setInformation("ID_EXIST");
-//
-//			return objClass;
-//		}
+
 
 		if (objClass.getStatus() == -1 && objClass.getSamplecode() != null) {
 
@@ -293,6 +288,20 @@ public class BaseMasterService {
 
 				return objClass;
 			}
+		}else if (objClass.getSamplecode() == null
+				&& lSsamplemasterRepository.findBySamplenameIgnoreCaseAndStatusAndLssitemaster(objClass.getSamplename().trim(),
+						1, objClass.getLssitemaster()) != null) {
+			objClass.getResponse().setStatus(false);
+			objClass.getResponse().setInformation("ID_EXIST");
+
+			return objClass;
+		} else if (objClass.getSamplecode() != null
+				&& lSsamplemasterRepository.findBySamplenameIgnoreCaseAndStatusAndSamplecodeNotAndLssitemaster(
+						objClass.getSamplename().trim(), 1, objClass.getSamplecode(), objClass.getLssitemaster()) != null) {
+			objClass.getResponse().setStatus(false);
+			objClass.getResponse().setInformation("ID_EXIST");
+
+			return objClass;
 		}
 
 		lSsamplemasterRepository.save(objClass);
@@ -307,8 +316,8 @@ public class BaseMasterService {
 		objClass.setResponse(new Response());
 
 		if (objClass.getProjectcode() == null
-				&& lSprojectmasterRepository.findByProjectnameIgnoreCaseAndLssitemaster(
-						objClass.getProjectname(), objClass.getLssitemaster()) != null) {
+				&& lSprojectmasterRepository.findByProjectnameIgnoreCaseAndLssitemaster(objClass.getProjectname(),
+						objClass.getLssitemaster()) != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
 			if (objClass.getObjsilentaudit() != null) {
@@ -366,19 +375,19 @@ public class BaseMasterService {
 
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 
-		
-		List<LSuserteammapping> objteam =new ArrayList<LSuserteammapping>();
+		List<LSuserteammapping> objteam = new ArrayList<LSuserteammapping>();
 		LSusersteam objteam1 = new LSusersteam();
-		
+
 		for (int i = 0; i < objClass.getLsusersteam().getLsuserteammapping().size(); i++) {
 			LSnotification notify = new LSnotification();
-			//objteam1 = LSusersteamRepository.findByteamcode(objClass.getLsusersteam().getTeamcode());
-		//LSuserteammappingRepository.findByUsercode();
+			// objteam1 =
+			// LSusersteamRepository.findByteamcode(objClass.getLsusersteam().getTeamcode());
+			// LSuserteammappingRepository.findByUsercode();
 			Details = "{\"teamname\":\"" + objClass.getTeamname() + "\", \"projectname\":\"" + objClass.getProjectname()
 					+ "\"}";
 
 			notify.setNotifationfrom(objClass.getModifiedby());
-				notify.setNotifationto(objClass.getLsusersteam().getLsuserteammapping().get(i).getLsuserMaster());
+			notify.setNotifationto(objClass.getLsusersteam().getLsuserteammapping().get(i).getLsuserMaster());
 			notify.setNotificationdate(new Date());
 			notify.setNotification(Notifiction);
 			notify.setNotificationdetils(Details);
@@ -395,17 +404,15 @@ public class BaseMasterService {
 
 	public Map<String, Object> GetMastersforTestMaster(LSuserMaster objuser) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		
+
 		mapOrders.put("test", getTestmaster(objuser));
 
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LStestmaster");
 //			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
-     	return mapOrders;
-	
-		
-		
+		return mapOrders;
+
 	}
 
 	public Lselninstrumentmaster InsertupdateInstrument(Lselninstrumentmaster objClass) {
@@ -526,7 +533,7 @@ public class BaseMasterService {
 
 		return objClass;
 	}
-	
+
 	public Map<String, Object> getLsrepositoriesLst(Map<String, Object> argMap) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		LScfttransaction LScfttransactionobj = new LScfttransaction();
@@ -551,7 +558,7 @@ public class BaseMasterService {
 		}
 		return mapObj;
 	}
-	
+
 	public Map<String, Object> getLsrepositoriesDataLst(Map<String, Object> argMap) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		LScfttransaction LScfttransactionobj = new LScfttransaction();
@@ -562,7 +569,7 @@ public class BaseMasterService {
 			Lsrepositories LsrepositoriesLst = new ObjectMapper().convertValue(argMap.get("LsrepositoriesObj"),
 					new TypeReference<Lsrepositories>() {
 					});
-			if(LsrepositoriesLst != null) {
+			if (LsrepositoriesLst != null) {
 				if (LsrepositoriesLst.getRepositorycode() > 0) {
 					List<Lsrepositoriesdata> LsrepositoriesdataLst = LsrepositoriesdataRepository
 							.findByRepositorycodeAndSitecodeAndItemstatusOrderByRepositorydatacodeDesc(
@@ -570,14 +577,12 @@ public class BaseMasterService {
 					mapObj.put("LsrepositoriesdataLst", LsrepositoriesdataLst);
 				} else {
 					mapObj.put("LsrepositoriesdataLst", new ArrayList<>());
-				}	
-			}else {
+				}
+			} else {
 				List<Lsrepositoriesdata> LsrepositoriesdataLst = LsrepositoriesdataRepository
-						.findByRepositoryitemname(
-								argMap.get("repositoryitemname"));
+						.findByRepositoryitemname(argMap.get("repositoryitemname"));
 				mapObj.put("LsrepositoriesdataLst", LsrepositoriesdataLst);
 			}
-			
 
 		}
 		return mapObj;
@@ -590,22 +595,16 @@ public class BaseMasterService {
 			LsrepositoriesdataRepository.save(lsrepositoriesdataobj);
 		}
 		return lsrepositoriesdataobj;
-		}
-	
-	
+	}
 
 	public Map<String, Object> logbooksampleupdates(LSlogbooksampleupdates lslogbooksampleupdates) {
 		Map<String, Object> obj = new HashMap<String, Object>();
 		LSlogbooksampleupdatesRepository.save(lslogbooksampleupdates);
 		List<LSlogbooksampleupdates> lslogbooksamplelist = LSlogbooksampleupdatesRepository
-				.findByLogbookcodeAndIndexofIsNotNullAndStatus(
-						lslogbooksampleupdates.getLogbookcode(),
-						1);
+				.findByLogbookcodeAndIndexofIsNotNullAndStatus(lslogbooksampleupdates.getLogbookcode(), 1);
 		obj.put("lslogbooksampleupdates", lslogbooksampleupdates);
 		obj.put("lslogbooksamplelist", lslogbooksamplelist);
 		return obj;
 	}
-	
-	
 
 }

@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.Null;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -186,7 +188,7 @@ public class FileService {
 		String Content = new String(bytes, StandardCharsets.UTF_16);
 
 		if (objfile.getFilecode() == null
-				&& lSfileRepository.findByfilenameuserIgnoreCaseAndLssitemaster(objfile.getFilenameuser(),
+				&& lSfileRepository.findByfilenameuserIgnoreCaseAndLssitemaster(objfile.getFilenameuser().trim(),
 						objfile.getLssitemaster()) != null) {
 
 			objfile.setResponse(new Response());
@@ -1398,19 +1400,22 @@ public class FileService {
 
 	public LSfile updatefilename(LSfile objfile) {
 
-		List<LSfile> fileByName = lSfileRepository.findByFilecodeNotAndFilenameuser(objfile.getFilecode(),
-				objfile.getFilenameuser());
+		LSfile fileByName = lSfileRepository.findByfilecode(objfile.getFilecode());
 
-		if (fileByName.isEmpty()) {
-			lSfileRepository.save(objfile);
-			objfile.setResponse(new Response());
-			objfile.getResponse().setStatus(true);
-			return objfile;
+		if (fileByName.getFilecode()!=null) {
+			fileByName.setFilenameuser(objfile.getFilenameuser());
+			fileByName.setCategory(objfile.getCategory());
+			fileByName.setModifiedby(objfile.getModifiedby());
+			fileByName.setModifieddate(objfile.getModifieddate());
+			lSfileRepository.save(fileByName);
+			fileByName.setResponse(new Response());
+			fileByName.getResponse().setStatus(true);
+			return fileByName;
 
 		} else {
 			objfile.setResponse(new Response());
 			objfile.getResponse().setStatus(false);
-			objfile.getResponse().setInformation("DUPLICATE SHEET NAME");
+			objfile.getResponse().setInformation("EDIT IN SOME PROBLEMS");
 
 			return objfile;
 		}
