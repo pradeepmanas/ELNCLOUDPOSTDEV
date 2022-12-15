@@ -131,7 +131,9 @@ public class LoginService {
 
 	public List<LSdomainMaster> loadDomain(LSSiteMaster objsite) {
 		List<LSdomainMaster> result = new ArrayList<LSdomainMaster>();
-		result = lSDomainMasterRepository.findBylssitemaster(objsite);
+	//	result = lSDomainMasterRepository.findBylssitemaster(objsite,1);
+		
+		result = lSDomainMasterRepository.findBylssitemasterAndDomainstatus(objsite,1);
 		return result;
 	}
 

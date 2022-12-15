@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
 @Entity
 @Table(name = "MappedTemplateFieldPropsMaterial")
 public class MappedTemplateFieldPropsMaterial {
@@ -14,6 +16,7 @@ public class MappedTemplateFieldPropsMaterial {
 	private Integer nmappedtemplatefieldpropmaterialcode;
 	@Column(name = "nmaterialconfigcode")
 	private Integer nmaterialconfigcode;
+	@Type(type = "jsonb")
 	@Column(name = "jsondata", columnDefinition = "jsonb")
 	private String jsondata;
 	@Column(name = "nstatus")

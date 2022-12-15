@@ -3129,3 +3129,93 @@ INSERT INTO parserignorechars(ignorechars)SELECT 'µµµµµ' WHERE NOT EXISTS (
    
  INSERT INTO parserignorechars(ignorechars)SELECT 'âââ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†µ');
   
+CREATE TABLE IF NOT EXISTS public.lslogilablimsorder
+(
+    orderid numeric(17,0) NOT NULL,
+    batchid character varying(250) COLLATE pg_catalog."default",
+    completedtimestamp timestamp without time zone,
+    createdtimestamp timestamp without time zone,
+    instrumentcode character varying(100) COLLATE pg_catalog."default",
+    instrumentname character varying(100) COLLATE pg_catalog."default",
+    methodcode character varying(100) COLLATE pg_catalog."default",
+    orderflag character(10) COLLATE pg_catalog."default",
+    parserflag character(10) COLLATE pg_catalog."default",
+    replicateid character varying(100) COLLATE pg_catalog."default",
+    sampleid character varying(250) COLLATE pg_catalog."default",
+    testcode character varying(100) COLLATE pg_catalog."default",
+    CONSTRAINT lslogilablimsorder_pkey PRIMARY KEY (orderid)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lslogilablimsorder
+    OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.lsinstruments
+(
+    t06_strinstid character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    t06_bytecaliber smallint,
+    t06_byte_clientbound smallint,
+    t06_bytedatasource smallint,
+    t06_bytemultisid smallint,
+    t06_byte_peakdetection smallint,
+    t06_bytesplitsid smallint,
+    t06_byteselected smallint,
+    t06_bytesid smallint,
+    t06_bytestationid smallint NOT NULL,
+    t06_calibduedate date,
+    t06_caliblastmodifiedon date,
+    t06_caliblastsetby character varying(50) COLLATE pg_catalog."default",
+    t06_calibstatus character varying(50) COLLATE pg_catalog."default",
+    t06_calibtime character varying(6) COLLATE pg_catalog."default",
+    t06_int_usedby smallint NOT NULL,
+    t06_lastcalibon date,
+    t06_strcalibtest character varying(50) COLLATE pg_catalog."default",
+    t06_strsched1 character varying(10) COLLATE pg_catalog."default",
+    t06_strsched2 character varying(15) COLLATE pg_catalog."default",
+    t06_strinstname character varying(50) COLLATE pg_catalog."default",
+    t06_striopnumber character varying(20) COLLATE pg_catalog."default",
+    t06_strelectrodeno character varying(50) COLLATE pg_catalog."default",
+    t06_strmake character varying(15) COLLATE pg_catalog."default",
+    t06_strmodel character varying(15) COLLATE pg_catalog."default",
+    CONSTRAINT lsinstruments_pkey PRIMARY KEY (t06_strinstid)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsinstruments
+    OWNER to postgres;
+    
+CREATE TABLE IF NOT EXISTS public.lsmethodfields
+(
+    t23_strfieldkey character varying(12) COLLATE pg_catalog."default" NOT NULL,
+    t23_bytealign smallint,
+    t23_bytecoltype smallint,
+    t23_bytedeletable smallint,
+    t23_bytedimension smallint,
+    t23_byteselected smallint,
+    t23_byteselloginrpt smallint,
+    t23_bytesequence smallint,
+    t23_bytevalue smallint,
+    t23_strdatatype character varying(12) COLLATE pg_catalog."default",
+    t23_strelnfieldname character varying(30) COLLATE pg_catalog."default",
+    t23_strfieldname character varying(30) COLLATE pg_catalog."default",
+    t23_strformat character varying(25) COLLATE pg_catalog."default",
+    t23_strinstrumentid character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    t23_strlimsfieldname character varying(30) COLLATE pg_catalog."default",
+    t23_strmethodname character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    t23_strparsername character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    t23_intsortsequence smallint,
+    CONSTRAINT lsmethodfields_pkey PRIMARY KEY (t23_strfieldkey)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsmethodfields
+    OWNER to postgres;

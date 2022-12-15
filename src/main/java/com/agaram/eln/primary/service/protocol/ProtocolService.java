@@ -1297,30 +1297,7 @@ public class ProtocolService {
 		ObjectMapper objMapper = new ObjectMapper();
 		Response response = new Response();
 
-		/**
-		 * // silent audit if (LScfttransactionobj != null) {
-		 * LScfttransactionobj.setTableName("LSprotocolmaster"); if
-		 * (argObj.containsKey("username")) { String username =
-		 * objMapper.convertValue(argObj.get("username"), String.class);
-		 * 
-		 * LSSiteMaster objsite =
-		 * LSSiteMasterRepository.findBysitecode(LScfttransactionobj.getLssitemaster());
-		 * LSuserMaster objuser =
-		 * LSuserMasterRepositoryObj.findByusernameAndLssitemaster(username, objsite);
-		 * LScfttransactionobj.setLsuserMaster(objuser.getUsercode());
-		 * LScfttransactionobj.setLssitemaster(objuser.getLssitemaster().getSitecode());
-		 * LScfttransactionobj.setUsername(username); }
-		 * lscfttransactionRepository.save(LScfttransactionobj); } // manual audit if
-		 * (argObj.containsKey("objuser")) { Map<String, Object> mapObjUser =
-		 * (Map<String, Object>) argObj.get("objuser");
-		 * 
-		 * if (argObj.containsKey("objmanualaudit")) { LScfttransaction objmanualaudit =
-		 * new LScfttransaction(); objmanualaudit =
-		 * objMapper.convertValue(argObj.get("objmanualaudit"), LScfttransaction.class);
-		 * 
-		 * objmanualaudit.setComments((String) mapObjUser.get("comments"));
-		 * lscfttransactionRepository.save(objmanualaudit); } }
-		 */
+	
 
 		if (argObj.containsKey("newProtocolMasterObj")) {
 			LSuserMaster LsuserMasterObj = LSuserMasterRepositoryObj
@@ -1330,6 +1307,13 @@ public class ProtocolService {
 
 				int protocolmastercode = new ObjectMapper().convertValue(argObj.get("protocolmastercode"),
 						Integer.class);
+				
+				if(LSProtocolMasterRepositoryObj.findByprotocolmastercodeNotAndProtocolmastername(protocolmastercode,argObj.get("protocolmastername").toString().trim())!=null) {
+					response.setStatus(false);
+					response.setInformation("IDS_MSG_ALREADY");
+					mapObj.put("response", response);
+					return mapObj;
+				}
 				newProtocolMasterObj = LSProtocolMasterRepositoryObj
 						.findFirstByProtocolmastercodeAndStatusAndLssitemaster(protocolmastercode, 1,
 								LScfttransactionobj.getLssitemaster());
@@ -1342,6 +1326,12 @@ public class ProtocolService {
 				argObj1 = (Map<String, Object>) argObj.get("LSprotocolupdates");
 //				UpdateProtocolversion(newProtocolMasterObj, argObj1, LSprotocolupdates.class);
 			} else {
+				if(LSProtocolMasterRepositoryObj.findByProtocolmastername(argObj.get("protocolmastername").toString().trim())!=null) {
+					response.setStatus(false);
+					response.setInformation("IDS_MSG_ALREADY");
+					mapObj.put("response", response);
+					return mapObj;
+				}
 				newProtocolMasterObj.setProtocolmastername((String) argObj.get("protocolmastername"));
 				newProtocolMasterObj.setProtocolstatus((Integer) argObj.get("protocolstatus"));
 				newProtocolMasterObj.setStatus((Integer) argObj.get("status"));
