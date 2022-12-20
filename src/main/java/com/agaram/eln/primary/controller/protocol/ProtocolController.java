@@ -452,7 +452,11 @@ public class ProtocolController {
 
 		return ProtocolMasterService.protocolordersampleupdates(lsprotocolordersampleupdates);
 	}
-	
+	@RequestMapping(value = "/consumableinventorynotificationprotocol")
+	protected Map<String, Object> consumableinventorynotificationprotocol(@RequestBody LSprotocolordersampleupdates lsprotocolordersampleupdates)throws Exception {
+
+		return ProtocolMasterService.consumableinventorynotificationprotocol(lsprotocolordersampleupdates);
+	}
 	@RequestMapping(value = "/getrepositoriesdata")
 	protected List<Lsrepositoriesdata> getrepositoriesdata(@RequestBody Integer[] lsrepositoriesdata)throws Exception {
 

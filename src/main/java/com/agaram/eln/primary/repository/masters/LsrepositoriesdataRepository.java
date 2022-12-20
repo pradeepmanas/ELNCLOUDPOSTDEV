@@ -38,6 +38,15 @@ public interface LsrepositoriesdataRepository extends JpaRepository<Lsrepositori
 
 	public List<Lsrepositoriesdata> findByRepositorycodeAndSitecodeOrderByRepositorydatacodeDesc(Integer repositorycode,
 			Integer sitecode);
+
+	public List<Lsrepositoriesdata> findByUsercode(Integer usercode);
+
+	public Lsrepositoriesdata findByRepositorycodeAndRepositoryitemnameAndSitecodeAndRepositorydatacodeAndInventoryidNot(
+			Integer repositorycode, String repositoryitemname, Integer sitecode, Integer repositorydatacode,
+			String inventoryid);
+
+	public Lsrepositoriesdata findByRepositorycodeAndRepositoryitemnameAndSitecodeAndInventoryid(Integer repositorycode,
+			String repositoryitemname, Integer sitecode, String inventoryid);
 	
 //	@Query(value = "select * from events where type_id in :types", nativeQuery = true)
 //	List<Lsrepositoriesdata> findEventsByType(@Param("types") List<Integer> types);

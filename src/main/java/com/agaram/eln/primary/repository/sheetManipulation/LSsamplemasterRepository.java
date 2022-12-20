@@ -22,4 +22,5 @@ public interface LSsamplemasterRepository extends JpaRepository<LSsamplemaster, 
 			Integer samplecode, LSSiteMaster lssitemaster);
 	public LSsamplemaster findBySamplenameIgnoreCaseAndStatusAndLssitemaster(String samplename, Integer status,
 			LSSiteMaster lssitemaster);
+	public List<Samplemaster> findBystatusAndLssitemasterOrderBySamplecodeDesc(int i, LSSiteMaster lssitemaster);
 }

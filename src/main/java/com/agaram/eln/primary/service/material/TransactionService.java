@@ -431,8 +431,21 @@ public class TransactionService {
 			MappedTemplateFieldPropsMaterial[] objLstClass) {
 		
 		List<MappedTemplateFieldPropsMaterial> lstMappedProps = Arrays.asList(objLstClass);
+		
+		lstMappedProps.stream().peek(f -> {
+			
+			MappedTemplateFieldPropsMaterial objFieldPropsMaterial = new MappedTemplateFieldPropsMaterial();
+			
+			objFieldPropsMaterial.setJsondata(f.getJsondata());
+			objFieldPropsMaterial.setNstatus(1);
+			objFieldPropsMaterial.setNmaterialconfigcode(f.getNmaterialconfigcode());
+			objFieldPropsMaterial.setNmappedtemplatefieldpropmaterialcode(f.getNmappedtemplatefieldpropmaterialcode());
+			
+			mappedTemplateFieldPropsMaterialRepository.save(objFieldPropsMaterial);
+			
+		}).collect(Collectors.toList());
 
-		mappedTemplateFieldPropsMaterialRepository.save(lstMappedProps);
+//		mappedTemplateFieldPropsMaterialRepository.save(lstMappedProps);
 
 		return new ResponseEntity<>("Material Properties updated successfully", HttpStatus.OK);
 

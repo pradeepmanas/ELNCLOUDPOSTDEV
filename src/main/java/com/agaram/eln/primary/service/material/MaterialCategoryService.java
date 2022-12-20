@@ -120,10 +120,6 @@ public class MaterialCategoryService {
 		final MaterialCategory objMaterialCategory = MaterialCategoryRepository
 				.findByNmaterialcatcodeAndNstatus(materialCategory.getNmaterialcatcode(), 1);
 
-//		final List<String> multilingualIDList = new ArrayList<>();
-//		final List<Object> listAfterUpdate = new ArrayList<>();
-//		final List<Object> listBeforeUpdate = new ArrayList<>();
-
 		if (objMaterialCategory == null) {
 			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYDELETED.getreturnstatus(),
 					HttpStatus.EXPECTATION_FAILED);
@@ -133,15 +129,14 @@ public class MaterialCategoryService {
 					.findBySmaterialcatnameAndNmaterialcatcodeAndNstatus(materialCategory.getSmaterialcatname(),
 							materialCategory.getNmaterialcatcode(), 1);
 
-			if (materialCategoryObj != null) {
+			if (materialCategoryObj == null) {
 
-				materialCategoryObj.setSmaterialcatname(materialCategory.getSmaterialcatname());
-				materialCategoryObj.setSdescription(materialCategory.getSdescription());
-				materialCategoryObj.setNdefaultstatus(materialCategory.getNdefaultstatus());
-				materialCategoryObj.setNmaterialtypecode(materialCategory.getNmaterialtypecode());
-				materialCategoryObj.setSmaterialtypename(materialCategory.getSmaterialtypename());
-
-				MaterialCategoryRepository.save(materialCategoryObj);
+				objMaterialCategory.setSmaterialcatname(materialCategory.getSmaterialcatname());
+				objMaterialCategory.setSdescription(materialCategory.getSdescription());
+				objMaterialCategory.setNmaterialtypecode(materialCategory.getNmaterialtypecode());
+				objMaterialCategory.setSmaterialtypename(materialCategory.getSmaterialtypename());
+				
+				MaterialCategoryRepository.save(objMaterialCategory);
 
 				return getMaterialCategory(inputMap);
 			} else {

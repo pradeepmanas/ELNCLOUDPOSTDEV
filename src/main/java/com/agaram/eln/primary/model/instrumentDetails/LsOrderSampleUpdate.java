@@ -12,6 +12,9 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
 @Table(name = "LsOrderSampleUpdate")
@@ -31,13 +34,15 @@ public class LsOrderSampleUpdate {
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date createddate;
 	public Integer usercode;
+	public Integer inventoryused;
 	public Integer repositorycode;
 	public Integer repositorydatacode;
 	public Integer quantityused=0;
 	public String historydetails;
 	public String createdbyusername;
 	public String screenmodule;
-	
+	@Transient
+	public LSuserMaster lsusermaster;
 	public String getHistorydetails() {
 		return historydetails;
 	}
@@ -52,6 +57,12 @@ public class LsOrderSampleUpdate {
 	}
 	public void setCreatedbyusername(String createdbyusername) {
 		this.createdbyusername = createdbyusername;
+	}
+	public LSuserMaster getLsusermaster() {
+		return lsusermaster;
+	}
+	public void setLsusermaster(LSuserMaster lsusermaster) {
+		this.lsusermaster = lsusermaster;
 	}
 	public void setScreenmodule(String screenmodule) {
 		this.screenmodule = screenmodule;
@@ -121,6 +132,12 @@ public class LsOrderSampleUpdate {
 	}
 	public void setQuantityused(Integer quantityused) {
 		this.quantityused = quantityused;
+	}
+	public Integer getInventoryused() {
+		return inventoryused;
+	}
+	public void setInventoryused(Integer inventoryused) {
+		this.inventoryused = inventoryused;
 	}	
 	
 }

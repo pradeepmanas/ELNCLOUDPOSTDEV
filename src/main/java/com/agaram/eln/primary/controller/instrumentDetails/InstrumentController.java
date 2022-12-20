@@ -1157,10 +1157,14 @@ public class InstrumentController {
 		return instrumentService.cancelprotocolorder(body);
 
 	}
-	
-//	@RequestMapping("/Getfoldersfordashboard")
-//	public Map<String, Object> Getfoldersfordashboard(@RequestBody LSuserMaster objusermaster)throws Exception {
-//		return instrumentService.Getfoldersfordashboard(objusermaster);
-//	}
+	@PostMapping("/Consumableinventoryotification")
+	public Map<String, Object> Consumableinventoryotification(@RequestBody Map<String, Object> argobj)throws Exception {
+		return instrumentService.Consumableinventoryotification(argobj);
+
+	}
+	@RequestMapping("/Getfoldersfordashboard")
+	public Map<String, Object> Getfoldersfordashboard(@RequestBody LSuserMaster objusermaster)throws Exception {
+		return instrumentService.Getfoldersfordashboard(objusermaster);
+	}
 	
 }

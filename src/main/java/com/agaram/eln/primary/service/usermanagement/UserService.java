@@ -607,7 +607,8 @@ public class UserService {
 		if (LSuserMaster.getUsername().equalsIgnoreCase("Administrator")) {
 			return lsusersteamRepository.findBystatus(1);
 		} else {
-			return lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(), 1);
+			List<LSuserteammapping> teams = lsuserteammappingRepository.findBylsuserMaster(LSuserMaster);
+			return lsusersteamRepository.findByLsuserteammappingInAndStatus(teams, 1);
 		}
 	}
 
@@ -872,7 +873,7 @@ public class UserService {
 			return lSusergroupRepository.findByusergroupnameNotOrderByUsergroupcodeDesc("Administrator");
 		}
 		return lSusergroupRepository
-				.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(), "Administrator");
+				.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(), "");
 	}
 
 	public LSuserMaster ValidateSignature(LoggedUser objuser) {

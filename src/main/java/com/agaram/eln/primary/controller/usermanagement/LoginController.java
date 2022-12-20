@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.agaram.eln.config.ADS_Connection;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSactiveUser;
@@ -214,7 +215,10 @@ public class LoginController {
 	public Notification Loginnotification(@RequestBody Notification objNotification) throws ParseException {
 		return loginService.Loginnotification(objNotification);
 	}
-
+	@PostMapping("/Resourcenotification")
+	public Lsrepositoriesdata Resourcenotification(@RequestBody Lsrepositoriesdata objNotification) throws ParseException {
+		return loginService.Resourcenotification(objNotification);
+	}
 	@PostMapping("/ValidateuserAndPassword")
 	public List <LSuserMaster> ValidateuserAndPassword(@RequestBody LoggedUser objuser)throws Exception {
 		return loginService.ValidateuserAndPassword(objuser);

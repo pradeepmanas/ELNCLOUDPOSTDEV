@@ -29,7 +29,8 @@ public class LSuserMaster {
 	@Basic(optional = false)
 	@Column(name = "usercode")
 	private Integer usercode;
-
+@Transient
+private LSuserMaster lsusermaster;
 	@Column(columnDefinition = "varchar(255)")
 	private String userfullname;
 	@Column(columnDefinition = "varchar(255)")
@@ -611,4 +612,15 @@ public class LSuserMaster {
 		this.userroleremovenotify = userroleremovenotify;
 	}
 
-}
+	public LSuserMaster getLsusermaster() {
+		return lsusermaster;
+	}
+
+	public void setLsusermaster(LSuserMaster lsusermaster) {
+		this.lsusermaster = lsusermaster;
+	}
+
+	
+	}
+
+

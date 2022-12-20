@@ -122,6 +122,13 @@ public class AuditService {
 
 			return objClass;
 
+		} else if (objClass.getReasoncode() != null && objClass.getStatus() == null
+				&& LScfrreasonsRepository.findByCommentsIgnoreCase(objClass.getComments()) != null) {
+			objClass.getResponse().setStatus(false);
+			objClass.getResponse().setInformation("ID_CFREXIST");
+
+			return objClass;
+
 		} else if (objClass.getReasoncode() != null && objClass.getStatus() != null
 				&& LScfrreasonsRepository.findByComments(objClass.getComments()) != null) {
 			LScfrreasonsRepository.delete(LScfrreasonsRepository.findByComments(objClass.getComments()));
@@ -156,7 +163,7 @@ public class AuditService {
 			String Audit = (String) system.get("Audit");
 			if (system.get("Audit").equals("All") || system.get("Audit").equals("User Generated")
 					|| system.get("Audit").equals("System Generated")) {
-				Audit = (String) system.get("Audit");
+				Audit = (String) system.get("name");
 			} else {
 				Audit = (String) system.get("name");
 			}

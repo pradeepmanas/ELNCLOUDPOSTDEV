@@ -10,12 +10,9 @@ import java.util.Map;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
 import org.springframework.stereotype.Service;
-import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
-import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
+
 import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
@@ -34,8 +31,6 @@ import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
-import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
-import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmaster;
@@ -54,20 +49,17 @@ import com.agaram.eln.primary.repository.instrumentDetails.Lselninstrumentmappin
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstrumentmasterRepository;
 import com.agaram.eln.primary.repository.inventory.LSequipmentmapRepository;
 import com.agaram.eln.primary.repository.inventory.LSmaterialmapRepository;
+import com.agaram.eln.primary.repository.masters.LSlogbooksampleupdatesRepository;
+import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
+import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplemasterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
-
+import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
-
-import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
-import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
-import com.agaram.eln.primary.repository.masters.LSlogbooksampleupdatesRepository;
-import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
-import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSsamplemasterRepository.class)
@@ -76,12 +68,11 @@ public class BaseMasterService {
 	/**
 	 * For Masters Repository
 	 */
+//	@Autowired
+//	private LSusersteamRepository LSusersteamRepository;
+//	@Autowired
+//	private LSuserteammappingRepository LSuserteammappingRepository;
 	@Autowired
-	private LSusersteamRepository LSusersteamRepository;
-	@Autowired
-	private LSuserteammappingRepository LSuserteammappingRepository;
-	@Autowired
-
 	private LSnotificationRepository LSnotificationRepository;
 //	@Autowired
 //	private LsMethodFieldsRepository lsMethodFieldsRepository;
@@ -143,8 +134,6 @@ public class BaseMasterService {
 
 		return lStestmasterlocalRepository.findBystatusAndLssitemasterOrderByTestcodeDesc(1,
 				objClass.getLssitemaster());
-		// return lStestmasterlocalRepository.findBystatusAndLssitemaster(1,
-		// objClass.getLssitemaster());
 	}
 
 	public Map<String, Object> getTestwithsheet(LSuserMaster objClass) {
@@ -192,15 +181,13 @@ public class BaseMasterService {
 
 	public List<Samplemaster> getsamplemaster(LSuserMaster objClass) {
 
-		return lSsamplemasterRepository.findBystatusAndLssitemaster(1, objClass.getLssitemaster());
+		return lSsamplemasterRepository.findBystatusAndLssitemasterOrderBySamplecodeDesc(1, objClass.getLssitemaster());
 	}
 
 	public List<LSprojectmaster> getProjectmaster(LSuserMaster objClass) {
 
 		List<LSprojectmaster> projectlist = lSprojectmasterRepository
-				.findByLssitemasterAndStatus(objClass.getLssitemaster(), 1);
-		// return lSprojectmasterRepository.findByLssitemaster(
-		// objClass.getLssitemaster());
+				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
 		return projectlist;
 	}
 
@@ -232,14 +219,16 @@ public class BaseMasterService {
 				return objClass;
 			}
 
-		} else if (objClass.getTestcode() == null && lStestmasterlocalRepository.findByTestnameIgnoreCaseAndStatusAndLssitemaster(
-				objClass.getTestname().trim(), 1, objClass.getLssitemaster()) != null) {
+		} else if (objClass.getTestcode() == null
+				&& lStestmasterlocalRepository.findByTestnameIgnoreCaseAndStatusAndLssitemaster(
+						objClass.getTestname().trim(), 1, objClass.getLssitemaster()) != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
 
 			return objClass;
-		}else if(objClass.getTestcode() != null && lStestmasterlocalRepository.findBytestcodeNotAndTestnameIgnoreCaseAndStatusAndLssitemaster(
-				objClass.getTestcode(),objClass.getTestname().trim(), 1, objClass.getLssitemaster()) != null) {
+		} else if (objClass.getTestcode() != null
+				&& lStestmasterlocalRepository.findBytestcodeNotAndTestnameIgnoreCaseAndStatusAndLssitemaster(
+						objClass.getTestcode(), objClass.getTestname().trim(), 1, objClass.getLssitemaster()) != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
 
@@ -276,7 +265,6 @@ public class BaseMasterService {
 
 		objClass.setResponse(new Response());
 
-
 		if (objClass.getStatus() == -1 && objClass.getSamplecode() != null) {
 
 			List<LSlogilablimsorderdetail> objOrderLst = LSlogilablimsorderdetailRepository
@@ -288,16 +276,16 @@ public class BaseMasterService {
 
 				return objClass;
 			}
-		}else if (objClass.getSamplecode() == null
-				&& lSsamplemasterRepository.findBySamplenameIgnoreCaseAndStatusAndLssitemaster(objClass.getSamplename().trim(),
-						1, objClass.getLssitemaster()) != null) {
+		} else if (objClass.getSamplecode() == null
+				&& lSsamplemasterRepository.findBySamplenameIgnoreCaseAndStatusAndLssitemaster(
+						objClass.getSamplename().trim(), 1, objClass.getLssitemaster()) != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
 
 			return objClass;
-		} else if (objClass.getSamplecode() != null
-				&& lSsamplemasterRepository.findBySamplenameIgnoreCaseAndStatusAndSamplecodeNotAndLssitemaster(
-						objClass.getSamplename().trim(), 1, objClass.getSamplecode(), objClass.getLssitemaster()) != null) {
+		} else if (objClass.getSamplecode() != null && lSsamplemasterRepository
+				.findBySamplenameIgnoreCaseAndStatusAndSamplecodeNotAndLssitemaster(objClass.getSamplename().trim(), 1,
+						objClass.getSamplecode(), objClass.getLssitemaster()) != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
 
@@ -369,6 +357,7 @@ public class BaseMasterService {
 		return objClass;
 	}
 
+	@SuppressWarnings("unused")
 	private void updatenotificationforproject(LSprojectmaster objClass) {
 		String Details = "";
 		String Notifiction = "PROJECTCREATED";

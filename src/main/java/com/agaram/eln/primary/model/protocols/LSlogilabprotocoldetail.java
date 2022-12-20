@@ -22,6 +22,7 @@ import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
+import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -35,14 +36,20 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orderGen")
 	@Column(columnDefinition = "numeric(17,0)", name = "Protocolordercode")
 	private Long protocolordercode;
-
+	@Column(name = "approvelstatus")
+	private Integer approvelstatus;
 	@Column(columnDefinition = "varchar(250)", name = "Protocolordername")
 	private String protoclordername;
-
+	@Transient
+	private LSworkflow isFinalStep;
 	@Column(columnDefinition = "varchar(250)", name = "Keyword")
 	private String keyword;
 	@Transient
 	private Integer multiusergroupcode;
+	@Transient
+	public Integer finalworkflow;
+	@Transient
+	private LSsheetworkflow isfinalstep;
 	@Transient
 	LoggedUser objuser;
 	@Transient
@@ -50,6 +57,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	Date modifidate;
 	@Transient
 	private String comment;
+	
 	public String getComment() {
 		return comment;
 	}
@@ -633,4 +641,38 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setTeamcode(Integer teamcode) {
 		this.teamcode = teamcode;
 	}
+
+	public Integer getApprovelstatus() {
+		return approvelstatus;
+	}
+
+	public void setApprovelstatus(Integer approvelstatus) {
+		this.approvelstatus = approvelstatus;
+	}
+
+	public LSworkflow getIsFinalStep() {
+		return isFinalStep;
+	}
+
+	public void setIsFinalStep(LSworkflow isFinalStep) {
+		this.isFinalStep = isFinalStep;
+	}
+
+	public Integer getFinalworkflow() {
+		return finalworkflow;
+	}
+
+	public void setFinalworkflow(Integer finalworkflow) {
+		this.finalworkflow = finalworkflow;
+	}
+
+	public LSsheetworkflow getIsfinalstep() {
+		return isfinalstep;
+	}
+
+	public void setIsfinalstep(LSsheetworkflow isfinalstep) {
+		this.isfinalstep = isfinalstep;
+	}
+
+	
 }

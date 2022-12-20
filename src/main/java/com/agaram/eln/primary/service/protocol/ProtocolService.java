@@ -44,6 +44,7 @@ import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo
 import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.fileManipulation.UserSignature;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
@@ -1297,8 +1298,6 @@ public class ProtocolService {
 		ObjectMapper objMapper = new ObjectMapper();
 		Response response = new Response();
 
-	
-
 		if (argObj.containsKey("newProtocolMasterObj")) {
 			LSuserMaster LsuserMasterObj = LSuserMasterRepositoryObj
 					.findByusercode(LScfttransactionobj.getLsuserMaster());
@@ -1307,8 +1306,9 @@ public class ProtocolService {
 
 				int protocolmastercode = new ObjectMapper().convertValue(argObj.get("protocolmastercode"),
 						Integer.class);
-				
-				if(LSProtocolMasterRepositoryObj.findByprotocolmastercodeNotAndProtocolmastername(protocolmastercode,argObj.get("protocolmastername").toString().trim())!=null) {
+
+				if (LSProtocolMasterRepositoryObj.findByprotocolmastercodeNotAndProtocolmastername(protocolmastercode,
+						argObj.get("protocolmastername").toString().trim()) != null) {
 					response.setStatus(false);
 					response.setInformation("IDS_MSG_ALREADY");
 					mapObj.put("response", response);
@@ -1326,7 +1326,8 @@ public class ProtocolService {
 				argObj1 = (Map<String, Object>) argObj.get("LSprotocolupdates");
 //				UpdateProtocolversion(newProtocolMasterObj, argObj1, LSprotocolupdates.class);
 			} else {
-				if(LSProtocolMasterRepositoryObj.findByProtocolmastername(argObj.get("protocolmastername").toString().trim())!=null) {
+				if (LSProtocolMasterRepositoryObj
+						.findByProtocolmastername(argObj.get("protocolmastername").toString().trim()) != null) {
 					response.setStatus(false);
 					response.setInformation("IDS_MSG_ALREADY");
 					mapObj.put("response", response);
@@ -1880,6 +1881,18 @@ public class ProtocolService {
 		LsProto.setLsprotocolworkflowhistory(obj);
 		mapObj.put("ProtocolObj", LsProto);
 		mapObj.put("status", "success");
+		if (objClass.getProtocolmastername() != null) {
+			LSworkflow objlastworkflow = lsworkflowRepository
+					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objClass.getIsfinalstep().getLssitemaster());
+			if (objlastworkflow != null && objClass.getLsprotocolworkflowhistory().get(0).getLssheetworkflow()
+					.getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
+				objClass.setFinalworkflow(1);
+				;
+			} else {
+				objClass.setFinalworkflow(0);
+				;
+			}
+		}
 		updatenotificationforprotocolworkflowapproval(objClass, LsProto.getLssheetworkflow());
 		updatenotificationforprotocol(objClass, LsProto.getLssheetworkflow());
 		return mapObj;
@@ -1892,7 +1905,7 @@ public class ProtocolService {
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		LSprotocolmaster LsProto = LSProtocolMasterRepositoryObj
 				.findFirstByProtocolmastercode(objClass.getProtocolmastercode());
-		LSuserMaster createby = lsusermasterRepository.findByusercode(LsProto.getCreatedby());
+		LSuserMaster createby = lsusermasterRepository.findByusercode(objClass.getCreatedby());
 		LSnotification objnotify = new LSnotification();
 
 		for (int k = 0; k < objClass.getLssheetworkflow().getLssheetworkflowgroupmap().size(); k++) {
@@ -1903,69 +1916,75 @@ public class ProtocolService {
 					.collect(Collectors.toList());
 			List<LSuserMaster> objuser = lsusermasterRepository.findByusercodeInAndUserretirestatusNot(objnotifyuser,
 					1);
-			if (objClass.getApproved() == null || objClass.getApproved() == 0) {
+			if (LsProto.getApproved() != null && objClass.getFinalworkflow() != 1) {
+
+				for (int i = 0; i < objuser.size(); i++) {
+					if (createby.getUsercode() != userobj.get(i).getUsercode()) {
+						if (LsProto.getApproved() == 0 && objClass.getRejected() == null
+								|| objClass.getApproved() == null) {
+							Notification = "PROTOCOLAPPROVALSENT";
+							objnotify.setNotifationto(objuser.get(i));
+						} else if (objClass.getApproved() == 2 && objClass.getRejected() == null) {
+							Notification = "PROTOCOLAPPROVALRETURN";
+							objnotify.setNotifationto(objuser.get(i));
+
+						} else if (objClass.getRejected() == 1) {
+							Notification = "PROTOCOLAPPROVALREJECT";
+							objnotify.setNotifationto(createby);
+						}
+
+						Details = "{\"ordercode\":\"" + objClass.getProtocolmastercode() + "\", \"order\":\""
+								+ objClass.getProtocolmastername() + "\", \"username\":\""
+
+								+ objClass.getLSuserMaster().getUsername() + "\"}";
+						objnotify.setNotifationfrom(objClass.getLSuserMaster());
+						objnotify.setNotificationdate(objClass.getCreatedate());
+						objnotify.setNotification(Notification);
+						objnotify.setNotificationdetils(Details);
+						objnotify.setIsnewnotification(1);
+						objnotify.setNotificationpath("/protocols");
+						objnotify.setNotificationfor(1);
+
+						lstnotifications.add(objnotify);
+					}
+				}
+			} else {
 
 				for (int i = 0; i < objuser.size(); i++) {
 
-					if (LsProto.getApproved() == 0 && objClass.getRejected() == null
-							|| objClass.getApproved() == null) {
-						Notification = "PROTOCOLAPPROVALSENT";
+					if (createby.getUsercode() != objClass.getLSuserMaster().getUsercode())
 
-					} else if (LsProto.getApproved() == 2 && LsProto.getRejected() == null
-							|| LsProto.getApproved() == 2 && LsProto.getRejected() != 1) {
-						Notification = "PROTOCOLAPPROVALRETURN";
-
-					}
-					objnotify.setNotifationto(objuser.get(i));
-					Details = "{\"ordercode\":\"" + objClass.getProtocolmastercode() + "\", \"order\":\""
-							+ objClass.getProtocolmastername() + "\", \"username\":\""
-
-							+ objClass.getLSuserMaster().getUsername() + "\"}";
-					objnotify.setNotifationfrom(objClass.getLSuserMaster());
-					objnotify.setNotificationdate(objClass.getCreatedate());
-					objnotify.setNotification(Notification);
-					objnotify.setNotificationdetils(Details);
-					objnotify.setIsnewnotification(1);
-					objnotify.setNotificationpath("/protocols");
-					objnotify.setNotificationfor(1);
-
-					lstnotifications.add(objnotify);
-				}
-			} else {
-				if (LsProto.getApproved() == 1 || LsProto.getRejected() == 1) {
-					for (int i = 0; i < objuser.size(); i++) {
-
-						if (createby.getUsercode() != userobj.get(i).getUsercode() && userobj.size() > 0
-								&& objClass.getCreatedby()!=objClass.getLSuserMaster().getUsercode())
-
-						{
-							if (objClass.getApproved() == 1 && objClass.getRejected() == null) {
-								Notification = "PROTOCOLAPPROVAL";
-							} else if (objClass.getApproved() == 3) {
-								Notification = "PROTOCOLAPPROVALREJECT";
-
-							}
-
+					{
+						if (objClass.getApproved() == 1 && objClass.getRejected() == null) {
+							Notification = "PROTOCOLAPPROVAL";
 							objnotify.setNotifationto(createby);
-							Details = "{\"ordercode\":\"" + objClass.getProtocolmastercode() + "\", \"order\":\""
-									+ objClass.getProtocolmastername() + "\", \"username\":\""
-
-									+ objClass.getLSuserMaster().getUsername() + "\"}";
-							objnotify.setNotifationfrom(objClass.getLSuserMaster());
-							objnotify.setNotificationdate(objClass.getCreatedate());
-							objnotify.setNotification(Notification);
-							objnotify.setNotificationdetils(Details);
+						} else if (objClass.getApproved() == 3) {
+							Notification = "PROTOCOLAPPROVALREJECT";
 							objnotify.setNotifationto(createby);
-							objnotify.setIsnewnotification(1);
-							objnotify.setNotificationpath("/protocols");
-							objnotify.setNotificationfor(1);
 
-							lstnotifications.add(objnotify);
+						} else if (objClass.getApproved() == 2 && objClass.getRejected() == null) {
+							Notification = "PROTOCOLAPPROVALRETURN";
+							objnotify.setNotifationto(objuser.get(i));
+
 						}
+						Details = "{\"ordercode\":\"" + objClass.getProtocolmastercode() + "\", \"order\":\""
+								+ objClass.getProtocolmastername() + "\", \"username\":\""
+
+								+ objClass.getLSuserMaster().getUsername() + "\"}";
+						objnotify.setNotifationfrom(objClass.getLSuserMaster());
+						objnotify.setNotificationdate(objClass.getCreatedate());
+						objnotify.setNotification(Notification);
+						objnotify.setNotificationdetils(Details);
+
+						objnotify.setIsnewnotification(1);
+						objnotify.setNotificationpath("/protocols");
+						objnotify.setNotificationfor(1);
+
+						lstnotifications.add(objnotify);
 					}
 				}
-
 			}
+
 			lsnotificationRepository.save(lstnotifications);
 		}
 	}
@@ -2097,6 +2116,18 @@ public class ProtocolService {
 		mapObj.put("curentprotocolorder", LSlogilabprotocoldetail);
 		mapObj.put("ProtocolObj", LsProto);
 		mapObj.put("status", "success");
+		if (objClass.getProtocoltype() != null) {
+			LSworkflow objlastworkflow = lsworkflowRepository
+					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objClass.getIsfinalstep().getLssitemaster());
+			if (objlastworkflow != null
+					&& objClass.getLsworkflow().getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
+				objClass.setFinalworkflow(1);
+				;
+			} else {
+				objClass.setFinalworkflow(0);
+				;
+			}
+		}
 		updatenotificationfororderworkflowapprovel(objClass);
 		updatenotificationfororderworkflow(objClass, LsProto.getLsworkflow());
 
@@ -2107,7 +2138,7 @@ public class ProtocolService {
 		String Details = "";
 		String Notifiction = "";
 		Notifiction = "";
-		LSuserMaster obj = lsusermasterRepository.findByusercode(objClass.getCreateby());
+		LSuserMaster obj = lsusermasterRepository.findByusercode(objClass.getLsuserMaster().getUsercode());
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		LSlogilabprotocoldetail LsProto = LSlogilabprotocoldetailRepository.findOne(objClass.getProtocolordercode());
 		LSuserMaster createby = lsusermasterRepository.findByusercode(LsProto.getCreateby());
@@ -2121,21 +2152,36 @@ public class ProtocolService {
 					.collect(Collectors.toList());
 			List<LSuserMaster> objuser = lsusermasterRepository.findByusercodeInAndUserretirestatusNot(objnotifyuser,
 					1);
+			LSusersteam objteam = lsusersteamRepository
+					.findByteamcode(LsProto.getLsprojectmaster().getLsusersteam().getTeamcode());
 
-			if (LsProto.getApproved() == 1) {
+			List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
+			if (objClass.getApprovelstatus() != null && objClass.getFinalworkflow() == 1) {
+
 				for (int i = 0; i < objuser.size(); i++) {
-					if (createby.getUsercode() != userobj.get(i).getUsercode() && userobj.size() > 0
-							&& objClass.getCreateby()!=objClass.getLsuserMaster().getUsercode())
+					if (createby.getUsercode() != userobj.get(i).getUsercode())
 
 					{
-						Notifiction = "PROTOCOLFINALAPPROVED";
+						if (LsProto.getApproved() == 1) {
+							Notifiction = "PROTOCOLFINALAPPROVED";
+							objnotify.setNotifationto(createby);
+						} else if (objClass.getApprovelstatus() == 3) {
+							Notifiction = "PROTOCOLUSERREJECT";
+							objnotify.setNotifationto(createby);
+						} else if (LsProto.getApproved() == 2 && objClass.getRejected() == null
+								&& objClass.getApprovelstatus() != 1) {
+							Notifiction = "PROTOCOLUSERRETURN";
+							objnotify.setNotifationto(objuser.get(i));
+
+						}
+
 						Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
 								+ objClass.getProtoclordername() + "\", \"user\":\""
 								+ objClass.getLsuserMaster().getUsername() + "\", \"comment\":\""
 								+ objClass.getComment() + "\"}";
 
 						objnotify.setNotifationfrom(objClass.getLsuserMaster());
-						objnotify.setNotifationto(obj);
+
 						objnotify.setNotificationdate(objClass.getModifidate());
 						objnotify.setNotification(Notifiction);
 						objnotify.setNotificationdetils(Details);
@@ -2146,43 +2192,47 @@ public class ProtocolService {
 
 					}
 				}
+
 			} else {
 				for (int i = 0; i < objuser.size(); i++) {
+					if (createby.getUsercode() != userobj.get(i).getUsercode()) {
+						if (LsProto.getApproved() == 2 && objClass.getRejected() == null
+								&& objClass.getApprovelstatus() != 1) {
+							Notifiction = "PROTOCOLUSERRETURN";
+							objnotify.setNotifationto(objuser.get(i));
 
-					if (LsProto.getApproved() == 0 && objClass.getRejected() == null) {
-						Notifiction = "PROTOCOLUSERAPPROVAL";
+						} else if (objClass.getApprovelstatus() == 3) {
+							Notifiction = "PROTOCOLUSERREJECT";
+							objnotify.setNotifationto(createby);
+						} else if ((objClass.getApproved() == null && LsProto.getApproved() == 0
+								|| objClass.getApproved() == 0 && objClass.getRejected() == null)
+								|| (objClass.getApproved() == 2 && objClass.getApprovelstatus() == 1
+										&& LsProto.getApproved() == 2 && LsProto.getApprovelstatus() == null
+										&& objClass.getApprovelstatus() == 1)) {
+							Notifiction = "PROTOCOLUSERAPPROVAL";
+							objnotify.setNotifationto(objuser.get(i));
+						}
+
+						Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
+								+ objClass.getProtoclordername() + "\", \"user\":\""
+								+ objClass.getLsuserMaster().getUsername() + "\", \"comment\":\""
+								+ objClass.getComment() + "\"}";
+
+						objnotify.setNotifationfrom(obj);
+
+						objnotify.setNotificationdate(objClass.getModifidate());
+						objnotify.setNotification(Notifiction);
+						objnotify.setNotificationdetils(Details);
+						objnotify.setIsnewnotification(1);
+						objnotify.setNotificationpath("/Protocolorder");
+						objnotify.setNotificationfor(1);
+						lstnotifications.add(objnotify);
 					}
-
-					else if (LsProto.getApproved() == 2 && objClass.getRejected() == null) {
-						Notifiction = "PROTOCOLUSERRETURN";
-
-					} else if (LsProto.getRejected() == 1) {
-						Notifiction = "PROTOCOLUSERREJECT";
-					}
-
-					Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
-							+ objClass.getProtoclordername() + "\", \"user\":\""
-							+ objClass.getLsuserMaster().getUsername() + "\", \"comment\":\"" + objClass.getComment()
-							+ "\"}";
-
-					objnotify.setNotifationfrom(obj);
-					if (LsProto.getApproved() == 0 && objClass.getRejected() == null
-							|| LsProto.getApproved() == 2 && objClass.getRejected() == null) {
-						objnotify.setNotifationto(objuser.get(i));
-
-					} else {
-						objnotify.setNotifationto(createby);
-					}
-					objnotify.setNotificationdate(objClass.getModifidate());
-					objnotify.setNotification(Notifiction);
-					objnotify.setNotificationdetils(Details);
-					objnotify.setIsnewnotification(1);
-					objnotify.setNotificationpath("/Protocolorder");
-					objnotify.setNotificationfor(1);
-					lstnotifications.add(objnotify);
 				}
+
 			}
 		}
+
 		lsnotificationRepository.save(lstnotifications);
 	}
 
@@ -4237,7 +4287,7 @@ public class ProtocolService {
 			mapOrders.put("orders", Getadministratororder(objorder));
 			mapOrders.put("ordercount", LSlogilabprotocoldetailRepository.count());
 		} else {
-			
+
 			List<Lsprotocolorderstructure> lstdir = new ArrayList<Lsprotocolorderstructure>();
 			List<Long> directorycode = new ArrayList<Long>();
 			if (objorder.getLstuserMaster().size() == 0) {
@@ -4313,7 +4363,7 @@ public class ProtocolService {
 				}
 			}
 		}
-		lstorders.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
+		lstorders.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLsuserMaster().getLstworkflow()));
 		return lstorders;
 	}
 
@@ -5649,7 +5699,33 @@ public class ProtocolService {
 						lsprotocolordersampleupdates.getProtocolstepcode(), 1);
 		obj.put("lsprotocolsampleupdates", lsprotocolordersampleupdates);
 		obj.put("lsprotocolsamplelist", lsprotocolsamplelist);
+		
 		return obj;
+	}
+
+	public Map<String, Object> consumableinventorynotificationprotocol(
+			LSprotocolordersampleupdates lsprotocolordersampleupdates) {
+		String Details = "";
+		String Notification = "";
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		Map<String, Object> obj = new HashMap<String, Object>();
+		LSnotification objnotify = new LSnotification();
+		LSuserMaster createby = lsusermasterRepository.findByusercode(lsprotocolordersampleupdates.getUsercode());
+		if (lsprotocolordersampleupdates.getInventoryconsumed() == 20) {
+			Notification = "INVENTORYCONSUMED";
+			Details = "{\"inventory\":\"" + lsprotocolordersampleupdates.getInventoryid()
+			+ lsprotocolordersampleupdates.getRepositorydatacode()  + "\"}";
+			objnotify.setNotificationdate(lsprotocolordersampleupdates.getCreateddate());
+			objnotify.setNotifationto(createby);
+			objnotify.setNotification(Notification);
+			objnotify.setNotificationdetils(Details);
+			objnotify.setIsnewnotification(1);
+			objnotify.setNotificationpath("/inventory");
+			objnotify.setNotificationfor(1);
+			lstnotifications.add(objnotify);
+			lsnotificationRepository.save(lstnotifications);
+		}
+		return null;
 	}
 
 	public List<LSprotocolorderworkflowhistory> getProtocolOrderworkflowhistoryList(
@@ -6252,80 +6328,103 @@ public class ProtocolService {
 		LSuserMaster lsselecteduser = mapper.convertValue(objusers.get("selecteduser"), LSuserMaster.class);
 		Date fromdate = lsselecteduser.getObjuser().getFromdate();
 		Date todate = lsselecteduser.getObjuser().getTodate();
-		Integer directory = mapper.convertValue(objusers.get("directorycode"), Integer.class);
-		String Unifieduserid = mapper.convertValue(objusers.get("Unifieduserid"), String.class);
-		Integer protocoltype = mapper.convertValue(objusers.get("protocoltype"), Integer.class);
+//		Integer directory = mapper.convertValue(objusers.get("directorycode"), Integer.class);
+//		String Unifieduserid =(String) objusers.get("Unifieduserid");
+//		Integer protocoltype =(Integer) objusers.get("protocoltype") mapper.convertValue(objusers.get("protocoltype"), Integer.class);
 		String Orderflag = null;
 		if (objusers.get("Orderflag") != null) {
 			Orderflag = mapper.convertValue(objusers.get("Orderflag"), String.class);
 		}
-
+		List<Lsprotocolordershareto> sharetome = new ArrayList<>();
+		List<Lsprotocolordersharedby> sharebyme = new ArrayList<>();
+		List<LSworkflow> workflow = mapper.convertValue(objusers.get("workflow"),
+				new TypeReference<List<LSworkflow>>() {
+				});
 		if (objusers.get("filefor").equals("OSBM")) {
-			if (protocoltype == -1 && Orderflag == null) {
-				mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository
+
+			if ((Integer) objusers.get("protocoltype") == -1 && Orderflag == null) {
+//				mapuserorders.put("sharebyme",
+				sharebyme = lsprotocolordersharedbyRepository
 						.findBySharebyunifiedidAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
-								Unifieduserid, 1, fromdate, todate));
+								(String) objusers.get("Unifieduserid"), 1, fromdate, todate);
 
-			} else if (protocoltype != -1 && Orderflag != null) {
+			} else if ((Integer) objusers.get("protocoltype") != -1 && Orderflag != null) {
 
-				mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository
+				sharebyme = lsprotocolordersharedbyRepository
 						.findBySharebyunifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
-								Unifieduserid, protocoltype, Orderflag, 1, fromdate, todate));
-			} else if (protocoltype == -1 && Orderflag != null) {
-				mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository
+								(String) objusers.get("Unifieduserid"), (Integer) objusers.get("protocoltype"),
+								Orderflag, 1, fromdate, todate);
+			} else if ((Integer) objusers.get("protocoltype") == -1 && Orderflag != null) {
+				sharebyme = lsprotocolordersharedbyRepository
 						.findBySharebyunifiedidAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
-								Unifieduserid, Orderflag, 1, fromdate, todate));
-			} else if (protocoltype != -1 && Orderflag == null) {
-				mapuserorders.put("sharebyme", lsprotocolordersharedbyRepository
+								(String) objusers.get("Unifieduserid"), Orderflag, 1, fromdate, todate);
+			} else if ((Integer) objusers.get("protocoltype") != -1 && Orderflag == null) {
+				sharebyme = lsprotocolordersharedbyRepository
 						.findBySharebyunifiedidAndProtocoltypeAndSharestatusAndSharedonBetweenOrderBySharedbytoprotocolordercodeDesc(
-								Unifieduserid, protocoltype, 1, fromdate, todate));
+								(String) objusers.get("Unifieduserid"), (Integer) objusers.get("protocoltype"), 1,
+								fromdate, todate);
+			}
+			if (sharebyme.size() > 0) {
+				sharebyme.forEach(objorderDetail -> objorderDetail.getProtocolorders().setLstworkflow(workflow));
+				mapuserorders.put("sharebyme", sharebyme);
 			}
 
 		} else if (objusers.get("filefor").equals("OSTM")) {
-			if (protocoltype == -1 && Orderflag == null) {
 
-				mapuserorders.put("sharetome", lsprotocolordersharetoRepository
+			if ((Integer) objusers.get("protocoltype") == -1 && Orderflag == null) {
+//				mapuserorders.put("sharetome",
+				sharetome = lsprotocolordersharetoRepository
 						.findBySharetounifiedidAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(
-								Unifieduserid, 1, fromdate, todate));
+								(String) objusers.get("Unifieduserid"), 1, fromdate, todate);
 
-			} else if (protocoltype != -1 && Orderflag != null) {
+			} else if ((Integer) objusers.get("protocoltype") != -1 && Orderflag != null) {
 
-				mapuserorders.put("sharetome", lsprotocolordersharetoRepository
+				sharetome = lsprotocolordersharetoRepository
 						.findBySharetounifiedidAndProtocoltypeAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(
-								Unifieduserid, protocoltype, Orderflag, 1, fromdate, todate));
+								(String) objusers.get("Unifieduserid"), (Integer) objusers.get("protocoltype"),
+								Orderflag, 1, fromdate, todate);
 
-			} else if (protocoltype == -1 && Orderflag != null) {
+			} else if ((Integer) objusers.get("protocoltype") == -1 && Orderflag != null) {
 
-				mapuserorders.put("sharetome", lsprotocolordersharetoRepository
+				sharetome = lsprotocolordersharetoRepository
 						.findBySharetounifiedidAndOrderflagAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(
-								Unifieduserid, Orderflag, 1, fromdate, todate));
-			} else if (protocoltype != -1 && Orderflag == null) {
-				mapuserorders.put("sharetome", lsprotocolordersharetoRepository
+								(String) objusers.get("Unifieduserid"), Orderflag, 1, fromdate, todate);
+			} else if ((Integer) objusers.get("protocoltype") != -1 && Orderflag == null) {
+				sharetome = lsprotocolordersharetoRepository
 						.findBySharetounifiedidAndProtocoltypeAndSharestatusAndSharedonBetweenOrderBySharetoprotocolordercodeDesc(
-								Unifieduserid, protocoltype, 1, fromdate, todate));
+								(String) objusers.get("Unifieduserid"), (Integer) objusers.get("protocoltype"), 1,
+								fromdate, todate);
 			}
+			if (sharetome.size() > 0) {
+				sharetome.forEach(objorderDetail -> objorderDetail.getProtocolorders().setLstworkflow(workflow));
+				mapuserorders.put("sharetome", sharetome);
+			}
+
 		}
 		List<Long> protocolordercodesharebyme = new ArrayList<>();
 		List<Long> protocolordercodesharetome = new ArrayList<>();
+
 		if (mapuserorders.size() > 0 && objusers.containsKey("searchCriteriaType")) {
 			if (objusers.get("filefor").equals("OSBM")) {
-				List<Lsprotocolordersharedby> obj = mapper.convertValue(mapuserorders.get("sharebyme"),
-						new TypeReference<List<Lsprotocolordersharedby>>() {
-						});
-				protocolordercodesharebyme = obj.stream().map(Lsprotocolordersharedby::getShareprotocolordercode)
-						.collect(Collectors.toList());
-				mapuserorders.put("protocolordercodeslist", protocolordercodesharebyme);
+				if (sharebyme.size() > 0) {
+					protocolordercodesharebyme = sharebyme.stream()
+							.map(Lsprotocolordersharedby::getShareprotocolordercode).collect(Collectors.toList());
+					mapuserorders.put("protocolordercodeslist", protocolordercodesharebyme);
+
+				}
 			} else {
-				List<Lsprotocolordershareto> obj = mapper.convertValue(mapuserorders.get("sharetome"),
-						new TypeReference<List<Lsprotocolordershareto>>() {
-						});
-				protocolordercodesharetome = obj.stream().map(Lsprotocolordershareto::getShareprotocolordercode)
-						.collect(Collectors.toList());
-				mapuserorders.put("protocolordercodeslist", protocolordercodesharetome);
+				if (sharetome.size() > 0) {
+					protocolordercodesharetome = sharetome.stream()
+							.map(Lsprotocolordershareto::getShareprotocolordercode).collect(Collectors.toList());
+					mapuserorders.put("protocolordercodeslist", protocolordercodesharetome);
+
+				}
+
 			}
 
 		}
-		mapuserorders.put("directorycode", directory);
+		mapuserorders.put("directorycode", objusers.get("directorycode"));
+		mapper = null;
 		return mapuserorders;
 
 	}

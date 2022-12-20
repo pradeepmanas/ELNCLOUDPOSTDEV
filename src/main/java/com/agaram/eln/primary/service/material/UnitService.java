@@ -30,12 +30,12 @@ public class UnitService {
 
 			return getUnit();
 		} else {
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
+			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),HttpStatus.CONFLICT);
 		}
 	}
 
 	private List<Unit> getUnitListByName(String sunitname, Integer nsitecode) {
-		List<Unit> lstUnit = unitRepository.findBySunitnameAndNstatus(sunitname, nsitecode);
+		List<Unit> lstUnit = unitRepository.findBySunitnameAndNstatus(sunitname, 1);
 		return lstUnit;
 	}
 

@@ -194,7 +194,7 @@ public class DynamicPreRegDesignService {
 				data = unitRepository.findByNstatusAndNunitcodeOrderByNunitcode(1,Integer.parseInt(defaultvalues));
 				break;
 			case "materialcategory":
-				data = materialCategoryRepository.findByNstatus(1);
+				data = materialCategoryRepository.findByNstatusAndNmaterialtypecode(1,Integer.parseInt(defaultvalues));
 				break;
 			}
 

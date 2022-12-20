@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "LSprotocolordersampleupdates")
@@ -36,6 +37,18 @@ public class LSprotocolordersampleupdates {
 	public String consumefieldkey;
 	public Integer usedquantity;
 	public String unit;
+	@Transient
+	public Integer inventoryconsumed;
+	@Transient
+	public String inventoryid;
+
+	public String getInventoryid() {
+		return inventoryid;
+	}
+
+	public void setInventoryid(String inventoryid) {
+		this.inventoryid = inventoryid;
+	}
 
 	public String getUnit() {
 		return unit;
@@ -155,6 +168,14 @@ public class LSprotocolordersampleupdates {
 
 	public void setProtocolordercode(Long protocolordercode) {
 		this.protocolordercode = protocolordercode;
+	}
+
+	public Integer getInventoryconsumed() {
+		return inventoryconsumed;
+	}
+
+	public void setInventoryconsumed(Integer inventoryconsumed) {
+		this.inventoryconsumed = inventoryconsumed;
 	}
 
 }

@@ -3,6 +3,7 @@ package com.agaram.eln.primary.service.usermanagement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -28,6 +29,7 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.jwt.JwtResponse;
+import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordHistoryDetails;
@@ -41,6 +43,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
+import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordHistoryDetailsRepository;
@@ -58,7 +61,8 @@ import com.agaram.eln.primary.service.cfr.AuditService;
 @EnableJpaRepositories(basePackageClasses = LSSiteMasterRepository.class)
 
 public class LoginService {
-
+	@Autowired
+	private LsrepositoriesdataRepository lsrepositoriesdataRepository;
 	@Autowired
 	private LSSiteMasterRepository lSSiteMasterRepository;
 	@Autowired
@@ -118,7 +122,6 @@ public class LoginService {
 
 	// added for notification
 
-
 	public List<LSSiteMaster> loadSite() {
 		List<LSSiteMaster> result = new ArrayList<LSSiteMaster>();
 		lSSiteMasterRepository.findByIstatus(1).forEach(result::add);
@@ -131,9 +134,9 @@ public class LoginService {
 
 	public List<LSdomainMaster> loadDomain(LSSiteMaster objsite) {
 		List<LSdomainMaster> result = new ArrayList<LSdomainMaster>();
-	//	result = lSDomainMasterRepository.findBylssitemaster(objsite,1);
-		
-		result = lSDomainMasterRepository.findBylssitemasterAndDomainstatus(objsite,1);
+		// result = lSDomainMasterRepository.findBylssitemaster(objsite,1);
+
+		result = lSDomainMasterRepository.findBylssitemasterAndDomainstatus(objsite, 1);
 		return result;
 	}
 
@@ -510,10 +513,10 @@ public class LoginService {
 	}
 
 	public Boolean Logout(LSuserMaster lsuserMaster) {
-		
-		if(lsuserMaster.getActiveusercode() != null) {
-			lsactiveUserRepository.deleteByActiveusercode(lsuserMaster.getActiveusercode());	
-		}else {
+
+		if (lsuserMaster.getActiveusercode() != null) {
+			lsactiveUserRepository.deleteByActiveusercode(lsuserMaster.getActiveusercode());
+		} else {
 			lsactiveUserRepository.deleteBylsusermaster(lsuserMaster);
 		}
 		return true;
@@ -580,7 +583,6 @@ public class LoginService {
 					objuser.getObjsilentaudit().setComments(
 							objuser.getsUsername() + " " + "entered password does not reach the history range");
 
-
 					objuser.getObjsilentaudit().setManipulatetype("Password");
 					objuser.getObjsilentaudit().setTableName("LSPasswordHistoryDetails");
 					lscfttransactionRepository.save(objuser.getObjsilentaudit());
@@ -591,7 +593,7 @@ public class LoginService {
 			if (objuser.getsNewPassword().equals(objuser.getsConfirmPassword())) {
 
 				objExitinguser.setPassword(AESEncryption.encrypt(objuser.getsNewPassword()));
-				if(objuser.getPasswordexpirydate()!=null) {
+				if (objuser.getPasswordexpirydate() != null) {
 					objExitinguser.setPasswordexpirydate(objuser.getPasswordexpirydate());
 				}
 				lSuserMasterRepository.save(objExitinguser);
@@ -607,8 +609,6 @@ public class LoginService {
 				if (objuser.getObjsilentaudit() != null) {
 					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
 					objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-
-
 
 					objuser.getObjsilentaudit().setSystemcoments("System Generated");
 
@@ -928,14 +928,14 @@ public class LoginService {
 	public LSSiteMaster InsertupdateSite(LSSiteMaster objClass) {
 		objClass.setResponse(new Response());
 		if ((objClass.getSitecode() == null || objClass.getSitecode() != null)
-				&& lSSiteMasterRepository.findBySitenameIgnoreCaseAndIstatus(objClass.getSitename(), 1).size()>0 ) {
-			if(objClass.getIstatus() != 0) {
-			//lSSiteMasterRepository.save(objClass);	
-			
-			objClass.getResponse().setStatus(false);
-			objClass.getResponse().setInformation("ID_EXIST");
+				&& lSSiteMasterRepository.findBySitenameIgnoreCaseAndIstatus(objClass.getSitename(), 1).size() > 0) {
+			if (objClass.getIstatus() != 0) {
+				// lSSiteMasterRepository.save(objClass);
 
-			return objClass;
+				objClass.getResponse().setStatus(false);
+				objClass.getResponse().setInformation("ID_EXIST");
+
+				return objClass;
 			}
 		} else if (objClass.getSitecode() != null && objClass.getSitecode() != 1) {
 
@@ -970,7 +970,7 @@ public class LoginService {
 		LSSiteMaster objsite = new LSSiteMaster(Integer.parseInt(objuser.getsSiteCode()));
 		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(username, "1",
 				objsite);
-		
+
 		LSPasswordPolicy lockcount = objExitinguser != null
 				? LSPasswordPolicyRepository
 						.findTopByAndLssitemasterOrderByPolicycodeDesc(objExitinguser.getLssitemaster())
@@ -1053,7 +1053,7 @@ public class LoginService {
 							dateSString = dateSString.replaceAll("57", "ss");
 							dateSString = dateSString.replaceAll(" AM", "");
 							dateSString = dateSString.replaceAll(" PM", "");
-							
+
 							dateSString = "MM-dd-yyyy hh:mm:ss";
 							objExitinguser.setDFormat(dateSString);
 						} catch (ParseException e) {
@@ -1350,7 +1350,7 @@ public class LoginService {
 				.findByUsernameIgnoreCaseAndLssitemaster(lsuserMaster.getUsername(), lsuserMaster.getLssitemaster());
 		objExitinguser.setLsusergroup(objLSMultiusergroup.getLsusergroup());
 		objExitinguser.setObjResponse(new Response());
-		
+
 		if (objLSMultiusergroup != null) {
 
 			if (lsuserMaster.getObjsilentaudit() != null) {
@@ -1364,18 +1364,18 @@ public class LoginService {
 
 			obj.put("user", objExitinguser);
 			if (groupstatus.trim().equals("Active")) {
-			if (objExitinguser.getLsusergroup() != null) {
-				obj.put("userrights", userService.GetUserRightsonGroup(objExitinguser.getLsusergroup()));
-				LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
-				objauditconfig.setLsusermaster(objExitinguser);
-				obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig.getLsusermaster()));
+				if (objExitinguser.getLsusergroup() != null) {
+					obj.put("userrights", userService.GetUserRightsonGroup(objExitinguser.getLsusergroup()));
+					LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
+					objauditconfig.setLsusermaster(objExitinguser);
+					obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig.getLsusermaster()));
 
-				obj.put("multiusergroupcode", objLSMultiusergroup.getLsusergroup().getUsergroupcode());
-			}
+					obj.put("multiusergroupcode", objLSMultiusergroup.getLsusergroup().getUsergroupcode());
+				}
 
-			objExitinguser.getObjResponse().setInformation("usergroup switched successfully ");
-			objExitinguser.getObjResponse().setStatus(true);
-			}else {
+				objExitinguser.getObjResponse().setInformation("usergroup switched successfully ");
+				objExitinguser.getObjResponse().setStatus(true);
+			} else {
 				objExitinguser.getObjResponse().setInformation("ID_GRPNOACT");
 				objExitinguser.getObjResponse().setStatus(false);
 			}
@@ -1435,10 +1435,93 @@ public class LoginService {
 		return null;
 
 	}
-	public Notification Resourcenotification(Notification objNotification) {
-		// TODO Auto-generated method stub
+
+	@SuppressWarnings({ "unlikely-arg-type", "unused" })
+	public Lsrepositoriesdata Resourcenotification(Lsrepositoriesdata objNotification) {
+		Date currentdate = objNotification.getCurrentdate();
+		List<Lsrepositoriesdata> codelist = lsrepositoriesdataRepository.findByUsercode(objNotification.getUsercode());
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		String Details = "";
+		int i = 0;
+		boolean value = false;
+		while (i < codelist.size()) {
+			SimpleDateFormat Datefor = new SimpleDateFormat("yyyy-MM-dd");
+			String expirydate = Datefor.format(codelist.get(i).getExpirydate());
+			LocalDate formatdate = LocalDate.parse(expirydate);
+
+			String currentdate1 = Datefor.format(currentdate);
+			LocalDate currentformatdate = LocalDate.parse(currentdate1);
+			LocalDate expirydate1 = formatdate.minusDays(14);
+			LocalDate expirydate2 = formatdate.minusDays(7);
+			LocalDate expirydate3 = formatdate.minusDays(3);
+
+			Boolean minusdate1 = expirydate1.equals(currentformatdate);
+			Boolean minusdate2 = expirydate2.equals(currentformatdate);
+			Boolean minusdate3 = expirydate3.equals(currentformatdate);
+
+			LSnotification LSnotification = new LSnotification();
+
+			LSuserMaster LSuserMaster = new LSuserMaster();
+			LSuserMaster.setUsercode(codelist.get(i).getUsercode());
+
+			LSuserMaster objLSuserMaster = new LSuserMaster();
+			objLSuserMaster = userService.getUserOnCode(LSuserMaster);
+			if (codelist.get(i).getItemstatus() == 1) {
+
+				if (minusdate1 == true) {
+					Details = "{\"inventory\" :\"" + codelist.get(i).getRepositoryitemname() + "\",\"inventoryid\" :\""
+							+ codelist.get(i).getInventoryid() + codelist.get(i).getRepositorydatacode()
+							+ "\",\"days\" :\"" + 14 + "\"}";
+					LSnotification.setIsnewnotification(1);
+					LSnotification.setNotification("INVENTORYEXPIRE");
+					LSnotification.setNotificationdate(objNotification.getCurrentdate());
+					LSnotification.setNotificationpath("/inventory");
+					LSnotification.setNotificationdetils(Details);
+					LSnotification.setNotifationfrom(objLSuserMaster);
+					LSnotification.setNotifationto(objLSuserMaster);
+					LSnotification.setNotificationfor(1);
+					lstnotifications.add(LSnotification);
+				} else if (minusdate2 == true) {
+
+					Details = "{\"inventory\" :\"" + codelist.get(i).getRepositoryitemname() + "\",\"inventoryid\" :\""
+							+ codelist.get(i).getInventoryid() + codelist.get(i).getRepositorydatacode()
+							+ "\",\"days\" :\"" + 7 + "\"}";
+					LSnotification.setNotificationdetils(Details);
+					LSnotification.setIsnewnotification(1);
+					LSnotification.setNotification("INVENTORYEXPIRE");
+					LSnotification.setNotificationdate(objNotification.getCurrentdate());
+					LSnotification.setNotificationpath("/inventory");
+					LSnotification.setNotificationdetils(Details);
+					LSnotification.setNotifationfrom(objLSuserMaster);
+					LSnotification.setNotifationto(objLSuserMaster);
+					LSnotification.setNotificationfor(1);
+					lstnotifications.add(LSnotification);
+				} else if (minusdate3 == true) {
+					Details = "{\"inventory\" :\"" + codelist.get(i).getRepositoryitemname() + "\",\"inventoryid\" :\""
+							+ codelist.get(i).getInventoryid() + codelist.get(i).getRepositorydatacode()
+							+ "\",\"days\" :\"" + 3 + "\"}";
+					LSnotification.setNotificationdetils(Details);
+					LSnotification.setIsnewnotification(1);
+					LSnotification.setNotification("INVENTORYEXPIRE");
+					LSnotification.setNotificationdate(objNotification.getCurrentdate());
+					LSnotification.setNotificationpath("/inventory");
+					LSnotification.setNotificationdetils(Details);
+					LSnotification.setNotifationfrom(objLSuserMaster);
+					LSnotification.setNotifationto(objLSuserMaster);
+					LSnotification.setNotificationfor(1);
+					lstnotifications.add(LSnotification);
+				}
+
+			}
+
+			i++;
+		}
+
+		LSnotificationRepository.save(lstnotifications);
 		return null;
+
 	}
+
 	public LSactiveUser activeUserEntry(LSactiveUser objsite) {
 
 		LSuserMaster objUser = lsuserMasterRepository.findByusercode(objsite.getLsusermaster().getUsercode());
@@ -1497,26 +1580,23 @@ public class LoginService {
 		}
 		return objExitinguser;
 	}
-	
-	
+
 	public Map<String, Object> CheckUserPassword(LoggedUser objuser) {
 
 		Map<String, Object> obj = new HashMap<>();
-		if(objuser.getsPassword()!=null) {
+		if (objuser.getsPassword() != null) {
 			String password = objuser.getsPassword();
 			String Password = AESEncryption.decrypt(password);
-			obj.put("password",Password);
+			obj.put("password", Password);
 			System.out.println(" password: " + Password);
-		}else if(objuser.getIsmultitenant()!=null) {
-			String kumu =objuser.getIsmultitenant().toString();
-			String  Password1 = AESEncryption.encrypt(kumu);
+		} else if (objuser.getIsmultitenant() != null) {
+			String kumu = objuser.getIsmultitenant().toString();
+			String Password1 = AESEncryption.encrypt(kumu);
 			System.out.println(" passwordint: " + Password1);
-			obj.put("passwordint",Password1);
+			obj.put("passwordint", Password1);
 		}
 		return obj;
-		
-	}
 
-	
+	}
 
 }

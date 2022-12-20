@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
@@ -31,6 +33,8 @@ public class Lsrepositoriesdata {
     @Column(columnDefinition = "jsonb")
 	private String repositorydatafields;
 	
+	private Date expirydate;
+	private String inventoryid;
 	private String repositoryitemname;
 	
 	private String addedby;
@@ -56,7 +60,8 @@ public class Lsrepositoriesdata {
 	
 	@Transient
 	private Date todate;
-	
+	@Transient
+	private Date currentdate;
 	@Transient
 	private String satus;
 	
@@ -183,5 +188,29 @@ public class Lsrepositoriesdata {
 
 	public void setTodate(Date todate) {
 		this.todate = todate;
+	}
+
+	public Date getExpirydate() {
+		return expirydate;
+	}
+
+	public void setExpirydate(Date expirydate) {
+		this.expirydate = expirydate;
+	}
+
+	public Date getCurrentdate() {
+		return currentdate;
+	}
+
+	public void setCurrentdate(Date currentdate) {
+		this.currentdate = currentdate;
+	}
+
+	public String getInventoryid() {
+		return inventoryid;
+	}
+
+	public void setInventoryid(String inventoryid) {
+		this.inventoryid = inventoryid;
 	}
 }

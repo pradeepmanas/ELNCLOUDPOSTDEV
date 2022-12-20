@@ -55,7 +55,8 @@ public class LSfile {
 	
 	@Transient
 	private String fileString;
-	
+	@Transient
+	private Integer isfinalstep;
 	@OneToMany
 	@JoinColumn(name="filecode")
 	private List<LSfilemethod> lsmethods;
@@ -361,6 +362,12 @@ public class LSfile {
 	}
 	public void setCategory(String category) {
 		this.category = category;
+	}
+	public Integer getIsfinalstep() {
+		return isfinalstep;
+	}
+	public void setIsfinalstep(Integer isfinalstep) {
+		this.isfinalstep = isfinalstep;
 	}
 	
 	

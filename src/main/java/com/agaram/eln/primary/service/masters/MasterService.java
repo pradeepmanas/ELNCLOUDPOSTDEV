@@ -169,13 +169,13 @@ public class MasterService {
 
 		if (lsrepositoriesdata.getRepositorydatacode() != null) {
 			lsrepodata = lsrepositoriesdataRepository
-					.findByRepositorycodeAndRepositoryitemnameAndSitecodeAndRepositorydatacodeNot(
+					.findByRepositorycodeAndRepositoryitemnameAndSitecodeAndRepositorydatacodeAndInventoryidNot(
 							lsrepositoriesdata.getRepositorycode(), lsrepositoriesdata.getRepositoryitemname(),
-							lsrepositoriesdata.getSitecode(), lsrepositoriesdata.getRepositorydatacode());
+							lsrepositoriesdata.getSitecode(), lsrepositoriesdata.getRepositorydatacode(),lsrepositoriesdata.getInventoryid());
 		} else {
-			lsrepodata = lsrepositoriesdataRepository.findByRepositorycodeAndRepositoryitemnameAndSitecode(
+			lsrepodata = lsrepositoriesdataRepository.findByRepositorycodeAndRepositoryitemnameAndSitecodeAndInventoryid(
 					lsrepositoriesdata.getRepositorycode(), lsrepositoriesdata.getRepositoryitemname(),
-					lsrepositoriesdata.getSitecode());
+					lsrepositoriesdata.getSitecode(),lsrepositoriesdata.getInventoryid());
 
 		}
 

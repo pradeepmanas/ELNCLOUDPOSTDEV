@@ -17,6 +17,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
@@ -30,16 +31,18 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	public Integer protocolstatus;
 	public Integer status;
 	public Integer createdby;
-
+	@Transient
+	private LSsheetworkflow isfinalstep;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdate;
-
+	@Transient
+	public Integer finalworkflow;
 	public Integer sharewithteam = 0;
 	@Column(columnDefinition = "varchar(120)")
 	public String createdbyusername;
 	@Column(name = "lssitemaster_sitecode")
 	private Integer lssitemaster;
-	
+
 	private Integer defaulttemplate;
 
 	@Transient
@@ -47,8 +50,8 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 
 	@ManyToOne
 	private LSprotocolworkflow lSprotocolworkflow;
-	
-	@ManyToOne 
+
+	@ManyToOne
 	private LSsheetworkflow lssheetworkflow;
 
 	private Integer approved;
@@ -56,7 +59,7 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	private Integer rejected;
 
 	public Integer versionno = 0;
-	
+
 	private String category;
 
 	@Transient
@@ -272,4 +275,21 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	public void setCategory(String category) {
 		this.category = category;
 	}
+
+	public LSsheetworkflow getIsfinalstep() {
+		return isfinalstep;
+	}
+
+	public void setIsfinalstep(LSsheetworkflow isfinalstep) {
+		this.isfinalstep = isfinalstep;
+	}
+
+	public Integer getFinalworkflow() {
+		return finalworkflow;
+	}
+
+	public void setFinalworkflow(Integer finalworkflow) {
+		this.finalworkflow = finalworkflow;
+	}
+
 }
