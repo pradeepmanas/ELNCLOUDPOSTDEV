@@ -31,13 +31,23 @@ public class SectionService {
 			section.setNdefaultstatus(1);
 			section.setNsitecode(1);
 			section.setNstatus(1);
-			
+
 			sectionRepository.save(section);
 
 			return getSection();
 
 		} else {
-			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(), HttpStatus.CONFLICT);
+
+			if (sectionObjByName.getSdescription() == section.getSdescription()) {
+				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
+						HttpStatus.CONFLICT);
+			} else {
+				section.setNdefaultstatus(1);
+				section.setNsitecode(1);
+				section.setNstatus(1);
+				sectionRepository.save(section);
+				return getSection();
+			}
 		}
 	}
 

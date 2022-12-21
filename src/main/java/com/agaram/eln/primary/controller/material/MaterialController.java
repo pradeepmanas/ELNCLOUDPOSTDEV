@@ -60,4 +60,9 @@ public class MaterialController {
 		return objMaterialService.getMaterialEdit(inputMap);
 	}
 
+	@RequestMapping(value = "/getMaterialByID", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getMaterialByID(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) objMaterialService.getMaterialByID(inputMap);
+	}
 }

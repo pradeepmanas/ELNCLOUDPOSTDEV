@@ -30,7 +30,17 @@ public class UnitService {
 
 			return getUnit();
 		} else {
-			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),HttpStatus.CONFLICT);
+
+			if (unitListByName.get(0).getSdescription() == objUnit.getSdescription()) {
+				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
+						HttpStatus.CONFLICT);
+			} else {
+				objUnit.setNdefaultstatus(1);
+				objUnit.setNsitecode(1);
+				objUnit.setNstatus(1);
+				unitRepository.save(objUnit);
+				return getUnit();
+			}
 		}
 	}
 
@@ -57,8 +67,7 @@ public class UnitService {
 			if (unitList.isEmpty()) {
 				unitRepository.save(objUnit);
 				return getUnit();
-			} 
-			else {
+			} else {
 				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
 						HttpStatus.CONFLICT);
 			}

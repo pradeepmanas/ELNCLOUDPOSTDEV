@@ -108,7 +108,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	
 //	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc( Integer filecode,List<LSuserMaster> lstusermaster);
 	
-	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc( Integer filecode,List<LSuserMaster> lstusermaster);
+//	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc( Integer filecode,List<LSuserMaster> lstusermaster);
 	
 //	public List<Sheettemplateget> findByCreatebyInAndFilecodeGreaterThanOrderByFilecodeDesc(List<LSuserMaster> lstusermaster, Integer filecode);
 	
@@ -142,8 +142,8 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	
 	public List<Sheettemplateget> findFirst20ByFilecodeLessThanAndCreatebyOrderByFilecodeDesc(Integer filecode, LSuserMaster lsusermaster);
 
-	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(int filecode,
-			LSuserMaster objuser);
+//	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(int filecode,
+//			LSuserMaster objuser);
 	
 	public List<Sheettemplateget> findByApprovedAndLssitemasterAndFilecodeGreaterThan(Integer approvelstatus,LSSiteMaster lssitemaster, Integer filecode);
 
@@ -167,6 +167,23 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	public Object countByCreatebyIn(Integer sitecode);
 
 	public List<LSfile> findByFilecodeNotAndFilenameuser(Integer filecode, String filenameuser);
+
+	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndViewoptionOrFilecodeGreaterThanAndCreatebyAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndViewoptionOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, int j, int k, LSuserMaster objuser, int l, int m,
+			List<LSuserMaster> lstteamuser, int n);
+
+	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndViewoptionOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, int j, int k, LSuserMaster objuser, int l);
+
+	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int l);
+
+	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int l, int m, List<LSuserMaster> lstteamuser, Date fromdate3, Date todate3,
+			int n);
+
 
 
 

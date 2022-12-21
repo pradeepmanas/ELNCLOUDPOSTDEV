@@ -507,4 +507,29 @@ public class MaterialService {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<Object> getMaterialByID(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		List<Map<String, Object>> lstMaterial = new ArrayList<Map<String, Object>>();
+//		ObjectMapper objMapper = new ObjectMapper();
+		
+		final Material objMatDetails = materialRepository.findByNstatusAndNmaterialcode(1,
+				(Integer) inputMap.get("nmaterialcode"));
+		
+		if(objMatDetails != null) {
+			Map<String, Object> objMaterial = new ObjectMapper().readValue(objMatDetails.getJsonuidata(), Map.class);
+
+			objMaterial.put("nmaterialcode", objMatDetails.getNmaterialcode());
+
+			lstMaterial.add(objMaterial);			
+			
+			objmap.put("SelectedMaterial", lstMaterial.get(lstMaterial.size() - 1));
+		}
+
+//		objmap.putAll((Map<String, Object>) objMaterialSectionDAO
+//				.getMaterialSectionByMaterialCode((int) inputMap.get("nmaterialcode"), inputMap).getBody());
+//		objmap.putAll((Map<String, Object>) getMaterialFile((int) inputMap.get("nmaterialcode"), userInfo));
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
 }

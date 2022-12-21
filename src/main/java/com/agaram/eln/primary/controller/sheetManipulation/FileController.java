@@ -150,6 +150,10 @@ public class FileController {
 		return fileService.GetMastersfororders(objuser);
 	}
 
+	@PostMapping("/GetMastersforordercreate")
+	public Map<String, Object> GetMastersforordercreate(@RequestBody LSuserMaster objuser) {
+		return fileService.GetMastersforordercreate(objuser);
+	}
 	@PostMapping("/GetMastersforsheetsetting")
 	public Map<String, Object> GetMastersforsheetsetting(@RequestBody LSuserMaster objuser) {
 		return fileService.GetMastersforsheetsetting(objuser);

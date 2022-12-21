@@ -75,4 +75,10 @@ public class MaterialInventoryController {
 
 		return materialInventoryService.getMaterialInventoryEdit(inputMap);
 	}
+	
+	@RequestMapping(value = "/getMaterialInventorySearchByID", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getMaterialInventorySearchByID(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) materialInventoryService.getMaterialInventorySearchByID(inputMap);
+	}
 }

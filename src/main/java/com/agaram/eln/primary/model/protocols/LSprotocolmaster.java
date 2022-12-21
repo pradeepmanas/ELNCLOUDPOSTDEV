@@ -37,7 +37,7 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	private Date createdate;
 	@Transient
 	public Integer finalworkflow;
-	public Integer sharewithteam = 0;
+	public Integer sharewithteam;
 	@Column(columnDefinition = "varchar(120)")
 	public String createdbyusername;
 	@Column(name = "lssitemaster_sitecode")
@@ -61,6 +61,16 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	public Integer versionno = 0;
 
 	private String category;
+	
+	private Integer viewoption;
+
+	public Integer getViewoption() {
+		return viewoption;
+	}
+
+	public void setViewoption(Integer viewoption) {
+		this.viewoption = viewoption;
+	}
 
 	@Transient
 	private List<LSprotocolworkflowhistory> lsprotocolworkflowhistory;
@@ -70,6 +80,9 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 
 	@Transient
 	LSuserMaster LSuserMaster;
+	
+	@Transient
+	private List<LSuserMaster> lstuserMaster;
 
 	@OneToMany
 	@JoinColumn(name = "protocolmastercode")

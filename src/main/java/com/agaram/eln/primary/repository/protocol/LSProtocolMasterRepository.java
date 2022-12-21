@@ -16,6 +16,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmaster, Integer> {
 
@@ -147,17 +148,14 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			Integer createdby, Integer status, Integer site, Integer Sharewithteam,
 			LSprotocolworkflow lSprotocolworkflow, Date fDate, Date tDate);
 
-	List<Protocoltemplateget> findByCreatedbyOrLSprotocolworkflowAndStatusAndCreatedateBetweenOrderByProtocolmastercodeDesc(
-			Integer usercode, LSprotocolworkflow lsprotocolworkflow, int i, Date fromdate, Date todate);
+
 	
 	List<LSprotocolmaster> findByCreatedbyInAndLssitemaster(List<Integer> createdby, Integer site);
 
 //	List<LSprotocolmaster> findByCreatedbyInAndLssitemasterOrderByCreatedateDesc(List<Integer> lstuser,
 //			Integer sitecode);
 
-	List<LSprotocolmaster> findByCreatedbyInAndStatusAndLssitemasterOrderByCreatedateDesc(List<Integer> lstuser, int i,
-			Integer sitecode);
-	
+
 	Long countByCreatedbyIn(List<Integer> lstuser);
 	
 	Long countByCreatedby(Integer usercode);
@@ -186,8 +184,8 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	List<LSprotocolmaster> findByLstestInAndStatus(List<LSprotocolmastertest> lsfiletest,int i);
 
-	List<LSprotocolmaster> findByCreatedbyInAndStatusAndLssitemasterOrderByCreatedateDesc(Integer usercode, int i,
-			Integer sitecode);
+//	List<LSprotocolmaster> findByCreatedbyInAndStatusAndLssitemasterOrderByCreatedateDesc(Integer usercode, int i,
+//			Integer sitecode);
 
 	LSprotocolmaster findByDefaulttemplate(int i);
 
@@ -196,4 +194,31 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 	Object findByprotocolmastercodeNotAndProtocolmastername(int protocolmastercode, String trim);
 
 	Object findByProtocolmastername(String trim);
+
+//	List<Protocoltemplateget> findByCreatedbyInAndStatusAndCreatedateBetweenOrderByProtocolmastercodeDesc(
+//			List<Integer> usercodelist, int i, Date fromdate, Date todate);
+
+
+	List<LSprotocolmaster> findByStatusAndLssitemasterAndViewoptionOrCreatedbyAndStatusAndLssitemasterAndViewoptionOrCreatedbyInAndStatusAndLssitemasterAndViewoptionOrderByCreatedateDesc(
+			int i, Integer sitecode, int j, Integer usercode, int k, Integer sitecode2, int l, List<Integer> lstuser,
+			int m, Integer sitecode3, int n);
+
+	List<LSprotocolmaster> findByStatusAndLssitemasterAndViewoptionOrCreatedbyAndStatusAndLssitemasterAndViewoptionOrderByCreatedateDesc(
+			int i, Integer sitecode, int j, Integer usercode, int k, Integer sitecode2, int l);
+
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
+			Date todate2, int l);
+
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
+			Date todate2, int l, List<Integer> usercodelist, int m, Date fromdate3, Date todate3, int n);
+
+
+
+
+
+
+
+
 }

@@ -1436,7 +1436,7 @@ public class LoginService {
 
 	}
 
-	@SuppressWarnings({ "unlikely-arg-type", "unused" })
+	@SuppressWarnings({ "unused" })
 	public Lsrepositoriesdata Resourcenotification(Lsrepositoriesdata objNotification) {
 		Date currentdate = objNotification.getCurrentdate();
 		List<Lsrepositoriesdata> codelist = lsrepositoriesdataRepository.findByUsercode(objNotification.getUsercode());
@@ -1446,7 +1446,7 @@ public class LoginService {
 		boolean value = false;
 		while (i < codelist.size()) {
 			SimpleDateFormat Datefor = new SimpleDateFormat("yyyy-MM-dd");
-			String expirydate = Datefor.format(codelist.get(i).getExpirydate());
+			String expirydate = Datefor.format(new Date());
 			LocalDate formatdate = LocalDate.parse(expirydate);
 
 			String currentdate1 = Datefor.format(currentdate);

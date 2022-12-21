@@ -579,7 +579,7 @@ public class UserService {
 				objnotify.setNotification(Notifiction);
 				objnotify.setNotificationdetils(Details);
 				objnotify.setNotificationfor(1);
-				objnotify.setNotificationpath("/masters");
+				objnotify.setNotificationpath("/Projectteam");
 				objnotify.setNotificationfor(1);
 				objnotify.setIsnewnotification(1);
 				lsnotificationRepository.save(objnotify);
@@ -596,7 +596,7 @@ public class UserService {
 				objnotify.setNotification(Notifiction);
 				objnotify.setNotificationdetils(Details);
 				objnotify.setIsnewnotification(1);
-				objnotify.setNotificationpath("/masters");
+				objnotify.setNotificationpath("/Projectteam");
 				objnotify.setNotificationfor(1);
 				lsnotificationRepository.save(objnotify);
 			}

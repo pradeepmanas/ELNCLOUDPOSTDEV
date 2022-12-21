@@ -1391,7 +1391,7 @@ public class MaterialInventoryService {
 
 //						TransactionStatus objTransactionStatus = transactionStatusRepository
 //								.findOne(Enumeration.TransactionStatus.RETIRED.gettransactionstatus());
-						
+
 						sdisplaystatus = "Retired";
 
 						jsonObject.put("ntranscode", Enumeration.TransactionStatus.RETIRED.gettransactionstatus());
@@ -1477,7 +1477,6 @@ public class MaterialInventoryService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
-	
 	@SuppressWarnings({ "unused", "unchecked" })
 	public ResponseEntity<Object> getMaterialInventoryEdit(Map<String, Object> inputMap) throws Exception {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
@@ -1507,7 +1506,7 @@ public class MaterialInventoryService {
 			lstsearchField = (List<MappedTemplateFieldPropsMaterial>) commonfunction
 					.getInventoryValuesFromJsonString(objMaterialInventory.getJsondata(), "138").get("rtnObj");
 
-			if(lstsearchField != null) {
+			if (lstsearchField != null) {
 				JSONArray objarray = new JSONArray(lstsearchField.get(0).getJsondata());
 				for (int i = 0; i < objarray.length(); i++) {
 					JSONObject jsonobject = new JSONObject(objarray.get(i).toString());
@@ -1572,5 +1571,34 @@ public class MaterialInventoryService {
 		ZoneOffset offset = zdt.getOffset();
 		int offSet = offset.getTotalSeconds();
 		return offSet;
+	}
+
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<Object> getMaterialInventorySearchByID(Map<String, Object> inputMap)
+			throws JsonParseException, JsonMappingException, IOException {
+
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		List<Map<String, Object>> lstMaterialInventory = new ArrayList<Map<String, Object>>();
+
+		MaterialInventory objMaterialInventory = materialInventoryRepository
+				.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
+
+		Map<String, Object> resObj = new ObjectMapper().readValue(objMaterialInventory.getJsonuidata(), Map.class);
+
+		resObj.put("nmaterialinventorycode", objMaterialInventory.getNmaterialinventorycode());
+
+		lstMaterialInventory.add(resObj);
+
+		objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(lstMaterialInventory.size() - 1));
+		inputMap.put("nsectioncode", lstMaterialInventory.get(lstMaterialInventory.size() - 1).get("nsectioncode"));
+		objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
+				(int) inputMap.get("nmaterialinventorycode"), inputMap).getBody());
+//		objmap.putAll((Map<String, Object>) getMaterialFile((int) inputMap.get("nmaterialinventorycode"), userInfo));
+//		objmap.putAll(
+//				(Map<String, Object>) getResultUsedMaterial((int) inputMap.get("nmaterialinventorycode"), userInfo)
+//						.getBody());
+//		objmap.putAll((Map<String, Object>) getMaterialInventoryhistory((int) inputMap.get("nmaterialinventorycode"),
+//				userInfo));
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 }

@@ -49,6 +49,7 @@ import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
@@ -75,6 +76,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.Lssheetworkflowhistor
 import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
@@ -176,7 +178,10 @@ public class FileService {
 
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
-
+	
+	@Autowired
+	private LSprojectmasterRepository lsprojectrepo;
+	
 	public LSfile InsertupdateSheet(LSfile objfile) {
 		Boolean Isnew = false;
 
@@ -311,10 +316,11 @@ public class FileService {
 
 		if (lstteamuser != null && lstteamuser.size() > 0) {
 			lstteamuser.add(objuser);
-			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1, lstteamuser);
+			lstfile = lSfileRepository.findByFilecodeGreaterThanAndLssitemasterAndViewoptionOrFilecodeGreaterThanAndCreatebyAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndViewoptionOrderByFilecodeDesc(1,objuser.getLssitemaster() ,1,1, objuser,2,1, lstteamuser,3);
+//			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1, lstteamuser);
 		} else {
-
-			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1, objuser);
+			lstfile = lSfileRepository.findByFilecodeGreaterThanAndLssitemasterAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndViewoptionOrderByFilecodeDesc(1, objuser.getLssitemaster(),1,1, objuser,2);
+//			lstfile = lSfileRepository.findByFilecodeGreaterThanAndCreatebyInOrderByFilecodeDesc(1, objuser);
 		}
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSfile");
@@ -502,6 +508,33 @@ public class FileService {
 		return mapOrders;
 	}
 
+	public Map<String, Object> GetMastersforordercreate(LSuserMaster objuser) {
+
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+
+		mapOrders.put("test", masterService.getTestmaster(objuser));
+		mapOrders.put("sample", masterService.getsamplemaster(objuser));
+		//mapOrders.put("userteam", userService.GetUserTeam(objuser));
+		//mapOrders.put("project", masterService.getProjectmaster(objuser));
+
+		List<LSuserteammapping> teams = lsuserteammappingRepository.findBylsuserMaster(objuser);
+		List<LSusersteam> teamlist = LSusersteamRepository.findByLsuserteammappingInAndStatus(teams, 1);
+		
+		List<LSprojectmaster> prolist = lsprojectrepo.findByLsusersteamInAndStatus(teamlist,1);
+		mapOrders.put("project",prolist);
+		
+		
+		Lsrepositories lsrepositories = new Lsrepositories();
+		lsrepositories.setSitecode(objuser.getLssitemaster().getSitecode());
+		mapOrders.put("inventories", inventoryservice.Getallrepositories(lsrepositories));
+		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
+		if (objuser.getObjsilentaudit() != null) {
+			objuser.getObjsilentaudit().setTableName("LSfiletest");
+			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+		}
+		return mapOrders;
+	}
+	
 	public Map<String, Object> GetMastersforsheetsetting(LSuserMaster objuser) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 
@@ -1427,6 +1460,7 @@ public class FileService {
 			fileByName.setCategory(objfile.getCategory());
 			fileByName.setModifiedby(objfile.getModifiedby());
 			fileByName.setModifieddate(objfile.getModifieddate());
+			fileByName.setViewoption(objfile.getViewoption());
 			lSfileRepository.save(fileByName);
 			fileByName.setResponse(new Response());
 			fileByName.getResponse().setStatus(true);

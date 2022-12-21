@@ -34,6 +34,8 @@ public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster
 	public Object findByProjectnameIgnoreCaseAndLssitemaster(String projectname, LSSiteMaster lssitemaster);
 	public List<LSprojectmaster> findByLssitemasterAndStatus(LSSiteMaster lssitemaster, int i);
 	public List<LSprojectmaster> findByLssitemasterAndStatusOrderByProjectcodeDesc(LSSiteMaster lssitemaster, int i);
+	public List<LSprojectmaster> findByLssitemasterOrderByProjectcodeDesc(LSSiteMaster lssitemaster);
+	public List<LSprojectmaster> findByLsusersteamInAndStatus(List<LSusersteam> teamlist, int i);
 	
 	
 }

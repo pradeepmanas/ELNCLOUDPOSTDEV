@@ -21,6 +21,7 @@ import com.agaram.eln.primary.fetchmodel.gettemplate.Protocoltemplateget;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowgroupmap;
@@ -522,13 +523,19 @@ public class DashBoardService {
 
 			if (lstteamuser != null && lstteamuser.size() > 0) {
 				lstteamuser.add(objuser);
-				lstsheets = lsfileRepository
-						.findByFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenOrderByFilecodeDesc(1, lstteamuser,
-								fromdate, todate);
+		lstsheets = lsfileRepository
+						.findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(1, objuser.getLssitemaster(),
+								fromdate, todate,1,1, objuser,fromdate, todate,2,1, lstteamuser,fromdate, todate,3);
+//				lstsheets = lsfileRepository
+//						.findByFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenOrderByFilecodeDesc(1, lstteamuser,
+//								fromdate, todate);
 			} else {
 				lstsheets = lsfileRepository
-						.findByFilecodeGreaterThanAndCreatebyAndCreatedateBetweenOrderByFilecodeDesc(1, objuser,
-								fromdate, todate);
+				.findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(1, objuser.getLssitemaster(),
+						fromdate, todate,1,1, objuser,fromdate, todate,2);
+//				lstsheets = lsfileRepository
+//						.findByFilecodeGreaterThanAndCreatebyAndCreatedateBetweenOrderByFilecodeDesc(1, objuser,
+//								fromdate, todate);
 			}
 
 			mapSheets.put("Sheets", lstsheets);
@@ -541,28 +548,47 @@ public class DashBoardService {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapSheets = new HashMap<String, Object>();
-
+		List<LSuserMaster> lstteamuser = objuser.getObjuser().getTeamusers();
 		if (objuser.getUsername().equals("Administrator")) {
 			mapSheets.put("Sheets", LSProtocolMasterRepository.findByStatusAndLssitemasterAndCreatedateBetween(1,
 					objuser.getLssitemaster().getSitecode(), fromdate, todate));
 		} else {
 
 			List<Protocoltemplateget> lstprotocolmaster = new ArrayList<>();
-
-			LSprotocolworkflow lsprotocolworkflow = new LSprotocolworkflow();
-			List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap = LSprotocolworkflowgroupmapRepository
-					.findBylsusergroupAndWorkflowcodeNotNull(objuser.getLsusergroup());
-
-			if (lsprotocolworkflowgroupmap != null && lsprotocolworkflowgroupmap.size() > 0) {
-				lsprotocolworkflow = lSprotocolworkflowRepository
-						.findByworkflowcode(lsprotocolworkflowgroupmap.get(0).getWorkflowcode());
-
-				List<Protocoltemplateget> lstprotocolmasterInUser = LSProtocolMasterRepository
-						.findByCreatedbyOrLSprotocolworkflowAndStatusAndCreatedateBetweenOrderByProtocolmastercodeDesc(
-								objuser.getUsercode(), lsprotocolworkflow, 1, fromdate, todate);
-
-				lstprotocolmaster.addAll(lstprotocolmasterInUser);
+			if (lstteamuser != null && lstteamuser.size() > 0) {
+				lstteamuser.add(objuser);
+				List<Integer> usercodelist = lstteamuser.stream().map(LSuserMaster::getUsercode)
+						.collect(Collectors.toList());
+				lstprotocolmaster = 
+						LSProtocolMasterRepository
+						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,1,objuser.getUsercode(),1, fromdate, todate,2,usercodelist,1, fromdate, todate,3);
+//				lstprotocolmaster = 
+//						LSProtocolMasterRepository
+//						.findByCreatedbyInAndStatusAndCreatedateBetweenOrderByProtocolmastercodeDesc(
+//								usercodelist, 1, fromdate, todate);
+			} else {
+				lstprotocolmaster = LSProtocolMasterRepository
+						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionOrderByProtocolmastercodeDesc(objuser.getLssitemaster().getSitecode(),1,
+								fromdate, todate,1,objuser.getUsercode(),1,fromdate, todate,2);
+//				lstprotocolmaster = LSProtocolMasterRepository
+//						.findByCreatedbyAndStatusAndCreatedateBetweenOrderByProtocolmastercodeDesc(objuser.getUsercode(),1,
+//								fromdate, todate);
 			}
+//			LSprotocolworkflow lsprotocolworkflow = new LSprotocolworkflow();
+//			List<LSprotocolworkflowgroupmap> lsprotocolworkflowgroupmap = LSprotocolworkflowgroupmapRepository
+//					.findBylsusergroupAndWorkflowcodeNotNull(objuser.getLsusergroup());
+//
+//			if (lsprotocolworkflowgroupmap != null && lsprotocolworkflowgroupmap.size() > 0) {
+//				lsprotocolworkflow = lSprotocolworkflowRepository
+//						.findByworkflowcode(lsprotocolworkflowgroupmap.get(0).getWorkflowcode());
+//
+//				List<Protocoltemplateget> lstprotocolmasterInUser = LSProtocolMasterRepository
+//						.findByCreatedbyOrLSprotocolworkflowAndStatusAndCreatedateBetweenOrderByProtocolmastercodeDesc(
+//								objuser.getUsercode(), lsprotocolworkflow, 1, fromdate, todate);
+//
+//				lstprotocolmaster.addAll(lstprotocolmasterInUser);
+//			}
 
 			lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 

@@ -2824,6 +2824,8 @@ update lslogbooksdata set logitemstatus='A' where logitemstatus is null;
 update parserfield set datatypekey = 1 where datatypekey is Null;
 ALTER TABLE IF Exists lsprotocolmaster ADD COLUMN IF NOT EXISTS viewoption integer;
 
+update lsprotocolmaster set viewoption = 1 where viewoption is null;
+
 ALTER TABLE IF Exists lsprotocolmaster ADD COLUMN IF NOT EXISTS category character varying(255);
 
 ALTER TABLE IF Exists LSfile ADD COLUMN IF NOT EXISTS category character varying(255);
@@ -3155,3 +3157,7 @@ ALTER TABLE IF Exists lsrepositoriesdata ADD COLUMN IF NOT EXISTS inventoryid va
 ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS approvelstatus integer;
 ALTER TABLE IF Exists LsOrderSampleUpdate ADD COLUMN IF NOT EXISTS inventoryused integer;
 update lsusergroup set createdby='Administrator' where usergroupcode=1;
+
+ALTER TABLE IF Exists lsfile ADD COLUMN IF NOT EXISTS viewoption integer;
+
+update lsfile set viewoption = 1 where viewoption is null;

@@ -186,8 +186,11 @@ public class BaseMasterService {
 
 	public List<LSprojectmaster> getProjectmaster(LSuserMaster objClass) {
 
+//		List<LSprojectmaster> projectlist = lSprojectmasterRepository
+//				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
+		
 		List<LSprojectmaster> projectlist = lSprojectmasterRepository
-				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
+				.findByLssitemasterOrderByProjectcodeDesc(objClass.getLssitemaster());
 		return projectlist;
 	}
 
@@ -308,14 +311,6 @@ public class BaseMasterService {
 						objClass.getLssitemaster()) != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
-			if (objClass.getObjsilentaudit() != null) {
-				objClass.getObjsilentaudit().setActions("Warning");
-				objClass.getObjsilentaudit().setComments(
-						objClass.getModifiedby().getUsername() + " " + "made attempt to create existing project");
-				objClass.getObjsilentaudit().setTableName("LSusergroup");
-
-			}
-
 			return objClass;
 		}
 
@@ -323,14 +318,6 @@ public class BaseMasterService {
 				&& LSlogilablimsorderdetailRepository.findByOrderflagAndLsprojectmaster("N", objClass).size() != 0) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("IDS_PROJECTPROGRESS");
-			if (objClass.getObjsilentaudit() != null) {
-				objClass.getObjsilentaudit().setActions("Warning");
-				objClass.getObjsilentaudit().setComments(
-						objClass.getModifiedby().getUsername() + " " + "made attempt to delete existing project");
-				objClass.getObjsilentaudit().setTableName("LSusergroup");
-
-			}
-
 			return objClass;
 		}
 
@@ -339,15 +326,17 @@ public class BaseMasterService {
 						objClass.getProjectname(), 1, objClass.getProjectcode(), objClass.getLssitemaster()) != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
-			if (objClass.getObjsilentaudit() != null) {
-				objClass.getObjsilentaudit().setActions("Warning");
-				objClass.getObjsilentaudit().setComments(
-						objClass.getModifiedby().getUsername() + " " + "made attempt to create existing project");
-				objClass.getObjsilentaudit().setTableName("LSusergroup");
-
-			}
-
 			return objClass;
+		}
+
+		else if (objClass.getProjectcode() != null
+				&& !(LSlogilablimsorderdetailRepository.findByLsprojectmaster(objClass).isEmpty())) {
+			LSprojectmaster objLSprojectmaster = lSprojectmasterRepository.findOne(objClass.getProjectcode());
+			if (objLSprojectmaster.getLsusersteam() != objClass.getLsusersteam()) {
+				objClass.getResponse().setStatus(false);
+				objClass.getResponse().setInformation("IDS_PROJECTPROGRESS");
+				return objClass;
+			}
 		}
 
 		lSprojectmasterRepository.save(objClass);

@@ -19,13 +19,14 @@ public class Sheettemplateget {
 //	private String filecontent;
 	private long versioncout;
 	private Integer versionno;
+	private Integer viewoption;
 	private String category;
 	private String lssheetworkflowname;
 //	private List<LSfileversion> lstfileversion;
 //	private LSfileversion lsfileversion;
 
 	public Sheettemplateget(Integer filecode, String filenameuser, Date createdate, LSuserMaster createby,
-			LSuserMaster modifiedby, Integer approved, Integer rejected,Integer versionno,String category,LSsheetworkflow lssheetworkflow
+			LSuserMaster modifiedby, Integer approved, Integer rejected,Integer versionno,String category,LSsheetworkflow lssheetworkflow,Integer viewoption
 //			,LSfileversion lsfileversion
 			) {
 		
@@ -53,6 +54,7 @@ public class Sheettemplateget {
 		this.modifiedby = modifiedUser;
 		this.versionno=versionno;
 		this.category =category;
+		this.viewoption =viewoption;
 		this.lssheetworkflowname=lssheetworkflow!=null?lssheetworkflow.getWorkflowname():null;
 //		this.lsfileversion = lsfileversion;
 	}
@@ -82,6 +84,14 @@ public class Sheettemplateget {
 
 	public long getVersioncout() {
 		return versioncout;
+	}
+
+	public Integer getViewoption() {
+		return viewoption;
+	}
+
+	public void setViewoption(Integer viewoption) {
+		this.viewoption = viewoption;
 	}
 
 	public String getLssheetworkflowname() {

@@ -116,6 +116,17 @@ public class LSfile {
 	
 	@Transient
 	Lssheetworkflowhistory objsheetworkflowhistory;
+	
+	private Integer viewoption;
+
+	public Integer getViewoption() {
+		return viewoption;
+	}
+
+	public void setViewoption(Integer viewoption) {
+		this.viewoption = viewoption;
+	}
+	
 	public List<LSsheetupdates> getModifiedlist() {
 		return modifiedlist;
 	}
