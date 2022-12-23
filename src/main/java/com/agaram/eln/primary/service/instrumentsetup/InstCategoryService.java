@@ -15,9 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 //import com.agaram.lleln.jaxb.ReadWriteXML;
 //import com.agaram.lleln.page.Page;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -53,6 +55,7 @@ public class InstCategoryService {
 	@Autowired
 	InstMasterRepository instMasterRepo;
 	
+
 	/**
      * This method is used to add new instrument category.
      * @param category [InstrumentCategory] -  holding details of all fields in 'InstrumentCategory' Pojo.
@@ -65,8 +68,8 @@ public class InstCategoryService {
     public ResponseEntity<Object> createInstCategory(final InstrumentCategory category, 
     		final boolean saveAuditTrial, final HttpServletRequest request) {    	
     	
-    	final Optional<InstrumentCategory> categoryByName = categoryRepo.findByInstcatnameAndStatus(
-    			category.getInstcatname(),1);
+    	final Optional<InstrumentCategory> categoryByName = categoryRepo.findByInstcatnameAndStatusAndLssitemaster(
+    			category.getInstcatname(),1,category.getLssitemaster());
 		
 		if (categoryByName.isPresent())
 		{
@@ -195,9 +198,12 @@ public class InstCategoryService {
      * @return list of active category.
      */
 	@Transactional
-    public ResponseEntity<Object> getInstCategory() {     	
-    	return new ResponseEntity<>(categoryRepo.findByStatus(1, new Sort(Sort.Direction.DESC, "instcatkey")),
+    public ResponseEntity<Object> getInstCategory(LSSiteMaster lssitemaster) {     	
+    	
+		List<InstrumentCategory> list = categoryRepo.findByStatusAndLssitemaster(1,lssitemaster, new Sort(Sort.Direction.DESC, "instcatkey"));
+		return new ResponseEntity<>(list,
     			HttpStatus.OK);
+
     }
     
     /**
@@ -262,7 +268,7 @@ public class InstCategoryService {
 //    }
 	
 	public ResponseEntity<Object> deleteInstCategory(final Integer categoryKey, final boolean saveAuditTrial,
-	 		   final String comments, final Integer userKey, final HttpServletRequest request) 
+	 		   final String comments, final Integer userKey, final HttpServletRequest request,InstrumentCategory sitedata) 
 		{
 			Map<String, Object> mapOrders = new HashMap<String, Object>();
 	        final InstrumentCategory category = categoryRepo.findOne(categoryKey);
@@ -285,7 +291,7 @@ public class InstCategoryService {
 	        		
 	        	}
 	        	else {
-	        		List<InstrumentMaster> instMasterList = instMasterRepo.findByInstcategoryAndStatus(categoryObj, 1);
+	        		List<InstrumentMaster> instMasterList = instMasterRepo.findByInstcategoryAndSiteAndStatus(categoryObj,sitedata, 1);
 	        		if (instMasterList.size() > 0) {
 	        	        		        			
 		        		//return new ResponseEntity<>(categoryObj.getInstcatname(), HttpStatus.IM_USED);//status code - 226

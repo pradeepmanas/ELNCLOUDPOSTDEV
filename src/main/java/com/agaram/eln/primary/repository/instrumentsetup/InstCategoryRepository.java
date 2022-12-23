@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 
 /**
  * This interface holds JpaRepository method declarations relevant to InstrumentCategory.
@@ -36,5 +37,12 @@ public interface InstCategoryRepository extends JpaRepository<InstrumentCategory
 	 * @return instrument category based on category name
 	 */
 	Optional<InstrumentCategory> findByInstcatnameAndStatus(final String categoryName, final int status);
+
+	List<InstrumentCategory> findByStatusAndLssitemaster(int i, LSSiteMaster lssitemaster, Sort sort);
+
+	Optional<InstrumentCategory> findByInstcatnameAndStatusAndLssitemaster(String instcatname, int i,
+			LSSiteMaster lssitemaster);
+
+	
 
 }

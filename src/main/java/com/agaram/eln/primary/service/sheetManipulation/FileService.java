@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -83,13 +82,15 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingReposit
 import com.agaram.eln.primary.service.basemaster.BaseMasterService;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.masters.MasterService;
+import com.agaram.eln.primary.service.material.TransactionService;
 import com.mongodb.gridfs.GridFSDBFile;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSfileRepository.class)
 public class FileService {
 
-	@SuppressWarnings("unused")
+	@Autowired
+	TransactionService transactionService;
 	@Autowired
 	private LSuserMasterRepository lsusermasterRepository;
 	@Autowired
@@ -514,8 +515,6 @@ public class FileService {
 
 		mapOrders.put("test", masterService.getTestmaster(objuser));
 		mapOrders.put("sample", masterService.getsamplemaster(objuser));
-		//mapOrders.put("userteam", userService.GetUserTeam(objuser));
-		//mapOrders.put("project", masterService.getProjectmaster(objuser));
 
 		List<LSuserteammapping> teams = lsuserteammappingRepository.findBylsuserMaster(objuser);
 		List<LSusersteam> teamlist = LSusersteamRepository.findByLsuserteammappingInAndStatus(teams, 1);
@@ -528,10 +527,9 @@ public class FileService {
 		lsrepositories.setSitecode(objuser.getLssitemaster().getSitecode());
 		mapOrders.put("inventories", inventoryservice.Getallrepositories(lsrepositories));
 		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
-		if (objuser.getObjsilentaudit() != null) {
-			objuser.getObjsilentaudit().setTableName("LSfiletest");
-			lscfttransactionRepository.save(objuser.getObjsilentaudit());
-		}
+		
+		mapOrders.put("limsInventory",transactionService.getMaterialLst4DashBoard(mapOrders));
+		
 		return mapOrders;
 	}
 	

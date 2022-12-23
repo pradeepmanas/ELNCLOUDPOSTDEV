@@ -44,7 +44,6 @@ import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo
 import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.fileManipulation.UserSignature;
 import com.agaram.eln.primary.model.general.Response;
-import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
@@ -121,6 +120,7 @@ import com.agaram.eln.primary.repository.protocol.LSprotocolorderfilesContentRep
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderfilesRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderimagesRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolordersampleupdatesRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolordersampleupdatesRepository.UserProjection1;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderstephistoryRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderstepversionRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderversionRepository;
@@ -341,8 +341,8 @@ public class ProtocolService {
 	@Autowired
 	private LsprotocolOrderStructureRepository lsprotocolorderStructurerepository;
 
-	@Autowired
-	private LSuserteammappingRepository lsuserteammappingRepository;
+//	@Autowired
+//	private LSuserteammappingRepository lsuserteammappingRepository;
 	@Autowired
 	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
 
@@ -416,15 +416,16 @@ public class ProtocolService {
 
 		if (lstuser.size() != 0) {
 			LSprotocolmaster = LSProtocolMasterRepositoryObj
-					.findByStatusAndLssitemasterAndViewoptionOrCreatedbyAndStatusAndLssitemasterAndViewoptionOrCreatedbyInAndStatusAndLssitemasterAndViewoptionOrderByCreatedateDesc( 1,
-							objusers.getLssitemaster().getSitecode(),1,objusers.getUsercode(), 1,objusers.getLssitemaster().getSitecode(),2,lstuser, 1,
-							objusers.getLssitemaster().getSitecode(),3);
-			
+					.findByStatusAndLssitemasterAndViewoptionOrCreatedbyAndStatusAndLssitemasterAndViewoptionOrCreatedbyInAndStatusAndLssitemasterAndViewoptionOrderByCreatedateDesc(
+							1, objusers.getLssitemaster().getSitecode(), 1, objusers.getUsercode(), 1,
+							objusers.getLssitemaster().getSitecode(), 2, lstuser, 1,
+							objusers.getLssitemaster().getSitecode(), 3);
+
 		} else {
 			LSprotocolmaster = LSProtocolMasterRepositoryObj
 					.findByStatusAndLssitemasterAndViewoptionOrCreatedbyAndStatusAndLssitemasterAndViewoptionOrderByCreatedateDesc(
-							 1, objusers.getLssitemaster().getSitecode(), 1,
-							objusers.getUsercode(), 1, objusers.getLssitemaster().getSitecode(), 2);
+							1, objusers.getLssitemaster().getSitecode(), 1, objusers.getUsercode(), 1,
+							objusers.getLssitemaster().getSitecode(), 2);
 
 		}
 //		if (lstuser.size() != 0) {
@@ -1406,15 +1407,16 @@ public class ProtocolService {
 			Integer usercode = objMapper.convertValue(argObj.get("usercode"), Integer.class);
 			if (lstuser.size() != 0) {
 				LSprotocolmasterLst = LSProtocolMasterRepositoryObj
-						.findByStatusAndLssitemasterAndViewoptionOrCreatedbyAndStatusAndLssitemasterAndViewoptionOrCreatedbyInAndStatusAndLssitemasterAndViewoptionOrderByCreatedateDesc( 1,
-								LScfttransactionobj.getLssitemaster(),1,usercode, 1,LScfttransactionobj.getLssitemaster(),2,lstuser, 1,
-								LScfttransactionobj.getLssitemaster(),3);
-				
+						.findByStatusAndLssitemasterAndViewoptionOrCreatedbyAndStatusAndLssitemasterAndViewoptionOrCreatedbyInAndStatusAndLssitemasterAndViewoptionOrderByCreatedateDesc(
+								1, LScfttransactionobj.getLssitemaster(), 1, usercode, 1,
+								LScfttransactionobj.getLssitemaster(), 2, lstuser, 1,
+								LScfttransactionobj.getLssitemaster(), 3);
+
 			} else {
 				LSprotocolmasterLst = LSProtocolMasterRepositoryObj
 						.findByStatusAndLssitemasterAndViewoptionOrCreatedbyAndStatusAndLssitemasterAndViewoptionOrderByCreatedateDesc(
-								 1, LScfttransactionobj.getLssitemaster(), 1,
-								usercode, 1, LScfttransactionobj.getLssitemaster(), 2);
+								1, LScfttransactionobj.getLssitemaster(), 1, usercode, 1,
+								LScfttransactionobj.getLssitemaster(), 2);
 
 			}
 
@@ -1527,7 +1529,7 @@ public class ProtocolService {
 		return mapObj;
 	}
 
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	private void updatenotificationforprotocolcreation(LSprotocolmaster newProtocolMasterObj,
 			Map<String, Object> argObj, Boolean Isnewprotocol) {
 		LSuserMaster lsusermaster = new ObjectMapper().convertValue(argObj.get("lsuserMaster"),
@@ -2065,7 +2067,7 @@ public class ProtocolService {
 
 		List<LSlogilabprotocoldetail> LSlogilabprotocoldetail = new ArrayList<LSlogilabprotocoldetail>();
 		LSlogilabprotocoldetail.add(objClass);
-		LSusergroup userGroup = LSusergroupRepository.findOne(objClass.getObjuser().getMultiusergroupcode());
+//		LSusergroup userGroup = LSusergroupRepository.findOne(objClass.getObjuser().getMultiusergroupcode());
 
 		List<LSworkflow> lstworkflow = objClass.getLstworkflow();
 
@@ -2139,10 +2141,10 @@ public class ProtocolService {
 					.collect(Collectors.toList());
 			List<LSuserMaster> objuser = lsusermasterRepository.findByusercodeInAndUserretirestatusNot(objnotifyuser,
 					1);
-			LSusersteam objteam = lsusersteamRepository
-					.findByteamcode(LsProto.getLsprojectmaster().getLsusersteam().getTeamcode());
+//			LSusersteam objteam = lsusersteamRepository
+//					.findByteamcode(LsProto.getLsprojectmaster().getLsusersteam().getTeamcode());
 
-			List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
+//			List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
 			if (objClass.getApprovelstatus() != null && objClass.getFinalworkflow() == 1) {
 
 				for (int i = 0; i < objuser.size(); i++) {
@@ -3084,8 +3086,8 @@ public class ProtocolService {
 						lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(), "R",
 						lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 
-		LSusergroup userGroup = LSusergroupRepository
-				.findOne(lSlogilabprotocoldetail.getObjuser().getMultiusergroupcode());
+//		LSusergroup userGroup = LSusergroupRepository
+//				.findOne(lSlogilabprotocoldetail.getObjuser().getMultiusergroupcode());
 
 //		List<LSprotocolworkflowgroupmap> lsworkflowgroupmapping = LSprotocolworkflowgroupmapRepository
 //				.findBylsusergroupAndWorkflowcodeNotNull(userGroup);
@@ -5418,7 +5420,7 @@ public class ProtocolService {
 					+ objprotocolordershareto.getReadorwrite() + "\"}";
 		}
 
-		List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
+//		List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
 		LSnotification objnotify = new LSnotification();
 		objnotify.setNotifationfrom(objprotocolordershareto.getObjLoggeduser());
 		objnotify.setNotificationdate(objprotocolordershareto.getSharedon());
@@ -5695,7 +5697,7 @@ public class ProtocolService {
 		String Details = "";
 		String Notification = "";
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-		Map<String, Object> obj = new HashMap<String, Object>();
+//		Map<String, Object> obj = new HashMap<String, Object>();
 		LSnotification objnotify = new LSnotification();
 		LSuserMaster createby = lsusermasterRepository.findByusercode(lsprotocolordersampleupdates.getUsercode());
 		if (lsprotocolordersampleupdates.getInventoryconsumed() == 20) {
@@ -5713,6 +5715,46 @@ public class ProtocolService {
 			lsnotificationRepository.save(lstnotifications);
 		}
 		return null;
+	}
+
+	public Map<String, Object> Outofstockinventorynotificationprotocol(
+			LSprotocolordersampleupdates lsprotocolordersampleupdates) {
+
+		String Details = "";
+		String Notification = "";
+
+		List<UserProjection1> ordersample1 = lsprotocolordersampleupdatesRepository
+				.getDistinctRepositorydatacode(lsprotocolordersampleupdates.getRepositorydatacode());
+
+		ArrayList<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+
+		for (int i = 0; i < ordersample1.size(); i++) {
+			LSnotification objnotify = new LSnotification();
+			LSuserMaster objuser = lsusermasterRepository.findByusercode(ordersample1.get(i).getUsercode());
+			if (lsprotocolordersampleupdates.getInventoryconsumed() == 0) {
+				Notification = "INVENTORYOUTOFSTOCK";
+
+				Details = "{\"orderid\":\"" + ordersample1.get(i).getProtocolordercode()
+
+						+ "\"}";
+				objnotify.setNotifationto(objuser);
+				objnotify.setNotificationdate(lsprotocolordersampleupdates.getCreateddate());
+				objnotify.setNotification(Notification);
+				objnotify.setNotificationdetils(Details);
+				objnotify.setIsnewnotification(1);
+				objnotify.setNotificationpath("/inventory");
+				objnotify.setNotificationfor(1);
+				lstnotifications.add(objnotify);
+				objnotify = null;
+
+			}
+			i++;
+
+		}
+
+		lsnotificationRepository.save(lstnotifications);
+		return null;
+
 	}
 
 	public List<LSprotocolorderworkflowhistory> getProtocolOrderworkflowhistoryList(

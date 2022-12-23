@@ -67,8 +67,8 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	@Query("update LSuserMaster u set u.password = ?1,u.passwordstatus = ?2 where u.usercode = ?3")
 	void setpasswordandpasswordstatusByusercode(String password, Integer integer, Integer usercode);
 
-	public List<LSuserMaster> findByLssitemasterAndUsercodeNotInAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(
-			LSSiteMaster lssitemaster, List<Integer> usercode, Integer userretirestatus);
+	public List<LSuserMaster> findByLssitemasterAndUsercodeNotInAndUserstatusAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(
+			LSSiteMaster lssitemaster, List<Integer> usercode, String string, Integer userretirestatus);
 
 	public Object findByLssitemasterAndUsernameIgnoreCase(LSSiteMaster lssitemaster, String username);
 
@@ -99,4 +99,7 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 
 	public List<LSuserMaster> findByUsernameIgnoreCaseAndLoginfromAndUserretirestatusNotOrderByCreateddateDesc(
 			String username, String string, int i);
+
+	
+	public LSuserMaster findByUsercode(LSuserMaster lsuserMaster);
 }

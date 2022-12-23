@@ -25,6 +25,7 @@ import org.apache.commons.lang3.builder.Diffable;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.agaram.eln.primary.model.methodsetup.InstantDateAdapter;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 
@@ -60,6 +61,9 @@ public class InstrumentCategory implements Serializable, Diffable<InstrumentCate
     @Transient 
     public String info;
 	
+    @ManyToOne
+	private LSSiteMaster lssitemaster;
+    
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "usercode", nullable = false)
 	private LSuserMaster createdby;
@@ -120,6 +124,15 @@ public class InstrumentCategory implements Serializable, Diffable<InstrumentCate
 
 	public void setInfo(String info) {
 		this.info = info;
+	}
+
+	
+	public LSSiteMaster getLssitemaster() {
+		return lssitemaster;
+	}
+
+	public void setLssitemaster(LSSiteMaster lssitemaster) {
+		this.lssitemaster = lssitemaster;
 	}
 
 	/**

@@ -2,15 +2,19 @@ package com.agaram.eln.primary.controller.instrumentsetup;
 
 import java.util.Map;
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.instrumentsetup.InstCategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,13 +32,15 @@ public class InstCategoryController {
 	@Autowired
 	InstCategoryService categoryService;
 	
+	
 	 /**
      * This method is used to retrieve list of active instrument categories (status=1)
      * @return list of active instrument categories.
      */
     @PostMapping(value = "/getInstCategory")
-    public ResponseEntity<Object> getInstCategory()throws Exception {
-        return  categoryService.getInstCategory();
+  
+    public ResponseEntity<Object> getInstCategory(@RequestBody LSSiteMaster lssitemaster)throws Exception {
+        return  categoryService.getInstCategory(lssitemaster);
     }
  
     /**
@@ -90,14 +96,16 @@ public class InstCategoryController {
     {
 	
 //		  final Boolean saveAuditTrail = (Boolean)mapObject.get("saveAuditTrail");
-    		final Boolean saveAuditTrail = false;
-		  
+    	  final Boolean saveAuditTrail = false;
+    	  final ObjectMapper mapper = new ObjectMapper();
+   		  final InstrumentCategory sitedata = mapper.convertValue(mapObject.get("lssitemaster"), InstrumentCategory.class);
 		  String strUserKey = (String) mapObject.get("doneByUserKey");
+		  
 		  
 		  int userKey = Integer.parseInt(strUserKey);
 		  
 		  return categoryService.deleteInstCategory((Integer) mapObject.get("instcatkey"), saveAuditTrail, 
-				   (String)mapObject.get("comments"), userKey, request);
+				   (String)mapObject.get("comments"), userKey, request,sitedata);
     }
 }
 

@@ -29,8 +29,8 @@ public class LSuserMaster {
 	@Basic(optional = false)
 	@Column(name = "usercode")
 	private Integer usercode;
-@Transient
-private LSuserMaster lsusermaster;
+	@Transient
+	private LSuserMaster lsusermaster;
 	@Column(columnDefinition = "varchar(255)")
 	private String userfullname;
 	@Column(columnDefinition = "varchar(255)")

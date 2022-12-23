@@ -1063,4 +1063,9 @@ public class ProtocolController {
 	
 		return  ProtocolMasterService.updatetransactionhistory(objuser);
 	}
+	@RequestMapping(value = "/Outofstockinventorynotificationprotocol")
+	protected Map<String, Object>  Outofstockinventorynotificationprotocol(@RequestBody LSprotocolordersampleupdates lsprotocolordersampleupdates)throws Exception {
+	
+		return  ProtocolMasterService.Outofstockinventorynotificationprotocol(lsprotocolordersampleupdates);
+	}
 }

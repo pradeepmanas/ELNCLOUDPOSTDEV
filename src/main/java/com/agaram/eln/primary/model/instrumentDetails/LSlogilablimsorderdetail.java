@@ -24,6 +24,8 @@ import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.material.Material;
+import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
@@ -147,6 +149,27 @@ public class LSlogilablimsorderdetail {
 
 	@Transient
 	List<LSworkflow> lstworkflow;
+	
+	@ManyToOne
+	private Material material;
+	@ManyToOne
+	private MaterialInventory materialinventory;
+
+	public Material getMaterial() {
+		return material;
+	}
+
+	public void setMaterial(Material material) {
+		this.material = material;
+	}
+
+	public MaterialInventory getMaterialinventory() {
+		return materialinventory;
+	}
+
+	public void setMaterialinventory(MaterialInventory materialinventory) {
+		this.materialinventory = materialinventory;
+	}
 
 	@OneToMany
 	@JoinColumn(name = "batchcode")

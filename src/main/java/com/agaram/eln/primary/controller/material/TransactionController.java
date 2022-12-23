@@ -52,4 +52,11 @@ public class TransactionController {
 
 		return transactionService.updateMappedTemplateFieldPropsMaterialTable(objLstClass);
 	}
+	
+	@PostMapping(value = "/getMaterialLst4DashBoard")
+	public ResponseEntity<Object> getMaterialLst4DashBoard(@RequestBody Map<String, Object> inputMap)
+			throws Exception {
+
+		return transactionService.getMaterialLst4DashBoard(inputMap);
+	}
 }

@@ -1162,6 +1162,11 @@ public class InstrumentController {
 		return instrumentService.Consumableinventoryotification(argobj);
 
 	}
+	@PostMapping("/Outofstockinventoryotification")
+	public Map<String, Object> Outofstockinventoryotification(@RequestBody Map<String, Object> argobj)throws Exception {
+		return instrumentService.Outofstockinventoryotification(argobj);
+
+	}
 	@RequestMapping("/Getfoldersfordashboard")
 	public Map<String, Object> Getfoldersfordashboard(@RequestBody LSuserMaster objusermaster)throws Exception {
 		return instrumentService.Getfoldersfordashboard(objusermaster);

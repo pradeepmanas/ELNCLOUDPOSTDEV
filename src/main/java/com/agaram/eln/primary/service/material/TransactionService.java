@@ -44,7 +44,7 @@ public class TransactionService {
 
 	@Autowired
 	private MaterialConfigRepository materialConfigRepository;
-	
+
 	@Autowired
 	private MappedTemplateFieldPropsMaterialRepository mappedTemplateFieldPropsMaterialRepository;
 
@@ -429,25 +429,46 @@ public class TransactionService {
 
 	public ResponseEntity<Object> updateMappedTemplateFieldPropsMaterialTable(
 			MappedTemplateFieldPropsMaterial[] objLstClass) {
-		
+
 		List<MappedTemplateFieldPropsMaterial> lstMappedProps = Arrays.asList(objLstClass);
-		
+
 		lstMappedProps.stream().peek(f -> {
-			
+
 			MappedTemplateFieldPropsMaterial objFieldPropsMaterial = new MappedTemplateFieldPropsMaterial();
-			
+
 			objFieldPropsMaterial.setJsondata(f.getJsondata());
 			objFieldPropsMaterial.setNstatus(1);
 			objFieldPropsMaterial.setNmaterialconfigcode(f.getNmaterialconfigcode());
 			objFieldPropsMaterial.setNmappedtemplatefieldpropmaterialcode(f.getNmappedtemplatefieldpropmaterialcode());
-			
+
 			mappedTemplateFieldPropsMaterialRepository.save(objFieldPropsMaterial);
-			
+
 		}).collect(Collectors.toList());
 
 //		mappedTemplateFieldPropsMaterialRepository.save(lstMappedProps);
 
 		return new ResponseEntity<>("Material Properties updated successfully", HttpStatus.OK);
 
+	}
+
+	public ResponseEntity<Object> getMaterialLst4DashBoard(Map<String, Object> inputMap) {
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+
+		List<Material> lstMaterials = new ArrayList<Material>();
+		List<MaterialInventory> lstMaterialInventories = new ArrayList<MaterialInventory>();
+
+		lstMaterials = materialRepository.findByNstatus(1);
+
+		if (!lstMaterials.isEmpty()) {
+
+			lstMaterialInventories = materialInventoryRepository
+					.findByNtransactionstatusOrderByNmaterialinventorycode(28);
+		}
+
+		rtnMap.put("listedMaterial", lstMaterials);
+		rtnMap.put("listedMaterialInventory", lstMaterialInventories);
+
+		return new ResponseEntity<>(rtnMap, HttpStatus.OK);
 	}
 }
