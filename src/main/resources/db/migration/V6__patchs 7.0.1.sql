@@ -1010,6 +1010,15 @@ update lsaudittrailconfiguration set taskname = 'IDS_TSK_GENERATEREPORT' where t
 update lsaudittrailconfiguration set taskname = 'IDS_TSK_CONFIGURE' where taskname='Configure';
 update lsaudittrailconfiguration set taskname = 'IDS_TSK_DIRECTORYSAVE' where taskname='Directory Save';
 
+update lsaudittrailconfigmaster set taskname='IDS_TSK_TASKSAVE' where serialno=4;
+update lsaudittrailconfigmaster set taskname='IDS_TSK_PROJECTSAVE' where serialno=7;
+update lsaudittrailconfigmaster set taskname='IDS_TSK_SAMPLESAVE' where serialno=9;
+update lsaudittrailconfiguration set taskname='IDS_TSK_TASKSAVE' where screenname='IDS_SCN_TASKMASTER' and taskname='IDS_TSK_SAVE';
+update lsaudittrailconfiguration set taskname='IDS_TSK_PROJECTSAVE' where screenname='IDS_SCN_PROJECTMASTER' and taskname='IDS_TSK_SAVE';
+update lsaudittrailconfiguration set taskname='IDS_TSK_SAMPLESAVE' where screenname='IDS_SCN_SAMPLEMASTER' and taskname='IDS_TSK_SAVE';
+update lsaudittrailconfigmaster set taskname='IDS_TSK_ADD' where modulename='IDS_MDL_PARSER' and taskname='IDS_TSK_SAVE' and screenname!='IDS_SCN_INSTRUMENTCATEGORY';
+update lsaudittrailconfiguration set taskname='IDS_TSK_ADD' where modulename='IDS_MDL_PARSER' and taskname='IDS_TSK_SAVE' and screenname!='IDS_SCN_INSTRUMENTCATEGORY';
+
 update lsusergrouprights set displaytopic = 'IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_TSK_UNLOCKORDERS';
 update lsusergrouprightsmaster set displaytopic = 'IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_TSK_UNLOCKORDERS';
 
@@ -1075,6 +1084,10 @@ delete from lsusergrouprightsmaster where orderno=4;
 delete from lsusergrouprightsmaster where orderno=42;
 delete from lsusergrouprightsmaster where orderno=44;
 
+update lsaudittrailconfigmaster set taskname='IDS_TSK_DELETED' where serialno in (21,56,57,34,85,88,91,94,97,28);
+
+update lsaudittrailconfiguration set taskname='IDS_TSK_DELETED' where taskname='IDS_TSK_DELETE' and screenname in ('IDS_SCN_PROJECTTEAM','IDS_SCN_CFRSETTINGS','IDS_SCN_ORDERWORKFLOW','IDS_SCN_TEMPLATEWORKFOW');
+update lsaudittrailconfiguration set taskname='IDS_TSK_DELETED' where taskname='IDS_TSK_DELETE' and modulename ='IDS_MDL_PARSER';
 
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (85, 'IDS_TSK_FOLDERCREATION', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',2,'IDS_SCN_SHEETORDERS') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (86, 'IDS_TSK_FOLDERCREATIONPROTOCOL', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',3,'IDS_SCN_PROTOCOLORDERS') ON CONFLICT(orderno)DO NOTHING;
@@ -2514,7 +2527,19 @@ update lsaudittrailconfigmaster set modulename='IDS_MDL_SETUP' where taskname='I
 
 update lsaudittrailconfigmaster set modulename='IDS_MDL_INVENTORY' where serialno in (71,72,73,74,75);
 update lsaudittrailconfiguration set modulename='IDS_MDL_INVENTORY' where taskname in ('IDS_TSK_ADDREPO','IDS_TSK_EDITREPO','IDS_TSK_SAVE','IDS_TSK_DELETE','IDS_TSK_EDIT');
- 
+
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(136,0,'IDS_MDL_TEMPLATES',6,'IDS_SCN_SHEETTEMPLATES','IDS_TSK_EDITSHEET') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(137,0,'IDS_MDL_TEMPLATES',6,'IDS_SCN_PROTOCOLTEMP','IDS_TSK_EDITPROTOCOL') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(138,0,'IDS_MDL_MASTERS',6,'IDS_SCN_TASKMASTER','IDS_TSK_EDITTASK') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(139,0,'IDS_MDL_MASTERS',6,'IDS_SCN_PROJECTMASTER','IDS_TSK_EDITPROJECT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(140,0,'IDS_MDL_MASTERS',6,'IDS_SCN_SAMPLEMASTER','IDS_TSK_EDITSAMPLE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(141,0,'IDS_MDL_INVENTORY',6,'IDS_SCN_UNITMASTER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(142,0,'IDS_MDL_INVENTORY',6,'IDS_SCN_SECTIONMASTER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(143,0,'IDS_MDL_INVENTORY',6,'IDS_SCN_STORAGELOCATION','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(144,0,'IDS_MDL_INVENTORY',6,'IDS_SCN_MATERIALCATEGORY','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(145,0,'IDS_MDL_INVENTORY',6,'IDS_SCN_MATERIAL','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(146,0,'IDS_MDL_INVENTORY',6,'IDS_SCN_MATERIALINVENTORY','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+
  update lsaudittrailconfigmaster set ordersequnce=1 where serialno=100;
  update lsaudittrailconfigmaster set ordersequnce=2 where serialno=2;
  update lsaudittrailconfigmaster set ordersequnce=3 where serialno=102;
@@ -2537,99 +2562,110 @@ update lsaudittrailconfiguration set modulename='IDS_MDL_INVENTORY' where taskna
  update lsaudittrailconfigmaster set ordersequnce=20 where serialno=130;
  update lsaudittrailconfigmaster set ordersequnce=21 where serialno=107;
  update lsaudittrailconfigmaster set ordersequnce=24 where serialno=113;
- update lsaudittrailconfigmaster set ordersequnce=25 where serialno=3;
- update lsaudittrailconfigmaster set ordersequnce=26 where serialno=41;
- update lsaudittrailconfigmaster set ordersequnce=27 where serialno=114;
- update lsaudittrailconfigmaster set ordersequnce=28 where serialno=108;
- update lsaudittrailconfigmaster set ordersequnce=29 where serialno=58;
- update lsaudittrailconfigmaster set ordersequnce=30 where serialno=59;
- update lsaudittrailconfigmaster set ordersequnce=31 where serialno=61;
- update lsaudittrailconfigmaster set ordersequnce=32 where serialno=60;
- update lsaudittrailconfigmaster set ordersequnce=33 where serialno=10;
- update lsaudittrailconfigmaster set ordersequnce=34 where serialno=4;
- update lsaudittrailconfigmaster set ordersequnce=35 where serialno=5;
- update lsaudittrailconfigmaster set ordersequnce=36 where serialno=7;
- update lsaudittrailconfigmaster set ordersequnce=37 where serialno=6;
- update lsaudittrailconfigmaster set ordersequnce=38 where serialno=9;
- update lsaudittrailconfigmaster set ordersequnce=39 where serialno=8;
- update lsaudittrailconfigmaster set ordersequnce=40 where serialno=30;
- update lsaudittrailconfigmaster set ordersequnce=41 where serialno=115;
- update lsaudittrailconfigmaster set ordersequnce=42 where serialno=50;
- update lsaudittrailconfigmaster set ordersequnce=43 where serialno=51;
- update lsaudittrailconfigmaster set ordersequnce=44 where serialno=11;
- update lsaudittrailconfigmaster set ordersequnce=44 where serialno=12;
- update lsaudittrailconfigmaster set ordersequnce=45 where serialno=13;
- update lsaudittrailconfigmaster set ordersequnce=46 where serialno=14;
- update lsaudittrailconfigmaster set ordersequnce=47 where serialno=15;
- update lsaudittrailconfigmaster set ordersequnce=48 where serialno=16;
- update lsaudittrailconfigmaster set ordersequnce=49 where serialno=17;
- update lsaudittrailconfigmaster set ordersequnce=50 where serialno=18;
- update lsaudittrailconfigmaster set ordersequnce=51 where serialno=116;
- update lsaudittrailconfigmaster set ordersequnce=52 where serialno=54;
- update lsaudittrailconfigmaster set ordersequnce=53 where serialno=55;
- update lsaudittrailconfigmaster set ordersequnce=54 where serialno=131;
- update lsaudittrailconfigmaster set ordersequnce=55 where serialno=19;
- update lsaudittrailconfigmaster set ordersequnce=56 where serialno=20;
- update lsaudittrailconfigmaster set ordersequnce=57 where serialno=21;
- update lsaudittrailconfigmaster set ordersequnce=58 where serialno=22;
- update lsaudittrailconfigmaster set ordersequnce=59 where serialno=56;
- update lsaudittrailconfigmaster set ordersequnce=60 where serialno=32;
- update lsaudittrailconfigmaster set ordersequnce=61 where serialno=57;
- update lsaudittrailconfigmaster set ordersequnce=62 where serialno=33;
- update lsaudittrailconfigmaster set ordersequnce=63 where serialno=34;
- update lsaudittrailconfigmaster set ordersequnce=64 where serialno=35;
- update lsaudittrailconfigmaster set ordersequnce=65 where serialno=23;
- update lsaudittrailconfigmaster set ordersequnce=66 where serialno=117;
- update lsaudittrailconfigmaster set ordersequnce=67 where serialno=24;
- update lsaudittrailconfigmaster set ordersequnce=68 where serialno=25;
- update lsaudittrailconfigmaster set ordersequnce=69 where serialno=26;
- update lsaudittrailconfigmaster set ordersequnce=70 where serialno=27;
- update lsaudittrailconfigmaster set ordersequnce=71 where serialno=28;
- update lsaudittrailconfigmaster set ordersequnce=72 where serialno=42;
- update lsaudittrailconfigmaster set ordersequnce=73 where serialno=47;
- update lsaudittrailconfigmaster set ordersequnce=74 where serialno=49;
- update lsaudittrailconfigmaster set ordersequnce=75 where serialno=45;
- update lsaudittrailconfigmaster set ordersequnce=76 where serialno=48;
- update lsaudittrailconfigmaster set ordersequnce=77 where serialno=43;
- update lsaudittrailconfigmaster set ordersequnce=78 where serialno=46;
- update lsaudittrailconfigmaster set ordersequnce=79 where serialno=84;
- update lsaudittrailconfigmaster set ordersequnce=80 where serialno=85;
- update lsaudittrailconfigmaster set ordersequnce=81 where serialno=86;
- update lsaudittrailconfigmaster set ordersequnce=82 where serialno=87;
- update lsaudittrailconfigmaster set ordersequnce=83 where serialno=88;
- update lsaudittrailconfigmaster set ordersequnce=84 where serialno=89;
- update lsaudittrailconfigmaster set ordersequnce=85 where serialno=90;
- update lsaudittrailconfigmaster set ordersequnce=86 where serialno=91;
- update lsaudittrailconfigmaster set ordersequnce=87 where serialno=92;
- update lsaudittrailconfigmaster set ordersequnce=88 where serialno=93;
- update lsaudittrailconfigmaster set ordersequnce=89 where serialno=94;
- update lsaudittrailconfigmaster set ordersequnce=90 where serialno=95;
- update lsaudittrailconfigmaster set ordersequnce=91 where serialno=96;
- update lsaudittrailconfigmaster set ordersequnce=92 where serialno=97;
- update lsaudittrailconfigmaster set ordersequnce=93 where serialno=118;
- update lsaudittrailconfigmaster set ordersequnce=94 where serialno=119;
- update lsaudittrailconfigmaster set ordersequnce=95 where serialno=120;
- update lsaudittrailconfigmaster set ordersequnce=96 where serialno=121;
- update lsaudittrailconfigmaster set ordersequnce=97 where serialno=122;
- update lsaudittrailconfigmaster set ordersequnce=98 where serialno=123;
- update lsaudittrailconfigmaster set ordersequnce=99 where serialno=124;
- update lsaudittrailconfigmaster set ordersequnce=100 where serialno=125;
- update lsaudittrailconfigmaster set ordersequnce=101 where serialno=126;
- update lsaudittrailconfigmaster set ordersequnce=102 where serialno=127;
- update lsaudittrailconfigmaster set ordersequnce=103 where serialno=128;
- update lsaudittrailconfigmaster set ordersequnce=104 where serialno=129;
- update lsaudittrailconfigmaster set ordersequnce=105 where serialno=71;
-update lsaudittrailconfigmaster set ordersequnce=106 where serialno=72;
-update lsaudittrailconfigmaster set ordersequnce=107 where serialno=73;
-update lsaudittrailconfigmaster set ordersequnce=108 where serialno=74;
-update lsaudittrailconfigmaster set ordersequnce=109 where serialno=75;
-update lsaudittrailconfigmaster set ordersequnce=110 where serialno=132;
-update lsaudittrailconfigmaster set ordersequnce=111 where serialno=133;
-update lsaudittrailconfigmaster set ordersequnce=112 where serialno=134;
-update lsaudittrailconfigmaster set ordersequnce=113 where serialno=135;
-update lsaudittrailconfigmaster set ordersequnce=114 where serialno=81;
-update lsaudittrailconfigmaster set ordersequnce=115 where serialno=82;
-update lsaudittrailconfigmaster set ordersequnce=116 where serialno=83;
+ update lsaudittrailconfigmaster set ordersequnce=25 where serialno=136;
+ update lsaudittrailconfigmaster set ordersequnce=26 where serialno=3;
+ update lsaudittrailconfigmaster set ordersequnce=27 where serialno=41;
+ update lsaudittrailconfigmaster set ordersequnce=28 where serialno=114;
+ update lsaudittrailconfigmaster set ordersequnce=29 where serialno=108;
+ update lsaudittrailconfigmaster set ordersequnce=30 where serialno=58;
+ update lsaudittrailconfigmaster set ordersequnce=31 where serialno=137;
+ update lsaudittrailconfigmaster set ordersequnce=32 where serialno=59;
+ update lsaudittrailconfigmaster set ordersequnce=33 where serialno=61;
+ update lsaudittrailconfigmaster set ordersequnce=34 where serialno=60;
+ update lsaudittrailconfigmaster set ordersequnce=35 where serialno=10;
+ update lsaudittrailconfigmaster set ordersequnce=36 where serialno=4;
+ update lsaudittrailconfigmaster set ordersequnce=37 where serialno=138;
+ update lsaudittrailconfigmaster set ordersequnce=38 where serialno=5;
+ update lsaudittrailconfigmaster set ordersequnce=39 where serialno=7;
+ update lsaudittrailconfigmaster set ordersequnce=40 where serialno=139;
+ update lsaudittrailconfigmaster set ordersequnce=41 where serialno=6;
+ update lsaudittrailconfigmaster set ordersequnce=42 where serialno=9;
+ update lsaudittrailconfigmaster set ordersequnce=43 where serialno=140;
+ update lsaudittrailconfigmaster set ordersequnce=44 where serialno=8;
+ update lsaudittrailconfigmaster set ordersequnce=45 where serialno=30;
+ update lsaudittrailconfigmaster set ordersequnce=46 where serialno=115;
+ update lsaudittrailconfigmaster set ordersequnce=47 where serialno=50;
+ update lsaudittrailconfigmaster set ordersequnce=48 where serialno=51;
+ update lsaudittrailconfigmaster set ordersequnce=49 where serialno=11;
+ update lsaudittrailconfigmaster set ordersequnce=50 where serialno=12;
+ update lsaudittrailconfigmaster set ordersequnce=51 where serialno=13;
+ update lsaudittrailconfigmaster set ordersequnce=52 where serialno=14;
+ update lsaudittrailconfigmaster set ordersequnce=53 where serialno=15;
+ update lsaudittrailconfigmaster set ordersequnce=54 where serialno=16;
+ update lsaudittrailconfigmaster set ordersequnce=55 where serialno=17;
+ update lsaudittrailconfigmaster set ordersequnce=56 where serialno=18;
+ update lsaudittrailconfigmaster set ordersequnce=57 where serialno=116;
+ update lsaudittrailconfigmaster set ordersequnce=58 where serialno=54;
+ update lsaudittrailconfigmaster set ordersequnce=59 where serialno=55;
+ update lsaudittrailconfigmaster set ordersequnce=60 where serialno=131;
+ update lsaudittrailconfigmaster set ordersequnce=61 where serialno=19;
+ update lsaudittrailconfigmaster set ordersequnce=62 where serialno=20;
+ update lsaudittrailconfigmaster set ordersequnce=63 where serialno=21;
+ update lsaudittrailconfigmaster set ordersequnce=64 where serialno=22;
+ update lsaudittrailconfigmaster set ordersequnce=65 where serialno=56;
+ update lsaudittrailconfigmaster set ordersequnce=66 where serialno=32;
+ update lsaudittrailconfigmaster set ordersequnce=67 where serialno=57;
+ update lsaudittrailconfigmaster set ordersequnce=68 where serialno=33;
+ update lsaudittrailconfigmaster set ordersequnce=69 where serialno=34;
+ update lsaudittrailconfigmaster set ordersequnce=70 where serialno=35;
+ update lsaudittrailconfigmaster set ordersequnce=71 where serialno=23;
+ update lsaudittrailconfigmaster set ordersequnce=72 where serialno=117;
+ update lsaudittrailconfigmaster set ordersequnce=73 where serialno=24;
+ update lsaudittrailconfigmaster set ordersequnce=74 where serialno=25;
+ update lsaudittrailconfigmaster set ordersequnce=75 where serialno=26;
+ update lsaudittrailconfigmaster set ordersequnce=76 where serialno=27;
+ update lsaudittrailconfigmaster set ordersequnce=77 where serialno=28;
+ update lsaudittrailconfigmaster set ordersequnce=78 where serialno=42;
+ update lsaudittrailconfigmaster set ordersequnce=79 where serialno=47;
+ update lsaudittrailconfigmaster set ordersequnce=80 where serialno=49;
+ update lsaudittrailconfigmaster set ordersequnce=81 where serialno=45;
+ update lsaudittrailconfigmaster set ordersequnce=82 where serialno=48;
+ update lsaudittrailconfigmaster set ordersequnce=83 where serialno=43;
+ update lsaudittrailconfigmaster set ordersequnce=84 where serialno=46;
+ update lsaudittrailconfigmaster set ordersequnce=85 where serialno=84;
+ update lsaudittrailconfigmaster set ordersequnce=86 where serialno=85;
+ update lsaudittrailconfigmaster set ordersequnce=87 where serialno=86;
+ update lsaudittrailconfigmaster set ordersequnce=88 where serialno=87;
+ update lsaudittrailconfigmaster set ordersequnce=89 where serialno=88;
+ update lsaudittrailconfigmaster set ordersequnce=90 where serialno=89;
+ update lsaudittrailconfigmaster set ordersequnce=91 where serialno=90;
+ update lsaudittrailconfigmaster set ordersequnce=92 where serialno=91;
+ update lsaudittrailconfigmaster set ordersequnce=93 where serialno=92;
+ update lsaudittrailconfigmaster set ordersequnce=94 where serialno=93;
+ update lsaudittrailconfigmaster set ordersequnce=95 where serialno=94;
+ update lsaudittrailconfigmaster set ordersequnce=96 where serialno=95;
+ update lsaudittrailconfigmaster set ordersequnce=97 where serialno=96;
+ update lsaudittrailconfigmaster set ordersequnce=98 where serialno=97;
+ update lsaudittrailconfigmaster set ordersequnce=99 where serialno=118;
+ update lsaudittrailconfigmaster set ordersequnce=100 where serialno=141;
+ update lsaudittrailconfigmaster set ordersequnce=101 where serialno=119;
+ update lsaudittrailconfigmaster set ordersequnce=102 where serialno=120;
+ update lsaudittrailconfigmaster set ordersequnce=103 where serialno=142;
+ update lsaudittrailconfigmaster set ordersequnce=104 where serialno=121;
+ update lsaudittrailconfigmaster set ordersequnce=105 where serialno=122;
+ update lsaudittrailconfigmaster set ordersequnce=106 where serialno=143;
+ update lsaudittrailconfigmaster set ordersequnce=107 where serialno=123;
+ update lsaudittrailconfigmaster set ordersequnce=108 where serialno=124;
+ update lsaudittrailconfigmaster set ordersequnce=109 where serialno=144;
+ update lsaudittrailconfigmaster set ordersequnce=110 where serialno=125;
+ update lsaudittrailconfigmaster set ordersequnce=111 where serialno=126;
+ update lsaudittrailconfigmaster set ordersequnce=112 where serialno=145;
+ update lsaudittrailconfigmaster set ordersequnce=113 where serialno=127;
+ update lsaudittrailconfigmaster set ordersequnce=114 where serialno=128;
+ update lsaudittrailconfigmaster set ordersequnce=115 where serialno=146;
+ update lsaudittrailconfigmaster set ordersequnce=116 where serialno=129;
+ update lsaudittrailconfigmaster set ordersequnce=117 where serialno=71;
+update lsaudittrailconfigmaster set ordersequnce=118 where serialno=72;
+update lsaudittrailconfigmaster set ordersequnce=119 where serialno=73;
+update lsaudittrailconfigmaster set ordersequnce=120 where serialno=74;
+update lsaudittrailconfigmaster set ordersequnce=121 where serialno=75;
+update lsaudittrailconfigmaster set ordersequnce=122 where serialno=132;
+update lsaudittrailconfigmaster set ordersequnce=123 where serialno=133;
+update lsaudittrailconfigmaster set ordersequnce=124 where serialno=134;
+update lsaudittrailconfigmaster set ordersequnce=125 where serialno=135;
+update lsaudittrailconfigmaster set ordersequnce=126 where serialno=81;
+update lsaudittrailconfigmaster set ordersequnce=127 where serialno=82;
+update lsaudittrailconfigmaster set ordersequnce=128 where serialno=83;
 
 update lsusergrouprights set modulename='IDS_MDL_LOGBOOK' where screenname='IDS_SCN_LOGBBOK';
 update lsaudittrailconfiguration set modulename='IDS_MDL_LOGBOOK' where screenname='IDS_SCN_LOGBBOK';
@@ -3184,6 +3220,14 @@ update lsaudittrailconfiguration set ordersequnce=34 where screenname='IDS_SCN_M
 update lsaudittrailconfiguration set ordersequnce=35 where screenname='IDS_SCN_INVENTORY';
 update lsaudittrailconfiguration set ordersequnce=36 where screenname='IDS_SCN_LOGBOOK';
 
+update lsaudittrailconfiguration set ordersequnce=3 where taskname='IDS_TSK_EDITSHEET';
+update lsaudittrailconfiguration set ordersequnce=4 where taskname='IDS_TSK_EDITPROTOCOL';
+update lsaudittrailconfiguration set ordersequnce=6 where taskname='IDS_TSK_EDITTASK';
+update lsaudittrailconfiguration set ordersequnce=7 where taskname='IDS_TSK_EDITPROJECT';
+update lsaudittrailconfiguration set ordersequnce=8 where taskname='IDS_TSK_EDITSAMPLE';
+
+
+
 update lsaudittrailconfiguration set modulename='IDS_MDL_ORDERS' where screenname IN ('IDS_SCN_PROTOCOLORDERS','IDS_SCN_SHEETORDERS');
 update lsaudittrailconfiguration set modulename='IDS_MDL_TEMPLATES' where screenname IN ('IDS_SCN_SHEETTEMPLATES','IDS_SCN_TEMPLATEMAPPING','IDS_SCN_PROTOCOLTEMPLATES');
 update lsaudittrailconfiguration set modulename='IDS_MDL_MASTERS' where screenname IN ('IDS_SCN_TASKMASTER','IDS_SCN_PROJECTMASTER','IDS_SCN_SAMPLEMASTER','IDS_SCN_UNLOCKORDERS');
@@ -3201,10 +3245,10 @@ declare
   multiusergroupcount integer :=0;
 begin
 
-SELECT count(*) into multiusergroupcount FROM information_schema.table_constraints WHERE constraint_name='fkcisd747ka6hp4c2makfd7xs01'
+SELECT count(*) into multiusergroupcount FROM information_schema.table_constraints WHERE constraint_name='fkawjfm6e00pklunwofd3ebfi5v'
 AND table_name='lslogilablimsorderdetail';
  IF multiusergroupcount =0 THEN
-    ALTER TABLE ONLY lslogilablimsorderdetail ADD CONSTRAINT fkcisd747ka6hp4c2makfd7xs01 FOREIGN KEY (material_nmaterialcode) REFERENCES material(nmaterialcode);
+    ALTER TABLE ONLY lslogilablimsorderdetail ADD CONSTRAINT fkawjfm6e00pklunwofd3ebfi5v FOREIGN KEY (material_nmaterialcode) REFERENCES material(nmaterialcode);
    END IF;
 END
 $do$;
@@ -3216,10 +3260,10 @@ declare
   multiusergroupcount integer :=0;
 begin
 
-SELECT count(*) into multiusergroupcount FROM information_schema.table_constraints WHERE constraint_name='fkcisd747ka6hp4c2makfd7xs02'
+SELECT count(*) into multiusergroupcount FROM information_schema.table_constraints WHERE constraint_name='fkhp9i9obfk74cs1gjvj0isuk4x'
 AND table_name='lslogilablimsorderdetail';
  IF multiusergroupcount =0 THEN
-    ALTER TABLE ONLY lslogilablimsorderdetail ADD CONSTRAINT fkcisd747ka6hp4c2makfd7xs02 FOREIGN KEY (materialinventory_nmaterialinventorycode) REFERENCES materialinventory(nmaterialinventorycode);
+    ALTER TABLE ONLY lslogilablimsorderdetail ADD CONSTRAINT fkhp9i9obfk74cs1gjvj0isuk4x FOREIGN KEY (materialinventory_nmaterialinventorycode) REFERENCES materialinventory(nmaterialinventorycode);
    END IF;
 END
 $do$;
@@ -3230,10 +3274,10 @@ $do$
 declare multiusergroupcount integer :=0;
 begin
 
-SELECT count(*) into multiusergroupcount FROM information_schema.table_constraints WHERE constraint_name='fkcisd747ka6hp4c2makfd7xs03'
+SELECT count(*) into multiusergroupcount FROM information_schema.table_constraints WHERE constraint_name='fkstcm67npdiupengejgrnayedf'
 AND table_name='LSlogilabprotocoldetail';
  IF multiusergroupcount =0 THEN
-    ALTER TABLE ONLY LSlogilabprotocoldetail ADD CONSTRAINT fkcisd747ka6hp4c2makfd7xs03 FOREIGN KEY (material_nmaterialcode) REFERENCES materialinventory(nmaterialinventorycode);
+    ALTER TABLE ONLY LSlogilabprotocoldetail ADD CONSTRAINT fkstcm67npdiupengejgrnayedf FOREIGN KEY (material_nmaterialcode) REFERENCES materialinventory(nmaterialinventorycode);
    END IF;
 END
 $do$;
@@ -3244,10 +3288,10 @@ $do$
 declare  multiusergroupcount integer :=0;
 begin
 
-SELECT count(*) into multiusergroupcount FROM information_schema.table_constraints WHERE constraint_name='fkcisd747ka6hp4c2makfd7xs04'
+SELECT count(*) into multiusergroupcount FROM information_schema.table_constraints WHERE constraint_name='fkt457hqlkbgfelrx793hg67nqb'
 AND table_name='LSlogilabprotocoldetail';
  IF multiusergroupcount =0 THEN
-    ALTER TABLE ONLY LSlogilabprotocoldetail ADD CONSTRAINT fkcisd747ka6hp4c2makfd7xs04 FOREIGN KEY (materialinventory_nmaterialinventorycode) REFERENCES materialinventory(nmaterialinventorycode);
+    ALTER TABLE ONLY LSlogilabprotocoldetail ADD CONSTRAINT fkt457hqlkbgfelrx793hg67nqb FOREIGN KEY (materialinventory_nmaterialinventorycode) REFERENCES materialinventory(nmaterialinventorycode);
    END IF;
 END
 $do$;
@@ -3265,6 +3309,75 @@ information_schema.table_constraints WHERE constraint_name='fkkl0697aigp5fwx9aox
 AND table_name='instrumentcategory';
  IF resultvalues =0 THEN
  	ALTER TABLE ONLY instrumentcategory ADD CONSTRAINT fkkl0697aigp5fwx9aoxl7b5fk FOREIGN KEY (lssitemaster_sitecode) REFERENCES lssitemaster (sitecode);
+   END IF;
+END
+$do$;  
+
+ 
+ALTER TABLE IF Exists instrumentcategory ADD COLUMN IF NOT EXISTS lssitemaster_sitecode integer;
+ 
+DO
+$do$
+declare
+  resultvalues integer :=0;
+begin
+
+SELECT count(*) into resultvalues FROM
+information_schema.table_constraints WHERE constraint_name='fkkl0697aigp5fwx9aoxl7b5fk'
+AND table_name='instrumentcategory';
+ IF resultvalues =0 THEN
+ 	ALTER TABLE ONLY instrumentcategory ADD CONSTRAINT fkkl0697aigp5fwx9aoxl7b5fk FOREIGN KEY (lssitemaster_sitecode) REFERENCES lssitemaster (sitecode);
+   END IF;
+END
+$do$;  
+
+ALTER TABLE IF Exists delimiter ADD COLUMN IF NOT EXISTS lssitemaster_sitecode integer;
+ 
+DO
+$do$
+declare
+  resultvalues integer :=0;
+begin
+
+SELECT count(*) into resultvalues FROM
+information_schema.table_constraints WHERE constraint_name='fke7mdkv29a179e89p7dyljka57'
+AND table_name='delimiter';
+ IF resultvalues =0 THEN
+ 	ALTER TABLE ONLY delimiter ADD CONSTRAINT fke7mdkv29a179e89p7dyljka57 FOREIGN KEY (lssitemaster_sitecode) REFERENCES lssitemaster (sitecode);
+   END IF;
+END
+$do$;  
+
+ALTER TABLE IF Exists methoddelimiter ADD COLUMN IF NOT EXISTS lssitemaster_sitecode integer;
+ 
+DO
+$do$
+declare
+  resultvalues integer :=0;
+begin
+
+SELECT count(*) into resultvalues FROM
+information_schema.table_constraints WHERE constraint_name='fk39k48l4vkd0dausrjxscoelw3'
+AND table_name='methoddelimiter';
+ IF resultvalues =0 THEN
+ 	ALTER TABLE ONLY delimiter ADD CONSTRAINT fk39k48l4vkd0dausrjxscoelw3 FOREIGN KEY (lssitemaster_sitecode) REFERENCES lssitemaster (sitecode);
+   END IF;
+END
+$do$;  
+
+ALTER TABLE IF Exists method ADD COLUMN IF NOT EXISTS lssitemaster_sitecode integer;
+ 
+DO
+$do$
+declare
+  resultvalues integer :=0;
+begin
+
+SELECT count(*) into resultvalues FROM
+information_schema.table_constraints WHERE constraint_name='fk6f1nbor27goud6ji0a6cohful'
+AND table_name='methoddelimiter';
+ IF resultvalues =0 THEN
+ 	ALTER TABLE ONLY delimiter ADD CONSTRAINT fk6f1nbor27goud6ji0a6cohful FOREIGN KEY (lssitemaster_sitecode) REFERENCES lssitemaster (sitecode);
    END IF;
 END
 $do$;  

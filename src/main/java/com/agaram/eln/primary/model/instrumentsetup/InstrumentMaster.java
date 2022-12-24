@@ -76,6 +76,9 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 	@Transient
 	LScfttransaction objmanualaudit;
 	
+	@Transient
+	private LSSiteMaster lssitemaster;;
+	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "insttypekey", nullable = false)
 	private InstrumentType insttype;
@@ -313,6 +316,15 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 		this.objmanualaudit = objmanualaudit;
 	}
 
+	
+	public LSSiteMaster getLssitemaster() {
+		return lssitemaster;
+	}
+
+	public void setLssitemaster(LSSiteMaster lssitemaster) {
+		this.lssitemaster = lssitemaster;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -339,6 +351,7 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
            .append("info", this.info, obj.info)
            .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
            .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
+
 	       .build();
 	}
 

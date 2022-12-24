@@ -77,7 +77,10 @@ public class Method implements Serializable, Diffable<Method>{
 	@OneToMany
 	@JoinColumn(name="methodkey")
 	private List<MethodVersion> methodversion;
-	
+
+	@ManyToOne
+	private LSSiteMaster lssitemaster;
+	 
 	@Transient
 	@Column(name = "displayvalue")
 	private String displayvalue;
@@ -314,6 +317,14 @@ public class Method implements Serializable, Diffable<Method>{
 
 	public void setInfo(String info) {
 		this.info = info;
+	}
+
+	public LSSiteMaster getLssitemaster() {
+		return lssitemaster;
+	}
+
+	public void setLssitemaster(LSSiteMaster lssitemaster) {
+		this.lssitemaster = lssitemaster;
 	}
 
 	/**

@@ -31,6 +31,7 @@ import com.agaram.eln.primary.model.methodsetup.InstantDateAdapter;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.ParserMethod;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -69,6 +70,9 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	@Column(name = "status")
 	private int status=1;	
 	
+	@ManyToOne
+	private LSSiteMaster lssitemaster;
+	 
 	@Transient
 	private String info;
 	
@@ -229,6 +233,14 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 		this.objmanualaudit = objmanualaudit;
 	}
 	
+	public LSSiteMaster getLssitemaster() {
+		return lssitemaster;
+	}
+
+	public void setLssitemaster(LSSiteMaster lssitemaster) {
+		this.lssitemaster = lssitemaster;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */

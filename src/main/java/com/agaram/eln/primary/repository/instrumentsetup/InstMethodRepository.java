@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.agaram.eln.primary.model.instrumentsetup.InstMethod;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 
 
 /**
@@ -25,5 +26,8 @@ public interface InstMethodRepository extends JpaRepository<InstMethod, Integer>
 	 * @param status [int] 1 - Active or -1- Inactive
 	 * @return  list of instruments associated with the InstMethod entity
 	 */
-	List<InstMethod> findByInstmasterAndStatus(final InstrumentMaster instMaster, final int status);
+
+	List<InstMethod> findByInstmasterAndSiteAndStatus(InstrumentMaster instMaster, LSSiteMaster site, int i);
+
+	List<InstMethod> findByInstmasterAndStatus(InstrumentMaster instrumentMaster, int i);
 }

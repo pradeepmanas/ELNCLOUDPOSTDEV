@@ -710,7 +710,7 @@ public class InstMasterService {
       	//This should be done only if the instrument is not binded in method setup
       	final InstrumentMaster instMaster = masterRepo.findOne(instMastKey);
                    	
-      	final List<InstMethod> methodList = instMethodRepo.findByInstmasterAndStatus(instMaster, 1);
+      	final List<InstMethod> methodList = instMethodRepo.findByInstmasterAndSiteAndStatus(instMaster,otherdetails.getLssitemaster() ,1);
             	
        if (methodList.isEmpty()) {
      	

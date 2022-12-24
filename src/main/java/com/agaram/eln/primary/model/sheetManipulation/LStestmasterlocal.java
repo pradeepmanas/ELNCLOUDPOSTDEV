@@ -39,6 +39,9 @@ public class LStestmasterlocal {
 	@Column(columnDefinition = "varchar(100)")
 	private String testname;
 	private String description;
+
+	@Column(columnDefinition = "varchar(20)")
+	private String teststatus;
 	
 	@OneToMany
 	@JoinColumn(name="testcode")
@@ -101,6 +104,21 @@ public class LStestmasterlocal {
 
 	public void setLssitemaster(LSSiteMaster lssitemaster) {
 		this.lssitemaster = lssitemaster;
+	}
+	
+	public String getTeststatus() {
+		if(teststatus != null)
+		{
+		return  teststatus.trim().equals("A")?"Active":"Retired";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public void setTeststatus(String teststatus) {
+		this.teststatus = teststatus;
 	}
 	
 	public LoggedUser getObjuser() {

@@ -30,6 +30,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.Range;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -70,6 +71,9 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	@Transient
 	private String username;
 
+    @ManyToOne
+	private LSSiteMaster lssitemaster;
+    
 	@Column(name = "defaultvalue")
 	//public int defaultvalue;	
 	public Integer defaultvalue;
@@ -225,6 +229,15 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 
 	public void setInfo(String info) {
 		this.info = info;
+	}
+
+	
+	public LSSiteMaster getLssitemaster() {
+		return lssitemaster;
+	}
+
+	public void setLssitemaster(LSSiteMaster lssitemaster) {
+		this.lssitemaster = lssitemaster;
 	}
 
 	/**

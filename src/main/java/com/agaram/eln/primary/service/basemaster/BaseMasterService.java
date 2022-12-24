@@ -382,9 +382,12 @@ public class BaseMasterService {
 
 	public Map<String, Object> GetMastersforTestMaster(LSuserMaster objuser) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-
-		mapOrders.put("test", getTestmaster(objuser));
-
+		
+		List<Testmaster> lstTest = lStestmasterlocalRepository.findByLssitemasterOrderByTestcodeDesc(
+				objuser.getLssitemaster());
+		mapOrders.put("test", lstTest);
+		
+//		mapOrders.put("test", getTestmaster(objuser));
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LStestmaster");
 //			lscfttransactionRepository.save(objuser.getObjsilentaudit());

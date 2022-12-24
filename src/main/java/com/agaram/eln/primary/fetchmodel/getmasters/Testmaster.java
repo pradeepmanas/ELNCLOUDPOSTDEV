@@ -11,17 +11,44 @@ public class Testmaster {
 	private Date createdate;
 	private LSuserMaster createby;
 	private String description;
+	private Integer status;
+	private String teststatus;
 	
-	public Testmaster(Integer testcode, String testname,String taskcategory,Date createdate,LSuserMaster createby, String description)
+	public Testmaster(Integer testcode, String testname,String taskcategory,Date createdate,LSuserMaster createby, String description, Integer status, String teststatus)
 	{
 		this.testcode = testcode;
 		this.testname = testname;
 		this.taskcategory=taskcategory;
 		this.createdate=createdate;
 		this.createby=createby;
-		 this.description=description;
+		this.description=description;
+		this.status = status;
+		this.teststatus = teststatus;
 	}
 	
+	public String getTeststatus() {
+		if(teststatus != null)
+		{
+		return  teststatus.trim().equals("A")?"Active":"Retired";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public void setTeststatus(String teststatus) {
+		this.teststatus = teststatus;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+		
 	public String getDescription() {
 		return description;
 	}

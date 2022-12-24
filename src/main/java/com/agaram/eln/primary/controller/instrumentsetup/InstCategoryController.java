@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
+
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.instrumentsetup.InstCategoryService;
@@ -98,14 +99,14 @@ public class InstCategoryController {
 //		  final Boolean saveAuditTrail = (Boolean)mapObject.get("saveAuditTrail");
     	  final Boolean saveAuditTrail = false;
     	  final ObjectMapper mapper = new ObjectMapper();
-   		  final InstrumentCategory sitedata = mapper.convertValue(mapObject.get("lssitemaster"), InstrumentCategory.class);
+    	  final  InstrumentCategory  otherdetails = mapper.convertValue(mapObject.get("otherdetails"), InstrumentCategory.class);
 		  String strUserKey = (String) mapObject.get("doneByUserKey");
 		  
 		  
 		  int userKey = Integer.parseInt(strUserKey);
 		  
 		  return categoryService.deleteInstCategory((Integer) mapObject.get("instcatkey"), saveAuditTrail, 
-				   (String)mapObject.get("comments"), userKey, request,sitedata);
+				   (String)mapObject.get("comments"), userKey, request,otherdetails);
     }
 }
 
