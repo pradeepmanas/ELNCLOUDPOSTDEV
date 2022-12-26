@@ -1190,10 +1190,11 @@ public class LoginService {
 				objuser.setLsusergroup(objgroup);
 
 				LSMultiusergroup.setLsusergroup(objgroup);
-				LSMultiusergroup.setDefaultusergroup(objgroup.getUsergroupcode());
+				LSMultiusergroup.setDefaultusergroup(1);
 			} else {
 				objuser.setLsusergroup(objaadsgroup);
-				LSMultiusergroup.setDefaultusergroup(objaadsgroup.getUsergroupcode());
+//				LSMultiusergroup.setDefaultusergroup(objaadsgroup.getUsergroupcode());
+				LSMultiusergroup.setDefaultusergroup(1);
 				LSMultiusergroup.setLsusergroup(objaadsgroup);
 			}
 

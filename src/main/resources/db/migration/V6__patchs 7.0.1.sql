@@ -3376,10 +3376,11 @@ update lssamplemaster set samplestatus = 'D' where status = -1;
 
 ALTER TABLE IF Exists lsactiveuser ADD COLUMN IF NOT EXISTS lastactivetime timestamp without time zone;
 
-ALTER TABLE delimiter ADD COLUMN delimiterstatus varchar(20) ;
-ALTER TABLE methoddelimiter ADD COLUMN methoddelimiterstatus varchar(20) ;
-ALTER TABLE method ADD COLUMN methodstatus varchar(20) ;
-ALTER TABLE instrumentmaster ADD COLUMN inststatus varchar(20) ;
+ALTER TABLE IF Exists delimiter ADD COLUMN IF NOT EXISTS delimiterstatus varchar(20) ;
+ALTER TABLE IF Exists methoddelimiter ADD COLUMN IF NOT EXISTS methoddelimiterstatus varchar(20) ;
+ALTER TABLE IF Exists method ADD COLUMN IF NOT EXISTS methodstatus varchar(20) ;
+ALTER TABLE IF Exists instrumentmaster ADD COLUMN IF NOT EXISTS inststatus varchar(20) ;
+ALTER TABLE IF Exists instrumentcategory ADD COLUMN IF NOT EXISTS instcategorystatus varchar(20) ;
 
 update delimiter set delimiterstatus='A' where status = 1;
 update delimiter set delimiterstatus='D' where status = -1;
@@ -3392,3 +3393,6 @@ update methoddelimiter set methoddelimiterstatus='D' where status = -1;
 
 update method set methodstatus='A' where status = 1;
 update method set methodstatus='D' where status = -1;
+
+update instrumentcategory set instcategorystatus='A' where status = 1;
+update instrumentcategory set instcategorystatus='D' where status = -1;

@@ -169,7 +169,8 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	
 	
 	private Integer ordercancell;
-	
+	@Transient
+	LSuserMaster objLoggeduser;
 	
 	@Transient
 	List<LSworkflow> lstworkflow;
@@ -695,6 +696,14 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	public void setIsfinalstep(LSsheetworkflow isfinalstep) {
 		this.isfinalstep = isfinalstep;
+	}
+
+	public LSuserMaster getObjLoggeduser() {
+		return objLoggeduser;
+	}
+
+	public void setObjLoggeduser(LSuserMaster objLoggeduser) {
+		this.objLoggeduser = objLoggeduser;
 	}
 
 	

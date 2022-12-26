@@ -200,7 +200,8 @@ public class InstCategoryService {
 	@Transactional
     public ResponseEntity<Object> getInstCategory(LSSiteMaster lssitemaster) {     	
     	
-		List<InstrumentCategory> list = categoryRepo.findByStatusAndLssitemaster(1,lssitemaster, new Sort(Sort.Direction.DESC, "instcatkey"));
+		//List<InstrumentCategory> list = categoryRepo.findByStatusAndLssitemaster(1,lssitemaster, new Sort(Sort.Direction.DESC, "instcatkey"));
+		List<InstrumentCategory> list = categoryRepo.findByLssitemaster(lssitemaster, new Sort(Sort.Direction.DESC, "instcatkey"));
 		return new ResponseEntity<>(list,
     			HttpStatus.OK);
 

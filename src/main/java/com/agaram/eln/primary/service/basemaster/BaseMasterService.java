@@ -58,6 +58,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterRepositor
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
 
@@ -82,6 +83,8 @@ public class BaseMasterService {
 	private LSsamplemasterRepository lSsamplemasterRepository;
 	@Autowired
 	private LSprojectmasterRepository lSprojectmasterRepository;
+	@Autowired
+	private LSuserMasterRepository lsuserMasterRepository;
 
 	@Autowired
 
@@ -188,12 +191,12 @@ public class BaseMasterService {
 
 		return lSsamplemasterRepository.findByLssitemasterOrderBySamplecodeDesc(objClass.getLssitemaster());
 	}
-	
+
 	public List<LSprojectmaster> getProjectmaster(LSuserMaster objClass) {
 
 //		List<LSprojectmaster> projectlist = lSprojectmasterRepository
 //				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
-		
+
 		List<LSprojectmaster> projectlist = lSprojectmasterRepository
 				.findByLssitemasterOrderByProjectcodeDesc(objClass.getLssitemaster());
 		return projectlist;
@@ -357,41 +360,41 @@ public class BaseMasterService {
 		String Notifiction = "PROJECTCREATED";
 
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-
+		LSuserMaster createby = lsuserMasterRepository.findByusercode(objClass.getModifiedby().getUsercode());
 		List<LSuserteammapping> objteam = new ArrayList<LSuserteammapping>();
 		LSusersteam objteam1 = new LSusersteam();
 
 		for (int i = 0; i < objClass.getLsusersteam().getLsuserteammapping().size(); i++) {
 			LSnotification notify = new LSnotification();
-			// objteam1 =
-			// LSusersteamRepository.findByteamcode(objClass.getLsusersteam().getTeamcode());
-			// LSuserteammappingRepository.findByUsercode();
-			Details = "{\"teamname\":\"" + objClass.getTeamname() + "\", \"projectname\":\"" + objClass.getProjectname()
-					+ "\"}";
+			if (createby.getUsercode() != objClass.getLsusersteam().getLsuserteammapping().get(i).getLsuserMaster()
+					.getUsercode()) {
+				Details = "{\"teamname\":\"" + objClass.getTeamname() + "\", \"projectname\":\""
+						+ objClass.getProjectname() + "\"}";
 
-			notify.setNotifationfrom(objClass.getModifiedby());
-			notify.setNotifationto(objClass.getLsusersteam().getLsuserteammapping().get(i).getLsuserMaster());
-			notify.setNotificationdate(new Date());
-			notify.setNotification(Notifiction);
-			notify.setNotificationdetils(Details);
-			notify.setIsnewnotification(1);
-			notify.setNotificationpath("/projectmaster");
-			notify.setNotificationfor(1);
+				notify.setNotifationfrom(objClass.getModifiedby());
+				notify.setNotifationto(objClass.getLsusersteam().getLsuserteammapping().get(i).getLsuserMaster());
+				notify.setNotificationdate(new Date());
+				notify.setNotification(Notifiction);
+				notify.setNotificationdetils(Details);
+				notify.setIsnewnotification(1);
+				notify.setNotificationpath("/projectmaster");
+				notify.setNotificationfor(1);
 
-			lstnotifications.add(notify);
-			LSnotificationRepository.save(lstnotifications);
+				lstnotifications.add(notify);
+				LSnotificationRepository.save(lstnotifications);
 
+			}
 		}
 
 	}
 
 	public Map<String, Object> GetMastersforTestMaster(LSuserMaster objuser) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-		
-		List<Testmaster> lstTest = lStestmasterlocalRepository.findByLssitemasterOrderByTestcodeDesc(
-				objuser.getLssitemaster());
+
+		List<Testmaster> lstTest = lStestmasterlocalRepository
+				.findByLssitemasterOrderByTestcodeDesc(objuser.getLssitemaster());
 		mapOrders.put("test", lstTest);
-		
+
 //		mapOrders.put("test", getTestmaster(objuser));
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LStestmaster");

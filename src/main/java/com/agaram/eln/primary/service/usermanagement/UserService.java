@@ -350,7 +350,7 @@ public class UserService {
 		LSnotification objnotify = new LSnotification();
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		StringBuffer sb = new StringBuffer();
-
+		LSuserMaster createby = lsuserMasterRepository.findByusercode(objusermaster.getLoggedinuser().getUsercode());
 		if (objusermaster.getMultiusergroupcode() != null && objusermaster.getDeleterole() != null) {
 			if (objusermaster.getMultiusergroupcode().size() > objusermaster.getDeleterole().size()) {
 				if (objusermaster.getUsernotify() != null) {
@@ -358,39 +358,41 @@ public class UserService {
 						sb.append(rowValues.getUsergroupname()).append(",");
 					}
 				}
-				String Detailwithcomma = sb.toString();
-				Details = "{\"role\":\"" + Detailwithcomma + "site:" + objusermaster.getSitename() + "\"}";
-				Notifiction = "USERROLEADD";
+				if (createby.getUsercode() != objusermaster.getUsercode()) {
+					String Detailwithcomma = sb.toString();
+					Details = "{\"role\":\"" + Detailwithcomma + "site:" + objusermaster.getSitename() + "\"}";
+					Notifiction = "USERROLEADD";
 
-				objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
-				objnotify.setNotifationto(objusermaster);
-				objnotify.setNotificationdate(objusermaster.getModifieddate());
-				objnotify.setNotification(Notifiction);
-				objnotify.setNotificationdetils(Details);
-				objnotify.setNotificationfor(1);
-				objnotify.setNotificationpath("/Usermaster");
-				objnotify.setIsnewnotification(1);
-				lstnotifications.add(objnotify);
-			}
-
-			else {
+					objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
+					objnotify.setNotifationto(objusermaster);
+					objnotify.setNotificationdate(objusermaster.getModifieddate());
+					objnotify.setNotification(Notifiction);
+					objnotify.setNotificationdetils(Details);
+					objnotify.setNotificationfor(1);
+					objnotify.setNotificationpath("/Usermaster");
+					objnotify.setIsnewnotification(1);
+					lstnotifications.add(objnotify);
+				}
+			} else {
 				if (objusermaster.getUserroleremovenotify() != null) {
 					for (LSuserMaster rowValues : objusermaster.getUserroleremovenotify()) {
 						sb.append(rowValues.getUsergroupname()).append(",");
 					}
 				}
-				String Detailwithcomma = sb.toString();
-				Details = "{\"role\":\"" + Detailwithcomma + "site:" + objusermaster.getSitename() + "\"}";
-				Notifiction = "USERROLEREMOVE";
-				objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
-				objnotify.setNotifationto(objusermaster);
-				objnotify.setNotificationdate(objusermaster.getModifieddate());
-				objnotify.setNotification(Notifiction);
-				objnotify.setNotificationdetils(Details);
-				objnotify.setNotificationfor(1);
-				objnotify.setNotificationpath("/Usermaster");
-				objnotify.setIsnewnotification(1);
-				lstnotifications.add(objnotify);
+				if (createby.getUsercode() != objusermaster.getUsercode()) {
+					String Detailwithcomma = sb.toString();
+					Details = "{\"role\":\"" + Detailwithcomma + "site:" + objusermaster.getSitename() + "\"}";
+					Notifiction = "USERROLEREMOVE";
+					objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
+					objnotify.setNotifationto(objusermaster);
+					objnotify.setNotificationdate(objusermaster.getModifieddate());
+					objnotify.setNotification(Notifiction);
+					objnotify.setNotificationdetils(Details);
+					objnotify.setNotificationfor(1);
+					objnotify.setNotificationpath("/Usermaster");
+					objnotify.setIsnewnotification(1);
+					lstnotifications.add(objnotify);
+				}
 			}
 		}
 
@@ -570,13 +572,12 @@ public class UserService {
 		LSuserMaster lstusers = lsuserMasterRepository.findByusercode(objteam.getLsuserMaster().get(0).getUsercode());
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		for (int i = 0; i < objteam.getLsuserMaster().size(); i++) {
-			//LSusersteam userteam = lsusersteamRepository.findByusercode(objteam.getLsuserMaster().get(i).getUsercode());
-			if(createby.getUsercode()!=lstusers.getUsercode())
-			{
-			
-				
+			// LSusersteam userteam =
+			// lsusersteamRepository.findByusercode(objteam.getLsuserMaster().get(i).getUsercode());
+			if (createby.getUsercode() != lstusers.getUsercode()) {
+
 				Details = "{\"teamname\":\"" + objteam.getTeamname() + "\", \"team\":\"" + "\"}";
-				
+
 				objnotify.setNotifationfrom(objteam.getModifiedby());
 				objnotify.setNotifationto(lstusers);
 				objnotify.setNotificationdate(objteam.getModifieddate());
@@ -586,7 +587,6 @@ public class UserService {
 				objnotify.setNotificationpath("/Projectteam");
 				objnotify.setNotificationfor(1);
 				objnotify.setIsnewnotification(1);
-				
 
 			}
 			lsnotificationRepository.save(objnotify);
@@ -979,22 +979,22 @@ public class UserService {
 		return policy;
 
 	}
-	
-	public LSPasswordPolicy GetLoginPasswordPolicy( final int objuser) {
 
+	public LSPasswordPolicy GetLoginPasswordPolicy(final int objuser) {
 
 		LSSiteMaster sitelist = new LSSiteMaster();
 		sitelist = LSSiteMasterRepository.findBysitecode(objuser);
-		
+
 		LSPasswordPolicy policy = new LSPasswordPolicy();
 //		if (objuser.get != null) {
-			policy = lSpasswordpolicyRepository.findTopByAndLssitemasterOrderByPolicycodeDesc(sitelist);
+		policy = lSpasswordpolicyRepository.findTopByAndLssitemasterOrderByPolicycodeDesc(sitelist);
 //		} else {
 //			
-			//policy = lSpasswordpolicyRepository.findTopByOrderByPolicycodeAsc();
-		//	policy = lSpasswordpolicyRepository.findByLssitemaster(objuser.getSitecode());
-			
-	//	}
+		// policy = lSpasswordpolicyRepository.findTopByOrderByPolicycodeAsc();
+		// policy =
+		// lSpasswordpolicyRepository.findByLssitemaster(objuser.getSitecode());
+
+		// }
 		return policy;
 
 	}
@@ -1067,10 +1067,11 @@ public class UserService {
 	public Map<String, Object> GetnotificationonLazyload(LSnotification lsnotification) {
 		Map<String, Object> objresmap = new HashMap<String, Object>();
 
-		objresmap.put("notification", lsnotificationRepository
-				.findAllByNotifationtoAndNotificationcodeLessThanAndNotificationforOrderByNotificationcodeDesc(
-						lsnotification.getNotifationto(), lsnotification.getNotificationcode(),
-						lsnotification.getNotificationfor()));
+		objresmap.put("notification",
+				lsnotificationRepository
+						.findAllByNotifationtoAndNotificationcodeLessThanAndNotificationforOrderByNotificationcodeDesc(
+								lsnotification.getNotifationto(), lsnotification.getNotificationcode(),
+								lsnotification.getNotificationfor()));
 
 		return objresmap;
 	}
@@ -1276,9 +1277,9 @@ public class UserService {
 	}
 
 	public Long getActiveUserCount(LSSiteMaster lsSiteMaster) {
-		
+
 		List<LSactiveUser> lstActiveUser = lsactiveUserRepository.findBylssitemaster(lsSiteMaster);
-		
+
 		return (long) lstActiveUser.size();
 	}
 

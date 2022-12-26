@@ -2231,7 +2231,7 @@ public class ProtocolService {
 		String Notifiction = "";
 		LSlogilabprotocoldetail LsProto = LSlogilabprotocoldetailRepository.findOne(objClass.getProtocolordercode());
 
-		LSuserMaster obj = lsusermasterRepository.findByusercode(objClass.getCreateby());
+//		LSuserMaster obj = lsusermasterRepository.findByusercode(objClass.getObjLoggeduser().getUsercode());
 
 		LSusersteam objteam = lsusersteamRepository
 				.findByteamcode(objClass.getLsprojectmaster().getLsusersteam().getTeamcode());
@@ -2258,7 +2258,7 @@ public class ProtocolService {
 		for (int i = 0; i < lstusers.size(); i++) {
 			if (objClass.getCreateby() != lstusers.get(i).getLsuserMaster().getUsercode()) {
 				LSnotification objnotify = new LSnotification();
-				objnotify.setNotifationfrom(obj);
+//				objnotify.setNotifationfrom(obj);
 				objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
 				objnotify.setNotificationdate(objClass.getCreatedtimestamp());
 				objnotify.setNotification(Notifiction);
@@ -2281,51 +2281,71 @@ public class ProtocolService {
 				&& objClass.getLsprojectmaster().getLsusersteam() != null) {
 			LSusersteam objteam = lsusersteamRepository
 					.findByteamcode(objClass.getLsprojectmaster().getLsusersteam().getTeamcode());
-
+			LSnotification objnotify = new LSnotification();
 			LSuserMaster obj = lsusermasterRepository.findByusercode(objClass.getCreateby());
+
 			String Details = "";
 			String Notifiction = "";
+			
 			if (objteam.getLsuserteammapping() != null && objteam.getLsuserteammapping().size() > 0) {
-
 				// objClass.setOrderflag("R");
+				if (objClass.getAssignedto() == null) {
+					if (objClass.getOrderflag().equalsIgnoreCase("R")) {
 
-				if (objClass.getOrderflag().equalsIgnoreCase("R")) {
+						Notifiction = "PROTOCOLORDERCOMPLETED";
 
-					Notifiction = "PROTOOCOLORDERCOMPLETED";
+						Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
+								+ objClass.getProtoclordername() + "\", \"currentworkflow\":\""
+								+ objClass.getLsworkflow().getWorkflowname() + "\", \"completeduser\":\""
+								+ objClass.getLsprojectmaster().getModifiedby().getUsername() + "\"}";
 
-					Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
-							+ objClass.getProtoclordername() + "\", \"currentworkflow\":\""
-							+ objClass.getLsworkflow().getWorkflowname() + "\", \"completeduser\":\""
-							+ objClass.getLsprojectmaster().getLsusersteam().getModifiedby().getUsername() + "\"}";
-				} else {
-					Notifiction = "PROTOCOLORDERCREATION";
+					} else  {
+						Notifiction = "PROTOCOLORDERCREATION";
+
+						Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
+								+ objClass.getProtoclordername() + "\", \"previousworkflow\":\"" + ""
+								+ "\", \"previousworkflowcode\":\"" + -1 + "\", \"currentworkflow\":\""
+								+ objClass.getLsworkflow().getWorkflowname() + "\", \"currentworkflowcode\":\""
+								+ objClass.getLsworkflow().getWorkflowcode() + "\"}";
+					}
+				}
+
+				else if(objClass.getApproved()==null){
+
+					Notifiction = "PROTOCOLORDERCREATIONANDASSIGN";
 
 					Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
 							+ objClass.getProtoclordername() + "\", \"previousworkflow\":\"" + ""
+							+ "\", \"assignedby\":\"" + objClass.getCreatedbyusername()
 							+ "\", \"previousworkflowcode\":\"" + -1 + "\", \"currentworkflow\":\""
 							+ objClass.getLsworkflow().getWorkflowname() + "\", \"currentworkflowcode\":\""
 							+ objClass.getLsworkflow().getWorkflowcode() + "\"}";
+					objnotify.setNotifationfrom(obj);
+					objnotify.setNotifationto(objClass.getAssignedto());
+					objnotify.setNotificationdate(objClass.getCreatedtimestamp());
+					objnotify.setNotification(Notifiction);
+					objnotify.setNotificationdetils(Details);
+					objnotify.setIsnewnotification(1);
+					objnotify.setNotificationpath("/Protocolorder");
+					objnotify.setNotificationfor(1);
+					lsnotificationRepository.save(objnotify);
 				}
-			} else {
-				Notifiction = "PROTOCOLORDERCREATIONANDASSIGN";
-
-				Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
-						+ objClass.getProtoclordername() + "\", \"previousworkflow\":\"" + ""
-						+ "\", \"previousworkflowcode\":\"" + -1 + "\", \"currentworkflow\":\""
-						+ objClass.getLsworkflow().getWorkflowname() + "\", \"assignedto\":\""
-						+ objClass.getAssignedto().getUsername() + "\", \"assignedby\":\""
-						+ objClass.getCreatedbyusername() + "\", \"currentworkflowcode\":\""
-						+ objClass.getLsworkflow().getWorkflowcode() + "\"}";
-			}
+			
 
 			if (objClass.getAssignedto() == null) {
 				List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
 				List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 				for (int i = 0; i < lstusers.size(); i++) {
 					if (objClass.getCreateby() != lstusers.get(i).getLsuserMaster().getUsercode()) {
-						LSnotification objnotify = new LSnotification();
-						objnotify.setNotifationfrom(obj);
-						objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
+
+						if (objClass.getOrderflag().equalsIgnoreCase("R")) {
+							objnotify.setNotifationto(obj);
+							objnotify.setNotifationfrom(objClass.getLsprojectmaster().getModifiedby());
+
+						} else {
+							objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
+							objnotify.setNotifationfrom(obj);
+						}
 						objnotify.setNotificationdate(objClass.getCreatedtimestamp());
 						objnotify.setNotification(Notifiction);
 						objnotify.setNotificationdetils(Details);
@@ -2338,17 +2358,7 @@ public class ProtocolService {
 				}
 
 				lsnotificationRepository.save(lstnotifications);
-			} else {
-				LSnotification objnotify = new LSnotification();
-				objnotify.setNotifationfrom(obj);
-				objnotify.setNotifationto(objClass.getAssignedto());
-				objnotify.setNotificationdate(objClass.getCreatedtimestamp());
-				objnotify.setNotification(Notifiction);
-				objnotify.setNotificationdetils(Details);
-				objnotify.setIsnewnotification(1);
-				objnotify.setNotificationpath("/Protocolorder");
-				objnotify.setNotificationfor(1);
-				lsnotificationRepository.save(objnotify);
+			}
 			}
 		}
 	}

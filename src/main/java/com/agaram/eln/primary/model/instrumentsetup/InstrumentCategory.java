@@ -58,6 +58,9 @@ public class InstrumentCategory implements Serializable, Diffable<InstrumentCate
 	@Column(name = "status")
 	private int status=1;
 	
+	@Column(name = "instcategorystatus")
+	private String instcategorystatus;
+	
     @Transient 
     public String info;
 	
@@ -133,6 +136,22 @@ public class InstrumentCategory implements Serializable, Diffable<InstrumentCate
 
 	public void setLssitemaster(LSSiteMaster lssitemaster) {
 		this.lssitemaster = lssitemaster;
+	}
+
+	public String getInstcategorystatus() {
+		//return instcategorystatus;
+		if(instcategorystatus != null)
+		{
+		return  instcategorystatus.trim().equals("A")?"Active":"Retired";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public void setInstcategorystatus(String instcategorystatus) {
+		this.instcategorystatus = instcategorystatus;
 	}
 
 	/**

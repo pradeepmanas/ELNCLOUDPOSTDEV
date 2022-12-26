@@ -43,6 +43,8 @@ public interface InstCategoryRepository extends JpaRepository<InstrumentCategory
 	Optional<InstrumentCategory> findByInstcatnameAndStatusAndLssitemaster(String instcatname, int i,
 			LSSiteMaster lssitemaster);
 
+	List<InstrumentCategory> findByLssitemaster(LSSiteMaster lssitemaster, Sort sort);
+
 	
 
 }
