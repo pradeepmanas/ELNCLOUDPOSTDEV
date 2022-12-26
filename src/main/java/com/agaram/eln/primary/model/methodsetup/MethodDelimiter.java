@@ -79,6 +79,9 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	@Transient
 	private String username;
 	
+	@Column(name = "methoddelimiterstatus")
+	private String methoddelimiterstatus;
+	
 	@Transient
 	private LScfttransaction objsilentaudit;
 	
@@ -241,6 +244,23 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 		this.lssitemaster = lssitemaster;
 	}
 
+	
+	public String getMethoddelimiterstatus() {
+		//return methoddelimiterstatus;
+		if(methoddelimiterstatus != null)
+		{
+		return  methoddelimiterstatus.trim().equals("A")?"Active":"Retired";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public void setMethoddelimiterstatus(String methoddelimiterstatus) {
+		this.methoddelimiterstatus = methoddelimiterstatus;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -260,6 +280,7 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	       .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
            .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
            .append("info", this.info, obj.info)
+           .append("methoddelimiterstatus", this.methoddelimiterstatus, obj.methoddelimiterstatus)
 
 
 	       .build();
@@ -288,6 +309,8 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
     	this.objsilentaudit = methodDelimiter.objsilentaudit;
     	this.objmanualaudit = methodDelimiter.objmanualaudit;
     	this.info = methodDelimiter.info;
+    	this.methoddelimiterstatus = methodDelimiter.methoddelimiterstatus;
+    	
       
 
 

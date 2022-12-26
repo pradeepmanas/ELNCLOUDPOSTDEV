@@ -31,17 +31,23 @@ public class LSactiveUser {
 	private String username;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastactivetime;
 	
+	public Date getLastactivetime() {
+		return lastactivetime;
+	}
+
+	public void setLastactivetime(Date lastactivetime) {
+		this.lastactivetime = lastactivetime;
+	}
+
 	@ManyToOne 
-	private LSuserMaster lsusermaster;
-	
-	
+	private LSuserMaster lsusermaster;	
 	@ManyToOne
 	private LSSiteMaster lssitemaster;
-	
 	@Transient
-	LScfttransaction objsilentaudit;
-	
+	LScfttransaction objsilentaudit;	
 	
 	public LScfttransaction getObjsilentaudit() {
 		return objsilentaudit;

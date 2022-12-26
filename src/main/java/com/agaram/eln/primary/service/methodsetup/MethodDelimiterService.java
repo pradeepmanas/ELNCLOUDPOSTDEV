@@ -71,9 +71,9 @@ public class MethodDelimiterService {
 	 * @return response object  with retrieved list of active MethodDelimiter entities
 	 */
 	@Transactional
-	public ResponseEntity<Object> getMethodDelimiterList(){
-		final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByStatus(1,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
-		
+	public ResponseEntity<Object> getMethodDelimiterList(LSSiteMaster mobj){
+		//final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByStatusAndLssitemaster(1,mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
+		final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByLssitemaster(mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
 		return new ResponseEntity<>(delimiterList, HttpStatus.OK);
 	}
 	
@@ -97,7 +97,7 @@ public class MethodDelimiterService {
 		   
 		   //Checking for Duplicate MethodDelimiter with same parsermethod and same delimiter
 		   final Optional<MethodDelimiter> methodDelimiterByDelimiter = methodDelimiterRepo
-	 				 .findByParsermethodAndDelimiterAndStatus(parserMethod, delimiter, 1);
+	 				 .findByParsermethodAndDelimiterAndStatusAndLssitemaster(parserMethod, delimiter, 1,methodDelimiter.getLssitemaster());
 		      
 		   final LSuserMaster createdUser = getCreatedUserByKey(methodDelimiter.getCreatedby().getUsercode());
 	    	if(methodDelimiterByDelimiter.isPresent())
@@ -177,7 +177,7 @@ public class MethodDelimiterService {
 		   final String comments, final HttpServletRequest request, final int doneByUserKey,MethodDelimiter auditdetails)
    {	   
 	   Boolean saveAuditTrail= true;
-	   final Optional<MethodDelimiter> methodDelimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatus(methodDelimiter.getMethoddelimiterkey(), 1);
+	   final Optional<MethodDelimiter> methodDelimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatusAndLssitemaster(methodDelimiter.getMethoddelimiterkey(), 1,methodDelimiter.getLssitemaster());
 	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
 	   if(methodDelimiterByKey.isPresent()) {	
@@ -193,7 +193,7 @@ public class MethodDelimiterService {
 				   
 				   //Checking for Duplicate MethodDelimiter with same parsermethod and same delimiter
 				   final Optional<MethodDelimiter> methodDelimiterByDelimiter = methodDelimiterRepo
-			 				 .findByParsermethodAndDelimiterAndStatus(parserMethod, delimiter, 1);
+			 				 .findByParsermethodAndDelimiterAndStatusAndLssitemaster(parserMethod, delimiter, 1,methodDelimiter.getLssitemaster());
 				  					   
 				  	if(methodDelimiterByDelimiter.isPresent())
 					{
@@ -324,7 +324,7 @@ public class MethodDelimiterService {
 		   final LSSiteMaster site, final String comments, final int doneByUserKey, final HttpServletRequest request,final MethodDelimiter otherdetails,MethodDelimiter auditdetails)
  {	   
 	   Boolean saveAuditTrial = true;
-	   final Optional<MethodDelimiter> delimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatus(methodDelimiterKey, 1);
+	   final Optional<MethodDelimiter> delimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatusAndLssitemaster(methodDelimiterKey, 1,site);
 	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
 	   if(delimiterByKey.isPresent()) {

@@ -6,12 +6,39 @@ public class Projectmaster {
 	private Integer projectcode;
 	private String projectname;
 	private LSusersteam lsusersteam;
+	private Integer status;
+	private String projectstatus;
 	
-	public Projectmaster(Integer projectcode,String projectname,LSusersteam lsusersteam)
+	public Projectmaster(Integer projectcode,String projectname,LSusersteam lsusersteam, Integer status, String projectstatus)
 	{
 		this.projectcode =  projectcode;
 		this.projectname = projectname;
 		this.lsusersteam =lsusersteam;
+		this.status = status;
+		this.projectstatus = projectstatus;
+	}
+	
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getProjectstatus() {
+		if(projectstatus != null)
+		{
+		return  projectstatus.trim().equals("A")?"Active":"Retired";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public void setProjectstatus(String projectstatus) {
+		this.projectstatus = projectstatus;
 	}
 	
 	public LSusersteam getLsusersteam() {

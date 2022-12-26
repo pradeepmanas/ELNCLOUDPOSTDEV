@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 
 /**
  * This interface holds JpaRepository method declarations relevant to Delimiters.
@@ -46,4 +47,18 @@ public interface DelimiterRepository extends JpaRepository<Delimiter, Integer>{
 	Optional<Delimiter> findByDelimiterkeyAndStatus(final int delimterKey, final int status);
 
 	Optional<Delimiter> findByActualdelimiterAndStatus(String actualdelimiter, int i);
+
+	List<Delimiter> findByLssitemasterAndStatus(LSSiteMaster lssitemaster, int i, Sort sort);
+
+	Optional<Delimiter> findByDelimiternameAndStatusAndLssitemaster(String delimitername, int i,
+			LSSiteMaster lssitemaster);
+
+	Optional<Delimiter> findByDelimiterkeyAndStatusAndLssitemaster(Integer delimiterkey, int i,
+			LSSiteMaster lssitemaster);
+
+	List<Delimiter> findByLssitemasterAndStatus(int del, int i, Sort sort);
+
+	List<Delimiter> findByLssitemasterAndStatusOrLssitemasterIsNull(LSSiteMaster del, int i, LSSiteMaster del2, Sort sort);
+
+	List<Delimiter> findByLssitemaster(LSSiteMaster del, Sort sort);
 }

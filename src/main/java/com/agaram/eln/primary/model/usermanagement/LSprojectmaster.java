@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -31,10 +33,12 @@ public class LSprojectmaster {
 	private String createdby;
 	//private String createdon;
 	
-	@Column(columnDefinition = "date")
+//	@Column(columnDefinition = "date")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdon;
 	
-	
+	@Column(columnDefinition = "varchar(20)")
+	private String projectstatus;
 
 	public Date getCreatedon() {
 		return createdon;
@@ -77,6 +81,21 @@ public class LSprojectmaster {
 
 	public void setLssitemaster(LSSiteMaster lssitemaster) {
 		this.lssitemaster = lssitemaster;
+	}
+	
+	public String getProjectstatus() {
+		if(projectstatus != null)
+		{
+		return  projectstatus.trim().equals("A")?"Active":"Retired";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public void setProjectstatus(String projectstatus) {
+		this.projectstatus = projectstatus;
 	}
 	
 	public LScfttransaction getObjmanualaudit() {

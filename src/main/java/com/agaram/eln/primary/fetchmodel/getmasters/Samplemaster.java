@@ -13,9 +13,11 @@ public class Samplemaster {
 	private String samplecategory;
 	private Date createdate;
 	private LSuserMaster createby;
+	private Integer status;
+	private String samplestatus;
 	
 	public Samplemaster(Integer samplecode, String samplename,LSSiteMaster lssitemaster,String samplecategory,Date createdate,
-			LSuserMaster createby)
+			LSuserMaster createby, Integer status, String samplestatus)
 	{
 		this.samplecode = samplecode;
 		this.samplename = samplename;
@@ -23,6 +25,30 @@ public class Samplemaster {
 		this.samplecategory=samplecategory;
 		this.createdate=createdate;
 		this.createby=createby;
+		this.status = status;
+		this.samplestatus = samplestatus;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}	
+	
+	public String getSamplestatus() {
+		if(samplestatus != null)
+		{
+		return  samplestatus.trim().equals("A")?"Active":"Retired";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public void setSamplestatus(String samplestatus) {
+		this.samplestatus = samplestatus;
 	}
 	
 	public LSuserMaster getCreateby() {

@@ -64,6 +64,9 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	@Column(name = "actualdelimiter")
 	private String actualdelimiter;	
 	
+	@Column(name = "delimiterstatus")
+	private String delimiterstatus;
+	
 	@Range(min=-1, max=1)
 	@Column(name = "status")
 	private int status=1;	
@@ -238,6 +241,22 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 
 	public void setLssitemaster(LSSiteMaster lssitemaster) {
 		this.lssitemaster = lssitemaster;
+	}
+
+	
+	public String getDelimiterstatus() {
+		if(delimiterstatus != null)
+		{
+		return  delimiterstatus.trim().equals("A")?"Active":"Retired";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public void setDelimiterstatus(String delimiterstatus) {
+		this.delimiterstatus = delimiterstatus;
 	}
 
 	/**

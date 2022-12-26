@@ -127,7 +127,7 @@ public class MethodController {
 		 
 		  final int methodKey = mapper.convertValue(mapObject.get("methodkey"), Integer.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
-		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
+		  final LSSiteMaster site = mapper.convertValue(mapObject.get("lssitemaster"), LSSiteMaster.class);
 		  String someValue =  (String) mapObject.get("doneByUserKey");
 		  final int doneByUserKey = Integer.parseInt(someValue);
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);

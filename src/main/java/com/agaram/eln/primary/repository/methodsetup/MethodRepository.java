@@ -96,4 +96,11 @@ public interface MethodRepository extends JpaRepository<Method, Integer>{
 	//List<Method> findByFilename(String filename);
 
 	List<Method> findByFilenameAndMethodkey(String filename, Integer methodkey);
+
+	Optional<Method> findByMethodkeyAndStatusAndSite(int methodKey, int i, LSSiteMaster site);
+
+	Optional<Method> findByMethodnameAndInstmasterAndStatusAndSite(String methodname, InstrumentMaster instMaster,
+			int i, LSSiteMaster site);
+
+	List<Method> findBySite(LSSiteMaster site, Sort sort);
 }

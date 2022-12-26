@@ -565,16 +565,20 @@ public class UserService {
 		String Details = "";
 		String Notifiction = "";
 		Notifiction = "TEAMCREATED";
-		LSusersteam userteam = lsusersteamRepository.findByteamcode(objteam.getTeamcode());
-		LSuserMaster lstusers = lsuserMasterRepository.findByusercode(objteam.getTeamcode());
+		LSuserMaster createby = lsuserMasterRepository.findByusercode(objteam.getCreateby().getUsercode());
+		LSnotification objnotify = new LSnotification();
+		LSuserMaster lstusers = lsuserMasterRepository.findByusercode(objteam.getLsuserMaster().get(0).getUsercode());
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		for (int i = 0; i < objteam.getLsuserMaster().size(); i++) {
-			if (objteam.getLsuserMaster().size() > 1) {
+			//LSusersteam userteam = lsusersteamRepository.findByusercode(objteam.getLsuserMaster().get(i).getUsercode());
+			if(createby.getUsercode()!=lstusers.getUsercode())
+			{
+			
 				
 				Details = "{\"teamname\":\"" + objteam.getTeamname() + "\", \"team\":\"" + "\"}";
-				LSnotification objnotify = new LSnotification();
+				
 				objnotify.setNotifationfrom(objteam.getModifiedby());
-				objnotify.setNotifationto(objteam.getLsuserMaster().get(i));
+				objnotify.setNotifationto(lstusers);
 				objnotify.setNotificationdate(objteam.getModifieddate());
 				objnotify.setNotification(Notifiction);
 				objnotify.setNotificationdetils(Details);
@@ -582,24 +586,10 @@ public class UserService {
 				objnotify.setNotificationpath("/Projectteam");
 				objnotify.setNotificationfor(1);
 				objnotify.setIsnewnotification(1);
-				lsnotificationRepository.save(objnotify);
+				
 
 			}
-			
-
-			else {
-				Details = "{\"teamname\":\"" + objteam.getTeamname() + "\", \"team\":\"" + "\"}";
-				LSnotification objnotify = new LSnotification();
-				objnotify.setNotifationfrom(objteam.getModifiedby());
-				objnotify.setNotifationto(objteam.getLsuserMaster().get(i));
-				objnotify.setNotificationdate(objteam.getModifieddate());
-				objnotify.setNotification(Notifiction);
-				objnotify.setNotificationdetils(Details);
-				objnotify.setIsnewnotification(1);
-				objnotify.setNotificationpath("/Projectteam");
-				objnotify.setNotificationfor(1);
-				lsnotificationRepository.save(objnotify);
-			}
+			lsnotificationRepository.save(objnotify);
 		}
 	}
 
@@ -1050,7 +1040,7 @@ public class UserService {
 		objresmap.put("newnotificationcount",
 				lsnotificationRepository.countByNotifationtoAndIsnewnotification(lsuserMaster, 1));
 		objresmap.put("notification", lsnotificationRepository
-				.findFirst10ByNotifationtoAndNotificationforOrderByNotificationcodeDesc(lsuserMaster, notifyfor));
+				.findAllByNotifationtoAndNotificationforOrderByNotificationcodeDesc(lsuserMaster, notifyfor));
 
 		objresmap.put("mynotificationcount",
 				lsnotificationRepository.countByNotifationtoAndIsnewnotificationAndNotificationfor(lsuserMaster, 1, 1));
@@ -1078,7 +1068,7 @@ public class UserService {
 		Map<String, Object> objresmap = new HashMap<String, Object>();
 
 		objresmap.put("notification", lsnotificationRepository
-				.findFirst10ByNotifationtoAndNotificationcodeLessThanAndNotificationforOrderByNotificationcodeDesc(
+				.findAllByNotifationtoAndNotificationcodeLessThanAndNotificationforOrderByNotificationcodeDesc(
 						lsnotification.getNotifationto(), lsnotification.getNotificationcode(),
 						lsnotification.getNotificationfor()));
 

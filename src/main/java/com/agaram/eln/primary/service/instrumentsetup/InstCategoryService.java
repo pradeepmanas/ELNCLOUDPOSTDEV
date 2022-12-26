@@ -268,7 +268,7 @@ public class InstCategoryService {
 //    }
 	
 	public ResponseEntity<Object> deleteInstCategory(final Integer categoryKey, final boolean saveAuditTrial,
-	 		   final String comments, final Integer userKey, final HttpServletRequest request,InstrumentCategory otherdetails) 
+	 		   final String comments, final Integer userKey, final HttpServletRequest request,InstrumentCategory otherdetails,LSSiteMaster site) 
 		{
 			Map<String, Object> mapOrders = new HashMap<String, Object>();
 	        final InstrumentCategory category = categoryRepo.findOne(categoryKey);
@@ -291,7 +291,7 @@ public class InstCategoryService {
 	        		
 	        	}
 	        	else {
-	        		List<InstrumentMaster> instMasterList = instMasterRepo.findByInstcategoryAndSiteAndStatus(categoryObj,otherdetails.getLssitemaster(), 1);
+	        		List<InstrumentMaster> instMasterList = instMasterRepo.findByInstcategoryAndSiteAndStatus(categoryObj,site, 1);
 	        		if (instMasterList.size() > 0) {
 	        	        		        			
 		        		//return new ResponseEntity<>(categoryObj.getInstcatname(), HttpStatus.IM_USED);//status code - 226

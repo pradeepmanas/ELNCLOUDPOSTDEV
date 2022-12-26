@@ -22,6 +22,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
 import com.agaram.eln.primary.model.methodsetup.MethodFieldTechnique;
@@ -66,13 +67,25 @@ public class DelimiterService {
 	 * @return response entity with list of active delimiters
 	 */
 	@Transactional
-	public ResponseEntity<Object> getActiveDelimiters(final String sortOrder){
+	public ResponseEntity<Object> getActiveDelimiters(final String sortOrder,LSSiteMaster del){
 		Sort.Direction sortBy = Sort.Direction.DESC;
 		if (sortOrder.equalsIgnoreCase("ASC")){
 			sortBy = Sort.Direction.ASC;
 		}
-		return new ResponseEntity<>(delimitersRepo.findByStatus(1,
-			  new Sort(sortBy, "delimiterkey")), HttpStatus.OK);
+		//List<Delimiter> delimiter =delimitersRepo.findByLssitemasterAndStatus(del,1,new Sort(sortBy, "delimiterkey"));
+		List<Delimiter> delimiter =delimitersRepo.findByLssitemaster(del,new Sort(sortBy, "delimiterkey"));
+		return new ResponseEntity<>(delimiter, HttpStatus.OK);	
+	
+	}
+	@Transactional
+	public ResponseEntity<Object> getActiveDelimiterdata(final String sortOrder,LSSiteMaster del){
+		Sort.Direction sortBy = Sort.Direction.DESC;
+		if (sortOrder.equalsIgnoreCase("ASC")){
+			sortBy = Sort.Direction.ASC;
+		}
+		List<Delimiter> delimiter =delimitersRepo.findByLssitemasterAndStatus(del,1,new Sort(sortBy, "delimiterkey"));
+		return new ResponseEntity<>(delimiter, HttpStatus.OK);	
+	
 	}
 	
 	/**
@@ -93,7 +106,7 @@ public class DelimiterService {
 		   //Checking for Duplicate delimitername 
 		   boolean saveAuditTrial = true;
 		   final Optional<Delimiter> delimiterByName = delimitersRepo
-	 				 .findByDelimiternameAndStatus(delimiters.getDelimitername(), 1);
+	 				 .findByDelimiternameAndStatusAndLssitemaster(delimiters.getDelimitername(), 1,delimiters.getLssitemaster());
 		      
 		   final LSuserMaster createdUser = getCreatedUserByKey(delimiters.getCreatedby().getUsercode());
 	    	if(delimiterByName.isPresent())
@@ -328,7 +341,7 @@ public class DelimiterService {
 		   final int doneByUserKey,final Delimiter auditdetails, final HttpServletRequest request)
    {	   
 	   Boolean saveAuditTrail = true;
-	   final Optional<Delimiter> delimiterByKey = delimitersRepo.findByDelimiterkeyAndStatus(delimiters.getDelimiterkey(), 1);
+	   final Optional<Delimiter> delimiterByKey = delimitersRepo.findByDelimiterkeyAndStatusAndLssitemaster(delimiters.getDelimiterkey(), 1,delimiters.getLssitemaster());
 	   
 	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
@@ -336,7 +349,7 @@ public class DelimiterService {
 
 //		   if(delimiterByKey.get().getDefaultvalue() == null) { 
 
-		   final List<MethodDelimiter> methodDelimiterList = methodDelimiterRepo.findByDelimiterAndStatus(delimiterByKey.get(), 1);
+		   final List<MethodDelimiter> methodDelimiterList = methodDelimiterRepo.findByDelimiterAndStatusAndLssitemaster(delimiterByKey.get(), 1,delimiters.getLssitemaster());
 		   
 		   if (methodDelimiterList.isEmpty()) {
 			   final Optional<Delimiter> delimiterByName = delimitersRepo
@@ -444,7 +457,7 @@ public class DelimiterService {
 			   		   
 		   final Delimiter delimiter = delimiterByKey.get();
 		   
-		   final List<MethodDelimiter> methodDelimiterList = methodDelimiterRepo.findByDelimiterAndStatus(delimiter, 1);
+		   final List<MethodDelimiter> methodDelimiterList = methodDelimiterRepo.findByDelimiterAndStatusAndLssitemaster(delimiter, 1,site);
 		   
 		   if (methodDelimiterList.isEmpty()) {
 			

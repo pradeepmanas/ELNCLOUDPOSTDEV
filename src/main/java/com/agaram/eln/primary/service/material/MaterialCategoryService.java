@@ -113,6 +113,7 @@ public class MaterialCategoryService {
 		}
 	}
 
+	
 	public ResponseEntity<Object> updateMaterialCategory(MaterialCategory materialCategory) {
 
 		Map<String, Object> inputMap = new HashMap<>();
@@ -129,7 +130,7 @@ public class MaterialCategoryService {
 					.findBySmaterialcatnameAndNmaterialcatcodeAndNstatus(materialCategory.getSmaterialcatname(),
 							materialCategory.getNmaterialcatcode(), 1);
 
-			if (materialCategoryObj == null) {
+			if (materialCategoryObj == null || (materialCategoryObj.getSmaterialcatname() == materialCategory.getSmaterialcatname())) {
 
 				objMaterialCategory.setSmaterialcatname(materialCategory.getSmaterialcatname());
 				objMaterialCategory.setSdescription(materialCategory.getSdescription());

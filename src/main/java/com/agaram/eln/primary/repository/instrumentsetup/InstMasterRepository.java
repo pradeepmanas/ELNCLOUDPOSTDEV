@@ -95,4 +95,6 @@ public interface InstMasterRepository extends JpaRepository<InstrumentMaster, In
 	List<InstrumentMaster> findByInstcategoryAndSiteAndStatus(InstrumentCategory categoryObj, LSSiteMaster lssitemaster,
 			int i);
 
+	List<InstrumentMaster> findBySite(LSSiteMaster site, Sort sort);
+
 }

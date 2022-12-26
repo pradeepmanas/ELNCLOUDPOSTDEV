@@ -101,12 +101,10 @@ public class InstCategoryController {
     	  final ObjectMapper mapper = new ObjectMapper();
     	  final  InstrumentCategory  otherdetails = mapper.convertValue(mapObject.get("otherdetails"), InstrumentCategory.class);
 		  String strUserKey = (String) mapObject.get("doneByUserKey");
-		  
-		  
 		  int userKey = Integer.parseInt(strUserKey);
-		  
+		  final LSSiteMaster site = mapper.convertValue(mapObject.get("lssitemaster"), LSSiteMaster.class);
 		  return categoryService.deleteInstCategory((Integer) mapObject.get("instcatkey"), saveAuditTrail, 
-				   (String)mapObject.get("comments"), userKey, request,otherdetails);
+				   (String)mapObject.get("comments"), userKey, request,otherdetails,site);
     }
 }
 

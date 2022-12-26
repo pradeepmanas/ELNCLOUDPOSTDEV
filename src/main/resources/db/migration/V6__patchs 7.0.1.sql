@@ -23,7 +23,7 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.samplestoragelocation
     OWNER to postgres;
-	
+    
 DO
 $do$
 DECLARE
@@ -65,7 +65,7 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.samplestorageversion
     OWNER to postgres;
-	
+    
 DO
 $do$
 DECLARE
@@ -86,7 +86,7 @@ END
 $do$;
 
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS lstestmasterlocal_testcode integer;
-	
+    
 DO
 $do$
 declare
@@ -97,7 +97,7 @@ SELECT count(*) into testcodelocal FROM
 information_schema.table_constraints WHERE constraint_name='fkoc0h7d2l44ol5jm8h12mghlf0'
 AND table_name='lslogilablimsorderdetail';
  IF testcodelocal =0 THEN
- 	ALTER TABLE ONLY lslogilablimsorderdetail ADD CONSTRAINT fkoc0h7d2l44ol5jm8h12mghlf0 FOREIGN KEY (lstestmasterlocal_testcode) REFERENCES lstestmasterlocal(testcode);
+    ALTER TABLE ONLY lslogilablimsorderdetail ADD CONSTRAINT fkoc0h7d2l44ol5jm8h12mghlf0 FOREIGN KEY (lstestmasterlocal_testcode) REFERENCES lstestmasterlocal(testcode);
    END IF;
 END
 $do$;
@@ -224,7 +224,7 @@ CREATE TABLE IF NOT EXISTS public.period
 TABLESPACE pg_default;
 
 ALTER TABLE public.period OWNER to postgres;
-	
+    
 DO
 $do$
 DECLARE
@@ -353,7 +353,7 @@ SELECT count(*) into resultvalues FROM
 information_schema.table_constraints WHERE constraint_name='fkly66uu1eaxbbop72kclab53q6'
 AND table_name='lsprotocolorderstructure';
  IF resultvalues =0 THEN
- 	ALTER TABLE ONLY lsprotocolorderstructure ADD CONSTRAINT fkly66uu1eaxbbop72kclab53q6 FOREIGN KEY (modifiedby_usercode) REFERENCES lsusermaster(usercode);
+    ALTER TABLE ONLY lsprotocolorderstructure ADD CONSTRAINT fkly66uu1eaxbbop72kclab53q6 FOREIGN KEY (modifiedby_usercode) REFERENCES lsusermaster(usercode);
    END IF;
 END
 $do$;  
@@ -380,7 +380,7 @@ SELECT count(*) into resultvalues FROM
 information_schema.table_constraints WHERE constraint_name='fkqdpmym80hts6xti2cj89sx315'
 AND table_name='lssheetorderstructure';
  IF resultvalues =0 THEN
- 	ALTER TABLE ONLY lssheetorderstructure ADD CONSTRAINT fkqdpmym80hts6xti2cj89sx315 FOREIGN KEY (modifiedby_usercode) REFERENCES lsusermaster(usercode);
+    ALTER TABLE ONLY lssheetorderstructure ADD CONSTRAINT fkqdpmym80hts6xti2cj89sx315 FOREIGN KEY (modifiedby_usercode) REFERENCES lsusermaster(usercode);
    END IF;
 END
 $do$;  
@@ -556,9 +556,9 @@ SELECT count(*) into sharebyconst FROM
 information_schema.table_constraints WHERE constraint_name='fkdl41qlwg7jfpm8diekvft2cvs'
 AND table_name='lsordersharedby';
  IF sharebyconst =0 THEN
- 	ALTER TABLE ONLY lsordersharedby ADD CONSTRAINT  fkdl41qlwg7jfpm8diekvft2cvs FOREIGN KEY (order_batchcode) REFERENCES lslogilablimsorderdetail (batchcode);
-	ALTER TABLE ONLY lsordersharedby ADD CONSTRAINT fk7g9lq71nd94juwopfv9o88dun FOREIGN KEY (usersharedby_usercode) REFERENCES lsusermaster(usercode);
-	ALTER TABLE ONLY lsordersharedby ADD CONSTRAINT fk4aii6cq1rj2j9bw814b88dacl FOREIGN KEY (usersharedon_usercode) REFERENCES lsusermaster(usercode);
+    ALTER TABLE ONLY lsordersharedby ADD CONSTRAINT  fkdl41qlwg7jfpm8diekvft2cvs FOREIGN KEY (order_batchcode) REFERENCES lslogilablimsorderdetail (batchcode);
+    ALTER TABLE ONLY lsordersharedby ADD CONSTRAINT fk7g9lq71nd94juwopfv9o88dun FOREIGN KEY (usersharedby_usercode) REFERENCES lsusermaster(usercode);
+    ALTER TABLE ONLY lsordersharedby ADD CONSTRAINT fk4aii6cq1rj2j9bw814b88dacl FOREIGN KEY (usersharedon_usercode) REFERENCES lsusermaster(usercode);
    END IF;
 END
 $do$;  
@@ -581,9 +581,9 @@ SELECT count(*) into sharetoconst FROM
 information_schema.table_constraints WHERE constraint_name='fkib60igm624s073vdsv2aghwah'
 AND table_name='lsordershareto';
  IF sharetoconst =0 THEN
- 	ALTER TABLE ONLY lsordershareto ADD CONSTRAINT fkib60igm624s073vdsv2aghwah FOREIGN KEY (order_batchcode) REFERENCES lslogilablimsorderdetail (batchcode);
-	ALTER TABLE ONLY lsordershareto ADD CONSTRAINT fkirjadtam9sj7xh4es0th8ojen FOREIGN KEY (usersharedby_usercode) REFERENCES lsusermaster(usercode);
-	ALTER TABLE ONLY lsordershareto ADD CONSTRAINT fk53672xvcvim49wg6rp474im2s FOREIGN KEY (usersharedon_usercode) REFERENCES lsusermaster(usercode);
+    ALTER TABLE ONLY lsordershareto ADD CONSTRAINT fkib60igm624s073vdsv2aghwah FOREIGN KEY (order_batchcode) REFERENCES lslogilablimsorderdetail (batchcode);
+    ALTER TABLE ONLY lsordershareto ADD CONSTRAINT fkirjadtam9sj7xh4es0th8ojen FOREIGN KEY (usersharedby_usercode) REFERENCES lsusermaster(usercode);
+    ALTER TABLE ONLY lsordershareto ADD CONSTRAINT fk53672xvcvim49wg6rp474im2s FOREIGN KEY (usersharedon_usercode) REFERENCES lsusermaster(usercode);
    END IF;
 END
 $do$;  
@@ -616,8 +616,8 @@ SELECT count(*) into sheetfoldercreate FROM
 information_schema.table_constraints WHERE constraint_name='fk5wxdhhqis9cwr5m0ejfbh6e47'
 AND table_name='lssheetorderstructure';
  IF sheetfoldercreate =0 THEN
- 	ALTER TABLE ONLY lssheetorderstructure ADD CONSTRAINT fk5wxdhhqis9cwr5m0ejfbh6e47 FOREIGN KEY (createdby_usercode) REFERENCES lsusermaster (usercode);
-	ALTER TABLE ONLY lssheetorderstructure ADD CONSTRAINT fk9bglp2u8m8ng4ckbeebshmkoc FOREIGN KEY (sitemaster_sitecode) REFERENCES lssitemaster(sitecode);
+    ALTER TABLE ONLY lssheetorderstructure ADD CONSTRAINT fk5wxdhhqis9cwr5m0ejfbh6e47 FOREIGN KEY (createdby_usercode) REFERENCES lsusermaster (usercode);
+    ALTER TABLE ONLY lssheetorderstructure ADD CONSTRAINT fk9bglp2u8m8ng4ckbeebshmkoc FOREIGN KEY (sitemaster_sitecode) REFERENCES lssitemaster(sitecode);
   END IF;
 END
 $do$;  
@@ -639,7 +639,7 @@ SELECT count(*) into resultvalues FROM
 information_schema.table_constraints WHERE constraint_name='fkg9fa19muc4tvdk8lg6cf9l4b6'
 AND table_name='lslogilabprotocoldetail';
  IF resultvalues =0 THEN
- 	ALTER TABLE ONLY lslogilabprotocoldetail ADD CONSTRAINT fkg9fa19muc4tvdk8lg6cf9l4b6 FOREIGN KEY (lsworkflow_workflowcode) REFERENCES lsworkflow(workflowcode);
+    ALTER TABLE ONLY lslogilabprotocoldetail ADD CONSTRAINT fkg9fa19muc4tvdk8lg6cf9l4b6 FOREIGN KEY (lsworkflow_workflowcode) REFERENCES lsworkflow(workflowcode);
    END IF;
 END
 $do$; 
@@ -658,7 +658,7 @@ SELECT count(*) into resultvalues FROM
 information_schema.table_constraints WHERE constraint_name='fkie1ot3vihwhddieq4rog8vlqk'
 AND table_name='lsprotocolorderworkflowhistory';
  IF resultvalues =0 THEN
- 	ALTER TABLE ONLY lsprotocolorderworkflowhistory ADD CONSTRAINT fkie1ot3vihwhddieq4rog8vlqk FOREIGN KEY (lsworkflow_workflowcode) REFERENCES lsworkflow(workflowcode);
+    ALTER TABLE ONLY lsprotocolorderworkflowhistory ADD CONSTRAINT fkie1ot3vihwhddieq4rog8vlqk FOREIGN KEY (lsworkflow_workflowcode) REFERENCES lsworkflow(workflowcode);
    END IF;
 END
 $do$; 
@@ -676,7 +676,7 @@ SELECT count(*) into resultvalues FROM
 information_schema.table_constraints WHERE constraint_name='fkg6acg5khtmyb897d7rtlfqr9x'
 AND table_name='lsprotocolmaster';
  IF resultvalues =0 THEN
- 	ALTER TABLE ONLY lsprotocolmaster ADD CONSTRAINT fkg6acg5khtmyb897d7rtlfqr9x FOREIGN KEY (lssheetworkflow_workflowcode) REFERENCES lssheetworkflow(workflowcode);
+    ALTER TABLE ONLY lsprotocolmaster ADD CONSTRAINT fkg6acg5khtmyb897d7rtlfqr9x FOREIGN KEY (lssheetworkflow_workflowcode) REFERENCES lssheetworkflow(workflowcode);
    END IF;
 END
 $do$; 
@@ -694,7 +694,7 @@ SELECT count(*) into resultvalues FROM
 information_schema.table_constraints WHERE constraint_name='fkn5ab7q19c60m37vkyux34igny'
 AND table_name='lsprotocolworkflowhistory';
  IF resultvalues =0 THEN
- 	ALTER TABLE ONLY lsprotocolworkflowhistory ADD CONSTRAINT fkn5ab7q19c60m37vkyux34igny FOREIGN KEY (lssheetworkflow_workflowcode) REFERENCES lssheetworkflow(workflowcode);
+    ALTER TABLE ONLY lsprotocolworkflowhistory ADD CONSTRAINT fkn5ab7q19c60m37vkyux34igny FOREIGN KEY (lssheetworkflow_workflowcode) REFERENCES lssheetworkflow(workflowcode);
    END IF;
 END
 $do$; 
@@ -723,10 +723,10 @@ SELECT count(*) into protocolfoldercreate FROM
 information_schema.table_constraints WHERE constraint_name='fkr15dsl9yqwg7ra49pos62g1rb'
 AND table_name='lsprotocolorderstructure';
  IF sheetfoldercreate =0 THEN
- 	ALTER TABLE ONLY lsprotocolorderstructure ADD CONSTRAINT fk1iyo88a9vor9jyr0wcg5ejo6j FOREIGN KEY (createdby_usercode) REFERENCES lsusermaster (usercode);
+    ALTER TABLE ONLY lsprotocolorderstructure ADD CONSTRAINT fk1iyo88a9vor9jyr0wcg5ejo6j FOREIGN KEY (createdby_usercode) REFERENCES lsusermaster (usercode);
   END IF;
    IF protocolfoldercreate =0 THEN
-	ALTER TABLE ONLY lsprotocolorderstructure ADD CONSTRAINT fkr15dsl9yqwg7ra49pos62g1rb FOREIGN KEY (sitemaster_sitecode) REFERENCES lssitemaster(sitecode);
+    ALTER TABLE ONLY lsprotocolorderstructure ADD CONSTRAINT fkr15dsl9yqwg7ra49pos62g1rb FOREIGN KEY (sitemaster_sitecode) REFERENCES lssitemaster(sitecode);
   END IF;
 END
 $do$;  
@@ -1167,7 +1167,7 @@ TABLESPACE pg_default;
 ALTER TABLE public.lslogbooks
     OWNER to postgres;
 
-	DO
+    DO
 $do$
 DECLARE
    _kind "char";
@@ -1255,10 +1255,10 @@ SELECT count(*) into protocolfoldercreate FROM
 information_schema.table_constraints WHERE constraint_name='fkpth04gp8erxx77xnlafxc03nj'
 AND table_name='lsprotocolordershareto';
  IF sheetfoldercreate =0 THEN
- 	ALTER TABLE ONLY lsprotocolordersharedby ADD CONSTRAINT fkghmbtxknscw2ha4cl83v2h85w FOREIGN KEY (protocolorders_protocolordercode) REFERENCES lslogilabprotocoldetail(protocolordercode);
+    ALTER TABLE ONLY lsprotocolordersharedby ADD CONSTRAINT fkghmbtxknscw2ha4cl83v2h85w FOREIGN KEY (protocolorders_protocolordercode) REFERENCES lslogilabprotocoldetail(protocolordercode);
   END IF;
    IF protocolfoldercreate =0 THEN
-	ALTER TABLE ONLY lsprotocolordershareto ADD CONSTRAINT fkpth04gp8erxx77xnlafxc03nj FOREIGN KEY (protocolorders_protocolordercode) REFERENCES lslogilabprotocoldetail(protocolordercode);
+    ALTER TABLE ONLY lsprotocolordershareto ADD CONSTRAINT fkpth04gp8erxx77xnlafxc03nj FOREIGN KEY (protocolorders_protocolordercode) REFERENCES lslogilabprotocoldetail(protocolordercode);
   END IF;
 END
 $do$;  
@@ -1497,7 +1497,7 @@ SELECT count(*) into resultvalues FROM
 information_schema.table_constraints WHERE constraint_name='fk6xm923bww44i2t95jw2b8keo4'
 AND table_name='parserfield';
  IF resultvalues =0 THEN
- 	ALTER TABLE ONLY parserfield ADD CONSTRAINT fk6xm923bww44i2t95jw2b8keo4 FOREIGN KEY (datatypekey) REFERENCES datatype (datatypekey);
+    ALTER TABLE ONLY parserfield ADD CONSTRAINT fk6xm923bww44i2t95jw2b8keo4 FOREIGN KEY (datatypekey) REFERENCES datatype (datatypekey);
    END IF;
 END
 $do$;  
@@ -1558,8 +1558,8 @@ CREATE TABLE IF NOT EXISTS public.materialinventory
     nmaterialinventorycode integer NOT NULL DEFAULT nextval('materialinventory_sequence'::regclass),
     nmaterialcode integer NOT NULL,
     ntransactionstatus integer NOT NULL,
-	nmaterialcatcode integer NOT NULL,
-	nmaterialtypecode integer NOT NULL,
+    nmaterialcatcode integer NOT NULL,
+    nmaterialtypecode integer NOT NULL,
     nsectioncode integer NOT NULL,
     jsondata text NOT NULL,
     jsonuidata text NOT NULL,
@@ -2907,7 +2907,7 @@ SELECT count(*) into resultvalues FROM
 information_schema.table_constraints WHERE constraint_name='fk88q928l57ed9lx1yxo3opl4a'
 AND table_name='lssamplemaster';
  IF resultvalues =0 THEN
- 	ALTER TABLE ONLY lssamplemaster ADD CONSTRAINT fk88q928l57ed9lx1yxo3opl4a FOREIGN KEY (createby_usercode) REFERENCES lsusermaster (usercode);
+    ALTER TABLE ONLY lssamplemaster ADD CONSTRAINT fk88q928l57ed9lx1yxo3opl4a FOREIGN KEY (createby_usercode) REFERENCES lsusermaster (usercode);
    END IF;
 END
 $do$; 
@@ -2928,7 +2928,7 @@ SELECT count(*) into resultvalues FROM
 information_schema.table_constraints WHERE constraint_name='fkjpbxy60g5p0bx5jj2dgrtn23u'
 AND table_name='lstestmasterlocal';
  IF resultvalues =0 THEN
- 	ALTER TABLE ONLY lstestmasterlocal ADD CONSTRAINT fkjpbxy60g5p0bx5jj2dgrtn23u FOREIGN KEY (createby_usercode) REFERENCES lsusermaster (usercode);
+    ALTER TABLE ONLY lstestmasterlocal ADD CONSTRAINT fkjpbxy60g5p0bx5jj2dgrtn23u FOREIGN KEY (createby_usercode) REFERENCES lsusermaster (usercode);
    END IF;
 END
 $do$;
@@ -3271,13 +3271,16 @@ $do$;
 ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS material_nmaterialcode integer;
 DO
 $do$
-declare multiusergroupcount integer :=0;
+declare
+  multiusergroupcount integer :=0;
 begin
 
-SELECT count(*) into multiusergroupcount FROM information_schema.table_constraints WHERE constraint_name='fkstcm67npdiupengejgrnayedf'
+SELECT count(*) into multiusergroupcount FROM information_schema.table_constraints WHERE constraint_name='fkstcm67npdiupengejgrnayedf' 
 AND table_name='LSlogilabprotocoldetail';
- IF multiusergroupcount =0 THEN
-    ALTER TABLE ONLY LSlogilabprotocoldetail ADD CONSTRAINT fkstcm67npdiupengejgrnayedf FOREIGN KEY (material_nmaterialcode) REFERENCES materialinventory(nmaterialinventorycode);
+
+IF multiusergroupcount =0 THEN
+    Alter TABLE ONLY LSlogilabprotocoldetail DROP CONSTRAINT if EXISTS fkstcm67npdiupengejgrnayedf;
+    ALTER TABLE ONLY LSlogilabprotocoldetail ADD CONSTRAINT fkstcm67npdiupengejgrnayedf FOREIGN KEY (material_nmaterialcode) REFERENCES material(nmaterialcode);
    END IF;
 END
 $do$;
@@ -3285,17 +3288,19 @@ $do$;
 ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS materialinventory_nmaterialinventorycode integer;
 DO
 $do$
-declare  multiusergroupcount integer :=0;
+declare  
+    multiusergroupcount integer :=0;
 begin
 
 SELECT count(*) into multiusergroupcount FROM information_schema.table_constraints WHERE constraint_name='fkt457hqlkbgfelrx793hg67nqb'
 AND table_name='LSlogilabprotocoldetail';
  IF multiusergroupcount =0 THEN
+    Alter TABLE ONLY LSlogilabprotocoldetail DROP CONSTRAINT if EXISTS fkt457hqlkbgfelrx793hg67nqb;
     ALTER TABLE ONLY LSlogilabprotocoldetail ADD CONSTRAINT fkt457hqlkbgfelrx793hg67nqb FOREIGN KEY (materialinventory_nmaterialinventorycode) REFERENCES materialinventory(nmaterialinventorycode);
    END IF;
 END
 $do$;
-			 
+             
 ALTER TABLE IF Exists instrumentcategory ADD COLUMN IF NOT EXISTS lssitemaster_sitecode integer;
  
 DO
@@ -3308,28 +3313,12 @@ SELECT count(*) into resultvalues FROM
 information_schema.table_constraints WHERE constraint_name='fkkl0697aigp5fwx9aoxl7b5fk'
 AND table_name='instrumentcategory';
  IF resultvalues =0 THEN
- 	ALTER TABLE ONLY instrumentcategory ADD CONSTRAINT fkkl0697aigp5fwx9aoxl7b5fk FOREIGN KEY (lssitemaster_sitecode) REFERENCES lssitemaster (sitecode);
+    ALTER TABLE ONLY instrumentcategory ADD CONSTRAINT fkkl0697aigp5fwx9aoxl7b5fk FOREIGN KEY (lssitemaster_sitecode) REFERENCES lssitemaster (sitecode);
    END IF;
 END
 $do$;  
 
- 
-ALTER TABLE IF Exists instrumentcategory ADD COLUMN IF NOT EXISTS lssitemaster_sitecode integer;
- 
-DO
-$do$
-declare
-  resultvalues integer :=0;
-begin
-
-SELECT count(*) into resultvalues FROM
-information_schema.table_constraints WHERE constraint_name='fkkl0697aigp5fwx9aoxl7b5fk'
-AND table_name='instrumentcategory';
- IF resultvalues =0 THEN
- 	ALTER TABLE ONLY instrumentcategory ADD CONSTRAINT fkkl0697aigp5fwx9aoxl7b5fk FOREIGN KEY (lssitemaster_sitecode) REFERENCES lssitemaster (sitecode);
-   END IF;
-END
-$do$;  
+update instrumentcategory set lssitemaster_sitecode=1 where lssitemaster_sitecode is Null;
 
 ALTER TABLE IF Exists delimiter ADD COLUMN IF NOT EXISTS lssitemaster_sitecode integer;
  
@@ -3343,10 +3332,12 @@ SELECT count(*) into resultvalues FROM
 information_schema.table_constraints WHERE constraint_name='fke7mdkv29a179e89p7dyljka57'
 AND table_name='delimiter';
  IF resultvalues =0 THEN
- 	ALTER TABLE ONLY delimiter ADD CONSTRAINT fke7mdkv29a179e89p7dyljka57 FOREIGN KEY (lssitemaster_sitecode) REFERENCES lssitemaster (sitecode);
+    ALTER TABLE ONLY delimiter ADD CONSTRAINT fke7mdkv29a179e89p7dyljka57 FOREIGN KEY (lssitemaster_sitecode) REFERENCES lssitemaster (sitecode);
    END IF;
 END
 $do$;  
+
+update delimiter set lssitemaster_sitecode=1 where lssitemaster_sitecode is Null;
 
 ALTER TABLE IF Exists methoddelimiter ADD COLUMN IF NOT EXISTS lssitemaster_sitecode integer;
  
@@ -3359,25 +3350,45 @@ begin
 SELECT count(*) into resultvalues FROM
 information_schema.table_constraints WHERE constraint_name='fk39k48l4vkd0dausrjxscoelw3'
 AND table_name='methoddelimiter';
- IF resultvalues =0 THEN
- 	ALTER TABLE ONLY delimiter ADD CONSTRAINT fk39k48l4vkd0dausrjxscoelw3 FOREIGN KEY (lssitemaster_sitecode) REFERENCES lssitemaster (sitecode);
+ IF resultvalues =0 
+    THEN
+    ALTER TABLE ONLY methoddelimiter ADD CONSTRAINT fk39k48l4vkd0dausrjxscoelw3 FOREIGN KEY (lssitemaster_sitecode) REFERENCES lssitemaster (sitecode);
    END IF;
 END
 $do$;  
 
-ALTER TABLE IF Exists method ADD COLUMN IF NOT EXISTS lssitemaster_sitecode integer;
- 
-DO
-$do$
-declare
-  resultvalues integer :=0;
-begin
+update methoddelimiter set lssitemaster_sitecode=1 where lssitemaster_sitecode is Null;
 
-SELECT count(*) into resultvalues FROM
-information_schema.table_constraints WHERE constraint_name='fk6f1nbor27goud6ji0a6cohful'
-AND table_name='methoddelimiter';
- IF resultvalues =0 THEN
- 	ALTER TABLE ONLY delimiter ADD CONSTRAINT fk6f1nbor27goud6ji0a6cohful FOREIGN KEY (lssitemaster_sitecode) REFERENCES lssitemaster (sitecode);
-   END IF;
-END
-$do$;  
+ALTER TABLE IF Exists lstestmasterlocal ADD COLUMN IF NOT EXISTS teststatus varchar(20);
+
+update LStestmasterlocal set teststatus = 'A' where status = 1;
+update LStestmasterlocal set teststatus = 'D' where status = -1;
+
+ALTER TABLE IF Exists lsprojectmaster ADD COLUMN IF NOT EXISTS projectstatus varchar(20);
+
+update lsprojectmaster set projectstatus = 'A' where status = 1;
+update lsprojectmaster set projectstatus = 'D' where status = -1;
+
+ALTER TABLE IF Exists lssamplemaster ADD COLUMN IF NOT EXISTS samplestatus varchar(20);
+
+update lssamplemaster set samplestatus = 'A' where status = 1;
+update lssamplemaster set samplestatus = 'D' where status = -1;
+
+ALTER TABLE IF Exists lsactiveuser ADD COLUMN IF NOT EXISTS lastactivetime timestamp without time zone;
+
+ALTER TABLE delimiter ADD COLUMN delimiterstatus varchar(20) ;
+ALTER TABLE methoddelimiter ADD COLUMN methoddelimiterstatus varchar(20) ;
+ALTER TABLE method ADD COLUMN methodstatus varchar(20) ;
+ALTER TABLE instrumentmaster ADD COLUMN inststatus varchar(20) ;
+
+update delimiter set delimiterstatus='A' where status = 1;
+update delimiter set delimiterstatus='D' where status = -1;
+
+update instrumentmaster set inststatus='A' where status = 1;
+update instrumentmaster set inststatus='D' where status = -1;
+
+update methoddelimiter set methoddelimiterstatus='A' where status = 1;
+update methoddelimiter set methoddelimiterstatus='D' where status = -1;
+
+update method set methodstatus='A' where status = 1;
+update method set methodstatus='D' where status = -1;

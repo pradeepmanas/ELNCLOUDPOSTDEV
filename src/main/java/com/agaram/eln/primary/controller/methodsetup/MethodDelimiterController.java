@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -36,8 +37,10 @@ public class MethodDelimiterController {
 	 * @return response entity with retrieved list of Method delimiters.
 	 */
 	@PostMapping(value = "/getMethodDelimiter")
-	public ResponseEntity<Object> getMethodDelimiter()throws Exception {	
-		 return methodDelimiterService.getMethodDelimiterList();
+	public ResponseEntity<Object> getMethodDelimiter(@RequestBody Map<String, Object> mapObject)throws Exception {
+		 final ObjectMapper mapper = new ObjectMapper();	
+		 final LSSiteMaster site = mapper.convertValue(mapObject.get("sitecode"), LSSiteMaster.class);
+		 return methodDelimiterService.getMethodDelimiterList(site);
 	}
 	
 	/**
@@ -94,7 +97,7 @@ public class MethodDelimiterController {
 		  final int methodDelimiterKey = mapper.convertValue(mapObject.get("methoddelimiterkey"), Integer.class);
 		  final MethodDelimiter auditdetails = mapper.convertValue(mapObject.get("auditdetails"), MethodDelimiter.class);
 		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
-		  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
+		  final LSSiteMaster site = mapper.convertValue(mapObject.get("lssitemaster"), LSSiteMaster.class);
 //		  final int doneByUserKey = (Integer) mapObject.get("doneByUserKey");
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);
 		  

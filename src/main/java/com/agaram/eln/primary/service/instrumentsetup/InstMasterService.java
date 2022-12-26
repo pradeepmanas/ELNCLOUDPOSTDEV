@@ -612,8 +612,12 @@ public class InstMasterService {
     @Transactional
     public ResponseEntity<Object> getInstMaster(final LSSiteMaster site) 
     {        	    	
-    	return new ResponseEntity<>(masterRepo.findByStatusAndSite(1, site, 
-    			new Sort(Sort.Direction.DESC, "instmastkey")), HttpStatus.OK);  
+    	final List<InstrumentMaster>  instobj = masterRepo.findBySite(site, new Sort(Sort.Direction.DESC, "instmastkey"));
+    	return new ResponseEntity<>(instobj, HttpStatus.OK);
+    	
+
+//    	return new ResponseEntity<>(masterRepo.findBySite(site, 
+//    			new Sort(Sort.Direction.DESC, "instmastkey")), HttpStatus.OK);  
     	//return new ResponseEntity<>(masterRepo.findByStatusAndSite(1, site), HttpStatus.OK);
     }
     
@@ -704,13 +708,13 @@ public class InstMasterService {
     
   //  @Transactional
     public ResponseEntity<Object> deleteInstMaster(final Integer instMastKey,
-    		   final String comments, final Integer userKey, final HttpServletRequest request,InstrumentMaster otherdetails,InstrumentMaster auditdetails) {
+    		   final String comments, final Integer userKey, final HttpServletRequest request,InstrumentMaster otherdetails,LSSiteMaster site,InstrumentMaster auditdetails) {
          
     	boolean saveAuditTrial1 = true;
       	//This should be done only if the instrument is not binded in method setup
       	final InstrumentMaster instMaster = masterRepo.findOne(instMastKey);
                    	
-      	final List<InstMethod> methodList = instMethodRepo.findByInstmasterAndSiteAndStatus(instMaster,otherdetails.getLssitemaster() ,1);
+      	final List<InstMethod> methodList = instMethodRepo.findByInstmasterAndSiteAndStatus(instMaster,site ,1);
             	
        if (methodList.isEmpty()) {
      	
@@ -737,7 +741,7 @@ public class InstMasterService {
   	        	deleteInstTypeSettings(masterObj);
   	        	
   	        	//---start -to delete this  instrument associated for 'Administrator' in 'InstrumentRights' by changing status to '-1'. 
-  	        	final LSSiteMaster site = masterObj.getSite();    	
+  	        	final LSSiteMaster sitedata = masterObj.getSite();    	
   	        	 //Administrator id has to be used  	
   	        	final LSuserMaster user =  userRepo.findOne(1);
   	        			

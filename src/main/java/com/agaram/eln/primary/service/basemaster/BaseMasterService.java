@@ -184,6 +184,11 @@ public class BaseMasterService {
 		return lSsamplemasterRepository.findBystatusAndLssitemasterOrderBySamplecodeDesc(1, objClass.getLssitemaster());
 	}
 
+	public List<Samplemaster> getAllSampleMaster(LSuserMaster objClass) {
+
+		return lSsamplemasterRepository.findByLssitemasterOrderBySamplecodeDesc(objClass.getLssitemaster());
+	}
+	
 	public List<LSprojectmaster> getProjectmaster(LSuserMaster objClass) {
 
 //		List<LSprojectmaster> projectlist = lSprojectmasterRepository

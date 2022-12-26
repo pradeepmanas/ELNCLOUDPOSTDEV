@@ -987,30 +987,34 @@ public class DatasourceService {
 	
 	public DataSourceConfig updateTenantPlan(DataSourceConfig tenantDetails) {
 
+		DataSourceConfig objConfig = configRepo.findById(tenantDetails.getId());
+		
 		if (tenantDetails.getPlantype() != null) {
 
 			Integer plantType = tenantDetails.getPlantype();
 
 			if (plantType == 3) {
-				tenantDetails.setPackagetype(3914465000000065053L);
+				objConfig.setPackagetype(3914465000000065053L);
 			} else if (plantType == 2) {
-				tenantDetails.setPackagetype(3914465000000065049L);
+				objConfig.setPackagetype(3914465000000065049L);
 			} else {
-				tenantDetails.setPackagetype(3914465000000065045L);
+				objConfig.setPackagetype(3914465000000065045L);
 			}
 
-			configRepo.save(tenantDetails);
+			configRepo.save(objConfig);
 
 		}
 
-		return tenantDetails;
+		return objConfig;
 	}
 
 	public DataSourceConfig updateTenantLicence(DataSourceConfig tenantDetails) {
+		
+		DataSourceConfig objConfig = configRepo.findById(tenantDetails.getId());
 
-		if (tenantDetails != null) {
-			tenantDetails.setLicencetype(tenantDetails.getLicencetype());
-			configRepo.save(tenantDetails);
+		if (objConfig != null) {
+			objConfig.setLicencetype(tenantDetails.getLicencetype());
+			configRepo.save(objConfig);
 		}
 
 		return tenantDetails;

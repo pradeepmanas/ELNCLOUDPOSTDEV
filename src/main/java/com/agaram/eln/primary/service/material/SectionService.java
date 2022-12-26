@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.material.Section;
+//import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 
 @Service
@@ -26,8 +27,7 @@ public class SectionService {
 	public ResponseEntity<Object> createSection(Section section) {
 		final Section sectionObjByName = sectionRepository.findBySsectionnameAndNstatus(section.getSsectionname(), 1);
 
-		if (sectionObjByName == null) {
-
+		if (sectionObjByName == null && section.getNsectioncode() == null) {
 			section.setNdefaultstatus(1);
 			section.setNsitecode(1);
 			section.setNstatus(1);
@@ -35,19 +35,10 @@ public class SectionService {
 			sectionRepository.save(section);
 
 			return getSection();
-
 		} else {
 
-			if (sectionObjByName.getSdescription() == section.getSdescription()) {
-				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
-						HttpStatus.CONFLICT);
-			} else {
-				section.setNdefaultstatus(1);
-				section.setNsitecode(1);
-				section.setNstatus(1);
-				sectionRepository.save(section);
-				return getSection();
-			}
+			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(), HttpStatus.CONFLICT);
+
 		}
 	}
 
@@ -64,8 +55,15 @@ public class SectionService {
 					HttpStatus.EXPECTATION_FAILED);
 		} else {
 
-			sectionRepository.save(section);
-			return getSection();
+			final Section objSetion1 = sectionRepository.findBySsectionnameAndNstatus(section.getSsectionname(), 1);
+
+			if (objSetion1 == null || (objSetion.getNsectioncode() == section.getNsectioncode())) {
+				sectionRepository.save(section);
+				return getSection();
+			} else {
+				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
+						HttpStatus.CONFLICT);
+			}
 
 		}
 	}

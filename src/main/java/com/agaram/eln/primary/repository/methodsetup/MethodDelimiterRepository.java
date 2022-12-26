@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.ParserMethod;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 
 /**
  * This interface holds JpaRepository MethodDelimiter declarations relevant to Method.
@@ -57,4 +58,17 @@ public interface MethodDelimiterRepository extends JpaRepository<MethodDelimiter
 	 * @return list of MethodDelimiter entities
 	 */
 	List<MethodDelimiter> findByDelimiterAndStatus(final Delimiter delimiter, final int status);
+
+	List<MethodDelimiter> findByDelimiterAndStatusAndLssitemaster(Delimiter delimiter, int i,
+			LSSiteMaster lssitemaster);
+
+	List<MethodDelimiter> findByStatusAndLssitemaster(int i, LSSiteMaster lssitemaster, Sort sort);
+
+	Optional<MethodDelimiter> findByParsermethodAndDelimiterAndStatusAndLssitemaster(ParserMethod parserMethod,
+			Delimiter delimiter, int i, LSSiteMaster lssitemaster);
+
+	Optional<MethodDelimiter> findByMethoddelimiterkeyAndStatusAndLssitemaster(int methodDelimiterKey, int i,
+			LSSiteMaster lssitemaster);
+
+	List<MethodDelimiter> findByLssitemaster(LSSiteMaster mobj, Sort sort);
 }

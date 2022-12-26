@@ -58,6 +58,11 @@ public class BaseMasterController {
 		return masterService.getsamplemaster(objClass);
 	}
 	
+	@RequestMapping("/getAllSampleMaster")
+	public List<Samplemaster> getAllSampleMaster(@RequestBody LSuserMaster objClass)throws Exception {
+		return masterService.getAllSampleMaster(objClass);
+	}
+	
 	@RequestMapping("/getProjectmaster")
 	public List<LSprojectmaster> getProjectmaster(@RequestBody LSuserMaster objClass)throws Exception {
 		return masterService.getProjectmaster(objClass);

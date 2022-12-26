@@ -74,13 +74,16 @@ public class Method implements Serializable, Diffable<Method>{
 	
 	public Integer version=1;
 
+	@Transient
+	private LSSiteMaster lssitemaster;
+	
+	@Column(name = "methodstatus")
+	private String methodstatus;
+	
 	@OneToMany
 	@JoinColumn(name="methodkey")
 	private List<MethodVersion> methodversion;
 
-	@ManyToOne
-	private LSSiteMaster lssitemaster;
-	 
 	@Transient
 	@Column(name = "displayvalue")
 	private String displayvalue;
@@ -319,12 +322,31 @@ public class Method implements Serializable, Diffable<Method>{
 		this.info = info;
 	}
 
+	
 	public LSSiteMaster getLssitemaster() {
 		return lssitemaster;
 	}
 
 	public void setLssitemaster(LSSiteMaster lssitemaster) {
 		this.lssitemaster = lssitemaster;
+	}
+	
+	
+
+	public String getMethodstatus() {
+		//return methodstatus;
+		if(methodstatus != null)
+		{
+		return  methodstatus.trim().equals("A")?"Active":"Retired";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public void setMethodstatus(String methodstatus) {
+		this.methodstatus = methodstatus;
 	}
 
 	/**

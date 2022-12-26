@@ -67,6 +67,9 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 	@Column(name = "instrumentname")
 	private String instrumentname;	
 	
+	@Column(name = "inststatus")
+	private String inststatus;
+	
 	@Column(name = "instused")
 	private int instused;
 
@@ -77,7 +80,7 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 	LScfttransaction objmanualaudit;
 	
 	@Transient
-	private LSSiteMaster lssitemaster;;
+	private LSSiteMaster lssitemaster;
 	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "insttypekey", nullable = false)
@@ -325,6 +328,23 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 		this.lssitemaster = lssitemaster;
 	}
 
+	
+	public String getInststatus() {
+		//return inststatus;
+		if(inststatus != null)
+		{
+		return  inststatus.trim().equals("A")?"Active":"Retired";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public void setInststatus(String inststatus) {
+		this.inststatus = inststatus;
+	}
+
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -351,7 +371,7 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
            .append("info", this.info, obj.info)
            .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
            .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
-
+           .append("inststatus", this.inststatus, obj.inststatus)
 	       .build();
 	}
 
@@ -383,6 +403,8 @@ public class InstrumentMaster implements Serializable, Diffable<InstrumentMaster
 		this.info = instMaster.info;
 		this.objsilentaudit = instMaster.objsilentaudit;
 		this.objmanualaudit = instMaster.objmanualaudit;
+		this.inststatus = instMaster.inststatus;
+		
 	}
 	
 	/**

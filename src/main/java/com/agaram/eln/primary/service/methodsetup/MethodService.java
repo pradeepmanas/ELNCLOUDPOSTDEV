@@ -162,8 +162,10 @@ public class MethodService {
 	 */
 	@Transactional
 	public ResponseEntity<Object> getActiveMethodBySite(final LSSiteMaster site){
-		final List<Method> methodList =  methodRepo.findBySiteAndStatus(site, 1,
-			new Sort(Sort.Direction.DESC, "methodkey"));
+//		final List<Method> methodList =  methodRepo.findBySiteAndStatus(site, 1,
+		//	new Sort(Sort.Direction.DESC, "methodkey"));
+		final List<Method> methodList =  methodRepo.findBySite(site,
+				new Sort(Sort.Direction.DESC, "methodkey"));
 		return new ResponseEntity<>(methodList, HttpStatus.OK);
 	}
 	
@@ -193,8 +195,8 @@ public class MethodService {
 		final LSuserMaster createdUser = getCreatedUserByKey(methodMaster.getCreatedby().getUsercode());
 		
 		if (instMaster != null) {			
-			final Optional<Method> methodByName = methodRepo.findByMethodnameAndInstmasterAndStatus(
-					methodMaster.getMethodname(), instMaster, 1);
+			final Optional<Method> methodByName = methodRepo.findByMethodnameAndInstmasterAndStatusAndSite(
+					methodMaster.getMethodname(), instMaster, 1,site);
 			if (methodByName.isPresent())
 			{
 				//Conflict =409 - Duplicate entry
@@ -400,7 +402,7 @@ public class MethodService {
 		final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);		
 		final InstrumentMaster instMaster = instMastRepo.findOne(method.getInstmaster().getInstmastkey());
 		
-		 final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(method.getMethodkey(), 1);
+		 final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatusAndSite(method.getMethodkey(), 1,site);
 		 
 		 if(methodByKey.isPresent()) {		   
 
@@ -408,8 +410,8 @@ public class MethodService {
 		if (instMaster != null) 
 		{
 
-			final Optional<Method> methodByName = methodRepo.findByMethodnameAndInstmasterAndStatus(
-					method.getMethodname(), instMaster, 1);
+			final Optional<Method> methodByName = methodRepo.findByMethodnameAndInstmasterAndStatusAndSite(
+					method.getMethodname(), instMaster, 1,site);
 			
 		
 			if (methodByName.isPresent())

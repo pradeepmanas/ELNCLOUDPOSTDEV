@@ -44,7 +44,9 @@ public class LSsamplemaster {
 	@ManyToOne
 	private LSuserMaster createby;
 
-
+	@Column(columnDefinition = "varchar(20)")
+	private String samplestatus;
+	
 	@Transient
 	private Response response;
 	
@@ -69,6 +71,21 @@ public class LSsamplemaster {
 
 	public void setLssitemaster(LSSiteMaster lssitemaster) {
 		this.lssitemaster = lssitemaster;
+	}
+	
+	public String getSamplestatus() {
+		if(samplestatus != null)
+		{
+		return  samplestatus.trim().equals("A")?"Active":"Retired";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public void setSamplestatus(String samplestatus) {
+		this.samplestatus = samplestatus;
 	}
 	
 	public LScfttransaction getObjmanualaudit() {
