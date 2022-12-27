@@ -290,7 +290,11 @@ public class UserService {
 			objusermaster.setCreateddate(updateUser.getCreateddate());
 
 			lsuserMasterRepository.save(updateUser);
-
+			
+				
+			
+			 
+			
 			objusermaster.setResponse(new Response());
 			objusermaster.getResponse().setStatus(true);
 			objusermaster.getResponse().setInformation("ID_SUCCESSMSG");
@@ -316,7 +320,8 @@ public class UserService {
 		 * 
 		 * }
 		 */
-
+		
+		
 		LSMultiusergroupRepositery.save(objusermaster.getMultiusergroupcode());
 		lsuserMasterRepository.save(objusermaster);
 
@@ -332,6 +337,11 @@ public class UserService {
 		objusermaster.setResponse(new Response());
 		objusermaster.getResponse().setStatus(true);
 		objusermaster.getResponse().setInformation("ID_SUCCESSMSG");
+		
+		Lsusersettings getUserPreference =  new Lsusersettings();
+		getUserPreference.setDFormat("Mon-DD-YYYY HH:mm:ss");
+		getUserPreference.setUsercode(objusermaster.getUsercode());
+		LsusersettingsRepository.save(getUserPreference);
 
 		if (objusermaster.getUsercode() != null) {
 			LSuserMaster obj1 = lsuserMasterRepository.findByusercode(objusermaster.getUsercode());
@@ -545,7 +555,7 @@ public class UserService {
 		objteam.setResponse(new Response());
 		objteam.getResponse().setStatus(true);
 		objteam.getResponse().setInformation("ID_SUCCESSMSG");
-		updatenotificationforteam(objteam);
+		//updatenotificationforteam(objteam);
 
 		for (LSuserMaster objuser : objteam.getLsuserMaster()) {
 			LSuserteammapping objmap = new LSuserteammapping();
@@ -599,6 +609,7 @@ public class UserService {
 		} else {
 			List<LSuserteammapping> teams = lsuserteammappingRepository.findBylsuserMaster(LSuserMaster);
 			return lsusersteamRepository.findByLsuserteammappingInAndStatus(teams, 1);
+			//return lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(), 1);
 		}
 	}
 

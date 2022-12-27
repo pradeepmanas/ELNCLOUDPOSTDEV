@@ -3396,3 +3396,5 @@ update method set methodstatus='D' where status = -1;
 
 update instrumentcategory set instcategorystatus='A' where status = 1;
 update instrumentcategory set instcategorystatus='D' where status = -1;
+
+ALTER TABLE IF Exists lscfttransaction ADD COLUMN IF NOT EXISTS auditkey varchar(100);

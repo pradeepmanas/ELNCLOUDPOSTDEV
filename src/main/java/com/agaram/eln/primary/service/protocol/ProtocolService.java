@@ -2109,7 +2109,7 @@ public class ProtocolService {
 			LSworkflow objlastworkflow = lsworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objClass.getIsfinalstep().getLssitemaster());
 			if (objlastworkflow != null
-					&& objClass.getLsworkflow().getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
+					&& objClass.getLstworkflow().get(0).getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
 				objClass.setFinalworkflow(1);
 				;
 			} else {
@@ -2286,7 +2286,7 @@ public class ProtocolService {
 
 			String Details = "";
 			String Notifiction = "";
-			
+
 			if (objteam.getLsuserteammapping() != null && objteam.getLsuserteammapping().size() > 0) {
 				// objClass.setOrderflag("R");
 				if (objClass.getAssignedto() == null) {
@@ -2299,7 +2299,7 @@ public class ProtocolService {
 								+ objClass.getLsworkflow().getWorkflowname() + "\", \"completeduser\":\""
 								+ objClass.getLsprojectmaster().getModifiedby().getUsername() + "\"}";
 
-					} else  {
+					} else {
 						Notifiction = "PROTOCOLORDERCREATION";
 
 						Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
@@ -2310,7 +2310,7 @@ public class ProtocolService {
 					}
 				}
 
-				else if(objClass.getApproved()==null){
+				else if (objClass.getApproved() == null) {
 
 					Notifiction = "PROTOCOLORDERCREATIONANDASSIGN";
 
@@ -2330,35 +2330,34 @@ public class ProtocolService {
 					objnotify.setNotificationfor(1);
 					lsnotificationRepository.save(objnotify);
 				}
-			
 
-			if (objClass.getAssignedto() == null) {
-				List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
-				List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-				for (int i = 0; i < lstusers.size(); i++) {
-					if (objClass.getCreateby() != lstusers.get(i).getLsuserMaster().getUsercode()) {
+				if (objClass.getAssignedto() == null) {
+					List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
+					List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+					for (int i = 0; i < lstusers.size(); i++) {
+						if (objClass.getCreateby() != lstusers.get(i).getLsuserMaster().getUsercode()) {
 
-						if (objClass.getOrderflag().equalsIgnoreCase("R")) {
-							objnotify.setNotifationto(obj);
-							objnotify.setNotifationfrom(objClass.getLsprojectmaster().getModifiedby());
+							if (objClass.getOrderflag().equalsIgnoreCase("R")) {
+								objnotify.setNotifationto(obj);
+								objnotify.setNotifationfrom(objClass.getLsprojectmaster().getModifiedby());
 
-						} else {
-							objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
-							objnotify.setNotifationfrom(obj);
+							} else {
+								objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
+								objnotify.setNotifationfrom(obj);
+							}
+							objnotify.setNotificationdate(objClass.getCreatedtimestamp());
+							objnotify.setNotification(Notifiction);
+							objnotify.setNotificationdetils(Details);
+							objnotify.setIsnewnotification(1);
+							objnotify.setNotificationpath("/Protocolorder");
+							objnotify.setNotificationfor(2);
+
+							lstnotifications.add(objnotify);
 						}
-						objnotify.setNotificationdate(objClass.getCreatedtimestamp());
-						objnotify.setNotification(Notifiction);
-						objnotify.setNotificationdetils(Details);
-						objnotify.setIsnewnotification(1);
-						objnotify.setNotificationpath("/Protocolorder");
-						objnotify.setNotificationfor(2);
-
-						lstnotifications.add(objnotify);
 					}
-				}
 
-				lsnotificationRepository.save(lstnotifications);
-			}
+					lsnotificationRepository.save(lstnotifications);
+				}
 			}
 		}
 	}
@@ -3646,13 +3645,12 @@ public class ProtocolService {
 
 	public Map<String, Object> getProtocolOrderStepLst(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
-		@SuppressWarnings("unused")
-		LScfttransaction LScfttransactionobj = new LScfttransaction();
-		if (argObj.containsKey("objsilentaudit")) {
-			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),
-					new TypeReference<LScfttransaction>() {
-					});
-
+//		LScfttransaction LScfttransactionobj = new LScfttransaction();
+//		if (argObj.containsKey("objsilentaudit")) {
+//			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),
+//					new TypeReference<LScfttransaction>() {
+//					});
+		if (argObj.containsKey("ismultitenant")) {
 			ObjectMapper objm = new ObjectMapper();
 			int multitenent = objm.convertValue(argObj.get("ismultitenant"), Integer.class);
 

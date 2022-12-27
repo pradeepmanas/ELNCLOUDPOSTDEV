@@ -51,8 +51,16 @@ public class LScfttransaction {
 	private String instrumentid;
 	@Column(columnDefinition = "varchar(100)")
 	private String reviewedstatus;
+	@Column(columnDefinition = "varchar(100)")
+	private String auditkey;
 	
-//	@ManyToOne 
+	public String getAuditkey() {
+		return auditkey;
+	}
+	public void setAuditkey(String auditkey) {
+		this.auditkey = auditkey;
+	}
+	//	@ManyToOne 
 	@Column(name="lssitemaster_sitecode")
 	private Integer lssitemaster;
 	

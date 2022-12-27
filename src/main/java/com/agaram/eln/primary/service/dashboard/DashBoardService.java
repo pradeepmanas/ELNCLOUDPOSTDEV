@@ -323,17 +323,24 @@ public class DashBoardService {
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
-
+		List<LSprojectmaster> lstproject = objuser.getLstproject();
 		if (objuser.getObjuser().getOrderfor() != 1) {
-			mapOrders.put("orders", LSlogilabprotocoldetailRepository.countBySitecodeAndCreatedtimestampBetween(
-					objuser.getLssitemaster().getSitecode(), fromdate, todate));
+			if (lstproject != null && lstproject.size() > 0) {
+			mapOrders.put("orders", LSlogilabprotocoldetailRepository.countBySitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(
+					objuser.getLssitemaster().getSitecode(), fromdate, todate,lstproject));
 			mapOrders.put("pendingorder",
-					LSlogilabprotocoldetailRepository.countByOrderflagAndSitecodeAndCreatedtimestampBetween("N",
-							objuser.getLssitemaster().getSitecode(), fromdate, todate));
+					LSlogilabprotocoldetailRepository.countByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn("N",
+							objuser.getLssitemaster().getSitecode(), fromdate, todate,lstproject));
 			mapOrders.put("completedorder",
-					LSlogilabprotocoldetailRepository.countByOrderflagAndSitecodeAndCreatedtimestampBetween("R",
-							objuser.getLssitemaster().getSitecode(), fromdate, todate));
+					LSlogilabprotocoldetailRepository.countByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn("R",
+							objuser.getLssitemaster().getSitecode(), fromdate, todate,lstproject));
 			mapOrders.put("onproces", 0);
+			}else {
+				mapOrders.put("orders",0);
+				mapOrders.put("pendingorder",0);
+				mapOrders.put("completedorder",0);
+				mapOrders.put("onproces",0);
+			}
 		} else if (objuser.getUsername().equals("Administrator") && objuser.getObjuser().getOrderfor() == 1) {
 			mapOrders.put("orders",
 					lslogilablimsorderdetailRepository.countByCreatedtimestampBetween(fromdate, todate));
@@ -346,7 +353,7 @@ public class DashBoardService {
 
 		} else {
 
-			List<LSprojectmaster> lstproject = objuser.getLstproject();
+		
 
 			long lstUserorder = 0;
 			if (lstproject != null && lstproject.size() > 0) {
@@ -464,20 +471,22 @@ public class DashBoardService {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 
 		List<Logilabprotocolorders> lstorders = new ArrayList<Logilabprotocolorders>();
-
+		List<LSprojectmaster> lstproject = objuser.getLstproject();
+		if (lstproject != null) {
 		if (objuser.getObjuser().getOrderselectiontype() == 1) {
-			lstorders = LSlogilabprotocoldetailRepository.findBySitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull(
-					objuser.getLssitemaster().getSitecode(), fromdate, todate);
+			lstorders = LSlogilabprotocoldetailRepository.findBySitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterIn(
+					objuser.getLssitemaster().getSitecode(), fromdate, todate,lstproject);
 
 		} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
 			lstorders = LSlogilabprotocoldetailRepository
-					.findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull("R",
-							objuser.getLssitemaster().getSitecode(), fromdate, todate);
+					.findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterIn("R",
+							objuser.getLssitemaster().getSitecode(), fromdate, todate,lstproject);
 
 		} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
 			lstorders = LSlogilabprotocoldetailRepository
-					.findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNull("N",
-							objuser.getLssitemaster().getSitecode(), fromdate, todate);
+					.findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterIn("N",
+							objuser.getLssitemaster().getSitecode(), fromdate, todate,lstproject);
+		}
 		}
 
 //		LSusergroup userGroup = LSusergroupRepository.findOne(objuser.getObjuser().getMultiusergroupcode());

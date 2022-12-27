@@ -165,9 +165,9 @@ public class AuditTrailController {
 	@PostMapping("/silentandmanualRecordHandlerParser")
 	public LScfttransaction silentandmanualRecordHandlerParser(@RequestBody Map<String, Object> mapObj)
 			throws ParseException {
-		Map<String, Object> Map = new HashMap<>();
-		LoggedUser objuser = new ObjectMapper().convertValue(mapObj.get("objuser"), new TypeReference<LoggedUser>() {
-		});
+//		Map<String, Object> Map = new HashMap<>();
+//		LoggedUser objuser = new ObjectMapper().convertValue(mapObj.get("objuser"), new TypeReference<LoggedUser>() {
+//		});
 		
 		return auditService.silentandmanualRecordHandler(mapObj);
 	}

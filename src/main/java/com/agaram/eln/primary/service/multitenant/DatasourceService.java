@@ -101,7 +101,7 @@ public class DatasourceService {
 				objreponse.setStatus(false);
 				objdatasource.setObjResponse(objreponse);
 			} else if (!objdatasource.isIsenable()) {
-				objreponse.setInformation("ID_ORGDISABLED");
+				objreponse.setInformation("IDS_MSG_ORGDISABLED");
 				objreponse.setStatus(false);
 				objdatasource.setObjResponse(objreponse);
 			}
@@ -831,7 +831,7 @@ public class DatasourceService {
 				objreponse.setStatus(false);
 				objdatasource.setObjResponse(objreponse);
 			} else if (!objdatasource.isIsenable()) {
-				objreponse.setInformation("ID_ORGDISABLED");
+				objreponse.setInformation("IDS_MSG_ORGDISABLED");
 				objreponse.setStatus(false);
 				objdatasource.setObjResponse(objreponse);
 			}
@@ -860,7 +860,7 @@ public class DatasourceService {
 				objreponse.setStatus(false);
 				objdatasource.setObjResponse(objreponse);
 			} else if (!objdatasource.isIsenable()) {
-				objreponse.setInformation("ID_ORGDISABLED");
+				objreponse.setInformation("IDS_MSG_ORGDISABLED");
 				objreponse.setStatus(false);
 				objdatasource.setObjResponse(objreponse);
 			}
