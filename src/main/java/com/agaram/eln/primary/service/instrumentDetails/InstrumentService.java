@@ -2342,6 +2342,100 @@ public class InstrumentService {
 		return objupdatedorder;
 	}
 
+public LSlogilablimsorderdetail GetorderStatusFromBatchID(LSlogilablimsorderdetail objorder) {
+		
+		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findByBatchid(objorder.getBatchid());
+		
+		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
+				.findBybatchid(objupdatedorder.getBatchid());
+		List<String> lsorderno = new ArrayList<String>();
+
+		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
+			int i = 0;
+
+			while (lsLogilaborders.size() > i) {
+				lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
+				i++;
+			}
+		}
+		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
+		if (objupdatedorder.getLockeduser() != null) {
+			objupdatedorder.setIsLock(1);
+		} else {
+			objupdatedorder.setIsLock(0);
+		}
+
+		if (objupdatedorder.getLockeduser() != null && objorder.getObjLoggeduser() != null
+				&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
+			objupdatedorder.setIsLockbycurrentuser(1);
+		} else {
+			objupdatedorder.setIsLockbycurrentuser(0);
+		}
+
+		if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
+			LSworkflow objlastworkflow = lsworkflowRepository
+					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
+			if (objlastworkflow != null && objupdatedorder.getLsworkflow().equals(objlastworkflow)) {
+				objupdatedorder.setIsFinalStep(1);
+			} else {
+				objupdatedorder.setIsFinalStep(0);
+			}
+		}
+
+		if (objupdatedorder.getFiletype() == 0) {
+			objupdatedorder
+					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
+		}
+
+		if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
+			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode)
+					.collect(Collectors.toList());
+			if (objorder.getLstworkflow() != null
+					&& lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode())) {
+				objupdatedorder.setCanuserprocess(true);
+			} else {
+				objupdatedorder.setCanuserprocess(false);
+			}
+		} else {
+			objupdatedorder.setCanuserprocess(true);
+		}
+
+		if (objupdatedorder.getLssamplefile() != null) {
+			if (objorder.getIsmultitenant() == 1) {
+				CloudOrderCreation file = cloudOrderCreationRepository
+						.findById((long) objupdatedorder.getLssamplefile().getFilesamplecode());
+				if (file != null) {
+					objupdatedorder.getLssamplefile().setFilecontent(file.getContent());
+				}
+			} else {
+
+				String fileid = "order_" + objupdatedorder.getLssamplefile().getFilesamplecode();
+				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
+				if (largefile == null) {
+					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
+				}
+
+				if (largefile != null) {
+					String filecontent = new BufferedReader(
+							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+							.collect(Collectors.joining("\n"));
+					objupdatedorder.getLssamplefile().setFilecontent(filecontent);
+				} else {
+
+					OrderCreation file = mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
+							OrderCreation.class);
+					if (file != null) {
+						objupdatedorder.getLssamplefile().setFilecontent(file.getContent());
+					}
+				}
+			}
+		}
+
+		return objupdatedorder;
+	}
+
+	
+	
 	private String GetSamplefileconent(LSsamplefile lssamplefile, Integer ismultitenant) {
 		String content = "";
 

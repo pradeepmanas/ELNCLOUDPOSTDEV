@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.service.masters;
 
 import java.io.FileWriter;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -13,10 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -28,7 +25,6 @@ import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchmodel.archieve.ProjectArchieve;
 import com.agaram.eln.primary.fetchmodel.getmasters.Repositorymaster;
 import com.agaram.eln.primary.model.archieve.LsProjectarchieve;
-import com.agaram.eln.primary.model.cfr.LSreviewdetails;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
@@ -57,7 +53,6 @@ import com.agaram.eln.primary.repository.protocol.LSprotocolordersampleupdatesRe
 import com.agaram.eln.primary.repository.protocol.LSprotocolsampleupdatesRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
-import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.microsoft.azure.storage.CloudStorageAccount;

@@ -75,6 +75,11 @@ public class SubParserField implements Serializable, Diffable<SubParserField>{
 	@Column(name = "status")
 	private int status=1;	
 
+	//new
+		@ManyToOne(fetch = FetchType.EAGER)
+	    @JoinColumn(name = "datatypekey")
+		private DataType datatype;
+		
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "usercode", nullable = false)
 	private LSuserMaster createdby;
@@ -171,6 +176,15 @@ public class SubParserField implements Serializable, Diffable<SubParserField>{
 
 	public void setCreateddate(Date createddate) {
 		this.createddate = createddate;
+	}
+
+	
+	public DataType getDatatype() {
+		return datatype;
+	}
+
+	public void setDatatype(DataType datatype) {
+		this.datatype = datatype;
 	}
 
 	/**

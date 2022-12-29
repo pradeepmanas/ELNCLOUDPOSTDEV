@@ -466,6 +466,7 @@ public class DelimiterService {
 				   final Delimiter delimitersBeforeSave = new Delimiter(delimiter); 	
 				   //Its not associated in transaction
 				   delimiter.setStatus(-1);
+				   delimiter.setDelimiterstatus("D");
 				   final Delimiter savedDelimiters = delimitersRepo.save(delimiter);  
 				   
 				   savedDelimiters.setDisplayvalue(savedDelimiters.getDelimitername());

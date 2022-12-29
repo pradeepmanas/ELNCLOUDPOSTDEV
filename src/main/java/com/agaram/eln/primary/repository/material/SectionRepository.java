@@ -14,4 +14,10 @@ public interface SectionRepository  extends JpaRepository<Section, Integer>{
 	public Section findByNsectioncode(int nsectionCode);
 
 	public Section findBySsectionnameAndNstatus(String ssectionname, int i);
+
+	public Section findBySsectionnameAndNstatusAndNsitecode(String ssectionname, int i, Integer nsitecode);
+
+	public List<Section> findByNstatusAndNsitecodeOrderByNsectioncodeDesc(int i, Integer nsiteInteger);
+
+	public List<Object> findByNstatusAndNsitecode(int i, Integer nsiteInteger);
 }

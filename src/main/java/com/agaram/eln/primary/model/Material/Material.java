@@ -33,6 +33,14 @@ public class Material implements Serializable{
 	
 	private String sprefix;
 	
+	private Integer nsitecode;
+	
+	public Integer getNsitecode() {
+		return nsitecode;
+	}
+	public void setNsitecode(Integer nsitecode) {
+		this.nsitecode = nsitecode;
+	}
 	public String getSprefix() {
 		return sprefix;
 	}

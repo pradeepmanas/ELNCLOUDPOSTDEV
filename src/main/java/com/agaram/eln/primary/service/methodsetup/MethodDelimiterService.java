@@ -77,6 +77,7 @@ public class MethodDelimiterService {
 		return new ResponseEntity<>(delimiterList, HttpStatus.OK);
 	}
 	
+	
 	/**
 	 * This method is used to add new MethodDelimiter object.
 	 * Need to check for duplicate entry of delimiter for the specified ParserMethod before saving into database. 
@@ -364,6 +365,7 @@ public class MethodDelimiterService {
 				
 				   //Its not associated in transaction
 				   delimiter.setStatus(-1);
+				   delimiter.setMethoddelimiterstatus("D");
 				   final MethodDelimiter savedDelimiters = methodDelimiterRepo.save(delimiter);   
 			   
 				   savedDelimiters.setDisplayvalue(savedDelimiters.getParsermethod().getParsermethodname());

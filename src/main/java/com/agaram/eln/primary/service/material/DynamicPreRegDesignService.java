@@ -47,6 +47,7 @@ public class DynamicPreRegDesignService {
 		Map<String, Object> parameters = (Map<String, Object>) inputMap.get("parameters");
 		String getJSONKeysQuery = "";
 
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
 		
 		List<Map<String, Object>> filterQueryComponentsQueries = null;
 
@@ -84,10 +85,10 @@ public class DynamicPreRegDesignService {
 
 			switch (tableName) {
 			case "unit":
-				data = unitRepository.findByNstatus(1);
+				data = unitRepository.findByNstatusAndNsitecode(1,nsiteInteger);
 				break;
 			case "section":
-				data = sectionRepository.findByNstatus(1);
+				data = sectionRepository.findByNstatusAndNsitecode(1,nsiteInteger);
 				break;
 			case "materialgrade":
 				data = materialGradeRepository.findByNstatus(1);
@@ -135,6 +136,8 @@ public class DynamicPreRegDesignService {
 		String getJSONKeysQuery = "";
 
 		String valuememberData = "";
+		
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
 		
 		List<Map<String, Object>> filterQueryComponentsQueries = null;
 
@@ -191,10 +194,10 @@ public class DynamicPreRegDesignService {
 
 			switch (tableName) {
 			case "unit":
-				data = unitRepository.findByNstatusAndNunitcodeOrderByNunitcode(1,Integer.parseInt(defaultvalues));
+				data = unitRepository.findByNstatusAndNsitecodeAndNunitcodeOrderByNunitcode(1,nsiteInteger,Integer.parseInt(defaultvalues));
 				break;
 			case "materialcategory":
-				data = materialCategoryRepository.findByNstatusAndNmaterialtypecode(1,Integer.parseInt(defaultvalues));
+				data = materialCategoryRepository.findByNstatusAndNsitecodeAndNmaterialtypecode(1,nsiteInteger,Integer.parseInt(defaultvalues));
 				break;
 			}
 

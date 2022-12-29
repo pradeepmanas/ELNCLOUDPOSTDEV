@@ -309,6 +309,7 @@ public class InstCategoryService {
 		 			   
 		        		//No child mapping
 			        	categoryObj.setStatus(-1);
+			        	categoryObj.setInstcategorystatus("D");
 			        	final InstrumentCategory savedCategory = categoryRepo.save(categoryObj);
 			        	
 			        	if (saveAuditTrial)

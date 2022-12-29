@@ -22,7 +22,9 @@ public class MaterialController {
 	@RequestMapping(value = "/getMaterial", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getMaterialType(@RequestBody Map<String, Object> inputMap) throws Exception {
 
-		return (ResponseEntity<Object>) objMaterialService.getMaterialType();
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		
+		return (ResponseEntity<Object>) objMaterialService.getMaterialType(nsiteInteger);
 	}
 
 	@RequestMapping(value = "/getMaterialByTypeCode", method = RequestMethod.POST)
@@ -34,7 +36,8 @@ public class MaterialController {
 	@RequestMapping(value = "/getMaterialcombo", method = RequestMethod.POST)
 	public ResponseEntity<Object> getMaterialcombo(@RequestBody Map<String, Object> inputMap) throws Exception {
 		Integer nmaterialtypecode = (Integer) inputMap.get("nmaterialtypecode");
-		return (ResponseEntity<Object>) objMaterialService.getMaterialcombo(nmaterialtypecode);
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		return (ResponseEntity<Object>) objMaterialService.getMaterialcombo(nmaterialtypecode,nsiteInteger);
 	}
 
 	@RequestMapping(value = "/createMaterial", method = RequestMethod.POST)

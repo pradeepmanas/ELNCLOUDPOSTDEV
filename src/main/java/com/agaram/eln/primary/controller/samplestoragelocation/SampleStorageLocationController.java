@@ -60,8 +60,11 @@ public class SampleStorageLocationController {
 	}
 	
 	@PostMapping(value = "/getAllActiveSampleStorageLocation")
-	public ResponseEntity<Object> getAllActiveSampleStorageLocation() {	
-		return sampleStorageLocationService.getAllActiveSampleStorageLocation();
+	public ResponseEntity<Object> getAllActiveSampleStorageLocation(@RequestBody Map<String, Object> mapObject) {
+		
+		Integer nsiteInteger = (Integer) mapObject.get("sitekey");
+		
+		return sampleStorageLocationService.getAllActiveSampleStorageLocation(nsiteInteger);
 	}
 	
 	@PostMapping(value = "/getActiveSampleStorageLocationByKey")

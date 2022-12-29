@@ -48,6 +48,15 @@ public class MaterialInventory {
 	private transient String savailablequatity;
 	private transient String sunitname;
 	
+	private Integer nsitecode;
+	
+	public Integer getNsitecode() {
+		return nsitecode;
+	}
+	public void setNsitecode(Integer nsitecode) {
+		this.nsitecode = nsitecode;
+	}
+	
 	@OneToMany
 	@JoinColumn(name="nmaterialinventorycode")
 	private List<MaterialInventoryTransaction> materialInventoryTransactions;

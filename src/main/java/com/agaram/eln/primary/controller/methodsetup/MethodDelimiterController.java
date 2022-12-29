@@ -38,9 +38,20 @@ public class MethodDelimiterController {
 	 */
 	@PostMapping(value = "/getMethodDelimiter")
 	public ResponseEntity<Object> getMethodDelimiter(@RequestBody Map<String, Object> mapObject)throws Exception {
+		
 		 final ObjectMapper mapper = new ObjectMapper();	
-		 final LSSiteMaster site = mapper.convertValue(mapObject.get("sitecode"), LSSiteMaster.class);
-		 return methodDelimiterService.getMethodDelimiterList(site);
+			Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
+	    	if(obj == null)
+	    	{
+	    	   final LSSiteMaster site = mapper.convertValue(mapObject.get("sitecode"), LSSiteMaster.class);
+	    	   return methodDelimiterService.getMethodDelimiterList(site);
+	    		
+	    	}else {
+	    		final Integer site = (Integer) obj.get("sitecode"); 
+	     		LSSiteMaster siteobj = new LSSiteMaster();  		
+	     		siteobj.setSitecode(site);
+	     		return methodDelimiterService.getMethodDelimiterList(siteobj);
+	    	}
 	}
 	
 	/**

@@ -198,7 +198,7 @@ public class BaseMasterService {
 //				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
 
 		List<LSprojectmaster> projectlist = lSprojectmasterRepository
-				.findByLssitemasterOrderByProjectcodeDesc(objClass.getLssitemaster());
+				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(),1);
 		return projectlist;
 	}
 
@@ -231,15 +231,15 @@ public class BaseMasterService {
 			}
 
 		} else if (objClass.getTestcode() == null
-				&& lStestmasterlocalRepository.findByTestnameIgnoreCaseAndStatusAndLssitemaster(
-						objClass.getTestname().trim(), 1, objClass.getLssitemaster()) != null) {
+				&& lStestmasterlocalRepository.findByTestnameIgnoreCaseAndLssitemaster(
+						objClass.getTestname().trim(), objClass.getLssitemaster()) .size()>0) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
 
 			return objClass;
 		} else if (objClass.getTestcode() != null
-				&& lStestmasterlocalRepository.findBytestcodeNotAndTestnameIgnoreCaseAndStatusAndLssitemaster(
-						objClass.getTestcode(), objClass.getTestname().trim(), 1, objClass.getLssitemaster()) != null) {
+				&& lStestmasterlocalRepository.findBytestcodeNotAndTestnameIgnoreCaseAndLssitemaster(
+						objClass.getTestcode(), objClass.getTestname().trim(), objClass.getLssitemaster()).size()>0 ) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
 
@@ -288,15 +288,15 @@ public class BaseMasterService {
 				return objClass;
 			}
 		} else if (objClass.getSamplecode() == null
-				&& lSsamplemasterRepository.findBySamplenameIgnoreCaseAndStatusAndLssitemaster(
-						objClass.getSamplename().trim(), 1, objClass.getLssitemaster()) != null) {
+				&& lSsamplemasterRepository.findBySamplenameIgnoreCaseAndLssitemaster(
+						objClass.getSamplename().trim(), objClass.getLssitemaster()) .size()>0) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
 
 			return objClass;
 		} else if (objClass.getSamplecode() != null && lSsamplemasterRepository
-				.findBySamplenameIgnoreCaseAndStatusAndSamplecodeNotAndLssitemaster(objClass.getSamplename().trim(), 1,
-						objClass.getSamplecode(), objClass.getLssitemaster()) != null) {
+				.findBySamplenameIgnoreCaseAndSamplecodeNotAndLssitemaster(objClass.getSamplename().trim(),
+						objClass.getSamplecode(), objClass.getLssitemaster()).size()>0 ) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
 

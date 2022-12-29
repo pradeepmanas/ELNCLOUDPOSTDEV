@@ -31,16 +31,16 @@ public class SampleStorageLocationService {
 			final SampleStorageVersion sampleStorageVersion) throws JsonMappingException, JsonProcessingException {
 
 		SampleStorageLocation objLocation = sampleStorageLocationRepository
-				.findBySamplestoragelocationnameAndStatus(sampleStorageLocation.getSamplestoragelocationname(), 1);
+				.findBySamplestoragelocationnameAndStatusAndSitekey(sampleStorageLocation.getSamplestoragelocationname(), 1,sampleStorageLocation.getSitekey());
 
 		if (objLocation == null) {
 			sampleStorageLocationRepository.save(sampleStorageLocation);
 			sampleStorageVersion.setSampleStorageLocation(sampleStorageLocation);
 			sampleStorageVersionRepository.save(sampleStorageVersion);
 
-			return new ResponseEntity<>(getAllActiveSampleStorageLocation().getBody(), HttpStatus.OK);
+			return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody(), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>(getAllActiveSampleStorageLocation().getBody(), HttpStatus.CONFLICT);
+			return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody(), HttpStatus.CONFLICT);
 		}
 	}
 
@@ -90,7 +90,7 @@ public class SampleStorageLocationService {
 				sampleStorageLocationRepository.save(sampleStorageLocationItem);
 				sampleStorageVersionRepository.delete(sampleStorageVersionDelete.get());
 
-				return new ResponseEntity<>(getAllActiveSampleStorageLocation().getBody(), HttpStatus.OK);
+				return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(), HttpStatus.OK);
 			}
 		} else {
 			if (sampleStorageVersionDelete.isPresent()) {
@@ -100,7 +100,7 @@ public class SampleStorageLocationService {
 					sampleStorageLocationItem.setStatus(-1);
 					sampleStorageLocationRepository.save(sampleStorageLocationItem);
 					sampleStorageVersionRepository.delete(sampleStorageVersionDelete.get());
-					return new ResponseEntity<>(getAllActiveSampleStorageLocation().getBody(), HttpStatus.OK);
+					return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(), HttpStatus.OK);
 				}
 			}
 		}
@@ -109,10 +109,10 @@ public class SampleStorageLocationService {
 
 	}
 
-	public ResponseEntity<Object> getAllActiveSampleStorageLocation() {
+	public ResponseEntity<Object> getAllActiveSampleStorageLocation(Integer nsiteInteger) {
 
 		List<SampleStorageLocation> sampleStorageLocationList = sampleStorageLocationRepository
-				.findBystatusOrderBySamplestoragelocationkeyDesc(1);
+				.findBystatusAndSitekeyOrderBySamplestoragelocationkeyDesc(1,nsiteInteger);
 
 		Map<String, Object> objMap = new LinkedHashMap<String, Object>();
 

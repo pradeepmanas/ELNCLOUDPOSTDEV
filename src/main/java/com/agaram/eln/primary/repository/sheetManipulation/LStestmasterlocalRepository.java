@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 
 public interface LStestmasterlocalRepository extends JpaRepository<LStestmasterlocal, Integer>{
 	public LStestmasterlocal findByTestname(String Testname);
@@ -27,6 +28,10 @@ public interface LStestmasterlocalRepository extends JpaRepository<LStestmasterl
 	public Object findBytestcodeNotAndTestnameIgnoreCaseAndStatusAndLssitemaster(Integer testcode, String trim, int i,
 			LSSiteMaster lssitemaster);
 	public List<Testmaster> findByLssitemasterOrderByTestcodeDesc(LSSiteMaster lssitemaster);
+	public List<Testmaster> findBytestcodeNotAndTestnameIgnoreCaseAndLssitemaster(Integer testcode, String trim,
+			LSSiteMaster lssitemaster);
+	public List<Testmaster> findByTestnameIgnoreCaseAndLssitemaster(String trim, LSSiteMaster lssitemaster);
+
 	
 
 //	public Object findByTestnameIgnoreCaseAndTaskcategoryIgnoreCaseAndStatusAndTestcodeNotAndLssitemaster(

@@ -22,7 +22,8 @@ public class MaterialInventoryController {
 	@RequestMapping(value = "/getMaterialInventory", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 
 	public ResponseEntity<Object> getMaterialInventory(@RequestBody Map<String, Object> inputMap) throws Exception {
-		return (ResponseEntity<Object>) materialInventoryService.getMaterialInventory();
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		return (ResponseEntity<Object>) materialInventoryService.getMaterialInventory(nsiteInteger);
 	}
 
 	@RequestMapping(value = "/getMaterialInventorycombo", method = RequestMethod.POST)
@@ -30,11 +31,12 @@ public class MaterialInventoryController {
 			throws Exception {
 		Integer nmaterialtypecode = (Integer) inputMap.get("nmaterialtypecode");
 		Integer nmaterialcatcode = null;
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
 		if (inputMap.containsKey("nmaterialcatcode")) {
 			nmaterialcatcode = (int) inputMap.get("nmaterialcatcode");
 		}
 		return (ResponseEntity<Object>) materialInventoryService.getMaterialInventorycombo(nmaterialtypecode,
-				nmaterialcatcode);
+				nmaterialcatcode,nsiteInteger);
 	}
 
 	@RequestMapping(value = "/getMaterialInventoryByID", method = RequestMethod.POST)

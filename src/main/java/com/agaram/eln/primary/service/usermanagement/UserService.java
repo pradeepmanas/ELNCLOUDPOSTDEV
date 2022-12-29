@@ -555,8 +555,7 @@ public class UserService {
 		objteam.setResponse(new Response());
 		objteam.getResponse().setStatus(true);
 		objteam.getResponse().setInformation("ID_SUCCESSMSG");
-		//updatenotificationforteam(objteam);
-
+		
 		for (LSuserMaster objuser : objteam.getLsuserMaster()) {
 			LSuserteammapping objmap = new LSuserteammapping();
 
@@ -568,6 +567,7 @@ public class UserService {
 		if (objteam.getObjsilentaudit() != null) {
 			objteam.getObjsilentaudit().setTableName("LSuserteam");
 		}
+		updatenotificationforteam(objteam);
 
 		return objteam;
 	}
@@ -607,8 +607,9 @@ public class UserService {
 		if (LSuserMaster.getUsername().equalsIgnoreCase("Administrator")) {
 			return lsusersteamRepository.findBystatus(1);
 		} else {
-			List<LSuserteammapping> teams = lsuserteammappingRepository.findBylsuserMaster(LSuserMaster);
-			return lsusersteamRepository.findByLsuserteammappingInAndStatus(teams, 1);
+//			List<LSuserteammapping> teams = lsuserteammappingRepository.findBylsuserMaster(LSuserMaster);
+//			return lsusersteamRepository.findByLsuserteammappingInAndStatus(teams, 1);
+			return lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(), 1);
 			//return lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(), 1);
 		}
 	}

@@ -18,23 +18,23 @@ public class SectionService {
 	@Autowired
 	SectionRepository sectionRepository;
 
-	public ResponseEntity<Object> getSection() {
-		List<Section> lstSection = sectionRepository.findByNstatusOrderByNsectioncode(1);
+	public ResponseEntity<Object> getSection(Integer nsiteInteger) {
+		List<Section> lstSection = sectionRepository.findByNstatusAndNsitecodeOrderByNsectioncodeDesc(1,nsiteInteger);
 
 		return new ResponseEntity<>(lstSection, HttpStatus.OK);
 	}
 
 	public ResponseEntity<Object> createSection(Section section) {
-		final Section sectionObjByName = sectionRepository.findBySsectionnameAndNstatus(section.getSsectionname(), 1);
+		final Section sectionObjByName = sectionRepository.findBySsectionnameAndNstatusAndNsitecode(section.getSsectionname(), 1,section.getNsitecode());
 
 		if (sectionObjByName == null && section.getNsectioncode() == null) {
 			section.setNdefaultstatus(1);
-			section.setNsitecode(1);
+			section.setNsitecode(section.getNsitecode());
 			section.setNstatus(1);
 
 			sectionRepository.save(section);
 
-			return getSection();
+			return getSection(section.getNsitecode());
 		} else {
 
 			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(), HttpStatus.CONFLICT);
@@ -55,11 +55,11 @@ public class SectionService {
 					HttpStatus.EXPECTATION_FAILED);
 		} else {
 
-			final Section objSetion1 = sectionRepository.findBySsectionnameAndNstatus(section.getSsectionname(), 1);
+			final Section objSetion1 = sectionRepository.findBySsectionnameAndNstatusAndNsitecode(section.getSsectionname(), 1,section.getNsitecode());
 
 			if (objSetion1 == null || (objSetion.getNsectioncode() == section.getNsectioncode())) {
 				sectionRepository.save(section);
-				return getSection();
+				return getSection(section.getNsitecode());
 			} else {
 				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
 						HttpStatus.CONFLICT);
@@ -79,7 +79,7 @@ public class SectionService {
 
 			objSetion.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
 			sectionRepository.save(objSetion);
-			return getSection();
+			return getSection(section.getNsitecode());
 
 		}
 	}

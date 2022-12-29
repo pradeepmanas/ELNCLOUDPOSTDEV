@@ -19,16 +19,16 @@ public class UnitService {
 
 	public ResponseEntity<Object> createUnit(Unit objUnit) {
 
-		final Unit objUnit2 = unitRepository.findByNstatusAndSunitname(1, objUnit.getSunitname());
+		final Unit objUnit2 = unitRepository.findByNstatusAndSunitnameAndNsitecode(1, objUnit.getSunitname(),objUnit.getNsitecode());
 
 		if (objUnit2 == null && objUnit.getNunitcode() == null) {
 			objUnit.setNdefaultstatus(1);
-			objUnit.setNsitecode(1);
+			objUnit.setNsitecode(objUnit.getNsitecode());
 			objUnit.setNstatus(1);
 
 			unitRepository.save(objUnit);
 
-			return getUnit();
+			return getUnit(objUnit.getNsitecode());
 		} else {
 
 			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(), HttpStatus.CONFLICT);
@@ -40,8 +40,9 @@ public class UnitService {
 //		return lstUnit;
 //	}
 
-	public ResponseEntity<Object> getUnit() {
-		List<Unit> lstUnit = unitRepository.findByNstatusOrderByNunitcodeDesc(1);
+	public ResponseEntity<Object> getUnit(Integer nsiteInteger) {
+		
+		List<Unit> lstUnit = unitRepository.findByNstatusAndNsitecodeOrderByNunitcodeDesc(1,nsiteInteger);
 
 		return new ResponseEntity<>(lstUnit, HttpStatus.OK);
 	}
@@ -55,12 +56,12 @@ public class UnitService {
 					HttpStatus.EXPECTATION_FAILED);
 		} else {
 
-			final Unit unit1 = unitRepository.findByNstatusAndSunitname(1, objUnit.getSunitname());
+			final Unit unit1 = unitRepository.findByNstatusAndSunitnameAndNsitecode(1, objUnit.getSunitname(),objUnit.getNsitecode());
 
 //			final List<Unit> unitList = getUnitListByName(objUnit.getSunitname(), objUnit.getNsitecode());
 			if (unit1 == null || (unit1.getNunitcode() == objUnit.getNunitcode())) {
 				unitRepository.save(objUnit);
-				return getUnit();
+				return getUnit(objUnit.getNsitecode());
 			} else {
 				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
 						HttpStatus.CONFLICT);
@@ -79,7 +80,7 @@ public class UnitService {
 
 			objUnit.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
 			unitRepository.save(objUnit);
-			return getUnit();
+			return getUnit(objUnit.getNsitecode());
 
 		}
 	}

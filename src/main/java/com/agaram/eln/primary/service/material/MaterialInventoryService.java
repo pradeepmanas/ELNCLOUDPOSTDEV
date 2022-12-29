@@ -74,14 +74,14 @@ public class MaterialInventoryService {
 	MaterialInventoryTransactionRepository materialInventoryTransactionRepository;
 
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> getMaterialInventory() throws Exception {
+	public ResponseEntity<Object> getMaterialInventory(Integer nsiteInteger) throws Exception {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
 		List<MaterialType> lstMaterialType = materialTypeRepository.findAllByOrderByNmaterialtypecode();
 		objmap.put("MaterialType", lstMaterialType);
 
 		List<MaterialCategory> lstMaterialCategory = materialCategoryRepository
-				.findByNmaterialtypecode(lstMaterialType.get(0).getNmaterialtypecode());
+				.findByNmaterialtypecodeAndNsitecode(lstMaterialType.get(0).getNmaterialtypecode(),nsiteInteger);
 
 		List<MaterialType> lstMaterialType1 = new ArrayList<MaterialType>();
 
@@ -115,11 +115,11 @@ public class MaterialInventoryService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> getMaterialInventorycombo(Integer nmaterialtypecode, Integer nmaterialcatcode) {
+	public ResponseEntity<Object> getMaterialInventorycombo(Integer nmaterialtypecode, Integer nmaterialcatcode, Integer nsiteInteger) {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
 		List<MaterialCategory> lstMaterialCategory = materialCategoryRepository
-				.findByNmaterialtypecode(nmaterialtypecode);
+				.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcode(nmaterialtypecode,nsiteInteger);
 
 		List<Map<String, Object>> lstMatObject = new ArrayList<Map<String, Object>>();
 

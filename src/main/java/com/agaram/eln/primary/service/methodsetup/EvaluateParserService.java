@@ -368,20 +368,20 @@ public class EvaluateParserService {
 //			   }
 		//	else {
 			Date date = new Date();
-			LScfttransaction LScfttransaction = new LScfttransaction();
-			LScfttransaction.setActions("Insert");
-			LScfttransaction.setComments("Evaluate Parser for Method : "+methodByKey.get().getMethodname());
-			LScfttransaction.setLssitemaster(site.getSitecode());
-			LScfttransaction.setLsuserMaster(1);
-			LScfttransaction.setManipulatetype("View/Load");
-			LScfttransaction.setModuleName("Method Master");
-			LScfttransaction.setUsername(methodByKey.get().getCreatedby().getUserfullname());
-
-			LScfttransaction.setTransactiondate(date);
-			LScfttransaction.setTableName("SampleExtract");
-			LScfttransaction.setSystemcoments("System Generated");
-			
-			LScfttransactionRepository.save(LScfttransaction);
+//			LScfttransaction LScfttransaction = new LScfttransaction();
+//			LScfttransaction.setActions("Insert");
+//			LScfttransaction.setComments("Evaluate Parser for Method : "+methodByKey.get().getMethodname());
+//			LScfttransaction.setLssitemaster(site.getSitecode());
+//			LScfttransaction.setLsuserMaster(1);
+//			LScfttransaction.setManipulatetype("View/Load");
+//			LScfttransaction.setModuleName("Method Master");
+//			LScfttransaction.setUsername(methodByKey.get().getCreatedby().getUserfullname());
+//
+//			LScfttransaction.setTransactiondate(date);
+//			LScfttransaction.setTableName("SampleExtract");
+//			LScfttransaction.setSystemcoments("System Generated");
+//			
+//			LScfttransactionRepository.save(LScfttransaction);
 			return new ResponseEntity<>(parsedData, HttpStatus.OK);
 		//	}
 		}

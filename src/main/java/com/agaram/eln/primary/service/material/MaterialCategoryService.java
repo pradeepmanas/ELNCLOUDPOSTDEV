@@ -32,8 +32,10 @@ public class MaterialCategoryService {
 		return new ResponseEntity<>(lstgetMaterialType, HttpStatus.OK);
 	}
 
-	public ResponseEntity<Object> getMaterialCategory(Map<String, Object> objmap) {
-		List<Object> lstgetMaterialCategory = MaterialCategoryRepository.findByNstatusOrderByNmaterialcatcodeDesc(1);
+	public ResponseEntity<Object> getMaterialCategory(Integer nsitecode) {
+
+		List<Object> lstgetMaterialCategory = MaterialCategoryRepository
+				.findByNstatusAndNsitecodeOrderByNmaterialcatcodeDesc(1, nsitecode);
 		return new ResponseEntity<>(lstgetMaterialCategory, HttpStatus.OK);
 	}
 
@@ -55,7 +57,7 @@ public class MaterialCategoryService {
 			materialCategory.setNuserrolecode(0);
 			MaterialCategoryRepository.save(materialCategory);
 
-			return getMaterialCategory(inputMap);
+			return getMaterialCategory(materialCategory.getNsitecode());
 
 		} else {
 			return (ResponseEntity<Object>) returnmsg.put("alreadyexists", returnmsg);
@@ -72,8 +74,7 @@ public class MaterialCategoryService {
 //						+ nmaterialcatcode + " and nstatus="+Enumeration.TransactionStatus.ACTIVE.gettransactionstatus()
 //						+") and nstatus="+Enumeration.TransactionStatus.ACTIVE.gettransactionstatus(), Integer.class);
 
-		final MaterialCategory objMaterialCategory = MaterialCategoryRepository
-				.findByNmaterialcatcodeAndNstatus(nmaterialcatcode, 1);
+		final MaterialCategory objMaterialCategory = MaterialCategoryRepository.findByNmaterialcatcodeAndNstatus(nmaterialcatcode, 1);
 
 //		objMaterialCategory = (MaterialCategory) jdbcQueryForObject(strQuery, MaterialCategory.class);
 //		if (needSectionCheck > 0) {
@@ -89,8 +90,6 @@ public class MaterialCategoryService {
 	}
 
 	public ResponseEntity<Object> deleteMaterialCategory(MaterialCategory materialCategory) {
-
-		Map<String, Object> inputMap = new HashMap<>();
 
 		final ObjectMapper objmapper = new ObjectMapper();
 
@@ -108,15 +107,12 @@ public class MaterialCategoryService {
 
 			MaterialCategoryRepository.save(objMaterialCategory);
 
-			return getMaterialCategory(inputMap);
+			return getMaterialCategory(materialCategory.getNsitecode());
 
 		}
 	}
 
-	
 	public ResponseEntity<Object> updateMaterialCategory(MaterialCategory materialCategory) {
-
-		Map<String, Object> inputMap = new HashMap<>();
 
 		final MaterialCategory objMaterialCategory = MaterialCategoryRepository
 				.findByNmaterialcatcodeAndNstatus(materialCategory.getNmaterialcatcode(), 1);
@@ -130,16 +126,17 @@ public class MaterialCategoryService {
 					.findBySmaterialcatnameAndNmaterialcatcodeAndNstatus(materialCategory.getSmaterialcatname(),
 							materialCategory.getNmaterialcatcode(), 1);
 
-			if (materialCategoryObj == null || (materialCategoryObj.getSmaterialcatname() == materialCategory.getSmaterialcatname())) {
+			if (materialCategoryObj == null
+					|| (materialCategoryObj.getSmaterialcatname() == materialCategory.getSmaterialcatname())) {
 
 				objMaterialCategory.setSmaterialcatname(materialCategory.getSmaterialcatname());
 				objMaterialCategory.setSdescription(materialCategory.getSdescription());
 				objMaterialCategory.setNmaterialtypecode(materialCategory.getNmaterialtypecode());
 				objMaterialCategory.setSmaterialtypename(materialCategory.getSmaterialtypename());
-				
+
 				MaterialCategoryRepository.save(objMaterialCategory);
 
-				return getMaterialCategory(inputMap);
+				return getMaterialCategory(materialCategory.getNsitecode());
 			} else {
 				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
 						HttpStatus.CONFLICT);

@@ -646,6 +646,7 @@ public class MethodService {
 
 		    		   //Its not associated in transaction
 					   method.setStatus(-1);
+					   method.setMethodstatus("D");
 					   final Method savedMethod = methodRepo.save(method);   
 					   
 					   savedMethod.setDisplayvalue(savedMethod.getMethodname());

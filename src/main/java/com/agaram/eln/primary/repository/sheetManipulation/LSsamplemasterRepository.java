@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 
 public interface LSsamplemasterRepository extends JpaRepository<LSsamplemaster, Integer>{
 	public LSsamplemaster findBySamplename(String samplename);
@@ -25,4 +26,7 @@ public interface LSsamplemasterRepository extends JpaRepository<LSsamplemaster, 
 	public List<Samplemaster> findBystatusAndLssitemasterOrderBySamplecodeDesc(int i, LSSiteMaster lssitemaster);
 	public List<LSsamplemaster> findByLssitemasterAndStatus(LSSiteMaster lssitemaster, int i);
 	public List<Samplemaster> findByLssitemasterOrderBySamplecodeDesc(LSSiteMaster lssitemaster);
+	public List<Samplemaster> findBySamplenameIgnoreCaseAndLssitemaster(String trim, LSSiteMaster lssitemaster);
+	public List<Samplemaster> findBySamplenameIgnoreCaseAndSamplecodeNotAndLssitemaster(String trim, Integer samplecode,
+			LSSiteMaster lssitemaster);
 }

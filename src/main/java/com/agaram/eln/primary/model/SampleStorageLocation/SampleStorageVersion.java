@@ -46,6 +46,16 @@ public class SampleStorageVersion {
 	@Column(name = "versionno", nullable = false)
 	private Integer versionno = 1;
 	
+	private transient Integer sitekey;
+	
+	public Integer getSitekey() {
+		return sitekey;
+	}
+
+	public void setSitekey(Integer sitekey) {
+		this.sitekey = sitekey;
+	}
+
 	@Column(name = "approvalstatus", nullable = false)
 	private Integer approvalstatus = 8;
 

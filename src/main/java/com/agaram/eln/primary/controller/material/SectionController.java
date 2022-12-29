@@ -23,7 +23,9 @@ public class SectionController {
 	@PostMapping(value = "/getSection")
 	public ResponseEntity<Object> getSection(@RequestBody Map<String, Object> inputMap) throws Exception {
 
-		return sectionService.getSection();
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		
+		return sectionService.getSection(nsiteInteger);
 	}
 
 	@PostMapping(value = "/createSection")

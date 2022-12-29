@@ -69,6 +69,9 @@ public class InstrumentController {
 	@Autowired
 	private LSsamplefileRepository lssamplefileRepository;
 
+	@Autowired
+	CloudParserFileRepository cloudparserfilerepository;
+
 	@PostMapping("/GetInstrumentParameters")
 	public Map<String, Object> getInstrumentparameters(@RequestBody LSSiteMaster lssiteMaster)throws Exception {
 		return instrumentService.getInstrumentparameters(lssiteMaster);
@@ -95,9 +98,6 @@ public class InstrumentController {
 	public LSactivity InsertActivities(@RequestBody LSactivity objActivity)throws Exception {
 		return instrumentService.InsertActivities(objActivity);
 	}
-
-	@Autowired
-	CloudParserFileRepository cloudparserfilerepository;
 	
 	@PostMapping("/Getorderbytype")
 	public Map<String, Object> Getorderbytype(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
@@ -196,6 +196,11 @@ public class InstrumentController {
 	@PostMapping("/GetorderStatus")
 	public LSlogilablimsorderdetail GetorderStatus(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
 		return instrumentService.GetorderStatus(objorder);
+	}
+	
+	@PostMapping("/GetorderStatusFromBatchID")
+	public LSlogilablimsorderdetail GetorderStatusFromBatchID(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
+		return instrumentService.GetorderStatusFromBatchID(objorder);
 	}
 
 	@PostMapping("/GetdetailorderStatus")

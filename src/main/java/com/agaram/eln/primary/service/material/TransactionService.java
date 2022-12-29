@@ -71,6 +71,10 @@ public class TransactionService {
 		List<MaterialCategory> lstCategories = new ArrayList<MaterialCategory>();
 		List<Material> lstMaterials = new ArrayList<Material>();
 		List<MaterialInventory> lstMaterialInventories = new ArrayList<MaterialInventory>();
+		
+		Integer nsiteInteger = (Integer) inputMap.get("sitecode");
+		
+//		Integer nsiteInteger = Integer.parseInt(sSiteInteger);
 
 		if (inputMap.containsKey("nFlag")) {
 			/**
@@ -82,12 +86,12 @@ public class TransactionService {
 
 				if (!lstTypes.isEmpty()) {
 					lstCategories = materialCategoryRepository
-							.findByNmaterialtypecodeOrderByNmaterialcatcode(lstTypes.get(0).getNmaterialtypecode());
+							.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcode(lstTypes.get(0).getNmaterialtypecode(),nsiteInteger);
 
 					if (!lstCategories.isEmpty()) {
 
 						lstMaterials = materialRepository
-								.findByNmaterialcatcodeOrderByNmaterialcode(lstCategories.get(0).getNmaterialcatcode());
+								.findByNmaterialcatcodeAndNsitecodeOrderByNmaterialcode(lstCategories.get(0).getNmaterialcatcode(),nsiteInteger);
 
 						if (!lstMaterials.isEmpty()) {
 							lstMaterialInventories = materialInventoryRepository
@@ -105,12 +109,12 @@ public class TransactionService {
 
 				Integer nTypeCode = (Integer) inputMap.get("nmaterialtypecode");
 
-				lstCategories = materialCategoryRepository.findByNmaterialtypecodeOrderByNmaterialcatcode(nTypeCode);
+				lstCategories = materialCategoryRepository.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcode(nTypeCode,nsiteInteger);
 
 				if (!lstCategories.isEmpty()) {
 
 					lstMaterials = materialRepository
-							.findByNmaterialcatcodeOrderByNmaterialcode(lstCategories.get(0).getNmaterialcatcode());
+							.findByNmaterialcatcodeAndNsitecodeOrderByNmaterialcode(lstCategories.get(0).getNmaterialcatcode(),nsiteInteger);
 
 					if (!lstMaterials.isEmpty()) {
 						lstMaterialInventories = materialInventoryRepository
@@ -124,7 +128,7 @@ public class TransactionService {
 				 */
 			else if ((Integer) inputMap.get("nFlag") == 3) {
 
-				Integer nCategoryCode = (Integer) inputMap.get("nmaterialtypecode");
+				Integer nCategoryCode = (Integer) inputMap.get("nmaterialcatcode");
 
 				lstMaterials = materialRepository.findByNmaterialcatcodeOrderByNmaterialcode(nCategoryCode);
 
@@ -454,11 +458,13 @@ public class TransactionService {
 	public ResponseEntity<Object> getMaterialLst4DashBoard(Map<String, Object> inputMap) {
 
 		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		
+		Integer nsiteInteger = (Integer) inputMap.get("sitecode");
 
 		List<Material> lstMaterials = new ArrayList<Material>();
 		List<MaterialInventory> lstMaterialInventories = new ArrayList<MaterialInventory>();
 
-		lstMaterials = materialRepository.findByNstatus(1);
+		lstMaterials = materialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1,nsiteInteger);
 
 		if (!lstMaterials.isEmpty()) {
 

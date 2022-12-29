@@ -105,27 +105,14 @@ public class InstMasterService {
     		 final HttpServletRequest request,InstrumentMaster auditdetails) 
     {      	
 		boolean saveAuditTrial=true;
-		final Optional<InstrumentMaster> masterByCode = masterRepo.findByInstrumentcodeAndSiteAndStatus(
-    			master.getInstrumentcode(), master.getSite(), 1);
+//		final Optional<InstrumentMaster> masterByCode = masterRepo.findByInstrumentcodeAndSiteAndStatus(
+//    			master.getInstrumentcode(), master.getSite(), 1);
+		final Optional<InstrumentMaster> masterByCode = masterRepo.findByInstrumentcodeAndSiteAndStatus(master.getInstrumentcode(), master.getSite(), 1);
+		final List<InstrumentMaster> masterByname = masterRepo.findByInstrumentnameAndSiteAndStatus(master.getInstrumentname(), master.getSite(), 1);
 		if (masterByCode.isPresent())
 		{
 			//Conflict =409 - Duplicate entry
-			
-//			LScfttransaction LScfttransaction = new LScfttransaction();
-//			
-//			LScfttransaction.setActions("Insert");
-//			LScfttransaction.setComments("Duplicate Entry -"+ master.getInstrumentcode() );
-//			LScfttransaction.setLssitemaster(master.getSite().getSitecode());
-//			LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
-//			LScfttransaction.setManipulatetype("Insert");
-//			LScfttransaction.setModuleName("Instruments");
-//			LScfttransaction.setTransactiondate(master.getCreateddate());
-//			LScfttransaction.setUsername(master.getUsername());
-//			LScfttransaction.setTableName("instrumentmaster");
-//			LScfttransaction.setSystemcoments("System Generated");
-//			
-//			lscfttransactionrepo.save(LScfttransaction);
-			
+
 			master.setInfo("Duplicate Entry - " + masterByCode.get().getInstrumentcode());
  			master.setObjsilentaudit(auditdetails.getObjsilentaudit());
 
@@ -133,6 +120,16 @@ public class InstMasterService {
 //  					 HttpStatus.CONFLICT);
   			return new ResponseEntity<>(master,HttpStatus.CONFLICT);
 		}    		
+		else if (!masterByname.isEmpty()){
+			
+			master.setInfo("Duplicate Entry - " + masterByname.get(0).getInstrumentname());
+ 			master.setObjsilentaudit(auditdetails.getObjsilentaudit());
+
+//  			return new ResponseEntity<>("Duplicate Entry - " + masterByCode.get().getInstrumentcode(), 
+//  					 HttpStatus.CONFLICT);
+  			return new ResponseEntity<>(master,HttpStatus.CONFLICT);
+		}
+		
 		else
 		{	
 			final LSuserMaster createdUser = getCreatedUserByKey(master.getCreatedby().getUsercode());			
@@ -161,29 +158,7 @@ public class InstMasterService {
 				fieldMap.put("createdby", "loginid");				
 				fieldMap.put("insttype", "insttypename");
 				fieldMap.put("instcategory", "instcatname");
-								
-//				final String xmlData = readWriteXML.saveXML(savedMaster, InstrumentMaster.class, 
-//						null, "individualpojo", fieldMap);
-//						
-//				final String actionType = EnumerationInfo.CFRActionType.SYSTEM.getActionType();	
-//				
-//				cfrTransService.saveCfrTransaction(page, actionType, "Create", "", page.getModule().getSite(),
-//						xmlData, createdUser, request.getRemoteAddr());
-				
-//				LScfttransaction LScfttransaction = new LScfttransaction();
-//				
-//				LScfttransaction.setActions("Insert");
-//				LScfttransaction.setComments(master.getInstrumentcode() +" was created by "+master.getUsername() );
-//				LScfttransaction.setLssitemaster(master.getSite().getSitecode());
-//				LScfttransaction.setLsuserMaster(master.getCreatedby().getUsercode());
-//				LScfttransaction.setManipulatetype("Insert");
-//				LScfttransaction.setModuleName("Instruments");
-//				LScfttransaction.setTransactiondate(master.getCreateddate());
-//				LScfttransaction.setUsername(master.getUsername());
-//				LScfttransaction.setTableName("instrumentmaster");
-//				LScfttransaction.setSystemcoments("System Generated");
-//				
-//				lscfttransactionrepo.save(LScfttransaction);
+
 		
 			}			
 			
@@ -756,12 +731,14 @@ public class InstMasterService {
   	        	}
   	        	//---end          
   	            
-  	       	    masterObj.setStatus(-1);	        	
+  	       	    masterObj.setStatus(-1);	 
+  	       	    masterObj.setInststatus("D");
 	            final InstrumentMaster savedInstrument = masterRepo.save(masterObj);    
 	        
 	            savedInstrument.setDisplayvalue(savedInstrument.getInstrumentname());
 	            savedInstrument.setScreenname("Instrument");
 	            savedInstrument.setObjsilentaudit(auditdetails.getObjsilentaudit());
+	            
   	            	
   	            return new ResponseEntity<>(savedInstrument, HttpStatus.OK);//status code - 200   
   	                	}

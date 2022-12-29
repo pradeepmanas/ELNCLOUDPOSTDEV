@@ -3398,3 +3398,15 @@ update instrumentcategory set instcategorystatus='A' where status = 1;
 update instrumentcategory set instcategorystatus='D' where status = -1;
 
 ALTER TABLE IF Exists lscfttransaction ADD COLUMN IF NOT EXISTS auditkey varchar(100);
+
+ ALTER TABLE IF Exists subparserfield ADD COLUMN IF NOT EXISTS datatypekey integer;
+ 
+ update subparserfield set datatypekey=1 where datatypekey is Null;
+ 
+ALTER TABLE IF Exists material ADD COLUMN IF NOT EXISTS nsitecode INTEGER;
+ALTER TABLE IF Exists materialinventory ADD COLUMN IF NOT EXISTS nsitecode INTEGER;
+
+--update samplestoragelocation set sitekey = 1 where sitekey = -1;
+--update materialcategory set nsitecode = 1 where materialcategory.nsitecode = -1;
+update material set nsitecode = 1 where nsitecode ISNULL;
+update materialinventory set nsitecode = 1 where nsitecode ISNULL;

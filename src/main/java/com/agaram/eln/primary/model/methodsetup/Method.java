@@ -99,7 +99,7 @@ public class Method implements Serializable, Diffable<Method>{
 	private String info;
 	
 	@Transient
-	LScfttransaction objmanualaudit;
+	private LScfttransaction objmanualaudit;
 	
 	@Transient
 	private String tenantid;

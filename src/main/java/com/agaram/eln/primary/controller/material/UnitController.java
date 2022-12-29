@@ -25,7 +25,9 @@ public class UnitController {
 	@RequestMapping(value = "/getUnit", method = RequestMethod.POST)
 	public ResponseEntity<Object> getUnit(@RequestBody Map<String, Object> inputMap) throws Exception {
 
-		return unitService.getUnit();
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		
+		return unitService.getUnit(nsiteInteger);
 
 	}
 
