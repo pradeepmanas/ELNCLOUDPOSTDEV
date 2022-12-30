@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -18,12 +19,45 @@ import com.agaram.eln.primary.model.general.Response;
 @Entity
 @Table(name = "Lslogbooks")
 public class Lslogbooks {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Basic(optional = false)
-	@Column(name = "logbookcode")
-	private Integer logbookcode;
 	
+	@Id
+	@SequenceGenerator(name = "orderGen", sequenceName = "orderDetail", initialValue = 1000000, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orderGen")
+	@Column(columnDefinition = "numeric(17,0)", name = "logbookcode")
+	private Long logbookcode;
+	
+	private String logbookid;
+	
+//	public Long getLogbookbatchid() {
+//		return logbookbatchid;
+//	}
+//
+//	public void setLogbookbatchid(Long logbookbatchid) {
+//		this.logbookbatchid = logbookbatchid;
+//	}
+
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	@Basic(optional = false)
+//	@Column(name = "logbookcode")
+//	private Integer logbookcode;
+	
+	public Long getLogbookcode() {
+		return logbookcode;
+	}
+
+	public void setLogbookcode(Long logbookcode) {
+		this.logbookcode = logbookcode;
+	}
+
+	public String getLogbookid() {
+		return logbookid;
+	}
+
+	public void setLogbookid(String logbookid) {
+		this.logbookid = logbookid;
+	}
+
 	private String logbookname;
 	private String logbookcategory;
 	
@@ -69,16 +103,14 @@ public class Lslogbooks {
 
 	@Column(name = "retirestatus")
 	private Integer retirestatus;
-	public Integer getLogbookcode() {
-		return logbookcode;
-	}
+	
 	@Column(columnDefinition = "varchar(10)")
 	private String userstatus;
 	
 	public String getUserstatus() {
 		if(userstatus != null)
 		{
-		return  userstatus.trim().equals("A")?"Active":"Retired";
+		return  userstatus.trim().equals("Active")?"Active":"Retired";
 		}
 		else
 		{
@@ -90,7 +122,7 @@ public class Lslogbooks {
 	public String getReviewstatus() {
 		if(reviewstatus != null)
 		{
-		return  reviewstatus.trim().equals("R")?"Review":"";
+		return  reviewstatus.trim().equals("Review")?"Review":"";
 		}
 		else
 		{
@@ -106,9 +138,7 @@ public class Lslogbooks {
 		this.userstatus = userstatus;
 	}
 
-	public void setLogbookcode(Integer logbookcode) {
-		this.logbookcode = logbookcode;
-	}
+
 
 	public String getLogbookname() {
 		return logbookname;

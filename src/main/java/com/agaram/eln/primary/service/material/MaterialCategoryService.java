@@ -126,8 +126,7 @@ public class MaterialCategoryService {
 					.findBySmaterialcatnameAndNmaterialcatcodeAndNstatus(materialCategory.getSmaterialcatname(),
 							materialCategory.getNmaterialcatcode(), 1);
 
-			if (materialCategoryObj == null
-					|| (materialCategoryObj.getSmaterialcatname() == materialCategory.getSmaterialcatname())) {
+			if (materialCategoryObj == null || (materialCategoryObj.getNmaterialcatcode().equals(materialCategory.getNmaterialcatcode()))) {
 
 				objMaterialCategory.setSmaterialcatname(materialCategory.getSmaterialcatname());
 				objMaterialCategory.setSdescription(materialCategory.getSdescription());

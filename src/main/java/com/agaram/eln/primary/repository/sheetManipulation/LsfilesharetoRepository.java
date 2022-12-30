@@ -19,4 +19,7 @@ public interface LsfilesharetoRepository extends JpaRepository<Lsfileshareto, In
 
 	Lsfileshareto findBySharetofilecode(Long sharetofilecode);
 
+
+	List<Lsfileshareto> findBySharefilecode(Long filecode);
+
 }

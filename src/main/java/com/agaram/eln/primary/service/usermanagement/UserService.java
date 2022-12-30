@@ -220,11 +220,15 @@ public class UserService {
 
 		if (objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
 
-			return lsuserMasterRepository.findByUserretirestatusNotOrderByCreateddateDesc(1);
+//			return lsuserMasterRepository.findByUserretirestatusNotOrderByCreateddateDesc(1);
+			return lsuserMasterRepository.findAll();
 		}
-
-		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1,
+		
+		return lsuserMasterRepository.findByLssitemasterOrderByCreateddateDesc(
 				objusergroup.getLssitemaster());
+
+//		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1,
+//				objusergroup.getLssitemaster());
 	}
 
 	public List<LSuserMaster> GetUsersOnsite(LSSiteMaster objclass) {

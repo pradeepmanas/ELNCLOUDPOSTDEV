@@ -175,5 +175,11 @@ public class MasterController {
 		return masterService.Retirelogbook(objreview);
 	}
 	
+	@RequestMapping("/GetalllogbooksOnSite")
+	public List<Lslogbooks> GetalllogbooksOnSite(@RequestBody Lslogbooks lslogbooks)throws Exception
+	{
+		return masterService.GetalllogbooksOnSite(lslogbooks);
+	}
+	
 	
 }

@@ -1201,21 +1201,23 @@ public class MethodService {
 				// Use while loop to check when file contains data
 				while ((line = br.readLine()) != null) {
 					tempArr = line.split(",");
-					// User for loop to iterate String Array and write data to text file
+				
 					for (String str : tempArr) {
-					//	writer.write(str + "\t ");[already written]
-						sb.append(str).append("\t");
+				
+					//	sb.append(str).append("\t");
+						sb.append(str).append(",");
 
 					}
 				      String appendedline = sb.toString();
-				    //  String resultline = appendedline.trim();
-				      String resultline = appendedline.replaceAll("\\s+$", "");
+				
+				    //  String resultline = appendedline.replaceAll("\\s+$", "");
+				      String resultline = appendedline.replaceAll(",$", "");
 
 				      writer.write(resultline);
 				      sb.setLength(0);
 				      appendedline ="";
 				      resultline="";
-					// Write each line of CSV file to multiple lines
+				
 					writer.write("\n");
 
 				}
@@ -1498,6 +1500,7 @@ public class MethodService {
 		   
 	     	savedMethod.setParser(parser);
 	     	savedMethod.setSamplesplit(sampleSplit);
+	     	savedMethod.setDisplayvalue(savedMethod.getMethodname());
 	    	final Method updatedMethod = methodRepo.save(savedMethod);
 				   
 //		    if (saveAuditTrail)

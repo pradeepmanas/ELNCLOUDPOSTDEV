@@ -1377,7 +1377,10 @@ public class ProtocolService {
 			if (argObj.containsKey("edit")) {
 			} else {
 				LSprotocolversion versProto = new LSprotocolversion();
-
+				
+				versProto.setCreatedate(newProtocolMasterObj.getCreatedate());
+				versProto.setCreatedby(newProtocolMasterObj.getCreatedby());
+				versProto.setCreatedbyusername(newProtocolMasterObj.getCreatedbyusername());
 				versProto.setProtocolmastercode(newProtocolMasterObj.getProtocolmastercode());
 				versProto.setProtocolmastername(newProtocolMasterObj.getProtocolmastername());
 				versProto.setProtocolstatus(1);
@@ -1917,7 +1920,7 @@ public class ProtocolService {
 							Notification = "PROTOCOLAPPROVALRETURN";
 							objnotify.setNotifationto(objuser.get(i));
 
-						} else if (objClass.getRejected() == 1) {
+						} else if (objClass.getRejected()!=null && objClass.getRejected() == 1) {
 							Notification = "PROTOCOLAPPROVALREJECT";
 							objnotify.setNotifationto(createby);
 						}

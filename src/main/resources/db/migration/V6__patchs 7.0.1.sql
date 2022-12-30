@@ -3410,3 +3410,6 @@ ALTER TABLE IF Exists materialinventory ADD COLUMN IF NOT EXISTS nsitecode INTEG
 --update materialcategory set nsitecode = 1 where materialcategory.nsitecode = -1;
 update material set nsitecode = 1 where nsitecode ISNULL;
 update materialinventory set nsitecode = 1 where nsitecode ISNULL;
+ALTER TABLE IF Exists lslogbooks ALTER COLUMN logbookcode TYPE numeric(17,0) USING logbookcode::numeric;
+
+ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS logbookid character varying(255);

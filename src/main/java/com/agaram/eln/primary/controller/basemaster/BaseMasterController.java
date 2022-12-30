@@ -68,6 +68,10 @@ public class BaseMasterController {
 		return masterService.getProjectmaster(objClass);
 	}
 
+	@RequestMapping("/getProjectmasteronproject")
+	public List<LSprojectmaster> getProjectmasteronproject(@RequestBody LSuserMaster objClass)throws Exception {
+		return masterService.getProjectmasteronproject(objClass);
+	}
 	
 	@PostMapping("/InsertupdateTest")
 	public LStestmasterlocal InsertupdateTest(@RequestBody LStestmasterlocal objClass)throws Exception

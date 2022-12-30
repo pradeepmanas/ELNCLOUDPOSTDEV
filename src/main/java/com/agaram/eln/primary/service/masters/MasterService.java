@@ -516,7 +516,11 @@ public class MasterService {
 			objResponse.setStatus(true);
 			lslogbooksRepository.save(lslogbooks);
 		}
-
+		String logbookid = "LB" + lslogbooks.getLogbookcode();
+		lslogbooks.setLogbookid(logbookid);
+		if (objrepo == null) {
+		lslogbooksRepository.save(lslogbooks);
+		}
 		lslogbooks.setObjResponse(objResponse);
 		return lslogbooks;
 	}
@@ -576,4 +580,18 @@ public class MasterService {
 		lslogbooksRepository.save(objreview);
 		return objreview;
 	}
+
+
+	public List<Lslogbooks> GetalllogbooksOnSite(Lslogbooks lslogbooks) {
+		List<Lslogbooks> objreview = Arrays.asList(lslogbooks);
+		if(objreview.get(0).getSitecode() == 0) {
+			objreview= lslogbooksRepository.findAll();
+		}else {
+			objreview= lslogbooksRepository.findBySitecodeOrderByLogbookcodeDesc(objreview.get(0).getSitecode());	
+		}
+		
+		return objreview;
+	}
+
+
 }

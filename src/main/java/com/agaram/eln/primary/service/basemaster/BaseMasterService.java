@@ -198,7 +198,7 @@ public class BaseMasterService {
 //				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
 
 		List<LSprojectmaster> projectlist = lSprojectmasterRepository
-				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(),1);
+				.findByLssitemasterOrderByProjectcodeDesc(objClass.getLssitemaster());
 		return projectlist;
 	}
 
@@ -594,6 +594,16 @@ public class BaseMasterService {
 		obj.put("lslogbooksampleupdates", lslogbooksampleupdates);
 		obj.put("lslogbooksamplelist", lslogbooksamplelist);
 		return obj;
+	}
+
+	public List<LSprojectmaster> getProjectmasteronproject(LSuserMaster objClass) {
+
+//		List<LSprojectmaster> projectlist = lSprojectmasterRepository
+//				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
+
+		List<LSprojectmaster> projectlist = lSprojectmasterRepository
+				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(),1);
+		return projectlist;
 	}
 
 }

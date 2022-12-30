@@ -21,4 +21,9 @@ public interface LsfilesharedbyRepository extends JpaRepository<Lsfilesharedby, 
 
 	Lsfilesharedby findBySharedbytofilecode(Long sharedbytofilecode);
 
+
+
+
+	List<Lsfilesharedby> findBySharefilecode(Long filecode);
+
 }

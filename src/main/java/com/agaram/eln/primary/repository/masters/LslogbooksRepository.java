@@ -10,4 +10,7 @@ public interface LslogbooksRepository extends JpaRepository<Lslogbooks, Integer>
 	public Lslogbooks findByLogbooknameAndSitecode(String logbookname,Integer sitecode);
 	public Lslogbooks findByLogbooknameAndSitecodeAndLogbookcodeNot(String logbookname,Integer sitecode, Integer logbookcode);
 	public List<Lslogbooks> findBySitecodeOrderByLogbookcodeAsc(Integer sitecode);
+	public Lslogbooks findByLogbooknameAndSitecodeAndLogbookcodeNot(String logbookname, Integer sitecode,
+			Long logbookcode);
+	public List<Lslogbooks> findBySitecodeOrderByLogbookcodeDesc(Integer sitecode);
 }
