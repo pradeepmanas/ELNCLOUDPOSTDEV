@@ -4,32 +4,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.builder.Diff;
-import org.apache.commons.lang3.builder.DiffResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agaram.eln.primary.model.instrumentsetup.InstRightsEssential;
+import com.agaram.eln.primary.model.instrumentsetup.InstrumentRights;
+import com.agaram.eln.primary.model.instrumentsetup.InstrumentRightsCollection;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 //import com.agaram.lleln.cfrpart11.cfrtransaction.CfrTransactionService;
 //import com.agaram.lleln.jaxb.ReadWriteXML;
 //import com.agaram.lleln.page.Page;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
-import com.agaram.eln.primary.model.instrumentsetup.InstRightsEssential;
-import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
-import com.agaram.eln.primary.model.instrumentsetup.InstrumentRights;
-import com.agaram.eln.primary.model.instrumentsetup.InstrumentRightsCollection;
-import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstRightsRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 //import com.agaram.lleln.util.EnumerationInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -76,11 +72,11 @@ public class InstRightsService {
 	    final Boolean saveAuditTrail = mapper.convertValue(rightsObject.get("saveAuditTrail"), Boolean.class);
 //	    final Page page = mapper.convertValue(rightsObject.get("modulePage"), Page.class);
 		final LSSiteMaster site =  mapper.convertValue(rightsObject.get("site"), LSSiteMaster.class);
-	    String comments = "";
-	    if(rightsObject.get("comments") != null)
-	    {
-	    	comments = (String) rightsObject.get("comments");
-	    }
+//	    String comments = "";
+//	    if(rightsObject.get("comments") != null)
+//	    {
+//	    	comments = (String) rightsObject.get("comments");
+//	    }
 	    
 	 	int createdBy = (Integer)rightsObject.get("createdby");
 	 		
@@ -96,11 +92,12 @@ public class InstRightsService {
 	 	
 		final LSSiteMaster userSite = userSiteRepo.findOne(userSiteKey);	 
 		final List<InstrumentRights> rightsBeforeSave = rightsRepo.findByUsersite(userSite);
-		List<InstrumentRights> cloneListBeforeSave = new ArrayList<InstrumentRights>();
+//		List<InstrumentRights> cloneListBeforeSave = new ArrayList<InstrumentRights>();
 		
 		if(saveAuditTrail)
 		{				
-			cloneListBeforeSave = rightsBeforeSave.stream().map(InstrumentRights::new).collect(Collectors.toList());
+//			cloneListBeforeSave = 
+					rightsBeforeSave.stream().map(InstrumentRights::new).collect(Collectors.toList());
 		}
 		
 		final List<InstrumentRights> instRightsList = new ArrayList<InstrumentRights>();
@@ -148,14 +145,15 @@ public class InstRightsService {
 		
 		if(!instRightsList.isEmpty())
 		{
-		 	final List<InstrumentRights> listAfterSave = rightsRepo.save(instRightsList);
+//		 	final List<InstrumentRights> listAfterSave = rightsRepo.save(instRightsList);
+			rightsRepo.save(instRightsList);
 		 		
 		 	if (saveAuditTrail)
 			{
-	        	final List<InstrumentRights> savedCloneList = listAfterSave.stream().map(InstrumentRights::new)
-						 .collect(Collectors.toList());					
+//	        	final List<InstrumentRights> savedCloneList = listAfterSave.stream().map(InstrumentRights::new)
+//						 .collect(Collectors.toList());					
 			
-	        	final String xmlData = convertInstrumentRightsListToXML(cloneListBeforeSave, savedCloneList);
+//	        	final String xmlData = convertInstrumentRightsListToXML(cloneListBeforeSave, savedCloneList);
 								
 //				String actionType = "";
 //			    String action = "";
@@ -259,7 +257,7 @@ public class InstRightsService {
    				{
    					if (beforeSaveRights.getInstrightskey().equals(savedRights.getInstrightskey()))
    					{							
-   						final DiffResult diffResult = beforeSaveRights.diff(savedRights);					
+//   						final DiffResult diffResult = beforeSaveRights.diff(savedRights);					
    						
    						final Map<String, Object> diffObject = new HashMap<String, Object>();
    						
@@ -306,17 +304,17 @@ public class InstRightsService {
 	 * @param data [Object] from which data is to be fetched
 	 * @return value of deeply nested property
 	 */
-	private static String getFieldValue(String fieldName, Object data)
-	{
-		if (fieldName.equalsIgnoreCase("master")) 
-		  return ((InstrumentMaster)data).getInstrumentcode();
-		else if (fieldName.equalsIgnoreCase("createdby"))
-			return ((LSuserMaster)data).getUsername();
-		else if (fieldName.equalsIgnoreCase("usersite"))
-			return ((LSSiteMaster)data).getSitename();
-		else
-			return "";
-	}
+//	private static String getFieldValue(String fieldName, Object data)
+//	{
+//		if (fieldName.equalsIgnoreCase("master")) 
+//		  return ((InstrumentMaster)data).getInstrumentcode();
+//		else if (fieldName.equalsIgnoreCase("createdby"))
+//			return ((LSuserMaster)data).getUsername();
+//		else if (fieldName.equalsIgnoreCase("usersite"))
+//			return ((LSSiteMaster)data).getSitename();
+//		else
+//			return "";
+//	}
    	
 }
    

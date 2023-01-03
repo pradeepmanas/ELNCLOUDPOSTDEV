@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.service.instrumentsetup;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +7,6 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.builder.DiffResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -16,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.instrumentsetup.FileSettings;
 import com.agaram.eln.primary.model.instrumentsetup.InstMethod;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
@@ -343,7 +340,7 @@ public class InstMasterService {
     
     public ResponseEntity<Object> updateInstMaster(final InstrumentMaster master, final String comments, final HttpServletRequest request,InstrumentMaster auditdetails) {
     	    
-    	Boolean saveAuditTrail = true;
+//    	Boolean saveAuditTrail = true;
     	final Optional<InstrumentMaster> instrumentByCode = masterRepo.findByInstrumentcodeAndSiteAndStatus(
    			master.getInstrumentcode(), master.getSite(), 1);
     	
@@ -505,7 +502,7 @@ public class InstMasterService {
 //	    			}
 		    		
 		    		//copy of object for using 'Diffable' to compare objects
-	    			final InstrumentMaster instrumentBeforeSave = new InstrumentMaster(instrumentBykey.get());
+//	    			final InstrumentMaster instrumentBeforeSave = new InstrumentMaster(instrumentBykey.get());
 	    			
 		    		//Updating fields with a new delimiter name
 	    			
@@ -711,12 +708,12 @@ public class InstMasterService {
           	final InstrumentMaster masterObj = instMaster;
          	
           		
-          		final InstrumentMaster instrumentBeforeSave = new InstrumentMaster(masterObj); 
+//          		final InstrumentMaster instrumentBeforeSave = new InstrumentMaster(masterObj); 
   	        	//Deleting existing 'Instrumenttype' settings record 
   	        	deleteInstTypeSettings(masterObj);
   	        	
   	        	//---start -to delete this  instrument associated for 'Administrator' in 'InstrumentRights' by changing status to '-1'. 
-  	        	final LSSiteMaster sitedata = masterObj.getSite();    	
+//  	        	final LSSiteMaster sitedata = masterObj.getSite();    	
   	        	 //Administrator id has to be used  	
   	        	final LSuserMaster user =  userRepo.findOne(1);
   	        			
@@ -748,7 +745,7 @@ public class InstMasterService {
  			   //Associated with Method master
  			   if (saveAuditTrial1)
  			   {
- 				   final String sysComments = "Delete Failed as instrument -" +instMaster.getInstrumentname()+ " is associated with Method master";
+// 				   final String sysComments = "Delete Failed as instrument -" +instMaster.getInstrumentname()+ " is associated with Method master";
  	   			
 // 					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 // 							"Delete", sysComments, 
@@ -812,7 +809,7 @@ public class InstMasterService {
    		final Map<Integer, Map<String, Object>> instMasterModified = new HashMap<Integer, Map<String, Object>>();
    		final Map<String, Object> diffObject = new HashMap<String, Object>();    			
    		
-   		final DiffResult diffResult = instMasterBeforeSave.diff(savedInstMaster);        			
+//   		final DiffResult diffResult = instMasterBeforeSave.diff(savedInstMaster);        			
    		
 //   		for(Diff<?> d: diffResult.getDiffs()) {
 //   			diffObject.put(d.getFieldName(), d.getKey()+" -> "+d.getValue());

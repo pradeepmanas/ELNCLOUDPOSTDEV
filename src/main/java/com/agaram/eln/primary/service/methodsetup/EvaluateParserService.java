@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,10 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.agaram.eln.primary.model.cfr.LScfttransaction;
-import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.methodsetup.CommonFunction;
 import com.agaram.eln.primary.model.methodsetup.CustomField;
+import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
 import com.agaram.eln.primary.model.methodsetup.GeneralField;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.MethodFieldTechnique;
@@ -32,12 +30,10 @@ import com.agaram.eln.primary.model.methodsetup.ParserTechnique;
 import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserTechnique;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
-import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
-import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.methodsetup.ELNResultDetailsRepository;
 import com.agaram.eln.primary.repository.methodsetup.LSResultFieldValuesRepository;
+import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 
 /**
  * This Service class holds methods that is used to validate the Parser result
@@ -367,7 +363,7 @@ public class EvaluateParserService {
 //				   return new ResponseEntity<>("wrong file ", HttpStatus.NOT_FOUND);
 //			   }
 		//	else {
-			Date date = new Date();
+//			Date date = new Date();
 //			LScfttransaction LScfttransaction = new LScfttransaction();
 //			LScfttransaction.setActions("Insert");
 //			LScfttransaction.setComments("Evaluate Parser for Method : "+methodByKey.get().getMethodname());

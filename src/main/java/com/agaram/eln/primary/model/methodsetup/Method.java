@@ -27,12 +27,10 @@ import org.apache.commons.lang3.builder.DiffBuilder;
 import org.apache.commons.lang3.builder.DiffResult;
 import org.apache.commons.lang3.builder.Diffable;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.bson.types.Binary;
 import org.hibernate.validator.constraints.Range;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
-import com.agaram.eln.primary.model.methodsetup.InstantDateAdapter;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -352,6 +350,7 @@ public class Method implements Serializable, Diffable<Method>{
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DiffResult diff(Method obj) {
 		

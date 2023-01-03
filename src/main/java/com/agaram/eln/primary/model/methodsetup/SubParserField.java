@@ -190,6 +190,7 @@ public class SubParserField implements Serializable, Diffable<SubParserField>{
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DiffResult diff(SubParserField obj) {
 		

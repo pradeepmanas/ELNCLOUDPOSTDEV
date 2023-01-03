@@ -2,26 +2,24 @@ package com.agaram.eln.primary.service.fileuploaddownload;
 
 
 import java.io.ByteArrayInputStream;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.bson.BsonBinarySubType;
-import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsOperations;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.exception.FileNotFoundException;
@@ -30,17 +28,11 @@ import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
 import com.agaram.eln.primary.property.FileStorageProperties;
 import com.agaram.eln.primary.repository.methodsetup.CloudParserFileRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
+import com.agaram.eln.primary.service.methodsetup.MethodService;
 //import net.javaguides.springboot.fileuploaddownload.exception.FileStorageException;
 //import net.javaguides.springboot.fileuploaddownload.exception.FileNotFoundException;
 //import net.javaguides.springboot.fileuploaddownload.property.FileStorageProperties;
 import com.mongodb.gridfs.GridFSDBFile;
-
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.gridfs.GridFsOperations;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-import com.agaram.eln.primary.service.methodsetup.MethodService;
 
 
 @Service
@@ -58,8 +50,8 @@ public class FileStorageService {
 	@Autowired
 	GridFsOperations gridFsOps;
 
-	@Autowired
-	private MongoTemplate mongoTemplate;
+//	@Autowired
+//	private MongoTemplate mongoTemplate;
 
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
@@ -152,10 +144,10 @@ public class FileStorageService {
     }
 
     
-    private Exception FileStorageException(String string, IOException e) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//    private Exception FileStorageException(String string, IOException e) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 
 	public String storeSQLFile(MultipartFile file , String tenant,Integer isMultitenant,String originalfilename) {

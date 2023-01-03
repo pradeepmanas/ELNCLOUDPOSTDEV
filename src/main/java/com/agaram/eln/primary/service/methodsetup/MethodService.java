@@ -2,9 +2,7 @@ package com.agaram.eln.primary.service.methodsetup;
 
 
 import java.io.BufferedReader;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -14,7 +12,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,37 +26,28 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.builder.DiffResult;
 import org.apache.pdfbox.cos.COSDocument;
 import org.apache.pdfbox.io.RandomAccessBufferedFileInputStream;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.util.Matrix;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-
 import org.springframework.web.multipart.MultipartFile;
 
-import org.springframework.mock.web.MockMultipartFile;
-
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
-import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
-
 import com.agaram.eln.primary.model.methodsetup.CustomField;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.MethodVersion;
@@ -80,10 +68,8 @@ import com.agaram.eln.primary.repository.methodsetup.CustomFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodVersionRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
-
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.mongodb.gridfs.GridFSDBFile;
 
 
@@ -139,8 +125,8 @@ public class MethodService {
 	@Autowired
 	GridFsOperations gridFsOps;
 
-	@Autowired
-	private MongoTemplate mongoTemplate;
+//	@Autowired
+//	private MongoTemplate mongoTemplate;
 
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
@@ -202,8 +188,8 @@ public class MethodService {
 				//Conflict =409 - Duplicate entry
 				if (saveAuditTrail == true)
 				{						
-					final String comments = "Create Failed for duplicate method name -"+ methodMaster.getMethodname()
-					+ " for the instrument - " + instMaster.getInstrumentcode();
+//					final String comments = "Create Failed for duplicate method name -"+ methodMaster.getMethodname()
+//					+ " for the instrument - " + instMaster.getInstrumentcode();
 					
 //					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //							"Create", comments, site, "",
@@ -237,7 +223,8 @@ public class MethodService {
 				methodMaster.setInstmaster(instMaster);					
 				final Method savedMethod = methodRepo.save(methodMaster);
 				
-				List<MethodVersion> MethodVersion = methodversionrepository.save(methodMaster.getMethodversion());
+//				List<MethodVersion> MethodVersion = 
+				methodversionrepository.save(methodMaster.getMethodversion());
 				
 				savedMethod.setDisplayvalue(savedMethod.getMethodname());
 				savedMethod.setScreenname("Methodmaster");
@@ -256,7 +243,7 @@ public class MethodService {
 			//Instrument not found
 			if (saveAuditTrail == true)
 			{						
-				final String comments = "Create Failed as Instrument not found";
+//				final String comments = "Create Failed as Instrument not found";
 				
 //				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //						"Create", comments, site, "",
@@ -399,7 +386,7 @@ public class MethodService {
 			    final HttpServletRequest request,Method auditdetails)
 	{	  		
 		boolean saveAuditTrail=true;
-		final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);		
+//		final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);		
 		final InstrumentMaster instMaster = instMastRepo.findOne(method.getInstmaster().getInstmastkey());
 		
 		 final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatusAndSite(method.getMethodkey(), 1,site);
@@ -420,7 +407,7 @@ public class MethodService {
 				if(methodByName.get().getMethodkey().equals(method.getMethodkey()))
 		    	{   
 				//copy of object for using 'Diffable' to compare objects
-	    			final Method methodBeforeSave = new Method(methodByName.get());
+//	    			final Method methodBeforeSave = new Method(methodByName.get());
 	    			
 					method.setInstmaster(instMaster);		    			
 		    		final Method savedMethod = methodRepo.save(method);
@@ -491,7 +478,7 @@ public class MethodService {
 			else
 	    	{			    		
 	    		//copy of object for using 'Diffable' to compare objects
-			final Method methodBeforeSave = new Method(methodByKey.get());
+//			final Method methodBeforeSave = new Method(methodByKey.get());
 			
 	    		//Updating fields with a new delimiter name
 			
@@ -603,7 +590,7 @@ public class MethodService {
 	   {	   
 		  boolean saveAuditTrial=true;
 		   final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);
-		   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
+//		   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 		   
 		   if(methodByKey.isPresent()) {
 
@@ -612,7 +599,7 @@ public class MethodService {
 					   || (method.getParser() != null && method.getParser() == 1)) {
 				    if (saveAuditTrial)
 		    		{	
-					   final String sysComments = "Delete Failed as method - "+ method.getMethodname() + " is associated samlesplit/parser";
+//					   final String sysComments = "Delete Failed as method - "+ method.getMethodname() + " is associated samlesplit/parser";
 			   			
 //						cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //								"Delete", sysComments, method.getSite(), "", createdUser, request.getRemoteAddr());
@@ -642,7 +629,7 @@ public class MethodService {
 			   else {
 			
 					   //copy of object for using 'Diffable' to compare objects
-					   final Method methodBeforeSave = new Method(method); 
+//					   final Method methodBeforeSave = new Method(method); 
 
 		    		   //Its not associated in transaction
 					   method.setStatus(-1);
@@ -708,7 +695,7 @@ public class MethodService {
 	  	final Map<Integer, Map<String, Object>> dataModified = new HashMap<Integer, Map<String, Object>>();
 			final Map<String, Object> diffObject = new HashMap<String, Object>();    			
 			
-			final DiffResult diffResult = methodBeforeSave.diff(savedMethod);        			
+//			final DiffResult diffResult = methodBeforeSave.diff(savedMethod);        			
 //			for(Diff<?> d: diffResult.getDiffs()) {	
 //					diffObject.put(d.getFieldName(), d.getKey()+" -> "+d.getValue());
 //			}
@@ -936,7 +923,8 @@ public class MethodService {
 //   }
 //   
         
-   public String getFileData(final String fileName,String tenant) throws FileNotFoundException, IOException
+   @SuppressWarnings("resource")
+public String getFileData(final String fileName,String tenant) throws FileNotFoundException, IOException
 
    {
 	   try
@@ -1133,10 +1121,11 @@ public class MethodService {
    }
    
       
-      public String getSQLFileData(String fileName) throws IOException {
+      @SuppressWarnings("resource")
+	public String getSQLFileData(String fileName) throws IOException {
 
 	
-		String Content = "";
+//		String Content = "";
 		String rawDataText="";
 		byte[] bytes = null;
 
@@ -1279,7 +1268,7 @@ public class MethodService {
 	   final int methodKey= (Integer) mapObject.get("methodKey");
 	   final String methodName= (String) mapObject.get("methodName");
 	   final int instrumentKey = (Integer) mapObject.get("instMasterKey");
-	   final String comments = (String) mapObject.get("comments");
+//	   final String comments = (String) mapObject.get("comments");
 	   
 	   final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);	   
 	   final InstrumentMaster instMaster = instMastRepo.findOne(instrumentKey);
@@ -1311,7 +1300,7 @@ public class MethodService {
   					 HttpStatus.CONFLICT); 
 		   }
 		   else {
-		   final Method methodBeforeSave = new Method(methodByKey.get());
+//		   final Method methodBeforeSave = new Method(methodByKey.get());
 		   
 		   //Making entry in 'method' table for the selected instrument
 		   final Method newMethod = new Method(methodByKey.get());
@@ -1476,7 +1465,8 @@ public class MethodService {
 				item.setCustomfieldkey(0);
 			});
 			
-			final List<CustomField> savedCustomFieldList =  customFieldRepo.save(customFieldListBS);					
+//			final List<CustomField> savedCustomFieldList =  
+					customFieldRepo.save(customFieldListBS);					
 			//End- Saving custom fields
 			
 			Integer parser = null; 
@@ -1501,7 +1491,8 @@ public class MethodService {
 	     	savedMethod.setParser(parser);
 	     	savedMethod.setSamplesplit(sampleSplit);
 	     	savedMethod.setDisplayvalue(savedMethod.getMethodname());
-	    	final Method updatedMethod = methodRepo.save(savedMethod);
+//	    	final Method updatedMethod =
+	    			methodRepo.save(savedMethod);
 				   
 //		    if (saveAuditTrail)
 //			{			  
@@ -1553,83 +1544,83 @@ public class MethodService {
     * @param comments [String] comments given by the user for audit recording
     * @param site [Site] object for which audit trail recording is to be done
     */
-   private void auditMethodCopy(final Method methodBeforeSave, final Method updatedMethod,
-		   final HttpServletRequest request, final Map<String, Object> savedSampleSplitMap,
-		   final Map<String, Object> savedParserMap, final List<CustomField> customFieldList, 
-		   final List<CustomField> savedCustomFieldList, final LSuserMaster createdUser,
-		   final String comments, final LSuserMaster site) {
-	    String methodXML = convertMethodObjectToXML(methodBeforeSave, updatedMethod);
-		
-   		final Map<String, String> xmlMap = sampleSplitService.getXMLData(savedSampleSplitMap);
-   		String textXML = (String) xmlMap.get("textXML");
-   		String lineXML = (String) xmlMap.get("lineXML");
-   		String extractXML = (String) xmlMap.get("extractXML");
-   	
-   		final StringBuffer xmlDataBuffer = new StringBuffer();	
-   		if (methodXML.length() != 0 && methodXML.contains("<?xml")){
-   			methodXML = methodXML.substring(textXML.indexOf("?>")+2);
-   		}
-   	
-   		if (textXML.length() != 0 && textXML.contains("<?xml")){
-			textXML = textXML.substring(textXML.indexOf("?>")+2);
-			textXML = textXML.replace("<sampletextsplits>", "").replace("</sampletextsplits>", "");									
-		}
-		if (lineXML.length() != 0 && lineXML.contains("<?xml")){
-			lineXML = lineXML.substring(lineXML.indexOf("?>")+2);
-			lineXML = lineXML.replace("<samplelinesplits>", "").replace("</samplelinesplits>", "");
-			
-		}
-		if (extractXML.length() != 0 && extractXML.contains("<?xml")){
-			extractXML = extractXML.substring(extractXML.indexOf("?>")+2);
-			extractXML = extractXML.replace("<sampleextracts>", "").replace("</sampleextracts>", "");
-		}	
-		
-		final Map<String, String> parserXMLMap = parserSetupService.getXMLData(savedParserMap);
-   	
-		String blockXML = (String) parserXMLMap.get("blockXML");
-		String parserFieldXML = (String) parserXMLMap.get("parserFieldXML");
-		String parserTechniqueXML = (String) parserXMLMap.get("parserTechniqueXML");
-		String subParserFieldXML = (String) parserXMLMap.get("subParserFieldXML");
-		String subParserTechXML = (String) parserXMLMap.get("subParserTechXML");
-   			    
-		if (blockXML.length() != 0 && blockXML.contains("<?xml")){
-			blockXML = blockXML.substring(blockXML.indexOf("?>")+2);
-			blockXML = blockXML.replace("<parserblocks>", "").replace("</parserblocks>", "");									
-		}
-		if (parserFieldXML.length() != 0 && parserFieldXML.contains("<?xml")){
-			parserFieldXML = parserFieldXML.substring(parserFieldXML.indexOf("?>")+2);
-			parserFieldXML = parserFieldXML.replace("<parserfields>", "").replace("</parserfields>", "");
-			
-		}
-		if (parserTechniqueXML.length() != 0 && parserTechniqueXML.contains("<?xml")){
-			parserTechniqueXML = parserTechniqueXML.substring(parserTechniqueXML.indexOf("?>")+2);
-			parserTechniqueXML = parserTechniqueXML.replace("<parsertechniques>", "").replace("</parsertechniques>", "");
-		}
-		if (subParserTechXML.length() != 0 && subParserTechXML.contains("<?xml")){
-			subParserTechXML = subParserTechXML.substring(subParserTechXML.indexOf("?>")+2);
-			subParserTechXML = subParserTechXML.replace("<subparsertechniques>", "").replace("</subparsertechniques>", "");
-		}
-		if (subParserFieldXML.length() != 0 && subParserFieldXML.contains("<?xml")){
-			subParserFieldXML = subParserFieldXML.substring(subParserFieldXML.indexOf("?>")+2);
-			subParserFieldXML = subParserFieldXML.replace("<subparserfields>", "").replace("</subparserfields>", "");
-		}
-		
-		String customFieldXML = customFieldService.convertCustomFieldListToXML(customFieldList, savedCustomFieldList);
-		 
-		if (customFieldXML.length() != 0 && customFieldXML.contains("<?xml")){
-			customFieldXML = customFieldXML.substring(customFieldXML.indexOf("?>")+2);
-			customFieldXML = customFieldXML.replace("<customfields>", "").replace("</customfields>", "");
-		}
-		xmlDataBuffer.append("<?xml version=\"1.0\" encoding=\"UTF-16\"?><combinedxml>" + methodXML + textXML + lineXML + 
-				extractXML+ blockXML + parserFieldXML + parserTechniqueXML + subParserTechXML + subParserFieldXML
-				 + customFieldXML 
-				 + "</combinedxml>");				
-		
-//		final String actionType = EnumerationInfo.CFRActionType.SYSTEM.getActionType();
-//		cfrTransService.saveCfrTransaction(page, actionType, "Copy Method", comments, 
-//					site, xmlDataBuffer.toString(), createdUser, request.getRemoteAddr());
-   }
-   
+//   private void auditMethodCopy(final Method methodBeforeSave, final Method updatedMethod,
+//		   final HttpServletRequest request, final Map<String, Object> savedSampleSplitMap,
+//		   final Map<String, Object> savedParserMap, final List<CustomField> customFieldList, 
+//		   final List<CustomField> savedCustomFieldList, final LSuserMaster createdUser,
+//		   final String comments, final LSuserMaster site) {
+//	    String methodXML = convertMethodObjectToXML(methodBeforeSave, updatedMethod);
+//		
+//   		final Map<String, String> xmlMap = sampleSplitService.getXMLData(savedSampleSplitMap);
+//   		String textXML = (String) xmlMap.get("textXML");
+//   		String lineXML = (String) xmlMap.get("lineXML");
+//   		String extractXML = (String) xmlMap.get("extractXML");
+//   	
+//   		final StringBuffer xmlDataBuffer = new StringBuffer();	
+//   		if (methodXML.length() != 0 && methodXML.contains("<?xml")){
+//   			methodXML = methodXML.substring(textXML.indexOf("?>")+2);
+//   		}
+//   	
+//   		if (textXML.length() != 0 && textXML.contains("<?xml")){
+//			textXML = textXML.substring(textXML.indexOf("?>")+2);
+//			textXML = textXML.replace("<sampletextsplits>", "").replace("</sampletextsplits>", "");									
+//		}
+//		if (lineXML.length() != 0 && lineXML.contains("<?xml")){
+//			lineXML = lineXML.substring(lineXML.indexOf("?>")+2);
+//			lineXML = lineXML.replace("<samplelinesplits>", "").replace("</samplelinesplits>", "");
+//			
+//		}
+//		if (extractXML.length() != 0 && extractXML.contains("<?xml")){
+//			extractXML = extractXML.substring(extractXML.indexOf("?>")+2);
+//			extractXML = extractXML.replace("<sampleextracts>", "").replace("</sampleextracts>", "");
+//		}	
+//		
+//		final Map<String, String> parserXMLMap = parserSetupService.getXMLData(savedParserMap);
+//   	
+//		String blockXML = (String) parserXMLMap.get("blockXML");
+//		String parserFieldXML = (String) parserXMLMap.get("parserFieldXML");
+//		String parserTechniqueXML = (String) parserXMLMap.get("parserTechniqueXML");
+//		String subParserFieldXML = (String) parserXMLMap.get("subParserFieldXML");
+//		String subParserTechXML = (String) parserXMLMap.get("subParserTechXML");
+//   			    
+//		if (blockXML.length() != 0 && blockXML.contains("<?xml")){
+//			blockXML = blockXML.substring(blockXML.indexOf("?>")+2);
+//			blockXML = blockXML.replace("<parserblocks>", "").replace("</parserblocks>", "");									
+//		}
+//		if (parserFieldXML.length() != 0 && parserFieldXML.contains("<?xml")){
+//			parserFieldXML = parserFieldXML.substring(parserFieldXML.indexOf("?>")+2);
+//			parserFieldXML = parserFieldXML.replace("<parserfields>", "").replace("</parserfields>", "");
+//			
+//		}
+//		if (parserTechniqueXML.length() != 0 && parserTechniqueXML.contains("<?xml")){
+//			parserTechniqueXML = parserTechniqueXML.substring(parserTechniqueXML.indexOf("?>")+2);
+//			parserTechniqueXML = parserTechniqueXML.replace("<parsertechniques>", "").replace("</parsertechniques>", "");
+//		}
+//		if (subParserTechXML.length() != 0 && subParserTechXML.contains("<?xml")){
+//			subParserTechXML = subParserTechXML.substring(subParserTechXML.indexOf("?>")+2);
+//			subParserTechXML = subParserTechXML.replace("<subparsertechniques>", "").replace("</subparsertechniques>", "");
+//		}
+//		if (subParserFieldXML.length() != 0 && subParserFieldXML.contains("<?xml")){
+//			subParserFieldXML = subParserFieldXML.substring(subParserFieldXML.indexOf("?>")+2);
+//			subParserFieldXML = subParserFieldXML.replace("<subparserfields>", "").replace("</subparserfields>", "");
+//		}
+//		
+//		String customFieldXML = customFieldService.convertCustomFieldListToXML(customFieldList, savedCustomFieldList);
+//		 
+//		if (customFieldXML.length() != 0 && customFieldXML.contains("<?xml")){
+//			customFieldXML = customFieldXML.substring(customFieldXML.indexOf("?>")+2);
+//			customFieldXML = customFieldXML.replace("<customfields>", "").replace("</customfields>", "");
+//		}
+//		xmlDataBuffer.append("<?xml version=\"1.0\" encoding=\"UTF-16\"?><combinedxml>" + methodXML + textXML + lineXML + 
+//				extractXML+ blockXML + parserFieldXML + parserTechniqueXML + subParserTechXML + subParserFieldXML
+//				 + customFieldXML 
+//				 + "</combinedxml>");				
+//		
+////		final String actionType = EnumerationInfo.CFRActionType.SYSTEM.getActionType();
+////		cfrTransService.saveCfrTransaction(page, actionType, "Copy Method", comments, 
+////					site, xmlDataBuffer.toString(), createdUser, request.getRemoteAddr());
+//   }
+//   
    /**
 	 * This method is used to validate whether the instrument is already associated with the specified Method.
 	 * @param method [Method] object which is to be validated

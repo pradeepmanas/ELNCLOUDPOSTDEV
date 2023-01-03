@@ -264,6 +264,7 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DiffResult diff(MethodDelimiter obj) {
 	     return new DiffBuilder(this, obj, ToStringStyle.SHORT_PREFIX_STYLE)

@@ -1,19 +1,13 @@
 package com.agaram.eln.primary.repository.methodsetup;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
-import com.agaram.eln.primary.model.methodsetup.Delimiter;
-import com.agaram.eln.primary.model.methodsetup.ParserMethod;
-import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-import com.agaram.eln.primary.model.methodsetup.Method;
-import com.agaram.eln.primary.model.methodsetup.ParserBlock;
 import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 
 /**
  * This interface holds JpaRepository ELNResultDetails declarations relevant to Method.

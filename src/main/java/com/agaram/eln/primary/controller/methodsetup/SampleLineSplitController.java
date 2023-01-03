@@ -31,6 +31,7 @@ public class SampleLineSplitController {
 	 * @param mapObject [Map] Object with 'methodKey' object as a key
 	 * @return response object with list of active SampleLineSplit entities
 	 */
+	@SuppressWarnings("unchecked")
 	@PostMapping(value = "/getSampleLineSplitByMethod")
 	public ResponseEntity<Object> getSampleLineSplitByMethod(@Valid @RequestBody Map<String, Object> mapObject)throws Exception
 	{    	

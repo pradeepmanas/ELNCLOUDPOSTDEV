@@ -8,12 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
-import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 
 
 public interface LsprotocolOrderStructureRepository extends JpaRepository<Lsprotocolorderstructure, Long> {

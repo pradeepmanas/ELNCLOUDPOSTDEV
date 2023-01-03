@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.service.methodsetup;
 
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,8 +8,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.builder.Diff;
-import org.apache.commons.lang3.builder.DiffResult;
+//import org.apache.commons.lang3.builder.DiffResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -18,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
@@ -27,13 +23,14 @@ import com.agaram.eln.primary.model.methodsetup.ParserField;
 import com.agaram.eln.primary.model.methodsetup.ParserMethod;
 import com.agaram.eln.primary.model.methodsetup.SubParserTechnique;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.methodsetup.DelimiterRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodDelimiterRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserMethodRepository;
 import com.agaram.eln.primary.repository.methodsetup.SubParserTechniqueRepository;
-import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 
 /**
  * This Service class is used to access the MethodDelimiterRepository to fetch details
@@ -179,7 +176,7 @@ public class MethodDelimiterService {
    {	   
 	   Boolean saveAuditTrail= true;
 	   final Optional<MethodDelimiter> methodDelimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatusAndLssitemaster(methodDelimiter.getMethoddelimiterkey(), 1,methodDelimiter.getLssitemaster());
-	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
+//	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
 	   if(methodDelimiterByKey.isPresent()) {	
 		   
@@ -236,7 +233,7 @@ public class MethodDelimiterService {
 				    		//copy of object for using 'Diffable' to compare objects
 			    			
 				    	
-                            final MethodDelimiter delimiterBeforeSave = new MethodDelimiter(methodDelimiterByKey.get());
+//                            final MethodDelimiter delimiterBeforeSave = new MethodDelimiter(methodDelimiterByKey.get());
 			    			
 				    		final MethodDelimiter savedMethodDelimiter = methodDelimiterRepo.save(methodDelimiter);
 				    		
@@ -251,7 +248,7 @@ public class MethodDelimiterService {
 		   		 //Not Eligible to update as associated with some childR
 		   			if (saveAuditTrail)
 		   			{
-					   final String sysComments = "Update Failed as methoddelimiter is associated with either ParserField /SubParserTechnique";
+//					   final String sysComments = "Update Failed as methoddelimiter is associated with either ParserField /SubParserTechnique";
 		   			
 //						cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //								"Edit", sysComments, 
@@ -326,7 +323,7 @@ public class MethodDelimiterService {
  {	   
 	   Boolean saveAuditTrial = true;
 	   final Optional<MethodDelimiter> delimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatusAndLssitemaster(methodDelimiterKey, 1,site);
-	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
+//	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
 	   if(delimiterByKey.isPresent()) {
 
@@ -361,7 +358,7 @@ public class MethodDelimiterService {
 			   else {
 			   
 
-			    final MethodDelimiter delimitersBeforeSave = new MethodDelimiter(delimiter); 
+//			    final MethodDelimiter delimitersBeforeSave = new MethodDelimiter(delimiter); 
 				
 				   //Its not associated in transaction
 				   delimiter.setStatus(-1);
@@ -466,7 +463,7 @@ public class MethodDelimiterService {
 	  	final Map<Integer, Map<String, Object>> dataModified = new HashMap<Integer, Map<String, Object>>();
 		final Map<String, Object> diffObject = new HashMap<String, Object>();    			
 		
-		final DiffResult diffResult = delimtersBeforeSave.diff(savedDelimiter);        			
+//		final DiffResult diffResult = delimtersBeforeSave.diff(savedDelimiter);        			
 //		for(Diff<?> d: diffResult.getDiffs()) {		    					
 //			diffObject.put(d.getFieldName(), d.getKey()+" -> "+d.getValue());
 //		}

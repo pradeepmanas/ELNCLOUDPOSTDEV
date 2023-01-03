@@ -178,6 +178,7 @@ public class CustomField implements Serializable, Diffable<CustomField>{
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DiffResult diff(CustomField obj) {
 		

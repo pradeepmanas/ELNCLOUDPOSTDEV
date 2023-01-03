@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.service.configuration.ConfigurationService;
-import com.agaram.eln.primary.service.report.ReportsService;
 
 @RestController
 @RequestMapping(value="/configuration", method=RequestMethod.POST)

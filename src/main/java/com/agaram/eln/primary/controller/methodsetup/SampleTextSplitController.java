@@ -30,6 +30,7 @@ public class SampleTextSplitController {
 	 * @param mapObject [Map] Object with 'methodKey' object as a key
 	 * @return response object with list of active SampleTextSplit entities
 	 */
+	@SuppressWarnings("unchecked")
 	@PostMapping(value = "/getSampleTextSplitByMethod")
 	public ResponseEntity<Object> getSampleTextSplitByMethod(@Valid @RequestBody Map<String, Object> mapObject)throws Exception
 	{    	

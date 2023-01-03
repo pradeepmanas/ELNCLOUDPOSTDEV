@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 
 public interface LSsamplemasterRepository extends JpaRepository<LSsamplemaster, Integer>{
 	public LSsamplemaster findBySamplename(String samplename);

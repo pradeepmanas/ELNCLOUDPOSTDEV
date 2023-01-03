@@ -1,7 +1,5 @@
 package com.agaram.eln.primary.service.methodsetup;
 
-import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,8 +7,6 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.builder.Diff;
-import org.apache.commons.lang3.builder.DiffResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -18,20 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
-import com.agaram.eln.primary.model.general.Response;
-import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
-import com.agaram.eln.primary.model.methodsetup.MethodFieldTechnique;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-import com.agaram.eln.primary.model.usermanagement.LSnotification;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.methodsetup.DelimiterRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodDelimiterRepository;
-import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 
 /**
  * This Service class is used to access the DelimitersRepository to fetch details
@@ -104,7 +95,7 @@ public class DelimiterService {
 		{ 
 		
 		   //Checking for Duplicate delimitername 
-		   boolean saveAuditTrial = true;
+//		   boolean saveAuditTrial = true;
 		   final Optional<Delimiter> delimiterByName = delimitersRepo
 	 				 .findByDelimiternameAndStatusAndLssitemaster(delimiters.getDelimitername(), 1,delimiters.getLssitemaster());
 		      
@@ -340,10 +331,10 @@ public class DelimiterService {
    public ResponseEntity<Object> updateDelimiters(final Delimiter delimiters, final LSSiteMaster site, 
 		   final int doneByUserKey,final Delimiter auditdetails, final HttpServletRequest request)
    {	   
-	   Boolean saveAuditTrail = true;
+//	   Boolean saveAuditTrail = true;
 	   final Optional<Delimiter> delimiterByKey = delimitersRepo.findByDelimiterkeyAndStatusAndLssitemaster(delimiters.getDelimiterkey(), 1,delimiters.getLssitemaster());
 	   
-	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
+//	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
 	   if(delimiterByKey.isPresent()) {		   
 
@@ -368,7 +359,7 @@ public class DelimiterService {
 			
 				    		//}
 			    			//copy of object for using 'Diffable' to compare objects
-				    		final Delimiter delimitersBeforeSave = new Delimiter(delimiterByName.get());
+//				    		final Delimiter delimitersBeforeSave = new Delimiter(delimiterByName.get());
 				    			
 				     			
 				    		final Delimiter savedDelimiters = delimitersRepo.save(delimiters);
@@ -397,7 +388,7 @@ public class DelimiterService {
 
 			    		
 			    		//copy of object for using 'Diffable' to compare objects
-		    			final Delimiter delimiterBeforeSave = new Delimiter(delimiterByKey.get());
+//		    			final Delimiter delimiterBeforeSave = new Delimiter(delimiterByKey.get());
 		    			
 			    		//Updating fields with a new delimiter name
 		    			
@@ -449,7 +440,7 @@ public class DelimiterService {
  {	   
 	  Boolean saveAuditTrial = true;
 	   final Optional<Delimiter> delimiterByKey = delimitersRepo.findByDelimiterkeyAndStatus(delimiterKey, 1);
-	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
+//	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
 	   if(delimiterByKey.isPresent()) {
 
@@ -463,7 +454,7 @@ public class DelimiterService {
 			
 			    
 			    //copy of object for using 'Diffable' to compare objects
-				   final Delimiter delimitersBeforeSave = new Delimiter(delimiter); 	
+//				   final Delimiter delimitersBeforeSave = new Delimiter(delimiter); 	
 				   //Its not associated in transaction
 				   delimiter.setStatus(-1);
 				   delimiter.setDelimiterstatus("D");
@@ -548,7 +539,8 @@ public class DelimiterService {
 	  	final Map<Integer, Map<String, Object>> dataModified = new HashMap<Integer, Map<String, Object>>();
 		final Map<String, Object> diffObject = new HashMap<String, Object>();    			
 		
-		final DiffResult diffResult = delimtersBeforeSave.diff(savedDelimiter);        			
+//		final DiffResult diffResult = 
+				delimtersBeforeSave.diff(savedDelimiter);        			
 //		for(Diff<?> d: diffResult.getDiffs()) {		    					
 //			diffObject.put(d.getFieldName(), d.getKey()+" -> "+d.getValue());
 //		}

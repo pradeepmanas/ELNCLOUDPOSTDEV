@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 
 public interface LStestmasterlocalRepository extends JpaRepository<LStestmasterlocal, Integer>{
 	public LStestmasterlocal findByTestname(String Testname);

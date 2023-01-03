@@ -155,6 +155,7 @@ public class SubParserTechnique implements Serializable, Diffable<SubParserTechn
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })  
 	@Override
 	public DiffResult diff(SubParserTechnique obj) {
 		

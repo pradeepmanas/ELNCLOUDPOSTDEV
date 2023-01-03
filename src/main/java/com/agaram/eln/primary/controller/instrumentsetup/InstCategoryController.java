@@ -2,20 +2,17 @@ package com.agaram.eln.primary.controller.instrumentsetup;
 
 import java.util.Map;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
-
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.instrumentsetup.InstCategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

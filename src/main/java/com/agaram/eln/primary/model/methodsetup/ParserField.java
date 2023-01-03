@@ -169,6 +169,7 @@ public class ParserField implements Serializable, Diffable<ParserField>{
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DiffResult diff(ParserField obj) {
 		

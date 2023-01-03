@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.model.protocols;
 
-import java.beans.Transient;
 import java.util.Date;
 
 import javax.persistence.Basic;

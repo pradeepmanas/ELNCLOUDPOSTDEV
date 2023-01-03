@@ -1,13 +1,12 @@
 package com.agaram.eln.primary.controller.methodsetup;
 
+import java.util.List;
 import java.util.Map;
-
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,22 +14,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
-import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
-import com.agaram.eln.primary.model.methodsetup.LSResultFieldValues;
 import com.agaram.eln.primary.model.methodsetup.Method;
-import com.agaram.eln.primary.payload.Response;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.service.fileuploaddownload.FileStorageService;
 import com.agaram.eln.primary.service.methodsetup.EvaluateParserService;
 import com.agaram.eln.primary.service.methodsetup.MethodService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.List;;
+import com.fasterxml.jackson.databind.ObjectMapper;;
 
 /**
  * This controller is used to dispatch the input request to its relevant method to access
@@ -99,7 +92,7 @@ public class EvaluateParserController {
 		
 	//	if(isMultitenant != 0) {
         String fileName = fileStorageService.storeFile(file,tenant,isMultitenant,originalfilename,methodobj.get(0).getVersion() );
-        final ObjectMapper mapper = new ObjectMapper();
+//        final ObjectMapper mapper = new ObjectMapper();
         if(method.indexOf(",")>0)
         {
         	method=method.substring(0,method.indexOf(","));
@@ -161,7 +154,7 @@ public class EvaluateParserController {
 	//	}
 		//else {
 		String fileName = fileStorageService.storeSQLFile(file,tenant,isMultitenant,originalfilename);
-		 final ObjectMapper mapper = new ObjectMapper();
+//		 final ObjectMapper mapper = new ObjectMapper();
 	        if(method.indexOf(",")>0)
 	        {
 	        	method=method.substring(0,method.indexOf(","));

@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
-import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository.UserProjection;
 
 
 	public interface LSprotocolordersampleupdatesRepository  extends JpaRepository<LSprotocolordersampleupdates, Long>{

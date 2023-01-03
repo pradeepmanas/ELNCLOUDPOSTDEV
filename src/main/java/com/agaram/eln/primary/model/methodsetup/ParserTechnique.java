@@ -215,6 +215,7 @@ public class ParserTechnique  implements Serializable, Diffable<ParserTechnique>
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DiffResult diff(ParserTechnique obj) {
 		

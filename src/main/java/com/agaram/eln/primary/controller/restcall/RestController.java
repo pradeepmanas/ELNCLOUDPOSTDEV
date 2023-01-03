@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.agaram.eln.primary.model.general.Response;
-import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.restcall.RestService;
 
 @org.springframework.web.bind.annotation.RestController
@@ -18,8 +17,6 @@ public class RestController {
 	
 	@Autowired
     private RestService restService;
-	@Autowired
-	private AuditService auditService;
 //	@Autowired
 //	private AuditService auditService;
 	

@@ -7,8 +7,6 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.builder.Diff;
-import org.apache.commons.lang3.builder.DiffResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -19,13 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.agaram.eln.primary.model.methodsetup.AppMaster;
 import com.agaram.eln.primary.model.methodsetup.GeneralField;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.methodsetup.AppMasterRepository;
 import com.agaram.eln.primary.repository.methodsetup.GeneralFieldRepository;
-import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
-
-import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 
 /**
  * This Service class is used to access the GeneralFieldRepository to fetch details
@@ -85,7 +80,7 @@ public class GeneralFieldService {
     		//Conflict = 409 - Duplicate entry
     		if (saveAuditTrial == true)
 			{						
-				final String comments = "Create Failed for duplicate field name - "+ generalField.getGeneralfieldname();
+//				final String comments = "Create Failed for duplicate field name - "+ generalField.getGeneralfieldname();
 								
 //				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //						"Create", comments, generalField.getSite(), "",
@@ -138,7 +133,7 @@ public class GeneralFieldService {
    {	   
 	   final Optional<GeneralField> generalFieldByKey = generalFieldRepo.findByGeneralfieldkeyAndStatus(generalField.getGeneralfieldkey(), 1);
 	   
-	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
+//	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
 	   if(generalFieldByKey.isPresent()) {		   
 
@@ -155,13 +150,13 @@ public class GeneralFieldService {
 			    if (generalFieldByProperty.get().getGeneralfieldkey().equals(generalField.getGeneralfieldkey()))
 			    	{   		    			
 			    		//copy of object for using 'Diffable' to compare objects
-			    		final GeneralField generalFieldBeforeSave = new GeneralField(generalFieldByProperty.get());
+//			    		final GeneralField generalFieldBeforeSave = new GeneralField(generalFieldByProperty.get());
 		    			
 			    		final GeneralField savedGeneralField = generalFieldRepo.save(generalField);
 			    					    			
 		    			if (saveAuditTrail)
 		    			{
-			    			final String xmlData = convertGeneralFieldObjectToXML(generalFieldBeforeSave, savedGeneralField);
+//			    			final String xmlData = convertGeneralFieldObjectToXML(generalFieldBeforeSave, savedGeneralField);
 //			    					    			
 //			    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(), 
 //			    					"Edit", comments, generalField.getSite(), xmlData, createdUser, request.getRemoteAddr());		    			
@@ -174,7 +169,7 @@ public class GeneralFieldService {
 		    			//Conflict =409 - Duplicate entry
 		    			if (saveAuditTrail == true)
 		    			{						
-		    				final String sysComments = "Update Failed for duplicate field name - "+ generalField.getGeneralfieldname();
+//		    				final String sysComments = "Update Failed for duplicate field name - "+ generalField.getGeneralfieldname();
 //		    				
 //		    				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //		    						"Create", sysComments, generalField.getSite(), "",createdUser, request.getRemoteAddr());
@@ -187,13 +182,13 @@ public class GeneralFieldService {
 		    	else
 		    	{			    		
 		    		//copy of object for using 'Diffable' to compare objects
-	    			final GeneralField generalFieldBeforeSave = new GeneralField(generalFieldByKey.get());
+//	    			final GeneralField generalFieldBeforeSave = new GeneralField(generalFieldByKey.get());
 	    			
 		    		final GeneralField savedGeneralField = generalFieldRepo.save(generalField);
 		    		
 		    		if (saveAuditTrail)
 	    			{
-		    			final String xmlData = convertGeneralFieldObjectToXML(generalFieldBeforeSave, savedGeneralField);
+//		    			final String xmlData = convertGeneralFieldObjectToXML(generalFieldBeforeSave, savedGeneralField);
 		    			
 //		    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
 //								"Edit", comments,generalField.getSite(), xmlData, createdUser, request.getRemoteAddr());
@@ -230,14 +225,14 @@ public class GeneralFieldService {
 		   final boolean saveAuditTrial, final HttpServletRequest request)
   {	   
 	   final Optional<GeneralField> generalFieldbyKey = generalFieldRepo.findByGeneralfieldkeyAndStatus(generalFieldKey, 1);
-	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
+//	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
 	   if(generalFieldbyKey.isPresent()) {
 
 		   final GeneralField generalField = generalFieldbyKey.get();
 		   //if (child not present)
 		  	   //copy of object for using 'Diffable' to compare objects
-			   final GeneralField generalFieldBeforeSave = new GeneralField(generalField); 
+//			   final GeneralField generalFieldBeforeSave = new GeneralField(generalField); 
 	
 			   //Its not associated in transaction
 			   generalField.setStatus(-1);
@@ -245,7 +240,7 @@ public class GeneralFieldService {
 					   
 			    if (saveAuditTrial)
 				{				    	
-			    	final String xmlData = convertGeneralFieldObjectToXML(generalFieldBeforeSave, savedGeneralField);
+//			    	final String xmlData = convertGeneralFieldObjectToXML(generalFieldBeforeSave, savedGeneralField);
 	   			
 //			    	cfrTransService.saveCfrTransaction(page, 
 //							EnumerationInfo.CFRActionType.USER.getActionType(), "Delete", comments, 
@@ -300,7 +295,7 @@ public class GeneralFieldService {
 	  	final Map<Integer, Map<String, Object>> dataModified = new HashMap<Integer, Map<String, Object>>();
 		final Map<String, Object> diffObject = new HashMap<String, Object>();    			
 		
-		final DiffResult diffResult = generalFieldBeforeSave.diff(savedGeneralField);        			
+//		final DiffResult diffResult = generalFieldBeforeSave.diff(savedGeneralField);        			
 //		for(Diff<?> d: diffResult.getDiffs()) {		    					
 //			diffObject.put(d.getFieldName(), d.getKey()+" -> "+d.getValue());
 //		}

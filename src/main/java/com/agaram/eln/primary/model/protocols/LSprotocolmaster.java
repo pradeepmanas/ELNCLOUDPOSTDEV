@@ -17,7 +17,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
-import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity

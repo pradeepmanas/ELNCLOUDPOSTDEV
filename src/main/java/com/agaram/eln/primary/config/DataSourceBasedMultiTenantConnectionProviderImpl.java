@@ -8,12 +8,10 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
-import org.hibernate.HibernateException;
 import org.hibernate.engine.jdbc.connections.spi.AbstractDataSourceBasedMultiTenantConnectionProviderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
@@ -28,8 +26,8 @@ public class DataSourceBasedMultiTenantConnectionProviderImpl extends AbstractDa
     @Autowired
     private ApplicationContext context;
     
-    @Autowired
-	private Environment env;
+//    @Autowired
+//	private Environment env;
 
     private Map<String, DataSource> map = new HashMap<>();
 

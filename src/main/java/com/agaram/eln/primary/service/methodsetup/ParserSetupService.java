@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.agaram.eln.primary.model.methodsetup.CommonFunction;
 import com.agaram.eln.primary.model.methodsetup.DataType;
 import com.agaram.eln.primary.model.methodsetup.Method;
-import com.agaram.eln.primary.model.methodsetup.MethodVersion;
 import com.agaram.eln.primary.model.methodsetup.ParserBlock;
 import com.agaram.eln.primary.model.methodsetup.ParserField;
 import com.agaram.eln.primary.model.methodsetup.ParserIgnoreChars;
@@ -30,7 +29,6 @@ import com.agaram.eln.primary.model.methodsetup.SampleLineSplit;
 import com.agaram.eln.primary.model.methodsetup.SampleTextSplit;
 import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserTechnique;
-
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.methodsetup.DataTypeRepository;
@@ -131,7 +129,7 @@ public class ParserSetupService {
 		
 		
 
-		final String a ="";
+//		final String a ="";
 		String rawDataText = "";
 		if (rawDataContent == null || rawDataContent.isEmpty()) {
 			if(isMultitenant != 0) {
@@ -196,7 +194,7 @@ public class ParserSetupService {
 	            rawData = commonFunction.removeRawData(rawData, removeSTSList, removeSLSList);
 	        }
 
-	        ArrayList< Map <String, Object>> names = new ArrayList< Map <String, Object>>();
+//	        ArrayList< Map <String, Object>> names = new ArrayList< Map <String, Object>>();
 
 	        final Map <String, Object> extractedBlock = new HashMap<String, Object>();
 
@@ -255,7 +253,7 @@ public class ParserSetupService {
 
 	                 }
 	                 else {
-	                	 int i =0 ;
+//	                	 int i =0 ;
 	                	 extractedBlock.replace(extractBlock, rawDataList.get(0));
 	     	       // 	for (i=0 ; i<=names.size();i++) {	        		
 
@@ -275,6 +273,7 @@ public class ParserSetupService {
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getversionParserData(final int methodKey, final Boolean evaluateParser,
 		    final String rawDataContent,final String tenant,final int isMultitenant,final String instrawdataurl) throws FileNotFoundException, IOException
 			{		
@@ -282,7 +281,7 @@ public class ParserSetupService {
 				
 				
 
-				final String a ="";
+//				final String a ="";
 				String rawDataText = "";
 				if (rawDataContent == null || rawDataContent.isEmpty()) {
 					if(isMultitenant != 0) {
@@ -347,7 +346,7 @@ public class ParserSetupService {
 			            rawData = commonFunction.removeRawData(rawData, removeSTSList, removeSLSList);
 			        }
 
-			        ArrayList< Map <String, Object>> names = new ArrayList< Map <String, Object>>();
+//			        ArrayList< Map <String, Object>> names = new ArrayList< Map <String, Object>>();
 
 			        final Map <String, Object> extractedBlock = new HashMap<String, Object>();
 
@@ -406,7 +405,7 @@ public class ParserSetupService {
 
 			                 }
 			                 else {
-			                	 int i =0 ;
+//			                	 int i =0 ;
 			                	 extractedBlock.replace(extractBlock, rawDataList.get(0));
 			     	       // 	for (i=0 ; i<=names.size();i++) {	        		
 

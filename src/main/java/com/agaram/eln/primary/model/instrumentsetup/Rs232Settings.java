@@ -154,6 +154,7 @@ public class Rs232Settings implements Serializable, Diffable<Rs232Settings>{
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DiffResult diff(Rs232Settings obj) {
 	     return new DiffBuilder(this, obj, ToStringStyle.SHORT_PREFIX_STYLE)

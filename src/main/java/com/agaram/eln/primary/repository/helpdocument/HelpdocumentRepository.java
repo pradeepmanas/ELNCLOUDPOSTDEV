@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.helpdocument.Helpdocument;
-import com.mongodb.util.JSON;
 
 public interface HelpdocumentRepository extends JpaRepository <Helpdocument,Integer >{
 

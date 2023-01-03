@@ -3,13 +3,11 @@ package com.agaram.eln.primary.repository.methodsetup;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.agaram.eln.primary.model.methodsetup.SubParserTechnique;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
 import com.agaram.eln.primary.model.methodsetup.ParserField;
-import com.agaram.eln.primary.model.methodsetup.SubParserField;
+import com.agaram.eln.primary.model.methodsetup.SubParserTechnique;
 
 /**
  * This interface holds JpaRepository method declarations relevant to SubParserTechnique.

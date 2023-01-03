@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.service.methodsetup.ParserSetupService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * This controller is used to dispatch the input request to its relevant method to access
@@ -34,6 +33,7 @@ public class ParserSetupController {
 	 * created
 	 * @return response object with list of extracted blockwise data.
 	 */
+	@SuppressWarnings("unchecked")
 	@PostMapping(value = "/getParserData")
 	public ResponseEntity<Object> getParserData(@Valid @RequestBody Map<String, Object> mapObject)throws Exception
 	{    	
@@ -49,6 +49,7 @@ public class ParserSetupController {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@PostMapping(value = "/getversionParserData")
 	public ResponseEntity<Object> getversionParserData(@Valid @RequestBody Map<String, Object> mapObject)throws Exception
 	{    	
@@ -94,10 +95,11 @@ public class ParserSetupController {
 	 * fetched
 	 * @return response object with list of parser techniques
 	 */
+	@SuppressWarnings("unchecked")
 	@PostMapping(value = "/getParserFieldTechniqueListByMethodKey")
 	public ResponseEntity<Object> getParserFieldTechniqueListByMethodKey(final HttpServletRequest request, 
 			@Valid @RequestBody Map<String, Object> mapObject)throws Exception{
-		final ObjectMapper mapper = new ObjectMapper();		 
+		 
 		//final int methodKey = mapper.convertValue(mapObject.get("methodKey"), Integer.class);
         Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
     	            	

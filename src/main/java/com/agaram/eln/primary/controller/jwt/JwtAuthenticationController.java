@@ -19,22 +19,6 @@ import com.agaram.eln.primary.model.jwt.JwtResponse;
 import com.agaram.eln.primary.model.jwt.UserDTO;
 import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
 
-
-import java.util.Properties;
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
 @RestController
 @CrossOrigin
 public class JwtAuthenticationController {

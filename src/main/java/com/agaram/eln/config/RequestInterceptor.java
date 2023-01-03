@@ -16,7 +16,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
                              HttpServletResponse response, Object object) throws Exception {
         System.out.println("In preHandle we are Intercepting the Request");
         System.out.println("____________________________________________");
-    	final String requestTokenHeader = request.getHeader("Authorization");
+//    	final String requestTokenHeader = request.getHeader("Authorization");
         String requestURI = request.getRequestURI();
         String tenantID = request.getHeader("X-TenantID");
 //        Enumeration<String> enumeration = request.getHeaderNames();

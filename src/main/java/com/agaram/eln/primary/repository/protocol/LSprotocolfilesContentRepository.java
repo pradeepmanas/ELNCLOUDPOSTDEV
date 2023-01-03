@@ -1,7 +1,5 @@
 package com.agaram.eln.primary.repository.protocol;
 
-import java.io.ByteArrayInputStream;
-
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.agaram.eln.primary.model.protocols.LSprotocolfilesContent;

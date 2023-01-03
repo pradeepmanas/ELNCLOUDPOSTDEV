@@ -1,25 +1,13 @@
 package com.agaram.eln.primary.model.methodsetup;
 
 import java.util.ArrayList;
-
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.springframework.http.ResponseEntity;
-
-import com.agaram.eln.primary.model.methodsetup.ParserIgnoreChars;
-import com.agaram.eln.primary.model.methodsetup.ParserTechnique;
-import com.agaram.eln.primary.model.methodsetup.SampleExtract;
-import com.agaram.eln.primary.model.methodsetup.SampleLineSplit;
-import com.agaram.eln.primary.model.methodsetup.SampleTextSplit;
-import com.agaram.eln.primary.model.methodsetup.SubParserTechnique;
-import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 
 /**
  * This class is used to apply sample split techniques for the raw data file of a method which is provided
@@ -572,7 +560,7 @@ public class CommonFunction {
             if (actualRowStart == realRowStart) {
 //                actualColEnd = rawDataBlockArray.get(dataBlockRowStart)
 //                		 .indexOf(parsingTechniques.get(3).getIdentificationtext());
-            	actualColEnd = actualColEnd;
+//            	actualColEnd = actualColEnd;
             }
             else if (realRowStart > actualRowStart) {
                 int diffStartRow = realRowStart - actualRowStart;
@@ -581,7 +569,7 @@ public class CommonFunction {
             }
             //newly added scinario
             else{
-           	 int diffStartRow = actualRowStart - realRowStart ;
+//           	 int diffStartRow = actualRowStart - realRowStart ;
 //                actualColEnd = rawDataBlockArray.get(dataBlockRowStart + diffStartRow)
 //                		.indexOf(parsingTechniques.get(3).getIdentificationtext());
                 actualColEnd =col+cols;
@@ -651,11 +639,6 @@ public class CommonFunction {
 	}
 	
 	
-	private List<List<String>> String(int i) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/**
 	 * This method is used to parse data from the data block in cases where there has no end column match.
 	 * @param rawDataBlockArray [List] of rows of the data block
@@ -733,7 +716,7 @@ public class CommonFunction {
 			 
 			 if (trimmedData.length() > 0) {
 				 //String[] str = trimmedData.split(delimiter!= "None" ? delimiter: "ChummaKizhi");
-				 String[] str = trimmedData.split(".");
+//				 String[] str = trimmedData.split(".");
 				 //outputList.add(Arrays.asList(str));
 				 outputList.add(Arrays.asList(trimmedData));
 			 }		
@@ -836,7 +819,7 @@ public class CommonFunction {
 			
 			List<String> splitFieldsrows = new ArrayList<>(splitFields);
 			
-			List<String> emptyarray = new ArrayList<>();
+//			List<String> emptyarray = new ArrayList<>();
 			
 			if(splitFieldsrows.size()<longest) {
 				for(int ind = splitFieldsrows.size(); ind < longest; ind++)
@@ -897,7 +880,7 @@ public class CommonFunction {
 		List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));
 		List<String> splitFieldsrows = new ArrayList<>(splitFields);
 		
-		List<String> emptyarray = new ArrayList<>();
+//		List<String> emptyarray = new ArrayList<>();
 		
 		if(splitFieldsrows.size()<longest) {
 			for(int ind = splitFieldsrows.size(); ind < longest; ind++)
@@ -1108,7 +1091,7 @@ public class CommonFunction {
 			List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));			
 			List<String> splitFieldsrow = new ArrayList<>(splitFields);
 						
-			List<String> emptyarray = new ArrayList<>();
+//			List<String> emptyarray = new ArrayList<>();
 			if(splitFieldsrow.size()<longest) {
 				for(int ind = splitFieldsrow.size(); ind < longest; ind++)
 					splitFieldsrow.add(" ");
@@ -1120,7 +1103,7 @@ public class CommonFunction {
 			                                                                                             
 				String strSplit = splitFields.get(Integer.parseInt(extractColumnIndex));
 				
-				List<String> splittedarray = new ArrayList<>();
+//				List<String> splittedarray = new ArrayList<>();
 				 String[] arrOfStr = strSplit.split(delimiterChar);
 				 for (String a : arrOfStr) {
 					 splitFieldsrow.add(a);
@@ -1164,7 +1147,7 @@ public class CommonFunction {
             			List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));			
             			List<String> splitFieldsrow = new ArrayList<>(splitFields);
             						
-            			List<String> emptyarray = new ArrayList<>();
+//            			List<String> emptyarray = new ArrayList<>();
             			if(splitFieldsrow.size()<longest) {
             				for(int ind = splitFieldsrow.size(); ind < longest; ind++)
             					splitFieldsrow.add(" ");
@@ -1176,7 +1159,7 @@ public class CommonFunction {
             			                                                                                             
             				String strSplit = splitFields.get(Integer.parseInt(extractColumnIndex));
             				
-            				List<String> splittedarray = new ArrayList<>();
+//            				List<String> splittedarray = new ArrayList<>();
             				 String[] arrOfStr = strSplit.split(delimiterChar);
             				 for (String a : arrOfStr) {
             					 splitFieldsrow.add(a);
@@ -1313,7 +1296,7 @@ public class CommonFunction {
     		final String delimiterChar = subParserField.getParserfield().getMethoddelimiter().getDelimiter().getActualdelimiter();
     		List<List<String>> dataBlockWithSplittedFields = new ArrayList<List<String>>();
     		
-    		int id=0;
+//    		int id=0;
     		int longest = 0;
     		int max =1;
 
@@ -1326,7 +1309,7 @@ public class CommonFunction {
     			List<String> splitFields = Arrays.asList(splitFieldArray.get(idx));			
     			List<String> splitFieldsrow = new ArrayList<>(splitFields);
     						
-    			List<String> emptyarray = new ArrayList<>();
+//    			List<String> emptyarray = new ArrayList<>();
     			if(splitFieldsrow.size()<longest) {
     				for(int ind = splitFieldsrow.size(); ind < longest; ind++)
     					splitFieldsrow.add(" ");

@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.builder.Diff;
-import org.apache.commons.lang3.builder.DiffResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -127,7 +125,7 @@ public class SampleTextSplitService {
 				{
 					if (objBeforeSave.getSampletextsplitkey().equals(objAfterSave.getSampletextsplitkey()))
 					{				
-						final DiffResult diffResult = objBeforeSave.diff(objAfterSave);
+//						final DiffResult diffResult = objBeforeSave.diff(objAfterSave);
 							
 						Map<String, Object> diffObject = new HashMap<String, Object>();
 						

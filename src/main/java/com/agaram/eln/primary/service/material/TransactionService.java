@@ -458,18 +458,16 @@ public class TransactionService {
 	public ResponseEntity<Object> getMaterialLst4DashBoard(Map<String, Object> inputMap) {
 
 		Map<String, Object> rtnMap = new HashMap<String, Object>();
-		
-		Integer nsiteInteger = (Integer) inputMap.get("sitecode");
 
 		List<Material> lstMaterials = new ArrayList<Material>();
 		List<MaterialInventory> lstMaterialInventories = new ArrayList<MaterialInventory>();
 
-		lstMaterials = materialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1,nsiteInteger);
+		lstMaterials = materialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1,(Integer) inputMap.get("sitecode"));
 
 		if (!lstMaterials.isEmpty()) {
 
 			lstMaterialInventories = materialInventoryRepository
-					.findByNtransactionstatusOrderByNmaterialinventorycode(28);
+					.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(lstMaterials.get(0).getNmaterialcode(),28);
 		}
 
 		rtnMap.put("listedMaterial", lstMaterials);

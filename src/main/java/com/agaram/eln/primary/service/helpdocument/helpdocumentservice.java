@@ -3,13 +3,12 @@ package com.agaram.eln.primary.service.helpdocument;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 import org.json.JSONObject;
@@ -29,7 +28,6 @@ import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.helpdocument.Helpdocument;
 import com.agaram.eln.primary.model.helpdocument.Helptittle;
-import com.agaram.eln.primary.model.protocols.LSprotocolorderimages;
 import com.agaram.eln.primary.repository.helpdocument.HelpdocumentRepository;
 import com.agaram.eln.primary.repository.helpdocument.HelptittleRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
@@ -43,12 +41,7 @@ import com.microsoft.azure.storage.blob.BlobRequestOptions;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFSDBFile;
-
-
-
 
 @Service
 @EnableJpaRepositories(basePackageClasses = HelpdocumentRepository.class)

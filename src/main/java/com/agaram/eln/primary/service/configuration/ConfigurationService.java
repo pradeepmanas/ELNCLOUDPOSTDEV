@@ -27,7 +27,6 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.net.ftp.FTPClient;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,6 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.configuration.LSConfiguration;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.configuration.LSconfigurationRepository;
-import com.agaram.eln.primary.service.report.ReportsService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

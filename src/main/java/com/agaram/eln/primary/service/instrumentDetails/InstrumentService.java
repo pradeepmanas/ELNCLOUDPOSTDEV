@@ -3143,7 +3143,7 @@ public LSlogilablimsorderdetail GetorderStatusFromBatchID(LSlogilablimsorderdeta
 		updatenotificationfororder(objorder);
 		objorder.setResponse(new Response());
 		objorder.getResponse().setStatus(true);
-		objorder.getResponse().setInformation("ID_ORDERCMPLT");
+		objorder.getResponse().setInformation("IDS_MSG_ORDERCMPLT");
 		return objorder;
 	}
 

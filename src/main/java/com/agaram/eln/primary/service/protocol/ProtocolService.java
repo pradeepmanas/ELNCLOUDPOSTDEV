@@ -1377,7 +1377,7 @@ public class ProtocolService {
 			if (argObj.containsKey("edit")) {
 			} else {
 				LSprotocolversion versProto = new LSprotocolversion();
-				
+
 				versProto.setCreatedate(newProtocolMasterObj.getCreatedate());
 				versProto.setCreatedby(newProtocolMasterObj.getCreatedby());
 				versProto.setCreatedbyusername(newProtocolMasterObj.getCreatedbyusername());
@@ -1876,7 +1876,7 @@ public class ProtocolService {
 		if (objClass.getProtocolmastername() != null) {
 			LSworkflow objlastworkflow = lsworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objClass.getIsfinalstep().getLssitemaster());
-			if (objlastworkflow != null && objClass.getLsprotocolworkflowhistory().get(0).getLssheetworkflow()
+			if (objlastworkflow != null && LsProto.getLssheetworkflow()
 					.getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
 				objClass.setFinalworkflow(1);
 				;
@@ -1920,7 +1920,7 @@ public class ProtocolService {
 							Notification = "PROTOCOLAPPROVALRETURN";
 							objnotify.setNotifationto(objuser.get(i));
 
-						} else if (objClass.getRejected()!=null && objClass.getRejected() == 1) {
+						} else if (objClass.getRejected() == 1) {
 							Notification = "PROTOCOLAPPROVALREJECT";
 							objnotify.setNotifationto(createby);
 						}
@@ -2112,7 +2112,7 @@ public class ProtocolService {
 			LSworkflow objlastworkflow = lsworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objClass.getIsfinalstep().getLssitemaster());
 			if (objlastworkflow != null
-					&& objClass.getLstworkflow().get(0).getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
+					&& objClass.getLsworkflow().getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
 				objClass.setFinalworkflow(1);
 				;
 			} else {
@@ -2144,10 +2144,6 @@ public class ProtocolService {
 					.collect(Collectors.toList());
 			List<LSuserMaster> objuser = lsusermasterRepository.findByusercodeInAndUserretirestatusNot(objnotifyuser,
 					1);
-//			LSusersteam objteam = lsusersteamRepository
-//					.findByteamcode(LsProto.getLsprojectmaster().getLsusersteam().getTeamcode());
-
-//			List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
 			if (objClass.getApprovelstatus() != null && objClass.getFinalworkflow() == 1) {
 
 				for (int i = 0; i < objuser.size(); i++) {
@@ -2188,6 +2184,7 @@ public class ProtocolService {
 			} else {
 				for (int i = 0; i < objuser.size(); i++) {
 					if (createby.getUsercode() != userobj.get(i).getUsercode()) {
+						
 						if (LsProto.getApproved() == 2 && objClass.getRejected() == null
 								&& objClass.getApprovelstatus() != 1) {
 							Notifiction = "PROTOCOLUSERRETURN";
@@ -2285,7 +2282,8 @@ public class ProtocolService {
 			LSusersteam objteam = lsusersteamRepository
 					.findByteamcode(objClass.getLsprojectmaster().getLsusersteam().getTeamcode());
 			LSnotification objnotify = new LSnotification();
-			LSuserMaster obj = lsusermasterRepository.findByusercode(objClass.getCreateby());
+			LSuserMaster obj = lsusermasterRepository.findByusercode(objClass.getLsuserMaster().getUsercode());
+			LSuserMaster createby = lsusermasterRepository.findByusercode(objClass.getCreateby());
 
 			String Details = "";
 			String Notifiction = "";
@@ -2341,8 +2339,8 @@ public class ProtocolService {
 						if (objClass.getCreateby() != lstusers.get(i).getLsuserMaster().getUsercode()) {
 
 							if (objClass.getOrderflag().equalsIgnoreCase("R")) {
-								objnotify.setNotifationto(obj);
-								objnotify.setNotifationfrom(objClass.getLsprojectmaster().getModifiedby());
+								objnotify.setNotifationto(createby);
+								objnotify.setNotifationfrom(obj);
 
 							} else {
 								objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());

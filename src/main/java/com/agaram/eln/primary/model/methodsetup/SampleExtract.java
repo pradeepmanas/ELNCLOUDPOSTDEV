@@ -188,6 +188,7 @@ public class SampleExtract implements Serializable, Diffable<SampleExtract>{
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DiffResult diff(SampleExtract obj) {
 		

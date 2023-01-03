@@ -1,16 +1,9 @@
 package com.agaram.eln.primary.service.notification;
 
-import java.io.File;
 import java.util.Random;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.BodyPart;
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
@@ -21,10 +14,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.repository.notification.EmailRepository;
-import com.agaram.eln.primary.service.report.ReportsService;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = EmailRepository.class)
@@ -73,7 +64,7 @@ public class EmailService {
 	}
 
 	public Email sendusernamepassemail(Email email) throws MessagingException {
-		boolean valid = true;
+//		boolean valid = true;
 		String from = env.getProperty("spring.mail.username");
 		String to = email.getMailto();
 		MimeMessage message = mailSender.createMimeMessage();
@@ -102,10 +93,10 @@ public class EmailService {
 		// return the resultant string
 		System.out.println(pass);
 
-		String passwordtenant = AESEncryption.encrypt(pass);
+//		String passwordtenant = AESEncryption.encrypt(pass);
 		// email.setPassword(passwordtenant);
 
-		boolean html = true;
+//		boolean html = true;
 		// helper.setText("<b>Dear Customer</b>,<br><i>This is for your username and
 		// password</i><br><b>UserName:\t\t"+email.getTenantid()+"</b><br><b>Password:\t\t"+pass+"</b>",
 		// html);

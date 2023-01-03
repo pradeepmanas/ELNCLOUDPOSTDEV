@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.service.dashboard;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -8,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,10 +19,7 @@ import com.agaram.eln.primary.fetchmodel.gettemplate.Protocoltemplateget;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
-import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
-import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
-import com.agaram.eln.primary.model.protocols.LSprotocolworkflowgroupmap;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
@@ -33,7 +28,6 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
@@ -44,8 +38,6 @@ import com.agaram.eln.primary.repository.instrumentDetails.LsordersharetoReposit
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
-import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowgroupmapRepository;
-import com.agaram.eln.primary.repository.protocol.lSprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSparsedparametersRespository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
@@ -54,7 +46,6 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappin
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
-import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 
@@ -94,9 +85,6 @@ public class DashBoardService {
 	private LSuserMasterRepository lsuserMasterRepository;
 
 	@Autowired
-	private LSusergroupRepository LSusergroupRepository;
-
-	@Autowired
 	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
 
 	@Autowired
@@ -107,12 +95,6 @@ public class DashBoardService {
 
 	@Autowired
 	private LSProtocolMasterRepository LSProtocolMasterRepository;
-
-	@Autowired
-	private LSprotocolworkflowgroupmapRepository LSprotocolworkflowgroupmapRepository;
-
-	@Autowired
-	private lSprotocolworkflowRepository lSprotocolworkflowRepository;
 
 	@Autowired
 	private LsordersharedbyRepository lsordersharedbyRepository;

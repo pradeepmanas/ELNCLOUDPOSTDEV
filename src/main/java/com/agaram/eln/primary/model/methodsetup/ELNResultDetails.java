@@ -17,8 +17,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang3.builder.DiffBuilder;
@@ -30,7 +28,6 @@ import org.hibernate.validator.constraints.Range;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * This class is used to map the fields of 'delimiter' table of the Database.
@@ -251,6 +248,7 @@ public class ELNResultDetails implements Serializable, Diffable<ELNResultDetails
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DiffResult diff(ELNResultDetails obj) {
 	     return new DiffBuilder(this, obj, ToStringStyle.SHORT_PREFIX_STYLE)

@@ -15,7 +15,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ArchiveDataSourceBasedMultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl {
-    private static final String DEFAULT_TENANT_ID = "Archive";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1523929767726055223L;
+
+	private static final String DEFAULT_TENANT_ID = "Archive";
 
 	@Autowired
     private DataSource defaultDS;

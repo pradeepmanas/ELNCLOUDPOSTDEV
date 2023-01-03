@@ -14,8 +14,6 @@ private final byte[] fileContent;
 
 private String fileName;
 
-private String contentType;
-
 private File file;
 
 private String destPath = System.getProperty("java.io.tmpdir");

@@ -1,13 +1,10 @@
 package com.agaram.eln.primary.model.methodsetup;
 
 import javax.persistence.Entity;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import org.bson.types.Binary;
 
 @Entity
 @Table(name="CloudParserFile")

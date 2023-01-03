@@ -1,9 +1,7 @@
 package com.agaram.eln.secondary.config;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -11,21 +9,23 @@ import javax.sql.DataSource;
 
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import com.agaram.eln.secondary.repository.multitenant.DataSourceConfigRepository;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import com.agaram.eln.primary.config.TenantDataSource;
 import com.agaram.eln.secondary.model.multitenant.DataSourceConfig;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 
 @Component
 public class TenantArchiveDataSource implements Serializable {
 
-    private HashMap<String, DataSource> dataSources = new HashMap<>();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 456546212187440081L;
+
+	private HashMap<String, DataSource> dataSources = new HashMap<>();
 
     @Autowired
     private TenantDataSource tenantDataSource;
@@ -56,7 +56,8 @@ public class TenantArchiveDataSource implements Serializable {
         return result;
     }
 
-    private DataSource createDataSource(String name) {
+    @SuppressWarnings("unused")
+	private DataSource createDataSource(String name) {
         DataSourceConfig config = new DataSourceConfig();
         		//configRepo.findByArchivename(name);
         if (config != null) {

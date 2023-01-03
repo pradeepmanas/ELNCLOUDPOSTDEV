@@ -131,6 +131,7 @@ public class InstrumentRights implements Serializable, Diffable<InstrumentRights
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DiffResult diff(InstrumentRights obj) {
 	     return new DiffBuilder(this, obj, ToStringStyle.SHORT_PREFIX_STYLE)

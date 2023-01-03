@@ -31,6 +31,7 @@ public class SampleExtractController {
 	 * @param mapObject [Map] Object with 'methodKey' object as a key
 	 * @return response object with list of active SampleExtract entities
 	 */
+	@SuppressWarnings("unchecked")
 	@PostMapping(value = "/getSampleExtractByMethod")
 	public ResponseEntity<Object> getSampleExtractByMethod(@Valid @RequestBody Map<String, Object> mapObject)throws Exception
 	{    	

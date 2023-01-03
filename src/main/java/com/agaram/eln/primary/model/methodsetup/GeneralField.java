@@ -178,6 +178,7 @@ public class GeneralField implements Serializable, Diffable<GeneralField>{
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DiffResult diff(GeneralField obj) {
 		

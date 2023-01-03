@@ -1,8 +1,6 @@
 package com.agaram.eln.primary.service.templates;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,15 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.agaram.eln.primary.model.general.Response;
-import com.agaram.eln.primary.model.templates.LsMappedTags;
-//import com.agaram.eln.primary.model.templates.LsMappedTemplate;
-import com.agaram.eln.primary.model.templates.LsUnmappedTags;
-//import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
-import com.agaram.eln.primary.repository.templates.LsMappedTagsRepository;
-//import com.agaram.eln.primary.repository.templates.LsMappedTemplateRepository;
-import com.agaram.eln.primary.repository.templates.LsUnmappedTagsRepository;
-//import com.agaram.eln.primary.repository.templates.LsUnmappedTemplateRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -31,11 +20,11 @@ public class TemplateMasterService {
 //	@Autowired
 //    private LsUnmappedTemplateRepository LsUnmappedTemplateRepository;
 	
-	@Autowired
-    private LsMappedTagsRepository LsMappedTagsRepository;
-	
-	@Autowired
-    private LsUnmappedTagsRepository LsUnmappedTagsRepository;
+//	@Autowired
+//    private LsMappedTagsRepository LsMappedTagsRepository;
+//	
+//	@Autowired
+//    private LsUnmappedTagsRepository LsUnmappedTagsRepository;
 	
 	@Autowired
 	private Environment env;

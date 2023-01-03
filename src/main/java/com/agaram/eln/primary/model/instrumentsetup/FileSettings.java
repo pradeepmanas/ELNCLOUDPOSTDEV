@@ -94,6 +94,7 @@ public class FileSettings implements Serializable, Diffable<FileSettings>{
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DiffResult diff(FileSettings obj) {
 	     return new DiffBuilder(this, obj, ToStringStyle.SHORT_PREFIX_STYLE)

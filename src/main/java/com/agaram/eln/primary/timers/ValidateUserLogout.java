@@ -3,6 +3,7 @@ package com.agaram.eln.primary.timers;
 import java.util.TimerTask;
 
 public class ValidateUserLogout  extends TimerTask{
+	@SuppressWarnings("unused")
 	private final int serial;
 
 

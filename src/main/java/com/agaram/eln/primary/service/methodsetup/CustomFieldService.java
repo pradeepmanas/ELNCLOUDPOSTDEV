@@ -8,10 +8,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.builder.Diff;
-import org.apache.commons.lang3.builder.DiffResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -112,7 +109,7 @@ public class CustomFieldService {
     		//Conflict = 409 - Duplicate entry
     		if (saveAuditTrial == true)
 			{						
-				final String comments = "Create Failed for duplicate field name - "+ customField.getCustomfieldname();
+//				final String comments = "Create Failed for duplicate field name - "+ customField.getCustomfieldname();
 								
 //				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //						"Create", comments, site, "",
@@ -168,7 +165,7 @@ public class CustomFieldService {
 	   final Optional<CustomField> customFieldByKey = customFieldRepo.findByCustomfieldkeyAndStatus(customField.getCustomfieldkey(), 1);
 	   final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(customField.getMethod().getMethodkey(), 1);
 	   
-	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
+//	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
 	   if(customFieldByKey.isPresent()) {		   
 
@@ -187,13 +184,13 @@ public class CustomFieldService {
 			     if (customFieldByProperty.get().getCustomfieldkey().equals(customField.getCustomfieldkey()))
 			     {   		    			
 			    		//copy of object for using 'Diffable' to compare objects
-			    		final CustomField customFieldBeforeSave = new CustomField(customFieldByProperty.get());
+//			    		final CustomField customFieldBeforeSave = new CustomField(customFieldByProperty.get());
 		    			
 			    		final CustomField savedCustomField = customFieldRepo.save(customField);
 			    					    			
 		    			if (saveAuditTrail)
 		    			{
-			    			final String xmlData = convertCustomFieldObjectToXML(customFieldBeforeSave, savedCustomField);
+//			    			final String xmlData = convertCustomFieldObjectToXML(customFieldBeforeSave, savedCustomField);
 			    					    			
 //			    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(), 
 //			    					"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());		    			
@@ -206,7 +203,7 @@ public class CustomFieldService {
 		    			//Conflict =409 - Duplicate entry
 		    			if (saveAuditTrail == true)
 		    			{						
-		    				final String sysComments = "Update Failed for duplicate field name - "+ customField.getCustomfieldname();
+//		    				final String sysComments = "Update Failed for duplicate field name - "+ customField.getCustomfieldname();
 		    				
 //		    				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //		    						"Create", sysComments, site, "",createdUser, request.getRemoteAddr());
@@ -219,13 +216,13 @@ public class CustomFieldService {
 		    	else
 		    	{			    		
 		    		//copy of object for using 'Diffable' to compare objects
-	    			final CustomField customFieldBeforeSave = new CustomField(customFieldByKey.get());
+//	    			final CustomField customFieldBeforeSave = new CustomField(customFieldByKey.get());
 	    			
 		    		final CustomField savedCustomField = customFieldRepo.save(customField);
 		    		
 		    		if (saveAuditTrail)
 	    			{
-		    			final String xmlData = convertCustomFieldObjectToXML(customFieldBeforeSave, savedCustomField);
+//		    			final String xmlData = convertCustomFieldObjectToXML(customFieldBeforeSave, savedCustomField);
 		    			
 //		    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
 //								"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
@@ -262,14 +259,14 @@ public class CustomFieldService {
 		   final boolean saveAuditTrial, final HttpServletRequest request)
   {	   
 	   final Optional<CustomField> customFieldbyKey = customFieldRepo.findByCustomfieldkeyAndStatus(customFieldKey, 1);
-	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
+//	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
 	   if(customFieldbyKey.isPresent()) {
 
 		   final CustomField customField = customFieldbyKey.get();
 		   //if (child not present)
 		  	   //copy of object for using 'Diffable' to compare objects
-			   final CustomField customFieldBeforeSave = new CustomField(customField); 
+//			   final CustomField customFieldBeforeSave = new CustomField(customField); 
 	
 			   //Its not associated in transaction
 			   customField.setStatus(-1);
@@ -277,7 +274,7 @@ public class CustomFieldService {
 					   
 			    if (saveAuditTrial)
 				{				    	
-			    	final String xmlData = convertCustomFieldObjectToXML(customFieldBeforeSave, savedCustomField);
+//			    	final String xmlData = convertCustomFieldObjectToXML(customFieldBeforeSave, savedCustomField);
 	   			
 //			    	cfrTransService.saveCfrTransaction(page, 
 //							EnumerationInfo.CFRActionType.USER.getActionType(), "Delete", comments, 
@@ -332,7 +329,8 @@ public class CustomFieldService {
 	  	final Map<Integer, Map<String, Object>> dataModified = new HashMap<Integer, Map<String, Object>>();
 		final Map<String, Object> diffObject = new HashMap<String, Object>();    			
 		
-		final DiffResult diffResult = customFieldBeforeSave.diff(savedCustomField);        			
+//		final DiffResult diffResult =
+				customFieldBeforeSave.diff(savedCustomField);        			
 //		for(Diff<?> d: diffResult.getDiffs()) {		    					
 //			diffObject.put(d.getFieldName(), d.getKey()+" -> "+d.getValue());
 //		}
@@ -370,7 +368,8 @@ public class CustomFieldService {
 				{
 					if (objBeforeSave.getCustomfieldkey().equals(objAfterSave.getCustomfieldkey()))
 					{				
-						final DiffResult diffResult = objBeforeSave.diff(objAfterSave);
+//						final DiffResult diffResult = 
+								objBeforeSave.diff(objAfterSave);
 							
 						Map<String, Object> diffObject = new HashMap<String, Object>();
 						

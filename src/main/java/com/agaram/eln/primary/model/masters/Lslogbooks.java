@@ -2,7 +2,6 @@ package com.agaram.eln.primary.model.masters;
 
 import java.util.Date;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

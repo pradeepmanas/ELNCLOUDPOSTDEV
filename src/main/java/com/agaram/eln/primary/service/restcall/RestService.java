@@ -1,12 +1,10 @@
 package com.agaram.eln.primary.service.restcall;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -289,47 +287,47 @@ public class RestService {
 		return result;
 	}
 	
-	private void createLogilabLIMSOrder4SDMS(LSlogilablimsorderdetail objLSlogilablimsorder) throws IOException {
-		
-		List<LSlogilablimsorder> lstLSlogilablimsorder = lslogilablimsorderRepository.findBybatchid(objLSlogilablimsorder.getBatchid());
-		
-		List<Map<String, Object>> lstMaPObject = new ArrayList<Map<String, Object>>();
-		
-		lstLSlogilablimsorder.stream().peek(f -> {
+//	private void createLogilabLIMSOrder4SDMS(LSlogilablimsorderdetail objLSlogilablimsorder) throws IOException {
+//		
+//		List<LSlogilablimsorder> lstLSlogilablimsorder = lslogilablimsorderRepository.findBybatchid(objLSlogilablimsorder.getBatchid());
+//		
+//		List<Map<String, Object>> lstMaPObject = new ArrayList<Map<String, Object>>();
+//		
+//		lstLSlogilablimsorder.stream().peek(f -> {
+//
+//			if(f.getInstrumentcode() != null ) {
+//				
+//				Map<String, Object> objResMap = new HashMap<>();
+//
+//				objResMap.put("batchid",f.getBatchid());
+//				objResMap.put("sampleid",f.getSampleid());
+//				objResMap.put("testcode",f.getTestcode());
+//				objResMap.put("methodcode",f.getMethodcode());
+//				objResMap.put("instrumentcode",f.getInstrumentcode());
+//				objResMap.put("instrumentname",f.getInstrumentname());
+//				objResMap.put("orderid",f.getOrderid());
+//
+//				lstMaPObject.add(objResMap);
+//			}
+//
+//		}).collect(Collectors.toList());
+//		
+//		if(!lstMaPObject.isEmpty())
+//			sdmsServiceCalling("ftpviewdata/createLogilabLIMSOrder",lstMaPObject);
+//	}
 
-			if(f.getInstrumentcode() != null ) {
-				
-				Map<String, Object> objResMap = new HashMap<>();
-
-				objResMap.put("batchid",f.getBatchid());
-				objResMap.put("sampleid",f.getSampleid());
-				objResMap.put("testcode",f.getTestcode());
-				objResMap.put("methodcode",f.getMethodcode());
-				objResMap.put("instrumentcode",f.getInstrumentcode());
-				objResMap.put("instrumentname",f.getInstrumentname());
-				objResMap.put("orderid",f.getOrderid());
-
-				lstMaPObject.add(objResMap);
-			}
-
-		}).collect(Collectors.toList());
-		
-		if(!lstMaPObject.isEmpty())
-			sdmsServiceCalling("ftpviewdata/createLogilabLIMSOrder",lstMaPObject);
-	}
-
-    private String sdmsServiceCalling(String uri, List<Map<String, Object>> lstMaPObject) {
-		
-    	final String url = env.getProperty("sdms.template.service.url") + uri;
-
-		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
-		
-		String result = restTemplate.postForObject(url, lstMaPObject, String.class);
-	    
-	    return result;
-		
-	}
+//    private String sdmsServiceCalling(String uri, List<Map<String, Object>> lstMaPObject) {
+//		
+//    	final String url = env.getProperty("sdms.template.service.url") + uri;
+//
+//		RestTemplate restTemplate = new RestTemplate();
+//		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+//		
+//		String result = restTemplate.postForObject(url, lstMaPObject, String.class);
+//	    
+//	    return result;
+//		
+//	}
 	
 //	public String forSyncOrderFromLims() throws Exception{
 //		
@@ -454,6 +452,7 @@ public class RestService {
 			
 			while(lstOrder.size()>i) {
 				if(lslogilablimsorderRepository.findByBatchid(lstOrder.get(i).getBatchid()) == null) {
+					lstOrder.get(i).setCompletedtimestamp(null);
 					lslogilablimsorderRepository.save(lstOrder.get(i));
 				}
 				i++;
@@ -533,6 +532,7 @@ public class RestService {
 			lstOrder.get(i).setFiletype(0);
 			
 			if(LSlogilablimsorderdetailRepository.findByBatchid(lstOrder.get(i).getBatchid()) == null) {
+				lstOrder.get(i).setCompletedtimestamp(null);
 				LSlogilablimsorderdetailRepository.save(lstOrder.get(i));
 			}
 			i++;
@@ -1259,11 +1259,11 @@ public class RestService {
 		 		
 		 		if(objorder.getOrderflag().trim().equals("N"))
 		 		{
-		 			res.setInformation("ID_NOTCOMPLETE");
+		 			res.setInformation("IDS_MSG_NOTCOMPLETE");
 		 		}
 		 		else
 		 		{
-		 			res.setInformation("ID_NOPARAMETERS");
+		 			res.setInformation("IDS_MSG_NOPARAMETERS");
 		 		}
 		    	res.setStatus(false);
 		    	

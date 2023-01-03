@@ -6,19 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.transaction.annotation.Transactional;
-
-import org.apache.commons.lang3.builder.Diff;
-import org.apache.commons.lang3.builder.DiffResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.ParserBlock;
 import com.agaram.eln.primary.model.methodsetup.ParserField;
-import com.agaram.eln.primary.model.methodsetup.ParserTechnique;
 import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserFields;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -145,7 +141,7 @@ public class SubParserFieldService {
 				{
 					if (objBeforeSave.getSubparserfieldkey().equals(objAfterSave.getSubparserfieldkey()))
 					{				
-						final DiffResult diffResult = objBeforeSave.diff(objAfterSave);
+//						final DiffResult diffResult = objBeforeSave.diff(objAfterSave);
 							
 						Map<String, Object> diffObject = new HashMap<String, Object>();
 						

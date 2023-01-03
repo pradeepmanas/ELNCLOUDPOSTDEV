@@ -16,7 +16,6 @@ import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
-import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmaster, Integer> {
 

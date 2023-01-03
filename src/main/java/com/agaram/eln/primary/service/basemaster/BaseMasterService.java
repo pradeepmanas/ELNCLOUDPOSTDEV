@@ -197,9 +197,8 @@ public class BaseMasterService {
 //		List<LSprojectmaster> projectlist = lSprojectmasterRepository
 //				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
 
-		List<LSprojectmaster> projectlist = lSprojectmasterRepository
+		return lSprojectmasterRepository
 				.findByLssitemasterOrderByProjectcodeDesc(objClass.getLssitemaster());
-		return projectlist;
 	}
 
 	public LStestmasterlocal InsertupdateTest(LStestmasterlocal objClass) {

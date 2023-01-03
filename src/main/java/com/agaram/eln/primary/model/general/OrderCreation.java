@@ -2,8 +2,6 @@ package com.agaram.eln.primary.model.general;
 
 import javax.persistence.Id;
 
-import org.springframework.data.mongodb.core.index.TextIndexed;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OrderCreation {

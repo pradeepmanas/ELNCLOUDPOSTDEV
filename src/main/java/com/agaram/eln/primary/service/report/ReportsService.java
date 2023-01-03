@@ -728,7 +728,7 @@ public class ReportsService {
 		return objMap;
 	}
 
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ "unchecked", "resource" })
 	public void saveDocxsReport(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(request.getInputStream()).useDelimiter("\\A");
@@ -903,7 +903,8 @@ public class ReportsService {
 							File toBeDeleted = new File(filePath, jsonObj.get("key") + ".docx");
 							
 							if (toBeDeleted.exists()) {
-								boolean FileStatus = toBeDeleted.delete();
+//								boolean FileStatus = 
+										toBeDeleted.delete();
 								LSdocreportsRepositoryObj.delete(LSDocReportsObj);
 					
 							}
@@ -945,6 +946,7 @@ public class ReportsService {
 		}
 	}
 
+	@SuppressWarnings({ "resource", "unchecked" })
 	public void cloudsaveDocxsReport(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(request.getInputStream()).useDelimiter("\\A");
@@ -1121,7 +1123,8 @@ public class ReportsService {
 								File toBeDeleted = new File(filePath, jsonObj.get("key") + ".docx");
 							
 								if (toBeDeleted.exists()) {
-									boolean FileStatus = toBeDeleted.delete();
+//									boolean FileStatus = 
+											toBeDeleted.delete();
 									LSdocreportsRepositoryObj.delete(LSDocReportsObj);
 								
 								}
@@ -2108,6 +2111,7 @@ public class ReportsService {
 
 	Map<String, List<Map<String, Object>>> sequenceTagList = new HashMap<String, List<Map<String, Object>>>();
 
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> cloudHandleOrderTemplate(Map<String, Object> obj) {
 		Map<String, Object> objMap = new HashMap<String, Object>();
 		sequenceTagList = new HashMap<String, List<Map<String, Object>>>();
@@ -2116,8 +2120,8 @@ public class ReportsService {
 			List<LSlogilablimsorderdetail> lstSelectedData = mapper.convertValue(obj.get("OrderData"),
 					new TypeReference<List<LSlogilablimsorderdetail>>() {
 					});
-			long batchcode = mapper.convertValue(obj.get("batchcode"), long.class);
-			String batchid = mapper.convertValue(obj.get("batchid"), String.class);
+//			long batchcode = mapper.convertValue(obj.get("batchcode"), long.class);
+//			String batchid = mapper.convertValue(obj.get("batchid"), String.class);
 //			List<LSlogilablimsorderdetail> lstSelectedData = lslogilablimsorderdetailRepository
 //					.findByBatchcodeAndBatchid(batchcode, batchid);
 
@@ -2646,6 +2650,7 @@ public class ReportsService {
 		return objMap;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void replaceDocxTagWithSequenceData(Map<String, List<Map<String, Object>>> sequenceDataTag,
 			XWPFDocument document) {
 		boolean isDone = false;
@@ -2722,6 +2727,7 @@ public class ReportsService {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void replaceDocxTagWithCell(List<Map<String, Object>> SingleTagObj1, XWPFDocument document, String SheetName,
 			Map<String, Object> SingleTag) {
 		boolean isDone = false;

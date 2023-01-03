@@ -128,6 +128,7 @@ public class ParserBlock implements Serializable, Diffable<ParserBlock>{
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DiffResult diff(ParserBlock obj) {		
 	     return new DiffBuilder(this, obj, ToStringStyle.SHORT_PREFIX_STYLE)
