@@ -81,6 +81,36 @@ public class Lslogbooks {
 	private Integer sitecode;
 	
 	private Integer fieldcount=-1;
+	
+	private String reviewedby;
+	
+	private Date revieweddate;
+	@Transient
+	private String msgshow;
+	
+	public String getMsgshow() {
+		return msgshow;
+	}
+
+	public void setMsgshow(String msgshow) {
+		this.msgshow = msgshow;
+	}
+
+	public Date getRevieweddate() {
+		return revieweddate;
+	}
+
+	public void setRevieweddate(Date revieweddate) {
+		this.revieweddate = revieweddate;
+	}
+
+	public String getReviewedby() {
+		return reviewedby;
+	}
+
+	public void setReviewedby(String reviewedby) {
+		this.reviewedby = reviewedby;
+	}
 
 	@Transient
 	Response objResponse;

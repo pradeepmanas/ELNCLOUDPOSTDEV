@@ -14,12 +14,12 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 public interface LSnotificationRepository extends JpaRepository<LSnotification, Long> {
 	public Long countByNotifationtoAndIsnewnotification(LSuserMaster lsuserMaster, Integer isnew);
 	public Long countByNotifationtoAndIsnewnotificationAndNotificationfor(LSuserMaster lsuserMaster, Integer isnew,Integer notificationfor);
-	public List<LSnotification> findAllByNotifationtoOrderByNotificationcodeDesc(LSuserMaster lsuserMaster);
-	public List<LSnotification> findAllByNotifationtoAndNotificationforOrderByNotificationcodeDesc(LSuserMaster lsuserMaster,Integer notificationfor);
+	public List<LSnotification> findFirst10ByNotifationtoOrderByNotificationcodeDesc(LSuserMaster lsuserMaster);
+	public List<LSnotification> findFirst10ByNotifationtoAndNotificationforOrderByNotificationcodeDesc(LSuserMaster lsuserMaster,Integer notificationfor);
 	public Long countByNotifationtoAndIsnewnotificationAndNotificationcodeGreaterThan(LSuserMaster lsuserMaster, Integer isnew, Long notificationcode);
 	public List<LSnotification> findByNotifationtoAndNotificationcodeGreaterThanOrderByNotificationcodeDesc(LSuserMaster lsuserMaster, Long notificationcode);
-	public List<LSnotification> findAllByNotifationtoAndNotificationcodeLessThanOrderByNotificationcodeDesc(LSuserMaster lsuserMaster, Long notificationcode);
-	public List<LSnotification> findAllByNotifationtoAndNotificationcodeLessThanAndNotificationforOrderByNotificationcodeDesc(LSuserMaster lsuserMaster, Long notificationcode,Integer notificationfor);
+	public List<LSnotification> findFirst10ByNotifationtoAndNotificationcodeLessThanOrderByNotificationcodeDesc(LSuserMaster lsuserMaster, Long notificationcode);
+	public List<LSnotification> findFirst10ByNotifationtoAndNotificationcodeLessThanAndNotificationforOrderByNotificationcodeDesc(LSuserMaster lsuserMaster, Long notificationcode,Integer notificationfor);
 	
 	@Transactional
 	@Modifying

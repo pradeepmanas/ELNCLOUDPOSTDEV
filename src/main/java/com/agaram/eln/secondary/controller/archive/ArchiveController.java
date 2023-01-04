@@ -1,10 +1,12 @@
 package com.agaram.eln.secondary.controller.archive;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,10 +39,17 @@ public class ArchiveController {
 		LScfrArchiveHistory objcfrArchiveHistory = new LScfrArchiveHistory();
 		LoggedUser objuser = new LoggedUser();
 		Response objResponse = new Response();
+		List<Integer> archivecode =new ArrayList<>();
 		if(objreqmap.containsKey("transaction"))
 		{
 			objcfrArchiveHistory = mapper.convertValue(objreqmap.get("transaction"),LScfrArchiveHistory.class);
 		}
+		
+		if(objreqmap.containsKey("PrimaryRecords")) {
+			 archivecode = mapper.convertValue(objreqmap.get("PrimaryRecords"),new TypeReference<List<Integer>>() {
+			});
+		}
+	
 		
 		if(objreqmap.containsKey("objuser"))
 		{
@@ -53,7 +62,7 @@ public class ArchiveController {
 				
 				if(userClass.getObjResponse().getStatus()) {
 					
-					objresmap.put("transaction", archiveService.CreateArchive(objcfrArchiveHistory));
+					objresmap.put("transaction", archiveService.CreateArchive(objcfrArchiveHistory,archivecode));
 					objResponse.setStatus(true);
 					objresmap.put("objResponse",objResponse);
 					
@@ -74,7 +83,7 @@ public class ArchiveController {
 				}
 				
 			}
-			objresmap.put("transaction", archiveService.CreateArchive(objcfrArchiveHistory));
+			objresmap.put("transaction", archiveService.CreateArchive(objcfrArchiveHistory,archivecode));
 			objResponse.setStatus(true);
 			objresmap.put("objResponse",objResponse);
 		return objresmap;

@@ -1,5 +1,6 @@
 package com.agaram.eln.secondary.service.archive;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,10 +32,14 @@ public class ArchiveService {
 	@Autowired
     private LSuserMasterRepository lsuserMasterRepository;
 	
-	public List<LScfttransaction> CreateArchive(LScfrArchiveHistory objcfrArchiveHistory)
+	public List<LScfttransaction> CreateArchive(LScfrArchiveHistory objcfrArchiveHistory,List<Integer> archivecode)
 	{
-		List<LScfttransaction> lstcfrtransaction = lscfttransactionRepository.findAll();
-		
+		List<LScfttransaction> lstcfrtransaction=new ArrayList<LScfttransaction>();
+		if(archivecode.size()>0) {
+			 lstcfrtransaction = lscfttransactionRepository.findByserialnoIn(archivecode);
+		}else {
+			 lstcfrtransaction = lscfttransactionRepository.findAll();
+		}
 		List<LSuserMaster> usermasterobj = lsuserMasterRepository.findAll();
 		
 		//objcfrArchiveHistory.setLscfrachivetransaction(lsarchive);
@@ -52,8 +57,12 @@ public class ArchiveService {
 		        .collect(Collectors.toList());
 		lscfrachivetransactionRepository.save(lsarchive);
 		
-		
-		lscfttransactionRepository.deleteAll();
+		if(archivecode.size()>0) {
+			lscfttransactionRepository.deleteByserialnoIn(archivecode);
+		}else {
+			lscfttransactionRepository.deleteAll();
+		}
+	
 		
 		if(objcfrArchiveHistory.getObjsilentaudit() != null)
     	{

@@ -177,4 +177,9 @@ public interface LScfttransactionRepository extends JpaRepository<LScfttransacti
 			Integer usercode, Date fromdate, Date todate);
 	List<LScfttransaction> findByLssitemasterAndTransactiondateBetweenOrderBySerialnoDesc(Integer site, Date fromdate,
 			Date todate);
+	@Transactional
+	void deleteByserialnoIn(List<Integer> archivecode);
+
+
+
 }

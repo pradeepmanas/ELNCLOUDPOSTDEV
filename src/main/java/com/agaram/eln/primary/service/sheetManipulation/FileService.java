@@ -302,17 +302,17 @@ public class FileService {
 	}
 
 	public List<LSfile> GetSheetsbyuser(LSuserMaster objuser) {
-		List<LSfile> lstfile = new ArrayList<LSfile>();
+//		List<LSfile> lstfile = new ArrayList<LSfile>();
 //		List<LSuserMaster> lstteamuser = objuser.getObjuser().getTeamusers();
 
 		if (objuser.getObjuser().getTeamusers() != null && objuser.getObjuser().getTeamusers().size() > 0) {
 			objuser.getObjuser().getTeamusers().add(objuser);
-			lstfile = lSfileRepository.getsheetGreaterthanOneAndCreatedByUserIN(objuser.getObjuser().getTeamusers());
+			return lSfileRepository.getsheetGreaterthanOneAndCreatedByUserIN(objuser.getObjuser().getTeamusers());
 		} else {
 			objuser.getObjuser().getTeamusers().add(objuser);
-			lstfile = lSfileRepository.getsheetGreaterthanOneAndCreatedByUserIN(objuser.getObjuser().getTeamusers());
+			return lSfileRepository.getsheetGreaterthanOneAndCreatedByUserIN(objuser.getObjuser().getTeamusers());
 		}
-		return lstfile;
+//		return lstfile;
 	}
 
 	public List<Sheettemplateget> GetSheetsbyuseronDetailview(LSuserMaster objuser) {

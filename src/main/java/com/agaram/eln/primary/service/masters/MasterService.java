@@ -141,6 +141,8 @@ public class MasterService {
 		}
 
 		lsrepositories.setObjResponse(objResponse);
+		
+		objResponse = null;
 		return lsrepositories;
 	}
 

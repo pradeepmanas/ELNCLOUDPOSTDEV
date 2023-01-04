@@ -1056,7 +1056,7 @@ public class UserService {
 		objresmap.put("newnotificationcount",
 				lsnotificationRepository.countByNotifationtoAndIsnewnotification(lsuserMaster, 1));
 		objresmap.put("notification", lsnotificationRepository
-				.findAllByNotifationtoAndNotificationforOrderByNotificationcodeDesc(lsuserMaster, notifyfor));
+				.findFirst10ByNotifationtoAndNotificationforOrderByNotificationcodeDesc(lsuserMaster, notifyfor));
 
 		objresmap.put("mynotificationcount",
 				lsnotificationRepository.countByNotifationtoAndIsnewnotificationAndNotificationfor(lsuserMaster, 1, 1));
@@ -1083,15 +1083,13 @@ public class UserService {
 	public Map<String, Object> GetnotificationonLazyload(LSnotification lsnotification) {
 		Map<String, Object> objresmap = new HashMap<String, Object>();
 
-		objresmap.put("notification",
-				lsnotificationRepository
-						.findAllByNotifationtoAndNotificationcodeLessThanAndNotificationforOrderByNotificationcodeDesc(
-								lsnotification.getNotifationto(), lsnotification.getNotificationcode(),
-								lsnotification.getNotificationfor()));
+		objresmap.put("notification", lsnotificationRepository
+				.findFirst10ByNotifationtoAndNotificationcodeLessThanAndNotificationforOrderByNotificationcodeDesc(
+						lsnotification.getNotifationto(), lsnotification.getNotificationcode(),
+						lsnotification.getNotificationfor()));
 
 		return objresmap;
 	}
-
 	public Map<String, Object> GetLatestnotification(LSnotification lsnotification) {
 		Map<String, Object> objresmap = new HashMap<String, Object>();
 

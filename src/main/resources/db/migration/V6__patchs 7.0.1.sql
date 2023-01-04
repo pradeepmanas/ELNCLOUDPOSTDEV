@@ -3413,3 +3413,6 @@ update materialinventory set nsitecode = 1 where nsitecode ISNULL;
 ALTER TABLE IF Exists lslogbooks ALTER COLUMN logbookcode TYPE numeric(17,0) USING logbookcode::numeric;
 
 ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS logbookid character varying(255);
+ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS reviewedby character varying(255);
+ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS revieweddate timestamp without time zone;
+

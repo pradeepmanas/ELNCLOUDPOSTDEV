@@ -745,6 +745,11 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			List<LSsamplemaster> lstsample, Integer filetype2, LSprojectmaster lsprojectmaster2, Date fromdate2,
 			Date todate2);
 
+	List<Logilaborders> findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			LSsamplemaster lssamplemaster, int i, LStestmasterlocal lstestmasterlocal, int j, Date fromdate,
+			Date todate, LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, int l, Date fromdate2,
+			Date todate2);
+
 
 
 
