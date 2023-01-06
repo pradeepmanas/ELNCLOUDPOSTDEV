@@ -168,11 +168,11 @@ public class FileStorageService {
 			}
 			//converting multipart file to string
 			ByteArrayInputStream stream = new   ByteArrayInputStream(file.getBytes());
-			String myString = IOUtils.toString(stream, "UTF-8");
+			//String myString = IOUtils.toString(stream, "UTF-8");
 			
-		//	gridFsTemplate.store(new ByteArrayInputStream(file.getBytes()), fileid);
+			gridFsTemplate.store(new ByteArrayInputStream(file.getBytes()), fileid);
            
-			gridFsTemplate.store(new ByteArrayInputStream(myString.getBytes(StandardCharsets.UTF_8)), fileid);
+		//	gridFsTemplate.store(new ByteArrayInputStream(myString.getBytes(StandardCharsets.UTF_8)), fileid);
 			
 			CloudParserFile objfile = new CloudParserFile();
     		objfile.setFileid(fileid);

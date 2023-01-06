@@ -4303,6 +4303,7 @@ public class ProtocolService {
 						.collect(Collectors.toList());
 
 			}
+			mapOrders.put("test", lstestmasterlocalRepository.findBystatusAndLssitemasterOrderByTestcodeDesc(1,objorder.getLsuserMaster().getLssitemaster()));
 			mapOrders.put("directorycode", directorycode);
 			mapOrders.put("orders", Getuserorder(objorder, directorycode));
 			mapOrders.put("ordercount", LSlogilabprotocoldetailRepository.countByLsprojectmasterInOrDirectorycodeIn(

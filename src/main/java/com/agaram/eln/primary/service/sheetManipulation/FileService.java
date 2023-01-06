@@ -343,10 +343,23 @@ public class FileService {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 
 //		List<LSuserMaster> lstteamuser = objusers.getObjuser().getTeamusers();
+		
+		List<LSuserMaster> lstteamuser = objusers.getObjuser().getTeamusers();
 
-		if (objusers.getObjuser().getTeamusers() != null) {
-			mapObj.put("templatecount", lSfileRepository.countByCreatebyIn(objusers.getObjuser().getTeamusers()));
+		if (lstteamuser != null && lstteamuser.size() > 0) {
+			lstteamuser.add(objusers);
+			mapObj.put("templatecount", lSfileRepository
+					.countByFilecodeGreaterThanAndLssitemasterAndViewoptionOrFilecodeGreaterThanAndCreatebyAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndViewoptionOrderByFilecodeDesc(
+							1, objusers.getLssitemaster(), 1, 1, objusers, 2, 1, lstteamuser, 3));
+		} else {
+			mapObj.put("templatecount", lSfileRepository
+					.countByFilecodeGreaterThanAndLssitemasterAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndViewoptionOrderByFilecodeDesc(
+							1, objusers.getLssitemaster(), 1, 1, objusers, 2));
 		}
+
+//		if (objusers.getObjuser().getTeamusers() != null) {
+//			mapObj.put("templatecount", lSfileRepository.countByCreatebyIn(objusers.getObjuser().getTeamusers()));
+//		}
 
 		mapObj.put("sharedbyme",
 				LsfilesharedbyRepository.countBySharebyunifiedidAndSharestatus(objusers.getSharebyunifiedid(), 1));

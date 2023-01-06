@@ -10,6 +10,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private Long batchcode;
@@ -29,9 +30,10 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private LSworkflow lsworkflow;
 	private String keyword;
 	private Integer ordercancell;
+	private LSuserMaster assignedto;
 
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
-			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,
+			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,LSuserMaster assignedto,
 			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
@@ -47,6 +49,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.keyword = keyword;
 		this.lsworkflow = lsworkflow;
 		this.ordercancell=ordercancell;
+		this.assignedto =assignedto;
 	}
 	
 	
@@ -234,6 +237,16 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 
 	public void setLsworkflow(LSworkflow lsworkflow) {
 		this.lsworkflow = lsworkflow;
+	}
+
+
+	public LSuserMaster getAssignedto() {
+		return assignedto;
+	}
+
+
+	public void setAssignedto(LSuserMaster assignedto) {
+		this.assignedto = assignedto;
 	}
 	
 	

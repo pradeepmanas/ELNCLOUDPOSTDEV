@@ -14,7 +14,7 @@ public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 	public String transactionstatus;
 	private Date createdate;
 	private String lssheetworkflowname;
-
+	public Integer versionno;
 	public Date getCreatedate() {
 		return createdate;
 	}
@@ -79,8 +79,17 @@ public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 		this.lssheetworkflowname = lssheetworkflowname;
 	}
 
+	
+	public Integer getVersionno() {
+		return versionno;
+	}
+
+	public void setVersionno(Integer versionno) {
+		this.versionno = versionno;
+	}
+
 	public Protocoltemplateget(Integer protocolmastercode, String protocolmastername, Integer protocolstatus,
-			Integer status, String createdbyusername, Integer approved, Integer rejected,Date createdate,LSsheetworkflow lssheetworkflow) {
+			Integer status, String createdbyusername, Integer approved, Integer rejected,Date createdate,LSsheetworkflow lssheetworkflow,Integer versionno) {
 
 		this.protocolmastercode = protocolmastercode;
 		this.protocolmastername = protocolmastername;
@@ -91,6 +100,7 @@ public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 		this.transactionstatus = (rejected != null && rejected == 1) ? "rejected"
 				: (approved == null ? "created" :approved == 1 ? "approved" : approved == 0 ? "initiated":approved == 2?"return":"");
 		this.lssheetworkflowname=lssheetworkflow!=null?lssheetworkflow.getWorkflowname():null;
+		this.versionno=versionno;
 	}
 
 	@Override

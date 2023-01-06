@@ -3356,7 +3356,7 @@ public class InstrumentService {
 			}
 			lsnotificationRepository.save(lstnotifications);
 			
-			lstnotifications = null;
+			lstnotifications.removeAll(lstnotifications);
 		}
 		Details = null;
 		Notification = null;
@@ -4676,7 +4676,7 @@ public class InstrumentService {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
 					.findByLsuserMasterAndTeamcodeNotNull(objuser);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
-			List<LSprojectmaster> lstprojectmaster = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+			List<LSprojectmaster> lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatus(lstteam,1);
 
 			List<Integer> lstproject = new ArrayList<Integer>();
 			if (lstprojectmaster != null && lstprojectmaster.size() > 0) {

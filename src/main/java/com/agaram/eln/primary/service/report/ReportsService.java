@@ -3499,8 +3499,8 @@ public class ReportsService {
 						.findByFiletypeAndOrderflagOrderByBatchcodeDesc((int) objorder.get("filetype"), "N");
 
 				Completed = lslogilablimsorderdetailRepository
-						.findByFiletypeAndApprovelstatusAndOrderflagOrderByBatchcodeDesc((int) objorder.get("filetype"),
-								1, "R");
+						.findByFiletypeAndOrderflagOrderByBatchcodeDesc((int) objorder.get("filetype"),
+								 "R");
 
 			} else {
 				Pending = lslogilablimsorderdetailRepository

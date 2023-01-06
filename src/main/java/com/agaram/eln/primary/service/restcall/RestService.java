@@ -268,6 +268,10 @@ public class RestService {
 	    bool = InsertLimsOrderDetail(map);
 	    
 	    if(bool) {
+	    	bool = InsertBatchOrderDetail(map);	    
+	    }
+	    
+	    if(bool) {
 	    	result="success";
 //	    	final LSlogilablimsorderdetail objLSlogilablimsorder = (LSlogilablimsorderdetail) mapOrderDetail;
 //
@@ -537,7 +541,34 @@ public class RestService {
 			}
 			i++;
 		}
-		i=0;
+//		i=0;
+//		while(lstOrder.size()>i) {
+//			
+//			if(lstOrder.get(i).getNbatchcode() != null) {
+//				LSlogilablimsorder lsOrder = lslogilablimsorderRepository.findFirstByBatchidOrderByOrderidDesc(lstOrder.get(i).getBatchid());
+//				LSlogilablimsorderdetail lsDetail = LSlogilablimsorderdetailRepository.findByBatchid(lstOrder.get(i).getBatchid());
+//				
+//				Lsbatchdetails lsBatch = new Lsbatchdetails();
+//				
+//				lsBatch.setBatchcode(lsDetail.getBatchcode());
+//				lsBatch.setSampleid(lstOrder.get(i).getSampleid());
+//				lsBatch.setOrderID(lsOrder.getOrderid());
+//				lsBatch.setLimsorderID(limsOrder.get(i).getOrderid());
+//				
+//				LsbatchdetailsRepository.save(lsBatch);
+//			}
+//			i++;
+//		}
+		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private boolean InsertBatchOrderDetail(Map<String, Object> mapObj) throws Exception{
+		List<LSlogilablimsorderdetail> lstOrder = new ArrayList<LSlogilablimsorderdetail>();
+		lstOrder=(List<LSlogilablimsorderdetail>) mapObj.get("LimsOrderDetail");
+		List<LSlogilablimsorder> limsOrder = new ArrayList<LSlogilablimsorder>();
+		limsOrder=(List<LSlogilablimsorder>) mapObj.get("LimsOrder");
+		int i=0;
 		while(lstOrder.size()>i) {
 			
 			if(lstOrder.get(i).getNbatchcode() != null) {
@@ -1249,7 +1280,7 @@ public class RestService {
 			    	
 			    	return res;
 			    }else {
-			    	res.setInformation("ID_DUMMY2");
+			    	res.setInformation("IDS_MSG_SENDTOLIMSFAILED");
 			    	res.setStatus(false);
 			    	
 			    	return res;

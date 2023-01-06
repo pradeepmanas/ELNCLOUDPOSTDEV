@@ -22,6 +22,7 @@ public class Sheettemplateget {
 	private Integer viewoption;
 	private String category;
 	private String lssheetworkflowname;
+	private String viewoptionstr;
 //	private List<LSfileversion> lstfileversion;
 //	private LSfileversion lsfileversion;
 
@@ -55,6 +56,7 @@ public class Sheettemplateget {
 		this.versionno=versionno;
 		this.category =category;
 		this.viewoption =viewoption;
+		this.viewoptionstr =viewoption==1?"Only Site":viewoption==2?"Only to me":"Only team";
 		this.lssheetworkflowname=lssheetworkflow!=null?lssheetworkflow.getWorkflowname():null;
 //		this.lsfileversion = lsfileversion;
 	}
@@ -84,6 +86,14 @@ public class Sheettemplateget {
 
 	public long getVersioncout() {
 		return versioncout;
+	}
+
+	public String getViewoptionstr() {
+		return viewoptionstr;
+	}
+
+	public void setViewoptionstr(String viewoptionstr) {
+		this.viewoptionstr = viewoptionstr;
 	}
 
 	public Integer getViewoption() {

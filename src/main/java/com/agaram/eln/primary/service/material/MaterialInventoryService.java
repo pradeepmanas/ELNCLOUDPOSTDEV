@@ -118,8 +118,15 @@ public class MaterialInventoryService {
 	public ResponseEntity<Object> getMaterialInventorycombo(Integer nmaterialtypecode, Integer nmaterialcatcode, Integer nsiteInteger) {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
-		List<MaterialCategory> lstMaterialCategory = materialCategoryRepository
-				.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcode(nmaterialtypecode,nsiteInteger);
+		List<MaterialCategory> lstMaterialCategory = new ArrayList<>();
+		
+		if(nmaterialcatcode != null) {
+			lstMaterialCategory = materialCategoryRepository
+					.findByNmaterialtypecodeAndNmaterialcatcodeAndNsitecodeOrderByNmaterialcatcode(nmaterialtypecode,nmaterialcatcode,nsiteInteger);
+		}else {
+			lstMaterialCategory = materialCategoryRepository
+					.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcode(nmaterialtypecode,nsiteInteger);
+		}
 
 		List<Map<String, Object>> lstMatObject = new ArrayList<Map<String, Object>>();
 
@@ -775,11 +782,11 @@ public class MaterialInventoryService {
 
 		objmap.putAll((Map<String, Object>) getMaterialInventoryByID(inputMap).getBody());
 
-		objmap.put("nregtypecode", -1);
-		objmap.put("nregsubtypecode", -1);
-		objmap.put("ndesigntemplatemappingcode", jsonuidata.get("nmaterialconfigcode"));
-		actionType.put("materialinventory", "IDS_ADDMATERIALINVENTORY");
-		actionType.put("materialinventorytransaction", "IDS_ADDMATERIALINVENTORYTRANSACTION");
+//		objmap.put("nregtypecode", -1);
+//		objmap.put("nregsubtypecode", -1);
+//		objmap.put("ndesigntemplatemappingcode", jsonuidata.get("nmaterialconfigcode"));
+//		actionType.put("materialinventory", "IDS_ADDMATERIALINVENTORY");
+//		actionType.put("materialinventorytransaction", "IDS_ADDMATERIALINVENTORYTRANSACTION");
 
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 

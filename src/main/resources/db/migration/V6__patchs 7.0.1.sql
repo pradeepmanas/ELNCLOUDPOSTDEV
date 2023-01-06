@@ -3416,3 +3416,6 @@ ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS logbookid character va
 ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS reviewedby character varying(255);
 ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS revieweddate timestamp without time zone;
 
+INSERT INTO parserignorechars(ignorechars)SELECT 'â†µâ†µâ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†µâ†µâ');
+INSERT INTO parserignorechars(ignorechars)SELECT 'â†µ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†µ');
+  

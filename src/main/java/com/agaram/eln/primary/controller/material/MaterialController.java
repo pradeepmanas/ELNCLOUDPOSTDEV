@@ -68,4 +68,9 @@ public class MaterialController {
 		
 		return (ResponseEntity<Object>) objMaterialService.getMaterialByID(inputMap);
 	}
+	
+	@RequestMapping(value = "/updateMaterial", method = RequestMethod.POST)
+	public ResponseEntity<Object> UpdateMaterial(@RequestBody Map<String, Object> inputMap) throws Exception {
+		return objMaterialService.UpdateMaterial(inputMap);
+	}
 }

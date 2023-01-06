@@ -469,6 +469,8 @@ public class MaterialService {
 //				objmap.put("MaterialDateFeild", submittedDateFeilds);
 //			}
 
+			
+			
 			Map<String, Object> objMaterialMap = objmapper.readValue(objMaterial.getJsondata(),
 					new TypeReference<Map<String, Object>>() {
 					});
@@ -534,6 +536,99 @@ public class MaterialService {
 //		objmap.putAll((Map<String, Object>) objMaterialSectionDAO
 //				.getMaterialSectionByMaterialCode((int) inputMap.get("nmaterialcode"), inputMap).getBody());
 //		objmap.putAll((Map<String, Object>) getMaterialFile((int) inputMap.get("nmaterialcode"), userInfo));
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
+	@SuppressWarnings({ "null", "unchecked" })
+	public ResponseEntity<Object> UpdateMaterial(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper objmapper = new ObjectMapper();
+//		JSONObject jsonAuditOld = new JSONObject();
+//		JSONObject jsonAuditNew = new JSONObject();
+//		JSONArray newJsonUiDataArray = new JSONArray();
+//		JSONObject actionType = new JSONObject();
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+//		List<String> lstDateField = (List<String>) inputMap.get("DateList");
+//		List<Integer> ismaterialSectionneed = new ArrayList<Integer>();
+		JSONObject jsonObject = new JSONObject(inputMap.get("materialJson").toString());
+		JSONObject jsonuidata = new JSONObject(inputMap.get("jsonuidata").toString());
+
+//		if (!lstDateField.isEmpty()) {
+//			jsonObject = (JSONObject) convertInputDateToUTCByZone(jsonObject, lstDateField, false);
+//			jsonuidata = (JSONObject) convertInputDateToUTCByZone(jsonuidata, lstDateField, false);
+//		}
+//		String strcheck = "";
+//		String strPrefix = "";
+//		boolean nflag = false;
+		
+//		Material ObjMatNamecheck = materialRepository.findByNstatusAndNmaterialcode(1,
+//				(Integer) inputMap.get("nmaterialcode"));
+		
+		Map<String, Object> objMat = (Map<String, Object>) inputMap.get("Material");
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode"); 
+		final Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,
+				(Integer) inputMap.get("nmaterialcode"));
+		
+		Material ObjMatNamecheck = materialRepository.findBySmaterialnameAndNstatus((String) objMat.get("Material Name"),1);
+		
+		if (ObjMatNamecheck == null) {
+			if (jsonObject.has("Prefix")) {
+//				nflag = true;
+				final Material lstcheckPrefix = materialRepository.findByNstatusAndSprefix(1,
+						(String) jsonObject.get("Prefix"));
+
+				if (lstcheckPrefix != null) {
+					return new ResponseEntity<>("IDS_PREFIXALREADYEXISTS", HttpStatus.CONFLICT);
+				}
+
+			}
+		} else {
+			if(objMaterial.getNmaterialcode() != ObjMatNamecheck.getNmaterialcode()) {
+				return new ResponseEntity<>("IDS_ALREADYEXISTS", HttpStatus.CONFLICT);	
+			}
+		}
+		
+		
+		ObjMatNamecheck.setJsondata(jsonObject.toString());
+		ObjMatNamecheck.setJsonuidata(jsonuidata.toString());
+		ObjMatNamecheck.setNmaterialcatcode((Integer) jsonObject.get("nmaterialcatcode"));
+		ObjMatNamecheck.setNtransactionstatus((Integer) inputMap.get("ntransactionstatus"));
+		ObjMatNamecheck.setNmaterialcode((Integer) inputMap.get("nmaterialcode"));
+		
+		materialRepository.save(ObjMatNamecheck);
+		
+		if (inputMap.containsKey("needsectionwise") && (int) inputMap.get("needsectionwise") == Enumeration.TransactionStatus.YES.gettransactionstatus()) {
+			jsonObject = new JSONObject(inputMap.get("materialSectionJson").toString());
+			jsonObject.put("nmaterialcode", inputMap.get("nmaterialcode"));
+			inputMap.put("nmaterialcode", inputMap.get("nmaterialcode"));
+			inputMap.put("materialSectionJson", jsonObject);
+//			objMaterialSectionDAO.createMaterialSection(inputMap);
+//			objmap.putAll((Map<String, Object>) objMaterialSectionDAO
+//					.getMaterialSectionByMaterialCode((int) inputMap.get("nmaterialcode"), inputMap).getBody());
+		}		
+		List<Map<String, Object>> lstMaterial = new ArrayList<Map<String, Object>>();
+		Map<String, Object> objMaterialMap = objmapper.readValue(objMaterial.getJsondata(),new TypeReference<Map<String, Object>>() {});
+		lstMaterial.add(0, objMaterialMap);
+		objmap.put("SelectedMaterial", lstMaterial.get(0));
+		
+		List<Material> materialLst = materialRepository.findByNmaterialcatcodeAndNmaterialtypecodeAndNsitecodeAndNstatus(
+				(Integer) inputMap.get("nmaterialcatcode"), (Integer) inputMap.get("nmaterialtypecode"),nsiteInteger, 1);
+		
+		List<MaterialType> lstMaterialType = materialTypeRepository
+				.findByNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
+		objmap.put("SelectedMaterialType", lstMaterialType);
+		objmap.put("Material", materialLst);
+
+//		String SelectedMaterialCategory = "select nmaterialcatcode,smaterialcatname,needSectionwise from materialcategory where nmaterialcatcode="
+//				+ inputMap.get("nmaterialcatcode") + " and nstatus=1";
+		
+		MaterialCategory objMaterialCategory = materialCategoryRepository.findByNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
+
+//		List<MaterialCategory> lstMaterialCategory = (List<MaterialCategory>) jdbcTemplate
+//				.query(SelectedMaterialCategory, new MaterialCategory());
+		
+		objmap.put("SelectedMaterialCategory", objMaterialCategory);
+
+		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
