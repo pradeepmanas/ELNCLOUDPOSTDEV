@@ -1368,8 +1368,8 @@ update lsusergrouprightsmaster set screate='0' where orderno=34;
 
 update lsusergrouprightsmaster set screate='NA',sedit='NA',sdelete='NA' where orderno in (97,98,108,109);
 update lsusergrouprights set screate='NA',sedit='NA',sdelete='NA' where displaytopic in ('IDS_TSK_ADDLOGBOOK','IDS_TSK_EDITLOGBOOK');
-update lsusergrouprights set screate='1',sedit='1',sdelete='1' where displaytopic='IDS_SCN_LOGBOOK' and usergroupid_usergroupcode=1;
-
+update lsusergrouprights set screate='1',sedit='NA',sdelete='NA' where displaytopic='IDS_SCN_LOGBOOK' and usergroupid_usergroupcode=1;
+update lsusergrouprights set sedit='NA',sdelete='NA' where displaytopic='IDS_SCN_LOGBOOK';
 DO $$                  
     BEGIN 
         IF  EXISTS
@@ -3225,7 +3225,9 @@ update lsaudittrailconfiguration set ordersequnce=4 where taskname='IDS_TSK_EDIT
 update lsaudittrailconfiguration set ordersequnce=6 where taskname='IDS_TSK_EDITTASK';
 update lsaudittrailconfiguration set ordersequnce=7 where taskname='IDS_TSK_EDITPROJECT';
 update lsaudittrailconfiguration set ordersequnce=8 where taskname='IDS_TSK_EDITSAMPLE';
-
+delete from lsaudittrailconfiguration where taskname='IDS_TSK_DELETED' and modulename='IDS_MDL_PARSER';
+update lsaudittrailconfigmaster set taskname='IDS_TSK_DELETEPARSER' where serialno in (85,88,91,94,97);
+update lsaudittrailconfiguration set taskname='IDS_TSK_DELETEPARSER' where taskname='IDS_TSK_DELETED' and modulename='IDS_MDL_PARSER';
 
 
 update lsaudittrailconfiguration set modulename='IDS_MDL_ORDERS' where screenname IN ('IDS_SCN_PROTOCOLORDERS','IDS_SCN_SHEETORDERS');
