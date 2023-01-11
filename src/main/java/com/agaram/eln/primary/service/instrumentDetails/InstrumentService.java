@@ -2729,12 +2729,12 @@ public class InstrumentService {
 
 		objfile.setProcessed(1);
 
-//		String Content = objfile.getFilecontent();
-//		objfile.setFilecontent(null);
+		String Content = objfile.getFilecontent();
+		objfile.setFilecontent(null);
 		lssamplefileRepository.save(objfile);
-		updateordercontent(objfile.getFilecontent(), objfile, objfile.getIsmultitenant());
+		updateordercontent(Content, objfile, objfile.getIsmultitenant());
 
-//		objfile.setFilecontent(Content);
+		objfile.setFilecontent(Content);
 
 		if (objfile.getObjActivity() != null) {
 			lsactivityRepository.save(objfile.getObjActivity());
@@ -3212,8 +3212,8 @@ public class InstrumentService {
 			lssamplefileversionRepository.save(objorder.getLssamplefile().getLssamplefileversion());
 		}
 		lssampleresultRepository.save(objorder.getLssamplefile().getLssampleresult());
-//		String Content = objorder.getLssamplefile().getFilecontent();
-//		objorder.getLssamplefile().setFilecontent(null);
+		String Content = objorder.getLssamplefile().getFilecontent();
+		objorder.getLssamplefile().setFilecontent(null);
 		lssamplefileRepository.save(objorder.getLssamplefile());
 		objorder.getLsparsedparameters().forEach((param) -> param.setBatchcode(objorder.getBatchcode()));
 		lsparsedparametersRespository.save(objorder.getLsparsedparameters());
@@ -3224,11 +3224,12 @@ public class InstrumentService {
 		lslogilablimsorderdetailRepository.save(objorder);
 
 		if (objorder.getLssamplefile() != null) {
-			updateordercontent(objorder.getLssamplefile().getFilecontent(), objorder.getLssamplefile(), objorder.getIsmultitenant());
-//			objorder.getLssamplefile().setFilecontent(Content);
+			updateordercontent(Content, objorder.getLssamplefile(), objorder.getIsmultitenant());
+			objorder.getLssamplefile().setFilecontent(Content);
 		}
 
 		updatenotificationfororder(objorder);
+		Content = null;
 		objorder.setResponse(new Response());
 		objorder.getResponse().setStatus(true);
 		objorder.getResponse().setInformation("IDS_MSG_ORDERCMPLT");

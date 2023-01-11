@@ -1228,14 +1228,14 @@ INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, s
 update lsusergrouprights set modulename='IDS_MDL_MASTERS' where displaytopic in ('IDS_TSK_ADDREPO','IDS_TSK_EDITREPO','IDS_SCN_UNLOCKORDERS','IDS_SCN_TASKMASTER','IDS_SCN_SAMPLEMASTER','IDS_SCN_PROJECTMASTER','IDS_SCN_INVENTORY');
 
 update lsusergrouprightsmaster set screate='1' where orderno in (71,72);
-update lsusergrouprights set screate='1' where displaytopic in ('IDS_TSK_SHEET','IDS_TSK_PROTOCOL');
+update lsusergrouprights set screate='1' where displaytopic in ('IDS_TSK_SHEET','IDS_TSK_PROTOCOL') and screate='NA';
 update lsusergrouprightsmaster set status='1,0,0' where orderno in (71,72);
 
 delete from lsusergrouprightsmaster where orderno in (15,82,95,97,98);
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (97, 'IDS_TSK_ADDLOGBOOK', 'IDS_MDL_LOGBOOK', '0', 'NA', 'NA', 'NA', '0,0,0',44,'IDS_SCN_LOGBOOK') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (98, 'IDS_TSK_EDITLOGBOOK', 'IDS_MDL_LOGBOOK', '0', 'NA', 'NA', 'NA', '0,0,0',44,'IDS_SCN_LOGBOOK') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (95, 'IDS_SCN_LOGBOOK', 'IDS_MDL_LOGBOOK', '0', 'NA', 'NA', 'NA', '0,0,0',44,'IDS_SCN_LOGBOOK') ON CONFLICT(orderno)DO NOTHING;
-update lsusergrouprightsmaster set screate='0',sedit=0,sdelete=0 where screenname='IDS_SCN_LOGBOOK';
+update lsusergrouprightsmaster set screate='0',sedit='0',sdelete='0' where screenname='IDS_SCN_LOGBOOK';
 update lsusergrouprightsmaster set status='1,1,1' where displaytopic='IDS_SCN_LOGBOOK';
 ALTER TABLE IF Exists lsprotocolordersharedby ADD COLUMN IF NOT EXISTS protocolorders_protocolordercode numeric(17,0);
 
@@ -1363,7 +1363,7 @@ delete from lsusergrouprightsmaster where orderno in (5,6,46,47);
 delete from lsusergrouprights where displaytopic in ('IDS_TSK_PENDINGWORKPROTOCOL','IDS_TSK_COMPLETEDWORKPROTOCOL','IDS_TSK_PENDINGWORK','IDS_TSK_COMPLETEDWORK');
 update lsusergrouprightsmaster set sedit='NA' where orderno in (80,81);
 update lsusergrouprightsmaster set sdelete='1' where orderno=26;
-update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_CFRSETTINGS';
+update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_CFRSETTINGS' and sdelete='NA';
 update lsusergrouprightsmaster set screate='0' where orderno=34;
 
 update lsusergrouprightsmaster set screate='NA',sedit='NA',sdelete='NA' where orderno in (97,98,108,109);
@@ -1769,9 +1769,9 @@ update lsusergrouprightsmaster set modulename='IDS_MDL_DASHBOARD' where orderno 
 update lsusergrouprightsmaster set modulename='IDS_MDL_ORDERS' where orderno in (7,8,9,37,38,61,62,93,85);
 update lsusergrouprightsmaster set modulename='IDS_MDL_MASTERS' where orderno=78;
 update lsusergrouprights set modulename='IDS_MDL_ORDERS' where displaytopic='IDS_TSK_MOVEORDERSPROTOCOL';
-update lsusergrouprightsmaster set screate=0 where orderno in (71,72);
-update lsusergrouprightsmaster set sedit=0 where orderno in (11,12,13);
-update lsusergrouprightsmaster set sdelete=0 where orderno=26;
+update lsusergrouprightsmaster set screate='0' where orderno in (71,72);
+update lsusergrouprightsmaster set sedit='0' where orderno in (11,12,13);
+update lsusergrouprightsmaster set sdelete='0' where orderno=26;
 update lsusergrouprightsmaster set status='1,1,1' where orderno in (39,11,12,13);
 
 delete from lsaudittrailconfigmaster where serialno in (81,82,83);
@@ -2042,8 +2042,8 @@ update lsusergrouprightsmaster set status='1,1,1' where orderno=106;
 update lsusergrouprightsmaster set status='1,1,1' where orderno=107;
 update lsusergrouprights set screate='NA',sedit='NA',  sdelete='NA' where displaytopic='IDS_TSK_RETIRELOGBOOK';
 update lsusergrouprights set screate='NA',sedit='NA', sdelete='NA' where displaytopic='IDS_TSK_REVIEWLOGBOOK';
-update lsusergrouprights set sedit='1', sdelete='1' where displaytopic='IDS_SCN_MATERIAL';
-update lsusergrouprights set sedit='1', sdelete='1' where displaytopic='IDS_SCN_MATERIALINVENTORY';
+update lsusergrouprights set sedit='1', sdelete='1' where displaytopic='IDS_SCN_MATERIAL' and sedit='NA' and sdelete='NA';
+update lsusergrouprights set sedit='1', sdelete='1' where displaytopic='IDS_SCN_MATERIALINVENTORY' and sedit='NA' and sdelete='NA';
 
 delete from lsusergrouprights where displaytopic ='IDS_TSK_LIMSTASKORDER';
 delete from lsusergrouprights where displaytopic='IDS_TSK_LIMSTESTORDER';

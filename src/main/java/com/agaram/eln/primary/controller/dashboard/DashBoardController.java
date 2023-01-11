@@ -75,6 +75,15 @@ public class DashBoardController {
 		}
 	}
 	
+	@PostMapping("/getDashboardSheetCount")
+	public Map<String, Object> getDashboardSheetCount(@RequestBody LSuserMaster objuser)throws Exception {
+		if (objuser.getObjuser().getTemplatefor() == 1) {
+			return dashBoardService.getCountFromSheetTemplate(objuser);
+		} else {
+			return dashBoardService.getCountFromProtocolTemplate(objuser);
+		}
+	}
+	
 	@PostMapping("/Getordersharebyme")
 	public Map<String, Object> Getordersharebyme(@RequestBody LSuserMaster objuser)throws Exception {
 		return dashBoardService.Getordersharebyme(objuser);

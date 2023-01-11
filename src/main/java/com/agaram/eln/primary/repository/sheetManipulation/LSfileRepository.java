@@ -190,8 +190,39 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	public Object countByFilecodeGreaterThanAndLssitemasterAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndViewoptionOrderByFilecodeDesc(
 			int i, LSSiteMaster lssitemaster, int j, int k, LSuserMaster objusers, int l);
 
+	public Long countByCreatedateBetweenAndFilecodeGreaterThanAndRejectedOrderByFilecodeDesc(Date fromdate,
+			Date todate, int i, int j);
 
+	public Long countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedAndRejectedNotOrderByFilecodeDesc(
+			Date fromdate, Date todate, int i, int j, int k);
 
+	public Long countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedNotAndRejectedNotOrderByFilecodeDesc(
+			Date fromdate, Date todate, int i, int j, int k);
 
+	public Long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionAndRejectedOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int m, int n, int o, List<LSuserMaster> lstteamuser, Date fromdate3,
+			Date todate3, int p, int q);
 
+	public Long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p, int q,
+			List<LSuserMaster> lstteamuser, Date fromdate3, Date todate3, int r, int s, int t);
+
+	public Long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p, int q,
+			List<LSuserMaster> lstteamuser, Date fromdate3, Date todate3, int r, int s, int t);
+
+	public Long findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndRejectedOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int m, int n);
+
+	public Long findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p);
+
+	public Long findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p);
 }

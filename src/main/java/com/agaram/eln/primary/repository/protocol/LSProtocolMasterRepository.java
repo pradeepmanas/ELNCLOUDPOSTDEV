@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.repository.protocol;
 
 import java.util.ArrayList;
+//import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -213,11 +214,57 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
 			Date todate2, int l, List<Integer> usercodelist, int m, Date fromdate3, Date todate3, int n);
 
+	Long countByStatusAndLssitemasterAndCreatedateBetweenAndRejected(int i, Integer sitecode, Date fromdate,
+			Date todate, int j);
 
+	Long countByStatusAndLssitemasterAndCreatedateBetweenAndRejectedNotAndApproved(int i, Integer sitecode,
+			Date fromdate, Date todate, int j, int k);
 
+	Long countByStatusAndLssitemasterAndCreatedateBetweenAndRejectedNotAndApprovedNot(int i, Integer sitecode,
+			Date fromdate, Date todate, int j, int k);
 
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, Integer usercode, int l, Date fromdate2,
+			Date todate2, int m, int n, List<Integer> usercodelist, int o, Date fromdate3, Date todate3, int p, int q);
 
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
+			Date fromdate2, Date todate2, int n, int o, int p, List<Integer> usercodelist, int q, Date fromdate3,
+			Date todate3, int r, int s, int t);
 
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
+			Date fromdate2, Date todate2, int n, int o, int p, List<Integer> usercodelist, int q, Date fromdate3,
+			Date todate3, int r, int s, int t);
 
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, Integer usercode, int l, Date fromdate2,
+			Date todate2, int m, int n);
+
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
+			Date fromdate2, Date todate2, int n, int o, int p);
+
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
+			Date fromdate2, Date todate2, int n, int o, int p);
+
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, Integer usercode, int l, Date fromdate2,
+			Date todate2, int m, int n, List<Integer> usercodelist, int o, Date fromdate3, Date todate3, int p, int q);
+
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
+			Date todate2, int l, List<Integer> usercodelist, int m, Date fromdate3, Date todate3, int n);
+
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
+			Date fromdate2, Date todate2, int n, int o, int p, List<Integer> usercodelist, int q, Date fromdate3,
+			Date todate3, int r, int s, int t);
+
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
+			Date fromdate2, Date todate2, int n, int o, int p, List<Integer> usercodelist, int q, Date fromdate3,
+			Date todate3, int r, int s, int t);
 
 }

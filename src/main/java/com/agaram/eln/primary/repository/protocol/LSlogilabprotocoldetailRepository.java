@@ -551,18 +551,41 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 
 	Object countByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(String string, Integer sitecode,
+			Date fromdate, Date todate, List<LSprojectmaster> lstproject);	
+	
+	Object countByApprovelstatusNotAndOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(Integer i,String string, Integer sitecode,
 			Date fromdate, Date todate, List<LSprojectmaster> lstproject);
 
 
+	Object countByOrdercancellNotAndApprovelstatusNotAndOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(
+			int i, int j, String string, Integer sitecode, Date fromdate, Date todate,
+			List<LSprojectmaster> lstproject);
 
 
+	Object countByApprovelstatusAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(int i, Integer sitecode,
+			Date fromdate, Date todate, List<LSprojectmaster> lstproject);
 
 
-
-	
-
-
+	Object countByOrdercancellNotAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(int i, Integer sitecode,
+			Date fromdate, Date todate, List<LSprojectmaster> lstproject);
 
 
-	
+	Object countByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(int i, Integer sitecode,
+			Date fromdate, Date todate, List<LSprojectmaster> lstproject);
+
+
+	Object countByOrdercancellIsNullAndOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndApprovelstatusNotOrApprovelstatusIsNull(
+			int i, String string, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject,
+			int j);
+
+	Object countByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndApprovelstatusNotOrApprovelstatusIsNullAndOrdercancellIsNull(
+			String string, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, int i);
+
+
+	List<Logilabprotocolorders> findByApprovelstatusAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(int i,
+			Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(int i,
+			Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject);
 }

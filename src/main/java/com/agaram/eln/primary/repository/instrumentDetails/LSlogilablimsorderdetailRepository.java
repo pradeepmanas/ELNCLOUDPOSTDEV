@@ -320,6 +320,14 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public Long countByOrderflag(String orderflag);
 
 	public long countByOrderflagAndCreatedtimestampBetween(String orderflag, Date fromdate, Date todate);
+	
+	public long countByOrderflagAndApprovelstatusNotAndCreatedtimestampBetween(String orderflag,int i, Date fromdate, Date todate);
+	
+	public long countByOrderflagAndApprovelstatusNotAndOrdercancellNotAndCreatedtimestampBetween(String orderflag,int i,int j,Date fromdate, Date todate);
+	
+	public long  countByApprovelstatusAndCreatedtimestampBetween(int i, Date fromdate, Date todate);
+	
+	public long countByOrdercancellAndCompletedtimestampBetween(int i, Date fromdate, Date todate);
 
 	public long countByOrderflagAndCompletedtimestampBetween(String orderflag, Date fromdate, Date todate);
 
@@ -750,9 +758,44 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Date todate, LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, int l, Date fromdate2,
 			Date todate2);
 
+	long countByOrderflagAndApprovelstatusNotAndOrdercancellNotAndLsprojectmasterInAndCreatedtimestampBetween(
+			String string, int i, int j, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 
+	long countByOrdercancellAndApprovelstatusNotAndLsprojectmasterInAndCreatedtimestampBetween(int i, int j,
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 
+	long countByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetween(int i, List<LSprojectmaster> lstproject,
+			Date fromdate, Date todate);
 
+	long countByOrderflagAndApprovelstatusNotOrApprovelstatusIsNullAndOrdercancellIsNullAndLsprojectmasterInAndCreatedtimestampBetween(
+			String string, int i, int j, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 
-	
+	long countByOrderflagAndOrdercancellIsNullAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotOrApprovelstatusIsNull(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i);
+
+	long countByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetween(int i, List<LSprojectmaster> lstproject,
+			Date fromdate, Date todate);
+
+	long countByOrderflagAndOrdercancellIsNullAndCreatedtimestampBetweenAndApprovelstatusNotOrApprovelstatusIsNull(
+			String string, Date fromdate, Date todate, int i);
+
+	Object findByOrderflagAndApprovelstatusNotAndCreatedtimestampBetweenOrderByBatchcodeDesc(String string, int i,
+			Date fromdate, Date todate);
+
+	Object findByOrderflagAndCreatedtimestampBetweenAndApprovelstatusNotOrApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+			String string, Date fromdate, Date todate, int i);
+
+	Object findByOrderflagAndApprovelstatusNotAndCreatedtimestampBetweenAndOrdercancellIsNullOrderByBatchcodeDesc(
+			String string, int i, Date fromdate, Date todate);
+
+	Object findByCreatedtimestampBetweenAndApprovelstatusOrderByBatchcodeDesc(Date fromdate, Date todate, int i);
+
+	Object findByCreatedtimestampBetweenAndOrdercancellOrderByBatchcodeDesc(Date fromdate, Date todate, int i);
+
+	List<Logilabordermaster> findByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetween(int i,
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate);
+
+	List<Logilabordermaster> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetween(int i,
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate);
+
 }
