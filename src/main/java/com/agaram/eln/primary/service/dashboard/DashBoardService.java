@@ -458,12 +458,12 @@ public class DashBoardService {
 
 				} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
 					lstorders = lslogilablimsorderdetailRepository
-							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc("R",
-									lstproject, fromdate, todate);
+							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotOrderByBatchcodeDesc("R",
+									lstproject, fromdate, todate,3);
 
 				} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
 					lstorders = lslogilablimsorderdetailRepository
-							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc("N",
+							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrderByBatchcodeDesc("N",
 									lstproject, fromdate, todate);
 
 				} else if (objuser.getObjuser().getOrderselectiontype() == 4) {

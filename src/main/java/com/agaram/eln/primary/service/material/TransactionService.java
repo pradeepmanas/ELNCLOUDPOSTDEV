@@ -1,6 +1,8 @@
 package com.agaram.eln.primary.service.material;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -214,10 +216,25 @@ public class TransactionService {
 
 		JSONObject insJsonObj = new JSONObject(inputMap.get("MaterialInventoryTrans").toString());
 		JSONObject jsonuidata = new JSONObject(inputMap.get("jsonuidata").toString());
+		
+		JSONObject jsonTransObj = (JSONObject) jsonuidata.get("Transaction Type");
+		
+		int nInventrans = (int) insJsonObj.get("ninventorytranscode");
+		
+		String inventTransString = nInventrans == 1 ? "Inhouse" : "Outside";
+		
+		LocalDateTime myDateObj = LocalDateTime.now();
+	    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern(dtransactiondate);
+	    String formattedDate = myDateObj.format(myFormatObj);
+				
+		jsonuidata.put("Transaction Type", jsonTransObj.get("transactionname"));
+		jsonuidata.put("Inventory Transaction Type", inventTransString);
+		insJsonObj.put("Transaction Type", jsonTransObj.get("transactionname"));
+		insJsonObj.put("Inventory Transaction Type", inventTransString);
 
-		insJsonObj.put("Transaction Date & Time", dtransactiondate);
+		insJsonObj.put("Transaction Date & Time", formattedDate);
 		insJsonObj.put("noffsetTransaction Date & Time", commonfunction.getCurrentDateTimeOffset("Europe/London"));
-		jsonuidata.put("Transaction Date & Time", dtransactiondate);
+		jsonuidata.put("Transaction Date & Time", formattedDate);
 		jsonuidata.put("noffsetTransaction Date & Time", commonfunction.getCurrentDateTimeOffset("Europe/London"));
 
 		if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.ISSUE.gettransactionstatus()
@@ -316,7 +333,8 @@ public class TransactionService {
 			if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.ISSUE
 					.gettransactionstatus()) {
 				jsonUidataObjcopy.put("Description",
-						new JSONObject(insJsonObjcopy.get("Transaction Type").toString()).get("transactionname")
+//						new JSONObject(insJsonObjcopy.get("Transaction Type").toString()).get("transactionname")
+						insJsonObjcopy.get("Transaction Type").toString()
 								+ "IDS_FROM " + sectionDescription + "IDS_TO"
 								+ new JSONObject(insJsonObj.get("Section").toString()).get("label"));
 
@@ -347,7 +365,8 @@ public class TransactionService {
 //				jsonuidataArray.put(jsonUidataObjcopy);
 			} else {
 				jsonuidata.put("Description",
-						new JSONObject(insJsonObjcopy.get("Transaction Type").toString()).get("transactionname")
+//						new JSONObject(insJsonObjcopy.get("Transaction Type").toString()).get("transactionname")
+						insJsonObjcopy.get("Transaction Type").toString()
 								+ " IDS_FROM " + new JSONObject(insJsonObj.get("Section").toString()).get("label") + " "
 								+ "IDS_TO  " + sectionDescription);
 				jsonUidataObjcopy.put("Description", "IDS_RECEIVED IDS_BY " + sectionDescription + " DS_FROM  "
@@ -377,7 +396,8 @@ public class TransactionService {
 
 		} else {
 			jsonUidataObjcopy.put("Description",
-					new JSONObject(insJsonObjcopy.get("Transaction Type").toString()).get("transactionname")
+//					new JSONObject(insJsonObjcopy.get("Transaction Type").toString()).get("transactionname")
+					insJsonObjcopy.get("Transaction Type").toString()
 							+ " IDS_BY " + sectionDescription);
 
 			MaterialInventoryTransaction objTransaction = new MaterialInventoryTransaction();
@@ -467,7 +487,8 @@ public class TransactionService {
 		if (!lstMaterials.isEmpty()) {
 
 			lstMaterialInventories = materialInventoryRepository
-					.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(lstMaterials.get(0).getNmaterialcode(),28);
+//					.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(lstMaterials.get(0).getNmaterialcode(),28);
+					.findByNsitecodeAndNtransactionstatusOrderByNmaterialinventorycodeDesc((Integer) inputMap.get("sitecode"),28);
 		}
 
 		rtnMap.put("listedMaterial", lstMaterials);

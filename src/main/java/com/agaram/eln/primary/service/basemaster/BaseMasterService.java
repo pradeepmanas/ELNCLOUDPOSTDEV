@@ -40,9 +40,10 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
+import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 //import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
-//import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstfieldmappingRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstrumentfieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstrumentmappingRepository;
@@ -75,8 +76,8 @@ public class BaseMasterService {
 //	private LSuserteammappingRepository LSuserteammappingRepository;
 	@Autowired
 	private LSnotificationRepository LSnotificationRepository;
-//	@Autowired
-//	private LsMethodFieldsRepository lsMethodFieldsRepository;
+	@Autowired
+	private LsMethodFieldsRepository lsMethodFieldsRepository;
 	@Autowired
 	private LStestmasterlocalRepository lStestmasterlocalRepository;
 	@Autowired
@@ -129,6 +130,9 @@ public class BaseMasterService {
 
 	@Autowired
 	private LSlogbooksampleupdatesRepository LSlogbooksampleupdatesRepository;
+
+	@Autowired
+	private LSinstrumentsRepository lSinstrumentsRepository;
 
 	@SuppressWarnings("unused")
 	private String ModuleName = "Base Master";
@@ -437,17 +441,35 @@ public class BaseMasterService {
 		return objinstrument;
 	}
 
+//	public Map<String, Object> GetInstrument(Lselninstrumentmaster objClass) {
+//		Map<String, Object> obj = new HashMap<>();
+//		List<String> lsInst = new ArrayList<String>();
+//		lsInst.add("INST000");
+//		lsInst.add("LPRO");
+//		obj.put("elninstrument", lselninstrumentmasterRepository
+//				.findBylssitemasterAndStatusOrderByInstrumentcodeDesc(objClass.getLssitemaster(), 1));
+//
+//		return obj;
+//	}
+
 	public Map<String, Object> GetInstrument(Lselninstrumentmaster objClass) {
 		Map<String, Object> obj = new HashMap<>();
 		List<String> lsInst = new ArrayList<String>();
 		lsInst.add("INST000");
 		lsInst.add("LPRO");
+//		obj.put("elninstrument",lselninstrumentmasterRepository.findBystatusOrderByInstrumentcodeDesc(1));
 		obj.put("elninstrument", lselninstrumentmasterRepository
 				.findBylssitemasterAndStatusOrderByInstrumentcodeDesc(objClass.getLssitemaster(), 1));
+		obj.put("instrument", lSinstrumentsRepository.findAll());
+		obj.put("instrumentfields", lsMethodFieldsRepository.findByinstrumentidNotIn(lsInst));
 
+//		silent audit
+		if (objClass.getObjsilentaudit() != null) {
+			objClass.getObjsilentaudit().setTableName("Lselninstrumentmaster");
+//			lscfttransactionRepository.save(objClass.getObjsilentaudit());
+		}
 		return obj;
 	}
-
 	public LStestmaster GetTestonID(LStestmaster objtest) {
 		return lstestmasterRepository.findByntestcode(objtest.getNtestcode());
 	}

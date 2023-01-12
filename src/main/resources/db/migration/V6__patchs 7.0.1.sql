@@ -1016,8 +1016,6 @@ update lsaudittrailconfigmaster set taskname='IDS_TSK_SAMPLESAVE' where serialno
 update lsaudittrailconfiguration set taskname='IDS_TSK_TASKSAVE' where screenname='IDS_SCN_TASKMASTER' and taskname='IDS_TSK_SAVE';
 update lsaudittrailconfiguration set taskname='IDS_TSK_PROJECTSAVE' where screenname='IDS_SCN_PROJECTMASTER' and taskname='IDS_TSK_SAVE';
 update lsaudittrailconfiguration set taskname='IDS_TSK_SAMPLESAVE' where screenname='IDS_SCN_SAMPLEMASTER' and taskname='IDS_TSK_SAVE';
-update lsaudittrailconfigmaster set taskname='IDS_TSK_ADD' where modulename='IDS_MDL_PARSER' and taskname='IDS_TSK_SAVE' and screenname!='IDS_SCN_INSTRUMENTCATEGORY';
-update lsaudittrailconfiguration set taskname='IDS_TSK_ADD' where modulename='IDS_MDL_PARSER' and taskname='IDS_TSK_SAVE' and screenname!='IDS_SCN_INSTRUMENTCATEGORY';
 
 update lsusergrouprights set displaytopic = 'IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_TSK_UNLOCKORDERS';
 update lsusergrouprightsmaster set displaytopic = 'IDS_SCN_UNLOCKORDERS' where displaytopic='IDS_TSK_UNLOCKORDERS';
@@ -1126,6 +1124,8 @@ update lsusergrouprightsmaster set status='0,0,0' where orderno in (45,58,35,89,
 
 update lsaudittrailconfigmaster set screenname='IDS_SCN_REPORTS' where modulename='IDS_MDL_REPORTS';
 update lsaudittrailconfiguration set screenname='IDS_SCN_REPORTS' where modulename='IDS_MDL_REPORTS';
+update lsaudittrailconfigmaster set taskname='IDS_TSK_ADD' where modulename='IDS_MDL_PARSER' and taskname='IDS_TSK_SAVE';
+update lsaudittrailconfiguration set taskname='IDS_TSK_ADD' where modulename='IDS_MDL_PARSER' and taskname='IDS_TSK_SAVE';
 
 DO
 $do$
@@ -3420,4 +3420,7 @@ ALTER TABLE IF Exists lslogbooks ADD COLUMN IF NOT EXISTS revieweddate timestamp
 
 INSERT INTO parserignorechars(ignorechars)SELECT 'â†µâ†µâ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†µâ†µâ');
 INSERT INTO parserignorechars(ignorechars)SELECT 'â†µ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†µ');
-  
+
+INSERT INTO parserignorechars(ignorechars)SELECT 'â†µâ†µâ†µâ†µ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†µâ†µâ†µâ†µ');
+INSERT INTO parserignorechars(ignorechars)SELECT 'â†µâ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†µâ');
+

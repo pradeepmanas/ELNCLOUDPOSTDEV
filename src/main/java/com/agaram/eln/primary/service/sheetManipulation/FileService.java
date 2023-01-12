@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,8 @@ import com.agaram.eln.primary.service.basemaster.BaseMasterService;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.masters.MasterService;
 import com.agaram.eln.primary.service.material.TransactionService;
+import com.agaram.eln.primary.service.protocol.Commonservice;
+import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.mongodb.gridfs.GridFSDBFile;
 
 @Service
@@ -182,6 +185,10 @@ public class FileService {
 	@Autowired
 	private LSprojectmasterRepository lsprojectrepo;
 
+	
+	@Autowired
+	Commonservice commonservice;
+
 	public LSfile InsertupdateSheet(LSfile objfile) {
 
 		Boolean Isnew = false;
@@ -253,14 +260,17 @@ public class FileService {
 		if (Isnew) {
 			UpdateSheetversion(objfile, Content);
 		}
+		commonservice.updatefilecontentcheck(Content, objfile, Isnew);
+		commonservice.updatenotificationforsheetthread(objfile, true, null, objfile.getIsnewsheet());
+		  
 
-		updatefilecontent(Content, objfile, Isnew);
+//		updatefilecontent(Content, objfile, Isnew);
 
 		objfile.setResponse(new Response());
 		objfile.getResponse().setStatus(true);
 		objfile.getResponse().setInformation("ID_SHEETMSG");
 
-		updatenotificationforsheet(objfile, true, null, objfile.getIsnewsheet());
+//		updatenotificationforsheet(objfile, true, null, objfile.getIsnewsheet());
 
 		Isnew = null;
 		bytes = null;
@@ -268,6 +278,7 @@ public class FileService {
 
 		return objfile;
 	}
+	
 
 	public void updatefilecontent(String Content, LSfile objfile, Boolean Isnew) {
 		// Document Doc = Document.parse(objfile.getFilecontent());
@@ -534,22 +545,19 @@ public class FileService {
 	public Map<String, Object> GetMastersforordercreate(LSuserMaster objuser) {
 
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
-
+		Map<String, Object> mapReq4Material = new HashMap<String, Object>();
 		mapOrders.put("test", masterService.getTestmaster(objuser));
 		mapOrders.put("sample", masterService.getsamplemaster(objuser));
-
 		List<LSprojectmaster> prolist = lsprojectrepo.findByLsusersteamInAndStatus(LSusersteamRepository
 				.findByLsuserteammappingInAndStatus(lsuserteammappingRepository.findBylsuserMaster(objuser), 1), 1);
 		mapOrders.put("project", prolist);
-
 		Lsrepositories lsrepositories = new Lsrepositories();
 		lsrepositories.setSitecode(objuser.getLssitemaster().getSitecode());
 		mapOrders.put("inventories", inventoryservice.Getallrepositories(lsrepositories));
 		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
-		mapOrders.put("limsInventory", transactionService.getMaterialLst4DashBoard(mapOrders));
-
+		mapReq4Material.put("sitecode", objuser.getLssitemaster().getSitecode());
+		mapOrders.put("limsInventory", transactionService.getMaterialLst4DashBoard(mapReq4Material));
 		lsrepositories = null;
-
 		return mapOrders;
 	}
 
@@ -752,8 +760,8 @@ public class FileService {
 		objteam = null;
 		objnotify = null;
 	}
-
-	public void updatenotificationforsheet(LSfile objFile, Boolean isNew, LSsheetworkflow previousworkflow,
+	
+	public CompletableFuture<LSfile> updatenotificationforsheet(LSfile objFile, Boolean isNew, LSsheetworkflow previousworkflow,
 			Boolean IsNewsheet) {
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		List<LSuserteammapping> objteam = lsuserteammappingRepository
@@ -881,7 +889,9 @@ public class FileService {
 
 		objteam = null;
 		lstnotifications = null;
+		return null;
 	}
+
 
 	public Map<String, Object> lockorder(Map<String, Object> objMap) throws Exception {
 

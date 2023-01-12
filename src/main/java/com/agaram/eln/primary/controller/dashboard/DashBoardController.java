@@ -53,8 +53,6 @@ public class DashBoardController {
 		}
 
 	}
-	
-
 
 	@PostMapping("/Getdashboardparameters")
 	public Map<String, Object> Getdashboardparameters(@RequestBody LSuserMaster objuser)throws Exception {
