@@ -833,7 +833,7 @@ public class DashBoardService {
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 
-		if (lstproject != null) {
+		if (lstproject != null && lstworkflow != null) {
 			List<Logilabordermaster> lstorders = lslogilablimsorderdetailRepository
 					.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween("N", lstproject,
 							lstworkflow, fromdate, todate);

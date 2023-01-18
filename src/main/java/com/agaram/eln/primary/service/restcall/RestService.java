@@ -526,8 +526,8 @@ public class RestService {
 	private boolean InsertLimsOrderDetail(Map<String, Object> mapObj) throws Exception{
 		List<LSlogilablimsorderdetail> lstOrder = new ArrayList<LSlogilablimsorderdetail>();
 		lstOrder=(List<LSlogilablimsorderdetail>) mapObj.get("LimsOrderDetail");
-		List<LSlogilablimsorder> limsOrder = new ArrayList<LSlogilablimsorder>();
-		limsOrder=(List<LSlogilablimsorder>) mapObj.get("LimsOrder");
+//		List<LSlogilablimsorder> limsOrder = new ArrayList<LSlogilablimsorder>();
+//		limsOrder=(List<LSlogilablimsorder>) mapObj.get("LimsOrder");
 		
 		int i=0;
 		

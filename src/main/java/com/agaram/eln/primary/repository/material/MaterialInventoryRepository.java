@@ -34,4 +34,7 @@ public interface MaterialInventoryRepository extends JpaRepository<MaterialInven
 	public List<MaterialInventory> findByNsitecodeAndNtransactionstatusOrderByNmaterialinventorycodeDesc(Integer integer,
 			int i);
 
+	public List<MaterialInventory> findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNstatusOrderByNmaterialinventorycodeDesc(
+			Integer integer, Integer integer2, Integer integer3, int i);
+
 }

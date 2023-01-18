@@ -21,7 +21,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationRepository;
-import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
+//import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
@@ -30,8 +30,8 @@ import com.mongodb.gridfs.GridFSDBFile;
 @Service
 public class Commonservice {
 
-	@Autowired
-	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
+//	@Autowired
+//	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
 	
 	
 	@Autowired

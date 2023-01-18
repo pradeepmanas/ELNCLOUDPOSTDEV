@@ -10,6 +10,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+//import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -184,7 +185,7 @@ public class MaterialInventoryService {
 		if (inputMap.containsKey("nmaterialcode")) {
 
 			List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository
-					.findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNstatus(
+					.findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNstatusOrderByNmaterialinventorycodeDesc(
 							(Integer) inputMap.get("nmaterialcode"), (Integer) inputMap.get("nmaterialcatcode"),
 							(Integer) inputMap.get("nmaterialtypecode"), 1);
 
@@ -211,13 +212,12 @@ public class MaterialInventoryService {
 
 				if (!(inputMap.containsKey("nflag"))) {
 
-					objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(lstMaterialInventory.size() - 1));
-					inputMap.put("nsectioncode",
-							lstMaterialInventory.get(lstMaterialInventory.size() - 1).get("nsectioncode"));
+					objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(0));
+					inputMap.put("nsectioncode", lstMaterialInventory.get(0).get("nsectioncode"));
 
 					objmap.putAll(
 							(Map<String, Object>) getQuantityTransactionByMaterialInvCode((int) lstMaterialInventory
-									.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode"), inputMap)
+									.get(0).get("nmaterialinventorycode"), inputMap)
 											.getBody());
 //					objmap.putAll((Map<String, Object>) getMaterialFile((int) lstMaterialInventory
 //							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")));
@@ -363,6 +363,7 @@ public class MaterialInventoryService {
 				resObj.put("Issued Quantity", objContent.get("rtnObj"));
 				resObj.put("Received Quantity", f.getNqtyreceived());
 				resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
+				resObj.put("nmaterialinventtranscode",f.getNmaterialinventtranscode());
 
 				lstMaterialInventoryTrans.add(resObj);
 
@@ -373,11 +374,11 @@ public class MaterialInventoryService {
 
 		}).collect(Collectors.toList());
 
-		MaterialConfig objMaterialConfig = materialConfigRepository.findByNformcodeAndNmaterialtypecodeAndNstatus(138,
-				-1, 1);
-
-		lstMaterialConfig.add(objMaterialConfig);
-
+		// dont remove
+//		MaterialConfig objMaterialConfig = materialConfigRepository.findByNformcodeAndNmaterialtypecodeAndNstatus(138,-1, 1);
+//		lstMaterialConfig.add(objMaterialConfig);
+//		Collections.sort(lstMaterialInventoryTrans, Collections.reverseOrder());
+		
 		objmap.put("QuantityTransactionTemplate", lstMaterialConfig);
 		objmap.put("MaterialInventoryTrans", lstMaterialInventoryTrans);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
@@ -780,7 +781,8 @@ public class MaterialInventoryService {
 			jsonUidataarrayTrans.put(jsonuidataTrans);
 		}
 
-		objmap.putAll((Map<String, Object>) getMaterialInventoryByID(inputMap).getBody());
+//		objmap.putAll((Map<String, Object>) getMaterialInventoryByID(inputMap).getBody());
+		objmap.putAll((Map<String, Object>) getMaterialInventoryDetails(inputMap).getBody());
 
 //		objmap.put("nregtypecode", -1);
 //		objmap.put("nregsubtypecode", -1);
@@ -1261,7 +1263,7 @@ public class MaterialInventoryService {
 		List<Map<String, Object>> lstMaterialInventory2 = new ArrayList<Map<String, Object>>();
 
 		List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository
-				.findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNstatus(
+				.findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNstatusOrderByNmaterialinventorycodeDesc(
 						(Integer) inputMap.get("nmaterialcode"), (Integer) inputMap.get("nmaterialcatcode"),
 						(Integer) inputMap.get("nmaterialtypecode"), 1);
 

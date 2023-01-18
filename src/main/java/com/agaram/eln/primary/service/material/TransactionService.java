@@ -208,9 +208,9 @@ public class TransactionService {
 
 //		List<String> lstDateField = (List<String>) inputMap.get("DateList");
 
-		List<MaterialInventoryTransaction> lstTransaction = materialInventoryTransactionRepository
-				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(
-						(Integer) inputMap.get("nmaterialinventorycode"));
+//		List<MaterialInventoryTransaction> lstTransaction = materialInventoryTransactionRepository
+//				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(
+//						(Integer) inputMap.get("nmaterialinventorycode"));
 
 		final String dtransactiondate = "dd-mm-yy";
 
@@ -251,14 +251,22 @@ public class TransactionService {
 		} else if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.RETURN
 				.gettransactionstatus()) {
 
-			double namountleft = new Double(
-					(commonfunction.getInventoryValuesFromJsonString(lstTransaction.get(0).getJsondata(), "namountleft")
-							.get("rtnObj").toString()));
+//			double namountleft = new Double(
+//					(commonfunction.getInventoryValuesFromJsonString(lstTransaction.get(0).getJsondata(), "namountleft")
+//							.get("rtnObj").toString()));
+//
+//			String amtleft = new Double(namountleft).toString();
 
-			String amtleft = new Double(namountleft).toString();
+//			insJsonObj.put("namountleft", amtleft);
+//			jsonuidata.put("namountleft", amtleft);
+			
+			double availqty = Double.parseDouble((String) insJsonObj.get("navailableqty"));
+			double namountleft = availqty + Double.parseDouble((String) insJsonObj.get("Received Quantity"));
 
-			insJsonObj.put("namountleft", amtleft);
-			jsonuidata.put("namountleft", amtleft);
+			insJsonObj.put("namountleft",new Double (namountleft).toString());
+			jsonuidata.put("namountleft", new Double (namountleft).toString());
+			insJsonObj.put("navailableqty", new Double (namountleft).toString());
+			jsonuidata.put("navailableqty", new Double (namountleft).toString());
 		} else {
 			double availqty = Double.parseDouble((String) insJsonObj.get("navailableqty"));
 			double namountleft = availqty + Double.parseDouble((String) insJsonObj.get("Received Quantity"));
@@ -304,9 +312,9 @@ public class TransactionService {
 		JSONObject insJsonObjcopy = new JSONObject(insJsonObj.toString());
 		JSONObject jsonUidataObjcopy = new JSONObject(jsonuidata.toString());
 
-		insJsonObjcopy.put("Transaction Date & Time", dtransactiondate);
+		insJsonObjcopy.put("Transaction Date & Time", formattedDate);
 		insJsonObjcopy.put("noffsetTransaction Date & Time", commonfunction.getCurrentDateTimeOffset("Europe/London"));
-		jsonUidataObjcopy.put("Transaction Date & Time", dtransactiondate);
+		jsonUidataObjcopy.put("Transaction Date & Time", formattedDate);
 		jsonUidataObjcopy.put("noffsetTransaction Date & Time",
 				commonfunction.getCurrentDateTimeOffset("Europe/London"));
 

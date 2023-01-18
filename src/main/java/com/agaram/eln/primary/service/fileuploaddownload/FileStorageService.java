@@ -4,13 +4,11 @@ package com.agaram.eln.primary.service.fileuploaddownload;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -167,7 +165,7 @@ public class FileStorageService {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
 			//converting multipart file to string
-			ByteArrayInputStream stream = new   ByteArrayInputStream(file.getBytes());
+//			ByteArrayInputStream stream = new   ByteArrayInputStream(file.getBytes());
 			//String myString = IOUtils.toString(stream, "UTF-8");
 			
 			gridFsTemplate.store(new ByteArrayInputStream(file.getBytes()), fileid);

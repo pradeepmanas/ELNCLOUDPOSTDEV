@@ -84,7 +84,7 @@ import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.masters.MasterService;
 import com.agaram.eln.primary.service.material.TransactionService;
 import com.agaram.eln.primary.service.protocol.Commonservice;
-import com.agaram.eln.primary.service.protocol.ProtocolService;
+//import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.mongodb.gridfs.GridFSDBFile;
 
 @Service
