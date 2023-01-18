@@ -43,7 +43,7 @@ public class MethodDelimiterController {
 		Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
 		if (obj == null) {
 			final LSSiteMaster site = mapper.convertValue(mapObject.get("sitecode"), LSSiteMaster.class);
-			return methodDelimiterService.getMethodDelimiterList(site);
+			return methodDelimiterService.getMethodDelimiter(site);
 
 		} else {
 			final Integer site = (Integer) obj.get("sitecode");

@@ -410,8 +410,7 @@ public class LoginService {
 		List<LSPasswordHistoryDetails> listofpwd = new ArrayList<LSPasswordHistoryDetails>();
 		LSPasswordHistoryDetails objectpwd = new LSPasswordHistoryDetails();
 		List<LSPasswordHistoryDetails> result = new ArrayList<LSPasswordHistoryDetails>();
-		LSPasswordPolicy passHistorycount = LSPasswordPolicyRepository
-				.findByLssitemaster(objExitinguser.getLssitemaster());
+		LSPasswordPolicy passHistorycount = LSPasswordPolicyRepository.findByLssitemaster(objExitinguser.getLssitemaster());
 
 		listofpwd = LSPasswordHistoryDetailsRepository
 				.findTop5ByAndLsusermasterInOrderByPasswordcodeDesc(objExitinguser);
@@ -435,7 +434,7 @@ public class LoginService {
 					objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
 					objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
 					objuser.getObjsilentaudit().setComments(
-							objuser.getsUsername() + " " + "entered password does not reach the history range");
+							 "Entered password has been already used by the user "+objuser.getsUsername());
 					objuser.getObjsilentaudit().setManipulatetype("Password");
 					objuser.getObjsilentaudit().setTableName("LSPasswordHistoryDetails");
 					lscfttransactionRepository.save(objuser.getObjsilentaudit());
@@ -581,7 +580,7 @@ public class LoginService {
 					objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
 
 					objuser.getObjsilentaudit().setComments(
-							objuser.getsUsername() + " " + "entered password does not reach the history range");
+							"Entered password has been already used by the user " + objuser.getsUsername());
 
 					objuser.getObjsilentaudit().setManipulatetype("Password");
 					objuser.getObjsilentaudit().setTableName("LSPasswordHistoryDetails");
@@ -1247,7 +1246,7 @@ public class LoginService {
 		if (policydays == null) {
 			LSSiteMaster lssitemaster = new LSSiteMaster();
 			lssitemaster.setSitecode(1);
-			LSPasswordPolicy lspasswordPolicy = LSPasswordPolicyRepository.findByLssitemaster(lssitemaster);
+			LSPasswordPolicy lspasswordPolicy = LSPasswordPolicyRepository.findFirst1ByLssitemaster(lssitemaster);
 
 			LSPasswordPolicy objPassword = new LSPasswordPolicy();
 			objPassword.setComplexpasswrd(lspasswordPolicy.getComplexpasswrd());

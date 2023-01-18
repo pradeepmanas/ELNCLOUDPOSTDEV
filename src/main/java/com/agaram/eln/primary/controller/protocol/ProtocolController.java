@@ -1031,7 +1031,7 @@ public class ProtocolController {
 	}
 	
 	@RequestMapping(value = "/impoertjsonforprotocol")
-	protected List<LSprotocolstep> impoertjsonforprotocol(@RequestBody LSprotocolstep[] argObj)throws Exception {
+	protected Map<String, Object> impoertjsonforprotocol(@RequestBody LSprotocolstep[] argObj)throws Exception {
 
 		return ProtocolMasterService.impoertjsonforprotocol(argObj);
 	

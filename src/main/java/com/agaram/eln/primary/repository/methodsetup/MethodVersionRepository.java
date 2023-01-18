@@ -18,5 +18,7 @@ public interface MethodVersionRepository extends JpaRepository<MethodVersion, In
 //	List<MethodVersion> findByOrderByMethodkeyDesc(int methodKey);
 
 	List<MethodVersion> findByMethodkeyOrderByVersionDesc(int methodKey);
+
+	List<MethodVersion> findByFilenameAndMethodkey(String filename, Integer methodkey);
 	
 }

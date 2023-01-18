@@ -55,6 +55,9 @@ public interface LSdocreportsRepository extends JpaRepository<LSdocreports, Inte
 
 	List<LSdocreports> findAllByIsTemplateAndIsdraftAndSheetfilecodeStringAndIsmultiplesheetAndLssitemasterAndFileNameIsNotNullOrderByCreatedateDesc(
 			int i, int j, String sheetCode, int ismultiplesheet, int sitecode);
+
+	List<LSdocreports> findAllByIsTemplateAndStatusAndIsdraftAndSheetfilecodeStringAndIsmultiplesheetAndLssitemasterAndFileNameIsNotNullOrderByCreatedateDesc(
+			int i, int j, int k, String sheetCode, int ismultiplesheet, int sitecode);
 	
 //	LSdocreports findFirstByFileHashNameAndStatusOrderByVersionnoDesc(String fileHashName, Integer status);
 }

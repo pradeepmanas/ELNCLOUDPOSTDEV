@@ -89,10 +89,11 @@ public class FileUploadController {
     		) throws IOException{
 		
 		
-		List<Method> methodfile = methodrepo.findByFilenameAndMethodkey(filename,methodkey);
+//		List<Method> methodfile = methodrepo.findByFilenameAndMethodkey(filename,methodkey);
 	
-		if(methodfile.isEmpty())
-		{
+	//	List<MethodVersion> methodfile = methodversionrepo.findByFilenameAndMethodkey(filename,methodkey);
+		//if(methodfile.isEmpty())
+	//	{
 		List<Method> method = new ArrayList<Method>();
 		Method newobj = new Method();
 		MethodVersion obj = new MethodVersion();
@@ -132,8 +133,9 @@ public class FileUploadController {
 		final String rawData = fileStorageService.storeimportFile(file,tenant, isMultitenant,originalfilename,version);	
 		
 		return rawData;
-		}
-		return null;
+//		}else {
+//		return null;
+//		}
 		// return new Response(file.getContentType(), instrawdataurl, instrawdataurl, file.getSize());
     }
 	

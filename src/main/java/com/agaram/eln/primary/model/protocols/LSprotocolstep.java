@@ -61,6 +61,13 @@ public class LSprotocolstep {
 
 	@Transient
 	private Integer newStep;
+	
+	@Transient
+	private LSprotocolmaster lsprotocolmaster;
+	
+	@Transient
+	private Boolean isversion;
+	
 	@Transient
 	private Integer versionno;
 	@Transient
@@ -69,6 +76,20 @@ public class LSprotocolstep {
 	@Transient
 	private Response response;
 	
+	
+
+	public Boolean getIsversion() {
+		return isversion;
+	}
+	public void setIsversion(Boolean isversion) {
+		this.isversion = isversion;
+	}
+	public LSprotocolmaster getLsprotocolmaster() {
+		return lsprotocolmaster;
+	}
+	public void setLsprotocolmaster(LSprotocolmaster lsprotocolmaster) {
+		this.lsprotocolmaster = lsprotocolmaster;
+	}
 	public String getModifiedusername() {
 		return modifiedusername;
 	}

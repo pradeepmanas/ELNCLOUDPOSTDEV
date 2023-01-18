@@ -69,11 +69,17 @@ public class MethodDelimiterService {
 	 */
 	@Transactional
 	public ResponseEntity<Object> getMethodDelimiterList(LSSiteMaster mobj){
+		final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByStatusAndLssitemaster(1,mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
+		//final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByLssitemaster(mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
+		return new ResponseEntity<>(delimiterList, HttpStatus.OK);
+	}
+	
+	@Transactional
+	public ResponseEntity<Object> getMethodDelimiter(LSSiteMaster mobj){
 		//final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByStatusAndLssitemaster(1,mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
 		final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByLssitemaster(mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
 		return new ResponseEntity<>(delimiterList, HttpStatus.OK);
 	}
-	
 	
 	/**
 	 * This method is used to add new MethodDelimiter object.

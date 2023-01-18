@@ -3709,8 +3709,8 @@ public class ReportsService {
 
 		int sitecode = Integer.parseInt(sSitecode);
 		List<LSdocreports> LSDocReportsLst = LSdocreportsRepositoryObj
-				.findAllByIsTemplateAndIsdraftAndSheetfilecodeStringAndIsmultiplesheetAndLssitemasterAndFileNameIsNotNullOrderByCreatedateDesc(
-						1, 0, sheetCode, ismultiplesheet, sitecode);
+				.findAllByIsTemplateAndStatusAndIsdraftAndSheetfilecodeStringAndIsmultiplesheetAndLssitemasterAndFileNameIsNotNullOrderByCreatedateDesc(
+						1,1, 0, sheetCode, ismultiplesheet, sitecode);
 
 		MapObj.put("LSDocReportsLst", LSDocReportsLst);
 		return MapObj;

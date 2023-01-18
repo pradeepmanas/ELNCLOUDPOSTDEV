@@ -79,6 +79,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
+import com.agaram.eln.primary.model.instrumentDetails.Lsbatchdetails;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
@@ -102,6 +103,8 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
+import com.agaram.eln.primary.model.templates.LsMappedTemplate;
+import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
@@ -135,6 +138,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRe
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsResultlimsOrderrefrenceRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsSheetorderlimsrefrenceRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsbatchdetailsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstrumentmasterRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharedbyRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharetoRepository;
@@ -163,6 +167,8 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSsampleresultReposit
 import com.agaram.eln.primary.repository.sheetManipulation.LStestparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
+import com.agaram.eln.primary.repository.templates.LsMappedTemplateRepository;
+import com.agaram.eln.primary.repository.templates.LsUnmappedTemplateRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
@@ -268,11 +274,11 @@ public class InstrumentService {
 	@Autowired
 	private LSnotificationRepository lsnotificationRepository;
 
-//	@Autowired
-//	private LsMappedTemplateRepository LsMappedTemplateRepository;
-//
-//	@Autowired
-//	private LsUnmappedTemplateRepository LsUnmappedTemplateRepository;
+	@Autowired
+	private LsMappedTemplateRepository LsMappedTemplateRepository;
+
+	@Autowired
+	private LsUnmappedTemplateRepository LsUnmappedTemplateRepository;
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -376,6 +382,9 @@ public class InstrumentService {
 	@Autowired
 	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
 	
+	@Autowired
+	private LsbatchdetailsRepository LsbatchdetailsRepository;
+	
 
 
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
@@ -468,9 +477,9 @@ public class InstrumentService {
 			List<LSfields> Generalfields = lSfieldsRepository.findByisactive(1);
 			List<LSinstruments> Instruments = lSinstrumentsRepository.findAll();
 			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findAll();
-//			List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
-//			List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
-//
+			List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
+			List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
+
 			List<Method> elnMethod = lsMethodRepository.findAll();
 			List<ParserBlock> ParserBlock = lsParserBlockRepository.findAll();
 			List<ParserField> ParserField = lsParserRepository.findAll();
@@ -480,8 +489,8 @@ public class InstrumentService {
 			obj.put("Instrmaster", InstrMaster);
 			obj.put("elninstrument", lselninstrumentmasterRepository
 					.findBylssitemasterAndStatusOrderByInstrumentcodeDesc(lssiteMaster, 1));
-//			obj.put("Mappedtemplates", MappedTemplate);
-//			obj.put("Unmappedtemplates", UnmappedTemplate);
+			obj.put("Mappedtemplates", MappedTemplate);
+			obj.put("Unmappedtemplates", UnmappedTemplate);
 			obj.put("ELNMethods", elnMethod);
 			obj.put("ParserBlock", ParserBlock);
 			obj.put("ParserField", ParserField);
@@ -2914,6 +2923,7 @@ public class InstrumentService {
 
 	public LSlogilablimsorderdetail UpdateLimsOrder(LSlogilablimsorderdetail objorder) {
 		List<LSlogilablimsorder> lstorder = lslogilablimsorderRepository.findBybatchid(objorder.getBatchid());
+		List<Lsbatchdetails> lstbatch = LsbatchdetailsRepository.findByBatchcode(objorder.getBatchcode());
 
 //		List<LSfilemethod> methodlst = LSfilemethodRepository
 //				.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode());
@@ -2936,6 +2946,8 @@ public class InstrumentService {
 
 		lstorder.forEach((orders) -> orders.setMethodcode(objorder.getMethodcode()));
 		lstorder.forEach((orders) -> orders.setInstrumentcode(objorder.getInstrumentcode()));
+
+		objorder.setLsbatchdetails(lstbatch);
 
 		objorder.getLssamplefile().setBatchcode(objorder.getBatchcode());
 		lslogilablimsorderRepository.save(lstorder);
