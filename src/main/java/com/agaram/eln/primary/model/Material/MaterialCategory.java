@@ -8,8 +8,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ColumnDefault;
+
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 
 @Entity
 @Table(name = "materialcategory")
@@ -57,6 +60,12 @@ public class MaterialCategory implements Serializable{
 	@Column(name = "nsitecode", nullable = false)
 	private Integer nsitecode = -1;
 
+	@Transient
+	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	private LScfttransaction objmanualaudit;
+	
 	@ColumnDefault("1")
 	@Column(name = "nstatus", nullable = false)
 	private Integer nstatus = 1;
@@ -253,4 +262,21 @@ public class MaterialCategory implements Serializable{
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
+	
 }

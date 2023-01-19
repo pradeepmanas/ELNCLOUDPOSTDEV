@@ -83,7 +83,25 @@ public class LSlogilabprotocolsteps {
 	@Transient
 	private Integer multitenent;
 	
+	@Transient
+	private LSprotocolmaster lsprotocolmaster;
 	
+	@Transient
+	private Boolean isversion;
+	
+	
+	public Boolean getIsversion() {
+		return isversion;
+	}
+	public void setIsversion(Boolean isversion) {
+		this.isversion = isversion;
+	}
+	public LSprotocolmaster getLsprotocolmaster() {
+		return lsprotocolmaster;
+	}
+	public void setLsprotocolmaster(LSprotocolmaster lsprotocolmaster) {
+		this.lsprotocolmaster = lsprotocolmaster;
+	}
 	public Integer getMultitenent() {
 		return multitenent;
 	}

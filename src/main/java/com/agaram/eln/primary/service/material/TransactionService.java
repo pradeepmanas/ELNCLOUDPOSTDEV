@@ -84,20 +84,20 @@ public class TransactionService {
 			 */
 			if ((Integer) inputMap.get("nFlag") == 1) {
 
-				lstTypes = materialTypeRepository.findByNstatusOrderByNmaterialtypecode(1);
+				lstTypes = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusOrderByNmaterialtypecode(-1,1);
 
 				if (!lstTypes.isEmpty()) {
 					lstCategories = materialCategoryRepository
-							.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcode(lstTypes.get(0).getNmaterialtypecode(),nsiteInteger);
+							.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcodeDesc(lstTypes.get(0).getNmaterialtypecode(),nsiteInteger);
 
 					if (!lstCategories.isEmpty()) {
 
 						lstMaterials = materialRepository
-								.findByNmaterialcatcodeAndNsitecodeOrderByNmaterialcode(lstCategories.get(0).getNmaterialcatcode(),nsiteInteger);
+								.findByNmaterialcatcodeAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0).getNmaterialcatcode(),nsiteInteger);
 
 						if (!lstMaterials.isEmpty()) {
 							lstMaterialInventories = materialInventoryRepository
-									.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(
+									.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycodeDesc(
 											lstMaterials.get(0).getNmaterialcode(), 28);
 						}
 
@@ -111,16 +111,16 @@ public class TransactionService {
 
 				Integer nTypeCode = (Integer) inputMap.get("nmaterialtypecode");
 
-				lstCategories = materialCategoryRepository.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcode(nTypeCode,nsiteInteger);
+				lstCategories = materialCategoryRepository.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcodeDesc(nTypeCode,nsiteInteger);
 
 				if (!lstCategories.isEmpty()) {
 
 					lstMaterials = materialRepository
-							.findByNmaterialcatcodeAndNsitecodeOrderByNmaterialcode(lstCategories.get(0).getNmaterialcatcode(),nsiteInteger);
+							.findByNmaterialcatcodeAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0).getNmaterialcatcode(),nsiteInteger);
 
 					if (!lstMaterials.isEmpty()) {
 						lstMaterialInventories = materialInventoryRepository
-								.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(
+								.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycodeDesc(
 										lstMaterials.get(0).getNmaterialcode(), 28);
 					}
 
@@ -132,11 +132,11 @@ public class TransactionService {
 
 				Integer nCategoryCode = (Integer) inputMap.get("nmaterialcatcode");
 
-				lstMaterials = materialRepository.findByNmaterialcatcodeOrderByNmaterialcode(nCategoryCode);
+				lstMaterials = materialRepository.findByNmaterialcatcodeOrderByNmaterialcodeDesc(nCategoryCode);
 
 				if (!lstMaterials.isEmpty()) {
 					lstMaterialInventories = materialInventoryRepository
-							.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(
+							.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycodeDesc(
 									lstMaterials.get(0).getNmaterialcode(), 28);
 				}
 
@@ -148,7 +148,7 @@ public class TransactionService {
 				Integer nmaterialCode = (Integer) inputMap.get("nmaterialcode");
 
 				lstMaterialInventories = materialInventoryRepository
-						.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(nmaterialCode, 28);
+						.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycodeDesc(nmaterialCode, 28);
 
 			} /**
 				 * in initial load all values by nmaterialinventorycode

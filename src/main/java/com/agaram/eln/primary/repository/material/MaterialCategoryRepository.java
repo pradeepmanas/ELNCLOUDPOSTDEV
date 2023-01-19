@@ -26,4 +26,6 @@ public interface MaterialCategoryRepository extends JpaRepository<MaterialCatego
 			Integer nmaterialtypecode,Integer nmaterialcatcode, Integer nsiteInteger);
 	public List<MaterialCategory> findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcode(Integer nmaterialtypecode,
 			Integer nsiteInteger);
+	public List<MaterialCategory> findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcodeDesc(
+			Integer nmaterialtypecode, Integer nsiteInteger);
 }

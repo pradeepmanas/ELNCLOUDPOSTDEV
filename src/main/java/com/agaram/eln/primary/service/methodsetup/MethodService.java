@@ -1268,6 +1268,7 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
 	   final int methodKey= (Integer) mapObject.get("methodKey");
 	   final String methodName= (String) mapObject.get("methodName");
 	   final int instrumentKey = (Integer) mapObject.get("instMasterKey");
+	   final String methodstatus= (String) mapObject.get("methodstatus");
 //	   final String comments = (String) mapObject.get("comments");
 	   
 	   final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);	   
@@ -1309,6 +1310,8 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
 		   newMethod.setInstmaster(instMaster);
 		   newMethod.setCreatedby(createdUser);
 		   newMethod.setCreateddate(date);
+		   newMethod.setMethodstatus(methodstatus);
+		   
 		   
 		   final Method savedMethod = methodRepo.save(newMethod);
 		   

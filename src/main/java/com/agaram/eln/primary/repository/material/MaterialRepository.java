@@ -39,5 +39,10 @@ public interface MaterialRepository  extends JpaRepository<Material, Integer>{
 
 	List<Material> findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(int i, Integer nsiteInteger);
 
+	List<Material> findByNmaterialcatcodeAndNsitecodeOrderByNmaterialcodeDesc(Integer nmaterialcatcode,
+			Integer nsiteInteger);
+
+	List<Material> findByNmaterialcatcodeOrderByNmaterialcodeDesc(Integer nCategoryCode);
+
 //	Material findBynstatusAndnmaterialcode(int i, Integer integer);
 }

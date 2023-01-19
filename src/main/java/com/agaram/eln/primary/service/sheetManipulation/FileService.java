@@ -986,7 +986,7 @@ public class FileService {
 			objesixting = objfile;
 		}
 
-		if (objesixting.getApproved() == 1 && objfile.getApproved() == 1) {
+		if (objesixting.getApproved()!=null&&  objesixting.getApproved() == 1 && objfile.getApproved() == 1) {
 			Versionnumber++;
 
 			LSsheetworkflow objfirstworkflow = lssheetworkflowRepository

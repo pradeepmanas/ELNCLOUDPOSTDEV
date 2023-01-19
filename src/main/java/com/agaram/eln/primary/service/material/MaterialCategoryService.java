@@ -132,6 +132,7 @@ public class MaterialCategoryService {
 				objMaterialCategory.setSdescription(materialCategory.getSdescription());
 				objMaterialCategory.setNmaterialtypecode(materialCategory.getNmaterialtypecode());
 				objMaterialCategory.setSmaterialtypename(materialCategory.getSmaterialtypename());
+				objMaterialCategory.setObjsilentaudit(materialCategory.getObjsilentaudit());
 
 				MaterialCategoryRepository.save(objMaterialCategory);
 
