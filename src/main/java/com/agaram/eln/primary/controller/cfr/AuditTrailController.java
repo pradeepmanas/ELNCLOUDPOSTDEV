@@ -162,16 +162,7 @@ public class AuditTrailController {
 		return auditService.silentandmanualRecordHandler(mapObj);
 	}
 
-	@PostMapping("/silentandmanualRecordHandlerParser")
-	public LScfttransaction silentandmanualRecordHandlerParser(@RequestBody Map<String, Object> mapObj)
-			throws ParseException {
-//		Map<String, Object> Map = new HashMap<>();
-//		LoggedUser objuser = new ObjectMapper().convertValue(mapObj.get("objuser"), new TypeReference<LoggedUser>() {
-//		});
-		
-		return auditService.silentandmanualRecordHandler(mapObj);
-	}
-	
+
 	@SuppressWarnings("unchecked")
 	@PostMapping("/checkManualAudit")
 	public Map<String, Object> checkManualAudit(@RequestBody Map<String, Object> reqMap) throws ParseException {

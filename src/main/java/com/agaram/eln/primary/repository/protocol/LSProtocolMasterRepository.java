@@ -56,7 +56,7 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 //	List<LSprotocolmaster> findByInCreatedbyAndStatusAndLssitemaster(Integer createdby, Integer status, LSSiteMaster site);
 
-	List<LSprotocolmaster> findAll();
+
 
 	@SuppressWarnings("unchecked")
 	LSprotocolmaster save(LSprotocolmaster LSprotocolmasterObj);

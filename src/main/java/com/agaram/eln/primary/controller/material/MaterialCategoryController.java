@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.service.material.MaterialCategoryService;
 
@@ -59,6 +60,7 @@ public class MaterialCategoryController {
 	public ResponseEntity<Object> deleteMaterialCategory(@RequestBody Map<String, Object> inputMap) throws Exception {
 		final ObjectMapper objmapper = new ObjectMapper();
 		final MaterialCategory materialCategory = objmapper.convertValue(inputMap.get("materialcategory"),MaterialCategory.class);
-		return materialcategoryservice.deleteMaterialCategory(materialCategory);
+		final LScfttransaction objsilentaudit = objmapper.convertValue(inputMap.get("objsilentaudit"),LScfttransaction.class);
+		return materialcategoryservice.deleteMaterialCategory(materialCategory,objsilentaudit);
 	}
 }

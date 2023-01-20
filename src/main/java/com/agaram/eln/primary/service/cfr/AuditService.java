@@ -26,6 +26,7 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.cfr.LSreviewdetails;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
@@ -512,6 +513,32 @@ public class AuditService {
 
 		return cfttransaction;
 	}
+
+	public LScfttransaction silentandmanualRecordHandlerInventory(Map<String, Object> mapObj) {
+
+//		ObjectMapper objMapper = new ObjectMapper();
+//		LScfttransaction cfttransaction = new LScfttransaction();
+//		MaterialCategory mat = new MaterialCategory();
+////		silent audit
+//		if (mapObj.containsKey("objsilentaudit")) {
+//			mat = objMapper.convertValue(mapObj.get("objsilentaudit"), MaterialCategory.class);
+//			cfttransaction=mat.getObjsilentaudit();
+//			lscfttransactionRepository.save(cfttransaction);
+//		}
+////		manual audit
+//		if (mapObj.containsKey("objmanualaudit")) {
+//			LScfttransaction objmanualaudit = new LScfttransaction();
+//			objmanualaudit = objMapper.convertValue(mapObj.get("objmanualaudit"), LScfttransaction.class);
+		//	lscfttransactionRepository.save(cft);
+	//}
+
+//		cfttransaction.setObjResponse(new Response());
+//		cfttransaction.getObjResponse().setStatus(true);
+//		cfttransaction.getObjResponse().setInformation("");
+
+		return null;
+	}
+
 
 	@SuppressWarnings("rawtypes")
 	public List<LScfttransaction> GetCFRTransactionsdid(Map<String, Object> objCFRFilter) throws ParseException {

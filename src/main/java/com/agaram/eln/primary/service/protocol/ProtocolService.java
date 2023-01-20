@@ -4556,15 +4556,15 @@ public class ProtocolService {
 		if (!body.get("protocolstepname").equals("")) {
 			LSprotocolstep LSprotocolstepObj = new LSprotocolstep();
 			String protocolstepname = object.convertValue(body.get("protocolstepname"), String.class);
-			String content = object.convertValue(body.get("content"), String.class);
+			String str = object.convertValue(body.get("content"), String.class);
 			Integer protocolmastercode = object.convertValue(body.get("protocolmastercode"), Integer.class);
 //			boolean NewStep = object.convertValue(body.get("NewStep"), boolean.class);
 			Integer NewStep = object.convertValue(body.get("newStep"), Integer.class);
 
 			Integer stepno = object.convertValue(body.get("stepno"), Integer.class);
 			Integer ismultitenant = object.convertValue(body.get("ismultitenant"), Integer.class);
-			Gson g = new Gson();
-			String str = g.toJson(content);
+//			Gson g = new Gson();
+//			String str = g.toJson(content);
 //			  String jsonObject = new JsonParser().parse(str).getAsString();
 
 			int sitecode = object.convertValue(body.get("sitecode"), Integer.class);
@@ -5024,7 +5024,7 @@ public class ProtocolService {
 
 			LSlogilabprotocolsteps lslogilabprotocolsteps = new LSlogilabprotocolsteps();
 			String protocolstepname = object.convertValue(body.get("protocolstepname"), String.class);
-			String content = object.convertValue(body.get("content"), String.class);
+			String str = object.convertValue(body.get("content"), String.class);
 			Long protocolordercode = object.convertValue(body.get("protocolordercode"), Long.class);
 			boolean isversion = object.convertValue(body.get("isversion"), boolean.class);
 //			boolean nochanges =object.convertValue(body.get("nochanges"), boolean.class);
@@ -5034,8 +5034,8 @@ public class ProtocolService {
 			Integer ismultitenant = object.convertValue(body.get("ismultitenant"), Integer.class);
 			Integer protocolmastercode = object.convertValue(body.get("protocolmastercode"), Integer.class);
 //			Integer protocolstepcode = object.convertValue(body.get("protocolstepcode"), Integer.class);
-			Gson g = new Gson();
-			String str = g.toJson(content);
+//			Gson g = new Gson();
+//			String str = g.toJson(content);
 			int sitecode = object.convertValue(body.get("sitecode"), Integer.class);
 //		LSprotocolstep Object=LSProtocolStepRepositoryObj.findByProtocolmastercodeAndProtocolstepnameAndStatus(protocolmastercode,protocolstepname,1);
 			String orderstepflag = object.convertValue(body.get("orderstepflag"), String.class);

@@ -64,6 +64,9 @@ public class MaterialCategory implements Serializable{
 	private LScfttransaction objsilentaudit;
 	
 	@Transient
+	public String info;
+	
+	@Transient
 	private LScfttransaction objmanualaudit;
 	
 	@ColumnDefault("1")
@@ -269,6 +272,14 @@ public class MaterialCategory implements Serializable{
 
 	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
 		this.objsilentaudit = objsilentaudit;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
 	}
 
 	public LScfttransaction getObjmanualaudit() {

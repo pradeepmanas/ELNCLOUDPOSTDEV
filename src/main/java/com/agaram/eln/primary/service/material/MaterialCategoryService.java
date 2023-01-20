@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.global.Enumeration;
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
@@ -55,12 +56,16 @@ public class MaterialCategoryService {
 			materialCategory.setSdescription(materialCategory.getSdescription());
 			materialCategory.setNactivestatus(0);
 			materialCategory.setNuserrolecode(0);
+			
 			MaterialCategoryRepository.save(materialCategory);
 
 			return getMaterialCategory(materialCategory.getNsitecode());
 
 		} else {
-			return (ResponseEntity<Object>) returnmsg.put("alreadyexists", returnmsg);
+			materialCategory.setInfo("Duplicate Entry - " + "Material Category : " + materialCategory.getSmaterialcatname());
+//			return (ResponseEntity<Object>) returnmsg.put("alreadyexists", returnmsg);
+			return new ResponseEntity<> (materialCategory, HttpStatus.CONFLICT);
+		
 		}
 	}
 
@@ -89,7 +94,7 @@ public class MaterialCategoryService {
 		return new ResponseEntity<>(objMaterialCategory, HttpStatus.OK);
 	}
 
-	public ResponseEntity<Object> deleteMaterialCategory(MaterialCategory materialCategory) {
+	public ResponseEntity<Object> deleteMaterialCategory(MaterialCategory materialCategory,LScfttransaction obj) {
 
 		final ObjectMapper objmapper = new ObjectMapper();
 
@@ -107,6 +112,7 @@ public class MaterialCategoryService {
 
 			MaterialCategoryRepository.save(objMaterialCategory);
 
+			materialCategory.setObjsilentaudit(obj);
 			return getMaterialCategory(materialCategory.getNsitecode());
 
 		}
