@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.global.Enumeration;
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.material.Section;
+import com.agaram.eln.primary.model.material.Unit;
 //import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 
@@ -50,6 +52,7 @@ public class SectionService {
 	public ResponseEntity<Object> updateSection(Section section) {
 		final Section objSetion = getActiveSectionById(section.getNsectioncode());
 
+		final Section unitobj = sectionRepository.findByNsectioncodeAndNstatus(section.getNsectioncode(), 1);
 		if (objSetion == null) {
 			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYDELETED.getreturnstatus(),
 					HttpStatus.EXPECTATION_FAILED);
@@ -58,6 +61,7 @@ public class SectionService {
 			final Section objSetion1 = sectionRepository.findBySsectionnameAndNstatusAndNsitecode(section.getSsectionname(), 1,section.getNsitecode());
 
 			if (objSetion1 == null || (objSetion.getNsectioncode() == section.getNsectioncode())) {
+				unitobj.setObjsilentaudit(section.getObjsilentaudit());
 				sectionRepository.save(section);
 				return getSection(section.getNsitecode());
 			} else {

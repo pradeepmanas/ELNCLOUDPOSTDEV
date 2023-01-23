@@ -8,8 +8,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
+
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 
 @Entity
 @Table(name = "material")
@@ -32,6 +35,15 @@ public class Material implements Serializable{
 	private Integer nmaterialtypecode;
 	
 	private String sprefix;
+
+	@Transient
+	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	public String info;
+	
+	@Transient
+	private LScfttransaction objmanualaudit;
 	
 	private Integer nsitecode;
 	
@@ -135,4 +147,23 @@ public class Material implements Serializable{
 	public void setSproductname(String sproductname) {
 		this.sproductname = sproductname;
 	}
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+	public String getInfo() {
+		return info;
+	}
+	public void setInfo(String info) {
+		this.info = info;
+	}
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
+	
 }

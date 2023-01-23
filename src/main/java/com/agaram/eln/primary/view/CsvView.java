@@ -85,7 +85,7 @@ public class CsvView extends AbstractCsvView {
 	       			 {
 	       				 if (dataEntry.getKey().equalsIgnoreCase("createddate"))
 	      				 { 	      						 
-	       					objList.add((String)dataEntry.getValue());
+	       					objList.add( String.valueOf(dataEntry.getValue()));
 	      				 }
 	       				 else
 	       				 {

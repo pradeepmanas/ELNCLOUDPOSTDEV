@@ -19,11 +19,13 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.model.material.MaterialType;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
@@ -208,6 +210,7 @@ public class MaterialService {
 	public ResponseEntity<Object> createMaterial(Map<String, Object> inputMap)
 			throws JsonParseException, JsonMappingException, IOException {
 
+		final ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		JSONObject actionType = new JSONObject();
 		JSONArray jsonUidataarray = new JSONArray();
@@ -216,6 +219,8 @@ public class MaterialService {
 
 		new ObjectMapper();
 
+		final LScfttransaction cft = mapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
+		
 		JSONObject jsonObject = new JSONObject(inputMap.get("materialJson").toString());
 		JSONObject jsonuidata = new JSONObject(inputMap.get("jsonuidata").toString());
 
@@ -254,6 +259,7 @@ public class MaterialService {
 		objMaterial.setJsondata(strJsonObj);
 		objMaterial.setJsonuidata(strJsonUiData);
 		objMaterial.setNsitecode(nsiteInteger);
+		objMaterial.setObjsilentaudit(cft);
 
 		materialRepository.save(objMaterial);
 
@@ -268,6 +274,7 @@ public class MaterialService {
 		inputMap.put("nmaterialconfigcode", jsonuidata.get("nmaterialconfigcode"));
 		objmap.putAll((Map<String, Object>) getMaterialByTypeCode(inputMap).getBody());
 		objmap.put("ndesigntemplatemappingcode", jsonuidata.get("nmaterialconfigcode"));
+		objmap.put("objsilentaudit",cft );
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
@@ -487,12 +494,15 @@ public class MaterialService {
 	public ResponseEntity<Object> deleteMaterial(Map<String, Object> inputMap)
 			throws JsonParseException, JsonMappingException, IOException {
 
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		final ObjectMapper mapper = new ObjectMapper();
 		int countMaterial = materialRepository.countByNmaterialcodeAndNstatus((Integer) inputMap.get("nmaterialcode"),
 				1);
 
 		int countMaterialInvent = materialInventoryRepository
 				.countByNmaterialcodeAndNstatus((Integer) inputMap.get("nmaterialcode"), 1);
 
+		final LScfttransaction cft = mapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		if (countMaterial != 0) {
 
 			if (countMaterialInvent == 0) {
@@ -501,9 +511,13 @@ public class MaterialService {
 						(Integer) inputMap.get("nmaterialcode"));
 
 				objMaterial.setNstatus(-1);
+				objMaterial.setObjsilentaudit(cft);
 				materialRepository.save(objMaterial);
 
-				return getMaterialByTypeCode(inputMap);
+				//return getMaterialByTypeCode(inputMap);
+				objmap.putAll((Map<String, Object>) getMaterialByTypeCode(inputMap).getBody());
+				objmap.put("objsilentaudit", cft);
+				return new ResponseEntity<>(objmap, HttpStatus.OK);
 
 			} else {
 				return new ResponseEntity<>("Material already in transaction", HttpStatus.CONFLICT);
@@ -552,6 +566,8 @@ public class MaterialService {
 		JSONObject jsonObject = new JSONObject(inputMap.get("materialJson").toString());
 		JSONObject jsonuidata = new JSONObject(inputMap.get("jsonuidata").toString());
 
+		String strJsonObj = inputMap.get("materialJson").toString();
+		String strJsonUiData = inputMap.get("jsonuidata").toString();
 //		if (!lstDateField.isEmpty()) {
 //			jsonObject = (JSONObject) convertInputDateToUTCByZone(jsonObject, lstDateField, false);
 //			jsonuidata = (JSONObject) convertInputDateToUTCByZone(jsonuidata, lstDateField, false);
@@ -563,6 +579,7 @@ public class MaterialService {
 //		Material ObjMatNamecheck = materialRepository.findByNstatusAndNmaterialcode(1,
 //				(Integer) inputMap.get("nmaterialcode"));
 		
+		final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		Map<String, Object> objMat = (Map<String, Object>) inputMap.get("Material");
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode"); 
 		final Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,
@@ -588,11 +605,12 @@ public class MaterialService {
 		}
 		
 		
-		ObjMatNamecheck.setJsondata(jsonObject.toString());
-		ObjMatNamecheck.setJsonuidata(jsonuidata.toString());
+		ObjMatNamecheck.setJsondata(strJsonObj);
+		ObjMatNamecheck.setJsonuidata(strJsonUiData);
 		ObjMatNamecheck.setNmaterialcatcode((Integer) jsonObject.get("nmaterialcatcode"));
 		ObjMatNamecheck.setNtransactionstatus((Integer) inputMap.get("ntransactionstatus"));
 		ObjMatNamecheck.setNmaterialcode((Integer) inputMap.get("nmaterialcode"));
+		ObjMatNamecheck.setObjsilentaudit(cft);
 		
 		materialRepository.save(ObjMatNamecheck);
 		
@@ -627,7 +645,7 @@ public class MaterialService {
 //				.query(SelectedMaterialCategory, new MaterialCategory());
 		
 		objmap.put("SelectedMaterialCategory", objMaterialCategory);
-
+		objmap.put("objsilentaudit", cft);
 		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}

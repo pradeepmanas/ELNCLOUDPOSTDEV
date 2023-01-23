@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.service.material.SectionService;
 
@@ -58,7 +59,7 @@ public class SectionController {
 
 		final ObjectMapper objmapper = new ObjectMapper();
 		final Section section = objmapper.convertValue(inputMap.get("section"), Section.class);
-
+		//final LScfttransaction objsilentaudit = objmapper.convertValue(inputMap.get("objsilentaudit"),LScfttransaction.class);
 
 		return sectionService.deleteSection(section);
 	}

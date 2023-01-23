@@ -40,10 +40,10 @@ public class MaterialCategoryService {
 		return new ResponseEntity<>(lstgetMaterialCategory, HttpStatus.OK);
 	}
 
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> createMaterialCategory(Map<String, Object> inputMap) throws Exception {
 		ObjectMapper objmapper = new ObjectMapper();
-		Map<String, Object> returnmsg = new HashMap<>();
+		//Map<String, Object> returnmsg = new HashMap<>();
 		final MaterialCategory materialCategory = objmapper.convertValue(inputMap.get("materialcategory"),
 				MaterialCategory.class);
 		List<MaterialCategory> lstgetMaterialCategory = MaterialCategoryRepository

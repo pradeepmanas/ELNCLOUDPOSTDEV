@@ -864,7 +864,7 @@ public class DashBoardService {
 		Map<String, Object> obj = new HashMap<String, Object>();
 		if (listobjfilecode.get(0) == 1) {
 			listobjfilecode.remove(0);
-			List<LSfile> fileobj = lsfileRepository.findByFilecodeIn(listobjfilecode);
+			List<Sheettemplateget> fileobj = lsfileRepository.findByFilecodeIn(listobjfilecode);
 			obj.put("Sheet", fileobj);
 		} else {
 			listobjfilecode.remove(0);

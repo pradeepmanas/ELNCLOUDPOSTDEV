@@ -66,7 +66,7 @@ public class UnitService {
 			if (unit1 == null || (unit1.getNunitcode() == objUnit.getNunitcode())) {
 				
 				unitobj.setObjsilentaudit(objUnit.getObjsilentaudit());
-				unitRepository.save(unitobj);
+				unitRepository.save(objUnit);
 				return getUnit(objUnit.getNsitecode());
 			} else {
 				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),

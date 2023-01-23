@@ -6,6 +6,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 
 @Entity
 @Table(name = "section")
@@ -30,6 +33,15 @@ public class Section {
 	@Column(name = "nsitecode")
 	private Integer nsitecode;
 
+	@Transient
+	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	public String info;
+	
+	@Transient
+	private LScfttransaction objmanualaudit;
+	
 	public Integer getNsectioncode() {
 		return nsectioncode;
 	}
@@ -76,6 +88,22 @@ public class Section {
 
 	public void setNsitecode(Integer nsitecode) {
 		this.nsitecode = nsitecode;
+	}
+
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
 	}
 	
 	

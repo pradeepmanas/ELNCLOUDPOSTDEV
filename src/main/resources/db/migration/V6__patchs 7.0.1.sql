@@ -3430,6 +3430,7 @@ INSERT INTO parserignorechars(ignorechars)SELECT 'â†µ' WHERE NOT EXISTS (SEL
 INSERT INTO parserignorechars(ignorechars)SELECT 'â†µâ†µâ†µâ†µ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†µâ†µâ†µâ†µ');
 INSERT INTO parserignorechars(ignorechars)SELECT 'â†µâ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†µâ');
 
+
 delete from lsusergrouprights where displaytopic='IDS_TSK_LIMSTESTORDER';
 
 delete from lsusergrouprights where displaytopic='IDS_TSK_DASHBOARDINVENTORY';
@@ -3451,4 +3452,62 @@ update lsusergrouprightsmaster set sedit='NA' where sedit ='0'and  displaytopic=
 update lsusergrouprights set screate='0' where screate ='NA' and  displaytopic='IDS_SCN_UNLOCKORDERS';
 update lsusergrouprightsmaster set screate='0' where screate='NA' and  displaytopic='IDS_SCN_UNLOCKORDERS';
 update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_UNLOCKORDERS' and usergroupid_usergroupcode=1;
+update lsusergrouprightsmaster set sdelete='NA', sedit='NA' where displaytopic='IDS_SCN_LOGBOOK';
+delete from lsusergrouprights where displaytopic='IDS_TSK_IMPORTADS';
+delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_IMPORTADS';
+update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_AUDITTRAILCONFIG';
+update lsusergrouprights set screate='0' where displaytopic='IDS_SCN_AUDITTRAILCONFIG';
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_AUDITTRAILCONFIG' and usergroupid_usergroupcode=1;
+update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_USERRIGHTS';
+update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_ORDERWORKLOW';
+update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW';
+update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_PASSWORDPOLICY';
+update lsusergrouprights set screate='0' where displaytopic='IDS_SCN_USERRIGHTS';
+update lsusergrouprights set screate='0' where displaytopic='IDS_SCN_ORDERWORKLOW';
+update lsusergrouprights set screate='0' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW';
+update lsusergrouprights set screate='0' where displaytopic='IDS_SCN_PASSWORDPOLICY';
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_USERRIGHTS' and usergroupid_usergroupcode=1;
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_ORDERWORKLOW' and usergroupid_usergroupcode=1;
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW' and usergroupid_usergroupcode=1;
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_PASSWORDPOLICY' and usergroupid_usergroupcode=1;
+update lsusergrouprightsmaster set sdelete='0', status='1,0,1' where displaytopic='IDS_SCN_PROJECTTEAM';
+update lsusergrouprights set sdelete='0' where displaytopic='IDS_SCN_PROJECTTEAM';
+update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_PROJECTTEAM' and usergroupid_usergroupcode=1;
 
+do $$
+DECLARE
+    counter integer := 0;
+    DECLARE
+    counter1 integer := 0;
+    DECLARE
+    rightscount integer := 0;
+    DECLARE
+    forcount integer := 1;
+begin
+
+select count(*) into counter from lsusergroup;
+select count(*) into rightscount from lsusergrouprights;
+
+-- RAISE NOTICE 'Value: %',counter;
+-- RAISE NOTICE 'rightscount: %',rightscount;
+
+   for cnt in forcount..counter loop
+   
+   select usergroupcode into counter1 from lsusergroup offset  forcount-1 LIMIT forcount;
+--     raise notice 'cnt: %', counter1;
+     for cnt1 in 1..rightscount loop
+--     raise notice 'cnt: %', cnt1;
+DELETE FROM lsusergrouprights
+WHERE orderno IN
+    (SELECT orderno
+    FROM 
+        (SELECT orderno,
+         ROW_NUMBER() OVER( PARTITION BY displaytopic
+        ORDER BY  orderno ) AS row_num
+        FROM lsusergrouprights where usergroupid_usergroupcode=counter1 ) t
+        WHERE t.row_num > 1 );              
+        end loop;
+        raise notice 'cnt: %', forcount; 
+     forcount:=forcount+1;
+   end loop;
+end; $$

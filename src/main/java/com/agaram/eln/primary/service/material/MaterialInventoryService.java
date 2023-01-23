@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialCategory;
@@ -449,6 +450,7 @@ public class MaterialInventoryService {
 		List<Map<String, Object>> lstAudit = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> lstAudittrans = new ArrayList<Map<String, Object>>();
 
+		final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		List<String> lstDateField = (List<String>) inputMap.get("DateList");
 		JSONObject jsonObject = new JSONObject(inputMap.get("materialInventoryJson").toString());
 		JSONObject jsonObjectInvTrans = new JSONObject(inputMap.get("MaterialInventoryTrans").toString());
@@ -636,6 +638,7 @@ public class MaterialInventoryService {
 					objSaveMaterialInventory.setNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
 					objSaveMaterialInventory.setNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
 
+					objSaveMaterialInventory.setObjsilentaudit(cft);
 					objSaveMaterialInventory = materialInventoryRepository.save(objSaveMaterialInventory);
 
 					if (strPrefix != null && !strPrefix.equals("")) {
@@ -783,7 +786,8 @@ public class MaterialInventoryService {
 
 //		objmap.putAll((Map<String, Object>) getMaterialInventoryByID(inputMap).getBody());
 		objmap.putAll((Map<String, Object>) getMaterialInventoryDetails(inputMap).getBody());
-
+		objmap.put("objsilentaudit",cft);
+		objmap.put("tabScreen", "IDS_MATERIALSECTION");
 //		objmap.put("nregtypecode", -1);
 //		objmap.put("nregsubtypecode", -1);
 //		objmap.put("ndesigntemplatemappingcode", jsonuidata.get("nmaterialconfigcode"));

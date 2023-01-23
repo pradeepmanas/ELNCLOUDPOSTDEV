@@ -11,8 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 
 @Entity
 @Table(name="materialinventory")
@@ -47,6 +49,15 @@ public class MaterialInventory {
 	private transient String sinventoryid;
 	private transient String savailablequatity;
 	private transient String sunitname;
+	
+	@Transient
+	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	public String info;
+	
+	@Transient
+	private LScfttransaction objmanualaudit;
 	
 	private Integer nsitecode;
 	
@@ -148,4 +159,23 @@ public class MaterialInventory {
 	public void setSunitname(String sunitname) {
 		this.sunitname = sunitname;
 	}
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+	public String getInfo() {
+		return info;
+	}
+	public void setInfo(String info) {
+		this.info = info;
+	}
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
+	
 }
