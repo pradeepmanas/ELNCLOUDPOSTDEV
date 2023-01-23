@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.service.material.UnitService;
 
@@ -57,10 +58,11 @@ public class UnitController {
 	public ResponseEntity<Object> deleteUnit(@RequestBody Map<String, Object> inputMap) throws Exception {
 
 		ObjectMapper objMapper = new ObjectMapper();
+		final LScfttransaction objsilentaudit = objMapper.convertValue(inputMap.get("objsilentaudit"),LScfttransaction.class);
 		Unit objUnit = objMapper.convertValue(inputMap.get("unit"), new TypeReference<Unit>() {
 		});
 
-		return unitService.deleteUnit(objUnit);
+		return unitService.deleteUnit(objUnit,objsilentaudit);
 
 	}
 
