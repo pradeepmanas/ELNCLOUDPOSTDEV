@@ -3432,3 +3432,23 @@ INSERT INTO parserignorechars(ignorechars)SELECT 'â†µâ' WHERE NOT EXISTS (S
 
 delete from lsusergrouprights where displaytopic='IDS_TSK_LIMSTESTORDER';
 
+delete from lsusergrouprights where displaytopic='IDS_TSK_DASHBOARDINVENTORY';
+delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_DASHBOARDINVENTORY';
+
+update lsusergrouprightsmaster set modulename='IDS_MDL_SETUP' where modulename='IDS_MDL_PARSER';
+update lsusergrouprights set modulename='IDS_MDL_SETUP' where modulename='IDS_MDL_PARSER';
+update lsusergrouprights set sedit='NA' where sedit ='1'and  displaytopic='IDS_TSK_ORDERSHAREDBYMEPROTOCOL';
+update lsusergrouprights set sedit='NA' where sedit ='1'and  displaytopic='IDS_TSK_ORDERSHAREDTOMEPROTOCOL';
+
+delete from lsusergrouprightsmaster where displaytopic ='IDS_TSK_DOWNLOADPDFEXCEL';
+delete from lsusergrouprights where displaytopic='IDS_TSK_DOWNLOADPDFEXCEL';
+delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_DOWNLOADPDFEXCELSECTION';
+delete from lsusergrouprights where displaytopic='IDS_TSK_DOWNLOADPDFEXCELSECTION';
+delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_DOWNLOADMATERILACATEGORY';
+delete from lsusergrouprights where displaytopic='IDS_TSK_DOWNLOADMATERILACATEGORY';
+update lsusergrouprights set sedit='NA' where sedit ='1'and  displaytopic='IDS_SCN_UNLOCKORDERS';
+update lsusergrouprightsmaster set sedit='NA' where sedit ='0'and  displaytopic='IDS_SCN_UNLOCKORDERS';
+update lsusergrouprights set screate='0' where screate ='NA' and  displaytopic='IDS_SCN_UNLOCKORDERS';
+update lsusergrouprightsmaster set screate='0' where screate='NA' and  displaytopic='IDS_SCN_UNLOCKORDERS';
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_UNLOCKORDERS' and usergroupid_usergroupcode=1;
+

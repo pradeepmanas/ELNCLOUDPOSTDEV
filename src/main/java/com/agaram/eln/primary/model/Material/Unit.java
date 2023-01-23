@@ -7,6 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 
 @Entity
 @Table(name = "unit")
@@ -27,6 +30,14 @@ public class Unit {
 	private String sunitname;
 	@Column(name = "sdescription")
 	private String sdescription;
+	@Transient
+	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	public String info;
+	
+	@Transient
+	private LScfttransaction objmanualaudit;
 	
 	public String getSunitname() {
 		return sunitname;
@@ -63,5 +74,24 @@ public class Unit {
 	}
 	public void setSdescription(String sdescription) {
 		this.sdescription = sdescription;
+	}
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+	public String getInfo() {
+		return info;
+	}
+	public void setInfo(String info) {
+		this.info = info;
+	}
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
 	}	
+	
 }

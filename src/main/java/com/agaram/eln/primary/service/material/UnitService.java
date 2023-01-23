@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.global.Enumeration;
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.repository.material.UnitRepository;
 
@@ -51,6 +53,8 @@ public class UnitService {
 
 		final Unit unit = getActiveUnitById(objUnit.getNunitcode());
 
+		final Unit unitobj = unitRepository.findByNunitcodeAndNstatus(objUnit.getNunitcode(), 1);
+
 		if (unit == null) {
 			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYDELETED.getreturnstatus(),
 					HttpStatus.EXPECTATION_FAILED);
@@ -60,7 +64,9 @@ public class UnitService {
 
 //			final List<Unit> unitList = getUnitListByName(objUnit.getSunitname(), objUnit.getNsitecode());
 			if (unit1 == null || (unit1.getNunitcode() == objUnit.getNunitcode())) {
-				unitRepository.save(objUnit);
+				
+				unitobj.setObjsilentaudit(objUnit.getObjsilentaudit());
+				unitRepository.save(unitobj);
 				return getUnit(objUnit.getNsitecode());
 			} else {
 				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
@@ -69,17 +75,18 @@ public class UnitService {
 		}
 	}
 
-	public ResponseEntity<Object> deleteUnit(Unit objUnit) {
+	public ResponseEntity<Object> deleteUnit(Unit objUnit,LScfttransaction obj) {
 		final Unit unit = getActiveUnitById(objUnit.getNunitcode());
-
+		final Unit unitobj = unitRepository.findByNunitcodeAndNstatus(objUnit.getNunitcode(), 1);
 		if (unit == null) {
 
 			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYDELETED.getreturnstatus(),
 					HttpStatus.EXPECTATION_FAILED);
 		} else {
 
-			objUnit.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
-			unitRepository.save(objUnit);
+			unitobj.setObjsilentaudit(obj);
+			unitobj.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
+			unitRepository.save(unitobj);
 			return getUnit(objUnit.getNsitecode());
 
 		}
