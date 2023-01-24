@@ -3474,7 +3474,8 @@ update lsusergrouprightsmaster set sdelete='0', status='1,0,1' where displaytopi
 update lsusergrouprights set sdelete='0' where displaytopic='IDS_SCN_PROJECTTEAM';
 update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_PROJECTTEAM' and usergroupid_usergroupcode=1;
 
-do $$
+DO
+$do$
 DECLARE
     counter integer := 0;
     DECLARE
@@ -3510,4 +3511,5 @@ WHERE orderno IN
         raise notice 'cnt: %', forcount; 
      forcount:=forcount+1;
    end loop;
-end; $$
+END
+$do$;  

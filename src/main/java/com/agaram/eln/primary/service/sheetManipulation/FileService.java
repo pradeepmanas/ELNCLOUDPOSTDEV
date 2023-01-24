@@ -714,7 +714,7 @@ public class FileService {
 					}
 
 					else {
-						if (objfile.getApproved() != 1 && objfile.getIsfinalstep() != 1) {
+						if (objfile.getApproved()!=null && objfile.getApproved() != 1 && objfile.getIsfinalstep() != 1) {
 							if (createby.getUsercode() != userobj.get(i).getUsercode()) {
 								if (objfile.getApproved() == 0) {
 									Notifiction = "SHEETAPPROVAL";
@@ -773,14 +773,14 @@ public class FileService {
 
 			if (!isNew) {
 
-				if (objFile.getApproved() == 0) {
+				if (objFile.getApproved()!=null && objFile.getApproved() == 0) {
 					Notifiction = "SHEETMOVED";
 				}
-				if (objFile.getApproved() == 2 && objFile.getRejected() != 1) {
+				if (objFile.getApproved()!=null && objFile.getApproved() == 2 && objFile.getRejected() != 1) {
 					Notifiction = "SHEETRETURNED";
-				} else if (objFile.getApproved() == 1) {
+				} else if (objFile.getApproved()!=null && objFile.getApproved() == 1) {
 					Notifiction = "SHEETAPPROVED";
-				} else if (objFile.getRejected() == 1) {
+				} else if (objFile.getRejected()!=null && objFile.getRejected() == 1) {
 					Notifiction = "SHEETREJECTED";
 				}
 

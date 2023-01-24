@@ -1333,7 +1333,8 @@ public class MaterialInventoryService {
 			inputMap.put("nregtypecode", -1);
 			inputMap.put("nregsubtypecode", -1);
 			inputMap.put("ndesigntemplatemappingcode", inputMap.get("nmaterialconfigcode"));
-
+			inputMap.put("tabScreen", "IDS_MATERIALSECTION");
+			
 			return getMaterialInventoryByID(inputMap);
 		} else {
 			return new ResponseEntity<>("IDS_ALREADYDELETED", HttpStatus.CONFLICT);
@@ -1343,6 +1344,7 @@ public class MaterialInventoryService {
 	@SuppressWarnings({ "unchecked" })
 	public ResponseEntity<Object> updateMaterialStatus(Map<String, Object> inputMap) throws Exception {
 
+		ObjectMapper objmapper = new ObjectMapper();
 		JSONArray jsonAuditArraynew = new JSONArray();
 		String jsonstr = "";
 		JSONObject actionType = new JSONObject();
@@ -1352,6 +1354,7 @@ public class MaterialInventoryService {
 		MaterialInventory objMaterialInventory = materialInventoryRepository
 				.findByNmaterialinventorycodeAndNstatus((Integer) inputMap.get("nmaterialinventorycode"), 1);
 
+		final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		if (objMaterialInventory != null) {
 
 			jsonstr = objMaterialInventory.getJsondata();
@@ -1414,7 +1417,7 @@ public class MaterialInventoryService {
 						objMaterialInventory.setJsondata(jsonObject.toString());
 						objMaterialInventory.setJsonuidata(jsonuidata.toString());
 						objMaterialInventory.setNtransactionstatus((Integer) jsonObject.get("ntranscode"));
-
+						objMaterialInventory.setObjsilentaudit(cft);
 						materialInventoryRepository.save(objMaterialInventory);
 
 						inputMap.put("ntranscode", jsonObject.get("ntranscode"));
@@ -1465,6 +1468,8 @@ public class MaterialInventoryService {
 			objmap.put("ndesigntemplatemappingcode", jsonuidata.get("nmaterialconfigcode"));
 
 			objmap.putAll((Map<String, Object>) getMaterialInventoryByID(inputMap).getBody());
+			objmap.put("objsilentaudit", cft);
+			objmap.put("tabScreen", "IDS_MATERIALSECTION");
 			return new ResponseEntity<>(objmap, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>("IDS_MATERIALINVENTORYALREADYDELETED", HttpStatus.CONFLICT);
