@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,13 +32,17 @@ import com.agaram.eln.primary.model.multitenant.Invoice;
 import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.multitenant.CustomerSubscriptionRepository;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
 import com.agaram.eln.primary.repository.multitenant.InvoiceRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordPolicyRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsmasterRepository;
 import com.agaram.eln.primary.service.notification.EmailService;
+
 import com.agaram.eln.secondary.config.ArchiveDataSourceBasedMultiTenantConnectionProviderImpl;
 
 @Service
@@ -72,6 +77,11 @@ public class DatasourceService {
 
 	@Autowired
 	private InvoiceRepository InvoiceRepository;
+	
+	
+	
+	@Autowired
+	private LSusergrouprightsRepository lsusergrouprightsRepository;
 
 	public DataSourceConfig Validatetenant(DataSourceConfig Tenantname) {
 
@@ -995,6 +1005,7 @@ public class DatasourceService {
 
 			if (plantType == 3) {
 				objConfig.setPackagetype(3914465000000065053L);
+								
 			} else if (plantType == 2) {
 				objConfig.setPackagetype(3914465000000065049L);
 			} else {
@@ -1008,6 +1019,8 @@ public class DatasourceService {
 		return objConfig;
 	}
 
+
+
 	public DataSourceConfig updateTenantLicence(DataSourceConfig tenantDetails) {
 		
 		DataSourceConfig objConfig = configRepo.findById(tenantDetails.getId());
@@ -1019,5 +1032,23 @@ public class DatasourceService {
 
 		return tenantDetails;
 	}
+
+	public DataSourceConfig updateplanrights(DataSourceConfig tenantDetails) {
+		if(tenantDetails.getPlantyperights() != null) {
+			if(tenantDetails.getPlantyperights() == 3 ||  tenantDetails.getPlantyperights() == 2 ) {				
+				lsusergrouprightsRepository.setplanrightsonUsergroupid();	
+				lsusergrouprightsRepository.setplatrightsonamdingroup();
+			}else if(tenantDetails.getPlantyperights() == 1){
+				lsusergrouprightsRepository.setplanrightsonUsergroupidfreestd();
+				lsusergrouprightsRepository.setplatrightsonamdingroup();						
+				
+			}
+		}
+	
+		
+		return tenantDetails;
+	}
+	
+	
 
 }

@@ -104,6 +104,7 @@ import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserActions;
@@ -181,6 +182,8 @@ import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
+
+
 
 @Service
 //@EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
@@ -468,7 +471,8 @@ public class InstrumentService {
 		lsInst.add("INST000");
 		lsInst.add("LPRO");
 		List<LsMethodFields> Methods = lsMethodFieldsRepository.findByinstrumentidNotIn(lsInst);
-
+		//List<SubParserField> SubParserField = new ArrayList<SubParserField>();
+				
 		if (lssiteMaster.getIsmultitenant() != 1) {
 			List<LSfields> Generalfields = lSfieldsRepository.findByisactive(1);
 			List<LSinstruments> Instruments = lSinstrumentsRepository.findAll();
@@ -476,11 +480,21 @@ public class InstrumentService {
 			List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
 			List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
 
-			List<Method> elnMethod = lsMethodRepository.findAll();
+			List<Method> elnMethod = lsMethodRepository.findByStatus(1);
 			List<ParserBlock> ParserBlock = lsParserBlockRepository.findAll();
-			List<ParserField> ParserField = lsParserRepository.findAll();
-			List<SubParserField> SubParserField = lsSubParserRepository.findAll();
+			List<ParserField> ParserField = lsParserRepository.findByStatus(1);
+			 List<SubParserField> SubParserField = lsSubParserRepository.findByStatus(1);
+		  //  SubParserField = lsSubParserRepository.findByStatus(1);
 			obj.put("Generalfields", Generalfields);
+
+			List<ParserField> filteredList = ParserField.stream()
+					.filter(filterParser -> SubParserField.stream()
+							.anyMatch(filterSubParser -> filterParser.getParserfieldkey()
+									.equals(filterSubParser.getParserfield().getParserfieldkey())))
+					.collect(Collectors.toList());
+
+			ParserField.removeAll(filteredList);
+
 			obj.put("Instruments", Instruments);
 			obj.put("Instrmaster", InstrMaster);
 			obj.put("elninstrument", lselninstrumentmasterRepository
@@ -498,7 +512,7 @@ public class InstrumentService {
 			elnMethod = null;
 			ParserBlock = null;
 			ParserField = null;
-			SubParserField = null;
+			//SubParserField = null;
 
 		} else {
 			List<LSfields> Generalfields = lSfieldsRepository.findByisactiveAndMethodname(1, "ID_GENERAL");
@@ -510,6 +524,7 @@ public class InstrumentService {
 			List<ParserField> ParserField = lsParserRepository.findByStatus(1);
 			// List<SubParserField> SubParserField = lsSubParserRepository.findAll();
 			List<SubParserField> SubParserField = lsSubParserRepository.findByStatus(1);
+			 
 			obj.put("Generalfields", Generalfields);
 
 			List<ParserField> filteredList = ParserField.stream()

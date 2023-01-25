@@ -20,7 +20,6 @@ import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
-import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
@@ -360,6 +359,9 @@ public class DashBoardService {
 			if (lstproject != null && lstproject.size() > 0) {
 				lstUserorder = lslogilablimsorderdetailRepository
 						.countByLsprojectmasterInAndCreatedtimestampBetween(lstproject, fromdate, todate);
+				
+				lstUserorder = lstUserorder +lslogilablimsorderdetailRepository
+						.countByFiletypeAndCreatedtimestampBetween(0, fromdate, todate);
 
 			}
 
@@ -367,6 +369,10 @@ public class DashBoardService {
 			if (lstproject != null && lstproject.size() > 0) {
 				lstlimscompleted = lslogilablimsorderdetailRepository
 						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("R", lstproject, fromdate,
+								todate);
+				
+				lstlimscompleted = lstlimscompleted + lslogilablimsorderdetailRepository
+						.countByOrderflagAndFiletypeAndCreatedtimestampBetween("R", 0, fromdate,
 								todate);
 			}
 
@@ -384,6 +390,10 @@ public class DashBoardService {
 				lstpending = lslogilablimsorderdetailRepository
 						.countByOrderflagAndOrdercancellIsNullAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotOrApprovelstatusIsNull(
 								"N", lstproject, fromdate, todate, 3);
+				
+				lstpending = lstpending + lslogilablimsorderdetailRepository
+						.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndApprovelstatusNotOrApprovelstatusIsNull(
+								"N", 0, fromdate, todate, 3);
 			}
 
 			long lstRejected = 0;
@@ -455,16 +465,21 @@ public class DashBoardService {
 				if (objuser.getObjuser().getOrderselectiontype() == 1) {
 					lstorders = lslogilablimsorderdetailRepository
 							.findByLsprojectmasterInAndCreatedtimestampBetween(lstproject, fromdate, todate);
+					
+					lstorders.addAll(lslogilablimsorderdetailRepository.findByFiletypeAndCreatedtimestampBetween(0, fromdate, todate));
 
 				} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
 					lstorders = lslogilablimsorderdetailRepository
 							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotOrderByBatchcodeDesc("R",
 									lstproject, fromdate, todate,3);
+					
+					lstorders.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndFiletypeAndCreatedtimestampBetween("R", 0, fromdate, todate));
 
 				} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
 					lstorders = lslogilablimsorderdetailRepository
 							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrderByBatchcodeDesc("N",
 									lstproject, fromdate, todate);
+					lstorders.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndFiletypeAndCreatedtimestampBetween("N", 0, fromdate, todate));
 
 				} else if (objuser.getObjuser().getOrderselectiontype() == 4) {
 

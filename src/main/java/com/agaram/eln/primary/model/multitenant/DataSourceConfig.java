@@ -61,7 +61,18 @@ public class DataSourceConfig implements Serializable {
 	private Long customer_crm_id;
 	@Column(columnDefinition = "numeric(30,0)", name = "customer_creator_id")
 	private Long customer_creator_id;
+	@Transient
+	private Integer plantyperights;
+	
+	public Integer getPlantyperights() {
+		return plantyperights;
+	}
 
+	public void setPlantyperights(Integer plantyperights) {
+		this.plantyperights = plantyperights;
+	}
+
+	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "customer_subscription_id", referencedColumnName = "customer_subscription_id")
 	private CustomerSubscription CustomerSubscription;
@@ -81,7 +92,7 @@ public class DataSourceConfig implements Serializable {
 	public Integer getLicencetype() {
 		return licencetype;
 	}
-
+	
 	public void setLicencetype(Integer licencetype) {
 		this.licencetype = licencetype;
 	}

@@ -1623,6 +1623,7 @@ CREATE TABLE IF NOT EXISTS public.materialgrade
     ndefaultstatus Integer NOT NULL DEFAULT 4,
     nsitecode Integer NOT NULL DEFAULT '-1'::integer,
     nstatus Integer NOT NULL DEFAULT 1,
+    smaterialgradename character varying(50),
     CONSTRAINT materialgrade_pkey PRIMARY KEY (nmaterialgradecode)
 )
 
@@ -1702,16 +1703,6 @@ insert into period values(1,'{
     },
     "sdescription": ""
 }',4,-1,1)on conflict (nperiodcode) do nothing;
-
-insert into materialgrade values(1,'{
-    "sdescription": "",
-    "smaterialgradename": "A"
-}',4,-1,1,'A')on conflict (nmaterialgradecode) do nothing;
-
-insert into materialgrade values(2,'{
-    "sdescription": "",
-    "smaterialgradename": "B"
-}',4,-1,1,'B')on conflict (nmaterialgradecode) do nothing;
 
 insert into transactionstatus values(47,'Receive','{
     "salertdisplaystatus": {
@@ -3426,6 +3417,45 @@ INSERT INTO parserignorechars(ignorechars)SELECT 'â†µ' WHERE NOT EXISTS (SEL
 INSERT INTO parserignorechars(ignorechars)SELECT 'â†µâ†µâ†µâ†µ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†µâ†µâ†µâ†µ');
 INSERT INTO parserignorechars(ignorechars)SELECT 'â†µâ' WHERE NOT EXISTS (SELECT ignorechars FROM parserignorechars WHERE ignorechars = 'â†µâ');
 
+DO
+$do$
+DECLARE
+    counter integer := 0;
+    DECLARE
+    counter1 integer := 0;
+    DECLARE
+    rightscount integer := 0;
+    DECLARE
+    forcount integer := 1;
+begin
+
+select count(*) into counter from lsusergroup;
+select count(*) into rightscount from lsusergrouprights;
+
+-- RAISE NOTICE 'Value: %',counter;
+-- RAISE NOTICE 'rightscount: %',rightscount;
+
+   for cnt in forcount..counter loop
+   
+   select usergroupcode into counter1 from lsusergroup offset  forcount-1 LIMIT forcount;
+--     raise notice 'cnt: %', counter1;
+     for cnt1 in 1..rightscount loop
+--     raise notice 'cnt: %', cnt1;
+DELETE FROM lsusergrouprights
+WHERE orderno IN
+    (SELECT orderno
+    FROM 
+        (SELECT orderno,
+         ROW_NUMBER() OVER( PARTITION BY displaytopic
+        ORDER BY  orderno ) AS row_num
+        FROM lsusergrouprights where usergroupid_usergroupcode=counter1 ) t
+        WHERE t.row_num > 1 );              
+        end loop;
+        raise notice 'cnt: %', forcount; 
+     forcount:=forcount+1;
+   end loop;
+END
+$do$;  
 
 delete from lsusergrouprights where displaytopic='IDS_TSK_LIMSTESTORDER';
 
@@ -3443,3 +3473,42 @@ delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_DOWNLOADPDFEXCEL
 delete from lsusergrouprights where displaytopic='IDS_TSK_DOWNLOADPDFEXCELSECTION';
 delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_DOWNLOADMATERILACATEGORY';
 delete from lsusergrouprights where displaytopic='IDS_TSK_DOWNLOADMATERILACATEGORY';
+
+update lsusergrouprights set sedit='NA' where sedit ='1'and  displaytopic='IDS_SCN_UNLOCKORDERS';
+update lsusergrouprightsmaster set sedit='NA' where sedit ='0'and  displaytopic='IDS_SCN_UNLOCKORDERS';
+update lsusergrouprights set screate='0' where screate ='NA' and  displaytopic='IDS_SCN_UNLOCKORDERS';
+update lsusergrouprightsmaster set screate='0' where screate='NA' and  displaytopic='IDS_SCN_UNLOCKORDERS';
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_UNLOCKORDERS' and usergroupid_usergroupcode=1;
+update lsusergrouprightsmaster set sdelete='NA' where displaytopic='IDS_SCN_LOGBOOK';
+update lsusergrouprightsmaster set sedit='NA' where displaytopic='IDS_SCN_LOGBOOK';
+
+update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_AUDITTRAILCONFIG';
+update lsusergrouprights set screate='0' where displaytopic='IDS_SCN_AUDITTRAILCONFIG';
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_AUDITTRAILCONFIG' and usergroupid_usergroupcode=1;
+update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_USERRIGHTS';
+update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_ORDERWORKLOW';
+update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW';
+update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_PASSWORDPOLICY';
+update lsusergrouprights set screate='0' where displaytopic='IDS_SCN_USERRIGHTS';
+update lsusergrouprights set screate='0' where displaytopic='IDS_SCN_ORDERWORKLOW';
+update lsusergrouprights set screate='0' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW';
+update lsusergrouprights set screate='0' where displaytopic='IDS_SCN_PASSWORDPOLICY';
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_USERRIGHTS' and usergroupid_usergroupcode=1;
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_ORDERWORKLOW' and usergroupid_usergroupcode=1;
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW' and usergroupid_usergroupcode=1;
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_PASSWORDPOLICY' and usergroupid_usergroupcode=1;
+update lsusergrouprightsmaster set sdelete='0' where displaytopic='IDS_SCN_PROJECTTEAM';
+update lsusergrouprightsmaster set status='1,0,1' where displaytopic='IDS_SCN_PROJECTTEAM';
+update lsusergrouprights set sdelete='0' where displaytopic='IDS_SCN_PROJECTTEAM';
+update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_PROJECTTEAM' and usergroupid_usergroupcode=1;
+
+delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_IMPORTADS';
+
+
+delete from lsusergrouprights where displaytopic='IDS_TSK_IMPORTADS';
+
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (120, 'IDS_SCN_MATERIALTYPE', 'IDS_MDL_INVENTORY', '0', 'NA', 'NA', 'NA', '0,0,0',97,'IDS_SCN_MATERIALTYPE') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_MATERIALTYPE', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_MATERIALTYPE'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_MATERIALTYPE' and usergroupid_usergroupcode = 1);
+
+update lsaudittrailconfigmaster set modulename='IDS_MDL_SETUP' where lsaudittrailconfigmaster.modulename='IDS_MDL_PARSER';
+delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_LIMSTASKORDER';

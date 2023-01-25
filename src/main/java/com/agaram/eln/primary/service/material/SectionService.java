@@ -8,9 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.global.Enumeration;
-import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.material.Section;
-import com.agaram.eln.primary.model.material.Unit;
 //import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 
@@ -39,7 +37,8 @@ public class SectionService {
 			return getSection(section.getNsitecode());
 		} else {
 
-			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(), HttpStatus.CONFLICT);
+			section.setInfo("Duplicate Entry:  Section - " + section.getSsectionname());
+			return new ResponseEntity<>(section, HttpStatus.CONFLICT);
 
 		}
 	}
@@ -65,7 +64,8 @@ public class SectionService {
 				sectionRepository.save(section);
 				return getSection(section.getNsitecode());
 			} else {
-				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
+				section.setInfo("Duplicate Entry:  Section - " + section.getSsectionname());
+				return new ResponseEntity<>(section,
 						HttpStatus.CONFLICT);
 			}
 

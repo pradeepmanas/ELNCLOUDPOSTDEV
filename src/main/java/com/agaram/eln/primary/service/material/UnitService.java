@@ -32,8 +32,9 @@ public class UnitService {
 
 			return getUnit(objUnit.getNsitecode());
 		} else {
-
-			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(), HttpStatus.CONFLICT);
+			objUnit.setInfo("Duplicate Entry:  Unit - " + objUnit.getSunitname());
+			//return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(), HttpStatus.CONFLICT);
+			return new ResponseEntity<>(objUnit, HttpStatus.CONFLICT);
 		}
 	}
 
@@ -69,7 +70,11 @@ public class UnitService {
 				unitRepository.save(objUnit);
 				return getUnit(objUnit.getNsitecode());
 			} else {
-				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
+				
+//				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
+//						HttpStatus.CONFLICT);
+				objUnit.setInfo("Duplicate Entry:  Unit - " + objUnit.getSunitname());
+				return new ResponseEntity<>(objUnit,
 						HttpStatus.CONFLICT);
 			}
 		}

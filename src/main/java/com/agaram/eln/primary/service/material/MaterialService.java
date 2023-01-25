@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,7 +24,6 @@ import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.model.material.MaterialType;
-import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
@@ -245,11 +243,17 @@ public class MaterialService {
 						(String) jsonObject.get("Prefix"));
 
 				if (objMaterialClass != null) {
-					return new ResponseEntity<>("IDS_PREFIXALREADYEXISTS", HttpStatus.CONFLICT);
+					
+					objMaterial.setInfo("Duplicate Entry:  Prefix - " + (String) jsonObject.get("Prefix"));
+					objMaterial.setObjsilentaudit(cft);
+//					return new ResponseEntity<>("IDS_PREFIXALREADYEXISTS", HttpStatus.CONFLICT);
+					return new ResponseEntity<>(objMaterial, HttpStatus.CONFLICT);
 				}
 			}
 		} else {
-			return new ResponseEntity<>("IDS_MATERIALALREADYEXISTS", HttpStatus.CONFLICT);
+			objMaterial.setInfo("Duplicate Entry:  Material - " + (String) jsonObject.get("Material Name"));
+			objMaterial.setObjsilentaudit(cft);
+			return new ResponseEntity<>(objMaterial, HttpStatus.CONFLICT);
 		}
 		objMaterial.setNmaterialcatcode((Integer) jsonObject.get("nmaterialcatcode"));
 		objMaterial.setSmaterialname(jsonObject.getString("Material Name"));
@@ -491,6 +495,7 @@ public class MaterialService {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> deleteMaterial(Map<String, Object> inputMap)
 			throws JsonParseException, JsonMappingException, IOException {
 
@@ -502,13 +507,14 @@ public class MaterialService {
 		int countMaterialInvent = materialInventoryRepository
 				.countByNmaterialcodeAndNstatus((Integer) inputMap.get("nmaterialcode"), 1);
 
+		Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,
+				(Integer) inputMap.get("nmaterialcode"));
+		
 		final LScfttransaction cft = mapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		if (countMaterial != 0) {
 
 			if (countMaterialInvent == 0) {
 
-				Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,
-						(Integer) inputMap.get("nmaterialcode"));
 
 				objMaterial.setNstatus(-1);
 				objMaterial.setObjsilentaudit(cft);
@@ -520,7 +526,9 @@ public class MaterialService {
 				return new ResponseEntity<>(objmap, HttpStatus.OK);
 
 			} else {
-				return new ResponseEntity<>("Material already in transaction", HttpStatus.CONFLICT);
+				objMaterial.setInfo("Duplicate Entry : Material - " + objMaterial.getSmaterialname());
+//				return new ResponseEntity<>("Material already in transaction", HttpStatus.CONFLICT);
+				return new ResponseEntity<>(objMaterial, HttpStatus.CONFLICT);
 			}
 
 		} else {
@@ -553,7 +561,7 @@ public class MaterialService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
-	@SuppressWarnings({ "null", "unchecked" })
+	@SuppressWarnings({ "unchecked", "unused" })
 	public ResponseEntity<Object> UpdateMaterial(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objmapper = new ObjectMapper();
 //		JSONObject jsonAuditOld = new JSONObject();
@@ -578,6 +586,8 @@ public class MaterialService {
 		
 //		Material ObjMatNamecheck = materialRepository.findByNstatusAndNmaterialcode(1,
 //				(Integer) inputMap.get("nmaterialcode"));
+	
+		Material matobj = new Material();
 		
 		final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		Map<String, Object> objMat = (Map<String, Object>) inputMap.get("Material");
@@ -594,6 +604,7 @@ public class MaterialService {
 						(String) jsonObject.get("Prefix"));
 
 				if (lstcheckPrefix != null) {
+//					matobj.setSprefix();
 					return new ResponseEntity<>("IDS_PREFIXALREADYEXISTS", HttpStatus.CONFLICT);
 				}
 

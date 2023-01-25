@@ -323,7 +323,7 @@ public class MaterialInventoryService {
 
 		System.out.println(lstMaterialInventoryType);
 		objmap.put("MaterialInventoryType", lstMaterialInventoryType);
-
+		
 		objmap.put("DesignMappedFeildsQuantityTransaction", getTemplateDesignForMaterial(9, 138));
 
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
