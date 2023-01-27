@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageLocation;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageVersion;
 import com.agaram.eln.primary.service.samplestoragelocation.SampleStorageLocationService;
@@ -33,7 +34,9 @@ public class SampleStorageLocationController {
 				SampleStorageLocation.class);
 		final SampleStorageVersion sampleStorageVersion = mapper.convertValue(mapObject.get("samplestorageversion"),
 				SampleStorageVersion.class);
-		return sampleStorageLocationService.createSampleStorageLocation(sampleStorageLocation, sampleStorageVersion);
+		final LScfttransaction Auditobj = mapper.convertValue(mapObject.get("objsilentaudit"),
+				LScfttransaction.class);
+		return sampleStorageLocationService.createSampleStorageLocation(sampleStorageLocation, sampleStorageVersion,Auditobj);
 	}
 
 	@PostMapping(value = "/updateSampleStorageLocation")
@@ -45,7 +48,9 @@ public class SampleStorageLocationController {
 				SampleStorageLocation.class);
 		final SampleStorageVersion sampleStorageVersion = mapper.convertValue(mapObject.get("samplestorageversion"),
 				SampleStorageVersion.class);
-		return sampleStorageLocationService.updateSampleStorageLocation(sampleStorageLocation, sampleStorageVersion);
+		final LScfttransaction Auditobj = mapper.convertValue(mapObject.get("objsilentaudit"),
+				LScfttransaction.class);
+		return sampleStorageLocationService.updateSampleStorageLocation(sampleStorageLocation, sampleStorageVersion,Auditobj);
 	}
 
 	@PostMapping(value = "/deleteSampleStorageLocation")
@@ -56,7 +61,9 @@ public class SampleStorageLocationController {
 		final SampleStorageVersion sampleStorageVersion = mapper.convertValue(mapObject.get("samplestorageversion"),
 				SampleStorageVersion.class);
 
-		return sampleStorageLocationService.deleteSampleStorageLocation(sampleStorageVersion);
+		final LScfttransaction Auditobj = mapper.convertValue(mapObject.get("objsilentaudit"),
+				LScfttransaction.class);
+		return sampleStorageLocationService.deleteSampleStorageLocation(sampleStorageVersion,Auditobj);
 	}
 	
 	@PostMapping(value = "/getAllActiveSampleStorageLocation")

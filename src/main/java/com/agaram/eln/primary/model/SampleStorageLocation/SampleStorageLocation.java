@@ -18,7 +18,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity(name = "SampleStorageLocation")
@@ -48,6 +50,15 @@ public class SampleStorageLocation {
 	
 	@Column(name = "status", nullable = false)
 	private Integer status = 1;
+	
+	@Transient
+	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	public String info;
+	
+	@Transient
+	private LScfttransaction objmanualaudit;
 	
 	@Column(name = "sitekey", nullable = false)
 	private Integer sitekey = -1;
@@ -102,6 +113,34 @@ public class SampleStorageLocation {
 		this.status = status;
 	}
 
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+
+
+	public String getInfo() {
+		return info;
+	}
+
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+
+
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
 
 	public Integer getSitekey() {
 		return sitekey;

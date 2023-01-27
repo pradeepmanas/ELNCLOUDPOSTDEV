@@ -63,7 +63,7 @@ public class UnitService {
 
 			final Unit unit1 = unitRepository.findByNstatusAndSunitnameAndNsitecode(1, objUnit.getSunitname(),objUnit.getNsitecode());
 
-//			final List<Unit> unitList = getUnitListByName(objUnit.getSunitname(), objUnit.getNsitecode());
+
 			if (unit1 == null || (unit1.getNunitcode() == objUnit.getNunitcode())) {
 				
 				unitobj.setObjsilentaudit(objUnit.getObjsilentaudit());
@@ -71,8 +71,6 @@ public class UnitService {
 				return getUnit(objUnit.getNsitecode());
 			} else {
 				
-//				return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYEXISTS.getreturnstatus(),
-//						HttpStatus.CONFLICT);
 				objUnit.setInfo("Duplicate Entry:  Unit - " + objUnit.getSunitname());
 				return new ResponseEntity<>(objUnit,
 						HttpStatus.CONFLICT);

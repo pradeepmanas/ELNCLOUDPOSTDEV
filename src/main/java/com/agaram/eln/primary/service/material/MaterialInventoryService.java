@@ -1366,6 +1366,7 @@ public class MaterialInventoryService {
 			JSONObject jsonObject = new JSONObject(jsonstr.toString());
 			JSONObject jsonuidata = new JSONObject(jsonUistr.toString());
 
+			MaterialInventory matinv = new MaterialInventory();
 			inputMap.put("nsectioncode", jsonuidata.get("nsectioncode"));
 
 			if ((int) inputMap.get("nflag") == 1) {
@@ -1391,14 +1392,25 @@ public class MaterialInventoryService {
 							jsonAuditArraynew.put(jsonuidata);
 							actionType.put("materialinventory", "IDS_MATERIALINVENTORYRELEASED");
 						} else {
-							return new ResponseEntity<>("IDS_ALREADYRELEASED", HttpStatus.ALREADY_REPORTED);
+							matinv.setInfo("Material Inv : "+objMaterialInventory.getNmaterialinventorycode() +"Already Released");
+							matinv.setObjsilentaudit(cft);
+//							return new ResponseEntity<>("IDS_ALREADYRELEASED", HttpStatus.ALREADY_REPORTED);
+							return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 						}
 					} else {
-						return new ResponseEntity<>("IDS_THEINVENTORYALREADYRETIRED", HttpStatus.ALREADY_REPORTED);
+
+						matinv.setInfo("Material Inv : "+objMaterialInventory.getNmaterialinventorycode() +"Already retired");
+						matinv.setObjsilentaudit(cft);
+						//return new ResponseEntity<>("IDS_THEINVENTORYALREADYRETIRED", HttpStatus.ALREADY_REPORTED);
+						return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 
 					}
 				} else {
-					return new ResponseEntity<>("IDS_THEINVENTORYALREADYEXPIRED", HttpStatus.ALREADY_REPORTED);
+
+					matinv.setInfo("Material Inv : "+objMaterialInventory.getNmaterialinventorycode() +"Already Expired");
+					matinv.setObjsilentaudit(cft);
+				//	return new ResponseEntity<>("IDS_THEINVENTORYALREADYEXPIRED", HttpStatus.ALREADY_REPORTED);
+					return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 
 				}
 			} else if ((int) inputMap.get("nflag") == 2) {
@@ -1425,10 +1437,17 @@ public class MaterialInventoryService {
 						jsonAuditArraynew.put(jsonuidata);
 						actionType.put("materialinventory", "IDS_MATERIALINVENTORYRETIRED");
 					} else {
-						return new ResponseEntity<>("IDS_THEINVENTORYALREADYRETIRED", HttpStatus.ALREADY_REPORTED);
+
+						matinv.setInfo("Material Inv : "+objMaterialInventory.getNmaterialinventorycode() +"Already Retired");
+						matinv.setObjsilentaudit(cft);
+//						return new ResponseEntity<>("IDS_THEINVENTORYALREADYRETIRED", HttpStatus.ALREADY_REPORTED);
+						return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 					}
 				} else {
-					return new ResponseEntity<>("IDS_THEINVENTORYALREADYEXPIRED", HttpStatus.ALREADY_REPORTED);
+					matinv.setInfo("Material Inv : "+objMaterialInventory.getNmaterialinventorycode() +"Already Released");
+					matinv.setObjsilentaudit(cft);
+					
+					return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 
 				}
 			} else if ((int) inputMap.get("nflag") == 3) {
@@ -1456,10 +1475,18 @@ public class MaterialInventoryService {
 
 						actionType.put("materialinventory", "IDS_OPENDATE");
 					} else {
-						return new ResponseEntity<>("IDS_PLEASESELECTRELEASEDRECORD", HttpStatus.ALREADY_REPORTED);
+
+						matinv.setInfo("Material Inv : "+objMaterialInventory.getNmaterialinventorycode() +"Already Released");
+						matinv.setObjsilentaudit(cft);
+						//return new ResponseEntity<>("IDS_PLEASESELECTRELEASEDRECORD", HttpStatus.ALREADY_REPORTED);
+						return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 					}
 				} else {
-					return new ResponseEntity<>("IDS_PLEASESELECTRELEASEDRECORD", HttpStatus.ALREADY_REPORTED);
+
+					matinv.setInfo("Select Released Record");
+					matinv.setObjsilentaudit(cft);
+					//return new ResponseEntity<>("IDS_PLEASESELECTRELEASEDRECORD", HttpStatus.ALREADY_REPORTED);
+					return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 				}
 			}
 

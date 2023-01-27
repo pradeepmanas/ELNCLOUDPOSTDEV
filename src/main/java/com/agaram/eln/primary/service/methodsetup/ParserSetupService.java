@@ -677,7 +677,9 @@ public class ParserSetupService {
 //		final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
 		final int methodKey = (Integer) mapObject.get("methodKey");
 		final String comments = (String) mapObject.get("comments"); 
-	
+
+		final Method cft = mapper.convertValue(mapObject.get("auditdetails"), Method.class);
+		
 		final List<ParserBlock> parserBlockList = mapper.convertValue(mapObject.get("parserBlockList"),List.class);		
 		final List<ParserField> parserFieldList = mapper.convertValue(mapObject.get("parserFieldList"),List.class);		
 		final List<ParserTechnique> parserTechniqueList = mapper.convertValue(mapObject.get("parserTechniqueList"),List.class);
@@ -726,6 +728,7 @@ public class ParserSetupService {
 		 Method savedMethod = method;
 	    if(parser != method.getParser()){
 	    	method.setParser(parser);
+	    	method.setObjsilentaudit(cft.getObjsilentaudit());
            savedMethod = methodRepo.save(method);
 			//final Method savedMethod = methodRepo.save(method);
 

@@ -604,14 +604,24 @@ public class MaterialService {
 						(String) jsonObject.get("Prefix"));
 
 				if (lstcheckPrefix != null) {
-//					matobj.setSprefix();
-					return new ResponseEntity<>("IDS_PREFIXALREADYEXISTS", HttpStatus.CONFLICT);
+					matobj.setSprefix(ObjMatNamecheck.getSprefix());
+					matobj.setObjsilentaudit(cft);
+					matobj.setInfo("Duplicate Entry : Material- "+ObjMatNamecheck.getSprefix());
+					return new ResponseEntity<>(matobj, HttpStatus.CONFLICT);
+
+					//matobj.setSprefix();
+				//	return new ResponseEntity<>("IDS_PREFIXALREADYEXISTS", HttpStatus.CONFLICT);
+
+
 				}
 
 			}
 		} else {
 			if(objMaterial.getNmaterialcode() != ObjMatNamecheck.getNmaterialcode()) {
-				return new ResponseEntity<>("IDS_ALREADYEXISTS", HttpStatus.CONFLICT);	
+				matobj.setSmaterialname(ObjMatNamecheck.getSmaterialname());
+				matobj.setObjsilentaudit(cft);
+				matobj.setInfo("Duplicate Entry : Material- "+ObjMatNamecheck.getSmaterialname());
+				return new ResponseEntity<>(matobj, HttpStatus.CONFLICT);	
 			}
 		}
 		

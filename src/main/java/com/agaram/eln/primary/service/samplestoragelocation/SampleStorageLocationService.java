@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageLocation;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageVersion;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageLocationRepository;
@@ -28,24 +29,31 @@ public class SampleStorageLocationService {
 	SampleStorageVersionRepository sampleStorageVersionRepository;
 
 	public ResponseEntity<Object> createSampleStorageLocation(final SampleStorageLocation sampleStorageLocation,
-			final SampleStorageVersion sampleStorageVersion) throws JsonMappingException, JsonProcessingException {
-
+			final SampleStorageVersion sampleStorageVersion,LScfttransaction Auditobj) throws JsonMappingException, JsonProcessingException {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		SampleStorageLocation objLocation = sampleStorageLocationRepository
 				.findBySamplestoragelocationnameAndStatusAndSitekey(sampleStorageLocation.getSamplestoragelocationname(), 1,sampleStorageLocation.getSitekey());
 
 		if (objLocation == null) {
+			sampleStorageLocation.setObjsilentaudit(Auditobj);
 			sampleStorageLocationRepository.save(sampleStorageLocation);
 			sampleStorageVersion.setSampleStorageLocation(sampleStorageLocation);
+			sampleStorageVersion.setObjsilentaudit(Auditobj);
 			sampleStorageVersionRepository.save(sampleStorageVersion);
 
-			return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody(), HttpStatus.OK);
+			objmap.putAll((Map<String, Object>) getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody());
+			objmap.put("objsilentaudit",Auditobj);
+//			return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody(), HttpStatus.OK);
+			return new ResponseEntity<>(objmap, HttpStatus.OK);
 		} else {
+			//return new ResponseEntity<>(objmap, HttpStatus.OK);
 			return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody(), HttpStatus.CONFLICT);
 		}
 	}
 
 	public ResponseEntity<Object> updateSampleStorageLocation(final SampleStorageLocation sampleStorageLocation,
-			final SampleStorageVersion sampleStorageVersion) throws JsonMappingException, JsonProcessingException {
+			final SampleStorageVersion sampleStorageVersion,LScfttransaction Auditobj) throws JsonMappingException, JsonProcessingException {
+		sampleStorageLocation.setObjsilentaudit(Auditobj);
 		sampleStorageLocationRepository.save(sampleStorageLocation);
 		if (sampleStorageVersion.getApprovalstatus() == 26) {
 			int maxVersion = sampleStorageVersionRepository
@@ -57,14 +65,16 @@ public class SampleStorageLocationService {
 			return new ResponseEntity<>(
 					sampleStorageVersionRepository.findBySampleStorageLocation(sampleStorageLocation), HttpStatus.OK);
 		} else {
+			sampleStorageVersion.setObjsilentaudit(Auditobj);
 			sampleStorageVersionRepository.save(sampleStorageVersion);
 			return new ResponseEntity<>(sampleStorageVersion, HttpStatus.OK);
 		}
 
 	}
 
-	public ResponseEntity<Object> deleteSampleStorageLocation(final SampleStorageVersion sampleStorageVersion)
+	public ResponseEntity<Object> deleteSampleStorageLocation(final SampleStorageVersion sampleStorageVersion,LScfttransaction Auditobj)
 			throws JsonMappingException, JsonProcessingException {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		List<Integer> lstVersionNoIntegers = new ArrayList<>();
 		lstVersionNoIntegers.add(sampleStorageVersion.getVersionno());
 
@@ -90,7 +100,10 @@ public class SampleStorageLocationService {
 				sampleStorageLocationRepository.save(sampleStorageLocationItem);
 				sampleStorageVersionRepository.delete(sampleStorageVersionDelete.get());
 
-				return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(), HttpStatus.OK);
+				objmap.putAll((Map<String, Object>)getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody());
+				objmap.put("objsilentaudit",Auditobj);
+				return new ResponseEntity<>(objmap,HttpStatus.OK);
+//				return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(), HttpStatus.OK);
 			}
 		} else {
 			if (sampleStorageVersionDelete.isPresent()) {
@@ -100,7 +113,10 @@ public class SampleStorageLocationService {
 					sampleStorageLocationItem.setStatus(-1);
 					sampleStorageLocationRepository.save(sampleStorageLocationItem);
 					sampleStorageVersionRepository.delete(sampleStorageVersionDelete.get());
-					return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(), HttpStatus.OK);
+					objmap.putAll((Map<String, Object>) getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody());
+					objmap.put("objsilentaudit",Auditobj);
+//					return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(), HttpStatus.OK);
+					return new ResponseEntity<>(objmap,HttpStatus.OK);
 				}
 			}
 		}

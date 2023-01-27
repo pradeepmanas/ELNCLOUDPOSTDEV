@@ -13,9 +13,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity(name = "SampleStorageVersion")
@@ -45,6 +47,15 @@ public class SampleStorageVersion {
 	
 	@Column(name = "versionno", nullable = false)
 	private Integer versionno = 1;
+
+	@Transient
+	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	public String info;
+	
+	@Transient
+	private LScfttransaction objmanualaudit;
 	
 	private transient Integer sitekey;
 	
@@ -104,6 +115,30 @@ public class SampleStorageVersion {
 
 	public void setApprovalstatus(Integer approvalstatus) {
 		this.approvalstatus = approvalstatus;
+	}
+
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
 	}
 
 	@JsonBackReference

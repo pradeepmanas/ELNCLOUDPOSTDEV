@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.SampleExtract;
 import com.agaram.eln.primary.model.methodsetup.SampleLineSplit;
@@ -82,7 +83,7 @@ public class SampleSplitService {
 		final int methodKey = (Integer) mapObject.get("methodKey");
 		final String comments = (String) mapObject.get("comments");
 		
-		
+		final Method cft = mapper.convertValue(mapObject.get("auditdetails"), Method.class);
 		
 		final Map<String, SampleTextSplit> textSplitMap = mapper.convertValue(mapObject.get("sampleTextSplitList"), Map.class);		
 		final Map<String, SampleLineSplit> lineSplitMap = mapper.convertValue(mapObject.get("sampleLineSplitList"), Map.class);		
@@ -139,6 +140,7 @@ public class SampleSplitService {
 		    Method savedMethod = method;
 		    if(sampleSplit != method.getSamplesplit()){
 		    	method.setSamplesplit(sampleSplit);
+		    	method.setObjsilentaudit(cft.getObjsilentaudit());
 		    	savedMethod = methodRepo.save(method);
 		    } 
 		    
