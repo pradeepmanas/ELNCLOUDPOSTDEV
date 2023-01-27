@@ -3458,9 +3458,7 @@ update lsusergrouprights set sdelete='0' where sdelete ='NA' and where displayto
 update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_PROJECTTEAM' and usergroupid_usergroupcode=1;
 delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_IMPORTADS';
 delete from lsusergrouprights where displaytopic='IDS_TSK_IMPORTADS';
-INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (120, 'IDS_SCN_MATERIALTYPE', 'IDS_MDL_INVENTORY', '0', 'NA', 'NA', 'NA', '0,0,0',97,'IDS_SCN_MATERIALTYPE') ON CONFLICT(orderno)DO NOTHING;
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_MATERIALTYPE', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_MATERIALTYPE'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_MATERIALTYPE' and usergroupid_usergroupcode = 1);
-update lsaudittrailconfigmaster set modulename='IDS_MDL_SETUP' where lsaudittrailconfigmaster.modulename='IDS_MDL_PARSER';
+
 delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_LIMSTASKORDER';
 delete from lsusergrouprights where displaytopic='IDS_SCN_SITEMASTER' and usergroupid_usergroupcode=1;
 delete from lsusergrouprights where displaytopic='IDS_SCN_DOMAIN' and usergroupid_usergroupcode=1;
