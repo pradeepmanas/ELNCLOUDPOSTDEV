@@ -3445,20 +3445,22 @@ update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_ORDER
 update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW';
 update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_PASSWORDPOLICY';
 update lsusergrouprights set screate='0' where screate ='NA' and displaytopic='IDS_SCN_USERRIGHTS';
-update lsusergrouprights set screate='0' where screate ='NA' and where displaytopic='IDS_SCN_ORDERWORKLOW';
-update lsusergrouprights set screate='0' where screate ='NA' and where displaytopic='IDS_SCN_TEMPLATEWORKFLOW';
-update lsusergrouprights set screate='0' where screate ='NA' and where displaytopic='IDS_SCN_PASSWORDPOLICY';
+update lsusergrouprights set screate='0' where screate ='NA' and  displaytopic='IDS_SCN_ORDERWORKLOW';
+update lsusergrouprights set screate='0' where screate ='NA' and  displaytopic='IDS_SCN_TEMPLATEWORKFLOW';
+update lsusergrouprights set screate='0' where screate ='NA' and  displaytopic='IDS_SCN_PASSWORDPOLICY';
 update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_USERRIGHTS' and usergroupid_usergroupcode=1;
 update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_ORDERWORKLOW' and usergroupid_usergroupcode=1;
 update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW' and usergroupid_usergroupcode=1;
 update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_PASSWORDPOLICY' and usergroupid_usergroupcode=1;
 update lsusergrouprightsmaster set sdelete='0' where displaytopic='IDS_SCN_PROJECTTEAM';
 update lsusergrouprightsmaster set status='1,0,1' where displaytopic='IDS_SCN_PROJECTTEAM';
-update lsusergrouprights set sdelete='0' where sdelete ='NA' and where displaytopic='IDS_SCN_PROJECTTEAM';
+update lsusergrouprights set sdelete='0' where sdelete ='NA' and  displaytopic='IDS_SCN_PROJECTTEAM';
 update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_PROJECTTEAM' and usergroupid_usergroupcode=1;
 delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_IMPORTADS';
 delete from lsusergrouprights where displaytopic='IDS_TSK_IMPORTADS';
-
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (120, 'IDS_SCN_MATERIALTYPE', 'IDS_MDL_INVENTORY', '0', 'NA', 'NA', 'NA', '0,0,0',97,'IDS_SCN_MATERIALTYPE') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_MATERIALTYPE', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_MATERIALTYPE'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_MATERIALTYPE' and usergroupid_usergroupcode = 1);
+update lsaudittrailconfigmaster set modulename='IDS_MDL_SETUP' where lsaudittrailconfigmaster.modulename='IDS_MDL_PARSER';
 delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_LIMSTASKORDER';
 delete from lsusergrouprights where displaytopic='IDS_SCN_SITEMASTER' and usergroupid_usergroupcode=1;
 delete from lsusergrouprights where displaytopic='IDS_SCN_DOMAIN' and usergroupid_usergroupcode=1;
