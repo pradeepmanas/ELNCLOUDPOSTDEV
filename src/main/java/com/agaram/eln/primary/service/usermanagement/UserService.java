@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
 
@@ -15,10 +16,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.config.AESEncryption;
+import com.agaram.eln.primary.fetchmodel.getmasters.Listofallmaster;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.material.Section;
+import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
@@ -39,6 +43,8 @@ import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.model.usermanagement.Lsusersettings;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
+import com.agaram.eln.primary.repository.material.SectionRepository;
+import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordPolicyRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
@@ -99,7 +105,6 @@ public class UserService {
 	@Autowired
 	private LSuserActionsRepository lsuserActionsRepository;
 
-	@SuppressWarnings("unused")
 	@Autowired
 	private LSSiteMasterRepository LSSiteMasterRepository;
 
@@ -123,6 +128,12 @@ public class UserService {
 
 	@Autowired
 	LSusergroupedcolumnsRepository lsusergroupedcolumnsRepository;
+
+	@Autowired
+	UnitRepository unitRepository;
+
+	@Autowired
+	SectionRepository sectionRepository;
 
 	public LSusergroup InsertUpdateUserGroup(LSusergroup objusergroup) {
 		if (lSusergroupRepository.findByusergroupnameIgnoreCaseAndLssitemaster(objusergroup.getUsergroupname(),
@@ -223,9 +234,8 @@ public class UserService {
 //			return lsuserMasterRepository.findByUserretirestatusNotOrderByCreateddateDesc(1);
 			return lsuserMasterRepository.findAll();
 		}
-		
-		return lsuserMasterRepository.findByLssitemasterOrderByCreateddateDesc(
-				objusergroup.getLssitemaster());
+
+		return lsuserMasterRepository.findByLssitemasterOrderByCreateddateDesc(objusergroup.getLssitemaster());
 
 //		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1,
 //				objusergroup.getLssitemaster());
@@ -294,11 +304,7 @@ public class UserService {
 			objusermaster.setCreateddate(updateUser.getCreateddate());
 
 			lsuserMasterRepository.save(updateUser);
-			
-				
-			
-			 
-			
+
 			objusermaster.setResponse(new Response());
 			objusermaster.getResponse().setStatus(true);
 			objusermaster.getResponse().setInformation("ID_SUCCESSMSG");
@@ -324,8 +330,7 @@ public class UserService {
 		 * 
 		 * }
 		 */
-		
-		
+
 		LSMultiusergroupRepositery.save(objusermaster.getMultiusergroupcode());
 		lsuserMasterRepository.save(objusermaster);
 
@@ -341,8 +346,8 @@ public class UserService {
 		objusermaster.setResponse(new Response());
 		objusermaster.getResponse().setStatus(true);
 		objusermaster.getResponse().setInformation("ID_SUCCESSMSG");
-		
-		Lsusersettings getUserPreference =  new Lsusersettings();
+
+		Lsusersettings getUserPreference = new Lsusersettings();
 		getUserPreference.setDFormat("Mon-DD-YYYY HH:mm:ss");
 		getUserPreference.setUsercode(objusermaster.getUsercode());
 		LsusersettingsRepository.save(getUserPreference);
@@ -559,7 +564,7 @@ public class UserService {
 		objteam.setResponse(new Response());
 		objteam.getResponse().setStatus(true);
 		objteam.getResponse().setInformation("ID_SUCCESSMSG");
-		
+
 		for (LSuserMaster objuser : objteam.getLsuserMaster()) {
 			LSuserteammapping objmap = new LSuserteammapping();
 
@@ -614,7 +619,9 @@ public class UserService {
 //			List<LSuserteammapping> teams = lsuserteammappingRepository.findBylsuserMaster(LSuserMaster);
 //			return lsusersteamRepository.findByLsuserteammappingInAndStatus(teams, 1);
 			return lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(), 1);
-			//return lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(), 1);
+			// return
+			// lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(),
+			// 1);
 		}
 	}
 
@@ -1090,6 +1097,7 @@ public class UserService {
 
 		return objresmap;
 	}
+
 	public Map<String, Object> GetLatestnotification(LSnotification lsnotification) {
 		Map<String, Object> objresmap = new HashMap<String, Object>();
 
@@ -1295,6 +1303,97 @@ public class UserService {
 		List<LSactiveUser> lstActiveUser = lsactiveUserRepository.findBylssitemaster(lsSiteMaster);
 
 		return (long) lstActiveUser.size();
+	}
+
+	public Listofallmaster InsertImportedlist(Listofallmaster listofallmaster) {
+
+		if (listofallmaster.getScreenname().equalsIgnoreCase("usermaster")) {
+			List<String> usermname = listofallmaster.getLsusermaster().stream().map(LSuserMaster::getUsername)
+					.collect(Collectors.toList());
+			List<LSuserMaster> lsusermaster = lsuserMasterRepository.findByusernameInAndLssitemaster(usermname,
+					listofallmaster.getLssitemaster());
+			if (lsusermaster.size() == 0) {
+				for (LSuserMaster usermansterobj : listofallmaster.getLsusermaster()) {
+
+					LSMultiusergroupRepositery.save(usermansterobj.getMultiusergroupcode());
+					lsuserMasterRepository.save(usermansterobj);
+					String unifieduser = usermansterobj.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "") + "u"
+							+ usermansterobj.getUsercode() + "s" + usermansterobj.getLssitemaster().getSitecode()
+							+ usermansterobj.getUnifieduserid();
+
+					usermansterobj.setUnifieduserid(unifieduser);
+					lsuserMasterRepository.save(usermansterobj);
+					Lsusersettings getUserPreference = new Lsusersettings();
+					getUserPreference.setDFormat("Mon-DD-YYYY HH:mm:ss");
+					getUserPreference.setUsercode(usermansterobj.getUsercode());
+					LsusersettingsRepository.save(getUserPreference);
+
+					if (usermansterobj.getUsercode() != null) {
+						LSuserMaster obj1 = lsuserMasterRepository.findByusercode(usermansterobj.getUsercode());
+						if (obj1.getPasswordexpirydate() != null) {
+							usermansterobj.setPasswordexpirydate(obj1.getPasswordexpirydate());
+						}
+					}
+				}
+				listofallmaster.setObjResponse(new Response());
+				listofallmaster.getObjResponse().setStatus(true);
+				listofallmaster.getObjResponse().setInformation("IDS_MSG_SUCCESSMSG");
+
+				return listofallmaster;
+			} else {
+				listofallmaster.setObjResponse(new Response());
+				listofallmaster.getObjResponse().setStatus(false);
+				listofallmaster.getObjResponse().setInformation("IDS_MSG_EXIST");
+				return listofallmaster;
+			}
+		} else if (listofallmaster.getScreenname().equalsIgnoreCase("unitmaster")) {
+
+			List<String> lstUnitname = listofallmaster.getUnit().stream().map(Unit::getSunitname)
+					.collect(Collectors.toList());
+
+			List<Unit> lstUnit = unitRepository.findBySunitnameInAndNstatusAndNsitecode(lstUnitname, 1,
+					listofallmaster.getLssitemaster().getSitecode());
+
+			if (lstUnit.isEmpty()) {
+				unitRepository.save(listofallmaster.getUnit());
+				listofallmaster.setUnit(listofallmaster.getUnit());
+				listofallmaster.setObjResponse(new Response());
+				listofallmaster.getObjResponse().setStatus(true);
+				listofallmaster.getObjResponse().setInformation("IDS_MSG_SUCCESSMSG");
+
+				return listofallmaster;
+			} else {
+				listofallmaster.setObjResponse(new Response());
+				listofallmaster.getObjResponse().setStatus(false);
+				listofallmaster.getObjResponse().setInformation("IDS_MSG_EXIST");
+
+				return listofallmaster;
+			}
+		} else if (listofallmaster.getScreenname().equalsIgnoreCase("sectionmaster")) {
+
+			List<String> lstSectionname = listofallmaster.getSection().stream().map(Section::getSsectionname)
+					.collect(Collectors.toList());
+
+			List<Section> lstSection = sectionRepository.findBySsectionnameInAndNstatusAndNsitecode(lstSectionname, 1,
+					listofallmaster.getLssitemaster().getSitecode());
+
+			if (lstSection.isEmpty()) {
+				sectionRepository.save(listofallmaster.getSection());
+				listofallmaster.setSection(listofallmaster.getSection());
+				listofallmaster.setObjResponse(new Response());
+				listofallmaster.getObjResponse().setStatus(true);
+				listofallmaster.getObjResponse().setInformation("IDS_MSG_SUCCESSMSG");
+
+				return listofallmaster;
+			} else {
+				listofallmaster.setObjResponse(new Response());
+				listofallmaster.getObjResponse().setStatus(false);
+				listofallmaster.getObjResponse().setInformation("IDS_MSG_EXIST");
+
+				return listofallmaster;
+			}
+		}
+		return null;
 	}
 
 }

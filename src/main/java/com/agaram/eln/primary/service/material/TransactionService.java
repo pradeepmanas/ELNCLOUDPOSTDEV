@@ -388,9 +388,10 @@ public class TransactionService {
 				objTransaction.setNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
 				objTransaction.setNinventorytranscode((Integer) insJsonObj.get("ninventorytranscode"));
 				objTransaction.setNtransactiontype((Integer) insJsonObj.get("ntransactiontype"));
-				objTransaction.setNsectioncode(
-						(Integer) (insJsonObj.get("nsectioncode") != null ? (Integer) insJsonObj.get("nsectioncode")
-								: -1));
+//				objTransaction.setNsectioncode(
+//						(Integer) (insJsonObj.get("nsectioncode") != null ? (Integer) insJsonObj.get("nsectioncode")
+//								: -1));
+				objTransaction.setNsectioncode(-1);
 				objTransaction.setNsitecode(-1);
 				objTransaction.setNresultusedmaterialcode(-1);
 				objTransaction.setNqtyreceived(Double.valueOf((Integer) insJsonObj.get("Received Quantity")));

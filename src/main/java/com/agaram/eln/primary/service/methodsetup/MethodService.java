@@ -1097,6 +1097,8 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
 			   else
 			   {
 				   rawDataText = new String(Files.readAllBytes(file.toPath()), StandardCharsets.ISO_8859_1);
+		//		   rawDataText = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+				   
 			   }
 		   
 		    }
@@ -1122,119 +1124,151 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
    
       
       @SuppressWarnings("resource")
-	public String getSQLFileData(String fileName) throws IOException {
-
-	
-//		String Content = "";
-		String rawDataText="";
-		byte[] bytes = null;
-
-		final String ext = FilenameUtils.getExtension(fileName); 
-		
-	   String fileid = fileName;
-		GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
-		if (largefile == null) {
-			largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
-		}
-
-		if (largefile != null) {
-			
-			if (ext.equalsIgnoreCase("pdf")) {
-				
-				   String parsedText = "";
-				   PDFParser parser = null;
-				    PDDocument pdDoc = null;
-				    COSDocument cosDoc = null;
-				    PDFTextStripper pdfStripper;
+//	public String getSQLFileData(String fileName) throws IOException {
+//
+//	
+////		String Content = "";
+//		String rawDataText="";
+//		byte[] bytes = null;
+//
+//		final String ext = FilenameUtils.getExtension(fileName); 
+//		
+//	   String fileid = fileName;
+//		GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
+//		if (largefile == null) {
+//			largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
+//		}
+//
+//		if (largefile != null) {
+//			
+//			//if (ext.equalsIgnoreCase("pdf")) {
+//				
+//				   String parsedText = "";
+//				   PDFParser parser = null;
+//				    PDDocument pdDoc = null;
+//				    COSDocument cosDoc = null;
+//				    PDFTextStripper pdfStripper;
 
 //				    try {
-				    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(largefile.getInputStream());
-				        parser = new PDFParser(raFile);
-				        parser.setLenient(true);
-				        parser.parse();
-				        cosDoc = parser.getDocument();
-				        pdfStripper = new PDFTextStripper();
-				        pdfStripper.setSortByPosition( true );
-				              			       
-				        pdDoc = new PDDocument(cosDoc);
-				        pdfStripper.setWordSeparator("\t");
-				        pdfStripper.setSuppressDuplicateOverlappingText(true);
-				        Matrix matrix = new Matrix();
-				        matrix.clone();
-				        pdfStripper.setTextLineMatrix(matrix);
-				   
-				        parsedText = pdfStripper.getText(pdDoc);
-				        
-				        rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);
-				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-			}
-			   else if (ext.equalsIgnoreCase("csv")) {
-				
-				File templocfile = null;
-				templocfile = stream2file(largefile.getInputStream(),fileName, ext);
-			//   File file = new File(path);
-				try {
-				FileReader fr = new FileReader(templocfile);
-				// User BufferReader
-				BufferedReader br = new BufferedReader(fr);
-			    StringBuffer sb = new StringBuffer();
+//				    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(largefile.getInputStream());
+//				        parser = new PDFParser(raFile);
+//				        parser.setLenient(true);
+//				        parser.parse();
+//				        cosDoc = parser.getDocument();
+//				        pdfStripper = new PDFTextStripper();
+//				        pdfStripper.setSortByPosition( true );
+//				              			       
+//				        pdDoc = new PDDocument(cosDoc);
+//				        pdfStripper.setWordSeparator("\t");
+//				        pdfStripper.setSuppressDuplicateOverlappingText(true);
+//				        Matrix matrix = new Matrix();
+//				        matrix.clone();
+//				        pdfStripper.setTextLineMatrix(matrix);
+//				   
+//				        parsedText = pdfStripper.getText(pdDoc);
+//				        rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);       
+//				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+				    
+//								    
+//			//}
+//			    if (ext.equalsIgnoreCase("csv")) {
+//				
+//				File templocfile = null;
+//				templocfile = stream2file(largefile.getInputStream(),fileName, ext);
+//			//   File file = new File(path);
+//				try {
+//				FileReader fr = new FileReader(templocfile);
+//				// User BufferReader
+//				BufferedReader br = new BufferedReader(fr);
+//			    StringBuffer sb = new StringBuffer();
+//
+//				String line = "";
+//
+//				String[] tempArr;
+//				//create temp file     
+//				final File tempFile = File.createTempFile(fileName, ext);
+//				
+//				// User FileWriter to write content to text file
+//				FileWriter writer = new FileWriter(tempFile);
+//				// Use while loop to check when file contains data
+//				while ((line = br.readLine()) != null) {
+//					tempArr = line.split(",");
+//				
+//					for (String str : tempArr) {
+//				
+//					//	sb.append(str).append("\t");
+//						sb.append(str).append(",");
+//
+//					}
+//				      String appendedline = sb.toString();
+//				
+//				    //  String resultline = appendedline.replaceAll("\\s+$", "");
+//				      String resultline = appendedline.replaceAll(",$", "");
+//
+//				      writer.write(resultline);
+//				      sb.setLength(0);
+//				      appendedline ="";
+//				      resultline="";
+//				
+//					writer.write("\n");
+//
+//				}
+//				writer.close();
+//
+//			    bytes = FileUtils.readFileToByteArray(tempFile);
+//
+//			    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
+//				 
+//		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+//				}
+//				catch (Exception e) {
+//			        e.printStackTrace();
+//			   }
+//			 }
+//			else
+//			{
+//			        rawDataText = new BufferedReader(
+//					new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+//							.collect(Collectors.joining("\n"));
+//			
+//		} 
+//			}	
+//		
+//	
+//		return rawDataText;
+//   }  
 
-				String line = "";
+  	public String getSQLFileData(String fileName) throws IOException {
 
-				String[] tempArr;
-				//create temp file     
-				final File tempFile = File.createTempFile(fileName, ext);
-				
-				// User FileWriter to write content to text file
-				FileWriter writer = new FileWriter(tempFile);
-				// Use while loop to check when file contains data
-				while ((line = br.readLine()) != null) {
-					tempArr = line.split(",");
-				
-					for (String str : tempArr) {
-				
-					//	sb.append(str).append("\t");
-						sb.append(str).append(",");
+    		
+//  		String Content = "";
+  		String rawDataText="";
+  		byte[] bytes = null;
 
-					}
-				      String appendedline = sb.toString();
-				
-				    //  String resultline = appendedline.replaceAll("\\s+$", "");
-				      String resultline = appendedline.replaceAll(",$", "");
+  		final String ext = FilenameUtils.getExtension(fileName); 
+  		
+  	   String fileid = fileName;
+  		GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
+  		if (largefile == null) {
+  			largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
+  		}
 
-				      writer.write(resultline);
-				      sb.setLength(0);
-				      appendedline ="";
-				      resultline="";
-				
-					writer.write("\n");
+  		if (largefile != null) {
+  			
+  			//if (ext.equalsIgnoreCase("pdf")) {
 
-				}
-				writer.close();
+  			        rawDataText = new BufferedReader(
+  					new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+  							.collect(Collectors.joining("\n"));  			
+  	
+  			}	
+  		
+  	
+  		return rawDataText;
+     }  
 
-			    bytes = FileUtils.readFileToByteArray(tempFile);
 
-			    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
-				 
-		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-				}
-				catch (Exception e) {
-			        e.printStackTrace();
-			   }
-			 }
-			else
-			{
-			        rawDataText = new BufferedReader(
-					new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-							.collect(Collectors.joining("\n"));
-			
-		} 
-			}	
-		
-	
-		return rawDataText;
-   }  
-
+      
    /**
     * This method is used to get Method entity based on its primary key
     * @param methodKey [int] primary key of method entity

@@ -22,4 +22,7 @@ public interface SectionRepository  extends JpaRepository<Section, Integer>{
 	public List<Object> findByNstatusAndNsitecode(int i, Integer nsiteInteger);
 
 	public Section findByNsectioncodeAndNstatus(Integer nsectioncode, int i);
+
+	public List<Section> findBySsectionnameInAndNstatusAndNsitecode(List<String> lstSectionname, int i,
+			Integer sitecode);
 }

@@ -32,4 +32,6 @@ public interface UnitRepository extends JpaRepository<Unit, Integer>{
 	public List<Object> findByNstatusAndNsitecodeAndNunitcodeOrderByNunitcode(int i, Integer nsiteInteger,
 			int parseInt);
 
+	public List<Unit> findBySunitnameInAndNstatusAndNsitecode(List<String> lstUnitname, int i, Integer sitecode);
+
 }

@@ -105,4 +105,7 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	public LSuserMaster findByusercode(LSuserMaster usercode);
 
 	public List<LSuserMaster> findByLssitemasterOrderByCreateddateDesc(LSSiteMaster lssitemaster);
+
+	public List<LSuserMaster> findByusernameInAndLssitemaster(List<String> usermname,
+			LSSiteMaster lssitemaster);
 }

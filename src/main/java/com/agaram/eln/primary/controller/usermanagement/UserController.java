@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.config.SMTPMailvalidation;
+import com.agaram.eln.primary.fetchmodel.getmasters.Listofallmaster;
 import com.agaram.eln.primary.model.cloudFileManip.CloudProfilePicture;
 import com.agaram.eln.primary.model.cloudFileManip.CloudUserSignature;
 import com.agaram.eln.primary.model.fileManipulation.ProfilePicture;
@@ -624,6 +625,13 @@ public class UserController {
 	public Long getActiveUserCount(@RequestBody LSSiteMaster lsSiteMaster)throws Exception
 	{
 		return userService.getActiveUserCount(lsSiteMaster);
+	}
+	
+	
+	@PostMapping("/InsertImportedlist")
+	public Listofallmaster InsertImportedlist(@RequestBody Listofallmaster listofallmaster) throws MessagingException {
+
+		return userService.InsertImportedlist(listofallmaster);
 	}
 }
 
