@@ -3464,7 +3464,7 @@ update lsaudittrailconfigmaster set modulename='IDS_MDL_SETUP' where lsaudittrai
 delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_LIMSTASKORDER';
 delete from lsusergrouprights where displaytopic='IDS_SCN_SITEMASTER' and usergroupid_usergroupcode=1;
 delete from lsusergrouprights where displaytopic='IDS_SCN_DOMAIN' and usergroupid_usergroupcode=1;
-delete from lsusergrouprights where displaytopic='IDS_SCN_ACTIVEUSER' and usergroupid_usergroupcode=1;DO
+delete from lsusergrouprights where displaytopic='IDS_SCN_ACTIVEUSER' and usergroupid_usergroupcode=1;
 INSERT INTO materialgrade (nmaterialgradecode, jsondata, ndefaultstatus, nsitecode, nstatus, smaterialgradename) VALUES (3, '{"sdescription": "", "smaterialgradename": "C"}', 4, -1, 1, 'C')on conflict(nmaterialgradecode) do nothing;
 
 INSERT INTO materialgrade (nmaterialgradecode, jsondata, ndefaultstatus, nsitecode, nstatus, smaterialgradename) VALUES (4, '{"sdescription": "", "smaterialgradename": "D"}', 4, -1, 1, 'D')on conflict(nmaterialgradecode) do nothing;
