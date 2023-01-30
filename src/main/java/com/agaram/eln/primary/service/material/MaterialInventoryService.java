@@ -180,9 +180,13 @@ public class MaterialInventoryService {
 	public ResponseEntity<Object> getMaterialInventoryByID(Map<String, Object> inputMap) throws Exception {
 
 		Map<String, Object> objmap = new HashMap<String, Object>();
-
+		final ObjectMapper objmapper = new ObjectMapper();
 		List<Map<String, Object>> lstMaterialInventory = new ArrayList<Map<String, Object>>();
 
+		LScfttransaction cft = new LScfttransaction();
+		if (inputMap.containsKey("objsilentaudit")) {
+		  cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
+		}
 		if (inputMap.containsKey("nmaterialcode")) {
 
 			List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository
@@ -325,7 +329,9 @@ public class MaterialInventoryService {
 		objmap.put("MaterialInventoryType", lstMaterialInventoryType);
 		
 		objmap.put("DesignMappedFeildsQuantityTransaction", getTemplateDesignForMaterial(9, 138));
-
+		if (cft != null) {
+			objmap.put("objsilentaudit", cft);
+		}
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 
 	}

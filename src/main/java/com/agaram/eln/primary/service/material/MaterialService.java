@@ -88,11 +88,12 @@ public class MaterialService {
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialByTypeCode(Map<String, Object> inputMap)
 			throws JsonParseException, JsonMappingException, IOException {
-
+		final ObjectMapper objmapper = new ObjectMapper();
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode"); 
 
+		final Material cft = objmapper.convertValue(inputMap.get("objsilentaudit"), Material.class);
 		final List<Material> lstMaterial = materialRepository.findByNmaterialcatcodeAndNmaterialtypecodeAndNsitecodeAndNstatus(
 				(Integer) inputMap.get("nmaterialcatcode"), (Integer) inputMap.get("nmaterialtypecode"),nsiteInteger, 1);
 
@@ -183,6 +184,7 @@ public class MaterialService {
 												"nmaterialtypecode") == Enumeration.TransactionStatus.VOLUMETRICTYPE
 														.gettransactionstatus() ? 2 : 3,
 						40));
+				
 
 			} else {
 
@@ -194,13 +196,17 @@ public class MaterialService {
 				objmap.put("Material", lstActiontype);
 				objmap.put("SelectedMaterial", lstActiontype);
 				objmap.put("SelectedMaterialCategory", lstActiontype);
+				
+				
 			}
 		}
 
 		List<MaterialConfig> lstMaterialConfig = materialConfigRepository
 				.findByNmaterialtypecodeAndNformcode((Integer) inputMap.get("nmaterialtypecode"), 40);
 		objmap.put("selectedTemplate", lstMaterialConfig);
-
+		if (cft != null) {
+		objmap.put("objsilentaudit", cft.getObjsilentaudit());
+		}
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 

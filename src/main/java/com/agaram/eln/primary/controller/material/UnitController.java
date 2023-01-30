@@ -58,11 +58,10 @@ public class UnitController {
 	public ResponseEntity<Object> deleteUnit(@RequestBody Map<String, Object> inputMap) throws Exception {
 
 		ObjectMapper objMapper = new ObjectMapper();
-		final LScfttransaction objsilentaudit = objMapper.convertValue(inputMap.get("objsilentaudit"),LScfttransaction.class);
 		Unit objUnit = objMapper.convertValue(inputMap.get("unit"), new TypeReference<Unit>() {
 		});
 
-		return unitService.deleteUnit(objUnit,objsilentaudit);
+		return unitService.deleteUnit(objUnit);
 
 	}
 

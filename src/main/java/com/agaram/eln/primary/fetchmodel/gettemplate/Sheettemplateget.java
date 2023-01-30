@@ -56,7 +56,7 @@ public class Sheettemplateget {
 		this.versionno=versionno;
 		this.category =category;
 		this.viewoption =viewoption;
-		this.viewoptionstr =viewoption==1?"Only Site":viewoption==2?"Only to me":"Only team";
+		this.viewoptionstr =viewoption==1?"Site":viewoption==2?"Only me":"Project Team";
 		this.lssheetworkflowname=lssheetworkflow!=null?lssheetworkflow.getWorkflowname():null;
 //		this.lsfileversion = lsfileversion;
 	}

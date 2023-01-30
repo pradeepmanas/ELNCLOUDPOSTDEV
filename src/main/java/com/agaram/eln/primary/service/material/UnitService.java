@@ -78,7 +78,7 @@ public class UnitService {
 		}
 	}
 
-	public ResponseEntity<Object> deleteUnit(Unit objUnit,LScfttransaction obj) {
+	public ResponseEntity<Object> deleteUnit(Unit objUnit) {
 		final Unit unit = getActiveUnitById(objUnit.getNunitcode());
 		final Unit unitobj = unitRepository.findByNunitcodeAndNstatus(objUnit.getNunitcode(), 1);
 		if (unit == null) {
@@ -87,7 +87,7 @@ public class UnitService {
 					HttpStatus.EXPECTATION_FAILED);
 		} else {
 
-			unitobj.setObjsilentaudit(obj);
+			unitobj.setObjsilentaudit(objUnit.getObjsilentaudit());
 			unitobj.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
 			unitRepository.save(unitobj);
 			return getUnit(objUnit.getNsitecode());
