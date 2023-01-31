@@ -21,5 +21,6 @@ public interface LSusersteamRepository  extends JpaRepository<LSusersteam, Integ
 	public LSusersteam findByteamcode(LSsheetworkflowgroupmap lSsheetworkflowgroupmap);
 	public LSusersteam findByteamcode(LSusersteam lSusersteam);
 	public List<LSusersteam> findByLsuserteammappingInAndStatus(List<LSuserteammapping> lsuserteammapping, Integer status);
+	public List<LSusersteam> findBylssitemaster(LSSiteMaster lssitemaster);
 
 }

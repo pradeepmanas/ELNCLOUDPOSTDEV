@@ -20,8 +20,6 @@ import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageLoca
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
-
 @Service
 public class DynamicPreRegDesignService {
 
@@ -48,77 +46,81 @@ public class DynamicPreRegDesignService {
 		String getJSONKeysQuery = "";
 
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-		
+
 		List<Map<String, Object>> filterQueryComponentsQueries = null;
 
 		Map<String, Object> returnObject = new HashMap<>();
 		for (int i = 0; i < srcData.size(); i++) {
-			String sourceName = (String) srcData.get(i).get("source");
-			String conditionString = srcData.get(i).containsKey("conditionstring")
-					? (String) srcData.get(i).get("conditionstring")
-					: "";
-			String Keysofparam = "";
 
-			while (conditionString.contains("P$")) {
-				StringBuilder sb = new StringBuilder(conditionString);
-				int firstindex = sb.indexOf("P$");
-				int lastindex = sb.indexOf("$P");
-				Keysofparam = sb.substring(firstindex + 2, lastindex);
-				if (Keysofparam.contains(".")) {
-					int index = Keysofparam.indexOf(".");
-					String tablename = Keysofparam.substring(0, index);
-					String columnName = Keysofparam.substring(index + 1, Keysofparam.length());
-					if (inputMap.containsKey(tablename)) {
-						Map<String, Object> userInfoMap = (Map<String, Object>) inputMap.get(tablename);
-						if (userInfoMap.containsKey(columnName)) {
-							sb.replace(firstindex, lastindex + 2, userInfoMap.get(columnName).toString());
+			if (srcData.get(i).get("source") != null) {
+
+				String sourceName = (String) srcData.get(i).get("source");
+				String conditionString = srcData.get(i).containsKey("conditionstring")
+						? (String) srcData.get(i).get("conditionstring")
+						: "";
+				String Keysofparam = "";
+
+				while (conditionString.contains("P$")) {
+					StringBuilder sb = new StringBuilder(conditionString);
+					int firstindex = sb.indexOf("P$");
+					int lastindex = sb.indexOf("$P");
+					Keysofparam = sb.substring(firstindex + 2, lastindex);
+					if (Keysofparam.contains(".")) {
+						int index = Keysofparam.indexOf(".");
+						String tablename = Keysofparam.substring(0, index);
+						String columnName = Keysofparam.substring(index + 1, Keysofparam.length());
+						if (inputMap.containsKey(tablename)) {
+							Map<String, Object> userInfoMap = (Map<String, Object>) inputMap.get(tablename);
+							if (userInfoMap.containsKey(columnName)) {
+								sb.replace(firstindex, lastindex + 2, userInfoMap.get(columnName).toString());
+							}
 						}
 					}
+					conditionString = sb.toString();
+
 				}
-				conditionString = sb.toString();
 
-			}
+				tableName = sourceName.toLowerCase();
 
-			tableName = sourceName.toLowerCase();
+				List<Object> data = new ArrayList<Object>();
 
-			List<Object> data = new ArrayList<Object>();
-
-			switch (tableName) {
-			case "unit":
-				data = unitRepository.findByNstatusAndNsitecode(1,nsiteInteger);
-				break;
-			case "section":
-				data = sectionRepository.findByNstatusAndNsitecode(1,nsiteInteger);
-				break;
-			case "materialgrade":
-				data = materialGradeRepository.findByNstatus(1);
-				break;
-			case "storagelocation":
-				data = sampleStorageLocationRepository.findByStatusOrderBySamplestoragelocationkeyDesc(1);
-				break;
-			case "period":
-				data = periodRepository.findByNstatus(1);
-				break;
-			}
+				switch (tableName) {
+				case "unit":
+					data = unitRepository.findByNstatusAndNsitecode(1, nsiteInteger);
+					break;
+				case "section":
+					data = sectionRepository.findByNstatusAndNsitecode(1, nsiteInteger);
+					break;
+				case "materialgrade":
+					data = materialGradeRepository.findByNstatus(1);
+					break;
+				case "storagelocation":
+					data = sampleStorageLocationRepository.findByStatusOrderBySamplestoragelocationkeyDesc(1);
+					break;
+				case "period":
+					data = periodRepository.findByNstatus(1);
+					break;
+				}
 //			System.out.println(data);
 
-			String label = (String) srcData.get(i).get("label");
+				String label = (String) srcData.get(i).get("label");
 
-			List<Map<String, Object>> lstJsonData = new ArrayList<Map<String, Object>>();
+				List<Map<String, Object>> lstJsonData = new ArrayList<Map<String, Object>>();
 
-			if (!data.isEmpty()) {
+				if (!data.isEmpty()) {
 
-				data.stream().peek(obj -> {
-					Map<String, Object> childValue = new HashMap<>();
+					data.stream().peek(obj -> {
+						Map<String, Object> childValue = new HashMap<>();
 
-					childValue.put("jsondata", obj);
-					
-					lstJsonData.add(childValue);
+						childValue.put("jsondata", obj);
 
-				}).collect(Collectors.toList());
+						lstJsonData.add(childValue);
+
+					}).collect(Collectors.toList());
+				}
+
+				returnObject.put(label, lstJsonData);
 			}
-
-			returnObject.put(label, lstJsonData);
 		}
 
 		return new ResponseEntity<>(returnObject, HttpStatus.OK);
@@ -132,13 +134,13 @@ public class DynamicPreRegDesignService {
 		Map<String, Object> childData = (Map<String, Object>) inputMap.get("childcolumnlist");
 		Map<String, Object> parameters = (Map<String, Object>) inputMap.get("parameters");
 		Map<String, Object> parentData = (Map<String, Object>) inputMap.get("parentdata");
-		
+
 		String getJSONKeysQuery = "";
 
 		String valuememberData = "";
-		
+
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-		
+
 		List<Map<String, Object>> filterQueryComponentsQueries = null;
 
 		Map<String, Object> returnObject = new HashMap<>();
@@ -174,7 +176,7 @@ public class DynamicPreRegDesignService {
 			tableName = sourceName.toLowerCase();
 
 			List<Object> data = new ArrayList<Object>();
-			
+
 			String defaultvalues = "";
 			if (srcData.get(i).containsKey("defaultvalues")) {
 				List<Map<String, Object>> defaulvalueslst = (List<Map<String, Object>>) srcData.get(i)
@@ -189,15 +191,17 @@ public class DynamicPreRegDesignService {
 				}
 
 			} else {
-				defaultvalues =  parentData.get(valuememberData)+"";
+				defaultvalues = parentData.get(valuememberData) + "";
 			}
 
 			switch (tableName) {
 			case "unit":
-				data = unitRepository.findByNstatusAndNsitecodeAndNunitcodeOrderByNunitcode(1,nsiteInteger,Integer.parseInt(defaultvalues));
+				data = unitRepository.findByNstatusAndNsitecodeAndNunitcodeOrderByNunitcode(1, nsiteInteger,
+						Integer.parseInt(defaultvalues));
 				break;
 			case "materialcategory":
-				data = materialCategoryRepository.findByNstatusAndNsitecodeAndNmaterialtypecode(1,nsiteInteger,Integer.parseInt(defaultvalues));
+				data = materialCategoryRepository.findByNstatusAndNsitecodeAndNmaterialtypecode(1, nsiteInteger,
+						Integer.parseInt(defaultvalues));
 				break;
 			}
 

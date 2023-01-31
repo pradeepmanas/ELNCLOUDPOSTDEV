@@ -619,11 +619,11 @@ public class UserService {
 
 	public List<LSusersteam> GetUserTeam(LSuserMaster LSuserMaster) {
 		if (LSuserMaster.getUsername().equalsIgnoreCase("Administrator")) {
-			return lsusersteamRepository.findBystatus(1);
+			return lsusersteamRepository.findBylssitemaster(LSuserMaster.getLssitemaster());
 		} else {
 //			List<LSuserteammapping> teams = lsuserteammappingRepository.findBylsuserMaster(LSuserMaster);
 //			return lsusersteamRepository.findByLsuserteammappingInAndStatus(teams, 1);
-			return lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(), 1);
+			return lsusersteamRepository.findBylssitemaster(LSuserMaster.getLssitemaster());
 			// return
 			// lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(),
 			// 1);
@@ -641,7 +641,7 @@ public class UserService {
 			return map;
 		}
 		map.put("user", lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objclass));
-		map.put("obj", lsusersteamRepository.findBylssitemasterAndStatus(objclass, 1));
+		map.put("obj", lsusersteamRepository.findBylssitemaster(objclass));
 		return map;
 	}
 

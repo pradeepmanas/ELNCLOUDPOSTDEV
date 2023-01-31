@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.material;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -47,6 +48,9 @@ public interface MaterialRepository  extends JpaRepository<Material, Integer>{
 	List<Material> findBySmaterialnameInAndNstatusAndNsitecode(List<String> lstMatName, int i, Integer sitecode);
 
 	List<Material> findBySprefixInAndNstatusAndNsitecode(List<String> lstPrefixName, int i, Integer sitecode);
+
+	List<Material> findByNmaterialcatcodeAndNmaterialtypecodeAndNsitecodeAndNstatusAndCreateddateBetween(
+			Integer integer, Integer integer2, Integer nsiteInteger, int i, Date fromDate, Date toDate);
 
 //	Material findBynstatusAndnmaterialcode(int i, Integer integer);
 }

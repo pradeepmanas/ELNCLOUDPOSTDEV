@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.model.material;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +36,15 @@ public class Material implements Serializable{
 	private Integer nmaterialtypecode;
 	
 	private String sprefix;
+	
+	private Date createddate;
 
+	public Date getCreateddate() {
+		return createddate;
+	}
+	public void setCreateddate(Date createddate) {
+		this.createddate = createddate;
+	}
 	@Transient
 	private LScfttransaction objsilentaudit;
 	

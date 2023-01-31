@@ -80,6 +80,24 @@ public class LSusersteam {
 		this.lssitemaster = lssitemaster;
 	}
 
+	@Column(columnDefinition = "varchar(20)")
+	private String projectteamstatus;
+	
+	public String getProjectteamstatus() {
+		if(projectteamstatus != null)
+		{
+		return  projectteamstatus.trim().equals("A")?"Active":"Retired";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public void setProjectteamstatus(String projectteamstatus) {
+		this.projectteamstatus = projectteamstatus;
+	}
+	
 	@Transient
 	LoggedUser objuser;
 	

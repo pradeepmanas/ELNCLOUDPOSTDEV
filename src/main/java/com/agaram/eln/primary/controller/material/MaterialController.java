@@ -32,6 +32,12 @@ public class MaterialController {
 
 		return objMaterialService.getMaterialByTypeCode(inputMap);
 	}
+	
+	@RequestMapping(value = "/getMaterialByTypeCodeByDate", method = RequestMethod.POST)
+	public ResponseEntity<Object> getMaterialByTypeCodeByDate(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return objMaterialService.getMaterialByTypeCodeByDate(inputMap);
+	}
 
 	@RequestMapping(value = "/getMaterialcombo", method = RequestMethod.POST)
 	public ResponseEntity<Object> getMaterialcombo(@RequestBody Map<String, Object> inputMap) throws Exception {

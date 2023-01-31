@@ -3703,4 +3703,8 @@ update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_ORDERWORKLO
 update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_AUDITTRAILCONFIG' and screate='NA'  and usergroupid_usergroupcode !=1;
 update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_PROJECTTEAM' and sdelete='NA'  and usergroupid_usergroupcode !=1; 
 
+ALTER TABLE IF Exists material ADD COLUMN IF NOT EXISTS createddate date default CURRENT_DATE;
 
+ALTER TABLE IF Exists lsusersteam ADD COLUMN IF NOT EXISTS projectteamstatus varchar(20);
+update lsusersteam set projectteamstatus='A' where status=1;
+update lsusersteam set projectteamstatus='D' where status=-1;
