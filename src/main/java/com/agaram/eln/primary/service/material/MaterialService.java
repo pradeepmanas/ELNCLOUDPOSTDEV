@@ -204,8 +204,9 @@ public class MaterialService {
 		List<MaterialConfig> lstMaterialConfig = materialConfigRepository
 				.findByNmaterialtypecodeAndNformcode((Integer) inputMap.get("nmaterialtypecode"), 40);
 		objmap.put("selectedTemplate", lstMaterialConfig);
+		objmap.put("selectedGridProps", lstMaterialConfig.get(0));
 		if (cft != null) {
-		objmap.put("objsilentaudit", cft.getObjsilentaudit());
+			objmap.put("objsilentaudit", cft.getObjsilentaudit());
 		}
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
@@ -567,7 +568,7 @@ public class MaterialService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "unchecked", "unused", "null" })
 	public ResponseEntity<Object> UpdateMaterial(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objmapper = new ObjectMapper();
 //		JSONObject jsonAuditOld = new JSONObject();

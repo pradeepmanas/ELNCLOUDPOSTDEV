@@ -21,6 +21,7 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.notification.Email;
@@ -43,6 +44,7 @@ import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.model.usermanagement.Lsusersettings;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
+import com.agaram.eln.primary.repository.material.MaterialRepository;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
@@ -134,6 +136,9 @@ public class UserService {
 
 	@Autowired
 	SectionRepository sectionRepository;
+	
+	@Autowired
+	MaterialRepository materialRepository;
 
 	public LSusergroup InsertUpdateUserGroup(LSusergroup objusergroup) {
 		if (lSusergroupRepository.findByusergroupnameIgnoreCaseAndLssitemaster(objusergroup.getUsergroupname(),
@@ -1389,6 +1394,42 @@ public class UserService {
 				listofallmaster.setObjResponse(new Response());
 				listofallmaster.getObjResponse().setStatus(false);
 				listofallmaster.getObjResponse().setInformation("IDS_MSG_EXIST");
+
+				return listofallmaster;
+			}
+		} else if (listofallmaster.getScreenname().equalsIgnoreCase("material")) {
+
+			List<String> lstMatName = listofallmaster.getMaterial().stream().map(Material::getSmaterialname)
+					.collect(Collectors.toList());
+			
+			List<String> lstPrefixName = listofallmaster.getMaterial().stream().map(Material::getSprefix)
+					.collect(Collectors.toList());
+
+			List<Material> lstMaterialByName = materialRepository.findBySmaterialnameInAndNstatusAndNsitecode(lstMatName, 1,
+					listofallmaster.getLssitemaster().getSitecode());
+			
+			List<Material> lstMaterialByPrefix = materialRepository.findBySprefixInAndNstatusAndNsitecode(lstPrefixName, 1,
+					listofallmaster.getLssitemaster().getSitecode());
+
+			if (lstMaterialByName.isEmpty() && lstMaterialByPrefix.isEmpty()) {
+				materialRepository.save(listofallmaster.getMaterial());
+				listofallmaster.setMaterial(listofallmaster.getMaterial());
+				listofallmaster.setObjResponse(new Response());
+				listofallmaster.getObjResponse().setStatus(true);
+				listofallmaster.getObjResponse().setInformation("IDS_MSG_SUCCESSMSG");
+
+				return listofallmaster;
+			} else {
+				
+				if(!lstMaterialByName.isEmpty()) {
+					listofallmaster.setObjResponse(new Response());
+					listofallmaster.getObjResponse().setStatus(false);
+					listofallmaster.getObjResponse().setInformation("IDS_MSG_EXIST");
+				}else {
+					listofallmaster.setObjResponse(new Response());
+					listofallmaster.getObjResponse().setStatus(false);
+					listofallmaster.getObjResponse().setInformation("IDS_MSG_EXIST_PREFIX");
+				}
 
 				return listofallmaster;
 			}

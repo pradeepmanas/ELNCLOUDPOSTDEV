@@ -1682,27 +1682,17 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.mappedtemplatefieldpropsmaterial OWNER to postgres;
 
-insert into period values(-1,'{
-    "ndata": -1,
-    "nmaxlength": 0,
-    "speriodname": {
-        "en-US": "NA",
-        "ru-RU": "нет данных",
-        "tg-TG": "НА"
-    },
-    "sdescription": "NA"
-}',4,-1,1)on conflict (nperiodcode) do nothing;
+ALTER TABLE IF Exists period ADD COLUMN IF NOT EXISTS speriodname character varying(50);
 
-insert into period values(1,'{
-    "ndata": 1,
-    "nmaxlength": 5,
-    "speriodname": {
-        "en-US": "Minutes",
-        "ru-RU": "Минуты",
-        "tg-TG": "Дакикахо"
-    },
-    "sdescription": ""
-}',4,-1,1)on conflict (nperiodcode) do nothing;
+INSERT INTO period (nperiodcode, jsondata, ndefaultstatus, nsitecode, nstatus,speriodname) VALUES (-1, '{"ndata": -1, "nmaxlength": 0, "speriodname": {"en-US": "NA", "ru-RU": "нет данных", "tg-TG": "НА"}, "sdescription": "NA"}', 4, -1, 1,'NA') on conflict(nperiodcode)do nothing;
+INSERT INTO period (nperiodcode, jsondata, ndefaultstatus, nsitecode, nstatus,speriodname) VALUES (1, '{"ndata": 1, "nmaxlength": 5, "speriodname": {"en-US": "Minutes", "ru-RU": "Минуты", "tg-TG": "Дакикахо"}, "sdescription": ""}', 4, -1, 1,'Minutes') on conflict(nperiodcode)do nothing;;
+INSERT INTO period (nperiodcode, jsondata, ndefaultstatus, nsitecode, nstatus,speriodname) VALUES (2, '{"ndata": 60, "nmaxlength": 4, "speriodname": {"en-US": "Hours", "ru-RU": "Часы", "tg-TG": "Соатхо"}, "sdescription": ""}', 3, -1, 1,'Hours') on conflict(nperiodcode)do nothing;;
+INSERT INTO period (nperiodcode, jsondata, ndefaultstatus, nsitecode, nstatus,speriodname) VALUES (3, '{"ndata": 10080, "nmaxlength": 0, "speriodname": {"en-US": "Weeks", "ru-RU": "Недели", "tg-TG": "Ҳафтаҳо"}, "sdescription": ""}', 4, -1, 1,'Weeks') on conflict(nperiodcode)do nothing;;
+INSERT INTO period (nperiodcode, jsondata, ndefaultstatus, nsitecode, nstatus,speriodname) VALUES (4, '{"ndata": 1440, "nmaxlength": 3, "speriodname": {"en-US": "Days", "ru-RU": "Дни", "tg-TG": "Рузхо"}, "sdescription": ""}', 4, -1, 1,'Days') on conflict(nperiodcode)do nothing;;
+INSERT INTO period (nperiodcode, jsondata, ndefaultstatus, nsitecode, nstatus,speriodname) VALUES (5, '{"ndata": 43200, "nmaxlength": 2, "speriodname": {"en-US": "Month", "ru-RU": "Месяц", "tg-TG": "Мох"}, "sdescription": ""}', 4, -1, 1,'Month') on conflict(nperiodcode)do nothing;;
+INSERT INTO period (nperiodcode, jsondata, ndefaultstatus, nsitecode, nstatus,speriodname) VALUES (6, '{"ndata": 525600, "nmaxlength": 1, "speriodname": {"en-US": "Years", "ru-RU": "Годы", "tg-TG": "Солхо"}, "sdescription": ""}', 4, -1, 1,'Years') on conflict(nperiodcode)do nothing;;
+INSERT INTO period (nperiodcode, jsondata, ndefaultstatus, nsitecode, nstatus,speriodname) VALUES (7, '{"ndata": 0, "nmaxlength": 0, "speriodname": {"en-US": "Day Without Hours", "ru-RU": "День без часов", "tg-TG": "Рӯзи бе соат"}, "sdescription": ""}', 4, -1, 1,'Day Without Hours') on conflict(nperiodcode)do nothing;;
+INSERT INTO period (nperiodcode, jsondata, ndefaultstatus, nsitecode, nstatus,speriodname) VALUES (8, '{"ndata": -1, "nmaxlength": 0, "speriodname": {"en-US": "Never", "ru-RU": "Никогда", "tg-TG": "Ҳеҷ гоҳ"}, "sdescription": "Never"}', 4, -1, 1,'Never') on conflict(nperiodcode)do nothing;;
 
 insert into transactionstatus values(47,'Receive','{
     "salertdisplaystatus": {
@@ -3438,23 +3428,16 @@ update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_UNLOCKORDER
 update lsusergrouprightsmaster set sdelete='NA' where displaytopic='IDS_SCN_LOGBOOK';
 update lsusergrouprightsmaster set sedit='NA' where displaytopic='IDS_SCN_LOGBOOK';
 update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_AUDITTRAILCONFIG';
-update lsusergrouprights set screate='0' where screate ='NA' and displaytopic='IDS_SCN_AUDITTRAILCONFIG';
 update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_AUDITTRAILCONFIG' and usergroupid_usergroupcode=1;
-update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_USERRIGHTS';
 update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_ORDERWORKLOW';
 update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW';
 update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_SCN_PASSWORDPOLICY';
-update lsusergrouprights set screate='0' where screate ='NA' and displaytopic='IDS_SCN_USERRIGHTS';
-update lsusergrouprights set screate='0' where screate ='NA' and  displaytopic='IDS_SCN_ORDERWORKLOW';
-update lsusergrouprights set screate='0' where screate ='NA' and  displaytopic='IDS_SCN_TEMPLATEWORKFLOW';
-update lsusergrouprights set screate='0' where screate ='NA' and  displaytopic='IDS_SCN_PASSWORDPOLICY';
 update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_USERRIGHTS' and usergroupid_usergroupcode=1;
 update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_ORDERWORKLOW' and usergroupid_usergroupcode=1;
 update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW' and usergroupid_usergroupcode=1;
 update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_PASSWORDPOLICY' and usergroupid_usergroupcode=1;
 update lsusergrouprightsmaster set sdelete='0' where displaytopic='IDS_SCN_PROJECTTEAM';
 update lsusergrouprightsmaster set status='1,0,1' where displaytopic='IDS_SCN_PROJECTTEAM';
-update lsusergrouprights set sdelete='0' where sdelete ='NA' and  displaytopic='IDS_SCN_PROJECTTEAM';
 update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_PROJECTTEAM' and usergroupid_usergroupcode=1;
 delete from lsusergrouprightsmaster where displaytopic='IDS_TSK_IMPORTADS';
 delete from lsusergrouprights where displaytopic='IDS_TSK_IMPORTADS';
@@ -3712,3 +3695,12 @@ update	lsusergrouprights set	screenname='IDS_SCN_SHEETTEMPLATE'	where displaytop
 update	lsusergrouprights set	screenname='IDS_SCN_USERMASTER'	where displaytopic ='IDS_TSK_UNLOCK';
 update	lsusergrouprights set	screenname='IDS_SCN_PROTOCOLORDERS'	where displaytopic ='IDS_TSK_UPLOADPROTOCOLORDER';
 update	lsusergrouprights set	screenname='IDS_SCN_SHEETORDERS'	where displaytopic ='IDS_TSK_UPLOADSHEETORDER';
+
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_USERRIGHTS' and screate='NA' and usergroupid_usergroupcode !=1;  
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW'and screate='NA' and usergroupid_usergroupcode !=1; 
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_PASSWORDPOLICY' and screate='NA'  and usergroupid_usergroupcode !=1; 
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_ORDERWORKLOW' and screate='NA'  and usergroupid_usergroupcode !=1; 
+update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_AUDITTRAILCONFIG' and screate='NA'  and usergroupid_usergroupcode !=1;
+update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_PROJECTTEAM' and sdelete='NA'  and usergroupid_usergroupcode !=1; 
+
+

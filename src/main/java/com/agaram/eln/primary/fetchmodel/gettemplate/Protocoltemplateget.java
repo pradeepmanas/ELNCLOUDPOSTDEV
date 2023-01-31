@@ -97,8 +97,8 @@ public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 		this.status = status;
 		this.createdbyusername = createdbyusername;
 		this.createdate = createdate;
-		this.transactionstatus = (rejected != null && rejected == 1) ? "rejected"
-				: (approved == null ? "created" :approved == 1 ? "approved" : approved == 0 ? "initiated":approved == 2?"return":"");
+		this.transactionstatus = (rejected != null && rejected == 1) ? "Rejected"
+				: (approved == null ? "Created" :approved == 1 ? "Approved" : approved == 0 ? "Initiated":approved == 2?"Return":"");
 		this.lssheetworkflowname=lssheetworkflow!=null?lssheetworkflow.getWorkflowname():null;
 		this.versionno=versionno;
 	}

@@ -96,9 +96,9 @@ public class DynamicPreRegDesignService {
 			case "storagelocation":
 				data = sampleStorageLocationRepository.findByStatusOrderBySamplestoragelocationkeyDesc(1);
 				break;
-//			case "period":
-//				data = periodRepository.findByNstatus(1);
-//				break;
+			case "period":
+				data = periodRepository.findByNstatus(1);
+				break;
 			}
 //			System.out.println(data);
 

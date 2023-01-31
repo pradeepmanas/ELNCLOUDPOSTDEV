@@ -31,6 +31,15 @@ public class Period {
 	private Integer nsitecode;
 	@Column(name = "nstatus")
 	private Integer nstatus;
+	private String speriodname;
+
+	public String getSperiodname() {
+		return speriodname;
+	}
+
+	public void setSperiodname(String speriodname) {
+		this.speriodname = speriodname;
+	}
 
 	public Integer getNperiodcode() {
 		return nperiodcode;

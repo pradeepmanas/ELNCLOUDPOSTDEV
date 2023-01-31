@@ -3,6 +3,7 @@ package com.agaram.eln.primary.fetchmodel.getmasters;
 import java.util.List;
 
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
@@ -19,6 +20,15 @@ public class Listofallmaster {
 	
 	List<Unit> unit;
 	List<Section> section;
+	List<Material> material;
+
+	public List<Material> getMaterial() {
+		return material;
+	}
+
+	public void setMaterial(List<Material> material) {
+		this.material = material;
+	}
 
 	public List<Section> getSection() {
 		return section;
