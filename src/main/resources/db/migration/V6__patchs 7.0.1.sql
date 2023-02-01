@@ -1694,6 +1694,9 @@ INSERT INTO period (nperiodcode, jsondata, ndefaultstatus, nsitecode, nstatus,sp
 INSERT INTO period (nperiodcode, jsondata, ndefaultstatus, nsitecode, nstatus,speriodname) VALUES (7, '{"ndata": 0, "nmaxlength": 0, "speriodname": {"en-US": "Day Without Hours", "ru-RU": "День без часов", "tg-TG": "Рӯзи бе соат"}, "sdescription": ""}', 4, -1, 1,'Day Without Hours') on conflict(nperiodcode)do nothing;;
 INSERT INTO period (nperiodcode, jsondata, ndefaultstatus, nsitecode, nstatus,speriodname) VALUES (8, '{"ndata": -1, "nmaxlength": 0, "speriodname": {"en-US": "Never", "ru-RU": "Никогда", "tg-TG": "Ҳеҷ гоҳ"}, "sdescription": "Never"}', 4, -1, 1,'Never') on conflict(nperiodcode)do nothing;;
 
+update period set speriodname = 'NA' where nperiodcode = -1;
+update period set speriodname = 'Minutes' where nperiodcode = 1;
+
 insert into transactionstatus values(47,'Receive','{
     "salertdisplaystatus": {
         "en-US": "Received",
@@ -3708,3 +3711,9 @@ ALTER TABLE IF Exists material ADD COLUMN IF NOT EXISTS createddate date default
 ALTER TABLE IF Exists lsusersteam ADD COLUMN IF NOT EXISTS projectteamstatus varchar(20);
 update lsusersteam set projectteamstatus='A' where status=1;
 update lsusersteam set projectteamstatus='D' where status=-1;
+
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode,screenname) values ( 'IDS_SCN_SITEMASTER','IDS_MDL_SETUP','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1,'IDS_SCN_SITEMASTER') ON CONFLICT(orderno)DO NOTHING;
+
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode,screenname) values ( 'IDS_SCN_DOMAIN','IDS_MDL_SETUP','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1,'IDS_SCN_DOMAIN')ON CONFLICT(orderno)DO NOTHING;
+
+INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode,screenname) values ( 'IDS_SCN_ACTIVEUSER','IDS_MDL_SETUP','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1,'IDS_SCN_ACTIVEUSER')ON CONFLICT(orderno)DO NOTHING;

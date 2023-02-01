@@ -677,7 +677,7 @@ public class ParserSetupService {
 //		final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
 		final int methodKey = (Integer) mapObject.get("methodKey");
 		final String comments = (String) mapObject.get("comments"); 
-
+//		final Method cft = mapper.convertValue(mapObject.get("objsilentaudit"), Method.class);
 		final Method cft = mapper.convertValue(mapObject.get("auditdetails"), Method.class);
 		
 		final List<ParserBlock> parserBlockList = mapper.convertValue(mapObject.get("parserBlockList"),List.class);		

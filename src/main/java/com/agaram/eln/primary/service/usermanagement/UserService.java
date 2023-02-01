@@ -1405,7 +1405,7 @@ public class UserService {
 			List<String> lstPrefixName = listofallmaster.getMaterial().stream().map(Material::getSprefix)
 					.collect(Collectors.toList());
 
-			List<Material> lstMaterialByName = materialRepository.findBySmaterialnameInAndNstatusAndNsitecode(lstMatName, 1,
+			List<Material> lstMaterialByName = materialRepository.findBySmaterialnameInAndAndNmaterialtypecodeAndNstatusAndNsitecode(lstMatName,listofallmaster.getMaterial().get(0).getNmaterialtypecode(), 1,
 					listofallmaster.getLssitemaster().getSitecode());
 			
 			List<Material> lstMaterialByPrefix = materialRepository.findBySprefixInAndNstatusAndNsitecode(lstPrefixName, 1,

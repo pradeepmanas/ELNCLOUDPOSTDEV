@@ -92,7 +92,7 @@ public class MaterialService {
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialByTypeCode(Map<String, Object> inputMap)
 			throws JsonParseException, JsonMappingException, IOException {
-		final ObjectMapper objmapper = new ObjectMapper();
+//		final ObjectMapper objmapper = new ObjectMapper();
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode"); 
@@ -142,6 +142,7 @@ public class MaterialService {
 					objmap.put("SelectedMaterial", lstMaterial);
 				}
 
+				
 				List<MaterialType> lstMaterialType = materialTypeRepository
 						.findByNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
 				objmap.put("SelectedMaterialType", lstMaterialType);
@@ -362,7 +363,7 @@ public class MaterialService {
 		boolean nflag = false;
 
 		final Material ObjMatNamecheck = materialRepository
-				.findBySmaterialnameAndNstatus((String) jsonObject.get("Material Name"), 1);
+				.findBySmaterialnameAndNmaterialtypecodeAndNstatus((String) jsonObject.get("Material Name"),(Integer) jsonObject.get("nmaterialtypecode"), 1);
 
 		if (ObjMatNamecheck == null) {
 
@@ -386,6 +387,12 @@ public class MaterialService {
 			objMaterial.setObjsilentaudit(cft);
 			return new ResponseEntity<>(objMaterial, HttpStatus.CONFLICT);
 		}
+		
+//		DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+//		
+//		Date fromDate =  simpleDateFormat.parse(new Date());
+//		Date toDate =  simpleDateFormat.parse((String) inputMap.get("toDate"));
+		
 		objMaterial.setNmaterialcatcode((Integer) jsonObject.get("nmaterialcatcode"));
 		objMaterial.setSmaterialname(jsonObject.getString("Material Name"));
 		objMaterial.setNmaterialtypecode((Integer) jsonObject.get("nmaterialtypecode"));
@@ -394,7 +401,8 @@ public class MaterialService {
 		objMaterial.setJsondata(strJsonObj);
 		objMaterial.setJsonuidata(strJsonUiData);
 		objMaterial.setNsitecode(nsiteInteger);
-		objMaterial.setObjsilentaudit(cft);
+		objMaterial.setCreateddate(new Date());
+//		objMaterial.setObjsilentaudit(cft);
 
 		materialRepository.save(objMaterial);
 
@@ -626,11 +634,11 @@ public class MaterialService {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> deleteMaterial(Map<String, Object> inputMap)
 			throws JsonParseException, JsonMappingException, IOException {
 
-		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+//		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		final ObjectMapper mapper = new ObjectMapper();
 		int countMaterial = materialRepository.countByNmaterialcodeAndNstatus((Integer) inputMap.get("nmaterialcode"),
 				1);
@@ -641,23 +649,23 @@ public class MaterialService {
 		Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,
 				(Integer) inputMap.get("nmaterialcode"));
 		
-		final LScfttransaction cft = mapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
+//		final LScfttransaction cft = mapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		if (countMaterial != 0) {
 
 			if (countMaterialInvent == 0) {
 
 
 				objMaterial.setNstatus(-1);
-				objMaterial.setObjsilentaudit(cft);
+//				objMaterial.setObjsilentaudit(cft);
 				materialRepository.save(objMaterial);
 
-				//return getMaterialByTypeCode(inputMap);
-				objmap.putAll((Map<String, Object>) getMaterialByTypeCode(inputMap).getBody());
-				objmap.put("objsilentaudit", cft);
-				return new ResponseEntity<>(objmap, HttpStatus.OK);
+				return getMaterialByTypeCode(inputMap);
+//				objmap.putAll((Map<String, Object>) getMaterialByTypeCode(inputMap).getBody());
+//				objmap.put("objsilentaudit", cft);
+//				return new ResponseEntity<>(objmap, HttpStatus.OK);
 
 			} else {
-				objMaterial.setInfo("Duplicate Entry : Material - " + objMaterial.getSmaterialname());
+				objMaterial.setInfo("Material already in transaction - " + objMaterial.getSmaterialname());
 //				return new ResponseEntity<>("Material already in transaction", HttpStatus.CONFLICT);
 				return new ResponseEntity<>(objMaterial, HttpStatus.CONFLICT);
 			}
