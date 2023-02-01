@@ -97,7 +97,7 @@ public class MaterialService {
 		
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode"); 
 
-		final Material cft = objmapper.convertValue(inputMap.get("objsilentaudit"), Material.class);
+//		final Material cft = objmapper.convertValue(inputMap.get("objsilentaudit"), Material.class);
 		final List<Material> lstMaterial = materialRepository.findByNmaterialcatcodeAndNmaterialtypecodeAndNsitecodeAndNstatus(
 				(Integer) inputMap.get("nmaterialcatcode"), (Integer) inputMap.get("nmaterialtypecode"),nsiteInteger, 1);
 
@@ -209,9 +209,9 @@ public class MaterialService {
 				.findByNmaterialtypecodeAndNformcode((Integer) inputMap.get("nmaterialtypecode"), 40);
 		objmap.put("selectedTemplate", lstMaterialConfig);
 		objmap.put("selectedGridProps", lstMaterialConfig.get(0));
-		if (cft != null) {
-			objmap.put("objsilentaudit", cft.getObjsilentaudit());
-		}
+//		if (cft != null) {
+//			objmap.put("objsilentaudit", cft.getObjsilentaudit());
+//		}
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 

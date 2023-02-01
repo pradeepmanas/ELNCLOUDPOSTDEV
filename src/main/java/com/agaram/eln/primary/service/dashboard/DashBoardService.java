@@ -311,7 +311,7 @@ public class DashBoardService {
 						LSlogilabprotocoldetailRepository.countBySitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(
 								objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject));
 				mapOrders.put("pendingorder", LSlogilabprotocoldetailRepository
-						.countByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndApprovelstatusNotOrApprovelstatusIsNullAndOrdercancellIsNull(
+						.countByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrdercancellIsNull(
 								"N", objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject, 3));
 
 				mapOrders.put("completedorder",
