@@ -3708,6 +3708,8 @@ update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_PROJECTTEAM
 
 ALTER TABLE IF Exists material ADD COLUMN IF NOT EXISTS createddate date default CURRENT_DATE;
 
+update material set createddate = CURRENT_DATE where createddate ISNULL;
+
 ALTER TABLE IF Exists lsusersteam ADD COLUMN IF NOT EXISTS projectteamstatus varchar(20);
 update lsusersteam set projectteamstatus='A' where status=1;
 update lsusersteam set projectteamstatus='D' where status=-1;
@@ -3717,3 +3719,5 @@ INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sall
 INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode,screenname) values ( 'IDS_SCN_DOMAIN','IDS_MDL_SETUP','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1,'IDS_SCN_DOMAIN')ON CONFLICT(orderno)DO NOTHING;
 
 INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode,screenname) values ( 'IDS_SCN_ACTIVEUSER','IDS_MDL_SETUP','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1,'IDS_SCN_ACTIVEUSER')ON CONFLICT(orderno)DO NOTHING;
+
+ALTER TABLE IF Exists material ALTER COLUMN createddate TYPE timestamp without time zone;

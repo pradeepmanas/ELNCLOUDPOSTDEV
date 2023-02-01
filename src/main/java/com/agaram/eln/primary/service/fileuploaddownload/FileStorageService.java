@@ -126,6 +126,7 @@ public class FileStorageService {
     public String storeimportFile(MultipartFile file , String tenant , Integer isMultitenant,String originalfilename,Integer version) throws IOException {
         
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+    	final String rawData;
       //  try {
             // Check if the file's name contains invalid characters
 //            if(fileName.contains("..")) {
@@ -150,12 +151,13 @@ public class FileStorageService {
     		cloudparserfilerepository.save(objfile);
           
     		//return methodService.getFileData(fileName, tenant);
-    		final String rawData =  methodservice.getFileData(fileName,tenant);
+    		if(isMultitenant == 1) {
+    		rawData =  methodservice.getFileData(fileName,tenant);}
+    		else {
+    		rawData =  methodservice.getSQLImportFileData(fileName);}
+    		
           return rawData;
-      //  } 
-//        catch (IOException e) {
-//            throw  FileStorageException("Could not store file " + fileName + ". Please try again!", e);
-//        }
+      
     }
 
     
@@ -245,6 +247,8 @@ public class FileStorageService {
 		   
 		        parsedText = pdfStripper.getText(pdDoc);
 		        gridFsTemplate.store(new ByteArrayInputStream(parsedText.getBytes(StandardCharsets.UTF_8)), fileid);
+		        cosDoc=null;
+		        pdDoc=null;
             }else if(ext.equals("txt")){
             	File tempfile;
             	tempfile = stream2file(file.getInputStream(),fileName, ext);
@@ -253,7 +257,7 @@ public class FileStorageService {
 		        BufferedReader in = new BufferedReader( 
 		            new InputStreamReader (new FileInputStream(tempfile), charset));
 		        String line;
-		        String result;
+		       // String result;
 		     
 		        StringBuffer sb = new StringBuffer();
 		        while( (line = in.readLine()) != null) { 
@@ -263,7 +267,7 @@ public class FileStorageService {
 		        String appendedline = sb.toString();
 		        
 			  //gridFsTemplate.store(new ByteArrayInputStream(file.getBytes()), fileid);
-           
+		        line="";
 			  gridFsTemplate.store(new ByteArrayInputStream(appendedline.getBytes(StandardCharsets.UTF_8)), fileid);
 			
             }else {
@@ -312,7 +316,7 @@ public class FileStorageService {
 			   String rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
 			   rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
 			    gridFsTemplate.store(new ByteArrayInputStream(rawDataText.getBytes(StandardCharsets.UTF_8)), fileid);
-					 
+			    br=null;	 
             }
 			  CloudParserFile objfile = new CloudParserFile();
  	     	  objfile.setFileid(fileid);

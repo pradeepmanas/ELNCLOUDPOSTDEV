@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.usermanagement;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -1412,6 +1413,11 @@ public class UserService {
 					listofallmaster.getLssitemaster().getSitecode());
 
 			if (lstMaterialByName.isEmpty() && lstMaterialByPrefix.isEmpty()) {
+				
+				listofallmaster.getMaterial().stream().peek(f -> {
+					f.setCreateddate(new Date());
+				}).collect(Collectors.toList());
+				
 				materialRepository.save(listofallmaster.getMaterial());
 				listofallmaster.setMaterial(listofallmaster.getMaterial());
 				listofallmaster.setObjResponse(new Response());

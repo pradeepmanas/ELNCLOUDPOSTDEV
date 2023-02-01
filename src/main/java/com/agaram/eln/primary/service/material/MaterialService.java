@@ -357,7 +357,7 @@ public class MaterialService {
 		String strJsonObj = inputMap.get("materialJson").toString();
 		String strJsonUiData = inputMap.get("jsonuidata").toString();
 		
-		Integer nsiteInteger = (Integer) inputMap.get("nsitecode"); 
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
 
 		inputMap.get("DateList");
 		boolean nflag = false;
