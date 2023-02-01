@@ -151,10 +151,11 @@ public class FileStorageService {
     		cloudparserfilerepository.save(objfile);
           
     		//return methodService.getFileData(fileName, tenant);
-    		if(isMultitenant == 1) {
-    		rawData =  methodservice.getFileData(fileName,tenant);}
-    		else {
-    		rawData =  methodservice.getSQLImportFileData(fileName);}
+//    		if(isMultitenant == 1) {
+    		rawData =  methodservice.getFileData(fileName,tenant);
+//    		}
+//    		else {
+//    		rawData =  methodservice.getSQLImportFileData(fileName);}
     		
           return rawData;
       
