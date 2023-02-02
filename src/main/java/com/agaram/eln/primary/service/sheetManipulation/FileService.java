@@ -382,7 +382,7 @@ public class FileService {
 
 	public List<LSfile> GetApprovedSheets(Integer approvelstatus, LSuserMaster objuser) {
 		if (objuser.getUsername().equals("Administrator")) {
-			return lSfileRepository.getsheetGreaterthanoneandapprovel(approvelstatus);
+			return lSfileRepository.getsheetGreaterthanoneandapprovel(approvelstatus,objuser.getLssitemaster().getSitecode());
 		} else {
 			return GetApprovedSheetsbyuser(approvelstatus, objuser);
 		}
@@ -427,13 +427,13 @@ public class FileService {
 			List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(
 					lsuserteammappingRepository.getTeamcodeByLsuserMaster(objuser.getUsercode()));
 			lstteamuser.add(objuser);
-			lstfile = lSfileRepository.getsheetGreaterthanoneandapprovelanduserIn(approvelstatus, lstteamuser);
+			lstfile = lSfileRepository.getsheetGreaterthanoneandapprovelanduserIn(approvelstatus, lstteamuser ,objuser.getLssitemaster().getSitecode());
 
 			lstteamuser = null;
 		} else {
 			List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
 			lstteamuser.add(objuser);
-			lstfile = lSfileRepository.getsheetGreaterthanoneandapprovelanduserIn(approvelstatus, lstteamuser);
+			lstfile = lSfileRepository.getsheetGreaterthanoneandapprovelanduserIn(approvelstatus, lstteamuser,objuser.getLssitemaster().getSitecode());
 
 			lstteamuser = null;
 		}

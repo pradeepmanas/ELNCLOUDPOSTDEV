@@ -328,8 +328,12 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public long  countByApprovelstatusAndCreatedtimestampBetween(int i, Date fromdate, Date todate);
 	
 	public long countByOrdercancellAndCompletedtimestampBetween(int i, Date fromdate, Date todate);
+	
+	public long countByOrdercancellAndCreatedtimestampBetween(int i, Date fromdate, Date todate);
 
 	public long countByOrderflagAndCompletedtimestampBetween(String orderflag, Date fromdate, Date todate);
+	
+	public long countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNot(String orderflag, Date fromdate, Date todate,int i);
 
 	public long countByOrderflagAndLssamplefileInAndCreatedtimestampBetween(String orderflag,
 			List<LSsamplefile> lssamplefile, Date fromdate, Date todate);
@@ -778,6 +782,9 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	long countByOrderflagAndOrdercancellIsNullAndCreatedtimestampBetweenAndApprovelstatusNotOrApprovelstatusIsNull(
 			String string, Date fromdate, Date todate, int i);
+	
+	long countByOrderflagAndOrdercancellIsNullAndCreatedtimestampBetween(
+			String string, Date fromdate, Date todate);
 
 	Object findByOrderflagAndApprovelstatusNotAndCreatedtimestampBetweenOrderByBatchcodeDesc(String string, int i,
 			Date fromdate, Date todate);
@@ -817,5 +824,15 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	List<Logilabordermaster> findByFiletypeAndCreatedtimestampBetween(int i, Date fromdate,
 			Date todate);
+	
+	long countByOrderflagAndOrdercancellIsNullAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNull(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
+
+	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNot(String string,
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i);
+
+	long countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndApprovelstatusNot(String string, int i, Date fromdate,
+			Date todate, int j);
+
 
 }

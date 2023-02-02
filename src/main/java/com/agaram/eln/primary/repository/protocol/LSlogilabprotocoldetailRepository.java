@@ -597,4 +597,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	List<LSlogilabprotocoldetail>  countByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrdercancellIsNull(String string,
 			Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, int i);
+	
+	Object countByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrdercancellIsNull(String string,
+			Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject);
 }

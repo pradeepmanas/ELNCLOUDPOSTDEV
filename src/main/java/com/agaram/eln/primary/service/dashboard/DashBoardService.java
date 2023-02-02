@@ -312,7 +312,7 @@ public class DashBoardService {
 								objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject));
 				mapOrders.put("pendingorder", LSlogilabprotocoldetailRepository
 						.countByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrdercancellIsNull(
-								"N", objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject, 3));
+								"N", objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject));
 
 				mapOrders.put("completedorder",
 						LSlogilabprotocoldetailRepository
@@ -342,14 +342,15 @@ public class DashBoardService {
 			mapOrders.put("orders",
 					lslogilablimsorderdetailRepository.countByCreatedtimestampBetween(fromdate, todate));
 			mapOrders.put("pendingorder", lslogilablimsorderdetailRepository
-					.countByOrderflagAndOrdercancellIsNullAndCreatedtimestampBetweenAndApprovelstatusNotOrApprovelstatusIsNull(
-							"N", fromdate, todate, 3));
+					.countByOrderflagAndOrdercancellIsNullAndCreatedtimestampBetween(
+							"N", fromdate, todate));
 			mapOrders.put("completedorder", lslogilablimsorderdetailRepository
-					.countByOrderflagAndCompletedtimestampBetween("R", fromdate, todate));
+					.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNot("R", fromdate, todate, 3));
+			
 			mapOrders.put("rejectedorder", lslogilablimsorderdetailRepository
 					.countByApprovelstatusAndCreatedtimestampBetween(3, fromdate, todate));
 			mapOrders.put("canceledorder", lslogilablimsorderdetailRepository
-					.countByOrdercancellAndCompletedtimestampBetween(1, fromdate, todate));
+					.countByOrdercancellAndCreatedtimestampBetween(1, fromdate, todate));
 			mapOrders.put("onproces", lslogilablimsorderdetailRepository
 					.countByOrderflagAndLssamplefileInAndCreatedtimestampBetween("N", lssamplefile, fromdate, todate));
 
@@ -368,8 +369,8 @@ public class DashBoardService {
 			long lstlimscompleted = 0;
 			if (lstproject != null && lstproject.size() > 0) {
 				lstlimscompleted = lslogilablimsorderdetailRepository
-						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetween("R", lstproject, fromdate,
-								todate);
+						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNot("R", lstproject, fromdate,
+								todate, 3);
 				
 				lstlimscompleted = lstlimscompleted + lslogilablimsorderdetailRepository
 						.countByOrderflagAndFiletypeAndCreatedtimestampBetween("R", 0, fromdate,
@@ -392,8 +393,8 @@ public class DashBoardService {
 								"N", lstproject, fromdate, todate, 3);
 				
 				lstpending = lstpending + lslogilablimsorderdetailRepository
-						.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndApprovelstatusNotOrApprovelstatusIsNull(
-								"N", 0, fromdate, todate, 3);
+						.countByOrderflagAndFiletypeAndCreatedtimestampBetween(
+								"N", 0, fromdate, todate);
 			}
 
 			long lstRejected = 0;

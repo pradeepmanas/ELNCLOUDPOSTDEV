@@ -84,13 +84,13 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	
 	@Transactional
 	@Modifying
-	@Query("select new com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode,filenameuser) from LSfile where filecode >1 and approved= ?1 or versionno > 1 ORDER BY filecode DESC")
-	public List<LSfile> getsheetGreaterthanoneandapprovel(Integer Approved);
+	@Query("select new com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode,filenameuser) from LSfile where lssitemaster_sitecode=?2 and filecode >1 and approved= ?1 or versionno > 1 ORDER BY filecode DESC")
+	public List<LSfile> getsheetGreaterthanoneandapprovel(Integer Approved,Integer sitecode);
 	
 	@Transactional
 	@Modifying
-	@Query("select new com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode,filenameuser) from LSfile where filecode >1 and approved= ?1 or versionno > 1 and rejected=0 and createby in (?2) ORDER BY filecode DESC")
-	public List<LSfile> getsheetGreaterthanoneandapprovelanduserIn(Integer Approved, List<LSuserMaster> lstusermaster);
+	@Query("select new com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode,filenameuser) from LSfile where lssitemaster_sitecode=?3 and filecode >1 and approved= ?1 or versionno > 1 and rejected=0 and createby in (?2) ORDER BY filecode DESC")
+	public List<LSfile> getsheetGreaterthanoneandapprovelanduserIn(Integer Approved, List<LSuserMaster> lstusermaster,Integer sitecode);
 
 	public List<LSfile> findByFilecodeGreaterThanAndApprovedOrFilecodeGreaterThanAndVersionnoGreaterThanOrderByFilecodeDesc(int filecode, int approved, int orfilecode, int version);
 	
