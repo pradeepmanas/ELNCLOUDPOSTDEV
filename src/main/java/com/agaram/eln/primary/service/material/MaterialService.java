@@ -60,7 +60,7 @@ public class MaterialService {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
 		List<MaterialCategory> lstMaterialCategory = materialCategoryRepository
-				.findByNmaterialtypecodeAndNsitecode(nmaterialtypecode,nsitecode);
+				.findByNmaterialtypecodeAndNsitecodeAndNstatusOrderByNmaterialcatcode(nmaterialtypecode,nsitecode,1);
 
 		objmap.put("MaterialCategoryMain", lstMaterialCategory);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);

@@ -389,8 +389,8 @@ public class DashBoardService {
 			long lstpending = 0;
 			if (lstproject != null && lstproject.size() > 0) {
 				lstpending = lslogilablimsorderdetailRepository
-						.countByOrderflagAndOrdercancellIsNullAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotOrApprovelstatusIsNull(
-								"N", lstproject, fromdate, todate, 3);
+						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNull(
+								"N", lstproject, fromdate, todate);
 				
 				lstpending = lstpending + lslogilablimsorderdetailRepository
 						.countByOrderflagAndFiletypeAndCreatedtimestampBetween(

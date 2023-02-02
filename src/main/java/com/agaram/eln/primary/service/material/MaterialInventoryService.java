@@ -124,10 +124,10 @@ public class MaterialInventoryService {
 		
 		if(nmaterialcatcode != null) {
 			lstMaterialCategory = materialCategoryRepository
-					.findByNmaterialtypecodeAndNmaterialcatcodeAndNsitecodeOrderByNmaterialcatcode(nmaterialtypecode,nmaterialcatcode,nsiteInteger);
+					.findByNmaterialtypecodeAndNmaterialcatcodeAndNsitecodeAndNstatusOrderByNmaterialcatcode(nmaterialtypecode,nmaterialcatcode,nsiteInteger,1);
 		}else {
 			lstMaterialCategory = materialCategoryRepository
-					.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcode(nmaterialtypecode,nsiteInteger);
+					.findByNmaterialtypecodeAndNsitecodeAndNstatusOrderByNmaterialcatcode(nmaterialtypecode,nsiteInteger,1);
 		}
 
 		List<Map<String, Object>> lstMatObject = new ArrayList<Map<String, Object>>();
