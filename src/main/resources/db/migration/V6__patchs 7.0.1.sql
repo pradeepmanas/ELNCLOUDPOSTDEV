@@ -3722,3 +3722,10 @@ INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sall
 
 ALTER TABLE IF Exists material ALTER COLUMN createddate TYPE timestamp without time zone;
 update lsaudittrailconfiguration set modulename='IDS_MDL_SETUP' where modulename='IDS_MDL_PARSER';
+delete from lsusergrouprights where screenname='IDS_SCN_PARSER';
+delete from lsusergrouprightsmaster where screenname='IDS_SCN_PARSER';
+
+update lsusergrouprights set sedit ='1',sdelete='1' where displaytopic='IDS_TSK_FOLDERCREATION' and sedit='NA' and sdelete='NA' and usergroupid_usergroupcode !=1;
+update lsusergrouprights set sedit ='1',sdelete='1' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and sedit='NA' and sdelete='NA' and usergroupid_usergroupcode !=1;
+update lsusergrouprightsmaster set sedit ='0',sdelete='0' where displaytopic='IDS_TSK_FOLDERCREATION' and sedit='NA' and sdelete='NA';
+update lsusergrouprightsmaster set sedit ='0',sdelete='0' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and sedit='NA' and sdelete='NA';

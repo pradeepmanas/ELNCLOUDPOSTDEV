@@ -1996,15 +1996,18 @@ public class ProtocolService {
 
 			if (LsProto.getApproved() == 0 && objClass.getRejected() == null) {
 				Notifiction = "PROTOCOLMOVED";
-			} else if (objClass.getApproved() == 2 && objClass.getRejected() == null
-					|| LsProto.getApproved() == 2 && objClass.getRejected() != 1) {
-				Notifiction = "PROTOCOLRETURNED";
-			} else if (objClass.getApproved() == 1 && objClass.getRejected() == null) {
+			
+			} else if (LsProto.getApproved() == 0 && objClass.getRejected() == null
+					|| objClass.getApproved() == null) {
 				Notifiction = "PROTOCOLAPPROVED";
-			} else if (objClass.getRejected() == 1) {
+				
+			} 
+			else if (objClass.getApproved() == 2 && objClass.getRejected() == null) {
+				Notifiction = "PROTOCOLRETURNED";
+			}else if (objClass.getRejected()!=null && objClass.getRejected() == 1) {
 				Notifiction = "PROTOCOLREJECTED";
 			}
-
+			
 			Details = "{\"ordercode\":\"" + objClass.getProtocolmastercode() + "\", \"order\":\""
 					+ objClass.getProtocolmastername() + "\", \"previousworkflow\":\"" + previousworkflowname
 					+ "\", \"previousworkflowcode\":\"" + perviousworkflowcode + "\", \"currentworkflow\":\""
