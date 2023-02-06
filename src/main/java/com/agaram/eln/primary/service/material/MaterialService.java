@@ -92,12 +92,12 @@ public class MaterialService {
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialByTypeCode(Map<String, Object> inputMap)
 			throws JsonParseException, JsonMappingException, IOException {
-//		final ObjectMapper objmapper = new ObjectMapper();
+		final ObjectMapper objmapper = new ObjectMapper();
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode"); 
 
-//		final Material cft = objmapper.convertValue(inputMap.get("objsilentaudit"), Material.class);
+		final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		final List<Material> lstMaterial = materialRepository.findByNmaterialcatcodeAndNmaterialtypecodeAndNsitecodeAndNstatus(
 				(Integer) inputMap.get("nmaterialcatcode"), (Integer) inputMap.get("nmaterialtypecode"),nsiteInteger, 1);
 
@@ -210,9 +210,9 @@ public class MaterialService {
 				.findByNmaterialtypecodeAndNformcode((Integer) inputMap.get("nmaterialtypecode"), 40);
 		objmap.put("selectedTemplate", lstMaterialConfig);
 		objmap.put("selectedGridProps", lstMaterialConfig.get(0));
-//		if (cft != null) {
-//			objmap.put("objsilentaudit", cft.getObjsilentaudit());
-//		}
+		if (cft != null) {
+			objmap.put("objsilentaudit", cft);
+		}
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
@@ -638,7 +638,7 @@ public class MaterialService {
 	public ResponseEntity<Object> deleteMaterial(Map<String, Object> inputMap)
 			throws JsonParseException, JsonMappingException, IOException {
 
-//		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		final ObjectMapper mapper = new ObjectMapper();
 		int countMaterial = materialRepository.countByNmaterialcodeAndNstatus((Integer) inputMap.get("nmaterialcode"),
 				1);
@@ -649,14 +649,14 @@ public class MaterialService {
 		Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,
 				(Integer) inputMap.get("nmaterialcode"));
 		
-//		final LScfttransaction cft = mapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
+		final LScfttransaction cft = mapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
+		objMaterial.setObjsilentaudit(cft);
 		if (countMaterial != 0) {
 
 			if (countMaterialInvent == 0) {
 
 
 				objMaterial.setNstatus(-1);
-//				objMaterial.setObjsilentaudit(cft);
 				materialRepository.save(objMaterial);
 
 				return getMaterialByTypeCode(inputMap);
