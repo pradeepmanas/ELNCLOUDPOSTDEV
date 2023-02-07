@@ -383,6 +383,24 @@ public class InstrumentController {
 				HttpStatus.OK);
 	}
 	
+	@PostMapping("/sqlparserattachment")
+	public ResponseEntity<InputStreamResource> sqlparserattachment(
+			@RequestBody Method objattachments) throws IllegalStateException, IOException {
+
+		HttpHeaders header = new HttpHeaders();
+		header.set("Content-Disposition", "attachment; filename=" + objattachments.getFilename());
+
+		GridFSDBFile gridFsFile = instrumentService.retrieveLargeFile(objattachments.getInstrawdataurl());
+
+	//	HttpHeaders header = new HttpHeaders();
+		header.setContentType(MediaType.parseMediaType(gridFsFile.getContentType()));
+		header.setContentLength(gridFsFile.getLength());
+		header.set("Content-Disposition", "attachment; filename=gg.pdf");
+
+		return new ResponseEntity<>(new InputStreamResource(gridFsFile.getInputStream()), header, HttpStatus.OK);
+	}
+	
+	
 	@PostMapping("/deleteattachments")
 	public LsOrderattachments deleteattachments(@RequestBody LsOrderattachments objattachments)throws Exception {
 		return instrumentService.deleteattachments(objattachments);

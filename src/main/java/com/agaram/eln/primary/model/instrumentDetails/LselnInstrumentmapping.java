@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -21,6 +23,18 @@ public class LselnInstrumentmapping {
 	
 //	@ManyToOne 
 //	private LSinstruments lsinstruments;
+
+	@ManyToOne
+	@JoinColumn(columnDefinition = "nvarchar(50)")
+	private LsMappedInstruments lsMappedInstruments;
+
+	public LsMappedInstruments getLsMappedInstruments() {
+		return lsMappedInstruments;
+	}
+
+	public void setLsMappedInstruments(LsMappedInstruments lsMappedInstruments) {
+		this.lsMappedInstruments = lsMappedInstruments;
+	}
 
 	public Integer getInstrumentmapcode() {
 		return instrumentmapcode;

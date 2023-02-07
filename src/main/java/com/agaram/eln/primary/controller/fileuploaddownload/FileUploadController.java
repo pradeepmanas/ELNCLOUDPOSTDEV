@@ -101,6 +101,8 @@ public class FileUploadController {
 	//	List<MethodVersion> methodfile = methodversionrepo.findByFilenameAndMethodkey(filename,methodkey);
 		//if(methodfile.isEmpty())
 	//	{
+		final String rawData = fileStorageService.storeimportFile(file,tenant, isMultitenant,originalfilename,version);
+		
 		List<Method> method = new ArrayList<Method>();
 		Method newobj = new Method();
 		MethodVersion obj = new MethodVersion();
@@ -136,8 +138,6 @@ public class FileUploadController {
 		newobj.setMethodversion(metverobj);
 		
 		methodrepo.save(newobj);	
-		
-		final String rawData = fileStorageService.storeimportFile(file,tenant, isMultitenant,originalfilename,version);	
 		
 		return rawData;
 //		}else {

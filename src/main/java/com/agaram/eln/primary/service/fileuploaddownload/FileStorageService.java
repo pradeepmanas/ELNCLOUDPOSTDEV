@@ -123,17 +123,13 @@ public class FileStorageService {
     }
 
 
-    public String storeimportFile(MultipartFile file , String tenant , Integer isMultitenant,String originalfilename,Integer version) throws IOException {
+public String storeimportFile(MultipartFile file , String tenant , Integer isMultitenant,String originalfilename,Integer version) throws IOException {
         
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
     	final String rawData;
-      //  try {
-            // Check if the file's name contains invalid characters
-//            if(fileName.contains("..")) {
-//                throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
-//            }
+
             String id = null;
-          
+          if(isMultitenant == 1) {
     		try {
     			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "parserfile");
     		} catch (IOException e) {
@@ -149,13 +145,15 @@ public class FileStorageService {
     		objfile.setVersion(version);
 
     		cloudparserfilerepository.save(objfile);
-          
+          }else {
+        	  storeSQLFile(file,tenant,isMultitenant,originalfilename) ;
+          }
     		//return methodService.getFileData(fileName, tenant);
-//    		if(isMultitenant == 1) {
+    		if(isMultitenant == 1) {
     		rawData =  methodservice.getFileData(fileName,tenant);
-//    		}
-//    		else {
-//    		rawData =  methodservice.getSQLImportFileData(fileName);}
+    		}
+    		else {
+    		rawData =  methodservice.getSQLFileData(fileName);}
     		
           return rawData;
       

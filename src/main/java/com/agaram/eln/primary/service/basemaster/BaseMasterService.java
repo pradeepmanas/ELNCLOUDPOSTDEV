@@ -44,6 +44,8 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsReposito
 //import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsMappedFieldsRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsMappedInstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstfieldmappingRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstrumentfieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstrumentmappingRepository;
@@ -134,6 +136,13 @@ public class BaseMasterService {
 	@Autowired
 	private LSinstrumentsRepository lSinstrumentsRepository;
 
+	@Autowired
+	private LsMappedInstrumentsRepository lsMappedInstrumentsRepository;
+	
+	@Autowired
+	private LsMappedFieldsRepository lsMappedFieldsRepository;
+
+	
 	@SuppressWarnings("unused")
 	private String ModuleName = "Base Master";
 
@@ -460,8 +469,8 @@ public class BaseMasterService {
 //		obj.put("elninstrument",lselninstrumentmasterRepository.findBystatusOrderByInstrumentcodeDesc(1));
 		obj.put("elninstrument", lselninstrumentmasterRepository
 				.findBylssitemasterAndStatusOrderByInstrumentcodeDesc(objClass.getLssitemaster(), 1));
-		obj.put("instrument", lSinstrumentsRepository.findAll());
-		obj.put("instrumentfields", lsMethodFieldsRepository.findByinstrumentidNotIn(lsInst));
+		obj.put("instrument", lsMappedInstrumentsRepository.findAll());
+		obj.put("instrumentfields", lsMappedFieldsRepository.findBysInstrumentIDNotIn(lsInst));
 
 //		silent audit
 		if (objClass.getObjsilentaudit() != null) {

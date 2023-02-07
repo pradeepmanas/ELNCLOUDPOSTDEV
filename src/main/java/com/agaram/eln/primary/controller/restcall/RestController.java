@@ -55,4 +55,8 @@ public class RestController {
 		return restService.syncLimsMasters(objMap);
 	}
 
+	@RequestMapping("/SDMSMappedInstrumentsSync")
+	public String ImportSDMSTest(@RequestBody Map<String, Object> objMap) throws Exception {
+		return restService.ImportSDMSTest(objMap);
+	}
 }

@@ -18,6 +18,8 @@ import com.agaram.eln.primary.model.general.Response;
 //import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.instrumentDetails.LsMappedFields;
+import com.agaram.eln.primary.model.instrumentDetails.LsMappedInstruments;
 import com.agaram.eln.primary.model.instrumentDetails.Lsbatchdetails;
 import com.agaram.eln.primary.model.inventory.LSinstrument;
 import com.agaram.eln.primary.model.inventory.LSinstrumentcategory;
@@ -39,6 +41,8 @@ import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 //import com.agaram.eln.primary.repository.instrumentDetails.LSlimsorderRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsMappedFieldsRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsMappedInstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsbatchdetailsRepository;
 import com.agaram.eln.primary.repository.inventory.LSinstrumentRepository;
 import com.agaram.eln.primary.repository.inventory.LSinstrumentcategoryRepository;
@@ -104,6 +108,10 @@ public class RestService {
 	private LScfttransactionRepository lscfttransactionRepository;
 	@Autowired
 	private LsbatchdetailsRepository LsbatchdetailsRepository;
+	@Autowired
+	private LsMappedInstrumentsRepository lsMappedInstrumentsRepository;
+	@Autowired
+	private LsMappedFieldsRepository lsMappedFieldsRepository;
 	
 	@Autowired
 	private Environment env;
@@ -1318,6 +1326,66 @@ public class RestService {
     	res.setStatus(false);
     	
     	return res;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String ImportSDMSTest(Map<String, Object> objMap) throws Exception {
+		
+		ObjectMapper mapper = new ObjectMapper();
+		
+		String result = "";
+		
+		String getInst=sdmsService("basemaster/getInstrumentList");
+		Map<String, Object> mapInstObj = mapper.readValue(getInst,new TypeReference<Map<String, Object>>() {});
+		List<LsMappedInstruments> instrumentLst = mapper.convertValue(mapInstObj.get("InstrumentList"),new TypeReference<List<LsMappedInstruments>>() {});
+//		List<LsMappedInstruments> instrumentLst = (List<LsMappedInstruments>) new ObjectMapper().readValue(getInst, Map.class).get("InstrumentList");
+		
+		String getFields=sdmsService("ftpviewdata/getMasterFieldsByMethod");
+		List<LsMappedFields> fieldsLst = (List<LsMappedFields>) new ObjectMapper().readValue(getFields, new TypeReference<List<LsMappedFields>>() {});
+//		List<LsMappedFields> mapParam = mapper.readValue(getFields,new TypeReference<List<LsMappedFields>>() {});
+	    
+		boolean bool;
+		
+		try {
+			if(!instrumentLst.isEmpty()) {
+				lsMappedInstrumentsRepository.deleteAll();
+				lsMappedInstrumentsRepository.save(instrumentLst);
+			}
+
+			if(!fieldsLst.isEmpty()) {
+				lsMappedFieldsRepository.deleteAll();
+				lsMappedFieldsRepository.save(fieldsLst);
+			}
+			
+			bool=true;
+		}
+		catch (Exception e) {
+			bool=false;
+			e.getMessage();
+		}
+		
+	    
+	    if(bool) {
+	    	result="Success";
+	    }
+	    else {
+	    	result="Failure";
+	    }
+		return result;
+	}
+	
+	public String sdmsService(String Service) {
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		final String url = env.getProperty("sdms.template.service.url")+Service;
+
+	    RestTemplate restTemplate = new RestTemplate();
+	    restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+	    
+	    String result = restTemplate.postForObject(url, map, String.class);
+	    
+	    return result;
 	}
 	
 	public boolean CheckLIMS() throws Exception {

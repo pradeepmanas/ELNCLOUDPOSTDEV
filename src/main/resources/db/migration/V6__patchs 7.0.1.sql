@@ -3729,3 +3729,47 @@ update lsusergrouprights set sedit ='1',sdelete='1' where displaytopic='IDS_TSK_
 update lsusergrouprights set sedit ='1',sdelete='1' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and sedit='NA' and sdelete='NA' and usergroupid_usergroupcode !=1;
 update lsusergrouprightsmaster set sedit ='0',sdelete='0' where displaytopic='IDS_TSK_FOLDERCREATION' and sedit='NA' and sdelete='NA';
 update lsusergrouprightsmaster set sedit ='0',sdelete='0' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and sedit='NA' and sdelete='NA';
+
+CREATE TABLE IF NOT EXISTS public.lsmappedinstruments
+(
+    sinstrumentid character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    ncommunicationtype integer,
+    ninstrumentstatus integer,
+    ninterfacestatus integer,
+    nparsertype integer,
+    sinstrumentaliasname character varying(50) COLLATE pg_catalog."default",
+    sinstrumentmake character varying(50) COLLATE pg_catalog."default",
+    sinstrumentmodel character varying(50) COLLATE pg_catalog."default",
+    sinstrumentname character varying(50) COLLATE pg_catalog."default",
+    slocktype character varying(50) COLLATE pg_catalog."default",
+    CONSTRAINT lsmappedinstruments_pkey PRIMARY KEY (sinstrumentid)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsmappedinstruments
+    OWNER to postgres;
+    
+CREATE TABLE IF NOT EXISTS public.lsmappedfields
+(
+    sfieldkey character varying(12) COLLATE pg_catalog."default" NOT NULL,
+    sdatatype character varying(12) COLLATE pg_catalog."default",
+    selnfieldname character varying(30) COLLATE pg_catalog."default",
+    sfieldname character varying(30) COLLATE pg_catalog."default",
+    sfieldtype character varying(30) COLLATE pg_catalog."default",
+    sformat character varying(25) COLLATE pg_catalog."default",
+    sinstrumentid character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    slimsfieldname character varying(30) COLLATE pg_catalog."default",
+    smethodname character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    sparsername character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT lsmappedfields_pkey PRIMARY KEY (sfieldkey)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.lsmappedfields
+    OWNER to postgres;

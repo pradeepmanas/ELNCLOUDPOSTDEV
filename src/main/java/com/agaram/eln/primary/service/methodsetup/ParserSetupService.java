@@ -290,7 +290,7 @@ public class ParserSetupService {
 					}
 					else
 					{
-						rawDataText = methodService.getSQLFileData(method.getInstrawdataurl());
+						rawDataText = methodService.getSQLFileData(instrawdataurl);
 					}
 				}
 				else {

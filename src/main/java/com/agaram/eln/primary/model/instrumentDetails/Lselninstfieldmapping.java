@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -23,6 +25,10 @@ public class Lselninstfieldmapping {
 //	@ManyToOne 
 //	private LsMethodFields lsMethodFields;
 
+	@ManyToOne
+	@JoinColumn(columnDefinition = "nvarchar(12)")
+	private LsMappedFields lsMappedFields;
+	
 	public Integer getInstfieldmapcode() {
 		return instfieldmapcode;
 	}
@@ -37,6 +43,14 @@ public class Lselninstfieldmapping {
 
 	public void setFieldcode(Integer fieldcode) {
 		this.fieldcode = fieldcode;
+	}
+
+	public LsMappedFields getLsMappedFields() {
+		return lsMappedFields;
+	}
+
+	public void setLsMappedFields(LsMappedFields lsMappedFields) {
+		this.lsMappedFields = lsMappedFields;
 	}
 
 //	public LsMethodFields getLsMethodFields() {
