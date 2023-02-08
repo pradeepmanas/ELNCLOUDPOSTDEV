@@ -229,6 +229,12 @@ public class UserController {
 		return userService.GetUserTeam(LSuserMaster);
 	}
 	
+	@PostMapping("/GetActiveUserTeam")
+	public List<LSusersteam> GetActiveUserTeam(@RequestBody LSuserMaster LSuserMaster)throws Exception
+	{
+		return userService.GetActiveUserTeam(LSuserMaster);
+	}
+	
 	@PostMapping("/GetUserTeamonSitevise")
 	public  Map<String,Object> GetUserTeamonSitevise(@RequestBody LSSiteMaster objclass)throws Exception
 	{

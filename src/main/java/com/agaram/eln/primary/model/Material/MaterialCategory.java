@@ -13,6 +13,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.general.Response;
 
 @Entity
 @Table(name = "materialcategory")
@@ -68,6 +69,24 @@ public class MaterialCategory implements Serializable{
 	
 	@Transient
 	private LScfttransaction objmanualaudit;
+	
+	@Transient
+	private Response response;
+	
+	public Response getResponse() {
+		return response;
+	}
+	public void setResponse(Response response) {
+		this.response = response;
+	}
+	
+	public String getDisplaystatus() {
+		return displaystatus;
+	}
+	public void setDisplaystatus(String displaystatus) {
+		this.displaystatus = displaystatus;
+	}
+	private transient String displaystatus;
 	
 	@ColumnDefault("1")
 	@Column(name = "nstatus", nullable = false)

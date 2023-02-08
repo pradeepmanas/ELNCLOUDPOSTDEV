@@ -28,6 +28,14 @@ public interface SampleStorageLocationRepository extends JpaRepository<SampleSto
 
 	public SampleStorageLocation findBySamplestoragelocationnameAndStatusAndSitekey(String samplestoragelocationname,
 			int i, Integer sitekey);
+
+	public List<SampleStorageLocation> findBySitekeyOrderBySamplestoragelocationkeyDesc(Integer nsiteInteger);
+
+	public SampleStorageLocation findBySamplestoragelocationnameAndSitekey(String samplestoragelocationname,
+			Integer sitekey);
+
+	public Optional<SampleStorageLocation> findBySitekeyAndSamplestoragelocationkey(Integer sitekey,
+			Integer samplestoragelocationkey);
 	
 //	List<SampleStorageLocation> findByStatusAndApprovalstatus(final int Status, final int Approvalstatus,final Sort sort);	
 }

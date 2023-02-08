@@ -72,6 +72,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LSresultdetails;
 import com.agaram.eln.primary.model.instrumentDetails.LSsheetfolderfiles;
+import com.agaram.eln.primary.model.instrumentDetails.LsMappedInstruments;
 import com.agaram.eln.primary.model.instrumentDetails.LsMethodFields;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
@@ -130,6 +131,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdet
 import com.agaram.eln.primary.repository.instrumentDetails.LSprotocolfolderfilesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSresultdetailsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSsheetfolderfilesRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsMappedInstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository.UserProjection;
@@ -384,6 +386,8 @@ public class InstrumentService {
 	@Autowired
 	private LsbatchdetailsRepository LsbatchdetailsRepository;
 	
+	@Autowired
+	private LsMappedInstrumentsRepository lsMappedInstrumentsRepository;
 
 
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
@@ -475,7 +479,7 @@ public class InstrumentService {
 				
 		if (lssiteMaster.getIsmultitenant() != 1) {
 			List<LSfields> Generalfields = lSfieldsRepository.findByisactive(1);
-			List<LSinstruments> Instruments = lSinstrumentsRepository.findAll();
+			List<LsMappedInstruments> Instruments = lsMappedInstrumentsRepository.findAll();
 			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findAll();
 			List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
 			List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();

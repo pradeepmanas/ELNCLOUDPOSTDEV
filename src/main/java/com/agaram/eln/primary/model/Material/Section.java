@@ -9,6 +9,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.general.Response;
 
 @Entity
 @Table(name = "section")
@@ -36,11 +37,41 @@ public class Section {
 	@Transient
 	private LScfttransaction objsilentaudit;
 	
+	private transient String sdisplaystatus;
+	
+	@Transient
+	private String displaystatus;
+
 	@Transient
 	public String info;
 	
 	@Transient
 	private LScfttransaction objmanualaudit;
+	
+	@Transient
+	private Response response;
+	
+	public String getDisplaystatus() {
+		return displaystatus;
+	}
+	public void setDisplaystatus(String displaystatus) {
+		this.displaystatus = displaystatus;
+	}
+	
+	public Response getResponse() {
+		return response;
+	}
+	public void setResponse(Response response) {
+		this.response = response;
+	}
+	
+	public String getSdisplaystatus() {
+		return sdisplaystatus;
+	}
+
+	public void setSdisplaystatus(String sdisplaystatus) {
+		this.sdisplaystatus = sdisplaystatus;
+	}
 	
 	public Integer getNsectioncode() {
 		return nsectioncode;

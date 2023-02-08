@@ -363,7 +363,7 @@ public class MaterialService {
 		boolean nflag = false;
 
 		final Material ObjMatNamecheck = materialRepository
-				.findBySmaterialnameAndNmaterialtypecodeAndNstatus((String) jsonObject.get("Material Name"),(Integer) jsonObject.get("nmaterialtypecode"), 1);
+				.findBySmaterialnameAndNmaterialtypecodeAndNstatusAndNsitecode((String) jsonObject.get("Material Name"),(Integer) jsonObject.get("nmaterialtypecode"), 1,nsiteInteger);
 
 		if (ObjMatNamecheck == null) {
 

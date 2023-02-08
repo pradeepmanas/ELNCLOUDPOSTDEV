@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.service.usermanagement;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -629,6 +628,10 @@ public class UserService {
 			// lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(),
 			// 1);
 		}
+	}
+	
+	public List<LSusersteam> GetActiveUserTeam(LSuserMaster LSuserMaster) {
+		return lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(), 1);
 	}
 
 	public Map<String, Object> GetUserTeamonSitevise(LSSiteMaster objclass) {

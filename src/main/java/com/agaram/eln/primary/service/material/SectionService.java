@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.global.Enumeration;
+import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.Section;
 //import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.repository.material.SectionRepository;
@@ -19,27 +20,26 @@ public class SectionService {
 	SectionRepository sectionRepository;
 
 	public ResponseEntity<Object> getSection(Integer nsiteInteger) {
-		List<Section> lstSection = sectionRepository.findByNstatusAndNsitecodeOrderByNsectioncodeDesc(1,nsiteInteger);
+		List<Section> lstSection = sectionRepository.findByNsitecodeOrderByNsectioncodeDesc(nsiteInteger);
 
 		return new ResponseEntity<>(lstSection, HttpStatus.OK);
 	}
 
 	public ResponseEntity<Object> createSection(Section section) {
-		final Section sectionObjByName = sectionRepository.findBySsectionnameAndNstatusAndNsitecode(section.getSsectionname(), 1,section.getNsitecode());
-
+		section.setResponse(new Response());
+		final Section sectionObjByName = sectionRepository.findBySsectionnameAndNsitecode(section.getSsectionname(),section.getNsitecode());
 		if (sectionObjByName == null && section.getNsectioncode() == null) {
 			section.setNdefaultstatus(1);
 			section.setNsitecode(section.getNsitecode());
 			section.setNstatus(1);
-
 			sectionRepository.save(section);
-
-			return getSection(section.getNsitecode());
+			section.getResponse().setStatus(true);
+			section.getResponse().setInformation("IDS_SUCCESS");
+			return new ResponseEntity<>(section, HttpStatus.OK);
 		} else {
-
-			section.setInfo("Duplicate Entry:  Section - " + section.getSsectionname());
-			return new ResponseEntity<>(section, HttpStatus.CONFLICT);
-
+			section.getResponse().setStatus(false);
+			section.getResponse().setInformation("IDS_ALREADYEXIST");
+			return new ResponseEntity<>(section, HttpStatus.OK);
 		}
 	}
 
@@ -49,42 +49,38 @@ public class SectionService {
 	}
 
 	public ResponseEntity<Object> updateSection(Section section) {
+		section.setResponse(new Response());
 		final Section objSetion = getActiveSectionById(section.getNsectioncode());
-
-		final Section unitobj = sectionRepository.findByNsectioncodeAndNstatus(section.getNsectioncode(), 1);
+		final Section sectionobj = sectionRepository.findByNsectioncode(section.getNsectioncode());
 		if (objSetion == null) {
-			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYDELETED.getreturnstatus(),
-					HttpStatus.EXPECTATION_FAILED);
+			sectionobj.getResponse().setStatus(false);
+			sectionobj.getResponse().setInformation("IDS_ALREADYDELETED");
+			return new ResponseEntity<>(sectionobj, HttpStatus.OK);
 		} else {
-
-			final Section objSetion1 = sectionRepository.findBySsectionnameAndNstatusAndNsitecode(section.getSsectionname(), 1,section.getNsitecode());
-
+			final Section objSetion1 = sectionRepository.findBySsectionnameAndNsitecode(section.getSsectionname(),section.getNsitecode());
 			if (objSetion1 == null || (objSetion.getNsectioncode() == section.getNsectioncode())) {
-				unitobj.setObjsilentaudit(section.getObjsilentaudit());
 				sectionRepository.save(section);
-				return getSection(section.getNsitecode());
+				section.setObjsilentaudit(section.getObjsilentaudit());
+				section.getResponse().setStatus(true);
+				section.getResponse().setInformation("IDS_SUCCESS");
+				return new ResponseEntity<>(section, HttpStatus.OK);
 			} else {
-				section.setInfo("Duplicate Entry:  Section - " + section.getSsectionname());
-				return new ResponseEntity<>(section,
-						HttpStatus.CONFLICT);
+				section.getResponse().setStatus(false);
+				section.getResponse().setInformation("IDS_ALREADYEXIST");
+				return new ResponseEntity<>(section, HttpStatus.OK);
 			}
-
 		}
 	}
 
 	public ResponseEntity<Object> deleteSection(Section section) {
 		final Section objSetion = getActiveSectionById(section.getNsectioncode());
-
 		if (objSetion == null) {
-
 			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYDELETED.getreturnstatus(),
 					HttpStatus.EXPECTATION_FAILED);
 		} else {
-
 			objSetion.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
 			sectionRepository.save(objSetion);
 			return getSection(section.getNsitecode());
-
 		}
 	}
 

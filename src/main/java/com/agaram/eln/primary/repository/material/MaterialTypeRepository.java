@@ -15,4 +15,5 @@ public interface MaterialTypeRepository extends JpaRepository<MaterialType, Inte
 	public List<MaterialType> findByNstatusOrderByNmaterialtypecode(int i);
 	public List<MaterialType> findAllByOrderByNmaterialtypecode();
 	public List<MaterialType> findByNmaterialtypecodeNotAndNstatusOrderByNmaterialtypecode(int i, int j);
+	public List<MaterialType> findByNstatusAndNmaterialtypecodeNotOrderByNmaterialtypecode(int i, int j);
 } 

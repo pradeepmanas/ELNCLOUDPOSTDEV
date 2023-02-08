@@ -61,8 +61,7 @@ public class SampleStorageLocationController {
 		final SampleStorageVersion sampleStorageVersion = mapper.convertValue(mapObject.get("samplestorageversion"),
 				SampleStorageVersion.class);
 
-		final LScfttransaction Auditobj = mapper.convertValue(mapObject.get("objsilentaudit"),
-				LScfttransaction.class);
+		final LScfttransaction Auditobj = mapper.convertValue(mapObject.get("objsilentaudit"),LScfttransaction.class);
 		return sampleStorageLocationService.deleteSampleStorageLocation(sampleStorageVersion,Auditobj);
 	}
 	

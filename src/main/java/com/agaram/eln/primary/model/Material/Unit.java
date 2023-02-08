@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.general.Response;
 
 @Entity
 @Table(name = "unit")
@@ -35,6 +36,23 @@ public class Unit {
 	
 	@Transient
 	public String info;
+	
+	@Transient
+	private Response response;
+	
+	public Response getResponse() {
+		return response;
+	}
+	public void setResponse(Response response) {
+		this.response = response;
+	}
+	public String getDisplaystatus() {
+		return displaystatus;
+	}
+	public void setDisplaystatus(String displaystatus) {
+		this.displaystatus = displaystatus;
+	}
+	private transient String displaystatus;
 	
 	@Transient
 	private LScfttransaction objmanualaudit;

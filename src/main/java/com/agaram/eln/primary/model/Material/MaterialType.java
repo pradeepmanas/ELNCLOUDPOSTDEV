@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
@@ -35,6 +36,9 @@ public class MaterialType implements Serializable {
 
 	@ColumnDefault("1")
 	@Column(name = "nstatus", nullable = false)	private Integer nstatus = 1;
+	
+	@Transient
+	private String displaystatus;
 
 	private transient String smaterialtypename;
 	private transient String sdescription;
