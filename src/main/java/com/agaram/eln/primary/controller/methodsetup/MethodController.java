@@ -45,9 +45,18 @@ public class MethodController {
 	@PostMapping(value = "/getMethod")
 	public ResponseEntity<Object> getActiveMethodBySite(@Valid @RequestBody Map<String, Object> mapObject)
 			throws Exception {
+
 		final ObjectMapper mapper = new ObjectMapper();
-		final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
+		Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
+		if (obj == null) {
+		final LSSiteMaster site = mapper.convertValue(mapObject.get("sitecode"), LSSiteMaster.class);
 		return methodService.getActiveMethodBySite(site);
+		}else {
+			final Integer site = (Integer) obj.get("sitecode");
+			LSSiteMaster siteobj = new LSSiteMaster();
+			siteobj.setSitecode(site);
+			return methodService.getActiveMethodBySite(siteobj);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

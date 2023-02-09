@@ -68,10 +68,9 @@ import com.microsoft.azure.storage.blob.CloudBlockBlob;
 @EnableJpaRepositories(basePackageClasses = LsrepositoriesRepository.class)
 public class MasterService {
 
-
 	@Autowired
 	private LsrepositoriesRepository lsrepositoriesRepository;
-	
+
 	@Autowired
 	private LslogbooksRepository lslogbooksRepository;
 
@@ -101,10 +100,10 @@ public class MasterService {
 
 	@Autowired
 	private LSprotocolordersampleupdatesRepository LSprotocolordersampleupdatesRepository;
-	
+
 	@Autowired
 	private LslogbooksdataRepository lslogbooksdataRepository;
-	
+
 	@Autowired
 	private LSlogbooksampleupdatesRepository LSlogbooksampleupdatesRepository;
 
@@ -141,22 +140,23 @@ public class MasterService {
 		}
 
 		lsrepositories.setObjResponse(objResponse);
-		
+
 		objResponse = null;
 		return lsrepositories;
 	}
 
 	public List<Lsrepositoriesdata> Getallrepositoriesdata(Lsrepositoriesdata lsrepositoriesdata) {
 //		if(lsrepositoriesdata.getItemstatus()!=null) {
-			List<Lsrepositoriesdata> reposotorydata = lsrepositoriesdataRepository.findByRepositorycodeAndSitecodeAndItemstatusOrderByRepositorydatacodeDesc(
-					lsrepositoriesdata.getRepositorycode(), lsrepositoriesdata.getSitecode(),1);
-			reposotorydata.forEach(objorderDetail -> objorderDetail.setSatus(""));
-			return reposotorydata;
+		List<Lsrepositoriesdata> reposotorydata = lsrepositoriesdataRepository
+				.findByRepositorycodeAndSitecodeOrderByRepositorydatacodeDesc(lsrepositoriesdata.getRepositorycode(),
+						lsrepositoriesdata.getSitecode());
+		reposotorydata.forEach(objorderDetail -> objorderDetail.setSatus(""));
+		return reposotorydata;
 //		}else {
 //			return lsrepositoriesdataRepository.findByRepositorycodeAndSitecodeAndItemstatusOrderByRepositorydatacodeDesc(
 //					lsrepositoriesdata.getRepositorycode(), lsrepositoriesdata.getSitecode(), 1);
 //		}
-	
+
 	}
 
 	public Lsrepositoriesdata Saverepositorydata(Lsrepositoriesdata lsrepositoriesdata) {
@@ -168,11 +168,13 @@ public class MasterService {
 			lsrepodata = lsrepositoriesdataRepository
 					.findByRepositorycodeAndRepositoryitemnameAndSitecodeAndRepositorydatacodeAndInventoryidNot(
 							lsrepositoriesdata.getRepositorycode(), lsrepositoriesdata.getRepositoryitemname(),
-							lsrepositoriesdata.getSitecode(), lsrepositoriesdata.getRepositorydatacode(),lsrepositoriesdata.getInventoryid());
+							lsrepositoriesdata.getSitecode(), lsrepositoriesdata.getRepositorydatacode(),
+							lsrepositoriesdata.getInventoryid());
 		} else {
-			lsrepodata = lsrepositoriesdataRepository.findByRepositorycodeAndRepositoryitemnameAndSitecodeAndInventoryid(
-					lsrepositoriesdata.getRepositorycode(), lsrepositoriesdata.getRepositoryitemname(),
-					lsrepositoriesdata.getSitecode(),lsrepositoriesdata.getInventoryid());
+			lsrepodata = lsrepositoriesdataRepository
+					.findByRepositorycodeAndRepositoryitemnameAndSitecodeAndInventoryid(
+							lsrepositoriesdata.getRepositorycode(), lsrepositoriesdata.getRepositoryitemname(),
+							lsrepositoriesdata.getSitecode(), lsrepositoriesdata.getInventoryid());
 
 		}
 
@@ -197,10 +199,20 @@ public class MasterService {
 	}
 
 	public Lsrepositoriesdata DeleteRepositorydata(Lsrepositoriesdata lsrepositoriesdata) {
-		lsrepositoriesdata = lsrepositoriesdataRepository.findOne(lsrepositoriesdata.getRepositorydatacode());
-		lsrepositoriesdata.setItemstatus(0);
-		lsrepositoriesdataRepository.save(lsrepositoriesdata);
-		lsrepositoriesdata.setSatus("");
+		Response response = new Response();
+
+		long onprocess = lslogilablimsorderdetailRepository.countByLsrepositoriesdataAndOrderflag(lsrepositoriesdata, "N");
+		if (onprocess > 0) {
+			response.setStatus(false);
+
+		} else {
+			lsrepositoriesdata = lsrepositoriesdataRepository.findOne(lsrepositoriesdata.getRepositorydatacode());
+			lsrepositoriesdata.setItemstatus(0);
+			lsrepositoriesdataRepository.save(lsrepositoriesdata);
+			lsrepositoriesdata.setSatus("");
+			response.setStatus(true);
+		}
+		lsrepositoriesdata.setObjResponse(response);
 		return lsrepositoriesdata;
 	}
 
@@ -214,13 +226,14 @@ public class MasterService {
 
 		List<LSprotocolsampleupdates> lsprotocolsampleupdates = lsprotocolsampleupdatesRepository
 				.findByRepositorydatacodeAndUsedquantityNotAndStatusOrderByProtocolsamplecodeDesc(
-					 lsordersamplUpdate.getRepositorydatacode(), 0, 1);
+						lsordersamplUpdate.getRepositorydatacode(), 0, 1);
 		List<LSprotocolordersampleupdates> lsprotocolordersampleupdates = LSprotocolordersampleupdatesRepository
 				.findByRepositorydatacodeAndUsedquantityNotAndStatusOrderByProtocolsamplecodeDesc(
-						 lsordersamplUpdate.getRepositorydatacode(), 0, 1);
-		List<LSlogbooksampleupdates> lslogbooksampleupdates = LSlogbooksampleupdatesRepository.findByRepositorydatacodeAndUsedquantityNotAndStatusOrderByLogbooksamplecodeDesc(
-				lsordersamplUpdate.getRepositorydatacode(),0,1);
-		
+						lsordersamplUpdate.getRepositorydatacode(), 0, 1);
+		List<LSlogbooksampleupdates> lslogbooksampleupdates = LSlogbooksampleupdatesRepository
+				.findByRepositorydatacodeAndUsedquantityNotAndStatusOrderByLogbooksamplecodeDesc(
+						lsordersamplUpdate.getRepositorydatacode(), 0, 1);
+
 //		obj.put("lsordersamplUpdateobj", lsordersamplUpdateobj);
 //		obj.put("lsprotocolsampleupdates", lsprotocolsampleupdates);
 //		obj.put("lsprotocolordersampleupdates", lsprotocolordersampleupdates);
@@ -228,8 +241,7 @@ public class MasterService {
 		obj1.addAll(lsprotocolordersampleupdates);
 		obj1.addAll(lsprotocolsampleupdates);
 		obj1.addAll(lslogbooksampleupdates);
-		
-		
+
 		return obj1;
 
 	}
@@ -272,7 +284,7 @@ public class MasterService {
 					objnotify.setRepositorycode(lsrepositoriesdata.get(i).getRepositorycode());
 					objnotify.setRepositorydatacode(lsrepositoriesdata.get(i).getRepositorydatacode());
 					objnotify.setNotificationfor(1);
-					
+
 					lstnotifications.add(objnotify);
 				}
 
@@ -286,7 +298,7 @@ public class MasterService {
 		}
 
 		catch (Exception e) {
-		
+
 		}
 		return null;
 	}
@@ -494,18 +506,17 @@ public class MasterService {
 		}
 		return null;
 	}
-	
+
 	public List<Lslogbooks> Getalllogbooks(Lslogbooks lslogbooks) {
 		return lslogbooksRepository.findBySitecodeOrderByLogbookcodeAsc(lslogbooks.getSitecode());
 	}
-	
+
 	public Lslogbooks Savelogbook(Lslogbooks lslogbooks) {
 		Response objResponse = new Response();
 		Lslogbooks objrepo = null;
 		if (lslogbooks.getLogbookcode() != null) {
-			objrepo = lslogbooksRepository.findByLogbooknameAndSitecodeAndLogbookcodeNot(
-					lslogbooks.getLogbookname(), lslogbooks.getSitecode(),
-					lslogbooks.getLogbookcode());
+			objrepo = lslogbooksRepository.findByLogbooknameAndSitecodeAndLogbookcodeNot(lslogbooks.getLogbookname(),
+					lslogbooks.getSitecode(), lslogbooks.getLogbookcode());
 		} else {
 			objrepo = lslogbooksRepository.findByLogbooknameAndSitecode(lslogbooks.getLogbookname(),
 					lslogbooks.getSitecode());
@@ -521,22 +532,22 @@ public class MasterService {
 		String logbookid = "LB" + lslogbooks.getLogbookcode();
 		lslogbooks.setLogbookid(logbookid);
 		if (objrepo == null) {
-		lslogbooksRepository.save(lslogbooks);
+			lslogbooksRepository.save(lslogbooks);
 		}
 		lslogbooks.setObjResponse(objResponse);
 		return lslogbooks;
 	}
-	
+
 	public List<Lslogbooksdata> Getalllogbookdata(Lslogbooksdata lslogbooksdata) {
 		return lslogbooksdataRepository.findByLogbookcodeAndSitecodeOrderByLogbookdatacodeDesc(
 				lslogbooksdata.getLogbookcode(), lslogbooksdata.getSitecode());
 	}
-	
+
 	public Lslogbooksdata GetupdatedLogbookdata(Lslogbooksdata lslogbooksdata) {
 		lslogbooksdata = lslogbooksdataRepository.findOne(lslogbooksdata.getLogbookdatacode());
 		return lslogbooksdata;
 	}
-	
+
 	public Lslogbooksdata DeleteLogbookdata(Lslogbooksdata lslogbooksdata) {
 		lslogbooksdata = lslogbooksdataRepository.findOne(lslogbooksdata.getLogbookdatacode());
 		lslogbooksdata.setItemstatus(0);
@@ -545,21 +556,19 @@ public class MasterService {
 
 		return lslogbooksdata;
 	}
-	
+
 	public Lslogbooksdata Savelogbookdata(Lslogbooksdata lslogbooksdata) {
 		Response objResponse = new Response();
 		@SuppressWarnings("unused")
 		Lslogbooksdata lsrepodata = null;
 
 		if (lslogbooksdata.getLogbookdatacode() != null) {
-			lsrepodata = lslogbooksdataRepository
-					.findByLogbookcodeAndLogbookitemnameAndSitecodeAndLogbookdatacodeNot(
-							lslogbooksdata.getLogbookcode(), lslogbooksdata.getLogbookitemname(),
-							lslogbooksdata.getSitecode(), lslogbooksdata.getLogbookdatacode());
+			lsrepodata = lslogbooksdataRepository.findByLogbookcodeAndLogbookitemnameAndSitecodeAndLogbookdatacodeNot(
+					lslogbooksdata.getLogbookcode(), lslogbooksdata.getLogbookitemname(), lslogbooksdata.getSitecode(),
+					lslogbooksdata.getLogbookdatacode());
 		} else {
 			lsrepodata = lslogbooksdataRepository.findByLogbookcodeAndLogbookitemnameAndSitecode(
-					lslogbooksdata.getLogbookcode(), lslogbooksdata.getLogbookitemname(),
-					lslogbooksdata.getSitecode());
+					lslogbooksdata.getLogbookcode(), lslogbooksdata.getLogbookitemname(), lslogbooksdata.getSitecode());
 
 		}
 
@@ -569,13 +578,14 @@ public class MasterService {
 		lslogbooksdata.setObjResponse(objResponse);
 		return lslogbooksdata;
 	}
+
 	public List<Lslogbooks> Reviewlogbook(Lslogbooks[] objreview1) {
 
 		List<Lslogbooks> objreview = Arrays.asList(objreview1);
 		lslogbooksRepository.save(objreview);
 		return objreview;
 	}
-	
+
 	public List<Lslogbooks> Retirelogbook(Lslogbooks[] objreview1) {
 
 		List<Lslogbooks> objreview = Arrays.asList(objreview1);
@@ -583,17 +593,15 @@ public class MasterService {
 		return objreview;
 	}
 
-
 	public List<Lslogbooks> GetalllogbooksOnSite(Lslogbooks lslogbooks) {
 		List<Lslogbooks> objreview = Arrays.asList(lslogbooks);
-		if(objreview.get(0).getSitecode() == 0) {
-			objreview= lslogbooksRepository.findAll();
-		}else {
-			objreview= lslogbooksRepository.findBySitecodeOrderByLogbookcodeDesc(objreview.get(0).getSitecode());	
+		if (objreview.get(0).getSitecode() == 0) {
+			objreview = lslogbooksRepository.findAll();
+		} else {
+			objreview = lslogbooksRepository.findBySitecodeOrderByLogbookcodeDesc(objreview.get(0).getSitecode());
 		}
-		
+
 		return objreview;
 	}
-
 
 }

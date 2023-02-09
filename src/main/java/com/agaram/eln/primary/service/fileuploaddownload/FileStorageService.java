@@ -220,35 +220,7 @@ public String storeimportFile(MultipartFile file , String tenant , Integer isMul
 			if (largefile != null) {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
-			
-			if(ext.equals("pdf")) {
-		       String parsedText = "";
-		       PDFParser parser = null;
-		       PDDocument pdDoc = null;
-		       COSDocument cosDoc = null;
-		       PDFTextStripper pdfStripper;
-
-		   
-		    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(file.getInputStream());
-		        parser = new PDFParser(raFile);
-		        parser.setLenient(true);
-		        parser.parse();
-		        cosDoc = parser.getDocument();
-		        pdfStripper = new PDFTextStripper();
-		        pdfStripper.setSortByPosition( true );
-		              			       
-		        pdDoc = new PDDocument(cosDoc);
-		        pdfStripper.setWordSeparator("\t");
-		        pdfStripper.setSuppressDuplicateOverlappingText(true);
-		        Matrix matrix = new Matrix();
-		        matrix.clone();
-		        pdfStripper.setTextLineMatrix(matrix);
-		   
-		        parsedText = pdfStripper.getText(pdDoc);
-		        gridFsTemplate.store(new ByteArrayInputStream(parsedText.getBytes(StandardCharsets.UTF_8)), fileid);
-		        cosDoc=null;
-		        pdDoc=null;
-            }else if(ext.equals("txt")){
+			if(ext.equals("txt")){
             	File tempfile;
             	tempfile = stream2file(file.getInputStream(),fileName, ext);
 
@@ -265,58 +237,11 @@ public String storeimportFile(MultipartFile file , String tenant , Integer isMul
 		        }
 		        String appendedline = sb.toString();
 		        
-			  //gridFsTemplate.store(new ByteArrayInputStream(file.getBytes()), fileid);
 		        line="";
-			  gridFsTemplate.store(new ByteArrayInputStream(appendedline.getBytes(StandardCharsets.UTF_8)), fileid);
-			
-            }else {
-            	
-				File templocfile = null;
-				templocfile = stream2file(file.getInputStream(),fileName, ext);
-		
-				//try {
-				FileReader fr = new FileReader(templocfile);
-		
-				BufferedReader br = new BufferedReader(fr);
-			    StringBuffer sb = new StringBuffer();
-
-				String line = "";
-
-				String[] tempArr;
-		     
-				final File tempFile = File.createTempFile(fileName, ext);
-				
-		
-				FileWriter writer = new FileWriter(tempFile);
-		
-				while ((line = br.readLine()) != null) {
-					tempArr = line.split(",");
-				
-					for (String str : tempArr) {
-						sb.append(str).append(",");
-					}
-				      String appendedline = sb.toString();
-				
-				    //  String resultline = appendedline.replaceAll("\\s+$", "");
-				      String resultline = appendedline.replaceAll(",$", "");
-
-				      writer.write(resultline);
-				      sb.setLength(0);
-				      appendedline ="";
-				      resultline="";
-				
-					writer.write("\n");
-
-				}
-				writer.close();
-				byte[] bytes = null;
-			    bytes = FileUtils.readFileToByteArray(tempFile);
-
-			   String rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
-			   rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-			    gridFsTemplate.store(new ByteArrayInputStream(rawDataText.getBytes(StandardCharsets.UTF_8)), fileid);
-			    br=null;	 
+			//  gridFsTemplate.store(new ByteArrayInputStream(appendedline.getBytes(StandardCharsets.UTF_8)),fileid);
+			  gridFsTemplate.store(new ByteArrayInputStream(appendedline.getBytes(StandardCharsets.UTF_8)), fileid, file.getContentType());
             }
+			  gridFsTemplate.store(new ByteArrayInputStream(file.getBytes()), fileid, file.getContentType());
 			  CloudParserFile objfile = new CloudParserFile();
  	     	  objfile.setFileid(fileid);
 	          objfile.setExtension(FilenameUtils.getExtension(file.getOriginalFilename()));

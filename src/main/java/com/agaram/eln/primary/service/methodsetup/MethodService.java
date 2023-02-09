@@ -1048,17 +1048,6 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
 					writer.write("\n");
 
 				}
-				
-//				while ((line = br.readLine()) != null) {
-//					tempArr = line.split(",");
-//					// User for loop to iterate String Array and write data to text file
-//					for (String str : tempArr) {
-//						writer.write(str + ",");
-//					}
-//					// Write each line of CSV file to multiple lines
-//					writer.write("\n");
-//
-//				}
 				writer.close();
 
 			    bytes = FileUtils.readFileToByteArray(tempFile);
@@ -1095,8 +1084,42 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
 			 }
 			   else
 			   {
-				   rawDataText = new String(Files.readAllBytes(file.toPath()), StandardCharsets.ISO_8859_1);
-		//		   rawDataText = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);		   
+				   //rawDataText = new String(Files.readAllBytes(file.toPath()), StandardCharsets.ISO_8859_1);
+				   
+				   FileReader fr = new FileReader(file);
+					BufferedReader br = new BufferedReader(fr);
+					String line = "";
+     			      StringBuffer sb = new StringBuffer();
+					String[] tempArr;     
+					final File tempFile = File.createTempFile(fileName, ext);		
+					FileWriter writer = new FileWriter(tempFile);
+			
+					while ((line = br.readLine()) != null) {
+						tempArr = line.split("\\s+");			
+						for (String str : tempArr) {
+							sb.append(str).append("\t");
+						//	sb.append(str).append(",");
+
+						}
+					      String appendedline = sb.toString();
+					      String resultline = appendedline.replaceAll("\\s+$", "");
+					    //  String resultline = appendedline.replaceAll(",$", "");
+					      writer.write(resultline);
+					      sb.setLength(0);
+					      appendedline ="";
+					      resultline="";
+					
+						writer.write("\n");
+
+					}
+					writer.close();
+
+				    bytes = FileUtils.readFileToByteArray(tempFile);
+
+				    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
+					 
+			        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+				   			   
 			   }
 		   
 		    }	    
@@ -1120,107 +1143,149 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
       
    
    @SuppressWarnings("resource")
-	public String getSQLFileData(String fileName) throws IOException {
-//		String Content = "";
-		String rawDataText="";
-		byte[] bytes = null;
+  	public String getSQLFileData(String fileName) throws IOException {
+//  		String Content = "";
+  		String rawDataText="";
+  		byte[] bytes = null;
 
-		final String ext = FilenameUtils.getExtension(fileName); 
-		
-	   String fileid = fileName;
-		GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
-		if (largefile == null) {
-			largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
-		}
+  		final String ext = FilenameUtils.getExtension(fileName); 
+  		
+  	   String fileid = fileName;
+  		GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
+  		if (largefile == null) {
+  			largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
+  		}
 
-		if (largefile != null) {
-			
-			if (ext.equalsIgnoreCase("pdf")) {
-				
-				   String parsedText = "";
-				   PDFParser parser = null;
-				    PDDocument pdDoc = null;
-				    COSDocument cosDoc = null;
-				    PDFTextStripper pdfStripper;
+  		if (largefile != null) {
+  			
+  			if (ext.equalsIgnoreCase("pdf")) {
+  				
+  				   String parsedText = "";
+  				   PDFParser parser = null;
+  				    PDDocument pdDoc = null;
+  				    COSDocument cosDoc = null;
+  				    PDFTextStripper pdfStripper;
 
-				    try {
-				    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(largefile.getInputStream());
-				        parser = new PDFParser(raFile);
-				        parser.setLenient(true);
-				        parser.parse();
-				        cosDoc = parser.getDocument();
-				        pdfStripper = new PDFTextStripper();
-				        pdfStripper.setSortByPosition( true );
-				              			       
-				        pdDoc = new PDDocument(cosDoc);
-				        pdfStripper.setWordSeparator("\t");
-				        pdfStripper.setSuppressDuplicateOverlappingText(true);
-				        Matrix matrix = new Matrix();
-				        matrix.clone();
-				        pdfStripper.setTextLineMatrix(matrix);
-				   
-				        parsedText = pdfStripper.getText(pdDoc);
-				        rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);       
-				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-				    }	
-				    catch (Exception e) {
-				        e.printStackTrace();
-					   }
-			}else if (ext.equalsIgnoreCase("csv")) {
-				
-				File templocfile = null;
-				templocfile = stream2file(largefile.getInputStream(),fileName, ext);
-			//   File file = new File(path);
-				try {
-				FileReader fr = new FileReader(templocfile);
-				// User BufferReader
-				BufferedReader br = new BufferedReader(fr);
-			    StringBuffer sb = new StringBuffer();
+  				    try {
+  				    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(largefile.getInputStream());
+  				        parser = new PDFParser(raFile);
+  				        parser.setLenient(true);
+  				        parser.parse();
+  				        cosDoc = parser.getDocument();
+  				        pdfStripper = new PDFTextStripper();
+  				        pdfStripper.setSortByPosition( true );
+  				              			       
+  				        pdDoc = new PDDocument(cosDoc);
+  				        pdfStripper.setWordSeparator("\t");
+  				        pdfStripper.setSuppressDuplicateOverlappingText(true);
+  				        Matrix matrix = new Matrix();
+  				        matrix.clone();
+  				        pdfStripper.setTextLineMatrix(matrix);
+  				   
+  				        parsedText = pdfStripper.getText(pdDoc);
+  				        rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);       
+  				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+  				    }	
+  				    catch (Exception e) {
+  				        e.printStackTrace();
+  					   }
+  			}else if (ext.equalsIgnoreCase("csv")) {
+  				
+  				File templocfile = null;
+  				templocfile = stream2file(largefile.getInputStream(),fileName, ext);
+  			//   File file = new File(path);
+  				try {
+  				FileReader fr = new FileReader(templocfile);
+  				// User BufferReader
+  				BufferedReader br = new BufferedReader(fr);
+  			    StringBuffer sb = new StringBuffer();
 
-				String line = "";
+  				String line = "";
 
-				String[] tempArr;
-				//create temp file     
-				final File tempFile = File.createTempFile(fileName, ext);
-				
-				// User FileWriter to write content to text file
-				FileWriter writer = new FileWriter(tempFile);
-				// Use while loop to check when file contains data
-				while ((line = br.readLine()) != null) {
-					tempArr = line.split(",");
-					for (String str : tempArr) {
-					//	sb.append(str).append("\t");
-						sb.append(str).append(",");
-					}
-				      String appendedline = sb.toString();
-				    //  String resultline = appendedline.replaceAll("\\s+$", "");
-				      String resultline = appendedline.replaceAll(",$", "");
-				      writer.write(resultline);
-				      sb.setLength(0);
-				      appendedline ="";
-				      resultline="";
-				
-					writer.write("\n");
+  				String[] tempArr;
+  				//create temp file     
+  				final File tempFile = File.createTempFile(fileName, ext);
+  				
+  				// User FileWriter to write content to text file
+  				FileWriter writer = new FileWriter(tempFile);
+  				// Use while loop to check when file contains data
+  				while ((line = br.readLine()) != null) {
+  					tempArr = line.split(",");
+  					for (String str : tempArr) {
+  					//	sb.append(str).append("\t");
+  						sb.append(str).append(",");
+  					}
+  				      String appendedline = sb.toString();
+  				    //  String resultline = appendedline.replaceAll("\\s+$", "");
+  				      String resultline = appendedline.replaceAll(",$", "");
+  				      writer.write(resultline);
+  				      sb.setLength(0);
+  				      appendedline ="";
+  				      resultline="";
+  				
+  					writer.write("\n");
 
-				}
-				writer.close();
-			    bytes = FileUtils.readFileToByteArray(tempFile);
-			    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
-		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-				}
-				catch (Exception e) {
-			        e.printStackTrace();
-			   }
-			 }
-			else
-			{
-			    rawDataText = new BufferedReader(
-				new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-					.collect(Collectors.joining("\n"));
-		    } 
-		}		
-		return rawDataText;
-}  
+  				}
+  				writer.close();
+  			    bytes = FileUtils.readFileToByteArray(tempFile);
+  			    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
+  		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+  				}
+  				catch (Exception e) {
+  			        e.printStackTrace();
+  			   }
+  			 }
+  			else
+  			{
+//  			    rawDataText = new BufferedReader(
+//  				new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+//  					.collect(Collectors.joining("\n"));
+  				
+  				File templocfile = null;
+  				templocfile = stream2file(largefile.getInputStream(),fileName, ext);
+  								
+  				String line = "";
+   			    StringBuffer sb = new StringBuffer();
+  				String[] tempArr; 
+  				
+  				FileReader fr = new FileReader(templocfile);
+  				BufferedReader br = new BufferedReader(fr);
+                  final File tempFile = File.createTempFile(fileName, ext);
+                  
+  				// User FileWriter to write content to text file
+  				FileWriter writer = new FileWriter(tempFile);
+  				
+  				
+  				while ((line = br.readLine()) != null) {
+  					tempArr = line.split("\\s+");			
+  					for (String str : tempArr) {
+  						sb.append(str).append("\t");
+  					//	sb.append(str).append(",");
+
+  					}
+  				      String appendedline = sb.toString();
+  				      String resultline = appendedline.replaceAll("\\s+$", "");
+  				    //  String resultline = appendedline.replaceAll(",$", "");
+  				      writer.write(resultline);
+  				      sb.setLength(0);
+  				      appendedline ="";
+  				      resultline="";
+  				
+  					writer.write("\n");
+
+  				}
+  				writer.close();
+
+  			    bytes = FileUtils.readFileToByteArray(tempFile);
+
+  			    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
+  				 
+  		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+
+  		    } 
+  		}		
+  		return rawDataText;
+  }  
 
 //	public String getSQLFileData(String fileName) throws IOException {
 //

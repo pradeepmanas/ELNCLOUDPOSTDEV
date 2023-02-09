@@ -38,6 +38,7 @@ import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSfileversionRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSparsedparametersRespository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
@@ -106,6 +107,9 @@ public class DashBoardService {
 
 	@Autowired
 	LSuserteammappingRepository LSuserteammappingRepositoryObj;
+	
+	@Autowired
+	private LSfileversionRepository lsfileversionRepository;
 
 	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser) {
 
@@ -577,6 +581,8 @@ public class DashBoardService {
 								1, objuser.getLssitemaster(), fromdate, todate, 1, 1, objuser, fromdate, todate, 2);
 
 			}
+			lstsheets.forEach(
+					objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
 
 			mapSheets.put("Sheets", lstsheets);
 		}
