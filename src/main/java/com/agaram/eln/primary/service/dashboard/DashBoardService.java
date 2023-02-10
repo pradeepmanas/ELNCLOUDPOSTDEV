@@ -89,6 +89,9 @@ public class DashBoardService {
 
 	@Autowired
 	private LSfileRepository lsfileRepository;
+	
+	@Autowired
+	private LSfileversionRepository lsfileversionRepository;
 
 	@Autowired
 	private LSlogilabprotocoldetailRepository LSlogilabprotocoldetailRepository;
@@ -107,9 +110,6 @@ public class DashBoardService {
 
 	@Autowired
 	LSuserteammappingRepository LSuserteammappingRepositoryObj;
-	
-	@Autowired
-	private LSfileversionRepository lsfileversionRepository;
 
 	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser) {
 
@@ -325,7 +325,7 @@ public class DashBoardService {
 
 				mapOrders.put("rejectedorder",
 						LSlogilabprotocoldetailRepository
-								.countByApprovelstatusAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(3,
+								.countByRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(1,
 										objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject));
 
 				mapOrders.put("canceledorder",
@@ -540,7 +540,7 @@ public class DashBoardService {
 								"N", objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject);
 			} else if (objuser.getObjuser().getOrderselectiontype() == 5) {
 				lstorders = LSlogilabprotocoldetailRepository
-						.findByApprovelstatusAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(3,
+						.findByRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterIn(1,
 								objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject);
 			} else if (objuser.getObjuser().getOrderselectiontype() == 6) {
 				lstorders = LSlogilabprotocoldetailRepository
@@ -561,30 +561,32 @@ public class DashBoardService {
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapSheets = new HashMap<String, Object>();
 		List<LSuserMaster> lstteamuser = objuser.getObjuser().getTeamusers();
-
+		List<Sheettemplateget> lstfile=new ArrayList<>();
 		if (objuser.getUsername().equals("Administrator")) {
-			mapSheets.put("Sheets", lsfileRepository
-					.findByCreatedateBetweenAndFilecodeGreaterThanOrderByFilecodeDesc(fromdate, todate, 1));
+			lstfile= lsfileRepository
+					.findByCreatedateBetweenAndFilecodeGreaterThanOrderByFilecodeDesc(fromdate, todate, 1);
+			lstfile.forEach(
+					objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
+			mapSheets.put("Sheets",lstfile);
 		} else {
-			List<Sheettemplateget> lstsheets = new ArrayList<Sheettemplateget>();
+//			List<Sheettemplateget> lstsheets = new ArrayList<Sheettemplateget>();
 
 			if (lstteamuser != null && lstteamuser.size() > 0) {
 				lstteamuser.add(objuser);
-				lstsheets = lsfileRepository
+				lstfile = lsfileRepository
 						.findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(
 								1, objuser.getLssitemaster(), fromdate, todate, 1, 1, objuser, fromdate, todate, 2, 1,
 								lstteamuser, fromdate, todate, 3);
 
 			} else {
-				lstsheets = lsfileRepository
+				lstfile = lsfileRepository
 						.findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(
 								1, objuser.getLssitemaster(), fromdate, todate, 1, 1, objuser, fromdate, todate, 2);
 
 			}
-			lstsheets.forEach(
+			lstfile.forEach(
 					objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
-
-			mapSheets.put("Sheets", lstsheets);
+			mapSheets.put("Sheets", lstfile);
 		}
 
 		return mapSheets;
@@ -887,6 +889,9 @@ public class DashBoardService {
 		if (listobjfilecode.get(0) == 1) {
 			listobjfilecode.remove(0);
 			List<Sheettemplateget> fileobj = lsfileRepository.findByFilecodeIn(listobjfilecode);
+			fileobj.forEach(
+					objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
+
 			obj.put("Sheet", fileobj);
 		} else {
 			listobjfilecode.remove(0);

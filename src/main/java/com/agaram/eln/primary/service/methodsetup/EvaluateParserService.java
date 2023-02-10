@@ -495,18 +495,18 @@ public class EvaluateParserService {
 //				list.add(parsedData);
 //				outputDataMap.put(blockNameKey, list);
 				
-				if(!parsedData.isEmpty()){
+			//	if(!parsedData.isEmpty()){
 				List<List<MethodFieldTechnique>> list = new ArrayList<List<MethodFieldTechnique>>();
 				list.add(parsedData);
 				outputDataMap.put(blockNameKey, list);
-				}
-				else {
-					List<List<MethodFieldTechnique>> list = new ArrayList<List<MethodFieldTechnique>>();
-					list.add(parsedData);
-					final String emptykey = null; 
-					outputDataMap.put(emptykey,list);
-					
-				}
+		//		}
+//				else {
+//					List<List<MethodFieldTechnique>> list = new ArrayList<List<MethodFieldTechnique>>();
+//					list.add(parsedData);
+//					final String emptykey = null; 
+//					outputDataMap.put(emptykey,list);
+//					
+//				}
 		
 			}
 			else {
