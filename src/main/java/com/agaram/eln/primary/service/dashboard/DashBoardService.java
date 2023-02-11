@@ -604,7 +604,9 @@ public class DashBoardService {
 			mapSheets.put("approvedTemplate", lsfileRepository
 					.countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedAndRejectedNotOrderByFilecodeDesc(fromdate, todate, 1,1,1));
 			mapSheets.put("createdTemplate", lsfileRepository
-					.countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedNotAndRejectedNotOrderByFilecodeDesc(fromdate, todate, 1,1,1));
+					.countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(fromdate, todate,1,1));
+			mapSheets.put("inprogressTemplate", lsfileRepository
+					.countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedAndRejectedNotOrderByFilecodeDesc(fromdate, todate, 0,1,1));
 		} else {
 			if (lstteamuser != null && lstteamuser.size() > 0) {
 				lstteamuser.add(objuser);
@@ -619,24 +621,33 @@ public class DashBoardService {
 								,1, objuser, fromdate, todate, 2, 1,1,
 								1,lstteamuser, fromdate, todate, 3,1,1));
 				mapSheets.put("createdTemplate",lsfileRepository
-						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate, 1, 1,1
-								,1, objuser, fromdate, todate, 2, 1,1,
-								1,lstteamuser, fromdate, todate, 3,1,1));
+						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate, 1, 1
+								,1, objuser, fromdate, todate, 2, 1,
+								1,lstteamuser, fromdate, todate, 3,1));
+				mapSheets.put("inprogressTemplate",lsfileRepository
+						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate, 1, 0,1
+								,1, objuser, fromdate, todate, 2, 0,1,
+								1,lstteamuser, fromdate, todate, 3,0,1));
 
 			} else {
 				mapSheets.put("rejectedTemplate",lsfileRepository
 						.findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndRejectedOrderByFilecodeDesc(
 								1, objuser.getLssitemaster(), fromdate, todate, 1,1,
 								1, objuser, fromdate, todate, 2,1));
-				mapSheets.put("rejectedTemplate",lsfileRepository
+				mapSheets.put("approvedTemplate",lsfileRepository
 						.findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
 								1, objuser.getLssitemaster(), fromdate, todate, 1,1,1,
 								1, objuser, fromdate, todate, 2,1,1));
-				mapSheets.put("rejectedTemplate",lsfileRepository
-						.findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate, 1,1,1,
-								1, objuser, fromdate, todate, 2,1,1));
+				mapSheets.put("inprogressTemplate",lsfileRepository
+						.findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate, 1,0,1,
+								1, objuser, fromdate, todate, 2,0,1));
+				mapSheets.put("createdTemplate",lsfileRepository
+						.findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate, 1,1,
+								1, objuser, fromdate, todate, 2,1));
 			}
 		}
 		return mapSheets;
@@ -689,8 +700,11 @@ public class DashBoardService {
 					.countByStatusAndLssitemasterAndCreatedateBetweenAndRejectedNotAndApproved(1,
 							objuser.getLssitemaster().getSitecode(), fromdate, todate,1,1));
 			mapSheets.put("createdTemplate", LSProtocolMasterRepository
-					.countByStatusAndLssitemasterAndCreatedateBetweenAndRejectedNotAndApprovedNot(1,
-							objuser.getLssitemaster().getSitecode(), fromdate, todate,1,1));
+					.countByStatusAndLssitemasterAndCreatedateBetweenAndRejectedNotAndApprovedIsNull(1,
+							objuser.getLssitemaster().getSitecode(), fromdate, todate,1));
+			mapSheets.put("inprogressTemplate", LSProtocolMasterRepository
+					.countByStatusAndLssitemasterAndCreatedateBetweenAndRejectedNotAndApproved(1,
+							objuser.getLssitemaster().getSitecode(), fromdate, todate,1,0));
 		} else {
 
 			List<Protocoltemplateget> lstprotocolmaster = new ArrayList<>();
@@ -706,29 +720,35 @@ public class DashBoardService {
 								usercodelist, 1, fromdate, todate, 3,1);
 				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("rejectedTemplate",lstprotocolmaster.size());
+				
 				lstprotocolmaster = LSProtocolMasterRepository
 						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrderByProtocolmastercodeDesc(
 								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1,1,
 								objuser.getUsercode(),1, fromdate, todate, 2,1, 
 								usercodelist, 1, fromdate, todate, 3,1);
-				
 				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("approvedTemplate",lstprotocolmaster.size());
+				
+				lstprotocolmaster = LSProtocolMasterRepository
+						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0,
+								objuser.getUsercode(),1, fromdate, todate, 2, 
+								usercodelist, 1, fromdate, todate, 3);
+//				lstprotocolmaster.addAll(LSProtocolMasterRepository
+//						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrderByProtocolmastercodeDesc(
+//								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1,
+//								objuser.getUsercode(),1, fromdate, todate, 2, 
+//								usercodelist, 1, fromdate, todate, 3));
+				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
+				mapSheets.put("createdTemplate",lstprotocolmaster.size());
+				
 				lstprotocolmaster = LSProtocolMasterRepository
 						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrderByProtocolmastercodeDesc(
 								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1,0,
 								objuser.getUsercode(),1, fromdate, todate, 2,0, 
 								usercodelist, 1, fromdate, todate, 3,0);
-				lstprotocolmaster.addAll(LSProtocolMasterRepository
-						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1,
-								objuser.getUsercode(),1, fromdate, todate, 2, 
-								usercodelist, 1, fromdate, todate, 3));
-				
-//				LSProtocolMasterRepository.findByStatusAndLssitemasterAndCreatedateBetweenAndApprovedAndRejected(1,objuser.getLssitemaster().getSitecode(),fromdate, todate,0,0);
-				
 				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
-				mapSheets.put("createdTemplate",lstprotocolmaster.size());
+				mapSheets.put("inprogressTemplate",lstprotocolmaster.size());
 
 			} else {
 				lstprotocolmaster = LSProtocolMasterRepository
@@ -737,18 +757,27 @@ public class DashBoardService {
 								objuser.getUsercode(),1, fromdate, todate, 2,1);
 				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("rejectedTemplate",lstprotocolmaster.size());
+				
 				lstprotocolmaster = LSProtocolMasterRepository
 						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByProtocolmastercodeDesc(
 								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, 1,1,
 								objuser.getUsercode(),1, fromdate, todate, 2,1,1);
 				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("approvedTemplate",lstprotocolmaster.size());
+				
 				lstprotocolmaster = LSProtocolMasterRepository
-						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, 1,1,
-								objuser.getUsercode(),1, fromdate, todate, 2,1,1);
+						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, 1,
+								objuser.getUsercode(),1, fromdate, todate, 2,1);
 				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("createdTemplate",lstprotocolmaster.size());
+				
+				lstprotocolmaster = LSProtocolMasterRepository
+						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, 0,1,
+								objuser.getUsercode(),1, fromdate, todate, 2,0,1);
+				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
+				mapSheets.put("inprogressTemplate",lstprotocolmaster.size());
 			}
 		}
 		return mapSheets;

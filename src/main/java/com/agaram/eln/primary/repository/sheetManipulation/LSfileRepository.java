@@ -231,6 +231,18 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			List<LSfiletest> lsfiletest2, int k, int l, List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3,
 			int m, int n);
 
+	public Object countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
+			Date fromdate, Date todate, int i, int j);
+
+	public Object countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int m, int n, int o, List<LSuserMaster> lstteamuser, Date fromdate3,
+			Date todate3, int p, int q);
+
+	public Object findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int m, int n);
+
 
 
 

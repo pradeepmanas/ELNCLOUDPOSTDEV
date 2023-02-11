@@ -272,6 +272,13 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			List<LSprotocolmastertest> lsfiletest2, int k, Integer usercode, int l,
 			List<LSprotocolmastertest> lsfiletest3, int m, List<Integer> lstteammap2, int n);
 
+	Object countByStatusAndLssitemasterAndCreatedateBetweenAndRejectedNotAndApprovedIsNull(int i, Integer sitecode,
+			Date fromdate, Date todate, int j);
+
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, Integer usercode, int l, Date fromdate2,
+			Date todate2, int m, int n);
+
 
 
 }
