@@ -64,7 +64,8 @@ public class DelimiterService {
 			sortBy = Sort.Direction.ASC;
 		}
 		//List<Delimiter> delimiter =delimitersRepo.findByLssitemasterAndStatus(del,1,new Sort(sortBy, "delimiterkey"));
-		List<Delimiter> delimiter =delimitersRepo.findByLssitemaster(del,new Sort(sortBy, "delimiterkey"));
+//		List<Delimiter> delimiter =delimitersRepo.findByLssitemaster(del,new Sort(sortBy, "delimiterkey"));
+		List<Delimiter> delimiter =delimitersRepo.findByLssitemasterOrLssitemasterIsNull(del,new Sort(sortBy, "delimiterkey"));
 		return new ResponseEntity<>(delimiter, HttpStatus.OK);	
 	
 	}
@@ -74,7 +75,8 @@ public class DelimiterService {
 		if (sortOrder.equalsIgnoreCase("ASC")){
 			sortBy = Sort.Direction.ASC;
 		}
-		List<Delimiter> delimiter =delimitersRepo.findByLssitemasterAndStatus(del,1,new Sort(sortBy, "delimiterkey"));
+		//List<Delimiter> delimiter =delimitersRepo.findByLssitemasterAndStatus(del,1,new Sort(sortBy, "delimiterkey"));
+		List<Delimiter> delimiter =delimitersRepo.findByLssitemasterAndStatusOrLssitemasterIsNull(del,1,new Sort(sortBy, "delimiterkey"));
 		return new ResponseEntity<>(delimiter, HttpStatus.OK);	
 	
 	}

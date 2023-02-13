@@ -61,4 +61,8 @@ public interface DelimiterRepository extends JpaRepository<Delimiter, Integer>{
 	List<Delimiter> findByLssitemasterAndStatusOrLssitemasterIsNull(LSSiteMaster del, int i, LSSiteMaster del2, Sort sort);
 
 	List<Delimiter> findByLssitemaster(LSSiteMaster del, Sort sort);
+
+	List<Delimiter> findByLssitemasterOrLssitemasterIsNull(LSSiteMaster del, Sort sort);
+
+	List<Delimiter> findByLssitemasterAndStatusOrLssitemasterIsNull(LSSiteMaster del, int i, Sort sort);
 }

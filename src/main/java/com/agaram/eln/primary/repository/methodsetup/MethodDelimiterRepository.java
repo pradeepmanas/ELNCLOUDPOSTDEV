@@ -71,4 +71,8 @@ public interface MethodDelimiterRepository extends JpaRepository<MethodDelimiter
 			LSSiteMaster lssitemaster);
 
 	List<MethodDelimiter> findByLssitemaster(LSSiteMaster mobj, Sort sort);
+
+	List<MethodDelimiter> findByStatusAndLssitemasterOrLssitemasterIsNull(int i, LSSiteMaster mobj, Sort sort);
+
+	List<MethodDelimiter> findByLssitemasterOrLssitemasterIsNull(LSSiteMaster mobj, Sort sort);
 }

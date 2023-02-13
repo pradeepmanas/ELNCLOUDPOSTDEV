@@ -3721,6 +3721,7 @@ INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sall
 INSERT into LSusergrouprights(displaytopic,modulename,createdby, createdon, sallow, screate, sdelete, sedit, lssitemaster_sitecode, usergroupid_usergroupcode,screenname) values ( 'IDS_SCN_ACTIVEUSER','IDS_MDL_SETUP','administrator', CAST('2022-01-21 00:00:00.000' AS date),'1','1','1','1',1,1,'IDS_SCN_ACTIVEUSER')ON CONFLICT(orderno)DO NOTHING;
 
 ALTER TABLE IF Exists material ALTER COLUMN createddate TYPE timestamp without time zone;
+
 update lsaudittrailconfiguration set modulename='IDS_MDL_SETUP' where modulename='IDS_MDL_PARSER';
 delete from lsusergrouprights where screenname='IDS_SCN_PARSER';
 delete from lsusergrouprightsmaster where screenname='IDS_SCN_PARSER';
@@ -3773,3 +3774,6 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.lsmappedfields
     OWNER to postgres;
+    
+update methoddelimiter set lssitemaster_sitecode = NULL where defaultvalue=1;
+update methoddelimiter set lssitemaster_sitecode = NULL where defaultvalue=1;
