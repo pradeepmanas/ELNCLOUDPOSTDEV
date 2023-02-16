@@ -63,6 +63,17 @@ public class Lsrepositoriesdata {
 	@Transient
 	private String satus;
 	
+	@Transient
+	private String screenname;
+	
+
+	public String getScreenname() {
+		return screenname;
+	}
+
+	public void setScreenname(String screenname) {
+		this.screenname = screenname;
+	}
 
 	public String getSatus() {
 		return satus;

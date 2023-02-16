@@ -346,8 +346,15 @@ public class DashBoardService {
 			mapOrders.put("orders",
 					lslogilablimsorderdetailRepository.countByCreatedtimestampBetween(fromdate, todate));
 			mapOrders.put("pendingorder", lslogilablimsorderdetailRepository
-					.countByOrderflagAndOrdercancellIsNullAndCreatedtimestampBetween(
+					.countByOrderflagAndCreatedtimestampBetweenAndOrdercancellIsNull(
 							"N", fromdate, todate));
+			long lstlimscompleted = 0;
+			lstlimscompleted = lslogilablimsorderdetailRepository
+					.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNot("R", fromdate, todate, 3);
+			
+			lstlimscompleted = lstlimscompleted + lslogilablimsorderdetailRepository
+					.countByOrderflagAndFiletypeAndCreatedtimestampBetween("R", 0, fromdate,
+							todate);
 			mapOrders.put("completedorder", lslogilablimsorderdetailRepository
 					.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNot("R", fromdate, todate, 3));
 			
@@ -357,6 +364,7 @@ public class DashBoardService {
 					.countByOrdercancellAndCreatedtimestampBetween(1, fromdate, todate));
 			mapOrders.put("onproces", lslogilablimsorderdetailRepository
 					.countByOrderflagAndLssamplefileInAndCreatedtimestampBetween("N", lssamplefile, fromdate, todate));
+			mapOrders.put("completedorder", (lstlimscompleted));
 
 		} else {
 
@@ -439,13 +447,19 @@ public class DashBoardService {
 				mapOrders.put("orderlst", lslogilablimsorderdetailRepository
 						.findByCreatedtimestampBetweenOrderByBatchcodeDesc(fromdate, todate));
 			} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
-				mapOrders.put("orderlst", lslogilablimsorderdetailRepository
+				List<Logilabordermaster> lstCompleted =  new ArrayList<Logilabordermaster>();
+				lstCompleted = lslogilablimsorderdetailRepository
 						.findByOrderflagAndApprovelstatusNotAndCreatedtimestampBetweenAndOrdercancellIsNullOrderByBatchcodeDesc(
-								"R", 3, fromdate, todate));
+								"R", 3, fromdate, todate);
+				lstCompleted.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndFiletypeAndCreatedtimestampBetween("R", 0, fromdate, todate));
+				mapOrders.put("orderlst", lstCompleted);
 			} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
-				mapOrders.put("orderlst", lslogilablimsorderdetailRepository
-						.findByOrderflagAndCreatedtimestampBetweenAndApprovelstatusNotOrApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-								"N", fromdate, todate, 3));
+				List<Logilabordermaster> lstPending =  new ArrayList<Logilabordermaster>();
+				lstPending = lslogilablimsorderdetailRepository
+						.findByOrderflagAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrderByBatchcodeDesc(
+								"N", fromdate, todate, 3);
+				lstPending.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndFiletypeAndCreatedtimestampBetween("N", 0, fromdate, todate));
+				mapOrders.put("orderlst", lstPending);
 			} else if (objuser.getObjuser().getOrderselectiontype() == 4) {
 				mapOrders.put("orderlst",
 						lslogilablimsorderdetailRepository

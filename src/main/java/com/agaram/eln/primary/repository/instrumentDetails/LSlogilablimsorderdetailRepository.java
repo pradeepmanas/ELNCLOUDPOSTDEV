@@ -341,7 +341,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	public long countByFiletypeAndCreatedtimestampBetween(Integer filetype, Date fromdate, Date todate);
 
-	public long countByLsprojectmasterInAndCreatedtimestampBetween(List<LSprojectmaster> lstproject, Date fromdate,
+	public Long countByLsprojectmasterInAndCreatedtimestampBetween(List<LSprojectmaster> lstproject, Date fromdate,
 			Date todate);
 	
 	public long countByLsprojectmasterInOrFiletypeAndCreatedtimestampBetween(List<LSprojectmaster> lstproject,Integer filetype, Date fromdate,
@@ -839,6 +839,11 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 
 	long countByLsrepositoriesdataAndOrderflag(Lsrepositoriesdata lsrepositoriesdata, String string);
+
+	long countByOrderflagAndCreatedtimestampBetweenAndOrdercancellIsNull(String string, Date fromdate, Date todate);
+
+	List<Logilabordermaster> findByOrderflagAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrderByBatchcodeDesc(
+			String string, Date fromdate, Date todate, int i);
 	
 
 }

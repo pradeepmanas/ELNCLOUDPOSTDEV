@@ -3340,7 +3340,8 @@ public class InstrumentService {
 
 						Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\""
 								+ objorder.getBatchid() + "\", \"user\":\"" + objuser.get(i).getUsername()
-								+ "\", \"comment\":\"" + objorder.getComment() + "\"}";
+								+ "\", \"comment\":\"" + objorder.getComment()
+								+ "\", \"workflowname\":\"" + objorder.getLsworkflow().getWorkflowname() + "\"}";
 						objnotify.setNotifationfrom(obj);
 						objnotify.setNotificationdate(objorder.getCreatedtimestamp());
 						objnotify.setNotification(Notification);
@@ -6553,13 +6554,23 @@ public class InstrumentService {
 	}
 
 	public List<LSsheetfolderfiles> Getfilesforfolder(LSsheetfolderfiles objfiles) throws Exception {
-
 		List<LSsheetfolderfiles> lstfiles = new ArrayList<LSsheetfolderfiles>();
+		try {
+			lstfiles = lssheetfolderfilesRepository
+					.findByDirectorycodeAndFileforOrderByFolderfilecode(objfiles.getDirectorycode(), objfiles.getFilefor());
+			
+			return lstfiles;
+		} catch (Exception e) {
+			return lstfiles ;
+		}
+		
 
-		lstfiles = lssheetfolderfilesRepository
-				.findByDirectorycodeAndFileforOrderByFolderfilecode(objfiles.getDirectorycode(), objfiles.getFilefor());
-
-		return lstfiles;
+//		List<LSsheetfolderfiles> lstfiles = new ArrayList<LSsheetfolderfiles>();
+//
+//		lstfiles = lssheetfolderfilesRepository
+//				.findByDirectorycodeAndFileforOrderByFolderfilecode(objfiles.getDirectorycode(), objfiles.getFilefor());
+//
+//		return lstfiles;
 	}
 
 	public Response validatefileexistonfolder(LSsheetfolderfiles objfile) {
