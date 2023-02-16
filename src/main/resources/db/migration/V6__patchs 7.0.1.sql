@@ -3777,36 +3777,4 @@ ALTER TABLE public.lsmappedfields
     
 update methoddelimiter set lssitemaster_sitecode = NULL where defaultvalue=1;
 update methoddelimiter set lssitemaster_sitecode = NULL where defaultvalue=1;
-
-DO
-$do$
-DECLARE
-    counter integer := 0;
-    DECLARE
-    counter1 integer := 0;
-    DECLARE
-    rightscount integer := 0;
-    DECLARE
-    forcount integer := 1;
-begin
-
-select count(*) into counter from lsusergroup;
-select count(*) into rightscount from lsusergrouprights;
-   for cnt in forcount..counter loop
-   select usergroupcode into counter1 from lsusergroup offset  forcount-1 LIMIT forcount;
-     for cnt1 in 1..rightscount loop
-DELETE FROM lsusergrouprights
-WHERE orderno IN
-    (SELECT orderno
-    FROM 
-        (SELECT orderno,
-         ROW_NUMBER() OVER( PARTITION BY displaytopic
-        ORDER BY  orderno ) AS row_num
-        FROM lsusergrouprights where usergroupid_usergroupcode=counter1 ) t
-        WHERE t.row_num > 1 );              
-        end loop;
-        raise notice 'cnt: %', forcount; 
-     forcount:=forcount+1;
-   end loop;
-END
-$do$;  
+  
