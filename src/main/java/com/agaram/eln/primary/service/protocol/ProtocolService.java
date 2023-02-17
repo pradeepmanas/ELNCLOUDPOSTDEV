@@ -5332,6 +5332,26 @@ public class ProtocolService {
 
 		lsprotocolordersharetoRepository.save(objprotocolordershareto);
 
+		String Details = "";
+		String Notification = "";
+		Notification = "PROTOCOLSHAREORDER";		
+	
+		Details = "{\"ordercode\":\"" + objprotocolordershareto.getSharetoprotocolordercode()
+				+ "\", \"order\":\"" + objprotocolordershareto.getShareprotoclordername()
+				+ "\", \"sharedby\":\"" + objprotocolordershareto.getSharebyusername() 
+				+ "\", \"sharerights\":\"" + objprotocolordershareto.getSharerights() + "\"}";
+		
+		LSnotification objnotify = new LSnotification();
+		objnotify.setNotifationfrom(objprotocolordershareto.getProtocolorders().getObjLoggeduser());
+		objnotify.setNotifationto(objprotocolordershareto.getObjLoggeduser());
+		objnotify.setNotificationdate(objprotocolordershareto.getSharedon());
+		objnotify.setNotification(Notification);
+		objnotify.setNotificationdetils(Details);
+		objnotify.setIsnewnotification(1);
+		objnotify.setNotificationpath("/Protocolorder");
+		objnotify.setNotificationfor(1);
+		lsnotificationRepository.save(objnotify);
+		
 		return objprotocolordershareto;
 	}
 
@@ -5387,24 +5407,14 @@ public class ProtocolService {
 	}
 
 	private void updatenotificationforprotocolshare(Lsprotocolshareto objprotocolordershareto) {
-
 		String Details = "";
 		String Notifiction = "";
-		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-
+		
 		Notifiction = "PROTOCOLTEMPSHARE";
-		if (objprotocolordershareto.getSharerights() == 0) {
-			objprotocolordershareto.setReadorwrite("Read");
-			Details = "{\"shareduser\":\"" + objprotocolordershareto.getSharebyusername() + "\", \"privileges\":\""
-					+ objprotocolordershareto.getReadorwrite() + "\"}";
-
-		} else if (objprotocolordershareto.getSharerights() == 1) {
-			objprotocolordershareto.setReadorwrite("Read/write");
-			Details = "{\"shareduser\":\"" + objprotocolordershareto.getSharebyusername() + "\", \"privileges\":\""
-					+ objprotocolordershareto.getReadorwrite() + "\"}";
-		}
-
-//		List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
+		Details = "{\"shareduser\":\"" + objprotocolordershareto.getSharebyusername() 
+					+ "\", \"privileges\":\"" + objprotocolordershareto.getSharerights()
+					+ "\", \"protocol\":\"" + objprotocolordershareto.getShareprotocolname() + "\"}";
+		
 		LSnotification objnotify = new LSnotification();
 		objnotify.setNotifationfrom(objprotocolordershareto.getObjLoggeduser());
 		objnotify.setNotificationdate(objprotocolordershareto.getSharedon());
@@ -5415,8 +5425,10 @@ public class ProtocolService {
 		objnotify.setNotificationpath("/protocols");
 		objnotify.setNotificationfor(1);
 
-		lstnotifications.add(objnotify);
-		lsnotificationRepository.save(lstnotifications);
+		lsnotificationRepository.save(objnotify);
+		Details = null;
+		Notifiction = null;
+		objnotify = null;
 	}
 
 	public Map<String, Object> Insertshareprotocolby(Lsprotocolsharedby objprotocolordersharedby) {

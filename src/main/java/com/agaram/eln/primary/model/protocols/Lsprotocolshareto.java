@@ -63,18 +63,9 @@ public class Lsprotocolshareto {
 
 	@Transient
 	LScfttransaction objmanualaudit;
-	@Transient
-	private String readorwrite;
+	
 	@Transient
 	LSuserMaster sharetousercode;
-
-	public String getReadorwrite() {
-		return readorwrite;
-	}
-
-	public void setReadorwrite(String readorwrite) {
-		this.readorwrite = readorwrite;
-	}
 
 	public LSuserMaster getSharetousercode() {
 		return sharetousercode;

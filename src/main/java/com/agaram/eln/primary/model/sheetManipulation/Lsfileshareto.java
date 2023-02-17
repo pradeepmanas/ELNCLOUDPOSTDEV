@@ -73,12 +73,6 @@ public class Lsfileshareto {
 
 	@Transient
 	private Long sharedbytofilecode;
-	@Transient
-	private String readorwrite;
-
-	public String getReadorwrite() {
-		return readorwrite;
-	}
 
 	public LSuserMaster getSharetousercode() {
 		return sharetousercode;
@@ -86,10 +80,6 @@ public class Lsfileshareto {
 
 	public void setSharetousercode(LSuserMaster sharetousercode) {
 		this.sharetousercode = sharetousercode;
-	}
-
-	public void setReadorwrite(String readorwrite) {
-		this.readorwrite = readorwrite;
 	}
 
 	public String getSharebyunifiedid() {

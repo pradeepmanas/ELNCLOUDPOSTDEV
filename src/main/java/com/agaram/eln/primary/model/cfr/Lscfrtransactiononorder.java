@@ -14,11 +14,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.general.Response;
-
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
-@Table(name = "LScfttransaction")
-public class LScfttransaction {
+@Table(name = "Lscfrtransactiononorder")
+public class Lscfrtransactiononorder {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Basic(optional = false)
@@ -34,7 +34,6 @@ public class LScfttransaction {
 	private String actions;
 	@Column(columnDefinition = "varchar(100)")
 	private String systemcoments;
-	//@Column(columnDefinition = "datetime")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date transactiondate;
 	@Column(columnDefinition = "varchar(100)")
@@ -51,24 +50,24 @@ public class LScfttransaction {
 	private String instrumentid;
 	@Column(columnDefinition = "varchar(100)")
 	private String reviewedstatus;
-//	@Column(columnDefinition = "varchar(100)")
-//	private String batchcode;
+	@Column(columnDefinition = "varchar(100)")
+	private String batchcode;
 	
-//	@Transient
-//	private LSuserMaster usermaster;
+	@Transient
+	private LSuserMaster usermaster;
 	
-//	public LSuserMaster getUsermaster() {
-//		return usermaster;
-//	}
-//	public void setUsermaster(LSuserMaster usermaster) {
-//		this.usermaster = usermaster;
-//	}
-//	public String getBatchcode() {
-//		return batchcode;
-//	}
-//	public void setBatchcode(String batchcode) {
-//		this.batchcode = batchcode;
-//	}
+	public LSuserMaster getUsermaster() {
+		return usermaster;
+	}
+	public void setUsermaster(LSuserMaster usermaster) {
+		this.usermaster = usermaster;
+	}
+	public String getBatchcode() {
+		return batchcode;
+	}
+	public void setBatchcode(String batchcode) {
+		this.batchcode = batchcode;
+	}
 	//	@ManyToOne 
 	@Column(name="lssitemaster_sitecode")
 	private Integer lssitemaster;
@@ -91,17 +90,7 @@ public class LScfttransaction {
 		this.lsuserMaster = lsuserMaster;
 	}
 	@Transient
-	private String username;
-
-//	@ManyToOne 
-//	private LSreviewdetails LSreviewdetails;
-	
-//	@Transient
-//	private String ReviewStatus;
-	
-//	@Transient
-//	LoggedUser objuser;
-	
+	private String username;	
 	@Transient
 	private Date fromdate;
 
@@ -132,12 +121,6 @@ public class LScfttransaction {
 	public void setObjResponse(Response objResponse) {
 		this.objResponse = objResponse;
 	}
-//	public LoggedUser getObjuser() {
-//		return objuser;
-//	}
-//	public void setObjuser(LoggedUser objuser) {
-//		this.objuser = objuser;
-//	}
 	@Transient
 	private boolean select;
 	
@@ -153,13 +136,6 @@ public class LScfttransaction {
 	public void setSerialno(Integer serialno) {
 		this.serialno = serialno;
 	}
-	
-//	public LSuserMaster getLsuserMaster() {
-//		return lsuserMaster;
-//	}
-//	public void setLsuserMaster(LSuserMaster lsuserMaster) {
-//		this.lsuserMaster = lsuserMaster;
-//	}
 	public String getModuleName() {
 		return moduleName;
 	}
@@ -233,23 +209,6 @@ public class LScfttransaction {
 	public void setInstrumentid(String instrumentid) {
 		this.instrumentid = instrumentid;
 	}
-	
-//	public LSSiteMaster getLssitemaster() {
-//		return lssitemaster;
-//	}
-//	public void setLssitemaster(LSSiteMaster lssitemaster) {
-//		this.lssitemaster = lssitemaster;
-//	}
-//	public String getUsername() {
-////		if(this.lsuserMaster != null)
-////		{
-////			return this.lsuserMaster.getUsername();
-////		}
-////		else
-////		{
-//			return "";
-////		}
-//	}
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -258,7 +217,5 @@ public class LScfttransaction {
 	}
 	public void setReviewedstatus(String reviewedstatus) {
 		this.reviewedstatus = reviewedstatus;
-	}
-	
-	
+	}	
 }

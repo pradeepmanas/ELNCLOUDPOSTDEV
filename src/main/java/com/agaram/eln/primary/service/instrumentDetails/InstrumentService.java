@@ -4070,6 +4070,26 @@ public class InstrumentService {
 
 		lsordersharetoRepository.save(objordershareto);
 
+		String Details = "";
+		String Notification = "";
+		Notification = "SHAREORDER";		
+	
+		Details = "{\"ordercode\":\"" + objordershareto.getOrder().getBatchcode()
+				+ "\", \"order\":\"" + objordershareto.getSharebatchid()
+				+ "\", \"sharedby\":\"" + objordershareto.getSharebyusername() 
+				+ "\", \"sharerights\":\"" + objordershareto.getSharerights() + "\"}";
+		
+		LSnotification objnotify = new LSnotification();
+		objnotify.setNotifationfrom(objordershareto.getOrder().getObjLoggeduser());
+		objnotify.setNotifationto(objordershareto.getUsersharedon());
+		objnotify.setNotificationdate(objordershareto.getSharedon());
+		objnotify.setNotification(Notification);
+		objnotify.setNotificationdetils(Details);
+		objnotify.setIsnewnotification(1);
+		objnotify.setNotificationpath("/registertask");
+		objnotify.setNotificationfor(1);
+		lsnotificationRepository.save(objnotify);
+		
 		return objordershareto;
 	}
 

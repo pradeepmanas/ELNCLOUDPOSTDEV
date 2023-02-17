@@ -25,6 +25,7 @@ import com.agaram.eln.primary.model.cfr.LScfrreasons;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.cfr.LSreviewdetails;
+import com.agaram.eln.primary.model.cfr.Lscfrtransactiononorder;
 import com.agaram.eln.primary.model.general.Response;
 //import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -36,6 +37,7 @@ import com.agaram.eln.primary.repository.cfr.LScfrreasonsRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.cfr.LSreviewdetailsRepository;
+import com.agaram.eln.primary.repository.cfr.LscfrtransactiononorderRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsRepository;
@@ -66,7 +68,8 @@ public class AuditService {
 	private LSreviewdetailsRepository LSreviewdetailsRepository;
 	@Autowired
 	private LSusergrouprightsRepository LSusergrouprightsRepository;
-
+	@Autowired
+	private LscfrtransactiononorderRepository LscfrtransactiononorderRepository;
 	@Autowired
 	private LSSiteMasterRepository lSSiteMasterRepository;
 	@SuppressWarnings("unused")
@@ -514,6 +517,22 @@ public class AuditService {
 		return cfttransaction;
 	}
 
+	
+	public Lscfrtransactiononorder silentRecordHandlerForOrder(Map<String, Object> mapObj) {
+
+		ObjectMapper objMapper = new ObjectMapper();
+		Lscfrtransactiononorder cfttransaction = new Lscfrtransactiononorder();
+
+		if (mapObj.containsKey("objsilentaudit")) {
+			cfttransaction = objMapper.convertValue(mapObj.get("objsilentaudit"), Lscfrtransactiononorder.class);
+			LscfrtransactiononorderRepository.save(cfttransaction);
+		}
+		cfttransaction.setObjResponse(new Response());
+		cfttransaction.getObjResponse().setStatus(true);
+		cfttransaction.getObjResponse().setInformation("");
+
+		return cfttransaction;
+	}
 	public LScfttransaction silentandmanualRecordHandlerInventory(Map<String, Object> mapObj) {
 
 //		ObjectMapper objMapper = new ObjectMapper();
@@ -643,5 +662,27 @@ public class AuditService {
 		List<LScfttransaction> obj= Arrays.asList(mapObj);
 		lscfttransactionRepository.save(obj);
 		return obj;
+	}
+
+	public List<Lscfrtransactiononorder> getAuditOnOrder(Map<String, Object> objMap) {	
+		List<Lscfrtransactiononorder> list = LscfrtransactiononorderRepository.findByBatchcodeOrderBySerialnoDesc(objMap.get("batchcode").toString());
+		if (list.size() > 0) {
+			int i = 0;
+			List<LSuserMaster> userDetails = lSuserMasterRepository.findAll();
+			while (list.size() > i) {
+				int k = 0;
+				while (userDetails.size() > k) {
+					if (list.get(i).getLsuserMaster() != null
+							&& list.get(i).getLsuserMaster().equals(userDetails.get(k).getUsercode())) {
+						String username = userDetails.get(k).getUsername();
+						list.get(i).setUsername(username);
+						list.get(i).setUsermaster(userDetails.get(k));
+					}
+					k++;
+				}
+				i++;
+			}
+		}
+		return list;
 	}
 }

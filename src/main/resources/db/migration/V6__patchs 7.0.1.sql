@@ -3778,3 +3778,29 @@ ALTER TABLE public.lsmappedfields
 update methoddelimiter set lssitemaster_sitecode = NULL where defaultvalue=1;
 update methoddelimiter set lssitemaster_sitecode = NULL where defaultvalue=1;
   
+ALTER TABLE IF Exists lscfttransaction DROP COLUMN IF EXISTS auditkey;
+
+CREATE TABLE IF NOT EXISTS public.Lscfrtransactiononorder
+(
+    serialno integer NOT NULL,
+    actions character varying(250) COLLATE pg_catalog."default",
+    affectedclientid character varying(100) COLLATE pg_catalog."default",
+    comments character varying(250) COLLATE pg_catalog."default",
+    instrumentid character varying(100) COLLATE pg_catalog."default",
+    lssitemaster_sitecode integer,
+    lsusermaster_usercode integer,
+    manipulatetype character varying(100) COLLATE pg_catalog."default",
+    modifieddata character varying(100) COLLATE pg_catalog."default",
+    modulename character varying(250) COLLATE pg_catalog."default",
+    reason character varying(100) COLLATE pg_catalog."default",
+    requestedclientid character varying(100) COLLATE pg_catalog."default",
+    reviewedstatus character varying(100) COLLATE pg_catalog."default",
+    systemcoments character varying(100) COLLATE pg_catalog."default",
+    tablename character varying(100) COLLATE pg_catalog."default",
+    transactiondate timestamp without time zone,
+    batchcode character varying(100) COLLATE pg_catalog."default",
+    CONSTRAINT Lscfrtransactiononorder_pkey PRIMARY KEY (serialno)
+)
+WITH (OIDS = FALSE) TABLESPACE pg_default;
+
+ALTER TABLE public.Lscfrtransactiononorder OWNER to postgres;

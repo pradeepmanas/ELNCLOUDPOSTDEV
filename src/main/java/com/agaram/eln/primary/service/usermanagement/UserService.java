@@ -282,10 +282,9 @@ public class UserService {
 			objusermaster.getResponse().setInformation("ID_EXIST");
 
 			return objusermaster;
-		} else if (objusermaster.getUsercode() != null && objusermaster.getUserstatus() != null
-				&& objusermaster.getLsusergroup() == null) {
+		} else if (objusermaster.getUsercode() != null && objusermaster.getUserstatus() != null&& objusermaster.getLsusergroup() == null) { 
 			LSuserMaster updateUser = lsuserMasterRepository.findOne(objusermaster.getUsercode());
-			updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A" : "D");
+			updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") || objusermaster.getUserstatus().equals("Locked") ? "A" : "D");
 			if (!isnewuser && objusermaster.isReset()) {
 				updateUser.setPassword(objusermaster.getPassword());
 			}

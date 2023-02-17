@@ -1379,21 +1379,12 @@ public class FileService {
 
 		String Details = "";
 		String Notifiction = "";
-		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 
 		Notifiction = "SHEETSHARE";
-		if (objprotocolordershareto.getSharerights() == 0) {
-			objprotocolordershareto.setReadorwrite("Read");
-			Details = "{\"shareduser\":\"" + objprotocolordershareto.getSharebyusername() + "\", \"privileges\":\""
-					+ objprotocolordershareto.getReadorwrite() + "\"}";
+		Details = "{\"shareduser\":\"" + objprotocolordershareto.getSharebyusername() 
+						+ "\", \"privileges\":\"" + objprotocolordershareto.getSharerights()
+						+ "\", \"sheet\":\"" + objprotocolordershareto.getSharefilename() + "\"}";
 
-		} else if (objprotocolordershareto.getSharerights() == 1) {
-			objprotocolordershareto.setReadorwrite("Read/write");
-			Details = "{\"shareduser\":\"" + objprotocolordershareto.getSharebyusername() + "\", \"privileges\":\""
-					+ objprotocolordershareto.getReadorwrite() + "\"}";
-		}
-
-//		List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
 		LSnotification objnotify = new LSnotification();
 		objnotify.setNotifationfrom(objprotocolordershareto.getObjLoggeduser());
 		objnotify.setNotificationdate(objprotocolordershareto.getSharedon());
@@ -1404,14 +1395,10 @@ public class FileService {
 		objnotify.setNotificationpath("/sheetcreation");
 		objnotify.setNotificationfor(1);
 
-		lstnotifications.add(objnotify);
-
+		LSnotificationRepository.save(objnotify);
 		Details = null;
 		Notifiction = null;
-		lstnotifications = null;
 		objnotify = null;
-
-		LSnotificationRepository.save(lstnotifications);
 	}
 
 	public List<Lsfilesharedby> Getfilesharedbyme(Lsfilesharedby lsordersharedby) {

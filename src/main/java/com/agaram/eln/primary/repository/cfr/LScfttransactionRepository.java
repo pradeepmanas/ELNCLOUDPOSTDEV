@@ -179,6 +179,7 @@ public interface LScfttransactionRepository extends JpaRepository<LScfttransacti
 			Date todate);
 	@Transactional
 	void deleteByserialnoIn(List<Integer> archivecode);
+//	List<LScfttransaction> findByBatchcodeOrderBySerialnoDesc(String string);
 
 
 

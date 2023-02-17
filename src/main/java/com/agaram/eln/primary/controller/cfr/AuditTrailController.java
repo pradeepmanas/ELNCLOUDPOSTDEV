@@ -21,6 +21,7 @@ import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfrreasons;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.cfr.Lscfrtransactiononorder;
 import com.agaram.eln.primary.model.cfr.LSreviewdetails;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -35,41 +36,45 @@ public class AuditTrailController {
 	private AuditService auditService;
 
 	@GetMapping("/GetReasons")
-	public List<LScfrreasons> getreasons(@RequestBody Map<String, Object> objMap)throws Exception {
+	public List<LScfrreasons> getreasons(@RequestBody Map<String, Object> objMap) throws Exception {
 		return auditService.getreasons(objMap);
 	}
 
 	@GetMapping("/CFRTranUsername")
-	public List<LSuserMaster> CFRTranUsername(HttpServletRequest request)throws Exception {
+	public List<LSuserMaster> CFRTranUsername(HttpServletRequest request) throws Exception {
 		return auditService.CFRTranUsername();
 	}
 
 	@GetMapping(path = "/CFRTranModuleName")
-	public List<String> CFRTranModuleName(HttpServletRequest request)throws Exception {
+	public List<String> CFRTranModuleName(HttpServletRequest request) throws Exception {
 		return auditService.CFRTranModuleName();
 	}
+
 	@GetMapping(path = "/CFRTranScreenName")
-	public List<String> CFRTranScreenName(HttpServletRequest request)throws Exception {
+	public List<String> CFRTranScreenName(HttpServletRequest request) throws Exception {
 		return auditService.CFRTranScreenName();
 	}
+
 	@PostMapping("/InsertupdateReasons")
-	public LScfrreasons InsertupdateReasons(@RequestBody LScfrreasons objClass)throws Exception {
+	public LScfrreasons InsertupdateReasons(@RequestBody LScfrreasons objClass) throws Exception {
 
 		return auditService.InsertupdateReasons(objClass);
 	}
 
 	@PostMapping("/GetAuditconfigUser")
-	public Map<String, Object> GetAuditconfigUser(@RequestBody LSuserMaster LSaudittrailconfiguration)throws Exception {
+	public Map<String, Object> GetAuditconfigUser(@RequestBody LSuserMaster LSaudittrailconfiguration)
+			throws Exception {
 		return auditService.GetAuditconfigUser(LSaudittrailconfiguration);
 	}
 
 	@PostMapping("/GetAuditconfig")
-	public Map<String, Object> GetAuditconfig(@RequestBody Map<String, Object> argObj)throws Exception {
+	public Map<String, Object> GetAuditconfig(@RequestBody Map<String, Object> argObj) throws Exception {
 		return auditService.GetAuditconfig(argObj);
 	}
-	
+
 	@PostMapping("/SaveAuditconfigUser")
-	public List<LSaudittrailconfiguration> SaveAuditconfigUser(@RequestBody LSaudittrailconfiguration[] lsAudit)throws Exception {
+	public List<LSaudittrailconfiguration> SaveAuditconfigUser(@RequestBody LSaudittrailconfiguration[] lsAudit)
+			throws Exception {
 		return auditService.SaveAuditconfigUser(lsAudit);
 	}
 
@@ -80,18 +85,19 @@ public class AuditTrailController {
 	}
 
 	@PostMapping("/CheckUserPassWord")
-	public LSuserMaster CheckUserPassWord(@RequestBody LoggedUser objuser)throws Exception {
+	public LSuserMaster CheckUserPassWord(@RequestBody LoggedUser objuser) throws Exception {
 		return auditService.CheckUserPassWord(objuser);
 	}
 
 	@PostMapping("/ReviewBtnValidation")
-	public List<LSreviewdetails> ReviewBtnValidation(@RequestBody LSreviewdetails[] objreview)throws Exception {
+	public List<LSreviewdetails> ReviewBtnValidation(@RequestBody LSreviewdetails[] objreview) throws Exception {
 
 		return auditService.ReviewBtnValidation(objreview);
 	}
 
 	@PostMapping("/GetReviewDetails")
-	public List<LSreviewdetails> GetReviewDetails(@RequestBody List<LSreviewdetails> objreviewdetails)throws Exception {
+	public List<LSreviewdetails> GetReviewDetails(@RequestBody List<LSreviewdetails> objreviewdetails)
+			throws Exception {
 
 		if (objreviewdetails.get(0).getObjuser() != null) {
 
@@ -110,7 +116,7 @@ public class AuditTrailController {
 	}
 
 	@PostMapping("/GetReviewDetails12")
-	public Map<String, Object> GetReviewDetails12(@RequestBody LSreviewdetails[] objreviewdetails)throws Exception {
+	public Map<String, Object> GetReviewDetails12(@RequestBody LSreviewdetails[] objreviewdetails) throws Exception {
 		Response objResponse = new Response();
 		Map<String, Object> objreview = new HashMap<String, Object>();
 
@@ -153,15 +159,18 @@ public class AuditTrailController {
 			throws ParseException {
 		return auditService.AuditConfigurationrecord(objmanualaudit);
 	}
-	
-	
 
 	@PostMapping("/silentandmanualRecordHandler")
 	public LScfttransaction silentandmanualRecordHandler(@RequestBody Map<String, Object> mapObj)
 			throws ParseException {
 		return auditService.silentandmanualRecordHandler(mapObj);
 	}
-
+	
+	@PostMapping("/silentRecordHandlerForOrder")
+	public Lscfrtransactiononorder silentRecordHandlerForOrder(@RequestBody Map<String, Object> mapObj)
+			throws ParseException {
+		return auditService.silentRecordHandlerForOrder(mapObj);
+	}
 
 	@SuppressWarnings("unchecked")
 	@PostMapping("/checkManualAudit")
@@ -183,8 +192,7 @@ public class AuditTrailController {
 			if (commonfunction.checkuseronmanualaudit(objuser.getEncryptedpassword(), objuser.getsPassword())) {
 				rMap.put("audit", true);
 				rMap.put("objuser", reqMap.get("valuePass"));
-				
-			
+
 				return rMap;
 			}
 
@@ -193,17 +201,22 @@ public class AuditTrailController {
 			return rMap;
 		}
 	}
-	
-		@PostMapping("/GetCFRTransactionsdid")
+
+	@PostMapping("/GetCFRTransactionsdid")
 	public List<LScfttransaction> GetCFRTransactionsdid(@RequestBody Map<String, Object> objCFRFilter)
 			throws ParseException {
 		return auditService.GetCFRTransactionsdid(objCFRFilter);
 	}
-		
-		@PostMapping("/silentandmanualRecordHandlerlist")
-		public List<LScfttransaction> silentandmanualRecordHandlerlist(@RequestBody LScfttransaction[] mapObj)
-				throws ParseException {
-			return auditService.silentandmanualRecordHandlerlist(mapObj);
-		}
 
+	@PostMapping("/silentandmanualRecordHandlerlist")
+	public List<LScfttransaction> silentandmanualRecordHandlerlist(@RequestBody LScfttransaction[] mapObj)
+			throws ParseException {
+		return auditService.silentandmanualRecordHandlerlist(mapObj);
+	}
+
+	@PostMapping("/getAuditOnOrder")
+	public List<Lscfrtransactiononorder> getAuditOnOrder(@RequestBody Map<String, Object> objMap)
+			throws ParseException {
+		return auditService.getAuditOnOrder(objMap);
+	}
 }
