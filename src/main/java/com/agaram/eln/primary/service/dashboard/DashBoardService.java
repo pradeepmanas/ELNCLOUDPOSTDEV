@@ -385,6 +385,10 @@ public class DashBoardService {
 								todate, 3);
 				
 				lstlimscompleted = lstlimscompleted + lslogilablimsorderdetailRepository
+						.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNull("R", lstproject, fromdate,
+								todate);
+				
+				lstlimscompleted = lstlimscompleted + lslogilablimsorderdetailRepository
 						.countByOrderflagAndFiletypeAndCreatedtimestampBetween("R", 0, fromdate,
 								todate);
 			}
@@ -491,7 +495,8 @@ public class DashBoardService {
 					lstorders = lslogilablimsorderdetailRepository
 							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotOrderByBatchcodeDesc("R",
 									lstproject, fromdate, todate,3);
-					
+					lstorders.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullOrderByBatchcodeDesc("R",
+							lstproject, fromdate, todate));
 					lstorders.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndFiletypeAndCreatedtimestampBetween("R", 0, fromdate, todate));
 
 				} else if (objuser.getObjuser().getOrderselectiontype() == 3) {

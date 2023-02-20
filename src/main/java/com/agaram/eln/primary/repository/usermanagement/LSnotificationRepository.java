@@ -28,8 +28,13 @@ public interface LSnotificationRepository extends JpaRepository<LSnotification, 
 	
 	@Transactional
 	@Modifying
-	@Query("update LSnotification o set o.isnewnotification = 0 where o.notifationto = ?1 ")
-	void updatenotificationstatusforall(LSuserMaster lsuserMaster);
+	@Query("update LSnotification o set o.isnewnotification = 0 where o.notifationto = ?1 and o.notificationfor = 1")
+	void updatereadallnotificationstatusforme(LSuserMaster lsuserMaster);
+	
+	@Transactional
+	@Modifying
+	@Query("update LSnotification o set o.isnewnotification = 0 where o.notifationto = ?1 and o.notificationfor = 2")
+	void updatereadallnotificationstatusforteam(LSuserMaster lsuserMaster);
 	
 	public LSnotification findByRepositorycodeAndRepositorydatacode(Integer repositorycode, Integer repositorydatacode);
 	public LSnotification findByRepositorycodeAndRepositorydatacodeAndNotificationdetils(Integer repositorycode,

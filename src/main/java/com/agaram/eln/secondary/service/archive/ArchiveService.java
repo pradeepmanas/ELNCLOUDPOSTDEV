@@ -74,7 +74,28 @@ public class ArchiveService {
 //			lscfttransactionRepository.save(objcfrArchiveHistory.getObjsilentaudit());
     	}
 		
-		return lscfttransactionRepository.findAll();
+		//return lscfttransactionRepository.findAll();
+		List<LScfttransaction> list = lscfttransactionRepository.findAll();
+
+		if (list.size() > 0) {
+			int i = 0;
+
+			List<LSuserMaster> userDetails = lsuserMasterRepository.findAll();
+
+			while (list.size() > i) {
+				int k = 0;
+				while (userDetails.size() > k) {
+					if (list.get(i).getLsuserMaster() != null
+							&& list.get(i).getLsuserMaster().equals(userDetails.get(k).getUsercode())) {
+						String username = userDetails.get(k).getUsername();
+						list.get(i).setUsername(username);
+					}
+					k++;
+				}
+				i++;
+			}
+		}
+		return list;
 	}
 	
 	public List<LScfttransaction> GetAllArchiveList(LSuserMaster objuser)

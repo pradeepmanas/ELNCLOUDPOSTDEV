@@ -13,6 +13,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 
 import org.json.JSONObject;
 
@@ -40,6 +41,15 @@ public class MaterialType implements Serializable {
 	@Transient
 	private String displaystatus;
 
+	@Transient
+	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	public String info;
+	
+	@Transient
+	private LScfttransaction objmanualaudit;
+	
 	private transient String smaterialtypename;
 	private transient String sdescription;
 	public Integer getNmaterialtypecode() {
@@ -94,6 +104,25 @@ public class MaterialType implements Serializable {
 	public void setSdescription(String sdescription) {
 		this.sdescription = sdescription;
 	}
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
+	public String getInfo() {
+		return info;
+	}
+	public void setInfo(String info) {
+		this.info = info;
+	}
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
+	
 	// Parameterized Constructor to make a copy of object
 //	public MaterialType(final MaterialType materialtype) {
 //		this.nmaterialtypecode = materialtype.nmaterialtypecode;

@@ -72,7 +72,9 @@ public class SampleStorageLocationService {
 //		} else {
 		sampleStorageVersion.setObjsilentaudit(Auditobj);
 		sampleStorageVersionRepository.save(sampleStorageVersion);
-		return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody(),
+		return new ResponseEntity<>(
+				getAllActiveSampleStorageLocationWithSelectedRecord(sampleStorageLocation.getSitekey(),
+						sampleStorageLocation.getSamplestoragelocationkey()).getBody(),
 				HttpStatus.OK);
 //		return new ResponseEntity<>(sampleStorageVersion, HttpStatus.OK);
 //		}
@@ -153,6 +155,32 @@ public class SampleStorageLocationService {
 				objMap.put("selectedSampleStorageVersion", sampleStorageVersionList.get(0));
 			}
 
+		}
+		return new ResponseEntity<>(objMap, HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> getAllActiveSampleStorageLocationWithSelectedRecord(Integer nsiteInteger,
+			Integer sampleStorageLocationKey) {
+		Map<String, Object> objMap = new LinkedHashMap<String, Object>();
+		List<SampleStorageLocation> sampleStorageLocationList = sampleStorageLocationRepository
+				.findBySitekeyOrderBySamplestoragelocationkeyDesc(nsiteInteger);
+		objMap.put("sampleStorageLocation", sampleStorageLocationList);
+		if (sampleStorageLocationList != null && sampleStorageLocationList.size() > 0) {
+			List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository
+					.findBySampleStorageLocation(sampleStorageLocationList.get(0));
+			objMap.put("sampleStorageVersion", sampleStorageVersionList);
+		}
+		SampleStorageLocation objStorageLocation = sampleStorageLocationRepository
+				.findBySamplestoragelocationkey(sampleStorageLocationKey);
+		if (objStorageLocation != null) {
+			List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository
+					.findBySampleStorageLocation(objStorageLocation);
+			objStorageLocation.setSampleStorageVersion(sampleStorageVersionList);
+			objMap.put("selectedSampleStorageLocation", objStorageLocation);
+			objMap.put("sampleStorageVersion", sampleStorageVersionList);
+			if (sampleStorageVersionList != null && sampleStorageVersionList.size() > 0) {
+				objMap.put("selectedSampleStorageVersion", sampleStorageVersionList.get(0));
+			}
 		}
 		return new ResponseEntity<>(objMap, HttpStatus.OK);
 	}

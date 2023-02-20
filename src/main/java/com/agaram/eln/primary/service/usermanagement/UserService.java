@@ -383,7 +383,7 @@ public class UserService {
 				}
 				if (createby.getUsercode() != objusermaster.getUsercode()) {
 					String Detailwithcomma = sb.toString();
-					Details = "{\"role\":\"" + Detailwithcomma + "site:" + objusermaster.getSitename() + "\"}";
+					Details = "{\"role\":\"" + Detailwithcomma + "\", \"site\":\"" + objusermaster.getSitename() + "\"}";
 					Notifiction = "USERROLEADD";
 
 					objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
@@ -404,7 +404,8 @@ public class UserService {
 				}
 				if (createby.getUsercode() != objusermaster.getUsercode()) {
 					String Detailwithcomma = sb.toString();
-					Details = "{\"role\":\"" + Detailwithcomma + "site:" + objusermaster.getSitename() + "\"}";
+					Details = "{\"role\":\"" + Detailwithcomma + "\", \"site\":\"" + objusermaster.getSitename()
+								+ "\", \"fromuser\":\"" + objusermaster.getLoggedinuser().getUsername() + "\"}";
 					Notifiction = "USERROLEREMOVE";
 					objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
 					objnotify.setNotifationto(objusermaster);
@@ -1301,8 +1302,11 @@ public class UserService {
 	}
 
 	public Boolean Notificationmarkallasread(LSuserMaster lsuserMaster) {
-		lsnotificationRepository.updatenotificationstatusforall(lsuserMaster);
-
+		if(lsuserMaster.getObjuser().getFiltertype().equals(1)) {
+			lsnotificationRepository.updatereadallnotificationstatusforme(lsuserMaster);
+		} else if (lsuserMaster.getObjuser().getFiltertype().equals(2)) {
+			lsnotificationRepository.updatereadallnotificationstatusforteam(lsuserMaster);
+		}
 		return true;
 	}
 
