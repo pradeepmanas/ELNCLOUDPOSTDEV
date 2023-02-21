@@ -521,6 +521,10 @@ public class CloudFileManipulationservice {
 			blobClient = storageAccount.createCloudBlobClient();
 			container = blobClient.getContainerReference(containername);
 
+			System.out.println("Creating container: " + container.getName());
+			container.createIfNotExists(BlobContainerPublicAccessType.CONTAINER, new BlobRequestOptions(),
+					new OperationContext());
+			
 			File targetFile = new File(System.getProperty("java.io.tmpdir") + "/" + fileid);
 
 			FileUtils.copyInputStreamToFile(InputStream, targetFile);

@@ -1036,6 +1036,16 @@ public class InstrumentController {
 				ismultitenant,usercode,sitecode,createddate,fileviewfor);
 	}
 	
+	@PostMapping("/removefilesprotocolfolder/{directorycode}/{filefor}/{tenantid}/{ismultitenant}/{usercode}/{sitecode}/{createddate}/{fileviewfor}")
+	public Map<String, Object> removefilesprotocolfolder(@RequestParam("uid") String uid
+			,@PathVariable Long directorycode, @PathVariable String filefor, @PathVariable String tenantid
+			,@PathVariable Integer ismultitenant, @PathVariable Integer usercode, @PathVariable Integer sitecode
+			, @PathVariable Date createddate, @PathVariable Integer fileviewfor
+			)throws Exception {
+		return instrumentService.deleteprotocolfilesforfolder(uid,directorycode,filefor,tenantid,
+				ismultitenant,usercode,sitecode,createddate,fileviewfor);
+	}
+	
 	@RequestMapping("/validatefileexistonfolder")
 	public Response validatefileexistonfolder(@RequestBody LSsheetfolderfiles objfile)throws Exception
 	{

@@ -2761,6 +2761,7 @@ public class InstrumentService {
 
 		String Content = objfile.getFilecontent();
 		objfile.setFilecontent(null);
+		objfile.setLssampleresult(null);
 		lssamplefileRepository.save(objfile);
 		updateordercontent(Content, objfile, objfile.getIsmultitenant());
 

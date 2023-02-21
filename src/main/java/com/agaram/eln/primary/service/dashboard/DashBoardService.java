@@ -588,7 +588,6 @@ public class DashBoardService {
 					objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
 			mapSheets.put("Sheets",lstfile);
 		} else {
-//			List<Sheettemplateget> lstsheets = new ArrayList<Sheettemplateget>();
 
 			if (lstteamuser != null && lstteamuser.size() > 0) {
 				lstteamuser.add(objuser);
@@ -625,7 +624,7 @@ public class DashBoardService {
 			mapSheets.put("createdTemplate", lsfileRepository
 					.countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(fromdate, todate,1,1));
 			mapSheets.put("inprogressTemplate", lsfileRepository
-					.countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedAndRejectedNotOrderByFilecodeDesc(fromdate, todate, 0,1,1));
+					.countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedAndRejectedOrderByFilecodeDesc(fromdate, todate, 1,0,0));
 		} else {
 			if (lstteamuser != null && lstteamuser.size() > 0) {
 				lstteamuser.add(objuser);
@@ -750,14 +749,9 @@ public class DashBoardService {
 				
 				lstprotocolmaster = LSProtocolMasterRepository
 						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0,
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,1,
 								objuser.getUsercode(),1, fromdate, todate, 2, 
 								usercodelist, 1, fromdate, todate, 3);
-//				lstprotocolmaster.addAll(LSProtocolMasterRepository
-//						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrderByProtocolmastercodeDesc(
-//								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1,
-//								objuser.getUsercode(),1, fromdate, todate, 2, 
-//								usercodelist, 1, fromdate, todate, 3));
 				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("createdTemplate",lstprotocolmaster.size());
 				
