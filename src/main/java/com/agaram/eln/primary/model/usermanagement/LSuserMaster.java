@@ -147,6 +147,28 @@ public class LSuserMaster {
 
 	@Transient
 	private Integer multiusergroups;
+	
+	@Transient
+	private Integer pagesize;
+	
+	@Transient
+	private Integer pageperorder;
+
+	public Integer getPagesize() {
+		return pagesize;
+	}
+
+	public void setPagesize(Integer pagesize) {
+		this.pagesize = pagesize;
+	}
+
+	public Integer getPageperorder() {
+		return pageperorder;
+	}
+
+	public void setPageperorder(Integer pageperorder) {
+		this.pageperorder = pageperorder;
+	}
 
 	public Integer getIdletime() {
 		return idletime;
@@ -206,6 +228,13 @@ public class LSuserMaster {
 
 	@Transient
 	List<LSprojectmaster> lstproject;
+	
+	@Transient
+	private Integer testcode;
+	
+	@Transient
+	LSprojectmaster lstprojectforfilter;
+
 
 	@Transient
 	List<LSworkflow> lstworkflow;
@@ -214,6 +243,23 @@ public class LSuserMaster {
 	private boolean reset;
 	@Transient
 	private boolean resendmail;
+	
+	
+	public LSprojectmaster getLstprojectforfilter() {
+		return lstprojectforfilter;
+	}
+
+	public void setLstprojectforfilter(LSprojectmaster lstprojectforfilter) {
+		this.lstprojectforfilter = lstprojectforfilter;
+	}
+
+	public Integer getTestcode() {
+		return testcode;
+	}
+
+	public void setTestcode(Integer testcode) {
+		this.testcode = testcode;
+	}
 
 	public boolean isResendmail() {
 		return resendmail;

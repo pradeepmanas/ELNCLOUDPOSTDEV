@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -91,7 +92,13 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	@Modifying
 	@Query("select new com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode,filenameuser) from LSfile where lssitemaster_sitecode=?3 and filecode >1 and approved= ?1 or versionno > 1 and rejected=0 and createby in (?2) ORDER BY filecode DESC")
 	public List<LSfile> getsheetGreaterthanoneandapprovelanduserIn(Integer Approved, List<LSuserMaster> lstusermaster,Integer sitecode);
-
+   
+	@Transactional
+	@Modifying
+	@Query("select new com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode,filenameuser) from LSfile where lssitemaster_sitecode=?3 and filecode >1 and approved= ?1 and rejected=0 or approved is null and rejected=0 or versionno > 0 and approved !=1 and rejected=0 and createby in (?2) ORDER BY filecode DESC")
+	public List<LSfile> getsheetapprovelanduserIn(List<LSuserMaster> lstusermaster,Integer sitecode);
+	
+	//public List<LSfile> getsheetapprovelanduserIn(List<LSuserMaster> lstusermaster,Integer sitecode);
 	public List<LSfile> findByFilecodeGreaterThanAndApprovedOrFilecodeGreaterThanAndVersionnoGreaterThanOrderByFilecodeDesc(int filecode, int approved, int orfilecode, int version);
 	
 	public List<LSfile> findByFilecodeGreaterThanAndCreatebyInAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndRejectedAndVersionnoGreaterThanOrderByFilecodeDesc
@@ -113,7 +120,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	
 	public List<Sheettemplateget> findByCreatebyAndCreatedateBetweenOrderByFilecodeDesc(LSuserMaster lsusermaster,Date fromdate, Date todate);
 	
-	public List<Sheettemplateget> findByCreatedateBetweenAndFilecodeGreaterThanOrderByFilecodeDesc(Date fromdate, Date todate, Integer filecode);
+	public List<Sheettemplateget> findByCreatedateBetweenAndFilecodeGreaterThanOrderByFilecodeDesc(Date fromdate, Date todate, Integer filecode, Pageable pageable);
 	
 	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenOrderByFilecodeDesc(Integer filecode,List<LSuserMaster> lstusermaster, Date fromdate, Date todate);
 	
@@ -174,14 +181,14 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndViewoptionOrderByFilecodeDesc(
 			int i, LSSiteMaster lssitemaster, int j, int k, LSuserMaster objuser, int l);
 
-	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(
-			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, LSuserMaster objuser,
-			Date fromdate2, Date todate2, int l);
+//	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(
+//			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, LSuserMaster objuser,
+//			Date fromdate2, Date todate2, int l);
 
-	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(
-			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, LSuserMaster objuser,
-			Date fromdate2, Date todate2, int l, int m, List<LSuserMaster> lstteamuser, Date fromdate3, Date todate3,
-			int n);
+//	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(
+//			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, LSuserMaster objuser,
+//			Date fromdate2, Date todate2, int l, int m, List<LSuserMaster> lstteamuser, Date fromdate3, Date todate3,
+//			int n);
 
 	public Object countByFilecodeGreaterThanAndLssitemasterAndViewoptionOrFilecodeGreaterThanAndCreatebyAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndViewoptionOrderByFilecodeDesc(
 			int i, LSSiteMaster lssitemaster, int j, int k, LSuserMaster objusers, int l, int m,
@@ -245,6 +252,26 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 
 	public Object countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedAndRejectedOrderByFilecodeDesc(Date fromdate,
 			Date todate, int i, int j, int k);
+
+	public long countByCreatedateBetweenAndFilecodeGreaterThanOrderByFilecodeDesc(Date fromdate, Date todate, int i);
+
+	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int l, int m, List<LSuserMaster> lstteamuser, Date fromdate3, Date todate3,
+			int n);
+
+	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int l, int m, List<LSuserMaster> lstteamuser, Date fromdate3, Date todate3,
+			int n, Pageable pageable);
+
+	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int l, Pageable pageable);
+
+	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int l);
 
 
 

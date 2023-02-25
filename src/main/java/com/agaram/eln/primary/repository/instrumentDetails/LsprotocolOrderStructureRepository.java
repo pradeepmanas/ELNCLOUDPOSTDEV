@@ -37,6 +37,8 @@ public interface LsprotocolOrderStructureRepository extends JpaRepository<Lsprot
 			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j, LSSiteMaster lssitemaster2, int k,
 			List<LSuserMaster> lstuserMaster);
 
+	Lsprotocolorderstructure findByParentdircodeAndDirectorynameIgnoreCase(Long parentdircode, String directoryname);
+
 
 
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -193,7 +194,7 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	Object findByprotocolmastercodeNotAndProtocolmastername(int protocolmastercode, String trim);
 
-	Object findByProtocolmastername(String trim);
+//	Object findByProtocolmastername(String trim);
 
 //	List<Protocoltemplateget> findByCreatedbyInAndStatusAndCreatedateBetweenOrderByProtocolmastercodeDesc(
 //			List<Integer> usercodelist, int i, Date fromdate, Date todate);
@@ -208,11 +209,11 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionOrderByProtocolmastercodeDesc(
 			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
-			Date todate2, int l);
+			Date todate2, int l, Pageable pageable);
 
 	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionOrderByProtocolmastercodeDesc(
 			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
-			Date todate2, int l, List<Integer> usercodelist, int m, Date fromdate3, Date todate3, int n);
+			Date todate2, int l, List<Integer> usercodelist, int m, Date fromdate3, Date todate3, int n, Pageable pageable);
 
 	Long countByStatusAndLssitemasterAndCreatedateBetweenAndRejected(int i, Integer sitecode, Date fromdate,
 			Date todate, int j);
@@ -223,7 +224,7 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 	Long countByStatusAndLssitemasterAndCreatedateBetweenAndRejectedNotAndApprovedNot(int i, Integer sitecode,
 			Date fromdate, Date todate, int j, int k);
 
-	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
 			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, Integer usercode, int l, Date fromdate2,
 			Date todate2, int m, int n, List<Integer> usercodelist, int o, Date fromdate3, Date todate3, int p, int q);
 
@@ -237,11 +238,11 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			Date fromdate2, Date todate2, int n, int o, int p, List<Integer> usercodelist, int q, Date fromdate3,
 			Date todate3, int r, int s, int t);
 
-	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
 			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, Integer usercode, int l, Date fromdate2,
 			Date todate2, int m, int n);
 
-	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByProtocolmastercodeDesc(
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByProtocolmastercodeDesc(
 			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
 			Date fromdate2, Date todate2, int n, int o, int p);
 
@@ -249,11 +250,11 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
 			Date fromdate2, Date todate2, int n, int o, int p);
 
-	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrderByProtocolmastercodeDesc(
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrderByProtocolmastercodeDesc(
 			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, Integer usercode, int l, Date fromdate2,
 			Date todate2, int m, int n, List<Integer> usercodelist, int o, Date fromdate3, Date todate3, int p, int q);
 
-	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrderByProtocolmastercodeDesc(
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrderByProtocolmastercodeDesc(
 			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
 			Date todate2, int l, List<Integer> usercodelist, int m, Date fromdate3, Date todate3, int n);
 
@@ -272,12 +273,28 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			List<LSprotocolmastertest> lsfiletest2, int k, Integer usercode, int l,
 			List<LSprotocolmastertest> lsfiletest3, int m, List<Integer> lstteammap2, int n);
 
-	Object countByStatusAndLssitemasterAndCreatedateBetweenAndRejectedNotAndApprovedIsNull(int i, Integer sitecode,
+	long countByStatusAndLssitemasterAndCreatedateBetweenAndRejectedNotAndApprovedIsNull(int i, Integer sitecode,
 			Date fromdate, Date todate, int j);
 
-	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByProtocolmastercodeDesc(
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByProtocolmastercodeDesc(
 			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, Integer usercode, int l, Date fromdate2,
 			Date todate2, int m, int n);
+
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetween(Integer sitecode, int i, Date fromdate, Date todate,
+			Pageable pageable);
+
+	long countByLssitemasterAndStatusAndCreatedateBetween(Integer sitecode, int i, Date fromdate, Date todate);
+
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
+			Date todate2, int l, List<Integer> usercodelist, int m, Date fromdate3, Date todate3, int n);
+
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
+			Date todate2, int l);
+
+	Object findByProtocolmasternameAndLssitemaster(String trim, Integer lssitemaster);
+
 
 
 

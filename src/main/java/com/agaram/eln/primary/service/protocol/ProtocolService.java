@@ -1344,7 +1344,7 @@ public class ProtocolService {
 //				UpdateProtocolversion(newProtocolMasterObj, argObj1, LSprotocolupdates.class);
 			} else {
 				if (LSProtocolMasterRepositoryObj
-						.findByProtocolmastername(argObj.get("protocolmastername").toString().trim()) != null) {
+						.findByProtocolmasternameAndLssitemaster(argObj.get("protocolmastername").toString().trim(),LScfttransactionobj.getLssitemaster()) != null) {
 					response.setStatus(false);
 					response.setInformation("IDS_MSG_ALREADY");
 					mapObj.put("response", response);

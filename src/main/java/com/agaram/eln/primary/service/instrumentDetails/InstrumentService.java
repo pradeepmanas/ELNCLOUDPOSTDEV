@@ -5325,8 +5325,8 @@ public class InstrumentService {
 			lstdir = lsSheetOrderStructureRepository.findByDirectorycodeAndParentdircodeAndDirectorynameNot(
 					objdir.getDirectorycode(), objdir.getParentdircode(), objdir.getDirectoryname());
 		} else {
-			lstdir = lsSheetOrderStructureRepository.findByParentdircodeAndDirectoryname(objdir.getParentdircode(),
-					objdir.getDirectoryname());
+			lstdir = lsSheetOrderStructureRepository.findByDirectorynameIgnoreCaseAndParentdircode(objdir.getDirectoryname(),
+					objdir.getParentdircode());
 		}
 		if (lstdir != null) {
 			objResponse.setStatus(false);
@@ -5520,6 +5520,7 @@ public class InstrumentService {
 	}
 
 	public LSSheetOrderStructure Movedirectory(LSSheetOrderStructure directory) {
+
 		lsSheetOrderStructureRepository.updatedirectory(directory.getParentdircode(), directory.getPath(),
 				directory.getDirectorycode(), directory.getDirectoryname());
 		return directory;
@@ -5729,7 +5730,7 @@ public class InstrumentService {
 			lstdir = lsprotocolorderStructurerepository.findByDirectorycodeAndParentdircodeAndDirectorynameNot(
 					objdir.getDirectorycode(), objdir.getParentdircode(), objdir.getDirectoryname());
 		} else {
-			lstdir = lsprotocolorderStructurerepository.findByParentdircodeAndDirectoryname(objdir.getParentdircode(),
+			lstdir = lsprotocolorderStructurerepository.findByParentdircodeAndDirectorynameIgnoreCase(objdir.getParentdircode(),
 					objdir.getDirectoryname());
 		}
 		if (lstdir != null) {

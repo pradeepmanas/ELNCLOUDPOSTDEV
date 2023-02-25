@@ -36,6 +36,10 @@ public interface LSSheetOrderStructureRepository extends JpaRepository<LSSheetOr
 			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j, LSSiteMaster lssitemaster2, int k,
 			List<LSuserMaster> lstuserMaster);
 
+	LSSheetOrderStructure findByParentdircodeAndDirectorynameIgnoreCase(Long parentdircode, String directoryname);
+
+	LSSheetOrderStructure findByDirectorynameIgnoreCaseAndParentdircode(String directoryname, Long parentdircode);
+
 
 	
 }
