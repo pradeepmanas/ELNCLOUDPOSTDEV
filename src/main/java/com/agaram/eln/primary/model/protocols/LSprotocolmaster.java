@@ -87,6 +87,17 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	@JoinColumn(name = "protocolmastercode")
 	private List<LSprotocolmastertest> lstest;
 
+	@Transient
+	private Date notificationdate;
+	
+	public Date getNotificationdate() {
+		return notificationdate;
+	}
+
+	public void setNotificationdate(Date notificationdate) {
+		this.notificationdate = notificationdate;
+	}
+
 	public Integer getDefaulttemplate() {
 		return defaulttemplate;
 	}

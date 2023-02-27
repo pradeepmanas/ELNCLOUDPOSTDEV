@@ -24,6 +24,7 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.config.TenantContext;
 //import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplatefortest;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
@@ -80,6 +81,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.basemaster.BaseMasterService;
+import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.masters.MasterService;
 import com.agaram.eln.primary.service.material.TransactionService;
@@ -107,7 +109,8 @@ public class FileService {
 	private LSusersteamRepository LSusersteamRepository;
 	@Autowired
 	private LSworkflowRepository lsworkflowRepository;
-
+	@Autowired
+	private CloudFileManipulationservice objCloudFileManipulationservice;
 	@Autowired
 	private LSnotificationRepository LSnotificationRepository;
 
@@ -188,12 +191,19 @@ public class FileService {
 	@Autowired
 	Commonservice commonservice;
 
-	public LSfile InsertupdateSheet(LSfile objfile) {
+	public LSfile InsertupdateSheet(LSfile objfile) throws IOException {
 
 		Boolean Isnew = false;
-		byte[] bytes = objfile.getFilecontent().getBytes(StandardCharsets.UTF_16);
-		String Content = new String(bytes, StandardCharsets.UTF_16);
-
+		
+		String Content = "";
+		
+		if(objfile.getIsmultitenant() == 1) {
+			Content = objfile.getFilecontent();
+		}else {
+			byte[] bytes = objfile.getFilecontent().getBytes(StandardCharsets.UTF_16);
+			Content = new String(bytes, StandardCharsets.UTF_16);
+		}
+		
 		if (objfile.getFilecode() == null
 				&& lSfileRepository.findByfilenameuserIgnoreCaseAndLssitemaster(objfile.getFilenameuser().trim(),
 						objfile.getLssitemaster()) != null) {
@@ -262,18 +272,14 @@ public class FileService {
 		commonservice.updatefilecontentcheck(Content, objfile, Isnew);
 		commonservice.updatenotificationforsheetthread(objfile, true, null, objfile.getIsnewsheet());
 
-//		updatefilecontent(Content, objfile, Isnew);
-
 		objfile.setResponse(new Response());
 		objfile.getResponse().setStatus(true);
 		objfile.getResponse().setInformation("ID_SHEETMSG");
 
-		// updatenotificationforsheet(objfile, true, null, objfile.getIsnewsheet());
-
-			objfile.setVersionno((int) lsfileversionRepository.countByFilecode(objfile.getFilecode()));
+		objfile.setVersionno((int) lsfileversionRepository.countByFilecode(objfile.getFilecode()));
 		
 		Isnew = null;
-		bytes = null;
+//		bytes = null;
 		Content = null;
 
 		return objfile;
@@ -698,15 +704,16 @@ public class FileService {
 						} else if (objfile.getApproved() == 2) {
 							Notifiction = "SHEETRETURN";
 							objnotify.setNotifationto(objuser.get(i));
+						} else if (objfile.getApproved() == 0) {
+							Notifiction = "SHEETAPPROVALSENTNEXT";
 						}
 
 						objnotify.setNotifationto(createby);
-						Details = "{\"ordercode\":\"" + objfile.getFilecode() + "\", \"order\":\""
-								+ objfile.getFilenameuser() + "\", \"username\":\""
-
-								+ objfile.getLSuserMaster().getUsername() + "\"}";
+						Details = "{\"ordercode\":\"" + objfile.getFilecode() + "\", \"order\":\"" + objfile.getFilenameuser()
+									+ "\", \"currentworkflow\":\"" + previousworkflow.getWorkflowname() 
+									+ "\", \"username\":\""	+ objfile.getLSuserMaster().getUsername() + "\"}";
 						objnotify.setNotifationfrom(objfile.getLSuserMaster());
-						objnotify.setNotificationdate(objfile.getCreatedate());
+						objnotify.setNotificationdate(objfile.getNotificationdate());
 						objnotify.setNotification(Notifiction);
 						objnotify.setNotificationdetils(Details);
 						objnotify.setIsnewnotification(1);
@@ -816,7 +823,7 @@ public class FileService {
 							if (IsNewsheet) {
 								objnotify.setNotificationdate(objFile.getCreatedate());
 							} else if (!IsNewsheet) {
-								objnotify.setNotificationdate(objFile.getModifieddate());
+								objnotify.setNotificationdate(objFile.getNotificationdate());
 							} else {
 								objnotify.setNotificationdate(objFile.getCreatedate());
 							}
@@ -974,7 +981,7 @@ public class FileService {
 		return objMap;
 	}
 
-	public boolean UpdateSheetversion(LSfile objfile, String orginalcontent) {
+	public boolean UpdateSheetversion(LSfile objfile, String orginalcontent) throws IOException {
 		int Versionnumber = 0;
 		String Content = "";
 		LSfile objesixting = lSfileRepository.findByfilecode(objfile.getFilecode());
@@ -1035,9 +1042,12 @@ public class FileService {
 			lsfileversionRepository.save(objfile.getLsfileversion());
 
 			if (objfile.getIsmultitenant() == 1) {
-//				CloudSheetCreation file = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
-				if (cloudSheetCreationRepository.findById((long) objfile.getFilecode()) != null) {
+				CloudSheetCreation objCreation = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
+				
+				if (objCreation != null && objCreation.getContainerstored() == 0) {
 					Content = cloudSheetCreationRepository.findById((long) objfile.getFilecode()).getContent();
+				}else {
+					Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),TenantContext.getCurrentTenant()+"sheetcreation");
 				}
 			} else {
 				GridFSDBFile largefile = gridFsTemplate
@@ -1105,21 +1115,27 @@ public class FileService {
 		return true;
 	}
 
-	public void updatefileversioncontent(String Content, LSfileversion objfile, Integer ismultitenant) {
+	public void updatefileversioncontent(String Content, LSfileversion objfile, Integer ismultitenant) throws IOException {
 		if (ismultitenant == 1) {
+			
+			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,TenantContext.getCurrentTenant()+"sheetversion");
+			String fileUUID = (String) objMap.get("uuid");
+			String fileURI = objMap.get("uri").toString();
+			
 			CloudSheetVersion objsavefile = new CloudSheetVersion();
 			if (objfile.getFileversioncode() != null) {
 				objsavefile.setId((long) objfile.getFileversioncode());
 			} else {
 				objsavefile.setId(1);
 			}
-			objsavefile.setContent(Content);
+			objsavefile.setFileuri(fileURI);
+			objsavefile.setFileuid(fileUUID);
+			objsavefile.setContainerstored(1);
 			cloudSheetVersionRepository.save(objsavefile);
 
 			objsavefile = null;
 		} else {
 
-//			String fileid = "fileversion_" + objfile.getFileversioncode();
 			GridFSDBFile largefile = gridFsTemplate
 					.findOne(new Query(Criteria.where("filename").is("fileversion_" + objfile.getFileversioncode())));
 			if (largefile != null) {
@@ -1140,7 +1156,7 @@ public class FileService {
 		return lssheetworkflowhistoryRepository.findByFilecode(objfile.getFilecode());
 	}
 
-	public String GetfileverContent(LSfile objfile) {
+	public String GetfileverContent(LSfile objfile) throws IOException {
 		String Content = "";
 
 		if (objfile.getVersionno() == 0) {
@@ -1148,13 +1164,14 @@ public class FileService {
 			Content = objesixting.getFilecontent();
 			if (objfile != null) {
 				if (objfile.getIsmultitenant() == 1) {
-//					CloudSheetCreation file = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
-					if (cloudSheetCreationRepository.findById((long) objfile.getFilecode()) != null) {
+					CloudSheetCreation objCreation = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
+					
+					if (objCreation != null && objCreation.getContainerstored() == 0) {
 						Content = cloudSheetCreationRepository.findById((long) objfile.getFilecode()).getContent();
+					}else {
+						Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),TenantContext.getCurrentTenant()+"sheetcreation");
 					}
 				} else {
-
-//					String fileid = "file_" + objfile.getFilecode();
 					GridFSDBFile largefile = gridFsTemplate
 							.findOne(new Query(Criteria.where("filename").is("file_" + objfile.getFilecode())));
 					if (largefile == null) {
@@ -1163,15 +1180,10 @@ public class FileService {
 					}
 
 					if (largefile != null) {
-//						String filecontent = new BufferedReader(
-//								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-//										.collect(Collectors.joining("\n"));
 						Content = new BufferedReader(
 								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
 								.collect(Collectors.joining("\n"));
 					} else {
-
-//						SheetCreation file = mongoTemplate.findById(objfile.getFilecode(), SheetCreation.class);
 						if (mongoTemplate.findById(objfile.getFilecode(), SheetCreation.class) != null) {
 							Content = mongoTemplate.findById(objfile.getFilecode(), SheetCreation.class).getContent();
 						}
@@ -1185,32 +1197,26 @@ public class FileService {
 					.findByFilecodeAndVersionnoOrderByVersionnoDesc(objfile.getFilecode(), objfile.getVersionno());
 			Content = objVersion.getFilecontent();
 			if (objVersion != null) {
-				if (objfile.getIsmultitenant() == 1) {
-//					CloudSheetVersion file = cloudSheetVersionRepository
-//							.findById((long) objVersion.getFileversioncode());
-					if (cloudSheetVersionRepository.findById((long) objVersion.getFileversioncode()) != null) {
-						Content = cloudSheetVersionRepository.findById((long) objVersion.getFileversioncode())
-								.getContent();
+				if (objfile.getIsmultitenant() == 1) {					
+					CloudSheetVersion objCreation = cloudSheetVersionRepository.findById((long) objVersion.getFileversioncode());
+					
+					if (objCreation != null && objCreation.getContainerstored() == 0) {
+						Content = cloudSheetVersionRepository.findById((long) objVersion.getFileversioncode()).getContent();
+					}else {
+						Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),TenantContext.getCurrentTenant()+"sheetversion");
 					}
 				} else {
-
-//					String fileid = "fileversion_" + objVersion.getFileversioncode();
 					GridFSDBFile largefile = gridFsTemplate.findOne(
 							new Query(Criteria.where("filename").is("fileversion_" + objVersion.getFileversioncode())));
 					if (largefile == null) {
 						largefile = gridFsTemplate.findOne(
 								new Query(Criteria.where("_id").is("fileversion_" + objVersion.getFileversioncode())));
 					}
-
 					if (largefile != null) {
-//						String filecontent = new BufferedReader(
-//								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-//										.collect(Collectors.joining("\n"));
 						Content = new BufferedReader(
 								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
 								.collect(Collectors.joining("\n"));
 					} else {
-//						SheetVersion file = mongoTemplate.findById(objVersion.getFileversioncode(), SheetVersion.class);
 						if (mongoTemplate.findById(objVersion.getFileversioncode(), SheetVersion.class) != null) {
 							Content = mongoTemplate.findById(objVersion.getFileversioncode(), SheetVersion.class)
 									.getContent();
@@ -1229,16 +1235,20 @@ public class FileService {
 		return LSlogilablimsorderdetailRepository.findAll();
 	}
 
-	public LSfile getfileoncode(LSfile objfile) {
+	public LSfile getfileoncode(LSfile objfile) throws IOException {
 		LSfile objreturnfile = lSfileRepository.findByfilecode(objfile.getFilecode());
 
 		objreturnfile.setModifiedlist(new ArrayList<LSsheetupdates>());
 		objreturnfile.getModifiedlist().addAll(lssheetupdatesRepository.findByfilecode(objfile.getFilecode()));
 		if (objreturnfile != null) {
 			if (objfile.getIsmultitenant() == 1) {
-				if (cloudSheetCreationRepository.findById((long) objfile.getFilecode()) != null) {
+				CloudSheetCreation objCreation = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
+				
+				if (objCreation != null && objCreation.getContainerstored() == 0) {
 					objreturnfile.setFilecontent(
 							cloudSheetCreationRepository.findById((long) objfile.getFilecode()).getContent());
+				}else {
+					objreturnfile.setFilecontent(objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),TenantContext.getCurrentTenant()+"sheetcreation"));
 				}
 			} else {
 				GridFSDBFile largefile = gridFsTemplate

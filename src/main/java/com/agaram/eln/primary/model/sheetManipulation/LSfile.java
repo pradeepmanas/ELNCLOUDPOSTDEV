@@ -83,6 +83,16 @@ public class LSfile {
 		this.isnewsheet = isnewsheet;
 	}
 	
+	@Transient
+	private Date notificationdate;
+	
+	public Date getNotificationdate() {
+		return notificationdate;
+	}
+	public void setNotificationdate(Date notificationdate) {
+		this.notificationdate = notificationdate;
+	}
+
 	@OneToMany
 	@JoinColumn(name="filecode")
 	@OrderBy("versionno DESC")

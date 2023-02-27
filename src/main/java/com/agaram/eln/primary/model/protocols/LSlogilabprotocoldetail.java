@@ -283,6 +283,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setActivekey(Integer activekey) {
 		this.activekey = activekey;
 	}
+	
+	@Transient
+	private Date notificationdate;
+
+	public Date getNotificationdate() {
+		return notificationdate;
+	}
+
+	public void setNotificationdate(Date notificationdate) {
+		this.notificationdate = notificationdate;
+	}
 
 	public List<LSprojectmaster> getLstproject() {
 		return lstproject;

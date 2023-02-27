@@ -289,20 +289,15 @@ public class UserService {
 				updateUser.setPassword(objusermaster.getPassword());
 			}
 			updateUser.setLockcount(objusermaster.getLockcount());
-			updateUser
-					.setUserretirestatus(objusermaster.getUserretirestatus() == 1 ? objusermaster.getUserretirestatus()
-							: updateUser.getUserretirestatus());
+			updateUser.setUserretirestatus(objusermaster.getUserretirestatus() == 1 ? objusermaster.getUserretirestatus() : updateUser.getUserretirestatus());
+			
 			if (objusermaster.getMultiusergroupcode() != null && objusermaster.getUsercode() != null) {
-//				if (!objusermaster.isSameusertologin()) {
 				LSMultiusergroupRepositery.deleteByusercode(objusermaster.getUsercode());
 				LSMultiusergroupRepositery.save(objusermaster.getMultiusergroupcode());
-//				}
-
-				updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A" : "D");
+				updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") || objusermaster.getUserstatus().equals("Locked") ? "A" : "D");
 				updateUser.setUserfullname(objusermaster.getUserfullname());
 				updateUser.setEmailid(objusermaster.getEmailid());
 				updateUser.setUnifieduserid(objusermaster.getUnifieduserid());
-
 			}
 
 			objusermaster.setCreateddate(updateUser.getCreateddate());
@@ -395,8 +390,9 @@ public class UserService {
 					objnotify.setNotificationpath("/Usermaster");
 					objnotify.setIsnewnotification(1);
 					lstnotifications.add(objnotify);
+					lsnotificationRepository.save(lstnotifications);
 				}
-			} else {
+			} else if (objusermaster.getMultiusergroupcode().size() != objusermaster.getDeleterole().size()) {
 				if (objusermaster.getUserroleremovenotify() != null) {
 					for (LSuserMaster rowValues : objusermaster.getUserroleremovenotify()) {
 						sb.append(rowValues.getUsergroupname()).append(",");
@@ -416,11 +412,10 @@ public class UserService {
 					objnotify.setNotificationpath("/Usermaster");
 					objnotify.setIsnewnotification(1);
 					lstnotifications.add(objnotify);
+					lsnotificationRepository.save(lstnotifications);
 				}
 			}
 		}
-
-		lsnotificationRepository.save(lstnotifications);
 
 	}
 

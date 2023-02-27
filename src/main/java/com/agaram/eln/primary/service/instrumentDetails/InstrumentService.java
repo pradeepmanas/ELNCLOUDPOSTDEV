@@ -54,6 +54,7 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderAttachment;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderVersion;
+import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.fileManipulation.Fileimages;
 import com.agaram.eln.primary.model.fileManipulation.Fileimagestemp;
 import com.agaram.eln.primary.model.fileManipulation.LSfileimages;
@@ -66,7 +67,6 @@ import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSfields;
-import com.agaram.eln.primary.model.instrumentDetails.LSinstruments;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
@@ -105,7 +105,6 @@ import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserActions;
@@ -125,7 +124,6 @@ import com.agaram.eln.primary.repository.fileManipulation.FileimagestempReposito
 import com.agaram.eln.primary.repository.fileManipulation.LSfileimagesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSSheetOrderStructureRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSfieldsRepository;
-import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSprotocolfolderfilesRepository;
@@ -185,8 +183,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
 
-
-
 @Service
 //@EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
 public class InstrumentService {
@@ -195,8 +191,8 @@ public class InstrumentService {
 	private Environment env;
 	@Autowired
 	private LsMethodFieldsRepository lsMethodFieldsRepository;
-	@Autowired
-	private LSinstrumentsRepository lSinstrumentsRepository;
+//	@Autowired
+//	private LSinstrumentsRepository lSinstrumentsRepository;
 	@Autowired
 	private InstMasterRepository lsInstMasterRepository;
 	@Autowired
@@ -289,7 +285,8 @@ public class InstrumentService {
 
 	@Autowired
 	private CloudSheetCreationRepository cloudSheetCreationRepository;
-
+	@Autowired
+	private CloudFileManipulationservice objCloudFileManipulationservice;
 	@Autowired
 	private CloudOrderCreationRepository cloudOrderCreationRepository;
 
@@ -382,13 +379,12 @@ public class InstrumentService {
 
 	@Autowired
 	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
-	
+
 	@Autowired
 	private LsbatchdetailsRepository LsbatchdetailsRepository;
-	
+
 	@Autowired
 	private LsMappedInstrumentsRepository lsMappedInstrumentsRepository;
-
 
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 //		Map<String, Object> obj = new HashMap<>();
@@ -475,8 +471,8 @@ public class InstrumentService {
 		lsInst.add("INST000");
 		lsInst.add("LPRO");
 		List<LsMethodFields> Methods = lsMethodFieldsRepository.findByinstrumentidNotIn(lsInst);
-		//List<SubParserField> SubParserField = new ArrayList<SubParserField>();
-				
+		// List<SubParserField> SubParserField = new ArrayList<SubParserField>();
+
 		if (lssiteMaster.getIsmultitenant() != 1) {
 			List<LSfields> Generalfields = lSfieldsRepository.findByisactive(1);
 			List<LsMappedInstruments> Instruments = lsMappedInstrumentsRepository.findAll();
@@ -487,8 +483,8 @@ public class InstrumentService {
 			List<Method> elnMethod = lsMethodRepository.findByStatus(1);
 			List<ParserBlock> ParserBlock = lsParserBlockRepository.findAll();
 			List<ParserField> ParserField = lsParserRepository.findByStatus(1);
-			 List<SubParserField> SubParserField = lsSubParserRepository.findByStatus(1);
-		  //  SubParserField = lsSubParserRepository.findByStatus(1);
+			List<SubParserField> SubParserField = lsSubParserRepository.findByStatus(1);
+			// SubParserField = lsSubParserRepository.findByStatus(1);
 			obj.put("Generalfields", Generalfields);
 
 			List<ParserField> filteredList = ParserField.stream()
@@ -516,7 +512,7 @@ public class InstrumentService {
 			elnMethod = null;
 			ParserBlock = null;
 			ParserField = null;
-			//SubParserField = null;
+			// SubParserField = null;
 
 		} else {
 			List<LSfields> Generalfields = lSfieldsRepository.findByisactiveAndMethodname(1, "ID_GENERAL");
@@ -528,7 +524,7 @@ public class InstrumentService {
 			List<ParserField> ParserField = lsParserRepository.findByStatus(1);
 			// List<SubParserField> SubParserField = lsSubParserRepository.findAll();
 			List<SubParserField> SubParserField = lsSubParserRepository.findByStatus(1);
-			 
+
 			obj.put("Generalfields", Generalfields);
 
 			List<ParserField> filteredList = ParserField.stream()
@@ -715,7 +711,7 @@ public class InstrumentService {
 //		return objorder;
 //	}
 
-	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder) {
+	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder) throws IOException {
 
 		objorder.setLsworkflow(lsworkflowRepository
 				.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
@@ -729,17 +725,23 @@ public class InstrumentService {
 			if ((objorder.getLsfile().getApproved() != null && objorder.getLsfile().getApproved() == 1)
 					|| (objorder.getFiletype() == 5)) {
 				if (objorder.getIsmultitenant() == 1) {
-//					CloudSheetCreation file = cloudSheetCreationRepository
-//							.findById((long) objorder.getLsfile().getFilecode());
-					if (cloudSheetCreationRepository.findById((long) objorder.getLsfile().getFilecode()) != null) {
-						Content = cloudSheetCreationRepository.findById((long) objorder.getLsfile().getFilecode())
-								.getContent();
+
+					CloudSheetCreation objCreation = cloudSheetCreationRepository
+							.findById((long) objorder.getLsfile().getFilecode());
+
+					if (objCreation != null) {
+						if (objCreation.getContainerstored() == 0) {
+							Content = cloudSheetCreationRepository.findById((long) objorder.getLsfile().getFilecode())
+									.getContent();
+						} else {
+							Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+									TenantContext.getCurrentTenant() + "sheetcreation");
+						}
 					} else {
 						Content = objorder.getLsfile().getFilecontent();
 					}
 				} else {
 
-//					String fileid = "file_" + objorder.getLsfile().getFilecode();
 					GridFSDBFile largefile = gridFsTemplate.findOne(
 							new Query(Criteria.where("filename").is("file_" + objorder.getLsfile().getFilecode())));
 					if (largefile == null) {
@@ -748,16 +750,10 @@ public class InstrumentService {
 					}
 
 					if (largefile != null) {
-//						String filecontent = new BufferedReader(
-//								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-//								.collect(Collectors.joining("\n"));
 						Content = new BufferedReader(
 								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
 										.collect(Collectors.joining("\n"));
 					} else {
-
-//						SheetCreation file = mongoTemplate.findById(objorder.getLsfile().getFilecode(),
-//								SheetCreation.class);
 						if (mongoTemplate.findById(objorder.getLsfile().getFilecode(), SheetCreation.class) != null) {
 							Content = mongoTemplate.findById(objorder.getLsfile().getFilecode(), SheetCreation.class)
 									.getContent();
@@ -823,7 +819,7 @@ public class InstrumentService {
 
 		List<LSlogilablimsorder> lsorder = new ArrayList<LSlogilablimsorder>();
 		String Limsorder = objorder.getBatchcode().toString();
-//		Map<String, Object> mapObj = new HashMap<>();
+
 		if (objorder.getLsfile() != null) {
 			objorder.getLsfile().setLsmethods(
 					LSfilemethodRepository.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()));
@@ -852,7 +848,7 @@ public class InstrumentService {
 
 				lslogilablimsorderRepository.save(lsorder);
 			} else {
-//				LSfilemethod lsfilemethod = LSfilemethodRepository.findByFilecode(objorder.getLsfile().getFilecode());
+
 				LSlogilablimsorder objLimsOrder = new LSlogilablimsorder();
 				if (LSfilemethodRepository.findByFilecode(objorder.getLsfile().getFilecode()) != null) {
 					objLimsOrder.setMethodcode(
@@ -875,8 +871,6 @@ public class InstrumentService {
 		if (objorder.getLssamplefile() != null) {
 			updateordercontent(Content, objorder.getLssamplefile(), objorder.getIsmultitenant());
 		}
-
-		
 
 		objorder.setLstworkflow(objorder.getLstworkflow());
 
@@ -983,7 +977,7 @@ public class InstrumentService {
 			mapOrders.put("completedorder", (lstlimscompleted));
 
 		}
-		
+
 		fromdate = null;
 		todate = null;
 
@@ -1197,7 +1191,7 @@ public class InstrumentService {
 	}
 
 	public List<LSlogilablimsorderdetail> Getorderbytype(LSlogilablimsorderdetail objorder) {
-		
+
 		if (objorder.getOrderflag().equals("N")) {
 			return lslogilablimsorderdetailRepository
 					.findByFiletypeAndOrderflagAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
@@ -1228,7 +1222,7 @@ public class InstrumentService {
 							objorder.getFiletype(), objorder.getOrderflag(), lstproject, objorder.getFromdate(),
 							objorder.getTodate());
 		}
-		
+
 		lstteammap = null;
 		lstteam = null;
 		lstproject = null;
@@ -1472,7 +1466,7 @@ public class InstrumentService {
 		mapOrders.put("completedcount", completedcount);
 		mapOrders.put("sharedbycount", sharedbycount);
 		mapOrders.put("sharetomecount", sharetomecount);
-		
+
 		idList = null;
 
 		return lstorder;
@@ -1881,8 +1875,8 @@ public class InstrumentService {
 
 					lstorder = lslogilablimsorderdetailRepository
 							.findByOrderflagAndFiletypeAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-									objorder.getOrderflag(), objorder.getFiletype(), objorder.getLstproject(), objorder.getFromdate(),
-									objorder.getTodate());
+									objorder.getOrderflag(), objorder.getFiletype(), objorder.getLstproject(),
+									objorder.getFromdate(), objorder.getTodate());
 				}
 			} else if (objorder.getOrderflag().equals("A")) {
 				if (objorder.getSearchCriteria() != null
@@ -2011,8 +2005,8 @@ public class InstrumentService {
 
 					lstorder = lslogilablimsorderdetailRepository
 							.findByOrderflagAndFiletypeAndLsprojectmasterInAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-									objorder.getOrderflag(), objorder.getFiletype(), objorder.getLstproject(), objorder.getFromdate(),
-									objorder.getTodate());
+									objorder.getOrderflag(), objorder.getFiletype(), objorder.getLstproject(),
+									objorder.getFromdate(), objorder.getTodate());
 				}
 			}
 
@@ -2085,11 +2079,13 @@ public class InstrumentService {
 			} else {
 				pendingcount = lslogilablimsorderdetailRepository
 						.countByFiletypeAndOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-								objorder.getFiletype(), "N", objorder.getLstproject(), objorder.getFromdate(), objorder.getTodate());
+								objorder.getFiletype(), "N", objorder.getLstproject(), objorder.getFromdate(),
+								objorder.getTodate());
 
 				completedcount = lslogilablimsorderdetailRepository
 						.countByFiletypeAndOrderflagAndLsprojectmasterInAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-								objorder.getFiletype(), "R", objorder.getLstproject(), objorder.getFromdate(), objorder.getTodate());
+								objorder.getFiletype(), "R", objorder.getLstproject(), objorder.getFromdate(),
+								objorder.getTodate());
 
 				Assignedcount = lslogilablimsorderdetailRepository
 						.countByFiletypeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrderByBatchcodeDesc(
@@ -2157,7 +2153,7 @@ public class InstrumentService {
 
 		mapOrders.put("sharedbycount", sharedbycount);
 		mapOrders.put("sharetomecount", sharetomecount);
-		
+
 		lstBatchcode = null;
 
 		return lstorder;
@@ -2230,13 +2226,15 @@ public class InstrumentService {
 		if (objorder.getOrderflag().equals("N")) {
 			return lslogilablimsorderdetailRepository
 					.findByFiletypeAndOrderflagAndBatchcodeLessThanAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-							objorder.getFiletype(), objorder.getOrderflag(), objorder.getBatchcode(), lsprojectmasterRepository.findByLsusersteamIn(lstteam),
-							objorder.getFromdate(), objorder.getTodate());
+							objorder.getFiletype(), objorder.getOrderflag(), objorder.getBatchcode(),
+							lsprojectmasterRepository.findByLsusersteamIn(lstteam), objorder.getFromdate(),
+							objorder.getTodate());
 		} else {
 			return lslogilablimsorderdetailRepository
 					.findByFiletypeAndOrderflagAndBatchcodeLessThanAndLsprojectmasterInAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-							objorder.getFiletype(), objorder.getOrderflag(), objorder.getBatchcode(), lsprojectmasterRepository.findByLsusersteamIn(lstteam),
-							objorder.getFromdate(), objorder.getTodate());
+							objorder.getFiletype(), objorder.getOrderflag(), objorder.getBatchcode(),
+							lsprojectmasterRepository.findByLsusersteamIn(lstteam), objorder.getFromdate(),
+							objorder.getTodate());
 		}
 
 //		mapOrders.put("orders", lstorder);
@@ -2291,9 +2289,8 @@ public class InstrumentService {
 	public List<LSworkflow> GetWorkflowonUser(LSuserMaster objuser) {
 //		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
 //				.findBylsusergroup(objuser.getLsusergroup());
-		List<LSworkflow> lsworkflow = lsworkflowRepository
-				.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmappingRepository
-						.findBylsusergroup(objuser.getLsusergroup()));
+		List<LSworkflow> lsworkflow = lsworkflowRepository.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(
+				lsworkflowgroupmappingRepository.findBylsusergroup(objuser.getLsusergroup()));
 
 		return lsworkflow;
 	}
@@ -2310,15 +2307,12 @@ public class InstrumentService {
 	}
 
 	public List<LSworkflow> GetWorkflowonuser(LSusergroup lsusergroup) {
-//		List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
-//				.findBylsusergroup(lsusergroup);
 
-		return lsworkflowRepository
-				.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(lsworkflowgroupmappingRepository
-						.findBylsusergroup(lsusergroup));
+		return lsworkflowRepository.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(
+				lsworkflowgroupmappingRepository.findBylsusergroup(lsusergroup));
 	}
 
-	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder) {
+	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder) throws IOException {
 
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
@@ -2377,41 +2371,41 @@ public class InstrumentService {
 
 		if (objupdatedorder.getLssamplefile() != null) {
 			if (objorder.getIsmultitenant() == 1) {
-//				CloudOrderCreation file = cloudOrderCreationRepository
-//						.findById((long) objupdatedorder.getLssamplefile().getFilesamplecode());
-				if (cloudOrderCreationRepository
-						.findById((long) objupdatedorder.getLssamplefile().getFilesamplecode()) != null) {
-					objupdatedorder.getLssamplefile().setFilecontent(cloudOrderCreationRepository
-							.findById((long) objupdatedorder.getLssamplefile().getFilesamplecode()).getContent());
+				CloudOrderCreation objCreation = cloudOrderCreationRepository
+						.findById((long) objupdatedorder.getLssamplefile().getFilesamplecode());
+				if (objCreation != null && objCreation.getContainerstored() == 0) {
+					objupdatedorder.getLssamplefile().setFilecontent(objCreation.getContent());
+				} else {
+					objupdatedorder.getLssamplefile().setFilecontent(
+							objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+									TenantContext.getCurrentTenant() + "ordercreation"));
 				}
 			} else {
 
-//				String fileid = "order_" + objupdatedorder.getLssamplefile().getFilesamplecode();
-				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
+				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename")
+						.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
 				if (largefile == null) {
-					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
+					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id")
+							.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
 				}
 
 				if (largefile != null) {
-//					String filecontent = new BufferedReader(
-//							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-//									.collect(Collectors.joining("\n"));
-					objupdatedorder.getLssamplefile().setFilecontent(new BufferedReader(
-							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-							.collect(Collectors.joining("\n")));
+					objupdatedorder.getLssamplefile()
+							.setFilecontent(new BufferedReader(
+									new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+											.collect(Collectors.joining("\n")));
 				} else {
 
-//					OrderCreation file = mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
-//							OrderCreation.class);
 					if (mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
 							OrderCreation.class) != null) {
-						objupdatedorder.getLssamplefile().setFilecontent(mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
-								OrderCreation.class).getContent());
+						objupdatedorder.getLssamplefile().setFilecontent(mongoTemplate
+								.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class)
+								.getContent());
 					}
 				}
 			}
 		}
-		
+
 		lsLogilaborders = null;
 
 		return objupdatedorder;
@@ -2488,26 +2482,30 @@ public class InstrumentService {
 			} else {
 
 //				String fileid = "order_" + objupdatedorder.getLssamplefile().getFilesamplecode();
-				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
+				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename")
+						.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
 				if (largefile == null) {
-					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
+					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id")
+							.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
 				}
 
 				if (largefile != null) {
 //					String filecontent = new BufferedReader(
 //							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
 //									.collect(Collectors.joining("\n"));
-					objupdatedorder.getLssamplefile().setFilecontent(new BufferedReader(
-							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-							.collect(Collectors.joining("\n")));
+					objupdatedorder.getLssamplefile()
+							.setFilecontent(new BufferedReader(
+									new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+											.collect(Collectors.joining("\n")));
 				} else {
 
 //					OrderCreation file = mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
 //							OrderCreation.class);
-					if ( mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
+					if (mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
 							OrderCreation.class) != null) {
-						objupdatedorder.getLssamplefile().setFilecontent( mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
-								OrderCreation.class).getContent());
+						objupdatedorder.getLssamplefile().setFilecontent(mongoTemplate
+								.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class)
+								.getContent());
 					}
 				}
 			}
@@ -2517,22 +2515,23 @@ public class InstrumentService {
 		return objupdatedorder;
 	}
 
-	private String GetSamplefileconent(LSsamplefile lssamplefile, Integer ismultitenant) {
+	private String GetSamplefileconent(LSsamplefile lssamplefile, Integer ismultitenant) throws IOException {
 		String content = "";
 
 		if (lssamplefile != null) {
 			if (ismultitenant == 1) {
-//				CloudOrderCreation file = cloudOrderCreationRepository
-//						.findById((long) lssamplefile.getFilesamplecode());
-				if (cloudOrderCreationRepository
-						.findById((long) lssamplefile.getFilesamplecode()) != null) {
-					content = cloudOrderCreationRepository
-							.findById((long) lssamplefile.getFilesamplecode()).getContent();
+				CloudOrderCreation objCreation = cloudOrderCreationRepository
+						.findById((long) lssamplefile.getFilesamplecode());
+				if (objCreation != null && objCreation.getContainerstored() == 0) {
+					content = objCreation.getContent();
+				} else {
+					content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+							TenantContext.getCurrentTenant() + "ordercreation");
 				}
 			} else {
-//				OrderCreation file = mongoTemplate.findById(lssamplefile.getFilesamplecode(), OrderCreation.class);
 				if (mongoTemplate.findById(lssamplefile.getFilesamplecode(), OrderCreation.class) != null) {
-					content = mongoTemplate.findById(lssamplefile.getFilesamplecode(), OrderCreation.class).getContent();
+					content = mongoTemplate.findById(lssamplefile.getFilesamplecode(), OrderCreation.class)
+							.getContent();
 				}
 			}
 		}
@@ -2676,31 +2675,39 @@ public class InstrumentService {
 
 		mapOrders.put("SDMSResults", lsResults);
 		mapOrders.put("ELNResults", ELNResults);
-		
+
 		lsLogilaborders = null;
-		lslogilablimsorderdetail  = null;
+		lslogilablimsorderdetail = null;
 		lsResults = null;
 		ELNResults = null;
 
 		return mapOrders;
 	}
 
-	public void updateorderversioncontent(String Content, LSsamplefileversion objfile, Integer ismultitenant) {
+	public void updateorderversioncontent(String Content, LSsamplefileversion objfile, Integer ismultitenant)
+			throws IOException {
 		if (ismultitenant == 1) {
+			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,
+					TenantContext.getCurrentTenant() + "orderversion");
+			String fileUUID = (String) objMap.get("uuid");
+			String fileURI = objMap.get("uri").toString();
+
 			CloudOrderVersion objsavefile = new CloudOrderVersion();
 			if (objfile.getFilesamplecodeversion() != null) {
 				objsavefile.setId((long) objfile.getFilesamplecodeversion());
 			} else {
 				objsavefile.setId(1);
 			}
-			objsavefile.setContent(Content);
+//			objsavefile.setContent(Content);
+			objsavefile.setFileuri(fileURI);
+			objsavefile.setFileuid(fileUUID);
+			objsavefile.setContainerstored(1);
 
 			cloudOrderVersionRepository.save(objsavefile);
 
 			objsavefile = null;
 		} else {
 
-//			String fileid = "orderversion_" + objfile.getFilesamplecodeversion();
 			GridFSDBFile largefile = gridFsTemplate.findOne(
 					new Query(Criteria.where("filename").is("orderversion_" + objfile.getFilesamplecodeversion())));
 			if (largefile != null) {
@@ -2714,13 +2721,13 @@ public class InstrumentService {
 	}
 
 	@SuppressWarnings("unused")
-	public LSsamplefile SaveResultfile(LSsamplefile objfile) {
+	public LSsamplefile SaveResultfile(LSsamplefile objfile) throws IOException {
 
 		List<LSsamplefileversion> lstSampleVer = objfile.getLssamplefileversion();
 		Integer target = objfile.getVersionno() == null ? 1 : objfile.getVersionno();
 
-		Integer lastversionindex = IntStream.range(0, lstSampleVer.size()).filter(i -> target.equals(lstSampleVer.get(i).getVersionno()))
-				.findFirst().orElse(0);
+		Integer lastversionindex = IntStream.range(0, lstSampleVer.size())
+				.filter(i -> target.equals(lstSampleVer.get(i).getVersionno())).findFirst().orElse(0);
 
 		boolean versionexist = true;
 		if (objfile.getLssamplefileversion().size() <= 0) {
@@ -2774,11 +2781,11 @@ public class InstrumentService {
 		objfile.setResponse(new Response());
 		objfile.getResponse().setStatus(true);
 		objfile.getResponse().setInformation("ID_DUMMY1");
-		
+
 		return objfile;
 	}
 
-	public void updateordercontent(String Content, LSsamplefile objfile, Integer ismultitenant) {
+	public void updateordercontent(String Content, LSsamplefile objfile, Integer ismultitenant) throws IOException {
 
 		String contentParams = "";
 		String contentValues = "";
@@ -2789,9 +2796,18 @@ public class InstrumentService {
 		contentParams = (String) objContent.get("parameters");
 
 		if (ismultitenant == 1) {
+
+			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,
+					TenantContext.getCurrentTenant() + "ordercreation");
+			String fileUUID = (String) objMap.get("uuid");
+			String fileURI = objMap.get("uri").toString();
+
 			CloudOrderCreation objsavefile = new CloudOrderCreation();
 			objsavefile.setId((long) objfile.getFilesamplecode());
-			objsavefile.setContent(Content);
+//			objsavefile.setContent(Content);
+			objsavefile.setFileuri(fileURI);
+			objsavefile.setFileuid(fileUUID);
+			objsavefile.setContainerstored(1);
 			objsavefile.setContentvalues(contentValues);
 			objsavefile.setContentparameter(contentParams);
 
@@ -2818,7 +2834,6 @@ public class InstrumentService {
 				mongoTemplate.upsert(query, update, OrderCreation.class);
 			}
 
-//			String fileid = "order_" + objfile.getFilesamplecode();
 			GridFSDBFile largefile = gridFsTemplate
 					.findOne(new Query(Criteria.where("filename").is("order_" + objfile.getFilesamplecode())));
 			if (largefile != null) {
@@ -2937,18 +2952,11 @@ public class InstrumentService {
 //		return objorder;
 //	}
 
-	public LSlogilablimsorderdetail UpdateLimsOrder(LSlogilablimsorderdetail objorder) {
+	public LSlogilablimsorderdetail UpdateLimsOrder(LSlogilablimsorderdetail objorder) throws IOException {
 		List<LSlogilablimsorder> lstorder = lslogilablimsorderRepository.findBybatchid(objorder.getBatchid());
 		List<Lsbatchdetails> lstbatch = LsbatchdetailsRepository.findByBatchcode(objorder.getBatchcode());
 
-//		List<LSfilemethod> methodlst = LSfilemethodRepository
-//				.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode());
-
-//		List<LSfileparameter> lstParam = lsFileparameterRepository
-//				.findByFilecodeOrderByFileparametercode(objorder.getLsfile().getFilecode());
-
-		if (!LSfilemethodRepository
-				.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()).isEmpty()) {
+		if (!LSfilemethodRepository.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()).isEmpty()) {
 			objorder.setInstrumentcode(LSfilemethodRepository
 					.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()).get(0).getInstrumentid());
 			objorder.setMethodcode(LSfilemethodRepository
@@ -2957,8 +2965,8 @@ public class InstrumentService {
 			objorder.setInstrumentcode(objorder.getMethodcode());
 			objorder.setMethodcode(objorder.getMethodcode());
 		}
-		objorder.getLsfile().setLsparameter(lsFileparameterRepository
-				.findByFilecodeOrderByFileparametercode(objorder.getLsfile().getFilecode()));
+		objorder.getLsfile().setLsparameter(
+				lsFileparameterRepository.findByFilecodeOrderByFileparametercode(objorder.getLsfile().getFilecode()));
 
 		lstorder.forEach((orders) -> orders.setMethodcode(objorder.getMethodcode()));
 		lstorder.forEach((orders) -> orders.setInstrumentcode(objorder.getInstrumentcode()));
@@ -2985,8 +2993,8 @@ public class InstrumentService {
 
 		LSsamplefile objfile = objorder.getLssamplefile();
 
-		if (lssamplefileversionRepository
-				.findByBatchcodeAndVersionno(objorder.getBatchcode(), 1) == null && !contString.equals("") && contString != null) {
+		if (lssamplefileversionRepository.findByBatchcodeAndVersionno(objorder.getBatchcode(), 1) == null
+				&& !contString.equals("") && contString != null) {
 
 			LSsamplefileversion objVersion = new LSsamplefileversion();
 			objVersion.setVersionname("1");
@@ -3021,26 +3029,31 @@ public class InstrumentService {
 			} else {
 
 //				String fileid = "order_" + objorder.getLssamplefile().getFilesamplecode();
-				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is("order_" + objorder.getLssamplefile().getFilesamplecode())));
+				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
+						Criteria.where("filename").is("order_" + objorder.getLssamplefile().getFilesamplecode())));
 				if (largefile == null) {
-					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is("order_" + objorder.getLssamplefile().getFilesamplecode())));
+					largefile = gridFsTemplate.findOne(new Query(
+							Criteria.where("_id").is("order_" + objorder.getLssamplefile().getFilesamplecode())));
 				}
 
 				if (largefile != null) {
 //					String filecontent = new BufferedReader(
 //							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
 //									.collect(Collectors.joining("\n"));
-					objorder.getLssamplefile().setFilecontent( new BufferedReader(
-							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-							.collect(Collectors.joining("\n")));
+					objorder.getLssamplefile()
+							.setFilecontent(new BufferedReader(
+									new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+											.collect(Collectors.joining("\n")));
 				} else {
 
 //					OrderCreation file = mongoTemplate.findById(objorder.getLssamplefile().getFilesamplecode(),
 //							OrderCreation.class);
-					if ( mongoTemplate.findById(objorder.getLssamplefile().getFilesamplecode(),
+					if (mongoTemplate.findById(objorder.getLssamplefile().getFilesamplecode(),
 							OrderCreation.class) != null) {
-						objorder.getLssamplefile().setFilecontent( mongoTemplate.findById(objorder.getLssamplefile().getFilesamplecode(),
-								OrderCreation.class).getContent());
+						objorder.getLssamplefile()
+								.setFilecontent(mongoTemplate
+										.findById(objorder.getLssamplefile().getFilesamplecode(), OrderCreation.class)
+										.getContent());
 					}
 				}
 			}
@@ -3071,14 +3084,17 @@ public class InstrumentService {
 			if (objfile.getIsmultitenant() == 1) {
 //				CloudSheetCreation file = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
 				if (cloudSheetCreationRepository.findById((long) objfile.getFilecode()) != null) {
-					content = commonfunction.getsheetdatawithfirstsheet(cloudSheetCreationRepository.findById((long) objfile.getFilecode()).getContent());
+					content = commonfunction.getsheetdatawithfirstsheet(
+							cloudSheetCreationRepository.findById((long) objfile.getFilecode()).getContent());
 				}
 			} else {
 
 //				String fileid = "file_" + objfile.getFilecode();
-				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is("file_" + objfile.getFilecode())));
+				GridFSDBFile largefile = gridFsTemplate
+						.findOne(new Query(Criteria.where("filename").is("file_" + objfile.getFilecode())));
 				if (largefile == null) {
-					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is("file_" + objfile.getFilecode())));
+					largefile = gridFsTemplate
+							.findOne(new Query(Criteria.where("_id").is("file_" + objfile.getFilecode())));
 				}
 
 				if (largefile != null) {
@@ -3087,7 +3103,7 @@ public class InstrumentService {
 //									.collect(Collectors.joining("\n"));
 					content = new BufferedReader(
 							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-							.collect(Collectors.joining("\n"));
+									.collect(Collectors.joining("\n"));
 				} else {
 
 //					SheetCreation file = mongoTemplate.findById(objfile.getFilecode(), SheetCreation.class);
@@ -3150,8 +3166,10 @@ public class InstrumentService {
 //						OrderCreation.class);
 				if (mongoTemplate.findById(objorder.getLssamplefile().getFilesamplecode(),
 						OrderCreation.class) != null) {
-					objupdated.getLssamplefile().setFilecontent(mongoTemplate.findById(objorder.getLssamplefile().getFilesamplecode(),
-							OrderCreation.class).getContent());
+					objupdated.getLssamplefile()
+							.setFilecontent(mongoTemplate
+									.findById(objorder.getLssamplefile().getFilesamplecode(), OrderCreation.class)
+									.getContent());
 				}
 			}
 		}
@@ -3241,7 +3259,7 @@ public class InstrumentService {
 		return mapOrder;
 	}
 
-	public LSlogilablimsorderdetail CompleteOrder(LSlogilablimsorderdetail objorder) {
+	public LSlogilablimsorderdetail CompleteOrder(LSlogilablimsorderdetail objorder) throws IOException {
 		if (objorder.getLssamplefile().getLssamplefileversion() != null) {
 			lssamplefileversionRepository.save(objorder.getLssamplefile().getLssamplefileversion());
 		}
@@ -3274,7 +3292,8 @@ public class InstrumentService {
 
 //		LSlogilablimsorderdetail lsOrder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 
-		updatenotificationfororderworkflow(objorder, lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode()).getLsworkflow());
+		updatenotificationfororderworkflow(objorder,
+				lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode()).getLsworkflow());
 
 		lsorderworkflowhistoryRepositroy.save(objorder.getLsorderworkflowhistory());
 
@@ -3340,11 +3359,11 @@ public class InstrumentService {
 						}
 
 						Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\""
-								+ objorder.getBatchid() + "\", \"user\":\"" + objuser.get(i).getUsername()
-								+ "\", \"comment\":\"" + objorder.getComment()
-								+ "\", \"workflowname\":\"" + objorder.getLsworkflow().getWorkflowname() + "\"}";
+								+ objorder.getBatchid() + "\", \"user\":\"" + createby.getUsername()
+								+ "\", \"comment\":\"" + objorder.getComment() + "\", \"workflowname\":\""
+								+ objorder.getLsworkflow().getWorkflowname() + "\"}";
 						objnotify.setNotifationfrom(obj);
-						objnotify.setNotificationdate(objorder.getCreatedtimestamp());
+						objnotify.setNotificationdate(objorder.getNotificationdate());
 						objnotify.setNotification(Notification);
 						objnotify.setNotificationdetils(Details);
 						objnotify.setIsnewnotification(1);
@@ -3378,7 +3397,7 @@ public class InstrumentService {
 								+ objorder.getBatchid() + "\", \"user\":\"" + objuser.get(i).getUsername()
 								+ "\", \"comment\":\"" + objorder.getComment() + "\"}";
 						objnotify.setNotifationfrom(obj);
-						objnotify.setNotificationdate(objorder.getCreatedtimestamp());
+						objnotify.setNotificationdate(objorder.getNotificationdate());
 						objnotify.setNotification(Notification);
 						objnotify.setNotificationdetils(Details);
 						objnotify.setIsnewnotification(1);
@@ -3391,7 +3410,7 @@ public class InstrumentService {
 
 			}
 			lsnotificationRepository.save(lstnotifications);
-			
+
 			lstnotifications.removeAll(lstnotifications);
 		}
 		Details = null;
@@ -3436,7 +3455,7 @@ public class InstrumentService {
 			objfile.getObjActivity().getObjsilentaudit().setTableName("LSfile");
 			lscfttransactionRepository.save(objfile.getObjActivity().getObjsilentaudit());
 		}
-		
+
 		objesixting = null;
 		objLatestversion = null;
 		objversion = null;
@@ -3448,38 +3467,36 @@ public class InstrumentService {
 		return lssamplefileversionRepository.findByFilesamplecodeOrderByVersionnoDesc(objfile);
 	}
 
-	public String GetfileverContent(LSsamplefile objfile) {
+	public String GetfileverContent(LSsamplefile objfile) throws IOException {
 		String Content = "";
-
 		if (objfile.getVersionno() == null || objfile.getVersionno() == 0) {
-//			LSsamplefile objesixting = lssamplefileRepository.findByfilesamplecode(objfile.getFilesamplecode());
 			Content = lssamplefileRepository.findByfilesamplecode(objfile.getFilesamplecode()).getFilecontent();
 			if (objfile != null) {
 				if (objfile.getIsmultitenant() == 1) {
-					CloudOrderCreation file = cloudOrderCreationRepository.findById((long) objfile.getFilesamplecode());
-					if (file != null) {
-						Content = file.getContent();
+					CloudOrderCreation objCreation = cloudOrderCreationRepository
+							.findById((long) objfile.getFilesamplecode());
+					if (objCreation != null && objCreation.getContainerstored() == 0) {
+						Content = objCreation.getContent();
+					} else {
+						Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+								TenantContext.getCurrentTenant() + "ordercreation");
 					}
 				} else {
-
-//					String fileid = "order_" + objfile.getFilesamplecode();
-					GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is("order_" + objfile.getFilesamplecode())));
+					GridFSDBFile largefile = gridFsTemplate
+							.findOne(new Query(Criteria.where("filename").is("order_" + objfile.getFilesamplecode())));
 					if (largefile == null) {
-						largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is("order_" + objfile.getFilesamplecode())));
+						largefile = gridFsTemplate
+								.findOne(new Query(Criteria.where("_id").is("order_" + objfile.getFilesamplecode())));
 					}
 
 					if (largefile != null) {
-//						String filecontent = new BufferedReader(
-//								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-//										.collect(Collectors.joining("\n"));
 						Content = new BufferedReader(
 								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-								.collect(Collectors.joining("\n"));
+										.collect(Collectors.joining("\n"));
 					} else {
-
-//						OrderCreation file = mongoTemplate.findById(objfile.getFilesamplecode(), OrderCreation.class);
 						if (mongoTemplate.findById(objfile.getFilesamplecode(), OrderCreation.class) != null) {
-							Content = mongoTemplate.findById(objfile.getFilesamplecode(), OrderCreation.class).getContent();
+							Content = mongoTemplate.findById(objfile.getFilesamplecode(), OrderCreation.class)
+									.getContent();
 						}
 					}
 				}
@@ -3491,36 +3508,33 @@ public class InstrumentService {
 
 			if (objVersion != null) {
 				if (objfile.getIsmultitenant() == 1) {
-//					CloudOrderVersion file = cloudOrderVersionRepository
-//							.findById((long) objVersion.getFilesamplecodeversion());
-					if (cloudOrderVersionRepository
-							.findById((long) objVersion.getFilesamplecodeversion()) != null) {
-						Content = cloudOrderVersionRepository
-								.findById((long) objVersion.getFilesamplecodeversion()).getContent();
+					CloudOrderVersion objCreation = cloudOrderVersionRepository
+							.findById((long) objVersion.getFilesamplecodeversion());
+					if (objCreation != null && objCreation.getContainerstored() == 0) {
+						Content = objCreation.getContent();
+					} else {
+						Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+								TenantContext.getCurrentTenant() + "orderversion");
 					}
 				} else {
 
-//					String fileid = "orderversion_" + objVersion.getFilesamplecodeversion();
-					GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is("orderversion_" + objVersion.getFilesamplecodeversion())));
+					GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
+							Criteria.where("filename").is("orderversion_" + objVersion.getFilesamplecodeversion())));
 					if (largefile == null) {
-						largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is("orderversion_" + objVersion.getFilesamplecodeversion())));
+						largefile = gridFsTemplate.findOne(new Query(
+								Criteria.where("_id").is("orderversion_" + objVersion.getFilesamplecodeversion())));
 					}
 
 					if (largefile != null) {
-//						String filecontent = new BufferedReader(
-//								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-//										.collect(Collectors.joining("\n"));
 						Content = new BufferedReader(
 								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-								.collect(Collectors.joining("\n"));
+										.collect(Collectors.joining("\n"));
 					} else {
 
-//						OrderCreation file = mongoTemplate.findById(objVersion.getFilesamplecodeversion(),
-//								OrderCreation.class);
 						if (mongoTemplate.findById(objVersion.getFilesamplecodeversion(),
 								OrderCreation.class) != null) {
-							Content = mongoTemplate.findById(objVersion.getFilesamplecodeversion(),
-									OrderCreation.class).getContent();
+							Content = mongoTemplate.findById(objVersion.getFilesamplecodeversion(), OrderCreation.class)
+									.getContent();
 						}
 					}
 				}
@@ -3571,19 +3585,25 @@ public class InstrumentService {
 		return objorder;
 	}
 
-	public LSsamplefile GetResultfileverContent(LSsamplefile objfile) {
+	public LSsamplefile GetResultfileverContent(LSsamplefile objfile) throws IOException {
 
 		LSsamplefile objesixting = lssamplefileRepository.findByfilesamplecode(objfile.getFilesamplecode());
 		if (objesixting != null) {
 			if (objfile.getIsmultitenant() == 1) {
-//				CloudOrderCreation file = cloudOrderCreationRepository.findById((long) objfile.getFilesamplecode());
-				if (cloudOrderCreationRepository.findById((long) objfile.getFilesamplecode()) != null) {
-					lssamplefileRepository.findByfilesamplecode(objfile.getFilesamplecode()).setFilecontent(cloudOrderCreationRepository.findById((long) objfile.getFilesamplecode()).getContent());
+				CloudOrderCreation objCreation = cloudOrderCreationRepository
+						.findById((long) objfile.getFilesamplecode());
+				if (objCreation != null && objCreation.getContainerstored() == 0) {
+					lssamplefileRepository.findByfilesamplecode(objfile.getFilesamplecode())
+							.setFilecontent(objCreation.getContent());
+				} else {
+					lssamplefileRepository.findByfilesamplecode(objfile.getFilesamplecode()).setFilecontent(
+							objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+									TenantContext.getCurrentTenant() + "ordercreation"));
 				}
 			} else {
-//				OrderCreation file = mongoTemplate.findById(objesixting.getFilesamplecode(), OrderCreation.class);
 				if (mongoTemplate.findById(objesixting.getFilesamplecode(), OrderCreation.class) != null) {
-					lssamplefileRepository.findByfilesamplecode(objfile.getFilesamplecode()).setFilecontent(mongoTemplate.findById(objesixting.getFilesamplecode(), OrderCreation.class).getContent());
+					lssamplefileRepository.findByfilesamplecode(objfile.getFilesamplecode()).setFilecontent(
+							mongoTemplate.findById(objesixting.getFilesamplecode(), OrderCreation.class).getContent());
 				}
 			}
 		}
@@ -3638,7 +3658,7 @@ public class InstrumentService {
 		lsOrderattachmentsRepository.save(objorder.getLsOrderattachments());
 
 		username = null;
-		
+
 		return objorder;
 	}
 
@@ -3698,7 +3718,7 @@ public class InstrumentService {
 		}
 
 		username = null;
-		
+
 		return objorder;
 	}
 
@@ -4073,13 +4093,12 @@ public class InstrumentService {
 
 		String Details = "";
 		String Notification = "";
-		Notification = "SHAREORDER";		
-	
-		Details = "{\"ordercode\":\"" + objordershareto.getOrder().getBatchcode()
-				+ "\", \"order\":\"" + objordershareto.getSharebatchid()
-				+ "\", \"sharedby\":\"" + objordershareto.getSharebyusername() 
+		Notification = "SHAREORDER";
+
+		Details = "{\"ordercode\":\"" + objordershareto.getOrder().getBatchcode() + "\", \"order\":\""
+				+ objordershareto.getSharebatchid() + "\", \"sharedby\":\"" + objordershareto.getSharebyusername()
 				+ "\", \"sharerights\":\"" + objordershareto.getSharerights() + "\"}";
-		
+
 		LSnotification objnotify = new LSnotification();
 		objnotify.setNotifationfrom(objordershareto.getOrder().getObjLoggeduser());
 		objnotify.setNotifationto(objordershareto.getUsersharedon());
@@ -4090,7 +4109,7 @@ public class InstrumentService {
 		objnotify.setNotificationpath("/registertask");
 		objnotify.setNotificationfor(1);
 		lsnotificationRepository.save(objnotify);
-		
+
 		return objordershareto;
 	}
 
@@ -4149,7 +4168,7 @@ public class InstrumentService {
 		return existingshare;
 	}
 
-	public Lsordersharedby GetsharedorderStatus(Lsordersharedby objorder) {
+	public Lsordersharedby GetsharedorderStatus(Lsordersharedby objorder) throws IOException {
 
 		LSlogilablimsorderdetail objorgorder = new LSlogilablimsorderdetail();
 
@@ -4168,7 +4187,7 @@ public class InstrumentService {
 		return objorder;
 	}
 
-	public Lsordershareto GetsharedtomeorderStatus(Lsordershareto objorder) {
+	public Lsordershareto GetsharedtomeorderStatus(Lsordershareto objorder) throws IOException {
 
 		LSlogilablimsorderdetail objorgorder = new LSlogilablimsorderdetail();
 
@@ -4187,11 +4206,11 @@ public class InstrumentService {
 		return objorder;
 	}
 
-	public LSsamplefile GetResultsharedfileverContent(LSsamplefile objfile) {
+	public LSsamplefile GetResultsharedfileverContent(LSsamplefile objfile) throws IOException {
 		return GetResultfileverContent(objfile);
 	}
 
-	public LSsamplefile SaveSharedResultfile(LSsamplefile objfile) {
+	public LSsamplefile SaveSharedResultfile(LSsamplefile objfile) throws IOException {
 		return SaveResultfile(objfile);
 	}
 
@@ -4687,14 +4706,17 @@ public class InstrumentService {
 	}
 
 	public String getsampledata(Long batchcode, Integer indexrow, Integer cellindex, Integer sheetval, String tagdata,
-			String tagvalue, String samplevalue, String sampledetails, Integer lssamplefile, Integer multitenant) {
+			String tagvalue, String samplevalue, String sampledetails, Integer lssamplefile, Integer multitenant)
+			throws IOException {
 
 		String Content = "";
 		if (multitenant == 1) {
-			CloudOrderCreation file = cloudOrderCreationRepository.findById((long) lssamplefile);
-
-			if (file != null) {
-				Content = file.getContent();
+			CloudOrderCreation objCreation = cloudOrderCreationRepository.findById((long) lssamplefile);
+			if (objCreation != null && objCreation.getContainerstored() == 0) {
+				Content = objCreation.getContent();
+			} else {
+				Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+						TenantContext.getCurrentTenant() + "ordercreation");
 			}
 
 		} else {
@@ -4732,7 +4754,7 @@ public class InstrumentService {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
 					.findByLsuserMasterAndTeamcodeNotNull(objuser);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
-			List<LSprojectmaster> lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatus(lstteam,1);
+			List<LSprojectmaster> lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatus(lstteam, 1);
 
 			List<Integer> lstproject = new ArrayList<Integer>();
 			if (lstprojectmaster != null && lstprojectmaster.size() > 0) {
@@ -5325,8 +5347,8 @@ public class InstrumentService {
 			lstdir = lsSheetOrderStructureRepository.findByDirectorycodeAndParentdircodeAndDirectorynameNot(
 					objdir.getDirectorycode(), objdir.getParentdircode(), objdir.getDirectoryname());
 		} else {
-			lstdir = lsSheetOrderStructureRepository.findByDirectorynameIgnoreCaseAndParentdircode(objdir.getDirectoryname(),
-					objdir.getParentdircode());
+			lstdir = lsSheetOrderStructureRepository.findByDirectorynameIgnoreCaseAndParentdircode(
+					objdir.getDirectoryname(), objdir.getParentdircode());
 		}
 		if (lstdir != null) {
 			objResponse.setStatus(false);
@@ -5730,8 +5752,8 @@ public class InstrumentService {
 			lstdir = lsprotocolorderStructurerepository.findByDirectorycodeAndParentdircodeAndDirectorynameNot(
 					objdir.getDirectorycode(), objdir.getParentdircode(), objdir.getDirectoryname());
 		} else {
-			lstdir = lsprotocolorderStructurerepository.findByParentdircodeAndDirectorynameIgnoreCase(objdir.getParentdircode(),
-					objdir.getDirectoryname());
+			lstdir = lsprotocolorderStructurerepository.findByParentdircodeAndDirectorynameIgnoreCase(
+					objdir.getParentdircode(), objdir.getDirectoryname());
 		}
 		if (lstdir != null) {
 			objResponse.setStatus(false);
@@ -6031,8 +6053,8 @@ public class InstrumentService {
 //								objorder.getLsuserMaster(), 2, fromdate, todate);
 				lstorder = lslogilablimsorderdetailRepository
 						.findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-								objorder.getLssamplemaster(), 1 ,objorder.getLstestmasterlocal(),2, fromdate, todate, objorder.getLssamplemaster(), 2,
-								objorder.getLsuserMaster(), 2, fromdate, todate);
+								objorder.getLssamplemaster(), 1, objorder.getLstestmasterlocal(), 2, fromdate, todate,
+								objorder.getLssamplemaster(), 2, objorder.getLsuserMaster(), 2, fromdate, todate);
 
 			} else if (filetype == 0) {
 
@@ -6579,13 +6601,14 @@ public class InstrumentService {
 		List<LSsheetfolderfiles> lstfiles = new ArrayList<LSsheetfolderfiles>();
 		try {
 			lstfiles = lssheetfolderfilesRepository
-					.findByDirectorycodeAndFileforOrderByFolderfilecode(objfiles.getDirectorycode(), objfiles.getFilefor());
-			
+					.findByDirectorycodeAndFileforAndCreatedtimestampBetweenOrderByFolderfilecode(
+							objfiles.getDirectorycode(), objfiles.getFilefor(), objfiles.getFromdate(),
+							objfiles.getTodate());
+
 			return lstfiles;
 		} catch (Exception e) {
-			return lstfiles ;
+			return lstfiles;
 		}
-		
 
 //		List<LSsheetfolderfiles> lstfiles = new ArrayList<LSsheetfolderfiles>();
 //
@@ -6926,7 +6949,9 @@ public class InstrumentService {
 		List<LSprotocolfolderfiles> lstfiles = new ArrayList<LSprotocolfolderfiles>();
 
 		lstfiles = lsprotocolfolderfilesRepository
-				.findByDirectorycodeAndFileforOrderByFolderfilecode(objfiles.getDirectorycode(), objfiles.getFilefor());
+				.findByDirectorycodeAndFileforAndCreatedtimestampBetweenOrderByFolderfilecode(
+						objfiles.getDirectorycode(), objfiles.getFilefor(), objfiles.getFromdate(),
+						objfiles.getTodate());
 
 		return lstfiles;
 	}
@@ -7077,7 +7102,7 @@ public class InstrumentService {
 //		List<LSusersteam> obj = lsusersteamRepository.findBylssitemasterAndStatus(lsusermaster.getLssitemaster(), 1);
 
 		List<Lsprotocolorderstructure> lstdirpro = new ArrayList<Lsprotocolorderstructure>();
-		if (lsusermaster.getUsernotify()==null) {
+		if (lsusermaster.getUsernotify() == null) {
 			lstdirpro = lsprotocolorderStructurerepository
 					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
 							lsusermaster.getLssitemaster(), 1, lsusermaster, 2);
@@ -7093,7 +7118,7 @@ public class InstrumentService {
 //		}else {
 		List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 
-		if (lsusermaster.getUsernotify()==null) {
+		if (lsusermaster.getUsernotify() == null) {
 			lstdir = lsSheetOrderStructureRepository
 					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
 							lsusermaster.getLssitemaster(), 1, lsusermaster, 2);
@@ -7110,7 +7135,5 @@ public class InstrumentService {
 //		}
 		return mapfolders;
 	}
-	
-
 
 }

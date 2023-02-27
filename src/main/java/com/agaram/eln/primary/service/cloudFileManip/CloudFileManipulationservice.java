@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -608,11 +610,78 @@ public class CloudFileManipulationservice {
 		}
 	}
 
-//	public void updateVersiononFile(byte[] data, String fileid) throws Exception {
-//		File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + fileid);
-//		OutputStream outStream = new FileOutputStream(convFile);
-//		outStream.write(data);
-//
-//	}
+	public Map<String, Object> storecloudSheetsreturnwithpreUUID(String Content,String containerName) throws IOException {
 
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		
+		CloudStorageAccount storageAccount;
+		CloudBlobClient blobClient = null;
+		CloudBlobContainer container = null;
+		
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+		String randomUUIDString = UUID.randomUUID().toString();
+
+		try {
+			// Parse the connection string and create a blob client to interact with Blob
+			storageAccount = CloudStorageAccount.parse(storageConnectionString);
+			blobClient = storageAccount.createCloudBlobClient();
+			container = blobClient.getContainerReference(containerName);
+
+			// Create the container if it does not exist with public access.
+			System.out.println("Creating container: " + container.getName());
+			container.createIfNotExists(BlobContainerPublicAccessType.CONTAINER, new BlobRequestOptions(),new OperationContext());
+			
+			// Getting a blob reference
+			CloudBlockBlob blob = container.getBlockBlobReference(randomUUIDString);
+
+			// uploading text
+			blob.uploadText(Content);
+			
+			objMap.put("uuid", randomUUIDString);
+			objMap.put("uri", blob.getUri());
+			
+			System.out.println("Uploading the file ");
+
+
+		} catch (StorageException ex) {
+			System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s",
+					ex.getHttpStatusCode(), ex.getErrorCode()));
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		} finally {
+			System.out.println("The program has completed successfully.");
+			System.out.println(
+					"Press the 'Enter' key while in the console to delete the sample files, example container, and exit the application.");
+
+		}
+
+		return objMap; 
+	}
+
+	public String retrieveCloudSheets(String fileid, String containername) throws IOException {
+
+		CloudStorageAccount storageAccount;
+		CloudBlobClient blobClient = null;
+		CloudBlobContainer container = null;
+		CloudBlockBlob blob = null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+		try {
+			// Parse the connection string and create a blob client to interact with Blob
+			// storage
+			storageAccount = CloudStorageAccount.parse(storageConnectionString);
+			blobClient = storageAccount.createCloudBlobClient();
+			container = blobClient.getContainerReference(containername);
+			blob = container.getBlockBlobReference(fileid);
+			return blob.downloadText();
+		} catch (StorageException ex) {
+			System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s",
+					ex.getHttpStatusCode(), ex.getErrorCode()));
+			throw new IOException(String.format("Error returned from the service. Http code: %d and error code: %s",
+					ex.getHttpStatusCode(), ex.getErrorCode()));
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+		return null;
+
+	}	
 }

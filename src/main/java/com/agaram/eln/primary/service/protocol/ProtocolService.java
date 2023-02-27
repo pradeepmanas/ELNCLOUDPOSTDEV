@@ -1876,7 +1876,7 @@ public class ProtocolService {
 		mapObj.put("ProtocolObj", LsProto);
 		mapObj.put("status", "success");
 		if (objClass.getProtocolmastername() != null) {
-			LSworkflow objlastworkflow = lsworkflowRepository
+			LSsheetworkflow objlastworkflow = lssheetworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objClass.getIsfinalstep().getLssitemaster());
 			if (objlastworkflow != null
 					&& LsProto.getLssheetworkflow().getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
@@ -1932,7 +1932,7 @@ public class ProtocolService {
 
 								+ objClass.getLSuserMaster().getUsername() + "\"}";
 						objnotify.setNotifationfrom(objClass.getLSuserMaster());
-						objnotify.setNotificationdate(objClass.getCreatedate());
+						objnotify.setNotificationdate(objClass.getNotificationdate());
 						objnotify.setNotification(Notification);
 						objnotify.setNotificationdetils(Details);
 						objnotify.setIsnewnotification(1);
@@ -1966,7 +1966,7 @@ public class ProtocolService {
 
 								+ objClass.getLSuserMaster().getUsername() + "\"}";
 						objnotify.setNotifationfrom(objClass.getLSuserMaster());
-						objnotify.setNotificationdate(objClass.getCreatedate());
+						objnotify.setNotificationdate(objClass.getNotificationdate());
 						objnotify.setNotification(Notification);
 						objnotify.setNotificationdetils(Details);
 
@@ -1999,7 +1999,7 @@ public class ProtocolService {
 			if (LsProto.getApproved() == 0 && objClass.getRejected() == null) {
 				Notifiction = "PROTOCOLMOVED";
 
-			} else if (LsProto.getApproved() == 0 && objClass.getRejected() == null || objClass.getApproved() == null) {
+			} else if (LsProto.getApproved() == 1 && objClass.getRejected() == null || objClass.getApproved() == null) {
 				Notifiction = "PROTOCOLAPPROVED";
 
 			} else if (objClass.getApproved() == 2 && objClass.getRejected() == null) {
@@ -2032,7 +2032,7 @@ public class ProtocolService {
 
 						objnotify.setNotifationfrom(objClass.getLSuserMaster());
 						objnotify.setNotifationto(lstusers.get(j).getLsuserMaster());
-						objnotify.setNotificationdate(objClass.getCreatedate());
+						objnotify.setNotificationdate(objClass.getNotificationdate());
 						objnotify.setNotification(Notifiction);
 						objnotify.setNotificationdetils(Details);
 						objnotify.setIsnewnotification(1);
@@ -2143,7 +2143,7 @@ public class ProtocolService {
 
 						objnotify.setNotifationfrom(objClass.getLsuserMaster());
 
-						objnotify.setNotificationdate(objClass.getModifidate());
+						objnotify.setNotificationdate(objClass.getNotificationdate());
 						objnotify.setNotification(Notifiction);
 						objnotify.setNotificationdetils(Details);
 						objnotify.setIsnewnotification(1);
@@ -2182,7 +2182,7 @@ public class ProtocolService {
 
 						objnotify.setNotifationfrom(obj);
 
-						objnotify.setNotificationdate(objClass.getModifidate());
+						objnotify.setNotificationdate(objClass.getNotificationdate());
 						objnotify.setNotification(Notifiction);
 						objnotify.setNotificationdetils(Details);
 						objnotify.setIsnewnotification(1);
@@ -2231,9 +2231,9 @@ public class ProtocolService {
 		for (int i = 0; i < lstusers.size(); i++) {
 			if (objClass.getCreateby() != lstusers.get(i).getLsuserMaster().getUsercode()) {
 				LSnotification objnotify = new LSnotification();
-//				objnotify.setNotifationfrom(obj);
+				objnotify.setNotifationfrom(objClass.getObjLoggeduser());
 				objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
-				objnotify.setNotificationdate(objClass.getCreatedtimestamp());
+				objnotify.setNotificationdate(objClass.getNotificationdate());
 				objnotify.setNotification(Notifiction);
 				objnotify.setNotificationdetils(Details);
 				objnotify.setIsnewnotification(1);

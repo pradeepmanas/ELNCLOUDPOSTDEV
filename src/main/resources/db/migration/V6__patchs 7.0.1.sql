@@ -3804,3 +3804,19 @@ CREATE TABLE IF NOT EXISTS public.Lscfrtransactiononorder
 WITH (OIDS = FALSE) TABLESPACE pg_default;
 
 ALTER TABLE public.Lscfrtransactiononorder OWNER to postgres;
+
+ALTER TABLE IF Exists LSSheetCreationfiles ADD COLUMN IF NOT EXISTS fileuid varchar(100);
+ALTER TABLE IF Exists LSSheetCreationfiles ADD COLUMN IF NOT EXISTS fileuri varchar(250);
+ALTER TABLE IF Exists LSSheetCreationfiles ADD COLUMN IF NOT EXISTS containerstored integer default 0;
+
+ALTER TABLE IF Exists LSSheetVersionfiles ADD COLUMN IF NOT EXISTS fileuid varchar(100);
+ALTER TABLE IF Exists LSSheetVersionfiles ADD COLUMN IF NOT EXISTS fileuri varchar(250);
+ALTER TABLE IF Exists LSSheetVersionfiles ADD COLUMN IF NOT EXISTS containerstored integer default 0;
+
+ALTER TABLE IF Exists LSOrderCreationfiles ADD COLUMN IF NOT EXISTS fileuid varchar(100);
+ALTER TABLE IF Exists LSOrderCreationfiles ADD COLUMN IF NOT EXISTS fileuri varchar(250);
+ALTER TABLE IF Exists LSOrderCreationfiles ADD COLUMN IF NOT EXISTS containerstored integer default 0;
+
+ALTER TABLE IF Exists LSOrderVersionfiles ADD COLUMN IF NOT EXISTS fileuid varchar(100);
+ALTER TABLE IF Exists LSOrderVersionfiles ADD COLUMN IF NOT EXISTS fileuri varchar(250);
+ALTER TABLE IF Exists LSOrderVersionfiles ADD COLUMN IF NOT EXISTS containerstored integer default 0;

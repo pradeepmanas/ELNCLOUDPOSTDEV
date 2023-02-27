@@ -1,9 +1,11 @@
 package com.agaram.eln.primary.service.protocol;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
@@ -25,6 +28,7 @@ import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationReposi
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
+import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.mongodb.gridfs.GridFSDBFile;
 
 @Service
@@ -36,6 +40,8 @@ public class Commonservice {
 	
 	@Autowired
 	private CloudSheetCreationRepository cloudSheetCreationRepository;
+	@Autowired
+	private CloudFileManipulationservice objCloudFileManipulationservice;
 	
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
@@ -51,19 +57,23 @@ public class Commonservice {
 	
 	
 	@Async
-	public CompletableFuture<List<LSfile>> updatefilecontentcheck(String Content, LSfile objfile, Boolean Isnew) {
-		// Document Doc = Document.parse(objfile.getFilecontent());
+	public CompletableFuture<List<LSfile>> updatefilecontentcheck(String Content, LSfile objfile, Boolean Isnew) throws IOException {
 				
 		if (objfile.getIsmultitenant() == 1) {
+			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,TenantContext.getCurrentTenant()+"sheetcreation");
+			String fileUUID = (String) objMap.get("uuid");
+			String fileURI = objMap.get("uri").toString();
+			
 			CloudSheetCreation objsavefile = new CloudSheetCreation();
 			objsavefile.setId((long) objfile.getFilecode());
-			objsavefile.setContent(Content);
+			objsavefile.setFileuri(fileURI);
+			objsavefile.setFileuid(fileUUID);
+			objsavefile.setContainerstored(1);
 			cloudSheetCreationRepository.save(objsavefile);
-
+			
 			objsavefile = null;
 		} else {
 
-//			String fileid = "file_" + objfile.getFilecode();
 			GridFSDBFile largefile = gridFsTemplate
 					.findOne(new Query(Criteria.where("filename").is("file_" + objfile.getFilecode())));
 			if (largefile != null) {
@@ -77,7 +87,7 @@ public class Commonservice {
 		return CompletableFuture.completedFuture(obj);
 
 	}
-
+	
 	@Async
 	public CompletableFuture<List<LSfile>> updatenotificationforsheetthread(LSfile objFile, Boolean isNew, LSsheetworkflow previousworkflow,
 			Boolean IsNewsheet) {

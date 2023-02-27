@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.instrumentDetails;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,6 +32,9 @@ public interface LSsheetfolderfilesRepository  extends JpaRepository<LSsheetfold
 
  @Transactional 
 public void deleteByUuidIn(List<String> lstfilesid);
+public List<LSsheetfolderfiles> findByDirectorycodeAndFileforAndCreatedtimestampBetweenOrderByFolderfilecode(
+		Long directorycode, String filefor, Date fromdate, Date todate);
+
  
 
 }

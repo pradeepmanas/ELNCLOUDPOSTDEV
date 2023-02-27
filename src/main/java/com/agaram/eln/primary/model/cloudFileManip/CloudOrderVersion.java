@@ -24,7 +24,27 @@ public class CloudOrderVersion {
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
 	private String content;
-	
+	private String fileuid;
+	private Integer containerstored;
+	private String fileuri;
+	public String getFileuri() {
+		return fileuri;
+	}
+	public void setFileuri(String fileuri) {
+		this.fileuri = fileuri;
+	}
+	public String getFileuid() {
+		return fileuid;
+	}
+	public void setFileuid(String fileuid) {
+		this.fileuid = fileuid;
+	}
+	public Integer getContainerstored() {
+		return containerstored;
+	}
+	public void setContainerstored(Integer containerstored) {
+		this.containerstored = containerstored;
+	}
 	public long getId() {
 		return id;
 	}

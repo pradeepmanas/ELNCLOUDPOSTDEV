@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -42,6 +43,28 @@ public class LSsheetfolderfiles {
 	@ManyToOne 
 	private LSSiteMaster lssitemaster;
 	
+	@Transient
+	private Date fromdate;
+	
+	@Transient
+	private Date todate;
+	
+	public Date getFromdate() {
+		return fromdate;
+	}
+
+	public void setFromdate(Date fromdate) {
+		this.fromdate = fromdate;
+	}
+
+	public Date getTodate() {
+		return todate;
+	}
+
+	public void setTodate(Date todate) {
+		this.todate = todate;
+	}
+
 	private Integer fileviewfor;
 
 	public Integer getFolderfilecode() {

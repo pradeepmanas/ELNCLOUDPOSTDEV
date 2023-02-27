@@ -253,6 +253,17 @@ public class LSlogilablimsorderdetail {
 		this.lstdirectorycode = lstdirectorycode;
 	}
 
+	@Transient
+	private Date notificationdate;
+	
+	public Date getNotificationdate() {
+		return notificationdate;
+	}
+
+	public void setNotificationdate(Date notificationdate) {
+		this.notificationdate = notificationdate;
+	}
+
 	private Integer filecode;
 
 	private Long directorycode;
