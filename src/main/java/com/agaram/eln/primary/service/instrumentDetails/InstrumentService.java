@@ -476,17 +476,20 @@ public class InstrumentService {
 		if (lssiteMaster.getIsmultitenant() != 1) {
 			List<LSfields> Generalfields = lSfieldsRepository.findByisactive(1);
 			List<LsMappedInstruments> Instruments = lsMappedInstrumentsRepository.findAll();
-			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findAll();
+			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatusAndSite(1,lssiteMaster);
 			List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
 			List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
 
-			List<Method> elnMethod = lsMethodRepository.findByStatus(1);
-			List<ParserBlock> ParserBlock = lsParserBlockRepository.findAll();
-			List<ParserField> ParserField = lsParserRepository.findByStatus(1);
-			List<SubParserField> SubParserField = lsSubParserRepository.findByStatus(1);
+			
+			List<Method> elnMethod = lsMethodRepository.findByStatusAndSite(1,lssiteMaster);
+			List<ParserBlock> ParserBlock = lsParserBlockRepository.findByMethodIn(elnMethod);
+			List<ParserField> ParserField = lsParserRepository.findByParserblockIn(ParserBlock);
+			List<SubParserField> SubParserField = lsSubParserRepository.findByParserfieldIn(ParserField);
+
 			// SubParserField = lsSubParserRepository.findByStatus(1);
 			obj.put("Generalfields", Generalfields);
 
+			
 			List<ParserField> filteredList = ParserField.stream()
 					.filter(filterParser -> SubParserField.stream()
 							.anyMatch(filterSubParser -> filterParser.getParserfieldkey()
@@ -517,13 +520,12 @@ public class InstrumentService {
 		} else {
 			List<LSfields> Generalfields = lSfieldsRepository.findByisactiveAndMethodname(1, "ID_GENERAL");
 
-			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatus(1);
-
-			List<Method> elnMethod = lsMethodRepository.findByStatus(1);
-			List<ParserBlock> ParserBlock = lsParserBlockRepository.findAll();
-			List<ParserField> ParserField = lsParserRepository.findByStatus(1);
-			// List<SubParserField> SubParserField = lsSubParserRepository.findAll();
-			List<SubParserField> SubParserField = lsSubParserRepository.findByStatus(1);
+			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatusAndSite(1,lssiteMaster);
+			List<Method> elnMethod = lsMethodRepository.findByStatusAndSite(1,lssiteMaster);
+			List<ParserBlock> ParserBlock = lsParserBlockRepository.findByMethodIn(elnMethod);
+			List<ParserField> ParserField = lsParserRepository.findByParserblockIn(ParserBlock);
+		
+			List<SubParserField> SubParserField = lsSubParserRepository.findByParserfieldIn(ParserField);
 
 			obj.put("Generalfields", Generalfields);
 
