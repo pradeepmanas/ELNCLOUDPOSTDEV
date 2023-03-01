@@ -37,5 +37,7 @@ public interface SubParserFieldRepository extends JpaRepository<SubParserField, 
 	
 	List<SubParserField> findByParserfieldInAndStatus(final List<ParserField> parserfield, final int status);
 
-	List<SubParserField> findByStatus(int i);           
+	List<SubParserField> findByStatus(int i);
+
+	List<SubParserField> findByParserfieldIn(List<ParserField> parserField);           
 }
