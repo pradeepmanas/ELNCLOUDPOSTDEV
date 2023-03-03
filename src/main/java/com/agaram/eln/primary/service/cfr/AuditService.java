@@ -417,7 +417,7 @@ public class AuditService {
 		if (objreviewdetails.get(0).getObjuser() != null) {
 
 		}
-		return LSreviewdetailsRepository.findByAuditserialnoIn(lstserailno);
+		return LSreviewdetailsRepository.findBySerialnoIn(lstserailno);
 	}
 
 	public Map<String, Object> GetReviewDetails12(LSreviewdetails[] objreview1) {
