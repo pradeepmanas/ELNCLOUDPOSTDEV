@@ -20,5 +20,6 @@ public interface LSsheetworkflowRepository  extends JpaRepository<LSsheetworkflo
    
 	//public LSsheetworkflow findByLssitemaster_sitecode(Integer sitecode);
 	public LSsheetworkflow findTopByAndLssitemaster_sitecodeOrderByWorkflowcodeAsc(Integer sitecode);
+	public List<LSsheetworkflow> findBylssitemasterOrderByWorkflowcodeAsc(LSSiteMaster lssitemaster);
 	
 }

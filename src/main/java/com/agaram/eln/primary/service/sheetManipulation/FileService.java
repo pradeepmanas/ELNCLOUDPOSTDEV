@@ -613,7 +613,7 @@ public class FileService {
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
-		return lssheetworkflowRepository.findBylssitemaster(objuser.getLssitemaster());
+		return lssheetworkflowRepository.findBylssitemasterOrderByWorkflowcodeAsc(objuser.getLssitemaster());
 	}
 
 	public Response Deletesheetworkflow(LSsheetworkflow objflow) {
