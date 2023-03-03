@@ -1296,11 +1296,25 @@ public class CommonFunction {
     		final String delimiterChar = subParserField.getParserfield().getMethoddelimiter().getDelimiter().getActualdelimiter();
     		List<List<String>> dataBlockWithSplittedFields = new ArrayList<List<String>>();
     		
-//    		int id=0;
+    		int id=0;
     		int longest = 0;
-    		int max =1;
-
+    		int max =1;    		
     		int idx=0;
+
+    		for(List<String> singlerowValues : dataBlock) {
+    						
+    			List<String> currentsingleRow = new ArrayList<>(singlerowValues);
+    			List<String[]> splittedArray = currentsingleRow.stream().map((item) -> item.split("\t")).collect(Collectors.toList());
+    		
+
+    			List<String> splitFieldsvales = Arrays.asList(splittedArray.get(id));
+    			List<String> splitFieldsrow = new ArrayList<>(splitFieldsvales);
+    						
+    			if(splitFieldsrow.size() > longest) {
+    				longest = splitFieldsrow.size();
+    			}
+    		}	
+    		
               for(List<String> rowValues : dataBlock) {
     						
     			List<String> currentRowValues = new ArrayList<>(rowValues);

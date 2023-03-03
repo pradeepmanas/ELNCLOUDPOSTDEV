@@ -2,6 +2,7 @@ package com.agaram.eln.primary.controller.fileuploaddownload;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.MethodVersion;
 import com.agaram.eln.primary.payload.Response;
+import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodVersionRepository;
 import com.agaram.eln.primary.service.fileuploaddownload.FileStorageService;
@@ -46,6 +48,9 @@ public class FileUploadController {
     
     @Autowired
     private MethodVersionRepository methodversionrepo; 
+
+    @Autowired
+    private LScfttransactionRepository cftrepo; 
     
 //    @Autowired
 //    private MethodService methodService; 
@@ -92,7 +97,8 @@ public class FileUploadController {
     		@RequestParam("isMultitenant") Integer isMultitenant,@RequestParam("originalfilename") String originalfilename,
     		@RequestParam("version") Integer version
     		,@RequestParam("methodkey") Integer methodkey,
-    		@RequestParam("filename") String filename,@RequestParam("instrawdataurl") String instrawdataurl
+    		@RequestParam("filename") String filename,@RequestParam("instrawdataurl") String instrawdataurl,
+    		@RequestParam("sitecode") Integer sitecode,@RequestParam("usercode") Integer usercode
     		) throws IOException{
 		
 		
@@ -138,7 +144,19 @@ public class FileUploadController {
 		newobj.setMethodversion(metverobj);
 		
 		methodrepo.save(newobj);	
+		Date Date = new Date();
+				
+		LScfttransaction auditobj = new LScfttransaction();
+		auditobj.setActions("IDS_TSK_IMPORT");
+		auditobj.setTransactiondate(Date);
+		auditobj.setComments("Filename: "+originalfilename+ "is imported for Method :" +method.get(0).getMethodname()+" and versioned as " +version  );
+		auditobj.setTableName("Method");
+		auditobj.setModuleName("Method Master");
+		auditobj.setSystemcoments("Audittrail.Audittrailhistory.Audittype.IDS_AUDIT_SYSTEMGENERATED");
+		auditobj.setLssitemaster(sitecode);
+		auditobj.setLsuserMaster(usercode);
 		
+		cftrepo.save(auditobj);
 		return rawData;
 //		}else {
 //		return null;
