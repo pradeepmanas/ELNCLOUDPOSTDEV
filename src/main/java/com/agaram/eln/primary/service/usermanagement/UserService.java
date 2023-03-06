@@ -1307,7 +1307,7 @@ public class UserService {
 
 	public Long getActiveUserCount(LSSiteMaster lsSiteMaster) {
 
-		List<LSactiveUser> lstActiveUser = lsactiveUserRepository.findBylssitemaster(lsSiteMaster);
+		List<LSactiveUser> lstActiveUser = lsactiveUserRepository.findAll();
 
 		return (long) lstActiveUser.size();
 	}

@@ -100,9 +100,12 @@ public class DelimiterService {
 //		   boolean saveAuditTrial = true;
 		   final Optional<Delimiter> delimiterByName = delimitersRepo
 	 				 .findByDelimiternameAndStatusAndLssitemaster(delimiters.getDelimitername(), 1,delimiters.getLssitemaster());
+		   
+//for defaultvalue
+		   final Optional<Delimiter> delimiterdefault = delimitersRepo.findByDelimiternameAndDefaultvalue(delimiters.getDelimitername(),1);
 		      
 		   final LSuserMaster createdUser = getCreatedUserByKey(delimiters.getCreatedby().getUsercode());
-	    	if(delimiterByName.isPresent())
+	    	if(delimiterByName.isPresent() || delimiterdefault.isPresent())
 	    	{
 	    		
 	    		//Conflict = 409 - Duplicate entry

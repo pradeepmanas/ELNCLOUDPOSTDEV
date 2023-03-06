@@ -79,6 +79,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/Login/LoadDomain").permitAll().
 		antMatchers("/Login/azureusertokengenrate").permitAll().
 		antMatchers("/Login/CheckUserAndPassword").permitAll().
+		antMatchers("/Login/updateActiveUserTime").permitAll().
 		antMatchers("/Login/createuserforazure").permitAll().
 		antMatchers("/Login/UpdatePassword").permitAll().
 		antMatchers("/Login/Validateuser").permitAll().

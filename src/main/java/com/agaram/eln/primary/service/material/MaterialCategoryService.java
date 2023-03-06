@@ -46,13 +46,14 @@ public class MaterialCategoryService {
 				MaterialCategory.class);
 		materialCategory.setResponse(new Response());
 		List<MaterialCategory> lstgetMaterialCategory = MaterialCategoryRepository
-				.findBySmaterialcatname(materialCategory.getSmaterialcatname());
+				.findBySmaterialcatnameAndNsitecode(materialCategory.getSmaterialcatname(),materialCategory.getNsitecode());
 		if (lstgetMaterialCategory.isEmpty()) {
 
 			materialCategory.setSmaterialtypename(materialCategory.getSmaterialtypename());
 			materialCategory.setNmaterialtypecode(materialCategory.getNmaterialtypecode());
 			materialCategory.setSmaterialcatname(materialCategory.getSmaterialcatname());
 			materialCategory.setSdescription(materialCategory.getSdescription());
+			materialCategory.setNsitecode(materialCategory.getNsitecode());
 			materialCategory.setNactivestatus(0);
 			materialCategory.setNuserrolecode(0);
 			MaterialCategoryRepository.save(materialCategory);

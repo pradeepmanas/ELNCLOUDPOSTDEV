@@ -725,39 +725,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	List<LSlogilablimsorderdetail> findByLsprojectmaster(LSprojectmaster objClass);
 
-	//newly added
-	List<Logilaborders> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-			String orderflag, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String orderflag2,
-			List<LSsamplemaster> lstsample, Date fromdate2, Date todate2);
-
-	List<Logilaborders> findByOrderflagAndOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-			String orderflag, String orderflag2, List<LSprojectmaster> lstproject, Date fromdate, Date todate,
-			String orderflag3, String orderflag4, List<LSsamplemaster> lstsample, Date fromdate2, Date todate2);
-
-	List<Logilaborders> findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-			String orderflag, Integer approvelstatus, List<LSprojectmaster> lstproject, Integer filetype, Date fromdate,
-			Date todate, String orderflag2, Integer approvelstatus2, List<LSsamplemaster> lstsample, Integer filetype2,
-			Date fromdate2, Date todate2);
-
-	List<Logilaborders> findByOrderflagAndTestcodeAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndTestcodeAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-			String orderflag, Integer testcode, List<LSprojectmaster> lstproject, Integer filetype, Date fromdate,
-			Date todate, String orderflag2, Integer testcode2, List<LSsamplemaster> lstsample, Integer filetype2,
-			Date fromdate2, Date todate2);
-
-	List<Logilaborders> findByOrderflagAndLsprojectmasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-			String orderflag, List<LSprojectmaster> lstproject, Integer filetype, LSprojectmaster lsprojectmaster,
-			Date fromdate, Date todate, String orderflag2, List<LSsamplemaster> lstsample, Integer filetype2,
-			LSprojectmaster lsprojectmaster2, Date fromdate2, Date todate2);
-
-	List<Logilaborders> findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-			String orderflag, List<LSprojectmaster> lstproject, Integer filetype, Date fromdate, Date todate,
-			String orderflag2, List<LSsamplemaster> lstsample, Integer filetype2, Date fromdate2, Date todate2);
-
-	List<Logilaborders> findByOrderflagAndLsprojectmasterInAndTestcodeAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-			String orderflag, List<LSprojectmaster> lstproject, Integer testcode, Integer filetype,
-			LSprojectmaster lsprojectmaster, Date fromdate, Date todate, String orderflag2, Integer testcode2,
-			List<LSsamplemaster> lstsample, Integer filetype2, LSprojectmaster lsprojectmaster2, Date fromdate2,
-			Date todate2);
 
 	List<Logilaborders> findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			LSsamplemaster lssamplemaster, int i, LStestmasterlocal lstestmasterlocal, int j, Date fromdate,
@@ -884,8 +851,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Pageable pageable);
 
 
-	long countByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Date fromdate2, Date todate2);
+//	long countByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//			List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Date fromdate2, Date todate2);
 
 	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, String string2,
@@ -921,13 +888,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			String string, Date fromdate, Date todate, String string2, Date fromdate2, Date todate2, int i,
 			Pageable pageable);
 
-	List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeOrFiletypeAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer testcode, int i, Date fromdate2,
-			Date todate2, Integer testcode2, Pageable pageable);
-
-	long countByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeOrFiletypeAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer testcode, int i, Date fromdate2,
-			Date todate2, Integer testcode2);
 
 	List<Logilabordermaster> findByLsprojectmasterAndCreatedtimestampBetweenOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			LSprojectmaster lstprojectforfilter, Date fromdate, Date todate, int i,
@@ -1239,6 +1199,421 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Long directorycode, int i, Date fromdate, Date todate, Long directorycode2, int j, LSuserMaster createdby,
 			Date fromdate2, Date todate2, Long directorycode3, int k, LSuserMaster createdby2, Date fromdate3,
 			Date todate3);
+
+
+	List<Logilabordermaster> findByOrderflagAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrOrderflagAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrOrderflagAndOrdercancellIsNullAndLsprojectmasterIsNullAndLsuserMasterIsNotAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenOrOrderflagAndOrdercancellIsNullAndLsprojectmasterIsNullAndLsuserMasterIsNotAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String string, int i, LSuserMaster objuser, Date fromdate, Date todate, String string2, int j,
+			LSuserMaster objuser2, Date fromdate2, Date todate2, String string3, LSuserMaster objuser3,
+			List<LSsamplemaster> lstsample, int k, Date fromdate3, Date todate3, String string4, LSuserMaster objuser4,
+			List<LSsamplemaster> lstsample2, int l, Date fromdate4, Date todate4, Pageable pageable);
+
+
+	List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Date fromdate2, Date todate2, int j,
+			LSuserMaster objuser, Date fromdate3, Date todate3, int k, LSuserMaster objuser2, Date fromdate4,
+			Date todate4, int l, LSuserMaster objuser3, Date fromdate5, Date todate5, List<LSprojectmaster> lstproject2,
+			Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeOrFiletypeAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndLsprojectmasterInOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer testcode, int i, Date fromdate2,
+			Date todate2, Integer testcode2, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
+			Integer testcode3, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, Integer testcode4, int l,
+			LSuserMaster objuser3, Date fromdate5, Date todate5, Integer testcode5, List<LSprojectmaster> lstproject2,
+			Pageable pageable);
+
+	long countByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeOrFiletypeAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer testcode, int i, Date fromdate2,
+			Date todate2, Integer testcode2, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
+			Integer testcode3, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, Integer testcode4);
+
+	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterInOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, String string2,
+			List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2, String string3, int j, Date fromdate3,
+			Date todate3, String string4, int k, LSuserMaster objuser, Date fromdate4, Date todate4, int l,
+			String string5, int m, LSuserMaster objuser2, Date fromdate5, Date todate5, int n, String string6, int o,
+			LSuserMaster objuser3, Date fromdate6, Date todate6, int p, List<LSprojectmaster> lstproject3,
+			String string7, int q, LSuserMaster objuser4, Date fromdate7, Date todate7, String string8, int r,
+			LSuserMaster objuser5, Date fromdate8, Date todate8, String string9, int s, LSuserMaster objuser6,
+			Date fromdate9, Date todate9, List<LSprojectmaster> lstproject4, Pageable pageable);
+
+	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterInOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, String string2,
+			List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2, String string3, int j, Date fromdate3,
+			Date todate3, String string4, int k, LSuserMaster objuser, Date fromdate4, Date todate4, int l,
+			String string5, int m, LSuserMaster objuser2, Date fromdate5, Date todate5, int n, String string6, int o,
+			LSuserMaster objuser3, Date fromdate6, Date todate6, int p, List<LSprojectmaster> lstproject3,
+			String string7, int q, LSuserMaster objuser4, Date fromdate7, Date todate7, String string8, int r,
+			LSuserMaster objuser5, Date fromdate8, Date todate8, String string9, int s, LSuserMaster objuser6,
+			Date fromdate9, Date todate9, List<LSprojectmaster> lstproject4);
+
+	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndTestcodeOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndTestcodeOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterInAndTestcodeOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Integer testcode,
+			String string2, List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2, Integer testcode2,
+			String string3, int j, Date fromdate3, Date todate3, Integer testcode3, String string4, int k,
+			LSuserMaster objuser, Date fromdate4, Date todate4, int l, Integer testcode4, String string5, int m,
+			LSuserMaster objuser2, Date fromdate5, Date todate5, int n, Integer testcode5, String string6, int o,
+			LSuserMaster objuser3, Date fromdate6, Date todate6, int p, List<LSprojectmaster> lstproject3,
+			Integer testcode6, String string7, int q, LSuserMaster objuser4, Date fromdate7, Date todate7,
+			Integer testcode7, String string8, int r, LSuserMaster objuser5, Date fromdate8, Date todate8,
+			Integer testcode8, String string9, int s, LSuserMaster objuser6, Date fromdate9, Date todate9,
+			List<LSprojectmaster> lstproject4, Integer testcode9, Pageable pageable);
+
+	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndTestcodeOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndTestcodeOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterInAndTestcodeOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Integer testcode,
+			String string2, List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2, Integer testcode2,
+			String string3, int j, Date fromdate3, Date todate3, Integer testcode3, String string4, int k,
+			LSuserMaster objuser, Date fromdate4, Date todate4, int l, Integer testcode4, String string5, int m,
+			LSuserMaster objuser2, Date fromdate5, Date todate5, int n, Integer testcode5, String string6, int o,
+			LSuserMaster objuser3, Date fromdate6, Date todate6, int p, List<LSprojectmaster> lstproject3,
+			Integer testcode6, String string7, int q, LSuserMaster objuser4, Date fromdate7, Date todate7,
+			Integer testcode7, String string8, int r, LSuserMaster objuser5, Date fromdate8, Date todate8,
+			Integer testcode8, String string9, int s, LSuserMaster objuser6, Date fromdate9, Date todate9,
+			List<LSprojectmaster> lstproject4, Integer testcode9);
+
+	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
+			Date fromdate2, Date todate2, String string3, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
+			String string4, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, String string5,
+			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
+			Pageable pageable);
+
+	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
+			Date fromdate2, Date todate2, String string3, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
+			String string4, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, String string5,
+			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5);
+
+	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndTestcodeOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndTestcodeOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer testcode,
+			String string2, int i, Date fromdate2, Date todate2, Integer testcode2, String string3, int j,
+			LSuserMaster objuser, Date fromdate3, Date todate3, Integer testcode3, String string4, int k,
+			LSuserMaster objuser2, Date fromdate4, Date todate4, Integer testcode4, String string5,
+			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
+			Integer testcode5, Pageable pageable);
+
+	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndTestcodeOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndTestcodeOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer testcode,
+			String string2, int i, Date fromdate2, Date todate2, Integer testcode2, String string3, int j,
+			LSuserMaster objuser, Date fromdate3, Date todate3, Integer testcode3, String string4, int k,
+			LSuserMaster objuser2, Date fromdate4, Date todate4, Integer testcode4, String string5,
+			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
+			Integer testcode5);
+
+
+	long countByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeOrFiletypeAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer testcode, int i, Date fromdate2,
+			Date todate2, Integer testcode2);
+
+
+
+	List<Logilabordermaster> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterInAndTestcode(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer testcode, int j,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int k, Integer testcode2, int l, LSuserMaster objuser2,
+			Date fromdate3, Date todate3, int m, Integer testcode3, int n, LSuserMaster objuser3, Date fromdate4,
+			Date todate4, int o, List<LSprojectmaster> lstproject2, Integer testcode4, Pageable pageable);
+
+	long countByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterInAndTestcode(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer testcode, int j,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int k, Integer testcode2, int l, LSuserMaster objuser2,
+			Date fromdate3, Date todate3, int m, Integer testcode3, int n, LSuserMaster objuser3, Date fromdate4,
+			Date todate4, int o, List<LSprojectmaster> lstproject2, Integer testcode4);
+
+	List<Logilabordermaster> findByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIn(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int j, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int k, int l, LSuserMaster objuser2, Date fromdate3, Date todate3, int m,
+			int n, LSuserMaster objuser3, Date fromdate4, Date todate4, int o, int p, LSuserMaster objuser4,
+			Date fromdate5, Date todate5, int q, List<LSprojectmaster> lstproject2, Pageable pageable);
+
+	long countByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIn(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int j, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int k, int l, LSuserMaster objuser2, Date fromdate3, Date todate3, int m,
+			int n, LSuserMaster objuser3, Date fromdate4, Date todate4, int o, int p, LSuserMaster objuser4,
+			Date fromdate5, Date todate5, int q, List<LSprojectmaster> lstproject2);
+
+	List<Logilabordermaster> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIn(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int j, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int k, int l, LSuserMaster objuser2, Date fromdate3, Date todate3, int m,
+			int n, LSuserMaster objuser3, Date fromdate4, Date todate4, int o, List<LSprojectmaster> lstproject2,
+			Pageable pageable);
+
+	long countByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIn(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int j, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int k, int l, LSuserMaster objuser2, Date fromdate3, Date todate3, int m,
+			int n, LSuserMaster objuser3, Date fromdate4, Date todate4, int o, List<LSprojectmaster> lstproject2);
+
+	List<Logilabordermaster> findByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterInAndTestcode(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer testcode, int j,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int k, Integer testcode2, int l, LSuserMaster objuser2,
+			Date fromdate3, Date todate3, int m, Integer testcode3, int n, LSuserMaster objuser3, Date fromdate4,
+			Date todate4, int o, Integer testcode4, int p, LSuserMaster objuser4, Date fromdate5, Date todate5, int q,
+			List<LSprojectmaster> lstproject2, Integer testcode5, Pageable pageable);
+
+	long countByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterInAndTestcode(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer testcode, int j,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int k, Integer testcode2, int l, LSuserMaster objuser2,
+			Date fromdate3, Date todate3, int m, Integer testcode3, int n, LSuserMaster objuser3, Date fromdate4,
+			Date todate4, int o, Integer testcode4, int p, LSuserMaster objuser4, Date fromdate5, Date todate5, int q,
+			List<LSprojectmaster> lstproject2, Integer testcode5);
+
+	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndApprovelstatusAndApprovedOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndApprovelstatusAndApprovedOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndApprovelstatusAndApprovedOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndApprovelstatusAndApprovedOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndApprovelstatusAndApprovedOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, int j, String string2,
+			int k, Date fromdate2, Date todate2, int l, int m, String string3, int n, LSuserMaster objuser,
+			Date fromdate3, Date todate3, int o, int p, String string4, int q, LSuserMaster objuser2, Date fromdate4,
+			Date todate4, int r, int s, String string5, List<LSprojectmaster> lstproject2, int t, LSuserMaster objuser3,
+			Date fromdate5, Date todate5, int u, int v);
+
+	long countByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Date fromdate2, Date todate2, int j,
+			LSuserMaster objuser, Date fromdate3, Date todate3, int k, LSuserMaster objuser2, Date fromdate4,
+			Date todate4, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
+			List<LSprojectmaster> lstproject2);
+
+
+
+	List<Logilaborders> findByOrderflagAndOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+			String orderflag, String orderflag2, List<LSprojectmaster> lstproject, Date fromdate, Date todate,
+			String orderflag3, String orderflag4, List<LSsamplemaster> lstsample, Date fromdate2, Date todate2);
+
+	List<Logilaborders> findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Integer filetype, Date fromdate, Date todate,
+			String orderflag2, List<LSsamplemaster> lstsample, Integer filetype2, Date fromdate2, Date todate2, int i,
+			String orderflag3, List<LSsamplemaster> lstsample2, Integer filetype3, Date fromdate3, Date todate3, int j,
+			LSuserMaster lsuserMaster);
+
+	List<Logilaborders> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String orderflag2,
+			List<LSsamplemaster> lstsample, Date fromdate2, Date todate2, int i, String orderflag3,
+			List<LSsamplemaster> lstsample2, Date fromdate3, Date todate3, int j, LSuserMaster lsuserMaster);
+
+	List<Logilaborders> findByOrderflagAndOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+			String orderflag, String orderflag2, List<LSprojectmaster> lstproject, Date fromdate, Date todate,
+			String orderflag3, String orderflag4, List<LSsamplemaster> lstsample, Date fromdate2, Date todate2, int i,
+			String orderflag5, String orderflag6, List<LSsamplemaster> lstsample2, Date fromdate3, Date todate3, int j,
+			LSuserMaster lsuserMaster);
+
+	List<Logilaborders> findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+			String orderflag, Integer approvelstatus, List<LSprojectmaster> lstproject, Integer filetype, Date fromdate,
+			Date todate, String orderflag2, Integer approvelstatus2, List<LSsamplemaster> lstsample, Integer filetype2,
+			Date fromdate2, Date todate2, int i, String orderflag3, Integer approvelstatus3,
+			List<LSsamplemaster> lstsample2, Integer filetype3, Date fromdate3, Date todate3, int j,
+			LSuserMaster lsuserMaster);
+
+	List<Logilaborders> findByOrderflagAndTestcodeAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndTestcodeAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndTestcodeAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+			String orderflag, Integer testcode, List<LSprojectmaster> lstproject, Integer filetype, Date fromdate,
+			Date todate, String orderflag2, Integer testcode2, List<LSsamplemaster> lstsample, Integer filetype2,
+			Date fromdate2, Date todate2, int i, String orderflag3, Integer testcode3, List<LSsamplemaster> lstsample2,
+			Integer filetype3, Date fromdate3, Date todate3, int j, LSuserMaster lsuserMaster);
+
+	List<Logilaborders> findByOrderflagAndLsprojectmasterInAndTestcodeAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Integer testcode, Integer filetype,
+			LSprojectmaster lsprojectmaster, Date fromdate, Date todate, String orderflag2, Integer testcode2,
+			List<LSsamplemaster> lstsample, Integer filetype2, LSprojectmaster lsprojectmaster2, Date fromdate2,
+			Date todate2, int i, String orderflag3, Integer testcode3, List<LSsamplemaster> lstsample2,
+			Integer filetype3, LSprojectmaster lsprojectmaster3, Date fromdate3, Date todate3, int j,
+			LSuserMaster lsuserMaster);
+
+	List<Logilaborders> findByOrderflagAndLsprojectmasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Integer filetype, LSprojectmaster lsprojectmaster,
+			Date fromdate, Date todate, String orderflag2, List<LSsamplemaster> lstsample, Integer filetype2,
+			LSprojectmaster lsprojectmaster2, Date fromdate2, Date todate2, int i, String orderflag3,
+			List<LSsamplemaster> lstsample2, Integer filetype3, LSprojectmaster lsprojectmaster3, Date fromdate3,
+			Date todate3, int j, LSuserMaster lsuserMaster);
+
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, List<LSsamplemaster> lstsample2, int j,
+			Date fromdate2, Date todate2, LSuserMaster objuser, int k, Date fromdate3, Date todate3,
+			LSuserMaster objuser2, List<Long> directorycode, int l, Date fromdate4, Date todate4,
+			List<Long> directorycode2, int m, Date fromdate5, Date todate5, LSuserMaster objuser3,
+			List<Long> directorycode3, int n, Date fromdate6, Date todate6, LSuserMaster objuser4);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, List<LSsamplemaster> lstsample2, int j,
+			Date fromdate2, Date todate2, LSuserMaster objuser, int k, Date fromdate3, Date todate3,
+			LSuserMaster objuser2, List<Long> directorycode, int l, Date fromdate4, Date todate4,
+			List<Long> directorycode2, int m, Date fromdate5, Date todate5, LSuserMaster objuser3,
+			List<Long> directorycode3, int n, Date fromdate6, Date todate6, LSuserMaster objuser4, Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, Integer testcode,
+			List<LSsamplemaster> lstsample2, int j, Date fromdate2, Date todate2, LSuserMaster objuser,
+			Integer testcode2, int k, Date fromdate3, Date todate3, LSuserMaster objuser2, Integer testcode3,
+			List<Long> directorycode, int l, Date fromdate4, Date todate4, Integer testcode4, List<Long> directorycode2,
+			int m, Date fromdate5, Date todate5, LSuserMaster objuser3, Integer testcode5, List<Long> directorycode3,
+			int n, Date fromdate6, Date todate6, LSuserMaster objuser4, Integer testcode6, Pageable pageable);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, Integer testcode,
+			List<LSsamplemaster> lstsample2, int j, Date fromdate2, Date todate2, LSuserMaster objuser,
+			Integer testcode2, int k, Date fromdate3, Date todate3, LSuserMaster objuser2, Integer testcode3,
+			List<Long> directorycode, int l, Date fromdate4, Date todate4, Integer testcode4, List<Long> directorycode2,
+			int m, Date fromdate5, Date todate5, LSuserMaster objuser3, Integer testcode5, List<Long> directorycode3,
+			int n, Date fromdate6, Date todate6, LSuserMaster objuser4, Integer testcode6);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusNotOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusNotOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String string, int j,
+			List<LSsamplemaster> lstsample2, int k, Date fromdate2, Date todate2, LSuserMaster objuser, String string2,
+			int l, int m, Date fromdate3, Date todate3, LSuserMaster objuser2, String string3, int n,
+			List<Long> directorycode, int o, Date fromdate4, Date todate4, String string4, int p,
+			List<Long> directorycode2, int q, Date fromdate5, Date todate5, LSuserMaster objuser3, String string5,
+			int r, List<Long> directorycode3, int s, Date fromdate6, Date todate6, LSuserMaster objuser4,
+			String string6, int t, Pageable pageable);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusNotOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusNotOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String string, int j,
+			List<LSsamplemaster> lstsample2, int k, Date fromdate2, Date todate2, LSuserMaster objuser, String string2,
+			int l, int m, Date fromdate3, Date todate3, LSuserMaster objuser2, String string3, int n,
+			List<Long> directorycode, int o, Date fromdate4, Date todate4, String string4, int p,
+			List<Long> directorycode2, int q, Date fromdate5, Date todate5, LSuserMaster objuser3, String string5,
+			int r, List<Long> directorycode3, int s, Date fromdate6, Date todate6, LSuserMaster objuser4,
+			String string6, int t);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusNotAndTestcodeOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndTestcodeOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusNotAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndTestcodeOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String string, int j, Integer testcode,
+			List<LSsamplemaster> lstsample2, int k, Date fromdate2, Date todate2, LSuserMaster objuser, String string2,
+			int l, Integer testcode2, int m, Date fromdate3, Date todate3, LSuserMaster objuser2, String string3, int n,
+			Integer testcode3, List<Long> directorycode, int o, Date fromdate4, Date todate4, String string4, int p,
+			Integer testcode4, List<Long> directorycode2, int q, Date fromdate5, Date todate5, LSuserMaster objuser3,
+			String string5, int r, Integer testcode5, List<Long> directorycode3, int s, Date fromdate6, Date todate6,
+			LSuserMaster objuser4, String string6, int t, Integer testcode6, Pageable pageable);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusNotAndTestcodeOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndTestcodeOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusNotAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndTestcodeOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String string, int j, Integer testcode,
+			List<LSsamplemaster> lstsample2, int k, Date fromdate2, Date todate2, LSuserMaster objuser, String string2,
+			int l, Integer testcode2, int m, Date fromdate3, Date todate3, LSuserMaster objuser2, String string3, int n,
+			Integer testcode3, List<Long> directorycode, int o, Date fromdate4, Date todate4, String string4, int p,
+			Integer testcode4, List<Long> directorycode2, int q, Date fromdate5, Date todate5, LSuserMaster objuser3,
+			String string5, int r, Integer testcode5, List<Long> directorycode3, int s, Date fromdate6, Date todate6,
+			LSuserMaster objuser4, String string6, int t, Integer testcode6);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String string,
+			List<LSsamplemaster> lstsample2, int j, Date fromdate2, Date todate2, LSuserMaster objuser, String string2,
+			int k, Date fromdate3, Date todate3, LSuserMaster objuser2, String string3, List<Long> directorycode, int l,
+			Date fromdate4, Date todate4, String string4, List<Long> directorycode2, int m, Date fromdate5,
+			Date todate5, LSuserMaster objuser3, String string5, List<Long> directorycode3, int n, Date fromdate6,
+			Date todate6, LSuserMaster objuser4, String string6, Pageable pageable);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String string,
+			List<LSsamplemaster> lstsample2, int j, Date fromdate2, Date todate2, LSuserMaster objuser, String string2,
+			int k, Date fromdate3, Date todate3, LSuserMaster objuser2, String string3, List<Long> directorycode, int l,
+			Date fromdate4, Date todate4, String string4, List<Long> directorycode2, int m, Date fromdate5,
+			Date todate5, LSuserMaster objuser3, String string5, List<Long> directorycode3, int n, Date fromdate6,
+			Date todate6, LSuserMaster objuser4, String string6);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndTestcodeOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndTestcodeOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String string, Integer testcode,
+			List<LSsamplemaster> lstsample2, int j, Date fromdate2, Date todate2, LSuserMaster objuser, String string2,
+			Integer testcode2, int k, Date fromdate3, Date todate3, LSuserMaster objuser2, String string3,
+			Integer testcode3, List<Long> directorycode, int l, Date fromdate4, Date todate4, String string4,
+			Integer testcode4, List<Long> directorycode2, int m, Date fromdate5, Date todate5, LSuserMaster objuser3,
+			String string5, Integer testcode5, List<Long> directorycode3, int n, Date fromdate6, Date todate6,
+			LSuserMaster objuser4, String string6, Integer testcode6, Pageable pageable);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndTestcodeOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndTestcodeOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String string, Integer testcode,
+			List<LSsamplemaster> lstsample2, int j, Date fromdate2, Date todate2, LSuserMaster objuser, String string2,
+			Integer testcode2, int k, Date fromdate3, Date todate3, LSuserMaster objuser2, String string3,
+			Integer testcode3, List<Long> directorycode, int l, Date fromdate4, Date todate4, String string4,
+			Integer testcode4, List<Long> directorycode2, int m, Date fromdate5, Date todate5, LSuserMaster objuser3,
+			String string5, Integer testcode5, List<Long> directorycode3, int n, Date fromdate6, Date todate6,
+			LSuserMaster objuser4, String string6, Integer testcode6);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, int j, List<LSsamplemaster> lstsample2,
+			int k, Date fromdate2, Date todate2, LSuserMaster objuser, int l, int m, Date fromdate3, Date todate3,
+			LSuserMaster objuser2, int n, List<Long> directorycode, int o, Date fromdate4, Date todate4, int p,
+			List<Long> directorycode2, int q, Date fromdate5, Date todate5, LSuserMaster objuser3, int r,
+			List<Long> directorycode3, int s, Date fromdate6, Date todate6, LSuserMaster objuser4, int t,
+			Pageable pageable);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, int j, List<LSsamplemaster> lstsample2,
+			int k, Date fromdate2, Date todate2, LSuserMaster objuser, int l, int m, Date fromdate3, Date todate3,
+			LSuserMaster objuser2, int n, List<Long> directorycode, int o, Date fromdate4, Date todate4, int p,
+			List<Long> directorycode2, int q, Date fromdate5, Date todate5, LSuserMaster objuser3, int r,
+			List<Long> directorycode3, int s, Date fromdate6, Date todate6, LSuserMaster objuser4, int t);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusAndTestcodeOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusAndTestcodeOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, int j, Integer testcode,
+			List<LSsamplemaster> lstsample2, int k, Date fromdate2, Date todate2, LSuserMaster objuser, int l,
+			Integer testcode2, int m, Date fromdate3, Date todate3, LSuserMaster objuser2, int n, Integer testcode3,
+			List<Long> directorycode, int o, Date fromdate4, Date todate4, int p, Integer testcode4,
+			List<Long> directorycode2, int q, Date fromdate5, Date todate5, LSuserMaster objuser3, int r,
+			Integer testcode5, List<Long> directorycode3, int s, Date fromdate6, Date todate6, LSuserMaster objuser4,
+			int t, Integer testcode6, Pageable pageable);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusAndTestcodeOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusAndTestcodeOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, int j, Integer testcode,
+			List<LSsamplemaster> lstsample2, int k, Date fromdate2, Date todate2, LSuserMaster objuser, int l,
+			Integer testcode2, int m, Date fromdate3, Date todate3, LSuserMaster objuser2, int n, Integer testcode3,
+			List<Long> directorycode, int o, Date fromdate4, Date todate4, int p, Integer testcode4,
+			List<Long> directorycode2, int q, Date fromdate5, Date todate5, LSuserMaster objuser3, int r,
+			Integer testcode5, List<Long> directorycode3, int s, Date fromdate6, Date todate6, LSuserMaster objuser4,
+			int t, Integer testcode6);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, int j, List<LSsamplemaster> lstsample2,
+			int k, Date fromdate2, Date todate2, LSuserMaster objuser, int l, int m, Date fromdate3, Date todate3,
+			LSuserMaster objuser2, int n, List<Long> directorycode, int o, Date fromdate4, Date todate4, int p,
+			List<Long> directorycode2, int q, Date fromdate5, Date todate5, LSuserMaster objuser3, int r,
+			List<Long> directorycode3, int s, Date fromdate6, Date todate6, LSuserMaster objuser4, int t,
+			Pageable pageable);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, int j, List<LSsamplemaster> lstsample2,
+			int k, Date fromdate2, Date todate2, LSuserMaster objuser, int l, int m, Date fromdate3, Date todate3,
+			LSuserMaster objuser2, int n, List<Long> directorycode, int o, Date fromdate4, Date todate4, int p,
+			List<Long> directorycode2, int q, Date fromdate5, Date todate5, LSuserMaster objuser3, int r,
+			List<Long> directorycode3, int s, Date fromdate6, Date todate6, LSuserMaster objuser4, int t);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellAndTestcodeOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellAndTestcodeOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, int j, Integer testcode,
+			List<LSsamplemaster> lstsample2, int k, Date fromdate2, Date todate2, LSuserMaster objuser, int l,
+			Integer testcode2, int m, Date fromdate3, Date todate3, LSuserMaster objuser2, int n, Integer testcode3,
+			List<Long> directorycode, int o, Date fromdate4, Date todate4, int p, Integer testcode4,
+			List<Long> directorycode2, int q, Date fromdate5, Date todate5, LSuserMaster objuser3, int r,
+			Integer testcode5, List<Long> directorycode3, int s, Date fromdate6, Date todate6, LSuserMaster objuser4,
+			int t, Integer testcode6, Pageable pageable);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellAndTestcodeOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellAndTestcodeOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, int j, Integer testcode,
+			List<LSsamplemaster> lstsample2, int k, Date fromdate2, Date todate2, LSuserMaster objuser, int l,
+			Integer testcode2, int m, Date fromdate3, Date todate3, LSuserMaster objuser2, int n, Integer testcode3,
+			List<Long> directorycode, int o, Date fromdate4, Date todate4, int p, Integer testcode4,
+			List<Long> directorycode2, int q, Date fromdate5, Date todate5, LSuserMaster objuser3, int r,
+			Integer testcode5, List<Long> directorycode3, int s, Date fromdate6, Date todate6, LSuserMaster objuser4,
+			int t, Integer testcode6);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String string, int j, int k,
+			List<LSsamplemaster> lstsample2, int l, Date fromdate2, Date todate2, LSuserMaster objuser, String string2,
+			int m, int n, int o, Date fromdate3, Date todate3, LSuserMaster objuser2, String string3, int p, int q,
+			List<Long> directorycode, int r, Date fromdate4, Date todate4, String string4, int s, int t,
+			List<Long> directorycode2, int u, Date fromdate5, Date todate5, LSuserMaster objuser3, String string5,
+			int v, int w, List<Long> directorycode3, int x, Date fromdate6, Date todate6, LSuserMaster objuser4,
+			String string6, int y, int z);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedAndTestcodeOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedAndTestcodeOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedAndTestcodeOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String string, int j, int k,
+			Integer testcode, List<LSsamplemaster> lstsample2, int l, Date fromdate2, Date todate2,
+			LSuserMaster objuser, String string2, int m, int n, Integer testcode2, int o, Date fromdate3, Date todate3,
+			LSuserMaster objuser2, String string3, int p, int q, Integer testcode3, List<Long> directorycode, int r,
+			Date fromdate4, Date todate4, String string4, int s, int t, Integer testcode4, List<Long> directorycode2,
+			int u, Date fromdate5, Date todate5, LSuserMaster objuser3, String string5, int v, int w, Integer testcode5,
+			List<Long> directorycode3, int x, Date fromdate6, Date todate6, LSuserMaster objuser4, String string6,
+			int y, int z, Integer testcode6);
+
+
+
+
+
+
+
+
+
+
 
 
 

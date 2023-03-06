@@ -104,9 +104,11 @@ public class MethodDelimiterService {
 		   //Checking for Duplicate MethodDelimiter with same parsermethod and same delimiter
 		   final Optional<MethodDelimiter> methodDelimiterByDelimiter = methodDelimiterRepo
 	 				 .findByParsermethodAndDelimiterAndStatusAndLssitemaster(parserMethod, delimiter, 1,methodDelimiter.getLssitemaster());
-		      
+		   
+		   final Optional<MethodDelimiter> meddelimiterdefault = methodDelimiterRepo.findByParsermethodAndDelimiterAndStatusAndDefaultvalue(parserMethod, delimiter, 1,1);
+		   
 		   final LSuserMaster createdUser = getCreatedUserByKey(methodDelimiter.getCreatedby().getUsercode());
-	    	if(methodDelimiterByDelimiter.isPresent())
+	    	if(methodDelimiterByDelimiter.isPresent() || meddelimiterdefault.isPresent())
 	    	{
 	    		//LScfttransaction LScfttransaction = new LScfttransaction();
 	    		//Conflict = 409 - Duplicate entry
@@ -132,10 +134,14 @@ public class MethodDelimiterService {
 //					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
 //							"Create", comments, site, "",
 //							createdUser, request.getRemoteAddr());
-	    			
+	    			if(methodDelimiterByDelimiter.isPresent()) {
 	    			methodDelimiter.setInfo("Duplicate Entry - " + methodDelimiterByDelimiter.get().getDelimiter().getDelimitername()
 	  					+" for " + methodDelimiterByDelimiter.get().getParsermethod().getParsermethodname());
-
+	    			
+	    			}else {
+	    			methodDelimiter.setInfo("Duplicate Entry - " + meddelimiterdefault.get().getDelimiter().getDelimitername()
+	  					+" for " + meddelimiterdefault.get().getParsermethod().getParsermethodname());
+	    			}
 	    			methodDelimiter.setObjsilentaudit(auditdetails.getObjsilentaudit());
 				}
 //	  			return new ResponseEntity<>("Duplicate Entry - " + methodDelimiterByDelimiter.get().getDelimiter().getDelimitername()

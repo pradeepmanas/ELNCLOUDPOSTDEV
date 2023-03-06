@@ -75,4 +75,10 @@ public interface MethodDelimiterRepository extends JpaRepository<MethodDelimiter
 	List<MethodDelimiter> findByStatusAndLssitemasterOrLssitemasterIsNull(int i, LSSiteMaster mobj, Sort sort);
 
 	List<MethodDelimiter> findByLssitemasterOrLssitemasterIsNull(LSSiteMaster mobj, Sort sort);
+
+	Optional<MethodDelimiter> findByParsermethodAndDelimiterAndStatusAndLssitemasterAndDefaultvalue(
+			ParserMethod parserMethod, Delimiter delimiter, int i, LSSiteMaster lssitemaster, int j);
+
+	Optional<MethodDelimiter> findByParsermethodAndDelimiterAndStatusAndDefaultvalue(ParserMethod parserMethod,
+			Delimiter delimiter, int i, int j);
 }

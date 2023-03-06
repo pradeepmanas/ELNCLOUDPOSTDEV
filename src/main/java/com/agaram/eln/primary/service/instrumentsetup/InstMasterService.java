@@ -110,7 +110,7 @@ public class InstMasterService {
 		{
 			//Conflict =409 - Duplicate entry
 
-			master.setInfo("Duplicate Entry - " + masterByCode.get().getInstrumentcode());
+			master.setInfo("Duplicate Entry - " + masterByCode.get().getInstrumentname());
  			master.setObjsilentaudit(auditdetails.getObjsilentaudit());
 
 //  			return new ResponseEntity<>("Duplicate Entry - " + masterByCode.get().getInstrumentcode(), 
@@ -469,7 +469,7 @@ public class InstMasterService {
 //					lscfttransactionrepo.save(LScfttransaction);
 //	    			}
 	     			
-	     			master.setInfo("Duplicate Entry - " + master.getInstrumentcode());
+	     			master.setInfo("Duplicate Entry - " + master.getInstrumentname());
 	     			master.setObjsilentaudit(auditdetails.getObjsilentaudit());
 
 //	     			return new ResponseEntity<>("Duplicate Entry - " + master.getInstrumentcode(), 
@@ -538,7 +538,7 @@ public class InstMasterService {
 //	    			
 //    			}
      			
-     			master.setInfo("Associated : "+master.getInstrumentcode());
+     			master.setInfo("Associated : "+master.getInstrumentname());
      			master.setObjsilentaudit(auditdetails.getObjsilentaudit());
      			//return new ResponseEntity<>(master.getInstrumentcode(), HttpStatus.IM_USED);//status code - 226
      			return new ResponseEntity<>(master, HttpStatus.IM_USED);//status code - 226
@@ -769,7 +769,7 @@ public class InstMasterService {
 // 						lscfttransactionrepo.save(LScfttransaction);
  	    				
  	    		//	}  
- 				  instMaster.setInfo("Associated : "+instMaster.getInstrumentcode());
+ 				  instMaster.setInfo("Associated : "+instMaster.getInstrumentname()+" with method");
  				  instMaster.setObjsilentaudit(auditdetails.getObjsilentaudit());
  			   }
  			 //  return new ResponseEntity<>(instMaster.getInstrumentname() , HttpStatus.IM_USED);//status code - 226		
