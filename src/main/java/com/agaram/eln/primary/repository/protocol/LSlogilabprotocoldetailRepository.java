@@ -956,14 +956,6 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Integer usercode, Date fromdate3, Date todate3, Integer testcode3, List<LSprojectmaster> lstproject2, int k,
 			Integer sitecode4, Date fromdate4, Date todate4, Integer testcode4);
 
-
-	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyOrderByProtocolordercodeDesc(
-			String orderflag, List<LSprojectmaster> lstproject, Integer protocoltype, Date fromdate, Date todate,
-			String orderflag2, Integer protocoltype2, Date fromdate2, Date todate2, List<LSsamplemaster> lstsample,
-			int i, String orderflag3, Integer protocoltype3, Date fromdate3, Date todate3,
-			List<LSsamplemaster> lstsample2, int j, LSlogilabprotocoldetail objorder);
-
-
 	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, int j, Integer usercode, Date fromdate2, Date todate2,
 			int k, Integer usercode2, Date fromdate3, Date todate3, Pageable pageable);
@@ -1076,6 +1068,12 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date fromdate2, Date todate2, int l, Integer testcode2, int m, Integer usercode2, Date fromdate3,
 			Date todate3, int n, Integer testcode3);
 
+
+	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyOrderByProtocolordercodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Integer protocoltype, Date fromdate, Date todate,
+			String orderflag2, Integer protocoltype2, Date fromdate2, Date todate2, List<LSsamplemaster> lstsample,
+			int i, String orderflag3, Integer protocoltype3, Date fromdate3, Date todate3,
+			List<LSsamplemaster> lstsample2, int j, Integer usercode);
 
 
 }

@@ -6552,7 +6552,7 @@ public class InstrumentService {
 		if (objorder.getTestcode() == null && objorder.getLsprojectmaster() == null && objorder.getRejected() == null) {
 			lstorder = LSlogilabprotocoldetailRepository
 					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyOrderByProtocolordercodeDesc(objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate,
-					        objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 1, objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 2,objorder);
+					        objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 1, objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 2,objorder.getLsuserMaster().getUsercode());
 //					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInOrderByProtocolordercodeDesc(
 //							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate,
 //							objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample);
