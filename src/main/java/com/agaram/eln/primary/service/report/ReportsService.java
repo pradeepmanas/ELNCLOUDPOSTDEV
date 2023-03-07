@@ -13,15 +13,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -76,6 +79,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
@@ -113,10 +117,16 @@ import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.configuration.ConfigurationService;
+import com.microsoft.azure.storage.CloudStorageAccount;
+import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.blob.CloudBlobClient;
+import com.microsoft.azure.storage.blob.CloudBlobContainer;
+import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFSDBFile;
 
+import io.jsonwebtoken.lang.Arrays;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -188,6 +198,9 @@ public class ReportsService {
 	private CloudOrderCreationRepository cloudOrderCreationRepository;
 	@Autowired
 	private LSMultiusergroupRepositery LSMultiusergroupRepositery;
+	
+	@Autowired
+	private CloudFileManipulationservice objCloudFileManipulationservice;
 
 	LSConfiguration FTPConfig = new LSConfiguration();
 
@@ -2257,9 +2270,16 @@ public class ReportsService {
 							excelData = LsSampleFiles.getFilecontent();
 						} else if ((int) obj.get("isMultitenant") == 1) {
 
-							CloudOrderCreation file = CloudOrderCreationRepository
+//							CloudOrderCreation file = CloudOrderCreationRepository
+//									.findById((long) SelectedDataObj.getLssamplefile().getFilesamplecode());
+//							excelData = file.getContent();
+							CloudOrderCreation objCreation = cloudOrderCreationRepository
 									.findById((long) SelectedDataObj.getLssamplefile().getFilesamplecode());
-							excelData = file.getContent();
+							if (objCreation != null && objCreation.getContainerstored() == 0) {
+								excelData=objCreation.getContent();
+							} else {
+								excelData=objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),TenantContext.getCurrentTenant() + "ordercreation");
+							}
 						} else {
 //							OrderCreation file = mongoTemplate.findById(
 //							SelectedDataObj.getLssamplefile().getFilesamplecode(), OrderCreation.class);
@@ -3183,6 +3203,8 @@ public class ReportsService {
 					int tagsheetindex = (int) eachTag.get("tagsheetindex");
 					JSONObject selectedSheet = (JSONObject) sheets.get(tagsheetindex);
 					JSONArray rowsArray = (JSONArray) selectedSheet.get("rows");
+					// Sort the JSONArray based on the "age" key
+					Collections.sort(rowsArray, Comparator.comparing(o -> ((JSONObject) o).get("index").toString()));					
 					Map<String, Object> tagData = new HashMap<String, Object>();
 					int rowCount = 0;
 					for (int rowIndex = 0; rowIndex < rowsArray.size(); rowIndex++) {
@@ -3190,18 +3212,32 @@ public class ReportsService {
 						int originalRowIndex = (int) rowData.get("index");
 						if (tagtoprow <= originalRowIndex && originalRowIndex <= tagbottomrow) {
 							JSONArray cellsArray = (JSONArray) rowData.get("cells");
-//							logger.info("getTagInfofromSheet : cellsArray" + cellsArray);
+							
+//							System.out.println("getTagInfofromSheet : cellsArray" + cellsArray);
 							int cellCount = 0;
 							for (int cellIndex = 0; cellIndex < cellsArray.size(); cellIndex++) {
 								JSONObject cellObject = (JSONObject) cellsArray.get(cellIndex);
-//								logger.info("getTagInfofromSheet : cellObject" + cellObject);
+//								System.out.println("getTagInfofromSheet : cellObject" + cellObject);
 								int originalCellIndex = (int) cellObject.get("index");
 								if (tagleftcol <= originalCellIndex && originalCellIndex <= tagrightcol) {
-//									logger.info("getTagInfofromSheet : cellObject Value " + cellObject.get("value"));
+//									System.out.println("getTagInfofromSheet : cellObject Value " + cellObject.get("value"));
 									Map<String, Object> cellData = new HashMap<String, Object>();
+									String  format =null;
+									if(cellObject.get("value") != null) {
+										if(cellObject.get("format") != null && cellObject.get("format").equals("0.00")) {
+											format=String.format("%,.2f", cellObject.get("value"));
+										}else if(cellObject.get("format") != null && cellObject.get("format").equals("0.000"))	{
+											format=String.format("%,.3f", cellObject.get("value"));
+										}
+									}
 									cellData.put("rowIndex", rowCount);
 									cellData.put("colIndex", cellCount);
-									cellData.put("value", cellObject.get("value"));
+									if(format != null) {
+										cellData.put("value",format);	
+									}else {
+										cellData.put("value", cellObject.get("value"));	
+									}
+									
 									if (cellObject.containsKey("background")) {
 										cellData.put("bgcolor",
 												((String) cellObject.get("background")).replace("#", ""));
@@ -3541,7 +3577,7 @@ public class ReportsService {
 		return mapOrders;
 	}
 
-	public Map<String, Object> getSheetLSfileLst(Map<String, Object> argMap) {
+	public Map<String, Object> getSheetLSfileLst(Map<String, Object> argMap) throws IOException, InvalidKeyException, URISyntaxException, StorageException {
 		Map<String, Object> MapObj = new HashMap<String, Object>();
 
 		LSSiteMaster objSite = new LSSiteMaster();
@@ -3552,14 +3588,62 @@ public class ReportsService {
 
 		List<LSfile> LSfileLst = LSfileRepositoryObj
 				.findByFilecodeGreaterThanAndApprovedAndLssitemasterOrderByCreatedateDesc(1, 1, objSite);
+		
+		
 
+
+		CloudStorageAccount storageAccount;
+		CloudBlobClient blobClient = null;
+		CloudBlobContainer container = null;
+		CloudBlockBlob blob = null;
+//		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+		storageAccount = CloudStorageAccount.parse(env.getProperty("azure.storage.ConnectionString"));
+		blobClient = storageAccount.createCloudBlobClient();
+
+//		return null;
+
+		container = (blobClient.getContainerReference(TenantContext.getCurrentTenant()+"sheetcreation"));
+//		ArrayList<Long> longList = new ArrayList<Long>();
+//        
+//        // Add elements to the list
+//        longList.add((long) 10);
+//        longList.add((long) 9);
+//        longList.add((long) 8);
+//        longList.add((long) 5);
+//        longList.add((long) 4);
 		for (LSfile LSfileObj : LSfileLst) {
 
 			if ((int) argMap.get("isMultitenant") == 1) {
+				
 				CloudSheetCreation file = cloudSheetCreationRepository.findById((long) LSfileObj.getFilecode());
-				if (file != null) {
-					LSfileObj.setFilecontent(file.getContent());
+				
+				if (file != null && file.getContainerstored() == 0) {
+					LSfileObj.setFilecontent(cloudSheetCreationRepository.findById((long) LSfileObj.getFilecode()).getContent());
+				}else {
+					try {
+						// Parse the connection string and create a blob client to interact with Blob
+						// storage
+//						storageAccount = CloudStorageAccount.parse(storageConnectionString);
+//						blobClient = storageAccount.createCloudBlobClient();
+						
+				        
+						blob = container.getBlockBlobReference(file.getFileuid());
+						LSfileObj.setFilecontent(blob.downloadText());
+					} catch (StorageException ex) {
+						System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s",
+								ex.getHttpStatusCode(), ex.getErrorCode()));
+						throw new IOException(String.format("Error returned from the service. Http code: %d and error code: %s",
+								ex.getHttpStatusCode(), ex.getErrorCode()));
+					} catch (Exception ex) {
+						System.out.println(ex.getMessage());
+					}
+					LSfileObj.setFilecontent(objCloudFileManipulationservice.retrieveCloudSheets(file.getFileuid(),TenantContext.getCurrentTenant()+"sheetcreation"));
 				}
+				
+//				CloudSheetCreation file = cloudSheetCreationRepository.findById((long) LSfileObj.getFilecode());
+//				if (file != null) {
+//					LSfileObj.setFilecontent(file.getContent());
+//				}
 			} else {
 
 				String fileid = "file_" + LSfileObj.getFilecode();
@@ -3584,12 +3668,13 @@ public class ReportsService {
 			}
 
 		}
+		
 		MapObj.put("filelst", LSfileLst);
 
 		return MapObj;
 	}
 
-	public Map<String, Object> getSheetLSfileUsingFilecode(Map<String, Object> argMap) {
+	public Map<String, Object> getSheetLSfileUsingFilecode(Map<String, Object> argMap) throws IOException {
 		Map<String, Object> MapObj = new HashMap<String, Object>();
 //		int fileCode = (int) argMap.get("SheetFileCode");
 		List<LSfile> LSfilelst = new ArrayList<LSfile>();
@@ -3607,11 +3692,18 @@ public class ReportsService {
 					LSfile objFile = LSfileRepositoryObj
 							.findByFilecodeAndApproved(Integer.parseInt(fileCodeArray[arrayIndex]), 1);
 
-					CloudSheetCreation file = cloudSheetCreationRepository
-							.findById((long) Integer.parseInt(fileCodeArray[arrayIndex]));
-					if (file != null) {
-						objFile.setFilecontent(file.getContent());
+					CloudSheetCreation objCreation = cloudSheetCreationRepository.findById((long) objFile.getFilecode());
+					
+					if (objCreation != null && objCreation.getContainerstored() == 0) {
+						objFile.setFilecontent(cloudSheetCreationRepository.findById((long) objFile.getFilecode()).getContent());
+					}else {
+						objFile.setFilecontent(objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),TenantContext.getCurrentTenant()+"sheetcreation"));
 					}
+//					CloudSheetCreation file = cloudSheetCreationRepository
+//							.findById((long) Integer.parseInt(fileCodeArray[arrayIndex]));
+//					if (file != null) {
+//						objFile.setFilecontent(file.getContent());
+//					}
 
 					LSfilelst.add(objFile);
 
@@ -3658,10 +3750,17 @@ public class ReportsService {
 		} else {
 			if (isMultitenant == 1) {
 				LSfile objFile = LSfileRepositoryObj.findByFilecodeAndApproved(Integer.parseInt(fileCode), 1);
-				CloudSheetCreation file = cloudSheetCreationRepository.findById((long) objFile.getFilecode());
-				if (file != null) {
-					objFile.setFilecontent(file.getContent());
+				CloudSheetCreation objCreation = cloudSheetCreationRepository.findById((long) objFile.getFilecode());
+				
+				if (objCreation != null && objCreation.getContainerstored() == 0) {
+					objFile.setFilecontent(cloudSheetCreationRepository.findById((long) objFile.getFilecode()).getContent());
+				}else {
+					objFile.setFilecontent(objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),TenantContext.getCurrentTenant()+"sheetcreation"));
 				}
+//				CloudSheetCreation file = cloudSheetCreationRepository.findById((long) objFile.getFilecode());
+//				if (file != null) {
+//					objFile.setFilecontent(file.getContent());
+//				}
 				LSfilelst.add(objFile);
 			} else {
 

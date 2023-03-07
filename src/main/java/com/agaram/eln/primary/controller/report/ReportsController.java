@@ -1,6 +1,8 @@
 package com.agaram.eln.primary.controller.report;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,7 @@ import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.report.ReportsService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.azure.storage.StorageException;
 
 @RestController
 @RequestMapping(value = "/reports", method = RequestMethod.POST)
@@ -302,7 +305,7 @@ public class ReportsController {
 	}
 	
 	@RequestMapping(value = "/getSheetLSfileLst")
-	protected Map<String, Object> getSheetLSfileLst(@RequestBody Map<String , Object> argMap) throws IOException {
+	protected Map<String, Object> getSheetLSfileLst(@RequestBody Map<String , Object> argMap) throws IOException, InvalidKeyException, URISyntaxException, StorageException {
 		Map<String, Object> ObjMap = ObjReportsService.getSheetLSfileLst(argMap);
 		return ObjMap;
 	}

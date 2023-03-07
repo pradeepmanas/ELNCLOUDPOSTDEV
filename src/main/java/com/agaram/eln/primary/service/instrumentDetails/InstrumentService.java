@@ -1046,7 +1046,7 @@ public class InstrumentService {
 								objnotify.setNotifationfrom(lsuserMasterRepository
 										.findByusercode(objorder.getObjLoggeduser().getUsercode()));
 								objnotify.setNotifationto(objorder.getLsuserMaster());
-								objnotify.setNotificationdate(objorder.getCreatedtimestamp());
+								objnotify.setNotificationdate(objorder.getNotificationdate());
 								objnotify.setNotification(Notifiction);
 								objnotify.setNotificationdetils(Details);
 								objnotify.setIsnewnotification(1);
@@ -1063,7 +1063,7 @@ public class InstrumentService {
 						objnotify.setNotifationfrom(
 								lsuserMasterRepository.findByusercode(objorder.getObjLoggeduser().getUsercode()));
 						objnotify.setNotifationto(objorder.getAssignedto());
-						objnotify.setNotificationdate(objorder.getCreatedtimestamp());
+						objnotify.setNotificationdate(objorder.getNotificationdate());
 						objnotify.setNotification(Notifiction);
 						objnotify.setNotificationdetils(Details);
 						objnotify.setIsnewnotification(1);
