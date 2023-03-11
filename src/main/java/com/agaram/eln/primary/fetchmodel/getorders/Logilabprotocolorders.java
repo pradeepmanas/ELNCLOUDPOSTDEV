@@ -45,7 +45,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	private String repositoryname;
 	private Integer approved;
 	private Integer rejected;
-	
+	private Integer viewoption;
 
 
 	List<LSworkflow> lstworkflow;
@@ -59,7 +59,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	public Logilabprotocolorders(Long protocolordercode,Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
 			LSprotocolworkflow lSprotocolworkflow,
-			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,String keyword,Long directorycode,Integer createby,LSuserMaster assignedto,Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,LSworkflow lsworkflow, Integer approved,Integer rejected,Integer ordercancell) {
+			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,String keyword,Long directorycode,Integer createby,LSuserMaster assignedto,Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,LSworkflow lsworkflow, Integer approved,Integer rejected,Integer ordercancell,Integer viewoption) {
 		
 		this.protocolordercode = protocolordercode;
 		this.Testcode =Testcode;
@@ -86,6 +86,15 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 		this.approved=approved;
 		this.rejected=rejected;
 		this.ordercancell=ordercancell;
+		this.viewoption=viewoption;
+	}
+
+	public Integer getViewoption() {
+		return viewoption;
+	}
+
+	public void setViewoption(Integer viewoption) {
+		this.viewoption = viewoption;
 	}
 
 	public Integer getOrdercancell() {

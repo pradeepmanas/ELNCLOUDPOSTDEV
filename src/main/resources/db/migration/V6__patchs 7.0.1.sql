@@ -3817,3 +3817,26 @@ ALTER TABLE IF Exists LSOrderCreationfiles ADD COLUMN IF NOT EXISTS containersto
 ALTER TABLE IF Exists LSOrderVersionfiles ADD COLUMN IF NOT EXISTS fileuid varchar(100);
 ALTER TABLE IF Exists LSOrderVersionfiles ADD COLUMN IF NOT EXISTS fileuri varchar(250);
 ALTER TABLE IF Exists LSOrderVersionfiles ADD COLUMN IF NOT EXISTS containerstored integer default 0;
+
+ALTER TABLE IF Exists lssheetworkflow ADD COLUMN IF NOT EXISTS status integer;
+update lssheetworkflow set status=1 where status is null;
+
+CREATE TABLE IF NOT EXISTS public.lslogilablimsordergroup
+(
+    groupid character varying(250) COLLATE pg_catalog."default" NOT NULL,
+    batchid character varying(250) COLLATE pg_catalog."default",
+    limsprimarycode numeric(20,0),
+    testcode integer,
+    ntransactiontestcode integer,
+    arno character varying(100) COLLATE pg_catalog."default",
+    samplearno character varying(100) COLLATE pg_catalog."default",
+    testname character varying(100) COLLATE pg_catalog."default",
+    CONSTRAINT lslogilablimsordergroup_pkey PRIMARY KEY (groupid)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.lslogilablimsordergroup
+    OWNER to postgres;

@@ -561,14 +561,19 @@ public class DashBoardService {
 						lslogilablimsorderdetailRepository.countByCreatedtimestampBetween(fromdate, todate));
 				mapOrders.put("pendingorder", lslogilablimsorderdetailRepository
 						.countByOrderflagAndCreatedtimestampBetweenAndOrdercancellIsNull("N", fromdate, todate));
-				long lstlimscompleted = 0;
-				lstlimscompleted = lslogilablimsorderdetailRepository
-						.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNot("R", fromdate, todate, 3);
-
-				lstlimscompleted = lstlimscompleted + lslogilablimsorderdetailRepository
-						.countByOrderflagAndFiletypeAndCreatedtimestampBetween("R", 0, fromdate, todate);
+//				long lstlimscompleted = 0;
+//				lstlimscompleted = lslogilablimsorderdetailRepository
+//						.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNull("R", fromdate, todate, 3);
+//
+//				lstlimscompleted = lstlimscompleted + lslogilablimsorderdetailRepository
+//						.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNull("R", 0, fromdate, todate,3);
+//				mapOrders.put("completedorder", lslogilablimsorderdetailRepository
+//						.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNull("R", fromdate, todate, 3)+
+//						lslogilablimsorderdetailRepository.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNull("R", fromdate, todate));
+				
 				mapOrders.put("completedorder", lslogilablimsorderdetailRepository
-						.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNull("R", fromdate, todate, 3));
+						.countByOrderflagAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNull("R", fromdate, todate, 3)+
+						lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNull("R", fromdate, todate));
 
 				mapOrders.put("rejectedorder", lslogilablimsorderdetailRepository
 						.countByApprovelstatusAndCreatedtimestampBetween(3, fromdate, todate));
@@ -577,7 +582,7 @@ public class DashBoardService {
 				mapOrders.put("onproces",
 						lslogilablimsorderdetailRepository.countByOrderflagAndLssamplefileInAndCreatedtimestampBetween(
 								"N", lssamplefile, fromdate, todate));
-				mapOrders.put("completedorder", (lstlimscompleted));
+//				mapOrders.put("completedorder", (lstlimscompleted));
 			} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 
 				mapOrders.put("orders", lslogilablimsorderdetailRepository
@@ -586,18 +591,20 @@ public class DashBoardService {
 						lslogilablimsorderdetailRepository
 								.countByOrderflagAndCreatedtimestampBetweenAndOrdercancellIsNullAndTestcode("N",
 										fromdate, todate, testcode));
-				long lstlimscompleted = 0;
-				lstlimscompleted = lslogilablimsorderdetailRepository
-						.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNotAndTestcode("R", fromdate,
-								todate, 3, testcode);
-
-				lstlimscompleted = lstlimscompleted + lslogilablimsorderdetailRepository
-						.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndTestcode("R", 0, fromdate, todate,
-								testcode);
+//				long lstlimscompleted = 0;
+//				lstlimscompleted = lslogilablimsorderdetailRepository
+//						.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNotAndTestcode("R", fromdate,
+//								todate, 3, testcode);
+//
+//				lstlimscompleted = lstlimscompleted + lslogilablimsorderdetailRepository
+//						.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndTestcode("R", 0, fromdate, todate,
+//								testcode);
 				mapOrders.put("completedorder",
 						lslogilablimsorderdetailRepository
-								.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNotAndTestcodeAndOrdercancellIsNull("R",
-										fromdate, todate, 3, testcode));
+								.countByOrderflagAndCreatedtimestampBetweenAndApprovelstatusNotAndTestcodeAndOrdercancellIsNull("R",
+										fromdate, todate, 3, testcode)+
+								lslogilablimsorderdetailRepository.countByOrderflagAndCreatedtimestampBetweenAndTestcodeAndApprovelstatusIsNullAndOrdercancellIsNull("R",
+										fromdate, todate, testcode));
 
 				mapOrders.put("rejectedorder", lslogilablimsorderdetailRepository
 						.countByApprovelstatusAndCreatedtimestampBetweenAndTestcode(3, fromdate, todate, testcode));
@@ -607,7 +614,7 @@ public class DashBoardService {
 						lslogilablimsorderdetailRepository
 								.countByOrderflagAndLssamplefileInAndCreatedtimestampBetweenAndTestcode("N",
 										lssamplefile, fromdate, todate, testcode));
-				mapOrders.put("completedorder", (lstlimscompleted));
+//				mapOrders.put("completedorder", (lstlimscompleted));
 
 			} else if (testcode == -1 && objuser.getLstprojectforfilter() != null) {
 
@@ -618,17 +625,17 @@ public class DashBoardService {
 						lslogilablimsorderdetailRepository
 								.countByOrderflagAndCreatedtimestampBetweenAndOrdercancellIsNullAndLsprojectmaster("N",
 										fromdate, todate, objuser.getLstprojectforfilter()));
-				long lstlimscompleted = 0;
-				lstlimscompleted = lslogilablimsorderdetailRepository
-						.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNotAndLsprojectmaster("R",
-								fromdate, todate, 3, objuser.getLstprojectforfilter());
-
-				lstlimscompleted = lstlimscompleted + lslogilablimsorderdetailRepository
-						.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmaster("R", 0, fromdate,
-								todate, objuser.getLstprojectforfilter());
+//				long lstlimscompleted = 0;
+//				lstlimscompleted = lslogilablimsorderdetailRepository
+//						.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNotAndLsprojectmaster("R",
+//								fromdate, todate, 3, objuser.getLstprojectforfilter());
+//
+//				lstlimscompleted = lstlimscompleted + lslogilablimsorderdetailRepository
+//						.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmaster("R", 0, fromdate,
+//								todate, objuser.getLstprojectforfilter());
 				mapOrders.put("completedorder",
 						lslogilablimsorderdetailRepository
-								.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterAndOrdercancellIsNull("R",
+								.countByOrderflagAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterAndOrdercancellIsNull("R",
 										fromdate, todate, 3, objuser.getLstprojectforfilter()));
 
 				mapOrders.put("rejectedorder",
@@ -643,7 +650,7 @@ public class DashBoardService {
 						lslogilablimsorderdetailRepository
 								.countByOrderflagAndLssamplefileInAndCreatedtimestampBetweenAndLsprojectmaster("N",
 										lssamplefile, fromdate, todate, objuser.getLstprojectforfilter()));
-				mapOrders.put("completedorder", (lstlimscompleted));
+//				mapOrders.put("completedorder", (lstlimscompleted));
 			} else {
 				mapOrders.put("orders",
 						lslogilablimsorderdetailRepository.countByCreatedtimestampBetweenAndLsprojectmasterAndTestcode(
@@ -651,16 +658,16 @@ public class DashBoardService {
 				mapOrders.put("pendingorder", lslogilablimsorderdetailRepository
 						.countByOrderflagAndCreatedtimestampBetweenAndOrdercancellIsNullAndLsprojectmasterAndTestcode(
 								"N", fromdate, todate, objuser.getLstprojectforfilter(), testcode));
-				long lstlimscompleted = 0;
-				lstlimscompleted = lslogilablimsorderdetailRepository
-						.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterAndTestcodeAndOrdercancellIsNull(
-								"R", fromdate, todate, 3, objuser.getLstprojectforfilter(), testcode);
-
-				lstlimscompleted = lstlimscompleted + lslogilablimsorderdetailRepository
-						.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeAndOrdercancellIsNull("R", 0,
-								fromdate, todate, objuser.getLstprojectforfilter(), testcode);
+//				long lstlimscompleted = 0;
+//				lstlimscompleted = lslogilablimsorderdetailRepository
+//						.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterAndTestcodeAndOrdercancellIsNull(
+//								"R", fromdate, todate, 3, objuser.getLstprojectforfilter(), testcode);
+//
+//				lstlimscompleted = lstlimscompleted + lslogilablimsorderdetailRepository
+//						.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeAndOrdercancellIsNull("R", 0,
+//								fromdate, todate, objuser.getLstprojectforfilter(), testcode);
 				mapOrders.put("completedorder", lslogilablimsorderdetailRepository
-						.countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterAndTestcodeAndOrdercancellIsNull(
+						.countByOrderflagAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterAndTestcodeAndOrdercancellIsNull(
 								"R", fromdate, todate, 3, objuser.getLstprojectforfilter(), testcode));
 
 				mapOrders.put("rejectedorder",
@@ -674,7 +681,7 @@ public class DashBoardService {
 				mapOrders.put("onproces", lslogilablimsorderdetailRepository
 						.countByOrderflagAndLssamplefileInAndCreatedtimestampBetweenAndLsprojectmasterAndTestcode("N",
 								lssamplefile, fromdate, todate, objuser.getLstprojectforfilter(), testcode));
-				mapOrders.put("completedorder", (lstlimscompleted));
+//				mapOrders.put("completedorder", (lstlimscompleted));
 			}
 
 		} else {
@@ -1142,8 +1149,6 @@ public class DashBoardService {
 
 			List<LSprojectmaster> lstproject = objuser.getLstproject();
 			List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
-			List<LSsamplemaster> lstsample = lssamplemasterrepository
-					.findByLssitemasterAndStatus(objuser.getLssitemaster(), 1);
 			List<LSworkflow> lstworkflow = objuser.getLstworkflow();
 			if (lstproject != null) {
 
@@ -1470,6 +1475,8 @@ public class DashBoardService {
 
 				lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
 			} else {
+				List<LSsamplemaster> lstsample = lssamplemasterrepository
+						.findByLssitemasterAndStatus(objuser.getLssitemaster(), 1);
 				List<LSSheetOrderStructure> lstdir = lsSheetOrderStructureRepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
 								objuser.getLssitemaster(), 1, objuser, 2);

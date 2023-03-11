@@ -199,7 +199,9 @@ public class MaterialService {
 		List<MaterialConfig> lstMaterialConfig = materialConfigRepository
 				.findByNmaterialtypecodeAndNformcode((Integer) inputMap.get("nmaterialtypecode"), 40);
 		objmap.put("selectedTemplate", lstMaterialConfig);
-		objmap.put("selectedGridProps", lstMaterialConfig.get(0));
+		if(!lstMaterialConfig.isEmpty()) {
+			objmap.put("selectedGridProps", lstMaterialConfig.get(0));
+		}
 		if (cft != null) {
 			objmap.put("objsilentaudit", cft);
 		}

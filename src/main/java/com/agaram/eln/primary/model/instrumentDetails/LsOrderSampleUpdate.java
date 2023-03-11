@@ -45,6 +45,14 @@ public class LsOrderSampleUpdate {
 	public String getHistorydetails() {
 		return historydetails;
 	}
+	@Transient
+	public String batchid;
+	public String getBatchid() {
+		return batchid;
+	}
+	public void setBatchid(String batchid) {
+		this.batchid = batchid;
+	}
 	public String getCreatedbyusername() {
 		return createdbyusername;
 	}

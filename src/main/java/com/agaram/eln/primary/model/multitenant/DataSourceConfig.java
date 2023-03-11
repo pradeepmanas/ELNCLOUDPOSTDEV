@@ -64,6 +64,22 @@ public class DataSourceConfig implements Serializable {
 	@Transient
 	private Integer plantyperights;
 	
+	private Integer isenableparser = 1;
+	private Integer isenablereport = 1;
+
+	public Integer getIsenableparser() {
+		return isenableparser;
+	}
+	public void setIsenableparser(Integer isenableparser) {
+		this.isenableparser = isenableparser;
+	}
+	public Integer getIsenablereport() {
+		return isenablereport;
+	}
+	public void setIsenablereport(Integer isenablereport) {
+		this.isenablereport = isenablereport;
+	}
+
 	public Integer getPlantyperights() {
 		return plantyperights;
 	}

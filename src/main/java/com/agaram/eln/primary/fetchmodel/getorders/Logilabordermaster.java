@@ -31,10 +31,11 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private String keyword;
 	private Integer ordercancell;
 	private LSuserMaster assignedto;
+	private Integer viewoption;
 
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,LSuserMaster assignedto,
-			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell) {
+			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -50,9 +51,20 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.lsworkflow = lsworkflow;
 		this.ordercancell=ordercancell;
 		this.assignedto =assignedto;
+		this.viewoption=viewoption;
 	}
 	
 	
+	public Integer getViewoption() {
+		return viewoption;
+	}
+
+
+	public void setViewoption(Integer viewoption) {
+		this.viewoption = viewoption;
+	}
+
+
 	public Integer getOrdercancell() {
 		return ordercancell;
 	}

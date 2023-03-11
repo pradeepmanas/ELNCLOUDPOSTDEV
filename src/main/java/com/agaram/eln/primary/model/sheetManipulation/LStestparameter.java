@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "LStestparameter")
@@ -37,6 +38,11 @@ public class LStestparameter {
 	@Column(name="parametersynonym")
 	private String sparametersynonym;
 	
+	@Column(columnDefinition = "numeric(17,0)",name="sitecode")
+	private Integer nsitecode;
+	
+	@Column(name="testname")
+	private String stestname;
 	
 	public Integer getNisadhocparameter() {
 		return nisadhocparameter;
@@ -103,6 +109,136 @@ public class LStestparameter {
 	}
 	public void setSparametersynonym(String sparametersynonym) {
 		this.sparametersynonym = sparametersynonym;
+	}
+	
+	@Transient
+	private String dmodifieddate;
+	
+	@Transient
+	private String objPredefinedParameter;
+	
+	@Transient
+	private String sdeltaunitname;
+	
+	@Transient
+	private String sdisplaystatus;
+	
+	@Transient
+	private String sformulacalculationcode;
+	
+	@Transient
+	private String stestparametersynonym;
+	
+	@Transient
+	private String stransdisplaystatus;
+	
+	@Transient
+	private String sunitname;
+	
+	@Transient
+	private Integer isformula;
+	
+	@Transient
+	private Integer ndeltacheck;
+	
+	@Transient
+	private Integer ndeltacheckframe;
+	
+	@Transient
+	private Integer ndeltachecklimitcode;
+	
+	@Transient
+	private Integer ndeltaunitcode;
+
+	public Integer getNsitecode() {
+		return nsitecode;
+	}
+	public void setNsitecode(Integer nsitecode) {
+		this.nsitecode = nsitecode;
+	}
+	public String getStestname() {
+		return stestname;
+	}
+	public void setStestname(String stestname) {
+		this.stestname = stestname;
+	}
+	public String getDmodifieddate() {
+		return dmodifieddate;
+	}
+	public void setDmodifieddate(String dmodifieddate) {
+		this.dmodifieddate = dmodifieddate;
+	}
+	public String getObjPredefinedParameter() {
+		return objPredefinedParameter;
+	}
+	public void setObjPredefinedParameter(String objPredefinedParameter) {
+		this.objPredefinedParameter = objPredefinedParameter;
+	}
+	public String getSdeltaunitname() {
+		return sdeltaunitname;
+	}
+	public void setSdeltaunitname(String sdeltaunitname) {
+		this.sdeltaunitname = sdeltaunitname;
+	}
+	public String getSdisplaystatus() {
+		return sdisplaystatus;
+	}
+	public void setSdisplaystatus(String sdisplaystatus) {
+		this.sdisplaystatus = sdisplaystatus;
+	}
+	public String getSformulacalculationcode() {
+		return sformulacalculationcode;
+	}
+	public void setSformulacalculationcode(String sformulacalculationcode) {
+		this.sformulacalculationcode = sformulacalculationcode;
+	}
+	public String getStestparametersynonym() {
+		return stestparametersynonym;
+	}
+	public void setStestparametersynonym(String stestparametersynonym) {
+		this.stestparametersynonym = stestparametersynonym;
+	}
+	public String getStransdisplaystatus() {
+		return stransdisplaystatus;
+	}
+	public void setStransdisplaystatus(String stransdisplaystatus) {
+		this.stransdisplaystatus = stransdisplaystatus;
+	}
+	public String getSunitname() {
+		return sunitname;
+	}
+	public void setSunitname(String sunitname) {
+		this.sunitname = sunitname;
+	}
+	public Integer getIsformula() {
+		return isformula;
+	}
+	public void setIsformula(Integer isformula) {
+		this.isformula = isformula;
+	}
+	public Integer getNdeltacheck() {
+		return ndeltacheck;
+	}
+	public void setNdeltacheck(Integer ndeltacheck) {
+		this.ndeltacheck = ndeltacheck;
+	}
+	public Integer getNdeltacheckframe() {
+		return ndeltacheckframe;
+	}
+	public void setNdeltacheckframe(Integer ndeltacheckframe) {
+		this.ndeltacheckframe = ndeltacheckframe;
+	}
+	public Integer getNdeltachecklimitcode() {
+		return ndeltachecklimitcode;
+	}
+	public void setNdeltachecklimitcode(Integer ndeltachecklimitcode) {
+		this.ndeltachecklimitcode = ndeltachecklimitcode;
+	}
+	public Integer getNdeltaunitcode() {
+		return ndeltaunitcode;
+	}
+	public void setNdeltaunitcode(Integer ndeltaunitcode) {
+		this.ndeltaunitcode = ndeltaunitcode;
 	}
 	
 }

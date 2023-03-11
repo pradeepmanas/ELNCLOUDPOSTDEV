@@ -1737,4 +1737,31 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			String string5, int r, Integer testcode5, List<Long> directorycode3, int s, Date fromdate6, Date todate6,
 			LSuserMaster objuser4, String string6, int t, Integer testcode6, Pageable pageable);
 
+
+	long countByOrderflagAndCompletedtimestampBetweenAndTestcodeAndApprovelstatusIsNullAndOrdercancellIsNull(
+			String string, Date fromdate, Date todate, Integer testcode);
+
+	long countByOrderflagAndCompletedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNull(String string,
+			Date fromdate, Date todate);
+
+	long countByOrderflagAndCreatedtimestampBetweenAndApprovelstatusNotAndTestcodeAndOrdercancellIsNull(String string,
+			Date fromdate, Date todate, int i, Integer testcode);
+
+	long countByOrderflagAndCreatedtimestampBetweenAndTestcodeAndApprovelstatusIsNullAndOrdercancellIsNull(String string,
+			Date fromdate, Date todate, Integer testcode);
+
+	long countByOrderflagAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNull(String string,
+			Date fromdate, Date todate, int i);
+
+	long countByOrderflagAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNull(String string,
+			Date fromdate, Date todate);
+
+	long countByOrderflagAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterAndOrdercancellIsNull(
+			String string, Date fromdate, Date todate, int i, LSprojectmaster lstprojectforfilter);
+
+	long countByOrderflagAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterAndTestcodeAndOrdercancellIsNull(
+			String string, Date fromdate, Date todate, int i, LSprojectmaster lstprojectforfilter, Integer testcode);
+
+	List<LSlogilablimsorderdetail> findByLstestmasterlocalAndFiletypeNot(LStestmasterlocal lstest, int i);
+
 }

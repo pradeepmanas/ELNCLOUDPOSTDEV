@@ -613,7 +613,7 @@ public class FileService {
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
-		return lssheetworkflowRepository.findBylssitemasterOrderByWorkflowcodeAsc(objuser.getLssitemaster());
+		return lssheetworkflowRepository.findBylssitemasterAndStatusOrderByWorkflowcodeAsc(objuser.getLssitemaster(),1);
 	}
 
 	public Response Deletesheetworkflow(LSsheetworkflow objflow) {
@@ -623,11 +623,11 @@ public class FileService {
 		if (onprocess > 0) {
 			response.setStatus(false);
 		} else {
-			lSfileRepository.setWorkflownullforApprovedfile(objflow, 1);
+//			lSfileRepository.setWorkflownullforApprovedfile(objflow, 1);
 			lssheetworkflowhistoryRepository.setWorkflownullforHistory(objflow);
 			lsfileversionRepository.setWorkflownullforHistory(objflow);
-			lssheetworkflowRepository.delete(objflow);
-			lssheetworkflowgroupmapRepository.delete(objflow.getLssheetworkflowgroupmap());
+			lssheetworkflowRepository.save(objflow);
+			lssheetworkflowgroupmapRepository.save(objflow.getLssheetworkflowgroupmap());
 			response.setStatus(true);
 			if (objflow.getObjsilentaudit() != null) {
 				objflow.getObjsilentaudit().setTableName("LSsheetworkflow");
@@ -640,9 +640,10 @@ public class FileService {
 	public LSfile updateworkflowforFile(LSfile objfile) {
 
 		LSfile objcurrentfile = lSfileRepository.findByfilecode(objfile.getFilecode());
-
-		updatenotificationforsheet(objfile, false, objcurrentfile.getLssheetworkflow(), false);
-
+		
+		if(objfile.getViewoption()==null ||objfile.getViewoption()!=null && objfile.getViewoption()!=2) {
+			updatenotificationforsheet(objfile, false, objcurrentfile.getLssheetworkflow(), false);
+		}
 		lssheetworkflowhistoryRepository.save(objfile.getLssheetworkflowhistory());
 		lSfileRepository.updateFileWorkflow(objfile.getLssheetworkflow(), objfile.getApproved(), objfile.getRejected(),
 				objfile.getFilecode());
@@ -654,18 +655,19 @@ public class FileService {
 			lscfttransactionRepository.save(objfile.getLssheetworkflowhistory()
 					.get(objfile.getLssheetworkflowhistory().size() - 1).getObjsilentaudit());
 		}
-		if (objfile.getFilenameuser() != null) {
-			LSworkflow objlastworkflow = lsworkflowRepository
-					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objfile.getObjLoggeduser().getLssitemaster());
-			if (objlastworkflow != null
-					&& objfile.getLssheetworkflow().getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
-				objfile.setIsfinalstep(1);
-			} else {
-				objfile.setIsfinalstep(0);
+		if(objfile.getViewoption()==null ||objfile.getViewoption()!=null && objfile.getViewoption()!=2) {
+			if (objfile.getFilenameuser() != null) {
+				LSworkflow objlastworkflow = lsworkflowRepository
+						.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objfile.getObjLoggeduser().getLssitemaster());
+				if (objlastworkflow != null
+						&& objfile.getLssheetworkflow().getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
+					objfile.setIsfinalstep(1);
+				} else {
+					objfile.setIsfinalstep(0);
+				}
 			}
+			updatenotificationforsheetworkflowapproval(objfile, false, objcurrentfile.getLssheetworkflow(), false);
 		}
-		updatenotificationforsheetworkflowapproval(objfile, false, objcurrentfile.getLssheetworkflow(), false);
-
 		objcurrentfile = null;
 
 		return objfile;

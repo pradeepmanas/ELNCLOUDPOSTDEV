@@ -65,17 +65,16 @@ public class UnitService {
 			return new ResponseEntity<>(objUnit, HttpStatus.OK);
 		} else {
 
-			final Unit unit1 = unitRepository.findBySunitnameAndNsitecode(objUnit.getSunitname(),
-					objUnit.getNsitecode());
+			final Unit unit1 = unitRepository.findBySunitnameAndNsitecode(objUnit.getSunitname(), objUnit.getNsitecode());
 
-			if (unit1 == null || (unit1.getNunitcode() == objUnit.getNunitcode())) {
+			if (unit1 == null || (unit1.getNunitcode().equals(objUnit.getNunitcode()))) {
 
 				unitobj.setObjsilentaudit(objUnit.getObjsilentaudit());
 				unitRepository.save(objUnit);
 				objUnit.getResponse().setStatus(true);
 				objUnit.getResponse().setInformation("IDS_SUCCESS");
 				return new ResponseEntity<>(objUnit, HttpStatus.OK);
-//				return getUnit(objUnit.getNsitecode());
+
 			} else {
 				objUnit.getResponse().setStatus(false);
 				objUnit.getResponse().setInformation("IDS_ALREADYEXIST");

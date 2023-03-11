@@ -1875,6 +1875,7 @@ public class ProtocolService {
 		LsProto.setLsprotocolworkflowhistory(obj);
 		mapObj.put("ProtocolObj", LsProto);
 		mapObj.put("status", "success");
+		if(objClass.getViewoption()==null ||objClass.getViewoption()!=null && objClass.getViewoption()!=2) {
 		if (objClass.getProtocolmastername() != null) {
 			LSsheetworkflow objlastworkflow = lssheetworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objClass.getIsfinalstep().getLssitemaster());
@@ -1889,6 +1890,7 @@ public class ProtocolService {
 		}
 		updatenotificationforprotocolworkflowapproval(objClass, LsProto.getLssheetworkflow());
 		updatenotificationforprotocol(objClass, LsProto.getLssheetworkflow());
+		}
 		return mapObj;
 	}
 
@@ -6611,6 +6613,11 @@ public class ProtocolService {
 			lsprotocolorderstephistoryRepository.save(objuser);
 		}
 		return objuser;
+	}
+
+	public List<LSprotocolmaster> getsingleprotocol(LSprotocolmaster objuser) {
+		
+		return LSProtocolMasterRepositoryObj.findByProtocolmastercode(objuser.getProtocolmastercode());
 	}
 
 }

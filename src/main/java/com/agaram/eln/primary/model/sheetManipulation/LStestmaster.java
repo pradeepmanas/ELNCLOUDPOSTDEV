@@ -184,4 +184,203 @@ public class LStestmaster {
 		this.lstestparameter = lstestparameter;
 	}
 	
+	@Transient
+	private String stestcategoryname;
+	
+	@Transient
+	private String sshortname;
+	
+	@Transient
+	private String stestplatform;
+	
+	@Transient
+	private String schecklistname;
+	
+	@Transient
+	private String stransactionstatus;
+	
+	@Transient
+	private String saccredited;
+	
+	@Transient
+	private String sparametername;
+	
+	@Transient
+	private String statperiodname;
+	
+	@Transient
+	private String sdeltaunitname;
+	
+	@Transient
+	private String sinterfacetypename;
+	
+	@Transient
+	private String strainingneed;
+	
+	@Transient
+	private String smodifieddate;
+	
+	@Transient
+	private Integer ntat;
+	
+	@Transient
+	private Integer ntatperiodcode;
+	
+	@Transient
+	private Integer ntrainingneed;
+	
+	@Transient
+	private Integer ninterfacetypecode;
+	
+	@Transient
+	private Integer ncomponentcode;
+	
+	@Transient
+	private Integer nproductcatcode;
+
+
+	public String getStestcategoryname() {
+		return stestcategoryname;
+	}
+
+	public void setStestcategoryname(String stestcategoryname) {
+		this.stestcategoryname = stestcategoryname;
+	}
+
+	public String getSshortname() {
+		return sshortname;
+	}
+
+	public void setSshortname(String sshortname) {
+		this.sshortname = sshortname;
+	}
+
+	public String getStestplatform() {
+		return stestplatform;
+	}
+
+	public void setStestplatform(String stestplatform) {
+		this.stestplatform = stestplatform;
+	}
+
+	public String getSchecklistname() {
+		return schecklistname;
+	}
+
+	public void setSchecklistname(String schecklistname) {
+		this.schecklistname = schecklistname;
+	}
+
+	public String getStransactionstatus() {
+		return stransactionstatus;
+	}
+
+	public void setStransactionstatus(String stransactionstatus) {
+		this.stransactionstatus = stransactionstatus;
+	}
+
+	public String getSaccredited() {
+		return saccredited;
+	}
+
+	public void setSaccredited(String saccredited) {
+		this.saccredited = saccredited;
+	}
+
+	public String getSparametername() {
+		return sparametername;
+	}
+
+	public void setSparametername(String sparametername) {
+		this.sparametername = sparametername;
+	}
+
+	public String getStatperiodname() {
+		return statperiodname;
+	}
+
+	public void setStatperiodname(String statperiodname) {
+		this.statperiodname = statperiodname;
+	}
+
+	public String getSdeltaunitname() {
+		return sdeltaunitname;
+	}
+
+	public void setSdeltaunitname(String sdeltaunitname) {
+		this.sdeltaunitname = sdeltaunitname;
+	}
+
+	public String getSinterfacetypename() {
+		return sinterfacetypename;
+	}
+
+	public void setSinterfacetypename(String sinterfacetypename) {
+		this.sinterfacetypename = sinterfacetypename;
+	}
+
+	public String getStrainingneed() {
+		return strainingneed;
+	}
+
+	public void setStrainingneed(String strainingneed) {
+		this.strainingneed = strainingneed;
+	}
+
+	public String getSmodifieddate() {
+		return smodifieddate;
+	}
+
+	public void setSmodifieddate(String smodifieddate) {
+		this.smodifieddate = smodifieddate;
+	}
+
+	public Integer getNtat() {
+		return ntat;
+	}
+
+	public void setNtat(Integer ntat) {
+		this.ntat = ntat;
+	}
+
+	public Integer getNtatperiodcode() {
+		return ntatperiodcode;
+	}
+
+	public void setNtatperiodcode(Integer ntatperiodcode) {
+		this.ntatperiodcode = ntatperiodcode;
+	}
+
+	public Integer getNtrainingneed() {
+		return ntrainingneed;
+	}
+
+	public void setNtrainingneed(Integer ntrainingneed) {
+		this.ntrainingneed = ntrainingneed;
+	}
+
+	public Integer getNinterfacetypecode() {
+		return ninterfacetypecode;
+	}
+
+	public void setNinterfacetypecode(Integer ninterfacetypecode) {
+		this.ninterfacetypecode = ninterfacetypecode;
+	}
+
+	public Integer getNcomponentcode() {
+		return ncomponentcode;
+	}
+
+	public void setNcomponentcode(Integer ncomponentcode) {
+		this.ncomponentcode = ncomponentcode;
+	}
+
+	public Integer getNproductcatcode() {
+		return nproductcatcode;
+	}
+
+	public void setNproductcatcode(Integer nproductcatcode) {
+		this.nproductcatcode = nproductcatcode;
+	}
+	
 }

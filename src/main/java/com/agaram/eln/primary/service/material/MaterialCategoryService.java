@@ -83,16 +83,14 @@ public class MaterialCategoryService {
 
 	public ResponseEntity<Object> updateMaterialCategory(MaterialCategory materialCategory) {
 		final MaterialCategory objMaterialCategory = MaterialCategoryRepository
-				.findByNmaterialcatcodeAndNstatus(materialCategory.getNmaterialcatcode(), 1);
+				.findByNmaterialcatcode(materialCategory.getNmaterialcatcode());
 		materialCategory.setResponse(new Response());
 		if (objMaterialCategory == null) {
 			materialCategory.getResponse().setStatus(false);
 			materialCategory.getResponse().setInformation("IDS_ALREADYDELETED");
 			return new ResponseEntity<>(materialCategory, HttpStatus.OK);
 		} else {
-			final MaterialCategory materialCategoryObj = MaterialCategoryRepository
-					.findBySmaterialcatnameAndNmaterialcatcodeAndNstatus(materialCategory.getSmaterialcatname(),
-							materialCategory.getNmaterialcatcode(), 1);
+			final MaterialCategory materialCategoryObj = MaterialCategoryRepository.findByNsitecodeAndSmaterialcatname(materialCategory.getNsitecode(),materialCategory.getSmaterialcatname());
 			if (materialCategoryObj == null
 					|| (materialCategoryObj.getNmaterialcatcode().equals(materialCategory.getNmaterialcatcode()))) {
 				MaterialCategoryRepository.save(materialCategory);

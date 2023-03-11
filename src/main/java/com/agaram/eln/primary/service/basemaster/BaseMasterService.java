@@ -235,7 +235,7 @@ public class BaseMasterService {
 		if (objClass.getStatus() == -1 && objClass.getTestcode() != null) {
 
 			List<LSlogilablimsorderdetail> objOrderLst = LSlogilablimsorderdetailRepository
-					.findByTestcode(objClass.getTestcode());
+					.findByLstestmasterlocalAndFiletypeNot(objClass, 0);
 
 			if (!objOrderLst.isEmpty()) {
 				objClass.getResponse().setStatus(false);

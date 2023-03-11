@@ -1068,4 +1068,9 @@ public class ProtocolController {
 	
 		return  ProtocolMasterService.Outofstockinventorynotificationprotocol(lsprotocolordersampleupdates);
 	}
+	@RequestMapping(value = "/getsingleprotocol")
+	protected  List<LSprotocolmaster> getsingleprotocol(@RequestBody LSprotocolmaster objuser)throws Exception {
+	
+		return  ProtocolMasterService.getsingleprotocol(objuser);
+	}
 }

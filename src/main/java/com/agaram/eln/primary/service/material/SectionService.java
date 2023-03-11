@@ -48,17 +48,17 @@ public class SectionService {
 		return objSection;
 	}
 
+	
 	public ResponseEntity<Object> updateSection(Section section) {
 		section.setResponse(new Response());
-		final Section objSetion = getActiveSectionById(section.getNsectioncode());
 		final Section sectionobj = sectionRepository.findByNsectioncode(section.getNsectioncode());
-		if (objSetion == null) {
-			sectionobj.getResponse().setStatus(false);
-			sectionobj.getResponse().setInformation("IDS_ALREADYDELETED");
-			return new ResponseEntity<>(sectionobj, HttpStatus.OK);
+		if (sectionobj == null) {
+			section.getResponse().setStatus(false);
+			section.getResponse().setInformation("IDS_ALREADYDELETED");
+			return new ResponseEntity<>(section, HttpStatus.OK);
 		} else {
 			final Section objSetion1 = sectionRepository.findBySsectionnameAndNsitecode(section.getSsectionname(),section.getNsitecode());
-			if (objSetion1 == null || (objSetion.getNsectioncode() == section.getNsectioncode())) {
+			if (objSetion1 == null || (objSetion1.getNsectioncode().equals(sectionobj.getNsectioncode()))) {
 				sectionRepository.save(section);
 				section.setObjsilentaudit(section.getObjsilentaudit());
 				section.getResponse().setStatus(true);

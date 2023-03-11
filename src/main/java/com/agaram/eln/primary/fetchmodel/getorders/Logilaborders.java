@@ -33,14 +33,15 @@ public class Logilaborders extends Logilabordermaster {
 	private Long batchcode;
 	private Long directorycode;
 	private Integer ordercancell;
+	private Integer viewoption;
 
 	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,LSuserMaster assignedto,
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
-			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,Integer ordercancell) {
+			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption) {
 		
-		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,lstestmasterlocal, ordercancell);
+		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,lstestmasterlocal, ordercancell,viewoption);
 		 
 		if(lssamplefile != null)
 		{
@@ -69,9 +70,20 @@ public class Logilaborders extends Logilabordermaster {
 		this.repositoryname =lsrepositories !=null ?lsrepositories.getRepositoryname():null;
 		this.directorycode = directorycode;
 		this.ordercancell=ordercancell;
+		this.viewoption=viewoption;
 	}
 	
 	
+	public Integer getViewoption() {
+		return viewoption;
+	}
+
+
+	public void setViewoption(Integer viewoption) {
+		this.viewoption = viewoption;
+	}
+
+
 	public Integer getOrdercancell() {
 		return ordercancell;
 	}

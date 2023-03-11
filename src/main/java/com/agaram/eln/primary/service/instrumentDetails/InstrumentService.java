@@ -4610,7 +4610,7 @@ public class InstrumentService {
 		return objmap;
 	}
 
-	@SuppressWarnings("unused")
+	
 	public Map<String, Object> Consumableinventoryotification(Map<String, Object> argobj) {
 
 		String Details = "";

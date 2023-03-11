@@ -295,6 +295,8 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	Object findByProtocolmasternameAndLssitemaster(String trim, Integer lssitemaster);
 
+	List<LSprotocolmaster> findByProtocolmastercode(Integer protocolmastercode);
+
 
 
 
