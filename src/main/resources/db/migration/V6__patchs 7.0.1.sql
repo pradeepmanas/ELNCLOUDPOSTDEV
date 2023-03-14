@@ -3833,14 +3833,9 @@ CREATE TABLE IF NOT EXISTS public.lslogilablimsordergroup
     testname character varying(100) COLLATE pg_catalog."default",
     CONSTRAINT lslogilablimsordergroup_pkey PRIMARY KEY (groupid)
 )
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+WITH ( OIDS = FALSE ) TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.lslogilablimsordergroup
-    OWNER to postgres;
-    
-ALTER TABLE IF Exists datasourceconfig ADD COLUMN IF NOT EXISTS isenableparser integer default 1;
+ALTER TABLE IF EXISTS public.lslogilablimsordergroup OWNER to postgres;
 
-ALTER TABLE IF Exists datasourceconfig ADD COLUMN IF NOT EXISTS isenablereport integer default 1;
+ALTER TABLE IF Exists DataSourceConfig ADD COLUMN IF NOT EXISTS isenableparser integer default 1;
+ALTER TABLE IF Exists DataSourceConfig ADD COLUMN IF NOT EXISTS isenablereport integer default 1;
