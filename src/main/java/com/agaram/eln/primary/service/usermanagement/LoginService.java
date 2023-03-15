@@ -1421,7 +1421,8 @@ public class LoginService {
 				LSnotification.setNotifationto(objLSuserMaster);
 				LSnotification.setRepositorycode(0);
 				LSnotification.setRepositorydatacode(0);
-
+				LSnotification.setNotificationfor(1);
+				
 				codelist.get(i).setStatus(0);
 				lstnotifications.add(LSnotification);
 			}

@@ -696,7 +696,7 @@ public class FileService {
 				List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode)
 						.collect(Collectors.toList());
 				List<LSuserMaster> objuser = lsusermasterRepository
-						.findByusercodeInAndUserretirestatusNot(objnotifyuser, 1);
+						.findByUsercodeInAndUserretirestatusNot(objnotifyuser, 1);
 
 				for (int i = 0; i < objuser.size(); i++) {
 					if (createby.getUsercode() != userobj.get(i).getUsercode() && userobj.size() > 0

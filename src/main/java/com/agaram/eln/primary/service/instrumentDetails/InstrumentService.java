@@ -1040,12 +1040,11 @@ public class InstrumentService {
 								.getLsuserteammapping();
 						List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 						for (int i = 0; i < lstusers.size(); i++) {
-							if (objorder.getLsuserMaster().getUsercode() != lstusers.get(i).getLsuserMaster()
-									.getUsercode()) {
+							if (objorder.getObjLoggeduser().getUsercode() != lstusers.get(i).getLsuserMaster().getUsercode()) {
 								LSnotification objnotify = new LSnotification();
 								objnotify.setNotifationfrom(lsuserMasterRepository
 										.findByusercode(objorder.getObjLoggeduser().getUsercode()));
-								objnotify.setNotifationto(objorder.getLsuserMaster());
+								objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
 								objnotify.setNotificationdate(objorder.getNotificationdate());
 								objnotify.setNotification(Notifiction);
 								objnotify.setNotificationdetils(Details);
@@ -3332,7 +3331,7 @@ public class InstrumentService {
 
 			List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode) .collect(Collectors.toList());
 			
-			List<LSuserMaster> objuser = lsuserMasterRepository.findByusercodeInAndUserretirestatusNot(objnotifyuser, 1);
+			List<LSuserMaster> objuser = lsuserMasterRepository.findByUsercodeInAndUserretirestatusNot(objnotifyuser, 1);
 			
 			LSusersteam objteam = lsusersteamRepository
 					.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode());
@@ -3341,7 +3340,7 @@ public class InstrumentService {
 
 			if (objorder.getApprovelstatus() != null && objorder.getIsFinalStep() != 1) {
 
-				for (int i = 0; i < lstusers.size(); i++) {
+				for (int i = 0; i < objuser.size(); i++) {
 					if (createby.getUsercode() != userobj.get(i).getUsercode()) {
 						if (objorder.getApprovelstatus() == 1) {
 							Notification = "USERAPPROVAL";

@@ -1910,7 +1910,7 @@ public class ProtocolService {
 
 			List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode)
 					.collect(Collectors.toList());
-			List<LSuserMaster> objuser = lsusermasterRepository.findByusercodeInAndUserretirestatusNot(objnotifyuser,
+			List<LSuserMaster> objuser = lsusermasterRepository.findByUsercodeInAndUserretirestatusNot(objnotifyuser,
 					1);
 			if (LsProto.getApproved() != null && objClass.getFinalworkflow() != 1) {
 
@@ -2117,7 +2117,7 @@ public class ProtocolService {
 
 			List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode)
 					.collect(Collectors.toList());
-			List<LSuserMaster> objuser = lsusermasterRepository.findByusercodeInAndUserretirestatusNot(objnotifyuser,
+			List<LSuserMaster> objuser = lsusermasterRepository.findByUsercodeInAndUserretirestatusNot(objnotifyuser,
 					1);
 			if (objClass.getApprovelstatus() != null && objClass.getFinalworkflow() == 1) {
 

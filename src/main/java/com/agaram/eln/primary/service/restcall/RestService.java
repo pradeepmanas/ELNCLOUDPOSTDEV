@@ -1202,7 +1202,10 @@ public class RestService {
 	
 	public boolean syncLimsMasters(Map<String, Object> objMap) throws Exception {
 		ImportLimsTest("");
-		CheckLIMS();
+		String isAPICalling = env.getProperty("limsbaseservice.serviceapi");
+		if (isAPICalling.equals("false")) {
+			CheckLIMS();
+		}
 		//importLIMSMaterial();
 		//importLIMSMaterialTrans();
 		return true;
