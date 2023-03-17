@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -27,7 +28,6 @@ import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.cfr.LSreviewdetails;
 import com.agaram.eln.primary.model.cfr.Lscfrtransactiononorder;
 import com.agaram.eln.primary.model.general.Response;
-//import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
@@ -41,7 +41,6 @@ import com.agaram.eln.primary.repository.cfr.LscfrtransactiononorderRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LScfrreasonsRepository.class)
@@ -522,43 +521,30 @@ public class AuditService {
 
 		ObjectMapper objMapper = new ObjectMapper();
 		Lscfrtransactiononorder cfttransaction = new Lscfrtransactiononorder();
-
+		
 		if (mapObj.containsKey("objsilentaudit")) {
 			cfttransaction = objMapper.convertValue(mapObj.get("objsilentaudit"), Lscfrtransactiononorder.class);
 			LscfrtransactiononorderRepository.save(cfttransaction);
 		}
+		
 		cfttransaction.setObjResponse(new Response());
 		cfttransaction.getObjResponse().setStatus(true);
 		cfttransaction.getObjResponse().setInformation("");
 
 		return cfttransaction;
 	}
-	public LScfttransaction silentandmanualRecordHandlerInventory(Map<String, Object> mapObj) {
-
-//		ObjectMapper objMapper = new ObjectMapper();
-//		LScfttransaction cfttransaction = new LScfttransaction();
-//		MaterialCategory mat = new MaterialCategory();
-////		silent audit
-//		if (mapObj.containsKey("objsilentaudit")) {
-//			mat = objMapper.convertValue(mapObj.get("objsilentaudit"), MaterialCategory.class);
-//			cfttransaction=mat.getObjsilentaudit();
-//			lscfttransactionRepository.save(cfttransaction);
-//		}
-////		manual audit
-//		if (mapObj.containsKey("objmanualaudit")) {
-//			LScfttransaction objmanualaudit = new LScfttransaction();
-//			objmanualaudit = objMapper.convertValue(mapObj.get("objmanualaudit"), LScfttransaction.class);
-		//	lscfttransactionRepository.save(cft);
-	//}
-
-//		cfttransaction.setObjResponse(new Response());
-//		cfttransaction.getObjResponse().setStatus(true);
-//		cfttransaction.getObjResponse().setInformation("");
-
-		return null;
+	
+	public Lscfrtransactiononorder silentRecordHandlerForOrderParsedData(Lscfrtransactiononorder[] mapObj) {
+		Lscfrtransactiononorder cfttransaction = new Lscfrtransactiononorder();
+		List<Lscfrtransactiononorder> obj= Arrays.asList(mapObj);
+		LscfrtransactiononorderRepository.save(obj);
+		cfttransaction.setObjResponse(new Response());
+		cfttransaction.getObjResponse().setStatus(true);
+		cfttransaction.getObjResponse().setInformation("");
+		
+		return cfttransaction;
 	}
-
-
+	
 	@SuppressWarnings("rawtypes")
 	public List<LScfttransaction> GetCFRTransactionsdid(Map<String, Object> objCFRFilter) throws ParseException {
 		List<LScfttransaction> list = new ArrayList<LScfttransaction>();
@@ -685,4 +671,5 @@ public class AuditService {
 		}
 		return list;
 	}
+
 }

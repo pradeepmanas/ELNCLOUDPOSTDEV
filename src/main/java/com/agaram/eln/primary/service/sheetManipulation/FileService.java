@@ -1524,9 +1524,9 @@ public class FileService {
 	}
 
 	public LSfile updatefilename(LSfile objfile) {
-
+		
 		LSfile fileByName = lSfileRepository.findByfilecode(objfile.getFilecode());
-
+		if(lSfileRepository.findByFilecodeNotAndFilenameuserIgnoreCase(objfile.getFilecode(),objfile.getFilenameuser()).size()==0) {
 		if (fileByName.getFilecode() != null) {
 			fileByName.setFilenameuser(objfile.getFilenameuser());
 			fileByName.setCategory(objfile.getCategory());
@@ -1542,6 +1542,13 @@ public class FileService {
 			objfile.setResponse(new Response());
 			objfile.getResponse().setStatus(false);
 			objfile.getResponse().setInformation("EDIT IN SOME PROBLEMS");
+
+			return objfile;
+		}
+		}else {
+			objfile.setResponse(new Response());
+			objfile.getResponse().setStatus(false);
+			objfile.getResponse().setInformation("IDS_MSG_SHEETNAMEEXIST");
 
 			return objfile;
 		}

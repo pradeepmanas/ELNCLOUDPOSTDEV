@@ -1296,6 +1296,9 @@ public class ProtocolService {
 //
 //			LSprotocolstepLst.add(LSprotocolstepObj1);
 //		}
+		ObjectMapper object = new ObjectMapper();
+		LSprotocolupdates lSprotocolupdates = object.convertValue(argObj.get("LSprotocolupdates"), LSprotocolupdates.class) ;
+		lsprotocolupdatesRepository.save(lSprotocolupdates);
 		mapObj.put("protocoloverallstepLst", tempLSprotocolstepLst);
 		mapObj.put("protocolstepLst", deleteprotocolstep);
 
@@ -4528,6 +4531,8 @@ public class ProtocolService {
 		Response response = new Response();
 		LSprotocolstepInformation obj = new LSprotocolstepInformation();
 		ObjectMapper object = new ObjectMapper();
+		LSprotocolupdates lSprotocolupdates = object.convertValue(body.get("LSprotocolupdates"), LSprotocolupdates.class) ;
+		lsprotocolupdatesRepository.save(lSprotocolupdates);
 		if (!body.get("protocolstepname").equals("")) {
 			LSprotocolstep LSprotocolstepObj = new LSprotocolstep();
 			String protocolstepname = object.convertValue(body.get("protocolstepname"), String.class);

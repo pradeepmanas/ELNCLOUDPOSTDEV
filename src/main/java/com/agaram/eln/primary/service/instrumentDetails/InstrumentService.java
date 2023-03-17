@@ -2316,8 +2316,7 @@ public class InstrumentService {
 	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder) throws IOException {
 
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
-		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
-				.findBybatchid(objupdatedorder.getBatchid());
+		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository.findBybatchid(objupdatedorder.getBatchid());
 		List<String> lsorderno = new ArrayList<String>();
 
 		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
@@ -2329,22 +2328,36 @@ public class InstrumentService {
 			}
 		}
 		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
+		
+		if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
+			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+			if (objorder.getLstworkflow() != null && lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode())) {
+				objupdatedorder.setCanuserprocess(true);
+			} else {
+				objupdatedorder.setCanuserprocess(false);
+			}
+		} else {
+			objupdatedorder.setCanuserprocess(true);
+		}
+		
 		if (objupdatedorder.getLockeduser() != null) {
 			objupdatedorder.setIsLock(1);
 		} else {
-			objupdatedorder.setIsLock(0);
+			objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
+			objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
+			objupdatedorder.setIsLock(1);
 		}
+		
+		lslogilablimsorderdetailRepository.save(objupdatedorder);
 
-		if (objupdatedorder.getLockeduser() != null && objorder.getObjLoggeduser() != null
-				&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
+		if (objupdatedorder.getLockeduser() != null && objorder.getObjLoggeduser() != null && objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
 			objupdatedorder.setIsLockbycurrentuser(1);
 		} else {
 			objupdatedorder.setIsLockbycurrentuser(0);
 		}
 
 		if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
-			LSworkflow objlastworkflow = lsworkflowRepository
-					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
+			LSworkflow objlastworkflow = lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
 			if (objlastworkflow != null && objupdatedorder.getLsworkflow().equals(objlastworkflow)) {
 				objupdatedorder.setIsFinalStep(1);
 			} else {
@@ -2353,21 +2366,7 @@ public class InstrumentService {
 		}
 
 		if (objupdatedorder.getFiletype() == 0) {
-			objupdatedorder
-					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
-		}
-
-		if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
-			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode)
-					.collect(Collectors.toList());
-			if (objorder.getLstworkflow() != null
-					&& lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode())) {
-				objupdatedorder.setCanuserprocess(true);
-			} else {
-				objupdatedorder.setCanuserprocess(false);
-			}
-		} else {
-			objupdatedorder.setCanuserprocess(true);
+			objupdatedorder.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
 		}
 
 		if (objupdatedorder.getLssamplefile() != null) {
@@ -2377,8 +2376,7 @@ public class InstrumentService {
 				if (objCreation != null && objCreation.getContainerstored() == 0) {
 					objupdatedorder.getLssamplefile().setFilecontent(objCreation.getContent());
 				} else {
-					objupdatedorder.getLssamplefile().setFilecontent(
-							objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+					objupdatedorder.getLssamplefile().setFilecontent(objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
 									TenantContext.getCurrentTenant() + "ordercreation"));
 				}
 			} else {
@@ -2386,21 +2384,18 @@ public class InstrumentService {
 				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename")
 						.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
 				if (largefile == null) {
-					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id")
-							.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
+					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
 				}
 
 				if (largefile != null) {
 					objupdatedorder.getLssamplefile()
-							.setFilecontent(new BufferedReader(
-									new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+							.setFilecontent(new BufferedReader(new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
 											.collect(Collectors.joining("\n")));
 				} else {
 
 					if (mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
 							OrderCreation.class) != null) {
-						objupdatedorder.getLssamplefile().setFilecontent(mongoTemplate
-								.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class)
+						objupdatedorder.getLssamplefile().setFilecontent(mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class)
 								.getContent());
 					}
 				}
@@ -6195,11 +6190,11 @@ public class InstrumentService {
 		Integer testcode = objorder.getTestcode();
 		Integer filetype = objorder.getFiletype();
 
-		if (objorder.getSearchCriteria().getContentsearchtype() != null
-				&& objorder.getSearchCriteria().getContentsearch() != null) {
+		if (objorder.getSearchCriteria().getContentsearchtype() != null && objorder.getSearchCriteria().getContentsearch() != null) {
+			
 			lstorder = GetordersonFilter(objorder);
 
-		} else if (objorder.getSearchCriteria().getContentsearch() == null) {
+		} else {//if (objorder.getSearchCriteria().getContentsearch() == null) {
 
 			if (filetype == -1 && objorder.getOrderflag() == null) {
 

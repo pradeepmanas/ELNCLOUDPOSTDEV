@@ -17,6 +17,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 
 
 public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
@@ -120,8 +121,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	
 	public List<Sheettemplateget> findByCreatebyAndCreatedateBetweenOrderByFilecodeDesc(LSuserMaster lsusermaster,Date fromdate, Date todate);
 	
-	public List<Sheettemplateget> findByCreatedateBetweenAndFilecodeGreaterThanOrderByFilecodeDesc(Date fromdate, Date todate, Integer filecode, Pageable pageable);
-	
+
 	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenOrderByFilecodeDesc(Integer filecode,List<LSuserMaster> lstusermaster, Date fromdate, Date todate);
 	
 	public List<Sheettemplateget> findByFilecodeGreaterThanAndCreatebyAndCreatedateBetweenOrderByFilecodeDesc(Integer filecode, LSuserMaster lsusermaster,Date fromdate, Date todate);
@@ -253,8 +253,6 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	public Object countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedAndRejectedOrderByFilecodeDesc(Date fromdate,
 			Date todate, int i, int j, int k);
 
-	public long countByCreatedateBetweenAndFilecodeGreaterThanOrderByFilecodeDesc(Date fromdate, Date todate, int i);
-
 	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionOrderByFilecodeDesc(
 			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, LSuserMaster objuser,
 			Date fromdate2, Date todate2, int l, int m, List<LSuserMaster> lstteamuser, Date fromdate3, Date todate3,
@@ -273,6 +271,15 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, LSuserMaster objuser,
 			Date fromdate2, Date todate2, int l);
 
+	public List<Sheettemplateget> findByCreatedateBetweenAndFilecodeGreaterThanAndLssitemasterAndViewoptionOrCreatedateBetweenAndFilecodeGreaterThanAndCreatebyInAndViewoptionOrderByFilecodeDesc(
+			Date fromdate, Date todate, int i, LSSiteMaster lssitemaster, int j, Date fromdate2, Date todate2, int k,
+			LSuserMaster objuser, int l, Pageable pageable);
+
+	public long countByCreatedateBetweenAndFilecodeGreaterThanAndLssitemasterAndViewoptionOrCreatedateBetweenAndFilecodeGreaterThanAndCreatebyInAndViewoptionOrderByFilecodeDesc(
+			Date fromdate, Date todate, int i, LSSiteMaster lssitemaster, int j, Date fromdate2, Date todate2, int k,
+			LSuserMaster objuser, int l);
+
+	public List<Sheettemplateget> findByFilecodeNotAndFilenameuserIgnoreCase(Integer filecode, String filenameuser);
 
 
 

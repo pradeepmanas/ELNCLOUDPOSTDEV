@@ -171,6 +171,12 @@ public class AuditTrailController {
 			throws ParseException {
 		return auditService.silentRecordHandlerForOrder(mapObj);
 	}
+	
+	@PostMapping("/silentRecordHandlerForOrderParsedData")
+	public Lscfrtransactiononorder silentRecordHandlerForOrderParsedData(@RequestBody Lscfrtransactiononorder[] lstObj)//@RequestBody LSreviewdetails[] objreviewdetails
+			throws ParseException {
+		return auditService.silentRecordHandlerForOrderParsedData(lstObj);
+	}
 
 	@SuppressWarnings("unchecked")
 	@PostMapping("/checkManualAudit")

@@ -2177,11 +2177,11 @@ public class DashBoardService {
 		Pageable pageable = new PageRequest(objuser.getPagesize(), objuser.getPageperorder());
 		long count = 0;
 		if (objuser.getUsername().equals("Administrator")) {
-			lstfile = lsfileRepository.findByCreatedateBetweenAndFilecodeGreaterThanOrderByFilecodeDesc(fromdate,
-					todate, 1, pageable);
+			lstfile = lsfileRepository.findByCreatedateBetweenAndFilecodeGreaterThanAndLssitemasterAndViewoptionOrCreatedateBetweenAndFilecodeGreaterThanAndCreatebyInAndViewoptionOrderByFilecodeDesc(fromdate,
+					todate, 1,objuser.getLssitemaster(),1,fromdate, todate,1,objuser,2, pageable);
 
-			count = lsfileRepository.countByCreatedateBetweenAndFilecodeGreaterThanOrderByFilecodeDesc(fromdate, todate,
-					1);
+			count = lsfileRepository.countByCreatedateBetweenAndFilecodeGreaterThanAndLssitemasterAndViewoptionOrCreatedateBetweenAndFilecodeGreaterThanAndCreatebyInAndViewoptionOrderByFilecodeDesc(fromdate,
+					todate, 1,objuser.getLssitemaster(),1,fromdate, todate,1,objuser,2);
 			lstfile.forEach(
 					objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
 //			mapSheets.put("Sheets",lstfile);

@@ -99,10 +99,10 @@ public class DelimiterService {
 		   //Checking for Duplicate delimitername 
 //		   boolean saveAuditTrial = true;
 		   final Optional<Delimiter> delimiterByName = delimitersRepo
-	 				 .findByDelimiternameAndStatusAndLssitemaster(delimiters.getDelimitername(), 1,delimiters.getLssitemaster());
+	 				 .findByDelimiternameIgnoreCaseAndStatusAndLssitemaster(delimiters.getDelimitername(), 1,delimiters.getLssitemaster());
 		   
 //for defaultvalue
-		   final Optional<Delimiter> delimiterdefault = delimitersRepo.findByDelimiternameAndDefaultvalue(delimiters.getDelimitername(),1);
+		   final Optional<Delimiter> delimiterdefault = delimitersRepo.findByDelimiternameIgnoreCaseAndDefaultvalue(delimiters.getDelimitername(),1);
 		      
 		   final LSuserMaster createdUser = getCreatedUserByKey(delimiters.getCreatedby().getUsercode());
 	    	if(delimiterByName.isPresent() || delimiterdefault.isPresent())

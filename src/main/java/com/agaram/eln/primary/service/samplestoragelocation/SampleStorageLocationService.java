@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageLocation;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageVersion;
+import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageLocationRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageVersionRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,77 +28,47 @@ public class SampleStorageLocationService {
 	SampleStorageLocationRepository sampleStorageLocationRepository;
 	@Autowired
 	SampleStorageVersionRepository sampleStorageVersionRepository;
+	@Autowired
+	LScfttransactionRepository lScfttransactionRepository;
 
-//	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> createSampleStorageLocation(final SampleStorageLocation sampleStorageLocation,
-			final SampleStorageVersion sampleStorageVersion, LScfttransaction Auditobj)
-			throws JsonMappingException, JsonProcessingException {
-//		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-		SampleStorageLocation objLocation = sampleStorageLocationRepository.findBySamplestoragelocationnameAndSitekey(
-				sampleStorageLocation.getSamplestoragelocationname(), sampleStorageLocation.getSitekey());
+	public ResponseEntity<Object> createSampleStorageLocation(final SampleStorageLocation sampleStorageLocation, final SampleStorageVersion sampleStorageVersion, LScfttransaction Auditobj) throws JsonMappingException, JsonProcessingException {
+		
+		SampleStorageLocation objLocation = sampleStorageLocationRepository.findBySamplestoragelocationnameAndSitekey(sampleStorageLocation.getSamplestoragelocationname(), sampleStorageLocation.getSitekey());
 
 		if (objLocation == null) {
 			sampleStorageLocation.setObjsilentaudit(Auditobj);
 			sampleStorageLocationRepository.save(sampleStorageLocation);
 			sampleStorageVersion.setSampleStorageLocation(sampleStorageLocation);
-			sampleStorageVersion.setObjsilentaudit(Auditobj);
+			lScfttransactionRepository.save(Auditobj);
 			sampleStorageVersionRepository.save(sampleStorageVersion);
 
-//			objmap.putAll((Map<String, Object>) getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody());
-//			objmap.put("objsilentaudit",Auditobj);
-			return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody(),
-					HttpStatus.OK);
-//			return new ResponseEntity<>(objmap, HttpStatus.OK);
+			return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody(),HttpStatus.OK);
 		} else {
-			// return new ResponseEntity<>(objmap, HttpStatus.OK);
-			return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody(),
-					HttpStatus.CONFLICT);
+			return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody(),HttpStatus.CONFLICT);
 		}
 	}
 
-	public ResponseEntity<Object> updateSampleStorageLocation(final SampleStorageLocation sampleStorageLocation,
-			final SampleStorageVersion sampleStorageVersion, LScfttransaction Auditobj)
-			throws JsonMappingException, JsonProcessingException {
+	public ResponseEntity<Object> updateSampleStorageLocation(final SampleStorageLocation sampleStorageLocation,final SampleStorageVersion sampleStorageVersion, LScfttransaction Auditobj)throws JsonMappingException, JsonProcessingException {
 		sampleStorageLocation.setObjsilentaudit(Auditobj);
 		sampleStorageLocationRepository.save(sampleStorageLocation);
-//		if (sampleStorageVersion.getApprovalstatus() == 26) {
-//			int maxVersion = sampleStorageVersionRepository
-//					.getMaxVersionNo(sampleStorageLocation.getSamplestoragelocationkey());
-//			sampleStorageVersion.setSamplestorageversionkey(null);
-//			sampleStorageVersion.setVersionno(maxVersion);
-//			sampleStorageVersion.setApprovalstatus(8);
-//			sampleStorageVersionRepository.save(sampleStorageVersion);
-//			return new ResponseEntity<>(
-//					sampleStorageVersionRepository.findBySampleStorageLocation(sampleStorageLocation), HttpStatus.OK);
-//		} else {
-		sampleStorageVersion.setObjsilentaudit(Auditobj);
 		sampleStorageVersionRepository.save(sampleStorageVersion);
-		return new ResponseEntity<>(
-				getAllActiveSampleStorageLocationWithSelectedRecord(sampleStorageLocation.getSitekey(),
-						sampleStorageLocation.getSamplestoragelocationkey()).getBody(),
-				HttpStatus.OK);
-//		return new ResponseEntity<>(sampleStorageVersion, HttpStatus.OK);
-//		}
+		lScfttransactionRepository.save(Auditobj);
+		return new ResponseEntity<>(getAllActiveSampleStorageLocationWithSelectedRecord(sampleStorageLocation.getSitekey(),sampleStorageLocation.getSamplestoragelocationkey()).getBody(),HttpStatus.OK);
 	}
 
-//	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> deleteSampleStorageLocation(final SampleStorageVersion sampleStorageVersion,
-			LScfttransaction Auditobj) throws JsonMappingException, JsonProcessingException {
-//		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+	public ResponseEntity<Object> deleteSampleStorageLocation(final SampleStorageVersion sampleStorageVersion,LScfttransaction Auditobj) throws JsonMappingException, JsonProcessingException {
+
 		List<Integer> lstVersionNoIntegers = new ArrayList<>();
 		lstVersionNoIntegers.add(sampleStorageVersion.getVersionno());
 
 		List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository
-				.findBySampleStorageLocationAndVersionnoNotIn(sampleStorageVersion.getSampleStorageLocation(),
-						lstVersionNoIntegers);
+				.findBySampleStorageLocationAndVersionnoNotIn(sampleStorageVersion.getSampleStorageLocation(),lstVersionNoIntegers);
 
 		Optional<SampleStorageVersion> sampleStorageVersionDelete = sampleStorageVersionRepository
-				.findBySampleStorageLocationAndVersionno(sampleStorageVersion.getSampleStorageLocation(),
-						sampleStorageVersion.getVersionno());
+				.findBySampleStorageLocationAndVersionno(sampleStorageVersion.getSampleStorageLocation(),sampleStorageVersion.getVersionno());
 
 		Optional<SampleStorageLocation> sampleStorageLocationDelete = sampleStorageLocationRepository
-				.findBySitekeyAndSamplestoragelocationkey(sampleStorageVersion.getSitekey(),
-						sampleStorageVersion.getSampleStorageLocation().getSamplestoragelocationkey());
+				.findBySitekeyAndSamplestoragelocationkey(sampleStorageVersion.getSitekey(),sampleStorageVersion.getSampleStorageLocation().getSamplestoragelocationkey());
 
 		final SampleStorageLocation sampleStorageLocationItem = sampleStorageLocationDelete.get();
 
@@ -107,34 +78,20 @@ public class SampleStorageLocationService {
 
 				sampleStorageLocationItem.setStatus(-1);
 				sampleStorageLocationRepository.save(sampleStorageLocationItem);
-//				sampleStorageVersionRepository.delete(sampleStorageVersionDelete.get());
-
-//				objmap.putAll((Map<String, Object>)getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody());
-//				objmap.put("objsilentaudit",Auditobj);
-//				return new ResponseEntity<>(objmap,HttpStatus.OK);
-				return new ResponseEntity<>(
-						getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(), HttpStatus.OK);
+				lScfttransactionRepository.save(Auditobj);
+				return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(), HttpStatus.OK);
 			}
 		} else {
 			if (sampleStorageVersionDelete.isPresent()) {
-
 				if (sampleStorageLocationDelete.isPresent()) {
-
 					sampleStorageLocationItem.setStatus(-1);
 					sampleStorageLocationRepository.save(sampleStorageLocationItem);
-//					sampleStorageVersionRepository.delete(sampleStorageVersionDelete.get());
-//					objmap.putAll((Map<String, Object>) getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody());
-//					objmap.put("objsilentaudit",Auditobj);
-					return new ResponseEntity<>(
-							getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(),
-							HttpStatus.OK);
-//					return new ResponseEntity<>(objmap,HttpStatus.OK);
+					lScfttransactionRepository.save(Auditobj);
+					return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(),HttpStatus.OK);
 				}
 			}
 		}
-
 		return new ResponseEntity<>("Delete Failed - Result Not Found", HttpStatus.NOT_FOUND);
-
 	}
 
 	public ResponseEntity<Object> getAllActiveSampleStorageLocation(Integer nsiteInteger) {

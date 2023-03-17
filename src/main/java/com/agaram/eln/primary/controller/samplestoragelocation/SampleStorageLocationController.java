@@ -29,13 +29,9 @@ public class SampleStorageLocationController {
 	public ResponseEntity<Object> createSampleStorageLocation(@Validated @RequestBody Map<String, Object> mapObject)
 			throws JsonProcessingException {
 		final ObjectMapper mapper = new ObjectMapper();
-//		mapper.registerModule(new JavaTimeModule());
-		final SampleStorageLocation sampleStorageLocation = mapper.convertValue(mapObject.get("samplestoragelocation"),
-				SampleStorageLocation.class);
-		final SampleStorageVersion sampleStorageVersion = mapper.convertValue(mapObject.get("samplestorageversion"),
-				SampleStorageVersion.class);
-		final LScfttransaction Auditobj = mapper.convertValue(mapObject.get("objsilentaudit"),
-				LScfttransaction.class);
+		final SampleStorageLocation sampleStorageLocation = mapper.convertValue(mapObject.get("samplestoragelocation"),SampleStorageLocation.class);
+		final SampleStorageVersion sampleStorageVersion = mapper.convertValue(mapObject.get("samplestorageversion"),SampleStorageVersion.class);
+		final LScfttransaction Auditobj = mapper.convertValue(mapObject.get("objsilentaudit"),LScfttransaction.class);
 		return sampleStorageLocationService.createSampleStorageLocation(sampleStorageLocation, sampleStorageVersion,Auditobj);
 	}
 
@@ -57,10 +53,7 @@ public class SampleStorageLocationController {
 	public ResponseEntity<Object> deleteSampleStorageLocation(@Validated @RequestBody Map<String, Object> mapObject)
 			throws JsonProcessingException {
 		final ObjectMapper mapper = new ObjectMapper();
-//		mapper.registerModule(new JavaTimeModule());
-		final SampleStorageVersion sampleStorageVersion = mapper.convertValue(mapObject.get("samplestorageversion"),
-				SampleStorageVersion.class);
-
+		final SampleStorageVersion sampleStorageVersion = mapper.convertValue(mapObject.get("samplestorageversion"),SampleStorageVersion.class);
 		final LScfttransaction Auditobj = mapper.convertValue(mapObject.get("objsilentaudit"),LScfttransaction.class);
 		return sampleStorageLocationService.deleteSampleStorageLocation(sampleStorageVersion,Auditobj);
 	}
