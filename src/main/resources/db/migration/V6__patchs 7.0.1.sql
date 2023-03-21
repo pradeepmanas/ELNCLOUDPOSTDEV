@@ -3839,3 +3839,82 @@ ALTER TABLE IF EXISTS public.lslogilablimsordergroup OWNER to postgres;
 
 ALTER TABLE IF Exists DataSourceConfig ADD COLUMN IF NOT EXISTS isenableparser integer default 1;
 ALTER TABLE IF Exists DataSourceConfig ADD COLUMN IF NOT EXISTS isenablereport integer default 1;
+
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (121, 'IDS_SCN_GRADEMASTER', 'IDS_MDL_INVENTORY','0', '0', '0', '0', '1,1,1',80,'IDS_SCN_GRADEMASTER') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_GRADEMASTER', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_GRADEMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_GRADEMASTER' and usergroupid_usergroupcode = 1);
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (122, 'IDS_SCN_SUPPLIER', 'IDS_MDL_INVENTORY','0', '0', '0', '0', '1,1,1',80,'IDS_SCN_SUPPLIER') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_SUPPLIER', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_SUPPLIER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_SUPPLIER' and usergroupid_usergroupcode = 1);
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (123, 'IDS_SCN_MANUFACTURER', 'IDS_MDL_INVENTORY','0', '0', '0', '0', '1,1,1',80,'IDS_SCN_MANUFACTURER') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_MANUFACTURER', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_MANUFACTURER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_MANUFACTURER' and usergroupid_usergroupcode = 1);
+ALTER TABLE IF Exists materialgrade ADD COLUMN IF NOT EXISTS sdescription character varying(100);
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'supplier_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE supplier_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;   
+
+CREATE TABLE IF NOT EXISTS supplier
+(
+    nsuppliercode integer Not NULL DEFAULT nextval('supplier_sequence'::regclass),
+    scountryname character varying(100) NOT NULL,
+    ssuppliername character varying(100) NOT NULL,
+    saddress1 character varying(255) NOT NULL,
+    saddress2 character varying(255),
+    saddress3 character varying(255),
+    sphoneno character varying(50),
+    smobileno character varying(50) NOT NULL,
+    sfaxno character varying(50),
+    semail character varying(50) NOT NULL,
+    ntransactionstatus integer NOT NULL DEFAULT 8,
+    nsitecode integer NOT NULL DEFAULT '-1'::integer,
+    nstatus integer NOT NULL DEFAULT 1,
+    CONSTRAINT supplier_pkey PRIMARY KEY (nsuppliercode)
+)TABLESPACE pg_default;
+
+ALTER TABLE public.supplier OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'manufacturer_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE manufacturer_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$; 
+
+CREATE TABLE IF NOT EXISTS manufacturer
+(
+    nmanufcode integer NOT NULL DEFAULT nextval('manufacturer_sequence'::regclass),
+    smanufname character varying(100) NOT NULL,
+    sdescription character varying(255),
+    ntransactionstatus integer NOT NULL DEFAULT 1,
+    nsitecode integer NOT NULL DEFAULT '-1'::integer,
+    nstatus integer NOT NULL DEFAULT 1,
+    CONSTRAINT manufacturer_pkey PRIMARY KEY (nmanufcode)
+)TABLESPACE pg_default;
+
+ALTER TABLE public.manufacturer OWNER to postgres;

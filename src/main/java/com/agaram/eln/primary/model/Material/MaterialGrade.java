@@ -2,10 +2,16 @@ package com.agaram.eln.primary.model.material;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
+
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.general.Response;
 
 @Entity
 @Table(name = "materialgrade")
@@ -13,6 +19,7 @@ public class MaterialGrade {
 	
 	@Id
 	@Column(name = "nmaterialgradecode")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer nmaterialgradecode;
 	@Type(type = "jsonb")
 	@Column(name = "jsondata", columnDefinition = "jsonb")
@@ -23,9 +30,43 @@ public class MaterialGrade {
 	private Integer nsitecode;
 	@Column(name = "nstatus")
 	private Integer nstatus;
+	@Column(name = "sdescription")
+	private String sdescription;
 	
-//	@Transient
 	private String smaterialgradename;
+	
+	public String getSdescription() {
+		return sdescription;
+	}
+	public void setSdescription(String sdescription) {
+		this.sdescription = sdescription;
+	}
+	@Transient
+	public String info;
+	public String getInfo() {
+		return info;
+	}
+	public void setInfo(String info) {
+		this.info = info;
+	}
+	
+	@Transient
+	private Response response;
+	public Response getResponse() {
+		return response;
+	}
+	public void setResponse(Response response) {
+		this.response = response;
+	}
+	
+	@Transient
+	private LScfttransaction objsilentaudit;
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
 			
 	public Integer getNmaterialgradecode() {
 		return nmaterialgradecode;

@@ -71,7 +71,7 @@ public class MaterialService {
 			throws JsonParseException, JsonMappingException, IOException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
-		List<MaterialType> lstMaterialType = materialTypeRepository.findAllByOrderByNmaterialtypecode();
+		List<MaterialType> lstMaterialType = materialTypeRepository.findByNmaterialtypecodeNotOrderByNmaterialtypecode(-1);
 
 		objmap.put("MaterialType", lstMaterialType);
 		objmap.put("SelectedMaterialType", lstMaterialType);
@@ -84,6 +84,7 @@ public class MaterialService {
 			objmap.put("nmaterialcatcode", lstMaterialCategory.get(0).getNmaterialcatcode());
 		}
 		objmap.put("nmaterialtypecode", lstMaterialType.get(0).getNmaterialtypecode());
+		objmap.put("nsitecode", nsiteInteger);
 		objmap.putAll((Map<String, Object>) getMaterialByTypeCode(objmap).getBody());
 //		objmap.putAll((Map<String, Object>) getMaterialAdd((Integer)objmap.get("nmaterialtypecode")).getBody());
 

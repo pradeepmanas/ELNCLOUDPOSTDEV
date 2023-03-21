@@ -11,10 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.repository.material.ManufacturerRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialGradeRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.material.SectionRepository;
+import com.agaram.eln.primary.repository.material.SupplierRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageLocationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,6 +37,10 @@ public class DynamicPreRegDesignService {
 	MaterialGradeRepository materialGradeRepository;
 	@Autowired
 	SampleStorageLocationRepository sampleStorageLocationRepository;
+	@Autowired
+	SupplierRepository supplierRepository;
+	@Autowired
+	ManufacturerRepository manufacturerRepository;
 
 	@SuppressWarnings({ "unchecked", "unused" })
 	public ResponseEntity<Object> getComboValues(Map<String, Object> inputMap) throws JsonProcessingException {
@@ -92,17 +98,21 @@ public class DynamicPreRegDesignService {
 					data = sectionRepository.findByNstatusAndNsitecode(1, nsiteInteger);
 					break;
 				case "materialgrade":
-					data = materialGradeRepository.findByNstatus(1);
+					data = materialGradeRepository.findByNstatusAndNsitecode(1,nsiteInteger);
 					break;
 				case "storagelocation":
-					data = sampleStorageLocationRepository.findByStatusOrderBySamplestoragelocationkeyDesc(1);
+					data = sampleStorageLocationRepository.findByStatusAndSitekeyOrderBySamplestoragelocationkeyDesc(1,nsiteInteger);
+					break;
+				case "supplier":
+					data = supplierRepository.findByNstatusAndNsitecode(1,nsiteInteger);
+					break;
+				case "manufacturer":
+					data = manufacturerRepository.findByNstatusAndNsitecode(1,nsiteInteger);
 					break;
 				case "period":
 					data = periodRepository.findByNstatus(1);
 					break;
 				}
-//			System.out.println(data);
-
 				String label = (String) srcData.get(i).get("label");
 
 				List<Map<String, Object>> lstJsonData = new ArrayList<Map<String, Object>>();

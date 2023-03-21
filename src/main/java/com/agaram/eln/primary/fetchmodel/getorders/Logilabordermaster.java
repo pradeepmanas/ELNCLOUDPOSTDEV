@@ -92,17 +92,17 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	}
 
 	public String getBatchid() {
-		String Batchid = "ELN" + this.batchcode;
+//		String Batchid = "ELN" + this.batchcode;
+//
+//		if (this.filetype == 3) {
+//			Batchid = "RESEARCH" + this.batchcode;
+//		} else if (this.filetype == 4) {
+//			Batchid = "EXCEL" + this.batchcode;
+//		} else if (this.filetype == 5) {
+//			Batchid = "VALIDATE" + this.batchcode;
+//		}
 
-		if (this.filetype == 3) {
-			Batchid = "RESEARCH" + this.batchcode;
-		} else if (this.filetype == 4) {
-			Batchid = "EXCEL" + this.batchcode;
-		} else if (this.filetype == 5) {
-			Batchid = "VALIDATE" + this.batchcode;
-		}
-
-		return Batchid;
+		return batchid;
 	}
 
 	public void setBatchid(String batchid) {

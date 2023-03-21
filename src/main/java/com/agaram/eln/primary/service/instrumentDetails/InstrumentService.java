@@ -3176,18 +3176,20 @@ public class InstrumentService {
 	public Map<String, Object> Getorderforlink(LSlogilablimsorderdetail objorder) {
 		Map<String, Object> mapOrder = new HashMap<String, Object>();
 		LSlogilablimsorderdetail objupdated = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
-
+		
 		if (objupdated.getLockeduser() != null) {
 			objupdated.setIsLock(1);
 		} else {
-			objupdated.setIsLock(0);
+			objupdated.setLockeduser(objorder.getObjLoggeduser().getUsercode());
+			objupdated.setLockedusername(objorder.getObjLoggeduser().getUsername());
+			objupdated.setIsLock(1);
 		}
+		
+		lslogilablimsorderdetailRepository.save(objupdated);
 
 		if (objupdated.getLsprojectmaster() != null) {
-			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode)
-					.collect(Collectors.toList());
-			if (objorder.getLstworkflow() != null
-					&& lstworkflowcode.contains(objupdated.getLsworkflow().getWorkflowcode())) {
+			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+			if (objorder.getLstworkflow() != null && lstworkflowcode.contains(objupdated.getLsworkflow().getWorkflowcode())) {
 				objupdated.setCanuserprocess(true);
 			} else {
 				objupdated.setCanuserprocess(false);
@@ -3335,7 +3337,7 @@ public class InstrumentService {
 
 			if (objorder.getApprovelstatus() != null && objorder.getIsFinalStep() != 1) {
 
-				for (int i = 0; i < objuser.size(); i++) {
+				for (int i = 0; i < lstusers.size(); i++) {
 					if (createby.getUsercode() != userobj.get(i).getUsercode()) {
 						if (objorder.getApprovelstatus() == 1) {
 							Notification = "USERAPPROVAL";
@@ -5227,8 +5229,12 @@ public class InstrumentService {
 		if (objupdated.getLockeduser() != null) {
 			objupdated.setIsLock(1);
 		} else {
-			objupdated.setIsLock(0);
+			objupdated.setLockeduser(objorder.getObjLoggeduser().getUsercode());
+			objupdated.setLockedusername(objorder.getObjLoggeduser().getUsername());
+			objupdated.setIsLock(1);
 		}
+		
+		lslogilablimsorderdetailRepository.save(objupdated);
 
 		if (objupdated.getLockeduser() != null && objorder.getObjLoggeduser() != null
 				&& objupdated.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
@@ -5296,8 +5302,7 @@ public class InstrumentService {
 		}
 
 		mapOrder.put("order", objupdated);
-		mapOrder.put("version",
-				lssamplefileversionRepository.findByFilesamplecodeOrderByVersionnoDesc(objupdated.getLssamplefile()));
+		mapOrder.put("version",lssamplefileversionRepository.findByFilesamplecodeOrderByVersionnoDesc(objupdated.getLssamplefile()));
 
 		return mapOrder;
 	}

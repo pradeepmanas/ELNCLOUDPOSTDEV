@@ -20,7 +20,6 @@ public class MaterialInventoryController {
 	private MaterialInventoryService materialInventoryService;
 
 	@RequestMapping(value = "/getMaterialInventory", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-
 	public ResponseEntity<Object> getMaterialInventory(@RequestBody Map<String, Object> inputMap) throws Exception {
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
 		return (ResponseEntity<Object>) materialInventoryService.getMaterialInventory(nsiteInteger);
