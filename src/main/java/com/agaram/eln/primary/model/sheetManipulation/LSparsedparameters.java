@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,6 +42,10 @@ public class LSparsedparameters {
 	//@Column(columnDefinition = "nvarchar(200)")
 	private String batchid;
 	
+	@Type(type = "jsonb")
+	@Column(name = "resultsvalue", columnDefinition = "jsonb")
+	private String resultsvalue;
+		
 	@Transient
 	private String fieldkey;
 	
@@ -210,5 +215,14 @@ public class LSparsedparameters {
 	public void setInstrumentname(String instrumentname) {
 		this.instrumentname = instrumentname;
 	}
+
+	public String getResultsvalue() {
+		return resultsvalue;
+	}
+
+	public void setResultsvalue(String resultsvalue) {
+		this.resultsvalue = resultsvalue;
+	}
+	
 	
 }

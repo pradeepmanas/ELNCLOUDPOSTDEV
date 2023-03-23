@@ -56,6 +56,15 @@ public class MaterialInventory {
 	@Transient
 	public String info;
 	
+	private Double nqtynotification;
+	
+	public Double getNqtynotification() {
+		return nqtynotification;
+	}
+	public void setNqtynotification(Double nqtynotification) {
+		this.nqtynotification = nqtynotification;
+	}
+	
 	@Transient
 	private LScfttransaction objmanualaudit;
 	

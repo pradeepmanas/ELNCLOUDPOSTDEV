@@ -146,7 +146,19 @@ public class ExcelView extends AbstractXlsxView{
         				 }
         				 
 	       				row.createCell(cellNum).setCellValue(value);
-	       			 }
+	       			 }else  if (dataEntry.getValue() instanceof java.util.ArrayList)
+        			   {
+	       				String value ="";
+	       				 if(deepDataObject.containsKey(dataEntry.getKey()))
+       				     {
+       					  List<String> dataValueMap = (List<String>) deepDataObject.get(dataEntry.getKey());	        					 
+   						  value = new MapUtil().getNestedValue((Map<String, Object>)dataEntry.getValue(), dataValueMap);
+//       				 
+       				    }
+       				 
+	       				row.createCell(cellNum).setCellValue(value);
+        			 }
+        			
 	       			 else
 	       			 {
 	       				 if (dataEntry.getKey().equalsIgnoreCase("createddate"))

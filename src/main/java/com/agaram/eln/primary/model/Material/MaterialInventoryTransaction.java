@@ -1,11 +1,15 @@
 package com.agaram.eln.primary.model.material;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "materialinventorytransaction")
@@ -24,14 +28,36 @@ public class MaterialInventoryTransaction {
 	private Integer nresultusedmaterialcode;
 	private Double nqtyreceived;
 	private Double nqtyissued;
-	
-//	@Type(type = "jsonb")
+
 	@Column(name = "jsondata")
 	private String jsondata;
-//	@Type(type = "jsonb")
 	@Column(name = "jsonuidata")
 	private String jsonuidata;
 	
+	private Integer createdbyusercode;
+	private Integer issuedbyusercode;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createddate;
+	
+	public Date getCreateddate() {
+		return createddate;
+	}
+	public void setCreateddate(Date createddate) {
+		this.createddate = createddate;
+	}
+	public Integer getCreatedbyusercode() {
+		return createdbyusercode;
+	}
+	public void setCreatedbyusercode(Integer createdbyusercode) {
+		this.createdbyusercode = createdbyusercode;
+	}
+	public Integer getIssuedbyusercode() {
+		return issuedbyusercode;
+	}
+	public void setIssuedbyusercode(Integer issuedbyusercode) {
+		this.issuedbyusercode = issuedbyusercode;
+	}
 	private Integer nsitecode;
 	
 	public Integer getNmaterialinventtranscode() {

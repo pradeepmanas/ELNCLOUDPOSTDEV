@@ -80,7 +80,19 @@ public class CsvView extends AbstractCsvView {
     				
 	       				 }       				 
 	       				objList.add(value);
-	       			 }
+	       			 }else  if (dataEntry.getValue() instanceof java.util.ArrayList)
+        			 {
+	       				 String value ="";
+	       				 if(deepDataObject.containsKey(dataEntry.getKey()))
+	       				 {
+	       					 List<String> dataValueMap = (List<String>) deepDataObject.get(dataEntry.getKey());	        					 
+	   						 value = new MapUtil().getNestedValue((Map<String, Object>)dataEntry.getValue(), dataValueMap);
+    				
+	       				 }       				 
+	       				objList.add(value);
+        			 }
+        			
+
 	       			 else
 	       			 {
 	       				 if (dataEntry.getKey().equalsIgnoreCase("createddate"))

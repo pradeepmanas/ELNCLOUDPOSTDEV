@@ -1891,8 +1891,13 @@ public class ProtocolService {
 				;
 			}
 		}
-		updatenotificationforprotocolworkflowapproval(objClass, LsProto.getLssheetworkflow());
-		updatenotificationforprotocol(objClass, LsProto.getLssheetworkflow());
+		
+		try {
+			updatenotificationforprotocolworkflowapproval(objClass, LsProto.getLssheetworkflow());
+			updatenotificationforprotocol(objClass, LsProto.getLssheetworkflow());
+		} catch(Exception e) {
+			
+		}
 		}
 		return mapObj;
 	}
@@ -2234,7 +2239,8 @@ public class ProtocolService {
 		List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		for (int i = 0; i < lstusers.size(); i++) {
-			if (objClass.getCreateby() != lstusers.get(i).getLsuserMaster().getUsercode()) {
+			if (objClass.getCreateby() != lstusers.get(i).getLsuserMaster().getUsercode()
+					&& objClass.getObjLoggeduser().getUsercode() != lstusers.get(i).getLsuserMaster().getUsercode()) {
 				LSnotification objnotify = new LSnotification();
 				objnotify.setNotifationfrom(objClass.getObjLoggeduser());
 				objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
@@ -2314,17 +2320,19 @@ public class ProtocolService {
 					List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
 					List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 					for (int i = 0; i < lstusers.size(); i++) {
-						if (objClass.getCreateby() != lstusers.get(i).getLsuserMaster().getUsercode()) {
+						if (objClass.getLsuserMaster().getUsercode() != lstusers.get(i).getLsuserMaster().getUsercode()) {
 
 							if (objClass.getOrderflag().equalsIgnoreCase("R")) {
-								objnotify.setNotifationto(createby);
+								objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
 								objnotify.setNotifationfrom(obj);
+								objnotify.setNotificationdate(objClass.getCompletedtimestamp());
 
 							} else {
 								objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
 								objnotify.setNotifationfrom(obj);
+								objnotify.setNotificationdate(objClass.getCreatedtimestamp());
 							}
-							objnotify.setNotificationdate(objClass.getCreatedtimestamp());
+							
 							objnotify.setNotification(Notifiction);
 							objnotify.setNotificationdetils(Details);
 							objnotify.setIsnewnotification(1);
@@ -4531,8 +4539,10 @@ public class ProtocolService {
 		Response response = new Response();
 		LSprotocolstepInformation obj = new LSprotocolstepInformation();
 		ObjectMapper object = new ObjectMapper();
-		LSprotocolupdates lSprotocolupdates = object.convertValue(body.get("LSprotocolupdates"), LSprotocolupdates.class) ;
-		lsprotocolupdatesRepository.save(lSprotocolupdates);
+		if(body.get("LSprotocolupdates") != null) {
+			LSprotocolupdates lSprotocolupdates = object.convertValue(body.get("LSprotocolupdates"), LSprotocolupdates.class) ;
+			lsprotocolupdatesRepository.save(lSprotocolupdates);
+		}
 		if (!body.get("protocolstepname").equals("")) {
 			LSprotocolstep LSprotocolstepObj = new LSprotocolstep();
 			String protocolstepname = object.convertValue(body.get("protocolstepname"), String.class);

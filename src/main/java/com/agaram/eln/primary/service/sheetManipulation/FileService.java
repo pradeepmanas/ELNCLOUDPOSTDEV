@@ -684,95 +684,100 @@ public class FileService {
 				.findByTeamcodeNotNullAndLsuserMaster(objfile.getLSuserMaster());
 
 		LSnotification objnotify = new LSnotification();
-
-		if (objteam != null && objteam.size() > 0) {
-			String Details = "";
-			String Notifiction = "";
-			List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-			for (int k = 0; k < objfile.getLssheetworkflow().getLssheetworkflowgroupmap().size(); k++) {
-				List<LSMultiusergroup> userobj = lsMultiusergroupRepositery.findBylsusergroup(
-						objfile.getLssheetworkflow().getLssheetworkflowgroupmap().get(k).getLsusergroup());
-				LSuserMaster createby = lsusermasterRepository.findByusercode(objfile.getCreateby().getUsercode());
-				List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode)
-						.collect(Collectors.toList());
-				List<LSuserMaster> objuser = lsusermasterRepository
-						.findByUsercodeInAndUserretirestatusNot(objnotifyuser, 1);
-
-				for (int i = 0; i < objuser.size(); i++) {
-					if (createby.getUsercode() != userobj.get(i).getUsercode() && userobj.size() > 0
-							&& objfile.getCreateby().getUsercode() != objfile.getLSuserMaster().getUsercode())
-
-					{
-						if (objfile.getApproved() == 1) {
-							Notifiction = "SHEETAPPROVALSENT";
-						} else if (objfile.getRejected() == 1) {
-							Notifiction = "SHEETAPPROVALREJECT";
-							objnotify.setNotifationto(createby);
-						} else if (objfile.getApproved() == 2) {
-							Notifiction = "SHEETRETURN";
-							objnotify.setNotifationto(objuser.get(i));
-						} else if (objfile.getApproved() == 0) {
-							Notifiction = "SHEETAPPROVALSENTNEXT";
-						}
-
-						objnotify.setNotifationto(createby);
-						Details = "{\"ordercode\":\"" + objfile.getFilecode() + "\", \"order\":\"" + objfile.getFilenameuser()
-									+ "\", \"currentworkflow\":\"" + previousworkflow.getWorkflowname() 
-									+ "\", \"username\":\""	+ objfile.getLSuserMaster().getUsername() + "\"}";
-						objnotify.setNotifationfrom(objfile.getLSuserMaster());
-						objnotify.setNotificationdate(objfile.getNotificationdate());
-						objnotify.setNotification(Notifiction);
-						objnotify.setNotificationdetils(Details);
-						objnotify.setIsnewnotification(1);
-						objnotify.setNotificationpath("/sheetcreation");
-						objnotify.setNotificationfor(1);
-
-						lstnotifications.add(objnotify);
-					}
-
-					else {
-						if (objfile.getApproved() != null && objfile.getApproved() != 1
-								&& objfile.getIsfinalstep() != 1) {
-							if (createby.getUsercode() != userobj.get(i).getUsercode()) {
-								if (objfile.getApproved() == 0) {
-									Notifiction = "SHEETAPPROVAL";
-									objnotify.setNotifationto(objuser.get(i));
-								} else if (objfile.getRejected() == 1) {
-									Notifiction = "SHEETAPPROVALREJECT";
-									objnotify.setNotifationto(createby);
-								} else if (objfile.getApproved() == 2) {
-									Notifiction = "SHEETRETURN";
-									objnotify.setNotifationto(objuser.get(i));
-								}
-
-								Details = "{\"ordercode\":\"" + objfile.getFilecode() + "\", \"order\":\""
-										+ objfile.getFilenameuser() + "\", \"username\":\""
-
-										+ objfile.getLSuserMaster().getUsername() + "\"}";
-								objnotify.setNotifationfrom(objfile.getLSuserMaster());
-								objnotify.setNotificationdate(objfile.getCreatedate());
-								objnotify.setNotification(Notifiction);
-								objnotify.setNotificationdetils(Details);
-								objnotify.setIsnewnotification(1);
-								objnotify.setNotificationpath("/sheetcreation");
-								objnotify.setNotificationfor(1);
-
-								lstnotifications.add(objnotify);
+		
+		try {
+			if (objteam != null && objteam.size() > 0) {
+				String Details = "";
+				String Notifiction = "";
+				List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+				for (int k = 0; k < objfile.getLssheetworkflow().getLssheetworkflowgroupmap().size(); k++) {
+					List<LSMultiusergroup> userobj = lsMultiusergroupRepositery.findBylsusergroup(
+							objfile.getLssheetworkflow().getLssheetworkflowgroupmap().get(k).getLsusergroup());
+					LSuserMaster createby = lsusermasterRepository.findByusercode(objfile.getCreateby().getUsercode());
+					List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode)
+							.collect(Collectors.toList());
+					List<LSuserMaster> objuser = lsusermasterRepository
+							.findByUsercodeInAndUserretirestatusNot(objnotifyuser, 1);
+	
+					for (int i = 0; i < objuser.size(); i++) {
+						if (createby.getUsercode() != userobj.get(i).getUsercode() && userobj.size() > 0
+								&& objfile.getCreateby().getUsercode() != objfile.getLSuserMaster().getUsercode())
+	
+						{
+							if (objfile.getApproved() == 1) {
+								Notifiction = "SHEETAPPROVALSENT";
+							} else if (objfile.getRejected() == 1) {
+								Notifiction = "SHEETAPPROVALREJECT";
+								objnotify.setNotifationto(createby);
+							} else if (objfile.getApproved() == 2) {
+								Notifiction = "SHEETRETURN";
+								objnotify.setNotifationto(objuser.get(i));
+							} else if (objfile.getApproved() == 0) {
+								Notifiction = "SHEETAPPROVALSENTNEXT";
 							}
+	
+							objnotify.setNotifationto(createby);
+							Details = "{\"ordercode\":\"" + objfile.getFilecode() + "\", \"order\":\"" + objfile.getFilenameuser()
+										+ "\", \"currentworkflow\":\"" + previousworkflow.getWorkflowname() 
+										+ "\", \"username\":\""	+ objfile.getLSuserMaster().getUsername() + "\"}";
+							objnotify.setNotifationfrom(objfile.getLSuserMaster());
+							objnotify.setNotificationdate(objfile.getNotificationdate());
+							objnotify.setNotification(Notifiction);
+							objnotify.setNotificationdetils(Details);
+							objnotify.setIsnewnotification(1);
+							objnotify.setNotificationpath("/sheetcreation");
+							objnotify.setNotificationfor(1);
+	
+							lstnotifications.add(objnotify);
 						}
-
+	
+						else {
+							if (objfile.getApproved() != null && objfile.getApproved() != 1
+									&& objfile.getIsfinalstep() != 1) {
+								if (createby.getUsercode() != userobj.get(i).getUsercode()
+										&& objfile.getCreateby().getUsercode() != objfile.getLSuserMaster().getUsercode()) {
+									if (objfile.getApproved() == 0) {
+										Notifiction = "SHEETAPPROVAL";
+										objnotify.setNotifationto(objuser.get(i));
+									} else if (objfile.getRejected() == 1) {
+										Notifiction = "SHEETAPPROVALREJECT";
+										objnotify.setNotifationto(createby);
+									} else if (objfile.getApproved() == 2) {
+										Notifiction = "SHEETRETURN";
+										objnotify.setNotifationto(objuser.get(i));
+									}
+	
+									Details = "{\"ordercode\":\"" + objfile.getFilecode() + "\", \"order\":\""
+											+ objfile.getFilenameuser() + "\", \"username\":\""
+	
+											+ objfile.getLSuserMaster().getUsername() + "\"}";
+									objnotify.setNotifationfrom(objfile.getLSuserMaster());
+									objnotify.setNotificationdate(objfile.getNotificationdate());
+									objnotify.setNotification(Notifiction);
+									objnotify.setNotificationdetils(Details);
+									objnotify.setIsnewnotification(1);
+									objnotify.setNotificationpath("/sheetcreation");
+									objnotify.setNotificationfor(1);
+	
+									lstnotifications.add(objnotify);
+								}
+							}
+	
+						}
 					}
+					LSnotificationRepository.save(lstnotifications);
+	
+					userobj = null;
+					createby = null;
+					objnotifyuser = null;
+					objuser = null;
 				}
-				LSnotificationRepository.save(lstnotifications);
-
-				userobj = null;
-				createby = null;
-				objnotifyuser = null;
-				objuser = null;
+				Details = null;
+				Notifiction = null;
+				lstnotifications = null;
 			}
-			Details = null;
-			Notifiction = null;
-			lstnotifications = null;
+		} catch (Exception e) {
+			
 		}
 
 		objteam = null;

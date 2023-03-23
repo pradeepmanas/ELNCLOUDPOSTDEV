@@ -1,15 +1,22 @@
 package com.agaram.eln.primary.controller.material;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.service.material.MaterialService;
 
 @RestController
@@ -78,5 +85,19 @@ public class MaterialController {
 	@RequestMapping(value = "/updateMaterial", method = RequestMethod.POST)
 	public ResponseEntity<Object> UpdateMaterial(@RequestBody Map<String, Object> inputMap) throws Exception {
 		return objMaterialService.UpdateMaterial(inputMap);
+	}
+	
+	@PostMapping("/CloudUploadattachments")
+	public Material CloudUploadattachments(@RequestParam("file") MultipartFile file,
+			@RequestParam("order") Integer nmaterialcatcode, @RequestParam("filename") String filename,
+			@RequestParam("fileexe") String fileexe, @RequestParam("usercode") Integer usercode,
+			@RequestParam("date") Date currentdate,@RequestParam("isMultitenant") Integer isMultitenant)
+			throws IOException {
+		return objMaterialService.CloudUploadattachments(file, nmaterialcatcode, filename, fileexe, usercode, currentdate,isMultitenant);
+	}
+	@RequestMapping(value = "/getAttachments", method = RequestMethod.POST)
+	public Map<String, Object> getAttachments(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return objMaterialService.getAttachments(inputMap);
 	}
 }

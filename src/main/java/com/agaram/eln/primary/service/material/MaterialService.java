@@ -19,21 +19,30 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.cloudFileManip.CloudOrderAttachment;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.model.material.MaterialType;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
 import com.agaram.eln.primary.repository.material.MaterialInventoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
+import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
+import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -48,6 +57,14 @@ public class MaterialService {
 	MaterialCategoryRepository materialCategoryRepository;
 	@Autowired
 	MaterialRepository materialRepository;
+	@Autowired
+	private LSuserMasterRepository lsuserMasterRepository;
+	@Autowired
+	private LsOrderattachmentsRepository lsOrderattachmentsRepository;
+	@Autowired
+	private CloudFileManipulationservice cloudFileManipulationservice;	
+	@Autowired
+	private FileManipulationservice fileManipulationservice;
 	@Autowired
 	MaterialConfigRepository materialConfigRepository;
 	@Autowired
@@ -72,6 +89,7 @@ public class MaterialService {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
 		List<MaterialType> lstMaterialType = materialTypeRepository.findByNmaterialtypecodeNotOrderByNmaterialtypecode(-1);
+		
 
 		objmap.put("MaterialType", lstMaterialType);
 		objmap.put("SelectedMaterialType", lstMaterialType);
@@ -752,5 +770,48 @@ public class MaterialService {
 //		MaterialCategory objMaterialCategory = materialCategoryRepository.findByNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
 //		objmap.put("SelectedMaterialCategory", objMaterialCategory);
 		return new ResponseEntity<>(getMaterialByTypeCode(inputMap), HttpStatus.OK);
+	}
+	public Material CloudUploadattachments(MultipartFile file, Integer nmaterialcatcode, String filename,
+			String fileexe, Integer usercode, Date currentdate,Integer isMultitenant) throws IOException {
+		Material objmaterial = materialRepository.findOne(nmaterialcatcode);
+		LsOrderattachments objattachment = new LsOrderattachments();
+		if(isMultitenant == 0) {
+			if (fileManipulationservice.storeLargeattachment(filename, file) != null) {
+				objattachment.setFileid(fileManipulationservice.storeLargeattachment(filename, file));
+			}	
+		}
+		
+     	objattachment.setFilename(filename);
+		objattachment.setFileextension(fileexe);
+		objattachment.setCreateby(lsuserMasterRepository.findByusercode(usercode));
+		objattachment.setCreatedate(currentdate);
+		objattachment.setNmaterialcode(objmaterial.getNmaterialcode());
+		if (objmaterial != null && objmaterial.getLsOrderattachments() != null) {
+			objmaterial.getLsOrderattachments().add(objattachment);
+		} else {
+			objmaterial.setLsOrderattachments(new ArrayList<LsOrderattachments>());
+			objmaterial.getLsOrderattachments().add(objattachment);
+		}
+		lsOrderattachmentsRepository.save(objmaterial.getLsOrderattachments());		
+		if(isMultitenant != 0) {
+		String filenameval = "attach_"+ objmaterial.getNmaterialcode() + "_" + objmaterial.getLsOrderattachments()
+		.get(objmaterial.getLsOrderattachments().lastIndexOf(objattachment)).getAttachmentcode()+ "_" + filename;
+			String id = cloudFileManipulationservice.storeLargeattachment(filenameval, file);
+			if (id != null) {
+				objattachment.setFileid(id);
+		}
+	
+		lsOrderattachmentsRepository.save(objmaterial.getLsOrderattachments());
+		}	
+
+		return objmaterial;
+	}
+
+	public Map<String, Object> getAttachments(Map<String, Object> objMap) {
+		Map<String, Object> obj = new HashMap<>();
+		List<LsOrderattachments> lstattach = lsOrderattachmentsRepository.findByNmaterialcodeOrderByAttachmentcodeDesc(objMap.get("nmaterialcode"));
+		obj.put("lsOrderattachments", lstattach);			
+		return obj;
+
 	}
 }

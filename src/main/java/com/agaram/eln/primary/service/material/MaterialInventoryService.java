@@ -39,6 +39,7 @@ import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialInventoryTransaction;
 import com.agaram.eln.primary.model.material.MaterialInventoryType;
 import com.agaram.eln.primary.model.material.MaterialType;
+import com.agaram.eln.primary.model.material.ResultUsedMaterial;
 import com.agaram.eln.primary.model.material.TransactionStatus;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
@@ -48,6 +49,7 @@ import com.agaram.eln.primary.repository.material.MaterialInventoryTransactionRe
 import com.agaram.eln.primary.repository.material.MaterialInventoryTypeRepository;
 import com.agaram.eln.primary.repository.material.MaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
+import com.agaram.eln.primary.repository.material.ResultUsedMaterialRepository;
 import com.agaram.eln.primary.repository.material.TransactionStatusRepository;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -74,6 +76,8 @@ public class MaterialInventoryService {
 	MaterialInventoryTypeRepository materialInventoryTypeRepository;
 	@Autowired
 	MaterialInventoryTransactionRepository materialInventoryTransactionRepository;
+	@Autowired
+	private ResultUsedMaterialRepository resultUsedMaterialRepository;
 
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInventory(Integer nsiteInteger) throws Exception {
@@ -227,15 +231,13 @@ public class MaterialInventoryService {
 											.getBody());
 //					objmap.putAll((Map<String, Object>) getMaterialFile((int) lstMaterialInventory
 //							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")));
-//					objmap.putAll((Map<String, Object>) getResultUsedMaterial((int) lstMaterialInventory
-//							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")).getBody());
+					objmap.putAll((Map<String, Object>) getResultUsedMaterial(Integer.parseInt(lstMaterialInventory.get(0).get("nmaterialinventorycode").toString())).getBody());
 //					objmap.putAll((Map<String, Object>) getMaterialInventoryhistory((int) lstMaterialInventory
 //							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")));
 
 				} else {
 
-					MaterialInventory objInventory = materialInventoryRepository
-							.findOne((Integer) inputMap.get("nmaterialinventorycode"));
+					MaterialInventory objInventory = materialInventoryRepository.findOne((Integer) inputMap.get("nmaterialinventorycode"));
 
 					List<Map<String, Object>> lstMaterialInventory1 = new ArrayList<Map<String, Object>>();
 
@@ -250,8 +252,7 @@ public class MaterialInventoryService {
 					objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
 							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode"), inputMap).getBody());
 
-//					objmap.putAll((Map<String, Object>) getResultUsedMaterial(
-//							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode")).getBody());
+					objmap.putAll((Map<String, Object>) getResultUsedMaterial(objInventory.getNmaterialinventorycode()).getBody());
 //					objmap.putAll((Map<String, Object>) getMaterialFile(
 //							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode")));
 //					objmap.putAll((Map<String, Object>) getMaterialInventoryhistory(
@@ -480,6 +481,8 @@ public class MaterialInventoryService {
 		String updatestr = "";
 		String insmat = "";
 		boolean nflag = false;
+		
+		Date objCreatedDate = cft.getTransactiondate();
 
 		Material objGetMaterialJSON = materialRepository.findByNstatusAndNmaterialcode(1,
 				(Integer) inputMap.get("nmaterialcode"));
@@ -687,10 +690,12 @@ public class MaterialInventoryService {
 							: -1));
 					objTransaction.setNsitecode(-1);
 					objTransaction.setNresultusedmaterialcode(-1);
-					objTransaction
-							.setNqtyreceived(Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
+					objTransaction.setNqtyreceived(Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
 					objTransaction.setNqtyissued(Double.valueOf((Integer) jsonObjectInvTrans.get("nqtyissued")));
-
+					objTransaction.setCreatedbyusercode(cft.getLsuserMaster());
+					objTransaction.setIssuedbyusercode(cft.getLsuserMaster());
+					objTransaction.setCreateddate(objCreatedDate);
+					
 					materialInventoryTransactionRepository.save(objTransaction);
 
 					jsonUidataarray.put(new JSONObject(jsonuidata.toString()));
@@ -784,7 +789,10 @@ public class MaterialInventoryService {
 			objTransaction.setNresultusedmaterialcode(-1);
 			objTransaction.setNqtyreceived(Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
 			objTransaction.setNqtyissued(Double.valueOf((Integer) jsonObjectInvTrans.get("nqtyissued")));
-
+			objTransaction.setCreatedbyusercode(cft.getLsuserMaster());
+			objTransaction.setIssuedbyusercode(cft.getLsuserMaster());
+			objTransaction.setCreateddate(objCreatedDate);
+			
 			materialInventoryTransactionRepository.save(objTransaction);
 
 			jsonUidataarray.put(jsonuidata);
@@ -1264,7 +1272,7 @@ public class MaterialInventoryService {
 
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInventoryDetails(Map<String, Object> inputMap)
-			throws JsonParseException, JsonMappingException, IOException {
+			throws Exception {
 
 		List<Map<String, Object>> lstMaterialInventory = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> lstMaterialInventory1 = new ArrayList<Map<String, Object>>();
@@ -1301,6 +1309,8 @@ public class MaterialInventoryService {
 			MaterialInventory objInventory = materialInventoryRepository
 					.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
 
+			objmap.putAll((Map<String, Object>) getResultUsedMaterial((Integer) inputMap.get("nmaterialinventorycode")).getBody());
+			
 			Map<String, Object> resObj = new ObjectMapper().readValue(objInventory.getJsonuidata(), Map.class);
 
 			resObj.put("nmaterialinventorycode", (Integer) inputMap.get("nmaterialinventorycode"));
@@ -1514,20 +1524,8 @@ public class MaterialInventoryService {
 
 	public ResponseEntity<Object> getResultUsedMaterial(int nmaterialinventorycode) throws Exception {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-//		List<Map<String, Object>> lstResultUsedMaterial = new ArrayList<>();
-//		String str = "select json_AGG(jsondata) jsondata from resultusedmaterial where ninventorycode="
-//				+ nmaterialinventorycode;
-//		try {
-//			String lstData1 = getJdbcTemplate().queryForObject(str, String.class);
-//			if (lstData1 != null)
-//				lstResultUsedMaterial = (List<Map<String, Object>>) getSiteLocalTimeFromUTCForRegTmplate(lstData1,
-//						objUserInfo, true, -1, "ResultEntryTransaction");
-//			objmap.put("ResultUsedMaterial", lstResultUsedMaterial);
-//
-//		} catch (EmptyResultDataAccessException e) {
-//			objmap.put("ResultUsedMaterial", lstResultUsedMaterial);
-//		}
-
+		List<ResultUsedMaterial> lstResultUsedMaterial = resultUsedMaterialRepository.findByNinventorycodeOrderByNresultusedmaterialcodeDesc(nmaterialinventorycode);
+		objmap.put("ResultUsedMaterial", lstResultUsedMaterial);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 

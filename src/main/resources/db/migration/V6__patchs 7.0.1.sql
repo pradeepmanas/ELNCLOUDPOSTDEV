@@ -3918,3 +3918,66 @@ CREATE TABLE IF NOT EXISTS manufacturer
 )TABLESPACE pg_default;
 
 ALTER TABLE public.manufacturer OWNER to postgres;
+
+ALTER TABLE IF Exists LSparsedparameters ADD COLUMN IF NOT EXISTS resultsvalue jsonb;
+
+ALTER TABLE IF Exists materialinventorytransaction ADD COLUMN IF NOT EXISTS issuedbyusercode integer;
+ALTER TABLE IF Exists materialinventorytransaction ADD COLUMN IF NOT EXISTS createdbyusercode integer;
+ALTER TABLE IF Exists materialinventorytransaction ADD COLUMN IF NOT EXISTS createddate timestamp without time zone;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind FROM   pg_class WHERE  relname = 'resultusedmaterial_sequence'  INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE resultusedmaterial_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$; 
+
+CREATE TABLE IF NOT EXISTS resultusedmaterial
+(
+    nresultusedmaterialcode integer NOT NULL DEFAULT nextval('resultusedmaterial_sequence'::regclass),
+    ordercode numeric(17,0) NOT NULL,
+    transactionscreen integer NOT NULL,
+    templatecode integer NOT NULL,
+    nmaterialtypecode integer NOT NULL,
+    nmaterialcategorycode integer NOT NULL,
+    nmaterialcode integer NOT NULL,
+    ninventorycode integer NOT NULL,
+    jsondata character varying(255) NOT NULL,
+    nstatus integer NOT NULL DEFAULT 1,
+    createdbyusercode integer NOT NULL,
+    createddate timestamp without time zone,
+    CONSTRAINT resultusedmaterial_pkey PRIMARY KEY (nresultusedmaterialcode)
+)TABLESPACE pg_default;
+
+ALTER TABLE public.resultusedmaterial OWNER to postgres;
+
+ALTER TABLE IF Exists resultusedmaterial ADD COLUMN IF NOT EXISTS batchid character varying(100);
+ALTER TABLE IF EXISTS resultusedmaterial ADD COLUMN IF NOT EXISTS nqtyissued double precision;
+ALTER TABLE IF EXISTS resultusedmaterial ADD COLUMN IF NOT EXISTS nqtyused double precision;
+ALTER TABLE IF EXISTS resultusedmaterial ADD COLUMN IF NOT EXISTS nqtyleft double precision;
+ALTER TABLE IF EXISTS materialinventory ADD COLUMN IF NOT EXISTS nqtynotification double precision;
+
+ALTER TABLE IF Exists LsOrderattachments ADD COLUMN IF NOT EXISTS nmaterialcode integer;
+
+ALTER TABLE IF Exists lsorderattachments ADD COLUMN IF NOT EXISTS nmaterialcode integer;
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM information_schema.table_constraints WHERE constraint_name='fk701k777d2da33pkkl6lnamavi'
+AND table_name='lsorderattachments';
+ IF multiusergroupcount =0 THEN
+    ALTER TABLE ONLY lsorderattachments ADD CONSTRAINT fk701k777d2da33pkkl6lnamavi FOREIGN KEY (nmaterialcode) REFERENCES material(nmaterialcode);
+   END IF;
+END
+$do$;

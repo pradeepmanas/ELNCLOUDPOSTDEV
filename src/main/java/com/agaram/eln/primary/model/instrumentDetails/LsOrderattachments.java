@@ -43,8 +43,18 @@ public class LsOrderattachments {
 	private Long batchcode;
 	
 	private Integer islargefile;
+	private Integer nmaterialcode;
 	
-//	@Column(columnDefinition = "date")
+	
+public Integer getNmaterialcode() {
+		return nmaterialcode;
+	}
+
+	public void setNmaterialcode(Integer nmaterialcode) {
+		this.nmaterialcode = nmaterialcode;
+	}
+
+	//	@Column(columnDefinition = "date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdate;
 	
@@ -170,5 +180,7 @@ public class LsOrderattachments {
 	public void setResponse(Response response) {
 		this.response = response;
 	}
+	
+	
 	
 }

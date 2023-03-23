@@ -131,7 +131,21 @@ public class PdfView extends AbstractPdfView {
 //	        					
 						}
 						para = new Paragraph(value, dataFont);
-					} else {
+					} 
+					 else  if (dataEntry.getValue() instanceof java.util.ArrayList)
+        			 {
+        				 String value ="";
+        				 if(deepDataObject.containsKey(dataEntry.getKey()))
+        				 {
+        					 List<String> dataValueMap = (List<String>) deepDataObject.get(dataEntry.getKey());	        					 
+    						 value = // maputil
+    								 new MapUtil()
+    								 .getNestedValue((Map<String, Object>)dataEntry.getValue(), dataValueMap);
+//        					
+        				 }
+        				 para = new Paragraph(value, dataFont);
+        			 }
+        			else {
 						if (dataEntry.getKey().equalsIgnoreCase("createddate")) {
 
 							para = new Paragraph(

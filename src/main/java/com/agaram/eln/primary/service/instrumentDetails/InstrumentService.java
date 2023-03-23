@@ -3322,87 +3322,92 @@ public class InstrumentService {
 		LSuserMaster obj = lsuserMasterRepository.findByusercode(objorder.getObjLoggeduser().getUsercode());
 		LSnotification objnotify = new LSnotification();
 
-		for (int k = 0; k < objorder.getLsworkflow().getLsworkflowgroupmapping().size(); k++) {
-			List<LSMultiusergroup> userobj = lsMultiusergroupRepositery
-					.findBylsusergroup(objorder.getLsworkflow().getLsworkflowgroupmapping().get(k).getLsusergroup());
-
-			List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode) .collect(Collectors.toList());
-			
-			List<LSuserMaster> objuser = lsuserMasterRepository.findByUsercodeInAndUserretirestatusNot(objnotifyuser, 1);
-			
-			LSusersteam objteam = lsusersteamRepository
-					.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode());
-
-			List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
-
-			if (objorder.getApprovelstatus() != null && objorder.getIsFinalStep() != 1) {
-
-				for (int i = 0; i < lstusers.size(); i++) {
-					if (createby.getUsercode() != userobj.get(i).getUsercode()) {
-						if (objorder.getApprovelstatus() == 1) {
-							Notification = "USERAPPROVAL";
-							objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
-						} else if (objorder.getApprovelstatus() == 2) {
-							Notification = "USERORDERRETURN";
-							objnotify.setNotifationto(lstusers.get(i).getLsuserMaster());
-
-						}else if (objorder.getApprovelstatus() == 3) {
-							Notification = "USERREJECT";
-							objnotify.setNotifationto(createby);
+		try {
+			for (int k = 0; k < objorder.getLsworkflow().getLsworkflowgroupmapping().size(); k++) {
+				List<LSMultiusergroup> userobj = lsMultiusergroupRepositery
+						.findBylsusergroup(objorder.getLsworkflow().getLsworkflowgroupmapping().get(k).getLsusergroup());
+	
+				List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode) .collect(Collectors.toList());
+				
+				List<LSuserMaster> objuser = lsuserMasterRepository.findByUsercodeInAndUserretirestatusNot(objnotifyuser, 1);
+				
+//				LSusersteam objteam = lsusersteamRepository
+//						.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode());
+	
+//				List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
+	
+				if (objorder.getApprovelstatus() != null && objorder.getIsFinalStep() != 1) {
+	
+					for (int i = 0; i < objuser.size(); i++) {
+						if (createby.getUsercode() != userobj.get(i).getUsercode()
+								&& objorder.getObjLoggeduser().getUsercode() != userobj.get(i).getUsercode()) {
+							if (objorder.getApprovelstatus() == 1) {
+								Notification = "USERAPPROVAL";
+								objnotify.setNotifationto(objuser.get(i));
+							} else if (objorder.getApprovelstatus() == 2) {
+								Notification = "USERORDERRETURN";
+								objnotify.setNotifationto(objuser.get(i));
+	
+							}else if (objorder.getApprovelstatus() == 3) {
+								Notification = "USERREJECT";
+								objnotify.setNotifationto(createby);
+							}
+	
+							Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\""
+									+ objorder.getBatchid() + "\", \"user\":\"" + createby.getUsername()
+									+ "\", \"comment\":\"" + objorder.getComment() + "\", \"workflowname\":\""
+									+ objorder.getLsworkflow().getWorkflowname() + "\"}";
+							
+							objnotify.setNotifationfrom(obj);
+							objnotify.setNotificationdate(objorder.getNotificationdate());
+							objnotify.setNotification(Notification);
+							objnotify.setNotificationdetils(Details);
+							objnotify.setIsnewnotification(1);
+							objnotify.setNotificationpath("/registertask");
+							objnotify.setNotificationfor(1);
+	
+							lstnotifications.add(objnotify);
 						}
-
-						Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\""
-								+ objorder.getBatchid() + "\", \"user\":\"" + createby.getUsername()
-								+ "\", \"comment\":\"" + objorder.getComment() + "\", \"workflowname\":\""
-								+ objorder.getLsworkflow().getWorkflowname() + "\"}";
-						
-						objnotify.setNotifationfrom(obj);
-						objnotify.setNotificationdate(objorder.getNotificationdate());
-						objnotify.setNotification(Notification);
-						objnotify.setNotificationdetils(Details);
-						objnotify.setIsnewnotification(1);
-						objnotify.setNotificationpath("/registertask");
-						objnotify.setNotificationfor(1);
-
-						lstnotifications.add(objnotify);
 					}
-				}
-			} else {
-				for (int i = 0; i < objuser.size(); i++) {
-
-					if (createby.getUsercode() != userobj.get(i).getUsercode() && userobj.size() > 0
-							&& objorder.getObjLoggeduser().getUsercode() != objorder.getLsuserMaster().getUsercode()) {
-						
-						if (objorder.getApprovelstatus() == 3 && objorder.getApproved() == null) {
-							Notification = "USERREJECT";
-							objnotify.setNotifationto(createby);
-						} else if (objorder.getApproved() == 1 && objorder.getRejected() == null) {
-							Notification = "SHEETORDERAPPROVED";
-							objnotify.setNotifationto(createby);
-						} else if (objorder.getApprovelstatus() == 2) {
-							Notification = "USERRETURN";
-							objnotify.setNotifationto(createby);
+				} else {
+					for (int i = 0; i < objuser.size(); i++) {
+	
+						if (createby.getUsercode() != userobj.get(i).getUsercode() && userobj.size() > 0
+								&& objorder.getObjLoggeduser().getUsercode() != objorder.getLsuserMaster().getUsercode()) {
+							
+							if (objorder.getApprovelstatus() == 3 && objorder.getApproved() == null) {
+								Notification = "USERREJECT";
+								objnotify.setNotifationto(createby);
+							} else if (objorder.getApproved() == 1 && objorder.getRejected() == null) {
+								Notification = "SHEETORDERAPPROVED";
+								objnotify.setNotifationto(createby);
+							} else if (objorder.getApprovelstatus() == 2) {
+								Notification = "USERRETURN";
+								objnotify.setNotifationto(createby);
+							}
+	
+							Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\""
+									+ objorder.getBatchid() + "\", \"user\":\"" + objuser.get(i).getUsername()
+									+ "\", \"comment\":\"" + objorder.getComment() + "\"}";
+							objnotify.setNotifationfrom(obj);
+							objnotify.setNotificationdate(objorder.getNotificationdate());
+							objnotify.setNotification(Notification);
+							objnotify.setNotificationdetils(Details);
+							objnotify.setIsnewnotification(1);
+							objnotify.setNotificationpath("/registertask");
+							objnotify.setNotificationfor(1);
+	
+							lstnotifications.add(objnotify);
 						}
-
-						Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\""
-								+ objorder.getBatchid() + "\", \"user\":\"" + objuser.get(i).getUsername()
-								+ "\", \"comment\":\"" + objorder.getComment() + "\"}";
-						objnotify.setNotifationfrom(obj);
-						objnotify.setNotificationdate(objorder.getNotificationdate());
-						objnotify.setNotification(Notification);
-						objnotify.setNotificationdetils(Details);
-						objnotify.setIsnewnotification(1);
-						objnotify.setNotificationpath("/registertask");
-						objnotify.setNotificationfor(1);
-
-						lstnotifications.add(objnotify);
 					}
+	
 				}
-
+				lsnotificationRepository.save(lstnotifications);
+	
+				lstnotifications.removeAll(lstnotifications);
 			}
-			lsnotificationRepository.save(lstnotifications);
-
-			lstnotifications.removeAll(lstnotifications);
+		} catch (Exception e) {
+			
 		}
 		Details = null;
 		Notification = null;

@@ -2,18 +2,22 @@ package com.agaram.eln.primary.model.material;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 
 @Entity
 @Table(name = "material")
@@ -78,7 +82,17 @@ public class Material implements Serializable{
 	
 	@Column(name = "smaterialname")
 	private String smaterialname;
+	@OneToMany
+	@JoinColumn(name = "nmaterialcode")
+	private List<LsOrderattachments> lsOrderattachments;	
 	
+	
+	public List<LsOrderattachments> getLsOrderattachments() {
+		return lsOrderattachments;
+	}
+	public void setLsOrderattachments(List<LsOrderattachments> lsOrderattachments) {
+		this.lsOrderattachments = lsOrderattachments;
+	}
 	private transient String sunitname;
 	private transient short needsection;
 	private transient int nproductcode;

@@ -38,6 +38,12 @@ public class TransactionController {
 
 		return transactionService.createMaterialInventoryTrans(inputMap);
 	}
+	
+	@PostMapping(value = "/createMaterialResultUsed")
+	public ResponseEntity<Object> createMaterialResultUsed(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return transactionService.createMaterialResultUsed(inputMap);
+	}
 
 	@PostMapping(value = "/updateMaterialDynamicTable")
 	public ResponseEntity<Object> updateMaterialDynamicTable(@RequestBody MaterialConfig[] objLstClass)
