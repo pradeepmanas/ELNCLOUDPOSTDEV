@@ -31,6 +31,7 @@ import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialInventoryTransaction;
 import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.ResultUsedMaterial;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
@@ -314,6 +315,9 @@ public class TransactionService {
 
 		JSONObject insJsonObjcopy = new JSONObject(insJsonObj.toString());
 		JSONObject jsonUidataObjcopy = new JSONObject(jsonuidata.toString());
+		
+		LSuserMaster objUser = new LSuserMaster();
+		objUser.setUsercode(cft.getLsuserMaster());
 
 		insJsonObjcopy.put("Transaction Date & Time", formattedDate);
 		insJsonObjcopy.put("noffsetTransaction Date & Time", commonfunction.getCurrentDateTimeOffset("Europe/London"));
@@ -358,7 +362,7 @@ public class TransactionService {
 				objTransaction.setNresultusedmaterialcode(-1);
 				objTransaction.setNqtyreceived(Double.valueOf((Integer) insJsonObj.get("Received Quantity")));
 				objTransaction.setNqtyissued(Double.valueOf((Integer) insJsonObj.get("nqtyissued")));
-				objTransaction.setIssuedbyusercode(cft.getLsuserMaster());
+				objTransaction.setIssuedbyusercode(objUser);
 				objTransaction.setCreateddate(objCreatedDate);
 				materialInventoryTransactionRepository.save(objTransaction);
 
@@ -381,7 +385,7 @@ public class TransactionService {
 				objTransaction.setNresultusedmaterialcode(-1);
 				objTransaction.setNqtyreceived(Double.valueOf((Integer) insJsonObj.get("Received Quantity")));
 				objTransaction.setNqtyissued(Double.valueOf((Integer) insJsonObj.get("nqtyissued")));
-				objTransaction.setIssuedbyusercode(cft.getLsuserMaster());
+				objTransaction.setIssuedbyusercode(objUser);
 				objTransaction.setCreateddate(objCreatedDate);
 				materialInventoryTransactionRepository.save(objTransaction);
 
@@ -405,7 +409,7 @@ public class TransactionService {
 			objTransaction.setNresultusedmaterialcode(-1);
 			objTransaction.setNqtyreceived(Double.valueOf((Integer) insJsonObj.get("Received Quantity")));
 			objTransaction.setNqtyissued(Double.valueOf((Integer) insJsonObj.get("nqtyissued")));
-			objTransaction.setIssuedbyusercode(cft.getLsuserMaster());
+			objTransaction.setIssuedbyusercode(objUser);
 			materialInventoryTransactionRepository.save(objTransaction);
 			
 			inputMap.put("nsectioncode", insJsonObj.get("nsectioncode"));
@@ -425,17 +429,24 @@ public class TransactionService {
 		final LScfttransaction cft = Objmapper.convertValue(inputMap.get("silentAudit"), LScfttransaction.class);
 		final MaterialInventory objInventoryFromMap = Objmapper.convertValue(inputMap.get("selectedMaterialInventory"), MaterialInventory.class);
 		final Map<String, Object> objResultMap =  (Map<String, Object>) inputMap.get("resultObject");
-	
+		final LStestmasterlocal objTest = new LStestmasterlocal();
+		objTest.setTestcode((Integer) objResultMap.get("testcode"));
+		
 		MaterialInventory objInventory = materialInventoryRepository.findByNmaterialinventorycode(objInventoryFromMap.getNmaterialinventorycode());
 		
 		Double getIssuedQty = Double.parseDouble(objResultMap.get("issuedQuantity").toString());
 		Double getUsedQty = Double.parseDouble(objResultMap.get("usedQuantity").toString());
 		Double getQtyLeft = getIssuedQty - Double.parseDouble(objResultMap.get("usedQuantity").toString());
 		
-		ResultUsedMaterial resultUsedMaterial = new ResultUsedMaterial();
+		LSuserMaster objUser = new LSuserMaster();
+		objUser.setUsercode(cft.getLsuserMaster());
 		
+		ResultUsedMaterial resultUsedMaterial = new ResultUsedMaterial();
+		if(objTest.getTestcode() != -1) {
+			resultUsedMaterial.setTestcode(objTest);	
+		}
 		resultUsedMaterial.setCreateddate(cft.getTransactiondate());
-		resultUsedMaterial.setCreatedbyusercode(cft.getLsuserMaster());
+		resultUsedMaterial.setCreatedbyusercode(objUser);
 		resultUsedMaterial.setNqtyissued(getIssuedQty);
 		resultUsedMaterial.setNqtyleft(getQtyLeft);
 		resultUsedMaterial.setNqtyused(getUsedQty);
@@ -468,37 +479,37 @@ public class TransactionService {
 		List<MaterialInventoryTransaction> objTransactions = materialInventoryTransactionRepository.
 				findByNmaterialinventorycodeOrderByNmaterialinventtranscode(objInventory.getNmaterialinventorycode());
 		List<MaterialInventoryTransaction> objLstTransactions = materialInventoryTransactionRepository.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(objInventory.getNmaterialinventorycode());
-		List<Integer> objnotifyuser = objLstTransactions.stream().map(MaterialInventoryTransaction::getIssuedbyusercode) .collect(Collectors.toList());
+		List<LSuserMaster> objLstuser = objLstTransactions.stream().map(MaterialInventoryTransaction::getIssuedbyusercode) .collect(Collectors.toList());
+		List<Integer> objnotifyuser = objLstuser.stream().map(LSuserMaster::getUsercode) .collect(Collectors.toList());
 		
-		objnotifyuser.add(objTransactions.get(0).getCreatedbyusercode());
+		objnotifyuser.add(objTransactions.get(0).getCreatedbyusercode().getUsercode());
 		objnotifyuser = objnotifyuser.stream().distinct().collect(Collectors.toList());
 		
 		LSuserMaster objUser = new LSuserMaster();
 		objUser.setUsercode(cft.getLsuserMaster());
 		
-		for (int i = 0; i < objnotifyuser.size(); i++) {
-
-			LSnotification objnotify = new LSnotification();
-			
-			String Details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  "
-					+ "\"qtyleft\":\"" + getQtyLeft + "\",  "
-					+ "\"notificationamount\":\"" +  objInventory.getNqtynotification() + "\"}";
-			
-			LSuserMaster toUser = new LSuserMaster();
-			toUser.setUsercode(objnotifyuser.get(i));
-			
-			objnotify.setNotifationto(toUser);
-			objnotify.setNotifationfrom(objUser);
-			objnotify.setNotificationdate(cft.getTransactiondate());
-			objnotify.setNotification(task);
-			objnotify.setNotificationdetils(Details);
-			objnotify.setIsnewnotification(1);
-			objnotify.setNotificationpath("/materialinventory");
-			objnotify.setNotificationfor(1);
-
-			lstnotifications.add(objnotify);
-			
-		}
+		lstnotifications = objnotifyuser.stream()
+			.map(userCode -> {
+		        LSnotification objnotify = new LSnotification();
+	
+		        String Details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  "
+		            + "\"qtyleft\":\"" + getQtyLeft + "\",  "
+		            + "\"notificationamount\":\"" + objInventory.getNqtynotification() + "\"}";
+	
+		        LSuserMaster toUser = new LSuserMaster();
+		        toUser.setUsercode(userCode);
+	
+		        objnotify.setNotifationto(toUser);
+		        objnotify.setNotifationfrom(objUser);
+		        objnotify.setNotificationdate(cft.getTransactiondate());
+		        objnotify.setNotification(task);
+		        objnotify.setNotificationdetils(Details);
+		        objnotify.setIsnewnotification(1);
+		        objnotify.setNotificationpath("/materialinventory");
+		        objnotify.setNotificationfor(1);
+	
+		        return objnotify;
+		    }).collect(Collectors.toList());
 		
 		lsnotificationRepository.save(lstnotifications);
 	}

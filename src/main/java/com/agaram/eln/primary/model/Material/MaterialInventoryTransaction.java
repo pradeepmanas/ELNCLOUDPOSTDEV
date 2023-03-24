@@ -7,9 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
 @Table(name = "materialinventorytransaction")
@@ -28,14 +31,17 @@ public class MaterialInventoryTransaction {
 	private Integer nresultusedmaterialcode;
 	private Double nqtyreceived;
 	private Double nqtyissued;
+	private Integer nsitecode;
 
 	@Column(name = "jsondata")
 	private String jsondata;
 	@Column(name = "jsonuidata")
 	private String jsonuidata;
 	
-	private Integer createdbyusercode;
-	private Integer issuedbyusercode;
+	@ManyToOne
+	private LSuserMaster createdbyusercode;
+	@ManyToOne
+	private LSuserMaster issuedbyusercode;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createddate;
@@ -46,19 +52,18 @@ public class MaterialInventoryTransaction {
 	public void setCreateddate(Date createddate) {
 		this.createddate = createddate;
 	}
-	public Integer getCreatedbyusercode() {
+	public LSuserMaster getCreatedbyusercode() {
 		return createdbyusercode;
 	}
-	public void setCreatedbyusercode(Integer createdbyusercode) {
+	public void setCreatedbyusercode(LSuserMaster createdbyusercode) {
 		this.createdbyusercode = createdbyusercode;
 	}
-	public Integer getIssuedbyusercode() {
+	public LSuserMaster getIssuedbyusercode() {
 		return issuedbyusercode;
 	}
-	public void setIssuedbyusercode(Integer issuedbyusercode) {
+	public void setIssuedbyusercode(LSuserMaster issuedbyusercode) {
 		this.issuedbyusercode = issuedbyusercode;
 	}
-	private Integer nsitecode;
 	
 	public Integer getNmaterialinventtranscode() {
 		return nmaterialinventtranscode;

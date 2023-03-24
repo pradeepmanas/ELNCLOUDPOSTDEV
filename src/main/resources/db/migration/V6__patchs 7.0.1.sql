@@ -3921,8 +3921,6 @@ ALTER TABLE public.manufacturer OWNER to postgres;
 
 ALTER TABLE IF Exists LSparsedparameters ADD COLUMN IF NOT EXISTS resultsvalue jsonb;
 
-ALTER TABLE IF Exists materialinventorytransaction ADD COLUMN IF NOT EXISTS issuedbyusercode integer;
-ALTER TABLE IF Exists materialinventorytransaction ADD COLUMN IF NOT EXISTS createdbyusercode integer;
 ALTER TABLE IF Exists materialinventorytransaction ADD COLUMN IF NOT EXISTS createddate timestamp without time zone;
 
 DO
@@ -3967,8 +3965,47 @@ ALTER TABLE IF EXISTS resultusedmaterial ADD COLUMN IF NOT EXISTS nqtyleft doubl
 ALTER TABLE IF EXISTS materialinventory ADD COLUMN IF NOT EXISTS nqtynotification double precision;
 
 ALTER TABLE IF Exists LsOrderattachments ADD COLUMN IF NOT EXISTS nmaterialcode integer;
-
 ALTER TABLE IF Exists lsorderattachments ADD COLUMN IF NOT EXISTS nmaterialcode integer;
+
+ALTER TABLE IF Exists materialinventorytransaction ADD COLUMN IF NOT EXISTS issuedbyusercode_usercode integer;
+ALTER TABLE IF Exists materialinventorytransaction ADD COLUMN IF NOT EXISTS createdbyusercode_usercode integer;
+
+ALTER TABLE IF Exists resultusedmaterial ADD COLUMN IF NOT EXISTS testcode_testcode integer;
+ALTER TABLE IF Exists resultusedmaterial ADD COLUMN IF NOT EXISTS createdbyusercode_usercode integer;
+
+ALTER TABLE resultusedmaterial DROP COLUMN IF EXISTS testcode;
+ALTER TABLE resultusedmaterial DROP COLUMN IF EXISTS createdbyusercode;
+ALTER TABLE materialinventorytransaction DROP COLUMN IF EXISTS createdbyusercode;
+ALTER TABLE materialinventorytransaction DROP COLUMN IF EXISTS issuedbyusercode; 
+
+DO
+$do$
+declare
+  resultcount integer :=0;
+begin
+SELECT count(*) into resultcount FROM information_schema.table_constraints WHERE constraint_name='fk5wxdhe1234wr5m0ejfbh6e47' 
+AND table_name='resultusedmaterial';
+ IF resultcount =0 THEN
+    ALTER TABLE ONLY resultusedmaterial ADD CONSTRAINT fk5wxdhe1234wr5m0ejfbh6e47 FOREIGN KEY (createdbyusercode_usercode) REFERENCES lsusermaster(usercode);
+    ALTER TABLE ONLY resultusedmaterial ADD CONSTRAINT fk5wxdhe1256wr5m0ejfbh6e47 FOREIGN KEY (testcode_testcode) REFERENCES LStestmasterlocal(testcode);
+  END IF;
+END
+$do$;
+
+DO
+$do$
+declare
+  inventorycount integer :=0;
+begin
+SELECT count(*) into inventorycount FROM information_schema.table_constraints WHERE constraint_name='fk5wxdhe678ewr5m0ejfbabc47' 
+AND table_name='materialinventorytransaction';
+ IF inventorycount =0 THEN
+    ALTER TABLE ONLY materialinventorytransaction ADD CONSTRAINT fk5wxdhe678ewr5m0ejfbabc47 FOREIGN KEY (createdbyusercode_usercode) REFERENCES lsusermaster(usercode);
+    ALTER TABLE ONLY materialinventorytransaction ADD CONSTRAINT fk5wxdhe690ewr5m0ejfbabc47 FOREIGN KEY (issuedbyusercode_usercode) REFERENCES lsusermaster(usercode);
+  END IF;
+END
+$do$;
+
 DO
 $do$
 declare
@@ -3981,3 +4018,6 @@ AND table_name='lsorderattachments';
    END IF;
 END
 $do$;
+update delimiter set createddate='2020-05-15 00:00:00.0000000' where createddate is Null;
+
+update methoddelimiter set createddate='2020-05-15 00:00:00.0000000' where createddate is Null;

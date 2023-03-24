@@ -107,7 +107,7 @@ public class DatasourceService {
 //					e.printStackTrace();
 //				}
 			} else if (!objdatasource.isInitialize()) {
-				objreponse.setInformation("ID_ORGREGINPROGRESS");
+				objreponse.setInformation("IDS_MSG_ORGREGINPROGRESS");
 				objreponse.setStatus(false);
 				objdatasource.setObjResponse(objreponse);
 			} else if (!objdatasource.isIsenable()) {
@@ -837,7 +837,7 @@ public class DatasourceService {
 				objreponse.setStatus(true);
 				objdatasource.setObjResponse(objreponse);
 			} else if (!objdatasource.isInitialize()) {
-				objreponse.setInformation("ID_ORGREGINPROGRESS");
+				objreponse.setInformation("IDS_MSG_ORGREGINPROGRESS");
 				objreponse.setStatus(false);
 				objdatasource.setObjResponse(objreponse);
 			} else if (!objdatasource.isIsenable()) {
@@ -866,7 +866,7 @@ public class DatasourceService {
 				objreponse.setStatus(true);
 				objdatasource.setObjResponse(objreponse);
 			} else if (!objdatasource.isInitialize()) {
-				objreponse.setInformation("ID_ORGREGINPROGRESS");
+				objreponse.setInformation("IDS_MSG_ORGREGINPROGRESS");
 				objreponse.setStatus(false);
 				objdatasource.setObjResponse(objreponse);
 			} else if (!objdatasource.isIsenable()) {
