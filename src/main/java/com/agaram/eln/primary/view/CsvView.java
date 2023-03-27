@@ -2,7 +2,9 @@ package com.agaram.eln.primary.view;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ import org.supercsv.io.ICsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
 import com.agaram.eln.primary.util.MapUtil;
+import com.itextpdf.text.Paragraph;
 
 /**
  * This class to use to create CSV file with provided input data
@@ -80,7 +83,7 @@ public class CsvView extends AbstractCsvView {
     				
 	       				 }       				 
 	       				objList.add(value);
-	       			 }else  if (dataEntry.getValue() instanceof java.util.ArrayList)
+	       			 } else  if (dataEntry.getValue() instanceof java.util.ArrayList)
         			 {
 	       				 String value ="";
 	       				 if(deepDataObject.containsKey(dataEntry.getKey()))
@@ -92,12 +95,14 @@ public class CsvView extends AbstractCsvView {
 	       				objList.add(value);
         			 }
         			
-
 	       			 else
 	       			 {
 	       				 if (dataEntry.getKey().equalsIgnoreCase("createddate"))
 	      				 { 	      						 
-	       					objList.add( String.valueOf(dataEntry.getValue()));
+	       				//	objList.add(dateFormat.format(dataEntry.getValue()));
+	       					
+	       					objList.add(dateFormat.format(Date.from(Instant.parse((String) dataEntry.getValue()))));
+
 	      				 }
 	       				 else
 	       				 {

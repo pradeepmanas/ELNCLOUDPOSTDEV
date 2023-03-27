@@ -1,7 +1,9 @@
 package com.agaram.eln.primary.view;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,25 +149,28 @@ public class ExcelView extends AbstractXlsxView{
         				 
 	       				row.createCell(cellNum).setCellValue(value);
 	       			 }else  if (dataEntry.getValue() instanceof java.util.ArrayList)
-        			   {
+        			 {
 	       				String value ="";
 	       				 if(deepDataObject.containsKey(dataEntry.getKey()))
-       				     {
-       					  List<String> dataValueMap = (List<String>) deepDataObject.get(dataEntry.getKey());	        					 
-   						  value = new MapUtil().getNestedValue((Map<String, Object>)dataEntry.getValue(), dataValueMap);
-//       				 
-       				    }
+       				 {
+       					 List<String> dataValueMap = (List<String>) deepDataObject.get(dataEntry.getKey());	        					 
+   						 value = new MapUtil().getNestedValue((Map<String, Object>)dataEntry.getValue(), dataValueMap);
+//       				
+       				 }
        				 
 	       				row.createCell(cellNum).setCellValue(value);
         			 }
         			
+
 	       			 else
 	       			 {
 	       				 if (dataEntry.getKey().equalsIgnoreCase("createddate"))
 	      				 { 	      						 
       						 Cell cell =  row.createCell(cellNum);
       	        			 cell.setCellStyle(dateCellStyle);
-      	        			cell.setCellValue((String)dataEntry.getValue());
+      	        			//cell.setCellValue(dateFormat.format(dataEntry.getValue()));
+      	        			cell.setCellValue(dateFormat.format(Date.from(Instant.parse((String) dataEntry.getValue()))));
+      	        			//objList.add(dateFormat.format(Date.from(Instant.parse((String) dataEntry.getValue()))));
 	      				 }
 	       				 else
 	       				 {

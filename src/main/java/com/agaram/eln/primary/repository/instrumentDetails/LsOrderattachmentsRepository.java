@@ -16,4 +16,6 @@ public interface LsOrderattachmentsRepository extends JpaRepository<LsOrderattac
 	public List<LsOrderattachments> findByBatchcodeOrderByAttachmentcodeDesc(Long batchcode);
 
 	public List<LsOrderattachments> findByNmaterialcodeOrderByAttachmentcodeDesc(Object object);
+
+	public List<LsOrderattachments> findByNmaterialinventorycodeOrderByAttachmentcodeDesc(Object object);
 }

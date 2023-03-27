@@ -65,4 +65,11 @@ public class TransactionController {
 
 		return transactionService.getMaterialLst4DashBoard(inputMap);
 	}
+	
+	@PostMapping(value="/updateMaterialInventoryNotification")
+	public void updateMaterialInventoryNotification(@RequestBody Map<String, Object> inputMap)
+			throws Exception {
+
+		transactionService.updateMaterialInventoryNotification(inputMap);
+	}
 }

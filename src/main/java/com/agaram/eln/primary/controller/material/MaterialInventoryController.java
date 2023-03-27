@@ -1,15 +1,21 @@
 package com.agaram.eln.primary.controller.material;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.service.material.MaterialInventoryService;
 
 @RestController
@@ -81,5 +87,18 @@ public class MaterialInventoryController {
 	public ResponseEntity<Object> getMaterialInventorySearchByID(@RequestBody Map<String, Object> inputMap) throws Exception {
 		
 		return (ResponseEntity<Object>) materialInventoryService.getMaterialInventorySearchByID(inputMap);
+	}
+	@PostMapping("/CloudUploadattachments")
+	public MaterialInventory CloudUploadattachments(@RequestParam("file") MultipartFile file,
+			@RequestParam("order") Integer nmaterialinventorycode, @RequestParam("filename") String filename,
+			@RequestParam("fileexe") String fileexe, @RequestParam("usercode") Integer usercode,
+			@RequestParam("date") Date currentdate,@RequestParam("isMultitenant") Integer isMultitenant)
+			throws IOException {
+		return materialInventoryService.CloudUploadattachments(file, nmaterialinventorycode, filename, fileexe, usercode, currentdate,isMultitenant);
+	}
+	@RequestMapping(value = "/getAttachments", method = RequestMethod.POST)
+	public Map<String, Object> getAttachments(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return materialInventoryService.getAttachments(inputMap);
 	}
 }

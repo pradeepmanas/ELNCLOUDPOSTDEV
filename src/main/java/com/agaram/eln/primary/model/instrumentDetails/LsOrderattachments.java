@@ -44,9 +44,17 @@ public class LsOrderattachments {
 	
 	private Integer islargefile;
 	private Integer nmaterialcode;
-	
-	
-public Integer getNmaterialcode() {
+	private Integer nmaterialinventorycode;
+		
+	public Integer getNmaterialinventorycode() {
+		return nmaterialinventorycode;
+	}
+
+	public void setNmaterialinventorycode(Integer nmaterialinventorycode) {
+		this.nmaterialinventorycode = nmaterialinventorycode;
+	}
+
+	public Integer getNmaterialcode() {
 		return nmaterialcode;
 	}
 

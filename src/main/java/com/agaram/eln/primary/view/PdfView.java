@@ -151,6 +151,10 @@ public class PdfView extends AbstractPdfView {
 							para = new Paragraph(
 									dateFormat.format(Date.from(Instant.parse((String) dataEntry.getValue()))),
 									dataFont);
+							
+						//	para = new Paragraph(dateFormat.format(dataEntry.getValue()));
+							
+							//objList.add(dateFormat.format(dataEntry.getValue()));
 
 							// para = new Paragraph(
 							// LocalDateTime.parse((String)dataEntry.getValue()).format(dateFormat),

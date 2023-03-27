@@ -221,6 +221,9 @@ public class LStestmaster {
 	private String smodifieddate;
 	
 	@Transient
+	private String scontainertype;
+	
+	@Transient
 	private Integer ntat;
 	
 	@Transient
@@ -237,7 +240,26 @@ public class LStestmaster {
 	
 	@Transient
 	private Integer nproductcatcode;
+	
+	@Transient
+	private Integer	ncontainertypecode;
 
+
+	public String getScontainertype() {
+		return scontainertype;
+	}
+
+	public void setScontainertype(String scontainertype) {
+		this.scontainertype = scontainertype;
+	}
+
+	public Integer getNcontainertypecode() {
+		return ncontainertypecode;
+	}
+
+	public void setNcontainertypecode(Integer ncontainertypecode) {
+		this.ncontainertypecode = ncontainertypecode;
+	}
 
 	public String getStestcategoryname() {
 		return stestcategoryname;

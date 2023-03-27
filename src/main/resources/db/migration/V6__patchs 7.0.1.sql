@@ -1087,8 +1087,8 @@ update lsaudittrailconfigmaster set taskname='IDS_TSK_DELETED' where serialno in
 update lsaudittrailconfiguration set taskname='IDS_TSK_DELETED' where taskname='IDS_TSK_DELETE' and screenname in ('IDS_SCN_PROJECTTEAM','IDS_SCN_CFRSETTINGS','IDS_SCN_ORDERWORKFLOW','IDS_SCN_TEMPLATEWORKFOW');
 update lsaudittrailconfiguration set taskname='IDS_TSK_DELETED' where taskname='IDS_TSK_DELETE' and modulename ='IDS_MDL_PARSER';
 
-INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (85, 'IDS_TSK_FOLDERCREATION', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',2,'IDS_SCN_SHEETORDERS') ON CONFLICT(orderno)DO NOTHING;
-INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (86, 'IDS_TSK_FOLDERCREATIONPROTOCOL', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',3,'IDS_SCN_PROTOCOLORDERS') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (85, 'IDS_TSK_FOLDERCREATION', 'IDS_MDL_ORDERS', '0', '0', '0', '0', '1,0,0',2,'IDS_SCN_SHEETORDERS') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (86, 'IDS_TSK_FOLDERCREATIONPROTOCOL', 'IDS_MDL_ORDERS', '0', '0', '0', '0', '1,0,0',3,'IDS_SCN_PROTOCOLORDERS') ON CONFLICT(orderno)DO NOTHING;
 
 update lsaudittrailconfigmaster set screenname='IDS_SCN_TEMPLATEWORKFLOW'  where screenname='IDS_SCN_SHEETWORKFLOW';
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (87, 'IDS_TSK_DASHBOARDINVENTORY', 'IDS_MDL_DASHBOARD', '0', 'NA', 'NA', 'NA', '0,0,0',4,'IDS_SCN_DASHBOARD') ON CONFLICT(orderno)DO NOTHING;
@@ -1351,7 +1351,7 @@ INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ORDERSHAREDBYMEPROTOCOL', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ORDERSHAREDBYMEPROTOCOL' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ORDERSHAREDTOMEPROTOCOL', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ORDERSHAREDTOMEPROTOCOL' and usergroupid_usergroupcode = 1) ; 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ACTDEACTUSERMASTER', 'IDS_MDL_SETUP', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_USERMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ACTDEACTUSERMASTER' and usergroupid_usergroupcode = 1) ; 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_FOLDERCREATION', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_FOLDERCREATION' and usergroupid_usergroupcode = 1) ; 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_FOLDERCREATION', 'IDS_MDL_ORDERS', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_SHEETORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_FOLDERCREATION' and usergroupid_usergroupcode = 1) ; 
 
 delete from lsusergrouprights where displaytopic IN ('IDS_SCN_TEMPLATEMAPPING','IDS_TSK_ELNANDRESEARCH');
 
@@ -3963,8 +3963,6 @@ ALTER TABLE IF EXISTS resultusedmaterial ADD COLUMN IF NOT EXISTS nqtyissued dou
 ALTER TABLE IF EXISTS resultusedmaterial ADD COLUMN IF NOT EXISTS nqtyused double precision;
 ALTER TABLE IF EXISTS resultusedmaterial ADD COLUMN IF NOT EXISTS nqtyleft double precision;
 ALTER TABLE IF EXISTS materialinventory ADD COLUMN IF NOT EXISTS nqtynotification double precision;
-
-ALTER TABLE IF Exists LsOrderattachments ADD COLUMN IF NOT EXISTS nmaterialcode integer;
 ALTER TABLE IF Exists lsorderattachments ADD COLUMN IF NOT EXISTS nmaterialcode integer;
 
 ALTER TABLE IF Exists materialinventorytransaction ADD COLUMN IF NOT EXISTS issuedbyusercode_usercode integer;
@@ -4021,3 +4019,20 @@ $do$;
 update delimiter set createddate='2020-05-15 00:00:00.0000000' where createddate is Null;
 
 update methoddelimiter set createddate='2020-05-15 00:00:00.0000000' where createddate is Null;
+
+ALTER TABLE IF Exists lsorderattachments ADD COLUMN IF NOT EXISTS nmaterialinventorycode integer;
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM information_schema.table_constraints WHERE constraint_name='fkbvkyp7mg7pxs4oxsg45bmnj6l'
+AND table_name='lsorderattachments';
+ IF multiusergroupcount =0 THEN
+    ALTER TABLE ONLY lsorderattachments ADD CONSTRAINT fkbvkyp7mg7pxs4oxsg45bmnj6l FOREIGN KEY (nmaterialinventorycode) REFERENCES materialinventory(nmaterialinventorycode);
+   END IF;
+END
+$do$;
+
+update lsusergrouprights set screate ='1' where displaytopic='IDS_TSK_FOLDERCREATION' and screate='NA'

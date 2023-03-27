@@ -27,10 +27,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialCategory;
@@ -42,6 +44,7 @@ import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.ResultUsedMaterial;
 import com.agaram.eln.primary.model.material.TransactionStatus;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
@@ -52,6 +55,9 @@ import com.agaram.eln.primary.repository.material.MaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.agaram.eln.primary.repository.material.ResultUsedMaterialRepository;
 import com.agaram.eln.primary.repository.material.TransactionStatusRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
+import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
+import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,6 +85,14 @@ public class MaterialInventoryService {
 	MaterialInventoryTransactionRepository materialInventoryTransactionRepository;
 	@Autowired
 	private ResultUsedMaterialRepository resultUsedMaterialRepository;
+	@Autowired
+	private LSuserMasterRepository lsuserMasterRepository;
+	@Autowired
+	private LsOrderattachmentsRepository lsOrderattachmentsRepository;
+	@Autowired
+	private CloudFileManipulationservice cloudFileManipulationservice;	
+	@Autowired
+	private FileManipulationservice fileManipulationservice;
 
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInventory(Integer nsiteInteger) throws Exception {
@@ -457,22 +471,20 @@ public class MaterialInventoryService {
 
 		Map<String, Object> rtnObj = new HashMap<>();
 		Map<String, Object> rtnUnitObj = new HashMap<>();
+		Map<String, Object> objContent = new HashMap<>();
 		
-		Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(),"Material Name");
-		String materialName = (String) objContent.get("rtnObj");
-
-		objContent = commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Basic Unit");
-		JSONObject jsonUnitObject = (JSONObject) objContent.get("rtnObj");
-
+		JSONObject jsonUnitObject = (JSONObject) commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Basic Unit").get("rtnObj") ;
 		rtnUnitObj.put("label", jsonUnitObject.get("label"));
 		rtnUnitObj.put("value", jsonUnitObject.get("value"));
 		
-		objContent.put("isExpiryNeed", "No Expiry");
 		objContent.put("nmaterialcode", objmaterial.getNmaterialcode());
-		objContent.put("Material Name", materialName);
 		objContent.put("nunitcode", rtnUnitObj);
 		objContent.put("ntranscode", objmaterial.getNtransactionstatus());
+		objContent.put("Material Name", (String) commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(),"Material Name").get("rtnObj"));
+		objContent.put("isExpiryNeed", (String) commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(),"Expiry Validations").get("rtnObj"));
+		objContent.put("Next Validation Need", commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Next Validation Need").get("rtnObj"));
 		objContent.put("Open Expiry Need", commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Open Expiry Need").get("rtnObj"));
+		
 		if(objmaterial.getNmaterialtypecode() == 3 || objmaterial.getNmaterialtypecode() == 4) {
 			Map<String, Object> isReusable = commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Reusable");
 			objContent.put("isreusable", Integer.parseInt(isReusable.get("rtnObj").toString()) == 3 ? true : false);
@@ -1691,5 +1703,48 @@ public class MaterialInventoryService {
 //		objmap.putAll((Map<String, Object>) getMaterialInventoryhistory((int) inputMap.get("nmaterialinventorycode"),
 //				userInfo));
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	public MaterialInventory CloudUploadattachments(MultipartFile file, Integer nmaterialinventorycode, String filename,
+			String fileexe, Integer usercode, Date currentdate,Integer isMultitenant) throws IOException {
+		MaterialInventory objmaterialinv = materialInventoryRepository.findOne(nmaterialinventorycode);
+		LsOrderattachments objattachment = new LsOrderattachments();
+		if(isMultitenant == 0) {
+			if (fileManipulationservice.storeLargeattachment(filename, file) != null) {
+				objattachment.setFileid(fileManipulationservice.storeLargeattachment(filename, file));
+			}	
+		}
+		
+     	objattachment.setFilename(filename);
+		objattachment.setFileextension(fileexe);
+		objattachment.setCreateby(lsuserMasterRepository.findByusercode(usercode));
+		objattachment.setCreatedate(currentdate);
+		objattachment.setNmaterialinventorycode(objmaterialinv.getNmaterialinventorycode());
+		if (objmaterialinv != null && objmaterialinv.getLsOrderattachments() != null) {
+			objmaterialinv.getLsOrderattachments().add(objattachment);
+		} else {
+			objmaterialinv.setLsOrderattachments(new ArrayList<LsOrderattachments>());
+			objmaterialinv.getLsOrderattachments().add(objattachment);
+		}
+		lsOrderattachmentsRepository.save(objmaterialinv.getLsOrderattachments());		
+		if(isMultitenant != 0) {
+		String filenameval = "attach_"+ objmaterialinv.getNmaterialcode() + "_" + objmaterialinv.getLsOrderattachments()
+		.get(objmaterialinv.getLsOrderattachments().lastIndexOf(objattachment)).getAttachmentcode()+ "_" + filename;
+			String id = cloudFileManipulationservice.storeLargeattachment(filenameval, file);
+			if (id != null) {
+				objattachment.setFileid(id);
+		}
+	
+		lsOrderattachmentsRepository.save(objmaterialinv.getLsOrderattachments());
+		}	
+
+		return objmaterialinv;
+	}
+
+	public Map<String, Object> getAttachments(Map<String, Object> objMap) {
+		Map<String, Object> obj = new HashMap<>();
+		List<LsOrderattachments> lstattach = lsOrderattachmentsRepository.findByNmaterialinventorycodeOrderByAttachmentcodeDesc(objMap.get("nmaterialinventorycode"));
+		obj.put("lsOrderattachments", lstattach);			
+		return obj;
+
 	}
 }

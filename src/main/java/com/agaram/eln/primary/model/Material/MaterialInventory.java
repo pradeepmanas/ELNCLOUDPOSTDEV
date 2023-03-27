@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 
 @Entity
 @Table(name="materialinventory")
@@ -55,6 +56,18 @@ public class MaterialInventory {
 	
 	@Transient
 	public String info;
+	
+	@OneToMany
+	@JoinColumn(name = "nmaterialinventorycode")
+	private List<LsOrderattachments> lsOrderattachments;	
+	
+	
+	public List<LsOrderattachments> getLsOrderattachments() {
+		return lsOrderattachments;
+	}
+	public void setLsOrderattachments(List<LsOrderattachments> lsOrderattachments) {
+		this.lsOrderattachments = lsOrderattachments;
+	}
 	
 	private Double nqtynotification;
 	
