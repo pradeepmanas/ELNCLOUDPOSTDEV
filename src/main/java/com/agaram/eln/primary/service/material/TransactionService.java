@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -80,10 +81,10 @@ public class TransactionService {
 
 	@Autowired
 	private MaterialInventoryService materialInventoryService;
-	
+
 	@Autowired
-	private LSnotificationRepository  lsnotificationRepository;
-	
+	private LSnotificationRepository lsnotificationRepository;
+
 	@Autowired
 	private ResultUsedMaterialRepository resultUsedMaterialRepository;
 
@@ -95,10 +96,8 @@ public class TransactionService {
 		List<MaterialCategory> lstCategories = new ArrayList<MaterialCategory>();
 		List<Material> lstMaterials = new ArrayList<Material>();
 		List<MaterialInventory> lstMaterialInventories = new ArrayList<MaterialInventory>();
-		
+
 		Integer nsiteInteger = (Integer) inputMap.get("sitecode");
-		
-//		Integer nsiteInteger = Integer.parseInt(sSiteInteger);
 
 		if (inputMap.containsKey("nFlag")) {
 			/**
@@ -106,16 +105,17 @@ public class TransactionService {
 			 */
 			if ((Integer) inputMap.get("nFlag") == 1) {
 
-				lstTypes = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusOrderByNmaterialtypecode(-1,1);
+				lstTypes = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusOrderByNmaterialtypecode(-1, 1);
 
 				if (!lstTypes.isEmpty()) {
 					lstCategories = materialCategoryRepository
-							.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcodeDesc(lstTypes.get(0).getNmaterialtypecode(),nsiteInteger);
+							.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcodeDesc(
+									lstTypes.get(0).getNmaterialtypecode(), nsiteInteger);
 
 					if (!lstCategories.isEmpty()) {
 
-						lstMaterials = materialRepository
-								.findByNmaterialcatcodeAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0).getNmaterialcatcode(),nsiteInteger);
+						lstMaterials = materialRepository.findByNmaterialcatcodeAndNsitecodeOrderByNmaterialcodeDesc(
+								lstCategories.get(0).getNmaterialcatcode(), nsiteInteger);
 
 						if (!lstMaterials.isEmpty()) {
 							lstMaterialInventories = materialInventoryRepository
@@ -133,12 +133,13 @@ public class TransactionService {
 
 				Integer nTypeCode = (Integer) inputMap.get("nmaterialtypecode");
 
-				lstCategories = materialCategoryRepository.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcodeDesc(nTypeCode,nsiteInteger);
+				lstCategories = materialCategoryRepository
+						.findByNmaterialtypecodeAndNsitecodeOrderByNmaterialcatcodeDesc(nTypeCode, nsiteInteger);
 
 				if (!lstCategories.isEmpty()) {
 
-					lstMaterials = materialRepository
-							.findByNmaterialcatcodeAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0).getNmaterialcatcode(),nsiteInteger);
+					lstMaterials = materialRepository.findByNmaterialcatcodeAndNsitecodeOrderByNmaterialcodeDesc(
+							lstCategories.get(0).getNmaterialcatcode(), nsiteInteger);
 
 					if (!lstMaterials.isEmpty()) {
 						lstMaterialInventories = materialInventoryRepository
@@ -200,23 +201,34 @@ public class TransactionService {
 
 		List<Map<String, Object>> lstMaterialInventoryTrans = new ArrayList<Map<String, Object>>();
 		List<MaterialInventoryTransaction> lstInventoryTransaction = materialInventoryTransactionRepository
-				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc((Integer) inputMap.get("nmaterialinventorycode"));
-		MaterialInventory objInventory = materialInventoryRepository.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
-		
-		Map<String, Object> mapJsonData = new ObjectMapper().readValue(lstInventoryTransaction.get(0).getJsonuidata(),Map.class);
-		Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(lstInventoryTransaction.get(0).getJsonuidata(), "namountleft");
+				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(
+						(Integer) inputMap.get("nmaterialinventorycode"));
+		MaterialInventory objInventory = materialInventoryRepository
+				.findByNmaterialinventorycodeAndNtransactionstatusNot((Integer) inputMap.get("nmaterialinventorycode"),
+						55);
 
-		mapJsonData.put("Available Quantity", objContent.get("rtnObj"));		
-		objContent = commonfunction.getInventoryValuesFromJsonString(objInventory.getJsonuidata(),"Received Quantity");
-		
-		List<ResultUsedMaterial> lstMaterial = resultUsedMaterialRepository.findByNinventorycodeOrderByNresultusedmaterialcodeDesc(objInventory.getNmaterialinventorycode());
-		
-		if(!lstMaterial.isEmpty()) {
-			mapJsonData.put("Issued Quantity", lstMaterial.get(0).getNqtyleft());
-		}else {
-			mapJsonData.put("Issued Quantity", Double.parseDouble(objContent.get("rtnObj").toString()) - Double.parseDouble(mapJsonData.get("Available Quantity").toString()));
+		Map<String, Object> mapJsonData = new ObjectMapper().readValue(lstInventoryTransaction.get(0).getJsonuidata(),
+				Map.class);
+
+		Double totalQuantity = Double.parseDouble(commonfunction
+				.getInventoryValuesFromJsonString(objInventory.getJsondata(), "Received Quantity").get("rtnObj").toString());		
+
+		List<Double> nqtyreceivedlst = lstInventoryTransaction.stream()
+				.map(MaterialInventoryTransaction::getNqtyreceived).collect(Collectors.toList());
+		List<Double> nqtyissuedLst = lstInventoryTransaction.stream().map(MaterialInventoryTransaction::getNqtyissued)
+				.collect(Collectors.toList());
+
+		double nqtyreceived = nqtyreceivedlst.stream().mapToDouble(Double::doubleValue).sum();
+		double nqtyissued = nqtyissuedLst.stream().mapToDouble(Double::doubleValue).sum();
+			
+		Double availabledQuantity = nqtyreceived - nqtyissued;
+		mapJsonData.put("Available Quantity", availabledQuantity);
+		if (totalQuantity == availabledQuantity) {
+			mapJsonData.put("Issued Quantity", availabledQuantity);
+		} else {
+			mapJsonData.put("Issued Quantity", totalQuantity - availabledQuantity);
 		}
-		
+
 		mapJsonData.put("Received Quantity", lstInventoryTransaction.get(0).getNqtyreceived());
 		mapJsonData.put("NotificationQty", objInventory.getNqtynotification());
 
@@ -231,24 +243,24 @@ public class TransactionService {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		ObjectMapper Objmapper = new ObjectMapper();
 		JSONObject json = new JSONObject();
-		
+
 		final LScfttransaction cft = Objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		final String dtransactiondate = "dd-mm-yy";
 
 		JSONObject insJsonObj = new JSONObject(inputMap.get("MaterialInventoryTrans").toString());
 		JSONObject jsonuidata = new JSONObject(inputMap.get("jsonuidata").toString());
 		JSONObject jsonTransObj = (JSONObject) jsonuidata.get("Transaction Type");
-		
+
 		int nInventrans = (int) insJsonObj.get("ninventorytranscode");
-		
+
 		String inventTransString = nInventrans == 1 ? "Inhouse" : "Outside";
-		
+
 		Date objCreatedDate = cft.getTransactiondate();
-		
+
 		LocalDateTime myDateObj = LocalDateTime.now();
-	    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern(dtransactiondate);
-	    String formattedDate = myDateObj.format(myFormatObj);
-				
+		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern(dtransactiondate);
+		String formattedDate = myDateObj.format(myFormatObj);
+
 		jsonuidata.put("Transaction Type", jsonTransObj.get("transactionname"));
 		jsonuidata.put("Inventory Transaction Type", inventTransString);
 		insJsonObj.put("Transaction Type", jsonTransObj.get("transactionname"));
@@ -259,24 +271,28 @@ public class TransactionService {
 		jsonuidata.put("Transaction Date & Time", formattedDate);
 		jsonuidata.put("noffsetTransaction Date & Time", commonfunction.getCurrentDateTimeOffset("Europe/London"));
 
-		if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.ISSUE.gettransactionstatus() || (int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.REJECTED.gettransactionstatus()) {
-			
-			double namountleft = Double.parseDouble(insJsonObj.get("navailableqty").toString()) - Double.parseDouble(insJsonObj.get("Received Quantity").toString());
+		if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.ISSUE.gettransactionstatus()
+				|| (int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.REJECTED
+						.gettransactionstatus()) {
+
+			double namountleft = Double.parseDouble(insJsonObj.get("navailableqty").toString())
+					- Double.parseDouble(insJsonObj.get("Received Quantity").toString());
 
 			String amtleft = new Double(namountleft).toString();
 
 			insJsonObj.put("namountleft", amtleft);
 			jsonuidata.put("namountleft", amtleft);
 
-		} else if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.RETURN.gettransactionstatus()) {
-			
+		} else if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.RETURN
+				.gettransactionstatus()) {
+
 			double availqty = Double.parseDouble(insJsonObj.get("navailableqty").toString());
 			double namountleft = availqty + Double.parseDouble(insJsonObj.get("Received Quantity").toString());
 
-			insJsonObj.put("namountleft",new Double (namountleft).toString());
-			jsonuidata.put("namountleft", new Double (namountleft).toString());
-			insJsonObj.put("navailableqty", new Double (namountleft).toString());
-			jsonuidata.put("navailableqty", new Double (namountleft).toString());
+			insJsonObj.put("namountleft", new Double(namountleft).toString());
+			jsonuidata.put("namountleft", new Double(namountleft).toString());
+			insJsonObj.put("navailableqty", new Double(namountleft).toString());
+			jsonuidata.put("navailableqty", new Double(namountleft).toString());
 		} else {
 			double availqty = Double.parseDouble(insJsonObj.get("navailableqty").toString());
 			double namountleft = availqty + Double.parseDouble(insJsonObj.get("Received Quantity").toString());
@@ -286,7 +302,8 @@ public class TransactionService {
 		}
 
 		if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.ISSUE.gettransactionstatus()
-				|| (int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.REJECTED .gettransactionstatus()) {
+				|| (int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.REJECTED
+						.gettransactionstatus()) {
 			if (insJsonObj.get("Received Quantity").toString().contains(".")) {
 				insJsonObj.put("nqtyissued", Double.parseDouble(insJsonObj.get("Received Quantity").toString()));
 				jsonuidata.put("nqtyissued", Double.parseDouble(insJsonObj.get("Received Quantity").toString()));
@@ -296,9 +313,11 @@ public class TransactionService {
 			}
 			insJsonObj.put("Received Quantity", 0);
 			jsonuidata.put("Received Quantity", 0);
-		} else if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.RECEIVE.gettransactionstatus()
-				|| (int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.RETURN.gettransactionstatus()) {
-			
+		} else if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.RECEIVE
+				.gettransactionstatus()
+				|| (int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.RETURN
+						.gettransactionstatus()) {
+
 			if (insJsonObj.get("Received Quantity").toString().contains(".")) {
 				insJsonObj.put("Received Quantity", Double.parseDouble(insJsonObj.get("Received Quantity").toString()));
 				jsonuidata.put("Received Quantity", Double.parseDouble(jsonuidata.get("Received Quantity").toString()));
@@ -310,19 +329,21 @@ public class TransactionService {
 			jsonuidata.put("nqtyissued", 0);
 
 		}
-		
-		if(inputMap.containsKey("notifcationamount")) {
-			MaterialInventory objInventory = materialInventoryRepository.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
+
+		if (inputMap.containsKey("notifcationamount")) {
+			MaterialInventory objInventory = materialInventoryRepository
+					.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
 			objInventory.setNqtynotification(Double.parseDouble(inputMap.get("notifcationamount").toString()));
 			materialInventoryRepository.save(objInventory);
 		}
 
 		List<MaterialInventoryTransaction> lstsourceSection = materialInventoryTransactionRepository
-				.findByNmaterialinventorycodeOrderByNmaterialinventtranscode((Integer) inputMap.get("nmaterialinventorycode"));
+				.findByNmaterialinventorycodeOrderByNmaterialinventtranscode(
+						(Integer) inputMap.get("nmaterialinventorycode"));
 
 		JSONObject insJsonObjcopy = new JSONObject(insJsonObj.toString());
 		JSONObject jsonUidataObjcopy = new JSONObject(jsonuidata.toString());
-		
+
 		LSuserMaster objUser = new LSuserMaster();
 		objUser.setUsercode(cft.getLsuserMaster());
 
@@ -352,9 +373,9 @@ public class TransactionService {
 
 			if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.ISSUE
 					.gettransactionstatus()) {
-				
-				jsonUidataObjcopy.put("Description",cft.getComments());
-				jsonuidata.put("Description",cft.getComments());
+
+				jsonUidataObjcopy.put("Description", cft.getComments());
+				jsonuidata.put("Description", cft.getComments());
 
 				MaterialInventoryTransaction objTransaction = new MaterialInventoryTransaction();
 
@@ -375,9 +396,9 @@ public class TransactionService {
 
 				inputMap.put("nsectioncode", lstsourceSection.get(0).getNsectioncode());
 			} else {
-				
-				jsonUidataObjcopy.put("Description",cft.getComments());
-				jsonuidata.put("Description",cft.getComments());
+
+				jsonUidataObjcopy.put("Description", cft.getComments());
+				jsonuidata.put("Description", cft.getComments());
 
 				MaterialInventoryTransaction objTransaction = new MaterialInventoryTransaction();
 
@@ -400,8 +421,8 @@ public class TransactionService {
 			}
 
 		} else {
-			
-			jsonUidataObjcopy.put("Description",cft.getComments());
+
+			jsonUidataObjcopy.put("Description", cft.getComments());
 
 			MaterialInventoryTransaction objTransaction = new MaterialInventoryTransaction();
 
@@ -418,39 +439,56 @@ public class TransactionService {
 			objTransaction.setNqtyissued(Double.valueOf((Integer) insJsonObj.get("nqtyissued")));
 			objTransaction.setIssuedbyusercode(objUser);
 			materialInventoryTransactionRepository.save(objTransaction);
-			
+
 			inputMap.put("nsectioncode", insJsonObj.get("nsectioncode"));
 		}
 		objmap.put("nregtypecode", -1);
 		objmap.put("nregsubtypecode", -1);
 
-		objmap.putAll((Map<String, Object>) materialInventoryService.getQuantityTransactionByMaterialInvCode((int) inputMap.get("nmaterialinventorycode"), inputMap).getBody());
+		if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.RETURN.gettransactionstatus()) {
+			List<ResultUsedMaterial> objList = resultUsedMaterialRepository
+					.findByNinventorycodeOrderByNresultusedmaterialcodeDesc(
+							(Integer) inputMap.get("nmaterialinventorycode"));
+
+			if (!objList.isEmpty()) {
+				objList.get(0).setNqtyleft(objList.get(0).getNqtyleft()
+						- Double.parseDouble(insJsonObj.get("Received Quantity").toString()));
+				resultUsedMaterialRepository.save(objList);
+			}
+		}
+
+		objmap.putAll((Map<String, Object>) materialInventoryService
+				.getQuantityTransactionByMaterialInvCode((int) inputMap.get("nmaterialinventorycode"), inputMap)
+				.getBody());
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> createMaterialResultUsed(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
-		
+	public ResponseEntity<Object> createMaterialResultUsed(Map<String, Object> inputMap)
+			throws JsonParseException, JsonMappingException, IOException {
+
 		ObjectMapper Objmapper = new ObjectMapper();
-		
+
 		final LScfttransaction cft = Objmapper.convertValue(inputMap.get("silentAudit"), LScfttransaction.class);
-		final MaterialInventory objInventoryFromMap = Objmapper.convertValue(inputMap.get("selectedMaterialInventory"), MaterialInventory.class);
-		final Map<String, Object> objResultMap =  (Map<String, Object>) inputMap.get("resultObject");
+		final MaterialInventory objInventoryFromMap = Objmapper.convertValue(inputMap.get("selectedMaterialInventory"),
+				MaterialInventory.class);
+		final Map<String, Object> objResultMap = (Map<String, Object>) inputMap.get("resultObject");
 		final LStestmasterlocal objTest = new LStestmasterlocal();
 		objTest.setTestcode((Integer) objResultMap.get("testcode"));
-		
-		MaterialInventory objInventory = materialInventoryRepository.findByNmaterialinventorycode(objInventoryFromMap.getNmaterialinventorycode());
-		
+
+		MaterialInventory objInventory = materialInventoryRepository
+				.findByNmaterialinventorycode(objInventoryFromMap.getNmaterialinventorycode());
+
 		Double getIssuedQty = Double.parseDouble(objResultMap.get("issuedQuantity").toString());
 		Double getUsedQty = Double.parseDouble(objResultMap.get("usedQuantity").toString());
 		Double getQtyLeft = getIssuedQty - Double.parseDouble(objResultMap.get("usedQuantity").toString());
-		
+
 		LSuserMaster objUser = new LSuserMaster();
 		objUser.setUsercode(cft.getLsuserMaster());
-		
+
 		ResultUsedMaterial resultUsedMaterial = new ResultUsedMaterial();
-		if(objTest.getTestcode() != -1) {
-			resultUsedMaterial.setTestcode(objTest);	
+		if (objTest.getTestcode() != -1) {
+			resultUsedMaterial.setTestcode(objTest);
 		}
 		resultUsedMaterial.setCreateddate(cft.getTransactiondate());
 		resultUsedMaterial.setCreatedbyusercode(objUser);
@@ -469,15 +507,15 @@ public class TransactionService {
 		resultUsedMaterial.setNstatus(1);
 		resultUsedMaterial.setResponse(new Response());
 		resultUsedMaterial.getResponse().setStatus(true);
-		
+
 		resultUsedMaterialRepository.save(resultUsedMaterial);
-		
-		if(objInventory.getNqtynotification() != null) {
-			if(objInventory.getNqtynotification() <= getQtyLeft ? false : true) {				
-				updateNotificationOnInventory(objInventory,"INVENTORYQTYNOTIFICATION",cft,getQtyLeft);
+
+		if (objInventory.getNqtynotification() != null) {
+			if (objInventory.getNqtynotification() <= getQtyLeft ? false : true) {
+				updateNotificationOnInventory(objInventory, "INVENTORYQTYNOTIFICATION", cft, getQtyLeft);
 			}
 		}
-		
+
 		return new ResponseEntity<>(resultUsedMaterial, HttpStatus.OK);
 	}
 
@@ -535,13 +573,15 @@ public class TransactionService {
 		List<Material> lstMaterials = new ArrayList<Material>();
 		List<MaterialInventory> lstMaterialInventories = new ArrayList<MaterialInventory>();
 
-		lstMaterials = materialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1,(Integer) inputMap.get("sitecode"));
+		lstMaterials = materialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1,
+				(Integer) inputMap.get("sitecode"));
 
 		if (!lstMaterials.isEmpty()) {
 
 			lstMaterialInventories = materialInventoryRepository
 //					.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(lstMaterials.get(0).getNmaterialcode(),28);
-					.findByNsitecodeAndNtransactionstatusOrderByNmaterialinventorycodeDesc((Integer) inputMap.get("sitecode"),28);
+					.findByNsitecodeAndNtransactionstatusOrderByNmaterialinventorycodeDesc(
+							(Integer) inputMap.get("sitecode"), 28);
 		}
 
 		rtnMap.put("listedMaterial", lstMaterials);
@@ -552,184 +592,357 @@ public class TransactionService {
 
 	private Map<String, Object> getJsonDataFromInventory(String jsonData, String string) {
 		Map<String, Object> objReturnMap = new HashMap<String, Object>();
-		Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(jsonData,string);
-		objReturnMap.put(string, (String) objContent.get("rtnObj"));
+		Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(jsonData, string);
+		if (objContent.get("rtnObj") != null) {
+			objReturnMap.put(string, objContent.get("rtnObj"));
+		}
 		return objReturnMap;
 	}
 
-	public void updateNotificationOnInventory(MaterialInventory objInventory,String task,LScfttransaction cft,Double getQtyLeft) {
-		
+	public void updateNotificationOnInventory(MaterialInventory objInventory, String task, LScfttransaction cft,
+			Double getQtyLeft) {
+
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-		List<MaterialInventoryTransaction> objLstTransactions = materialInventoryTransactionRepository.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(objInventory.getNmaterialinventorycode());
-		List<LSuserMaster> objLstuser = objLstTransactions.stream().map(MaterialInventoryTransaction::getIssuedbyusercode) .collect(Collectors.toList());
+		List<MaterialInventoryTransaction> objLstTransactions = materialInventoryTransactionRepository
+				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(
+						objInventory.getNmaterialinventorycode());
+		List<LSuserMaster> objLstuser = objLstTransactions.stream()
+				.map(MaterialInventoryTransaction::getIssuedbyusercode).collect(Collectors.toList());
 		List<Integer> objnotifyuser = objLstuser.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
-		
+
 		objnotifyuser = objnotifyuser.stream().distinct().collect(Collectors.toList());
-		
+
 		LSuserMaster objUser = new LSuserMaster();
 		objUser.setUsercode(cft.getLsuserMaster());
-		
+
 		String details = "";
-		
-		if(task.equals("INVENTORYQTYNOTIFICATION")) {
-			details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  "
-		            + "\"qtyleft\":\"" + getQtyLeft + "\",  "
-		            + "\"notificationamount\":\"" + objInventory.getNqtynotification() + "\"}";
-		}else if(task.equals("EXPIRYDATE")) {
-			details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  "
-		            + "\"daysleft\":\"" + getQtyLeft + "\"}";
+
+		if (task.equals("INVENTORYQTYNOTIFICATION")) {
+
+			details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"qtyleft\":\"" + getQtyLeft
+					+ "\",  " + "\"notificationamount\":\"" + objInventory.getNqtynotification() + "\"}";
+
+		} else {
+//			if (task.equals("EXPIRYDATE") || task.equals("OPENDATEDAYS") || task.equals("OPENDATEWEEK")
+//				|| task.equals("OPENDATEMONTH") || task.equals("OPENDATEMINUTES") || task.equals("OPENDATEHOURS")
+//				|| task.equals("OPENDATEYEAR") || task.equals("NEXTVALIDATEDAYS") || task.equals("NEXTVALIDATEWEEK")
+//				|| task.equals("NEXTVALIDATEMONTH") || task.equals("NEXTVALIDATEMINUTES")
+//				|| task.equals("NEXTVALIDATEHOURS") || task.equals("NEXTVALIDATEYEAR")) {
+
+			details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + getQtyLeft
+					+ "\"}";
 		}
-		
+
 		String notification = details;
-		
+
 		lstnotifications = objnotifyuser.stream().map(userCode -> {
-			
-		        LSnotification objnotify = new LSnotification();
-	
-		        LSuserMaster toUser = new LSuserMaster();
-		        toUser.setUsercode(userCode);
-	
-		        objnotify.setNotifationto(toUser);
-		        objnotify.setNotifationfrom(objUser);
-		        objnotify.setNotificationdate(cft.getTransactiondate());
-		        objnotify.setNotification(task);
-		        objnotify.setNotificationdetils(notification);
-		        objnotify.setIsnewnotification(1);
-		        objnotify.setNotificationpath("/materialinventory");
-		        objnotify.setNotificationfor(1);
-	
-		        return objnotify;
-		    }).collect(Collectors.toList());
-		
+
+			LSnotification objnotify = new LSnotification();
+
+			LSuserMaster toUser = new LSuserMaster();
+			toUser.setUsercode(userCode);
+
+			objnotify.setNotifationto(toUser);
+			objnotify.setNotifationfrom(objUser);
+			objnotify.setNotificationdate(cft.getTransactiondate());
+			objnotify.setNotification(task);
+			objnotify.setNotificationdetils(notification);
+			objnotify.setIsnewnotification(1);
+			objnotify.setNotificationpath("/materialinventory");
+			objnotify.setNotificationfor(1);
+
+			return objnotify;
+		}).collect(Collectors.toList());
+
 		lsnotificationRepository.save(lstnotifications);
 	}
 
 	public void updateMaterialInventoryNotification(Map<String, Object> inputMap) {
 		final Map<String, Object> threadMap = inputMap;
-//		new Thread(() -> {
+		new Thread(() -> {
 			updateMaterialInventoryNotificationviaThread(threadMap);
-//		}).start();
+		}).start();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void updateMaterialInventoryNotificationviaThread(Map<String, Object> inputMap) {
-		
+
 		ObjectMapper Objmapper = new ObjectMapper();
-		
+
 		Integer sitecode = (Integer) inputMap.get("sitecode");
 		Long timestamp = (Long) inputMap.get("currentDate");
 		Date currentDate = new Date(timestamp);
 		final LScfttransaction cft = Objmapper.convertValue(inputMap.get("silentAudit"), LScfttransaction.class);
-		List<Material> lstMaterials = materialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1,sitecode);
-		
+		List<Material> lstMaterials = materialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1, sitecode);
+
 		SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
 		LocalDate localCurrentDate = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		
+
 		lstMaterials.stream().peek(objMaterial -> {
 
 			Map<String, Object> objMapMaterial = materialInventoryService.crumObjectMaterialCreated(objMaterial);
-			
-			if(objMapMaterial.containsKey("jsondata")) {
+
+			if (objMapMaterial.containsKey("jsondata")) {
 				Map<String, Object> objMapJsonData = (Map<String, Object>) objMapMaterial.get("jsondata");
+
 				String isExpiryNeed = (String) objMapJsonData.get("isExpiryNeed");
 				String isOpenExpiryNeed = objMapJsonData.get("Open Expiry Need").toString();
-				boolean isExpiryNotify = isExpiryNeed != null ? isExpiryNeed.equalsIgnoreCase("Expiry Date") ? true : false: false;
-//				boolean isOpenExpiry = isOpenExpiryNeed != null ? isOpenExpiryNeed.equalsIgnoreCase("3") ? true : false: false;
-				if(isExpiryNotify) {
-					
-					List<MaterialInventory> objInventories = materialInventoryRepository.findByNmaterialcode(objMaterial.getNmaterialcode());
-					
+				String isNextValidNeed = objMapJsonData.get("Next Validation Need").toString();
+
+				boolean isExpiryNotify = isExpiryNeed != null
+						? isExpiryNeed.equalsIgnoreCase("Expiry Date") ? true : false
+						: false;
+				boolean isOpenExpiry = isOpenExpiryNeed != null ? isOpenExpiryNeed.equalsIgnoreCase("3") ? true : false
+						: false;
+				boolean isNextValidate = isNextValidNeed != null ? isNextValidNeed.equalsIgnoreCase("3") ? true : false
+						: false;
+
+				List<MaterialInventory> objInventories = materialInventoryRepository
+						.findByNmaterialcodeAndNtransactionstatusNotOrderByNmaterialinventorycodeDesc(
+								objMaterial.getNmaterialcode(), 55);
+
+				if (isExpiryNotify) {
+
 					objInventories.stream().peek(objInventory -> {
-						Map<String,Object> objMap = getJsonDataFromInventory(objInventory.getJsondata(),"Expiry Date & Time");
-						
-						String indoDateStr =(String) objMap.get("Expiry Date & Time");
+
+						Map<String, Object> objMap = getJsonDataFromInventory(objInventory.getJsondata(),
+								"Expiry Date & Time");
+
+						String indoDateStr = (String) objMap.get("Expiry Date & Time");
 						try {
 							Date date = dateFormat.parse(indoDateStr);
 							LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-							
-							Duration duration = Duration.between(localDate.atStartOfDay(), localCurrentDate.atStartOfDay());
-							long days = duration.toDays();
-							
-							if(days<= 10) {
-								final double day = (double) days;
-								
-								updateNotificationOnInventory(objInventory,"EXPIRYDATE",cft,day);
+
+							if (localCurrentDate.isBefore(localDate) || localDate.equals(localCurrentDate)) {
+								Duration duration = Duration.between(localDate.atStartOfDay(),
+										localCurrentDate.atStartOfDay());
+								long days = duration.toDays();
+
+								if (days <= 10) {
+									final double day = (double) days;
+									updateNotificationOnInventory(objInventory, "EXPIRYDATE", cft, day);
+								}
+							} else {
+								objInventory.setNtransactionstatus(55);
+								materialInventoryRepository.save(objInventory);
 							}
 
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
 					}).collect(Collectors.toList());
+				} else if (isOpenExpiry) {
+
+					objInventories.stream().peek(objInventory -> {
+						long openExpiry = Long
+								.parseLong(getJsonDataFromInventory(objInventory.getJsondata(), "Open Expiry")
+										.get("rtnObj").toString());
+						Map<String, Object> objMap = getJsonDataFromInventory(objInventory.getJsondata(), "Open Date");
+						Map<String, Object> objOpenExp = getJsonDataFromInventory(objMaterial.getJsondata(),
+								"Open Expiry Period");
+
+						if (objMap.get("Open Date") != null && objOpenExp != null
+								&& objOpenExp.containsKey("Open Expiry Period")) {
+
+							Map<String, Object> objOpenValue = ((JSONObject) objOpenExp.get("Open Expiry Period"))
+									.toMap();
+
+							if (!objOpenValue.get("label").toString().equalsIgnoreCase("NA")
+									&& !objOpenValue.get("label").toString().equalsIgnoreCase("Never")) {
+
+								String validationType = objOpenValue.get("label").toString();
+								long longOpenDate = (long) objMap.get("Open Date");
+
+								Date openDate = new Date(longOpenDate);
+								LocalDate localDate = openDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+								if (localCurrentDate.isBefore(localDate) || localDate.equals(localCurrentDate)) {
+
+									if (validationType.equalsIgnoreCase("days")) {
+										Duration duration = Duration.between(localDate.atStartOfDay(),
+												localCurrentDate.atStartOfDay());
+
+										long days = duration.toDays();
+
+										if (days <= openExpiry) {
+											final double day = (double) days;
+
+											updateNotificationOnInventory(objInventory, "OPENDATEDAYS", cft, day);
+										}
+									} else if (validationType.equalsIgnoreCase("weeks")) {
+
+										long weeks = ChronoUnit.WEEKS.between(localDate, localCurrentDate);
+
+										if (weeks <= openExpiry) {
+											final double week = (double) weeks;
+											updateNotificationOnInventory(objInventory, "OPENDATEWEEK", cft, week);
+										}
+
+									} else if (validationType.equalsIgnoreCase("month")) {
+
+										Period period = Period.between(localDate, localCurrentDate);
+
+										long months = period.getMonths();
+
+										if (months <= openExpiry) {
+											final double month = (double) months;
+											updateNotificationOnInventory(objInventory, "OPENDATEMONTH", cft, month);
+										}
+
+									} else if (validationType.equalsIgnoreCase("years")) {
+										Period period = Period.between(localDate, localCurrentDate);
+
+										long years = period.getYears();
+
+										final double year = (double) years;
+										updateNotificationOnInventory(objInventory, "OPENDATEYEAR", cft, year);
+									} else if (validationType.equalsIgnoreCase("hours")) {
+
+										Duration duration = Duration.between(localDate.atStartOfDay(),
+												localCurrentDate.atStartOfDay());
+										long days = duration.toDays();
+
+										if (days == 0) {
+											long diffInMs = currentDate.getTime() - openDate.getTime();
+
+											long diffInHours = diffInMs / (60 * 60 * 1000);
+											if (diffInHours <= openExpiry) {
+												final double hour = (double) diffInHours;
+												updateNotificationOnInventory(objInventory, "OPENDATEHOURS", cft, hour);
+											}
+										}
+
+									} else if (validationType.equalsIgnoreCase("minutes")) {
+
+										Duration duration = Duration.between(localDate.atStartOfDay(),
+												localCurrentDate.atStartOfDay());
+										long days = duration.toDays();
+
+										if (days == 0) {
+											long diffInMs = currentDate.getTime() - openDate.getTime();
+
+											long diffInMinutes = diffInMs / (60 * 1000);
+
+											final double minute = (double) diffInMinutes;
+											updateNotificationOnInventory(objInventory, "OPENDATEMINUTES", cft, minute);
+										}
+									}
+								}
+							}
+						}
+					}).collect(Collectors.toList());
+				} else if (isNextValidate) {
+
+					objInventories.stream().peek(objInventory -> {
+						long nextValidation = Long
+								.parseLong(getJsonDataFromInventory(objInventory.getJsondata(), "Next Validation")
+										.get("rtnObj").toString());
+
+						Map<String, Object> objMap = getJsonDataFromInventory(objInventory.getJsondata(),
+								"Last Validation Date & Time");
+						Map<String, Object> objNextVal = getJsonDataFromInventory(objMaterial.getJsondata(),
+								"Next Validation Period");
+
+						if (objMap.get("Last Validation Date & Time") != null && objNextVal != null
+								&& objNextVal.containsKey("Next Validation Period")) {
+
+							Map<String, Object> objOpenValue = ((JSONObject) objNextVal.get("Next Validation Period"))
+									.toMap();
+
+							if (!objOpenValue.get("label").toString().equalsIgnoreCase("NA")
+									&& !objOpenValue.get("label").toString().equalsIgnoreCase("Never")) {
+
+								String validationType = objOpenValue.get("label").toString();
+								long longOpenDate = (long) objMap.get("Open Date");
+
+								Date openDate = new Date(longOpenDate);
+								LocalDate localDate = openDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+								if (localCurrentDate.isBefore(localDate) || localDate.equals(localCurrentDate)) {
+
+									if (validationType.equalsIgnoreCase("days")) {
+										Duration duration = Duration.between(localDate.atStartOfDay(),
+												localCurrentDate.atStartOfDay());
+
+										long days = duration.toDays();
+
+										if (days <= nextValidation) {
+											final double day = (double) days;
+
+											updateNotificationOnInventory(objInventory, "NEXTVALIDATEDAYS", cft, day);
+										}
+									} else if (validationType.equalsIgnoreCase("weeks")) {
+
+										long weeks = ChronoUnit.WEEKS.between(localDate, localCurrentDate);
+
+										if (weeks <= nextValidation) {
+											final double week = (double) weeks;
+											updateNotificationOnInventory(objInventory, "NEXTVALIDATEWEEK", cft, week);
+										}
+
+									} else if (validationType.equalsIgnoreCase("month")) {
+
+										Period period = Period.between(localDate, localCurrentDate);
+
+										long months = period.getMonths();
+
+										if (months <= nextValidation) {
+											final double month = (double) months;
+											updateNotificationOnInventory(objInventory, "NEXTVALIDATEMONTH", cft,
+													month);
+										}
+
+									} else if (validationType.equalsIgnoreCase("years")) {
+										Period period = Period.between(localDate, localCurrentDate);
+
+										long years = period.getYears();
+
+										final double year = (double) years;
+										updateNotificationOnInventory(objInventory, "NEXTVALIDATEYEAR", cft, year);
+									} else if (validationType.equalsIgnoreCase("hours")) {
+
+										Duration duration = Duration.between(localDate.atStartOfDay(),
+												localCurrentDate.atStartOfDay());
+										long days = duration.toDays();
+
+										if (days == 0) {
+											long diffInMs = currentDate.getTime() - openDate.getTime();
+
+											long diffInHours = diffInMs / (60 * 60 * 1000);
+
+											if (diffInHours <= nextValidation) {
+												final double hour = (double) diffInHours;
+												updateNotificationOnInventory(objInventory, "NEXTVALIDATEHOURS", cft,
+														hour);
+											}
+										}
+
+									} else if (validationType.equalsIgnoreCase("minutes")) {
+
+										Duration duration = Duration.between(localDate.atStartOfDay(),
+												localCurrentDate.atStartOfDay());
+										long days = duration.toDays();
+
+										if (days == 0) {
+											long diffInMs = currentDate.getTime() - openDate.getTime();
+
+											long diffInMinutes = diffInMs / (60 * 1000);
+
+											final double minute = (double) diffInMinutes;
+											updateNotificationOnInventory(objInventory, "NEXTVALIDATEMINUTES", cft,
+													minute);
+										}
+									}
+								}
+							}
+						}
+					}).collect(Collectors.toList());
+
 				}
-				
-//				else if(isOpenExpiry) {
-//					List<MaterialInventory> objInventories = materialInventoryRepository.findByNmaterialcode(objMaterial.getNmaterialcode());
-//					
-//					objInventories.stream().peek(objInventory -> {
-//						Map<String,Object> objMap = getJsonDataFromInventory(objInventory.getJsondata(),"Open Date");
-//						Map<String,Object> objOpenValue = getJsonDataFromInventory(objMaterial.getJsondata(),"Open Expiry Period");
-//						
-//						if(objOpenValue != null && objOpenValue.containsKey("label")) {
-//							if(!objOpenValue.get("label").toString().equalsIgnoreCase("NA") && !objOpenValue.get("label").toString().equalsIgnoreCase("Never")) {
-//								String indoDateStr =(String) objMap.get("Open Date");
-//								String validationType = objOpenValue.get("label").toString();
-//								
-//								if(validationType.equalsIgnoreCase("days")){
-//									try {
-//										Date date = dateFormat.parse(indoDateStr);
-//										LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//										
-//										Duration duration = Duration.between(localDate.atStartOfDay(), localCurrentDate.atStartOfDay());
-//										long days = duration.toDays();
-//										
-//										if(days<= 10) {
-//											final double day = (double) days;
-//											
-//											updateNotificationOnInventory(objInventory,"OPENDATEDAYS",cft,day);
-//										}
-//
-//									} catch (ParseException e) {
-//										e.printStackTrace();
-//									}
-//								}else if(validationType.equalsIgnoreCase("hours")) {
-//									
-//									try {
-//										Date endDate = dateFormat.parse(indoDateStr);
-//										// convert Date objects to Instant objects (required by Duration)
-//										Instant startInstant = currentDate.toInstant();
-//										Instant endInstant = endDate.toInstant();
-//
-//										// calculate the duration between the two instants
-//										Duration duration = Duration.between(startInstant, endInstant);
-//
-//										// get the number of hours in the duration
-//										long hours = duration.toHours();
-//										
-//										final double hour = (double) hours;
-//										
-//										updateNotificationOnInventory(objInventory,"OPENDATEHOURS",cft,hour);
-//										
-//									} catch (ParseException e) {
-//										// TODO Auto-generated catch block
-//										e.printStackTrace();
-//									}
-//									
-//								}else if(validationType.equalsIgnoreCase("month")) {
-//									
-//								}else if(validationType.equalsIgnoreCase("minutes")) {
-//									
-//								}else if(validationType.equalsIgnoreCase("years")) {
-//									
-//								}
-//							}
-//						}
-//					}).collect(Collectors.toList());
-//				}
-				
 			}
 
 		}).collect(Collectors.toList());
-		
+
 	}
-	
+
 }

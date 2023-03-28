@@ -24,15 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
-import com.agaram.eln.primary.model.cloudFileManip.CloudOrderAttachment;
-import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.model.material.MaterialType;
-import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
@@ -382,8 +379,8 @@ public class MaterialService {
 				objMaterial.setSprefix((String) jsonObject.get("Prefix"));
 				nflag = true;
 
-				final Material objMaterialClass = materialRepository.findByNstatusAndSprefix(1,
-						(String) jsonObject.get("Prefix"));
+				final Material objMaterialClass = materialRepository.findByNstatusAndSprefixAndNsitecode(1,
+						(String) jsonObject.get("Prefix"),nsiteInteger);
 
 				if (objMaterialClass != null) {
 

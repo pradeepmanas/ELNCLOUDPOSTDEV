@@ -631,6 +631,7 @@ public class FileService {
 //			lSfileRepository.setWorkflownullforApprovedfile(objflow, 1);
 			lssheetworkflowhistoryRepository.setWorkflownullforHistory(objflow);
 			lsfileversionRepository.setWorkflownullforHistory(objflow);
+			objflow.setStatus(-1);
 			lssheetworkflowRepository.save(objflow);
 			lssheetworkflowgroupmapRepository.save(objflow.getLssheetworkflowgroupmap());
 			response.setStatus(true);

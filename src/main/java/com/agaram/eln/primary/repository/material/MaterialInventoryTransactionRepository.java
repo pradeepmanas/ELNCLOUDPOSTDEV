@@ -13,5 +13,4 @@ public interface MaterialInventoryTransactionRepository  extends JpaRepository<M
 	List<MaterialInventoryTransaction> findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(Integer integer);
 
 	List<MaterialInventoryTransaction> findByNmaterialinventorycodeOrderByNmaterialinventtranscode(Integer integer);
-
 }

@@ -4035,4 +4035,7 @@ AND table_name='lsorderattachments';
 END
 $do$;
 
-update lsusergrouprights set screate ='1' where displaytopic='IDS_TSK_FOLDERCREATION' and screate='NA'
+update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_TSK_FOLDERCREATION' and screate='NA';
+update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and screate='NA';
+update lsusergrouprights set screate ='1' where displaytopic='IDS_TSK_FOLDERCREATION' and screate='NA';
+update lsusergrouprights set screate ='1' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and screate='NA';

@@ -52,8 +52,12 @@ public class MaterialInventoryController {
 
 	@RequestMapping(value = "/createMaterialInventory", method = RequestMethod.POST)
 	public ResponseEntity<Object> createMaterialInventory(@RequestBody Map<String, Object> inputMap) throws Exception {
-
 		return materialInventoryService.createMaterialInventory(inputMap);
+	}
+	
+	@RequestMapping(value = "/updateMaterialInventory", method = RequestMethod.POST)
+	public ResponseEntity<Object> UpdateMaterialInventory(@RequestBody Map<String, Object> inputMap) throws Exception {
+		return materialInventoryService.UpdateMaterialInventory(inputMap);
 	}
 
 	@RequestMapping(value = "/getQuantityTransaction", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

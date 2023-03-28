@@ -90,7 +90,7 @@ public class MaterialInventoryService {
 	@Autowired
 	private LsOrderattachmentsRepository lsOrderattachmentsRepository;
 	@Autowired
-	private CloudFileManipulationservice cloudFileManipulationservice;	
+	private CloudFileManipulationservice cloudFileManipulationservice;
 	@Autowired
 	private FileManipulationservice fileManipulationservice;
 
@@ -98,11 +98,12 @@ public class MaterialInventoryService {
 	public ResponseEntity<Object> getMaterialInventory(Integer nsiteInteger) throws Exception {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
-		List<MaterialType> lstMaterialType = materialTypeRepository.findByNmaterialtypecodeNotOrderByNmaterialtypecode(-1);
+		List<MaterialType> lstMaterialType = materialTypeRepository
+				.findByNmaterialtypecodeNotOrderByNmaterialtypecode(-1);
 		objmap.put("MaterialType", lstMaterialType);
 
 		List<MaterialCategory> lstMaterialCategory = materialCategoryRepository
-				.findByNmaterialtypecodeAndNsitecode(lstMaterialType.get(0).getNmaterialtypecode(),nsiteInteger);
+				.findByNmaterialtypecodeAndNsitecode(lstMaterialType.get(0).getNmaterialtypecode(), nsiteInteger);
 
 		List<MaterialType> lstMaterialType1 = new ArrayList<MaterialType>();
 
@@ -113,7 +114,7 @@ public class MaterialInventoryService {
 		if (!lstMaterialCategory.isEmpty()) {
 			objmap.put("MaterialCategoryMain", lstMaterialCategory);
 			objmap.put("nmaterialcatcode", lstMaterialCategory.get(0).getNmaterialcatcode());
-			
+
 			List<Map<String, Object>> lstMatObject = new ArrayList<Map<String, Object>>();
 			List<Material> lstMaterial = materialRepository
 					.findByNmaterialcatcode(lstMaterialCategory.get(0).getNmaterialcatcode());
@@ -156,7 +157,7 @@ public class MaterialInventoryService {
 
 			objmap.put("nmaterialtypecode", lstMaterialType.get(0).getNmaterialtypecode());
 			objmap.put("nmaterialcatcode", lstMaterialCategory.get(0).getNmaterialcatcode());
-			objmap.put("nsitecode",nsiteInteger);
+			objmap.put("nsitecode", nsiteInteger);
 			if (!lstMaterial.isEmpty()) {
 				objmap.put("nmaterialcode", lstMaterial.get(0).getNmaterialcode());
 			}
@@ -167,17 +168,20 @@ public class MaterialInventoryService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> getMaterialInventorycombo(Integer nmaterialtypecode, Integer nmaterialcatcode, Integer nsiteInteger) {
+	public ResponseEntity<Object> getMaterialInventorycombo(Integer nmaterialtypecode, Integer nmaterialcatcode,
+			Integer nsiteInteger) {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
 		List<MaterialCategory> lstMaterialCategory = new ArrayList<>();
-		
-		if(nmaterialcatcode != null) {
+
+		if (nmaterialcatcode != null) {
 			lstMaterialCategory = materialCategoryRepository
-					.findByNmaterialtypecodeAndNmaterialcatcodeAndNsitecodeAndNstatusOrderByNmaterialcatcode(nmaterialtypecode,nmaterialcatcode,nsiteInteger,1);
-		}else {
+					.findByNmaterialtypecodeAndNmaterialcatcodeAndNsitecodeAndNstatusOrderByNmaterialcatcode(
+							nmaterialtypecode, nmaterialcatcode, nsiteInteger, 1);
+		} else {
 			lstMaterialCategory = materialCategoryRepository
-					.findByNmaterialtypecodeAndNsitecodeAndNstatusOrderByNmaterialcatcode(nmaterialtypecode,nsiteInteger,1);
+					.findByNmaterialtypecodeAndNsitecodeAndNstatusOrderByNmaterialcatcode(nmaterialtypecode,
+							nsiteInteger, 1);
 		}
 
 		List<Map<String, Object>> lstMatObject = new ArrayList<Map<String, Object>>();
@@ -235,7 +239,7 @@ public class MaterialInventoryService {
 
 		LScfttransaction cft = new LScfttransaction();
 		if (inputMap.containsKey("objsilentaudit")) {
-		  cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
+			cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		}
 		if (inputMap.containsKey("nmaterialcode")) {
 
@@ -251,9 +255,11 @@ public class MaterialInventoryService {
 					Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
 
 					resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-					resObj.put("displaystatus", f.getNtransactionstatus() ==  28 ? "Released" : (f.getNtransactionstatus() == 55 ? "Expired" : 
-						(f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
-					
+					resObj.put("displaystatus",
+							f.getNtransactionstatus() == 28 ? "Released"
+									: (f.getNtransactionstatus() == 55 ? "Expired"
+											: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
+
 					lstMaterialInventory.add(resObj);
 
 				} catch (IOException e) {
@@ -272,19 +278,20 @@ public class MaterialInventoryService {
 					objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(0));
 					inputMap.put("nsectioncode", lstMaterialInventory.get(0).get("nsectioncode"));
 
-					objmap.putAll(
-							(Map<String, Object>) getQuantityTransactionByMaterialInvCode((int) lstMaterialInventory
-									.get(0).get("nmaterialinventorycode"), inputMap)
-											.getBody());
+					objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
+							(int) lstMaterialInventory.get(0).get("nmaterialinventorycode"), inputMap).getBody());
 //					objmap.putAll((Map<String, Object>) getMaterialFile((int) lstMaterialInventory
 //							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")));
-					objmap.putAll((Map<String, Object>) getResultUsedMaterial(Integer.parseInt(lstMaterialInventory.get(0).get("nmaterialinventorycode").toString())).getBody());
+					objmap.putAll((Map<String, Object>) getResultUsedMaterial(
+							Integer.parseInt(lstMaterialInventory.get(0).get("nmaterialinventorycode").toString()))
+									.getBody());
 //					objmap.putAll((Map<String, Object>) getMaterialInventoryhistory((int) lstMaterialInventory
 //							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")));
 
 				} else {
 
-					MaterialInventory objInventory = materialInventoryRepository.findOne((Integer) inputMap.get("nmaterialinventorycode"));
+					MaterialInventory objInventory = materialInventoryRepository
+							.findOne((Integer) inputMap.get("nmaterialinventorycode"));
 
 					List<Map<String, Object>> lstMaterialInventory1 = new ArrayList<Map<String, Object>>();
 
@@ -299,7 +306,8 @@ public class MaterialInventoryService {
 					objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
 							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode"), inputMap).getBody());
 
-					objmap.putAll((Map<String, Object>) getResultUsedMaterial(objInventory.getNmaterialinventorycode()).getBody());
+					objmap.putAll((Map<String, Object>) getResultUsedMaterial(objInventory.getNmaterialinventorycode())
+							.getBody());
 //					objmap.putAll((Map<String, Object>) getMaterialFile(
 //							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode")));
 //					objmap.putAll((Map<String, Object>) getMaterialInventoryhistory(
@@ -376,7 +384,7 @@ public class MaterialInventoryService {
 
 		System.out.println(lstMaterialInventoryType);
 		objmap.put("MaterialInventoryType", lstMaterialInventoryType);
-		
+
 		objmap.put("DesignMappedFeildsQuantityTransaction", getTemplateDesignForMaterial(9, 138));
 		if (cft != null) {
 			objmap.put("objsilentaudit", cft);
@@ -405,7 +413,7 @@ public class MaterialInventoryService {
 		List<MaterialConfig> lstMaterialConfig = new ArrayList<MaterialConfig>();
 
 		List<MaterialInventoryTransaction> lstInventoryTransaction = materialInventoryTransactionRepository
-				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(nmaterialinventorycode);
+				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc((Integer) nmaterialinventorycode);
 
 		lstInventoryTransaction.stream().peek(f -> {
 
@@ -419,7 +427,7 @@ public class MaterialInventoryService {
 				resObj.put("Issued Quantity", objContent.get("rtnObj"));
 				resObj.put("Received Quantity", f.getNqtyreceived());
 				resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-				resObj.put("nmaterialinventtranscode",f.getNmaterialinventtranscode());
+				resObj.put("nmaterialinventtranscode", f.getNmaterialinventtranscode());
 				resObj.put("issuedby", f.getIssuedbyusercode() != null ? f.getIssuedbyusercode().getUsername() : "-");
 				resObj.put("createddate", f.getCreateddate());
 
@@ -436,7 +444,7 @@ public class MaterialInventoryService {
 //		MaterialConfig objMaterialConfig = materialConfigRepository.findByNformcodeAndNmaterialtypecodeAndNstatus(138,-1, 1);
 //		lstMaterialConfig.add(objMaterialConfig);
 //		Collections.sort(lstMaterialInventoryTrans, Collections.reverseOrder());
-		
+
 		objmap.put("QuantityTransactionTemplate", lstMaterialConfig);
 		objmap.put("MaterialInventoryTrans", lstMaterialInventoryTrans);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
@@ -472,23 +480,29 @@ public class MaterialInventoryService {
 		Map<String, Object> rtnObj = new HashMap<>();
 		Map<String, Object> rtnUnitObj = new HashMap<>();
 		Map<String, Object> objContent = new HashMap<>();
-		
-		JSONObject jsonUnitObject = (JSONObject) commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Basic Unit").get("rtnObj") ;
+
+		JSONObject jsonUnitObject = (JSONObject) commonfunction
+				.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Basic Unit").get("rtnObj");
 		rtnUnitObj.put("label", jsonUnitObject.get("label"));
 		rtnUnitObj.put("value", jsonUnitObject.get("value"));
-		
+
 		objContent.put("nmaterialcode", objmaterial.getNmaterialcode());
 		objContent.put("nunitcode", rtnUnitObj);
 		objContent.put("ntranscode", objmaterial.getNtransactionstatus());
-		objContent.put("Material Name", (String) commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(),"Material Name").get("rtnObj"));
-		objContent.put("isExpiryNeed", (String) commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(),"Expiry Validations").get("rtnObj"));
-		objContent.put("Next Validation Need", commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Next Validation Need").get("rtnObj"));
-		objContent.put("Open Expiry Need", commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Open Expiry Need").get("rtnObj"));
-		
-		if(objmaterial.getNmaterialtypecode() == 3 || objmaterial.getNmaterialtypecode() == 4) {
-			Map<String, Object> isReusable = commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Reusable");
+		objContent.put("Material Name", (String) commonfunction
+				.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Material Name").get("rtnObj"));
+		objContent.put("isExpiryNeed", (String) commonfunction
+				.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Expiry Validations").get("rtnObj"));
+		objContent.put("Next Validation Need", commonfunction
+				.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Next Validation Need").get("rtnObj"));
+		objContent.put("Open Expiry Need", commonfunction
+				.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Open Expiry Need").get("rtnObj"));
+
+		if (objmaterial.getNmaterialtypecode() == 3 || objmaterial.getNmaterialtypecode() == 4) {
+			Map<String, Object> isReusable = commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(),
+					"Reusable");
 			objContent.put("isreusable", Integer.parseInt(isReusable.get("rtnObj").toString()) == 3 ? true : false);
-		}else {
+		} else {
 			objContent.put("isreusable", false);
 		}
 		objContent.remove("rtnObj");
@@ -531,7 +545,7 @@ public class MaterialInventoryService {
 		String updatestr = "";
 		String insmat = "";
 		boolean nflag = false;
-		
+
 		Date objCreatedDate = cft.getTransactiondate();
 
 		Material objGetMaterialJSON = materialRepository.findByNstatusAndNmaterialcode(1,
@@ -552,7 +566,7 @@ public class MaterialInventoryService {
 				.replace("T", " ").replace("Z", "");
 
 		if (!lstDateField.isEmpty()) {
-			jsonObject = (JSONObject) convertInputDateToUTCByZone(jsonObject, lstDateField, false);
+			jsonObject = (JSONObject) convertInputDateToUTCByZone(jsonObject, lstDateField, true);
 		}
 
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -636,7 +650,7 @@ public class MaterialInventoryService {
 				(Integer) inputMap.get("nmaterialcode"));
 		MaterialCategory objMaterialCategory = materialCategoryRepository
 				.findByNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
-		
+
 		LSuserMaster objUser = new LSuserMaster();
 		objUser.setUsercode(cft.getLsuserMaster());
 
@@ -744,12 +758,13 @@ public class MaterialInventoryService {
 							: -1));
 					objTransaction.setNsitecode(-1);
 					objTransaction.setNresultusedmaterialcode(-1);
-					objTransaction.setNqtyreceived(Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
+					objTransaction
+							.setNqtyreceived(Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
 					objTransaction.setNqtyissued(Double.valueOf((Integer) jsonObjectInvTrans.get("nqtyissued")));
 					objTransaction.setCreatedbyusercode(objUser);
 					objTransaction.setIssuedbyusercode(objUser);
 					objTransaction.setCreateddate(objCreatedDate);
-					
+
 					materialInventoryTransactionRepository.save(objTransaction);
 
 					jsonUidataarray.put(new JSONObject(jsonuidata.toString()));
@@ -836,7 +851,9 @@ public class MaterialInventoryService {
 			objTransaction.setNmaterialinventorycode(objSaveMaterialInventory.getNmaterialinventorycode());
 			objTransaction.setNinventorytranscode((Integer) jsonObjectInvTrans.get("ninventorytranscode"));
 			objTransaction.setNtransactiontype((Integer) jsonObjectInvTrans.get("ntransactiontype"));
-			objTransaction.setNsectioncode((Integer) (jsonObjectInvTrans.get("nsectioncode") != null ? (Integer) jsonObjectInvTrans.get("nsectioncode") : -1));
+			objTransaction.setNsectioncode((Integer) (jsonObjectInvTrans.get("nsectioncode") != null
+					? (Integer) jsonObjectInvTrans.get("nsectioncode")
+					: -1));
 			objTransaction.setNsitecode(-1);
 			objTransaction.setNresultusedmaterialcode(-1);
 			objTransaction.setNqtyreceived(Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
@@ -844,7 +861,7 @@ public class MaterialInventoryService {
 			objTransaction.setCreatedbyusercode(objUser);
 			objTransaction.setIssuedbyusercode(objUser);
 			objTransaction.setCreateddate(objCreatedDate);
-			
+
 			materialInventoryTransactionRepository.save(objTransaction);
 
 			jsonUidataarray.put(jsonuidata);
@@ -853,13 +870,170 @@ public class MaterialInventoryService {
 
 //		objmap.putAll((Map<String, Object>) getMaterialInventoryByID(inputMap).getBody());
 		objmap.putAll((Map<String, Object>) getMaterialInventoryDetails(inputMap).getBody());
-		objmap.put("objsilentaudit",cft);
+		objmap.put("objsilentaudit", cft);
 		objmap.put("tabScreen", "IDS_MATERIALSECTION");
-//		objmap.put("nregtypecode", -1);
-//		objmap.put("nregsubtypecode", -1);
-//		objmap.put("ndesigntemplatemappingcode", jsonuidata.get("nmaterialconfigcode"));
-//		actionType.put("materialinventory", "IDS_ADDMATERIALINVENTORY");
-//		actionType.put("materialinventorytransaction", "IDS_ADDMATERIALINVENTORYTRANSACTION");
+
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+
+	}
+
+	@SuppressWarnings({ "unchecked", "unused" })
+	public ResponseEntity<Object> UpdateMaterialInventory(Map<String, Object> inputMap) throws Exception {
+
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+
+		Date receiveDate = null;
+		Date expiryDate = null;
+		Date manufDate = null;
+		List<String> lstDateField = (List<String>) inputMap.get("DateList");
+
+		final String dtransactiondate = getCurrentDateTime().truncatedTo(ChronoUnit.SECONDS).toString()
+				.replace("T", " ").replace("Z", "");
+
+		JSONObject jsonObject = new JSONObject(inputMap.get("materialInventoryJson").toString());
+		JSONObject jsonuidata = new JSONObject(inputMap.get("jsonuidata").toString());
+
+		JSONObject jsonObjectTrans = new JSONObject(inputMap.get("MaterialInventoryTrans").toString());
+		JSONObject jsonuidataTrans = new JSONObject(inputMap.get("jsonuidataTrans").toString());
+
+		Material objGetMaterialJSON = materialRepository.findByNstatusAndNmaterialcode(1,
+				(Integer) inputMap.get("nmaterialcode"));
+
+		if (!lstDateField.isEmpty()) {
+			jsonObject = (JSONObject) convertInputDateToUTCByZone(jsonObject, lstDateField, false);
+			jsonuidata = (JSONObject) convertInputDateToUTCByZone(jsonuidata, lstDateField, false);
+			jsonObjectTrans = (JSONObject) convertInputDateToUTCByZone(jsonObjectTrans, lstDateField, false);
+			jsonuidataTrans = (JSONObject) convertInputDateToUTCByZone(jsonuidataTrans, lstDateField, false);
+		}
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		String isExpiryNeed = (String) commonfunction
+				.getInventoryValuesFromJsonString(objGetMaterialJSON.getJsondata(), "Expiry Validations").get("rtnObj");
+
+		if (isExpiryNeed != null) {
+			Map<String, Object> rtnMap = new HashMap<String, Object>();
+			if (isExpiryNeed.equals("Expiry date") && !jsonObject.has("Received Date & Time")
+					&& !jsonObject.has("Expiry Date & Time")) {
+				rtnMap.put("success", false);
+				rtnMap.put("msg", "IDS_ATLEASTADDEXPIRYDATEORRECEIVEDDATE");
+				return new ResponseEntity<>(rtnMap, HttpStatus.ACCEPTED);
+			} else if (isExpiryNeed.equals("Expiry policy") && !jsonObject.has("Received Date & Time")
+					&& !jsonObject.has("Expiry Date & Time")) {
+				rtnMap.put("success", false);
+				rtnMap.put("msg", "IDS_ATLEASTADDRECEIVEDDATEORRECEIVEDDATE");
+				return new ResponseEntity<>(rtnMap, HttpStatus.ACCEPTED);
+			}
+		}
+		if (jsonObject.has("Received Date & Time")) {
+			receiveDate = (Date) jsonObject.get("Received Date & Time");
+			Map<String, Object> rtnMap = new HashMap<String, Object>();
+			if (receiveDate != null && expiryDate != null) {
+				if (receiveDate.compareTo(expiryDate) == 1) {
+					rtnMap.put("success", false);
+					rtnMap.put("msg", "IDS_RECEIVEDATELESSTHANEXPEDATE");
+					return new ResponseEntity<>(rtnMap, HttpStatus.ACCEPTED);
+				}
+			}
+			if (receiveDate != null && manufDate != null) {
+				if (receiveDate.compareTo(manufDate) == -1) {
+					rtnMap.put("success", false);
+					rtnMap.put("msg", "IDS_RECEIVEDATEGREATERTHANMANUFEDATE");
+					return new ResponseEntity<>(rtnMap, HttpStatus.ACCEPTED);
+				}
+			}
+		}
+		if (jsonObject.has("Expiry Date & Time")) {
+			expiryDate = (Date) jsonObject.get("Expiry Date & Time");
+			Map<String, Object> rtnMap = new HashMap<String, Object>();
+			if (receiveDate != null && expiryDate != null) {
+				if (expiryDate.compareTo(receiveDate) == -1) {
+					rtnMap.put("success", false);
+					rtnMap.put("msg", "IDS_EXPDATEGREATERTHANRECEIVEDATE");
+					return new ResponseEntity<>(rtnMap, HttpStatus.ACCEPTED);
+				}
+			}
+			if (expiryDate != null && manufDate != null) {
+				if (expiryDate.compareTo(manufDate) == -1) {
+					rtnMap.put("success", false);
+					rtnMap.put("msg", "IDS_EXPDATEGREATERTHANMANUFDATE");
+					return new ResponseEntity<>(rtnMap, HttpStatus.ACCEPTED);
+				}
+			}
+		}
+		if (jsonObject.has("Date Of Manufacturer")) {
+			manufDate = (Date) jsonObject.get("Date Of Manufacturer");
+			Map<String, Object> rtnMap = new HashMap<String, Object>();
+			if (manufDate != null && expiryDate != null) {
+				if (manufDate.compareTo(expiryDate) == 1) {
+					rtnMap.put("success", false);
+					rtnMap.put("msg", "IDS_MANUFDATELESSTHANEXPEDATE");
+					return new ResponseEntity<>(rtnMap, HttpStatus.ACCEPTED);
+				}
+			}
+
+			if (manufDate != null && receiveDate != null) {
+				if (manufDate.compareTo(receiveDate) == 1) {
+					rtnMap.put("success", false);
+					rtnMap.put("msg", "IDS_MANUFDATELESSTHANRECEIVEEDATE");
+					return new ResponseEntity<>(rtnMap, HttpStatus.ACCEPTED);
+				}
+			}
+		}
+
+		jsonObject.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVED.gettransactionstatus());
+		jsonuidata.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVED.gettransactionstatus());
+		
+		if (!lstDateField.isEmpty()) {
+			jsonObject = (JSONObject) removeISTinDateString(jsonObject, lstDateField, false);
+			jsonuidata = (JSONObject) removeISTinDateString(jsonuidata, lstDateField, false);
+			jsonObjectTrans = (JSONObject) removeISTinDateString(jsonObjectTrans, lstDateField, false);
+			jsonuidataTrans = (JSONObject) removeISTinDateString(jsonuidataTrans, lstDateField, false);
+		}
+
+		MaterialInventory objInventory = materialInventoryRepository
+				.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
+		objInventory.setJsondata(ReplaceQuote(jsonObject.toString()));
+		objInventory.setJsonuidata(ReplaceQuote(jsonuidata.toString()));
+		objInventory
+				.setNsectioncode(inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode") : -1);
+		materialInventoryRepository.save(objInventory);
+
+		jsonObjectTrans.put("Transaction Date & Time", dtransactiondate);
+		jsonObjectTrans.put("ninventorytranscode", Enumeration.TransactionStatus.OUTSIDE.gettransactionstatus());
+		jsonObjectTrans.put("nqtyissued", 0);
+		jsonObjectTrans.put("namountleft", Double.valueOf((Integer) jsonuidata.get("Received Quantity")));
+		jsonuidataTrans.put("namountleft", Double.valueOf((Integer) jsonuidata.get("Received Quantity")));
+		jsonuidataTrans.put("Transaction Date & Time", dtransactiondate);
+		jsonuidataTrans.put("ninventorytranscode", Enumeration.TransactionStatus.OUTSIDE.gettransactionstatus());
+		jsonuidataTrans.put("nqtyissued", 0);
+
+		List<MaterialInventoryTransaction> lstTransactions = materialInventoryTransactionRepository
+				.findByNmaterialinventorycodeOrderByNmaterialinventtranscode(
+						(Integer) inputMap.get("nmaterialinventorycode"));
+
+		Double recQty = Double.valueOf((Integer) jsonuidata.get("Received Quantity"));
+//		Double issQty = Double.valueOf((Integer) jsonuidata.get("nqtyissued"));
+
+		JSONObject jsonObjectLstTrans = jsonObjectTrans;
+		JSONObject jsonObjectUiTrans = jsonuidataTrans;
+
+		lstTransactions.stream().peek(objTransaction -> {
+			objTransaction.setJsondata(ReplaceQuote(jsonObjectLstTrans.toString()));
+			objTransaction.setJsonuidata(ReplaceQuote(jsonObjectUiTrans.toString()));
+			objTransaction.setNsectioncode(
+					inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode") : -1);
+			objTransaction.setNqtyreceived(recQty);
+//			objTransaction.setNqtyissued(issQty);
+		}).collect(Collectors.toList());
+
+		materialInventoryTransactionRepository.save(lstTransactions);
+
+		inputMap.put("nflag", Enumeration.TransactionStatus.ACTIVE.gettransactionstatus());
+		objmap.putAll((Map<String, Object>) getMaterialInventoryByID(inputMap).getBody());
+
+		objmap.put("nregtypecode", -1);
+		objmap.put("nregsubtypecode", -1);
+		objmap.put("ndesigntemplatemappingcode", jsonuidata.get("nmaterialconfigcode"));
 
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 
@@ -1119,10 +1293,7 @@ public class MaterialInventoryService {
 						Enumeration.TransactionStatus.NA.gettransactionstatus(),
 						Enumeration.TransactionStatus.ACTIVE.gettransactionstatus());
 
-		int sourceSection = materialInventoryTransactionRepository
-				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(
-						(Integer) inputMap.get("nmaterialinventorycode"))
-				.get(0).getNsectioncode();
+//		int sourceSection = materialInventoryTransactionRepository.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc((Integer) inputMap.get("nmaterialinventorycode")).get(0).getNsectioncode();
 
 		if ((int) inputMap.get("nflag") == 1) {
 
@@ -1317,14 +1488,13 @@ public class MaterialInventoryService {
 			objmap.put("navailableqtyref", transtypechange);
 		}
 
-		objmap.put("sourceSection", sourceSection);
+//		objmap.put("sourceSection", sourceSection);
 		objmap.put("QuantityTransactionTemplate", lstMaterialConfig);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> getMaterialInventoryDetails(Map<String, Object> inputMap)
-			throws Exception {
+	public ResponseEntity<Object> getMaterialInventoryDetails(Map<String, Object> inputMap) throws Exception {
 
 		List<Map<String, Object>> lstMaterialInventory = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> lstMaterialInventory1 = new ArrayList<Map<String, Object>>();
@@ -1345,8 +1515,10 @@ public class MaterialInventoryService {
 				Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
 
 				resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-				resObj.put("displaystatus", f.getNtransactionstatus() ==  28 ? "Released" : (f.getNtransactionstatus() == 55 ? "Expired" : 
-					(f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
+				resObj.put("displaystatus",
+						f.getNtransactionstatus() == 28 ? "Released"
+								: (f.getNtransactionstatus() == 55 ? "Expired"
+										: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
 				lstMaterialInventory2.add(resObj);
 
 			} catch (IOException e) {
@@ -1357,13 +1529,14 @@ public class MaterialInventoryService {
 		}).collect(Collectors.toList());
 
 		objmap.put("MaterialInventory", lstMaterialInventory2);
-		
-		if(inputMap.get("nmaterialinventorycode") != null) {
+
+		if (inputMap.get("nmaterialinventorycode") != null) {
 			MaterialInventory objInventory = materialInventoryRepository
 					.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
 
-			objmap.putAll((Map<String, Object>) getResultUsedMaterial((Integer) inputMap.get("nmaterialinventorycode")).getBody());
-			
+			objmap.putAll((Map<String, Object>) getResultUsedMaterial((Integer) inputMap.get("nmaterialinventorycode"))
+					.getBody());
+
 			Map<String, Object> resObj = new ObjectMapper().readValue(objInventory.getJsonuidata(), Map.class);
 
 			resObj.put("nmaterialinventorycode", (Integer) inputMap.get("nmaterialinventorycode"));
@@ -1406,7 +1579,7 @@ public class MaterialInventoryService {
 			inputMap.put("nregsubtypecode", -1);
 			inputMap.put("ndesigntemplatemappingcode", inputMap.get("nmaterialconfigcode"));
 			inputMap.put("tabScreen", "IDS_MATERIALSECTION");
-			
+
 			return getMaterialInventoryByID(inputMap);
 		} else {
 			return new ResponseEntity<>("IDS_ALREADYDELETED", HttpStatus.CONFLICT);
@@ -1464,24 +1637,29 @@ public class MaterialInventoryService {
 							jsonAuditArraynew.put(jsonuidata);
 							actionType.put("materialinventory", "IDS_MATERIALINVENTORYRELEASED");
 						} else {
-							matinv.setInfo("Material Inv : "+objMaterialInventory.getNmaterialinventorycode() +"Already Released");
+							matinv.setInfo("Material Inv : " + objMaterialInventory.getNmaterialinventorycode()
+									+ "Already Released");
 							matinv.setObjsilentaudit(cft);
 //							return new ResponseEntity<>("IDS_ALREADYRELEASED", HttpStatus.ALREADY_REPORTED);
 							return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 						}
 					} else {
 
-						matinv.setInfo("Material Inv : "+objMaterialInventory.getNmaterialinventorycode() +"Already retired");
+						matinv.setInfo("Material Inv : " + objMaterialInventory.getNmaterialinventorycode()
+								+ "Already retired");
 						matinv.setObjsilentaudit(cft);
-						//return new ResponseEntity<>("IDS_THEINVENTORYALREADYRETIRED", HttpStatus.ALREADY_REPORTED);
+						// return new ResponseEntity<>("IDS_THEINVENTORYALREADYRETIRED",
+						// HttpStatus.ALREADY_REPORTED);
 						return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 
 					}
 				} else {
 
-					matinv.setInfo("Material Inv : "+objMaterialInventory.getNmaterialinventorycode() +"Already Expired");
+					matinv.setInfo(
+							"Material Inv : " + objMaterialInventory.getNmaterialinventorycode() + "Already Expired");
 					matinv.setObjsilentaudit(cft);
-				//	return new ResponseEntity<>("IDS_THEINVENTORYALREADYEXPIRED", HttpStatus.ALREADY_REPORTED);
+					// return new ResponseEntity<>("IDS_THEINVENTORYALREADYEXPIRED",
+					// HttpStatus.ALREADY_REPORTED);
 					return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 
 				}
@@ -1510,15 +1688,17 @@ public class MaterialInventoryService {
 						actionType.put("materialinventory", "IDS_MATERIALINVENTORYRETIRED");
 					} else {
 
-						matinv.setInfo("Material Inv : "+objMaterialInventory.getNmaterialinventorycode() +"Already Retired");
+						matinv.setInfo("Material Inv : " + objMaterialInventory.getNmaterialinventorycode()
+								+ "Already Retired");
 						matinv.setObjsilentaudit(cft);
 //						return new ResponseEntity<>("IDS_THEINVENTORYALREADYRETIRED", HttpStatus.ALREADY_REPORTED);
 						return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 					}
 				} else {
-					matinv.setInfo("Material Inv : "+objMaterialInventory.getNmaterialinventorycode() +"Already Released");
+					matinv.setInfo(
+							"Material Inv : " + objMaterialInventory.getNmaterialinventorycode() + "Already Released");
 					matinv.setObjsilentaudit(cft);
-					
+
 					return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 
 				}
@@ -1534,8 +1714,8 @@ public class MaterialInventoryService {
 							jsonuidata.put("tzOpen Date", inputMap.get("tzOpen Date"));
 
 							lstDateField.add("Open Date");
-							jsonObject = (JSONObject) convertInputDateToUTCByZone(jsonObject, lstDateField, false);
-							jsonuidata = (JSONObject) convertInputDateToUTCByZone(jsonuidata, lstDateField, false);
+//							jsonObject = (JSONObject) convertInputDateToUTCByZone(jsonObject, lstDateField, false);
+//							jsonuidata = (JSONObject) convertInputDateToUTCByZone(jsonuidata, lstDateField, false);
 							jsonObject = getmaterialquery(jsonObject, 2);
 							jsonuidata = getmaterialquery(jsonuidata, 2);
 						}
@@ -1548,7 +1728,8 @@ public class MaterialInventoryService {
 						actionType.put("materialinventory", "IDS_OPENDATE");
 					} else {
 
-						matinv.setInfo("Material Inv : "+objMaterialInventory.getNmaterialinventorycode() +"Already Released");
+						matinv.setInfo("Material Inv : " + objMaterialInventory.getNmaterialinventorycode()
+								+ "Already Released");
 						matinv.setObjsilentaudit(cft);
 						return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 					}
@@ -1575,7 +1756,8 @@ public class MaterialInventoryService {
 
 	public ResponseEntity<Object> getResultUsedMaterial(int nmaterialinventorycode) throws Exception {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-		List<ResultUsedMaterial> lstResultUsedMaterial = resultUsedMaterialRepository.findByNinventorycodeOrderByNresultusedmaterialcodeDesc(nmaterialinventorycode);
+		List<ResultUsedMaterial> lstResultUsedMaterial = resultUsedMaterialRepository
+				.findByNinventorycodeOrderByNresultusedmaterialcodeDesc(nmaterialinventorycode);
 		objmap.put("ResultUsedMaterial", lstResultUsedMaterial);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
@@ -1651,15 +1833,32 @@ public class MaterialInventoryService {
 			final boolean returnAsString) throws Exception {
 
 		DateFormat formatter;
-		formatter = new SimpleDateFormat("yyyy-MM-dd");
+		if (!returnAsString) {
+			formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		} else {
+			formatter = new SimpleDateFormat("yyyy-MM-dd");
+		}
 
 		for (int i = 0; i < inputFieldList.size(); i++) {
 
 			String v_date_str = (String) jsonObj.get(inputFieldList.get(i));
 
-			Date date_temp = (Date) formatter.parse(v_date_str);
+			Date date_temp = formatter.parse(v_date_str);
 
 			jsonObj.put(inputFieldList.get(i), date_temp);
+
+		}
+
+		return jsonObj;
+	}
+	
+	public Object removeISTinDateString(JSONObject jsonObj, final List<String> inputFieldList, final boolean returnAsString) throws Exception {
+
+		for (int i = 0; i < inputFieldList.size(); i++) {
+			
+			String v_date_str = jsonObj.get(inputFieldList.get(i)).toString().replace("IST","+0530");
+
+			jsonObj.put(inputFieldList.get(i), v_date_str);
 
 		}
 
@@ -1704,17 +1903,18 @@ public class MaterialInventoryService {
 //				userInfo));
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+
 	public MaterialInventory CloudUploadattachments(MultipartFile file, Integer nmaterialinventorycode, String filename,
-			String fileexe, Integer usercode, Date currentdate,Integer isMultitenant) throws IOException {
+			String fileexe, Integer usercode, Date currentdate, Integer isMultitenant) throws IOException {
 		MaterialInventory objmaterialinv = materialInventoryRepository.findOne(nmaterialinventorycode);
 		LsOrderattachments objattachment = new LsOrderattachments();
-		if(isMultitenant == 0) {
+		if (isMultitenant == 0) {
 			if (fileManipulationservice.storeLargeattachment(filename, file) != null) {
 				objattachment.setFileid(fileManipulationservice.storeLargeattachment(filename, file));
-			}	
+			}
 		}
-		
-     	objattachment.setFilename(filename);
+
+		objattachment.setFilename(filename);
 		objattachment.setFileextension(fileexe);
 		objattachment.setCreateby(lsuserMasterRepository.findByusercode(usercode));
 		objattachment.setCreatedate(currentdate);
@@ -1725,26 +1925,36 @@ public class MaterialInventoryService {
 			objmaterialinv.setLsOrderattachments(new ArrayList<LsOrderattachments>());
 			objmaterialinv.getLsOrderattachments().add(objattachment);
 		}
-		lsOrderattachmentsRepository.save(objmaterialinv.getLsOrderattachments());		
-		if(isMultitenant != 0) {
-		String filenameval = "attach_"+ objmaterialinv.getNmaterialcode() + "_" + objmaterialinv.getLsOrderattachments()
-		.get(objmaterialinv.getLsOrderattachments().lastIndexOf(objattachment)).getAttachmentcode()+ "_" + filename;
+		lsOrderattachmentsRepository.save(objmaterialinv.getLsOrderattachments());
+		if (isMultitenant != 0) {
+			String filenameval = "attach_" + objmaterialinv.getNmaterialcode() + "_"
+					+ objmaterialinv.getLsOrderattachments()
+							.get(objmaterialinv.getLsOrderattachments().lastIndexOf(objattachment)).getAttachmentcode()
+					+ "_" + filename;
 			String id = cloudFileManipulationservice.storeLargeattachment(filenameval, file);
 			if (id != null) {
 				objattachment.setFileid(id);
+			}
+
+			lsOrderattachmentsRepository.save(objmaterialinv.getLsOrderattachments());
 		}
-	
-		lsOrderattachmentsRepository.save(objmaterialinv.getLsOrderattachments());
-		}	
 
 		return objmaterialinv;
 	}
 
 	public Map<String, Object> getAttachments(Map<String, Object> objMap) {
 		Map<String, Object> obj = new HashMap<>();
-		List<LsOrderattachments> lstattach = lsOrderattachmentsRepository.findByNmaterialinventorycodeOrderByAttachmentcodeDesc(objMap.get("nmaterialinventorycode"));
-		obj.put("lsOrderattachments", lstattach);			
+		List<LsOrderattachments> lstattach = lsOrderattachmentsRepository
+				.findByNmaterialinventorycodeOrderByAttachmentcodeDesc(objMap.get("nmaterialinventorycode"));
+		obj.put("lsOrderattachments", lstattach);
 		return obj;
 
+	}
+
+	public String ReplaceQuote(String str) {
+		if (str != null) {
+			str = str.trim().replace("'", "''");
+		}
+		return str;
 	}
 }
