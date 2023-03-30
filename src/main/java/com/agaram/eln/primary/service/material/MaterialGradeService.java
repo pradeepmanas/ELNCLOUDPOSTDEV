@@ -19,7 +19,7 @@ public class MaterialGradeService {
 	MaterialGradeRepository materialGradeRepository;
 	
 	public ResponseEntity<Object> getGrade(Integer nsiteInteger) {
-		List<MaterialGrade> lstGrade = materialGradeRepository.findByNstatusAndNsitecodeOrderByNmaterialgradecodeDesc(1,nsiteInteger);
+		List<MaterialGrade> lstGrade = materialGradeRepository.findByNsitecodeOrderByNmaterialgradecodeDesc(nsiteInteger);
 		return new ResponseEntity<>(lstGrade, HttpStatus.OK);
 	}
 

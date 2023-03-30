@@ -19,7 +19,7 @@ public class ManufacturerService {
 	ManufacturerRepository manufacturerRepository;
 
 	public ResponseEntity<Object> getManufacturer(Integer nsiteInteger) {
-		List<Manufacturer> lstManufacturer = manufacturerRepository.findByNstatusAndNsitecodeOrderByNmanufcodeDesc(1,nsiteInteger);
+		List<Manufacturer> lstManufacturer = manufacturerRepository.findByNsitecodeOrderByNmanufcodeDesc(nsiteInteger);
 		return new ResponseEntity<>(lstManufacturer, HttpStatus.OK);
 	}
 

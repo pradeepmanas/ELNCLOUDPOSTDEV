@@ -4035,7 +4035,16 @@ AND table_name='lsorderattachments';
 END
 $do$;
 
+ALTER TABLE IF Exists DataSourceConfig ADD COLUMN IF NOT EXISTS licencetype integer default 1;
+
 update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_TSK_FOLDERCREATION' and screate='NA';
 update lsusergrouprightsmaster set screate='0' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and screate='NA';
 update lsusergrouprights set screate ='1' where displaytopic='IDS_TSK_FOLDERCREATION' and screate='NA';
 update lsusergrouprights set screate ='1' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and screate='NA';
+
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(150,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_GRADEMASTER','IDS_TSK_SAVEGRADE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(151,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_GRADEMASTER','IDS_TSK_DELETEGRADE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(152,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_SUPPLIER','IDS_TSK_SAVESUPPLIER') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(153,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_SUPPLIER','IDS_TSK_DELETESUPPLIER') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(154,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_MANUFACTURER','IDS_TSK_SAVEMANUFACTURER') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(155,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_MANUFACTURER','IDS_TSK_DELETEMANUFACTURER') ON CONFLICT(serialno)DO NOTHING;

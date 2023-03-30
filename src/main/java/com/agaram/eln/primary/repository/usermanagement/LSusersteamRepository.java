@@ -17,10 +17,12 @@ public interface LSusersteamRepository  extends JpaRepository<LSusersteam, Integ
 	public List<LSusersteam> findBylssitemasterAndStatus(LSSiteMaster lssitemaster,Integer status);
 	public Object findByTeamnameAndStatusAndLssitemaster(String teamname, int i, LSSiteMaster lssitemaster);
 	public LSusersteam findByteamcode(Integer teamcode);
-	public LSusersteam findByTeamnameIgnoreCaseAndStatusAndLssitemaster(String teamname, int i, LSSiteMaster lssitemaster);
+	public List<LSusersteam> findByTeamnameIgnoreCaseAndLssitemaster(String teamname, LSSiteMaster lssitemaster);
 	public LSusersteam findByteamcode(LSsheetworkflowgroupmap lSsheetworkflowgroupmap);
 	public LSusersteam findByteamcode(LSusersteam lSusersteam);
 	public List<LSusersteam> findByLsuserteammappingInAndStatus(List<LSuserteammapping> lsuserteammapping, Integer status);
 	public List<LSusersteam> findBylssitemaster(LSSiteMaster lssitemaster);
+	public List<LSusersteam> findByTeamnameIgnoreCaseAndTeamcodeNotAndLssitemaster(String teamname, Integer teamcode,
+			LSSiteMaster lssitemaster);
 
 }

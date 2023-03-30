@@ -192,7 +192,7 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	List<LSprotocolmaster> findByProtocolmastercodeIn(List<Integer> listobjfilecode);
 
-	Object findByprotocolmastercodeNotAndProtocolmastername(int protocolmastercode, String trim);
+	List<LSprotocolmaster> findByProtocolmastercodeNotAndProtocolmasternameIgnoreCase(int protocolmastercode, String trim);
 
 //	Object findByProtocolmastername(String trim);
 
@@ -293,7 +293,7 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
 			Date todate2, int l);
 
-	Object findByProtocolmasternameAndLssitemaster(String trim, Integer lssitemaster);
+	Object findByProtocolmasternameIgnoreCaseAndLssitemaster(String trim, Integer lssitemaster);
 
 	List<LSprotocolmaster> findByProtocolmastercode(Integer protocolmastercode);
 

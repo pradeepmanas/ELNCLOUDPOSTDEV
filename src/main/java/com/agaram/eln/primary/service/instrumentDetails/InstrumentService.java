@@ -105,6 +105,7 @@ import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSactiveUser;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserActions;
@@ -167,6 +168,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappin
 import com.agaram.eln.primary.repository.templates.LsMappedTemplateRepository;
 import com.agaram.eln.primary.repository.templates.LsUnmappedTemplateRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
+import com.agaram.eln.primary.repository.usermanagement.LSactiveUserRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -385,6 +387,9 @@ public class InstrumentService {
 
 	@Autowired
 	private LsMappedInstrumentsRepository lsMappedInstrumentsRepository;
+	
+	@Autowired
+	private LSactiveUserRepository lSactiveUserRepository;
 
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 //		Map<String, Object> obj = new HashMap<>();
@@ -1480,13 +1485,13 @@ public class InstrumentService {
 		String searchtext = searchCriteria.getContentsearch().replace("[", "\\[").replace("]", "\\]");
 		if (ismultitenant == 0) {
 			Query query = new Query();
-			if (searchCriteria.getContentsearchtype() == 1) {
+			if (searchCriteria.getContentsearchtype() == 1|| searchCriteria.getContentsearchtype() == 3) {
 				query.addCriteria(Criteria.where("contentvalues").regex(searchtext, "i"));
 			} else if (searchCriteria.getContentsearchtype() == 2) {
 				query.addCriteria(Criteria.where("contentparameter").regex(searchtext, "i"));
 			}
 
-			query.addCriteria(Criteria.where("id").in(lstsamplefilecode)).with(new PageRequest(0, 5));
+		//	query.addCriteria(Criteria.where("id").in(lstsamplefilecode)).with(new PageRequest(0, 5));
 
 			List<OrderCreation> orders = mongoTemplate.find(query, OrderCreation.class);
 			idList = orders.stream().map(OrderCreation::getId).collect(Collectors.toList());
@@ -2341,6 +2346,16 @@ public class InstrumentService {
 		}
 		
 		if (objupdatedorder.getLockeduser() != null) {
+			
+			LSuserMaster user = new LSuserMaster();
+			user.setUsercode(objupdatedorder.getLockeduser());
+			
+			List<LSactiveUser> LSactiveUsr = lSactiveUserRepository.findByLsusermaster(user);
+			
+			if(LSactiveUsr.isEmpty()) {
+				objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
+				objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
+			}			
 			objupdatedorder.setIsLock(1);
 		} else {
 			objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
@@ -6275,7 +6290,7 @@ public class InstrumentService {
 
 	public Map<String, Object> Getprotocolordersonproject(LSlogilabprotocoldetail objorder) {
 		Map<String, Object> retuobjts = new HashMap<>();
-		List<LSlogilabprotocoldetail> lstorder = new ArrayList<LSlogilabprotocoldetail>();
+		List<Logilabprotocolorders> lstorder = new ArrayList<Logilabprotocolorders>();
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
 		Integer protocoltype = objorder.getProtocoltype();
@@ -6316,7 +6331,7 @@ public class InstrumentService {
 		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
 		List<Long> protocolordercode = new ArrayList<>();
 		if (lstorder.size() > 0 && objorder.getSearchCriteriaType() != null) {
-			protocolordercode = lstorder.stream().map(LSlogilabprotocoldetail::getProtocolordercode)
+			protocolordercode = lstorder.stream().map(Logilabprotocolorders::getProtocolordercode)
 					.collect(Collectors.toList());
 			retuobjts.put("protocolordercodeslist", protocolordercode);
 		}

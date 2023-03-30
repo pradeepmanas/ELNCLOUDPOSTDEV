@@ -702,7 +702,7 @@ public class FileService {
 	
 					for (int i = 0; i < objuser.size(); i++) {
 						if (createby.getUsercode() != userobj.get(i).getUsercode() && userobj.size() > 0
-								&& objfile.getCreateby().getUsercode() != objfile.getLSuserMaster().getUsercode())
+								&& createby.getUsercode() != objfile.getObjLoggeduser().getUsercode())
 	
 						{
 							if (objfile.getApproved() == 1) {
@@ -736,7 +736,7 @@ public class FileService {
 							if (objfile.getApproved() != null && objfile.getApproved() != 1
 									&& objfile.getIsfinalstep() != 1) {
 								if (createby.getUsercode() != userobj.get(i).getUsercode()
-										&& objfile.getCreateby().getUsercode() != objfile.getLSuserMaster().getUsercode()) {
+										&& createby.getUsercode() != objfile.getObjLoggeduser().getUsercode()) {
 									if (objfile.getApproved() == 0) {
 										Notifiction = "SHEETAPPROVAL";
 										objnotify.setNotifationto(objuser.get(i));
@@ -1533,24 +1533,24 @@ public class FileService {
 		
 		LSfile fileByName = lSfileRepository.findByfilecode(objfile.getFilecode());
 		if(lSfileRepository.findByFilecodeNotAndFilenameuserIgnoreCase(objfile.getFilecode(),objfile.getFilenameuser()).size()==0) {
-		if (fileByName.getFilecode() != null) {
-			fileByName.setFilenameuser(objfile.getFilenameuser());
-			fileByName.setCategory(objfile.getCategory());
-			fileByName.setModifiedby(objfile.getModifiedby());
-			fileByName.setModifieddate(objfile.getModifieddate());
-			fileByName.setViewoption(objfile.getViewoption());
-			lSfileRepository.save(fileByName);
-			fileByName.setResponse(new Response());
-			fileByName.getResponse().setStatus(true);
-			return fileByName;
-
-		} else {
-			objfile.setResponse(new Response());
-			objfile.getResponse().setStatus(false);
-			objfile.getResponse().setInformation("EDIT IN SOME PROBLEMS");
-
-			return objfile;
-		}
+			if (fileByName.getFilecode() != null) {
+				fileByName.setFilenameuser(objfile.getFilenameuser());
+				fileByName.setCategory(objfile.getCategory());
+				fileByName.setModifiedby(objfile.getModifiedby());
+				fileByName.setModifieddate(objfile.getModifieddate());
+				fileByName.setViewoption(objfile.getViewoption());
+				lSfileRepository.save(fileByName);
+				fileByName.setResponse(new Response());
+				fileByName.getResponse().setStatus(true);
+				return fileByName;
+	
+			} else {
+				objfile.setResponse(new Response());
+				objfile.getResponse().setStatus(false);
+				objfile.getResponse().setInformation("EDIT IN SOME PROBLEMS");
+	
+				return objfile;
+			}
 		}else {
 			objfile.setResponse(new Response());
 			objfile.getResponse().setStatus(false);

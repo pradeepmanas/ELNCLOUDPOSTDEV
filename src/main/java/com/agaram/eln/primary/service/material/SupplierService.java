@@ -19,7 +19,7 @@ public class SupplierService {
 	SupplierRepository supplierRepository;
 
 	public ResponseEntity<Object> getSupplier(Integer nsiteInteger) {
-		List<Supplier> lstSupplier = supplierRepository.findByNstatusAndNsitecodeOrderByNsuppliercode(1,nsiteInteger);
+		List<Supplier> lstSupplier = supplierRepository.findByNsitecodeOrderByNsuppliercode(nsiteInteger);
 		return new ResponseEntity<>(lstSupplier, HttpStatus.OK);
 	}
 
@@ -76,9 +76,9 @@ public class SupplierService {
 		if (supplier == null) {
 			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYDELETED.getreturnstatus(), HttpStatus.EXPECTATION_FAILED);
 		} else {
-			objSupplier.setObjsilentaudit(objSupplier.getObjsilentaudit());
-			objSupplier.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
-			supplierRepository.save(objSupplier);
+			supplier.setObjsilentaudit(objSupplier.getObjsilentaudit());
+			supplier.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
+			supplierRepository.save(supplier);
 			return getSupplier(objSupplier.getNsitecode());
 		}
 	}

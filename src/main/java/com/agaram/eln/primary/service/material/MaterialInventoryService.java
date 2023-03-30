@@ -259,7 +259,7 @@ public class MaterialInventoryService {
 							f.getNtransactionstatus() == 28 ? "Released"
 									: (f.getNtransactionstatus() == 55 ? "Expired"
 											: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
-
+					resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
 					lstMaterialInventory.add(resObj);
 
 				} catch (IOException e) {
@@ -499,9 +499,8 @@ public class MaterialInventoryService {
 				.getInventoryValuesFromJsonString(objmaterial.getJsondata(), "Open Expiry Need").get("rtnObj"));
 
 		if (objmaterial.getNmaterialtypecode() == 3 || objmaterial.getNmaterialtypecode() == 4) {
-			Map<String, Object> isReusable = commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(),
-					"Reusable");
-			objContent.put("isreusable", Integer.parseInt(isReusable.get("rtnObj").toString()) == 3 ? true : false);
+			Map<String, Object> isReusable = commonfunction.getInventoryValuesFromJsonString(objmaterial.getJsondata(),"Reusable");
+			objContent.put("isreusable", Integer.parseInt(isReusable.get("rtnObj") != null ? isReusable.get("rtnObj").toString() : "4") == 3 ? true : false);
 		} else {
 			objContent.put("isreusable", false);
 		}
@@ -1519,6 +1518,7 @@ public class MaterialInventoryService {
 						f.getNtransactionstatus() == 28 ? "Released"
 								: (f.getNtransactionstatus() == 55 ? "Expired"
 										: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
+				resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
 				lstMaterialInventory2.add(resObj);
 
 			} catch (IOException e) {
@@ -1540,6 +1540,7 @@ public class MaterialInventoryService {
 			Map<String, Object> resObj = new ObjectMapper().readValue(objInventory.getJsonuidata(), Map.class);
 
 			resObj.put("nmaterialinventorycode", (Integer) inputMap.get("nmaterialinventorycode"));
+			resObj.put("ntranscode", (Integer) objInventory.getNtransactionstatus());
 
 			lstMaterialInventory.add(resObj);
 
@@ -1704,8 +1705,7 @@ public class MaterialInventoryService {
 				}
 			} else if ((int) inputMap.get("nflag") == 3) {
 				if (jsonint != Enumeration.TransactionStatus.QUARENTINE.gettransactionstatus()) {
-					if (jsonint != Enumeration.TransactionStatus.RETIRED.gettransactionstatus()
-							&& jsonint != Enumeration.TransactionStatus.EXPIRED.gettransactionstatus()) {
+					if (jsonint != Enumeration.TransactionStatus.RETIRED.gettransactionstatus() && jsonint != Enumeration.TransactionStatus.EXPIRED.gettransactionstatus()) {
 						if (inputMap.containsKey("Open Date")) {
 							jsonObject.put("Open Date", inputMap.get("Open Date"));
 							jsonObject.put("tzOpen Date", inputMap.get("tzOpen Date"));
@@ -1727,14 +1727,11 @@ public class MaterialInventoryService {
 
 						actionType.put("materialinventory", "IDS_OPENDATE");
 					} else {
-
-						matinv.setInfo("Material Inv : " + objMaterialInventory.getNmaterialinventorycode()
-								+ "Already Released");
+						matinv.setInfo("Material Inv : " + objMaterialInventory.getNmaterialinventorycode() + "Already Retired/Expired");
 						matinv.setObjsilentaudit(cft);
 						return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
 					}
 				} else {
-
 					matinv.setInfo("Select Released Record");
 					matinv.setObjsilentaudit(cft);
 					return new ResponseEntity<>(matinv, HttpStatus.ALREADY_REPORTED);
@@ -1888,7 +1885,7 @@ public class MaterialInventoryService {
 		Map<String, Object> resObj = new ObjectMapper().readValue(objMaterialInventory.getJsonuidata(), Map.class);
 
 		resObj.put("nmaterialinventorycode", objMaterialInventory.getNmaterialinventorycode());
-
+		resObj.put("ntranscode", (Integer) objMaterialInventory.getNtransactionstatus());
 		lstMaterialInventory.add(resObj);
 
 		objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(lstMaterialInventory.size() - 1));

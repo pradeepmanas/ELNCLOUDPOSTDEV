@@ -147,7 +147,8 @@ public class MaterialService {
 
 							result.put("nmaterialcode", f.getNmaterialcode());
 							result.put("nstatus", f.getNstatus());
-
+							result.put("status", f.getNstatus() == -1 ? "Retired" : "Active");
+							
 							lstMatObject.add(result);
 						} catch (IOException e) {
 
@@ -272,7 +273,8 @@ public class MaterialService {
 
 							result.put("nmaterialcode", f.getNmaterialcode());
 							result.put("nstatus", f.getNstatus());
-
+							result.put("status", f.getNstatus() == -1 ? "Retired" : "Active");
+							
 							lstMatObject.add(result);
 						} catch (IOException e) {
 
@@ -408,9 +410,9 @@ public class MaterialService {
 		materialRepository.save(objMaterial);
 
 		inputMap.put("nmaterialconfigcode", jsonuidata.get("nmaterialconfigcode"));
-		objmap.putAll((Map<String, Object>) getMaterialByTypeCode(inputMap).getBody());
 		objmap.put("ndesigntemplatemappingcode", jsonuidata.get("nmaterialconfigcode"));
 		objmap.put("objsilentaudit", cft);
+		objmap.putAll((Map<String, Object>) getMaterialByTypeCode(inputMap).getBody());
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
@@ -712,10 +714,10 @@ public class MaterialService {
 
 		if (ObjMatNamecheck == null) {
 			if (jsonObject.has("Prefix")) {
-				final Material lstcheckPrefix = materialRepository.findBySprefixAndNmaterialtypecode(
-						(String) jsonObject.get("Prefix"), (Integer) inputMap.get("nmaterialtypecode"));
+//
+				List<Material> lstcheckPrefix = materialRepository.findByNmaterialtypecodeAndSprefix((Integer) inputMap.get("nmaterialtypecode"),(String) jsonObject.get("Prefix"));
 
-				if (objMaterial.getNmaterialcode() != lstcheckPrefix.getNmaterialcode()) {
+				if (objMaterial.getNmaterialcode() != lstcheckPrefix.get(0).getNmaterialcode()) {
 					if (lstcheckPrefix != null && ObjMatNamecheck != null) {
 						matobj.setSprefix(ObjMatNamecheck.getSprefix());
 						matobj.setObjsilentaudit(cft);
@@ -764,9 +766,10 @@ public class MaterialService {
 				.findByNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
 		objmap.put("SelectedMaterialType", lstMaterialType);
 		objmap.put("Material", materialLst);
-//		MaterialCategory objMaterialCategory = materialCategoryRepository.findByNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
-//		objmap.put("SelectedMaterialCategory", objMaterialCategory);
-		return new ResponseEntity<>(getMaterialByTypeCode(inputMap), HttpStatus.OK);
+		MaterialCategory objMaterialCategory = materialCategoryRepository.findByNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
+		objmap.put("SelectedMaterialCategory", objMaterialCategory);
+		return getMaterialByTypeCode(inputMap);
+//		return new ResponseEntity<>(getMaterialByTypeCode(inputMap), HttpStatus.OK);
 	}
 	public Material CloudUploadattachments(MultipartFile file, Integer nmaterialcatcode, String filename,
 			String fileexe, Integer usercode, Date currentdate,Integer isMultitenant) throws IOException {

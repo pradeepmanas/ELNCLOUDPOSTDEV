@@ -501,8 +501,8 @@ public class UserService {
 
 	public LSusersteam InsertUpdateTeam(LSusersteam objteam) {
 		if (objteam.getTeamcode() == null
-				&& lsusersteamRepository.findByTeamnameIgnoreCaseAndStatusAndLssitemaster(objteam.getTeamname(), 1,
-						objteam.getLssitemaster()) != null) {
+				&& lsusersteamRepository.findByTeamnameIgnoreCaseAndLssitemaster(objteam.getTeamname(),
+						objteam.getLssitemaster()).size() != 0) {
 
 			objteam.setResponse(new Response());
 			objteam.getResponse().setStatus(false);
@@ -516,6 +516,14 @@ public class UserService {
 			}
 
 			return objteam;
+		} else if (objteam.getTeamcode() != null
+					&& lsusersteamRepository.findByTeamnameIgnoreCaseAndTeamcodeNotAndLssitemaster(objteam.getTeamname(), 
+							objteam.getTeamcode(), objteam.getLssitemaster()).size() != 0) {
+			objteam.setResponse(new Response());
+			objteam.getResponse().setStatus(false);
+			objteam.getResponse().setInformation("ID_EXIST");
+			return objteam;
+			
 		} else if (objteam.getStatus() == -1) {
 			List<LSprojectmaster> team = new ArrayList<LSprojectmaster>();
 			team = LSprojectmasterRepository.findByLsusersteam(objteam);

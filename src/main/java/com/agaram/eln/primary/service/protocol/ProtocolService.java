@@ -1324,11 +1324,10 @@ public class ProtocolService {
 			LSprotocolmaster newProtocolMasterObj = new LSprotocolmaster();
 			if (argObj.containsKey("edit")) {
 
-				int protocolmastercode = new ObjectMapper().convertValue(argObj.get("protocolmastercode"),
-						Integer.class);
+				int protocolmastercode = new ObjectMapper().convertValue(argObj.get("protocolmastercode"), Integer.class);
 
-				if (LSProtocolMasterRepositoryObj.findByprotocolmastercodeNotAndProtocolmastername(protocolmastercode,
-						argObj.get("protocolmastername").toString().trim()) != null) {
+				if (LSProtocolMasterRepositoryObj.findByProtocolmastercodeNotAndProtocolmasternameIgnoreCase(protocolmastercode,
+						(String) argObj.get("protocolmastername")).size() != 0) {
 					response.setStatus(false);
 					response.setInformation("IDS_MSG_ALREADY");
 					mapObj.put("response", response);
@@ -1347,7 +1346,7 @@ public class ProtocolService {
 //				UpdateProtocolversion(newProtocolMasterObj, argObj1, LSprotocolupdates.class);
 			} else {
 				if (LSProtocolMasterRepositoryObj
-						.findByProtocolmasternameAndLssitemaster(argObj.get("protocolmastername").toString().trim(),LScfttransactionobj.getLssitemaster()) != null) {
+						.findByProtocolmasternameIgnoreCaseAndLssitemaster(argObj.get("protocolmastername").toString().trim(),LScfttransactionobj.getLssitemaster()) != null) {
 					response.setStatus(false);
 					response.setInformation("IDS_MSG_ALREADY");
 					mapObj.put("response", response);
@@ -1923,7 +1922,8 @@ public class ProtocolService {
 			if (LsProto.getApproved() != null && objClass.getFinalworkflow() != 1) {
 
 				for (int i = 0; i < objuser.size(); i++) {
-					if (createby.getUsercode() != userobj.get(i).getUsercode()) {
+					if (createby.getUsercode() != userobj.get(i).getUsercode() &&
+							objClass.getLSuserMaster().getUsercode() != createby.getUsercode()) {
 						if (LsProto.getApproved() == 0 && objClass.getRejected() == null
 								|| objClass.getApproved() == null) {
 							Notification = "PROTOCOLAPPROVALSENT";
@@ -1956,7 +1956,8 @@ public class ProtocolService {
 
 				for (int i = 0; i < objuser.size(); i++) {
 
-					if (createby.getUsercode() != objClass.getLSuserMaster().getUsercode())
+					if (createby.getUsercode() != userobj.get(i).getUsercode() &&
+							objClass.getLSuserMaster().getUsercode() != createby.getUsercode())
 
 					{
 						if (objClass.getApproved() == 1 && objClass.getRejected() == null) {
@@ -2130,7 +2131,8 @@ public class ProtocolService {
 			if (objClass.getApprovelstatus() != null && objClass.getFinalworkflow() == 1) {
 
 				for (int i = 0; i < objuser.size(); i++) {
-					if (createby.getUsercode() != userobj.get(i).getUsercode())
+					if (createby.getUsercode() != userobj.get(i).getUsercode()
+							&& createby.getUsercode() != objClass.getObjLoggeduser().getUsercode())
 
 					{
 						if (LsProto.getApproved() == 1) {
@@ -2166,7 +2168,8 @@ public class ProtocolService {
 
 			} else {
 				for (int i = 0; i < objuser.size(); i++) {
-					if (createby.getUsercode() != userobj.get(i).getUsercode()) {
+					if (createby.getUsercode() != userobj.get(i).getUsercode()
+							&& createby.getUsercode() != objClass.getObjLoggeduser().getUsercode()) {
 
 						if (LsProto.getApproved() == 2 && objClass.getRejected() == null
 								&& objClass.getApprovelstatus() != 1) {
@@ -3307,7 +3310,7 @@ public class ProtocolService {
 //							lSlogilabprotocoldetail.getAssignedto(), lSlogilabprotocoldetail.getFromdate(),
 //							lSlogilabprotocoldetail.getTodate());
 
-			List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
+			List<Logilabprotocolorders> lstCompletedOrder = LSlogilabprotocoldetailRepository
 					.findByProtocoltypeAndSitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
 							lSlogilabprotocoldetail.getAssignedto(), lSlogilabprotocoldetail.getFromdate(),
@@ -3335,7 +3338,7 @@ public class ProtocolService {
 //							lSlogilabprotocoldetail.getLsuserMaster(),lSlogilabprotocoldetail.getAssignedto(),
 //							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 
-			List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
+			List<Logilabprotocolorders> lstCompletedOrder = LSlogilabprotocoldetailRepository
 //					.findByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 					.findByProtocoltypeAndSitecodeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
@@ -3684,14 +3687,17 @@ public class ProtocolService {
 					}
 				}
 
-				List<LSprotocolorderversion> LSprotocolorderversion = lsprotocolorderversionRepository
-						.findByProtocolordercodeOrderByVersionnoDesc(ipInt);
+			
 //				Collections.sort(LSprotocolorderversion, Collections.reverseOrder());
 
 				LSprotocolstepLst.add(LSprotocolstepObj1);
-				if (LSprotocolorderversion != null) {
-					mapObj.put("protocolorderversionLst", LSprotocolorderversion);
-				}
+				
+			}
+			
+			List<LSprotocolorderversion> LSprotocolorderversion = lsprotocolorderversionRepository
+					.findByProtocolordercodeOrderByVersionnoDesc(ipInt);
+			if (LSprotocolorderversion != null) {
+				mapObj.put("protocolorderversionLst", LSprotocolorderversion);
 			}
 			if (LSprotocolsteplst != null) {
 				mapObj.put("protocolstepLst", LSprotocolstepLst);
@@ -6101,7 +6107,7 @@ public class ProtocolService {
 							lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getAssignedto(),
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 
-			List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
+			List<Logilabprotocolorders> lstCompletedOrder = LSlogilabprotocoldetailRepository
 					.findByProtocoltypeAndSitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
 							lSlogilabprotocoldetail.getAssignedto(), lSlogilabprotocoldetail.getFromdate(),
@@ -6119,7 +6125,7 @@ public class ProtocolService {
 							lSlogilabprotocoldetail.getLsuserMaster(), lSlogilabprotocoldetail.getAssignedto(),
 							lSlogilabprotocoldetail.getFromdate(), lSlogilabprotocoldetail.getTodate());
 
-			List<LSlogilabprotocoldetail> lstCompletedOrder = LSlogilabprotocoldetailRepository
+			List<Logilabprotocolorders> lstCompletedOrder = LSlogilabprotocoldetailRepository
 //					.findByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 					.findByProtocoltypeAndSitecodeAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 							lSlogilabprotocoldetail.getProtocoltype(), lSlogilabprotocoldetail.getSitecode(),
@@ -6295,7 +6301,7 @@ public class ProtocolService {
 		LSlogilabprotocoldetail lSlogilabprotocoldetail = obj.convertValue(objusers.get("lSlogilabprotocoldetail"),
 				new TypeReference<LSlogilabprotocoldetail>() {
 				});
-		List<LSlogilabprotocoldetail> lstorder = new ArrayList<LSlogilabprotocoldetail>();
+		List<Logilabprotocolorders> lstorder = new ArrayList<Logilabprotocolorders>();
 		Map<String, Object> retuobjts = new HashMap<>();
 		Integer protocoltype = lSlogilabprotocoldetail.getProtocoltype();
 		String Orderflag = null;
@@ -6366,7 +6372,7 @@ public class ProtocolService {
 		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(lSlogilabprotocoldetail.getLstworkflow()));
 		List<Long> protocolordercode = new ArrayList<>();
 		if (lstorder.size() > 0 && lSlogilabprotocoldetail.getSearchCriteriaType() != null) {
-			protocolordercode = lstorder.stream().map(LSlogilabprotocoldetail::getProtocolordercode)
+			protocolordercode = lstorder.stream().map(Logilabprotocolorders::getProtocolordercode)
 					.collect(Collectors.toList());
 			retuobjts.put("protocolordercodeslist", protocolordercode);
 		}

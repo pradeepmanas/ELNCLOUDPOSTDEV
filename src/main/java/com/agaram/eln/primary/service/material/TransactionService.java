@@ -238,8 +238,8 @@ public class TransactionService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> createMaterialInventoryTrans(Map<String, Object> inputMap)
-			throws JSONException, Exception {
+	public ResponseEntity<Object> createMaterialInventoryTrans(Map<String, Object> inputMap) throws JSONException, Exception {
+		
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		ObjectMapper Objmapper = new ObjectMapper();
 		JSONObject json = new JSONObject();
@@ -270,10 +270,12 @@ public class TransactionService {
 		insJsonObj.put("noffsetTransaction Date & Time", commonfunction.getCurrentDateTimeOffset("Europe/London"));
 		jsonuidata.put("Transaction Date & Time", formattedDate);
 		jsonuidata.put("noffsetTransaction Date & Time", commonfunction.getCurrentDateTimeOffset("Europe/London"));
+		
+		final double aQty = Double.parseDouble(insJsonObj.get("navailableqty").toString()) ;
+		final double rQty = Double.parseDouble(insJsonObj.get("Received Quantity").toString());
 
 		if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.ISSUE.gettransactionstatus()
-				|| (int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.REJECTED
-						.gettransactionstatus()) {
+				|| (int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.REJECTED.gettransactionstatus()) {
 
 			double namountleft = Double.parseDouble(insJsonObj.get("navailableqty").toString())
 					- Double.parseDouble(insJsonObj.get("Received Quantity").toString());
@@ -283,8 +285,7 @@ public class TransactionService {
 			insJsonObj.put("namountleft", amtleft);
 			jsonuidata.put("namountleft", amtleft);
 
-		} else if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.RETURN
-				.gettransactionstatus()) {
+		} else if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.RETURN.gettransactionstatus()) {
 
 			double availqty = Double.parseDouble(insJsonObj.get("navailableqty").toString());
 			double namountleft = availqty + Double.parseDouble(insJsonObj.get("Received Quantity").toString());
@@ -330,13 +331,6 @@ public class TransactionService {
 
 		}
 
-		if (inputMap.containsKey("notifcationamount")) {
-			MaterialInventory objInventory = materialInventoryRepository
-					.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
-			objInventory.setNqtynotification(Double.parseDouble(inputMap.get("notifcationamount").toString()));
-			materialInventoryRepository.save(objInventory);
-		}
-
 		List<MaterialInventoryTransaction> lstsourceSection = materialInventoryTransactionRepository
 				.findByNmaterialinventorycodeOrderByNmaterialinventtranscode(
 						(Integer) inputMap.get("nmaterialinventorycode"));
@@ -366,8 +360,7 @@ public class TransactionService {
 			jsonUidataObjcopy.put("Section", new JSONObject(Objmapper.writeValueAsString(map)).get("label"));
 
 		}
-		if ((int) insJsonObj.get("ninventorytranscode") == Enumeration.TransactionStatus.INHOUSE
-				.gettransactionstatus()) {
+		if ((int) insJsonObj.get("ninventorytranscode") == Enumeration.TransactionStatus.INHOUSE.gettransactionstatus()) {
 			json.put("label", "Received");
 			json.put("value", Enumeration.TransactionStatus.RECEIVE.gettransactionstatus());
 
@@ -456,10 +449,28 @@ public class TransactionService {
 				resultUsedMaterialRepository.save(objList);
 			}
 		}
+		
+		if (inputMap.containsKey("notifcationamount") && inputMap.get("notifcationamount") != null) {
+			MaterialInventory objInventory = materialInventoryRepository.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
+			objInventory.setNqtynotification(Double.parseDouble(inputMap.get("notifcationamount").toString()));
+			materialInventoryRepository.save(objInventory);
+		}
+		
+		if(inputMap.containsKey("isquarantine") && Integer.parseInt(inputMap.get("isquarantine").toString()) == 1) {
+			MaterialInventory objInventory = materialInventoryRepository.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
+			JSONObject invJsonObj = new JSONObject(objInventory.getJsondata());
+			JSONObject invJsonuidata = new JSONObject(objInventory.getJsonuidata());
 
-		objmap.putAll((Map<String, Object>) materialInventoryService
-				.getQuantityTransactionByMaterialInvCode((int) inputMap.get("nmaterialinventorycode"), inputMap)
-				.getBody());
+			invJsonObj.put("Received Quantity", aQty + rQty);
+			invJsonuidata.put("Received Quantity", aQty + rQty);
+			
+			objInventory.setJsondata(invJsonObj.toString());
+			objInventory.setJsonuidata(invJsonuidata.toString());
+			
+			materialInventoryRepository.save(objInventory);
+		}
+
+		objmap.putAll((Map<String, Object>) materialInventoryService.getQuantityTransactionByMaterialInvCode((int) inputMap.get("nmaterialinventorycode"), inputMap).getBody());
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
@@ -686,11 +697,10 @@ public class TransactionService {
 				Map<String, Object> objMapJsonData = (Map<String, Object>) objMapMaterial.get("jsondata");
 
 				String isExpiryNeed = (String) objMapJsonData.get("isExpiryNeed");
-				String isOpenExpiryNeed = objMapJsonData.get("Open Expiry Need").toString();
-				String isNextValidNeed = objMapJsonData.get("Next Validation Need").toString();
+				String isOpenExpiryNeed = objMapJsonData.get("Open Expiry Need") != null ? objMapJsonData.get("Open Expiry Need").toString() : "4";
+				String isNextValidNeed = objMapJsonData.get("Next Validation Need") != null ? objMapJsonData.get("Next Validation Need").toString() : "4";
 
-				boolean isExpiryNotify = isExpiryNeed != null
-						? isExpiryNeed.equalsIgnoreCase("Expiry Date") ? true : false
+				boolean isExpiryNotify = isExpiryNeed != null ? isExpiryNeed.equalsIgnoreCase("Expiry Date") ? true : false
 						: false;
 				boolean isOpenExpiry = isOpenExpiryNeed != null ? isOpenExpiryNeed.equalsIgnoreCase("3") ? true : false
 						: false;
