@@ -3531,11 +3531,11 @@ update lsusergrouprightsmaster set sequenceorder=76 where displaytopic ='IDS_SCN
 update lsusergrouprightsmaster set sequenceorder=77 where displaytopic ='IDS_SCN_MATERIALCATEGORY' ;
 update lsusergrouprightsmaster set sequenceorder=78 where displaytopic ='IDS_SCN_MATERIAL' ;
 update lsusergrouprightsmaster set sequenceorder=79 where displaytopic ='IDS_SCN_MATERIALINVENTORY' ;
-update lsusergrouprightsmaster set sequenceorder=80 where displaytopic ='IDS_SCN_LOGBOOK' ;
-update lsusergrouprightsmaster set sequenceorder=81 where displaytopic ='IDS_TSK_ADDLOGBOOK' ;
-update lsusergrouprightsmaster set sequenceorder=82 where displaytopic ='IDS_TSK_EDITLOGBOOK' ;
-update lsusergrouprightsmaster set sequenceorder=83 where displaytopic ='IDS_TSK_RETIRELOGBOOK' ;
-update lsusergrouprightsmaster set sequenceorder=84 where displaytopic ='IDS_TSK_REVIEWLOGBOOK' ;
+update lsusergrouprightsmaster set sequenceorder=83 where displaytopic ='IDS_SCN_LOGBOOK' ;
+update lsusergrouprightsmaster set sequenceorder=84 where displaytopic ='IDS_TSK_ADDLOGBOOK' ;
+update lsusergrouprightsmaster set sequenceorder=85 where displaytopic ='IDS_TSK_EDITLOGBOOK' ;
+update lsusergrouprightsmaster set sequenceorder=86 where displaytopic ='IDS_TSK_RETIRELOGBOOK' ;
+update lsusergrouprightsmaster set sequenceorder=87 where displaytopic ='IDS_TSK_REVIEWLOGBOOK' ;
 
 
 
@@ -3842,9 +3842,9 @@ ALTER TABLE IF Exists DataSourceConfig ADD COLUMN IF NOT EXISTS isenablereport i
 
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (121, 'IDS_SCN_GRADEMASTER', 'IDS_MDL_INVENTORY','0', '0', '0', '0', '1,1,1',80,'IDS_SCN_GRADEMASTER') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_GRADEMASTER', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_GRADEMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_GRADEMASTER' and usergroupid_usergroupcode = 1);
-INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (122, 'IDS_SCN_SUPPLIER', 'IDS_MDL_INVENTORY','0', '0', '0', '0', '1,1,1',80,'IDS_SCN_SUPPLIER') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (122, 'IDS_SCN_SUPPLIER', 'IDS_MDL_INVENTORY','0', '0', '0', '0', '1,1,1',81,'IDS_SCN_SUPPLIER') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_SUPPLIER', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_SUPPLIER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_SUPPLIER' and usergroupid_usergroupcode = 1);
-INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (123, 'IDS_SCN_MANUFACTURER', 'IDS_MDL_INVENTORY','0', '0', '0', '0', '1,1,1',80,'IDS_SCN_MANUFACTURER') ON CONFLICT(orderno)DO NOTHING;
+INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (123, 'IDS_SCN_MANUFACTURER', 'IDS_MDL_INVENTORY','0', '0', '0', '0', '1,1,1',82,'IDS_SCN_MANUFACTURER') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_MANUFACTURER', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_MANUFACTURER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_MANUFACTURER' and usergroupid_usergroupcode = 1);
 ALTER TABLE IF Exists materialgrade ADD COLUMN IF NOT EXISTS sdescription character varying(100);
 
@@ -4048,3 +4048,7 @@ Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,order
 Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(153,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_SUPPLIER','IDS_TSK_DELETESUPPLIER') ON CONFLICT(serialno)DO NOTHING;
 Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(154,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_MANUFACTURER','IDS_TSK_SAVEMANUFACTURER') ON CONFLICT(serialno)DO NOTHING;
 Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(155,0,'IDS_MDL_INVENTORY',13,'IDS_SCN_MANUFACTURER','IDS_TSK_DELETEMANUFACTURER') ON CONFLICT(serialno)DO NOTHING;
+
+update lsusergrouprightsmaster set sequenceorder=80 where displaytopic ='IDS_SCN_GRADEMASTER' ;
+update lsusergrouprightsmaster set sequenceorder=81 where displaytopic ='IDS_SCN_SUPPLIER' ;
+update lsusergrouprightsmaster set sequenceorder=82 where displaytopic ='IDS_SCN_MANUFACTURER' ;

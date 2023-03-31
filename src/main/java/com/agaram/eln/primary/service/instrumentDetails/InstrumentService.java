@@ -3288,10 +3288,10 @@ public class InstrumentService {
 		objorder.setLsOrderattachments(lstattach);
 		lslogilablimsorderdetailRepository.save(objorder);
 
-		if (objorder.getLssamplefile() != null) {
-			updateordercontent(Content, objorder.getLssamplefile(), objorder.getIsmultitenant());
-			objorder.getLssamplefile().setFilecontent(Content);
-		}
+//		if (objorder.getLssamplefile() != null) {
+//			updateordercontent(Content, objorder.getLssamplefile(), objorder.getIsmultitenant());
+//			objorder.getLssamplefile().setFilecontent(Content);
+//		}
 
 		updatenotificationfororder(objorder);
 		Content = null;
