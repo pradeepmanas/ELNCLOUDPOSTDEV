@@ -6619,7 +6619,7 @@ public class ProtocolService {
 	public List<LSprotocolorderstephistory> getprotocolstephistory(LSprotocolorderstephistory objuser) {
 		if (objuser.getProtocolordercode() != null) {
 			List<LSprotocolorderstephistory> rtobj = lsprotocolorderstephistoryRepository
-					.findByProtocolordercode(objuser.getProtocolordercode());
+					.findByProtocolordercodeOrderByProtocolorderstephistorycodeDesc(objuser.getProtocolordercode());
 			return rtobj;
 		} else if (objuser.getBatchcode() != null) {
 			List<LSprotocolorderstephistory> rtobj = lsprotocolorderstephistoryRepository

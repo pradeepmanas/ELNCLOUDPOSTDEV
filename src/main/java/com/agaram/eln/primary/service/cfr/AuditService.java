@@ -20,6 +20,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.config.AESEncryption;
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LSaudittrailconfigmaster;
 import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfrreasons;
@@ -471,6 +472,12 @@ public class AuditService {
 				cfttransaction.setLssitemaster(objuser.getLssitemaster().getSitecode());
 				cfttransaction.setUsername(username);
 			}
+			try {
+				cfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(cfttransaction);
 		}
 //		manual audit
@@ -482,6 +489,12 @@ public class AuditService {
 				objmanualaudit.setActions("Warning");
 				objmanualaudit.setTableName("LScfttransaction");
 				objmanualaudit.setComments(objUser.getComments());
+				try {
+					objmanualaudit.setTransactiondate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				lscfttransactionRepository.save(objmanualaudit);
 			}
 		}
@@ -500,12 +513,24 @@ public class AuditService {
 //		silent audit
 		if (mapObj.containsKey("objsilentaudit")) {
 			cfttransaction = objMapper.convertValue(mapObj.get("objsilentaudit"), LScfttransaction.class);
+			try {
+				cfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(cfttransaction);
 		}
 //		manual audit
 		if (mapObj.containsKey("objmanualaudit")) {
 			LScfttransaction objmanualaudit = new LScfttransaction();
 			objmanualaudit = objMapper.convertValue(mapObj.get("objmanualaudit"), LScfttransaction.class);
+			try {
+				objmanualaudit.setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objmanualaudit);
 		}
 
@@ -524,6 +549,12 @@ public class AuditService {
 		
 		if (mapObj.containsKey("objsilentaudit")) {
 			cfttransaction = objMapper.convertValue(mapObj.get("objsilentaudit"), Lscfrtransactiononorder.class);
+			try {
+				cfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			LscfrtransactiononorderRepository.save(cfttransaction);
 		}
 		
@@ -537,6 +568,14 @@ public class AuditService {
 	public Lscfrtransactiononorder silentRecordHandlerForOrderParsedData(Lscfrtransactiononorder[] mapObj) {
 		Lscfrtransactiononorder cfttransaction = new Lscfrtransactiononorder();
 		List<Lscfrtransactiononorder> obj= Arrays.asList(mapObj);
+		obj.forEach(audit -> {
+			try {
+				audit.setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 		LscfrtransactiononorderRepository.save(obj);
 		cfttransaction.setObjResponse(new Response());
 		cfttransaction.getObjResponse().setStatus(true);
@@ -646,6 +685,14 @@ public class AuditService {
 
 	public List<LScfttransaction> silentandmanualRecordHandlerlist(LScfttransaction[] mapObj) {
 		List<LScfttransaction> obj= Arrays.asList(mapObj);
+		obj.forEach(audit -> {
+			try {
+				audit.setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 		lscfttransactionRepository.save(obj);
 		return obj;
 	}
