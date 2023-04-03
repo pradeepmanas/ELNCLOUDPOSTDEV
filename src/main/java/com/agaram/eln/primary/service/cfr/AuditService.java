@@ -176,7 +176,7 @@ public class AuditService {
 			Date todate = new SimpleDateFormat("dd/MM/yyyy").parse((String) objCFRFilter.get("todate"));
 
 			if (Usercode == -1 && module.equals("All") && Audit.equals("All")) {
-				list = lscfttransactionRepository.findByLssitemasterAndTransactiondateBetweenOrderBySerialnoDesc(site,
+				list = lscfttransactionRepository.findByLssitemasterAndTransactiondateBetweenOrderByTransactiondateDesc(site,
 						fromdate, todate);
 			}
 
@@ -184,19 +184,19 @@ public class AuditService {
 			{
 				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
 				list = lscfttransactionRepository
-						.findByLssitemasterAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(site,
+						.findByLssitemasterAndLsuserMasterAndTransactiondateBetweenOrderByTransactiondateDesc(site,
 								objuserselected.getUsercode(), fromdate, todate);
 
 			} else if (Usercode == -1 && !module.equals("All") && Audit.equals("All"))// module filter
 			{
 				list = lscfttransactionRepository
-						.findByLssitemasterAndModuleNameAndTransactiondateBetweenOrderBySerialnoDesc(site, module,
+						.findByLssitemasterAndModuleNameAndTransactiondateBetweenOrderByTransactiondateDesc(site, module,
 								fromdate, todate);
 			} else if (Usercode != -1 && !module.equals("All") && Audit.equals("All"))// user code and moduel name
 			{
 				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
 				list = lscfttransactionRepository
-						.findByLssitemasterAndModuleNameAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(
+						.findByLssitemasterAndModuleNameAndLsuserMasterAndTransactiondateBetweenOrderByTransactiondateDesc(
 								site, module, objuserselected.getUsercode(), fromdate, todate);
 			}
 
@@ -204,24 +204,24 @@ public class AuditService {
 			{
 
 				list = lscfttransactionRepository
-						.findByLssitemasterAndSystemcomentsAndTransactiondateBetweenOrderBySerialnoDesc(site, Audit,
+						.findByLssitemasterAndSystemcomentsAndTransactiondateBetweenOrderByTransactiondateDesc(site, Audit,
 								fromdate, todate);
 			} else if (Usercode == -1 && !Audit.equals("All") && !module.equals("All"))// audit+module
 			{
 				list = lscfttransactionRepository
-						.findByLssitemasterAndSystemcomentsAndModuleNameAndTransactiondateBetweenOrderBySerialnoDesc(
+						.findByLssitemasterAndSystemcomentsAndModuleNameAndTransactiondateBetweenOrderByTransactiondateDesc(
 								site, Audit, module, fromdate, todate);
 
 			} else if (Usercode != -1 && !Audit.equals("All") && module.equals("All")) {
 				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
 				list = lscfttransactionRepository
-						.findByLssitemasterAndSystemcomentsAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(
+						.findByLssitemasterAndSystemcomentsAndLsuserMasterAndTransactiondateBetweenOrderByTransactiondateDesc(
 								site, Audit, objuserselected.getUsercode(), fromdate, todate);
 
 			} else if (Usercode != -1 && !Audit.equals("All") && !module.equals("All")) {
 				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
 				list = lscfttransactionRepository
-						.findByLssitemasterAndSystemcomentsAndModuleNameAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(
+						.findByLssitemasterAndSystemcomentsAndModuleNameAndLsuserMasterAndTransactiondateBetweenOrderByTransactiondateDesc(
 								site, Audit, module, objuserselected.getUsercode(), fromdate, todate);
 			}
 		}
@@ -610,7 +610,7 @@ public class AuditService {
 			}
 
 			if (Usercode == -1 && module.equals("All") && Audit.equals("All")) {
-				list = lscfttransactionRepository.findByLssitemasterAndTransactiondateBetweenOrderBySerialnoDesc(site,
+				list = lscfttransactionRepository.findByLssitemasterAndTransactiondateBetweenOrderByTransactiondateDesc(site,
 						lscfttransaction.getFromdate(), lscfttransaction.getTodate());
 			}
 
@@ -618,19 +618,19 @@ public class AuditService {
 			{
 				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
 				list = lscfttransactionRepository
-						.findByLssitemasterAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(site,
+						.findByLssitemasterAndLsuserMasterAndTransactiondateBetweenOrderByTransactiondateDesc(site,
 								objuserselected.getUsercode(), lscfttransaction.getFromdate(),
 								lscfttransaction.getTodate());
 			} else if (Usercode == -1 && !module.equals("All") && Audit.equals("All"))// module filter
 			{
 				list = lscfttransactionRepository
-						.findByLssitemasterAndModuleNameAndTransactiondateBetweenOrderBySerialnoDesc(site, module,
+						.findByLssitemasterAndModuleNameAndTransactiondateBetweenOrderByTransactiondateDesc(site, module,
 								lscfttransaction.getFromdate(), lscfttransaction.getTodate());
 			} else if (Usercode != -1 && !module.equals("All") && Audit.equals("All"))// user code and moduel name
 			{
 				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
 				list = lscfttransactionRepository
-						.findByLssitemasterAndModuleNameAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(
+						.findByLssitemasterAndModuleNameAndLsuserMasterAndTransactiondateBetweenOrderByTransactiondateDesc(
 								site, module, objuserselected.getUsercode(), lscfttransaction.getFromdate(),
 								lscfttransaction.getTodate());
 			}
@@ -639,23 +639,23 @@ public class AuditService {
 			{
 
 				list = lscfttransactionRepository
-						.findByLssitemasterAndSystemcomentsAndTransactiondateBetweenOrderBySerialnoDesc(site, Audit,
+						.findByLssitemasterAndSystemcomentsAndTransactiondateBetweenOrderByTransactiondateDesc(site, Audit,
 								lscfttransaction.getFromdate(), lscfttransaction.getTodate());
 			} else if (Usercode == -1 && !Audit.equals("All") && !module.equals("All"))// audit+module
 			{
 				list = lscfttransactionRepository
-						.findByLssitemasterAndSystemcomentsAndModuleNameAndTransactiondateBetweenOrderBySerialnoDesc(
+						.findByLssitemasterAndSystemcomentsAndModuleNameAndTransactiondateBetweenOrderByTransactiondateDesc(
 								site, Audit, module, lscfttransaction.getFromdate(), lscfttransaction.getTodate());
 			} else if (Usercode != -1 && !Audit.equals("All") && module.equals("All")) {
 				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
 				list = lscfttransactionRepository
-						.findByLssitemasterAndSystemcomentsAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(
+						.findByLssitemasterAndSystemcomentsAndLsuserMasterAndTransactiondateBetweenOrderByTransactiondateDesc(
 								site, Audit, objuserselected.getUsercode(), lscfttransaction.getFromdate(),
 								lscfttransaction.getTodate());
 			} else if (Usercode != -1 && !Audit.equals("All") && !module.equals("All")) {
 				LSuserMaster objuserselected = lSuserMasterRepository.findByusercode(Usercode);
 				list = lscfttransactionRepository
-						.findByLssitemasterAndSystemcomentsAndModuleNameAndLsuserMasterAndTransactiondateBetweenOrderBySerialnoDesc(
+						.findByLssitemasterAndSystemcomentsAndModuleNameAndLsuserMasterAndTransactiondateBetweenOrderByTransactiondateDesc(
 								site, Audit, module, objuserselected.getUsercode(), lscfttransaction.getFromdate(),
 								lscfttransaction.getTodate());
 			}

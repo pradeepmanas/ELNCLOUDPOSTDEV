@@ -332,7 +332,7 @@ public class RestService {
 				LSlogilablimsorderdetail orderDetail = new LSlogilablimsorderdetail();
 				LSlogilablimsorder lstLims = new LSlogilablimsorder();
 				
-				if(lslogilablimsordergroupRepository.findByBatchid(lstOrder.get(i).getBatchid()) == null) {
+				if(lslogilablimsordergroupRepository.findByLimsprimarycode(lstOrder.get(i).getLimsprimarycode()) == null) {
 					lslogilablimsordergroupRepository.save(lstOrder.get(i));
 				}
 				
@@ -1034,17 +1034,20 @@ public class RestService {
 				
 				if (isAPICalling.equals("true")) {
 					
-					LSlogilablimsordergroup orderGroup = lslogilablimsordergroupRepository.findByBatchid(Batchid);
+					List<LSlogilablimsordergroup> orderGroup = lslogilablimsordergroupRepository.findByBatchid(Batchid);
 					
 					while (i < lstResult.size()) {
 						
-						Map<String, Object> lstMap = new HashMap<>();
-						String sresult = lstResult.get(i).getResult();
-						Long orderid = orderGroup.getLimsprimarycode();
-						lstMap.put("sresult",sresult);
-						lstMap.put("limsprimarycode",orderid);
-						lssampleresult.add(i, lstMap);
+						if(lstResult.get(i).getParametercode().equals(orderGroup.get(i).getNtestparametercode())) {
+							Map<String, Object> lstMap = new HashMap<>();
+							String sresult = lstResult.get(i).getResult();
+							Long orderid = orderGroup.get(i).getLimsprimarycode();
+							lstMap.put("sresult",sresult);
+							lstMap.put("limsprimarycode",orderid);
+							lssampleresult.add(i, lstMap);
+						}
 						i++;
+						
 					}
 					
 					map.put("lssampleresult", lssampleresult);

@@ -552,6 +552,8 @@ public class LSlogilablimsorderdetail {
 			Batchid = "EXCEL" + this.batchcode;
 		} else if (this.filetype == 5) {
 			Batchid = "VALIDATE" + this.batchcode;
+		} else if (this.filetype == 0) {
+			Batchid = batchid;
 		}
 
 		return Batchid;
@@ -571,6 +573,8 @@ public class LSlogilablimsorderdetail {
 				Batchid = "VALIDATE" + this.batchcode;
 			}
 
+		} else {
+			Batchid = batchid;
 		}
 
 		this.batchid = Batchid;
