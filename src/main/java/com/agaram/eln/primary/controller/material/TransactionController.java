@@ -31,6 +31,12 @@ public class TransactionController {
 
 		return transactionService.getInventoryTransaction(inputMap);
 	}
+	
+	@PostMapping(value = "/getResultInventoryTransaction")
+	public ResponseEntity<Object> getResultInventoryTransaction(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return transactionService.getResultInventoryTransaction(inputMap);
+	}
 
 	@PostMapping(value = "/createMaterialInventoryTrans")
 	public ResponseEntity<Object> createMaterialInventoryTrans(@RequestBody Map<String, Object> inputMap)

@@ -24,6 +24,7 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 //import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplatefortest;
@@ -237,9 +238,22 @@ public class FileService {
 			}
 
 			Isnew = false;
+			try {
+				objfile.setModifieddate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else {
 
 			Isnew = true;
+			try {
+				objfile.setCreatedate(commonfunction.getCurrentUtcTime());
+				objfile.setModifieddate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		if (objfile.getLstest().size() > 0) {
 			lSfiletestRepository.save(objfile.getLstest());
@@ -254,7 +268,12 @@ public class FileService {
 		}
 
 		if (objfile.getObjActivity() != null) {
-
+			try {
+				objfile.getObjActivity().setActivityDate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lsactivityRepository.save(objfile.getObjActivity());
 		}
 		if (objfile.getModifiedlist() != null) {
@@ -649,6 +668,16 @@ public class FileService {
 		
 		if(objfile.getViewoption()==null ||objfile.getViewoption()!=null && objfile.getViewoption()!=2) {
 			updatenotificationforsheet(objfile, false, objcurrentfile.getLssheetworkflow(), false);
+		}
+		for(int k=0;k<objfile.getLssheetworkflowhistory().size();k++) {
+			if(objfile.getLssheetworkflowhistory().get(k).getHistorycode()==null) {
+				try {
+					objfile.getLssheetworkflowhistory().get(k).setCreatedate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		lssheetworkflowhistoryRepository.save(objfile.getLssheetworkflowhistory());
 		lSfileRepository.updateFileWorkflow(objfile.getLssheetworkflow(), objfile.getApproved(), objfile.getRejected(),

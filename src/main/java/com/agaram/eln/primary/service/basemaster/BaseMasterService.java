@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.basemaster;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
@@ -138,11 +140,10 @@ public class BaseMasterService {
 
 	@Autowired
 	private LsMappedInstrumentsRepository lsMappedInstrumentsRepository;
-	
+
 	@Autowired
 	private LsMappedFieldsRepository lsMappedFieldsRepository;
 
-	
 	@SuppressWarnings("unused")
 	private String ModuleName = "Base Master";
 
@@ -260,6 +261,15 @@ public class BaseMasterService {
 			return objClass;
 		}
 
+		if (objClass.getTestcode() == null) {
+			try {
+				objClass.setCreatedate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 		lStestmasterlocalRepository.save(objClass);
 
 		if (objClass.getLSmaterial() != null) {
@@ -317,6 +327,14 @@ public class BaseMasterService {
 
 			return objClass;
 		}
+		if(objClass.getSamplecode() == null) {
+			try {
+				objClass.setCreatedate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 		lSsamplemasterRepository.save(objClass);
 		objClass.getResponse().setStatus(true);
@@ -359,6 +377,15 @@ public class BaseMasterService {
 				objClass.getResponse().setStatus(false);
 				objClass.getResponse().setInformation("IDS_PROJECTPROGRESS");
 				return objClass;
+			}
+		}
+		
+		if(objClass.getProjectcode() == null) {
+			try {
+				objClass.setCreatedon(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 
@@ -479,6 +506,7 @@ public class BaseMasterService {
 		}
 		return obj;
 	}
+
 	public LStestmaster GetTestonID(LStestmaster objtest) {
 		return lstestmasterRepository.findByntestcode(objtest.getNtestcode());
 	}

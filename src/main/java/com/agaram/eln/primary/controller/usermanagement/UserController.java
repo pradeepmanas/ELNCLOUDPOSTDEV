@@ -627,11 +627,17 @@ public class UserController {
 		return userService.Notificationmarkallasread(lsuserMaster);
 	}
 	
+//	@RequestMapping("/getActiveUserCount")
+//	public Long getActiveUserCount(@RequestBody LSSiteMaster lsSiteMaster)throws Exception
+//	{
+//		return userService.getActiveUserCount(lsSiteMaster);
+//	}
+	
 	@RequestMapping("/getActiveUserCount")
-	public Long getActiveUserCount(@RequestBody LSSiteMaster lsSiteMaster)throws Exception
-	{
-		return userService.getActiveUserCount(lsSiteMaster);
+	public Map<String, Object> getActiveUserCount(@RequestBody Map<String, Object> objMap) {
+	 return userService.getActiveUserCount(objMap);
 	}
+	
 	
 	
 	@PostMapping("/InsertImportedlist")

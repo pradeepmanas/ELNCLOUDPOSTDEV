@@ -3,6 +3,7 @@ package com.agaram.eln.primary.service.protocol;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,7 +11,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -34,6 +34,7 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.config.CustomMultipartFile;
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -164,7 +165,6 @@ import com.microsoft.azure.storage.blob.BlobRequestOptions;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
-import com.mongodb.connection.Stream;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSProtocolMasterRepository.class)
@@ -1345,6 +1345,12 @@ public class ProtocolService {
 				argObj1 = (Map<String, Object>) argObj.get("LSprotocolupdates");
 //				UpdateProtocolversion(newProtocolMasterObj, argObj1, LSprotocolupdates.class);
 			} else {
+				try {
+					newProtocolMasterObj.setCreatedate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				if (LSProtocolMasterRepositoryObj
 						.findByProtocolmasternameIgnoreCaseAndLssitemaster(argObj.get("protocolmastername").toString().trim(),LScfttransactionobj.getLssitemaster()) != null) {
 					response.setStatus(false);
@@ -2079,6 +2085,16 @@ public class ProtocolService {
 			if (LsProto.getApproved() == null) {
 				LsProto.setApproved(0);
 			}
+			for(int k=0;k<objClass.getLsprotocolorderworkflowhistory().size();k++) {
+				if(objClass.getLsprotocolorderworkflowhistory().get(k).getHistorycode()==null) {
+					try {
+						objClass.getLsprotocolorderworkflowhistory().get(k).setCreatedate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
 			lsprotocolorderworkflowhistoryRepository.save(objClass.getLsprotocolorderworkflowhistory());
 
 			List<LSlogilabprotocoldetail> LSlogilabprotocoldetail = new ArrayList<LSlogilabprotocoldetail>();
@@ -2515,6 +2531,12 @@ public class ProtocolService {
 
 	public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabprotocoldetail) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
+		try {
+			lSlogilabprotocoldetail.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (lSlogilabprotocoldetail != null) {
 			lSlogilabprotocoldetail.setVersionno(0);
 
@@ -3789,7 +3811,13 @@ public class ProtocolService {
 		LSlogilabprotocoldetail lslogilabprotocoldetail = LSlogilabprotocoldetailRepository
 				.findByProtocolordercode(argMap.getProtocolordercode());
 		lslogilabprotocoldetail.setOrderflag(argMap.getOrderflag());
-		lslogilabprotocoldetail.setCompletedtimestamp(argMap.getCompletedtimestamp());
+//		lslogilabprotocoldetail.setCompletedtimestamp(argMap.getCompletedtimestamp());
+		try {
+			lslogilabprotocoldetail.setCompletedtimestamp(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		LSlogilabprotocoldetailRepository.save(lslogilabprotocoldetail);
 //			LScfttransactionobj.setTableName("LSlogilabprotocoldetail");
 		mapOrders.put("curentprotocolorder", argMap);

@@ -68,6 +68,7 @@ import com.agaram.eln.primary.repository.usermanagement.LsusersettingsRepository
 import com.agaram.eln.primary.service.notification.EmailService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSusergroupRepository.class)
@@ -846,6 +847,19 @@ public class UserService {
 
 	public List<LSusergrouprights> SaveUserRights(LSusergrouprights[] lsrites) {
 		List<LSusergrouprights> lsrights = Arrays.asList(lsrites);
+		if(lsrights.size()>0 && lsrights.get(0).getOrderno()==null) {
+		lsrights = lsrights.stream()
+				  .map(obj -> {
+				    try {
+						obj.setCreatedon(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				    return obj;
+				  })
+				  .collect(Collectors.toList());
+		}
 		if (lsrights.get(0).getUsergroupid() == null) {
 			lsrights.get(0).setResponse(new Response());
 			lsrights.get(0).getResponse().setStatus(false);
@@ -1344,11 +1358,28 @@ public class UserService {
 		return true;
 	}
 
-	public Long getActiveUserCount(LSSiteMaster lsSiteMaster) {
-
-		List<LSactiveUser> lstActiveUser = lsactiveUserRepository.findAll();
-
-		return (long) lstActiveUser.size();
+//	public Long getActiveUserCount(LSSiteMaster lsSiteMaster) {
+//
+//		List<LSactiveUser> lstActiveUser = lsactiveUserRepository.findAll();
+//
+//		return (long) lstActiveUser.size();
+//	}
+	
+	public Map<String, Object> getActiveUserCount(Map<String, Object> objMap) {
+		Map<String, Object> obj = new HashMap<>();	
+			List<LSactiveUser> lstActiveUser = lsactiveUserRepository.findAll();
+			obj.put("Named", lstActiveUser.size());	
+			LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser","Active");
+			if(objPrefrence != null) {
+				String dvalue = objPrefrence.getValueencrypted();
+				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
+				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
+				int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
+				obj.put("ConCurrentUser", nConcurrentUsers); 
+			}
+				
+		
+		return obj;
 	}
 
 	public Listofallmaster InsertImportedlist(Listofallmaster listofallmaster) {
@@ -1482,5 +1513,7 @@ public class UserService {
 		}
 		return null;
 	}
+
+	
 
 }

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -25,7 +26,6 @@ import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -797,14 +797,27 @@ public class InstrumentService {
 
 			Contentversion = null;
 		}
-
+		try {
+			objorder.getLssamplefile().setCreatedate(commonfunction.getCurrentUtcTime());
+			if(objorder.getLssamplefile().getLssamplefileversion().get(0)!=null){
+				objorder.getLssamplefile().getLssamplefileversion().get(0).setCreatedate(commonfunction.getCurrentUtcTime());
+			}
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		lssamplefileRepository.save(objorder.getLssamplefile());
 
 		if (objorder.getAssignedto() != null) {
 			objorder.setLockeduser(objorder.getAssignedto().getUsercode());
 			objorder.setLockedusername(objorder.getAssignedto().getUsername());
 		}
-
+		try {
+			objorder.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lslogilablimsorderdetailRepository.save(objorder);
 
 		String Batchid = "ELN" + objorder.getBatchcode();
@@ -818,7 +831,7 @@ public class InstrumentService {
 		}
 		lslogilablimsorderdetailRepository.setbatchidBybatchcode(Batchid, objorder.getBatchcode());
 		objorder.setBatchid(Batchid);
-
+		
 		lslogilablimsorderdetailRepository.save(objorder);
 
 		lssamplefileRepository.setbatchcodeOnsamplefile(objorder.getBatchcode(),
@@ -1193,6 +1206,12 @@ public class InstrumentService {
 	}
 
 	public LSactivity InsertActivities(LSactivity objActivity) {
+		try {
+			objActivity.setActivityDate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return lsactivityRepository.save(objActivity);
 	}
 
@@ -2766,6 +2785,16 @@ public class InstrumentService {
 
 			String Contentversion = GetSamplefileconent(objfile, objfile.getIsmultitenant());
 			objfile.getLssamplefileversion().get(lastversionindex).setFilecontent(null);
+			for(int k=0;k<objfile.getLssamplefileversion().size();k++) {
+				if(objfile.getLssamplefileversion().get(k).getFilesamplecodeversion()==null) {
+					try {
+						objfile.getLssamplefileversion().get(k).setCreatedate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
 			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
 			updateorderversioncontent(objfile.getFilecontent(), objfile.getLssamplefileversion().get(lastversionindex),
 					objfile.getIsmultitenant());
@@ -2780,12 +2809,24 @@ public class InstrumentService {
 		String Content = objfile.getFilecontent();
 		objfile.setFilecontent(null);
 		objfile.setLssampleresult(null);
+		try {
+			objfile.setModifieddate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lssamplefileRepository.save(objfile);
 		updateordercontent(Content, objfile, objfile.getIsmultitenant());
 
 		objfile.setFilecontent(Content);
 
 		if (objfile.getObjActivity() != null) {
+			try {
+				objfile.getObjActivity().setActivityDate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lsactivityRepository.save(objfile.getObjActivity());
 		}
 
@@ -3286,6 +3327,12 @@ public class InstrumentService {
 		List<LsOrderattachments> lstattach = lsOrderattachmentsRepository
 				.findByBatchcodeOrderByAttachmentcodeDesc(objorder.getBatchcode());
 		objorder.setLsOrderattachments(lstattach);
+		try {
+			objorder.setCompletedtimestamp(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lslogilablimsorderdetailRepository.save(objorder);
 
 //		if (objorder.getLssamplefile() != null) {
@@ -3307,8 +3354,25 @@ public class InstrumentService {
 
 		updatenotificationfororderworkflow(objorder,
 				lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode()).getLsworkflow());
+		
+		for(int k=0;k<objorder.getLsorderworkflowhistory().size();k++) {
+			if(objorder.getLsorderworkflowhistory().get(k).getHistorycode()==null) {
+				try {
+					objorder.getLsorderworkflowhistory().get(k).setCreatedate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 
 		lsorderworkflowhistoryRepositroy.save(objorder.getLsorderworkflowhistory());
+		try {
+			objorder.setModifidate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		lslogilablimsorderdetailRepository.save(objorder);
 
@@ -4600,6 +4664,12 @@ public class InstrumentService {
 			ordersample = mapper.convertValue(argobj.get("Ordersampleobj"), LsOrderSampleUpdate.class);
 //			lsOrderSampleUpdateRepository.save(ordersample);
 //			ordersample.setOrdersampleusedDetail(ordersample.getOrdersampleusedDetail()+ " id:" + ordersample.getOrdersamplecode());
+			try {
+				ordersample.setCreateddate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lsOrderSampleUpdateRepository.save(ordersample);
 		}
 		if (argobj.containsKey("LsrepositoriesdataSeletedObj")) {

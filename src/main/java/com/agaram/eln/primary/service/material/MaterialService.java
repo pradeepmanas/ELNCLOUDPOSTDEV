@@ -81,27 +81,28 @@ public class MaterialService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> getMaterialType(Integer nsiteInteger)
-			throws JsonParseException, JsonMappingException, IOException {
+	public ResponseEntity<Object> getMaterialType(Integer nsiteInteger) throws JsonParseException, JsonMappingException, IOException {
+		
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
 		List<MaterialType> lstMaterialType = materialTypeRepository.findByNmaterialtypecodeNotOrderByNmaterialtypecode(-1);
 		
-
 		objmap.put("MaterialType", lstMaterialType);
 		objmap.put("SelectedMaterialType", lstMaterialType);
+		
+		if(!lstMaterialType.isEmpty()) {
+			List<MaterialCategory> lstMaterialCategory = materialCategoryRepository
+					.findByNmaterialtypecodeAndNsitecode(lstMaterialType.get(0).getNmaterialtypecode(), nsiteInteger);
 
-		List<MaterialCategory> lstMaterialCategory = materialCategoryRepository
-				.findByNmaterialtypecodeAndNsitecode(lstMaterialType.get(0).getNmaterialtypecode(), nsiteInteger);
-
-		if (!lstMaterialCategory.isEmpty()) {
-			objmap.put("MaterialCategoryMain", lstMaterialCategory);
-			objmap.put("nmaterialcatcode", lstMaterialCategory.get(0).getNmaterialcatcode());
+			if (!lstMaterialCategory.isEmpty()) {
+				objmap.put("MaterialCategoryMain", lstMaterialCategory);
+				objmap.put("nmaterialcatcode", lstMaterialCategory.get(0).getNmaterialcatcode());
+			}
+			objmap.put("nmaterialtypecode", lstMaterialType.get(0).getNmaterialtypecode());
+			objmap.put("nsitecode", nsiteInteger);
+			objmap.putAll((Map<String, Object>) getMaterialByTypeCode(objmap).getBody());
+//			objmap.putAll((Map<String, Object>) getMaterialAdd((Integer)objmap.get("nmaterialtypecode")).getBody());
 		}
-		objmap.put("nmaterialtypecode", lstMaterialType.get(0).getNmaterialtypecode());
-		objmap.put("nsitecode", nsiteInteger);
-		objmap.putAll((Map<String, Object>) getMaterialByTypeCode(objmap).getBody());
-//		objmap.putAll((Map<String, Object>) getMaterialAdd((Integer)objmap.get("nmaterialtypecode")).getBody());
 
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}

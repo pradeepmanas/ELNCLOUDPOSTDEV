@@ -223,12 +223,70 @@ public class TransactionService {
 			
 		Double availabledQuantity = nqtyreceived - nqtyissued;
 		mapJsonData.put("Available Quantity", availabledQuantity);
+		
 		if (totalQuantity == availabledQuantity) {
 			mapJsonData.put("Issued Quantity", availabledQuantity);
 		} else {
 			mapJsonData.put("Issued Quantity", totalQuantity - availabledQuantity);
 		}
+		
+//		List<ResultUsedMaterial> lstUsedMaterials = resultUsedMaterialRepository.findByNinventorycodeOrderByNresultusedmaterialcodeDesc((Integer) inputMap.get("nmaterialinventorycode"));
+//
+//		if(!lstUsedMaterials.isEmpty()) {
+//			mapJsonData.put("Issued Quantity", lstUsedMaterials.get(0).getNqtyleft());
+//		}
+		
+		mapJsonData.put("Total Quantity", totalQuantity);
+		mapJsonData.put("Received Quantity", lstInventoryTransaction.get(0).getNqtyreceived());
+		mapJsonData.put("NotificationQty", objInventory.getNqtynotification());
 
+		lstMaterialInventoryTrans.add(mapJsonData);
+
+		return new ResponseEntity<>(lstMaterialInventoryTrans, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> getResultInventoryTransaction(Map<String, Object> inputMap)
+			throws JsonParseException, JsonMappingException, IOException {
+
+		List<Map<String, Object>> lstMaterialInventoryTrans = new ArrayList<Map<String, Object>>();
+		List<MaterialInventoryTransaction> lstInventoryTransaction = materialInventoryTransactionRepository
+				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(
+						(Integer) inputMap.get("nmaterialinventorycode"));
+		MaterialInventory objInventory = materialInventoryRepository
+				.findByNmaterialinventorycodeAndNtransactionstatusNot((Integer) inputMap.get("nmaterialinventorycode"),
+						55);
+
+		@SuppressWarnings("unchecked")
+		Map<String, Object> mapJsonData = new ObjectMapper().readValue(lstInventoryTransaction.get(0).getJsonuidata(),
+				Map.class);
+
+		Double totalQuantity = Double.parseDouble(commonfunction
+				.getInventoryValuesFromJsonString(objInventory.getJsondata(), "Received Quantity").get("rtnObj").toString());		
+
+		List<Double> nqtyreceivedlst = lstInventoryTransaction.stream()
+				.map(MaterialInventoryTransaction::getNqtyreceived).collect(Collectors.toList());
+		List<Double> nqtyissuedLst = lstInventoryTransaction.stream().map(MaterialInventoryTransaction::getNqtyissued)
+				.collect(Collectors.toList());
+
+		double nqtyreceived = nqtyreceivedlst.stream().mapToDouble(Double::doubleValue).sum();
+		double nqtyissued = nqtyissuedLst.stream().mapToDouble(Double::doubleValue).sum();
+			
+		Double availabledQuantity = nqtyreceived - nqtyissued;
+		mapJsonData.put("Available Quantity", availabledQuantity);
+		
+		List<ResultUsedMaterial> lstUsedMaterials = resultUsedMaterialRepository.findByNinventorycodeOrderByNresultusedmaterialcodeDesc((Integer) inputMap.get("nmaterialinventorycode"));
+
+		if(!lstUsedMaterials.isEmpty()) {
+			mapJsonData.put("Issued Quantity", lstUsedMaterials.get(0).getNqtyleft());
+		}else {
+			if (totalQuantity == availabledQuantity) {
+				mapJsonData.put("Issued Quantity", availabledQuantity);
+			} else {
+				mapJsonData.put("Issued Quantity", totalQuantity - availabledQuantity);
+			}
+		}
+		
+		mapJsonData.put("Total Quantity", totalQuantity);
 		mapJsonData.put("Received Quantity", lstInventoryTransaction.get(0).getNqtyreceived());
 		mapJsonData.put("NotificationQty", objInventory.getNqtynotification());
 
@@ -440,12 +498,19 @@ public class TransactionService {
 
 		if ((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.RETURN.gettransactionstatus()) {
 			List<ResultUsedMaterial> objList = resultUsedMaterialRepository
-					.findByNinventorycodeOrderByNresultusedmaterialcodeDesc(
-							(Integer) inputMap.get("nmaterialinventorycode"));
+					.findByNinventorycodeOrderByNresultusedmaterialcodeDesc((Integer) inputMap.get("nmaterialinventorycode"));
 
 			if (!objList.isEmpty()) {
-				objList.get(0).setNqtyleft(objList.get(0).getNqtyleft()
-						- Double.parseDouble(insJsonObj.get("Received Quantity").toString()));
+				objList.get(0).setNqtyleft(objList.get(0).getNqtyleft() - rQty);
+				resultUsedMaterialRepository.save(objList);
+			}
+		}
+		else if((int) insJsonObj.get("ntransactiontype") == Enumeration.TransactionStatus.ISSUE.gettransactionstatus()) {
+			List<ResultUsedMaterial> objList = resultUsedMaterialRepository
+					.findByNinventorycodeOrderByNresultusedmaterialcodeDesc((Integer) inputMap.get("nmaterialinventorycode"));
+
+			if (!objList.isEmpty()) {
+				objList.get(0).setNqtyleft(objList.get(0).getNqtyleft() + rQty);
 				resultUsedMaterialRepository.save(objList);
 			}
 		}
@@ -708,8 +773,8 @@ public class TransactionService {
 						: false;
 
 				List<MaterialInventory> objInventories = materialInventoryRepository
-						.findByNmaterialcodeAndNtransactionstatusNotOrderByNmaterialinventorycodeDesc(
-								objMaterial.getNmaterialcode(), 55);
+						.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycodeDesc(
+								objMaterial.getNmaterialcode(), 28);
 
 				if (isExpiryNotify) {
 
@@ -727,6 +792,8 @@ public class TransactionService {
 								Duration duration = Duration.between(localDate.atStartOfDay(),
 										localCurrentDate.atStartOfDay());
 								long days = duration.toDays();
+								
+								days = Math.abs(days);
 
 								if (days <= 10) {
 									final double day = (double) days;
@@ -773,6 +840,8 @@ public class TransactionService {
 												localCurrentDate.atStartOfDay());
 
 										long days = duration.toDays();
+										
+										days = Math.abs(days);
 
 										if (days <= openExpiry) {
 											final double day = (double) days;
@@ -783,6 +852,8 @@ public class TransactionService {
 
 										long weeks = ChronoUnit.WEEKS.between(localDate, localCurrentDate);
 
+										weeks = Math.abs(weeks);
+										
 										if (weeks <= openExpiry) {
 											final double week = (double) weeks;
 											updateNotificationOnInventory(objInventory, "OPENDATEWEEK", cft, week);
@@ -794,6 +865,8 @@ public class TransactionService {
 
 										long months = period.getMonths();
 
+										months = Math.abs(months);
+										
 										if (months <= openExpiry) {
 											final double month = (double) months;
 											updateNotificationOnInventory(objInventory, "OPENDATEMONTH", cft, month);
@@ -804,6 +877,7 @@ public class TransactionService {
 
 										long years = period.getYears();
 
+										years = Math.abs(years);
 										final double year = (double) years;
 										updateNotificationOnInventory(objInventory, "OPENDATEYEAR", cft, year);
 									} else if (validationType.equalsIgnoreCase("hours")) {
@@ -811,7 +885,7 @@ public class TransactionService {
 										Duration duration = Duration.between(localDate.atStartOfDay(),
 												localCurrentDate.atStartOfDay());
 										long days = duration.toDays();
-
+										days = Math.abs(days);
 										if (days == 0) {
 											long diffInMs = currentDate.getTime() - openDate.getTime();
 
@@ -827,7 +901,7 @@ public class TransactionService {
 										Duration duration = Duration.between(localDate.atStartOfDay(),
 												localCurrentDate.atStartOfDay());
 										long days = duration.toDays();
-
+										days = Math.abs(days);
 										if (days == 0) {
 											long diffInMs = currentDate.getTime() - openDate.getTime();
 
@@ -875,7 +949,7 @@ public class TransactionService {
 												localCurrentDate.atStartOfDay());
 
 										long days = duration.toDays();
-
+										days = Math.abs(days);
 										if (days <= nextValidation) {
 											final double day = (double) days;
 
@@ -884,7 +958,7 @@ public class TransactionService {
 									} else if (validationType.equalsIgnoreCase("weeks")) {
 
 										long weeks = ChronoUnit.WEEKS.between(localDate, localCurrentDate);
-
+										weeks = Math.abs(weeks);
 										if (weeks <= nextValidation) {
 											final double week = (double) weeks;
 											updateNotificationOnInventory(objInventory, "NEXTVALIDATEWEEK", cft, week);
@@ -895,7 +969,7 @@ public class TransactionService {
 										Period period = Period.between(localDate, localCurrentDate);
 
 										long months = period.getMonths();
-
+										months = Math.abs(months);
 										if (months <= nextValidation) {
 											final double month = (double) months;
 											updateNotificationOnInventory(objInventory, "NEXTVALIDATEMONTH", cft,
@@ -906,7 +980,7 @@ public class TransactionService {
 										Period period = Period.between(localDate, localCurrentDate);
 
 										long years = period.getYears();
-
+										years = Math.abs(years);
 										final double year = (double) years;
 										updateNotificationOnInventory(objInventory, "NEXTVALIDATEYEAR", cft, year);
 									} else if (validationType.equalsIgnoreCase("hours")) {
@@ -914,7 +988,7 @@ public class TransactionService {
 										Duration duration = Duration.between(localDate.atStartOfDay(),
 												localCurrentDate.atStartOfDay());
 										long days = duration.toDays();
-
+										days = Math.abs(days);
 										if (days == 0) {
 											long diffInMs = currentDate.getTime() - openDate.getTime();
 
@@ -932,7 +1006,7 @@ public class TransactionService {
 										Duration duration = Duration.between(localDate.atStartOfDay(),
 												localCurrentDate.atStartOfDay());
 										long days = duration.toDays();
-
+										days = Math.abs(days);
 										if (days == 0) {
 											long diffInMs = currentDate.getTime() - openDate.getTime();
 
