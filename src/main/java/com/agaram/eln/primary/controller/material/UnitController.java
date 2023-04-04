@@ -34,8 +34,7 @@ public class UnitController {
 	public ResponseEntity<Object> createUnit(@RequestBody Map<String, Object> inputMap) throws Exception {
 
 		ObjectMapper objMapper = new ObjectMapper();
-		Unit objUnit = objMapper.convertValue(inputMap.get("unit"), new TypeReference<Unit>() {
-		});
+		Unit objUnit = objMapper.convertValue(inputMap.get("unit"), new TypeReference<Unit>() {});
 
 		return unitService.createUnit(objUnit);
 
@@ -45,8 +44,7 @@ public class UnitController {
 	public ResponseEntity<Object> updateUnit(@RequestBody Map<String, Object> inputMap) throws Exception {
 
 		ObjectMapper objMapper = new ObjectMapper();
-		Unit objUnit = objMapper.convertValue(inputMap.get("unit"), new TypeReference<Unit>() {
-		});
+		Unit objUnit = objMapper.convertValue(inputMap.get("unit"), new TypeReference<Unit>() {});
 
 		return unitService.updateUnit(objUnit);
 

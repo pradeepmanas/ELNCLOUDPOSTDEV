@@ -191,7 +191,8 @@ public class LoginService {
 
 		if (objPrefrence != null) {
 
-			List<LSactiveUser> lstActUsrs = lsactiveUserRepository.findBylssitemaster(objsiteobj);
+//			List<LSactiveUser> lstActUsrs = lsactiveUserRepository.findBylssitemaster(objsiteobj);
+			List<LSactiveUser> lstActUsrs = lsactiveUserRepository.findAll();
 
 			String dvalue = objPrefrence.getValueencrypted();
 
@@ -1596,6 +1597,11 @@ public class LoginService {
 			System.out.println(" passwordint: " + Password1);
 			obj.put("passwordint", Password1);
 		}
+		
+//	license encryption code 
+//		String license = "3";
+//		String licensekey = AESEncryption.encrypt(license);
+//		System.out.println(" license update key: " + licensekey);
 		return obj;
 
 	}

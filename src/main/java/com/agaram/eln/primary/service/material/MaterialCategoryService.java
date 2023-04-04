@@ -46,7 +46,7 @@ public class MaterialCategoryService {
 				MaterialCategory.class);
 		materialCategory.setResponse(new Response());
 		List<MaterialCategory> lstgetMaterialCategory = MaterialCategoryRepository
-				.findBySmaterialcatnameAndNsitecode(materialCategory.getSmaterialcatname(),materialCategory.getNsitecode());
+				.findBySmaterialcatnameIgnoreCaseAndNsitecode(materialCategory.getSmaterialcatname(),materialCategory.getNsitecode());
 		if (lstgetMaterialCategory.isEmpty()) {
 
 			materialCategory.setSmaterialtypename(materialCategory.getSmaterialtypename());
@@ -90,9 +90,9 @@ public class MaterialCategoryService {
 			materialCategory.getResponse().setInformation("IDS_ALREADYDELETED");
 			return new ResponseEntity<>(materialCategory, HttpStatus.OK);
 		} else {
-			final MaterialCategory materialCategoryObj = MaterialCategoryRepository.findByNsitecodeAndSmaterialcatname(materialCategory.getNsitecode(),materialCategory.getSmaterialcatname());
-			if (materialCategoryObj == null
-					|| (materialCategoryObj.getNmaterialcatcode().equals(materialCategory.getNmaterialcatcode()))) {
+			final MaterialCategory materialCategoryObj = MaterialCategoryRepository.findByNsitecodeAndSmaterialcatnameIgnoreCase(materialCategory.getNsitecode(),materialCategory.getSmaterialcatname());
+			
+			if (materialCategoryObj == null || (materialCategoryObj.getNmaterialcatcode().equals(materialCategory.getNmaterialcatcode()))) {
 				MaterialCategoryRepository.save(materialCategory);
 				materialCategory.getResponse().setStatus(true);
 				materialCategory.getResponse().setInformation("IDS_SUCCESS");

@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.usermanagement;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -16,6 +17,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.config.AESEncryption;
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.getmasters.Listofallmaster;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
@@ -161,6 +163,20 @@ public class UserService {
 		if (objusergroup.getUsergroupcode() != null) {
 			LSusergroup objGroup = lSusergroupRepository.findOne(objusergroup.getUsergroupcode());
 			objusergroup.setCreatedon(objGroup.getCreatedon());
+			try {
+				objusergroup.setModifiedon(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else if(objusergroup.getUsergroupcode() == null) {
+			try {
+				objusergroup.setCreatedon(commonfunction.getCurrentUtcTime());
+				objusergroup.setModifiedon(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		lSusergroupRepository.save(objusergroup);
@@ -301,6 +317,13 @@ public class UserService {
 			}
 
 			objusermaster.setCreateddate(updateUser.getCreateddate());
+			try {
+				updateUser.setModifieddate(commonfunction.getCurrentUtcTime());
+				objusermaster.setModifieddate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			lsuserMasterRepository.save(updateUser);
 
@@ -339,6 +362,13 @@ public class UserService {
 					+ objusermaster.getUnifieduserid();
 
 			objusermaster.setUnifieduserid(unifieduser);
+			try {
+				objusermaster.setCreateddate(commonfunction.getCurrentUtcTime());
+				objusermaster.setModifieddate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lsuserMasterRepository.save(objusermaster);
 		}
 
@@ -1288,8 +1318,9 @@ public class UserService {
 
 			int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
 
-			Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNotAndLssitemaster(1, 1,
-					objsite);
+//			Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNotAndLssitemaster(1, 1,
+//					objsite);
+			Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1, 1);
 
 			if (userCount < nConcurrentUsers) {
 

@@ -24,7 +24,7 @@ public class MaterialGradeService {
 	}
 
 	public ResponseEntity<Object> createGrade(MaterialGrade objGrade) {
-		final MaterialGrade objUnit2 = materialGradeRepository.findBySmaterialgradenameAndNsitecode(objGrade.getSmaterialgradename(),objGrade.getNsitecode());
+		final MaterialGrade objUnit2 = materialGradeRepository.findBySmaterialgradenameIgnoreCaseAndNsitecode(objGrade.getSmaterialgradename(),objGrade.getNsitecode());
 		
 		objGrade.setResponse(new Response());
 
@@ -56,7 +56,7 @@ public class MaterialGradeService {
 			return new ResponseEntity<>(objGrade, HttpStatus.OK);
 		} else {
 
-			final MaterialGrade grade1 = materialGradeRepository.findBySmaterialgradenameAndNsitecode(objGrade.getSmaterialgradename(), objGrade.getNsitecode());
+			final MaterialGrade grade1 = materialGradeRepository.findBySmaterialgradenameIgnoreCaseAndNsitecode(objGrade.getSmaterialgradename(), objGrade.getNsitecode());
 
 			if (grade1 == null || (grade1.getNmaterialgradecode().equals(objGrade.getNmaterialgradecode()))) {
 

@@ -46,4 +46,6 @@ public interface UnitRepository extends JpaRepository<Unit, Integer>{
 
 	public Unit findByNunitcodeAndNsitecodeAndNstatus(Integer nunitcode, Integer nsitecode, int i);
 
+	public Unit findBySunitnameIgnoreCaseAndNsitecode(String sunitname, Integer nsitecode);
+
 }

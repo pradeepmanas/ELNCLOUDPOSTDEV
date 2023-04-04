@@ -97,17 +97,20 @@ public class CsvView extends AbstractCsvView {
         			
 	       			 else
 	       			 {
-	       				 if (dataEntry.getKey().equalsIgnoreCase("createddate"))
+	       				 if (dataEntry.getKey().equalsIgnoreCase("createddate") ||(dataEntry.getKey().equalsIgnoreCase("modifieddate"))||(dataEntry.getKey().equalsIgnoreCase("lastloggedon")))
 	      				 { 	      						 
 	       				//	objList.add(dateFormat.format(dataEntry.getValue()));
 	       					
 	       					objList.add(dateFormat.format(Date.from(Instant.parse((String) dataEntry.getValue()))));
 
 	      				 }
+
 	       				 else
 	       				 {
 	       					if(!dataEntry.getKey().equalsIgnoreCase("select")) {
+	       						if(!(dataEntry.getValue() instanceof Boolean)) {
 	         					objList.add((String)dataEntry.getValue());
+	       						}
 	       					 }
 	       				 }
 	       			 }	 

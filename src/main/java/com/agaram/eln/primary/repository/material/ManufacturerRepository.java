@@ -12,4 +12,5 @@ public interface ManufacturerRepository  extends JpaRepository<Manufacturer, Int
 	Manufacturer findByNmanufcode(int nunitCode);
 	List<Object> findByNstatusAndNsitecode(int i, Integer nsiteInteger);
 	List<Manufacturer> findByNsitecodeOrderByNmanufcodeDesc(Integer nsiteInteger);
+	Manufacturer findBySmanufnameIgnoreCaseAndNsitecode(String smanufname, Integer nsitecode);
 }
