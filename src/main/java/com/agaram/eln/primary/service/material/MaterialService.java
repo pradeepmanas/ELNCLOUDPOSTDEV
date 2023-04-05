@@ -373,8 +373,7 @@ public class MaterialService {
 		inputMap.get("DateList");
 		boolean nflag = false;
 
-		final Material ObjMatNamecheck = materialRepository.findBySmaterialnameAndNmaterialtypecodeAndNsitecode(
-				(String) jsonObject.get("Material Name"), (Integer) jsonObject.get("nmaterialtypecode"), nsiteInteger);
+		final Material ObjMatNamecheck = materialRepository.findBySmaterialnameAndNmaterialtypecodeAndNsitecode((String) jsonObject.get("Material Name"), (Integer) jsonObject.get("nmaterialtypecode"), nsiteInteger);
 
 		if (ObjMatNamecheck == null) {
 
@@ -407,7 +406,16 @@ public class MaterialService {
 		objMaterial.setJsondata(strJsonObj);
 		objMaterial.setJsonuidata(strJsonUiData);
 		objMaterial.setNsitecode(nsiteInteger);
-		objMaterial.setCreateddate(new Date());
+//		objMaterial.setCreateddate(new Date());
+		
+		try {
+			objMaterial.setCreateddate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		materialRepository.save(objMaterial);
 
 		inputMap.put("nmaterialconfigcode", jsonuidata.get("nmaterialconfigcode"));
@@ -425,9 +433,7 @@ public class MaterialService {
 
 		final Material objMatDetails = materialRepository.findByNmaterialcode((Integer) inputMap.get("nmaterialcode"));
 
-		Map<String, Object> objMaterial = objmapper.readValue(objMatDetails.getJsonuidata(),
-				new TypeReference<Map<String, Object>>() {
-				});
+		Map<String, Object> objMaterial = objmapper.readValue(objMatDetails.getJsonuidata(),new TypeReference<Map<String, Object>>() {});
 
 		objMaterial.put("nmaterialcode", objMatDetails.getNmaterialcode());
 		objMaterial.put("nstatus", objMatDetails.getNstatus());

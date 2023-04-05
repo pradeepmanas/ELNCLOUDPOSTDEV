@@ -68,7 +68,6 @@ import com.agaram.eln.primary.repository.usermanagement.LsusersettingsRepository
 import com.agaram.eln.primary.service.notification.EmailService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSusergroupRepository.class)
@@ -1486,7 +1485,11 @@ public class UserService {
 			if (lstMaterialByName.isEmpty() && lstMaterialByPrefix.isEmpty()) {
 				
 				listofallmaster.getMaterial().stream().peek(f -> {
-					f.setCreateddate(new Date());
+					try {
+						f.setCreateddate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 				}).collect(Collectors.toList());
 				
 				materialRepository.save(listofallmaster.getMaterial());
@@ -1513,7 +1516,4 @@ public class UserService {
 		}
 		return null;
 	}
-
-	
-
 }

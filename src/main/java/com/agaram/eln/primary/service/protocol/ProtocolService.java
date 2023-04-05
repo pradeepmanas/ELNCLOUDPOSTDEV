@@ -3952,30 +3952,70 @@ public class ProtocolService {
 					LSprotocolsampleupdatesRepository.save(sampleupdate);
 				}
 			}
+			LSprotocolstepversion protoVersStep =new LSprotocolstepversion();
+			CloudLSprotocolversionstep cloudStepVersion = new CloudLSprotocolversionstep();
+			LSprotocolversionstepInfo LsLogilabprotocolstepInfoObj = new LSprotocolversionstepInfo();
+			protoVersStep.setProtocolmastercode(LSprotocolstep.getProtocolmastercode());
+			protoVersStep.setProtocolstepcode(LSprotocolstep.getProtocolstepcode());
+			protoVersStep.setProtocolstepname(LSprotocolstep.getProtocolstepname());
+			protoVersStep.setStatus(LSprotocolstep.getStatus());
+			protoVersStep.setStepno(LSprotocolstep.getStepno());
+			protoVersStep.setVersionno(1);
 
-			List<LSprotocolstep> LSprotocolsteplstforsecond = LSProtocolStepRepositoryObj
-					.findByProtocolmastercodeAndStatus(LSprotocolstepObj.getProtocolmastercode(), 1);
-			for (int j = i; j < LSprotocolsteplstforsecond.size(); j++) {
-				if (multitenent == 1 && LSprotocolstepInformation != null) {
-					LSprotocolstepInformation CloudLSprotocolstepInfoforinsert = new LSprotocolstepInformation();
-					CloudLSprotocolstepInfoforinsert.setId(LSprotocolsteplstforsecond.get(i).getProtocolstepcode());
-					CloudLSprotocolstepInfoforinsert
-							.setLsprotocolstepInfo(LSprotocolstepInformation.getLsprotocolstepInfo());
-					lsprotocolstepInformationRepository.save(CloudLSprotocolstepInfoforinsert);
-					i++;
-					break;
-				} else if (newLSprotocolstepInfo != null && multitenent == 0) {
+			LSprotocolstepversionRepository.save(protoVersStep);
+			if (multitenent == 1 && LSprotocolstepInformation != null) {
+				LSprotocolstepInformation CloudLSprotocolstepInfoforinsert = new LSprotocolstepInformation();
+				CloudLSprotocolstepInfoforinsert.setId(LSprotocolstep.getProtocolstepcode());
+				CloudLSprotocolstepInfoforinsert
+						.setLsprotocolstepInfo(LSprotocolstepInformation.getLsprotocolstepInfo());
+				lsprotocolstepInformationRepository.save(CloudLSprotocolstepInfoforinsert);	
+				
+				cloudStepVersion.setId(protoVersStep.getProtocolstepversioncode());
+				cloudStepVersion.setProtocolmastercode(LSprotocolstep.getProtocolmastercode());
+				cloudStepVersion.setLsprotocolstepInfo(LSprotocolstepInformation.getLsprotocolstepInfo());
+				cloudStepVersion.setVersionname("version_" + 1);
+				cloudStepVersion.setVersionno(1);
 
-					Query query = new Query(
-							Criteria.where("id").is(LSprotocolsteplstforsecond.get(i).getProtocolstepcode()));
-					Update update = new Update();
-					update.set("content", newLSprotocolstepInfo.getContent());
+				CloudLSprotocolversionstepRepository.save(cloudStepVersion);
+				
+			}else if (newLSprotocolstepInfo != null && multitenent == 0) {
+				Query query = new Query(
+						Criteria.where("id").is(LSprotocolstep.getProtocolstepcode()));
+				Update update = new Update();
+				update.set("content", newLSprotocolstepInfo.getContent());
 
-					mongoTemplate.upsert(query, update, LSprotocolstepInfo.class);
-					i++;
-					break;
-				}
+				mongoTemplate.upsert(query, update, LSprotocolstepInfo.class);
+				
+				LsLogilabprotocolstepInfoObj.setContent(LSprotocolstepInformation.getLsprotocolstepInfo());
+				LsLogilabprotocolstepInfoObj.setId(protoVersStep.getProtocolstepversioncode());
+				LsLogilabprotocolstepInfoObj.setStepcode(protoVersStep.getProtocolstepcode());
+				LsLogilabprotocolstepInfoObj.setVersionno(1);
+				mongoTemplate.insert(LsLogilabprotocolstepInfoObj);
+				
 			}
+//			List<LSprotocolstep> LSprotocolsteplstforsecond = LSProtocolStepRepositoryObj
+//					.findByProtocolmastercodeAndStatus(LSprotocolstepObj.getProtocolmastercode(), 1);
+//			for (int j = i; j < LSprotocolsteplstforsecond.size(); j++) {
+//				if (multitenent == 1 && LSprotocolstepInformation != null) {
+//					LSprotocolstepInformation CloudLSprotocolstepInfoforinsert = new LSprotocolstepInformation();
+//					CloudLSprotocolstepInfoforinsert.setId(LSprotocolsteplstforsecond.get(i).getProtocolstepcode());
+//					CloudLSprotocolstepInfoforinsert
+//							.setLsprotocolstepInfo(LSprotocolstepInformation.getLsprotocolstepInfo());
+//					lsprotocolstepInformationRepository.save(CloudLSprotocolstepInfoforinsert);
+//					i++;
+//					break;
+//				} else if (newLSprotocolstepInfo != null && multitenent == 0) {
+//
+//					Query query = new Query(
+//							Criteria.where("id").is(LSprotocolsteplstforsecond.get(i).getProtocolstepcode()));
+//					Update update = new Update();
+//					update.set("content", newLSprotocolstepInfo.getContent());
+//
+//					mongoTemplate.upsert(query, update, LSprotocolstepInfo.class);
+//					i++;
+//					break;
+//				}
+//			}
 
 		}
 

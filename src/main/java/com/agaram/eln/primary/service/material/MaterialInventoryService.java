@@ -2,6 +2,7 @@ package com.agaram.eln.primary.service.material;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.json.JSONArray;
@@ -561,8 +563,7 @@ public class MaterialInventoryService {
 		String strtypePrefix = (String) commonfunction
 				.getInventoryValuesFromJsonString(objGetMaterialTypeJSON.getJsondata(), "prefix").get("rtnObj");
 
-		final String dtransactiondate = getCurrentDateTime().truncatedTo(ChronoUnit.SECONDS).toString()
-				.replace("T", " ").replace("Z", "");
+		final String dtransactiondate = getCurrentDateTime().truncatedTo(ChronoUnit.SECONDS).toString().replace("T", " ").replace("Z", "");
 
 		if (!lstDateField.isEmpty()) {
 			jsonObject = (JSONObject) convertInputDateToUTCByZone(jsonObject, lstDateField, true);
@@ -664,7 +665,7 @@ public class MaterialInventoryService {
 
 				int reusableCount = jsonObject.getInt("Received Quantity");
 
-				jsonObjectInvTrans.put("Transaction Date & Time", dtransactiondate);
+				jsonObjectInvTrans.put("Transaction Date & Time", commonfunction.getCurrentUtcTime());
 				jsonObjectInvTrans.put("noffsetTransaction Date & Time", getCurrentDateTimeOffset("Europe/London"));
 				jsonObjectInvTrans.put("ntransactiontype",
 						Enumeration.TransactionStatus.RECEIVED.gettransactionstatus());
@@ -687,7 +688,7 @@ public class MaterialInventoryService {
 				jsonuidata.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVED.gettransactionstatus());
 				jsonuidata = getmaterialquery(jsonuidata, 1);
 
-				jsonuidataTrans.put("Transaction Date & Time", dtransactiondate);
+				jsonuidataTrans.put("Transaction Date & Time", commonfunction.getCurrentUtcTime());
 				jsonuidataTrans.put("noffsetTransaction Date & Time", getCurrentDateTimeOffset("Europe/London"));
 
 				jsonuidataTrans.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVED.gettransactionstatus());
@@ -762,7 +763,13 @@ public class MaterialInventoryService {
 					objTransaction.setNqtyissued(Double.valueOf((Integer) jsonObjectInvTrans.get("nqtyissued")));
 					objTransaction.setCreatedbyusercode(objUser);
 					objTransaction.setIssuedbyusercode(objUser);
-					objTransaction.setCreateddate(objCreatedDate);
+//					objTransaction.setCreateddate(objCreatedDate);
+					try {
+						objTransaction.setCreateddate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
 					materialInventoryTransactionRepository.save(objTransaction);
 
@@ -814,12 +821,12 @@ public class MaterialInventoryService {
 			inputMap.put("nmaterialinventorycode", objSaveMaterialInventory.getNmaterialinventorycode());
 			inputMap.put("ntranscode", inputMap.get("ntransactionstatus"));
 //			createMaterialInventoryhistory(inputMap);
-
+//
 			jsonObjectInvTrans.put("Inventory ID", strformat);
 			jsonuidataTrans.put("Inventory ID", strformat);
 
 			jsonObjectInvTrans.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVE.gettransactionstatus());
-			jsonObjectInvTrans.put("Transaction Date & Time", new Date());
+			jsonObjectInvTrans.put("Transaction Date & Time", dtransactiondate);
 			jsonObjectInvTrans.put("noffsetTransaction Date & Time", getCurrentDateTimeOffset("Europe/London"));
 			jsonObjectInvTrans.put("ninventorytranscode", Enumeration.TransactionStatus.OUTSIDE.gettransactionstatus());
 			jsonObjectInvTrans.put("nqtyissued", 0);
@@ -827,7 +834,7 @@ public class MaterialInventoryService {
 					Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
 			jsonuidataTrans.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVE.gettransactionstatus());
 			jsonuidataTrans.put("Transaction Date & Time", dtransactiondate);
-			jsonuidataTrans.put("Transaction Date & Time", new Date());
+			jsonuidataTrans.put("Transaction Date & Time", dtransactiondate);
 			jsonuidataTrans.put("noffsetTransaction Date & Time", getCurrentDateTimeOffset("Europe/London"));
 
 			jsonuidataTrans.put("ninventorytranscode", Enumeration.TransactionStatus.OUTSIDE.gettransactionstatus());
@@ -859,7 +866,13 @@ public class MaterialInventoryService {
 			objTransaction.setNqtyissued(Double.valueOf((Integer) jsonObjectInvTrans.get("nqtyissued")));
 			objTransaction.setCreatedbyusercode(objUser);
 			objTransaction.setIssuedbyusercode(objUser);
-			objTransaction.setCreateddate(objCreatedDate);
+//			objTransaction.setCreateddate(objCreatedDate);
+			try {
+				objTransaction.setCreateddate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			materialInventoryTransactionRepository.save(objTransaction);
 
@@ -1743,6 +1756,7 @@ public class MaterialInventoryService {
 			objmap.put("ndesigntemplatemappingcode", jsonuidata.get("nmaterialconfigcode"));
 
 			objmap.putAll((Map<String, Object>) getMaterialInventoryByID(inputMap).getBody());
+			objmap.putAll((Map<String, Object>) getMaterialInventoryDetails(inputMap).getBody());
 			objmap.put("objsilentaudit", cft);
 			objmap.put("tabScreen", "IDS_MATERIALSECTION");
 			return new ResponseEntity<>(objmap, HttpStatus.OK);
@@ -1826,10 +1840,10 @@ public class MaterialInventoryService {
 		return date;
 	}
 
-	public Object convertInputDateToUTCByZone(JSONObject jsonObj, final List<String> inputFieldList,
-			final boolean returnAsString) throws Exception {
+	public Object convertInputDateToUTCByZone(JSONObject jsonObj, final List<String> inputFieldList, final boolean returnAsString) throws Exception {
 
 		DateFormat formatter;
+		
 		if (!returnAsString) {
 			formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		} else {
@@ -1842,7 +1856,7 @@ public class MaterialInventoryService {
 
 			Date date_temp = formatter.parse(v_date_str);
 
-			jsonObj.put(inputFieldList.get(i), date_temp);
+			jsonObj.put(inputFieldList.get(i), getCurrentUtcTime(date_temp));
 
 		}
 
@@ -1871,6 +1885,18 @@ public class MaterialInventoryService {
 		int offSet = offset.getTotalSeconds();
 		return offSet;
 	}
+	
+	 public static Date getCurrentUtcTime(Date date) throws ParseException {    
+	    // create a thread-local instance of the SimpleDateFormat class
+        ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return dateFormat;
+        });
+        
+        // parse the date using the thread-local sdf instance
+        return sdf.get().parse(sdf.get().format(date));  
+    } 
 
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInventorySearchByID(Map<String, Object> inputMap)

@@ -313,7 +313,7 @@ public class TransactionService {
 
 		String inventTransString = nInventrans == 1 ? "Inhouse" : "Outside";
 
-		Date objCreatedDate = cft.getTransactiondate();
+//		Date objCreatedDate = cft.getTransactiondate();
 
 		LocalDateTime myDateObj = LocalDateTime.now();
 		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern(dtransactiondate);
@@ -442,7 +442,13 @@ public class TransactionService {
 				objTransaction.setNqtyreceived(Double.valueOf((Integer) insJsonObj.get("Received Quantity")));
 				objTransaction.setNqtyissued(Double.valueOf((Integer) insJsonObj.get("nqtyissued")));
 				objTransaction.setIssuedbyusercode(objUser);
-				objTransaction.setCreateddate(objCreatedDate);
+//				objTransaction.setCreateddate(objCreatedDate);
+				try {
+					objTransaction.setCreateddate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				materialInventoryTransactionRepository.save(objTransaction);
 
 				inputMap.put("nsectioncode", lstsourceSection.get(0).getNsectioncode());
@@ -465,7 +471,13 @@ public class TransactionService {
 				objTransaction.setNqtyreceived(Double.valueOf((Integer) insJsonObj.get("Received Quantity")));
 				objTransaction.setNqtyissued(Double.valueOf((Integer) insJsonObj.get("nqtyissued")));
 				objTransaction.setIssuedbyusercode(objUser);
-				objTransaction.setCreateddate(objCreatedDate);
+//				objTransaction.setCreateddate(objCreatedDate);
+				try {
+					objTransaction.setCreateddate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				materialInventoryTransactionRepository.save(objTransaction);
 
 				inputMap.put("nsectioncode", lstsourceSection.get(0).getNsectioncode());
@@ -566,7 +578,7 @@ public class TransactionService {
 		if (objTest.getTestcode() != -1) {
 			resultUsedMaterial.setTestcode(objTest);
 		}
-		resultUsedMaterial.setCreateddate(cft.getTransactiondate());
+//		resultUsedMaterial.setCreateddate(cft.getTransactiondate());
 		resultUsedMaterial.setCreatedbyusercode(objUser);
 		resultUsedMaterial.setNqtyissued(getIssuedQty);
 		resultUsedMaterial.setNqtyleft(getQtyLeft);
@@ -583,6 +595,12 @@ public class TransactionService {
 		resultUsedMaterial.setNstatus(1);
 		resultUsedMaterial.setResponse(new Response());
 		resultUsedMaterial.getResponse().setStatus(true);
+		try {
+			resultUsedMaterial.setCreateddate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		resultUsedMaterialRepository.save(resultUsedMaterial);
 

@@ -1037,14 +1037,18 @@ public class RestService {
 					List<LSlogilablimsordergroup> orderGroup = lslogilablimsordergroupRepository.findByBatchid(Batchid);
 					
 					while (i < lstResult.size()) {
-						
-						if(lstResult.get(i).getParametercode().equals(orderGroup.get(i).getNtestparametercode())) {
-							Map<String, Object> lstMap = new HashMap<>();
-							String sresult = lstResult.get(i).getResult();
-							Long orderid = orderGroup.get(i).getLimsprimarycode();
-							lstMap.put("sresult",sresult);
-							lstMap.put("limsprimarycode",orderid);
-							lssampleresult.add(i, lstMap);
+						int j = 0;
+						while (j < orderGroup.size()) {
+							if(lstResult.get(i).getParametercode().equals(orderGroup.get(j).getNtestparametercode())) {
+								Map<String, Object> lstMap = new HashMap<>();
+								String sresult = lstResult.get(i).getResult();
+								Long orderid = orderGroup.get(j).getLimsprimarycode();
+								lstMap.put("sresult",sresult);
+								lstMap.put("limsprimarycode",orderid);
+								lssampleresult.add(i, lstMap);
+								break;
+							}
+							j++;
 						}
 						i++;
 						

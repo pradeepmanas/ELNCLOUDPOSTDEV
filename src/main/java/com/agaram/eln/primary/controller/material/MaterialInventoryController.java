@@ -92,6 +92,7 @@ public class MaterialInventoryController {
 		
 		return (ResponseEntity<Object>) materialInventoryService.getMaterialInventorySearchByID(inputMap);
 	}
+	
 	@PostMapping("/CloudUploadattachments")
 	public MaterialInventory CloudUploadattachments(@RequestParam("file") MultipartFile file,
 			@RequestParam("order") Integer nmaterialinventorycode, @RequestParam("filename") String filename,
@@ -100,6 +101,7 @@ public class MaterialInventoryController {
 			throws IOException {
 		return materialInventoryService.CloudUploadattachments(file, nmaterialinventorycode, filename, fileexe, usercode, currentdate,isMultitenant);
 	}
+	
 	@RequestMapping(value = "/getAttachments", method = RequestMethod.POST)
 	public Map<String, Object> getAttachments(@RequestBody Map<String, Object> inputMap) throws Exception {
 
