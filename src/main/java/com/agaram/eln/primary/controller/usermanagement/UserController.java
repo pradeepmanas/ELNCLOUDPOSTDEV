@@ -42,6 +42,7 @@ import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSactiveUser;
 import com.agaram.eln.primary.model.usermanagement.LScentralisedUsers;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserActions;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
@@ -644,6 +645,12 @@ public class UserController {
 	public Listofallmaster InsertImportedlist(@RequestBody Listofallmaster listofallmaster) throws MessagingException {
 
 		return userService.InsertImportedlist(listofallmaster);
+	}
+	
+	@PostMapping("/GetUsersonprojectbased")
+	public List<LSuserMaster> GetUsersonprojectbased(@RequestBody LSprojectmaster objusermaster)throws Exception
+	{
+		return userService.GetUsersonprojectbased(objusermaster);
 	}
 }
 

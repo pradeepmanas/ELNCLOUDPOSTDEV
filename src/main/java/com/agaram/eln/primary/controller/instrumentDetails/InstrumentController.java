@@ -2,6 +2,7 @@ package com.agaram.eln.primary.controller.instrumentDetails;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1003,6 +1004,15 @@ public class InstrumentController {
 	{
 		return instrumentService.Getprotocolordersonsample(objorder);
 	}
+	
+	@RequestMapping("/GetordersondirectoryFilter")
+	public List<Logilaborders> GetordersondirectoryFilter(@RequestBody LSSheetOrderStructure objdir)throws Exception
+	{
+		List<Logilaborders> lssheet = new ArrayList<Logilaborders>();
+		
+		return instrumentService.GetordersondirectoryFilter(objdir,lssheet);
+	}
+	
 	
 	@RequestMapping("/Getprotocolorderbyflaganduser")
 	public Map<String,Object> Getprotocolorderbyflaganduser(@RequestBody LSlogilabprotocoldetail objorder)throws Exception

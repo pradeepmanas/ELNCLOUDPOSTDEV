@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
@@ -76,6 +77,12 @@ public class LSSheetOrderStructure {
 	
 	@Transient
 	private List<LSuserMaster> lstuserMaster;
+	
+	@Transient
+	private Integer ismultitenant;
+	
+	@Transient
+	private SearchCriteria searchCriteria;
 	
 	public List<LSuserMaster> getLstuserMaster() {
 		return lstuserMaster;
@@ -290,4 +297,21 @@ public class LSSheetOrderStructure {
 		this.objuser = objuser;
 	}
 
+	public Integer getIsmultitenant() {
+		return ismultitenant;
+	}
+
+	public void setIsmultitenant(Integer ismultitenant) {
+		this.ismultitenant = ismultitenant;
+	}
+
+	public SearchCriteria getSearchCriteria() {
+		return searchCriteria;
+	}
+
+	public void setSearchCriteria(SearchCriteria searchCriteria) {
+		this.searchCriteria = searchCriteria;
+	}
+
+	
 }

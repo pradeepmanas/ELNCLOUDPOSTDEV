@@ -1366,20 +1366,31 @@ public class UserService {
 	
 	public Map<String, Object> getActiveUserCount(Map<String, Object> objMap) {
 		Map<String, Object> obj = new HashMap<>();	
-			List<LSactiveUser> lstActiveUser = lsactiveUserRepository.findAll();
-			obj.put("Named", lstActiveUser.size());	
-			LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser","Active");
-			if(objPrefrence != null) {
-				String dvalue = objPrefrence.getValueencrypted();
-				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
-				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
-				int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
-				obj.put("ConCurrentUser", nConcurrentUsers); 
-			}
-				
+		List<LSactiveUser> lstActiveUser = lsactiveUserRepository.findAll();
+		obj.put("Named", lstActiveUser.size());	
+		LSpreferences objPrefrence;			
+		objPrefrence=LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser","Active");
 		
-		return obj;
-	}
+		if(objPrefrence == null) {
+			objPrefrence=LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser","Active");
+			obj.put("logintype", "MainFormUser");
+		}				
+		if(objPrefrence != null) {
+			String dvalue = objPrefrence.getValueencrypted();
+			String sConcurrentUsers = AESEncryption.decrypt(dvalue);
+			sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
+			int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
+			obj.put("ConCurrentUser", nConcurrentUsers); 
+			if(obj.get("logintype") == null) {
+			obj.put("logintype", "ConCurrentUser");	
+			}
+			obj.put("licencetype", objPrefrence != null ? 2 : (LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser","Active") != null ? 1 : 0));
+			
+		}
+			
+	
+	return obj;
+}
 
 	public Listofallmaster InsertImportedlist(Listofallmaster listofallmaster) {
 
@@ -1514,6 +1525,11 @@ public class UserService {
 				return listofallmaster;
 			}
 		}
+		return null;
+	}
+
+	public List<LSuserMaster> GetUsersonprojectbased(LSprojectmaster objusermaster) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

@@ -1803,4 +1803,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Date todate11, LSuserMaster objuser7, String string11, int y, List<Long> directorycode6, int z,
 			Date fromdate12, Date todate12, LSuserMaster objuser8, String string12, Pageable pageable);
 
+	List<Logilaborders> findByDirectorycodeAndCreatedtimestampBetweenAndLssamplefileIn(Long directorycode,
+			Date fromdate, Date todate, List<LSsamplefile> idList);
+
 }
