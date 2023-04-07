@@ -166,6 +166,22 @@ public class InstrumentController {
 		return mapOrders;
 	}
 
+	@RequestMapping("/GetsharedordersonFilter")
+	public List<Logilaborders> GetsharedordersonFilter(@RequestBody LSSheetOrderStructure objdir)throws Exception
+	{
+		List<Logilaborders> lssheet = new ArrayList<Logilaborders>();
+		
+		return instrumentService.GetordersondirectoryFilter(objdir,lssheet);
+	}
+
+	@RequestMapping("/GetmyordersonFilter")
+	public List<Logilaborders> GetmyordersonFilter(@RequestBody LSSheetOrderStructure objdir)throws Exception
+	{
+		List<Logilaborders> lssheet = new ArrayList<Logilaborders>();
+		
+		return instrumentService.GetordersondirectoryFilter(objdir,lssheet);
+	}
+	
 	@PostMapping("/Getorderallbytypeandflaglazy")
 	public Map<String, Object> Getorderallbytypeandflaglazy(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();

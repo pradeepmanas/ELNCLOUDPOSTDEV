@@ -74,6 +74,16 @@ public class LSusergrouprights {
 	private LSuserMaster lsuserMaster;
 	
 	@Transient
+	private LSuserMaster objLoggedUser;
+	
+	public LSuserMaster getObjLoggedUser() {
+		return objLoggedUser;
+	}
+
+	public void setObjLoggedUser(LSuserMaster objLoggedUser) {
+		this.objLoggedUser = objLoggedUser;
+	}
+	@Transient
 	private Response response;
 	
 	private Integer sequenceorder;

@@ -1806,4 +1806,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	List<Logilaborders> findByDirectorycodeAndCreatedtimestampBetweenAndLssamplefileIn(Long directorycode,
 			Date fromdate, Date todate, List<LSsamplefile> idList);
 
+	List<Long> findByBatchcodeIn(List<Long> batchcode);
+
+	List<Long> findByBatchcodeInAndFiletypeIn(List<Long> batchcode, List<Integer> filetype);
+
 }

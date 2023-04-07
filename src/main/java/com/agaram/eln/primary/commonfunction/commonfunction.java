@@ -196,8 +196,30 @@ public class commonfunction {
 						if (objCellValue.has("value")) {
 							if (!objCellValue.has("formula")) {
 								try {
-									String val = objCellValue.getString("value");
-									lstValues.add(val);
+									Object value = objCellValue.get("value");
+									if (value instanceof Integer) {
+									    int valInt = (int) value;
+									    String valStr = Integer.toString(valInt);
+									    lstValues.add(valStr);
+									    // handle integer value
+									}else if (value instanceof Float) {
+									    float valFloat = (float) value;
+									    String valStr = Float.toString(valFloat);
+									    lstValues.add(valStr);
+									    // handle float value
+									}  else if (value instanceof Double) {
+									    double valDouble = (double) value;
+									    String valStr = Double.toString(valDouble);
+									    lstValues.add(valStr);
+									    // handle double value
+									}
+									else {
+									    String valStr = (String) value;
+									    lstValues.add(valStr);
+									    // handle string value
+									}
+//									String val = (String) objCellValue.get("value");
+									
 								} catch (Exception e) {
 									System.out.println(e.getMessage());
 								}

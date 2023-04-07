@@ -301,6 +301,7 @@ public class UserService {
 		} else if (objusermaster.getUsercode() != null && objusermaster.getUserstatus() != null&& objusermaster.getLsusergroup() == null) { 
 			LSuserMaster updateUser = lsuserMasterRepository.findOne(objusermaster.getUsercode());
 			updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") || objusermaster.getUserstatus().equals("Locked") ? "A" : "D");
+			objusermaster.setUserstatus(objusermaster.getUserstatus().equals("Active") || objusermaster.getUserstatus().equals("Locked") ? "A" : "D");
 			if (!isnewuser && objusermaster.isReset()) {
 				updateUser.setPassword(objusermaster.getPassword());
 			}
@@ -846,6 +847,13 @@ public class UserService {
 
 	public List<LSusergrouprights> SaveUserRights(LSusergrouprights[] lsrites) {
 		List<LSusergrouprights> lsrights = Arrays.asList(lsrites);
+		try {
+			updateNotificationForUserRoleRights(lsrights);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		if(lsrights.size()>0 && lsrights.get(0).getOrderno()==null) {
 		lsrights = lsrights.stream()
 				  .map(obj -> {
@@ -874,6 +882,41 @@ public class UserService {
 		}
 		return lsrights;
 
+	}
+	
+	private void updateNotificationForUserRoleRights(List<LSusergrouprights> objRights) throws ParseException {
+		String Details = "";
+		String Notifiction = "";
+		LSnotification objnotify = new LSnotification();
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+
+		Details = "{\"role\":\"" + objRights.get(0).getUsergroupid().getUsergroupname()
+					+ "\", \"user\":\"" + objRights.get(0).getObjLoggedUser().getUsername() + "\"}";
+		Notifiction = "USERRIGHTSADD";
+		
+		List<LSMultiusergroup> userobj = LSMultiusergroupRepositery
+				.findBylsusergroup(objRights.get(0).getUsergroupid());
+
+		List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode) .collect(Collectors.toList());
+		List<LSuserMaster> objuser = lsuserMasterRepository.findByUsercodeInAndUserretirestatusNot(objnotifyuser, 1);
+		try {
+			for (int i = 0; i < objuser.size(); i++) {
+				if(objuser.get(i).getUsercode() != objRights.get(0).getObjLoggedUser().getUsercode()) {
+					objnotify.setNotifationfrom(objRights.get(0).getObjLoggedUser());
+					objnotify.setNotifationto(objuser.get(i));
+					objnotify.setNotificationdate(commonfunction.getCurrentUtcTime());
+					objnotify.setNotification(Notifiction);
+					objnotify.setNotificationdetils(Details);
+					objnotify.setNotificationfor(1);
+					objnotify.setNotificationpath("/Userrights");
+					objnotify.setIsnewnotification(1);
+					lstnotifications.add(objnotify);
+					lsnotificationRepository.save(lstnotifications);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 
 	public List<LSactiveUser> GetActiveUsers(LSuserMaster objuser) {
@@ -1529,7 +1572,13 @@ public class UserService {
 	}
 
 	public List<LSuserMaster> GetUsersonprojectbased(LSprojectmaster objusermaster) {
-		// TODO Auto-generated method stub
-		return null;
+		LSprojectmaster obj =LSprojectmasterRepository.findByProjectcode(objusermaster.getProjectcode());
+		List<LSuserteammapping> teamobj =lsuserteammappingRepository.findByteamcode(obj.getLsusersteam().getTeamcode());
+		List<LSuserMaster> lsusermasterobj = new ArrayList<LSuserMaster>();
+		if (teamobj != null && teamobj.size() > 0) {
+			lsusermasterobj = teamobj.stream().map(LSuserteammapping::getLsuserMaster).collect(Collectors.toList());
+		}
+		
+		return lsusermasterobj;
 	}
 }
