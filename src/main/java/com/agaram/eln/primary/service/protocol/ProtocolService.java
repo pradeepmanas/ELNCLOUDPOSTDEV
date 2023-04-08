@@ -4207,8 +4207,8 @@ public class ProtocolService {
 //				.findById(LSprotocolsteplst.getProtocolorderstepcode());
 				LSprotocolsteplst.setLsprotocolstepInfo(cloudlsprotocolorderversionstep.getLsprotocolstepInfo());
 			} else {
-				LsLogilabprotocolstepInfo newLSprotocolstepInfo = mongoTemplate
-						.findById(LSprotocolsteplst.getProtocolorderstepcode(), LsLogilabprotocolstepInfo.class);
+				LSprotocolorderversionstepInfo newLSprotocolstepInfo = mongoTemplate
+						.findById(LSprotocolsteplst.getProtocolorderstepcode(), LSprotocolorderversionstepInfo.class);
 				if (newLSprotocolstepInfo != null) {
 					LSprotocolsteplst.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
 				}
@@ -5072,7 +5072,7 @@ public class ProtocolService {
 					Update update = new Update();
 					update.set("content", str);
 
-					mongoTemplate.upsert(query, update, LSprotocolversionstepInfo.class);
+					mongoTemplate.upsert(query, update, LSprotocolorderversionstepInfo.class);
 				}
 			}
 		}

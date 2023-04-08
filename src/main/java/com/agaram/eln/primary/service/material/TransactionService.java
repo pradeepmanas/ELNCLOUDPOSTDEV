@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.json.JSONException;
@@ -702,7 +703,7 @@ public class TransactionService {
 		List<MaterialInventoryTransaction> objLstTransactions = materialInventoryTransactionRepository
 				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(objInventory.getNmaterialinventorycode());
 		
-		List<LSuserMaster> objLstuser = objLstTransactions.stream().map(MaterialInventoryTransaction::getIssuedbyusercode).collect(Collectors.toList());
+		List<LSuserMaster> objLstuser = objLstTransactions.stream().map(MaterialInventoryTransaction::getIssuedbyusercode).filter(Objects::nonNull).collect(Collectors.toList());
 		
 		if(!objLstuser.isEmpty()) {
 			List<Integer> objnotifyuser = objLstuser.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
@@ -728,8 +729,7 @@ public class TransactionService {
 //					|| task.equals("NEXTVALIDATEMONTH") || task.equals("NEXTVALIDATEMINUTES")
 //					|| task.equals("NEXTVALIDATEHOURS") || task.equals("NEXTVALIDATEYEAR")) {
 
-				details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + getQtyLeft
-						+ "\"}";
+				details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + getQtyLeft + "\"}";
 			}
 
 			String notification = details;
@@ -826,6 +826,7 @@ public class TransactionService {
 							} else {
 								objInventory.setNtransactionstatus(55);
 								materialInventoryRepository.save(objInventory);
+								updateNotificationOnInventory(objInventory, "EXPIRYREACHED", cft, 0.0 ,date);
 							}
 
 						} catch (ParseException e) {
@@ -848,8 +849,7 @@ public class TransactionService {
 								Map<String, Object> objOpenValue = ((JSONObject) objOpenExp.get("Open Expiry Period"))
 										.toMap();
 
-								if (!objOpenValue.get("label").toString().equalsIgnoreCase("NA")
-										&& !objOpenValue.get("label").toString().equalsIgnoreCase("Never")) {
+								if (!objOpenValue.get("label").toString().equalsIgnoreCase("NA") && !objOpenValue.get("label").toString().equalsIgnoreCase("Never")) {
 
 									String validationType = objOpenValue.get("label").toString();
 									long longOpenDate = (long) objMap.get("Open Date");
@@ -1050,12 +1050,8 @@ public class TransactionService {
 							}
 						}
 					}).collect(Collectors.toList());
-
 				}
 			}
-
 		}).collect(Collectors.toList());
-
 	}
-
 }

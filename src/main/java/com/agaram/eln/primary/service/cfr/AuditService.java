@@ -254,7 +254,7 @@ public class AuditService {
 
 		LSpreferences objpref = LSpreferencesRepository.findByTasksettingsAndValuesettings("ELNparser", "0");
 
-		List<LSaudittrailconfiguration> lstAudit = LSaudittrailconfigurationRepository.findByLsusermaster(LSaudittrailconfiguration);
+		List<LSaudittrailconfiguration> lstAudit = LSaudittrailconfigurationRepository.findByLsusermasterOrderByOrdersequnce(LSaudittrailconfiguration);
 		
 		List<LSaudittrailconfigmaster> lstAuditmaster = LSaudittrailconfigmasterRepository.findByOrderByOrdersequnce();
 

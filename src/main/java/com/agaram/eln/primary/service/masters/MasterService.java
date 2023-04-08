@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -527,6 +528,15 @@ public class MasterService {
 			objResponse.setInformation("Logbook already exists");
 		} else {
 			objResponse.setStatus(true);
+			if(lslogbooks.getLogbookcode() == null) {
+				try {
+					lslogbooks.setAddedon(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			}
+			
 			lslogbooksRepository.save(lslogbooks);
 		}
 		String logbookid = "LB" + lslogbooks.getLogbookcode();
@@ -573,6 +583,14 @@ public class MasterService {
 		}
 
 		objResponse.setStatus(true);
+		if(lslogbooksdata.getLogbookdatacode() == null) {
+			try {
+				lslogbooksdata.setAddedon(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
 		lslogbooksdataRepository.save(lslogbooksdata);
 
 		lslogbooksdata.setObjResponse(objResponse);
