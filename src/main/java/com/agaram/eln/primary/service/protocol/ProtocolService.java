@@ -4208,7 +4208,7 @@ public class ProtocolService {
 				LSprotocolsteplst.setLsprotocolstepInfo(cloudlsprotocolorderversionstep.getLsprotocolstepInfo());
 			} else {
 				LSprotocolorderversionstepInfo newLSprotocolstepInfo = mongoTemplate
-						.findById(LSprotocolsteplst.getProtocolorderstepcode(), LSprotocolorderversionstepInfo.class);
+						.findById(lsprotocolorderstepversion.getProtocolorderstepversioncode(), LSprotocolorderversionstepInfo.class);
 				if (newLSprotocolstepInfo != null) {
 					LSprotocolsteplst.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
 				}

@@ -487,9 +487,9 @@ public class InstrumentService {
 
 			
 			List<Method> elnMethod = lsMethodRepository.findByStatusAndSite(1,lssiteMaster);
-			List<ParserBlock> ParserBlock = lsParserBlockRepository.findByMethodIn(elnMethod);
-			List<ParserField> ParserField = lsParserRepository.findByParserblockIn(ParserBlock);
-			List<SubParserField> SubParserField = lsSubParserRepository.findByParserfieldIn(ParserField);
+			List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatusAndMethodIn(1,elnMethod);
+			List<ParserField> ParserField = lsParserRepository.findByStatusAndParserblockIn(1,ParserBlock);
+			List<SubParserField> SubParserField = lsSubParserRepository.findByStatusAndParserfieldIn(1,ParserField);
 
 			// SubParserField = lsSubParserRepository.findByStatus(1);
 			obj.put("Generalfields", Generalfields);
@@ -527,10 +527,10 @@ public class InstrumentService {
 
 			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatusAndSite(1,lssiteMaster);
 			List<Method> elnMethod = lsMethodRepository.findByStatusAndSite(1,lssiteMaster);
-			List<ParserBlock> ParserBlock = lsParserBlockRepository.findByMethodIn(elnMethod);
-			List<ParserField> ParserField = lsParserRepository.findByParserblockIn(ParserBlock);
+			List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatusAndMethodIn(1,elnMethod);
+			List<ParserField> ParserField = lsParserRepository.findByStatusAndParserblockIn(1,ParserBlock);
 		
-			List<SubParserField> SubParserField = lsSubParserRepository.findByParserfieldIn(ParserField);
+			List<SubParserField> SubParserField = lsSubParserRepository.findByStatusAndParserfieldIn(1,ParserField);
 
 			obj.put("Generalfields", Generalfields);
 
@@ -2605,7 +2605,7 @@ public class InstrumentService {
 		}
 
 		lsLogilaborders = null;
-
+		objupdatedorder.setLstworkflow(objorder.getLstworkflow());
 		return objupdatedorder;
 	}
 
@@ -3478,6 +3478,7 @@ public class InstrumentService {
 			}
 
 		}
+		objupdated.setLstworkflow(objorder.getLstworkflow());
 		mapOrder.put("order", objupdated);
 		mapOrder.put("version",
 				lssamplefileversionRepository.findByFilesamplecodeOrderByVersionnoDesc(objupdated.getLssamplefile()));

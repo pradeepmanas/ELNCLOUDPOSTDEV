@@ -1513,35 +1513,35 @@ public class MaterialInventoryService {
 
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
-		List<Map<String, Object>> lstMaterialInventory2 = new ArrayList<Map<String, Object>>();
+//		List<Map<String, Object>> lstMaterialInventory2 = new ArrayList<Map<String, Object>>();
 
-		List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository
-				.findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNstatusOrderByNmaterialinventorycodeDesc(
-						(Integer) inputMap.get("nmaterialcode"), (Integer) inputMap.get("nmaterialcatcode"),
-						(Integer) inputMap.get("nmaterialtypecode"), 1);
+//		List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository
+//				.findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNstatusOrderByNmaterialinventorycodeDesc(
+//						(Integer) inputMap.get("nmaterialcode"), (Integer) inputMap.get("nmaterialcatcode"),
+//						(Integer) inputMap.get("nmaterialtypecode"), 1);
+//
+//		objLstMaterialInventory.stream().peek(f -> {
+//
+//			try {
+//
+//				Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
+//
+//				resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
+//				resObj.put("displaystatus",
+//						f.getNtransactionstatus() == 28 ? "Released"
+//								: (f.getNtransactionstatus() == 55 ? "Expired"
+//										: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
+//				resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
+//				lstMaterialInventory2.add(resObj);
+//
+//			} catch (IOException e) {
+//
+//				e.printStackTrace();
+//			}
+//
+//		}).collect(Collectors.toList());
 
-		objLstMaterialInventory.stream().peek(f -> {
-
-			try {
-
-				Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
-
-				resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-				resObj.put("displaystatus",
-						f.getNtransactionstatus() == 28 ? "Released"
-								: (f.getNtransactionstatus() == 55 ? "Expired"
-										: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
-				resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
-				lstMaterialInventory2.add(resObj);
-
-			} catch (IOException e) {
-
-				e.printStackTrace();
-			}
-
-		}).collect(Collectors.toList());
-
-		objmap.put("MaterialInventory", lstMaterialInventory2);
+//		objmap.put("MaterialInventory", lstMaterialInventory2);
 
 		if (inputMap.get("nmaterialinventorycode") != null) {
 			MaterialInventory objInventory = materialInventoryRepository

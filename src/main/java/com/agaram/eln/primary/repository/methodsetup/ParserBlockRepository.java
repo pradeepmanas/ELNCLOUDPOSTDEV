@@ -39,6 +39,8 @@ public interface ParserBlockRepository extends JpaRepository<ParserBlock, Intege
 	List<ParserBlock> findByStatus(int i);
 
 	List<ParserBlock> findByMethodIn(List<Method> elnMethod);
-	
+
+	List<ParserBlock> findByStatusAndMethodIn(int i, List<Method> elnMethod);
+
 	
 }

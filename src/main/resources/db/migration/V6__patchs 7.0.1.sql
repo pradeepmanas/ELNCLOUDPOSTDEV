@@ -4063,3 +4063,5 @@ update lsaudittrailconfigmaster set ordersequnce=108 where taskname ='IDS_TSK_DE
 update lsaudittrailconfiguration set ordersequnce=30 where screenname ='IDS_SCN_GRADEMASTER' ;
 update lsaudittrailconfiguration set ordersequnce=31 where screenname ='IDS_SCN_SUPPLIER' ;
 update lsaudittrailconfiguration set ordersequnce=32 where screenname ='IDS_SCN_MANUFACTURER' ;
+
+delete from datatype where datatypename='Integer';
