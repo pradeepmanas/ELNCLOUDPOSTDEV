@@ -140,12 +140,7 @@ public class Material implements Serializable{
 	public void setJsonuidata(String jsonuidata) {
 		this.jsonuidata = jsonuidata;
 	}
-	public String getSmaterialname() {
-		return smaterialname;
-	}
-	public void setSmaterialname(String smaterialname) {
-		this.smaterialname = smaterialname;
-	}
+	
 	public String getSunitname() {
 		return sunitname;
 	}
@@ -187,6 +182,12 @@ public class Material implements Serializable{
 	}
 	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
 		this.objmanualaudit = objmanualaudit;
+	}
+	public String getSmaterialname() {
+		return smaterialname;
+	}
+	public void setSmaterialname(String smaterialname) {
+		this.smaterialname = smaterialname;
 	}
 	
 }

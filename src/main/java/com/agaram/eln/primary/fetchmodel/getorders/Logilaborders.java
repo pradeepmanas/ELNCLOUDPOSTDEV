@@ -2,8 +2,11 @@ package com.agaram.eln.primary.fetchmodel.getorders;
 
 import java.util.Date;
 
+import com.agaram.eln.primary.model.inventory.LSmaterial;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.material.Material;
+import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
@@ -28,6 +31,8 @@ public class Logilaborders extends Logilabordermaster {
 	private Integer filetype;
 	private LSsamplefile lssamplefile;
 	private String repositoryitemname;
+	private String materialname;
+	private String materialinventoryname;
 	private LSuserMaster assignedto;
 	private String repositoryname;
 	private Long batchcode;
@@ -39,7 +44,7 @@ public class Logilaborders extends Logilabordermaster {
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,LSuserMaster assignedto,
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
-			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption) {
+			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,Material material,MaterialInventory materialinventory) {
 		
 		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,lstestmasterlocal, ordercancell,viewoption);
 		 
@@ -68,6 +73,8 @@ public class Logilaborders extends Logilabordermaster {
 		this.repositoryitemname =lsrepositoriesdata !=null ?lsrepositoriesdata.getRepositoryitemname():null;
 		this.assignedto =assignedto;
 		this.repositoryname =lsrepositories !=null ?lsrepositories.getRepositoryname():null;
+		this.materialname=material!=null?material.getSmaterialname():null;
+		this.materialinventoryname=materialinventory!=null?materialinventory.getSinventoryid():null;
 		this.directorycode = directorycode;
 		this.ordercancell=ordercancell;
 		this.viewoption=viewoption;
@@ -240,4 +247,27 @@ public class Logilaborders extends Logilabordermaster {
 	public void setDirectorycode(Long directorycode) {
 		this.directorycode = directorycode;
 	}
+
+
+	public String getMaterialname() {
+		return materialname;
+	}
+
+
+	public void setMaterialname(String materialname) {
+		this.materialname = materialname;
+	}
+
+
+	public String getMaterialinventoryname() {
+		return materialinventoryname;
+	}
+
+
+	public void setMaterialinventoryname(String materialinventoryname) {
+		this.materialinventoryname = materialinventoryname;
+	}
+
+
+	
 }

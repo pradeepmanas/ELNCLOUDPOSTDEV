@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.material.Material;
+import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
@@ -14,7 +16,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
-public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{ 
+public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> {
 
 	private Long protocolordercode;
 	private String protoclordername;
@@ -31,15 +33,14 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	private String protocolmastername;
 	private LSprojectmaster lsprojectmaster;
 
-
 	private String keyword;
-	
+
 	private Integer Testcode;
-	
+
 	private Long directorycode;
-	
+
 	private Integer createby;
-	
+
 	private String repositoryitemname;
 	private LSuserMaster assignedto;
 	private String repositoryname;
@@ -47,7 +48,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	private Integer rejected;
 	private Integer viewoption;
 
-
+	private String materialname;
+	private String materialinventoryname;
 	List<LSworkflow> lstworkflow;
 	private LSprotocolworkflow lSprotocolworkflow;
 	private LSworkflow lsworkflow;
@@ -56,13 +58,15 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	private LSsamplemaster lssamplemaster;
 	private Integer ordercancell;
 
-	public Logilabprotocolorders(Long protocolordercode,Integer Testcode, String protoclordername, String orderflag,
+	public Logilabprotocolorders(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
-			LSprotocolworkflow lSprotocolworkflow,
-			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,String keyword,Long directorycode,Integer createby,LSuserMaster assignedto,Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,LSworkflow lsworkflow, Integer approved,Integer rejected,Integer ordercancell,Integer viewoption) {
-		
+			LSprotocolworkflow lSprotocolworkflow, LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,
+			String keyword, Long directorycode, Integer createby, LSuserMaster assignedto,
+			Lsrepositoriesdata lsrepositoriesdata, Lsrepositories lsrepositories, LSworkflow lsworkflow,Material material,MaterialInventory materialinventory,
+			Integer approved, Integer rejected, Integer ordercancell, Integer viewoption) {
+
 		this.protocolordercode = protocolordercode;
-		this.Testcode =Testcode;
+		this.Testcode = Testcode;
 		this.protoclordername = protoclordername;
 		this.orderflag = orderflag;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -70,23 +74,25 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 		this.createdtimestamp = createdtimestamp;
 		this.completedtimestamp = completedtimestamp;
 		this.protocolmastername = lsprotocolmaster != null ? lsprotocolmaster.getProtocolmastername() : "";
-		this.samplename = lssamplemaster != null ? lssamplemaster.getSamplename():"";
-		this.projectname = lsprojectmaster != null ? lsprojectmaster.getProjectname():"";
+		this.samplename = lssamplemaster != null ? lssamplemaster.getSamplename() : "";
+		this.projectname = lsprojectmaster != null ? lsprojectmaster.getProjectname() : "";
 		this.keyword = keyword;
 		this.directorycode = directorycode;
 		this.lsprojectmaster = lsprojectmaster;
-		this.createby =createby;
-		this.assignedto =assignedto;
-		this.lssamplemaster= lssamplemaster != null ? lssamplemaster:null;
-		this.repositoryitemname =lsrepositoriesdata !=null ?lsrepositoriesdata.getRepositoryitemname():null;
-		this.repositoryname =lsrepositories !=null ?lsrepositories.getRepositoryname():null;
+		this.createby = createby;
+		this.assignedto = assignedto;
+		this.lssamplemaster = lssamplemaster != null ? lssamplemaster : null;
+		this.repositoryitemname = lsrepositoriesdata != null ? lsrepositoriesdata.getRepositoryitemname() : null;
+		this.repositoryname = lsrepositories != null ? lsrepositories.getRepositoryname() : null;
+		this.materialname=material!=null?material.getSmaterialname():null;
+		this.materialinventoryname=materialinventory!=null?materialinventory.getSinventoryid():null;
 		this.directorycode = directorycode;
-		this.lsworkflow=lsworkflow;
-		this.lsprotocolmaster=lsprotocolmaster;
-		this.approved=approved;
-		this.rejected=rejected;
-		this.ordercancell=ordercancell;
-		this.viewoption=viewoption;
+		this.lsworkflow = lsworkflow;
+		this.lsprotocolmaster = lsprotocolmaster;
+		this.approved = approved;
+		this.rejected = rejected;
+		this.ordercancell = ordercancell;
+		this.viewoption = viewoption;
 	}
 
 	public Integer getViewoption() {
@@ -120,8 +126,6 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	public void setRejected(Integer rejected) {
 		this.rejected = rejected;
 	}
-
-
 
 	public LSworkflow getLsworkflow() {
 		return lsworkflow;
@@ -258,14 +262,15 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	public void setLsprotocolmaster(LSprotocolmaster lsprotocolmaster) {
 		this.lsprotocolmaster = lsprotocolmaster;
 	}
-	
+
 	public List<LSworkflow> getLstworkflow() {
 		return lstworkflow;
 	}
+
 	public LSprojectmaster getLsprojectmaster() {
 		return lsprojectmaster;
 	}
-	
+
 	public String getRepositoryitemname() {
 		return repositoryitemname;
 	}
@@ -293,9 +298,10 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	public void setLsprojectmaster(LSprojectmaster lsprojectmaster) {
 		this.lsprojectmaster = lsprojectmaster;
 	}
+
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
 
-		if (lstworkflow != null  && this.workflowcode !=null && lstworkflow.size() > 0) {
+		if (lstworkflow != null && this.workflowcode != null && lstworkflow.size() > 0) {
 
 			List<Integer> lstworkflowcode = new ArrayList<Integer>();
 			if (lstworkflow != null && lstworkflow.size() > 0) {
@@ -314,6 +320,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 		}
 		this.lstworkflow = null;
 	}
+
 	public Long getDirectorycode() {
 		return directorycode;
 	}
@@ -334,4 +341,22 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders>{
 	public int compareTo(Logilabprotocolorders o) {
 		return this.getProtocolordercode().compareTo(o.getProtocolordercode());
 	}
+
+	public String getMaterialname() {
+		return materialname;
+	}
+
+	public void setMaterialname(String materialname) {
+		this.materialname = materialname;
+	}
+
+	public String getMaterialinventoryname() {
+		return materialinventoryname;
+	}
+
+	public void setMaterialinventoryname(String materialinventoryname) {
+		this.materialinventoryname = materialinventoryname;
+	}
+
+	
 }
