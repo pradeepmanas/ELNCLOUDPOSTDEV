@@ -60,12 +60,12 @@ public class JwtUserDetailsService implements UserDetailsService {
 		
 		LSuserMaster user = new LSuserMaster();
 		
-		if(usernamevalue.equalsIgnoreCase("Administrator")) {
-			user = userDao.findByusernameIgnoreCase(usernamevalue);
-		}
-		else {
+//		if(usernamevalue.equalsIgnoreCase("Administrator")) {
+//			user = userDao.findByusernameIgnoreCase(usernamevalue);
+//		}
+//		else {
 			user = userDao.findByUsernameIgnoreCaseAndLssitemaster(usernamevalue, objsite);
-		}
+//		}
 //		LSuserMaster user = userDao.findByUsernameIgnoreCaseAndLssitemasterAndUserretirestatusNot(usernamevalue, objsite,1);
 		
 		try {

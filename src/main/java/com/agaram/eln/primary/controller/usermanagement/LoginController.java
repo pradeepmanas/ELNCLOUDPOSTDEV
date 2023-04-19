@@ -59,10 +59,10 @@ public class LoginController {
 		return loginService.Login(objuser);
 	}
 
-	@PostMapping("/ActiveUserEntry")
-	public LSactiveUser activeUserEntry(@RequestBody LSactiveUser objsite) throws Exception {
-		return loginService.activeUserEntry(objsite);
-	}
+//	@PostMapping("/ActiveUserEntry")
+//	public LSactiveUser activeUserEntry(@RequestBody LSactiveUser objsite) throws Exception {
+//		return loginService.activeUserEntry(objsite);
+//	}
 
 	@PostMapping("/CheckUserAndPassword")
 	public List<LSuserMaster> CheckUserAndPassword(@RequestBody LoggedUser objuser) throws Exception {

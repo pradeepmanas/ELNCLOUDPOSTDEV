@@ -11,5 +11,7 @@ public interface LSlogilablimsordergroupRepository extends JpaRepository<LSlogil
 	public List<LSlogilablimsordergroup> findByBatchid(String batchid);
 
 	public LSlogilablimsordergroup findByLimsprimarycode(Long limsprimarycode);
+	
+	public List<LSlogilablimsordergroup> findByGroupid(String groupid);
 
 }

@@ -20,7 +20,7 @@ public class LSlogilablimsordergroup {
 	private Integer ntestcode;
 	
 	@Column(name = "ntransactiontestcode") 
-	private Integer ntransactiontestcode;
+	private Long ntransactiontestcode;
 	
 	@Column(columnDefinition = "varchar(100)",name = "testname")
 	private String stestname;
@@ -181,6 +181,17 @@ public class LSlogilablimsordergroup {
 	@Transient
 	private String testparametersynonym;
 
+	@Transient
+	private Integer nbatchmastercode;
+	
+	public Integer getNbatchmastercode() {
+		return nbatchmastercode;
+	}
+
+	public void setNbatchmastercode(Integer nbatchmastercode) {
+		this.nbatchmastercode = nbatchmastercode;
+	}
+	
 	public Integer getNtransactionresultcode() {
 		return ntransactionresultcode;
 	}
@@ -205,11 +216,11 @@ public class LSlogilablimsordergroup {
 		this.ntransactionsamplecode = ntransactionsamplecode;
 	}
 
-	public Integer getNtransactiontestcode() {
+	public Long getNtransactiontestcode() {
 		return ntransactiontestcode;
 	}
 
-	public void setNtransactiontestcode(Integer ntransactiontestcode) {
+	public void setNtransactiontestcode(Long ntransactiontestcode) {
 		this.ntransactiontestcode = ntransactiontestcode;
 	}
 

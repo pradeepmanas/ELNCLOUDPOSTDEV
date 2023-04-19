@@ -359,7 +359,14 @@ public class InstrumentController {
 		return instrumentService.Cloudparserdownloadattachments(objattachments);
 	}
 
-	
+	@RequestMapping("/GetsampleordersonFilter")
+	public List<Logilaborders> GetsampleordersonFilter(@RequestBody LSlogilablimsorderdetail objdir)throws Exception
+	{
+		List<Logilaborders> lssheet = new ArrayList<Logilaborders>();
+		
+		return instrumentService.GetsampleordersonFilter(objdir,lssheet);
+	}
+		
 	@RequestMapping(value = "attachment/{fileid}", method = RequestMethod.GET)
 	@GetMapping
 	public ResponseEntity<InputStreamResource> downloadlargeattachment(@PathVariable String fileid)

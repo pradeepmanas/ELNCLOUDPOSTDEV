@@ -396,56 +396,63 @@ public class UserService {
 	private void updatenotificationforuserrole(LSuserMaster objusermaster) {
 		String Details = "";
 		String Notifiction = "";
-		LSnotification objnotify = new LSnotification();
+		
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-		StringBuffer sb = new StringBuffer();
+		
 		LSuserMaster createby = lsuserMasterRepository.findByusercode(objusermaster.getLoggedinuser().getUsercode());
 		if (objusermaster.getMultiusergroupcode() != null && objusermaster.getDeleterole() != null) {
-			if (objusermaster.getMultiusergroupcode().size() > objusermaster.getDeleterole().size()) {
-				if (objusermaster.getUsernotify() != null) {
+//			if (objusermaster.getMultiusergroupcode().size() > objusermaster.getDeleterole().size()) {
+				if (!objusermaster.getUsernotify().isEmpty() && objusermaster.getUsernotify() != null) {
+					StringBuffer sb = new StringBuffer();
 					for (LSuserMaster rowValues : objusermaster.getUsernotify()) {
 						sb.append(rowValues.getUsergroupname()).append(",");
 					}
+					
+					if (createby.getUsercode() != objusermaster.getUsercode()) {
+						String Detailwithcomma = sb.toString();
+						Details = "{\"role\":\"" + Detailwithcomma + "\", \"site\":\"" + objusermaster.getSitename() + "\"}";
+						Notifiction = "USERROLEADD";
+	
+						LSnotification objnotify = new LSnotification();
+						objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
+						objnotify.setNotifationto(objusermaster);
+						objnotify.setNotificationdate(objusermaster.getModifieddate());
+						objnotify.setNotification(Notifiction);
+						objnotify.setNotificationdetils(Details);
+						objnotify.setNotificationfor(1);
+						objnotify.setNotificationpath("/Usermaster");
+						objnotify.setIsnewnotification(1);
+						lstnotifications.add(objnotify);
+						lsnotificationRepository.save(lstnotifications);
+					}
 				}
-				if (createby.getUsercode() != objusermaster.getUsercode()) {
-					String Detailwithcomma = sb.toString();
-					Details = "{\"role\":\"" + Detailwithcomma + "\", \"site\":\"" + objusermaster.getSitename() + "\"}";
-					Notifiction = "USERROLEADD";
-
-					objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
-					objnotify.setNotifationto(objusermaster);
-					objnotify.setNotificationdate(objusermaster.getModifieddate());
-					objnotify.setNotification(Notifiction);
-					objnotify.setNotificationdetils(Details);
-					objnotify.setNotificationfor(1);
-					objnotify.setNotificationpath("/Usermaster");
-					objnotify.setIsnewnotification(1);
-					lstnotifications.add(objnotify);
-					lsnotificationRepository.save(lstnotifications);
-				}
-			} else if (objusermaster.getMultiusergroupcode().size() != objusermaster.getDeleterole().size()) {
-				if (objusermaster.getUserroleremovenotify() != null) {
+//			}
+//			if (objusermaster.getMultiusergroupcode().size() != objusermaster.getDeleterole().size()) {
+				if (!objusermaster.getUserroleremovenotify().isEmpty() && objusermaster.getUserroleremovenotify() != null) {
+					StringBuffer sb = new StringBuffer();
 					for (LSuserMaster rowValues : objusermaster.getUserroleremovenotify()) {
 						sb.append(rowValues.getUsergroupname()).append(",");
 					}
+					if (createby.getUsercode() != objusermaster.getUsercode()) {
+						String Detailwithcomma = sb.toString();
+						Details = "{\"role\":\"" + Detailwithcomma + "\", \"site\":\"" + objusermaster.getSitename()
+									+ "\", \"fromuser\":\"" + objusermaster.getLoggedinuser().getUsername() + "\"}";
+						Notifiction = "USERROLEREMOVE";
+						
+						LSnotification objnotify = new LSnotification();
+						objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
+						objnotify.setNotifationto(objusermaster);
+						objnotify.setNotificationdate(objusermaster.getModifieddate());
+						objnotify.setNotification(Notifiction);
+						objnotify.setNotificationdetils(Details);
+						objnotify.setNotificationfor(1);
+						objnotify.setNotificationpath("/Usermaster");
+						objnotify.setIsnewnotification(1);
+						lstnotifications.add(objnotify);
+						lsnotificationRepository.save(lstnotifications);
+					}
 				}
-				if (createby.getUsercode() != objusermaster.getUsercode()) {
-					String Detailwithcomma = sb.toString();
-					Details = "{\"role\":\"" + Detailwithcomma + "\", \"site\":\"" + objusermaster.getSitename()
-								+ "\", \"fromuser\":\"" + objusermaster.getLoggedinuser().getUsername() + "\"}";
-					Notifiction = "USERROLEREMOVE";
-					objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
-					objnotify.setNotifationto(objusermaster);
-					objnotify.setNotificationdate(objusermaster.getModifieddate());
-					objnotify.setNotification(Notifiction);
-					objnotify.setNotificationdetils(Details);
-					objnotify.setNotificationfor(1);
-					objnotify.setNotificationpath("/Usermaster");
-					objnotify.setIsnewnotification(1);
-					lstnotifications.add(objnotify);
-					lsnotificationRepository.save(lstnotifications);
-				}
-			}
+//			}
 		}
 
 	}

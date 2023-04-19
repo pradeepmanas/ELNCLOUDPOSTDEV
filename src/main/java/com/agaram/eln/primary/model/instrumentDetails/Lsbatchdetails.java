@@ -32,6 +32,9 @@ public class Lsbatchdetails {
 	@Column(columnDefinition = "varchar(250)",name = "SampleID") 
 	private String sampleid;
 	
+	@Column(columnDefinition = "numeric(17,0)",name = "limsprimarycode") 
+	private Long limsprimarycode;
+	
 	@Column(columnDefinition = "char(10)",name = "OrderFlag")
 	@Transient
 	private String orderflag;
@@ -53,6 +56,14 @@ public class Lsbatchdetails {
 
 	public void setNbatchcode(String nbatchcode) {
 		this.nbatchcode = nbatchcode;
+	}
+
+	public Long getLimsprimarycode() {
+		return limsprimarycode;
+	}
+
+	public void setLimsprimarycode(Long limsprimarycode) {
+		this.limsprimarycode = limsprimarycode;
 	}
 
 	public String getOrderflag() {

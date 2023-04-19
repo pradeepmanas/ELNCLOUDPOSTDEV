@@ -222,7 +222,7 @@ public class RestService {
 		
 		if (isAPICalling.equals("true")) {
 			final String url = env.getProperty("limsbaseservice.url")+"eln/getLimsSDMSRecords";
-			map.put("elnsitecode", -1);
+			map.put("elnsitecode", str);
 		    result = restTemplate.postForObject(url, map, String.class);
 			
 		    List<LSlogilablimsordergroup> mapLimsOrder = mapper.readValue(result,
@@ -336,32 +336,53 @@ public class RestService {
 					lslogilablimsordergroupRepository.save(lstOrder.get(i));
 				}
 				
-				if(LSlogilablimsorderdetailRepository.findByBatchid(lstOrder.get(i).getBatchid()) == null) {					
-					orderDetail.setBatchid(lstOrder.get(i).getBatchid());
+				if(LSlogilablimsorderdetailRepository.findByBatchid(lstOrder.get(i).getGroupid()) == null) {	
+					if(!lstOrder.get(i).getNbatchmastercode().equals(-1)) {
+						orderDetail.setNbatchcode(String.valueOf(lstOrder.get(i).getNbatchmastercode()));
+					}
+					orderDetail.setBatchid(lstOrder.get(i).getGroupid());
 					orderDetail.setOrderflag("N");
 					orderDetail.setTestcode(lstOrder.get(i).getNtestcode());
 					orderDetail.setTestname(lstOrder.get(i).getStestname());
 					orderDetail.setCreatedtimestamp(new Date());
+//					orderDetail.setNbatchcode(String.valueOf(lstOrder.get(i).getNbatchmastercode()));
 					orderDetail.setLsworkflow(lsworkflowRepository.findTopByOrderByWorkflowcodeAsc());
 					orderDetail.setFiletype(0);
 					lstOrderDetail.add(orderDetail);
 					LSlogilablimsorderdetailRepository.save(lstOrderDetail);
 				}
 				
-				if(lslogilablimsorderRepository.findByBatchid(lstOrder.get(i).getBatchid()) == null) {
-					lstLims.setOrderid(lstOrderDetail.get(i).getBatchcode());
-					lstLims.setBatchid(lstOrderDetail.get(i).getBatchid());
-					lstLims.setOrderflag(lstOrderDetail.get(i).getOrderflag());
-					lstLims.setTestcode(Integer.toString(lstOrderDetail.get(i).getTestcode()));
+				if(lslogilablimsorderRepository.findByBatchid(lstOrder.get(i).getGroupid()) == null) {
+					if(!lstOrder.get(i).getNbatchmastercode().equals(-1)) {
+						lstLims.setNbatchcode(orderDetail.getNbatchcode());
+					}
+					lstLims.setOrderid(orderDetail.getBatchcode());
+					lstLims.setBatchid(orderDetail.getBatchid());
+					lstLims.setOrderflag(orderDetail.getOrderflag());
+					lstLims.setTestcode(Integer.toString(orderDetail.getTestcode()));
+//					lstLims.setNbatchcode(orderDetail.getNbatchcode());
 					lstLims.setCreatedtimestamp(new Date());
 					lstLims.setCompletedtimestamp(null);
 					lstLimsOrders.add(lstLims);
 					lslogilablimsorderRepository.save(lstLimsOrders);
 				}
 				
+				if(!lstOrder.get(i).getNbatchmastercode().equals(-1)) {
+					LSlogilablimsorder lsOrder = lslogilablimsorderRepository.findFirstByBatchidOrderByOrderidDesc(lstOrder.get(i).getGroupid());
+					LSlogilablimsorderdetail lsDetail = LSlogilablimsorderdetailRepository.findByBatchid(lstOrder.get(i).getGroupid());
+					
+					Lsbatchdetails lsBatch = new Lsbatchdetails();
+					
+					lsBatch.setBatchcode(lsDetail.getBatchcode());
+					lsBatch.setSampleid(lstOrder.get(i).getSsamplearno());
+					lsBatch.setOrderID(lsOrder.getOrderid());
+					lsBatch.setLimsorderID(lstOrder.get(i).getNtransactiontestcode());
+					lsBatch.setLimsprimarycode(lstOrder.get(i).getLimsprimarycode());
+					
+					LsbatchdetailsRepository.save(lsBatch);
+				}
 				i++;
 			}
-			
 			bool=updateLIMSGroupMaster(mapObj);
 			if(bool) {
 				bool=true;
@@ -1034,20 +1055,31 @@ public class RestService {
 				
 				if (isAPICalling.equals("true")) {
 					
-					List<LSlogilablimsordergroup> orderGroup = lslogilablimsordergroupRepository.findByBatchid(Batchid);
+					List<LSlogilablimsordergroup> orderGroup = lslogilablimsordergroupRepository.findByGroupid(Batchid);
 					
 					while (i < lstResult.size()) {
 						int j = 0;
 						while (j < orderGroup.size()) {
-							if(lstResult.get(i).getParametercode().equals(orderGroup.get(j).getNtestparametercode())) {
+							
+							if(lstResult.get(i).getParametercode().equals(orderGroup.get(j).getNtestparametercode())
+									&& (lstResult.get(i).getOrderid() == 0 || lstResult.get(i).getOrderid() == orderGroup.get(j).getNtransactiontestcode())) {
 								Map<String, Object> lstMap = new HashMap<>();
 								String sresult = lstResult.get(i).getResult();
 								Long orderid = orderGroup.get(j).getLimsprimarycode();
 								lstMap.put("sresult",sresult);
 								lstMap.put("limsprimarycode",orderid);
-								lssampleresult.add(i, lstMap);
+								lssampleresult.add(lstMap);
 								break;
-							}
+							} 
+//							else if(lstResult.get(i).getParametercode().equals(orderGroup.get(j).getNtestparametercode())) {
+//								Map<String, Object> lstMap = new HashMap<>();
+//								String sresult = lstResult.get(i).getResult();
+//								Long orderid = orderGroup.get(j).getLimsprimarycode();
+//								lstMap.put("sresult",sresult);
+//								lstMap.put("limsprimarycode",orderid);
+//								lssampleresult.add(lstMap);
+//								break;
+//							}
 							j++;
 						}
 						i++;

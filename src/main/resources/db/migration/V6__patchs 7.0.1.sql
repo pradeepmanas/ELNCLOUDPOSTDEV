@@ -1111,7 +1111,7 @@ INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, s
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (91, 'IDS_TSK_MOVEORDERS', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',14,'IDS_SCN_SHEETORDERS') ON CONFLICT(orderno)DO NOTHING;
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (92, 'IDS_TSK_MOVEORDERSPROTOCOL', 'IDS_MDL_ORDERS', '0', 'NA', 'NA', 'NA', '1,0,0',21,'IDS_SCN_PROTOCOLORDERS') ON CONFLICT(orderno)DO NOTHING;
 
-update lsusergrouprightsmaster set screate='NA' where displaytopic in ('IDS_SCN_USERRIGHTS');
+update lsusergrouprightsmaster set screate='0' where displaytopic in ('IDS_SCN_USERRIGHTS');
 update lsusergrouprights set modulename='IDS_MDL_TEMPLATES' where displaytopic in ('IDS_TSK_SHEET','IDS_TSK_PROTOCOL','IDS_TSK_ELNANDRESEARCH','IDS_TSK_LIMSTESTORDER');
 update lsusergrouprights set modulename='IDS_MDL_ORDERS' where displaytopic='IDS_TSK_MOVEORDERSPROTOCOL';
 update lsusergrouprightsmaster set modulename='IDS_MDL_TEMPLATES' where orderno in (14,15,71,72);
@@ -4065,3 +4065,5 @@ update lsaudittrailconfiguration set ordersequnce=31 where screenname ='IDS_SCN_
 update lsaudittrailconfiguration set ordersequnce=32 where screenname ='IDS_SCN_MANUFACTURER' ;
 
 delete from datatype where datatypename='Integer';
+
+ALTER TABLE IF EXISTS lsbatchdetails ADD COLUMN IF NOT EXISTS limsprimarycode numeric(17,0);

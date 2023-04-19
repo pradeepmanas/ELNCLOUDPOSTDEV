@@ -344,7 +344,27 @@ public class LoginService {
 			objExitinguser.getObjResponse().setStatus(false);
 
 		}
-
+		if(objExitinguser.getObjResponse().getStatus() == true) {
+			LSuserMaster objUser = lsuserMasterRepository.findByusercode(objExitinguser.getUsercode());
+			if (objUser != null) {
+				LSactiveUser activeUser = new LSactiveUser();
+				objExitinguser.setLssitemaster(objExitinguser.getLssitemaster());
+				try {
+					activeUser.setTimestamp(commonfunction.getCurrentUtcTime());
+					activeUser.setClientname(null);
+					activeUser.setLastactivetime(commonfunction.getCurrentUtcTime());
+					activeUser.setLssitemaster(objExitinguser.getLssitemaster());
+					activeUser.setLsusermaster(objUser);
+					objUser.setLastloggedon(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				lsuserMasterRepository.save(objUser);
+				lsactiveUserRepository.save(activeUser);
+				obj.put("activeUserId", activeUser);
+			}
+		}
 		obj.put("user", objExitinguser);
 
 		return obj;
@@ -1524,23 +1544,23 @@ public class LoginService {
 
 	}
 
-	public LSactiveUser activeUserEntry(LSactiveUser objsite) {
-
-		LSuserMaster objUser = lsuserMasterRepository.findByusercode(objsite.getLsusermaster().getUsercode());
-
-		if (objUser != null) {
-
-			objsite.setLssitemaster(objsite.getLssitemaster());
-			objsite.setTimestamp(objsite.getTimestamp());
-
-			objUser.setLastloggedon(objsite.getTimestamp());
-			lsuserMasterRepository.save(objUser);
-			lsactiveUserRepository.save(objsite);
-
-		}
-
-		return objsite;
-	}
+//	public LSactiveUser activeUserEntry(LSactiveUser objsite) {
+//
+//		LSuserMaster objUser = lsuserMasterRepository.findByusercode(objsite.getLsusermaster().getUsercode());
+//
+//		if (objUser != null) {
+//
+//			objsite.setLssitemaster(objsite.getLssitemaster());
+//			objsite.setTimestamp(objsite.getTimestamp());
+//
+//			objUser.setLastloggedon(objsite.getTimestamp());
+//			lsuserMasterRepository.save(objUser);
+//			lsactiveUserRepository.save(objsite);
+//
+//		}
+//
+//		return objsite;
+//	}
 
 	public List<LSuserMaster> ValidateuserAndPassword(LoggedUser objuser) {
 		List<LSuserMaster> objExitinguser = new ArrayList<LSuserMaster>();
