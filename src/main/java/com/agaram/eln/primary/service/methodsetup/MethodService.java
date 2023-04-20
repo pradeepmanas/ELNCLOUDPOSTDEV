@@ -1038,13 +1038,16 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
 				      String appendedline = sb.toString();
 				
 				    //  String resultline = appendedline.replaceAll("\\s+$", "");
-				      String resultline = appendedline.replaceAll(",$", "");
 
-				      writer.write(resultline);
+  				      String resultline = appendedline.replaceAll("\"", "");
+  				      String finalresult = resultline.replaceAll(",$", "");
+
+				      writer.write(finalresult);
 				      sb.setLength(0);
 				      appendedline ="";
 				      resultline="";
-				
+				      finalresult="";
+				      
 					writer.write("\n");
 
 				}
@@ -1102,13 +1105,15 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
 
 						}
 					      String appendedline = sb.toString();
-					      String resultline = appendedline.replaceAll("\\s+$", "");
+					      String resultline = appendedline.replaceAll("\"", "");
+					      String finalresult = appendedline.replaceAll("\\s+$", "");
+					     
 					    //  String resultline = appendedline.replaceAll(",$", "");
-					      writer.write(resultline);
+					      writer.write(finalresult);
 					      sb.setLength(0);
 					      appendedline ="";
 					      resultline="";
-					
+					      finalresult="";
 						writer.write("\n");
 
 					}
@@ -1218,6 +1223,7 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
   				      String appendedline = sb.toString();
   				    //  String resultline = appendedline.replaceAll("\\s+$", "");
   				      String resultline = appendedline.replaceAll(",$", "");
+  				      
   				      writer.write(resultline);
   				      sb.setLength(0);
   				      appendedline ="";

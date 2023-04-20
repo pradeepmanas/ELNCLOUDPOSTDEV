@@ -1166,7 +1166,7 @@ public class UserService {
 		Map<String, Object> objresmap = new HashMap<String, Object>();
 		Integer notifyfor = lsuserMaster.getObjuser().getFiltertype();
 		objresmap.put("newnotificationcount",
-				lsnotificationRepository.countByNotifationtoAndIsnewnotification(lsuserMaster, 1));
+				lsnotificationRepository.countByNotifationtoAndIsnewnotificationAndNotificationforOrNotifationtoAndIsnewnotificationAndNotificationfor(lsuserMaster, 1,1,lsuserMaster, 1,2));
 		objresmap.put("notification", lsnotificationRepository
 				.findFirst20ByNotifationtoAndNotificationforOrderByNotificationcodeDesc(lsuserMaster, notifyfor));
 
@@ -1220,7 +1220,7 @@ public class UserService {
 		Map<String, Object> objresmap = new HashMap<String, Object>();
 
 		objresmap.put("newnotificationcount",
-				lsnotificationRepository.countByNotifationtoAndIsnewnotification(lsnotification.getNotifationto(), 1));
+				lsnotificationRepository.countByNotifationtoAndIsnewnotificationAndNotificationforOrNotifationtoAndIsnewnotificationAndNotificationfor(lsnotification.getNotifationto(), 1,1,lsnotification.getNotifationto(), 1,2));
 
 		return objresmap;
 	}

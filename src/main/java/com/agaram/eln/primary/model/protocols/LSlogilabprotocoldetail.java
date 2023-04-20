@@ -191,6 +191,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setLstuserMaster(List<LSuserMaster> lstuserMaster) {
 		this.lstuserMaster = lstuserMaster;
 	}
+	
+	@Transient
+	private LSworkflow currentStep;
+	
+	public LSworkflow getCurrentStep() {
+		return currentStep;
+	}
+
+	public void setCurrentStep(LSworkflow currentStep) {
+		this.currentStep = currentStep;
+	}
 
 	public List<Long> getLstdirectorycode() {
 		return lstdirectorycode;

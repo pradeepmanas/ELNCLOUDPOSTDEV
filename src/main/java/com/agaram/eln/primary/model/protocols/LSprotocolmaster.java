@@ -17,6 +17,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
@@ -98,6 +99,17 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 		this.notificationdate = notificationdate;
 	}
 
+	@Transient
+	private LSworkflow currentStep;
+	
+	public LSworkflow getCurrentStep() {
+		return currentStep;
+	}
+
+	public void setCurrentStep(LSworkflow currentStep) {
+		this.currentStep = currentStep;
+	}
+	
 	public Integer getDefaulttemplate() {
 		return defaulttemplate;
 	}

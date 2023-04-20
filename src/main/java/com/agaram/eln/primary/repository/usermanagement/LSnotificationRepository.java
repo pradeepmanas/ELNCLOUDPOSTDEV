@@ -39,4 +39,6 @@ public interface LSnotificationRepository extends JpaRepository<LSnotification, 
 	public LSnotification findByRepositorycodeAndRepositorydatacode(Integer repositorycode, Integer repositorydatacode);
 	public LSnotification findByRepositorycodeAndRepositorydatacodeAndNotificationdetils(Integer repositorycode,
 			Integer repositorydatacode, String details);
+	public Object countByNotifationtoAndIsnewnotificationAndNotificationforOrNotifationtoAndIsnewnotificationAndNotificationfor(
+			LSuserMaster lsuserMaster, int i, int j, LSuserMaster lsuserMaster2, int k, int l);
 }

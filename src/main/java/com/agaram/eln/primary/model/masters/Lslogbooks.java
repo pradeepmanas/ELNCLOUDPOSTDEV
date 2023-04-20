@@ -76,6 +76,28 @@ public class Lslogbooks {
 	
 	private Date addedon;
 	
+	
+	@Transient
+	private String addedonview;
+	
+	public String getAddedonview() {
+		return addedonview;
+	}
+
+	public void setAddedonview(String addedonview) {
+		this.addedonview = addedonview;
+	}
+	@Transient
+	private String  reviewstatusview;
+	
+	public String getReviewstatusview() {
+		return reviewstatusview;
+	}
+
+	public void setReviewstatusview(String reviewstatusview) {
+		this.reviewstatusview = reviewstatusview;
+	}
+
 	private Integer usercode;
 	
 	private Integer sitecode;
@@ -147,7 +169,17 @@ public class Lslogbooks {
 		}
 	}
 	private String reviewstatus;
+	@Transient
+	private String retirestatusview;
 	
+	public String getRetirestatusview() {
+		return retirestatusview;
+	}
+
+	public void setRetirestatusview(String retirestatusview) {
+		this.retirestatusview = retirestatusview;
+	}
+
 	public String getReviewstatus() {
 		if(reviewstatus != null)
 		{
