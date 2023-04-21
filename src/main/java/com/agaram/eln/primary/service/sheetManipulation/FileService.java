@@ -695,7 +695,7 @@ public class FileService {
 				LSworkflow objlastworkflow = lsworkflowRepository
 						.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objfile.getObjLoggeduser().getLssitemaster());
 				if (objlastworkflow != null
-						&& objfile.getLssheetworkflow().getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
+						&& objfile.getCurrentStep().getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
 					objfile.setIsfinalstep(1);
 				} else {
 					objfile.setIsfinalstep(0);

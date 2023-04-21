@@ -176,7 +176,17 @@ public class LSfile {
 	@Transient
 	private Integer ismultitenant;
 	
+	@Transient
+	private LSworkflow currentStep;
+	
+	public LSworkflow getCurrentStep() {
+		return currentStep;
+	}
 
+	public void setCurrentStep(LSworkflow currentStep) {
+		this.currentStep = currentStep;
+	}
+	
 	public Response getResponse() {
 		return response;
 	}

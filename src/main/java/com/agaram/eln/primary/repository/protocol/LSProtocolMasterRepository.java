@@ -297,6 +297,13 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	List<LSprotocolmaster> findByProtocolmastercode(Integer protocolmastercode);
 
+	long countByStatusAndLssitemasterAndViewoptionOrCreatedbyAndStatusAndLssitemasterAndViewoptionOrCreatedbyInAndStatusAndLssitemasterAndViewoptionOrderByCreatedateDesc(
+			int i, Integer sitecode, int j, Integer usercode, int k, Integer sitecode2, int l, List<Integer> lstuser,
+			int m, Integer sitecode3, int n);
+
+	long countByStatusAndLssitemasterAndViewoptionOrCreatedbyAndStatusAndLssitemasterAndViewoptionOrderByCreatedateDesc(
+			int i, Integer sitecode, int j, Integer usercode, int k, Integer sitecode2, int l);
+
 
 
 
