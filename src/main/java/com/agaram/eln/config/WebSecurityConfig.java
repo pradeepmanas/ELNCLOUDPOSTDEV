@@ -185,7 +185,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		antMatchers("/transaction/updateMappedTemplateFieldPropsMaterialTable").permitAll().
 		antMatchers("/multitenant/updateplanrights").permitAll().
 		antMatchers("/User/getActiveUserCount").permitAll().
-		
+		antMatchers("/multitenant/updateplanType").permitAll().
 
 
 		

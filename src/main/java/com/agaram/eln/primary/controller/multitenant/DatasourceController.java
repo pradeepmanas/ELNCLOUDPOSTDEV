@@ -257,4 +257,9 @@ public class DatasourceController {
 			throws Exception {
 		return datasourceService.updateplanrights(tenantDetails);
 	}
+	@PostMapping("/updateplanType")
+	public DataSourceConfig updateplanType(@RequestBody DataSourceConfig tenantDetails)
+			throws Exception {
+		return datasourceService.updateplanType(tenantDetails);
+	}
 }

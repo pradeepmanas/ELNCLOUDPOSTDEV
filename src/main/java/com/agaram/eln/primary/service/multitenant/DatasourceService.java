@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.config.DataSourceBasedMultiTenantConnectionProviderImpl;
 import com.agaram.eln.primary.config.TenantDataSource;
+import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.multitenant.CustomerSubscription;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
@@ -34,6 +35,7 @@ import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
+import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.multitenant.CustomerSubscriptionRepository;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
 import com.agaram.eln.primary.repository.multitenant.InvoiceRepository;
@@ -74,7 +76,9 @@ public class DatasourceService {
 
 	@Autowired
 	private LSPasswordPolicyRepository LSPasswordPolicyRepository;
-
+	
+	@Autowired
+	private LSpreferencesRepository LSpreferencesRepository;
 	@Autowired
 	private InvoiceRepository InvoiceRepository;
 	
@@ -1046,6 +1050,19 @@ public class DatasourceService {
 		}
 	
 		
+		return tenantDetails;
+	}
+
+
+	public DataSourceConfig updateplanType(DataSourceConfig tenantDetails) {		
+		if(tenantDetails.getLicencetype().equals(2)){
+			LSpreferencesRepository.setPlantypeConCurrentUser("Active",2);
+			LSpreferencesRepository.setPlantypeMainFormUser("InActive",3);
+
+		}else if(tenantDetails.getLicencetype().equals(1)) {
+			LSpreferencesRepository.setPlantypeConCurrentUser("InActive",2);
+			LSpreferencesRepository.setPlantypeMainFormUser("Active",3);
+		}		
 		return tenantDetails;
 	}
 	
