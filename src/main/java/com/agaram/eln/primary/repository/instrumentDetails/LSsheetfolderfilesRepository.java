@@ -34,6 +34,11 @@ public interface LSsheetfolderfilesRepository  extends JpaRepository<LSsheetfold
 public void deleteByUuidIn(List<String> lstfilesid);
 public List<LSsheetfolderfiles> findByDirectorycodeAndFileforAndCreatedtimestampBetweenOrderByFolderfilecode(
 		Long directorycode, String filefor, Date fromdate, Date todate);
+@Transactional
+	@Modifying
+	@Query("delete from LSsheetfolderfiles where uuid in(?1)")
+public void removeForFile(List<String> uuid);
+
 
  
 

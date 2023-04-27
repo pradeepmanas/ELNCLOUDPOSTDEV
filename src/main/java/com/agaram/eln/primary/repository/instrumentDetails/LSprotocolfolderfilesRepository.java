@@ -39,5 +39,9 @@ public interface LSprotocolfolderfilesRepository extends JpaRepository<LSprotoco
 
 	public List<LSprotocolfolderfiles> findByDirectorycodeAndFileforAndCreatedtimestampBetweenOrderByFolderfilecode(
 			Long directorycode, String filefor, Date fromdate, Date todate);
+	@Transactional
+	@Modifying
+	@Query("delete from LSprotocolfolderfiles where uuid in(?1)")
+	public void removeForFile(List<String> lstuuid);
 
 }

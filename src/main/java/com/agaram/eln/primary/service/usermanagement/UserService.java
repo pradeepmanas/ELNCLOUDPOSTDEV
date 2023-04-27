@@ -268,8 +268,9 @@ public class UserService {
 			lscfttransactionRepository.save(objclass.getObjsilentaudit());
 		}
 		if (objclass.getSitecode() == 0) {
-			return lsuserMasterRepository.findByusernameNotAndUserretirestatusNotOrderByCreateddateDesc("Administrator",
-					1);
+			return lsuserMasterRepository.findAll();
+//			return lsuserMasterRepository.findByusernameNotAndUserretirestatusNotOrderByCreateddateDesc("Administrator",
+//					1);
 		}
 //		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objclass);
 //		return lsuserMasterRepository.findByUsernameNotAndUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(

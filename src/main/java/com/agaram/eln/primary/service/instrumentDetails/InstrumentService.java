@@ -106,6 +106,7 @@ import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSactiveUser;
+import com.agaram.eln.primary.model.usermanagement.LScentralisedUsers;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserActions;
@@ -180,6 +181,7 @@ import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservic
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
+import com.agaram.eln.primary.service.usermanagement.UserService;
 import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -375,6 +377,9 @@ public class InstrumentService {
 
 	@Autowired
 	ProtocolService ProtocolMasterService;
+	
+	@Autowired
+	UserService userService;
 
 	@Autowired
 	private LSprotocolfolderfilesRepository lsprotocolfolderfilesRepository;
@@ -2663,6 +2668,13 @@ public class InstrumentService {
 
 		lsLogilaborders = null;
 		objupdatedorder.setLstworkflow(objorder.getLstworkflow());
+		
+		if(objorder.getLsuserMaster() != null && objorder.getLsuserMaster().getUnifieduserid() != null) {
+			LScentralisedUsers objUserId = new LScentralisedUsers();
+			objUserId.setUnifieduserid(objorder.getLsuserMaster().getUnifieduserid());
+			objupdatedorder.setLscentralisedusers(userService.Getcentraliseduserbyid(objUserId));
+		}
+		
 		return objupdatedorder;
 	}
 
@@ -7700,6 +7712,15 @@ public class InstrumentService {
 
 //		}
 		return mapfolders;
+	}
+
+	public void onDeleteforCancel(List<String> lstuuid, String screen) {
+		if(screen.equals("sheet")) {
+			 lssheetfolderfilesRepository.removeForFile(lstuuid);
+		}else if(screen.equals("protocol")) {
+			lsprotocolfolderfilesRepository.removeForFile(lstuuid);
+		}
+			
 	}
 
 }

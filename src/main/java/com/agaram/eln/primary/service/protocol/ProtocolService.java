@@ -920,11 +920,16 @@ public class ProtocolService {
 
 			if (LSprotocolstepObj.getIsmultitenant() == 1) {
 				LScfttransaction objaudit1 = new LScfttransaction();
-				updateCloudProtocolVersion(LSprotocolstepObj.getProtocolmastercode(),
-						LSprotocolstepObj.getProtocolstepcode(), LSprotocolstepObj.getLsprotocolstepInfo(),
-						LSprotocolstepObj.getNewStep(), LScfttransactionobj.getLssitemaster(), LSprotocolstepObj,
-						LsuserMasterObj.getUsername(), LsuserMasterObj.getUsercode(), objaudit1);
+				try {
+					updateCloudProtocolVersion(LSprotocolstepObj.getProtocolmastercode(),
+							LSprotocolstepObj.getProtocolstepcode(), LSprotocolstepObj.getLsprotocolstepInfo(),
+							LSprotocolstepObj.getNewStep(), LScfttransactionobj.getLssitemaster(), LSprotocolstepObj,
+							LsuserMasterObj.getUsername(), LsuserMasterObj.getUsercode(), objaudit1);
 
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				
 				if (LSprotocolstepObj.getNewStep() == 1) {
 					CloudLSprotocolstepInfoObj.setId(LSprotocolstepObj.getProtocolstepcode());
 					CloudLSprotocolstepInfoObj.setLsprotocolstepInfo(LSprotocolstepObj.getLsprotocolstepInfo());
@@ -947,9 +952,14 @@ public class ProtocolService {
 				}
 
 			} else {
-				updateCloudProtocolVersiononSQL(LSprotocolstepObj, LScfttransactionobj.getLssitemaster(),
-						LsuserMasterObj.getUsername(), LsuserMasterObj.getUsercode());
+				try {
+					updateCloudProtocolVersiononSQL(LSprotocolstepObj, LScfttransactionobj.getLssitemaster(),
+							LsuserMasterObj.getUsername(), LsuserMasterObj.getUsercode());
 
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				
 				Query query = new Query(Criteria.where("id").is(LSprotocolstepObj.getProtocolstepcode()));
 				Update update = new Update();
 				update.set("content", LSprotocolstepObj.getLsprotocolstepInfo());
@@ -4780,10 +4790,15 @@ public class ProtocolService {
 					if (body.get("objsilentaudit") != null) {
 						objaudit = object.convertValue(body.get("objsilentaudit"), LScfttransaction.class);
 					}
-					updateCloudProtocolVersion(protocolmastercode, LSprotocolstepObj.getProtocolstepcode(),
-							LSprotocolstepObj.getLsprotocolstepInformation(), NewStep, sitecode, LSprotocolstepObj,
-							username, usercode, objaudit);
+					try {
+						updateCloudProtocolVersion(protocolmastercode, LSprotocolstepObj.getProtocolstepcode(),
+								LSprotocolstepObj.getLsprotocolstepInformation(), NewStep, sitecode, LSprotocolstepObj,
+								username, usercode, objaudit);
 
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+					
 //					if (NewStep != 1) {
 					LSprotocolmaster protocolmaster = LSProtocolMasterRepositoryObj
 							.findByprotocolmastercode(LSprotocolstepObj.getProtocolmastercode());
@@ -4798,8 +4813,13 @@ public class ProtocolService {
 //					}
 
 				} else {
-					updateCloudProtocolVersiononSQL(LSprotocolstepObj, sitecode, username, usercode);
+					try {
+						updateCloudProtocolVersiononSQL(LSprotocolstepObj, sitecode, username, usercode);
 
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+					
 //					if (LSprotocolstepObj.getNewStep() != 1) {
 					LSprotocolmaster protocolmaster = LSProtocolMasterRepositoryObj
 							.findByprotocolmastercode(LSprotocolstepObj.getProtocolmastercode());
@@ -6621,10 +6641,11 @@ public class ProtocolService {
 		LSprotocolmaster protocolMaster = argObj.get(0).getLsprotocolmaster();
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 //		LSprotocolstepversion protoVersStep = new LSprotocolstepversion();
-		CloudLSprotocolversionstep cloudStepVersion = new CloudLSprotocolversionstep();
+//		CloudLSprotocolversionstep cloudStepVersion = new CloudLSprotocolversionstep();
 		Boolean isversion = argObj.get(0).getIsversion();
 		LSprotocolversionstepInfo LsLogilabprotocolstepInfoObj = new LSprotocolversionstepInfo();
 		for (LSprotocolstep LSprotocolstepObj1 : argObj) {
+			CloudLSprotocolversionstep cloudStepVersion = new CloudLSprotocolversionstep();
 			LSprotocolstepversion protoVersStep = new LSprotocolstepversion();
 			LSprotocolstep LSprotocolstep = new LSprotocolstep();
 			LSprotocolstep.setProtocolmastercode(LSprotocolstepObj1.getProtocolmastercode());
@@ -6685,22 +6706,33 @@ public class ProtocolService {
 					mongoTemplate.insert(LsLogilabprotocolstepInfoObj);
 				}
 			}
+			cloudStepVersion=null;
 			protoVersStep = null;
 			rtnobj.add(LSprotocolstep);
 		}
 
 		if (isversion) {
 			if (argObj.get(0).getIsmultitenant() == 1) {
-				updateCloudProtocolVersion(protocolMaster.getProtocolmastercode(), 0, null, 0,
-						argObj.get(0).getSitecode(), null, argObj.get(0).getCreatedbyusername(),
-						argObj.get(0).getCreatedby(), null);
+				try {
+					updateCloudProtocolVersion(protocolMaster.getProtocolmastercode(), 0, null, 0,
+							argObj.get(0).getSitecode(), null, argObj.get(0).getCreatedbyusername(),
+							argObj.get(0).getCreatedby(), null);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				
 			} else {
 				LSprotocolstep dummyobj = new LSprotocolstep();
 				dummyobj.setProtocolstepcode(0);
 				dummyobj.setNewStep(0);
-				updateCloudProtocolVersiononSQL(dummyobj, argObj.get(0).getSitecode(),
-						argObj.get(0).getCreatedbyusername(), argObj.get(0).getCreatedby());
+				try {
+					updateCloudProtocolVersiononSQL(dummyobj, argObj.get(0).getSitecode(),
+							argObj.get(0).getCreatedbyusername(), argObj.get(0).getCreatedby());
 
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				
 			}
 		}
 		mapObj.put("protocolmaster",
@@ -6715,11 +6747,21 @@ public class ProtocolService {
 	public Map<String, Object> deleteprotocolstepversion(LSprotocolstep body) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		if (body.getIsmultitenant() == 1) {
-			updateCloudProtocolVersion(body.getProtocolmastercode(), body.getProtocolstepcode(), null, 0,
-					body.getSitecode(), null, body.getCreatedbyusername(), body.getCreatedby(), null);
-		} else {
-			updateCloudProtocolVersiononSQL(body, body.getSitecode(), body.getCreatedbyusername(), body.getCreatedby());
-		}
+			try {
+				updateCloudProtocolVersion(body.getProtocolmastercode(), body.getProtocolstepcode(), null, 0,
+						body.getSitecode(), null, body.getCreatedbyusername(), body.getCreatedby(), null);
+
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+					} else {
+						try {
+							updateCloudProtocolVersiononSQL(body, body.getSitecode(), body.getCreatedbyusername(), body.getCreatedby());
+
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+				}
 		List<LSprotocolversion> LSprotocolversionlst = lsprotocolversionRepository
 				.findByprotocolmastercode(body.getProtocolmastercode());
 

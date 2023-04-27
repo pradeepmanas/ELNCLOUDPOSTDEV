@@ -593,16 +593,16 @@ public class InstrumentController {
 	}
 
 	// cloud
-	@RequestMapping(path = "/downloadNonCloud/{param}/{fileid}/{tenant}", method = RequestMethod.GET)
-	public ResponseEntity<InputStreamResource> download(@PathVariable String param, @PathVariable String fileid,
-			@PathVariable String tenant) throws IOException {
+	@RequestMapping(path = "/downloadNonCloud/{param}/{tenant}/{fileid}", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> download(@PathVariable String param,@PathVariable String tenant, @PathVariable String fileid
+			) throws IOException {
 
 		return instrumentService.downloadattachmentsNonCloud(param, fileid);
 	}
 	
-	@RequestMapping(path = "/downloadparserNonCloud/{param}/{fileid}/{tenant}", method = RequestMethod.GET)
-	public ResponseEntity<InputStreamResource> downloadparser(@PathVariable String param, @PathVariable String fileid,
-			@PathVariable String tenant) throws IOException {
+	@RequestMapping(path = "/downloadparserNonCloud/{param}/{tenant}/{fileid}", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> downloadparser(@PathVariable String param,@PathVariable String tenant, @PathVariable String fileid
+			) throws IOException {
 
 		return instrumentService.downloadparserattachmentsNonCloud(param, fileid);
 	}
@@ -1238,4 +1238,9 @@ public class InstrumentController {
 		return instrumentService.Getfoldersfordashboard(objusermaster);
 	}
 	
+	@RequestMapping("/onDeleteforCancel/{screen}")
+	public void onDeleteforCancel(@RequestBody List<String> lstuuid, @PathVariable String screen)throws Exception	
+	{
+	 instrumentService.onDeleteforCancel(lstuuid,screen);
+	}
 }
