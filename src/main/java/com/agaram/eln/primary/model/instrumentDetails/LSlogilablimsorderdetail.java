@@ -37,6 +37,7 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
+import com.agaram.eln.primary.model.usermanagement.LScentralisedUsers;
 
 @Entity(name = "LSlogilablimsorderdetail")
 @Table(name = "LSlogilablimsorderdetail")
@@ -88,6 +89,17 @@ public class LSlogilablimsorderdetail {
 	@Temporal(TemporalType.TIMESTAMP)
 	Date modifidate;
 	
+	@Transient
+	private LScentralisedUsers lscentralisedusers;
+	
+	public LScentralisedUsers getLscentralisedusers() {
+		return lscentralisedusers;
+	}
+
+	public void setLscentralisedusers(LScentralisedUsers lscentralisedusers) {
+		this.lscentralisedusers = lscentralisedusers;
+	}
+
 	@Transient
 	private List<LSuserMaster> lstuserMaster;
 	
