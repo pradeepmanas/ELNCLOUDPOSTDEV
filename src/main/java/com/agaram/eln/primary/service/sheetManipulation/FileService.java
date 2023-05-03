@@ -721,7 +721,7 @@ public class FileService {
 				LSuserMaster createby = lsusermasterRepository.findByusercode(objfile.getCreateby().getUsercode());
 				List<Integer> notifiedUsers = new ArrayList<Integer>();  
 				
-				if (createby.getUsercode() != objfile.getObjLoggeduser().getUsercode())
+				if (!createby.getUsercode().equals(objfile.getObjLoggeduser().getUsercode()))
 				{
 					LSnotification notify = new LSnotification();
 					if (objfile.getApproved() == 1) {

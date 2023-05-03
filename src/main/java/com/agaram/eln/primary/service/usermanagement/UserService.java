@@ -301,8 +301,8 @@ public class UserService {
 			return objusermaster;
 		} else if (objusermaster.getUsercode() != null && objusermaster.getUserstatus() != null&& objusermaster.getLsusergroup() == null) { 
 			LSuserMaster updateUser = lsuserMasterRepository.findOne(objusermaster.getUsercode());
-			updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") || objusermaster.getUserstatus().equals("Locked") ? "A" : "D");
-			objusermaster.setUserstatus(objusermaster.getUserstatus().equals("Active") || objusermaster.getUserstatus().equals("Locked") ? "A" : "D");
+			updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A" : objusermaster.getUserstatus().equals("Deactive") ? "D" : "Locked");
+//			objusermaster.setUserstatus(objusermaster.getUserstatus().equals("Active") || objusermaster.getUserstatus().equals("Locked") ? "A" : "D");
 			if (!isnewuser && objusermaster.isReset()) {
 				updateUser.setPassword(objusermaster.getPassword());
 			}
@@ -312,7 +312,7 @@ public class UserService {
 			if (objusermaster.getMultiusergroupcode() != null && objusermaster.getUsercode() != null) {
 				LSMultiusergroupRepositery.deleteByusercode(objusermaster.getUsercode());
 				LSMultiusergroupRepositery.save(objusermaster.getMultiusergroupcode());
-				updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") || objusermaster.getUserstatus().equals("Locked") ? "A" : "D");
+				updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A" : objusermaster.getUserstatus().equals("Deactive") ? "D" : "Locked");
 				updateUser.setUserfullname(objusermaster.getUserfullname());
 				updateUser.setEmailid(objusermaster.getEmailid());
 				updateUser.setUnifieduserid(objusermaster.getUnifieduserid());
@@ -326,7 +326,7 @@ public class UserService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+			objusermaster.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A" : objusermaster.getUserstatus().equals("Deactive") ? "D" : "Locked");
 			lsuserMasterRepository.save(updateUser);
 
 			objusermaster.setResponse(new Response());
