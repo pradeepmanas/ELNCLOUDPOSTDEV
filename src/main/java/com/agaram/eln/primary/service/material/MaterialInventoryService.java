@@ -357,15 +357,14 @@ public class MaterialInventoryService {
 				objmap.put("SelectedMaterialCrumb", crumObjectMaterialCreated(lstMaterial));
 			}
 		}
-		objmap.putAll(
-				(Map<String, Object>) getQuantityTransactionTemplate(138, (Integer) inputMap.get("nmaterialtypecode"))
-						.getBody());
+		objmap.putAll((Map<String, Object>) getQuantityTransactionTemplate(138, (Integer) inputMap.get("nmaterialtypecode")).getBody());
+		
 		objmap.putAll((Map<String, Object>) getMaterialInventoryAdd((int) inputMap.get("nmaterialtypecode")).getBody());
 
 		List<MaterialConfig> lstConfigs = (List<MaterialConfig>) objmap.get("selectedTemplate");
 
-		Integer configCode = lstConfigs.get(0).getNmaterialconfigcode();
-
+		Integer configCode = lstConfigs.isEmpty() ? 6 : lstConfigs.get(0).getNmaterialconfigcode();
+		
 		objmap.put("DesignMappedFeilds", getTemplateDesignForMaterial(configCode, 138));
 
 		List<Integer> lstParams = new ArrayList<Integer>();
@@ -397,6 +396,8 @@ public class MaterialInventoryService {
 
 	private HttpEntity<Object> getMaterialInventoryAdd(int ntypecode) {
 		Map<String, Object> objmap = new HashMap<>();
+		
+		ntypecode = ntypecode == 5 || ntypecode == 6 || ntypecode == 7 ? 1 : ntypecode;
 
 		List<MaterialConfig> lstMaterialConfig = materialConfigRepository
 				.findByNmaterialtypecodeAndNformcodeAndNstatus(ntypecode, 138, 1);
@@ -880,7 +881,7 @@ public class MaterialInventoryService {
 			jsonUidataarrayTrans.put(jsonuidataTrans);
 		}
 
-//		objmap.putAll((Map<String, Object>) getMaterialInventoryByID(inputMap).getBody());
+		objmap.putAll((Map<String, Object>) getMaterialInventoryByID(inputMap).getBody());
 		objmap.putAll((Map<String, Object>) getMaterialInventoryDetails(inputMap).getBody());
 		objmap.put("objsilentaudit", cft);
 		objmap.put("tabScreen", "IDS_MATERIALSECTION");
@@ -1059,6 +1060,8 @@ public class MaterialInventoryService {
 		String sprecision = "";
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
+		materialtypecode = materialtypecode == 5 || materialtypecode == 6 || materialtypecode == 7 ? 1 : materialtypecode;
+		
 		List<MaterialConfig> lstMaterialConfig = materialConfigRepository
 				.findByNmaterialtypecodeAndNformcodeAndNstatus(materialtypecode, formcode, 1);
 

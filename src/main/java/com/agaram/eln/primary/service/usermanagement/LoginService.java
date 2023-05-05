@@ -1094,6 +1094,28 @@ public class LoginService {
 							lscfttransactionRepository.save(objuser.getObjsilentaudit());
 
 						}
+						
+						if(objExitinguser.getObjResponse().getStatus() == true) {
+							LSuserMaster objUser = lsuserMasterRepository.findByusercode(objExitinguser.getUsercode());
+							if (objUser != null) {
+								LSactiveUser activeUser = new LSactiveUser();
+								objExitinguser.setLssitemaster(objExitinguser.getLssitemaster());
+								try {
+									activeUser.setTimestamp(commonfunction.getCurrentUtcTime());
+									activeUser.setClientname(null);
+									activeUser.setLastactivetime(commonfunction.getCurrentUtcTime());
+									activeUser.setLssitemaster(objExitinguser.getLssitemaster());
+									activeUser.setLsusermaster(objUser);
+									objUser.setLastloggedon(commonfunction.getCurrentUtcTime());
+								} catch (ParseException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								lsuserMasterRepository.save(objUser);
+								lsactiveUserRepository.save(activeUser);
+								obj.put("activeUserId", activeUser);
+							}
+						}
 
 					}
 				}

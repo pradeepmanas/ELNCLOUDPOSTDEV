@@ -514,14 +514,14 @@ public class EvaluateParserService {
 				for (String blockData : (List<String>)extractedBlock.get(blockNameKey.split(",")[0])) {					
 					final List<MethodFieldTechnique> parsedData = getFieldData(blockFieldList, blockData, //parsedData, 
 							ignoreList);
-					if(!parsedData.isEmpty()){
+				//	if(!parsedData.isEmpty()){
 					list.add(parsedData);	
 					outputDataMap.put(blockNameKey, list);
 
-					}else {
-						final String emptykey = null; 
-						outputDataMap.put(emptykey,list);
-					}
+//					}else {
+//						final String emptykey = null; 
+//						outputDataMap.put(emptykey,list);
+//					}
 				}
 			}			
 		}

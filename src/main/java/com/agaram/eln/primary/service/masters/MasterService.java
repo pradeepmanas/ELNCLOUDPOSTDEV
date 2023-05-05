@@ -516,10 +516,10 @@ public class MasterService {
 		Response objResponse = new Response();
 		Lslogbooks objrepo = null;
 		if (lslogbooks.getLogbookcode() != null) {
-			objrepo = lslogbooksRepository.findByLogbooknameAndSitecodeAndLogbookcodeNot(lslogbooks.getLogbookname(),
+			objrepo = lslogbooksRepository.findByLogbooknameIgnoreCaseAndSitecodeAndLogbookcodeNot(lslogbooks.getLogbookname().trim(),
 					lslogbooks.getSitecode(), lslogbooks.getLogbookcode());
 		} else {
-			objrepo = lslogbooksRepository.findByLogbooknameAndSitecode(lslogbooks.getLogbookname(),
+			objrepo = lslogbooksRepository.findByLogbooknameIgnoreCaseAndSitecode(lslogbooks.getLogbookname().trim(),
 					lslogbooks.getSitecode());
 		}
 
@@ -536,6 +536,9 @@ public class MasterService {
 					e.printStackTrace();
 				}	
 			}
+			if(lslogbooks.getReviewstatus().isEmpty()) {
+				lslogbooks.setRevieweddate(null);
+						}
 			
 			lslogbooksRepository.save(lslogbooks);
 		}
@@ -616,7 +619,7 @@ public class MasterService {
 		if (objreview.get(0).getSitecode() == 0) {
 			objreview = lslogbooksRepository.findAll();
 		} else {
-			objreview = lslogbooksRepository.findBySitecodeOrderByLogbookcodeDesc(objreview.get(0).getSitecode());
+			objreview = lslogbooksRepository.findBySitecodeOrderByLogbookcodeAsc(objreview.get(0).getSitecode());
 		}
 
 		return objreview;

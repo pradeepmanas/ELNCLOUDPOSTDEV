@@ -103,7 +103,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
-import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
+//import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSactiveUser;
 import com.agaram.eln.primary.model.usermanagement.LScentralisedUsers;
@@ -168,7 +168,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
 import com.agaram.eln.primary.repository.templates.LsMappedTemplateRepository;
 import com.agaram.eln.primary.repository.templates.LsUnmappedTemplateRepository;
-import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
+//import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSactiveUserRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
@@ -384,8 +384,8 @@ public class InstrumentService {
 	@Autowired
 	private LSprotocolfolderfilesRepository lsprotocolfolderfilesRepository;
 
-	@Autowired
-	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
+//	@Autowired
+//	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
 
 	@Autowired
 	private LsbatchdetailsRepository LsbatchdetailsRepository;
@@ -3645,12 +3645,12 @@ public class InstrumentService {
 
 		try {
 			for (int k = 0; k < objorder.getLsworkflow().getLsworkflowgroupmapping().size(); k++) {
-				List<LSMultiusergroup> userobj = lsMultiusergroupRepositery
-						.findBylsusergroup(objorder.getLsworkflow().getLsworkflowgroupmapping().get(k).getLsusergroup());
-	
-				List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode) .collect(Collectors.toList());
-				
-				List<LSuserMaster> objuser = lsuserMasterRepository.findByUsercodeInAndUserretirestatusNot(objnotifyuser, 1);
+//				List<LSMultiusergroup> userobj = lsMultiusergroupRepositery
+//						.findBylsusergroup(objorder.getLsworkflow().getLsworkflowgroupmapping().get(k).getLsusergroup());
+//	
+//				List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode) .collect(Collectors.toList());
+//				
+//				List<LSuserMaster> objuser = lsuserMasterRepository.findByUsercodeInAndUserretirestatusNot(objnotifyuser, 1);
 				
 				LSusersteam objteam = lsusersteamRepository
 						.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode());
@@ -7588,8 +7588,11 @@ public class InstrumentService {
 	private void updateNotificationForCancelOrder(LSlogilablimsorderdetail objorder) throws ParseException {
 		String Details = "";
 		String Notifiction = "";
-		if (objorder != null && objorder.getLsprojectmaster() != null
-				&& objorder.getLsprojectmaster().getLsusersteam() != null && objorder.getAssignedto() == null) {
+		
+		int workflowcode = objorder.getLsworkflow() != null ? objorder.getLsworkflow().getWorkflowcode() : -1;
+		String workflowname = objorder.getLsworkflow() != null ? objorder.getLsworkflow().getWorkflowname() : "";
+		
+		if (objorder != null && objorder.getLsprojectmaster() != null && objorder.getLsprojectmaster().getLsusersteam() != null && objorder.getAssignedto() == null) {
 
 			if (lsusersteamRepository.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode()).getLsuserteammapping() != null	
 					&& lsusersteamRepository.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode()).getLsuserteammapping().size() > 0) {
@@ -7597,8 +7600,8 @@ public class InstrumentService {
 					Notifiction = "ORDERCANCEL";
 
 					Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid() 
-							+ "\", \"currentworkflow\":\""	+ objorder.getLsworkflow().getWorkflowname() 
-							+ "\", \"currentworkflowcode\":\""	+ objorder.getLsworkflow().getWorkflowcode()
+							+ "\", \"currentworkflow\":\""	+ workflowname
+							+ "\", \"currentworkflowcode\":\""	+ workflowcode
 							+ "\", \"notifyFor\":\"" + 2 + "\", \"user\":\""	+ objorder.getObjLoggeduser().getUsername()+ "\"}";
 					
 					List<LSuserteammapping> lstusers = lsusersteamRepository
@@ -7629,8 +7632,8 @@ public class InstrumentService {
 		Notifiction = "ORDERCANCEL";
 
 		Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid() 
-			+ "\", \"currentworkflow\":\""	+ objorder.getLsworkflow().getWorkflowname() 
-			+ "\", \"currentworkflowcode\":\""	+ objorder.getLsworkflow().getWorkflowcode()
+			+ "\", \"currentworkflow\":\""	+ workflowname
+			+ "\", \"currentworkflowcode\":\""	+ workflowcode
 			+ "\", \"notifyFor\":\""	+ 1 + "\", \"user\":\""	+ objorder.getObjLoggeduser().getUsername() + "\"}";
 		
 //		LSuserMaster createby = lsuserMasterRepository.findByusercode(objorder.getLsuserMaster().getUsercode());
