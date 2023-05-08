@@ -876,7 +876,7 @@ public class LoginService {
 	}
 
 	public List<LSdomainMaster> LoadDomainMaster(LSSiteMaster objsite) {
-		return lSDomainMasterRepository.findBylssitemasterAndDomainstatus(objsite, 1);
+		return lSDomainMasterRepository.findBylssitemaster(objsite);
 	}
 
 	public List<LSdomainMaster> LoadDomainMasterAdmin(LSSiteMaster objsite) {

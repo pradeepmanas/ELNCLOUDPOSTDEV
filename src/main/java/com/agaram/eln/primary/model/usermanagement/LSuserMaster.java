@@ -453,7 +453,7 @@ public class LSuserMaster {
 			 */
 //			return  userstatus.trim().equals("A")?"Active":"Deactive";
 			
-			return this.userretirestatus !=null &&this.userretirestatus == 1?"Retired":userstatus.trim().equals("A") || userstatus.trim().equals("Active") ? "Active" : userstatus.trim().equals("D") ? "Deactive" : "Locked";
+			return this.userretirestatus !=null &&this.userretirestatus == 1?"Retired":userstatus.trim().equals("A") || userstatus.trim().equals("Active") ? "Active" : userstatus.trim().equals("D") || userstatus.trim().equals("Inactive") ? "Deactive" : "Locked";
 //			return userstatus.trim().equals("A") && this.userretirestatus == 0 ? "Active" : userstatus.trim().equals("D") && this.userretirestatus == 0 ? "Deactive" :this.userretirestatus == 1?"Retired": "Locked";
 		} else {
 			return "";

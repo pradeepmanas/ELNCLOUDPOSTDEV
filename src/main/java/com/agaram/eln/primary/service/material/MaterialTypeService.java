@@ -24,7 +24,10 @@ public class MaterialTypeService {
 
 	public ResponseEntity<Object> getMaterialTypeField(MaterialType objMaterialType) {
 		MaterialConfig objConfig = materialConfigRepository.findByNformcodeAndNmaterialtypecodeAndNstatus(40, objMaterialType.getNmaterialtypecode(), 1);
-		return new ResponseEntity<>(objConfig.getJsondata(),HttpStatus.OK);
+		if(objConfig != null) {
+			return new ResponseEntity<>(objConfig.getJsondata(),HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	public ResponseEntity<Object> updateMaterialTypeField(MaterialConfig objMaterialType) {
@@ -32,6 +35,18 @@ public class MaterialTypeService {
 		if(objConfig != null) {
 			objConfig.setJsondata(objMaterialType.getJsondata());
 			materialConfigRepository.save(objConfig);
+		}else {
+			
+			if(objMaterialType.getNmaterialtypecode() == 5) {
+				objMaterialType.setNmaterialconfigcode(12);
+			}else if(objMaterialType.getNmaterialtypecode() == 6) {
+				objMaterialType.setNmaterialconfigcode(13);
+			}else if(objMaterialType.getNmaterialtypecode() == 7) {
+				objMaterialType.setNmaterialconfigcode(14);
+			}
+			objMaterialType.setNformcode(40);
+			objMaterialType.setNstatus(1);
+			materialConfigRepository.save(objMaterialType);
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

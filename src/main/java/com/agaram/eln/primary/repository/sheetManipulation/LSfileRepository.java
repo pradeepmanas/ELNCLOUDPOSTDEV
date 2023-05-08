@@ -17,7 +17,6 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 
 
 public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
@@ -221,17 +220,21 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p, int q,
 			List<LSuserMaster> lstteamuser, Date fromdate3, Date todate3, int r, int s, int t);
 
-	public Long findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndRejectedOrderByFilecodeDesc(
-			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
-			Date fromdate2, Date todate2, int m, int n);
-
-	public Long findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
-			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m,
-			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p);
-
-	public Long findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrderByFilecodeDesc(
-			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m,
-			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p);
+//	public Long findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndRejectedOrderByFilecodeDesc(
+//			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
+//			Date fromdate2, Date todate2, int m, int n);
+//
+//	public Long findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
+//			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m,
+//			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p);
+//
+//	public Long findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedNotAndRejectedNotOrderByFilecodeDesc(
+//			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m,
+//			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p);
+//	
+//	public Object findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
+//			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
+//			Date fromdate2, Date todate2, int m, int n);
 
 	public List<Sheettemplateget> findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoption(
 			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest, int i, int j, LSuserMaster objLoggeduser,
@@ -245,10 +248,6 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
 			Date fromdate2, Date todate2, int m, int n, int o, List<LSuserMaster> lstteamuser, Date fromdate3,
 			Date todate3, int p, int q);
-
-	public Object findByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
-			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
-			Date fromdate2, Date todate2, int m, int n);
 
 	public Object countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedAndRejectedOrderByFilecodeDesc(Date fromdate,
 			Date todate, int i, int j, int k);
@@ -281,6 +280,15 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 
 	public List<Sheettemplateget> findByFilecodeNotAndFilenameuserIgnoreCase(Integer filecode, String filenameuser);
 
+	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndRejectedOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int m, int n);
 
+	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p);
 
+	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int m, int n);
 }

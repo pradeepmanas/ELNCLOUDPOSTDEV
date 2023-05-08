@@ -1535,16 +1535,17 @@ public class UserService {
 			List<String> lstMatName = listofallmaster.getMaterial().stream().map(Material::getSmaterialname)
 					.collect(Collectors.toList());
 			
-			List<String> lstPrefixName = listofallmaster.getMaterial().stream().map(Material::getSprefix)
-					.collect(Collectors.toList());
+//			List<String> lstPrefixName = listofallmaster.getMaterial().stream().map(Material::getSprefix)
+//					.collect(Collectors.toList());
 
 			List<Material> lstMaterialByName = materialRepository.findBySmaterialnameInAndAndNmaterialtypecodeAndNstatusAndNsitecode(lstMatName,listofallmaster.getMaterial().get(0).getNmaterialtypecode(), 1,
 					listofallmaster.getLssitemaster().getSitecode());
 			
-			List<Material> lstMaterialByPrefix = materialRepository.findBySprefixInAndNstatusAndNsitecode(lstPrefixName, 1,
-					listofallmaster.getLssitemaster().getSitecode());
+//			List<Material> lstMaterialByPrefix = materialRepository.findBySprefixInAndNstatusAndNsitecode(lstPrefixName, 1,
+//					listofallmaster.getLssitemaster().getSitecode());
 
-			if (lstMaterialByName.isEmpty() && lstMaterialByPrefix.isEmpty()) {
+//			if (lstMaterialByName.isEmpty() && lstMaterialByPrefix.isEmpty()) {
+			if (lstMaterialByName.isEmpty()) {
 				
 				listofallmaster.getMaterial().stream().peek(f -> {
 					try {
