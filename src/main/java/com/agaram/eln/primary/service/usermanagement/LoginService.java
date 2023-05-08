@@ -1441,7 +1441,7 @@ public class LoginService {
 		while (i < codelist.size()) {
 
 			value = commonfunction.isSameDay(currentdate, codelist.get(i).getCautiondate());
-
+			if(value) {
 			LSnotification LSnotification = new LSnotification();
 
 			LSuserMaster LSuserMaster = new LSuserMaster(); /* to get the value */
@@ -1475,7 +1475,7 @@ public class LoginService {
 
 		LSnotificationRepository.save(lstnotifications);
 		NotificationRepository.save(codelist);
-
+		}
 		return null;
 
 	}
