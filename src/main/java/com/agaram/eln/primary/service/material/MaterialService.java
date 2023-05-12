@@ -92,7 +92,7 @@ public class MaterialService {
 		
 		if(!lstMaterialType.isEmpty()) {
 			List<MaterialCategory> lstMaterialCategory = materialCategoryRepository
-					.findByNmaterialtypecodeAndNsitecode(lstMaterialType.get(0).getNmaterialtypecode(), nsiteInteger);
+					.findByNmaterialtypecodeAndNsitecodeAndNstatus(lstMaterialType.get(0).getNmaterialtypecode(), nsiteInteger,1);
 
 			if (!lstMaterialCategory.isEmpty()) {
 				objmap.put("MaterialCategoryMain", lstMaterialCategory);

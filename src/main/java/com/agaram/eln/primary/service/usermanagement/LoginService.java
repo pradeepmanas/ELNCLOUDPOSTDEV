@@ -1648,22 +1648,23 @@ public class LoginService {
 
 	}
 
-	public void updateActiveUserTime(Map<String, Object> objMap) {
+	public Map<String, Object> updateActiveUserTime(Map<String, Object> objMap) {
+		return objMap;
 		
-		if(objMap.containsKey("activeusercode")) {
-			Integer activerUsercode = (Integer) objMap.get("activeusercode");
-			
-			LSactiveUser objUser = lsactiveUserRepository.findByActiveusercode(activerUsercode);
-			
-			if(objUser!=null) {
-				objUser.setLastactivetime(new Date());
-				lsactiveUserRepository.save(objUser);
-			}
-		}
-		
-		List<LSactiveUser> lstUsers = lsactiveUserRepository.findByLastactivetimeLessThan(new Date(System.currentTimeMillis() - 3600 * 1000));
-		
-		lsactiveUserRepository.delete(lstUsers);
+//		if(objMap.containsKey("activeusercode")) {
+//			Integer activerUsercode = (Integer) objMap.get("activeusercode");
+//			
+//			LSactiveUser objUser = lsactiveUserRepository.findByActiveusercode(activerUsercode);
+//			
+//			if(objUser!=null) {
+//				objUser.setLastactivetime(new Date());
+//				lsactiveUserRepository.save(objUser);
+//			}
+//		}
+//		
+//		List<LSactiveUser> lstUsers = lsactiveUserRepository.findByLastactivetimeLessThan(new Date(System.currentTimeMillis() - 3600 * 1000));
+//		
+//		lsactiveUserRepository.delete(lstUsers);
 		
  	}
 

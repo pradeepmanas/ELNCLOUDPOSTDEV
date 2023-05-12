@@ -234,7 +234,7 @@ public class LoginController {
 	}
 	
 	@PostMapping("/updateActiveUserTime")
-	public void updateActiveUserTime(@RequestBody Map<String, Object> objMap) throws Exception {
-		loginService.updateActiveUserTime(objMap);
+	public Map<String, Object> updateActiveUserTime(@RequestBody Map<String, Object> objMap) throws Exception {
+		return loginService.updateActiveUserTime(objMap);
 	}
 }

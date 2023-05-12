@@ -85,8 +85,14 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	
 	@Transactional
 	@Modifying
-	@Query("select new com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode,filenameuser) from LSfile where lssitemaster_sitecode=?2 and filecode >1 and approved= ?1 or versionno > 1 ORDER BY filecode DESC")
-	public List<LSfile> getsheetGreaterthanoneandapprovel(Integer Approved,Integer sitecode);
+//	@Query("select new com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode,filenameuser) from LSfile where lssitemaster_sitecode=?2 and filecode >1 and approved= ?1 or versionno > 1 ORDER BY filecode DESC")
+	@Query("SELECT NEW com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode, filenameuser) \r\n" + 
+			"FROM com.agaram.eln.primary.model.sheetManipulation.LSfile \r\n" + 
+			"WHERE lssitemaster_sitecode = ?1 AND \r\n" + 
+			"      ((filecode > 1 AND approved != 1) OR approved IS NULL) AND \r\n" + 
+			"      ((rejected != 1) OR (versionno > 1)) \r\n" + 
+			"ORDER BY filecode DESC")
+	public List<LSfile> getsheetGreaterthanoneandapprovel(Integer sitecode);
 	
 	@Transactional
 	@Modifying
@@ -95,8 +101,14 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
    
 	@Transactional
 	@Modifying
-	@Query("select new com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode,filenameuser) from LSfile where lssitemaster_sitecode=?3 and filecode >1 and approved= ?1 and rejected!=1	and versionno >0 or versionno is null and approved !=1	and rejected=0 or approved is null and createby in (?2) ORDER BY filecode DESC")
-	public List<LSfile> getsheetapprovelanduserIn(Integer Approved,List<LSuserMaster> lstusermaster,Integer sitecode);
+//	@Query("select new com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode,filenameuser) from LSfile where lssitemaster_sitecode=?3 and filecode >1 and approved= ?1 and rejected!=1	and versionno >0 or versionno is null and approved !=1	and rejected=0 or approved is null and createby in (?2) ORDER BY filecode DESC")
+	@Query("SELECT NEW com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode, filenameuser) \r\n" + 
+			"FROM com.agaram.eln.primary.model.sheetManipulation.LSfile \r\n" + 
+			"WHERE lssitemaster_sitecode = ?2 AND \r\n" + 
+			"      ((filecode > 1 AND approved != 1) OR approved IS NULL) AND \r\n" + 
+			"      ((rejected != 1) OR (versionno > 1)) \r\n" + 
+			" and createby in (?1)ORDER BY filecode DESC")
+	public List<LSfile> getsheetapprovelanduserIn(List<LSuserMaster> lstusermaster,Integer sitecode);
 	
 	//public List<LSfile> getsheetapprovelanduserIn(List<LSuserMaster> lstusermaster,Integer sitecode);
 	public List<LSfile> findByFilecodeGreaterThanAndApprovedOrFilecodeGreaterThanAndVersionnoGreaterThanOrderByFilecodeDesc(int filecode, int approved, int orfilecode, int version);
@@ -291,4 +303,14 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
 			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
 			Date fromdate2, Date todate2, int m, int n);
+
+	public List<LSfile> findByFilecodeGreaterThanAndLssitemasterAndApprovedOrFilecodeGreaterThanAndVersionnoGreaterThanOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Integer approvelstatus, int j, int k);
+
+	public List<Sheettemplateget> findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApproved(
+			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest, int i, int j, int k,
+			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest2, int l, int m, int n,
+			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int o, int p, int q);
+
+	public List<Sheettemplateget> findBylstestInAndApproved(List<LSfiletest> lsfiletest, int i);
 }

@@ -23,7 +23,6 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
-import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.notification.Email;
@@ -1532,20 +1531,20 @@ public class UserService {
 			}
 		} else if (listofallmaster.getScreenname().equalsIgnoreCase("material")) {
 
-			List<String> lstMatName = listofallmaster.getMaterial().stream().map(Material::getSmaterialname)
-					.collect(Collectors.toList());
+//			List<String> lstMatName = listofallmaster.getMaterial().stream().map(Material::getSmaterialname)
+//					.collect(Collectors.toList());
 			
 //			List<String> lstPrefixName = listofallmaster.getMaterial().stream().map(Material::getSprefix)
 //					.collect(Collectors.toList());
 
-			List<Material> lstMaterialByName = materialRepository.findBySmaterialnameInAndAndNmaterialtypecodeAndNstatusAndNsitecode(lstMatName,listofallmaster.getMaterial().get(0).getNmaterialtypecode(), 1,
-					listofallmaster.getLssitemaster().getSitecode());
+//			List<Material> lstMaterialByName = materialRepository.findBySmaterialnameInAndAndNmaterialtypecodeAndNstatusAndNsitecode(lstMatName,listofallmaster.getMaterial().get(0).getNmaterialtypecode(), 1,
+//					listofallmaster.getLssitemaster().getSitecode());
 			
 //			List<Material> lstMaterialByPrefix = materialRepository.findBySprefixInAndNstatusAndNsitecode(lstPrefixName, 1,
 //					listofallmaster.getLssitemaster().getSitecode());
 
 //			if (lstMaterialByName.isEmpty() && lstMaterialByPrefix.isEmpty()) {
-			if (lstMaterialByName.isEmpty()) {
+//			if (lstMaterialByName.isEmpty()) {
 				
 				listofallmaster.getMaterial().stream().peek(f -> {
 					try {
@@ -1562,20 +1561,20 @@ public class UserService {
 				listofallmaster.getObjResponse().setInformation("IDS_MSG_SUCCESSMSG");
 
 				return listofallmaster;
-			} else {
-				
-				if(!lstMaterialByName.isEmpty()) {
-					listofallmaster.setObjResponse(new Response());
-					listofallmaster.getObjResponse().setStatus(false);
-					listofallmaster.getObjResponse().setInformation("IDS_MSG_EXIST");
-				}else {
-					listofallmaster.setObjResponse(new Response());
-					listofallmaster.getObjResponse().setStatus(false);
-					listofallmaster.getObjResponse().setInformation("IDS_MSG_EXIST_PREFIX");
-				}
-
-				return listofallmaster;
-			}
+//			} else {
+//				
+//				if(!lstMaterialByName.isEmpty()) {
+//					listofallmaster.setObjResponse(new Response());
+//					listofallmaster.getObjResponse().setStatus(false);
+//					listofallmaster.getObjResponse().setInformation("IDS_MSG_EXIST");
+//				}else {
+//					listofallmaster.setObjResponse(new Response());
+//					listofallmaster.getObjResponse().setStatus(false);
+//					listofallmaster.getObjResponse().setInformation("IDS_MSG_EXIST_PREFIX");
+//				}
+//
+//				return listofallmaster;
+//			}
 		}
 		return null;
 	}
