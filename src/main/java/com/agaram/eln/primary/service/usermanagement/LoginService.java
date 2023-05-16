@@ -14,6 +14,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.ResponseEntity;
@@ -169,7 +171,7 @@ public class LoginService {
 //        put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
 //    }};
 
-	@SuppressWarnings("unused")
+	@Transactional
 	public Map<String, Object> Login(LoggedUser objuser) {
 		Map<String, Object> obj = new HashMap<>();
 		LSuserMaster objExitinguser = new LSuserMaster();
@@ -236,7 +238,7 @@ public class LoginService {
 				String Password = AESEncryption.decrypt(objExitinguser.getPassword());
 				System.out.println(" password: " + Password);
 
-				Date passwordexp = objExitinguser.getPasswordexpirydate();
+//				Date passwordexp = objExitinguser.getPasswordexpirydate();
 				if (Password.equals(objuser.getsPassword()) && objExitinguser.getUserstatus() != "Locked"
 						&& objExitinguser.getUserretirestatus() == 0) {
 
@@ -378,6 +380,7 @@ public class LoginService {
 		return true;
 	}
 
+	@Transactional
 	public List<LSuserMaster> CheckUserAndPassword(LoggedUser objuser) {
 		List<LSuserMaster> objExitinguser = new ArrayList<LSuserMaster>();
 		String username = objuser.getsUsername();
@@ -981,7 +984,7 @@ public class LoginService {
 		return objClass;
 	}
 
-	@SuppressWarnings("unused")
+	@Transactional
 	public Map<String, Object> azureauthenticatelogin(LoggedUser objuser) {
 		Map<String, Object> obj = new HashMap<>();
 		LSuserMaster objExitinguser = new LSuserMaster();
@@ -1122,8 +1125,8 @@ public class LoginService {
 
 			} else if (objExitinguser.getUserretirestatus() != 0) {
 
-				String status = objExitinguser.getUserstatus();
-				String groupstatus = objExitinguser.getLsusergroup().getUsergroupstatus();
+//				String status = objExitinguser.getUserstatus();
+//				String groupstatus = objExitinguser.getLsusergroup().getUsergroupstatus();
 
 				objExitinguser.getObjResponse().setInformation("ID_RETIREDUSER");
 				objExitinguser.getObjResponse().setStatus(false);
@@ -1277,6 +1280,7 @@ public class LoginService {
 		return objuser;
 	}
 
+	@Transactional
 	public ResponseEntity<?> azureusertokengenrate(LSuserMaster objuser) throws Exception {
 
 		if (objuser.getUsername() == null)

@@ -9,7 +9,11 @@ import javax.persistence.Transient;
 @Entity(name = "LSlogilablimsordergroup")
 @Table(name = "LSlogilablimsordergroup")
 public class LSlogilablimsordergroup {
+
 	@Id
+	@Column(columnDefinition = "numeric(20,0)",name = "limsprimarycode") 
+	private Long limsprimarycode;
+	
 	@Column(name = "groupid",columnDefinition = "varchar(250)") 
 	private String groupid;
 	
@@ -25,15 +29,14 @@ public class LSlogilablimsordergroup {
 	@Column(columnDefinition = "varchar(100)",name = "testname")
 	private String stestname;
 	
-	@Column(columnDefinition = "numeric(20,0)",name = "limsprimarycode") 
-	private Long limsprimarycode;
-	
 	@Column(columnDefinition = "varchar(100)",name = "arno")
 	private String sarno;
 	
 	@Column(columnDefinition = "varchar(100)",name = "samplearno")
 	private String ssamplearno;
 	
+	@Column(name = "ntestparametercode")
+	private Integer ntestparametercode;
 //	@Column(columnDefinition = "nvarchar(100)",name = "InstrumentName")
 //	private String instrumentname;
 //	
@@ -134,9 +137,6 @@ public class LSlogilablimsordergroup {
 	private Integer ntestgrouptestparametercode;
 	
 	@Transient
-	private Integer ntestparametercode;
-	
-	@Transient
 	private Integer nparametertypecode;
 	
 	@Transient
@@ -161,6 +161,20 @@ public class LSlogilablimsordergroup {
 	private Integer nlimssitecode;
 	
 	@Transient
+	private Integer nbatchmastercode;
+	
+	@Transient
+	private Integer nallottedspeccode;
+	
+	public Integer getNallottedspeccode() {
+		return nallottedspeccode;
+	}
+
+	public void setNallottedspeccode(Integer nallottedspeccode) {
+		this.nallottedspeccode = nallottedspeccode;
+	}
+
+	@Transient
 	private String sresult;
 	
 	@Transient
@@ -181,17 +195,6 @@ public class LSlogilablimsordergroup {
 	@Transient
 	private String testparametersynonym;
 
-	@Transient
-	private Integer nbatchmastercode;
-	
-	public Integer getNbatchmastercode() {
-		return nbatchmastercode;
-	}
-
-	public void setNbatchmastercode(Integer nbatchmastercode) {
-		this.nbatchmastercode = nbatchmastercode;
-	}
-	
 	public Integer getNtransactionresultcode() {
 		return ntransactionresultcode;
 	}
@@ -326,6 +329,14 @@ public class LSlogilablimsordergroup {
 
 	public void setNlimssitecode(Integer nlimssitecode) {
 		this.nlimssitecode = nlimssitecode;
+	}
+
+	public Integer getNbatchmastercode() {
+		return nbatchmastercode;
+	}
+
+	public void setNbatchmastercode(Integer nbatchmastercode) {
+		this.nbatchmastercode = nbatchmastercode;
 	}
 
 	public String getSresult() {

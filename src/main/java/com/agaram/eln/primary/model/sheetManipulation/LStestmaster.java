@@ -183,7 +183,7 @@ public class LStestmaster {
 	public void setLstestparameter(List<LStestparameter> lstestparameter) {
 		this.lstestparameter = lstestparameter;
 	}
-	
+
 	@Transient
 	private String stestcategoryname;
 	
@@ -223,6 +223,22 @@ public class LStestmaster {
 	@Transient
 	private String scontainertype;
 	
+	public String getScontainertype() {
+		return scontainertype;
+	}
+
+	public void setScontainertype(String scontainertype) {
+		this.scontainertype = scontainertype;
+	}
+
+	public Integer getNcontainertypecode() {
+		return ncontainertypecode;
+	}
+
+	public void setNcontainertypecode(Integer ncontainertypecode) {
+		this.ncontainertypecode = ncontainertypecode;
+	}
+
 	@Transient
 	private Integer ntat;
 	
@@ -240,25 +256,30 @@ public class LStestmaster {
 	
 	@Transient
 	private Integer nproductcatcode;
-	
+
 	@Transient
 	private Integer	ncontainertypecode;
 
-
-	public String getScontainertype() {
-		return scontainertype;
+	@Transient
+	private Integer nallottedspeccode;
+	
+	@Transient
+	private Integer ntestgrouptestcode;
+	
+	public Integer getNtestgrouptestcode() {
+		return ntestgrouptestcode;
 	}
 
-	public void setScontainertype(String scontainertype) {
-		this.scontainertype = scontainertype;
+	public void setNtestgrouptestcode(Integer ntestgrouptestcode) {
+		this.ntestgrouptestcode = ntestgrouptestcode;
 	}
 
-	public Integer getNcontainertypecode() {
-		return ncontainertypecode;
+	public Integer getNallottedspeccode() {
+		return nallottedspeccode;
 	}
 
-	public void setNcontainertypecode(Integer ncontainertypecode) {
-		this.ncontainertypecode = ncontainertypecode;
+	public void setNallottedspeccode(Integer nallottedspeccode) {
+		this.nallottedspeccode = nallottedspeccode;
 	}
 
 	public String getStestcategoryname() {
