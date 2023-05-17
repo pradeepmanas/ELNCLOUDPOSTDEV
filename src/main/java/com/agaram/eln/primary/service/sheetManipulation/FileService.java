@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -1446,8 +1447,16 @@ public class FileService {
 	}
 
 	public List<Lsfileshareto> Getfilesharetome(Lsfileshareto lsordershareto) {
-		return LsfilesharetoRepository.findBySharetounifiedidAndSharestatusOrderBySharetofilecodeDesc(
-				lsordershareto.getSharetounifiedid(), 1);
+		List<Lsfileshareto> lstReturn = LsfilesharetoRepository.findBySharetounifiedidAndSharestatusOrderBySharetofilecodeDesc(lsordershareto.getSharetounifiedid(), 1);
+		if(lstReturn.size() > 0) {
+			lstReturn.stream().peek(f->{
+				LSfile objFile = lSfileRepository.findByfilecode(Long.valueOf(f.getSharefilecode()).intValue());
+				JSONObject jsonObject = new JSONObject(f.getShareitemdetails());
+				jsonObject.put("fileversioncount", objFile.getVersionno());
+				f.setShareitemdetails(jsonObject.toString());
+			}).collect(Collectors.toList());
+		}		
+		return lstReturn;
 	}
 
 	public Lsfilesharedby Unsharefileby(Lsfilesharedby objordershareby) {
