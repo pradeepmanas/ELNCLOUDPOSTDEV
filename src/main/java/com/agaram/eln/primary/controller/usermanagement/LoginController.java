@@ -23,12 +23,35 @@ public class LoginController {
 
 	
 	@GetMapping("/validate")
-	public void loadSite(HttpServletRequest request)throws Exception {
+	public Integer loadSite(HttpServletRequest request)throws Exception {
+		int retunvalues=0;
 		for(int i=0; i<10000;i++)
 		{
 			System.out.println(i);
+			retunvalues=i;
 		}
+		return retunvalues;
 	}
+	
+    @GetMapping("/tocheckforloop")
+    public Integer tocheckforloop(HttpServletRequest request) throws Exception {
+    	int retunvalues=0;
+		for (int index=0;index<=10000000;index++) {
+			System.out.println("Loop no:" + index);
+			retunvalues=index;
+		}
+		return retunvalues;
+    }
+    
+    @GetMapping("/tocheckforloopforlimi")
+    public Integer tocheckforloopforlimi(HttpServletRequest request) throws Exception {
+    	int retunvalues=0;
+		for (int index=0;index<=1000000;index++) {
+			System.out.println("Loop no:" + index);
+			retunvalues=index;
+		}
+		return retunvalues;
+    }
 
 	
 }
