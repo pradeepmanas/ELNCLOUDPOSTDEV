@@ -14,9 +14,9 @@ import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 
-import com.agaram.eln.primary.viewResolver.ExcelViewResolver;
-import com.agaram.eln.primary.viewResolver.PdfViewResolver;
-import com.agaram.eln.primary.viewResolver.CsvViewResolver; 
+//import com.agaram.eln.primary.viewResolver.ExcelViewResolver;
+//import com.agaram.eln.primary.viewResolver.PdfViewResolver;
+//import com.agaram.eln.primary.viewResolver.CsvViewResolver; 
 
 @SpringBootApplication
 @EnableJpaRepositories("com.agaram.eln.primary")
@@ -50,10 +50,10 @@ public class Application extends SpringBootServletInitializer implements WebAppl
 	        // Define all possible view resolvers
 	        List<ViewResolver> resolvers = new ArrayList<>();        
 
-	        resolvers.add(excelViewResolver());
-	        resolvers.add(csvViewResolver());
-	        resolvers.add(pdfViewResolver());
-	        
+//	        resolvers.add(excelViewResolver());
+//	        resolvers.add(csvViewResolver());
+//	        resolvers.add(pdfViewResolver());
+//	        
 	        resolver.setViewResolvers(resolvers);
 	        return resolver;
 	    }
@@ -62,27 +62,27 @@ public class Application extends SpringBootServletInitializer implements WebAppl
 	     * Configure View resolver to provide XLS output using Apache POI library to
 	     * generate XLS output for an object content
 	     */
-	    @Bean
-	    public ViewResolver excelViewResolver() {
-	        return new ExcelViewResolver();
-	    }
+//	    @Bean
+//	    public ViewResolver excelViewResolver() {
+//	        return new ExcelViewResolver();
+//	    }
 
 	    /*
 	     * Configure View resolver to provide Csv output using Super Csv library to
 	     * generate Csv output for an object content
 	     */
-	    @Bean
-	    public ViewResolver csvViewResolver() {
-	        return new CsvViewResolver();
-	    }
+//	    @Bean
+//	    public ViewResolver csvViewResolver() {
+//	        return new CsvViewResolver();
+//	    }
 
 	    /*
 	     * Configure View resolver to provide Pdf output using iText library to
 	     * generate pdf output for an object content
 	     */
-	    @Bean
-	    public ViewResolver pdfViewResolver() {
-	        return new PdfViewResolver();
-	    }	 
+//	    @Bean
+//	    public ViewResolver pdfViewResolver() {
+//	        return new PdfViewResolver();
+//	    }	 
 }
 
