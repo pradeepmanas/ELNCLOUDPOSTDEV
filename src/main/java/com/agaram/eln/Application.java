@@ -14,7 +14,9 @@ import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 
-
+//import com.agaram.eln.primary.viewResolver.ExcelViewResolver;
+//import com.agaram.eln.primary.viewResolver.PdfViewResolver;
+//import com.agaram.eln.primary.viewResolver.CsvViewResolver; 
 
 @SpringBootApplication
 @EnableJpaRepositories("com.agaram.eln.primary")
@@ -40,22 +42,22 @@ public class Application extends SpringBootServletInitializer implements WebAppl
 	 	/*
 	     * Configure ContentNegotiatingViewResolver
 	     */
-//	    @Bean 
-//	    public ViewResolver contentNegotiatingViewResolver(ContentNegotiationManager manager) {
-//	        ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
-//	        resolver.setContentNegotiationManager(manager);
-//
-//	        // Define all possible view resolvers
-//	        List<ViewResolver> resolvers = new ArrayList<>();        
-//
+	    @Bean 
+	    public ViewResolver contentNegotiatingViewResolver(ContentNegotiationManager manager) {
+	        ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
+	        resolver.setContentNegotiationManager(manager);
+
+	        // Define all possible view resolvers
+	        List<ViewResolver> resolvers = new ArrayList<>();        
+
 //	        resolvers.add(excelViewResolver());
 //	        resolvers.add(csvViewResolver());
 //	        resolvers.add(pdfViewResolver());
 //	        
-//	        resolver.setViewResolvers(resolvers);
-//	        return resolver;
-//	    }
-//	    
+	        resolver.setViewResolvers(resolvers);
+	        return resolver;
+	    }
+	    
 	    /*
 	     * Configure View resolver to provide XLS output using Apache POI library to
 	     * generate XLS output for an object content
