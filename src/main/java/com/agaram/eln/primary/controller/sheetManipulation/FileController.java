@@ -39,6 +39,11 @@ public class FileController {
 	public LSfile InsertupdateSheet(@RequestBody LSfile objfile)throws Exception {
 		return fileService.InsertupdateSheet(objfile);
 	}
+	
+	@PostMapping("/updateTemplateOnBatch")
+	public LSfile updateTemplateOnBatch(@RequestBody LSfile objfile)throws Exception {
+		return fileService.updateTemplateOnBatch(objfile);
+	}
 
 	@PostMapping("/UpdateFilecontent")
 	public LSfile UpdateFilecontent(@RequestBody LSfile objfile)throws Exception {

@@ -369,6 +369,19 @@ public class commonfunction {
 //        }  
 //        // pass UTC date to main method.  
 //        return d1;  
-    }  
+    }
+
+    public static String getBatchValues(String jsonString, String batString) {
+		try {
+			JSONObject jsonObject = new JSONObject(jsonString);
+			jsonObject.put("Batchcoordinates", new JSONObject(batString));			
+			
+			return jsonObject.toString();
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	} 
 
 }

@@ -304,6 +304,25 @@ public class FileService {
 
 		return objfile;
 	}
+	
+	public LSfile updateTemplateOnBatch(LSfile objfile) throws IOException {
+
+		Boolean Isnew = true;
+		
+		LSfile fileObj = getfileoncode(objfile);
+		
+		String fileOriginalContent = fileObj.getFilecontent();
+		
+		String Content = commonfunction.getBatchValues(fileOriginalContent,objfile.getFilecontent());
+		
+		LSfileversion objLatestversion = lsfileversionRepository.findFirstByFilecodeOrderByVersionnoDesc(objfile.getFilecode());
+		
+		updatefileversioncontent(Content, objLatestversion, objfile.getIsmultitenant());
+		
+		commonservice.updatefilecontentcheck(Content, objfile, Isnew);
+
+		return objfile;
+	}
 
 	public void updatefilecontent(String Content, LSfile objfile, Boolean Isnew) {
 		// Document Doc = Document.parse(objfile.getFilecontent());
@@ -1557,7 +1576,7 @@ public class FileService {
 	public LSfile updatefilename(LSfile objfile) {
 		
 		LSfile fileByName = lSfileRepository.findByfilecode(objfile.getFilecode());
-		if(lSfileRepository.findByFilecodeNotAndFilenameuserIgnoreCase(objfile.getFilecode(),objfile.getFilenameuser()).size()==0) {
+		if(lSfileRepository.findByFilecodeNotAndLssitemasterAndFilenameuserIgnoreCase(objfile.getFilecode(),objfile.getLssitemaster(),objfile.getFilenameuser()).isEmpty()) {
 			if (fileByName.getFilecode() != null) {
 				fileByName.setFilenameuser(objfile.getFilenameuser());
 				fileByName.setCategory(objfile.getCategory());

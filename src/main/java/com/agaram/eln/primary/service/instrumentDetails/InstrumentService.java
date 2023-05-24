@@ -3867,16 +3867,32 @@ public class InstrumentService {
 			lstorder = lslogilablimsorderdetailRepository
 					.findByFiletypeAndLsfileOrderByBatchcodeDesc(objorder.getFiletype(), objorder.getLsfile());
 		} else {
-			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
-					.findBylsuserMaster(objorder.getLsuserMaster());
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
-			lstorder = lslogilablimsorderdetailRepository
-					.findByFiletypeAndLsfileAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getFiletype(),
-							objorder.getLsfile(), lstproject);
+			List<LSsamplemaster> lstsample = lssamplemasterrepository.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
+			
+//			lstorder = lslogilablimsorderdetailRepository
+//					.findByFiletypeAndLsfileAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getFiletype(),
+//							objorder.getLsfile(), lstproject);
+			findByOrderflagAndLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndLsfileOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndLsfileOrderByBatchcodeDesc(
+					objorder.getOrderflag(), lstproject, objorder.getFiletype(), objorder.getLsfile(),
+					objorder.getOrderflag(), lstsample, objorder.getFiletype(), objorder.getLsfile(),
+					1,objorder.getOrderflag(), lstsample, objorder.getFiletype(), objorder.getLsfile(),
+					2,objorder.getLsuserMaster(), objorder.getOrderflag(), lstsample, objorder.getFiletype(), 3,objorder.getLstuserMaster(),objorder.getLsfile());
 		}
 
 		return lstorder;
+	}
+
+	private void findByOrderflagAndLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndLsfileOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndLsfileOrderByBatchcodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Integer filetype, LSfile lsfile, String orderflag2,
+			List<LSsamplemaster> lstsample, Integer filetype2, LSfile lsfile2, int i, String orderflag3,
+			List<LSsamplemaster> lstsample2, Integer filetype3, LSfile lsfile3, int j, LSuserMaster lsuserMaster,
+			String orderflag4, List<LSsamplemaster> lstsample3, Integer filetype4, int k,
+			List<LSuserMaster> lstuserMaster, LSfile lsfile4) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public List<LSlogilablimsorderdetail> Getexcelorder(LSlogilablimsorderdetail objorder) {
@@ -3884,12 +3900,20 @@ public class InstrumentService {
 		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 			lstorder = lslogilablimsorderdetailRepository.findByFiletypeOrderByBatchcodeDesc(objorder.getFiletype());
 		} else {
-			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
-					.findBylsuserMaster(objorder.getLsuserMaster());
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
-			lstorder = lslogilablimsorderdetailRepository
-					.findByFiletypeAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getFiletype(), lstproject);
+			List<LSsamplemaster> lstsample = lssamplemasterrepository.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
+			
+//			lstorder = lslogilablimsorderdetailRepository
+//					.findByFiletypeAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getFiletype(), lstproject);
+			
+			lstorder = lslogilablimsorderdetailRepository.
+					findByOrderflagAndLsprojectmasterInAndFiletypeAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterInOrderByBatchcodeDesc(
+							objorder.getOrderflag(), lstproject, objorder.getFiletype(), 
+							objorder.getOrderflag(), lstsample, objorder.getFiletype(), 
+							1,objorder.getOrderflag(), lstsample, objorder.getFiletype(), 
+							2,objorder.getLsuserMaster(), objorder.getOrderflag(), lstsample, objorder.getFiletype(), 3,objorder.getLstuserMaster());
 		}
 		return lstorder;
 	}

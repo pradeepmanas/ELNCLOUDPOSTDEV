@@ -408,14 +408,14 @@ public class LoginService {
 
 			if (objExitinguser.size() != 0) {
 //				objExitinguser = new LSuserMaster();
-				objExitinguser.get(0).setUserstatus("");
+//				objExitinguser.get(0).setUserstatus("");
 				objExitinguser.get(0).setObjResponse(new Response());
 				objExitinguser.get(0).getObjResponse().setInformation("User is not present on the site.");
 				objExitinguser.get(0).getObjResponse().setStatus(false);
 
 			} else {
 				LSuserMaster objExitinguser1 = new LSuserMaster();
-				objExitinguser1.setUserstatus("");
+//				objExitinguser1.setUserstatus("");
 				objExitinguser1.setObjResponse(new Response());
 				objExitinguser1.getObjResponse().setInformation("Invalid user");
 				objExitinguser1.getObjResponse().setStatus(false);
@@ -1653,22 +1653,24 @@ public class LoginService {
 	}
 
 	public Map<String, Object> updateActiveUserTime(Map<String, Object> objMap) {
-		return objMap;
+//		return objMap;
 		
-//		if(objMap.containsKey("activeusercode")) {
-//			Integer activerUsercode = (Integer) objMap.get("activeusercode");
-//			
-//			LSactiveUser objUser = lsactiveUserRepository.findByActiveusercode(activerUsercode);
-//			
-//			if(objUser!=null) {
-//				objUser.setLastactivetime(new Date());
-//				lsactiveUserRepository.save(objUser);
-//			}
-//		}
-//		
-//		List<LSactiveUser> lstUsers = lsactiveUserRepository.findByLastactivetimeLessThan(new Date(System.currentTimeMillis() - 3600 * 1000));
-//		
-//		lsactiveUserRepository.delete(lstUsers);
+		if(objMap.containsKey("activeusercode")) {
+			Integer activerUsercode = (Integer) objMap.get("activeusercode");
+			
+			LSactiveUser objUser = lsactiveUserRepository.findByActiveusercode(activerUsercode);
+			
+			if(objUser!=null) {
+				objUser.setLastactivetime(new Date());
+				lsactiveUserRepository.save(objUser);
+			}
+		}
+		
+		List<LSactiveUser> lstUsers = lsactiveUserRepository.findByLastactivetimeLessThan(new Date(System.currentTimeMillis() - 3600 * 1000));
+		
+		lsactiveUserRepository.delete(lstUsers);
+		
+		return objMap;
 		
  	}
 

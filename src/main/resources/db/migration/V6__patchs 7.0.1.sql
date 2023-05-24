@@ -4080,3 +4080,7 @@ update lsusergrouprights set screate='0' where screate='NA' and displaytopic='ID
 
 delete from lsaudittrailconfigmaster where modulename = 'IDS_MDL_INVENTORY';
 delete from lsaudittrailconfiguration where modulename = 'IDS_MDL_INVENTORY';
+
+update lsusergrouprights set sedit = 1 where sedit = 'NA' and displaytopic = 'IDS_SCN_PROJECTMASTER' and modulename ='IDS_MDL_MASTERS';
+update lsusergrouprights set sedit = 1 where sedit = 'NA' and displaytopic = 'IDS_SCN_SAMPLEMASTER' and modulename ='IDS_MDL_MASTERS';
+update lsusergrouprights set sedit = 1 where sedit = 'NA' and displaytopic = 'IDS_SCN_TASKMASTER' and modulename ='IDS_MDL_MASTERS';

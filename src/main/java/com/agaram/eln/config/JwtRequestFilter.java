@@ -38,21 +38,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		
 
 		
-//		String path =request.getRequestURI();
+		String path =request.getRequestURI();
 //		int index =path.lastIndexOf("/");
 //		String substringtenant= path.substring(index+1);
-//		int length= path.length();
-//		String substringpath="";
-//		if(length>=20) {
-//		substringpath=path.substring(1,20);
-//		}
-//		final String tenantID;
-//		String[] parts = request.getRequestURI().split("/");
-//		if(parts.length > 4 && substringpath.equals("Instrument/download")) {
-//			tenantID =parts[4];
-//		}else {
-			final String tenantID = request.getHeader("X-TenantID");
-//		}
+		int length= path.length();
+		String substringpath="";
+		if(length>=20) {
+		substringpath=path.substring(1,20);
+		}
+		final String tenantID;
+		String[] parts = request.getRequestURI().split("/");
+		if(parts.length > 4 && substringpath.equals("Instrument/download")) {
+			tenantID =parts[4];
+		}else {
+			tenantID = request.getHeader("X-TenantID");
+		}
 //		if(substringpath.equals("Instrument/download")) {
 //		tenantID =substringtenant;
 //		}

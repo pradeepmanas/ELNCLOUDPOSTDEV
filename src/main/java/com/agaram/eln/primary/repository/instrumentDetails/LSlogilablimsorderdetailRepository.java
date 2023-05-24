@@ -1906,9 +1906,9 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Date fromdate2, Date todate2, int k, int l, LSuserMaster objuser2, Date fromdate3, Date todate3, int m,
 			int n, LSuserMaster objuser3, Date fromdate4, Date todate4, int o, Pageable pageable);
 
-
-
-
-
-
+	List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndFiletypeAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterInOrderByBatchcodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, int i, String orderflag2,
+			List<LSsamplemaster> lstsample, int j, int k, String orderflag3, List<LSsamplemaster> lstsample2, int l,
+			int m, LSuserMaster lsuserMaster, String orderflag4, List<LSsamplemaster> lstsample3, int n, int o,
+			List<LSuserMaster> lstuserMaster);
 }

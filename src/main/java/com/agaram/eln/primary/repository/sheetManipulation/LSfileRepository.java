@@ -17,6 +17,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 
 
 public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
@@ -313,4 +314,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int o, int p, int q);
 
 	public List<Sheettemplateget> findBylstestInAndApproved(List<LSfiletest> lsfiletest, int i);
+
+	public List<LSfile> findByFilecodeNotAndLssitemasterAndFilenameuserIgnoreCase(Integer filecode,
+			LSSiteMaster lssitemaster, String filenameuser);
 }
