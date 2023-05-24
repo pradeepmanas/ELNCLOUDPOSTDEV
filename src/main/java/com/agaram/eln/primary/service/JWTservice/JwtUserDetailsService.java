@@ -10,9 +10,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.model.jwt.UserDTO;
-
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-
+import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 
 
@@ -25,7 +25,8 @@ public class JwtUserDetailsService implements UserDetailsService {
 	@Autowired
 	private PasswordEncoder bcryptEncoder;
 	
-
+	@Autowired
+    private LSSiteMasterRepository lSSiteMasterRepository;
 
 //	@Override
 //	public UserDetails loadUserByUsernameaandpassword(String username,String password) throws UsernameNotFoundException{
@@ -55,7 +56,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 		String usernamevalue = username.substring(0,sitecodestartindex);
 		String sitecodevalue = username.substring(sitecodestartindex+1, username.length()-1);
 		
-		
+		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(sitecodevalue));
 		
 		LSuserMaster user = new LSuserMaster();
 		
@@ -63,7 +64,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 //			user = userDao.findByusernameIgnoreCase(usernamevalue);
 //		}
 //		else {
-			user = userDao.findByUsernameIgnoreCase(usernamevalue);
+			user = userDao.findByUsernameIgnoreCaseAndLssitemaster(usernamevalue, objsite);
 //		}
 //		LSuserMaster user = userDao.findByUsernameIgnoreCaseAndLssitemasterAndUserretirestatusNot(usernamevalue, objsite,1);
 		
@@ -76,7 +77,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 		}
 		
 		if(user!=null) {
-		String Tokenuser = user.getUsername();
+		String Tokenuser = user.getUsername() +"["+user.getLssitemaster().getSitecode()+"]";
 		
 		return new org.springframework.security.core.userdetails.User(Tokenuser, user.getPassword(),
 				new ArrayList<>());

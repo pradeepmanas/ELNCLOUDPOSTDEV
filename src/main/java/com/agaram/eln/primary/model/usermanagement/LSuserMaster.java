@@ -17,7 +17,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 
 @Entity
 @Table(name = "LSusermaster")
@@ -97,12 +99,26 @@ public class LSuserMaster {
 	private String profileimagename;
 	private Integer verificationcode;
 
+	@ManyToOne
+	private LSusergroup lsusergroup;
 
+	@ManyToOne
+	private LSSiteMaster lssitemaster;
+
+	@ManyToOne
+	private LSuserActions lsuserActions;
+
+	@Transient
+	Response objResponse;
 
 	@Transient
 	private String usergroupname;
 
+	@Transient
+	LScfttransaction objsilentaudit;
 
+	@Transient
+	LScfttransaction Objmanualaudit;
 
 	@Transient
 	String DFormat = "dd/MM/yyyy";
@@ -121,8 +137,13 @@ public class LSuserMaster {
 	@Transient
 	private Integer multitenantusercount;
 
+	@Transient
+	private LSusergroup lsusergrouptrans;
 
-
+	@OneToMany
+	@JoinColumn(name = "usercode")
+//	@JsonManagedReference
+	private List<LSMultiusergroup> multiusergroupcode;
 
 	@Transient
 	private Integer multiusergroups;
@@ -157,6 +178,16 @@ public class LSuserMaster {
 		this.idletime = idletime;
 	}
 
+	@Transient
+	private List<LSMultiusergroup> deleterole;
+
+	public List<LSMultiusergroup> getDeleterole() {
+		return deleterole;
+	}
+
+	public void setDeleterole(List<LSMultiusergroup> deleterole) {
+		this.deleterole = deleterole;
+	}
 
 	@Transient
 	private Integer idletime;
@@ -174,6 +205,11 @@ public class LSuserMaster {
 	@Column(columnDefinition = "varchar(500)")
 	private String unifieduserid;
 
+	@Transient
+	private Response response;
+
+	@Transient
+	LoggedUser objuser;
 
 	@Transient
 	private String token;
@@ -190,19 +226,32 @@ public class LSuserMaster {
 	@Transient
 	private String sharetounifiedid;
 
-
+	@Transient
+	List<LSprojectmaster> lstproject;
+	
 	@Transient
 	private Integer testcode;
 	
+	@Transient
+	LSprojectmaster lstprojectforfilter;
 
 
-
+	@Transient
+	List<LSworkflow> lstworkflow;
 
 	@Transient
 	private boolean reset;
 	@Transient
 	private boolean resendmail;
 	
+	
+	public LSprojectmaster getLstprojectforfilter() {
+		return lstprojectforfilter;
+	}
+
+	public void setLstprojectforfilter(LSprojectmaster lstprojectforfilter) {
+		this.lstprojectforfilter = lstprojectforfilter;
+	}
 
 	public Integer getTestcode() {
 		return testcode;
@@ -244,7 +293,13 @@ public class LSuserMaster {
 		this.userloginlink = userloginlink;
 	}
 
+	public LSusergroup getLsusergrouptrans() {
+		return lsusergrouptrans;
+	}
 
+	public void setLsusergrouptrans(LSusergroup lsusergrouptrans) {
+		this.lsusergrouptrans = lsusergrouptrans;
+	}
 
 	public String getSharebyunifiedid() {
 		return sharebyunifiedid;
@@ -302,11 +357,45 @@ public class LSuserMaster {
 		this.userretirestatus = userretirestatus;
 	}
 
+	public LScfttransaction getObjmanualaudit() {
+		return Objmanualaudit;
+	}
 
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		Objmanualaudit = objmanualaudit;
+	}
 
+	public Response getResponse() {
+		return response;
+	}
 
+	public void setResponse(Response response) {
+		this.response = response;
+	}
 
+	public LoggedUser getObjuser() {
+		return objuser;
+	}
 
+	public void setObjuser(LoggedUser objuser) {
+		this.objuser = objuser;
+	}
+
+	public List<LSMultiusergroup> getMultiusergroupcode() {
+		return multiusergroupcode;
+	}
+
+	public void setMultiusergroupcode(List<LSMultiusergroup> multiusergroupcode) {
+		this.multiusergroupcode = multiusergroupcode;
+	}
+
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
 
 	public Integer getUsercode() {
 		return usercode;
@@ -455,7 +544,29 @@ public class LSuserMaster {
 		this.verificationcode = verificationcode;
 	}
 
+	public LSSiteMaster getLssitemaster() {
+		return lssitemaster;
+	}
 
+	public void setLssitemaster(LSSiteMaster lssitemaster) {
+		this.lssitemaster = lssitemaster;
+	}
+
+	public LSusergroup getLsusergroup() {
+		return lsusergrouptrans;
+	}
+
+	public void setLsusergroup(LSusergroup lsusergroup) {
+		this.lsusergrouptrans = lsusergroup;
+	}
+
+	public Response getObjResponse() {
+		return objResponse;
+	}
+
+	public void setObjResponse(Response objResponse) {
+		this.objResponse = objResponse;
+	}
 
 	public String getUsergroupname() {
 		return usergroupname;
@@ -465,12 +576,25 @@ public class LSuserMaster {
 		this.usergroupname = usergroupname;
 	}
 
-
+	public String getSitename() {
+		if (this.lssitemaster != null) {
+			return this.lssitemaster.getSitename();
+		} else {
+			return "";
+		}
+	}
 
 	public void setSitename(String sitename) {
 		this.sitename = sitename;
 	}
 
+	public LSuserActions getLsuserActions() {
+		return lsuserActions;
+	}
+
+	public void setLsuserActions(LSuserActions lsuserActions) {
+		this.lsuserActions = lsuserActions;
+	}
 
 	public String getLoginfrom() {
 		return loginfrom;
@@ -512,8 +636,21 @@ public class LSuserMaster {
 		this.unifieduserid = unifieduserid;
 	}
 
+	public List<LSprojectmaster> getLstproject() {
+		return lstproject;
+	}
 
+	public void setLstproject(List<LSprojectmaster> lstproject) {
+		this.lstproject = lstproject;
+	}
 
+	public List<LSworkflow> getLstworkflow() {
+		return lstworkflow;
+	}
+
+	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+		this.lstworkflow = lstworkflow;
+	}
 
 	public List<LSuserMaster> getUserroleremovenotify() {
 		return userroleremovenotify;

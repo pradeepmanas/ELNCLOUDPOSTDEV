@@ -17,7 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
-//import com.agaram.eln.secondary.config.TenantArchiveContext;
+import com.agaram.eln.secondary.config.TenantArchiveContext;
 
 import io.jsonwebtoken.ExpiredJwtException;
 
@@ -71,7 +71,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		if(tenantID != null)
 		{
 			TenantContext.setCurrentTenant(tenantID);
-//			TenantArchiveContext.setCurrentTenant(arciveTenant);
+			TenantArchiveContext.setCurrentTenant(arciveTenant);
 		}
 
 		String username = null;
