@@ -80,6 +80,11 @@ public class MaterialInventoryController {
 	public ResponseEntity<Object> updateMaterialStatus(@RequestBody Map<String, Object> inputMap) throws Exception {
 		return materialInventoryService.updateMaterialStatus(inputMap);
 	}
+	
+	@RequestMapping(value = "/deleteMaterialStatus", method = RequestMethod.POST)
+	public ResponseEntity<Object> deleteMaterialStatus(@RequestBody Map<String, Object> inputMap) throws Exception {
+		return materialInventoryService.updateMaterialStatus(inputMap);
+	}
 
 	@RequestMapping(value = "/getMaterialInventoryEdit", method = RequestMethod.POST)
 	public ResponseEntity<Object> getMaterialInventoryEdit(@RequestBody Map<String, Object> inputMap) throws Exception {

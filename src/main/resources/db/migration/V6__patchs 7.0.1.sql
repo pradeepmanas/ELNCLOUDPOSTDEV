@@ -4084,3 +4084,6 @@ delete from lsaudittrailconfiguration where modulename = 'IDS_MDL_INVENTORY';
 update lsusergrouprights set sedit = 1 where sedit = 'NA' and displaytopic = 'IDS_SCN_PROJECTMASTER' and modulename ='IDS_MDL_MASTERS';
 update lsusergrouprights set sedit = 1 where sedit = 'NA' and displaytopic = 'IDS_SCN_SAMPLEMASTER' and modulename ='IDS_MDL_MASTERS';
 update lsusergrouprights set sedit = 1 where sedit = 'NA' and displaytopic = 'IDS_SCN_TASKMASTER' and modulename ='IDS_MDL_MASTERS';
+
+ALTER TABLE IF Exists lsprotocolorderstructure ADD COLUMN IF NOT EXISTS floatvalues bigint;
+ALTER TABLE IF Exists lssheetorderstructure ADD COLUMN IF NOT EXISTS floatvalues bigint;

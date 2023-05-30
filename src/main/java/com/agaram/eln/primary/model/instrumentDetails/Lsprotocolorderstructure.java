@@ -68,6 +68,17 @@ public class Lsprotocolorderstructure {
 	@Transient
 	private String teamname;
 	
+	
+	private Long floatvalues;
+
+	public Long getFloatvalues() {
+		return floatvalues;
+	}
+
+	public void setFloatvalues(Long floatvalues) {
+		this.floatvalues = floatvalues;
+	}
+	
 	public String getTeamname() {
 		return teamname;
 	}

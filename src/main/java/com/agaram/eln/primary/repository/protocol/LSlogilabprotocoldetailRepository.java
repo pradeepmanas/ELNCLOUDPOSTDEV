@@ -228,10 +228,10 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	List<Logilabprotocolorders> findByDirectorycodeOrderByProtocolordercodeDesc(Long directorycode);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			LSprojectmaster lsprojectmaster, Integer testcode, int i, Date fromdate, Date todate);
-
-
+//	List<Logilabprotocolorders> findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+//			LSprojectmaster lsprojectmaster, Integer testcode, int i, Date fromdate, Date todate);
+//
+//
 
 
 	List<LSlogilabprotocoldetail> findByAssignedtoAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(LSuserMaster lsloginuser,
@@ -242,10 +242,10 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			LSuserMaster lsselecteduser, LSuserMaster lsloginuser, Date fromdate, Date todate);
 
 
-	List<LSlogilabprotocoldetail> findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			LSsamplemaster lssamplemaster, int i, Integer testcode, int j, Date fromdate, Date todate,
-			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode1, int l, Date fromdate2,
-			Date todate2);
+//	List<LSlogilabprotocoldetail> findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+//			LSsamplemaster lssamplemaster, int i, Integer testcode, int j, Date fromdate, Date todate,
+//			LSsamplemaster lssamplemaster2, int k, LSuserMaster lsuserMaster, Integer testcode1, int l, Date fromdate2,
+//			Date todate2);
 
 
 	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByProtocolordercodeDesc(
@@ -1178,6 +1178,18 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Integer sitecode2, int k, Date fromdate2, Date todate2, int l, Integer sitecode3, int m, Integer usercode,
 			Date fromdate3, Date todate3, int n, Integer sitecode4, int o, Date fromdate4, Date todate4,
 			List<Integer> userlist, Pageable pageable);
+
+
+	List<Logilabprotocolorders> findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndCreatedtimestampBetweenOrLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			LSprojectmaster lsprojectmaster, Integer testcode, int i, Date fromdate, Date todate,
+			LSprojectmaster lsprojectmaster2, Integer testcode2, int j, Date fromdate2, Date todate2);
+
+
+	List<LSlogilabprotocoldetail> findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+			LSsamplemaster lssamplemaster, int i, Integer testcode, int j, Date fromdate, Date todate,
+			LSsamplemaster lssamplemaster2, int k, Integer testcode2, int l, Date fromdate2, Date todate2,
+			LSsamplemaster lssamplemaster3, int m, LSuserMaster lsuserMaster, Integer testcode3, int n, Date fromdate3,
+			Date todate3);
 
 
 }

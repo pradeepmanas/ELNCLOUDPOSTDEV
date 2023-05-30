@@ -5717,6 +5717,7 @@ public class ProtocolService {
 
 		if (objtest.getObjLoggeduser().getUsername().trim().toLowerCase().equals("administrator")) {
 			lsfiles = LSProtocolMasterRepositoryObj.findByLstestInAndStatusAndApproved(lsfiletest, 1,1);
+			return lsfiles;
 		} else {
 
 			List<Integer> lstteammap = LSuserteammappingRepositoryObj
@@ -5730,6 +5731,7 @@ public class ProtocolService {
 								lsfiletest, 1, lstteammap, 1, 1,
 								lsfiletest, 1, objtest.getObjLoggeduser().getUsercode(),2, 1,
 								lsfiletest, 1, lstteammap, 3,1);
+				return lsfiles;
 
 			} else {
 				lstteammap.add(objtest.getObjLoggeduser().getUsercode());
@@ -5738,12 +5740,13 @@ public class ProtocolService {
 								lsfiletest, 1, lstteammap, 1,1,
 								lsfiletest, 1, objtest.getObjLoggeduser().getUsercode(),2,1,
 								lsfiletest, 1, lstteammap, 3,1);
+				return lsfiles;
 
 			}
-			lsfiles = LSProtocolMasterRepositoryObj.findByLstestInAndStatus(lsfiletest, 1);
+//			lsfiles = LSProtocolMasterRepositoryObj.findByLstestInAndStatus(lsfiletest, 1);
 		}
 
-		return lsfiles;
+//		return lsfiles;
 	}
 
 	public Map<String, Object> Uploadprotocolimagesql(MultipartFile file, Integer protocolstepcode,

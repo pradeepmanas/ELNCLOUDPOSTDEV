@@ -175,54 +175,45 @@ public class LoginService {
 	public Map<String, Object> Login(LoggedUser objuser) {
 		Map<String, Object> obj = new HashMap<>();
 		LSuserMaster objExitinguser = new LSuserMaster();
-
 		String username = objuser.getsUsername();
-
 		LSSiteMaster objsiteobj = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
-
-		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndLoginfrom(username,
-				objsiteobj, "0");
-
-		LSPasswordPolicy lockcount = objExitinguser != null
-				? LSPasswordPolicyRepository
-						.findTopByAndLssitemasterOrderByPolicycodeDesc(objExitinguser.getLssitemaster())
-				: null;
-
-		LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser",
-				"Active");
+		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndLoginfrom(username, objsiteobj, "0");
+		LSPasswordPolicy lockcount = objExitinguser != null ? LSPasswordPolicyRepository.findTopByAndLssitemasterOrderByPolicycodeDesc(objExitinguser.getLssitemaster()) : null;
+		LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser","Active");
 
 		if (objPrefrence != null) {
 
-//			List<LSactiveUser> lstActUsrs = lsactiveUserRepository.findBylssitemaster(objsiteobj);
 			List<LSactiveUser> lstActUsrs = lsactiveUserRepository.findAll();
-
 			String dvalue = objPrefrence.getValueencrypted();
+			
+			if(dvalue != null) {
+				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
+				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
 
-			String sConcurrentUsers = AESEncryption.decrypt(dvalue);
+				int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
+				int actUsr = lstActUsrs.size();
 
-			sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
+				if (actUsr >= nConcurrentUsers) {
+					objExitinguser.setObjResponse(new Response());
+					objExitinguser.getObjResponse().setInformation("IDS_LICENCERCHD");
+					objExitinguser.getObjResponse().setStatus(false);
 
-			int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
-			int actUsr = lstActUsrs.size();
-
-			if (actUsr >= nConcurrentUsers) {
-
+					obj.put("user", objExitinguser);
+					return obj;
+				}
+			}else {
 				objExitinguser.setObjResponse(new Response());
-
-				objExitinguser.getObjResponse().setInformation("IDS_LICENCERCHD");
+				objExitinguser.getObjResponse().setInformation("IDS_SETCONCURRENTLICENCE");
 				objExitinguser.getObjResponse().setStatus(false);
 
 				obj.put("user", objExitinguser);
 				return obj;
-
 			}
-
 		}
 
 		if (objExitinguser != null) {
 
 			if (objuser.getLsusergroup() == null) {
-
 				objExitinguser.setLsusergroup(LSusergroupRepository.findOne(objuser.getMultiusergroupcode()));
 			} else {
 				objExitinguser.setLsusergroup(objuser.getLsusergroup());
@@ -233,8 +224,8 @@ public class LoginService {
 			objExitinguser.setIdletime(lockcount.getIdletime());
 			objExitinguser.setIdletimeshowcheck(lockcount.getIdletimeshowcheck());
 
-			if ((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode())
-					|| objuser.getsUsername().equalsIgnoreCase("Administrator")) {
+			if ((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode()) || objuser.getsUsername().equalsIgnoreCase("Administrator")) {
+				
 				String Password = AESEncryption.decrypt(objExitinguser.getPassword());
 				System.out.println(" password: " + Password);
 

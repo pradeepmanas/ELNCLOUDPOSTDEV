@@ -1307,6 +1307,17 @@ public class UserService {
 		}
 		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objusergroup.getLssitemaster());
 	}
+	
+	public List<LSuserMaster> GetUserslocalnonRetired(LSuserMaster objusergroup) {
+//		if (objusergroup.getObjsilentaudit() != null) {
+//			objusergroup.getObjsilentaudit().setTableName("LSuserMaster");
+//			lscfttransactionRepository.save(objusergroup.getObjsilentaudit());
+//		}
+//		if (objusergroup.getUsername() != null && objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
+		return lsuserMasterRepository.findByusernameNotAndUserretirestatusNot("Administrator",1);
+//		}
+//		return lsuserMasterRepository.findByUsernameNotAndLssitemasterAndUserretirestatusNot("Administrator", objusergroup.getLssitemaster(),0);
+	}
 
 	public LSuserMaster getUserOnCode(LSuserMaster objuser) {
 		LSuserMaster objExitinguser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
@@ -1374,24 +1385,27 @@ public class UserService {
 		if (objPrefrence != null) {
 
 			String dvalue = objPrefrence.getValueencrypted();
+			
+			if(dvalue != null) {
+				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
 
-			String sConcurrentUsers = AESEncryption.decrypt(dvalue);
+				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
 
-			sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
+				int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
 
-			int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
+//				Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNotAndLssitemaster(1, 1,
+//						objsite);
+				Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1, 1);
 
-//			Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNotAndLssitemaster(1, 1,
-//					objsite);
-			Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1, 1);
+				if (userCount < nConcurrentUsers) {
 
-			if (userCount < nConcurrentUsers) {
+					bool = true;
 
-				bool = true;
-
-			} else {
-				bool = false;
+				} else {
+					bool = false;
+				}
 			}
+
 			return bool;
 		}
 
@@ -1416,31 +1430,34 @@ public class UserService {
 	
 	public Map<String, Object> getActiveUserCount(Map<String, Object> objMap) {
 		Map<String, Object> obj = new HashMap<>();	
-		List<LSactiveUser> lstActiveUser = lsactiveUserRepository.findAll();
-		obj.put("Named", lstActiveUser.size());	
-		LSpreferences objPrefrence;			
-		objPrefrence=LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser","Active");
 		
+		List<LSactiveUser> lstActiveUser = lsactiveUserRepository.findAll();
+		obj.put("activeUserCount", lstActiveUser.size());	
+		
+		LSpreferences objPrefrence;
+		int loginType = 2;
+		objPrefrence=LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser","Active");
+		obj.put("logintype", "ConCurrentUser");	
 		if(objPrefrence == null) {
 			objPrefrence=LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser","Active");
 			obj.put("logintype", "MainFormUser");
+			loginType = 1;
 		}				
 		if(objPrefrence != null) {
 			String dvalue = objPrefrence.getValueencrypted();
-			String sConcurrentUsers = AESEncryption.decrypt(dvalue);
-			sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
-			int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
-			obj.put("ConCurrentUser", nConcurrentUsers); 
-			if(obj.get("logintype") == null) {
-			obj.put("logintype", "ConCurrentUser");	
+			if(dvalue != null) {
+				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
+				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
+				int userCount = Integer.parseInt(sConcurrentUsers);
+				obj.put("ConCurrentUser", userCount); 
+				obj.put("licencetype",loginType);
 			}
-			obj.put("licencetype", objPrefrence != null ? 2 : (LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser","Active") != null ? 1 : 0));
-			
+//			obj.put("licencetype", objPrefrence != null ? 2 : (LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser","Active") != null ? 1 : 0));
+		}else {
+			obj.put("licencetype",0);
 		}
-			
-	
-	return obj;
-}
+		return obj;
+	}
 
 	public Listofallmaster InsertImportedlist(Listofallmaster listofallmaster) {
 

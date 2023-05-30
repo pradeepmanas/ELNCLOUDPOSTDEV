@@ -572,6 +572,12 @@ public class UserController {
 		return userService.GetUserslocal(objusermaster);
 	}
 	
+	@PostMapping("/GetUserslocalnonRetired")
+	public List<LSuserMaster> GetUserslocalnonRetired(@RequestBody LSuserMaster objusermaster)throws Exception
+	{
+		return userService.GetUserslocalnonRetired(objusermaster);
+	}
+	
 	@PostMapping("/getUserOnCode")
 	public LSuserMaster getUserOnCode(@RequestBody LSuserMaster objuser)throws Exception
 	{

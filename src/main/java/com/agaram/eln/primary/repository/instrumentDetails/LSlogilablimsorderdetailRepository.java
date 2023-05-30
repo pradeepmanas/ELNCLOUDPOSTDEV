@@ -1906,9 +1906,21 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Date fromdate2, Date todate2, int k, int l, LSuserMaster objuser2, Date fromdate3, Date todate3, int m,
 			int n, LSuserMaster objuser3, Date fromdate4, Date todate4, int o, Pageable pageable);
 
-	List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndFiletypeAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterInOrderByBatchcodeDesc(
-			String orderflag, List<LSprojectmaster> lstproject, int i, String orderflag2,
-			List<LSsamplemaster> lstsample, int j, int k, String orderflag3, List<LSsamplemaster> lstsample2, int l,
-			int m, LSuserMaster lsuserMaster, String orderflag4, List<LSsamplemaster> lstsample3, int n, int o,
-			List<LSuserMaster> lstuserMaster);
+	List<LSlogilablimsorderdetail> findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfile(
+			List<LSprojectmaster> lstproject, Integer filetype, LSfile lsfile, List<LSsamplemaster> lstsample,
+			Integer filetype2, int i, LSfile lsfile2, List<LSsamplemaster> lstsample2, Integer filetype3, int j,
+			LSfile lsfile3, List<LSsamplemaster> lstsample3, Integer filetype4, int k, LSfile lsfile4);
+
+	List<LSlogilablimsorderdetail> findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoption(
+			List<LSprojectmaster> lstproject, Integer filetype, List<LSsamplemaster> lstsample, Integer filetype2,
+			int i, List<LSsamplemaster> lstsample2, Integer filetype3, int j, List<LSsamplemaster> lstsample3,
+			Integer filetype4, int k);
+
+	List<LSlogilablimsorderdetail> findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileOrLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfile(
+			List<LSprojectmaster> lstproject, Integer filetype, LSfile lsfile, Integer filetype2, LSfile lsfile2,
+			List<LSsamplemaster> lstsample, Integer filetype3, int i, LSfile lsfile3, List<LSsamplemaster> lstsample2,
+			Integer filetype4, int j, LSfile lsfile4, List<LSsamplemaster> lstsample3, Integer filetype5, int k,
+			LSfile lsfile5);
+
+
 }
