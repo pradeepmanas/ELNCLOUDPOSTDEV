@@ -3,12 +3,18 @@ package com.agaram.eln.config;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 //import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -20,6 +26,10 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import javax.servlet.http.HttpServletRequest;
+
 
 @Component
 public class Converter extends AbstractHttpMessageConverter<Object> {
@@ -51,15 +61,15 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 		String encoding = inputMessage.getHeaders().get("accept-encoding").get(0);
 //		String contendencoding = inputMessage.getHeaders().get("content-encoding");
 
-		String contendencoding ="";
-		
-		if(inputMessage.getHeaders().containsKey("content-encoding")) {
+		String contendencoding = "";
+
+		if (inputMessage.getHeaders().containsKey("content-encoding")) {
 			contendencoding = inputMessage.getHeaders().get("content-encoding").get(0);
 			System.out.println("content-encoding header : " + contendencoding);
-		}else {
+		} else {
 			contendencoding = "normal";
 		}
-		
+
 		String decryptionkey = "1234567812345678";
 //    	if(inputMessage.getHeaders().get("authorization") != null && 
 //    			inputMessage.getHeaders().get("authorization").size()>0 && 
@@ -95,6 +105,76 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 
 	}
 
+//	@Override
+//	protected void writeInternal(Object o, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+//	    ObjectMapper mapper = new ObjectMapper();
+//	    mapper.setSerializationInclusion(Include.NON_NULL);
+//	    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//	    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+//
+//	    // Convert object to bytes
+//	    byte[] bytes = mapper.writeValueAsBytes(o);
+//	    outputMessage.getBody().write(encrypt(mapper.writeValueAsBytes(o)));
+//	    // Compress the bytes
+//	    byte[] compressedBytes = compress(bytes);
+//
+//	    // Set response headers
+//	    HttpHeaders headers = outputMessage.getHeaders();
+//	    headers.setContentType(MediaType.APPLICATION_JSON);
+//	    headers.set("Content-Encoding", "gzip");
+//
+//	    // Write the compressed bytes to the response body
+//	    OutputStream os = outputMessage.getBody();
+//	    os.write(compressedBytes);
+//	}
+//
+//	public byte[] compress(byte[] data) throws IOException {
+//	    ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length);
+//	    GZIPOutputStream gzip = new GZIPOutputStream(bos);
+//	    gzip.write(data);
+//	    gzip.close();
+//	    byte[] compressedData = bos.toByteArray();
+//	    bos.close();
+//	    return compressedData;
+//	}
+
+//	@Override
+//    protected void writeInternal(Object o, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.setSerializationInclusion(Include.NON_NULL);
+//        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+//
+//        // Convert object to bytes
+//        byte[] bytes = mapper.writeValueAsBytes(o);
+//
+//        // Create a GZIPOutputStream to compress the bytes
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        GZIPOutputStream gzipos = new GZIPOutputStream(baos);
+//        gzipos.write(bytes);
+//        gzipos.close();
+//
+//        // Set response headers
+//        HttpHeaders headers = outputMessage.getHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        headers.set("Content-Encoding", "gzip");
+//
+//        // Write the output stream to the response body
+////        outputMessage.getBody().write(encrypt(baos.toByteArray()));
+//        OutputStream os = outputMessage.getBody();
+//        os.write(baos.toByteArray());
+////        os.flush();
+////        os.close();
+//    }
+
+	private byte[] compress(byte[] data) throws IOException {
+		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+		try (GZIPOutputStream gzipStream = new GZIPOutputStream(byteStream)) {
+			gzipStream.write(data);
+		}
+		return byteStream.toByteArray();
+	}
+
 	@Override
 	protected void writeInternal(Object o, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
@@ -104,9 +184,81 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		// mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 //    	System.out.println("write "+ outputMessage.getHeaders().get("authorization").get(0));
-
-		outputMessage.getBody().write(encrypt(mapper.writeValueAsBytes(o)));
+		 HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		    String requestUrl = request.getRequestURI();
+        List < String > uncompressedUrls = Arrays.asList(
+                "/protocol/uploadprotocolsfile",
+                "/protocol/uploadprotocolsfilesql",
+                "/protocol/Uploadprotocolimage",
+                "/protocol/Uploadprotocolimagesql",
+                "/protocol/removeprotocolimage",
+                "/protocol/removeprotocolimagesql",
+                "/protocol/loadprotocolfiles",
+                "/protocol/uploadvideo",
+                "/protocol/uploadvideosql",
+                "/protocol/removeprotocolvideo",
+                "/protocol/removeprotocolvideossql",
+                "/protocol/uploadprotocolsorderfile",
+                "/protocol/uploadprotocolsorderfilesql",
+                "/protocol/Uploadprotocolorderimage",
+                "/protocol/Uploadprotocolorderimagesql",
+                "/protocol/removeprotocoorderlimage",
+                "/protocol/removeprotocoorderlimagesql",
+                "/protocol/loadprotocolorderfiles",
+                "/protocol/uploadprotocolordervideo",
+                "/protocol/downloadprotocolordervideosql",
+                "/protocol/removeprotocolordervideo",
+                "/protocol/removeprotocolordervideossql"
+            );
+        byte[] compressedBytes = new byte[0];
+        if (uncompressedUrls.contains(requestUrl)) {
+            // Don't compress the response
+        	compressedBytes = mapper.writeValueAsBytes(o);
+        } else {
+            // Compress the response
+        	compressedBytes = compress(mapper.writeValueAsBytes(o));
+        }
+		outputMessage.getBody().write(compressedBytes);
 	}
+//	@Override
+//	protected void writeInternal(Object o, HttpOutputMessage outputMessage)
+//	        throws IOException, HttpMessageNotWritableException {
+//	    ObjectMapper mapper = new ObjectMapper();
+//	    mapper.setSerializationInclusion(Include.NON_NULL);
+//	    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//	    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+//
+//	    // Compress the response body.
+//	    GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputMessage.getBody());
+//	    gzipOutputStream.write(mapper.writeValueAsBytes(o));
+//	    gzipOutputStream.close();
+//
+//	    // Add the "Content-Encoding" header
+////	    HttpHeaders headers = new HttpHeaders();
+////
+////        // Add the "Content-Encoding" header.
+////        headers.add(HttpHeaders.CONTENT_ENCODING, "gzip");
+//
+//        // Copy the headers from the new HttpHeaders object to the outputMessage object.
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Custom-Header", "Value");
+//        outputMessage.getHeaders().putAll(headers);
+//	}
+
+	// correct
+//    @Override
+//    protected void writeInternal(Object o, HttpOutputMessage outputMessage)
+//            throws IOException, HttpMessageNotWritableException {
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.setSerializationInclusion(Include.NON_NULL);
+//        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+//
+//        // Compress the response body.
+//        GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputMessage.getBody());
+//        gzipOutputStream.write(mapper.writeValueAsBytes(o));
+//        gzipOutputStream.close();
+//    }
 
 	private InputStream decrypt(InputStream inputStream, String key) {
 
