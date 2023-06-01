@@ -49,5 +49,5 @@ jobs:
         with:
           app-name: 'logilabelntestservice'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_809361AA0B934DB5BBCCDC3F03DACB2F }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A2F8959A10EE455088027A6A8DE1662C }}
           package: '*.jar'
