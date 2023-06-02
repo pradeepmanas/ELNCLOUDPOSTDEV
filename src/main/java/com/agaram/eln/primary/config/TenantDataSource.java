@@ -110,6 +110,11 @@ public class TenantDataSource implements Serializable {
             configuration.setPassword(config.getPassword());
             configuration.setMaximumPoolSize(5);
             configuration.setPoolName(config.getUrl());
+            configuration.setMinimumIdle(2);
+            configuration.setConnectionTestQuery("SELECT 1");
+            configuration.setConnectionTimeout(300000);
+            configuration.setConnectionTimeout(120000);
+            configuration.setLeakDetectionThreshold(300000);
             // Like this you can configure multiple properties here 
             
         HikariDataSource dataSource = new HikariDataSource(configuration);
