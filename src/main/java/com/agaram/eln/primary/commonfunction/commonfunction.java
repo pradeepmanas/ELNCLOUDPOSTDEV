@@ -337,53 +337,53 @@ public class commonfunction {
 		return jsonObj;
 	}
 	
-	public static Date getCurrentUtcTime() throws ParseException {
-	    LocalDateTime utcDateTime = LocalDateTime.now(ZoneOffset.UTC);
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-	    String formattedDateTime = utcDateTime.format(formatter);
-
-	    System.out.print("Current UTC Date and Time: " + formattedDateTime);
-
-	    // Parse the formatted date-time string into a Date object
-	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    Date utcDate = sdf.parse(formattedDateTime);
-
-	    return utcDate;
-	}
+//	public static Date getCurrentUtcTime() throws ParseException {
+//	    LocalDateTime utcDateTime = LocalDateTime.now(ZoneOffset.UTC);
+//	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//	    String formattedDateTime = utcDateTime.format(formatter);
+//
+//	    System.out.print("Current UTC Date and Time: " + formattedDateTime);
+//
+//	    // Parse the formatted date-time string into a Date object
+//	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//	    Date utcDate = sdf.parse(formattedDateTime);
+//
+//	    return utcDate;
+//	}
 	
-//	// create getCurrentUtcTime() method to get the current UTC time  
-//    public static Date getCurrentUtcTime() throws ParseException {  // handling ParseException  
-//        // create a thread-local instance of the SimpleDateFormat class
-//        ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> {
-//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-//            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-//            return dateFormat;
-//        });
-//        
-//        // parse the date using the thread-local sdf instance
-//        return sdf.get().parse(sdf.get().format(new Date()));
-////        // create an instance of the SimpleDateFormat class  
-////        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");  
-////        // set UTC time zone by using SimpleDateFormat class  
-////        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));  
-////        //create another instance of the SimpleDateFormat class for local date format  
-////        SimpleDateFormat ldf = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");  
-////        // declare and initialize a date variable which we return to the main method  
-////        Date d1 = null;  
-////        // use try catch block to parse date in UTC time zone  
-////        try {  
-////            // parsing date using SimpleDateFormat class  
-////            d1 = ldf.parse( sdf.format(new Date()) );  
-////        }   
-////        // catch block for handling ParseException  
-////        catch (java.text.ParseException e) {  
-////            // TODO Auto-generated catch block  
-////            e.printStackTrace();  
-////            System.out.println(e.getMessage());  
-////        }  
-////        // pass UTC date to main method.  
-////        return d1;  
-//    }
+	// create getCurrentUtcTime() method to get the current UTC time  
+    public static Date getCurrentUtcTime() throws ParseException {  // handling ParseException  
+        // create a thread-local instance of the SimpleDateFormat class
+        ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return dateFormat;
+        });
+        
+        // parse the date using the thread-local sdf instance
+        return sdf.get().parse(sdf.get().format(new Date()));
+//        // create an instance of the SimpleDateFormat class  
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");  
+//        // set UTC time zone by using SimpleDateFormat class  
+//        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));  
+//        //create another instance of the SimpleDateFormat class for local date format  
+//        SimpleDateFormat ldf = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");  
+//        // declare and initialize a date variable which we return to the main method  
+//        Date d1 = null;  
+//        // use try catch block to parse date in UTC time zone  
+//        try {  
+//            // parsing date using SimpleDateFormat class  
+//            d1 = ldf.parse( sdf.format(new Date()) );  
+//        }   
+//        // catch block for handling ParseException  
+//        catch (java.text.ParseException e) {  
+//            // TODO Auto-generated catch block  
+//            e.printStackTrace();  
+//            System.out.println(e.getMessage());  
+//        }  
+//        // pass UTC date to main method.  
+//        return d1;  
+    }
 
 	public static String getBatchValues(String jsonString, String batString) {
 		try {

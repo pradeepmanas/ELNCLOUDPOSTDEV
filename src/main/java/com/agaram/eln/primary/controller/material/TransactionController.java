@@ -66,15 +66,13 @@ public class TransactionController {
 	}
 	
 	@PostMapping(value = "/getMaterialLst4DashBoard")
-	public ResponseEntity<Object> getMaterialLst4DashBoard(@RequestBody Map<String, Object> inputMap)
-			throws Exception {
+	public ResponseEntity<Object> getMaterialLst4DashBoard(@RequestBody Map<String, Object> inputMap) throws Exception {
 
 		return transactionService.getMaterialLst4DashBoard(inputMap);
 	}
 	
 	@PostMapping(value="/updateMaterialInventoryNotification")
-	public void updateMaterialInventoryNotification(@RequestBody Map<String, Object> inputMap)
-			throws Exception {
+	public void updateMaterialInventoryNotification(@RequestBody Map<String, Object> inputMap) throws Exception {
 
 		transactionService.updateMaterialInventoryNotification(inputMap);
 	}
