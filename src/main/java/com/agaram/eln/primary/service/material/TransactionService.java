@@ -711,21 +711,18 @@ public class TransactionService {
 		return objReturnMap;
 	}
 
-	public void updateNotificationOnInventory(MaterialInventory objInventory, String task, LScfttransaction cft,
+	public List<LSnotification>  updateNotificationOnInventory(MaterialInventory objInventory, String task, LScfttransaction cft,
 			Double getQtyLeft, Date date) {
 
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-		List<MaterialInventoryTransaction> objLstTransactions = materialInventoryTransactionRepository
-				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(
-						objInventory.getNmaterialinventorycode());
+		
+		List<MaterialInventoryTransaction> objLstTransactions = objInventory.getMaterialInventoryTransactions();
 
 		List<LSuserMaster> objLstuser = objLstTransactions.stream()
-				.map(MaterialInventoryTransaction::getIssuedbyusercode).filter(Objects::nonNull)
-				.collect(Collectors.toList());
+				.map(MaterialInventoryTransaction::getIssuedbyusercode).filter(Objects::nonNull).collect(Collectors.toList());
 
 		if (!objLstuser.isEmpty()) {
-			List<Integer> objnotifyuser = objLstuser.stream().map(LSuserMaster::getUsercode)
-					.collect(Collectors.toList());
+			List<Integer> objnotifyuser = objLstuser.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
 
 			objnotifyuser = objnotifyuser.stream().distinct().collect(Collectors.toList());
 
@@ -737,21 +734,12 @@ public class TransactionService {
 			if (task.equals("INVENTORYQTYNOTIFICATION")) {
 
 				details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"qtyleft\":\""
-						+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objInventory.getNqtynotification()
-						+ "\"}";
+						+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objInventory.getNqtynotification() + "\"}";
 
 			} else if (task.equals("EXPIRYDATE")) {
-				details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + date
-						+ "\"}";
+				details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + date + "\"}";
 			} else {
-//				if (task.equals("EXPIRYDATE") || task.equals("OPENDATEDAYS") || task.equals("OPENDATEWEEK")
-//					|| task.equals("OPENDATEMONTH") || task.equals("OPENDATEMINUTES") || task.equals("OPENDATEHOURS")
-//					|| task.equals("OPENDATEYEAR") || task.equals("NEXTVALIDATEDAYS") || task.equals("NEXTVALIDATEWEEK")
-//					|| task.equals("NEXTVALIDATEMONTH") || task.equals("NEXTVALIDATEMINUTES")
-//					|| task.equals("NEXTVALIDATEHOURS") || task.equals("NEXTVALIDATEYEAR")) {
-
-				details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\""
-						+ getQtyLeft + "\"}";
+				details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + getQtyLeft + "\"}";
 			}
 
 			String notification = details;
@@ -773,10 +761,12 @@ public class TransactionService {
 				objnotify.setNotificationfor(1);
 
 				return objnotify;
+				
 			}).collect(Collectors.toList());
-
-			lsnotificationRepository.save(lstnotifications);
+			
+			return lstnotifications;
 		}
+		return lstnotifications;
 	}
 
 	public void updateMaterialInventoryNotification(Map<String, Object> inputMap) throws ParseException {
@@ -1119,8 +1109,8 @@ public class TransactionService {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(currentDate);
 
-		// Subtract 5 days from the current date
-		calendar.add(Calendar.DAY_OF_YEAR, -5);
+		// Add 5 days from the current date
+		calendar.add(Calendar.DAY_OF_YEAR, 5);
 
 		// Get the end date
 		Date endDate = calendar.getTime();
@@ -1129,6 +1119,8 @@ public class TransactionService {
 				.findByNtransactionstatusAndIsexpiryneedAndExpirydateBetween(28, true, currentDate, endDate);
 		
 		List<MaterialInventory> expiredInvent = new ArrayList<MaterialInventory>(); 
+		
+		List<LSnotification> lstLSnotifications = new ArrayList<LSnotification>();
 
 		objInventories.stream().peek(objInventory -> {
 
@@ -1136,31 +1128,16 @@ public class TransactionService {
 				Date date = objInventory.getExpirydate();
 				LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 				if (localCurrentDate.isBefore(localDate) || localDate.equals(localCurrentDate)) {
-					updateNotificationOnInventory(objInventory, "EXPIRYDATE", cft, 0.0, date);
+					lstLSnotifications.addAll(updateNotificationOnInventory(objInventory, "EXPIRYDATE", cft, 0.0, date));
 				} else {
 					objInventory.setNtransactionstatus(55);
-//					materialInventoryRepository.save(objInventory);
 					expiredInvent.add(objInventory);
-					updateNotificationOnInventory(objInventory, "EXPIRYREACHED", cft, 0.0, date);
+					lstLSnotifications.addAll(updateNotificationOnInventory(objInventory, "EXPIRYREACHED", cft, 0.0, date));
 				}
 			}
-//			if (objInventory.getValidationneed()) {
-//				Date lastValDate = objInventory.getValidationdate();
-//				if (lastValDate != null) {
-//					LocalDate localDate = lastValDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//					if (localCurrentDate.isBefore(localDate) || localDate.equals(localCurrentDate)) {
-//						Duration duration = Duration.between(localDate.atStartOfDay(), localCurrentDate.atStartOfDay());
-//						long days = duration.toDays();
-//						days = Math.abs(days);
-//						if (days <= 5) {
-//							final double day = (double) days;
-//							updateNotificationOnInventory(objInventory, "NEXTVALIDATEDAYS", cft, day, lastValDate);
-//						}
-//					}
-//				}
-//			}
 		}).collect(Collectors.toList());
 		
+		lsnotificationRepository.save(lstLSnotifications);
 		materialInventoryRepository.save(expiredInvent);
 	}
 
