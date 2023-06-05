@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.service.fileManipulation;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -13,6 +14,7 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.fileManipulation.OrderAttachment;
 import com.agaram.eln.primary.model.fileManipulation.ProfilePicture;
@@ -74,6 +76,12 @@ public class FileManipulationservice {
 		list.setTransactiondate(currentdate);
 //	    	list.setLsuserMaster(lsuserMasterRepository.findByusercode(usercode));
 		list.setLsuserMaster(usercode);
+		try {
+			list.setTransactiondate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lscfttransactionRepository.save(list);
 		deletePhoto(usercode, list);
 
@@ -100,6 +108,12 @@ public class FileManipulationservice {
 		list.setTransactiondate(currentdate);
 //	    	list.setLsuserMaster(lsuserMasterRepository.findByusercode(usercode));
 		list.setLsuserMaster(usercode);
+		try {
+			list.setTransactiondate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lscfttransactionRepository.save(list);
 		deleteSignature(usercode, list);
 
@@ -115,6 +129,12 @@ public class FileManipulationservice {
 	
 	public Long deleteSignature(Integer id, LScfttransaction list) {
 		list.setTableName("UserSignature");
+		try {
+			list.setTransactiondate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lscfttransactionRepository.save(list);
 		return UserSignatureRepository.deleteById(id);
 	}
@@ -131,6 +151,12 @@ public class FileManipulationservice {
 
 	public Long deletePhoto(Integer id, LScfttransaction list) {
 		list.setTableName("ProfilePicture");
+		try {
+			list.setTransactiondate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lscfttransactionRepository.save(list);
 		return profilePictureRepository.deleteById(id);
 	}

@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.dashboard;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.getmasters.Repositorymaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
@@ -206,6 +208,12 @@ public class DashBoardService {
 
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+			try {
+				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
@@ -309,6 +317,12 @@ public class DashBoardService {
 
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+			try {
+				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
@@ -1762,6 +1776,12 @@ public class DashBoardService {
 		mapOrders.put("count", count);
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+			try {
+				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
@@ -2523,6 +2543,12 @@ public class DashBoardService {
 
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+			try {
+				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
@@ -2546,6 +2572,12 @@ public class DashBoardService {
 
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+			try {
+				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 

@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.model.material;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
@@ -47,6 +50,27 @@ public class MaterialInventory {
 	@Column(name = "jsonuidata")
 	private String jsonuidata;
 	
+	private Boolean isexpiryneed;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date expirydate;
+	
+	private Boolean validationneed;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date validationdate;
+	
+	public Boolean getValidationneed() {
+		return validationneed;
+	}
+	public void setValidationneed(Boolean validationneed) {
+		this.validationneed = validationneed;
+	}
+	public Date getValidationdate() {
+		return validationdate;
+	}
+	public void setValidationdate(Date validationdate) {
+		this.validationdate = validationdate;
+	}
+
 	private transient String sinventoryid;
 	private transient String savailablequatity;
 	private transient String sunitname;
@@ -55,8 +79,21 @@ public class MaterialInventory {
 	private LScfttransaction objsilentaudit;
 	
 	@Transient
-	public String info;
+	public String info;	
 	
+	public Boolean getIsexpiryneed() {
+		return isexpiryneed;
+	}
+	public void setIsexpiryneed(Boolean isexpiryneed) {
+		this.isexpiryneed = isexpiryneed;
+	}
+	public Date getExpirydate() {
+		return expirydate;
+	}
+	public void setExpirydate(Date expirydate) {
+		this.expirydate = expirydate;
+	}
+
 	@OneToMany
 	@JoinColumn(name = "nmaterialinventorycode")
 	private List<LsOrderattachments> lsOrderattachments;	

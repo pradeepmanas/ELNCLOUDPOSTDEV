@@ -11,6 +11,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
 //import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,6 +96,8 @@ public class MaterialInventoryService {
 	private CloudFileManipulationservice cloudFileManipulationservice;
 	@Autowired
 	private FileManipulationservice fileManipulationservice;
+//	@Autowired
+//	private TransactionService transactionService;
 
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInventory(Integer nsiteInteger) throws Exception {
@@ -318,7 +321,7 @@ public class MaterialInventoryService {
 				}
 			} else {
 				objmap.put("SelectedMaterialInventory", lstMaterialInventory);
-			}
+			}			
 		}
 
 		List<MaterialType> lstMaterialType = materialTypeRepository
@@ -542,6 +545,7 @@ public class MaterialInventoryService {
 		Date receiveDate = null;
 		Date expiryDate = null;
 		Date manufDate = null;
+		Date lastValidation = null;
 		String strcheck = "";
 		String strformat = "";
 		String updatestr = "";
@@ -644,14 +648,52 @@ public class MaterialInventoryService {
 				}
 			}
 		}
+		if (jsonObject.has("Last Validation Date & Time")) {
+			lastValidation = (Date) jsonObject.get("Last Validation Date & Time");
+		}
 
 		JSONObject objmat = new JSONObject(objGetMaterialJSON.getJsondata());
 
-		Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,
-				(Integer) inputMap.get("nmaterialcode"));
-		MaterialCategory objMaterialCategory = materialCategoryRepository
-				.findByNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
+		Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,(Integer) inputMap.get("nmaterialcode"));
+		MaterialCategory objMaterialCategory = materialCategoryRepository.findByNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
+		
+		/**
+		 * Added for validate inventory expiry
+		 * Start
+		 */
+		
+		Boolean isExpiry = (Boolean) inputMap.get("isexpiryneed");
+		Boolean isNextVal = false;
+		
+		Date getExpPolicyDate = null;
+		Date getNextValDate = null;
+		
+		if(objMaterial.isExpirypolicy()) {
+			Date getmanufDate = manufDate == null ? commonfunction.getCurrentUtcTime() : manufDate;
+			if(objMaterial.getExpirypolicyperiod().equalsIgnoreCase("NA") ||objMaterial.getExpirypolicyperiod().equalsIgnoreCase("Never")) {
+				isExpiry = false;
+			}else {
+				isExpiry = true;
+				getExpPolicyDate = calcluateDate(objMaterial.getExpirypolicyperiod(),getmanufDate,objMaterial.getExpirypolicyvalue());
+			}
+			expiryDate = getExpPolicyDate != null ? getExpPolicyDate : expiryDate;
+		}
+		if(objMaterial.isNextvalidation()) {
+			getNextValDate = lastValidation;
+//			Date getmanufDate = lastValidation;
+			if(objMaterial.getNextvalidationperiod().equalsIgnoreCase("NA") ||objMaterial.getNextvalidationperiod().equalsIgnoreCase("Never")) {
+				isNextVal = false;
+			}else {
+				isNextVal = true;
+				getNextValDate = lastValidation;
+//				getNextValDate = calcluateDate(objMaterial.getNextvalidationperiod(),getmanufDate,objMaterial.getNextvalidationvalue());
+			}
+		}		
 
+		/**
+		 * End
+		 */
+		
 		LSuserMaster objUser = new LSuserMaster();
 		objUser.setUsercode(cft.getLsuserMaster());
 
@@ -706,13 +748,16 @@ public class MaterialInventoryService {
 
 					MaterialInventory objSaveMaterialInventory = new MaterialInventory();
 
+					objSaveMaterialInventory.setIsexpiryneed(isExpiry);
+					objSaveMaterialInventory.setExpirydate(isExpiry ? expiryDate : null);
+					objSaveMaterialInventory.setValidationneed(isNextVal);
+					objSaveMaterialInventory.setValidationdate(getNextValDate);
+					
 					objSaveMaterialInventory.setJsondata(jsonObject.toString());
 					objSaveMaterialInventory.setJsonuidata(jsonuidata.toString());
 					objSaveMaterialInventory.setNstatus(Enumeration.TransactionStatus.ACTIVE.gettransactionstatus());
 					objSaveMaterialInventory.setNtransactionstatus((Integer) inputMap.get("ntransactionstatus"));
-					objSaveMaterialInventory.setNsectioncode(
-							(Integer) (inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode")
-									: -1));
+					objSaveMaterialInventory.setNsectioncode((Integer) (inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode"): -1));
 					objSaveMaterialInventory.setNmaterialcode((Integer) inputMap.get("nmaterialcode"));
 					objSaveMaterialInventory.setNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
 					objSaveMaterialInventory.setNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
@@ -755,12 +800,10 @@ public class MaterialInventoryService {
 					objTransaction.setNinventorytranscode((Integer) jsonObjectInvTrans.get("ninventorytranscode"));
 					objTransaction.setNtransactiontype((Integer) jsonObjectInvTrans.get("ntransactiontype"));
 					objTransaction.setNsectioncode((Integer) (jsonObjectInvTrans.get("nsectioncode") != null
-							? (Integer) jsonObjectInvTrans.get("nsectioncode")
-							: -1));
+							? (Integer) jsonObjectInvTrans.get("nsectioncode"): -1));
 					objTransaction.setNsitecode(-1);
 					objTransaction.setNresultusedmaterialcode(-1);
-					objTransaction
-							.setNqtyreceived(Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
+					objTransaction.setNqtyreceived(Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
 					objTransaction.setNqtyissued(Double.valueOf((Integer) jsonObjectInvTrans.get("nqtyissued")));
 					objTransaction.setCreatedbyusercode(objUser);
 					objTransaction.setIssuedbyusercode(objUser);
@@ -792,12 +835,14 @@ public class MaterialInventoryService {
 			objSaveMaterialInventory.setJsonuidata(jsonuidata.toString());
 			objSaveMaterialInventory.setNstatus(Enumeration.TransactionStatus.ACTIVE.gettransactionstatus());
 			objSaveMaterialInventory.setNtransactionstatus((Integer) inputMap.get("ntransactionstatus"));
-			objSaveMaterialInventory.setNsectioncode(
-					(Integer) (inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode") : -1));
+			objSaveMaterialInventory.setNsectioncode((Integer) (inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode") : -1));
 			objSaveMaterialInventory.setNmaterialcode((Integer) inputMap.get("nmaterialcode"));
 			objSaveMaterialInventory.setNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
 			objSaveMaterialInventory.setNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
-
+			objSaveMaterialInventory.setIsexpiryneed(isExpiry);
+			objSaveMaterialInventory.setExpirydate(isExpiry ? expiryDate : null);
+			objSaveMaterialInventory.setValidationneed(isNextVal);
+			objSaveMaterialInventory.setValidationdate(getNextValDate);
 			objSaveMaterialInventory = materialInventoryRepository.save(objSaveMaterialInventory);
 
 			if (strPrefix != null && !strPrefix.equals("")) {
@@ -890,6 +935,34 @@ public class MaterialInventoryService {
 
 	}
 
+	private Date calcluateDate(String type,Date date, String value1) {
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+
+		Integer value = Integer.valueOf(value1);
+		
+		if(type.equalsIgnoreCase("Days")) {
+			calendar.add(Calendar.DAY_OF_YEAR, value);
+		}
+		if(type.equalsIgnoreCase("Month")) {
+			calendar.add(Calendar.MONTH, value);
+		}
+		if(type.equalsIgnoreCase("Weeks")) {
+			calendar.add(Calendar.WEEK_OF_YEAR, value);
+		}
+		if(type.equalsIgnoreCase("Years")) {
+			calendar.add(Calendar.YEAR, value);
+		}	
+		if(type.equalsIgnoreCase("Hours")) {
+			calendar.add(Calendar.HOUR_OF_DAY, value);	
+		}
+		if(type.equalsIgnoreCase("Minutes")) {
+			calendar.add(Calendar.MINUTE, value);	
+		}
+		return calendar.getTime();
+	}
+
 	@SuppressWarnings({ "unchecked", "unused" })
 	public ResponseEntity<Object> UpdateMaterialInventory(Map<String, Object> inputMap) throws Exception {
 
@@ -898,6 +971,7 @@ public class MaterialInventoryService {
 		Date receiveDate = null;
 		Date expiryDate = null;
 		Date manufDate = null;
+		Date lastValidation = null;
 		List<String> lstDateField = (List<String>) inputMap.get("DateList");
 
 		final String dtransactiondate = getCurrentDateTime().truncatedTo(ChronoUnit.SECONDS).toString()
@@ -992,9 +1066,50 @@ public class MaterialInventoryService {
 				}
 			}
 		}
+		
+		if (jsonObject.has("Last Validation Date & Time")) {
+			lastValidation = (Date) jsonObject.get("Last Validation Date & Time");
+		}
 
 		jsonObject.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVED.gettransactionstatus());
 		jsonuidata.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVED.gettransactionstatus());
+		
+		/**
+		 * Added for validate inventory expiry
+		 * Start
+		 */
+		
+		Boolean isExpiry = (Boolean) inputMap.get("isexpiryneed");
+		Boolean isNextVal = false;
+		
+		Date getExpPolicyDate = null;
+		Date getNextValDate = null;
+		
+		if(objGetMaterialJSON.isExpirypolicy()) {
+			Date getmanufDate = manufDate == null ? commonfunction.getCurrentUtcTime() : manufDate;
+			if(objGetMaterialJSON.getExpirypolicyperiod().equalsIgnoreCase("NA") ||objGetMaterialJSON.getExpirypolicyperiod().equalsIgnoreCase("Never")) {
+				isExpiry = false;
+			}else {
+				isExpiry = true;
+				getExpPolicyDate = calcluateDate(objGetMaterialJSON.getExpirypolicyperiod(),getmanufDate,objGetMaterialJSON.getExpirypolicyvalue());
+			}
+			expiryDate = getExpPolicyDate != null ? getExpPolicyDate : expiryDate;
+		}
+		if(objGetMaterialJSON.isNextvalidation()) {
+			getNextValDate = lastValidation;
+//			Date getmanufDate = lastValidation;
+			if(objGetMaterialJSON.getNextvalidationperiod().equalsIgnoreCase("NA") ||objGetMaterialJSON.getNextvalidationperiod().equalsIgnoreCase("Never")) {
+				isNextVal = false;
+			}else {
+				isNextVal = true;
+				getNextValDate = lastValidation;
+//				getNextValDate = calcluateDate(objMaterial.getNextvalidationperiod(),getmanufDate,objMaterial.getNextvalidationvalue());
+			}
+		}		
+
+		/**
+		 * End
+		 */
 		
 		if (!lstDateField.isEmpty()) {
 			jsonObject = (JSONObject) removeISTinDateString(jsonObject, lstDateField, false);
@@ -1003,12 +1118,16 @@ public class MaterialInventoryService {
 			jsonuidataTrans = (JSONObject) removeISTinDateString(jsonuidataTrans, lstDateField, false);
 		}
 
-		MaterialInventory objInventory = materialInventoryRepository
-				.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
+		MaterialInventory objInventory = materialInventoryRepository.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
+		
 		objInventory.setJsondata(ReplaceQuote(jsonObject.toString()));
 		objInventory.setJsonuidata(ReplaceQuote(jsonuidata.toString()));
-		objInventory
-				.setNsectioncode(inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode") : -1);
+		objInventory.setNsectioncode(inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode") : -1);
+		objInventory.setIsexpiryneed(isExpiry);
+		objInventory.setExpirydate(isExpiry ? expiryDate : null);
+		objInventory.setValidationneed(isNextVal);
+		objInventory.setValidationdate(getNextValDate);
+		
 		materialInventoryRepository.save(objInventory);
 
 		jsonObjectTrans.put("Transaction Date & Time", dtransactiondate);
@@ -1603,7 +1722,7 @@ public class MaterialInventoryService {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ "unchecked", "unused" })
 	public ResponseEntity<Object> updateMaterialStatus(Map<String, Object> inputMap) throws Exception {
 
 		ObjectMapper objmapper = new ObjectMapper();
@@ -1615,6 +1734,8 @@ public class MaterialInventoryService {
 		List<String> lstDateField = new ArrayList<>();
 		MaterialInventory objMaterialInventory = materialInventoryRepository
 				.findByNmaterialinventorycodeAndNstatus((Integer) inputMap.get("nmaterialinventorycode"), 1);
+		
+		Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,objMaterialInventory.getNmaterialcode());
 
 		final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		if (objMaterialInventory != null) {
@@ -1730,14 +1851,34 @@ public class MaterialInventoryService {
 							jsonuidata.put("tzOpen Date", inputMap.get("tzOpen Date"));
 
 							lstDateField.add("Open Date");
-//							jsonObject = (JSONObject) convertInputDateToUTCByZone(jsonObject, lstDateField, false);
-//							jsonuidata = (JSONObject) convertInputDateToUTCByZone(jsonuidata, lstDateField, false);
 							jsonObject = getmaterialquery(jsonObject, 2);
 							jsonuidata = getmaterialquery(jsonuidata, 2);
 						}
 
 						objMaterialInventory.setJsondata(jsonObject.toString());
 						objMaterialInventory.setJsonuidata(jsonuidata.toString());
+						
+						/**
+						 * Added for after done open expiry set exiry time
+						 * Start
+						 */
+						Boolean isExpiry = false; 
+						Date getExpPolicyDate = null;
+						if(objMaterial.isExpirypolicy()) {
+							Date openDate = (Date) inputMap.get("Open Date");
+							Date getmanufDate = openDate;
+							if(objMaterial.getOpenexpiryperiod().equalsIgnoreCase("NA") ||objMaterial.getOpenexpiryperiod().equalsIgnoreCase("Never")) {
+								isExpiry = false;
+							}else {
+								isExpiry = true;
+								getExpPolicyDate = calcluateDate(objMaterial.getOpenexpiryperiod(),getmanufDate,objMaterial.getOpenexpiryvalue());
+								objMaterialInventory.setExpirydate(getExpPolicyDate);
+							}
+							objMaterialInventory.setIsexpiryneed(isExpiry);
+						}
+						/**
+						 * End
+						 */
 
 						materialInventoryRepository.save(objMaterialInventory);
 

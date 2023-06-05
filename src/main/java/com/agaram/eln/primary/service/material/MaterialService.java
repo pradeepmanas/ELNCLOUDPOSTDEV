@@ -369,7 +369,9 @@ public class MaterialService {
 		String strJsonUiData = inputMap.get("jsonuidata").toString();
 
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-
+		
+		Map<String, Object> objMaterialProps = (Map<String, Object>) inputMap.get("Material");
+		
 		inputMap.get("DateList");
 		boolean nflag = false;
 
@@ -397,6 +399,55 @@ public class MaterialService {
 			objMaterial.setObjsilentaudit(cft);
 			return new ResponseEntity<>(objMaterial, HttpStatus.CONFLICT);
 		}
+		
+		/**
+		 * Added for validate inventory expiry
+		 * Start
+		 */
+		
+		Boolean expiryPolicy = objMaterialProps.get("Expiry Validations").toString().equalsIgnoreCase("Expiry policy") ? true : false ;
+		Boolean openExpiry = objMaterialProps.get("Open Expiry Need").toString().equalsIgnoreCase("3") ? true : false ;
+		Boolean nextValidation = objMaterialProps.get("Next Validation Need").toString().equalsIgnoreCase("3") ? true : false ;
+		
+		String expiryValue = objMaterialProps.get("Expiry Policy Days").toString();
+		String openValue = objMaterialProps.get("Open Expiry").toString();
+		String nextValValue = objMaterialProps.get("Next Validation").toString();
+		
+		Map<String, Object> expiryPeriodMap = new HashMap<>();
+		Map<String, Object> openPeriodMap = new HashMap<>();
+		Map<String, Object> nextPeriodMap = new HashMap<>();
+		String expiryPeriod = "";
+		String openPeriod = "";
+		String nextPeriod = "";
+		
+		if(expiryPolicy) {
+			expiryPeriodMap = (Map<String, Object>) objMaterialProps.get("Expiry Policy Period");
+			expiryPeriod = expiryPeriodMap.get("label").toString();
+		}
+		if(openExpiry) {
+			openPeriodMap = (Map<String, Object>) objMaterialProps.get("Open Expiry Period");
+			openPeriod = openPeriodMap.get("label").toString();
+		}
+		if(nextValidation) {
+			nextPeriodMap = (Map<String, Object>) objMaterialProps.get("Next Validation Period");
+			nextPeriod = nextPeriodMap.get("label").toString();
+		}
+		
+		objMaterial.setExpirypolicy(expiryPolicy);		
+		objMaterial.setExpirypolicyvalue(expiryValue);
+		objMaterial.setExpirypolicyperiod(expiryPeriod);
+		
+		objMaterial.setOpenexpiry(openExpiry);
+		objMaterial.setOpenexpiryvalue(openValue);
+		objMaterial.setOpenexpiryperiod(openPeriod);
+		
+		objMaterial.setNextvalidation(nextValidation);
+		objMaterial.setNextvalidationvalue(nextValValue);
+		objMaterial.setNextvalidationperiod(nextPeriod);
+		
+		/**
+		 * End
+		 */
 
 		objMaterial.setNmaterialcatcode((Integer) jsonObject.get("nmaterialcatcode"));
 		objMaterial.setSmaterialname(jsonObject.getString("Material Name"));
@@ -741,6 +792,56 @@ public class MaterialService {
 				return new ResponseEntity<>(matobj, HttpStatus.CONFLICT);
 			}
 		}
+		
+		/**
+		 * Added for validate inventory expiry
+		 * Start
+		 */
+		Map<String, Object> objMaterialProps = (Map<String, Object>) inputMap.get("Material");
+		
+		Boolean expiryPolicy = objMaterialProps.get("Expiry Validations").toString().equalsIgnoreCase("Expiry policy") ? true : false ;
+		Boolean openExpiry = objMaterialProps.get("Open Expiry Need").toString().equalsIgnoreCase("3") ? true : false ;
+		Boolean nextValidation = objMaterialProps.get("Next Validation Need").toString().equalsIgnoreCase("3") ? true : false ;
+		
+		String expiryValue = objMaterialProps.get("Expiry Policy Days").toString();
+		String openValue = objMaterialProps.get("Open Expiry").toString();
+		String nextValValue = objMaterialProps.get("Next Validation").toString();
+		
+		Map<String, Object> expiryPeriodMap = new HashMap<>();
+		Map<String, Object> openPeriodMap = new HashMap<>();
+		Map<String, Object> nextPeriodMap = new HashMap<>();
+		String expiryPeriod = "";
+		String openPeriod = "";
+		String nextPeriod = "";
+		
+		if(expiryPolicy) {
+			expiryPeriodMap = (Map<String, Object>) objMaterialProps.get("Expiry Policy Period");
+			expiryPeriod = expiryPeriodMap.get("label").toString();
+		}
+		if(openExpiry) {
+			openPeriodMap = (Map<String, Object>) objMaterialProps.get("Open Expiry Period");
+			openPeriod = openPeriodMap.get("label").toString();
+		}
+		if(nextValidation) {
+			nextPeriodMap = (Map<String, Object>) objMaterialProps.get("Next Validation Period");
+			nextPeriod = nextPeriodMap.get("label").toString();
+		}		
+		
+		objMaterial.setExpirypolicy(expiryPolicy);		
+		objMaterial.setExpirypolicyvalue(expiryValue);
+		objMaterial.setExpirypolicyperiod(expiryPeriod);
+		
+		objMaterial.setOpenexpiry(openExpiry);
+		objMaterial.setOpenexpiryvalue(openValue);
+		objMaterial.setOpenexpiryperiod(openPeriod);
+		
+		objMaterial.setNextvalidation(nextValidation);
+		objMaterial.setNextvalidationvalue(nextValValue);
+		objMaterial.setNextvalidationperiod(nextPeriod);
+		
+		/**
+		 * End
+		 */
 
 		objMaterial.setJsondata(strJsonObj.toString());
 		objMaterial.setJsonuidata(strJsonUiData.toString());

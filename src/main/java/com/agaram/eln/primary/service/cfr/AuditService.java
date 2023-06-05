@@ -439,6 +439,12 @@ public class AuditService {
 		LScfttransaction cfttDeatils = new LScfttransaction();
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LScfttransaction");
+			try {
+				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			cfttDeatils = lscfttransactionRepository.save(objuser.getObjsilentaudit());
 			cfttDeatils.setObjResponse(new Response());
 			cfttDeatils.getObjResponse().setStatus(true);

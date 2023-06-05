@@ -4087,3 +4087,20 @@ update lsusergrouprights set sedit = 1 where sedit = 'NA' and displaytopic = 'ID
 
 ALTER TABLE IF Exists lsprotocolorderstructure ADD COLUMN IF NOT EXISTS floatvalues bigint;
 ALTER TABLE IF Exists lssheetorderstructure ADD COLUMN IF NOT EXISTS floatvalues bigint;
+
+ALTER TABLE IF Exists materialinventory ADD Column IF NOT EXISTS isexpiryneed BOOLEAN;
+ALTER TABLE IF Exists materialinventory ADD Column IF NOT EXISTS expirydate DATE;
+ALTER TABLE IF Exists materialinventory ADD Column IF NOT EXISTS validationneed Boolean;
+ALTER TABLE IF Exists materialinventory ADD Column IF NOT EXISTS validationdate TIMESTAMP;
+
+ALTER TABLE IF Exists material ADD Column IF NOT EXISTS expirypolicy BOOLEAN;
+ALTER TABLE IF Exists material ADD Column IF NOT EXISTS expirypolicyvalue character varying(50);
+ALTER TABLE IF Exists material ADD Column IF NOT EXISTS expirypolicyperiod character varying(50);
+
+ALTER TABLE IF Exists material ADD Column IF NOT EXISTS openexpiry BOOLEAN;
+ALTER TABLE IF Exists material ADD Column IF NOT EXISTS openexpiryvalue character varying(50);
+ALTER TABLE IF Exists material ADD Column IF NOT EXISTS openexpiryperiod character varying(50);
+
+ALTER TABLE IF Exists material ADD Column IF NOT EXISTS nextvalidation BOOLEAN;
+ALTER TABLE IF Exists material ADD Column IF NOT EXISTS nextvalidationvalue character varying(50);
+ALTER TABLE IF Exists material ADD Column IF NOT EXISTS nextvalidationperiod character varying(50);

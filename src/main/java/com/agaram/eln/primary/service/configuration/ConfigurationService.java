@@ -15,6 +15,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.configuration.LSConfiguration;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
@@ -342,6 +344,12 @@ public class ConfigurationService {
 						// LScfttransactionobj.setActions("Creation");
 						LScfttransactionobj.setSystemcoments("System Generated");
 						LScfttransactionobj.setTableName("LSConfiguration");
+						try {
+							LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						lscfttransactionRepository.save(LScfttransactionobj);
 					}
 				}
@@ -416,6 +424,12 @@ public class ConfigurationService {
 					// LScfttransactionobj.setActions("Load");
 					LScfttransactionobj.setSystemcoments("System Generated");
 					LScfttransactionobj.setTableName("LSConfiguration");
+					try {
+						LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					lscfttransactionRepository.save(LScfttransactionobj);
 				}
 			}
@@ -452,6 +466,12 @@ public class ConfigurationService {
 					// LScfttransactionobj.setActions("Load");
 					LScfttransactionobj.setSystemcoments("System Generated");
 					LScfttransactionobj.setTableName("LSConfiguration");
+					try {
+						LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					lscfttransactionRepository.save(LScfttransactionobj);
 				}
 			}

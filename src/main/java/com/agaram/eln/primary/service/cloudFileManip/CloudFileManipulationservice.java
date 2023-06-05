@@ -3,6 +3,7 @@ package com.agaram.eln.primary.service.cloudFileManip;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderAttachment;
@@ -70,7 +72,13 @@ public class CloudFileManipulationservice {
 		list.setActions("View / Load");
 		list.setSystemcoments("System Generated");
 		list.setTableName("profile");
-		list.setTransactiondate(currentdate);
+//		list.setTransactiondate(currentdate);
+		try {
+			list.setTransactiondate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		list.setLsuserMaster(usercode);
 		lscfttransactionRepository.save(list);
 		deletePhoto(usercode, list);
@@ -106,6 +114,12 @@ public class CloudFileManipulationservice {
 
 	public Long deletePhoto(Integer id, LScfttransaction list) {
 		list.setTableName("ProfilePicture");
+		try {
+			list.setTransactiondate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lscfttransactionRepository.save(list);
 		return cloudProfilePictureRepository.deleteById(id);
 	}

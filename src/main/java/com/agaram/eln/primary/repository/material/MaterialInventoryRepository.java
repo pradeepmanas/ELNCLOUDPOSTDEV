@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.material;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -44,5 +45,8 @@ public interface MaterialInventoryRepository extends JpaRepository<MaterialInven
 			Integer nmaterialcode, int i);
 
 	public MaterialInventory findByNmaterialinventorycodeAndNtransactionstatusNot(Integer integer, int i);
+
+	public List<MaterialInventory> findByNtransactionstatusAndIsexpiryneedAndExpirydateBetween(int i, boolean b,
+			Date currentDate, Date currentDate2);
 
 }
