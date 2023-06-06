@@ -405,13 +405,16 @@ public class MaterialService {
 		 * Start
 		 */
 		
-		Boolean expiryPolicy = objMaterialProps.get("Expiry Validations").toString().equalsIgnoreCase("Expiry policy") ? true : false ;
-		Boolean openExpiry = objMaterialProps.get("Open Expiry Need").toString().equalsIgnoreCase("3") ? true : false ;
-		Boolean nextValidation = objMaterialProps.get("Next Validation Need").toString().equalsIgnoreCase("3") ? true : false ;
+		Boolean expiryPolicy = objMaterialProps.get("Expiry Validations") == null ? false :
+				objMaterialProps.get("Expiry Validations").toString().equalsIgnoreCase("Expiry policy") ? true : false ;
+		Boolean openExpiry = objMaterialProps.get("Open Expiry Need") == null ? false :
+				objMaterialProps.get("Open Expiry Need").toString().equalsIgnoreCase("3") ? true : false ;
+		Boolean nextValidation = objMaterialProps.get("Next Validation Need") == null ? false :
+				objMaterialProps.get("Next Validation Need").toString().equalsIgnoreCase("3") ? true : false ;
 		
-		String expiryValue = objMaterialProps.get("Expiry Policy Days").toString();
-		String openValue = objMaterialProps.get("Open Expiry").toString();
-		String nextValValue = objMaterialProps.get("Next Validation").toString();
+		String expiryValue = objMaterialProps.get("Expiry Policy Days") == null ? "" : objMaterialProps.get("Expiry Policy Days").toString();
+		String openValue = objMaterialProps.get("Open Expiry") == null ? "" : objMaterialProps.get("Open Expiry").toString();
+		String nextValValue = objMaterialProps.get("Next Validation") == null ? "" : objMaterialProps.get("Next Validation").toString();
 		
 		Map<String, Object> expiryPeriodMap = new HashMap<>();
 		Map<String, Object> openPeriodMap = new HashMap<>();
@@ -799,17 +802,21 @@ public class MaterialService {
 		 */
 		Map<String, Object> objMaterialProps = (Map<String, Object>) inputMap.get("Material");
 		
-		Boolean expiryPolicy = objMaterialProps.get("Expiry Validations").toString().equalsIgnoreCase("Expiry policy") ? true : false ;
-		Boolean openExpiry = objMaterialProps.get("Open Expiry Need").toString().equalsIgnoreCase("3") ? true : false ;
-		Boolean nextValidation = objMaterialProps.get("Next Validation Need").toString().equalsIgnoreCase("3") ? true : false ;
+		Boolean expiryPolicy = objMaterialProps.get("Expiry Validations") == null ? false :
+			objMaterialProps.get("Expiry Validations").toString().equalsIgnoreCase("Expiry policy") ? true : false ;
+		Boolean openExpiry = objMaterialProps.get("Open Expiry Need") == null ? false :
+				objMaterialProps.get("Open Expiry Need").toString().equalsIgnoreCase("3") ? true : false ;
+		Boolean nextValidation = objMaterialProps.get("Next Validation Need") == null ? false :
+				objMaterialProps.get("Next Validation Need").toString().equalsIgnoreCase("3") ? true : false ;
 		
-		String expiryValue = objMaterialProps.get("Expiry Policy Days").toString();
-		String openValue = objMaterialProps.get("Open Expiry").toString();
-		String nextValValue = objMaterialProps.get("Next Validation").toString();
+		String expiryValue = objMaterialProps.get("Expiry Policy Days") == null ? "" : objMaterialProps.get("Expiry Policy Days").toString();
+		String openValue = objMaterialProps.get("Open Expiry") == null ? "" : objMaterialProps.get("Open Expiry").toString();
+		String nextValValue = objMaterialProps.get("Next Validation") == null ? "" : objMaterialProps.get("Next Validation").toString();
 		
 		Map<String, Object> expiryPeriodMap = new HashMap<>();
 		Map<String, Object> openPeriodMap = new HashMap<>();
 		Map<String, Object> nextPeriodMap = new HashMap<>();
+		
 		String expiryPeriod = "";
 		String openPeriod = "";
 		String nextPeriod = "";

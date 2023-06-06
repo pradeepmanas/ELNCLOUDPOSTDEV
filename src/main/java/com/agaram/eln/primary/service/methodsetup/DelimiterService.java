@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.methodsetup;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
@@ -119,7 +121,12 @@ public class DelimiterService {
 	    	else
 	    	{    		
 	    		delimiters.setCreatedby(createdUser);
-	    			
+	    		try {
+					delimiters.setCreateddate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
 	    		final Delimiter savedPolicy = delimitersRepo.save(delimiters);
 	    		savedPolicy.setDisplayvalue(savedPolicy.getDelimitername());
 	    		savedPolicy.setScreenname("Delimiter");
@@ -337,6 +344,13 @@ public class DelimiterService {
 		   final int doneByUserKey,final Delimiter auditdetails, final HttpServletRequest request)
    {	   
 //	   Boolean saveAuditTrail = true;
+	   try {
+			delimiters.setCreateddate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	   
 	   final Optional<Delimiter> delimiterByKey = delimitersRepo.findByDelimiterkeyAndStatusAndLssitemaster(delimiters.getDelimiterkey(), 1,delimiters.getLssitemaster());
 	   
 //	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
@@ -366,7 +380,7 @@ public class DelimiterService {
 			    			//copy of object for using 'Diffable' to compare objects
 //				    		final Delimiter delimitersBeforeSave = new Delimiter(delimiterByName.get());
 				    			
-				     			
+				    	
 				    		final Delimiter savedDelimiters = delimitersRepo.save(delimiters);
 				    		
 				    		savedDelimiters.setDisplayvalue(savedDelimiters.getActualdelimiter());
@@ -507,6 +521,12 @@ public class DelimiterService {
 				LScfttransaction.setTableName("Delimiter");
 				LScfttransaction.setSystemcoments("System Generated");
 				
+				try {
+					LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				lscfttransactionrepo.save(LScfttransaction);
 			   
 		    }			

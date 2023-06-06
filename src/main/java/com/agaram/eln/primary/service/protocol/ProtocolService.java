@@ -360,6 +360,12 @@ public class ProtocolService {
 					new TypeReference<LScfttransaction>() {
 					});
 			LScfttransactionobj.setTableName("LSprotocolmaster");
+			try {
+				LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(LScfttransactionobj);
 		}
 		@SuppressWarnings("unchecked")
@@ -1249,6 +1255,12 @@ public class ProtocolService {
 			}
 			lsprotocolversionRepository.save(versProto);
 			if (objaudit1 != null && objaudit1.getLssitemaster() != null) {
+				try {
+					objaudit1.setTransactiondate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				lscfttransactionRepository.save(objaudit1);
 			}
 		} else {
@@ -1698,6 +1710,12 @@ public class ProtocolService {
 						+ newProtocolMasterObj1.getCreatedbyusername());
 				LScfttransactionobj.setTableName("LSfile");
 				LScfttransactionobj.setTableName("LSprotocolmaster");
+				try {
+					LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				lscfttransactionRepository.save(LScfttransactionobj);
 			}
 
@@ -3794,6 +3812,13 @@ public class ProtocolService {
 //		mapOrders.put("sheets", GetApprovedSheets(0,objuser));
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSfiletest");
+			
+			try {
+				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 		return mapOrders;
@@ -3803,6 +3828,12 @@ public class ProtocolService {
 
 		if (objuser.getCreateby().getObjsilentaudit() != null) {
 			objuser.getCreateby().getObjsilentaudit().setTableName("lslogilabprotocolsteps");
+			try {
+				objuser.getCreateby().getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objuser.getCreateby().getObjsilentaudit());
 		}
 
@@ -3824,6 +3855,12 @@ public class ProtocolService {
 
 //			mapOrders = getProtocolOrderStepLst(argMap);
 			LScfttransactionobj.setTableName("lslogilabprotocolsteps");
+			try {
+				LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(LScfttransactionobj);
 		}
 		return mapOrders;

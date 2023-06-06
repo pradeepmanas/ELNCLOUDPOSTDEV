@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.instrumentsetup;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.instrumentsetup.FileSettings;
 import com.agaram.eln.primary.model.instrumentsetup.InstMethod;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
@@ -138,6 +140,12 @@ public class InstMasterService {
 	    	final InstrumentCategory instCategory = categoryRepo.findOne(master.getInstcategory().getInstcatkey()); 
 	    	master.setInstcategory(instCategory);
 			
+	    	try {
+				master.setCreateddate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			final InstrumentMaster savedMaster = masterRepo.save(master);
 			
 			saveInstTypeSettings(savedMaster);
@@ -378,6 +386,7 @@ public class InstMasterService {
 	     		if (instrumentByCode.get().getInstmastkey().equals(master.getInstmastkey()))
 	     		{   
 	     			final InstrumentMaster instrumentToSave = instrumentByCode.get();
+	     		
 	     			
 	     			//copy of instrumentToSave object for using 'Diffable' to compare objects
 	     			final InstrumentMaster instrumentBeforeSave = new InstrumentMaster(instrumentToSave); 
@@ -420,6 +429,13 @@ public class InstMasterService {
 	            	instrumentToSave.setInstrumentname(master.getInstrumentname());
 	            	instrumentToSave.setInstused(master.getInstused());
 	     			
+	            	try {
+						instrumentToSave.setCreateddate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	            	
 	     			final InstrumentMaster savedInstrument = masterRepo.save(instrumentToSave);     
 	     			
 	     			savedInstrument.setDisplayvalue(savedInstrument.getInstrumentname());
@@ -506,6 +522,12 @@ public class InstMasterService {
 	    			
 		    		//Updating fields with a new delimiter name
 	    			
+    				try {
+						master.setCreateddate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 		    		final InstrumentMaster savedMethod = masterRepo.save(master);
 		    		
 		    		savedMethod.setDisplayvalue(savedMethod.getInstrumentcode());

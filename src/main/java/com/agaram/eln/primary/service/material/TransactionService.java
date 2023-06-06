@@ -725,33 +725,30 @@ public class TransactionService {
 			List<Integer> objnotifyuser = objLstuser.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
 
 			objnotifyuser = objnotifyuser.stream().distinct().collect(Collectors.toList());
+			
+			if(objnotifyuser.contains(cft.getLsuserMaster())) {
+				
+				LSuserMaster objUser = new LSuserMaster();
+				objUser.setUsercode(cft.getLsuserMaster());
 
-			LSuserMaster objUser = new LSuserMaster();
-			objUser.setUsercode(cft.getLsuserMaster());
+				String details = "";
 
-			String details = "";
+				if (task.equals("INVENTORYQTYNOTIFICATION")) {
 
-			if (task.equals("INVENTORYQTYNOTIFICATION")) {
+					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"qtyleft\":\""
+							+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objInventory.getNqtynotification() + "\"}";
 
-				details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"qtyleft\":\""
-						+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objInventory.getNqtynotification() + "\"}";
+				} else if (task.equals("EXPIRYDATE")) {
+					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + date + "\"}";
+				} else {
+					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + getQtyLeft + "\"}";
+				}
 
-			} else if (task.equals("EXPIRYDATE")) {
-				details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + date + "\"}";
-			} else {
-				details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + getQtyLeft + "\"}";
-			}
-
-			String notification = details;
-
-			lstnotifications = objnotifyuser.stream().map(userCode -> {
+				String notification = details;
 
 				LSnotification objnotify = new LSnotification();
 
-				LSuserMaster toUser = new LSuserMaster();
-				toUser.setUsercode(userCode);
-
-				objnotify.setNotifationto(toUser);
+				objnotify.setNotifationto(objUser);
 				objnotify.setNotifationfrom(objUser);
 				objnotify.setNotificationdate(cft.getTransactiondate());
 				objnotify.setNotification(task);
@@ -759,20 +756,19 @@ public class TransactionService {
 				objnotify.setIsnewnotification(1);
 				objnotify.setNotificationpath("/materialinventory");
 				objnotify.setNotificationfor(1);
-
-				return objnotify;
 				
-			}).collect(Collectors.toList());
-			
-			return lstnotifications;
+				lstnotifications.add(objnotify);
+				
+				return lstnotifications;
+			}
 		}
 		return lstnotifications;
 	}
 
 	public void updateMaterialInventoryNotification(Map<String, Object> inputMap) throws ParseException {
-		Map<String, Object> threadMap = inputMap;
+		final Map<String, Object> threadMap = inputMap;
 //		new Thread(() -> {
-		updateMaterialInventoryNotificationvia(inputMap);
+		updateMaterialInventoryNotificationvia(threadMap);
 //		}).start();
 	}
 
@@ -1099,31 +1095,23 @@ public class TransactionService {
 
 //		Integer sitecode = (Integer) inputMap.get("sitecode");
 		Date currentDate = commonfunction.getCurrentUtcTime();
-		LScfttransaction cft = Objmapper.convertValue(inputMap.get("silentAudit"), LScfttransaction.class);
+		final LScfttransaction cft = Objmapper.convertValue(inputMap.get("silentAudit"), LScfttransaction.class);
+//		LSuserMaster objUser = cft.getLsuserMaster();
 //		List<Material> lstMaterials = materialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1, sitecode);
 		LocalDate localCurrentDate = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-//		lstMaterials.stream().peek(objMaterial -> {
-
 		// Create a Calendar instance and set it to the current date
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(currentDate);
-
 		// Add 5 days from the current date
 		calendar.add(Calendar.DAY_OF_YEAR, 5);
-
 		// Get the end date
 		Date endDate = calendar.getTime();
 
-		List<MaterialInventory> objInventories = materialInventoryRepository
-				.findByNtransactionstatusAndIsexpiryneedAndExpirydateBetween(28, true, currentDate, endDate);
-		
+		List<MaterialInventory> objInventories = materialInventoryRepository.findByNtransactionstatusAndIsexpiryneedAndExpirydateBetween(28, true, currentDate, endDate);
 		List<MaterialInventory> expiredInvent = new ArrayList<MaterialInventory>(); 
-		
 		List<LSnotification> lstLSnotifications = new ArrayList<LSnotification>();
 
 		objInventories.stream().peek(objInventory -> {
-
 			if (objInventory.getIsexpiryneed()) {
 				Date date = objInventory.getExpirydate();
 				LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

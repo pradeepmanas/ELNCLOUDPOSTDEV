@@ -1543,6 +1543,12 @@ public class InstrumentService {
 
 		if (objorder.getObjsilentaudit() != null) {
 			objorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+			try {
+				objorder.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objorder.getObjsilentaudit());
 		}
 
@@ -2052,6 +2058,12 @@ public class InstrumentService {
 		}
 		if (objorder.getObjsilentaudit() != null) {
 			objorder.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
+			try {
+				objorder.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objorder.getObjsilentaudit());
 		}
 
@@ -3769,6 +3781,12 @@ public class InstrumentService {
 					.setComments("Sheet" + " " + objfile.getFilesamplecode() + " " + " was versioned to version_"
 							+ Versionnumber + " " + "by the user" + " " + objfile.getLsuserMaster().getUsername());
 			objfile.getObjActivity().getObjsilentaudit().setTableName("LSfile");
+			try {
+				objfile.getObjActivity().getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objfile.getObjActivity().getObjsilentaudit());
 		}
 
@@ -3986,8 +4004,14 @@ public class InstrumentService {
 		list.setActions("Insert");
 		list.setSystemcoments("System Generated");
 		list.setTableName("profile");
-		list.setTransactiondate(currentdate);
+//		list.setTransactiondate(currentdate);
 		list.setLsuserMaster(usercode);
+		try {
+			list.setTransactiondate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lscfttransactionRepository.save(list);
 		if (objorder != null && objorder.getLsOrderattachments() != null) {
 			objorder.getLsOrderattachments().add(objattachment);
@@ -4033,8 +4057,14 @@ public class InstrumentService {
 		list.setActions("Insert");
 		list.setSystemcoments("System Generated");
 		list.setTableName("profile");
-		list.setTransactiondate(currentdate);
+//		list.setTransactiondate(currentdate);
 		list.setLsuserMaster(usercode);
+		try {
+			list.setTransactiondate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lscfttransactionRepository.save(list);
 		if (objorder != null && objorder.getLsOrderattachments() != null) {
 			objorder.getLsOrderattachments().add(objattachment);
@@ -4210,6 +4240,12 @@ public class InstrumentService {
 		list.setTableName("profile");
 		list.setTransactiondate(currentdate);
 		list.setLsuserMaster(usercode);
+		try {
+			list.setTransactiondate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lscfttransactionRepository.save(list);
 		if (objorder != null && objorder.getELNFileAttachments() != null) {
 			objorder.getELNFileAttachments().add(objattachment);
@@ -4278,8 +4314,14 @@ public class InstrumentService {
 		list.setActions("Insert");
 		list.setSystemcoments("System Generated");
 		list.setTableName("profile");
-		list.setTransactiondate(currentdate);
+//		list.setTransactiondate(currentdate);
 		list.setLsuserMaster(usercode);
+		try {
+			list.setTransactiondate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lscfttransactionRepository.save(list);
 		if (objorder != null && objorder.getELNFileAttachments() != null) {
 			objorder.getELNFileAttachments().add(objattachment);
@@ -4304,6 +4346,12 @@ public class InstrumentService {
 //		silent audit
 		if (objattachments.getObjsilentaudit() != null) {
 			objattachments.getObjsilentaudit().setTableName("LsOrderattachments");
+			try {
+				objattachments.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objattachments.getObjsilentaudit());
 		}
 		return objattachments;
@@ -4318,6 +4366,12 @@ public class InstrumentService {
 //		silent audit
 		if (objattachments.getObjsilentaudit() != null) {
 			objattachments.getObjsilentaudit().setTableName("ELNFileAttachments");
+			try {
+				objattachments.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objattachments.getObjsilentaudit());
 		}
 		return objattachments;
@@ -4332,6 +4386,12 @@ public class InstrumentService {
 //		silent audit
 		if (objattachments.getObjsilentaudit() != null) {
 			objattachments.getObjsilentaudit().setTableName("LsOrderattachments");
+			try {
+				objattachments.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objattachments.getObjsilentaudit());
 		}
 		return objattachments;
@@ -4346,6 +4406,12 @@ public class InstrumentService {
 //		silent audit
 		if (objattachments.getObjsilentaudit() != null) {
 			objattachments.getObjsilentaudit().setTableName("LsOrderattachments");
+			try {
+				objattachments.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objattachments.getObjsilentaudit());
 		}
 		return objattachments;
@@ -4387,6 +4453,12 @@ public class InstrumentService {
 //		silent audit
 		if (objattachments.getObjsilentaudit() != null) {
 			objattachments.getObjsilentaudit().setTableName("LsOrderattachments");
+			try {
+				objattachments.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objattachments.getObjsilentaudit());
 		}
 		return objattachments;
@@ -4415,6 +4487,12 @@ public class InstrumentService {
 //		silent audit
 		if (objattachments.getObjsilentaudit() != null) {
 			objattachments.getObjsilentaudit().setTableName("LsOrderattachments");
+			try {
+				objattachments.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objattachments.getObjsilentaudit());
 		}
 		return objattachments;
@@ -5242,7 +5320,7 @@ public class InstrumentService {
 
 	public Map<String, Object> uploadfilessheetfolder(MultipartFile file, String uid, Long directorycode,
 			String filefor, String tenantid, Integer ismultitenant, Integer usercode, Integer sitecode,
-			Date createddate, Integer fileviewfor) throws IOException {
+			Date createddate, Integer fileviewfor) throws IOException, ParseException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		LSsheetfolderfiles objfile = new LSsheetfolderfiles();
 		objfile.setFilename(file.getOriginalFilename());
@@ -5269,7 +5347,8 @@ public class InstrumentService {
 			lssite.setSitecode(sitecode);
 			lsfiles.setLssitemaster(lssite);
 			lsfiles.setFilefor(filefor);
-			lsfiles.setCreatedtimestamp(createddate);
+//			lsfiles.setCreatedtimestamp(createddate);
+			lsfiles.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
 			lsfiles.setFileviewfor(fileviewfor);
 
 			lssheetfolderfilesRepository.save(lsfiles);
@@ -5713,7 +5792,9 @@ public class InstrumentService {
 		return objdir;
 	}
 
-	public LSSheetOrderStructure Insertnewdirectory(LSSheetOrderStructure objdir) {
+	public LSSheetOrderStructure Insertnewdirectory(LSSheetOrderStructure objdir) throws ParseException {
+		objdir.setDateCreated(commonfunction.getCurrentUtcTime());
+		objdir.setDateModified(commonfunction.getCurrentUtcTime());
 		lsSheetOrderStructureRepository.save(objdir);
 		return objdir;
 	}
@@ -5960,6 +6041,7 @@ public class InstrumentService {
 					f.setLockedusername(null);
 				}).collect(Collectors.toList());
 
+				
 				lslogilablimsorderdetailRepository.save(lsOrder);
 
 			}
@@ -6138,8 +6220,9 @@ public class InstrumentService {
 
 	}
 
-	public Lsprotocolorderstructure Insertnewdirectoryonprotocol(Lsprotocolorderstructure objdir) {
-
+	public Lsprotocolorderstructure Insertnewdirectoryonprotocol(Lsprotocolorderstructure objdir) throws ParseException {
+		objdir.setDateCreated(commonfunction.getCurrentUtcTime());
+		objdir.setDateModified(commonfunction.getCurrentUtcTime());
 		lsprotocolorderStructurerepository.save(objdir);
 		return objdir;
 
@@ -7459,7 +7542,7 @@ public class InstrumentService {
 
 	public Map<String, Object> uploadfilesprotocolfolder(MultipartFile file, String uid, Long directorycode,
 			String filefor, String tenantid, Integer ismultitenant, Integer usercode, Integer sitecode,
-			Date createddate, Integer fileviewfor) throws IOException {
+			Date createddate, Integer fileviewfor) throws IOException, ParseException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		LSprotocolfolderfiles objfile = new LSprotocolfolderfiles();
 		objfile.setFilename(file.getOriginalFilename());
@@ -7486,7 +7569,8 @@ public class InstrumentService {
 			lssite.setSitecode(sitecode);
 			lsfiles.setLssitemaster(lssite);
 			lsfiles.setFilefor(filefor);
-			lsfiles.setCreatedtimestamp(createddate);
+			lsfiles.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
+//			lsfiles.setCreatedtimestamp(createddate);
 			lsfiles.setFileviewfor(fileviewfor);
 
 			lsprotocolfolderfilesRepository.save(lsfiles);

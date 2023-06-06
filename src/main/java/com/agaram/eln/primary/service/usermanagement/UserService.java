@@ -212,6 +212,12 @@ public class UserService {
 			// Successfully");
 			// objusergroup.getObjsilentaudit().setActions("Insert/Update UserGroup");
 			objusergroup.getObjsilentaudit().setTableName("LSusergroup");
+			try {
+				objusergroup.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objusergroup.getObjsilentaudit());
 		}
 //		Manual Audit
@@ -229,7 +235,13 @@ public class UserService {
 				objusergroup.getObjmanualaudit().setLsuserMaster(objusergroup.getLSuserMaster().getUsercode());
 				objusergroup.getObjmanualaudit()
 						.setLssitemaster(objusergroup.getLSuserMaster().getLssitemaster().getSitecode());
-				objusergroup.getObjmanualaudit().setTransactiondate(date);
+//				objusergroup.getObjmanualaudit().setTransactiondate(date);
+				try {
+					objusergroup.getObjmanualaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				lscfttransactionRepository.save(objusergroup.getObjmanualaudit());
 			}
 		}
@@ -264,6 +276,12 @@ public class UserService {
 	public List<LSuserMaster> GetUsersOnsite(LSSiteMaster objclass) {
 		if (objclass.getObjsilentaudit() != null) {
 			objclass.getObjsilentaudit().setTableName("LSuserMaster");
+			try {
+				objclass.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objclass.getObjsilentaudit());
 		}
 		if (objclass.getSitecode() == 0) {
@@ -494,6 +512,12 @@ public class UserService {
 			// objusermaster.getObjsilentaudit().setActions("Insert/Update User");
 			// objusermaster.getObjsilentaudit().setSystemcoments("System Generated");
 			objusermaster.getObjsilentaudit().setTableName("LSuserMaster");
+			try {
+				objusermaster.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objusermaster.getObjsilentaudit());
 		}
 		// Manual Audit
@@ -510,7 +534,12 @@ public class UserService {
 			// manualAudit.setLsuserMaster(objusermaster);
 			objusermaster.getObjmanualaudit().setLsuserMaster(objusermaster.getUsercode());
 			objusermaster.getObjmanualaudit().setLssitemaster(objusermaster.getLssitemaster().getSitecode());
-			objusermaster.getObjmanualaudit().setTransactiondate(date);
+			try {
+				objusermaster.getObjmanualaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objusermaster.getObjmanualaudit());
 		}
 		objusermaster.setResponse(new Response());
@@ -531,6 +560,12 @@ public class UserService {
 			objuser.getObjsilentaudit().setActions("Reset Password");
 			objuser.getObjsilentaudit().setSystemcoments("System Generated");
 			objuser.getObjsilentaudit().setTableName("LSuserMaster");
+			try {
+				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 //			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
@@ -935,6 +970,12 @@ public class UserService {
 	public List<LSactiveUser> GetActiveUsersOnsitewise(LSSiteMaster objclass) {
 		if (objclass.getObjsilentaudit() != null) {
 			objclass.getObjsilentaudit().setTableName("LSuserMaster");
+			try {
+				objclass.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objclass.getObjsilentaudit());
 		}
 		return lsactiveUserRepository.findBylssitemaster(objclass);
@@ -944,6 +985,12 @@ public class UserService {
 
 		if (objusergroup.getObjsilentaudit() != null) {
 			objusergroup.getObjsilentaudit().setTableName("LSusergroup");
+			try {
+				objusergroup.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objusergroup.getObjsilentaudit());
 		}
 
@@ -968,6 +1015,12 @@ public class UserService {
 
 		if (Objclass.getObjsilentaudit() != null) {
 			Objclass.getObjsilentaudit().setTableName("LSusergroup");
+			try {
+				Objclass.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(Objclass.getObjsilentaudit());
 		}
 		List<String> status = Arrays.asList("A", "Active");
@@ -985,6 +1038,12 @@ public class UserService {
 
 		if (Objclass.getObjsilentaudit() != null) {
 			Objclass.getObjsilentaudit().setTableName("LSusergroup");
+			try {
+				Objclass.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(Objclass.getObjsilentaudit());
 		}
 		if (Objclass.getSitecode() == 0) {
@@ -1027,7 +1086,13 @@ public class UserService {
 					manualAudit.setManipulatetype("view");
 					manualAudit.setLsuserMaster(objExitinguser.getUsercode());
 					manualAudit.setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-					manualAudit.setTransactiondate(objuser.getLogindate());
+//					manualAudit.setTransactiondate(objuser.getLogindate());
+					try {
+						manualAudit.setTransactiondate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					lscfttransactionRepository.save(manualAudit);
 				} else if (objuser.getsComments().isEmpty()) {
 					objExitinguser.getObjResponse().setInformation("IDS_INVALIDCOMMENTS");
@@ -1050,7 +1115,13 @@ public class UserService {
 					manualAudit.setManipulatetype("view");
 					manualAudit.setLsuserMaster(objExitinguser.getUsercode());
 					manualAudit.setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-					manualAudit.setTransactiondate(objuser.getLogindate());
+//					manualAudit.setTransactiondate(objuser.getLogindate());
+					try {
+						manualAudit.setTransactiondate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					lscfttransactionRepository.save(manualAudit);
 				} else {
 					objExitinguser.getObjResponse().setInformation("Invalid password");
@@ -1080,6 +1151,12 @@ public class UserService {
 
 		if (objpwd.getObjsilentaudit() != null) {
 			objpwd.getObjsilentaudit().setTableName("LSPasswordPolicy");
+			try {
+				objpwd.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objpwd.getObjsilentaudit());
 		}
 		if (objpwd.getObjuser() != null) {
@@ -1300,6 +1377,12 @@ public class UserService {
 	public List<LSuserMaster> GetUserslocal(LSuserMaster objusergroup) {
 		if (objusergroup.getObjsilentaudit() != null) {
 			objusergroup.getObjsilentaudit().setTableName("LSuserMaster");
+			try {
+				objusergroup.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lscfttransactionRepository.save(objusergroup.getObjsilentaudit());
 		}
 		if (objusergroup.getUsername() != null && objusergroup.getUsername().equalsIgnoreCase("Administrator")) {

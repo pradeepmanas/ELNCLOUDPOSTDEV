@@ -125,7 +125,7 @@ public class DashBoardService {
 	@Autowired
 	private LSSheetOrderStructureRepository lsSheetOrderStructureRepository;
 
-	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser) {
+	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser) throws ParseException {
 
 		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
@@ -208,19 +208,14 @@ public class DashBoardService {
 
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-			try {
-				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
 		return mapOrders;
 	}
 
-	public Map<String, Object> Getdashboarddetailsonfilters(LSuserMaster objuser) {
+	public Map<String, Object> Getdashboarddetailsonfilters(LSuserMaster objuser) throws ParseException {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
@@ -317,12 +312,7 @@ public class DashBoardService {
 
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-			try {
-				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
@@ -738,10 +728,16 @@ public class DashBoardService {
 //										fromdate, todate, "N", 2, objuser, fromdate, todate, "N", lstproject, 3,
 //										objuser, fromdate, todate);
 						lstpending = lslogilablimsorderdetailRepository
-								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-										"N", lstproject, fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser,
-										fromdate, todate, "N", 2, objuser, fromdate, todate, "N", 3,
-										objuser.getUsernotify(), fromdate, todate);
+							    .countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+							        "N", lstproject, fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser,
+							        fromdate, todate, "N", 2, objuser, fromdate, todate,
+							        "N",lstproject, 3,objuser, fromdate, todate,"N", 3,
+							        objuser.getUsernotify(), fromdate, todate);
+//						lstpending = lslogilablimsorderdetailRepository
+//								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//										"N", lstproject, fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser,
+//										fromdate, todate, "N", 2, objuser, fromdate, todate, "N", 3,
+//										objuser.getUsernotify(), fromdate, todate);
 
 //						lstRejected = lslogilablimsorderdetailRepository
 //								.countByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetween(3, lstproject,
@@ -970,7 +966,7 @@ public class DashBoardService {
 		return mapOrders;
 	}
 
-	public Map<String, Object> Getdashboardorders(LSuserMaster objuser) {
+	public Map<String, Object> Getdashboardorders(LSuserMaster objuser) throws ParseException {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
@@ -1321,17 +1317,17 @@ public class DashBoardService {
 //										fromdate, todate, "N", 2, objuser, fromdate, todate, "N", lstproject, 3,
 //										objuser, fromdate, todate, pageable);
 						lstorders = lslogilablimsorderdetailRepository
-							    .findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
+							    .findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
 							        "N", lstproject, fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser,
 							        fromdate, todate, "N", 2, objuser, fromdate, todate, "N", lstproject, 3,
 							        objuser, fromdate, todate, "N", 3,
-							        objuser, fromdate, todate,objuser.getUsernotify(), pageable);
+							         fromdate, todate,objuser.getUsernotify(), pageable);
 						count = lslogilablimsorderdetailRepository
-								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
+								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
 								        "N", lstproject, fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser,
 								        fromdate, todate, "N", 2, objuser, fromdate, todate, "N", lstproject, 3,
 								        objuser, fromdate, todate, "N", 3,
-								        objuser, fromdate, todate,objuser.getUsernotify());
+								         fromdate, todate,objuser.getUsernotify());
 //						lstorders = lslogilablimsorderdetailRepository
 //								.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 //										"N", lstproject, fromdate, todate, "N", 0, fromdate, todate, pageable);
@@ -1776,12 +1772,7 @@ public class DashBoardService {
 		mapOrders.put("count", count);
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-			try {
-				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
@@ -2511,7 +2502,7 @@ public class DashBoardService {
 		return mapSheets;
 	}
 
-	public Map<String, Object> Getdashboardparameters(LSuserMaster objuser) {
+	public Map<String, Object> Getdashboardparameters(LSuserMaster objuser) throws ParseException {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		LSuserMaster objupdateduser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
@@ -2543,19 +2534,14 @@ public class DashBoardService {
 
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-			try {
-				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
 		return mapOrders;
 	}
 
-	public Map<String, Object> Getdashboardactivities(LSuserMaster objuser) {
+	public Map<String, Object> Getdashboardactivities(LSuserMaster objuser) throws ParseException {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
@@ -2572,12 +2558,7 @@ public class DashBoardService {
 
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSlogilablimsorderdetail");
-			try {
-				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 

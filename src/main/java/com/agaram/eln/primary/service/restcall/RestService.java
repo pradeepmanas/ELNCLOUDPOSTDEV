@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 //import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 //import com.agaram.eln.primary.model.instrumentDetails.LSlimsorder;
@@ -727,6 +728,7 @@ public class RestService {
 				silentAudit.setActions("Insert");
 				silentAudit.setSystemcoments("System Generated");
 				silentAudit.setTableName("LSmaterial");
+				silentAudit.setTransactiondate(commonfunction.getCurrentUtcTime());
 	    		lscfttransactionRepository.save(silentAudit);
 				
 				i++;
@@ -748,6 +750,7 @@ public class RestService {
 				silentAudit.setActions("Insert");
 				silentAudit.setSystemcoments("System Generated");
 				silentAudit.setTableName("LSmaterialgrade");
+				silentAudit.setTransactiondate(commonfunction.getCurrentUtcTime());
 	    		lscfttransactionRepository.save(silentAudit);
 				
 				i++;
@@ -769,6 +772,7 @@ public class RestService {
 				silentAudit.setActions("Insert");
 				silentAudit.setSystemcoments("System Generated");
 				silentAudit.setTableName("LSinstrument");
+				silentAudit.setTransactiondate(commonfunction.getCurrentUtcTime());
 	    		lscfttransactionRepository.save(silentAudit);
 				
 				i++;
@@ -791,6 +795,7 @@ public class RestService {
 				silentAudit.setActions("Insert");
 				silentAudit.setSystemcoments("System Generated");
 				silentAudit.setTableName("LSmaterialsection");
+				silentAudit.setTransactiondate(commonfunction.getCurrentUtcTime());
 	    		lscfttransactionRepository.save(silentAudit);
 				
 				i++;
@@ -813,6 +818,7 @@ public class RestService {
 				silentAudit.setActions("Insert");
 				silentAudit.setSystemcoments("System Generated");
 				silentAudit.setTableName("LSmaterialtype");
+				silentAudit.setTransactiondate(commonfunction.getCurrentUtcTime());
 	    		lscfttransactionRepository.save(silentAudit);
 				
 				i++;
@@ -835,6 +841,7 @@ public class RestService {
 				silentAudit.setActions("Insert");
 				silentAudit.setSystemcoments("System Generated");
 				silentAudit.setTableName("LSunit");
+				silentAudit.setTransactiondate(commonfunction.getCurrentUtcTime());
 	    		lscfttransactionRepository.save(silentAudit);
 				
 				i++;
@@ -858,6 +865,7 @@ public class RestService {
 				silentAudit.setActions("Insert");
 				silentAudit.setSystemcoments("System Generated");
 				silentAudit.setTableName("LSsection");
+				silentAudit.setTransactiondate(commonfunction.getCurrentUtcTime());
 	    		lscfttransactionRepository.save(silentAudit);
 				
 				i++;
@@ -880,6 +888,7 @@ public class RestService {
 				silentAudit.setActions("Insert");
 				silentAudit.setSystemcoments("System Generated");
 				silentAudit.setTableName("LSinstrument");
+				silentAudit.setTransactiondate(commonfunction.getCurrentUtcTime());
 	    		lscfttransactionRepository.save(silentAudit);
 				
 				i++;
@@ -901,6 +910,7 @@ public class RestService {
 				silentAudit.setActions("Insert");
 				silentAudit.setSystemcoments("System Generated");
 				silentAudit.setTableName("LSinstrumentcategory");
+				silentAudit.setTransactiondate(commonfunction.getCurrentUtcTime());
 	    		lscfttransactionRepository.save(silentAudit);
 				
 				i++;
@@ -923,6 +933,7 @@ public class RestService {
 				silentAudit.setActions("Insert");
 				silentAudit.setSystemcoments("System Generated");
 				silentAudit.setTableName("LSmaterialcategory");
+				silentAudit.setTransactiondate(commonfunction.getCurrentUtcTime());
 	    		lscfttransactionRepository.save(silentAudit);
 				
 				i++;
@@ -1008,6 +1019,7 @@ public class RestService {
 				silentAudit.setActions("Insert");
 				silentAudit.setSystemcoments("System Generated");
 				silentAudit.setTableName("LSmaterialinventorytransaction");
+				silentAudit.setTransactiondate(commonfunction.getCurrentUtcTime());
 	    		lscfttransactionRepository.save(silentAudit);
 				
 				i++;
@@ -1151,12 +1163,14 @@ public class RestService {
 		LScfttransaction cfttransaction;
 		if(objMap.containsKey("objsilentaudit")) {
 			cfttransaction = objMapper.convertValue(objMap.get("objsilentaudit"), LScfttransaction.class);
+			cfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
 			lscfttransactionRepository.save(cfttransaction);
 		}
 		if(objMap.containsKey("objuser")) {
 			LoggedUser objuser=objMapper.convertValue(objMap.get("objuser"), LoggedUser.class);
 			LScfttransaction manualcfrt = objMapper.convertValue(objMap.get("objmanualaudit"), LScfttransaction.class);
 			manualcfrt.setComments(objuser.getComments());
+			manualcfrt.setTransactiondate(commonfunction.getCurrentUtcTime());
 			lscfttransactionRepository.save(manualcfrt);
 		}
 		res.setInformation("ID_INVALIDORDERCODE");

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -1423,66 +1424,86 @@ public class LoginService {
 	}
 
 	// added for notification
+	
 	public Notification Loginnotification(Notification objNotification) throws ParseException {
 
-		Date currentdate = objNotification.getCurrentdate();
+		 Date fromDate = objNotification.getCurrentdate();
+	        Date toDate = objNotification.getCurrentdate();
+		    
+	      //   Set time on currentDate to 0:01 am
+	         Calendar calendar1 = Calendar.getInstance();
+	        calendar1.setTime(fromDate);
+	        calendar1.set(Calendar.HOUR_OF_DAY, 0);
+	        calendar1.set(Calendar.MINUTE, 0);
+	        calendar1.set(Calendar.SECOND, 0);
+	        calendar1.set(Calendar.MILLISECOND, 0);
+	        fromDate = calendar1.getTime();
 
-		List<Notification> codelist = NotificationRepository.findByUsercode(objNotification.getUsercode());
+	        // Set time on currentDate1 to 23:59 pm
+	        Calendar calendar2 = Calendar.getInstance();
+	        calendar2.setTime(toDate);
+	        calendar2.set(Calendar.HOUR_OF_DAY, 23);
+	        calendar2.set(Calendar.MINUTE, 59);
+	        calendar2.set(Calendar.SECOND, 59);
+	        calendar2.set(Calendar.MILLISECOND, 999);
+	        toDate = calendar2.getTime();
 
+	        List<Notification> codelist = NotificationRepository.findByUsercodeAndCautiondateBetween(objNotification.getUsercode(), fromDate, toDate);
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 
 		int i = 0;
 		boolean value = false;
-//		while (i < codelist.size()) {
-//
-//			value = commonfunction.isSameDay(currentdate, codelist.get(i).getCautiondate());
-//			if(value) {
-//			LSnotification LSnotification = new LSnotification();
-//
-//			LSuserMaster LSuserMaster = new LSuserMaster(); /* to get the value */
-//			LSuserMaster.setUsercode(codelist.get(i).getUsercode());
-//
-//			LSuserMaster objLSuserMaster = new LSuserMaster();/* to return the value this obj is created */
-//			objLSuserMaster = userService.getUserOnCode(LSuserMaster);
-//
-//			String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\""
-//					+ codelist.get(i).getBatchid() + "\",\"description\":\"" + codelist.get(i).getDescription() + "\"}";
-//
-//			if (codelist.get(i).getStatus() == 1 && value) {
-//
-//				LSnotification.setIsnewnotification(1);
-//				LSnotification.setNotification("CAUTIONALERT");
-//				LSnotification.setNotificationdate(objNotification.getCurrentdate());
-//				LSnotification.setNotificationdetils(Details);
-//				LSnotification.setNotificationpath("/registertask");
-//				LSnotification.setNotifationfrom(objLSuserMaster);
-//				LSnotification.setNotifationto(objLSuserMaster);
-//				LSnotification.setRepositorycode(0);
-//				LSnotification.setRepositorydatacode(0);
-//				LSnotification.setNotificationfor(1);
-//				
-//				codelist.get(i).setStatus(0);
-//				lstnotifications.add(LSnotification);
-//			}
-//
-//			i++;
-//		}
-//		}
-		LSnotificationRepository.save(lstnotifications);
-		NotificationRepository.save(codelist);
+		 
+			 List<LSnotification> loginlstnotifications = codelist.stream()
+			            .filter(notification -> notification.getStatus() == 1)
+			            .map(notification -> {
+
 		
+			LSnotification LSnotification = new LSnotification();
+
+			LSuserMaster LSuserMaster = new LSuserMaster(); /* to get the value */
+			LSuserMaster.setUsercode(codelist.get(i).getUsercode());
+
+			LSuserMaster objLSuserMaster = new LSuserMaster();/* to return the value this obj is created */
+			objLSuserMaster = userService.getUserOnCode(LSuserMaster);
+
+			String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\""
+					+ codelist.get(i).getBatchid() + "\",\"description\":\"" + codelist.get(i).getDescription() + "\"}";
+
+	
+
+				LSnotification.setIsnewnotification(1);
+				LSnotification.setNotification("CAUTIONALERT");
+				LSnotification.setNotificationdate(objNotification.getCurrentdate());
+				LSnotification.setNotificationdetils(Details);
+				LSnotification.setNotificationpath("/registertask");
+				LSnotification.setNotifationfrom(objLSuserMaster);
+				LSnotification.setNotifationto(objLSuserMaster);
+				LSnotification.setRepositorycode(0);
+				LSnotification.setRepositorydatacode(0);
+				LSnotification.setNotificationfor(1);
+		
+				notification.setStatus(0);
+	
+			  return LSnotification;	
+			  })
+			 .collect(Collectors.toList());
+		
+			LSnotificationRepository.save(loginlstnotifications);
+			NotificationRepository.save(codelist);
+			
 		return null;
 
 	}
 
 	@SuppressWarnings({ "unused" })
 	public Lsrepositoriesdata Resourcenotification(Lsrepositoriesdata objNotification) {
-		Date currentdate = objNotification.getCurrentdate();
-		List<Lsrepositoriesdata> codelist = lsrepositoriesdataRepository.findByUsercode(objNotification.getUsercode());
-		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-		String Details = "";
-		int i = 0;
-		boolean value = false;
+//		Date currentdate = objNotification.getCurrentdate();
+//		List<Lsrepositoriesdata> codelist = lsrepositoriesdataRepository.findByUsercode(objNotification.getUsercode());
+//		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+//		String Details = "";
+//		int i = 0;
+//		boolean value = false;
 //		while (i < codelist.size()) {
 //			SimpleDateFormat Datefor = new SimpleDateFormat("yyyy-MM-dd");
 //			String expirydate = Datefor.format(new Date());
@@ -1555,8 +1576,8 @@ public class LoginService {
 //
 //			i++;
 //		}
-
-		LSnotificationRepository.save(lstnotifications);
+//
+//		LSnotificationRepository.save(lstnotifications);
 		return null;
 
 	}

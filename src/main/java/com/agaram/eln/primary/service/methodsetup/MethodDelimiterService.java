@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.service.methodsetup;
 
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
@@ -97,6 +99,13 @@ public class MethodDelimiterService {
 	public ResponseEntity<Object> createMethodDelimiter(final MethodDelimiter methodDelimiter, final LSSiteMaster site,
 			    final HttpServletRequest request,MethodDelimiter auditdetails)
 		{ 
+		
+		try {
+			methodDelimiter.setCreateddate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		    boolean saveAuditTrial = true;
 		   final ParserMethod parserMethod = parserMethodRepo.findOne(methodDelimiter.getParsermethod().getParsermethodkey());
 		   final Delimiter delimiter = delimiterRepo.findOne(methodDelimiter.getDelimiter().getDelimiterkey());
@@ -188,6 +197,12 @@ public class MethodDelimiterService {
    public ResponseEntity<Object> updateMethodDelimiter(final MethodDelimiter methodDelimiter, final LSSiteMaster site,
 		   final String comments, final HttpServletRequest request, final int doneByUserKey,MethodDelimiter auditdetails)
    {	   
+	   try {
+		methodDelimiter.setCreateddate(commonfunction.getCurrentUtcTime());
+	} catch (ParseException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
 	   Boolean saveAuditTrail= true;
 	   final Optional<MethodDelimiter> methodDelimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatusAndLssitemaster(methodDelimiter.getMethoddelimiterkey(), 1,methodDelimiter.getLssitemaster());
 //	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
@@ -281,6 +296,12 @@ public class MethodDelimiterService {
 						LScfttransaction.setTableName("Methoddelimiter");
 						LScfttransaction.setSystemcoments("System Generated");
 						
+						try {
+							LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						lscfttransactionrepo.save(LScfttransaction);
 						
 				   }
@@ -312,7 +333,12 @@ public class MethodDelimiterService {
 				LScfttransaction.setUsername(methodDelimiter.getUsername());
 				LScfttransaction.setTableName("Methoddelimiter");
 				LScfttransaction.setSystemcoments("System Generated");
-				
+				try {
+					LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				lscfttransactionrepo.save(LScfttransaction);
 				
 				return new ResponseEntity<>("Update Failed - MethodDelimiter Not Found", HttpStatus.NOT_FOUND);
@@ -365,6 +391,12 @@ public class MethodDelimiterService {
 					LScfttransaction.setTableName("Methoddelimiter");
 					LScfttransaction.setSystemcoments("System Generated");
 					
+					try {
+						LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					lscfttransactionrepo.save(LScfttransaction);
 				   
 				   return new ResponseEntity<>("Delete Failed -", HttpStatus.LOCKED);
@@ -440,6 +472,12 @@ public class MethodDelimiterService {
 				LScfttransaction.setUsername(otherdetails.getUsername());
 				LScfttransaction.setTableName("Methoddelimiter");
 				
+				try {
+					LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				lscfttransactionrepo.save(LScfttransaction);
 			   
 			   

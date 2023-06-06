@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.Method;
@@ -27,6 +28,8 @@ import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.text.ParseException;
 import java.util.Date;
 
 
@@ -197,6 +200,12 @@ public class SampleSplitService {
 				LScfttransaction.setTableName("SampleExtract");
 				LScfttransaction.setSystemcoments("System Generated");
 				
+				try {
+					LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				lscfttransactionrepo.save(LScfttransaction);
 				
 			}

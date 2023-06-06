@@ -1833,20 +1833,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			LSuserMaster objuser5, Date fromdate8, Date todate8, String string9, int s, LSuserMaster objuser6,
 			Date fromdate9, Date todate9, List<LSprojectmaster> lstproject4);
 
-	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
-			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
-			Date fromdate2, Date todate2, String string3, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
-			String string4, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, String string5,
-			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
-			String string6, int m, LSuserMaster objuser4, Date fromdate6, Date todate6, List<LSuserMaster> usernotify,
-			Pageable pageable);
 
-	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
-			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
-			Date fromdate2, Date todate2, String string3, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
-			String string4, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, String string5,
-			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
-			String string6, int m, LSuserMaster objuser4, Date fromdate6, Date todate6, List<LSuserMaster> usernotify);
 
 	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
@@ -1906,6 +1893,19 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Date fromdate2, Date todate2, int k, int l, LSuserMaster objuser2, Date fromdate3, Date todate3, int m,
 			int n, LSuserMaster objuser3, Date fromdate4, Date todate4, int o, Pageable pageable);
 
+	List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndFiletypeAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterInOrderByBatchcodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Integer filetype, String orderflag2,
+			List<LSsamplemaster> lstsample, Integer filetype2, int i, String orderflag3,
+			List<LSsamplemaster> lstsample2, Integer filetype3, int j, LSuserMaster lsuserMaster, String orderflag4,
+			List<LSsamplemaster> lstsample3, Integer filetype4, int k, List<LSuserMaster> lstuserMaster);
+
+	List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndLsfileOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndLsfileOrderByBatchcodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Integer filetype, LSfile lsfile, String orderflag2,
+			List<LSsamplemaster> lstsample, Integer filetype2, LSfile lsfile2, int i, String orderflag3,
+			List<LSsamplemaster> lstsample2, Integer filetype3, LSfile lsfile3, int j, LSuserMaster lsuserMaster,
+			String orderflag4, List<LSsamplemaster> lstsample3, Integer filetype4, int k,
+			List<LSuserMaster> lstuserMaster, LSfile lsfile4);
+
 	List<LSlogilablimsorderdetail> findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfile(
 			List<LSprojectmaster> lstproject, Integer filetype, LSfile lsfile, List<LSsamplemaster> lstsample,
 			Integer filetype2, int i, LSfile lsfile2, List<LSsamplemaster> lstsample2, Integer filetype3, int j,
@@ -1922,5 +1922,25 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Integer filetype4, int j, LSfile lsfile4, List<LSsamplemaster> lstsample3, Integer filetype5, int k,
 			LSfile lsfile5);
 
+	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
+			Date fromdate2, Date todate2, String string3, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
+			String string4, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, String string5,
+			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
+			String string6, int m, Date fromdate6, Date todate6, List<LSuserMaster> usernotify, Pageable pageable);
+
+	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
+			Date fromdate2, Date todate2, String string3, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
+			String string4, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, String string5,
+			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
+			String string6, int m, Date fromdate6, Date todate6, List<LSuserMaster> usernotify);
+
+	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
+			Date fromdate2, Date todate2, String string3, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
+			String string4, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, String string5,
+			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
+			String string6, int m, List<LSuserMaster> usernotify, Date fromdate6, Date todate6);
 
 }

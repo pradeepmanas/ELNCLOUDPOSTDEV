@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
@@ -176,6 +178,12 @@ public class MethodService {
 	@Transactional
 	public ResponseEntity<Object> createMethod(final Method methodMaster, final LSSiteMaster site, final HttpServletRequest request,Method auditdetails)
 	{			
+		try {
+			methodMaster.setCreateddate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		boolean saveAuditTrail=true;
 		final InstrumentMaster instMaster = instMastRepo.findOne(methodMaster.getInstmaster().getInstmastkey());
 		final LSuserMaster createdUser = getCreatedUserByKey(methodMaster.getCreatedby().getUsercode());
@@ -261,6 +269,12 @@ public class MethodService {
 					LScfttransaction.setTableName("Method");
 					LScfttransaction.setSystemcoments("System Generated");
 					
+					try {
+						LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					lscfttransactionrepo.save(LScfttransaction);
 			}
   			return new ResponseEntity<>("Invalid Instrument", HttpStatus.NOT_FOUND);
@@ -385,6 +399,12 @@ public class MethodService {
 	public ResponseEntity<Object> updateMethod(final Method method, final LSSiteMaster site, final int doneByUserKey, 
 			    final HttpServletRequest request,Method auditdetails)
 	{	  		
+		try {
+			method.setCreateddate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		boolean saveAuditTrail=true;
 //		final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);		
 		final InstrumentMaster instMaster = instMastRepo.findOne(method.getInstmaster().getInstmastkey());
@@ -538,6 +558,12 @@ public class MethodService {
 					LScfttransaction.setTableName("Method");
 					LScfttransaction.setSystemcoments("System Generated");
 					
+					try {
+						LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					lscfttransactionrepo.save(LScfttransaction);
 	   		    }			
 				return new ResponseEntity<>("Update Failed - Method Not Found", HttpStatus.NOT_FOUND);
@@ -562,7 +588,12 @@ public class MethodService {
 					LScfttransaction.setUsername(method.getUsername());
 					LScfttransaction.setTableName("Method");
 					LScfttransaction.setSystemcoments("System Generated");
-					
+					try {
+						LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					lscfttransactionrepo.save(LScfttransaction);
 
 			}
@@ -1383,7 +1414,12 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
 				LScfttransaction.setUsername(createdUser.getUsername());
 				LScfttransaction.setTableName("Method");
 				LScfttransaction.setSystemcoments("System Generated");
-				
+				try {
+					LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				lscfttransactionrepo.save(LScfttransaction);
                 }
 			   return new ResponseEntity<>("Duplicate Entry - " + methodByKey.get().getMethodname() +" method cannot be copied", 

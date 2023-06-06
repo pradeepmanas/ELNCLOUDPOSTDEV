@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.samplestoragelocation;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageLocation;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageVersion;
@@ -39,6 +41,12 @@ public class SampleStorageLocationService {
 			sampleStorageLocation.setObjsilentaudit(Auditobj);
 			sampleStorageLocationRepository.save(sampleStorageLocation);
 			sampleStorageVersion.setSampleStorageLocation(sampleStorageLocation);
+			try {
+				Auditobj.setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lScfttransactionRepository.save(Auditobj);
 			sampleStorageVersionRepository.save(sampleStorageVersion);
 
@@ -52,6 +60,12 @@ public class SampleStorageLocationService {
 		sampleStorageLocation.setObjsilentaudit(Auditobj);
 		sampleStorageLocationRepository.save(sampleStorageLocation);
 		sampleStorageVersionRepository.save(sampleStorageVersion);
+		try {
+			Auditobj.setTransactiondate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lScfttransactionRepository.save(Auditobj);
 		return new ResponseEntity<>(getAllActiveSampleStorageLocationWithSelectedRecord(sampleStorageLocation.getSitekey(),sampleStorageLocation.getSamplestoragelocationkey()).getBody(),HttpStatus.OK);
 	}
@@ -78,6 +92,12 @@ public class SampleStorageLocationService {
 
 				sampleStorageLocationItem.setStatus(-1);
 				sampleStorageLocationRepository.save(sampleStorageLocationItem);
+				try {
+					Auditobj.setTransactiondate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				lScfttransactionRepository.save(Auditobj);
 				return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(), HttpStatus.OK);
 			}
@@ -86,6 +106,12 @@ public class SampleStorageLocationService {
 				if (sampleStorageLocationDelete.isPresent()) {
 					sampleStorageLocationItem.setStatus(-1);
 					sampleStorageLocationRepository.save(sampleStorageLocationItem);
+					try {
+						Auditobj.setTransactiondate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					lScfttransactionRepository.save(Auditobj);
 					return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(),HttpStatus.OK);
 				}

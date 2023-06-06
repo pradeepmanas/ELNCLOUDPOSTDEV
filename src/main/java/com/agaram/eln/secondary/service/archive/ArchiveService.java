@@ -1,5 +1,6 @@
 package com.agaram.eln.secondary.service.archive;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
@@ -43,6 +45,12 @@ public class ArchiveService {
 		List<LSuserMaster> usermasterobj = lsuserMasterRepository.findAll();
 		
 		//objcfrArchiveHistory.setLscfrachivetransaction(lsarchive);
+		try {
+			objcfrArchiveHistory.setArchivedate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lscfrArchiveHistoryRepository.save(objcfrArchiveHistory);
 		lstcfrtransaction.stream().forEach(obj1->{ usermasterobj.stream().filter(obj2->{ return obj2.getUsercode().equals(obj1.getLsuserMaster());})
 			.limit(1)
