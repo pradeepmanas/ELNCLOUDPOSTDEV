@@ -214,13 +214,15 @@ public class LoginController {
 
 	@PostMapping("/Loginnotification")
 	public Notification Loginnotification(@RequestBody Notification objNotification) throws ParseException {
-		return loginService.Loginnotification(objNotification);
+		//return loginService.Loginnotification(objNotification);
+		return null;
 	}
 
 	@PostMapping("/Resourcenotification")
 	public Lsrepositoriesdata Resourcenotification(@RequestBody Lsrepositoriesdata objNotification)
 			throws ParseException {
-		return loginService.Resourcenotification(objNotification);
+//		return loginService.Resourcenotification(objNotification);
+		return null;
 	}
 
 	@PostMapping("/ValidateuserAndPassword")

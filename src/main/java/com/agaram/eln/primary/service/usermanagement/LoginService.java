@@ -1433,44 +1433,44 @@ public class LoginService {
 
 		int i = 0;
 		boolean value = false;
-		while (i < codelist.size()) {
-
-			value = commonfunction.isSameDay(currentdate, codelist.get(i).getCautiondate());
-			if(value) {
-			LSnotification LSnotification = new LSnotification();
-
-			LSuserMaster LSuserMaster = new LSuserMaster(); /* to get the value */
-			LSuserMaster.setUsercode(codelist.get(i).getUsercode());
-
-			LSuserMaster objLSuserMaster = new LSuserMaster();/* to return the value this obj is created */
-			objLSuserMaster = userService.getUserOnCode(LSuserMaster);
-
-			String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\""
-					+ codelist.get(i).getBatchid() + "\",\"description\":\"" + codelist.get(i).getDescription() + "\"}";
-
-			if (codelist.get(i).getStatus() == 1 && value) {
-
-				LSnotification.setIsnewnotification(1);
-				LSnotification.setNotification("CAUTIONALERT");
-				LSnotification.setNotificationdate(objNotification.getCurrentdate());
-				LSnotification.setNotificationdetils(Details);
-				LSnotification.setNotificationpath("/registertask");
-				LSnotification.setNotifationfrom(objLSuserMaster);
-				LSnotification.setNotifationto(objLSuserMaster);
-				LSnotification.setRepositorycode(0);
-				LSnotification.setRepositorydatacode(0);
-				LSnotification.setNotificationfor(1);
-				
-				codelist.get(i).setStatus(0);
-				lstnotifications.add(LSnotification);
-			}
-
-			i++;
-		}
-
+//		while (i < codelist.size()) {
+//
+//			value = commonfunction.isSameDay(currentdate, codelist.get(i).getCautiondate());
+//			if(value) {
+//			LSnotification LSnotification = new LSnotification();
+//
+//			LSuserMaster LSuserMaster = new LSuserMaster(); /* to get the value */
+//			LSuserMaster.setUsercode(codelist.get(i).getUsercode());
+//
+//			LSuserMaster objLSuserMaster = new LSuserMaster();/* to return the value this obj is created */
+//			objLSuserMaster = userService.getUserOnCode(LSuserMaster);
+//
+//			String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\""
+//					+ codelist.get(i).getBatchid() + "\",\"description\":\"" + codelist.get(i).getDescription() + "\"}";
+//
+//			if (codelist.get(i).getStatus() == 1 && value) {
+//
+//				LSnotification.setIsnewnotification(1);
+//				LSnotification.setNotification("CAUTIONALERT");
+//				LSnotification.setNotificationdate(objNotification.getCurrentdate());
+//				LSnotification.setNotificationdetils(Details);
+//				LSnotification.setNotificationpath("/registertask");
+//				LSnotification.setNotifationfrom(objLSuserMaster);
+//				LSnotification.setNotifationto(objLSuserMaster);
+//				LSnotification.setRepositorycode(0);
+//				LSnotification.setRepositorydatacode(0);
+//				LSnotification.setNotificationfor(1);
+//				
+//				codelist.get(i).setStatus(0);
+//				lstnotifications.add(LSnotification);
+//			}
+//
+//			i++;
+//		}
+//		}
 		LSnotificationRepository.save(lstnotifications);
 		NotificationRepository.save(codelist);
-		}
+		
 		return null;
 
 	}
