@@ -1115,8 +1115,8 @@ public class TransactionService {
 		// Get the end date
 		Date endDate = calendar.getTime();
 
-		List<MaterialInventory> objInventories = materialInventoryRepository
-				.findByNtransactionstatusAndIsexpiryneedAndExpirydateBetween(28, true, currentDate, endDate);
+//		List<MaterialInventory> objInventories = materialInventoryRepository
+//				.findByNtransactionstatusAndIsexpiryneedAndExpirydateBetween(28, true, currentDate, endDate);
 		
 		List<MaterialInventory> expiredInvent = new ArrayList<MaterialInventory>(); 
 		
