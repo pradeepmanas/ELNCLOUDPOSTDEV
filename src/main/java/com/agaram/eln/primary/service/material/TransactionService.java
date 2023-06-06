@@ -1124,17 +1124,17 @@ public class TransactionService {
 
 		objInventories.stream().peek(objInventory -> {
 
-			if (objInventory.getIsexpiryneed()) {
-				Date date = objInventory.getExpirydate();
-				LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-				if (localCurrentDate.isBefore(localDate) || localDate.equals(localCurrentDate)) {
-					lstLSnotifications.addAll(updateNotificationOnInventory(objInventory, "EXPIRYDATE", cft, 0.0, date));
-				} else {
-					objInventory.setNtransactionstatus(55);
-					expiredInvent.add(objInventory);
-					lstLSnotifications.addAll(updateNotificationOnInventory(objInventory, "EXPIRYREACHED", cft, 0.0, date));
-				}
-			}
+//			if (objInventory.getIsexpiryneed()) {
+//				Date date = objInventory.getExpirydate();
+//				LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//				if (localCurrentDate.isBefore(localDate) || localDate.equals(localCurrentDate)) {
+//					lstLSnotifications.addAll(updateNotificationOnInventory(objInventory, "EXPIRYDATE", cft, 0.0, date));
+//				} else {
+//					objInventory.setNtransactionstatus(55);
+//					expiredInvent.add(objInventory);
+//					lstLSnotifications.addAll(updateNotificationOnInventory(objInventory, "EXPIRYREACHED", cft, 0.0, date));
+//				}
+//			}
 		}).collect(Collectors.toList());
 		
 		lsnotificationRepository.save(lstLSnotifications);
