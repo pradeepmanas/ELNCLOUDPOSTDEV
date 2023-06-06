@@ -1483,78 +1483,78 @@ public class LoginService {
 		String Details = "";
 		int i = 0;
 		boolean value = false;
-		while (i < codelist.size()) {
-			SimpleDateFormat Datefor = new SimpleDateFormat("yyyy-MM-dd");
-			String expirydate = Datefor.format(new Date());
-			LocalDate formatdate = LocalDate.parse(expirydate);
-
-			String currentdate1 = Datefor.format(currentdate);
-			LocalDate currentformatdate = LocalDate.parse(currentdate1);
-			LocalDate expirydate1 = formatdate.minusDays(14);
-			LocalDate expirydate2 = formatdate.minusDays(7);
-			LocalDate expirydate3 = formatdate.minusDays(3);
-
-			Boolean minusdate1 = expirydate1.equals(currentformatdate);
-			Boolean minusdate2 = expirydate2.equals(currentformatdate);
-			Boolean minusdate3 = expirydate3.equals(currentformatdate);
-
-			LSnotification LSnotification = new LSnotification();
-
-			LSuserMaster LSuserMaster = new LSuserMaster();
-			LSuserMaster.setUsercode(codelist.get(i).getUsercode());
-
-			LSuserMaster objLSuserMaster = new LSuserMaster();
-			objLSuserMaster = userService.getUserOnCode(LSuserMaster);
-			if (codelist.get(i).getItemstatus() == 1) {
-
-				if (minusdate1 == true) {
-					Details = "{\"inventory\" :\"" + codelist.get(i).getRepositoryitemname() + "\",\"inventoryid\" :\""
-							+ codelist.get(i).getInventoryid() + codelist.get(i).getRepositorydatacode()
-							+ "\",\"days\" :\"" + 14 + "\"}";
-					LSnotification.setIsnewnotification(1);
-					LSnotification.setNotification("INVENTORYEXPIRE");
-					LSnotification.setNotificationdate(objNotification.getCurrentdate());
-					LSnotification.setNotificationpath("/inventory");
-					LSnotification.setNotificationdetils(Details);
-					LSnotification.setNotifationfrom(objLSuserMaster);
-					LSnotification.setNotifationto(objLSuserMaster);
-					LSnotification.setNotificationfor(1);
-					lstnotifications.add(LSnotification);
-				} else if (minusdate2 == true) {
-
-					Details = "{\"inventory\" :\"" + codelist.get(i).getRepositoryitemname() + "\",\"inventoryid\" :\""
-							+ codelist.get(i).getInventoryid() + codelist.get(i).getRepositorydatacode()
-							+ "\",\"days\" :\"" + 7 + "\"}";
-					LSnotification.setNotificationdetils(Details);
-					LSnotification.setIsnewnotification(1);
-					LSnotification.setNotification("INVENTORYEXPIRE");
-					LSnotification.setNotificationdate(objNotification.getCurrentdate());
-					LSnotification.setNotificationpath("/inventory");
-					LSnotification.setNotificationdetils(Details);
-					LSnotification.setNotifationfrom(objLSuserMaster);
-					LSnotification.setNotifationto(objLSuserMaster);
-					LSnotification.setNotificationfor(1);
-					lstnotifications.add(LSnotification);
-				} else if (minusdate3 == true) {
-					Details = "{\"inventory\" :\"" + codelist.get(i).getRepositoryitemname() + "\",\"inventoryid\" :\""
-							+ codelist.get(i).getInventoryid() + codelist.get(i).getRepositorydatacode()
-							+ "\",\"days\" :\"" + 3 + "\"}";
-					LSnotification.setNotificationdetils(Details);
-					LSnotification.setIsnewnotification(1);
-					LSnotification.setNotification("INVENTORYEXPIRE");
-					LSnotification.setNotificationdate(objNotification.getCurrentdate());
-					LSnotification.setNotificationpath("/inventory");
-					LSnotification.setNotificationdetils(Details);
-					LSnotification.setNotifationfrom(objLSuserMaster);
-					LSnotification.setNotifationto(objLSuserMaster);
-					LSnotification.setNotificationfor(1);
-					lstnotifications.add(LSnotification);
-				}
-
-			}
-
-			i++;
-		}
+//		while (i < codelist.size()) {
+//			SimpleDateFormat Datefor = new SimpleDateFormat("yyyy-MM-dd");
+//			String expirydate = Datefor.format(new Date());
+//			LocalDate formatdate = LocalDate.parse(expirydate);
+//
+//			String currentdate1 = Datefor.format(currentdate);
+//			LocalDate currentformatdate = LocalDate.parse(currentdate1);
+//			LocalDate expirydate1 = formatdate.minusDays(14);
+//			LocalDate expirydate2 = formatdate.minusDays(7);
+//			LocalDate expirydate3 = formatdate.minusDays(3);
+//
+//			Boolean minusdate1 = expirydate1.equals(currentformatdate);
+//			Boolean minusdate2 = expirydate2.equals(currentformatdate);
+//			Boolean minusdate3 = expirydate3.equals(currentformatdate);
+//
+//			LSnotification LSnotification = new LSnotification();
+//
+//			LSuserMaster LSuserMaster = new LSuserMaster();
+//			LSuserMaster.setUsercode(codelist.get(i).getUsercode());
+//
+//			LSuserMaster objLSuserMaster = new LSuserMaster();
+//			objLSuserMaster = userService.getUserOnCode(LSuserMaster);
+//			if (codelist.get(i).getItemstatus() == 1) {
+//
+//				if (minusdate1 == true) {
+//					Details = "{\"inventory\" :\"" + codelist.get(i).getRepositoryitemname() + "\",\"inventoryid\" :\""
+//							+ codelist.get(i).getInventoryid() + codelist.get(i).getRepositorydatacode()
+//							+ "\",\"days\" :\"" + 14 + "\"}";
+//					LSnotification.setIsnewnotification(1);
+//					LSnotification.setNotification("INVENTORYEXPIRE");
+//					LSnotification.setNotificationdate(objNotification.getCurrentdate());
+//					LSnotification.setNotificationpath("/inventory");
+//					LSnotification.setNotificationdetils(Details);
+//					LSnotification.setNotifationfrom(objLSuserMaster);
+//					LSnotification.setNotifationto(objLSuserMaster);
+//					LSnotification.setNotificationfor(1);
+//					lstnotifications.add(LSnotification);
+//				} else if (minusdate2 == true) {
+//
+//					Details = "{\"inventory\" :\"" + codelist.get(i).getRepositoryitemname() + "\",\"inventoryid\" :\""
+//							+ codelist.get(i).getInventoryid() + codelist.get(i).getRepositorydatacode()
+//							+ "\",\"days\" :\"" + 7 + "\"}";
+//					LSnotification.setNotificationdetils(Details);
+//					LSnotification.setIsnewnotification(1);
+//					LSnotification.setNotification("INVENTORYEXPIRE");
+//					LSnotification.setNotificationdate(objNotification.getCurrentdate());
+//					LSnotification.setNotificationpath("/inventory");
+//					LSnotification.setNotificationdetils(Details);
+//					LSnotification.setNotifationfrom(objLSuserMaster);
+//					LSnotification.setNotifationto(objLSuserMaster);
+//					LSnotification.setNotificationfor(1);
+//					lstnotifications.add(LSnotification);
+//				} else if (minusdate3 == true) {
+//					Details = "{\"inventory\" :\"" + codelist.get(i).getRepositoryitemname() + "\",\"inventoryid\" :\""
+//							+ codelist.get(i).getInventoryid() + codelist.get(i).getRepositorydatacode()
+//							+ "\",\"days\" :\"" + 3 + "\"}";
+//					LSnotification.setNotificationdetils(Details);
+//					LSnotification.setIsnewnotification(1);
+//					LSnotification.setNotification("INVENTORYEXPIRE");
+//					LSnotification.setNotificationdate(objNotification.getCurrentdate());
+//					LSnotification.setNotificationpath("/inventory");
+//					LSnotification.setNotificationdetils(Details);
+//					LSnotification.setNotifationfrom(objLSuserMaster);
+//					LSnotification.setNotifationto(objLSuserMaster);
+//					LSnotification.setNotificationfor(1);
+//					lstnotifications.add(LSnotification);
+//				}
+//
+//			}
+//
+//			i++;
+//		}
 
 		LSnotificationRepository.save(lstnotifications);
 		return null;
