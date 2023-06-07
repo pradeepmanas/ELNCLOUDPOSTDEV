@@ -62,7 +62,7 @@ public class Logilaborders extends Logilabordermaster {
 		this.lockeduser = lockeduser;
 		this.testcode = testcode;
 		this.lssamplemaster = lssamplemaster;
-		this.lsprojectmaster =new LSprojectmaster(lsprojectmaster.getCreatedby(),lsprojectmaster.getProjectcode(),lsprojectmaster.getProjectname(),lsprojectmaster.getProjectstatus(),lsprojectmaster.getStatus(),lsprojectmaster.getTeamname());
+		this.lsprojectmaster =lsprojectmaster!=null?new LSprojectmaster(lsprojectmaster.getCreatedby(),lsprojectmaster.getProjectcode(),lsprojectmaster.getProjectname(),lsprojectmaster.getProjectstatus(),lsprojectmaster.getStatus(),lsprojectmaster.getTeamname()):lsprojectmaster;
 		this.filecode = lsfile != null ? lsfile.getFilecode() : -1;
 		this.filetype = filetype;
 		this.lsuserMaster = lsuserMaster;

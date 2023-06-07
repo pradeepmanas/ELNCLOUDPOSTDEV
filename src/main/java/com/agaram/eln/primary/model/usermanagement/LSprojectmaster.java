@@ -81,10 +81,10 @@ public class LSprojectmaster {
 	
 	public LSprojectmaster(String createdby,Integer projectcode,String projectname,String projectstatus,Integer status,String teamname) {
 		this.createdby=createdby;
-		this.projectcode=projectcode;
+		this.projectcode=projectcode!=null?projectcode:-1;
 		this.projectname=projectname;
 		this.projectstatus=projectstatus;
-		this.status=status;
+		this.status=status!=null?status:-1;
 		this.teamname=teamname;
 	}
 	
