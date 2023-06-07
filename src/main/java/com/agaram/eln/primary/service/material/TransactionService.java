@@ -624,7 +624,9 @@ public class TransactionService {
 
 		if (objInventory.getNqtynotification() != null) {
 			if (objInventory.getNqtynotification() <= getQtyLeft ? false : true) {
-				updateNotificationOnInventory(objInventory, "INVENTORYQTYNOTIFICATION", cft, getQtyLeft, new Date());
+				List<LSnotification> lstLSnotifications = new ArrayList<LSnotification>();
+				lstLSnotifications.addAll(updateNotificationOnInventory(objInventory, "INVENTORYQTYNOTIFICATION", cft, getQtyLeft, new Date()));
+				lsnotificationRepository.save(lstLSnotifications);
 			}
 		}
 

@@ -59,8 +59,9 @@ public class SectionService {
 		} else {
 			final Section objSetion1 = sectionRepository.findBySsectionnameIgnoreCaseAndNsitecode(section.getSsectionname(),section.getNsitecode());
 			if (objSetion1 == null || (objSetion1.getNsectioncode().equals(sectionobj.getNsectioncode()))) {
+				section.setNsitecode(sectionobj.getNsitecode());
 				sectionRepository.save(section);
-				section.setObjsilentaudit(section.getObjsilentaudit());
+//				section.setObjsilentaudit(section.getObjsilentaudit());
 				section.getResponse().setStatus(true);
 				section.getResponse().setInformation("IDS_SUCCESS");
 				return new ResponseEntity<>(section, HttpStatus.OK);

@@ -1449,28 +1449,25 @@ public class LoginService {
 	        toDate = calendar2.getTime();
 
 	        List<Notification> codelist = NotificationRepository.findByUsercodeAndCautiondateBetween(objNotification.getUsercode(), fromDate, toDate);
-		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		
+		LSuserMaster LSuserMaster = new LSuserMaster(); /* to get the value */
+		LSuserMaster.setUsercode(objNotification.getUsercode());
 
+	//	LSuserMaster objLSuserMaster = new LSuserMaster();
+	//	objLSuserMaster = userService.getUserOnCode(LSuserMaster);
+		
+		LSuserMaster objLSuserMaster = userService.getUserOnCode(LSuserMaster);/* to return the value this obj is created */
+		
 		int i = 0;
-		boolean value = false;
-		 
+		
 			 List<LSnotification> loginlstnotifications = codelist.stream()
 			            .filter(notification -> notification.getStatus() == 1)
 			            .map(notification -> {
-
 		
 			LSnotification LSnotification = new LSnotification();
 
-			LSuserMaster LSuserMaster = new LSuserMaster(); /* to get the value */
-			LSuserMaster.setUsercode(codelist.get(i).getUsercode());
-
-			LSuserMaster objLSuserMaster = new LSuserMaster();/* to return the value this obj is created */
-			objLSuserMaster = userService.getUserOnCode(LSuserMaster);
-
 			String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\""
 					+ codelist.get(i).getBatchid() + "\",\"description\":\"" + codelist.get(i).getDescription() + "\"}";
-
-	
 
 				LSnotification.setIsnewnotification(1);
 				LSnotification.setNotification("CAUTIONALERT");

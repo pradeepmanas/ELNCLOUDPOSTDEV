@@ -1172,7 +1172,7 @@ public class DashBoardService {
 			List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
 			List<LSworkflow> lstworkflow = objuser.getLstworkflow();	
 			if (lstproject != null) {
-
+				objuser.getUsernotify().add(objuser);
 				if (objuser.getObjuser().getOrderselectiontype() == 1) {
 
 					if (testcode == -1 && objuser.getLstprojectforfilter() == null) {

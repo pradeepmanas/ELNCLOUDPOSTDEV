@@ -285,13 +285,9 @@ public class MaterialInventoryService {
 
 					objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
 							(int) lstMaterialInventory.get(0).get("nmaterialinventorycode"), inputMap).getBody());
-//					objmap.putAll((Map<String, Object>) getMaterialFile((int) lstMaterialInventory
-//							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")));
 					objmap.putAll((Map<String, Object>) getResultUsedMaterial(
 							Integer.parseInt(lstMaterialInventory.get(0).get("nmaterialinventorycode").toString()))
 									.getBody());
-//					objmap.putAll((Map<String, Object>) getMaterialInventoryhistory((int) lstMaterialInventory
-//							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")));
 
 				} else {
 
@@ -310,13 +306,8 @@ public class MaterialInventoryService {
 
 					objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
 							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode"), inputMap).getBody());
-
 					objmap.putAll((Map<String, Object>) getResultUsedMaterial(objInventory.getNmaterialinventorycode())
 							.getBody());
-//					objmap.putAll((Map<String, Object>) getMaterialFile(
-//							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode")));
-//					objmap.putAll((Map<String, Object>) getMaterialInventoryhistory(
-//							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode")));
 
 				}
 			} else {
@@ -668,7 +659,7 @@ public class MaterialInventoryService {
 		Date getExpPolicyDate = null;
 		Date getNextValDate = null;
 		
-		if(objMaterial.isExpirypolicy()) {
+		if(objMaterial.isExpirypolicy() != null && objMaterial.isExpirypolicy()) {
 			Date getmanufDate = manufDate == null ? commonfunction.getCurrentUtcTime() : manufDate;
 			if(objMaterial.getExpirypolicyperiod().equalsIgnoreCase("NA") ||objMaterial.getExpirypolicyperiod().equalsIgnoreCase("Never")) {
 				isExpiry = false;
@@ -678,7 +669,7 @@ public class MaterialInventoryService {
 			}
 			expiryDate = getExpPolicyDate != null ? getExpPolicyDate : expiryDate;
 		}
-		if(objMaterial.isNextvalidation()) {
+		if(objMaterial.isNextvalidation() != null && objMaterial.isNextvalidation()) {
 			getNextValDate = lastValidation;
 //			Date getmanufDate = lastValidation;
 			if(objMaterial.getNextvalidationperiod().equalsIgnoreCase("NA") ||objMaterial.getNextvalidationperiod().equalsIgnoreCase("Never")) {

@@ -36,7 +36,7 @@ public class MaterialController {
 	@RequestMapping(value = "/getMaterialByTypeCode", method = RequestMethod.POST)
 	public ResponseEntity<Object> getMaterialByTypeCode(@RequestBody Map<String, Object> inputMap) throws Exception {
 
-		return objMaterialService.getMaterialByTypeCode(inputMap);
+		return objMaterialService.getMaterialInitial(inputMap);
 	}
 	
 	@RequestMapping(value = "/getMaterialByTypeCodeByDate", method = RequestMethod.POST)
