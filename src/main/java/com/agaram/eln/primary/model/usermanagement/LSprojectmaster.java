@@ -74,6 +74,19 @@ public class LSprojectmaster {
 
 	@ManyToOne
 	private LSuserMaster modifiedby;
+	public LSprojectmaster () {
+		
+	}
+	
+	
+	public LSprojectmaster(String createdby,Integer projectcode,String projectname,String projectstatus,Integer status,String teamname) {
+		this.createdby=createdby;
+		this.projectcode=projectcode;
+		this.projectname=projectname;
+		this.projectstatus=projectstatus;
+		this.status=status;
+		this.teamname=teamname;
+	}
 	
 	public LSSiteMaster getLssitemaster() {
 		return lssitemaster;
