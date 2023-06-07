@@ -1170,7 +1170,7 @@ public class DashBoardService {
 
 			List<LSprojectmaster> lstproject = objuser.getLstproject();
 			List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
-			List<LSworkflow> lstworkflow = objuser.getLstworkflow();
+			List<LSworkflow> lstworkflow = objuser.getLstworkflow();	
 			if (lstproject != null) {
 
 				if (objuser.getObjuser().getOrderselectiontype() == 1) {
@@ -1317,17 +1317,30 @@ public class DashBoardService {
 //										fromdate, todate, "N", 2, objuser, fromdate, todate, "N", lstproject, 3,
 //										objuser, fromdate, todate, pageable);
 						lstorders = lslogilablimsorderdetailRepository
-							    .findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
-							        "N", lstproject, fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser,
-							        fromdate, todate, "N", 2, objuser, fromdate, todate, "N", lstproject, 3,
-							        objuser, fromdate, todate, "N", 3,
-							         fromdate, todate,objuser.getUsernotify(), pageable);
+								.findByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullOrderByBatchcodeDesc(
+										lstproject, fromdate, todate, 0, fromdate, todate, 1, objuser, fromdate, todate,
+										2, objuser, fromdate, todate, 3,objuser,fromdate, todate,lstproject,
+                                        3, objuser.getUsernotify(), fromdate, todate,
+										pageable);
 						count = lslogilablimsorderdetailRepository
-								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
-								        "N", lstproject, fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser,
-								        fromdate, todate, "N", 2, objuser, fromdate, todate, "N", lstproject, 3,
-								        objuser, fromdate, todate, "N", 3,
-								         fromdate, todate,objuser.getUsernotify());
+								.countByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullOrderByBatchcodeDesc(
+										lstproject, fromdate, todate, 0, fromdate, todate, 1, objuser, fromdate, todate,
+										2, objuser, fromdate, todate, 3,objuser,fromdate, todate,lstproject,
+                                        3, objuser.getUsernotify(), fromdate, todate
+										);
+						//last
+//						lstorders = lslogilablimsorderdetailRepository
+//							    .findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
+//							        "N", lstproject, fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser,
+//							        fromdate, todate, "N", 2, objuser, fromdate, todate, "N", lstproject, 3,
+//							        objuser, fromdate, todate, "N", 3,
+//							         fromdate, todate,objuser.getUsernotify(), pageable);
+//						count = lslogilablimsorderdetailRepository
+//								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
+//								        "N", lstproject, fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser,
+//								        fromdate, todate, "N", 2, objuser, fromdate, todate, "N", lstproject, 3,
+//								        objuser, fromdate, todate, "N", 3,
+//								         fromdate, todate,objuser.getUsernotify());
 //						lstorders = lslogilablimsorderdetailRepository
 //								.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 //										"N", lstproject, fromdate, todate, "N", 0, fromdate, todate, pageable);
