@@ -42,6 +42,12 @@ public class LSworkflow {
 	@Transient
 	private Response response;
 	
+	public  LSworkflow() {};
+	
+	public  LSworkflow(int workflowcode,String workflowname) {
+		this.workflowcode=workflowcode;
+		this.workflowname=workflowname;
+	};
 	
 	public Response getResponse() {
 		return response;
