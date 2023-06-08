@@ -59,7 +59,17 @@ public class LSuserMaster {
 
 	@Transient
 	private Integer activeusercode;
-	
+
+	public LSuserMaster() {
+
+	}
+
+	public LSuserMaster(Integer usercode, String username, LSSiteMaster lssitemaster) {
+		this.usercode = usercode;
+		this.username = username;
+		this.lssitemaster = lssitemaster;
+	}
+
 	public Integer getActiveusercode() {
 		return activeusercode;
 	}
@@ -147,10 +157,10 @@ public class LSuserMaster {
 
 	@Transient
 	private Integer multiusergroups;
-	
+
 	@Transient
 	private Integer pagesize;
-	
+
 	@Transient
 	private Integer pageperorder;
 
@@ -228,13 +238,12 @@ public class LSuserMaster {
 
 	@Transient
 	List<LSprojectmaster> lstproject;
-	
+
 	@Transient
 	private Integer testcode;
-	
+
 	@Transient
 	LSprojectmaster lstprojectforfilter;
-
 
 	@Transient
 	List<LSworkflow> lstworkflow;
@@ -243,8 +252,7 @@ public class LSuserMaster {
 	private boolean reset;
 	@Transient
 	private boolean resendmail;
-	
-	
+
 	public LSprojectmaster getLstprojectforfilter() {
 		return lstprojectforfilter;
 	}
@@ -452,8 +460,11 @@ public class LSuserMaster {
 			 * userstatus.trim().equals("A")?"Active":"Deactive";
 			 */
 //			return  userstatus.trim().equals("A")?"Active":"Deactive";
-			
-			return this.userretirestatus !=null &&this.userretirestatus == 1?"Retired":userstatus.trim().equals("A") || userstatus.trim().equals("Active") ? "Active" : userstatus.trim().equals("D") || userstatus.trim().equals("Inactive") ? "Deactive" : "Locked";
+
+			return this.userretirestatus != null && this.userretirestatus == 1 ? "Retired"
+					: userstatus.trim().equals("A") || userstatus.trim().equals("Active") ? "Active"
+							: userstatus.trim().equals("D") || userstatus.trim().equals("Inactive") ? "Deactive"
+									: "Locked";
 //			return userstatus.trim().equals("A") && this.userretirestatus == 0 ? "Active" : userstatus.trim().equals("D") && this.userretirestatus == 0 ? "Deactive" :this.userretirestatus == 1?"Retired": "Locked";
 		} else {
 			return "";
@@ -668,7 +679,4 @@ public class LSuserMaster {
 		this.lsusermaster = lsusermaster;
 	}
 
-	
-	}
-
-
+}

@@ -12,6 +12,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -65,7 +66,7 @@ public class Logilaborders extends Logilabordermaster {
 		this.lsprojectmaster =lsprojectmaster!=null?new LSprojectmaster(lsprojectmaster.getCreatedby(),lsprojectmaster.getProjectcode(),lsprojectmaster.getProjectname(),lsprojectmaster.getProjectstatus(),lsprojectmaster.getStatus(),lsprojectmaster.getTeamname()):lsprojectmaster;
 		this.filecode = lsfile != null ? lsfile.getFilecode() : -1;
 		this.filetype = filetype;
-		this.lsuserMaster = lsuserMaster;
+		this.lsuserMaster = lsuserMaster!=null? new LSuserMaster(lsuserMaster.getUsercode(),lsuserMaster.getUsername(),lsuserMaster.getLssitemaster()):null;
 		this.batchid=batchid;
 		this.batchcode = batchcode;
 		this.keyword=keyword != null ? keyword :"";

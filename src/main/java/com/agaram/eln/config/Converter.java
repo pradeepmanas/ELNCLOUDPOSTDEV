@@ -210,7 +210,6 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
                 "/protocol/removeprotocolordervideo",
                 "/protocol/removeprotocolordervideossql",
                 "/protocol/downloadprotocolimage"
-//                "/Instrument/Getorderbyflaganduser"
             );
         byte[] compressedBytes = new byte[0];
         if (uncompressedUrls.contains(requestUrl)) {

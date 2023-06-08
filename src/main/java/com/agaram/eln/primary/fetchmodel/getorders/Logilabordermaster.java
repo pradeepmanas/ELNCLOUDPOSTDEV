@@ -48,7 +48,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.createdtimestamp = createdtimestamp;
 		this.completedtimestamp = completedtimestamp;
 		this.keyword = keyword;
-		this.lsworkflow =new LSworkflow(lsworkflow.getWorkflowcode(),lsworkflow.getWorkflowname());
+		this.lsworkflow =lsworkflow != null ? new LSworkflow(lsworkflow.getWorkflowcode(),lsworkflow.getWorkflowname()):null;
 		this.ordercancell=ordercancell;
 		this.assignedto =assignedto;
 		this.viewoption=viewoption;
