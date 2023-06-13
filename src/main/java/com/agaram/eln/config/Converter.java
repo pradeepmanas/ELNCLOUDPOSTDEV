@@ -184,8 +184,13 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		// mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 //    	System.out.println("write "+ outputMessage.getHeaders().get("authorization").get(0));
-		 HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-		    String requestUrl = request.getRequestURI();
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		String requestUrl = request.getRequestURI();
+	    System.out.println("---------------------------------------------------------------------------------------------------------------");
+	    System.out.println("ZipDataKumu" + requestUrl);
+	    requestUrl = requestUrl.contains("/ELNPOSTGRE-0.0.1-SNAPSHOT")? requestUrl.substring("/ELNPOSTGRE-0.0.1-SNAPSHOT".length()) : 
+	        	requestUrl.contains("/ELN-0.0.1-SNAPSHOT")? requestUrl.substring("/ELN-0.0.1-SNAPSHOT".length()) : requestUrl;
+		    
         List < String > uncompressedUrls = Arrays.asList(
                 "/protocol/uploadprotocolsfile",
                 "/protocol/uploadprotocolsfilesql",
@@ -209,7 +214,16 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
                 "/protocol/downloadprotocolordervideosql",
                 "/protocol/removeprotocolordervideo",
                 "/protocol/removeprotocolordervideossql",
-                "/protocol/downloadprotocolimage"
+                "/protocol/downloadprotocolimage",
+                "/Lims/getSheetsFromELN",
+                "/Lims/downloadSheetFromELN",
+                "/Lims/downloadResultFromELN",
+                "/Lims/updateSheetsParameterForELN",
+                "/Lims/getAttachmentsForLIMS",
+                "/Lims/getOrdersFromELN",
+                "/Lims/getOrderTagFromELN",
+                "/Lims/getSiteFromELN",
+                "/Lims/getUsersFromELN"
             );
         byte[] compressedBytes = new byte[0];
         if (uncompressedUrls.contains(requestUrl)) {

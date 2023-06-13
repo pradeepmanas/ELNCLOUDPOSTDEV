@@ -6839,8 +6839,15 @@ public class ProtocolService {
 		return null;
 	}
 
-	public LSprotocolorderstephistory updatetransactionhistory(LSprotocolorderstephistory objuser) {
+	public LSprotocolorderstephistory updatetransactionhistory(LSprotocolorderstephistory objuser) throws ParseException {
 		if (objuser.getProtocolordercode() != null || objuser.getBatchcode() != null) {
+			if(objuser.getStepstartdate()!=null) {
+				objuser.setStepstartdate(commonfunction.getCurrentUtcTime());
+			}else if(objuser.getStepskipeddate()!=null) {
+				objuser.setStepskipeddate(commonfunction.getCurrentUtcTime());
+			}else if(objuser.getStependdate()!=null) {
+				objuser.setStependdate(commonfunction.getCurrentUtcTime());
+			}
 			lsprotocolorderstephistoryRepository.save(objuser);
 		}
 		return objuser;

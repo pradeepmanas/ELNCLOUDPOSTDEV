@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.config.DataSourceBasedMultiTenantConnectionProviderImpl;
 import com.agaram.eln.primary.config.TenantDataSource;
-import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.multitenant.CustomerSubscription;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
@@ -33,7 +31,6 @@ import com.agaram.eln.primary.model.multitenant.Invoice;
 import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.multitenant.CustomerSubscriptionRepository;
@@ -42,9 +39,7 @@ import com.agaram.eln.primary.repository.multitenant.InvoiceRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordPolicyRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsRepository;
-import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsmasterRepository;
 import com.agaram.eln.primary.service.notification.EmailService;
-
 import com.agaram.eln.secondary.config.ArchiveDataSourceBasedMultiTenantConnectionProviderImpl;
 
 @Service
@@ -151,6 +146,8 @@ public class DatasourceService {
 		String password = Generatetenantpassword();
 		String passwordtenant = AESEncryption.encrypt(password);
 		Tenantname.setTenantpassword(passwordtenant);
+		//by default named licence 
+		Tenantname.setLicencetype(1);
 
 		configRepo.save(Tenantname);
 		

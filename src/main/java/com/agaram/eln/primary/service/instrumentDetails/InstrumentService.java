@@ -3316,7 +3316,8 @@ public class InstrumentService {
 
 		}
 
-		if (objorder.getLssamplefile() != null && objorder.getLssamplefile().getProcessed() == 0) {
+		if (objorder.getLssamplefile() != null && objorder.getLssamplefile().getProcessed() != null 
+				&& objorder.getLssamplefile().getProcessed() == 0) {
 			updateordercontent(contString, objorder.getLssamplefile(), objorder.getIsmultitenant());
 			objorder.getLssamplefile().setFilecontent(contString);
 		} else {

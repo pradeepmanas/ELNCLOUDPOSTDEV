@@ -106,7 +106,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	@Query("SELECT NEW com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode, filenameuser) \r\n" + 
 			"FROM com.agaram.eln.primary.model.sheetManipulation.LSfile \r\n" + 
 			"WHERE lssitemaster_sitecode = ?2 AND \r\n" + 
-			"      ((filecode > 1 AND approved != 1) OR approved IS NULL) AND \r\n" + 
+			"      ((filecode > 1 AND approved != 1 AND rejected != 1) OR approved IS NULL) AND \r\n" + 
 			"      ((rejected != 1) OR (versionno > 1)) \r\n" + 
 			" and createby in (?1)ORDER BY filecode DESC")
 	public List<LSfile> getsheetapprovelanduserIn(List<LSuserMaster> lstusermaster,Integer sitecode);
