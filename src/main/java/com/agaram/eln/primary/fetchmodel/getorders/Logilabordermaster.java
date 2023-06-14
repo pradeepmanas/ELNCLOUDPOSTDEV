@@ -30,6 +30,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private LSworkflow lsworkflow;
 	private String keyword;
 	private Integer ordercancell;
+	private Integer filecode;
 	private LSuserMaster assignedto;
 	private Integer viewoption;
 
@@ -44,6 +45,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.projectname = lsprojectmaster != null ? lsprojectmaster.getProjectname() : null;
 		this.samplename = lssamplemaster != null ? lssamplemaster.getSamplename() : null;
 		this.filetype = filetype;
+		this.filecode = lsfile != null ? lsfile.getFilecode() : -1;
 		this.orderflag = orderflag;
 		this.createdtimestamp = createdtimestamp;
 		this.completedtimestamp = completedtimestamp;
@@ -221,6 +223,16 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	public void setFiletype(Integer filetype) {
 		this.filetype = filetype;
 	}
+
+	public Integer getFilecode() {
+		return filecode;
+	}
+
+
+	public void setFilecode(Integer filecode) {
+		this.filecode = filecode;
+	}
+
 
 	public String getOrderflag() {
 		return orderflag;

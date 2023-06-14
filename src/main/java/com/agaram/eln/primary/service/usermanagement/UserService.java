@@ -3,7 +3,6 @@ package com.agaram.eln.primary.service.usermanagement;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -224,7 +223,7 @@ public class UserService {
 
 		if (objusergroup.getObjuser() != null) {
 			// LScfttransaction manualAudit=new LScfttransaction();
-			Date date = new Date();
+//			Date date = new Date();
 			if (objusergroup.getObjmanualaudit() != null) {
 				// objusergroup.getObjmanualaudit().setComments("Insert Test Successfully");
 				objusergroup.getObjmanualaudit().setComments(objusergroup.getObjuser().getComments());
@@ -523,7 +522,7 @@ public class UserService {
 		// Manual Audit
 		if (objusermaster.getObjuser() != null) {
 			// LScfttransaction manualAudit=new LScfttransaction();
-			Date date = new Date();
+//			Date date = new Date();
 			objusermaster.getObjmanualaudit().setComments(objusermaster.getObjuser().getComments());
 			// manualAudit.setModuleName("UserManagement");
 			// manualAudit.setComments("Insert Test Successfully");
@@ -999,16 +998,15 @@ public class UserService {
 
 	public List<LSusergroup> GetSiteWiseUserGroup(LSSiteMaster Objclass) {
 
-		if (Objclass.getObjsilentaudit() != null) {
-			Objclass.getObjsilentaudit().setTableName("LSusergroup");
-//			lscfttransactionRepository.save(Objclass.getObjsilentaudit());
-		}
-		if (Objclass.getSitecode() == 0) {
-			return lSusergroupRepository.findByOrderByUsergroupcodeDesc();
-		}
+		if(Objclass != null && Objclass.getSitecode() != null) {
+			
+			if (Objclass.getSitecode() == 0) {
+				return lSusergroupRepository.findByOrderByUsergroupcodeDesc();
+			}
 
-		return lSusergroupRepository
-				.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(), "");
+			return lSusergroupRepository.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(), "");
+		}
+		return null;
 	}
 
 	public List<LSusergroup> GetSiteWiseActiveUserGroup(LSSiteMaster Objclass) {
