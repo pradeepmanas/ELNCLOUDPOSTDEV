@@ -2,6 +2,7 @@ package com.agaram.eln.primary.controller.usermanagement;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -236,5 +237,10 @@ public class LoginController {
 	@PostMapping("/updateActiveUserTime")
 	public Map<String, Object> updateActiveUserTime(@RequestBody Map<String, Object> objMap) throws Exception {
 		return loginService.updateActiveUserTime(objMap);
+	}
+	
+	@PostMapping("/getCurrentUTCDate")
+	public Date getCurrentUTCDate(@RequestBody LoggedUser objuser) throws Exception {
+		return commonfunction.getCurrentUtcTime();
 	}
 }

@@ -894,9 +894,7 @@ public class MaterialInventoryService {
 			objTransaction.setNmaterialinventorycode(objSaveMaterialInventory.getNmaterialinventorycode());
 			objTransaction.setNinventorytranscode((Integer) jsonObjectInvTrans.get("ninventorytranscode"));
 			objTransaction.setNtransactiontype((Integer) jsonObjectInvTrans.get("ntransactiontype"));
-			objTransaction.setNsectioncode((Integer) (jsonObjectInvTrans.get("nsectioncode") != null
-					? (Integer) jsonObjectInvTrans.get("nsectioncode")
-					: -1));
+			objTransaction.setNsectioncode((Integer) (jsonObjectInvTrans.get("nsectioncode") != null ? (Integer) jsonObjectInvTrans.get("nsectioncode") : -1));
 			objTransaction.setNsitecode(-1);
 			objTransaction.setNresultusedmaterialcode(-1);
 			objTransaction.setNqtyreceived(Double.valueOf((Integer) jsonObjectInvTrans.get("Received Quantity")));
@@ -919,7 +917,10 @@ public class MaterialInventoryService {
 
 		objmap.putAll((Map<String, Object>) getMaterialInventoryByID(inputMap).getBody());
 		objmap.putAll((Map<String, Object>) getMaterialInventoryDetails(inputMap).getBody());
-		objmap.put("objsilentaudit", cft);
+		if(cft != null) {
+			cft.setComments(strformat+" "+ cft.getComments());
+			objmap.put("objsilentaudit", cft);
+		}		
 		objmap.put("tabScreen", "IDS_MATERIALSECTION");
 
 		return new ResponseEntity<>(objmap, HttpStatus.OK);

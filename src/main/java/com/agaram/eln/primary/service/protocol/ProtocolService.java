@@ -1124,7 +1124,12 @@ public class ProtocolService {
 			versProto.setProtocolstatus(1);
 			versProto.setVersionno(protocolMaster.getVersionno());
 			versProto.setVersionname("version_" + protocolMaster.getVersionno());
-			versProto.setCreatedate(new Date());
+			try {
+				versProto.setCreatedate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if (usercode != "" && usercode1 != 0) {
 				versProto.setCreatedbyusername(usercode);
 				versProto.setCreatedby(usercode1);
@@ -1248,7 +1253,12 @@ public class ProtocolService {
 			versProto.setProtocolstatus(1);
 			versProto.setVersionno(protocolMaster.getVersionno());
 			versProto.setVersionname("version_" + protocolMaster.getVersionno());
-			versProto.setCreatedate(new Date());
+			try {
+				versProto.setCreatedate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			if (usercode != "" && usercode1 != 0) {
 				versProto.setCreatedbyusername(usercode);
 				versProto.setCreatedby(usercode1);
@@ -1413,7 +1423,7 @@ public class ProtocolService {
 				newProtocolMasterObj.setIsmultitenant((Integer) argObj.get("ismultitenant"));
 
 				LSprotocolmaster obj = objMapper.convertValue(argObj.get("LSprotocolmaster"), LSprotocolmaster.class);
-				newProtocolMasterObj.setCreatedate(obj.getCreatedate());
+//				newProtocolMasterObj.setCreatedate(obj.getCreatedate());
 				newProtocolMasterObj.setLssitemaster(LScfttransactionobj.getLssitemaster());
 				newProtocolMasterObj.setCreatedbyusername(LsuserMasterObj.getUsername());
 				newProtocolMasterObj.setVersionno(1);
@@ -1933,6 +1943,19 @@ public class ProtocolService {
 			LsProto.setApproved(0);
 		}
 		List<LSprotocolworkflowhistory> obj = objClass.getLsprotocolworkflowhistory();
+		obj = obj.stream()
+		            .map(workflowhistory -> {
+		                try {
+		                	if(workflowhistory.getHistorycode()==null) {
+		                	workflowhistory.setCreatedate(commonfunction.getCurrentUtcTime());
+		                	}
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+		                return workflowhistory;
+		            })
+		            .collect(Collectors.toList());
 		lsprotocolworkflowhistoryRepository.save(obj);
 		LsProto.setLsprotocolworkflowhistory(obj);
 		mapObj.put("ProtocolObj", LsProto);
@@ -3836,7 +3859,12 @@ public class ProtocolService {
 			}
 			lscfttransactionRepository.save(objuser.getCreateby().getObjsilentaudit());
 		}
-
+		try {
+			objuser.setStepstartdate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lsprotocolorderstephistoryRepository.save(objuser);
 		return objuser;
 	}
@@ -5037,7 +5065,12 @@ public class ProtocolService {
 			obj = Uploadprotocolorderimage(customMultipartFile, protocolstepcode, protocolordercode, stepno,
 					protocolstepname, originurl);
 		}
-
+		try {
+			obj.put("curendateandtime", commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return obj;
 	}
 
@@ -6408,7 +6441,12 @@ public class ProtocolService {
 				e.printStackTrace();
 			}
 		}
-
+		try {
+			obj.put("curendateandtime", commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return obj;
 	}
 

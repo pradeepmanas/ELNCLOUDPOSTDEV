@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -603,6 +604,17 @@ public class MasterService {
 	public List<Lslogbooks> Reviewlogbook(Lslogbooks[] objreview1) {
 
 		List<Lslogbooks> objreview = Arrays.asList(objreview1);
+	    objreview = objreview.stream()
+	            .map(lslogbook -> {
+	                try {
+						lslogbook.setRevieweddate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	                return lslogbook;
+	            })
+	            .collect(Collectors.toList());
 		lslogbooksRepository.save(objreview);
 		return objreview;
 	}

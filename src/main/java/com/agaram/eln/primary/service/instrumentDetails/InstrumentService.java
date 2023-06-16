@@ -3578,7 +3578,7 @@ public class InstrumentService {
 		lssamplefileRepository.save(objorder.getLssamplefile());
 		objorder.getLsparsedparameters().forEach((param) -> param.setBatchcode(objorder.getBatchcode()));
 		lsparsedparametersRespository.save(objorder.getLsparsedparameters());
-		lsorderworkflowhistoryRepositroy.save(objorder.getLsorderworkflowhistory());
+//		lsorderworkflowhistoryRepositroy.save(objorder.getLsorderworkflowhistory());
 		List<LsOrderattachments> lstattach = lsOrderattachmentsRepository
 				.findByBatchcodeOrderByAttachmentcodeDesc(objorder.getBatchcode());
 		objorder.setLsOrderattachments(lstattach);
