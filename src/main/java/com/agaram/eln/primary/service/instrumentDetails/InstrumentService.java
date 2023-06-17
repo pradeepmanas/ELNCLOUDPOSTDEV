@@ -7848,10 +7848,12 @@ public class InstrumentService {
 	}
 
 	public void onDeleteforCancel(List<String> lstuuid, String screen) {
-		if(screen.equals("sheet")) {
-			 lssheetfolderfilesRepository.removeForFile(lstuuid);
-		}else if(screen.equals("protocol")) {
-			lsprotocolfolderfilesRepository.removeForFile(lstuuid);
+		if(!lstuuid.isEmpty()) {
+			if(screen.equals("sheet")) {
+				 lssheetfolderfilesRepository.removeForFile(lstuuid);
+			}else if(screen.equals("protocol")) {
+				lsprotocolfolderfilesRepository.removeForFile(lstuuid);
+			}
 		}
 			
 	}
