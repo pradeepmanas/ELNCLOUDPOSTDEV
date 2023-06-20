@@ -108,6 +108,15 @@ public class LSuserMaster {
 	private String profileimage;
 	private String profileimagename;
 	private Integer verificationcode;
+	private Integer isadsuser = 0;
+
+	public Integer getIsadsuser() {
+		return isadsuser;
+	}
+
+	public void setIsadsuser(Integer isadsuser) {
+		this.isadsuser = isadsuser;
+	}
 
 	@ManyToOne
 	private LSusergroup lsusergroup;

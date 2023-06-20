@@ -111,4 +111,9 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 
 	public List<LSuserMaster> findByUsernameIgnoreCaseAndLoginfromOrderByCreateddateDesc(String username,
 			String string);
+
+	public Long countByLssitemasterAndUserstatus(LSSiteMaster sitemaster, String string);
+
+	public LSuserMaster findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndIsadsuser(String username,
+			LSSiteMaster objsiteobj, String string, int i);
 }

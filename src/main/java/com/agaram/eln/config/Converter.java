@@ -3,18 +3,18 @@ package com.agaram.eln.config;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.servlet.http.HttpServletRequest;
+
 //import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -22,13 +22,12 @@ import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import javax.servlet.http.HttpServletRequest;
 
 
 @Component
@@ -223,7 +222,11 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
                 "/Lims/getOrdersFromELN",
                 "/Lims/getOrderTagFromELN",
                 "/Lims/getSiteFromELN",
-                "/Lims/getUsersFromELN"
+                "/Lims/getUsersFromELN",
+                "/Instrument/uploadsheetimagesSql",
+                "/Instrument/uploadsheetimages",
+                "/Instrument/downloadsheetimages",
+                "/Instrument/downloadsheetimagessql"
             );
         byte[] compressedBytes = new byte[0];
         if (uncompressedUrls.contains(requestUrl)) {
@@ -319,6 +322,7 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 		return new ByteArrayInputStream(bytes);
 	}
 
+	@SuppressWarnings("unused")
 	private byte[] encrypt(byte[] bytesToEncrypt) {
 //        String apiJsonResponse = new String(bytesToEncrypt);
 //

@@ -53,6 +53,11 @@ public class LoginController {
 	public List<LSdomainMaster> LoadDomain(@RequestBody LSSiteMaster objsite) throws Exception {
 		return loginService.loadDomain(objsite);
 	}
+	
+	@PostMapping("/adsUserValidation")
+	public Map<String, Object> adsUserValidation(@RequestBody LoggedUser objuser) throws Exception {
+		return loginService.adsUserValidation(objuser);
+	}
 
 	@PostMapping("/Login")
 	public Map<String, Object> Login(@RequestBody LoggedUser objuser) throws Exception {
@@ -242,5 +247,10 @@ public class LoginController {
 	@PostMapping("/getCurrentUTCDate")
 	public Date getCurrentUTCDate(@RequestBody LoggedUser objuser) throws Exception {
 		return commonfunction.getCurrentUtcTime();
+	}
+	
+	@PostMapping("/getlicense")
+	public Map<String,Object> getlicense(@RequestBody Map<String,Object> obj) throws Exception {
+		return loginService.getlicense(obj);
 	}
 }

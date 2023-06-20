@@ -79,6 +79,9 @@ public class JwtUserDetailsService implements UserDetailsService {
 		if(user!=null) {
 		String Tokenuser = user.getUsername() +"["+user.getLssitemaster().getSitecode()+"]";
 		
+		if(user.getPassword() == null) {
+			user.setPassword("admin");
+		}
 		return new org.springframework.security.core.userdetails.User(Tokenuser, user.getPassword(),
 				new ArrayList<>());
 	}

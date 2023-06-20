@@ -4110,3 +4110,7 @@ ALTER TABLE IF Exists material ADD Column IF NOT EXISTS openexpiryperiod charact
 ALTER TABLE IF Exists material ADD Column IF NOT EXISTS nextvalidation BOOLEAN;
 ALTER TABLE IF Exists material ADD Column IF NOT EXISTS nextvalidationvalue character varying(50);
 ALTER TABLE IF Exists material ADD Column IF NOT EXISTS nextvalidationperiod character varying(50);
+
+ALTER TABLE IF Exists LSusermaster ADD Column IF NOT EXISTS isadsuser integer;
+
+update LSusermaster set isadsuser = 0 where isadsuser is null;

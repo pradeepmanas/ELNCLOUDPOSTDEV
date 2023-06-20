@@ -3,18 +3,23 @@ package com.agaram.eln.primary.service.usermanagement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
+import javax.naming.AuthenticationException;
+import javax.naming.AuthenticationNotSupportedException;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +32,14 @@ import com.agaram.eln.config.ADS_Connection;
 import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.config.JwtTokenUtil;
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.model.adsconnection.Tbladssettings;
 import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.jwt.JwtResponse;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordHistoryDetails;
@@ -44,9 +51,10 @@ import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
+import com.agaram.eln.primary.repository.adsconnection.TbladssettingsRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
-import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
+import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordHistoryDetailsRepository;
@@ -64,8 +72,8 @@ import com.agaram.eln.primary.service.cfr.AuditService;
 @EnableJpaRepositories(basePackageClasses = LSSiteMasterRepository.class)
 
 public class LoginService {
-	@Autowired
-	private LsrepositoriesdataRepository lsrepositoriesdataRepository;
+//	@Autowired
+//	private LsrepositoriesdataRepository lsrepositoriesdataRepository;
 	@Autowired
 	private LSSiteMasterRepository lSSiteMasterRepository;
 	@Autowired
@@ -116,6 +124,18 @@ public class LoginService {
 
 	@Autowired
 	private LSnotificationRepository LSnotificationRepository;
+	
+	@Autowired
+	private DataSourceConfigRepository DataSourceConfigRepository;
+
+	@Autowired
+	private LSactiveUserRepository LSactiveUserRepository;
+	
+	@Autowired
+	private TbladssettingsRepository tbladssettingsRepository;
+	
+	static final String INITIAL_CONTEXT_FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
+	static final String SECURITY_AUTHENTICATION = "simple";
 
 //	@Autowired
 //	private LSfileRepository lSfileRepository;
@@ -171,6 +191,166 @@ public class LoginService {
 //        put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMM yyyy HH:mm:ss");
 //        put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
 //    }};
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static String CheckLDAPUserConnection(Tbladssettings objAdsConnectConfig) throws NamingException {
+		String str = "";		
+		Hashtable env = new Hashtable();
+		env.put(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY);
+		env.put(Context.SECURITY_AUTHENTICATION, SECURITY_AUTHENTICATION);
+		env.put(Context.PROVIDER_URL, objAdsConnectConfig.getLdaplocation());
+		env.put(Context.SECURITY_PRINCIPAL, objAdsConnectConfig.getSloginid() + "@" + objAdsConnectConfig.getLdapserverdomainname());
+		env.put(Context.SECURITY_CREDENTIALS, objAdsConnectConfig.getSpassword());
+		env.put(Context.REFERRAL, "follow");
+		try {
+			DirContext ctx = new InitialDirContext(env);
+			
+			ctx.close();
+			return "success";
+		} catch (AuthenticationNotSupportedException ex) {
+			str = "IDS_AUTHENTICATIONNOTSUPPORTEDBYSERVER";
+			
+		} catch (AuthenticationException ex) {
+			String errorcodes[] = { "52e", "525", "530", "531", "532", "533", "701", "773" };
+			for (int i = 0; i < errorcodes.length; i++) {
+				String strser = errorcodes[i];
+				if (ex.getLocalizedMessage().toString().contains(strser)) {
+					switch (errorcodes[i]) {
+					case "52e":
+						str = "IDS_WRONGCREDENTIAL";
+						break;
+					case "525":
+						str = "IDS_USERNOTFOUND";
+						break;
+					case "530":
+						str = "IDS_NOTPERMITTEDCONTACTADMIN";
+						break;
+					case "531":
+						str = "IDS_NOTPERMITTED";
+						break;
+					case "532":
+						str = "IDS_PASSWORDEXPIRED";
+						break;
+					case "533":
+						str = "IDS_ACCOUNTDISABLED";
+						break;
+					case "701":
+						str = "IDS_ACCOUNTEXPIRED";
+						break;
+					case "773":
+						str = "IDS_USERMUSTRESETPASSWORD";
+						break;
+					default:
+						str = "IDS_UNKNOWNERROR";
+						break;
+					}
+					break;
+				}
+			}
+		}
+		return str;
+	}	
+	
+	@SuppressWarnings({ "null" })
+	public Map<String, Object> adsUserValidation(LoggedUser objuser) throws Exception {
+
+		Map<String, Object> obj = new HashMap<>();
+		String username = objuser.getsUsername();
+		LSSiteMaster objsiteobj = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
+		LSuserMaster objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndIsadsuser(username, objsiteobj, "0",1);
+		
+		if(objExitinguser != null) {
+			Tbladssettings objTbladssettings = tbladssettingsRepository.findByLdaptatus(1);
+			
+			if(objTbladssettings != null) {
+				
+				objTbladssettings.setSloginid(username);
+				objTbladssettings.setSpassword(objuser.getsPassword());
+				String str = "";
+				
+				try {
+					str = CheckLDAPUserConnection(objTbladssettings);
+				}catch (NamingException e) {
+					str = "failure";
+					System.out.print(e);
+				}
+				
+				if(str.equalsIgnoreCase("success")) {
+					objExitinguser.setObjResponse(new Response());
+					objExitinguser.getObjResponse().setStatus(true);
+					objExitinguser.setLockcount(0);
+					lSuserMasterRepository.save(objExitinguser);
+					
+					
+					if(objExitinguser.getObjResponse().getStatus() == true) {
+						LSuserMaster objUser1 = lsuserMasterRepository.findByusercode(objExitinguser.getUsercode());
+						if (objUser1 != null) {
+							LSactiveUser activeUser = new LSactiveUser();
+							objExitinguser.setLssitemaster(objExitinguser.getLssitemaster());
+							try {
+								activeUser.setTimestamp(commonfunction.getCurrentUtcTime());
+								activeUser.setClientname(null);
+								activeUser.setLastactivetime(commonfunction.getCurrentUtcTime());
+								activeUser.setLssitemaster(objExitinguser.getLssitemaster());
+								activeUser.setLsusermaster(objUser1);
+								objUser1.setLastloggedon(commonfunction.getCurrentUtcTime());
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
+							String userPassword = AESEncryption.encrypt(objuser.getsPassword());
+							objUser1.setPassword(userPassword);
+							objExitinguser.setPassword(userPassword);
+							
+							lsuserMasterRepository.save(objUser1);
+							lsactiveUserRepository.save(activeUser);
+							obj.put("activeUserId", activeUser);
+							
+							if (objuser.getLsusergroup() == null) {
+								objExitinguser.setLsusergroup(LSusergroupRepository.findOne(objuser.getMultiusergroupcode()));
+							} else {
+								objExitinguser.setLsusergroup(objuser.getLsusergroup());
+							}
+							
+							String encryptionStr = objUser1.getPassword() + "_" + objUser1.getUsername() + objUser1.getLssitemaster().getSitename();
+
+							String encryptPassword = AESEncryption.encrypt(encryptionStr);
+		
+							obj.put("encryptedpassword", encryptPassword);
+							
+							obj.put("multiusergroupcode", objuser.getMultiusergroupcode());
+						}
+					}
+					obj.put("user", objExitinguser);
+
+					return obj;
+					
+				}else {
+					objExitinguser.setObjResponse(new Response());
+					objExitinguser.getObjResponse().setInformation(str);
+					objExitinguser.getObjResponse().setStatus(false);
+
+					obj.put("user", objExitinguser);
+					return obj;
+				}
+			}else {
+				objExitinguser.setObjResponse(new Response());
+				objExitinguser.getObjResponse().setInformation("IDS_ADD_LDAP_CONFIGUARATION");
+				objExitinguser.getObjResponse().setStatus(false);
+
+				obj.put("user", objExitinguser);
+				return obj;
+			}
+		}else {
+			objExitinguser.setObjResponse(new Response());
+			objExitinguser.getObjResponse().setInformation("IDS_ADS_USERNOT_PRESENTIN_ELN");
+			objExitinguser.getObjResponse().setStatus(false);
+
+			obj.put("user", objExitinguser);
+			return obj;
+		}		
+	}
 
 	@Transactional
 	public Map<String, Object> Login(LoggedUser objuser) {
@@ -1682,6 +1862,33 @@ public class LoginService {
 		return objMap;
 		
  	}
+	
+	public Map<String, Object> getlicense(Map<String, Object> obj) {
+		Map<String, Object> rtnobj = new HashMap<>();
+		
+		if ((Integer) obj.get("isMultitenant") == 1) {
+			DataSourceConfig tenant = DataSourceConfigRepository.findByTenantid(obj.get("tenantdomain").toString());
+			rtnobj.put("Noofuser", tenant.getNoofusers());
+			LSSiteMaster sitemaster =new LSSiteMaster();
+			sitemaster.setSitecode(Integer.parseInt((String) obj.get("lssitemaster")));
+			Long usercount =lsuserMasterRepository.countByLssitemasterAndUserstatus(sitemaster,"A");
+			rtnobj.put("activeuser", usercount);
+		} else {
+			LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser",
+					"Active");
+			String dvalue = objPrefrence.getValueencrypted();
+			Long activeusercount = LSactiveUserRepository.count();
+			if (dvalue != null) {
+				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
+				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
+				rtnobj.put("Noofuser",Integer.parseInt(sConcurrentUsers));
+			}
+			rtnobj.put("activeuser", activeusercount);
+		}
+			
+			return rtnobj;
+		
+	}
 
 //	public void autoShedulerInactiveUserkill() {
 //		// TODO Auto-generated method stub

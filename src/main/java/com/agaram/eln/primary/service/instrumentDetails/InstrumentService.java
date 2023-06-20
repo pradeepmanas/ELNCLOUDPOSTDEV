@@ -81,6 +81,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.Lsbatchdetails;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
+import com.agaram.eln.primary.model.instrumentDetails.Lsorderworkflowhistory;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
@@ -3588,6 +3589,11 @@ public class InstrumentService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		List<Lsorderworkflowhistory> objLstLsorderworkflowhistories = lsorderworkflowhistoryRepositroy.findByBatchcodeOrderByHistorycode(objorder.getBatchcode());
+		lsorderworkflowhistoryRepositroy.save(objLstLsorderworkflowhistories);
+		
+		objorder.setLsorderworkflowhistory(objLstLsorderworkflowhistories);			
 		lslogilablimsorderdetailRepository.save(objorder);
 
 //		if (objorder.getLssamplefile() != null) {

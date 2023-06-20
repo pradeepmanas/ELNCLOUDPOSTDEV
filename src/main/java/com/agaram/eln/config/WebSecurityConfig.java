@@ -121,7 +121,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 	                "/Lims/getOrderTagFromELN", "/Lims/getUsersFromELN", "/Lims/getSiteFromELN",
 	                "/multitenant/getPremiumTenant", "/transaction/updateMaterialDynamicTable",
 	                "/transaction/updateMappedTemplateFieldPropsMaterialTable", "/multitenant/updateplanrights",
-	                "/User/getActiveUserCount", "/multitenant/updateplanType")
+	                "/User/getActiveUserCount", "/multitenant/updateplanType","/Login/getlicense")
 	        .permitAll()
 	        // all other requests need to be authenticated
 	        .anyRequest().authenticated()
