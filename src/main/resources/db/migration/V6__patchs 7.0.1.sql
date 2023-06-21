@@ -4114,3 +4114,18 @@ ALTER TABLE IF Exists material ADD Column IF NOT EXISTS nextvalidationperiod cha
 ALTER TABLE IF Exists LSusermaster ADD Column IF NOT EXISTS isadsuser integer;
 
 update LSusermaster set isadsuser = 0 where isadsuser is null;
+
+CREATE TABLE IF NOT EXISTS tbladssettings
+(
+    ldaplocationid character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    createddate timestamp without time zone,
+    groupname integer,
+    lastsyncdate timestamp without time zone,
+    ldaplocation character varying(255) COLLATE pg_catalog."default",
+    ldapserverdomainname character varying(255) COLLATE pg_catalog."default",
+    ldapstatus integer,
+    CONSTRAINT tbladssettings_pkey PRIMARY KEY (ldaplocationid)
+)
+WITH (OIDS = FALSE) TABLESPACE pg_default;
+
+ALTER TABLE tbladssettings OWNER to postgres;

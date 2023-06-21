@@ -972,10 +972,12 @@ public class LoginService {
 					lsUser.setLockcount(0);
 					lsUser.setUserfullname(sUserFullName);
 					lsUser.setUsername(sUserDomainID);
-					lsUser.setUserstatus(sUserStatus);
+//					lsUser.setUserstatus(sUserStatus);
 					lsUser.setLssitemaster(sSiteCode);
 					lsUser.setPasswordstatus(0);
 					lsUser.setUserretirestatus(0);
+					lsUser.setIsadsuser(1);
+					lsUser.setUserstatus("A");
 
 					List<LSMultiusergroup> lstGroup = new ArrayList<LSMultiusergroup>();
 

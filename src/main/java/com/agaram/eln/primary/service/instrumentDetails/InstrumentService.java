@@ -2591,7 +2591,7 @@ public class InstrumentService {
 		
 		if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
 			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
-			if (objorder.getLstworkflow() != null && lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode())) {
+			if (objorder.getLstworkflow() != null && objupdatedorder.getLsworkflow()!=null && lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode())) {
 				objupdatedorder.setCanuserprocess(true);
 			} else {
 				objupdatedorder.setCanuserprocess(false);
@@ -2635,7 +2635,7 @@ public class InstrumentService {
 
 		if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
 			LSworkflow objlastworkflow = lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
-			if (objlastworkflow != null && objupdatedorder.getLsworkflow().equals(objlastworkflow)) {
+			if (objlastworkflow != null &&objupdatedorder.getLsworkflow()!=null && objupdatedorder.getLsworkflow().equals(objlastworkflow)) {
 				objupdatedorder.setIsFinalStep(1);
 			} else {
 				objupdatedorder.setIsFinalStep(0);
