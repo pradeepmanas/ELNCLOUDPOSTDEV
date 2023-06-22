@@ -1373,7 +1373,12 @@ public class LoginService {
 			obj.put("multiusergroupcode",
 					objExitinguser.getMultiusergroupcode().get(0).getLsusergroup().getUsergroupcode());
 		}
-
+		try {
+			obj.put("Logintime", commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return obj;
 
 	}
