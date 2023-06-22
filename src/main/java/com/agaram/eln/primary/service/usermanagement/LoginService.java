@@ -1196,8 +1196,19 @@ public class LoginService {
 					List<LSMultiusergroup> LSMultiusergroup = new ArrayList<LSMultiusergroup>();
 
 					LSMultiusergroup = LSMultiusergroupRepositery.findByusercode(objExitinguser.getUsercode());
-
-					objExitinguser.setLsusergroup(LSMultiusergroup.get(0).getLsusergroup());
+					List<LSMultiusergroup> objGroup= objExitinguser.getMultiusergroupcode().stream()
+			                .filter(
+			                		obj1 -> (obj1.getDefaultusergroup() != null && obj1.getDefaultusergroup() == 1)
+			                ).collect(Collectors.toList());
+					
+					if(objGroup.isEmpty()) {
+						obj.put("multiusergroupcode", objExitinguser.getMultiusergroupcode().get(0).getLsusergroup().getUsergroupcode());
+						objExitinguser.setLsusergroup(LSMultiusergroup.get(0).getLsusergroup());
+					}else {
+						obj.put("multiusergroupcode", objGroup.get(0).getLsusergroup().getUsergroupcode());
+						objExitinguser.setLsusergroup(objGroup.get(0).getLsusergroup());
+					}
+//					objExitinguser.setLsusergroup(LSMultiusergroup.get(0).getLsusergroup());
 //			    	}
 
 					String groupstatus = objExitinguser.getLsusergroup().getUsergroupstatus();
@@ -1370,8 +1381,8 @@ public class LoginService {
 			LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
 			objauditconfig.setLsusermaster(objExitinguser);
 			obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig.getLsusermaster()));
-			obj.put("multiusergroupcode",
-					objExitinguser.getMultiusergroupcode().get(0).getLsusergroup().getUsergroupcode());
+//			obj.put("multiusergroupcode",
+//					objExitinguser.getMultiusergroupcode().get(0).getLsusergroup().getUsergroupcode());
 		}
 		try {
 			obj.put("Logintime", commonfunction.getCurrentUtcTime());

@@ -118,4 +118,5 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 			LSSiteMaster objsiteobj, String string, int i);
 
 	public List<LSuserMaster> findAllByOrderByCreateddateDesc();
+	public List<LSuserMaster> findByUserretirestatus(int i);
 }

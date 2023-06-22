@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.agaram.eln.primary.model.cfr.LSpreferences;
+import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.config.ADS_Connection;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.general.Response;
@@ -31,6 +32,8 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.service.usermanagement.LoginService;
+import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 
 @RestController
 @RequestMapping(value = "/Login", method = RequestMethod.POST)
@@ -38,6 +41,10 @@ public class LoginController {
 
 	@Autowired
 	private LoginService loginService;
+	@Autowired
+	private LSpreferencesRepository LSpreferencesRepository;
+	@Autowired
+	private LSuserMasterRepository lsuserMasterRepository;
 
 	@GetMapping("/LoadSite")
 	public List<LSSiteMaster> loadSite(HttpServletRequest request) throws Exception {
@@ -128,23 +135,68 @@ public class LoginController {
 		Map<String, Object> rtnMap = new HashMap<>();
 		Map<String, Object> isCompleted = new HashMap<>();
 
-		isCompleted = loginService.addImportADSUsers(objMap);
+		LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser","Active");
+		LSpreferences objPrefrencenamed = LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser","Active");
+		List<LSuserMaster> lstActUsrs = lsuserMasterRepository.findByUserretirestatus(0);
+		if (objPrefrence != null) {			
+			String dvalue = objPrefrence.getValueencrypted();			
+			if(dvalue != null) {
+				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
+				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
+				int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);	
+				
+				if (lstActUsrs.size() <= nConcurrentUsers) {
+					isCompleted = loginService.addImportADSUsers(objMap);
+					if (isCompleted.get("isCompleted").equals(true)) {
+						List<LSuserMaster> lstUsers = new ArrayList<>();
 
-		if (isCompleted.get("isCompleted").equals(true)) {
-			List<LSuserMaster> lstUsers = new ArrayList<>();
+						LSusergroup userGroup = (LSusergroup) isCompleted.get("LSusergroup");
+						LSSiteMaster sSiteCode = (LSSiteMaster) isCompleted.get("LSSiteMaster");
 
-			LSusergroup userGroup = (LSusergroup) isCompleted.get("LSusergroup");
-			LSSiteMaster sSiteCode = (LSSiteMaster) isCompleted.get("LSSiteMaster");
+						lstUsers = loginService.UserMasterDetails(userGroup, sSiteCode);
 
-			lstUsers = loginService.UserMasterDetails(userGroup, sSiteCode);
-
-			rtnMap.put("LSuserMaster", lstUsers);
-			rtnMap.put("status", true);
-			rtnMap.put("sinformation", "Users imported successfully");
-		} else {
-			rtnMap.put("status", false);
-			rtnMap.put("sinformation", "Imported users are not saved");
+						rtnMap.put("LSuserMaster", lstUsers);
+						rtnMap.put("status", true);
+						rtnMap.put("sinformation", "Users imported successfully");
+					} else {
+						rtnMap.put("status", false);
+						rtnMap.put("sinformation", "Imported users are not saved");
+					}
+				}else {
+					rtnMap.put("msg", "User license not available, Please contact administrator");
+				}
+			}
 		}
+			else if(objPrefrencenamed != null) {
+				String dvalue1 = objPrefrencenamed.getValueencrypted();			
+				if(dvalue1 != null) {
+					String sMainFormUser = AESEncryption.decrypt(dvalue1);
+					sMainFormUser = sMainFormUser.replaceAll("\\s", "");
+					int nsMainFormUsers = Integer.parseInt(sMainFormUser);
+					if (lstActUsrs.size() <= nsMainFormUsers) {
+						isCompleted = loginService.addImportADSUsers(objMap);
+						if (isCompleted.get("isCompleted").equals(true)) {
+							List<LSuserMaster> lstUsers = new ArrayList<>();
+
+							LSusergroup userGroup = (LSusergroup) isCompleted.get("LSusergroup");
+							LSSiteMaster sSiteCode = (LSSiteMaster) isCompleted.get("LSSiteMaster");
+
+							lstUsers = loginService.UserMasterDetails(userGroup, sSiteCode);
+
+							rtnMap.put("LSuserMaster", lstUsers);
+							rtnMap.put("status", true);
+							rtnMap.put("sinformation", "Users imported successfully");
+						} else {
+							rtnMap.put("status", false);
+							rtnMap.put("sinformation", "Imported users are not saved");
+						}
+					}else {
+						rtnMap.put("msg", "User license not available, Please contact administrator");
+					}
+					
+				}	
+			}
+		
 		return rtnMap;
 	}
 

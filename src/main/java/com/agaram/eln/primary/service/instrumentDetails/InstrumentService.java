@@ -2578,10 +2578,28 @@ public class InstrumentService {
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository.findBybatchid(objupdatedorder.getBatchid());
 		List<String> lsorderno = new ArrayList<String>();
+		
+		if (objupdatedorder.getLockeduser() != null) {
+			LSuserMaster user = new LSuserMaster();
+			user.setUsercode(objupdatedorder.getLockeduser());
+			List<LSactiveUser> LSactiveUsr = lSactiveUserRepository.findByLsusermaster(user);
+			if(LSactiveUsr.isEmpty()) {
+				objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
+				objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
+			}			
+			objupdatedorder.setIsLock(1);
+			lslogilablimsorderdetailRepository.save(objupdatedorder);
+		} else {
+//			if(objupdatedorder.isCanuserprocess()) {
+			objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
+			objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
+			objupdatedorder.setIsLock(1);
+			lslogilablimsorderdetailRepository.save(objupdatedorder);
+//			}
+		}		
 
 		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
 			int i = 0;
-
 			while (lsLogilaborders.size() > i) {
 				lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
 				i++;
@@ -2596,36 +2614,12 @@ public class InstrumentService {
 			} else {
 				objupdatedorder.setCanuserprocess(false);
 			}
-		} 
-//		else {
-//			objupdatedorder.setCanuserprocess(true);
-//		}
+		}
 		
 		if(objupdatedorder.getFiletype() == 0) {
 			objupdatedorder.setCanuserprocess(true);
 		}
 		
-		if (objupdatedorder.getLockeduser() != null) {
-			
-			LSuserMaster user = new LSuserMaster();
-			user.setUsercode(objupdatedorder.getLockeduser());
-			
-			List<LSactiveUser> LSactiveUsr = lSactiveUserRepository.findByLsusermaster(user);
-			
-			if(LSactiveUsr.isEmpty()) {
-				objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
-				objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
-			}			
-			objupdatedorder.setIsLock(1);
-		} else {
-			if(objupdatedorder.isCanuserprocess()) {
-				objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
-				objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
-				objupdatedorder.setIsLock(1);
-			}
-		}
-		
-		lslogilablimsorderdetailRepository.save(objupdatedorder);
 
 		if (objupdatedorder.getLockeduser() != null && objorder.getObjLoggeduser() != null && objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
 			objupdatedorder.setIsLockbycurrentuser(1);

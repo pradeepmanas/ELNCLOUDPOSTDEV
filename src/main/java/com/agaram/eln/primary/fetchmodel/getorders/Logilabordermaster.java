@@ -14,7 +14,6 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private Long batchcode;
-	@SuppressWarnings("unused")
 	private String batchid;
 	List<LSworkflow> lstworkflow;
 	private Integer workflowcode;
@@ -33,10 +32,11 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private Integer filecode;
 	private LSuserMaster assignedto;
 	private Integer viewoption;
-
+	private LSuserMaster createdby;
+	
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,LSuserMaster assignedto,
-			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption) {
+			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -54,18 +54,24 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.ordercancell=ordercancell;
 		this.assignedto =assignedto;
 		this.viewoption=viewoption;
+		this.createdby = lsuserMaster;
 	}
 	
-	
+	public LSuserMaster getCreatedby() {
+		return createdby;
+	}
+
+	public void setCreatedby(LSuserMaster createdby) {
+		this.createdby = createdby;
+	}
+
 	public Integer getViewoption() {
 		return viewoption;
 	}
 
-
 	public void setViewoption(Integer viewoption) {
 		this.viewoption = viewoption;
 	}
-
 
 	public Integer getOrdercancell() {
 		return ordercancell;
