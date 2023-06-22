@@ -312,7 +312,6 @@ public class AuditService {
 		return maprAuditConfig;
 	}
 
-	
 	public Map<String, Object> GetAuditconfig(Map<String, Object> argObj) {
 		Map<String, Object> obj = new HashMap<>();
 		
@@ -320,6 +319,23 @@ public class AuditService {
 		obj.put ("AuditConfig",auditconfig);
 	
  		return obj;
+	}
+	
+	public Map<String, Object> GetAuditconfigparser(Map<String, Object> argObj) {
+        Map<String, Object> obj = new HashMap<>();	
+		final ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> obj1 = (Map<String, Object>) argObj.get("auditobj");
+		
+		final Integer usercode = mapper.convertValue(obj1.get("usercode"), Integer.class);
+		
+		LSuserMaster user = new LSuserMaster();
+		user.setUsercode(usercode);
+		
+		List<LSaudittrailconfiguration> auditconfig = LSaudittrailconfigurationRepository.findByLsusermasterOrderByOrdersequnce(user);
+		obj.put ("AuditConfig",auditconfig);
+	
+ 		return obj;
+
 	}
 	public List<LSaudittrailconfiguration> SaveAuditconfigUser(LSaudittrailconfiguration[] lsAuditary) {
 		List<LSaudittrailconfiguration> lsAudit = Arrays.asList(lsAuditary);

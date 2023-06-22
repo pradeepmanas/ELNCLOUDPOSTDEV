@@ -11,6 +11,6 @@ public interface LSSiteMasterRepository extends JpaRepository<LSSiteMaster, Inte
 	public LSSiteMaster findBySitenameAndIstatus(String sitename,Integer status);
 	public List<LSSiteMaster> findBySitenameNot(String sitename);
 	public List<LSSiteMaster> findByIstatus(Integer status);
-	public List<LSSiteMaster> findByOrderBySitecodeAsc();
+	public List<LSSiteMaster> findByOrderBySitecodeDesc();
 	public List<LSSiteMaster> findBySitenameIgnoreCaseAndIstatus(String sitename, Integer status);
 }

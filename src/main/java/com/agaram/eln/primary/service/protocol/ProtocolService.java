@@ -4741,6 +4741,12 @@ public class ProtocolService {
 		if (body.get("LSprotocolupdates") != null) {
 			LSprotocolupdates lSprotocolupdates = object.convertValue(body.get("LSprotocolupdates"),
 					LSprotocolupdates.class);
+			try {
+				lSprotocolupdates.setProtocolmodifiedDate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lsprotocolupdatesRepository.save(lSprotocolupdates);
 		}
 		if (!body.get("protocolstepname").equals("")) {

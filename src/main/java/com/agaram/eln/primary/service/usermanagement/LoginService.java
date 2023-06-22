@@ -152,7 +152,7 @@ public class LoginService {
 	}
 
 	public List<LSSiteMaster> LoadSiteMaster() {
-		return lSSiteMasterRepository.findByOrderBySitecodeAsc();
+		return lSSiteMasterRepository.findByOrderBySitecodeDesc();
 	}
 
 	public List<LSdomainMaster> loadDomain(LSSiteMaster objsite) {
@@ -538,6 +538,12 @@ public class LoginService {
 				lsactiveUserRepository.save(activeUser);
 				obj.put("activeUserId", activeUser);
 			}
+		}
+		try {
+			obj.put("Logintime", commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		obj.put("user", objExitinguser);
 
@@ -1053,7 +1059,7 @@ public class LoginService {
 	}
 
 	public List<LSdomainMaster> LoadDomainMaster(LSSiteMaster objsite) {
-		return lSDomainMasterRepository.findBylssitemaster(objsite);
+		return lSDomainMasterRepository.findBylssitemasterOrderByDomaincodeDesc(objsite);
 	}
 
 	public List<LSdomainMaster> LoadDomainMasterAdmin(LSSiteMaster objsite) {

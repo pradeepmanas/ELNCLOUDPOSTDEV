@@ -72,6 +72,11 @@ public class AuditTrailController {
 		return auditService.GetAuditconfig(argObj);
 	}
 
+	@PostMapping("/GetAuditconfigparser")
+	public Map<String, Object> GetAuditconfigparser(@RequestBody Map<String, Object> argObj) throws Exception {
+		return auditService.GetAuditconfigparser(argObj);
+	}
+	
 	@PostMapping("/SaveAuditconfigUser")
 	public List<LSaudittrailconfiguration> SaveAuditconfigUser(@RequestBody LSaudittrailconfiguration[] lsAudit)
 			throws Exception {

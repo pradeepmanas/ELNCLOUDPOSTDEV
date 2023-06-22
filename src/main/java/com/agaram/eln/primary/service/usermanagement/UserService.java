@@ -263,7 +263,7 @@ public class UserService {
 		if (objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
 
 //			return lsuserMasterRepository.findByUserretirestatusNotOrderByCreateddateDesc(1);
-			return lsuserMasterRepository.findAll();
+			return lsuserMasterRepository.findAllByOrderByCreateddateDesc();
 		}
 
 		return lsuserMasterRepository.findByLssitemasterOrderByCreateddateDesc(objusergroup.getLssitemaster());
@@ -284,7 +284,7 @@ public class UserService {
 			lscfttransactionRepository.save(objclass.getObjsilentaudit());
 		}
 		if (objclass.getSitecode() == 0) {
-			return lsuserMasterRepository.findAll();
+			return lsuserMasterRepository.findAllByOrderByCreateddateDesc();
 //			return lsuserMasterRepository.findByusernameNotAndUserretirestatusNotOrderByCreateddateDesc("Administrator",
 //					1);
 		}
@@ -694,11 +694,11 @@ public class UserService {
 
 	public List<LSusersteam> GetUserTeam(LSuserMaster LSuserMaster) {
 		if (LSuserMaster.getUsername().equalsIgnoreCase("Administrator")) {
-			return lsusersteamRepository.findBylssitemaster(LSuserMaster.getLssitemaster());
+			return lsusersteamRepository.findBylssitemasterOrderByTeamcodeDesc(LSuserMaster.getLssitemaster());
 		} else {
 //			List<LSuserteammapping> teams = lsuserteammappingRepository.findBylsuserMaster(LSuserMaster);
 //			return lsusersteamRepository.findByLsuserteammappingInAndStatus(teams, 1);
-			return lsusersteamRepository.findBylssitemaster(LSuserMaster.getLssitemaster());
+			return lsusersteamRepository.findBylssitemasterOrderByTeamcodeDesc(LSuserMaster.getLssitemaster());
 			// return
 			// lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(),
 			// 1);

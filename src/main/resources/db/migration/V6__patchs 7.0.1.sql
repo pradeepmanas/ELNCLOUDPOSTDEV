@@ -4129,3 +4129,6 @@ CREATE TABLE IF NOT EXISTS tbladssettings
 WITH (OIDS = FALSE) TABLESPACE pg_default;
 
 ALTER TABLE tbladssettings OWNER to postgres;
+
+ALTER TABLE IF Exists LSusersteam ADD Column IF NOT EXISTS createdate DATE;
+update LSusersteam set createdate=modifieddate where createdate is Null;

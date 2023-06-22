@@ -24,5 +24,6 @@ public interface LSusersteamRepository  extends JpaRepository<LSusersteam, Integ
 	public List<LSusersteam> findBylssitemaster(LSSiteMaster lssitemaster);
 	public List<LSusersteam> findByTeamnameIgnoreCaseAndTeamcodeNotAndLssitemaster(String teamname, Integer teamcode,
 			LSSiteMaster lssitemaster);
+	public List<LSusersteam> findBylssitemasterOrderByTeamcodeDesc(LSSiteMaster lssitemaster);
 
 }

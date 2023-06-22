@@ -53,7 +53,16 @@ public class LSusersteam {
 		this.selectedrecord = selectedrecord;
 	}
 
-	
+	@Column(columnDefinition = "date")
+	private Date createdate;
+
+	public Date getCreatedate() {
+		return createdate;
+	}
+
+	public void setCreatedate(Date createdate) {
+		this.createdate = createdate;
+	}
 
 	@Column(columnDefinition = "date")
 	private Date modifieddate;
@@ -106,13 +115,6 @@ public class LSusersteam {
 	
 	@Transient
 	LScfttransaction objsilentaudit;
-
-	
-	
-
-	
-
-	
 
 	public LSuserMaster getModifieduserMaster() {
 		return modifieduserMaster;

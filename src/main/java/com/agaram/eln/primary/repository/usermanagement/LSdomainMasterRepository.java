@@ -14,4 +14,5 @@ public interface LSdomainMasterRepository extends JpaRepository<LSdomainMaster, 
 	public List<LSdomainMaster> findBylssitemasterAndDomainstatus(LSSiteMaster objsite,Integer domainstatus);
 	public LSdomainMaster findByDomainnameIgnoreCaseAndDomainstatus(String domainname, Integer domainstatus);
 	//public List<LSdomainMaster> findBylssitemasterAndStatus(LSSiteMaster objsite, int i);
+	public List<LSdomainMaster> findBylssitemasterOrderByDomaincodeDesc(LSSiteMaster objsite);
 }
