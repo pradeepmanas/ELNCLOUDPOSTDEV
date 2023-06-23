@@ -165,6 +165,11 @@ public class FileController {
 		return fileService.getSheetOrder(objClass);
 	}
 
+	@PostMapping(value = "/getFileDetails")
+	public LSfile getFileDetails(@RequestBody LSfile objfile)throws Exception {
+		return fileService.getFileDetails(objfile);
+	}
+	
 	@PostMapping(value = "/getfileoncode")
 	public LSfile getfileoncode(@RequestBody LSfile objfile)throws Exception {
 		return fileService.getfileoncode(objfile);

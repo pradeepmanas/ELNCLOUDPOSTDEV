@@ -1309,6 +1309,11 @@ public class FileService {
 		return LSlogilablimsorderdetailRepository.findAll();
 	}
 
+	public LSfile getFileDetails(LSfile objfile) throws IOException {
+		LSfile objreturnfile = lSfileRepository.findByfilecode(objfile.getFilecode());
+		return objreturnfile;
+	}
+	
 	public LSfile getfileoncode(LSfile objfile) throws IOException {
 		LSfile objreturnfile = lSfileRepository.findByfilecode(objfile.getFilecode());
 
