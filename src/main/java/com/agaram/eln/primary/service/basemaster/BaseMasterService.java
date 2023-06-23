@@ -64,6 +64,8 @@ import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepo
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
 
@@ -74,10 +76,10 @@ public class BaseMasterService {
 	/**
 	 * For Masters Repository
 	 */
-//	@Autowired
-//	private LSusersteamRepository LSusersteamRepository;
-//	@Autowired
-//	private LSuserteammappingRepository LSuserteammappingRepository;
+	@Autowired
+	private LSusersteamRepository LSusersteamRepository;
+	@Autowired
+	private LSuserteammappingRepository lsuserteammappingRepository;
 	@Autowired
 	private LSnotificationRepository LSnotificationRepository;
 //	@Autowired
@@ -612,9 +614,9 @@ public class BaseMasterService {
 //		List<LSprojectmaster> projectlist = lSprojectmasterRepository
 //				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
 
-		List<LSprojectmaster> projectlist = lSprojectmasterRepository
-				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
-		return projectlist;
+		List<LSprojectmaster> prolist = lSprojectmasterRepository.findByLsusersteamInAndStatus(LSusersteamRepository
+				.findByLsuserteammappingInAndStatus(lsuserteammappingRepository.findBylsuserMaster(objClass), 1), 1);
+		return prolist;
 	}
 
 }
