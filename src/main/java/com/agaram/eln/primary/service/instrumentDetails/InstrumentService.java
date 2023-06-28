@@ -3889,8 +3889,20 @@ public class InstrumentService {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
-			List<LSsamplemaster> lstsample = lssamplemasterrepository.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
+//			List<LSsamplemaster> lstsample = lssamplemasterrepository.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
 			
+			List<Integer> lstsampleint = lssamplemasterrepository
+					.getDistinctByLssitemasterSitecodeAndStatus(objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1);
+			List<LSsamplemaster> lstsample = new ArrayList<>();
+			LSsamplemaster sample = null;
+			if(lstsampleint.size()>0) {
+			for (Integer item : lstsampleint) {
+			    sample = new LSsamplemaster();
+			    sample.setSamplecode(item);
+			    lstsample.add(sample);
+			    sample = null; // Set sample to null after adding it to the list
+			}
+			}
 //			lstorder = lslogilablimsorderdetailRepository
 //					.findByFiletypeAndLsfileAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getFiletype(),
 //							objorder.getLsfile(), lstproject);
@@ -3916,8 +3928,19 @@ public class InstrumentService {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
-			List<LSsamplemaster> lstsample = lssamplemasterrepository.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
-			
+//			List<LSsamplemaster> lstsample = lssamplemasterrepository.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
+			List<Integer> lstsampleint = lssamplemasterrepository
+					.getDistinctByLssitemasterSitecodeAndStatus(objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1);
+			List<LSsamplemaster> lstsample = new ArrayList<>();
+			LSsamplemaster sample = null;
+			if(lstsampleint.size()>0) {
+			for (Integer item : lstsampleint) {
+			    sample = new LSsamplemaster();
+			    sample.setSamplecode(item);
+			    lstsample.add(sample);
+			    sample = null; // Set sample to null after adding it to the list
+			}
+			}
 //			lstorder = lslogilablimsorderdetailRepository
 //					.findByFiletypeAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getFiletype(), lstproject);
 			
@@ -6674,8 +6697,20 @@ public class InstrumentService {
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 
-		List<LSsamplemaster> lstsample = lssamplemasterrepository
-				.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
+//		List<LSsamplemaster> lstsample = lssamplemasterrepository
+//				.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
+		List<Integer> lstsampleint = lssamplemasterrepository
+				.getDistinctByLssitemasterSitecodeAndStatus(objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1);
+		List<LSsamplemaster> lstsample = new ArrayList<>();
+		LSsamplemaster sample = null;
+		if(lstsampleint.size()>0) {
+		for (Integer item : lstsampleint) {
+		    sample = new LSsamplemaster();
+		    sample.setSamplecode(item);
+		    lstsample.add(sample);
+		    sample = null; // Set sample to null after adding it to the list
+		}
+		}
 
 		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		Date fromdate = objorder.getFromdate();

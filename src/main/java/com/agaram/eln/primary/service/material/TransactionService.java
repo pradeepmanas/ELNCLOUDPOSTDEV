@@ -1106,10 +1106,25 @@ public class TransactionService {
 		calendar.setTime(currentDate);
 		// Add 5 days from the current date
 		calendar.add(Calendar.DAY_OF_YEAR, 5);
+		// Set the ending time of the day
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		calendar.set(Calendar.MILLISECOND, 999);
 		// Get the end date
 		Date endDate = calendar.getTime();
+		
+		calendar.setTime(currentDate);
+		// Add -1 days from the previous day of the current date
+		calendar.add(Calendar.DAY_OF_YEAR, -1);
+		// Set the ending time of the day
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		calendar.set(Calendar.MILLISECOND, 999);
+		currentDate = calendar.getTime();
 
-		List<MaterialInventory> objInventories = materialInventoryRepository.findByNtransactionstatusAndIsexpiryneedAndExpirydateBetween(28, true, currentDate, endDate);
+		List<MaterialInventory> objInventories = materialInventoryRepository.findByNsitecodeAndNtransactionstatusAndIsexpiryneedAndExpirydateBetween(cft.getLssitemaster(),28, true, currentDate, endDate);
 		List<MaterialInventory> expiredInvent = new ArrayList<MaterialInventory>(); 
 		List<LSnotification> lstLSnotifications = new ArrayList<LSnotification>();
 
@@ -1117,7 +1132,7 @@ public class TransactionService {
 			if (objInventory.getIsexpiryneed()) {
 				Date date = objInventory.getExpirydate();
 				LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-				if (localCurrentDate.isBefore(localDate) || localDate.equals(localCurrentDate)) {
+				if (localCurrentDate.isBefore(localDate)) {
 					lstLSnotifications.addAll(updateNotificationOnInventory(objInventory, "EXPIRYDATE", cft, 0.0, date));
 				} else {
 					objInventory.setNtransactionstatus(55);

@@ -4131,4 +4131,7 @@ WITH (OIDS = FALSE) TABLESPACE pg_default;
 ALTER TABLE tbladssettings OWNER to postgres;
 
 ALTER TABLE IF Exists LSusersteam ADD Column IF NOT EXISTS createdate DATE;
+
 update LSusersteam set createdate=modifieddate where createdate is Null;
+
+ALTER TABLE IF EXISTS materialinventory ALTER COLUMN expirydate TYPE timestamp without time zone;

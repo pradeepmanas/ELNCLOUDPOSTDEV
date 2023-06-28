@@ -752,6 +752,7 @@ public class MaterialInventoryService {
 					objSaveMaterialInventory.setNmaterialcode((Integer) inputMap.get("nmaterialcode"));
 					objSaveMaterialInventory.setNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
 					objSaveMaterialInventory.setNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
+					objSaveMaterialInventory.setNsitecode(objUser.getLssitemaster().getSitecode());
 
 					objSaveMaterialInventory.setObjsilentaudit(cft);
 					objSaveMaterialInventory = materialInventoryRepository.save(objSaveMaterialInventory);
@@ -834,6 +835,7 @@ public class MaterialInventoryService {
 			objSaveMaterialInventory.setExpirydate(isExpiry ? expiryDate : null);
 			objSaveMaterialInventory.setValidationneed(isNextVal);
 			objSaveMaterialInventory.setValidationdate(getNextValDate);
+			objSaveMaterialInventory.setNsitecode(objUser.getLssitemaster().getSitecode());
 			objSaveMaterialInventory = materialInventoryRepository.save(objSaveMaterialInventory);
 
 			if (strPrefix != null && !strPrefix.equals("")) {

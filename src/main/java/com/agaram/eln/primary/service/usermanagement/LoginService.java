@@ -560,6 +560,7 @@ public class LoginService {
 
 	@Transactional
 	public List<LSuserMaster> CheckUserAndPassword(LoggedUser objuser) {
+
 		List<LSuserMaster> objExitinguser = new ArrayList<LSuserMaster>();
 		String username = objuser.getsUsername();
 
@@ -571,14 +572,20 @@ public class LoginService {
 			String Password = AESEncryption.decrypt(objExitinguser.get(0).getPassword());
 			objExitinguser.get(0).setObjResponse(new Response());
 
-			if (Password == null) {
-				objExitinguser.get(0).getObjResponse().setInformation("GenerateNewPassword");
-				objExitinguser.get(0).getObjResponse().setStatus(true);
+			if(objExitinguser.get(0).getIsadsuser() == null || objExitinguser.get(0).getIsadsuser() == 0) {
+				if (Password == null) {
+					objExitinguser.get(0).getObjResponse().setInformation("GenerateNewPassword");
+					objExitinguser.get(0).getObjResponse().setStatus(true);
 
-			} else {
+				} else {
+					objExitinguser.get(0).getObjResponse().setInformation("Valid user and password exist");
+					objExitinguser.get(0).getObjResponse().setStatus(true);
+				}
+			}else {
 				objExitinguser.get(0).getObjResponse().setInformation("Valid user and password exist");
 				objExitinguser.get(0).getObjResponse().setStatus(true);
-			}
+			}			
+			
 		} else {
 
 			objExitinguser = lSuserMasterRepository
@@ -601,6 +608,7 @@ public class LoginService {
 			}
 		}
 		return objExitinguser;
+	
 	}
 
 	@SuppressWarnings({ "unused" })
