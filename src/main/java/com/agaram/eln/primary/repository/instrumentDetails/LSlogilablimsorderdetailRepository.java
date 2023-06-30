@@ -2321,6 +2321,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			List<LSuserMaster> usernotify2, String searchkeywords34, int w, List<LSuserMaster> usernotify3,
 			String searchkeywords35);
 
+	LSlogilablimsorderdetail findByBatchidOrBatchcode(String batchid, Long batchcode);
+
 
 
 }

@@ -2572,23 +2572,117 @@ public class InstrumentService {
 		return lsworkflowRepository.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(
 				lsworkflowgroupmappingRepository.findBylsusergroup(lsusergroup));
 	}
+	
+	public LSlogilablimsorderdetail GetorderForLINKsheet(LSlogilablimsorderdetail objorder) throws IOException {
+
+		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
+		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository.findBybatchid(objupdatedorder.getBatchid());
+		List<String> lsorderno = new ArrayList<String>();
+		objupdatedorder.setResponse(new Response());		
+
+		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
+			int i = 0;
+			while (lsLogilaborders.size() > i) {
+				lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
+				i++;
+			}
+		}
+		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
+		
+		if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
+			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+			if (objorder.getLstworkflow() != null && objupdatedorder.getLsworkflow()!=null && lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode())) {
+				objupdatedorder.setCanuserprocess(true);
+			} else {
+				objupdatedorder.setCanuserprocess(false);
+			}
+		}
+
+		if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
+			LSworkflow objlastworkflow = lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
+			if (objlastworkflow != null &&objupdatedorder.getLsworkflow()!=null && objupdatedorder.getLsworkflow().equals(objlastworkflow)) {
+				objupdatedorder.setIsFinalStep(1);
+			} else {
+				objupdatedorder.setIsFinalStep(0);
+			}
+		}
+
+		if (objupdatedorder.getFiletype() == 0) {
+			objupdatedorder.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
+		}
+
+		if (objupdatedorder.getLssamplefile() != null) {
+			if (objorder.getIsmultitenant() == 1) {
+				CloudOrderCreation objCreation = cloudOrderCreationRepository
+						.findById((long) objupdatedorder.getLssamplefile().getFilesamplecode());
+				if (objCreation != null && objCreation.getContainerstored() == 0) {
+					objupdatedorder.getLssamplefile().setFilecontent(objCreation.getContent());
+				} else {
+					objupdatedorder.getLssamplefile().setFilecontent(objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+									TenantContext.getCurrentTenant() + "ordercreation"));
+				}
+			} else {
+
+				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename")
+						.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
+				if (largefile == null) {
+					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
+				}
+
+				if (largefile != null) {
+					objupdatedorder.getLssamplefile()
+							.setFilecontent(new BufferedReader(new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+											.collect(Collectors.joining("\n")));
+				} else {
+
+					if (mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
+							OrderCreation.class) != null) {
+						objupdatedorder.getLssamplefile().setFilecontent(mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class)
+								.getContent());
+					}
+				}
+			}
+		}
+
+		lsLogilaborders = null;
+		objupdatedorder.setLstworkflow(objorder.getLstworkflow());
+		
+		if(objorder.getLsuserMaster() != null && objorder.getLsuserMaster().getUnifieduserid() != null) {
+			LScentralisedUsers objUserId = new LScentralisedUsers();
+			objUserId.setUnifieduserid(objorder.getLsuserMaster().getUnifieduserid());
+			objupdatedorder.setLscentralisedusers(userService.Getcentraliseduserbyid(objUserId));
+		}
+		objupdatedorder.getResponse().setStatus(true);
+		return objupdatedorder;
+	}
 
 	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder) throws IOException {
 
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository.findBybatchid(objupdatedorder.getBatchid());
 		List<String> lsorderno = new ArrayList<String>();
-		
+		objupdatedorder.setResponse(new Response());
 		if (objupdatedorder.getLockeduser() != null) {
-			LSuserMaster user = new LSuserMaster();
-			user.setUsercode(objupdatedorder.getLockeduser());
-			List<LSactiveUser> LSactiveUsr = lSactiveUserRepository.findByLsusermaster(user);
-			if(LSactiveUsr.isEmpty()) {
-				objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
-				objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
-			}			
-			objupdatedorder.setIsLock(1);
-			lslogilablimsorderdetailRepository.save(objupdatedorder);
+			
+			if(objupdatedorder.getAssignedto() == null && objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
+				
+				objupdatedorder.getResponse().setInformation("IDS_SAME_USER_OPEN");
+				objupdatedorder.getResponse().setStatus(false);
+				
+				return objupdatedorder;
+			}else {
+				LSuserMaster user = new LSuserMaster();
+				user.setUsercode(objupdatedorder.getLockeduser());
+				List<LSactiveUser> LSactiveUsr = lSactiveUserRepository.findByLsusermaster(user);
+				if(LSactiveUsr.isEmpty()) {
+					objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
+					objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
+				}			
+				objupdatedorder.setIsLock(1);
+				lslogilablimsorderdetailRepository.save(objupdatedorder);
+			}
+			
+			
 		} else {
 //			if(objupdatedorder.isCanuserprocess()) {
 			objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
@@ -2681,7 +2775,7 @@ public class InstrumentService {
 			objUserId.setUnifieduserid(objorder.getLsuserMaster().getUnifieduserid());
 			objupdatedorder.setLscentralisedusers(userService.Getcentraliseduserbyid(objUserId));
 		}
-		
+		objupdatedorder.getResponse().setStatus(true);
 		return objupdatedorder;
 	}
 
@@ -2693,7 +2787,7 @@ public class InstrumentService {
 		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
 				.findBybatchid(objupdatedorder.getBatchid());
 		List<String> lsorderno = new ArrayList<String>();
-
+		objupdatedorder.setResponse(new Response());
 		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
 			int i = 0;
 
@@ -2790,6 +2884,7 @@ public class InstrumentService {
 		}
 
 		objorder = null;
+		objupdatedorder.getResponse().setStatus(true);
 		return objupdatedorder;
 	}
 
@@ -7756,7 +7851,8 @@ public class InstrumentService {
 
 	public LSlogilablimsorderdetail cancelprotocolorder(LSlogilablimsorderdetail body) {
 
-		LSlogilablimsorderdetail obj = lslogilablimsorderdetailRepository.findByBatchid(body.getBatchid());
+//		LSlogilablimsorderdetail obj = lslogilablimsorderdetailRepository.findByBatchid(body.getBatchid());
+		LSlogilablimsorderdetail obj = lslogilablimsorderdetailRepository.findByBatchidOrBatchcode(body.getBatchid(), body.getBatchcode());
 		obj.setOrdercancell(body.getOrdercancell());
 		lslogilablimsorderdetailRepository.save(obj);
 		try {
@@ -7909,6 +8005,28 @@ public class InstrumentService {
 			}
 		}
 			
+	}
+
+	public Boolean checkOrderLockedBySameUser(Map<String, Object> objMap) {
+		Long BatchID = null;
+
+		if (objMap.containsKey("Batch")) {
+			BatchID = Long.valueOf((Integer) objMap.get("Batch"));
+		}
+		
+		Integer userCode = Integer.parseInt(objMap.get("usercode").toString());
+
+		LSlogilablimsorderdetail orderDetail = lslogilablimsorderdetailRepository.findOne(BatchID);
+
+		if (orderDetail != null) {
+			if(userCode != null && orderDetail.getLockeduser() != null && userCode.equals(orderDetail.getLockeduser())) {
+				return true;
+			}else {
+				return false;
+			}
+		}else {
+			return false;
+		}		
 	}
 
 }

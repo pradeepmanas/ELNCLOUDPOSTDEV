@@ -143,6 +143,12 @@ public class FileController {
 
 		return fileService.unlockorder(objMap);
 	}
+	
+	@RequestMapping(value = "/unlockorderOnViewClose")
+	public Map<String, Object> unlockorderOnViewClose(@RequestBody Map<String, Object> objMap) throws Exception {
+
+		return fileService.unlockorderOnViewClose(objMap);
+	}
 
 	@PostMapping("/Getfileversions")
 	public List<LSfileversion> Getfileversions(@RequestBody LSfile objfile)throws Exception {

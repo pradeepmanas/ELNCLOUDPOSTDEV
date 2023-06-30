@@ -1908,16 +1908,18 @@ public class LoginService {
 		} else {
 			LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser",
 					"Active");
-			Long activeusercount = LSactiveUserRepository.count();
 			if (objPrefrence != null) {
+				Long activeusercount =  LSactiveUserRepository.count();
 				String dvalue = objPrefrence.getValueencrypted();
 				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
 				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
 				rtnobj.put("Noofuser",Integer.parseInt(sConcurrentUsers));
+				rtnobj.put("activeuser", activeusercount);
 			} else {
+				Long usercount =lsuserMasterRepository.countByUsercodeNotAndUserretirestatus(1,0);
+				rtnobj.put("activeuser", usercount);
 				rtnobj.put("Noofuser",3);
 			}
-			rtnobj.put("activeuser", activeusercount);
 		}			
 		return rtnobj;
 	}

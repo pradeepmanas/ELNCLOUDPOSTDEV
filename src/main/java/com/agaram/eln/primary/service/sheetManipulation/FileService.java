@@ -1054,6 +1054,46 @@ public class FileService {
 
 		return objMap;
 	}
+	
+	@SuppressWarnings("null")
+	public Map<String, Object> unlockorderOnViewClose(Map<String, Object> objMap) throws Exception {
+		Long BatchID = null;
+
+		if (objMap.containsKey("Batch")) {
+			BatchID = Long.valueOf((Integer) objMap.get("Batch"));
+		}
+		
+		Integer userCode = Integer.parseInt(objMap.get("usercode").toString());
+
+		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findOne(BatchID);
+
+		if (orderDetail != null) {
+			
+			if(userCode != null && orderDetail.getLockeduser() != null && userCode.equals(orderDetail.getLockeduser())) {
+				orderDetail.setLockeduser(null);
+				orderDetail.setLockedusername(null);
+
+				LSlogilablimsorderdetailRepository.save(orderDetail);
+
+				orderDetail.setResponse(new Response());
+				orderDetail.getResponse().setStatus(true);
+				orderDetail.getResponse().setInformation("ID_UNLOCKMSG");
+			}else {
+				orderDetail.setResponse(new Response());
+				orderDetail.getResponse().setStatus(true);
+				orderDetail.getResponse().setInformation("IDS_ORDER_LOCKED_BY_DIFF_USER");
+			}			
+
+			objMap.put("response", orderDetail);
+		} else {
+			orderDetail.setResponse(new Response());
+			orderDetail.getResponse().setStatus(false);
+			orderDetail.getResponse().setInformation("ID_UNLOCKFAIL");
+		}
+		orderDetail = null;
+
+		return objMap;
+	}
 
 	public boolean UpdateSheetversion(LSfile objfile, String orginalcontent) throws IOException {
 		int Versionnumber = 0;

@@ -209,6 +209,16 @@ public class InstrumentController {
 	public Map<String, Object> GetWorkflowanduseronUsercode(@RequestBody LSuserMaster usercode)throws Exception {
 		return instrumentService.GetWorkflowanduseronUsercode(usercode);
 	}
+	
+	@PostMapping("/checkOrderLockedBySameUser")
+	public Boolean checkOrderLockedBySameUser(@RequestBody Map<String, Object> objMap)throws Exception {
+		return instrumentService.checkOrderLockedBySameUser(objMap);
+	}
+	
+	@PostMapping("/GetorderForLINKsheet")
+	public LSlogilablimsorderdetail GetorderForLINKsheet(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
+		return instrumentService.GetorderForLINKsheet(objorder);
+	}
 
 	@PostMapping("/GetorderStatus")
 	public LSlogilablimsorderdetail GetorderStatus(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
