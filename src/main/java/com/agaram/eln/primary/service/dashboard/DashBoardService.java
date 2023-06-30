@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.cloudfoundry.com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.cloud.cloudfoundry.com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -2750,4 +2752,297 @@ public class DashBoardService {
 
 		return obj;
 	}
+	public Map<String, Object> Getglobalsearchorders(Map<String, Object> obj) {
+		Map<String, Object> rtnobj = new HashMap<>();
+		ObjectMapper objectmapper = new ObjectMapper();
+		LSuserMaster objuser = objectmapper.convertValue(obj.get("lsusermaster"), new TypeReference<LSuserMaster>() {
+		});
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		Integer testcode = objuser.getTestcode();
+		Pageable pageable = new PageRequest(objuser.getPagesize(), objuser.getPageperorder());
+		long count = 0;
+		List<Logilabprotocolorders> lstordersprotocol = new ArrayList<Logilabprotocolorders>();
+		String searchkeywords = (String) obj.get("searchkeywords");
+		List<LSprojectmaster> lstproject = objuser.getLstproject();
+		List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
+		List<Integer> lstsampleint = lssamplemasterrepository
+				.getDistinctByLssitemasterSitecodeAndStatus(objuser.getLssitemaster().getSitecode(), 1);
+		List<LSsamplemaster> lstsample = new ArrayList<>();
+		LSsamplemaster sample = null;
+		if (lstsampleint.size() > 0) {
+			for (Integer item : lstsampleint) {
+				sample = new LSsamplemaster();
+				sample.setSamplecode(item);
+				lstsample.add(sample);
+				sample = null;
+			}
+		}
+		List<Integer> userlist = objuser.getUsernotify() != null
+				? objuser.getUsernotify().stream().map(LSuserMaster::getUsercode).collect(Collectors.toList())
+				: new ArrayList<Integer>();
+		if (lstproject != null) {
+			objuser.getUsernotify().add(objuser);
+			if (objuser.getObjuser().getOrderselectiontype() == 1) {
+
+				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
+					if (objuser.getObjuser().getOrderfor() == 1) {
+						lstorders = lslogilablimsorderdetailRepository
+								.findByLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndAndTestnameIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+										lstproject, searchkeywords, searchkeywords, searchkeywords, lstproject,
+										searchkeywords, lstproject, searchkeywords, 0, searchkeywords, searchkeywords,
+										searchkeywords, 0, searchkeywords, 0, searchkeywords, lstsample, searchkeywords,
+										searchkeywords, searchkeywords, lstsample, searchkeywords, lstsample,
+										searchkeywords, 1, objuser, searchkeywords, searchkeywords, searchkeywords, 1,
+										objuser, searchkeywords, 1, objuser, searchkeywords, 2, objuser, searchkeywords,
+										searchkeywords, searchkeywords, 2, objuser, searchkeywords, 2, objuser,
+										searchkeywords, 3, objuser, lstproject, searchkeywords, searchkeywords,
+										searchkeywords, 3, objuser, lstproject, searchkeywords, 3, objuser, lstproject,
+										searchkeywords, 3, objuser.getUsernotify(), searchkeywords, searchkeywords,
+										searchkeywords, 3, objuser.getUsernotify(), searchkeywords, 3,
+										objuser.getUsernotify(), searchkeywords, pageable);
+						count = lslogilablimsorderdetailRepository
+								.countByLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndAndTestnameIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+										lstproject, searchkeywords, searchkeywords, searchkeywords, lstproject,
+										searchkeywords, lstproject, searchkeywords, 0, searchkeywords, searchkeywords,
+										searchkeywords, 0, searchkeywords, 0, searchkeywords, lstsample, searchkeywords,
+										searchkeywords, searchkeywords, lstsample, searchkeywords, lstsample,
+										searchkeywords, 1, objuser, searchkeywords, searchkeywords, searchkeywords, 1,
+										objuser, searchkeywords, 1, objuser, searchkeywords, 2, objuser, searchkeywords,
+										searchkeywords, searchkeywords, 2, objuser, searchkeywords, 2, objuser,
+										searchkeywords, 3, objuser, lstproject, searchkeywords, searchkeywords,
+										searchkeywords, 3, objuser, lstproject, searchkeywords, 3, objuser, lstproject,
+										searchkeywords, 3, objuser.getUsernotify(), searchkeywords, searchkeywords,
+										searchkeywords, 3, objuser.getUsernotify(), searchkeywords, 3,
+										objuser.getUsernotify(), searchkeywords);
+
+						lstorders.addAll(lslogilablimsorderdetailRepository
+								.findByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+										lstproject, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
+										lstproject, fromdate, todate, searchkeywords, 0, fromdate, todate,
+										searchkeywords, searchkeywords, searchkeywords, 0, fromdate, todate,
+										searchkeywords, lstsample, fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, lstsample, fromdate, todate, searchkeywords, 1, objuser,
+										fromdate, todate, searchkeywords, searchkeywords, searchkeywords, 1, objuser,
+										fromdate, todate, searchkeywords, 2, objuser, fromdate, todate, searchkeywords,
+										searchkeywords, searchkeywords, 2, objuser, fromdate, todate, searchkeywords, 3,
+										objuser, fromdate, todate, lstproject, searchkeywords, searchkeywords,
+										searchkeywords, 3, objuser, fromdate, todate, lstproject, searchkeywords, 3,
+										objuser.getUsernotify(), fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, 3, objuser.getUsernotify(), fromdate, todate, searchkeywords,
+										pageable));
+
+						count = count + lslogilablimsorderdetailRepository
+								.countByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+										lstproject, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
+										lstproject, fromdate, todate, searchkeywords, 0, fromdate, todate,
+										searchkeywords, searchkeywords, searchkeywords, 0, fromdate, todate,
+										searchkeywords, lstsample, fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, lstsample, fromdate, todate, searchkeywords, 1, objuser,
+										fromdate, todate, searchkeywords, searchkeywords, searchkeywords, 1, objuser,
+										fromdate, todate, searchkeywords, 2, objuser, fromdate, todate, searchkeywords,
+										searchkeywords, searchkeywords, 2, objuser, fromdate, todate, searchkeywords, 3,
+										objuser, fromdate, todate, lstproject, searchkeywords, searchkeywords,
+										searchkeywords, 3, objuser, fromdate, todate, lstproject, searchkeywords, 3,
+										objuser.getUsernotify(), fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, 3, objuser.getUsernotify(), fromdate, todate, searchkeywords);
+
+						lstorders.addAll(lslogilablimsorderdetailRepository
+								.findByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
+										lstproject, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
+										lstproject, fromdate, todate, searchkeywords, 0, fromdate, todate,
+										searchkeywords, searchkeywords, searchkeywords, 0, fromdate, todate,
+										searchkeywords, lstsample, fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, lstsample, fromdate, todate, searchkeywords, 1, objuser,
+										fromdate, todate, searchkeywords, searchkeywords, searchkeywords, 1, objuser,
+										fromdate, todate, searchkeywords, 2, objuser, fromdate, todate, searchkeywords,
+										searchkeywords, searchkeywords, 2, objuser, fromdate, todate, searchkeywords, 3,
+										objuser, fromdate, todate, lstproject, searchkeywords, searchkeywords,
+										searchkeywords, 3, objuser, fromdate, todate, lstproject, searchkeywords, 3,
+										objuser.getUsernotify(), fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, 3, objuser.getUsernotify(), fromdate, todate, searchkeywords,
+										pageable));
+
+						count = count + lslogilablimsorderdetailRepository
+								.countByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
+										lstproject, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
+										lstproject, fromdate, todate, searchkeywords, 0, fromdate, todate,
+										searchkeywords, searchkeywords, searchkeywords, 0, fromdate, todate,
+										searchkeywords, lstsample, fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, lstsample, fromdate, todate, searchkeywords, 1, objuser,
+										fromdate, todate, searchkeywords, searchkeywords, searchkeywords, 1, objuser,
+										fromdate, todate, searchkeywords, 2, objuser, fromdate, todate, searchkeywords,
+										searchkeywords, searchkeywords, 2, objuser, fromdate, todate, searchkeywords, 3,
+										objuser, fromdate, todate, lstproject, searchkeywords, searchkeywords,
+										searchkeywords, 3, objuser, fromdate, todate, lstproject, searchkeywords, 3,
+										objuser.getUsernotify(), fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, 3, objuser.getUsernotify(), fromdate, todate, searchkeywords);
+						rtnobj.put("orders", lstorders);
+
+					} else {
+						lstordersprotocol = LSlogilabprotocoldetailRepository
+								.findByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
+										lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),
+										searchkeywords, searchkeywords, lstproject, fromdate, todate,
+										objuser.getLssitemaster().getSitecode(), searchkeywords, searchkeywords, 1,
+										objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
+										searchkeywords, 1, objuser.getLssitemaster().getSitecode(), fromdate, todate,
+										searchkeywords, searchkeywords, 2, objuser.getLssitemaster().getSitecode(),
+										objuser.getUsercode(), fromdate, todate, searchkeywords, searchkeywords, 2,
+										objuser.getLssitemaster().getSitecode(), objuser.getUsercode(), fromdate,
+										todate, searchkeywords, searchkeywords, lstproject, 3,
+										objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
+										searchkeywords, lstproject, 3, objuser.getLssitemaster().getSitecode(),
+										fromdate, todate, searchkeywords, searchkeywords, 3,
+										objuser.getLssitemaster().getSitecode(), fromdate, todate, userlist,
+										searchkeywords, searchkeywords, 3, objuser.getLssitemaster().getSitecode(),
+										fromdate, todate, userlist, searchkeywords, searchkeywords, pageable);
+
+						count = LSlogilabprotocoldetailRepository
+								.countByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
+										lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),
+										searchkeywords, searchkeywords, lstproject, fromdate, todate,
+										objuser.getLssitemaster().getSitecode(), searchkeywords, searchkeywords, 1,
+										objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
+										searchkeywords, 1, objuser.getLssitemaster().getSitecode(), fromdate, todate,
+										searchkeywords, searchkeywords, 2, objuser.getLssitemaster().getSitecode(),
+										objuser.getUsercode(), fromdate, todate, searchkeywords, searchkeywords, 2,
+										objuser.getLssitemaster().getSitecode(), objuser.getUsercode(), fromdate,
+										todate, searchkeywords, searchkeywords, lstproject, 3,
+										objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
+										searchkeywords, lstproject, 3, objuser.getLssitemaster().getSitecode(),
+										fromdate, todate, searchkeywords, searchkeywords, 3,
+										objuser.getLssitemaster().getSitecode(), fromdate, todate, userlist,
+										searchkeywords, searchkeywords, 3, objuser.getLssitemaster().getSitecode(),
+										fromdate, todate, userlist, searchkeywords, searchkeywords);
+						rtnobj.put("orders", lstordersprotocol);
+					}
+				}
+			}
+		} else {
+			List<LSSheetOrderStructure> lstdir = lsSheetOrderStructureRepository
+					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+							objuser.getLssitemaster(), 1, objuser, 2);
+			List<Long> directorycode = lstdir.stream().map(LSSheetOrderStructure::getDirectorycode)
+					.collect(Collectors.toList());
+			if (objuser.getObjuser().getOrderselectiontype() == 1) {
+
+				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
+					if (objuser.getObjuser().getOrderfor() == 1) {
+						lstorders = lslogilablimsorderdetailRepository
+								.findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrderByBatchcodeDesc(
+										lstsample, 1, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
+										lstsample, 1, fromdate, todate, searchkeywords, lstsample, 2, fromdate, todate,
+										objuser, searchkeywords, searchkeywords, searchkeywords, lstsample, 2, fromdate,
+										todate, objuser, searchkeywords, 3, fromdate, todate, objuser, searchkeywords,
+										searchkeywords, searchkeywords, 3, fromdate, todate, objuser, searchkeywords,
+										directorycode, 1, fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 1, fromdate, todate, searchkeywords,
+										directorycode, 2, fromdate, todate, objuser, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 2, fromdate, todate, objuser, searchkeywords,
+										directorycode, 3, fromdate, todate, objuser, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 3, fromdate, todate, objuser, searchkeywords,
+										pageable);
+
+						count = lslogilablimsorderdetailRepository
+								.countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrderByBatchcodeDesc(
+										lstsample, 1, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
+										lstsample, 1, fromdate, todate, searchkeywords, lstsample, 2, fromdate, todate,
+										objuser, searchkeywords, searchkeywords, searchkeywords, lstsample, 2, fromdate,
+										todate, objuser, searchkeywords, 3, fromdate, todate, objuser, searchkeywords,
+										searchkeywords, searchkeywords, 3, fromdate, todate, objuser, searchkeywords,
+										directorycode, 1, fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 1, fromdate, todate, searchkeywords,
+										directorycode, 2, fromdate, todate, objuser, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 2, fromdate, todate, objuser, searchkeywords,
+										directorycode, 3, fromdate, todate, objuser, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 3, fromdate, todate, objuser, searchkeywords);
+
+						lstorders.addAll(lslogilablimsorderdetailRepository
+								.findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+										lstsample, 1, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
+										lstsample, 1, fromdate, todate, searchkeywords, lstsample, 2, fromdate, todate,
+										objuser, searchkeywords, searchkeywords, searchkeywords, lstsample, 2, fromdate,
+										todate, objuser, searchkeywords, 3, fromdate, todate, objuser, searchkeywords,
+										searchkeywords, searchkeywords, 3, fromdate, todate, objuser, searchkeywords,
+										directorycode, 1, fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 1, fromdate, todate, searchkeywords,
+										directorycode, 2, fromdate, todate, objuser, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 2, fromdate, todate, objuser, searchkeywords,
+										directorycode, 3, fromdate, todate, objuser, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 3, fromdate, todate, objuser, searchkeywords,
+										pageable));
+
+						count = count + lslogilablimsorderdetailRepository
+								.countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+										lstsample, 1, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
+										lstsample, 1, fromdate, todate, searchkeywords, lstsample, 2, fromdate, todate,
+										objuser, searchkeywords, searchkeywords, searchkeywords, lstsample, 2, fromdate,
+										todate, objuser, searchkeywords, 3, fromdate, todate, objuser, searchkeywords,
+										searchkeywords, searchkeywords, 3, fromdate, todate, objuser, searchkeywords,
+										directorycode, 1, fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 1, fromdate, todate, searchkeywords,
+										directorycode, 2, fromdate, todate, objuser, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 2, fromdate, todate, objuser, searchkeywords,
+										directorycode, 3, fromdate, todate, objuser, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 3, fromdate, todate, objuser, searchkeywords);
+
+						lstorders.addAll(lslogilablimsorderdetailRepository
+								.findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
+										lstsample, 1, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
+										lstsample, 1, fromdate, todate, searchkeywords, lstsample, 2, fromdate, todate,
+										objuser, searchkeywords, searchkeywords, searchkeywords, lstsample, 2, fromdate,
+										todate, objuser, searchkeywords, 3, fromdate, todate, objuser, searchkeywords,
+										searchkeywords, searchkeywords, 3, fromdate, todate, objuser, searchkeywords,
+										directorycode, 1, fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 1, fromdate, todate, searchkeywords,
+										directorycode, 2, fromdate, todate, objuser, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 2, fromdate, todate, objuser, searchkeywords,
+										directorycode, 3, fromdate, todate, objuser, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 3, fromdate, todate, objuser, searchkeywords,
+										pageable));
+
+						count = count + lslogilablimsorderdetailRepository
+								.countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
+										lstsample, 1, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
+										lstsample, 1, fromdate, todate, searchkeywords, lstsample, 2, fromdate, todate,
+										objuser, searchkeywords, searchkeywords, searchkeywords, lstsample, 2, fromdate,
+										todate, objuser, searchkeywords, 3, fromdate, todate, objuser, searchkeywords,
+										searchkeywords, searchkeywords, 3, fromdate, todate, objuser, searchkeywords,
+										directorycode, 1, fromdate, todate, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 1, fromdate, todate, searchkeywords,
+										directorycode, 2, fromdate, todate, objuser, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 2, fromdate, todate, objuser, searchkeywords,
+										directorycode, 3, fromdate, todate, objuser, searchkeywords, searchkeywords,
+										searchkeywords, directorycode, 3, fromdate, todate, objuser, searchkeywords);
+						rtnobj.put("orders", lstorders);
+					} else {
+						lstordersprotocol = LSlogilabprotocoldetailRepository
+								.findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
+										1, objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
+										searchkeywords, 1, objuser.getLssitemaster().getSitecode(), fromdate, todate,
+										searchkeywords, searchkeywords, 2, objuser.getUsercode(), fromdate, todate,
+										searchkeywords, searchkeywords, 2, objuser.getUsercode(), fromdate, todate,
+										searchkeywords, searchkeywords, 3, objuser.getUsercode(), fromdate, todate,
+										searchkeywords, searchkeywords, 3, objuser.getUsercode(), fromdate, todate,
+										searchkeywords, searchkeywords, pageable);
+
+						count = LSlogilabprotocoldetailRepository
+								.countByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
+										1, objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
+										searchkeywords, 1, objuser.getLssitemaster().getSitecode(), fromdate, todate,
+										searchkeywords, searchkeywords, 2, objuser.getUsercode(), fromdate, todate,
+										searchkeywords, searchkeywords, 2, objuser.getUsercode(), fromdate, todate,
+										searchkeywords, searchkeywords, 3, objuser.getUsercode(), fromdate, todate,
+										searchkeywords, searchkeywords, 3, objuser.getUsercode(), fromdate, todate,
+										searchkeywords, searchkeywords);
+						rtnobj.put("orders", lstordersprotocol);
+					}
+				}
+			}
+		}
+		rtnobj.put("count", count);
+		return rtnobj;
+	}
+
 }

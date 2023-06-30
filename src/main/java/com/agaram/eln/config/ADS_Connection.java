@@ -120,12 +120,15 @@ public class ADS_Connection {
 			DirContext context = new InitialDirContext(setLDAPCredential(objCredentials));
 			SearchControls searchControls = new SearchControls();
 			searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-
+			
 			String sDistinguishedName = (String) objCredentials.get("sDistinguishedName");
+			System.out.println("sDistinguishedName =="+sDistinguishedName);
 			@SuppressWarnings("rawtypes")
 			NamingEnumeration answer = context.search("",
 					"(&(objectCategory=user)(memberOf=" + sDistinguishedName + "))", searchControls);
+			System.out.println("search answer =="+answer);
 			while (answer.hasMore()) {
+				System.out.println("== search answer start ==");
 				SearchResult rslt = (SearchResult) answer.next();
 				Attributes attrs = rslt.getAttributes();
 				Map<String, String> objAttrs = new HashMap<>();
@@ -133,12 +136,23 @@ public class ADS_Connection {
 				objAttrs.put("sDistinguishedName", attrs.get("distinguishedName").toString().split(":")[1].trim());
 				objAttrs.put("sImport", "0");
 				objAttrs.put("sApprove", "0");
+				System.out.println("== search answer start values start==");
+				System.out.println("== search answer start username =="+attrs.get("cn").toString().split(":")[1].trim());
+				System.out.println("== search answer start sDistinguishedName=="+attrs.get("distinguishedName").toString().split(":")[1].trim());
+				System.out.println("== search answer start values end ==");
+				
 				Attribute userPrincipalName = attrs.get("userPrincipalName");
-				if (userPrincipalName == null)
+				System.out.println("== search answer start userPrincipalName =="+userPrincipalName);
+				if (userPrincipalName == null) {
+			
 					objAttrs.put("DomainUserID", attrs.get("cn").toString().split(":")[1].trim());
-				else
+				System.out.println("== search answer start userPrincipalName null  =="+attrs.get("cn").toString().split(":")[1].trim());
+				}
+				else {
 					objAttrs.put("DomainUserID",
 							(attrs.get("userPrincipalName").toString().split(":")[1]).split("@")[0].trim());
+					System.out.println("== search answer start userPrincipalName not null DomainUserID  =="+ (attrs.get("userPrincipalName").toString().split(":")[1]).split("@")[0].trim());
+				}
 				lstUsers.add(objAttrs);
 			}
 			rtnListMap.put("ADSUsersByGroup", lstUsers);
@@ -148,11 +162,13 @@ public class ADS_Connection {
 			errMsg.put("error", "The authentication is not supported by the server");
 			lstUsers.add(errMsg);
 			rtnListMap.put("error", lstUsers);
+			System.out.println("AuthenticationNotSupportedException =="+ex);
 			
 		} catch (AuthenticationException ex) {
 			errMsg.put("error", "Incorrect username or password");
 			lstUsers.add(errMsg);
 			rtnListMap.put("error", lstUsers);
+			System.out.println("AuthenticationException =="+ex);
 			
 		} catch (NamingException ex) {
 			errMsg.put("error", "Unknown Host...Check Domainname");

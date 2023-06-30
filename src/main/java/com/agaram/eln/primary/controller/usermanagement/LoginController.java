@@ -134,7 +134,7 @@ public class LoginController {
 
 		Map<String, Object> rtnMap = new HashMap<>();
 		Map<String, Object> isCompleted = new HashMap<>();
-
+		LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser","Active");
 		LSpreferences objPrefrencenamed = LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser","Active");
 		List<LSuserMaster> lstActUsrs = lsuserMasterRepository.findByUserretirestatus(0);
 				 if(objPrefrencenamed != null) {
@@ -165,6 +165,26 @@ public class LoginController {
 					}
 					
 				}	
+			}if (objPrefrence != null) {		
+					
+						isCompleted = loginService.addImportADSUsers(objMap);
+						if (isCompleted.get("isCompleted").equals(true)) {
+							List<LSuserMaster> lstUsers = new ArrayList<>();
+
+							LSusergroup userGroup = (LSusergroup) isCompleted.get("LSusergroup");
+							LSSiteMaster sSiteCode = (LSSiteMaster) isCompleted.get("LSSiteMaster");
+
+							lstUsers = loginService.UserMasterDetails(userGroup, sSiteCode);
+
+							rtnMap.put("LSuserMaster", lstUsers);
+							rtnMap.put("status", true);
+							rtnMap.put("sinformation", "Users imported successfully");
+						} else {
+							rtnMap.put("status", false);
+							rtnMap.put("sinformation", "Imported users are not saved");
+						}
+					
+				
 			}
 		
 		return rtnMap;

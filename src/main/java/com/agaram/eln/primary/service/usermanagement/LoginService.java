@@ -1908,18 +1908,18 @@ public class LoginService {
 		} else {
 			LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser",
 					"Active");
-			String dvalue = objPrefrence.getValueencrypted();
 			Long activeusercount = LSactiveUserRepository.count();
-			if (dvalue != null) {
+			if (objPrefrence != null) {
+				String dvalue = objPrefrence.getValueencrypted();
 				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
 				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
 				rtnobj.put("Noofuser",Integer.parseInt(sConcurrentUsers));
+			} else {
+				rtnobj.put("Noofuser",3);
 			}
 			rtnobj.put("activeuser", activeusercount);
-		}
-			
-			return rtnobj;
-		
+		}			
+		return rtnobj;
 	}
 
 //	public void autoShedulerInactiveUserkill() {

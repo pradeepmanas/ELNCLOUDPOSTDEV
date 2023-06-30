@@ -1076,9 +1076,9 @@ public class UserService {
 
 					LScfttransaction manualAudit = new LScfttransaction();
 
-					manualAudit.setModuleName("Register Task Orders & Execute");
+					manualAudit.setModuleName("IDS_SCN_SHEETORDERS");
 					manualAudit.setComments(objuser.getsComments());
-					manualAudit.setActions("view");
+					manualAudit.setActions("IDS_TSK_ESIGN");
 					manualAudit.setSystemcoments("User Generated");
 					manualAudit.setTableName("Lsusermaster");
 					manualAudit.setManipulatetype("view");
@@ -1105,9 +1105,9 @@ public class UserService {
 
 					LScfttransaction manualAudit = new LScfttransaction();
 
-					manualAudit.setModuleName("Register Task Orders & Execute");
+					manualAudit.setModuleName("IDS_SCN_SHEETORDERS");
 					manualAudit.setComments(objuser.getsComments());
-					manualAudit.setActions("view");
+					manualAudit.setActions("IDS_TSK_ESIGN");
 					manualAudit.setSystemcoments("User Generated");
 					manualAudit.setTableName("Lsusermaster");
 					manualAudit.setManipulatetype("view");
