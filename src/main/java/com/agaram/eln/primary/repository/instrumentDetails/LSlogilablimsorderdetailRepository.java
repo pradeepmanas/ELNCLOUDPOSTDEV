@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.repository.instrumentDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -1762,17 +1763,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	
 	public List<LSlogilablimsorderdetail> findFirst2ByBatchcodeLessThanAndCreatedtimestampBetweenOrderByBatchcodeDesc(Long batchcode, Date fromdate, Date todate);
 
-//	List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullOrderByBatchcodeDesc(
-//			List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Date fromdate2, Date todate2, int j,
-//			LSuserMaster objuser, Date fromdate3, Date todate3, int k, LSuserMaster objuser2, Date fromdate4,
-//			Date todate4, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
-//			Pageable pageable);
-
-//	long countByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullOrderByBatchcodeDesc(
-//			List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Date fromdate2, Date todate2, int j,
-//			LSuserMaster objuser, Date fromdate3, Date todate3, int k, LSuserMaster objuser2, Date fromdate4,
-//			Date todate4, int l, LSuserMaster objuser3, Date fromdate5, Date todate5
-//			 );
 
 	List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeOrFiletypeAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
 			List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer testcode, int i, Date fromdate2,
@@ -1922,19 +1912,19 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Integer filetype4, int j, LSfile lsfile4, List<LSsamplemaster> lstsample3, Integer filetype5, int k,
 			LSfile lsfile5);
 
-//	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
-//			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
-//			Date fromdate2, Date todate2, String string3, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
-//			String string4, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, String string5,
-//			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
-//			String string6, int m, Date fromdate6, Date todate6, List<LSuserMaster> usernotify, Pageable pageable);
+	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
+			Date fromdate2, Date todate2, String string3, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
+			String string4, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, String string5,
+			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
+			String string6, int m, Date fromdate6, Date todate6, List<LSuserMaster> usernotify, Pageable pageable);
 
-//	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
-//			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
-//			Date fromdate2, Date todate2, String string3, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
-//			String string4, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, String string5,
-//			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
-//			String string6, int m, Date fromdate6, Date todate6, List<LSuserMaster> usernotify);
+	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
+			Date fromdate2, Date todate2, String string3, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
+			String string4, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, String string5,
+			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
+			String string6, int m, Date fromdate6, Date todate6, List<LSuserMaster> usernotify);
 
 	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
@@ -1955,45 +1945,10 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Date todate4, int l, LSuserMaster objuser3, Date fromdate5, Date todate5, List<LSprojectmaster> lstproject2,
 			int m, List<LSuserMaster> usernotify, Date fromdate6, Date todate6);
 
-	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
-			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
-			Date fromdate2, Date todate2, String string3, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
-			String string4, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, String string5,
-			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
-			String string6, int m, Date fromdate6, Date todate6, List<LSuserMaster> usernotify, Pageable pageable);
-
-	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
-			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
-			Date fromdate2, Date todate2, String string3, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
-			String string4, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, String string5,
-			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate5, Date todate5,
-			String string6, int m, Date fromdate6, Date todate6, List<LSuserMaster> usernotify);
-
 	long countByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullOrderByBatchcodeDesc(
 			List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Date fromdate2, Date todate2, int j,
 			LSuserMaster objuser, Date fromdate3, Date todate3, int k, LSuserMaster objuser2, Date fromdate4,
 			Date todate4, int l, LSuserMaster objuser3, Date fromdate5, Date todate5);
-
-	List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Date fromdate2, Date todate2,
-			List<LSsamplemaster> lstsample, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
-			List<LSsamplemaster> lstsample2, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, int l,
-			LSuserMaster objuser3, Date fromdate5, Date todate5, List<LSprojectmaster> lstproject2, int m,
-			List<LSuserMaster> usernotify, Date fromdate6, Date todate6, Pageable pageable);
-
-	long countByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndLssamplemasterAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndLssamplemasterAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Date fromdate2, Date todate2,
-			List<LSsamplemaster> lstsample1, int j, LSuserMaster objuser, Date fromdate3, Date todate3,
-			List<LSsamplemaster> lstsample12, int k, LSuserMaster objuser2, Date fromdate4, Date todate4, int l,
-			LSuserMaster objuser3, Date fromdate5, Date todate5, List<LSprojectmaster> lstproject2, int m,
-			List<LSuserMaster> usernotify, Date fromdate6, Date todate6);
-
-	List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Date fromdate2, Date todate2,
-			List<LSsamplemaster> lstsample1, Date fromdate3, Date todate3, int j, LSuserMaster objuser, Date fromdate4,
-			Date todate4, int k, LSuserMaster objuser2, Date fromdate5, Date todate5, int l, LSuserMaster objuser3,
-			Date fromdate6, Date todate6, List<LSprojectmaster> lstproject2, int m, List<LSuserMaster> usernotify,
-			Date fromdate7, Date todate7, Pageable pageable);
 
 	long countByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullOrderByBatchcodeDesc(
 			List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Date fromdate2, Date todate2,
@@ -2001,18 +1956,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Date todate4, int k, LSuserMaster objuser2, Date fromdate5, Date todate5, int l, LSuserMaster objuser3,
 			Date fromdate6, Date todate6, List<LSprojectmaster> lstproject2, int m, List<LSuserMaster> usernotify,
 			Date fromdate7, Date todate7);
-
-	long countByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenOrOrdercancellAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNull(
-			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int j, List<LSsamplemaster> lstsample1,
-			Date fromdate2, Date todate2, int k, LSuserMaster objuser, Date fromdate3, Date todate3, int l, int m,
-			LSuserMaster objuser2, Date fromdate4, Date todate4, int n, int o, LSuserMaster objuser3, Date fromdate5,
-			Date todate5, int p);
-
-	long countByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenOrApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNull(
-			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int j, List<LSsamplemaster> lstsample1,
-			Date fromdate2, Date todate2, int k, LSuserMaster objuser, Date fromdate3, Date todate3, int l, int m,
-			LSuserMaster objuser2, Date fromdate4, Date todate4, int n, int o, LSuserMaster objuser3, Date fromdate5,
-			Date todate5, int p, int q, LSuserMaster objuser4, Date fromdate6, Date todate6, int r);
 
 	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
@@ -2022,21 +1965,24 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			int l, LSuserMaster objuser3, Date fromdate6, Date todate6, String string7, int m,
 			List<LSuserMaster> usernotify, Date fromdate7, Date todate7);
 
-	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
-			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2,
-			List<LSsamplemaster> lstsample1, Date fromdate2, Date todate2, String string3, int i, Date fromdate3,
-			Date todate3, String string4, int j, LSuserMaster objuser, Date fromdate4, Date todate4, String string5,
-			int k, LSuserMaster objuser2, Date fromdate5, Date todate5, String string6,
-			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate6, Date todate6,
-			String string7, int m, Date fromdate7, Date todate7, List<LSuserMaster> usernotify, Pageable pageable);
+	long countByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenOrApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNull(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int j, List<LSsamplemaster> lstsample1,
+			Date fromdate2, Date todate2, int k, LSuserMaster objuser, Date fromdate3, Date todate3, int l, int m,
+			LSuserMaster objuser2, Date fromdate4, Date todate4, int n, int o, LSuserMaster objuser3, Date fromdate5,
+			Date todate5, int p, int q, LSuserMaster objuser4, Date fromdate6, Date todate6, int r);
 
-	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
-			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2,
-			List<LSsamplemaster> lstsample1, Date fromdate2, Date todate2, String string3, int i, Date fromdate3,
-			Date todate3, String string4, int j, LSuserMaster objuser, Date fromdate4, Date todate4, String string5,
-			int k, LSuserMaster objuser2, Date fromdate5, Date todate5, String string6,
-			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate6, Date todate6,
-			String string7, int m, Date fromdate7, Date todate7, List<LSuserMaster> usernotify);
+	long countByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenOrOrdercancellAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNull(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int j, List<LSsamplemaster> lstsample1,
+			Date fromdate2, Date todate2, int k, LSuserMaster objuser, Date fromdate3, Date todate3, int l, int m,
+			LSuserMaster objuser2, Date fromdate4, Date todate4, int n, int o, LSuserMaster objuser3, Date fromdate5,
+			Date todate5, int p);
+
+	List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Date fromdate2, Date todate2,
+			List<LSsamplemaster> lstsample1, Date fromdate3, Date todate3, int j, LSuserMaster objuser, Date fromdate4,
+			Date todate4, int k, LSuserMaster objuser2, Date fromdate5, Date todate5, int l, LSuserMaster objuser3,
+			Date fromdate6, Date todate6, List<LSprojectmaster> lstproject2, int m, List<LSuserMaster> usernotify,
+			Date fromdate7, Date todate7, Pageable pageable);
 
 	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
 			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, String string2,
@@ -2062,267 +2008,387 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			LSuserMaster objuser5, Date fromdate10, Date todate10, String string11, int t, LSuserMaster objuser6,
 			Date fromdate11, Date todate11);
 
+	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2,
+			List<LSsamplemaster> lstsample1, Date fromdate2, Date todate2, String string3, int i, Date fromdate3,
+			Date todate3, String string4, int j, LSuserMaster objuser, Date fromdate4, Date todate4, String string5,
+			int k, LSuserMaster objuser2, Date fromdate5, Date todate5, String string6,
+			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate6, Date todate6,
+			String string7, int m, Date fromdate7, Date todate7, List<LSuserMaster> usernotify, Pageable pageable);
+
+	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2,
+			List<LSsamplemaster> lstsample1, Date fromdate2, Date todate2, String string3, int i, Date fromdate3,
+			Date todate3, String string4, int j, LSuserMaster objuser, Date fromdate4, Date todate4, String string5,
+			int k, LSuserMaster objuser2, Date fromdate5, Date todate5, String string6,
+			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate6, Date todate6,
+			String string7, int m, Date fromdate7, Date todate7, List<LSuserMaster> usernotify);
+
 	List<Logilabordermaster> findByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenOrApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNull(
 			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int j, List<LSsamplemaster> lstsample1,
 			Date fromdate2, Date todate2, int k, LSuserMaster objuser, Date fromdate3, Date todate3, int l, int m,
 			LSuserMaster objuser2, Date fromdate4, Date todate4, int n, int o, LSuserMaster objuser3, Date fromdate5,
 			Date todate5, int p, int q, LSuserMaster objuser4, Date fromdate6, Date todate6, int r, Pageable pageable);
 
+
+	List<Logilabordermaster> findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrderByBatchcodeDesc(
+			int i, Date fromdate, Date todate, LSuserMaster objuser, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, int j, Date fromdate2, Date todate2, LSuserMaster objuser2, String searchkeywords4,
+			List<Long> directorycode, int k, Date fromdate3, Date todate3, String searchkeywords5,
+			String searchkeywords6, String searchkeywords7, List<Long> directorycode2, int l, Date fromdate4,
+			Date todate4, String searchkeywords8, List<Long> directorycode3, int m, Date fromdate5, Date todate5,
+			LSuserMaster objuser3, String searchkeywords9, String searchkeywords10, String searchkeywords11,
+			List<Long> directorycode4, int n, Date fromdate6, Date todate6, LSuserMaster objuser4,
+			String searchkeywords12, List<Long> directorycode5, int o, Date fromdate7, Date todate7,
+			LSuserMaster objuser5, String searchkeywords13, String searchkeywords14, String searchkeywords15,
+			List<Long> directorycode6, int p, Date fromdate8, Date todate8, LSuserMaster objuser6,
+			String searchkeywords16, Pageable pageable);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
+			String searchkeywords2, String searchkeywords3, LSuserMaster objuser);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
+			LSuserMaster objuser);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, LSuserMaster objuser,
+			String searchkeywords, String searchkeywords2, String searchkeywords3);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, LSuserMaster objuser,
+			String searchkeywords);
+
+	long countByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrderByBatchcodeDesc(
+			int i, Date fromdate, Date todate, LSuserMaster objuser, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, int j, Date fromdate2, Date todate2, LSuserMaster objuser2, String searchkeywords4,
+			List<Long> directorycode, int k, Date fromdate3, Date todate3, String searchkeywords5,
+			String searchkeywords6, String searchkeywords7, List<Long> directorycode2, int l, Date fromdate4,
+			Date todate4, String searchkeywords8, List<Long> directorycode3, int m, Date fromdate5, Date todate5,
+			LSuserMaster objuser3, String searchkeywords9, String searchkeywords10, String searchkeywords11,
+			List<Long> directorycode4, int n, Date fromdate6, Date todate6, LSuserMaster objuser4,
+			String searchkeywords12, List<Long> directorycode5, int o, Date fromdate7, Date todate7,
+			LSuserMaster objuser5, String searchkeywords13, String searchkeywords14, String searchkeywords15,
+			List<Long> directorycode6, int p, Date fromdate8, Date todate8, LSuserMaster objuser6,
+			String searchkeywords16);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, LSuserMaster objuser,
+			String searchkeywords, Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, LSuserMaster objuser,
+			String searchkeywords, String searchkeywords2, String searchkeywords3, Pageable pageable);
+
+
+//	List<Logilabordermaster> findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullderByBatchcodeDesc(
+//			int i, Date fromdate, Date todate, LSuserMaster objuser, String searchkeywords, String searchkeywords2,
+//			String searchkeywords3, int j, Date fromdate2, Date todate2, LSuserMaster objuser2, String searchkeywords4,
+//			List<Long> directorycode, int k, Date fromdate3, Date todate3, String searchkeywords5,
+//			String searchkeywords6, String searchkeywords7, List<Long> directorycode2, int l, Date fromdate4,
+//			Date todate4, String searchkeywords8, List<Long> directorycode3, int m, Date fromdate5, Date todate5,
+//			LSuserMaster objuser3, String searchkeywords9, String searchkeywords10, String searchkeywords11,
+//			List<Long> directorycode4, int n, Date fromdate6, Date todate6, LSuserMaster objuser4,
+//			String searchkeywords12, List<Long> directorycode5, int o, Date fromdate7, Date todate7,
+//			LSuserMaster objuser5, String searchkeywords13, String searchkeywords14, String searchkeywords15,
+//			List<Long> directorycode6, int p, Date fromdate8, Date todate8, LSuserMaster objuser6,
+//			String searchkeywords16, Pageable pageable);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, LSuserMaster objuser,
+			String searchkeywords);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,LSuserMaster obj);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
+			String searchkeywords2, String searchkeywords3,LSuserMaster userma);
+
+//	long countByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullderByBatchcodeDesc(
+//			int i, Date fromdate, Date todate, LSuserMaster objuser, String searchkeywords, String searchkeywords2,
+//			String searchkeywords3, int j, Date fromdate2, Date todate2, LSuserMaster objuser2, String searchkeywords4,
+//			List<Long> directorycode, int k, Date fromdate3, Date todate3, String searchkeywords5,
+//			String searchkeywords6, String searchkeywords7, List<Long> directorycode2, int l, Date fromdate4,
+//			Date todate4, String searchkeywords8, List<Long> directorycode3, int m, Date fromdate5, Date todate5,
+//			LSuserMaster objuser3, String searchkeywords9, String searchkeywords10, String searchkeywords11,
+//			List<Long> directorycode4, int n, Date fromdate6, Date todate6, LSuserMaster objuser4,
+//			String searchkeywords12, List<Long> directorycode5, int o, Date fromdate7, Date todate7,
+//			LSuserMaster objuser5, String searchkeywords13, String searchkeywords14, String searchkeywords15,
+//			List<Long> directorycode6, int p, Date fromdate8, Date todate8, LSuserMaster objuser6,
+//			String searchkeywords16);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, LSuserMaster objuser,
+			String searchkeywords);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, LSuserMaster objuser,
+			String searchkeywords, String searchkeywords2, String searchkeywords3);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
+			LSuserMaster objuser);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
+			String searchkeywords2, String searchkeywords3, LSuserMaster objuser);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, LSuserMaster objuser,
+			String searchkeywords, Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, LSuserMaster objuser,
+			String searchkeywords, String searchkeywords2, String searchkeywords3, Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
+			LSuserMaster objuser, Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
+			String searchkeywords2, String searchkeywords3, LSuserMaster objuser, Pageable pageable);
+
+	List<Logilabordermaster> findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
+			int i, Date fromdate, Date todate, LSuserMaster objuser, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, int j, Date fromdate2, Date todate2, LSuserMaster objuser2, String searchkeywords4,
+			List<Long> directorycode, int k, Date fromdate3, Date todate3, String searchkeywords5,
+			String searchkeywords6, String searchkeywords7, List<Long> directorycode2, int l, Date fromdate4,
+			Date todate4, String searchkeywords8, List<Long> directorycode3, int m, Date fromdate5, Date todate5,
+			LSuserMaster objuser3, String searchkeywords9, String searchkeywords10, String searchkeywords11,
+			List<Long> directorycode4, int n, Date fromdate6, Date todate6, LSuserMaster objuser4,
+			String searchkeywords12, List<Long> directorycode5, int o, Date fromdate7, Date todate7,
+			LSuserMaster objuser5, String searchkeywords13, String searchkeywords14, String searchkeywords15,
+			List<Long> directorycode6, int p, Date fromdate8, Date todate8, LSuserMaster objuser6,
+			String searchkeywords16, Pageable pageable);
+
+	long countByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
+			int i, Date fromdate, Date todate, LSuserMaster objuser, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, int j, Date fromdate2, Date todate2, LSuserMaster objuser2, String searchkeywords4,
+			List<Long> directorycode, int k, Date fromdate3, Date todate3, String searchkeywords5,
+			String searchkeywords6, String searchkeywords7, List<Long> directorycode2, int l, Date fromdate4,
+			Date todate4, String searchkeywords8, List<Long> directorycode3, int m, Date fromdate5, Date todate5,
+			LSuserMaster objuser3, String searchkeywords9, String searchkeywords10, String searchkeywords11,
+			List<Long> directorycode4, int n, Date fromdate6, Date todate6, LSuserMaster objuser4,
+			String searchkeywords12, List<Long> directorycode5, int o, Date fromdate7, Date todate7,
+			LSuserMaster objuser5, String searchkeywords13, String searchkeywords14, String searchkeywords15,
+			List<Long> directorycode6, int p, Date fromdate8, Date todate8, LSuserMaster objuser6,
+			String searchkeywords16);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
+			String searchkeywords2, String searchkeywords3, LSuserMaster objuser, Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
+			LSuserMaster objuser, Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
+			String searchkeywords2, String searchkeywords3, LSuserMaster objuser, Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
+			LSuserMaster objuser, Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, LSuserMaster objuser,
+			String searchkeywords, String searchkeywords2, String searchkeywords3, Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, LSuserMaster objuser,
+			String searchkeywords, Pageable pageable);
+	long countByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2,
+			String searchkeywords4, int i, Date fromdate3, Date todate3, String searchkeywords5, String searchkeywords6,
+			String searchkeywords7, int j, Date fromdate4, Date todate4, String searchkeywords8, int k,
+			LSuserMaster objuser, Date fromdate5, Date todate5, String searchkeywords9, String searchkeywords10,
+			String searchkeywords11, int l, LSuserMaster objuser2, Date fromdate6, Date todate6,
+			String searchkeywords12, int m, LSuserMaster objuser3, Date fromdate7, Date todate7,
+			String searchkeywords13, String searchkeywords14, String searchkeywords15, int n, LSuserMaster objuser4,
+			Date fromdate8, Date todate8, String searchkeywords16, int o, LSuserMaster objuser5, Date fromdate9,
+			Date todate9, List<LSprojectmaster> lstproject3, String searchkeywords17, String searchkeywords18,
+			String searchkeywords19, int p, LSuserMaster objuser6, Date fromdate10, Date todate10,
+			List<LSprojectmaster> lstproject4, String searchkeywords20, int q, List<LSuserMaster> usernotify,
+			Date fromdate11, Date todate11, String searchkeywords21, String searchkeywords22, String searchkeywords23,
+			int r, List<LSuserMaster> usernotify2, Date fromdate12, Date todate12, String searchkeywords24);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, Date fromdate, Date todate, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, LSuserMaster objuser, Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, Date fromdate, Date todate, String searchkeywords, LSuserMaster objuser,
+			Pageable pageable);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, Date fromdate, Date todate, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, LSuserMaster objuser);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, Date fromdate, Date todate, String searchkeywords, LSuserMaster objuser);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, Date fromdate, Date todate, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, Pageable pageable, LSuserMaster objuser);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, Date fromdate, Date todate, String searchkeywords, Pageable pageable,
+			LSuserMaster objuser);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, Date fromdate, Date todate, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, LSuserMaster objuser);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, Date fromdate, Date todate, String searchkeywords, LSuserMaster objuser);
+
+	long countByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2,
+			String searchkeywords4, int i, Date fromdate3, Date todate3, String searchkeywords5, String searchkeywords6,
+			String searchkeywords7, int j, Date fromdate4, Date todate4, String searchkeywords8, int k,
+			LSuserMaster objuser, Date fromdate5, Date todate5, String searchkeywords9, String searchkeywords10,
+			String searchkeywords11, int l, LSuserMaster objuser2, Date fromdate6, Date todate6,
+			String searchkeywords12, int m, LSuserMaster objuser3, Date fromdate7, Date todate7,
+			String searchkeywords13, String searchkeywords14, String searchkeywords15, int n, LSuserMaster objuser4,
+			Date fromdate8, Date todate8, String searchkeywords16, int o, LSuserMaster objuser5, Date fromdate9,
+			Date todate9, List<LSprojectmaster> lstproject3, String searchkeywords17, String searchkeywords18,
+			String searchkeywords19, int p, LSuserMaster objuser6, Date fromdate10, Date todate10,
+			List<LSprojectmaster> lstproject4, String searchkeywords20, int q, List<LSuserMaster> usernotify,
+			Date fromdate11, Date todate11, String searchkeywords21, String searchkeywords22, String searchkeywords23,
+			int r, List<LSuserMaster> usernotify2, Date fromdate12, Date todate12, String searchkeywords24);
+
+	List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2,
+			String searchkeywords4, int i, Date fromdate3, Date todate3, String searchkeywords5, String searchkeywords6,
+			String searchkeywords7, int j, Date fromdate4, Date todate4, String searchkeywords8, int k,
+			LSuserMaster objuser, Date fromdate5, Date todate5, String searchkeywords9, String searchkeywords10,
+			String searchkeywords11, int l, LSuserMaster objuser2, Date fromdate6, Date todate6,
+			String searchkeywords12, int m, LSuserMaster objuser3, Date fromdate7, Date todate7,
+			String searchkeywords13, String searchkeywords14, String searchkeywords15, int n, LSuserMaster objuser4,
+			Date fromdate8, Date todate8, String searchkeywords16, int o, LSuserMaster objuser5, Date fromdate9,
+			Date todate9, List<LSprojectmaster> lstproject3, String searchkeywords17, String searchkeywords18,
+			String searchkeywords19, int p, LSuserMaster objuser6, Date fromdate10, Date todate10,
+			List<LSprojectmaster> lstproject4, String searchkeywords20, int q, List<LSuserMaster> usernotify,
+			Date fromdate11, Date todate11, String searchkeywords21, String searchkeywords22, String searchkeywords23,
+			int r, List<LSuserMaster> usernotify2, Date fromdate12, Date todate12, String searchkeywords24,
+			Pageable pageable);
+	
+	List<Logilabordermaster> findByLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndAndTestnameIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject, String searchkeywords, String searchkeywords2, String searchkeywords3,
+			List<LSprojectmaster> lstproject2, String searchkeywords4, List<LSprojectmaster> lstproject3,
+			String searchkeywords5, int i, String searchkeywords6, String searchkeywords7, String searchkeywords8,
+			int j, String searchkeywords9, int k, String searchkeywords10, int l, LSuserMaster objuser,
+			String searchkeywords11, String searchkeywords12, String searchkeywords13, int m, LSuserMaster objuser2,
+			String searchkeywords14, int n, LSuserMaster objuser3, String searchkeywords15, int o,
+			LSuserMaster objuser4, String searchkeywords16, String searchkeywords17, String searchkeywords18, int p,
+			LSuserMaster objuser5, String searchkeywords19, int q, LSuserMaster objuser6, String searchkeywords20,
+			int r, LSuserMaster objuser7, List<LSprojectmaster> lstproject4, String searchkeywords21,
+			String searchkeywords22, String searchkeywords23, int s, LSuserMaster objuser8,
+			List<LSprojectmaster> lstproject5, String searchkeywords24, int t, LSuserMaster objuser9,
+			List<LSprojectmaster> lstproject6, String searchkeywords25, int u, List<LSuserMaster> usernotify,
+			String searchkeywords26, String searchkeywords27, String searchkeywords28, int v,
+			List<LSuserMaster> usernotify2, String searchkeywords29, int w, List<LSuserMaster> usernotify3,
+			String searchkeywords30, Pageable pageable);
+
+	long countByLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndAndTestnameIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject, String searchkeywords, String searchkeywords2, String searchkeywords3,
+			List<LSprojectmaster> lstproject2, String searchkeywords4, List<LSprojectmaster> lstproject3,
+			String searchkeywords5, int i, String searchkeywords6, String searchkeywords7, String searchkeywords8,
+			int j, String searchkeywords9, int k, String searchkeywords10, int l, LSuserMaster objuser,
+			String searchkeywords11, String searchkeywords12, String searchkeywords13, int m, LSuserMaster objuser2,
+			String searchkeywords14, int n, LSuserMaster objuser3, String searchkeywords15, int o,
+			LSuserMaster objuser4, String searchkeywords16, String searchkeywords17, String searchkeywords18, int p,
+			LSuserMaster objuser5, String searchkeywords19, int q, LSuserMaster objuser6, String searchkeywords20,
+			int r, LSuserMaster objuser7, List<LSprojectmaster> lstproject4, String searchkeywords21,
+			String searchkeywords22, String searchkeywords23, int s, LSuserMaster objuser8,
+			List<LSprojectmaster> lstproject5, String searchkeywords24, int t, LSuserMaster objuser9,
+			List<LSprojectmaster> lstproject6, String searchkeywords25, int u, List<LSuserMaster> usernotify,
+			String searchkeywords26, String searchkeywords27, String searchkeywords28, int v,
+			List<LSuserMaster> usernotify2, String searchkeywords29, int w, List<LSuserMaster> usernotify3,
+			String searchkeywords30);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, String searchkeywords, String searchkeywords2, String searchkeywords3,
+			LSuserMaster objuser, Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, String searchkeywords, LSuserMaster objuser, Pageable pageable);
+
+	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, String searchkeywords, LSuserMaster objuser, Pageable pageable);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, String searchkeywords, String searchkeywords2, String searchkeywords3,
+			LSuserMaster objuser);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, String searchkeywords, LSuserMaster objuser);
+
+	long countByLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+			List<LSsamplemaster> lstsample, String searchkeywords, LSuserMaster objuser);
+
+
+	List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject, Date fromdate, Date todate, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2,
+			String searchkeywords4, int i, Date fromdate3, Date todate3, String searchkeywords5, String searchkeywords6,
+			String searchkeywords7, int j, Date fromdate4, Date todate4, String searchkeywords8, int k,
+			LSuserMaster objuser, Date fromdate5, Date todate5, String searchkeywords9, String searchkeywords10,
+			String searchkeywords11, int l, LSuserMaster objuser2, Date fromdate6, Date todate6,
+			String searchkeywords12, int m, LSuserMaster objuser3, Date fromdate7, Date todate7,
+			String searchkeywords13, String searchkeywords14, String searchkeywords15, int n, LSuserMaster objuser4,
+			Date fromdate8, Date todate8, String searchkeywords16, int o, LSuserMaster objuser5, Date fromdate9,
+			Date todate9, List<LSprojectmaster> lstproject3, String searchkeywords17, String searchkeywords18,
+			String searchkeywords19, int p, LSuserMaster objuser6, Date fromdate10, Date todate10,
+			List<LSprojectmaster> lstproject4, String searchkeywords20, int q, List<LSuserMaster> usernotify,
+			Date fromdate11, Date todate11, String searchkeywords21, String searchkeywords22, String searchkeywords23,
+			int r, List<LSuserMaster> usernotify2, Date fromdate12, Date todate12, String searchkeywords24,
+			Pageable pageable);
+
+	List<Logilabordermaster> findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+			int i, Date fromdate, Date todate, LSuserMaster objuser, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, int j, Date fromdate2, Date todate2, LSuserMaster objuser2, String searchkeywords4,
+			List<Long> directorycode, int k, Date fromdate3, Date todate3, String searchkeywords5,
+			String searchkeywords6, String searchkeywords7, List<Long> directorycode2, int l, Date fromdate4,
+			Date todate4, String searchkeywords8, List<Long> directorycode3, int m, Date fromdate5, Date todate5,
+			LSuserMaster objuser3, String searchkeywords9, String searchkeywords10, String searchkeywords11,
+			List<Long> directorycode4, int n, Date fromdate6, Date todate6, LSuserMaster objuser4,
+			String searchkeywords12, List<Long> directorycode5, int o, Date fromdate7, Date todate7,
+			LSuserMaster objuser5, String searchkeywords13, String searchkeywords14, String searchkeywords15,
+			List<Long> directorycode6, int p, Date fromdate8, Date todate8, LSuserMaster objuser6,
+			String searchkeywords16, Pageable pageable);
+
+	long countByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
+			int i, Date fromdate, Date todate, LSuserMaster objuser, String searchkeywords, String searchkeywords2,
+			String searchkeywords3, int j, Date fromdate2, Date todate2, LSuserMaster objuser2, String searchkeywords4,
+			List<Long> directorycode, int k, Date fromdate3, Date todate3, String searchkeywords5,
+			String searchkeywords6, String searchkeywords7, List<Long> directorycode2, int l, Date fromdate4,
+			Date todate4, String searchkeywords8, List<Long> directorycode3, int m, Date fromdate5, Date todate5,
+			LSuserMaster objuser3, String searchkeywords9, String searchkeywords10, String searchkeywords11,
+			List<Long> directorycode4, int n, Date fromdate6, Date todate6, LSuserMaster objuser4,
+			String searchkeywords12, List<Long> directorycode5, int o, Date fromdate7, Date todate7,
+			LSuserMaster objuser5, String searchkeywords13, String searchkeywords14, String searchkeywords15,
+			List<Long> directorycode6, int p, Date fromdate8, Date todate8, LSuserMaster objuser6,
+			String searchkeywords16);
+
 	List<Logilaborders> findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMaster(
 			String orderflag, List<LSprojectmaster> lstproject, Integer filetype, Date fromdate, Date todate,
 			String orderflag2, List<LSsamplemaster> lstsample, Integer filetype2, Date fromdate2, Date todate2, int i,
 			String orderflag3, List<LSsamplemaster> lstsample2, Integer filetype3, Date fromdate3, Date todate3, int j,
 			LSuserMaster lsuserMaster);
-
-	List<Logilaborders> findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
-			String orderflag, List<LSsamplemaster> lstsample, Integer filetype, Date fromdate, Date todate, int i,
-			LSuserMaster lsuserMaster);
-
 	List<Logilaborders> findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInOrderByBatchcodeDesc(
 			String orderflag, List<LSsamplemaster> lstsample, Integer filetype, Date fromdate, Date todate, int i,
 			List<LSuserMaster> lstuserMaster);
 	
-
-	long countByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, Date fromdate, Date todate, String searchkeywords, String searchkeywords2,
-			String searchkeywords3, int i, Date fromdate2, Date todate2, String searchkeywords4, String searchkeywords5,
-			String searchkeywords6, List<LSsamplemaster> lstsample, Date fromdate3, Date todate3,
-			String searchkeywords7, String searchkeywords8, String searchkeywords9, int j, LSuserMaster objuser,
-			Date fromdate4, Date todate4, String searchkeywords10, String searchkeywords11, String searchkeywords12,
-			int k, LSuserMaster objuser2, Date fromdate5, Date todate5, String searchkeywords13,
-			String searchkeywords14, String searchkeywords15, int l, LSuserMaster objuser3, Date fromdate6,
-			Date todate6, List<LSprojectmaster> lstproject2, String searchkeywords16, String searchkeywords17,
-			String searchkeywords18, int m, List<LSuserMaster> usernotify, Date fromdate7, Date todate7,
-			String searchkeywords19, String searchkeywords20, String searchkeywords21);
-
-
-
-	List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, Date fromdate, Date todate, String searchkeywords, String searchkeywords2,
-			String searchkeywords3, List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2,
-			String searchkeywords4, int i, Date fromdate3, Date todate3, String searchkeywords5, String searchkeywords6,
-			String searchkeywords7, int j, Date fromdate4, Date todate4, String searchkeywords8,
-			List<LSsamplemaster> lstsample, Date fromdate5, Date todate5, String searchkeywords9,
-			String searchkeywords10, String searchkeywords11, List<LSsamplemaster> lstsample2, Date fromdate6,
-			Date todate6, String searchkeywords12, int k, LSuserMaster objuser, Date fromdate7, Date todate7,
-			String searchkeywords13, String searchkeywords14, String searchkeywords15, int l, LSuserMaster objuser2,
-			Date fromdate8, Date todate8, String searchkeywords16, int m, LSuserMaster objuser3, Date fromdate9,
-			Date todate9, String searchkeywords17, String searchkeywords18, String searchkeywords19, int n,
-			LSuserMaster objuser4, Date fromdate10, Date todate10, String searchkeywords20, int o,
-			LSuserMaster objuser5, Date fromdate11, Date todate11, List<LSprojectmaster> lstproject3,
-			String searchkeywords21, String searchkeywords22, String searchkeywords23, int p, LSuserMaster objuser6,
-			Date fromdate12, Date todate12, List<LSprojectmaster> lstproject4, String searchkeywords24, int q,
-			List<LSuserMaster> usernotify, Date fromdate13, Date todate13, String searchkeywords25,
-			String searchkeywords26, String searchkeywords27, int r, List<LSuserMaster> usernotify2, Date fromdate14,
-			Date todate14, String searchkeywords28, Pageable pageable);
-
-	long countByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, Date fromdate, Date todate, String searchkeywords, String searchkeywords2,
-			String searchkeywords3, List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2,
-			String searchkeywords4, int i, Date fromdate3, Date todate3, String searchkeywords5, String searchkeywords6,
-			String searchkeywords7, int j, Date fromdate4, Date todate4, String searchkeywords8,
-			List<LSsamplemaster> lstsample, Date fromdate5, Date todate5, String searchkeywords9,
-			String searchkeywords10, String searchkeywords11, List<LSsamplemaster> lstsample2, Date fromdate6,
-			Date todate6, String searchkeywords12, int k, LSuserMaster objuser, Date fromdate7, Date todate7,
-			String searchkeywords13, String searchkeywords14, String searchkeywords15, int l, LSuserMaster objuser2,
-			Date fromdate8, Date todate8, String searchkeywords16, int m, LSuserMaster objuser3, Date fromdate9,
-			Date todate9, String searchkeywords17, String searchkeywords18, String searchkeywords19, int n,
-			LSuserMaster objuser4, Date fromdate10, Date todate10, String searchkeywords20, int o,
-			LSuserMaster objuser5, Date fromdate11, Date todate11, List<LSprojectmaster> lstproject3,
-			String searchkeywords21, String searchkeywords22, String searchkeywords23, int p, LSuserMaster objuser6,
-			Date fromdate12, Date todate12, List<LSprojectmaster> lstproject4, String searchkeywords24, int q,
-			List<LSuserMaster> usernotify, Date fromdate13, Date todate13, String searchkeywords25,
-			String searchkeywords26, String searchkeywords27, int r, List<LSuserMaster> usernotify2, Date fromdate14,
-			Date todate14, String searchkeywords28);
-
-	List<Logilabordermaster> findByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, Date fromdate, Date todate, String searchkeywords, String searchkeywords2,
-			String searchkeywords3, List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2,
-			String searchkeywords4, int i, Date fromdate3, Date todate3, String searchkeywords5, String searchkeywords6,
-			String searchkeywords7, int j, Date fromdate4, Date todate4, String searchkeywords8,
-			List<LSsamplemaster> lstsample, Date fromdate5, Date todate5, String searchkeywords9,
-			String searchkeywords10, String searchkeywords11, List<LSsamplemaster> lstsample2, Date fromdate6,
-			Date todate6, String searchkeywords12, int k, LSuserMaster objuser, Date fromdate7, Date todate7,
-			String searchkeywords13, String searchkeywords14, String searchkeywords15, int l, LSuserMaster objuser2,
-			Date fromdate8, Date todate8, String searchkeywords16, int m, LSuserMaster objuser3, Date fromdate9,
-			Date todate9, String searchkeywords17, String searchkeywords18, String searchkeywords19, int n,
-			LSuserMaster objuser4, Date fromdate10, Date todate10, String searchkeywords20, int o,
-			LSuserMaster objuser5, Date fromdate11, Date todate11, List<LSprojectmaster> lstproject3,
-			String searchkeywords21, String searchkeywords22, String searchkeywords23, int p, LSuserMaster objuser6,
-			Date fromdate12, Date todate12, List<LSprojectmaster> lstproject4, String searchkeywords24, int q,
-			List<LSuserMaster> usernotify, Date fromdate13, Date todate13, String searchkeywords25,
-			String searchkeywords26, String searchkeywords27, int r, List<LSuserMaster> usernotify2, Date fromdate14,
-			Date todate14, String searchkeywords28, Pageable pageable);
-
-	long countByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, Date fromdate, Date todate, String searchkeywords, String searchkeywords2,
-			String searchkeywords3, List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2,
-			String searchkeywords4, int i, Date fromdate3, Date todate3, String searchkeywords5, String searchkeywords6,
-			String searchkeywords7, int j, Date fromdate4, Date todate4, String searchkeywords8,
-			List<LSsamplemaster> lstsample, Date fromdate5, Date todate5, String searchkeywords9,
-			String searchkeywords10, String searchkeywords11, List<LSsamplemaster> lstsample2, Date fromdate6,
-			Date todate6, String searchkeywords12, int k, LSuserMaster objuser, Date fromdate7, Date todate7,
-			String searchkeywords13, String searchkeywords14, String searchkeywords15, int l, LSuserMaster objuser2,
-			Date fromdate8, Date todate8, String searchkeywords16, int m, LSuserMaster objuser3, Date fromdate9,
-			Date todate9, String searchkeywords17, String searchkeywords18, String searchkeywords19, int n,
-			LSuserMaster objuser4, Date fromdate10, Date todate10, String searchkeywords20, int o,
-			LSuserMaster objuser5, Date fromdate11, Date todate11, List<LSprojectmaster> lstproject3,
-			String searchkeywords21, String searchkeywords22, String searchkeywords23, int p, LSuserMaster objuser6,
-			Date fromdate12, Date todate12, List<LSprojectmaster> lstproject4, String searchkeywords24, int q,
-			List<LSuserMaster> usernotify, Date fromdate13, Date todate13, String searchkeywords25,
-			String searchkeywords26, String searchkeywords27, int r, List<LSuserMaster> usernotify2, Date fromdate14,
-			Date todate14, String searchkeywords28);
-
-
-
-	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrderByBatchcodeDesc(
-			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
-			String searchkeywords2, String searchkeywords3, List<LSsamplemaster> lstsample2, int j, Date fromdate2,
-			Date todate2, String searchkeywords4, List<LSsamplemaster> lstsample3, int k, Date fromdate3, Date todate3,
-			LSuserMaster objuser, String searchkeywords5, String searchkeywords6, String searchkeywords7,
-			List<LSsamplemaster> lstsample4, int l, Date fromdate4, Date todate4, LSuserMaster objuser2,
-			String searchkeywords8, int m, Date fromdate5, Date todate5, LSuserMaster objuser3, String searchkeywords9,
-			String searchkeywords10, String searchkeywords11, int n, Date fromdate6, Date todate6,
-			LSuserMaster objuser4, String searchkeywords12, List<Long> directorycode, int o, Date fromdate7,
-			Date todate7, String searchkeywords13, String searchkeywords14, String searchkeywords15,
-			List<Long> directorycode2, int p, Date fromdate8, Date todate8, String searchkeywords16,
-			List<Long> directorycode3, int q, Date fromdate9, Date todate9, LSuserMaster objuser5,
-			String searchkeywords17, String searchkeywords18, String searchkeywords19, List<Long> directorycode4, int r,
-			Date fromdate10, Date todate10, LSuserMaster objuser6, String searchkeywords20, List<Long> directorycode5,
-			int s, Date fromdate11, Date todate11, LSuserMaster objuser7, String searchkeywords21,
-			String searchkeywords22, String searchkeywords23, List<Long> directorycode6, int t, Date fromdate12,
-			Date todate12, LSuserMaster objuser8, String searchkeywords24);
-
-	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullAndTestnameIsNullOrderByBatchcodeDesc(
-			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
-			String searchkeywords2, String searchkeywords3, List<LSsamplemaster> lstsample2, int j, Date fromdate2,
-			Date todate2, String searchkeywords4, List<LSsamplemaster> lstsample3, int k, Date fromdate3, Date todate3,
-			LSuserMaster objuser, String searchkeywords5, String searchkeywords6, String searchkeywords7,
-			List<LSsamplemaster> lstsample4, int l, Date fromdate4, Date todate4, LSuserMaster objuser2,
-			String searchkeywords8, int m, Date fromdate5, Date todate5, LSuserMaster objuser3, String searchkeywords9,
-			String searchkeywords10, String searchkeywords11, int n, Date fromdate6, Date todate6,
-			LSuserMaster objuser4, String searchkeywords12, List<Long> directorycode, int o, Date fromdate7,
-			Date todate7, String searchkeywords13, String searchkeywords14, String searchkeywords15,
-			List<Long> directorycode2, int p, Date fromdate8, Date todate8, String searchkeywords16,
-			List<Long> directorycode3, int q, Date fromdate9, Date todate9, LSuserMaster objuser5,
-			String searchkeywords17, String searchkeywords18, String searchkeywords19, List<Long> directorycode4, int r,
-			Date fromdate10, Date todate10, LSuserMaster objuser6, String searchkeywords20, List<Long> directorycode5,
-			int s, Date fromdate11, Date todate11, LSuserMaster objuser7, String searchkeywords21,
-			String searchkeywords22, String searchkeywords23, List<Long> directorycode6, int t, Date fromdate12,
-			Date todate12, LSuserMaster objuser8, String searchkeywords24, Pageable pageable);
-
-	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
-			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
-			String searchkeywords2, String searchkeywords3, List<LSsamplemaster> lstsample2, int j, Date fromdate2,
-			Date todate2, String searchkeywords4, List<LSsamplemaster> lstsample3, int k, Date fromdate3, Date todate3,
-			LSuserMaster objuser, String searchkeywords5, String searchkeywords6, String searchkeywords7,
-			List<LSsamplemaster> lstsample4, int l, Date fromdate4, Date todate4, LSuserMaster objuser2,
-			String searchkeywords8, int m, Date fromdate5, Date todate5, LSuserMaster objuser3, String searchkeywords9,
-			String searchkeywords10, String searchkeywords11, int n, Date fromdate6, Date todate6,
-			LSuserMaster objuser4, String searchkeywords12, List<Long> directorycode, int o, Date fromdate7,
-			Date todate7, String searchkeywords13, String searchkeywords14, String searchkeywords15,
-			List<Long> directorycode2, int p, Date fromdate8, Date todate8, String searchkeywords16,
-			List<Long> directorycode3, int q, Date fromdate9, Date todate9, LSuserMaster objuser5,
-			String searchkeywords17, String searchkeywords18, String searchkeywords19, List<Long> directorycode4, int r,
-			Date fromdate10, Date todate10, LSuserMaster objuser6, String searchkeywords20, List<Long> directorycode5,
-			int s, Date fromdate11, Date todate11, LSuserMaster objuser7, String searchkeywords21,
-			String searchkeywords22, String searchkeywords23, List<Long> directorycode6, int t, Date fromdate12,
-			Date todate12, LSuserMaster objuser8, String searchkeywords24, Pageable pageable);
-
-	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
-			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
-			String searchkeywords2, String searchkeywords3, List<LSsamplemaster> lstsample2, int j, Date fromdate2,
-			Date todate2, String searchkeywords4, List<LSsamplemaster> lstsample3, int k, Date fromdate3, Date todate3,
-			LSuserMaster objuser, String searchkeywords5, String searchkeywords6, String searchkeywords7,
-			List<LSsamplemaster> lstsample4, int l, Date fromdate4, Date todate4, LSuserMaster objuser2,
-			String searchkeywords8, int m, Date fromdate5, Date todate5, LSuserMaster objuser3, String searchkeywords9,
-			String searchkeywords10, String searchkeywords11, int n, Date fromdate6, Date todate6,
-			LSuserMaster objuser4, String searchkeywords12, List<Long> directorycode, int o, Date fromdate7,
-			Date todate7, String searchkeywords13, String searchkeywords14, String searchkeywords15,
-			List<Long> directorycode2, int p, Date fromdate8, Date todate8, String searchkeywords16,
-			List<Long> directorycode3, int q, Date fromdate9, Date todate9, LSuserMaster objuser5,
-			String searchkeywords17, String searchkeywords18, String searchkeywords19, List<Long> directorycode4, int r,
-			Date fromdate10, Date todate10, LSuserMaster objuser6, String searchkeywords20, List<Long> directorycode5,
-			int s, Date fromdate11, Date todate11, LSuserMaster objuser7, String searchkeywords21,
-			String searchkeywords22, String searchkeywords23, List<Long> directorycode6, int t, Date fromdate12,
-			Date todate12, LSuserMaster objuser8, String searchkeywords24);
-
-	List<Logilabordermaster> findByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
-			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
-			String searchkeywords2, String searchkeywords3, List<LSsamplemaster> lstsample2, int j, Date fromdate2,
-			Date todate2, String searchkeywords4, List<LSsamplemaster> lstsample3, int k, Date fromdate3, Date todate3,
-			LSuserMaster objuser, String searchkeywords5, String searchkeywords6, String searchkeywords7,
-			List<LSsamplemaster> lstsample4, int l, Date fromdate4, Date todate4, LSuserMaster objuser2,
-			String searchkeywords8, int m, Date fromdate5, Date todate5, LSuserMaster objuser3, String searchkeywords9,
-			String searchkeywords10, String searchkeywords11, int n, Date fromdate6, Date todate6,
-			LSuserMaster objuser4, String searchkeywords12, List<Long> directorycode, int o, Date fromdate7,
-			Date todate7, String searchkeywords13, String searchkeywords14, String searchkeywords15,
-			List<Long> directorycode2, int p, Date fromdate8, Date todate8, String searchkeywords16,
-			List<Long> directorycode3, int q, Date fromdate9, Date todate9, LSuserMaster objuser5,
-			String searchkeywords17, String searchkeywords18, String searchkeywords19, List<Long> directorycode4, int r,
-			Date fromdate10, Date todate10, LSuserMaster objuser6, String searchkeywords20, List<Long> directorycode5,
-			int s, Date fromdate11, Date todate11, LSuserMaster objuser7, String searchkeywords21,
-			String searchkeywords22, String searchkeywords23, List<Long> directorycode6, int t, Date fromdate12,
-			Date todate12, LSuserMaster objuser8, String searchkeywords24, Pageable pageable);
-
-	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
-			List<LSsamplemaster> lstsample, int i, Date fromdate, Date todate, String searchkeywords,
-			String searchkeywords2, String searchkeywords3, List<LSsamplemaster> lstsample2, int j, Date fromdate2,
-			Date todate2, String searchkeywords4, List<LSsamplemaster> lstsample3, int k, Date fromdate3, Date todate3,
-			LSuserMaster objuser, String searchkeywords5, String searchkeywords6, String searchkeywords7,
-			List<LSsamplemaster> lstsample4, int l, Date fromdate4, Date todate4, LSuserMaster objuser2,
-			String searchkeywords8, int m, Date fromdate5, Date todate5, LSuserMaster objuser3, String searchkeywords9,
-			String searchkeywords10, String searchkeywords11, int n, Date fromdate6, Date todate6,
-			LSuserMaster objuser4, String searchkeywords12, List<Long> directorycode, int o, Date fromdate7,
-			Date todate7, String searchkeywords13, String searchkeywords14, String searchkeywords15,
-			List<Long> directorycode2, int p, Date fromdate8, Date todate8, String searchkeywords16,
-			List<Long> directorycode3, int q, Date fromdate9, Date todate9, LSuserMaster objuser5,
-			String searchkeywords17, String searchkeywords18, String searchkeywords19, List<Long> directorycode4, int r,
-			Date fromdate10, Date todate10, LSuserMaster objuser6, String searchkeywords20, List<Long> directorycode5,
-			int s, Date fromdate11, Date todate11, LSuserMaster objuser7, String searchkeywords21,
-			String searchkeywords22, String searchkeywords23, List<Long> directorycode6, int t, Date fromdate12,
-			Date todate12, LSuserMaster objuser8, String searchkeywords24);
-
-	List<Logilabordermaster> findByLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndAndTestnameIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, String searchkeywords, String searchkeywords2, String searchkeywords3,
-			List<LSprojectmaster> lstproject2, String searchkeywords4, List<LSprojectmaster> lstproject3,
-			String searchkeywords5, int i, String searchkeywords6, String searchkeywords7, String searchkeywords8,
-			int j, String searchkeywords9, int k, String searchkeywords10, List<LSsamplemaster> lstsample,
-			String searchkeywords11, String searchkeywords12, String searchkeywords13, List<LSsamplemaster> lstsample2,
-			String searchkeywords14, List<LSsamplemaster> lstsample3, String searchkeywords15, int l,
-			LSuserMaster objuser, String searchkeywords16, String searchkeywords17, String searchkeywords18, int m,
-			LSuserMaster objuser2, String searchkeywords19, int n, LSuserMaster objuser3, String searchkeywords20,
-			int o, LSuserMaster objuser4, String searchkeywords21, String searchkeywords22, String searchkeywords23,
-			int p, LSuserMaster objuser5, String searchkeywords24, int q, LSuserMaster objuser6,
-			String searchkeywords25, int r, LSuserMaster objuser7, List<LSprojectmaster> lstproject4,
-			String searchkeywords26, String searchkeywords27, String searchkeywords28, int s, LSuserMaster objuser8,
-			List<LSprojectmaster> lstproject5, String searchkeywords29, int t, LSuserMaster objuser9,
-			List<LSprojectmaster> lstproject6, String searchkeywords30, int u, List<LSuserMaster> usernotify,
-			String searchkeywords31, String searchkeywords32, String searchkeywords33, int v,
-			List<LSuserMaster> usernotify2, String searchkeywords34, int w, List<LSuserMaster> usernotify3,
-			String searchkeywords35, Pageable pageable);
-
-	long countByLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndAndTestnameIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, String searchkeywords, String searchkeywords2, String searchkeywords3,
-			List<LSprojectmaster> lstproject2, String searchkeywords4, List<LSprojectmaster> lstproject3,
-			String searchkeywords5, int i, String searchkeywords6, String searchkeywords7, String searchkeywords8,
-			int j, String searchkeywords9, int k, String searchkeywords10, List<LSsamplemaster> lstsample,
-			String searchkeywords11, String searchkeywords12, String searchkeywords13, List<LSsamplemaster> lstsample2,
-			String searchkeywords14, List<LSsamplemaster> lstsample3, String searchkeywords15, int l,
-			LSuserMaster objuser, String searchkeywords16, String searchkeywords17, String searchkeywords18, int m,
-			LSuserMaster objuser2, String searchkeywords19, int n, LSuserMaster objuser3, String searchkeywords20,
-			int o, LSuserMaster objuser4, String searchkeywords21, String searchkeywords22, String searchkeywords23,
-			int p, LSuserMaster objuser5, String searchkeywords24, int q, LSuserMaster objuser6,
-			String searchkeywords25, int r, LSuserMaster objuser7, List<LSprojectmaster> lstproject4,
-			String searchkeywords26, String searchkeywords27, String searchkeywords28, int s, LSuserMaster objuser8,
-			List<LSprojectmaster> lstproject5, String searchkeywords29, int t, LSuserMaster objuser9,
-			List<LSprojectmaster> lstproject6, String searchkeywords30, int u, List<LSuserMaster> usernotify,
-			String searchkeywords31, String searchkeywords32, String searchkeywords33, int v,
-			List<LSuserMaster> usernotify2, String searchkeywords34, int w, List<LSuserMaster> usernotify3,
-			String searchkeywords35);
-
+	List<Logilaborders> findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+			String orderflag, List<LSsamplemaster> lstsample, Integer filetype, Date fromdate, Date todate, int i,
+			LSuserMaster lsuserMaster);
+	
 	LSlogilablimsorderdetail findByBatchidOrBatchcode(String batchid, Long batchcode);
-
-
-
 }

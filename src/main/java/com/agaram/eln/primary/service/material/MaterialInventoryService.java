@@ -122,7 +122,7 @@ public class MaterialInventoryService {
 
 			List<Map<String, Object>> lstMatObject = new ArrayList<Map<String, Object>>();
 			List<Material> lstMaterial = materialRepository
-					.findByNmaterialcatcode(lstMaterialCategory.get(0).getNmaterialcatcode());
+					.findByNmaterialcatcodeAndNstatusOrderByNmaterialcode(lstMaterialCategory.get(0).getNmaterialcatcode(),1);
 
 			lstMaterial.stream().peek(f -> {
 
@@ -193,7 +193,7 @@ public class MaterialInventoryService {
 
 		if (!lstMaterialCategory.isEmpty()) {
 
-			List<Material> lstMaterial = materialRepository.findByNmaterialcatcodeAndNmaterialtypecodeAndNstatus(
+			List<Material> lstMaterial = materialRepository.findByNmaterialcatcodeAndNmaterialtypecodeAndNstatusOrderByNmaterialcode(
 					lstMaterialCategory.get(0).getNmaterialcatcode(), nmaterialtypecode, 1);
 
 			lstMaterial.stream().peek(f -> {
