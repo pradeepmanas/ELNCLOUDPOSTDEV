@@ -1254,5 +1254,16 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			List<Integer> userlist);
 
 
+	List<Logilabprotocolorders>  findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
+			String orderflag, List<LSprojectmaster> lstproject, Integer protocoltype, Date fromdate, Date todate);
+
+
+	List<Logilabprotocolorders>  findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoption(
+			String orderflag, Integer protocoltype, Date fromdate, Date todate, List<LSsamplemaster> lstsample, int i);
+
+
+	List<Logilabprotocolorders>  findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreateby(
+			String orderflag, Integer protocoltype, Date fromdate, Date todate, List<LSsamplemaster> lstsample, int i,
+			Integer usercode);
 }
 

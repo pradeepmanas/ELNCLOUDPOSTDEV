@@ -2664,7 +2664,8 @@ public class InstrumentService {
 		objupdatedorder.setResponse(new Response());
 		if (objupdatedorder.getLockeduser() != null) {
 			
-			if(objupdatedorder.getAssignedto() == null && objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
+			if(!objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R") && objupdatedorder.getAssignedto() == null 
+					&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
 				
 				objupdatedorder.getResponse().setInformation("IDS_SAME_USER_OPEN");
 				objupdatedorder.getResponse().setStatus(false);
@@ -3577,16 +3578,6 @@ public class InstrumentService {
 		Map<String, Object> mapOrder = new HashMap<String, Object>();
 		LSlogilablimsorderdetail objupdated = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 		
-		if (objupdated.getLockeduser() != null) {
-			objupdated.setIsLock(1);
-		} else {
-			objupdated.setLockeduser(objorder.getObjLoggeduser().getUsercode());
-			objupdated.setLockedusername(objorder.getObjLoggeduser().getUsername());
-			objupdated.setIsLock(1);
-		}
-		
-		lslogilablimsorderdetailRepository.save(objupdated);
-
 		if (objupdated.getLsprojectmaster() != null) {
 			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
 			if (objorder.getLstworkflow() != null && lstworkflowcode.contains(objupdated.getLsworkflow().getWorkflowcode())) {
@@ -7202,13 +7193,11 @@ public class InstrumentService {
 //					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyInOrderByProtocolordercodeDesc(objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate,
 //					        objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 1, objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 2,objorder.getLsuserMaster().getUsercode(), objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 3,userlist);
 
-			lstorder = LSlogilabprotocoldetailRepository
-					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreateby(objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate,
-					        objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 1,
-					        objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 2,objorder.getLsuserMaster().getUsercode());
-					List<Logilabprotocolorders> lstorder1 = new ArrayList<Logilabprotocolorders>();
-					lstorder1 = LSlogilabprotocoldetailRepository.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyInOrderByProtocolordercodeDesc(objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 3,userlist);
-					lstorder.addAll(lstorder1);
+			lstorder.addAll(LSlogilabprotocoldetailRepository.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
+			lstorder.addAll(LSlogilabprotocoldetailRepository.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoption(objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 1));
+			lstorder.addAll(LSlogilabprotocoldetailRepository.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreateby(objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 2,objorder.getLsuserMaster().getUsercode()));	
+			lstorder.addAll(LSlogilabprotocoldetailRepository.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyInOrderByProtocolordercodeDesc(objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 3,userlist));
+					
 					
 //					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInOrderByProtocolordercodeDesc(
 //							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate,
