@@ -100,24 +100,20 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	}
 
 	public String getBatchid() {
+		
+		String Batchid = "ELN" + this.batchcode;
 
-		if(this.batchid != null) {
-			return this.batchid;
-		}else {
-			String Batchid = "ELN" + this.batchcode;
-
-			if (this.filetype == 3) {
-				Batchid = "RESEARCH" + this.batchcode;
-			} else if (this.filetype == 4) {
-				Batchid = "EXCEL" + this.batchcode;
-			} else if (this.filetype == 5) {
-				Batchid = "VALIDATE" + this.batchcode;
-			} else if (this.filetype == 0) {
-				Batchid = batchid;
-			}
-
-			return Batchid;	
+		if (this.filetype == 3) {
+			Batchid = "RESEARCH" + this.batchcode;
+		} else if (this.filetype == 4) {
+			Batchid = "EXCEL" + this.batchcode;
+		} else if (this.filetype == 5) {
+			Batchid = "VALIDATE" + this.batchcode;
+		} else if (this.filetype == 0) {
+			Batchid = batchid;
 		}
+
+		return Batchid;	
 		
 	}
 
