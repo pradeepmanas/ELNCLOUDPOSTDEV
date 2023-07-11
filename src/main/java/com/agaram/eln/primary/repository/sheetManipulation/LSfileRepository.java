@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.sheetManipulation;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -317,4 +318,9 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 
 	public List<LSfile> findByFilecodeNotAndLssitemasterAndFilenameuserIgnoreCase(Integer filecode,
 			LSSiteMaster lssitemaster, String filenameuser);
+
+	public  List<Sheettemplateget> findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThan(
+			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest, int i, int j, int k, int l,
+			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest2, int m, int n, int o, int p,
+			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int q, int r, int s, int t);
 }

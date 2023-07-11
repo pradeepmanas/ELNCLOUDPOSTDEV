@@ -525,6 +525,11 @@ public class FileService {
 								lstteamuser, lsfiletest,1,1,1,
 								objtest.getObjLoggeduser(), lsfiletest,1,2,1,
 								lstteamuser, lsfiletest,1,3,1);
+				
+				lsfiles.addAll(lSfileRepository.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThan(
+						lstteamuser, lsfiletest,1,1,0,1,
+						objtest.getObjLoggeduser(), lsfiletest,1,2,0,1,
+						lstteamuser, lsfiletest,1,3,0,1));
 			} else {
 				List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
 				lstteamuser.add(objtest.getObjLoggeduser());
@@ -532,6 +537,11 @@ public class FileService {
 								lstteamuser, lsfiletest,1,1,1,
 								objtest.getObjLoggeduser(), lsfiletest,1,2,1,
 								lstteamuser, lsfiletest,1,3,1);
+				
+				lsfiles.addAll(lSfileRepository.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThan(
+						lstteamuser, lsfiletest,1,1,0,1,
+						objtest.getObjLoggeduser(), lsfiletest,1,2,0,1,
+						lstteamuser, lsfiletest,1,3,0,1));
 			}
 		}
 
@@ -1027,8 +1037,17 @@ public class FileService {
 	public Map<String, Object> unlockorder(Map<String, Object> objMap) throws Exception {
 		Long BatchID = null;
 
+//		if (objMap.containsKey("Batch")) {
+//			BatchID = Long.valueOf((Integer) objMap.get("Batch"));
+//		}
 		if (objMap.containsKey("Batch")) {
-			BatchID = Long.valueOf((Integer) objMap.get("Batch"));
+//			BatchID = Long.valueOf((Integer) objMap.get("Batch"));
+			
+			if (objMap.get("Batch") instanceof Integer) {
+				BatchID = Long.valueOf((Integer) objMap.get("Batch"));
+		    } else if (objMap.get("Batch") instanceof Long) {
+		    	BatchID = (Long) objMap.get("Batch");
+		    }
 		}
 
 		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findOne(BatchID);
