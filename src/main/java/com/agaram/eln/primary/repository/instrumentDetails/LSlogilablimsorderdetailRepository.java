@@ -1743,13 +1743,13 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Date todate4, int l, LSuserMaster objuser3, Date fromdate5, Date todate5);
 
 
-	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
-			Date fromdate2, Date todate2, String string3, List<LSsamplemaster> lstsample1, Date fromdate3, Date todate3,
-			String string4, int j, LSuserMaster objuser, Date fromdate4, Date todate4, String string5, int k,
-			LSuserMaster objuser2, Date fromdate5, Date todate5, String string6, List<LSprojectmaster> lstproject2,
-			int l, LSuserMaster objuser3, Date fromdate6, Date todate6, String string7, int m,
-			List<LSuserMaster> usernotify, Date fromdate7, Date todate7);
+//	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
+//			Date fromdate2, Date todate2, String string3, List<LSsamplemaster> lstsample1, Date fromdate3, Date todate3,
+//			String string4, int j, LSuserMaster objuser, Date fromdate4, Date todate4, String string5, int k,
+//			LSuserMaster objuser2, Date fromdate5, Date todate5, String string6, List<LSprojectmaster> lstproject2,
+//			int l, LSuserMaster objuser3, Date fromdate6, Date todate6, String string7, int m,
+//			List<LSuserMaster> usernotify, Date fromdate7, Date todate7);
 
 	long countByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenOrApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNull(
 			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int j, List<LSsamplemaster> lstsample1,
@@ -2368,4 +2368,25 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	List<LSlogilablimsorderdetail> findByActiveuser(Integer activeuser);
 
 	List<LSlogilablimsorderdetail> findByActiveuserIn(List<Integer> activeuser);
+
+	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNull(
+			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2,
+			List<LSsamplemaster> lstsample1, Date fromdate2, Date todate2, String string3, int i, Date fromdate3,
+			Date todate3, String string4, int j, LSuserMaster objuser, Date fromdate4, Date todate4, String string5,
+			int k, LSuserMaster objuser2, Date fromdate5, Date todate5, String string6,
+			List<LSprojectmaster> lstproject2, int l, LSuserMaster objuser3, Date fromdate6, Date todate6,
+			String string7, int m, Date fromdate7, Date todate7, List<LSuserMaster> usernotify);
+
+//	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNull(
+//			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
+//			Date fromdate2, Date todate2, String string3, List<LSsamplemaster> lstsample1, Date fromdate3, Date todate3,
+//			String string4, int j, LSuserMaster objuser, Date fromdate4, Date todate4, String string5, int k,
+//			LSuserMaster objuser2, Date fromdate5, Date todate5, String string6, List<LSprojectmaster> lstproject2,
+//			int l, LSuserMaster objuser3, Date fromdate6, Date todate6, String string7, int m,
+//			List<LSuserMaster> usernotify, Date fromdate7, Date todate7);
+
+//	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNull(
+//			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String string2, int i,
+//			Date fromdate2, Date todate2, String string3, List<LSsamplemaster> lstsample1, Date fromdate3,
+//			Date todate3);
 }

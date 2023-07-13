@@ -608,13 +608,23 @@ public class DashBoardService {
 										fromdate, todate, lstproject, 3, objuser.getUsernotify(), fromdate, todate,
 										objuser, objuser, fromdate, todate, objuser, fromdate, todate);
 
+//						lstlimscompleted = lslogilablimsorderdetailRepository
+//								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+//										"R", lstproject, fromdate, todate, 3, "R", lstproject, fromdate, todate, "R", 0,
+//										fromdate, todate, "R", 1, objuser, fromdate, todate, 3, "R", 2, objuser,
+//										fromdate, todate, 3, "R", 3, objuser, fromdate, todate, 3, lstproject, "R", 1,
+//										objuser, fromdate, todate, "R", 2, objuser, fromdate, todate, "R", 3, objuser,
+//										fromdate, todate); #
+						
 						lstlimscompleted = lslogilablimsorderdetailRepository
-								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-										"R", lstproject, fromdate, todate, 3, "R", lstproject, fromdate, todate, "R", 0,
-										fromdate, todate, "R", 1, objuser, fromdate, todate, 3, "R", 2, objuser,
-										fromdate, todate, 3, "R", 3, objuser, fromdate, todate, 3, lstproject, "R", 1,
-										objuser, fromdate, todate, "R", 2, objuser, fromdate, todate, "R", 3, objuser,
-										fromdate, todate);
+								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNull(
+									"R", lstproject, fromdate, todate, 
+									"R", lstsample1, fromdate, todate, 
+									"R", 0, fromdate, todate, 
+									"R", 1, objuser, fromdate, todate, 
+									"R", 2, objuser, fromdate, todate, 
+									"R", lstproject, 3, objuser, fromdate, todate, 
+									"R", 3, fromdate, todate, objuser.getUsernotify());
 
 //						lstlimscompleted = lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterInAndOrdercancellIsNullOrderByBatchcodeDesc(
 //								"R", lstproject, fromdate, todate, 3, "R", lstproject, fromdate, todate, "R", 0,
@@ -638,12 +648,35 @@ public class DashBoardService {
 //										"N", lstproject, fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser,
 //										fromdate, todate, "N", 2, objuser, fromdate, todate, "N", lstproject, 3,
 //										objuser, fromdate, todate);
+						
+//						lstpending = lslogilablimsorderdetailRepository
+//								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//										"N", lstproject, fromdate, todate, "N", 0, fromdate, todate, "N", lstsample1,
+//										fromdate, todate, "N", 1, objuser, fromdate, todate, "N", 2, objuser, fromdate,
+//										todate, "N", lstproject, 3, objuser, fromdate, todate, "N", 3,
+//										objuser.getUsernotify(), fromdate, todate); #
+						
+//						lstpending = lslogilablimsorderdetailRepository
+//								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNull(
+//										"N", lstproject, fromdate, todate,
+//										"N", 0, fromdate, todate,
+//										"N", lstsample1,fromdate, todate,
+//										"N", 1, objuser, fromdate, todate,
+//										"N", 2, objuser, fromdate,todate,
+//										"N", lstproject, 3, objuser, fromdate, todate,
+//										"N", 3,objuser.getUsernotify(), fromdate, todate);
+						
 						lstpending = lslogilablimsorderdetailRepository
-								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-										"N", lstproject, fromdate, todate, "N", 0, fromdate, todate, "N", lstsample1,
-										fromdate, todate, "N", 1, objuser, fromdate, todate, "N", 2, objuser, fromdate,
-										todate, "N", lstproject, 3, objuser, fromdate, todate, "N", 3,
-										objuser.getUsernotify(), fromdate, todate);
+								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNull(
+									"N", lstproject, fromdate, todate, 
+									"N", lstsample1, fromdate, todate, 
+									"N", 0, fromdate, todate, 
+									"N", 1, objuser, fromdate, todate, 
+									"N", 2, objuser, fromdate, todate, 
+									"N", lstproject, 3, objuser, fromdate, todate, 
+									"N", 3, fromdate, todate, objuser.getUsernotify());
+						
+						
 //						lstpending = lslogilablimsorderdetailRepository
 //								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 //										"N", lstproject, fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser,
