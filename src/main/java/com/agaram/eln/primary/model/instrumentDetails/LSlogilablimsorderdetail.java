@@ -156,6 +156,16 @@ public class LSlogilablimsorderdetail {
 
 	@Transient
 	List<LSprotocolorderstephistory> lSprotocolorderstephistory;
+	
+	private Integer activeuser;
+
+	public Integer getActiveuser() {
+		return activeuser;
+	}
+
+	public void setActiveuser(Integer activeuser) {
+		this.activeuser = activeuser;
+	}
 
 	public List<LSprotocolorderstephistory> getlSprotocolorderstephistory() {
 		return lSprotocolorderstephistory;

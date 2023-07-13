@@ -37,6 +37,7 @@ import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.jwt.JwtResponse;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
@@ -54,6 +55,7 @@ import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.adsconnection.TbladssettingsRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
@@ -94,7 +96,8 @@ public class LoginService {
 
 	@Autowired
 	private LSPasswordHistoryDetailsRepository LSPasswordHistoryDetailsRepository;
-
+	@Autowired
+	private LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
 	@Autowired
 	private LSPasswordPolicyRepository LSPasswordPolicyRepository;
 
@@ -725,6 +728,8 @@ public class LoginService {
 
 		if (lsuserMaster.getActiveusercode() != null) {
 			lsactiveUserRepository.deleteByActiveusercode(lsuserMaster.getActiveusercode());
+			
+			removeOrdersOnInActive(lsuserMaster.getActiveusercode());
 		} else {
 			lsactiveUserRepository.deleteBylsusermaster(lsuserMaster);
 		}
@@ -975,11 +980,11 @@ public class LoginService {
 				if (lstUserName.isEmpty()) {
 
 					String sUserFullName = (String) lstAdsUsers.get(u).get("UserName");
-					int sApprove = Integer.parseInt((String) lstAdsUsers.get(u).get("sApprove"));
+//					int sApprove = Integer.parseInt((String) lstAdsUsers.get(u).get("sApprove"));
 
-					String sUserStatus = "D";
-					if (sApprove == 1)
-						sUserStatus = "A";
+//					String sUserStatus = "D";
+//					if (sApprove == 1)
+//						sUserStatus = "A";
 
 					lsUser.setCreatedby(sCreateBy);
 					lsUser.setCreateddate(new Date());
@@ -1889,11 +1894,46 @@ public class LoginService {
 		
 		List<LSactiveUser> lstUsers = lsactiveUserRepository.findByLastactivetimeLessThan(new Date(System.currentTimeMillis() - 3600 * 1000));
 		
+		if(!lstUsers.isEmpty()) {
+			
+			List<Integer> objnotifyuser = lstUsers.stream().map(LSactiveUser::getActiveusercode).collect(Collectors.toList());	
+			
+			removeOrdersOnInActiveLst(objnotifyuser);
+			
+		}
+		
 		lsactiveUserRepository.delete(lstUsers);
 		
 		return objMap;
 		
  	}
+	
+	
+	public void removeOrdersOnInActive(Integer activeuser) {
+		List<LSlogilablimsorderdetail> lsOrder = lslogilablimsorderdetailRepository.findByActiveuser(activeuser);
+		
+		if (!lsOrder.isEmpty()) {
+			lsOrder = lsOrder.stream().peek(f -> {
+				f.setLockeduser(null);
+				f.setLockedusername(null);
+				f.setActiveuser(null);
+			}).collect(Collectors.toList());
+			lslogilablimsorderdetailRepository.save(lsOrder);
+		}
+	}
+	
+	public void removeOrdersOnInActiveLst(List<Integer> activeuser) {
+		List<LSlogilablimsorderdetail> lsOrder = lslogilablimsorderdetailRepository.findByActiveuserIn(activeuser);
+		
+		if (!lsOrder.isEmpty()) {
+			lsOrder = lsOrder.stream().peek(f -> {
+				f.setLockeduser(null);
+				f.setLockedusername(null);
+				f.setActiveuser(null);
+			}).collect(Collectors.toList());
+			lslogilablimsorderdetailRepository.save(lsOrder);
+		}
+	}
 	
 	public Map<String, Object> getlicense(Map<String, Object> obj) {
 		Map<String, Object> rtnobj = new HashMap<>();

@@ -4123,3 +4123,5 @@ ALTER TABLE IF Exists LSusersteam ADD Column IF NOT EXISTS createdate DATE;
 update LSusersteam set createdate=modifieddate where createdate is Null;
 
 ALTER TABLE IF EXISTS materialinventory ALTER COLUMN expirydate TYPE timestamp without time zone;
+
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS activeuser integer;

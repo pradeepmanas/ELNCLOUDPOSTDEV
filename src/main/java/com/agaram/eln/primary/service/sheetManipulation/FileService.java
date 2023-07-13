@@ -1056,6 +1056,7 @@ public class FileService {
 
 			orderDetail.setLockeduser(null);
 			orderDetail.setLockedusername(null);
+			orderDetail.setActiveuser(null);
 
 			LSlogilablimsorderdetailRepository.save(orderDetail);
 
@@ -1091,6 +1092,7 @@ public class FileService {
 			if(userCode != null && orderDetail.getLockeduser() != null && userCode.equals(orderDetail.getLockeduser())) {
 				orderDetail.setLockeduser(null);
 				orderDetail.setLockedusername(null);
+				orderDetail.setActiveuser(null);
 
 				LSlogilablimsorderdetailRepository.save(orderDetail);
 

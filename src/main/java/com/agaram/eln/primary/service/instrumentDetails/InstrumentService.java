@@ -2668,7 +2668,7 @@ public class InstrumentService {
 		objupdatedorder.setResponse(new Response());
 		if (objupdatedorder.getLockeduser() != null) {
 			
-			if(!objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R") && objupdatedorder.getAssignedto() == null 
+			if(!objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R") && objupdatedorder.getAssignedto() == null  
 					&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
 				
 				objupdatedorder.getResponse().setInformation("IDS_SAME_USER_OPEN");
@@ -2682,19 +2682,18 @@ public class InstrumentService {
 				if(LSactiveUsr.isEmpty()) {
 					objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
 					objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
+					objupdatedorder.setActiveuser(objorder.getActiveuser());
 				}			
 				objupdatedorder.setIsLock(1);
 				lslogilablimsorderdetailRepository.save(objupdatedorder);
 			}
 			
-			
 		} else {
-//			if(objupdatedorder.isCanuserprocess()) {
 			objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
 			objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
+			objupdatedorder.setActiveuser(objorder.getActiveuser());
 			objupdatedorder.setIsLock(1);
 			lslogilablimsorderdetailRepository.save(objupdatedorder);
-//			}
 		}		
 
 		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
@@ -2784,7 +2783,7 @@ public class InstrumentService {
 		objupdatedorder.setlSprotocolorderstephistory(lsprotocolorderstephistoryRepository.findByBatchcode(objupdatedorder.getBatchcode()));
 		return objupdatedorder;
 	}
-
+	
 	public LSlogilablimsorderdetail GetorderStatusFromBatchID(LSlogilablimsorderdetail objorder) {
 
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository
@@ -6154,6 +6153,7 @@ public class InstrumentService {
 				lsOrder = lsOrder.stream().peek(f -> {
 					f.setLockeduser(null);
 					f.setLockedusername(null);
+					f.setActiveuser(null);
 				}).collect(Collectors.toList());
 
 				
