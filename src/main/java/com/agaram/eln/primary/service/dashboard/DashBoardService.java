@@ -580,12 +580,12 @@ public class DashBoardService {
 			if (lstproject != null && lstproject.size() > 0) {
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 					if (lstproject != null && lstproject.size() > 0) {
-						lstUserorder = lslogilablimsorderdetailRepository
-								.countByLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndAssignedtoIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-										lstproject, fromdate, todate, 0, fromdate, todate, lstsample1, fromdate, todate,
-										1, objuser, fromdate, todate, 2, objuser, fromdate, todate, 3, objuser,
-										fromdate, todate, lstproject, 3, objuser.getUsernotify(), fromdate, todate,
-										objuser, objuser, fromdate, todate, objuser, fromdate, todate);
+//						lstUserorder = lslogilablimsorderdetailRepository
+//								.countByLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndAssignedtoIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//										lstproject, fromdate, todate, 0, fromdate, todate, lstsample1, fromdate, todate,
+//										1, objuser, fromdate, todate, 2, objuser, fromdate, todate, 3, objuser,
+//										fromdate, todate, lstproject, 3, objuser.getUsernotify(), fromdate, todate,
+//										objuser, objuser, fromdate, todate, objuser, fromdate, todate);
 
 //						lstlimscompleted = lslogilablimsorderdetailRepository
 //								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
@@ -656,12 +656,12 @@ public class DashBoardService {
 //						lstUserorder = lslogilablimsorderdetailRepository
 //								.countByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeOrFiletypeAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
 //										lstproject, fromdate, todate, testcode, 0, fromdate, todate, testcode);
-						lstUserorder = lslogilablimsorderdetailRepository
-								.countByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrFiletypeAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
-										lstproject, fromdate, todate, testcode, 0, fromdate, todate, testcode, 1,
-										objuser, fromdate, todate, testcode, 2, objuser, fromdate, todate, testcode, 3,
-										objuser, fromdate, todate, testcode, objuser, objuser, fromdate, todate,
-										testcode, objuser, fromdate, todate, testcode);
+//						lstUserorder = lslogilablimsorderdetailRepository
+//								.countByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrFiletypeAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
+//										lstproject, fromdate, todate, testcode, 0, fromdate, todate, testcode, 1,
+//										objuser, fromdate, todate, testcode, 2, objuser, fromdate, todate, testcode, 3,
+//										objuser, fromdate, todate, testcode, objuser, objuser, fromdate, todate,
+//										testcode, objuser, fromdate, todate, testcode);
 
 //						lstlimscompleted = lslogilablimsorderdetailRepository
 //								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
@@ -722,12 +722,12 @@ public class DashBoardService {
 					}
 				} else if (testcode == -1 && objuser.getLstprojectforfilter() != null) {
 
-					lstUserorder = lslogilablimsorderdetailRepository
-							.countByLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterOrderByBatchcodeDesc(
-									objuser.getLstprojectforfilter(), fromdate, todate, 0,
-									objuser.getLstprojectforfilter(), fromdate, todate, objuser, objuser, fromdate,
-									todate, objuser.getLstprojectforfilter(), objuser, fromdate, todate,
-									objuser.getLstprojectforfilter());
+//					lstUserorder = lslogilablimsorderdetailRepository
+//							.countByLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterOrderByBatchcodeDesc(
+//									objuser.getLstprojectforfilter(), fromdate, todate, 0,
+//									objuser.getLstprojectforfilter(), fromdate, todate, objuser, objuser, fromdate,
+//									todate, objuser.getLstprojectforfilter(), objuser, fromdate, todate,
+//									objuser.getLstprojectforfilter());
 //							.countByLsprojectmasterAndCreatedtimestampBetweenOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 //									objuser.getLstprojectforfilter(), fromdate, todate, 0,
 //									objuser.getLstprojectforfilter(), fromdate, todate);
@@ -769,12 +769,12 @@ public class DashBoardService {
 									objuser.getLstprojectforfilter());
 
 				} else {
-					lstUserorder = lslogilablimsorderdetailRepository
-							.countByLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndTestcodeAndLsprojectmasterOrderByBatchcodeDesc(
-									objuser.getLstprojectforfilter(), fromdate, todate, testcode, 0,
-									objuser.getLstprojectforfilter(), fromdate, todate, testcode, objuser, objuser,
-									fromdate, todate, testcode, objuser.getLstprojectforfilter(), objuser, fromdate,
-									todate, testcode, objuser.getLstprojectforfilter());
+//					lstUserorder = lslogilablimsorderdetailRepository
+//							.countByLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndTestcodeAndLsprojectmasterOrderByBatchcodeDesc(
+//									objuser.getLstprojectforfilter(), fromdate, todate, testcode, 0,
+//									objuser.getLstprojectforfilter(), fromdate, todate, testcode, objuser, objuser,
+//									fromdate, todate, testcode, objuser.getLstprojectforfilter(), objuser, fromdate,
+//									todate, testcode, objuser.getLstprojectforfilter());
 //							.countByLsprojectmasterAndCreatedtimestampBetweenAndTestcodeOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
 //									objuser.getLstprojectforfilter(), fromdate, todate, testcode, 0,
 //									objuser.getLstprojectforfilter(), fromdate, todate, testcode);
@@ -816,10 +816,10 @@ public class DashBoardService {
 //							.countByApprovelstatusAndLsprojectmasterAndCreatedtimestampBetweenAndTestcode(3,
 //									objuser.getLstprojectforfilter(), fromdate, todate, testcode);
 					lstCancelled = lslogilablimsorderdetailRepository
-							.countByOrdercancellAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndLsprojectmasterAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterAndTestcode
-						    (1,objuser.getLstprojectforfilter(), fromdate, todate, testcode, 
-							        objuser, objuser, fromdate, todate, 1, objuser.getLstprojectforfilter(), testcode, objuser, fromdate, todate, 1, objuser.getLstprojectforfilter(),
-							        testcode);
+							.countByOrdercancellAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndLsprojectmasterAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterAndTestcode(
+									1, objuser.getLstprojectforfilter(), fromdate, todate, testcode, objuser, objuser,
+									fromdate, todate, 1, objuser.getLstprojectforfilter(), testcode, objuser, fromdate,
+									todate, 1, objuser.getLstprojectforfilter(), testcode);
 				}
 
 			} else {
@@ -981,110 +981,71 @@ public class DashBoardService {
 			objuser.getUsernotify().add(objuser);
 			if (objuser.getObjuser().getOrderselectiontype() == 1) {
 
-				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
-					lstorders = lslogilablimsorderdetailRepository
-							.findByLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndAssignedtoIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-									lstproject, fromdate, todate, 0, fromdate, todate, lstsample1, fromdate, todate, 1,
-									objuser, fromdate, todate, 2, objuser, fromdate, todate, 3, objuser, fromdate,
-									todate, lstproject, 3, objuser.getUsernotify(), fromdate, todate, objuser, objuser,
-									fromdate, todate, objuser, fromdate, todate, pageable);
-					count = lslogilablimsorderdetailRepository
-							.countByLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndAssignedtoIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-									lstproject, fromdate, todate, 0, fromdate, todate, lstsample1, fromdate, todate, 1,
-									objuser, fromdate, todate, 2, objuser, fromdate, todate, 3, objuser, fromdate,
-									todate, lstproject, 3, objuser.getUsernotify(), fromdate, todate, objuser, objuser,
-									fromdate, todate, objuser, fromdate, todate);
-
+				return mapOrders = getallorders(lstproject, fromdate, todate, objuser, testcode, pageable, lstsample1);
+//
+//				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 //					lstorders = lslogilablimsorderdetailRepository
-//							.findByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullOrderByBatchcodeDesc(
-//									lstproject, fromdate, todate, 
-//									0, fromdate, todate, 
-//									lstsample1,fromdate, todate,
-//									1, objuser, fromdate, todate,
-//									2, objuser, fromdate, todate, 
-//									3,objuser,fromdate, todate,lstproject,
-//                                    3, objuser.getUsernotify(), fromdate, todate,pageable);
+//							.findByLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndAssignedtoIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//									lstproject, fromdate, todate, 0, fromdate, todate, lstsample1, fromdate, todate, 1,
+//									objuser, fromdate, todate, 2, objuser, fromdate, todate, 3, objuser, fromdate,
+//									todate, lstproject, 3, objuser.getUsernotify(), fromdate, todate, objuser, objuser,
+//									fromdate, todate, objuser, fromdate, todate, pageable);
 //					count = lslogilablimsorderdetailRepository
-//							.countByLsprojectmasterInAndCreatedtimestampBetweenOrFiletypeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullOrderByBatchcodeDesc(
-//									lstproject, fromdate, todate, 
-//									0, fromdate, todate, 
-//									lstsample1,fromdate, todate,
-//									1, objuser, fromdate, todate,
-//									2, objuser, fromdate, todate, 
-//									3,objuser,fromdate, todate,lstproject,
-//                                    3, objuser.getUsernotify(), fromdate, todate);
-
-				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
-
+//							.countByLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndAssignedtoIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//									lstproject, fromdate, todate, 0, fromdate, todate, lstsample1, fromdate, todate, 1,
+//									objuser, fromdate, todate, 2, objuser, fromdate, todate, 3, objuser, fromdate,
+//									todate, lstproject, 3, objuser.getUsernotify(), fromdate, todate, objuser, objuser,
+//									fromdate, todate, objuser, fromdate, todate);
+//
+//
+//
+//				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
+//
+//
 //					lstorders = lslogilablimsorderdetailRepository
-//							.findByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeOrFiletypeAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
-//									lstproject, fromdate, todate, testcode, 0, fromdate, todate, testcode, 1,
-//									objuser, fromdate, todate, testcode, 2, objuser, fromdate, todate, testcode, 3,
-//									objuser, fromdate, todate, testcode, pageable);
+//							.findByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrFiletypeAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
+//									lstproject, fromdate, todate, testcode, 0, fromdate, todate, testcode, 1, objuser,
+//									fromdate, todate, testcode, 2, objuser, fromdate, todate, testcode, 3, objuser,
+//									fromdate, todate, testcode, objuser, objuser, fromdate, todate, testcode, objuser,
+//									fromdate, todate, testcode, pageable);
 //					count = lslogilablimsorderdetailRepository
-//							.countByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeOrFiletypeAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
-//									lstproject, fromdate, todate, testcode, 0, fromdate, todate, testcode, 1,
-//									objuser, fromdate, todate, testcode, 2, objuser, fromdate, todate, testcode, 3,
-//									objuser, fromdate, todate, testcode);
-
-					lstorders = lslogilablimsorderdetailRepository
-							.findByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrFiletypeAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
-									lstproject, fromdate, todate, testcode, 0, fromdate, todate, testcode, 1, objuser,
-									fromdate, todate, testcode, 2, objuser, fromdate, todate, testcode, 3, objuser,
-									fromdate, todate, testcode, objuser, objuser, fromdate, todate, testcode, objuser,
-									fromdate, todate, testcode, pageable);
-					count = lslogilablimsorderdetailRepository
-							.countByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrFiletypeAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
-									lstproject, fromdate, todate, testcode, 0, fromdate, todate, testcode, 1, objuser,
-									fromdate, todate, testcode, 2, objuser, fromdate, todate, testcode, 3, objuser,
-									fromdate, todate, testcode, objuser, objuser, fromdate, todate, testcode, objuser,
-									fromdate, todate, testcode);
-				} else if (testcode == -1 && objuser.getLstprojectforfilter() != null) {
-					lstorders = lslogilablimsorderdetailRepository
-							.findByLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterOrderByBatchcodeDesc(
-									objuser.getLstprojectforfilter(), fromdate, todate, 0,
-									objuser.getLstprojectforfilter(), fromdate, todate, objuser, objuser, fromdate,
-									todate, objuser.getLstprojectforfilter(), objuser, fromdate, todate,
-									objuser.getLstprojectforfilter(), pageable);
-					count = lslogilablimsorderdetailRepository
-							.countByLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterOrderByBatchcodeDesc(
-									objuser.getLstprojectforfilter(), fromdate, todate, 0,
-									objuser.getLstprojectforfilter(), fromdate, todate, objuser, objuser, fromdate,
-									todate, objuser.getLstprojectforfilter(), objuser, fromdate, todate,
-									objuser.getLstprojectforfilter());
-
+//							.countByLsprojectmasterInAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrFiletypeAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
+//									lstproject, fromdate, todate, testcode, 0, fromdate, todate, testcode, 1, objuser,
+//									fromdate, todate, testcode, 2, objuser, fromdate, todate, testcode, 3, objuser,
+//									fromdate, todate, testcode, objuser, objuser, fromdate, todate, testcode, objuser,
+//									fromdate, todate, testcode);
+//				} else if (testcode == -1 && objuser.getLstprojectforfilter() != null) {
 //					lstorders = lslogilablimsorderdetailRepository
-//							.findByLsprojectmasterAndCreatedtimestampBetweenOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//							.findByLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterOrderByBatchcodeDesc(
 //									objuser.getLstprojectforfilter(), fromdate, todate, 0,
-//									objuser.getLstprojectforfilter(), fromdate, todate, pageable);
+//									objuser.getLstprojectforfilter(), fromdate, todate, objuser, objuser, fromdate,
+//									todate, objuser.getLstprojectforfilter(), objuser, fromdate, todate,
+//									objuser.getLstprojectforfilter(), pageable);
 //					count = lslogilablimsorderdetailRepository
-//							.countByLsprojectmasterAndCreatedtimestampBetweenOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//							.countByLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterOrderByBatchcodeDesc(
 //									objuser.getLstprojectforfilter(), fromdate, todate, 0,
-//									objuser.getLstprojectforfilter(), fromdate, todate);
-
-				} else {
+//									objuser.getLstprojectforfilter(), fromdate, todate, objuser, objuser, fromdate,
+//									todate, objuser.getLstprojectforfilter(), objuser, fromdate, todate,
+//									objuser.getLstprojectforfilter());
+//
+//
+//
+//				} else {
+//
 //					lstorders = lslogilablimsorderdetailRepository
-//							.findByLsprojectmasterAndCreatedtimestampBetweenAndTestcodeOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
+//							.findByLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndTestcodeAndLsprojectmasterOrderByBatchcodeDesc(
 //									objuser.getLstprojectforfilter(), fromdate, todate, testcode, 0,
-//									objuser.getLstprojectforfilter(), fromdate, todate, testcode, pageable);
+//									objuser.getLstprojectforfilter(), fromdate, todate, testcode, objuser, objuser,
+//									fromdate, todate, testcode, objuser.getLstprojectforfilter(), objuser, fromdate,
+//									todate, testcode, objuser.getLstprojectforfilter(), pageable);
 //					count = lslogilablimsorderdetailRepository
-//							.countByLsprojectmasterAndCreatedtimestampBetweenAndTestcodeOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
+//							.countByLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndTestcodeAndLsprojectmasterOrderByBatchcodeDesc(
 //									objuser.getLstprojectforfilter(), fromdate, todate, testcode, 0,
-//									objuser.getLstprojectforfilter(), fromdate, todate, testcode);
-					lstorders = lslogilablimsorderdetailRepository
-							.findByLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndTestcodeAndLsprojectmasterOrderByBatchcodeDesc(
-									objuser.getLstprojectforfilter(), fromdate, todate, testcode, 0,
-									objuser.getLstprojectforfilter(), fromdate, todate, testcode, objuser, objuser,
-									fromdate, todate, testcode, objuser.getLstprojectforfilter(), objuser, fromdate,
-									todate, testcode, objuser.getLstprojectforfilter(), pageable);
-					count = lslogilablimsorderdetailRepository
-							.countByLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndTestcodeAndLsprojectmasterOrderByBatchcodeDesc(
-									objuser.getLstprojectforfilter(), fromdate, todate, testcode, 0,
-									objuser.getLstprojectforfilter(), fromdate, todate, testcode, objuser, objuser,
-									fromdate, todate, testcode, objuser.getLstprojectforfilter(), objuser, fromdate,
-									todate, testcode, objuser.getLstprojectforfilter());
-				}
-
+//									objuser.getLstprojectforfilter(), fromdate, todate, testcode, objuser, objuser,
+//									fromdate, todate, testcode, objuser.getLstprojectforfilter(), objuser, fromdate,
+//									todate, testcode, objuser.getLstprojectforfilter());
+//				}
+//
 			} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 
@@ -1523,15 +1484,15 @@ public class DashBoardService {
 //							.countByOrdercancellAndLsprojectmasterAndCreatedtimestampBetweenAndTestcode(1,
 //									objuser.getLstprojectforfilter(), fromdate, todate, testcode);
 					lstorders = lslogilablimsorderdetailRepository
-						    .findByOrdercancellAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndLsprojectmasterAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterAndTestcode
-						    (1,objuser.getLstprojectforfilter(), fromdate, todate, testcode, 
-						        objuser, objuser, fromdate, todate, 1, objuser.getLstprojectforfilter(), testcode, objuser, fromdate, todate, 1, objuser.getLstprojectforfilter(),
-						        testcode,  pageable);
+							.findByOrdercancellAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndLsprojectmasterAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterAndTestcode(
+									1, objuser.getLstprojectforfilter(), fromdate, todate, testcode, objuser, objuser,
+									fromdate, todate, 1, objuser.getLstprojectforfilter(), testcode, objuser, fromdate,
+									todate, 1, objuser.getLstprojectforfilter(), testcode, pageable);
 					count = lslogilablimsorderdetailRepository
-							.countByOrdercancellAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndLsprojectmasterAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterAndTestcode
-						    (1,objuser.getLstprojectforfilter(), fromdate, todate, testcode, 
-							        objuser, objuser, fromdate, todate, 1, objuser.getLstprojectforfilter(), testcode, objuser, fromdate, todate, 1, objuser.getLstprojectforfilter(),
-							        testcode);
+							.countByOrdercancellAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndLsprojectmasterAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterAndTestcode(
+									1, objuser.getLstprojectforfilter(), fromdate, todate, testcode, objuser, objuser,
+									fromdate, todate, 1, objuser.getLstprojectforfilter(), testcode, objuser, fromdate,
+									todate, 1, objuser.getLstprojectforfilter(), testcode);
 				}
 
 			}
@@ -1805,6 +1766,238 @@ public class DashBoardService {
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
+		return mapOrders;
+	}
+
+	private Map<String, Object> getallorders(List<LSprojectmaster> lstproject, Date fromdate, Date todate,
+			LSuserMaster objuser, Integer testcode, Pageable pageable, List<LSsamplemaster> lstsample1) {
+		List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
+		Map<String, Object> mapOrders = new HashMap<>();
+		long count = 0;
+		if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
+
+			lstorders = lslogilablimsorderdetailRepository
+					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+							"R", lstproject, fromdate, todate, 3, "R", lstproject, fromdate, todate, "R", lstsample1,
+							fromdate, todate, 3, "R", lstsample1, fromdate, todate, "R", 0, fromdate, todate, "R", 1,
+							objuser, fromdate, todate, 3, "R", 2, objuser, fromdate, todate, 3, "R", 3, objuser,
+							fromdate, todate, 3, lstproject, "R", 1, objuser, fromdate, todate, "R", 2, objuser,
+							fromdate, todate, "R", 3, objuser, fromdate, todate, "R", objuser, objuser, fromdate,
+							todate, "R", objuser, fromdate, todate, pageable);
+
+			count = lslogilablimsorderdetailRepository
+					.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+							"R", lstproject, fromdate, todate, 3, "R", lstproject, fromdate, todate, "R", lstsample1,
+							fromdate, todate, 3, "R", lstsample1, fromdate, todate, "R", 0, fromdate, todate, "R", 1,
+							objuser, fromdate, todate, 3, "R", 2, objuser, fromdate, todate, 3, "R", 3, objuser,
+							fromdate, todate, 3, lstproject, "R", 1, objuser, fromdate, todate, "R", 2, objuser,
+							fromdate, todate, "R", 3, objuser, fromdate, todate, "R", objuser, objuser, fromdate,
+							todate, "R", objuser, fromdate, todate);
+
+			lstorders.addAll(lslogilablimsorderdetailRepository
+					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+							"N", lstproject, fromdate, todate, "N", lstsample1, fromdate, todate, "N", 0, fromdate,
+							todate, "N", 1, objuser, fromdate, todate, "N", 2, objuser, fromdate, todate, "N",
+							lstproject, 3, objuser, fromdate, todate, "N", 3, fromdate, todate, objuser.getUsernotify(),
+							"N", objuser, objuser, fromdate, todate, "N", objuser, fromdate, todate, pageable));
+
+			count = count + lslogilablimsorderdetailRepository
+					.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetween(
+							"N", lstproject, fromdate, todate, "N", lstsample1, fromdate, todate, "N", 0, fromdate,
+							todate, "N", 1, objuser, fromdate, todate, "N", 2, objuser, fromdate, todate, "N",
+							lstproject, 3, objuser, fromdate, todate, "N", 3, fromdate, todate, objuser.getUsernotify(),
+							"N", objuser, objuser, fromdate, todate, "N", objuser, fromdate, todate);
+
+			lstorders.addAll(lslogilablimsorderdetailRepository
+					.findByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatus(
+							3, lstproject, fromdate, todate, 3, lstsample1, fromdate, todate, 1, objuser, fromdate,
+							todate, 3, 2, objuser, fromdate, todate, 3, 3, objuser, fromdate, todate, 3, 3, objuser,
+							fromdate, todate, 3, objuser, objuser, fromdate, todate, 3, objuser, fromdate, todate, 3,
+							pageable));
+			count = count + lslogilablimsorderdetailRepository
+					.countByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatus(
+							3, lstproject, fromdate, todate, 3, lstsample1, fromdate, todate, 1, objuser, fromdate,
+							todate, 3, 2, objuser, fromdate, todate, 3, 3, objuser, fromdate, todate, 3, 3, objuser,
+							fromdate, todate, 3, objuser, objuser, fromdate, todate, 3, objuser, fromdate, todate, 3);
+
+			lstorders.addAll(lslogilablimsorderdetailRepository
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
+							1, lstproject, fromdate, todate, 1, objuser, fromdate, todate, 1, 2, objuser, fromdate,
+							todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate, todate, 1, objuser,
+							fromdate, todate, 1, pageable));
+
+			count = count + lslogilablimsorderdetailRepository
+					.countByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
+							1, lstproject, fromdate, todate, 1, objuser, fromdate, todate, 1, 2, objuser, fromdate,
+							todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate, todate, 1, objuser,
+							fromdate, todate, 1);
+		} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
+			lstorders = lslogilablimsorderdetailRepository
+					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
+							"R", lstproject, fromdate, todate, 3, testcode, "R", lstproject, fromdate, todate, testcode,
+							"R", lstsample1, fromdate, todate, 3, testcode, "R", lstsample1, fromdate, todate, testcode,
+							"R", 0, fromdate, todate, testcode, "R", 1, objuser, fromdate, todate, 3, testcode, "R", 2,
+							objuser, fromdate, todate, 3, testcode, "R", 3, objuser, fromdate, todate, 3, lstproject,
+							testcode, "R", 1, objuser, fromdate, todate, testcode, "R", 2, objuser, fromdate, todate,
+							testcode, "R", 3, objuser, fromdate, todate, testcode, "R", objuser, objuser, fromdate,
+							todate, testcode, "R", objuser, fromdate, todate, testcode, pageable);
+
+			count = lslogilablimsorderdetailRepository
+					.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
+							"R", lstproject, fromdate, todate, 3, testcode, "R", lstproject, fromdate, todate, testcode,
+							"R", lstsample1, fromdate, todate, 3, testcode, "R", lstsample1, fromdate, todate, testcode,
+							"R", 0, fromdate, todate, testcode, "R", 1, objuser, fromdate, todate, 3, testcode, "R", 2,
+							objuser, fromdate, todate, 3, testcode, "R", 3, objuser, fromdate, todate, 3, lstproject,
+							testcode, "R", 1, objuser, fromdate, todate, testcode, "R", 2, objuser, fromdate, todate,
+							testcode, "R", 3, objuser, fromdate, todate, testcode, "R", objuser, objuser, fromdate,
+							todate, testcode, "R", objuser, fromdate, todate, testcode);
+
+			lstorders.addAll(lslogilablimsorderdetailRepository
+					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
+							"N", lstproject, fromdate, todate, testcode, "N", lstsample1, fromdate, todate, testcode,
+							"N", 0, fromdate, todate, testcode, "N", 1, objuser, fromdate, todate, testcode, "N", 2,
+							objuser, fromdate, todate, testcode, "N", lstproject, 3, objuser, fromdate, todate,
+							testcode, "N", 3, fromdate, todate, objuser.getUsernotify(), testcode, "N", objuser,
+							objuser, fromdate, todate, testcode, "N", objuser, fromdate, todate, testcode, pageable));
+
+			count = count + lslogilablimsorderdetailRepository
+					.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndTestcodeOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndTestcodeOrderByBatchcodeDesc(
+							"N", lstproject, fromdate, todate, testcode, "N", lstsample1, fromdate, todate, testcode,
+							"N", 0, fromdate, todate, testcode, "N", 1, objuser, fromdate, todate, testcode, "N", 2,
+							objuser, fromdate, todate, testcode, "N", lstproject, 3, objuser, fromdate, todate,
+							testcode, "N", 3, fromdate, todate, objuser.getUsernotify(), testcode, "N", objuser,
+							objuser, fromdate, todate, testcode, "N", objuser, fromdate, todate, testcode);
+
+			lstorders.addAll(lslogilablimsorderdetailRepository
+					.findByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullAndTestcodeOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusAndTestcode(
+							3, lstproject, fromdate, todate, testcode, 3, lstsample1, fromdate, todate, testcode, 1,
+							objuser, fromdate, todate, 3, testcode, 2, objuser, fromdate, todate, 3, testcode, 3,
+							objuser, fromdate, todate, 3, testcode, 3, objuser, fromdate, todate, 3, testcode, objuser,
+							objuser, fromdate, todate, 3, testcode, objuser, fromdate, todate, 3, testcode, pageable));
+
+			count = count + lslogilablimsorderdetailRepository
+					.countByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullAndTestcodeOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusAndTestcode(
+							3, lstproject, fromdate, todate, testcode, 3, lstsample1, fromdate, todate, testcode, 1,
+							objuser, fromdate, todate, 3, testcode, 2, objuser, fromdate, todate, 3, testcode, 3,
+							objuser, fromdate, todate, 3, testcode, 3, objuser, fromdate, todate, 3, testcode, objuser,
+							objuser, fromdate, todate, 3, testcode, objuser, fromdate, todate, 3, testcode);
+
+			lstorders.addAll(lslogilablimsorderdetailRepository
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndTestcodeOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndTestcode(
+							1, lstproject, fromdate, todate, testcode, 1, objuser, fromdate, todate, 1, testcode, 2,
+							objuser, fromdate, todate, 1, testcode, 3, objuser, fromdate, todate, 1, testcode, objuser,
+							objuser, fromdate, todate, 1, testcode, objuser, fromdate, todate, 1, testcode, pageable));
+
+			count = count + lslogilablimsorderdetailRepository
+					.countByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndTestcodeOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndTestcode(
+							1, lstproject, fromdate, todate, testcode, 1, objuser, fromdate, todate, 1, testcode, 2,
+							objuser, fromdate, todate, 1, testcode, 3, objuser, fromdate, todate, 1, testcode, objuser,
+							objuser, fromdate, todate, 1, testcode, objuser, fromdate, todate, 1, testcode);
+		} else if (testcode == -1 && objuser.getLstprojectforfilter() != null) {
+
+			lstorders = lslogilablimsorderdetailRepository
+					.findByOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmasterAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterOrderByBatchcodeDesc(
+							"R", objuser.getLstprojectforfilter(), fromdate, todate, 3, "R",
+							objuser.getLstprojectforfilter(), fromdate, todate, "R", 0, fromdate, todate,
+							objuser.getLstprojectforfilter(), "R", objuser, objuser, fromdate, todate,
+							objuser.getLstprojectforfilter(), "R", objuser, fromdate, todate,
+							objuser.getLstprojectforfilter(), pageable);
+			count =lslogilablimsorderdetailRepository
+					.countByOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmasterAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterOrderByBatchcodeDesc(
+							"R", objuser.getLstprojectforfilter(), fromdate, todate, 3, "R",
+							objuser.getLstprojectforfilter(), fromdate, todate, "R", 0, fromdate, todate,
+							objuser.getLstprojectforfilter(), "R", objuser, objuser, fromdate, todate,
+							objuser.getLstprojectforfilter(), "R", objuser, fromdate, todate,
+							objuser.getLstprojectforfilter());
+
+			lstorders.addAll(lslogilablimsorderdetailRepository
+					.findByOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmasterAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterOrderByBatchcodeDesc(
+							"N", objuser.getLstprojectforfilter(), fromdate, todate, "N", 0, fromdate, todate,
+							objuser.getLstprojectforfilter(), "N", objuser, objuser, fromdate, todate,
+							objuser.getLstprojectforfilter(), "N", objuser, fromdate, todate,
+							objuser.getLstprojectforfilter(), pageable));
+			count =count+ lslogilablimsorderdetailRepository
+					.countByOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmasterAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterOrderByBatchcodeDesc(
+							"N", objuser.getLstprojectforfilter(), fromdate, todate, "N", 0, fromdate, todate,
+							objuser.getLstprojectforfilter(), "N", objuser, objuser, fromdate, todate,
+							objuser.getLstprojectforfilter(), "N", objuser, fromdate, todate,
+							objuser.getLstprojectforfilter());
+
+			lstorders.addAll( lslogilablimsorderdetailRepository
+					.findByApprovelstatusAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmaster(
+							3, objuser.getLstprojectforfilter(), fromdate, todate, objuser, objuser, fromdate, todate,
+							3, objuser.getLstprojectforfilter(), objuser, fromdate, todate, 3,
+							objuser.getLstprojectforfilter(), pageable));
+			count =count+ lslogilablimsorderdetailRepository
+					.countByApprovelstatusAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmaster(
+							3, objuser.getLstprojectforfilter(), fromdate, todate, objuser, objuser, fromdate, todate,
+							3, objuser.getLstprojectforfilter(), objuser, fromdate, todate, 3,
+							objuser.getLstprojectforfilter());
+
+			lstorders.addAll(lslogilablimsorderdetailRepository
+					.findByOrdercancellAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmaster(
+							1, objuser.getLstprojectforfilter(), fromdate, todate, objuser, objuser, fromdate, todate,
+							1, objuser.getLstprojectforfilter(), objuser, fromdate, todate, 1,
+							objuser.getLstprojectforfilter(), pageable));
+			count =count+ lslogilablimsorderdetailRepository
+					.countByOrdercancellAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndLsprojectmasterOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmaster(
+							1, objuser.getLstprojectforfilter(), fromdate, todate, objuser, objuser, fromdate, todate,
+							1, objuser.getLstprojectforfilter(), objuser, fromdate, todate, 1,
+							objuser.getLstprojectforfilter());
+		} else {
+			lstorders = lslogilablimsorderdetailRepository
+					.findByOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndApprovelstatusNotAndTestcodeAndOrdercancellIsNullOrOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndTestcodeAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeAndOrdercancellIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterAndTestcodeOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeOrderByBatchcodeDesc(
+							"R", objuser.getLstprojectforfilter(), fromdate, todate, 3, testcode, "R",
+							objuser.getLstprojectforfilter(), fromdate, todate, testcode, "R", 0, fromdate,
+							todate, objuser.getLstprojectforfilter(), testcode, "R", objuser, objuser, fromdate,
+							todate, objuser.getLstprojectforfilter(), testcode, "R", objuser, fromdate, todate,
+							objuser.getLstprojectforfilter(), testcode, pageable);
+
+			count = lslogilablimsorderdetailRepository
+					.countByOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndApprovelstatusNotAndTestcodeAndOrdercancellIsNullOrOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndTestcodeAndOrdercancellIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeAndOrdercancellIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterAndTestcodeOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeOrderByBatchcodeDesc(
+							"R", objuser.getLstprojectforfilter(), fromdate, todate, 3, testcode, "R",
+							objuser.getLstprojectforfilter(), fromdate, todate, testcode, "R", 0, fromdate,
+							todate, objuser.getLstprojectforfilter(), testcode, "R", objuser, objuser, fromdate,
+							todate, objuser.getLstprojectforfilter(), testcode, "R", objuser, fromdate, todate,
+							objuser.getLstprojectforfilter(), testcode);
+			
+			lstorders.addAll(lslogilablimsorderdetailRepository
+					.findByOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndOrdercancellIsNullAndTestcodeAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterAndTestcodeOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeOrderByBatchcodeDesc(
+							"N", objuser.getLstprojectforfilter(), fromdate, todate, testcode, "N", 0, fromdate,
+							todate, objuser.getLstprojectforfilter(), testcode, "N", objuser, objuser, fromdate,
+							todate, objuser.getLstprojectforfilter(), testcode, "N", objuser, fromdate, todate,
+							objuser.getLstprojectforfilter(), testcode, pageable));
+			count =count+ lslogilablimsorderdetailRepository
+					.countByOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndOrdercancellIsNullAndTestcodeAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterAndTestcodeOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeOrderByBatchcodeDesc(
+							"N", objuser.getLstprojectforfilter(), fromdate, todate, testcode, "N", 0, fromdate,
+							todate, objuser.getLstprojectforfilter(), testcode, "N", objuser, objuser, fromdate,
+							todate, objuser.getLstprojectforfilter(), testcode, "N", objuser, fromdate, todate,
+							objuser.getLstprojectforfilter(), testcode);
+			lstorders.addAll(lslogilablimsorderdetailRepository
+					.findByApprovelstatusAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusAndLsprojectmasterAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterAndTestcode(
+							3, objuser.getLstprojectforfilter(), fromdate, todate, testcode, objuser, objuser,
+							fromdate, todate, 3, objuser.getLstprojectforfilter(), testcode, objuser, fromdate,
+							todate, 3, objuser.getLstprojectforfilter(), testcode, pageable));
+
+			count =count+ lslogilablimsorderdetailRepository
+					.countByApprovelstatusAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusAndLsprojectmasterAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterAndTestcode(
+							3, objuser.getLstprojectforfilter(), fromdate, todate, testcode, objuser, objuser,
+							fromdate, todate, 3, objuser.getLstprojectforfilter(), testcode, objuser, fromdate,
+							todate, 3, objuser.getLstprojectforfilter(), testcode);
+			
+			lstorders.addAll(lslogilablimsorderdetailRepository
+				    .findByOrdercancellAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndLsprojectmasterAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterAndTestcode
+				    (1,objuser.getLstprojectforfilter(), fromdate, todate, testcode, 
+				        objuser, objuser, fromdate, todate, 1, objuser.getLstprojectforfilter(), testcode, objuser, fromdate, todate, 1, objuser.getLstprojectforfilter(),
+				        testcode,  pageable));
+			count =count+ lslogilablimsorderdetailRepository
+					.countByOrdercancellAndLsprojectmasterAndCreatedtimestampBetweenAndTestcodeAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndLsprojectmasterAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterAndTestcode
+				    (1,objuser.getLstprojectforfilter(), fromdate, todate, testcode, 
+					        objuser, objuser, fromdate, todate, 1, objuser.getLstprojectforfilter(), testcode, objuser, fromdate, todate, 1, objuser.getLstprojectforfilter(),
+					        testcode);
+		}
+		mapOrders.put("orderlst", lstorders);
+		mapOrders.put("count", count);
 		return mapOrders;
 	}
 
