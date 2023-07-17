@@ -735,6 +735,22 @@ public class LoginService {
 		}
 		return true;
 	}
+	
+	public Boolean autoLogout(LSuserMaster lsuserMaster) {
+
+		if (lsuserMaster.getActiveusercode() != null) {
+//			lsactiveUserRepository.deleteByActiveusercode(lsuserMaster.getActiveusercode());
+
+			LSactiveUser objUser = lsactiveUserRepository.findByActiveusercode(lsuserMaster.getActiveusercode());
+			objUser.setRemoveinititated(true);
+			lsactiveUserRepository.save(objUser);
+			
+//			removeOrdersOnInActive(lsuserMaster.getActiveusercode());
+		} else {
+			lsactiveUserRepository.deleteBylsusermaster(lsuserMaster);
+		}
+		return true;
+	}
 
 	@SuppressWarnings({ "unused" })
 	public LSuserMaster ChangePassword(LoggedUser objuser) {
@@ -1879,7 +1895,6 @@ public class LoginService {
 	}
 
 	public Map<String, Object> updateActiveUserTime(Map<String, Object> objMap) {
-//		return objMap;
 		
 		if(objMap.containsKey("activeusercode")) {
 			Integer activerUsercode = (Integer) objMap.get("activeusercode");
@@ -1887,6 +1902,7 @@ public class LoginService {
 			LSactiveUser objUser = lsactiveUserRepository.findByActiveusercode(activerUsercode);
 			
 			if(objUser!=null) {
+				objUser.setRemoveinititated(false);
 				objUser.setLastactivetime(new Date());
 				lsactiveUserRepository.save(objUser);
 			}
@@ -1903,6 +1919,17 @@ public class LoginService {
 		}
 		
 		lsactiveUserRepository.delete(lstUsers);
+				
+		List<LSactiveUser> lstUsersRemoved = lsactiveUserRepository.findByRemoveinititatedAndLastactivetimeLessThan(true,new Date(System.currentTimeMillis() - 45 * 1000));
+	
+		if(!lstUsersRemoved.isEmpty()) {
+			
+			List<Integer> objnotifyuser = lstUsersRemoved.stream().map(LSactiveUser::getActiveusercode).collect(Collectors.toList());	
+			
+			removeOrdersOnInActiveLst(objnotifyuser);
+			
+			lsactiveUserRepository.delete(lstUsersRemoved);
+		}
 		
 		return objMap;
 		

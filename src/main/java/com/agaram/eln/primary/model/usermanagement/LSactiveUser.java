@@ -33,7 +33,16 @@ public class LSactiveUser {
 	private Date timestamp;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastactivetime;
+	private boolean removeinititated;
 	
+	public boolean isRemoveinititated() {
+		return removeinititated;
+	}
+
+	public void setRemoveinititated(boolean removeinititated) {
+		this.removeinititated = removeinititated;
+	}
+
 	public Date getLastactivetime() {
 		return lastactivetime;
 	}

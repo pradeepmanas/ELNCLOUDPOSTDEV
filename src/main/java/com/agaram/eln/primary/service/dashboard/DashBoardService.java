@@ -3,6 +3,7 @@ package com.agaram.eln.primary.service.dashboard;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1996,6 +1997,7 @@ public class DashBoardService {
 					        objuser, objuser, fromdate, todate, 1, objuser.getLstprojectforfilter(), testcode, objuser, fromdate, todate, 1, objuser.getLstprojectforfilter(),
 					        testcode);
 		}
+		 lstorders.sort(Comparator.comparing(Logilabordermaster::getBatchcode).reversed());
 		mapOrders.put("orderlst", lstorders);
 		mapOrders.put("count", count);
 		return mapOrders;

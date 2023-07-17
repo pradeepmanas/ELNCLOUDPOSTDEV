@@ -91,6 +91,11 @@ public class LoginController {
 		return loginService.Logout(lsuserMaster);
 	}
 
+	@PostMapping("/autoLogout")
+	public Boolean autoLogout(@RequestBody LSuserMaster lsuserMaster) throws Exception {
+		return loginService.autoLogout(lsuserMaster);
+	}
+	
 	@PostMapping("/ChangePassword")
 	public LSuserMaster ChangePassword(@RequestBody LoggedUser objuser) throws Exception {
 		return loginService.ChangePassword(objuser);

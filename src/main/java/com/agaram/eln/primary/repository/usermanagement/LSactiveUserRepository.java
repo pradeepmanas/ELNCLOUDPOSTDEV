@@ -22,4 +22,6 @@ public interface LSactiveUserRepository extends JpaRepository<LSactiveUser, Inte
 	public LSactiveUser findByActiveusercode(Integer activerUsercode);
 	public List<LSactiveUser> findByLastactivetimeLessThan(Date date);
 	public List<LSactiveUser> findByLsusermaster(LSuserMaster user);
+	public List<LSactiveUser> findByRemoveinititatedAndLastactivetimeLessThan(boolean b, Date date);
+	public List<LSactiveUser> findByRemoveinititated(boolean b);
 }
