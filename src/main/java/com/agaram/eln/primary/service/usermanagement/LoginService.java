@@ -739,15 +739,11 @@ public class LoginService {
 	public Boolean autoLogout(LSuserMaster lsuserMaster) {
 
 		if (lsuserMaster.getActiveusercode() != null) {
-//			lsactiveUserRepository.deleteByActiveusercode(lsuserMaster.getActiveusercode());
 
 			LSactiveUser objUser = lsactiveUserRepository.findByActiveusercode(lsuserMaster.getActiveusercode());
 			objUser.setRemoveinititated(true);
 			lsactiveUserRepository.save(objUser);
 			
-//			removeOrdersOnInActive(lsuserMaster.getActiveusercode());
-		} else {
-			lsactiveUserRepository.deleteBylsusermaster(lsuserMaster);
 		}
 		return true;
 	}
