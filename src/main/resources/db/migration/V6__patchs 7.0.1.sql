@@ -1,3 +1,6 @@
+
+
+
 update lslogilablimsorderdetail set directorycode = null where directorycode in (select directorycode from lssheetorderstructure where directoryname = 'my order');
 delete from lssheetorderstructure where parentdircode in (select directorycode from lssheetorderstructure where directoryname = 'my order');
 delete from lssheetorderstructure where directoryname = 'my order';
@@ -1479,22 +1482,22 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.datatype OWNER to postgres;
      
-DO
-$do$
-declare
-  resultvalues integer :=0;
-begin
+-- DO
+-- $do$
+-- declare
+--   resultvalues integer :=0;
+-- begin
 
-SELECT count(*) into resultvalues FROM
-information_schema.table_constraints WHERE constraint_name='fk6xm923bww44i2t95jw2b8keo4'
-AND table_name='parserfield';
- IF resultvalues =0 THEN
-    ALTER TABLE ONLY parserfield ADD CONSTRAINT fk6xm923bww44i2t95jw2b8keo4 FOREIGN KEY (datatypekey) REFERENCES datatype (datatypekey);
-   END IF;
-END
-$do$;  
-ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdby character varying(255);
-ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdon character varying(255);
+-- SELECT count(*) into resultvalues FROM
+-- information_schema.table_constraints WHERE constraint_name='fk6xm923bww44i2t95jw2b8keo4'
+-- AND table_name='parserfield';
+--  IF resultvalues =0 THEN
+--     ALTER TABLE ONLY parserfield ADD CONSTRAINT fk6xm923bww44i2t95jw2b8keo4 FOREIGN KEY (datatypekey) REFERENCES datatype (datatypekey);
+--    END IF;
+-- END
+-- $do$;  
+-- ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdby character varying(255);
+-- ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdon character varying(255);
 
     
 DO
@@ -2801,7 +2804,7 @@ update lslogbooks set reviewstatus='' where reviewstatus is null;
 ALTER TABLE IF Exists lslogbooksdata ADD COLUMN IF NOT EXISTS logitemstatus character varying(255); 
 update lslogbooksdata set logitemstatus='A' where logitemstatus is null;
 
-update parserfield set datatypekey = 1 where datatypekey is Null;
+-- update parserfield set datatypekey = 1 where datatypekey is Null;
 ALTER TABLE IF Exists lsprotocolmaster ADD COLUMN IF NOT EXISTS viewoption integer;
 
 update lsprotocolmaster set viewoption = 1 where viewoption is null;
