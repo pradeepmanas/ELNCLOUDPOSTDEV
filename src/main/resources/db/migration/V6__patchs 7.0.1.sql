@@ -1481,52 +1481,26 @@ WITH (
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.datatype OWNER to postgres;
+ 
+ALTER TABLE IF Exists ParserField ADD COLUMN IF NOT EXISTS datatypekey integer;
      
--- DO
--- $do$
--- declare
---   resultvalues integer :=0;
--- begin
+ DO
+ $do$
+ declare
+ resultvalues integer :=0;
+ begin
 
--- SELECT count(*) into resultvalues FROM
--- information_schema.table_constraints WHERE constraint_name='fk6xm923bww44i2t95jw2b8keo4'
--- AND table_name='parserfield';
---  IF resultvalues =0 THEN
---     ALTER TABLE ONLY parserfield ADD CONSTRAINT fk6xm923bww44i2t95jw2b8keo4 FOREIGN KEY (datatypekey) REFERENCES datatype (datatypekey);
---    END IF;
--- END
--- $do$;  
+ SELECT count(*) into resultvalues FROM
+ information_schema.table_constraints WHERE constraint_name='fk6xm923bww44i2t95jw2b8keo4'
+ AND table_name='parserfield';
+ IF resultvalues =0 THEN
+    ALTER TABLE ONLY parserfield ADD CONSTRAINT fk6xm923bww44i2t95jw2b8keo4 FOREIGN KEY (datatypekey) REFERENCES datatype (datatypekey);
+    END IF;
+ END
+ $do$;  
 -- ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdby character varying(255);
 -- ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdon character varying(255);
 
-    
-DO
-$do$
-DECLARE
-    counter integer := 0;
-BEGIN
-  select count(*) into counter from datatype where datatypename = 'string';
-
-   IF counter=0 THEN       -- name is free
-insert into datatype (datatypekey,datatypename)SELECT 1,'string'
-WHERE NOT EXISTS (select * from datatype where datatypename = 'string'); 
-   END IF;
-END
-$do$;
-
-DO
-$do$
-DECLARE
-    counter integer := 0;
-BEGIN
-  select count(*) into counter from datatype where datatypename = 'Integer';
-
-   IF counter=0 THEN       -- name is free
-insert into datatype (datatypekey,datatypename)SELECT 2,'Integer'
-WHERE NOT EXISTS (select * from datatype where datatypename = 'Integer'); 
-   END IF;
-END
-$do$;
  
  
  DO
@@ -1875,23 +1849,6 @@ delete from lsusergrouprights where displaytopic='IDS_TSK_TEMPLATEDESIGN';
 ALTER TABLE IF Exists lspasswordpolicy ADD COLUMN IF NOT EXISTS idletimeshowcheck integer;
 
 update lspasswordpolicy set idletimeshowcheck=0 where idletimeshowcheck is null;
-
-
-DO
-$do$
-DECLARE
-    counter integer := 0;
-BEGIN
-  select count(*) into counter from datatype where datatypename = 'Number';
-
-   IF counter=0 THEN       -- name is free
-insert into datatype (datatypekey,datatypename)SELECT 3,'Number'
-WHERE NOT EXISTS (select * from datatype where datatypename = 'Number'); 
-   END IF;
-END
-$do$;
- 
-delete from datatype where datatype.datatypename='Integer';
 
 update lsusergrouprights set modulename='IDS_MDL_LOGBOOK' where screenname='IDS_SCN_LOGBOOK';
 
@@ -2300,6 +2257,7 @@ INSERT INTO public.materialtype (nmaterialtypecode, jsondata, ndefaultstatus, ns
 --    END IF;
 -- END
 -- $do$;
+
 
 update methoddelimiter set defaultvalue = 1 where defaultvalue is Null; 
 
@@ -3131,6 +3089,7 @@ ALTER TABLE public.lsmethodfields
     
     
 ALTER TABLE IF Exists lsrepositoriesdata ADD COLUMN IF NOT EXISTS expirydate date;
+ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdby varchar(100);
 update LSprojectmaster set createdby = 'Administrator' where createdby is Null;
 ALTER TABLE IF Exists lsrepositoriesdata ADD COLUMN IF NOT EXISTS inventoryid varchar(255);
 ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS approvelstatus integer;
@@ -4061,7 +4020,6 @@ update lsaudittrailconfiguration set ordersequnce=30 where screenname ='IDS_SCN_
 update lsaudittrailconfiguration set ordersequnce=31 where screenname ='IDS_SCN_SUPPLIER' ;
 update lsaudittrailconfiguration set ordersequnce=32 where screenname ='IDS_SCN_MANUFACTURER' ;
 
-delete from datatype where datatypename='Integer';
 
 ALTER TABLE IF EXISTS lsbatchdetails ADD COLUMN IF NOT EXISTS limsprimarycode numeric(17,0);
 
@@ -4130,3 +4088,267 @@ ALTER TABLE IF EXISTS materialinventory ALTER COLUMN expirydate TYPE timestamp w
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS activeuser integer;
 
 ALTER TABLE IF Exists lsactiveuser ADD Column IF NOT EXISTS removeinititated BOOLEAN;
+
+INSERT INTO datatype(datatypekey,datatypename)SELECT 1,'Number'WHERE NOT EXISTS (select * from datatype where datatypename = 'string');
+INSERT INTO datatype(datatypekey,datatypename)SELECT 2,'Number'WHERE NOT EXISTS (select * from datatype where datatypename = 'Integer');
+ INSERT INTO datatype(datatypekey,datatypename)SELECT 3,'Number'WHERE NOT EXISTS (select * from datatype where datatypename = 'Number');
+
+ --datablock
+
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='None';
+  
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =1) THEN
+  
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,1,1,'A');
+  END IF;
+END $$;
+
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+ 
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Result without space';
+ 
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =1) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,1,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+ 
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Result with space';
+ 
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =1) THEN
+ 
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,1,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Comma';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =1) THEN
+  
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,1,1,'A');
+  END IF;
+END $$;
+
+--for split
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Result without space';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
+
+     INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,7,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Result with space';
+
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
+
+     INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,7,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Colon';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,7,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Comma';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,7,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Space';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,7,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Split Dot';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,7,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Merge Dot';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,7,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Slash';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,7,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='None';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,7,1,'A');
+  END IF;
+END $$;
+
+---merge
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Merge Dot';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =6) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,6,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Slash';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =6) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,6,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Colon';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =6) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,6,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Comma';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =6) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,6,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Space';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =6) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,6,1,'A');
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  dvalue Integer;
+BEGIN
+  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='None';
+
+  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =6) THEN
+
+  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
+  (1,1,dvalue,6,1,'A');
+  END IF;
+END $$;
