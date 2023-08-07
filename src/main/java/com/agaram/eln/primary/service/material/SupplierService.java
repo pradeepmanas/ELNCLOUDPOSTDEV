@@ -57,7 +57,7 @@ public class SupplierService {
 			final Supplier grade1 = supplierRepository.findBySsuppliernameIgnoreCaseAndNsitecode(objSupplier.getSsuppliername(), objSupplier.getNsitecode());
 
 			if (grade1 == null || (grade1.getNsuppliercode().equals(objSupplier.getNsuppliercode()))) {
-				objSupplier.setNsitecode(grade.getNsitecode());
+				grade.setObjsilentaudit(objSupplier.getObjsilentaudit());
 				supplierRepository.save(objSupplier);
 				objSupplier.getResponse().setStatus(true);
 				objSupplier.getResponse().setInformation("IDS_SUCCESS");

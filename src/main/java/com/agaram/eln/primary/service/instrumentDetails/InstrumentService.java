@@ -156,7 +156,6 @@ import com.agaram.eln.primary.repository.methodsetup.ParserBlockRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.SubParserFieldRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
-import com.agaram.eln.primary.repository.protocol.LSprotocolorderstephistoryRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileparameterRepository;
@@ -397,9 +396,6 @@ public class InstrumentService {
 	
 	@Autowired
 	private LSactiveUserRepository lSactiveUserRepository;
-	
-	@Autowired
-	private LSprotocolorderstephistoryRepository lsprotocolorderstephistoryRepository;
 
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 //		Map<String, Object> obj = new HashMap<>();
@@ -2576,89 +2572,6 @@ public class InstrumentService {
 		return lsworkflowRepository.findByLsworkflowgroupmappingInOrderByWorkflowcodeDesc(
 				lsworkflowgroupmappingRepository.findBylsusergroup(lsusergroup));
 	}
-	
-	public LSlogilablimsorderdetail GetorderForLINKsheet(LSlogilablimsorderdetail objorder) throws IOException {
-
-		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
-		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository.findBybatchid(objupdatedorder.getBatchid());
-		List<String> lsorderno = new ArrayList<String>();
-		objupdatedorder.setResponse(new Response());		
-
-		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
-			int i = 0;
-			while (lsLogilaborders.size() > i) {
-				lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
-				i++;
-			}
-		}
-		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
-		
-		if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
-			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
-			if (objorder.getLstworkflow() != null && objupdatedorder.getLsworkflow()!=null && lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode())) {
-				objupdatedorder.setCanuserprocess(true);
-			} else {
-				objupdatedorder.setCanuserprocess(false);
-			}
-		}
-
-		if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
-			LSworkflow objlastworkflow = lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
-			if (objlastworkflow != null &&objupdatedorder.getLsworkflow()!=null && objupdatedorder.getLsworkflow().equals(objlastworkflow)) {
-				objupdatedorder.setIsFinalStep(1);
-			} else {
-				objupdatedorder.setIsFinalStep(0);
-			}
-		}
-
-		if (objupdatedorder.getFiletype() == 0) {
-			objupdatedorder.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
-		}
-
-		if (objupdatedorder.getLssamplefile() != null) {
-			if (objorder.getIsmultitenant() == 1) {
-				CloudOrderCreation objCreation = cloudOrderCreationRepository
-						.findById((long) objupdatedorder.getLssamplefile().getFilesamplecode());
-				if (objCreation != null && objCreation.getContainerstored() == 0) {
-					objupdatedorder.getLssamplefile().setFilecontent(objCreation.getContent());
-				} else {
-					objupdatedorder.getLssamplefile().setFilecontent(objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
-									TenantContext.getCurrentTenant() + "ordercreation"));
-				}
-			} else {
-
-				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename")
-						.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
-				if (largefile == null) {
-					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
-				}
-
-				if (largefile != null) {
-					objupdatedorder.getLssamplefile()
-							.setFilecontent(new BufferedReader(new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-											.collect(Collectors.joining("\n")));
-				} else {
-
-					if (mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
-							OrderCreation.class) != null) {
-						objupdatedorder.getLssamplefile().setFilecontent(mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class)
-								.getContent());
-					}
-				}
-			}
-		}
-
-		lsLogilaborders = null;
-		objupdatedorder.setLstworkflow(objorder.getLstworkflow());
-		
-		if(objorder.getLsuserMaster() != null && objorder.getLsuserMaster().getUnifieduserid() != null) {
-			LScentralisedUsers objUserId = new LScentralisedUsers();
-			objUserId.setUnifieduserid(objorder.getLsuserMaster().getUnifieduserid());
-			objupdatedorder.setLscentralisedusers(userService.Getcentraliseduserbyid(objUserId));
-		}
-		objupdatedorder.getResponse().setStatus(true);
-		return objupdatedorder;
-	}
 
 	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder) throws IOException {
 
@@ -2668,7 +2581,7 @@ public class InstrumentService {
 		objupdatedorder.setResponse(new Response());
 		if (objupdatedorder.getLockeduser() != null) {
 			
-			if(!objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R") && objupdatedorder.getAssignedto() == null  
+			if(objupdatedorder.getFiletype() != 1 && !objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R") && objupdatedorder.getAssignedto() == null 
 					&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
 				
 				objupdatedorder.getResponse().setInformation("IDS_SAME_USER_OPEN");
@@ -2687,6 +2600,7 @@ public class InstrumentService {
 				objupdatedorder.setIsLock(1);
 				lslogilablimsorderdetailRepository.save(objupdatedorder);
 			}
+			
 			
 		} else {
 			objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
@@ -2780,10 +2694,9 @@ public class InstrumentService {
 			objupdatedorder.setLscentralisedusers(userService.Getcentraliseduserbyid(objUserId));
 		}
 		objupdatedorder.getResponse().setStatus(true);
-		objupdatedorder.setlSprotocolorderstephistory(lsprotocolorderstephistoryRepository.findByBatchcode(objupdatedorder.getBatchcode()));
 		return objupdatedorder;
 	}
-	
+
 	public LSlogilablimsorderdetail GetorderStatusFromBatchID(LSlogilablimsorderdetail objorder) {
 
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository
@@ -2792,7 +2705,7 @@ public class InstrumentService {
 		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
 				.findBybatchid(objupdatedorder.getBatchid());
 		List<String> lsorderno = new ArrayList<String>();
-		objupdatedorder.setResponse(new Response());
+
 		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
 			int i = 0;
 
@@ -2889,7 +2802,6 @@ public class InstrumentService {
 		}
 
 		objorder = null;
-		objupdatedorder.getResponse().setStatus(true);
 		return objupdatedorder;
 	}
 
@@ -3581,7 +3493,7 @@ public class InstrumentService {
 	public Map<String, Object> Getorderforlink(LSlogilablimsorderdetail objorder) {
 		Map<String, Object> mapOrder = new HashMap<String, Object>();
 		LSlogilablimsorderdetail objupdated = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
-		
+
 		if (objupdated.getLsprojectmaster() != null) {
 			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
 			if (objorder.getLstworkflow() != null && lstworkflowcode.contains(objupdated.getLsworkflow().getWorkflowcode())) {
@@ -3673,11 +3585,10 @@ public class InstrumentService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		List<Lsorderworkflowhistory> objLstLsorderworkflowhistories = lsorderworkflowhistoryRepositroy.findByBatchcodeOrderByHistorycode(objorder.getBatchcode());
 		lsorderworkflowhistoryRepositroy.save(objLstLsorderworkflowhistories);
 		
-		objorder.setLsorderworkflowhistory(objLstLsorderworkflowhistories);			
+		objorder.setLsorderworkflowhistory(objLstLsorderworkflowhistories);		
 		lslogilablimsorderdetailRepository.save(objorder);
 
 //		if (objorder.getLssamplefile() != null) {
@@ -3980,7 +3891,6 @@ public class InstrumentService {
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 //			List<LSsamplemaster> lstsample = lssamplemasterrepository.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
-			
 			List<Integer> lstsampleint = lssamplemasterrepository
 					.getDistinctByLssitemasterSitecodeAndStatus(objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1);
 			List<LSsamplemaster> lstsample = new ArrayList<>();
@@ -3996,14 +3906,20 @@ public class InstrumentService {
 //			lstorder = lslogilablimsorderdetailRepository
 //					.findByFiletypeAndLsfileAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getFiletype(),
 //							objorder.getLsfile(), lstproject);
+//			lstorder = lslogilablimsorderdetailRepository.
+//					findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndLsfileOrderByBatchcodeDesc(
+//					lstproject, objorder.getFiletype(), objorder.getLsfile(),
+//					lstsample, objorder.getFiletype(), 1,objorder.getLsfile(), 
+//					lstsample, objorder.getFiletype(), 2,objorder.getLsuserMaster(), objorder.getLsfile(),
+//					lstsample, objorder.getFiletype(), 3,objorder.getLstuserMaster(),objorder.getLsfile());
 			
 			lstorder = lslogilablimsorderdetailRepository.
-			findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileOrLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfile(
-			lstproject, objorder.getFiletype(), objorder.getLsfile(),
-			objorder.getFiletype(), objorder.getLsfile(),
-			lstsample, objorder.getFiletype(), 1,objorder.getLsfile(),
-			lstsample, objorder.getFiletype(), 2,objorder.getLsfile(),
-			lstsample, objorder.getFiletype(), 3,objorder.getLsfile());
+					findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileOrLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfile(
+					lstproject, objorder.getFiletype(), objorder.getLsfile(),
+					objorder.getFiletype(), objorder.getLsfile(),
+					lstsample, objorder.getFiletype(), 1,objorder.getLsfile(),
+					lstsample, objorder.getFiletype(), 2,objorder.getLsfile(),
+					lstsample, objorder.getFiletype(), 3,objorder.getLsfile());
 		}
 
 		return lstorder;
@@ -4019,6 +3935,7 @@ public class InstrumentService {
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 //			List<LSsamplemaster> lstsample = lssamplemasterrepository.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
+			
 			List<Integer> lstsampleint = lssamplemasterrepository
 					.getDistinctByLssitemasterSitecodeAndStatus(objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1);
 			List<LSsamplemaster> lstsample = new ArrayList<>();
@@ -4050,6 +3967,8 @@ public class InstrumentService {
 		}
 		return lstorder;
 	}
+
+	
 
 	public LSlogilablimsorderdetail updateVersionandWorkflowhistory(LSlogilablimsorderdetail objorder) {
 		objorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
@@ -4119,13 +4038,13 @@ public class InstrumentService {
 		list.setSystemcoments("System Generated");
 		list.setTableName("profile");
 //		list.setTransactiondate(currentdate);
-		list.setLsuserMaster(usercode);
 		try {
 			list.setTransactiondate(commonfunction.getCurrentUtcTime());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		list.setLsuserMaster(usercode);
 		lscfttransactionRepository.save(list);
 		if (objorder != null && objorder.getLsOrderattachments() != null) {
 			objorder.getLsOrderattachments().add(objattachment);
@@ -4172,13 +4091,13 @@ public class InstrumentService {
 		list.setSystemcoments("System Generated");
 		list.setTableName("profile");
 //		list.setTransactiondate(currentdate);
-		list.setLsuserMaster(usercode);
 		try {
 			list.setTransactiondate(commonfunction.getCurrentUtcTime());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		list.setLsuserMaster(usercode);
 		lscfttransactionRepository.save(list);
 		if (objorder != null && objorder.getLsOrderattachments() != null) {
 			objorder.getLsOrderattachments().add(objattachment);
@@ -4352,14 +4271,14 @@ public class InstrumentService {
 		list.setActions("Insert");
 		list.setSystemcoments("System Generated");
 		list.setTableName("profile");
-		list.setTransactiondate(currentdate);
-		list.setLsuserMaster(usercode);
+//		list.setTransactiondate(currentdate);
 		try {
 			list.setTransactiondate(commonfunction.getCurrentUtcTime());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		list.setLsuserMaster(usercode);
 		lscfttransactionRepository.save(list);
 		if (objorder != null && objorder.getELNFileAttachments() != null) {
 			objorder.getELNFileAttachments().add(objattachment);
@@ -4429,13 +4348,13 @@ public class InstrumentService {
 		list.setSystemcoments("System Generated");
 		list.setTableName("profile");
 //		list.setTransactiondate(currentdate);
-		list.setLsuserMaster(usercode);
 		try {
 			list.setTransactiondate(commonfunction.getCurrentUtcTime());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		list.setLsuserMaster(usercode);
 		lscfttransactionRepository.save(list);
 		if (objorder != null && objorder.getELNFileAttachments() != null) {
 			objorder.getELNFileAttachments().add(objattachment);
@@ -5434,7 +5353,7 @@ public class InstrumentService {
 
 	public Map<String, Object> uploadfilessheetfolder(MultipartFile file, String uid, Long directorycode,
 			String filefor, String tenantid, Integer ismultitenant, Integer usercode, Integer sitecode,
-			Date createddate, Integer fileviewfor) throws IOException, ParseException {
+			Date createddate, Integer fileviewfor) throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		LSsheetfolderfiles objfile = new LSsheetfolderfiles();
 		objfile.setFilename(file.getOriginalFilename());
@@ -5461,8 +5380,7 @@ public class InstrumentService {
 			lssite.setSitecode(sitecode);
 			lsfiles.setLssitemaster(lssite);
 			lsfiles.setFilefor(filefor);
-//			lsfiles.setCreatedtimestamp(createddate);
-			lsfiles.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
+			lsfiles.setCreatedtimestamp(createddate);
 			lsfiles.setFileviewfor(fileviewfor);
 
 			lssheetfolderfilesRepository.save(lsfiles);
@@ -5906,9 +5824,7 @@ public class InstrumentService {
 		return objdir;
 	}
 
-	public LSSheetOrderStructure Insertnewdirectory(LSSheetOrderStructure objdir) throws ParseException {
-		objdir.setDateCreated(commonfunction.getCurrentUtcTime());
-		objdir.setDateModified(commonfunction.getCurrentUtcTime());
+	public LSSheetOrderStructure Insertnewdirectory(LSSheetOrderStructure objdir) {
 		lsSheetOrderStructureRepository.save(objdir);
 		return objdir;
 	}
@@ -6134,9 +6050,30 @@ public class InstrumentService {
 			return lslogilablimsorderdetailRepository
 					.findByOrderflagAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc("N");
 		} else {
-			return lslogilablimsorderdetailRepository
-					.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc(
-							"N", objorder.getLstproject(), objorder.getLstworkflow());
+//			return lslogilablimsorderdetailRepository
+//					.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc(
+//							"N", objorder.getLstproject(), objorder.getLstworkflow());
+			
+			List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
+			
+			List<Integer> lstsampleint = lssamplemasterrepository
+					.getDistinctByLssitemasterSitecodeAndStatus(objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1);
+			List<LSsamplemaster> lstsample = new ArrayList<>();
+			LSsamplemaster sample = null;
+			if(lstsampleint.size()>0) {
+				for (Integer item : lstsampleint) {
+				    sample = new LSsamplemaster();
+				    sample.setSamplecode(item);
+				    lstsample.add(sample);
+				    sample = null; // Set sample to null after adding it to the list
+				}
+			}			
+			
+			lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndAssignedtoIsNullAndLockeduserIsNotNull("N", objorder.getLstproject());
+			lstorder.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndAssignedtoIsNullAndViewoptionAndLockeduserIsNotNull("N",lstsample,1));
+			lstorder.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndLockeduserIsNotNullOrderByBatchcodeDesc("N",lstsample, 2,objorder.getLsuserMaster()));
+			
+			return lstorder;
 		}
 	}
 
@@ -6156,7 +6093,6 @@ public class InstrumentService {
 					f.setActiveuser(null);
 				}).collect(Collectors.toList());
 
-				
 				lslogilablimsorderdetailRepository.save(lsOrder);
 
 			}
@@ -6335,9 +6271,8 @@ public class InstrumentService {
 
 	}
 
-	public Lsprotocolorderstructure Insertnewdirectoryonprotocol(Lsprotocolorderstructure objdir) throws ParseException {
-		objdir.setDateCreated(commonfunction.getCurrentUtcTime());
-		objdir.setDateModified(commonfunction.getCurrentUtcTime());
+	public Lsprotocolorderstructure Insertnewdirectoryonprotocol(Lsprotocolorderstructure objdir) {
+
 		lsprotocolorderStructurerepository.save(objdir);
 		return objdir;
 
@@ -6787,9 +6722,7 @@ public class InstrumentService {
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
 		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
-
-//		List<LSsamplemaster> lstsample = lssamplemasterrepository
-//				.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
+		
 		List<Integer> lstsampleint = lssamplemasterrepository
 				.getDistinctByLssitemasterSitecodeAndStatus(objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1);
 		List<LSsamplemaster> lstsample = new ArrayList<>();
@@ -6802,6 +6735,8 @@ public class InstrumentService {
 		    sample = null; // Set sample to null after adding it to the list
 		}
 		}
+//		List<LSsamplemaster> lstsample = lssamplemasterrepository
+//				.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
 
 		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		Date fromdate = objorder.getFromdate();
@@ -6817,53 +6752,123 @@ public class InstrumentService {
 
 			if (filetype == -1 && objorder.getOrderflag() == null) {
 
-				lstorder = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
-								objorder.getOrderflag(), lstproject, fromdate, todate, objorder.getOrderflag(),
-								lstsample, fromdate, todate,1, objorder.getOrderflag(),lstsample, fromdate, todate,2,objorder.getLsuserMaster());
+//				lstorder = lslogilablimsorderdetailRepository
+//						.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+//								objorder.getOrderflag(), lstproject, fromdate, todate, objorder.getOrderflag(),
+//								lstsample, fromdate, todate,1, objorder.getOrderflag(),lstsample, fromdate, todate,2,objorder.getLsuserMaster());
+				
+				lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNull(objorder.getOrderflag(), lstproject, fromdate, todate);
+				lstorder.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(objorder.getOrderflag(),lstsample, fromdate, todate,1));
+				lstorder.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(objorder.getOrderflag(),lstsample, fromdate, todate,2,objorder.getLsuserMaster()));
 			} else if (filetype == -1 && objorder.getOrderflag() != null) {
 				
-				lstorder = lslogilablimsorderdetailRepository
-						.findByOrderflagAndOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
-								objorder.getOrderflag(), objorder.getOrderflag(), lstproject, fromdate, todate,
-								objorder.getOrderflag(), objorder.getOrderflag(), lstsample, fromdate, todate,1,objorder.getOrderflag(), objorder.getOrderflag(), lstsample, fromdate, todate,2,objorder.getLsuserMaster());
+//				lstorder = lslogilablimsorderdetailRepository
+//						.findByOrderflagAndOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+//								objorder.getOrderflag(), objorder.getOrderflag(), lstproject, fromdate, todate,
+//								objorder.getOrderflag(), objorder.getOrderflag(), lstsample, fromdate, todate,1,objorder.getOrderflag(), objorder.getOrderflag(), lstsample, fromdate, todate,2,objorder.getLsuserMaster());
+				
+				lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNull(objorder.getOrderflag(), lstproject, fromdate, todate);
+				lstorder.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(objorder.getOrderflag(),lstsample, fromdate, todate,1));
+				lstorder.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(objorder.getOrderflag(),lstsample, fromdate, todate,2,objorder.getLsuserMaster()));
+				
 			} else if (objorder.getOrderflag() != null && objorder.getApprovelstatus() != null
 					&& objorder.getApprovelstatus() == 3) {
 				
+//				lstorder = lslogilablimsorderdetailRepository
+//						.findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+//								objorder.getOrderflag(), objorder.getApprovelstatus(), lstproject, filetype, fromdate,
+//								todate, objorder.getOrderflag(), objorder.getApprovelstatus(), lstsample, filetype,
+//								fromdate, todate,1,objorder.getOrderflag(), objorder.getApprovelstatus(), lstsample, filetype,fromdate, todate,2,objorder.getLsuserMaster());
+				
 				lstorder = lslogilablimsorderdetailRepository
-						.findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
-								objorder.getOrderflag(), objorder.getApprovelstatus(), lstproject, filetype, fromdate,
-								todate, objorder.getOrderflag(), objorder.getApprovelstatus(), lstsample, filetype,
-								fromdate, todate,1,objorder.getOrderflag(), objorder.getApprovelstatus(), lstsample, filetype,fromdate, todate,2,objorder.getLsuserMaster());
+						.findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
+						objorder.getOrderflag(), objorder.getApprovelstatus(), lstproject, filetype, fromdate,todate);
+
+						lstorder.addAll(lslogilablimsorderdetailRepository
+						.findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+								objorder.getOrderflag(), objorder.getApprovelstatus(), lstsample, filetype,fromdate, todate,1));
+
+						lstorder.addAll(lslogilablimsorderdetailRepository
+						.findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+								objorder.getOrderflag(), objorder.getApprovelstatus(), lstsample, filetype,fromdate, todate,2,objorder.getLsuserMaster()));
+				
 			} else if (objorder.getOrderflag() != null && objorder.getApprovelstatus() != null
 					&& objorder.getApprovelstatus() == 1) {
 			
+//				lstorder = lslogilablimsorderdetailRepository
+//						.findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+//								objorder.getOrderflag(), objorder.getApprovelstatus(), lstproject, filetype, fromdate,
+//								todate, objorder.getOrderflag(), objorder.getApprovelstatus(), lstsample, filetype,
+//								fromdate, todate,1,objorder.getOrderflag(), objorder.getApprovelstatus(), lstsample, filetype,fromdate, todate,2,objorder.getLsuserMaster());
+				
+				
 				lstorder = lslogilablimsorderdetailRepository
-						.findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
-								objorder.getOrderflag(), objorder.getApprovelstatus(), lstproject, filetype, fromdate,
-								todate, objorder.getOrderflag(), objorder.getApprovelstatus(), lstsample, filetype,
-								fromdate, todate,1,objorder.getOrderflag(), objorder.getApprovelstatus(), lstsample, filetype,fromdate, todate,2,objorder.getLsuserMaster());
+						.findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
+						objorder.getOrderflag(), objorder.getApprovelstatus(), lstproject, filetype, fromdate,todate);
+
+						lstorder.addAll(lslogilablimsorderdetailRepository
+						.findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+								objorder.getOrderflag(), objorder.getApprovelstatus(), lstsample, filetype,fromdate, todate,1));
+
+						lstorder.addAll(lslogilablimsorderdetailRepository
+						.findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+								objorder.getOrderflag(), objorder.getApprovelstatus(), lstsample, filetype,fromdate, todate,2,objorder.getLsuserMaster()));
+				
 			} else if (testcode != null && testcode != -1 && objorder.getLsprojectmaster() == null) {
+//				lstorder = lslogilablimsorderdetailRepository
+//						.findByOrderflagAndTestcodeAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndTestcodeAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndTestcodeAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+//								objorder.getOrderflag(), testcode, lstproject, filetype, fromdate, todate,
+//								objorder.getOrderflag(), testcode, lstsample, filetype, fromdate, todate,1,objorder.getOrderflag(), testcode, lstsample, filetype, fromdate, todate,2,objorder.getLsuserMaster());
+				
 				lstorder = lslogilablimsorderdetailRepository
-						.findByOrderflagAndTestcodeAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndTestcodeAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndTestcodeAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
-								objorder.getOrderflag(), testcode, lstproject, filetype, fromdate, todate,
-								objorder.getOrderflag(), testcode, lstsample, filetype, fromdate, todate,1,objorder.getOrderflag(), testcode, lstsample, filetype, fromdate, todate,2,objorder.getLsuserMaster());
+						.findByOrderflagAndTestcodeAndLsprojectmasterIsNullAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndTestcodeAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+								objorder.getOrderflag(), testcode, filetype, fromdate, todate, 
+								objorder.getOrderflag(),testcode, lstsample, filetype, fromdate, todate, 1);
+
+				lstorder.addAll(lslogilablimsorderdetailRepository
+						.findByOrderflagAndTestcodeAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+								objorder.getOrderflag(), testcode, lstsample, filetype, fromdate, todate, 2,objorder.getLsuserMaster()));
 
 			} else if (objorder.getLsprojectmaster() != null && objorder.getLsprojectmaster().getProjectcode() != -1
 					&& testcode != null && testcode != -1) {
 
-				lstorder = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterInAndTestcodeAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
-								objorder.getOrderflag(), lstproject, testcode, filetype, objorder.getLsprojectmaster(),
-								fromdate, todate, objorder.getOrderflag(), testcode, lstsample, filetype,
-								objorder.getLsprojectmaster(), fromdate, todate,1, objorder.getOrderflag(), testcode, lstsample, filetype,	objorder.getLsprojectmaster(), fromdate, todate,2,objorder.getLsuserMaster());
-			} else if (objorder.getLsprojectmaster() != null && objorder.getLsprojectmaster().getProjectcode() != -1) {
+//				lstorder = lslogilablimsorderdetailRepository
+//						.findByOrderflagAndLsprojectmasterInAndTestcodeAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+//								objorder.getOrderflag(), lstproject, testcode, filetype, objorder.getLsprojectmaster(),
+//								fromdate, todate, objorder.getOrderflag(), testcode, lstsample, filetype,
+//								objorder.getLsprojectmaster(), fromdate, todate,1, objorder.getOrderflag(), testcode, lstsample, filetype,	objorder.getLsprojectmaster(), fromdate, todate,2,objorder.getLsuserMaster());
 				
 				lstorder = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
-								objorder.getOrderflag(), lstproject, filetype, objorder.getLsprojectmaster(), fromdate,
-								todate, objorder.getOrderflag(), lstsample, filetype, objorder.getLsprojectmaster(),
-								fromdate, todate,1,objorder.getOrderflag(), lstsample, filetype, objorder.getLsprojectmaster(),fromdate, todate,2,objorder.getLsuserMaster());
+						.findByOrderflagAndLsprojectmasterInAndTestcodeAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNull
+						(objorder.getOrderflag(), lstproject, testcode, filetype, objorder.getLsprojectmaster(),fromdate, todate);
+
+						lstorder.addAll(lslogilablimsorderdetailRepository
+						.findByOrderflagAndLsprojectmasterIsNullAndTestcodeAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption
+						(objorder.getOrderflag(), testcode, lstsample, filetype,objorder.getLsprojectmaster(), fromdate, todate,1));
+
+						lstorder.addAll(lslogilablimsorderdetailRepository
+						.findByOrderflagAndLsprojectmasterIsNullAndTestcodeAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc
+						(objorder.getOrderflag(), testcode, lstsample, filetype,	objorder.getLsprojectmaster(), fromdate, todate,2,objorder.getLsuserMaster()));
+						
+			} else if (objorder.getLsprojectmaster() != null && objorder.getLsprojectmaster().getProjectcode() != -1) {
+				
+//				lstorder = lslogilablimsorderdetailRepository
+//						.findByOrderflagAndLsprojectmasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+//								objorder.getOrderflag(), lstproject, filetype, objorder.getLsprojectmaster(), fromdate,
+//								todate, objorder.getOrderflag(), lstsample, filetype, objorder.getLsprojectmaster(),
+//								fromdate, todate,1,objorder.getOrderflag(), lstsample, filetype, objorder.getLsprojectmaster(),fromdate, todate,2,objorder.getLsuserMaster());
+				
+				lstorder = lslogilablimsorderdetailRepository
+						.findByOrderflagAndLsprojectmasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNull(
+						objorder.getOrderflag(), lstproject, filetype, objorder.getLsprojectmaster(), fromdate,todate);
+
+						lstorder.addAll(lslogilablimsorderdetailRepository
+						.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption
+						(objorder.getOrderflag(), lstsample, filetype, objorder.getLsprojectmaster(),fromdate, todate,1));
+
+						lstorder.addAll(lslogilablimsorderdetailRepository
+						.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc
+						(objorder.getOrderflag(), lstsample, filetype, objorder.getLsprojectmaster(),fromdate, todate,2,objorder.getLsuserMaster()));
 			} else if (filetype == 0 && objorder.getOrderflag() != null) {
 				lstorder = lslogilablimsorderdetailRepository
 						.findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
@@ -6872,34 +6877,32 @@ public class InstrumentService {
 
 			else {
 				if(objorder.getLstuserMaster() != null) {
-					lstorder = lslogilablimsorderdetailRepository
-							.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMaster(objorder.getOrderflag(), lstproject, filetype, fromdate, todate,
-									objorder.getOrderflag(), lstsample, filetype, fromdate, todate,1,
-									objorder.getOrderflag(), lstsample, filetype, fromdate, todate,2,objorder.getLsuserMaster());
-							
-							List<Logilaborders> lstorder1 = new ArrayList<Logilaborders>();
-							lstorder1 = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInOrderByBatchcodeDesc(objorder.getOrderflag(), lstsample, filetype, fromdate, todate,3,objorder.getLstuserMaster());
-							lstorder.addAll(lstorder1);
 //					lstorder = lslogilablimsorderdetailRepository
 //							.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInOrderByBatchcodeDesc(
 //									objorder.getOrderflag(), lstproject, filetype, fromdate, todate,
 //									objorder.getOrderflag(), lstsample, filetype, fromdate, todate,1,objorder.getOrderflag(), lstsample, filetype, fromdate, todate,2,objorder.getLsuserMaster(), objorder.getOrderflag(), lstsample, filetype, fromdate, todate,3,objorder.getLstuserMaster());
+					
+					lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
+
+					lstorder.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMaster(objorder.getOrderflag(), lstsample, filetype, fromdate, todate,2,objorder.getLsuserMaster()));
+
+					lstorder.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(objorder.getOrderflag(), lstsample, filetype, fromdate, todate,1));
+							
+					lstorder.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInOrderByBatchcodeDesc(objorder.getOrderflag(), lstsample, filetype, fromdate, todate,3,objorder.getLstuserMaster()));
 	
 				}else {
-					List<Logilaborders> lstorder1 = new ArrayList<Logilaborders>();
-					lstorder = lslogilablimsorderdetailRepository
-					.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMaster(objorder.getOrderflag(), lstproject, filetype, fromdate, todate,
-							objorder.getOrderflag(), lstsample, filetype, fromdate, todate,1,
-							objorder.getOrderflag(), lstsample, filetype, fromdate, todate,2,objorder.getLsuserMaster());
-					
-					lstorder1 = lslogilablimsorderdetailRepository
-							.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(							
-							objorder.getOrderflag(), lstsample, filetype, fromdate, todate,3,objorder.getLsuserMaster());
-					lstorder.addAll(lstorder1);
 //					lstorder = lslogilablimsorderdetailRepository
 //							.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
 //									objorder.getOrderflag(), lstproject, filetype, fromdate, todate,
 //									objorder.getOrderflag(), lstsample, filetype, fromdate, todate,1,objorder.getOrderflag(), lstsample, filetype, fromdate, todate,2,objorder.getLsuserMaster(), objorder.getOrderflag(), lstsample, filetype, fromdate, todate,3,objorder.getLsuserMaster());
+					
+					lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNull(objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
+
+					lstorder.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMaster(objorder.getOrderflag(), lstsample, filetype, fromdate, todate,2,objorder.getLsuserMaster()));
+
+					lstorder.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(objorder.getOrderflag(), lstsample, filetype, fromdate, todate,1));
+					
+					lstorder.addAll(lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(objorder.getOrderflag(), lstsample, filetype, fromdate, todate,3,objorder.getLsuserMaster()));
 				}
 				
 			}
@@ -6919,11 +6922,10 @@ public class InstrumentService {
 //			lstorder = LSlogilabprotocoldetailRepository
 //					.findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 //							objorder.getLsprojectmaster(), objorder.getTestcode(), 1, fromdate, todate);
+			
 			lstorder = LSlogilabprotocoldetailRepository
 					.findByLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndCreatedtimestampBetweenOrLsprojectmasterAndTestcodeAndOrderdisplaytypeAndAssignedtoIsNullAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 							objorder.getLsprojectmaster(), objorder.getTestcode(), 1, fromdate, todate,objorder.getLsprojectmaster(), objorder.getTestcode(), 2, fromdate, todate);
-
-		
 		} else if (protocoltype != -1 && objorder.getOrderflag() != null) {
 			if (objorder.getRejected() != null) {
 				lstorder = LSlogilabprotocoldetailRepository
@@ -7125,12 +7127,12 @@ public class InstrumentService {
 //							objorder.getLssamplemaster(), 1, objorder.getTestcode(), 2, fromdate, todate,
 //							objorder.getLssamplemaster(), 2, objorder.getLsuserMaster(), objorder.getTestcode(), 2,
 //							fromdate, todate);
+			
 			lstorder = LSlogilabprotocoldetailRepository
 					.findByLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndTestcodeAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 							objorder.getLssamplemaster(), 1, objorder.getTestcode(), 2, fromdate, todate,objorder.getLssamplemaster(), 1, objorder.getTestcode(), 1, fromdate, todate,
 							objorder.getLssamplemaster(), 2, objorder.getLsuserMaster(), objorder.getTestcode(), 2,
 							fromdate, todate);
-
 		} else if (protocoltype != -1 && objorder.getOrderflag() != null) {
 			if (objorder.getRejected() != null) {
 				lstorder = LSlogilabprotocoldetailRepository
@@ -7190,23 +7192,38 @@ public class InstrumentService {
 		Date todate = objorder.getTodate();
 		Integer protocoltype = objorder.getProtocoltype();
 
-		List<LSsamplemaster> lstsample = lssamplemasterrepository.findSamplecodeAndSamplenameBystatusAndLssitemaster(1,
-				objorder.getLsuserMaster().getLssitemaster());
+//		List<LSsamplemaster> lstsample = lssamplemasterrepository.findSamplecodeAndSamplenameBystatusAndLssitemaster(1,
+//				objorder.getLsuserMaster().getLssitemaster());
+		List<Integer> lstsampleint = lssamplemasterrepository
+				.getDistinctByLssitemasterSitecodeAndStatus(objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1);
+		List<LSsamplemaster> lstsample = new ArrayList<>();
+		LSsamplemaster sample = null;
+		if (lstsampleint.size() > 0) {
+			for (Integer item : lstsampleint) {
+				sample = new LSsamplemaster();
+				sample.setSamplecode(item);
+				lstsample.add(sample);
+				sample = null; // Set sample to null after adding it to the list
+			}
+		}
 		List<Integer> userlist = objorder.getLstuserMaster()!=null? objorder.getLstuserMaster().stream().map(LSuserMaster::getUsercode).collect(Collectors.toList()):new ArrayList<Integer>();
 		if (objorder.getTestcode() == null && objorder.getLsprojectmaster() == null && objorder.getRejected() == null) {
 //			lstorder = LSlogilabprotocoldetailRepository
 //					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyInOrderByProtocolordercodeDesc(objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate,
 //					        objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 1, objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 2,objorder.getLsuserMaster().getUsercode(), objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 3,userlist);
-
-			lstorder.addAll(LSlogilabprotocoldetailRepository.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
-			lstorder.addAll(LSlogilabprotocoldetailRepository.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoption(objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 1));
-			lstorder.addAll(LSlogilabprotocoldetailRepository.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreateby(objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 2,objorder.getLsuserMaster().getUsercode()));	
-			lstorder.addAll(LSlogilabprotocoldetailRepository.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyInOrderByProtocolordercodeDesc(objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 3,userlist));
-					
-					
-//					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInOrderByProtocolordercodeDesc(
-//							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate,
-//							objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample);
+			lstorder.addAll(LSlogilabprotocoldetailRepository
+					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
+							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
+			lstorder.addAll(LSlogilabprotocoldetailRepository
+					.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoption(
+							objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 1));
+			lstorder.addAll(LSlogilabprotocoldetailRepository
+					.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreateby(
+							objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 2,
+							objorder.getLsuserMaster().getUsercode()));
+			lstorder.addAll(LSlogilabprotocoldetailRepository
+					.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyInOrderByProtocolordercodeDesc(
+							objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 3, userlist));
 		} else if (objorder.getTestcode() == null && objorder.getLsprojectmaster() == null
 				&& objorder.getRejected() != null) {
 			lstorder = LSlogilabprotocoldetailRepository
@@ -7694,7 +7711,7 @@ public class InstrumentService {
 
 	public Map<String, Object> uploadfilesprotocolfolder(MultipartFile file, String uid, Long directorycode,
 			String filefor, String tenantid, Integer ismultitenant, Integer usercode, Integer sitecode,
-			Date createddate, Integer fileviewfor) throws IOException, ParseException {
+			Date createddate, Integer fileviewfor) throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		LSprotocolfolderfiles objfile = new LSprotocolfolderfiles();
 		objfile.setFilename(file.getOriginalFilename());
@@ -7721,8 +7738,7 @@ public class InstrumentService {
 			lssite.setSitecode(sitecode);
 			lsfiles.setLssitemaster(lssite);
 			lsfiles.setFilefor(filefor);
-			lsfiles.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
-//			lsfiles.setCreatedtimestamp(createddate);
+			lsfiles.setCreatedtimestamp(createddate);
 			lsfiles.setFileviewfor(fileviewfor);
 
 			lsprotocolfolderfilesRepository.save(lsfiles);
@@ -7854,8 +7870,7 @@ public class InstrumentService {
 
 	public LSlogilablimsorderdetail cancelprotocolorder(LSlogilablimsorderdetail body) {
 
-//		LSlogilablimsorderdetail obj = lslogilablimsorderdetailRepository.findByBatchid(body.getBatchid());
-		LSlogilablimsorderdetail obj = lslogilablimsorderdetailRepository.findByBatchidOrBatchcode(body.getBatchid(), body.getBatchcode());
+		LSlogilablimsorderdetail obj = lslogilablimsorderdetailRepository.findByBatchid(body.getBatchid());
 		obj.setOrdercancell(body.getOrdercancell());
 		lslogilablimsorderdetailRepository.save(obj);
 		try {
@@ -8000,36 +8015,12 @@ public class InstrumentService {
 	}
 
 	public void onDeleteforCancel(List<String> lstuuid, String screen) {
-		if(!lstuuid.isEmpty()) {
-			if(screen.equals("sheet")) {
-				 lssheetfolderfilesRepository.removeForFile(lstuuid);
-			}else if(screen.equals("protocol")) {
-				lsprotocolfolderfilesRepository.removeForFile(lstuuid);
-			}
+		if(screen.equals("sheet")) {
+			 lssheetfolderfilesRepository.removeForFile(lstuuid);
+		}else if(screen.equals("protocol")) {
+			lsprotocolfolderfilesRepository.removeForFile(lstuuid);
 		}
 			
-	}
-
-	public Boolean checkOrderLockedBySameUser(Map<String, Object> objMap) {
-		Long BatchID = null;
-
-		if (objMap.containsKey("Batch")) {
-			BatchID = Long.valueOf((Integer) objMap.get("Batch"));
-		}
-		
-		Integer userCode = Integer.parseInt(objMap.get("usercode").toString());
-
-		LSlogilablimsorderdetail orderDetail = lslogilablimsorderdetailRepository.findOne(BatchID);
-
-		if (orderDetail != null) {
-			if(userCode != null && orderDetail.getLockeduser() != null && userCode.equals(orderDetail.getLockeduser())) {
-				return true;
-			}else {
-				return false;
-			}
-		}else {
-			return false;
-		}		
 	}
 
 }

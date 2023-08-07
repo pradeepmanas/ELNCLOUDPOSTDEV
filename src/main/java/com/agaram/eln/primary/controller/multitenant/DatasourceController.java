@@ -157,6 +157,11 @@ public class DatasourceController {
 	public DataSourceConfig Initiatetenant(@RequestBody DataSourceConfig Tenant)throws Exception {
 		return datasourceService.Initiatetenant(Tenant);
 	}
+	
+	@PostMapping("/tenantDatabaseBackup")
+	public DataSourceConfig tenantDatabaseBackup(@RequestBody DataSourceConfig Tenant)throws Exception {
+		return datasourceService.tenantDatabaseBackup(Tenant);
+	}
 
 	@PostMapping("/Updaprofiletetenant")
 	public int Updaprofiletetenant(@RequestBody DataSourceConfig Tenant)throws Exception {

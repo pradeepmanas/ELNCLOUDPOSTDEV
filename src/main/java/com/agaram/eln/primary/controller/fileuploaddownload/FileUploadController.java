@@ -1,12 +1,14 @@
 package com.agaram.eln.primary.controller.fileuploaddownload;
 
 import java.io.IOException;
+
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Date;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.MethodVersion;
 import com.agaram.eln.primary.payload.Response;
-import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodVersionRepository;
 import com.agaram.eln.primary.service.fileuploaddownload.FileStorageService;
@@ -40,6 +42,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 public class FileUploadController {
 
+	private final Path fileStorageLocation = null;
+    
     @Autowired
     private FileStorageService fileStorageService;  
 
@@ -48,6 +52,7 @@ public class FileUploadController {
     
     @Autowired
     private MethodVersionRepository methodversionrepo; 
+    
 
     @Autowired
     private LScfttransactionRepository cftrepo; 
@@ -99,7 +104,7 @@ public class FileUploadController {
     		,@RequestParam("methodkey") Integer methodkey,
     		@RequestParam("filename") String filename,@RequestParam("instrawdataurl") String instrawdataurl,
     		@RequestParam("sitecode") Integer sitecode,@RequestParam("usercode") Integer usercode
-    		) throws IOException{
+    		) throws IOException, InterruptedException{
 		
 		
 //		List<Method> methodfile = methodrepo.findByFilenameAndMethodkey(filename,methodkey);
@@ -107,7 +112,7 @@ public class FileUploadController {
 	//	List<MethodVersion> methodfile = methodversionrepo.findByFilenameAndMethodkey(filename,methodkey);
 		//if(methodfile.isEmpty())
 	//	{
-		final String rawData = fileStorageService.storeimportFile(file,tenant, isMultitenant,originalfilename,version);
+		final String rawData = fileStorageService.storeimportFile(file,tenant, isMultitenant,originalfilename,version,methodkey);
 		
 		List<Method> method = new ArrayList<Method>();
 		Method newobj = new Method();
@@ -143,7 +148,7 @@ public class FileUploadController {
 		newobj.setVersion(version);
 		newobj.setMethodversion(metverobj);
 		
-		methodrepo.save(newobj);	
+		methodrepo.save(newobj);		
 		Date Date = new Date();
 				
 		LScfttransaction auditobj = new LScfttransaction();
@@ -157,6 +162,7 @@ public class FileUploadController {
 		auditobj.setLsuserMaster(usercode);
 		
 		cftrepo.save(auditobj);
+		
 		return rawData;
 //		}else {
 //		return null;

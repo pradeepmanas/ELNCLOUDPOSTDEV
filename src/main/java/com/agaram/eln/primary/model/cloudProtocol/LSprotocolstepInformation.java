@@ -26,6 +26,12 @@ public class LSprotocolstepInformation {
     @Column(columnDefinition = "jsonb")
 	public String lsprotocolstepInfo;
 	
+//	private String fileuid;
+//	
+//	private Integer containerstored;
+//	
+//	private String fileuri;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -38,4 +44,22 @@ public class LSprotocolstepInformation {
 	public void setLsprotocolstepInfo(String myJSON) {
 		this.lsprotocolstepInfo = myJSON;
 	}
+//	public String getFileuid() {
+//		return fileuid;
+//	}
+//	public void setFileuid(String fileuid) {
+//		this.fileuid = fileuid;
+//	}
+//	public Integer getContainerstored() {
+//		return containerstored;
+//	}
+//	public void setContainerstored(Integer containerstored) {
+//		this.containerstored = containerstored;
+//	}
+//	public String getFileuri() {
+//		return fileuri;
+//	}
+//	public void setFileuri(String fileuri) {
+//		this.fileuri = fileuri;
+//	}
 }

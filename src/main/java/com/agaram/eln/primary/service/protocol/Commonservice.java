@@ -17,6 +17,10 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
+import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
+import com.agaram.eln.primary.model.protocols.LSprotocolfiles;
+import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.protocols.LSprotocolstep;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
@@ -24,6 +28,8 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationRepository;
+import com.agaram.eln.primary.repository.cloudProtocol.LSprotocolstepInformationRepository;
+import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 //import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
@@ -55,6 +61,8 @@ public class Commonservice {
 	@Autowired
 	LSnotificationRepository lsnotificationRepository;
 	
+	@Autowired
+	private LSProtocolMasterRepository lsProtocolMasterRepository;
 	
 	@Async
 	public CompletableFuture<List<LSfile>> updatefilecontentcheck(String Content, LSfile objfile, Boolean Isnew) throws IOException {
@@ -83,6 +91,37 @@ public class Commonservice {
 					"file_" + objfile.getFilecode(), StandardCharsets.UTF_16);
 		}
 		List<LSfile> obj =new ArrayList<>();
+		obj.add(objfile);
+		return CompletableFuture.completedFuture(obj);
+
+	}
+	
+	@Async
+	public CompletableFuture<List<LSprotocolmaster>> updateProtocolContent(String Content, LSprotocolmaster objfile) throws IOException {
+				
+		if (objfile.getIsmultitenant() == 1) {
+			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,TenantContext.getCurrentTenant()+"protocol");
+			String fileUUID = (String) objMap.get("uuid");
+			String fileURI = objMap.get("uri").toString();
+			
+//			LSprotocolmaster objsavefile = new LSprotocolmaster();
+			objfile.setFileuri(fileURI);
+			objfile.setFileuid(fileUUID);
+			objfile.setContainerstored(1);
+			lsProtocolMasterRepository.save(objfile);
+			
+//			objsavefile = null;
+		} else {
+
+			GridFSDBFile largefile = gridFsTemplate
+					.findOne(new Query(Criteria.where("filename").is("file_" + objfile.getProtocolmastercode())));
+			if (largefile != null) {
+				gridFsTemplate.delete(new Query(Criteria.where("filename").is("file_" + objfile.getProtocolmastercode())));
+			}
+			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
+					"file_" + objfile.getProtocolmastercode(), StandardCharsets.UTF_16);
+		}
+		List<LSprotocolmaster> obj =new ArrayList<>();
 		obj.add(objfile);
 		return CompletableFuture.completedFuture(obj);
 

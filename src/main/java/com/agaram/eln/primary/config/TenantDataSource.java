@@ -108,9 +108,9 @@ public class TenantDataSource implements Serializable {
             configuration.setJdbcUrl(config.getUrl());
             configuration.setUsername(config.getUsername());
             configuration.setPassword(config.getPassword());
-            configuration.setMaximumPoolSize(7);
+            configuration.setMaximumPoolSize(10);
             configuration.setPoolName(config.getUrl());
-            configuration.setMinimumIdle(2);
+            configuration.setMinimumIdle(5);
             configuration.setConnectionTestQuery("SELECT 1");
             configuration.setConnectionTimeout(300000);
             configuration.setConnectionTimeout(120000);

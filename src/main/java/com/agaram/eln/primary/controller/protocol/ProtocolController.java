@@ -2,6 +2,7 @@ package com.agaram.eln.primary.controller.protocol;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -511,7 +512,7 @@ public class ProtocolController {
 	}
 
 	@PostMapping("/Getprotocollinksignature")
-	public Map<String, Object> Getprotocollinksignature(@RequestBody Map<String, String> body)
+	public Map<String, Object> Getprotocollinksignature(@RequestBody Map<String, String> body) throws ParseException
 	{
 		return ProtocolMasterService.Getprotocollinksignature(body);
 	}
@@ -1072,5 +1073,12 @@ public class ProtocolController {
 	protected  List<LSprotocolmaster> getsingleprotocol(@RequestBody LSprotocolmaster objuser)throws Exception {
 	
 		return  ProtocolMasterService.getsingleprotocol(objuser);
+	}
+	
+	@PostMapping("/protocolTemplateSave")
+	public Map<String, Object> protocolTemplateSave(@RequestBody Map<String, Object> body)throws Exception
+	{
+		return ProtocolMasterService.protocolTemplateSave(body);
+//		return true;
 	}
 }

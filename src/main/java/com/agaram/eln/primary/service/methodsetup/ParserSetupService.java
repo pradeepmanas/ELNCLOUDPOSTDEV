@@ -119,11 +119,12 @@ public class ParserSetupService {
 	 * @return map object holding block name and list of extracted blockwise data.
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
+	 * @throws InterruptedException 
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public ResponseEntity<Object> getParserData(final int methodKey, final Boolean evaluateParser,
-    final String rawDataContent,final String tenant,final int isMultitenant) throws FileNotFoundException, IOException
+    final String rawDataContent,final String tenant,final int isMultitenant) throws FileNotFoundException, IOException, InterruptedException
 	{		
 		final Method method = (Method)methodService.findById(methodKey).getBody();
 		
@@ -133,12 +134,12 @@ public class ParserSetupService {
 		String rawDataText = "";
 		if (rawDataContent == null || rawDataContent.isEmpty()) {
 			if(isMultitenant != 0) {
-			rawDataText = methodService.getFileData(method.getInstrawdataurl(),tenant);  
+			rawDataText = methodService.getFileData(method.getInstrawdataurl(),tenant,methodKey);  
 				
 			}
 			else
 			{
-				rawDataText = methodService.getSQLFileData(method.getInstrawdataurl());
+				rawDataText = methodService.getSQLFileData(method.getInstrawdataurl(),methodKey);
 			}
 		}
 		else {
@@ -275,7 +276,7 @@ public class ParserSetupService {
 	
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getversionParserData(final int methodKey, final Boolean evaluateParser,
-		    final String rawDataContent,final String tenant,final int isMultitenant,final String instrawdataurl) throws FileNotFoundException, IOException
+		    final String rawDataContent,final String tenant,final int isMultitenant,final String instrawdataurl) throws FileNotFoundException, IOException, InterruptedException
 			{		
 				final Method method = (Method)methodService.findById(methodKey).getBody();
 				
@@ -286,11 +287,11 @@ public class ParserSetupService {
 				if (rawDataContent == null || rawDataContent.isEmpty()) {
 					if(isMultitenant != 0) {
 				//	rawDataText = methodService.getFileData(method.getInstrawdataurl(),tenant);  
-					rawDataText = methodService.getFileData(instrawdataurl,tenant);	
+					rawDataText = methodService.getFileData(instrawdataurl,tenant,methodKey);	
 					}
 					else
 					{
-						rawDataText = methodService.getSQLFileData(instrawdataurl);
+						rawDataText = methodService.getSQLFileData(instrawdataurl,methodKey);
 					}
 				}
 				else {
@@ -427,7 +428,7 @@ public class ParserSetupService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public ResponseEntity<Object> getSQLParserData(final int methodKey, final Boolean evaluateParser,
-    final String rawDataContent,final int isMultitenant) throws FileNotFoundException, IOException
+    final String rawDataContent,final int isMultitenant) throws FileNotFoundException, IOException, InterruptedException
 	{		
 		final Method method = (Method)methodService.findById(methodKey).getBody();
 	//	String tenant = null;
@@ -439,7 +440,7 @@ public class ParserSetupService {
 //			}
 		//	else
 		//	{
-				rawDataText = methodService.getSQLFileData(method.getInstrawdataurl());
+				rawDataText = methodService.getSQLFileData(method.getInstrawdataurl(),methodKey);
 		//	}
 		}
 		else {

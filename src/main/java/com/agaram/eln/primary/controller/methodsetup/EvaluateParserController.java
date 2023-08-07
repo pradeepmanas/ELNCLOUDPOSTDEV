@@ -104,7 +104,7 @@ public class EvaluateParserController {
 		
 		final LSSiteMaster site = lssiteMasterRepository.findOne(Integer.parseInt(sitecode));
 		
-		final String rawData =  methodservice.getFileData(fileName,tenant);
+		final String rawData =  methodservice.getFileData(fileName,tenant,methodKey);
 		return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant,request);
 //		}
 //		else {
@@ -134,27 +134,9 @@ public class EvaluateParserController {
     public ResponseEntity<Object> uploadELNFileandevaluateParser(@RequestParam("file") MultipartFile file, @RequestParam("method") String method,
     		@RequestParam("site") String sitecode,@RequestParam("X-TenantID") String tenant,@RequestParam ("isMultitenant") Integer isMultitenant,
     		@RequestParam ("originalfilename") String originalfilename,final HttpServletRequest request)throws Exception {
-		
-		//if(isMultitenant != 0) {
-//        String fileName = fileStorageService.storeFile(file,tenant,isMultitenant,originalfilename );
-//        final ObjectMapper mapper = new ObjectMapper();
-//        if(method.indexOf(",")>0)
-//        {
-//        	method=method.substring(0,method.indexOf(","));
-//        }
-//        if(sitecode.indexOf(",")>0)
-//        {
-//        	sitecode=sitecode.substring(0,sitecode.indexOf(","));
-//        }
-//		final int methodKey = Integer.parseInt(method);
-//		final LSSiteMaster site = lssiteMasterRepository.findOne(Integer.parseInt(sitecode));
-//		
-//		final String rawData =  methodservice.getFileData(fileName,tenant);
-//		return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant);
-	//	}
-		//else {
+	
 		String fileName = fileStorageService.storeSQLFile(file,tenant,isMultitenant,originalfilename);
-//		 final ObjectMapper mapper = new ObjectMapper();
+
 	        if(method.indexOf(",")>0)
 	        {
 	        	method=method.substring(0,method.indexOf(","));
@@ -165,13 +147,11 @@ public class EvaluateParserController {
 	        }
 			final int methodKey = Integer.parseInt(method);
 			final LSSiteMaster site = lssiteMasterRepository.findOne(Integer.parseInt(sitecode));
-			final String rawData =  methodservice.getSQLFileData(fileName);
+			final String rawData =  methodservice.getSQLFileData(fileName,methodKey);
 			return parserService.evaluateParser(methodKey, site, rawData,tenant,isMultitenant,request);
 		}
    
   
-      
-//	}
 	/**
 	   * This method is used to retrieve list of active methods for which parsing
 	   * is done for the specified site
@@ -205,23 +185,10 @@ public class EvaluateParserController {
 		 return parserService.getMethodFieldList(methodKey, site, null,tenant,isMultitenant);
 	}
 	
-//	@PostMapping(value = "/insertELNResultDetails")
-//	public ResponseEntity<Object> insertELNResultDetails(@RequestBody List<ELNResultDetails> lstResultDetails) {	
-//		 final ObjectMapper mapper = new ObjectMapper();		
-//		 //final ELNResultDetails elnresults = mapper.convertValue(mapObject.get("elnresultdetails"), ELNResultDetails.class);
-//		 return parserService.insertELNResultDetails(lstResultDetails, null);
-//	}
 	@PostMapping("/insertELNResultDetails")
 	public List<ELNResultDetails> insertELNResultDetails(@RequestBody ELNResultDetails[] lsresultDetails)throws Exception
 	{
 		return parserService.insertELNResultDetails(lsresultDetails);
 	}
-	//srimathi
-//		@PostMapping("/insertLSResultFieldValues")
-//		public List<LSResultFieldValues> insertLSResultFieldValues(@RequestBody LSResultFieldValues[] objresultDetails)
-//		{
-//			return parserService.insertLSResultFieldValues(objresultDetails);
-//		}
-//		
-		
+
 }

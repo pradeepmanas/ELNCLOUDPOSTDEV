@@ -99,6 +99,16 @@ public class LSusergroup {
 	@Transient
 	LSuserMaster LSuserMaster;
 	
+	@Transient
+	private Integer defaultusergroup;
+	
+	public Integer getDefaultusergroup() {
+		return defaultusergroup;
+	}
+	public void setDefaultusergroup(Integer defaultusergroup) {
+		this.defaultusergroup = defaultusergroup;
+	}
+
 	private Integer modifiedUser;
 	private String modifiedUsername;
 	

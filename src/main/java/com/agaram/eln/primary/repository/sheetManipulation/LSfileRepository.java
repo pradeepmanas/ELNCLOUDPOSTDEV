@@ -18,7 +18,6 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 
 
 public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
@@ -306,20 +305,20 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
 			Date fromdate2, Date todate2, int m, int n);
 
-	public List<LSfile> findByFilecodeGreaterThanAndLssitemasterAndApprovedOrFilecodeGreaterThanAndVersionnoGreaterThanOrderByFilecodeDesc(
-			int i, LSSiteMaster lssitemaster, Integer approvelstatus, int j, int k);
+	public List<Sheettemplateget> findBylstestInAndApproved(List<LSfiletest> lsfiletest, int i);
 
 	public List<Sheettemplateget> findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApproved(
 			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest, int i, int j, int k,
 			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest2, int l, int m, int n,
 			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int o, int p, int q);
 
-	public List<Sheettemplateget> findBylstestInAndApproved(List<LSfiletest> lsfiletest, int i);
+	public List<LSfile> findByFilecodeGreaterThanAndLssitemasterAndApprovedOrFilecodeGreaterThanAndVersionnoGreaterThanOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Integer approvelstatus, int j, int k);
 
 	public List<LSfile> findByFilecodeNotAndLssitemasterAndFilenameuserIgnoreCase(Integer filecode,
 			LSSiteMaster lssitemaster, String filenameuser);
 
-	public  List<Sheettemplateget> findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThan(
+	public List<Sheettemplateget> findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThan(
 			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest, int i, int j, int k, int l,
 			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest2, int m, int n, int o, int p,
 			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int q, int r, int s, int t);

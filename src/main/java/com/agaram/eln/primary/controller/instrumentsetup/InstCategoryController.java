@@ -75,8 +75,8 @@ public class InstCategoryController {
     public ResponseEntity<Object> updateInstCategory(final HttpServletRequest request, @Valid @RequestBody Map<String, Object> mapObject)throws Exception{
 	 	  final ObjectMapper mapper = new ObjectMapper();
 		  final InstrumentCategory category = mapper.convertValue(mapObject.get("instCategory"), InstrumentCategory.class);
-		  final Boolean saveAuditTrail = mapper.convertValue(mapObject.get("saveAuditTrail"), Boolean.class);
-		 
+		
+		  final Boolean saveAuditTrail = false;
 		  final String comments = mapper.convertValue(mapObject.get("comments"), String.class);			
 		  
 		  return categoryService.updateInstCategory(category, saveAuditTrail, comments,  request);

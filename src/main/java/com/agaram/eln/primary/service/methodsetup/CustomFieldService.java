@@ -18,16 +18,12 @@ import com.agaram.eln.primary.model.methodsetup.ControlType;
 import com.agaram.eln.primary.model.methodsetup.CustomField;
 import com.agaram.eln.primary.model.methodsetup.CustomFields;
 import com.agaram.eln.primary.model.methodsetup.Method;
-//import com.agaram.lleln.cfrpart11.cfrtransaction.CfrTransactionService;
-//import com.agaram.lleln.jaxb.ReadWriteXML;
-//import com.agaram.lleln.page.Page;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.methodsetup.ControlTypeRepository;
 import com.agaram.eln.primary.repository.methodsetup.CustomFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
-//import com.agaram.lleln.util.EnumerationInfo;
 
 /**
  * This Service class is used to access the CustomFieldRepository to fetch details

@@ -45,7 +45,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @XmlRootElement  (name = "method")
 @XmlType(propOrder = { "methodkey", "methodname", "instmaster", "instrawdataurl",
 		"samplesplit", "parser", "site", "status", "createdby", "createddate","username","transactiondate","filename","displayvalue",
-		"screenname","objsilentaudit","objmanualaudit","info"})
+		"screenname","objsilentaudit","objmanualaudit","info","converterstatus"})
 @Entity
 @Table(name = "method")
 public class Method implements Serializable, Diffable<Method>{
@@ -72,6 +72,8 @@ public class Method implements Serializable, Diffable<Method>{
 	
 	public Integer version=1;
 
+	private Integer converterstatus;
+	
 	@Transient
 	private LSSiteMaster lssitemaster;
 	
@@ -328,8 +330,14 @@ public class Method implements Serializable, Diffable<Method>{
 	public void setLssitemaster(LSSiteMaster lssitemaster) {
 		this.lssitemaster = lssitemaster;
 	}
-	
-	
+
+	public Integer getConverterstatus() {
+		return converterstatus;
+	}
+
+	public void setConverterstatus(Integer converterstatus) {
+		this.converterstatus = converterstatus;
+	}
 
 	public String getMethodstatus() {
 		//return methodstatus;
@@ -376,9 +384,7 @@ public class Method implements Serializable, Diffable<Method>{
            .append("version", this.version, obj.version)
            .append("methodversion", this.getMethodversion(), obj.getMethodversion())
            .append("info", this.getInfo(), obj.getInfo())
-
-
-
+           .append("converterstatus", this.getConverterstatus(), obj.getConverterstatus())
 	       .build();
 	}
 
@@ -423,6 +429,7 @@ public class Method implements Serializable, Diffable<Method>{
 		this.version = method.version;
 		this.methodversion=method.methodversion;
 		this.info=method.info;
+		this.converterstatus=method.converterstatus;
 
 
 	}

@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.controller.methodsetup;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodVersionRepository;
 import com.agaram.eln.primary.service.methodsetup.MethodService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,6 +36,9 @@ public class MethodController {
 
 	@Autowired
 	MethodVersionRepository methodversionrepository;
+	
+	@Autowired
+	MethodRepository methodrepo;
 
 	/**
 	 * This method is used to retrieve list of active methods for the specified
@@ -43,7 +49,7 @@ public class MethodController {
 	 * @return list of active methods for the specified Site.
 	 */
 	@PostMapping(value = "/getMethod")
-	public ResponseEntity<Object> getActiveMethodBySite(@Valid @RequestBody Map<String, Object> mapObject)
+	public ResponseEntity<Object> getActiveMethodBySite(@RequestBody Map<String, Object> mapObject)
 			throws Exception {
 
 		final ObjectMapper mapper = new ObjectMapper();
@@ -56,6 +62,21 @@ public class MethodController {
 			LSSiteMaster siteobj = new LSSiteMaster();
 			siteobj.setSitecode(site);
 			return methodService.getActiveMethodBySite(siteobj);
+		}
+	}
+	
+	@PostMapping(value = "/findByStatus")
+	public ResponseEntity<Object> findByStatus(@RequestBody Map<String, Object> mapObject)
+			throws Exception {
+	  final ObjectMapper mapper = new ObjectMapper();
+	  Map<String, Object> obj = (Map<String, Object>) mapObject.get("site");
+
+		if (obj == null) {
+	        final Integer status = mapper.convertValue(mapObject.get("status"), Integer.class);
+		    return methodService.findByStatus(status);
+		}else{
+		 	final Integer status = (Integer) obj.get("status");
+			return methodService.findByStatus(status);
 		}
 	}
 
@@ -181,40 +202,22 @@ public class MethodController {
 	@PostMapping(value = "/getFileData")
 	public String getFileData(@Valid @RequestBody Map<String, Object> mapObject) throws Exception {
 
-		// public ResponseEntity<Object>
-		// public ResponseEntity<Object> getFileData(@Valid @RequestBody Map<String,
-		// Object> mapObject)throws Exception{
-
-//		  final ObjectMapper mapper = new ObjectMapper();
-
 		Map<String, Object> objinput = (Map<String, Object>) mapObject.get("inputData");
 		final String fileName = (String) objinput.get("rawDataFileName");
 		String tenant = (String) objinput.get("X-TenantID");
 		Integer isMultitenant = (Integer) objinput.get("isMultitenant");
 
-		// return methodService.getFileData(fileName, tenant, HttpStatus.OK);
-
+		List<Method> methodobj = methodrepo.findByInstrawdataurl(fileName);
+		Integer methodkey = methodobj.get(0).getMethodkey();
+		
 		if (isMultitenant != 0) {
-			return methodService.getFileData(fileName, tenant);
+			return methodService.getFileData(fileName, tenant,methodkey);
 		} else {
-			return methodService.getSQLFileData(fileName);
+			return methodService.getSQLFileData(fileName,methodkey);
 		}
 
 		// return new ResponseEntity<>("Sample Split Done - "+ objinput, HttpStatus.OK);
 	}
-
-//	  @PostMapping(value = "/getFileData")
-//		  public ResponseEntity<Object> getFileData(@Valid @RequestBody Map<String, Object> mapObject)throws Exception{
-//
-//		
-//			  final ObjectMapper mapper = new ObjectMapper();
-//		
-//			  Map<String, Object> objinput = (Map<String, Object>) mapObject.get("inputData");
-//			  final String fileName = (String) objinput.get("rawDataFileName");
-//			  return new ResponseEntity<>(methodService.getFileData(fileName),HttpStatus.OK);
-//
-//
-//		  }	
 
 	/**
 	 * This method is used to copy the selected 'Method', its sampling techniques,

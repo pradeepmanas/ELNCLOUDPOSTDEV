@@ -33,10 +33,11 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private LSuserMaster assignedto;
 	private Integer viewoption;
 	private LSuserMaster createdby;
-	
+	private Integer testcode;
+
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,LSuserMaster assignedto,
-			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster) {
+			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster,Integer testcode) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -53,6 +54,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.lsworkflow =lsworkflow != null ? new LSworkflow(lsworkflow.getWorkflowcode(),lsworkflow.getWorkflowname()):null;
 		this.ordercancell=ordercancell;
 		this.assignedto =assignedto;
+		this.testcode=testcode;
 		this.viewoption=viewoption;
 		this.createdby = lsuserMaster;
 	}
@@ -72,7 +74,13 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	public void setViewoption(Integer viewoption) {
 		this.viewoption = viewoption;
 	}
+public Integer getTestcode() {
+		return testcode;
+	}
 
+	public void setTestcode(Integer testcode) {
+		this.testcode = testcode;
+	}
 	public Integer getOrdercancell() {
 		return ordercancell;
 	}
@@ -100,7 +108,6 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	}
 
 	public String getBatchid() {
-		
 		String Batchid = "ELN" + this.batchcode;
 
 		if (this.filetype == 3) {
@@ -113,8 +120,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 			Batchid = batchid;
 		}
 
-		return Batchid;	
-		
+		return Batchid;
 	}
 
 	public void setBatchid(String batchid) {
@@ -282,6 +288,4 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	public void setAssignedto(LSuserMaster assignedto) {
 		this.assignedto = assignedto;
 	}
-	
-	
 }

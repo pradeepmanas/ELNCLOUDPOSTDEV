@@ -2,6 +2,7 @@ package com.agaram.eln.primary.service.fileuploaddownload;
 
 
 import java.io.BufferedReader;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -123,7 +124,7 @@ public class FileStorageService {
     }
 
 
-public String storeimportFile(MultipartFile file , String tenant , Integer isMultitenant,String originalfilename,Integer version) throws IOException {
+public String storeimportFile(MultipartFile file , String tenant , Integer isMultitenant,String originalfilename,Integer version,Integer methodkey) throws IOException, InterruptedException {
         
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
     	final String rawData;
@@ -150,10 +151,11 @@ public String storeimportFile(MultipartFile file , String tenant , Integer isMul
           }
     		//return methodService.getFileData(fileName, tenant);
     		if(isMultitenant == 1) {
-    		rawData =  methodservice.getFileData(fileName,tenant);
+    		rawData =  methodservice.getFileData(fileName,tenant,methodkey);
     		}
     		else {
-    		rawData =  methodservice.getSQLFileData(fileName);}
+    		rawData =  methodservice.getSQLFileData(fileName,methodkey);
+    		}
     		
           return rawData;
       
@@ -220,27 +222,27 @@ public String storeimportFile(MultipartFile file , String tenant , Integer isMul
 			if (largefile != null) {
 				gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileid)));
 			}
-			if(ext.equals("txt")){
-            	File tempfile;
-            	tempfile = stream2file(file.getInputStream(),fileName, ext);
-
-		        String charset = "ISO-8859-1"; // or what corresponds
-		        BufferedReader in = new BufferedReader( 
-		            new InputStreamReader (new FileInputStream(tempfile), charset));
-		        String line;
-		       // String result;
-		     
-		        StringBuffer sb = new StringBuffer();
-		        while( (line = in.readLine()) != null) { 
-		        
-		        	sb.append(line).append("\n");
-		        }
-		        String appendedline = sb.toString();
-		        
-		        line="";
-			//  gridFsTemplate.store(new ByteArrayInputStream(appendedline.getBytes(StandardCharsets.UTF_8)),fileid);
-			  gridFsTemplate.store(new ByteArrayInputStream(appendedline.getBytes(StandardCharsets.UTF_8)), fileid, file.getContentType());
-            }
+//			if(ext.equalsIgnoreCase("txt")){
+//            	File tempfile;
+//            	tempfile = stream2file(file.getInputStream(),fileName, ext);
+//
+//		        String charset = "ISO-8859-1"; // or what corresponds
+//		        BufferedReader in = new BufferedReader( 
+//		            new InputStreamReader (new FileInputStream(tempfile), charset));
+//		        String line;
+//		       // String result;
+//		     
+//		        StringBuffer sb = new StringBuffer();
+//		        while( (line = in.readLine()) != null) { 
+//		        
+//		        	sb.append(line).append("\n");
+//		        }
+//		        String appendedline = sb.toString();
+//		        
+//		        line="";
+//			//  gridFsTemplate.store(new ByteArrayInputStream(appendedline.getBytes(StandardCharsets.UTF_8)),fileid);
+//			  gridFsTemplate.store(new ByteArrayInputStream(appendedline.getBytes(StandardCharsets.UTF_8)), fileid, file.getContentType());
+//            }
 			  gridFsTemplate.store(new ByteArrayInputStream(file.getBytes()), fileid, file.getContentType());
 			  CloudParserFile objfile = new CloudParserFile();
  	     	  objfile.setFileid(fileid);

@@ -2,8 +2,12 @@ package com.agaram.eln.primary.repository.usermanagement;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 
 public interface LSusergroupRepository extends JpaRepository<LSusergroup, Integer> {
@@ -17,6 +21,7 @@ public interface LSusergroupRepository extends JpaRepository<LSusergroup, Intege
 	public LSusergroup findByusergroupname(String usergroupname);
 
 //	public LSusergroup findByusergroupnameAndLssitemaster(String usergroupname, LSSiteMaster lssitemaster);
+	@Transactional
 	public LSusergroup findByusergroupnameAndLssitemaster(String usergroupname, Integer lssitemaster);
 
 	public List<LSusergroup> findByOrderByUsergroupcodeDesc();
@@ -65,5 +70,8 @@ public interface LSusergroupRepository extends JpaRepository<LSusergroup, Intege
 	public List<LSusergroup> findByUsergroupnameNotAndUsergroupstatusInOrderByUsergroupcodeDesc( String string, List<String> usergroupstatus);
 	
 	public List<LSusergroup> findByUsergroupstatusInOrderByUsergroupcodeDesc(List<String> usergroupstatus);
+
+	public List<LSusergroup> findBylssitemasterInAndUsergroupnameNotOrderByUsergroupcodeDesc(List<Integer> sitecode,
+			String string);
 
 }

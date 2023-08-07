@@ -17,15 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-//import com.agaram.lleln.jaxb.ReadWriteXML;
-//import com.agaram.lleln.page.Page;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.instrumentsetup.InstCategoryRepository;
-//import com.agaram.lleln.cfrpart11.cfrtransaction.CfrTransactionService;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
-//import com.agaram.lleln.users.CreatedUser;
-//import com.agaram.lleln.util.EnumerationInfo;
 
 /**
  * This Service class is used to access the InstCategoryRepository to fetch
@@ -123,60 +118,35 @@ public class InstCategoryService {
 		if (category.getInstcatkey() == 1) {
 			// statuscode =423
 			// Default Category cannot be deleted
-			return new ResponseEntity<>(category.getInstcatname() + " - Default Category Cannot be Updated!",
+			
+			category.setInfo("Default Category Cannot be Updated!");
+			return new ResponseEntity<>(category,
 					HttpStatus.LOCKED);// status code - 423
 		} else {
 			final Optional<InstrumentCategory> categoryByName = categoryRepo
 					.findByInstcatnameAndStatus(category.getInstcatname(), 1);
 
-			if (categoryByName.isPresent()) {
-				// category already available
-				if (categoryByName.get().getInstcatkey().equals(category.getInstcatkey())) {
-//	     			final InstrumentCategory categoryToSave = categoryByName.get();
-
-					// copy of categoryToSave object for using 'Diffable' to compare objects
-//	     			final InstrumentCategory categoryBeforeSave = new InstrumentCategory(categoryToSave); 
-
-					/*
-					 * Update other fields with existing category name ok=200
-					 */
-
-					final InstrumentCategory savedCategory = categoryRepo.save(category);
-
-					if (saveAuditTrial) {
-//	     				final String xmlData = convertCategoryToXML(categoryBeforeSave, savedCategory);
-
-//	     				final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
-//	     				cfrTransService.saveCfrTransaction(page, actionType, "Edit", comments, 
-//	     						page.getModule().getSite(), xmlData, category.getCreatedby(), request.getRemoteAddr());
-//	     				
-					}
-
-					return new ResponseEntity<>(savedCategory, HttpStatus.OK);
-				} else {
-					// Conflict =409 - Duplicate entry
-					return new ResponseEntity<>("Duplicate Entry - " + category.getInstcatname(), HttpStatus.CONFLICT);
-				}
-			} else {
+//			if (categoryByName.isPresent()) {
+//
+//				if (categoryByName.get().getInstcatkey().equals(category.getInstcatkey())) {
+//
+//					final InstrumentCategory savedCategory = categoryRepo.save(category);
+//
+//					return new ResponseEntity<>(savedCategory, HttpStatus.OK);
+//				} else {
+//					// Conflict =409 - Duplicate entry
+//					return new ResponseEntity<>("Duplicate Entry - " + category.getInstcatname(), HttpStatus.CONFLICT);
+//				}
+//			} else {
+			
+				
 				// Updating record with new category name
 				// HttpStatus.OK-200
-//	     		final InstrumentCategory categoryByKey = categoryRepo.findOne(category.getInstcatkey());
-
-				// copy of roleByKey object for using 'Diffable' to compare objects
-//	     		final InstrumentCategory categoryBeforeSave = new InstrumentCategory(categoryByKey); 
 
 				final InstrumentCategory savedCategory = categoryRepo.save(category);
 
-				if (saveAuditTrial) {
-//	     			final String xmlData = convertCategoryToXML(categoryBeforeSave, savedCategory);
-
-//	 				final String actionType = EnumerationInfo.CFRActionType.USER.getActionType();
-//	 				cfrTransService.saveCfrTransaction(page, actionType, "Edit", comments, 
-//	 						page.getModule().getSite(), xmlData, category.getCreatedby(), request.getRemoteAddr());
-				}
-
 				return new ResponseEntity<>(savedCategory, HttpStatus.OK);
-			}
+			//}
 		}
 
 	}
@@ -280,7 +250,8 @@ public class InstCategoryService {
 				// Category Cannot be deleted!", HttpStatus.LOCKED);//status code - 423
 
 				// Default Category cannot be d
-				return new ResponseEntity<>(categoryObj.getInstcatname(), HttpStatus.LOCKED);// status code - 423
+				categoryObj.setInfo("Default Cannot Be Deleted");
+				return new ResponseEntity<>(categoryObj, HttpStatus.LOCKED);// status code - 423
 
 			} else {
 				List<InstrumentMaster> instMasterList = instMasterRepo.findByInstcategoryAndSiteAndStatus(categoryObj,

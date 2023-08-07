@@ -36,7 +36,7 @@ public class MaterialController {
 	@RequestMapping(value = "/getMaterialByTypeCode", method = RequestMethod.POST)
 	public ResponseEntity<Object> getMaterialByTypeCode(@RequestBody Map<String, Object> inputMap) throws Exception {
 
-		return objMaterialService.getMaterialInitial(inputMap);
+		return objMaterialService.getMaterialByTypeCode(inputMap);
 	}
 	
 	@RequestMapping(value = "/getMaterialByTypeCodeByDate", method = RequestMethod.POST)
@@ -94,9 +94,19 @@ public class MaterialController {
 			throws IOException {
 		return objMaterialService.CloudUploadattachments(file, nmaterialcatcode, filename, fileexe, usercode, currentdate,isMultitenant);
 	}
+	
 	@RequestMapping(value = "/getAttachments", method = RequestMethod.POST)
 	public Map<String, Object> getAttachments(@RequestBody Map<String, Object> inputMap) throws Exception {
 
 		return objMaterialService.getAttachments(inputMap);
+	}
+	
+	@PostMapping("/cloudUploadFilesWithTags")
+	public Material cloudUploadFilesWithTags(@RequestParam("file") MultipartFile file,
+			@RequestParam("order") Integer nmaterialcatcode, @RequestParam("filename") String filename,
+			@RequestParam("fileexe") String fileexe, @RequestParam("usercode") Integer usercode,
+			@RequestParam("date") Date currentdate,@RequestParam("isMultitenant") Integer isMultitenant)
+			throws IOException {
+		return objMaterialService.cloudUploadFilesWithTags(file, nmaterialcatcode, filename, fileexe, usercode, currentdate,isMultitenant);
 	}
 }

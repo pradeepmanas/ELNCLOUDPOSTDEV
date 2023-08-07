@@ -27,12 +27,11 @@ public interface LSsamplemasterRepository extends JpaRepository<LSsamplemaster, 
 	public LSsamplemaster findBySamplenameIgnoreCaseAndStatusAndLssitemaster(String samplename, Integer status,
 			LSSiteMaster lssitemaster);
 	public List<Samplemaster> findBystatusAndLssitemasterOrderBySamplecodeDesc(int i, LSSiteMaster lssitemaster);
-//	public List<LSsamplemaster> findByLssitemasterAndStatus(LSSiteMaster lssitemaster, int i);
+	public List<LSsamplemaster> findByLssitemasterAndStatus(LSSiteMaster lssitemaster, int i);
 	public List<Samplemaster> findByLssitemasterOrderBySamplecodeDesc(LSSiteMaster lssitemaster);
 	public List<Samplemaster> findBySamplenameIgnoreCaseAndLssitemaster(String trim, LSSiteMaster lssitemaster);
 	public List<Samplemaster> findBySamplenameIgnoreCaseAndSamplecodeNotAndLssitemaster(String trim, Integer samplecode,
-			LSSiteMaster lssitemaster);
-	
+			LSSiteMaster lssitemaster);	
 	@Transactional
 	@Modifying
 	 @Query(value = "SELECT DISTINCT m.samplecode  " +
@@ -41,5 +40,5 @@ public interface LSsamplemasterRepository extends JpaRepository<LSsamplemaster, 
              "WHERE m.lssitemaster_sitecode = ?1 " +
              "AND m.status = ?2", nativeQuery = true)
 List<Integer> getDistinctByLssitemasterSitecodeAndStatus(int siteCode, int status);
-
+	
 }

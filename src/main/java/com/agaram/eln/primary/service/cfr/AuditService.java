@@ -312,6 +312,7 @@ public class AuditService {
 		return maprAuditConfig;
 	}
 
+	
 	public Map<String, Object> GetAuditconfig(Map<String, Object> argObj) {
 		Map<String, Object> obj = new HashMap<>();
 		
@@ -337,6 +338,7 @@ public class AuditService {
  		return obj;
 
 	}
+	
 	public List<LSaudittrailconfiguration> SaveAuditconfigUser(LSaudittrailconfiguration[] lsAuditary) {
 		List<LSaudittrailconfiguration> lsAudit = Arrays.asList(lsAuditary);
 		LSaudittrailconfigurationRepository.save(lsAudit);

@@ -2,7 +2,6 @@ package com.agaram.eln.primary.fetchmodel.getmasters;
 
 import java.util.Date;
 
-import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public class Testmaster {
@@ -14,9 +13,8 @@ public class Testmaster {
 	private String description;
 	private Integer status;
 	private String teststatus;
-	private LSSiteMaster lssitemaster;
 	
-	public Testmaster(LSSiteMaster lssitemaster,Integer testcode, String testname,String taskcategory,Date createdate,LSuserMaster createby, String description, Integer status, String teststatus)
+	public Testmaster(Integer testcode, String testname,String taskcategory,Date createdate,LSuserMaster createby, String description, Integer status, String teststatus)
 	{
 		this.testcode = testcode;
 		this.testname = testname;
@@ -26,7 +24,6 @@ public class Testmaster {
 		this.description=description;
 		this.status = status;
 		this.teststatus = teststatus;
-		this.lssitemaster=lssitemaster;
 	}
 	
 	public String getTeststatus() {
@@ -38,14 +35,6 @@ public class Testmaster {
 		{
 			return "";
 		}
-	}
-
-	public LSSiteMaster getLssitemaster() {
-		return lssitemaster;
-	}
-
-	public void setLssitemaster(LSSiteMaster lssitemaster) {
-		this.lssitemaster = lssitemaster;
 	}
 
 	public void setTeststatus(String teststatus) {

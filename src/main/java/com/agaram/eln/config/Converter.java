@@ -226,7 +226,19 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
                 "/Instrument/uploadsheetimagesSql",
                 "/Instrument/uploadsheetimages",
                 "/Instrument/downloadsheetimages",
-                "/Instrument/downloadsheetimagessql"
+                "/Instrument/downloadsheetimagessql",
+                "/evaluateParser",
+        		"/findByStatus",
+        		"/getMethod",
+        		"/getParserData",
+        		"/getMethodDelimiter",
+        		"/getParserMethod",
+        		"/getDelimiters",
+        		"/getSubParserMethod",
+        		"/getParserFieldTechniqueListByMethodKey",
+        		"/getmethodversion",
+        		"/getParserMethod"
+              
             );
         byte[] compressedBytes = new byte[0];
         if (uncompressedUrls.contains(requestUrl)) {
@@ -322,7 +334,6 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 		return new ByteArrayInputStream(bytes);
 	}
 
-	@SuppressWarnings("unused")
 	private byte[] encrypt(byte[] bytesToEncrypt) {
 //        String apiJsonResponse = new String(bytesToEncrypt);
 //

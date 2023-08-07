@@ -25,5 +25,6 @@ public interface LSsamplefileRepository extends JpaRepository<LSsamplefile, Inte
 	 @Modifying
 	 @Query("update LSsamplefile o set o.batchcode = ?1 where o.filesamplecode = ?2")
 	 void setbatchcodeOnsamplefile(Long batchcode, Integer filesamplecode);
+	public List<Integer> getFilesamplecodeByBatchcodeIn(Long batchcode);
 	
 }

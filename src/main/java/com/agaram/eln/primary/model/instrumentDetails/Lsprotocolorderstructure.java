@@ -43,6 +43,17 @@ public class Lsprotocolorderstructure {
 	private boolean edit;
 	private Integer length;
 	private Long parentdircode;
+	
+	
+	private Long floatvalues;
+
+	public Long getFloatvalues() {
+		return floatvalues;
+	}
+
+	public void setFloatvalues(Long floatvalues) {
+		this.floatvalues = floatvalues;
+	}
 
 	@ManyToOne
 	public LSuserMaster createdby;
@@ -67,17 +78,6 @@ public class Lsprotocolorderstructure {
 	
 	@Transient
 	private String teamname;
-	
-	
-	private Long floatvalues;
-
-	public Long getFloatvalues() {
-		return floatvalues;
-	}
-
-	public void setFloatvalues(Long floatvalues) {
-		this.floatvalues = floatvalues;
-	}
 	
 	public String getTeamname() {
 		return teamname;

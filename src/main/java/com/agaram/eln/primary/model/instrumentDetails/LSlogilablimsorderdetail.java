@@ -37,7 +37,6 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
-import com.agaram.eln.primary.model.protocols.LSprotocolorderstephistory;
 import com.agaram.eln.primary.model.usermanagement.LScentralisedUsers;
 
 @Entity(name = "LSlogilablimsorderdetail")
@@ -154,27 +153,6 @@ public class LSlogilablimsorderdetail {
 	@ManyToOne
 	private LSworkflow lsworkflow;
 
-	@Transient
-	List<LSprotocolorderstephistory> lSprotocolorderstephistory;
-	
-	private Integer activeuser;
-
-	public Integer getActiveuser() {
-		return activeuser;
-	}
-
-	public void setActiveuser(Integer activeuser) {
-		this.activeuser = activeuser;
-	}
-
-	public List<LSprotocolorderstephistory> getlSprotocolorderstephistory() {
-		return lSprotocolorderstephistory;
-	}
-
-	public void setlSprotocolorderstephistory(List<LSprotocolorderstephistory> lSprotocolorderstephistory) {
-		this.lSprotocolorderstephistory = lSprotocolorderstephistory;
-	}
-	
 	@ManyToOne
 	private LSfile lsfile;
 
@@ -279,6 +257,16 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	private List<Long> lstdirectorycode;
 
+	private Integer activeuser;
+
+	public Integer getActiveuser() {
+		return activeuser;
+	}
+
+	public void setActiveuser(Integer activeuser) {
+		this.activeuser = activeuser;
+	}
+	
 	public List<Long> getLstdirectorycode() {
 		return lstdirectorycode;
 	}

@@ -96,8 +96,6 @@ public class MaterialInventoryService {
 	private CloudFileManipulationservice cloudFileManipulationservice;
 	@Autowired
 	private FileManipulationservice fileManipulationservice;
-//	@Autowired
-//	private TransactionService transactionService;
 
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInventory(Integer nsiteInteger) throws Exception {
@@ -122,7 +120,7 @@ public class MaterialInventoryService {
 
 			List<Map<String, Object>> lstMatObject = new ArrayList<Map<String, Object>>();
 			List<Material> lstMaterial = materialRepository
-					.findByNmaterialcatcodeAndNstatusOrderByNmaterialcode(lstMaterialCategory.get(0).getNmaterialcatcode(),1);
+					.findByNmaterialcatcode(lstMaterialCategory.get(0).getNmaterialcatcode());
 
 			lstMaterial.stream().peek(f -> {
 
@@ -193,7 +191,7 @@ public class MaterialInventoryService {
 
 		if (!lstMaterialCategory.isEmpty()) {
 
-			List<Material> lstMaterial = materialRepository.findByNmaterialcatcodeAndNmaterialtypecodeAndNstatusOrderByNmaterialcode(
+			List<Material> lstMaterial = materialRepository.findByNmaterialcatcodeAndNmaterialtypecodeAndNstatus(
 					lstMaterialCategory.get(0).getNmaterialcatcode(), nmaterialtypecode, 1);
 
 			lstMaterial.stream().peek(f -> {
@@ -285,9 +283,13 @@ public class MaterialInventoryService {
 
 					objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
 							(int) lstMaterialInventory.get(0).get("nmaterialinventorycode"), inputMap).getBody());
+//					objmap.putAll((Map<String, Object>) getMaterialFile((int) lstMaterialInventory
+//							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")));
 					objmap.putAll((Map<String, Object>) getResultUsedMaterial(
 							Integer.parseInt(lstMaterialInventory.get(0).get("nmaterialinventorycode").toString()))
 									.getBody());
+//					objmap.putAll((Map<String, Object>) getMaterialInventoryhistory((int) lstMaterialInventory
+//							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")));
 
 				} else {
 
@@ -306,13 +308,18 @@ public class MaterialInventoryService {
 
 					objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
 							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode"), inputMap).getBody());
+
 					objmap.putAll((Map<String, Object>) getResultUsedMaterial(objInventory.getNmaterialinventorycode())
 							.getBody());
+//					objmap.putAll((Map<String, Object>) getMaterialFile(
+//							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode")));
+//					objmap.putAll((Map<String, Object>) getMaterialInventoryhistory(
+//							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode")));
 
 				}
 			} else {
 				objmap.put("SelectedMaterialInventory", lstMaterialInventory);
-			}			
+			}
 		}
 
 		List<MaterialType> lstMaterialType = materialTypeRepository
@@ -505,6 +512,34 @@ public class MaterialInventoryService {
 		rtnObj.put("jsondata", objContent);
 
 		return rtnObj;
+	}
+	
+	private Date calcluateDate(String type,Date date, String value1) {
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+
+		Integer value = Integer.valueOf(value1);
+		
+		if(type.equalsIgnoreCase("Days")) {
+			calendar.add(Calendar.DAY_OF_YEAR, value);
+		}
+		if(type.equalsIgnoreCase("Month")) {
+			calendar.add(Calendar.MONTH, value);
+		}
+		if(type.equalsIgnoreCase("Weeks")) {
+			calendar.add(Calendar.WEEK_OF_YEAR, value);
+		}
+		if(type.equalsIgnoreCase("Years")) {
+			calendar.add(Calendar.YEAR, value);
+		}	
+		if(type.equalsIgnoreCase("Hours")) {
+			calendar.add(Calendar.HOUR_OF_DAY, value);	
+		}
+		if(type.equalsIgnoreCase("Minutes")) {
+			calendar.add(Calendar.MINUTE, value);	
+		}
+		return calendar.getTime();
 	}
 
 	@SuppressWarnings({ "unused", "unchecked" })
@@ -752,11 +787,7 @@ public class MaterialInventoryService {
 					objSaveMaterialInventory.setNmaterialcode((Integer) inputMap.get("nmaterialcode"));
 					objSaveMaterialInventory.setNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
 					objSaveMaterialInventory.setNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
-					if(objUser.getLssitemaster() == null) {						
-						objSaveMaterialInventory.setNsitecode(cft.getLssitemaster());						
-					}else {
-						objSaveMaterialInventory.setNsitecode(objUser.getLssitemaster().getSitecode());	
-					}
+					objSaveMaterialInventory.setNsitecode(objUser.getLssitemaster().getSitecode());
 
 					objSaveMaterialInventory.setObjsilentaudit(cft);
 					objSaveMaterialInventory = materialInventoryRepository.save(objSaveMaterialInventory);
@@ -839,11 +870,7 @@ public class MaterialInventoryService {
 			objSaveMaterialInventory.setExpirydate(isExpiry ? expiryDate : null);
 			objSaveMaterialInventory.setValidationneed(isNextVal);
 			objSaveMaterialInventory.setValidationdate(getNextValDate);
-			if(objUser.getLssitemaster() == null) {						
-				objSaveMaterialInventory.setNsitecode(cft.getLssitemaster());						
-			}else {
-				objSaveMaterialInventory.setNsitecode(objUser.getLssitemaster().getSitecode());	
-			}
+			objSaveMaterialInventory.setNsitecode(objUser.getLssitemaster().getSitecode());
 			objSaveMaterialInventory = materialInventoryRepository.save(objSaveMaterialInventory);
 
 			if (strPrefix != null && !strPrefix.equals("")) {
@@ -935,34 +962,6 @@ public class MaterialInventoryService {
 
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 
-	}
-
-	private Date calcluateDate(String type,Date date, String value1) {
-		
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-
-		Integer value = Integer.valueOf(value1);
-		
-		if(type.equalsIgnoreCase("Days")) {
-			calendar.add(Calendar.DAY_OF_YEAR, value);
-		}
-		if(type.equalsIgnoreCase("Month")) {
-			calendar.add(Calendar.MONTH, value);
-		}
-		if(type.equalsIgnoreCase("Weeks")) {
-			calendar.add(Calendar.WEEK_OF_YEAR, value);
-		}
-		if(type.equalsIgnoreCase("Years")) {
-			calendar.add(Calendar.YEAR, value);
-		}	
-		if(type.equalsIgnoreCase("Hours")) {
-			calendar.add(Calendar.HOUR_OF_DAY, value);	
-		}
-		if(type.equalsIgnoreCase("Minutes")) {
-			calendar.add(Calendar.MINUTE, value);	
-		}
-		return calendar.getTime();
 	}
 
 	@SuppressWarnings({ "unchecked", "unused" })
@@ -1724,7 +1723,7 @@ public class MaterialInventoryService {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "unchecked" })
 	public ResponseEntity<Object> updateMaterialStatus(Map<String, Object> inputMap) throws Exception {
 
 		ObjectMapper objmapper = new ObjectMapper();
@@ -1736,8 +1735,6 @@ public class MaterialInventoryService {
 		List<String> lstDateField = new ArrayList<>();
 		MaterialInventory objMaterialInventory = materialInventoryRepository
 				.findByNmaterialinventorycodeAndNstatus((Integer) inputMap.get("nmaterialinventorycode"), 1);
-		
-		Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,objMaterialInventory.getNmaterialcode());
 
 		final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		if (objMaterialInventory != null) {
@@ -1853,34 +1850,14 @@ public class MaterialInventoryService {
 							jsonuidata.put("tzOpen Date", inputMap.get("tzOpen Date"));
 
 							lstDateField.add("Open Date");
+//							jsonObject = (JSONObject) convertInputDateToUTCByZone(jsonObject, lstDateField, false);
+//							jsonuidata = (JSONObject) convertInputDateToUTCByZone(jsonuidata, lstDateField, false);
 							jsonObject = getmaterialquery(jsonObject, 2);
 							jsonuidata = getmaterialquery(jsonuidata, 2);
 						}
 
 						objMaterialInventory.setJsondata(jsonObject.toString());
 						objMaterialInventory.setJsonuidata(jsonuidata.toString());
-						
-						/**
-						 * Added for after done open expiry set exiry time
-						 * Start
-						 */
-						Boolean isExpiry = false; 
-						Date getExpPolicyDate = null;
-						if(objMaterial.isExpirypolicy()) {
-							Date openDate = (Date) inputMap.get("Open Date");
-							Date getmanufDate = openDate;
-							if(objMaterial.getOpenexpiryperiod().equalsIgnoreCase("NA") ||objMaterial.getOpenexpiryperiod().equalsIgnoreCase("Never")) {
-								isExpiry = false;
-							}else {
-								isExpiry = true;
-								getExpPolicyDate = calcluateDate(objMaterial.getOpenexpiryperiod(),getmanufDate,objMaterial.getOpenexpiryvalue());
-								objMaterialInventory.setExpirydate(getExpPolicyDate);
-							}
-							objMaterialInventory.setIsexpiryneed(isExpiry);
-						}
-						/**
-						 * End
-						 */
 
 						materialInventoryRepository.save(objMaterialInventory);
 

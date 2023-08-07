@@ -60,8 +60,7 @@ public class MaterialGradeService {
 
 			if (grade1 == null || (grade1.getNmaterialgradecode().equals(objGrade.getNmaterialgradecode()))) {
 
-				objGrade.setNsitecode(grade.getNsitecode());
-//				grade.setObjsilentaudit(objGrade.getObjsilentaudit());
+				grade.setObjsilentaudit(objGrade.getObjsilentaudit());
 				materialGradeRepository.save(objGrade);
 				objGrade.getResponse().setStatus(true);
 				objGrade.getResponse().setInformation("IDS_SUCCESS");
@@ -77,14 +76,13 @@ public class MaterialGradeService {
 
 	public ResponseEntity<Object> deleteGrade(MaterialGrade objGrade) {
 		final MaterialGrade grade = getActiveGradeById(objGrade.getNmaterialgradecode());
-//		final MaterialGrade gradeObj = materialGradeRepository.findByNmaterialgradecode(objGrade.getNmaterialgradecode());
+		final MaterialGrade gradeObj = materialGradeRepository.findByNmaterialgradecode(objGrade.getNmaterialgradecode());
 		if (grade == null) {
 			return new ResponseEntity<>(Enumeration.ReturnStatus.ALREADYDELETED.getreturnstatus(), HttpStatus.EXPECTATION_FAILED);
 		} else {
-//			grade.setNsitecode(grade.getNsitecode());
-			grade.setObjsilentaudit(objGrade.getObjsilentaudit());
-			grade.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
-			materialGradeRepository.save(grade);
+			gradeObj.setObjsilentaudit(objGrade.getObjsilentaudit());
+			gradeObj.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
+			materialGradeRepository.save(gradeObj);
 			return getGrade(objGrade.getNsitecode());
 		}
 	}

@@ -2,7 +2,11 @@ package com.agaram.eln.primary.service.methodsetup;
 
 
 import java.io.BufferedReader;
+
+
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -10,9 +14,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,7 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,6 +44,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.util.Matrix;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -46,7 +57,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.exception.FileStorageException;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
@@ -63,18 +74,43 @@ import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserTechnique;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.property.FileStorageProperties;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.methodsetup.CloudParserFileRepository;
 import com.agaram.eln.primary.repository.methodsetup.CustomFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodVersionRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
+import com.agaram.eln.primary.service.fileuploaddownload.FileStorageService;
+import com.aspose.pdf.Document;
+import com.aspose.pdf.ExcelSaveOptions;
+import com.aspose.pdf.License;
+import com.aspose.pdf.TextAbsorber;
+import com.aspose.pdf.TextExtractionOptions;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itextpdf.text.pdf.PdfReader;
+//import com.itextpdf.text.pdf.eln.PdfTextExtractor;
 import com.mongodb.gridfs.GridFSDBFile;
 
+//import okhttp3.OkHttpClient;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
+import org.springframework.util.StringUtils;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+//import okhttp3.*;
+
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * This Service class is used to access the MethodRepository to fetch details
@@ -90,6 +126,11 @@ public class MethodService {
 
 	@Autowired
 	MethodRepository methodRepo;
+	
+	
+
+	@Autowired
+	LSSiteMasterRepository siteRepo;
 	
 	@Autowired
 	LSuserMasterRepository userRepo;
@@ -142,7 +183,25 @@ public class MethodService {
 		
 	@Autowired
 	MethodVersionRepository methodversionrepository;
+
+	@Autowired
+	private Environment env;
+
+	private Path fileStorageLocation;
+
     
+    @Autowired
+    public MethodService(FileStorageProperties fileStorageProperties) {
+        this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
+                .toAbsolutePath().normalize();
+
+        try {
+            Files.createDirectories(this.fileStorageLocation);
+        } catch (Exception ex) {
+            throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
+        }
+    }
+   
 	/**
 	 * This method is used to retrieve list of active methods in the site.
 	 * @param site [Site] object for which the methods are to be fetched
@@ -155,6 +214,12 @@ public class MethodService {
 		final List<Method> methodList =  methodRepo.findBySite(site,
 				new Sort(Sort.Direction.DESC, "methodkey"));
 		return new ResponseEntity<>(methodList, HttpStatus.OK);
+	}
+	
+	@Transactional
+	public ResponseEntity<Object> findByStatus(Integer status){
+		final List<LSSiteMaster> siteList =  siteRepo.findByIstatus(status);
+		return new ResponseEntity<>(siteList, HttpStatus.OK);
 	}
 	
 	@Transactional
@@ -178,12 +243,6 @@ public class MethodService {
 	@Transactional
 	public ResponseEntity<Object> createMethod(final Method methodMaster, final LSSiteMaster site, final HttpServletRequest request,Method auditdetails)
 	{			
-		try {
-			methodMaster.setCreateddate(commonfunction.getCurrentUtcTime());
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		boolean saveAuditTrail=true;
 		final InstrumentMaster instMaster = instMastRepo.findOne(methodMaster.getInstmaster().getInstmastkey());
 		final LSuserMaster createdUser = getCreatedUserByKey(methodMaster.getCreatedby().getUsercode());
@@ -195,34 +254,11 @@ public class MethodService {
 			{
 				//Conflict =409 - Duplicate entry
 				if (saveAuditTrail == true)
-				{						
-//					final String comments = "Create Failed for duplicate method name -"+ methodMaster.getMethodname()
-//					+ " for the instrument - " + instMaster.getInstrumentcode();
-					
-//					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-//							"Create", comments, site, "",
-//							createdUser, request.getRemoteAddr());
-					
-//					LScfttransaction LScfttransaction = new LScfttransaction();
-//					
-//					LScfttransaction.setActions("Insert");
-//					LScfttransaction.setComments("Duplicate Entry  -"+methodMaster.getMethodname());
-//					LScfttransaction.setLssitemaster(site.getSitecode());
-//					LScfttransaction.setLsuserMaster(methodMaster.getCreatedby().getUsercode());
-//					LScfttransaction.setManipulatetype("View/Load");
-//					LScfttransaction.setModuleName("Method Master");
-//					LScfttransaction.setTransactiondate(methodMaster.getCreateddate());
-//					LScfttransaction.setUsername(methodMaster.getUsername());
-//					LScfttransaction.setTableName("Method");
-//					LScfttransaction.setSystemcoments("System Generated");
-//					
-//					lscfttransactionrepo.save(LScfttransaction);
+				{	
 				}
 				methodMaster.setInfo("Duplicate Entry - " + methodMaster.getMethodname() + " for inst : " + instMaster.getInstrumentcode());
 				methodMaster.setObjsilentaudit(auditdetails.getObjsilentaudit());
 
-//	  			return new ResponseEntity<>("Duplicate Entry - " + methodMaster.getMethodname() + " - " + instMaster.getInstrumentcode(), 
-//	  					 HttpStatus.CONFLICT);
 				return new ResponseEntity<>(methodMaster, HttpStatus.CONFLICT);
 			}
 			else
@@ -230,15 +266,12 @@ public class MethodService {
 				methodMaster.setCreatedby(createdUser);
 				methodMaster.setInstmaster(instMaster);					
 				final Method savedMethod = methodRepo.save(methodMaster);
-				
-//				List<MethodVersion> MethodVersion = 
+				 
 				methodversionrepository.save(methodMaster.getMethodversion());
 				
 				savedMethod.setDisplayvalue(savedMethod.getMethodname());
 				savedMethod.setScreenname("Methodmaster");
 				savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());
-//				if (saveAuditTrail == true)
-//				{
 					final Map<String, String> fieldMap = new HashMap<String, String>();
 					fieldMap.put("site", "sitename");				
 					fieldMap.put("createdby", "loginid");				
@@ -269,12 +302,6 @@ public class MethodService {
 					LScfttransaction.setTableName("Method");
 					LScfttransaction.setSystemcoments("System Generated");
 					
-					try {
-						LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					lscfttransactionrepo.save(LScfttransaction);
 			}
   			return new ResponseEntity<>("Invalid Instrument", HttpStatus.NOT_FOUND);
@@ -295,118 +322,11 @@ public class MethodService {
 	 * @return Response of updated method master entity
 	 */
 	@Transactional
-//	public ResponseEntity<Object> updateMethod(final Method method, final LSSiteMaster site, final int doneByUserKey, 
-//			   final String comments, final boolean saveAuditTrail, final HttpServletRequest request)
-//	{	  		
-//		final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);		
-//		final InstrumentMaster instMaster = instMastRepo.findOne(method.getInstmaster().getInstmastkey());
-//		
-//		 final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(method.getMethodkey(), 1);
-//		 
-//		 if(methodByKey.isPresent()) {		   
-//
-//		
-//		if (instMaster != null) 
-//		{
-//
-//			final Optional<Method> methodByName = methodRepo.findByMethodnameAndInstmasterAndStatus(
-//					method.getMethodname(), instMaster, 1);
-//			
-//		
-//			if (methodByName.isPresent())
-//              {
-//				 
-//				if(methodByName.get().getMethodkey().equals(method.getMethodkey()))
-//		    	{   
-//				//copy of object for using 'Diffable' to compare objects
-//	    			final Method methodBeforeSave = new Method(methodByName.get());
-//	    			
-//					method.setInstmaster(instMaster);		    			
-//		    		final Method savedMethod = methodRepo.save(method);
-//		    		
-//		    		if (saveAuditTrail)
-//	    			{
-//		    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
-//		    			
-////		    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
-////								"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
-//	    			}
-//		    		
-//		    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);	
-//		    	}
-//				else {
-//					//Conflict =409 - Duplicate entry
-//	    			if (saveAuditTrail == true)
-//	    			{						
-//	    				final String sysComments = "Update Failed for duplicate method name - "+ method.getMethodname();
-//	    				
-////	    				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-////	    						"Create", sysComments, site, "",createdUser, request.getRemoteAddr());
-//	    			}
-//	    			
-//	    			return new ResponseEntity<>("Duplicate Entry - " + method.getMethodname() + " - " + instMaster.getInstrumentcode(), 
-//		  					 HttpStatus.CONFLICT);      		
-//				}
-//		   }
-//			
-//			
-//			else
-//	    	{			    		
-//	    		//copy of object for using 'Diffable' to compare objects
-//    			final Method methodBeforeSave = new Method(methodByKey.get());
-//    			
-//	    		//Updating fields with a new delimiter name
-//    			
-//	    		final Method savedMethod = methodRepo.save(method);
-//	    		
-//	    		if (saveAuditTrail)
-//    			{
-//	    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
-//	    			
-////	    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
-////							"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
-//    			}
-//	    		
-//	    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
-//	    	}	
-//			   }
-//			
-//			
-//			
-//		   else
-//		   {
-//			   //Invalid methodkey		   
-//			   if (saveAuditTrail) {				
-////					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-////							"Edit", "Update Failed - Method Not Found", site, "", createdUser, request.getRemoteAddr());
-//	   		    }			
-//				return new ResponseEntity<>("Update Failed - Method Not Found", HttpStatus.NOT_FOUND);
-//		   }
-//		}
-//		else {
-//			//Instrument not found
-//			if (saveAuditTrail == true)
-//			{		
-////				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-////						"Edit", "Update Failed", site, "",
-////						createdUser, request.getRemoteAddr());
-//
-//			}
-//  			return new ResponseEntity<>("Invalid Instrument", HttpStatus.NOT_FOUND);
-//		}
-//   }	
 	
 	public ResponseEntity<Object> updateMethod(final Method method, final LSSiteMaster site, final int doneByUserKey, 
 			    final HttpServletRequest request,Method auditdetails)
 	{	  		
-		try {
-			method.setCreateddate(commonfunction.getCurrentUtcTime());
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		boolean saveAuditTrail=true;
-//		final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);		
+		boolean saveAuditTrail=true;	
 		final InstrumentMaster instMaster = instMastRepo.findOne(method.getInstmaster().getInstmastkey());
 		
 		 final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatusAndSite(method.getMethodkey(), 1,site);
@@ -434,62 +354,12 @@ public class MethodService {
 		    		
 		    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
 		    		savedMethod.setScreenname("Methodmaster");
-		    		savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());
-//		    		if (saveAuditTrail)
-//	    			{
-//		    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
-//		    			
-////		    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
-////								"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
-//		    			
-//		    			 LScfttransaction LScfttransaction = new LScfttransaction();
-//							
-//							LScfttransaction.setActions("Update");
-//							LScfttransaction.setComments(method.getMethodname()+" was updated by "+method.getUsername());
-//							LScfttransaction.setLssitemaster(site.getSitecode());
-//							LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
-//							LScfttransaction.setManipulatetype("View/Load");
-//							LScfttransaction.setModuleName("Method Master");
-//							LScfttransaction.setTransactiondate(method.getCreateddate());
-//							LScfttransaction.setUsername(method.getUsername());
-//							LScfttransaction.setTableName("Method");
-//							LScfttransaction.setSystemcoments("System Generated");
-//							
-//							lscfttransactionrepo.save(LScfttransaction);
-//	    			}
-		    		
+		    		savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());	
 		    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);	
 		    	}
 				else {
-					//Conflict =409 - Duplicate entry
-//	    			if (saveAuditTrail == true)
-//	    			{						
-	    				//final String sysComments = "Update Failed for duplicate method name - "+ method.getMethodname();
-	    				
-//	    				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-//	    						"Create", sysComments, site, "",createdUser, request.getRemoteAddr());
-	    				
-//	    				 LScfttransaction LScfttransaction = new LScfttransaction();
-//	 					
-//	 					LScfttransaction.setActions("Update");
-//	 					LScfttransaction.setComments(" Duplicate Entry method name - "+ method.getMethodname());
-//	 					LScfttransaction.setLssitemaster(site.getSitecode());
-//	 					LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
-//	 					LScfttransaction.setManipulatetype("View/Load");
-//	 					LScfttransaction.setModuleName("Method Master");
-//	 					LScfttransaction.setTransactiondate(method.getCreateddate());
-//	 					LScfttransaction.setUsername(method.getUsername());
-//	 					LScfttransaction.setTableName("Method");
-//	 					LScfttransaction.setSystemcoments("System Generated");
-//	 					
-//	 					lscfttransactionrepo.save(LScfttransaction);
-	 					
-	    		//	}
-	    			
 					method.setInfo("Duplicate Entry - " + method.getMethodname() + " for inst " + instMaster.getInstrumentcode());
 					method.setObjsilentaudit(auditdetails.getObjsilentaudit());
-//	    			return new ResponseEntity<>("Duplicate Entry - " + method.getMethodname() + " - " + instMaster.getInstrumentcode(), 
-//		  					 HttpStatus.CONFLICT);   
 	    			return new ResponseEntity<>(method, HttpStatus.CONFLICT);   
 				}
 		   }
@@ -497,43 +367,14 @@ public class MethodService {
 			
 			else
 	    	{			    		
-	    		//copy of object for using 'Diffable' to compare objects
-//			final Method methodBeforeSave = new Method(methodByKey.get());
-			
-	    		//Updating fields with a new delimiter name
-			
+	    	
 	    		final Method savedMethod = methodRepo.save(method);
 	    		
 	    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
 	    		savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());
 
 				savedMethod.setScreenname("Methodmaster");
-				
-	    		
-//	    		if (saveAuditTrail)
-//			{
-//	    			final String xmlData = convertMethodObjectToXML(methodBeforeSave, savedMethod);
-//	    			
-////	    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(),
-////							"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());
-//	    			
-//	    			 LScfttransaction LScfttransaction = new LScfttransaction();
-//	 					
-//	 					LScfttransaction.setActions("Update");
-//	 					LScfttransaction.setComments(method.getMethodname()+" was updated by "+method.getUsername());
-//	 					LScfttransaction.setLssitemaster(site.getSitecode());
-//	 					LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
-//	 					LScfttransaction.setManipulatetype("View/Load");
-//	 					LScfttransaction.setModuleName("Method Master");
-//	 					LScfttransaction.setTransactiondate(method.getCreateddate());
-//	 					LScfttransaction.setUsername(method.getUsername());
-//	 					LScfttransaction.setTableName("Method");
-//	 					LScfttransaction.setSystemcoments("System Generated");
-//	 					
-//	 					lscfttransactionrepo.save(LScfttransaction);
-//			}
-
-	    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
+					    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
 	    	}	
 			   }
 			
@@ -558,12 +399,6 @@ public class MethodService {
 					LScfttransaction.setTableName("Method");
 					LScfttransaction.setSystemcoments("System Generated");
 					
-					try {
-						LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					lscfttransactionrepo.save(LScfttransaction);
 	   		    }			
 				return new ResponseEntity<>("Update Failed - Method Not Found", HttpStatus.NOT_FOUND);
@@ -573,9 +408,6 @@ public class MethodService {
 			//Instrument not found
 			if (saveAuditTrail == true)
 			{		
-//				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-//						"Edit", "Update Failed", site, "",
-//						createdUser, request.getRemoteAddr());
 				 LScfttransaction LScfttransaction = new LScfttransaction();
 					
 					LScfttransaction.setActions("Update");
@@ -588,12 +420,7 @@ public class MethodService {
 					LScfttransaction.setUsername(method.getUsername());
 					LScfttransaction.setTableName("Method");
 					LScfttransaction.setSystemcoments("System Generated");
-					try {
-						LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					
 					lscfttransactionrepo.save(LScfttransaction);
 
 			}
@@ -629,41 +456,16 @@ public class MethodService {
 			   if ((method.getSamplesplit() != null && method.getSamplesplit() == 1)
 					   || (method.getParser() != null && method.getParser() == 1)) {
 				    if (saveAuditTrial)
-		    		{	
-//					   final String sysComments = "Delete Failed as method - "+ method.getMethodname() + " is associated samlesplit/parser";
-			   			
-//						cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-//								"Delete", sysComments, method.getSite(), "", createdUser, request.getRemoteAddr());
-					   
-//					   LScfttransaction LScfttransaction = new LScfttransaction();
-//						
-//						LScfttransaction.setActions("Delete"); 
-//						LScfttransaction.setComments("Associated - "+ method.getMethodname());
-//						LScfttransaction.setLssitemaster(site.getSitecode());
-//						LScfttransaction.setLsuserMaster(doneByUserKey);
-//						LScfttransaction.setManipulatetype("View/Load");
-//						LScfttransaction.setModuleName("Method Master");
-//						LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
-//						LScfttransaction.setUsername(otherdetails.getUsername());
-//						LScfttransaction.setTableName("Method");
-//						LScfttransaction.setSystemcoments("System Generated");
-//						
-//						lscfttransactionrepo.save(LScfttransaction);
-						
+		    		{		
 		    	    }
 				    method.setInfo("Associated - "+ method.getMethodname());
 				    method.setObjsilentaudit(auditdetails.getObjsilentaudit());
 				    
-				 //   return new ResponseEntity<>(method.getMethodname() , HttpStatus.IM_USED);//status code - 226	
+			
 				    return new ResponseEntity<>(method , HttpStatus.IM_USED);//status code - 226
 			   }
 			   else {
-			
-					   //copy of object for using 'Diffable' to compare objects
-//					   final Method methodBeforeSave = new Method(method); 
-
-		    		   //Its not associated in transaction
-					   method.setStatus(-1);
+								   method.setStatus(-1);
 					   method.setMethodstatus("D");
 					   final Method savedMethod = methodRepo.save(method);   
 					   
@@ -677,10 +479,7 @@ public class MethodService {
 		   {
 			   //Invalid methodkey
 			   if (saveAuditTrial) {				
-//					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-//							"Delete", "Delete Failed - Method Not Found", site, "", 
-//							createdUser, request.getRemoteAddr());
-				   				
+//							
 	  		    }			
 				return new ResponseEntity<>("Delete Failed - Method Not Found", HttpStatus.NOT_FOUND);
 		   }
@@ -726,11 +525,6 @@ public class MethodService {
 	  	final Map<Integer, Map<String, Object>> dataModified = new HashMap<Integer, Map<String, Object>>();
 			final Map<String, Object> diffObject = new HashMap<String, Object>();    			
 			
-//			final DiffResult diffResult = methodBeforeSave.diff(savedMethod);        			
-//			for(Diff<?> d: diffResult.getDiffs()) {	
-//					diffObject.put(d.getFieldName(), d.getKey()+" -> "+d.getValue());
-//			}
-			
 			dataModified.put(savedMethod.getMethodkey(), diffObject);
 			
 			final Map<String, String> fieldMap = new HashMap<String, String>();
@@ -755,207 +549,10 @@ public class MethodService {
  * @throws FileNotFoundException 
  * @throws IOException 
     */
-  
-   
-//   public String getFileData(final String fileName,String tenant) throws FileNotFoundException, IOException
-//   {	   
-//	   //"pdftotext.exe -layout " + "\"C://Users/Ate153/Downloads/RS 1.pdf\""
-//	  
-////		 
-//	   try
-//        {			
-//		   File file = null;
-//		   final String ext = FilenameUtils.getExtension(fileName); 
-//		   String rawDataText="";
-//		   		   		 
-//		   
-//		   CloudParserFile obj = cloudparserfilerepository.findByfilename(fileName);
-//		    String fileid = obj.fileid;
-//			   
-//		//retrieving pdf data from blob	
-//			byte[] data = null;
-//			try {
-//				data = StreamUtils
-//						.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "parserfile"));
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		//	ByteArrayInputStream bis = new ByteArrayInputStream(data);
-//			//converting byte stream to file
-//			
-//			 final String retrivedfile = FilenameUtils.getBaseName(fileName);	
-//			 try (FileOutputStream fileOuputStream  = new FileOutputStream("uploads/"+ retrivedfile )){
-//				 fileOuputStream .write(data);
-//				 }
-//			
-//			 String textfilename = retrivedfile+".txt";
-//		   
-//		   
-//		   if (ext.equalsIgnoreCase("pdf")) {		
-//	
-////			   final String name = FilenameUtils.getBaseName(fileName);				  
-////			   final String filePath = "uploads/"+ name + ".txt";
-//			     
-//			 //  final String name = FilenameUtils.getBaseName(fileName);				  
-//			   final String filePath = "uploads/"+ retrivedfile + ".txt";
-//			   
-//			   file = new File(filePath);
-//			   if (!file.exists()) {
-//
-//				   String parsedText = "";
-//				   PDFParser parser = null;
-//				    PDDocument pdDoc = null;
-//				    COSDocument cosDoc = null;
-//				    PDFTextStripper pdfStripper;
-//
-//				    try {
-//				    //	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(new File("uploads/"+fileName));
-//				    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(new File("uploads/"+retrivedfile));
-//				        parser = new PDFParser(raFile);
-//				        parser.setLenient(true);
-//				        parser.parse();
-//				        cosDoc = parser.getDocument();
-//				        pdfStripper = new PDFTextStripper();
-//				        pdfStripper.setSortByPosition( true );
-//				              			       
-//				        pdDoc = new PDDocument(cosDoc);
-//				    //    pdfStripper.setAddMoreFormatting(true);
-//				        pdfStripper.setWordSeparator("\t");
-//				        pdfStripper.setSuppressDuplicateOverlappingText(true);
-//				        Matrix matrix = new Matrix();
-//				        matrix.clone();
-//				        pdfStripper.setTextLineMatrix(matrix);
-//				   
-//				        parsedText = pdfStripper.getText(pdDoc);
-//				                                                                                                             
-//				                                                                                                                                     
-//				        if (!file.exists()) {
-//				            file.createNewFile();
-//				        }
-//				        
-//				        
-//				        FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-//				        BufferedWriter bw = new BufferedWriter(fw);
-//
-//				        bw.write(parsedText);
-//				        bw.close();
-//				        System.out.println(parsedText.replaceAll("[^A-Za-z0-9. ]+", ""));
-//				            
-//					      //converting text file to multipart file
-//					        
-//					        Path path = Paths.get("uploads/"+retrivedfile+".txt");
-//					        String txtfilename = retrivedfile+".txt";
-//					        String originalFileName = retrivedfile;
-//					        String contentType = "text/plain";
-//					        byte[] content = null;
-//					        try {
-//					            content = Files.readAllBytes(path);
-//					        } catch (final IOException e) {
-//					        }
-//					        MultipartFile convertedmultipartfile = new MockMultipartFile(txtfilename,
-//					                             originalFileName, contentType, content);
-//					        
-//					        //storing file in blob
-//					        
-//					        String textid = null;
-//				    		try {
-//				    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
-//				    		} catch (IOException e) {
-//				    			// TODO Auto-generated catch block
-//				    			e.printStackTrace();
-//				    		}
-//		
-//				    		CloudParserFile objfile = new CloudParserFile();
-//				    		objfile.setFileid(textid);
-//		
-//				    		//objfile.setFile(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
-//				    		objfile.setExtension(".txt");
-//				    		objfile.setFilename(txtfilename);
-//				    			
-//				    		cloudparserfilerepository.save(objfile);
-//				    } catch (Exception e) {
-//				        e.printStackTrace();
-//				        try {
-//				            if (cosDoc != null)
-//				                cosDoc.close();
-//				            if (pdDoc != null)
-//				                pdDoc.close();
-//				        } catch (Exception e1) {
-//				            e1.printStackTrace();
-//				        }
-//
-//				    }
-//		        		          
-//			   }		           
-//		   }
-//		   else
-//		   {
-//			   final String filePath = "uploads/"+fileName;
-//			   file = new File(filePath);
-//		   } 
-//		   
-//		   CloudParserFile txtobj = cloudparserfilerepository.findByfilename(textfilename);
-//		   String txtfileid = txtobj.fileid;
-//		   
-//		 //retrieving txt data from blob	
-//			byte[] txtdata = null;
-//			try {
-//				txtdata = StreamUtils
-//						.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(txtfileid, tenant + "parsertextfile"));
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		   
-//			//converting byte stream to file
-//			
-////			 final String retrivedtxtfile = FilenameUtils.getBaseName(textfilename);	
-////			 try (FileOutputStream fileOuputStream  = new FileOutputStream("uploads/"+ retrivedtxtfile)){
-////				 fileOuputStream .write(data);
-////				 }
-//		   
-//		   
-////		   if (file != null && file.exists()) {
-////	           byte[] bytesArray = new byte[(int) file.length()]; 	
-////	           FileInputStream fis = new FileInputStream(file);
-////	           fis.read(bytesArray); //read file into bytes[]
-////	           fis.close();	
-////	           
-////	          rawDataText = new String(bytesArray, StandardCharsets.ISO_8859_1);	
-////	          if (ext.equalsIgnoreCase("pdf")) {
-////	          rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-////	          
-////	           }
-////           }
-//           
-//		//	 String textfile = "uploads/"+ retrivedtxtfile +".txt";
-//			 
-//		   if (textfilename != null) {
-////	           byte[] bytesArray = new byte[(int) textfile.length()]; 	
-////	           FileInputStream fis = new FileInputStream(textfile);
-////	           fis.read(bytesArray); //read file into bytes[]
-////	           fis.close();	
-//	           
-//	          rawDataText = new String(txtdata, StandardCharsets.ISO_8859_1);	
-//	          if (ext.equalsIgnoreCase("pdf")) {
-//	          rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-//	          
-//	           }
-//           }
-//		   
-//           return rawDataText;
-//         
-//        } 	  
-//        catch (IOException e) 
-//        { 
-//        	return null;
-//        } 
-//   }
-//   
+     
         
    @SuppressWarnings("resource")
-public String getFileData(final String fileName,String tenant) throws FileNotFoundException, IOException
+public String getFileData(final String fileName,String tenant,Integer methodKey) throws FileNotFoundException, IOException
  {
 	   try
         {			
@@ -974,190 +571,421 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
 
 		    if(file !=null)
 		    {
-			   if (ext.equalsIgnoreCase("pdf")) {
-	
-					   String parsedText = "";
-					   PDFParser parser = null;
-					    PDDocument pdDoc = null;
-					    COSDocument cosDoc = null;
-					    PDFTextStripper pdfStripper;
-	
-					    try {
-					    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(file);
-					        parser = new PDFParser(raFile);
-					        parser.setLenient(true);
-					        parser.parse();
-					        cosDoc = parser.getDocument();
-					        pdfStripper = new PDFTextStripper();
-					        pdfStripper.setSortByPosition( true );
-					              			       
-					        pdDoc = new PDDocument(cosDoc);
-					        pdfStripper.setWordSeparator("\t");
-					        pdfStripper.setSuppressDuplicateOverlappingText(true);
-					        Matrix matrix = new Matrix();
-					        matrix.clone();
-					        pdfStripper.setTextLineMatrix(matrix);
-					   
-					        parsedText = pdfStripper.getText(pdDoc);
-					      					        
-					        //converting into multipart file
-						        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
-						        		fileName, "text/plain", parsedText.getBytes());
-						        
-						        //storing file in blob
-						        String textid = null;
-					    		try {
-					    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
-					    		} catch (IOException e) {
-					    			// TODO Auto-generated catch block
-					    			e.printStackTrace();
-					    		}
-			
-					    		CloudParserFile objfile = new CloudParserFile();
-					    		objfile.setFileid(textid);
-					    		objfile.setExtension(".txt");
-					    		objfile.setFilename(name+".txt");
-					    			
-					    		cloudparserfilerepository.save(objfile);
-					    } catch (Exception e) {
-					        e.printStackTrace();
-					        try {
-					            if (cosDoc != null)
-					                cosDoc.close();
-					            if (pdDoc != null)
-					                pdDoc.close();
-					        } catch (Exception e1) {
-					            e1.printStackTrace();
-					        }
-	
-					    }    
-					    
-					    rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);
-				 
-				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-					   
-			   }
-			
-			   else if (ext.equalsIgnoreCase("csv")) {
-				   
-			//   File file = new File(path);
-				try {
-				FileReader fr = new FileReader(file);
-				// User BufferReader
-				BufferedReader br = new BufferedReader(fr);
-				String line = "";
-		      //  String resultline;
-			      StringBuffer sb = new StringBuffer();
-
-				
-				String[] tempArr;
-				//create temp file     
-				final File tempFile = File.createTempFile(fileName, ext);
-				
-			
-				FileWriter writer = new FileWriter(tempFile);
-		
-				while ((line = br.readLine()) != null) {
-					tempArr = line.split(",");
-				
-					for (String str : tempArr) {
-				
-					//	sb.append(str).append("\t");
-						sb.append(str).append(",");
-
-					}
-				      String appendedline = sb.toString();
-				
-				    //  String resultline = appendedline.replaceAll("\\s+$", "");
-
-  				      String resultline = appendedline.replaceAll("\"", "");
-  				      String finalresult = resultline.replaceAll(",$", "");
-
-				      writer.write(finalresult);
-				      sb.setLength(0);
-				      appendedline ="";
-				      resultline="";
-				      finalresult="";
-				      
-					writer.write("\n");
-
-				}
-				writer.close();
-
-			    bytes = FileUtils.readFileToByteArray(tempFile);
-
-				
-				//converting into multipart file
-		        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
-		        		fileName, "text/plain", bytes);
-		        
-		        //storing file in blob
-		        String textid = null;
-	    		try {
-	    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
-	    		} catch (IOException e) {
-	    			// TODO Auto-generated catch block
-	    			e.printStackTrace();
-	    		}
-
-	    		CloudParserFile objfile = new CloudParserFile();
-	    		objfile.setFileid(textid);
-	    		objfile.setExtension(".txt");
-	    		objfile.setFilename(name+".txt");
-	    			
-	    		cloudparserfilerepository.save(objfile);
-
-	    		
-			    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
-				 
-		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-				}
-				catch (Exception e) {
-			        e.printStackTrace();
-			   }
-			 }
-			   else
-			   {
-				   //rawDataText = new String(Files.readAllBytes(file.toPath()), StandardCharsets.ISO_8859_1);
-				   
-				   FileReader fr = new FileReader(file);
-					BufferedReader br = new BufferedReader(fr);
-					String line = "";
-     			      StringBuffer sb = new StringBuffer();
-					String[] tempArr;     
-					final File tempFile = File.createTempFile(fileName, ext);		
-					FileWriter writer = new FileWriter(tempFile);
-			
-					while ((line = br.readLine()) != null) {
-						tempArr = line.split("\\s+");			
-						for (String str : tempArr) {
-							sb.append(str).append("\t");
-						//	sb.append(str).append(",");
-
+//			   if (ext.equalsIgnoreCase("pdf")) {
+//	
+//					   String parsedText = "";
+//					   PDFParser parser = null;
+//					    PDDocument pdDoc = null;
+//					    COSDocument cosDoc = null;
+//					    PDFTextStripper pdfStripper;
+//	
+//					    try {
+//					    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(file);
+//					        parser = new PDFParser(raFile);
+//					        parser.setLenient(true);
+//					        parser.parse();
+//					        cosDoc = parser.getDocument();
+//					        pdfStripper = new PDFTextStripper();
+//					        pdfStripper.setSortByPosition( true );
+//					              			       
+//					        pdDoc = new PDDocument(cosDoc);
+//					        pdfStripper.setWordSeparator("\t");
+//					        pdfStripper.setSuppressDuplicateOverlappingText(true);
+//					        Matrix matrix = new Matrix();
+//					        matrix.clone();
+//					        pdfStripper.setTextLineMatrix(matrix);
+//					   
+//					        parsedText = pdfStripper.getText(pdDoc);
+//					      					        
+//					        //converting into multipart file
+//						        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
+//						        		fileName, "text/plain", parsedText.getBytes());
+//						        
+//						        //storing file in blob
+//						        String textid = null;
+//					    		try {
+//					    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
+//					    		} catch (IOException e) {
+//					    			// TODO Auto-generated catch block
+//					    			e.printStackTrace();
+//					    		}
+//			
+//					    		CloudParserFile objfile = new CloudParserFile();
+//					    		objfile.setFileid(textid);
+//					    		objfile.setExtension(".txt");
+//					    		objfile.setFilename(name+".txt");
+//					    			
+//					    		cloudparserfilerepository.save(objfile);
+//					    } catch (Exception e) {
+//					        e.printStackTrace();
+//					        try {
+//					            if (cosDoc != null)
+//					                cosDoc.close();
+//					            if (pdDoc != null)
+//					                pdDoc.close();
+//					        } catch (Exception e1) {
+//					            e1.printStackTrace();
+//					        }
+//	
+//					    }    
+//					    
+//					    rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);
+//				 
+//				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+//					   
+//			   }
+//			
+//			   else if (ext.equalsIgnoreCase("csv")) {
+//				   
+//			//   File file = new File(path);
+//				try {
+//				FileReader fr = new FileReader(file);
+//				// User BufferReader
+//				BufferedReader br = new BufferedReader(fr);
+//				String line = "";
+//		      //  String resultline;
+//			      StringBuffer sb = new StringBuffer();
+//
+//				
+//				String[] tempArr;
+//				//create temp file     
+//				final File tempFile = File.createTempFile(fileName, ext);
+//				
+//			
+//				FileWriter writer = new FileWriter(tempFile);
+//		
+//				while ((line = br.readLine()) != null) {
+//					tempArr = line.split(",");
+//				
+//					for (String str : tempArr) {
+//				
+//					//	sb.append(str).append("\t");
+//						sb.append(str).append(",");
+//
+//					}
+//				      String appendedline = sb.toString();
+//				
+//				    //  String resultline = appendedline.replaceAll("\\s+$", "");
+//				      String resultline = appendedline.replaceAll(",$", "");
+//
+//				      writer.write(resultline);
+//				      sb.setLength(0);
+//				      appendedline ="";
+//				      resultline="";
+//				
+//					writer.write("\n");
+//
+//				}
+//				writer.close();
+//
+//			    bytes = FileUtils.readFileToByteArray(tempFile);
+//
+//				
+//				//converting into multipart file
+//		        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
+//		        		fileName, "text/plain", bytes);
+//		        
+//		        //storing file in blob
+//		        String textid = null;
+//	    		try {
+//	    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
+//	    		} catch (IOException e) {
+//	    			// TODO Auto-generated catch block
+//	    			e.printStackTrace();
+//	    		}
+//
+//	    		CloudParserFile objfile = new CloudParserFile();
+//	    		objfile.setFileid(textid);
+//	    		objfile.setExtension(".txt");
+//	    		objfile.setFilename(name+".txt");
+//	    			
+//	    		cloudparserfilerepository.save(objfile);
+//
+//	    		
+//			    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
+//				 
+//		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+//				}
+//				catch (Exception e) {
+//			        e.printStackTrace();
+//			   }
+//			 }
+//			   else
+//			   {
+//				   //rawDataText = new String(Files.readAllBytes(file.toPath()), StandardCharsets.ISO_8859_1);
+//				   
+//				   FileReader fr = new FileReader(file);
+//					BufferedReader br = new BufferedReader(fr);
+//					String line = "";
+//     			      StringBuffer sb = new StringBuffer();
+//					String[] tempArr;     
+//					final File tempFile = File.createTempFile(fileName, ext);		
+//					FileWriter writer = new FileWriter(tempFile);
+//			
+//					while ((line = br.readLine()) != null) {
+//						tempArr = line.split("\\s+");			
+//						for (String str : tempArr) {
+//							sb.append(str).append("\t");
+//						//	sb.append(str).append(",");
+//
+//						}
+//					      String appendedline = sb.toString();
+//					      String resultline = appendedline.replaceAll("\\s+$", "");
+//					    //  String resultline = appendedline.replaceAll(",$", "");
+//					      writer.write(resultline);
+//					      sb.setLength(0);
+//					      appendedline ="";
+//					      resultline="";
+//					
+//						writer.write("\n");
+//
+//					}
+//					writer.close();
+//
+//				    bytes = FileUtils.readFileToByteArray(tempFile);
+//
+//				    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
+//					 
+//			        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+//				   			   
+//			   }
+//		   
+		    	
+		if (ext.equalsIgnoreCase("pdf")) {  	
+	        List<Method> methodobj = methodRepo.findByMethodkey(methodKey);
+  				
+  				Integer converterstatus = methodobj.get(0).getConverterstatus();
+  				if(converterstatus == 1) //pdf to txt
+  				{
+  				    String userDirectory = new File("").getAbsolutePath();
+	 				   System.out.println(userDirectory);
+	 				
+	 				String commanddev =  userDirectory+"\\src\\main\\resources\\" +"Aspose License";//folder path in development 
+	 				System.out.println(commanddev);
+			        File folder = new File(commanddev);
+//
+			        if (folder.exists() && folder.isDirectory()) {//presence of folder check in dev
+			            System.out.println("Folder exists in dev");
+			            
+			          License asposePdfLicenseText = new License();
+	 		            try {
+							asposePdfLicenseText.setLicense(userDirectory+"\\src\\main\\resources\\Aspose License\\Aspose.PDF.Java.lic");
+						} catch (Exception e1) {
+							e1.printStackTrace();
 						}
-					      String appendedline = sb.toString();
-					      String resultline = appendedline.replaceAll("\"", "");
-					      String finalresult = appendedline.replaceAll("\\s+$", "");
-					     
-					    //  String resultline = appendedline.replaceAll(",$", "");
-					      writer.write(finalresult);
-					      sb.setLength(0);
-					      appendedline ="";
-					      resultline="";
-					      finalresult="";
-						writer.write("\n");
+	 		            
+	 		        RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
+  		            Document convertPDFDocumentToText = new Document(raFileinputstream);
 
-					}
-					writer.close();
+  		            TextAbsorber textAbsorber = new TextAbsorber(new TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Pure));
 
-				    bytes = FileUtils.readFileToByteArray(tempFile);
+  		            convertPDFDocumentToText.getPages().accept(textAbsorber);
 
-				    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
-					 
-			        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-				   			   
-			   }
-		   
+  		            String ExtractedText = textAbsorber.getText();
+  		            BufferedWriter writer = null;
+
+				    	final File tempFile = File.createTempFile(name, ".txt");
+			            String tempPath = tempFile.toString();
+			            
+  					try {
+  						writer = new BufferedWriter(new FileWriter(tempPath));
+  					} catch (IOException e) {
+  						e.printStackTrace();
+  					}
+  	
+  		            try {
+  						writer.write(ExtractedText);
+  					} catch (IOException e) {
+  						e.printStackTrace();
+  					}
+  		            
+  		            try {
+  						writer.close();
+  					} catch (IOException e) {
+  						e.printStackTrace();
+  					}
+
+  		            System.out.println("Done");
+  		            
+  		          byte[] bytesArray = new byte[(int) tempFile.length()]; 	
+     	          FileInputStream fis = new FileInputStream(tempFile);
+	              fis.read(bytesArray); //read file into bytes[]
+	              fis.close();	
+	           		 	           
+	 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+	 	          tempFile.delete();
+	 	          tempPath="";
+	 			}
+//			        else { //folder path for tomcat
+//	 				 
+//  				  License asposePdfLicenseText = new License();
+//  				System.out.println("now entering into tomcat");
+//  				   System.out.println(env.getProperty("parserconvertor"));
+//  				 System.out.println(env.getProperty("parserconvertor")+"Aspose License/Aspose.PDFforJava.lic");
+//  				 
+//	 		            try {      	
+//	 		            	asposePdfLicenseText.setLicense(env.getProperty("parserconvertor")+"Aspose License/Aspose.PDF.Java.lic");
+//						} catch (Exception e1) {
+//							e1.printStackTrace();
+//						}
+//	 	
+//		            Document convertPDFDocumentToText = new Document(largefile.getInputStream());
+//
+//		            TextAbsorber textAbsorber = new TextAbsorber(new TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Pure));
+//
+//		            convertPDFDocumentToText.getPages().accept(textAbsorber);
+//
+//		            String ExtractedText = textAbsorber.getText();
+//
+//		            BufferedWriter writer = null;
+//
+//				    	final File tempFile = File.createTempFile(name, ".txt");
+//			            String tempPath = tempFile.toString();
+//			            
+//					try {
+//						writer = new BufferedWriter(new FileWriter(tempPath));
+//					} catch (IOException e) {
+//						
+//						e.printStackTrace();
+//					}
+//		        
+//		    		            try {
+//						writer.write(ExtractedText);
+//					} catch (IOException e) {
+//	
+//						e.printStackTrace();
+//					}
+//		            
+//		            try {
+//						writer.close();
+//					} catch (IOException e) {
+//										e.printStackTrace();
+//					}
+//
+//		            System.out.println("Done");
+//		            
+//		          byte[] bytesArray = new byte[(int) tempFile.length()]; 	
+//   	              FileInputStream fis = new FileInputStream(tempFile);
+//	              fis.read(bytesArray); //read file into bytes[]
+//	              fis.close();	
+//	           		 	           
+//	 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+//	 	          tempFile.delete();
+//	 	          tempPath="";
+//  				}
+	 				
+  				}  //pdf to txt
+  					
+  					
+  				else { //pdf to csv
+
+  	 				    String userDirectory = new File("").getAbsolutePath();
+  	 				    System.out.println(userDirectory);
+  	 					String commanddev =  userDirectory+"\\src\\main\\resources\\" +"Aspose License";//folder path in development
+    	 				 System.out.println(commanddev);
+  	 			        File folder = new File(commanddev);
+  	//
+  	 			        if (folder.exists() && folder.isDirectory()) { //presence of folder check in dev
+  	 			            System.out.println("Folder exists in dev");
+  	 			            
+  	 			           License asposePdfLicenseCSV = new License();
+  	 			           try {
+  	 							asposePdfLicenseCSV.setLicense(userDirectory+"\\src\\main\\resources\\Aspose License\\Aspose.PDF.Java.lic");
+  	 						} catch (Exception e) {
+  	 				    		e.printStackTrace();
+  	 						}       
+  	 				        
+  	 				    
+  	 			           RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
+  	 				       Document convertPDFDocumentToCSV = new Document(raFileinputstream);
+  	 				        
+  	 				        ExcelSaveOptions csvSave = new ExcelSaveOptions();
+  	 				        csvSave.setFormat(ExcelSaveOptions.ExcelFormat.CSV);
+  	 				        
+  	 				    	final File tempFile = File.createTempFile(name, ".csv");
+  	 			            String tempPath = tempFile.toString();
+  	 			            
+  	 				      //  convertPDFDocumentToCSV.save("uploads/" + name + ".csv", csvSave);
+//  	 				       convertPDFDocumentToCSV.save(userDirectory+"\\src\\main\\resources\\conversion-files\\GUAVA export.csv", csvSave);
+
+  	 				    	 convertPDFDocumentToCSV.save(tempPath, csvSave);
+  	 				        System.out.println("Done");
+
+  	    				    //   File file = new File(userDirectory+"\\src\\main\\resources\\conversion-files\\GUAVA export.csv");
+  			  		    	
+  		    	  	               byte[] bytesArray = new byte[(int) tempFile.length()]; 	
+  			        	           FileInputStream fis = new FileInputStream(tempFile);
+  			 	                   fis.read(bytesArray); //read file into bytes[]
+  			 	                   fis.close();	
+  			 	           		 	           
+  		 		 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+  		 		 	          rawDataText = rawDataText.replaceAll("\"", "");
+  		 		 	          tempFile.delete();
+  			 	              tempPath="";
+  		 			        
+  	 			        } 
+//  	 			        else {//folder path in tomcat
+//  	 			        	 License asposePdfLicenseCSV = new License();
+//  	 			            System.out.println("now entering into tomcat");
+//
+//  	 	  				   System.out.println(env.getProperty("parserconvertor"));
+//  	 	  				 System.out.println(env.getProperty("parserconvertor")+"Aspose License/Aspose.PDFforJava.lic");
+//  	 			           try {
+//  								asposePdfLicenseCSV.setLicense(env.getProperty("parserconvertor")+"Aspose License/Aspose.PDF.Java.lic");
+//  							} catch (Exception e) {
+//  						
+//  								e.printStackTrace();
+//  							}      
+//  	 			        
+//  						 System.out.println(userDirectory);
+//  					
+//  						  Document convertPDFDocumentToCSV = new Document(largefile.getInputStream());
+//  					        
+//  					        ExcelSaveOptions csvSave = new ExcelSaveOptions();
+//  					        csvSave.setFormat(ExcelSaveOptions.ExcelFormat.CSV);
+//  					        
+//  					    	final File tempFile = File.createTempFile(name, ".csv");
+//  				            String tempPath = tempFile.toString();
+//
+//  					    	 convertPDFDocumentToCSV.save(tempPath, csvSave);
+//  					        System.out.println("Done");
+//                                                                                                                                                
+//  		    	  	               byte[] bytesArray = new byte[(int) tempFile.length()]; 	
+//  			        	           FileInputStream fis = new FileInputStream(tempFile);
+//  			 	                   fis.read(bytesArray); //read file into bytes[]
+//  			 	                   fis.close();	
+//  			 	           		 	                                                                             
+//  		 		 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+//  		 		 	          rawDataText = rawDataText.replaceAll("\"", "");
+//  		 		 	          tempFile.delete();
+//  			 	              tempPath="";
+//  	 			           }			
+         				}
+ 				    }else if (ext.equalsIgnoreCase("csv")) {
+
+     		    	 RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
+     		    	 
+ 				     File templocfile = stream2file(raFileinputstream,fileName, ".csv");
+	 		  		 File newfile = new File(templocfile.getAbsolutePath());
+	 		  			 
+   	  	              byte[] bytesArray = new byte[(int) templocfile.length()]; 	
+        	          FileInputStream fis = new FileInputStream(newfile);
+	                  fis.read(bytesArray); //read file into bytes[]
+ 	                  fis.close();	
+		 	          
+	 	              rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+	 	              rawDataText = rawDataText.replaceAll("\"", "");
+	 	          
+  			 }
+  			else
+  			{
+  				 RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
+  			    rawDataText = new BufferedReader(
+  				new InputStreamReader(raFileinputstream, StandardCharsets.UTF_8)).lines()
+  					.collect(Collectors.joining("\n"));
+  
+  		    } 
+
 		    }	    
            return rawDataText;    
         } 	  
@@ -1179,12 +1007,13 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
       
    
    @SuppressWarnings("resource")
-  	public String getSQLFileData(String fileName) throws IOException {
+  	public String getSQLFileData(String fileName,Integer methodKey) throws IOException, InterruptedException {
 //  		String Content = "";
   		String rawDataText="";
   		byte[] bytes = null;
 
   		final String ext = FilenameUtils.getExtension(fileName); 
+  		final String name = FilenameUtils.getBaseName(fileName);
   		
   	   String fileid = fileName;
   		GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
@@ -1196,165 +1025,239 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
   			
   			if (ext.equalsIgnoreCase("pdf")) {
   				
-  				   String parsedText = "";
-  				   PDFParser parser = null;
-  				    PDDocument pdDoc = null;
-  				    COSDocument cosDoc = null;
-  				    PDFTextStripper pdfStripper;
-
-  				    try {
-  				    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(largefile.getInputStream());
-  				        parser = new PDFParser(raFile);
-  				        parser.setLenient(true);
-  				        parser.parse();
-  				        cosDoc = parser.getDocument();
-  				        pdfStripper = new PDFTextStripper();
-  				        pdfStripper.setSortByPosition( true );
-  				              			       
-  				        pdDoc = new PDDocument(cosDoc);
-  				        pdfStripper.setWordSeparator("\t");
-  				        pdfStripper.setSuppressDuplicateOverlappingText(true);
-  				        Matrix matrix = new Matrix();
-  				        matrix.clone();
-  				        pdfStripper.setTextLineMatrix(matrix);
-  				   
-  				        parsedText = pdfStripper.getText(pdDoc);
-  				        rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);       
-  				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-  				    }	
-  				    catch (Exception e) {
-  				        e.printStackTrace();
-  					   }
-  			}else if (ext.equalsIgnoreCase("csv")) {
+//  				List<Method> methodobj = methodRepo.findByInstrawdataurl(fileName);
+  				List<Method> methodobj = methodRepo.findByMethodkey(methodKey);
   				
-  				File templocfile = null;
-  				templocfile = stream2file(largefile.getInputStream(),fileName, ext);
-  			//   File file = new File(path);
-  				try {
-  				FileReader fr = new FileReader(templocfile);
-  				// User BufferReader
-  				BufferedReader br = new BufferedReader(fr);
-  			    StringBuffer sb = new StringBuffer();
+  				Integer converterstatus = methodobj.get(0).getConverterstatus();
+  				if(converterstatus == 1) //pdf to txt
+  				{
+  				    String userDirectory = new File("").getAbsolutePath();
+	 				   System.out.println(userDirectory);
+	 				
+	 				String commanddev =  userDirectory+"\\src\\main\\resources\\" +"Aspose License";//folder path in development 
+	 				System.out.println(commanddev);
+			        File folder = new File(commanddev);
+//
+			        if (folder.exists() && folder.isDirectory()) {//presence of folder check in dev
+			            System.out.println("Folder exists in dev");
+			            
+			          License asposePdfLicenseText = new License();
+	 		            try {
+							asposePdfLicenseText.setLicense(userDirectory+"\\src\\main\\resources\\Aspose License\\Aspose.PDF.Java.lic");
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+	 	
+  		            Document convertPDFDocumentToText = new Document(largefile.getInputStream());
 
-  				String line = "";
+  		            TextAbsorber textAbsorber = new TextAbsorber(new TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Pure));
 
-  				String[] tempArr;
-  				//create temp file     
-  				final File tempFile = File.createTempFile(fileName, ext);
-  				
-  				// User FileWriter to write content to text file
-  				FileWriter writer = new FileWriter(tempFile);
-  				// Use while loop to check when file contains data
-  				while ((line = br.readLine()) != null) {
-  					tempArr = line.split(",");
-  					for (String str : tempArr) {
-  					//	sb.append(str).append("\t");
-  						sb.append(str).append(",");
+  		            convertPDFDocumentToText.getPages().accept(textAbsorber);
+
+  		            String ExtractedText = textAbsorber.getText();
+  		            BufferedWriter writer = null;
+
+				    	final File tempFile = File.createTempFile(name, ".txt");
+			            String tempPath = tempFile.toString();
+			            
+  					try {
+  						writer = new BufferedWriter(new FileWriter(tempPath));
+  					} catch (IOException e) {
+  						e.printStackTrace();
   					}
-  				      String appendedline = sb.toString();
-  				    //  String resultline = appendedline.replaceAll("\\s+$", "");
-  				      String resultline = appendedline.replaceAll(",$", "");
-  				      
-  				      writer.write(resultline);
-  				      sb.setLength(0);
-  				      appendedline ="";
-  				      resultline="";
-  				
-  					writer.write("\n");
+  	
+  		            try {
+  						writer.write(ExtractedText);
+  					} catch (IOException e) {
+  						e.printStackTrace();
+  					}
+  		            
+  		            try {
+  						writer.close();
+  					} catch (IOException e) {
+  						e.printStackTrace();
+  					}
 
+  		            System.out.println("Done");
+  		            
+  		          byte[] bytesArray = new byte[(int) tempFile.length()]; 	
+     	          FileInputStream fis = new FileInputStream(tempFile);
+	              fis.read(bytesArray); //read file into bytes[]
+	              fis.close();	
+	           		 	           
+	 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+	 	          tempFile.delete();
+	 	          tempPath="";
+	 			}else { //folder path for tomcat
+	 				 
+  				  License asposePdfLicenseText = new License();
+  				System.out.println("now entering into tomcat");
+  				   System.out.println(env.getProperty("parserconvertor"));
+  				 System.out.println(env.getProperty("parserconvertor")+"Aspose License/Aspose.PDFforJava.lic");
+  				 
+	 		            try {      	
+	 		            	asposePdfLicenseText.setLicense(env.getProperty("parserconvertor")+"Aspose License/Aspose.PDF.Java.lic");
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+	 	
+		            Document convertPDFDocumentToText = new Document(largefile.getInputStream());
+
+		            TextAbsorber textAbsorber = new TextAbsorber(new TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Pure));
+
+		            convertPDFDocumentToText.getPages().accept(textAbsorber);
+
+		            String ExtractedText = textAbsorber.getText();
+
+		            BufferedWriter writer = null;
+
+				    	final File tempFile = File.createTempFile(name, ".txt");
+			            String tempPath = tempFile.toString();
+			            
+					try {
+						writer = new BufferedWriter(new FileWriter(tempPath));
+					} catch (IOException e) {
+						
+						e.printStackTrace();
+					}
+		        
+		    		            try {
+						writer.write(ExtractedText);
+					} catch (IOException e) {
+	
+						e.printStackTrace();
+					}
+		            
+		            try {
+						writer.close();
+					} catch (IOException e) {
+										e.printStackTrace();
+					}
+
+		            System.out.println("Done");
+		            
+		          byte[] bytesArray = new byte[(int) tempFile.length()]; 	
+   	              FileInputStream fis = new FileInputStream(tempFile);
+	              fis.read(bytesArray); //read file into bytes[]
+	              fis.close();	
+	           		 	           
+	 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+	 	          tempFile.delete();
+	 	          tempPath="";
   				}
-  				writer.close();
-  			    bytes = FileUtils.readFileToByteArray(tempFile);
-  			    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
-  		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-  				}
-  				catch (Exception e) {
-  			        e.printStackTrace();
-  			   }
+	 				
+  				}  //pdf to txt
+  					
+  					
+  				else { //pdf to csv
+
+  	 				    String userDirectory = new File("").getAbsolutePath();
+  	 				    System.out.println(userDirectory);
+  	 					String commanddev =  userDirectory+"\\src\\main\\resources\\" +"Aspose License";//folder path in development
+    	 				 System.out.println(commanddev);
+  	 			        File folder = new File(commanddev);
+  	//
+  	 			        if (folder.exists() && folder.isDirectory()) { //presence of folder check in dev
+  	 			            System.out.println("Folder exists in dev");
+  	 			            
+  	 			           License asposePdfLicenseCSV = new License();
+  	 			           try {
+  	 							asposePdfLicenseCSV.setLicense(userDirectory+"\\src\\main\\resources\\Aspose License\\Aspose.PDF.Java.lic");
+  	 						} catch (Exception e) {
+  	 				    		e.printStackTrace();
+  	 						}       
+  	 				        
+  	 				      //  Document convertPDFDocumentToCSV = new Document("uploads/" + fileName);
+  	 				       Document convertPDFDocumentToCSV = new Document(largefile.getInputStream());
+  	 				        
+  	 				        ExcelSaveOptions csvSave = new ExcelSaveOptions();
+  	 				        csvSave.setFormat(ExcelSaveOptions.ExcelFormat.CSV);
+  	 				        
+  	 				    	final File tempFile = File.createTempFile(name, ".csv");
+  	 			            String tempPath = tempFile.toString();
+  	 			            
+  	 				      //  convertPDFDocumentToCSV.save("uploads/" + name + ".csv", csvSave);
+//  	 				       convertPDFDocumentToCSV.save(userDirectory+"\\src\\main\\resources\\conversion-files\\GUAVA export.csv", csvSave);
+
+  	 				    	 convertPDFDocumentToCSV.save(tempPath, csvSave);
+  	 				        System.out.println("Done");
+
+  	    				    //   File file = new File(userDirectory+"\\src\\main\\resources\\conversion-files\\GUAVA export.csv");
+  			  		    	
+  		    	  	               byte[] bytesArray = new byte[(int) tempFile.length()]; 	
+  			        	           FileInputStream fis = new FileInputStream(tempFile);
+  			 	                   fis.read(bytesArray); //read file into bytes[]
+  			 	                   fis.close();	
+  			 	           		 	           
+  		 		 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+  		 		 	          rawDataText = rawDataText.replaceAll("\"", "");
+  		 		 	          tempFile.delete();
+  			 	              tempPath="";
+  		 			        
+  	 			        } else {//folder path in tomcat
+  	 			        	 License asposePdfLicenseCSV = new License();
+  	 			            System.out.println("now entering into tomcat");
+
+  	 	  				   System.out.println(env.getProperty("parserconvertor"));
+  	 	  				 System.out.println(env.getProperty("parserconvertor")+"Aspose License/Aspose.PDFforJava.lic");
+  	 			           try {
+  								asposePdfLicenseCSV.setLicense(env.getProperty("parserconvertor")+"Aspose License/Aspose.PDF.Java.lic");
+  							} catch (Exception e) {
+  						
+  								e.printStackTrace();
+  							}      
+  	 			        
+  						 System.out.println(userDirectory);
+  					
+  						  Document convertPDFDocumentToCSV = new Document(largefile.getInputStream());
+  					        
+  					        ExcelSaveOptions csvSave = new ExcelSaveOptions();
+  					        csvSave.setFormat(ExcelSaveOptions.ExcelFormat.CSV);
+  					        
+  					    	final File tempFile = File.createTempFile(name, ".csv");
+  				            String tempPath = tempFile.toString();
+
+  					    	 convertPDFDocumentToCSV.save(tempPath, csvSave);
+  					        System.out.println("Done");
+                                                                                                                                                
+  		    	  	               byte[] bytesArray = new byte[(int) tempFile.length()]; 	
+  			        	           FileInputStream fis = new FileInputStream(tempFile);
+  			 	                   fis.read(bytesArray); //read file into bytes[]
+  			 	                   fis.close();	
+  			 	           		 	                                                                             
+  		 		 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+  		 		 	          rawDataText = rawDataText.replaceAll("\"", "");
+  		 		 	          tempFile.delete();
+  			 	              tempPath="";
+  	 			           }			
+         				}
+ 				    }else if (ext.equalsIgnoreCase("csv")) {
+
+ 				     File templocfile = stream2file(largefile.getInputStream(),fileName, ".csv");
+	 		  		 File newfile = new File(templocfile.getAbsolutePath());
+	 		  			 
+   	  	              byte[] bytesArray = new byte[(int) templocfile.length()]; 	
+        	          FileInputStream fis = new FileInputStream(newfile);
+	                  fis.read(bytesArray); //read file into bytes[]
+ 	                  fis.close();	
+		 	          
+	 	              rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+	 	              rawDataText = rawDataText.replaceAll("\"", "");
+	 	          
   			 }
   			else
   			{
-//  			    rawDataText = new BufferedReader(
-//  				new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-//  					.collect(Collectors.joining("\n"));
-  				
-  				File templocfile = null;
-  				templocfile = stream2file(largefile.getInputStream(),fileName, ext);
-  								
-  				String line = "";
-   			    StringBuffer sb = new StringBuffer();
-  				String[] tempArr; 
-  				
-  				FileReader fr = new FileReader(templocfile);
-  				BufferedReader br = new BufferedReader(fr);
-                  final File tempFile = File.createTempFile(fileName, ext);
-                  
-  				// User FileWriter to write content to text file
-  				FileWriter writer = new FileWriter(tempFile);
-  				
-  				
-  				while ((line = br.readLine()) != null) {
-  					tempArr = line.split("\\s+");			
-  					for (String str : tempArr) {
-  						sb.append(str).append("\t");
-  					//	sb.append(str).append(",");
-
-  					}
-  				      String appendedline = sb.toString();
-  				      String resultline = appendedline.replaceAll("\\s+$", "");
-  				    //  String resultline = appendedline.replaceAll(",$", "");
-  				      writer.write(resultline);
-  				      sb.setLength(0);
-  				      appendedline ="";
-  				      resultline="";
-  				
-  					writer.write("\n");
-
-  				}
-  				writer.close();
-
-  			    bytes = FileUtils.readFileToByteArray(tempFile);
-
-  			    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
-  				 
-  		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-
+  			    rawDataText = new BufferedReader(
+  				new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+  					.collect(Collectors.joining("\n"));
+  
   		    } 
   		}		
   		return rawDataText;
   }  
 
-//	public String getSQLFileData(String fileName) throws IOException {
-//
-// 		
-////		String Content = "";
-//		String rawDataText="";
-//		byte[] bytes = null;
-//
-//		final String ext = FilenameUtils.getExtension(fileName); 
-//		
-//	   String fileid = fileName;
-//		GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
-//		if (largefile == null) {
-//			largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
-//		}
-//
-//		if (largefile != null) {
-//			
-//			//if (ext.equalsIgnoreCase("pdf")) {
-//
-//			        rawDataText = new BufferedReader(
-//					new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-//							.collect(Collectors.joining("\n"));  			
-//	
-//			}	
-//		
-//	
-//		return rawDataText;
-//  }  
 
-      
-   /**
+    /**
     * This method is used to get Method entity based on its primary key
     * @param methodKey [int] primary key of method entity
     * @return Method entity based on primary key
@@ -1414,12 +1317,7 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
 				LScfttransaction.setUsername(createdUser.getUsername());
 				LScfttransaction.setTableName("Method");
 				LScfttransaction.setSystemcoments("System Generated");
-				try {
-					LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				
 				lscfttransactionrepo.save(LScfttransaction);
                 }
 			   return new ResponseEntity<>("Duplicate Entry - " + methodByKey.get().getMethodname() +" method cannot be copied", 
@@ -1622,43 +1520,18 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
 	     	savedMethod.setObjsilentaudit(cft.getObjsilentaudit());
 //	    	final Method updatedMethod =
 	    			methodRepo.save(savedMethod);
-				   
-//		    if (saveAuditTrail)
-//			{			  
-//		    	auditMethodCopy(methodBeforeSave, updatedMethod, request, savedSampleSplitMap, savedParserMap, customFieldListBS,
-//		    			savedCustomFieldList, createdUser, comments, site);				
-//			}
-	    	
-//			LScfttransaction LScfttransaction = new LScfttransaction();
-//			LScfttransaction.setActions("Insert");
-//			LScfttransaction.setComments("Method copied from : "+methodByKey.get().getMethodname()+" to "+methodName);
-//			LScfttransaction.setLssitemaster(site.getSitecode());
-//			LScfttransaction.setLsuserMaster(doneByUserKey);
-//			LScfttransaction.setManipulatetype("View/Load");
-//			LScfttransaction.setModuleName("Method Master");
-//			LScfttransaction.setUsername(createdUser.getUsername());
-//
-//			LScfttransaction.setTransactiondate(date);
-//			LScfttransaction.setTableName("SampleExtract");
-//			LScfttransaction.setSystemcoments("System Generated");
-//			
-//			lscfttransactionrepo.save(LScfttransaction);
+		
 		    return new ResponseEntity<>(savedMethod, HttpStatus.OK);
 		   }
 	   }
 	 
 	   else {
 		   
-//		   final String actionType = EnumerationInfo.CFRActionType.SYSTEM.getActionType();
-//			
-//		   cfrTransService.saveCfrTransaction(page, actionType, "Copy Method", "Copy Method Failed", 
-//						site, "", createdUser, request.getRemoteAddr());
-//			
 		   return new ResponseEntity<>("Method/Instrument Not Found", HttpStatus.NOT_FOUND);
 	   }	
    } 
-
-   
+                                                                                                                                                                                   
+                                 
    /**
     * This method is used to audit trail the 'Copy Method'.
     * @param methodBeforeSave [Method] object before saving to data base
@@ -1672,84 +1545,7 @@ public String getFileData(final String fileName,String tenant) throws FileNotFou
     * @param page [Page] object holding "Method" as pagename
     * @param comments [String] comments given by the user for audit recording
     * @param site [Site] object for which audit trail recording is to be done
-    */
-//   private void auditMethodCopy(final Method methodBeforeSave, final Method updatedMethod,
-//		   final HttpServletRequest request, final Map<String, Object> savedSampleSplitMap,
-//		   final Map<String, Object> savedParserMap, final List<CustomField> customFieldList, 
-//		   final List<CustomField> savedCustomFieldList, final LSuserMaster createdUser,
-//		   final String comments, final LSuserMaster site) {
-//	    String methodXML = convertMethodObjectToXML(methodBeforeSave, updatedMethod);
-//		
-//   		final Map<String, String> xmlMap = sampleSplitService.getXMLData(savedSampleSplitMap);
-//   		String textXML = (String) xmlMap.get("textXML");
-//   		String lineXML = (String) xmlMap.get("lineXML");
-//   		String extractXML = (String) xmlMap.get("extractXML");
-//   	
-//   		final StringBuffer xmlDataBuffer = new StringBuffer();	
-//   		if (methodXML.length() != 0 && methodXML.contains("<?xml")){
-//   			methodXML = methodXML.substring(textXML.indexOf("?>")+2);
-//   		}
-//   	
-//   		if (textXML.length() != 0 && textXML.contains("<?xml")){
-//			textXML = textXML.substring(textXML.indexOf("?>")+2);
-//			textXML = textXML.replace("<sampletextsplits>", "").replace("</sampletextsplits>", "");									
-//		}
-//		if (lineXML.length() != 0 && lineXML.contains("<?xml")){
-//			lineXML = lineXML.substring(lineXML.indexOf("?>")+2);
-//			lineXML = lineXML.replace("<samplelinesplits>", "").replace("</samplelinesplits>", "");
-//			
-//		}
-//		if (extractXML.length() != 0 && extractXML.contains("<?xml")){
-//			extractXML = extractXML.substring(extractXML.indexOf("?>")+2);
-//			extractXML = extractXML.replace("<sampleextracts>", "").replace("</sampleextracts>", "");
-//		}	
-//		
-//		final Map<String, String> parserXMLMap = parserSetupService.getXMLData(savedParserMap);
-//   	
-//		String blockXML = (String) parserXMLMap.get("blockXML");
-//		String parserFieldXML = (String) parserXMLMap.get("parserFieldXML");
-//		String parserTechniqueXML = (String) parserXMLMap.get("parserTechniqueXML");
-//		String subParserFieldXML = (String) parserXMLMap.get("subParserFieldXML");
-//		String subParserTechXML = (String) parserXMLMap.get("subParserTechXML");
-//   			    
-//		if (blockXML.length() != 0 && blockXML.contains("<?xml")){
-//			blockXML = blockXML.substring(blockXML.indexOf("?>")+2);
-//			blockXML = blockXML.replace("<parserblocks>", "").replace("</parserblocks>", "");									
-//		}
-//		if (parserFieldXML.length() != 0 && parserFieldXML.contains("<?xml")){
-//			parserFieldXML = parserFieldXML.substring(parserFieldXML.indexOf("?>")+2);
-//			parserFieldXML = parserFieldXML.replace("<parserfields>", "").replace("</parserfields>", "");
-//			
-//		}
-//		if (parserTechniqueXML.length() != 0 && parserTechniqueXML.contains("<?xml")){
-//			parserTechniqueXML = parserTechniqueXML.substring(parserTechniqueXML.indexOf("?>")+2);
-//			parserTechniqueXML = parserTechniqueXML.replace("<parsertechniques>", "").replace("</parsertechniques>", "");
-//		}
-//		if (subParserTechXML.length() != 0 && subParserTechXML.contains("<?xml")){
-//			subParserTechXML = subParserTechXML.substring(subParserTechXML.indexOf("?>")+2);
-//			subParserTechXML = subParserTechXML.replace("<subparsertechniques>", "").replace("</subparsertechniques>", "");
-//		}
-//		if (subParserFieldXML.length() != 0 && subParserFieldXML.contains("<?xml")){
-//			subParserFieldXML = subParserFieldXML.substring(subParserFieldXML.indexOf("?>")+2);
-//			subParserFieldXML = subParserFieldXML.replace("<subparserfields>", "").replace("</subparserfields>", "");
-//		}
-//		
-//		String customFieldXML = customFieldService.convertCustomFieldListToXML(customFieldList, savedCustomFieldList);
-//		 
-//		if (customFieldXML.length() != 0 && customFieldXML.contains("<?xml")){
-//			customFieldXML = customFieldXML.substring(customFieldXML.indexOf("?>")+2);
-//			customFieldXML = customFieldXML.replace("<customfields>", "").replace("</customfields>", "");
-//		}
-//		xmlDataBuffer.append("<?xml version=\"1.0\" encoding=\"UTF-16\"?><combinedxml>" + methodXML + textXML + lineXML + 
-//				extractXML+ blockXML + parserFieldXML + parserTechniqueXML + subParserTechXML + subParserFieldXML
-//				 + customFieldXML 
-//				 + "</combinedxml>");				
-//		
-////		final String actionType = EnumerationInfo.CFRActionType.SYSTEM.getActionType();
-////		cfrTransService.saveCfrTransaction(page, actionType, "Copy Method", comments, 
-////					site, xmlDataBuffer.toString(), createdUser, request.getRemoteAddr());
-//   }
-//   
+    */ 
    /**
 	 * This method is used to validate whether the instrument is already associated with the specified Method.
 	 * @param method [Method] object which is to be validated

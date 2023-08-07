@@ -69,8 +69,7 @@ public class UnitService {
 
 			if (unit1 == null || (unit1.getNunitcode().equals(objUnit.getNunitcode()))) {
 
-				unitobj.setNsitecode(unit.getNsitecode());
-//				unitobj.setObjsilentaudit(objUnit.getObjsilentaudit());
+				unitobj.setObjsilentaudit(objUnit.getObjsilentaudit());
 				unitRepository.save(objUnit);
 				objUnit.getResponse().setStatus(true);
 				objUnit.getResponse().setInformation("IDS_SUCCESS");
@@ -93,8 +92,7 @@ public class UnitService {
 					HttpStatus.EXPECTATION_FAILED);
 		} else {
 
-//			unitobj.setObjsilentaudit(objUnit.getObjsilentaudit());
-			unitobj.setNsitecode(unit.getNsitecode());
+			unitobj.setObjsilentaudit(objUnit.getObjsilentaudit());
 			unitobj.setNstatus(Enumeration.TransactionStatus.DELETED.gettransactionstatus());
 			unitRepository.save(unitobj);
 			return getUnit(objUnit.getNsitecode());

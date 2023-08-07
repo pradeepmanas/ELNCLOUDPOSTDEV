@@ -117,7 +117,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/getMultiUserGroup")
-	public List<LSMultiusergroup> getMultiUserGroup(@RequestBody LSuserMaster objusermaster)throws Exception
+	public Map<String, Object> getMultiUserGroup(@RequestBody LSuserMaster objusermaster)throws Exception
 	{
 	  return userService.getMultiUserGroup(objusermaster);
 	}
@@ -288,6 +288,12 @@ public class UserController {
 	public LSPasswordPolicy GetPasswordPolicy(@RequestBody LSPasswordPolicy lspasswordpolicy)throws Exception
 	{
 		return userService.GetPasswordPolicy(lspasswordpolicy);
+	}
+	
+	@PostMapping("/GetUserslocalnonRetired")
+	public List<LSuserMaster> GetUserslocalnonRetired(@RequestBody LSuserMaster objusermaster)throws Exception
+	{
+		return userService.GetUserslocalnonRetired(objusermaster);
 	}
 	
 	@SuppressWarnings({ "unused", "unchecked" })
@@ -572,12 +578,6 @@ public class UserController {
 		return userService.GetUserslocal(objusermaster);
 	}
 	
-	@PostMapping("/GetUserslocalnonRetired")
-	public List<LSuserMaster> GetUserslocalnonRetired(@RequestBody LSuserMaster objusermaster)throws Exception
-	{
-		return userService.GetUserslocalnonRetired(objusermaster);
-	}
-	
 	@PostMapping("/getUserOnCode")
 	public LSuserMaster getUserOnCode(@RequestBody LSuserMaster objuser)throws Exception
 	{
@@ -657,6 +657,23 @@ public class UserController {
 	public List<LSuserMaster> GetUsersonprojectbased(@RequestBody LSprojectmaster objusermaster)throws Exception
 	{
 		return userService.GetUsersonprojectbased(objusermaster);
+	}
+	
+	@PostMapping("/GetSiteWiseUserGrouplist")
+	public Map<String, Object> GetSiteWiseUserGrouplist(@RequestBody LSuserMaster objclass)throws Exception
+	{
+	  return userService.GetSiteWiseUserGrouplist(objclass);
+	}
+	@PostMapping("/getUsersinglOnCode")
+	public Map<String, Object> getUsersinglOnCode(@RequestBody LSuserMaster objuser)throws Exception
+	{
+		return userService.getUsersinglOnCode(objuser);
+	}
+	
+	@PostMapping("/getmultiusergroup")
+	public List<LSusergroup> getmultiusergroup(@RequestBody LSuserMaster objuser)throws Exception
+	{
+		return userService.getmultiusergroup(objuser);
 	}
 }
 

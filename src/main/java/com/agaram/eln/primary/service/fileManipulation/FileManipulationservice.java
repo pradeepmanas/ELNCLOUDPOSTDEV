@@ -73,10 +73,9 @@ public class FileManipulationservice {
 		list.setActions("View / Load");
 		list.setSystemcoments("System Generated");
 		list.setTableName("profile");
-		list.setTransactiondate(currentdate);
+//		list.setTransactiondate(currentdate);
 //	    	list.setLsuserMaster(lsuserMasterRepository.findByusercode(usercode));
-		list.setLsuserMaster(usercode);
-		try {
+		list.setLsuserMaster(usercode);			try {
 			list.setTransactiondate(commonfunction.getCurrentUtcTime());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -105,7 +104,7 @@ public class FileManipulationservice {
 		list.setActions("View / Load");
 		list.setSystemcoments("System Generated");
 		list.setTableName("profile");
-		list.setTransactiondate(currentdate);
+//		list.setTransactiondate(currentdate);
 //	    	list.setLsuserMaster(lsuserMasterRepository.findByusercode(usercode));
 		list.setLsuserMaster(usercode);
 		try {

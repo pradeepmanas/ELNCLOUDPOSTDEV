@@ -50,10 +50,27 @@ public class MaterialInventory {
 	@Column(name = "jsonuidata")
 	private String jsonuidata;
 	
+	private transient String sinventoryid;
+	private transient String savailablequatity;
+	private transient String sunitname;
+	
 	private Boolean isexpiryneed;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date expirydate;
 	
+	public Boolean getIsexpiryneed() {
+		return isexpiryneed;
+	}
+	public void setIsexpiryneed(Boolean isexpiryneed) {
+		this.isexpiryneed = isexpiryneed;
+	}
+	public Date getExpirydate() {
+		return expirydate;
+	}
+	public void setExpirydate(Date expirydate) {
+		this.expirydate = expirydate;
+	}
+
 	private Boolean validationneed;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date validationdate;
@@ -70,30 +87,13 @@ public class MaterialInventory {
 	public void setValidationdate(Date validationdate) {
 		this.validationdate = validationdate;
 	}
-
-	private transient String sinventoryid;
-	private transient String savailablequatity;
-	private transient String sunitname;
 	
 	@Transient
 	private LScfttransaction objsilentaudit;
 	
 	@Transient
-	public String info;	
+	public String info;
 	
-	public Boolean getIsexpiryneed() {
-		return isexpiryneed;
-	}
-	public void setIsexpiryneed(Boolean isexpiryneed) {
-		this.isexpiryneed = isexpiryneed;
-	}
-	public Date getExpirydate() {
-		return expirydate;
-	}
-	public void setExpirydate(Date expirydate) {
-		this.expirydate = expirydate;
-	}
-
 	@OneToMany
 	@JoinColumn(name = "nmaterialinventorycode")
 	private List<LsOrderattachments> lsOrderattachments;	

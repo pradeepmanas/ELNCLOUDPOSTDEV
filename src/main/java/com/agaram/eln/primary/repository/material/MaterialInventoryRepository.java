@@ -47,9 +47,9 @@ public interface MaterialInventoryRepository extends JpaRepository<MaterialInven
 	public MaterialInventory findByNmaterialinventorycodeAndNtransactionstatusNot(Integer integer, int i);
 
 	public List<MaterialInventory> findByNtransactionstatusAndIsexpiryneedAndExpirydateBetween(int i, boolean b,
-			Date currentDate, Date currentDate2);
+			Date currentDate, Date endDate);
 
-	public List<MaterialInventory> findByNsitecodeAndNtransactionstatusAndIsexpiryneedAndExpirydateBetween(int i, int j,
-			boolean b, Date currentDate, Date endDate);
+	public List<MaterialInventory> findByNsitecodeAndNtransactionstatusAndIsexpiryneedAndExpirydateBetween(
+			Integer lssitemaster, int i, boolean b, Date currentDate, Date endDate);
 
 }

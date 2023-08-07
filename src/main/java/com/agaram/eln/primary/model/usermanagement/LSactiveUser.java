@@ -33,6 +33,8 @@ public class LSactiveUser {
 	private Date timestamp;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastactivetime;
+	
+	@Column(name = "removeinititated", columnDefinition = "boolean default 'false'")
 	private boolean removeinititated;
 	
 	public boolean isRemoveinititated() {
@@ -42,7 +44,7 @@ public class LSactiveUser {
 	public void setRemoveinititated(boolean removeinititated) {
 		this.removeinititated = removeinititated;
 	}
-
+	
 	public Date getLastactivetime() {
 		return lastactivetime;
 	}

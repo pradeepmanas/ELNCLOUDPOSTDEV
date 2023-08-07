@@ -1047,4 +1047,35 @@ public class MaterialService {
 		return obj;
 
 	}
+
+	public Material cloudUploadFilesWithTags(MultipartFile file, Integer nmaterialcatcode, String filename,
+			String fileexe, Integer usercode, Date currentdate, Integer isMultitenant) throws IOException {
+		Material objmaterial = materialRepository.findOne(nmaterialcatcode);
+		LsOrderattachments objattachment = new LsOrderattachments();
+		
+     	objattachment.setFilename(filename);
+		objattachment.setFileextension(fileexe);
+		objattachment.setCreateby(lsuserMasterRepository.findByusercode(usercode));
+		objattachment.setCreatedate(currentdate);
+		objattachment.setNmaterialcode(objmaterial.getNmaterialcode());
+		if (objmaterial != null && objmaterial.getLsOrderattachments() != null) {
+			objmaterial.getLsOrderattachments().add(objattachment);
+		} else {
+			objmaterial.setLsOrderattachments(new ArrayList<LsOrderattachments>());
+			objmaterial.getLsOrderattachments().add(objattachment);
+		}
+		lsOrderattachmentsRepository.save(objmaterial.getLsOrderattachments());		
+		if(isMultitenant != 0) {
+		String filenameval = "attach_"+ objmaterial.getNmaterialcode() + "_" + objmaterial.getLsOrderattachments()
+		.get(objmaterial.getLsOrderattachments().lastIndexOf(objattachment)).getAttachmentcode()+ "_" + filename;
+			String id = cloudFileManipulationservice.storeFileWithTags(filenameval, file,"Material_"+nmaterialcatcode);
+			if (id != null) {
+				objattachment.setFileid(id);
+		}
+	
+		lsOrderattachmentsRepository.save(objmaterial.getLsOrderattachments());
+		}	
+
+		return objmaterial;
+	}
 }

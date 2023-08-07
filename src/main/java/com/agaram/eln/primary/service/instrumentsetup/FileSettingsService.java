@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.agaram.eln.primary.repository.instrumentsetup.FileSettingsRepository;
-import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.model.instrumentsetup.FileSettings;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
+import com.agaram.eln.primary.repository.instrumentsetup.FileSettingsRepository;
+import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 
 /**
  * This Service class is used to access the FileSettingsRepository to fetch details

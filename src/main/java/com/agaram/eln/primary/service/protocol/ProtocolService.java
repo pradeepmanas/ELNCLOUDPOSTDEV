@@ -3,6 +3,7 @@ package com.agaram.eln.primary.service.protocol;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +39,7 @@ import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.cloudFileManip.CloudOrderCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudUserSignature;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolorderversionstep;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolstepInfo;
@@ -45,6 +47,7 @@ import com.agaram.eln.primary.model.cloudProtocol.CloudLSprotocolversionstep;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.fileManipulation.UserSignature;
+import com.agaram.eln.primary.model.general.OrderCreation;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
@@ -86,6 +89,7 @@ import com.agaram.eln.primary.model.protocols.ProtocolImage;
 import com.agaram.eln.primary.model.protocols.ProtocolorderImage;
 import com.agaram.eln.primary.model.protocols.Protocolordervideos;
 import com.agaram.eln.primary.model.protocols.Protocolvideos;
+import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
@@ -165,6 +169,7 @@ import com.microsoft.azure.storage.blob.BlobRequestOptions;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
+import com.mongodb.gridfs.GridFSDBFile;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSProtocolMasterRepository.class)
@@ -186,7 +191,16 @@ public class ProtocolService {
 
 	@Autowired
 	LSuserMasterRepository LSuserMasterRepositoryObj;
+	
+	@Autowired
+	LSProtocolMasterRepository lsProtocolMasterRepository;
+	
+	@Autowired
+	private CloudFileManipulationservice objCloudFileManipulationservice;
 
+	@Autowired
+	Commonservice commonservice;
+	
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
@@ -360,12 +374,6 @@ public class ProtocolService {
 					new TypeReference<LScfttransaction>() {
 					});
 			LScfttransactionobj.setTableName("LSprotocolmaster");
-			try {
-				LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			lscfttransactionRepository.save(LScfttransactionobj);
 		}
 		@SuppressWarnings("unchecked")
@@ -596,7 +604,7 @@ public class ProtocolService {
 		return mapObj;
 	}
 
-	public Map<String, Object> getProtocolStepLst(Map<String, Object> argObj) {
+	public Map<String, Object> getProtocolStepLst(Map<String, Object> argObj) throws IOException {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 //		@SuppressWarnings("unused")
 //		LScfttransaction LScfttransactionobj = new LScfttransaction();
@@ -631,6 +639,8 @@ public class ProtocolService {
 //					if (newLSprotocolstepInfo != null) {
 //						LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
 //					}
+					
+					
 					LSprotocolstepInformation newobj = lsprotocolstepInformationRepository
 							.findById(LSprotocolstepObj1.getProtocolstepcode());
 					if (newobj != null) {
@@ -654,6 +664,9 @@ public class ProtocolService {
 				mapObj.put("protocolstepLst", new ArrayList<>());
 				mapObj.put("LSprotocolversionlst", new ArrayList<>());
 			}
+			LSprotocolmaster lsProtocolMaster = lsProtocolMasterRepository.findByprotocolmastercode(protocolmastercode);
+			mapObj.put("ProtocolData",objCloudFileManipulationservice.retrieveCloudSheets(lsProtocolMaster.getFileuid(),
+					TenantContext.getCurrentTenant() + "protocol"));
 		}
 		return mapObj;
 	}
@@ -1255,9 +1268,9 @@ public class ProtocolService {
 			versProto.setVersionname("version_" + protocolMaster.getVersionno());
 			try {
 				versProto.setCreatedate(commonfunction.getCurrentUtcTime());
-			} catch (ParseException e1) {
+			} catch (ParseException e) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				e.printStackTrace();
 			}
 			if (usercode != "" && usercode1 != 0) {
 				versProto.setCreatedbyusername(usercode);
@@ -1265,12 +1278,6 @@ public class ProtocolService {
 			}
 			lsprotocolversionRepository.save(versProto);
 			if (objaudit1 != null && objaudit1.getLssitemaster() != null) {
-				try {
-					objaudit1.setTransactiondate(commonfunction.getCurrentUtcTime());
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				lscfttransactionRepository.save(objaudit1);
 			}
 		} else {
@@ -1362,7 +1369,7 @@ public class ProtocolService {
 	}
 
 	@SuppressWarnings({ "unchecked", "unused" })
-	public Map<String, Object> addProtocolMaster(Map<String, Object> argObj) {
+	public Map<String, Object> addProtocolMaster(Map<String, Object> argObj) throws IOException {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 
 		LScfttransaction LScfttransactionobj = new LScfttransaction();
@@ -1529,6 +1536,10 @@ public class ProtocolService {
 			}
 			if (LSprotocolsteplst != null) {
 				mapObj.put("protocolstepLst", LSprotocolstepLst);
+				Gson gson = new Gson();
+				String protocolDataJson = gson.toJson(argObj.get("protocolData"));
+				commonservice.updateProtocolContent(protocolDataJson, newProtocolMasterObj);
+				mapObj.put("ProtocolData",protocolDataJson);
 			} else {
 				mapObj.put("protocolstepLst", new ArrayList<>());
 			}
@@ -1594,6 +1605,8 @@ public class ProtocolService {
 			mapObj.put("LSprotocolversionlst", LSprotocolversionlst);
 			mapObj.put("protocolmasterLst", LSprotocolmasterLst);
 			mapObj.put("AddedLSprotocolmasterObj", AddedLSprotocolmasterObj);
+//			mapObj.put("ProtocolData",objCloudFileManipulationservice.retrieveCloudSheets(newProtocolMasterObj.getFileuid(),
+//					TenantContext.getCurrentTenant() + "protocol"));
 			mapObj.put("response", response);
 			updatenotificationforprotocolcreation(newProtocolMasterObj, argObj, false);
 		}
@@ -1720,12 +1733,6 @@ public class ProtocolService {
 						+ newProtocolMasterObj1.getCreatedbyusername());
 				LScfttransactionobj.setTableName("LSfile");
 				LScfttransactionobj.setTableName("LSprotocolmaster");
-				try {
-					LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				lscfttransactionRepository.save(LScfttransactionobj);
 			}
 
@@ -1791,7 +1798,7 @@ public class ProtocolService {
 //		
 //	}
 
-	public Map<String, Object> deleteProtocolMaster(Map<String, Object> argObj) {
+	public Map<String, Object> deleteProtocolMaster(Map<String, Object> argObj) throws IOException {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 
 		LScfttransaction LScfttransactionobj = new LScfttransaction();
@@ -1944,18 +1951,18 @@ public class ProtocolService {
 		}
 		List<LSprotocolworkflowhistory> obj = objClass.getLsprotocolworkflowhistory();
 		obj = obj.stream()
-		            .map(workflowhistory -> {
-		                try {
-		                	if(workflowhistory.getHistorycode()==null) {
-		                	workflowhistory.setCreatedate(commonfunction.getCurrentUtcTime());
-		                	}
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-		                return workflowhistory;
-		            })
-		            .collect(Collectors.toList());
+	            .map(workflowhistory -> {
+	                try {
+	                	if(workflowhistory.getHistorycode()==null) {
+	                	workflowhistory.setCreatedate(commonfunction.getCurrentUtcTime());
+	                	}
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	                return workflowhistory;
+	            })
+	            .collect(Collectors.toList());
 		lsprotocolworkflowhistoryRepository.save(obj);
 		LsProto.setLsprotocolworkflowhistory(obj);
 		mapObj.put("ProtocolObj", LsProto);
@@ -2623,6 +2630,7 @@ public class ProtocolService {
 
 	public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabprotocoldetail) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
+		String Content = "";
 		try {
 			lSlogilabprotocoldetail.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
 		} catch (ParseException e) {
@@ -2673,100 +2681,121 @@ public class ProtocolService {
 						});
 				List<CloudLsLogilabprotocolstepInfo> objinfo = new ArrayList<CloudLsLogilabprotocolstepInfo>();
 				List<LsLogilabprotocolstepInfo> objmongoinfo = new ArrayList<LsLogilabprotocolstepInfo>();
-				for (LSlogilabprotocolsteps LSprotocolstepObj1 : lststep1) {
-
-					LSprotocolstepObj1.setModifiedusername(null);
-					LSprotocolstepObj1.setProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
-					LSprotocolstepObj1.setOrderstepflag("N");
-//					LSprotocolstepObj1.setVersionno(0);
-
-					LSlogilabprotocolstepsRepository.save(LSprotocolstepObj1);
-
-					if (lSlogilabprotocoldetail.getIsmultitenant() == 1) {
-
-						LSprotocolstepInformation lsprotocolstepInformation = lsprotocolstepInformationRepository
-								.findById(LSprotocolstepObj1.getProtocolstepcode());
-						if (lsprotocolstepInformation != null) {
-							LSprotocolstepObj1.setLsprotocolstepInfo(lsprotocolstepInformation.getLsprotocolstepInfo());
+				if(!lststep1.isEmpty()) {
+					for (LSlogilabprotocolsteps LSprotocolstepObj1 : lststep1) {
+	
+						LSprotocolstepObj1.setModifiedusername(null);
+						LSprotocolstepObj1.setProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
+						LSprotocolstepObj1.setOrderstepflag("N");
+	//					LSprotocolstepObj1.setVersionno(0);
+	
+						LSlogilabprotocolstepsRepository.save(LSprotocolstepObj1);
+	
+						if (lSlogilabprotocoldetail.getIsmultitenant() == 1) {
+							
+							LSprotocolstepInformation lsprotocolstepInformation = lsprotocolstepInformationRepository
+									.findById(LSprotocolstepObj1.getProtocolstepcode());
+							if (lsprotocolstepInformation != null) {
+								LSprotocolstepObj1.setLsprotocolstepInfo(lsprotocolstepInformation.getLsprotocolstepInfo());
+							} else {
+								Gson g = new Gson();
+								LSprotocolstepObj1.setLsprotocolstepInfo(g.toJson(""));
+							}
+							CloudLsLogilabprotocolstepInfo CloudLSprotocolstepInfoObj = new CloudLsLogilabprotocolstepInfo();
+							CloudLSprotocolstepInfoObj.setId(LSprotocolstepObj1.getProtocolorderstepcode());
+							CloudLSprotocolstepInfoObj.setLsprotocolstepInfo(LSprotocolstepObj1.getLsprotocolstepInfo());
+							CloudLsLogilabprotocolstepInfoRepository.save(CloudLSprotocolstepInfoObj);
+	
+							objinfo.add(CloudLSprotocolstepInfoObj);
+	
+	//						mapObj.put("CloudLsLogilabprotocolstepInfo", objinfo);
+	
 						} else {
-							Gson g = new Gson();
-							LSprotocolstepObj1.setLsprotocolstepInfo(g.toJson(""));
+							LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate
+									.findById(LSprotocolstepObj1.getProtocolstepcode(), LSprotocolstepInfo.class);
+	
+							List<LSprotocolimages> objimg = new ArrayList<>();
+							List<LSprotocolfiles> objfile = new ArrayList<>();
+							List<LSprotocolvideos> objvideo = new ArrayList<>();
+							objfile = lsprotocolfilesRepository
+									.findByProtocolstepcode(LSprotocolstepObj1.getProtocolstepcode());
+							objimg = lsprotocolimagesRepository
+									.findByProtocolstepcode(LSprotocolstepObj1.getProtocolstepcode());
+							objvideo = lsprotocolvideosRepository
+									.findByProtocolstepcode(LSprotocolstepObj1.getProtocolstepcode());
+	
+							if (newLSprotocolstepInfo != null) {
+								LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+								LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+								if (objimg.size() != 0) {
+									for (LSprotocolimages img : objimg) {
+										if (img.getFileid() != null) {
+											String id = img.getFileid() + lSlogilabprotocoldetail.getProtoclordername();
+	
+											String con = LSprotocolstepObj1.getLsprotocolstepInfo();
+											String finalinfo = con.replaceAll(img.getFileid(), id);
+	
+											LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
+										}
+	
+									}
+								}
+								if (objfile.size() != 0) {
+									for (LSprotocolfiles file : objfile) {
+										if (file.getFileid() != null) {
+											String id = file.getFileid() + lSlogilabprotocoldetail.getProtoclordername();
+	
+											String con = LSprotocolstepObj1.getLsprotocolstepInfo();
+											String finalinfo = con.replaceAll(file.getFileid(), id);
+	
+											LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
+										}
+									}
+	
+								}
+								if (objvideo.size() != 0) {
+									for (LSprotocolvideos video : objvideo) {
+										if (video.getFileid() != null) {
+											String id = video.getFileid() + lSlogilabprotocoldetail.getProtoclordername();
+	
+											String con = LSprotocolstepObj1.getLsprotocolstepInfo();
+											String finalinfo = con.replaceAll(video.getFileid(), id);
+											LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
+										}
+									}
+								}
+							}
+							LsLogilabprotocolstepInfo LsLogilabprotocolstepInfoObj = new LsLogilabprotocolstepInfo();
+	//						Gson g = new Gson();
+	//						String str = g.toJson(LSprotocolstepObj1.getLsprotocolstepInfo());
+							LsLogilabprotocolstepInfoObj.setId(LSprotocolstepObj1.getProtocolorderstepcode());
+							LsLogilabprotocolstepInfoObj.setContent(LSprotocolstepObj1.getLsprotocolstepInfo());
+							mongoTemplate.insert(LsLogilabprotocolstepInfoObj);
+	
+							objmongoinfo.add(LsLogilabprotocolstepInfoObj);
+	
 						}
-						CloudLsLogilabprotocolstepInfo CloudLSprotocolstepInfoObj = new CloudLsLogilabprotocolstepInfo();
-						CloudLSprotocolstepInfoObj.setId(LSprotocolstepObj1.getProtocolorderstepcode());
-						CloudLSprotocolstepInfoObj.setLsprotocolstepInfo(LSprotocolstepObj1.getLsprotocolstepInfo());
-						CloudLsLogilabprotocolstepInfoRepository.save(CloudLSprotocolstepInfoObj);
-
-						objinfo.add(CloudLSprotocolstepInfoObj);
-
-//						mapObj.put("CloudLsLogilabprotocolstepInfo", objinfo);
-
-					} else {
-						LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate
-								.findById(LSprotocolstepObj1.getProtocolstepcode(), LSprotocolstepInfo.class);
-
-						List<LSprotocolimages> objimg = new ArrayList<>();
-						List<LSprotocolfiles> objfile = new ArrayList<>();
-						List<LSprotocolvideos> objvideo = new ArrayList<>();
-						objfile = lsprotocolfilesRepository
-								.findByProtocolstepcode(LSprotocolstepObj1.getProtocolstepcode());
-						objimg = lsprotocolimagesRepository
-								.findByProtocolstepcode(LSprotocolstepObj1.getProtocolstepcode());
-						objvideo = lsprotocolvideosRepository
-								.findByProtocolstepcode(LSprotocolstepObj1.getProtocolstepcode());
-
-						if (newLSprotocolstepInfo != null) {
-							LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
-							LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
-							if (objimg.size() != 0) {
-								for (LSprotocolimages img : objimg) {
-									if (img.getFileid() != null) {
-										String id = img.getFileid() + lSlogilabprotocoldetail.getProtoclordername();
-
-										String con = LSprotocolstepObj1.getLsprotocolstepInfo();
-										String finalinfo = con.replaceAll(img.getFileid(), id);
-
-										LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
-									}
-
-								}
-							}
-							if (objfile.size() != 0) {
-								for (LSprotocolfiles file : objfile) {
-									if (file.getFileid() != null) {
-										String id = file.getFileid() + lSlogilabprotocoldetail.getProtoclordername();
-
-										String con = LSprotocolstepObj1.getLsprotocolstepInfo();
-										String finalinfo = con.replaceAll(file.getFileid(), id);
-
-										LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
-									}
-								}
-
-							}
-							if (objvideo.size() != 0) {
-								for (LSprotocolvideos video : objvideo) {
-									if (video.getFileid() != null) {
-										String id = video.getFileid() + lSlogilabprotocoldetail.getProtoclordername();
-
-										String con = LSprotocolstepObj1.getLsprotocolstepInfo();
-										String finalinfo = con.replaceAll(video.getFileid(), id);
-										LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
-									}
-								}
-							}
-						}
-						LsLogilabprotocolstepInfo LsLogilabprotocolstepInfoObj = new LsLogilabprotocolstepInfo();
-//						Gson g = new Gson();
-//						String str = g.toJson(LSprotocolstepObj1.getLsprotocolstepInfo());
-						LsLogilabprotocolstepInfoObj.setId(LSprotocolstepObj1.getProtocolorderstepcode());
-						LsLogilabprotocolstepInfoObj.setContent(LSprotocolstepObj1.getLsprotocolstepInfo());
-						mongoTemplate.insert(LsLogilabprotocolstepInfoObj);
-
-						objmongoinfo.add(LsLogilabprotocolstepInfoObj);
-
+	
 					}
-
+				} else {
+					if (lSlogilabprotocoldetail.getIsmultitenant() == 1) {
+						LSprotocolmaster lsprotocolmasterobj = LSProtocolMasterRepositoryObj.findByprotocolmastercode(
+								lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode());
+						if (lsprotocolmasterobj.getContainerstored() == 0) {
+	//							Content = cloudSheetCreationRepository.findById((long) objorder.getLsfile().getFilecode())
+	//									.getContent();
+						} else {
+							try {
+								Content = objCloudFileManipulationservice.retrieveCloudSheets(lsprotocolmasterobj.getFileuid(),
+										TenantContext.getCurrentTenant() + "protocol");
+								updateProtocolOrderContent(Content, lSlogilabprotocoldetail, lSlogilabprotocoldetail.getIsmultitenant());
+								mapObj.put("protocolData", Content);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					}
 				}
 				if (objinfo.size() != 0) {
 					lSlogilabprotocoldetail.setCloudLsLogilabprotocolstepInfo(objinfo);
@@ -2877,6 +2906,52 @@ public class ProtocolService {
 		return mapObj;
 	}
 
+	public void updateProtocolOrderContent(String Content, LSlogilabprotocoldetail objOrder, Integer ismultitenant) throws IOException {
+
+		if (ismultitenant == 1) {
+
+			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,
+					TenantContext.getCurrentTenant() + "protocolorder");
+			String fileUUID = (String) objMap.get("uuid");
+			String fileURI = objMap.get("uri").toString();
+
+			objOrder.setFileuri(fileURI);
+			objOrder.setFileuid(fileUUID);
+			objOrder.setContainerstored(1);
+			LSlogilabprotocoldetailRepository.save(objOrder);
+
+		} else {
+//			OrderCreation objsavefile = new OrderCreation();
+//			objsavefile.setId((long) objfile.getFilesamplecode());
+//			objsavefile.setContentvalues(contentValues);
+//			objsavefile.setContentparameter(contentParams);
+//
+//			Query query = new Query(Criteria.where("id").is(objsavefile.getId()));
+//
+//			Boolean recordcount = mongoTemplate.exists(query, OrderCreation.class);
+//
+//			if (!recordcount) {
+//				mongoTemplate.insert(objsavefile);
+//			} else {
+//				Update update = new Update();
+//				update.set("contentvalues", contentValues);
+//				update.set("contentparameter", contentParams);
+//
+//				mongoTemplate.upsert(query, update, OrderCreation.class);
+//			}
+
+//			GridFSDBFile largefile = gridFsTemplate
+//					.findOne(new Query(Criteria.where("filename").is("order_" + objfile.getFilesamplecode())));
+//			if (largefile != null) {
+//				gridFsTemplate.delete(new Query(Criteria.where("filename").is("order_" + objfile.getFilesamplecode())));
+//			}
+//			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
+//					"order_" + objfile.getFilesamplecode(), StandardCharsets.UTF_16);
+
+//			objsavefile = null;
+		}
+	}
+	
 	public void updateprotocolorderfileforsql(List<LSprotocolfiles> objimg,
 			LSlogilabprotocoldetail lSlogilabprotocoldetail, LSlogilabprotocolsteps lslogilabprotocolsteps) {
 
@@ -3758,6 +3833,7 @@ public class ProtocolService {
 //			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),
 //					new TypeReference<LScfttransaction>() {
 //					});
+		String Content = "";
 		if (argObj.containsKey("ismultitenant")) {
 			ObjectMapper objm = new ObjectMapper();
 			int multitenent = objm.convertValue(argObj.get("ismultitenant"), Integer.class);
@@ -3782,33 +3858,48 @@ public class ProtocolService {
 
 			List<LSlogilabprotocolsteps> LSprotocolstepLst = new ArrayList<LSlogilabprotocolsteps>();
 
-			for (LSlogilabprotocolsteps LSprotocolstepObj1 : LSprotocolsteplst) {
-
+			if(!LSprotocolsteplst.isEmpty()) {
+				for (LSlogilabprotocolsteps LSprotocolstepObj1 : LSprotocolsteplst) {
+	
+					if (multitenent == 1) {
+	
+						CloudLsLogilabprotocolstepInfo newLSprotocolstepInfo = CloudLsLogilabprotocolstepInfoRepository
+								.findById(LSprotocolstepObj1.getProtocolorderstepcode());
+						List<LSprotocolorderimages> lsprotocolorderimages = lsprotocolorderimagesRepository
+								.findByProtocolorderstepcode(LSprotocolstepObj1.getProtocolorderstepcode());
+						if (newLSprotocolstepInfo != null) {
+							LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
+						}
+						if (lsprotocolorderimages.size() != 0) {
+							LSprotocolstepObj1.setLsprotocolorderimages(lsprotocolorderimages);
+						}
+					} else {
+	
+						LsLogilabprotocolstepInfo newLSprotocolstepInfo = mongoTemplate
+								.findById(LSprotocolstepObj1.getProtocolorderstepcode(), LsLogilabprotocolstepInfo.class);
+						if (newLSprotocolstepInfo != null) {
+							LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+						}
+					}
+	
+	//				Collections.sort(LSprotocolorderversion, Collections.reverseOrder());
+	
+					LSprotocolstepLst.add(LSprotocolstepObj1);
+	
+				}
+			} else {
 				if (multitenent == 1) {
-
-					CloudLsLogilabprotocolstepInfo newLSprotocolstepInfo = CloudLsLogilabprotocolstepInfoRepository
-							.findById(LSprotocolstepObj1.getProtocolorderstepcode());
-					List<LSprotocolorderimages> lsprotocolorderimages = lsprotocolorderimagesRepository
-							.findByProtocolorderstepcode(LSprotocolstepObj1.getProtocolorderstepcode());
-					if (newLSprotocolstepInfo != null) {
-						LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
-					}
-					if (lsprotocolorderimages.size() != 0) {
-						LSprotocolstepObj1.setLsprotocolorderimages(lsprotocolorderimages);
-					}
-				} else {
-
-					LsLogilabprotocolstepInfo newLSprotocolstepInfo = mongoTemplate
-							.findById(LSprotocolstepObj1.getProtocolorderstepcode(), LsLogilabprotocolstepInfo.class);
-					if (newLSprotocolstepInfo != null) {
-						LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+					LSlogilabprotocoldetail lslogilabprotocoldetail = LSlogilabprotocoldetailRepository
+							.findByProtocolordercode(ipInt);
+					try {
+						Content = objCloudFileManipulationservice.retrieveCloudSheets(lslogilabprotocoldetail.getFileuid(),
+								TenantContext.getCurrentTenant() + "protocolorder");
+						mapObj.put("protocolData", Content);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
-
-//				Collections.sort(LSprotocolorderversion, Collections.reverseOrder());
-
-				LSprotocolstepLst.add(LSprotocolstepObj1);
-
 			}
 
 			List<LSprotocolorderversion> LSprotocolorderversion = lsprotocolorderversionRepository
@@ -3835,13 +3926,6 @@ public class ProtocolService {
 //		mapOrders.put("sheets", GetApprovedSheets(0,objuser));
 		if (objuser.getObjsilentaudit() != null) {
 			objuser.getObjsilentaudit().setTableName("LSfiletest");
-			
-			try {
-				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 		return mapOrders;
@@ -3883,12 +3967,6 @@ public class ProtocolService {
 
 //			mapOrders = getProtocolOrderStepLst(argMap);
 			LScfttransactionobj.setTableName("lslogilabprotocolsteps");
-			try {
-				LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			lscfttransactionRepository.save(LScfttransactionobj);
 		}
 		return mapOrders;
@@ -4732,12 +4810,13 @@ public class ProtocolService {
 		return true;
 	}
 
-	public Map<String, Object> uploadprotocols(Map<String, Object> body) {
+	public Map<String, Object> uploadprotocols(Map<String, Object> body) throws IOException {
 
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		Response response = new Response();
 		LSprotocolstepInformation obj = new LSprotocolstepInformation();
 		ObjectMapper object = new ObjectMapper();
+		Boolean Isnew = false;
 		if (body.get("LSprotocolupdates") != null) {
 			LSprotocolupdates lSprotocolupdates = object.convertValue(body.get("LSprotocolupdates"),
 					LSprotocolupdates.class);
@@ -4771,6 +4850,7 @@ public class ProtocolService {
 				mapObj.put("response", response);
 			} else {
 				if (NewStep == 0 && body.get("protocolstepcode") != null) {
+					Isnew = true;
 					int protocolstepcode = object.convertValue(body.get("protocolstepcode"), Integer.class);
 
 					LSprotocolstepObj = LSProtocolStepRepositoryObj
@@ -4789,6 +4869,7 @@ public class ProtocolService {
 						obj.setId(protocolstepcode);
 						obj.setLsprotocolstepInfo(str);
 						lsprotocolstepInformationRepository.save(obj);
+//						commonservice.updateProtocolContent(str, LSprotocolstepObj, Isnew);
 					} else {
 						Query query = new Query(Criteria.where("id").is(protocolstepcode));
 						Update update = new Update();
@@ -4943,6 +5024,68 @@ public class ProtocolService {
 		return mapObj;
 	}
 
+	public Map<String, Object> protocolTemplateSave(Map<String, Object> body) throws IOException {
+
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+		Response response = new Response();
+		ObjectMapper object = new ObjectMapper();
+		
+		if (body.get("newProtocolMaster") != null) {
+			LSprotocolmaster lSprotocolmaster = object.convertValue(body.get("newProtocolMaster"),
+					LSprotocolmaster.class);
+			LSprotocolmaster protocolMaster = LSProtocolMasterRepositoryObj.findByprotocolmastercode(lSprotocolmaster.getProtocolmastercode());
+//			LSProtocolMasterRepositoryObj.save(lSprotocolmaster);
+			Integer ismultitenant = object.convertValue(body.get("ismultitenant"), Integer.class);
+			int sitecode = object.convertValue(body.get("sitecode"), Integer.class);
+			
+			if ((protocolMaster.getApproved() != null && protocolMaster.getApproved() == 1 )) {
+
+				LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(sitecode);
+//				LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
+//						.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);.
+
+				LSsheetworkflow lssheetworkflow = lssheetworkflowRepository
+						.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
+
+				protocolMaster.setApproved(0);
+//				lSprotocolmaster.setlSprotocolworkflow(lsprotocolworkflow);
+				protocolMaster.setLssheetworkflow(lssheetworkflow);
+				protocolMaster.setVersionno(protocolMaster.getVersionno() + 1);
+
+//				LSProtocolMasterRepositoryObj.save(lSprotocolmaster);
+				List<LSprotocolmastertest> LSprotocolmastertest = protocolMaster.getLstest();
+				for (LSprotocolmastertest test : LSprotocolmastertest) {
+					test.setTestcode(null);
+					LSprotocolmastertestRepository.save(test);
+				}
+			}
+			
+			if (!body.get("protocolData").equals("")) {
+				
+//				String str = object.convertValue(body.get("protocolData"), String.class);
+				
+				if (ismultitenant == 1) {
+					protocolMaster.setIsmultitenant(ismultitenant);
+					Gson gson = new Gson();
+					String protocolDataJson = gson.toJson(body.get("protocolData"));
+					commonservice.updateProtocolContent(protocolDataJson, protocolMaster);
+					mapObj.put("protocolMaster", protocolMaster);
+					response.setInformation("IDS_MSG_PROTOCOLSAVE");
+					response.setStatus(true);
+				} else {
+//					Query query = new Query(Criteria.where("id").is(LSprotocolstepObj.getProtocolstepcode()));
+//					Update update = new Update();
+//					update.set("content", str);
+////					update.set("content", content);
+//					mongoTemplate.upsert(query, update, LSprotocolstepInfo.class);
+				}
+			}
+		}
+		
+		mapObj.put("response", response);
+		return mapObj;
+	}
+	
 	@SuppressWarnings("unused")
 	public List<Lsrepositoriesdata> reducecunsumablefield(Lsrepositoriesdata[] lsrepositoriesdata) {
 		List<Lsrepositoriesdata> lsrepositoriesdataobj = Arrays.asList(lsrepositoriesdata);
@@ -5032,7 +5175,7 @@ public class ProtocolService {
 	}
 
 	@SuppressWarnings("unused")
-	public Map<String, Object> Getprotocollinksignature(Map<String, String> body) {
+	public Map<String, Object> Getprotocollinksignature(Map<String, String> body) throws ParseException {
 		Map<String, Object> obj = new HashMap<String, Object>();
 		ObjectMapper object = new ObjectMapper();
 
@@ -5071,12 +5214,7 @@ public class ProtocolService {
 			obj = Uploadprotocolorderimage(customMultipartFile, protocolstepcode, protocolordercode, stepno,
 					protocolstepname, originurl);
 		}
-		try {
-			obj.put("curendateandtime", commonfunction.getCurrentUtcTime());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		obj.put("curendateandtime", commonfunction.getCurrentUtcTime());
 		return obj;
 	}
 
@@ -5793,7 +5931,6 @@ public class ProtocolService {
 
 		if (objtest.getObjLoggeduser().getUsername().trim().toLowerCase().equals("administrator")) {
 			lsfiles = LSProtocolMasterRepositoryObj.findByLstestInAndStatusAndApproved(lsfiletest, 1,1);
-			return lsfiles;
 		} else {
 
 			List<Integer> lstteammap = LSuserteammappingRepositoryObj
@@ -5807,7 +5944,6 @@ public class ProtocolService {
 								lsfiletest, 1, lstteammap, 1, 1,
 								lsfiletest, 1, objtest.getObjLoggeduser().getUsercode(),2, 1,
 								lsfiletest, 1, lstteammap, 3,1);
-				return lsfiles;
 
 			} else {
 				lstteammap.add(objtest.getObjLoggeduser().getUsercode());
@@ -5816,13 +5952,12 @@ public class ProtocolService {
 								lsfiletest, 1, lstteammap, 1,1,
 								lsfiletest, 1, objtest.getObjLoggeduser().getUsercode(),2,1,
 								lsfiletest, 1, lstteammap, 3,1);
-				return lsfiles;
 
 			}
-//			lsfiles = LSProtocolMasterRepositoryObj.findByLstestInAndStatus(lsfiletest, 1);
+			// lsfiles = LSProtocolMasterRepositoryObj.findByLstestInAndStatus(lsfiletest, 1);
 		}
 
-//		return lsfiles;
+		return lsfiles;
 	}
 
 	public Map<String, Object> Uploadprotocolimagesql(MultipartFile file, Integer protocolstepcode,

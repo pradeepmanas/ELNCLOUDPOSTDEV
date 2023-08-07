@@ -1,11 +1,21 @@
 package com.agaram.eln.primary.service.multitenant;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -476,6 +486,116 @@ public class DatasourceService {
 
 		return Tenant;
 	}
+	
+	public DataSourceConfig tenantDatabaseBackup(DataSourceConfig Tenant) throws URISyntaxException {
+		
+		Response objreponse = new Response();
+		String Databasename = Tenant.getTenantid().toLowerCase().replaceAll("[^a-zA-Z0-9]", "") + Tenant.getId();
+        String path = gettenanturlDataBasename(Databasename); // Replace with your database URL
+        String username = env.getProperty("app.datasource.eln.username"); // Replace with your username
+        String password = env.getProperty("app.datasource.eln.password"); // Replace with your password
+        String backupPath = env.getProperty("app.datasource.eln.backupPath"); // Replace with the path where you want to save the backup
+       
+        File backupFilePath = new File(backupPath + File.separator + "backup_" + Databasename);
+        if (!backupFilePath.exists()) {
+            File dir = backupFilePath;
+            dir.mkdirs();
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String backupFileName = "backup_" + Databasename + "_" + sdf.format(new Date());
+        
+         
+        URL url = null;
+        URI uri = null;
+        try {
+        	uri = new URI("http" + path.substring(path.indexOf("://")));
+            url = uri.toURL();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        String hostname = url.getHost();
+        int port = url.getPort();
+        
+        List<String> commands = getPgComands(Databasename, backupFilePath, backupFileName, "backup", hostname, port, username);
+        if (!commands.isEmpty()) {
+            try {
+                ProcessBuilder pb = new ProcessBuilder(commands);
+                pb.environment().put("PGPASSWORD", password);
+
+                Process process = pb.start();
+
+                try (BufferedReader buf = new BufferedReader(
+                        new InputStreamReader(process.getErrorStream()))) {
+                    String line = buf.readLine();
+                    while (line != null) {
+                        System.err.println(line);
+                        line = buf.readLine();
+                    }
+                }
+
+                process.waitFor();
+                process.destroy();
+
+                System.out.println("Database backup completed successfully.");
+                objreponse.setInformation("IDS_MSG_BACKUPSUCCESS");
+				objreponse.setStatus(true);
+				
+            } catch (IOException | InterruptedException ex) {
+                System.out.println("Exception: " + ex);
+                objreponse.setInformation("IDS_MSG_BACKUPFAILURE");
+    			objreponse.setStatus(false);
+            }
+        } else {
+            System.out.println("Error: Invalid params.");
+            objreponse.setInformation("IDS_MSG_BACKUPFAILURE");
+			objreponse.setStatus(false);
+        }
+        Tenant.setObjResponse(objreponse);
+		return Tenant;
+    }
+
+	 @SuppressWarnings("unchecked")
+	private List<String> getPgComands(String databaseName, File backupFilePath, String backupFileName,
+			 		String type, String hostname, int port, String username) {
+
+	        ArrayList<String> commands = new ArrayList<>();
+	        switch (type) {
+	            case "backup":
+	                commands.add(env.getProperty("app.datasource.eln.dbPath"));
+	                commands.add("-h"); //database server host
+	                commands.add(hostname);
+	                commands.add("-p"); //database server port number
+	                commands.add(Integer.toString(port));
+	                commands.add("-U"); //connect as specified database user
+	                commands.add(username);
+	                commands.add("-F"); //output file format (custom, directory, tar, plain text (default))
+	                commands.add("c");
+	                commands.add("-b"); //include large objects in dump
+	                commands.add("-v"); //verbose mode
+	                commands.add("-f"); //output file or directory name
+	                commands.add(backupFilePath.getAbsolutePath() + File.separator + backupFileName);
+	                commands.add("-d"); //database name
+	                commands.add(databaseName);
+	                break;
+	            case "restore":
+	                commands.add("pg_restore");
+	                commands.add("-h");
+	                commands.add("localhost");
+	                commands.add("-p");
+	                commands.add("5432");
+	                commands.add("-U");
+	                commands.add("postgres");
+	                commands.add("-d");
+	                commands.add(databaseName);
+	                commands.add("-v");
+	                commands.add(backupFilePath.getAbsolutePath() + File.separator + backupFileName);
+	                break;
+	            default:
+	                return Collections.EMPTY_LIST;
+	        }
+	        return commands;
+	    }
 
 	private DataSource createDataSource(String name, String url, DataSourceConfig config) {
 		if (config != null) {

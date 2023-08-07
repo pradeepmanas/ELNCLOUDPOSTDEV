@@ -3,9 +3,12 @@ package com.agaram.eln.primary.service.usermanagement;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
@@ -18,13 +21,16 @@ import org.springframework.stereotype.Service;
 import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.getmasters.Listofallmaster;
+import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.notification.Email;
+import com.agaram.eln.primary.model.usermanagement.LSMultisites;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -47,6 +53,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdet
 import com.agaram.eln.primary.repository.material.MaterialRepository;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSMultisitesRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordPolicyRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
@@ -63,6 +70,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsmasterR
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.repository.usermanagement.LsusersettingsRepository;
+import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.notification.EmailService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -136,9 +144,16 @@ public class UserService {
 
 	@Autowired
 	SectionRepository sectionRepository;
-	
+
 	@Autowired
 	MaterialRepository materialRepository;
+
+	@Autowired
+	private LSMultisitesRepositery LSMultisitesRepositery;
+	
+
+	@Autowired
+	private AuditService auditService;
 
 	public LSusergroup InsertUpdateUserGroup(LSusergroup objusergroup) {
 		if (lSusergroupRepository.findByusergroupnameIgnoreCaseAndLssitemaster(objusergroup.getUsergroupname(),
@@ -167,7 +182,7 @@ public class UserService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}else if(objusergroup.getUsergroupcode() == null) {
+		} else if (objusergroup.getUsergroupcode() == null) {
 			try {
 				objusergroup.setCreatedon(commonfunction.getCurrentUtcTime());
 				objusergroup.setModifiedon(commonfunction.getCurrentUtcTime());
@@ -223,7 +238,7 @@ public class UserService {
 
 		if (objusergroup.getObjuser() != null) {
 			// LScfttransaction manualAudit=new LScfttransaction();
-//			Date date = new Date();
+			Date date = new Date();
 			if (objusergroup.getObjmanualaudit() != null) {
 				// objusergroup.getObjmanualaudit().setComments("Insert Test Successfully");
 				objusergroup.getObjmanualaudit().setComments(objusergroup.getObjuser().getComments());
@@ -234,9 +249,9 @@ public class UserService {
 				objusergroup.getObjmanualaudit().setLsuserMaster(objusergroup.getLSuserMaster().getUsercode());
 				objusergroup.getObjmanualaudit()
 						.setLssitemaster(objusergroup.getLSuserMaster().getLssitemaster().getSitecode());
-//				objusergroup.getObjmanualaudit().setTransactiondate(date);
+				objusergroup.getObjmanualaudit().setTransactiondate(date);
 				try {
-					objusergroup.getObjmanualaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+					objusergroup.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -266,7 +281,10 @@ public class UserService {
 			return lsuserMasterRepository.findAllByOrderByCreateddateDesc();
 		}
 
-		return lsuserMasterRepository.findByLssitemasterOrderByCreateddateDesc(objusergroup.getLssitemaster());
+		List<LSMultisites> obj = LSMultisitesRepositery.findByLssiteMaster(objusergroup.getLssitemaster());
+		List<Integer> usercode = obj.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
+		return lsuserMasterRepository.findByUsercodeInAndUserretirestatusNot(usercode, 1);
+//		return lsuserMasterRepository.findByLssitemasterOrderByCreateddateDesc(objusergroup.getLssitemaster());
 
 //		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1,
 //				objusergroup.getLssitemaster());
@@ -278,21 +296,17 @@ public class UserService {
 			try {
 				objclass.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			lscfttransactionRepository.save(objclass.getObjsilentaudit());
 		}
 		if (objclass.getSitecode() == 0) {
 			return lsuserMasterRepository.findAllByOrderByCreateddateDesc();
-//			return lsuserMasterRepository.findByusernameNotAndUserretirestatusNotOrderByCreateddateDesc("Administrator",
-//					1);
 		}
-//		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objclass);
-//		return lsuserMasterRepository.findByUsernameNotAndUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(
-//				"Administrator", 1, objclass);
-
-		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1, objclass);
+		List<LSMultisites> obj = LSMultisitesRepositery.findByLssiteMaster(objclass);
+		List<Integer> usercode = obj.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
+		return lsuserMasterRepository.findByUserretirestatusNotAndUsercodeInOrderByCreateddateDesc(1, usercode);
+//		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1, objclass);
 	}
 
 	@SuppressWarnings("unused")
@@ -303,32 +317,49 @@ public class UserService {
 			isnewuser = true;
 		} else {
 			LSuserMaster obj1 = lsuserMasterRepository.findByusercode(objusermaster.getUsercode());
-
 		}
 
-		if (objusermaster.getUsercode() == null
-				&& lsuserMasterRepository.findByLssitemasterAndUsernameIgnoreCase(objusermaster.getLssitemaster(),
-						objusermaster.getUsername()) != null) {
+		List<LSSiteMaster> siteobj = objusermaster.getLsmultisites().stream()
+		    .map(multisite -> multisite.getLssiteMaster())
+		    .collect(Collectors.toList());
 
+		 List<LSMultisites> userocedsites = LSMultisitesRepositery.findByLssiteMasterIn(siteobj);
+		List<Integer> usercodes =userocedsites.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
+//		if (objusermaster.getUsercode() == null
+//				&& lsuserMasterRepository.findByLssitemasterAndUsernameIgnoreCase(objusermaster.getLssitemaster(),
+//						objusermaster.getUsername()) != null) {
+//		List<LSuserMaster> kumu=lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeIn(objusermaster.getUsername(), usercodes);
+		if (objusermaster.getUsercode() == null
+				&& lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeIn(objusermaster.getUsername(), usercodes).size()>0) {
 			objusermaster.setResponse(new Response());
 			objusermaster.getResponse().setStatus(false);
 			objusermaster.getResponse().setInformation("ID_EXIST");
 
 			return objusermaster;
-		} else if (objusermaster.getUsercode() != null && objusermaster.getUserstatus() != null&& objusermaster.getLsusergroup() == null) { 
+		} else if (objusermaster.getUsercode() != null && objusermaster.getUserstatus() != null
+				&& objusermaster.getLsusergroup() == null) {
 			LSuserMaster updateUser = lsuserMasterRepository.findOne(objusermaster.getUsercode());
-			updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A" : objusermaster.getUserstatus().equals("Deactive") ? "D" : "Locked");
+			updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A"
+					: objusermaster.getUserstatus().equals("Deactive") ? "D" : "Locked");
 //			objusermaster.setUserstatus(objusermaster.getUserstatus().equals("Active") || objusermaster.getUserstatus().equals("Locked") ? "A" : "D");
 			if (!isnewuser && objusermaster.isReset()) {
 				updateUser.setPassword(objusermaster.getPassword());
 			}
 			updateUser.setLockcount(objusermaster.getLockcount());
-			updateUser.setUserretirestatus(objusermaster.getUserretirestatus() == 1 ? objusermaster.getUserretirestatus() : updateUser.getUserretirestatus());
-			
+			updateUser
+					.setUserretirestatus(objusermaster.getUserretirestatus() == 1 ? objusermaster.getUserretirestatus()
+							: updateUser.getUserretirestatus());
+
 			if (objusermaster.getMultiusergroupcode() != null && objusermaster.getUsercode() != null) {
+				
+				if(objusermaster.getLsmultisites().size()>0) {
+					LSMultisitesRepositery.deleteByusercode(objusermaster.getUsercode());
+					LSMultisitesRepositery.save(objusermaster.getLsmultisites());
+				}
 				LSMultiusergroupRepositery.deleteByusercode(objusermaster.getUsercode());
 				LSMultiusergroupRepositery.save(objusermaster.getMultiusergroupcode());
-				updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A" : objusermaster.getUserstatus().equals("Deactive") ? "D" : "Locked");
+				updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A"
+						: objusermaster.getUserstatus().equals("Deactive") ? "D" : "Locked");
 				updateUser.setUserfullname(objusermaster.getUserfullname());
 				updateUser.setEmailid(objusermaster.getEmailid());
 				updateUser.setUnifieduserid(objusermaster.getUnifieduserid());
@@ -342,7 +373,8 @@ public class UserService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			objusermaster.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A" : objusermaster.getUserstatus().equals("Deactive") ? "D" : "Locked");
+			objusermaster.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A"
+					: objusermaster.getUserstatus().equals("Deactive") ? "D" : "Locked");
 			lsuserMasterRepository.save(updateUser);
 
 			objusermaster.setResponse(new Response());
@@ -352,32 +384,18 @@ public class UserService {
 
 			return objusermaster;
 		}
-
-		/*
-		 * if (objusermaster.getUsercode() == null && objusermaster.getIsmultitenant()
-		 * != null && objusermaster.getMultitenantusercount() != null &&
-		 * objusermaster.getIsmultitenant() == 1) {
-		 * 
-		 * if (lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1, 1) >=
-		 * objusermaster .getMultitenantusercount() &&
-		 * lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1, 1) != 0) {
-		 * Response objResponse = new Response(); objResponse.setStatus(false);
-		 * objResponse.setInformation("ID_USERCOUNTEXCEEDS");
-		 * 
-		 * objusermaster.setResponse(objResponse);
-		 * 
-		 * return objusermaster; }
-		 * 
-		 * }
-		 */
-
+		LSMultisitesRepositery.save(objusermaster.getLsmultisites());
 		LSMultiusergroupRepositery.save(objusermaster.getMultiusergroupcode());
 		lsuserMasterRepository.save(objusermaster);
-
+		AtomicInteger siteCodeHolder = new AtomicInteger(0);
+		objusermaster.getLsmultisites().stream().filter(items -> items.getDefaultsiteMaster() != null)
+				.forEach(items -> {
+					siteCodeHolder.set(items.getLssiteMaster().getSitecode());
+				});
+		Integer sitecode = siteCodeHolder.get();
 		if (isnewuser) {
 			String unifieduser = objusermaster.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "") + "u"
-					+ objusermaster.getUsercode() + "s" + objusermaster.getLssitemaster().getSitecode()
-					+ objusermaster.getUnifieduserid();
+					+ objusermaster.getUsercode() + "s" + sitecode + objusermaster.getUnifieduserid();
 
 			objusermaster.setUnifieduserid(unifieduser);
 			try {
@@ -387,7 +405,23 @@ public class UserService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			LSSiteMaster obj=new LSSiteMaster();
+			obj.setSitecode(sitecode);
+			objusermaster.setLssitemaster(obj);
 			lsuserMasterRepository.save(objusermaster);
+		}else{
+			LSuserMaster editobj =lsuserMasterRepository.findByusercode(objusermaster.getUsercode());
+			if(editobj.getLssitemaster().getSitecode()!=sitecode) {
+				String unifieduser = objusermaster.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "") + "u"
+						+ objusermaster.getUsercode() + "s" + sitecode + objusermaster.getUnifieduserid();
+
+				editobj.setUnifieduserid(unifieduser);
+				LSSiteMaster obj=new LSSiteMaster();
+				obj.setSitecode(sitecode);
+				editobj.setLssitemaster(obj);
+				lsuserMasterRepository.save(editobj);
+				objusermaster.setUnifieduserid(unifieduser);
+			}
 		}
 
 		objusermaster.setResponse(new Response());
@@ -413,62 +447,63 @@ public class UserService {
 	private void updatenotificationforuserrole(LSuserMaster objusermaster) {
 		String Details = "";
 		String Notifiction = "";
-		
+
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-		
+
 		LSuserMaster createby = lsuserMasterRepository.findByusercode(objusermaster.getLoggedinuser().getUsercode());
 		if (objusermaster.getMultiusergroupcode() != null && objusermaster.getDeleterole() != null) {
 //			if (objusermaster.getMultiusergroupcode().size() > objusermaster.getDeleterole().size()) {
-				if (!objusermaster.getUsernotify().isEmpty() && objusermaster.getUsernotify() != null) {
-					StringBuffer sb = new StringBuffer();
-					for (LSuserMaster rowValues : objusermaster.getUsernotify()) {
-						sb.append(rowValues.getUsergroupname()).append(",");
-					}
-					
-					if (createby.getUsercode() != objusermaster.getUsercode()) {
-						String Detailwithcomma = sb.toString();
-						Details = "{\"role\":\"" + Detailwithcomma + "\", \"site\":\"" + objusermaster.getSitename() + "\"}";
-						Notifiction = "USERROLEADD";
-	
-						LSnotification objnotify = new LSnotification();
-						objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
-						objnotify.setNotifationto(objusermaster);
-						objnotify.setNotificationdate(objusermaster.getModifieddate());
-						objnotify.setNotification(Notifiction);
-						objnotify.setNotificationdetils(Details);
-						objnotify.setNotificationfor(1);
-						objnotify.setNotificationpath("/Usermaster");
-						objnotify.setIsnewnotification(1);
-						lstnotifications.add(objnotify);
-						lsnotificationRepository.save(lstnotifications);
-					}
+			if (!objusermaster.getUsernotify().isEmpty() && objusermaster.getUsernotify() != null) {
+				StringBuffer sb = new StringBuffer();
+				for (LSuserMaster rowValues : objusermaster.getUsernotify()) {
+					sb.append(rowValues.getUsergroupname()).append(",");
 				}
+
+				if (createby.getUsercode() != objusermaster.getUsercode()) {
+					String Detailwithcomma = sb.toString();
+					Details = "{\"role\":\"" + Detailwithcomma + "\", \"site\":\"" + objusermaster.getSitename()
+							+ "\"}";
+					Notifiction = "USERROLEADD";
+
+					LSnotification objnotify = new LSnotification();
+					objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
+					objnotify.setNotifationto(objusermaster);
+					objnotify.setNotificationdate(objusermaster.getModifieddate());
+					objnotify.setNotification(Notifiction);
+					objnotify.setNotificationdetils(Details);
+					objnotify.setNotificationfor(1);
+					objnotify.setNotificationpath("/Usermaster");
+					objnotify.setIsnewnotification(1);
+					lstnotifications.add(objnotify);
+					lsnotificationRepository.save(lstnotifications);
+				}
+			}
 //			}
 //			if (objusermaster.getMultiusergroupcode().size() != objusermaster.getDeleterole().size()) {
-				if (!objusermaster.getUserroleremovenotify().isEmpty() && objusermaster.getUserroleremovenotify() != null) {
-					StringBuffer sb = new StringBuffer();
-					for (LSuserMaster rowValues : objusermaster.getUserroleremovenotify()) {
-						sb.append(rowValues.getUsergroupname()).append(",");
-					}
-					if (createby.getUsercode() != objusermaster.getUsercode()) {
-						String Detailwithcomma = sb.toString();
-						Details = "{\"role\":\"" + Detailwithcomma + "\", \"site\":\"" + objusermaster.getSitename()
-									+ "\", \"fromuser\":\"" + objusermaster.getLoggedinuser().getUsername() + "\"}";
-						Notifiction = "USERROLEREMOVE";
-						
-						LSnotification objnotify = new LSnotification();
-						objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
-						objnotify.setNotifationto(objusermaster);
-						objnotify.setNotificationdate(objusermaster.getModifieddate());
-						objnotify.setNotification(Notifiction);
-						objnotify.setNotificationdetils(Details);
-						objnotify.setNotificationfor(1);
-						objnotify.setNotificationpath("/Usermaster");
-						objnotify.setIsnewnotification(1);
-						lstnotifications.add(objnotify);
-						lsnotificationRepository.save(lstnotifications);
-					}
+			if (!objusermaster.getUserroleremovenotify().isEmpty() && objusermaster.getUserroleremovenotify() != null) {
+				StringBuffer sb = new StringBuffer();
+				for (LSuserMaster rowValues : objusermaster.getUserroleremovenotify()) {
+					sb.append(rowValues.getUsergroupname()).append(",");
 				}
+				if (createby.getUsercode() != objusermaster.getUsercode()) {
+					String Detailwithcomma = sb.toString();
+					Details = "{\"role\":\"" + Detailwithcomma + "\", \"site\":\"" + objusermaster.getSitename()
+							+ "\", \"fromuser\":\"" + objusermaster.getLoggedinuser().getUsername() + "\"}";
+					Notifiction = "USERROLEREMOVE";
+
+					LSnotification objnotify = new LSnotification();
+					objnotify.setNotifationfrom(objusermaster.getLoggedinuser());
+					objnotify.setNotifationto(objusermaster);
+					objnotify.setNotificationdate(objusermaster.getModifieddate());
+					objnotify.setNotification(Notifiction);
+					objnotify.setNotificationdetils(Details);
+					objnotify.setNotificationfor(1);
+					objnotify.setNotificationpath("/Usermaster");
+					objnotify.setIsnewnotification(1);
+					lstnotifications.add(objnotify);
+					lsnotificationRepository.save(lstnotifications);
+				}
+			}
 //			}
 		}
 
@@ -522,7 +557,7 @@ public class UserService {
 		// Manual Audit
 		if (objusermaster.getObjuser() != null) {
 			// LScfttransaction manualAudit=new LScfttransaction();
-//			Date date = new Date();
+			Date date = new Date();
 			objusermaster.getObjmanualaudit().setComments(objusermaster.getObjuser().getComments());
 			// manualAudit.setModuleName("UserManagement");
 			// manualAudit.setComments("Insert Test Successfully");
@@ -533,6 +568,7 @@ public class UserService {
 			// manualAudit.setLsuserMaster(objusermaster);
 			objusermaster.getObjmanualaudit().setLsuserMaster(objusermaster.getUsercode());
 			objusermaster.getObjmanualaudit().setLssitemaster(objusermaster.getLssitemaster().getSitecode());
+//			objusermaster.getObjmanualaudit().setTransactiondate(date);
 			try {
 				objusermaster.getObjmanualaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
 			} catch (ParseException e) {
@@ -572,9 +608,9 @@ public class UserService {
 	}
 
 	public LSusersteam InsertUpdateTeam(LSusersteam objteam) {
-		if (objteam.getTeamcode() == null
-				&& lsusersteamRepository.findByTeamnameIgnoreCaseAndLssitemaster(objteam.getTeamname(),
-						objteam.getLssitemaster()).size() != 0) {
+		if (objteam.getTeamcode() == null && lsusersteamRepository
+				.findByTeamnameIgnoreCaseAndLssitemaster(objteam.getTeamname(), objteam.getLssitemaster())
+				.size() != 0) {
 
 			objteam.setResponse(new Response());
 			objteam.getResponse().setStatus(false);
@@ -589,13 +625,13 @@ public class UserService {
 
 			return objteam;
 		} else if (objteam.getTeamcode() != null
-					&& lsusersteamRepository.findByTeamnameIgnoreCaseAndTeamcodeNotAndLssitemaster(objteam.getTeamname(), 
-							objteam.getTeamcode(), objteam.getLssitemaster()).size() != 0) {
+				&& lsusersteamRepository.findByTeamnameIgnoreCaseAndTeamcodeNotAndLssitemaster(objteam.getTeamname(),
+						objteam.getTeamcode(), objteam.getLssitemaster()).size() != 0) {
 			objteam.setResponse(new Response());
 			objteam.getResponse().setStatus(false);
 			objteam.getResponse().setInformation("ID_EXIST");
 			return objteam;
-			
+
 		} else if (objteam.getStatus() == -1) {
 			List<LSprojectmaster> team = new ArrayList<LSprojectmaster>();
 			team = LSprojectmasterRepository.findByLsusersteam(objteam);
@@ -704,7 +740,7 @@ public class UserService {
 			// 1);
 		}
 	}
-	
+
 	public List<LSusersteam> GetActiveUserTeam(LSuserMaster LSuserMaster) {
 		return lsusersteamRepository.findBylssitemasterAndStatus(LSuserMaster.getLssitemaster(), 1);
 	}
@@ -894,19 +930,17 @@ public class UserService {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		if(lsrights.size()>0 && lsrights.get(0).getOrderno()==null) {
-		lsrights = lsrights.stream()
-				  .map(obj -> {
-				    try {
-						obj.setCreatedon(commonfunction.getCurrentUtcTime());
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				    return obj;
-				  })
-				  .collect(Collectors.toList());
+
+		if (lsrights.size() > 0 && lsrights.get(0).getOrderno() == null) {
+			lsrights = lsrights.stream().map(obj -> {
+				try {
+					obj.setCreatedon(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return obj;
+			}).collect(Collectors.toList());
 		}
 		if (lsrights.get(0).getUsergroupid() == null) {
 			lsrights.get(0).setResponse(new Response());
@@ -924,25 +958,25 @@ public class UserService {
 		return lsrights;
 
 	}
-	
+
 	private void updateNotificationForUserRoleRights(List<LSusergrouprights> objRights) throws ParseException {
 		String Details = "";
 		String Notifiction = "";
 		LSnotification objnotify = new LSnotification();
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 
-		Details = "{\"role\":\"" + objRights.get(0).getUsergroupid().getUsergroupname()
-					+ "\", \"user\":\"" + objRights.get(0).getObjLoggedUser().getUsername() + "\"}";
+		Details = "{\"role\":\"" + objRights.get(0).getUsergroupid().getUsergroupname() + "\", \"user\":\""
+				+ objRights.get(0).getObjLoggedUser().getUsername() + "\"}";
 		Notifiction = "USERRIGHTSADD";
-		
+
 		List<LSMultiusergroup> userobj = LSMultiusergroupRepositery
 				.findBylsusergroup(objRights.get(0).getUsergroupid());
 
-		List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode) .collect(Collectors.toList());
+		List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode).collect(Collectors.toList());
 		List<LSuserMaster> objuser = lsuserMasterRepository.findByUsercodeInAndUserretirestatusNot(objnotifyuser, 1);
 		try {
 			for (int i = 0; i < objuser.size(); i++) {
-				if(objuser.get(i).getUsercode() != objRights.get(0).getObjLoggedUser().getUsercode()) {
+				if (objuser.get(i).getUsercode() != objRights.get(0).getObjLoggedUser().getUsercode()) {
 					objnotify.setNotifationfrom(objRights.get(0).getObjLoggedUser());
 					objnotify.setNotifationto(objuser.get(i));
 					objnotify.setNotificationdate(commonfunction.getCurrentUtcTime());
@@ -998,15 +1032,22 @@ public class UserService {
 
 	public List<LSusergroup> GetSiteWiseUserGroup(LSSiteMaster Objclass) {
 
-		if(Objclass != null && Objclass.getSitecode() != null) {
-			
-			if (Objclass.getSitecode() == 0) {
-				return lSusergroupRepository.findByOrderByUsergroupcodeDesc();
-			}
-
-			return lSusergroupRepository.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(), "");
+		if (Objclass.getObjsilentaudit() != null) {
+			Objclass.getObjsilentaudit().setTableName("LSusergroup");
+//			try {
+//				Objclass.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+//			} catch (ParseException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			lscfttransactionRepository.save(Objclass.getObjsilentaudit());
 		}
-		return null;
+		if (Objclass.getSitecode() == 0) {
+			return lSusergroupRepository.findByOrderByUsergroupcodeDesc();
+		}
+
+		return lSusergroupRepository
+				.findBylssitemasterAndUsergroupnameNotOrderByUsergroupcodeDesc(Objclass.getSitecode(), "");
 	}
 
 	public List<LSusergroup> GetSiteWiseActiveUserGroup(LSSiteMaster Objclass) {
@@ -1240,8 +1281,9 @@ public class UserService {
 	public Map<String, Object> Getnotification(LSuserMaster lsuserMaster) {
 		Map<String, Object> objresmap = new HashMap<String, Object>();
 		Integer notifyfor = lsuserMaster.getObjuser().getFiltertype();
-		objresmap.put("newnotificationcount",
-				lsnotificationRepository.countByNotifationtoAndIsnewnotificationAndNotificationforOrNotifationtoAndIsnewnotificationAndNotificationfor(lsuserMaster, 1,1,lsuserMaster, 1,2));
+		objresmap.put("newnotificationcount", lsnotificationRepository
+				.countByNotifationtoAndIsnewnotificationAndNotificationforOrNotifationtoAndIsnewnotificationAndNotificationfor(
+						lsuserMaster, 1, 1, lsuserMaster, 1, 2));
 		objresmap.put("notification", lsnotificationRepository
 				.findFirst20ByNotifationtoAndNotificationforOrderByNotificationcodeDesc(lsuserMaster, notifyfor));
 
@@ -1294,8 +1336,9 @@ public class UserService {
 	public Map<String, Object> GetLatestnotificationcount(LSnotification lsnotification) {
 		Map<String, Object> objresmap = new HashMap<String, Object>();
 
-		objresmap.put("newnotificationcount",
-				lsnotificationRepository.countByNotifationtoAndIsnewnotificationAndNotificationforOrNotifationtoAndIsnewnotificationAndNotificationfor(lsnotification.getNotifationto(), 1,1,lsnotification.getNotifationto(), 1,2));
+		objresmap.put("newnotificationcount", lsnotificationRepository
+				.countByNotifationtoAndIsnewnotificationAndNotificationforOrNotifationtoAndIsnewnotificationAndNotificationfor(
+						lsnotification.getNotifationto(), 1, 1, lsnotification.getNotifationto(), 1, 2));
 
 		return objresmap;
 	}
@@ -1322,6 +1365,9 @@ public class UserService {
 				.findByUnifieduseridIgnoreCase(objctrluser.getUnifieduserid());
 		if (objunifieduser == null || objunifieduser.getUnifieduserid() == null) {
 			lscentralisedUsersRepository.save(objctrluser);
+		} else if (objunifieduser != null && objunifieduser.getSitecode() != objctrluser.getSitecode()) {
+			lscentralisedUsersRepository.updatesitecodeonLScentralisedUsers(objctrluser.getSitecode(),
+					objctrluser.getUsercode());
 		}
 		return objctrluser;
 	}
@@ -1388,17 +1434,6 @@ public class UserService {
 		}
 		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objusergroup.getLssitemaster());
 	}
-	
-	public List<LSuserMaster> GetUserslocalnonRetired(LSuserMaster objusergroup) {
-//		if (objusergroup.getObjsilentaudit() != null) {
-//			objusergroup.getObjsilentaudit().setTableName("LSuserMaster");
-//			lscfttransactionRepository.save(objusergroup.getObjsilentaudit());
-//		}
-//		if (objusergroup.getUsername() != null && objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
-		return lsuserMasterRepository.findByusernameNotAndUserretirestatusNot("Administrator",1);
-//		}
-//		return lsuserMasterRepository.findByUsernameNotAndLssitemasterAndUserretirestatusNot("Administrator", objusergroup.getLssitemaster(),0);
-	}
 
 	public LSuserMaster getUserOnCode(LSuserMaster objuser) {
 		LSuserMaster objExitinguser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
@@ -1438,9 +1473,22 @@ public class UserService {
 		return LsusersettingsRepository.findByUsercode(objuser.getUsercode());
 	}
 
-	public List<LSMultiusergroup> getMultiUserGroup(LSuserMaster objusermaster) {
+	public Map<String, Object> getMultiUserGroup(LSuserMaster objusermaster) {
+		Map<String, Object> rtnobj=new HashMap<>();		
+		LSuserMaster usermaster = lsuserMasterRepository.findByusercode(objusermaster.getUsercode());
+		List<LSuserMaster> userobj = Collections.singletonList(usermaster);
+		List<LSMultiusergroup> filteredMultiusergroupcode = userobj.stream()
+			    .flatMap(items -> items.getMultiusergroupcode().stream()
+			        .filter(values -> values.getLsusergroup().getLssitemaster() == objusermaster.getLssitemaster().getSitecode())
+			    )
+			    .collect(Collectors.toList());
 
-		return LSMultiusergroupRepositery.findByusercode(objusermaster.getUsercode());
+		rtnobj.put("lsmultiusergroup", filteredMultiusergroupcode);
+		List<LSuserMaster> usermastersite =lsuserMasterRepository.findByUsernameIgnoreCaseAndUserretirestatusNot(objusermaster.getUsername(),1);
+		List<Integer> usercode =usermastersite.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
+		rtnobj.put("lsmultisites", LSMultisitesRepositery.findByusercodeIn(usercode)) ;
+		rtnobj.put("multiplenames", usermastersite.size()==1?false:usermastersite.size()>1?true:false) ;
+		return rtnobj;
 	}
 
 	public LSusergroupedcolumns setGroupedcolumn(LSusergroupedcolumns objgroupped) {
@@ -1466,27 +1514,24 @@ public class UserService {
 		if (objPrefrence != null) {
 
 			String dvalue = objPrefrence.getValueencrypted();
-			
-			if(dvalue != null) {
-				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
 
-				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
+			String sConcurrentUsers = AESEncryption.decrypt(dvalue);
 
-				int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
+			sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
 
-//				Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNotAndLssitemaster(1, 1,
-//						objsite);
-				Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1, 1);
+			int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
 
-				if (userCount < nConcurrentUsers) {
+//			Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNotAndLssitemaster(1, 1,
+//					objsite);
+			Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1, 1);
 
-					bool = true;
+			if (userCount < nConcurrentUsers) {
 
-				} else {
-					bool = false;
-				}
+				bool = true;
+
+			} else {
+				bool = false;
 			}
-
 			return bool;
 		}
 
@@ -1494,7 +1539,7 @@ public class UserService {
 	}
 
 	public Boolean Notificationmarkallasread(LSuserMaster lsuserMaster) {
-		if(lsuserMaster.getObjuser().getFiltertype().equals(1)) {
+		if (lsuserMaster.getObjuser().getFiltertype().equals(1)) {
 			lsnotificationRepository.updatereadallnotificationstatusforme(lsuserMaster);
 		} else if (lsuserMaster.getObjuser().getFiltertype().equals(2)) {
 			lsnotificationRepository.updatereadallnotificationstatusforteam(lsuserMaster);
@@ -1508,34 +1553,34 @@ public class UserService {
 //
 //		return (long) lstActiveUser.size();
 //	}
-	
+
 	public Map<String, Object> getActiveUserCount(Map<String, Object> objMap) {
-		Map<String, Object> obj = new HashMap<>();	
-		
+		Map<String, Object> obj = new HashMap<>();
+
 		List<LSactiveUser> lstActiveUser = lsactiveUserRepository.findAll();
-		obj.put("activeUserCount", lstActiveUser.size());	
-		
+		obj.put("activeUserCount", lstActiveUser.size());
+
 		LSpreferences objPrefrence;
 		int loginType = 2;
-		objPrefrence=LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser","Active");
-		obj.put("logintype", "ConCurrentUser");	
-		if(objPrefrence == null) {
-			objPrefrence=LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser","Active");
+		objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser", "Active");
+		obj.put("logintype", "ConCurrentUser");
+		if (objPrefrence == null) {
+			objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser", "Active");
 			obj.put("logintype", "MainFormUser");
 			loginType = 1;
-		}				
-		if(objPrefrence != null) {
+		}
+		if (objPrefrence != null) {
 			String dvalue = objPrefrence.getValueencrypted();
-			if(dvalue != null) {
+			if (dvalue != null) {
 				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
 				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
 				int userCount = Integer.parseInt(sConcurrentUsers);
-				obj.put("ConCurrentUser", userCount); 
-				obj.put("licencetype",loginType);
+				obj.put("ConCurrentUser", userCount);
+				obj.put("licencetype", loginType);
 			}
 //			obj.put("licencetype", objPrefrence != null ? 2 : (LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser","Active") != null ? 1 : 0));
-		}else {
-			obj.put("licencetype",0);
+		} else {
+			obj.put("licencetype", 0);
 		}
 		return obj;
 	}
@@ -1631,34 +1676,34 @@ public class UserService {
 
 //			List<String> lstMatName = listofallmaster.getMaterial().stream().map(Material::getSmaterialname)
 //					.collect(Collectors.toList());
-			
+
 //			List<String> lstPrefixName = listofallmaster.getMaterial().stream().map(Material::getSprefix)
 //					.collect(Collectors.toList());
 
 //			List<Material> lstMaterialByName = materialRepository.findBySmaterialnameInAndAndNmaterialtypecodeAndNstatusAndNsitecode(lstMatName,listofallmaster.getMaterial().get(0).getNmaterialtypecode(), 1,
 //					listofallmaster.getLssitemaster().getSitecode());
-			
+
 //			List<Material> lstMaterialByPrefix = materialRepository.findBySprefixInAndNstatusAndNsitecode(lstPrefixName, 1,
 //					listofallmaster.getLssitemaster().getSitecode());
 
 //			if (lstMaterialByName.isEmpty() && lstMaterialByPrefix.isEmpty()) {
 //			if (lstMaterialByName.isEmpty()) {
-				
-				listofallmaster.getMaterial().stream().peek(f -> {
-					try {
-						f.setCreateddate(commonfunction.getCurrentUtcTime());
-					} catch (ParseException e) {
-						e.printStackTrace();
-					}
-				}).collect(Collectors.toList());
-				
-				materialRepository.save(listofallmaster.getMaterial());
-				listofallmaster.setMaterial(listofallmaster.getMaterial());
-				listofallmaster.setObjResponse(new Response());
-				listofallmaster.getObjResponse().setStatus(true);
-				listofallmaster.getObjResponse().setInformation("IDS_MSG_SUCCESSMSG");
 
-				return listofallmaster;
+			listofallmaster.getMaterial().stream().peek(f -> {
+				try {
+					f.setCreateddate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}).collect(Collectors.toList());
+
+			materialRepository.save(listofallmaster.getMaterial());
+			listofallmaster.setMaterial(listofallmaster.getMaterial());
+			listofallmaster.setObjResponse(new Response());
+			listofallmaster.getObjResponse().setStatus(true);
+			listofallmaster.getObjResponse().setInformation("IDS_MSG_SUCCESSMSG");
+
+			return listofallmaster;
 //			} else {
 //				
 //				if(!lstMaterialByName.isEmpty()) {
@@ -1678,13 +1723,110 @@ public class UserService {
 	}
 
 	public List<LSuserMaster> GetUsersonprojectbased(LSprojectmaster objusermaster) {
-		LSprojectmaster obj =LSprojectmasterRepository.findByProjectcode(objusermaster.getProjectcode());
-		List<LSuserteammapping> teamobj =lsuserteammappingRepository.findByteamcode(obj.getLsusersteam().getTeamcode());
+		LSprojectmaster obj = LSprojectmasterRepository.findByProjectcode(objusermaster.getProjectcode());
+		List<LSuserteammapping> teamobj = lsuserteammappingRepository
+				.findByteamcode(obj.getLsusersteam().getTeamcode());
 		List<LSuserMaster> lsusermasterobj = new ArrayList<LSuserMaster>();
 		if (teamobj != null && teamobj.size() > 0) {
 			lsusermasterobj = teamobj.stream().map(LSuserteammapping::getLsuserMaster).collect(Collectors.toList());
 		}
-		
+
 		return lsusermasterobj;
 	}
+
+	public List<LSuserMaster> GetUserslocalnonRetired(LSuserMaster objusermaster) {
+		return lsuserMasterRepository.findByusernameNotAndUserretirestatusNot("Administrator", 1);
+	}
+
+	public Map<String, Object> GetSiteWiseUserGrouplist(LSuserMaster objclass) {
+	    Map<String, Object> retobj = new HashMap<>();
+	    List<LSSiteMaster> lsrights = Arrays.asList(objclass.getLstiteMaster());
+	    List<Integer> sitecode = lsrights.stream().map(LSSiteMaster::getSitecode).collect(Collectors.toList());
+	    boolean isnewuser = objclass.getUsercode() == null;
+	    boolean usernameExists = false;
+	    
+	    if(objclass.getUsername()!=null) {
+		    for (LSSiteMaster tempobj : lsrights) {
+		        List<LSMultisites> userocedsites = LSMultisitesRepositery.findByLssiteMaster(tempobj);
+		        List<Integer> usercode = userocedsites.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
+		        
+		        List<LSuserMaster> existingUsers;
+		        if (isnewuser) {
+		            existingUsers = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeIn(objclass.getUsername(), usercode);
+		        } else {
+		            existingUsers = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeInAndUsercodeNot(objclass.getUsername(), usercode, objclass.getUsercode());
+		        }
+		        
+		        if (!existingUsers.isEmpty()) {
+		            retobj.put("sitemaster",LSSiteMasterRepository.findBysitecode(tempobj.getSitecode()));
+		            retobj.put("username", objclass.getUsername());
+//		            retobj.put("message", "username already exists");
+		            usernameExists = true;
+		            break;
+		        }
+		    }
+		    
+		    retobj.put("usernameExists", usernameExists);
+	    }
+	    if (!usernameExists) {
+	        retobj.put("listofusergroup", lSusergroupRepository.findBylssitemasterInAndUsergroupnameNotOrderByUsergroupcodeDesc(sitecode, ""));
+	    }
+	    
+	    return retobj;
+	}
+
+	public LSuserMaster getkumum(Map<String, Object> argObj) {
+		LSuserMaster obj =new ObjectMapper().convertValue(argObj.get("usermaster"),
+				new TypeReference<LSuserMaster>() {
+				});
+		return obj;
+	}
+	
+	public Map<String, Object> getUsersinglOnCode(LSuserMaster objuser) {
+		LSuserMaster objExitinguser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
+		Map<String, Object> obj = new HashMap<>();
+//		String encryptionStr = objExitinguser.getPassword() + "_" + objExitinguser.getUsername()
+//				+ objExitinguser.getLssitemaster().getSitename();
+//
+//		String encryptPassword = AESEncryption.encrypt(encryptionStr);
+		String Password = AESEncryption.decrypt(objExitinguser.getPassword());
+
+		objExitinguser.setEncryptedpassword(Password);
+		objExitinguser.setLssitemaster(objuser.getLsmultisites().get(0).getLssiteMaster());
+		objExitinguser.setLsusergroup(objuser.getLsusergroup());
+		
+		String groupstatus = objExitinguser.getLsusergroup().getUsergroupstatus();
+		if (groupstatus.trim().equals("Active")) {
+			if (objExitinguser.getLsusergroup() != null) {
+				obj.put("userrights", GetUserRightsonGroup(objExitinguser.getLsusergroup()));
+				LSaudittrailconfiguration objauditconfig = new LSaudittrailconfiguration();
+				objauditconfig.setLsusermaster(objExitinguser);
+				obj.put("auditconfig", auditService.GetAuditconfigUser(objauditconfig.getLsusermaster()));
+
+			}
+		}
+		obj.put("objExitinguser", objExitinguser);
+		return obj;
+	}
+
+	public List<LSusergroup> getmultiusergroup(LSuserMaster objuser) {
+//		List<LSMultiusergroup> rtnobj=LSMultiusergroupRepositery.findByusercode(objuser.getUsercode());
+		LSuserMaster usermaster = lsuserMasterRepository.findByusercode(objuser.getUsercode());
+		List<LSuserMaster> userobj = Collections.singletonList(usermaster);
+		List<LSusergroup> filteredMultiusergroupcode = userobj.stream()
+			    .flatMap(items -> items.getMultiusergroupcode().stream().peek(itemsva -> {
+		            if (itemsva.getDefaultusergroup() != null) {
+		            	itemsva.getLsusergroup().setDefaultusergroup(itemsva.getDefaultusergroup());
+		            }
+		        }).filter(values ->
+			        values.getLsusergroup().getLssitemaster() == objuser.getLssitemaster().getSitecode())
+			        .map(LSMultiusergroup::getLsusergroup)
+			    )
+			    .collect(Collectors.toList());
+		return filteredMultiusergroupcode;
+		
+
+
+	}
+
 }

@@ -66,6 +66,17 @@ public class LSSiteMaster {
 	@Transient
 	private Integer ismultitenant;
 	
+	@Transient
+	private Integer defaultsiteMaster;
+	
+	public Integer getDefaultsiteMaster() {
+		return defaultsiteMaster;
+	}
+
+	public void setDefaultsiteMaster(Integer defaultsiteMaster) {
+		this.defaultsiteMaster = defaultsiteMaster;
+	}
+
 	public LSSiteMaster()
 	{
 		

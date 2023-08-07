@@ -1,6 +1,8 @@
 package com.agaram.eln.primary.service.JWTservice;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,8 +12,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.model.jwt.UserDTO;
+import com.agaram.eln.primary.model.usermanagement.LSMultisites;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.usermanagement.LSMultisitesRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 
@@ -27,6 +31,8 @@ public class JwtUserDetailsService implements UserDetailsService {
 	
 	@Autowired
     private LSSiteMasterRepository lSSiteMasterRepository;
+	@Autowired
+	private LSMultisitesRepositery LSMultisitesRepositery;
 
 //	@Override
 //	public UserDetails loadUserByUsernameaandpassword(String username,String password) throws UsernameNotFoundException{
@@ -59,14 +65,18 @@ public class JwtUserDetailsService implements UserDetailsService {
 		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(sitecodevalue));
 		
 		LSuserMaster user = new LSuserMaster();
-		
-//		if(usernamevalue.equalsIgnoreCase("Administrator")) {
-//			user = userDao.findByusernameIgnoreCase(usernamevalue);
-//		}
-//		else {
-			user = userDao.findByUsernameIgnoreCaseAndLssitemaster(usernamevalue, objsite);
-//		}
-//		LSuserMaster user = userDao.findByUsernameIgnoreCaseAndLssitemasterAndUserretirestatusNot(usernamevalue, objsite,1);
+		List<LSMultisites> obj = LSMultisitesRepositery.findByLssiteMaster(objsite);
+		List<Integer> usercode = obj.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
+		List<LSuserMaster> userobj = userDao.findByUsernameIgnoreCaseAndUsercodeInAndUserretirestatusNot(usernamevalue, usercode,1);
+		if (!userobj.isEmpty()) {
+		    userobj.forEach(items -> {
+		                items.setLssitemaster(objsite);
+		    });
+		    user = userobj.get(0);
+		}
+//kumaresan multisite purpose 
+//			user = userDao.findByUsernameIgnoreCaseAndLssitemaster(usernamevalue, objsite);
+
 		
 		try {
 			if (user == null) {
@@ -78,7 +88,6 @@ public class JwtUserDetailsService implements UserDetailsService {
 		
 		if(user!=null) {
 		String Tokenuser = user.getUsername() +"["+user.getLssitemaster().getSitecode()+"]";
-		
 		if(user.getPassword() == null) {
 			user.setPassword("admin");
 		}

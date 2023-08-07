@@ -19,22 +19,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.agaram.eln.primary.model.cfr.LSpreferences;
-import com.agaram.eln.config.AESEncryption;
+
 import com.agaram.eln.config.ADS_Connection;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
+import com.agaram.eln.primary.model.usermanagement.LSMultisites;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSdomainMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.service.usermanagement.LoginService;
+import com.agaram.eln.primary.model.cfr.LSpreferences;
+import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
-
 @RestController
 @RequestMapping(value = "/Login", method = RequestMethod.POST)
 public class LoginController {
@@ -91,11 +92,6 @@ public class LoginController {
 		return loginService.Logout(lsuserMaster);
 	}
 
-	@PostMapping("/autoLogout")
-	public Boolean autoLogout(@RequestBody LSuserMaster lsuserMaster) throws Exception {
-		return loginService.autoLogout(lsuserMaster);
-	}
-	
 	@PostMapping("/ChangePassword")
 	public LSuserMaster ChangePassword(@RequestBody LoggedUser objuser) throws Exception {
 		return loginService.ChangePassword(objuser);
@@ -139,10 +135,12 @@ public class LoginController {
 
 		Map<String, Object> rtnMap = new HashMap<>();
 		Map<String, Object> isCompleted = new HashMap<>();
-		LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser","Active");
+
+
 		LSpreferences objPrefrencenamed = LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser","Active");
 		List<LSuserMaster> lstActUsrs = lsuserMasterRepository.findByUserretirestatus(0);
-				 if(objPrefrencenamed != null) {
+	
+			 if(objPrefrencenamed != null) {
 				String dvalue1 = objPrefrencenamed.getValueencrypted();			
 				if(dvalue1 != null) {
 					String sMainFormUser = AESEncryption.decrypt(dvalue1);
@@ -170,26 +168,6 @@ public class LoginController {
 					}
 					
 				}	
-			}if (objPrefrence != null) {		
-					
-						isCompleted = loginService.addImportADSUsers(objMap);
-						if (isCompleted.get("isCompleted").equals(true)) {
-							List<LSuserMaster> lstUsers = new ArrayList<>();
-
-							LSusergroup userGroup = (LSusergroup) isCompleted.get("LSusergroup");
-							LSSiteMaster sSiteCode = (LSSiteMaster) isCompleted.get("LSSiteMaster");
-
-							lstUsers = loginService.UserMasterDetails(userGroup, sSiteCode);
-
-							rtnMap.put("LSuserMaster", lstUsers);
-							rtnMap.put("status", true);
-							rtnMap.put("sinformation", "Users imported successfully");
-						} else {
-							rtnMap.put("status", false);
-							rtnMap.put("sinformation", "Imported users are not saved");
-						}
-					
-				
 			}
 		
 		return rtnMap;
@@ -287,8 +265,8 @@ public class LoginController {
 	}
 	
 	@PostMapping("/updateActiveUserTime")
-	public Map<String, Object> updateActiveUserTime(@RequestBody Map<String, Object> objMap) throws Exception {
-		return loginService.updateActiveUserTime(objMap);
+	public void updateActiveUserTime(@RequestBody Map<String, Object> objMap) throws Exception {
+		loginService.updateActiveUserTime(objMap);
 	}
 	
 	@PostMapping("/getCurrentUTCDate")
@@ -296,8 +274,18 @@ public class LoginController {
 		return commonfunction.getCurrentUtcTime();
 	}
 	
+	@PostMapping("/autoLogout")
+	public Boolean autoLogout(@RequestBody LSuserMaster lsuserMaster) throws Exception {
+		return loginService.autoLogout(lsuserMaster);
+	}
+	
 	@PostMapping("/getlicense")
 	public Map<String,Object> getlicense(@RequestBody Map<String,Object> obj) throws Exception {
 		return loginService.getlicense(obj);
+	}
+	
+	@PostMapping("/loadmultisite")
+	public List<LSSiteMaster> loadmultisite(@RequestBody LSuserMaster objsite) throws Exception {
+		return loginService.loadmultisite(objsite);
 	}
 }

@@ -57,7 +57,6 @@ public class ManufacturerService {
 			final Manufacturer grade1 = manufacturerRepository.findBySmanufnameIgnoreCaseAndNsitecode(objManufacturer.getSmanufname(), objManufacturer.getNsitecode());
 
 			if (grade1 == null || (grade1.getNmanufcode().equals(objManufacturer.getNmanufcode()))) {
-				objManufacturer.setNsitecode(grade.getNsitecode());
 				grade.setObjsilentaudit(objManufacturer.getObjsilentaudit());
 				manufacturerRepository.save(objManufacturer);
 				objManufacturer.getResponse().setStatus(true);

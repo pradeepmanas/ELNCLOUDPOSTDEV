@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.service.methodsetup;
 
 
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
@@ -71,16 +69,14 @@ public class MethodDelimiterService {
 	 */
 	@Transactional
 	public ResponseEntity<Object> getMethodDelimiterList(LSSiteMaster mobj){
-		//final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByStatusAndLssitemaster(1,mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
+	
 		final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByStatusAndLssitemasterOrLssitemasterIsNull(1,mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
-		//final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByLssitemaster(mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
+	
 		return new ResponseEntity<>(delimiterList, HttpStatus.OK);
 	}
 	
 	@Transactional
 	public ResponseEntity<Object> getMethodDelimiter(LSSiteMaster mobj){
-		//final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByStatusAndLssitemaster(1,mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
-		//final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByLssitemaster(mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
 		final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByLssitemasterOrLssitemasterIsNull(mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
 		return new ResponseEntity<>(delimiterList, HttpStatus.OK);
 	}
@@ -99,13 +95,6 @@ public class MethodDelimiterService {
 	public ResponseEntity<Object> createMethodDelimiter(final MethodDelimiter methodDelimiter, final LSSiteMaster site,
 			    final HttpServletRequest request,MethodDelimiter auditdetails)
 		{ 
-		
-		try {
-			methodDelimiter.setCreateddate(commonfunction.getCurrentUtcTime());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		    boolean saveAuditTrial = true;
 		   final ParserMethod parserMethod = parserMethodRepo.findOne(methodDelimiter.getParsermethod().getParsermethodkey());
 		   final Delimiter delimiter = delimiterRepo.findOne(methodDelimiter.getDelimiter().getDelimiterkey());
@@ -119,30 +108,10 @@ public class MethodDelimiterService {
 		   final LSuserMaster createdUser = getCreatedUserByKey(methodDelimiter.getCreatedby().getUsercode());
 	    	if(methodDelimiterByDelimiter.isPresent() || meddelimiterdefault.isPresent())
 	    	{
-	    		//LScfttransaction LScfttransaction = new LScfttransaction();
+	    
 	    		//Conflict = 409 - Duplicate entry
 	    		if (saveAuditTrial == true)
 				{						
-//					final String comments = "Create Failed for duplicate entry - " + methodDelimiterByDelimiter.get().getDelimiter().getDelimitername()
-//		  					+" for " + methodDelimiterByDelimiter.get().getParsermethod().getParsermethodname();
-					
-//					LScfttransaction.setActions("Insert");
-//					LScfttransaction.setComments("Duplicate Entry  -"+methodDelimiterByDelimiter.get().getDelimiter().getDelimitername()
-//		  					+" for " + methodDelimiterByDelimiter.get().getParsermethod().getParsermethodname());
-//					LScfttransaction.setLssitemaster(site.getSitecode());
-//					LScfttransaction.setLsuserMaster(methodDelimiterByDelimiter.get().getCreatedby().getUsercode());
-//					LScfttransaction.setManipulatetype("View/Load");
-//					LScfttransaction.setModuleName("Method Delimiter");
-//					LScfttransaction.setTransactiondate(methodDelimiterByDelimiter.get().getCreateddate());
-//					LScfttransaction.setUsername(methodDelimiterByDelimiter.get().getCreatedby().getUserfullname());
-//					LScfttransaction.setTableName("Methoddelimiter");
-//					LScfttransaction.setSystemcoments("System Generated");
-//					
-//					lscfttransactionrepo.save(LScfttransaction);
-					
-//					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-//							"Create", comments, site, "",
-//							createdUser, request.getRemoteAddr());
 	    			if(methodDelimiterByDelimiter.isPresent()) {
 	    			methodDelimiter.setInfo("Duplicate Entry - " + methodDelimiterByDelimiter.get().getDelimiter().getDelimitername()
 	  					+" for " + methodDelimiterByDelimiter.get().getParsermethod().getParsermethodname());
@@ -153,9 +122,6 @@ public class MethodDelimiterService {
 	    			}
 	    			methodDelimiter.setObjsilentaudit(auditdetails.getObjsilentaudit());
 				}
-//	  			return new ResponseEntity<>("Duplicate Entry - " + methodDelimiterByDelimiter.get().getDelimiter().getDelimitername()
-//	  					+" for " + methodDelimiterByDelimiter.get().getParsermethod().getParsermethodname(), 
-//	  					 HttpStatus.CONFLICT);
 	  			return new ResponseEntity<>(methodDelimiter, HttpStatus.CONFLICT);
 	    	}
 	    	else
@@ -197,12 +163,6 @@ public class MethodDelimiterService {
    public ResponseEntity<Object> updateMethodDelimiter(final MethodDelimiter methodDelimiter, final LSSiteMaster site,
 		   final String comments, final HttpServletRequest request, final int doneByUserKey,MethodDelimiter auditdetails)
    {	   
-	   try {
-		methodDelimiter.setCreateddate(commonfunction.getCurrentUtcTime());
-	} catch (ParseException e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
-	}
 	   Boolean saveAuditTrail= true;
 	   final Optional<MethodDelimiter> methodDelimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatusAndLssitemaster(methodDelimiter.getMethoddelimiterkey(), 1,methodDelimiter.getLssitemaster());
 //	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
@@ -226,44 +186,20 @@ public class MethodDelimiterService {
 					{
 				  		methodDelimiter.setParsermethod(parserMethod);
 			    		methodDelimiter.setDelimiter(delimiter);
-			    		
-					    //methodDelimiter already available	
-//					    if (methodDelimiterByDelimiter.get().getMethoddelimiterkey().equals(methodDelimiter.getMethoddelimiterkey()))
-//					    	{   		    			
-//					    		//copy of object for using 'Diffable' to compare objects
-//					    		final MethodDelimiter delimitersBeforeSave = new MethodDelimiter(methodDelimiterByDelimiter.get());
-//				    			
-//					    		final MethodDelimiter savedMethodDelimiter = methodDelimiterRepo.save(methodDelimiter);
-//					    					    			
-//				    			if (saveAuditTrail)
-//				    			{
-////					    			final String xmlData = convertMethodDelimiterObjectToXML(delimitersBeforeSave, savedMethodDelimiter);
-////					    					    			
-////					    			cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.USER.getActionType(), 
-////					    					"Edit", comments, site, xmlData, createdUser, request.getRemoteAddr());		    			
-//					    		}
-//					    			
-//					       		return new ResponseEntity<>(savedMethodDelimiter, HttpStatus.OK);     		
-//				    		}
-//				    		else
-//				    		{ 	
+			    	 	
 				    			//Conflict =409 - Duplicate entry
 				    		
 				    			methodDelimiter.setInfo("Duplicate Entry - " + methodDelimiterByDelimiter.get().getDelimiter().getDelimitername() +" for Delimiter : " + methodDelimiterByDelimiter.get().getParsermethod().getParsermethodname());
 				    			
 				    			methodDelimiter.setObjsilentaudit(auditdetails.getObjsilentaudit());
-//				    			return new ResponseEntity<>("Duplicate Entry - " + methodDelimiterByDelimiter.get().getDelimiter().getDelimitername() +" for Delimiter : " + methodDelimiterByDelimiter.get().getParsermethod().getParsermethodname(),
-//				    					HttpStatus.CONFLICT);    
+
 				    			return new ResponseEntity<>(methodDelimiter,HttpStatus.CONFLICT);  
 				    		//}
 				    	}
 				    	else
 				    	{			    		
 				    		//copy of object for using 'Diffable' to compare objects
-			    			
-				    	
-//                            final MethodDelimiter delimiterBeforeSave = new MethodDelimiter(methodDelimiterByKey.get());
-			    			
+			    		
 				    		final MethodDelimiter savedMethodDelimiter = methodDelimiterRepo.save(methodDelimiter);
 				    		
 				    		savedMethodDelimiter.setDisplayvalue(savedMethodDelimiter.getParsermethod().getParsermethodname());
@@ -276,13 +212,7 @@ public class MethodDelimiterService {
 		   		else {
 		   		 //Not Eligible to update as associated with some childR
 		   			if (saveAuditTrail)
-		   			{
-//					   final String sysComments = "Update Failed as methoddelimiter is associated with either ParserField /SubParserTechnique";
-		   			
-//						cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-//								"Edit", sysComments, 
-//								site, "", createdUser, request.getRemoteAddr());
-					   
+		   			{   
 					   LScfttransaction LScfttransaction = new LScfttransaction();
 						
 						LScfttransaction.setActions("Update"); 
@@ -296,12 +226,6 @@ public class MethodDelimiterService {
 						LScfttransaction.setTableName("Methoddelimiter");
 						LScfttransaction.setSystemcoments("System Generated");
 						
-						try {
-							LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
 						lscfttransactionrepo.save(LScfttransaction);
 						
 				   }
@@ -314,13 +238,7 @@ public class MethodDelimiterService {
 		   		}
 		   }
 		   else
-		   {
-			   //Invalid methoddelimiterkey		   
-//			   if (saveAuditTrail) {				
-//					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-//							"Edit", "Update Failed - MethodDelimiter Not Found", site, "", createdUser, request.getRemoteAddr());
-//	   		    }			
-			   
+		   {		   
 			   LScfttransaction LScfttransaction = new LScfttransaction();
 				
 				LScfttransaction.setActions("Update"); 
@@ -333,12 +251,7 @@ public class MethodDelimiterService {
 				LScfttransaction.setUsername(methodDelimiter.getUsername());
 				LScfttransaction.setTableName("Methoddelimiter");
 				LScfttransaction.setSystemcoments("System Generated");
-				try {
-					LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				
 				lscfttransactionrepo.save(LScfttransaction);
 				
 				return new ResponseEntity<>("Update Failed - MethodDelimiter Not Found", HttpStatus.NOT_FOUND);
@@ -391,12 +304,6 @@ public class MethodDelimiterService {
 					LScfttransaction.setTableName("Methoddelimiter");
 					LScfttransaction.setSystemcoments("System Generated");
 					
-					try {
-						LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					lscfttransactionrepo.save(LScfttransaction);
 				   
 				   return new ResponseEntity<>("Delete Failed -", HttpStatus.LOCKED);
@@ -419,26 +326,7 @@ public class MethodDelimiterService {
 			   return new ResponseEntity<>(savedDelimiters, HttpStatus.OK);  
 		   }
 		 }
-		   else {
-			   //Associated with ParserField or SubParserTechnique
-//			   if (saveAuditTrial)
-//			   {
-//	
-//                  LScfttransaction LScfttransaction = new LScfttransaction();
-//					
-//					LScfttransaction.setActions("Delete"); 
-//					LScfttransaction.setComments("Associated : " +delimiter.getParsermethod().getParsermethodname() +"-" + delimiter.getDelimiter().getDelimitername());
-//					LScfttransaction.setLssitemaster(site.getSitecode());
-//					LScfttransaction.setLsuserMaster(doneByUserKey);
-//					LScfttransaction.setManipulatetype("View/Load");
-//					LScfttransaction.setModuleName("Method Delimiter");
-//					LScfttransaction.setTransactiondate(otherdetails.getTransactiondate());
-//					LScfttransaction.setUsername(otherdetails.getUsername());
-//					LScfttransaction.setTableName("Methoddelimiter");
-//					LScfttransaction.setSystemcoments("System Generated");
-//					
-//					lscfttransactionrepo.save(LScfttransaction);
-//			   }
+		   else {		   
 			   delimiter.setInfo("Associated : " + delimiter.getParsermethod().getParsermethodname() +"-" + delimiter.getDelimiter().getDelimitername());
 			   delimiter.setObjsilentaudit(auditdetails.getObjsilentaudit());
 			   
@@ -454,12 +342,7 @@ public class MethodDelimiterService {
 	   else
 	   {
 		   //Invalid MethodDelimiterkey
-		   if (saveAuditTrial) {				
-//				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-//						"Delete", "Delete Failed - MethodDelimiter Not Found", site, "", 
-//						createdUser, request.getRemoteAddr());
-			   
-
+		   if (saveAuditTrial) {	
               LScfttransaction LScfttransaction = new LScfttransaction();
 				
 				LScfttransaction.setActions("Delete"); 
@@ -472,12 +355,6 @@ public class MethodDelimiterService {
 				LScfttransaction.setUsername(otherdetails.getUsername());
 				LScfttransaction.setTableName("Methoddelimiter");
 				
-				try {
-					LScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				lscfttransactionrepo.save(LScfttransaction);
 			   
 			   
@@ -514,11 +391,6 @@ public class MethodDelimiterService {
    {
 	  	final Map<Integer, Map<String, Object>> dataModified = new HashMap<Integer, Map<String, Object>>();
 		final Map<String, Object> diffObject = new HashMap<String, Object>();    			
-		
-//		final DiffResult diffResult = delimtersBeforeSave.diff(savedDelimiter);        			
-//		for(Diff<?> d: diffResult.getDiffs()) {		    					
-//			diffObject.put(d.getFieldName(), d.getKey()+" -> "+d.getValue());
-//		}
 		
 		dataModified.put(savedDelimiter.getMethoddelimiterkey(), diffObject);
 		

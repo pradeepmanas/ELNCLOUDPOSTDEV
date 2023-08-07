@@ -31,12 +31,12 @@ public class LSprojectmaster {
 	private Integer status;
 	@Column(columnDefinition = "varchar(100)")
 	private String createdby;
-	//private String createdon;
-	
+	// private String createdon;
+
 //	@Column(columnDefinition = "date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdon;
-	
+
 	@Column(columnDefinition = "varchar(20)")
 	private String projectstatus;
 
@@ -74,20 +74,21 @@ public class LSprojectmaster {
 
 	@ManyToOne
 	private LSuserMaster modifiedby;
-	public LSprojectmaster () {
-		
+
+	public LSprojectmaster() {
+
 	}
-	
-	
-	public LSprojectmaster(String createdby,Integer projectcode,String projectname,String projectstatus,Integer status,String teamname) {
-		this.createdby=createdby;
-		this.projectcode=projectcode!=null?projectcode:-1;
-		this.projectname=projectname;
-		this.projectstatus=projectstatus;
-		this.status=status!=null?status:-1;
-		this.teamname=teamname;
+
+	public LSprojectmaster(String createdby, Integer projectcode, String projectname, String projectstatus,
+			Integer status, String teamname) {
+		this.createdby = createdby;
+		this.projectcode = projectcode != null ? projectcode : -1;
+		this.projectname = projectname;
+		this.projectstatus = projectstatus;
+		this.status = status != null ? status : -1;
+		this.teamname = teamname;
 	}
-	
+
 	public LSSiteMaster getLssitemaster() {
 		return lssitemaster;
 	}
@@ -95,14 +96,11 @@ public class LSprojectmaster {
 	public void setLssitemaster(LSSiteMaster lssitemaster) {
 		this.lssitemaster = lssitemaster;
 	}
-	
+
 	public String getProjectstatus() {
-		if(projectstatus != null)
-		{
-		return  projectstatus.trim().equals("A")?"Active":"Retired";
-		}
-		else
-		{
+		if (projectstatus != null) {
+			return projectstatus.trim().equals("A") ? "Active" : "Retired";
+		} else {
 			return "";
 		}
 	}
@@ -110,7 +108,7 @@ public class LSprojectmaster {
 	public void setProjectstatus(String projectstatus) {
 		this.projectstatus = projectstatus;
 	}
-	
+
 	public LScfttransaction getObjmanualaudit() {
 		return objmanualaudit;
 	}
@@ -166,7 +164,6 @@ public class LSprojectmaster {
 	public void setProjectname(String projectname) {
 		this.projectname = projectname;
 	}
-	
 
 	public String getCreatedby() {
 		return createdby;

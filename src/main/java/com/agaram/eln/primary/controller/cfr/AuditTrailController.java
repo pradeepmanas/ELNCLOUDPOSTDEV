@@ -74,7 +74,7 @@ public class AuditTrailController {
 
 	@PostMapping("/GetAuditconfigparser")
 	public Map<String, Object> GetAuditconfigparser(@RequestBody Map<String, Object> argObj) throws Exception {
-		return auditService.GetAuditconfigparser(argObj);
+		return auditService.GetAuditconfig(argObj);
 	}
 	
 	@PostMapping("/SaveAuditconfigUser")

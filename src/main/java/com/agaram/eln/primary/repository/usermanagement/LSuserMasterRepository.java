@@ -54,6 +54,7 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	public List<LSuserMaster> findByUsernameIgnoreCaseAndLssitemasterAndUserretirestatusNot(String username,
 			LSSiteMaster lssitemaster, Integer userretirestatus);
 
+	@Transactional
 	public LSuserMaster findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(String username, String loginform,
 			LSSiteMaster lssitemaster);
 
@@ -114,11 +115,32 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 
 	public Long countByLssitemasterAndUserstatus(LSSiteMaster sitemaster, String string);
 
+	public List<LSuserMaster> findAllByOrderByCreateddateDesc();
+	
 	public LSuserMaster findByUsernameIgnoreCaseAndLssitemasterAndLoginfromAndIsadsuser(String username,
 			LSSiteMaster objsiteobj, String string, int i);
 
-	public List<LSuserMaster> findAllByOrderByCreateddateDesc();
 	public List<LSuserMaster> findByUserretirestatus(int i);
 
-	public Long countByUsercodeNotAndUserretirestatus(int i, int j);
+
+
+	public List<LSuserMaster> findByUserretirestatusNotAndUsercodeInOrderByCreateddateDesc(int i,
+			List<Integer> usercode);
+
+	public List<LSuserMaster> findByUsernameIgnoreCaseAndUsercodeIn(String username, List<Integer> usercode);
+
+	public List<LSuserMaster> findByUsernameIgnoreCaseAndUsercodeInAndUsercodeNot(String username, List<Integer> usercode,
+			Integer usercode2);
+
+	public List<LSuserMaster> findByUsernameIgnoreCaseAndUserretirestatusNot(String username, int i);
+
+
+	public List<LSuserMaster> findByUsernameIgnoreCaseAndUsercodeInAndLoginfromAndUserretirestatusNot(String username,
+			List<Integer> usercode, String string, int i);
+
+	public List<LSuserMaster> findByUsernameIgnoreCaseAndUsercodeInAndUserretirestatusNot(String username,
+			List<Integer> usercode, int i);
+
+
+
 }

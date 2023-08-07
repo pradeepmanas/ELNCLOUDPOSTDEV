@@ -42,10 +42,10 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
-//import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 //import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
-//import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMappedFieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMappedInstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LselninstfieldmappingRepository;
@@ -82,8 +82,8 @@ public class BaseMasterService {
 	private LSuserteammappingRepository lsuserteammappingRepository;
 	@Autowired
 	private LSnotificationRepository LSnotificationRepository;
-//	@Autowired
-//	private LsMethodFieldsRepository lsMethodFieldsRepository;
+	@Autowired
+	private LsMethodFieldsRepository lsMethodFieldsRepository;
 	@Autowired
 	private LStestmasterlocalRepository lStestmasterlocalRepository;
 	@Autowired
@@ -137,8 +137,8 @@ public class BaseMasterService {
 	@Autowired
 	private LSlogbooksampleupdatesRepository LSlogbooksampleupdatesRepository;
 
-//	@Autowired
-//	private LSinstrumentsRepository lSinstrumentsRepository;
+	@Autowired
+	private LSinstrumentsRepository lSinstrumentsRepository;
 
 	@Autowired
 	private LsMappedInstrumentsRepository lsMappedInstrumentsRepository;
@@ -613,9 +613,10 @@ public class BaseMasterService {
 
 //		List<LSprojectmaster> projectlist = lSprojectmasterRepository
 //				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
-
 		List<LSprojectmaster> prolist = lSprojectmasterRepository.findByLsusersteamInAndStatus(LSusersteamRepository
 				.findByLsuserteammappingInAndStatus(lsuserteammappingRepository.findBylsuserMaster(objClass), 1), 1);
+//		List<LSprojectmaster> projectlist = lSprojectmasterRepository
+//				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
 		return prolist;
 	}
 

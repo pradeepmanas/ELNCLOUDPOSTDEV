@@ -39,6 +39,7 @@ import com.microsoft.azure.storage.blob.BlobRequestOptions;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
+import com.microsoft.azure.storage.blob.ListBlobItem;
 
 @Service
 @Transactional
@@ -73,13 +74,13 @@ public class CloudFileManipulationservice {
 		list.setSystemcoments("System Generated");
 		list.setTableName("profile");
 //		list.setTransactiondate(currentdate);
+		list.setLsuserMaster(usercode);
 		try {
 			list.setTransactiondate(commonfunction.getCurrentUtcTime());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		list.setLsuserMaster(usercode);
 		lscfttransactionRepository.save(list);
 		deletePhoto(usercode, list);
 
@@ -187,6 +188,64 @@ public class CloudFileManipulationservice {
 		return bloburi; // id.toString();
 	}
 
+	public String storeFileWithTags(String title, MultipartFile file, String tagName) throws IOException {
+
+		String bloburi = "";
+		CloudStorageAccount storageAccount;
+		CloudBlobClient blobClient = null;
+		CloudBlobContainer container = null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+
+		UUID objGUID = UUID.randomUUID();
+		String randomUUIDString = objGUID.toString();
+
+		try {
+			// Parse the connection string and create a blob client to interact with Blob
+			// storage
+			storageAccount = CloudStorageAccount.parse(storageConnectionString);
+			blobClient = storageAccount.createCloudBlobClient();
+			container = blobClient.getContainerReference(TenantContext.getCurrentTenant());
+
+			// Create the container if it does not exist with public access.
+			System.out.println("Creating container: " + container.getName());
+			container.createIfNotExists(BlobContainerPublicAccessType.CONTAINER, new BlobRequestOptions(),
+					new OperationContext());
+
+			File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + randomUUIDString);
+			file.transferTo(convFile);
+
+			// Getting a blob reference
+			CloudBlockBlob blob = container.getBlockBlobReference(convFile.getName());
+
+			Map<String, Object> metadata = new HashMap<>();
+			metadata.put(tagName, convFile);
+//			metadata.put(tagName, "value1");
+
+			//Convert metadata HashMap to Map<String, String>
+			HashMap<String, String> metadataString = new HashMap<>();
+			for (Map.Entry<String, Object> entry : metadata.entrySet()) {
+			    metadataString.put(entry.getKey(), entry.getValue().toString());
+			}
+
+			blob.setMetadata(metadataString);
+			
+			blob.uploadFromFile(convFile.getAbsolutePath());
+			
+			bloburi = blob.getName();
+
+		} catch (StorageException ex) {
+			System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s", ex.getHttpStatusCode(), ex.getErrorCode()));
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		} finally {
+			System.out.println("The program has completed successfully.");
+			System.out.println("Press the 'Enter' key while in the console to delete the sample files, example container, and exit the application.");
+		}
+
+		return bloburi; // id.toString();
+	}
+
+	
 	public CloudOrderAttachment retrieveFile(LsOrderattachments objattachment) {
 
 		CloudOrderAttachment objfile = cloudOrderAttachmentRepository.findByFileid(objattachment.getFileid());
@@ -214,6 +273,49 @@ public class CloudFileManipulationservice {
 
 			blob = container.getBlockBlobReference(fileid);
 			return blob.openInputStream();
+		} catch (StorageException ex) {
+			System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s",
+					ex.getHttpStatusCode(), ex.getErrorCode()));
+			throw new IOException(String.format("Error returned from the service. Http code: %d and error code: %s",
+					ex.getHttpStatusCode(), ex.getErrorCode()));
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+		return null;
+
+	}
+	
+	public InputStream retrieveLargeFileByTag(String fileid) throws IOException {
+
+		CloudStorageAccount storageAccount;
+		CloudBlobClient blobClient = null;
+		CloudBlobContainer container = null;
+//		CloudBlockBlob blob = null;
+		String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+		try {
+			// Parse the connection string and create a blob client to interact with Blob
+			// storage
+			storageAccount = CloudStorageAccount.parse(storageConnectionString);
+			blobClient = storageAccount.createCloudBlobClient();
+			container = blobClient.getContainerReference(TenantContext.getCurrentTenant());
+
+//			blob = container.getBlockBlobReference(fileid);
+//			return blob.openInputStream();
+			// Get all blobs in the container
+		    Iterable<ListBlobItem> blobs = container.listBlobs();
+
+		    // Search for blob based on tag name
+		    for (ListBlobItem blobItem : blobs) {
+		        if (blobItem instanceof CloudBlockBlob) {
+		            CloudBlockBlob blob = (CloudBlockBlob) blobItem;
+		            String tagName = "your_tag_name";
+		            String tagValue = blob.getMetadata().get(tagName);
+		            if (tagValue != null && tagValue.equals("your_tag_value")) {
+		                // Found the blob with the specified tag, return its input stream
+		                return blob.openInputStream();
+		            }
+		        }
+		    }
 		} catch (StorageException ex) {
 			System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s",
 					ex.getHttpStatusCode(), ex.getErrorCode()));

@@ -46,7 +46,7 @@ public class Logilaborders extends Logilabordermaster {
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,
 			Integer ordercancell,Integer viewoption,Material material,MaterialInventory materialinventory) {
 		
-		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,lstestmasterlocal, ordercancell,viewoption,lsuserMaster);
+		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode);
 		 
 		if(lssamplefile != null)
 		{
@@ -224,19 +224,16 @@ public class Logilaborders extends Logilabordermaster {
 
 	public String getBatchid() {
 		String Batchid = "ELN" + this.batchcode;
-
+		
 		if (this.filetype == 3) {
 			Batchid = "RESEARCH" + this.batchcode;
 		} else if (this.filetype == 4) {
 			Batchid = "EXCEL" + this.batchcode;
 		} else if (this.filetype == 5) {
 			Batchid = "VALIDATE" + this.batchcode;
-		} else if (this.filetype == 0) {
-			Batchid = batchid;
 		}
-
-		return Batchid;
 		
+		return Batchid;
 	}
 
 	public void setBatchid(String batchid) {
@@ -270,7 +267,4 @@ public class Logilaborders extends Logilabordermaster {
 	public void setMaterialinventoryname(String materialinventoryname) {
 		this.materialinventoryname = materialinventoryname;
 	}
-
-
-	
 }

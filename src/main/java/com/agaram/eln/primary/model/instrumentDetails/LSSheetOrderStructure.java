@@ -44,6 +44,18 @@ public class LSSheetOrderStructure {
 	private boolean edit;
 	private Integer length;
 	private Long parentdircode;
+	
+	
+	private Long floatvalues;
+
+	public Long getFloatvalues() {
+		return floatvalues;
+	}
+
+	public void setFloatvalues(Long floatvalues) {
+		this.floatvalues = floatvalues;
+	}
+
 
 	@Transient
 	private Long dircodetomove;
@@ -83,17 +95,6 @@ public class LSSheetOrderStructure {
 	
 	@Transient
 	private SearchCriteria searchCriteria;
-	
-	
-	private Long floatvalues;
-
-	public Long getFloatvalues() {
-		return floatvalues;
-	}
-
-	public void setFloatvalues(Long floatvalues) {
-		this.floatvalues = floatvalues;
-	}
 	
 	public List<LSuserMaster> getLstuserMaster() {
 		return lstuserMaster;

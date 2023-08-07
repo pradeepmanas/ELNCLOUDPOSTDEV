@@ -21,7 +21,6 @@ import java.security.InvalidKeyException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,7 +79,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderCreation;
@@ -611,12 +609,6 @@ public class ReportsService {
 						.convertValue(argObj.get("objmanualaudit"), new TypeReference<LScfttransaction>() {
 						});
 				LScfttransactionobj.setTableName("LSdocreports");
-				try {
-					LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				lscfttransactionRepository.save(LScfttransactionManualobj);
 			}
 		}
@@ -720,12 +712,6 @@ public class ReportsService {
 				if (argObj.get("objsilentaudit") != null) {
 					LScfttransactionobj.setSystemcoments("System Generated");
 					LScfttransactionobj.setTableName("LSdocreports");
-					try {
-						LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					lscfttransactionRepository.save(LScfttransactionobj);
 				}
 			}
@@ -920,7 +906,6 @@ public class ReportsService {
 							if (toBeDeleted.exists()) {
 								toBeDeleted.delete();
 							}
-							LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 							lscfttransactionRepository.save(LScfttransactionobj);
 						}
 					}
@@ -1141,7 +1126,6 @@ public class ReportsService {
 								if (toBeDeleted.exists()) {
 									toBeDeleted.delete();
 								}
-								LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 								lscfttransactionRepository.save(LScfttransactionobj);
 							}
 						}
@@ -1253,12 +1237,6 @@ public class ReportsService {
 								});
 						LScfttransactionobj.setSystemcoments("System Generated");
 						LScfttransactionobj.setTableName("LSdocreports");
-						try {
-							LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
 						lscfttransactionRepository.save(LScfttransactionobj);
 					}
 				}
@@ -1272,12 +1250,6 @@ public class ReportsService {
 							LScfttransactionManualobj.setComments((String) objuser.get("comments"));
 						}
 						LScfttransactionManualobj.setTableName("LSdocreports");
-						try {
-							LScfttransactionManualobj.setTransactiondate(commonfunction.getCurrentUtcTime());
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
 						lscfttransactionRepository.save(LScfttransactionManualobj);
 					}
 				}
@@ -1619,7 +1591,6 @@ public class ReportsService {
 					// LScfttransactionobj.setActions("Creation");
 					LScfttransactionobj.setSystemcoments("System Generated");
 					LScfttransactionobj.setTableName("LSdocdirectory");
-					LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 					lscfttransactionRepository.save(LScfttransactionobj);
 				}
 			}
@@ -1664,14 +1635,12 @@ public class ReportsService {
 						LScfttransactionManualobj.setComments((String) objuser.get("comments"));
 					}
 					LScfttransactionManualobj.setTableName("LSdocdirectory");
-					LScfttransactionManualobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 					lscfttransactionRepository.save(LScfttransactionManualobj);
 				}
 			}
 			if (LScfttransactionobj != null) {
 				LScfttransactionobj.setSystemcoments("System Generated");
 				LScfttransactionobj.setTableName("LSdocdirectory");
-				LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 				lscfttransactionRepository.save(LScfttransactionobj);
 			}
 			rtnobjMap.putAll(getDocxDirectoryLst());
@@ -1714,14 +1683,12 @@ public class ReportsService {
 						LScfttransactionManualobj.setComments((String) objuser.get("comments"));
 					}
 					LScfttransactionManualobj.setTableName("LSdocreports");
-					LScfttransactionManualobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 					lscfttransactionRepository.save(LScfttransactionManualobj);
 				}
 			}
 			if (LScfttransactionobj != null) {
 				LScfttransactionobj.setSystemcoments("System Generated");
 				LScfttransactionobj.setTableName("ObjLSdocreports");
-				LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 				lscfttransactionRepository.save(LScfttransactionobj);
 			}
 			rtnobjMap.putAll(getDocxDirectoryLst());
@@ -1810,7 +1777,6 @@ public class ReportsService {
 									});
 							LScfttransactionobj.setSystemcoments("System Generated");
 							LScfttransactionobj.setTableName("LSdocreports");
-							LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 							lscfttransactionRepository.save(LScfttransactionobj);
 						}
 					}
@@ -1917,7 +1883,6 @@ public class ReportsService {
 									});
 							LScfttransactionobj.setSystemcoments("System Generated");
 							LScfttransactionobj.setTableName("LSdocreports");
-							LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 							lscfttransactionRepository.save(LScfttransactionobj);
 						}
 					}
@@ -1943,12 +1908,6 @@ public class ReportsService {
 				// LScfttransactionobj.setActions("Load");
 				LScfttransactionobj.setSystemcoments("System Generated");
 				LScfttransactionobj.setTableName("LSdocreports");
-				try {
-					LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				lscfttransactionRepository.save(LScfttransactionobj);
 			}
 		}
@@ -2435,7 +2394,6 @@ public class ReportsService {
 								new TypeReference<LScfttransaction>() {
 								});
 						LScfttransactionobj.setTableName("LSdocreports");
-						LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 						lscfttransactionRepository.save(LScfttransactionobj);
 					}
 					if (obj.containsKey("objmanualaudit")) {
@@ -2448,7 +2406,6 @@ public class ReportsService {
 								LScfttransactionobj.setComments((String) objuser.get("comments"));
 							}
 							LScfttransactionobj.setTableName("LSdocreports");
-							LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 							lscfttransactionRepository.save(LScfttransactionobj);
 						}
 					}
@@ -2683,7 +2640,6 @@ public class ReportsService {
 								new TypeReference<LScfttransaction>() {
 								});
 						LScfttransactionobj.setTableName("LSdocreports");
-						LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 						lscfttransactionRepository.save(LScfttransactionobj);
 					}
 					if (obj.containsKey("objmanualaudit")) {
@@ -2696,7 +2652,6 @@ public class ReportsService {
 								LScfttransactionobj.setComments((String) objuser.get("comments"));
 							}
 							LScfttransactionobj.setTableName("LSdocreports");
-							LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 							lscfttransactionRepository.save(LScfttransactionobj);
 						}
 					}
@@ -3925,12 +3880,6 @@ public class ReportsService {
 				// LScfttransactionobj.setActions("Load");
 				LScfttransactionobj.setSystemcoments("System Generated");
 				LScfttransactionobj.setTableName("LSdocreports");
-				try {
-					LScfttransactionobj.setTransactiondate(commonfunction.getCurrentUtcTime());
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				lscfttransactionRepository.save(LScfttransactionobj);
 			}
 		}
