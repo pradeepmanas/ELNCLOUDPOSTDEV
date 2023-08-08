@@ -509,7 +509,7 @@ public class DatasourceService {
         URL url = null;
         URI uri = null;
         try {
-        	uri = new URI("http" + path.substring(path.indexOf("://")));
+        	uri = new URI("https" + path.substring(path.indexOf("://")));
             url = uri.toURL();
         } catch (MalformedURLException e) {
             e.printStackTrace();
