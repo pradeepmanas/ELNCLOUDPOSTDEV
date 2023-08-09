@@ -509,7 +509,7 @@ public class DatasourceService {
         URL url = null;
         URI uri = null;
         try {
-        	uri = new URI("https" + path.substring(path.indexOf("://")));
+        	uri = new URI("http" + path.substring(path.indexOf("://")));
             url = uri.toURL();
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -548,7 +548,7 @@ public class DatasourceService {
             }
         } else {
             System.out.println("Error: Invalid params.");
-            objreponse.setInformation("IDS_MSG_BACKUPFAILURE");
+            objreponse.setInformation("IDS_MSG_BACKUPFAILED");
 			objreponse.setStatus(false);
         }
         Tenant.setObjResponse(objreponse);

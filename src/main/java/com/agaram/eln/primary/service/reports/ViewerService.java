@@ -81,7 +81,7 @@ public class ViewerService {
 		    CloudBlobContainer container = blobClient.getContainerReference(TenantContext.getCurrentTenant() + "ordercreation");
 
 		    if (lstorder != null && !lstorder.isEmpty()) {
-		        lstorder.stream()
+		        lstorder.parallelStream()
 		                .filter(order -> order.getLssamplefile() != null && order.getLssamplefile().getFilesamplecode() != null)
 		                .forEach(order -> setFileContentFromBlob(container, order));
 		    }
