@@ -1243,4 +1243,10 @@ public class InstrumentController {
 	{
 	 instrumentService.onDeleteforCancel(lstuuid,screen);
 	}
+	
+	@RequestMapping("/getimagesforlink")
+	public Map<String,Object> getimagesforlink(@RequestBody Map<String,Object> site)throws Exception
+	{
+		return instrumentService.getimagesforlink(site);
+	}
 }

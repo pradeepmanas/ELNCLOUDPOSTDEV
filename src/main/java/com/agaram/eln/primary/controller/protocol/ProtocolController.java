@@ -1081,4 +1081,22 @@ public class ProtocolController {
 		return ProtocolMasterService.protocolTemplateSave(body);
 //		return true;
 	}
+	
+
+	@RequestMapping("/insertlinkimages")
+	public Map<String,Object> insertlinkimages(@RequestBody Map<String,Object> obj)throws Exception
+	{
+		return ProtocolMasterService.insertlinkimages(obj);
+	}
+	@RequestMapping("/insertlinkfiles")
+	public Map<String,Object> insertlinkfiles(@RequestBody Map<String,Object> obj)throws Exception
+	{
+		return ProtocolMasterService.insertlinkfiles(obj);
+	}
+
+	@RequestMapping("/insertlinkimagessql")
+	public Map<String,Object> insertlinkimagessql(@RequestBody Map<String,Object> obj)throws Exception
+	{
+		return ProtocolMasterService.insertlinkimagessql(obj);
+	}
 }

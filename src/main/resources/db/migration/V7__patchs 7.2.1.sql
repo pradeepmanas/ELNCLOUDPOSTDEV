@@ -667,6 +667,45 @@ DECLARE
 BEGIN
    SELECT relkind
    FROM   pg_class
+   WHERE  relname = 'selectedinventorymapped_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE selectedinventorymapped_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE                    -- object name exists for different kind
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.selectedinventorymapped
+(
+    mappedid  integer NOT NULL DEFAULT nextval('selectedinventorymapped_sequence'::regclass),
+    id character varying(150),
+    nmaterialinventorycode integer,
+    samplestoragelocationkey integer,
+    CONSTRAINT selectedinventorymapped_pkey PRIMARY KEY (mappedid),
+    CONSTRAINT fk8fernqbshr6gaugjiauyb9b1 FOREIGN KEY (nmaterialinventorycode)
+        REFERENCES public.materialinventory (nmaterialinventorycode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk8fernqbshr6gaprjiauyb9b1 FOREIGN KEY (samplestoragelocationkey)
+        REFERENCES public.samplestoragelocation (samplestoragelocationkey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH ( OIDS = FALSE ) TABLESPACE pg_default;
+
+ALTER TABLE public.selectedinventorymapped OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
    WHERE  relname = 'lsmultisites_multisitecode_seq' 
    INTO  _kind;
 
@@ -719,3 +758,6 @@ BEGIN
 END
 $do$;
 
+ALTER TABLE IF Exists LSprotocolimages ADD Column IF NOT EXISTS islinkimage boolean;
+
+ALTER TABLE IF Exists LSprotocolfiles ADD Column IF NOT EXISTS islinkfile boolean ;

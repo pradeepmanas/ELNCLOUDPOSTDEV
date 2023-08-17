@@ -357,7 +357,8 @@ public class RestService {
 					if(!lstOrder.get(i).getNbatchmastercode().equals(-1)) {
 						lstLims.setNbatchcode(orderDetail.getNbatchcode());
 					}
-					lstLims.setOrderid(orderDetail.getBatchcode());
+					String Limsorder = orderDetail.getBatchcode().toString();
+					lstLims.setOrderid(Long.parseLong(Limsorder.concat("00")));
 					lstLims.setBatchid(orderDetail.getBatchid());
 					lstLims.setOrderflag(orderDetail.getOrderflag());
 					lstLims.setTestcode(Integer.toString(orderDetail.getTestcode()));
@@ -1065,15 +1066,17 @@ public class RestService {
 		 		String result = "";
 		 		RestTemplate restTemplate = new RestTemplate();
 				
+		 		Map<String, Object> jsMap = new HashMap<>();
+		 		
 				if (isAPICalling.equals("true")) {
 					
 					List<LSlogilablimsordergroup> orderGroup = lslogilablimsordergroupRepository.findByGroupid(Batchid);
 					
 					while (i < lstResult.size()) {
 						int j = 0;
-						while (j < orderGroup.size()) {
+						while (j < (orderGroup.size() + 1)) {
 							
-							if(lstResult.get(i).getParametercode().equals(orderGroup.get(j).getNtestparametercode())
+							if(orderGroup != null && j < orderGroup.size() &&lstResult.get(i).getParametercode().equals(orderGroup.get(j).getNtestparametercode())
 									&& (lstResult.get(i).getOrderid() == 0 || lstResult.get(i).getOrderid() == orderGroup.get(j).getNtransactiontestcode())) {
 								Map<String, Object> lstMap = new HashMap<>();
 								String sresult = lstResult.get(i).getResult();
@@ -1082,16 +1085,10 @@ public class RestService {
 								lstMap.put("limsprimarycode",orderid);
 								lssampleresult.add(lstMap);
 								break;
-							} 
-//							else if(lstResult.get(i).getParametercode().equals(orderGroup.get(j).getNtestparametercode())) {
-//								Map<String, Object> lstMap = new HashMap<>();
-//								String sresult = lstResult.get(i).getResult();
-//								Long orderid = orderGroup.get(j).getLimsprimarycode();
-//								lstMap.put("sresult",sresult);
-//								lstMap.put("limsprimarycode",orderid);
-//								lssampleresult.add(lstMap);
-//								break;
-//							}
+							} else if(lstResult.get(i).getOrderid() == -1) {
+								jsMap.put("jsondata", lstResult.get(i).getResult());
+							}
+							
 							j++;
 						}
 						i++;
@@ -1099,6 +1096,9 @@ public class RestService {
 					}
 					
 					map.put("lssampleresult", lssampleresult);
+					map.put("batcharno", objorder.getBatchid());
+					map.put("ntestcode", objorder.getTestcode());
+					map.put("jsondata", jsMap.get("jsondata"));
 					
 					final String url = env.getProperty("limsbaseservice.url")+"eln/updateLimsSDMSComplete";
 				    

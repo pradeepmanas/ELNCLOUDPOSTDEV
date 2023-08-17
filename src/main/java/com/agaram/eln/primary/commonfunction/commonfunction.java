@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.IntStream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -169,6 +170,40 @@ public class commonfunction {
 		return rtnMapObj;
 	}
 
+	public static String getStoargeFromIdJsonString(String jsonString, String objectKey) {
+		
+		try {
+            JSONArray jsonArray = new JSONArray(jsonString);
+
+            IntStream.range(0, jsonArray.length())
+                .mapToObj(jsonArray::getJSONObject)
+                .forEach(jsonObject -> {
+                    String id = jsonObject.getString("id");
+                    
+                    if(id.equalsIgnoreCase(objectKey)) {
+                    	jsonObject.remove("storageseted");
+                    }
+
+                    JSONArray itemsArray = jsonObject.optJSONArray("items");
+                    if (itemsArray != null) {
+                        IntStream.range(0, itemsArray.length())
+                            .mapToObj(itemsArray::getJSONObject)
+                            .forEach(itemObject -> {
+                                String itemId = itemObject.getString("id");
+                                if(itemId.equalsIgnoreCase(objectKey)) {
+                                	itemObject.remove("storageseted");
+                                }
+                            });
+                    }
+                });
+            
+            return jsonArray.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+	}
+	
 	public static Map<String, Object> getParamsAndValues(String jsonString) {
 
 		Map<String, Object> rtnMapObj = new HashMap<String, Object>();

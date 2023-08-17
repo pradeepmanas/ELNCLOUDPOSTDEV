@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="LSprotocolfiles")
@@ -20,6 +21,23 @@ public class LSprotocolfiles {
 	public String extension;
 	public String filename;
 	
+	@Transient
+	private String link;
+	
+	public boolean islinkfile;
+	
+	public boolean isIslinkfile() {
+		return islinkfile;
+	}
+	public void setIslinkfile(boolean islinkfile) {
+		this.islinkfile = islinkfile;
+	}
+	public String getLink() {
+		return link;
+	}
+	public void setLink(String link) {
+		this.link = link;
+	}
 	public Integer getProtocolstepfilecode() {
 		return protocolstepfilecode;
 	}

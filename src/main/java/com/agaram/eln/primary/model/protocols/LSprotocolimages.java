@@ -37,6 +37,14 @@ public class LSprotocolimages {
     @Column(columnDefinition = "jsonb")
 	public String src;
 	
+	public boolean islinkimage;
+	
+	public boolean isIslinkimage() {
+		return islinkimage;
+	}
+	public void setIslinkimage(boolean islinkimage) {
+		this.islinkimage = islinkimage;
+	}
 	public String getSrc() {
 		return src;
 	}

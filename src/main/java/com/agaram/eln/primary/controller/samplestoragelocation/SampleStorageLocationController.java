@@ -66,10 +66,39 @@ public class SampleStorageLocationController {
 		return sampleStorageLocationService.getAllActiveSampleStorageLocation(nsiteInteger);
 	}
 	
+	@PostMapping(value = "/getActiveSampleStorageLocation")
+	public ResponseEntity<Object> getActiveSampleStorageLocation(@RequestBody Map<String, Object> mapObject) {
+		
+		Integer nsiteInteger = (Integer) mapObject.get("sitekey");
+		
+		return sampleStorageLocationService.getActiveSampleStorageLocation(nsiteInteger);
+	}
+	
 	@PostMapping(value = "/getActiveSampleStorageLocationByKey")
 	public ResponseEntity<Object> getActiveSampleStorageLocationByKey(@Validated @RequestBody Map<String, Object> mapObject) {
 
 		final int sampleStorageLocationKey = (Integer) mapObject.get("samplestoragelocationkey");
 		return sampleStorageLocationService.getActiveSampleStorageLocationByKey(sampleStorageLocationKey);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@PostMapping(value = "/setStorageLocationOnNode")
+	public ResponseEntity<Object> setStorageLocationOnNode(@Validated @RequestBody Map<String, Object> mapObject) {
+
+		final int sampleStorageLocationKey =  Integer.parseInt(mapObject.get("samplestoragelocationkey").toString());
+		final int inventoryCode = Integer.parseInt(mapObject.get("selectedMaterialInventory").toString());
+		final String jsobString = mapObject.get("jsonbresult").toString();
+		final Map<String, Object> selectedStorageId = (Map<String, Object>) mapObject.get("selectedStorageId");
+		
+		return sampleStorageLocationService.setStorageLocationOnNode(sampleStorageLocationKey,inventoryCode,selectedStorageId,jsobString);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@PostMapping(value = "/getSelectedStorageItem")
+	public Boolean getSelectedStorageItem(@Validated @RequestBody Map<String, Object> mapObject) {
+
+		final Map<String, Object> selectedStorageId = (Map<String, Object>) mapObject.get("selectedStorageId");
+		
+		return sampleStorageLocationService.getSelectedStorageItem(selectedStorageId);
 	}
 }

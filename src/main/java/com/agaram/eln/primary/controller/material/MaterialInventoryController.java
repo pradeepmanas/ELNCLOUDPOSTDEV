@@ -49,6 +49,12 @@ public class MaterialInventoryController {
 
 		return materialInventoryService.getMaterialInventoryByID(inputMap);
 	}
+	
+	@RequestMapping(value = "/getMaterialInventoryByStorageID", method = RequestMethod.POST)
+	public ResponseEntity<Object> getMaterialInventoryByStorageID(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return materialInventoryService.getMaterialInventoryByStorageID(inputMap);
+	}
 
 	@RequestMapping(value = "/createMaterialInventory", method = RequestMethod.POST)
 	public ResponseEntity<Object> createMaterialInventory(@RequestBody Map<String, Object> inputMap) throws Exception {

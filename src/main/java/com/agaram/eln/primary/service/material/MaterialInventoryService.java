@@ -46,6 +46,7 @@ import com.agaram.eln.primary.model.material.MaterialInventoryType;
 import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.ResultUsedMaterial;
 import com.agaram.eln.primary.model.material.TransactionStatus;
+import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
@@ -58,6 +59,7 @@ import com.agaram.eln.primary.repository.material.MaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.agaram.eln.primary.repository.material.ResultUsedMaterialRepository;
 import com.agaram.eln.primary.repository.material.TransactionStatusRepository;
+import com.agaram.eln.primary.repository.samplestoragelocation.SelectedInventoryMappedRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
@@ -96,6 +98,8 @@ public class MaterialInventoryService {
 	private CloudFileManipulationservice cloudFileManipulationservice;
 	@Autowired
 	private FileManipulationservice fileManipulationservice;
+	@Autowired
+	SelectedInventoryMappedRepository selectedInventoryMappedRepository;
 
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInventory(Integer nsiteInteger) throws Exception {
@@ -281,15 +285,14 @@ public class MaterialInventoryService {
 					objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(0));
 					inputMap.put("nsectioncode", lstMaterialInventory.get(0).get("nsectioncode"));
 
+					MaterialInventory objInventory = materialInventoryRepository.findOne((Integer) lstMaterialInventory.get(0).get("nmaterialinventorycode"));
+					
+//					objmap.put("SelectedStorageId",setStorageMappedId(objInventory));
 					objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
 							(int) lstMaterialInventory.get(0).get("nmaterialinventorycode"), inputMap).getBody());
-//					objmap.putAll((Map<String, Object>) getMaterialFile((int) lstMaterialInventory
-//							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")));
 					objmap.putAll((Map<String, Object>) getResultUsedMaterial(
 							Integer.parseInt(lstMaterialInventory.get(0).get("nmaterialinventorycode").toString()))
 									.getBody());
-//					objmap.putAll((Map<String, Object>) getMaterialInventoryhistory((int) lstMaterialInventory
-//							.get(lstMaterialInventory.size() - 1).get("nmaterialinventorycode")));
 
 				} else {
 
@@ -305,16 +308,12 @@ public class MaterialInventoryService {
 					lstMaterialInventory1.add(resObj);
 
 					inputMap.put("nsectioncode", objInventory.getNsectioncode());
-
+					
+//					objmap.put("SelectedStorageId",setStorageMappedId(objInventory));
 					objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
 							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode"), inputMap).getBody());
-
 					objmap.putAll((Map<String, Object>) getResultUsedMaterial(objInventory.getNmaterialinventorycode())
 							.getBody());
-//					objmap.putAll((Map<String, Object>) getMaterialFile(
-//							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode")));
-//					objmap.putAll((Map<String, Object>) getMaterialInventoryhistory(
-//							(int) lstMaterialInventory1.get(0).get("nmaterialinventorycode")));
 
 				}
 			} else {
@@ -395,6 +394,58 @@ public class MaterialInventoryService {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<Object> getMaterialInventoryByStorageID(Map<String, Object> inputMap) throws Exception {
+
+		Map<String, Object> objmap = new HashMap<String, Object>();
+		List<Map<String, Object>> lstMaterialInventory = new ArrayList<Map<String, Object>>();
+		
+		Map<String, Object> clickedItem = (Map<String, Object>) inputMap.get("clickedItem");
+		
+		String id = clickedItem.get("id").toString();
+		
+		List<SelectedInventoryMapped> lstInventoryMappeds = selectedInventoryMappedRepository.findByIdOrderByMappedidDesc(id);
+		
+		List<MaterialInventory> objLstMaterialInventory = new ArrayList<MaterialInventory>();
+		
+		if(!lstInventoryMappeds.isEmpty()) {
+			
+			lstInventoryMappeds.stream().peek(f -> {
+				objLstMaterialInventory.add(f.getNmaterialinventorycode());		
+			}).collect(Collectors.toList());
+			
+			objLstMaterialInventory.stream().peek(f -> {
+
+				try {
+
+					Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
+
+					resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
+					resObj.put("displaystatus",
+							f.getNtransactionstatus() == 28 ? "Released"
+									: (f.getNtransactionstatus() == 55 ? "Expired"
+											: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
+					resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
+					lstMaterialInventory.add(resObj);
+
+				} catch (IOException e) {
+
+					e.printStackTrace();
+				}
+
+			}).collect(Collectors.toList());
+
+			objmap.put("MaterialInventory", lstMaterialInventory);
+			
+			objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(0));
+			
+//			objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode((int) lstMaterialInventory.get(0).get("nmaterialinventorycode"), inputMap).getBody());
+			objmap.putAll((Map<String, Object>) getResultUsedMaterial(Integer.parseInt(lstMaterialInventory.get(0).get("nmaterialinventorycode").toString())).getBody());
+		}
+		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
 	private HttpEntity<Object> getMaterialInventoryAdd(int ntypecode) {
 		Map<String, Object> objmap = new HashMap<>();
 		
@@ -1684,11 +1735,24 @@ public class MaterialInventoryService {
 
 			objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(lstMaterialInventory.size() - 1));
 			inputMap.put("nsectioncode", lstMaterialInventory1.get(0).get("nsectioncode"));
-
+//			objmap.put("SelectedStorageId",setStorageMappedId(objInventory));
 			objmap.putAll((Map<String, Object>) getQuantityTransactionByMaterialInvCode(
 					(int) inputMap.get("nmaterialinventorycode"), inputMap).getBody());
 		}
 
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
+	public HttpEntity<Object> setStorageMappedId(MaterialInventory objInventory) throws JsonParseException, JsonMappingException, IOException {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		SelectedInventoryMapped inventoryMapped = selectedInventoryMappedRepository.findByNmaterialinventorycode(objInventory);
+		
+		if(inventoryMapped != null) {
+			objmap.put("SelectedMappedStorage", inventoryMapped);
+		}else {
+			objmap.put("SelectedMappedStorage", null);
+		}
+		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 

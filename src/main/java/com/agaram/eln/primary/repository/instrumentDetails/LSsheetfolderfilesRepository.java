@@ -38,6 +38,8 @@ public List<LSsheetfolderfiles> findByDirectorycodeAndFileforAndCreatedtimestamp
 	@Modifying
 	@Query("delete from LSsheetfolderfiles where uuid in(?1)")
 public void removeForFile(List<String> uuid);
+public List<LSsheetfolderfiles> findByDirectorycode(long directorycode);
+public List<LSsheetfolderfiles> findByDirectorycodeAndFilefor(long directorycode, String filefor);
 
 
  

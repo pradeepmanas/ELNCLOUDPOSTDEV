@@ -32,7 +32,7 @@ public class LSsampleresult {
 	private Integer parametercode;
 	@Column(columnDefinition = "numeric(18,0)")
 	private Integer parametertypecode;
-	@Column(columnDefinition = "varchar(100)")
+//	@Column(columnDefinition = "varchar(max)")
 	private String result;
 	private Integer isactive;
 	@Column(columnDefinition = "numeric(17,0)")

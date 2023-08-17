@@ -19,11 +19,15 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -95,6 +99,9 @@ import com.agaram.eln.primary.model.methodsetup.ParserBlock;
 import com.agaram.eln.primary.model.methodsetup.ParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+import com.agaram.eln.primary.model.protocols.LSprotocolimages;
+import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.protocols.LSprotocolstep;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
@@ -156,6 +163,7 @@ import com.agaram.eln.primary.repository.methodsetup.ParserBlockRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.SubParserFieldRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolorderstephistoryRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileparameterRepository;
@@ -186,6 +194,7 @@ import com.agaram.eln.primary.service.usermanagement.UserService;
 import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.mongodb.gridfs.GridFSDBFile;
 
 @Service
@@ -396,6 +405,13 @@ public class InstrumentService {
 	
 	@Autowired
 	private LSactiveUserRepository lSactiveUserRepository;
+	
+	@Autowired
+	private LSprotocolorderstephistoryRepository lsprotocolorderstephistoryRepository;
+	
+	@Autowired
+	@Qualifier("entityManagerFactory")
+	private EntityManager entityManager;
 
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 //		Map<String, Object> obj = new HashMap<>();
@@ -2601,7 +2617,6 @@ public class InstrumentService {
 				lslogilablimsorderdetailRepository.save(objupdatedorder);
 			}
 			
-			
 		} else {
 			objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
 			objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
@@ -2694,6 +2709,7 @@ public class InstrumentService {
 			objupdatedorder.setLscentralisedusers(userService.Getcentraliseduserbyid(objUserId));
 		}
 		objupdatedorder.getResponse().setStatus(true);
+		objupdatedorder.setlSprotocolorderstephistory(lsprotocolorderstephistoryRepository.findByBatchcode(objupdatedorder.getBatchcode()));
 		return objupdatedorder;
 	}
 
@@ -3606,7 +3622,7 @@ public class InstrumentService {
 
 	public LSlogilablimsorderdetail updateworflowforOrder(LSlogilablimsorderdetail objorder) {
 
-//		LSlogilablimsorderdetail lsOrder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
+		LSlogilablimsorderdetail objDbOrder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 
 		updatenotificationfororderworkflow(objorder,
 				lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode()).getLsworkflow());
@@ -3629,6 +3645,10 @@ public class InstrumentService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		objorder.setLockeduser(objDbOrder.getLockeduser());
+		objorder.setLockedusername(objDbOrder.getLockedusername());
+		objorder.setActiveuser(objDbOrder.getActiveuser());
 
 		lslogilablimsorderdetailRepository.save(objorder);
 
@@ -7974,12 +7994,11 @@ public class InstrumentService {
 		return map;
 	}
 
-	public Map<String, Object> Getfoldersfordashboard(LSuserMaster lsusermaster) {
+public Map<String, Object> Getfoldersfordashboard(LSuserMaster lsusermaster) {
 		Map<String, Object> mapfolders = new HashMap<String, Object>();
 
-//		List<LSusersteam> obj = lsusersteamRepository.findBylssitemasterAndStatus(lsusermaster.getLssitemaster(), 1);
-
 		List<Lsprotocolorderstructure> lstdirpro = new ArrayList<Lsprotocolorderstructure>();
+		if(lsusermaster.getActiveusercode()==2) {
 		if (lsusermaster.getUsernotify() == null) {
 			lstdirpro = lsprotocolorderStructurerepository
 					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
@@ -7990,37 +8009,77 @@ public class InstrumentService {
 							lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
 							lsusermaster.getUsernotify());
 		}
-//		lstdirpro.forEach(e -> e.setTeamname(obj.stream().filter(a -> a.getTeamcode().equals(e.getTeamcode()))
-//				.map(LSusersteam::getTeamname).findAny().orElse(null)));
+
 		mapfolders.put("directorypro", lstdirpro);
-//		}else {
-		List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
+		}else {
+			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 
-		if (lsusermaster.getUsernotify() == null) {
-			lstdir = lsSheetOrderStructureRepository
-					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-							lsusermaster.getLssitemaster(), 1, lsusermaster, 2);
-		} else {
-			lstdir = lsSheetOrderStructureRepository
-					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-							lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
-							lsusermaster.getUsernotify());
+			if (lsusermaster.getUsernotify() == null) {
+				lstdir = lsSheetOrderStructureRepository
+						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2);
+			} else {
+				lstdir = lsSheetOrderStructureRepository
+						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
+								lsusermaster.getUsernotify());
+			}
+
+			mapfolders.put("directory", lstdir);
 		}
-//		lstdir.forEach(e -> e.setTeamname(obj.stream().filter(a -> a.getTeamcode().equals(e.getTeamcode()))
-//				.map(LSusersteam::getTeamname).findAny().orElse(null)));
-		mapfolders.put("directory", lstdir);
-
-//		}
 		return mapfolders;
 	}
-
 	public void onDeleteforCancel(List<String> lstuuid, String screen) {
-		if(screen.equals("sheet")) {
-			 lssheetfolderfilesRepository.removeForFile(lstuuid);
-		}else if(screen.equals("protocol")) {
-			lsprotocolfolderfilesRepository.removeForFile(lstuuid);
+		if(!lstuuid.isEmpty()) {
+			if(screen.equals("sheet")) {
+				 lssheetfolderfilesRepository.removeForFile(lstuuid);
+			}else if(screen.equals("protocol")) {
+				lsprotocolfolderfilesRepository.removeForFile(lstuuid);
+			}
 		}
 			
 	}
+	
+	public Map<String, Object> getimagesforlink(Map<String, Object> obj) {
+		Map<String, Object> rtnobj = new HashMap<String, Object>();
+		Integer onTabKey = (Integer) obj.get("ontabkey");
+		long directorycode = ((Number) obj.get("directorycode")).longValue();
+		Integer uploadtype=(Integer) obj.get("uploadtype");
+		if(uploadtype==1) {
+		String jpql = onTabKey == 1
+				? "SELECT f FROM LSsheetfolderfiles f WHERE (f.directorycode=:directorycode) And (f.filename LIKE LOWER(:png) OR f.filename LIKE :jpg OR f.filename LIKE :jpeg)"
+				: "SELECT f FROM LSprotocolfolderfiles f WHERE (f.directorycode=:directorycode) AND (f.filename LIKE LOWER(:png) OR f.filename LIKE :jpg OR f.filename LIKE :jpeg)";
+		TypedQuery<LSsheetfolderfiles> query1;
+		TypedQuery<LSprotocolfolderfiles> query2;
+		if (onTabKey == 1) {
+			query1 = entityManager.createQuery(jpql, LSsheetfolderfiles.class);
+			query1.setParameter("png", "%.png%");
+			query1.setParameter("jpg", "%.jpg%");
+			query1.setParameter("jpeg", "%.jpeg%");
+			query1.setParameter("directorycode", directorycode);
+			rtnobj.put("LSsheetfolderfiles", query1.getResultList());
+		} else {
+			query2 = entityManager.createQuery(jpql, LSprotocolfolderfiles.class);
+			query2.setParameter("png", "%.png%");
+			query2.setParameter("jpg", "%.jpg%");
+			query2.setParameter("jpeg", "%.jpeg%");
+			query2.setParameter("directorycode", directorycode);
+			rtnobj.put("LSprotocolfolderfiles", query2.getResultList());
+		}
+		}else {
+			String filefor=(String)obj.get("filefor");
+			if (onTabKey == 1) {
+			List<LSsheetfolderfiles> lstfiles = new ArrayList<LSsheetfolderfiles>();
+				lstfiles = lssheetfolderfilesRepository.findByDirectorycodeAndFilefor(directorycode,filefor);
+				rtnobj.put("LSsheetfolderfiles", lstfiles);
+			}else {
+				List<LSprotocolfolderfiles> lstfiles = new ArrayList<LSprotocolfolderfiles>();
+				lstfiles = lsprotocolfolderfilesRepository.findByDirectorycodeAndFilefor(directorycode, filefor);
+				rtnobj.put("LSprotocolfolderfiles", lstfiles);
+			}
+		}
+		return rtnobj;
+	}
+
 
 }

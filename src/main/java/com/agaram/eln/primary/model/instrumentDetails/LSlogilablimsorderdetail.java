@@ -37,6 +37,7 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
+import com.agaram.eln.primary.model.protocols.LSprotocolorderstephistory;
 import com.agaram.eln.primary.model.usermanagement.LScentralisedUsers;
 
 @Entity(name = "LSlogilablimsorderdetail")
@@ -275,6 +276,17 @@ public class LSlogilablimsorderdetail {
 		this.lstdirectorycode = lstdirectorycode;
 	}
 
+	@Transient
+	List<LSprotocolorderstephistory> lSprotocolorderstephistory;
+
+	public List<LSprotocolorderstephistory> getlSprotocolorderstephistory() {
+		return lSprotocolorderstephistory;
+	}
+
+	public void setlSprotocolorderstephistory(List<LSprotocolorderstephistory> lSprotocolorderstephistory) {
+		this.lSprotocolorderstephistory = lSprotocolorderstephistory;
+	}
+	
 	@Transient
 	private Date notificationdate;
 	

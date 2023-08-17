@@ -44,4 +44,6 @@ public interface LSprotocolfolderfilesRepository extends JpaRepository<LSprotoco
 	@Query("delete from LSprotocolfolderfiles where uuid in(?1)")
 	public void removeForFile(List<String> lstuuid);
 
+	public List<LSprotocolfolderfiles> findByDirectorycodeAndFilefor(long directorycode, String filefor);
+
 }

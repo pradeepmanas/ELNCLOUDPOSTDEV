@@ -74,13 +74,15 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	public void setViewoption(Integer viewoption) {
 		this.viewoption = viewoption;
 	}
-public Integer getTestcode() {
+	
+	public Integer getTestcode() {
 		return testcode;
 	}
 
 	public void setTestcode(Integer testcode) {
 		this.testcode = testcode;
 	}
+	
 	public Integer getOrdercancell() {
 		return ordercancell;
 	}

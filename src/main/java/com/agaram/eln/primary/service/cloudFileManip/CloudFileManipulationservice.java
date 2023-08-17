@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
+import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -800,4 +800,39 @@ public class CloudFileManipulationservice {
 		return null;
 
 	}	
+	
+	
+	public boolean tocopyoncontainertoanothercontainer(List<String> fileIds, String sourceContainerName, String destinationContainerName) throws IOException {
+		  CloudStorageAccount storageAccount;
+		    CloudBlobClient blobClient = null;
+		    CloudBlobContainer sourceContainer = null;
+		    CloudBlobContainer destinationContainer = null;
+		    String storageConnectionString = env.getProperty("azure.storage.ConnectionString");
+		    try {
+		        // Parse the connection string and create a blob client to interact with Blob storage
+		        storageAccount = CloudStorageAccount.parse(storageConnectionString);
+		        blobClient = storageAccount.createCloudBlobClient();
+		        sourceContainer = blobClient.getContainerReference(sourceContainerName);
+		        destinationContainer = blobClient.getContainerReference(destinationContainerName);
+		        destinationContainer.createIfNotExists(BlobContainerPublicAccessType.CONTAINER, new BlobRequestOptions(),new OperationContext());
+
+		        for (String fileId : fileIds) {
+		            CloudBlockBlob sourceBlob = sourceContainer.getBlockBlobReference(fileId);
+		            CloudBlockBlob destinationBlob = destinationContainer.getBlockBlobReference(fileId);
+		            destinationBlob.startCopy(sourceBlob);
+		        }
+		        return true;
+		    } catch (StorageException ex) {
+		        System.out.println(String.format("Error returned from the service. Http code: %d and error code: %s",
+		                ex.getHttpStatusCode(), ex.getErrorCode()));
+//		        throw new IOException(String.format("Error returned from the service. Http code: %d and error code: %s",
+//		                ex.getHttpStatusCode(), ex.getErrorCode()));
+		        return false;
+		    } catch (Exception ex) {
+		        System.out.println(ex.getMessage());
+		        return false;
+		    }
+//			return storageConnectionString;
+			
+	}
 }

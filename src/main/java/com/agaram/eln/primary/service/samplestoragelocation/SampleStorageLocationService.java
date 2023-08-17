@@ -15,11 +15,15 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageLocation;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageVersion;
+import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
+import com.agaram.eln.primary.repository.material.MaterialInventoryRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageLocationRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageVersionRepository;
+import com.agaram.eln.primary.repository.samplestoragelocation.SelectedInventoryMappedRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -32,6 +36,10 @@ public class SampleStorageLocationService {
 	SampleStorageVersionRepository sampleStorageVersionRepository;
 	@Autowired
 	LScfttransactionRepository lScfttransactionRepository;
+	@Autowired
+	MaterialInventoryRepository MaterialInventoryRepository;
+	@Autowired
+	SelectedInventoryMappedRepository selectedInventoryMappedRepository;
 
 	public ResponseEntity<Object> createSampleStorageLocation(final SampleStorageLocation sampleStorageLocation, final SampleStorageVersion sampleStorageVersion, LScfttransaction Auditobj) throws JsonMappingException, JsonProcessingException {
 		
@@ -141,6 +149,28 @@ public class SampleStorageLocationService {
 		}
 		return new ResponseEntity<>(objMap, HttpStatus.OK);
 	}
+	
+	public ResponseEntity<Object> getActiveSampleStorageLocation(Integer nsiteInteger) {
+
+		List<SampleStorageLocation> sampleStorageLocationList = sampleStorageLocationRepository
+				.findBySitekeyAndStatusOrderBySamplestoragelocationkeyDesc(nsiteInteger,1);
+
+		Map<String, Object> objMap = new LinkedHashMap<String, Object>();
+
+		if (sampleStorageLocationList != null && sampleStorageLocationList.size() > 0) {
+			objMap.put("sampleStorageLocation", sampleStorageLocationList);
+			objMap.put("selectedSampleStorageLocation", sampleStorageLocationList.get(0));
+
+			List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository
+					.findBySampleStorageLocation(sampleStorageLocationList.get(0));
+			objMap.put("sampleStorageVersion", sampleStorageVersionList);
+			if (sampleStorageVersionList != null && sampleStorageVersionList.size() > 0) {
+				objMap.put("selectedSampleStorageVersion", sampleStorageVersionList.get(0));
+			}
+
+		}
+		return new ResponseEntity<>(objMap, HttpStatus.OK);
+	}
 
 	public ResponseEntity<Object> getAllActiveSampleStorageLocationWithSelectedRecord(Integer nsiteInteger,
 			Integer sampleStorageLocationKey) {
@@ -188,5 +218,54 @@ public class SampleStorageLocationService {
 			}
 		}
 		return new ResponseEntity<>(objMap, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> setStorageLocationOnNode(final int sampleStorageLocationKey,final int inventoryCode,Map<String, Object> selectedStorageId,String jsobString) {
+
+		SampleStorageLocation objStorageLocation = sampleStorageLocationRepository.findBySamplestoragelocationkey(sampleStorageLocationKey);
+		MaterialInventory objInventory = MaterialInventoryRepository.findByNmaterialinventorycode(inventoryCode);
+		SelectedInventoryMapped inventoryMapped = new SelectedInventoryMapped(); 
+		List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository.findBySampleStorageLocation(objStorageLocation);
+
+		if (sampleStorageVersionList != null && sampleStorageVersionList.size() > 0) {
+			
+			List<SelectedInventoryMapped> lstInventoryMappeds1 = selectedInventoryMappedRepository.findByNmaterialinventorycodeOrderByMappedidDesc(objInventory);
+			
+			if(lstInventoryMappeds1.isEmpty()) {
+				sampleStorageVersionList.get(0).setJsonbresult(jsobString);
+				
+				inventoryMapped.setNmaterialinventorycode(objInventory);
+				inventoryMapped.setSamplestoragelocationkey(objStorageLocation);
+				inventoryMapped.setId(selectedStorageId.get("id").toString());
+				selectedInventoryMappedRepository.save(inventoryMapped);
+			}else {
+				
+				if(!lstInventoryMappeds1.get(0).getId().equalsIgnoreCase(selectedStorageId.get("id").toString())) {
+					List<SelectedInventoryMapped> lstInventoryMappeds = selectedInventoryMappedRepository.findByIdAndNmaterialinventorycodeNotOrderByMappedidDesc(lstInventoryMappeds1.get(0).getId(),objInventory);
+					
+					if(lstInventoryMappeds.isEmpty()) {
+						jsobString = commonfunction.getStoargeFromIdJsonString(jsobString,lstInventoryMappeds1.get(0).getId());
+					}
+				}
+				sampleStorageVersionList.get(0).setJsonbresult(jsobString);
+				
+				lstInventoryMappeds1.get(0).setSamplestoragelocationkey(objStorageLocation);
+				lstInventoryMappeds1.get(0).setId(selectedStorageId.get("id").toString());
+				selectedInventoryMappedRepository.save(lstInventoryMappeds1);
+			}
+			sampleStorageVersionRepository.save(sampleStorageVersionList);
+		}
+		
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	public Boolean getSelectedStorageItem(Map<String, Object> selectedStorageId) {
+		List<SelectedInventoryMapped> lstItemMapped = selectedInventoryMappedRepository.findByIdOrderByMappedidDesc(selectedStorageId.get("id").toString());
+		
+		if(lstItemMapped.isEmpty()) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 }
