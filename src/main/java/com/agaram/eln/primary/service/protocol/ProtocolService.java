@@ -5083,6 +5083,52 @@ public class ProtocolService {
 		return mapObj;
 	}
 	
+	public Map<String, Object> protocolOrderSave(Map<String, Object> body) throws IOException {
+
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+		Response response = new Response();
+		ObjectMapper object = new ObjectMapper();
+		
+		if (body.get("ProtocolOrder") != null) {
+			LSlogilabprotocoldetail lSlogilabprotocoldetail = object.convertValue(body.get("ProtocolOrder"),
+					LSlogilabprotocoldetail.class);
+			LSlogilabprotocoldetail protocolOrder = LSlogilabprotocoldetailRepository.findByProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
+			Integer ismultitenant = object.convertValue(body.get("ismultitenant"), Integer.class);
+			int sitecode = object.convertValue(body.get("sitecode"), Integer.class);
+	
+			if ((protocolOrder.getApproved() == null || protocolOrder.getApproved() != 1 )) {
+
+				LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(sitecode);
+				LSworkflow lsworkflow = lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
+
+				protocolOrder.setApproved(0);
+				protocolOrder.setLsworkflow(lsworkflow);
+				protocolOrder.setVersionno(protocolOrder.getVersionno() + 1);
+			
+				if (!body.get("protocolData").equals("")) {		
+					if (ismultitenant == 1) {
+						protocolOrder.setIsmultitenant(ismultitenant);
+						Gson gson = new Gson();
+						String protocolDataJson = gson.toJson(body.get("protocolData"));
+						updateProtocolOrderContent(protocolDataJson, protocolOrder, ismultitenant);
+						mapObj.put("protocolOrder", protocolOrder);
+						response.setInformation("IDS_MSG_PROTOCOLORDERSAVE");
+						response.setStatus(true);
+					} else {
+	//					Query query = new Query(Criteria.where("id").is(LSprotocolstepObj.getProtocolstepcode()));
+	//					Update update = new Update();
+	//					update.set("content", str);
+	////					update.set("content", content);
+	//					mongoTemplate.upsert(query, update, LSprotocolstepInfo.class);
+					}
+				}
+			}
+		}
+		
+		mapObj.put("response", response);
+		return mapObj;
+	}
+	
 	@SuppressWarnings("unused")
 	public List<Lsrepositoriesdata> reducecunsumablefield(Lsrepositoriesdata[] lsrepositoriesdata) {
 		List<Lsrepositoriesdata> lsrepositoriesdataobj = Arrays.asList(lsrepositoriesdata);
