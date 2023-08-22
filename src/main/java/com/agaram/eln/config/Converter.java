@@ -237,7 +237,11 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
         		"/getSubParserMethod",
         		"/getParserFieldTechniqueListByMethodKey",
         		"/getmethodversion",
-        		"/getParserMethod"
+        		"/getParserMethod",
+        		"/MethodExportController/exportMethods",
+        		"/MethodImportController/importMethods",
+        		"/downloadFile/{fileName}",
+        		"/getFileData"
               
             );
         byte[] compressedBytes = new byte[0];

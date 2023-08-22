@@ -23,6 +23,8 @@ public class SelectedInventoryMapped {
 	@Column(name = "mappedid") 
 	private Integer mappedid;
 	
+	private String storagepath;
+
 	public String id;
 
 	@OneToOne(cascade = CascadeType.ALL)
@@ -33,6 +35,14 @@ public class SelectedInventoryMapped {
 	@JoinColumn(name = "samplestoragelocationkey", referencedColumnName = "samplestoragelocationkey")
 	private SampleStorageLocation samplestoragelocationkey;
 	
+	public String getStoragepath() {
+		return storagepath;
+	}
+
+	public void setStoragepath(String storagepath) {
+		this.storagepath = storagepath;
+	}
+
 	public SampleStorageLocation getSamplestoragelocationkey() {
 		return samplestoragelocationkey;
 	}

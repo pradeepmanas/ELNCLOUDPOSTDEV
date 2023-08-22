@@ -453,19 +453,21 @@ public class MethodService {
 		   if(methodByKey.isPresent()) {
 
 			   final Method method = methodByKey.get();
-			   if ((method.getSamplesplit() != null && method.getSamplesplit() == 1)
-					   || (method.getParser() != null && method.getParser() == 1)) {
-				    if (saveAuditTrial)
-		    		{		
-		    	    }
-				    method.setInfo("Associated - "+ method.getMethodname());
-				    method.setObjsilentaudit(auditdetails.getObjsilentaudit());
-				    
-			
-				    return new ResponseEntity<>(method , HttpStatus.IM_USED);//status code - 226
-			   }
-			   else {
-								   method.setStatus(-1);
+//			   if ((method.getSamplesplit() != null && method.getSamplesplit() == 1)
+//					   || (method.getParser() != null && method.getParser() == 1)) {
+//				    if (saveAuditTrial)
+//		    		{		
+//		    	    }
+//				    method.setInfo("Associated - "+ method.getMethodname());
+//				    method.setObjsilentaudit(auditdetails.getObjsilentaudit());
+//				    
+//			
+//				    return new ResponseEntity<>(method , HttpStatus.IM_USED);//status code - 226
+//			   }
+//			   else
+			   {
+						
+				       method.setStatus(-1);
 					   method.setMethodstatus("D");
 					   final Method savedMethod = methodRepo.save(method);   
 					   
@@ -484,7 +486,7 @@ public class MethodService {
 				return new ResponseEntity<>("Delete Failed - Method Not Found", HttpStatus.NOT_FOUND);
 		   }
 	   }  
-	   
+
    /**
     * This method is used to fetch list of instruments that are not yet associated with
     * any of the Method master.

@@ -2,7 +2,11 @@ package com.agaram.eln.primary.repository.methodsetup;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
@@ -58,5 +62,18 @@ public interface ParserFieldRepository extends JpaRepository<ParserField, Intege
 	List<ParserField> findByParserblockIn(List<ParserBlock> parserBlock);
 
 	List<ParserField> findByStatusAndParserblockIn(int i, List<ParserBlock> parserBlock);
+	
+	@Transactional
+	@Modifying
+//	@Query(value = "SELECT pf FROM ParserField pf JOIN ParserBlock pb ON "
+//			+ " pb.parserblockkey = pf.parserblock.parserblockkey JOIN Method m "
+//			+ " ON m.methodkey = pb.method.methodkey AND m.methodkey = ?1 and pf.status=1" , nativeQuery = true)
+	
+	@Query(value = "SELECT * FROM ParserField JOIN ParserBlock ON" +" ParserField.parserblockkey = ParserBlock.parserblockkey "
+	+" JOIN Method ON method.methodkey = ParserBlock.methodkey And method.methodkey = ?1 and ParserField.status=1",nativeQuery = true)
+
+	
+	List<ParserField> getParserFieldByMethodKey(Integer methodkey);
+
 
 }

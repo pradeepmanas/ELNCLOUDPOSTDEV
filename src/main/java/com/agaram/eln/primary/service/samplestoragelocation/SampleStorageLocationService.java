@@ -67,7 +67,13 @@ public class SampleStorageLocationService {
 	public ResponseEntity<Object> updateSampleStorageLocation(final SampleStorageLocation sampleStorageLocation,final SampleStorageVersion sampleStorageVersion, LScfttransaction Auditobj)throws JsonMappingException, JsonProcessingException {
 		sampleStorageLocation.setObjsilentaudit(Auditobj);
 		sampleStorageLocationRepository.save(sampleStorageLocation);
-		sampleStorageVersionRepository.save(sampleStorageVersion);
+		
+		List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository
+				.findFirstBySampleStorageLocationOrderBySamplestorageversionkeyDesc(sampleStorageLocation);
+		
+		sampleStorageVersionList.get(0).setJsonbresult(sampleStorageVersion.getJsonbresult());
+		
+		sampleStorageVersionRepository.save(sampleStorageVersionList);
 		try {
 			Auditobj.setTransactiondate(commonfunction.getCurrentUtcTime());
 		} catch (ParseException e) {
@@ -140,7 +146,7 @@ public class SampleStorageLocationService {
 			objMap.put("selectedSampleStorageLocation", sampleStorageLocationList.get(0));
 
 			List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository
-					.findBySampleStorageLocation(sampleStorageLocationList.get(0));
+					.findFirstBySampleStorageLocationOrderBySamplestorageversionkeyDesc(sampleStorageLocationList.get(0));
 			objMap.put("sampleStorageVersion", sampleStorageVersionList);
 			if (sampleStorageVersionList != null && sampleStorageVersionList.size() > 0) {
 				objMap.put("selectedSampleStorageVersion", sampleStorageVersionList.get(0));
@@ -162,7 +168,7 @@ public class SampleStorageLocationService {
 			objMap.put("selectedSampleStorageLocation", sampleStorageLocationList.get(0));
 
 			List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository
-					.findBySampleStorageLocation(sampleStorageLocationList.get(0));
+					.findFirstBySampleStorageLocationOrderBySamplestorageversionkeyDesc(sampleStorageLocationList.get(0));
 			objMap.put("sampleStorageVersion", sampleStorageVersionList);
 			if (sampleStorageVersionList != null && sampleStorageVersionList.size() > 0) {
 				objMap.put("selectedSampleStorageVersion", sampleStorageVersionList.get(0));
@@ -180,14 +186,14 @@ public class SampleStorageLocationService {
 		objMap.put("sampleStorageLocation", sampleStorageLocationList);
 		if (sampleStorageLocationList != null && sampleStorageLocationList.size() > 0) {
 			List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository
-					.findBySampleStorageLocation(sampleStorageLocationList.get(0));
+					.findFirstBySampleStorageLocationOrderBySamplestorageversionkeyDesc(sampleStorageLocationList.get(0));
 			objMap.put("sampleStorageVersion", sampleStorageVersionList);
 		}
 		SampleStorageLocation objStorageLocation = sampleStorageLocationRepository
 				.findBySamplestoragelocationkey(sampleStorageLocationKey);
 		if (objStorageLocation != null) {
 			List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository
-					.findBySampleStorageLocation(objStorageLocation);
+					.findFirstBySampleStorageLocationOrderBySamplestorageversionkeyDesc(objStorageLocation);
 			objStorageLocation.setSampleStorageVersion(sampleStorageVersionList);
 			objMap.put("selectedSampleStorageLocation", objStorageLocation);
 			objMap.put("sampleStorageVersion", sampleStorageVersionList);
@@ -210,7 +216,7 @@ public class SampleStorageLocationService {
 			objMap.put("selectedSampleStorageLocation", objStorageLocation);
 
 			List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository
-					.findBySampleStorageLocation(objStorageLocation);
+					.findFirstBySampleStorageLocationOrderBySamplestorageversionkeyDesc(objStorageLocation);
 			objMap.put("sampleStorageVersion", sampleStorageVersionList);
 
 			if (sampleStorageVersionList != null && sampleStorageVersionList.size() > 0) {
@@ -225,10 +231,10 @@ public class SampleStorageLocationService {
 		SampleStorageLocation objStorageLocation = sampleStorageLocationRepository.findBySamplestoragelocationkey(sampleStorageLocationKey);
 		MaterialInventory objInventory = MaterialInventoryRepository.findByNmaterialinventorycode(inventoryCode);
 		SelectedInventoryMapped inventoryMapped = new SelectedInventoryMapped(); 
-		List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository.findBySampleStorageLocation(objStorageLocation);
+		List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository.findFirstBySampleStorageLocationOrderBySamplestorageversionkeyDesc(objStorageLocation);
 
 		if (sampleStorageVersionList != null && sampleStorageVersionList.size() > 0) {
-			
+			String path = commonfunction.findPath(jsobString,selectedStorageId.get("id").toString());
 			List<SelectedInventoryMapped> lstInventoryMappeds1 = selectedInventoryMappedRepository.findByNmaterialinventorycodeOrderByMappedidDesc(objInventory);
 			
 			if(lstInventoryMappeds1.isEmpty()) {
@@ -237,6 +243,7 @@ public class SampleStorageLocationService {
 				inventoryMapped.setNmaterialinventorycode(objInventory);
 				inventoryMapped.setSamplestoragelocationkey(objStorageLocation);
 				inventoryMapped.setId(selectedStorageId.get("id").toString());
+				inventoryMapped.setStoragepath(path);
 				selectedInventoryMappedRepository.save(inventoryMapped);
 			}else {
 				
@@ -251,6 +258,7 @@ public class SampleStorageLocationService {
 				
 				lstInventoryMappeds1.get(0).setSamplestoragelocationkey(objStorageLocation);
 				lstInventoryMappeds1.get(0).setId(selectedStorageId.get("id").toString());
+				lstInventoryMappeds1.get(0).setStoragepath(path);
 				selectedInventoryMappedRepository.save(lstInventoryMappeds1);
 			}
 			sampleStorageVersionRepository.save(sampleStorageVersionList);

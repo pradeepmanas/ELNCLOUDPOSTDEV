@@ -2,7 +2,11 @@ package com.agaram.eln.primary.repository.methodsetup;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.agaram.eln.primary.model.methodsetup.Method;
@@ -41,6 +45,13 @@ public interface ParserBlockRepository extends JpaRepository<ParserBlock, Intege
 	List<ParserBlock> findByMethodIn(List<Method> elnMethod);
 
 	List<ParserBlock> findByStatusAndMethodIn(int i, List<Method> elnMethod);
+	
+
+	@Transactional
+	@Modifying
+	@Query(value = "SELECT * FROM ParserBlock JOIN Method "
+			+ " ON Method.methodkey = ParserBlock.methodkey AND Method.methodkey = ?1 and ParserBlock.status=1",nativeQuery = true )
+	List<ParserBlock> getParserBlockByMethodKey(final int methodKey);
 
 	
 }

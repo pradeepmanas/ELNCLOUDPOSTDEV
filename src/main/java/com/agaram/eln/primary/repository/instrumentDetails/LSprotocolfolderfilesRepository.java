@@ -17,7 +17,7 @@ public interface LSprotocolfolderfilesRepository extends JpaRepository<LSprotoco
 	public List<LSprotocolfolderfiles> findByDirectorycodeAndFileforOrderByFolderfilecode(Long directorycode,
 			String filefor);
 
-	public Object findByUuid(String uid);
+//	public Object findByUuid(String uid);
 
 	@Transactional
 	public Long deleteByUuid(String uuid);
@@ -45,5 +45,7 @@ public interface LSprotocolfolderfilesRepository extends JpaRepository<LSprotoco
 	public void removeForFile(List<String> lstuuid);
 
 	public List<LSprotocolfolderfiles> findByDirectorycodeAndFilefor(long directorycode, String filefor);
+
+	public LSprotocolfolderfiles findByUuid(String filename);
 
 }

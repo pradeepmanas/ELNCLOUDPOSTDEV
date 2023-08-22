@@ -19,6 +19,7 @@ import javax.persistence.Transient;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
+import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
 
 @Entity
 @Table(name="materialinventory")
@@ -137,6 +138,18 @@ public class MaterialInventory {
 	public void setMaterialInventoryTransactions(List<MaterialInventoryTransaction> materialInventoryTransactions) {
 		this.materialInventoryTransactions = materialInventoryTransactions;
 	}
+	
+	@OneToMany
+	@JoinColumn(name="nmaterialinventorycode")
+	private  List<SelectedInventoryMapped> selectedinventorymapped;
+	
+	public List<SelectedInventoryMapped> getSelectedinventorymapped() {
+		return selectedinventorymapped;
+	}
+	public void setSelectedinventorymapped(List<SelectedInventoryMapped> selectedinventorymapped) {
+		this.selectedinventorymapped = selectedinventorymapped;
+	}
+	
 	
 	public Integer getNmaterialinventorycode() {
 		return nmaterialinventorycode;

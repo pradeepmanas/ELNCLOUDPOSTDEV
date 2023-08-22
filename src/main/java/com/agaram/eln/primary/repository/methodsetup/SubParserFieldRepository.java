@@ -2,7 +2,11 @@ package com.agaram.eln.primary.repository.methodsetup;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.agaram.eln.primary.model.methodsetup.ParserField;
@@ -34,6 +38,13 @@ public interface SubParserFieldRepository extends JpaRepository<SubParserField, 
 //			 + " JOIN ParserBlock pb ON pb.parserblockkey = pf.parserblock.parserblockkey JOIN Method m "
 //			+ " ON m.methodkey = pb.method.methodkey AND m.methodkey = ?1 and spf.status=1" )
 //	List<SubParserField> getSubParserFieldByMethodKey(final int methodKey);
+	
+	@Transactional
+	@Modifying
+	@Query(value = "SELECT * FROM SubParserField JOIN ParserField  ON ParserField.parserfieldkey = SubParserField.parserfieldkey"
+			 + " JOIN ParserBlock  ON ParserBlock.parserblockkey = ParserField.parserblockkey JOIN Method  "
+			+ " ON Method.methodkey = ParserBlock.methodkey AND Method.methodkey = ?1 and SubParserField.status=1",nativeQuery = true )
+	List<SubParserField> getSubParserFieldByMethodKey(final int methodKey);
 	
 	List<SubParserField> findByParserfieldInAndStatus(final List<ParserField> parserfield, final int status);
 

@@ -1,6 +1,8 @@
 package com.agaram.eln.primary.model.reports.reportviewer;
 
 import java.util.Date;
+import java.util.List;
+
 import com.agaram.eln.primary.model.general.Response;
 
 import javax.persistence.Basic;
@@ -13,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -23,9 +26,9 @@ public class Reports {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Basic(optional = false)
 	private Long reportcode;
-	
+
 	private String reportname;
-	
+
 	private Date dateCreated;
 	private Date dateModified;
 	@ManyToOne
@@ -38,26 +41,36 @@ public class Reports {
 	private LSSiteMaster sitemaster;
 
 	private Integer viewoption;
-	
+
 	private Integer templatetype;
-	
+
 	@ManyToOne
 	private ReportViewerStructure reportviewerstructure;
-	
+
+	@Transient
+	private List<LStestmasterlocal> lstestmasterlocal;
+
+	public List<LStestmasterlocal> getLstestmasterlocal() {
+		return lstestmasterlocal;
+	}
+
+	public void setLstestmasterlocal(List<LStestmasterlocal> lstestmasterlocal) {
+		this.lstestmasterlocal = lstestmasterlocal;
+	}
+
 	@ManyToOne
 	private Reporttemplate reporttemplate;
-	
+
 	@Transient
 	private String reporttemplatecontent;
-	
+
 //	@Transient
 	private Date fromdate;
 
 	@Transient
 	private Response response;
 
-
-public Response getResponse() {
+	public Response getResponse() {
 		return response;
 	}
 
@@ -65,7 +78,7 @@ public Response getResponse() {
 		this.response = response;
 	}
 
-	//	@Transient
+	// @Transient
 	private Date todate;
 
 	public Long getReportcode() {
@@ -180,8 +193,4 @@ public Response getResponse() {
 		this.todate = todate;
 	}
 
-	
-
-	
-	
 }

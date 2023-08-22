@@ -2,7 +2,11 @@ package com.agaram.eln.primary.repository.methodsetup;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.agaram.eln.primary.model.methodsetup.ParserField;
@@ -35,6 +39,13 @@ public interface ParserTechniqueRepository extends JpaRepository<ParserTechnique
 //			 + " JOIN ParserBlock pb ON pb.parserblockkey = pf.parserblock.parserblockkey "//AND pb.methodkey = ?1")
 //			 + "JOIN Method m  ON m.methodkey = pb.method.methodkey AND m.methodkey = ?1 and pt.status=1")
 //	List<ParserTechnique> getParserTechniqueByMethodKey(final int methodKey);
+	
+	@Transactional
+	@Modifying
+	@Query(value = "SELECT * FROM ParserTechnique JOIN ParserField ON ParserField.parserfieldkey = ParserTechnique.parserfieldkey"
+			 + " JOIN ParserBlock ON ParserBlock.parserblockkey = ParserField.parserblockkey "//AND pb.methodkey = ?1")
+			 + "JOIN Method ON Method.methodkey = ParserBlock.methodkey AND Method.methodkey = ?1 and ParserTechnique.status=1",nativeQuery = true)
+	List<ParserTechnique> getParserTechniqueByMethodKey(final int methodKey);
 	
 	List<ParserTechnique> findByParserfieldInAndStatus(List<ParserField> lstparsefield, int Status);
 }

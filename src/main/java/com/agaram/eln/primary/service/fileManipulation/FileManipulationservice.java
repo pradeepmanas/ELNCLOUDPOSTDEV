@@ -3,6 +3,7 @@ package com.agaram.eln.primary.service.fileManipulation;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.bson.BsonBinarySubType;
@@ -261,5 +262,12 @@ public class FileManipulationservice {
 		ResultorderlimsRefrence objfile = ResultorderlimsRefrenceRepository.findById(objattachment.getFileid());
 
 		return objfile;
+	}
+	
+	public List<GridFSDBFile> retrieveLargeFileinlist(List<String> fileid) throws IllegalStateException, IOException {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("filename").in(fileid));
+		List<GridFSDBFile> result = gridFsTemplate.find(query);
+		return result;
 	}
 }

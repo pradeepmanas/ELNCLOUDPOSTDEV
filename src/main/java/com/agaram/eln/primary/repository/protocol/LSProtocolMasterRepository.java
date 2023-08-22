@@ -18,6 +18,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 
 public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmaster, Integer> {
 
@@ -310,4 +311,13 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			List<LSprotocolmastertest> lsfiletest3, int o, List<Integer> lstteammap2, int p, int q);
 
 	List<LSprotocolmaster> findByLstestInAndStatusAndApproved(List<LSprotocolmastertest> lsfiletest, int i, int j);
+
+	List<LSprotocolmaster> findByStatusAndApprovedAndLssitemaster(int i, int j, LSSiteMaster sitecode);
+
+	List<LSprotocolmaster> findByStatusAndApprovedAndLssitemasterAndProtocolmastercodeIn(int i, int j, Integer sitecode,
+			List<Integer> lstprotocoltemp);
+
+	List<LSprotocolmaster> findByprotocolmastercodeIn(List<Integer> lstprotocoltemp);
+
+
 }

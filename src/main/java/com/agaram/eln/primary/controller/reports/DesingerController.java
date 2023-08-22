@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.reports.reportdesigner.Cloudreporttemplate;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportDesignerStructure;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
@@ -57,5 +58,10 @@ public class DesingerController {
 	@RequestMapping("/gettemplateonfolder")
 	public List<Reporttemplate> gettemplateonfolder(@RequestBody ReportDesignerStructure objdir)throws Exception {
 		return desingerservice.gettemplateonfolder(objdir);
+	}
+	
+	@RequestMapping("/getordersonreport")
+	public Map<String,Object> getordersonreport (@RequestBody Map<String, Object> objMap){
+		return desingerservice.getordersonreport(objMap);
 	}
 }

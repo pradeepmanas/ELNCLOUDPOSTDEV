@@ -761,3 +761,8 @@ $do$;
 ALTER TABLE IF Exists LSprotocolimages ADD Column IF NOT EXISTS islinkimage boolean;
 
 ALTER TABLE IF Exists LSprotocolfiles ADD Column IF NOT EXISTS islinkfile boolean ;
+
+ALTER TABLE IF Exists reporttemplate ADD COLUMN IF NOT EXISTS reporttype integer;
+update reporttemplate set reporttype=1 where reporttype is Null;
+
+ALTER TABLE IF Exists selectedinventorymapped ADD COLUMN IF NOT EXISTS storagepath character varying(255);

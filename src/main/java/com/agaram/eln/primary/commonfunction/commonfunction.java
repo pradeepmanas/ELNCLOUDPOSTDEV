@@ -204,6 +204,41 @@ public class commonfunction {
         }
 	}
 	
+	private static String findPathRecursive(JSONObject node, String targetId, String currentPath) {
+        if (node.getString("id").equals(targetId)) {
+            return currentPath + node.getString("text");
+        }
+
+        if (node.has("items")) {
+            JSONArray items = node.getJSONArray("items");
+            for (int i = 0; i < items.length(); i++) {
+                JSONObject childNode = items.getJSONObject(i);
+                String path = findPathRecursive(childNode, targetId, currentPath + node.getString("text") + " -> ");
+                if (!path.isEmpty()) {
+                    return path;
+                }
+            }
+        }
+
+        return "";
+    }
+	
+	public static String findPath(String node, String targetId) {
+		JSONArray jsonArray = new JSONArray(node);
+	    for (int i = 0; i < jsonArray.length(); i++) {
+	        JSONObject jsonObject = jsonArray.getJSONObject(i);
+	        String path = findPathCall(jsonObject, targetId);
+	        if (!path.isEmpty()) {
+	        	return path;
+	        }
+	    }
+		return "";
+    }
+	
+	public static String findPathCall(JSONObject root, String targetId) {
+        return findPathRecursive(root, targetId, "");
+    }
+	
 	public static Map<String, Object> getParamsAndValues(String jsonString) {
 
 		Map<String, Object> rtnMapObj = new HashMap<String, Object>();

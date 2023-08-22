@@ -18,6 +18,7 @@ import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -1369,6 +1370,21 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyInOrderByProtocolordercodeDesc(
 			String orderflag, Integer protocoltype, Date fromdate, Date todate, List<LSsamplemaster> lstsample, int i,
 			List<Integer> userlist);
+
+
+	List<LSlogilabprotocoldetail> findBylsprojectmasterAndTestcodeInAndLssamplemasterIn(LSprojectmaster lsproject,
+			List<Integer> testid, List<LSsamplemaster> lssample);
+
+
+	List<LSlogilabprotocoldetail> findBylsprojectmasterAndTestcodeIn(LSprojectmaster lsproject, List<Integer> testid);
+
+
+	List<LSlogilabprotocoldetail> findByTestcodeIn(List<Integer> testid);
+
+
+
+
+
 
 
 

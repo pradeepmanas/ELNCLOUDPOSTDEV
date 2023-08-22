@@ -1100,9 +1100,4 @@ public class ProtocolController {
 		return ProtocolMasterService.insertlinkfiles(obj);
 	}
 
-	@RequestMapping("/insertlinkimagessql")
-	public Map<String,Object> insertlinkimagessql(@RequestBody Map<String,Object> obj)throws Exception
-	{
-		return ProtocolMasterService.insertlinkimagessql(obj);
-	}
 }

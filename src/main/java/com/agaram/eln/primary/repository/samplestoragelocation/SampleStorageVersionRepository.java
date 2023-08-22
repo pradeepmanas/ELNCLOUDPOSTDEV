@@ -18,7 +18,7 @@ public interface SampleStorageVersionRepository extends JpaRepository<SampleStor
 	
 	List<SampleStorageVersion>  findBySampleStorageLocationAndVersionnoNotIn(final SampleStorageLocation Samplestoragelocation, final List<Integer> Versionno);
 	
-	List<SampleStorageVersion>  findBySampleStorageLocation(final SampleStorageLocation Samplestoragelocation);	
+	List<SampleStorageVersion>  findFirstBySampleStorageLocationOrderBySamplestorageversionkeyDesc(final SampleStorageLocation Samplestoragelocation);	
 	
 	@Query( value = " select max(versionno) + 1 from SampleStorageVersion where samplestoragelocationkey = ?1 ", nativeQuery = true) 
 	

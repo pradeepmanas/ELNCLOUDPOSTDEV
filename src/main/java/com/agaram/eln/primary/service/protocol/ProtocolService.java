@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.poi.util.IOUtils;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -107,6 +108,8 @@ import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolstepInfoRe
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolversionstepRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLsLogilabprotocolstepInfoRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.LSprotocolstepInformationRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSprotocolfolderfilesRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSsheetfolderfilesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolOrderStructureRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharedbyRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharetoRepository;
@@ -167,6 +170,7 @@ import com.microsoft.azure.storage.blob.BlobRequestOptions;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
+import com.mongodb.gridfs.GridFSDBFile;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSProtocolMasterRepository.class)
@@ -358,6 +362,12 @@ public class ProtocolService {
 //	private LSuserteammappingRepository lsuserteammappingRepository;
 	@Autowired
 	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
+	
+	@Autowired
+	private LSsheetfolderfilesRepository lssheetfolderfilesRepository;
+	
+	@Autowired
+	private LSprotocolfolderfilesRepository lsprotocolfolderfilesRepository;
 
 //	@Autowired
 //	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
@@ -7081,12 +7091,12 @@ public class ProtocolService {
 	}
 	
 	public Map<String, Object> insertlinkimages(Map<String, Object> obj) throws IOException {
-		Map<String, Object> imagelist=new HashMap<String, Object>();
+		Map<String, Object> imagelist = new HashMap<String, Object>();
 		Integer onTabKey = (Integer) obj.get("ontabkey");
 		ObjectMapper objectmap = new ObjectMapper();
 		List<String> fileIds = new ArrayList<String>();
 		String destinationContainerName = (String) obj.get("Tenantname") + "protocolimages";
-		;
+		Integer isMultitenant = (Integer) obj.get("isMultitenant");
 		String sourceContainerName = "";
 		LSprotocolstep protocol = objectmap.convertValue(obj.get("LSprotocolstep"),
 				new TypeReference<LSprotocolstep>() {
@@ -7108,72 +7118,121 @@ public class ProtocolService {
 			fileIds = imgprotocol.stream().map(LSprotocolfolderfiles::getUuid).collect(Collectors.toList());
 			sourceContainerName = (String) obj.get("Tenantname") + "protocolfolderfiles";
 		}
-		boolean isdone = cloudFileManipulationservice.tocopyoncontainertoanothercontainer(fileIds, sourceContainerName,
-				destinationContainerName);
-		if (isdone) {
-			if (onTabKey == 1) {
+		if (isMultitenant == 1) {
+			boolean isdone = cloudFileManipulationservice.tocopyoncontainertoanothercontainer(fileIds,
+					sourceContainerName, destinationContainerName);
+			if (isdone) {
+				if (onTabKey == 1) {
 
-				listofimg = imgsheet.stream().map(items -> {
-					LSprotocolimages objimg = new LSprotocolimages();
-					objimg.setExtension(FilenameUtils.getExtension(items.getFilename()));
-					objimg.setFileid(items.getUuid());
-					objimg.setProtocolmastercode(protocol.getProtocolmastercode());
-					objimg.setProtocolstepcode(protocol.getProtocolstepcode());
-					objimg.setProtocolstepname(protocol.getProtocolstepname());
-					objimg.setStepno(protocol.getStepno());
-					objimg.setIslinkimage(true);
-					objimg.setFilename(FilenameUtils.removeExtension(items.getFilename()));
-					String filename = "No Name";
-					if (!objimg.getFilename().isEmpty()) {
-						filename = objimg.getFilename();
-					}
-					String url = originurl + "/protocol/downloadprotocolimage/" + objimg.getFileid() + "/"
-							+ TenantContext.getCurrentTenant() + "/" + filename + "/" + objimg.getExtension();
-					Gson g = new Gson();
-					String str = g.toJson(url);
-					objimg.setSrc(str);
-					return objimg;
-				}).collect(Collectors.toList());
+					listofimg = imgsheet.stream().map(items -> {
+						LSprotocolimages objimg = new LSprotocolimages();
+						objimg.setExtension(FilenameUtils.getExtension(items.getFilename()));
+						objimg.setFileid(items.getUuid());
+						objimg.setProtocolmastercode(protocol.getProtocolmastercode());
+						objimg.setProtocolstepcode(protocol.getProtocolstepcode());
+						objimg.setProtocolstepname(protocol.getProtocolstepname());
+						objimg.setStepno(protocol.getStepno());
+						objimg.setIslinkimage(true);
+						objimg.setFilename(FilenameUtils.removeExtension(items.getFilename()));
+						String filename = "No Name";
+						if (!objimg.getFilename().isEmpty()) {
+							filename = objimg.getFilename();
+						}
+						String url = originurl + "/protocol/downloadprotocolimage/" + objimg.getFileid() + "/"
+								+ TenantContext.getCurrentTenant() + "/" + filename + "/" + objimg.getExtension();
+						Gson g = new Gson();
+						String str = g.toJson(url);
+						objimg.setSrc(str);
+						return objimg;
+					}).collect(Collectors.toList());
 
-				lsprotocolimagesRepository.save(listofimg);
-			} else {
-				listofimg = imgprotocol.stream().map(items -> {
-					LSprotocolimages objimg = new LSprotocolimages();
-					objimg.setExtension(FilenameUtils.getExtension(items.getFilename()));
-					objimg.setFileid(items.getUuid());
-					objimg.setProtocolmastercode(protocol.getProtocolmastercode());
-					objimg.setProtocolstepcode(protocol.getProtocolstepcode());
-					objimg.setProtocolstepname(protocol.getProtocolstepname());
-					objimg.setStepno(protocol.getStepno());
-					objimg.setIslinkimage(true);
-					objimg.setFilename(FilenameUtils.removeExtension(items.getFilename()));
-					String filename = "No Name";
-					if (!objimg.getFilename().isEmpty()) {
-						filename = objimg.getFilename();
-					}
-					String url = originurl + "/protocol/downloadprotocolimage/" + objimg.getFileid() + "/"
-							+ TenantContext.getCurrentTenant() + "/" + filename + "/" + objimg.getExtension();
-					Gson g = new Gson();
-					String str = g.toJson(url);
-					objimg.setSrc(str);
-					return objimg;
-				}).collect(Collectors.toList());
+					lsprotocolimagesRepository.save(listofimg);
+				} else {
+					listofimg = imgprotocol.stream().map(items -> {
+						LSprotocolimages objimg = new LSprotocolimages();
+						objimg.setExtension(FilenameUtils.getExtension(items.getFilename()));
+						objimg.setFileid(items.getUuid());
+						objimg.setProtocolmastercode(protocol.getProtocolmastercode());
+						objimg.setProtocolstepcode(protocol.getProtocolstepcode());
+						objimg.setProtocolstepname(protocol.getProtocolstepname());
+						objimg.setStepno(protocol.getStepno());
+						objimg.setIslinkimage(true);
+						objimg.setFilename(FilenameUtils.removeExtension(items.getFilename()));
+						String filename = "No Name";
+						if (!objimg.getFilename().isEmpty()) {
+							filename = objimg.getFilename();
+						}
+						String url = originurl + "/protocol/downloadprotocolimage/" + objimg.getFileid() + "/"
+								+ TenantContext.getCurrentTenant() + "/" + filename + "/" + objimg.getExtension();
+						Gson g = new Gson();
+						String str = g.toJson(url);
+						objimg.setSrc(str);
+						return objimg;
+					}).collect(Collectors.toList());
 
-				lsprotocolimagesRepository.save(listofimg);
+					lsprotocolimagesRepository.save(listofimg);
+				}
+
 			}
+		} else {
+			List<GridFSDBFile> gridFsFile = fileManipulationservice.retrieveLargeFileinlist(fileIds);
+			List<ProtocolImage> protocolImage =new ArrayList<>();
+			listofimg = gridFsFile.parallelStream().map(items -> {
+				String fieldId = Generatetenantpassword();
+				LSprotocolimages objImg = new LSprotocolimages();
+				String filename="";
+				if(onTabKey==1) {
+					LSsheetfolderfiles LSsheetfolderfiles = lssheetfolderfilesRepository.findByUuid(items.getFilename());
+					filename=LSsheetfolderfiles.getFilename()!=null?LSsheetfolderfiles.getFilename(): "No Name";
+				}else {
+					LSprotocolfolderfiles LSprotocolfolderfiles=lsprotocolfolderfilesRepository.findByUuid(items.getFilename());
+					filename=LSprotocolfolderfiles.getFilename()!=null?LSprotocolfolderfiles.getFilename():"No Name";
+				}
+				objImg.setExtension(FilenameUtils.getExtension(filename));
+				objImg.setFileid(fieldId);
+				objImg.setProtocolmastercode(protocol.getProtocolmastercode());
+				objImg.setProtocolstepcode(protocol.getProtocolstepcode());
+				objImg.setProtocolstepname(protocol.getProtocolstepname());
+				objImg.setStepno(protocol.getStepno());
+				objImg.setIslinkimage(true);
+				objImg.setFilename(FilenameUtils.removeExtension(filename));
 
+//				String filename = objImg.getFilename() != null ? objImg.getFilename() : "No Name";
+				String url = originurl + "/protocol/downloadprotocolimagesql/" + objImg.getFileid() + "/" + filename
+						+ "/" + objImg.getExtension();
+				String str = new Gson().toJson(url);
+				objImg.setSrc(str);
+				lsprotocolimagesRepository.save(objImg);
+				ProtocolImage protocolImageObj = new ProtocolImage();
+				protocolImageObj.setId(objImg.getProtocolstepimagecode());
+				protocolImageObj.setName(filename);
+				protocolImageObj.setFileid(fieldId);
+				try {
+					byte[] imageBytes = IOUtils.toByteArray(items.getInputStream());
+					Binary binaryImage = new Binary(BsonBinarySubType.BINARY, imageBytes);
+					protocolImageObj.setImage(binaryImage);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				protocolImage.add(protocolImageObj);
+				return objImg;
+			}).collect(Collectors.toList());
+			if (!protocolImage.isEmpty()) {
+				protocolImageRepository.insert(protocolImage);
+			}
+		
 		}
 		imagelist.put("listofimg", listofimg);
 		return imagelist;
 	}
 
 	public Map<String, Object> insertlinkfiles(Map<String, Object> obj) throws IOException {
-		Map<String, Object> imagelist=new HashMap<String, Object>();
+		Map<String, Object> imagelist = new HashMap<String, Object>();
 		Integer onTabKey = (Integer) obj.get("ontabkey");
 		ObjectMapper objectmap = new ObjectMapper();
 		List<String> fileIds = new ArrayList<String>();
 		String destinationContainerName = (String) obj.get("Tenantname") + "protocolfiles";
-		;
+		Integer isMultitenant = (Integer) obj.get("isMultitenant");
 		String sourceContainerName = "";
 		LSprotocolstep protocol = objectmap.convertValue(obj.get("LSprotocolstep"),
 				new TypeReference<LSprotocolstep>() {
@@ -7195,6 +7254,7 @@ public class ProtocolService {
 			fileIds = imgprotocol.stream().map(LSprotocolfolderfiles::getUuid).collect(Collectors.toList());
 			sourceContainerName = (String) obj.get("Tenantname") + "protocolfolderfiles";
 		}
+		if(isMultitenant==1) {
 		boolean isdone = cloudFileManipulationservice.tocopyoncontainertoanothercontainer(fileIds, sourceContainerName,
 				destinationContainerName);
 		if (isdone) {
@@ -7209,7 +7269,7 @@ public class ProtocolService {
 					objimg.setProtocolstepname(protocol.getProtocolstepname());
 					objimg.setStepno(protocol.getStepno());
 					objimg.setIslinkfile(true);
-					objimg.setFilename(FilenameUtils.removeExtension(items.getFilename()));					
+					objimg.setFilename(FilenameUtils.removeExtension(items.getFilename()));
 					String filename = "No Name";
 					if (!objimg.getFilename().isEmpty()) {
 						filename = objimg.getFilename();
@@ -7246,38 +7306,55 @@ public class ProtocolService {
 			}
 
 		}
-		imagelist.put("listoffile", listofimg);
-		return imagelist;
-	}
+		}else {
 
-	public Map<String, Object> insertlinkimagessql(Map<String, Object> obj) {
-		Map<String, Object> imagelist=new HashMap<String, Object>();
-		Integer onTabKey = (Integer) obj.get("ontabkey");
-		ObjectMapper objectmap = new ObjectMapper();
-		List<String> fileIds = new ArrayList<String>();
-		String destinationContainerName = (String) obj.get("Tenantname") + "protocolimages";
-		;
-		String sourceContainerName = "";
-		LSprotocolstep protocol = objectmap.convertValue(obj.get("LSprotocolstep"),
-				new TypeReference<LSprotocolstep>() {
-				});
-		List<LSsheetfolderfiles> imgsheet = new ArrayList<LSsheetfolderfiles>();
-		List<LSprotocolfolderfiles> imgprotocol = new ArrayList<LSprotocolfolderfiles>();
-		String originurl = (String) obj.get("originurl");
-		List<LSprotocolimages> listofimg = new ArrayList<>();
-		if (onTabKey == 1) {
-			imgsheet = objectmap.convertValue(obj.get("LSsheetfolderfiles"),
-					new TypeReference<List<LSsheetfolderfiles>>() {
-					});
-			fileIds = imgsheet.stream().map(LSsheetfolderfiles::getUuid).collect(Collectors.toList());
-			
-		} else {
-			imgprotocol = objectmap.convertValue(obj.get("LSprotocolfolderfiles"),
-					new TypeReference<List<LSprotocolfolderfiles>>() {
-					});
-			fileIds = imgprotocol.stream().map(LSprotocolfolderfiles::getUuid).collect(Collectors.toList());
-			
+			List<GridFSDBFile> gridFsFile = fileManipulationservice.retrieveLargeFileinlist(fileIds);
+			List<LSprotocolfilesContent> protocolImage =new ArrayList<>();
+			listofimg = gridFsFile.parallelStream().map(items -> {
+				String fieldId = Generatetenantpassword();
+				LSprotocolfiles objImg = new LSprotocolfiles();
+				String filename="";
+				if(onTabKey==1) {
+					LSsheetfolderfiles LSsheetfolderfiles = lssheetfolderfilesRepository.findByUuid(items.getFilename());
+					filename=LSsheetfolderfiles.getFilename()!=null?LSsheetfolderfiles.getFilename(): "No Name";
+				}else {
+					LSprotocolfolderfiles LSprotocolfolderfiles=lsprotocolfolderfilesRepository.findByUuid(items.getFilename());
+					filename=LSprotocolfolderfiles.getFilename()!=null?LSprotocolfolderfiles.getFilename():"No Name";
+				}
+				objImg.setExtension(FilenameUtils.getExtension(filename));
+				objImg.setFileid(fieldId);
+				objImg.setProtocolmastercode(protocol.getProtocolmastercode());
+				objImg.setProtocolstepcode(protocol.getProtocolstepcode());
+				objImg.setProtocolstepname(protocol.getProtocolstepname());
+				objImg.setStepno(protocol.getStepno());
+				objImg.setIslinkfile(true);
+				objImg.setFilename(FilenameUtils.removeExtension(filename));
+
+//				String filename = objImg.getFilename() != null ? objImg.getFilename() : "No Name";
+				String url = originurl + "/protocol/downloadprotocolfilesql/" + objImg.getFileid() + "/" + filename
+						+ "/" + objImg.getExtension();
+				objImg.setLink(originurl);
+
+				lsprotocolfilesRepository.save(objImg);	
+				LSprotocolfilesContent objattachment = new LSprotocolfilesContent();
+				objattachment.setId(objImg.getProtocolstepfilecode());
+				objattachment.setName(filename);
+				objattachment.setFileid(fieldId);				
+				try {
+					byte[] imageBytes = IOUtils.toByteArray(items.getInputStream());
+					Binary binaryImage = new Binary(BsonBinarySubType.BINARY, imageBytes);
+					objattachment.setFile(binaryImage);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				protocolImage.add(objattachment);
+				return objImg;
+			}).collect(Collectors.toList());
+			if (!protocolImage.isEmpty()) {
+				lsprotocolfilesContentRepository.insert(protocolImage);
+			}
 		}
+		imagelist.put("listoffile", listofimg);
 		return imagelist;
 	}
 

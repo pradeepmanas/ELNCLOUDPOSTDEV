@@ -1,7 +1,7 @@
 package com.agaram.eln.primary.service.methodsetup;
 
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,6 +18,7 @@ import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
+import com.agaram.eln.primary.model.methodsetup.MethodVersion;
 import com.agaram.eln.primary.model.methodsetup.ParserBlock;
 import com.agaram.eln.primary.model.methodsetup.ParserField;
 import com.agaram.eln.primary.model.methodsetup.ParserTechnique;
@@ -33,6 +34,7 @@ import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.methodsetup.DelimiterRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodDelimiterRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
+import com.agaram.eln.primary.repository.methodsetup.MethodVersionRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserBlockRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserTechniqueRepository;
@@ -95,6 +97,8 @@ public class MethodImportService {
 	@Autowired
 	SubParserFieldRepository subParserFieldRepo;
 	
+	@Autowired
+	MethodVersionRepository methversionRepo;
 //	@Autowired
 //	ReadWriteXML readWriteXML;
 	
@@ -102,9 +106,11 @@ public class MethodImportService {
 //	CfrTransactionService cfrTransService;
 	
 //	@Transactional(propagation = Propagation.MANDATORY, isolation = Isolation.READ_UNCOMMITTED)
+
 	public ResponseEntity<Object> importMethodByEntity(Map<String, Object> mapObject) throws Exception {
 		
 		final ObjectMapper mapper = new ObjectMapper();
+		
 		
 		final List<Method> importedMethods = new ArrayList<>();
 //		final boolean saveAuditTrial = false;
@@ -121,8 +127,15 @@ public class MethodImportService {
 		
 		List<Map<String, Object>> methodMap = (List<Map<String, Object>>) inputData.get("methodMap");
 		
+		//userdefinedinstdetails
+		String instdetailsJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(inputData.get("instdetails"));
+		final InstrumentMaster userdefinedinstdetails =  mapper.readValue(instdetailsJson, InstrumentMaster.class);
+		
+		//userdefinedmethodname
+		String userdefmethodJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(inputData.get("method"));
+		final Method userdefinedmethod =  mapper.readValue(userdefmethodJson, Method.class);
+		
 		for (Map<String, Object> item : methodMap) {
-			
 			
 			String methodJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item.get("Method"));
 			final Method expMethod = mapper.readValue(methodJson, Method.class);
@@ -133,30 +146,13 @@ public class MethodImportService {
 			final InstrumentCategory impInstCategory = new InstrumentCategory(expInstCategory);
 			final List<InstrumentCategory> instCategoryList = new ArrayList<>(1);
 			final Optional<InstrumentCategory> instCategoryExist = instCategoryRepo.findByInstcatnameAndStatus(expInstCategory.getInstcatname(), 1);
-			
-			Date date = new Date();
-			
-			if(instCategoryExist.isPresent()) {
+            Date date = new Date();		
+            if(!instCategoryExist.isPresent()) {
 				impInstCategory.setInstcatkey(0);
 				impInstCategory.setCreatedby(createdUser);
 				impInstCategory.setCreateddate(date);
 				instCategoryList.add(instCategoryRepo.save(impInstCategory));
-				
-//				if (saveAuditTrial == true)
-//				{
-//					final Map<String, String> fieldMap = new HashMap<String, String>();
-//					fieldMap.put("createdby", "loginid");
-//					
-//					final String xmlData = readWriteXML.saveXML(instCategoryList.get(0), InstrumentCategory.class, 
-//							null, "individualpojo", fieldMap);
-//							
-//					final String actionType = EnumerationInfo.CFRActionType.SYSTEM.getActionType();	
-//					
-//					cfrTransService.saveCfrTransaction(page, actionType, "Create", "", page.getModule().getSite(),
-//							xmlData, createdUser, request.getRemoteAddr());
-//			
-//				}				
-				
+			
 			} else {
 				instCategoryList.add(instCategoryExist.get());
 			}
@@ -165,10 +161,16 @@ public class MethodImportService {
 			String instMasterJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expMethod.getInstmaster());
 			final InstrumentMaster expInstMaster = mapper.readValue(instMasterJson, InstrumentMaster.class);
 			final InstrumentMaster impInstMaster = new InstrumentMaster(expInstMaster);
+			
+			impInstMaster.setInstrumentcode(userdefinedinstdetails.getInstrumentcode());
+			impInstMaster.setInstrumentname(userdefinedinstdetails.getInstrumentname());
+			
 			final List<InstrumentMaster> instMasterList = new ArrayList<>(1);
-	    	final Optional<InstrumentMaster> instMasterExist = instMasterRepo.findByInstrumentcodeAndSiteAndStatus(
-	    			expInstMaster.getInstrumentcode(), site, 1);
-	    	if(instMasterExist.isPresent()) {
+//	    	final Optional<InstrumentMaster> instMasterExist = instMasterRepo.findByInstrumentcodeAndSiteAndStatus(
+//	    			expInstMaster.getInstrumentcode(), site, 1);
+			final Optional<InstrumentMaster> instMasterExist = instMasterRepo.findByInstrumentcodeAndSiteAndStatus(
+					impInstMaster.getInstrumentcode(), site, 1);
+	    	if(!instMasterExist.isPresent()) {
 	    		impInstMaster.setInstmastkey(0);
 	    		impInstMaster.setSite(site);
 	    		impInstMaster.setInstcategory(instCategoryList.get(0));
@@ -182,25 +184,46 @@ public class MethodImportService {
 //	    	Method
 			final Method impMethod = new Method(expMethod);
 			final List<Method> methodList = new ArrayList<>(1);
-			final Optional<Method> methodExist = methodRepo.findByMethodnameAndInstmasterAndStatus(expMethod.getMethodname(), instMasterList.get(0), 1);
-			if(methodExist.isPresent()) {
+			
+			final MethodVersion impmethodversion = new MethodVersion(expMethod.getMethodversion().get(0));
+			final List<MethodVersion> methversionList = new ArrayList<>(1);
+			
+			//newly added for userdefined methodname
+			impMethod.setMethodname(userdefinedmethod.getMethodname());
+			
+		//	final Optional<Method> methodExist = methodRepo.findByMethodnameAndInstmasterAndStatus(expMethod.getMethodname(), instMasterList.get(0), 1);
+			final Optional<Method> methodExist = methodRepo.findByMethodnameAndInstmasterAndStatus(impMethod.getMethodname(), instMasterList.get(0), 1);
+			if(!methodExist.isPresent()) {
+				
+				//method version
+				impmethodversion.setMvno(0);
+				impmethodversion.setMethodkey(1);
+				methversionList.add(methversionRepo.save(impmethodversion));
+				
+				
 				impMethod.setMethodkey(0);
 				impMethod.setInstmaster(instMasterList.get(0));
 				impMethod.setSite(site);
 				impMethod.setCreatedby(createdUser);
 				impMethod.setCreateddate(date);
+				impMethod.setMethodversion(methversionList);
 				methodList.add(methodRepo.save(impMethod));
 				importedMethods.add(methodList.get(0));
+				
 			} else {
 //				methodList.add(methodExist.get());
 	    		return new ResponseEntity<>("Import Failed - "+methodExist.get().getMethodname()+" Already Exists!", HttpStatus.ALREADY_REPORTED);
 			}
 			
+			 
+			
+			
+			
 //			ParserBlock
 			String parserBlockJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item.get("ParserBlock"));
 			List<ParserBlock> expParserBlock = mapper.readValue(parserBlockJson, new TypeReference<List<ParserBlock>>(){});
 		    final List<ParserBlock> newParserBlock = new ArrayList<>();
-		    final List<ParserBlock> parserBlockExist = parserBlockRepo.findByMethodAndStatus(methodList.get(0), 1);
+		    final List<ParserBlock> parserBlockExist = parserBlockRepo.getParserBlockByMethodKey(methodList.get(0).getMethodkey());
 		    if(parserBlockExist.isEmpty()) {
 			    expParserBlock.forEach(parserBlockItem -> {
 			    	parserBlockItem.setParserblockkey(0);
@@ -231,7 +254,7 @@ public class MethodImportService {
 //				}
 				
 		    }
-		    final List<ParserBlock> parserBlock = parserBlockRepo.findByMethodAndStatus(methodList.get(0), 1);
+		    final List<ParserBlock> parserBlock = parserBlockRepo.getParserBlockByMethodKey(methodList.get(0).getMethodkey());
 		
 //		    SampleTextSplit
 			String sampleTextSplitJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item.get("SampleTextSplit"));
@@ -308,7 +331,7 @@ public class MethodImportService {
 //		    Delimiter
 			String delimiterJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item.get("Delimiter"));
 			final List<Delimiter> expDelimiter = mapper.readValue(delimiterJson, new TypeReference<List<Delimiter>>(){});
-			final List<Delimiter> currDelimiter = delimiterRepo.findByStatus(1,new Sort(Sort.Direction.ASC, "delimiterkey"));
+			final List<Delimiter> currDelimiter = delimiterRepo.findByStatus(1, new Sort(Sort.Direction.ASC, "delimiterkey"));
 			final List<Delimiter> newDelimiter = new ArrayList<>();
 			final List<Delimiter> delimiterExist = getAnyDelimiter(expDelimiter, currDelimiter);
 			if(!delimiterExist.isEmpty()) {
@@ -321,12 +344,12 @@ public class MethodImportService {
 				});
 				delimiterRepo.save(newDelimiter);
 			}
-			final List<Delimiter> delimiter = delimiterRepo.findByStatus(1,new Sort(Sort.Direction.ASC, "delimiterkey"));
+			final List<Delimiter> delimiter = delimiterRepo.findByStatus(1, new Sort(Sort.Direction.ASC, "delimiterkey"));
 			
 //			MethodDelimiter
 			String methodDelimiterJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item.get("MethodDelimiter"));
 			List<MethodDelimiter> expMethodDelimiter = mapper.readValue(methodDelimiterJson, new TypeReference<List<MethodDelimiter>>(){});
-			final List<MethodDelimiter> currMethodDelimiter = methodDelimiterRepo.findByStatus(1,new Sort(Sort.Direction.ASC, "methoddelimiterkey"));
+			final List<MethodDelimiter> currMethodDelimiter = methodDelimiterRepo.findByStatus(1, new Sort(Sort.Direction.ASC, "methoddelimiterkey"));
 			final List<MethodDelimiter> newMethodDelimiter = new ArrayList<>();
 			final List<MethodDelimiter> methodDelimiterExist = getAnyMethodDelimiter(expMethodDelimiter, currMethodDelimiter);
 		    if(!methodDelimiterExist.isEmpty()) {
@@ -344,26 +367,12 @@ public class MethodImportService {
 		    	});
 		    	methodDelimiterRepo.save(newMethodDelimiter);
 		    }
-		    final List<MethodDelimiter> methodDelimiter = methodDelimiterRepo.findByStatus(1,new Sort(Sort.Direction.ASC, "methoddelimiterkey"));
+		    final List<MethodDelimiter> methodDelimiter = methodDelimiterRepo.findByStatus(1, new Sort(Sort.Direction.ASC, "methoddelimiterkey"));
 			
 //		    ParserField
 			String parserFieldJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item.get("ParserField"));
 			List<ParserField> expParserField = mapper.readValue(parserFieldJson, new TypeReference<List<ParserField>>(){});
-			
-			List<ParserBlock> lstparserblock = new ArrayList<ParserBlock>();
-			List<ParserField> lstparserfield = new ArrayList<ParserField>();
-			
-			if(methodList.get(0) != null)
-			{
-				lstparserblock = parserBlockRepo.findByMethodAndStatus(methodList.get(0), 1);
-				
-				if(lstparserblock != null)
-				{
-					lstparserfield = parserFieldRepo.findByParserblockInAndStatus(lstparserblock, 1);
-				}
-			}
-			
-			final List<ParserField> parserFieldExist = lstparserfield;
+			final List<ParserField> parserFieldExist = parserFieldRepo.getParserFieldByMethodKey(methodList.get(0).getMethodkey());
 			final List<ParserField> newParserField = new ArrayList<>();
 			if(parserFieldExist.isEmpty()) {
 				expParserField.forEach(parserFieldItem -> {
@@ -387,9 +396,9 @@ public class MethodImportService {
 				});
 				parserFieldRepo.save(newParserField);
 			}
-			final List<ParserField> parserField = lstparserfield;
+			final List<ParserField> parserField = parserFieldRepo.getParserFieldByMethodKey(methodList.get(0).getMethodkey());
 
-			final List<ParserTechnique> parserTechniqueExist = parserTechniqueRepo.findByParserfieldInAndStatus(parserField, 1);
+			final List<ParserTechnique> parserTechniqueExist = parserTechniqueRepo.getParserTechniqueByMethodKey(methodList.get(0).getMethodkey());
 			List<ParserTechnique> newParserTechnique = new ArrayList<>();
 			if(parserTechniqueExist.isEmpty()) {
 				expParserTechnique.forEach(parserTechniqueItem -> {
@@ -411,7 +420,7 @@ public class MethodImportService {
 //			SubParserTechnique
 			String subParserTechniqueJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item.get("SubParserTechnique"));
 			List<SubParserTechnique> expSubParserTechnique = mapper.readValue(subParserTechniqueJson, new TypeReference<List<SubParserTechnique>>(){});
-			final List<SubParserTechnique> subParserTechniqueExist = subParserTechniqueRepo.findByParserfieldInAndStatus(parserField, 1);
+			final List<SubParserTechnique> subParserTechniqueExist = subParserTechniqueRepo.getSubParserTechniqueByMethodKey(methodList.get(0).getMethodkey());
 			List<SubParserTechnique> newSubParserTechnique = new ArrayList<>();
 			if(subParserTechniqueExist.isEmpty()) {
 				expSubParserTechnique.forEach(subParserTechniqueItem -> {
@@ -440,14 +449,7 @@ public class MethodImportService {
 //			SubParserField
 			String subParserFieldJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item.get("SubParserField"));
 			List<SubParserField> expSubParserField = mapper.readValue(subParserFieldJson, new TypeReference<List<SubParserField>>(){});
-			List<SubParserField> lstsubparserfield = new ArrayList<SubParserField>();
-			
-			if(lstparserfield != null)
-			{
-				lstsubparserfield = subParserFieldRepo.findByParserfieldInAndStatus(lstparserfield, 1);
-			}
-			
-			final List<SubParserField> subParserFieldExist = lstsubparserfield;
+			final List<SubParserField> subParserFieldExist = subParserFieldRepo.getSubParserFieldByMethodKey(methodList.get(0).getMethodkey());
 			final List<SubParserField> newSubParserField = new ArrayList<>();
 			if(subParserFieldExist.isEmpty()) {
 				expSubParserField.forEach(subParserFieldItem -> {
@@ -467,7 +469,11 @@ public class MethodImportService {
 			
 		}
 
-		return new ResponseEntity<Object>(importedMethods, HttpStatus.OK);
+		Sort.Direction sortBy = Sort.Direction.DESC;
+		
+		List<Method> metdata = methodRepo.findBySiteAndStatus(site, 1, new Sort(sortBy, "methodkey"));
+	//	return new ResponseEntity<>("Import Failed - "+methodExist.get().getMethodname()+" Already Exists!", HttpStatus.ALREADY_REPORTED);
+		return new ResponseEntity<Object>(metdata, HttpStatus.OK);
 	
 	}
 

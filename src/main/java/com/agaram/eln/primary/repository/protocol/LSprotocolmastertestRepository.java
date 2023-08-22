@@ -10,4 +10,6 @@ public interface LSprotocolmastertestRepository extends JpaRepository<LSprotocol
 
 	List<LSprotocolmastertest> findByTestcodeAndTesttype(Integer testcode, Integer testtype);
 
+	List<LSprotocolmastertest> findByTesttypeAndTestcodeIn(int i, List<Integer> testid);
+
 }

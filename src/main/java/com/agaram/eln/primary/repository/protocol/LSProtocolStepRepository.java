@@ -32,4 +32,6 @@ public interface LSProtocolStepRepository extends JpaRepository<LSprotocolstep, 
 			String protocolstepname, int i);
 
 	LSprotocolstep findByProtocolstepcode(Integer protocolstepcode);
+
+	List<LSprotocolstep> findByProtocolmastercodeInAndStatus(List<Integer> lstprotocoltemp, int i);
 }

@@ -49,6 +49,16 @@ public class Reporttemplate {
 
 	@Transient
 	private String templatecontent;
+	
+	private Integer reporttype;	
+
+	public Integer getReporttype() {
+		return reporttype;
+	}
+
+	public void setReporttype(Integer reporttype) {
+		this.reporttype = reporttype;
+	}
 
 	public Long getTemplatecode() {
 		return templatecode;
