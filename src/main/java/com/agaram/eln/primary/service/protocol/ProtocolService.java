@@ -21,6 +21,7 @@ import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
@@ -2795,7 +2796,9 @@ public class ProtocolService {
 							try {
 								Content = objCloudFileManipulationservice.retrieveCloudSheets(lsprotocolmasterobj.getFileuid(),
 										TenantContext.getCurrentTenant() + "protocol");
-								updateProtocolOrderContent(Content, lSlogilabprotocoldetail, lSlogilabprotocoldetail.getIsmultitenant());
+								JSONObject protocolJson = new JSONObject(Content);
+								protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
+								updateProtocolOrderContent(protocolJson.toString(), lSlogilabprotocoldetail, lSlogilabprotocoldetail.getIsmultitenant());
 								mapObj.put("protocolData", Content);
 							} catch (IOException e) {
 								// TODO Auto-generated catch block

@@ -241,7 +241,8 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
         		"/MethodExportController/exportMethods",
         		"/MethodImportController/importMethods",
         		"/downloadFile/{fileName}",
-        		"/getFileData"
+        		"/getFileData",
+        		"/Login/LoadSitewithoutgzip"
               
             );
         byte[] compressedBytes = new byte[0];

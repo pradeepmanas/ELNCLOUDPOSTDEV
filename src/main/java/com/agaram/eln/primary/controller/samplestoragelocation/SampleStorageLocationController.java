@@ -95,7 +95,7 @@ public class SampleStorageLocationController {
 	
 	@SuppressWarnings("unchecked")
 	@PostMapping(value = "/getSelectedStorageItem")
-	public Boolean getSelectedStorageItem(@Validated @RequestBody Map<String, Object> mapObject) {
+	public Boolean getSelectedStorageItem(@Validated @RequestBody Map<String, Object> mapObject) throws JsonProcessingException {
 
 		final Map<String, Object> selectedStorageId = (Map<String, Object>) mapObject.get("selectedStorageId");
 		

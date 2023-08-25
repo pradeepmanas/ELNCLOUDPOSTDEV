@@ -288,4 +288,9 @@ public class LoginController {
 	public List<LSSiteMaster> loadmultisite(@RequestBody LSuserMaster objsite) throws Exception {
 		return loginService.loadmultisite(objsite);
 	}
+	
+	@GetMapping("/LoadSitewithoutgzip")
+	public List<LSSiteMaster> LoadSitewithoutgzip(HttpServletRequest request) throws Exception {
+		return loginService.loadSite();
+	}
 }

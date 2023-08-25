@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,7 @@ import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageVers
 import com.agaram.eln.primary.repository.samplestoragelocation.SelectedInventoryMappedRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class SampleStorageLocationService {
@@ -99,25 +102,16 @@ public class SampleStorageLocationService {
 				.findBySitekeyAndSamplestoragelocationkey(sampleStorageVersion.getSitekey(),sampleStorageVersion.getSampleStorageLocation().getSamplestoragelocationkey());
 
 		final SampleStorageLocation sampleStorageLocationItem = sampleStorageLocationDelete.get();
+		
+		List<SelectedInventoryMapped> lstInventoryMappeds = selectedInventoryMappedRepository.findBySamplestoragelocationkey(sampleStorageLocationItem);
 
-		if (sampleStorageVersionList.size() > 0) {
+		if(!lstInventoryMappeds.isEmpty()) {
+			return new ResponseEntity<>("Delete Failed - Storage mapped with inventory", HttpStatus.NOT_FOUND);
+		}else {
+			if (sampleStorageVersionList.size() > 0) {
 
-			if (sampleStorageVersionDelete.isPresent()) {
+				if (sampleStorageVersionDelete.isPresent()) {
 
-				sampleStorageLocationItem.setStatus(-1);
-				sampleStorageLocationRepository.save(sampleStorageLocationItem);
-				try {
-					Auditobj.setTransactiondate(commonfunction.getCurrentUtcTime());
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				lScfttransactionRepository.save(Auditobj);
-				return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(), HttpStatus.OK);
-			}
-		} else {
-			if (sampleStorageVersionDelete.isPresent()) {
-				if (sampleStorageLocationDelete.isPresent()) {
 					sampleStorageLocationItem.setStatus(-1);
 					sampleStorageLocationRepository.save(sampleStorageLocationItem);
 					try {
@@ -127,7 +121,22 @@ public class SampleStorageLocationService {
 						e.printStackTrace();
 					}
 					lScfttransactionRepository.save(Auditobj);
-					return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(),HttpStatus.OK);
+					return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(), HttpStatus.OK);
+				}
+			} else {
+				if (sampleStorageVersionDelete.isPresent()) {
+					if (sampleStorageLocationDelete.isPresent()) {
+						sampleStorageLocationItem.setStatus(-1);
+						sampleStorageLocationRepository.save(sampleStorageLocationItem);
+						try {
+							Auditobj.setTransactiondate(commonfunction.getCurrentUtcTime());
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						lScfttransactionRepository.save(Auditobj);
+						return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageVersion.getSitekey()).getBody(),HttpStatus.OK);
+					}
 				}
 			}
 		}
@@ -267,13 +276,47 @@ public class SampleStorageLocationService {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	public Boolean getSelectedStorageItem(Map<String, Object> selectedStorageId) {
+	public Boolean getSelectedStorageItem(Map<String, Object> selectedStorageId) throws JsonProcessingException {
 		List<SelectedInventoryMapped> lstItemMapped = selectedInventoryMappedRepository.findByIdOrderByMappedidDesc(selectedStorageId.get("id").toString());
 		
 		if(lstItemMapped.isEmpty()) {
 			return true;
 		}else {
+			
+			// Create an ObjectMapper instance
+	        ObjectMapper objectMapper = new ObjectMapper();
+
+	        // Convert the Map to a JSON string
+	        String jsonString = objectMapper.writeValueAsString(selectedStorageId);
+			
+			JSONObject jsonObject = new JSONObject(jsonString);
+	        List<String> idList = extractIds(jsonObject);
+	        
+	        List<SelectedInventoryMapped> lstItemMapped1 = selectedInventoryMappedRepository.findByIdIn(idList);
+	        
+	        if(lstItemMapped1.isEmpty()) {
+	        	return true;
+	        }
+			
 			return false;
 		}
 	}
+	
+	public static List<String> extractIds(JSONObject jsonObject) {
+        List<String> idList = new ArrayList<>();
+
+        if (jsonObject.has("id")) {
+            idList.add(jsonObject.getString("id"));
+        }
+
+        if (jsonObject.has("items")) {
+            JSONArray items = jsonObject.getJSONArray("items");
+            for (int i = 0; i < items.length(); i++) {
+                JSONObject childObject = items.getJSONObject(i);
+                idList.addAll(extractIds(childObject));
+            }
+        }
+
+        return idList;
+    }
 }
