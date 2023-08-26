@@ -47,6 +47,7 @@ import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.ResultUsedMaterial;
 import com.agaram.eln.primary.model.material.TransactionStatus;
 import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
@@ -748,7 +749,8 @@ public class MaterialInventoryService {
 		final ObjectMapper objmapper = new ObjectMapper();
 		List<Map<String, Object>> lstAudit = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> lstAudittrans = new ArrayList<Map<String, Object>>();
-
+		Map<String, Object> userinfo = (Map<String, Object>) inputMap.get("userinfo");
+LSSiteMaster site=objmapper.convertValue(userinfo.get("site"), LSSiteMaster.class);
 		final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		List<String> lstDateField = (List<String>) inputMap.get("DateList");
 		JSONObject jsonObject = new JSONObject(inputMap.get("materialInventoryJson").toString());
@@ -983,7 +985,7 @@ public class MaterialInventoryService {
 					objSaveMaterialInventory.setNmaterialcode((Integer) inputMap.get("nmaterialcode"));
 					objSaveMaterialInventory.setNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
 					objSaveMaterialInventory.setNmaterialcatcode((Integer) inputMap.get("nmaterialcatcode"));
-					objSaveMaterialInventory.setNsitecode(objUser.getLssitemaster().getSitecode());
+					objSaveMaterialInventory.setNsitecode(site.getSitecode());
 
 					objSaveMaterialInventory.setObjsilentaudit(cft);
 					objSaveMaterialInventory = materialInventoryRepository.save(objSaveMaterialInventory);
@@ -1066,7 +1068,7 @@ public class MaterialInventoryService {
 			objSaveMaterialInventory.setExpirydate(isExpiry ? expiryDate : null);
 			objSaveMaterialInventory.setValidationneed(isNextVal);
 			objSaveMaterialInventory.setValidationdate(getNextValDate);
-			objSaveMaterialInventory.setNsitecode(objUser.getLssitemaster().getSitecode());
+			objSaveMaterialInventory.setNsitecode(site.getSitecode());
 			objSaveMaterialInventory = materialInventoryRepository.save(objSaveMaterialInventory);
 
 			if (strPrefix != null && !strPrefix.equals("")) {

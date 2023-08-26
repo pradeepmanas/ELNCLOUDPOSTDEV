@@ -390,8 +390,31 @@ public class ProtocolController {
 		return ProtocolMasterService.uploadprotocolsfile(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl );
 	}
 	
+	@PostMapping("/uploadprotocolsfileondrag")
+	public Map<String, Object> uploadprotocolsfileondrag(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolstepcode") Integer protocolstepcode, 
+			@RequestParam("protocolmastercode") Integer protocolmastercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl)throws Exception
+	{
+	
+		return ProtocolMasterService.uploadprotocolsfile(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl );
+	}
+	
 	@PostMapping("/Uploadprotocolimage")
 	public Map<String, Object> Uploadprotocolimage(@RequestParam("file") MultipartFile file,
+			@RequestParam("protocolstepcode") Integer protocolstepcode, 
+			@RequestParam("protocolmastercode") Integer protocolmastercode, 
+			@RequestParam("stepno") Integer stepno,
+			@RequestParam("protocolstepname") String protocolstepname,
+			@RequestParam("originurl") String originurl)throws Exception
+	{
+		return ProtocolMasterService.Uploadprotocolimage(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl );
+	}
+	
+	@PostMapping("/Uploadprotocolimageondrag")
+	public Map<String, Object> Uploadprotocolimageondrag(@RequestParam("file") MultipartFile file,
 			@RequestParam("protocolstepcode") Integer protocolstepcode, 
 			@RequestParam("protocolmastercode") Integer protocolmastercode, 
 			@RequestParam("stepno") Integer stepno,
