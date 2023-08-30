@@ -52,4 +52,9 @@ public interface MaterialInventoryRepository extends JpaRepository<MaterialInven
 	public List<MaterialInventory> findByNsitecodeAndNtransactionstatusAndIsexpiryneedAndExpirydateBetween(
 			Integer lssitemaster, int i, boolean b, Date currentDate, Date endDate);
 
+	public List<MaterialInventory> findByNstatus(int i);
+
+	public List<MaterialInventory> findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNstatusAndNmaterialinventorycodeInOrderByNmaterialinventorycodeDesc(
+			Integer integer, Integer integer2, Integer integer3, int i, List<Integer> lstInventKey);
+
 }

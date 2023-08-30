@@ -40,8 +40,7 @@ public class MaterialInventoryController {
 		if (inputMap.containsKey("nmaterialcatcode")) {
 			nmaterialcatcode = (int) inputMap.get("nmaterialcatcode");
 		}
-		return (ResponseEntity<Object>) materialInventoryService.getMaterialInventorycombo(nmaterialtypecode,
-				nmaterialcatcode,nsiteInteger);
+		return (ResponseEntity<Object>) materialInventoryService.getMaterialInventorycombo(nmaterialtypecode,nmaterialcatcode,nsiteInteger);
 	}
 
 	@RequestMapping(value = "/getMaterialInventoryByID", method = RequestMethod.POST)
