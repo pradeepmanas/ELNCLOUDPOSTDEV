@@ -247,7 +247,7 @@ public class SampleStorageLocationService {
 			List<SelectedInventoryMapped> lstInventoryMappeds1 = selectedInventoryMappedRepository.findByNmaterialinventorycodeOrderByMappedidDesc(objInventory);
 			
 			if(lstInventoryMappeds1.isEmpty()) {
-				sampleStorageVersionList.get(0).setJsonbresult(jsobString);
+//				sampleStorageVersionList.get(0).setJsonbresult(jsobString);
 				
 				inventoryMapped.setNmaterialinventorycode(objInventory);
 				inventoryMapped.setSamplestoragelocationkey(objStorageLocation);
@@ -256,21 +256,21 @@ public class SampleStorageLocationService {
 				selectedInventoryMappedRepository.save(inventoryMapped);
 			}else {
 				
-				if(!lstInventoryMappeds1.get(0).getId().equalsIgnoreCase(selectedStorageId.get("id").toString())) {
-					List<SelectedInventoryMapped> lstInventoryMappeds = selectedInventoryMappedRepository.findByIdAndNmaterialinventorycodeNotOrderByMappedidDesc(lstInventoryMappeds1.get(0).getId(),objInventory);
-					
-					if(lstInventoryMappeds.isEmpty()) {
-						jsobString = commonfunction.getStoargeFromIdJsonString(jsobString,lstInventoryMappeds1.get(0).getId());
-					}
-				}
-				sampleStorageVersionList.get(0).setJsonbresult(jsobString);
+//				if(!lstInventoryMappeds1.get(0).getId().equalsIgnoreCase(selectedStorageId.get("id").toString())) {
+//					List<SelectedInventoryMapped> lstInventoryMappeds = selectedInventoryMappedRepository.findByIdAndNmaterialinventorycodeNotOrderByMappedidDesc(lstInventoryMappeds1.get(0).getId(),objInventory);
+//					
+//					if(lstInventoryMappeds.isEmpty()) {
+//						jsobString = commonfunction.getStoargeFromIdJsonString(jsobString,lstInventoryMappeds1.get(0).getId());
+//					}
+//				}
+//				sampleStorageVersionList.get(0).setJsonbresult(jsobString);
 				
 				lstInventoryMappeds1.get(0).setSamplestoragelocationkey(objStorageLocation);
 				lstInventoryMappeds1.get(0).setId(selectedStorageId.get("id").toString());
 				lstInventoryMappeds1.get(0).setStoragepath(path);
 				selectedInventoryMappedRepository.save(lstInventoryMappeds1);
 			}
-			sampleStorageVersionRepository.save(sampleStorageVersionList);
+//			sampleStorageVersionRepository.save(sampleStorageVersionList);
 		}
 		
 		return new ResponseEntity<>(HttpStatus.OK);

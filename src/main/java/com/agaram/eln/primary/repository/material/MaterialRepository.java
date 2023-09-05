@@ -3,7 +3,11 @@ package com.agaram.eln.primary.repository.material;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.material.Material;
 
@@ -76,7 +80,13 @@ public interface MaterialRepository  extends JpaRepository<Material, Integer>{
 	
 	List<Material> findByNmaterialtypecodeAndSprefix(Integer integer,String string);
 
-	Material findByNstatusAndSprefixAndNsitecode(int i, String string, Integer nsiteInteger);
+	Material findByNstatusAndSprefixAndNsitecode(int i, String string, Integer nsiteInteger);	
+	
+	@Transactional
+	@Query(value = "SELECT m.smaterialname FROM Material m WHERE m.nmaterialcode = ?1", nativeQuery = true)
+	public String getmatrialname(Integer nmaterialcode);
+
+	
 
 //	Material findBynstatusAndnmaterialcode(int i, Integer integer);
 }
