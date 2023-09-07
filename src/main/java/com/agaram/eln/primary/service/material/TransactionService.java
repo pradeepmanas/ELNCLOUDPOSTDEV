@@ -665,27 +665,26 @@ public class TransactionService {
 		return new ResponseEntity<>("Material Properties updated successfully", HttpStatus.OK);
 
 	}
-
 	public ResponseEntity<Object> getMaterialLst4DashBoard(Map<String, Object> inputMap) {
 
 		Map<String, Object> rtnMap = new HashMap<String, Object>();
 
 		List<Material> lstMaterials = new ArrayList<Material>();
-		List<MaterialInventory> lstMaterialInventories = new ArrayList<MaterialInventory>();
+//		List<MaterialInventory> lstMaterialInventories = new ArrayList<MaterialInventory>();
 
 		lstMaterials = materialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1,
 				(Integer) inputMap.get("sitecode"));
 
-		if (!lstMaterials.isEmpty()) {
-
-			lstMaterialInventories = materialInventoryRepository
-//					.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(lstMaterials.get(0).getNmaterialcode(),28);
-					.findByNsitecodeAndNtransactionstatusOrderByNmaterialinventorycodeDesc(
-							(Integer) inputMap.get("sitecode"), 28);
-		}
+//		if (!lstMaterials.isEmpty()) {
+//
+//			lstMaterialInventories = materialInventoryRepository
+////					.findByNmaterialcodeAndNtransactionstatusOrderByNmaterialinventorycode(lstMaterials.get(0).getNmaterialcode(),28);
+//					.findByNsitecodeAndNtransactionstatusOrderByNmaterialinventorycodeDesc(
+//							(Integer) inputMap.get("sitecode"), 28);
+//		}
 
 		rtnMap.put("listedMaterial", lstMaterials);
-		rtnMap.put("listedMaterialInventory", lstMaterialInventories);
+//		rtnMap.put("listedMaterialInventory", lstMaterialInventories);
 
 		return new ResponseEntity<>(rtnMap, HttpStatus.OK);
 	}

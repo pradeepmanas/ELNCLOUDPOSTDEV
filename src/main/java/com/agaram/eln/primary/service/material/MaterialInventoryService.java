@@ -831,9 +831,11 @@ public class MaterialInventoryService {
 
 			objmap.put("MaterialInventory", lstMaterialInventory);
 
+			if (!lstMaterialInventory.isEmpty()) {
 			objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(0));
 			objmap.putAll((Map<String, Object>) getResultUsedMaterial(
 					Integer.parseInt(lstMaterialInventory.get(0).get("nmaterialinventorycode").toString())).getBody());
+			}
 		}
 
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
