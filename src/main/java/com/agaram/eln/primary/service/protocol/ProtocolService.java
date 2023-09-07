@@ -3836,6 +3836,7 @@ public class ProtocolService {
 		return mapObj;
 	}
 
+	@SuppressWarnings("unused")
 	public Map<String, Object> getProtocolOrderStepLst(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 //		LScfttransaction LScfttransactionobj = new LScfttransaction();
@@ -5091,7 +5092,7 @@ public class ProtocolService {
 				}
 			}
 		}
-		
+		mapObj.put("protocolData", body.get("protocolData"));
 		mapObj.put("response", response);
 		return mapObj;
 	}
