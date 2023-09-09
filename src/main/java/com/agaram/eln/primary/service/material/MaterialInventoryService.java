@@ -212,6 +212,31 @@ public class MaterialInventoryService {
 	}
 
 	@SuppressWarnings("unchecked")
+	public Map<String, Object> returnDataAsRequested(MaterialInventory f)
+			throws JsonParseException, JsonMappingException, IOException {
+		Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
+		resObj.put("selectedSampleStorage",
+				f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
+						? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
+								.getSamplestoragelocationname()
+						: "");
+		resObj.put("selectedSampleStoragePath",
+				f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
+						? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
+								.getSamplestoragelocationname() + "->"
+								+ f.getSelectedinventorymapped().get(0).getStoragepath()
+						: "");
+		resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
+		resObj.put("displaystatus",
+				f.getNtransactionstatus() == 28 ? "Released"
+						: (f.getNtransactionstatus() == 55 ? "Expired"
+								: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
+		resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
+
+		return resObj;
+	}
+
+	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInventoryByAll(Map<String, Object> inputMap) throws Exception {
 
 		Map<String, Object> objmap = new HashMap<String, Object>();
@@ -221,27 +246,7 @@ public class MaterialInventoryService {
 		objLstMaterialInventory.stream().peek(f -> {
 
 			try {
-
-				Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
-
-				resObj.put("selectedSampleStorage",
-						f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
-								? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-										.getSamplestoragelocationname()
-								: "");
-				resObj.put("selectedSampleStoragePath",
-						f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
-								? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-										.getSamplestoragelocationname() + "->"
-										+ f.getSelectedinventorymapped().get(0).getStoragepath()
-								: "");
-				resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-				resObj.put("displaystatus",
-						f.getNtransactionstatus() == 28 ? "Released"
-								: (f.getNtransactionstatus() == 55 ? "Expired"
-										: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
-				resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
-				lstMaterialInventory.add(resObj);
+				lstMaterialInventory.add(returnDataAsRequested(f));
 
 			} catch (IOException e) {
 
@@ -310,27 +315,7 @@ public class MaterialInventoryService {
 			objLstMaterialInventory.stream().peek(f -> {
 
 				try {
-
-					Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
-
-					resObj.put("selectedSampleStorage",
-							f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
-									? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-											.getSamplestoragelocationname()
-									: "");
-					resObj.put("selectedSampleStoragePath",
-							f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
-									? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-											.getSamplestoragelocationname() + "->"
-											+ f.getSelectedinventorymapped().get(0).getStoragepath()
-									: "");
-					resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-					resObj.put("displaystatus",
-							f.getNtransactionstatus() == 28 ? "Released"
-									: (f.getNtransactionstatus() == 55 ? "Expired"
-											: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
-					resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
-					lstMaterialInventory.add(resObj);
+					lstMaterialInventory.add(returnDataAsRequested(f));
 
 				} catch (IOException e) {
 
@@ -454,8 +439,9 @@ public class MaterialInventoryService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> getMaterialInventorycombo(Integer nmaterialtypecode, Integer nmaterialcatcode, Integer nsiteInteger) {
-		
+	public ResponseEntity<Object> getMaterialInventorycombo(Integer nmaterialtypecode, Integer nmaterialcatcode,
+			Integer nsiteInteger) {
+
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		List<MaterialCategory> lstMaterialCategory = new ArrayList<>();
 
@@ -507,7 +493,7 @@ public class MaterialInventoryService {
 
 			objmap.put("MaterialCombo", lstMatObject);
 		} else {
-			
+
 			List<MaterialType> lstMaterialType = materialTypeRepository.findByNstatusOrderByNmaterialtypecode(1);
 			objmap.put("MaterialType", lstMaterialType);
 
@@ -581,27 +567,7 @@ public class MaterialInventoryService {
 				objLstMaterialInventory.stream().peek(f -> {
 
 					try {
-
-						Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
-
-						resObj.put("selectedSampleStorage",
-								f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
-										? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-												.getSamplestoragelocationname()
-										: "");
-						resObj.put("selectedSampleStoragePath",
-								f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
-										? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-												.getSamplestoragelocationname() + "->"
-												+ f.getSelectedinventorymapped().get(0).getStoragepath()
-										: "");
-						resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-						resObj.put("displaystatus",
-								f.getNtransactionstatus() == 28 ? "Released"
-										: (f.getNtransactionstatus() == 55 ? "Expired"
-												: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
-						resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
-						lstMaterialInventory.add(resObj);
+						lstMaterialInventory.add(returnDataAsRequested(f));
 
 					} catch (IOException e) {
 
@@ -735,41 +701,42 @@ public class MaterialInventoryService {
 
 		String id = clickedItem.get("id").toString();
 
-		List<SelectedInventoryMapped> lstInventoryMappeds = selectedInventoryMappedRepository.findByIdOrderByMappedidDesc(id);
-		
+		List<SelectedInventoryMapped> lstInventoryMappeds = selectedInventoryMappedRepository
+				.findByIdOrderByMappedidDesc(id);
+
 		if ((Integer) inputMap.get("nmaterialtypecode") == -1) {
 			if (!lstInventoryMappeds.isEmpty()) {
 				List<MaterialInventory> objLstMaterialInventory = new ArrayList<MaterialInventory>();
-				
+
 				lstInventoryMappeds.stream().peek(f -> {
 					objLstMaterialInventory.add(f.getNmaterialinventorycode());
 				}).collect(Collectors.toList());
-				
+
 				objLstMaterialInventory.stream().peek(f -> {
 
 					try {
 
-						Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
-
-						resObj.put("selectedSampleStorage",
-								f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
-										? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-												.getSamplestoragelocationname()
-										: "");
-						resObj.put("selectedSampleStoragePath",
-								f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
-										? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-												.getSamplestoragelocationname() + "->"
-												+ f.getSelectedinventorymapped().get(0).getStoragepath()
-										: "");
-						resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-						resObj.put("displaystatus",
-								f.getNtransactionstatus() == 28 ? "Released"
-										: (f.getNtransactionstatus() == 55 ? "Expired"
-												: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
-						resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
-						resObj.put("materialname", materialRepository.getmatrialname(f.getNmaterialcode()));
-						lstMaterialInventory.add(resObj);
+//						Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
+						//
+//										resObj.put("selectedSampleStorage",
+//												f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
+//														? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
+//																.getSamplestoragelocationname()
+//														: "");
+//										resObj.put("selectedSampleStoragePath",
+//												f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
+//														? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
+//																.getSamplestoragelocationname() + "->"
+//																+ f.getSelectedinventorymapped().get(0).getStoragepath()
+//														: "");
+//										resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
+//										resObj.put("displaystatus",
+//												f.getNtransactionstatus() == 28 ? "Released"
+//														: (f.getNtransactionstatus() == 55 ? "Expired"
+//																: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
+//										resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
+//										lstMaterialInventory.add(resObj);
+						lstMaterialInventory.add(returnDataAsRequested(f));
 
 					} catch (IOException e) {
 
@@ -782,12 +749,13 @@ public class MaterialInventoryService {
 
 				objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(0));
 				objmap.putAll((Map<String, Object>) getResultUsedMaterial(
-						Integer.parseInt(lstMaterialInventory.get(0).get("nmaterialinventorycode").toString())).getBody());
+						Integer.parseInt(lstMaterialInventory.get(0).get("nmaterialinventorycode").toString()))
+								.getBody());
 			}
 		} else {
-			
+
 			List<Integer> lstInventKey = new ArrayList<Integer>();
-			
+
 			lstInventoryMappeds.stream().peek(f -> {
 				lstInventKey.add(f.getNmaterialinventorycode().getNmaterialinventorycode());
 			}).collect(Collectors.toList());
@@ -795,32 +763,33 @@ public class MaterialInventoryService {
 			List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository
 					.findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNstatusAndNmaterialinventorycodeInOrderByNmaterialinventorycodeDesc(
 							(Integer) inputMap.get("nmaterialcode"), (Integer) inputMap.get("nmaterialcatcode"),
-							(Integer) inputMap.get("nmaterialtypecode"), 1,lstInventKey);
-			
+							(Integer) inputMap.get("nmaterialtypecode"), 1, lstInventKey);
+
 			objLstMaterialInventory.stream().peek(f -> {
 
 				try {
 
-					Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
-
-					resObj.put("selectedSampleStorage",
-							f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
-									? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-											.getSamplestoragelocationname()
-									: "");
-					resObj.put("selectedSampleStoragePath",
-							f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
-									? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-											.getSamplestoragelocationname() + "->"
-											+ f.getSelectedinventorymapped().get(0).getStoragepath()
-									: "");
-					resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-					resObj.put("displaystatus",
-							f.getNtransactionstatus() == 28 ? "Released"
-									: (f.getNtransactionstatus() == 55 ? "Expired"
-											: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
-					resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
-					lstMaterialInventory.add(resObj);
+//					Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
+					//
+//									resObj.put("selectedSampleStorage",
+//											f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
+//													? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
+//															.getSamplestoragelocationname()
+//													: "");
+//									resObj.put("selectedSampleStoragePath",
+//											f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
+//													? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
+//															.getSamplestoragelocationname() + "->"
+//															+ f.getSelectedinventorymapped().get(0).getStoragepath()
+//													: "");
+//									resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
+//									resObj.put("displaystatus",
+//											f.getNtransactionstatus() == 28 ? "Released"
+//													: (f.getNtransactionstatus() == 55 ? "Expired"
+//															: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
+//									resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
+//									lstMaterialInventory.add(resObj);
+					lstMaterialInventory.add(returnDataAsRequested(f));
 
 				} catch (IOException e) {
 
@@ -832,9 +801,10 @@ public class MaterialInventoryService {
 			objmap.put("MaterialInventory", lstMaterialInventory);
 
 			if (!lstMaterialInventory.isEmpty()) {
-			objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(0));
-			objmap.putAll((Map<String, Object>) getResultUsedMaterial(
-					Integer.parseInt(lstMaterialInventory.get(0).get("nmaterialinventorycode").toString())).getBody());
+				objmap.put("SelectedMaterialInventory", lstMaterialInventory.get(0));
+				objmap.putAll((Map<String, Object>) getResultUsedMaterial(
+						Integer.parseInt(lstMaterialInventory.get(0).get("nmaterialinventorycode").toString()))
+								.getBody());
 			}
 		}
 
@@ -913,7 +883,8 @@ public class MaterialInventoryService {
 		designChildObject.put("null", true);
 		designChildObject.put("value", lstMappedTemplate.get(0).getJsondata());
 
-		Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(lstMappedTemplate.get(0).getJsondata(), "138");
+		Map<String, Object> objContent = commonfunction
+				.getInventoryValuesFromJsonString(lstMappedTemplate.get(0).getJsondata(), "138");
 
 		JSONObject jsonObject = (JSONObject) objContent.get("rtnObj");
 
@@ -1209,6 +1180,8 @@ public class MaterialInventoryService {
 				jsonuidata.put("nqtyissued", 0);
 				jsonuidata.put("namountleft", Double.valueOf((Integer) jsonuidata.get("Received Quantity")));
 				jsonuidata.put("ntransactiontype", Enumeration.TransactionStatus.RECEIVED.gettransactionstatus());
+				jsonuidata.put("smaterialname", objMaterial.getSmaterialname());
+				jsonuidata.put("smaterialcatname", objMaterialCategory.getSmaterialcatname());
 				jsonuidata = getmaterialquery(jsonuidata, 1);
 
 				jsonuidataTrans.put("Transaction Date & Time", commonfunction.getCurrentUtcTime());
@@ -1304,8 +1277,8 @@ public class MaterialInventoryService {
 
 					jsonUidataarray.put(new JSONObject(jsonuidata.toString()));
 					jsonUidataarrayTrans.put(new JSONObject(jsonuidataTrans.toString()));
-					
-					setStorageLocationOnNode(inputMap,objSaveMaterialInventory.getNmaterialinventorycode());
+
+					setStorageLocationOnNode(inputMap, objSaveMaterialInventory.getNmaterialinventorycode());
 				}
 				inputMap.put("reusableCount", reusableCount);
 				inputMap.put("ntranscode", inputMap.get("ntransactionstatus"));
@@ -1315,6 +1288,9 @@ public class MaterialInventoryService {
 		if (nflag == false) {
 
 			MaterialInventory objSaveMaterialInventory = new MaterialInventory();
+
+			jsonuidata.put("smaterialname", objMaterial.getSmaterialname());
+			jsonuidata.put("smaterialcatname", objMaterialCategory.getSmaterialcatname());
 
 			objSaveMaterialInventory.setJsondata(jsonObject.toString());
 			objSaveMaterialInventory.setJsonuidata(jsonuidata.toString());
@@ -1354,7 +1330,6 @@ public class MaterialInventoryService {
 
 			inputMap.put("nmaterialinventorycode", objSaveMaterialInventory.getNmaterialinventorycode());
 			inputMap.put("ntranscode", inputMap.get("ntransactionstatus"));
-//			createMaterialInventoryhistory(inputMap);
 //
 			jsonObjectInvTrans.put("Inventory ID", strformat);
 			jsonuidataTrans.put("Inventory ID", strformat);
@@ -1412,13 +1387,12 @@ public class MaterialInventoryService {
 
 			jsonUidataarray.put(jsonuidata);
 			jsonUidataarrayTrans.put(jsonuidataTrans);
-			
-			setStorageLocationOnNode(inputMap,objSaveMaterialInventory.getNmaterialinventorycode());			
+
+			setStorageLocationOnNode(inputMap, objSaveMaterialInventory.getNmaterialinventorycode());
 		}
-		
-		
+
 		objmap.putAll((Map<String, Object>) getMaterialInventoryByID(inputMap).getBody());
-		objmap.putAll((Map<String, Object>) getMaterialInventoryDetails(inputMap).getBody());
+//		objmap.putAll((Map<String, Object>) getMaterialInventoryDetails(inputMap).getBody());
 		if (cft != null) {
 			cft.setComments(strformat + " " + cft.getComments());
 			objmap.put("objsilentaudit", cft);
@@ -1428,19 +1402,21 @@ public class MaterialInventoryService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void setStorageLocationOnNode(Map<String, Object> inputMap, int inventoryCode) {
-		Map<String, Object> selectedStorage = (Map<String, Object>) inputMap.get("selectedStorage");	
-		Map<String, Object> selectedStorageId = (Map<String, Object>) inputMap.get("selectedStorageItem");	
-		int sampleStorageLocationKey =  Integer.parseInt(selectedStorage.get("samplestoragelocationkey").toString());		
-		SampleStorageLocation objStorageLocation = sampleStorageLocationRepository.findBySamplestoragelocationkey(sampleStorageLocationKey);
-		
+		Map<String, Object> selectedStorage = (Map<String, Object>) inputMap.get("selectedStorage");
+		Map<String, Object> selectedStorageId = (Map<String, Object>) inputMap.get("selectedStorageItem");
+		int sampleStorageLocationKey = Integer.parseInt(selectedStorage.get("samplestoragelocationkey").toString());
+		SampleStorageLocation objStorageLocation = sampleStorageLocationRepository
+				.findBySamplestoragelocationkey(sampleStorageLocationKey);
+
 		if (objStorageLocation != null) {
 			List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository
 					.findFirstBySampleStorageLocationOrderBySamplestorageversionkeyDesc(objStorageLocation);
-			final String jsobString = sampleStorageVersionList.get(0).getJsonbresult();				
-			sampleStorageLocationService.setStorageLocationOnNode(sampleStorageLocationKey,inventoryCode,selectedStorageId,jsobString);
+			final String jsobString = sampleStorageVersionList.get(0).getJsonbresult();
+			sampleStorageLocationService.setStorageLocationOnNode(sampleStorageLocationKey, inventoryCode,
+					selectedStorageId, jsobString);
 		}
 	}
 
@@ -1577,7 +1553,7 @@ public class MaterialInventoryService {
 			}
 			expiryDate = getExpPolicyDate != null ? getExpPolicyDate : expiryDate;
 		}
-		if (objGetMaterialJSON.isNextvalidation() != null &&  objGetMaterialJSON.isNextvalidation()) {
+		if (objGetMaterialJSON.isNextvalidation() != null && objGetMaterialJSON.isNextvalidation()) {
 			getNextValDate = lastValidation;
 //			Date getmanufDate = lastValidation;
 			if (objGetMaterialJSON.getNextvalidationperiod().equalsIgnoreCase("NA")
@@ -1606,15 +1582,16 @@ public class MaterialInventoryService {
 
 		objInventory.setJsondata(ReplaceQuote(jsonObject.toString()));
 		objInventory.setJsonuidata(ReplaceQuote(jsonuidata.toString()));
-		objInventory.setNsectioncode(inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode") : -1);
+		objInventory
+				.setNsectioncode(inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode") : -1);
 		objInventory.setIsexpiryneed(isExpiry);
 		objInventory.setExpirydate(isExpiry ? expiryDate : null);
 		objInventory.setValidationneed(isNextVal);
 		objInventory.setValidationdate(getNextValDate);
 
 		materialInventoryRepository.save(objInventory);
-		
-		setStorageLocationOnNode(inputMap,objInventory.getNmaterialinventorycode());
+
+		setStorageLocationOnNode(inputMap, objInventory.getNmaterialinventorycode());
 
 		jsonObjectTrans.put("Transaction Date & Time", dtransactiondate);
 		jsonObjectTrans.put("ninventorytranscode", Enumeration.TransactionStatus.OUTSIDE.gettransactionstatus());
@@ -1638,7 +1615,8 @@ public class MaterialInventoryService {
 		lstTransactions.stream().peek(objTransaction -> {
 			objTransaction.setJsondata(ReplaceQuote(jsonObjectLstTrans.toString()));
 			objTransaction.setJsonuidata(ReplaceQuote(jsonObjectUiTrans.toString()));
-			objTransaction.setNsectioncode(inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode") : -1);
+			objTransaction.setNsectioncode(
+					inputMap.get("nsectioncode") != null ? (Integer) inputMap.get("nsectioncode") : -1);
 			objTransaction.setNqtyreceived(recQty);
 //			objTransaction.setNqtyissued(issQty);
 		}).collect(Collectors.toList());
@@ -2121,57 +2099,28 @@ public class MaterialInventoryService {
 
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
-//		List<Map<String, Object>> lstMaterialInventory2 = new ArrayList<Map<String, Object>>();
-
-//		List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository
-//				.findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNstatusOrderByNmaterialinventorycodeDesc(
-//						(Integer) inputMap.get("nmaterialcode"), (Integer) inputMap.get("nmaterialcatcode"),
-//						(Integer) inputMap.get("nmaterialtypecode"), 1);
-//
-//		objLstMaterialInventory.stream().peek(f -> {
-//
-//			try {
-//
-//				Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
-//
-//				resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-//				resObj.put("displaystatus",
-//						f.getNtransactionstatus() == 28 ? "Released"
-//								: (f.getNtransactionstatus() == 55 ? "Expired"
-//										: (f.getNtransactionstatus() == 37 ? "Quarantine" : "Retired")));
-//				resObj.put("ntranscode", (Integer) f.getNtransactionstatus());
-//				lstMaterialInventory2.add(resObj);
-//
-//			} catch (IOException e) {
-//
-//				e.printStackTrace();
-//			}
-//
-//		}).collect(Collectors.toList());
-
-//		objmap.put("MaterialInventory", lstMaterialInventory2);
-
 		if (inputMap.get("nmaterialinventorycode") != null) {
+
 			MaterialInventory objInventory = materialInventoryRepository
 					.findByNmaterialinventorycode((Integer) inputMap.get("nmaterialinventorycode"));
-
 			objmap.putAll((Map<String, Object>) getResultUsedMaterial((Integer) inputMap.get("nmaterialinventorycode"))
 					.getBody());
 
-			Map<String, Object> resObj = new ObjectMapper().readValue(objInventory.getJsonuidata(), Map.class);
+//			Map<String, Object> resObj = new ObjectMapper().readValue(objInventory.getJsonuidata(), Map.class);
+//
+//			resObj.put("selectedSampleStoragePath",
+//					objInventory.getSelectedinventorymapped() != null
+//							&& !objInventory.getSelectedinventorymapped().isEmpty()
+//									? objInventory.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
+//											.getSamplestoragelocationname() + "->"
+//											+ objInventory.getSelectedinventorymapped().get(0).getStoragepath()
+//									: "");
+//			resObj.put("nmaterialinventorycode", (Integer) inputMap.get("nmaterialinventorycode"));
+//			resObj.put("ntranscode", (Integer) objInventory.getNtransactionstatus());
+//
+//			lstMaterialInventory.add(resObj);
 
-//			resObj.put("selectedSampleStoragePath", objInventory.getSelectedinventorymapped() != null && !objInventory.getSelectedinventorymapped().isEmpty() ? objInventory.getSelectedinventorymapped().get(0).getStoragepath() : "");
-			resObj.put("selectedSampleStoragePath",
-					objInventory.getSelectedinventorymapped() != null
-							&& !objInventory.getSelectedinventorymapped().isEmpty()
-									? objInventory.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-											.getSamplestoragelocationname() + "->"
-											+ objInventory.getSelectedinventorymapped().get(0).getStoragepath()
-									: "");
-			resObj.put("nmaterialinventorycode", (Integer) inputMap.get("nmaterialinventorycode"));
-			resObj.put("ntranscode", (Integer) objInventory.getNtransactionstatus());
-
-			lstMaterialInventory.add(resObj);
+			lstMaterialInventory.add(returnDataAsRequested(objInventory));
 
 			lstMaterialInventory1.add(new ObjectMapper().readValue(objInventory.getJsondata(), Map.class));
 

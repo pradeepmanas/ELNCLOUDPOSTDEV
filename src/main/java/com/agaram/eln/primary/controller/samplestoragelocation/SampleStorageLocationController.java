@@ -101,4 +101,13 @@ public class SampleStorageLocationController {
 		
 		return sampleStorageLocationService.getSelectedStorageItem(selectedStorageId);
 	}
+	
+	@PostMapping(value = "/getStorageIdBasedOnInvent")
+	public ResponseEntity<Object> getStorageIdBasedOnInvent(@Validated @RequestBody Map<String, Object> mapObject) {
+
+		Integer nsiteInteger = (Integer) mapObject.get("sitekey");
+		final int inventoryCode = Integer.parseInt(mapObject.get("nmaterialinventorycode").toString());
+		
+		return sampleStorageLocationService.getStorageIdBasedOnInvent(inventoryCode,nsiteInteger);
+	}
 }

@@ -36,6 +36,12 @@ public class MaterialInventory {
 	@Column(name = "nmaterialcatcode")
 	private Integer nmaterialcatcode;
 	
+//	@Column(name = "nmaterialcode")
+//	private Material nmaterialcode;
+//	
+//	@Column(name = "nmaterialcatcode")
+//	private MaterialCategory nmaterialcatcode;
+	
 	@Column(name = "nmaterialtypecode")
 	private Integer nmaterialtypecode;
 	
@@ -54,7 +60,22 @@ public class MaterialInventory {
 	private transient String sinventoryid;
 	private transient String savailablequatity;
 	private transient String sunitname;
+	private transient String smaterialcatname;
+	private transient String smaterialname;
 	
+	public String getSmaterialcatname() {
+		return smaterialcatname;
+	}
+	public void setSmaterialcatname(String smaterialcatname) {
+		this.smaterialcatname = smaterialcatname;
+	}
+	public String getSmaterialname() {
+		return smaterialname;
+	}
+	public void setSmaterialname(String smaterialname) {
+		this.smaterialname = smaterialname;
+	}
+
 	private Boolean isexpiryneed;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date expirydate;
@@ -169,9 +190,23 @@ public class MaterialInventory {
 	public void setNmaterialcatcode(Integer nmaterialcatcode) {
 		this.nmaterialcatcode = nmaterialcatcode;
 	}
+	
+	
 	public Integer getNmaterialtypecode() {
 		return nmaterialtypecode;
 	}
+//	public Material getNmaterialcode() {
+//		return nmaterialcode;
+//	}
+//	public void setNmaterialcode(Material nmaterialcode) {
+//		this.nmaterialcode = nmaterialcode;
+//	}
+//	public MaterialCategory getNmaterialcatcode() {
+//		return nmaterialcatcode;
+//	}
+//	public void setNmaterialcatcode(MaterialCategory nmaterialcatcode) {
+//		this.nmaterialcatcode = nmaterialcatcode;
+//	}
 	public void setNmaterialtypecode(Integer nmaterialtypecode) {
 		this.nmaterialtypecode = nmaterialtypecode;
 	}

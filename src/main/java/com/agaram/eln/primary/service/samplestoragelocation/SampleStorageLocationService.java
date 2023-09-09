@@ -319,4 +319,32 @@ public class SampleStorageLocationService {
 
         return idList;
     }
+
+	public ResponseEntity<Object> getStorageIdBasedOnInvent(int inventoryCode,int nsiteInteger) {
+		Map<String, Object> objMap = new LinkedHashMap<String, Object>();
+
+		MaterialInventory objInventory = new MaterialInventory();
+		objInventory.setNmaterialinventorycode(inventoryCode);
+
+		SelectedInventoryMapped objInventoryMapped = selectedInventoryMappedRepository.findByNmaterialinventorycode(objInventory);
+
+		if (objInventoryMapped != null) {
+
+			objMap.put("selectedSampleStorageLocation", objInventoryMapped.getSamplestoragelocationkey());
+			objMap.put("selectedStoragePath", objInventoryMapped.getStoragepath());
+			objMap.put("selectedStorageId", objInventoryMapped.getId());
+			
+			List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository.findFirstBySampleStorageLocationOrderBySamplestorageversionkeyDesc(objInventoryMapped.getSamplestoragelocationkey());
+			if (sampleStorageVersionList != null && sampleStorageVersionList.size() > 0) {
+				objMap.put("selectedSampleStorageVersion", sampleStorageVersionList.get(0));
+			}
+		}
+		List<SampleStorageLocation> sampleStorageLocationList = sampleStorageLocationRepository.findBySitekeyOrderBySamplestoragelocationkeyDesc(nsiteInteger);
+
+		if (sampleStorageLocationList != null && sampleStorageLocationList.size() > 0) {
+			objMap.put("sampleStorageLocation", sampleStorageLocationList);
+		}
+		return new ResponseEntity<>(objMap, HttpStatus.OK);
+	}
+	
 }

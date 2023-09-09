@@ -720,6 +720,12 @@ public class AuditService {
 		lscfttransactionRepository.save(obj);
 		return obj;
 	}
+	
+	public List<LScfttransaction> silentandmanualRecordHandlerForProtocol(LScfttransaction[] mapObj) {
+		List<LScfttransaction> obj= Arrays.asList(mapObj);
+		lscfttransactionRepository.save(obj);
+		return obj;
+	}
 
 	public List<Lscfrtransactiononorder> getAuditOnOrder(Map<String, Object> objMap) {	
 		List<Lscfrtransactiononorder> list = LscfrtransactiononorderRepository.findByBatchcodeOrderBySerialnoDesc(objMap.get("batchcode").toString());

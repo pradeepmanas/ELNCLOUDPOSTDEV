@@ -6,7 +6,6 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.material.Material;
@@ -85,6 +84,9 @@ public interface MaterialRepository  extends JpaRepository<Material, Integer>{
 	@Transactional
 	@Query(value = "SELECT m.smaterialname FROM Material m WHERE m.nmaterialcode = ?1", nativeQuery = true)
 	public String getmatrialname(Integer nmaterialcode);
+
+	List<Material> findBySmaterialnameStartingWithIgnoreCaseAndNmaterialcatcodeAndNmaterialtypecodeAndNsitecode(
+			String searchString, Integer integer, Integer integer2, Integer nsiteInteger);
 
 	
 

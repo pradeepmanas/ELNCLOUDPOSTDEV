@@ -224,6 +224,12 @@ public class AuditTrailController {
 			throws ParseException {
 		return auditService.silentandmanualRecordHandlerlist(mapObj);
 	}
+	
+	@PostMapping("/silentandmanualRecordHandlerForProtocol")
+	public List<LScfttransaction> silentandmanualRecordHandlerForProtocol(@RequestBody LScfttransaction[] mapObj)
+			throws ParseException {
+		return auditService.silentandmanualRecordHandlerForProtocol(mapObj);
+	}
 
 	@PostMapping("/getAuditOnOrder")
 	public List<Lscfrtransactiononorder> getAuditOnOrder(@RequestBody Map<String, Object> objMap)
