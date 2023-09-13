@@ -249,7 +249,7 @@ public class SampleStorageLocationService {
 			if(lstInventoryMappeds1.isEmpty()) {
 //				sampleStorageVersionList.get(0).setJsonbresult(jsobString);
 				
-				inventoryMapped.setNmaterialinventorycode(objInventory);
+				inventoryMapped.setNmaterialinventorycode(objInventory.getNmaterialinventorycode());
 				inventoryMapped.setSamplestoragelocationkey(objStorageLocation);
 				inventoryMapped.setId(selectedStorageId.get("id").toString());
 				inventoryMapped.setStoragepath(path);

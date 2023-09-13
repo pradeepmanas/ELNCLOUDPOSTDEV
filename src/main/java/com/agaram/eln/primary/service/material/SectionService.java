@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.material;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.Section;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 //import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 
@@ -28,10 +31,18 @@ public class SectionService {
 	public ResponseEntity<Object> createSection(Section section) {
 		section.setResponse(new Response());
 		final Section sectionObjByName = sectionRepository.findBySsectionnameIgnoreCaseAndNsitecode(section.getSsectionname(),section.getNsitecode());
+		LSuserMaster objMaster = new LSuserMaster();
+		objMaster.setUsercode(section.getObjsilentaudit().getLsuserMaster());
 		if (sectionObjByName == null && section.getNsectioncode() == null) {
 			section.setNdefaultstatus(1);
 			section.setNsitecode(section.getNsitecode());
 			section.setNstatus(1);
+			section.setCreateby(objMaster);
+			try {
+				section.setCreatedate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			sectionRepository.save(section);
 			section.getResponse().setStatus(true);
 			section.getResponse().setInformation("IDS_SUCCESS");

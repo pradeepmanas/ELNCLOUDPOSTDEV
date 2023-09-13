@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.material;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.Manufacturer;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.material.ManufacturerRepository;
 
 @Service
@@ -27,13 +30,19 @@ public class ManufacturerService {
 		final Manufacturer objUnit2 = manufacturerRepository.findBySmanufnameIgnoreCaseAndNsitecode(objManufacturer.getSmanufname(),objManufacturer.getNsitecode());
 		
 		objManufacturer.setResponse(new Response());
-
+		LSuserMaster objMaster = new LSuserMaster();
+		objMaster.setUsercode(objManufacturer.getObjsilentaudit().getLsuserMaster());
 		if (objUnit2 == null && objManufacturer.getNmanufcode() == null) {
 			objManufacturer.setNsitecode(objManufacturer.getNsitecode());
 			objManufacturer.setNstatus(1);
 			objManufacturer.getResponse().setStatus(true);
 			objManufacturer.getResponse().setInformation("IDS_SUCCESS");
-
+			objManufacturer.setCreateby(objMaster);
+			try {
+				objManufacturer.setCreatedate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			manufacturerRepository.save(objManufacturer);
 			
 			return new ResponseEntity<>(objManufacturer, HttpStatus.OK);

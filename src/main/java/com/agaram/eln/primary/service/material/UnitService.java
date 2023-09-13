@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.material;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.Unit;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.material.UnitRepository;
 
 @Service
@@ -24,11 +27,20 @@ public class UnitService {
 				objUnit.getNsitecode());
 		
 		objUnit.setResponse(new Response());
+		
+		LSuserMaster objMaster = new LSuserMaster();
+		objMaster.setUsercode(objUnit.getObjsilentaudit().getLsuserMaster());
 
 		if (objUnit2 == null && objUnit.getNunitcode() == null) {
 			objUnit.setNdefaultstatus(1);
 			objUnit.setNsitecode(objUnit.getNsitecode());
 			objUnit.setNstatus(1);
+			objUnit.setCreateby(objMaster);
+			try {
+				objUnit.setCreatedate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			
 			objUnit.getResponse().setStatus(true);
 			objUnit.getResponse().setInformation("IDS_SUCCESS");

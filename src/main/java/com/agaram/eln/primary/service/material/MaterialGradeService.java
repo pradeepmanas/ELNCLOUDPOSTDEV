@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.material;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.MaterialGrade;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.material.MaterialGradeRepository;
 
 @Service
@@ -27,11 +30,20 @@ public class MaterialGradeService {
 		final MaterialGrade objUnit2 = materialGradeRepository.findBySmaterialgradenameIgnoreCaseAndNsitecode(objGrade.getSmaterialgradename(),objGrade.getNsitecode());
 		
 		objGrade.setResponse(new Response());
-
+		
+		LSuserMaster objMaster = new LSuserMaster();
+		objMaster.setUsercode(objGrade.getObjsilentaudit().getLsuserMaster());
+		
 		if (objUnit2 == null && objGrade.getNmaterialgradecode() == null) {
 			objGrade.setNdefaultstatus(1);
 			objGrade.setNsitecode(objGrade.getNsitecode());
 			objGrade.setNstatus(1);
+			objGrade.setCreateby(objMaster);
+			try {
+				objGrade.setCreatedate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			
 			objGrade.getResponse().setStatus(true);
 			objGrade.getResponse().setInformation("IDS_SUCCESS");

@@ -5139,6 +5139,7 @@ public class ProtocolService {
 			}
 		}
 		
+		mapObj.put("protocolData", body.get("protocolData"));
 		mapObj.put("response", response);
 		return mapObj;
 	}

@@ -11,8 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.agaram.eln.primary.model.material.MaterialInventory;
-
 @Entity(name = "selectedinventorymapped")
 @Table(name = "selectedinventorymapped")
 public class SelectedInventoryMapped {
@@ -27,9 +25,11 @@ public class SelectedInventoryMapped {
 
 	public String id;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "nmaterialinventorycode", referencedColumnName = "nmaterialinventorycode")
-	private MaterialInventory nmaterialinventorycode;
+//	@OneToOne(cascade = CascadeType.ALL)
+//	@JoinColumn(name = "nmaterialinventorycode", referencedColumnName = "nmaterialinventorycode")
+//	private MaterialInventory nmaterialinventorycode;
+	
+	private Integer nmaterialinventorycode;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "samplestoragelocationkey", referencedColumnName = "samplestoragelocationkey")
@@ -67,11 +67,21 @@ public class SelectedInventoryMapped {
 		this.id = id;
 	}
 
-	public MaterialInventory getNmaterialinventorycode() {
+	public Integer getNmaterialinventorycode() {
 		return nmaterialinventorycode;
 	}
 
-	public void setNmaterialinventorycode(MaterialInventory nmaterialinventorycode) {
+	public void setNmaterialinventorycode(Integer nmaterialinventorycode) {
 		this.nmaterialinventorycode = nmaterialinventorycode;
 	}
+
+	
+	
+//	public MaterialInventory getNmaterialinventorycode() {
+//		return nmaterialinventorycode;
+//	}
+//
+//	public void setNmaterialinventorycode(MaterialInventory nmaterialinventorycode) {
+//		this.nmaterialinventorycode = nmaterialinventorycode;
+//	}
 }

@@ -766,3 +766,48 @@ ALTER TABLE IF Exists reporttemplate ADD COLUMN IF NOT EXISTS reporttype integer
 update reporttemplate set reporttype=1 where reporttype is Null;
 
 ALTER TABLE IF Exists selectedinventorymapped ADD COLUMN IF NOT EXISTS storagepath character varying(255);
+
+ALTER TABLE IF Exists materialinventory ADD Column IF NOT EXISTS createddate DATE;
+
+-- Attempt to insert into samplestoragelocation, but only if a record with samplestoragelocationkey = -1 does not exist
+INSERT INTO public.samplestoragelocation(
+    samplestoragelocationkey, createdby, createddate, samplestoragelocationname, sitekey, status)
+VALUES (-1, 'Administrator', now(), 'Default', 1, 1)
+ON CONFLICT (samplestoragelocationkey) DO NOTHING;
+
+-- Attempt to insert into samplestorageversion, but only if a record with samplestorageversionkey = -1 does not exist
+INSERT INTO public.samplestorageversion(
+    samplestorageversionkey, approvalstatus, createdby, createddate, jsonbresult, versionno, samplestoragelocationkey)
+VALUES (-1, 1, 'Administrator', now(), '[{"text":"Default node","expanded":true,"editable":false,"root":true,"id":"e9052aac-b470-44e0-a2de-5652f7475b67"}]', 1, -1)
+ON CONFLICT (samplestorageversionkey) DO NOTHING;
+
+UPDATE materialtype SET jsondata = '{
+    "sdescription": "ALL",
+    "smaterialtypename": {
+        "en-US": "ALL",
+        "ru-RU": "нет данных",
+        "tg-TG": "ALL"
+    }
+}'WHERE nmaterialtypecode = -1;
+
+ALTER TABLE IF Exists unit ADD COLUMN IF NOT EXISTS createby_usercode integer default 1 ,ADD COLUMN IF NOT EXISTS createdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF Exists section ADD COLUMN IF NOT EXISTS createby_usercode integer default 1 ,ADD COLUMN IF NOT EXISTS createdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF Exists materialgrade ADD COLUMN IF NOT EXISTS createby_usercode integer default 1 ,ADD COLUMN IF NOT EXISTS createdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF Exists supplier ADD COLUMN IF NOT EXISTS createby_usercode integer default 1 ,ADD COLUMN IF NOT EXISTS createdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF Exists manufacturer ADD COLUMN IF NOT EXISTS createby_usercode integer default 1 ,ADD COLUMN IF NOT EXISTS createdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF Exists materialcategory ADD COLUMN IF NOT EXISTS createby_usercode integer default 1 ,ADD COLUMN IF NOT EXISTS createdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT conname
+                   FROM pg_constraint
+                   WHERE conname = 'fknok3att985drj28p3b41qn888') THEN
+        ALTER TABLE ResultUsedMaterial
+        ADD CONSTRAINT fknok3att985drj28p3b41qn888
+        FOREIGN KEY (ninventorycode)
+        REFERENCES public.materialinventory (nmaterialinventorycode)
+        MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+    END IF;
+END $$;

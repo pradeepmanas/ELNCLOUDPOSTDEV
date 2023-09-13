@@ -49,11 +49,11 @@ public class MaterialInventoryController {
 		return materialInventoryService.getMaterialInventoryByID(inputMap);
 	}
 	
-//	@RequestMapping(value = "/getMaterialInventoryBySearchField", method = RequestMethod.POST)
-//	public ResponseEntity<Object> getMaterialInventoryBySearchField(@RequestBody Map<String, Object> inputMap) throws Exception {
-//
-//		return materialInventoryService.getMaterialInventoryBySearchField(inputMap);
-//	}
+	@RequestMapping(value = "/getMaterialInventoryBySearchField", method = RequestMethod.POST)
+	public ResponseEntity<Object> getMaterialInventoryBySearchField(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return materialInventoryService.getMaterialInventoryBySearchField(inputMap);
+	}
 	
 	@RequestMapping(value = "/getMaterialInventoryByStorageID", method = RequestMethod.POST)
 	public ResponseEntity<Object> getMaterialInventoryByStorageID(@RequestBody Map<String, Object> inputMap) throws Exception {

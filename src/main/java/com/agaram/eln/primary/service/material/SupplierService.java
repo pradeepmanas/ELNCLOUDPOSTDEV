@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.material;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.Supplier;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.material.SupplierRepository;
 
 @Service
@@ -27,12 +30,21 @@ public class SupplierService {
 		final Supplier objUnit2 = supplierRepository.findBySsuppliernameIgnoreCaseAndNsitecode(objSupplier.getSsuppliername(),objSupplier.getNsitecode());
 		
 		objSupplier.setResponse(new Response());
+		
+		LSuserMaster objMaster = new LSuserMaster();
+		objMaster.setUsercode(objSupplier.getObjsilentaudit().getLsuserMaster());
 
 		if (objUnit2 == null && objSupplier.getNsuppliercode() == null) {
 			objSupplier.setNsitecode(objSupplier.getNsitecode());
 			objSupplier.setNstatus(1);
 			objSupplier.getResponse().setStatus(true);
 			objSupplier.getResponse().setInformation("IDS_SUCCESS");
+			objSupplier.setCreateby(objMaster);
+			try {
+				objSupplier.setCreatedate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 
 			supplierRepository.save(objSupplier);
 			

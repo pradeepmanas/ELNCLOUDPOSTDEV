@@ -1,17 +1,23 @@
 package com.agaram.eln.primary.model.material;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
 @Table(name = "materialgrade")
@@ -34,6 +40,34 @@ public class MaterialGrade {
 	private String sdescription;
 	
 	private String smaterialgradename;
+	
+	@ManyToOne
+	private LSuserMaster createby;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdate;
+	
+private transient String sDate;
+	
+	public String getsDate() {
+		return sDate;
+	}
+	public void setsDate(String sDate) {
+		this.sDate = sDate;
+	}
+	
+	public LSuserMaster getCreateby() {
+		return createby;
+	}
+	public void setCreateby(LSuserMaster createby) {
+		this.createby = createby;
+	}
+	public Date getCreatedate() {
+		return createdate;
+	}
+	public void setCreatedate(Date createdate) {
+		this.createdate = createdate;
+	}
 	
 	public String getSdescription() {
 		return sdescription;

@@ -80,6 +80,15 @@ public class MaterialInventory {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date expirydate;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createddate;
+	
+	public Date getCreateddate() {
+		return createddate;
+	}
+	public void setCreateddate(Date createddate) {
+		this.createddate = createddate;
+	}
 	public Boolean getIsexpiryneed() {
 		return isexpiryneed;
 	}
@@ -161,6 +170,17 @@ public class MaterialInventory {
 	}
 	
 	@OneToMany
+	@JoinColumn(name="ninventorycode")
+	private List<ResultUsedMaterial> resultusedmaterial;	
+	
+	public List<ResultUsedMaterial> getResultusedmaterial() {
+		return resultusedmaterial;
+	}
+	public void setResultusedmaterial(List<ResultUsedMaterial> resultusedmaterial) {
+		this.resultusedmaterial = resultusedmaterial;
+	}
+
+	@OneToMany
 	@JoinColumn(name="nmaterialinventorycode")
 	private  List<SelectedInventoryMapped> selectedinventorymapped;
 	
@@ -170,7 +190,6 @@ public class MaterialInventory {
 	public void setSelectedinventorymapped(List<SelectedInventoryMapped> selectedinventorymapped) {
 		this.selectedinventorymapped = selectedinventorymapped;
 	}
-	
 	
 	public Integer getNmaterialinventorycode() {
 		return nmaterialinventorycode;

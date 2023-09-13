@@ -62,7 +62,15 @@ public class SampleStorageLocation {
 	
 	@Column(name = "sitekey", nullable = false)
 	private Integer sitekey = -1;
-
+	
+	private transient String sDate;
+	
+	public String getsDate() {
+		return sDate;
+	}
+	public void setsDate(String sDate) {
+		this.sDate = sDate;
+	}
 	
 	public Integer getSamplestoragelocationkey() {
 		return samplestoragelocationkey;

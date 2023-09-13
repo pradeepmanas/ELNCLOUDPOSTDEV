@@ -87,6 +87,15 @@ public interface MaterialRepository  extends JpaRepository<Material, Integer>{
 
 	List<Material> findBySmaterialnameStartingWithIgnoreCaseAndNmaterialcatcodeAndNmaterialtypecodeAndNsitecode(
 			String searchString, Integer integer, Integer integer2, Integer nsiteInteger);
+	List<Material> findByNsitecode(Integer nsiteInteger);
+
+	List<Material> findBySmaterialnameStartingWithIgnoreCaseAndNsitecode(String searchString, Integer nsiteInteger);
+
+	List<Material> findBySmaterialnameStartingWithIgnoreCaseAndNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNsitecode(
+			String searchString, Integer integer, Integer integer2, Integer integer3, Integer nsiteInteger);
+
+	List<Material> findByNmaterialcodeAndNmaterialcatcodeAndNmaterialtypecodeAndNsitecode(Integer integer,
+			Integer integer2, Integer integer3, Integer nsiteInteger);
 
 	
 

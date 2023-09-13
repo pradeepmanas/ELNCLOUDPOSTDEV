@@ -204,12 +204,14 @@ public class TransactionService {
 			throws JsonParseException, JsonMappingException, IOException {
 
 		List<Map<String, Object>> lstMaterialInventoryTrans = new ArrayList<Map<String, Object>>();
-		List<MaterialInventoryTransaction> lstInventoryTransaction = materialInventoryTransactionRepository
-				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(
-						(Integer) inputMap.get("nmaterialinventorycode"));
+		
 		MaterialInventory objInventory = materialInventoryRepository
 				.findByNmaterialinventorycodeAndNtransactionstatusNot((Integer) inputMap.get("nmaterialinventorycode"),
 						55);
+		
+		List<MaterialInventoryTransaction> lstInventoryTransaction = materialInventoryTransactionRepository
+				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(
+						(Integer) inputMap.get("nmaterialinventorycode"));
 
 		Map<String, Object> mapJsonData = new ObjectMapper().readValue(lstInventoryTransaction.get(0).getJsonuidata(),
 				Map.class);
