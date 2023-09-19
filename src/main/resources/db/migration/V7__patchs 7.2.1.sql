@@ -811,3 +811,5 @@ BEGIN
         ON DELETE NO ACTION;
     END IF;
 END $$;
+
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS orderstarted integer ,ADD COLUMN IF NOT EXISTS orderstartedby_usercode integer ,ADD COLUMN IF NOT EXISTS orderstartedon TIMESTAMP;

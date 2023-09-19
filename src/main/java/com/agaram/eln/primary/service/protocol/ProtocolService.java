@@ -3869,7 +3869,7 @@ public class ProtocolService {
 
 			List<LSlogilabprotocolsteps> LSprotocolstepLst = new ArrayList<LSlogilabprotocolsteps>();
 
-			if(!LSprotocolsteplst.isEmpty()) {
+//			if(!LSprotocolsteplst.isEmpty()) {
 				for (LSlogilabprotocolsteps LSprotocolstepObj1 : LSprotocolsteplst) {
 	
 					if (multitenent == 1) {
@@ -3898,7 +3898,7 @@ public class ProtocolService {
 					LSprotocolstepLst.add(LSprotocolstepObj1);
 	
 				}
-			} else {
+//			} else {
 				if (multitenent == 1) {
 					LSlogilabprotocoldetail lslogilabprotocoldetail = LSlogilabprotocoldetailRepository
 							.findByProtocolordercode(ipInt);
@@ -3911,7 +3911,7 @@ public class ProtocolService {
 						e.printStackTrace();
 					}
 				}
-			}
+//			}
 
 			List<LSprotocolorderversion> LSprotocolorderversion = lsprotocolorderversionRepository
 					.findByProtocolordercodeOrderByVersionnoDesc(ipInt);
@@ -7363,4 +7363,32 @@ public class ProtocolService {
 		return imagelist;
 	}
 
+	public Map<String, Object> onStartProtocolOrder(Map<String, Object> body) throws IOException {
+
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+		Response response = new Response();
+		ObjectMapper object = new ObjectMapper();
+		
+		if (body.get("ProtocolOrder") != null) {
+			LSlogilabprotocoldetail lSlogilabprotocoldetail = object.convertValue(body.get("ProtocolOrder"), LSlogilabprotocoldetail.class);
+			LSlogilabprotocoldetail protocolOrder = LSlogilabprotocoldetailRepository.findByProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
+	
+			protocolOrder.setOrderstarted(1);
+			protocolOrder.setOrderstartedby(lsusermasterRepository.findByusercode(object.convertValue(body.get("usercode"), Integer.class)));
+			try {
+				protocolOrder.setOrderstartedon(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			LSlogilabprotocoldetailRepository.save(protocolOrder);
+			Logilabprotocolorders lsprotocol = LSlogilabprotocoldetailRepository.findByProtocolordercodeOrderByProtocolordercodeDesc(protocolOrder.getProtocolordercode());
+			mapObj.put("protocolOrder", lsprotocol);
+			response.setInformation("IDS_MSG_PROTOCOLORDERSTART");
+			response.setStatus(true);
+		}
+		
+		mapObj.put("response", response);
+		return mapObj;
+	}
 }

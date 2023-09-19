@@ -1,5 +1,8 @@
 package com.agaram.eln.primary.service.material;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +12,9 @@ import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class MaterialTypeService {
@@ -48,6 +54,37 @@ public class MaterialTypeService {
 			objMaterialType.setNstatus(1);
 			materialConfigRepository.save(objMaterialType);
 		}
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<Object> createMaterialType(MaterialType objMaterialType) throws JsonParseException, JsonMappingException, IOException {
+		List<MaterialConfig> objLstConfig = materialConfigRepository.findAllByOrderByNmaterialconfigcodeDesc();
+		
+		if(!objLstConfig.isEmpty()) {
+			List<MaterialType> objlstTypes = materialTypeRepository.findAllByOrderByNmaterialtypecodeDesc();
+			if(!objlstTypes.isEmpty()) {
+				ObjectMapper objectMapper = new ObjectMapper();
+				List<Object> dataList = objectMapper.readValue(objMaterialType.getJsonconfigdata(), List.class);
+				
+				objMaterialType.setNmaterialtypecode(objlstTypes.get(0).getNmaterialtypecode() + 1);
+				objMaterialType.setNdefaultstatus(4);
+				objMaterialType.setNstatus(1);
+				materialTypeRepository.save(objMaterialType);
+				
+				MaterialConfig objConfig = new MaterialConfig();
+				objConfig.setNmaterialconfigcode(objLstConfig.get(0).getNmaterialconfigcode()+1);
+				objConfig.setNmaterialtypecode(objMaterialType.getNmaterialtypecode());
+				objConfig.setNformcode(40);
+				objConfig.setNstatus(1);
+				objConfig.setJsondata(dataList);
+				
+				materialConfigRepository.save(objConfig);
+				
+				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
+			}			
+		}
+		
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

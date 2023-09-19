@@ -146,7 +146,7 @@ public class SampleStorageLocationService {
 	public ResponseEntity<Object> getAllActiveSampleStorageLocation(Integer nsiteInteger) {
 
 		List<SampleStorageLocation> sampleStorageLocationList = sampleStorageLocationRepository
-				.findBySitekeyOrderBySamplestoragelocationkeyDesc(nsiteInteger);
+				.findBySamplestoragelocationkeyOrSitekeyOrderBySamplestoragelocationkeyDesc(-1,nsiteInteger);
 
 		Map<String, Object> objMap = new LinkedHashMap<String, Object>();
 
@@ -167,8 +167,11 @@ public class SampleStorageLocationService {
 	
 	public ResponseEntity<Object> getActiveSampleStorageLocation(Integer nsiteInteger) {
 
+//		List<SampleStorageLocation> sampleStorageLocationList = sampleStorageLocationRepository
+//				.findBySitekeyAndStatusOrderBySamplestoragelocationkeyDesc(nsiteInteger,1);
+		
 		List<SampleStorageLocation> sampleStorageLocationList = sampleStorageLocationRepository
-				.findBySitekeyAndStatusOrderBySamplestoragelocationkeyDesc(nsiteInteger,1);
+				.findBySamplestoragelocationkeyOrSitekeyAndStatusOrderBySamplestoragelocationkeyDesc(-1,nsiteInteger,1);
 
 		Map<String, Object> objMap = new LinkedHashMap<String, Object>();
 
@@ -244,7 +247,7 @@ public class SampleStorageLocationService {
 
 		if (sampleStorageVersionList != null && sampleStorageVersionList.size() > 0) {
 			String path = commonfunction.findPath(jsobString,selectedStorageId.get("id").toString());
-			List<SelectedInventoryMapped> lstInventoryMappeds1 = selectedInventoryMappedRepository.findByNmaterialinventorycodeOrderByMappedidDesc(objInventory);
+			List<SelectedInventoryMapped> lstInventoryMappeds1 = selectedInventoryMappedRepository.findByNmaterialinventorycodeOrderByMappedidDesc(objInventory.getNmaterialinventorycode());
 			
 			if(lstInventoryMappeds1.isEmpty()) {
 //				sampleStorageVersionList.get(0).setJsonbresult(jsobString);
@@ -326,7 +329,7 @@ public class SampleStorageLocationService {
 		MaterialInventory objInventory = new MaterialInventory();
 		objInventory.setNmaterialinventorycode(inventoryCode);
 
-		SelectedInventoryMapped objInventoryMapped = selectedInventoryMappedRepository.findByNmaterialinventorycode(objInventory);
+		SelectedInventoryMapped objInventoryMapped = selectedInventoryMappedRepository.findByNmaterialinventorycode(objInventory.getNmaterialinventorycode());
 
 		if (objInventoryMapped != null) {
 

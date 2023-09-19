@@ -10,9 +10,9 @@ import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMappe
 
 public interface SelectedInventoryMappedRepository extends JpaRepository<SelectedInventoryMapped, Integer> {
 
-	SelectedInventoryMapped findByNmaterialinventorycode(MaterialInventory objInventory);
+	SelectedInventoryMapped findByNmaterialinventorycode(Integer objInventory);
 
-	List<SelectedInventoryMapped> findByNmaterialinventorycodeOrderByMappedidDesc(MaterialInventory objInventory);
+	List<SelectedInventoryMapped> findByNmaterialinventorycodeOrderByMappedidDesc(Integer objInventory);
 	
 	List<SelectedInventoryMapped> findByIdOrderByMappedidDesc(String id);
 	
@@ -20,6 +20,6 @@ public interface SelectedInventoryMappedRepository extends JpaRepository<Selecte
 	
 	List<SelectedInventoryMapped> findByIdIn(List<String> id);
 	
-	List<SelectedInventoryMapped> findByIdAndNmaterialinventorycodeNotOrderByMappedidDesc(String id,MaterialInventory objInventory);
+	List<SelectedInventoryMapped> findByIdAndNmaterialinventorycodeNotOrderByMappedidDesc(String id,Integer objInventory);
 
 }

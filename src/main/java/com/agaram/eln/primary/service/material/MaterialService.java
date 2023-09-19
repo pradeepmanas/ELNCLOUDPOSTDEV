@@ -382,8 +382,28 @@ public class MaterialService {
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
 
 		final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
-		final List<Material> lstMaterial = materialRepository.findByNmaterialcatcodeAndNmaterialtypecodeAndNsitecode(
-				(Integer) inputMap.get("nmaterialcatcode"), (Integer) inputMap.get("nmaterialtypecode"), nsiteInteger);
+//		final List<Material> lstMaterial = materialRepository.findByNmaterialcatcodeAndNmaterialtypecodeAndNsitecode(
+//				(Integer) inputMap.get("nmaterialcatcode"), (Integer) inputMap.get("nmaterialtypecode"), nsiteInteger);
+		
+		 List<Material> lstMaterial = new ArrayList<Material>();
+		 
+		 if((Integer) inputMap.get("nmaterialtypecode") == -1) {
+			List<MaterialCategory> objLstCategories= new ArrayList<MaterialCategory>();
+			MaterialCategory objCategory = new MaterialCategory();
+			objCategory.setNmaterialcatcode(-1);
+			objCategory.setSmaterialcatname("ALL");
+			objCategory.setSdescription("ALL");
+			objLstCategories.add(objCategory);
+			
+			objmap.put("MaterialCategoryMain", objLstCategories);
+			
+			objmap.put("SelectedMaterialCategory",objCategory);
+			 
+			lstMaterial = materialRepository.findByNsitecodeOrderByNmaterialcodeDesc(nsiteInteger);
+		 }else {
+			 lstMaterial = materialRepository.findByNmaterialcatcodeAndNmaterialtypecodeAndNsitecodeOrderByNmaterialcodeDesc(
+						(Integer) inputMap.get("nmaterialcatcode"), (Integer) inputMap.get("nmaterialtypecode"), nsiteInteger);
+		 }
 
 		if (lstMaterial != null) {
 
@@ -842,7 +862,7 @@ public class MaterialService {
 		objMaterial.setSmaterialname(jsonObject.getString("Material Name"));
 		objMaterial.setNmaterialtypecode((Integer) jsonObject.get("nmaterialtypecode"));
 		objMaterial.setNstatus(1);
-		objMaterial.setNtransactionstatus((Integer) inputMap.get("ntransactionstatus"));
+		objMaterial.setNtransactionstatus(inputMap.get("ntransactionstatus") == null ? 4 : (Integer) inputMap.get("ntransactionstatus"));
 		objMaterial.setJsondata(strJsonObj);
 		objMaterial.setJsonuidata(strJsonUiData);
 		objMaterial.setNsitecode(nsiteInteger);

@@ -57,13 +57,16 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	private boolean canuserprocess;
 	private LSsamplemaster lssamplemaster;
 	private Integer ordercancell;
+	private Integer orderstarted;
+	private LSuserMaster orderstartedby;
+	private Date orderstartedon;
 
 	public Logilabprotocolorders(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
 			LSprotocolworkflow lSprotocolworkflow, LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,
 			String keyword, Long directorycode, Integer createby, LSuserMaster assignedto,
 			Lsrepositoriesdata lsrepositoriesdata, Lsrepositories lsrepositories, LSworkflow lsworkflow,Material material,MaterialInventory materialinventory,
-			Integer approved, Integer rejected, Integer ordercancell, Integer viewoption) {
+			Integer approved, Integer rejected, Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby, Date orderstartedon) {
 
 		this.protocolordercode = protocolordercode;
 		this.Testcode = Testcode;
@@ -93,6 +96,9 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.rejected = rejected;
 		this.ordercancell = ordercancell;
 		this.viewoption = viewoption;
+		this.orderstarted = orderstarted != null && orderstarted == 1 ? orderstarted : 0;
+		this.orderstartedby = orderstartedby != null ? orderstartedby : null;
+		this.orderstartedon = orderstartedon != null ? orderstartedon : null;
 	}
 
 	public Integer getViewoption() {
@@ -356,6 +362,30 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 
 	public void setMaterialinventoryname(String materialinventoryname) {
 		this.materialinventoryname = materialinventoryname;
+	}
+
+	public Integer getOrderstarted() {
+		return orderstarted;
+	}
+
+	public void setOrderstarted(Integer orderstarted) {
+		this.orderstarted = orderstarted;
+	}
+
+	public LSuserMaster getOrderstartedby() {
+		return orderstartedby;
+	}
+
+	public void setOrderstartedby(LSuserMaster orderstartedby) {
+		this.orderstartedby = orderstartedby;
+	}
+
+	public Date getOrderstartedon() {
+		return orderstartedon;
+	}
+
+	public void setOrderstartedon(Date orderstartedon) {
+		this.orderstartedon = orderstartedon;
 	}
 
 	

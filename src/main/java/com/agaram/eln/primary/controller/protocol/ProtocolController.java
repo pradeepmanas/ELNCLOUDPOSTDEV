@@ -1123,4 +1123,10 @@ public class ProtocolController {
 		return ProtocolMasterService.insertlinkfiles(obj);
 	}
 
+	@PostMapping("/onStartProtocolOrder")
+	public Map<String, Object> onStartProtocolOrder(@RequestBody Map<String, Object> body)throws Exception
+	{
+		return ProtocolMasterService.onStartProtocolOrder(body);
+	}
+	
 }

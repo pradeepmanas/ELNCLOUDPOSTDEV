@@ -14,4 +14,6 @@ public interface MaterialConfigRepository extends JpaRepository<MaterialConfig, 
 	public MaterialConfig findByNformcodeAndNmaterialtypecodeAndNstatus(int i, int j, int k);
 	public List<MaterialConfig> findByNformcodeAndNmaterialtypecodeAndNstatusOrderByNmaterialconfigcode(int i,
 			int ntypecode, int j);
+//	public List<MaterialConfig> findByNstatusOrderByNmaterialconfigcodeDesc(int i);
+	public List<MaterialConfig> findAllByOrderByNmaterialconfigcodeDesc();
 }

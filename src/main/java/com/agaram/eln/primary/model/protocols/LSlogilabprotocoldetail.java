@@ -167,8 +167,41 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@ManyToOne
 	private LSworkflow lsworkflow;
 	
-	
 	private Integer ordercancell;
+	
+	private Integer orderstarted=0;
+
+	public Integer getOrderstarted() {
+		return orderstarted;
+	}
+
+	public void setOrderstarted(Integer orderstarted) {
+		this.orderstarted = orderstarted;
+	}
+
+	@ManyToOne
+	LSuserMaster orderstartedby;
+	
+	public LSuserMaster getOrderstartedby() {
+		return orderstartedby;
+	}
+
+	public void setOrderstartedby(LSuserMaster orderstartedby) {
+		this.orderstartedby = orderstartedby;
+	}
+
+	@Column(name = "orderstartedon")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date orderstartedon;
+	
+	public Date getOrderstartedon() {
+		return orderstartedon;
+	}
+
+	public void setOrderstartedon(Date orderstartedon) {
+		this.orderstartedon = orderstartedon;
+	}
+
 	@Transient
 	LSuserMaster objLoggeduser;
 	

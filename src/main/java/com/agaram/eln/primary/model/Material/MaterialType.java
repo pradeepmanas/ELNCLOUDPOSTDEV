@@ -11,11 +11,10 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
+import org.json.JSONObject;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
-
-import org.json.JSONObject;
 
 @Entity
 @Table(name = "materialtype")
@@ -52,6 +51,20 @@ public class MaterialType implements Serializable {
 	
 	private transient String smaterialtypename;
 	private transient String sdescription;
+	private  transient String jsonconfigdata;
+	
+	public String getDisplaystatus() {
+		return displaystatus;
+	}
+	public void setDisplaystatus(String displaystatus) {
+		this.displaystatus = displaystatus;
+	}
+	public String getJsonconfigdata() {
+		return jsonconfigdata;
+	}
+	public void setJsonconfigdata(String jsonconfigdata) {
+		this.jsonconfigdata = jsonconfigdata;
+	}
 	public Integer getNmaterialtypecode() {
 		return nmaterialtypecode;
 	}

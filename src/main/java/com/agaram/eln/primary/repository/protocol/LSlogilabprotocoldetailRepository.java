@@ -123,6 +123,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	LSlogilabprotocoldetail findByProtocolordercode(Long protocolordercode);
 
+	Logilabprotocolorders findByProtocolordercodeOrderByProtocolordercodeDesc(Long protocolordercode);
 
 	int countByProtocoltypeAndSitecodeAndOrderflagAndLsuserMasterAndCreatedtimestampBetween(Integer protocoltype,
 			Integer sitecode, String string, LSuserMaster lsuserMaster, Date fromdate, Date todate);

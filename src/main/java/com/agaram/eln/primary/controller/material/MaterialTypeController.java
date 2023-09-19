@@ -30,6 +30,11 @@ public class MaterialTypeController {
 		return (ResponseEntity<Object>) objMaterialTypeService.getMaterialTypeField(objMaterialType);
 	}
 	
+	@RequestMapping(value = "/createMaterialType", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> createMaterialType(@RequestBody MaterialType objMaterialType) throws Exception {		
+		return (ResponseEntity<Object>) objMaterialTypeService.createMaterialType(objMaterialType);
+	}
+	
 	@RequestMapping(value = "/updateMaterialTypeField", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> updateMaterialTypeField(@RequestBody MaterialConfig objMaterialType) throws Exception {		
 		return (ResponseEntity<Object>) objMaterialTypeService.updateMaterialTypeField(objMaterialType);

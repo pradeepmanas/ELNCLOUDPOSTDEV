@@ -123,4 +123,10 @@ public class MaterialInventoryController {
 
 		return materialInventoryService.getAttachments(inputMap);
 	}
+	
+	@RequestMapping(value = "/getMaterialInventorytransDetails", method = RequestMethod.POST)
+	public ResponseEntity<Object> getMaterialInventorytransDetails(@RequestBody Map<String, Object> inputMap)
+			throws Exception {
+		return materialInventoryService.getMaterialInventorytransDetails(inputMap);
+	}
 }

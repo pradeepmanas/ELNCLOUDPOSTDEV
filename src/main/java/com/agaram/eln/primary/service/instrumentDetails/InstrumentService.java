@@ -6748,11 +6748,10 @@ public class InstrumentService {
 		    sample = new LSsamplemaster();
 		    sample.setSamplecode(item);
 		    lstsample.add(sample);
-		    sample = null; // Set sample to null after adding it to the list
+		    sample = null; 
 		}
 		}
-//		List<LSsamplemaster> lstsample = lssamplemasterrepository
-//				.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
+		
 
 		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
 		Date fromdate = objorder.getFromdate();
