@@ -135,8 +135,8 @@ public class MaterialInventoryService {
 			objmap.put("nmaterialcatcode", lstMaterialCategory.get(0).getNmaterialcatcode());
 
 			List<Map<String, Object>> lstMatObject = new ArrayList<Map<String, Object>>();
-			List<Material> lstMaterial = materialRepository
-					.findByNmaterialcatcodeAndNsitecodeOrderByNmaterialcodeDesc(lstMaterialCategory.get(0).getNmaterialcatcode(),nsiteInteger);
+			List<Material> lstMaterial = materialRepository.findByNmaterialcatcodeAndNsitecodeOrderByNmaterialcodeDesc(
+					lstMaterialCategory.get(0).getNmaterialcatcode(), nsiteInteger);
 
 			lstMaterial.stream().peek(f -> {
 
@@ -206,7 +206,7 @@ public class MaterialInventoryService {
 
 			objmap.put("SelectedMaterialCategory", objCategory);
 			objmap.put("SelectedMaterialCrumb", setObj);
-			objmap.put("nsitecode",nsiteInteger);
+			objmap.put("nsitecode", nsiteInteger);
 
 			objmap.put("DesignMappedFeildsQuantityTransaction", getTemplateDesignForMaterial(9, 138));
 			objmap.putAll((Map<String, Object>) getMaterialInventoryByAll(objmap).getBody());
@@ -215,59 +215,59 @@ public class MaterialInventoryService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> returnDataAsRequested(MaterialInventory f)
-			throws JsonParseException, JsonMappingException, IOException {
+	public Map<String, Object> returnDataAsRequested(MaterialInventory f) throws JsonParseException, JsonMappingException, IOException {
+		
 		Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
-		Double totalQuantity = Double.parseDouble(commonfunction
-				.getInventoryValuesFromJsonString(f.getJsondata(), "Received Quantity").get("rtnObj").toString());
+		Double totalQuantity = Double.parseDouble(commonfunction.getInventoryValuesFromJsonString(f.getJsondata(), "Received Quantity").get("rtnObj").toString());
+		
 		resObj.put("selectedSampleStorage",
 				f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
 						? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-								.getSamplestoragelocationname()
-						: "");
+								.getSamplestoragelocationname() : "");
 		resObj.put("selectedSampleStoragePath",
 				f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
 						? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
 								.getSamplestoragelocationname() + "->"
-								+ f.getSelectedinventorymapped().get(0).getStoragepath()
-						: "");
-		
-		List<Double> nqtyreceivedlst = (f.getMaterialInventoryTransactions() != null && !f.getMaterialInventoryTransactions().isEmpty())
-			    ? f.getMaterialInventoryTransactions().stream()
-			        .map(MaterialInventoryTransaction::getNqtyreceived)
-			        .collect(Collectors.toList())
-			    : new ArrayList<>();
+								+ f.getSelectedinventorymapped().get(0).getStoragepath() : "");
 
-		List<Double> nqtyissuedLst = (f.getMaterialInventoryTransactions() != null && !f.getMaterialInventoryTransactions().isEmpty())
-		    ? f.getMaterialInventoryTransactions().stream()
-		        .map(MaterialInventoryTransaction::getNqtyissued)
-		        .collect(Collectors.toList())
-		    : new ArrayList<>();
-		
+		List<Double> nqtyreceivedlst = (f.getMaterialInventoryTransactions() != null
+				&& !f.getMaterialInventoryTransactions().isEmpty())
+						? f.getMaterialInventoryTransactions().stream()
+								.map(MaterialInventoryTransaction::getNqtyreceived).collect(Collectors.toList())
+						: new ArrayList<>();
+
+		List<Double> nqtyissuedLst = (f.getMaterialInventoryTransactions() != null
+				&& !f.getMaterialInventoryTransactions().isEmpty())
+						? f.getMaterialInventoryTransactions().stream()
+								.map(MaterialInventoryTransaction::getNqtyissued).collect(Collectors.toList())
+						: new ArrayList<>();
+
 		double nqtyreceived = nqtyreceivedlst.stream().mapToDouble(Double::doubleValue).sum();
 		double nqtyissued = nqtyissuedLst.stream().mapToDouble(Double::doubleValue).sum();
 		double navailableqty = 0.0;
-		
+
 		List<ResultUsedMaterial> lstUsedMaterials = f.getResultusedmaterial();
-		
+
 		Double availabledQuantity = nqtyreceived - nqtyissued;
 
-		if(lstUsedMaterials != null && !lstUsedMaterials.isEmpty()) {
-			Collections.sort(lstUsedMaterials, (a, b) -> b.getNresultusedmaterialcode().compareTo(a.getNresultusedmaterialcode()));
+		if (lstUsedMaterials != null && !lstUsedMaterials.isEmpty()) {
+			Collections.sort(lstUsedMaterials,(a, b) -> b.getNresultusedmaterialcode().compareTo(a.getNresultusedmaterialcode()));
 			navailableqty = lstUsedMaterials.get(0).getNqtyleft();
-		}else {
+		} else {
 			if (totalQuantity == availabledQuantity) {
-//				resObj.put("availableQuantity", availabledQuantity);
 				navailableqty = availabledQuantity;
-			} 
-//			else {
-//				resObj.put("availableQuantity", totalQuantity - availabledQuantity);
-//			}
+			} else {
+//				if(nqtyissued != 0.0) {
+//					navailableqty = totalQuantity - nqtyissued;
+//				}				
+			}
 		}
-		
+
 		resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-		resObj.put("displaystatus",getStatusLabel(f.getNtransactionstatus(),navailableqty,f.getNqtynotification() == null ? 0.0 :f.getNqtynotification(),
-				lstUsedMaterials.isEmpty() ? true : false));
+		resObj.put("displaystatus",
+				getStatusLabel(f.getNtransactionstatus(), navailableqty,
+						f.getNqtynotification() == null ? 0.0 : f.getNqtynotification(),
+						lstUsedMaterials.isEmpty() ? true : false));
 		resObj.put("availableQuantity", navailableqty);
 		resObj.put("issuedQuantity", nqtyissued);
 		resObj.put("receivedQuantity", totalQuantity);
@@ -280,9 +280,12 @@ public class MaterialInventoryService {
 		return resObj;
 	}
 
-	private String getStatusLabel(int ntransactionstatus, double navailableqty, double nqtynotification,boolean isused) {
+	private String getStatusLabel(int ntransactionstatus, double navailableqty, double nqtynotification,
+			boolean isused) {
 		if (!isused && nqtynotification != 0.0 && nqtynotification >= navailableqty && ntransactionstatus == 28) {
 			return "Low-stock";
+		} else if (!isused && nqtynotification != 0.0 && navailableqty <= 0.0 && ntransactionstatus == 28) {
+			return "Out-of-stock";
 		} else {
 			switch (ntransactionstatus) {
 			case 28:
@@ -303,7 +306,8 @@ public class MaterialInventoryService {
 		Map<String, Object> objmap = new HashMap<String, Object>();
 		List<Map<String, Object>> lstMaterialInventory = new ArrayList<Map<String, Object>>();
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-		List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository.findByNstatusAndNsitecode(1,nsiteInteger);
+		List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository.findByNstatusAndNsitecode(1,
+				nsiteInteger);
 
 		objLstMaterialInventory.stream().peek(f -> {
 
@@ -938,8 +942,9 @@ public class MaterialInventoryService {
 					objLstInvKey.add(f.getNmaterialinventorycode());
 				}).collect(Collectors.toList());
 
-				List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository.findByNmaterialinventorycodeIn(objLstInvKey);
-				
+				List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository
+						.findByNmaterialinventorycodeIn(objLstInvKey);
+
 				objLstMaterialInventory.stream().peek(f -> {
 
 					try {
