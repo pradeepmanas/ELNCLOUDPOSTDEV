@@ -2792,25 +2792,41 @@ public class MaterialInventoryService {
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInventorytransDetails(Map<String, Object> inputMap) {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-		List<Map<String, Object>> lstMaterialInventoryTrans = new ArrayList<Map<String, Object>>();
-		   List<Integer> nmaterialinventorycode = (List<Integer>) inputMap.get("nmaterialinventorycode");
-		List<MaterialInventoryTransaction> lstInventoryTransaction = materialInventoryTransactionRepository
-					.findByNmaterialinventorycodeInOrderByNmaterialinventtranscodeDesc(nmaterialinventorycode);
-			lstInventoryTransaction.stream().peek(f -> {
-				try {
-					Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
-					Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(f.getJsonuidata(),
-							"namountleft");
-					resObj.put("Available Quantity", objContent.get("rtnObj"));
-					objContent = commonfunction.getInventoryValuesFromJsonString(f.getJsonuidata(), "nqtyissued");
-					resObj.put("Issued Quantity", objContent.get("rtnObj"));
-					resObj.put("Received Quantity", f.getNqtyreceived());
-					resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-					resObj.put("nmaterialinventtranscode", f.getNmaterialinventtranscode());
-					resObj.put("issuedby", f.getIssuedbyusercode() != null ? f.getIssuedbyusercode().getUsername() : "-");
-					resObj.put("createddate", f.getCreateddate());
+			List<Map<String, Object>> lstMaterialInventoryTrans = new ArrayList<Map<String, Object>>();
+			   List<Integer> nmaterialinventorycode = (List<Integer>) inputMap.get("nmaterialinventorycode");
+			List<MaterialInventoryTransaction> lstInventoryTransaction = materialInventoryTransactionRepository
+						.findByNmaterialinventorycodeInOrderByNmaterialinventtranscodeDesc(nmaterialinventorycode);
+				lstInventoryTransaction.stream().peek(f -> {
+					try {
+						Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
+						Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(f.getJsonuidata(),
+								"namountleft");
+						resObj.put("Available Quantity", objContent.get("rtnObj"));
+						objContent = commonfunction.getInventoryValuesFromJsonString(f.getJsonuidata(), "nqtyissued");
+						resObj.put("Issued Quantity", objContent.get("rtnObj"));
+						resObj.put("Received Quantity", f.getNqtyreceived());
+						resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
+						resObj.put("nmaterialinventtranscode", f.getNmaterialinventtranscode());
+						resObj.put("issuedby", f.getIssuedbyusercode() != null ? f.getIssuedbyusercode().getUsername() : "-");
+						resObj.put("createddate", f.getCreateddate());
 
-					lstMaterialInventoryTrans.add(resObj);
+						lstMaterialInventoryTrans.add(resObj);
+
+					} catch (IOException e) {
+
+						e.printStackTrace();
+					}
+
+				}).collect(Collectors.toList());
+				objmap.put("MaterialInventoryTrans", lstMaterialInventoryTrans);
+			List<Map<String, Object>> lstMaterialInventory = new ArrayList<Map<String, Object>>();
+			List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository
+					.findByNmaterialinventorycodeIn(nmaterialinventorycode);
+
+			objLstMaterialInventory.stream().peek(f -> {
+
+				try {
+					lstMaterialInventory.add(returnDataAsRequested(f));
 
 				} catch (IOException e) {
 
@@ -2818,7 +2834,10 @@ public class MaterialInventoryService {
 				}
 
 			}).collect(Collectors.toList());
-			objmap.put("MaterialInventoryTrans", lstMaterialInventoryTrans);
+
+			objmap.put("MaterialInventory", lstMaterialInventory);
+		
+		
 			return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 }

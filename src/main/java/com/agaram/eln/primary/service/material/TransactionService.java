@@ -1113,4 +1113,58 @@ public class TransactionService {
 			}
 		}).collect(Collectors.toList());
 	}
+	
+	
+    @SuppressWarnings("unchecked")
+	public ResponseEntity<Object> createMaterialResultUsedForList(Map<String, Object> inputMap) {
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    final LScfttransaction cft = objectMapper.convertValue(inputMap.get("silentAudit"), LScfttransaction.class);
+	    final List<Map<String, Object>> objResultMap = (List<Map<String, Object>>) inputMap.get("resultObject");
+	    objResultMap.forEach(item -> {
+	        int nmaterialinventorycodeValue = (Integer) item.get("nmaterialinventorycode");
+	        MaterialInventory objInventory = materialInventoryRepository.findByNmaterialinventorycode(nmaterialinventorycodeValue);
+
+	        LStestmasterlocal objTest = new LStestmasterlocal();
+	        objTest.setTestcode((Integer) item.get("testcode"));
+
+	        double getIssuedQty = Double.parseDouble(item.get("issuedQuantity").toString());
+	        double getUsedQty = Double.parseDouble(item.get("usedQuantity").toString());
+	        double getQtyLeft = getIssuedQty - getUsedQty;
+
+	        LSuserMaster objUser = new LSuserMaster();
+	        objUser.setUsercode(cft.getLsuserMaster());
+
+	        ResultUsedMaterial resultUsedMaterial = new ResultUsedMaterial();
+	        if (objTest.getTestcode() != -1) {
+	            resultUsedMaterial.setTestcode(objTest);
+	        }
+
+	        resultUsedMaterial.setCreatedbyusercode(objUser);
+	        resultUsedMaterial.setNqtyissued(getIssuedQty);
+	        resultUsedMaterial.setNqtyleft(getQtyLeft);
+	        resultUsedMaterial.setNqtyused(getUsedQty);
+	        resultUsedMaterial.setBatchid(item.get("batchid").toString());
+	        resultUsedMaterial.setNmaterialcode(objInventory.getNmaterialcode());
+	        resultUsedMaterial.setNmaterialcategorycode(objInventory.getNmaterialcatcode());
+	        resultUsedMaterial.setNinventorycode(objInventory.getNmaterialinventorycode());
+	        resultUsedMaterial.setNmaterialtypecode(objInventory.getNmaterialtypecode());
+	        resultUsedMaterial.setOrdercode(Long.valueOf(item.get("ordercode").toString()));
+	        resultUsedMaterial.setTransactionscreen(Integer.parseInt(item.get("transactionscreen").toString()));
+	        resultUsedMaterial.setTemplatecode(Integer.parseInt(item.get("templatecode").toString()));
+	        resultUsedMaterial.setJsondata(cft.getComments());
+	        resultUsedMaterial.setNstatus(1);
+
+	        try {
+	            resultUsedMaterial.setCreateddate(commonfunction.getCurrentUtcTime());
+	        } catch (ParseException e) {
+	            // Handle the exception appropriately, e.g., log it or return an error response
+	            e.printStackTrace();
+	        }
+
+	        resultUsedMaterialRepository.save(resultUsedMaterial);
+	    });
+
+	    return new ResponseEntity<>("true", HttpStatus.OK);
+	}
+
 }

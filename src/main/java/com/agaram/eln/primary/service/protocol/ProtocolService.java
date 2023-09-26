@@ -162,6 +162,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingReposit
 import com.agaram.eln.primary.service.basemaster.BaseMasterService;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
+import com.agaram.eln.primary.service.material.TransactionService;
 import com.google.gson.Gson;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.OperationContext;
@@ -369,6 +370,9 @@ public class ProtocolService {
 	
 	@Autowired
 	private LSprotocolfolderfilesRepository lsprotocolfolderfilesRepository;
+	
+	@Autowired
+	TransactionService transactionService;
 
 //	@Autowired
 //	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
@@ -5097,6 +5101,7 @@ public class ProtocolService {
 		return mapObj;
 	}
 	
+	
 	public Map<String, Object> protocolOrderSave(Map<String, Object> body) throws IOException {
 
 		Map<String, Object> mapObj = new HashMap<String, Object>();
@@ -5138,7 +5143,11 @@ public class ProtocolService {
 				}
 			}
 		}
-		
+		if((boolean) body.get("ismaterialreduce")) {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> mapObj11=(Map<String, Object>) body.get("materialinventory");
+			transactionService.createMaterialResultUsedForList(mapObj11);
+		}
 		mapObj.put("protocolData", body.get("protocolData"));
 		mapObj.put("response", response);
 		return mapObj;

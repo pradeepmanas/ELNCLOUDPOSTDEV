@@ -34,10 +34,9 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private Integer viewoption;
 	private LSuserMaster createdby;
 	private Integer testcode;
-
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,LSuserMaster assignedto,
-			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster,Integer testcode) {
+			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster ,Integer testcode) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -74,15 +73,13 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	public void setViewoption(Integer viewoption) {
 		this.viewoption = viewoption;
 	}
-	
-	public Integer getTestcode() {
+   public Integer getTestcode() {
 		return testcode;
 	}
 
 	public void setTestcode(Integer testcode) {
 		this.testcode = testcode;
 	}
-	
 	public Integer getOrdercancell() {
 		return ordercancell;
 	}
@@ -110,19 +107,24 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	}
 
 	public String getBatchid() {
-		String Batchid = "ELN" + this.batchcode;
+		
+		if(this.batchid != null) {
+			return this.batchid;
+			}else {
+				String Batchid = "ELN" + this.batchcode;
 
-		if (this.filetype == 3) {
-			Batchid = "RESEARCH" + this.batchcode;
-		} else if (this.filetype == 4) {
-			Batchid = "EXCEL" + this.batchcode;
-		} else if (this.filetype == 5) {
-			Batchid = "VALIDATE" + this.batchcode;
-		} else if (this.filetype == 0) {
-			Batchid = batchid;
-		}
-
-		return Batchid;
+				if (this.filetype == 3) {
+					Batchid = "RESEARCH" + this.batchcode;
+				} else if (this.filetype == 4) {
+					Batchid = "EXCEL" + this.batchcode;
+				} else if (this.filetype == 5) {
+					Batchid = "VALIDATE" + this.batchcode;
+				} else if (this.filetype == 0) {
+					Batchid = batchid;
+				}
+				return Batchid;	
+			}
+		
 	}
 
 	public void setBatchid(String batchid) {
@@ -290,4 +292,6 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	public void setAssignedto(LSuserMaster assignedto) {
 		this.assignedto = assignedto;
 	}
+	
+	
 }
