@@ -144,4 +144,5 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 
 
 
+
 }

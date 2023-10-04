@@ -2024,15 +2024,26 @@ public class LoginService {
 		List<LSuserMaster> objExitinguser = new ArrayList<LSuserMaster>();
 		String username = objuser.getsUsername();
 		String userPassword = objuser.getsPassword();
-//		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
-//		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndUserretirestatusNot(username,
-//				objsite, 1);
+//		if (objuser.getLoggedfrom() == 1) {
+//			LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
+//			objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndUserretirestatusNot(username,
+//					objsite, 1);	
+//		}else {
+//			LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
+//			List<LSMultisites> obj = LSMultisitesRepositery.findByLssiteMaster(objsite);
+//			List<Integer> usercode = obj.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
+//			objExitinguser = lSuserMasterRepository
+//					.findByUsernameIgnoreCaseAndUsercodeInAndLoginfromAndUserretirestatusNot(username, usercode, "0", 1);
+//			
+//		}
 		
 		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
-		List<LSMultisites> obj = LSMultisitesRepositery.findByLssiteMaster(objsite);
+		List<LSMultisites> obj = LSMultisitesRepositery.findByLssiteMasterAndUsercode(objsite,objuser.getUserID());
 		List<Integer> usercode = obj.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
 		objExitinguser = lSuserMasterRepository
-				.findByUsernameIgnoreCaseAndUsercodeInAndLoginfromAndUserretirestatusNot(username, usercode, "0", 1);
+				.findByUsercodeInAndUserretirestatusNot(usercode, 1);
+		
+		
 		
 
 		if (!objExitinguser.isEmpty()) {

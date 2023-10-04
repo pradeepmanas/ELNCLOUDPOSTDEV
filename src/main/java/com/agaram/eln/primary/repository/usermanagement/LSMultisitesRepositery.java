@@ -20,6 +20,8 @@ public interface LSMultisitesRepositery extends JpaRepository<LSMultisites, Inte
 
 	List<LSMultisites> findByusercodeIn(List<Integer> usercode);
 
+	List<LSMultisites> findByLssiteMasterAndUsercode(LSSiteMaster objsite, Integer userID);
+
 
 
 }
