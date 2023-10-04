@@ -5,6 +5,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -77,13 +79,21 @@ public class MaterialService {
 				.findByNmaterialtypecodeAndNsitecodeAndNstatusOrderByNmaterialcatcode(nmaterialtypecode, nsitecode, 1);
 		
 		if(nmaterialtypecode == -1) {
-			List<MaterialCategory> objLstCategories= new ArrayList<MaterialCategory>();
+			
+			List<MaterialCategory> objLstCategories = materialCategoryRepository
+					.findByNsitecodeAndNstatusOrderByNmaterialcatcode(nsitecode, 1);
 			
 			MaterialCategory objCategory = new MaterialCategory();
 			objCategory.setNmaterialcatcode(-1);
 			objCategory.setSmaterialcatname("ALL");
 			objCategory.setSdescription("ALL");
 			objLstCategories.add(objCategory);
+			
+			// Define a custom comparator to sort by nmaterialcatcode
+			Comparator<MaterialCategory> comparator = Comparator.comparingInt(MaterialCategory::getNmaterialcatcode);
+
+			// Sort the list using the custom comparator
+			Collections.sort(objLstCategories, comparator);
 			
 			objmap.put("MaterialCategoryMain", objLstCategories);
 			return new ResponseEntity<>(objmap, HttpStatus.OK);
@@ -136,7 +146,20 @@ public class MaterialService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 	
-
+	public ResponseEntity<Object> getMaterialTypeDesign(Integer ntypecode) throws JsonParseException, JsonMappingException, IOException {
+		
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		List<MaterialConfig> lstMaterialConfig = materialConfigRepository.findByNmaterialtypecodeAndNformcode(ntypecode, 40);
+		objmap.put("selectedTemplate", lstMaterialConfig);
+		objmap.put("DesignMappedFeilds", getTemplateDesignForMaterial(
+				ntypecode == Enumeration.TransactionStatus.STANDARDTYPE.gettransactionstatus() ? 1
+								: ntypecode == Enumeration.TransactionStatus.VOLUMETRICTYPE.gettransactionstatus() ? 2 : 3,
+				40));
+		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInitiallyByAll(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
 		final ObjectMapper objmapper = new ObjectMapper();
@@ -456,19 +479,34 @@ public class MaterialService {
 				List<MaterialCategory> objLstMaterialCategory = new ArrayList<>();
 
 				if (inputMap.containsKey("nmaterialcatcode")) {
-					MaterialCategory objMaterialCategory = materialCategoryRepository
-							.findByNmaterialcatcodeAndNstatus((Integer) inputMap.get("nmaterialcatcode"), 1);
+					MaterialCategory objMaterialCategory = materialCategoryRepository.findByNmaterialcatcodeAndNstatus((Integer) inputMap.get("nmaterialcatcode"), 1);
 
 					objLstMaterialCategory.add(objMaterialCategory);
+					
+					if((Integer) inputMap.get("nmaterialcatcode") == -1) {
+						
+						MaterialCategory objCategory = new MaterialCategory();
+						objCategory.setNmaterialcatcode(-1);
+						objCategory.setSmaterialcatname("ALL");
+						objCategory.setSdescription("ALL");
+						
+						objLstMaterialCategory.add(objCategory);
+					}
 				} else {
-					objLstMaterialCategory = materialCategoryRepository
-							.findByNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
+					objLstMaterialCategory = materialCategoryRepository.findByNmaterialtypecode((Integer) inputMap.get("nmaterialtypecode"));
 				}
 				List<MaterialCategory> lstMaterialCategory = objLstMaterialCategory;
 
 				if (!lstMaterialCategory.isEmpty()) {
 					if (inputMap.containsKey("nmaterialcatcode")) {
 						objmap.put("SelectedMaterialCategory", lstMaterialCategory.get(0));
+						if((Integer) inputMap.get("nmaterialcatcode") == -1) {
+							MaterialCategory objCategory = new MaterialCategory();
+							objCategory.setNmaterialcatcode(-1);
+							objCategory.setSmaterialcatname("ALL");
+							objCategory.setSdescription("ALL");
+							objmap.put("SelectedMaterialCategory",objCategory);
+						}
 					} else {
 						objmap.put("SelectedMaterialCategory", lstMaterialCategory.get(0));
 					}

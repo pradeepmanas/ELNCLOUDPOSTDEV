@@ -227,8 +227,8 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
                 "/Instrument/uploadsheetimages",
                 "/Instrument/downloadsheetimages",
                 "/Instrument/downloadsheetimagessql",
-                "/evaluateParser",
-        		"/findByStatus",
+//                "/evaluateParser",
+//        		"/findByStatus",
         		"/getMethod",
         		"/getParserData",
         		"/getMethodDelimiter",
@@ -237,13 +237,12 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
         		"/getSubParserMethod",
         		"/getParserFieldTechniqueListByMethodKey",
         		"/getmethodversion",
-        		"/getParserMethod",
-        		"/MethodExportController/exportMethods",
-        		"/MethodImportController/importMethods",
-        		"/downloadFile/{fileName}",
-        		"/getFileData",
+//        		"/MethodExportController/exportMethods",
+//        		"/MethodImportController/importMethods",
+//        		"/downloadFile/{fileName}",
+ //       		"/getFileData",
         		"/Login/LoadSitewithoutgzip"
-              
+                                                                                                                                      
             );
         byte[] compressedBytes = new byte[0];
         if (uncompressedUrls.contains(requestUrl)) {

@@ -2024,9 +2024,16 @@ public class LoginService {
 		List<LSuserMaster> objExitinguser = new ArrayList<LSuserMaster>();
 		String username = objuser.getsUsername();
 		String userPassword = objuser.getsPassword();
+//		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
+//		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndUserretirestatusNot(username,
+//				objsite, 1);
+		
 		LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
-		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndUserretirestatusNot(username,
-				objsite, 1);
+		List<LSMultisites> obj = LSMultisitesRepositery.findByLssiteMaster(objsite);
+		List<Integer> usercode = obj.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
+		objExitinguser = lSuserMasterRepository
+				.findByUsernameIgnoreCaseAndUsercodeInAndLoginfromAndUserretirestatusNot(username, usercode, "0", 1);
+		
 
 		if (!objExitinguser.isEmpty()) {
 
@@ -2077,7 +2084,7 @@ public class LoginService {
 		}
 
 //	license encryption code 
-//		String license = "3";
+//		String license = "400";
 //		String licensekey = AESEncryption.encrypt(license);
 //		System.out.println(" license update key: " + licensekey);
 		return obj;

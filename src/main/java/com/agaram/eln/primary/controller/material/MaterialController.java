@@ -32,6 +32,21 @@ public class MaterialController {
 		
 		return (ResponseEntity<Object>) objMaterialService.getMaterialType(nsiteInteger);
 	}
+	
+	@RequestMapping(value = "/getMaterialTypeDesign", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getMaterialTypeDesign(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		Integer ntypecode = (Integer) inputMap.get("ntypecode");
+		
+		return (ResponseEntity<Object>) objMaterialService.getMaterialTypeDesign(ntypecode);
+	}	
+	
+	@RequestMapping(value = "/getMaterialcombo", method = RequestMethod.POST)
+	public ResponseEntity<Object> getMaterialcombo(@RequestBody Map<String, Object> inputMap) throws Exception {
+		Integer nmaterialtypecode = (Integer) inputMap.get("nmaterialtypecode");
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		return (ResponseEntity<Object>) objMaterialService.getMaterialcombo(nmaterialtypecode,nsiteInteger);
+	}
 
 	@RequestMapping(value = "/getMaterialByTypeCode", method = RequestMethod.POST)
 	public ResponseEntity<Object> getMaterialByTypeCode(@RequestBody Map<String, Object> inputMap) throws Exception {
@@ -49,13 +64,6 @@ public class MaterialController {
 	public ResponseEntity<Object> getMaterialByTypeCodeByDate(@RequestBody Map<String, Object> inputMap) throws Exception {
 
 		return objMaterialService.getMaterialByTypeCodeByDate(inputMap);
-	}
-
-	@RequestMapping(value = "/getMaterialcombo", method = RequestMethod.POST)
-	public ResponseEntity<Object> getMaterialcombo(@RequestBody Map<String, Object> inputMap) throws Exception {
-		Integer nmaterialtypecode = (Integer) inputMap.get("nmaterialtypecode");
-		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-		return (ResponseEntity<Object>) objMaterialService.getMaterialcombo(nmaterialtypecode,nsiteInteger);
 	}
 
 	@RequestMapping(value = "/createMaterial", method = RequestMethod.POST)

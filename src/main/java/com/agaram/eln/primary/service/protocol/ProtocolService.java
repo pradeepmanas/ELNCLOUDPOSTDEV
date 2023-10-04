@@ -5117,11 +5117,11 @@ public class ProtocolService {
 	
 			if ((protocolOrder.getApproved() == null || protocolOrder.getApproved() != 1 )) {
 
-				LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(sitecode);
-				LSworkflow lsworkflow = lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
+//				LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(sitecode);
+//				LSworkflow lsworkflow = lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
 
 				protocolOrder.setApproved(0);
-				protocolOrder.setLsworkflow(lsworkflow);
+				protocolOrder.setLsworkflow(lSlogilabprotocoldetail.getLsworkflow());
 				protocolOrder.setVersionno(protocolOrder.getVersionno() + 1);
 			
 				if (!body.get("protocolData").equals("")) {		

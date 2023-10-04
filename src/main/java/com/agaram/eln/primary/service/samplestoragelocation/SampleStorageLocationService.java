@@ -166,12 +166,9 @@ public class SampleStorageLocationService {
 	}
 	
 	public ResponseEntity<Object> getActiveSampleStorageLocation(Integer nsiteInteger) {
-
-//		List<SampleStorageLocation> sampleStorageLocationList = sampleStorageLocationRepository
-//				.findBySitekeyAndStatusOrderBySamplestoragelocationkeyDesc(nsiteInteger,1);
 		
 		List<SampleStorageLocation> sampleStorageLocationList = sampleStorageLocationRepository
-				.findBySamplestoragelocationkeyOrSitekeyAndStatusOrderBySamplestoragelocationkeyDesc(-1,nsiteInteger,1);
+				.findBySamplestoragelocationkeyOrSitekeyAndStatusOrderBySamplestoragelocationkey(-1,nsiteInteger,1);
 
 		Map<String, Object> objMap = new LinkedHashMap<String, Object>();
 
