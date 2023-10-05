@@ -750,7 +750,46 @@ public class MaterialInventoryService {
 			objmap.put("objsilentaudit", cft);
 		}
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<Object> getMaterialTypeDesign(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		Integer ntypecode = (Integer) inputMap.get("ntypecode");
+		Integer nmaterialcode = (Integer) inputMap.get("nmaterialcode");
+		
+		objmap.putAll((Map<String, Object>) getMaterialInventoryAdd(ntypecode).getBody());
+		Material objMaterial = materialRepository.findByNstatusAndNmaterialcode(1,nmaterialcode);
 
+		if (objMaterial != null) {
+			objmap.put("SelectedMaterialCrumb", crumObjectMaterialCreated(objMaterial));
+		}
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> getMaterialInvCombo(Integer ntypecode, Integer nflag) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		if(nflag == 2) {
+			List<Material> lstMaterials = materialRepository.findByNmaterialcatcodeOrderByNmaterialcodeDesc(ntypecode);
+			objmap.put("listMaterial", lstMaterials);
+		}else {
+			if(nflag == 0) {
+				
+				List<MaterialType> lstType = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusOrderByNmaterialtypecode(-1,1);
+				objmap.put("listMaterialType", lstType);
+				List<MaterialCategory> lstCategories = materialCategoryRepository.findByNmaterialtypecodeOrderByNmaterialcatcodeDesc(lstType.get(0).getNmaterialtypecode());
+				objmap.put("listMaterialCategory", lstCategories);
+				List<Material> lstMaterials = materialRepository.findByNmaterialcatcodeOrderByNmaterialcodeDesc(lstCategories.get(0).getNmaterialcatcode());
+				objmap.put("listMaterial", lstMaterials);
+			}else {
+				List<MaterialCategory> lstCategories = materialCategoryRepository.findByNmaterialtypecodeOrderByNmaterialcatcodeDesc(ntypecode);
+				objmap.put("listMaterialCategory", lstCategories);
+				List<Material> lstMaterials = materialRepository.findByNmaterialcatcodeOrderByNmaterialcodeDesc(lstCategories.get(0).getNmaterialcatcode());
+				objmap.put("listMaterial", lstMaterials);
+			}	
+		}
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2836,4 +2875,6 @@ public class MaterialInventoryService {
 		
 			return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+
+	
 }

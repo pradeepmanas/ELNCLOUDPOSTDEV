@@ -49,6 +49,28 @@ public class MaterialInventoryController {
 		return materialInventoryService.getMaterialInventoryByID(inputMap);
 	}
 	
+	@RequestMapping(value = "/getMaterialInvCombo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getMaterialInvCombo(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		Integer ntypecode = (Integer) inputMap.get("nmaterialtypecode");
+		Integer nmaterialcatcode = (Integer) inputMap.get("nmaterialcatcode");
+		Integer nflag = (Integer) inputMap.get("nflag");
+		
+		if(nflag == 1) {
+			return (ResponseEntity<Object>) materialInventoryService.getMaterialInvCombo(ntypecode,nflag);
+		}else {
+			return (ResponseEntity<Object>) materialInventoryService.getMaterialInvCombo(nmaterialcatcode,nflag);
+		}
+	}
+	
+	@RequestMapping(value = "/getMaterialTypeDesign", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getMaterialTypeDesign(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+//		Integer ntypecode = (Integer) inputMap.get("ntypecode");
+		
+		return (ResponseEntity<Object>) materialInventoryService.getMaterialTypeDesign(inputMap);
+	}
+	
 	@RequestMapping(value = "/getMaterialInventoryBySearchField", method = RequestMethod.POST)
 	public ResponseEntity<Object> getMaterialInventoryBySearchField(@RequestBody Map<String, Object> inputMap) throws Exception {
 
