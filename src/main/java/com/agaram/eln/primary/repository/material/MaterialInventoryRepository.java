@@ -41,5 +41,7 @@ public interface MaterialInventoryRepository extends JpaRepository<MaterialInven
 			List<Integer> lstPrimaryIntegers, int i);
 	public List<MaterialInventory> findByNmaterialinventorycodeIn(List<Integer> objLstInvKey);
 	public List<MaterialInventory> findByNstatusAndNsitecode(int i, Integer nsiteInteger);
+	public List<MaterialInventory> findByNsitecodeAndCreateddateBetween(Integer nsiteInteger, Date fromDate,
+			Date toDate);
 
 }

@@ -118,7 +118,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 	                "/protocol/downloadprotocolordervideosql/{fileid}/{filename}/{extension}",
 	                "/protocol/downloadprotocolordervideosql/{fileid}/{filename}/{extension}",
 	                "/protocol/downloadprotocolvideosql/{fileid}/{filename}/{extension}", "/Lims/getOrdersFromELN",
-	                "/Lims/getOrderTagFromELN", "/Lims/getUsersFromELN", "/Lims/getSiteFromELN",
+	                "/Lims/getOrderTagFromELN", "/Lims/getUsersFromELN", "/Lims/getSiteFromELN", "/getMethod",
 	                "/multitenant/getPremiumTenant", "/transaction/updateMaterialDynamicTable",
 	                "/transaction/updateMappedTemplateFieldPropsMaterialTable", "/multitenant/updateplanrights",
 	                "/User/getActiveUserCount", "/multitenant/updateplanType","/Login/getlicense","/Login/loadmultisite","/Login/LoadSitewithoutgzip")

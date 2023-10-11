@@ -13,6 +13,7 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialType;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,6 +48,10 @@ public class MaterialCategoryService {
 		materialCategory.setResponse(new Response());
 		List<MaterialCategory> lstgetMaterialCategory = MaterialCategoryRepository
 				.findBySmaterialcatnameIgnoreCaseAndNsitecode(materialCategory.getSmaterialcatname(),materialCategory.getNsitecode());
+		
+		LSuserMaster objMaster = new LSuserMaster();
+		objMaster.setUsercode(materialCategory.getObjsilentaudit().getLsuserMaster());
+		
 		if (lstgetMaterialCategory.isEmpty()) {
 
 			materialCategory.setSmaterialtypename(materialCategory.getSmaterialtypename());
@@ -56,6 +61,7 @@ public class MaterialCategoryService {
 			materialCategory.setNsitecode(materialCategory.getNsitecode());
 			materialCategory.setNactivestatus(0);
 			materialCategory.setNuserrolecode(0);
+			materialCategory.setCreateby(objMaster);
 			MaterialCategoryRepository.save(materialCategory);
 			materialCategory.getResponse().setStatus(true);
 			materialCategory.getResponse().setInformation("IDS_SUCCESS");

@@ -928,7 +928,7 @@ public class DashBoardService {
 									todate, 1, objuser.getLstprojectforfilter(), testcode));
 				}
 				
-				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
+				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 						.mapToLong(i -> {
 							int startIndex = i * chunkSize;
 							int endIndex = Math.min(startIndex + chunkSize, totalSamples);
@@ -1133,7 +1133,7 @@ public class DashBoardService {
 
 				}
 				
-				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
+				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 						.mapToLong(i -> {
 							int startIndex = i * chunkSize;
 							int endIndex = Math.min(startIndex + chunkSize, totalSamples);
@@ -1363,7 +1363,7 @@ public class DashBoardService {
 							todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate, todate, 1, objuser,
 							fromdate, todate, 1);
 
-			lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
+			lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).mapToObj(i -> {
 				int startIndex = i * chunkSize;
 				int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 				List<LSsamplemaster> currentChunk = lstsample1.subList(startIndex, endIndex);
@@ -1385,7 +1385,7 @@ public class DashBoardService {
 			}).flatMap(List::stream).collect(Collectors.toList());
 
 			lstorders.addAll(lstorderobj);
-			countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToLong(i -> {
+			countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).mapToLong(i -> {
 				int startIndex = i * chunkSize;
 				int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 				List<LSsamplemaster> currentChunk = lstsample1.subList(startIndex, endIndex);
@@ -1544,7 +1544,7 @@ public class DashBoardService {
 							objuser, fromdate, todate, 1, testcode, 3, objuser, fromdate, todate, 1, testcode, objuser,
 							objuser, fromdate, todate, 1, testcode, objuser, fromdate, todate, 1, testcode);
 
-			lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
+			lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).mapToObj(i -> {
 				int startIndex = i * chunkSize;
 				int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 				List<LSsamplemaster> currentChunk = lstsample1.subList(startIndex, endIndex);
@@ -1567,7 +1567,7 @@ public class DashBoardService {
 			}).flatMap(List::stream).collect(Collectors.toList());
 
 			lstorders.addAll(lstorderobj);
-			countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToLong(i -> {
+			countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).mapToLong(i -> {
 				int startIndex = i * chunkSize;
 				int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 				List<LSsamplemaster> currentChunk = lstsample1.subList(startIndex, endIndex);
@@ -1904,7 +1904,7 @@ public class DashBoardService {
 
 				}
 
-				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
+				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).mapToObj(i -> {
 
 					int startIndex = i * chunkSize;
 
@@ -1938,7 +1938,7 @@ public class DashBoardService {
 
 				lstorders.addAll(lstorderobj);
 
-				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
+				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 						.mapToLong(i -> {
 
 							int startIndex = i * chunkSize;
@@ -2111,7 +2111,7 @@ public class DashBoardService {
 
 				}
 
-				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
+				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).mapToObj(i -> {
 
 					int startIndex = i * chunkSize;
 					int endIndex = Math.min(startIndex + chunkSize, totalSamples);
@@ -2134,7 +2134,7 @@ public class DashBoardService {
 
 				lstorders.addAll(lstorderobj);
 
-				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
+				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 						.mapToLong(i -> {
 							int startIndex = i * chunkSize;
 							int endIndex = Math.min(startIndex + chunkSize, totalSamples);
@@ -2277,7 +2277,7 @@ public class DashBoardService {
 
 				}
 
-				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
+				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).mapToObj(i -> {
 
 					int startIndex = i * chunkSize;
 					int endIndex = Math.min(startIndex + chunkSize, totalSamples);
@@ -2300,7 +2300,7 @@ public class DashBoardService {
 
 				lstorders.addAll(lstorderobj);
 
-				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
+				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 						.mapToLong(i -> {
 							int startIndex = i * chunkSize;
 							int endIndex = Math.min(startIndex + chunkSize, totalSamples);
@@ -2470,7 +2470,7 @@ public class DashBoardService {
 
 				}
 
-				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
+				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).mapToObj(i -> {
 
 					int startIndex = i * chunkSize;
 
@@ -2503,7 +2503,7 @@ public class DashBoardService {
 
 				lstorders.addAll(lstorderobj);
 
-				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
+				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 						.mapToLong(i -> {
 
 							int startIndex = i * chunkSize;
@@ -2617,7 +2617,7 @@ public class DashBoardService {
 
 				}
 
-				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
+				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).mapToObj(i -> {
 
 					int startIndex = i * chunkSize;
 
@@ -2662,7 +2662,7 @@ public class DashBoardService {
 
 				lstorders.addAll(lstorderobj);
 
-				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
+				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 						.mapToLong(i -> {
 
 							int startIndex = i * chunkSize;
@@ -2771,7 +2771,7 @@ public class DashBoardService {
 
 				}
 
-				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
+				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).mapToObj(i -> {
 
 					int startIndex = i * chunkSize;
 
@@ -2802,7 +2802,7 @@ public class DashBoardService {
 
 				lstorders.addAll(lstorderobj);
 
-				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
+				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 						.mapToLong(i -> {
 
 							int startIndex = i * chunkSize;
@@ -2901,7 +2901,7 @@ public class DashBoardService {
 
 				}
 
-				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
+				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).mapToObj(i -> {
 					int startIndex = i * chunkSize;
 					int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 					List<LSsamplemaster> currentChunk = lstsample1.subList(startIndex, endIndex);
@@ -2926,7 +2926,7 @@ public class DashBoardService {
 					return orderChunk;
 				}).flatMap(List::stream).collect(Collectors.toList());
 				lstorders.addAll(lstorderobj);
-				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
+				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 						.mapToLong(i -> {
 							int startIndex = i * chunkSize;
 							int endIndex = Math.min(startIndex + chunkSize, totalSamples);
@@ -3014,7 +3014,7 @@ public class DashBoardService {
 									3, fromdate, todate, objuser, 1, testcode);
 
 				}
-				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
+				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).mapToObj(i -> {
 					int startIndex = i * chunkSize;
 					int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 					List<LSsamplemaster> currentChunk = lstsample1.subList(startIndex, endIndex);
@@ -3039,7 +3039,7 @@ public class DashBoardService {
 					return orderChunk;
 				}).flatMap(List::stream).collect(Collectors.toList());
 				lstorders.addAll(lstorderobj);
-				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
+				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 						.mapToLong(i -> {
 							int startIndex = i * chunkSize;
 							int endIndex = Math.min(startIndex + chunkSize, totalSamples);

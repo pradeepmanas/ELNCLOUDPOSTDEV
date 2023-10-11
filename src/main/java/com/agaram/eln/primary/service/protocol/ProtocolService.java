@@ -1,8 +1,11 @@
 package com.agaram.eln.primary.service.protocol;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +34,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -373,6 +377,9 @@ public class ProtocolService {
 	
 	@Autowired
 	TransactionService transactionService;
+	
+	@Autowired
+	private GridFsTemplate gridFsTemplate;
 
 //	@Autowired
 //	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
@@ -677,8 +684,16 @@ public class ProtocolService {
 				mapObj.put("LSprotocolversionlst", new ArrayList<>());
 			}
 			LSprotocolmaster lsProtocolMaster = lsProtocolMasterRepository.findByprotocolmastercode(protocolmastercode);
-			mapObj.put("ProtocolData",objCloudFileManipulationservice.retrieveCloudSheets(lsProtocolMaster.getFileuid(),
-					TenantContext.getCurrentTenant() + "protocol"));
+			if (multitenent == 1) {
+				mapObj.put("ProtocolData",objCloudFileManipulationservice.retrieveCloudSheets(lsProtocolMaster.getFileuid(),
+						TenantContext.getCurrentTenant() + "protocol"));
+			} else {
+				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
+						Criteria.where("filename").is("protocol_" + lsProtocolMaster.getProtocolmastercode())));
+				mapObj.put("ProtocolData",new BufferedReader(
+						new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+								.collect(Collectors.joining("\n")));
+			}
 		}
 		return mapObj;
 	}
@@ -1548,9 +1563,24 @@ public class ProtocolService {
 			}
 			if (LSprotocolsteplst != null) {
 				mapObj.put("protocolstepLst", LSprotocolstepLst);
+				Integer isMultitenant = (Integer) argObj.get("ismultitenant");
 				Gson gson = new Gson();
 				String protocolDataJson = gson.toJson(argObj.get("protocolData"));
-				commonservice.updateProtocolContent(protocolDataJson, newProtocolMasterObj);
+				
+				if(isMultitenant == 1) {
+					commonservice.updateProtocolContent(protocolDataJson, newProtocolMasterObj);					
+				} else {
+					if (gridFsTemplate.findOne(
+							new Query(Criteria.where("filename").is("protocol_" + newProtocolMasterObj.getProtocolmastercode()))) == null) {
+						try {
+							gridFsTemplate.store(new ByteArrayInputStream(protocolDataJson.getBytes(StandardCharsets.UTF_8)),
+									"protocol_" + newProtocolMasterObj.getProtocolmastercode(), StandardCharsets.UTF_16);
+						} catch (Exception e) {
+							System.out.println(
+									"error protocoldata lsprotocolmaster content update mongodb" + newProtocolMasterObj.getProtocolmastercode());
+						}
+					}
+				}
 				mapObj.put("ProtocolData",protocolDataJson);
 			} else {
 				mapObj.put("protocolstepLst", new ArrayList<>());
@@ -2790,9 +2820,9 @@ public class ProtocolService {
 	
 					}
 				} else {
+					LSprotocolmaster lsprotocolmasterobj = LSProtocolMasterRepositoryObj.findByprotocolmastercode(
+							lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode());
 					if (lSlogilabprotocoldetail.getIsmultitenant() == 1) {
-						LSprotocolmaster lsprotocolmasterobj = LSProtocolMasterRepositoryObj.findByprotocolmastercode(
-								lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode());
 						if (lsprotocolmasterobj.getContainerstored() == 0) {
 	//							Content = cloudSheetCreationRepository.findById((long) objorder.getLsfile().getFilecode())
 	//									.getContent();
@@ -2803,13 +2833,29 @@ public class ProtocolService {
 								JSONObject protocolJson = new JSONObject(Content);
 								protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
 								updateProtocolOrderContent(protocolJson.toString(), lSlogilabprotocoldetail, lSlogilabprotocoldetail.getIsmultitenant());
-								mapObj.put("protocolData", Content);
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
+					} else {
+						GridFSDBFile data = gridFsTemplate
+								.findOne(new Query(Criteria.where("filename").is("protocol_" + lsprotocolmasterobj.getProtocolmastercode())));
+						Content = new BufferedReader(
+								new InputStreamReader(data.getInputStream(), StandardCharsets.UTF_8)).lines()
+										.collect(Collectors.joining("\n"));
+						if (gridFsTemplate.findOne(
+								new Query(Criteria.where("filename").is("protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode()))) == null) {
+							try {
+								gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
+										"protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode(), StandardCharsets.UTF_16);
+							} catch (Exception e) {
+								System.out.println(
+										"error protocoldata lslogilabprotocoldetail content update mongodb" + lSlogilabprotocoldetail.getProtocolordercode());
+							}
+						}
 					}
+					mapObj.put("protocolData", Content);
 				}
 				if (objinfo.size() != 0) {
 					lSlogilabprotocoldetail.setCloudLsLogilabprotocolstepInfo(objinfo);
@@ -3914,6 +3960,14 @@ public class ProtocolService {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+				} else {
+					LSlogilabprotocoldetail lslogilabprotocoldetail = LSlogilabprotocoldetailRepository
+							.findByProtocolordercode(ipInt);
+					GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
+							Criteria.where("filename").is("protocolorder_" + lslogilabprotocoldetail.getProtocolordercode())));
+					mapObj.put("protocolData",new BufferedReader(
+							new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+									.collect(Collectors.joining("\n")));
 				}
 //			}
 
@@ -5078,22 +5132,26 @@ public class ProtocolService {
 			if (!body.get("protocolData").equals("")) {
 				
 //				String str = object.convertValue(body.get("protocolData"), String.class);
+				Gson gson = new Gson();
+				String protocolDataJson = gson.toJson(body.get("protocolData"));
 				
 				if (ismultitenant == 1) {
 					protocolMaster.setIsmultitenant(ismultitenant);
-					Gson gson = new Gson();
-					String protocolDataJson = gson.toJson(body.get("protocolData"));
 					commonservice.updateProtocolContent(protocolDataJson, protocolMaster);
 					mapObj.put("protocolMaster", protocolMaster);
-					response.setInformation("IDS_MSG_PROTOCOLSAVE");
-					response.setStatus(true);
 				} else {
-//					Query query = new Query(Criteria.where("id").is(LSprotocolstepObj.getProtocolstepcode()));
-//					Update update = new Update();
-//					update.set("content", str);
-////					update.set("content", content);
-//					mongoTemplate.upsert(query, update, LSprotocolstepInfo.class);
+					
+					GridFSDBFile largefile = gridFsTemplate
+							.findOne(new Query(Criteria.where("filename").is("protocol_" + protocolMaster.getProtocolmastercode())));
+					if (largefile != null) {
+						gridFsTemplate.delete(new Query(Criteria.where("filename").is("protocol_" + protocolMaster.getProtocolmastercode())));
+					}
+					gridFsTemplate.store(new ByteArrayInputStream(protocolDataJson.getBytes(StandardCharsets.UTF_8)),
+							"protocol_" + protocolMaster.getProtocolmastercode(), StandardCharsets.UTF_16);
+					
 				}
+				response.setInformation("IDS_MSG_PROTOCOLSAVE");
+				response.setStatus(true);
 			}
 		}
 		mapObj.put("protocolData", body.get("protocolData"));
@@ -5124,22 +5182,24 @@ public class ProtocolService {
 				protocolOrder.setLsworkflow(lSlogilabprotocoldetail.getLsworkflow());
 				protocolOrder.setVersionno(protocolOrder.getVersionno() + 1);
 			
-				if (!body.get("protocolData").equals("")) {		
+				if (!body.get("protocolData").equals("")) {	
+					Gson gson = new Gson();
+					String protocolDataJson = gson.toJson(body.get("protocolData"));
 					if (ismultitenant == 1) {
 						protocolOrder.setIsmultitenant(ismultitenant);
-						Gson gson = new Gson();
-						String protocolDataJson = gson.toJson(body.get("protocolData"));
 						updateProtocolOrderContent(protocolDataJson, protocolOrder, ismultitenant);
-						mapObj.put("protocolOrder", protocolOrder);
-						response.setInformation("IDS_MSG_PROTOCOLORDERSAVE");
-						response.setStatus(true);
 					} else {
-	//					Query query = new Query(Criteria.where("id").is(LSprotocolstepObj.getProtocolstepcode()));
-	//					Update update = new Update();
-	//					update.set("content", str);
-	////					update.set("content", content);
-	//					mongoTemplate.upsert(query, update, LSprotocolstepInfo.class);
+						GridFSDBFile largefile = gridFsTemplate
+								.findOne(new Query(Criteria.where("filename").is("protocolorder_" + protocolOrder.getProtocolordercode())));
+						if (largefile != null) {
+							gridFsTemplate.delete(new Query(Criteria.where("filename").is("protocolorder_" + protocolOrder.getProtocolordercode())));
+						}
+						gridFsTemplate.store(new ByteArrayInputStream(protocolDataJson.getBytes(StandardCharsets.UTF_8)),
+								"protocolorder_" + protocolOrder.getProtocolordercode(), StandardCharsets.UTF_16);
 					}
+					mapObj.put("protocolOrder", protocolOrder);
+					response.setInformation("IDS_MSG_PROTOCOLORDERSAVE");
+					response.setStatus(true);
 				}
 			}
 		}

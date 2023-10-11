@@ -255,45 +255,49 @@ public class TransactionService {
 			throws JsonParseException, JsonMappingException, IOException {
 
 		List<Map<String, Object>> lstMaterialInventoryTrans = new ArrayList<Map<String, Object>>();
-		List<MaterialInventoryTransaction> lstInventoryTransaction = materialInventoryTransactionRepository
-				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(
-						(Integer) inputMap.get("nmaterialinventorycode"));
+//		List<MaterialInventoryTransaction> lstInventoryTransaction = materialInventoryTransactionRepository
+//				.findByNmaterialinventorycodeOrderByNmaterialinventtranscodeDesc(
+//						(Integer) inputMap.get("nmaterialinventorycode"));
 		MaterialInventory objInventory = materialInventoryRepository
 				.findByNmaterialinventorycodeAndNtransactionstatusNot((Integer) inputMap.get("nmaterialinventorycode"),
 						55);
 
-		@SuppressWarnings("unchecked")
-		Map<String, Object> mapJsonData = new ObjectMapper().readValue(lstInventoryTransaction.get(0).getJsonuidata(),
-				Map.class);
+//		@SuppressWarnings("unchecked")
+//		Map<String, Object> mapJsonData = new ObjectMapper().readValue(lstInventoryTransaction.get(0).getJsonuidata(),
+//				Map.class);
+		
+		Map<String, Object> mapJsonData = new HashMap<>();
 
 		Double totalQuantity = Double.parseDouble(commonfunction
 				.getInventoryValuesFromJsonString(objInventory.getJsondata(), "Received Quantity").get("rtnObj").toString());		
 
-		List<Double> nqtyreceivedlst = lstInventoryTransaction.stream()
-				.map(MaterialInventoryTransaction::getNqtyreceived).collect(Collectors.toList());
-		List<Double> nqtyissuedLst = lstInventoryTransaction.stream().map(MaterialInventoryTransaction::getNqtyissued)
-				.collect(Collectors.toList());
+//		List<Double> nqtyreceivedlst = lstInventoryTransaction.stream()
+//				.map(MaterialInventoryTransaction::getNqtyreceived).collect(Collectors.toList());
+//		List<Double> nqtyissuedLst = lstInventoryTransaction.stream().map(MaterialInventoryTransaction::getNqtyissued)
+//				.collect(Collectors.toList());
 
-		double nqtyreceived = nqtyreceivedlst.stream().mapToDouble(Double::doubleValue).sum();
-		double nqtyissued = nqtyissuedLst.stream().mapToDouble(Double::doubleValue).sum();
+//		double nqtyreceived = nqtyreceivedlst.stream().mapToDouble(Double::doubleValue).sum();
+//		double nqtyissued = nqtyissuedLst.stream().mapToDouble(Double::doubleValue).sum();
 			
-		Double availabledQuantity = nqtyreceived - nqtyissued;
-		mapJsonData.put("Available Quantity", availabledQuantity);
+//		Double availabledQuantity = nqtyreceived - nqtyissued;
+//		mapJsonData.put("Available Quantity", availabledQuantity);
 		
 		List<ResultUsedMaterial> lstUsedMaterials = resultUsedMaterialRepository.findByNinventorycodeOrderByNresultusedmaterialcodeDesc((Integer) inputMap.get("nmaterialinventorycode"));
 
 		if(!lstUsedMaterials.isEmpty()) {
-			mapJsonData.put("Issued Quantity", lstUsedMaterials.get(0).getNqtyleft());
+//			mapJsonData.put("Issued Quantity", lstUsedMaterials.get(0).getNqtyleft());
+			mapJsonData.put("Available Quantity", lstUsedMaterials.get(0).getNqtyleft());
 		}else {
-			if (totalQuantity == availabledQuantity) {
-				mapJsonData.put("Issued Quantity", availabledQuantity);
-			} else {
-				mapJsonData.put("Issued Quantity", totalQuantity - availabledQuantity);
-			}
+			mapJsonData.put("Available Quantity", totalQuantity);
+//			if (totalQuantity == availabledQuantity) {
+//				mapJsonData.put("Issued Quantity", availabledQuantity);
+//			} else {
+//				mapJsonData.put("Issued Quantity", totalQuantity - availabledQuantity);
+//			}
 		}
 		
 		mapJsonData.put("Total Quantity", totalQuantity);
-		mapJsonData.put("Received Quantity", lstInventoryTransaction.get(0).getNqtyreceived());
+//		mapJsonData.put("Received Quantity", lstInventoryTransaction.get(0).getNqtyreceived());
 		mapJsonData.put("NotificationQty", objInventory.getNqtynotification());
 
 		lstMaterialInventoryTrans.add(mapJsonData);

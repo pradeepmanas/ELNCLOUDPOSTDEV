@@ -1035,20 +1035,35 @@ public class FileService {
 			BatchID = Long.valueOf((Integer) objMap.get("Batch"));
 		}
 
+		Integer userCode = Integer.parseInt(objMap.get("usercode").toString());
 		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findOne(BatchID);
 
 		if (orderDetail != null) {
 
-			orderDetail.setLockeduser(null);
-			orderDetail.setLockedusername(null);
-			orderDetail.setActiveuser(null);
+//			orderDetail.setLockeduser(null);
+//			orderDetail.setLockedusername(null);
+//			orderDetail.setActiveuser(null);
+//
+//			LSlogilablimsorderdetailRepository.save(orderDetail);
+//
+//			orderDetail.setResponse(new Response());
+//			orderDetail.getResponse().setStatus(true);
+//			orderDetail.getResponse().setInformation("ID_UNLOCKMSG");
+			if(userCode != null && orderDetail.getLockeduser() != null && userCode.equals(orderDetail.getLockeduser())) {
+				orderDetail.setLockeduser(null);
+				orderDetail.setLockedusername(null);
+				orderDetail.setActiveuser(null);
+				
+				LSlogilablimsorderdetailRepository.save(orderDetail);
 
-			LSlogilablimsorderdetailRepository.save(orderDetail);
-
-			orderDetail.setResponse(new Response());
-			orderDetail.getResponse().setStatus(true);
-			orderDetail.getResponse().setInformation("ID_UNLOCKMSG");
-
+				orderDetail.setResponse(new Response());
+				orderDetail.getResponse().setStatus(true);
+				orderDetail.getResponse().setInformation("ID_UNLOCKMSG");
+			}else {
+				orderDetail.setResponse(new Response());
+				orderDetail.getResponse().setStatus(true);
+				orderDetail.getResponse().setInformation("IDS_ORDER_LOCKED_BY_DIFF_USER");
+			}	
 			objMap.put("response", orderDetail);
 		} else {
 			orderDetail.setResponse(new Response());
