@@ -3939,7 +3939,7 @@ public class InstrumentService {
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = lstsample.size();
 			List<LSlogilablimsorderdetail> lstorderlimsobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-					.parallel().mapToObj(i -> {
+					.mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -4004,7 +4004,7 @@ public class InstrumentService {
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = lstsample.size();
 			List<LSlogilablimsorderdetail> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-					.parallel().mapToObj(i -> {
+					.mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -6126,7 +6126,7 @@ public class InstrumentService {
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = lstsample.size();
 			List<LSlogilablimsorderdetail> lstorderlimsobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-					.parallel().mapToObj(i -> {
+					.mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -6830,7 +6830,7 @@ public class InstrumentService {
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 				int totalSamples = lstsample.size();
 				List<Logilaborders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-						.parallel().mapToObj(i -> {
+						.mapToObj(i -> {
 							int startIndex = i * chunkSize;
 							int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 							List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -6855,7 +6855,7 @@ public class InstrumentService {
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 				int totalSamples = lstsample.size();
 				List<Logilaborders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-						.parallel().mapToObj(i -> {
+						.mapToObj(i -> {
 							int startIndex = i * chunkSize;
 							int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 							List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -6887,7 +6887,7 @@ public class InstrumentService {
 						int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 						int totalSamples = lstsample.size();
 						List<Logilaborders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-								.parallel().mapToObj(i -> {
+								.mapToObj(i -> {
 									int startIndex = i * chunkSize;
 									int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 									List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -6923,7 +6923,7 @@ public class InstrumentService {
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 				int totalSamples = lstsample.size();
 				List<Logilaborders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-						.parallel().mapToObj(i -> {
+						.mapToObj(i -> {
 							int startIndex = i * chunkSize;
 							int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 							List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -6954,7 +6954,7 @@ public class InstrumentService {
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 				int totalSamples = lstsample.size();
 				List<Logilaborders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-						.parallel().mapToObj(i -> {
+						.mapToObj(i -> {
 							int startIndex = i * chunkSize;
 							int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 							List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -6994,7 +6994,7 @@ public class InstrumentService {
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 				int totalSamples = lstsample.size();
 				List<Logilaborders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-						.parallel().mapToObj(i -> {
+						.mapToObj(i -> {
 							int startIndex = i * chunkSize;
 							int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 							List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -7037,7 +7037,7 @@ public class InstrumentService {
 					int totalSamples = lstsample.size();
 
 					List<Logilaborders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-							.parallel().mapToObj(i -> {
+							.mapToObj(i -> {
 								int startIndex = i * chunkSize;
 								int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 								List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -7389,7 +7389,7 @@ public class InstrumentService {
 			lstorder.addAll(LSlogilabprotocoldetailRepository.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
 
 			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-					.parallel().mapToObj(i -> {
+					.mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -7409,7 +7409,7 @@ public class InstrumentService {
 && objorder.getRejected() != null) {
 
 			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-					.parallel().mapToObj(i -> {
+					.mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -7426,7 +7426,7 @@ public class InstrumentService {
 && objorder.getRejected() == null) {
 
 			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-					.parallel().mapToObj(i -> {
+					.mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -7443,7 +7443,7 @@ public class InstrumentService {
 && objorder.getRejected() == null) {
 
 			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-					.parallel().mapToObj(i -> {
+					.mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -7460,7 +7460,7 @@ public class InstrumentService {
 && objorder.getRejected() == null) {
 
 			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-					.parallel().mapToObj(i -> {
+					.mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -7478,7 +7478,7 @@ public class InstrumentService {
 && objorder.getRejected() != null) {
 
 			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-					.parallel().mapToObj(i -> {
+					.mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -7496,7 +7496,7 @@ public class InstrumentService {
 && objorder.getRejected() != null) {
 
 			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-					.parallel().mapToObj(i -> {
+					.mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
@@ -7513,7 +7513,7 @@ public class InstrumentService {
 && objorder.getRejected() != null) {
 
 			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-					.parallel().mapToObj(i -> {
+					.mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
