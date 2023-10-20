@@ -22,4 +22,5 @@ public interface LSlogilabprotocolstepsRepository extends JpaRepository<LSlogila
 	List<LSlogilabprotocolsteps> findByStatusAndSitecode(int i, Integer lssitemaster);
 	List<LSlogilabprotocolsteps> findByStatusAndSitecodeAndProtocolordercodeIn(int i, int sitecode,
 			List<Long> protocolordercode);
+	List<LSlogilabprotocolsteps> findByProtocolordercodeIn(List<Long> lstpmc);
 }

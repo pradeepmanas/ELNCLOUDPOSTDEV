@@ -813,3 +813,246 @@ BEGIN
 END $$;
 
 ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS orderstarted integer ,ADD COLUMN IF NOT EXISTS orderstartedby_usercode integer ,ADD COLUMN IF NOT EXISTS orderstartedon TIMESTAMP;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'elnmaterial_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE elnmaterial_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;
+CREATE TABLE IF NOT EXISTS public.elnmaterial
+(
+    nmaterialcode integer NOT NULL DEFAULT nextval('elnmaterial_sequence'::regclass),
+    materialcategory_nmaterialcatcode integer NOT NULL,
+    materialtype_nmaterialtypecode integer NOT NULL,
+    unit_nunitcode integer,
+    section_nsectioncode integer,
+    smaterialname character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    jsondata jsonb,
+    nstatus integer NOT NULL DEFAULT 1,
+    sprefix character varying(50) COLLATE pg_catalog."default",
+    nsitecode integer,
+    createddate timestamp without time zone DEFAULT ('now'::text)::date,
+    expirytype integer,
+    remarks character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    expirypolicyvalue character varying(50) COLLATE pg_catalog."default",
+    expirypolicyperiod character varying(50) COLLATE pg_catalog."default",
+    openexpiryvalue character varying(50) COLLATE pg_catalog."default",
+    openexpiryperiod character varying(50) COLLATE pg_catalog."default",
+    openexpiry boolean,
+    quarantine boolean,
+    reusable boolean,
+    CONSTRAINT elnmaterial_pkey PRIMARY KEY (nmaterialcode)
+)
+WITH (OIDS = FALSE ) TABLESPACE pg_default;
+
+ALTER TABLE public.elnmaterial OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'elnmaterialinventory_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE elnmaterialinventory_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.elnmaterialinventory
+(
+    nmaterialinventorycode integer NOT NULL DEFAULT nextval('elnmaterialinventory_sequence'::regclass),
+    material_nmaterialcode integer NOT NULL,
+    materialcategory_nmaterialcatcode integer NOT NULL,
+    materialtype_nmaterialtypecode integer NOT NULL,
+    section_nsectioncode integer,
+    unit_nunitcode integer,
+    materialgrade_nmaterialgradecode integer,
+    supplier_nsuppliercode integer,
+    manufacturer_nmanufcode integer,
+    jsondata text COLLATE pg_catalog."default",
+    ntransactionstatus integer NOT NULL,
+    nstatus integer NOT NULL DEFAULT 1,
+    nsitecode integer,
+    nqtynotification double precision,
+    isexpiry boolean,
+    expirydate timestamp without time zone,
+    createddate timestamp without time zone,
+    manufacdate timestamp without time zone,
+    receiveddate timestamp without time zone,
+    remarks character varying(200) COLLATE pg_catalog."default",
+    sinventoryid character varying(50) COLLATE pg_catalog."default",
+    savailablequantity character varying(50) COLLATE pg_catalog."default",
+    sreceivedquantity character varying(50) COLLATE pg_catalog."default",
+    CONSTRAINT elnmaterialinventory_pkey PRIMARY KEY (nmaterialinventorycode)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.elnmaterialinventory OWNER to postgres;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.table_constraints
+        WHERE constraint_name = 'fk701k777d2da33pkkl6lnamavi' 
+        AND table_name = 'lsorderattachments'
+    ) THEN
+        ALTER TABLE public.lsorderattachments
+        DROP CONSTRAINT fk701k777d2da33pkkl6lnamavi;
+
+        ALTER TABLE public.lsorderattachments
+        ADD CONSTRAINT fk701k777d2da33pkkl6lnamavi
+        FOREIGN KEY (nmaterialcode)
+        REFERENCES public.elnmaterial (nmaterialcode)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+    END IF;
+END $$;
+
+ALTER TABLE IF Exists lsprotocolmaster ADD Column IF NOT EXISTS lastmodified timestamp;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.table_constraints
+        WHERE constraint_name = 'fkbvkyp7mg7pxs4oxsg45bmnj6l' 
+        AND table_name = 'lsorderattachments'
+    ) THEN
+        ALTER TABLE public.lsorderattachments
+        DROP CONSTRAINT fkbvkyp7mg7pxs4oxsg45bmnj6l;
+
+        ALTER TABLE public.lsorderattachments
+        ADD CONSTRAINT fkbvkyp7mg7pxs4oxsg45bmnj6l
+        FOREIGN KEY (nmaterialinventorycode)
+        REFERENCES public.elnmaterialinventory (nmaterialinventorycode)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+    END IF;
+END $$;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.table_constraints
+        WHERE constraint_name = 'fk8fernqbshr6gaugjiauyb9b1' 
+        AND table_name = 'selectedinventorymapped'
+    ) THEN
+        ALTER TABLE public.selectedinventorymapped
+        DROP CONSTRAINT fk8fernqbshr6gaugjiauyb9b1;
+
+        ALTER TABLE public.selectedinventorymapped
+        ADD CONSTRAINT fk8fernqbshr6gaugjiauyb9b1
+        FOREIGN KEY (nmaterialinventorycode)
+        REFERENCES public.elnmaterialinventory (nmaterialinventorycode)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+    END IF;
+END $$;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'elnresultusedmaterial_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE elnresultusedmaterial_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.elnresultusedmaterial
+(
+    nresultusedmaterialcode integer NOT NULL DEFAULT nextval('elnresultusedmaterial_sequence'::regclass),
+    ordercode numeric(17,0) NOT NULL,
+    transactionscreen integer NOT NULL,
+    templatecode integer NOT NULL,
+    nmaterialtypecode integer NOT NULL,
+    nmaterialcategorycode integer NOT NULL,
+    nmaterialcode integer NOT NULL,
+    ninventorycode integer NOT NULL,
+    jsondata character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    nstatus integer NOT NULL DEFAULT 1,
+    createddate timestamp without time zone,
+    nqtyissued double precision,
+    nqtyused double precision,
+    nqtyleft double precision,
+    batchid character varying(100) COLLATE pg_catalog."default",
+    lstestmasterlocal_testcode integer,
+    lsusermaster_createdbyusercode integer,
+    testcode_testcode integer,
+    createdbyusercode_usercode integer,
+    CONSTRAINT elnresultusedmaterial_pkey PRIMARY KEY (nresultusedmaterialcode),
+    CONSTRAINT fk5wxdhabcdewr5m0ejfbh6e47 FOREIGN KEY (lsusermaster_createdbyusercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk5wxdhe1234wr5m0ejfbh6e47 FOREIGN KEY (createdbyusercode_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk5wxdhe1256wr5m0ejdyd6e47 FOREIGN KEY (testcode_testcode)
+        REFERENCES public.lstestmasterlocal (testcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk5wxdhghijkwr5m0ejabc6e47 FOREIGN KEY (lstestmasterlocal_testcode)
+        REFERENCES public.lstestmasterlocal (testcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fknok3att985drj28p3bwern888 FOREIGN KEY (ninventorycode)
+        REFERENCES public.elnmaterialinventory (nmaterialinventorycode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.elnresultusedmaterial OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.lsreportfile
+(
+    id bigint NOT NULL,
+    content jsonb,
+    contentstored integer,
+    CONSTRAINT lsreportfile_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.lsreportfile
+    OWNER to postgres;

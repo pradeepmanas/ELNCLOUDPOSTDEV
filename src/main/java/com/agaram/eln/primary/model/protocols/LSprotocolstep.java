@@ -34,6 +34,7 @@ public class LSprotocolstep {
 	public Integer protocolmastercode;
 	public Integer stepno;
 	public String protocolstepname;
+	
 	public Integer createdby;
 //	@Column(columnDefinition = "date")
 	@Temporal(TemporalType.TIMESTAMP)

@@ -107,6 +107,15 @@ public class LSsamplefile {
 	@Transient
 	private String contentvalues;
 	@Transient
+	private String tagvalues;
+	
+	public String getTagvalues() {
+		return tagvalues;
+	}
+	public void setTagvalues(String tagvalues) {
+		this.tagvalues = tagvalues;
+	}
+	@Transient
 	LScfttransaction objsilentaudit;
 	@Transient
 	LScfttransaction objmanualaudit;

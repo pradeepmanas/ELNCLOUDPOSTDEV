@@ -25,6 +25,7 @@ import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -149,7 +150,18 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private LSuserMaster lsuserMaster;
 
 	private Integer testcode;
+	@ManyToOne
+	@Transient
+	private LStestmasterlocal lstestmasterlocal;
 	
+	public LStestmasterlocal getLstestmasterlocal() {
+		return lstestmasterlocal;
+	}
+
+	public void setLstestmasterlocal(LStestmasterlocal lstestmasterlocal) {
+		this.lstestmasterlocal = lstestmasterlocal;
+	}
+
 	private Long directorycode;
 	
 	private Integer teamcode;

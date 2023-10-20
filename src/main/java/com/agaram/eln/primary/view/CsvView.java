@@ -19,7 +19,6 @@ import org.supercsv.io.ICsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
 import com.agaram.eln.primary.util.MapUtil;
-import com.itextpdf.text.Paragraph;
 
 /**
  * This class to use to create CSV file with provided input data
@@ -104,7 +103,13 @@ public class CsvView extends AbstractCsvView {
 	       					objList.add(dateFormat.format(Date.from(Instant.parse((String) dataEntry.getValue()))));
 
 	      				 }
-
+	       				 else if(dataEntry.getKey().equalsIgnoreCase("createdate")) {
+	       					 
+	       					long timestamp = (long) dataEntry.getValue(); // The timestamp in milliseconds
+	       					Date date = new Date(timestamp);
+	       					 
+	       					objList.add(dateFormat.format(date));
+	       				 }
 	       				 else
 	       				 {
 	       					if(!dataEntry.getKey().equalsIgnoreCase("select")) {

@@ -1379,8 +1379,14 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	List<LSlogilabprotocoldetail> findBylsprojectmasterAndTestcodeIn(LSprojectmaster lsproject, List<Integer> testid);
 
+	List<LSlogilabprotocoldetail> findByLsprotocolmasterInAndTestcodeIn(List<LSprotocolmaster> lstpm,
+			List<Integer> testid);
 
-	List<LSlogilabprotocoldetail> findByTestcodeIn(List<Integer> testid);
+
+
+
+
+
 
 
 

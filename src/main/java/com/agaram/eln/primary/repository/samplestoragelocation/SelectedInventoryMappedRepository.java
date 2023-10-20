@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageLocation;
 import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
 

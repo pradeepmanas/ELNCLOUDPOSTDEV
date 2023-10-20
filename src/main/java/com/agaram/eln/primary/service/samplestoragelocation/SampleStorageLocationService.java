@@ -17,11 +17,13 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageLocation;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageVersion;
 import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
+import com.agaram.eln.primary.repository.material.ElnmaterialInventoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialInventoryRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageLocationRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageVersionRepository;
@@ -43,6 +45,8 @@ public class SampleStorageLocationService {
 	MaterialInventoryRepository MaterialInventoryRepository;
 	@Autowired
 	SelectedInventoryMappedRepository selectedInventoryMappedRepository;
+	@Autowired
+	ElnmaterialInventoryRepository elnmaterialInventoryRepository;
 
 	public ResponseEntity<Object> createSampleStorageLocation(final SampleStorageLocation sampleStorageLocation, final SampleStorageVersion sampleStorageVersion, LScfttransaction Auditobj) throws JsonMappingException, JsonProcessingException {
 		
@@ -235,19 +239,16 @@ public class SampleStorageLocationService {
 		return new ResponseEntity<>(objMap, HttpStatus.OK);
 	}
 	
-	public ResponseEntity<Object> setStorageLocationOnNode(final int sampleStorageLocationKey,final int inventoryCode,Map<String, Object> selectedStorageId,String jsobString) {
+	public ResponseEntity<Object> setStorageLocationOnNode(SampleStorageLocation objStorageLocation,ElnmaterialInventory objInventory,
+			Map<String, Object> selectedStorageId,List<SampleStorageVersion> sampleStorageVersionList) {
 
-		SampleStorageLocation objStorageLocation = sampleStorageLocationRepository.findBySamplestoragelocationkey(sampleStorageLocationKey);
-		MaterialInventory objInventory = MaterialInventoryRepository.findByNmaterialinventorycode(inventoryCode);
 		SelectedInventoryMapped inventoryMapped = new SelectedInventoryMapped(); 
-		List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository.findFirstBySampleStorageLocationOrderBySamplestorageversionkeyDesc(objStorageLocation);
 
 		if (sampleStorageVersionList != null && sampleStorageVersionList.size() > 0) {
-			String path = commonfunction.findPath(jsobString,selectedStorageId.get("id").toString());
+			String path = commonfunction.findPath(sampleStorageVersionList.get(0).getJsonbresult(),selectedStorageId.get("id").toString());
 			List<SelectedInventoryMapped> lstInventoryMappeds1 = selectedInventoryMappedRepository.findByNmaterialinventorycodeOrderByMappedidDesc(objInventory.getNmaterialinventorycode());
 			
 			if(lstInventoryMappeds1.isEmpty()) {
-//				sampleStorageVersionList.get(0).setJsonbresult(jsobString);
 				
 				inventoryMapped.setNmaterialinventorycode(objInventory.getNmaterialinventorycode());
 				inventoryMapped.setSamplestoragelocationkey(objStorageLocation);
@@ -256,21 +257,11 @@ public class SampleStorageLocationService {
 				selectedInventoryMappedRepository.save(inventoryMapped);
 			}else {
 				
-//				if(!lstInventoryMappeds1.get(0).getId().equalsIgnoreCase(selectedStorageId.get("id").toString())) {
-//					List<SelectedInventoryMapped> lstInventoryMappeds = selectedInventoryMappedRepository.findByIdAndNmaterialinventorycodeNotOrderByMappedidDesc(lstInventoryMappeds1.get(0).getId(),objInventory);
-//					
-//					if(lstInventoryMappeds.isEmpty()) {
-//						jsobString = commonfunction.getStoargeFromIdJsonString(jsobString,lstInventoryMappeds1.get(0).getId());
-//					}
-//				}
-//				sampleStorageVersionList.get(0).setJsonbresult(jsobString);
-				
 				lstInventoryMappeds1.get(0).setSamplestoragelocationkey(objStorageLocation);
 				lstInventoryMappeds1.get(0).setId(selectedStorageId.get("id").toString());
 				lstInventoryMappeds1.get(0).setStoragepath(path);
 				selectedInventoryMappedRepository.save(lstInventoryMappeds1);
 			}
-//			sampleStorageVersionRepository.save(sampleStorageVersionList);
 		}
 		
 		return new ResponseEntity<>(HttpStatus.OK);

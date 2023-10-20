@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.controller.reports;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class ViewerController {
 	private ViewerService viewerservice;
 	
 	@RequestMapping(value = "/getreportdata")
-	protected Map<String, Object> getreportdata(@RequestBody Reports report) throws ServletException, IOException {
+	protected Map<String, Object> getreportdata(@RequestBody Reports report) throws ServletException, IOException, URISyntaxException {
 		return viewerservice.getreportdata(report);
 	}
 	

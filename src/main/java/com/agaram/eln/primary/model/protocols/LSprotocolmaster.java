@@ -35,6 +35,8 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	private LSsheetworkflow isfinalstep;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdate;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastmodified;
 	@Transient
 	public Integer finalworkflow;
 	public Integer sharewithteam;
@@ -275,7 +277,7 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	public String toString() {
 		return "LSprotocolmaster [protocolmastercode=" + protocolmastercode + ", protocolmastername="
 				+ protocolmastername + ", protocolstatus=" + protocolstatus + ", status=" + status + ", createdby="
-				+ createdby + ", createdate=" + createdate + ", sharewithteam=" + sharewithteam + ", createdbyusername="
+				+ createdby + ", createdate=" + createdate + ", lastmodified=" + lastmodified + " , sharewithteam=" + sharewithteam + ", createdbyusername="
 				+ createdbyusername + ", lssitemaster=" + lssitemaster + ", createdateprotocol=" + createdateprotocol
 				+ ", lSprotocolworkflow=" + lSprotocolworkflow + ", approved=" + approved + ", rejected=" + rejected
 				+ ", versionno=" + versionno + ", lsprotocolworkflowhistory=" + lsprotocolworkflowhistory
@@ -356,5 +358,15 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	public void setFileuri(String fileuri) {
 		this.fileuri = fileuri;
 	}
+
+	public Date getLastmodified() {
+		return lastmodified;
+	}
+
+	public void setLastmodified(Date lastmodified) {
+		this.lastmodified = lastmodified;
+	}
+
+	
 	
 }

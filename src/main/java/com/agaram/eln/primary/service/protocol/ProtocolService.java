@@ -5134,11 +5134,15 @@ public class ProtocolService {
 //				String str = object.convertValue(body.get("protocolData"), String.class);
 				Gson gson = new Gson();
 				String protocolDataJson = gson.toJson(body.get("protocolData"));
-				
+				try {
+					protocolMaster.setLastmodified(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				if (ismultitenant == 1) {
 					protocolMaster.setIsmultitenant(ismultitenant);
 					commonservice.updateProtocolContent(protocolDataJson, protocolMaster);
-					mapObj.put("protocolMaster", protocolMaster);
 				} else {
 					
 					GridFSDBFile largefile = gridFsTemplate
@@ -5152,6 +5156,8 @@ public class ProtocolService {
 				}
 				response.setInformation("IDS_MSG_PROTOCOLSAVE");
 				response.setStatus(true);
+				lsProtocolMasterRepository.save(protocolMaster);
+				mapObj.put("ProtocolMaster", lsProtocolMasterRepository.findByprotocolmastercode(protocolMaster.getProtocolmastercode()));
 			}
 		}
 		mapObj.put("protocolData", body.get("protocolData"));

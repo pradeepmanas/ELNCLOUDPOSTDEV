@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -25,13 +26,13 @@ public class LSprotocolstepInformation {
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
 	public String lsprotocolstepInfo;
+
 	
 //	private String fileuid;
 //	
 //	private Integer containerstored;
 //	
 //	private String fileuri;
-	
 	public Integer getId() {
 		return id;
 	}

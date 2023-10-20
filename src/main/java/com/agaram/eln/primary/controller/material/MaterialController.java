@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.service.material.MaterialService;
 
@@ -32,6 +33,14 @@ public class MaterialController {
 		
 		return (ResponseEntity<Object>) objMaterialService.getMaterialType(nsiteInteger);
 	}
+	
+	@RequestMapping(value = "/getMaterialDesign", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getMaterialDesign(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		Integer ntypecode = (Integer) inputMap.get("nmaterialcode");
+		
+		return (ResponseEntity<Object>) objMaterialService.getMaterialDesign(ntypecode);
+	}	
 	
 	@RequestMapping(value = "/getMaterialTypeDesign", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getMaterialTypeDesign(@RequestBody Map<String, Object> inputMap) throws Exception {
@@ -101,7 +110,7 @@ public class MaterialController {
 	}
 	
 	@PostMapping("/CloudUploadattachments")
-	public Material CloudUploadattachments(@RequestParam("file") MultipartFile file,
+	public Elnmaterial CloudUploadattachments(@RequestParam("file") MultipartFile file,
 			@RequestParam("order") Integer nmaterialcatcode, @RequestParam("filename") String filename,
 			@RequestParam("fileexe") String fileexe, @RequestParam("usercode") Integer usercode,
 			@RequestParam("date") Date currentdate,@RequestParam("isMultitenant") Integer isMultitenant)
@@ -122,5 +131,50 @@ public class MaterialController {
 			@RequestParam("date") Date currentdate,@RequestParam("isMultitenant") Integer isMultitenant)
 			throws IOException {
 		return objMaterialService.cloudUploadFilesWithTags(file, nmaterialcatcode, filename, fileexe, usercode, currentdate,isMultitenant);
+	}
+	
+	/**
+	 * 
+	 * done material by Sathishkumar chandrasekar 15-10-2023
+	 * 
+	 * 
+	 */
+	
+	@RequestMapping(value = "/getElnMaterial", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getElnMaterial(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) objMaterialService.getElnMaterial(inputMap);
+	}
+	
+	@RequestMapping(value = "/getElnMaterialByFilter", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getElnMaterialByFilter(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) objMaterialService.getElnMaterialByFilter(inputMap);
+	}
+	
+	@RequestMapping(value = "/getELNMaterialProps", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getMaterialProps(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		
+		return (ResponseEntity<Object>) objMaterialService.getMaterialProps(nsiteInteger);
+	}
+	
+	@RequestMapping(value = "/getELNMaterialTypeBasedCat", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getMaterialTypeBasedCat(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) objMaterialService.getMaterialTypeBasedCat(inputMap);
+	}
+	
+	@RequestMapping(value = "/createElnMaterial", method = RequestMethod.POST)
+	public ResponseEntity<Object> createElnMaterial(@RequestBody Elnmaterial obj) throws Exception {
+
+		return objMaterialService.createElnMaterial(obj);
+	}
+	
+	@RequestMapping(value = "/updateElnMaterial", method = RequestMethod.POST)
+	public ResponseEntity<Object> updateElnMaterial(@RequestBody Elnmaterial obj) throws Exception {
+
+		return objMaterialService.updateElnMaterial(obj);
 	}
 }

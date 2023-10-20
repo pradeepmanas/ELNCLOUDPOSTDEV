@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.service.material.MaterialInventoryService;
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping(value = "materialinventory")
 public class MaterialInventoryController {
@@ -136,7 +138,7 @@ public class MaterialInventoryController {
 	}
 	
 	@PostMapping("/CloudUploadattachments")
-	public MaterialInventory CloudUploadattachments(@RequestParam("file") MultipartFile file,
+	public ElnmaterialInventory CloudUploadattachments(@RequestParam("file") MultipartFile file,
 			@RequestParam("order") Integer nmaterialinventorycode, @RequestParam("filename") String filename,
 			@RequestParam("fileexe") String fileexe, @RequestParam("usercode") Integer usercode,
 			@RequestParam("date") Date currentdate,@RequestParam("isMultitenant") Integer isMultitenant)
@@ -154,5 +156,52 @@ public class MaterialInventoryController {
 	public ResponseEntity<Object> getMaterialInventorytransDetails(@RequestBody Map<String, Object> inputMap)
 			throws Exception {
 		return materialInventoryService.getMaterialInventorytransDetails(inputMap);
+	}
+	
+	/**
+	 * Added by sathishkumar chandrasekar for new inventory changes 
+	 * dated on 18-10-2023
+	 */
+	
+	@RequestMapping(value = "/getElnMaterialInventory", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getElnMaterialInventory(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) materialInventoryService.getElnMaterialInventory(inputMap);
+	}
+	
+	@RequestMapping(value = "/getElnMaterialInventoryByFilter", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getElnMaterialInventoryByFilter(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) materialInventoryService.getElnMaterialInventoryByFilter(inputMap);
+	}
+	
+	@RequestMapping(value = "/getELNInventoryProps", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getELNInventoryProps(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		
+		return (ResponseEntity<Object>) materialInventoryService.getELNInventoryProps(nsiteInteger);
+	}
+	
+	@RequestMapping(value = "/getELNMaterialTypeBasedCat", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getMaterialTypeBasedCat(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) materialInventoryService.getMaterialTypeBasedCat(inputMap);
+	}
+	
+	@RequestMapping(value = "/getELNMaterialCatBasedMaterial", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getELNMaterialCatBasedMaterial(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) materialInventoryService.getELNMaterialCatBasedMaterial(inputMap);
+	}
+	
+	@RequestMapping(value = "/createElnMaterialInventory", method = RequestMethod.POST)
+	public ResponseEntity<Object> createElnMaterialInventory(@RequestBody Map<String, Object> inputMap) throws Exception {
+		return materialInventoryService.createElnMaterialInventory(inputMap);
+	}
+	
+	@RequestMapping(value = "/updateElnMaterialInventory", method = RequestMethod.POST)
+	public ResponseEntity<Object> updateElnMaterialInventory(@RequestBody ElnmaterialInventory objElnmaterialInventory) throws Exception {
+		return materialInventoryService.updateElnMaterialInventory(objElnmaterialInventory);
 	}
 }

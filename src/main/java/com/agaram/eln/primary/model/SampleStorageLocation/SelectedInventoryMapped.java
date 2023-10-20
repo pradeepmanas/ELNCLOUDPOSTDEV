@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.model.samplestoragelocation;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,14 +23,10 @@ public class SelectedInventoryMapped {
 	private String storagepath;
 
 	public String id;
-
-//	@OneToOne(cascade = CascadeType.ALL)
-//	@JoinColumn(name = "nmaterialinventorycode", referencedColumnName = "nmaterialinventorycode")
-//	private MaterialInventory nmaterialinventorycode;
 	
 	private Integer nmaterialinventorycode;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	@JoinColumn(name = "samplestoragelocationkey", referencedColumnName = "samplestoragelocationkey")
 	private SampleStorageLocation samplestoragelocationkey;
 	
@@ -74,14 +69,4 @@ public class SelectedInventoryMapped {
 	public void setNmaterialinventorycode(Integer nmaterialinventorycode) {
 		this.nmaterialinventorycode = nmaterialinventorycode;
 	}
-
-	
-	
-//	public MaterialInventory getNmaterialinventorycode() {
-//		return nmaterialinventorycode;
-//	}
-//
-//	public void setNmaterialinventorycode(MaterialInventory nmaterialinventorycode) {
-//		this.nmaterialinventorycode = nmaterialinventorycode;
-//	}
 }

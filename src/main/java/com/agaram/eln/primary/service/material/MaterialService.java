@@ -26,26 +26,37 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
+import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.model.material.MaterialType;
+import com.agaram.eln.primary.model.material.Period;
+import com.agaram.eln.primary.model.material.Section;
+import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
+import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
 import com.agaram.eln.primary.repository.material.MaterialInventoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
+import com.agaram.eln.primary.repository.material.PeriodRepository;
+import com.agaram.eln.primary.repository.material.SectionRepository;
+import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.google.gson.Gson;
 
 @Service
 public class MaterialService {
@@ -70,6 +81,14 @@ public class MaterialService {
 	MappedTemplateFieldPropsMaterialRepository mappedTemplateFieldPropsMaterialRepository;
 	@Autowired
 	MaterialInventoryRepository materialInventoryRepository;
+	@Autowired
+	ElnmaterialRepository elnmaterialRepository;
+	@Autowired
+	UnitRepository unitRepository;
+	@Autowired
+	SectionRepository sectionRepository;
+	@Autowired
+	PeriodRepository periodRepository;
 
 	public ResponseEntity<Object> getMaterialcombo(Integer nmaterialtypecode, Integer nsitecode) {
 
@@ -152,6 +171,18 @@ public class MaterialService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 	
+	public ResponseEntity<Object> getMaterialDesign(Integer ntypecode) throws JsonParseException, JsonMappingException, IOException {
+		
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		Material objMaterial = materialRepository.findByNmaterialcode(ntypecode);
+		
+		List<MaterialConfig> lstMaterialConfig = materialConfigRepository.findByNmaterialtypecodeAndNformcode(objMaterial.getNmaterialtypecode(), 40);
+		objmap.put("selectedTemplate", lstMaterialConfig);
+	
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
 	public ResponseEntity<Object> getMaterialTypeDesign(Integer ntypecode) throws JsonParseException, JsonMappingException, IOException {
 		
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
@@ -162,6 +193,10 @@ public class MaterialService {
 				ntypecode == Enumeration.TransactionStatus.STANDARDTYPE.gettransactionstatus() ? 1
 								: ntypecode == Enumeration.TransactionStatus.VOLUMETRICTYPE.gettransactionstatus() ? 2 : 3,
 				40));
+		
+//		if(!lstMaterialConfig.isEmpty()) {
+//			objmap.put("selectedGridProps", lstMaterialConfig.get(0));
+//		}
 		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
@@ -966,7 +1001,53 @@ public class MaterialService {
 		objmap.putAll((Map<String, Object>) getMaterialByTypeCode(inputMap).getBody());
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+	
+	public ResponseEntity<Object> createElnMaterial(Elnmaterial obj) throws ParseException, JsonProcessingException {
+		
+		Elnmaterial objElnmaterial = elnmaterialRepository.findByNsitecodeAndSmaterialnameAndMaterialcategory(
+				obj.getNsitecode(),obj.getSmaterialname(),obj.getMaterialcategory());
+		
+		obj.setResponse(new Response());
+		
+		if(objElnmaterial == null) {
 
+			obj.setCreateddate(commonfunction.getCurrentUtcTime());
+			elnmaterialRepository.save(obj);
+			
+			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
+			obj.getResponse().setStatus(true);
+			
+			return new ResponseEntity<>(obj, HttpStatus.OK);
+		}else {
+			obj.getResponse().setInformation("IDS_SAVE_FAIL");
+			obj.getResponse().setStatus(false);
+			return new ResponseEntity<>(obj, HttpStatus.OK);
+		}
+	}
+
+	public ResponseEntity<Object> updateElnMaterial(Elnmaterial obj) throws ParseException, JsonProcessingException {
+		
+		Elnmaterial objElnmaterial = elnmaterialRepository.
+				findByNsitecodeAndSmaterialnameAndMaterialcategoryAndNmaterialcodeNot(
+				obj.getNsitecode(),obj.getSmaterialname(),obj.getMaterialcategory(),obj.getNmaterialcode());
+		
+		obj.setResponse(new Response());
+		
+		if(objElnmaterial == null) {
+
+			elnmaterialRepository.save(obj);
+			
+			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
+			obj.getResponse().setStatus(true);
+			
+			return new ResponseEntity<>(obj, HttpStatus.OK);
+		}else {
+			obj.getResponse().setInformation("IDS_SAVE_FAIL");
+			obj.getResponse().setStatus(false);
+			return new ResponseEntity<>(obj, HttpStatus.OK);
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialDetails(Map<String, Object> inputMap)
 			throws JsonParseException, JsonMappingException, IOException {
@@ -1365,9 +1446,9 @@ public class MaterialService {
 		return getMaterialByTypeCode(inputMap);
 //		return new ResponseEntity<>(getMaterialByTypeCode(inputMap), HttpStatus.OK);
 	}
-	public Material CloudUploadattachments(MultipartFile file, Integer nmaterialcatcode, String filename,
-			String fileexe, Integer usercode, Date currentdate,Integer isMultitenant) throws IOException {
-		Material objmaterial = materialRepository.findOne(nmaterialcatcode);
+	
+	public Elnmaterial CloudUploadattachments(MultipartFile file, Integer nmaterialcatcode, String filename, String fileexe, Integer usercode, Date currentdate,Integer isMultitenant) throws IOException {
+		Elnmaterial objmaterial = elnmaterialRepository.findOne(nmaterialcatcode);
 		LsOrderattachments objattachment = new LsOrderattachments();
 		if(isMultitenant == 0) {
 			if (fileManipulationservice.storeLargeattachment(filename, file) != null) {
@@ -1438,5 +1519,121 @@ public class MaterialService {
 		}	
 
 		return objmaterial;
+	}	
+	
+	
+	public ResponseEntity<Object> getElnMaterial(Map<String, Object> inputMap) throws ParseException {
+		
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
+		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
+		
+		List<Elnmaterial> lstElnmaterials = elnmaterialRepository
+				.findByNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(nsiteInteger,fromDate,toDate);
+		
+		objmap.put("lstMaterial", lstElnmaterials);
+		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> getElnMaterialByFilter(Map<String, Object> inputMap) throws ParseException {
+		
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		ObjectMapper objmapper = new ObjectMapper();
+		
+		long longFromValue = Long.parseLong(inputMap.get("fromdate").toString());
+		long longToValue = Long.parseLong(inputMap.get("todate").toString());
+		
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		Date fromDate = new Date(longFromValue);
+		Date toDate = new Date(longToValue);
+		
+		MaterialType objMaterialType = objmapper.convertValue(inputMap.get("materialtype"), MaterialType.class);
+		MaterialCategory objMaterialCategory = objmapper.convertValue(inputMap.get("materialcategory"), MaterialCategory.class);
+		
+		List<Elnmaterial> lstElnmaterials = new ArrayList<>();
+		
+		if((objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1) && 
+				(objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)) {
+			lstElnmaterials = 
+					elnmaterialRepository.findByNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(
+							nsiteInteger,fromDate,toDate);
+		}else if((objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1) 
+				&& objMaterialCategory.getNmaterialcatcode() != -1) {
+			lstElnmaterials = 
+					elnmaterialRepository.findByMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(
+							objMaterialCategory,nsiteInteger,fromDate,toDate);
+		}else if(objMaterialType.getNmaterialtypecode() != -1 && (objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)) {
+			lstElnmaterials = 
+					elnmaterialRepository.findByMaterialtypeAndNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(
+							objMaterialType,nsiteInteger,fromDate,toDate);
+		}else {
+			lstElnmaterials = 
+					elnmaterialRepository.findByMaterialtypeAndMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(
+							objMaterialType,objMaterialCategory,nsiteInteger,fromDate,toDate);
+		}		
+		
+		objmap.put("lstMaterial", lstElnmaterials);
+		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> getMaterialProps(Integer nsiteInteger) {
+		
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		List<MaterialType> lstMaterialTypes =  new ArrayList<MaterialType>();
+		List<MaterialCategory> lstCategories = new ArrayList<MaterialCategory>();
+		List<Elnmaterial> lstElnmaterials = new ArrayList<Elnmaterial>();
+		
+		lstMaterialTypes = materialTypeRepository.findByNstatusAndNmaterialtypecodeNotOrderByNmaterialtypecode(1, -1);
+		if(!lstMaterialTypes.isEmpty()) {
+			lstCategories = materialCategoryRepository.
+					findByNmaterialtypecodeAndNsitecodeAndNstatus(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1);
+			if(!lstCategories.isEmpty()) {
+				lstElnmaterials = elnmaterialRepository.findByMaterialcategoryAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger);
+			}
+		}	
+		
+		objmap.put("lstMaterial", lstElnmaterials);		
+		objmap.put("lstCategories", lstCategories);
+		objmap.put("lstType", lstMaterialTypes);
+		
+		List<Unit> lstUnits = unitRepository.findByNsitecodeOrderByNunitcodeDesc(nsiteInteger);
+		List<Section> lstSec = sectionRepository.findByNsitecodeOrderByNsectioncodeDesc(nsiteInteger);
+		List<Period> lstPeriods = periodRepository.findAll();
+		
+		objmap.put("lstUnit", lstUnits);
+		objmap.put("lstSection", lstSec);
+		objmap.put("lstPeriods", lstPeriods);
+		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> getMaterialTypeBasedCat(Map<String, Object> inputMap) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		Integer ntypecode = (Integer) inputMap.get("ntypecode");
+		
+		List<MaterialType> lstMaterialTypes = materialTypeRepository.findByNmaterialtypecode(ntypecode);
+		List<MaterialCategory> lstCategories = new ArrayList<MaterialCategory>();
+		List<Elnmaterial> lstElnmaterials = new ArrayList<Elnmaterial>();
+		
+		if(!lstMaterialTypes.isEmpty()) {
+			lstCategories = materialCategoryRepository.
+					findByNmaterialtypecodeAndNsitecodeAndNstatus(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1);
+			
+			if(!lstCategories.isEmpty()) {
+				lstElnmaterials = elnmaterialRepository.findByMaterialcategoryAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger);
+			}			
+		}
+		
+		objmap.put("lstCategories", lstCategories);
+		objmap.put("lstMaterial", lstElnmaterials);		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 }
