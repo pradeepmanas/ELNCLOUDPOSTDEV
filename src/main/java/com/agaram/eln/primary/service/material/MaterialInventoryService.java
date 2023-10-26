@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -2918,50 +2919,10 @@ public class MaterialInventoryService {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 			List<Map<String, Object>> lstMaterialInventoryTrans = new ArrayList<Map<String, Object>>();
 			   List<Integer> nmaterialinventorycode = (List<Integer>) inputMap.get("nmaterialinventorycode");
-			List<MaterialInventoryTransaction> lstInventoryTransaction = materialInventoryTransactionRepository
-						.findByNmaterialinventorycodeInOrderByNmaterialinventtranscodeDesc(nmaterialinventorycode);
-				lstInventoryTransaction.stream().peek(f -> {
-					try {
-						Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
-						Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(f.getJsonuidata(),
-								"namountleft");
-						resObj.put("Available Quantity", objContent.get("rtnObj"));
-						objContent = commonfunction.getInventoryValuesFromJsonString(f.getJsonuidata(), "nqtyissued");
-						resObj.put("Issued Quantity", objContent.get("rtnObj"));
-						resObj.put("Received Quantity", f.getNqtyreceived());
-						resObj.put("nmaterialinventorycode", f.getNmaterialinventorycode());
-						resObj.put("nmaterialinventtranscode", f.getNmaterialinventtranscode());
-						resObj.put("issuedby", f.getIssuedbyusercode() != null ? f.getIssuedbyusercode().getUsername() : "-");
-						resObj.put("createddate", f.getCreateddate());
-
-						lstMaterialInventoryTrans.add(resObj);
-
-					} catch (IOException e) {
-
-						e.printStackTrace();
-					}
-
-				}).collect(Collectors.toList());
-				objmap.put("MaterialInventoryTrans", lstMaterialInventoryTrans);
-			List<Map<String, Object>> lstMaterialInventory = new ArrayList<Map<String, Object>>();
-			List<MaterialInventory> objLstMaterialInventory = materialInventoryRepository
-					.findByNmaterialinventorycodeIn(nmaterialinventorycode);
-
-			objLstMaterialInventory.stream().peek(f -> {
-
-				try {
-					lstMaterialInventory.add(returnDataAsRequested(f));
-
-				} catch (IOException e) {
-
-					e.printStackTrace();
-				}
-
-			}).collect(Collectors.toList());
-
-			objmap.put("MaterialInventory", lstMaterialInventory);
-		
-		
+			   List<ElnmaterialInventory> lstElnInventories = new ArrayList<ElnmaterialInventory>();
+				lstElnInventories = 
+						elnmaterialInventoryReppository.findByNmaterialinventorycodeIn(nmaterialinventorycode);
+			objmap.put("MaterialInventory", lstElnInventories);
 			return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
@@ -3172,7 +3133,7 @@ public class MaterialInventoryService {
 	public ResponseEntity<Object> getElnMaterialInventory(Map<String, Object> inputMap) throws ParseException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		
+		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
 		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
 		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
@@ -3209,29 +3170,123 @@ public class MaterialInventoryService {
 					elnmaterialInventoryReppository.findByNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
 							nsiteInteger,fromDate,toDate);
 			
-		}else if((objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1) 
-				&& objMaterialCategory.getNmaterialcatcode() != -1) {
-			lstElnInventories = 
-					elnmaterialInventoryReppository.findByMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
-							objMaterialCategory,nsiteInteger,fromDate,toDate);
-		}else if(objMaterialType.getNmaterialtypecode() != -1 && (objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)) {
+		}else if((objMaterialType.getNmaterialtypecode() != -1) && 
+				(objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1) &&
+				(objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+			
 			lstElnInventories = 
 					elnmaterialInventoryReppository.findByMaterialtypeAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
 							objMaterialType,nsiteInteger,fromDate,toDate);
-		}else {
+			
+		}else if((objMaterialType.getNmaterialtypecode() != -1) &&  (objMaterialCategory.getNmaterialcatcode() != -1) &&
+				(objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+			
 			lstElnInventories = 
 					elnmaterialInventoryReppository.findByMaterialtypeAndMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
 							objMaterialType,objMaterialCategory,nsiteInteger,fromDate,toDate);
+		}else {
+			lstElnInventories = 
+					elnmaterialInventoryReppository.findByMaterialtypeAndMaterialcategoryAndMaterialAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+							objMaterialType,objMaterialCategory,objElnmaterial,nsiteInteger,fromDate,toDate);
 		}	
 		
 		objmap.put("lstMaterialInventory", lstElnInventories);
 		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<Object> getElnMaterialInventoryByStorage(Map<String, Object> inputMap) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		ObjectMapper objmapper = new ObjectMapper();
+		
+		Map<String, Object> clickedItem = (Map<String, Object>) inputMap.get("clickedItem");
 
-	public ResponseEntity<Object> updateElnMaterialInventory(ElnmaterialInventory objElnmaterialInventory) {
+		String id = clickedItem.get("id").toString();
+
+		List<SelectedInventoryMapped> lstInventoryMappeds = selectedInventoryMappedRepository.findByIdOrderByMappedidDesc(id);
+		
+		List<Integer> objLstInvKey = new ArrayList<Integer>();
+		
+		List<ElnmaterialInventory> lstElnInventories = new ArrayList<ElnmaterialInventory>();
+
+		if(!lstInventoryMappeds.isEmpty()) {
+			
+			lstInventoryMappeds.stream().filter(f -> f.getNmaterialinventorycode() != null).map(f -> f.getNmaterialinventorycode()) .forEach(objLstInvKey::add);
+			
+			if(!objLstInvKey.isEmpty()) {
+				
+				long longFromValue = Long.parseLong(inputMap.get("fromdate").toString());
+				long longToValue = Long.parseLong(inputMap.get("todate").toString());
+				
+				Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+				Date fromDate = new Date(longFromValue);
+				Date toDate = new Date(longToValue);
+				
+				MaterialType objMaterialType = objmapper.convertValue(inputMap.get("materialtype"), MaterialType.class);
+				MaterialCategory objMaterialCategory = objmapper.convertValue(inputMap.get("materialcategory"), MaterialCategory.class);
+				Elnmaterial objElnmaterial = objmapper.convertValue(inputMap.get("elnmaterial"), Elnmaterial.class);
+				
+				if((objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1) && 
+						(objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1) &&
+							(objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+					
+					lstElnInventories = 
+							elnmaterialInventoryReppository.findByNsitecodeAndNmaterialinventorycodeInAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+									nsiteInteger,objLstInvKey,fromDate,toDate);
+					
+				}else if((objMaterialType.getNmaterialtypecode() != -1) &&  (objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1) &&
+								(objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+					
+					lstElnInventories = 
+							elnmaterialInventoryReppository.findByMaterialtypeAndNsitecodeAndNmaterialinventorycodeInAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+									objMaterialType,nsiteInteger,objLstInvKey,fromDate,toDate);
+					
+				}else if((objMaterialType.getNmaterialtypecode() != -1) &&  (objMaterialCategory.getNmaterialcatcode() != -1) &&
+						(objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+					
+					lstElnInventories = 
+							elnmaterialInventoryReppository.findByMaterialtypeAndMaterialcategoryAndNsitecodeAndNmaterialinventorycodeInAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+									objMaterialType,objMaterialCategory,nsiteInteger,objLstInvKey,fromDate,toDate);
+			
+				}else if((objMaterialType.getNmaterialtypecode() != -1) &&  (objMaterialCategory.getNmaterialcatcode() != -1) && (objElnmaterial.getNmaterialcode() != -1)) {
+					
+					lstElnInventories = 
+							elnmaterialInventoryReppository.findByMaterialtypeAndMaterialcategoryAndMaterialAndNsitecodeAndNmaterialinventorycodeInAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+									objMaterialType,objMaterialCategory,objElnmaterial,nsiteInteger,objLstInvKey,fromDate,toDate);
+			
+				}
+				
+				objmap.put("lstMaterialInventory", lstElnInventories);
+			}
+		}
+		objmap.put("lstMaterialInventory", lstElnInventories);
+		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> updateElnMaterialInventory(ElnmaterialInventory objElnmaterialInventory) throws ParseException {
 		
 		ElnmaterialInventory objInventory = elnmaterialInventoryReppository.findByNmaterialinventorycode(objElnmaterialInventory.getNmaterialinventorycode());
+		
+		if(objElnmaterialInventory.getIsexpiry()) {
+			Date openDate = objElnmaterialInventory.getOpendate();
+			
+			Elnmaterial objElnmaterial = elnMaterialRepository.findOne(objInventory.getMaterial().getNmaterialcode());
+			
+			if(objElnmaterial != null) {
+				String openExpiryvalue = objElnmaterial.getOpenexpiryvalue();
+				String openExpiryperiod = objElnmaterial.getOpenexpiryperiod();
+				
+				Date getExpiryAfterOpen = setExpiryDateBasedOnValue(openExpiryvalue,openExpiryperiod,openDate);
+				
+				objInventory.setIsexpiry(true);
+				objInventory.setExpirydate(getExpiryAfterOpen);
+				
+				elnmaterialInventoryReppository.save(objInventory);
+				return new ResponseEntity<>(objInventory, HttpStatus.OK);
+			}
+		}
 		
 		objInventory.setNstatus(objElnmaterialInventory.getNstatus());
 		objInventory.setNtransactionstatus(objElnmaterialInventory.getNstatus());
@@ -3239,5 +3294,39 @@ public class MaterialInventoryService {
 		elnmaterialInventoryReppository.save(objInventory);
 		return new ResponseEntity<>(objInventory, HttpStatus.OK);
 	}
+
+	private Date setExpiryDateBasedOnValue(String string, String string2,Date openDate) throws ParseException {
+		
+		Instant instant = openDate.toInstant();
+        LocalDate currentDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+		
+		int value = Integer.parseInt(string);
+
+        if ("Days".equalsIgnoreCase(string2)) {
+            currentDate = currentDate.plusDays(value);
+        } else if ("Hours".equalsIgnoreCase(string2)) {
+        	// Convert Date to LocalDateTime
+        	Instant instant1 = openDate.toInstant();
+        	LocalDateTime localDateTime = instant1.atZone(ZoneId.systemDefault()).toLocalDateTime();
+        	localDateTime = localDateTime.plusHours(value); // Add hours
+            currentDate = localDateTime.toLocalDate();
+            
+         // Convert LocalDateTime to Date
+            ZoneId zoneId = ZoneId.systemDefault(); // You can use a specific time zone
+            ZoneOffset zoneOffset = zoneId.getRules().getOffset(localDateTime);
+            long epochMillis = localDateTime.toInstant(zoneOffset).toEpochMilli();
+            return new Date(epochMillis);
+            
+        } else if ("Weeks".equalsIgnoreCase(string2)) {
+            currentDate = currentDate.plusWeeks(value);
+        } else if ("Months".equalsIgnoreCase(string2)) {
+            currentDate = currentDate.plusMonths(value);
+        } else if ("Years".equalsIgnoreCase(string2)) {
+            currentDate = currentDate.plusYears(value);
+        }
+        
+		return openDate;		
+	}
+	
 	
 }

@@ -1056,3 +1056,13 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.lsreportfile
     OWNER to postgres;
+
+ALTER TABLE IF Exists elnmaterialinventory ADD COLUMN IF NOT EXISTS createdby_usercode INTEGER;
+
+ALTER TABLE IF Exists elnmaterialinventory ADD COLUMN IF NOT EXISTS opendate timestamp without time zone;
+
+ALTER TABLE IF Exists elnmaterial ADD COLUMN IF NOT EXISTS createby_usercode INTEGER;
+
+ALTER TABLE IF EXISTS public.lsprotocolmaster ADD COLUMN IF NOT EXISTS protocoldatainfo jsonb;
+
+ALTER TABLE IF EXISTS public.lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS protocoldatainfo jsonb;

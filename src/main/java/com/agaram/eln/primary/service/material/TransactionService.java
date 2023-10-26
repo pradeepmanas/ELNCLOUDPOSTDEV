@@ -601,8 +601,11 @@ public class TransactionService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
+		objInventory.setSavailablequantity(getQtyLeft.toString());
+		
 		elnresultUsedMaterialRepository.save(resultUsedMaterial);
+		elnmaterialInventoryRepository.save(objInventory);
 
 //		if (objInventory.getNqtynotification() != null) {
 //			if (objInventory.getNqtynotification() <= getQtyLeft ? false : true) {
@@ -795,26 +798,126 @@ public class TransactionService {
 		calendar.set(Calendar.MILLISECOND, 999);
 		currentDate = calendar.getTime();
 
-		List<MaterialInventory> objInventories = materialInventoryRepository.findByNsitecodeAndNtransactionstatusAndIsexpiryneedAndExpirydateBetween(cft.getLssitemaster(),28, true, currentDate, endDate);
-		List<MaterialInventory> expiredInvent = new ArrayList<MaterialInventory>(); 
+//		List<MaterialInventory> objInventories = materialInventoryRepository.findByNsitecodeAndNtransactionstatusAndIsexpiryneedAndExpirydateBetween(cft.getLssitemaster(),28, true, currentDate, endDate);
+//		List<MaterialInventory> expiredInvent = new ArrayList<MaterialInventory>();
+		
+		List<ElnmaterialInventory> objInventories = elnmaterialInventoryRepository.findByNsitecodeAndNtransactionstatusAndIsexpiryAndExpirydateBetween(cft.getLssitemaster(),28, true, currentDate, endDate);
+		List<ElnmaterialInventory> expiredInvent = new ArrayList<ElnmaterialInventory>();
 		List<LSnotification> lstLSnotifications = new ArrayList<LSnotification>();
 
 		objInventories.stream().peek(objInventory -> {
-			if (objInventory.getIsexpiryneed()) {
+			if (objInventory.getIsexpiry()) {
 				Date date = objInventory.getExpirydate();
 				LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 				if (localCurrentDate.isBefore(localDate)) {
-					lstLSnotifications.addAll(updateNotificationOnInventory(objInventory, "EXPIRYDATE", cft, 0.0, date));
+					lstLSnotifications.addAll(updateNotificationOnELNInventory(objInventory, "EXPIRYDATE", cft, 0.0, date));
 				} else {
 					objInventory.setNtransactionstatus(55);
 					expiredInvent.add(objInventory);
-					lstLSnotifications.addAll(updateNotificationOnInventory(objInventory, "EXPIRYREACHED", cft, 0.0, date));
+					lstLSnotifications.addAll(updateNotificationOnELNInventory(objInventory, "EXPIRYREACHED", cft, 0.0, date));
 				}
 			}
 		}).collect(Collectors.toList());
 		
 		lsnotificationRepository.save(lstLSnotifications);
-		materialInventoryRepository.save(expiredInvent);
+		elnmaterialInventoryRepository.save(expiredInvent);
+	}
+	
+	public List<LSnotification> updateNotificationOnELNInventory(ElnmaterialInventory objInventory, String task, LScfttransaction cft,
+			Double getQtyLeft,Date date) {
+
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		
+		List<ElnresultUsedMaterial> objLstTransactions = objInventory.getResultusedmaterial();
+
+		List<LSuserMaster> objLstuser = objLstTransactions.stream()
+				.map(ElnresultUsedMaterial::getCreatedbyusercode).filter(Objects::nonNull).collect(Collectors.toList());
+
+		if (!objLstuser.isEmpty()) {
+			List<Integer> objnotifyuser = objLstuser.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
+
+			objnotifyuser = objnotifyuser.stream().distinct().collect(Collectors.toList());
+			
+			if(objnotifyuser.contains(cft.getLsuserMaster())) {
+				
+				LSuserMaster objUser = new LSuserMaster();
+				objUser.setUsercode(cft.getLsuserMaster());
+
+				String details = "";
+
+				if (task.equals("INVENTORYQTYNOTIFICATION")) {
+
+					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"qtyleft\":\""
+							+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objInventory.getNqtynotification() + "\"}";
+
+				} else if (task.equals("EXPIRYDATE")) {
+					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + date + "\"}";
+				} else {
+					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + getQtyLeft + "\"}";
+				}
+
+				String notification = details;
+
+				LSnotification objnotify = new LSnotification();
+
+				objnotify.setNotifationto(objUser);
+				objnotify.setNotifationfrom(objUser);
+				objnotify.setNotificationdate(cft.getTransactiondate());
+				objnotify.setNotification(task);
+				objnotify.setNotificationdetils(notification);
+				objnotify.setIsnewnotification(1);
+				objnotify.setNotificationpath("/materialinventory");
+				objnotify.setNotificationfor(1);
+				
+				lstnotifications.add(objnotify);
+				
+				return lstnotifications;
+			}
+		}else {
+			List<Integer> objnotifyuser = new ArrayList<Integer>();
+			Integer getUsrCode = objInventory.getCreatedby().getUsercode();
+			if(getUsrCode != null) {
+				objnotifyuser.add(getUsrCode);
+				
+				if(objnotifyuser.contains(cft.getLsuserMaster())) {
+					
+					LSuserMaster objUser = new LSuserMaster();
+					objUser.setUsercode(cft.getLsuserMaster());
+
+					String details = "";
+
+					if (task.equals("INVENTORYQTYNOTIFICATION")) {
+
+						details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"qtyleft\":\""
+								+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objInventory.getNqtynotification() + "\"}";
+
+					} else if (task.equals("EXPIRYDATE")) {
+						details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + date + "\"}";
+					} else {
+						details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + getQtyLeft + "\"}";
+					}
+
+					String notification = details;
+
+					LSnotification objnotify = new LSnotification();
+
+					objnotify.setNotifationto(objUser);
+					objnotify.setNotifationfrom(objUser);
+					objnotify.setNotificationdate(cft.getTransactiondate());
+					objnotify.setNotification(task);
+					objnotify.setNotificationdetils(notification);
+					objnotify.setIsnewnotification(1);
+					objnotify.setNotificationpath("/materialinventory");
+					objnotify.setNotificationfor(1);
+					
+					lstnotifications.add(objnotify);
+					
+					return lstnotifications;
+				}
+			}
+			
+		}
+		return lstnotifications;
 	}
 
 	@SuppressWarnings("unchecked")

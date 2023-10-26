@@ -175,6 +175,12 @@ public class MaterialInventoryController {
 		return (ResponseEntity<Object>) materialInventoryService.getElnMaterialInventoryByFilter(inputMap);
 	}
 	
+	@RequestMapping(value = "/getElnMaterialInventoryByStorage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getElnMaterialInventoryByStorage(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) materialInventoryService.getElnMaterialInventoryByStorage(inputMap);
+	}
+	
 	@RequestMapping(value = "/getELNInventoryProps", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getELNInventoryProps(@RequestBody Map<String, Object> inputMap) throws Exception {
 

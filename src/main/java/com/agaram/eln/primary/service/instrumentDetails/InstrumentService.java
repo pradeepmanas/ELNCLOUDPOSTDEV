@@ -5935,8 +5935,20 @@ public class InstrumentService {
 		if (lstsample != null && lstsample.size() > 0) {
 			List<Integer> lssamplecode = lstsample.stream().map(LSsamplemaster::getSamplecode)
 					.collect(Collectors.toList());
-			ArrayList<List<Object>> lsttest = lslogilablimsorderdetailRepository
-					.getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(lssamplecode);
+			int totalSamples = lssamplecode.size();
+			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));			
+			List<Object> lsttest = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+				    .parallel()
+				    .mapToObj(i -> {
+				        int startIndex = i * chunkSize;
+				        int endIndex = Math.min(startIndex + chunkSize, totalSamples);
+				        List<Integer> currentChunk = lssamplecode.subList(startIndex, endIndex);
+				        List<Object> orderChunk = lslogilablimsorderdetailRepository
+				            .getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(currentChunk);
+				        return orderChunk;
+				    })
+				    .flatMap(List::stream) // Flatten the list of arrays to a single list
+				    .collect(Collectors.toList());
 
 			mapfolders.put("sampletests", lsttest);
 			mapfolders.put("samples", lstsample);
@@ -6246,14 +6258,39 @@ public class InstrumentService {
 
 		List<LSsamplemaster> lstsample = lssamplemasterrepository.findSamplecodeAndSamplenameBystatusAndLssitemaster(1,
 				objusermaster.getLsuserMaster().getLssitemaster());
+//		if (lstsample != null && lstsample.size() > 0) {
+//		List<Integer> lssamplecode = lstsample.stream().map(LSsamplemaster::getSamplecode)
+//				.collect(Collectors.toList());
+//		ArrayList<List<Object>> lsttest = LSlogilabprotocoldetailRepository
+//				.getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(lssamplecode);
+//
+//		mapfolders.put("sampletests", lsttest);
+//		mapfolders.put("samples", lstsample);
+		
+		
 		if (lstsample != null && lstsample.size() > 0) {
 			List<Integer> lssamplecode = lstsample.stream().map(LSsamplemaster::getSamplecode)
 					.collect(Collectors.toList());
-			ArrayList<List<Object>> lsttest = LSlogilabprotocoldetailRepository
-					.getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(lssamplecode);
+			
+			int totalSamples = lssamplecode.size();
+			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));			
+			List<Object> lsttest = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+				    .parallel()
+				    .mapToObj(i -> {
+				        int startIndex = i * chunkSize;
+				        int endIndex = Math.min(startIndex + chunkSize, totalSamples);
+				        List<Integer> currentChunk = lssamplecode.subList(startIndex, endIndex);
+				        List<Object> orderChunk = lslogilablimsorderdetailRepository
+				            .getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(currentChunk);
+				        return orderChunk;
+				    })
+				    .flatMap(List::stream) // Flatten the list of arrays to a single list
+				    .collect(Collectors.toList());
 
 			mapfolders.put("sampletests", lsttest);
 			mapfolders.put("samples", lstsample);
+		
+		
 		} else {
 			mapfolders.put("sampletests", new ArrayList<Logilaborders>());
 			mapfolders.put("samples", new ArrayList<Samplemaster>());

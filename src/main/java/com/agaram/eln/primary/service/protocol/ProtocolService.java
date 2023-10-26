@@ -5107,6 +5107,11 @@ public class ProtocolService {
 			Integer ismultitenant = object.convertValue(body.get("ismultitenant"), Integer.class);
 			int sitecode = object.convertValue(body.get("sitecode"), Integer.class);
 			
+			if (body.get("protocoldatainfo") != null) {
+				lSprotocolmaster.setProtocoldatainfo((String) body.get("protocoldatainfo"));
+				protocolMaster.setProtocoldatainfo((String) body.get("protocoldatainfo"));
+			}
+			
 			if ((protocolMaster.getApproved() != null && protocolMaster.getApproved() == 1 )) {
 
 				LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(sitecode);
@@ -5179,6 +5184,11 @@ public class ProtocolService {
 			Integer ismultitenant = object.convertValue(body.get("ismultitenant"), Integer.class);
 			int sitecode = object.convertValue(body.get("sitecode"), Integer.class);
 	
+			if (body.get("protocoldatainfo") != null) {
+				lSlogilabprotocoldetail.setProtocoldatainfo((String) body.get("protocoldatainfo"));
+				protocolOrder.setProtocoldatainfo((String) body.get("protocoldatainfo"));
+			}
+			
 			if ((protocolOrder.getApproved() == null || protocolOrder.getApproved() != 1 )) {
 
 //				LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(sitecode);

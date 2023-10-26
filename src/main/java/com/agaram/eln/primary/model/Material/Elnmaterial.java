@@ -20,6 +20,7 @@ import org.hibernate.annotations.Type;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
 @Table(name = "elnmaterial")
@@ -43,6 +44,9 @@ public class Elnmaterial implements Serializable{
 	
 	@ManyToOne
 	private Section section;
+	
+	@ManyToOne
+	private LSuserMaster createby;
 	
 	@Column(name = "nstatus")
 	private Integer nstatus;
@@ -99,7 +103,7 @@ public class Elnmaterial implements Serializable{
 	private String displaystatus;
 	
 	public String getExpiryTypeValue() {
-		return this.expirytype == 1 ? "Expiry Date" : (this.expirytype == 0 ? "No Expiry" : "Expiry Policy");
+		return this.expirytype == 1 ? "Expiry Date" : (this.expirytype == 0 ? "No Expiry" : "Open Expiry");
 	}
 
 	public void setExpiryTypeValue(String expiryTypeValue) {
@@ -332,5 +336,13 @@ public class Elnmaterial implements Serializable{
 
 	public void setSection(Section section) {
 		this.section = section;
+	}
+
+	public LSuserMaster getCreateby() {
+		return createby;
+	}
+
+	public void setCreateby(LSuserMaster createby) {
+		this.createby = createby;
 	}
 }

@@ -533,7 +533,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	@Modifying
 	@Query(value = "select distinct LSlogilablimsorderdetail.lstestmasterlocal_testcode, LSlogilablimsorderdetail.lssamplemaster_samplecode,  CAST((select testname from lstestmasterlocal where testcode =  LSlogilablimsorderdetail.lstestmasterlocal_testcode) as varchar(10))as testname  from LSlogilablimsorderdetail as LSlogilablimsorderdetail"
 			+ " where LSlogilablimsorderdetail.lstestmasterlocal_testcode is not null and LSlogilablimsorderdetail.lssamplemaster_samplecode is not null and LSlogilablimsorderdetail.lssamplemaster_samplecode in (?1)", nativeQuery = true)
-	public  ArrayList<List<Object>>  getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(List<Integer> lssamplecode);
+	public  List<Object>  getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(List<Integer> lssamplecode);
 		
 	public List<Logilaborders> findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			LSsamplemaster lssample,Integer siteview, LStestmasterlocal lstest,Integer displaytype, Date fromdate, Date todate,LSsamplemaster lsusersample,Integer userview,LSuserMaster lsloginuser, 

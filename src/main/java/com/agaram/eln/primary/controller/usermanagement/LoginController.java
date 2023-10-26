@@ -10,10 +10,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.scheduling.annotation.EnableScheduling;
 //import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,21 +23,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.config.ADS_Connection;
+import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
-import com.agaram.eln.primary.model.usermanagement.LSMultisites;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSdomainMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
-import com.agaram.eln.primary.service.usermanagement.LoginService;
-import com.agaram.eln.primary.model.cfr.LSpreferences;
-import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
+import com.agaram.eln.primary.service.multitenant.DatasourceService;
+import com.agaram.eln.primary.service.usermanagement.LoginService;
 @RestController
 @RequestMapping(value = "/Login", method = RequestMethod.POST)
 public class LoginController {
@@ -46,6 +49,9 @@ public class LoginController {
 	private LSpreferencesRepository LSpreferencesRepository;
 	@Autowired
 	private LSuserMasterRepository lsuserMasterRepository;
+	
+	@Autowired
+	private DatasourceService datasourceService;
 
 	@GetMapping("/LoadSite")
 	public List<LSSiteMaster> loadSite(HttpServletRequest request) throws Exception {
@@ -293,4 +299,26 @@ public class LoginController {
 	public List<LSSiteMaster> LoadSitewithoutgzip(HttpServletRequest request) throws Exception {
 		return loginService.loadSite();
 	}
+	
+	@GetMapping("/Logintenat/{Tenantname}/{Username}")
+	public ResponseEntity<Object> Logintenat(
+	    @PathVariable String Tenantname,
+	    @PathVariable String Username,
+	    HttpServletRequest request) throws Exception {
+	    DataSourceConfig sendobj = new DataSourceConfig();
+	    sendobj.setTenantid(Tenantname);
+	    DataSourceConfig rtnobj = datasourceService.Validatetenant(sendobj);
+	    if (!rtnobj.getObjResponse().getStatus()) {
+	        return new ResponseEntity<>("TENANT_NOT_VALID", HttpStatus.OK);
+	    }
+	    List<LSuserMaster> users = lsuserMasterRepository.findByusername(Username);
+	    if (users.isEmpty()) {
+	        return new ResponseEntity<>("USER_NOT_EXIST", HttpStatus.OK);
+	    } else {
+	        return new ResponseEntity<>(users, HttpStatus.OK);
+	    }
+	}
+
+
+
 }

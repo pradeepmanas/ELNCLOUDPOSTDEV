@@ -29,7 +29,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 @Component
 public class Converter extends AbstractHttpMessageConverter<Object> {
 
@@ -57,7 +56,9 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 //    	mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 //    	System.out.println(inputMessage.getHeaders().get("authorization").get(0));
 		String contenttype = inputMessage.getHeaders().get("Content-Type").get(0);
-		String encoding = inputMessage.getHeaders().get("accept-encoding") != null ? inputMessage.getHeaders().get("accept-encoding").get(0) : inputMessage.getHeaders().get("accept").get(0);
+		String encoding = inputMessage.getHeaders().get("accept-encoding") != null
+				? inputMessage.getHeaders().get("accept-encoding").get(0)
+				: inputMessage.getHeaders().get("accept").get(0);
 //		String contendencoding = inputMessage.getHeaders().get("content-encoding");
 
 		String contendencoding = "";
@@ -183,75 +184,53 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		// mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 //    	System.out.println("write "+ outputMessage.getHeaders().get("authorization").get(0));
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+				.getRequest();
 		String requestUrl = request.getRequestURI();
-	    System.out.println("---------------------------------------------------------------------------------------------------------------");
-	    System.out.println("ZipDataKumu" + requestUrl);
-	    requestUrl = requestUrl.contains("/ELNPOSTGRE-0.0.1-SNAPSHOT")? requestUrl.substring("/ELNPOSTGRE-0.0.1-SNAPSHOT".length()) : 
-	        	requestUrl.contains("/ELN-0.0.1-SNAPSHOT")? requestUrl.substring("/ELN-0.0.1-SNAPSHOT".length()) : requestUrl;
-		    
-        List < String > uncompressedUrls = Arrays.asList(
-                "/protocol/uploadprotocolsfile",
-                "/protocol/uploadprotocolsfilesql",
-                "/protocol/Uploadprotocolimage",
-                "/protocol/Uploadprotocolimagesql",
-                "/protocol/removeprotocolimage",
-                "/protocol/removeprotocolimagesql",
-                "/protocol/loadprotocolfiles",
-                "/protocol/uploadvideo",
-                "/protocol/uploadvideosql",
-                "/protocol/removeprotocolvideo",
-                "/protocol/removeprotocolvideossql",
-                "/protocol/uploadprotocolsorderfile",
-                "/protocol/uploadprotocolsorderfilesql",
-                "/protocol/Uploadprotocolorderimage",
-                "/protocol/Uploadprotocolorderimagesql",
-                "/protocol/removeprotocoorderlimage",
-                "/protocol/removeprotocoorderlimagesql",
-                "/protocol/loadprotocolorderfiles",
-                "/protocol/uploadprotocolordervideo",
-                "/protocol/downloadprotocolordervideosql",
-                "/protocol/removeprotocolordervideo",
-                "/protocol/removeprotocolordervideossql",
-                "/protocol/downloadprotocolimage",
-                "/Lims/getSheetsFromELN",
-                "/Lims/downloadSheetFromELN",
-                "/Lims/downloadResultFromELN",
-                "/Lims/updateSheetsParameterForELN",
-                "/Lims/getAttachmentsForLIMS",
-                "/Lims/getOrdersFromELN",
-                "/Lims/getOrderTagFromELN",
-                "/Lims/getSiteFromELN",
-                "/Lims/getUsersFromELN",
-                "/Instrument/uploadsheetimagesSql",
-                "/Instrument/uploadsheetimages",
-                "/Instrument/downloadsheetimages",
-                "/Instrument/downloadsheetimagessql",
+		System.out.println(
+				"---------------------------------------------------------------------------------------------------------------");
+		System.out.println("ZipDataKumu" + requestUrl);
+		requestUrl = requestUrl.contains("/ELNPOSTGRE-0.0.1-SNAPSHOT")
+				? requestUrl.substring("/ELNPOSTGRE-0.0.1-SNAPSHOT".length())
+				: requestUrl.contains("/ELN-0.0.1-SNAPSHOT") ? requestUrl.substring("/ELN-0.0.1-SNAPSHOT".length())
+						: requestUrl;
+
+		List<String> uncompressedUrls = Arrays.asList("/protocol/uploadprotocolsfile",
+				"/protocol/uploadprotocolsfilesql", "/protocol/Uploadprotocolimage", "/protocol/Uploadprotocolimagesql",
+				"/protocol/removeprotocolimage", "/protocol/removeprotocolimagesql", "/protocol/loadprotocolfiles",
+				"/protocol/uploadvideo", "/protocol/uploadvideosql", "/protocol/removeprotocolvideo",
+				"/protocol/removeprotocolvideossql", "/protocol/uploadprotocolsorderfile",
+				"/protocol/uploadprotocolsorderfilesql", "/protocol/Uploadprotocolorderimage",
+				"/protocol/Uploadprotocolorderimagesql", "/protocol/removeprotocoorderlimage",
+				"/protocol/removeprotocoorderlimagesql", "/protocol/loadprotocolorderfiles",
+				"/protocol/uploadprotocolordervideo", "/protocol/downloadprotocolordervideosql",
+				"/protocol/removeprotocolordervideo", "/protocol/removeprotocolordervideossql",
+				"/protocol/downloadprotocolimage", "/Lims/getSheetsFromELN", "/Lims/downloadSheetFromELN",
+				"/Lims/downloadResultFromELN", "/Lims/updateSheetsParameterForELN", "/Lims/getAttachmentsForLIMS",
+				"/Lims/getOrdersFromELN", "/Lims/getOrderTagFromELN", "/Lims/getSiteFromELN", "/Lims/getUsersFromELN",
+				"/Instrument/uploadsheetimagesSql", "/Instrument/uploadsheetimages", "/Instrument/downloadsheetimages",
+				"/Instrument/downloadsheetimagessql",
 //                "/evaluateParser",
 //        		"/findByStatus",
-        		"/getMethod",
-        		"/getParserData",
-        		"/getMethodDelimiter",
-        		"/getParserMethod",
-        		"/getDelimiters",
-        		"/getSubParserMethod",
-        		"/getParserFieldTechniqueListByMethodKey",
-        		"/getmethodversion",
+				"/getMethod", "/getParserData", "/getMethodDelimiter", "/getParserMethod", "/getDelimiters",
+				"/getSubParserMethod", "/getParserFieldTechniqueListByMethodKey", "/getmethodversion",
 //        		"/MethodExportController/exportMethods",
 //        		"/MethodImportController/importMethods",
 //        		"/downloadFile/{fileName}",
- //       		"/getFileData",
-        		"/Login/LoadSitewithoutgzip"
-                                                                                                                                      
-            );
-        byte[] compressedBytes = new byte[0];
-        if (uncompressedUrls.contains(requestUrl)) {
-            // Don't compress the response
-        	compressedBytes = mapper.writeValueAsBytes(o);
-        } else {
-            // Compress the response
-        	compressedBytes = compress(mapper.writeValueAsBytes(o));
-        }
+				// "/getFileData",
+				"/Login/LoadSitewithoutgzip", "/Login/Logintenat/"
+
+		);
+		byte[] uncompressedBytes = mapper.writeValueAsBytes(o);
+		byte[] compressedBytes;
+
+		if (uncompressedUrls.stream().anyMatch(requestUrl::contains)) {
+		    // Don't compress the response
+		    compressedBytes = uncompressedBytes;
+		} else {
+		    // Compress the response
+		    compressedBytes = compress(uncompressedBytes);
+		}
 		outputMessage.getBody().write(compressedBytes);
 	}
 //	@Override

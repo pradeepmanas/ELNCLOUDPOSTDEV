@@ -67,6 +67,7 @@ public class ElnmaterialInventory {
 	
 	private Date expirydate;
 	private Date createddate;
+	private Date opendate;
 	private Date manufacdate;
 	private Date receiveddate;
 	
@@ -91,6 +92,14 @@ public class ElnmaterialInventory {
 	
 	@Transient
 	private LScfttransaction objmanualaudit;
+
+	public Date getOpendate() {
+		return opendate;
+	}
+
+	public void setOpendate(Date opendate) {
+		this.opendate = opendate;
+	}
 
 	public LSuserMaster getCreatedby() {
 		return createdby;

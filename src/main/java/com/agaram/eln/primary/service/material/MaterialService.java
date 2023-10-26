@@ -37,6 +37,7 @@ import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Unit;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
@@ -1009,8 +1010,12 @@ public class MaterialService {
 		
 		obj.setResponse(new Response());
 		
+		LSuserMaster objMaster = new LSuserMaster();
+		objMaster.setUsercode(obj.getObjsilentaudit().getLsuserMaster());
+		
 		if(objElnmaterial == null) {
 
+			obj.setCreateby(objMaster);
 			obj.setCreateddate(commonfunction.getCurrentUtcTime());
 			elnmaterialRepository.save(obj);
 			
@@ -1025,6 +1030,7 @@ public class MaterialService {
 		}
 	}
 
+	@SuppressWarnings("null")
 	public ResponseEntity<Object> updateElnMaterial(Elnmaterial obj) throws ParseException, JsonProcessingException {
 		
 		Elnmaterial objElnmaterial = elnmaterialRepository.
@@ -1035,6 +1041,7 @@ public class MaterialService {
 		
 		if(objElnmaterial == null) {
 
+			obj.setCreateddate(objElnmaterial.getCreateddate());
 			elnmaterialRepository.save(obj);
 			
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
@@ -1535,6 +1542,7 @@ public class MaterialService {
 				.findByNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(nsiteInteger,fromDate,toDate);
 		
 		objmap.put("lstMaterial", lstElnmaterials);
+		objmap.put("objsilentaudit", inputMap.get("objsilentaudit"));
 		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
@@ -1577,7 +1585,7 @@ public class MaterialService {
 		}		
 		
 		objmap.put("lstMaterial", lstElnmaterials);
-		
+		objmap.put("objsilentaudit", inputMap.get("objsilentaudit"));
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 	

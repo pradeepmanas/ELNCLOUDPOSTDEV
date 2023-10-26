@@ -23,13 +23,35 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 	List<ElnmaterialInventory> findByMaterialtypeAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
 			MaterialType objMaterialType, Integer nsiteInteger, Date fromDate, Date toDate);
 
-	List<ElnmaterialInventory> findByMaterialtypeAndMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
-			MaterialType objMaterialType, MaterialCategory objMaterialCategory, Integer nsiteInteger, Date fromDate,
-			Date toDate);
-
 	List<ElnmaterialInventory> findByMaterialAndNtransactionstatusOrderByNmaterialinventorycodeDesc(
 			Elnmaterial elnmaterial, int i);
 
 	ElnmaterialInventory findByNmaterialinventorycodeAndNtransactionstatus(Integer nmaterialinventorycode, int i);
+
+	List<ElnmaterialInventory> findByMaterialtypeAndMaterialcategoryAndMaterialAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+			MaterialType objMaterialType, MaterialCategory objMaterialCategory, Elnmaterial objElnmaterial,
+			Integer nsiteInteger, Date fromDate, Date toDate);
+
+	List<ElnmaterialInventory> findByMaterialtypeAndMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+			MaterialType objMaterialType, MaterialCategory objMaterialCategory, Integer nsiteInteger, Date fromDate,
+			Date toDate);
+
+	List<ElnmaterialInventory> findByNsitecodeAndNmaterialinventorycodeInAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+			Integer nsiteInteger, List<Integer> objLstInvKey, Date fromDate, Date toDate);
+
+	List<ElnmaterialInventory> findByMaterialtypeAndNsitecodeAndNmaterialinventorycodeInAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+			MaterialType objMaterialType, Integer nsiteInteger, List<Integer> objLstInvKey, Date fromDate, Date toDate);
+
+	List<ElnmaterialInventory> findByMaterialtypeAndMaterialcategoryAndMaterialAndNsitecodeAndNmaterialinventorycodeInAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+			MaterialType objMaterialType, MaterialCategory objMaterialCategory, Elnmaterial objElnmaterial,
+			Integer nsiteInteger, List<Integer> objLstInvKey, Date fromDate, Date toDate);
+
+	List<ElnmaterialInventory> findByMaterialtypeAndMaterialcategoryAndNsitecodeAndNmaterialinventorycodeInAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+			MaterialType objMaterialType, MaterialCategory objMaterialCategory, Integer nsiteInteger,
+			List<Integer> objLstInvKey, Date fromDate, Date toDate);
+
+	List<ElnmaterialInventory> findByNsitecodeAndNtransactionstatusAndIsexpiryAndExpirydateBetween(Integer lssitemaster,
+			int i, boolean b, Date currentDate, Date endDate);
+
 
 }

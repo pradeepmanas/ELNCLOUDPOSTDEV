@@ -17,6 +17,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
+
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
@@ -214,6 +216,18 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.orderstartedon = orderstartedon;
 	}
 
+	@Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+	public String protocoldatainfo;
+	
+	public String getProtocoldatainfo() {
+		return protocoldatainfo;
+	}
+
+	public void setProtocoldatainfo(String protocoldatainfo) {
+		this.protocoldatainfo = protocoldatainfo;
+	}
+	
 	@Transient
 	LSuserMaster objLoggeduser;
 	

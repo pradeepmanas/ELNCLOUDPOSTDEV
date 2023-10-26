@@ -16,6 +16,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
+
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -99,6 +101,18 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 
 	public void setNotificationdate(Date notificationdate) {
 		this.notificationdate = notificationdate;
+	}
+	
+	@Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+	public String protocoldatainfo;
+	
+	public String getProtocoldatainfo() {
+		return protocoldatainfo;
+	}
+
+	public void setProtocoldatainfo(String protocoldatainfo) {
+		this.protocoldatainfo = protocoldatainfo;
 	}
 
 	@Transient
