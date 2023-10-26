@@ -935,25 +935,25 @@ END $$;
 
 ALTER TABLE IF Exists lsprotocolmaster ADD Column IF NOT EXISTS lastmodified timestamp;
 
-DO $$ 
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1
-        FROM information_schema.table_constraints
-        WHERE constraint_name = 'fkbvkyp7mg7pxs4oxsg45bmnj6l' 
-        AND table_name = 'lsorderattachments'
-    ) THEN
-        ALTER TABLE public.lsorderattachments
-        DROP CONSTRAINT fkbvkyp7mg7pxs4oxsg45bmnj6l;
+-- DO $$ 
+-- BEGIN
+--     IF NOT EXISTS (
+--         SELECT 1
+--         FROM information_schema.table_constraints
+--         WHERE constraint_name = 'fkbvkyp7mg7pxs4oxsg45bmnj6l' 
+--         AND table_name = 'lsorderattachments'
+--     ) THEN
+--         ALTER TABLE public.lsorderattachments
+--         DROP CONSTRAINT fkbvkyp7mg7pxs4oxsg45bmnj6l;
 
-        ALTER TABLE public.lsorderattachments
-        ADD CONSTRAINT fkbvkyp7mg7pxs4oxsg45bmnj6l
-        FOREIGN KEY (nmaterialinventorycode)
-        REFERENCES public.elnmaterialinventory (nmaterialinventorycode)
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION;
-    END IF;
-END $$;
+--         ALTER TABLE public.lsorderattachments
+--         ADD CONSTRAINT fkbvkyp7mg7pxs4oxsg45bmnj6l
+--         FOREIGN KEY (nmaterialinventorycode)
+--         REFERENCES public.elnmaterialinventory (nmaterialinventorycode)
+--         ON UPDATE NO ACTION
+--         ON DELETE NO ACTION;
+--     END IF;
+-- END $$;
 
 DO $$ 
 BEGIN
