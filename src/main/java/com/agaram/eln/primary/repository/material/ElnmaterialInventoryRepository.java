@@ -53,5 +53,7 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 	List<ElnmaterialInventory> findByNsitecodeAndNtransactionstatusAndIsexpiryAndExpirydateBetween(Integer lssitemaster,
 			int i, boolean b, Date currentDate, Date endDate);
 
+	List<ElnmaterialInventory> findByNmaterialinventorycodeIn(List<Integer> nmaterialinventorycode);
+
 
 }
