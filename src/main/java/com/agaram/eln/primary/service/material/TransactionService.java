@@ -44,6 +44,7 @@ import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialInventoryTransaction;
 import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.ResultUsedMaterial;
+import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -60,8 +61,10 @@ import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.agaram.eln.primary.repository.material.ResultUsedMaterialRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Service
 public class TransactionService {
@@ -1219,7 +1222,7 @@ public class TransactionService {
 	    final List<Map<String, Object>> objResultMap = (List<Map<String, Object>>) inputMap.get("resultObject");
 	    objResultMap.forEach(item -> {
 	        int nmaterialinventorycodeValue = (Integer) item.get("nmaterialinventorycode");
-	        MaterialInventory objInventory = materialInventoryRepository.findByNmaterialinventorycode(nmaterialinventorycodeValue);
+	        ElnmaterialInventory objInventory = elnmaterialInventoryRepository.findByNmaterialinventorycode(nmaterialinventorycodeValue);
 
 	        LStestmasterlocal objTest = new LStestmasterlocal();
 	        objTest.setTestcode((Integer) item.get("testcode"));
@@ -1230,8 +1233,7 @@ public class TransactionService {
 
 	        LSuserMaster objUser = new LSuserMaster();
 	        objUser.setUsercode(cft.getLsuserMaster());
-
-	        ResultUsedMaterial resultUsedMaterial = new ResultUsedMaterial();
+	        ElnresultUsedMaterial resultUsedMaterial = new ElnresultUsedMaterial();
 	        if (objTest.getTestcode() != -1) {
 	            resultUsedMaterial.setTestcode(objTest);
 	        }
@@ -1241,10 +1243,10 @@ public class TransactionService {
 	        resultUsedMaterial.setNqtyleft(getQtyLeft);
 	        resultUsedMaterial.setNqtyused(getUsedQty);
 	        resultUsedMaterial.setBatchid(item.get("batchid").toString());
-	        resultUsedMaterial.setNmaterialcode(objInventory.getNmaterialcode());
-	        resultUsedMaterial.setNmaterialcategorycode(objInventory.getNmaterialcatcode());
+	        resultUsedMaterial.setNmaterialcode(objInventory.getMaterial().getNmaterialcode());
+	        resultUsedMaterial.setNmaterialcategorycode(objInventory.getMaterialcategory().getNmaterialcatcode());
 	        resultUsedMaterial.setNinventorycode(objInventory.getNmaterialinventorycode());
-	        resultUsedMaterial.setNmaterialtypecode(objInventory.getNmaterialtypecode());
+	        resultUsedMaterial.setNmaterialtypecode(objInventory.getMaterialtype().getNmaterialtypecode());
 	        resultUsedMaterial.setOrdercode(Long.valueOf(item.get("ordercode").toString()));
 	        resultUsedMaterial.setTransactionscreen(Integer.parseInt(item.get("transactionscreen").toString()));
 	        resultUsedMaterial.setTemplatecode(Integer.parseInt(item.get("templatecode").toString()));
@@ -1258,10 +1260,154 @@ public class TransactionService {
 	            e.printStackTrace();
 	        }
 
-	        resultUsedMaterialRepository.save(resultUsedMaterial);
+	        elnresultUsedMaterialRepository.save(resultUsedMaterial);
 	    });
 
 	    return new ResponseEntity<>("true", HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> getMaterialLst4NewMaterial(Map<String, Object> inputMap) throws JsonProcessingException {
+		
+		List<Material> lstMaterial = materialRepository.findAll();
+		
+		if(!lstMaterial.isEmpty()) {
+			
+			List<Elnmaterial> objLstElnmaterials = new ArrayList<Elnmaterial>();
+			
+			ObjectMapper mapper = new ObjectMapper();
+
+	        // Create an empty JSON object
+	        ObjectNode emptyObject = mapper.createObjectNode();
+
+	        // Serialize it to a JSON string
+	        String jsonString = mapper.writeValueAsString(emptyObject);
+			
+			lstMaterial.stream().peek(objMaterial -> {
+				
+				Elnmaterial objElnmaterial = new Elnmaterial();
+				
+				JSONObject  objUnit = (JSONObject) commonfunction.getInventoryValuesFromJsonString(objMaterial.getJsondata(), "Basic Unit").get("rtnObj");
+					
+				if(objUnit != null) {
+					Integer unitcode = Integer.parseInt(objUnit.get("value").toString());
+					
+					Unit newUnit = new Unit();
+					newUnit.setNunitcode(unitcode);
+					if(unitcode != -1) {
+						objElnmaterial.setUnit(newUnit);
+					}else {
+						objElnmaterial.setUnit(null);
+					}
+				}else {
+					objElnmaterial.setUnit(null);
+				}				
+				
+				MaterialCategory objCategory = new MaterialCategory(); 
+				objCategory.setNmaterialcatcode(objMaterial.getNmaterialcatcode());
+				
+				MaterialType objType = new MaterialType(); 
+				objType.setNmaterialtypecode(objMaterial.getNmaterialtypecode());
+				
+				LSuserMaster objLSuserMaster = new LSuserMaster();
+				objLSuserMaster.setUsercode(1);
+				
+				objElnmaterial.setMaterialcategory(objCategory);
+				objElnmaterial.setMaterialtype(objType);
+				objElnmaterial.setNsitecode(objMaterial.getNsitecode());
+				objElnmaterial.setSection(null);
+				objElnmaterial.setCreateby(objLSuserMaster);
+				try {
+					objElnmaterial.setCreateddate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				objElnmaterial.setSmaterialname(objMaterial.getSmaterialname());
+				objElnmaterial.setJsondata(jsonString);
+				objElnmaterial.setNstatus(objMaterial.getNstatus());
+				objElnmaterial.setExpirytype(0);
+				objElnmaterial.setQuarantine(false);
+				objElnmaterial.setOpenexpiry(false);
+				objElnmaterial.setNmaterialcode(objMaterial.getNmaterialcode());
+				objElnmaterial.setRemarks("");
+				
+				objLstElnmaterials.add(objElnmaterial);
+			}).collect(Collectors.toList());
+			
+			elnmaterialRepository.save(objLstElnmaterials);
+			
+			getMaterialInvLst4NewMaterialInv(inputMap);
+		}
+		
+		return null;
+	}
+
+	public ResponseEntity<Object> getMaterialInvLst4NewMaterialInv(Map<String, Object> inputMap) throws JsonProcessingException {
+		
+		List<MaterialInventory> lstMaterial = materialInventoryRepository.findAll();
+		
+		if(!lstMaterial.isEmpty()) {
+			
+			List<ElnmaterialInventory> objLstElnmaterials = new ArrayList<ElnmaterialInventory>();
+			
+			ObjectMapper mapper = new ObjectMapper();
+
+	        // Create an empty JSON object
+	        ObjectNode emptyObject = mapper.createObjectNode();
+
+	        // Serialize it to a JSON string
+	        String jsonString = mapper.writeValueAsString(emptyObject);
+			
+			lstMaterial.stream().peek(objMaterial -> {
+				
+				ElnmaterialInventory objInv = new ElnmaterialInventory();
+				
+				String receivedString = commonfunction.getInventoryValuesFromJsonString(objMaterial.getJsondata(), "Received Quantity").get("rtnObj").toString();
+				String sinventoryid = commonfunction.getInventoryValuesFromJsonString(objMaterial.getJsondata(), "Inventory ID").get("rtnObj").toString();
+				
+				Elnmaterial objElnmaterial = elnmaterialRepository.findOne(objMaterial.getNmaterialcode());
+				
+				MaterialCategory objCategory = new MaterialCategory(); 
+				objCategory.setNmaterialcatcode(objMaterial.getNmaterialcatcode());
+				
+				MaterialType objType = new MaterialType(); 
+				objType.setNmaterialtypecode(objMaterial.getNmaterialtypecode());
+				
+				LSuserMaster objLSuserMaster = new LSuserMaster();
+				objLSuserMaster.setUsercode(1);
+				
+				objInv.setSreceivedquantity(receivedString);
+				objInv.setSavailablequantity(receivedString);
+				objInv.setJsondata(jsonString);
+				objInv.setNstatus(objMaterial.getNstatus());
+				objInv.setRemarks("");
+				objInv.setMaterialcategory(objCategory);
+				objInv.setMaterialtype(objType);
+				objInv.setMaterial(objElnmaterial);
+				objInv.setNsitecode(objMaterial.getNsitecode());
+				objInv.setSection(null);
+				objInv.setCreatedby(objLSuserMaster);
+				objInv.setUnit(objElnmaterial.getUnit());
+				objInv.setIsexpiry(objMaterial.getIsexpiryneed());
+				objInv.setExpirydate(objMaterial.getExpirydate());
+				objInv.setNtransactionstatus(objMaterial.getNtransactionstatus());
+				objInv.setSinventoryid(sinventoryid);
+				objInv.setNmaterialinventorycode(objMaterial.getNmaterialinventorycode());
+				
+				try {
+					objInv.setCreateddate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				objLstElnmaterials.add(objInv);
+				
+			}).collect(Collectors.toList());
+			
+			elnmaterialInventoryRepository.save(objLstElnmaterials);
+		}
+		return null;
 	}
 
 }

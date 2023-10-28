@@ -1030,7 +1030,6 @@ public class MaterialService {
 		}
 	}
 
-	@SuppressWarnings("null")
 	public ResponseEntity<Object> updateElnMaterial(Elnmaterial obj) throws ParseException, JsonProcessingException {
 		
 		Elnmaterial objElnmaterial = elnmaterialRepository.
@@ -1040,8 +1039,10 @@ public class MaterialService {
 		obj.setResponse(new Response());
 		
 		if(objElnmaterial == null) {
+			
+			Elnmaterial objMaterial = elnmaterialRepository.findOne(obj.getNmaterialcode());
 
-			obj.setCreateddate(objElnmaterial.getCreateddate());
+			obj.setCreateddate(objMaterial.getCreateddate());
 			elnmaterialRepository.save(obj);
 			
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
@@ -1612,7 +1613,7 @@ public class MaterialService {
 		
 		List<Unit> lstUnits = unitRepository.findByNsitecodeOrderByNunitcodeDesc(nsiteInteger);
 		List<Section> lstSec = sectionRepository.findByNsitecodeOrderByNsectioncodeDesc(nsiteInteger);
-		List<Period> lstPeriods = periodRepository.findAll();
+		List<Period> lstPeriods = periodRepository.findByNstatusOrderByNperiodcode(1);
 		
 		objmap.put("lstUnit", lstUnits);
 		objmap.put("lstSection", lstSec);

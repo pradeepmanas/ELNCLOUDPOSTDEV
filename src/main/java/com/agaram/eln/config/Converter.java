@@ -219,12 +219,13 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 //        		"/downloadFile/{fileName}",
 				// "/getFileData",
 				"/Login/LoadSitewithoutgzip", "/Login/Logintenat/"
+//				"/protocol/Uploadprotocolimageondrag"
 
 		);
 		byte[] uncompressedBytes = mapper.writeValueAsBytes(o);
 		byte[] compressedBytes;
 
-		if (uncompressedUrls.stream().anyMatch(requestUrl::contains)) {
+		if (uncompressedUrls.contains(requestUrl)) {
 		    // Don't compress the response
 		    compressedBytes = uncompressedBytes;
 		} else {

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.agaram.eln.config.ADS_Connection;
 import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
@@ -307,10 +308,12 @@ public class LoginController {
 	    HttpServletRequest request) throws Exception {
 	    DataSourceConfig sendobj = new DataSourceConfig();
 	    sendobj.setTenantid(Tenantname);
+	    TenantContext.setCurrentTenant("MAIN");
 	    DataSourceConfig rtnobj = datasourceService.Validatetenant(sendobj);
 	    if (!rtnobj.getObjResponse().getStatus()) {
 	        return new ResponseEntity<>("TENANT_NOT_VALID", HttpStatus.OK);
 	    }
+	    TenantContext.setCurrentTenant(rtnobj.getTenantid());
 	    List<LSuserMaster> users = lsuserMasterRepository.findByusername(Username);
 	    if (users.isEmpty()) {
 	        return new ResponseEntity<>("USER_NOT_EXIST", HttpStatus.OK);

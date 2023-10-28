@@ -210,4 +210,9 @@ public class MaterialInventoryController {
 	public ResponseEntity<Object> updateElnMaterialInventory(@RequestBody ElnmaterialInventory objElnmaterialInventory) throws Exception {
 		return materialInventoryService.updateElnMaterialInventory(objElnmaterialInventory);
 	}
+	
+	@RequestMapping(value = "/OsearchElnMaterialInventory", method = RequestMethod.POST)
+	public ResponseEntity<Object> OsearchElnMaterialInventory(@RequestBody String Searchname) throws Exception {
+		return materialInventoryService.OsearchElnMaterialInventory(Searchname);
+	}
 }

@@ -37,4 +37,6 @@ public interface ElnmaterialRepository extends JpaRepository<Elnmaterial, Intege
 
 	List<Elnmaterial> findByMaterialcategoryOrderByNmaterialcodeDesc(MaterialCategory materialCategory);
 
+	List<Elnmaterial> findBySmaterialnameContainsIgnoreCase(String searchname);
+
 }
