@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.model.material;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,9 +10,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
-import org.json.JSONObject;
 
-import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 
 @Entity
@@ -49,7 +46,7 @@ public class MaterialType implements Serializable {
 	@Transient
 	private LScfttransaction objmanualaudit;
 	
-	private transient String smaterialtypename;
+	private String smaterialtypename;
 	private transient String sdescription;
 	private  transient String jsonconfigdata;
 	
@@ -98,14 +95,6 @@ public class MaterialType implements Serializable {
 	
 	public String getSmaterialtypename() {
 		
-		Map<String, Object> objContent = commonfunction.getInventoryValuesFromJsonString(this.jsondata,"smaterialtypename");
-		
-		if(objContent.containsKey("rtnObj")) {
-			JSONObject resObj = (JSONObject) objContent.get("rtnObj");
-			
-			return smaterialtypename = (String) resObj.get("en-US");
-		}
-		
 		return smaterialtypename;
 	}
 	public void setSmaterialtypename(String smaterialtypename) {
@@ -135,15 +124,5 @@ public class MaterialType implements Serializable {
 	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
 		this.objmanualaudit = objmanualaudit;
 	}
-	
-	// Parameterized Constructor to make a copy of object
-//	public MaterialType(final MaterialType materialtype) {
-//		this.nmaterialtypecode = materialtype.nmaterialtypecode;
-//		this.smaterialtypename = materialtype.smaterialtypename;
-//		this.sdescription = materialtype.sdescription;
-//		this.ndefaultstatus = materialtype.getNdefaultstatus();
-//		this.nsitecode = materialtype.nsitecode;
-//		this.nstatus = materialtype.nstatus;
-//	}
 }
 

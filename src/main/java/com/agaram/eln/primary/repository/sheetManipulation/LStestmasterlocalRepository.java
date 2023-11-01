@@ -30,6 +30,7 @@ public interface LStestmasterlocalRepository extends JpaRepository<LStestmasterl
 	public List<Testmaster> findBytestcodeNotAndTestnameIgnoreCaseAndLssitemaster(Integer testcode, String trim,
 			LSSiteMaster lssitemaster);
 	public List<Testmaster> findByTestnameIgnoreCaseAndLssitemaster(String trim, LSSiteMaster lssitemaster);
+	public LStestmasterlocal findByTestcode(Integer testcode);
 
 	
 

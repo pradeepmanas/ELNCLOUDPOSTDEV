@@ -33,6 +33,17 @@ public class LSprotocolmastertest {
 	private Response response;
 	
 	@Transient
+	private String Testname;
+	
+	public String getTestname() {
+		return Testname;
+	}
+
+	public void setTestname(String testname) {
+		Testname = testname;
+	}
+
+	@Transient
 	LSuserMaster LSuserMaster;
 	
 	@Transient

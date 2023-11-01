@@ -144,6 +144,8 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 
 	public List<LSuserMaster> findByusername(String username);
 
+	public LSuserMaster findByUsername(String notifyto);
+
 
 
 

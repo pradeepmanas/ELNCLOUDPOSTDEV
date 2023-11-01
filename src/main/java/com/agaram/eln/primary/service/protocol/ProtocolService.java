@@ -633,7 +633,16 @@ public class ProtocolService {
 //			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),
 //					new TypeReference<LScfttransaction>() {
 //					});
-
+			LSprotocolmastertest testcode = LSprotocolmastertestRepository.findByProtocolmastercode(argObj.get("protocolmastercode"));
+			if( testcode != null && testcode.getTestcode() != null) {
+				LStestmasterlocal test = lstestmasterlocalRepository.findByTestcode(testcode.getTestcode());
+			if(test != null && test.getTestname() != null) {
+				testcode.setTestname(test.getTestname());
+				mapObj.put("LSprotocolmastertest", testcode);
+			}
+				
+			}
+			
 			List<LSprotocolstep> LSprotocolsteplst = LSProtocolStepRepositoryObj
 					.findByProtocolmastercodeAndStatus(argObj.get("protocolmastercode"), 1);
 			List<LSprotocolstep> LSprotocolstepLst = new ArrayList<LSprotocolstep>();
@@ -694,6 +703,8 @@ public class ProtocolService {
 						new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
 								.collect(Collectors.joining("\n")));
 			}
+			
+
 		}
 		return mapObj;
 	}
@@ -5167,6 +5178,36 @@ public class ProtocolService {
 		}
 		mapObj.put("protocolData", body.get("protocolData"));
 		mapObj.put("response", response);
+		
+		//for protocol comments nottification
+		LSuserMaster lsuserfrom = object.convertValue(body.get("lsuserMaster"), LSuserMaster.class);
+		if(lsuserfrom != null) {
+		@SuppressWarnings("unchecked")
+		ArrayList<String> notifyto = (ArrayList<String>) body.get("notifyto");
+		for(String to :notifyto) {			
+		if(to != null) {	
+		LSuserMaster createby = lsusermasterRepository.findByUsername(to);
+		String Details = "{\"protocolname\":\"" + body.get("protocolmastername") + "\", \"createduser\":\""
+				+ body.get("username") + "\", \"protocolmastercode\":" +body.get("protocolmastercode")+ ", \"isprocess\": true, \"isprotocolprocess\":true }";
+		LSnotification objnotify = new LSnotification();
+		objnotify.setNotifationfrom(lsuserfrom);
+		objnotify.setNotifationto(createby);
+		try {
+			objnotify.setNotificationdate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		objnotify.setNotification("PROTOCOLCOMMENT");
+		objnotify.setNotificationdetils(Details);
+		objnotify.setIsnewnotification(1);
+		objnotify.setNotificationpath("/protocols");
+		objnotify.setNotificationfor(1);
+		lsnotificationRepository.save(objnotify);
+		}
+			}
+		}
+	
 		return mapObj;
 	}
 	
@@ -5226,6 +5267,36 @@ public class ProtocolService {
 		}
 		mapObj.put("protocolData", body.get("protocolData"));
 		mapObj.put("response", response);
+		
+		//comments nottification
+				LSuserMaster lsuserfrom = object.convertValue(body.get("lsuserMaster"), LSuserMaster.class);
+				if(lsuserfrom != null) {
+					@SuppressWarnings("unchecked")
+					ArrayList<String> notifyto = (ArrayList<String>) body.get("notifyto");
+					for(String to :notifyto) {			
+				if(to != null) {	
+				LSuserMaster createby = lsusermasterRepository.findByUsername(to);
+				String Details = "{\"ordercode\":\"" + body.get("protocolordercode") + "\", \"order\":\""
+						+ body.get("protoclordername") + "\" }";
+				
+				LSnotification objnotify = new LSnotification();
+				objnotify.setNotifationfrom(lsuserfrom);
+				objnotify.setNotifationto(createby);
+				try {
+					objnotify.setNotificationdate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				objnotify.setNotification("PROTOCOLORDERCOMMENT");
+				objnotify.setNotificationdetils(Details);
+				objnotify.setIsnewnotification(1);
+				objnotify.setNotificationpath("/Protocolorder");
+				objnotify.setNotificationfor(1);
+				lsnotificationRepository.save(objnotify);
+				}
+					}
+				}
 		return mapObj;
 	}
 	

@@ -14,7 +14,6 @@ import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class MaterialTypeService {
@@ -57,34 +56,81 @@ public class MaterialTypeService {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	@SuppressWarnings("unchecked")
+	
+//	public ResponseEntity<Object> createMaterialType(MaterialType objMaterialType) throws JsonParseException, JsonMappingException, IOException {
+//		List<MaterialConfig> objLstConfig = materialConfigRepository.findAllByOrderByNmaterialconfigcodeDesc();
+//		
+//		if(!objLstConfig.isEmpty()) {
+//			List<MaterialType> objlstTypes = materialTypeRepository.findAllByOrderByNmaterialtypecodeDesc();
+//			if(!objlstTypes.isEmpty()) {
+//				ObjectMapper objectMapper = new ObjectMapper();
+//				List<Object> dataList = objectMapper.readValue(objMaterialType.getJsonconfigdata(), List.class);
+//				
+//				objMaterialType.setNmaterialtypecode(objlstTypes.get(0).getNmaterialtypecode() + 1);
+//				objMaterialType.setNdefaultstatus(4);
+//				objMaterialType.setNstatus(1);
+//				materialTypeRepository.save(objMaterialType);
+//				
+//				MaterialConfig objConfig = new MaterialConfig();
+//				objConfig.setNmaterialconfigcode(objLstConfig.get(0).getNmaterialconfigcode()+1);
+//				objConfig.setNmaterialtypecode(objMaterialType.getNmaterialtypecode());
+//				objConfig.setNformcode(40);
+//				objConfig.setNstatus(1);
+//				objConfig.setJsondata(dataList);
+//				
+//				materialConfigRepository.save(objConfig);
+//				
+//				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
+//			}			
+//		}
+//		
+//		return new ResponseEntity<>(HttpStatus.OK);
+//	}
+	
 	public ResponseEntity<Object> createMaterialType(MaterialType objMaterialType) throws JsonParseException, JsonMappingException, IOException {
-		List<MaterialConfig> objLstConfig = materialConfigRepository.findAllByOrderByNmaterialconfigcodeDesc();
 		
-		if(!objLstConfig.isEmpty()) {
-			List<MaterialType> objlstTypes = materialTypeRepository.findAllByOrderByNmaterialtypecodeDesc();
-			if(!objlstTypes.isEmpty()) {
-				ObjectMapper objectMapper = new ObjectMapper();
-				List<Object> dataList = objectMapper.readValue(objMaterialType.getJsonconfigdata(), List.class);
+		
+		if(objMaterialType.getNmaterialtypecode() == null) {
+			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameAndNdefaultstatusAndNsitecodeOrderByNmaterialtypecode(
+					objMaterialType.getSmaterialtypename(),4,objMaterialType.getNsitecode());
+			
+			if(objlstTypes.isEmpty()) {
 				
-				objMaterialType.setNmaterialtypecode(objlstTypes.get(0).getNmaterialtypecode() + 1);
-				objMaterialType.setNdefaultstatus(4);
+				List<MaterialType> objlstTypes1 = materialTypeRepository.findAll();
+				
+				objMaterialType.setNmaterialtypecode(objlstTypes1.size()+1);
+				objMaterialType.setNdefaultstatus(3);
+				objMaterialType.setNstatus(1);
+				
+				materialTypeRepository.save(objMaterialType);
+				objMaterialType.setInfo("IDS_SUCCESS");
+				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
+			}else {
+				
+				objMaterialType.setInfo("IDS_FAIL");
+				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
+			}
+		}
+		else {
+			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameAndNdefaultstatusAndNsitecodeAndNmaterialtypecodeNot(
+					objMaterialType.getSmaterialtypename(),4,objMaterialType.getNsitecode(),objMaterialType.getNmaterialtypecode());
+			
+			if(objlstTypes.isEmpty()) {
+				
+				MaterialType objMType = materialTypeRepository.findByNmaterialtypecodeAndNstatus(objMaterialType.getNmaterialtypecode(), 1);				
+				
+				objMaterialType.setNdefaultstatus(objMType.getNdefaultstatus());
 				objMaterialType.setNstatus(1);
 				materialTypeRepository.save(objMaterialType);
 				
-				MaterialConfig objConfig = new MaterialConfig();
-				objConfig.setNmaterialconfigcode(objLstConfig.get(0).getNmaterialconfigcode()+1);
-				objConfig.setNmaterialtypecode(objMaterialType.getNmaterialtypecode());
-				objConfig.setNformcode(40);
-				objConfig.setNstatus(1);
-				objConfig.setJsondata(dataList);
-				
-				materialConfigRepository.save(objConfig);
-				
+				objMaterialType.setInfo("IDS_SUCCESS");
 				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
-			}			
-		}
+			}else {
+				
+				objMaterialType.setInfo("IDS_FAIL");
+				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
+			}
+		}				
 		
-		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

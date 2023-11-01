@@ -1066,3 +1066,11 @@ ALTER TABLE IF Exists elnmaterial ADD COLUMN IF NOT EXISTS createby_usercode INT
 ALTER TABLE IF EXISTS public.lsprotocolmaster ADD COLUMN IF NOT EXISTS protocoldatainfo jsonb;
 
 ALTER TABLE IF EXISTS public.lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS protocoldatainfo jsonb;
+
+ALTER TABLE IF Exists materialtype ADD COLUMN IF NOT EXISTS smaterialtypename varchar(100);
+
+update materialtype set smaterialtypename = 'NA' where nmaterialtypecode = -1;
+update materialtype set smaterialtypename = 'Standard Type' where nmaterialtypecode = 1;
+update materialtype set smaterialtypename = 'Volumetric Type' where nmaterialtypecode = 2;
+update materialtype set smaterialtypename = 'Material Inventory Type' where nmaterialtypecode = 3;
+update materialtype set smaterialtypename = 'IQC Material Standard Type' where nmaterialtypecode = 4;
