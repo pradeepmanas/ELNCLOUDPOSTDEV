@@ -2990,6 +2990,50 @@ public class InstrumentService {
 		return mapOrders;
 	}
 
+	public Map<String, Object> GetResultsproto(LSlogilabprotocoldetail protoobj) {
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+
+//		List<LSresultdetails> lsResults = new ArrayList<LSresultdetails>();
+//		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository.findBybatchid(objorder.getBatchid());
+//		List<String> lsorderno = new ArrayList<String>();
+//
+//		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
+//			int i = 0;
+//
+//			while (lsLogilaborders.size() > i) {
+//				lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
+//				i++;
+//			}
+//		}
+//		lsResults = lsresultdetailsRepository.findBylimsreferencecodeIn(lsorderno);
+
+		List<ELNResultDetails> ELNResults = new ArrayList<ELNResultDetails>();
+//		List<LSlogilablimsorderdetail> lslogilablimsorderdetail = lslogilablimsorderdetailRepository
+//				.findBybatchcode(objorder.getBatchcode());
+		List<LSlogilabprotocoldetail> lslogilabpro = LSlogilabprotocoldetailRepository.findByProtocolordercodeOrderByProtocolordercodeAsc(protoobj.getProtocolordercode());
+		
+		List<Long> protocolordercode = new ArrayList<Long>();
+
+		if (lslogilabpro != null && lslogilabpro.size() > 0) {
+			int i = 0;
+
+			while (lslogilabpro.size() > i) {
+				protocolordercode.add(lslogilabpro.get(i).getProtocolordercode());
+				i++;
+			}
+		}
+		ELNResults = ELNResultDetailsRepository.findBybatchcode(protocolordercode);
+
+		//mapOrders.put("SDMSResults", lsResults);
+		mapOrders.put("ELNResults", ELNResults);
+
+	
+		lslogilabpro = null;
+		ELNResults = null;
+
+		return mapOrders;
+	}
+
 	public void updateorderversioncontent(String Content, LSsamplefileversion objfile, Integer ismultitenant)
 			throws IOException {
 		if (ismultitenant == 1) {
@@ -4315,6 +4359,7 @@ public class InstrumentService {
 		Map<String, Object> map = new HashMap<>();
 
 		LSlogilablimsorderdetail objorder = lslogilablimsorderdetailRepository.findOne(batchcode);
+		LSlogilabprotocoldetail objproto = LSlogilabprotocoldetailRepository.findOne(batchcode);
 
 		ELNFileAttachments objattachment = new ELNFileAttachments();
 
@@ -4325,41 +4370,86 @@ public class InstrumentService {
 			}
 		}
 
+		
 		objattachment.setFilename(filename);
 		objattachment.setFileextension(fileexe);
 		objattachment.setCreateby(lsuserMasterRepository.findByusercode(usercode));
 		objattachment.setCreatedate(currentdate);
-		objattachment.setBatchcode(objorder.getBatchcode());
+//		objattachment.setBatchcode(objorder.getBatchcode());
 		objattachment.setIslargefile(islargefile);
 		objattachment.setMethodkey(methodkey);
 
 		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
 		String name = username.getUsername();
 		LScfttransaction list = new LScfttransaction();
-		list.setModuleName("Register Task Orders & Execute");
-		list.setComments(
-				name + " " + "Uploaded the attachement in Order ID: " + objorder.getBatchid() + " " + "successfully");
-		list.setActions("Insert");
-		list.setSystemcoments("System Generated");
-		list.setTableName("profile");
-//		list.setTransactiondate(currentdate);
-		try {
-			list.setTransactiondate(commonfunction.getCurrentUtcTime());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		list.setLsuserMaster(usercode);
-		lscfttransactionRepository.save(list);
+//		list.setModuleName("Register Task Orders & Execute");
+//		list.setComments(
+//				name + " " + "Uploaded the attachement in Order ID: " + objorder.getBatchid() + " " + "successfully");
+//		list.setActions("Insert");
+//		list.setSystemcoments("System Generated");
+//		list.setTableName("profile");
+//		try {
+//			list.setTransactiondate(commonfunction.getCurrentUtcTime());
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		list.setLsuserMaster(usercode);
+//		
 		if (objorder != null && objorder.getELNFileAttachments() != null) {
 			objorder.getELNFileAttachments().add(objattachment);
-		} else {
+			elnFileattachmentsRepository.save(objorder.getELNFileAttachments());
+		} else if(objorder != null){
 			objorder.setELNFileAttachments(new ArrayList<ELNFileAttachments>());
 			objorder.getELNFileAttachments().add(objattachment);
+			elnFileattachmentsRepository.save(objorder.getELNFileAttachments());
 		}
 
-		elnFileattachmentsRepository.save(objorder.getELNFileAttachments());
-
+		if(objorder == null) {
+			objattachment.setBatchcode(objproto.getProtocolordercode());
+			list.setModuleName("Register Protocol Orders");
+			list.setComments(
+					name + " " + "Uploaded the attachement in Protocol ID: " + objproto.getProtoclordername() + " " + "successfully");
+			list.setActions("Insert");
+			list.setSystemcoments("System Generated");
+			list.setTableName("profile");
+			try {
+				list.setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			list.setLsuserMaster(usercode);
+			
+		}else {
+			objattachment.setBatchcode(objorder.getBatchcode());
+			list.setModuleName("Register Task Orders & Execute");
+			list.setComments(
+					name + " " + "Uploaded the attachement in Order ID: " + objorder.getBatchid() + " " + "successfully");
+			list.setActions("Insert");
+			list.setSystemcoments("System Generated");
+			list.setTableName("profile");
+			try {
+				list.setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			list.setLsuserMaster(usercode);
+			
+		}
+		
+		lscfttransactionRepository.save(list);
+//		if (objorder != null && objorder.getELNFileAttachments() != null) {
+//			objorder.getELNFileAttachments().add(objattachment);
+//		} else {
+//			objorder.setELNFileAttachments(new ArrayList<ELNFileAttachments>());
+//			objorder.getELNFileAttachments().add(objattachment);
+//		}
+//
+//		elnFileattachmentsRepository.save(objorder.getELNFileAttachments());
+//
+//		objproto.getls
 		if (islargefile == 1) {
 			@SuppressWarnings("unlikely-arg-type")
 			String filenameval = "attach_"

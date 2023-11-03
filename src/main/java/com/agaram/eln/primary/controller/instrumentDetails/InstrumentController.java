@@ -58,6 +58,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.repository.methodsetup.CloudParserFileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
 import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
 
 @RestController
@@ -226,9 +227,45 @@ public class InstrumentController {
 	}
 
 	
+//	@PostMapping("/GetResults")
+//	public Map<String, Object> GetResults(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
+//		return instrumentService.GetResults(objorder);
+//	}
+	
 	@PostMapping("/GetResults")
-	public Map<String, Object> GetResults(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
-		return instrumentService.GetResults(objorder);
+	public Map<String, Object> GetResults(@RequestBody Map<String, Object> mapObject)throws Exception {
+		
+		final ObjectMapper mapper = new ObjectMapper();
+		
+		
+		Map<String, Object> obj = (Map<String, Object>) mapObject.get("protoobj");
+		if (obj == null) {
+		//	return instrumentService.GetResults(objorder);
+			LSlogilablimsorderdetail orderobj = new LSlogilablimsorderdetail();
+			
+			Object batcode=mapObject.get("batchcode");
+			Long batchcode = ((Integer) batcode).longValue();
+			orderobj.setBatchcode(batchcode);
+			orderobj.setBatchid((String) mapObject.get("batchid"));
+			orderobj.setFiletype((Integer)mapObject.get("filetype"));
+			
+		//	LSlogilablimsorderdetail orderobj = mapper.convertValue(mapObject.get("batchcode"), LSlogilablimsorderdetail.class);
+		//	orderobj=mapper.convertValue(mapObject.get("batchid"), LSlogilablimsorderdetail.class);
+		//	orderobj=mapper.convertValue(mapObject.get("filetype"), LSlogilablimsorderdetail.class);
+			return instrumentService.GetResults(orderobj);
+		}
+		else {
+			final String Protocolordername = (String) obj.get("Protocolordername");
+			Object procode = obj.get("Protocolordercode");
+	        Long Protocolordercode = ((Integer) procode).longValue();
+	        
+		    LSlogilabprotocoldetail proobj = new LSlogilabprotocoldetail();
+		    proobj.setProtoclordername(Protocolordername);
+		    proobj.setProtocolordercode(Protocolordercode);
+		    
+		    return instrumentService.GetResultsproto(proobj);
+		}
+		
 	}
 	
 	

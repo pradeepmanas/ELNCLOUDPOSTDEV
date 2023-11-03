@@ -1382,6 +1382,10 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	List<LSlogilabprotocoldetail> findByLsprotocolmasterInAndTestcodeIn(List<LSprotocolmaster> lstpm,
 			List<Integer> testid);
 
+	List<LSlogilabprotocoldetail> findByProtocolordercodeOrderByProtocolordercodeAsc(Long protocolordercode);
+
+
+
 
 
 
