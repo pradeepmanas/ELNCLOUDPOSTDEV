@@ -215,4 +215,10 @@ public class MaterialInventoryController {
 	public ResponseEntity<Object> OsearchElnMaterialInventory(@RequestBody String Searchname) throws Exception {
 		return materialInventoryService.OsearchElnMaterialInventory(Searchname);
 	}
+	
+	@RequestMapping(value = "/getELNMaterialBySearchField", method = RequestMethod.POST)
+	public ResponseEntity<Object> getELNMaterialBySearchField(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return materialInventoryService.getELNMaterialBySearchField(inputMap);
+	}
 }

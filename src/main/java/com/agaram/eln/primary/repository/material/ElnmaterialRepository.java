@@ -39,4 +39,6 @@ public interface ElnmaterialRepository extends JpaRepository<Elnmaterial, Intege
 
 	List<Elnmaterial> findBySmaterialnameContainsIgnoreCase(String searchname);
 
+	List<Elnmaterial> findBySmaterialnameStartingWithIgnoreCaseAndNsitecode(String searchString, Integer nsiteInteger);
+
 }

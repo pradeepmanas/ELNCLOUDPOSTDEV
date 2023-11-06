@@ -3156,14 +3156,16 @@ public class MaterialInventoryService {
 
 	public ResponseEntity<Object> getElnMaterialInventory(Map<String, Object> inputMap) throws ParseException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
-		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
+//		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+//		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+//		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+//		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
+//		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
 
-		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository
-				.findByNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(nsiteInteger, fromDate, toDate);
+//		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository
+//				.findByNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(nsiteInteger, fromDate, toDate);
+		
+		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository.findAll();
 
 		objmap.put("lstMaterialInventory", lstElnInventories);
 
@@ -3326,6 +3328,18 @@ public class MaterialInventoryService {
 		List<Elnmaterial> material = elnMaterialRepository.findBySmaterialnameContainsIgnoreCase(searchname);
 		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findByMaterialIn(material);
 		return ResponseEntity.ok(inventoryItems);
+	}
+
+	public ResponseEntity<Object> getELNMaterialBySearchField(Map<String, Object> inputMap) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+	    String searchString = (String) inputMap.get("searchString"); 
+	    
+	    List<Elnmaterial> lstMaterial = elnMaterialRepository.findBySmaterialnameStartingWithIgnoreCaseAndNsitecode(searchString,nsiteInteger);
+		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findByMaterialIn(lstMaterial);
+			
+		objmap.put("lstMaterialInventory", inventoryItems);		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
 }

@@ -89,7 +89,6 @@ public class MaterialTypeService {
 	
 	public ResponseEntity<Object> createMaterialType(MaterialType objMaterialType) throws JsonParseException, JsonMappingException, IOException {
 		
-		
 		if(objMaterialType.getNmaterialtypecode() == null) {
 			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameAndNdefaultstatusAndNsitecodeOrderByNmaterialtypecode(
 					objMaterialType.getSmaterialtypename(),4,objMaterialType.getNsitecode());
@@ -107,7 +106,7 @@ public class MaterialTypeService {
 				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
 			}else {
 				
-				objMaterialType.setInfo("IDS_FAIL");
+				objMaterialType.setInfo("IDS_FAIL_ALREADY_EXIST");
 				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
 			}
 		}
@@ -127,7 +126,7 @@ public class MaterialTypeService {
 				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
 			}else {
 				
-				objMaterialType.setInfo("IDS_FAIL");
+				objMaterialType.setInfo("IDS_FAIL_ALREADY_EXIST");
 				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
 			}
 		}				

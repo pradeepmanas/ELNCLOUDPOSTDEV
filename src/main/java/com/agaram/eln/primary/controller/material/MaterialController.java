@@ -177,4 +177,10 @@ public class MaterialController {
 
 		return objMaterialService.updateElnMaterial(obj);
 	}
+	
+	@RequestMapping(value = "/getELNMaterialBySearchField", method = RequestMethod.POST)
+	public ResponseEntity<Object> getELNMaterialBySearchField(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return objMaterialService.getELNMaterialBySearchField(inputMap);
+	}
 }

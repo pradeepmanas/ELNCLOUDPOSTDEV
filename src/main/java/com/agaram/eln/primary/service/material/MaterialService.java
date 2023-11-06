@@ -1645,4 +1645,17 @@ public class MaterialService {
 		objmap.put("lstMaterial", lstElnmaterials);		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+
+	public ResponseEntity<Object> getELNMaterialBySearchField(Map<String, Object> inputMap) {
+		
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+	    String searchString = (String) inputMap.get("searchString");
+	    
+	    List<Elnmaterial> lstMaterial = elnmaterialRepository.findBySmaterialnameStartingWithIgnoreCaseAndNsitecode(searchString,
+				nsiteInteger);
+			
+		objmap.put("lstMaterial", lstMaterial);		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
 }
