@@ -3156,16 +3156,16 @@ public class MaterialInventoryService {
 
 	public ResponseEntity<Object> getElnMaterialInventory(Map<String, Object> inputMap) throws ParseException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-//		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-//		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-//		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-//		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
-//		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
+		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
 
-//		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository
-//				.findByNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(nsiteInteger, fromDate, toDate);
+		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository
+				.findByNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(nsiteInteger, fromDate, toDate);
 		
-		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository.findAll();
+//		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository.findAll();
 
 		objmap.put("lstMaterialInventory", lstElnInventories);
 

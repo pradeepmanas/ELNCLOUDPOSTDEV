@@ -23,8 +23,9 @@ public class MaterialTypeService {
 	@Autowired
 	MaterialConfigRepository materialConfigRepository;
 
-	public ResponseEntity<Object> getMaterialType() {
-		return new ResponseEntity<>(materialTypeRepository.findByNmaterialtypecodeNotAndNstatusOrderByNmaterialtypecode(-1,1), HttpStatus.OK);
+	public ResponseEntity<Object> getMaterialType(MaterialType objMaterialType) {
+		return new ResponseEntity<>(materialTypeRepository.
+				findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatus(-1,1,objMaterialType.getNsitecode(),-1,1,4), HttpStatus.OK);
 	}
 
 	public ResponseEntity<Object> getMaterialTypeField(MaterialType objMaterialType) {

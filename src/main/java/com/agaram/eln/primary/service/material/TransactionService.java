@@ -671,10 +671,10 @@ public class TransactionService {
 
 		Map<String, Object> rtnMap = new HashMap<String, Object>();
 
-		List<Material> lstMaterials = new ArrayList<Material>();
+		List<Elnmaterial> lstMaterials = new ArrayList<Elnmaterial>();
 //		List<MaterialInventory> lstMaterialInventories = new ArrayList<MaterialInventory>();
 
-		lstMaterials = materialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1,
+		lstMaterials = elnmaterialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1,
 				(Integer) inputMap.get("sitecode"));
 
 //		if (!lstMaterials.isEmpty()) {

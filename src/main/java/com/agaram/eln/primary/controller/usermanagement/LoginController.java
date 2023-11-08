@@ -2,6 +2,7 @@ package com.agaram.eln.primary.controller.usermanagement;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +11,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.scheduling.annotation.EnableScheduling;
 //import org.springframework.scheduling.annotation.Scheduled;
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.agaram.eln.config.ADS_Connection;
 import com.agaram.eln.config.AESEncryption;
@@ -40,6 +46,10 @@ import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.multitenant.DatasourceService;
 import com.agaram.eln.primary.service.usermanagement.LoginService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 @RestController
 @RequestMapping(value = "/Login", method = RequestMethod.POST)
 public class LoginController {
@@ -53,6 +63,36 @@ public class LoginController {
 	
 	@Autowired
 	private DatasourceService datasourceService;
+	
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    
+    @RequestMapping(value = "/importchemdata")
+    public ResponseEntity<Object> importchemdata(@RequestBody MolExportRequest request) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+            String requestBody = objectMapper.writeValueAsString(request);
+            HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+
+            ResponseEntity<Object> response = restTemplate.exchange(
+                "https://marvinjs-demo.chemaxon.com/rest-v1/util/calculate/molExport",
+                HttpMethod.POST,
+                entity,
+                Object.class
+            );
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return ResponseEntity.ok(response.getBody());
+            } else {
+                return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while fetching data");
+        }
+    }
 
 	@GetMapping("/LoadSite")
 	public List<LSSiteMaster> loadSite(HttpServletRequest request) throws Exception {

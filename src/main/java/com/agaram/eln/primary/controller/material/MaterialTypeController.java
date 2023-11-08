@@ -1,7 +1,5 @@
 package com.agaram.eln.primary.controller.material;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +19,8 @@ public class MaterialTypeController {
 	private MaterialTypeService objMaterialTypeService;
 	
 	@RequestMapping(value = "/getMaterialType", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> getMaterialType(@RequestBody Map<String, Object> inputMap) throws Exception {		
-		return (ResponseEntity<Object>) objMaterialTypeService.getMaterialType();
+	public ResponseEntity<Object> getMaterialType(@RequestBody MaterialType objMaterialType) throws Exception {		
+		return (ResponseEntity<Object>) objMaterialTypeService.getMaterialType(objMaterialType);
 	}
 	
 	@RequestMapping(value = "/getMaterialTypeField", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
