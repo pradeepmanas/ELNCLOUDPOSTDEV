@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
@@ -62,7 +63,9 @@ public class MaterialCategoryService {
 			materialCategory.setNactivestatus(0);
 			materialCategory.setNuserrolecode(0);
 			materialCategory.setCreateby(objMaster);
+			materialCategory.setCreatedate(commonfunction.getCurrentUtcTime());
 			MaterialCategoryRepository.save(materialCategory);
+			
 			materialCategory.getResponse().setStatus(true);
 			materialCategory.getResponse().setInformation("IDS_SUCCESS");
 			return new ResponseEntity<>(materialCategory, HttpStatus.OK);

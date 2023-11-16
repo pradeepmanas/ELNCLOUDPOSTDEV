@@ -21,4 +21,6 @@ public interface SelectedInventoryMappedRepository extends JpaRepository<Selecte
 	
 	List<SelectedInventoryMapped> findByIdAndNmaterialinventorycodeNotOrderByMappedidDesc(String id,Integer objInventory);
 
+	List<SelectedInventoryMapped> findBySamplestoragelocationkeyOrderByMappedidDesc(SampleStorageLocation objLocation);
+
 }
