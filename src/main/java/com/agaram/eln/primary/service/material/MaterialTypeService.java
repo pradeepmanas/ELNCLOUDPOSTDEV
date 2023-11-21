@@ -91,8 +91,8 @@ public class MaterialTypeService {
 	public ResponseEntity<Object> createMaterialType(MaterialType objMaterialType) throws JsonParseException, JsonMappingException, IOException {
 		
 		if(objMaterialType.getNmaterialtypecode() == null) {
-			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameAndNdefaultstatusAndNsitecodeOrderByNmaterialtypecode(
-					objMaterialType.getSmaterialtypename(),4,objMaterialType.getNsitecode());
+			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameAndNsitecodeOrderByNmaterialtypecode(
+					objMaterialType.getSmaterialtypename(),objMaterialType.getNsitecode());
 			
 			if(objlstTypes.isEmpty()) {
 				
@@ -112,8 +112,8 @@ public class MaterialTypeService {
 			}
 		}
 		else {
-			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameAndNdefaultstatusAndNsitecodeAndNmaterialtypecodeNot(
-					objMaterialType.getSmaterialtypename(),4,objMaterialType.getNsitecode(),objMaterialType.getNmaterialtypecode());
+			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameAndNsitecodeAndNmaterialtypecodeNot(
+					objMaterialType.getSmaterialtypename(),objMaterialType.getNsitecode(),objMaterialType.getNmaterialtypecode());
 			
 			if(objlstTypes.isEmpty()) {
 				
