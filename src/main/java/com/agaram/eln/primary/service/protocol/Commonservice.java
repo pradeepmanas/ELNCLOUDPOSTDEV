@@ -105,22 +105,10 @@ public class Commonservice {
 			String fileUUID = (String) objMap.get("uuid");
 			String fileURI = objMap.get("uri").toString();
 			
-//			LSprotocolmaster objsavefile = new LSprotocolmaster();
 			objfile.setFileuri(fileURI);
 			objfile.setFileuid(fileUUID);
 			objfile.setContainerstored(1);
 			lsProtocolMasterRepository.save(objfile);
-			
-//			objsavefile = null;
-		} else {
-
-			GridFSDBFile largefile = gridFsTemplate
-					.findOne(new Query(Criteria.where("filename").is("file_" + objfile.getProtocolmastercode())));
-			if (largefile != null) {
-				gridFsTemplate.delete(new Query(Criteria.where("filename").is("file_" + objfile.getProtocolmastercode())));
-			}
-			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
-					"file_" + objfile.getProtocolmastercode(), StandardCharsets.UTF_16);
 		}
 		List<LSprotocolmaster> obj =new ArrayList<>();
 		obj.add(objfile);

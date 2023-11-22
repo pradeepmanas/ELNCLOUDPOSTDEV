@@ -1774,20 +1774,20 @@ public class ProtocolService {
 			}
 
 			lsprotocolversionRepository.save(newProtocolMasterObj1.getLsprotocolversion());
-			if (argObj1 != null) {
-				LScfttransaction LScfttransactionobj = new LScfttransaction();
-				LScfttransactionobj = new ObjectMapper().convertValue(argObj1.get("objsilentaudit"),
-						new TypeReference<LScfttransaction>() {
-						});
-
-//			LSprotocolupdates lSprotocolupdates =(LSprotocolupdates) argObj1.get("objsilentaudit");
-				LScfttransactionobj.setComments("Protocol" + " " + newProtocolMasterObj1.getProtocolmastername() + " "
-						+ " was versioned to version_" + Versionnumber + " " + "by the user" + " "
-						+ newProtocolMasterObj1.getCreatedbyusername());
-				LScfttransactionobj.setTableName("LSfile");
-				LScfttransactionobj.setTableName("LSprotocolmaster");
-				lscfttransactionRepository.save(LScfttransactionobj);
-			}
+//			if (argObj1 != null) {
+//				LScfttransaction LScfttransactionobj = new LScfttransaction();
+//				LScfttransactionobj = new ObjectMapper().convertValue(argObj1.get("objsilentaudit"),
+//						new TypeReference<LScfttransaction>() {
+//						});
+//
+////			LSprotocolupdates lSprotocolupdates =(LSprotocolupdates) argObj1.get("objsilentaudit");
+//				LScfttransactionobj.setComments("Protocol" + " " + newProtocolMasterObj1.getProtocolmastername() + " "
+//						+ " was versioned to version_" + Versionnumber + " " + "by the user" + " "
+//						+ newProtocolMasterObj1.getCreatedbyusername());
+//				LScfttransactionobj.setTableName("LSfile");
+//				LScfttransactionobj.setTableName("LSprotocolmaster");
+//				lscfttransactionRepository.save(LScfttransactionobj);
+//			}
 
 		}
 		return true;
@@ -5117,6 +5117,8 @@ public class ProtocolService {
 //			LSProtocolMasterRepositoryObj.save(lSprotocolmaster);
 			Integer ismultitenant = object.convertValue(body.get("ismultitenant"), Integer.class);
 			int sitecode = object.convertValue(body.get("sitecode"), Integer.class);
+			int usercode = object.convertValue(body.get("usercode"), Integer.class);
+			String username = (String) body.get("username");
 			
 			if (body.get("protocoldatainfo") != null) {
 				lSprotocolmaster.setProtocoldatainfo((String) body.get("protocoldatainfo"));
@@ -5125,24 +5127,62 @@ public class ProtocolService {
 			
 			if ((protocolMaster.getApproved() != null && protocolMaster.getApproved() == 1 )) {
 
-				LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(sitecode);
-//				LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
-//						.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);.
+				if (ismultitenant == 1) {
+					LSprotocolversion version = new LSprotocolversion();
+					if(lsprotocolversionRepository.findFirstByProtocolmastercodeAndVersionno(protocolMaster.getProtocolmastercode(), protocolMaster.getVersionno()) != null) {
+						version = lsprotocolversionRepository.findFirstByProtocolmastercodeAndVersionno(protocolMaster.getProtocolmastercode(), protocolMaster.getVersionno());
+					} else {
+						version = lsprotocolversionRepository.findFirstByProtocolmastercodeAndVersionno(protocolMaster.getProtocolmastercode(), 1);
+						protocolMaster.setVersionno(1);
+					}
+					String content = objCloudFileManipulationservice.retrieveCloudSheets(protocolMaster.getFileuid(), TenantContext.getCurrentTenant() + "protocol");
+					Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(content, TenantContext.getCurrentTenant() + "protocolversion");
+					String fileUUID = (String) objMap.get("uuid"); 
+					String fileURI = objMap.get("uri").toString();
+					
+					version.setApproved(protocolMaster.getApproved());
+					version.setFileuid(fileUUID);
+					version.setFileuri(fileURI);
+					lsprotocolversionRepository.save(version);
+				}
 
+				LSprotocolversion objversion = new LSprotocolversion();
+				objversion.setApproved(0);
+				objversion.setCreatedby(usercode);
+				try {
+					objversion.setCreatedate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+//				objversion.setModifiedby(lSprotocolupdates.getModifiedby());
+//				objversion.setModifieddate(lSprotocolupdates.getProtocolmodifiedDate());
+				objversion.setProtocolmastercode(protocolMaster.getProtocolmastercode());
+				objversion.setProtocolmastername(protocolMaster.getProtocolmastername());
+				objversion.setProtocolstatus(protocolMaster.getProtocolstatus());
+				objversion.setCreatedbyusername(username);
+				objversion.setSharewithteam(protocolMaster.getSharewithteam());
+				objversion.setLssitemaster(protocolMaster.getLssitemaster());
+				objversion.setRejected(protocolMaster.getRejected());
+				objversion.setVersionname("version_" + (protocolMaster.getVersionno() + 1));
+				objversion.setVersionno(protocolMaster.getVersionno() + 1);
+
+				if (protocolMaster.getLsprotocolversion() != null) {
+					protocolMaster.getLsprotocolversion().add(objversion);
+				} else {
+					List<LSprotocolversion> lstversion = new ArrayList<LSprotocolversion>();
+					lstversion.add(objversion);
+					protocolMaster.setLsprotocolversion(lstversion);
+				}
+
+				lsprotocolversionRepository.save(protocolMaster.getLsprotocolversion());
+				
+				LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(sitecode);
 				LSsheetworkflow lssheetworkflow = lssheetworkflowRepository
 						.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
-
 				protocolMaster.setApproved(0);
-//				lSprotocolmaster.setlSprotocolworkflow(lsprotocolworkflow);
 				protocolMaster.setLssheetworkflow(lssheetworkflow);
 				protocolMaster.setVersionno(protocolMaster.getVersionno() + 1);
-
-//				LSProtocolMasterRepositoryObj.save(lSprotocolmaster);
-				List<LSprotocolmastertest> LSprotocolmastertest = protocolMaster.getLstest();
-				for (LSprotocolmastertest test : LSprotocolmastertest) {
-					test.setTestcode(null);
-					LSprotocolmastertestRepository.save(test);
-				}
 			}
 			
 			if (!body.get("protocolData").equals("")) {
@@ -5175,6 +5215,8 @@ public class ProtocolService {
 				lsProtocolMasterRepository.save(protocolMaster);
 				mapObj.put("ProtocolMaster", lsProtocolMasterRepository.findByprotocolmastercode(protocolMaster.getProtocolmastercode()));
 			}
+			mapObj.put("LSprotocolversionlst",
+					lsprotocolversionRepository.findByprotocolmastercodeOrderByVersionnoDesc(protocolMaster.getProtocolmastercode()));
 		}
 		mapObj.put("protocolData", body.get("protocolData"));
 		mapObj.put("response", response);
@@ -5182,29 +5224,29 @@ public class ProtocolService {
 		//for protocol comments nottification
 		LSuserMaster lsuserfrom = object.convertValue(body.get("lsuserMaster"), LSuserMaster.class);
 		if(lsuserfrom != null) {
-		@SuppressWarnings("unchecked")
-		ArrayList<String> notifyto = (ArrayList<String>) body.get("notifyto");
-		for(String to :notifyto) {			
-		if(to != null) {	
-		LSuserMaster createby = lsusermasterRepository.findByUsername(to);
-		String Details = "{\"protocolname\":\"" + body.get("protocolmastername") + "\", \"createduser\":\""
-				+ body.get("username") + "\", \"protocolmastercode\":" +body.get("protocolmastercode")+ ", \"isprocess\": true, \"isprotocolprocess\":true }";
-		LSnotification objnotify = new LSnotification();
-		objnotify.setNotifationfrom(lsuserfrom);
-		objnotify.setNotifationto(createby);
-		try {
-			objnotify.setNotificationdate(commonfunction.getCurrentUtcTime());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		objnotify.setNotification("PROTOCOLCOMMENT");
-		objnotify.setNotificationdetils(Details);
-		objnotify.setIsnewnotification(1);
-		objnotify.setNotificationpath("/protocols");
-		objnotify.setNotificationfor(1);
-		lsnotificationRepository.save(objnotify);
-		}
+			@SuppressWarnings("unchecked")
+			ArrayList<String> notifyto = (ArrayList<String>) body.get("notifyto");
+			for(String to :notifyto) {			
+				if(to != null) {	
+					LSuserMaster createby = lsusermasterRepository.findByUsername(to);
+					String Details = "{\"protocolname\":\"" + body.get("protocolmastername") + "\", \"createduser\":\""
+							+ body.get("username") + "\", \"protocolmastercode\":" +body.get("protocolmastercode")+ ", \"isprocess\": true, \"isprotocolprocess\":true }";
+					LSnotification objnotify = new LSnotification();
+					objnotify.setNotifationfrom(lsuserfrom);
+					objnotify.setNotifationto(createby);
+					try {
+						objnotify.setNotificationdate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					objnotify.setNotification("PROTOCOLCOMMENT");
+					objnotify.setNotificationdetils(Details);
+					objnotify.setIsnewnotification(1);
+					objnotify.setNotificationpath("/protocols");
+					objnotify.setNotificationfor(1);
+					lsnotificationRepository.save(objnotify);
+				}
 			}
 		}
 	
@@ -7545,6 +7587,32 @@ public class ProtocolService {
 		}
 		
 		mapObj.put("response", response);
+		return mapObj;
+	}
+	
+	public Map<String, Object> getProtocolTemplateVersionChanges(Map<String, Object> argObj) throws IOException {
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+		ObjectMapper object = new ObjectMapper();
+		
+		LSprotocolversion versionMaster = object.convertValue(argObj.get("Lsprotocolversion"),	LSprotocolversion.class);
+		int multitenent = object.convertValue(argObj.get("ismultitenant"), Integer.class);
+		LSprotocolmaster protocol = lsProtocolMasterRepository.findFirstByProtocolmastercode(versionMaster.getProtocolmastercode());
+		if (multitenent == 1) {
+			if(versionMaster.getFileuid() != null) {
+				mapObj.put("ProtocolData", objCloudFileManipulationservice.retrieveCloudSheets(versionMaster.getFileuid(),
+						TenantContext.getCurrentTenant() + "protocolversion"));
+			} else {
+				mapObj.put("ProtocolData", objCloudFileManipulationservice.retrieveCloudSheets(protocol.getFileuid(),
+						TenantContext.getCurrentTenant() + "protocol"));
+			}
+		} else {
+			GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
+					Criteria.where("filename").is("protocol_" + versionMaster.getProtocolmastercode())));
+			mapObj.put("ProtocolData", new BufferedReader(
+					new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+							.collect(Collectors.joining("\n")));
+		}
+		
 		return mapObj;
 	}
 }

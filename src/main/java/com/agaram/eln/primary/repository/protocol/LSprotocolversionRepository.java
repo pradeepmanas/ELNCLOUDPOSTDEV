@@ -16,4 +16,8 @@ public interface LSprotocolversionRepository extends JpaRepository<LSprotocolver
 
 	public List<LSprotocolversion> findByprotocolmastercodeIn(List<Integer> lstprotocoltemp);
 
+	public LSprotocolversion findFirstByProtocolmastercodeAndVersionno(Integer protocolmastercode, Integer versionno);
+
+	public List<LSprotocolversion> findByprotocolmastercodeOrderByVersionnoDesc(Integer protocolmastercode);
+
 }

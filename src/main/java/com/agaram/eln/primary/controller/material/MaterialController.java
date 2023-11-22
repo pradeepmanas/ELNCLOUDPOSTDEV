@@ -152,6 +152,14 @@ public class MaterialController {
 		return (ResponseEntity<Object>) objMaterialService.getElnMaterialByFilter(inputMap);
 	}
 	
+	@RequestMapping(value = "/getELNMaterialPropsForFilter", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getELNMaterialPropsForFilter(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		
+		return (ResponseEntity<Object>) objMaterialService.getELNMaterialPropsForFilter(nsiteInteger);
+	}
+	
 	@RequestMapping(value = "/getELNMaterialProps", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getMaterialProps(@RequestBody Map<String, Object> inputMap) throws Exception {
 

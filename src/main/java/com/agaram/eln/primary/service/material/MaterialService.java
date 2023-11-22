@@ -1600,10 +1600,9 @@ public class MaterialService {
 		
 		lstMaterialTypes = materialTypeRepository.findByNstatusAndNmaterialtypecodeNotOrderByNmaterialtypecode(1, -1);
 		if(!lstMaterialTypes.isEmpty()) {
-			lstCategories = materialCategoryRepository.
-					findByNmaterialtypecodeAndNsitecodeAndNstatus(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1);
+			lstCategories = materialCategoryRepository.findByNmaterialtypecodeAndNsitecodeAndNstatus(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1);
 			if(!lstCategories.isEmpty()) {
-				lstElnmaterials = elnmaterialRepository.findByMaterialcategoryAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger);
+				lstElnmaterials = elnmaterialRepository.findByMaterialcategoryAndNsitecodeAndNstatusOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger,1);
 			}
 		}	
 		
@@ -1632,13 +1631,21 @@ public class MaterialService {
 		List<MaterialCategory> lstCategories = new ArrayList<MaterialCategory>();
 		List<Elnmaterial> lstElnmaterials = new ArrayList<Elnmaterial>();
 		
-		if(!lstMaterialTypes.isEmpty()) {
-			lstCategories = materialCategoryRepository.
-					findByNmaterialtypecodeAndNsitecodeAndNstatus(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1);
+		if(ntypecode==-1) {
+			lstCategories = materialCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
 			
 			if(!lstCategories.isEmpty()) {
 				lstElnmaterials = elnmaterialRepository.findByMaterialcategoryAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger);
-			}			
+			}
+		}else {
+			if(!lstMaterialTypes.isEmpty()) {
+				lstCategories = materialCategoryRepository.
+						findByNmaterialtypecodeAndNsitecodeAndNstatus(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1);
+				
+				if(!lstCategories.isEmpty()) {
+					lstElnmaterials = elnmaterialRepository.findByMaterialcategoryAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger);
+				}			
+			}
 		}
 		
 		objmap.put("lstCategories", lstCategories);
@@ -1656,6 +1663,37 @@ public class MaterialService {
 				nsiteInteger);
 			
 		objmap.put("lstMaterial", lstMaterial);		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> getELNMaterialPropsForFilter(Integer nsiteInteger) {
+		
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		List<MaterialType> lstMaterialTypes =  new ArrayList<MaterialType>();
+		List<MaterialCategory> lstCategories = new ArrayList<MaterialCategory>();
+		List<Elnmaterial> lstElnmaterials = new ArrayList<Elnmaterial>();
+		
+		lstMaterialTypes = materialTypeRepository.findByNstatusAndNmaterialtypecodeNotOrderByNmaterialtypecode(1, -1);
+		if(!lstMaterialTypes.isEmpty()) {
+			lstCategories = materialCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
+			if(!lstCategories.isEmpty()) {
+				lstElnmaterials = elnmaterialRepository.findByNsitecodeAndNstatusOrderByNmaterialcodeDesc(nsiteInteger,1);
+			}
+		}	
+		
+		objmap.put("lstMaterial", lstElnmaterials);		
+		objmap.put("lstCategories", lstCategories);
+		objmap.put("lstType", lstMaterialTypes);
+		
+		List<Unit> lstUnits = unitRepository.findByNsitecodeOrderByNunitcodeDesc(nsiteInteger);
+		List<Section> lstSec = sectionRepository.findByNsitecodeOrderByNsectioncodeDesc(nsiteInteger);
+		List<Period> lstPeriods = periodRepository.findByNstatusOrderByNperiodcode(1);
+		
+		objmap.put("lstUnit", lstUnits);
+		objmap.put("lstSection", lstSec);
+		objmap.put("lstPeriods", lstPeriods);
+		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 }

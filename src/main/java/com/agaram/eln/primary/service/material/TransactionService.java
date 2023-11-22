@@ -1227,9 +1227,10 @@ public class TransactionService {
 	        LStestmasterlocal objTest = new LStestmasterlocal();
 	        objTest.setTestcode((Integer) item.get("testcode"));
 
-	        double getIssuedQty = Double.parseDouble(item.get("issuedQuantity").toString());
-	        double getUsedQty = Double.parseDouble(item.get("usedQuantity").toString());
-	        double getQtyLeft = getIssuedQty - getUsedQty;
+//	        Double getIssuedQty = Double.parseDouble(item.get("issuedQuantity").toString());
+	        Double getIssuedQty = Double.parseDouble(objInventory.getSavailablequantity());
+	        Double getUsedQty = Double.parseDouble(item.get("usedQuantity").toString());
+	        Double getQtyLeft = getIssuedQty - getUsedQty;
 
 	        LSuserMaster objUser = new LSuserMaster();
 	        objUser.setUsercode(cft.getLsuserMaster());
@@ -1259,8 +1260,10 @@ public class TransactionService {
 	            // Handle the exception appropriately, e.g., log it or return an error response
 	            e.printStackTrace();
 	        }
+	        objInventory.setSavailablequantity(getQtyLeft.toString());
 
 	        elnresultUsedMaterialRepository.save(resultUsedMaterial);
+	        elnmaterialInventoryRepository.save(objInventory);
 	    });
 
 	    return new ResponseEntity<>("true", HttpStatus.OK);

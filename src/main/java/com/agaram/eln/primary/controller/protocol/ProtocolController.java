@@ -1129,4 +1129,10 @@ public class ProtocolController {
 		return ProtocolMasterService.onStartProtocolOrder(body);
 	}
 	
+	@PostMapping("/getProtocolTemplateVersionChanges")
+	public Map<String, Object> getProtocolTemplateVersionChanges(@RequestBody Map<String, Object> body)throws Exception
+	{
+		return ProtocolMasterService.getProtocolTemplateVersionChanges(body);
+	}
+	
 }

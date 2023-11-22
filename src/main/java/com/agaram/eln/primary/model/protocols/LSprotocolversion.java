@@ -44,6 +44,10 @@ public class LSprotocolversion implements Comparable<LSprotocolversion>{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifieddate;
 	
+	private String fileuid;
+	
+	private String fileuri;
+	
 	public Integer getProtocolversioncode() {
 		return protocolversioncode;
 	}
@@ -127,6 +131,22 @@ public class LSprotocolversion implements Comparable<LSprotocolversion>{
 	}
 	public void setModifieddate(Date modifieddate) {
 		this.modifieddate = modifieddate;
+	}
+	
+	public String getFileuid() {
+		return fileuid;
+	}
+	
+	public void setFileuid(String fileuid) {
+		this.fileuid = fileuid;
+	}
+	
+	public String getFileuri() {
+		return fileuri;
+	}
+	
+	public void setFileuri(String fileuri) {
+		this.fileuri = fileuri;
 	}
 	
 	@Override

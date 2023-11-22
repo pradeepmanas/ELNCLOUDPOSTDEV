@@ -344,8 +344,8 @@ update lsaudittrailconfigmaster set ordersequnce=106 where serialno=119 ;
 update lsaudittrailconfigmaster set screenname='IDS_SCN_UNITMASTER' where serialno=150 ;
 update lsaudittrailconfigmaster set screenname='IDS_SCN_GRADEMASTER' where serialno=119 ;
 
-ALTER TABLE IF Exists LSprotocolmaster ADD COLUMN IF NOT EXISTS fileuid varchar(100);
-ALTER TABLE IF Exists LSprotocolmaster ADD COLUMN IF NOT EXISTS fileuri varchar(250);
+ALTER TABLE IF Exists LSprotocolmaster ADD COLUMN IF NOT EXISTS fileuid varchar(250);
+ALTER TABLE IF Exists LSprotocolmaster ADD COLUMN IF NOT EXISTS fileuri varchar(500);
 ALTER TABLE IF Exists LSprotocolmaster ADD COLUMN IF NOT EXISTS containerstored integer default 0;
 
 ALTER TABLE IF Exists materialinventory ADD Column IF NOT EXISTS isexpiryneed BOOLEAN;
@@ -389,8 +389,8 @@ ALTER TABLE tbladssettings OWNER to postgres;
 
 ALTER TABLE IF EXISTS materialinventory ALTER COLUMN expirydate TYPE timestamp without time zone;
 
-ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS fileuid varchar(100);
-ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS fileuri varchar(250);
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS fileuid varchar(250);
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS fileuri varchar(500);
 ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS containerstored integer default 0;
 
 ALTER TABLE IF Exists method ADD COLUMN IF NOT EXISTS converterstatus integer;
@@ -1074,3 +1074,9 @@ update materialtype set smaterialtypename = 'Standard Type' where nmaterialtypec
 update materialtype set smaterialtypename = 'Volumetric Type' where nmaterialtypecode = 2;
 update materialtype set smaterialtypename = 'Material Inventory Type' where nmaterialtypecode = 3;
 update materialtype set smaterialtypename = 'IQC Material Standard Type' where nmaterialtypecode = 4;
+
+INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) VALUES (60, NULL, NULL, 20, 3, 1, 'G1', 'ID_GENERAL', '21', 'ID_GENERAL', 21, 'ID_GENERAL', 'G21', 'Barcode', 1) on conflict (fieldcode) do nothing;
+INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) VALUES (61, NULL, NULL, 21, 3, 1, 'G1', 'ID_GENERAL', '22', 'ID_GENERAL', 22, 'ID_GENERAL', 'G22', 'Formula Field', 1) on conflict (fieldcode) do nothing;
+
+ALTER TABLE IF Exists LSprotocolversion ADD COLUMN IF NOT EXISTS fileuid varchar(250);
+ALTER TABLE IF Exists LSprotocolversion ADD COLUMN IF NOT EXISTS fileuri varchar(500);

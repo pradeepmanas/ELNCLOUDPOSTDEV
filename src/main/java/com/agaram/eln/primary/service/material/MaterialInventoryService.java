@@ -2934,8 +2934,8 @@ public class MaterialInventoryService {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 //		List<Map<String, Object>> lstMaterialInventoryTrans = new ArrayList<Map<String, Object>>();
 		List<Integer> nmaterialinventorycode = (List<Integer>) inputMap.get("nmaterialinventorycode");
-		List<ElnmaterialInventory> lstElnInventories = new ArrayList<ElnmaterialInventory>();
-		lstElnInventories = elnmaterialInventoryReppository.findByNmaterialinventorycodeIn(nmaterialinventorycode);
+//		List<ElnmaterialInventory> lstElnInventories = new ArrayList<ElnmaterialInventory>();
+		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository.findByNmaterialinventorycodeIn(nmaterialinventorycode);
 		objmap.put("MaterialInventory", lstElnInventories);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
