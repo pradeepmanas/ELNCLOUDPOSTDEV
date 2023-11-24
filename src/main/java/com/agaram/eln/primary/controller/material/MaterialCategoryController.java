@@ -24,7 +24,8 @@ public class MaterialCategoryController {
 
 	@PostMapping(value = "/getMaterialType")
 	public ResponseEntity<Object> getMaterialType(@RequestBody Map<String, Object> inputMap) throws Exception {
-		return materialcategoryservice.getMaterialType(inputMap);
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		return materialcategoryservice.getMaterialType(nsiteInteger);
 	}
 
 	@PostMapping(value = "/getMaterialCategory")

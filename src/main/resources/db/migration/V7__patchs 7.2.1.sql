@@ -1084,3 +1084,24 @@ ALTER TABLE IF Exists LSprotocolversion ADD COLUMN IF NOT EXISTS fileuri varchar
 update elnmaterialInventory set createdby_usercode=(select lsusermaster.usercode from lsusermaster  where lsusermaster.username='Administrator') where createdby_usercode is null;
 
 ALTER TABLE IF Exists materialtype ADD COLUMN IF NOT EXISTS createby_usercode integer default 1,ADD COLUMN IF NOT EXISTS createdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'materialtype_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE materialtype_sequence START WITH 50;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;
+
+ALTER TABLE materialtype ALTER COLUMN nmaterialtypecode SET DEFAULT nextval('materialtype_sequence');

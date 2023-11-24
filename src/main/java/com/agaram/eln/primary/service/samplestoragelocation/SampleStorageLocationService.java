@@ -69,7 +69,8 @@ public class SampleStorageLocationService {
 
 			return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody(),HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>(getAllActiveSampleStorageLocation(sampleStorageLocation.getSitekey()).getBody(),HttpStatus.CONFLICT);
+			sampleStorageLocation.setInfo("IDS_EXIST");
+			return new ResponseEntity<>(sampleStorageLocation,HttpStatus.OK);
 		}
 	}
 

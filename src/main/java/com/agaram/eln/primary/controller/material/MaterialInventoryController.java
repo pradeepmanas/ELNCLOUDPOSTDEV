@@ -168,11 +168,21 @@ public class MaterialInventoryController {
 		
 		return (ResponseEntity<Object>) materialInventoryService.getElnMaterialInventory(inputMap);
 	}
+	@RequestMapping(value = "/getElnMaterialInventoryonprotocol", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getElnMaterialInventoryonprotocol(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) materialInventoryService.getElnMaterialInventoryonprotocol(inputMap);
+	}
 	
 	@RequestMapping(value = "/getElnMaterialInventoryByFilter", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getElnMaterialInventoryByFilter(@RequestBody Map<String, Object> inputMap) throws Exception {
 		
 		return (ResponseEntity<Object>) materialInventoryService.getElnMaterialInventoryByFilter(inputMap);
+	}
+	@RequestMapping(value = "/getElnMaterialInventoryByFilterForprotocol", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getElnMaterialInventoryByFilterForprotocol(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) materialInventoryService.getElnMaterialInventoryByFilterForprotocol(inputMap);
 	}
 	
 	@RequestMapping(value = "/getElnMaterialInventoryByStorage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

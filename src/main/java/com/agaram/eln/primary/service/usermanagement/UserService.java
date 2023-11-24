@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.usermanagement;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +27,6 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
-import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.notification.Email;
@@ -558,7 +558,7 @@ public class UserService {
 		// Manual Audit
 		if (objusermaster.getObjuser() != null) {
 			// LScfttransaction manualAudit=new LScfttransaction();
-			Date date = new Date();
+//			Date date = new Date();
 			objusermaster.getObjmanualaudit().setComments(objusermaster.getObjuser().getComments());
 			// manualAudit.setModuleName("UserManagement");
 			// manualAudit.setComments("Insert Test Successfully");
@@ -1636,7 +1636,16 @@ public class UserService {
 					listofallmaster.getLssitemaster().getSitecode());
 
 			if (lstUnit.isEmpty()) {
-				unitRepository.save(listofallmaster.getUnit());
+				
+				List<Unit> objLst = listofallmaster.getUnit().stream().peek(f -> {
+					try {
+						f.setCreatedate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}).collect(Collectors.toList());
+				
+				unitRepository.save(objLst);
 				listofallmaster.setUnit(listofallmaster.getUnit());
 				listofallmaster.setObjResponse(new Response());
 				listofallmaster.getObjResponse().setStatus(true);
@@ -1659,7 +1668,16 @@ public class UserService {
 					listofallmaster.getLssitemaster().getSitecode());
 
 			if (lstSection.isEmpty()) {
-				sectionRepository.save(listofallmaster.getSection());
+				
+				List<Section> objLst = listofallmaster.getSection().stream().peek(f -> {
+					try {
+						f.setCreatedate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}).collect(Collectors.toList());
+				
+				sectionRepository.save(objLst);
 				listofallmaster.setSection(listofallmaster.getSection());
 				listofallmaster.setObjResponse(new Response());
 				listofallmaster.getObjResponse().setStatus(true);

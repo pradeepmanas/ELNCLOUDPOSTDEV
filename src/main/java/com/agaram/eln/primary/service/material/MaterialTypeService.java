@@ -93,14 +93,14 @@ public class MaterialTypeService {
 	public ResponseEntity<Object> createMaterialType(MaterialType objMaterialType) throws JsonParseException, JsonMappingException, IOException, ParseException {
 		
 		if(objMaterialType.getNmaterialtypecode() == null) {
-			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameAndNsitecodeOrderByNmaterialtypecode(
+			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameIgnoreCaseAndNsitecodeOrderByNmaterialtypecode(
 					objMaterialType.getSmaterialtypename(),objMaterialType.getNsitecode());
 			
 			if(objlstTypes.isEmpty()) {
 				
-				List<MaterialType> objlstTypes1 = materialTypeRepository.findAll();
+//				List<MaterialType> objlstTypes1 = materialTypeRepository.findAll();
 				
-				objMaterialType.setNmaterialtypecode(objlstTypes1.size()+1);
+//				objMaterialType.setNmaterialtypecode(objlstTypes1.size()+1);
 				objMaterialType.setNdefaultstatus(3);
 				objMaterialType.setNstatus(1);
 				objMaterialType.setCreatedate(commonfunction.getCurrentUtcTime());
@@ -116,7 +116,7 @@ public class MaterialTypeService {
 			}
 		}
 		else {
-			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameAndNsitecodeAndNmaterialtypecodeNot(
+			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameIgnoreCaseAndNsitecodeAndNmaterialtypecodeNot(
 					objMaterialType.getSmaterialtypename(),objMaterialType.getNsitecode(),objMaterialType.getNmaterialtypecode());
 			
 			if(objlstTypes.isEmpty()) {
@@ -125,6 +125,9 @@ public class MaterialTypeService {
 				
 				objMaterialType.setNdefaultstatus(objMType.getNdefaultstatus());
 				objMaterialType.setNstatus(1);
+				objMaterialType.setCreatedate(objMType.getCreatedate());
+				objMaterialType.setCreateby(objMType.getCreateby());
+				
 				materialTypeRepository.save(objMaterialType);
 				
 				objMaterialType.setInfo("IDS_SUCCESS");

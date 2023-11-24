@@ -1227,11 +1227,11 @@ public class TransactionService {
 	        LStestmasterlocal objTest = new LStestmasterlocal();
 	        objTest.setTestcode((Integer) item.get("testcode"));
 
-//	        Double getIssuedQty = Double.parseDouble(item.get("issuedQuantity").toString());
-	        Double getIssuedQty = Double.parseDouble(objInventory.getSavailablequantity());
+	        Double getIssuedQty = Double.parseDouble(item.get("issuedQuantity").toString());
+////	        Double getIssuedQty = Double.parseDouble(objInventory.getSavailablequantity());
 	        Double getUsedQty = Double.parseDouble(item.get("usedQuantity").toString());
-	        Double getQtyLeft = getIssuedQty - getUsedQty;
-
+//	        Double getQtyLeft = getIssuedQty - getUsedQty;
+	        Double getQtyLeft = Double.parseDouble(item.get("issuedQuantity").toString());
 	        LSuserMaster objUser = new LSuserMaster();
 	        objUser.setUsercode(cft.getLsuserMaster());
 	        ElnresultUsedMaterial resultUsedMaterial = new ElnresultUsedMaterial();

@@ -35,8 +35,6 @@ import com.agaram.eln.primary.model.cloudFileManip.CloudUserSignature;
 import com.agaram.eln.primary.model.fileManipulation.ProfilePicture;
 import com.agaram.eln.primary.model.fileManipulation.UserSignature;
 import com.agaram.eln.primary.model.general.Response;
-
-import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSactiveUser;

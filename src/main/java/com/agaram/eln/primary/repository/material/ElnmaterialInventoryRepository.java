@@ -57,4 +57,18 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 
 	List<ElnmaterialInventory> findByMaterialIn(List<Elnmaterial> material);
 
+	List<ElnmaterialInventory> findByNsitecodeAndNtransactionstatusAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+			Integer nsiteInteger, int i, Date fromDate, Date toDate);
+
+	List<ElnmaterialInventory> findByMaterialtypeAndNtransactionstatusAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+			MaterialType objMaterialType, int i, Integer nsiteInteger, Date fromDate, Date toDate);
+
+	List<ElnmaterialInventory> findByMaterialtypeAndNtransactionstatusAndMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+			MaterialType objMaterialType, int i, MaterialCategory objMaterialCategory, Integer nsiteInteger,
+			Date fromDate, Date toDate);
+
+	List<ElnmaterialInventory> findByMaterialtypeAndNtransactionstatusAndMaterialcategoryAndMaterialAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+			MaterialType objMaterialType, int i, MaterialCategory objMaterialCategory, Elnmaterial objElnmaterial,
+			Integer nsiteInteger, Date fromDate, Date toDate);
+
 }

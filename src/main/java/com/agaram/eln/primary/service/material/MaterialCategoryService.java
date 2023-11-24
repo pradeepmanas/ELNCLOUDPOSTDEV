@@ -28,10 +28,9 @@ public class MaterialCategoryService {
 	@Autowired
 	MaterialCategoryRepository MaterialCategoryRepository;
 
-	public ResponseEntity<Object> getMaterialType(Map<String, Object> inputMap) {
+	public ResponseEntity<Object> getMaterialType(Integer nsitecode) {
 
-		List<MaterialType> lstgetMaterialType = MaterialTypeRepository
-				.findByNstatusAndNmaterialtypecodeNotOrderByNmaterialtypecode(1, -1);
+		List<MaterialType> lstgetMaterialType = MaterialTypeRepository.findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatus(-1,1,nsitecode,-1,1,4);
 		return new ResponseEntity<>(lstgetMaterialType, HttpStatus.OK);
 	}
 

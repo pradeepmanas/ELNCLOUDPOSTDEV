@@ -1599,7 +1599,7 @@ public class MaterialService {
 		List<MaterialCategory> lstCategories = new ArrayList<MaterialCategory>();
 		List<Elnmaterial> lstElnmaterials = new ArrayList<Elnmaterial>();
 		
-		lstMaterialTypes = materialTypeRepository.findByNstatusAndNmaterialtypecodeNotOrderByNmaterialtypecode(1, -1);
+		lstMaterialTypes = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatus(-1,1,nsiteInteger,-1,1,4);
 		if(!lstMaterialTypes.isEmpty()) {
 			lstCategories = materialCategoryRepository.findByNmaterialtypecodeAndNsitecodeAndNstatus(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1);
 			if(!lstCategories.isEmpty()) {
@@ -1675,7 +1675,7 @@ public class MaterialService {
 		List<MaterialCategory> lstCategories = new ArrayList<MaterialCategory>();
 		List<Elnmaterial> lstElnmaterials = new ArrayList<Elnmaterial>();
 		
-		lstMaterialTypes = materialTypeRepository.findByNstatusAndNmaterialtypecodeNotOrderByNmaterialtypecode(1, -1);
+		lstMaterialTypes = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatus(-1,1,nsiteInteger,-1,1,4);
 		if(!lstMaterialTypes.isEmpty()) {
 			lstCategories = materialCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
 			if(!lstCategories.isEmpty()) {
