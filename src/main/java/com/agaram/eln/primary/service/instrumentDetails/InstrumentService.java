@@ -19,6 +19,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
@@ -40,6 +41,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.mail.MailSendException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
@@ -98,6 +102,7 @@ import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.ParserBlock;
 import com.agaram.eln.primary.model.methodsetup.ParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserField;
+import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.reports.lsreportfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
@@ -120,6 +125,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
+import com.agaram.eln.primary.repository.notification.EmailRepository;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
@@ -408,6 +414,12 @@ public class InstrumentService {
 	
 	@Autowired
 	private LSprotocolorderstephistoryRepository lsprotocolorderstephistoryRepository;
+	
+	@Autowired
+	private JavaMailSender mailSender;
+	
+	@Autowired
+	private EmailRepository EmailRepository;
 	
 	@Autowired
 	@Qualifier("entityManagerFactory")
@@ -3709,6 +3721,20 @@ public class InstrumentService {
 		lslogilablimsorderdetailRepository.save(objorder);
 
 		updatenotificationforworkflowapproval(objorder);
+		
+		//for email notify
+		String email =  env.getProperty("spring.emailnotificationconfig");
+		if( email != null && email.equals("true")) {
+			try {
+				updateemailnotificationorderworkflow(objorder,
+						lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode()).getLsworkflow());	
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.out.println(e);
+			}
+			
+		}
 
 		if (objorder.getFiletype() != 0 && objorder.getOrderflag().toString().trim().equals("N")) {
 			LSworkflow objlastworkflow = lsworkflowRepository
@@ -3722,6 +3748,77 @@ public class InstrumentService {
 		}
 
 		return objorder;
+	}
+
+	private void updateemailnotificationorderworkflow(LSlogilablimsorderdetail objorder, LSworkflow previousworkflow) {
+
+		try {
+			
+			String Content = "";
+			LSuserMaster obj = lsuserMasterRepository.findByusercode(objorder.getObjLoggeduser().getUsercode());
+
+			if (objorder.getApprovelstatus() != null) {
+				LSusersteam objteam = lsusersteamRepository
+						.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode());
+
+				String previousworkflowname = previousworkflow != null ? previousworkflow.getWorkflowname() : "";
+
+			
+				if (objorder.getApprovelstatus() == 1) {
+					Content="Sheet Order: "+ objorder.getBatchid() +" was sent from the workflow level : "+ previousworkflowname +" to : "+ objorder.getLsworkflow().getWorkflowname() +" by "+obj.getUsername()+"";
+				} else if (objorder.getApprovelstatus() == 2) {
+					Content="Sheet Order: "+ objorder.getBatchid() +" was returned to the previous level of workflow from : "+ previousworkflowname +" to : "+ objorder.getLsworkflow().getWorkflowname() +" by "+obj.getUsername()+"";
+				} else if (objorder.getApprovelstatus() == 3) {
+					Content="Sheet Order: "+ objorder.getBatchid() +" was rejected by "+obj.getUsername()+"  upon review";
+				}				
+				if (previousworkflowname.equals(objorder.getLsworkflow().getWorkflowname())
+						&& objorder.getApprovelstatus() == 1) {
+					Content="Sheet Order: "+ objorder.getBatchid() +" was approved by the "+obj.getUsername()+" on the Workflow: "+ objorder.getLsworkflow().getWorkflowname() +"";
+				}
+				List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();				
+				List<Email> lstemail= new ArrayList<Email>();
+				for (int i = 0; i < lstusers.size(); i++) {
+					if (!(objorder.getObjLoggeduser().getUsercode().equals(lstusers.get(i).getLsuserMaster().getUsercode()))) {						
+						Email objemail = new Email();
+						MimeMessage message = mailSender.createMimeMessage();
+						MimeMessageHelper helper = new MimeMessageHelper(message);
+						
+						if(lstusers.get(i).getLsuserMaster().getEmailid() != null) {
+							objemail.setMailto(lstusers.get(i).getLsuserMaster().getEmailid());
+							helper.setTo(lstusers.get(i).getLsuserMaster().getEmailid());	
+						}
+						//email notification
+						String subject = "Auto message generation for Sheet Order";
+						String from = env.getProperty("spring.mail.username");
+						objemail.setMailfrom(from);
+						objemail.setMailcontent(Content);
+						objemail.setSubject(subject);
+						lstemail.add(objemail);
+						helper.setSubject(subject);
+						helper.setFrom(from);
+						helper.setText("<p>" + Content + "</p><br><p> Order : </p><a href='" + objorder.getOrderlink() + "'><b>" + objorder.getBatchid() + "</b></a>", true);
+
+						try {
+							mailSender.send(message);
+							System.out.println("---email notification sent---");
+						} catch (MailSendException e) {
+							// TODO: handle exception
+							System.out.println("---email notification log---");
+							System.out.println(e);
+						}
+
+						
+					}
+				}
+
+				EmailRepository.save(lstemail);
+				lstemail.removeAll(lstemail);
+				
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	
 	}
 
 	private void updatenotificationforworkflowapproval(LSlogilablimsorderdetail objorder) {

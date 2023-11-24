@@ -3029,16 +3029,14 @@ public class MaterialInventoryService {
 		String sformattype = "{yyyy}/{99999}";
 		ObjectMapper objmapper = new ObjectMapper();
 
-		ElnmaterialInventory objInventory = objmapper.convertValue(inputMap.get("selectedInventory"),
-				ElnmaterialInventory.class);
+		ElnmaterialInventory objInventory = objmapper.convertValue(inputMap.get("selectedInventory"), ElnmaterialInventory.class);
 		final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 
 		MaterialType objMaterialType = objInventory.getMaterialtype();
 		Elnmaterial objMaterial = objInventory.getMaterial();
 
 		Map<String, Object> selectedStorage = (Map<String, Object>) inputMap.get("selectedStorageLocation");
-		SelectedInventoryMapped objStorageLocation = objmapper.convertValue(selectedStorage,
-				SelectedInventoryMapped.class);
+		SelectedInventoryMapped objStorageLocation = objmapper.convertValue(selectedStorage, SelectedInventoryMapped.class);
 
 		boolean isReusable = objMaterial.getReusable() == null ? false : objMaterial.getReusable();
 		boolean isExpiry = objMaterial.getExpirytype() == 1;
@@ -3126,16 +3124,13 @@ public class MaterialInventoryService {
 
 		if (lstIntegerInventory.isEmpty()) {
 			SampleStorageLocation objLocation = new SampleStorageLocation();
-			objLocation.setSamplestoragelocationkey(
-					objStorageLocation.getSamplestoragelocationkey().getSamplestoragelocationkey());
-
+			objLocation.setSamplestoragelocationkey(objStorageLocation.getSamplestoragelocationkey().getSamplestoragelocationkey());
 			objStorageLocation.setSamplestoragelocationkey(objLocation);
 			objStorageLocation.setNmaterialinventorycode(objInventory.getNmaterialinventorycode());
 			selectedInventoryMappedRepository.save(objStorageLocation);
 		} else {
 			SampleStorageLocation objLocation = new SampleStorageLocation();
-			objLocation.setSamplestoragelocationkey(
-					objStorageLocation.getSamplestoragelocationkey().getSamplestoragelocationkey());
+			objLocation.setSamplestoragelocationkey(objStorageLocation.getSamplestoragelocationkey().getSamplestoragelocationkey());
 
 			List<SelectedInventoryMapped> objLstStorages = new ArrayList<SelectedInventoryMapped>();
 
@@ -3184,31 +3179,27 @@ public class MaterialInventoryService {
 		Date toDate = new Date(longToValue);
 
 		MaterialType objMaterialType = objmapper.convertValue(inputMap.get("materialtype"), MaterialType.class);
-		MaterialCategory objMaterialCategory = objmapper.convertValue(inputMap.get("materialcategory"),
-				MaterialCategory.class);
+		MaterialCategory objMaterialCategory = objmapper.convertValue(inputMap.get("materialcategory"),MaterialCategory.class);
 		Elnmaterial objElnmaterial = objmapper.convertValue(inputMap.get("elnmaterial"), Elnmaterial.class);
 
 		List<ElnmaterialInventory> lstElnInventories = new ArrayList<ElnmaterialInventory>();
 
-		if ((objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1)
-				&& (objMaterialCategory.getNmaterialcatcode() == null
-						|| objMaterialCategory.getNmaterialcatcode() == -1)
-				&& (objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+		if ((objMaterialType == null || objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1)
+				&& (objMaterialCategory == null || objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)
+					&& (objElnmaterial == null || objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+			
 			lstElnInventories = elnmaterialInventoryReppository
-					.findByNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(nsiteInteger, fromDate,
-							toDate);
+					.findByNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(nsiteInteger, fromDate, toDate);
 
-		} else if ((objMaterialType.getNmaterialtypecode() != -1)
-				&& (objMaterialCategory.getNmaterialcatcode() == null
-						|| objMaterialCategory.getNmaterialcatcode() == -1)
-				&& (objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+		} else if ((objMaterialType != null && objMaterialType.getNmaterialtypecode() != -1)
+				&& (objMaterialCategory == null || objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)
+				&& (objElnmaterial == null || objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
 
 			lstElnInventories = elnmaterialInventoryReppository
-					.findByMaterialtypeAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
-							objMaterialType, nsiteInteger, fromDate, toDate);
+					.findByMaterialtypeAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(objMaterialType, nsiteInteger, fromDate, toDate);
 
-		} else if ((objMaterialType.getNmaterialtypecode() != -1) && (objMaterialCategory.getNmaterialcatcode() != -1)
-				&& (objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+		} else if ((objMaterialType != null && objMaterialType.getNmaterialtypecode() != -1) && (objMaterialCategory != null && objMaterialCategory.getNmaterialcatcode() != -1)
+				&& (objElnmaterial == null || objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
 
 			lstElnInventories = elnmaterialInventoryReppository
 					.findByMaterialtypeAndMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
@@ -3399,19 +3390,62 @@ public class MaterialInventoryService {
 		return new ResponseEntity<>(objInventory, HttpStatus.OK);
 	}
 	
-	public ResponseEntity<Object> updateElnMaterialInventoryStock(ElnmaterialInventory objElnmaterialInventory) throws ParseException {
+	public ResponseEntity<Object> updateElnMaterialInventoryStock(ElnmaterialInventory objElnmaterialInventory) throws Exception {
 
 		ElnmaterialInventory objInventory = elnmaterialInventoryReppository.findByNmaterialinventorycode(objElnmaterialInventory.getNmaterialinventorycode());
-
-		String savailableQtyInHand = objInventory.getSavailablequantity();
-		String savailableQtyReceive = objElnmaterialInventory.getSavailablequantity();
 		
-		Double dAvailableQtyInHand = Double.parseDouble(savailableQtyInHand);
-		Double dAvailableQtyReceive = Double.parseDouble(savailableQtyReceive);
-		Double totalAvailableQty = dAvailableQtyInHand + dAvailableQtyReceive;
+//		String savailableQtyInHand = objInventory.getSavailablequantity();
+		String savailableQtyReceive = objElnmaterialInventory.getSavailablequantity();
+//		
+//		Double dAvailableQtyInHand = Double.parseDouble(savailableQtyInHand);
+//		Double dAvailableQtyReceive = Double.parseDouble(savailableQtyReceive);
+//		Double totalAvailableQty = dAvailableQtyInHand + dAvailableQtyReceive;
 	
-		objInventory.setSavailablequantity(totalAvailableQty.toString());
-		elnmaterialInventoryReppository.save(objInventory);
+//		objInventory.setSavailablequantity(totalAvailableQty.toString());
+		
+		ElnmaterialInventory objElnmaterialInventory2 = new ElnmaterialInventory();
+		
+		List<Integer> lstIntegerInventory = new ArrayList<Integer>();
+		LScfttransaction cft = objElnmaterialInventory.getObjsilentaudit();
+		LSuserMaster objMaster = new LSuserMaster();
+		objMaster.setUsercode(cft.getLsuserMaster());
+		String sformattype = "{yyyy}/{99999}";
+		SelectedInventoryMapped objStorageLocation = selectedInventoryMappedRepository.findByNmaterialinventorycode(objElnmaterialInventory.getNmaterialinventorycode());
+		
+		String stridformat = objInventory.getMaterialtype().getSmaterialtypename().substring(0, 3) + "/"
+				+ objInventory.getMaterial().getSmaterialname().substring(0, 3) + "/"
+				+ getfnFormat(objInventory.getNmaterialinventorycode(), sformattype);
+		
+		objElnmaterialInventory2.setExpirydate(objInventory.getExpirydate());
+		objElnmaterialInventory2.setIsexpiry(objInventory.getIsexpiry());
+		objElnmaterialInventory2.setLsOrderattachments(null);
+		objElnmaterialInventory2.setManufacdate(objInventory.getManufacdate());
+		objElnmaterialInventory2.setReceiveddate(objInventory.getReceiveddate());
+		objElnmaterialInventory2.setRemarks(objInventory.getRemarks());
+		objElnmaterialInventory2.setManufacturer(objInventory.getManufacturer());
+		objElnmaterialInventory2.setMaterial(objInventory.getMaterial());
+		objElnmaterialInventory2.setMaterialcategory(objInventory.getMaterialcategory());
+		objElnmaterialInventory2.setMaterialgrade(objInventory.getMaterialgrade());
+		objElnmaterialInventory2.setMaterialtype(objInventory.getMaterialtype());
+		objElnmaterialInventory2.setJsondata(objInventory.getJsondata());
+		objElnmaterialInventory2.setNqtynotification(objInventory.getNqtynotification());
+		objElnmaterialInventory2.setNsitecode(objInventory.getNsitecode());
+		objElnmaterialInventory2.setNtransactionstatus(objInventory.getNtransactionstatus());
+		objElnmaterialInventory2.setNstatus(objInventory.getNstatus());
+		objElnmaterialInventory2.setOpendate(objInventory.getOpendate());
+		objElnmaterialInventory2.setSavailablequantity(savailableQtyReceive);
+		objElnmaterialInventory2.setSection(objInventory.getSection());
+		objElnmaterialInventory2.setSreceivedquantity(savailableQtyReceive);
+		objElnmaterialInventory2.setSupplier(objInventory.getSupplier());
+		objElnmaterialInventory2.setUnit(objInventory.getUnit());
+		objElnmaterialInventory2.setCreateddate(commonfunction.getCurrentUtcTime());
+		objElnmaterialInventory2.setCreatedby(objMaster);
+		objElnmaterialInventory2.setNmaterialinventorycode(null);
+		objElnmaterialInventory2.setSinventoryid(stridformat);
+		
+		elnmaterialInventoryReppository.save(objElnmaterialInventory2);
+		
+		setStorageInventoryStorageOnNode(objStorageLocation, objElnmaterialInventory2, lstIntegerInventory);
 		
 		return new ResponseEntity<>(objInventory, HttpStatus.OK);
 	}

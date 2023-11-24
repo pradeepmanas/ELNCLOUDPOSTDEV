@@ -54,6 +54,8 @@ public class SampleStorageLocationService {
 
 		if (objLocation == null) {
 			sampleStorageLocation.setObjsilentaudit(Auditobj);
+			sampleStorageLocation.setCreatedby(Auditobj.getUsername());
+			sampleStorageVersion.setCreatedby(Auditobj.getUsername());
 			sampleStorageLocationRepository.save(sampleStorageLocation);
 			sampleStorageVersion.setSampleStorageLocation(sampleStorageLocation);
 			try {
@@ -110,7 +112,10 @@ public class SampleStorageLocationService {
 		List<SelectedInventoryMapped> lstInventoryMappeds = selectedInventoryMappedRepository.findBySamplestoragelocationkey(sampleStorageLocationItem);
 
 		if(!lstInventoryMappeds.isEmpty()) {
-			return new ResponseEntity<>("Delete Failed - Storage mapped with inventory", HttpStatus.NOT_FOUND);
+			
+			sampleStorageLocationItem.setInfo("Delete Failed - Storage mapped with inventory");
+			return new ResponseEntity<>(sampleStorageLocationItem, HttpStatus.OK);
+//			return new ResponseEntity<>("Delete Failed - Storage mapped with inventory", HttpStatus.NOT_FOUND);
 		}else {
 			if (sampleStorageVersionList.size() > 0) {
 
@@ -144,7 +149,9 @@ public class SampleStorageLocationService {
 				}
 			}
 		}
-		return new ResponseEntity<>("Delete Failed - Result Not Found", HttpStatus.NOT_FOUND);
+		sampleStorageLocationItem.setInfo("Delete Failed - Result Not Found");
+		return new ResponseEntity<>(sampleStorageLocationItem, HttpStatus.OK);
+//		return new ResponseEntity<>("Delete Failed - Result Not Found", HttpStatus.NOT_FOUND);
 	}
 
 	public ResponseEntity<Object> getAllActiveSampleStorageLocation(Integer nsiteInteger) {

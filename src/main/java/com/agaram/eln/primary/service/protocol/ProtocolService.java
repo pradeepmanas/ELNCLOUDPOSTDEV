@@ -12,9 +12,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -35,6 +39,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.mail.MailSendException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,6 +66,7 @@ import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocolsteps;
 import com.agaram.eln.primary.model.protocols.LSprotocolfiles;
@@ -107,6 +115,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
+import com.agaram.eln.primary.repository.notification.EmailRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolorderversionstepRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolstepInfoRepository;
@@ -381,6 +390,11 @@ public class ProtocolService {
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
 
+	@Autowired
+	private JavaMailSender mailSender;
+	
+	@Autowired
+	private EmailRepository EmailRepository;
 //	@Autowired
 //	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
 
@@ -2267,12 +2281,83 @@ public class ProtocolService {
 			}
 			updatenotificationfororderworkflowapprovel(objClass);
 			updatenotificationfororderworkflow(objClass, LsProto.getLsworkflow());
+			String email =  env.getProperty("spring.emailnotificationconfig");
+			if( email != null && email.equals("true")) {
+				try {
+					updateemailnotificationfororderworkflow(objClass, LsProto.getLsworkflow());
+				} catch (Exception e) {
+					// TODO: handle exception
+					System.out.println(e);
+				}
+				
+			}
 
 		} catch (Exception e) {
 			mapObj.put("ERROR", e);
 		}
 		return mapObj;
 	}
+
+	private void updateemailnotificationfororderworkflow(LSlogilabprotocoldetail objClass, LSworkflow lsworkflow) throws MessagingException {
+
+		String Content="";
+		LSlogilabprotocoldetail LsProto = LSlogilabprotocoldetailRepository.findOne(objClass.getProtocolordercode());
+
+		LSuserMaster obj = lsusermasterRepository.findByusercode(objClass.getObjLoggeduser().getUsercode());
+		LSusersteam objteam = lsusersteamRepository
+				.findByteamcode(objClass.getLsprojectmaster().getLsusersteam().getTeamcode());
+		String previousworkflowname = lsworkflow != null ? lsworkflow.getWorkflowname() : "";
+		String currnetworkflow = objClass.getLsprotocolorderworkflowhistory().get(0).getLsworkflow().getWorkflowname();
+		if (previousworkflowname.equals(objClass.getLsworkflow().getWorkflowname()) && LsProto.getApproved() == 1) {
+			Content="Protocol Order: "+ objClass.getProtoclordername() +" was approved by the "+obj.getUsername()+" on the Workflow: "+currnetworkflow+"";
+		} else if (LsProto.getApproved() == 0 && objClass.getRejected() == null) {
+			Content="Protocol Order: "+ objClass.getProtoclordername() +" was sent from the workflow level : "+previousworkflowname+" to : "+currnetworkflow+" by "+obj.getUsername()+"";
+		} else if (LsProto.getApproved() == 2 && objClass.getRejected() == null) {
+			Content="Protocol Order: "+ objClass.getProtoclordername() +" was returned to the previous level of workflow from :"+previousworkflowname+" to : "+currnetworkflow+" by "+obj.getUsername()+"";
+		} else if (LsProto.getRejected() == 1) {
+			Content="Protocol Order: "+ objClass.getProtoclordername() +" was rejected by "+obj.getUsername()+"  upon review";
+		}
+
+		List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
+		List<Email> lstemail= new ArrayList<Email>();
+		for (int i = 0; i < lstusers.size(); i++) {
+			if (!(objClass.getLsuserMaster().getUsercode().equals(lstusers.get(i).getLsuserMaster().getUsercode()))) {
+
+				Email objemail = new Email();
+				MimeMessage message = mailSender.createMimeMessage();
+				MimeMessageHelper helper = new MimeMessageHelper(message);
+				
+				if(lstusers.get(i).getLsuserMaster().getEmailid() != null) {
+					objemail.setMailto(lstusers.get(i).getLsuserMaster().getEmailid());
+					helper.setTo(lstusers.get(i).getLsuserMaster().getEmailid());	
+				}
+				//email notification
+				String subject = "Auto message generation for Protocol Order";
+				String from = env.getProperty("spring.mail.username");
+				objemail.setMailfrom(from);
+				objemail.setMailcontent(Content);
+				objemail.setSubject(subject);
+				lstemail.add(objemail);
+				helper.setSubject(subject);
+				helper.setFrom(from);							
+				helper.setText("<p>" + Content + "</p><br><p> Order : </p><a href='" + objClass.getOrderlink() + "'><b>" + objClass.getProtoclordername() + "</b></a>", true);
+				try {
+					mailSender.send(message);
+					System.out.println("---email notification sent---");
+				} catch (MailSendException e) {
+					// TODO: handle exception
+					System.out.println("---email notification log---");
+					System.out.println(e);
+				}
+				
+			}
+
+		}
+
+		EmailRepository.save(lstemail);
+		lstemail.removeAll(lstemail);
+	}
+
 
 	private void updatenotificationfororderworkflowapprovel(LSlogilabprotocoldetail objClass) {
 		String Details = "";
@@ -5225,27 +5310,27 @@ public class ProtocolService {
 		LSuserMaster lsuserfrom = object.convertValue(body.get("lsuserMaster"), LSuserMaster.class);
 		if(lsuserfrom != null) {
 			@SuppressWarnings("unchecked")
-			ArrayList<String> notifyto = (ArrayList<String>) body.get("notifyto");
-			for(String to :notifyto) {			
-				if(to != null) {	
-					LSuserMaster createby = lsusermasterRepository.findByUsername(to);
-					String Details = "{\"protocolname\":\"" + body.get("protocolmastername") + "\", \"createduser\":\""
-							+ body.get("username") + "\", \"protocolmastercode\":" +body.get("protocolmastercode")+ ", \"isprocess\": true, \"isprotocolprocess\":true }";
-					LSnotification objnotify = new LSnotification();
-					objnotify.setNotifationfrom(lsuserfrom);
-					objnotify.setNotifationto(createby);
-					try {
-						objnotify.setNotificationdate(commonfunction.getCurrentUtcTime());
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					objnotify.setNotification("PROTOCOLCOMMENT");
-					objnotify.setNotificationdetils(Details);
-					objnotify.setIsnewnotification(1);
-					objnotify.setNotificationpath("/protocols");
-					objnotify.setNotificationfor(1);
-					lsnotificationRepository.save(objnotify);
+			List<LinkedHashMap<String, String>> notifyto = (List<LinkedHashMap<String, String>>) body.get("notifyto");
+			for (LinkedHashMap<String, String> to : notifyto) {		
+			if(to != null) {	
+			LSuserMaster createby = lsusermasterRepository.findByUsername(to.get("value"));
+			String Details = "{\"protocolname\":\"" + body.get("protocolmastername") + "\", \"createduser\":\""
+					+ body.get("username") + "\", \"protocolmastercode\":" +body.get("protocolmastercode")+ ", \"isprocess\": true, \"isprotocolprocess\":true, \"screen\": \""+to.get("screen")+"\" }";
+			LSnotification objnotify = new LSnotification();
+			objnotify.setNotifationfrom(lsuserfrom);
+			objnotify.setNotifationto(createby);
+			try {
+				objnotify.setNotificationdate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			objnotify.setNotification("PROTOCOLCOMMENT");
+			objnotify.setNotificationdetils(Details);
+			objnotify.setIsnewnotification(1);
+			objnotify.setNotificationpath("/protocols");
+			objnotify.setNotificationfor(1);
+			lsnotificationRepository.save(objnotify);
 				}
 			}
 		}
@@ -5314,12 +5399,12 @@ public class ProtocolService {
 				LSuserMaster lsuserfrom = object.convertValue(body.get("lsuserMaster"), LSuserMaster.class);
 				if(lsuserfrom != null) {
 					@SuppressWarnings("unchecked")
-					ArrayList<String> notifyto = (ArrayList<String>) body.get("notifyto");
-					for(String to :notifyto) {			
+					List<LinkedHashMap<String, String>> notifyto = (List<LinkedHashMap<String, String>>) body.get("notifyto");
+					for (LinkedHashMap<String, String> to : notifyto) {		
 				if(to != null) {	
-				LSuserMaster createby = lsusermasterRepository.findByUsername(to);
+				LSuserMaster createby = lsusermasterRepository.findByUsername(to.get("value"));
 				String Details = "{\"ordercode\":\"" + body.get("protocolordercode") + "\", \"order\":\""
-						+ body.get("protoclordername") + "\" }";
+						+ body.get("protoclordername") + "\", \"screen\": \""+to.get("screen")+"\" }";
 				
 				LSnotification objnotify = new LSnotification();
 				objnotify.setNotifationfrom(lsuserfrom);

@@ -363,6 +363,7 @@ public class UserService {
 				updateUser.setUserfullname(objusermaster.getUserfullname());
 				updateUser.setEmailid(objusermaster.getEmailid());
 				updateUser.setUnifieduserid(objusermaster.getUnifieduserid());
+				updateUser.setMultiusergroupcode(objusermaster.getMultiusergroupcode());
 			}
 
 			objusermaster.setCreateddate(updateUser.getCreateddate());

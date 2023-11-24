@@ -1080,3 +1080,7 @@ INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypeco
 
 ALTER TABLE IF Exists LSprotocolversion ADD COLUMN IF NOT EXISTS fileuid varchar(250);
 ALTER TABLE IF Exists LSprotocolversion ADD COLUMN IF NOT EXISTS fileuri varchar(500);
+
+update elnmaterialInventory set createdby_usercode=(select lsusermaster.usercode from lsusermaster  where lsusermaster.username='Administrator') where createdby_usercode is null;
+
+ALTER TABLE IF Exists materialtype ADD COLUMN IF NOT EXISTS createby_usercode integer default 1,ADD COLUMN IF NOT EXISTS createdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP;

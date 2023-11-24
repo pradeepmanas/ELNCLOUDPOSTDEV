@@ -816,4 +816,15 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setFileuri(String fileuri) {
 		this.fileuri = fileuri;
 	}
+	
+	@Transient
+	private String orderlink;
+
+	public String getOrderlink() {
+		return orderlink;
+	}
+
+	public void setOrderlink(String orderlink) {
+		this.orderlink = orderlink;
+	}
 }

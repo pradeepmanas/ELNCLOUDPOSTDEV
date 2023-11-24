@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.service.material;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
@@ -88,7 +90,7 @@ public class MaterialTypeService {
 //		return new ResponseEntity<>(HttpStatus.OK);
 //	}
 	
-	public ResponseEntity<Object> createMaterialType(MaterialType objMaterialType) throws JsonParseException, JsonMappingException, IOException {
+	public ResponseEntity<Object> createMaterialType(MaterialType objMaterialType) throws JsonParseException, JsonMappingException, IOException, ParseException {
 		
 		if(objMaterialType.getNmaterialtypecode() == null) {
 			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameAndNsitecodeOrderByNmaterialtypecode(
@@ -101,6 +103,8 @@ public class MaterialTypeService {
 				objMaterialType.setNmaterialtypecode(objlstTypes1.size()+1);
 				objMaterialType.setNdefaultstatus(3);
 				objMaterialType.setNstatus(1);
+				objMaterialType.setCreatedate(commonfunction.getCurrentUtcTime());
+				objMaterialType.setCreateby(objMaterialType.getCreateby());
 				
 				materialTypeRepository.save(objMaterialType);
 				objMaterialType.setInfo("IDS_SUCCESS");

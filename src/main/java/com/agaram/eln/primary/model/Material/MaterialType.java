@@ -1,17 +1,22 @@
 package com.agaram.eln.primary.model.material;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
 @Table(name = "materialtype")
@@ -49,6 +54,14 @@ public class MaterialType implements Serializable {
 	private String smaterialtypename;
 	private transient String sdescription;
 	private  transient String jsonconfigdata;
+	
+	@ManyToOne
+	private LSuserMaster createby;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdate;
+
+	private transient String sDate;
 	
 	public String getDisplaystatus() {
 		return displaystatus;
@@ -123,6 +136,24 @@ public class MaterialType implements Serializable {
 	}
 	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
 		this.objmanualaudit = objmanualaudit;
+	}
+	public LSuserMaster getCreateby() {
+		return createby;
+	}
+	public void setCreateby(LSuserMaster createby) {
+		this.createby = createby;
+	}
+	public Date getCreatedate() {
+		return createdate;
+	}
+	public void setCreatedate(Date createdate) {
+		this.createdate = createdate;
+	}
+	public String getsDate() {
+		return sDate;
+	}
+	public void setsDate(String sDate) {
+		this.sDate = sDate;
 	}
 }
 

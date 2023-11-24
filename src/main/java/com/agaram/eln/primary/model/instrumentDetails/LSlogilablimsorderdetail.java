@@ -958,5 +958,16 @@ public class LSlogilablimsorderdetail {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
+	
+	@Transient
+	private String orderlink;
+
+	public String getOrderlink() {
+		return orderlink;
+	}
+
+	public void setOrderlink(String orderlink) {
+		this.orderlink = orderlink;
+	}
 
 }

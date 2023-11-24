@@ -1565,17 +1565,18 @@ public class MaterialService {
 		
 		List<Elnmaterial> lstElnmaterials = new ArrayList<>();
 		
-		if((objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1) && 
-				(objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)) {
+		if((objMaterialType == null || objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1) && 
+				(objMaterialCategory == null || objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)) {
 			lstElnmaterials = 
 					elnmaterialRepository.findByNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(
 							nsiteInteger,fromDate,toDate);
-		}else if((objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1) 
-				&& objMaterialCategory.getNmaterialcatcode() != -1) {
+		}else if((objMaterialType == null || objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1) 
+				&& objMaterialCategory != null && objMaterialCategory.getNmaterialcatcode() != -1) {
 			lstElnmaterials = 
 					elnmaterialRepository.findByMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(
 							objMaterialCategory,nsiteInteger,fromDate,toDate);
-		}else if(objMaterialType.getNmaterialtypecode() != -1 && (objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)) {
+		}else if(objMaterialType != null && objMaterialType.getNmaterialtypecode() != -1 &&
+				(objMaterialCategory == null || objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)) {
 			lstElnmaterials = 
 					elnmaterialRepository.findByMaterialtypeAndNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(
 							objMaterialType,nsiteInteger,fromDate,toDate);
