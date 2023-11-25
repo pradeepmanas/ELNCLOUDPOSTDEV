@@ -2954,12 +2954,11 @@ public class MaterialInventoryService {
 		List<Manufacturer> lstManufacturer = new ArrayList<Manufacturer>();
 
 		lstMaterialTypes = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatus(-1,1,nsiteInteger,-1,1,4);
-		lstCategories = materialCategoryRepository.findByNmaterialtypecodeAndNsitecodeAndNstatus(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1);
-		
-		if(lstCategories.isEmpty()) {
-//			lstElnmaterials = elnMaterialRepository.findByNsitecodeOrderByNmaterialcodeDesc(nsiteInteger);
-		}else {
-			lstElnmaterials = elnMaterialRepository.findByMaterialcategoryAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger);
+		if(!lstMaterialTypes.isEmpty()) {
+			lstCategories = materialCategoryRepository.findByNmaterialtypecodeAndNsitecodeAndNstatus(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1);
+			if(!lstCategories.isEmpty()) {
+				lstElnmaterials = elnMaterialRepository.findByMaterialcategoryAndNsitecodeAndNstatusOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger,1);
+			}
 		}
 		lstGrade = materialGradeRepository.findByNstatusAndNsitecodeOrderByNmaterialgradecode(1, nsiteInteger);
 		lstSuplier = supplierRepository.findByNstatusAndNsitecodeOrderByNsuppliercode(1, nsiteInteger);
