@@ -3477,10 +3477,6 @@ public class MaterialInventoryService {
 		String sformattype = "{yyyy}/{99999}";
 		SelectedInventoryMapped objStorageLocation = selectedInventoryMappedRepository.findByNmaterialinventorycode(objElnmaterialInventory.getNmaterialinventorycode());
 		
-		String stridformat = objInventory.getMaterialtype().getSmaterialtypename().substring(0, 3) + "/"
-				+ objInventory.getMaterial().getSmaterialname().substring(0, 3) + "/"
-				+ getfnFormat(objInventory.getNmaterialinventorycode(), sformattype);
-		
 		objElnmaterialInventory2.setExpirydate(objInventory.getExpirydate());
 		objElnmaterialInventory2.setIsexpiry(objInventory.getIsexpiry());
 		objElnmaterialInventory2.setLsOrderattachments(null);
@@ -3506,6 +3502,14 @@ public class MaterialInventoryService {
 		objElnmaterialInventory2.setCreateddate(commonfunction.getCurrentUtcTime());
 		objElnmaterialInventory2.setCreatedby(objMaster);
 		objElnmaterialInventory2.setNmaterialinventorycode(null);
+//		objElnmaterialInventory2.setSinventoryid(stridformat);
+		
+		elnmaterialInventoryReppository.save(objElnmaterialInventory2);
+		
+		String stridformat = objInventory.getMaterialtype().getSmaterialtypename().substring(0, 3) + "/"
+				+ objInventory.getMaterial().getSmaterialname().substring(0, 3) + "/"
+				+ getfnFormat(objElnmaterialInventory2.getNmaterialinventorycode(), sformattype);
+		
 		objElnmaterialInventory2.setSinventoryid(stridformat);
 		
 		elnmaterialInventoryReppository.save(objElnmaterialInventory2);
