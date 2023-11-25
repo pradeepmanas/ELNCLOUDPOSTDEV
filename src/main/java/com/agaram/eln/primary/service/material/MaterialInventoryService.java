@@ -2955,7 +2955,12 @@ public class MaterialInventoryService {
 
 		lstMaterialTypes = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatus(-1,1,nsiteInteger,-1,1,4);
 		lstCategories = materialCategoryRepository.findByNmaterialtypecodeAndNsitecodeAndNstatus(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1);
-		lstElnmaterials = elnMaterialRepository.findByMaterialcategoryAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger);
+		
+		if(lstCategories.isEmpty()) {
+//			lstElnmaterials = elnMaterialRepository.findByNsitecodeOrderByNmaterialcodeDesc(nsiteInteger);
+		}else {
+			lstElnmaterials = elnMaterialRepository.findByMaterialcategoryAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger);
+		}
 		lstGrade = materialGradeRepository.findByNstatusAndNsitecodeOrderByNmaterialgradecode(1, nsiteInteger);
 		lstSuplier = supplierRepository.findByNstatusAndNsitecodeOrderByNsuppliercode(1, nsiteInteger);
 		lstManufacturer = manufacturerRepository.findByNstatusAndNsitecodeOrderByNmanufcode(1, nsiteInteger);
