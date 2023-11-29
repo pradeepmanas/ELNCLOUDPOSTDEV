@@ -1105,3 +1105,9 @@ END
 $do$;
 
 ALTER TABLE materialtype ALTER COLUMN nmaterialtypecode SET DEFAULT nextval('materialtype_sequence');
+
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS elnmaterial_nmaterialcode integer,ADD COLUMN IF NOT EXISTS elnmaterialinventory_nmaterialinventorycode integer;
+ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS elnmaterial_nmaterialcode integer,ADD COLUMN IF NOT EXISTS elnmaterialinventory_nmaterialinventorycode integer;
+
+ALTER TABLE IF Exists materialtype ADD Column IF NOT EXISTS expvalidation Boolean default false, ADD Column IF NOT EXISTS quarvalidation Boolean default false;
+ALTER TABLE IF Exists elnmaterialinventory ADD Column IF NOT EXISTS sbatchno varchar(250) default '';

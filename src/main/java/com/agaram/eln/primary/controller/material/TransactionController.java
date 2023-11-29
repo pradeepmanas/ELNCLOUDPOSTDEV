@@ -77,13 +77,7 @@ public class TransactionController {
 			throws Exception {
 
 		transactionService.updateMaterialInventoryNotification(inputMap);
-	}
-	
-	
-	
-	
-	
-	
+	}	
 	
 	@PostMapping(value = "/getMaterialLst4NewMaterial")
 	public ResponseEntity<Object> getMaterialLst4NewMaterial(@RequestBody Map<String, Object> inputMap)

@@ -61,6 +61,7 @@ public class ElnmaterialInventory {
 	private String remarks;
 	private String sinventoryid;
 	private String savailablequantity;
+	private String sbatchno;
 	private String sreceivedquantity;
 
 	private Boolean isexpiry;
@@ -73,6 +74,14 @@ public class ElnmaterialInventory {
 	
 	private Double nqtynotification;
 	
+	public String getSbatchno() {
+		return sbatchno;
+	}
+
+	public void setSbatchno(String sbatchno) {
+		this.sbatchno = sbatchno;
+	}
+
 	@OneToMany
 	@JoinColumn(name = "nmaterialinventorycode")
 	private List<LsOrderattachments> lsOrderattachments;

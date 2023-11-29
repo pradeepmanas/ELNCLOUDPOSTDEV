@@ -24,8 +24,12 @@ import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.material.Elnmaterial;
+import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialInventory;
+import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
+import com.agaram.eln.primary.model.protocols.LSprotocolorderstephistory;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
@@ -33,12 +37,10 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LStestparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
+import com.agaram.eln.primary.model.usermanagement.LScentralisedUsers;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
-import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
-import com.agaram.eln.primary.model.protocols.LSprotocolorderstephistory;
-import com.agaram.eln.primary.model.usermanagement.LScentralisedUsers;
 
 @Entity(name = "LSlogilablimsorderdetail")
 @Table(name = "LSlogilablimsorderdetail")
@@ -167,6 +169,27 @@ public class LSlogilablimsorderdetail {
 	private Material material;
 	@ManyToOne
 	private MaterialInventory materialinventory;
+	
+	@ManyToOne
+	private Elnmaterial elnmaterial;
+	@ManyToOne
+	private ElnmaterialInventory elnmaterialinventory;
+
+	public Elnmaterial getElnmaterial() {
+		return elnmaterial;
+	}
+
+	public void setElnmaterial(Elnmaterial elnmaterial) {
+		this.elnmaterial = elnmaterial;
+	}
+
+	public ElnmaterialInventory getElnmaterialinventory() {
+		return elnmaterialinventory;
+	}
+
+	public void setElnmaterialinventory(ElnmaterialInventory elnmaterialinventory) {
+		this.elnmaterialinventory = elnmaterialinventory;
+	}
 
 	public Material getMaterial() {
 		return material;

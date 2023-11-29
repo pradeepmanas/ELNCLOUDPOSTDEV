@@ -23,6 +23,8 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.material.Elnmaterial;
+import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
@@ -67,6 +69,27 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private Material material;
 	@ManyToOne
 	private MaterialInventory materialinventory;
+	
+	@ManyToOne
+	private Elnmaterial elnmaterial;
+	@ManyToOne
+	private ElnmaterialInventory elnmaterialinventory;
+
+	public Elnmaterial getElnmaterial() {
+		return elnmaterial;
+	}
+
+	public void setElnmaterial(Elnmaterial elnmaterial) {
+		this.elnmaterial = elnmaterial;
+	}
+
+	public ElnmaterialInventory getElnmaterialinventory() {
+		return elnmaterialinventory;
+	}
+
+	public void setElnmaterialinventory(ElnmaterialInventory elnmaterialinventory) {
+		this.elnmaterialinventory = elnmaterialinventory;
+	}
 
 	public Material getMaterial() {
 		return material;

@@ -27,7 +27,7 @@ public class MaterialTypeService {
 
 	public ResponseEntity<Object> getMaterialType(MaterialType objMaterialType) {
 		return new ResponseEntity<>(materialTypeRepository.
-				findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatus(-1,1,objMaterialType.getNsitecode(),-1,1,4), HttpStatus.OK);
+				findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatusOrderByNmaterialtypecodeDesc(-1,1,objMaterialType.getNsitecode(),-1,1,4), HttpStatus.OK);
 	}
 
 	public ResponseEntity<Object> getMaterialTypeField(MaterialType objMaterialType) {
@@ -58,43 +58,11 @@ public class MaterialTypeService {
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-
-	
-//	public ResponseEntity<Object> createMaterialType(MaterialType objMaterialType) throws JsonParseException, JsonMappingException, IOException {
-//		List<MaterialConfig> objLstConfig = materialConfigRepository.findAllByOrderByNmaterialconfigcodeDesc();
-//		
-//		if(!objLstConfig.isEmpty()) {
-//			List<MaterialType> objlstTypes = materialTypeRepository.findAllByOrderByNmaterialtypecodeDesc();
-//			if(!objlstTypes.isEmpty()) {
-//				ObjectMapper objectMapper = new ObjectMapper();
-//				List<Object> dataList = objectMapper.readValue(objMaterialType.getJsonconfigdata(), List.class);
-//				
-//				objMaterialType.setNmaterialtypecode(objlstTypes.get(0).getNmaterialtypecode() + 1);
-//				objMaterialType.setNdefaultstatus(4);
-//				objMaterialType.setNstatus(1);
-//				materialTypeRepository.save(objMaterialType);
-//				
-//				MaterialConfig objConfig = new MaterialConfig();
-//				objConfig.setNmaterialconfigcode(objLstConfig.get(0).getNmaterialconfigcode()+1);
-//				objConfig.setNmaterialtypecode(objMaterialType.getNmaterialtypecode());
-//				objConfig.setNformcode(40);
-//				objConfig.setNstatus(1);
-//				objConfig.setJsondata(dataList);
-//				
-//				materialConfigRepository.save(objConfig);
-//				
-//				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
-//			}			
-//		}
-//		
-//		return new ResponseEntity<>(HttpStatus.OK);
-//	}
 	
 	public ResponseEntity<Object> createMaterialType(MaterialType objMaterialType) throws JsonParseException, JsonMappingException, IOException, ParseException {
 		
 		if(objMaterialType.getNmaterialtypecode() == null) {
-			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameIgnoreCaseAndNsitecodeOrderByNmaterialtypecode(
-					objMaterialType.getSmaterialtypename(),objMaterialType.getNsitecode());
+			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameIgnoreCaseAndNsitecodeOrderByNmaterialtypecode(objMaterialType.getSmaterialtypename(),objMaterialType.getNsitecode());
 			
 			if(objlstTypes.isEmpty()) {
 				

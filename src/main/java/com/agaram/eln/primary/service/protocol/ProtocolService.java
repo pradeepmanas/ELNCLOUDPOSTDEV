@@ -4886,7 +4886,7 @@ public class ProtocolService {
 		objfile.setFilename(FilenameUtils.removeExtension(file.getOriginalFilename()));
 
 		lsprotocolfilesRepository.save(objfile);
-
+		map.put("extension", "."+objfile.getExtension());
 		map.put("link", originurl + "/protocol/downloadprotocolfile/" + objfile.getFileid() + "/"
 				+ TenantContext.getCurrentTenant() + "/" + objfile.getFilename() + "/" + objfile.getExtension());
 		return map;
@@ -7699,5 +7699,35 @@ public class ProtocolService {
 		}
 		
 		return mapObj;
+	}
+	
+	public Map<String, Object> getProtocolTemplateVersionsForCompare(Map<String, Object> argObj) throws IOException {
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+		ObjectMapper object = new ObjectMapper();
+		
+		LSprotocolmaster protocol = lsProtocolMasterRepository.findFirstByProtocolmastercode(object.convertValue(argObj.get("protocolmastercode"), Integer.class));
+		LSprotocolversion compare1 = lsprotocolversionRepository.findFirstByProtocolmastercodeAndVersionno(protocol.getProtocolmastercode(), object.convertValue(argObj.get("compare1"), Integer.class));
+		LSprotocolversion compare2 = lsprotocolversionRepository.findFirstByProtocolmastercodeAndVersionno(protocol.getProtocolmastercode(), object.convertValue(argObj.get("compare2"), Integer.class));
+		int multitenant = object.convertValue(argObj.get("ismultitenant"), Integer.class);
+		if (multitenant == 1) {
+	        mapObj.put("comparedata1", retrieveCloudSheets(compare1.getFileuid(), protocol.getFileuid()));
+	        mapObj.put("comparedata2", retrieveCloudSheets(compare2.getFileuid(), protocol.getFileuid()));
+	    } else {
+			GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
+					Criteria.where("filename").is("protocol_" + protocol.getProtocolmastercode())));
+			mapObj.put("ProtocolData", new BufferedReader(
+					new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+							.collect(Collectors.joining("\n")));
+		}
+		
+		return mapObj;
+	}
+
+	private Object retrieveCloudSheets(String fileUid, String defaultFileUid) throws IOException {
+	    if (fileUid != null) {
+	        return objCloudFileManipulationservice.retrieveCloudSheets(fileUid, TenantContext.getCurrentTenant() + "protocolversion");
+	    } else {
+	        return objCloudFileManipulationservice.retrieveCloudSheets(defaultFileUid, TenantContext.getCurrentTenant() + "protocol");
+	    }
 	}
 }

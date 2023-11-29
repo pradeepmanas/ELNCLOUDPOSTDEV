@@ -775,9 +775,7 @@ public class TransactionService {
 //		Integer sitecode = (Integer) inputMap.get("sitecode");
 		Date currentDate = commonfunction.getCurrentUtcTime();
 		final LScfttransaction cft = Objmapper.convertValue(inputMap.get("silentAudit"), LScfttransaction.class);
-//		LSuserMaster objUser = cft.getLsuserMaster();
-//		List<Material> lstMaterials = materialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1, sitecode);
-		LocalDate localCurrentDate = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
 		// Create a Calendar instance and set it to the current date
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(currentDate);
@@ -801,8 +799,8 @@ public class TransactionService {
 		calendar.set(Calendar.MILLISECOND, 999);
 		currentDate = calendar.getTime();
 
-//		List<MaterialInventory> objInventories = materialInventoryRepository.findByNsitecodeAndNtransactionstatusAndIsexpiryneedAndExpirydateBetween(cft.getLssitemaster(),28, true, currentDate, endDate);
-//		List<MaterialInventory> expiredInvent = new ArrayList<MaterialInventory>();
+		Calendar calendar1 = Calendar.getInstance();
+		calendar1.setTime(currentDate);
 		
 		List<ElnmaterialInventory> objInventories = elnmaterialInventoryRepository.findByNsitecodeAndNtransactionstatusAndIsexpiryAndExpirydateBetween(cft.getLssitemaster(),28, true, currentDate, endDate);
 		List<ElnmaterialInventory> expiredInvent = new ArrayList<ElnmaterialInventory>();
@@ -810,14 +808,30 @@ public class TransactionService {
 
 		objInventories.stream().peek(objInventory -> {
 			if (objInventory.getIsexpiry()) {
-				Date date = objInventory.getExpirydate();
-				LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-				if (localCurrentDate.isBefore(localDate)) {
-					lstLSnotifications.addAll(updateNotificationOnELNInventory(objInventory, "EXPIRYDATE", cft, 0.0, date));
-				} else {
-					objInventory.setNtransactionstatus(55);
-					expiredInvent.add(objInventory);
-					lstLSnotifications.addAll(updateNotificationOnELNInventory(objInventory, "EXPIRYREACHED", cft, 0.0, date));
+				Date expDate = objInventory.getExpirydate();
+				
+				try {
+					long millisecondsDate1 = commonfunction.getCurrentUtcTime().getTime();
+					long millisecondsDate2 = expDate.getTime();
+					
+					if (millisecondsDate1 < millisecondsDate2) {
+			            System.out.println("Date 1 is before Date 2");
+			            lstLSnotifications.addAll(updateNotificationOnELNInventory(objInventory, "EXPIRYDATE", cft, 0.0, expDate));
+			        } else if (millisecondsDate1 > millisecondsDate2) {
+			            System.out.println("Date 1 is after Date 2");
+						objInventory.setNtransactionstatus(55);
+						expiredInvent.add(objInventory);
+						lstLSnotifications.addAll(updateNotificationOnELNInventory(objInventory, "EXPIRYREACHED", cft, 0.0, expDate));
+			        } else {
+			            System.out.println("Date 1 and Date 2 are equal");
+						objInventory.setNtransactionstatus(55);
+						expiredInvent.add(objInventory);
+						lstLSnotifications.addAll(updateNotificationOnELNInventory(objInventory, "EXPIRYREACHED", cft, 0.0, expDate));
+			        }
+					
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}).collect(Collectors.toList());

@@ -50,7 +50,7 @@ public class SampleStorageLocationService {
 
 	public ResponseEntity<Object> createSampleStorageLocation(final SampleStorageLocation sampleStorageLocation, final SampleStorageVersion sampleStorageVersion, LScfttransaction Auditobj) throws JsonMappingException, JsonProcessingException {
 		
-		SampleStorageLocation objLocation = sampleStorageLocationRepository.findBySamplestoragelocationnameAndSitekey(sampleStorageLocation.getSamplestoragelocationname(), sampleStorageLocation.getSitekey());
+		SampleStorageLocation objLocation = sampleStorageLocationRepository.findBySamplestoragelocationnameAndSitekeyAndStatus(sampleStorageLocation.getSamplestoragelocationname(), sampleStorageLocation.getSitekey(),1);
 
 		if (objLocation == null) {
 			sampleStorageLocation.setObjsilentaudit(Auditobj);
@@ -76,6 +76,8 @@ public class SampleStorageLocationService {
 
 	public ResponseEntity<Object> updateSampleStorageLocation(final SampleStorageLocation sampleStorageLocation,final SampleStorageVersion sampleStorageVersion, LScfttransaction Auditobj)throws JsonMappingException, JsonProcessingException {
 		sampleStorageLocation.setObjsilentaudit(Auditobj);
+		sampleStorageLocation.setCreatedby(Auditobj.getUsername());
+		sampleStorageVersion.setCreatedby(Auditobj.getUsername());
 		sampleStorageLocationRepository.save(sampleStorageLocation);
 		
 		List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository

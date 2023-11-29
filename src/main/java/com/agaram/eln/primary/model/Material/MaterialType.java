@@ -67,6 +67,21 @@ public class MaterialType implements Serializable {
 
 	private transient String sDate;
 	
+	private Boolean expvalidation;
+	private Boolean quarvalidation;
+	
+	public Boolean getExpvalidation() {
+		return expvalidation;
+	}
+	public void setExpvalidation(Boolean expvalidation) {
+		this.expvalidation = expvalidation;
+	}
+	public Boolean getQuarvalidation() {
+		return quarvalidation;
+	}
+	public void setQuarvalidation(Boolean quarvalidation) {
+		this.quarvalidation = quarvalidation;
+	}
 	public String getDisplaystatus() {
 		return displaystatus;
 	}

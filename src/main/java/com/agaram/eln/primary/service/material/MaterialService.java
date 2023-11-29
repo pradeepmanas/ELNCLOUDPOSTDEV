@@ -1611,8 +1611,8 @@ public class MaterialService {
 		objmap.put("lstCategories", lstCategories);
 		objmap.put("lstType", lstMaterialTypes);
 		
-		List<Unit> lstUnits = unitRepository.findByNsitecodeOrderByNunitcodeDesc(nsiteInteger);
-		List<Section> lstSec = sectionRepository.findByNsitecodeOrderByNsectioncodeDesc(nsiteInteger);
+		List<Unit> lstUnits = unitRepository.findByNsitecodeAndNstatusOrderByNunitcodeDesc(nsiteInteger,1);
+		List<Section> lstSec = sectionRepository.findByNsitecodeAndNstatusOrderByNsectioncodeDesc(nsiteInteger,1);
 		List<Period> lstPeriods = periodRepository.findByNstatusOrderByNperiodcode(1);
 		
 		objmap.put("lstUnit", lstUnits);
@@ -1687,8 +1687,8 @@ public class MaterialService {
 		objmap.put("lstCategories", lstCategories);
 		objmap.put("lstType", lstMaterialTypes);
 		
-		List<Unit> lstUnits = unitRepository.findByNsitecodeOrderByNunitcodeDesc(nsiteInteger);
-		List<Section> lstSec = sectionRepository.findByNsitecodeOrderByNsectioncodeDesc(nsiteInteger);
+		List<Unit> lstUnits = unitRepository.findByNsitecodeAndNstatusOrderByNunitcodeDesc(nsiteInteger,1);
+		List<Section> lstSec = sectionRepository.findByNsitecodeAndNstatusOrderByNsectioncodeDesc(nsiteInteger,1);
 		List<Period> lstPeriods = periodRepository.findByNstatusOrderByNperiodcode(1);
 		
 		objmap.put("lstUnit", lstUnits);

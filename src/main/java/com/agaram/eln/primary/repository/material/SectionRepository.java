@@ -33,4 +33,6 @@ public interface SectionRepository  extends JpaRepository<Section, Integer>{
 	public Section findBySsectionnameAndNsitecodeAndNstatus(String ssectionname, Integer nsitecode, int i);
 
 	public Section findBySsectionnameIgnoreCaseAndNsitecode(String ssectionname, Integer nsitecode);
+
+	public List<Section> findByNsitecodeAndNstatusOrderByNsectioncodeDesc(Integer nsiteInteger, int i);
 }

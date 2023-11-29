@@ -2198,36 +2198,17 @@ public class LoginService {
 		List<LSuserMaster> usermaster = lsuserMasterRepository
 				.findByUsernameIgnoreCaseAndUserretirestatusNot(objsite.getUsername(), 1);
 		List<Integer> usercode = usermaster.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
-		List<LSMultisites> ultisites = LSMultisitesRepositery.findByusercodeIn(usercode);
-		for (LSMultisites items : ultisites) {
+		List<LSMultisites> multisites = LSMultisitesRepositery.findByusercodeIn(usercode);
+		for (LSMultisites items : multisites) {
 			if (items.getDefaultsiteMaster() != null) {
 				items.getLssiteMaster().setDefaultsiteMaster(items.getDefaultsiteMaster());
 			}
 		}
-//		return ultisites.stream()
-//		        .peek(items -> {
-//		            if (items.getDefaultsiteMaster() != null) {
-//		                items.getLssiteMaster().setDefaultsiteMaster(items.getDefaultsiteMaster());
-//		            }
-//		        })
-//		        .map(LSMultisites::getLssiteMaster)
-//		        .collect(Collectors.toList());
-
-//		return  ultisites.stream()
-//		        .peek(items -> {
-//		            if (items.getDefaultsiteMaster() != null) {
-//		                items.getLssiteMaster().setDefaultsiteMaster(items.getDefaultsiteMaster());
-//		            }
-//		        })
-//		        .map(LSMultisites::getLssiteMaster)
-//		        .sorted(Comparator.comparingInt(LSSiteMaster::getSitecode).reversed())
-//		        .collect(Collectors.toList());
-
-		return ultisites.stream().peek(items -> {
+		return multisites.stream().peek(items -> {
 			if (items.getDefaultsiteMaster() != null) {
 				items.getLssiteMaster().setDefaultsiteMaster(items.getDefaultsiteMaster());
 			}
-		}).map(LSMultisites::getLssiteMaster).sorted(Comparator.comparingInt(LSSiteMaster::getSitecode))
+		}).map(LSMultisites::getLssiteMaster).sorted(Comparator.comparingInt(LSSiteMaster::getSitecode)).filter((items)->(items.getIstatus()!=0))
 				.collect(Collectors.toList());
 
 	}

@@ -3320,35 +3320,33 @@ public class MaterialInventoryService {
 						MaterialCategory objMaterialCategory = objmapper.convertValue(inputMap.get("materialcategory"),MaterialCategory.class);
 						Elnmaterial objElnmaterial = objmapper.convertValue(inputMap.get("elnmaterial"), Elnmaterial.class);
 		
-						if ((objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1)
-								&& (objMaterialCategory.getNmaterialcatcode() == null
-										|| objMaterialCategory.getNmaterialcatcode() == -1)
-								&& (objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+						if ((objMaterialType == null || objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1)
+								&& (objMaterialCategory == null || objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)
+								&& (objElnmaterial == null || objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
 		
 							lstElnInventories = elnmaterialInventoryReppository
 									.findByNsitecodeAndNmaterialinventorycodeInAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
 											nsiteInteger, objLstInvKey, fromDate, toDate);
 		
-						} else if ((objMaterialType.getNmaterialtypecode() != -1)
-								&& (objMaterialCategory.getNmaterialcatcode() == null
-										|| objMaterialCategory.getNmaterialcatcode() == -1)
-								&& (objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+						} else if ((objMaterialType != null && objMaterialType.getNmaterialtypecode() != -1)
+								&& (objMaterialCategory == null || objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)
+								&& (objElnmaterial == null || objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
 		
 							lstElnInventories = elnmaterialInventoryReppository
 									.findByMaterialtypeAndNsitecodeAndNmaterialinventorycodeInAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
 											objMaterialType, nsiteInteger, objLstInvKey, fromDate, toDate);
 
-						} else if ((objMaterialType.getNmaterialtypecode() != -1)
-								&& (objMaterialCategory.getNmaterialcatcode() != -1)
-								&& (objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+						} else if ((objMaterialType != null && objMaterialType.getNmaterialtypecode() != -1)
+								&& (objMaterialCategory != null && objMaterialCategory.getNmaterialcatcode() != -1)
+								&& (objElnmaterial == null || objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
 	
 							lstElnInventories = elnmaterialInventoryReppository
 									.findByMaterialtypeAndMaterialcategoryAndNsitecodeAndNmaterialinventorycodeInAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
 											objMaterialType, objMaterialCategory, nsiteInteger, objLstInvKey, fromDate, toDate);
 
-						} else if ((objMaterialType.getNmaterialtypecode() != -1)
-								&& (objMaterialCategory.getNmaterialcatcode() != -1)
-								&& (objElnmaterial.getNmaterialcode() != -1)) {
+						} else if ((objMaterialType != null && objMaterialType.getNmaterialtypecode() != -1) && 
+								(objMaterialCategory != null && objMaterialCategory.getNmaterialcatcode() != -1) && 
+								(objElnmaterial != null && objElnmaterial.getNmaterialcode() != -1)) {
 
 							lstElnInventories = elnmaterialInventoryReppository
 									.findByMaterialtypeAndMaterialcategoryAndMaterialAndNsitecodeAndNmaterialinventorycodeInAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
@@ -3491,7 +3489,7 @@ public class MaterialInventoryService {
 		objElnmaterialInventory2.setJsondata(objInventory.getJsondata());
 		objElnmaterialInventory2.setNqtynotification(objInventory.getNqtynotification());
 		objElnmaterialInventory2.setNsitecode(objInventory.getNsitecode());
-		objElnmaterialInventory2.setNtransactionstatus(objInventory.getNtransactionstatus());
+		objElnmaterialInventory2.setNtransactionstatus(28);
 		objElnmaterialInventory2.setNstatus(objInventory.getNstatus());
 		objElnmaterialInventory2.setOpendate(objInventory.getOpendate());
 		objElnmaterialInventory2.setSavailablequantity(savailableQtyReceive);

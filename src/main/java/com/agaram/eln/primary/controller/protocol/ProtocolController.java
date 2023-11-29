@@ -1135,4 +1135,10 @@ public class ProtocolController {
 		return ProtocolMasterService.getProtocolTemplateVersionChanges(body);
 	}
 	
+	@PostMapping("/getProtocolTemplateVersionsForCompare")
+	public Map<String, Object> getProtocolTemplateVersionsForCompare(@RequestBody Map<String, Object> body)throws Exception
+	{
+		return ProtocolMasterService.getProtocolTemplateVersionsForCompare(body);
+	}
+	
 }
