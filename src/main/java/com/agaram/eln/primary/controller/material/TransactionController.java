@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
@@ -91,5 +92,11 @@ public class TransactionController {
 			throws Exception {
 
 		return transactionService.getMaterialInvLst4NewMaterialInv(inputMap);
+	}
+	
+	@RequestMapping(value = "/getTransactionResultsByDate", method = RequestMethod.POST)
+	public ResponseEntity<Object> getTransactionResultsByDate(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return transactionService.getTransactionResultsByDate(inputMap);
 	}
 }

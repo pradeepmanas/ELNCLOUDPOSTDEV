@@ -561,14 +561,13 @@ public class TransactionService {
 		ObjectMapper Objmapper = new ObjectMapper();
 
 		final LScfttransaction cft = Objmapper.convertValue(inputMap.get("silentAudit"), LScfttransaction.class);
-		final ElnmaterialInventory objInventoryFromMap = Objmapper.convertValue(inputMap.get("selectedMaterialInventory"),
-				ElnmaterialInventory.class);
+		final ElnmaterialInventory objInventoryFromMap = Objmapper.convertValue(inputMap.get("selectedMaterialInventory"),ElnmaterialInventory.class);
 		final Map<String, Object> objResultMap = (Map<String, Object>) inputMap.get("resultObject");
 		final LStestmasterlocal objTest = new LStestmasterlocal();
+		
 		objTest.setTestcode((Integer) objResultMap.get("testcode"));
 
-		ElnmaterialInventory objInventory = elnmaterialInventoryRepository
-				.findByNmaterialinventorycode(objInventoryFromMap.getNmaterialinventorycode());
+		ElnmaterialInventory objInventory = elnmaterialInventoryRepository.findByNmaterialinventorycode(objInventoryFromMap.getNmaterialinventorycode());
 
 		Double getIssuedQty = Double.parseDouble(objResultMap.get("issuedQuantity").toString());
 		Double getUsedQty = Double.parseDouble(objResultMap.get("usedQuantity").toString());
@@ -1425,6 +1424,24 @@ public class TransactionService {
 			elnmaterialInventoryRepository.save(objLstElnmaterials);
 		}
 		return null;
+	}
+
+	public ResponseEntity<Object> getTransactionResultsByDate(Map<String, Object> inputMap) {
+		
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		long longFromValue = Long.parseLong(inputMap.get("fromdate").toString());
+		long longToValue = Long.parseLong(inputMap.get("todate").toString());
+		
+		Integer ninventorycode = (Integer) inputMap.get("ninventorycode");
+		Date fromDate = new Date(longFromValue);
+		Date toDate = new Date(longToValue);
+		
+		List<ElnresultUsedMaterial> lstUsedMaterials = elnresultUsedMaterialRepository
+				.findByNinventorycodeAndCreateddateBetweenOrderByNresultusedmaterialcodeDesc(fromDate,toDate,ninventorycode);
+		
+		objmap.put("resultusedmaterial", lstUsedMaterials);
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
 }

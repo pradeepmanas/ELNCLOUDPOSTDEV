@@ -4251,12 +4251,12 @@ public class ProtocolService {
 				.findFirstByProtocolmastercode(lSprotocolmaster.getProtocolmastercode());
 		LSuserMaster createby = lSuserMasterRepository.findByusercode(LSprotocolmasterrecord.getCreatedby());
 		List<LSprotocolworkflowhistory> lsprotocolworkflowhistory = lsprotocolworkflowhistoryRepository
-				.findByProtocolmastercode(lSprotocolmaster.getProtocolmastercode());
+				.findByProtocolmastercodeAndCreatedateBetween(lSprotocolmaster.getProtocolmastercode(),lSprotocolmaster.getFromdate(),lSprotocolmaster.getTodate());
 		List<LSprotocolupdates> modifiedlist = lsprotocolupdatesRepository
 				.findByprotocolmastercode(lSprotocolmaster.getProtocolmastercode());
 
 		List<LSprotocolversion> lsprotocolversion = lsprotocolversionRepository
-				.findByprotocolmastercode(lSprotocolmaster.getProtocolmastercode());
+				.findByprotocolmastercodeAndCreatedateBetween(lSprotocolmaster.getProtocolmastercode(),lSprotocolmaster.getFromdate(),lSprotocolmaster.getTodate());
 
 		mapObj.put("createby", createby);
 		mapObj.put("lsprotocolworkflowhistory", lsprotocolworkflowhistory);

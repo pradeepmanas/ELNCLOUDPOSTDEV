@@ -734,8 +734,8 @@ public class MaterialService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> getMaterialByTypeCodeByDate(Map<String, Object> inputMap)
-			throws JsonParseException, JsonMappingException, IOException, ParseException {
+	public ResponseEntity<Object> getMaterialByTypeCodeByDate(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException, ParseException {
+		
 		final ObjectMapper objmapper = new ObjectMapper();
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 

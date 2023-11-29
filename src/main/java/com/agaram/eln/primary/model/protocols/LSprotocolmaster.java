@@ -380,7 +380,30 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	public void setLastmodified(Date lastmodified) {
 		this.lastmodified = lastmodified;
 	}
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date fromdate; 
+	
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date todate;
 
+	public Date getFromdate() {
+		return fromdate;
+	}
+
+	public void setFromdate(Date fromdate) {
+		this.fromdate = fromdate;
+	}
+
+	public Date getTodate() {
+		return todate;
+	}
+
+	public void setTodate(Date todate) {
+		this.todate = todate;
+	} 
+	
 	
 	
 }

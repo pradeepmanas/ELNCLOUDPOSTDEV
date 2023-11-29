@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.protocol;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,5 +20,8 @@ public interface LSprotocolversionRepository extends JpaRepository<LSprotocolver
 	public LSprotocolversion findFirstByProtocolmastercodeAndVersionno(Integer protocolmastercode, Integer versionno);
 
 	public List<LSprotocolversion> findByprotocolmastercodeOrderByVersionnoDesc(Integer protocolmastercode);
+
+	public List<LSprotocolversion> findByprotocolmastercodeAndCreatedateBetween(Integer protocolmastercode,
+			Date fromdate, Date todate);
 
 }
