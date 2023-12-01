@@ -3,7 +3,6 @@ package com.agaram.eln.primary.service.material;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,11 +12,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.material.Elnmaterial;
+import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.model.material.MaterialType;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
+import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
+import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
+import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
+import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplemasterRepository;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -31,6 +38,14 @@ public class MaterialTypeService {
 	MaterialConfigRepository materialConfigRepository;
 	@Autowired
 	LSsamplemasterRepository lssamplemasterRepository;
+	@Autowired
+	MaterialCategoryRepository materialCategoryRepository;
+	@Autowired
+	ElnmaterialRepository elnmaterialRepository;
+	@Autowired
+	LSlogilablimsorderdetailRepository lSlogilablimsorderdetailRepository;
+	@Autowired
+	LSlogilabprotocoldetailRepository lSlogilabprotocoldetailRepository;
 
 	public ResponseEntity<Object> getMaterialType(MaterialType objMaterialType) {
 		return new ResponseEntity<>(materialTypeRepository.
@@ -69,7 +84,7 @@ public class MaterialTypeService {
 	public ResponseEntity<Object> createMaterialType(MaterialType objMaterialType) throws JsonParseException, JsonMappingException, IOException, ParseException {
 		
 		if(objMaterialType.getNmaterialtypecode() == null) {
-			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameIgnoreCaseAndNsitecodeOrderByNmaterialtypecode(objMaterialType.getSmaterialtypename(),objMaterialType.getNsitecode());
+			List<MaterialType> objlstTypes = materialTypeRepository.findBySmaterialtypenameIgnoreCaseAndNsitecodeOrderByNmaterialtypecode(objMaterialType.getSmaterialtypename(),objMaterialType.getNsitecode());
 			
 			if(objlstTypes.isEmpty()) {
 				
@@ -91,7 +106,7 @@ public class MaterialTypeService {
 			}
 		}
 		else {
-			List<MaterialType> objlstTypes = materialTypeRepository.findByAndSmaterialtypenameIgnoreCaseAndNsitecodeAndNmaterialtypecodeNot(
+			List<MaterialType> objlstTypes = materialTypeRepository.findBySmaterialtypenameIgnoreCaseAndNsitecodeAndNmaterialtypecodeNot(
 					objMaterialType.getSmaterialtypename(),objMaterialType.getNsitecode(),objMaterialType.getNmaterialtypecode());
 			
 			if(objlstTypes.isEmpty()) {
@@ -118,18 +133,74 @@ public class MaterialTypeService {
 
 	public ResponseEntity<Object> syncSamplestoType() throws ParseException {
 		
-		List<MaterialType> objTypes = new ArrayList<MaterialType>();
+		List<Elnmaterial> objMatLst = new ArrayList<Elnmaterial>();
 		List<LSsamplemaster> objList = lssamplemasterRepository.findBystatus(1);
-		Date createdDate = commonfunction.getCurrentUtcTime();
+		
+		MaterialType objType = materialTypeRepository.findBySmaterialtypenameIgnoreCase("Samples");
+		MaterialCategory objCategory = materialCategoryRepository.findBySmaterialcatnameAndNstatus("Samples", 1);
 		
 		objList.stream().peek(f -> {
-			MaterialType objType = new MaterialType();
+			Elnmaterial objMaterial = new Elnmaterial();
 			
-			objType.setSmaterialtypename(f.getSamplename());
-			objType.setNstatus(1);
-			objType.setCreatedate(createdDate);
+			objMaterial.setSmaterialname(f.getSamplename());
+			objMaterial.setNstatus(1);
+			objMaterial.setCreateddate(f.getCreatedate());
+			objMaterial.setCreateby(f.getCreateby());
+			objMaterial.setNsitecode(f.getLssitemaster().getSitecode());
+			objMaterial.setJsondata(null);
+			objMaterial.setMaterialcategory(objCategory);
+			objMaterial.setMaterialtype(objType);
+			objMaterial.setExpirytype(0);
+			objMaterial.setSamplecode(f.getSamplecode());
+			
+			objMatLst.add(objMaterial);
 			
 		}).collect(Collectors.toList());
+		
+		if(!objMatLst.isEmpty()) {
+			elnmaterialRepository.save(objMatLst);
+		}
+		
+		List<Elnmaterial> objMatSampleLst = elnmaterialRepository.findBySamplecodeIsNotNull();
+		
+		if(!objMatSampleLst.isEmpty()) {
+			List<Integer> lstSamples = new ArrayList<Integer>();
+
+			objMatSampleLst.stream().peek(f -> { lstSamples.add(f.getSamplecode()); }).collect(Collectors.toList());
+			
+			List<LSsamplemaster> lsSampleLst = lssamplemasterRepository.findBySamplecodeIn(lstSamples);
+			
+			List<LSlogilablimsorderdetail> objOrders = lSlogilablimsorderdetailRepository.findByLssamplemasterIn(lsSampleLst);
+			
+			if(!objOrders.isEmpty()) {
+				
+				objOrders.stream().peek(x -> {
+					objMatSampleLst.stream().peek(y -> {
+						if(x.getLssamplemaster().getSamplecode() == y.getSamplecode()) {
+							x.setElnmaterial(y);
+						}
+					}).collect(Collectors.toList());
+				}).collect(Collectors.toList());
+				
+				lSlogilablimsorderdetailRepository.save(objOrders);
+			}
+			
+			List<LSlogilabprotocoldetail> objProOrders = lSlogilabprotocoldetailRepository.findByLssamplemasterIn(lsSampleLst);
+			
+			if(!objProOrders.isEmpty()) {
+				
+				objProOrders.stream().peek(x -> {
+					objMatSampleLst.stream().peek(y -> {
+						if(x.getLssamplemaster().getSamplecode() == y.getSamplecode()) {
+							x.setElnmaterial(y);
+						}
+					}).collect(Collectors.toList());
+				}).collect(Collectors.toList());
+				
+				lSlogilabprotocoldetailRepository.save(objProOrders);
+			}
+		}
+		
 		
 		return null;
 	}

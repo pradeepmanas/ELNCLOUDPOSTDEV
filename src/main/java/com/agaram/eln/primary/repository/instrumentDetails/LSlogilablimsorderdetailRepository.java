@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.repository.instrumentDetails;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -2460,5 +2459,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	long countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellAndTestcode(
 			List<LSsamplemaster> lstsample1, int i, Date fromdate, Date todate, LSuserMaster objuser, int j,
 			Integer testcode);
+
+	List<LSlogilablimsorderdetail> findByLssamplemasterIn(List<LSsamplemaster> lsSampleLst);
 	
 }

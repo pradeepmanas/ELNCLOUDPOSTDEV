@@ -65,6 +65,10 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private String comment;
 	
+	private Integer lockeduser;
+	
+	private String lockedusername;
+	
 	@ManyToOne
 	private Material material;
 	@ManyToOne
@@ -77,6 +81,22 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	public Elnmaterial getElnmaterial() {
 		return elnmaterial;
+	}
+
+	public Integer getLockeduser() {
+		return lockeduser;
+	}
+
+	public void setLockeduser(Integer lockeduser) {
+		this.lockeduser = lockeduser;
+	}
+
+	public String getLockedusername() {
+		return lockedusername;
+	}
+
+	public void setLockedusername(String lockedusername) {
+		this.lockedusername = lockedusername;
 	}
 
 	public void setElnmaterial(Elnmaterial elnmaterial) {

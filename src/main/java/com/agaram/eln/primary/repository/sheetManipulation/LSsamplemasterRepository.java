@@ -40,5 +40,6 @@ public interface LSsamplemasterRepository extends JpaRepository<LSsamplemaster, 
              "WHERE m.lssitemaster_sitecode = ?1 " +
              "AND m.status = ?2", nativeQuery = true)
 List<Integer> getDistinctByLssitemasterSitecodeAndStatus(int siteCode, int status);
+	public List<LSsamplemaster> findBySamplecodeIn(List<Integer> lstSamples);
 	
 }

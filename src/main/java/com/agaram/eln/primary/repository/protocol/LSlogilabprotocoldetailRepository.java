@@ -1385,6 +1385,30 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	List<LSlogilabprotocoldetail> findByProtocolordercodeOrderByProtocolordercodeAsc(Long protocolordercode);
 
 
+	List<LSlogilabprotocoldetail> findByLssamplemasterIn(List<LSsamplemaster> lsSampleLst);
+
+	List<Logilabprotocolorders> findByOrderflagAndLockeduserIsNotNullAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+			String string);
+
+
+	@Transactional
+	@Modifying
+	@Query(value="update LSlogilabprotocoldetail set lockeduser=null,lockedusername=null where protocolordercode in(?1)")
+	void Updatelockedusersonptocolorders(List<Long> protocolorderscode);
+
+
+	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserNotOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndLockeduserIsNotNullAndOrderflagAndLockeduserNotOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyInAndLockeduserIsNotNullAndOrderflagAndLockeduserNotOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, String string, Integer usercode, int j, Integer sitecode2, Integer usercode2,
+			String string2, Integer usercode3, int k, Integer sitecode3, List<Integer> userlist, String string3,
+			Integer usercode4);
+
+
+	List<Logilabprotocolorders> findByLsprojectmasterInAndViewoptionAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserNotOrderByProtocolordercodeDesc(
+			List<LSprojectmaster> lstproject, int i, Integer sitecode, String string, Integer usercode);
+
+
+	List<Logilabprotocolorders> findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserNotOrderByProtocolordercodeDesc(
+			List<LSprojectmaster> lstproject, Integer sitecode, String string, Integer usercode);
 
 
 

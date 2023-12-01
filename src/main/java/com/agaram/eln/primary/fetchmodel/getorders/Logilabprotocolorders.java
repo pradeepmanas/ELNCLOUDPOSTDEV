@@ -60,13 +60,17 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	private Integer orderstarted;
 	private LSuserMaster orderstartedby;
 	private Date orderstartedon;
+	private Integer lockeduser;
+	private String lockedusername;
 
 	public Logilabprotocolorders(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
 			LSprotocolworkflow lSprotocolworkflow, LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,
 			String keyword, Long directorycode, Integer createby, LSuserMaster assignedto,
-			Lsrepositoriesdata lsrepositoriesdata, Lsrepositories lsrepositories, LSworkflow lsworkflow,Material material,MaterialInventory materialinventory,
-			Integer approved, Integer rejected, Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby, Date orderstartedon) {
+			Lsrepositoriesdata lsrepositoriesdata, Lsrepositories lsrepositories, LSworkflow lsworkflow,
+			Material material, MaterialInventory materialinventory, Integer approved, Integer rejected,
+			Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby,
+			Date orderstartedon,Integer lockeduser,String lockedusername) {
 
 		this.protocolordercode = protocolordercode;
 		this.Testcode = Testcode;
@@ -87,8 +91,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.lssamplemaster = lssamplemaster != null ? lssamplemaster : null;
 		this.repositoryitemname = lsrepositoriesdata != null ? lsrepositoriesdata.getRepositoryitemname() : null;
 		this.repositoryname = lsrepositories != null ? lsrepositories.getRepositoryname() : null;
-		this.materialname=material!=null?material.getSmaterialname():null;
-		this.materialinventoryname=materialinventory!=null?materialinventory.getSinventoryid():null;
+		this.materialname = material != null ? material.getSmaterialname() : null;
+		this.materialinventoryname = materialinventory != null ? materialinventory.getSinventoryid() : null;
 		this.directorycode = directorycode;
 		this.lsworkflow = lsworkflow;
 		this.lsprotocolmaster = lsprotocolmaster;
@@ -99,6 +103,24 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.orderstarted = orderstarted != null && orderstarted == 1 ? orderstarted : 0;
 		this.orderstartedby = orderstartedby != null ? orderstartedby : null;
 		this.orderstartedon = orderstartedon != null ? orderstartedon : null;
+		this.lockeduser=lockeduser!=null?lockeduser:null;
+		this.lockedusername=lockedusername!=null?lockedusername:null;
+	}
+
+	public Integer getLockeduser() {
+		return lockeduser;
+	}
+
+	public void setLockeduser(Integer lockeduser) {
+		this.lockeduser = lockeduser;
+	}
+
+	public String getLockedusername() {
+		return lockedusername;
+	}
+
+	public void setLockedusername(String lockedusername) {
+		this.lockedusername = lockedusername;
 	}
 
 	public Integer getViewoption() {
@@ -388,5 +410,4 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.orderstartedon = orderstartedon;
 	}
 
-	
 }

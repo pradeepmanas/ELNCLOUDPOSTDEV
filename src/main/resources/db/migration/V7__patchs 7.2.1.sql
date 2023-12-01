@@ -1111,3 +1111,12 @@ ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS elnmateri
 
 ALTER TABLE IF Exists materialtype ADD Column IF NOT EXISTS expvalidation Boolean default false, ADD Column IF NOT EXISTS quarvalidation Boolean default false;
 ALTER TABLE IF Exists elnmaterialinventory ADD Column IF NOT EXISTS sbatchno varchar(250) default '';
+
+insert into materialtype(smaterialtypename,nstatus,ndefaultstatus,jsondata,createdate,createby_usercode,expvalidation,quarvalidation) values ('Samples',1,4,'{}','2023-11-23 12:08:01.187496',1,false,false);
+
+insert into materialcategory(smaterialcatname,nuserrolecode,nstatus,nmaterialtypecode,nsitecode,ndefaultstatus,createdate,createby_usercode) values ('Samples',-1,1,(select nmaterialtypecode from materialtype where smaterialtypename = 'Samples'),1,3,'2023-11-23 12:08:01.187496',1);
+
+ALTER TABLE IF Exists elnmaterial ADD COLUMN IF NOT EXISTS samplecode integer;
+
+ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS lockeduser INTEGER;
+ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS lockedusername character varying(255);

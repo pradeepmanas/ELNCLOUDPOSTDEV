@@ -182,4 +182,28 @@ public class LSprotocolorderstephistory {
 	public void setViewoption(Integer viewoption) {
 		this.viewoption = viewoption;
 	}
+	
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date fromdate; 
+	
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date todate;
+
+	public Date getFromdate() {
+		return fromdate;
+	}
+
+	public void setFromdate(Date fromdate) {
+		this.fromdate = fromdate;
+	}
+
+	public Date getTodate() {
+		return todate;
+	}
+
+	public void setTodate(Date todate) {
+		this.todate = todate;
+	} 
 }

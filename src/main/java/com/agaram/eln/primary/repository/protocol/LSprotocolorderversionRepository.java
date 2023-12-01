@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.protocol;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,5 +14,8 @@ public interface LSprotocolorderversionRepository extends JpaRepository<LSprotoc
 	List<LSprotocolorderversion> findByProtocolordercodeOrderByVersionnoDesc(long ipInt);
 
 	List<LSprotocolorderversion> findByProtocolordercodeAndStatus(Long protocolordercode, int i);
+
+	List<LSprotocolorderversion> findByProtocolordercodeAndStatusAndCreatedateBetween(Long protocolordercode, int i,
+			Date fromdate, Date todate);
 
 }

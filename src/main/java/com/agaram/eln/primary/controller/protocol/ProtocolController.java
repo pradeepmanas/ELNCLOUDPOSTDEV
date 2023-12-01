@@ -1141,4 +1141,18 @@ public class ProtocolController {
 		return ProtocolMasterService.getProtocolTemplateVersionsForCompare(body);
 	}
 	
+	@PostMapping("/LockUnlockprotocolorders")
+	public LSlogilabprotocoldetail LockUnlockprotocolorders(@RequestBody LSlogilabprotocoldetail protocolorders) {
+		return ProtocolMasterService.LockUnlockprotocolorders(protocolorders);
+	}
+	@PostMapping("/GetUnlockscreendata")
+	public List<Logilabprotocolorders> GetUnlockscreendata(@RequestBody LSuserMaster protocolorders) {
+		return ProtocolMasterService.GetUnlockscreendata(protocolorders);
+	}
+	
+	@PostMapping("/Unloackprotocolorders")
+	public Boolean Unloackprotocolorders(@RequestBody Long[] protocolorders) {
+		return ProtocolMasterService.Unloackprotocolorders(protocolorders);
+	}
+	
 }

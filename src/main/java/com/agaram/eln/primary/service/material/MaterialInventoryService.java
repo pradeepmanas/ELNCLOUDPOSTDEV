@@ -3022,6 +3022,14 @@ public class MaterialInventoryService {
 
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+	
+	public String returnSubstring (String name) {
+		if (name.length() > 3) {
+			return name.substring(0, 3);
+        } else {
+        	return name;
+        }
+	}
 
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> createElnMaterialInventory(Map<String, Object> inputMap) throws Exception {
@@ -3083,8 +3091,8 @@ public class MaterialInventoryService {
 
 				objInventoriesLst.stream().peek(f -> {
 					try {
-						String stridformat = objMaterialType.getSmaterialtypename().substring(0, 3) + "/"
-								+ objMaterial.getSmaterialname().substring(0, 3) + "/"
+						String stridformat = returnSubstring(objMaterialType.getSmaterialtypename()) + "/"
+								+ returnSubstring(objMaterial.getSmaterialname()) + "/"
 								+ getfnFormat(f.getNmaterialinventorycode(), sformattype);
 
 						f.setSinventoryid(stridformat);
@@ -3105,9 +3113,10 @@ public class MaterialInventoryService {
 
 			elnmaterialInventoryReppository.save(objInventory);
 
-			String stridformat = objMaterialType.getSmaterialtypename().substring(0, 3) + "/"
-					+ objMaterial.getSmaterialname().substring(0, 3) + "/"
+			String stridformat = returnSubstring(objMaterialType.getSmaterialtypename()) + "/"
+					+ returnSubstring(objMaterial.getSmaterialname()) + "/"
 					+ getfnFormat(objInventory.getNmaterialinventorycode(), sformattype);
+	
 			objInventory.setSinventoryid(stridformat);
 
 			elnmaterialInventoryReppository.save(objInventory);
@@ -3500,12 +3509,11 @@ public class MaterialInventoryService {
 		objElnmaterialInventory2.setCreateddate(commonfunction.getCurrentUtcTime());
 		objElnmaterialInventory2.setCreatedby(objMaster);
 		objElnmaterialInventory2.setNmaterialinventorycode(null);
-//		objElnmaterialInventory2.setSinventoryid(stridformat);
 		
 		elnmaterialInventoryReppository.save(objElnmaterialInventory2);
 		
-		String stridformat = objInventory.getMaterialtype().getSmaterialtypename().substring(0, 3) + "/"
-				+ objInventory.getMaterial().getSmaterialname().substring(0, 3) + "/"
+		String stridformat = returnSubstring(objInventory.getMaterialtype().getSmaterialtypename()) + "/"
+				+ returnSubstring(objInventory.getMaterial().getSmaterialname()) + "/"
 				+ getfnFormat(objElnmaterialInventory2.getNmaterialinventorycode(), sformattype);
 		
 		objElnmaterialInventory2.setSinventoryid(stridformat);

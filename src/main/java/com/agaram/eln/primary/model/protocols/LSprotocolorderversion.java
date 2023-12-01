@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="LSprotocolorderversion")
@@ -102,4 +103,28 @@ public class LSprotocolorderversion {
 	public void setVersionname(String versionname) {
 		this.versionname = versionname;
 	}
+	
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date fromdate; 
+	
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date todate;
+
+	public Date getFromdate() {
+		return fromdate;
+	}
+
+	public void setFromdate(Date fromdate) {
+		this.fromdate = fromdate;
+	}
+
+	public Date getTodate() {
+		return todate;
+	}
+
+	public void setTodate(Date todate) {
+		this.todate = todate;
+	} 
 }

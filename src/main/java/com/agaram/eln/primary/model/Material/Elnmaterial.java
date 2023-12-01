@@ -102,6 +102,16 @@ public class Elnmaterial implements Serializable{
 	@Transient
 	private String displaystatus;
 	
+	private Integer samplecode;
+	
+	public Integer getSamplecode() {
+		return samplecode;
+	}
+
+	public void setSamplecode(Integer samplecode) {
+		this.samplecode = samplecode;
+	}
+
 	public String getExpiryTypeValue() {
 		return this.expirytype == 1 ? "Expiry Date" : (this.expirytype == 0 ? "No Expiry" : "Open Expiry");
 	}

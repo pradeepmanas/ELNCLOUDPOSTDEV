@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.protocol;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +15,8 @@ public interface LSprotocolorderstephistoryRepository extends JpaRepository<LSpr
 
 	List<LSprotocolorderstephistory> findByProtocolordercodeOrderByProtocolorderstephistorycodeDesc(
 			Long protocolordercode);
+
+	List<LSprotocolorderstephistory> findByProtocolordercodeAndStepstartdateBetweenOrderByProtocolorderstephistorycodeDesc(
+			Long protocolordercode, Date fromdate, Date todate);
 
 }

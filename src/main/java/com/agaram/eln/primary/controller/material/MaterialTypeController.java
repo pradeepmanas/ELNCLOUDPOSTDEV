@@ -37,4 +37,9 @@ public class MaterialTypeController {
 	public ResponseEntity<Object> updateMaterialTypeField(@RequestBody MaterialConfig objMaterialType) throws Exception {		
 		return (ResponseEntity<Object>) objMaterialTypeService.updateMaterialTypeField(objMaterialType);
 	}
+	
+	@RequestMapping(value ="/syncSamplestoType",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> syncSamplestoType() throws Exception {		
+		return (ResponseEntity<Object>) objMaterialTypeService.syncSamplestoType();
+	}
 }

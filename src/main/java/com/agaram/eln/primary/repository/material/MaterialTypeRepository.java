@@ -20,20 +20,21 @@ public interface MaterialTypeRepository extends JpaRepository<MaterialType, Inte
 	public List<MaterialType> findAllByOrderByNmaterialtypecodeDesc();
 	public List<MaterialType> findByNdefaultstatusAndNsitecodeOrderByNmaterialtypecode(int i, Integer nsitecode);
 	
-	public List<MaterialType> findByAndSmaterialtypenameAndNdefaultstatusAndNsitecodeAndNmaterialtypecodeNot(
+	public List<MaterialType> findBySmaterialtypenameAndNdefaultstatusAndNsitecodeAndNmaterialtypecodeNot(
 			String smaterialtypename, int i, Integer nsitecode, Integer nmaterialtypecode);
-	public List<MaterialType> findByAndSmaterialtypenameAndNdefaultstatusAndNsitecodeOrderByNmaterialtypecode(
+	public List<MaterialType> findBySmaterialtypenameAndNdefaultstatusAndNsitecodeOrderByNmaterialtypecode(
 			String smaterialtypename, int i, Integer nsitecode);
 	public List<MaterialType> findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatus(
 			int i, int j, Integer nsitecode, int k, int l, int m);
 	public List<MaterialType> findByAndSmaterialtypenameAndNsitecodeOrderByNmaterialtypecode(String smaterialtypename,
 			Integer nsitecode);
-	public List<MaterialType> findByAndSmaterialtypenameAndNsitecodeAndNmaterialtypecodeNot(String smaterialtypename,
+	public List<MaterialType> findBySmaterialtypenameAndNsitecodeAndNmaterialtypecodeNot(String smaterialtypename,
 			Integer nsitecode, Integer nmaterialtypecode);
-	public List<MaterialType> findByAndSmaterialtypenameIgnoreCaseAndNsitecodeOrderByNmaterialtypecode(
+	public List<MaterialType> findBySmaterialtypenameIgnoreCaseAndNsitecodeOrderByNmaterialtypecode(
 			String smaterialtypename, Integer nsitecode);
-	public List<MaterialType> findByAndSmaterialtypenameIgnoreCaseAndNsitecodeAndNmaterialtypecodeNot(
+	public List<MaterialType> findBySmaterialtypenameIgnoreCaseAndNsitecodeAndNmaterialtypecodeNot(
 			String smaterialtypename, Integer nsitecode, Integer nmaterialtypecode);
 	public List<MaterialType> findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatusOrderByNmaterialtypecodeDesc(
 			int i, int j, Integer nsitecode, int k, int l, int m);
+	public MaterialType findBySmaterialtypenameIgnoreCase(String string);
 } 
