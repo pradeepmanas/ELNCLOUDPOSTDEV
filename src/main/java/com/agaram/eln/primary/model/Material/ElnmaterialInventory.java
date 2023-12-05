@@ -63,6 +63,7 @@ public class ElnmaterialInventory {
 	private String savailablequantity;
 	private String sbatchno;
 	private String sreceivedquantity;
+	private String sequipid;
 
 	private Boolean isexpiry;
 	
@@ -71,9 +72,35 @@ public class ElnmaterialInventory {
 	private Date opendate;
 	private Date manufacdate;
 	private Date receiveddate;
+	private Date callibrationdate;
+	private Date manintanancedate;
 	
 	private Double nqtynotification;
 	
+	public String getSequipid() {
+		return sequipid;
+	}
+
+	public void setSequipid(String sequipid) {
+		this.sequipid = sequipid;
+	}
+
+	public Date getCallibrationdate() {
+		return callibrationdate;
+	}
+
+	public void setCallibrationdate(Date callibrationdate) {
+		this.callibrationdate = callibrationdate;
+	}
+
+	public Date getManintanancedate() {
+		return manintanancedate;
+	}
+
+	public void setManintanancedate(Date manintanancedate) {
+		this.manintanancedate = manintanancedate;
+	}
+
 	public String getSbatchno() {
 		return sbatchno;
 	}

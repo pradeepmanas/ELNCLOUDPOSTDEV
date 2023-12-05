@@ -69,7 +69,14 @@ public class MaterialType implements Serializable {
 	
 	private Boolean expvalidation;
 	private Boolean quarvalidation;
+	private Integer sampletype;
 	
+	public Integer getSampletype() {
+		return sampletype;
+	}
+	public void setSampletype(Integer sampletype) {
+		this.sampletype = sampletype;
+	}
 	public Boolean getExpvalidation() {
 		return expvalidation;
 	}

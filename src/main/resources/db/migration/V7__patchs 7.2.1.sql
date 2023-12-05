@@ -1112,11 +1112,17 @@ ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS elnmateri
 ALTER TABLE IF Exists materialtype ADD Column IF NOT EXISTS expvalidation Boolean default false, ADD Column IF NOT EXISTS quarvalidation Boolean default false;
 ALTER TABLE IF Exists elnmaterialinventory ADD Column IF NOT EXISTS sbatchno varchar(250) default '';
 
-insert into materialtype(smaterialtypename,nstatus,ndefaultstatus,jsondata,createdate,createby_usercode,expvalidation,quarvalidation) values ('Samples',1,4,'{}','2023-11-23 12:08:01.187496',1,false,false);
-
-insert into materialcategory(smaterialcatname,nuserrolecode,nstatus,nmaterialtypecode,nsitecode,ndefaultstatus,createdate,createby_usercode) values ('Samples',-1,1,(select nmaterialtypecode from materialtype where smaterialtypename = 'Samples'),1,3,'2023-11-23 12:08:01.187496',1);
-
 ALTER TABLE IF Exists elnmaterial ADD COLUMN IF NOT EXISTS samplecode integer;
 
 ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS lockeduser INTEGER;
 ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS lockedusername character varying(255);
+
+ALTER TABLE IF Exists materialtype ADD Column IF NOT EXISTS sampletype INTEGER default 1;
+
+ALTER TABLE IF Exists elnmaterialinventory ADD COLUMN IF NOT EXISTS manintanancedate timestamp without time zone,ADD COLUMN IF NOT EXISTS callibrationdate timestamp without time zone,ADD COLUMN IF NOT EXISTS sequipid character varying(100);
+
+INSERT INTO materialtype (smaterialtypename, sampletype, nstatus, ndefaultstatus, jsondata, createdate, createby_usercode, expvalidation, quarvalidation) SELECT 'Samples', 1, 1, 4, '{}', '2023-11-23 12:08:01.187496', 1, false, false WHERE NOT EXISTS (SELECT 1 FROM materialtype WHERE smaterialtypename = 'Samples');
+
+INSERT INTO materialcategory (smaterialcatname, nuserrolecode, nstatus, nmaterialtypecode, nsitecode, ndefaultstatus, createdate, createby_usercode) SELECT 'Samples', -1, 1, mt.nmaterialtypecode, 1, 3, '2023-11-23 12:08:01.187496', 1 FROM materialtype mt WHERE mt.smaterialtypename = 'Samples' AND NOT EXISTS (SELECT 1 FROM materialcategory WHERE smaterialcatname = 'Samples' );
+
+INSERT INTO materialtype (smaterialtypename, sampletype, nstatus, ndefaultstatus, jsondata, createdate, createby_usercode, expvalidation, quarvalidation) SELECT 'Equipments', 2, 1, 4, '{}', '2023-11-23 12:08:01.187496', 1, false, false WHERE NOT EXISTS (SELECT 1 FROM materialtype WHERE smaterialtypename = 'Equipments');

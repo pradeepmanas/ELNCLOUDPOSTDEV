@@ -5438,7 +5438,8 @@ public class ProtocolService {
 			List<LinkedHashMap<String, String>> notifyto = (List<LinkedHashMap<String, String>>) body.get("notifyto");
 			for (LinkedHashMap<String, String> to : notifyto) {
 				if (to != null) {
-					LSuserMaster createby = lsusermasterRepository.findByUsername(to.get("value"));
+					Integer usercode = Integer.parseInt(to.get("value"));
+					LSuserMaster createby = lsusermasterRepository.findByUsercode(usercode);
 					String Details = "{\"ordercode\":\"" + body.get("protocolordercode") + "\", \"order\":\""
 							+ body.get("protoclordername") + "\", \"screen\": \"" + to.get("screen") + "\" }";
 
