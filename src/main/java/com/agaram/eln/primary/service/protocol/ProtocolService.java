@@ -4069,9 +4069,9 @@ public class ProtocolService {
 			if (multitenent == 1) {
 				LSlogilabprotocoldetail lslogilabprotocoldetail = LSlogilabprotocoldetailRepository
 						.findByProtocolordercode(ipInt);
-//				LSuserMaster createby = lsusermasterRepository.findByusercode(lslogilabprotocoldetail.getCreateby());
-//				lslogilabprotocoldetail.setCreatedbyusername(createby.getUsername());
-//				mapObj.put("orderDetail", lslogilabprotocoldetail);
+				LSuserMaster createby = lsusermasterRepository.findByusercode(lslogilabprotocoldetail.getCreateby());
+				lslogilabprotocoldetail.setCreatedbyusername(createby.getUsername());
+				mapObj.put("orderDetail", lslogilabprotocoldetail);
 				try {
 					Content = objCloudFileManipulationservice.retrieveCloudSheets(lslogilabprotocoldetail.getFileuid(),
 							TenantContext.getCurrentTenant() + "protocolorder");
@@ -4083,9 +4083,9 @@ public class ProtocolService {
 			} else {
 				LSlogilabprotocoldetail lslogilabprotocoldetail = LSlogilabprotocoldetailRepository
 						.findByProtocolordercode(ipInt);
-//				LSuserMaster createby = lsusermasterRepository.findByusercode(lslogilabprotocoldetail.getCreateby());
-//				lslogilabprotocoldetail.setCreatedbyusername(createby.getUsername());
-//				mapObj.put("orderDetail", lslogilabprotocoldetail);
+				LSuserMaster createby = lsusermasterRepository.findByusercode(lslogilabprotocoldetail.getCreateby());
+				lslogilabprotocoldetail.setCreatedbyusername(createby.getUsername());
+				mapObj.put("orderDetail", lslogilabprotocoldetail);
 				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename")
 						.is("protocolorder_" + lslogilabprotocoldetail.getProtocolordercode())));
 				mapObj.put("protocolData",
