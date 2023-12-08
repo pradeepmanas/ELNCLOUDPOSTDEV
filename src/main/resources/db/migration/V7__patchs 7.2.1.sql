@@ -1126,3 +1126,6 @@ INSERT INTO materialtype (smaterialtypename, sampletype, nstatus, ndefaultstatus
 INSERT INTO materialcategory (smaterialcatname, nuserrolecode, nstatus, nmaterialtypecode, nsitecode, ndefaultstatus, createdate, createby_usercode) SELECT 'Samples', -1, 1, mt.nmaterialtypecode, 1, 3, '2023-11-23 12:08:01.187496', 1 FROM materialtype mt WHERE mt.smaterialtypename = 'Samples' AND NOT EXISTS (SELECT 1 FROM materialcategory WHERE smaterialcatname = 'Samples' );
 
 INSERT INTO materialtype (smaterialtypename, sampletype, nstatus, ndefaultstatus, jsondata, createdate, createby_usercode, expvalidation, quarvalidation) SELECT 'Equipments', 2, 1, 4, '{}', '2023-11-23 12:08:01.187496', 1, false, false WHERE NOT EXISTS (SELECT 1 FROM materialtype WHERE smaterialtypename = 'Equipments');
+
+ALTER TABLE IF Exists LSprotocolorderversion ADD COLUMN IF NOT EXISTS fileuid varchar(250);
+ALTER TABLE IF Exists LSprotocolorderversion ADD COLUMN IF NOT EXISTS fileuri varchar(500);

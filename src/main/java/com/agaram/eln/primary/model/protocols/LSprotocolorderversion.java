@@ -127,4 +127,25 @@ public class LSprotocolorderversion {
 	public void setTodate(Date todate) {
 		this.todate = todate;
 	} 
+	
+	private String fileuid;
+	
+	private String fileuri;
+
+	public String getFileuid() {
+		return fileuid;
+	}
+
+	public void setFileuid(String fileuid) {
+		this.fileuid = fileuid;
+	}
+
+	public String getFileuri() {
+		return fileuri;
+	}
+
+	public void setFileuri(String fileuri) {
+		this.fileuri = fileuri;
+	}
+	
 }

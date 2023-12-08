@@ -870,4 +870,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setOrderlink(String orderlink) {
 		this.orderlink = orderlink;
 	}
+	
+	@Transient
+	private List<LSprotocolorderversion> lSprotocolorderversion;
+
+	public List<LSprotocolorderversion> getlSprotocolorderversion() {
+		return lSprotocolorderversion;
+	}
+
+	public void setlSprotocolorderversion(List<LSprotocolorderversion> lSprotocolorderversion) {
+		this.lSprotocolorderversion = lSprotocolorderversion;
+	}
+	
+	
 }

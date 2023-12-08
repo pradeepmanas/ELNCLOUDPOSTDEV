@@ -62,6 +62,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	private Date orderstartedon;
 	private Integer lockeduser;
 	private String lockedusername;
+	private Integer versionno;
 
 	public Logilabprotocolorders(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
@@ -70,7 +71,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 			Lsrepositoriesdata lsrepositoriesdata, Lsrepositories lsrepositories, LSworkflow lsworkflow,
 			Material material, MaterialInventory materialinventory, Integer approved, Integer rejected,
 			Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby,
-			Date orderstartedon,Integer lockeduser,String lockedusername) {
+			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno) {
 
 		this.protocolordercode = protocolordercode;
 		this.Testcode = Testcode;
@@ -105,6 +106,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.orderstartedon = orderstartedon != null ? orderstartedon : null;
 		this.lockeduser=lockeduser!=null?lockeduser:null;
 		this.lockedusername=lockedusername!=null?lockedusername:null;
+		this.versionno = versionno;
 	}
 
 	public Integer getLockeduser() {
@@ -408,6 +410,14 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 
 	public void setOrderstartedon(Date orderstartedon) {
 		this.orderstartedon = orderstartedon;
+	}
+
+	public Integer getVersionno() {
+		return versionno;
+	}
+
+	public void setVersionno(Integer versionno) {
+		this.versionno = versionno;
 	}
 
 }

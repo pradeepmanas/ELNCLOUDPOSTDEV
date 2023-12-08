@@ -18,4 +18,6 @@ public interface LSprotocolorderversionRepository extends JpaRepository<LSprotoc
 	List<LSprotocolorderversion> findByProtocolordercodeAndStatusAndCreatedateBetween(Long protocolordercode, int i,
 			Date fromdate, Date todate);
 
+	LSprotocolorderversion findFirstByProtocolordercodeAndVersionno(Long protocolordercode, Integer versionno);
+
 }

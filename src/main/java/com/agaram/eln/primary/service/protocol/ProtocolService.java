@@ -5391,6 +5391,9 @@ public class ProtocolService {
 					.findByProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
 			Integer ismultitenant = object.convertValue(body.get("ismultitenant"), Integer.class);
 			int sitecode = object.convertValue(body.get("sitecode"), Integer.class);
+			int usercode = object.convertValue(body.get("usercode"), Integer.class);
+			String username = (String) body.get("username");
+			Boolean doversion = object.convertValue(body.get("doversion"), Boolean.class);
 
 			if (body.get("protocoldatainfo") != null) {
 				lSlogilabprotocoldetail.setProtocoldatainfo((String) body.get("protocoldatainfo"));
@@ -5399,13 +5402,59 @@ public class ProtocolService {
 
 			if ((protocolOrder.getApproved() == null || protocolOrder.getApproved() != 1)) {
 
-//				LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(sitecode);
-//				LSworkflow lsworkflow = lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
+				if(doversion) {
+					if (ismultitenant == 1) {
+						LSprotocolorderversion version = new LSprotocolorderversion();
+						if (lsprotocolorderversionRepository.findFirstByProtocolordercodeAndVersionno(
+								protocolOrder.getProtocolordercode(), protocolOrder.getVersionno()) != null) {
+							version = lsprotocolorderversionRepository.findFirstByProtocolordercodeAndVersionno(
+									protocolOrder.getProtocolordercode(), protocolOrder.getVersionno());
+						} else {
+							version = lsprotocolorderversionRepository
+									.findFirstByProtocolordercodeAndVersionno(protocolOrder.getProtocolordercode(), 1);
+							protocolOrder.setVersionno(1);
+						}
+						String content = objCloudFileManipulationservice.retrieveCloudSheets(protocolOrder.getFileuid(),
+								TenantContext.getCurrentTenant() + "protocolorder");
+						Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(
+								content, TenantContext.getCurrentTenant() + "protocolorderversion");
+						String fileUUID = (String) objMap.get("uuid");
+						String fileURI = objMap.get("uri").toString();
 
-				protocolOrder.setApproved(0);
-				protocolOrder.setLsworkflow(lSlogilabprotocoldetail.getLsworkflow());
-				protocolOrder.setVersionno(protocolOrder.getVersionno() + 1);
+						version.setFileuid(fileUUID);
+						version.setFileuri(fileURI);
+						lsprotocolorderversionRepository.save(version);
+					}
 
+					LSprotocolorderversion objversion = new LSprotocolorderversion();
+					objversion.setCreatedbyusername(username);
+					objversion.setCreatedby(usercode);
+					try {
+						objversion.setCreatedate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+//					objversion.setModifiedby(lSprotocolupdates.getModifiedby());
+//					objversion.setModifieddate(lSprotocolupdates.getProtocolmodifiedDate());
+					objversion.setProtocolordercode(protocolOrder.getProtocolordercode());
+					objversion.setStatus(1);
+					objversion.setVersionname("version_" + (protocolOrder.getVersionno() + 1));
+					objversion.setVersionno(protocolOrder.getVersionno() + 1);
+
+					if (protocolOrder.getlSprotocolorderversion() != null) {
+						protocolOrder.getlSprotocolorderversion().add(objversion);
+					} else {
+						List<LSprotocolorderversion> lstversion = new ArrayList<LSprotocolorderversion>();
+						lstversion.add(objversion);
+						protocolOrder.setlSprotocolorderversion(lstversion);
+					}
+
+					lsprotocolorderversionRepository.save(protocolOrder.getlSprotocolorderversion());
+					
+					protocolOrder.setVersionno(protocolOrder.getVersionno() + 1);
+				}
+					
 				if (!body.get("protocolData").equals("")) {
 					Gson gson = new Gson();
 					String protocolDataJson = gson.toJson(body.get("protocolData"));
@@ -5424,6 +5473,8 @@ public class ProtocolService {
 								"protocolorder_" + protocolOrder.getProtocolordercode(), StandardCharsets.UTF_16);
 					}
 					mapObj.put("protocolOrder", protocolOrder);
+					mapObj.put("protocolorderversionlst", lsprotocolorderversionRepository
+							.findByProtocolordercodeOrderByVersionnoDesc(protocolOrder.getProtocolordercode()));
 					response.setInformation("IDS_MSG_PROTOCOLORDERSAVE");
 					response.setStatus(true);
 				}
@@ -7758,6 +7809,33 @@ public class ProtocolService {
 
 		return mapObj;
 	}
+	
+	public Map<String, Object> getProtocolOrderVersionChanges(Map<String, Object> argObj) throws IOException {
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+		ObjectMapper object = new ObjectMapper();
+
+		LSprotocolorderversion versionMaster = object.convertValue(argObj.get("Lsprotocolorderversion"), LSprotocolorderversion.class);
+		int multitenent = object.convertValue(argObj.get("ismultitenant"), Integer.class);
+		LSlogilabprotocoldetail protocol = LSlogilabprotocoldetailRepository
+				.findByProtocolordercode(versionMaster.getProtocolordercode());
+		if (multitenent == 1) {
+			if (versionMaster.getFileuid() != null) {
+				mapObj.put("ProtocolData", objCloudFileManipulationservice.retrieveCloudSheets(
+						versionMaster.getFileuid(), TenantContext.getCurrentTenant() + "protocolorderversion"));
+			} else {
+				mapObj.put("ProtocolData", objCloudFileManipulationservice.retrieveCloudSheets(protocol.getFileuid(),
+						TenantContext.getCurrentTenant() + "protocolorder"));
+			}
+		} else {
+			GridFSDBFile largefile = gridFsTemplate.findOne(
+					new Query(Criteria.where("filename").is("protocol_" + versionMaster.getProtocolordercode())));
+			mapObj.put("ProtocolData",
+					new BufferedReader(new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8))
+							.lines().collect(Collectors.joining("\n")));
+		}
+
+		return mapObj;
+	}
 
 	public Map<String, Object> getProtocolTemplateVersionsForCompare(Map<String, Object> argObj) throws IOException {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
@@ -7771,8 +7849,8 @@ public class ProtocolService {
 				protocol.getProtocolmastercode(), object.convertValue(argObj.get("compare2"), Integer.class));
 		int multitenant = object.convertValue(argObj.get("ismultitenant"), Integer.class);
 		if (multitenant == 1) {
-			mapObj.put("comparedata1", retrieveCloudSheets(compare1.getFileuid(), protocol.getFileuid()));
-			mapObj.put("comparedata2", retrieveCloudSheets(compare2.getFileuid(), protocol.getFileuid()));
+			mapObj.put("comparedata1", retrieveCloudSheets(compare1.getFileuid(), protocol.getFileuid(), "Template"));
+			mapObj.put("comparedata2", retrieveCloudSheets(compare2.getFileuid(), protocol.getFileuid(), "Template"));
 		} else {
 			GridFSDBFile largefile = gridFsTemplate
 					.findOne(new Query(Criteria.where("filename").is("protocol_" + protocol.getProtocolmastercode())));
@@ -7783,14 +7861,49 @@ public class ProtocolService {
 
 		return mapObj;
 	}
+	
+	public Map<String, Object> getProtocolOrderVersionsForCompare(Map<String, Object> argObj) throws IOException {
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+		ObjectMapper object = new ObjectMapper();
 
-	private Object retrieveCloudSheets(String fileUid, String defaultFileUid) throws IOException {
-		if (fileUid != null) {
-			return objCloudFileManipulationservice.retrieveCloudSheets(fileUid,
-					TenantContext.getCurrentTenant() + "protocolversion");
+		LSlogilabprotocoldetail protocol = LSlogilabprotocoldetailRepository
+				.findByProtocolordercode(object.convertValue(argObj.get("protocolordercode"), Long.class));
+		LSprotocolorderversion compare1 = lsprotocolorderversionRepository.findFirstByProtocolordercodeAndVersionno(
+				protocol.getProtocolordercode(), object.convertValue(argObj.get("compare1"), Integer.class));
+		LSprotocolorderversion compare2 = lsprotocolorderversionRepository.findFirstByProtocolordercodeAndVersionno(
+				protocol.getProtocolordercode(), object.convertValue(argObj.get("compare2"), Integer.class));
+		int multitenant = object.convertValue(argObj.get("ismultitenant"), Integer.class);
+		if (multitenant == 1) {
+			mapObj.put("comparedata1", retrieveCloudSheets(compare1.getFileuid(), protocol.getFileuid(), "Order"));
+			mapObj.put("comparedata2", retrieveCloudSheets(compare2.getFileuid(), protocol.getFileuid(), "Order"));
 		} else {
-			return objCloudFileManipulationservice.retrieveCloudSheets(defaultFileUid,
-					TenantContext.getCurrentTenant() + "protocol");
+			GridFSDBFile largefile = gridFsTemplate
+					.findOne(new Query(Criteria.where("filename").is("protocol_" + protocol.getProtocolordercode())));
+			mapObj.put("ProtocolData",
+					new BufferedReader(new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8))
+							.lines().collect(Collectors.joining("\n")));
+		}
+
+		return mapObj;
+	}
+
+	private Object retrieveCloudSheets(String fileUid, String defaultFileUid, String screen) throws IOException {
+		if (screen.equals("Template")) {
+			if (fileUid != null) {
+				return objCloudFileManipulationservice.retrieveCloudSheets(fileUid,
+						TenantContext.getCurrentTenant() + "protocolversion");
+			} else {
+				return objCloudFileManipulationservice.retrieveCloudSheets(defaultFileUid,
+						TenantContext.getCurrentTenant() + "protocol");
+			}
+		}else {
+			if (fileUid != null) {
+				return objCloudFileManipulationservice.retrieveCloudSheets(fileUid,
+						TenantContext.getCurrentTenant() + "protocolorderversion");
+			} else {
+				return objCloudFileManipulationservice.retrieveCloudSheets(defaultFileUid,
+						TenantContext.getCurrentTenant() + "protocolorder");
+			}
 		}
 	}
 

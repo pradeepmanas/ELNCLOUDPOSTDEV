@@ -1135,10 +1135,22 @@ public class ProtocolController {
 		return ProtocolMasterService.getProtocolTemplateVersionChanges(body);
 	}
 	
+	@PostMapping("/getProtocolOrderVersionChanges")
+	public Map<String, Object> getProtocolOrderVersionChanges(@RequestBody Map<String, Object> body)throws Exception
+	{
+		return ProtocolMasterService.getProtocolOrderVersionChanges(body);
+	}
+	
 	@PostMapping("/getProtocolTemplateVersionsForCompare")
 	public Map<String, Object> getProtocolTemplateVersionsForCompare(@RequestBody Map<String, Object> body)throws Exception
 	{
 		return ProtocolMasterService.getProtocolTemplateVersionsForCompare(body);
+	}
+	
+	@PostMapping("/getProtocolOrderVersionsForCompare")
+	public Map<String, Object> getProtocolOrderVersionsForCompare(@RequestBody Map<String, Object> body)throws Exception
+	{
+		return ProtocolMasterService.getProtocolOrderVersionsForCompare(body);
 	}
 	
 	@PostMapping("/LockUnlockprotocolorders")
