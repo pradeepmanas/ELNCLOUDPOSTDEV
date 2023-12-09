@@ -1432,15 +1432,22 @@ public class TransactionService {
 		
 		long longFromValue = Long.parseLong(inputMap.get("fromdate").toString());
 		long longToValue = Long.parseLong(inputMap.get("todate").toString());
-		
 		Integer ninventorycode = (Integer) inputMap.get("ninventorycode");
+		Integer screencode = (Integer) inputMap.get("selectedScreen");
 		Date fromDate = new Date(longFromValue);
 		Date toDate = new Date(longToValue);
 		
-		List<ElnresultUsedMaterial> lstUsedMaterials = elnresultUsedMaterialRepository
-				.findByNinventorycodeAndCreateddateBetweenOrderByNresultusedmaterialcodeDesc(fromDate,toDate,ninventorycode);
-		
-		objmap.put("resultusedmaterial", lstUsedMaterials);
+		if(screencode == -1) {
+			List<ElnresultUsedMaterial> lstUsedMaterials = elnresultUsedMaterialRepository
+					.findByNinventorycodeAndCreateddateBetweenOrderByNresultusedmaterialcodeDesc(ninventorycode,fromDate,toDate);
+			
+			objmap.put("resultusedmaterial", lstUsedMaterials);
+		}else {
+			List<ElnresultUsedMaterial> lstUsedMaterials = elnresultUsedMaterialRepository
+					.findByNinventorycodeAndTransactionscreenAndCreateddateBetweenOrderByNresultusedmaterialcodeDesc(ninventorycode,screencode,fromDate,toDate);
+			
+			objmap.put("resultusedmaterial", lstUsedMaterials);
+		}
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
