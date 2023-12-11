@@ -1341,7 +1341,7 @@ public class DashBoardService {
 				lstorders.addAll(lstorderobj);
 //			}
 			mapOrders.put("All", true);
-			mapOrders.put("kumu", kumu);
+//			mapOrders.put("kumu", kumu);
 //			countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToLong(i -> {
 //				int startIndex = i * chunkSize;
 //				int endIndex = Math.min(startIndex + chunkSize, totalSamples);
