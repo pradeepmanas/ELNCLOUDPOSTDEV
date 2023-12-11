@@ -1269,7 +1269,7 @@ public class DashBoardService {
 							objuser, fromdate, todate, "R", objuser, objuser, fromdate, todate, "R", objuser, fromdate,
 							todate, pageable);
 			
-//			List<LSlogilablimsorderdetail> kumu =lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboard("R", 0, fromdate, todate,objuser,3,1,2,3);
+//			List<LSlogilablimsorderdetail> kumu =lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboard("R", 0, fromdate, todate,objuser,3,1,2,3,"N",objuser.getUsernotify(),1,objuser.getLssitemaster());
 
 			lstorders.addAll(lslogilablimsorderdetailRepository
 					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
@@ -1313,7 +1313,7 @@ public class DashBoardService {
 								1, lstproject, fromdate, todate, 1, objuser, fromdate, todate, 1, 2, objuser, fromdate,
 								todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate, todate, 1, objuser,
 								fromdate, todate, 1, pageable));
-				
+				//done
 				
 			}
 
@@ -1341,6 +1341,7 @@ public class DashBoardService {
 				lstorders.addAll(lstorderobj);
 //			}
 			mapOrders.put("All", true);
+			mapOrders.put("kumu", kumu);
 //			countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToLong(i -> {
 //				int startIndex = i * chunkSize;
 //				int endIndex = Math.min(startIndex + chunkSize, totalSamples);

@@ -442,20 +442,37 @@ public class FileService {
 							-1, objuser.getLssitemaster(),approvelstatus, -1, 1);
 		} else {
 
+//			List<Integer> lstteammap = lsuserteammappingRepository.getTeamcodeByLsuserMaster(objuser.getUsercode());
+//			if (lstteammap.size() > 0) {
+//				List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
+//				lstteamuser.add(objuser);
+//				lstfile = lSfileRepository
+//						.findByFilecodeGreaterThanAndCreatebyInAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndRejectedAndVersionnoGreaterThanOrderByFilecodeDesc(
+//								-1, lstteamuser, 0, approvelstatus, -1, lstteamuser, 0, 1);
+//			} else {
+//				List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
+//				lstteamuser.add(objuser);
+//				lstfile = lSfileRepository
+//						.findByFilecodeGreaterThanAndCreatebyInAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndRejectedAndVersionnoGreaterThanOrderByFilecodeDesc(
+//								-1, lstteamuser, 0, approvelstatus, -1, lstteamuser, 0, 1);
+//			}
+			
 			List<Integer> lstteammap = lsuserteammappingRepository.getTeamcodeByLsuserMaster(objuser.getUsercode());
-
-			if (lstteammap.size() > 0) {
+			if (lstteammap != null && lstteammap.size() > 0) {
 				List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
 				lstteamuser.add(objuser);
+				
 				lstfile = lSfileRepository
-						.findByFilecodeGreaterThanAndCreatebyInAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndRejectedAndVersionnoGreaterThanOrderByFilecodeDesc(
-								-1, lstteamuser, 0, approvelstatus, -1, lstteamuser, 0, 1);
+						.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndRejectedAndApprovedOrderByFilecodeDesc(
+								-1, objuser.getLssitemaster(), 1, 0, approvelstatus,
+								-1, objuser, 2, 0, approvelstatus,
+								-1, lstteamuser, 3, 0, approvelstatus);
 			} else {
 				List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
 				lstteamuser.add(objuser);
-				lstfile = lSfileRepository
-						.findByFilecodeGreaterThanAndCreatebyInAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndRejectedAndVersionnoGreaterThanOrderByFilecodeDesc(
-								-1, lstteamuser, 0, approvelstatus, -1, lstteamuser, 0, 1);
+				lstfile = lSfileRepository.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndRejectedAndApprovedOrderByFilecodeDesc(
+								-1, objuser.getLssitemaster(), 1, 0, approvelstatus, 
+								-1, lstteamuser, 2, 0, approvelstatus);
 			}
 
 		}

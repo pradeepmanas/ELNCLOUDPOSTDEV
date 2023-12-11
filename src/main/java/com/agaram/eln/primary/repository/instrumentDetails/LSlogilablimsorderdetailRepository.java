@@ -20,6 +20,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -2434,13 +2435,38 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?9 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
 			+ "OR(o.orderflag =?1 And lsusermaster_usercode =?5 And assignedto_usercode !=?5 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NOT NULL)"
 			+ "OR(o.orderflag =?1 And  assignedto_usercode=?5 And createdtimestamp BETWEEN ?3 And ?4)"
-			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
+			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
 			+ "AND approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
-			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
+			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
 			+ "And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
-			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
-			+ "ANd viewoption=?9 And lsusermaster_usercode =?5 AND approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)", nativeQuery = true)
-	public List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboard(String string, int i, Date fromdate, Date todate,
-			LSuserMaster objuser, int j, int k, int l, int m);
+			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
+			+ "ANd viewoption=?9 And lsusermaster_usercode =?5 AND approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR (o.orderflag =?10 And filetype=?2 And createdtimestamp BETWEEN ?3 And ?4)"
+			+ "OR(o.orderflag =?10 And lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And ordercancell IS NULL And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?10 And lsprojectmaster_projectcode IS NULL And viewoption=?8 And lsusermaster_usercode =?5 And ordercancell IS NULL And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?10 And lsprojectmaster_projectcode IS NULL And viewoption=?9 And ordercancell IS NULL And createdtimestamp BETWEEN ?3 And ?4 and lsusermaster_usercode in(?11) And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?10 And lsusermaster_usercode =?5 And assignedto_usercode !=?5 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NOT NULL)"
+			+ "OR(o.orderflag =?10 And  assignedto_usercode=?5 And createdtimestamp BETWEEN ?3 And ?4)"
+			+ "OR(o.orderflag =?10 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1))  And createdtimestamp BETWEEN ?3 And ?4 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?10 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And viewoption=?9 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus =?6 And assignedto_usercode IS NULL)"
+			+ "OR(o.lsprojectmaster_projectcode IS NULL And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus =?6 And assignedto_usercode IS NULL)"
+			+ "OR(o.lsprojectmaster_projectcode IS NULL And viewoption=?9 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus =?6 And assignedto_usercode IS NULL)"
+			+ "OR(lsusermaster_usercode =?5 And assignedto_usercode !=?5 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NOT NULL And approvelstatus =?6)"
+			+ "OR(assignedto_usercode =?5  And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus =?6)"
+			+ "OR(approvelstatus =?6 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NULL)"
+			+ "OR(ordercancell =?12 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NULL)"
+			+ "OR(lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And ordercancell =?12 And assignedto_usercode IS NULL)"
+			+ "OR(lsprojectmaster_projectcode IS NULL And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And ordercancell =?12 And assignedto_usercode IS NULL)"
+			+ "OR(lsprojectmaster_projectcode IS NULL And viewoption=?9 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And ordercancell =?12 And assignedto_usercode IS NULL)"
+			+ "OR(lsusermaster_usercode =?5 And assignedto_usercode !=?5 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NOT NULL And ordercancell =?12)"
+			+ "OR(assignedto_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And ordercancell =?12)"
+		    + "OR(approvelstatus =?6  And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?13)) And createdtimestamp BETWEEN ?3 And ?4  And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+            +"OR(o.orderflag =?10 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?13))And createdtimestamp BETWEEN ?3 And ?4  And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+            +"OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?13))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+            +"OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?13))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+			, nativeQuery = true)
+	public List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboard(String string, int i, Date fromdate,
+			Date todate, LSuserMaster objuser, int j, int k, int l, int m, String string2, List<LSuserMaster> list, int n, LSSiteMaster lsSiteMaster);
 
 }

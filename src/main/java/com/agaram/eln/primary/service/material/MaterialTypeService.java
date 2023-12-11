@@ -152,6 +152,7 @@ public class MaterialTypeService {
 			objMaterial.setMaterialtype(objType);
 			objMaterial.setExpirytype(0);
 			objMaterial.setSamplecode(f.getSamplecode());
+			objMaterial.setRemarks("");
 			
 			objMatLst.add(objMaterial);
 			
