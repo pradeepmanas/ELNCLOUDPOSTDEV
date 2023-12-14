@@ -2488,39 +2488,33 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	@Transactional
 	@Modifying
-	@Query(value = "SELECT  *"
-//			+ "batchcode, batchid, lsworkflow_workflowcode ,"
-//		        + "CAST((select testname from lstestmasterlocal where testcode = o.lstestmasterlocal_testcode) as varchar(100)) as testname,"
-//		        + "CAST((select filenameuser from lsfile where filecode = o.lsfile_filecode) as varchar(100)) as filename,"
-//		        + "CAST((select projectname from lsprojectmaster where projectcode = o.lsprojectmaster_projectcode) as varchar(100)) as projectname, "
-//		        + "CAST((select samplename from lssamplemaster where samplecode = o.lssamplemaster_samplecode) as varchar(100)) as samplename, "
-//		        + "filetype, "
-//		        + "(select filecode from lsfile where filecode = o.lsfile_filecode) as filecode, "
-//		        + "orderflag, createdtimestamp, completedtimestamp, keyword, ordercancell,"
-//		        + "CAST((select workflowname from lsworkflow where workflowcode = o.lsworkflow_workflowcode) as varchar(100)) as lsworkflow "
-			+ " FROM LSlogilablimsorderdetail o "
+	@Query(value = "WITH TeamProjects AS (SELECT lsprojectmaster_projectcode "
+			+ " FROM LSlogilablimsorderdetail   WHERE lsprojectmaster_projectcode IN ("
+			+ " SELECT DISTINCT projectcode FROM LSprojectmaster " + " WHERE lsusersteam_teamcode IN ("
+			+ " SELECT teamcode FROM LSuserteammapping " + " WHERE lsuserMaster_usercode = ?5 AND teamcode IS NOT NULL"
+			+ " ) AND status = 1))" + "SELECT  *  FROM LSlogilablimsorderdetail o "
 			+ "WHERE (o.orderflag =?1 And filetype=?2 And createdtimestamp BETWEEN ?3 And ?4)"
 			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?6 And lsusermaster_usercode =?5 And ordercancell IS NULL And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NULL)"
 			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And ordercancell IS NULL And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NULL)"
 			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?8 And ordercancell IS NULL And createdtimestamp BETWEEN ?3 And ?4 and lsusermaster_usercode in(?9) And assignedto_usercode IS NULL)"
 			+ "OR(o.orderflag =?1 And lsusermaster_usercode =?5 And assignedto_usercode !=?5 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NOT NULL)"
 			+ "OR(o.orderflag =?1 And  assignedto_usercode=?5 And createdtimestamp BETWEEN ?3 And ?4)"
-			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1))  And createdtimestamp BETWEEN ?3 And ?4 And ordercancell IS NULL And assignedto_usercode IS NULL)"
-			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+//			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1))  And createdtimestamp BETWEEN ?3 And ?4 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+//			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM TeamProjects)  And createdtimestamp BETWEEN ?3 And ?4 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM TeamProjects) And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And ordercancell IS NULL And assignedto_usercode IS NULL)"
 			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?10))And createdtimestamp BETWEEN ?3 And ?4  And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
 			+ "ORDER BY batchcode DESC OFFSET ?11 ROWS FETCH NEXT ?12 ROWS ONLY", nativeQuery = true)
 	List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboardforpending(String string, int i, Date fromdate,
 			Date todate, LSuserMaster objuser, int j, int k, int l, List<LSuserMaster> usernotify,
 			LSSiteMaster lssitemaster, int m, Integer pageperorder);
-	
-	
 
 	@Transactional
 //	@Modifying
 	@Query(value = "SELECT  count(*)  FROM LSlogilablimsorderdetail o "
 			+ "WHERE (o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?6))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?2 And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
 			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?6))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)", nativeQuery = true)
-	 long getLSlogilablimsorderdetaildashboardforcount(String string, int i, Date fromdate, Date todate,
+	long getLSlogilablimsorderdetaildashboardforcount(String string, int i, Date fromdate, Date todate,
 			LSuserMaster objuser, LSSiteMaster lssitemaster);
 
 	@Transactional
@@ -2536,28 +2530,27 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			+ "WHERE (approvelstatus =?1  And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?5)) And createdtimestamp BETWEEN ?2 And ?3  And assignedto_usercode IS NULL And lsusermaster_usercode !=?4)", nativeQuery = true)
 	long getLSlogilablimsorderdetaildashboardforrejectcount(int i, Date fromdate, Date todate, LSuserMaster objuser,
 			LSSiteMaster lssitemaster);
-	
+
 	@Transactional
 //	@Modifying
 	@Query(value = "SELECT  count(*)  FROM LSlogilablimsorderdetail o "
 			+ "WHERE (o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?6))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?2 And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5 And testcode=?7)"
 			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?6))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5 And testcode=?7)", nativeQuery = true)
-	public long getLSlogilablimsorderdetaildashboardforcompletecountfilter(String string, int i, Date fromdate, Date todate,
-			LSuserMaster objuser, LSSiteMaster lssitemaster, Integer testcode);
+	public long getLSlogilablimsorderdetaildashboardforcompletecountfilter(String string, int i, Date fromdate,
+			Date todate, LSuserMaster objuser, LSSiteMaster lssitemaster, Integer testcode);
 
 	@Transactional
 //	@Modifying
 	@Query(value = "SELECT  count(*) FROM LSlogilablimsorderdetail o "
 			+ "WHERE (o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?2))And createdtimestamp BETWEEN ?3 And ?4  And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5 And testcode=?6)", nativeQuery = true)
-	long getLSlogilablimsorderdetaildashboardforpendingcountfilter(String string, LSSiteMaster lssitemaster, Date fromdate,
-			Date todate, LSuserMaster objuser, Integer testcode);
+	long getLSlogilablimsorderdetaildashboardforpendingcountfilter(String string, LSSiteMaster lssitemaster,
+			Date fromdate, Date todate, LSuserMaster objuser, Integer testcode);
 
 	@Transactional
 //	@Modifying
 	@Query(value = "SELECT  count(*) FROM LSlogilablimsorderdetail o "
 			+ "WHERE (approvelstatus =?1  And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?5)) And createdtimestamp BETWEEN ?2 And ?3  And assignedto_usercode IS NULL And lsusermaster_usercode !=?4 And testcode=?6)", nativeQuery = true)
-	long getLSlogilablimsorderdetaildashboardforrejectcountfilter(int i, Date fromdate, Date todate, LSuserMaster objuser,
-			LSSiteMaster lssitemaster, Integer testcode);
-
+	long getLSlogilablimsorderdetaildashboardforrejectcountfilter(int i, Date fromdate, Date todate,
+			LSuserMaster objuser, LSSiteMaster lssitemaster, Integer testcode);
 
 }
