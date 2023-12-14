@@ -3695,6 +3695,21 @@ public class InstrumentService {
 		updatenotificationfororderworkflow(objorder,
 				lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode()).getLsworkflow());
 		
+		//for email notify
+		String email =  env.getProperty("spring.emailnotificationconfig");
+		if( email != null && email.equals("true")) {
+			try {
+				updateemailnotificationorderworkflow(objorder,
+						lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode()).getLsworkflow());	
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.out.println(e);
+			}
+			
+		}
+		
+		
 		for(int k=0;k<objorder.getLsorderworkflowhistory().size();k++) {
 			if(objorder.getLsorderworkflowhistory().get(k).getHistorycode()==null) {
 				try {
@@ -3722,19 +3737,7 @@ public class InstrumentService {
 
 		updatenotificationforworkflowapproval(objorder);
 		
-		//for email notify
-		String email =  env.getProperty("spring.emailnotificationconfig");
-		if( email != null && email.equals("true")) {
-			try {
-				updateemailnotificationorderworkflow(objorder,
-						lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode()).getLsworkflow());	
-				
-			} catch (Exception e) {
-				// TODO: handle exception
-				System.out.println(e);
-			}
-			
-		}
+		
 
 		if (objorder.getFiletype() != 0 && objorder.getOrderflag().toString().trim().equals("N")) {
 			LSworkflow objlastworkflow = lsworkflowRepository

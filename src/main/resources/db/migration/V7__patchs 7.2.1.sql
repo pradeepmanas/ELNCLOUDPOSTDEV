@@ -846,7 +846,7 @@ CREATE TABLE IF NOT EXISTS public.elnmaterial
     nsitecode integer,
     createddate timestamp without time zone DEFAULT ('now'::text)::date,
     expirytype integer,
-    remarks character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    remarks character varying(200) COLLATE pg_catalog."default",
     expirypolicyvalue character varying(50) COLLATE pg_catalog."default",
     expirypolicyperiod character varying(50) COLLATE pg_catalog."default",
     openexpiryvalue character varying(50) COLLATE pg_catalog."default",
@@ -1125,7 +1125,116 @@ INSERT INTO materialtype (smaterialtypename, sampletype, nstatus, ndefaultstatus
 
 INSERT INTO materialcategory (smaterialcatname, nuserrolecode, nstatus, nmaterialtypecode, nsitecode, ndefaultstatus, createdate, createby_usercode) SELECT 'Samples', -1, 1, mt.nmaterialtypecode, 1, 3, '2023-11-23 12:08:01.187496', 1 FROM materialtype mt WHERE mt.smaterialtypename = 'Samples' AND NOT EXISTS (SELECT 1 FROM materialcategory WHERE smaterialcatname = 'Samples' );
 
-INSERT INTO materialtype (smaterialtypename, sampletype, nstatus, ndefaultstatus, jsondata, createdate, createby_usercode, expvalidation, quarvalidation) SELECT 'Equipments', 2, 1, 4, '{}', '2023-11-23 12:08:01.187496', 1, false, false WHERE NOT EXISTS (SELECT 1 FROM materialtype WHERE smaterialtypename = 'Equipments');
-
 ALTER TABLE IF Exists LSprotocolorderversion ADD COLUMN IF NOT EXISTS fileuid varchar(250);
 ALTER TABLE IF Exists LSprotocolorderversion ADD COLUMN IF NOT EXISTS fileuri varchar(500);
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'equipmenttype_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE equipmenttype_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.equipmenttype
+(
+    nequipmenttypecode integer DEFAULT nextval('equipmenttype_sequence'::regclass),
+    jsondata jsonb,
+    ndefaultstatus integer NOT NULL DEFAULT 4,
+    nsitecode integer NOT NULL DEFAULT '-1'::integer,
+    nstatus integer NOT NULL DEFAULT 1,
+    sequipmenttypename character varying(100) COLLATE pg_catalog."default",
+    createby_usercode integer DEFAULT 1,
+    createdate timestamp without time zone DEFAULT now(),
+    CONSTRAINT equipmenttype_pkey PRIMARY KEY (nequipmenttypecode)
+)
+WITH (OIDS = FALSE) TABLESPACE pg_default;
+
+ALTER TABLE public.equipmenttype OWNER to postgres;
+
+INSERT INTO equipmenttype (sequipmenttypename, nstatus, ndefaultstatus, jsondata, createdate, createby_usercode) SELECT 'Equipments', 1, 4, '{}', '2023-11-23 12:08:01.187496', 1 WHERE NOT EXISTS (SELECT 1 FROM equipmenttype WHERE sequipmenttypename = 'Equipments');
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'equipmentcategory_nequipmentcatcode_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE equipmentcategory_nequipmentcatcode_seq;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.equipmentcategory
+(
+    nequipmentcatcode integer NOT NULL DEFAULT nextval('equipmentcategory_nequipmentcatcode_seq'::regclass),
+    equipmenttype_nequipmenttypecode integer NOT NULL,
+    ndefaultstatus integer NOT NULL DEFAULT 4,
+    nsitecode integer NOT NULL DEFAULT '-1'::integer,
+    nstatus integer NOT NULL DEFAULT 1,
+    sdescription character varying(255) COLLATE pg_catalog."default",
+    sequipmentcatname character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    createby_usercode integer DEFAULT 1,
+    createdate timestamp without time zone DEFAULT now(),
+    CONSTRAINT equipmentcategory_pkey PRIMARY KEY (nequipmentcatcode)
+)
+WITH (OIDS = FALSE) TABLESPACE pg_default;
+
+ALTER TABLE public.equipmentcategory OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'equipment_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE equipment_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.equipment
+(
+    nequipmentcode integer NOT NULL DEFAULT nextval('equipment_sequence'::regclass),
+    equipmentcategory_nequipmentcatcode integer NOT NULL,
+    equipmenttype_nequipmenttypecode integer NOT NULL,
+    ntransactionstatus integer NOT NULL,
+    sequipmentname character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    jsondata jsonb NOT NULL,
+    jsonuidata jsonb NOT NULL,
+    nstatus integer NOT NULL DEFAULT 1,
+    nsitecode integer,
+    createddate timestamp without time zone DEFAULT ('now'::text)::date,
+    createby_usercode integer DEFAULT 1,
+    CONSTRAINT equipment_pkey PRIMARY KEY (nequipmentcode)
+)
+WITH (OIDS = FALSE) TABLESPACE pg_default;
+
+ALTER TABLE public.equipment OWNER to postgres;

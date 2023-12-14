@@ -321,5 +321,8 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	List<LSprotocolmaster> findByprotocolmasternameIn(List<String> protocolList);
 
+	LSprotocolmaster findFirstByProtocolmastercodeAndCreatedateBetween(Integer protocolmastercode, Date fromdate,
+			Date todate);
+
 
 }

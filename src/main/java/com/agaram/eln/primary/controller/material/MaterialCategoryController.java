@@ -48,15 +48,7 @@ public class MaterialCategoryController {
 		
 		return materialcategoryservice.updateMaterialCategory(materialCategory);
 	}
-	
-//	@PostMapping(value = "/getActiveMaterialCategoryById")
-//	public ResponseEntity<Object> getActiveMaterialCategoryById(@RequestBody Map<String, Object> inputMap)throws Exception {
-//		
-//		final int nmaterialcatcode = (Integer) inputMap.get("nmaterialcatcode");
-//		
-//		return materialcategoryservice.getActiveMaterialCategoryById(nmaterialcatcode);
-//	}
-	
+		
 	@PostMapping(value = "/deleteMaterialCategory")
 	public ResponseEntity<Object> deleteMaterialCategory(@RequestBody Map<String, Object> inputMap) throws Exception {
 		final ObjectMapper objmapper = new ObjectMapper();

@@ -53,12 +53,6 @@ public class DashBoardController {
 		}
 
 	}
-	@PostMapping("/Getdashboardorderspartially")
-	public Map<String, Object> Getdashboardorderspartially(@RequestBody LSuserMaster objuser)throws Exception {
-		
-		return dashBoardService.Getdashboardorderspartially(objuser);
-		
-	}
 
 	@PostMapping("/Getdashboardparameters")
 	public Map<String, Object> Getdashboardparameters(@RequestBody LSuserMaster objuser)throws Exception {

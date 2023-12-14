@@ -3,6 +3,7 @@ package com.agaram.eln.primary.repository.instrumentDetails;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.transaction.Transactional;
 
@@ -1719,12 +1720,12 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			LSprojectmaster lstprojectforfilter2, Integer testcode2, LSuserMaster objuser3, Date fromdate3,
 			Date todate3, int k, LSprojectmaster lstprojectforfilter3, Integer testcode3);
 
-	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
-			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Pageable pageable);
+//	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
+//			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Pageable pageable);
 
-	List<Logilabordermaster> findByOrderflagAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
-			String string, int i, LSuserMaster objuser, Date fromdate, Date todate, int j,
-			List<LSprojectmaster> lstproject, Pageable pageable);
+//	List<Logilabordermaster> findByOrderflagAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
+//			String string, int i, LSuserMaster objuser, Date fromdate, Date todate, int j,
+//			List<LSprojectmaster> lstproject, Pageable pageable);
 
 	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNull(
 			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
@@ -1733,18 +1734,18 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			String string, int i, LSuserMaster objuser, Date fromdate, Date todate, int j,
 			List<LSprojectmaster> lstproject);
 
-	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
-			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Pageable pageable);
+//	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
+//			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Pageable pageable);
 
 	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNull(
 			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i);
 
-	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
-			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Pageable pageable);
+//	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
+//			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Pageable pageable);
 
-	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-			String string, List<LSprojectmaster> lstproject, int i, LSuserMaster objuser, Date fromdate, Date todate,
-			Pageable pageable);
+//	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+//			String string, List<LSprojectmaster> lstproject, int i, LSuserMaster objuser, Date fromdate, Date todate,
+//			Pageable pageable);
 
 	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNull(
 			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
@@ -2225,12 +2226,12 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndLockeduserIsNotNullOrderByBatchcodeDesc(
 			String string, List<LSsamplemaster> lstsample, int i, LSuserMaster lsuserMaster);
 
-	List<Logilabordermaster> findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-			String string, int i, Date fromdate, Date todate, String string2, int j, LSuserMaster objuser,
-			Date fromdate2, Date todate2, String string3, int k, LSuserMaster objuser2, Date fromdate3, Date todate3,
-			String string4, int l, Date fromdate4, Date todate4, List<LSuserMaster> usernotify, String string5,
-			LSuserMaster objuser3, LSuserMaster objuser4, Date fromdate5, Date todate5, String string6,
-			LSuserMaster objuser5, Date fromdate6, Date todate6, Pageable pageable);
+//	List<Logilabordermaster> findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//			String string, int i, Date fromdate, Date todate, String string2, int j, LSuserMaster objuser,
+//			Date fromdate2, Date todate2, String string3, int k, LSuserMaster objuser2, Date fromdate3, Date todate3,
+//			String string4, int l, Date fromdate4, Date todate4, List<LSuserMaster> usernotify, String string5,
+//			LSuserMaster objuser3, LSuserMaster objuser4, Date fromdate5, Date todate5, String string6,
+//			LSuserMaster objuser5, Date fromdate6, Date todate6, Pageable pageable);
 
 	long countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			String string, int i, Date fromdate, Date todate, String string2, int j, LSuserMaster objuser,
@@ -2243,17 +2244,17 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, LSuserMaster objuser,
 			Pageable pageable);
 
-	long countByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
-			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, LSuserMaster objuser);
+//	long countByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+//			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, LSuserMaster objuser);
 
-	List<Logilabordermaster> findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-			String string, int i, Date fromdate, Date todate, String string2, int j, LSuserMaster objuser,
-			Date fromdate2, Date todate2, int k, String string3, int l, LSuserMaster objuser2, Date fromdate3,
-			Date todate3, int m, String string4, int n, LSuserMaster objuser3, Date fromdate4, Date todate4,
-			String string5, int o, LSuserMaster objuser4, Date fromdate5, Date todate5, String string6, int p,
-			LSuserMaster objuser5, Date fromdate6, Date todate6, String string7, LSuserMaster objuser6,
-			LSuserMaster objuser7, Date fromdate7, Date todate7, String string8, LSuserMaster objuser8, Date fromdate8,
-			Date todate8, Pageable pageable);
+//	List<Logilabordermaster> findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//			String string, int i, Date fromdate, Date todate, String string2, int j, LSuserMaster objuser,
+//			Date fromdate2, Date todate2, int k, String string3, int l, LSuserMaster objuser2, Date fromdate3,
+//			Date todate3, int m, String string4, int n, LSuserMaster objuser3, Date fromdate4, Date todate4,
+//			String string5, int o, LSuserMaster objuser4, Date fromdate5, Date todate5, String string6, int p,
+//			LSuserMaster objuser5, Date fromdate6, Date todate6, String string7, LSuserMaster objuser6,
+//			LSuserMaster objuser7, Date fromdate7, Date todate7, String string8, LSuserMaster objuser8, Date fromdate8,
+//			Date todate8, Pageable pageable);
 
 	long countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			String string, int i, Date fromdate, Date todate, String string2, int j, LSuserMaster objuser,
@@ -2264,8 +2265,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			LSuserMaster objuser7, Date fromdate7, Date todate7, String string8, LSuserMaster objuser8, Date fromdate8,
 			Date todate8);
 
-	long countByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
-			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, LSuserMaster objuser);
+//	long countByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+//			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, LSuserMaster objuser);
 
 	List<Logilabordermaster> findByLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatus(
 			int i, LSuserMaster objuser, Date fromdate, Date todate, int j, int k, LSuserMaster objuser2,
@@ -2285,8 +2286,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			LSuserMaster objuser6, Date fromdate5, Date todate5, int q, LSuserMaster objuser7, Date fromdate6,
 			Date todate6, int r);
 
-	long countByApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsuserMasterNot(
-			int i, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, LSuserMaster objuser);
+//	long countByApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsuserMasterNot(
+//			int i, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, LSuserMaster objuser);
 
 	List<Logilabordermaster> findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeAndLsuserMasterNotOrderByBatchcodeDesc(
 			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, int i, Integer testcode,
@@ -2296,21 +2297,21 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, Integer testcode,
 			LSuserMaster objuser, Pageable pageable);
 
-	long countByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeAndLsuserMasterNot(
-			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, int i, Integer testcode,
-			LSuserMaster objuser);
+//	long countByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeAndLsuserMasterNot(
+//			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, int i, Integer testcode,
+//			LSuserMaster objuser);
 
-	long countByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeAndLsuserMasterNot(
-			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, Integer testcode,
-			LSuserMaster objuser);
+//	long countByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeAndLsuserMasterNot(
+//			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, Integer testcode,
+//			LSuserMaster objuser);
 
 	List<Logilabordermaster> findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeAndLsuserMasterNotOrderByBatchcodeDesc(
 			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, Integer testcode,
 			LSuserMaster objuser, Pageable pageable);
 
-	long countByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeAndLsuserMasterNot(
-			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, Integer testcode,
-			LSuserMaster objuser);
+//	long countByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeAndLsuserMasterNot(
+//			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, Integer testcode,
+//			LSuserMaster objuser);
 
 	List<Logilabordermaster> findByLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullAndTestcodeOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusAndTestcode(
 			int i, LSuserMaster objuser, Date fromdate, Date todate, int j, Integer testcode, int k,
@@ -2332,20 +2333,20 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Date todate5, int q, Integer testcode5, LSuserMaster objuser7, Date fromdate6, Date todate6, int r,
 			Integer testcode6);
 
-	long countByApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeAndLsuserMasterNot(
-			int i, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, Integer testcode,
-			LSuserMaster objuser);
+//	long countByApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeAndLsuserMasterNot(
+//			int i, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, Integer testcode,
+//			LSuserMaster objuser);
 
-	List<Logilabordermaster> findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
-			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, int i, LSuserMaster objuser,
-			Pageable pageable);
+//	List<Logilabordermaster> findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+//			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, int i, LSuserMaster objuser,
+//			Pageable pageable);
 
-	List<Logilabordermaster> findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
-			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, LSuserMaster objuser,
-			Pageable pageable);
+//	List<Logilabordermaster> findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+//			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, LSuserMaster objuser,
+//			Pageable pageable);
 
-	Long countByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndLsuserMasterNot(
-			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, int i, LSuserMaster objuser);
+//	Long countByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndLsuserMasterNot(
+//			String string, List<LSsamplemaster> currentChunk, Date fromdate, Date todate, int i, LSuserMaster objuser);
 
 	List<LSlogilablimsorderdetail> findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfile(
 			List<LSprojectmaster> lstproject, Integer filetype, LSfile lsfile);
@@ -2417,15 +2418,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	@Transactional
 	@Modifying
-//	@Query(value = "SELECT * FROM LSlogilablimsorderdetail o "
-//			+ "WHERE (o.orderflag =?1 And filetype=?2 And createdtimestamp BETWEEN ?3 And ?4)"
-//			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
-//			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
-//			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
-//			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
-//			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?9 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
-//			+ "OR(o.orderflag =?1 And lsusermaster_usercode =?5 And assignedto_usercode !=?5 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NOT NULL)"
-//			+ "OR(o.orderflag =?1 And  assignedto_usercode=?5 And createdtimestamp BETWEEN ?3 And ?4)", nativeQuery = true)
 	@Query(value = "SELECT * FROM LSlogilablimsorderdetail o "
 			+ "WHERE (o.orderflag =?1 And filetype=?2 And createdtimestamp BETWEEN ?3 And ?4)"
 			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
@@ -2461,12 +2453,111 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			+ "OR(lsprojectmaster_projectcode IS NULL And viewoption=?9 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And ordercancell =?12 And assignedto_usercode IS NULL)"
 			+ "OR(lsusermaster_usercode =?5 And assignedto_usercode !=?5 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NOT NULL And ordercancell =?12)"
 			+ "OR(assignedto_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And ordercancell =?12)"
-		    + "OR(approvelstatus =?6  And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?13)) And createdtimestamp BETWEEN ?3 And ?4  And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
-            +"OR(o.orderflag =?10 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?13))And createdtimestamp BETWEEN ?3 And ?4  And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
-            +"OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?13))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
-            +"OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?13))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
-			, nativeQuery = true)
+			+ "OR(approvelstatus =?6  And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?13)) And createdtimestamp BETWEEN ?3 And ?4  And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+			+ "OR(o.orderflag =?10 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?13))And createdtimestamp BETWEEN ?3 And ?4  And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?13))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?13))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+			+ "ORDER BY batchcode DESC OFFSET ?14 ROWS FETCH NEXT ?15 ROWS ONLY", nativeQuery = true)
 	public List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboard(String string, int i, Date fromdate,
-			Date todate, LSuserMaster objuser, int j, int k, int l, int m, String string2, List<LSuserMaster> list, int n, LSSiteMaster lsSiteMaster);
+			Date todate, LSuserMaster objuser, int j, int k, int l, int m, String string2, List<LSuserMaster> list,
+			int n, LSSiteMaster lsSiteMaster, int o, Integer integer);
+
+	@Transactional
+	@Modifying
+	@Query(value = "SELECT * FROM LSlogilablimsorderdetail o "
+			+ "WHERE (o.orderflag =?1 And filetype=?2 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?9 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And lsusermaster_usercode =?5 And assignedto_usercode !=?5 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NOT NULL)"
+			+ "OR(o.orderflag =?1 And  assignedto_usercode=?5 And createdtimestamp BETWEEN ?3 And ?4)"
+			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
+			+ "AND approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
+			+ "And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
+			+ "ANd viewoption=?9 And lsusermaster_usercode =?5 AND approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?10))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?10))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+			+ "ORDER BY batchcode DESC OFFSET ?11 ROWS FETCH NEXT ?12 ROWS ONLY", nativeQuery = true)
+	List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboardforcompleted(String string, int i, Date fromdate,
+			Date todate, LSuserMaster objuser, int j, int k, int l, int m, LSSiteMaster lssitemaster, int n,
+			Integer pageperorder);
+
+	@Transactional
+	@Modifying
+	@Query(value = "SELECT  *"
+//			+ "batchcode, batchid, lsworkflow_workflowcode ,"
+//		        + "CAST((select testname from lstestmasterlocal where testcode = o.lstestmasterlocal_testcode) as varchar(100)) as testname,"
+//		        + "CAST((select filenameuser from lsfile where filecode = o.lsfile_filecode) as varchar(100)) as filename,"
+//		        + "CAST((select projectname from lsprojectmaster where projectcode = o.lsprojectmaster_projectcode) as varchar(100)) as projectname, "
+//		        + "CAST((select samplename from lssamplemaster where samplecode = o.lssamplemaster_samplecode) as varchar(100)) as samplename, "
+//		        + "filetype, "
+//		        + "(select filecode from lsfile where filecode = o.lsfile_filecode) as filecode, "
+//		        + "orderflag, createdtimestamp, completedtimestamp, keyword, ordercancell,"
+//		        + "CAST((select workflowname from lsworkflow where workflowcode = o.lsworkflow_workflowcode) as varchar(100)) as lsworkflow "
+			+ " FROM LSlogilablimsorderdetail o "
+			+ "WHERE (o.orderflag =?1 And filetype=?2 And createdtimestamp BETWEEN ?3 And ?4)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?6 And lsusermaster_usercode =?5 And ordercancell IS NULL And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And ordercancell IS NULL And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?8 And ordercancell IS NULL And createdtimestamp BETWEEN ?3 And ?4 and lsusermaster_usercode in(?9) And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And lsusermaster_usercode =?5 And assignedto_usercode !=?5 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NOT NULL)"
+			+ "OR(o.orderflag =?1 And  assignedto_usercode=?5 And createdtimestamp BETWEEN ?3 And ?4)"
+			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1))  And createdtimestamp BETWEEN ?3 And ?4 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?10))And createdtimestamp BETWEEN ?3 And ?4  And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+			+ "ORDER BY batchcode DESC OFFSET ?11 ROWS FETCH NEXT ?12 ROWS ONLY", nativeQuery = true)
+	List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboardforpending(String string, int i, Date fromdate,
+			Date todate, LSuserMaster objuser, int j, int k, int l, List<LSuserMaster> usernotify,
+			LSSiteMaster lssitemaster, int m, Integer pageperorder);
+	
+	
+
+	@Transactional
+//	@Modifying
+	@Query(value = "SELECT  count(*)  FROM LSlogilablimsorderdetail o "
+			+ "WHERE (o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?6))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?2 And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?6))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)", nativeQuery = true)
+	 long getLSlogilablimsorderdetaildashboardforcount(String string, int i, Date fromdate, Date todate,
+			LSuserMaster objuser, LSSiteMaster lssitemaster);
+
+	@Transactional
+//	@Modifying
+	@Query(value = "SELECT  count(*) FROM LSlogilablimsorderdetail o "
+			+ "WHERE (o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?2))And createdtimestamp BETWEEN ?3 And ?4  And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)", nativeQuery = true)
+	long getLSlogilablimsorderdetaildashboardforpendingcount(String string, LSSiteMaster lssitemaster, Date fromdate,
+			Date todate, LSuserMaster objuser);
+
+	@Transactional
+//	@Modifying
+	@Query(value = "SELECT  count(*) FROM LSlogilablimsorderdetail o "
+			+ "WHERE (approvelstatus =?1  And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?5)) And createdtimestamp BETWEEN ?2 And ?3  And assignedto_usercode IS NULL And lsusermaster_usercode !=?4)", nativeQuery = true)
+	long getLSlogilablimsorderdetaildashboardforrejectcount(int i, Date fromdate, Date todate, LSuserMaster objuser,
+			LSSiteMaster lssitemaster);
+	
+	@Transactional
+//	@Modifying
+	@Query(value = "SELECT  count(*)  FROM LSlogilablimsorderdetail o "
+			+ "WHERE (o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?6))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?2 And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5 And testcode=?7)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?6))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5 And testcode=?7)", nativeQuery = true)
+	public long getLSlogilablimsorderdetaildashboardforcompletecountfilter(String string, int i, Date fromdate, Date todate,
+			LSuserMaster objuser, LSSiteMaster lssitemaster, Integer testcode);
+
+	@Transactional
+//	@Modifying
+	@Query(value = "SELECT  count(*) FROM LSlogilablimsorderdetail o "
+			+ "WHERE (o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?2))And createdtimestamp BETWEEN ?3 And ?4  And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5 And testcode=?6)", nativeQuery = true)
+	long getLSlogilablimsorderdetaildashboardforpendingcountfilter(String string, LSSiteMaster lssitemaster, Date fromdate,
+			Date todate, LSuserMaster objuser, Integer testcode);
+
+	@Transactional
+//	@Modifying
+	@Query(value = "SELECT  count(*) FROM LSlogilablimsorderdetail o "
+			+ "WHERE (approvelstatus =?1  And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?5)) And createdtimestamp BETWEEN ?2 And ?3  And assignedto_usercode IS NULL And lsusermaster_usercode !=?4 And testcode=?6)", nativeQuery = true)
+	long getLSlogilablimsorderdetaildashboardforrejectcountfilter(int i, Date fromdate, Date todate, LSuserMaster objuser,
+			LSSiteMaster lssitemaster, Integer testcode);
+
 
 }

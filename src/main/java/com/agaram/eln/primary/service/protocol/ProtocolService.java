@@ -2326,17 +2326,17 @@ public class ProtocolService {
 		LSusersteam objteam = lsusersteamRepository
 				.findByteamcode(objClass.getLsprojectmaster().getLsusersteam().getTeamcode());
 		String previousworkflowname = lsworkflow != null ? lsworkflow.getWorkflowname() : "";
-		String currnetworkflow = objClass.getLsprotocolorderworkflowhistory().get(0).getLsworkflow().getWorkflowname();
+		String currnetworkflow = objClass.getLsprotocolorderworkflowhistory().get(objClass.getLsprotocolorderworkflowhistory().size()-1).getLsworkflow().getWorkflowname();
 		if (previousworkflowname.equals(objClass.getLsworkflow().getWorkflowname()) && LsProto.getApproved() == 1) {
 			Content = "Protocol Order: " + objClass.getProtoclordername() + " was approved by the " + obj.getUsername()
 					+ " on the Workflow: " + currnetworkflow + "";
 		} else if (LsProto.getApproved() == 0 && objClass.getRejected() == null) {
 			Content = "Protocol Order: " + objClass.getProtoclordername() + " was sent from the workflow level : "
-					+ previousworkflowname + " to : " + currnetworkflow + " by " + obj.getUsername() + "";
+					+ currnetworkflow + " to : " +  previousworkflowname + " by " + obj.getUsername() + "";
 		} else if (LsProto.getApproved() == 2 && objClass.getRejected() == null) {
 			Content = "Protocol Order: " + objClass.getProtoclordername()
-					+ " was returned to the previous level of workflow from :" + previousworkflowname + " to : "
-					+ currnetworkflow + " by " + obj.getUsername() + "";
+					+ " was returned to the previous level of workflow from :" + currnetworkflow + " to : "
+					+ previousworkflowname + " by " + obj.getUsername() + "";
 		} else if (LsProto.getRejected() == 1) {
 			Content = "Protocol Order: " + objClass.getProtoclordername() + " was rejected by " + obj.getUsername()
 					+ "  upon review";
@@ -4302,6 +4302,8 @@ public class ProtocolService {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		LSprotocolmaster LSprotocolmasterrecord = LSProtocolMasterRepositoryObj
 				.findFirstByProtocolmastercode(lSprotocolmaster.getProtocolmastercode());
+		LSprotocolmaster LSprotocolmasterrecordtransaction= LSProtocolMasterRepositoryObj
+				.findFirstByProtocolmastercodeAndCreatedateBetween(lSprotocolmaster.getProtocolmastercode(),lSprotocolmaster.getFromdate(), lSprotocolmaster.getTodate());		
 		LSuserMaster createby = lSuserMasterRepository.findByusercode(LSprotocolmasterrecord.getCreatedby());
 		List<LSprotocolworkflowhistory> lsprotocolworkflowhistory = lsprotocolworkflowhistoryRepository
 				.findByProtocolmastercodeAndCreatedateBetween(lSprotocolmaster.getProtocolmastercode(),
@@ -4312,11 +4314,11 @@ public class ProtocolService {
 		List<LSprotocolversion> lsprotocolversion = lsprotocolversionRepository
 				.findByprotocolmastercodeAndCreatedateBetween(lSprotocolmaster.getProtocolmastercode(),
 						lSprotocolmaster.getFromdate(), lSprotocolmaster.getTodate());
-
 		mapObj.put("createby", createby);
 		mapObj.put("lsprotocolworkflowhistory", lsprotocolworkflowhistory);
 		mapObj.put("modifiedlist", modifiedlist);
 		mapObj.put("lsprotocolversion", lsprotocolversion);
+		mapObj.put("lsprotocoltransaction", LSprotocolmasterrecordtransaction);		
 
 		return mapObj;
 	}
