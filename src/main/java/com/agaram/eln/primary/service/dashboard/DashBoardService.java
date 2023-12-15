@@ -1783,19 +1783,19 @@ public class DashBoardService {
 			} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 
-//					lstorders = lslogilablimsorderdetailRepository
-//							.findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-//									"N", 0, fromdate, todate, "N", 1, objuser, fromdate, todate, "N", 2, objuser,
-//									fromdate, todate, "N", 3, fromdate, todate, objuser.getUsernotify(), "N", objuser,
-//									objuser, fromdate, todate, "N", objuser, fromdate, todate, pageable);
-//
-//					lstorders.addAll(lslogilablimsorderdetailRepository
-//							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
-//									"N", lstproject, fromdate, todate, pageable));
-//
-//					lstorders.addAll(lslogilablimsorderdetailRepository
-//							.findByOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-//									"N", lstproject, 3, objuser, fromdate, todate, pageable));
+					lstorders = lslogilablimsorderdetailRepository
+							.findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+									"N", 0, fromdate, todate, "N", 1, objuser, fromdate, todate, "N", 2, objuser,
+									fromdate, todate, "N", 3, fromdate, todate, objuser.getUsernotify(), "N", objuser,
+									objuser, fromdate, todate, "N", objuser, fromdate, todate, pageable);
+
+					lstorders.addAll(lslogilablimsorderdetailRepository
+							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
+									"N", lstproject, fromdate, todate, pageable));
+
+					lstorders.addAll(lslogilablimsorderdetailRepository
+							.findByOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+									"N", lstproject, 3, objuser, fromdate, todate, pageable));
 					lstordersdem =lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforpending("N", 0, fromdate, todate,objuser,1,2,3,objuser.getUsernotify(),objuser.getLssitemaster(),objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder());
 
 					
@@ -1908,28 +1908,28 @@ public class DashBoardService {
 
 				}
 
-				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
-
-					int startIndex = i * chunkSize;
-					int endIndex = Math.min(startIndex + chunkSize, totalSamples);
-					List<LSsamplemaster> currentChunk = lstsample1.subList(startIndex, endIndex);
-
-					List<Logilabordermaster> orderChunk = new ArrayList<>();
-					if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
-						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
-										"N", currentChunk, fromdate, todate, objuser, pageable));
-					} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
-						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeAndLsuserMasterNotOrderByBatchcodeDesc(
-										"N", currentChunk, fromdate, todate, testcode, objuser, pageable));
-					}
-
-					return orderChunk;
-
-				}).flatMap(List::stream).collect(Collectors.toList());
-
-				lstorders.addAll(lstorderobj);
+//				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
+//
+//					int startIndex = i * chunkSize;
+//					int endIndex = Math.min(startIndex + chunkSize, totalSamples);
+//					List<LSsamplemaster> currentChunk = lstsample1.subList(startIndex, endIndex);
+//
+//					List<Logilabordermaster> orderChunk = new ArrayList<>();
+//					if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
+//						orderChunk.addAll(lslogilablimsorderdetailRepository
+//								.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
+//										"N", currentChunk, fromdate, todate, objuser, pageable));
+//					} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
+//						orderChunk.addAll(lslogilablimsorderdetailRepository
+//								.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeAndLsuserMasterNotOrderByBatchcodeDesc(
+//										"N", currentChunk, fromdate, todate, testcode, objuser, pageable));
+//					}
+//
+//					return orderChunk;
+//
+//				}).flatMap(List::stream).collect(Collectors.toList());
+//
+//				lstorders.addAll(lstorderobj);
 
 //				countforsample = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
 //						.mapToLong(i -> {
