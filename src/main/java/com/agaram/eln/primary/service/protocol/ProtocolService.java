@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -50,6 +51,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.config.CustomMultipartFile;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
+import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudUserSignature;
@@ -7506,6 +7508,10 @@ public class ProtocolService {
 			List<LSprotocolorderstephistory> rtobj = lsprotocolorderstephistoryRepository
 					.findByProtocolordercodeAndStepstartdateBetweenOrderByProtocolorderstephistorycodeDesc(
 							objuser.getProtocolordercode(), objuser.getFromdate(), objuser.getTodate());
+			rtobj.addAll(lsprotocolorderstephistoryRepository
+					.findByProtocolordercodeAndStependdateBetweenOrderByProtocolorderstephistorycodeDesc(
+					objuser.getProtocolordercode(), objuser.getFromdate(), objuser.getTodate()));
+			
 			return rtobj;
 		} else if (objuser.getBatchcode() != null) {
 			List<LSprotocolorderstephistory> rtobj = lsprotocolorderstephistoryRepository
@@ -7746,7 +7752,7 @@ public class ProtocolService {
 						}
 						String url = originurl + "/protocol/downloadprotocolfile/" + objimg.getFileid() + "/"
 								+ TenantContext.getCurrentTenant() + "/" + filename + "/" + objimg.getExtension();
-						objimg.setLink(originurl);
+						objimg.setLink(url);
 						return objimg;
 					}).collect(Collectors.toList());
 

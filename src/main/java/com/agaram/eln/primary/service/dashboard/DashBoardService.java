@@ -1806,19 +1806,19 @@ public class DashBoardService {
 			} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 
-					lstorders = lslogilablimsorderdetailRepository
-							.findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-									"N", 0, fromdate, todate, "N", 1, objuser, fromdate, todate, "N", 2, objuser,
-									fromdate, todate, "N", 3, fromdate, todate, objuser.getUsernotify(), "N", objuser,
-									objuser, fromdate, todate, "N", objuser, fromdate, todate, pageable);
-
-					lstorders.addAll(lslogilablimsorderdetailRepository
-							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
-									"N", lstproject, fromdate, todate, pageable));
-
-					lstorders.addAll(lslogilablimsorderdetailRepository
-							.findByOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-									"N", lstproject, 3, objuser, fromdate, todate, pageable));
+//					lstorders = lslogilablimsorderdetailRepository
+//							.findByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//									"N", 0, fromdate, todate, "N", 1, objuser, fromdate, todate, "N", 2, objuser,
+//									fromdate, todate, "N", 3, fromdate, todate, objuser.getUsernotify(), "N", objuser,
+//									objuser, fromdate, todate, "N", objuser, fromdate, todate, pageable);
+//
+//					lstorders.addAll(lslogilablimsorderdetailRepository
+//							.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
+//									"N", lstproject, fromdate, todate, pageable));
+//
+//					lstorders.addAll(lslogilablimsorderdetailRepository
+//							.findByOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+//									"N", lstproject, 3, objuser, fromdate, todate, pageable));
 					lstordersdem =lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforpending("N", 0, fromdate, todate,objuser,1,2,3,objuser.getUsernotify(),objuser.getLssitemaster(),objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder());
 
 					
