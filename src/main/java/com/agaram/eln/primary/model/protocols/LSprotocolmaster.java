@@ -72,6 +72,18 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 		return viewoption;
 	}
 
+	@OneToMany
+	@JoinColumn(name="protocolmastercode")
+	private List<LSprotocolmethod> lsprotocolmethod;
+	
+	public List<LSprotocolmethod> getLsprotocolmethod() {
+		return lsprotocolmethod;
+	}
+
+	public void setLsprotocolmethod(List<LSprotocolmethod> lsprotocolmethod) {
+		this.lsprotocolmethod = lsprotocolmethod;
+	}
+
 	public void setViewoption(Integer viewoption) {
 		this.viewoption = viewoption;
 	}

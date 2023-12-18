@@ -41,11 +41,13 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.config.CustomMultipartFile;
@@ -62,6 +64,7 @@ import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo
 import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.fileManipulation.UserSignature;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LSsheetfolderfiles;
@@ -78,6 +81,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolfilesContent;
 import com.agaram.eln.primary.model.protocols.LSprotocolimages;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
+import com.agaram.eln.primary.model.protocols.LSprotocolmethod;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderfiles;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderfilesContent;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderimages;
@@ -131,6 +135,7 @@ import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolstepInfoRe
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolversionstepRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLsLogilabprotocolstepInfoRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.LSprotocolstepInformationRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSprotocolfolderfilesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSsheetfolderfilesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolOrderStructureRepository;
@@ -408,6 +413,10 @@ public class ProtocolService {
 
 	@Autowired
 	private EmailRepository EmailRepository;
+
+	@Autowired
+    private LSlogilablimsorderRepository lslogilablimsorderrepo;
+	
 //	@Autowired
 //	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
 
@@ -2823,7 +2832,38 @@ public class ProtocolService {
 			}
 
 			LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
+			//sri
+			List<LSlogilablimsorder> lsorder = new ArrayList<LSlogilablimsorder>();
+			if(lSlogilabprotocoldetail.getLsprotocolmaster().getLsprotocolmethod() != null && lSlogilabprotocoldetail.getLsprotocolmaster().getLsprotocolmethod().size() > 0) {
+				int protocolmethodindex = 0;
+				
+				//int methodindex = 0;
+				for (LSprotocolmethod objmethod : lSlogilabprotocoldetail.getLsprotocolmaster().getLsprotocolmethod()) {
+					LSlogilablimsorder objLimsOrder = new LSlogilablimsorder();
+					String Limsorder=lSlogilabprotocoldetail.getProtocolordercode().toString();
+					
+					//lSlogilabprotocoldetail.setProbatchid("PRO"+Limsorder);
+					String order = "";
+					if (protocolmethodindex < 10) {
+						order = Limsorder.concat("0" + protocolmethodindex);
+					} else {
+						order = Limsorder.concat("" + protocolmethodindex);
+					}
+					objLimsOrder.setOrderid(Long.parseLong(order));
+					objLimsOrder.setBatchid("ELN" + lSlogilabprotocoldetail.getProtocolordercode());
+					objLimsOrder.setMethodcode(objmethod.getMethodid());
+					objLimsOrder.setInstrumentcode(objmethod.getInstrumentid());
+					objLimsOrder.setTestcode(lSlogilabprotocoldetail.getTestcode() != null ? lSlogilabprotocoldetail.getTestcode().toString() : null);
+					objLimsOrder.setOrderflag("N");
+					objLimsOrder.setCreatedtimestamp(lSlogilabprotocoldetail.getCreatedtimestamp());
 
+					lsorder.add(objLimsOrder);
+					protocolmethodindex++;
+				}
+
+				lslogilablimsorderrepo.save(lsorder);
+			}
+			
 			if (lSlogilabprotocoldetail.getProtocolordercode() != null) {
 
 				String ProtocolOrderName = "ELN" + lSlogilabprotocoldetail.getProtocolordercode();
@@ -3102,8 +3142,62 @@ public class ProtocolService {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+		
+//sri		
+		new Thread(() -> {
+			try {
+				System.out.println("inside the thread SDMS order call");
+				createLogilabLIMSOrder4SDMS(lSlogilabprotocoldetail);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
+
 		return mapObj;
 	}
+	private void createLogilabLIMSOrder4SDMS(LSlogilabprotocoldetail objLSlogilabprotoorder) throws IOException {
+
+		List<LSlogilablimsorder> lstLSlogilablimsorder = lslogilablimsorderrepo
+				.findBybatchid(objLSlogilabprotoorder.getProtoclordername());
+
+		List<Map<String, Object>> lstMaPObject = new ArrayList<Map<String, Object>>();
+
+		lstLSlogilablimsorder.stream().peek(f -> {
+
+			if (f.getInstrumentcode() != null) {
+
+				Map<String, Object> objResMap = new HashMap<>();
+
+				objResMap.put("batchid", f.getBatchid());
+				objResMap.put("sampleid", f.getSampleid());
+				objResMap.put("testcode", f.getTestcode());
+				objResMap.put("methodcode", f.getMethodcode());
+				objResMap.put("instrumentcode", f.getInstrumentcode());
+				objResMap.put("instrumentname", f.getInstrumentname());
+				objResMap.put("orderid", f.getOrderid());
+
+				lstMaPObject.add(objResMap);
+			}
+
+		}).collect(Collectors.toList());
+
+		if (!lstMaPObject.isEmpty())
+			sdmsServiceCalling("ftpviewdata/createLogilabLIMSOrder", lstMaPObject);
+	}
+
+	private String sdmsServiceCalling(String uri, List<Map<String, Object>> lstMaPObject) {
+
+		final String url = env.getProperty("sdms.template.service.url") + uri;
+
+		RestTemplate restTemplate = new RestTemplate();
+		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+
+		String result = restTemplate.postForObject(url, lstMaPObject, String.class);
+
+		return result;
+
+	}
+
 
 	public void updateProtocolOrderContent(String Content, LSlogilabprotocoldetail objOrder, Integer ismultitenant)
 			throws IOException {

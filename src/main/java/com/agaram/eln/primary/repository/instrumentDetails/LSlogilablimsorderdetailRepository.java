@@ -2464,27 +2464,131 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	@Transactional
 	@Modifying
-	@Query(value = "SELECT * FROM LSlogilablimsorderdetail o "
-			+ "WHERE (o.orderflag =?1 And filetype=?2 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NULL)"
-			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
-			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
-			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
-			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
-			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?9 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
-			+ "OR(o.orderflag =?1 And lsusermaster_usercode =?5 And assignedto_usercode !=?5 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NOT NULL)"
-			+ "OR(o.orderflag =?1 And  assignedto_usercode=?5 And createdtimestamp BETWEEN ?3 And ?4)"
-			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
-			+ "AND approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
-			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
-			+ "And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
-			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
-			+ "ANd viewoption=?9 And lsusermaster_usercode =?5 AND approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
-			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?10))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
-			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?10))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
-			+ "ORDER BY batchcode DESC OFFSET ?11 ROWS FETCH NEXT ?12 ROWS ONLY", nativeQuery = true)
-	List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboardforcompleted(String string, int i, Date fromdate,
-			Date todate, LSuserMaster objuser, int j, int k, int l, int m, LSSiteMaster lssitemaster, int n,
-			Integer pageperorder);
+//	@Query(value = "SELECT * FROM LSlogilablimsorderdetail o "
+//			+ "WHERE (o.orderflag =?1 And filetype=?2 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NULL)"
+//			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+//			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+//			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?7 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
+//			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?8 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
+//			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And viewoption=?9 And lsusermaster_usercode =?5 And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
+//			+ "OR(o.orderflag =?1 And lsusermaster_usercode =?5 And assignedto_usercode !=?5 And createdtimestamp BETWEEN ?3 And ?4 And assignedto_usercode IS NOT NULL)"
+//			+ "OR(o.orderflag =?1 And  assignedto_usercode=?5 And createdtimestamp BETWEEN ?3 And ?4)"
+//			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
+//			+ "AND approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+//			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
+//			+ "And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL)"
+//			+ "OR(o.orderflag =?1 And o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN (SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN (SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 and teamcode is not null) AND status = 1)) And createdtimestamp BETWEEN ?3 And ?4 "
+//			+ "ANd viewoption=?9 And lsusermaster_usercode =?5 AND approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL)"
+//			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?10))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+//			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?10))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?6 And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+//			+ "ORDER BY batchcode DESC OFFSET ?11 ROWS FETCH NEXT ?12 ROWS ONLY", nativeQuery = true)
+	@Query(value ="SELECT * FROM LSlogilablimsorderdetail o "
+	        + "WHERE "
+	        + "    ("
+	        + "        o.orderflag = ?1 "
+	        + "        AND filetype = ?2 "
+	        + "        AND createdtimestamp BETWEEN ?3 AND ?4 "
+	        + "        AND assignedto_usercode IS NULL "
+	        + "    ) "
+	        + "    OR ("
+	        + "        o.orderflag = ?1 "
+	        + "        AND lsprojectmaster_projectcode IS NULL "
+	        + "        AND ("
+	        + "            (viewoption = ?7 OR viewoption = ?8 OR viewoption = ?9) "
+	        + "            AND lsusermaster_usercode = ?5 "
+	        + "            AND createdtimestamp BETWEEN ?3 AND ?4 "
+	        + "            AND ("
+	        + "                (approvelstatus != ?6 AND ordercancell IS NULL AND assignedto_usercode IS NULL) "
+	        + "                OR (approvelstatus IS NULL AND ordercancell IS NULL AND assignedto_usercode IS NULL) "
+	        + "            ) "
+	        + "        ) "
+	        + "    ) "
+	        + "    OR ("
+	        + "        o.orderflag = ?1 "
+	        + "        AND ("
+	        + "            (lsusermaster_usercode = ?5 AND assignedto_usercode != ?5 AND createdtimestamp BETWEEN ?3 AND ?4 AND assignedto_usercode IS NOT NULL) "
+	        + "            OR (assignedto_usercode = ?5 AND createdtimestamp BETWEEN ?3 AND ?4) "
+	        + "        ) "
+	        + "    ) "
+	        + "    OR ("
+	        + "        o.orderflag = ?1 "
+	        + "        AND ("
+	        + "            ("
+	        + "                o.lsprojectmaster_projectcode IN ("
+	        + "                    SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN ("
+	        + "                        SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN ("
+	        + "                            SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 AND teamcode IS NOT NULL"
+	        + "                        ) AND status = 1"
+	        + "                    )"
+	        + "                ) "
+	        + "                AND createdtimestamp BETWEEN ?3 AND ?4 "
+	        + "                AND approvelstatus != ?6 "
+	        + "                AND ordercancell IS NULL "
+	        + "                AND assignedto_usercode IS NULL "
+	        + "            ) "
+	        + "            OR ("
+	        + "                o.lsprojectmaster_projectcode IN ("
+	        + "                    SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN ("
+	        + "                        SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN ("
+	        + "                            SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 AND teamcode IS NOT NULL"
+	        + "                        ) AND status = 1"
+	        + "                    )"
+	        + "                ) "
+	        + "                AND createdtimestamp BETWEEN ?3 AND ?4 "
+	        + "                AND approvelstatus IS NULL "
+	        + "                AND ordercancell IS NULL "
+	        + "                AND assignedto_usercode IS NULL "
+	        + "            ) "
+	        + "            OR ("
+	        + "                o.lsprojectmaster_projectcode IN ("
+	        + "                    SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN ("
+	        + "                        SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN ("
+	        + "                            SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 AND teamcode IS NOT NULL"
+	        + "                        ) AND status = 1"
+	        + "                    )"
+	        + "                ) "
+	        + "                AND createdtimestamp BETWEEN ?3 AND ?4 "
+	        + "                AND viewoption = ?9 "
+	        + "                AND lsusermaster_usercode = ?5 "
+	        + "                AND approvelstatus != ?6 "
+	        + "                AND ordercancell IS NULL "
+	        + "                AND assignedto_usercode IS NULL "
+	        + "            ) "
+	        + "        ) "
+	        + "    ) "
+	        + "    OR ("
+	        + "        o.orderflag = ?1 "
+	        + "        AND lsprojectmaster_projectcode IS NULL "
+	        + "        AND elnmaterial_nmaterialcode IN ("
+	        + "            SELECT DISTINCT elnmaterial_nmaterialcode FROM lslogilablimsorderdetail WHERE elnmaterial_nmaterialcode IN ("
+	        + "                SELECT m.nmaterialcode FROM elnmaterial m WHERE m.nsitecode = ?10"
+	        + "            )"
+	        + "        ) "
+	        + "        AND createdtimestamp BETWEEN ?3 AND ?4 "
+	        + "        AND approvelstatus IS NULL "
+	        + "        AND ordercancell IS NULL "
+	        + "        AND assignedto_usercode IS NULL "
+	        + "        AND lsusermaster_usercode != ?5 "
+	        + "    ) "
+	        + "    OR ("
+	        + "        o.orderflag = ?1 "
+	        + "        AND lsprojectmaster_projectcode IS NULL "
+	        + "        AND elnmaterial_nmaterialcode IN ("
+	        + "            SELECT DISTINCT elnmaterial_nmaterialcode FROM lslogilablimsorderdetail WHERE elnmaterial_nmaterialcode IN ("
+	        + "                SELECT m.nmaterialcode FROM elnmaterial m WHERE m.nsitecode = ?10"
+	        + "            )"
+	        + "        ) "
+	        + "        AND createdtimestamp BETWEEN ?3 AND ?4 "
+	        + "        AND approvelstatus != ?6 "
+	        + "        AND ordercancell IS NULL "
+	        + "        AND assignedto_usercode IS NULL "
+	        + "        AND lsusermaster_usercode != ?5 "
+	        + "    ) "
+	        + "ORDER BY batchcode DESC "
+	        + "OFFSET ?11 ROWS FETCH NEXT ?12 ROWS ONLY", nativeQuery = true)
+	List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboardforcompleted(
+	        String string, int i, Date fromdate, Date todate, LSuserMaster objuser, int j, int k, int l, int m,
+	        LSSiteMaster lssitemaster, int n, Integer pageperorder);
 
 	@Transactional
 	@Modifying
@@ -2508,6 +2612,30 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboardforpending(String string, int i, Date fromdate,
 			Date todate, LSuserMaster objuser, int j, int k, int l, List<LSuserMaster> usernotify,
 			LSSiteMaster lssitemaster, int m, Integer pageperorder);
+	
+	
+	@Transactional
+//	@Modifying
+	@Query(value = "SELECT  *  FROM LSlogilablimsorderdetail o "
+			+ "WHERE (o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?6))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus !=?2 And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)"
+			+ "OR(o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?6))And createdtimestamp BETWEEN ?3 And ?4 And approvelstatus IS NULL And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)", nativeQuery = true)
+	List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboardformaterial(String string, int i, Date fromdate, Date todate,
+			LSuserMaster objuser, LSSiteMaster lssitemaster);
+	
+	@Transactional
+//	@Modifying
+	@Query(value = "SELECT  * FROM LSlogilablimsorderdetail o "
+			+ "WHERE (o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?2))And createdtimestamp BETWEEN ?3 And ?4  And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)", nativeQuery = true)
+	List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboardformaterial(String string, LSSiteMaster lssitemaster, Date fromdate,
+			Date todate, LSuserMaster objuser);
+	
+	
+	@Transactional
+//	@Modifying
+	@Query(value = "SELECT  * FROM LSlogilablimsorderdetail o "
+			+ "WHERE (approvelstatus =?1  And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?5)) And createdtimestamp BETWEEN ?2 And ?3  And assignedto_usercode IS NULL And lsusermaster_usercode !=?4)", nativeQuery = true)
+	List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboardforrejectmaterial(int i, Date fromdate, Date todate, LSuserMaster objuser,
+			LSSiteMaster lssitemaster);
 
 	@Transactional
 //	@Modifying
@@ -2553,36 +2681,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	long getLSlogilablimsorderdetaildashboardforrejectcountfilter(int i, Date fromdate, Date todate,
 			LSuserMaster objuser, LSSiteMaster lssitemaster, Integer testcode);
 
-	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusOrOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
-			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, String string2,
-			List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2, String string3,
-			List<LSsamplemaster> lstsample1, Date fromdate3, Date todate3, int j, String string4,
-			List<LSsamplemaster> lstsample12, Date fromdate4, Date todate4, String string5, int k, Date fromdate5,
-			Date todate5, String string6, int l, LSuserMaster objuser, Date fromdate6, Date todate6, int m,
-			String string7, int n, LSuserMaster objuser2, Date fromdate7, Date todate7, int o, String string8, int p,
-			LSuserMaster objuser3, Date fromdate8, Date todate8, int q, List<LSprojectmaster> lstproject3,
-			String string9, int r, LSuserMaster objuser4, Date fromdate9, Date todate9, String string10, int s,
-			LSuserMaster objuser5, Date fromdate10, Date todate10, String string11, int t, LSuserMaster objuser6,
-			Date fromdate11, Date todate11, String string12, LSuserMaster objuser7, LSuserMaster objuser8,
-			Date fromdate12, Date todate12, String string13, LSuserMaster objuser9, Date fromdate13, Date todate13,
-			String string14, List<LSprojectmaster> lstproject4, Date fromdate14, Date todate14, String string15,
-			List<LSsamplemaster> lstsample13, Date fromdate15, Date todate15, String string16, int u, Date fromdate16,
-			Date todate16, String string17, int v, LSuserMaster objuser10, Date fromdate17, Date todate17,
-			String string18, int w, LSuserMaster objuser11, Date fromdate18, Date todate18, String string19,
-			List<LSprojectmaster> lstproject5, int x, LSuserMaster objuser12, Date fromdate19, Date todate19,
-			String string20, int y, Date fromdate20, Date todate20, List<LSuserMaster> usernotify, String string21,
-			LSuserMaster objuser13, LSuserMaster objuser14, Date fromdate21, Date todate21, String string22,
-			LSuserMaster objuser15, Date fromdate22, Date todate22, int z, List<LSprojectmaster> lstproject6,
-			Date fromdate23, Date todate23, int a, List<LSsamplemaster> lstsample14, Date fromdate24, Date todate24,
-			int b, LSuserMaster objuser16, Date fromdate25, Date todate25, int c, int d, LSuserMaster objuser17,
-			Date fromdate26, Date todate26, int e, int f, LSuserMaster objuser18, Date fromdate27, Date todate27, int g,
-			int h, LSuserMaster objuser19, Date fromdate28, Date todate28, int int1, LSuserMaster objuser20,
-			LSuserMaster objuser21, Date fromdate29, Date todate29, int int2, LSuserMaster objuser22, Date fromdate30,
-			Date todate30, int int3, int int4, List<LSprojectmaster> lstproject7, Date fromdate31, Date todate31,
-			int int5, LSuserMaster objuser23, Date fromdate32, Date todate32, int int6, int int7,
-			LSuserMaster objuser24, Date fromdate33, Date todate33, int int8, int int9, LSuserMaster objuser25,
-			Date fromdate34, Date todate34, int int10, LSuserMaster objuser26, LSuserMaster objuser27, Date fromdate35,
-			Date todate35, int int11, LSuserMaster objuser28, Date fromdate36, Date todate36, int int12,
-			Pageable pageable);
+	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusOrOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, String string2, List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2, String string3, int j, Date fromdate3, Date todate3, String string4, int k, LSuserMaster objuser, Date fromdate4, Date todate4, int l, String string5, int m, LSuserMaster objuser2, Date fromdate5, Date todate5, int n, String string6, int o, LSuserMaster objuser3, Date fromdate6, Date todate6, int p, List<LSprojectmaster> lstproject3, String string7, int q, LSuserMaster objuser4, Date fromdate7, Date todate7, String string8, int r, LSuserMaster objuser5, Date fromdate8, Date todate8, String string9, int s, LSuserMaster objuser6, Date fromdate9, Date todate9, String string10, LSuserMaster objuser7, LSuserMaster objuser8, Date fromdate10, Date todate10, String string11, LSuserMaster objuser9, Date fromdate11, Date todate11, String string12, List<LSprojectmaster> lstproject4, Date fromdate12, Date todate12, String string13, int t, Date fromdate13, Date todate13, String string14, int u, LSuserMaster objuser10, Date fromdate14, Date todate14, String string15, int v, LSuserMaster objuser11, Date fromdate15, Date todate15, String string16, List<LSprojectmaster> lstproject5, int w, LSuserMaster objuser12, Date fromdate16, Date todate16, String string17, int x, Date fromdate17, Date todate17, List<LSuserMaster> list, String string18, LSuserMaster objuser13, LSuserMaster objuser14, Date fromdate18, Date todate18, String string19, LSuserMaster objuser15, Date fromdate19, Date todate19, int y, List<LSprojectmaster> lstproject6, Date fromdate20, Date todate20, int z, LSuserMaster objuser16, Date fromdate21, Date todate21, int a, int b, LSuserMaster objuser17, Date fromdate22, Date todate22, int c, int d, LSuserMaster objuser18, Date fromdate23, Date todate23, int e, int f, LSuserMaster objuser19, Date fromdate24, Date todate24, int g, LSuserMaster objuser20, LSuserMaster objuser21, Date fromdate25, Date todate25, int h, LSuserMaster objuser22, Date fromdate26, Date todate26, int int1, int int2, List<LSprojectmaster> lstproject7, Date fromdate27, Date todate27, int int3, LSuserMaster objuser23, Date fromdate28, Date todate28, int int4, int int5, LSuserMaster objuser24, Date fromdate29, Date todate29, int int6, int int7, LSuserMaster objuser25, Date fromdate30, Date todate30, int int8, LSuserMaster objuser26, LSuserMaster objuser27, Date fromdate31, Date todate31, int int9, LSuserMaster objuser28, Date fromdate32, Date todate32, int int10, Pageable pageable
+);
 
 }

@@ -12,7 +12,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
+
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
@@ -31,6 +34,12 @@ public class Equipment implements Serializable{
 	
 	@ManyToOne
 	private EquipmentType equipmenttype;
+	
+	@Column(name = "sequipmentname", length = 100, nullable = false)
+	private String sequipmentname;
+	
+	@Column(name = "sequipmentid", length = 100)
+	private String sequipmentid;
 	
 	private Integer ntransactionstatus;
 	
@@ -51,6 +60,64 @@ public class Equipment implements Serializable{
 	
 	@Transient
 	private LScfttransaction objmanualaudit;
+
+	@Transient
+	private Response response;
+	
+	private Date callibrationdate;
+	private Date manintanancedate;
+	
+	@Type(type = "jsonb")
+	@Column(name = "jsondata", columnDefinition = "jsonb")
+	private String jsondata;
+	
+	public String getJsondata() {
+		return jsondata;
+	}
+
+	public void setJsondata(String jsondata) {
+		this.jsondata = jsondata;
+	}
+
+	public Date getCallibrationdate() {
+		return callibrationdate;
+	}
+
+	public void setCallibrationdate(Date callibrationdate) {
+		this.callibrationdate = callibrationdate;
+	}
+
+	public Date getManintanancedate() {
+		return manintanancedate;
+	}
+
+	public void setManintanancedate(Date manintanancedate) {
+		this.manintanancedate = manintanancedate;
+	}
+	
+	public Response getResponse() {
+		return response;
+	}
+
+	public void setResponse(Response response) {
+		this.response = response;
+	}
+
+	public String getSequipmentname() {
+		return sequipmentname;
+	}
+
+	public void setSequipmentname(String sequipmentname) {
+		this.sequipmentname = sequipmentname;
+	}
+
+	public String getSequipmentid() {
+		return sequipmentid;
+	}
+
+	public void setSequipmentid(String sequipmentid) {
+		this.sequipmentid = sequipmentid;
+	}
 
 	public Integer getNequipmentcode() {
 		return nequipmentcode;

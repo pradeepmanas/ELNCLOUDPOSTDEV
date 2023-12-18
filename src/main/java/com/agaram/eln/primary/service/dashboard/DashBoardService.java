@@ -1172,34 +1172,20 @@ public class DashBoardService {
 //							objuser, fromdate, todate, "R", objuser, objuser, fromdate, todate, "R", objuser, fromdate,
 //							todate, pageable);
 			
-//			List<LSlogilablimsorderdetail> lstordersdem =lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboard("R", 0, fromdate, todate,objuser,3,1,2,3,"N",objuser.getUsernotify(),1,objuser.getLssitemaster(),objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder());
-//			lstorders = lstordersdem.stream()
-//					.map(lsOrderDetail -> new Logilabordermaster(lsOrderDetail.getBatchcode(),
-//							lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(),
-//							lsOrderDetail.getTestname(), lsOrderDetail.getLsfile(),
-//							lsOrderDetail.getLssamplemaster(), lsOrderDetail.getLsprojectmaster(),
-//							lsOrderDetail.getFiletype(), lsOrderDetail.getOrderflag(),
-//							lsOrderDetail.getAssignedto(), lsOrderDetail.getCreatedtimestamp(),
-//							lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
-//							lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
-//							lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
-//							lsOrderDetail.getTestcode()))
-//					.collect(Collectors.toList());
-			
-	
+			if(env.getProperty("app.datasource.eln.url").toLowerCase().contains("postgres")) {
+
 			lstorders = lslogilablimsorderdetailRepository
-					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrApprovelstatusAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusOrOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
-							"R", lstproject, fromdate, todate, 3, "R", lstproject, fromdate, todate, "R", lstsample1,
-							fromdate, todate, 3, "R", lstsample1, fromdate, todate, "R", 0, fromdate, todate, "R", 1,
+					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusOrOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
+							"R", lstproject, fromdate, todate, 3, "R", lstproject, fromdate, todate, "R", 0, fromdate, todate, "R", 1,
 							objuser, fromdate, todate, 3, "R", 2, objuser, fromdate, todate, 3, "R", 3, objuser,
 							fromdate, todate, 3, lstproject, "R", 1, objuser, fromdate, todate, "R", 2, objuser,
 							fromdate, todate, "R", 3, objuser, fromdate, todate, "R", objuser, objuser, fromdate,
 							todate, "R", objuser, fromdate, todate, 
-							"N", lstproject, fromdate, todate, "N", lstsample1, fromdate, todate, "N", 0, fromdate,
+							"N", lstproject, fromdate, todate, "N", 0, fromdate,
 							todate, "N", 1, objuser, fromdate, todate, "N", 2, objuser, fromdate, todate, "N",
 							lstproject, 3, objuser, fromdate, todate, "N", 3, fromdate, todate, objuser.getUsernotify(),
 							"N", objuser, objuser, fromdate, todate, "N", objuser, fromdate, todate,
-							3, lstproject, fromdate, todate, 3, lstsample1, fromdate, todate, 1, objuser, fromdate,
+							3, lstproject, fromdate, todate,  1, objuser, fromdate,
 							todate, 3, 2, objuser, fromdate, todate, 3, 3, objuser, fromdate, todate, 3, 3, objuser,
 							fromdate, todate, 3, objuser, objuser, fromdate, todate, 3, objuser, fromdate, todate, 3,
 							1, lstproject, fromdate, todate, 1, objuser, fromdate, todate, 1, 2, objuser, fromdate,
@@ -1207,6 +1193,41 @@ public class DashBoardService {
 							fromdate, todate, 1,
 							pageable);
 
+			
+			List<LSlogilablimsorderdetail> lstordersdem=lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardformaterial("R",3,fromdate, todate,objuser,objuser.getLssitemaster());
+//			lstlimscompleted.addAndGet(countcompleted);
+			lstordersdem.addAll(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardformaterial("N",objuser.getLssitemaster(),fromdate, todate,objuser));
+			lstordersdem.addAll(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforrejectmaterial(3, fromdate, todate, objuser,objuser.getLssitemaster()));
+			if(!lstordersdem.isEmpty()) {
+			lstorders.addAll(lstordersdem.stream()
+					.map(lsOrderDetail -> new Logilabordermaster(lsOrderDetail.getBatchcode(),
+							lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(),
+							lsOrderDetail.getTestname(), lsOrderDetail.getLsfile(),
+							lsOrderDetail.getLssamplemaster(), lsOrderDetail.getLsprojectmaster(),
+							lsOrderDetail.getFiletype(), lsOrderDetail.getOrderflag(),
+							lsOrderDetail.getAssignedto(), lsOrderDetail.getCreatedtimestamp(),
+							lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
+							lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
+							lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
+							lsOrderDetail.getTestcode()))
+					.collect(Collectors.toList()));
+			}
+			}else {
+				List<LSlogilablimsorderdetail> lstordersdem =lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboard("R", 0, fromdate, todate,objuser,3,1,2,3,"N",objuser.getUsernotify(),1,objuser.getLssitemaster(),objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder());
+				lstorders = lstordersdem.stream()
+						.map(lsOrderDetail -> new Logilabordermaster(lsOrderDetail.getBatchcode(),
+								lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(),
+								lsOrderDetail.getTestname(), lsOrderDetail.getLsfile(),
+								lsOrderDetail.getLssamplemaster(), lsOrderDetail.getLsprojectmaster(),
+								lsOrderDetail.getFiletype(), lsOrderDetail.getOrderflag(),
+								lsOrderDetail.getAssignedto(), lsOrderDetail.getCreatedtimestamp(),
+								lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
+								lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
+								lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
+								lsOrderDetail.getTestcode()))
+						.collect(Collectors.toList());
+			}
+	
 
 
 //			lstorders.addAll(lslogilablimsorderdetailRepository
@@ -1586,7 +1607,7 @@ public class DashBoardService {
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		Integer testcode = objuser.getTestcode();
-		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
+//		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
 		Pageable pageable = new PageRequest(objuser.getPagesize(), objuser.getPageperorder());
 		long count = 0;
 		List<LSprojectmaster> lstproject = objuser.getLstproject();
@@ -1977,13 +1998,15 @@ public class DashBoardService {
 //
 //				count += countforsample;
 
-			} else if (objuser.getObjuser().getOrderselectiontype() == 4) {
-				lstorders = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLssamplefileInAndCreatedtimestampBetween("N", lssamplefile, fromdate, todate,
-								pageable);
-//				count = lslogilablimsorderdetailRepository.countByOrderflagAndLssamplefileInAndCreatedtimestampBetween(
-//						"N", lssamplefile, fromdate, todate);
-			} else if (objuser.getObjuser().getOrderselectiontype() == 5) {
+			} 
+//			else if (objuser.getObjuser().getOrderselectiontype() == 4) {
+//				lstorders = lslogilablimsorderdetailRepository
+//						.findByOrderflagAndLssamplefileInAndCreatedtimestampBetween("N", lssamplefile, fromdate, todate,
+//								pageable);
+////				count = lslogilablimsorderdetailRepository.countByOrderflagAndLssamplefileInAndCreatedtimestampBetween(
+////						"N", lssamplefile, fromdate, todate);
+//			}
+			else if (objuser.getObjuser().getOrderselectiontype() == 5) {
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 
 					lstorders = lslogilablimsorderdetailRepository
@@ -2574,13 +2597,15 @@ public class DashBoardService {
 //
 //				count += countforsample;
 
-			} else if (objuser.getObjuser().getOrderselectiontype() == 4) {
-				lstorders = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLssamplefileInAndCreatedtimestampBetween("N", lssamplefile, fromdate, todate,
-								pageable);
-//				count = lslogilablimsorderdetailRepository.countByOrderflagAndLssamplefileInAndCreatedtimestampBetween(
-//						"N", lssamplefile, fromdate, todate);
-			} else if (objuser.getObjuser().getOrderselectiontype() == 5) {
+			}
+//			else if (objuser.getObjuser().getOrderselectiontype() == 4) {
+//				lstorders = lslogilablimsorderdetailRepository
+//						.findByOrderflagAndLssamplefileInAndCreatedtimestampBetween("N", lssamplefile, fromdate, todate,
+//								pageable);
+////				count = lslogilablimsorderdetailRepository.countByOrderflagAndLssamplefileInAndCreatedtimestampBetween(
+////						"N", lssamplefile, fromdate, todate);
+//			}
+			else if (objuser.getObjuser().getOrderselectiontype() == 5) {
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 
 					lstorders = lslogilablimsorderdetailRepository

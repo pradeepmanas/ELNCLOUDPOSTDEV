@@ -1119,8 +1119,6 @@ ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS lockeduse
 
 ALTER TABLE IF Exists materialtype ADD Column IF NOT EXISTS sampletype INTEGER default 1;
 
-ALTER TABLE IF Exists elnmaterialinventory ADD COLUMN IF NOT EXISTS manintanancedate timestamp without time zone,ADD COLUMN IF NOT EXISTS callibrationdate timestamp without time zone,ADD COLUMN IF NOT EXISTS sequipid character varying(100);
-
 INSERT INTO materialtype (smaterialtypename, sampletype, nstatus, ndefaultstatus, jsondata, createdate, createby_usercode, expvalidation, quarvalidation) SELECT 'Samples', 1, 1, 4, '{}', '2023-11-23 12:08:01.187496', 1, false, false WHERE NOT EXISTS (SELECT 1 FROM materialtype WHERE smaterialtypename = 'Samples');
 
 INSERT INTO materialcategory (smaterialcatname, nuserrolecode, nstatus, nmaterialtypecode, nsitecode, ndefaultstatus, createdate, createby_usercode) SELECT 'Samples', -1, 1, mt.nmaterialtypecode, 1, 3, '2023-11-23 12:08:01.187496', 1 FROM materialtype mt WHERE mt.smaterialtypename = 'Samples' AND NOT EXISTS (SELECT 1 FROM materialcategory WHERE smaterialcatname = 'Samples' );
@@ -1228,7 +1226,6 @@ CREATE TABLE IF NOT EXISTS public.equipment
     ntransactionstatus integer NOT NULL,
     sequipmentname character varying(100) COLLATE pg_catalog."default" NOT NULL,
     jsondata jsonb NOT NULL,
-    jsonuidata jsonb NOT NULL,
     nstatus integer NOT NULL DEFAULT 1,
     nsitecode integer,
     createddate timestamp without time zone DEFAULT ('now'::text)::date,
@@ -1238,3 +1235,50 @@ CREATE TABLE IF NOT EXISTS public.equipment
 WITH (OIDS = FALSE) TABLESPACE pg_default;
 
 ALTER TABLE public.equipment OWNER to postgres;
+
+ALTER TABLE equipment DROP COLUMN IF Exists jsonuidata;
+
+ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS manintanancedate timestamp without time zone,ADD COLUMN IF NOT EXISTS callibrationdate timestamp without time zone,ADD COLUMN IF NOT EXISTS sequipmentid character varying(100);
+
+
+    DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsprotocolmethod_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE lsprotocolmethod_sequence;
+   ELSIF _kind = 'S' THEN  
+      -- do nothing?
+   ELSE             
+      -- do something!
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.lsprotocolmethod
+(
+    protocolmethodcode integer NOT NULL,
+    instrumentid character varying(120) COLLATE pg_catalog."default",
+    methodid character varying(120) COLLATE pg_catalog."default",
+    protocolmastercode integer,
+    sectioncode integer,
+    stepcode integer,
+    CONSTRAINT lsprotocolmethod_pkey PRIMARY KEY (protocolmethodcode),
+    CONSTRAINT fkc4nmo3njuakiypx2ohlt8xerk FOREIGN KEY (protocolmastercode)
+        REFERENCES public.lsprotocolmaster (protocolmastercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.lsprotocolmethod
+    OWNER to postgres;
+    
