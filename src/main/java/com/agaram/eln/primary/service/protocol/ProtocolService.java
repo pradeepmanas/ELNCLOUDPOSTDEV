@@ -151,6 +151,7 @@ import com.agaram.eln.primary.repository.protocol.LSprotocolfilesContentReposito
 import com.agaram.eln.primary.repository.protocol.LSprotocolfilesRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolimagesRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolmastertestRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolmethodRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderfilesContentRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderfilesRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderimagesRepository;
@@ -419,7 +420,10 @@ public class ProtocolService {
 	
 //	@Autowired
 //	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
-
+ 
+	@Autowired
+	private LSprotocolmethodRepository lsprotocolmethodrepo;
+	
 	public Map<String, Object> getProtocolMasterInit(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		LScfttransaction LScfttransactionobj = new LScfttransaction();
@@ -5364,6 +5368,12 @@ public class ProtocolService {
 				protocolMaster.setProtocoldatainfo((String) body.get("protocoldatainfo"));
 			}
 
+			if (lSprotocolmaster.getLsprotocolmethod() != null && !lSprotocolmaster.getLsprotocolmethod().isEmpty()) {
+				//	lSprotocolmaster.getLsprotocolmethod().get(0).setProtocolmastercode(lSprotocolmaster.getProtocolmastercode());
+					lsprotocolmethodrepo.deleteByprotocolmastercode(lSprotocolmaster.getProtocolmastercode());
+					lsprotocolmethodrepo.save(lSprotocolmaster.getLsprotocolmethod());
+				}
+			
 			if ((protocolMaster.getApproved() != null && protocolMaster.getApproved() == 1)) {
 				
 				LSprotocolversion version = new LSprotocolversion();

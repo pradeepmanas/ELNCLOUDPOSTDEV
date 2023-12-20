@@ -660,6 +660,8 @@ ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS activeus
 
 ALTER TABLE IF Exists lsactiveuser ADD Column IF NOT EXISTS removeinititated BOOLEAN;
 
+update LSactiveuser set removeinititated =false where removeinititated is null;
+
 DO
 $do$
 DECLARE
@@ -1161,6 +1163,8 @@ WITH (OIDS = FALSE) TABLESPACE pg_default;
 
 ALTER TABLE public.equipmenttype OWNER to postgres;
 
+ALTER TABLE IF Exists equipmenttype ADD COLUMN IF NOT EXISTS sequipmenttypename character varying(100);
+
 INSERT INTO equipmenttype (sequipmenttypename, nstatus, ndefaultstatus, jsondata, createdate, createby_usercode) SELECT 'Equipments', 1, 4, '{}', '2023-11-23 12:08:01.187496', 1 WHERE NOT EXISTS (SELECT 1 FROM equipmenttype WHERE sequipmenttypename = 'Equipments');
 
 DO
@@ -1240,8 +1244,7 @@ ALTER TABLE equipment DROP COLUMN IF Exists jsonuidata;
 
 ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS manintanancedate timestamp without time zone,ADD COLUMN IF NOT EXISTS callibrationdate timestamp without time zone,ADD COLUMN IF NOT EXISTS sequipmentid character varying(100);
 
-
-    DO
+DO
 $do$
 DECLARE
    _kind "char";
