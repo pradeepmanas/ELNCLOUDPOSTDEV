@@ -3,9 +3,15 @@ package com.agaram.eln.primary.repository.protocol;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import javax.transaction.Transactional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+
+import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderworkflowhistory;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 
 public interface LSprotocolorderworkflowhistoryRepository extends JpaRepository<LSprotocolorderworkflowhistory, Integer>{
 
@@ -13,5 +19,8 @@ public interface LSprotocolorderworkflowhistoryRepository extends JpaRepository<
 
 	List<LSprotocolorderworkflowhistory> findByProtocolordercodeAndCreatedateBetween(Integer protocolordercode,
 			Date fromdate, Date todate);
-
+	@Transactional
+	@Modifying
+	@Query(value="update LSprotocolorderworkflowhistory  set currentworkflow_workflowcode = null where currentworkflow_workflowcode = ?1",nativeQuery = true)
+	void setWorkflownullforHistory(Elnprotocolworkflow lsworkflow);
 }

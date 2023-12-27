@@ -357,7 +357,9 @@ public class UserService {
 					LSMultisitesRepositery.save(objusermaster.getLsmultisites());
 				}
 				LSMultiusergroupRepositery.deleteByusercode(objusermaster.getUsercode());
-				LSMultiusergroupRepositery.save(objusermaster.getMultiusergroupcode());
+				List<LSMultiusergroup> objects=objusermaster.getMultiusergroupcode();
+				LSMultiusergroupRepositery.save(objects);
+				updateUser.setMultiusergroupcode(objects);
 				updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A"
 						: objusermaster.getUserstatus().equals("Deactive") ? "D" : "Locked");
 				updateUser.setUserfullname(objusermaster.getUserfullname());

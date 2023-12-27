@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileversion;
@@ -251,5 +252,21 @@ public class FileController {
 	@PostMapping(value = "/updatefilename")
 	public LSfile updatefilename(@RequestBody LSfile objfile)throws Exception {
 		return fileService.updatefilename(objfile);
+	}
+	
+	@PostMapping("/GetProtocolOrderWorkflow")
+	public List<Elnprotocolworkflow> GetProtocolOrderWorkflow(@RequestBody Elnprotocolworkflow objflow) {
+		return fileService.GetProtocolOrderWorkflow(objflow);
+	}
+	
+	@PostMapping("/InsertUpdateprotocolorderWorkflow")
+	public List<Elnprotocolworkflow> InsertUpdateprotocolorderWorkflow(@RequestBody Elnprotocolworkflow[] workflow) {
+
+		return fileService.InsertUpdateprotocolorderWorkflow(workflow);
+	}
+	
+	@PostMapping("/Deleteprotocolorderworkflow")
+	public Response Deleteprotocolorderworkflow(@RequestBody Elnprotocolworkflow objflow) {
+		return fileService.Deleteprotocolorderworkflow(objflow);
 	}
 }

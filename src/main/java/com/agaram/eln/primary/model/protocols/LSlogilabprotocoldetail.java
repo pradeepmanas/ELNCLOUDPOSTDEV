@@ -222,6 +222,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private LSprotocolworkflow lSprotocolworkflow;
 	
 	@ManyToOne
+	private Elnprotocolworkflow elnprotocolworkflow;
+	
+	public Elnprotocolworkflow getElnprotocolworkflow() {
+		return elnprotocolworkflow;
+	}
+
+	public void setElnprotocolworkflow(Elnprotocolworkflow elnprotocolworkflow) {
+		this.elnprotocolworkflow = elnprotocolworkflow;
+	}
+
+	@ManyToOne
 	private LSworkflow lsworkflow;
 	
 	private Integer ordercancell;

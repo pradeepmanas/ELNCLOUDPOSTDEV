@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
+import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
@@ -1409,6 +1410,17 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	List<Logilabprotocolorders> findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserNotOrderByProtocolordercodeDesc(
 			List<LSprojectmaster> lstproject, Integer sitecode, String string, Integer usercode);
+	
+	
+	@Transactional
+	@Modifying
+	@Query(value ="update LSlogilabprotocoldetail  set elnprotocolworkflow_workflowcode = null where elnprotocolworkflow_workflowcode = ?1", nativeQuery = true)
+	void setWorkflownullforcompletedorder(Elnprotocolworkflow lsworkflow);
+
+
+	long countByelnprotocolworkflowAndOrderflag(Elnprotocolworkflow objflow, String string);
+
+
 
 
 

@@ -1282,6 +1282,101 @@ WITH (
 )
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.lsprotocolmethod
+ALTER TABLE IF EXISTS public.lsprotocolmethod OWNER to postgres;
+    
+delete from period where speriodname in ('Never','NA','Minutes','Day Without Hours');
+
+CREATE TABLE IF NOT EXISTS public.elnprotocolworkflow
+(
+    workflowcode integer NOT NULL,
+    workflowname character varying(120) COLLATE pg_catalog."default",
+    lssitemaster_sitecode integer,
+    CONSTRAINT elnprotocolworkflow_pkey PRIMARY KEY (workflowcode),
+    CONSTRAINT fkod7wbg5h1ih4pevt3oxk6be1f FOREIGN KEY (lssitemaster_sitecode)
+        REFERENCES public.lssitemaster (sitecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.elnprotocolworkflow
+    OWNER to postgres;
+
+    CREATE TABLE IF NOT EXISTS public.elnprotocolworkflowgroupmap
+(
+    workflowmapid integer NOT NULL,
+    workflowcode integer,
+    lsusergroup_usergroupcode integer,
+    CONSTRAINT elnprotocolworkflowgroupmap_pkey PRIMARY KEY (workflowmapid),
+    CONSTRAINT fkanrjwn5d7j6ruu3v5ri6uxltn FOREIGN KEY (workflowcode)
+        REFERENCES public.elnprotocolworkflow (workflowcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fktbt930h7jlk9ojp6h6ygjhklh FOREIGN KEY (lsusergroup_usergroupcode)
+        REFERENCES public.lsusergroup (usergroupcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.elnprotocolworkflowgroupmap
     OWNER to postgres;
     
+DO $$
+DECLARE
+  Elnprotocolworkflow INTEGER := 0;
+  LSworkflow INTEGER := 0;
+BEGIN
+  SELECT COUNT(*) INTO Elnprotocolworkflow FROM Elnprotocolworkflow;
+  SELECT COUNT(*) INTO LSworkflow FROM LSworkflow;
+  IF Elnprotocolworkflow = 0 AND LSworkflow != 0 THEN
+   INSERT INTO Elnprotocolworkflow
+      SELECT * FROM LSworkflow;
+  END IF;
+END
+$$;
+
+DO $$
+DECLARE
+  elnprotocolworkflowgroupmap INTEGER := 0;
+  LSworkflowgroupmapping INTEGER := 0;
+BEGIN
+  SELECT COUNT(*) INTO elnprotocolworkflowgroupmap FROM elnprotocolworkflowgroupmap;
+  SELECT COUNT(*) INTO LSworkflowgroupmapping FROM LSworkflowgroupmapping;
+  IF elnprotocolworkflowgroupmap = 0 AND LSworkflowgroupmapping != 0 THEN
+   INSERT INTO elnprotocolworkflowgroupmap
+      SELECT * FROM LSworkflowgroupmapping  where workflowcode is not null and lsusergroup_usergroupcode is not null;
+  END IF;
+END
+$$;
+
+
+ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS elnprotocolworkflow_workflowcode integer;
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fk15axj242rehy7vaftbtr51fv2'
+AND table_name='lslogilabprotocoldetail';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY lslogilabprotocoldetail ADD CONSTRAINT fk15axj242rehy7vaftbtr51fv2 FOREIGN KEY (elnprotocolworkflow_workflowcode) REFERENCES elnprotocolworkflow(workflowcode);
+   END IF;
+END
+$do$; 
+
+DO $$
+DECLARE
+  Elnprotocolworkflow INTEGER := 0;
+BEGIN
+ SELECT COUNT(*) INTO Elnprotocolworkflow FROM lslogilabprotocoldetail where elnprotocolworkflow_workflowcode is not null;
+  IF Elnprotocolworkflow = 0 THEN
+  UPDATE lslogilabprotocoldetail
+SET elnprotocolworkflow_workflowcode =lsworkflow_workflowcode ;
+  END IF;
+END
+$$;

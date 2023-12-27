@@ -38,6 +38,7 @@ import com.agaram.eln.primary.model.general.SheetVersion;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
+import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -62,6 +63,10 @@ import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetVersionReposit
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsSheetorderlimsrefrenceRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsorderworkflowhistoryRepositroy;
+import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowRepository;
+import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowgroupmapRepository;
+import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolorderworkflowhistoryRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileparameterRepository;
@@ -150,6 +155,8 @@ public class FileService {
 
 	@Autowired
 	private LsorderworkflowhistoryRepositroy lsorderworkflowhistoryRepositroy;
+	@Autowired
+	private LSprotocolorderworkflowhistoryRepository lsprotocolorderworkflowhistoryRepository;
 
 	@Autowired
 	private LSsheetupdatesRepository lssheetupdatesRepository;
@@ -192,6 +199,15 @@ public class FileService {
 
 	@Autowired
 	Commonservice commonservice;
+	
+	@Autowired
+	private ElnprotocolworkflowRepository elnprotocolworkflowRepository;
+	
+	@Autowired
+	private ElnprotocolworkflowgroupmapRepository elnprotocolworkflowgroupmapRepository;
+	
+	@Autowired
+	private LSlogilabprotocoldetailRepository LSlogilabprotocoldetailRepository;
 
 	public LSfile InsertupdateSheet(LSfile objfile) throws IOException {
 
@@ -1710,5 +1726,56 @@ public class FileService {
 
 			return objfile;
 		}
+	}
+
+	public List<Elnprotocolworkflow> GetProtocolOrderWorkflow(Elnprotocolworkflow objflow) {
+
+
+		if (objflow.getObjsilentaudit() != null) {
+			objflow.getObjsilentaudit().setTableName("Elnprotocolworkflow");
+			try {
+				objflow.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			lscfttransactionRepository.save(objflow.getObjsilentaudit());
+		}
+
+		return elnprotocolworkflowRepository.findByLssitemasterOrderByWorkflowcodeAsc(objflow.getLssitemaster());
+	
+	}
+
+	public List<Elnprotocolworkflow> InsertUpdateprotocolorderWorkflow(Elnprotocolworkflow[] workflow) {
+		List<Elnprotocolworkflow> lstworkflow1 = Arrays.asList(workflow);
+		for (Elnprotocolworkflow flow : lstworkflow1) {
+			elnprotocolworkflowgroupmapRepository.save(flow.getElnprotocolworkflowgroupmap());
+			elnprotocolworkflowRepository.save(flow);
+		}
+
+		lstworkflow1.get(0).setResponse(new Response());
+		lstworkflow1.get(0).getResponse().setStatus(true);
+		lstworkflow1.get(0).getResponse().setInformation("ID_SHEETMSG");
+
+		return lstworkflow1;
+	}
+
+	public Response Deleteprotocolorderworkflow(Elnprotocolworkflow objflow) {
+		Response response = new Response();
+
+		long onprocess = LSlogilabprotocoldetailRepository.countByelnprotocolworkflowAndOrderflag(objflow, "N");
+		if (onprocess > 0) {
+			response.setStatus(false);
+
+		} else {
+			LSlogilabprotocoldetailRepository.setWorkflownullforcompletedorder(objflow);
+			lsprotocolorderworkflowhistoryRepository.setWorkflownullforHistory(objflow);
+			elnprotocolworkflowRepository.delete(objflow);
+			elnprotocolworkflowgroupmapRepository.delete(objflow.getElnprotocolworkflowgroupmap());
+			response.setStatus(true);
+
+		}
+
+		return response;
 	}
 }
