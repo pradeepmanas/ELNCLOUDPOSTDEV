@@ -647,10 +647,18 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	 	          tempPath="";
 	 			}else {// in cloudpath
 	 				System.out.println("Folder exist in azure");
+			         String azure = userDirectory+"src/main/resources/"+"Aspose License";
+ 		 				 System.out.println("azure:"+azure);
+  	 			         File azurefolder = new File(azure);
+  	
+  	 			         System.out.println("azureexists:"+azurefolder.exists());
+  	 			         System.out.println("azurefolderisdir:"+azurefolder.isDirectory());
+  	 			         System.out.println("License path i created :"+userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
+  	 			         
 	 				 License asposePdfLicenseText = new License();
 	 		            try {
 	 		            	
-							asposePdfLicenseText.setLicense(userDirectory+"/src/main/resources/Aspose License/Aspose.PDF.Java.lic");
+							asposePdfLicenseText.setLicense(userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic");
 							System.out.println("license is set");
 						} catch (Exception e1) {
 							
@@ -753,11 +761,18 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
   		 			        
   	 			        } else {
   	 			         System.out.println("Folder exists in azure");
-	 			            
+  	 			         String azure = userDirectory+"src/main/resources/"+"Aspose License";
+  		 				 System.out.println("azure:"+azure);
+   	 			         File azurefolder = new File(azure);
+   	
+   	 			         System.out.println("azureexists:"+azurefolder.exists());
+   	 			         System.out.println("azurefolderisdir:"+azurefolder.isDirectory());
+   	 			         System.out.println("License path i created :"+userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
+   	 			         
 	 			           License asposePdfLicenseCSV = new License();
 	 			           try {
 	 			        	   
-	 							asposePdfLicenseCSV.setLicense(userDirectory+"/src/main/resources/Aspose License/Aspose.PDF.Java.lic");
+	 							asposePdfLicenseCSV.setLicense(userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic");
 	 							System.out.println("License is set");
 	 						} catch (Exception e) {
 	 							
