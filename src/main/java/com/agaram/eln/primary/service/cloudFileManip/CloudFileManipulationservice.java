@@ -459,6 +459,7 @@ public class CloudFileManipulationservice {
 
 	public String storecloudfilesreturnUUID(MultipartFile file, String containername) throws IOException {
 
+		System.out.print("entering storecloudfilesreturnUUID function");
 		// String bloburi="";
 		CloudStorageAccount storageAccount;
 		CloudBlobClient blobClient = null;
@@ -487,7 +488,7 @@ public class CloudFileManipulationservice {
 			CloudBlockBlob blob = container.getBlockBlobReference(convFile.getName());
 
 			// Creating blob and uploading file to it
-			System.out.println("Uploading the sample file ");
+			System.out.println("Uploading the sample file in container "+container.getName());
 			blob.uploadFromFile(convFile.getAbsolutePath());
 
 			// bloburi = blob.getName();

@@ -82,7 +82,7 @@ public class FileUploadController {
     public Response uploadFile(@RequestParam("file") MultipartFile file ,@RequestParam("tenant") String tenant,
     		@RequestParam("isMultitenant") Integer isMultitenant,@RequestParam("originalfilename") String originalfilename,@RequestParam("version") Integer version) throws IOException{
 		
-		
+		System.out.print("going to storefile");
         String fileName = fileStorageService.storeFile(file,tenant, isMultitenant,originalfilename,version);
 		
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()

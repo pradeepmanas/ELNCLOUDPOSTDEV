@@ -97,9 +97,13 @@ public class FileStorageService {
 //                throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
 //            }
             String id = null;
-          
+    		System.out.print("in storefile function");
+
     		try {
     			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "parserfile");
+    			System.out.print("Blob ID"+id);
+    			System.out.print("stored in blob");
+
     		} catch (IOException e) {
     			
     			e.printStackTrace();

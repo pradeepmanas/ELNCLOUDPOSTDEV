@@ -9,6 +9,7 @@ import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialInventory;
+import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
@@ -63,6 +64,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	private Integer lockeduser;
 	private String lockedusername;
 	private Integer versionno;
+	List<Elnprotocolworkflow> lstelnprotocolworkflow;
+	private Elnprotocolworkflow elnprotocolworkflow;
 
 	public Logilabprotocolorders(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
@@ -71,13 +74,14 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 			Lsrepositoriesdata lsrepositoriesdata, Lsrepositories lsrepositories, LSworkflow lsworkflow,
 			Material material, MaterialInventory materialinventory, Integer approved, Integer rejected,
 			Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby,
-			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno) {
+			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow) {
 
 		this.protocolordercode = protocolordercode;
 		this.Testcode = Testcode;
 		this.protoclordername = protoclordername;
 		this.orderflag = orderflag;
-		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
+//		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;  //kumaresan 
+		this.workflowcode = elnprotocolworkflow != null ? elnprotocolworkflow.getWorkflowcode() : null;
 		this.protocoltype = protocoltype;
 		this.createdtimestamp = createdtimestamp;
 		this.completedtimestamp = completedtimestamp;
@@ -107,6 +111,41 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.lockeduser=lockeduser!=null?lockeduser:null;
 		this.lockedusername=lockedusername!=null?lockedusername:null;
 		this.versionno = versionno;
+		this.elnprotocolworkflow=elnprotocolworkflow;
+	}
+
+	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
+		return lstelnprotocolworkflow;
+	}
+
+	public void setLstelnprotocolworkflow(List<Elnprotocolworkflow> lstelnprotocolworkflow) {
+//		this.lstelnprotocolworkflow = lstelnprotocolworkflow;
+		if (lstelnprotocolworkflow != null && this.workflowcode != null && lstelnprotocolworkflow.size() > 0) {
+
+			List<Integer> lstworkflowcode = new ArrayList<Integer>();
+			if (lstelnprotocolworkflow != null && lstelnprotocolworkflow.size() > 0) {
+				lstworkflowcode = lstelnprotocolworkflow.stream().map(Elnprotocolworkflow::getWorkflowcode).collect(Collectors.toList());
+
+				if (lstworkflowcode.contains(this.workflowcode)) {
+					this.setCanuserprocess(true);
+				} else {
+					this.setCanuserprocess(false);
+				}
+			} else {
+				this.setCanuserprocess(false);
+			}
+		} else {
+			this.setCanuserprocess(false);
+		}
+		this.lstelnprotocolworkflow = null;
+	}
+
+	public Elnprotocolworkflow getElnprotocolworkflow() {
+		return elnprotocolworkflow;
+	}
+
+	public void setElnprotocolworkflow(Elnprotocolworkflow elnprotocolworkflow) {
+		this.elnprotocolworkflow = elnprotocolworkflow;
 	}
 
 	public Integer getLockeduser() {
@@ -330,25 +369,25 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	}
 
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
-
-		if (lstworkflow != null && this.workflowcode != null && lstworkflow.size() > 0) {
-
-			List<Integer> lstworkflowcode = new ArrayList<Integer>();
-			if (lstworkflow != null && lstworkflow.size() > 0) {
-				lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
-
-				if (lstworkflowcode.contains(this.workflowcode)) {
-					this.setCanuserprocess(true);
-				} else {
-					this.setCanuserprocess(false);
-				}
-			} else {
-				this.setCanuserprocess(false);
-			}
-		} else {
-			this.setCanuserprocess(false);
-		}
-		this.lstworkflow = null;
+		this.lstworkflow=lstworkflow;
+//		if (lstworkflow != null && this.workflowcode != null && lstworkflow.size() > 0) {
+//
+//			List<Integer> lstworkflowcode = new ArrayList<Integer>();
+//			if (lstworkflow != null && lstworkflow.size() > 0) {
+//				lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+//
+//				if (lstworkflowcode.contains(this.workflowcode)) {
+//					this.setCanuserprocess(true);
+//				} else {
+//					this.setCanuserprocess(false);
+//				}
+//			} else {
+//				this.setCanuserprocess(false);
+//			}
+//		} else {
+//			this.setCanuserprocess(false);
+//		}
+//		this.lstworkflow = null;
 	}
 
 	public Long getDirectorycode() {
