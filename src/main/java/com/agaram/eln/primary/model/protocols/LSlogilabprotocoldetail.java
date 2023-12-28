@@ -289,6 +289,9 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	List<LSworkflow> lstworkflow;
 	
 	@Transient
+	List<Elnprotocolworkflow> lstelnprotocolworkflow;
+	
+	@Transient
 	private List<Long> lstdirectorycode;
 	
 	@Transient
@@ -297,6 +300,15 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private List<LSuserMaster> lstuserMaster;
 	
+	
+	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
+		return lstelnprotocolworkflow;
+	}
+
+	public void setLstelnprotocolworkflow(List<Elnprotocolworkflow> lstelnprotocolworkflow) {
+		this.lstelnprotocolworkflow = lstelnprotocolworkflow;
+	}
+
 	public List<LSuserMaster> getLstuserMaster() {
 		return lstuserMaster;
 	}
