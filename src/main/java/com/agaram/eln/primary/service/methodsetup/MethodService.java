@@ -95,7 +95,6 @@ import com.itextpdf.text.pdf.PdfReader;
 //import com.itextpdf.text.pdf.eln.PdfTextExtractor;
 import com.mongodb.gridfs.GridFSDBFile;
 
-
 //import okhttp3.OkHttpClient;
 
 import java.nio.file.Path;
@@ -648,18 +647,44 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	 	          tempPath="";
 	 			}else {// in cloudpath
 	 				System.out.println("Folder exist in azure");
-			         String azure = userDirectory+"src/main/resources/"+"Aspose License";
+			         String azure = "src/main/resources/"+"Aspose License";
  		 				 System.out.println("azure:"+azure);
   	 			         File azurefolder = new File(azure);
   	
   	 			         System.out.println("azureexists:"+azurefolder.exists());
   	 			         System.out.println("azurefolderisdir:"+azurefolder.isDirectory());
-  	 			         System.out.println("License path i created :"+userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
+  	 			         System.out.println("License path i created :"+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
   	 			         
+  	
+  	 			         String azure1 = "src//main//resources//"+"Aspose License";
+		 				 System.out.println("azure:"+azure1);
+	 			         File azurefolder1 = new File(azure1);
+	
+	 			         System.out.println("azureexists1:"+azurefolder1.exists());
+	 			         System.out.println("azurefolderisdir1:"+azurefolder1.isDirectory());
+	 			         System.out.println("License path i created :"+"src//main//resources//Aspose License//Aspose.PDF.Java.lic"); 
+	
+	 			         
+	 			         String azure2 = "src\\main\\resources\\"+"Aspose License";
+		 				 System.out.println("azure:"+azure2);
+	 			         File azurefolder2 = new File(azure2);
+	
+	 			         System.out.println("azureexists2:"+azurefolder2.exists());
+	 			         System.out.println("azurefolderisdir2:"+azurefolder2.isDirectory());
+	 			         System.out.println("License path i created :"+"src\\main\\resources\\Aspose License\\Aspose.PDF.Java.lic"); 
+	
+	 			         String azure3 = userDirectory+"src/main/resources/"+"Aspose License";
+	  		 				 System.out.println("azure:"+azure3);
+	   	 			         File azurefolder3 = new File(azure3);
+	   	
+	   	 			         System.out.println("azureexists3:"+azurefolder3.exists());
+	   	 			         System.out.println("azurefolderisdir3:"+azurefolder3.isDirectory());
+	   	 			         System.out.println("License path i created :"+userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
+	   	 			         
 	 				 License asposePdfLicenseText = new License();
 	 		            try {
 	 		            	
-							asposePdfLicenseText.setLicense(userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic");
+							asposePdfLicenseText.setLicense("src/main/resources/Aspose License/Aspose.PDF.Java.lic");
 							System.out.println("license is set");
 						} catch (Exception e1) {
 							
@@ -762,18 +787,44 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
   		 			        
   	 			        } else {
   	 			         System.out.println("Folder exists in azure");
-  	 			         String azure = userDirectory+"src/main/resources/"+"Aspose License";
-  		 				 System.out.println("azure:"+azure);
-   	 			         File azurefolder = new File(azure);
-   	
-   	 			         System.out.println("azureexists:"+azurefolder.exists());
-   	 			         System.out.println("azurefolderisdir:"+azurefolder.isDirectory());
-   	 			         System.out.println("License path i created :"+userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
-   	 			         
+  	 			         String azure = "src/main/resources/"+"Aspose License";
+  	 	 		 				 System.out.println("azure:"+azure);
+  	 	  	 			         File azurefolder = new File(azure);
+  	 	  	
+  	 	  	 			         System.out.println("azureexists:"+azurefolder.exists());
+  	 	  	 			         System.out.println("azurefolderisdir:"+azurefolder.isDirectory());
+  	 	  	 			         System.out.println("License path i created :"+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
+  	 	  	 			         
+  	 	  	
+  	 	  	 			         String azure1 = "src//main//resources//"+"Aspose License";
+  	 			 				 System.out.println("azure:"+azure1);
+  	 		 			         File azurefolder1 = new File(azure1);
+  	 		
+  	 		 			         System.out.println("azureexists1:"+azurefolder1.exists());
+  	 		 			         System.out.println("azurefolderisdir1:"+azurefolder1.isDirectory());
+  	 		 			         System.out.println("License path i created :"+"src//main//resources//Aspose License//Aspose.PDF.Java.lic"); 
+  	 		
+  	 		 			         
+  	 		 			         String azure2 = "src\\main\\resources\\"+"Aspose License";
+  	 			 				 System.out.println("azure:"+azure2);
+  	 		 			         File azurefolder2 = new File(azure2);
+  	 		
+  	 		 			         System.out.println("azureexists2:"+azurefolder2.exists());
+  	 		 			         System.out.println("azurefolderisdir2:"+azurefolder2.isDirectory());
+  	 		 			         System.out.println("License path i created :"+"src\\main\\resources\\Aspose License\\Aspose.PDF.Java.lic"); 
+  	 		
+  	 		 			         String azure3 = userDirectory+"src/main/resources/"+"Aspose License";
+  	 		  		 				 System.out.println("azure:"+azure3);
+  	 		   	 			         File azurefolder3 = new File(azure3);
+  	 		   	
+  	 		   	 			         System.out.println("azureexists3:"+azurefolder3.exists());
+  	 		   	 			         System.out.println("azurefolderisdir3:"+azurefolder3.isDirectory());
+  	 		   	 			         System.out.println("License path i created :"+userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
+  	 		   	 			          			         
 	 			           License asposePdfLicenseCSV = new License();
 	 			           try {
 	 			        	   
-	 							asposePdfLicenseCSV.setLicense(userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic");
+	 							asposePdfLicenseCSV.setLicense("src/main/resources/Aspose License/Aspose.PDF.Java.lic");
 	 							System.out.println("License is set");
 	 						} catch (Exception e) {
 	 							
