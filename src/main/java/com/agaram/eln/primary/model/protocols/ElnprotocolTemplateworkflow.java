@@ -16,68 +16,34 @@ import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflowgroupmap;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 
 @Entity
-@Table(name = "Elnprotocolworkflow")
-public class Elnprotocolworkflow {
+@Table(name = "ElnprotocolTemplateworkflow")
+public class ElnprotocolTemplateworkflow {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Basic(optional = false)
 	@Column(name = "workflowcode") 
-	private int workflowcode;;
+	private int workflowcode;
 
 	@Column(columnDefinition = "varchar(120)")
 	private String workflowname;
 	
 	@OneToMany
 	@JoinColumn(name="workflowcode")
-	private List<Elnprotocolworkflowgroupmap> elnprotocolworkflowgroupmap;
+	private List<ElnprotocolTemplateworkflowgroupmap> elnprotocoltemplateworkflowgroupmap;
 	
-	public List<Elnprotocolworkflowgroupmap> getElnprotocolworkflowgroupmap() {
-		return elnprotocolworkflowgroupmap;
-	}
-
-	public void setElnprotocolworkflowgroupmap(List<Elnprotocolworkflowgroupmap> elnprotocolworkflowgroupmap) {
-		this.elnprotocolworkflowgroupmap = elnprotocolworkflowgroupmap;
-	}
-
 	@Transient
 	private LScfttransaction objsilentaudit;
 	
 	@Transient
-	private LScfttransaction objmanualaudit;
-	
-	@Transient
 	private Response response;
 	
-	@ManyToOne 
-	private LSSiteMaster lssitemaster;
 	
-	@Transient
-	private String sitename;
-	
-	@Transient 
-	private LSuserMaster lsusermaster;
-	
-	public LSuserMaster getLsusermaster() {
-		return lsusermaster;
-	}
-
-	public void setLsusermaster(LSuserMaster lsusermaster) {
-		this.lsusermaster = lsusermaster;
-	}
-
-	public LSSiteMaster getLssitemaster() {
-		return lssitemaster;
-	}
-
-	public void setLssitemaster(LSSiteMaster lssitemaster) {
-		this.lssitemaster = lssitemaster;
-	}
-
 	public Response getResponse() {
 		return response;
 	}
@@ -104,11 +70,40 @@ public class Elnprotocolworkflow {
 
 	@Transient
 	LoggedUser objuser;
-	
+	@ManyToOne 
+	private LSSiteMaster lssitemaster;
+	@Transient
+	private LScfttransaction objmanualaudit;
+	public LSSiteMaster getLssitemaster() {
+		return lssitemaster;
+	}
+
+	public void setLssitemaster(LSSiteMaster lssitemaster) {
+		this.lssitemaster = lssitemaster;
+	}
+
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
+
 	@Transient
 	LSuserMaster LSuserMaster;
 	
+	private Integer status;
 	
+	
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
 	public LScfttransaction getObjsilentaudit() {
 		return objsilentaudit;
 	}
@@ -133,27 +128,16 @@ public class Elnprotocolworkflow {
 		this.workflowname = workflowname;
 	}
 
-
-
-
-	public String getSitename() {
-		if(this.lssitemaster != null)
-		{
-			return this.lssitemaster.getSitename();
-		}
-		else
-		{
-			return "";
-		}
-	}
-	public void setSitename(String sitename) {
-		this.sitename = sitename;
-	}
-	public LScfttransaction getObjmanualaudit() {
-		return objmanualaudit;
+	public List<ElnprotocolTemplateworkflowgroupmap> getElnprotocoltemplateworkflowgroupmap() {
+		return elnprotocoltemplateworkflowgroupmap;
 	}
 
-	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
-		this.objmanualaudit = objmanualaudit;
+	public void setElnprotocoltemplateworkflowgroupmap(
+			List<ElnprotocolTemplateworkflowgroupmap> elnprotocoltemplateworkflowgroupmap) {
+		this.elnprotocoltemplateworkflowgroupmap = elnprotocoltemplateworkflowgroupmap;
 	}
+
+
+
+	
 }

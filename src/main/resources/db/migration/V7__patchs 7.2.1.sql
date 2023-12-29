@@ -1380,3 +1380,109 @@ SET elnprotocolworkflow_workflowcode =lsworkflow_workflowcode ;
   END IF;
 END
 $$;
+
+ALTER TABLE IF Exists lsprotocolorderworkflowhistory ADD COLUMN IF NOT EXISTS elnprotocolworkflow_workflowcode integer;
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fk3sk2cb8s314107cojt1wmtjyn'
+AND table_name='lsprotocolorderworkflowhistory';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY lsprotocolorderworkflowhistory ADD CONSTRAINT fk3sk2cb8s314107cojt1wmtjyn FOREIGN KEY (elnprotocolworkflow_workflowcode) REFERENCES elnprotocolworkflow(workflowcode);
+   END IF;
+END
+$do$; 
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'elnprotocoltemplateworkflow_workflowcode_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE elnprotocoltemplateworkflow_workflowcode_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.elnprotocoltemplateworkflow
+(
+    workflowcode integer NOT NULL DEFAULT nextval('elnprotocoltemplateworkflow_workflowcode_seq'::regclass),
+    status integer,
+    workflowname character varying(120) COLLATE pg_catalog."default",
+    lssitemaster_sitecode integer,
+    CONSTRAINT elnprotocoltemplateworkflow_pkey PRIMARY KEY (workflowcode),
+    CONSTRAINT fk86xurw8smb7jbeba3bqrrmwcp FOREIGN KEY (lssitemaster_sitecode)
+        REFERENCES public.lssitemaster (sitecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.elnprotocoltemplateworkflow
+    OWNER to postgres;
+
+
+
+CREATE TABLE IF NOT EXISTS public.elnprotocoltemplateworkflowgroupmap
+(
+    workflowmapid integer NOT NULL,
+    workflowcode integer,
+    lsusergroup_usergroupcode integer,
+    CONSTRAINT elnprotocoltemplateworkflowgroupmap_pkey PRIMARY KEY (workflowmapid),
+    CONSTRAINT fk7sgh5qbb0ylgf9ahb51j9w5cp FOREIGN KEY (workflowcode)
+        REFERENCES public.elnprotocoltemplateworkflow (workflowcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkn421ud3sx9u0qf8ccpy8rjivd FOREIGN KEY (lsusergroup_usergroupcode)
+        REFERENCES public.lsusergroup (usergroupcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.elnprotocoltemplateworkflowgroupmap
+    OWNER to postgres;
+    
+ 
+DO $$
+DECLARE
+  ElnprotocolTemplateworkflow INTEGER := 0;
+  LSsheetworkflow INTEGER := 0;
+BEGIN
+  SELECT COUNT(*) INTO ElnprotocolTemplateworkflow FROM ElnprotocolTemplateworkflow;
+  SELECT COUNT(*) INTO LSsheetworkflow FROM LSsheetworkflow;
+  IF ElnprotocolTemplateworkflow = 0 AND LSsheetworkflow != 0 THEN
+   INSERT INTO ElnprotocolTemplateworkflow
+      SELECT workflowcode,status,workflowname,lssitemaster_sitecode FROM LSsheetworkflow;
+  END IF;
+END
+$$;
+
+
+DO $$
+DECLARE
+  ElnprotocolTemplateworkflowgroupmap INTEGER := 0;
+  LSsheetworkflowgroupmap INTEGER := 0;
+BEGIN
+  SELECT COUNT(*) INTO ElnprotocolTemplateworkflowgroupmap FROM ElnprotocolTemplateworkflowgroupmap;
+  SELECT COUNT(*) INTO LSsheetworkflowgroupmap FROM LSsheetworkflowgroupmap;
+  IF ElnprotocolTemplateworkflowgroupmap = 0 AND LSsheetworkflowgroupmap != 0 THEN
+   INSERT INTO ElnprotocolTemplateworkflowgroupmap
+      SELECT * FROM LSsheetworkflowgroupmap  where workflowcode is not null and lsusergroup_usergroupcode is not null;
+  END IF;
+END
+$$;

@@ -7,13 +7,14 @@ import java.util.stream.Collectors;
 
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.material.Elnmaterial;
+import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
-import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -51,9 +52,9 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 
 	private String materialname;
 	private String materialinventoryname;
-	List<LSworkflow> lstworkflow;
+//	List<LSworkflow> lstworkflow;
 	private LSprotocolworkflow lSprotocolworkflow;
-	private LSworkflow lsworkflow;
+//	private LSworkflow lsworkflow;
 	private Integer workflowcode;
 	private boolean canuserprocess;
 	private LSsamplemaster lssamplemaster;
@@ -67,12 +68,14 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	List<Elnprotocolworkflow> lstelnprotocolworkflow;
 	private Elnprotocolworkflow elnprotocolworkflow;
 
+
 	public Logilabprotocolorders(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
 			LSprotocolworkflow lSprotocolworkflow, LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,
 			String keyword, Long directorycode, Integer createby, LSuserMaster assignedto,
-			Lsrepositoriesdata lsrepositoriesdata, Lsrepositories lsrepositories, LSworkflow lsworkflow,
-			Material material, MaterialInventory materialinventory, Integer approved, Integer rejected,
+			Lsrepositoriesdata lsrepositoriesdata, Lsrepositories lsrepositories,
+//			LSworkflow lsworkflow,
+			Elnmaterial elnmaterial,ElnmaterialInventory elnmaterialinventory, Integer approved, Integer rejected,
 			Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby,
 			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow) {
 
@@ -96,10 +99,10 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.lssamplemaster = lssamplemaster != null ? lssamplemaster : null;
 		this.repositoryitemname = lsrepositoriesdata != null ? lsrepositoriesdata.getRepositoryitemname() : null;
 		this.repositoryname = lsrepositories != null ? lsrepositories.getRepositoryname() : null;
-		this.materialname = material != null ? material.getSmaterialname() : null;
-		this.materialinventoryname = materialinventory != null ? materialinventory.getSinventoryid() : null;
+		this.materialname = elnmaterial != null ? elnmaterial.getSmaterialname() : null;
+		this.materialinventoryname = elnmaterialinventory != null ? elnmaterialinventory.getSinventoryid() : null;
 		this.directorycode = directorycode;
-		this.lsworkflow = lsworkflow;
+//		this.lsworkflow = lsworkflow;
 		this.lsprotocolmaster = lsprotocolmaster;
 		this.approved = approved;
 		this.rejected = rejected;
@@ -196,13 +199,13 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.rejected = rejected;
 	}
 
-	public LSworkflow getLsworkflow() {
-		return lsworkflow;
-	}
-
-	public void setLsworkflow(LSworkflow lsworkflow) {
-		this.lsworkflow = lsworkflow;
-	}
+//	public LSworkflow getLsworkflow() {
+//		return lsworkflow;
+//	}
+//
+//	public void setLsworkflow(LSworkflow lsworkflow) {
+//		this.lsworkflow = lsworkflow;
+//	}
 
 	public LSsamplemaster getLssamplemaster() {
 		return lssamplemaster;
@@ -332,9 +335,9 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.lsprotocolmaster = lsprotocolmaster;
 	}
 
-	public List<LSworkflow> getLstworkflow() {
-		return lstworkflow;
-	}
+//	public List<LSworkflow> getLstworkflow() {
+//		return lstworkflow;
+//	}
 
 	public LSprojectmaster getLsprojectmaster() {
 		return lsprojectmaster;
@@ -364,31 +367,31 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.repositoryname = repositoryname;
 	}
 
-	public void setLsprojectmaster(LSprojectmaster lsprojectmaster) {
-		this.lsprojectmaster = lsprojectmaster;
-	}
-
-	public void setLstworkflow(List<LSworkflow> lstworkflow) {
-		this.lstworkflow=lstworkflow;
-//		if (lstworkflow != null && this.workflowcode != null && lstworkflow.size() > 0) {
+//	public void setLsprojectmaster(LSprojectmaster lsprojectmaster) {
+//		this.lsprojectmaster = lsprojectmaster;
+//	}
 //
-//			List<Integer> lstworkflowcode = new ArrayList<Integer>();
-//			if (lstworkflow != null && lstworkflow.size() > 0) {
-//				lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
-//
-//				if (lstworkflowcode.contains(this.workflowcode)) {
-//					this.setCanuserprocess(true);
-//				} else {
-//					this.setCanuserprocess(false);
-//				}
-//			} else {
-//				this.setCanuserprocess(false);
-//			}
-//		} else {
-//			this.setCanuserprocess(false);
-//		}
-//		this.lstworkflow = null;
-	}
+//	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+//		this.lstworkflow=lstworkflow;
+////		if (lstworkflow != null && this.workflowcode != null && lstworkflow.size() > 0) {
+////
+////			List<Integer> lstworkflowcode = new ArrayList<Integer>();
+////			if (lstworkflow != null && lstworkflow.size() > 0) {
+////				lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+////
+////				if (lstworkflowcode.contains(this.workflowcode)) {
+////					this.setCanuserprocess(true);
+////				} else {
+////					this.setCanuserprocess(false);
+////				}
+////			} else {
+////				this.setCanuserprocess(false);
+////			}
+////		} else {
+////			this.setCanuserprocess(false);
+////		}
+////		this.lstworkflow = null;
+//	}
 
 	public Long getDirectorycode() {
 		return directorycode;

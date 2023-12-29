@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -268,5 +269,10 @@ public class FileController {
 	@PostMapping("/Deleteprotocolorderworkflow")
 	public Response Deleteprotocolorderworkflow(@RequestBody Elnprotocolworkflow objflow) {
 		return fileService.Deleteprotocolorderworkflow(objflow);
+	}
+	
+	@PostMapping("/GetProtocoltempleteWorkflow")
+	public List<ElnprotocolTemplateworkflow> GetProtocoltempleteWorkflow(@RequestBody ElnprotocolTemplateworkflow objuser)throws Exception {
+		return fileService.GetProtocoltempleteWorkflow(objuser);
 	}
 }

@@ -52,8 +52,21 @@ public class LSprotocolorderworkflowhistory {
 	
 	@ManyToOne
 	private LSworkflow lsworkflow;
+	
+	@ManyToOne
+	private Elnprotocolworkflow elnprotocolworkflow;
 
 	
+	public Elnprotocolworkflow getElnprotocolworkflow() {
+		return elnprotocolworkflow;
+	}
+
+
+	public void setElnprotocolworkflow(Elnprotocolworkflow elnprotocolworkflow) {
+		this.elnprotocolworkflow = elnprotocolworkflow;
+	}
+
+
 	public LSworkflow getLsworkflow() {
 		return lsworkflow;
 	}

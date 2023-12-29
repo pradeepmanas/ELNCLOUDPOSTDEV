@@ -38,6 +38,7 @@ import com.agaram.eln.primary.model.general.SheetVersion;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
+import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
@@ -63,6 +64,7 @@ import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetVersionReposit
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsSheetorderlimsrefrenceRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsorderworkflowhistoryRepositroy;
+import com.agaram.eln.primary.repository.protocol.ElnprotocolTemplateworkflowRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
@@ -208,6 +210,9 @@ public class FileService {
 	
 	@Autowired
 	private LSlogilabprotocoldetailRepository LSlogilabprotocoldetailRepository;
+	
+	@Autowired
+	private ElnprotocolTemplateworkflowRepository elnprotocoltemplateworkflowRepository;
 
 	public LSfile InsertupdateSheet(LSfile objfile) throws IOException {
 
@@ -1777,5 +1782,21 @@ public class FileService {
 		}
 
 		return response;
+	}
+
+	public List<ElnprotocolTemplateworkflow> GetProtocoltempleteWorkflow(ElnprotocolTemplateworkflow objuser) {
+
+		if (objuser.getObjsilentaudit() != null) {
+			objuser.getObjsilentaudit().setTableName("LSsheetworkflow");
+			try {
+				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+		}
+
+		return elnprotocoltemplateworkflowRepository.findBylssitemasterAndStatusOrderByWorkflowcodeAsc(objuser.getLssitemaster(),1);
 	}
 }

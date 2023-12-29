@@ -83,11 +83,18 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	@Query("select lsorder from LSlogilabprotocoldetail lsorder where lsorder.lsprotocolmaster IN (:protocolmastercodeArray)") 
 	List<LSlogilabprotocoldetail> findByLsprotocolmaster(@Param("protocolmastercodeArray") List<LSprotocolmaster> protocolmastercodeArray);
 
+//	@Transactional
+//	@Modifying
+//	@Query("update LSlogilabprotocoldetail set lsworkflow = :workflow, approved= :approved , rejected= :rejected "
+//			+ "where protocolordercode in (:protocolordercode)")
+//	public void updateFileWorkflow(@Param("workflow") LSworkflow lSworkflow,
+//			@Param("approved") Integer approved, @Param("rejected") Integer rejected,
+//			@Param("protocolordercode") Long protocolordercode);
 	@Transactional
 	@Modifying
-	@Query("update LSlogilabprotocoldetail set lsworkflow = :workflow, approved= :approved , rejected= :rejected "
+	@Query("update LSlogilabprotocoldetail set elnprotocolworkflow = :workflow, approved= :approved , rejected= :rejected "
 			+ "where protocolordercode in (:protocolordercode)")
-	public void updateFileWorkflow(@Param("workflow") LSworkflow lSworkflow,
+	public void updateFileWorkflow(@Param("workflow") Elnprotocolworkflow lSworkflow,
 			@Param("approved") Integer approved, @Param("rejected") Integer rejected,
 			@Param("protocolordercode") Long protocolordercode);
 

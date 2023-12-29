@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -92,6 +93,9 @@ public class Lsprotocolorderstructure {
 	
 	@Transient
 	List<LSworkflow> lstworkflow;
+	
+	@Transient
+	List<Elnprotocolworkflow> lstelnprotocolworkflow;
 
 	@Transient
 	private LSuserMaster lsuserMaster;
@@ -327,6 +331,14 @@ public class Lsprotocolorderstructure {
 
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
 		this.lstworkflow = lstworkflow;
+	}
+
+	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
+		return lstelnprotocolworkflow;
+	}
+
+	public void setLstelnprotocolworkflow(List<Elnprotocolworkflow> lstelnprotocolworkflow) {
+		this.lstelnprotocolworkflow = lstelnprotocolworkflow;
 	}
 
 	public LSuserMaster getLsuserMaster() {

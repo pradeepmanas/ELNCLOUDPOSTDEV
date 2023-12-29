@@ -19,6 +19,7 @@ import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 
 @Entity
@@ -271,6 +272,9 @@ public class LSuserMaster {
 
 	@Transient
 	List<LSworkflow> lstworkflow;
+	
+	@Transient
+	List<Elnprotocolworkflow> lstelnprotocolworkflow;
 	
 	@Transient
 	LSSiteMaster[] lstiteMaster;
@@ -699,6 +703,14 @@ public class LSuserMaster {
 
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
 		this.lstworkflow = lstworkflow;
+	}
+
+	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
+		return lstelnprotocolworkflow;
+	}
+
+	public void setLstelnprotocolworkflow(List<Elnprotocolworkflow> lstelnprotocolworkflow) {
+		this.lstelnprotocolworkflow = lstelnprotocolworkflow;
 	}
 
 	public List<LSuserMaster> getUserroleremovenotify() {

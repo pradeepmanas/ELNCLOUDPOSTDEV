@@ -301,11 +301,32 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private List<LSuserMaster> lstuserMaster;
 	
 	
+	
+	
+	
 	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
 		return lstelnprotocolworkflow;
 	}
 
 	public void setLstelnprotocolworkflow(List<Elnprotocolworkflow> lstelnprotocolworkflow) {
+//		this.lstelnprotocolworkflow = lstelnprotocolworkflow;
+		if (this.elnprotocolworkflow != null && lstelnprotocolworkflow != null  && lstelnprotocolworkflow.size() > 0) {
+			List<Integer> lstworkflowcode = new ArrayList<Integer>();
+			if (lstelnprotocolworkflow != null && lstelnprotocolworkflow.size() > 0) {
+				lstworkflowcode = lstelnprotocolworkflow.stream().map(Elnprotocolworkflow::getWorkflowcode).collect(Collectors.toList());
+
+				if (lstworkflowcode.contains(this.elnprotocolworkflow.getWorkflowcode())) {
+					this.setCanuserprocess(true);
+				} else {
+					this.setCanuserprocess(false);
+				}
+			} else {
+				this.setCanuserprocess(false);
+			}
+		} else {
+			this.setCanuserprocess(false);
+		}
+		
 		this.lstelnprotocolworkflow = lstelnprotocolworkflow;
 	}
 
@@ -351,25 +372,25 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	}
 
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
-//		this.lstworkflow = lstworkflow;
-		if (this.lsworkflow != null && lstworkflow != null  && lstworkflow.size() > 0) {
-			List<Integer> lstworkflowcode = new ArrayList<Integer>();
-			if (lstworkflow != null && lstworkflow.size() > 0) {
-				lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
-
-				if (lstworkflowcode.contains(this.lsworkflow.getWorkflowcode())) {
-					this.setCanuserprocess(true);
-				} else {
-					this.setCanuserprocess(false);
-				}
-			} else {
-				this.setCanuserprocess(false);
-			}
-		} else {
-			this.setCanuserprocess(false);
-		}
-		
 		this.lstworkflow = lstworkflow;
+//		if (this.lsworkflow != null && lstworkflow != null  && lstworkflow.size() > 0) {
+//			List<Integer> lstworkflowcode = new ArrayList<Integer>();
+//			if (lstworkflow != null && lstworkflow.size() > 0) {
+//				lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+//
+//				if (lstworkflowcode.contains(this.lsworkflow.getWorkflowcode())) {
+//					this.setCanuserprocess(true);
+//				} else {
+//					this.setCanuserprocess(false);
+//				}
+//			} else {
+//				this.setCanuserprocess(false);
+//			}
+//		} else {
+//			this.setCanuserprocess(false);
+//		}
+//		
+//		this.lstworkflow = lstworkflow;
 	
 	}
 

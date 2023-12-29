@@ -727,7 +727,7 @@ public class InstrumentController {
 	}
 
 	@PostMapping("/Getuserworkflow")
-	public List<Integer> Getuserworkflow(@RequestBody LSusergroup lsusergroup)throws Exception {
+	public Map<String, List<Integer>> Getuserworkflow(@RequestBody LSusergroup lsusergroup)throws Exception {
 		return instrumentService.Getuserworkflow(lsusergroup);
 	}
 
