@@ -69,6 +69,17 @@ public class LSprotocolworkflowhistory {
 	private LSsheetworkflow lssheetworkflow;
 	
 	
+	@ManyToOne
+	private ElnprotocolTemplateworkflow elnprotocoltemplateworkflow;
+	
+
+	public ElnprotocolTemplateworkflow getElnprotocoltemplateworkflow() {
+		return elnprotocoltemplateworkflow;
+	}
+
+	public void setElnprotocoltemplateworkflow(ElnprotocolTemplateworkflow elnprotocoltemplateworkflow) {
+		this.elnprotocoltemplateworkflow = elnprotocoltemplateworkflow;
+	}
 
 	public LSsheetworkflow getLssheetworkflow() {
 		return lssheetworkflow;

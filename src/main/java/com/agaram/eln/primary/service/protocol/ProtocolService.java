@@ -74,6 +74,7 @@ import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.notification.Email;
+import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
@@ -145,6 +146,8 @@ import com.agaram.eln.primary.repository.instrumentDetails.Lsprotocolordershared
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharetoRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
+import com.agaram.eln.primary.repository.protocol.ElnprotocolTemplateworkflowRepository;
+import com.agaram.eln.primary.repository.protocol.ElnprotocolTemplateworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
@@ -432,6 +435,12 @@ public class ProtocolService {
 	
 	@Autowired
 	private ElnprotocolworkflowgroupmapRepository elnprotocolworkflowgroupmapRepository;
+	
+	@Autowired
+	private ElnprotocolTemplateworkflowRepository elnprotocolTemplateworkflowRepository;
+	
+	@Autowired
+	private ElnprotocolTemplateworkflowgroupmapRepository elnprotocolTemplateworkflowgroupmapRepository;
 	
 	public Map<String, Object> getProtocolMasterInit(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
@@ -1182,12 +1191,15 @@ public class ProtocolService {
 //			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
 //					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
 
-			LSsheetworkflow lssheetworkflow = lssheetworkflowRepository
+//			LSsheetworkflow lssheetworkflow = lssheetworkflowRepository
+//					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
+			
+			ElnprotocolTemplateworkflow lssheetworkflow = elnprotocolTemplateworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
 
 			protocolMaster.setApproved(0);
 //			protocolMaster.setlSprotocolworkflow(lsprotocolworkflow);
-			protocolMaster.setLssheetworkflow(lssheetworkflow);
+			protocolMaster.setElnprotocoltemplateworkflow(lssheetworkflow);
 			protocolMaster.setVersionno(protocolMaster.getVersionno() + 1);
 
 			LSProtocolMasterRepositoryObj.save(protocolMaster);
@@ -1294,12 +1306,12 @@ public class ProtocolService {
 //			LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
 //					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);.
 
-			LSsheetworkflow lssheetworkflow = lssheetworkflowRepository
+			ElnprotocolTemplateworkflow lssheetworkflow = elnprotocolTemplateworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
 
 			protocolMaster.setApproved(0);
 //			protocolMaster.setlSprotocolworkflow(lsprotocolworkflow);
-			protocolMaster.setLssheetworkflow(lssheetworkflow);
+			protocolMaster.setElnprotocoltemplateworkflow(lssheetworkflow);
 			protocolMaster.setVersionno(protocolMaster.getVersionno() + 1);
 
 			LSProtocolMasterRepositoryObj.save(protocolMaster);
@@ -1533,9 +1545,9 @@ public class ProtocolService {
 						.findBysitecode(LScfttransactionobj.getLssitemaster());
 //				LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
 //						.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
-				if (newProtocolMasterObj.getLssheetworkflow() == null) {
-					newProtocolMasterObj.setLssheetworkflow(
-							lssheetworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster));
+				if (newProtocolMasterObj.getElnprotocoltemplateworkflow() == null) {
+					newProtocolMasterObj.setElnprotocoltemplateworkflow(
+							elnprotocolTemplateworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster));
 				}
 //				newProtocolMasterObj.setlSprotocolworkflow(lsprotocolworkflow);
 
@@ -2053,13 +2065,13 @@ public class ProtocolService {
 			approved = objClass.getApproved();
 		}
 
-		LSProtocolMasterRepositoryObj.updateFileWorkflow(objClass.getLssheetworkflow(), approved,
+		LSProtocolMasterRepositoryObj.updateFileWorkflow(objClass.getElnprotocoltemplateworkflow(), approved,
 				objClass.getRejected(), objClass.getProtocolmastercode());
 
 		LSprotocolmaster LsProto = LSProtocolMasterRepositoryObj
 				.findFirstByProtocolmastercode(objClass.getProtocolmastercode());
 
-		LsProto.setLssheetworkflow(objClass.getLssheetworkflow());
+		LsProto.setElnprotocoltemplateworkflow(objClass.getElnprotocoltemplateworkflow());
 		if (LsProto.getApproved() == null) {
 			LsProto.setApproved(0);
 		}
@@ -2081,7 +2093,9 @@ public class ProtocolService {
 		mapObj.put("status", "success");
 		if (objClass.getViewoption() == null || objClass.getViewoption() != null && objClass.getViewoption() != 2) {
 			if (objClass.getProtocolmastername() != null) {
-				LSsheetworkflow objlastworkflow = lssheetworkflowRepository
+//				LSsheetworkflow objlastworkflow = lssheetworkflowRepository
+//						.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objClass.getIsfinalstep().getLssitemaster());
+				ElnprotocolTemplateworkflow objlastworkflow = elnprotocolTemplateworkflowRepository
 						.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objClass.getIsfinalstep().getLssitemaster());
 				if (objlastworkflow != null
 						&& objClass.getCurrentStep().getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
@@ -2094,8 +2108,8 @@ public class ProtocolService {
 			}
 
 			try {
-				updatenotificationforprotocolworkflowapproval(objClass, LsProto.getLssheetworkflow());
-				updatenotificationforprotocol(objClass, LsProto.getLssheetworkflow());
+				updatenotificationforprotocolworkflowapproval(objClass, LsProto.getElnprotocoltemplateworkflow());
+				updatenotificationforprotocol(objClass, LsProto.getElnprotocoltemplateworkflow());
 			} catch (Exception e) {
 
 			}
@@ -2104,7 +2118,7 @@ public class ProtocolService {
 	}
 
 	private void updatenotificationforprotocolworkflowapproval(LSprotocolmaster objClass,
-			LSsheetworkflow lssheetworkflow) {
+			ElnprotocolTemplateworkflow lssheetworkflow) {
 		String Details = "";
 		String Notification = "";
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
@@ -2113,10 +2127,10 @@ public class ProtocolService {
 		LSuserMaster createby = lsusermasterRepository.findByusercode(objClass.getCreatedby());
 		LSnotification objnotify = new LSnotification();
 
-		for (int k = 0; k < objClass.getLssheetworkflow().getLssheetworkflowgroupmap().size(); k++) {
+		for (int k = 0; k < objClass.getElnprotocoltemplateworkflow().getElnprotocoltemplateworkflowgroupmap().size(); k++) {
 
 			List<LSMultiusergroup> userobj = lsMultiusergroupRepositery.findBylsusergroup(
-					objClass.getLssheetworkflow().getLssheetworkflowgroupmap().get(k).getLsusergroup());
+					objClass.getElnprotocoltemplateworkflow().getElnprotocoltemplateworkflowgroupmap().get(k).getLsusergroup());
 
 			List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode)
 					.collect(Collectors.toList());
@@ -2206,7 +2220,7 @@ public class ProtocolService {
 		}
 	}
 
-	private void updatenotificationforprotocol(LSprotocolmaster objClass, LSsheetworkflow lsprotocolworkflow) {
+	private void updatenotificationforprotocol(LSprotocolmaster objClass, ElnprotocolTemplateworkflow lsprotocolworkflow) {
 		List<LSuserteammapping> objteam = LSuserteammappingRepositoryObj
 				.findByTeamcodeNotNullAndLsuserMaster(objClass.getLSuserMaster());
 		LSprotocolmaster LsProto = LSProtocolMasterRepositoryObj
@@ -2235,7 +2249,7 @@ public class ProtocolService {
 					+ objClass.getProtocolmastername() + "\", \"previousworkflow\":\"" + previousworkflowname
 					+ "\", \"previousworkflowcode\":\"" + perviousworkflowcode + "\", \"currentworkflow\":\""
 					+ objClass.getLsprotocolworkflowhistory().get(objClass.getLsprotocolworkflowhistory().size()-1).getLssheetworkflow().getWorkflowname()
-					+ "\", \"currentworkflowcode\":\"" + objClass.getLssheetworkflow().getWorkflowcode() + "\"}";
+					+ "\", \"currentworkflowcode\":\"" + objClass.getElnprotocoltemplateworkflow().getWorkflowcode() + "\"}";
 
 			List<LSuserMaster> lstnotified = new ArrayList<LSuserMaster>();
 
@@ -5460,10 +5474,11 @@ public class ProtocolService {
 				lsprotocolversionRepository.save(protocolMaster.getLsprotocolversion());
 
 				LSSiteMaster lssitemaster = LSSiteMasterRepository.findBysitecode(sitecode);
-				LSsheetworkflow lssheetworkflow = lssheetworkflowRepository
+				ElnprotocolTemplateworkflow lssheetworkflow = elnprotocolTemplateworkflowRepository
 						.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
 				protocolMaster.setApproved(0);
-				protocolMaster.setLssheetworkflow(lssheetworkflow);
+//				protocolMaster.setLssheetworkflow(lssheetworkflow);
+				protocolMaster.setElnprotocoltemplateworkflow(lssheetworkflow);
 				protocolMaster.setVersionno(protocolMaster.getVersionno() + 1);
 			}
 

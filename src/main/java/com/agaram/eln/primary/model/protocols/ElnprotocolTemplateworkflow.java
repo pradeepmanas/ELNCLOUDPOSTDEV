@@ -30,7 +30,7 @@ public class ElnprotocolTemplateworkflow {
 	@Column(name = "workflowcode") 
 	private int workflowcode;
 
-	@Column(columnDefinition = "varchar(120)")
+//	@Column(columnDefinition = "varchar(120)")
 	private String workflowname;
 	
 	@OneToMany

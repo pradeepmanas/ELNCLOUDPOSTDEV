@@ -39,7 +39,9 @@ import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
+import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
+import com.agaram.eln.primary.model.protocols.LSprotocolworkflowhistory;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -65,10 +67,13 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdet
 import com.agaram.eln.primary.repository.instrumentDetails.LsSheetorderlimsrefrenceRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsorderworkflowhistoryRepositroy;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolTemplateworkflowRepository;
+import com.agaram.eln.primary.repository.protocol.ElnprotocolTemplateworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowgroupmapRepository;
+import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderworkflowhistoryRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowhistoryRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileparameterRepository;
@@ -154,6 +159,8 @@ public class FileService {
 
 	@Autowired
 	private LssheetworkflowhistoryRepository lssheetworkflowhistoryRepository;
+	@Autowired
+	private LSprotocolworkflowhistoryRepository lsprotocolworkflowhistoryRepository;
 
 	@Autowired
 	private LsorderworkflowhistoryRepositroy lsorderworkflowhistoryRepositroy;
@@ -201,32 +208,38 @@ public class FileService {
 
 	@Autowired
 	Commonservice commonservice;
-	
+
 	@Autowired
 	private ElnprotocolworkflowRepository elnprotocolworkflowRepository;
-	
+
 	@Autowired
 	private ElnprotocolworkflowgroupmapRepository elnprotocolworkflowgroupmapRepository;
-	
+
 	@Autowired
 	private LSlogilabprotocoldetailRepository LSlogilabprotocoldetailRepository;
-	
+
 	@Autowired
 	private ElnprotocolTemplateworkflowRepository elnprotocoltemplateworkflowRepository;
+
+	@Autowired
+	private ElnprotocolTemplateworkflowgroupmapRepository elnprotocolTemplateworkflowgroupmapRepository;
+	
+	@Autowired
+	private LSProtocolMasterRepository lSProtocolMasterRepository;
 
 	public LSfile InsertupdateSheet(LSfile objfile) throws IOException {
 
 		Boolean Isnew = false;
-		
+
 		String Content = "";
-		
-		if(objfile.getIsmultitenant() == 1) {
+
+		if (objfile.getIsmultitenant() == 1) {
 			Content = objfile.getFilecontent();
-		}else {
+		} else {
 			byte[] bytes = objfile.getFilecontent().getBytes(StandardCharsets.UTF_16);
 			Content = new String(bytes, StandardCharsets.UTF_16);
 		}
-		
+
 		if (objfile.getFilecode() == null
 				&& lSfileRepository.findByfilenameuserIgnoreCaseAndLssitemaster(objfile.getFilenameuser().trim(),
 						objfile.getLssitemaster()) != null) {
@@ -318,28 +331,29 @@ public class FileService {
 		objfile.getResponse().setInformation("ID_SHEETMSG");
 
 		objfile.setVersionno((int) lsfileversionRepository.countByFilecode(objfile.getFilecode()));
-		
+
 		Isnew = null;
 //		bytes = null;
 		Content = null;
 
 		return objfile;
 	}
-	
+
 	public LSfile updateTemplateOnBatch(LSfile objfile) throws IOException {
 
 		Boolean Isnew = true;
-		
+
 		LSfile fileObj = getfileoncode(objfile);
-		
+
 		String fileOriginalContent = fileObj.getFilecontent();
-		
-		String Content = commonfunction.getBatchValues(fileOriginalContent,objfile.getFilecontent());
-		
-		LSfileversion objLatestversion = lsfileversionRepository.findFirstByFilecodeOrderByVersionnoDesc(objfile.getFilecode());
-		
+
+		String Content = commonfunction.getBatchValues(fileOriginalContent, objfile.getFilecontent());
+
+		LSfileversion objLatestversion = lsfileversionRepository
+				.findFirstByFilecodeOrderByVersionnoDesc(objfile.getFilecode());
+
 		updatefileversioncontent(Content, objLatestversion, objfile.getIsmultitenant());
-		
+
 		commonservice.updatefilecontentcheck(Content, objfile, Isnew);
 
 		return objfile;
@@ -460,7 +474,7 @@ public class FileService {
 		if (objuser.getUsername().equals("Administrator")) {
 			lstfile = lSfileRepository
 					.findByFilecodeGreaterThanAndLssitemasterAndApprovedOrFilecodeGreaterThanAndVersionnoGreaterThanOrderByFilecodeDesc(
-							-1, objuser.getLssitemaster(),approvelstatus, -1, 1);
+							-1, objuser.getLssitemaster(), approvelstatus, -1, 1);
 		} else {
 
 //			List<Integer> lstteammap = lsuserteammappingRepository.getTeamcodeByLsuserMaster(objuser.getUsercode());
@@ -477,23 +491,23 @@ public class FileService {
 //						.findByFilecodeGreaterThanAndCreatebyInAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndRejectedAndVersionnoGreaterThanOrderByFilecodeDesc(
 //								-1, lstteamuser, 0, approvelstatus, -1, lstteamuser, 0, 1);
 //			}
-			
+
 			List<Integer> lstteammap = lsuserteammappingRepository.getTeamcodeByLsuserMaster(objuser.getUsercode());
 			if (lstteammap != null && lstteammap.size() > 0) {
 				List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
 				lstteamuser.add(objuser);
-				
+
 				lstfile = lSfileRepository
 						.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndRejectedAndApprovedOrderByFilecodeDesc(
-								-1, objuser.getLssitemaster(), 1, 0, approvelstatus,
-								-1, objuser, 2, 0, approvelstatus,
+								-1, objuser.getLssitemaster(), 1, 0, approvelstatus, -1, objuser, 2, 0, approvelstatus,
 								-1, lstteamuser, 3, 0, approvelstatus);
 			} else {
 				List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
 				lstteamuser.add(objuser);
-				lstfile = lSfileRepository.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndRejectedAndApprovedOrderByFilecodeDesc(
-								-1, objuser.getLssitemaster(), 1, 0, approvelstatus, 
-								-1, lstteamuser, 2, 0, approvelstatus);
+				lstfile = lSfileRepository
+						.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndRejectedAndApprovedOrderByFilecodeDesc(
+								-1, objuser.getLssitemaster(), 1, 0, approvelstatus, -1, lstteamuser, 2, 0,
+								approvelstatus);
 			}
 
 		}
@@ -511,8 +525,8 @@ public class FileService {
 			lstteamuser.add(objuser);
 //			lstfile = lSfileRepository.getsheetGreaterthanoneandapprovelanduserIn(approvelstatus, lstteamuser,
 //					objuser.getLssitemaster().getSitecode());
-			lstfile = lSfileRepository.getsheetapprovelanduserIn(lstteamuser,objuser.getLssitemaster().getSitecode());
-			
+			lstfile = lSfileRepository.getsheetapprovelanduserIn(lstteamuser, objuser.getLssitemaster().getSitecode());
+
 			lstteamuser = null;
 		} else {
 			List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
@@ -520,7 +534,7 @@ public class FileService {
 //			lstfile = lSfileRepository.getsheetGreaterthanoneandapprovelanduserIn(approvelstatus, lstteamuser,
 //					objuser.getLssitemaster().getSitecode());
 
-			lstfile = lSfileRepository.getsheetapprovelanduserIn(lstteamuser,objuser.getLssitemaster().getSitecode());
+			lstfile = lSfileRepository.getsheetapprovelanduserIn(lstteamuser, objuser.getLssitemaster().getSitecode());
 
 			lstteamuser = null;
 		}
@@ -547,7 +561,7 @@ public class FileService {
 				objtest.getTesttype());
 
 		if (objtest.getObjLoggeduser().getUsername().trim().toLowerCase().equals("administrator")) {
-			lsfiles = lSfileRepository.findBylstestInAndApproved(lsfiletest,1);
+			lsfiles = lSfileRepository.findBylstestInAndApproved(lsfiletest, 1);
 		} else {
 			List<Integer> lstteammap = lsuserteammappingRepository
 					.getTeamcodeByLsuserMaster(objtest.getObjLoggeduser().getUsercode());
@@ -555,25 +569,25 @@ public class FileService {
 			if (lstteammap.size() > 0) {
 				List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
 				lstteamuser.add(objtest.getObjLoggeduser());
-				lsfiles = lSfileRepository.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApproved(
-								lstteamuser, lsfiletest,1,1,1,
-								objtest.getObjLoggeduser(), lsfiletest,1,2,1,
-								lstteamuser, lsfiletest,1,3,1);
-				lsfiles.addAll(lSfileRepository.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThan(
-						lstteamuser, lsfiletest,1,1,0,1,
-						objtest.getObjLoggeduser(), lsfiletest,1,2,0,1,
-						lstteamuser, lsfiletest,1,3,0,1));
+				lsfiles = lSfileRepository
+						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApproved(
+								lstteamuser, lsfiletest, 1, 1, 1, objtest.getObjLoggeduser(), lsfiletest, 1, 2, 1,
+								lstteamuser, lsfiletest, 1, 3, 1);
+				lsfiles.addAll(lSfileRepository
+						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThan(
+								lstteamuser, lsfiletest, 1, 1, 0, 1, objtest.getObjLoggeduser(), lsfiletest, 1, 2, 0, 1,
+								lstteamuser, lsfiletest, 1, 3, 0, 1));
 			} else {
 				List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
 				lstteamuser.add(objtest.getObjLoggeduser());
-				lsfiles = lSfileRepository.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApproved(
-								lstteamuser, lsfiletest,1,1,1,
-								objtest.getObjLoggeduser(), lsfiletest,1,2,1,
-								lstteamuser, lsfiletest,1,3,1);
-				lsfiles.addAll(lSfileRepository.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThan(
-						lstteamuser, lsfiletest,1,1,0,1,
-						objtest.getObjLoggeduser(), lsfiletest,1,2,0,1,
-						lstteamuser, lsfiletest,1,3,0,1));
+				lsfiles = lSfileRepository
+						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApproved(
+								lstteamuser, lsfiletest, 1, 1, 1, objtest.getObjLoggeduser(), lsfiletest, 1, 2, 1,
+								lstteamuser, lsfiletest, 1, 3, 1);
+				lsfiles.addAll(lSfileRepository
+						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedAndVersionnoGreaterThan(
+								lstteamuser, lsfiletest, 1, 1, 0, 1, objtest.getObjLoggeduser(), lsfiletest, 1, 2, 0, 1,
+								lstteamuser, lsfiletest, 1, 3, 0, 1));
 			}
 		}
 
@@ -677,7 +691,7 @@ public class FileService {
 
 		if (lstfiles != null && lstfiles.size() > 0) {
 			listfiles = lstfiles.stream().map(lsfile -> new Sheettemplatefortest(lsfile.getFilecode(),
-					lsfile.getFilenameuser(),lsfile.getCreatedate(), lsfile.getLstest())).collect(Collectors.toList());
+					lsfile.getFilenameuser(), lsfile.getCreatedate(), lsfile.getLstest())).collect(Collectors.toList());
 		}
 
 		mapOrders.put("sheets", listfiles);
@@ -715,7 +729,8 @@ public class FileService {
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
-		return lssheetworkflowRepository.findBylssitemasterAndStatusOrderByWorkflowcodeAsc(objuser.getLssitemaster(),1);
+		return lssheetworkflowRepository.findBylssitemasterAndStatusOrderByWorkflowcodeAsc(objuser.getLssitemaster(),
+				1);
 	}
 
 	public Response Deletesheetworkflow(LSsheetworkflow objflow) {
@@ -749,12 +764,12 @@ public class FileService {
 	public LSfile updateworkflowforFile(LSfile objfile) {
 
 		LSfile objcurrentfile = lSfileRepository.findByfilecode(objfile.getFilecode());
-		
-		if(objfile.getViewoption()==null ||objfile.getViewoption()!=null && objfile.getViewoption()!=2) {
+
+		if (objfile.getViewoption() == null || objfile.getViewoption() != null && objfile.getViewoption() != 2) {
 			updatenotificationforsheet(objfile, false, objcurrentfile.getLssheetworkflow(), false);
 		}
-		for(int k=0;k<objfile.getLssheetworkflowhistory().size();k++) {
-			if(objfile.getLssheetworkflowhistory().get(k).getHistorycode()==null) {
+		for (int k = 0; k < objfile.getLssheetworkflowhistory().size(); k++) {
+			if (objfile.getLssheetworkflowhistory().get(k).getHistorycode() == null) {
 				try {
 					objfile.getLssheetworkflowhistory().get(k).setCreatedate(commonfunction.getCurrentUtcTime());
 				} catch (ParseException e) {
@@ -773,7 +788,7 @@ public class FileService {
 					.setTableName("LSfile");
 			try {
 				objfile.getLssheetworkflowhistory().get(objfile.getLssheetworkflowhistory().size() - 1)
-					.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+						.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -781,7 +796,7 @@ public class FileService {
 			lscfttransactionRepository.save(objfile.getLssheetworkflowhistory()
 					.get(objfile.getLssheetworkflowhistory().size() - 1).getObjsilentaudit());
 		}
-		if(objfile.getViewoption()==null ||objfile.getViewoption()!=null && objfile.getViewoption()!=2) {
+		if (objfile.getViewoption() == null || objfile.getViewoption() != null && objfile.getViewoption() != 2) {
 			if (objfile.getFilenameuser() != null) {
 				LSworkflow objlastworkflow = lsworkflowRepository
 						.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objfile.getObjLoggeduser().getLssitemaster());
@@ -803,17 +818,16 @@ public class FileService {
 			LSsheetworkflow previousworkflow, Boolean IsNewsheet) {
 		List<LSuserteammapping> objteam = lsuserteammappingRepository
 				.findByTeamcodeNotNullAndLsuserMaster(objfile.getLSuserMaster());
-		
+
 		try {
 			if (objteam != null && objteam.size() > 0) {
 				String Details = "";
 				String Notifiction = "";
 				List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 				LSuserMaster createby = lsusermasterRepository.findByusercode(objfile.getCreateby().getUsercode());
-				List<Integer> notifiedUsers = new ArrayList<Integer>();  
-				
-				if (!createby.getUsercode().equals(objfile.getObjLoggeduser().getUsercode()))
-				{
+				List<Integer> notifiedUsers = new ArrayList<Integer>();
+
+				if (!createby.getUsercode().equals(objfile.getObjLoggeduser().getUsercode())) {
 					LSnotification notify = new LSnotification();
 					if (objfile.getApproved() == 1) {
 						Notifiction = "SHEETAPPROVALSENT";
@@ -826,9 +840,10 @@ public class FileService {
 					}
 
 					notify.setNotifationto(createby);
-					Details = "{\"ordercode\":\"" + objfile.getFilecode() + "\", \"order\":\"" + objfile.getFilenameuser()
-								+ "\", \"currentworkflow\":\"" + previousworkflow.getWorkflowname() 
-								+ "\", \"username\":\""	+ objfile.getLSuserMaster().getUsername() + "\"}";
+					Details = "{\"ordercode\":\"" + objfile.getFilecode() + "\", \"order\":\""
+							+ objfile.getFilenameuser() + "\", \"currentworkflow\":\""
+							+ previousworkflow.getWorkflowname() + "\", \"username\":\""
+							+ objfile.getLSuserMaster().getUsername() + "\"}";
 					notify.setNotifationfrom(objfile.getObjLoggeduser());
 					notify.setNotificationdate(objfile.getNotificationdate());
 					notify.setNotification(Notifiction);
@@ -839,29 +854,30 @@ public class FileService {
 
 					LSnotificationRepository.save(notify);
 				}
-				
+
 				for (int k = 0; k < objfile.getLssheetworkflow().getLssheetworkflowgroupmap().size(); k++) {
 					List<LSMultiusergroup> userobj = lsMultiusergroupRepositery.findBylsusergroup(
 							objfile.getLssheetworkflow().getLssheetworkflowgroupmap().get(k).getLsusergroup());
-					
+
 					List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode)
 							.collect(Collectors.toList());
 					List<LSuserMaster> objuser = lsusermasterRepository
 							.findByUsercodeInAndUserretirestatusNot(objnotifyuser, 1);
-					
+
 					for (int i = 0; i < objuser.size(); i++) {
 						if (objfile.getApproved() != null && objfile.getApproved() != 1
 								&& objfile.getIsfinalstep() != 1) {
 							if (!objuser.get(i).getUsercode().equals(objfile.getObjLoggeduser().getUsercode())
-								    && !notifiedUsers.contains(objuser.get(i).getUsercode())) {
+									&& !notifiedUsers.contains(objuser.get(i).getUsercode())) {
 								LSnotification objnotify = new LSnotification();
-								if (objfile.getApproved() == 0 && objfile.getRejected() != 1 && objfile.getApproved() != 2) {
+								if (objfile.getApproved() == 0 && objfile.getRejected() != 1
+										&& objfile.getApproved() != 2) {
 									Notifiction = "SHEETAPPROVAL";
-									
+
 									Details = "{\"ordercode\":\"" + objfile.getFilecode() + "\", \"order\":\""
 											+ objfile.getFilenameuser() + "\", \"username\":\""
 											+ objfile.getLSuserMaster().getUsername() + "\"}";
-									
+
 									objnotify.setNotifationto(objuser.get(i));
 									objnotify.setNotifationfrom(objfile.getObjLoggeduser());
 									objnotify.setNotificationdate(objfile.getNotificationdate());
@@ -875,14 +891,14 @@ public class FileService {
 									notifiedUsers.add(objuser.get(i).getUsercode());
 								}
 							}
-						}						
+						}
 					}
-					
+
 				}
 				LSnotificationRepository.save(lstnotifications);
 			}
 		} catch (Exception e) {
-			
+
 		}
 
 		objteam = null;
@@ -1087,21 +1103,22 @@ public class FileService {
 //			orderDetail.setResponse(new Response());
 //			orderDetail.getResponse().setStatus(true);
 //			orderDetail.getResponse().setInformation("ID_UNLOCKMSG");
-			if(userCode != null && orderDetail.getLockeduser() != null && userCode.equals(orderDetail.getLockeduser())) {
+			if (userCode != null && orderDetail.getLockeduser() != null
+					&& userCode.equals(orderDetail.getLockeduser())) {
 				orderDetail.setLockeduser(null);
 				orderDetail.setLockedusername(null);
 				orderDetail.setActiveuser(null);
-				
+
 				LSlogilablimsorderdetailRepository.save(orderDetail);
 
 				orderDetail.setResponse(new Response());
 				orderDetail.getResponse().setStatus(true);
 				orderDetail.getResponse().setInformation("ID_UNLOCKMSG");
-			}else {
+			} else {
 				orderDetail.setResponse(new Response());
 				orderDetail.getResponse().setStatus(true);
 				orderDetail.getResponse().setInformation("IDS_ORDER_LOCKED_BY_DIFF_USER");
-			}	
+			}
 			objMap.put("response", orderDetail);
 		} else {
 			orderDetail.setResponse(new Response());
@@ -1120,28 +1137,29 @@ public class FileService {
 		if (objMap.containsKey("Batch")) {
 			BatchID = Long.valueOf((Integer) objMap.get("Batch"));
 		}
-		
+
 		Integer userCode = Integer.parseInt(objMap.get("usercode").toString());
 
 		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findOne(BatchID);
 
 		if (orderDetail != null) {
-			
-			if(userCode != null && orderDetail.getLockeduser() != null && userCode.equals(orderDetail.getLockeduser())) {
+
+			if (userCode != null && orderDetail.getLockeduser() != null
+					&& userCode.equals(orderDetail.getLockeduser())) {
 				orderDetail.setLockeduser(null);
 				orderDetail.setLockedusername(null);
 				orderDetail.setActiveuser(null);
-				
+
 				LSlogilablimsorderdetailRepository.save(orderDetail);
 
 				orderDetail.setResponse(new Response());
 				orderDetail.getResponse().setStatus(true);
 				orderDetail.getResponse().setInformation("ID_UNLOCKMSG");
-			}else {
+			} else {
 				orderDetail.setResponse(new Response());
 				orderDetail.getResponse().setStatus(true);
 				orderDetail.getResponse().setInformation("IDS_ORDER_LOCKED_BY_DIFF_USER");
-			}			
+			}
 
 			objMap.put("response", orderDetail);
 		} else {
@@ -1153,7 +1171,7 @@ public class FileService {
 
 		return objMap;
 	}
-	
+
 	public boolean UpdateSheetversion(LSfile objfile, String orginalcontent) throws IOException {
 		int Versionnumber = 0;
 		String Content = "";
@@ -1216,11 +1234,12 @@ public class FileService {
 
 			if (objfile.getIsmultitenant() == 1) {
 				CloudSheetCreation objCreation = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
-				
+
 				if (objCreation != null && objCreation.getContainerstored() == 0) {
 					Content = cloudSheetCreationRepository.findById((long) objfile.getFilecode()).getContent();
-				}else {
-					Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),TenantContext.getCurrentTenant()+"sheetcreation");
+				} else {
+					Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+							TenantContext.getCurrentTenant() + "sheetcreation");
 				}
 			} else {
 				GridFSDBFile largefile = gridFsTemplate
@@ -1288,13 +1307,15 @@ public class FileService {
 		return true;
 	}
 
-	public void updatefileversioncontent(String Content, LSfileversion objfile, Integer ismultitenant) throws IOException {
+	public void updatefileversioncontent(String Content, LSfileversion objfile, Integer ismultitenant)
+			throws IOException {
 		if (ismultitenant == 1) {
-			
-			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,TenantContext.getCurrentTenant()+"sheetversion");
+
+			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,
+					TenantContext.getCurrentTenant() + "sheetversion");
 			String fileUUID = (String) objMap.get("uuid");
 			String fileURI = objMap.get("uri").toString();
-			
+
 			CloudSheetVersion objsavefile = new CloudSheetVersion();
 			if (objfile.getFileversioncode() != null) {
 				objsavefile.setId((long) objfile.getFileversioncode());
@@ -1337,12 +1358,14 @@ public class FileService {
 			Content = objesixting.getFilecontent();
 			if (objfile != null) {
 				if (objfile.getIsmultitenant() == 1) {
-					CloudSheetCreation objCreation = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
-					
+					CloudSheetCreation objCreation = cloudSheetCreationRepository
+							.findById((long) objfile.getFilecode());
+
 					if (objCreation != null && objCreation.getContainerstored() == 0) {
 						Content = cloudSheetCreationRepository.findById((long) objfile.getFilecode()).getContent();
-					}else {
-						Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),TenantContext.getCurrentTenant()+"sheetcreation");
+					} else {
+						Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+								TenantContext.getCurrentTenant() + "sheetcreation");
 					}
 				} else {
 					GridFSDBFile largefile = gridFsTemplate
@@ -1370,13 +1393,16 @@ public class FileService {
 					.findByFilecodeAndVersionnoOrderByVersionnoDesc(objfile.getFilecode(), objfile.getVersionno());
 			Content = objVersion.getFilecontent();
 			if (objVersion != null) {
-				if (objfile.getIsmultitenant() == 1) {					
-					CloudSheetVersion objCreation = cloudSheetVersionRepository.findById((long) objVersion.getFileversioncode());
-					
+				if (objfile.getIsmultitenant() == 1) {
+					CloudSheetVersion objCreation = cloudSheetVersionRepository
+							.findById((long) objVersion.getFileversioncode());
+
 					if (objCreation != null && objCreation.getContainerstored() == 0) {
-						Content = cloudSheetVersionRepository.findById((long) objVersion.getFileversioncode()).getContent();
-					}else {
-						Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),TenantContext.getCurrentTenant()+"sheetversion");
+						Content = cloudSheetVersionRepository.findById((long) objVersion.getFileversioncode())
+								.getContent();
+					} else {
+						Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+								TenantContext.getCurrentTenant() + "sheetversion");
 					}
 				} else {
 					GridFSDBFile largefile = gridFsTemplate.findOne(
@@ -1412,7 +1438,7 @@ public class FileService {
 		LSfile objreturnfile = lSfileRepository.findByfilecode(objfile.getFilecode());
 		return objreturnfile;
 	}
-	
+
 	public LSfile getfileoncode(LSfile objfile) throws IOException {
 		LSfile objreturnfile = lSfileRepository.findByfilecode(objfile.getFilecode());
 
@@ -1421,12 +1447,13 @@ public class FileService {
 		if (objreturnfile != null) {
 			if (objfile.getIsmultitenant() == 1) {
 				CloudSheetCreation objCreation = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
-				
+
 				if (objCreation != null && objCreation.getContainerstored() == 0) {
 					objreturnfile.setFilecontent(
 							cloudSheetCreationRepository.findById((long) objfile.getFilecode()).getContent());
-				}else {
-					objreturnfile.setFilecontent(objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),TenantContext.getCurrentTenant()+"sheetcreation"));
+				} else {
+					objreturnfile.setFilecontent(objCloudFileManipulationservice.retrieveCloudSheets(
+							objCreation.getFileuid(), TenantContext.getCurrentTenant() + "sheetcreation"));
 				}
 			} else {
 				GridFSDBFile largefile = gridFsTemplate
@@ -1569,9 +1596,9 @@ public class FileService {
 		String Notifiction = "";
 
 		Notifiction = "SHEETSHARE";
-		Details = "{\"shareduser\":\"" + objprotocolordershareto.getSharebyusername() 
-						+ "\", \"privileges\":\"" + objprotocolordershareto.getSharerights()
-						+ "\", \"sheet\":\"" + objprotocolordershareto.getSharefilename() + "\"}";
+		Details = "{\"shareduser\":\"" + objprotocolordershareto.getSharebyusername() + "\", \"privileges\":\""
+				+ objprotocolordershareto.getSharerights() + "\", \"sheet\":\""
+				+ objprotocolordershareto.getSharefilename() + "\"}";
 
 		LSnotification objnotify = new LSnotification();
 		objnotify.setNotifationfrom(objprotocolordershareto.getObjLoggeduser());
@@ -1595,15 +1622,17 @@ public class FileService {
 	}
 
 	public List<Lsfileshareto> Getfilesharetome(Lsfileshareto lsordershareto) {
-		List<Lsfileshareto> lstReturn = LsfilesharetoRepository.findBySharetounifiedidAndSharestatusOrderBySharetofilecodeDesc(lsordershareto.getSharetounifiedid(), 1);
-		if(lstReturn.size() > 0) {
-			lstReturn.stream().peek(f->{
+		List<Lsfileshareto> lstReturn = LsfilesharetoRepository
+				.findBySharetounifiedidAndSharestatusOrderBySharetofilecodeDesc(lsordershareto.getSharetounifiedid(),
+						1);
+		if (lstReturn.size() > 0) {
+			lstReturn.stream().peek(f -> {
 				LSfile objFile = lSfileRepository.findByfilecode(Long.valueOf(f.getSharefilecode()).intValue());
 				JSONObject jsonObject = new JSONObject(f.getShareitemdetails());
 				jsonObject.put("fileversioncount", objFile.getVersionno());
 				f.setShareitemdetails(jsonObject.toString());
 			}).collect(Collectors.toList());
-		}		
+		}
 		return lstReturn;
 	}
 
@@ -1703,9 +1732,10 @@ public class FileService {
 	}
 
 	public LSfile updatefilename(LSfile objfile) {
-		
+
 		LSfile fileByName = lSfileRepository.findByfilecode(objfile.getFilecode());
-		if(lSfileRepository.findByFilecodeNotAndLssitemasterAndFilenameuserIgnoreCase(objfile.getFilecode(),objfile.getLssitemaster(),objfile.getFilenameuser()).isEmpty()) {
+		if (lSfileRepository.findByFilecodeNotAndLssitemasterAndFilenameuserIgnoreCase(objfile.getFilecode(),
+				objfile.getLssitemaster(), objfile.getFilenameuser()).isEmpty()) {
 			if (fileByName.getFilecode() != null) {
 				fileByName.setFilenameuser(objfile.getFilenameuser());
 				fileByName.setCategory(objfile.getCategory());
@@ -1716,15 +1746,15 @@ public class FileService {
 				fileByName.setResponse(new Response());
 				fileByName.getResponse().setStatus(true);
 				return fileByName;
-	
+
 			} else {
 				objfile.setResponse(new Response());
 				objfile.getResponse().setStatus(false);
 				objfile.getResponse().setInformation("EDIT IN SOME PROBLEMS");
-	
+
 				return objfile;
 			}
-		}else {
+		} else {
 			objfile.setResponse(new Response());
 			objfile.getResponse().setStatus(false);
 			objfile.getResponse().setInformation("IDS_MSG_SHEETNAMEEXIST");
@@ -1734,7 +1764,6 @@ public class FileService {
 	}
 
 	public List<Elnprotocolworkflow> GetProtocolOrderWorkflow(Elnprotocolworkflow objflow) {
-
 
 		if (objflow.getObjsilentaudit() != null) {
 			objflow.getObjsilentaudit().setTableName("Elnprotocolworkflow");
@@ -1748,7 +1777,7 @@ public class FileService {
 		}
 
 		return elnprotocolworkflowRepository.findByLssitemasterOrderByWorkflowcodeAsc(objflow.getLssitemaster());
-	
+
 	}
 
 	public List<Elnprotocolworkflow> InsertUpdateprotocolorderWorkflow(Elnprotocolworkflow[] workflow) {
@@ -1797,6 +1826,91 @@ public class FileService {
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
-		return elnprotocoltemplateworkflowRepository.findBylssitemasterAndStatusOrderByWorkflowcodeAsc(objuser.getLssitemaster(),1);
+		return elnprotocoltemplateworkflowRepository
+				.findBylssitemasterAndStatusOrderByWorkflowcodeAsc(objuser.getLssitemaster(), 1);
+	}
+
+	public List<ElnprotocolTemplateworkflow> InsertUpdateprotocoltemplateWorkflow(
+			ElnprotocolTemplateworkflow[] elnprotocolTemplateworkflow) {
+
+		List<ElnprotocolTemplateworkflow> elnprotocolTemplateworkflowobj = Arrays.asList(elnprotocolTemplateworkflow);
+		for (ElnprotocolTemplateworkflow flow : elnprotocolTemplateworkflowobj) {
+			
+			if (flow.getWorkflowcode() == 0) {
+				int workflowcode= elnprotocoltemplateworkflowRepository.getlargeworkflowecode();
+				flow.setWorkflowcode(workflowcode+1);
+				elnprotocoltemplateworkflowRepository.customInsertElnprotocolTemplateworkflow(flow.getWorkflowcode(),flow.getStatus(),
+						flow.getWorkflowname(),flow.getLssitemaster().getSitecode()
+						);
+				List<ElnprotocolTemplateworkflowgroupmap> updatedGroupMapList=flow.getElnprotocoltemplateworkflowgroupmap().stream()
+		                .peek(groupMap -> groupMap.setWorkflowcode(flow.getWorkflowcode()))
+		                .collect(Collectors.toList());
+				elnprotocolTemplateworkflowgroupmapRepository.save(updatedGroupMapList);
+				
+			}else {
+				elnprotocolTemplateworkflowgroupmapRepository.save(flow.getElnprotocoltemplateworkflowgroupmap());
+				elnprotocoltemplateworkflowRepository.save(flow);
+			}
+			
+//			
+		}
+//		List<ElnprotocolTemplateworkflow> inobj = elnprotocolTemplateworkflowobj.stream()
+//				.filter(items -> items.getWorkflowcode() == 0).collect(Collectors.toList());
+//		if (!inobj.isEmpty()) {
+//			for (ElnprotocolTemplateworkflow flow : inobj) {
+//				elnprotocolTemplateworkflowgroupmapRepository.save(flow.getElnprotocoltemplateworkflowgroupmap());
+//				int workflowcode= elnprotocoltemplateworkflowRepository.getlargeworkflowecode();
+//				flow.setWorkflowcode(workflowcode+1);
+//				elnprotocoltemplateworkflowRepository.save(flow);
+//			}
+//		}
+		elnprotocolTemplateworkflowobj.get(0).setResponse(new Response());
+		elnprotocolTemplateworkflowobj.get(0).getResponse().setStatus(true);
+		elnprotocolTemplateworkflowobj.get(0).getResponse().setInformation("ID_SHEETMSG");
+		return elnprotocolTemplateworkflowobj;
+	}
+
+	public Response DeleteprotocolTemplateworkflow(ElnprotocolTemplateworkflow objflow) {
+		Response response = new Response();
+
+		long onprocess = lSProtocolMasterRepository.countByElnprotocoltemplateworkflowAndApproved(objflow, 0);
+		if (onprocess > 0) {
+			response.setStatus(false);
+		} else {
+
+			lsprotocolworkflowhistoryRepository.setWorkflownullforHistory(objflow.getWorkflowcode());
+			objflow.setStatus(-1);
+			elnprotocoltemplateworkflowRepository.save(objflow);
+			elnprotocolTemplateworkflowgroupmapRepository.save(objflow.getElnprotocoltemplateworkflowgroupmap());
+			response.setStatus(true);
+			if (objflow.getObjsilentaudit() != null) {
+				objflow.getObjsilentaudit().setTableName("ElnprotocolTemplateworkflow");
+				try {
+					objflow.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				lscfttransactionRepository.save(objflow.getObjsilentaudit());
+			}
+		}
+		return response;
+	}
+
+	public List<ElnprotocolTemplateworkflow> GetprotocoltemplateWorkflow(ElnprotocolTemplateworkflow objuser) {
+
+		if (objuser.getObjsilentaudit() != null) {
+			objuser.getObjsilentaudit().setTableName("ElnprotocolTemplateworkflow");
+			try {
+				objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			lscfttransactionRepository.save(objuser.getObjsilentaudit());
+		}
+
+		return elnprotocoltemplateworkflowRepository.findBylssitemasterAndStatusOrderByWorkflowcodeAsc(objuser.getLssitemaster(),
+				1);
 	}
 }

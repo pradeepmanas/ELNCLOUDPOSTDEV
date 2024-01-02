@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.agaram.eln.primary.fetchmodel.gettemplate.Protocoltemplateget;
+import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
@@ -77,9 +78,9 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	@Transactional
 	@Modifying
-	@Query("update LSprotocolmaster set lssheetworkflow = :workflow, approved= :approved , rejected= :rejected "
+	@Query("update LSprotocolmaster set elnprotocoltemplateworkflow = :workflow, approved= :approved , rejected= :rejected "
 			+ "where protocolmastercode in (:protocolmastercode)")
-	public void updateFileWorkflow(@Param("workflow") LSsheetworkflow lSsheetworkflow,
+	public void updateFileWorkflow(@Param("workflow") ElnprotocolTemplateworkflow lSsheetworkflow,
 			@Param("approved") Integer approved, @Param("rejected") Integer rejected,
 			@Param("protocolmastercode") Integer protocolmastercode);
 
@@ -323,6 +324,8 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	LSprotocolmaster findFirstByProtocolmastercodeAndCreatedateBetween(Integer protocolmastercode, Date fromdate,
 			Date todate);
+
+	long countByElnprotocoltemplateworkflowAndApproved(ElnprotocolTemplateworkflow objflow, int i);
 
 
 }

@@ -21,6 +21,6 @@ public interface LSprotocolorderworkflowhistoryRepository extends JpaRepository<
 			Date fromdate, Date todate);
 	@Transactional
 	@Modifying
-	@Query(value="update LSprotocolorderworkflowhistory  set currentworkflow_workflowcode = null where currentworkflow_workflowcode = ?1",nativeQuery = true)
+	@Query(value="update LSprotocolorderworkflowhistory  set elnprotocolworkflow_workflowcode = null where elnprotocolworkflow_workflowcode = ?1",nativeQuery = true)
 	void setWorkflownullforHistory(Elnprotocolworkflow lsworkflow);
 }

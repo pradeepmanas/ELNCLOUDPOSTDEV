@@ -275,4 +275,20 @@ public class FileController {
 	public List<ElnprotocolTemplateworkflow> GetProtocoltempleteWorkflow(@RequestBody ElnprotocolTemplateworkflow objuser)throws Exception {
 		return fileService.GetProtocoltempleteWorkflow(objuser);
 	}
+	
+	@PostMapping("/InsertUpdateprotocoltemplateWorkflow")
+	public List<ElnprotocolTemplateworkflow> InsertUpdateprotocoltemplateWorkflow(@RequestBody ElnprotocolTemplateworkflow[] ElnprotocolTemplateworkflow) {
+
+		return fileService.InsertUpdateprotocoltemplateWorkflow(ElnprotocolTemplateworkflow);
+	}
+	
+	@PostMapping("/DeleteprotocolTemplateworkflow")
+	public Response DeleteprotocolTemplateworkflow(@RequestBody ElnprotocolTemplateworkflow objflow)throws Exception {
+		return fileService.DeleteprotocolTemplateworkflow(objflow);
+	}
+	
+	@PostMapping("/GetprotocoltemplateWorkflow")
+	public List<ElnprotocolTemplateworkflow> GetprotocoltemplateWorkflow(@RequestBody ElnprotocolTemplateworkflow objuser)throws Exception {
+		return fileService.GetprotocoltemplateWorkflow(objuser);
+	}
 }

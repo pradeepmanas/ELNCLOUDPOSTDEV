@@ -57,6 +57,9 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 
 	@ManyToOne
 	private LSsheetworkflow lssheetworkflow;
+	
+	@ManyToOne
+	private ElnprotocolTemplateworkflow elnprotocoltemplateworkflow;
 
 	private Integer approved;
 
@@ -414,6 +417,22 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 
 	public void setTodate(Date todate) {
 		this.todate = todate;
+	}
+
+	public ElnprotocolTemplateworkflow getElnprotocoltemplateworkflow() {
+		return elnprotocoltemplateworkflow;
+	}
+
+	public void setElnprotocoltemplateworkflow(ElnprotocolTemplateworkflow elnprotocoltemplateworkflow) {
+		this.elnprotocoltemplateworkflow = elnprotocoltemplateworkflow;
+	}
+
+	public List<LSuserMaster> getLstuserMaster() {
+		return lstuserMaster;
+	}
+
+	public void setLstuserMaster(List<LSuserMaster> lstuserMaster) {
+		this.lstuserMaster = lstuserMaster;
 	} 
 	
 	

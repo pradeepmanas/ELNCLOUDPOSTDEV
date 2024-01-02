@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.service.usermanagement;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1482,9 +1481,14 @@ public class UserService {
 		List<LSuserMaster> userobj = Collections.singletonList(usermaster);
 		List<LSMultiusergroup> filteredMultiusergroupcode = userobj.stream()
 			    .flatMap(items -> items.getMultiusergroupcode().stream()
-			        .filter(values -> values.getLsusergroup().getLssitemaster() == objusermaster.getLssitemaster().getSitecode())
+			        .filter(values -> {
+			            boolean result = values.getLsusergroup().getLssitemaster().equals(objusermaster.getLssitemaster().getSitecode());
+			            System.out.println("Result: " + result); // Add logging here
+			            return result;
+			        })
 			    )
 			    .collect(Collectors.toList());
+
 
 		rtnobj.put("lsmultiusergroup", filteredMultiusergroupcode);
 		List<LSuserMaster> usermastersite =lsuserMasterRepository.findByUsernameIgnoreCaseAndUserretirestatusNot(objusermaster.getUsername(),1);
@@ -1840,7 +1844,8 @@ public class UserService {
 		            	itemsva.getLsusergroup().setDefaultusergroup(itemsva.getDefaultusergroup());
 		            }
 		        }).filter(values ->
-			        values.getLsusergroup().getLssitemaster() == objuser.getLssitemaster().getSitecode())
+//			        values.getLsusergroup().getLssitemaster() == objuser.getLssitemaster().getSitecode())
+		        values.getLsusergroup().getLssitemaster().equals(objuser.getLssitemaster().getSitecode()))
 			        .map(LSMultiusergroup::getLsusergroup)
 			    )
 			    .collect(Collectors.toList());

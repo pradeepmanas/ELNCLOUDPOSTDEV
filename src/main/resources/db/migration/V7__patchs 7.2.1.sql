@@ -1324,16 +1324,25 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.elnprotocolworkflowgroupmap
     OWNER to postgres;
     
+
 DO $$
 DECLARE
   Elnprotocolworkflow INTEGER := 0;
   LSworkflow INTEGER := 0;
+  hasElnprotocolworkflowWorkflowcode BOOLEAN := false;
 BEGIN
   SELECT COUNT(*) INTO Elnprotocolworkflow FROM Elnprotocolworkflow;
   SELECT COUNT(*) INTO LSworkflow FROM LSworkflow;
-  IF Elnprotocolworkflow = 0 AND LSworkflow != 0 THEN
-   INSERT INTO Elnprotocolworkflow
-      SELECT * FROM LSworkflow;
+  BEGIN
+    EXECUTE 'SELECT elnprotocolworkflow_workflowcode FROM lslogilabprotocoldetail LIMIT 1';
+    hasElnprotocolworkflowWorkflowcode := true;
+  EXCEPTION WHEN others THEN
+    hasElnprotocolworkflowWorkflowcode := false;
+  END;
+
+  IF Elnprotocolworkflow = 0 AND LSworkflow != 0 AND hasElnprotocolworkflowWorkflowcode THEN
+    INSERT INTO Elnprotocolworkflow
+    SELECT * FROM LSworkflow;
   END IF;
 END
 $$;
@@ -1342,12 +1351,16 @@ DO $$
 DECLARE
   elnprotocolworkflowgroupmap INTEGER := 0;
   LSworkflowgroupmapping INTEGER := 0;
+  Elnprotocolworkflow INTEGER := 0;
 BEGIN
   SELECT COUNT(*) INTO elnprotocolworkflowgroupmap FROM elnprotocolworkflowgroupmap;
   SELECT COUNT(*) INTO LSworkflowgroupmapping FROM LSworkflowgroupmapping;
-  IF elnprotocolworkflowgroupmap = 0 AND LSworkflowgroupmapping != 0 THEN
-   INSERT INTO elnprotocolworkflowgroupmap
-      SELECT * FROM LSworkflowgroupmapping  where workflowcode is not null and lsusergroup_usergroupcode is not null;
+  SELECT COUNT(*) INTO Elnprotocolworkflow FROM Elnprotocolworkflow;
+
+  IF elnprotocolworkflowgroupmap = 0 AND LSworkflowgroupmapping != 0 AND Elnprotocolworkflow != 0 THEN
+    INSERT INTO elnprotocolworkflowgroupmap
+    SELECT * FROM LSworkflowgroupmapping 
+    WHERE workflowcode IS NOT NULL AND lsusergroup_usergroupcode IS NOT NULL;
   END IF;
 END
 $$;
@@ -1416,6 +1429,18 @@ BEGIN
 END
 $do$;
 
+DO $$
+DECLARE
+  Elnprotocolworkflow INTEGER := 0;
+BEGIN
+ SELECT COUNT(*) INTO Elnprotocolworkflow FROM LSprotocolorderworkflowhistory where elnprotocolworkflow_workflowcode is not null;
+  IF Elnprotocolworkflow = 0 THEN
+  UPDATE LSprotocolorderworkflowhistory
+SET elnprotocolworkflow_workflowcode =lsworkflow_workflowcode ;
+  END IF;
+END
+$$;
+
 CREATE TABLE IF NOT EXISTS public.elnprotocoltemplateworkflow
 (
     workflowcode integer NOT NULL DEFAULT nextval('elnprotocoltemplateworkflow_workflowcode_seq'::regclass),
@@ -1477,12 +1502,71 @@ DO $$
 DECLARE
   ElnprotocolTemplateworkflowgroupmap INTEGER := 0;
   LSsheetworkflowgroupmap INTEGER := 0;
+  ElnprotocolTemplateworkflow INTEGER := 0;
 BEGIN
   SELECT COUNT(*) INTO ElnprotocolTemplateworkflowgroupmap FROM ElnprotocolTemplateworkflowgroupmap;
   SELECT COUNT(*) INTO LSsheetworkflowgroupmap FROM LSsheetworkflowgroupmap;
-  IF ElnprotocolTemplateworkflowgroupmap = 0 AND LSsheetworkflowgroupmap != 0 THEN
+   SELECT COUNT(*) INTO ElnprotocolTemplateworkflow FROM ElnprotocolTemplateworkflow;
+  IF ElnprotocolTemplateworkflowgroupmap = 0 AND LSsheetworkflowgroupmap != 0 And ElnprotocolTemplateworkflow !=0 THEN
    INSERT INTO ElnprotocolTemplateworkflowgroupmap
       SELECT * FROM LSsheetworkflowgroupmap  where workflowcode is not null and lsusergroup_usergroupcode is not null;
+  END IF;
+END
+$$;
+
+ALTER TABLE IF Exists lsprotocolworkflowhistory ADD COLUMN IF NOT EXISTS elnprotocoltemplateworkflow_workflowcode integer;
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fk1o5n7rogxv9097hxylr6pi7ko'
+AND table_name='lsprotocolworkflowhistory';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY lsprotocolworkflowhistory ADD CONSTRAINT fk1o5n7rogxv9097hxylr6pi7ko FOREIGN KEY (elnprotocoltemplateworkflow_workflowcode) REFERENCES elnprotocoltemplateworkflow(workflowcode);
+   END IF;
+END
+$do$; 
+
+
+DO $$
+DECLARE
+  Elnprotocolworkflow INTEGER := 0;
+BEGIN
+ SELECT COUNT(*) INTO Elnprotocolworkflow FROM lsprotocolworkflowhistory where elnprotocoltemplateworkflow_workflowcode is not null;
+  IF Elnprotocolworkflow = 0 THEN
+  UPDATE lsprotocolworkflowhistory
+SET elnprotocoltemplateworkflow_workflowcode =lssheetworkflow_workflowcode ;
+  END IF;
+END
+$$;
+
+ALTER TABLE IF Exists lsprotocolmaster ADD COLUMN IF NOT EXISTS elnprotocoltemplateworkflow_workflowcode integer;
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fkamn7qwghoiisbp5ci4axbvwt6'
+AND table_name='lsprotocolmaster';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY lsprotocolmaster ADD CONSTRAINT fkamn7qwghoiisbp5ci4axbvwt6 FOREIGN KEY (elnprotocoltemplateworkflow_workflowcode) REFERENCES elnprotocoltemplateworkflow(workflowcode);
+   END IF;
+END
+$do$; 
+
+DO $$
+DECLARE
+  Elnprotocolworkflow INTEGER := 0;
+BEGIN
+ SELECT COUNT(*) INTO Elnprotocolworkflow FROM lsprotocolmaster where elnprotocoltemplateworkflow_workflowcode is not null;
+  IF Elnprotocolworkflow = 0 THEN
+  UPDATE lsprotocolmaster
+SET elnprotocoltemplateworkflow_workflowcode =lssheetworkflow_workflowcode ;
   END IF;
 END
 $$;
