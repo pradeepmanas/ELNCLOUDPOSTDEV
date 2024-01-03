@@ -12,7 +12,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 public interface LSusersteamRepository  extends JpaRepository<LSusersteam, Integer> {
 
 	public List<LSusersteam> findBystatus(Integer status);
-	public List<LSusersteam> findByLsuserteammappingIn(List<LSuserteammapping> lsuserteammapping);
+//	public List<LSusersteam> findByLsuserteammappingIn(List<LSuserteammapping> lsuserteammapping);
 	public LSusersteam findByTeamnameAndStatus(String teamname,Integer status);
 	public List<LSusersteam> findBylssitemasterAndStatus(LSSiteMaster lssitemaster,Integer status);
 	public Object findByTeamnameAndStatusAndLssitemaster(String teamname, int i, LSSiteMaster lssitemaster);
@@ -25,5 +25,7 @@ public interface LSusersteamRepository  extends JpaRepository<LSusersteam, Integ
 	public List<LSusersteam> findByTeamnameIgnoreCaseAndTeamcodeNotAndLssitemaster(String teamname, Integer teamcode,
 			LSSiteMaster lssitemaster);
 	public List<LSusersteam> findBylssitemasterOrderByTeamcodeDesc(LSSiteMaster lssitemaster);
+	public List<LSusersteam> findByLsuserteammappingInAndLssitemaster(List<LSuserteammapping> lstteammap,
+			LSSiteMaster lssitemaster);
 
 }

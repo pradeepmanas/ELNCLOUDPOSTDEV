@@ -1489,7 +1489,7 @@ public class InstrumentService {
 
 	public List<LSlogilablimsorderdetail> Getorderbytypeanduser(LSlogilablimsorderdetail objorder) {
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
-		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objorder.getLsuserMaster().getLssitemaster());
 		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
 
@@ -1803,7 +1803,7 @@ public class InstrumentService {
 	public List<LSlogilablimsorderdetail> Getorderbytypeandflaganduser(LSlogilablimsorderdetail objorder,
 			Map<String, Object> mapOrders) {
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
-		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objorder.getLsuserMaster().getLssitemaster());
 		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
 //		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
@@ -2515,7 +2515,7 @@ public class InstrumentService {
 	public List<LSlogilablimsorderdetail> Getorderbytypeandflaganduserlazy(LSlogilablimsorderdetail objorder,
 			Map<String, Object> mapOrders) {
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
-		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objorder.getLsuserMaster().getLssitemaster());
 //		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 
 		if (objorder.getOrderflag().equals("N")) {
@@ -2560,7 +2560,7 @@ public class InstrumentService {
 	public List<LSlogilablimsorderdetail> Getorderallbytypeandflaganduserlazy(LSlogilablimsorderdetail objorder,
 			Map<String, Object> mapOrders) {
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
-		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objorder.getLsuserMaster().getLssitemaster());
 		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
 
@@ -4092,7 +4092,7 @@ public class InstrumentService {
 		} else {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
 					.findBylsuserMaster(objorder.getLsuserMaster());
-			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objorder.getLsuserMaster().getLssitemaster());
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 //			List<LSsamplemaster> lstsample = lssamplemasterrepository.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
 
@@ -4164,7 +4164,7 @@ public class InstrumentService {
 		} else {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
 					.findBylsuserMaster(objorder.getLsuserMaster());
-			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objorder.getLsuserMaster().getLssitemaster());
 //			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 //			List<LSsamplemaster> lstsample = lssamplemasterrepository.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
 			List<Integer> lstsampleint = lssamplemasterrepository.getDistinctByLssitemasterSitecodeAndStatus(
@@ -5516,7 +5516,7 @@ public class InstrumentService {
 			Map<String, Object> objmap = new HashMap<>();
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
 					.findByLsuserMasterAndTeamcodeNotNull(objuser);
-			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objuser.getLssitemaster());
 			List<LSprojectmaster> lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatus(lstteam, 1);
 
 			List<Integer> lstproject = new ArrayList<Integer>();
@@ -5531,7 +5531,7 @@ public class InstrumentService {
 			}
 
 			List<Integer> lstteamusercode = new ArrayList<Integer>();
-			if (lstteammap != null && lstteammap.size() > 0) {
+			if (lstteammap != null && lstteammap.size() > 0 && !lstteamcode.isEmpty()) {
 				List<LSuserMaster> lstusers = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteamcode);
 				if (lstusers != null && lstusers.size() > 0) {
 					lstteamusercode = lstusers.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
@@ -7081,7 +7081,7 @@ public class InstrumentService {
 	public List<Logilaborders> Getorderbyflaganduser(LSlogilablimsorderdetail objorder) {
 
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
-		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objorder.getLsuserMaster().getLssitemaster());
 		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 
 //		List<LSsamplemaster> lstsample = lssamplemasterrepository
@@ -7683,7 +7683,7 @@ public class InstrumentService {
 
 		Map<String, Object> retuobjts = new HashMap<>();
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
-		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objorder.getLsuserMaster().getLssitemaster());
 		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 		List<Logilabprotocolorders> lstorder = new ArrayList<Logilabprotocolorders>();
 		Date fromdate = objorder.getFromdate();

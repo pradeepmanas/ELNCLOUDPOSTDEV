@@ -925,6 +925,18 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setlSprotocolorderversion(List<LSprotocolorderversion> lSprotocolorderversion) {
 		this.lSprotocolorderversion = lSprotocolorderversion;
 	}
+	@Transient
+	private String content;
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	
 	
 	
 }

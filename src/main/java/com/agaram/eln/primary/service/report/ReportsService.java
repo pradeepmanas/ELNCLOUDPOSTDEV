@@ -3519,7 +3519,7 @@ public class ReportsService {
 			mapOrders.put("Completed", Completed);
 		} else {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(LsuserMasterObj);
-			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingIn(lstteammap);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,LsuserMasterObj.getLssitemaster());
 			List<LSMultiusergroup> objtemp = LSMultiusergroupRepositery.findByusercode(LsuserMasterObj.getUsercode());
 			List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
 					.findBylsusergroup(objtemp.get(0).getLsusergroup());

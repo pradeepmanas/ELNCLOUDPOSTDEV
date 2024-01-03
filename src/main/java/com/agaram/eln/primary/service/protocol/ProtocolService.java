@@ -2338,10 +2338,10 @@ public class ProtocolService {
 				if (objlastworkflow != null
 						&& objClass.getCurrentStep().getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
 					objClass.setFinalworkflow(1);
-					;
+					
 				} else {
 					objClass.setFinalworkflow(0);
-					;
+					
 				}
 			}
 			updatenotificationfororderworkflowapprovel(objClass);
@@ -3025,10 +3025,19 @@ public class ProtocolService {
 					LSprotocolmaster lsprotocolmasterobj = LSProtocolMasterRepositoryObj.findByprotocolmastercode(
 							lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode());
 					if (lSlogilabprotocoldetail.getIsmultitenant() == 1) {
-						if (lsprotocolmasterobj.getContainerstored() == 0) {
+						if ( lsprotocolmasterobj.getContainerstored() == null && lSlogilabprotocoldetail.getContent() != null && !lSlogilabprotocoldetail.getContent().isEmpty()) {
 							// Content = cloudSheetCreationRepository.findById((long)
 							// objorder.getLsfile().getFilecode())
 							// .getContent();
+							try {
+								JSONObject protocolJson = new JSONObject(lSlogilabprotocoldetail.getContent());
+								protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
+								updateProtocolOrderContent(protocolJson.toString(), lSlogilabprotocoldetail,
+										lSlogilabprotocoldetail.getIsmultitenant());
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						} else {
 							try {
 								Content = objCloudFileManipulationservice.retrieveCloudSheets(
