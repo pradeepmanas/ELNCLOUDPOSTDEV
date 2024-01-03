@@ -682,14 +682,49 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	   	 			         System.out.println("License path i created :"+userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
 	   	 			        
 	   	 			     
-	   	 			     String azure4 = userDirectory+"Aspose.PDF.Java.lic";  
+	   	 			     String azure4 = "src/main/resources/Aspose.PDF.Java.lic";  
 	   	 			     File f = new File(azure4);
 	   	 			     System.out.println("azureexists4:"+f.exists());
 	   	 			
-	   	 			    String convert= env.getProperty("parserconvertor");
-	   	 			    System.out.println("workspace:"+convert);
-	   	 			    
+
+	   	 			     String azure5 = "src//main//resources//Aspose.PDF.Java.lic";  
+	   	 			     File f1 = new File(azure5);
+	   	 			     System.out.println("azureexists5:"+f1.exists());
 	   	 			
+	   	 		     String azure6 = "/src/main/resources/Aspose.PDF.Java.lic";  
+   	 			     File f2 = new File(azure6);
+   	 			     System.out.println("azureexists6:"+f2.exists());
+   	 			
+   	 		        String azure7 = "//src//main//resources//Aspose.PDF.Java.lic";  
+	 			     File f7 = new File(azure7);
+	 			     System.out.println("azureexists7:"+f7.exists());
+	 			
+	 			    String azure8 = "/Aspose.PDF.Java.lic";  
+	 			     File f8 = new File(azure8);
+	 			     System.out.println("azureexists8:"+f8.exists());
+	 			
+	 			    String azure9 = "//Aspose.PDF.Java.lic";  
+	 			     File f9 = new File(azure9);
+	 			     System.out.println("azureexists9:"+f9.exists());
+	 			
+			         String azure10 = userDirectory+"src/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
+			         File f10 = new File(azure10);
+		  		 				 System.out.println("azureexists10:"+f10);
+		   	 			 
+		
+		   	 			         String azure11 = userDirectory+"/src//main//java//com//agaram//eln/Aspose.PDF.Java.lic";
+		   	 		         File f11 = new File(azure11);
+	  		 				 System.out.println("azureexists10:"+f11);
+	
+	   	 		         String azure12 = "src/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
+	   	 	         File f12 = new File(azure12);
+		 				 System.out.println("azureexists10:"+f12);
+
+   	 			         
+   	 		         String azure13 = "src//main//java//com//agaram//eln/Aspose.PDF.Java.lic";
+   	 	         File f13 = new File(azure13);
+	 				 System.out.println("azureexists10:"+f13);
+	
 	 				 License asposePdfLicenseText = new License();
 	 		            try {
 	 		            	
