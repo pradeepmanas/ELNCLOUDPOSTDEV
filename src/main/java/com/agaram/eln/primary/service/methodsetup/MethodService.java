@@ -649,39 +649,50 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	 				System.out.println("Folder exist in azure");
 	 				
 
-			         String azure = "src/main/resources/asposelicense";
- 		 				 System.out.println("azure:"+azure);
- 		 				 String absoluteTestPath = new File(azure).getAbsolutePath();
-  	 			         File azurefolder = new File(absoluteTestPath); 	
-  	 			         System.out.println("azureexists:"+azurefolder.exists());
-  	 			         System.out.println("azurefolderisdir:"+azurefolder.isDirectory());
-  	 			      	 			         
-	   	 			     
-	   	 			     String azure5 = "src/main/resources/asposelicense/Aspose.PDF.Java.lic";  
-	   	 			    String absoluteTestPath1 = new File(azure5).getAbsolutePath();
-	   	 			     File f = new File(absoluteTestPath1);
-	   	 			     System.out.println("azureexists4:"+f.exists());
-	   	 			
-	   	 			 String azure4 = "src/main/resources/Aspose.PDF.Java.lic";  
-	   	 			 String absoluteTestPath2 = new File(azure4).getAbsolutePath();
-   	 			     File f1 = new File(absoluteTestPath2);
-   	 			     System.out.println("azureexists4:"+f1.exists());
-   	 			
-	 			    String azure8 = "/Aspose.PDF.Java.lic";  
-	 			   String absoluteTestPath3 = new File(azure8).getAbsolutePath();
-	 			     File f8 = new File(absoluteTestPath3);
-	 			     System.out.println("azureexists8:"+f8.exists());
-	 			
-		
-	   	 		         String azure12 = "src/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
-	   	 		     String absoluteTestPath4 = new File(azure12).getAbsolutePath();
-	   	 	         File f12 = new File(azure12);
-		 				 System.out.println("azureexists12:"+f12.exists());
+//			         String azure = "src/main/resources/asposelicense";
+// 		 				 System.out.println("azure:"+azure);
+// 		 				 String absoluteTestPath = new File(azure).getAbsolutePath();
+//  	 			         File azurefolder = new File(absoluteTestPath); 	
+//  	 			         System.out.println("azureexists:"+azurefolder.exists());
+//  	 			         System.out.println("azurefolderisdir:"+azurefolder.isDirectory());
+//  	 			      	 			         
+//	   	 			     
+//	   	 			     String azure5 = "src/main/resources/asposelicense/Aspose.PDF.Java.lic";  
+//	   	 			    String absoluteTestPath1 = new File(azure5).getAbsolutePath();
+//	   	 			     File f = new File(absoluteTestPath1);
+//	   	 			     System.out.println("azureexists4:"+f.exists());
+//	   	 			
+//	   	 			 String azure4 = "src/main/resources/Aspose.PDF.Java.lic";  
+//	   	 			 String absoluteTestPath2 = new File(azure4).getAbsolutePath();
+//   	 			     File f1 = new File(absoluteTestPath2);
+//   	 			     System.out.println("azureexists4:"+f1.exists());
+//   	 			
+//	 			    String azure8 = "/Aspose.PDF.Java.lic";  
+//	 			   String absoluteTestPath3 = new File(azure8).getAbsolutePath();
+//	 			     File f8 = new File(absoluteTestPath3);
+//	 			     System.out.println("azureexists8:"+f8.exists());
+//	 			
+//		
+//	   	 		         String azure12 = "src/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
+//	   	 		     String absoluteTestPath4 = new File(azure12).getAbsolutePath();
+//	   	 	         File f12 = new File(azure12);
+//		 				 System.out.println("azureexists12:"+f12.exists());
 
+	 
+		   	 		 File f = new File("Aspose.PDF.Java.lic"); 
+		   	 	     String absolute = f.getAbsolutePath(); 
+		   	 	     Path path = Paths.get(absolute);
+
+		   	     	 System.out.println("stringabsolute:"+absolute); 
+		   	         System.out.println("absolutepath:"+path);
+		   	     	 Boolean value=Files.exists(path);
+		   	 			
+		   	     	 
+	   	 			     System.out.println("existscheck:"+value);
 	 				 License asposePdfLicenseText = new License();
 	 		            try {
 	 		            	
-							asposePdfLicenseText.setLicense(azure4);
+							asposePdfLicenseText.setLicense(absolute);
 							System.out.println("license is set");
 						} catch (Exception e1) {
 							                                                                                                                              
