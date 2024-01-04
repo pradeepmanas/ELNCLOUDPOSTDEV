@@ -709,22 +709,91 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	 			
 			         String azure10 = userDirectory+"src/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
 			         File f10 = new File(azure10);
-		  		 				 System.out.println("azureexists10:"+f10);
+		  		 				 System.out.println("azureexists10:"+f10.exists());
 		   	 			 
 		
 		   	 			         String azure11 = userDirectory+"/src//main//java//com//agaram//eln/Aspose.PDF.Java.lic";
 		   	 		         File f11 = new File(azure11);
-	  		 				 System.out.println("azureexists10:"+f11);
+	  		 				 System.out.println("azureexists11:"+f11.exists());
 	
 	   	 		         String azure12 = "src/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
 	   	 	         File f12 = new File(azure12);
-		 				 System.out.println("azureexists10:"+f12);
+		 				 System.out.println("azureexists12:"+f12.exists());
 
    	 			         
    	 		         String azure13 = "src//main//java//com//agaram//eln/Aspose.PDF.Java.lic";
-   	 	         File f13 = new File(azure13);
-	 				 System.out.println("azureexists10:"+f13);
+   	 	             File f13 = new File(azure13);
+	 				 System.out.println("azureexists13:"+f13.exists());
 	
+	 				String azure14 = "/pradeepmanas/ELNCLOUDPOSTDEV/blob/main/Aspose.PDF.Java.lic";
+	 				 File f14 = new File(azure14);
+	 				 System.out.println("azureexists14:"+f14.exists());
+	
+	  				String azure15 = "//pradeepmanas//ELNCLOUDPOSTDEV//blob//main//Aspose.PDF.Java.lic";
+	 				 File f15 = new File(azure15);
+	 				 System.out.println("azureexists15:"+f15.exists());
+	
+	 			//	https://github.com/pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose%20License
+	 					
+	 			         String azure16 ="/pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose%20License";
+	 		  		 	 System.out.println("azure:"+azure16);
+	 		   	 		 File azurefolder16 = new File(azure16);
+	 		   	 		 System.out.println("azureexists16:"+azurefolder16.exists());
+	 		   	 		
+	 		   	 	 String azure17 ="//pradeepmanas//ELNCLOUDPOSTDEV//tree//main//src//main//resources//Aspose%20License";
+ 		  		 	 System.out.println("azure:"+azure17);
+ 		   	 		 File azurefolder17 = new File(azure17);
+ 		   	 		 System.out.println("azureexists17:"+azurefolder17.exists());
+ 		   	 		
+
+	 		   	 	 String azure22 ="pradeepmanas//ELNCLOUDPOSTDEV//tree//main//src//main//resources//Aspose%20License";
+ 		  		 	 System.out.println("azure:"+azure22);
+ 		   	 		 File azurefolder22 = new File(azure22);
+ 		   	 		 System.out.println("azureexists22:"+azurefolder22.exists());
+ 		   	 		 
+ 		   	 	   String azure25 ="pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose%20License";
+		  		 	 System.out.println("azure:"+azure25);
+		   	 		 File azurefolder25 = new File(azure25);
+		   	 		 System.out.println("azureexists25:"+azurefolder25.exists());
+		   	 		
+ 		   	 //	https://github.com/pradeepmanas/ELNCLOUDPOSTDEV/blob/main/src/main/java/com/agaram/eln/Aspose.PDF.Java.lic
+ 		   	 		
+ 	  				String azure18 = "//pradeepmanas//ELNCLOUDPOSTDEV//blob//main//java//com//agaram//eln//Aspose.PDF.Java.lic";
+				 File f18 = new File(azure18);
+				 System.out.println("azureexists18:"+f18.exists());
+
+	  				String azure19 = "/pradeepmanas/ELNCLOUDPOSTDEV/blob/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
+				 File f19 = new File(azure19);
+				 System.out.println("azureexists19:"+f19.exists());
+
+	  				String azure23 = "pradeepmanas/ELNCLOUDPOSTDEV/blob/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
+				 File f23 = new File(azure23);
+				 System.out.println("azureexists23:"+f23.exists());
+
+	  				String azure24 = "pradeepmanas//ELNCLOUDPOSTDEV//blob//main//java//com//agaram//eln//Aspose.PDF.Java.lic";
+				 File f24 = new File(azure24);
+				 System.out.println("azureexists24:"+f24.exists());
+
+			     String azure20 ="/pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose License";
+		  		 	 System.out.println("azure:"+azure20);
+		   	 		 File azurefolder20 = new File(azure20);
+		   	 		 System.out.println("azureexists20:"+azurefolder20.exists());
+		   	 		
+		   	 	 String azure21 ="//pradeepmanas//ELNCLOUDPOSTDEV//tree//main//src//main//resources//Aspose License";
+	  		 	 System.out.println("azure:"+azure21);
+	   	 		 File azurefolder21 = new File(azure21);
+	   	 		 System.out.println("azureexists21:"+azurefolder21.exists());
+	   	 		
+	   	 	 String azure26 ="pradeepmanas//ELNCLOUDPOSTDEV//tree//main//src//main//resources//Aspose License";
+  		 	 System.out.println("azure:"+azure26);
+   	 		 File azurefolder26= new File(azure26);
+   	 		 System.out.println("azureexists26:"+azurefolder26.exists());
+   	 		
+		     String azure27 ="pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose License";
+  		 	 System.out.println("azure:"+azure27);
+   	 		 File azurefolder27 = new File(azure27);
+   	 		 System.out.println("azureexists27:"+azurefolder27.exists());
+
 	 				 License asposePdfLicenseText = new License();
 	 		            try {
 	 		            	
@@ -951,8 +1020,6 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
        }
        return tempFile;
    }
-   
-      
    
    @SuppressWarnings("resource")
   	public String getSQLFileData(String fileName,Integer methodKey) throws IOException, InterruptedException {
