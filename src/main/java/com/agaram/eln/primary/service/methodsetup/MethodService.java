@@ -45,6 +45,8 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.util.Matrix;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -52,6 +54,7 @@ import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -692,6 +695,17 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	 		        Path absolutePath = relativePath.toAbsolutePath();
 	 		        Boolean value=Files.exists(absolutePath);
 	 		        System.out.println("existscheck:"+value);
+	 		        
+	 		   //    ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
+	 		  //     databasePopulator.addScript(new ClassPathResource("Aspose.PDF.Java.lic"));
+	 		    
+
+	 		        String resourceLocation = "src/main/resources/Aspose.PDF.Java.lic";
+
+	 		        // Create a ClassPathResource object
+	 		        Resource resource = new ClassPathResource(resourceLocation);
+	 		        Boolean value1=resource.exists();
+	 		        System.out.println("resourceexistscheck:"+value1);
 	 		        
 	 				 License asposePdfLicenseText = new License();
 	 		            try {
