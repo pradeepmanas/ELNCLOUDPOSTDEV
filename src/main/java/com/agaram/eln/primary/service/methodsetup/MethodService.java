@@ -647,152 +647,36 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	 	          tempPath="";
 	 			}else {// in cloudpath
 	 				System.out.println("Folder exist in azure");
-			         String azure = "src/main/resources/"+"Aspose License";
+	 				
+
+			         String azure = "src/main/resources/asposelicense";
  		 				 System.out.println("azure:"+azure);
-  	 			         File azurefolder = new File(azure);
-  	
+ 		 				 String absoluteTestPath = new File(azure).getAbsolutePath();
+  	 			         File azurefolder = new File(absoluteTestPath); 	
   	 			         System.out.println("azureexists:"+azurefolder.exists());
   	 			         System.out.println("azurefolderisdir:"+azurefolder.isDirectory());
-  	 			         System.out.println("License path i created :"+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
-  	 			         
-  	
-  	 			         String azure1 = "src//main//resources//"+"Aspose License";
-		 				 System.out.println("azure:"+azure1);
-	 			         File azurefolder1 = new File(azure1);
-	
-	 			         System.out.println("azureexists1:"+azurefolder1.exists());
-	 			         System.out.println("azurefolderisdir1:"+azurefolder1.isDirectory());
-	 			         System.out.println("License path i created :"+"src//main//resources//Aspose License//Aspose.PDF.Java.lic"); 
-	
-	 			         
-	 			         String azure2 = "src\\main\\resources\\"+"Aspose License";
-		 				 System.out.println("azure:"+azure2);
-	 			         File azurefolder2 = new File(azure2);
-	
-	 			         System.out.println("azureexists2:"+azurefolder2.exists());
-	 			         System.out.println("azurefolderisdir2:"+azurefolder2.isDirectory());
-	 			         System.out.println("License path i created :"+"src\\main\\resources\\Aspose License\\Aspose.PDF.Java.lic"); 
-	
-	 			         String azure3 = userDirectory+"src/main/resources/"+"Aspose License";
-	  		 				 System.out.println("azure:"+azure3);
-	   	 			         File azurefolder3 = new File(azure3);
-	   	
-	   	 			         System.out.println("azureexists3:"+azurefolder3.exists());
-	   	 			         System.out.println("azurefolderisdir3:"+azurefolder3.isDirectory());
-	   	 			         System.out.println("License path i created :"+userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
-	   	 			        
+  	 			      	 			         
 	   	 			     
-	   	 			     String azure4 = "src/main/resources/Aspose.PDF.Java.lic";  
-	   	 			     File f = new File(azure4);
+	   	 			     String azure5 = "src/main/resources/asposelicense/Aspose.PDF.Java.lic";  
+	   	 			    String absoluteTestPath1 = new File(azure5).getAbsolutePath();
+	   	 			     File f = new File(absoluteTestPath1);
 	   	 			     System.out.println("azureexists4:"+f.exists());
 	   	 			
-
-	   	 			     String azure5 = "src//main//resources//Aspose.PDF.Java.lic";  
-	   	 			     File f1 = new File(azure5);
-	   	 			     System.out.println("azureexists5:"+f1.exists());
-	   	 			
-	   	 		     String azure6 = "/src/main/resources/Aspose.PDF.Java.lic";  
-   	 			     File f2 = new File(azure6);
-   	 			     System.out.println("azureexists6:"+f2.exists());
+	   	 			 String azure4 = "src/main/resources/Aspose.PDF.Java.lic";  
+	   	 			 String absoluteTestPath2 = new File(azure4).getAbsolutePath();
+   	 			     File f1 = new File(absoluteTestPath2);
+   	 			     System.out.println("azureexists4:"+f1.exists());
    	 			
-   	 		        String azure7 = "//src//main//resources//Aspose.PDF.Java.lic";  
-	 			     File f7 = new File(azure7);
-	 			     System.out.println("azureexists7:"+f7.exists());
-	 			
 	 			    String azure8 = "/Aspose.PDF.Java.lic";  
-	 			     File f8 = new File(azure8);
+	 			   String absoluteTestPath3 = new File(azure8).getAbsolutePath();
+	 			     File f8 = new File(absoluteTestPath3);
 	 			     System.out.println("azureexists8:"+f8.exists());
 	 			
-	 			    String azure9 = "//Aspose.PDF.Java.lic";  
-	 			     File f9 = new File(azure9);
-	 			     System.out.println("azureexists9:"+f9.exists());
-	 			
-			         String azure10 = userDirectory+"src/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
-			         File f10 = new File(azure10);
-		  		 				 System.out.println("azureexists10:"+f10.exists());
-		   	 			 
 		
-		   	 			         String azure11 = userDirectory+"/src//main//java//com//agaram//eln/Aspose.PDF.Java.lic";
-		   	 		         File f11 = new File(azure11);
-	  		 				 System.out.println("azureexists11:"+f11.exists());
-	
 	   	 		         String azure12 = "src/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
+	   	 		     String absoluteTestPath4 = new File(azure12).getAbsolutePath();
 	   	 	         File f12 = new File(azure12);
 		 				 System.out.println("azureexists12:"+f12.exists());
-
-   	 			         
-   	 		         String azure13 = "src//main//java//com//agaram//eln/Aspose.PDF.Java.lic";
-   	 	             File f13 = new File(azure13);
-	 				 System.out.println("azureexists13:"+f13.exists());
-	
-	 				String azure14 = "/pradeepmanas/ELNCLOUDPOSTDEV/blob/main/Aspose.PDF.Java.lic";
-	 				 File f14 = new File(azure14);
-	 				 System.out.println("azureexists14:"+f14.exists());
-	
-	  				String azure15 = "//pradeepmanas//ELNCLOUDPOSTDEV//blob//main//Aspose.PDF.Java.lic";
-	 				 File f15 = new File(azure15);
-	 				 System.out.println("azureexists15:"+f15.exists());
-	
-	 			//	https://github.com/pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose%20License
-	 					
-	 			         String azure16 ="/pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose%20License";
-	 		  		 	 System.out.println("azure:"+azure16);
-	 		   	 		 File azurefolder16 = new File(azure16);
-	 		   	 		 System.out.println("azureexists16:"+azurefolder16.exists());
-	 		   	 		
-	 		   	 	 String azure17 ="//pradeepmanas//ELNCLOUDPOSTDEV//tree//main//src//main//resources//Aspose%20License";
- 		  		 	 System.out.println("azure:"+azure17);
- 		   	 		 File azurefolder17 = new File(azure17);
- 		   	 		 System.out.println("azureexists17:"+azurefolder17.exists());
- 		   	 		
-
-	 		   	 	 String azure22 ="pradeepmanas//ELNCLOUDPOSTDEV//tree//main//src//main//resources//Aspose%20License";
- 		  		 	 System.out.println("azure:"+azure22);
- 		   	 		 File azurefolder22 = new File(azure22);
- 		   	 		 System.out.println("azureexists22:"+azurefolder22.exists());
- 		   	 		 
- 		   	 	   String azure25 ="pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose%20License";
-		  		 	 System.out.println("azure:"+azure25);
-		   	 		 File azurefolder25 = new File(azure25);
-		   	 		 System.out.println("azureexists25:"+azurefolder25.exists());
-		   	 		
- 		   	 //	https://github.com/pradeepmanas/ELNCLOUDPOSTDEV/blob/main/src/main/java/com/agaram/eln/Aspose.PDF.Java.lic
- 		   	 		
- 	  				String azure18 = "//pradeepmanas//ELNCLOUDPOSTDEV//blob//main//java//com//agaram//eln//Aspose.PDF.Java.lic";
-				 File f18 = new File(azure18);
-				 System.out.println("azureexists18:"+f18.exists());
-
-	  				String azure19 = "/pradeepmanas/ELNCLOUDPOSTDEV/blob/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
-				 File f19 = new File(azure19);
-				 System.out.println("azureexists19:"+f19.exists());
-
-	  				String azure23 = "pradeepmanas/ELNCLOUDPOSTDEV/blob/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
-				 File f23 = new File(azure23);
-				 System.out.println("azureexists23:"+f23.exists());
-
-	  				String azure24 = "pradeepmanas//ELNCLOUDPOSTDEV//blob//main//java//com//agaram//eln//Aspose.PDF.Java.lic";
-				 File f24 = new File(azure24);
-				 System.out.println("azureexists24:"+f24.exists());
-
-			     String azure20 ="/pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose License";
-		  		 	 System.out.println("azure:"+azure20);
-		   	 		 File azurefolder20 = new File(azure20);
-		   	 		 System.out.println("azureexists20:"+azurefolder20.exists());
-		   	 		
-		   	 	 String azure21 ="//pradeepmanas//ELNCLOUDPOSTDEV//tree//main//src//main//resources//Aspose License";
-	  		 	 System.out.println("azure:"+azure21);
-	   	 		 File azurefolder21 = new File(azure21);
-	   	 		 System.out.println("azureexists21:"+azurefolder21.exists());
-	   	 		
-	   	 	 String azure26 ="pradeepmanas//ELNCLOUDPOSTDEV//tree//main//src//main//resources//Aspose License";
-  		 	 System.out.println("azure:"+azure26);
-   	 		 File azurefolder26= new File(azure26);
-   	 		 System.out.println("azureexists26:"+azurefolder26.exists());
-   	 		
-		     String azure27 ="pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose License";
-  		 	 System.out.println("azure:"+azure27);
-   	 		 File azurefolder27 = new File(azure27);
-   	 		 System.out.println("azureexists27:"+azurefolder27.exists());
 
 	 				 License asposePdfLicenseText = new License();
 	 		            try {
