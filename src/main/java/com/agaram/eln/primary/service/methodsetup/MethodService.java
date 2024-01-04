@@ -679,20 +679,24 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 //		 				 System.out.println("azureexists12:"+f12.exists());
 
 	 
-		   	 		 File f = new File("Aspose.PDF.Java.lic"); 
-		   	 	     String absolute = f.getAbsolutePath(); 
-		   	 	     Path path = Paths.get(absolute);
-
-		   	     	 System.out.println("stringabsolute:"+absolute); 
-		   	         System.out.println("absolutepath:"+path);
-		   	     	 Boolean value=Files.exists(path);
+//		   	 		 File f = new File("Aspose.PDF.Java.lic"); 
+//		   	 	     String absolute = f.getAbsolutePath(); 
+//		   	 	     Path path = Paths.get(absolute);
+//
+//		   	     	 System.out.println("stringabsolute:"+absolute); 
+//		   	         System.out.println("absolutepath:"+path);
+//		   	     	 Boolean value=Files.exists(path);
 		   	 			
-		   	     	 
-	   	 			     System.out.println("existscheck:"+value);
+	 				String filePath="src/main/resources/Aspose.PDF.Java.lic";
+	 		        Path relativePath = Paths.get(filePath);
+	 		        Path absolutePath = relativePath.toAbsolutePath();
+	 		        Boolean value=Files.exists(absolutePath);
+	 		        System.out.println("existscheck:"+value);
+	 		        
 	 				 License asposePdfLicenseText = new License();
 	 		            try {
 	 		            	
-							asposePdfLicenseText.setLicense(absolute);
+							asposePdfLicenseText.setLicense(absolutePath.toString());
 							System.out.println("license is set");
 						} catch (Exception e1) {
 							                                                                                                                              
