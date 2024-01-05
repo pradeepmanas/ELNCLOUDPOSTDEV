@@ -854,6 +854,20 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 		        System.out.println("resourceexistscheck:"+value1);
 		        
 
+		        String fileName1 = "Aspose.PDF.Java.lic";
+
+		        // Use the ClassLoader to get the resource URL
+		        ClassLoader classLoader = MethodService.class.getClassLoader();
+		        java.net.URL resourceUrl = classLoader.getResource(fileName1);
+
+		        // Check if the resource URL is not null (file exists in the classpath)
+		        if (resourceUrl != null) {
+		            System.out.println("File '" + fileName + "' exists in the classpath.");
+		            System.out.println("File URL: " + resourceUrl);
+		        } else {
+		            System.out.println("File '" + fileName + "' does not exist in the classpath.");
+		        }
+		        
 	 				 License asposePdfLicenseText = new License();
 	 		            try {
 	 		            	
