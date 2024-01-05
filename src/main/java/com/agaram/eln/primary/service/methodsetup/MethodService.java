@@ -857,7 +857,7 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	 				 License asposePdfLicenseText = new License();
 	 		            try {
 	 		            	
-							asposePdfLicenseText.setLicense(absolutePath.toString());
+							asposePdfLicenseText.setLicense("[Aspose.PDF.Java.lic]");
 							System.out.println("license is set");
 						} catch (Exception e1) {
 							                                                                                                                              
