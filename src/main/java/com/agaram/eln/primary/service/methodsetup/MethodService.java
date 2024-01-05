@@ -891,24 +891,14 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 		        } else {
 		            System.out.println("File '" + fileName2 + "' does not exist in the classpath.");
 		        }
-		        
-		       
-		        
-		     // Specify the resource name
-		      //  String resourceName = "Aspose.PDF.Java.lic";
 
-		        // Use the ClassLoader to get the resource URL
-		       // ClassLoader classLoader = ShowClasspathForResource.class.getClassLoader();
-		      //  java.net.URL resourceUrl = classLoader.getResource(resourceName);
-
-		        // Check if the resource URL is not null (file exists in the classpath)
-
-		        
 	 				 License asposePdfLicenseText = new License();
 	 		            try {
 	 		            	
-							asposePdfLicenseText.setLicense("[Aspose.PDF.Java.lic]");
-							System.out.println("license is set");
+							asposePdfLicenseText.setLicense("jar:file:/tmp/app.jar!/BOOT-INF/classes!/Aspose.PDF.Java.lic");
+							System.out.println("license is set for path: jar:file:/tmp/app.jar!/BOOT-INF/classes!/Aspose.PDF.Java.lic");
+							asposePdfLicenseText.setLicense("/BOOT-INF/classes!/Aspose.PDF.Java.lic");
+							System.out.println("license is set for path: /BOOT-INF/classes!/Aspose.PDF.Java.lic");
 						} catch (Exception e1) {
 							                                                                                                                              
 							e1.printStackTrace();
