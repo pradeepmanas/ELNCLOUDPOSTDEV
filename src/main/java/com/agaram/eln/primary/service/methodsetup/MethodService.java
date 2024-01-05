@@ -871,7 +871,7 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 		       
 		        
 		     // Specify the resource name
-		        String resourceName = "Aspose.PDF.Java.lic";
+		      //  String resourceName = "Aspose.PDF.Java.lic";
 
 		        // Use the ClassLoader to get the resource URL
 		       // ClassLoader classLoader = ShowClasspathForResource.class.getClassLoader();
@@ -880,31 +880,13 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 		        // Check if the resource URL is not null (file exists in the classpath)
 		        if (resourceUrl != null) {
 		            // Extract the classpath entry from the URL
-		          //  String classpathEntry = extractClasspathEntry(resourceUrl);
+		            String classpathEntry = extractClasspathEntry(resourceUrl);
 
-		         // Convert the URL to a string
-		            String urlString = resourceUrl.toString();
-
-		            // Check if the URL is a file URL
-		            if (urlString.startsWith("file:")) {
-		                // For file URLs, the classpath entry is the file path
-		                return urlString.substring("file:".length());
-		            } else if (urlString.startsWith("jar:file:")) {
-		                // For JAR file URLs, extract the JAR file path
-		                int jarSeparatorIndex = urlString.indexOf('!');
-		                if (jarSeparatorIndex != -1) {
-		                    return urlString.substring("jar:file:".length(), jarSeparatorIndex);
-		                }
-		            }
-
-		            // If the URL format is not recognized, return the full URL
-		          //  return urlString;
-		            
 		            // Print the classpath entry
-		            System.out.println("Classpath Entry for '" + resourceName + "':");
-		            System.out.println(urlString);
+		            System.out.println("Classpath Entry for '" + fileName2 + "':");
+		            System.out.println(classpathEntry);
 		        } else {
-		            System.out.println("Resource '" + resourceName + "' does not exist in the classpath.");
+		            System.out.println("Resource '" + fileName2 + "' does not exist in the classpath.");
 		        }
 		        
 	 				 License asposePdfLicenseText = new License();
@@ -1125,6 +1107,26 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
         } 
    }
    
+   private static String extractClasspathEntry(java.net.URL resourceUrl) {
+       // Convert the URL to a string
+       String urlString = resourceUrl.toString();
+
+       // Check if the URL is a file URL
+       if (urlString.startsWith("file:")) {
+           // For file URLs, the classpath entry is the file path
+           return urlString.substring("file:".length());
+       } else if (urlString.startsWith("jar:file:")) {
+           // For JAR file URLs, extract the JAR file path
+           int jarSeparatorIndex = urlString.indexOf('!');
+           if (jarSeparatorIndex != -1) {
+               return urlString.substring("jar:file:".length(), jarSeparatorIndex);
+           }
+       }
+
+       // If the URL format is not recognized, return the full URL
+       return urlString;
+   }
+
    public static File stream2file (InputStream in,String filename,String ext) throws IOException {
        final File tempFile = File.createTempFile(filename, ext);
        tempFile.deleteOnExit();
