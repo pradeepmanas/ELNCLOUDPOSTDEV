@@ -895,8 +895,8 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	 				 License asposePdfLicenseText = new License();
 	 		            try {
 	 		            	
-							asposePdfLicenseText.setLicense("jar:file:/tmp/app.jar!/BOOT-INF/classes!/Aspose.PDF.Java.lic");
-							System.out.println("license is set for path: jar:file:/tmp/app.jar!/BOOT-INF/classes!/Aspose.PDF.Java.lic");
+							//asposePdfLicenseText.setLicense("jar:file:/tmp/app.jar!/BOOT-INF/classes!/Aspose.PDF.Java.lic");
+							//System.out.println("license is set for path: jar:file:/tmp/app.jar!/BOOT-INF/classes!/Aspose.PDF.Java.lic");
 							asposePdfLicenseText.setLicense("/BOOT-INF/classes!/Aspose.PDF.Java.lic");
 							System.out.println("license is set for path: /BOOT-INF/classes!/Aspose.PDF.Java.lic");
 						} catch (Exception e1) {
