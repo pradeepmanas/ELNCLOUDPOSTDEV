@@ -97,12 +97,12 @@ public class FileStorageService {
 //                throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
 //            }
             String id = null;
-    		System.out.print("in storefile function");
+    		System.out.println("in storefile function");
 
     		try {
     			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "parserfile");
-    			System.out.print("Blob ID"+id);
-    			System.out.print("stored in blob");
+    			System.out.println("Blob ID"+id);
+    			System.out.println("stored in blob");
 
     		} catch (IOException e) {
     			
@@ -128,7 +128,7 @@ public class FileStorageService {
     }
 
 
-public String storeimportFile(MultipartFile file , String tenant , Integer isMultitenant,String originalfilename,Integer version,Integer methodkey) throws IOException, InterruptedException {
+public String storeimportFile(MultipartFile file , String tenant , Integer isMultitenant,String originalfilename,Integer version,Integer methodkey) throws Exception {
         
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
     	final String rawData;
