@@ -551,12 +551,11 @@ public class MethodService {
     * @param fileName [String] name of pdf/txt/csv file to convert
  * @param ok 
     * @return string of text file content
- * @throws FileNotFoundException 
- * @throws IOException 
+ * @throws Exception 
     */
      
    @SuppressWarnings("resource")
-   public String getFileData(final String fileName,String tenant,Integer methodKey) throws FileNotFoundException, IOException
+   public String getFileData(final String fileName,String tenant,Integer methodKey) throws Exception
     {
 //   	   try
 //           {			
@@ -586,13 +585,12 @@ public class MethodService {
    		  					new ClassPathResource("Aspose.PDF.Java.lic");
    		  			       System.out.println("classpath:"+new ClassPathResource("Aspose.PDF.Java.lic"));
 
-   		  			   String fileName2 = "Aspose.PDF.Java.lic";
-   		  			String urlString = null;
+   		  			    String fileName2 = "Aspose.PDF.Java.lic";
+   		  		    	String urlString = null;
    		  					      
    		  					        ClassLoader classLoader = MethodService.class.getClassLoader();
    		  					        java.net.URL resourceUrl = classLoader.getResource(fileName2);
-   		  			
-   		  					      
+   		  			   		  					      
    		  					        if (resourceUrl != null) {
    		  					            System.out.println("File '" + fileName2 + "' exists in the classpath.");
    		  					            System.out.println("File URL: " + resourceUrl);
@@ -618,12 +616,27 @@ public class MethodService {
    		  					            System.out.println("File '" + fileName2 + "' does not exist in the classpath.");
    		  					        }
    		  			
-   		  			
+   		  				   		  			
    		  			License asposePdfLicenseText = new License();
  		            try {
  		            	
-						asposePdfLicenseText.setLicense(urlString);
-						System.out.println("license is set");
+						//asposePdfLicenseText.setLicense(urlString);
+						
+					//	System.out.println("license is set");
+ 		        	   String dataDir = urlString;
+
+  		  				// Create a stream object containing the license file
+
+  		  				FileInputStream fstream = new FileInputStream(dataDir);
+
+  		  				// Instantiate the License class
+
+  		  				License license = new License();
+
+  		  				//Set the license through the stream object
+
+  		  				license.setLicense(fstream);
+  		  			System.out.println("license is set");
 					} catch (Exception e1) {
 						
 						e1.printStackTrace();
