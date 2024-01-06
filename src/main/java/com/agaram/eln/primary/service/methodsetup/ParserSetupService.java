@@ -117,14 +117,12 @@ public class ParserSetupService {
 	 * 								  false - extracted block is used as input for ParserSetup
 	 * @param rawDataContent [String] raw data source to be used 
 	 * @return map object holding block name and list of extracted blockwise data.
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
-	 * @throws InterruptedException 
+	 * @throws Exception 
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public ResponseEntity<Object> getParserData(final int methodKey, final Boolean evaluateParser,
-    final String rawDataContent,final String tenant,final int isMultitenant) throws FileNotFoundException, IOException, InterruptedException
+    final String rawDataContent,final String tenant,final int isMultitenant) throws Exception
 	{		
 		final Method method = (Method)methodService.findById(methodKey).getBody();
 		
@@ -276,7 +274,7 @@ public class ParserSetupService {
 	
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getversionParserData(final int methodKey, final Boolean evaluateParser,
-		    final String rawDataContent,final String tenant,final int isMultitenant,final String instrawdataurl) throws FileNotFoundException, IOException, InterruptedException
+		    final String rawDataContent,final String tenant,final int isMultitenant,final String instrawdataurl) throws Exception
 			{		
 				final Method method = (Method)methodService.findById(methodKey).getBody();
 				

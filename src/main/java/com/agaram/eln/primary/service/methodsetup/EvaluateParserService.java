@@ -75,13 +75,11 @@ public class EvaluateParserService {
     * general fields for the first Method available in the list.
     * @param site [Site] object for which list is to be fetched
     * @return list of Method entities
- * @throws IOException 
- * @throws FileNotFoundException 
- * @throws InterruptedException 
+ * @throws Exception 
     */
    @SuppressWarnings({ "unchecked" })
    @Transactional
-   public ResponseEntity<Object> getLabSheetMethodList(final LSSiteMaster site ,final String tenant,final Integer isMultitenant) throws FileNotFoundException, IOException, InterruptedException{
+   public ResponseEntity<Object> getLabSheetMethodList(final LSSiteMaster site ,final String tenant,final Integer isMultitenant) throws Exception{
 	   
 	   final List<Method> methodList = methodRepo.findByParserAndSiteAndStatus(1, site, 1);
 	   final Map<String, Object> returnObject = new HashMap<String, Object>();
@@ -108,14 +106,13 @@ public class EvaluateParserService {
 	    * @param site [Site] object for which the fields are to be fetched
 	    * @param rawData [String] raw data source to be used in case of stringcontent
 	    * @return list of fields relating the method and the site.
-	 * @throws IOException 
-	 * @throws InterruptedException 
+	 * @throws Exception 
 	 
 	    */
 	   @SuppressWarnings({ "unchecked" })
 	   @Transactional
 	   public ResponseEntity<Object> getMethodFieldList(final int methodKey, final LSSiteMaster site, 
-			   final String rawData,final String tenant,final Integer isMultitenant) throws IOException, InterruptedException{
+			   final String rawData,final String tenant,final Integer isMultitenant) throws Exception{
 		   
 		   final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);
 		   if (methodByKey.isPresent()) {
@@ -345,14 +342,12 @@ public class EvaluateParserService {
 	 * @param site [Site] for which the evaluate parser is handled
 	 * @param rawDataContent [String] raw data source to be used in case of stringcontent
 	 * @return map object holding parsed data
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
-	 * @throws InterruptedException 
+	 * @throws Exception 
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public ResponseEntity<Object> evaluateParser(final int methodKey, final LSSiteMaster site, final String rawDataContent,final String tenant,
-			final Integer isMultitenant,final HttpServletRequest request) throws FileNotFoundException, IOException, InterruptedException
+			final Integer isMultitenant,final HttpServletRequest request) throws Exception
 	{
 		final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);				   
 		if(methodByKey.isPresent()) 
@@ -416,14 +411,12 @@ public class EvaluateParserService {
 	 * @param rawDataContent [String] raw data source to be used in case of contenttype=stringcontent
 	 * @param ignoreList [List] holding ParserIgnoreChars entity list that will be ignored in parsed data
 	 * @return map object holding field id and its parsed data
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
-	 * @throws InterruptedException 
+	 * @throws Exception 
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, List<List<MethodFieldTechnique>>> parseDataForInstFields(final Map<String, List<MethodFieldTechnique>> blockMap,
 			final int methodKey, final String rawDataContent, final List<ParserIgnoreChars> ignoreList ,String tenant,
-			Integer isMultitenant) throws FileNotFoundException, IOException, InterruptedException {
+			Integer isMultitenant) throws Exception {
 		
 		final Map <String, Object> extractedBlock =  (Map <String, Object>) parserSetupService.getParserData(
 				methodKey, true, rawDataContent, tenant,isMultitenant).getBody();
