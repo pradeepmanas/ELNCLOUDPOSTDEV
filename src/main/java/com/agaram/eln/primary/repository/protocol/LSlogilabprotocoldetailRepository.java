@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
+import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
@@ -1426,22 +1427,38 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 
 	long countByelnprotocolworkflowAndOrderflag(Elnprotocolworkflow objflow, String string);
+	
+	@Transactional
+	@Modifying
+	@Query(value = "select distinct LSlogilabprotocoldetail.testcode, LSlogilabprotocoldetail.elnmaterial_nmaterialcode,  CAST((select testname from lstestmasterlocal where testcode =  LSlogilabprotocoldetail.testcode) as varchar(50))as testname  from LSlogilabprotocoldetail as LSlogilabprotocoldetail"
+			+ " where LSlogilabprotocoldetail.testcode is not null and LSlogilabprotocoldetail.elnmaterial_nmaterialcode is not null and LSlogilabprotocoldetail.elnmaterial_nmaterialcode in (select nmaterialcode from elnmaterial where nsitecode=?1)", nativeQuery = true)
+	public List<Object> getLstestmasterlocalAndmaterialByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(Integer sitecode);
 
 
+	List<Logilabprotocolorders> findByElnmaterialAndTestcodeAndCreatedtimestampBetween(Elnmaterial elnmaterial,
+			Integer testcode, Date fromdate, Date todate);
 
 
+	List<Logilabprotocolorders> findByElnmaterialAndTestcodeAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetween(
+			Elnmaterial elnmaterial, Integer testcode, Integer protocoltype, String orderflag, int i, Date fromdate,
+			Date todate);
 
 
+	List<Logilabprotocolorders> findByElnmaterialAndTestcodeAndProtocoltypeAndOrderflagAndCreatedtimestampBetween(
+			Elnmaterial elnmaterial, Integer testcode, Integer protocoltype, String orderflag, Date fromdate,
+			Date todate);
 
 
+	List<Logilabprotocolorders> findByElnmaterialAndTestcodeAndOrderflagAndRejectedAndCreatedtimestampBetween(
+			Elnmaterial elnmaterial, Integer testcode, String orderflag, int i, Date fromdate, Date todate);
 
 
+	List<Logilabprotocolorders> findByElnmaterialAndTestcodeAndOrderflagAndCreatedtimestampBetween(
+			Elnmaterial elnmaterial, Integer testcode, String orderflag, Date fromdate, Date todate);
 
 
-
-
-
-
+	List<Logilabprotocolorders> findByElnmaterialAndTestcodeAndProtocoltypeAndCreatedtimestampBetween(
+			Elnmaterial elnmaterial, Integer testcode, Integer protocoltype, Date fromdate, Date todate);
 
 }
 

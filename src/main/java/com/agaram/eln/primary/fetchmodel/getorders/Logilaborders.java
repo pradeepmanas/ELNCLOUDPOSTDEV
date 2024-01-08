@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
@@ -44,7 +45,7 @@ public class Logilaborders extends Logilabordermaster {
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,LSuserMaster assignedto,
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,
-			Integer ordercancell,Integer viewoption,Material material,MaterialInventory materialinventory) {
+			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory) {
 		
 		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode);
 		 
@@ -73,7 +74,7 @@ public class Logilaborders extends Logilabordermaster {
 		this.repositoryitemname =lsrepositoriesdata !=null ?lsrepositoriesdata.getRepositoryitemname():null;
 		this.assignedto =assignedto;
 		this.repositoryname =lsrepositories !=null ?lsrepositories.getRepositoryname():null;
-		this.materialname=material!=null?material.getSmaterialname():null;
+		this.materialname=elnmaterial!=null?elnmaterial.getSmaterialname():null;
 		this.materialinventoryname=materialinventory!=null?materialinventory.getSinventoryid():null;
 		this.directorycode = directorycode;
 		this.ordercancell=ordercancell;

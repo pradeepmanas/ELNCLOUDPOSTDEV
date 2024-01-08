@@ -2939,6 +2939,19 @@ public class MaterialInventoryService {
 		objmap.put("MaterialInventory", lstElnInventories);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<Object> getElnMaterialInventoryByIdBarCode(Map<String, Object> inputMap) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		List<String> lstIds = (List<String>) inputMap.get("selectedRecord");
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		
+		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository.findBySinventoryidInAndNsitecode(lstIds, nsiteInteger);
+		
+		objmap.put("MaterialInventory", lstElnInventories);
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
 
 	public ResponseEntity<Object> getELNInventoryProps(Integer nsiteInteger) {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
@@ -3072,6 +3085,8 @@ public class MaterialInventoryService {
 				tempInventory.setMaterialcategory(objInventory.getMaterialcategory());
 				tempInventory.setMaterialgrade(objInventory.getMaterialgrade());
 				tempInventory.setMaterialtype(objInventory.getMaterialtype());
+				tempInventory.setUnit(objInventory.getUnit());
+				tempInventory.setSection(objInventory.getSection());
 				tempInventory.setNsitecode(objInventory.getNsitecode());
 				tempInventory.setNstatus(1);
 				tempInventory.setReceiveddate(objInventory.getReceiveddate());
@@ -3540,6 +3555,17 @@ public class MaterialInventoryService {
 		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findByMaterialIn(lstMaterial);
 			
 		objmap.put("lstMaterialInventory", inventoryItems);		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> getElnMaterialInventoryById(Map<String, Object> inputMap) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+	    String searchString = (String) inputMap.get("sinventoryid"); 
+		
+		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findBySinventoryidAndNsitecode(searchString, nsiteInteger);
+		objmap.put("lstELNInventory", inventoryItems);		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 

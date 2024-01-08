@@ -1570,3 +1570,9 @@ SET elnprotocoltemplateworkflow_workflowcode =lssheetworkflow_workflowcode ;
   END IF;
 END
 $$;
+
+update LSpreferences set valueencrypted ='FrPnPlV4QlIH23zy6DkkeA==' where valueencrypted is null and serialno in (3,2);
+ALTER TABLE IF Exists elnmaterial ADD COLUMN IF NOT EXISTS barcode boolean;
+update elnmaterial set barcode = false where barcode is null;
+
+ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS sequipmentmake character varying(100), ADD COLUMN IF NOT EXISTS sequipmentmodel character varying(100), ADD COLUMN IF NOT EXISTS sequipmentlotno character varying(100);

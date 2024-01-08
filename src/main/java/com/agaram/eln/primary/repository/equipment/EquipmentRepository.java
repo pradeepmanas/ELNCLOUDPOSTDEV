@@ -33,4 +33,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Integer>{
 
 	List<Equipment> findBySequipmentnameStartingWithIgnoreCaseAndNsitecode(String searchString, Integer nsiteInteger);
 
+	List<Equipment> findBySequipmentnameStartingWithIgnoreCase(String searchname);
+
+	List<Equipment> findByNequipmentcodeIn(List<Integer> nequipmentcode);
+
 }

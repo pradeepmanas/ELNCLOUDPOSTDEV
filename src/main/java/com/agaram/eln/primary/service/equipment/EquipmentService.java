@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.service.equipment;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -38,11 +37,17 @@ public class EquipmentService {
 
 	public ResponseEntity<Object> getEquipment(Map<String, Object> inputMap) throws ParseException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+//		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
-		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
+//		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
+//		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
+		
+		long longFromValue = Long.parseLong(inputMap.get("fromdate").toString());
+		long longToValue = Long.parseLong(inputMap.get("todate").toString());
+		
+		Date fromDate = new Date(longFromValue);
+		Date toDate = new Date(longToValue);
 		
 		List<Equipment> lstEquipment = equipmentRepository
 				.findByNsitecodeAndCreateddateBetweenOrderByNequipmentcodeDesc(nsiteInteger,fromDate,toDate);
@@ -214,6 +219,22 @@ public class EquipmentService {
 	    List<Equipment> lstEquipments = equipmentRepository.findBySequipmentnameStartingWithIgnoreCaseAndNsitecode(searchString,nsiteInteger);
 			
 		objmap.put("lstEquipment", lstEquipments);		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> OsearchEquipment(String searchname) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		 List<Equipment> lstEquipments = equipmentRepository.findBySequipmentnameStartingWithIgnoreCase(searchname);
+		objmap.put("lstEquipment", lstEquipments);		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> onGetEquipmentSelect(Map<String, Object> inputMap) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		@SuppressWarnings("unchecked")
+		List<Integer> nequipmentcode = (List<Integer>) inputMap.get("nequipmentcode");
+		List<Equipment> lstEquipments = equipmentRepository.findByNequipmentcodeIn(nequipmentcode);
+		objmap.put("lstEquipment", lstEquipments);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 }

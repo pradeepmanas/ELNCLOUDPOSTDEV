@@ -104,7 +104,7 @@ public class FileUploadController {
     		,@RequestParam("methodkey") Integer methodkey,
     		@RequestParam("filename") String filename,@RequestParam("instrawdataurl") String instrawdataurl,
     		@RequestParam("sitecode") Integer sitecode,@RequestParam("usercode") Integer usercode
-    		) throws IOException, InterruptedException{
+    		) throws Exception{
 		
 		
 //		List<Method> methodfile = methodrepo.findByFilenameAndMethodkey(filename,methodkey);

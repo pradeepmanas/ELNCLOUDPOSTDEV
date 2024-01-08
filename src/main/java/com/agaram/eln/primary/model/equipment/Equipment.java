@@ -41,6 +41,10 @@ public class Equipment implements Serializable{
 	@Column(name = "sequipmentid", length = 100)
 	private String sequipmentid;
 	
+	private String sequipmentmake;
+	private String sequipmentmodel;
+	private String sequipmentlotno;
+	
 	private Integer ntransactionstatus;
 	
 	private Integer nstatus;
@@ -71,6 +75,58 @@ public class Equipment implements Serializable{
 	@Column(name = "jsondata", columnDefinition = "jsonb")
 	private String jsondata;
 	
+	private transient String sDate;
+	private transient String cDate;
+	private transient String mDate;
+	
+	public String getSequipmentmake() {
+		return sequipmentmake;
+	}
+
+	public void setSequipmentmake(String sequipmentmake) {
+		this.sequipmentmake = sequipmentmake;
+	}
+
+	public String getSequipmentmodel() {
+		return sequipmentmodel;
+	}
+
+	public void setSequipmentmodel(String sequipmentmodel) {
+		this.sequipmentmodel = sequipmentmodel;
+	}
+
+	public String getSequipmentlotno() {
+		return sequipmentlotno;
+	}
+
+	public void setSequipmentlotno(String sequipmentlotno) {
+		this.sequipmentlotno = sequipmentlotno;
+	}
+
+	public String getsDate() {
+		return sDate;
+	}
+
+	public void setsDate(String sDate) {
+		this.sDate = sDate;
+	}
+
+	public String getcDate() {
+		return cDate;
+	}
+
+	public void setcDate(String cDate) {
+		this.cDate = cDate;
+	}
+
+	public String getmDate() {
+		return mDate;
+	}
+
+	public void setmDate(String mDate) {
+		this.mDate = mDate;
+	}
+
 	public String getJsondata() {
 		return jsondata;
 	}

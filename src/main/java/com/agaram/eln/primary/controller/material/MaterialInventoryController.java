@@ -158,6 +158,12 @@ public class MaterialInventoryController {
 		return materialInventoryService.getMaterialInventorytransDetails(inputMap);
 	}
 	
+	@RequestMapping(value = "/getElnMaterialInventoryByIdBarCode", method = RequestMethod.POST)
+	public ResponseEntity<Object> getElnMaterialInventoryByIdBarCode(@RequestBody Map<String, Object> inputMap)
+			throws Exception {
+		return materialInventoryService.getElnMaterialInventoryByIdBarCode(inputMap);
+	}
+	
 	/**
 	 * Added by sathishkumar chandrasekar for new inventory changes 
 	 * dated on 18-10-2023
@@ -235,5 +241,10 @@ public class MaterialInventoryController {
 	public ResponseEntity<Object> getELNMaterialBySearchField(@RequestBody Map<String, Object> inputMap) throws Exception {
 
 		return materialInventoryService.getELNMaterialBySearchField(inputMap);
+	}
+	
+	@RequestMapping(value = "/getElnMaterialInventoryById", method = RequestMethod.POST)
+	public ResponseEntity<Object> getElnMaterialInventoryById(@RequestBody Map<String, Object> inputMap) throws Exception {
+		return materialInventoryService.getElnMaterialInventoryById(inputMap);
 	}
 }

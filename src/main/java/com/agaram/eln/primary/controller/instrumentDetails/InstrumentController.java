@@ -1286,4 +1286,16 @@ public class InstrumentController {
 	{
 		return instrumentService.getimagesforlink(site);
 	}
+	
+	@RequestMapping("/Getordersonmaterial")
+	public List<Logilaborders> Getordersonmaterial(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
+	{
+		return instrumentService.Getordersonmaterial(objorder);
+	}
+	
+	@RequestMapping("/Getprotocolordersonmaterial")
+	public Map<String,Object> Getprotocolordersonmaterial(@RequestBody LSlogilabprotocoldetail objorder)throws Exception
+	{
+		return instrumentService.Getprotocolordersonmaterial(objorder);
+	}
 }

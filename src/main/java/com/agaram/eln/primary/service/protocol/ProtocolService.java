@@ -2898,6 +2898,7 @@ public class ProtocolService {
 				}
 
 				lslogilablimsorderrepo.save(lsorder);
+				lSlogilabprotocoldetail.setLsLSlogilablimsorder(lsorder);
 			}
 			
 			if (lSlogilabprotocoldetail.getProtocolordercode() != null) {

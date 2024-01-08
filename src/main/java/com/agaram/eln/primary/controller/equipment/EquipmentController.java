@@ -72,4 +72,14 @@ public class EquipmentController {
 		return equipmentService.getEquipmentBySearchField(inputMap);
 	}
 	
+	@RequestMapping(value = "/OsearchEquipment", method = RequestMethod.POST)
+	public ResponseEntity<Object> OsearchEquipment(@RequestBody String Searchname) throws Exception {
+		return equipmentService.OsearchEquipment(Searchname);
+	}
+	
+	@RequestMapping(value = "/onGetEquipmentSelect", method = RequestMethod.POST)
+	public ResponseEntity<Object> onGetEquipmentSelect(@RequestBody Map<String, Object> inputMap)
+			throws Exception {
+		return equipmentService.onGetEquipmentSelect(inputMap);
+	}
 }

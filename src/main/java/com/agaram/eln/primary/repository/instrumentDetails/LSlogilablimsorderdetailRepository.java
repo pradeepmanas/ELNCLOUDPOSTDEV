@@ -16,6 +16,7 @@ import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
@@ -546,6 +547,12 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			+ " where LSlogilablimsorderdetail.lstestmasterlocal_testcode is not null and LSlogilablimsorderdetail.lssamplemaster_samplecode is not null and LSlogilablimsorderdetail.lssamplemaster_samplecode in (?1)", nativeQuery = true)
 	public List<Object> getLstestmasterlocalByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(
 			List<Integer> lssamplecode);
+	
+	@Transactional
+	@Modifying
+	@Query(value = "select distinct LSlogilablimsorderdetail.lstestmasterlocal_testcode, LSlogilablimsorderdetail.elnmaterial_nmaterialcode,  CAST((select testname from lstestmasterlocal where testcode =  LSlogilablimsorderdetail.lstestmasterlocal_testcode) as varchar(10))as testname  from LSlogilablimsorderdetail as LSlogilablimsorderdetail"
+			+ " where LSlogilablimsorderdetail.lstestmasterlocal_testcode is not null and LSlogilablimsorderdetail.elnmaterial_nmaterialcode is not null and LSlogilablimsorderdetail.elnmaterial_nmaterialcode in (select nmaterialcode from elnmaterial where nsitecode=?1)", nativeQuery = true)
+	public List<Object> getLstestmasterlocalAndmaterialByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(Integer sitecode);
 
 	public List<Logilaborders> findByLssamplemasterAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrLssamplemasterAndViewoptionAndLsuserMasterAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			LSsamplemaster lssample, Integer siteview, LStestmasterlocal lstest, Integer displaytype, Date fromdate,
@@ -2683,5 +2690,32 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusOrOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, String string2, List<LSprojectmaster> lstproject2, Date fromdate2, Date todate2, String string3, int j, Date fromdate3, Date todate3, String string4, int k, LSuserMaster objuser, Date fromdate4, Date todate4, int l, String string5, int m, LSuserMaster objuser2, Date fromdate5, Date todate5, int n, String string6, int o, LSuserMaster objuser3, Date fromdate6, Date todate6, int p, List<LSprojectmaster> lstproject3, String string7, int q, LSuserMaster objuser4, Date fromdate7, Date todate7, String string8, int r, LSuserMaster objuser5, Date fromdate8, Date todate8, String string9, int s, LSuserMaster objuser6, Date fromdate9, Date todate9, String string10, LSuserMaster objuser7, LSuserMaster objuser8, Date fromdate10, Date todate10, String string11, LSuserMaster objuser9, Date fromdate11, Date todate11, String string12, List<LSprojectmaster> lstproject4, Date fromdate12, Date todate12, String string13, int t, Date fromdate13, Date todate13, String string14, int u, LSuserMaster objuser10, Date fromdate14, Date todate14, String string15, int v, LSuserMaster objuser11, Date fromdate15, Date todate15, String string16, List<LSprojectmaster> lstproject5, int w, LSuserMaster objuser12, Date fromdate16, Date todate16, String string17, int x, Date fromdate17, Date todate17, List<LSuserMaster> list, String string18, LSuserMaster objuser13, LSuserMaster objuser14, Date fromdate18, Date todate18, String string19, LSuserMaster objuser15, Date fromdate19, Date todate19, int y, List<LSprojectmaster> lstproject6, Date fromdate20, Date todate20, int z, LSuserMaster objuser16, Date fromdate21, Date todate21, int a, int b, LSuserMaster objuser17, Date fromdate22, Date todate22, int c, int d, LSuserMaster objuser18, Date fromdate23, Date todate23, int e, int f, LSuserMaster objuser19, Date fromdate24, Date todate24, int g, LSuserMaster objuser20, LSuserMaster objuser21, Date fromdate25, Date todate25, int h, LSuserMaster objuser22, Date fromdate26, Date todate26, int int1, int int2, List<LSprojectmaster> lstproject7, Date fromdate27, Date todate27, int int3, LSuserMaster objuser23, Date fromdate28, Date todate28, int int4, int int5, LSuserMaster objuser24, Date fromdate29, Date todate29, int int6, int int7, LSuserMaster objuser25, Date fromdate30, Date todate30, int int8, LSuserMaster objuser26, LSuserMaster objuser27, Date fromdate31, Date todate31, int int9, LSuserMaster objuser28, Date fromdate32, Date todate32, int int10, Pageable pageable
 );
+
+	List<Logilaborders> findByElnmaterialAndViewoptionAndLstestmasterlocalAndOrderdisplaytypeAndCreatedtimestampBetweenOrElnmaterialAndViewoptionAndLsuserMasterAndOrderdisplaytypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			Elnmaterial elnmaterial, int i, LStestmasterlocal lstestmasterlocal, int j, Date fromdate, Date todate,
+			Elnmaterial elnmaterial2, int k, LSuserMaster lsuserMaster, int l, Date fromdate2, Date todate2);
+
+	List<Logilaborders> findByElnmaterialAndLstestmasterlocalAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			Elnmaterial elnmaterial,  LStestmasterlocal lstestmasterlocal, Date fromdate, Date todate);
+
+	List<Logilaborders> findByElnmaterialAndLstestmasterlocalAndFiletypeAndOrderflagAndApprovelstatusAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			Elnmaterial elnmaterial,  LStestmasterlocal lstestmasterlocal, Integer filetype, String orderflag,
+			Integer approvelstatus, Date fromdate, Date todate);
+
+	List<Logilaborders> findByElnmaterialAndLstestmasterlocalAndFiletypeAndOrderflagAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			Elnmaterial elnmaterial, LStestmasterlocal lstestmasterlocal, Integer filetype, String orderflag,
+			Date fromdate, Date todate);
+
+	List<Logilaborders> findByElnmaterialAndLstestmasterlocalAndOrderflagAndApprovelstatusAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			Elnmaterial elnmaterial, LStestmasterlocal lstestmasterlocal, String orderflag,
+			Integer approvelstatus, Date fromdate, Date todate);
+
+	List<Logilaborders> findByElnmaterialAndLstestmasterlocalAndOrderflagAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			Elnmaterial elnmaterial,LStestmasterlocal lstestmasterlocal, String orderflag, Date fromdate,
+			Date todate);
+
+	List<Logilaborders> findByElnmaterialAndLstestmasterlocalAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			Elnmaterial elnmaterial, LStestmasterlocal lstestmasterlocal, Integer filetype, Date fromdate,
+			Date todate);
 
 }

@@ -21,6 +21,7 @@ import org.hibernate.annotations.Type;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Elnmaterial;
@@ -74,6 +75,18 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@ManyToOne
 	private MaterialInventory materialinventory;
 	
+	@Transient
+	private List<LSlogilablimsorder> lsLSlogilablimsorder;
+
+	
+	public List<LSlogilablimsorder> getLsLSlogilablimsorder() {
+		return lsLSlogilablimsorder;
+	}
+
+	public void setLsLSlogilablimsorder(List<LSlogilablimsorder> lsLSlogilablimsorder) {
+		this.lsLSlogilablimsorder = lsLSlogilablimsorder;
+	}
+
 	@ManyToOne
 	private Elnmaterial elnmaterial;
 	@ManyToOne

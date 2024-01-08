@@ -26,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.equipment.EquipmentCategory;
+import com.agaram.eln.primary.model.equipment.EquipmentType;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.material.Elnmaterial;
@@ -38,6 +40,8 @@ import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
+import com.agaram.eln.primary.repository.equipment.EquipmentTypeRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
@@ -90,6 +94,10 @@ public class MaterialService {
 	SectionRepository sectionRepository;
 	@Autowired
 	PeriodRepository periodRepository;
+	@Autowired
+	EquipmentTypeRepository equipmentTypeRepository;
+	@Autowired
+	EquipmentCategoryRepository equipmentCategoryRepository;
 
 	public ResponseEntity<Object> getMaterialcombo(Integer nmaterialtypecode, Integer nsitecode) {
 
@@ -1694,6 +1702,12 @@ public class MaterialService {
 		objmap.put("lstUnit", lstUnits);
 		objmap.put("lstSection", lstSec);
 		objmap.put("lstPeriods", lstPeriods);
+		
+		List<EquipmentType> lstEquipmentTypes = equipmentTypeRepository.findByNstatusAndNsitecodeOrNstatusAndNdefaultstatus(1,nsiteInteger,1, 4);
+		List<EquipmentCategory> lstEquipmentCategories = equipmentCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
+		
+		objmap.put("lstEquipmentTypes", lstEquipmentTypes);
+		objmap.put("lstEquipmentCategories", lstEquipmentCategories);
 		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
