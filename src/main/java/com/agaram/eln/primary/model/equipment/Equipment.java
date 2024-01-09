@@ -79,6 +79,16 @@ public class Equipment implements Serializable{
 	private transient String cDate;
 	private transient String mDate;
 	
+	private String remarks;
+	
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
 	public String getSequipmentmake() {
 		return sequipmentmake;
 	}
