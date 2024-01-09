@@ -1576,3 +1576,17 @@ ALTER TABLE IF Exists elnmaterial ADD COLUMN IF NOT EXISTS barcode boolean;
 update elnmaterial set barcode = false where barcode is null;
 
 ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS sequipmentmake character varying(100), ADD COLUMN IF NOT EXISTS sequipmentmodel character varying(100), ADD COLUMN IF NOT EXISTS sequipmentlotno character varying(100);
+
+ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS remarks character varying(250);
+
+ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS remarks character varying(250);
+ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS callibrationvalue character varying(100);
+ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS callibrationperiod character varying(100);
+ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS manintanancevalue character varying(100);
+ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS maintananceperiod character varying(100);
+ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS equipmentused boolean;
+ALTER TABLE IF Exists equipment ADD Column IF NOT EXISTS lastcallibrated timestamp without time zone;
+ALTER TABLE IF Exists equipment ADD Column IF NOT EXISTS lastmaintained timestamp without time zone;
+update equipment set equipmentused = false where equipmentused is null;
+
+INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) VALUES (62, NULL, NULL, 22, 3, 1, 'G1', 'ID_GENERAL', '22', 'ID_GENERAL', 22, 'ID_GENERAL', 'G23', 'Add Equipment', 1) on conflict (fieldcode) do nothing;

@@ -1,10 +1,12 @@
 package com.agaram.eln.primary.service.equipment;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,12 @@ import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.equipment.EquipmentCategory;
 import com.agaram.eln.primary.model.equipment.EquipmentType;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentTypeRepository;
+import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -28,21 +32,17 @@ public class EquipmentService {
 
 	@Autowired
 	EquipmentRepository equipmentRepository;
-	
 	@Autowired
 	EquipmentCategoryRepository equipmentCategoryRepository;
-	
 	@Autowired
 	EquipmentTypeRepository equipmentTypeRepository;
+	@Autowired
+	PeriodRepository periodRepository;
 
 	public ResponseEntity<Object> getEquipment(Map<String, Object> inputMap) throws ParseException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-//		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		
-		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-//		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
-//		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
-		
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");		
 		long longFromValue = Long.parseLong(inputMap.get("fromdate").toString());
 		long longToValue = Long.parseLong(inputMap.get("todate").toString());
 		
@@ -51,6 +51,25 @@ public class EquipmentService {
 		
 		List<Equipment> lstEquipment = equipmentRepository
 				.findByNsitecodeAndCreateddateBetweenOrderByNequipmentcodeDesc(nsiteInteger,fromDate,toDate);
+		
+		objmap.put("lstEquipment", lstEquipment);
+		objmap.put("objsilentaudit", inputMap.get("objsilentaudit"));
+		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> getEquipmentOnTransaction(Map<String, Object> inputMap) throws ParseException {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");		
+		long longFromValue = Long.parseLong(inputMap.get("fromdate").toString());
+		long longToValue = Long.parseLong(inputMap.get("todate").toString());
+		
+		Date fromDate = new Date(longFromValue);
+		Date toDate = new Date(longToValue);
+		
+		List<Equipment> lstEquipment = equipmentRepository
+				.findByEquipmentusedAndNsitecodeAndCreateddateBetweenOrderByNequipmentcodeDesc(true,nsiteInteger,fromDate,toDate);
 		
 		objmap.put("lstEquipment", lstEquipment);
 		objmap.put("objsilentaudit", inputMap.get("objsilentaudit"));
@@ -133,7 +152,32 @@ public class EquipmentService {
 		if(!lstTypes.isEmpty()) {
 			lstCategories = equipmentCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
 		}	
-			
+		
+		List<Period> lstPeriods = periodRepository.findByNstatusOrderByNperiodcode(1);
+		objmap.put("lstPeriods", lstPeriods);
+		objmap.put("lstCategories", lstCategories);
+		objmap.put("lstType", lstTypes);
+		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> getEquipmentTransactionProps(Integer nsiteInteger) {
+		
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		List<EquipmentType> lstTypes =  new ArrayList<EquipmentType>();
+		List<EquipmentCategory> lstCategories = new ArrayList<EquipmentCategory>();
+		List<Equipment> lstEquipments = new ArrayList<Equipment>();
+		
+		lstTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrNequipmenttypecodeNotAndNstatusAndNdefaultstatus(-1,1,nsiteInteger,-1,1,4);
+		if(!lstTypes.isEmpty()) {
+			lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatus(lstTypes.get(0),nsiteInteger, 1);
+			if(!lstCategories.isEmpty()) {
+				lstEquipments = equipmentRepository.findByEquipmentcategoryAndNsitecodeAndNstatus(lstCategories.get(0),nsiteInteger, 1);
+			}	
+		}	
+		
+		objmap.put("lstEquipments", lstEquipments);
 		objmap.put("lstCategories", lstCategories);
 		objmap.put("lstType", lstTypes);
 		
@@ -148,25 +192,44 @@ public class EquipmentService {
 		
 		List<EquipmentType> lstTypes = equipmentTypeRepository.findByNequipmenttypecode(ntypecode);
 		List<EquipmentCategory> lstCategories = new ArrayList<EquipmentCategory>();
+		List<Equipment> lstEquipments = new ArrayList<Equipment>();
 		
 		if(ntypecode==-1) {
 			lstCategories = equipmentCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
 		}else {
 			if(!lstTypes.isEmpty()) {
-				lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatus(lstTypes.get(0), nsiteInteger, 1);		
+				lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatus(lstTypes.get(0), nsiteInteger, 1);
+				if(!lstCategories.isEmpty()) {
+					lstEquipments = equipmentRepository.findByEquipmentcategoryAndNsitecodeAndNstatus(lstCategories.get(0),nsiteInteger, 1);
+				}	
 			}
 		}
-		
+		objmap.put("lstEquipments", lstEquipments);
 		objmap.put("lstCategories", lstCategories);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+	
+	public ResponseEntity<Object> getEquipmentCatBased(Map<String, Object> inputMap) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		Integer ncatcode = (Integer) inputMap.get("ncatcode");
+		
+		EquipmentCategory objCategory = equipmentCategoryRepository.findByNequipmentcatcode(ncatcode);
+		List<Equipment> lstEquipments = new ArrayList<Equipment>();
+		
+		lstEquipments = equipmentRepository.findByEquipmentcategoryAndNsitecodeAndNstatus(objCategory,nsiteInteger, 1);
+				
+		objmap.put("lstEquipments", lstEquipments);
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
 
-	public ResponseEntity<Object> createEquipment(Equipment obj) throws ParseException {
+	public ResponseEntity<Object> createEquipment(Equipment obj) throws Exception {
 		
 		Equipment objEquipment = equipmentRepository.findByNsitecodeAndSequipmentnameAndEquipmentcategory(obj.getNsitecode(),obj.getSequipmentname(),obj.getEquipmentcategory());
 		
 		obj.setResponse(new Response());
-		
+		String sformattype = "{yyyy}/{99999}";
 		LSuserMaster objMaster = new LSuserMaster();
 		objMaster.setUsercode(obj.getObjsilentaudit().getLsuserMaster());
 		
@@ -174,6 +237,14 @@ public class EquipmentService {
 
 			obj.setCreateby(objMaster);
 			obj.setCreateddate(commonfunction.getCurrentUtcTime());
+			obj.setLastcallibrated(commonfunction.getCurrentUtcTime());
+			obj.setLastmaintained(commonfunction.getCurrentUtcTime());
+			equipmentRepository.save(obj);
+			
+			String stridformat = returnSubstring(obj.getSequipmentname()) + "/" + getfnFormat(obj.getNequipmentcode(), sformattype);
+	
+			obj.setSequipmentid(stridformat);
+			
 			equipmentRepository.save(obj);
 			
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
@@ -185,6 +256,67 @@ public class EquipmentService {
 			obj.getResponse().setStatus(false);
 			return new ResponseEntity<>(obj, HttpStatus.OK);
 		}
+	}
+	
+	public String returnSubstring (String name) {
+		if (name.length() > 3) {
+			return name.substring(0, 3);
+        } else {
+        	return name;
+        }
+	}
+	
+	public String getfnFormat(int sequenceno, String sFormat) throws Exception {
+		// init(timestamp);
+
+		if (sFormat != null) {
+			while (sFormat.contains("{")) {
+				int start = sFormat.indexOf('{');
+				int end = sFormat.indexOf('}');
+
+				String subString = sFormat.substring(start + 1, end);
+				if (subString.equals("yy") || subString.equals("YY")) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yy", Locale.getDefault());
+					sdf.toPattern();
+					Date date = new Date();
+					String replaceString = sdf.format(date);
+					sFormat = sFormat.replace('{' + subString + '}', replaceString);
+				} else if (subString.equals("yyyy") || subString.equals("YYYY")) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy", Locale.getDefault());
+					sdf.toPattern();
+					Date date = new Date();
+					String replaceString = sdf.format(date);
+					sFormat = sFormat.replace('{' + subString + '}', replaceString);
+				} else if (subString.equals("mm") || subString.equals("MM")) {
+					SimpleDateFormat sdf = new SimpleDateFormat("MM", Locale.getDefault());
+					sdf.toPattern();
+					Date date = new Date();
+					String replaceString = sdf.format(date);
+					sFormat = sFormat.replace('{' + subString + '}', replaceString);
+				} else if (subString.equals("mon") || subString.equals("MON")) {
+					SimpleDateFormat sdf = new SimpleDateFormat("MON", Locale.getDefault());
+					sdf.toPattern();
+					Date date = new Date();
+					String replaceString = sdf.format(date);
+					sFormat = sFormat.replace('{' + subString + '}', replaceString);
+				} else if (subString.equals("dd") || subString.equals("DD")) {
+					SimpleDateFormat sdf = new SimpleDateFormat("dd", Locale.getDefault());
+					sdf.toPattern();
+					Date date = new Date();
+					String replaceString = sdf.format(date);
+					sFormat = sFormat.replace('{' + subString + '}', replaceString);
+				} else if (subString.matches("9+")) {
+					String seqPadding = "%0" + subString.length() + "d";
+					String replaceString = String.format(seqPadding, sequenceno);
+					sFormat = sFormat.replace('{' + subString + '}', replaceString);
+				}
+
+				else {
+					sFormat = sFormat.replace('{' + subString + '}', subString);
+				}
+			}
+		}
+		return sFormat;
 	}
 
 	public ResponseEntity<Object> updateEquipment(Equipment obj) {
@@ -207,6 +339,29 @@ public class EquipmentService {
 		}else {
 			obj.getResponse().setInformation("IDS_SAVE_FAIL");
 			obj.getResponse().setStatus(false);
+			return new ResponseEntity<>(obj, HttpStatus.OK);
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	public ResponseEntity<Object> updateStatus(Equipment obj) {
+		
+		Equipment objEquipment = equipmentRepository.findOne(obj.getNequipmentcode());
+		
+		objEquipment.setResponse(new Response());
+		
+		if(objEquipment != null) {
+			
+			objEquipment.setEquipmentused(true);
+			equipmentRepository.save(objEquipment);
+			
+			objEquipment.getResponse().setInformation("IDS_SAVE_SUCCEED");
+			objEquipment.getResponse().setStatus(true);
+			
+			return new ResponseEntity<>(obj, HttpStatus.OK);
+		}else {
+			objEquipment.getResponse().setInformation("IDS_SAVE_FAIL");
+			objEquipment.getResponse().setStatus(false);
 			return new ResponseEntity<>(obj, HttpStatus.OK);
 		}
 	}

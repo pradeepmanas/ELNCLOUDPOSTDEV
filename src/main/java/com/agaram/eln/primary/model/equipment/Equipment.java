@@ -79,6 +79,71 @@ public class Equipment implements Serializable{
 	private transient String cDate;
 	private transient String mDate;
 	
+	private String callibrationvalue;
+	private String callibrationperiod;
+	private String manintanancevalue;
+	private String maintananceperiod;
+	private Boolean equipmentused;
+	
+	private Date lastcallibrated;
+	private Date lastmaintained;
+	
+	public Date getLastcallibrated() {
+		return lastcallibrated;
+	}
+
+	public void setLastcallibrated(Date lastcallibrated) {
+		this.lastcallibrated = lastcallibrated;
+	}
+
+	public Date getLastmaintained() {
+		return lastmaintained;
+	}
+
+	public void setLastmaintained(Date lastmaintained) {
+		this.lastmaintained = lastmaintained;
+	}
+
+	public String getManintanancevalue() {
+		return manintanancevalue;
+	}
+
+	public void setManintanancevalue(String manintanancevalue) {
+		this.manintanancevalue = manintanancevalue;
+	}
+
+	public String getMaintananceperiod() {
+		return maintananceperiod;
+	}
+
+	public void setMaintananceperiod(String maintananceperiod) {
+		this.maintananceperiod = maintananceperiod;
+	}
+
+	public Boolean getEquipmentused() {
+		return equipmentused;
+	}
+
+	public void setEquipmentused(Boolean equipmentused) {
+		this.equipmentused = equipmentused;
+	}
+
+	public String getCallibrationvalue() {
+		return callibrationvalue;
+	}
+
+	public void setCallibrationvalue(String callibrationvalue) {
+		this.callibrationvalue = callibrationvalue;
+	}
+
+	public String getCallibrationperiod() {
+		return callibrationperiod;
+	}
+
+	public void setCallibrationperiod(String callibrationperiod) {
+		this.callibrationperiod = callibrationperiod;
+	}
+
 	private String remarks;
 	
 	public String getRemarks() {

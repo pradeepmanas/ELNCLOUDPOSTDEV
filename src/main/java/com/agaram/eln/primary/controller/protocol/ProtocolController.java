@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,6 +33,7 @@ import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocolsteps;
 import com.agaram.eln.primary.model.protocols.LSprotocolfiles;
@@ -45,6 +47,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolorderworkflowhistory;
 import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
+import com.agaram.eln.primary.model.protocols.LSprotocolworkflowhistory;
 import com.agaram.eln.primary.model.protocols.Lsprotocolsharedby;
 import com.agaram.eln.primary.model.protocols.Lsprotocolshareto;
 import com.agaram.eln.primary.model.protocols.ProtocolImage;
@@ -54,6 +57,9 @@ import com.agaram.eln.primary.model.protocols.Protocolvideos;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.protocol.ElnprotocolTemplateworkflowRepository;
+import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowhistoryRepository;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 
 @RestController
@@ -62,6 +68,15 @@ public class ProtocolController {
 
 	@Autowired
 	ProtocolService ProtocolMasterService;
+	
+	@Autowired
+	LSProtocolMasterRepository LSProtocolMasterRepositoryObj;
+	
+	@Autowired
+	private LSprotocolworkflowhistoryRepository lsprotocolworkflowhistoryRepository;
+	
+	@Autowired
+	private ElnprotocolTemplateworkflowRepository elnprotocolTemplateworkflowRepository;
 
 	@RequestMapping(value = "/getProtocolMasterInit")
 	protected Map<String, Object> getProtocolMasterInit(@RequestBody Map<String, Object> argObj)throws Exception {
@@ -146,9 +161,67 @@ public class ProtocolController {
 
 	@RequestMapping(value = "/updateworkflowforProtocol")
 	protected Map<String, Object> updateworkflowforProtocol(@RequestBody LSprotocolmaster objClass)throws Exception {
-		Map<String, Object> objMap = new HashMap<String, Object>();
-		objMap = ProtocolMasterService.updateworkflowforProtocol(objClass);
-		return objMap;
+//		Map<String, Object> objMap = new HashMap<String, Object>();
+//		objMap = ProtocolMasterService.updateworkflowforProtocol(objClass);
+		Map<String, Object> mapObj = new HashMap<String, Object>();
+
+		int approved = 0;
+
+		if (objClass.getApproved() != null) {
+			approved = objClass.getApproved();
+		}
+
+		LSProtocolMasterRepositoryObj.updateFileWorkflow(objClass.getElnprotocoltemplateworkflow(), approved,
+				objClass.getRejected(), objClass.getProtocolmastercode());
+
+		LSprotocolmaster LsProto = LSProtocolMasterRepositoryObj
+				.findFirstByProtocolmastercode(objClass.getProtocolmastercode());
+
+		LsProto.setElnprotocoltemplateworkflow(objClass.getElnprotocoltemplateworkflow());
+		if (LsProto.getApproved() == null) {
+			LsProto.setApproved(0);
+		}
+		List<LSprotocolworkflowhistory> obj = objClass.getLsprotocolworkflowhistory();
+		obj = obj.stream().map(workflowhistory -> {
+			try {
+				if (workflowhistory.getHistorycode() == null) {
+					workflowhistory.setCreatedate(commonfunction.getCurrentUtcTime());
+				}
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return workflowhistory;
+		}).collect(Collectors.toList());
+		lsprotocolworkflowhistoryRepository.save(obj);
+		LsProto.setLsprotocolworkflowhistory(obj);
+		mapObj.put("ProtocolObj", LsProto);
+		mapObj.put("status", "success");
+		if (objClass.getViewoption() == null || objClass.getViewoption() != null && objClass.getViewoption() != 2) {
+			if (objClass.getProtocolmastername() != null) {
+//				LSsheetworkflow objlastworkflow = lssheetworkflowRepository
+//						.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objClass.getIsfinalstep().getLssitemaster());
+				ElnprotocolTemplateworkflow objlastworkflow = elnprotocolTemplateworkflowRepository
+						.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objClass.getIsfinalstep().getLssitemaster());
+				if (objlastworkflow != null
+						&& objClass.getCurrentStep().getWorkflowcode() == objlastworkflow.getWorkflowcode()) {
+					objClass.setFinalworkflow(1);
+					;
+				} else {
+					objClass.setFinalworkflow(0);
+					;
+				}
+			}
+
+			try {
+				ProtocolMasterService.updatenotificationforprotocolworkflowapproval(objClass, LsProto.getElnprotocoltemplateworkflow());
+				ProtocolMasterService.updatenotificationforprotocol(objClass, LsProto.getElnprotocoltemplateworkflow());
+			} catch (Exception e) {
+
+			}
+		}
+//		return mapObj;
+		return mapObj;
 	}
 	
 	@RequestMapping(value = "/updateworkflowforProtocolorder")

@@ -26,6 +26,12 @@ public class EquipmentController {
 		return (ResponseEntity<Object>) equipmentService.getEquipment(inputMap);
 	}
 	
+	@RequestMapping(value = "/getEquipmentOnTransaction", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getEquipmentOnTransaction(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) equipmentService.getEquipmentOnTransaction(inputMap);
+	}
+	
 	@RequestMapping(value = "/getEquipmentByFilter", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getEquipmentByFilter(@RequestBody Map<String, Object> inputMap) throws Exception {
 		
@@ -48,10 +54,24 @@ public class EquipmentController {
 		return (ResponseEntity<Object>) equipmentService.getEquipmentProps(nsiteInteger);
 	}
 	
+	@RequestMapping(value = "/getEquipmentTransactionProps", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getEquipmentTransactionProps(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		
+		return (ResponseEntity<Object>) equipmentService.getEquipmentTransactionProps(nsiteInteger);
+	}
+	
 	@RequestMapping(value = "/getEquipmentTypeBasedCat", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getEquipmentTypeBasedCat(@RequestBody Map<String, Object> inputMap) throws Exception {
 		
 		return (ResponseEntity<Object>) equipmentService.getEquipmentTypeBasedCat(inputMap);
+	}
+	
+	@RequestMapping(value = "/getEquipmentCatBased", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getEquipmentCatBased(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) equipmentService.getEquipmentCatBased(inputMap);
 	}
 	
 	@RequestMapping(value = "/createEquipment", method = RequestMethod.POST)
@@ -64,6 +84,12 @@ public class EquipmentController {
 	public ResponseEntity<Object> updateEquipment(@RequestBody Equipment obj) throws Exception {
 
 		return equipmentService.updateEquipment(obj);
+	}
+	
+	@RequestMapping(value = "/updateStatus", method = RequestMethod.POST)
+	public ResponseEntity<Object> updateStatus(@RequestBody Equipment obj) throws Exception {
+
+		return equipmentService.updateStatus(obj);
 	}
 	
 	@RequestMapping(value = "/getEquipmentBySearchField", method = RequestMethod.POST)
