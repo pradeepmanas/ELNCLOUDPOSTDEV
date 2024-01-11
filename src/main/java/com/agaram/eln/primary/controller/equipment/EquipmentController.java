@@ -80,6 +80,12 @@ public class EquipmentController {
 		return equipmentService.createEquipment(obj);
 	}
 	
+	@RequestMapping(value = "/updateELNEquipment", method = RequestMethod.POST)
+	public ResponseEntity<Object> updateELNEquipment(@RequestBody Equipment obj) throws Exception {
+
+		return equipmentService.updateELNEquipment(obj);
+	}
+	
 	@RequestMapping(value = "/updateEquipment", method = RequestMethod.POST)
 	public ResponseEntity<Object> updateEquipment(@RequestBody Equipment obj) throws Exception {
 

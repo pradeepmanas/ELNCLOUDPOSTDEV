@@ -519,8 +519,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	List<LSlogilablimsorderdetail> findByAssignedtoAndLsuserMasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			LSuserMaster lsselecteduser, LSuserMaster lsloginuser, Date fromdate, Date todate);
 
-	List<LSlogilablimsorderdetail> findByOrderflagAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc(
-			String string);
+//	List<LSlogilablimsorderdetail> findByOrderflagAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc(
+//			String string);
 
 	List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndLsworkflowInAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String string, List<LSprojectmaster> lstproject, List<LSworkflow> lstworkflow);
@@ -2717,5 +2717,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	List<Logilaborders> findByElnmaterialAndLstestmasterlocalAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			Elnmaterial elnmaterial, LStestmasterlocal lstestmasterlocal, Integer filetype, Date fromdate,
 			Date todate);
+
+	List<LSlogilablimsorderdetail> findByOrderflagAndLockeduserIsNotNullAndLockeduserInAndAssignedtoIsNullOrderByBatchcodeDesc(
+			String string, List<Integer> usercode);
 
 }

@@ -260,6 +260,36 @@ public class EquipmentService {
 		}
 	}
 	
+	public ResponseEntity<Object> updateELNEquipment(Equipment obj) {
+		
+		Equipment objElnmaterial = equipmentRepository.findByNsitecodeAndSequipmentnameAndEquipmentcategoryAndNequipmentcodeNot(obj.getNsitecode(),obj.getSequipmentname(),obj.getEquipmentcategory(),obj.getNequipmentcode());
+		
+		obj.setResponse(new Response());
+		
+		if(objElnmaterial == null) {
+			
+			Equipment objMaterial = equipmentRepository.findOne(obj.getNequipmentcode());
+
+			obj.setSequipmentid(objMaterial.getSequipmentid());
+			obj.setCreateddate(objMaterial.getCreateddate());
+			obj.setLastcallibrated(objMaterial.getLastcallibrated());
+			obj.setLastmaintained(objMaterial.getLastmaintained());
+			obj.setManintanancedate(objMaterial.getManintanancedate());
+			obj.setCallibrationdate(objMaterial.getCallibrationdate());
+			
+			equipmentRepository.save(obj);
+			
+			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
+			obj.getResponse().setStatus(true);
+			
+			return new ResponseEntity<>(obj, HttpStatus.OK);
+		}else {
+			obj.getResponse().setInformation("IDS_SAVE_FAIL");
+			obj.getResponse().setStatus(false);
+			return new ResponseEntity<>(obj, HttpStatus.OK);
+		}
+	}
+	
 	public String returnSubstring (String name) {
 		if (name.length() > 3) {
 			return name.substring(0, 3);
@@ -384,9 +414,9 @@ public class EquipmentService {
 			objEquipment.getResponse().setInformation("IDS_SAVE_SUCCEED");
 			objEquipment.getResponse().setStatus(true);
 			
-			createEquipmentHistory(objEquipment,1);
+			createEquipmentHistory(obj,1);
 			
-			return new ResponseEntity<>(obj, HttpStatus.OK);
+			return new ResponseEntity<>(objEquipment, HttpStatus.OK);
 		}else {
 			objEquipment.getResponse().setInformation("IDS_SAVE_FAIL");
 			objEquipment.getResponse().setStatus(false);

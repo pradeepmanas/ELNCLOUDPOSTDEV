@@ -4241,6 +4241,10 @@ public class ProtocolService {
 				LSuserMaster createby = lsusermasterRepository.findByusercode(lslogilabprotocoldetail.getCreateby());
 				lslogilabprotocoldetail.setCreatedbyusername(createby.getUsername());
 				mapObj.put("orderDetail", lslogilabprotocoldetail);
+				
+				List<LSlogilablimsorder> lslogilablimsorder = lslogilablimsorderrepo.findBybatchid(lslogilabprotocoldetail.getProtoclordername());
+				lslogilabprotocoldetail.setLsLSlogilablimsorder(lslogilablimsorder);
+				
 				try {
 					Content = objCloudFileManipulationservice.retrieveCloudSheets(lslogilabprotocoldetail.getFileuid(),
 							TenantContext.getCurrentTenant() + "protocolorder");
@@ -4255,6 +4259,10 @@ public class ProtocolService {
 				LSuserMaster createby = lsusermasterRepository.findByusercode(lslogilabprotocoldetail.getCreateby());
 				lslogilabprotocoldetail.setCreatedbyusername(createby.getUsername());
 				mapObj.put("orderDetail", lslogilabprotocoldetail);
+				
+				List<LSlogilablimsorder> lslogilablimsorder = lslogilablimsorderrepo.findBybatchid(lslogilabprotocoldetail.getProtoclordername());
+				lslogilabprotocoldetail.setLsLSlogilablimsorder(lslogilablimsorder);
+				
 				
 				Lsprotocolorderdata lsprotocolorderdata = mongoTemplate
 						.findById(lslogilabprotocoldetail.getProtocolordercode(), Lsprotocolorderdata.class);
@@ -8216,11 +8224,18 @@ public class ProtocolService {
 		if (rtnobj.getLockeduser() == null && protocolorders.getComment().equals("Order_Lock")) {
 			rtnobj.setLockeduser(protocolorders.getLockeduser());
 			rtnobj.setLockedusername(protocolorders.getLockedusername());
+			rtnobj.setActiveuser(protocolorders.getActiveuser());
 			LSlogilabprotocoldetailRepository.save(rtnobj);
-		} else if (protocolorders.getComment().equals("Order_Unlock")) {
+			rtnobj.setComment("Order_Lock");
+		}else if(rtnobj.getLockeduser() != null && protocolorders.getLockeduser().equals(rtnobj.getLockeduser()) && protocolorders.getComment().equals("Order_Lock")) {
+			rtnobj.setComment("IDS_SAME_USER_OPEN");
+		}
+        else if (protocolorders.getComment().equals("Order_Unlock")) {
 			rtnobj.setLockeduser(null);
 			rtnobj.setLockedusername(null);
+			rtnobj.setActiveuser(null);
 			LSlogilabprotocoldetailRepository.save(rtnobj);
+			rtnobj.setComment("Order_Unlock");
 		}
 		return rtnobj;
 
@@ -8231,7 +8246,7 @@ public class ProtocolService {
 		if (objuser.getUsername().equalsIgnoreCase("Administrator")) {
 			return LSlogilabprotocoldetailRepository
 //					.findByOrderflagAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc("N");
-					.findByOrderflagAndLockeduserIsNotNullAndAssignedtoIsNullOrderByProtocolordercodeDesc("N");
+					.findByOrderflagAndSitecodeAndAndLockeduserIsNotNullAndAssignedtoIsNullOrderByProtocolordercodeDesc("N",objuser.getLssitemaster().getSitecode());
 		} else {
 			List<Logilabprotocolorders> lstorder = new ArrayList<Logilabprotocolorders>();
 			List<Integer> userlist = objuser.getUsernotify() != null

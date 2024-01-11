@@ -224,7 +224,7 @@ public class FileService {
 
 	@Autowired
 	private ElnprotocolTemplateworkflowgroupmapRepository elnprotocolTemplateworkflowgroupmapRepository;
-	
+
 	@Autowired
 	private LSProtocolMasterRepository lSProtocolMasterRepository;
 
@@ -1134,20 +1134,26 @@ public class FileService {
 	@SuppressWarnings("null")
 	public Map<String, Object> unlockorderOnViewClose(Map<String, Object> objMap) throws Exception {
 		Long BatchID = null;
-Long protocolordercode=null;
+		Long protocolordercode = null;
+		LSlogilabprotocoldetail Protocol_Order = new LSlogilabprotocoldetail();
 		if (objMap.containsKey("Batch")) {
 			BatchID = Long.valueOf((Integer) objMap.get("Batch"));
 		}
-		if(objMap.containsKey("protocolordercode")) {
-			protocolordercode= Long.valueOf((Integer) objMap.get("protocolordercode"));
+		if (objMap.containsKey("protocolordercode")) {
+			protocolordercode = Long.valueOf((Integer) objMap.get("protocolordercode"));
 		}
 
 		Integer userCode = Integer.parseInt(objMap.get("usercode").toString());
+		LSlogilablimsorderdetail orderDetail=new LSlogilablimsorderdetail();
+		if(BatchID!=null) {
+	    orderDetail = LSlogilablimsorderdetailRepository.findOne(BatchID);
+		}
+		
+		if (protocolordercode != null) {
+			Protocol_Order = LSlogilabprotocoldetailRepository.findOne(protocolordercode);
+		}
 
-		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findOne(BatchID);
-//		LSlogilabprotocoldetail Protocol_Order = LSlogilabprotocoldetailRepository
-//				.findOne(protocolordercode);
-		if (orderDetail != null) {
+		if (orderDetail.getBatchcode() != null) {
 
 			if (userCode != null && orderDetail.getLockeduser() != null
 					&& userCode.equals(orderDetail.getLockeduser())) {
@@ -1171,6 +1177,16 @@ Long protocolordercode=null;
 			orderDetail.setResponse(new Response());
 			orderDetail.getResponse().setStatus(false);
 			orderDetail.getResponse().setInformation("ID_UNLOCKFAIL");
+		}
+
+		if(Protocol_Order.getProtocolordercode() != null) {
+			if (userCode != null && Protocol_Order.getLockeduser() != null
+					&& userCode.equals(Protocol_Order.getLockeduser())) {
+				Protocol_Order.setLockeduser(null);
+				Protocol_Order.setLockedusername(null);
+				Protocol_Order.setActiveuser(null);
+				LSlogilabprotocoldetailRepository.save(Protocol_Order);
+			}
 		}
 		orderDetail = null;
 
@@ -1840,23 +1856,23 @@ Long protocolordercode=null;
 
 		List<ElnprotocolTemplateworkflow> elnprotocolTemplateworkflowobj = Arrays.asList(elnprotocolTemplateworkflow);
 		for (ElnprotocolTemplateworkflow flow : elnprotocolTemplateworkflowobj) {
-			
+
 			if (flow.getWorkflowcode() == 0) {
-				int workflowcode= elnprotocoltemplateworkflowRepository.getlargeworkflowecode();
-				flow.setWorkflowcode(workflowcode+1);
-				elnprotocoltemplateworkflowRepository.customInsertElnprotocolTemplateworkflow(flow.getWorkflowcode(),flow.getStatus(),
-						flow.getWorkflowname(),flow.getLssitemaster().getSitecode()
-						);
-				List<ElnprotocolTemplateworkflowgroupmap> updatedGroupMapList=flow.getElnprotocoltemplateworkflowgroupmap().stream()
-		                .peek(groupMap -> groupMap.setWorkflowcode(flow.getWorkflowcode()))
-		                .collect(Collectors.toList());
+				int workflowcode = elnprotocoltemplateworkflowRepository.getlargeworkflowecode();
+				flow.setWorkflowcode(workflowcode + 1);
+				elnprotocoltemplateworkflowRepository.customInsertElnprotocolTemplateworkflow(flow.getWorkflowcode(),
+						flow.getStatus(), flow.getWorkflowname(), flow.getLssitemaster().getSitecode());
+				List<ElnprotocolTemplateworkflowgroupmap> updatedGroupMapList = flow
+						.getElnprotocoltemplateworkflowgroupmap().stream()
+						.peek(groupMap -> groupMap.setWorkflowcode(flow.getWorkflowcode()))
+						.collect(Collectors.toList());
 				elnprotocolTemplateworkflowgroupmapRepository.save(updatedGroupMapList);
-				
-			}else {
+
+			} else {
 				elnprotocolTemplateworkflowgroupmapRepository.save(flow.getElnprotocoltemplateworkflowgroupmap());
 				elnprotocoltemplateworkflowRepository.save(flow);
 			}
-			
+
 //			
 		}
 //		List<ElnprotocolTemplateworkflow> inobj = elnprotocolTemplateworkflowobj.stream()
@@ -1915,7 +1931,7 @@ Long protocolordercode=null;
 			lscfttransactionRepository.save(objuser.getObjsilentaudit());
 		}
 
-		return elnprotocoltemplateworkflowRepository.findBylssitemasterAndStatusOrderByWorkflowcodeAsc(objuser.getLssitemaster(),
-				1);
+		return elnprotocoltemplateworkflowRepository
+				.findBylssitemasterAndStatusOrderByWorkflowcodeAsc(objuser.getLssitemaster(), 1);
 	}
 }

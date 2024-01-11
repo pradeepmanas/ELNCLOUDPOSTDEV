@@ -91,6 +91,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private Elnmaterial elnmaterial;
 	@ManyToOne
 	private ElnmaterialInventory elnmaterialinventory;
+	
+	private Integer activeuser;
+
+	public Integer getActiveuser() {
+		return activeuser;
+	}
+
+	public void setActiveuser(Integer activeuser) {
+		this.activeuser = activeuser;
+	}
+	
 
 	public Elnmaterial getElnmaterial() {
 		return elnmaterial;

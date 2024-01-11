@@ -1677,3 +1677,5 @@ CREATE TABLE IF NOT EXISTS public.equipmenthistory
 )WITH ( OIDS = FALSE ) TABLESPACE pg_default;
 
 ALTER TABLE public.equipmenthistory OWNER to postgres;
+
+ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS activeuser integer;

@@ -1396,9 +1396,6 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	List<LSlogilabprotocoldetail> findByLssamplemasterIn(List<LSsamplemaster> lsSampleLst);
 
-	List<Logilabprotocolorders> findByOrderflagAndLockeduserIsNotNullAndAssignedtoIsNullOrderByProtocolordercodeDesc(
-			String string);
-
 
 	@Transactional
 	@Modifying
@@ -1459,6 +1456,10 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	List<Logilabprotocolorders> findByElnmaterialAndTestcodeAndProtocoltypeAndCreatedtimestampBetween(
 			Elnmaterial elnmaterial, Integer testcode, Integer protocoltype, Date fromdate, Date todate);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndAndLockeduserIsNotNullAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+			String string, Integer sitecode);
 
 }
 

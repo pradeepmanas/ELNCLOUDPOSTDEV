@@ -116,6 +116,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
+import com.agaram.eln.primary.model.usermanagement.LSMultisites;
 //import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSactiveUser;
@@ -187,6 +188,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
 import com.agaram.eln.primary.repository.templates.LsMappedTemplateRepository;
 import com.agaram.eln.primary.repository.templates.LsUnmappedTemplateRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSMultisitesRepositery;
 //import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSactiveUserRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
@@ -436,6 +438,9 @@ public class InstrumentService {
 	@Autowired
 	@Qualifier("entityManagerFactory")
 	private EntityManager entityManager;
+	
+	@Autowired
+	private LSMultisitesRepositery LSMultisitesRepositery;
 
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 //		Map<String, Object> obj = new HashMap<>();
@@ -6385,8 +6390,10 @@ public class InstrumentService {
 	public List<LSlogilablimsorderdetail> GetLockedOrders(LSlogilablimsorderdetail objorder) {
 
 		if (objorder.getLsuserMaster().getUsername().equalsIgnoreCase("Administrator")) {
+			List<LSMultisites> obj = LSMultisitesRepositery.findByLssiteMaster(objorder.getLsuserMaster().getLssitemaster());
+			List<Integer> usercode = obj.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
 			return lslogilablimsorderdetailRepository
-					.findByOrderflagAndLockeduserIsNotNullAndAssignedtoIsNullOrderByBatchcodeDesc("N");
+					.findByOrderflagAndLockeduserIsNotNullAndLockeduserInAndAssignedtoIsNullOrderByBatchcodeDesc("N",usercode);
 		} else {
 			List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
 
