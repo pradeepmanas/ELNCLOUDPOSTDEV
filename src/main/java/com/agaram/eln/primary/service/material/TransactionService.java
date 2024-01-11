@@ -32,6 +32,9 @@ import org.springframework.stereotype.Service;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.equipment.ElnresultEquipment;
+import com.agaram.eln.primary.model.equipment.Equipment;
+import com.agaram.eln.primary.model.equipment.EquipmentHistory;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
@@ -48,6 +51,9 @@ import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.equipment.ElnresultEquipmentRepository;
+import com.agaram.eln.primary.repository.equipment.EquipmentHistoryRepository;
+import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialInventoryRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
 import com.agaram.eln.primary.repository.material.ElnresultUsedMaterialRepository;
@@ -107,6 +113,15 @@ public class TransactionService {
 	
 	@Autowired
 	private ElnresultUsedMaterialRepository elnresultUsedMaterialRepository;
+	
+	@Autowired
+	private EquipmentRepository equipmentRepository;
+	
+	@Autowired
+	private ElnresultEquipmentRepository elnresultEquipmentRepository;
+	
+	@Autowired
+	private EquipmentHistoryRepository equipmentHistoryRepository;
 
 	public ResponseEntity<Object> getLoadOnInventoryData(Map<String, Object> inputMap) {
 
@@ -618,6 +633,50 @@ public class TransactionService {
 //		}
 
 		return new ResponseEntity<>(resultUsedMaterial, HttpStatus.OK);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<Object> createEquipmentResultUsed(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
+
+		ObjectMapper Objmapper = new ObjectMapper();
+
+		final LScfttransaction cft = Objmapper.convertValue(inputMap.get("silentAudit"), LScfttransaction.class);
+		final Equipment objEquipFromMap = Objmapper.convertValue(inputMap.get("selectedEquipment"),Equipment.class);
+		final Map<String, Object> objResultMap = (Map<String, Object>) inputMap.get("resultObject");
+		
+		final LStestmasterlocal objTest = new LStestmasterlocal();
+		objTest.setTestcode((Integer) objResultMap.get("testcode"));
+
+		Equipment objInventory = equipmentRepository.findOne(objEquipFromMap.getNequipmentcode());
+
+		LSuserMaster objUser = new LSuserMaster();
+		objUser.setUsercode(cft.getLsuserMaster());
+
+		ElnresultEquipment resultEquipment = new ElnresultEquipment();
+		if (objTest.getTestcode() != -1) {
+			resultEquipment.setLstestmasterlocal(objTest);
+		}
+		resultEquipment.setCreatedby(objUser);
+		resultEquipment.setBatchid(objResultMap.get("batchid").toString());
+		resultEquipment.setNequipmentcode(objInventory.getNequipmentcode());
+		resultEquipment.setNequipmentcatcode(objInventory.getEquipmentcategory().getNequipmentcatcode());
+		resultEquipment.setNequipmenttypecode(objInventory.getEquipmenttype().getNequipmenttypecode());
+		resultEquipment.setOrdercode(Long.valueOf(objResultMap.get("ordercode").toString()));
+		resultEquipment.setTransactionscreen(Integer.parseInt(objResultMap.get("transactionscreen").toString()));
+		resultEquipment.setTemplatecode(Integer.parseInt(objResultMap.get("templatecode").toString()));
+		resultEquipment.setNstatus(1);
+		resultEquipment.setResponse(new Response());
+		resultEquipment.getResponse().setStatus(true);
+		try {
+			resultEquipment.setCreateddate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		elnresultEquipmentRepository.save(resultEquipment);
+
+		return new ResponseEntity<>(resultEquipment, HttpStatus.OK);
 	}
 
 	public ResponseEntity<Object> updateMaterialDynamicTable(MaterialConfig[] objLstClass)
@@ -1448,6 +1507,20 @@ public class TransactionService {
 			
 			objmap.put("resultusedmaterial", lstUsedMaterials);
 		}
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> getEquipmentTransactionResult(Equipment objEquipment) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		List<ElnresultEquipment> objList = elnresultEquipmentRepository.findByNequipmentcode(objEquipment.getNequipmentcode());
+		List<EquipmentHistory> lstCal = equipmentHistoryRepository.findByNequipmentcodeAndHistorytype(objEquipment.getNequipmentcode(),1);
+		List<EquipmentHistory> lstMain = equipmentHistoryRepository.findByNequipmentcodeAndHistorytype(objEquipment.getNequipmentcode(),2);
+		
+		objmap.put("resultusedmaterial", objList);
+		objmap.put("resultCallibrated", lstCal);
+		objmap.put("resultMaintanance", lstMain);
+	
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 

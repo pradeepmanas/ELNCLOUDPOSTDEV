@@ -43,4 +43,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Integer>{
 	List<Equipment> findByEquipmentcategoryAndNsitecodeAndNstatus(EquipmentCategory equipmentCategory,
 			Integer nsiteInteger, int i);
 
+	List<Equipment> findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatus(boolean b,
+			EquipmentCategory equipmentCategory, Integer nsiteInteger, int i);
+
 }

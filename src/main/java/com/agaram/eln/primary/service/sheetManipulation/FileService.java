@@ -41,6 +41,7 @@ import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowhistory;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
@@ -1133,15 +1134,19 @@ public class FileService {
 	@SuppressWarnings("null")
 	public Map<String, Object> unlockorderOnViewClose(Map<String, Object> objMap) throws Exception {
 		Long BatchID = null;
-
+Long protocolordercode=null;
 		if (objMap.containsKey("Batch")) {
 			BatchID = Long.valueOf((Integer) objMap.get("Batch"));
+		}
+		if(objMap.containsKey("protocolordercode")) {
+			protocolordercode= Long.valueOf((Integer) objMap.get("protocolordercode"));
 		}
 
 		Integer userCode = Integer.parseInt(objMap.get("usercode").toString());
 
 		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findOne(BatchID);
-
+//		LSlogilabprotocoldetail Protocol_Order = LSlogilabprotocoldetailRepository
+//				.findOne(protocolordercode);
 		if (orderDetail != null) {
 
 			if (userCode != null && orderDetail.getLockeduser() != null

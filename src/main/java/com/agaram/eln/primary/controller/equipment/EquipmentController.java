@@ -92,6 +92,18 @@ public class EquipmentController {
 		return equipmentService.updateStatus(obj);
 	}
 	
+	@RequestMapping(value = "/updateElnEquipmentCallibrate", method = RequestMethod.POST)
+	public ResponseEntity<Object> updateElnEquipmentCallibrate(@RequestBody Equipment obj) throws Exception {
+
+		return equipmentService.updateElnEquipmentCallibrate(obj);
+	}
+	
+	@RequestMapping(value = "/updateElnEquipmentMaintanance", method = RequestMethod.POST)
+	public ResponseEntity<Object> updateElnEquipmentMaintanance(@RequestBody Equipment obj) throws Exception {
+
+		return equipmentService.updateElnEquipmentMaintanance(obj);
+	}
+	
 	@RequestMapping(value = "/getEquipmentBySearchField", method = RequestMethod.POST)
 	public ResponseEntity<Object> getEquipmentBySearchField(@RequestBody Map<String, Object> inputMap) throws Exception {
 

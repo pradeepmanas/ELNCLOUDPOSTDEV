@@ -553,152 +553,116 @@ public class MethodService {
     * @return string of text file content
  * @throws Exception 
     */
-     
+        
    @SuppressWarnings("resource")
-   public String getFileData(final String fileName,String tenant,Integer methodKey) throws Exception
-    {
-//   	   try
-//           {			
-   		   File file = null;
-   		   final String ext = FilenameUtils.getExtension(fileName); 
-   		   String rawDataText="";
-   		   
-   		   final String name = FilenameUtils.getBaseName(fileName);
-   		   
-   		   CloudParserFile obj = cloudparserfilerepository.findTop1Byfilename(fileName);
-   		   String fileid = obj.fileid;
-   		   System.out.println("going to retrieve file from blob");
-   		   file = stream2file(cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "parserfile"),fileName, ext);
-   		   
-   		   byte[] bytes = null;
+public String getFileData(final String fileName,String tenant,Integer methodKey) throws FileNotFoundException, IOException
+ {
+	   try
+        {			
+		   File file = null;
+		   final String ext = FilenameUtils.getExtension(fileName); 
+		   String rawDataText="";
+		   
+		   final String name = FilenameUtils.getBaseName(fileName);
+		   
+		   CloudParserFile obj = cloudparserfilerepository.findTop1Byfilename(fileName);
+		   String fileid = obj.fileid;
+			 
+		   file = stream2file(cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "parserfile"),fileName, ext);
+		   
+		   byte[] bytes = null;
 
-   		    if(file !=null)
-   		    {
-    	
-   		    	if (ext.equalsIgnoreCase("pdf")) {  	
-   			        List<Method> methodobj = methodRepo.findByMethodkey(methodKey);
-   		  				
-   		  				Integer converterstatus = methodobj.get(0).getConverterstatus();
-   		  				if(converterstatus == 1) //pdf to txt
-   		  				{
-   		  					
-   		  					new ClassPathResource("Aspose.PDF.Java.lic");
-   		  			       System.out.println("classpath:"+new ClassPathResource("Aspose.PDF.Java.lic"));
+		    if(file !=null)
+		    {
 
-   		  			    String fileName2 = "Aspose.PDF.Java.lic";
-   		  		    	String urlString = null;
-   		  					      
-   		  					        ClassLoader classLoader = MethodService.class.getClassLoader();
-   		  					        java.net.URL resourceUrl = classLoader.getResource(fileName2);
-   		  			   		  					      
-   		  					        if (resourceUrl != null) {
-   		  					            System.out.println("File '" + fileName2 + "' exists in the classpath.");
-   		  					            System.out.println("File URL: " + resourceUrl);
-   		  					      
-   		  					             urlString = resourceUrl.toString();
-   		  					            System.out.println("urlString: " + urlString);
-   		  					      
-   		  					       if (urlString.startsWith("file:")) {
-   		  				            // For file URLs, the classpath entry is the file path
-   		  					    	urlString= urlString.substring("file:".length());
-   		  				               } else if (urlString.startsWith("jar:file:")) {
-   		  					      
-   		  					            	 System.out.println("For JAR file URLs, extract the JAR file path");
-   		  					                int jarSeparatorIndex = urlString.indexOf('!');
-   		  					                if (jarSeparatorIndex != -1) {
-   		  					                	urlString= urlString.substring("jar:file:".length(), jarSeparatorIndex);
-   		  					                }
-   		  					            }
-   		  					            System.out.println("Classpath Entry for '" + fileName2 + "':");
-   		  					            System.out.println(urlString);
-   		  					            
-   		  					        } else {
-   		  					            System.out.println("File '" + fileName2 + "' does not exist in the classpath.");
-   		  					        }
-   		  			
-   		  				   		  			
-   		  			License asposePdfLicenseText = new License();
- 		            try {
- 		            	
-						//asposePdfLicenseText.setLicense(urlString);
-						
-					//	System.out.println("license is set");
- 		        	   String dataDir = urlString;
-
-  		  				// Create a stream object containing the license file
-
-  		  				FileInputStream fstream = new FileInputStream(dataDir);
-
-  		  				// Instantiate the License class
-
-  		  				License license = new License();
-
-  		  				//Set the license through the stream object
-
-  		  				license.setLicense(fstream);
-  		  			System.out.println("license is set");
-					} catch (Exception e1) {
-						
-						e1.printStackTrace();
-						System.out.println("license is not set");
-					}
-//   		  			     asposePdfLicenseText.setLicense(new ClassPathResource("Aspose.PDF.Java.lic"));
- 		            
- 		           RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
-		            Document convertPDFDocumentToText = new Document(raFileinputstream);
-
-		            TextAbsorber textAbsorber = new TextAbsorber(new TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Pure));
-
-		            convertPDFDocumentToText.getPages().accept(textAbsorber);
-
-		            String ExtractedText = textAbsorber.getText();
-		            BufferedWriter writer = null;
-
-			    	final File tempFile = File.createTempFile(name, ".txt");
-			    	
-		            String tempPath = tempFile.toString();
-		            
-		            
-					try {
-						writer = new BufferedWriter(new FileWriter(tempPath));
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+			   if (ext.equalsIgnoreCase("pdf")) {
+				   
+	                List<Method> methodobj = methodRepo.findByMethodkey(methodKey);
+	  				Integer converterstatus = methodobj.get(0).getConverterstatus();
+	  				
+	  				if(converterstatus==1) {
 	
-		            try {
-						writer.write(ExtractedText);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-		            
-		            try {
-						writer.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					   String parsedText = "";
+					   PDFParser parser = null;
+					    PDDocument pdDoc = null;
+					    COSDocument cosDoc = null;
+					    PDFTextStripper pdfStripper;
+	
+					    try {
+					    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(file);
+					        parser = new PDFParser(raFile);
+					        parser.setLenient(true);
+					        parser.parse();
+					        cosDoc = parser.getDocument();
+					        pdfStripper = new PDFTextStripper();
+					        pdfStripper.setSortByPosition( true );
+					              			       
+					        pdDoc = new PDDocument(cosDoc);
+					        pdfStripper.setWordSeparator("\t");
+					        pdfStripper.setSuppressDuplicateOverlappingText(true);
+					        Matrix matrix = new Matrix();
+					        matrix.clone();
+					        pdfStripper.setTextLineMatrix(matrix);
+					   
+					        parsedText = pdfStripper.getText(pdDoc);
+					      					        
+					        //converting into multipart file
+						        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
+						        		fileName, "text/plain", parsedText.getBytes());
+						        
+						        //storing file in blob
+						        String textid = null;
+					    		try {
+					    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
+					    		} catch (IOException e) {
+					    			// TODO Auto-generated catch block
+					    			e.printStackTrace();
+					    		}
+			
+					    		CloudParserFile objfile = new CloudParserFile();
+					    		objfile.setFileid(textid);
+					    		objfile.setExtension(".txt");
+					    		objfile.setFilename(name+".txt");
+					    			
+					    		cloudparserfilerepository.save(objfile);
+					    } catch (Exception e) {
+					        e.printStackTrace();
+					        try {
+					            if (cosDoc != null)
+					                cosDoc.close();
+					            if (pdDoc != null)
+					                pdDoc.close();
+					        } catch (Exception e1) {
+					            e1.printStackTrace();
+					        }
+	
+					    }    
+					    
+					    rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);
+				 
+				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+					   
+	  				}	  				}
+			  
+			
 
-		            System.out.println("Done");
-		            
-		          byte[] bytesArray = new byte[(int) tempFile.length()]; 	
-	          FileInputStream fis = new FileInputStream(tempFile);
-             fis.read(bytesArray); //read file into bytes[]
-             fis.close();	
-          		 	           
-	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
-	          System.out.println("PDF-TXT-rawDataText:"+rawDataText);
-	          tempFile.delete();
-	          tempPath="";
-
-   		  				}
-   		    	}
-   		    }
-   		 return rawDataText;
-//           }	catch (IOException e) {
-//		e.printStackTrace();
-//      }
-   	  
-    }
-
+			   else
+			   {
+				   RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
+	  			    rawDataText = new BufferedReader(
+	  				new InputStreamReader(raFileinputstream, StandardCharsets.UTF_8)).lines()
+	  					.collect(Collectors.joining("\n"));
+	  			   System.out.println("TXTFile-rawDataText:"+rawDataText);
+	  			   }
+		   
+		    }	    
+           return rawDataText;    
+        } 	  
+        catch (IOException e) 
+        { 
+        	return null;
+        } 
+   }
    
 //        
 //   @SuppressWarnings("resource")

@@ -54,8 +54,8 @@ public class SampleStorageLocationService {
 
 		if (objLocation == null) {
 			sampleStorageLocation.setObjsilentaudit(Auditobj);
-			sampleStorageLocation.setCreatedby(Auditobj.getUsername());
-			sampleStorageVersion.setCreatedby(Auditobj.getUsername());
+			sampleStorageLocation.setCreatedby(Auditobj.getUsername().toLowerCase());
+			sampleStorageVersion.setCreatedby(Auditobj.getUsername().toLowerCase());
 			sampleStorageLocationRepository.save(sampleStorageLocation);
 			sampleStorageVersion.setSampleStorageLocation(sampleStorageLocation);
 			try {

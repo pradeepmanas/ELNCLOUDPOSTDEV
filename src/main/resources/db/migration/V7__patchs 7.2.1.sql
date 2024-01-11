@@ -1324,7 +1324,6 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.elnprotocolworkflowgroupmap
     OWNER to postgres;
     
-
 DO $$
 DECLARE
   Elnprotocolworkflow INTEGER := 0;
@@ -1333,19 +1332,13 @@ DECLARE
 BEGIN
   SELECT COUNT(*) INTO Elnprotocolworkflow FROM Elnprotocolworkflow;
   SELECT COUNT(*) INTO LSworkflow FROM LSworkflow;
-  BEGIN
-    EXECUTE 'SELECT elnprotocolworkflow_workflowcode FROM lslogilabprotocoldetail LIMIT 1';
-    hasElnprotocolworkflowWorkflowcode := true;
-  EXCEPTION WHEN others THEN
-    hasElnprotocolworkflowWorkflowcode := false;
-  END;
-
-  IF Elnprotocolworkflow = 0 AND LSworkflow != 0 AND hasElnprotocolworkflowWorkflowcode THEN
+  IF Elnprotocolworkflow = 0 AND LSworkflow != 0 THEN
     INSERT INTO Elnprotocolworkflow
     SELECT * FROM LSworkflow;
   END IF;
 END
 $$;
+
 
 DO $$
 DECLARE
@@ -1590,3 +1583,97 @@ ALTER TABLE IF Exists equipment ADD Column IF NOT EXISTS lastmaintained timestam
 update equipment set equipmentused = false where equipmentused is null;
 
 INSERT into LSfields (fieldcode, createby, createdate, fieldorderno, fieldtypecode, isactive, level01code, level01name, level02code, level02name, level03code, level03name, level04code, level04name, siteID) VALUES (62, NULL, NULL, 22, 3, 1, 'G1', 'ID_GENERAL', '22', 'ID_GENERAL', 22, 'ID_GENERAL', 'G23', 'Add Equipment', 1) on conflict (fieldcode) do nothing;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'elnresultequipment_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE elnresultequipment_sequence;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.elnresultequipment
+(
+    nresultequipmentcode integer NOT NULL DEFAULT nextval('elnresultequipment_sequence'::regclass),
+    ordercode numeric(17,0),
+    transactionscreen integer,
+    templatecode integer,
+    nequipmenttypecode integer,
+    nequipmentcatcode integer,
+    nequipmentcode integer,
+    nstatus integer NOT NULL DEFAULT 1,
+    createddate timestamp without time zone,
+    batchid character varying(100) COLLATE pg_catalog."default",
+    lstestmasterlocal_testcode integer,
+    createdby_usercode integer,
+    CONSTRAINT elnresultequipment_pkey PRIMARY KEY (nresultequipmentcode),
+    CONSTRAINT fk5wxdhabcdewr5m0ejfbh6e47 FOREIGN KEY (createdby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk5wxdhghijkwr5m0ejabc6e47 FOREIGN KEY (lstestmasterlocal_testcode)
+        REFERENCES public.lstestmasterlocal (testcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fknok3att985drj28p3bwern888 FOREIGN KEY (nequipmentcode)
+        REFERENCES public.equipment (nequipmentcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+) WITH ( OIDS = FALSE ) TABLESPACE pg_default;
+
+ALTER TABLE public.elnresultequipment OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'equipmenthistory_sequence' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE equipmenthistory_sequence;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.equipmenthistory
+(
+    nequipmenthistorycode integer NOT NULL DEFAULT nextval('equipmenthistory_sequence'::regclass),
+    historytype integer,
+    nequipmentcode integer,
+    nstatus integer NOT NULL DEFAULT 1,
+    createddate timestamp without time zone,
+    createdby_usercode integer,
+    lastcallibrated timestamp without time zone,
+    lastmaintained timestamp without time zone,
+    manintanancedate timestamp without time zone,
+    callibrationdate timestamp without time zone,
+    CONSTRAINT equipmenthistory_pkey PRIMARY KEY (nequipmenthistorycode),
+    CONSTRAINT fk5wxdhabcdewr5m0ejfbh6e47 FOREIGN KEY (createdby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fknok3att985drj28p3bwern888 FOREIGN KEY (nequipmentcode)
+        REFERENCES public.equipment (nequipmentcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)WITH ( OIDS = FALSE ) TABLESPACE pg_default;
+
+ALTER TABLE public.equipmenthistory OWNER to postgres;

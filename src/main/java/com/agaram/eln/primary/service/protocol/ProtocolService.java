@@ -7680,6 +7680,16 @@ public class ProtocolService {
 		return null;
 	}
 
+	public LSprotocolupdates updatetProtocolTemplateTransaction(LSprotocolupdates objuser) throws ParseException {
+		if (objuser.getProtocolmastercode() != null ) {
+			if (objuser.getProtocolmodifiedDate() != null) {
+				objuser.setProtocolmodifiedDate(commonfunction.getCurrentUtcTime());
+			}
+			lsprotocolupdatesRepository.save(objuser);
+		}
+		return objuser;
+	}
+	
 	public LSprotocolorderstephistory updatetransactionhistory(LSprotocolorderstephistory objuser)
 			throws ParseException {
 		if (objuser.getProtocolordercode() != null || objuser.getBatchcode() != null) {
@@ -7693,6 +7703,12 @@ public class ProtocolService {
 			lsprotocolorderstephistoryRepository.save(objuser);
 		}
 		return objuser;
+	}
+	
+	public List<LSprotocolorderstephistory> updateprotocolordertransactions(LSprotocolorderstephistory[] mapObj) {
+		List<LSprotocolorderstephistory> obj= Arrays.asList(mapObj);
+		lsprotocolorderstephistoryRepository.save(obj);
+		return obj;
 	}
 
 	public List<LSprotocolmaster> getsingleprotocol(LSprotocolmaster objuser) {

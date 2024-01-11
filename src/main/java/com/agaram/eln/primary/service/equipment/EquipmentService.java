@@ -17,11 +17,13 @@ import org.springframework.stereotype.Service;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.equipment.EquipmentCategory;
+import com.agaram.eln.primary.model.equipment.EquipmentHistory;
 import com.agaram.eln.primary.model.equipment.EquipmentType;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
+import com.agaram.eln.primary.repository.equipment.EquipmentHistoryRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentTypeRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
@@ -38,6 +40,8 @@ public class EquipmentService {
 	EquipmentTypeRepository equipmentTypeRepository;
 	@Autowired
 	PeriodRepository periodRepository;
+	@Autowired
+	EquipmentHistoryRepository equipmentHistoryRepository;
 
 	public ResponseEntity<Object> getEquipment(Map<String, Object> inputMap) throws ParseException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
@@ -173,7 +177,7 @@ public class EquipmentService {
 		if(!lstTypes.isEmpty()) {
 			lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatus(lstTypes.get(0),nsiteInteger, 1);
 			if(!lstCategories.isEmpty()) {
-				lstEquipments = equipmentRepository.findByEquipmentcategoryAndNsitecodeAndNstatus(lstCategories.get(0),nsiteInteger, 1);
+				lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatus(true,lstCategories.get(0),nsiteInteger, 1);
 			}	
 		}	
 		
@@ -200,7 +204,7 @@ public class EquipmentService {
 			if(!lstTypes.isEmpty()) {
 				lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatus(lstTypes.get(0), nsiteInteger, 1);
 				if(!lstCategories.isEmpty()) {
-					lstEquipments = equipmentRepository.findByEquipmentcategoryAndNsitecodeAndNstatus(lstCategories.get(0),nsiteInteger, 1);
+					lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatus(true,lstCategories.get(0),nsiteInteger, 1);
 				}	
 			}
 		}
@@ -218,7 +222,7 @@ public class EquipmentService {
 		EquipmentCategory objCategory = equipmentCategoryRepository.findByNequipmentcatcode(ncatcode);
 		List<Equipment> lstEquipments = new ArrayList<Equipment>();
 		
-		lstEquipments = equipmentRepository.findByEquipmentcategoryAndNsitecodeAndNstatus(objCategory,nsiteInteger, 1);
+		lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatus(true,objCategory,nsiteInteger, 1);
 				
 		objmap.put("lstEquipments", lstEquipments);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
@@ -237,8 +241,6 @@ public class EquipmentService {
 
 			obj.setCreateby(objMaster);
 			obj.setCreateddate(commonfunction.getCurrentUtcTime());
-			obj.setLastcallibrated(commonfunction.getCurrentUtcTime());
-			obj.setLastmaintained(commonfunction.getCurrentUtcTime());
 			equipmentRepository.save(obj);
 			
 			String stridformat = returnSubstring(obj.getSequipmentname()) + "/" + getfnFormat(obj.getNequipmentcode(), sformattype);
@@ -352,11 +354,37 @@ public class EquipmentService {
 		
 		if(objEquipment != null) {
 			
-			objEquipment.setEquipmentused(true);
+			objEquipment.setEquipmentused(obj.getEquipmentused() ? false : true);
 			equipmentRepository.save(objEquipment);
 			
 			objEquipment.getResponse().setInformation("IDS_SAVE_SUCCEED");
 			objEquipment.getResponse().setStatus(true);
+			
+			return new ResponseEntity<>(objEquipment, HttpStatus.OK);
+		}else {
+			objEquipment.getResponse().setInformation("IDS_SAVE_FAIL");
+			objEquipment.getResponse().setStatus(false);
+			return new ResponseEntity<>(obj, HttpStatus.OK);
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	public ResponseEntity<Object> updateElnEquipmentCallibrate(Equipment obj) throws ParseException {
+		
+		Equipment objEquipment = equipmentRepository.findOne(obj.getNequipmentcode());
+		
+		objEquipment.setResponse(new Response());
+		
+		if(objEquipment != null) {
+			
+			objEquipment.setLastcallibrated(obj.getLastcallibrated());
+			objEquipment.setCallibrationdate(obj.getCallibrationdate());
+			equipmentRepository.save(objEquipment);
+			
+			objEquipment.getResponse().setInformation("IDS_SAVE_SUCCEED");
+			objEquipment.getResponse().setStatus(true);
+			
+			createEquipmentHistory(objEquipment,1);
 			
 			return new ResponseEntity<>(obj, HttpStatus.OK);
 		}else {
@@ -366,6 +394,49 @@ public class EquipmentService {
 		}
 	}
 
+	@SuppressWarnings("unused")
+	public ResponseEntity<Object> updateElnEquipmentMaintanance(Equipment obj) throws ParseException {
+		
+		Equipment objEquipment = equipmentRepository.findOne(obj.getNequipmentcode());
+		
+		objEquipment.setResponse(new Response());
+		
+		if(objEquipment != null) {
+			
+			objEquipment.setLastmaintained(obj.getLastmaintained());
+			objEquipment.setManintanancedate(obj.getManintanancedate());
+			equipmentRepository.save(objEquipment);
+			
+			objEquipment.getResponse().setInformation("IDS_SAVE_SUCCEED");
+			objEquipment.getResponse().setStatus(true);
+			
+			createEquipmentHistory(obj,2);
+			
+			return new ResponseEntity<>(objEquipment, HttpStatus.OK);
+		}else {
+			objEquipment.getResponse().setInformation("IDS_SAVE_FAIL");
+			objEquipment.getResponse().setStatus(false);
+			return new ResponseEntity<>(obj, HttpStatus.OK);
+		}
+	}
+	
+	public void createEquipmentHistory(Equipment obj,Integer historytype) throws ParseException {
+		
+		EquipmentHistory objHistory = new EquipmentHistory();
+		
+		objHistory.setHistorytype(historytype);
+		objHistory.setNequipmentcode(obj.getNequipmentcode());
+		objHistory.setCreatedby(obj.getCreateby());
+		objHistory.setLastcallibrated(obj.getLastcallibrated());
+		objHistory.setCallibrationdate(obj.getCallibrationdate());
+		objHistory.setLastmaintained(obj.getLastmaintained());
+		objHistory.setManintanancedate(obj.getManintanancedate());
+		objHistory.setNstatus(1);
+		objHistory.setCreateddate(commonfunction.getCurrentUtcTime());
+		
+		equipmentHistoryRepository.save(objHistory);
+	}
+	
 	public ResponseEntity<Object> getEquipmentBySearchField(Map<String, Object> inputMap) {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
@@ -392,4 +463,47 @@ public class EquipmentService {
 		objmap.put("lstEquipment", lstEquipments);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+	
+//	public ResponseEntity<Object> createEquipmentResultUsed(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
+
+//		ObjectMapper Objmapper = new ObjectMapper();
+
+//		final LScfttransaction cft = Objmapper.convertValue(inputMap.get("silentAudit"), LScfttransaction.class);
+//		final Equipment objEquipFromMap = Objmapper.convertValue(inputMap.get("selectedEquipment"),Equipment.class);
+//		final Map<String, Object> objResultMap = (Map<String, Object>) inputMap.get("resultObject");
+		
+//		final LStestmasterlocal objTest = new LStestmasterlocal();
+//		objTest.setTestcode((Integer) objResultMap.get("testcode"));
+
+//		Equipment objInventory = equipmentRepository.findOne(objEquipFromMap.getNequipmentcode());
+//
+//		Integer user = (Integer) inputMap.get("user");
+//		
+//		LSuserMaster objUser = new LSuserMaster();
+//		objUser.setUsercode(user);
+//
+//		ElnresultEquipment resultEquipment = new ElnresultEquipment();
+//		
+//		resultEquipment.setLstestmasterlocal(null);
+//		resultEquipment.setCreatedby(objUser);
+//		resultEquipment.setBatchid(objResultMap.get("batchid").toString());
+//		resultEquipment.setNequipmentcode(objInventory.getNequipmentcode());
+//		resultEquipment.setNequipmentcatcode(objInventory.getEquipmentcategory().getNequipmentcatcode());
+//		resultEquipment.setNequipmenttypecode(objInventory.getEquipmenttype().getNequipmenttypecode());
+//		resultEquipment.setOrdercode(Long.valueOf(objResultMap.get("ordercode").toString()));
+//		resultEquipment.setTransactionscreen(Integer.parseInt(objResultMap.get("transactionscreen").toString()));
+//		resultEquipment.setTemplatecode(Integer.parseInt(objResultMap.get("templatecode").toString()));
+//		resultEquipment.setNstatus(1);
+//		resultEquipment.setResponse(new Response());
+//		resultEquipment.getResponse().setStatus(true);
+//		try {
+//			resultEquipment.setCreateddate(commonfunction.getCurrentUtcTime());
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		elnresultEquipmentRepository.save(resultEquipment);
+
+//		return new ResponseEntity<>(resultEquipment, HttpStatus.OK);
+//	}
 }

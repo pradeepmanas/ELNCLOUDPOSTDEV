@@ -46,6 +46,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolorderstephistory;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderworkflowhistory;
 import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
+import com.agaram.eln.primary.model.protocols.LSprotocolupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowhistory;
 import com.agaram.eln.primary.model.protocols.Lsprotocolsharedby;
@@ -1155,11 +1156,13 @@ public class ProtocolController {
 	
 		return  ProtocolMasterService.getprotocolstephistory(objuser);
 	}
+	
 	@RequestMapping(value = "/updatetransactionhistory")
 	protected LSprotocolorderstephistory updatetransactionhistory(@RequestBody LSprotocolorderstephistory objuser)throws Exception {
 	
 		return  ProtocolMasterService.updatetransactionhistory(objuser);
 	}
+	
 	@RequestMapping(value = "/Outofstockinventorynotificationprotocol")
 	protected Map<String, Object>  Outofstockinventorynotificationprotocol(@RequestBody LSprotocolordersampleupdates lsprotocolordersampleupdates)throws Exception {
 	
@@ -1240,4 +1243,15 @@ public class ProtocolController {
 		return ProtocolMasterService.Unloackprotocolorders(protocolorders);
 	}
 	
+	@RequestMapping(value = "/updatetProtocolTemplateTransaction")
+	protected LSprotocolupdates updatetProtocolTemplateTransaction(@RequestBody LSprotocolupdates objuser)throws Exception {
+	
+		return  ProtocolMasterService.updatetProtocolTemplateTransaction(objuser);
+	}
+	
+	@RequestMapping(value = "/updateprotocolordertransactions")
+	protected List<LSprotocolorderstephistory> updateprotocolordertransactions(@RequestBody LSprotocolorderstephistory[] objuser)throws Exception {
+	
+		return  ProtocolMasterService.updateprotocolordertransactions(objuser);
+	}
 }

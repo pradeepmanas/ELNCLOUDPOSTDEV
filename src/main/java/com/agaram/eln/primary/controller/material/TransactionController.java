@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.service.material.TransactionService;
@@ -50,6 +51,18 @@ public class TransactionController {
 	public ResponseEntity<Object> createMaterialResultUsed(@RequestBody Map<String, Object> inputMap) throws Exception {
 
 		return transactionService.createMaterialResultUsed(inputMap);
+	}
+	
+	@PostMapping(value = "/createEquipmentResultUsed")
+	public ResponseEntity<Object> createEquipmentResultUsed(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return transactionService.createEquipmentResultUsed(inputMap);
+	}
+	
+	@PostMapping(value = "/getEquipmentTransactionResult")
+	public ResponseEntity<Object> getEquipmentTransactionResult(@RequestBody Equipment objEquipment) throws Exception {
+
+		return transactionService.getEquipmentTransactionResult(objEquipment);
 	}
 
 	@PostMapping(value = "/updateMaterialDynamicTable")
