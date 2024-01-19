@@ -602,14 +602,24 @@ public class CommonFunction {
 			 String trimmedData = extractedString.trim();
 			 System.out.println("getdatablock-trimmeddata:"+trimmedData);
 			 if (trimmedData.length() > 0) {
-				 String[] str = trimmedData.split(delimiter!= "None" ? delimiter: "ChummaKizhi");
-				 System.out.println("getdatablock-str:"+str);
-				 outputList.add(Arrays.asList(str));
+				 
+				 if(delimiter.equals("None")) {
+					 String str = trimmedData;
+					 System.out.println("getdatablock-str:"+str);
+					 outputList.add(Arrays.asList(str)); 
+				 }else {
+					String[] str = trimmedData.split(delimiter!= "None" ? delimiter: "ChummaKizhi");
+					System.out.println("getdatablock-str:"+str);
+					outputList.add(Arrays.asList(str));	 
+				 }
+				 
+				 
+				 
 			 }	
 			 
 		   }
 		 }
-
+		 System.out.println("getdatablock-outputList:"+outputList);
 		 return outputList;
     }
 	
