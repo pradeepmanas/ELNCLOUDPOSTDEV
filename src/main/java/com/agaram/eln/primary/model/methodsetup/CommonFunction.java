@@ -593,15 +593,17 @@ public class CommonFunction {
 			 if (dataStartIndex<=endIndex) {
 				
 			 String extractedString = data.substring(dataStartIndex, endIndex);
+			 System.out.println("getdatablock-extractedString:"+extractedString);
 			 
 			 for (ParserIgnoreChars ignoreCharacter :ignoreList) {
 				 extractedString = extractedString.replace(ignoreCharacter.getIgnorechars(), "");
 				 extractedString = extractedString.trim();
 			 }
 			 String trimmedData = extractedString.trim();
-			 
+			 System.out.println("getdatablock-trimmeddata:"+trimmedData);
 			 if (trimmedData.length() > 0) {
 				 String[] str = trimmedData.split(delimiter!= "None" ? delimiter: "ChummaKizhi");
+				 System.out.println("getdatablock-str:"+str);
 				 outputList.add(Arrays.asList(str));
 			 }	
 			 

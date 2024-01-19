@@ -545,6 +545,8 @@ public class EvaluateParserService {
 			List<List<String>> dataBlock = commonFunction.getMvfData(methodFieldTech.getParsertechniques(), blockData, 
 				methodFieldTech.getParserfield().getMethoddelimiter().getDelimiter().getActualdelimiter(), ignoreList);
 			
+			System.out.println("getfielddatadataBlock :"+dataBlock);
+
 			if (!methodFieldTech.getSubparsertechniques().isEmpty()) {
 				for(final SubParserTechnique subParserTechnique : methodFieldTech.getSubparsertechniques())
 				{
@@ -574,9 +576,11 @@ public class EvaluateParserService {
                         if (subParserField.getSubparserfieldtype().equalsIgnoreCase("col")) {
                         	for(final List<String> rowData : dataBlock) {
                         		if (rowData.size() <= Integer.parseInt(subParserField.getSubparserfieldposition())){
+                        			System.out.println("getfielddata-Subparserfieldposition :"+subParserField.getSubparserfieldposition());
                         			fieldData.add("");
                         		}
                         		else {
+                        			System.out.println("getfielddata-fielddata :"+rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
                         			fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
                         		}
                         	}
@@ -593,6 +597,7 @@ public class EvaluateParserService {
 			else
 			{				
 				for (List<String> dataList : dataBlock) {
+					System.out.println("getfielddatadataList :"+dataList);
 					for (String data : dataList) {
 						fieldData.add(data);
 						System.out.println("getfielddatasingleparserfielddatainforloop :"+data);
