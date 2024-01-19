@@ -226,7 +226,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	
 	@Transactional
 	@Modifying
-	@Query(value = "select distinct LSlogilabprotocoldetail.testcode, LSlogilabprotocoldetail.lsprojectmaster_projectcode, CAST((select testname from lstestmasterlocal where testcode =  LSlogilabprotocoldetail.testcode) as varchar(10))as testname  from LSlogilabprotocoldetail as LSlogilabprotocoldetail"
+	@Query(value = "select distinct LSlogilabprotocoldetail.testcode, LSlogilabprotocoldetail.lsprojectmaster_projectcode,  (select testname from lstestmasterlocal where testcode = LSlogilabprotocoldetail.testcode) as testname  from LSlogilabprotocoldetail as LSlogilabprotocoldetail"
 			+ " where LSlogilabprotocoldetail.testcode is not null and assignedto_usercode is null and LSlogilabprotocoldetail.lsprojectmaster_projectcode is not null and LSlogilabprotocoldetail.lsprojectmaster_projectcode in (?1)", nativeQuery = true)
 	public ArrayList<List<Object>>  getLstestmasterlocalByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(List<Integer> lsprojectcode);
 
@@ -1409,12 +1409,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Integer usercode4);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterInAndViewoptionAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserNotOrderByProtocolordercodeDesc(
-			List<LSprojectmaster> lstproject, int i, Integer sitecode, String string, Integer usercode);
 
-
-	List<Logilabprotocolorders> findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserNotOrderByProtocolordercodeDesc(
-			List<LSprojectmaster> lstproject, Integer sitecode, String string, Integer usercode);
 	
 	
 	@Transactional
@@ -1460,6 +1455,14 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndAndLockeduserIsNotNullAndAssignedtoIsNullOrderByProtocolordercodeDesc(
 			String string, Integer sitecode);
+
+
+	List<Logilabprotocolorders> findByLsprojectmasterInAndViewoptionAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserOrderByProtocolordercodeDesc(
+			List<LSprojectmaster> lstproject, int i, Integer sitecode, String string, Integer usercode);
+
+
+	List<Logilabprotocolorders> findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserOrderByProtocolordercodeDesc(
+			List<LSprojectmaster> lstproject, Integer sitecode, String string, Integer usercode);
 
 }
 

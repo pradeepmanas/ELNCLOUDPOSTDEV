@@ -30,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+//import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.equipment.ElnresultEquipment;
@@ -1522,6 +1523,10 @@ public class TransactionService {
 		objmap.put("resultMaintanance", lstMain);
 	
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
+	public List<Elnmaterial> getMaterials(LSuserMaster objClass) {
+		return elnmaterialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1, objClass.getLssitemaster().getSitecode());
 	}
 
 }

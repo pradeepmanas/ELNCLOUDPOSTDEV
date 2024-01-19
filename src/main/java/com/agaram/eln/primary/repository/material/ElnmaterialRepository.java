@@ -50,4 +50,6 @@ public interface ElnmaterialRepository extends JpaRepository<Elnmaterial, Intege
 
 	List<Elnmaterial> findBySamplecodeIsNotNull();
 
+	List<Elnmaterial> findBySmaterialnameContainsIgnoreCaseAndNsitecode(String searchname, Integer sitecode);
+
 }

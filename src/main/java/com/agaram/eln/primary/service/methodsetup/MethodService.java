@@ -642,10 +642,92 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 				 
 				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
 					   
-	  				}	  				}
-			  
-			
+	  				}	  				
+	  				
+			   }  else if (ext.equalsIgnoreCase("csv")) {
+				   
+			//   File file = new File(path);
+				try {
+				FileReader fr = new FileReader(file);
+				// User BufferReader
+				BufferedReader br = new BufferedReader(fr);
+				String line = "";
+		      //  String resultline;
+			      StringBuffer sb = new StringBuffer();
 
+				
+				String[] tempArr;
+				//create temp file     
+				final File tempFile = File.createTempFile(fileName, ext);
+				
+				// User FileWriter to write content to text file
+				FileWriter writer = new FileWriter(tempFile);
+			//	 Use while loop to check when file contains data
+				while ((line = br.readLine()) != null) {
+					tempArr = line.split(",");
+					// User for loop to iterate String Array and write data to text file
+					for (String str : tempArr) {
+					//	writer.write(str + "\t ");[already written]
+						sb.append(str).append("\t");
+
+					}
+				      String appendedline = sb.toString();
+				    //  String resultline = appendedline.trim();
+				      String resultline = appendedline.replaceAll("\\s+$", "");
+
+				      writer.write(resultline);
+				      sb.setLength(0);
+				      appendedline ="";
+				      resultline="";
+					// Write each line of CSV file to multiple lines
+					writer.write("\n");
+
+				}
+				
+//				while ((line = br.readLine()) != null) {
+//					tempArr = line.split(",");
+//					// User for loop to iterate String Array and write data to text file
+//					for (String str : tempArr) {
+//						writer.write(str + "\t");
+//					}
+//					// Write each line of CSV file to multiple lines
+//					writer.write("\n");
+//
+//				}
+				writer.close();
+
+			    bytes = FileUtils.readFileToByteArray(tempFile);
+
+				
+				//converting into multipart file
+		        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
+		        		fileName, "text/plain", bytes);
+		        
+		        //storing file in blob
+		        String textid = null;
+	    		try {
+	    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
+	    		} catch (IOException e) {
+	    			// TODO Auto-generated catch block
+	    			e.printStackTrace();
+	    		}
+
+	    		CloudParserFile objfile = new CloudParserFile();
+	    		objfile.setFileid(textid);
+	    		objfile.setExtension(".txt");
+	    		objfile.setFilename(name+".txt");
+	    			
+	    		cloudparserfilerepository.save(objfile);
+
+	    		
+			    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
+				 
+		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+				}
+				catch (Exception e) {
+			        e.printStackTrace();
+			   }
+			 }
 			   else
 			   {
 				   RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
@@ -655,6 +737,7 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	  			   System.out.println("TXTFile-rawDataText:"+rawDataText);
 	  			   }
 		   
+			   //rawDataText = new String(Files.readAllBytes(file.toPath()), StandardCharsets.ISO_8859_1);
 		    }	    
            return rawDataText;    
         } 	  

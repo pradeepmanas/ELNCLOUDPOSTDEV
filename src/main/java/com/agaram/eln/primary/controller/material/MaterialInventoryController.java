@@ -233,8 +233,8 @@ public class MaterialInventoryController {
 	}
 	
 	@RequestMapping(value = "/OsearchElnMaterialInventory", method = RequestMethod.POST)
-	public ResponseEntity<Object> OsearchElnMaterialInventory(@RequestBody String Searchname) throws Exception {
-		return materialInventoryService.OsearchElnMaterialInventory(Searchname);
+	public ResponseEntity<Object> OsearchElnMaterialInventory(@RequestBody Map<String, Object> inputMap) throws Exception {
+		return materialInventoryService.OsearchElnMaterialInventory(inputMap);
 	}
 	
 	@RequestMapping(value = "/getELNMaterialBySearchField", method = RequestMethod.POST)

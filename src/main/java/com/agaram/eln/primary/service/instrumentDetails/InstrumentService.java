@@ -8598,32 +8598,49 @@ public class InstrumentService {
 		if (lsusermaster.getActiveusercode() != null && lsusermaster.getActiveusercode() == 2) {
 			if (lsusermaster.getUsernotify() == null) {
 				lstdirpro = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2);
+						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,lsusermaster, 3);
 			} else {
 				lstdirpro = lsprotocolorderStructurerepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
-								lsusermaster.getUsernotify());
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,
+								lsusermaster.getLssitemaster(), 3, lsusermaster.getUsernotify());
 			}
-
+			
+			
 			mapfolders.put("directorypro", lstdirpro);
 		} else {
 			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 
-			if (lsusermaster.getUsernotify() == null) {
+			if (lsusermaster.getUsernotify() == null) {				
 				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2);
+						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,lsusermaster, 3);
 			} else {
 				lstdir = lsSheetOrderStructureRepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
-								lsusermaster.getUsernotify());
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,
+								lsusermaster.getLssitemaster(), 3, lsusermaster.getUsernotify());
+				
 			}
-
+			
 			mapfolders.put("directory", lstdir);
 		}
+		if (lsusermaster.getLstproject() != null && lsusermaster.getLstproject().size() > 0) {
+			ArrayList<List<Object>> lsttest = new ArrayList<List<Object>>();
+			List<Integer> lsprojectcode = lsusermaster.getLstproject().stream().map(LSprojectmaster::getProjectcode)
+					.collect(Collectors.toList());
+			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findAll(lsprojectcode);
+			lsttest = lslogilablimsorderdetailRepository
+					.getLstestmasterlocalByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(lsprojectcode);
+
+			mapfolders.put("tests", lsttest);
+			mapfolders.put("projects", lstproject);
+		} else {
+			mapfolders.put("tests", new ArrayList<Logilaborders>());
+			mapfolders.put("projects", new ArrayList<Projectmaster>());
+		}
+		
 		return mapfolders;
 	}
 

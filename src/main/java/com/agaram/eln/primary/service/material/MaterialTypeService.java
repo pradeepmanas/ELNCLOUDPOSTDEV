@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.MaterialCategory;
@@ -19,6 +20,7 @@ import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
+import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
@@ -46,6 +48,8 @@ public class MaterialTypeService {
 	LSlogilablimsorderdetailRepository lSlogilablimsorderdetailRepository;
 	@Autowired
 	LSlogilabprotocoldetailRepository lSlogilabprotocoldetailRepository;
+	@Autowired
+	LSpreferencesRepository lspreferencesRepository;
 
 	public ResponseEntity<Object> getMaterialType(MaterialType objMaterialType) {
 		return new ResponseEntity<>(materialTypeRepository.
@@ -133,75 +137,86 @@ public class MaterialTypeService {
 
 	public ResponseEntity<Object> syncSamplestoType() throws ParseException {
 		
-		List<Elnmaterial> objMatLst = new ArrayList<Elnmaterial>();
-		List<LSsamplemaster> objList = lssamplemasterRepository.findBystatus(1);
+		LSpreferences objPrefrence = lspreferencesRepository.findByTasksettingsAndValuesettings("samplesync", "1");
 		
-		MaterialType objType = materialTypeRepository.findBySmaterialtypenameIgnoreCase("Samples");
-		MaterialCategory objCategory = materialCategoryRepository.findBySmaterialcatnameAndNstatus("Samples", 1);
-		
-		objList.stream().peek(f -> {
-			Elnmaterial objMaterial = new Elnmaterial();
+		if(objPrefrence == null) {
 			
-			objMaterial.setSmaterialname(f.getSamplename());
-			objMaterial.setNstatus(1);
-			objMaterial.setCreateddate(f.getCreatedate());
-			objMaterial.setCreateby(f.getCreateby());
-			objMaterial.setNsitecode(f.getLssitemaster().getSitecode());
-			objMaterial.setJsondata(null);
-			objMaterial.setMaterialcategory(objCategory);
-			objMaterial.setMaterialtype(objType);
-			objMaterial.setExpirytype(0);
-			objMaterial.setSamplecode(f.getSamplecode());
-			objMaterial.setRemarks("");
+			List<Elnmaterial> objMatLst = new ArrayList<Elnmaterial>();
+			List<LSsamplemaster> objList = lssamplemasterRepository.findBystatus(1);
 			
-			objMatLst.add(objMaterial);
+			MaterialType objType = materialTypeRepository.findBySmaterialtypenameIgnoreCase("Samples");
+			MaterialCategory objCategory = materialCategoryRepository.findBySmaterialcatnameAndNstatus("Samples", 1);
 			
-		}).collect(Collectors.toList());
-		
-		if(!objMatLst.isEmpty()) {
-			elnmaterialRepository.save(objMatLst);
-		}
-		
-		List<Elnmaterial> objMatSampleLst = elnmaterialRepository.findBySamplecodeIsNotNull();
-		
-		if(!objMatSampleLst.isEmpty()) {
-			List<Integer> lstSamples = new ArrayList<Integer>();
+			objList.stream().peek(f -> {
+				Elnmaterial objMaterial = new Elnmaterial();
+				
+				objMaterial.setSmaterialname(f.getSamplename());
+				objMaterial.setNstatus(1);
+				objMaterial.setCreateddate(f.getCreatedate());
+				objMaterial.setCreateby(f.getCreateby());
+				objMaterial.setNsitecode(f.getLssitemaster().getSitecode());
+				objMaterial.setJsondata(null);
+				objMaterial.setMaterialcategory(objCategory);
+				objMaterial.setMaterialtype(objType);
+				objMaterial.setExpirytype(0);
+				objMaterial.setSamplecode(f.getSamplecode());
+				objMaterial.setRemarks("");
+				
+				objMatLst.add(objMaterial);
+				
+			}).collect(Collectors.toList());
+			
+			if(!objMatLst.isEmpty()) {
+				elnmaterialRepository.save(objMatLst);
+			}
+			
+			List<Elnmaterial> objMatSampleLst = elnmaterialRepository.findBySamplecodeIsNotNull();
+			
+			if(!objMatSampleLst.isEmpty()) {
+				List<Integer> lstSamples = new ArrayList<Integer>();
 
-			objMatSampleLst.stream().peek(f -> { lstSamples.add(f.getSamplecode()); }).collect(Collectors.toList());
-			
-			List<LSsamplemaster> lsSampleLst = lssamplemasterRepository.findBySamplecodeIn(lstSamples);
-			
-			List<LSlogilablimsorderdetail> objOrders = lSlogilablimsorderdetailRepository.findByLssamplemasterIn(lsSampleLst);
-			
-			if(!objOrders.isEmpty()) {
+				objMatSampleLst.stream().peek(f -> { lstSamples.add(f.getSamplecode()); }).collect(Collectors.toList());
 				
-				objOrders.stream().peek(x -> {
-					objMatSampleLst.stream().peek(y -> {
-						if(x.getLssamplemaster().getSamplecode() == y.getSamplecode()) {
-							x.setElnmaterial(y);
-						}
+				List<LSsamplemaster> lsSampleLst = lssamplemasterRepository.findBySamplecodeIn(lstSamples);
+				
+				List<LSlogilablimsorderdetail> objOrders = lSlogilablimsorderdetailRepository.findByLssamplemasterIn(lsSampleLst);
+				
+				if(!objOrders.isEmpty()) {
+					
+					objOrders.stream().peek(x -> {
+						objMatSampleLst.stream().peek(y -> {
+							if(x.getLssamplemaster().getSamplecode() == y.getSamplecode()) {
+								x.setElnmaterial(y);
+							}
+						}).collect(Collectors.toList());
 					}).collect(Collectors.toList());
-				}).collect(Collectors.toList());
+					
+					lSlogilablimsorderdetailRepository.save(objOrders);
+				}
 				
-				lSlogilablimsorderdetailRepository.save(objOrders);
+				List<LSlogilabprotocoldetail> objProOrders = lSlogilabprotocoldetailRepository.findByLssamplemasterIn(lsSampleLst);
+				
+				if(!objProOrders.isEmpty()) {
+					
+					objProOrders.stream().peek(x -> {
+						objMatSampleLst.stream().peek(y -> {
+							if(x.getLssamplemaster().getSamplecode() == y.getSamplecode()) {
+								x.setElnmaterial(y);
+							}
+						}).collect(Collectors.toList());
+					}).collect(Collectors.toList());
+					
+					lSlogilabprotocoldetailRepository.save(objProOrders);
+				}
 			}
 			
-			List<LSlogilabprotocoldetail> objProOrders = lSlogilabprotocoldetailRepository.findByLssamplemasterIn(lsSampleLst);
+			LSpreferences lSpreferences = lspreferencesRepository.findByTasksettings("samplesync");
 			
-			if(!objProOrders.isEmpty()) {
-				
-				objProOrders.stream().peek(x -> {
-					objMatSampleLst.stream().peek(y -> {
-						if(x.getLssamplemaster().getSamplecode() == y.getSamplecode()) {
-							x.setElnmaterial(y);
-						}
-					}).collect(Collectors.toList());
-				}).collect(Collectors.toList());
-				
-				lSlogilabprotocoldetailRepository.save(objProOrders);
+			if(lSpreferences != null) {
+				lSpreferences.setValuesettings("1");
+				lspreferencesRepository.save(lSpreferences);
 			}
 		}
-		
 		
 		return null;
 	}

@@ -42,7 +42,6 @@ import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
-import com.agaram.eln.primary.model.protocols.LSprotocolworkflowhistory;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -677,6 +676,7 @@ public class FileService {
 		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
 		mapReq4Material.put("sitecode", objuser.getLssitemaster().getSitecode());
 		mapOrders.put("limsInventory", transactionService.getMaterialLst4DashBoard(mapReq4Material));
+		mapOrders.put("material", transactionService.getMaterials(objuser));
 		lsrepositories = null;
 		return mapOrders;
 	}

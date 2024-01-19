@@ -1679,3 +1679,7 @@ CREATE TABLE IF NOT EXISTS public.equipmenthistory
 ALTER TABLE public.equipmenthistory OWNER to postgres;
 
 ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS activeuser integer;
+
+insert into LSpreferences (serialno,tasksettings) values(5,'samplesync') on conflict(serialno) do nothing;
+
+ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdon character varying(255);

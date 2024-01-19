@@ -1641,8 +1641,8 @@ public class ProtocolService {
 				}
 				LSprotocolstepLst.add(LSprotocolstepObj1);
 			}
-			if (LSprotocolsteplst != null) {
-				mapObj.put("protocolstepLst", LSprotocolstepLst);
+			
+			if (argObj.containsKey("protocolData")) {
 				Integer isMultitenant = (Integer) argObj.get("ismultitenant");
 				Gson gson = new Gson();
 				String protocolDataJson = gson.toJson(argObj.get("protocolData"));
@@ -1668,9 +1668,8 @@ public class ProtocolService {
 //					}
 				}
 				mapObj.put("ProtocolData", protocolDataJson);
-			} else {
-				mapObj.put("protocolstepLst", new ArrayList<>());
 			}
+			
 			if (argObj.containsKey("edit")) {
 				Map<String, Object> argObj1 = new HashMap<String, Object>();
 				argObj1.put("objsilentaudit", argObj.get("objsilentaudit"));
@@ -2573,7 +2572,7 @@ public class ProtocolService {
 		Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
 				+ objClass.getProtoclordername() + "\", \"previousworkflow\":\"" + previousworkflowname
 				+ "\", \"currentworkflow\":\""
-				+ objClass.getLsprotocolorderworkflowhistory().get(objClass.getLsprotocolorderworkflowhistory().size()-1).getLsworkflow().getWorkflowname()
+				+ objClass.getLsprotocolorderworkflowhistory().get(objClass.getLsprotocolorderworkflowhistory().size()-1).getElnprotocolworkflow().getWorkflowname()
 				+ "\", \"currentworkflowcode\":\"" + objClass.getElnprotocolworkflow().getWorkflowcode() + "\"}";
 
 		List<LSuserteammapping> lstusers = objteam.getLsuserteammapping();
@@ -8259,12 +8258,13 @@ public class ProtocolService {
 			List<LSprojectmaster> lstproject = objuser.getLstproject();
 			if (lstproject != null) {
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByLsprojectmasterInAndViewoptionAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserNotOrderByProtocolordercodeDesc(
+						.findByLsprojectmasterInAndViewoptionAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserOrderByProtocolordercodeDesc(
 								lstproject, 3, objuser.getLssitemaster().getSitecode(), "N",objuser.getUsercode()));
 
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserNotOrderByProtocolordercodeDesc(
+						.findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserOrderByProtocolordercodeDesc(
 								lstproject, objuser.getLssitemaster().getSitecode(), "N",objuser.getUsercode()));
+
 				return lstorder;
 			}
 			return lstorder;
