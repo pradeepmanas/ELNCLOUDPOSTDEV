@@ -573,6 +573,7 @@ public class CommonFunction {
 			 final List<ParserTechnique> parsingTechniques,	 final List<ParserIgnoreChars> ignoreList){
 		 
 		 List<List<String>> outputList = new ArrayList<List<String>>();
+		 List<List<String>> finaloutputList = new ArrayList<List<String>>();
 		
 		 int dataStartIndex = 0;
 		 if (parsingTechniques.get(0).getRow() == parsingTechniques.get(1).getRow()) {
@@ -603,10 +604,18 @@ public class CommonFunction {
 			 System.out.println("getdatablock-trimmeddata:"+trimmedData);
 			 if (trimmedData.length() > 0) {
 				 
-				 if(delimiter.equals("None")) {
-					 String str = trimmedData;
-					 System.out.println("getdatablock-str:"+str);
-					 outputList.add(Arrays.asList(str)); 
+				 if(delimiter.equalsIgnoreCase("None")) {
+					 System.out.println("delimiter: none");
+					// String str = trimmedData;
+					// System.out.println("getdatablock-str:"+str);
+					 List<String> List=Arrays.asList(trimmedData);
+					 System.out.println("List:"+ List);
+					 finaloutputList.add(List);
+					 
+					 System.out.println("getdatablock-finaloutputList:"+finaloutputList);
+					 outputList = finaloutputList;
+					 System.out.println("getdatablock-outputList:"+outputList);
+					
 				 }else {
 					String[] str = trimmedData.split(delimiter!= "None" ? delimiter: "ChummaKizhi");
 					System.out.println("getdatablock-str:"+str);
