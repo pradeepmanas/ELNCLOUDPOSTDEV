@@ -595,13 +595,17 @@ public class EvaluateParserService {
 				for (List<String> dataList : dataBlock) {
 					for (String data : dataList) {
 						fieldData.add(data);
+						System.out.println("getfielddatasingleparserfielddatainforloop :"+data);
 					}
 				}
+				System.out.println("getfielddatasingleparserfielddata :"+fieldData);
 				techData.setParseddata(fieldData);
 			}
 			parsedFieldList.add(techData);
 		}
+		System.out.println("getfielddataparsedFieldList :"+parsedFieldList);
 		return parsedFieldList;
+		
 	}
 //	
 	

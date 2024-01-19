@@ -132,8 +132,11 @@ public class ParserSetupService {
 		String rawDataText = "";
 		if (rawDataContent == null || rawDataContent.isEmpty()) {
 			if(isMultitenant != 0) {
-			rawDataText = methodService.getFileData(method.getInstrawdataurl(),tenant,methodKey);  
-				
+				System.out.println("in evaluate parser  rawdatatext :"+rawDataText);
+				System.out.println("rawdataurl :"+method.getInstrawdataurl());
+				System.out.println("tenant :"+tenant);
+				System.out.println("methodKey :"+methodKey);
+			rawDataText = methodService.getFileData(method.getInstrawdataurl(),tenant,methodKey);  				
 			}
 			else
 			{

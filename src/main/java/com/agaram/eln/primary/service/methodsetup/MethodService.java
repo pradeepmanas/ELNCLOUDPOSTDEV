@@ -568,13 +568,16 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 		   CloudParserFile obj = cloudparserfilerepository.findTop1Byfilename(fileName);
 		   String fileid = obj.fileid;
 			 
+		   System.out.println("getFileData - fileid:"+fileid);
+		   System.out.println("getFileData - fileName:"+fileName);
+		   
 		   file = stream2file(cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "parserfile"),fileName, ext);
 		   
 		   byte[] bytes = null;
-
+           
 		    if(file !=null)
 		    {
-
+		    	System.out.println("filepresentinblob");
 			   if (ext.equalsIgnoreCase("pdf")) {
 				   
 	                List<Method> methodobj = methodRepo.findByMethodkey(methodKey);
@@ -605,26 +608,27 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 					        pdfStripper.setTextLineMatrix(matrix);
 					   
 					        parsedText = pdfStripper.getText(pdDoc);
-					      					        
-					        //converting into multipart file
-						        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
-						        		fileName, "text/plain", parsedText.getBytes());
-						        
-						        //storing file in blob
-						        String textid = null;
-					    		try {
-					    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
-					    		} catch (IOException e) {
-					    			// TODO Auto-generated catch block
-					    			e.printStackTrace();
-					    		}
-			
-					    		CloudParserFile objfile = new CloudParserFile();
-					    		objfile.setFileid(textid);
-					    		objfile.setExtension(".txt");
-					    		objfile.setFilename(name+".txt");
-					    			
-					    		cloudparserfilerepository.save(objfile);
+//					      					        
+//					        //converting into multipart file
+//						        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
+//						        		fileName, "text/plain", parsedText.getBytes());
+//						        
+//						        //storing file in blob
+//						        String textid = null;
+//					    		try {
+//					    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
+//					    		} catch (IOException e) {
+//					    			// TODO Auto-generated catch block
+//					    			e.printStackTrace();
+//					    		}
+//			
+//					    		CloudParserFile objfile = new CloudParserFile();
+//					    		objfile.setFileid(textid);
+//					    		objfile.setExtension(".txt");
+//					    		objfile.setFilename(name+".txt");
+//					    			
+//					    		cloudparserfilerepository.save(objfile);
+//					    		
 					    } catch (Exception e) {
 					        e.printStackTrace();
 					        try {
@@ -641,6 +645,7 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 					    rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);
 				 
 				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+				        System.out.println("PDFfile-rawDataText:"+rawDataText);
 					   
 	  				}	  				
 	  				
@@ -668,14 +673,19 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 					// User for loop to iterate String Array and write data to text file
 					for (String str : tempArr) {
 					//	writer.write(str + "\t ");[already written]
-						sb.append(str).append("\t");
+						sb.append(str).append(",");
 
 					}
 				      String appendedline = sb.toString();
-				    //  String resultline = appendedline.trim();
-				      String resultline = appendedline.replaceAll("\\s+$", "");
+				      
 
-				      writer.write(resultline);
+  				      String resultline = appendedline.replaceAll("\"", "");
+  				      String finalresult = resultline.replaceAll(",$", "");
+
+				    //  String resultline = appendedline.trim();
+				  //    String resultline = appendedline.replaceAll("\\s+$", "");
+
+				      writer.write(finalresult);
 				      sb.setLength(0);
 				      appendedline ="";
 				      resultline="";
@@ -698,31 +708,30 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 
 			    bytes = FileUtils.readFileToByteArray(tempFile);
 
-				
-				//converting into multipart file
-		        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
-		        		fileName, "text/plain", bytes);
-		        
-		        //storing file in blob
-		        String textid = null;
-	    		try {
-	    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
-	    		} catch (IOException e) {
-	    			// TODO Auto-generated catch block
-	    			e.printStackTrace();
-	    		}
-
-	    		CloudParserFile objfile = new CloudParserFile();
-	    		objfile.setFileid(textid);
-	    		objfile.setExtension(".txt");
-	    		objfile.setFilename(name+".txt");
-	    			
-	    		cloudparserfilerepository.save(objfile);
-
-	    		
-			    rawDataText = new String(bytes, StandardCharsets.ISO_8859_1);
-				 
+//				
+//				//converting into multipart file
+//		        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
+//		        		fileName, "text/plain", bytes);
+//		        
+//		        //storing file in blob
+//		        String textid = null;
+//	    		try {
+//	    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
+//	    		} catch (IOException e) {
+//	    			// TODO Auto-generated catch block
+//	    			e.printStackTrace();
+//	    		}
+//
+//	    		CloudParserFile objfile = new CloudParserFile();
+//	    		objfile.setFileid(textid);
+//	    		objfile.setExtension(".txt");
+//	    		objfile.setFilename(name+".txt");
+//	    			
+//	    		cloudparserfilerepository.save(objfile);
+//
+	    		rawDataText = new String(bytes, StandardCharsets.ISO_8859_1); 
 		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+		        System.out.println("CSVfile-rawDataText:"+rawDataText);
 				}
 				catch (Exception e) {
 			        e.printStackTrace();
@@ -738,7 +747,9 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	  			   }
 		   
 			   //rawDataText = new String(Files.readAllBytes(file.toPath()), StandardCharsets.ISO_8859_1);
-		    }	    
+		    }else {
+		    	System.out.println("filenotpresentinblob");
+		    }
            return rawDataText;    
         } 	  
         catch (IOException e) 
