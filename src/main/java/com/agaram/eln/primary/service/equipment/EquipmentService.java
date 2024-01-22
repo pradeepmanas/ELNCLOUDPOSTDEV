@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.equipment;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,18 +17,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.model.equipment.ElnresultEquipment;
 import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.equipment.EquipmentCategory;
 import com.agaram.eln.primary.model.equipment.EquipmentHistory;
 import com.agaram.eln.primary.model.equipment.EquipmentType;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.Period;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.equipment.ElnresultEquipmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentHistoryRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentTypeRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
+import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -42,6 +50,10 @@ public class EquipmentService {
 	PeriodRepository periodRepository;
 	@Autowired
 	EquipmentHistoryRepository equipmentHistoryRepository;
+	@Autowired
+	LSlogilabprotocoldetailRepository lslogilabprotocoldetailRepository;
+	@Autowired
+	ElnresultEquipmentRepository elnresultEquipmentRepository;
 
 	public ResponseEntity<Object> getEquipment(Map<String, Object> inputMap) throws ParseException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
@@ -73,7 +85,7 @@ public class EquipmentService {
 		Date toDate = new Date(longToValue);
 		
 		List<Equipment> lstEquipment = equipmentRepository
-				.findByEquipmentusedAndNsitecodeAndCreateddateBetweenOrderByNequipmentcodeDesc(true,nsiteInteger,fromDate,toDate);
+				.findByEquipmentusedAndNsitecodeAndNstatusAndCreateddateBetweenOrderByNequipmentcodeDesc(true,nsiteInteger,1,fromDate,toDate);
 		
 		objmap.put("lstEquipment", lstEquipment);
 		objmap.put("objsilentaudit", inputMap.get("objsilentaudit"));
@@ -485,13 +497,59 @@ public class EquipmentService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
-	public ResponseEntity<Object> onGetEquipmentSelect(Map<String, Object> inputMap) {
+	@SuppressWarnings({ "unchecked", "unused" })
+	public ResponseEntity<Object> onGetEquipmentSelect(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-		@SuppressWarnings("unchecked")
+		ObjectMapper Objmapper = new ObjectMapper();
+		Integer user = (Integer) inputMap.get("user");
+		Map<String, Object> objResultMap = (Map<String, Object>) inputMap.get("selectedProtocol"); 
 		List<Integer> nequipmentcode = (List<Integer>) inputMap.get("nequipmentcode");
+		LSuserMaster objUser = new LSuserMaster();
+		objUser.setUsercode(user);
+		LSlogilabprotocoldetail objDetail = lslogilabprotocoldetailRepository.findOne(Long.valueOf(objResultMap.get("protocolordercode").toString()));
 		List<Equipment> lstEquipments = equipmentRepository.findByNequipmentcodeIn(nequipmentcode);
 		objmap.put("lstEquipment", lstEquipments);
+		
+		if(!lstEquipments.isEmpty()) {
+			createEquipmentResultUsedLst(objDetail,objUser,lstEquipments);	
+		}
+		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
+	public void createEquipmentResultUsedLst(LSlogilabprotocoldetail objDetail,LSuserMaster objUser,List<Equipment> lstEquipments) throws JsonParseException, JsonMappingException, IOException {
+
+		List<ElnresultEquipment> lstEquipments2 = new ArrayList<ElnresultEquipment>(); 
+		
+		lstEquipments.stream().peek(objInventory -> {
+			
+			ElnresultEquipment resultEquipment = new ElnresultEquipment();
+			resultEquipment.setLstestmasterlocal(null);
+			
+			resultEquipment.setCreatedby(objUser);
+			resultEquipment.setBatchid(objDetail.getProtoclordername());
+			resultEquipment.setNequipmentcode(objInventory.getNequipmentcode());
+			resultEquipment.setNequipmentcatcode(objInventory.getEquipmentcategory().getNequipmentcatcode());
+			resultEquipment.setNequipmenttypecode(objInventory.getEquipmenttype().getNequipmenttypecode());
+			resultEquipment.setOrdercode(Long.valueOf(objDetail.getProtocolordercode()));
+			resultEquipment.setTransactionscreen(3);
+			resultEquipment.setTemplatecode(Integer.parseInt(objDetail.getProtocolordercode().toString()));
+			resultEquipment.setNstatus(1);
+			resultEquipment.setResponse(new Response());
+			resultEquipment.getResponse().setStatus(true);
+			try {
+				resultEquipment.setCreateddate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
+			lstEquipments2.add(resultEquipment);
+			
+		}).collect(Collectors.toList());
+	
+		if(!lstEquipments2.isEmpty()) {
+			elnresultEquipmentRepository.save(lstEquipments2);
+		}
 	}
 	
 //	public ResponseEntity<Object> createEquipmentResultUsed(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {

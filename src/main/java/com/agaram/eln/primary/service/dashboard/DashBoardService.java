@@ -1209,7 +1209,8 @@ public class DashBoardService {
 							lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
 							lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
 							lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
-							lsOrderDetail.getTestcode()))
+							lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus()
+				           ))
 					.collect(Collectors.toList()));
 			}
 			}else {
@@ -1224,7 +1225,8 @@ public class DashBoardService {
 								lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
 								lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
 								lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
-								lsOrderDetail.getTestcode()))
+								lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus()
+					            ))
 						.collect(Collectors.toList());
 			}
 	
@@ -2214,7 +2216,9 @@ public class DashBoardService {
 			            lsOrderDetail.getOrdercancell(),
 			            lsOrderDetail.getViewoption(),
 			            lsOrderDetail.getLsuserMaster(),
-			            lsOrderDetail.getTestcode()
+			            lsOrderDetail.getTestcode(),
+			            lsOrderDetail.getApprovelstatus()
+			           
 			        ))
 			        .collect(Collectors.toList());
 			}
@@ -4162,7 +4166,8 @@ public class DashBoardService {
 										lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
 										lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
 										lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
-										lsOrderDetail.getTestcode()))
+										lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus()
+							           ))
 								.collect(Collectors.toList());
 						rtnobj.put("orders", lstorders);
 

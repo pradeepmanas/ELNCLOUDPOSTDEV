@@ -617,6 +617,8 @@ public class CommonFunction {
 					 System.out.println("getdatablock-outputList:"+outputList);
 					
 				 }else {
+					 System.out.println("delimiter:"+delimiter);
+					 System.out.println("splitteddata:"+trimmedData.split(delimiter));
 					String[] str = trimmedData.split(delimiter!= "None" ? delimiter: "ChummaKizhi");
 					System.out.println("getdatablock-str:"+str);
 					outputList.add(Arrays.asList(str));	 
