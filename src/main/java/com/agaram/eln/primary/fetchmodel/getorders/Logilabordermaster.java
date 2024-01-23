@@ -34,11 +34,9 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private Integer viewoption;
 	private LSuserMaster createdby;
 	private Integer testcode;
-	private Integer approvelstatus;
-	
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,LSuserMaster assignedto,
-			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster ,Integer testcode,Integer approvelstatus) {
+			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster ,Integer testcode) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -58,20 +56,8 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.testcode=testcode;
 		this.viewoption=viewoption;
 		this.createdby = lsuserMaster;
-		this.approvelstatus=approvelstatus;
-		
 	}
 	
-	public Integer getApprovelstatus() {
-		return approvelstatus;
-	}
-
-	public void setApprovelstatus(Integer approvelstatus) {
-		this.approvelstatus = approvelstatus;
-	}
-
-
-
 	public LSuserMaster getCreatedby() {
 		return createdby;
 	}

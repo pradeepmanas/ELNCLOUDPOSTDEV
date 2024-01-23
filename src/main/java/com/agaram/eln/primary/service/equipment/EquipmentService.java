@@ -85,7 +85,7 @@ public class EquipmentService {
 		Date toDate = new Date(longToValue);
 		
 		List<Equipment> lstEquipment = equipmentRepository
-				.findByEquipmentusedAndNsitecodeAndNstatusAndCreateddateBetweenOrderByNequipmentcodeDesc(true,nsiteInteger,1,fromDate,toDate);
+				.findByEquipmentusedAndNsitecodeAndNstatusAndCreateddateBetweenAndLastmaintainedNotNullAndLastcallibratedNotNullOrderByNequipmentcodeDesc(true,nsiteInteger,1,fromDate,toDate);
 		
 		objmap.put("lstEquipment", lstEquipment);
 		objmap.put("objsilentaudit", inputMap.get("objsilentaudit"));
@@ -189,7 +189,7 @@ public class EquipmentService {
 		if(!lstTypes.isEmpty()) {
 			lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatus(lstTypes.get(0),nsiteInteger, 1);
 			if(!lstCategories.isEmpty()) {
-				lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatus(true,lstCategories.get(0),nsiteInteger, 1);
+				lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNull(true,lstCategories.get(0),nsiteInteger, 1);
 			}	
 		}	
 		
@@ -222,6 +222,46 @@ public class EquipmentService {
 		}
 		objmap.put("lstEquipments", lstEquipments);
 		objmap.put("lstCategories", lstCategories);
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> getEquipmentTypeBasedCatOnTrans(Map<String, Object> inputMap) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		Integer ntypecode = (Integer) inputMap.get("ntypecode");
+		
+		List<EquipmentType> lstTypes = equipmentTypeRepository.findByNequipmenttypecode(ntypecode);
+		List<EquipmentCategory> lstCategories = new ArrayList<EquipmentCategory>();
+		List<Equipment> lstEquipments = new ArrayList<Equipment>();
+		
+		if(ntypecode==-1) {
+			lstCategories = equipmentCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
+		}else {
+			if(!lstTypes.isEmpty()) {
+				lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatus(lstTypes.get(0), nsiteInteger, 1);
+				if(!lstCategories.isEmpty()) {
+					lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNull(true,lstCategories.get(0),nsiteInteger, 1);
+				}	
+			}
+		}
+		objmap.put("lstEquipments", lstEquipments);
+		objmap.put("lstCategories", lstCategories);
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> getEquipmentCatBasedOnTrans(Map<String, Object> inputMap) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		Integer ncatcode = (Integer) inputMap.get("ncatcode");
+		
+		EquipmentCategory objCategory = equipmentCategoryRepository.findByNequipmentcatcode(ncatcode);
+		List<Equipment> lstEquipments = new ArrayList<Equipment>();
+		
+		lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNull(true,objCategory,nsiteInteger, 1);
+				
+		objmap.put("lstEquipments", lstEquipments);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 	
@@ -502,15 +542,17 @@ public class EquipmentService {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		ObjectMapper Objmapper = new ObjectMapper();
 		Integer user = (Integer) inputMap.get("user");
+		Integer selectedScreen = (Integer) inputMap.get("selectedScreen");
 		Map<String, Object> objResultMap = (Map<String, Object>) inputMap.get("selectedProtocol"); 
 		List<Integer> nequipmentcode = (List<Integer>) inputMap.get("nequipmentcode");
-		LSuserMaster objUser = new LSuserMaster();
-		objUser.setUsercode(user);
-		LSlogilabprotocoldetail objDetail = lslogilabprotocoldetailRepository.findOne(Long.valueOf(objResultMap.get("protocolordercode").toString()));
+		
 		List<Equipment> lstEquipments = equipmentRepository.findByNequipmentcodeIn(nequipmentcode);
 		objmap.put("lstEquipment", lstEquipments);
 		
-		if(!lstEquipments.isEmpty()) {
+		if(!lstEquipments.isEmpty() && selectedScreen == 2) {
+			LSuserMaster objUser = new LSuserMaster();
+			objUser.setUsercode(user);
+			LSlogilabprotocoldetail objDetail = lslogilabprotocoldetailRepository.findOne(Long.valueOf(objResultMap.get("protocolordercode").toString()));
 			createEquipmentResultUsedLst(objDetail,objUser,lstEquipments);	
 		}
 		

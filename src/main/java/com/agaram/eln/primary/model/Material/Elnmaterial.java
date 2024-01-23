@@ -79,6 +79,8 @@ public class Elnmaterial implements Serializable{
 	private String openexpiryvalue;
 	private String openexpiryperiod;
 	
+	private Integer barcodetype;
+	
 	@Transient
 	private Response response;
 	
@@ -364,5 +366,12 @@ public class Elnmaterial implements Serializable{
 	public void setBarcode(Boolean barcode) {
 		this.barcode = barcode;
 	}
-	
+
+	public Integer getBarcodetype() {
+		return barcodetype;
+	}
+
+	public void setBarcodetype(Integer barcodetype) {
+		this.barcodetype = barcodetype;
+	}
 }

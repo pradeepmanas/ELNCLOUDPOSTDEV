@@ -52,4 +52,10 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Integer>{
 	List<Equipment> findByEquipmentusedAndNsitecodeAndNstatusAndCreateddateBetweenOrderByNequipmentcodeDesc(boolean b,
 			Integer nsiteInteger, int i, Date fromDate, Date toDate);
 
+	List<Equipment> findByEquipmentusedAndNsitecodeAndNstatusAndCreateddateBetweenAndLastmaintainedNotNullAndLastcallibratedNotNullOrderByNequipmentcodeDesc(
+			boolean b, Integer nsiteInteger, int i, Date fromDate, Date toDate);
+
+	List<Equipment> findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNull(
+			boolean b, EquipmentCategory equipmentCategory, Integer nsiteInteger, int i);
+
 }

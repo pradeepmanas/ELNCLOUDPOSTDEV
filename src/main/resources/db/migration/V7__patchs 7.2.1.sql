@@ -1565,8 +1565,6 @@ END
 $$;
 
 update LSpreferences set valueencrypted ='FrPnPlV4QlIH23zy6DkkeA==' where valueencrypted is null and serialno in (3,2);
-ALTER TABLE IF Exists elnmaterial ADD COLUMN IF NOT EXISTS barcode boolean;
-update elnmaterial set barcode = false where barcode is null;
 
 ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS sequipmentmake character varying(100), ADD COLUMN IF NOT EXISTS sequipmentmodel character varying(100), ADD COLUMN IF NOT EXISTS sequipmentlotno character varying(100);
 
@@ -1683,3 +1681,7 @@ ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS activeuse
 insert into LSpreferences (serialno,tasksettings) values(5,'samplesync') on conflict(serialno) do nothing;
 
 ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdon character varying(255);
+
+ALTER TABLE IF Exists elnmaterial ADD COLUMN IF NOT EXISTS barcodetype integer;
+
+update elnmaterial set barcodetype = 1 where barcodetype is null;

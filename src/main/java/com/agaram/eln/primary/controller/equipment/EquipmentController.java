@@ -68,10 +68,22 @@ public class EquipmentController {
 		return (ResponseEntity<Object>) equipmentService.getEquipmentTypeBasedCat(inputMap);
 	}
 	
+	@RequestMapping(value = "/getEquipmentTypeBasedCatOnTrans", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getEquipmentTypeBasedCatOnTrans(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) equipmentService.getEquipmentTypeBasedCatOnTrans(inputMap);
+	}
+	
 	@RequestMapping(value = "/getEquipmentCatBased", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getEquipmentCatBased(@RequestBody Map<String, Object> inputMap) throws Exception {
 		
 		return (ResponseEntity<Object>) equipmentService.getEquipmentCatBased(inputMap);
+	}
+	
+	@RequestMapping(value = "/getEquipmentCatBasedOnTrans", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getEquipmentCatBasedOnTrans(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) equipmentService.getEquipmentCatBasedOnTrans(inputMap);
 	}
 	
 	@RequestMapping(value = "/createEquipment", method = RequestMethod.POST)

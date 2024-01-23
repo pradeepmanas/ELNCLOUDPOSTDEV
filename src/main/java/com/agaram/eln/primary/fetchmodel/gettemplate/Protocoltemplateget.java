@@ -2,7 +2,6 @@ package com.agaram.eln.primary.fetchmodel.gettemplate;
 
 import java.util.Date;
 
-import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 
 
@@ -90,7 +89,7 @@ public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 	}
 
 	public Protocoltemplateget(Integer protocolmastercode, String protocolmastername, Integer protocolstatus,
-			Integer status, String createdbyusername, Integer approved, Integer rejected,Date createdate,Integer versionno,ElnprotocolTemplateworkflow elnprotocoltemplateworkflow) {
+			Integer status, String createdbyusername, Integer approved, Integer rejected,Date createdate,LSsheetworkflow lssheetworkflow,Integer versionno) {
 
 		this.protocolmastercode = protocolmastercode;
 		this.protocolmastername = protocolmastername;
@@ -100,7 +99,7 @@ public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 		this.createdate = createdate;
 		this.transactionstatus = (rejected != null && rejected == 1) ? "Rejected"
 				: (approved == null ? "Created" :approved == 1 ? "Approved" : approved == 0 ? "Initiated":approved == 2?"Return":"");
-		this.lssheetworkflowname=elnprotocoltemplateworkflow!=null?elnprotocoltemplateworkflow.getWorkflowname():null;
+		this.lssheetworkflowname=lssheetworkflow!=null?lssheetworkflow.getWorkflowname():null;
 		this.versionno=versionno;
 	}
 
