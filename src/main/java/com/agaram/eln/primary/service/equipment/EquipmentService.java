@@ -286,12 +286,11 @@ public class EquipmentService {
 		
 		obj.setResponse(new Response());
 		String sformattype = "{yyyy}/{99999}";
-		LSuserMaster objMaster = new LSuserMaster();
-		objMaster.setUsercode(obj.getObjsilentaudit().getLsuserMaster());
-		
+//		LSuserMaster objMaster = new LSuserMaster();
+//		objMaster.setUsercode(obj.getObjsilentaudit().getLsuserMaster());	
 		if(objEquipment == null) {
 
-			obj.setCreateby(objMaster);
+//			obj.setCreateby(objMaster);
 			obj.setCreateddate(commonfunction.getCurrentUtcTime());
 			equipmentRepository.save(obj);
 			
