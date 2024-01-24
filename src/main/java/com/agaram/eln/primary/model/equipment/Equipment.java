@@ -83,11 +83,30 @@ public class Equipment implements Serializable{
 	private String callibrationperiod;
 	private String manintanancevalue;
 	private String maintananceperiod;
+	
+	private Boolean reqcalibration;
+	private Boolean reqmaintanance;
 	private Boolean equipmentused;
 	
 	private Date lastcallibrated;
 	private Date lastmaintained;
 	
+	public Boolean getReqcalibration() {
+		return reqcalibration;
+	}
+
+	public void setReqcalibration(Boolean reqcalibration) {
+		this.reqcalibration = reqcalibration;
+	}
+
+	public Boolean getReqmaintanance() {
+		return reqmaintanance;
+	}
+
+	public void setReqmaintanance(Boolean reqmaintanance) {
+		this.reqmaintanance = reqmaintanance;
+	}
+
 	public Date getLastcallibrated() {
 		return lastcallibrated;
 	}

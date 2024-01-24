@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.equipment;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.equipment.EquipmentCategory;
 import com.agaram.eln.primary.model.equipment.EquipmentType;
 
+@SuppressWarnings("unused")
 public interface EquipmentRepository extends JpaRepository<Equipment, Integer>{
 
 	List<Equipment> findByNsitecodeAndCreateddateBetweenOrderByNequipmentcodeDesc(Integer nsiteInteger, Date fromDate,
@@ -57,5 +59,23 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Integer>{
 
 	List<Equipment> findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNull(
 			boolean b, EquipmentCategory equipmentCategory, Integer nsiteInteger, int i);
+
+	List<Equipment> findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqcalibrationAndLastmaintainedNotNull(
+			boolean b, EquipmentCategory equipmentCategory, Integer nsiteInteger, int i, boolean c);
+//
+	List<Equipment> findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqmaintananceAndLastcallibratedNotNull(
+			boolean b, EquipmentCategory equipmentCategory, Integer nsiteInteger, int i, boolean c);
+//
+	List<Equipment> findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqmaintananceAndReqcalibration(
+			boolean b, EquipmentCategory equipmentCategory, Integer nsiteInteger, int i, boolean c, boolean d);
+
+	List<Equipment> findByEquipmentusedAndNsitecodeAndNstatusAndReqcalibrationAndLastmaintainedNotNullOrderByNequipmentcodeDesc(
+			boolean b, Integer nsiteInteger, int i, boolean c);
+
+	List<Equipment> findByEquipmentusedAndNsitecodeAndNstatusAndReqmaintananceAndLastcallibratedNotNullOrderByNequipmentcodeDesc(
+			boolean b, Integer nsiteInteger, int i, boolean c);
+
+	List<Equipment> findByEquipmentusedAndNsitecodeAndNstatusAndReqmaintananceAndReqcalibrationOrderByNequipmentcodeDesc(
+			boolean b, Integer nsiteInteger, int i, boolean c, boolean d);
 
 }

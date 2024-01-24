@@ -1736,3 +1736,11 @@ update lsaudittrailconfigmaster set ordersequnce = 148 where ordersequnce = 134 
 update lsaudittrailconfigmaster set ordersequnce = 149 where ordersequnce = 133 and screenname = 'IDS_SCN_LOGBOOK';
 update lsaudittrailconfigmaster set ordersequnce = 150 where ordersequnce = 132 and screenname = 'IDS_SCN_LOGBOOK';
 update lsaudittrailconfigmaster set ordersequnce = 151 where ordersequnce = 131 and screenname = 'IDS_SCN_LOGBOOK';
+
+ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS reqcalibration boolean;
+update equipment set reqcalibration = true where callibrationvalue is not null and callibrationperiod is not null;
+update equipment set reqcalibration = false where callibrationvalue is null and callibrationperiod is null;
+
+ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS reqmaintanance boolean;
+update equipment set reqmaintanance = true where manintanancevalue is not null and maintananceperiod is not null;
+update equipment set reqmaintanance = false where manintanancevalue is null and maintananceperiod is null;

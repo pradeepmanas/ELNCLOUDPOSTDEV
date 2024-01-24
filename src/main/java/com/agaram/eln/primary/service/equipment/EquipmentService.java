@@ -87,6 +87,10 @@ public class EquipmentService {
 		List<Equipment> lstEquipment = equipmentRepository
 				.findByEquipmentusedAndNsitecodeAndNstatusAndCreateddateBetweenAndLastmaintainedNotNullAndLastcallibratedNotNullOrderByNequipmentcodeDesc(true,nsiteInteger,1,fromDate,toDate);
 		
+		lstEquipment.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqcalibrationAndLastmaintainedNotNullOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false));
+		lstEquipment.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqmaintananceAndLastcallibratedNotNullOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false));
+		lstEquipment.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqmaintananceAndReqcalibrationOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false,false));
+		
 		objmap.put("lstEquipment", lstEquipment);
 		objmap.put("objsilentaudit", inputMap.get("objsilentaudit"));
 		
@@ -242,6 +246,11 @@ public class EquipmentService {
 				lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatus(lstTypes.get(0), nsiteInteger, 1);
 				if(!lstCategories.isEmpty()) {
 					lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNull(true,lstCategories.get(0),nsiteInteger, 1);
+					
+					lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqcalibrationAndLastmaintainedNotNull(true,lstCategories.get(0),nsiteInteger, 1, false));
+					lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqmaintananceAndLastcallibratedNotNull(true,lstCategories.get(0),nsiteInteger, 1, false));
+					lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqmaintananceAndReqcalibration(true,lstCategories.get(0),nsiteInteger, 1, false,false));
+					
 				}	
 			}
 		}
