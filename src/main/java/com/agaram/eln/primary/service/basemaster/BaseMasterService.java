@@ -94,8 +94,8 @@ public class BaseMasterService {
 	private LSequipmentmapRepository lSequipmentmapRepository;
 	@Autowired
 	private LStestmasterRepository lstestmasterRepository;
-//	@Autowired
-//	ProtocolService ProtocolMasterService;
+	@Autowired
+	private ProtocolService protocolMasterService;
 	@Autowired
 	private UnitRepository unitRepository;
 	@Autowired
@@ -161,7 +161,7 @@ public class BaseMasterService {
 			obj1.setTesttype(1);
 			obj1.setObjLoggeduser(objClass);
 
-//			lstP = ProtocolMasterService.getProtocolOnTestcode(obj1);
+			lstP = protocolMasterService.getProtocolOnTestcode(obj1);
 
 		}
 		map.put("Protocol", lstP);
