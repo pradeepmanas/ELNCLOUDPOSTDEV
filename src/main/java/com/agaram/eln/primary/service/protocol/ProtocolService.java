@@ -8256,15 +8256,14 @@ public class ProtocolService {
                         1, objuser.getLssitemaster().getSitecode(), "N", objuser.getUsercode(), 2, objuser.getLssitemaster().getSitecode(),
                         objuser.getUsercode(), "N", objuser.getUsercode(), 3, objuser.getLssitemaster().getSitecode(), userlist, "N", objuser.getUsercode());
 			List<LSprojectmaster> lstproject = objuser.getLstproject();
-			if (lstproject != null) {
+		if (lstproject != null) {
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByLsprojectmasterInAndViewoptionAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserOrderByProtocolordercodeDesc(
+						.findByLsprojectmasterInAndViewoptionAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserNotOrderByProtocolordercodeDesc(
 								lstproject, 3, objuser.getLssitemaster().getSitecode(), "N",objuser.getUsercode()));
 
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserOrderByProtocolordercodeDesc(
+						.findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserNotOrderByProtocolordercodeDesc(
 								lstproject, objuser.getLssitemaster().getSitecode(), "N",objuser.getUsercode()));
-
 				return lstorder;
 			}
 			return lstorder;
