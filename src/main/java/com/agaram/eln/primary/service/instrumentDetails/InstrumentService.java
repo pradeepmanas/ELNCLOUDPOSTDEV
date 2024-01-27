@@ -8609,7 +8609,7 @@ public class InstrumentService {
 			
 			
 			mapfolders.put("directorypro", lstdirpro);
-		} else if(lsusermaster.getActiveusercode() != null && lsusermaster.getActiveusercode() == 1){
+		} else {
 			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 
 			if (lsusermaster.getUsernotify() == null) {				
@@ -8625,35 +8625,6 @@ public class InstrumentService {
 			}
 			
 			mapfolders.put("directory", lstdir);
-		}else {
-			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
-
-			if (lsusermaster.getUsernotify() == null) {				
-				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,lsusermaster, 3);
-			} else {
-				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,
-								lsusermaster.getLssitemaster(), 3, lsusermaster.getUsernotify());
-				
-			}
-			if (lsusermaster.getUsernotify() == null) {
-				lstdirpro = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,lsusermaster, 3);
-			} else {
-				lstdirpro = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,
-								lsusermaster.getLssitemaster(), 3, lsusermaster.getUsernotify());
-			}
-			
-			
-			mapfolders.put("directorypro", lstdirpro);			
-			mapfolders.put("directory", lstdir);
-			
 		}
 		if (lsusermaster.getLstproject() != null && lsusermaster.getLstproject().size() > 0) {
 			ArrayList<List<Object>> lsttest = new ArrayList<List<Object>>();

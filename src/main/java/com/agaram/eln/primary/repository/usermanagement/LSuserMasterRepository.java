@@ -148,8 +148,6 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 
 	public LSuserMaster findByUsercode(Integer usercode);
 
-	public List<LSuserMaster> findByUsercodeNot(int i);
-
 
 
 

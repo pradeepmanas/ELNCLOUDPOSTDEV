@@ -2161,19 +2161,9 @@ public class LoginService {
 	}
 
 	public Map<String, Object> getlicense(Map<String, Object> obj) {
-
 		Map<String, Object> rtnobj = new HashMap<>();
 		
-		  if(obj.get("licencetype") != null && obj.get("licencetype").equals("2")) {			
-			Long activeusercount =  LSactiveUserRepository.count();
-			rtnobj.put("activeuser", activeusercount);
-
-	}else if(obj.get("licencetype") != null && obj.get("licencetype").equals("1")) {
-			
-			Long usercount = lsuserMasterRepository.count();
-			rtnobj.put("activeuser", usercount);
-
-	}else if ((Integer) obj.get("isMultitenant") == 1) {
+		if ((Integer) obj.get("isMultitenant") == 1) {
 			DataSourceConfig tenant = DataSourceConfigRepository.findByTenantid(obj.get("tenantdomain").toString());
 			rtnobj.put("Noofuser", tenant.getNoofusers());
 			LSSiteMaster sitemaster =new LSSiteMaster();
@@ -2197,7 +2187,6 @@ public class LoginService {
 			}
 		}			
 		return rtnobj;
-	
 	}
 	
 //	public void autoShedulerInactiveUserkill() {
