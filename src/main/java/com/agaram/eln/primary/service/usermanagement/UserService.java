@@ -1432,7 +1432,7 @@ public class UserService {
 			lscfttransactionRepository.save(objusergroup.getObjsilentaudit());
 		}
 		if (objusergroup.getUsername() != null && objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
-			return lsuserMasterRepository.findByusernameNot("Administrator");
+			return lsuserMasterRepository.findByUsercodeNot(1);
 		}
 		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objusergroup.getLssitemaster());
 	}
