@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
@@ -56,6 +57,8 @@ import com.agaram.eln.primary.repository.masters.LSlogbooksampleupdatesRepositor
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
+import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolmastertestRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplemasterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
@@ -64,7 +67,6 @@ import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepositor
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
-import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
 
 @Service
@@ -83,6 +85,10 @@ public class BaseMasterService {
 	@Autowired
 	private LStestmasterlocalRepository lStestmasterlocalRepository;
 	@Autowired
+	private LSprotocolmastertestRepository LSprotocolmastertestRepository;
+	@Autowired
+	private LSProtocolMasterRepository LSProtocolMasterRepositoryObj;
+	@Autowired
 	private LSsamplemasterRepository lSsamplemasterRepository;
 	@Autowired
 	private LSprojectmasterRepository lSprojectmasterRepository;
@@ -94,8 +100,8 @@ public class BaseMasterService {
 	private LSequipmentmapRepository lSequipmentmapRepository;
 	@Autowired
 	private LStestmasterRepository lstestmasterRepository;
-	@Autowired
-	private ProtocolService protocolMasterService;
+//	@Autowired
+//	private ProtocolService protocolMasterService;
 	@Autowired
 	private UnitRepository unitRepository;
 	@Autowired
@@ -161,13 +167,50 @@ public class BaseMasterService {
 			obj1.setTesttype(1);
 			obj1.setObjLoggeduser(objClass);
 
-			lstP = protocolMasterService.getProtocolOnTestcode(obj1);
+			lstP = getProtocolOnTestcode(obj1);
 
 		}
 		map.put("Protocol", lstP);
 		map.put("Sheet", lstSheet);
 
 		return map;
+	}
+	
+	public List<LSprotocolmaster> getProtocolOnTestcode(LSprotocolmastertest objtest) {
+
+		List<LSprotocolmaster> lsfiles = new ArrayList<LSprotocolmaster>();
+
+		List<LSprotocolmastertest> lsfiletest = LSprotocolmastertestRepository
+				.findByTestcodeAndTesttype(objtest.getTestcode(), objtest.getTesttype());
+
+		if (objtest.getObjLoggeduser().getUsername().trim().toLowerCase().equals("administrator")) {
+			lsfiles = LSProtocolMasterRepositoryObj.findByLstestInAndStatusAndApproved(lsfiletest, 1, 1);
+		} else {
+
+			List<Integer> lstteammap = lsuserteammappingRepository
+					.getTeamcodeByLsuserMaster(objtest.getObjLoggeduser().getUsercode());
+			if (lstteammap.size() > 0) {
+				List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
+				lstteamuser.add(objtest.getObjLoggeduser());
+				lstteammap = lstteamuser.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
+				lsfiles = LSProtocolMasterRepositoryObj
+						.findByLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndApproved(
+								lsfiletest, 1, lstteammap, 1, 1, lsfiletest, 1,
+								objtest.getObjLoggeduser().getUsercode(), 2, 1, lsfiletest, 1, lstteammap, 3, 1);
+
+			} else {
+				lstteammap.add(objtest.getObjLoggeduser().getUsercode());
+				lsfiles = LSProtocolMasterRepositoryObj
+						.findByLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndApproved(
+								lsfiletest, 1, lstteammap, 1, 1, lsfiletest, 1,
+								objtest.getObjLoggeduser().getUsercode(), 2, 1, lsfiletest, 1, lstteammap, 3, 1);
+
+			}
+			// lsfiles = LSProtocolMasterRepositoryObj.findByLstestInAndStatus(lsfiletest,
+			// 1);
+		}
+
+		return lsfiles;
 	}
 
 	public List<LStestmaster> getLimsTestMaster(LSuserMaster objClass) {
