@@ -291,15 +291,13 @@ public class EquipmentService {
 
 	public ResponseEntity<Object> createEquipment(Equipment obj) throws Exception {
 		
-		Equipment objEquipment = equipmentRepository.findByNsitecodeAndSequipmentnameAndEquipmentcategory(obj.getNsitecode(),obj.getSequipmentname(),obj.getEquipmentcategory());
+		Equipment objEquipment = equipmentRepository.findByNsitecodeAndSequipmentnameAndEquipmentcategoryAndNstatus(obj.getNsitecode(),obj.getSequipmentname(),obj.getEquipmentcategory(),1);
 		
 		obj.setResponse(new Response());
 		String sformattype = "{yyyy}/{99999}";
-//		LSuserMaster objMaster = new LSuserMaster();
-//		objMaster.setUsercode(obj.getObjsilentaudit().getLsuserMaster());	
+
 		if(objEquipment == null) {
 
-//			obj.setCreateby(objMaster);
 			obj.setCreateddate(commonfunction.getCurrentUtcTime());
 			equipmentRepository.save(obj);
 			
@@ -322,7 +320,7 @@ public class EquipmentService {
 	
 	public ResponseEntity<Object> updateELNEquipment(Equipment obj) {
 		
-		Equipment objElnmaterial = equipmentRepository.findByNsitecodeAndSequipmentnameAndEquipmentcategoryAndNequipmentcodeNot(obj.getNsitecode(),obj.getSequipmentname(),obj.getEquipmentcategory(),obj.getNequipmentcode());
+		Equipment objElnmaterial = equipmentRepository.findByNsitecodeAndSequipmentnameAndEquipmentcategoryAndNequipmentcodeNotAndNstatus(obj.getNsitecode(),obj.getSequipmentname(),obj.getEquipmentcategory(),obj.getNequipmentcode(),1);
 		
 		obj.setResponse(new Response());
 		

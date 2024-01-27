@@ -22,4 +22,10 @@ public interface EquipmentCategoryRepository extends JpaRepository<EquipmentCate
 	List<EquipmentCategory> findByEquipmenttypeAndNsitecodeAndNstatus(EquipmentType equipmentType, Integer nsiteInteger,
 			int i);
 
+	List<EquipmentCategory> findBySequipmentcatnameIgnoreCaseAndNsitecodeAndNstatus(String sequipmentcatname,
+			Integer nsitecode, int i);
+
+	EquipmentCategory findByNsitecodeAndSequipmentcatnameIgnoreCaseAndNstatus(Integer nsitecode,
+			String sequipmentcatname, int i);
+
 }

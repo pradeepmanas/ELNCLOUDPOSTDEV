@@ -35,7 +35,7 @@ public class EquipmentCategoryService {
 		final EquipmentCategory objEquipmentCategory = objmapper.convertValue(inputMap.get("EquipmentCategory"),EquipmentCategory.class);
 		objEquipmentCategory.setResponse(new Response());
 		
-		List<EquipmentCategory> lstgetMaterialCategory = equipmentCategoryRepository.findBySequipmentcatnameIgnoreCaseAndNsitecode(objEquipmentCategory.getSequipmentcatname(),objEquipmentCategory.getNsitecode());
+		List<EquipmentCategory> lstgetMaterialCategory = equipmentCategoryRepository.findBySequipmentcatnameIgnoreCaseAndNsitecodeAndNstatus(objEquipmentCategory.getSequipmentcatname(),objEquipmentCategory.getNsitecode(),1);
 		
 		LSuserMaster objMaster = new LSuserMaster();
 		objMaster.setUsercode(objEquipmentCategory.getObjsilentaudit().getLsuserMaster());
@@ -69,7 +69,7 @@ public class EquipmentCategoryService {
 			materialCategory.getResponse().setInformation("IDS_ALREADYDELETED");
 			return new ResponseEntity<>(materialCategory, HttpStatus.OK);
 		} else {
-			final EquipmentCategory materialCategoryObj = equipmentCategoryRepository.findByNsitecodeAndSequipmentcatnameIgnoreCase(materialCategory.getNsitecode(),materialCategory.getSequipmentcatname());
+			final EquipmentCategory materialCategoryObj = equipmentCategoryRepository.findByNsitecodeAndSequipmentcatnameIgnoreCaseAndNstatus(materialCategory.getNsitecode(),materialCategory.getSequipmentcatname(),1);
 			
 			if (materialCategoryObj == null || (materialCategoryObj.getNequipmentcatcode().equals(materialCategory.getNequipmentcatcode()))) {
 				equipmentCategoryRepository.save(materialCategory);

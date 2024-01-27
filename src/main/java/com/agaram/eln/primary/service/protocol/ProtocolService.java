@@ -1,16 +1,13 @@
 package com.agaram.eln.primary.service.protocol;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -18,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -41,7 +37,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -55,7 +50,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.config.CustomMultipartFile;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
-import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudUserSignature;
@@ -67,7 +61,6 @@ import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.fileManipulation.UserSignature;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
-import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LSsheetfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
@@ -111,19 +104,16 @@ import com.agaram.eln.primary.model.protocols.LSprotocolworkflowhistory;
 import com.agaram.eln.primary.model.protocols.LsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.protocols.Lsprotocolorderdata;
 import com.agaram.eln.primary.model.protocols.Lsprotocolorderversiondata;
-import com.agaram.eln.primary.model.protocols.Lsprotocoltemplatedata;
-import com.agaram.eln.primary.model.protocols.Lsprotocoltemplateversiondata;
 import com.agaram.eln.primary.model.protocols.Lsprotocolsharedby;
 import com.agaram.eln.primary.model.protocols.Lsprotocolshareto;
+import com.agaram.eln.primary.model.protocols.Lsprotocoltemplatedata;
+import com.agaram.eln.primary.model.protocols.Lsprotocoltemplateversiondata;
 import com.agaram.eln.primary.model.protocols.ProtocolImage;
 import com.agaram.eln.primary.model.protocols.ProtocolorderImage;
 import com.agaram.eln.primary.model.protocols.Protocolordervideos;
 import com.agaram.eln.primary.model.protocols.Protocolvideos;
-import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
-import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
-import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
@@ -133,7 +123,6 @@ import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
-import com.agaram.eln.primary.repository.notification.EmailRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolorderversionstepRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLSprotocolstepInfoRepository;
@@ -148,8 +137,8 @@ import com.agaram.eln.primary.repository.instrumentDetails.Lsprotocolordershared
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharetoRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
+import com.agaram.eln.primary.repository.notification.EmailRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolTemplateworkflowRepository;
-import com.agaram.eln.primary.repository.protocol.ElnprotocolTemplateworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
@@ -185,11 +174,8 @@ import com.agaram.eln.primary.repository.protocol.ProtocolorderImageRepository;
 import com.agaram.eln.primary.repository.protocol.ProtocolordervideosRepository;
 import com.agaram.eln.primary.repository.protocol.ProtocolvideosRepository;
 import com.agaram.eln.primary.repository.protocol.lSprotocolworkflowRepository;
-import com.agaram.eln.primary.repository.sheetManipulation.LSsamplemasterRepository;
-import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
-import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
@@ -263,8 +249,8 @@ public class ProtocolService {
 	@Autowired
 	private LSlogilabprotocoldetailRepository LSlogilabprotocoldetailRepository;
 
-	@Autowired
-	private LSsamplemasterRepository lssamplemasterrepository;
+//	@Autowired
+//	private LSsamplemasterRepository lssamplemasterrepository;
 
 	@Autowired
 	private LSlogilabprotocolstepsRepository LSlogilabprotocolstepsRepository;
@@ -389,14 +375,14 @@ public class ProtocolService {
 	@Autowired
 	private LSworkflowRepository lsworkflowRepository;
 
-	@Autowired
-	private LSsheetworkflowRepository lssheetworkflowRepository;
+//	@Autowired
+//	private LSsheetworkflowRepository lssheetworkflowRepository;
 
 	@Autowired
 	private LSprotocolorderstephistoryRepository lsprotocolorderstephistoryRepository;
 
-	@Autowired
-	private LSworkflowgroupmappingRepository lsworkflowgroupmappingRepository;
+//	@Autowired
+//	private LSworkflowgroupmappingRepository lsworkflowgroupmappingRepository;
 
 	@Autowired
 	private LsprotocolOrderStructureRepository lsprotocolorderStructurerepository;
@@ -415,8 +401,8 @@ public class ProtocolService {
 	@Autowired
 	TransactionService transactionService;
 
-	@Autowired
-	private GridFsTemplate gridFsTemplate;
+//	@Autowired
+//	private GridFsTemplate gridFsTemplate;
 
 	@Autowired
 	private JavaMailSender mailSender;
@@ -441,8 +427,8 @@ public class ProtocolService {
 	@Autowired
 	private ElnprotocolTemplateworkflowRepository elnprotocolTemplateworkflowRepository;
 	
-	@Autowired
-	private ElnprotocolTemplateworkflowgroupmapRepository elnprotocolTemplateworkflowgroupmapRepository;
+//	@Autowired
+//	private ElnprotocolTemplateworkflowgroupmapRepository elnprotocolTemplateworkflowgroupmapRepository;
 	
 	public Map<String, Object> getProtocolMasterInit(Map<String, Object> argObj) {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
@@ -8220,7 +8206,7 @@ public class ProtocolService {
 
 		LSlogilabprotocoldetail rtnobj = LSlogilabprotocoldetailRepository
 				.findOne(protocolorders.getProtocolordercode());
-		if (rtnobj.getLockeduser() == null && protocolorders.getComment().equals("Order_Lock")) {
+		if ((rtnobj != null && rtnobj.getLockeduser() == null) && protocolorders.getComment().equals("Order_Lock")) {
 			rtnobj.setLockeduser(protocolorders.getLockeduser());
 			rtnobj.setLockedusername(protocolorders.getLockedusername());
 			rtnobj.setActiveuser(protocolorders.getActiveuser());
