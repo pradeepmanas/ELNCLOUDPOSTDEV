@@ -6575,7 +6575,7 @@ public class ProtocolService {
 				.findByTestcodeAndTesttype(objtest.getTestcode(), objtest.getTesttype());
 
 		if (objtest.getObjLoggeduser().getUsername().trim().toLowerCase().equals("administrator")) {
-			lsfiles = LSProtocolMasterRepositoryObj.findByLstestInAndStatusAndApproved(lsfiletest, 1, 1);
+			lsfiles = LSProtocolMasterRepositoryObj.findByLstestInAndStatusAndApprovedOrderByProtocolmastercodeDesc(lsfiletest, 1, 1);
 		} else {
 
 			List<Integer> lstteammap = LSuserteammappingRepositoryObj
@@ -6585,14 +6585,14 @@ public class ProtocolService {
 				lstteamuser.add(objtest.getObjLoggeduser());
 				lstteammap = lstteamuser.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
 				lsfiles = LSProtocolMasterRepositoryObj
-						.findByLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndApproved(
+						.findByLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrderByProtocolmastercodeDesc(
 								lsfiletest, 1, lstteammap, 1, 1, lsfiletest, 1,
 								objtest.getObjLoggeduser().getUsercode(), 2, 1, lsfiletest, 1, lstteammap, 3, 1);
 
 			} else {
 				lstteammap.add(objtest.getObjLoggeduser().getUsercode());
 				lsfiles = LSProtocolMasterRepositoryObj
-						.findByLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndApproved(
+						.findByLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrderByProtocolmastercodeDesc(
 								lsfiletest, 1, lstteammap, 1, 1, lsfiletest, 1,
 								objtest.getObjLoggeduser().getUsercode(), 2, 1, lsfiletest, 1, lstteammap, 3, 1);
 

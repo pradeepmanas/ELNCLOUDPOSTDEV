@@ -327,5 +327,13 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 
 	long countByElnprotocoltemplateworkflowAndApproved(ElnprotocolTemplateworkflow objflow, int i);
 
+	List<LSprotocolmaster> findByLstestInAndStatusAndApprovedOrderByProtocolmastercodeDesc(
+			List<LSprotocolmastertest> lsfiletest, int i, int j);
+
+	List<LSprotocolmaster> findByLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrderByProtocolmastercodeDesc(
+			List<LSprotocolmastertest> lsfiletest, int i, List<Integer> lstteammap, int j, int k,
+			List<LSprotocolmastertest> lsfiletest2, int l, Integer usercode, int m, int n,
+			List<LSprotocolmastertest> lsfiletest3, int o, List<Integer> lstteammap2, int p, int q);
+
 
 }

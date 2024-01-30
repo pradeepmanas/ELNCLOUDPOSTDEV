@@ -555,7 +555,7 @@ public class EquipmentService {
 		List<Equipment> lstEquipments = equipmentRepository.findByNequipmentcodeIn(nequipmentcode);
 		objmap.put("lstEquipment", lstEquipments);
 		
-		if(!lstEquipments.isEmpty() && selectedScreen == 2) {
+		if(!lstEquipments.isEmpty() && selectedScreen != null && selectedScreen == 2) {
 			LSuserMaster objUser = new LSuserMaster();
 			objUser.setUsercode(user);
 			LSlogilabprotocoldetail objDetail = lslogilabprotocoldetailRepository.findOne(Long.valueOf(objResultMap.get("protocolordercode").toString()));
