@@ -168,9 +168,9 @@ public class EquipmentService {
 		List<EquipmentType> lstTypes =  new ArrayList<EquipmentType>();
 		List<EquipmentCategory> lstCategories = new ArrayList<EquipmentCategory>();
 		
-		lstTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrNequipmenttypecodeNotAndNstatusAndNdefaultstatus(-1,1,nsiteInteger,-1,1,4);
+		lstTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrNequipmenttypecodeNotAndNstatusAndNdefaultstatusOrderByNequipmenttypecodeDesc(-1,1,nsiteInteger,-1,1,4);
 		if(!lstTypes.isEmpty()) {
-			lstCategories = equipmentCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
+			lstCategories = equipmentCategoryRepository.findByNsitecodeAndNstatusOrderByNequipmentcatcodeDesc(nsiteInteger, 1);
 		}	
 		
 		List<Period> lstPeriods = periodRepository.findByNstatusOrderByNperiodcode(1);
@@ -189,11 +189,11 @@ public class EquipmentService {
 		List<EquipmentCategory> lstCategories = new ArrayList<EquipmentCategory>();
 		List<Equipment> lstEquipments = new ArrayList<Equipment>();
 		
-		lstTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrNequipmenttypecodeNotAndNstatusAndNdefaultstatus(-1,1,nsiteInteger,-1,1,4);
+		lstTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrNequipmenttypecodeNotAndNstatusAndNdefaultstatusOrderByNequipmenttypecodeDesc(-1,1,nsiteInteger,-1,1,4);
 		if(!lstTypes.isEmpty()) {
-			lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatus(lstTypes.get(0),nsiteInteger, 1);
+			lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatusOrderByNequipmentcatcodeDesc(lstTypes.get(0),nsiteInteger, 1);
 			if(!lstCategories.isEmpty()) {
-				lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNull(true,lstCategories.get(0),nsiteInteger, 1);
+				lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNullOrderByNequipmentcodeDesc(true,lstCategories.get(0),nsiteInteger, 1);
 			}	
 		}	
 		
@@ -218,9 +218,9 @@ public class EquipmentService {
 			lstCategories = equipmentCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
 		}else {
 			if(!lstTypes.isEmpty()) {
-				lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatus(lstTypes.get(0), nsiteInteger, 1);
+				lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatusOrderByNequipmentcatcodeDesc(lstTypes.get(0), nsiteInteger, 1);
 				if(!lstCategories.isEmpty()) {
-					lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatus(true,lstCategories.get(0),nsiteInteger, 1);
+					lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusOrderByNequipmentcodeDesc(true,lstCategories.get(0),nsiteInteger, 1);
 				}	
 			}
 		}

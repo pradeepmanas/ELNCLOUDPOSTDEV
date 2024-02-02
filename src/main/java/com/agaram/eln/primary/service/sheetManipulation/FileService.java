@@ -667,8 +667,9 @@ public class FileService {
 		Map<String, Object> mapReq4Material = new HashMap<String, Object>();
 		mapOrders.put("test", masterService.getTestmaster(objuser));
 		mapOrders.put("sample", masterService.getsamplemaster(objuser));
-		List<LSprojectmaster> prolist = lsprojectrepo.findByLsusersteamInAndStatus(LSusersteamRepository
-				.findByLsuserteammappingInAndStatus(lsuserteammappingRepository.findBylsuserMaster(objuser), 1), 1);
+		List<LSprojectmaster> prolist = lsprojectrepo.findByLsusersteamInAndStatusAndLssitemaster(
+				LSusersteamRepository.findByLsuserteammappingInAndStatusAndLssitemaster(lsuserteammappingRepository.findBylsuserMaster(objuser), 1,objuser.getLssitemaster())
+				, 1,objuser.getLssitemaster());
 		mapOrders.put("project", prolist);
 		Lsrepositories lsrepositories = new Lsrepositories();
 		lsrepositories.setSitecode(objuser.getLssitemaster().getSitecode());

@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,6 +42,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.jwt.JwtResponse;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSMultisites;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
@@ -61,6 +61,7 @@ import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
+import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultisitesRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
@@ -94,6 +95,8 @@ public class LoginService {
 	private LSpreferencesRepository LSpreferencesRepository;
 	@Autowired
 	private LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
+	@Autowired
+	private LSlogilabprotocoldetailRepository lslogilabprotocoldetailRepository;
 	@Autowired
 	private LSactiveUserRepository lsactiveUserRepository;
 
@@ -638,8 +641,13 @@ public class LoginService {
 				objExitinguser.get(0).getObjResponse().setStatus(true);
 
 			} else {
-				objExitinguser.get(0).getObjResponse().setInformation("Valid user and password exist");
-				objExitinguser.get(0).getObjResponse().setStatus(true);
+				if(objExitinguser.get(0).getUserstatus().equals("Locked")) {
+					objExitinguser.get(0).getObjResponse().setInformation("user locked");
+					objExitinguser.get(0).getObjResponse().setStatus(false);
+				}else {
+					objExitinguser.get(0).getObjResponse().setInformation("Valid user and password exist");
+					objExitinguser.get(0).getObjResponse().setStatus(true);
+				}
 			}
 		} else {
 
@@ -840,6 +848,18 @@ public class LoginService {
 				f.setActiveuser(null);
 			}).collect(Collectors.toList());
 			lslogilablimsorderdetailRepository.save(lsOrder);
+		}
+	}
+	public void removeOrdersOnInActiveLstforprotocolorders(List<Integer> activeuser) {
+		List<LSlogilabprotocoldetail> lsOrder = lslogilabprotocoldetailRepository.findByActiveuserIn(activeuser);
+		
+		if (!lsOrder.isEmpty()) {
+			lsOrder = lsOrder.stream().peek(f -> {
+				f.setLockeduser(null);
+				f.setLockedusername(null);
+				f.setActiveuser(null);
+			}).collect(Collectors.toList());
+			lslogilabprotocoldetailRepository.save(lsOrder);
 		}
 	}
 
@@ -2022,7 +2042,7 @@ public class LoginService {
 
 	public List<LSuserMaster> ValidateuserAndPassword(LoggedUser objuser) {
 		List<LSuserMaster> objExitinguser = new ArrayList<LSuserMaster>();
-		String username = objuser.getsUsername();
+//		String username = objuser.getsUsername();
 		String userPassword = objuser.getsPassword();
 //		if (objuser.getLoggedfrom() == 1) {
 //			LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
@@ -2125,6 +2145,7 @@ public class LoginService {
 					.collect(Collectors.toList());
 
 			removeOrdersOnInActiveLst(objnotifyuser);
+			removeOrdersOnInActiveLstforprotocolorders(objnotifyuser);
 
 		}
 
@@ -2142,6 +2163,7 @@ public class LoginService {
 					.collect(Collectors.toList());
 
 			removeOrdersOnInActiveLst(objnotifyuser);
+			removeOrdersOnInActiveLstforprotocolorders(objnotifyuser);
 
 			lsactiveUserRepository.delete(lstUsersRemoved);
 		}
@@ -2169,8 +2191,7 @@ public class LoginService {
 			rtnobj.put("activeuser", activeusercount);
 
 	}else if(obj.get("licencetype") != null && obj.get("licencetype").equals("1")) {
-			
-			Long usercount = lsuserMasterRepository.count();
+			Long usercount =lsuserMasterRepository.countByUserstatus("A");
 			rtnobj.put("activeuser", usercount);
 
 	}else if ((Integer) obj.get("isMultitenant") == 1) {

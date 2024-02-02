@@ -1432,7 +1432,7 @@ public class UserService {
 			lscfttransactionRepository.save(objusergroup.getObjsilentaudit());
 		}
 		if (objusergroup.getUsername() != null && objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
-			return lsuserMasterRepository.findByUsercodeNot(1);
+			return lsuserMasterRepository.findAll();
 		}
 		return lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objusergroup.getLssitemaster());
 	}
@@ -1530,7 +1530,7 @@ public class UserService {
 
 //			Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNotAndLssitemaster(1, 1,
 //					objsite);
-			Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1, 1);
+			Long userCount = lsuserMasterRepository.countByUserretirestatusNot(1);
 
 			if (userCount < nConcurrentUsers) {
 

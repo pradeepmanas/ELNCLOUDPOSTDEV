@@ -8248,8 +8248,8 @@ public class ProtocolService {
 								lstproject, 3, objuser.getLssitemaster().getSitecode(), "N",objuser.getUsercode()));
 
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserOrderByProtocolordercodeDesc(
-								lstproject, objuser.getLssitemaster().getSitecode(), "N",objuser.getUsercode()));
+						.findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagOrderByProtocolordercodeDesc(
+								lstproject, objuser.getLssitemaster().getSitecode(), "N"));
 
 				return lstorder;
 			}

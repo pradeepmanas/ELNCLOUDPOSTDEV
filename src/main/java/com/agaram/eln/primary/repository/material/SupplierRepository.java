@@ -13,4 +13,5 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer>{
 	List<Object> findByNstatusAndNsitecode(int i, Integer nsiteInteger);
 	List<Supplier> findByNsitecodeOrderByNsuppliercode(Integer nsiteInteger);
 	Supplier findBySsuppliernameIgnoreCaseAndNsitecode(String ssuppliername, Integer nsitecode);
+	List<Supplier> findByNstatusAndNsitecodeOrderByNsuppliercodeDesc(int i, Integer nsiteInteger);
 }

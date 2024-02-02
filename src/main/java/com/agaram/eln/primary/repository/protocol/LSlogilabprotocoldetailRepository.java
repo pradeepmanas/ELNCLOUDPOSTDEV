@@ -1461,8 +1461,13 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			List<LSprojectmaster> lstproject, int i, Integer sitecode, String string, Integer usercode);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagAndLockeduserOrderByProtocolordercodeDesc(
-			List<LSprojectmaster> lstproject, Integer sitecode, String string, Integer usercode);
+
+
+	List<LSlogilabprotocoldetail> findByActiveuserIn(List<Integer> activeuser);
+
+
+	List<Logilabprotocolorders>  findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagOrderByProtocolordercodeDesc(
+			List<LSprojectmaster> lstproject, Integer sitecode, String string);
 
 }
 

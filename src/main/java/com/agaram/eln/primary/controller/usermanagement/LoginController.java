@@ -2,7 +2,6 @@ package com.agaram.eln.primary.controller.usermanagement;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +45,6 @@ import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.multitenant.DatasourceService;
 import com.agaram.eln.primary.service.usermanagement.LoginService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 

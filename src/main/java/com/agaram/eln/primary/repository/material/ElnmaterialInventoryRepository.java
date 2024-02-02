@@ -75,4 +75,6 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 
 	List<ElnmaterialInventory> findBySinventoryidInAndNsitecode(List<String> lstIds, Integer nsiteInteger);
 
+	List<ElnmaterialInventory> findByMaterialOrderByNmaterialinventorycodeDesc(Elnmaterial objElnmaterial);
+
 }

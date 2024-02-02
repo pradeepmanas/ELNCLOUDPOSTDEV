@@ -625,15 +625,69 @@ public class TransactionService {
 		elnresultUsedMaterialRepository.save(resultUsedMaterial);
 		elnmaterialInventoryRepository.save(objInventory);
 
-//		if (objInventory.getNqtynotification() != null) {
-//			if (objInventory.getNqtynotification() <= getQtyLeft ? false : true) {
-//				List<LSnotification> lstLSnotifications = new ArrayList<LSnotification>();
-//				lstLSnotifications.addAll(updateNotificationOnInventory(objInventory, "INVENTORYQTYNOTIFICATION", cft, getQtyLeft, new Date()));
-//				lsnotificationRepository.save(lstLSnotifications);
-//			}
-//		}
+		if (objInventory.getNqtynotification() != null) {
+			if (objInventory.getNqtynotification() <= getQtyLeft ? false : true) {
+				List<LSnotification> lstLSnotifications = new ArrayList<LSnotification>();
+				lstLSnotifications.addAll(updateNotificationOnInventory(objInventory, "INVENTORYQTYNOTIFICATION", cft, getQtyLeft, new Date()));
+				lsnotificationRepository.save(lstLSnotifications);
+			}
+		}
 
 		return new ResponseEntity<>(resultUsedMaterial, HttpStatus.OK);
+	}
+	
+	public List<LSnotification> updateNotificationOnInventory(ElnmaterialInventory objInventory, String task, LScfttransaction cft,
+			Double getQtyLeft,Date date) {
+
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		
+		List<ElnresultUsedMaterial> objLstTransactions = objInventory.getResultusedmaterial();
+
+		List<LSuserMaster> objLstuser = objLstTransactions.stream()
+				.map(ElnresultUsedMaterial::getCreatedbyusercode).filter(Objects::nonNull).collect(Collectors.toList());
+
+		if (!objLstuser.isEmpty()) {
+			List<Integer> objnotifyuser = objLstuser.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
+
+			objnotifyuser = objnotifyuser.stream().distinct().collect(Collectors.toList());
+			
+			if(objnotifyuser.contains(cft.getLsuserMaster())) {
+				
+				LSuserMaster objUser = new LSuserMaster();
+				objUser.setUsercode(cft.getLsuserMaster());
+
+				String details = "";
+
+				if (task.equals("INVENTORYQTYNOTIFICATION")) {
+
+					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"qtyleft\":\""
+							+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objInventory.getNqtynotification() + "\"}";
+
+				} else if (task.equals("EXPIRYDATE")) {
+					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + date + "\"}";
+				} else {
+					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\"" + getQtyLeft + "\"}";
+				}
+
+				String notification = details;
+
+				LSnotification objnotify = new LSnotification();
+
+				objnotify.setNotifationto(objUser);
+				objnotify.setNotifationfrom(objUser);
+				objnotify.setNotificationdate(cft.getTransactiondate());
+				objnotify.setNotification(task);
+				objnotify.setNotificationdetils(notification);
+				objnotify.setIsnewnotification(1);
+				objnotify.setNotificationpath("/materialinventory");
+				objnotify.setNotificationfor(1);
+				
+				lstnotifications.add(objnotify);
+				
+				return lstnotifications;
+			}
+		}
+		return lstnotifications;
 	}
 	
 	
