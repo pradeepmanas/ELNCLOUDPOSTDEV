@@ -14,4 +14,6 @@ public interface MaterialGradeRepository  extends JpaRepository<MaterialGrade, I
 	public List<MaterialGrade> findByNstatusAndNsitecodeOrderByNmaterialgradecodeDesc(int i, Integer nsiteInteger);
 	public List<MaterialGrade> findByNsitecodeOrderByNmaterialgradecodeDesc(Integer nsiteInteger);
 	public MaterialGrade findBySmaterialgradenameIgnoreCaseAndNsitecode(String smaterialgradename, Integer nsitecode);
+	public MaterialGrade findBySmaterialgradenameIgnoreCaseAndNsitecodeAndNstatus(String smaterialgradename,
+			Integer nsitecode, int i);
 }

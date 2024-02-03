@@ -23,8 +23,8 @@ public class UnitService {
 
 	public ResponseEntity<Object> createUnit(Unit objUnit) {
 
-		final Unit objUnit2 = unitRepository.findBySunitnameIgnoreCaseAndNsitecode(objUnit.getSunitname(),
-				objUnit.getNsitecode());
+		final Unit objUnit2 = unitRepository.findBySunitnameIgnoreCaseAndNsitecodeAndNstatus(objUnit.getSunitname(),
+				objUnit.getNsitecode(),1);
 		
 		objUnit.setResponse(new Response());
 		
@@ -77,7 +77,7 @@ public class UnitService {
 			return new ResponseEntity<>(objUnit, HttpStatus.OK);
 		} else {
 
-			final Unit unit1 = unitRepository.findBySunitnameIgnoreCaseAndNsitecode(objUnit.getSunitname(), objUnit.getNsitecode());
+			final Unit unit1 = unitRepository.findBySunitnameIgnoreCaseAndNsitecodeAndNstatus(objUnit.getSunitname(), objUnit.getNsitecode(),1);
 
 			if (unit1 == null || (unit1.getNunitcode().equals(objUnit.getNunitcode()))) {
 

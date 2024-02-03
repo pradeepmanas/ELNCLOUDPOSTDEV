@@ -30,7 +30,7 @@ public class SectionService {
 
 	public ResponseEntity<Object> createSection(Section section) {
 		section.setResponse(new Response());
-		final Section sectionObjByName = sectionRepository.findBySsectionnameIgnoreCaseAndNsitecode(section.getSsectionname(),section.getNsitecode());
+		final Section sectionObjByName = sectionRepository.findBySsectionnameIgnoreCaseAndNsitecodeAndNstatus(section.getSsectionname(),section.getNsitecode(),1);
 		LSuserMaster objMaster = new LSuserMaster();
 		objMaster.setUsercode(section.getObjsilentaudit().getLsuserMaster());
 		if (sectionObjByName == null && section.getNsectioncode() == null) {
@@ -68,7 +68,7 @@ public class SectionService {
 			section.getResponse().setInformation("IDS_ALREADYDELETED");
 			return new ResponseEntity<>(section, HttpStatus.OK);
 		} else {
-			final Section objSetion1 = sectionRepository.findBySsectionnameIgnoreCaseAndNsitecode(section.getSsectionname(),section.getNsitecode());
+			final Section objSetion1 = sectionRepository.findBySsectionnameIgnoreCaseAndNsitecodeAndNstatus(section.getSsectionname(),section.getNsitecode(),1);
 			if (objSetion1 == null || (objSetion1.getNsectioncode().equals(sectionobj.getNsectioncode()))) {
 				sectionRepository.save(section);
 				section.setObjsilentaudit(section.getObjsilentaudit());

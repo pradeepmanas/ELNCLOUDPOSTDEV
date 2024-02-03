@@ -27,7 +27,7 @@ public class SupplierService {
 	}
 
 	public ResponseEntity<Object> createSupplier(Supplier objSupplier) {
-		final Supplier objUnit2 = supplierRepository.findBySsuppliernameIgnoreCaseAndNsitecode(objSupplier.getSsuppliername(),objSupplier.getNsitecode());
+		final Supplier objUnit2 = supplierRepository.findBySsuppliernameIgnoreCaseAndNsitecodeAndNstatus(objSupplier.getSsuppliername(),objSupplier.getNsitecode(),1);
 		
 		objSupplier.setResponse(new Response());
 		
@@ -66,7 +66,7 @@ public class SupplierService {
 			return new ResponseEntity<>(objSupplier, HttpStatus.OK);
 		} else {
 
-			final Supplier grade1 = supplierRepository.findBySsuppliernameIgnoreCaseAndNsitecode(objSupplier.getSsuppliername(), objSupplier.getNsitecode());
+			final Supplier grade1 = supplierRepository.findBySsuppliernameIgnoreCaseAndNsitecodeAndNstatus(objSupplier.getSsuppliername(), objSupplier.getNsitecode(),1);
 
 			if (grade1 == null || (grade1.getNsuppliercode().equals(objSupplier.getNsuppliercode()))) {
 				grade.setObjsilentaudit(objSupplier.getObjsilentaudit());

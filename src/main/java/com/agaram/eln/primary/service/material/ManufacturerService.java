@@ -27,7 +27,7 @@ public class ManufacturerService {
 	}
 
 	public ResponseEntity<Object> createManufacturer(Manufacturer objManufacturer) {
-		final Manufacturer objUnit2 = manufacturerRepository.findBySmanufnameIgnoreCaseAndNsitecode(objManufacturer.getSmanufname(),objManufacturer.getNsitecode());
+		final Manufacturer objUnit2 = manufacturerRepository.findBySmanufnameIgnoreCaseAndNsitecodeAndNstatus(objManufacturer.getSmanufname(),objManufacturer.getNsitecode(),1);
 		
 		objManufacturer.setResponse(new Response());
 		LSuserMaster objMaster = new LSuserMaster();
@@ -63,7 +63,7 @@ public class ManufacturerService {
 			return new ResponseEntity<>(objManufacturer, HttpStatus.OK);
 		} else {
 
-			final Manufacturer grade1 = manufacturerRepository.findBySmanufnameIgnoreCaseAndNsitecode(objManufacturer.getSmanufname(), objManufacturer.getNsitecode());
+			final Manufacturer grade1 = manufacturerRepository.findBySmanufnameIgnoreCaseAndNsitecodeAndNstatus(objManufacturer.getSmanufname(), objManufacturer.getNsitecode(),1);
 
 			if (grade1 == null || (grade1.getNmanufcode().equals(objManufacturer.getNmanufcode()))) {
 				grade.setObjsilentaudit(objManufacturer.getObjsilentaudit());

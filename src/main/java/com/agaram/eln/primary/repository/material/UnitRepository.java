@@ -50,4 +50,6 @@ public interface UnitRepository extends JpaRepository<Unit, Integer>{
 
 	public List<Unit> findByNsitecodeAndNstatusOrderByNunitcodeDesc(Integer nsiteInteger, int i);
 
+	public Unit findBySunitnameIgnoreCaseAndNsitecodeAndNstatus(String sunitname, Integer nsitecode, int i);
+
 }

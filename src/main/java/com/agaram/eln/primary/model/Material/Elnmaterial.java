@@ -73,7 +73,7 @@ public class Elnmaterial implements Serializable{
 	private String expirypolicyperiod;
 	
 	private Boolean quarantine;
-	private Boolean barcode;
+//	private Boolean barcode;
 	private Boolean openexpiry;
 	private Boolean reusable;
 	private String openexpiryvalue;
@@ -359,13 +359,13 @@ public class Elnmaterial implements Serializable{
 		this.createby = createby;
 	}
 
-	public Boolean getBarcode() {
-		return barcode;
-	}
-
-	public void setBarcode(Boolean barcode) {
-		this.barcode = barcode;
-	}
+//	public Boolean getBarcode() {
+//		return barcode;
+//	}
+//
+//	public void setBarcode(Boolean barcode) {
+//		this.barcode = barcode;
+//	}
 
 	public Integer getBarcodetype() {
 		return barcodetype;
