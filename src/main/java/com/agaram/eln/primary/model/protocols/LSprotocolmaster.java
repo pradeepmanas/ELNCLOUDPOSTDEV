@@ -48,6 +48,16 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	private Integer lssitemaster;
 
 	private Integer defaulttemplate;
+	
+	private Integer retirestatus;
+
+	public Integer getRetirestatus() {
+		return retirestatus;
+	}
+
+	public void setRetirestatus(Integer retirestatus) {
+		this.retirestatus = retirestatus;
+	}
 
 	@Transient
 	private String createdateprotocol;
@@ -132,6 +142,17 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 
 	@Transient
 	private LSworkflow currentStep;
+	
+	@Transient
+	private Integer activekey;
+	
+	public Integer getActivekey() {
+		return activekey;
+	}
+
+	public void setActivekey(Integer activekey) {
+		this.activekey = activekey;
+	}
 	
 	public LSworkflow getCurrentStep() {
 		return currentStep;

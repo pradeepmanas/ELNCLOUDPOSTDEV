@@ -335,5 +335,79 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			List<LSprotocolmastertest> lsfiletest2, int l, Integer usercode, int m, int n,
 			List<LSprotocolmastertest> lsfiletest3, int o, List<Integer> lstteammap2, int p, int q);
 
+	@Transactional
+	@Modifying
+	@Query(value="select protocolmastercode from LSprotocolmaster where protocolmastername=?1",nativeQuery=true)
+	public List<Integer>  getprotocolcode(String protocolmastername);
+
+	List<LSprotocolmaster> findByStatusAndApprovedAndLssitemasterAndRetirestatus(int i, int j, Integer sitecode, int k);
+
+	List<LSprotocolmaster> findByLstestInAndStatusAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
+			List<LSprotocolmastertest> lsfiletest, int i, int j, int k);
+
+	List<LSprotocolmaster> findByLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
+			List<LSprotocolmastertest> lsfiletest, int i, List<Integer> lstteammap, int j, int k, int l,
+			List<LSprotocolmastertest> lsfiletest2, int m, Integer usercode, int n, int o, int p,
+			List<LSprotocolmastertest> lsfiletest3, int q, List<Integer> lstteammap2, int r, int s, int t);
+
+	List<LSprotocolmaster> findByLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
+			List<LSprotocolmastertest> lsfiletest, int i, List<Integer> lstteammap, int j, int k,
+			List<LSprotocolmastertest> lsfiletest2, int l, int m, Integer usercode, int n, int o, int p,
+			List<LSprotocolmastertest> lsfiletest3, int q, List<Integer> lstteammap2, int r, int s, int t);
+
+	List<LSprotocolmaster> findByProtocolmastercodeNotAndRetirestatusAndProtocolmasternameIgnoreCase(
+			int protocolmastercode, int i, String pname);
+
+	List<LSprotocolmaster> findByRetirestatusAndProtocolmasternameIgnoreCaseAndLssitemaster(int i, String string,
+			Integer lssitemaster);
+
+	List<LSprotocolmaster> findByStatusAndLssitemasterAndProtocolmasternameAndRetirestatus(int i, Integer lssitemaster,
+			String protocolmastername, int j);
+
+	long countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatusAndRejected(int i, Integer sitecode,
+			Date fromdate, Date todate, int j, int k);
+
+	long countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatusAndRejectedNotAndApproved(int i,
+			Integer sitecode, Date fromdate, Date todate, int j, int k, int l);
+
+	long countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatusAndRejectedNotAndApprovedIsNull(int i,
+			Integer sitecode, Date fromdate, Date todate, int j, int k);
+
+	long countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatus(int i, Integer sitecode, Date fromdate,
+			Date todate, int j);
+
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
+			Date fromdate2, Date todate2, int n, int o, int p, List<Integer> usercodelist, int q, Date fromdate3,
+			Date todate3, int r, int s, int t);
+
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
+			Date fromdate2, Date todate2, int n, int o, int p, List<Integer> usercodelist, int q, Date fromdate3,
+			Date todate3, int r, int s, int t);
+
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedIsNullOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, Integer usercode, int l, Date fromdate2,
+			Date todate2, int m, int n, List<Integer> usercodelist, int o, Date fromdate3, Date todate3, int p, int q);
+
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, Integer usercode, int l, Date fromdate2,
+			Date todate2, int m, int n, List<Integer> usercodelist, int o, Date fromdate3, Date todate3, int p, int q);
+
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
+			Date fromdate2, Date todate2, int n, int o, int p);
+
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, int m, Integer usercode, int n,
+			Date fromdate2, Date todate2, int o, int p, int q, int r);
+
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
+			Date fromdate2, Date todate2, int n, int o, int p);
+
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
+			Date fromdate2, Date todate2, int n, int o, int p);
 
 }

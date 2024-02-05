@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.sheetManipulation;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -88,7 +89,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 //	@Query("select new com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode,filenameuser) from LSfile where lssitemaster_sitecode=?2 and filecode >1 and approved= ?1 or versionno > 1 ORDER BY filecode DESC")
 	@Query("SELECT NEW com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode, filenameuser) \r\n" + 
 			"FROM com.agaram.eln.primary.model.sheetManipulation.LSfile \r\n" + 
-			"WHERE lssitemaster_sitecode = ?1 AND \r\n" + 
+			"WHERE retirestatus=0 AND lssitemaster_sitecode = ?1 AND \r\n" + 
 			"      ((filecode > 1 AND approved != 1) OR approved IS NULL) AND \r\n" + 
 			"      ((rejected != 1) OR (versionno > 1)) \r\n" + 
 			"ORDER BY filecode DESC")
@@ -104,7 +105,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 //	@Query("select new com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode,filenameuser) from LSfile where lssitemaster_sitecode=?3 and filecode >1 and approved= ?1 and rejected!=1	and versionno >0 or versionno is null and approved !=1	and rejected=0 or approved is null and createby in (?2) ORDER BY filecode DESC")
 	@Query("SELECT NEW com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode, filenameuser) \r\n" + 
 			"FROM com.agaram.eln.primary.model.sheetManipulation.LSfile \r\n" + 
-			"WHERE lssitemaster_sitecode = ?2 AND \r\n" + 
+			"WHERE retirestatus=0 AND lssitemaster_sitecode = ?2 AND \r\n" + 
 			"      ((filecode > 1 AND approved != 1 AND rejected != 1) OR approved IS NULL) AND \r\n" + 
 			"      ((rejected != 1) OR (versionno > 1)) \r\n" + 
 			" and createby in (?1)ORDER BY filecode DESC")
@@ -330,5 +331,83 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	public List<LSfile> findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndRejectedAndApprovedOrderByFilecodeDesc(
 			int i, LSSiteMaster lssitemaster, int j, int k, Integer approvelstatus, int l,
 			List<LSuserMaster> lstteamuser, int m, int n, Integer approvelstatus2);
+
+	public List<LSfile> findByfilenameuserIgnoreCaseAndLssitemasterAndRetirestatus(String trim,
+			LSSiteMaster lssitemaster, int i);
+
+	public List<LSfile> findByFilecodeGreaterThanAndLssitemasterAndApprovedAndRetirestatusOrFilecodeGreaterThanAndRetirestatusAndVersionnoGreaterThanOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Integer approvelstatus, int j, int k, int l, int m);
+
+	public List<LSfile> findByFilecodeGreaterThanAndRetirestatusAndLssitemasterAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndRetirestatusAndCreatebyAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndRetirestatusAndCreatebyInAndViewoptionAndRejectedAndApprovedOrderByFilecodeDesc(
+			int i, int j, LSSiteMaster lssitemaster, int k, int l, Integer approvelstatus, int m, int n,
+			LSuserMaster objuser, int o, int p, Integer approvelstatus2, int q, int r, List<LSuserMaster> lstteamuser,
+			int s, int t, Integer approvelstatus3);
+
+	public List<LSfile> findByFilecodeGreaterThanAndRetirestatusAndLssitemasterAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndRetirestatusAndCreatebyInAndViewoptionAndRejectedAndApprovedOrderByFilecodeDesc(
+			int i, int j, LSSiteMaster lssitemaster, int k, int l, Integer approvelstatus, int m, int n,
+			List<LSuserMaster> lstteamuser, int o, int p, Integer approvelstatus2);
+
+	public List<Sheettemplateget> findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApproved(
+			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest, int i, int j, int k, int l,
+			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest2, int m, int n, int o, int p,
+			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int q, int r, int s, int t);
+
+	public List<Sheettemplateget> findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThan(
+			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest, int i, int j, int k, int l, int m,
+			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest2, int n, int o, int p, int q, int r,
+			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int s, int t, int u, int v, int w);
+
+	public List<Sheettemplateget> findBylstestInAndApprovedAndRetirestatus(List<LSfiletest> lsfiletest, int i, int j);
+
+	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndRetirestatusOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndRetirestatusOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int m, int n, int o, List<LSuserMaster> lstteamuser, Date fromdate3,
+			Date todate3, int p, int q);
+
+	public long countByCreatedateBetweenAndFilecodeGreaterThanAndRetirestatusOrderByFilecodeDesc(Date fromdate,
+			Date todate, int i, int j);
+
+	public long countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndRejectedOrderByFilecodeDesc(
+			Date fromdate, Date todate, int i, int j, int k);
+
+	public long countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndApprovedAndRejectedNotOrderByFilecodeDesc(
+			Date fromdate, Date todate, int i, int j, int k, int l);
+
+	public long countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
+			Date fromdate, Date todate, int i, int j, int k);
+
+	public long countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndApprovedAndRejectedOrderByFilecodeDesc(
+			Date fromdate, Date todate, int i, int j, int k, int l);
+
+	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p, int q,
+			List<LSuserMaster> lstteamuser, Date fromdate3, Date todate3, int r, int s, int t);
+
+	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m, int n,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int o, int p, int q, int r, int s,
+			List<LSuserMaster> lstteamuser, Date fromdate3, Date todate3, int t, int u, int v, int w);
+
+	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p, int q,
+			List<LSuserMaster> lstteamuser, Date fromdate3, Date todate3, int r, int s, int t);
+
+	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p);
+
+	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m, int n,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int o, int p, int q, int r);
+
+	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, int m,
+			LSuserMaster objuser, Date fromdate2, Date todate2, int n, int o, int p);
+
+	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
+			Date fromdate2, Date todate2, int m, int n);
 	
 }

@@ -438,7 +438,7 @@ public class InstrumentService {
 	@Autowired
 	@Qualifier("entityManagerFactory")
 	private EntityManager entityManager;
-	
+
 	@Autowired
 	private LSMultisitesRepositery LSMultisitesRepositery;
 
@@ -6390,10 +6390,12 @@ public class InstrumentService {
 	public List<LSlogilablimsorderdetail> GetLockedOrders(LSlogilablimsorderdetail objorder) {
 
 		if (objorder.getLsuserMaster().getUsername().equalsIgnoreCase("Administrator")) {
-			List<LSMultisites> obj = LSMultisitesRepositery.findByLssiteMaster(objorder.getLsuserMaster().getLssitemaster());
+			List<LSMultisites> obj = LSMultisitesRepositery
+					.findByLssiteMaster(objorder.getLsuserMaster().getLssitemaster());
 			List<Integer> usercode = obj.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
 			return lslogilablimsorderdetailRepository
-					.findByOrderflagAndLockeduserIsNotNullAndLockeduserInAndAssignedtoIsNullOrderByBatchcodeDesc("N",usercode);
+					.findByOrderflagAndLockeduserIsNotNullAndLockeduserInAndAssignedtoIsNullOrderByBatchcodeDesc("N",
+							usercode);
 		} else {
 			List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
 
@@ -8599,61 +8601,59 @@ public class InstrumentService {
 			if (lsusermaster.getUsernotify() == null) {
 				lstdirpro = lsprotocolorderStructurerepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,lsusermaster, 3);
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster, 3);
 			} else {
 				lstdirpro = lsprotocolorderStructurerepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,
-								lsusermaster.getLssitemaster(), 3, lsusermaster.getUsernotify());
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
+								lsusermaster.getUsernotify());
 			}
-			
-			
+
 			mapfolders.put("directorypro", lstdirpro);
-		} else if(lsusermaster.getActiveusercode() != null && lsusermaster.getActiveusercode() == 1){
+		} else if (lsusermaster.getActiveusercode() != null && lsusermaster.getActiveusercode() == 1) {
 			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 
-			if (lsusermaster.getUsernotify() == null) {				
+			if (lsusermaster.getUsernotify() == null) {
 				lstdir = lsSheetOrderStructureRepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,lsusermaster, 3);
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster, 3);
 			} else {
 				lstdir = lsSheetOrderStructureRepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,
-								lsusermaster.getLssitemaster(), 3, lsusermaster.getUsernotify());
-				
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
+								lsusermaster.getUsernotify());
+
 			}
-			
+
 			mapfolders.put("directory", lstdir);
-		}else {
+		} else {
 			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 
-			if (lsusermaster.getUsernotify() == null) {				
+			if (lsusermaster.getUsernotify() == null) {
 				lstdir = lsSheetOrderStructureRepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,lsusermaster, 3);
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster, 3);
 			} else {
 				lstdir = lsSheetOrderStructureRepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,
-								lsusermaster.getLssitemaster(), 3, lsusermaster.getUsernotify());
-				
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
+								lsusermaster.getUsernotify());
+
 			}
 			if (lsusermaster.getUsernotify() == null) {
 				lstdirpro = lsprotocolorderStructurerepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,lsusermaster, 3);
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster, 3);
 			} else {
 				lstdirpro = lsprotocolorderStructurerepository
 						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2,
-								lsusermaster.getLssitemaster(), 3, lsusermaster.getUsernotify());
+								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
+								lsusermaster.getUsernotify());
 			}
-			
-			
-			mapfolders.put("directorypro", lstdirpro);			
+
+			mapfolders.put("directorypro", lstdirpro);
 			mapfolders.put("directory", lstdir);
-			
+
 		}
 		if (lsusermaster.getLstproject() != null && lsusermaster.getLstproject().size() > 0) {
 			ArrayList<List<Object>> lsttest = new ArrayList<List<Object>>();
@@ -8669,7 +8669,14 @@ public class InstrumentService {
 			mapfolders.put("tests", new ArrayList<Logilaborders>());
 			mapfolders.put("projects", new ArrayList<Projectmaster>());
 		}
-		
+		List<Elnmaterial> Matireal_List = elnmaterialRepository
+				.findByNsitecodeOrderByNmaterialcodeDesc(lsusermaster.getLssitemaster().getSitecode());
+		List<Object> Material_List_Ordes = LSlogilabprotocoldetailRepository
+				.getLstestmasterlocalAndmaterialByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(
+						lsusermaster.getLssitemaster().getSitecode());
+		mapfolders.put("Materialtest", Material_List_Ordes);
+		mapfolders.put("Material", Matireal_List);
+
 		return mapfolders;
 	}
 
@@ -8831,7 +8838,6 @@ public class InstrumentService {
 					.findByElnmaterialAndTestcodeAndProtocoltypeAndCreatedtimestampBetween(objorder.getElnmaterial(),
 							objorder.getTestcode(), protocoltype, fromdate, todate);
 
-
 		}
 
 		lstorder.forEach(
@@ -8845,6 +8851,104 @@ public class InstrumentService {
 		retuobjts.put("protocolorders", lstorder);
 
 		return retuobjts;
+	}
+
+	public List<Logilaborders> Getcancelledordes(LSlogilablimsorderdetail objdir) {
+		List<Logilaborders> lstorders = new ArrayList<Logilaborders>();
+		List<Logilaborders> lstorderstrcarray = new ArrayList<Logilaborders>();
+		Date fromdate = objdir.getFromdate();
+		Date todate = objdir.getTodate();
+		Integer filetype = objdir.getFiletype();
+		String orderflag = objdir.getOrderflag();
+		Integer rejected = objdir.getRejected();
+		List<LSprojectmaster> lstproject = objdir.getLstproject();
+
+		if (filetype == -1 && orderflag == null && rejected == null) {
+			lstorders = lslogilablimsorderdetailRepository
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
+							1, lstproject, fromdate, todate, 1, objdir.getLsuserMaster(), fromdate, todate, 1, 2,
+							objdir.getLsuserMaster(), fromdate, todate, 1, 3, objdir.getLsuserMaster(), fromdate,
+							todate, 1, objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1,
+							objdir.getLsuserMaster(), fromdate, todate, 1);
+
+		} else if (filetype != -1 && orderflag == null && rejected == null) {
+			lstorders = lslogilablimsorderdetailRepository
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletype(
+							1, lstproject, fromdate, todate, filetype, 1, objdir.getLsuserMaster(), fromdate, todate, 1,
+							filetype, 2, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3,
+							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, objdir.getLsuserMaster(),
+							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, objdir.getLsuserMaster(), fromdate,
+							todate, 1, filetype);
+		} else if (filetype != -1 && orderflag != null && rejected == null) {
+			lstorders = lslogilablimsorderdetailRepository
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndOrderflagOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndOrderflag(
+							1, lstproject, fromdate, todate, filetype, orderflag, 1, objdir.getLsuserMaster(), fromdate,
+							todate, 1, filetype, orderflag, 2, objdir.getLsuserMaster(), fromdate, todate, 1, filetype,
+							orderflag, 3, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, orderflag,
+							objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1, filetype,
+							orderflag, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, orderflag);
+		} else if (filetype != -1 && orderflag == null && rejected != null) {
+			lstorders = lslogilablimsorderdetailRepository
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndApprovelstatus(
+							1, lstproject, fromdate, todate, filetype, 3, 1, objdir.getLsuserMaster(), fromdate, todate,
+							1, filetype, 3, 2, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3, 3,
+							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3, objdir.getLsuserMaster(),
+							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3, objdir.getLsuserMaster(),
+							fromdate, todate, 1, filetype, 3);
+		}else if(filetype==-1 && orderflag!=null && rejected==null) {
+			lstorders = lslogilablimsorderdetailRepository
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndOrderflagOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndOrderflagOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndOrderflag(
+							1, lstproject, fromdate, todate,orderflag,
+                             1, objdir.getLsuserMaster(), fromdate, todate, 1,orderflag,
+                              2, objdir.getLsuserMaster(),fromdate, todate, 1,orderflag,
+                               3, objdir.getLsuserMaster(), fromdate, todate, 1,orderflag, 
+                               objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate,todate, 1,orderflag,
+                                objdir.getLsuserMaster(), fromdate, todate, 1,orderflag);
+		}else if(filetype==-1 && orderflag!=null && rejected!=null){
+			lstorders = lslogilablimsorderdetailRepository
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndOrderflagAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndOrderflagAndApprovelstatus(
+							1, lstproject, fromdate, todate,orderflag,3,
+                             1, objdir.getLsuserMaster(), fromdate, todate, 1,orderflag,3,
+                              2, objdir.getLsuserMaster(),fromdate, todate, 1,orderflag,3,
+                               3, objdir.getLsuserMaster(), fromdate, todate, 1,orderflag, 3,
+                               objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate,todate, 1,orderflag,3,
+                                objdir.getLsuserMaster(), fromdate, todate, 1,orderflag,3);
+        }
+        else if(filetype==-1 && orderflag==null && rejected!=null){
+        	lstorders = lslogilablimsorderdetailRepository
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndApprovelstatus(
+							1, lstproject, fromdate, todate,3,
+                             1, objdir.getLsuserMaster(), fromdate, todate, 1,3,
+                              2, objdir.getLsuserMaster(),fromdate, todate, 1,3,
+                               3, objdir.getLsuserMaster(), fromdate, todate, 1,3, 
+                               objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate,todate, 1,3,
+                                objdir.getLsuserMaster(), fromdate, todate, 1,3);
+        }
+        else{
+        	lstorders = lslogilablimsorderdetailRepository
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndOrderflagAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndOrderflagAndApprovelstatus(
+							1, lstproject, fromdate, todate,filetype,orderflag,3,
+                             1, objdir.getLsuserMaster(), fromdate, todate, 1,filetype,orderflag,3,
+                              2, objdir.getLsuserMaster(),fromdate, todate, 1,filetype,orderflag,3,
+                               3, objdir.getLsuserMaster(), fromdate, todate, 1,filetype,orderflag, 3,
+                               objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate,todate, 1,filetype,orderflag,3,
+                                objdir.getLsuserMaster(), fromdate, todate, 1,filetype,orderflag,3);
+        }
+		if (objdir.getSearchCriteria() != null
+				&& objdir.getSearchCriteria().getContentsearchtype() != null
+				&& objdir.getSearchCriteria().getContentsearch() != null) {
+
+			lstorders = GetmyordersonFilter(objdir, lstorders, orderflag);
+
+			lstorders.forEach(
+					objorderDetail -> objorderDetail.setLstworkflow(objdir.getLstworkflow()));
+			return lstorders;
+		} else {
+
+			lstorders.forEach(
+					objorderDetail -> objorderDetail.setLstworkflow(objdir.getLstworkflow()));
+			return lstorders;
+		}
 	}
 
 }

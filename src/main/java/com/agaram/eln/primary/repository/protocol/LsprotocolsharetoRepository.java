@@ -22,4 +22,8 @@ public interface LsprotocolsharetoRepository extends JpaRepository<Lsprotocolsha
 
 	Lsprotocolshareto findBysharetoprotocolcode(Long sharetoprotocolcode);
 
+
+	List<Lsprotocolshareto> findByShareprotocolcodeAndSharestatusOrderBySharetoprotocolcodeDesc(Long integer, int i);
+
+
 }

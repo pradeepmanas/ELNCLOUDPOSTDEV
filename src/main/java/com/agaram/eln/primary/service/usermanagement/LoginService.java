@@ -2185,40 +2185,40 @@ public class LoginService {
 	public Map<String, Object> getlicense(Map<String, Object> obj) {
 
 		Map<String, Object> rtnobj = new HashMap<>();
-		
-		  if(obj.get("licencetype") != null && obj.get("licencetype").equals("2")) {			
-			Long activeusercount =  LSactiveUserRepository.count();
+
+		if (obj.get("licencetype") != null && obj.get("licencetype").equals("2")) {
+			Long activeusercount = LSactiveUserRepository.count();
 			rtnobj.put("activeuser", activeusercount);
 
-	}else if(obj.get("licencetype") != null && obj.get("licencetype").equals("1")) {
-			Long usercount =lsuserMasterRepository.countByUserstatus("A");
+		} else if (obj.get("licencetype") != null && obj.get("licencetype").equals("1")) {
+			Long usercount = lsuserMasterRepository.countByUserretirestatusNot(1);
 			rtnobj.put("activeuser", usercount);
 
-	}else if ((Integer) obj.get("isMultitenant") == 1) {
+		} else if ((Integer) obj.get("isMultitenant") == 1) {
 			DataSourceConfig tenant = DataSourceConfigRepository.findByTenantid(obj.get("tenantdomain").toString());
 			rtnobj.put("Noofuser", tenant.getNoofusers());
-			LSSiteMaster sitemaster =new LSSiteMaster();
+			LSSiteMaster sitemaster = new LSSiteMaster();
 			sitemaster.setSitecode(Integer.parseInt((String) obj.get("lssitemaster")));
-			Long usercount =lsuserMasterRepository.countByLssitemasterAndUserstatus(sitemaster,"A");
+			Long usercount = lsuserMasterRepository.countByLssitemasterAndUserstatus(sitemaster, "A");
 			rtnobj.put("activeuser", usercount);
 		} else {
 			LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser",
 					"Active");
 			if (objPrefrence != null) {
-				Long activeusercount =  LSactiveUserRepository.count();
+				Long activeusercount = LSactiveUserRepository.count();
 				String dvalue = objPrefrence.getValueencrypted();
 				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
 				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
-				rtnobj.put("Noofuser",Integer.parseInt(sConcurrentUsers));
+				rtnobj.put("Noofuser", Integer.parseInt(sConcurrentUsers));
 				rtnobj.put("activeuser", activeusercount);
 			} else {
-				Long usercount =lsuserMasterRepository.countByUsercodeNotAndUserretirestatus(1,0);
+				Long usercount = lsuserMasterRepository.countByUsercodeNotAndUserretirestatus(1, 0);
 				rtnobj.put("activeuser", usercount);
-				rtnobj.put("Noofuser",3);
+				rtnobj.put("Noofuser", 3);
 			}
-		}			
+		}
 		return rtnobj;
-	
+
 	}
 	
 //	public void autoShedulerInactiveUserkill() {

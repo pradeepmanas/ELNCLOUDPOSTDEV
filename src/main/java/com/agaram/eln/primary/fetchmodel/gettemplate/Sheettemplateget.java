@@ -23,11 +23,12 @@ public class Sheettemplateget {
 	private String category;
 	private String lssheetworkflowname;
 	private String viewoptionstr;
+	private Integer retirestatus;
 //	private List<LSfileversion> lstfileversion;
 //	private LSfileversion lsfileversion;
 
 	public Sheettemplateget(Integer filecode, String filenameuser, Date createdate, LSuserMaster createby,
-			LSuserMaster modifiedby, Integer approved, Integer rejected,Integer versionno,String category,LSsheetworkflow lssheetworkflow,Integer viewoption
+			LSuserMaster modifiedby, Integer approved, Integer rejected,Integer retirestatus, Integer versionno,String category,LSsheetworkflow lssheetworkflow,Integer viewoption
 //			,LSfileversion lsfileversion
 			) {
 		
@@ -50,6 +51,7 @@ public class Sheettemplateget {
 		this.filenameuser = filenameuser;
 		this.approved = approved;
 		this.rejected = rejected;
+		this.retirestatus=retirestatus;
 		this.createby = createdUser;
 		this.createdate = createdate;
 		this.modifiedby = modifiedUser;
@@ -186,6 +188,14 @@ public class Sheettemplateget {
 
 	public void setFilenameuser(String filenameuser) {
 		this.filenameuser = filenameuser;
+	}
+
+	public Integer getRetirestatus() {
+		return retirestatus;
+	}
+
+	public void setRetirestatus(Integer retirestatus) {
+		this.retirestatus = retirestatus;
 	}
 
 //	public String getFilecontent() {

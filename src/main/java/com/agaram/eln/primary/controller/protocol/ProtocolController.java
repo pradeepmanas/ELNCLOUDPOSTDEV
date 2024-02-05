@@ -1169,7 +1169,7 @@ public class ProtocolController {
 		return  ProtocolMasterService.Outofstockinventorynotificationprotocol(lsprotocolordersampleupdates);
 	}
 	@RequestMapping(value = "/getsingleprotocol")
-	protected  List<LSprotocolmaster> getsingleprotocol(@RequestBody LSprotocolmaster objuser)throws Exception {
+	protected  Map<String, Object> getsingleprotocol(@RequestBody Map<String, Object> objuser)throws Exception {
 	
 		return  ProtocolMasterService.getsingleprotocol(objuser);
 	}
@@ -1253,5 +1253,23 @@ public class ProtocolController {
 	protected List<LSprotocolorderstephistory> updateprotocolordertransactions(@RequestBody LSprotocolorderstephistory[] objuser)throws Exception {
 	
 		return  ProtocolMasterService.updateprotocolordertransactions(objuser);
+	}
+	
+	@RequestMapping("/Getprotocolcancelledorders")
+	public Map<String,Object> Getprotocolcancelledorders(@RequestBody LSlogilabprotocoldetail  objorder)throws Exception
+	{
+		return ProtocolMasterService.Getprotocolcancelledorders(objorder);
+	}
+	
+	@RequestMapping(value = "/getprotocolcode")
+	protected List<Integer> getprotocolcode(@RequestBody LSprotocolmaster objuser)throws Exception {
+	
+		return  ProtocolMasterService.getprotocolcode(objuser);
+	}
+	@RequestMapping(value = "/RetireProtocolMaster")
+	public Map<String, Object> RetireProtocolMaster(@RequestBody Map<String, Object> argObj)throws Exception {
+
+		return ProtocolMasterService.RetireProtocolMaster(argObj);
+
 	}
 }

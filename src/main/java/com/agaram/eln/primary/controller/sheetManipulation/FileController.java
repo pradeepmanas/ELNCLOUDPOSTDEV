@@ -2,6 +2,7 @@ package com.agaram.eln.primary.controller.sheetManipulation;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,9 +19,11 @@ import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
+import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileversion;
+import com.agaram.eln.primary.model.sheetManipulation.LSsheetupdates;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.Lsfilesharedby;
@@ -290,5 +293,19 @@ public class FileController {
 	@PostMapping("/GetprotocoltemplateWorkflow")
 	public List<ElnprotocolTemplateworkflow> GetprotocoltemplateWorkflow(@RequestBody ElnprotocolTemplateworkflow objuser)throws Exception {
 		return fileService.GetprotocoltemplateWorkflow(objuser);
+	}
+	@PostMapping("/lsfileRetire")
+	public LSfile lsfileRetire(@RequestBody LSfile objfile)throws Exception {
+		return fileService.lsfileRetire(objfile);
+	}
+	@PostMapping("/updatetSheetTemplateTransaction")
+	public LSsheetupdates updatetSheetTemplateTransaction(@RequestBody LSsheetupdates objsheetupdates)throws Exception {
+		return fileService.updatetSheetTemplateTransaction(objsheetupdates);
+	}
+	@PostMapping("/GetSheetTransactionDetails")
+	public Map<String, Object> GetSheetTransactionDetails(@RequestBody LSfile objfile)throws Exception {
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		objMap = fileService.GetSheetTransactionDetails(objfile);
+		return objMap;
 	}
 }

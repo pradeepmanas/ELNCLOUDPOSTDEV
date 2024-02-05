@@ -112,7 +112,15 @@ public class LSfile {
 	
 	private Integer approved;
 	private Integer rejected;
+	private Integer retirestatus;
 	
+	public Integer getRetirestatus() {
+		return retirestatus;
+	}
+	public void setRetirestatus(Integer retirestatus) {
+		this.retirestatus = retirestatus;
+	}
+
 	private String category;
 	
 	@Transient
@@ -400,6 +408,7 @@ public class LSfile {
 	public void setIsfinalstep(Integer isfinalstep) {
 		this.isfinalstep = isfinalstep;
 	}
+	
 	
 	
 }

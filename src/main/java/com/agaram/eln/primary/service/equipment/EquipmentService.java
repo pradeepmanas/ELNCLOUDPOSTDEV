@@ -194,6 +194,9 @@ public class EquipmentService {
 			lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatusOrderByNequipmentcatcodeDesc(lstTypes.get(0),nsiteInteger, 1);
 			if(!lstCategories.isEmpty()) {
 				lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNullOrderByNequipmentcodeDesc(true,lstCategories.get(0),nsiteInteger, 1);
+				lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqcalibrationAndLastmaintainedNotNullOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false));
+				lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqmaintananceAndLastcallibratedNotNullOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false));
+				lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqmaintananceAndReqcalibrationOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false,false));
 			}	
 		}	
 		
@@ -269,7 +272,11 @@ public class EquipmentService {
 		List<Equipment> lstEquipments = new ArrayList<Equipment>();
 		
 		lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNull(true,objCategory,nsiteInteger, 1);
-				
+		
+		lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqcalibrationAndLastmaintainedNotNullOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false));
+		lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqmaintananceAndLastcallibratedNotNullOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false));
+		lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqmaintananceAndReqcalibrationOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false,false));
+		
 		objmap.put("lstEquipments", lstEquipments);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}

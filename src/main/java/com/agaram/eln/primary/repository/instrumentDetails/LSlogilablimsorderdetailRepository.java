@@ -2721,4 +2721,71 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	List<LSlogilablimsorderdetail> findByOrderflagAndLockeduserIsNotNullAndLockeduserInAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String string, List<Integer> usercode);
 
+	List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int j, LSuserMaster lsuserMaster,
+			Date fromdate2, Date todate2, int k, int l, LSuserMaster lsuserMaster2, Date fromdate3, Date todate3, int m,
+			int n, LSuserMaster lsuserMaster3, Date fromdate4, Date todate4, int o, LSuserMaster lsuserMaster4,
+			LSuserMaster lsuserMaster5, Date fromdate5, Date todate5, int p, LSuserMaster lsuserMaster6, Date fromdate6,
+			Date todate6, int q);
+
+	List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletype(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer filetype, int j,
+			LSuserMaster lsuserMaster, Date fromdate2, Date todate2, int k, Integer filetype2, int l,
+			LSuserMaster lsuserMaster2, Date fromdate3, Date todate3, int m, Integer filetype3, int n,
+			LSuserMaster lsuserMaster3, Date fromdate4, Date todate4, int o, Integer filetype4,
+			LSuserMaster lsuserMaster4, LSuserMaster lsuserMaster5, Date fromdate5, Date todate5, int p,
+			Integer filetype5, LSuserMaster lsuserMaster6, Date fromdate6, Date todate6, int q, Integer filetype6);
+
+	List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndOrderflagOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndOrderflag(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer filetype, String orderflag,
+			int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2, int k, Integer filetype2, String orderflag2,
+			int l, LSuserMaster lsuserMaster2, Date fromdate3, Date todate3, int m, Integer filetype3,
+			String orderflag3, int n, LSuserMaster lsuserMaster3, Date fromdate4, Date todate4, int o,
+			Integer filetype4, String orderflag4, LSuserMaster lsuserMaster4, LSuserMaster lsuserMaster5,
+			Date fromdate5, Date todate5, int p, Integer filetype5, String orderflag5, LSuserMaster lsuserMaster6,
+			Date fromdate6, Date todate6, int q, Integer filetype6, String orderflag6);
+
+	List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndApprovelstatus(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer filetype, int j, int k,
+			LSuserMaster lsuserMaster, Date fromdate2, Date todate2, int l, Integer filetype2, int m, int n,
+			LSuserMaster lsuserMaster2, Date fromdate3, Date todate3, int o, Integer filetype3, int p, int q,
+			LSuserMaster lsuserMaster3, Date fromdate4, Date todate4, int r, Integer filetype4, int s,
+			LSuserMaster lsuserMaster4, LSuserMaster lsuserMaster5, Date fromdate5, Date todate5, int t,
+			Integer filetype5, int u, LSuserMaster lsuserMaster6, Date fromdate6, Date todate6, int v,
+			Integer filetype6, int w);
+
+	List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndOrderflagOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndOrderflagOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndOrderflag(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String orderflag, int j,
+			LSuserMaster lsuserMaster, Date fromdate2, Date todate2, int k, String orderflag2, int l,
+			LSuserMaster lsuserMaster2, Date fromdate3, Date todate3, int m, String orderflag3, int n,
+			LSuserMaster lsuserMaster3, Date fromdate4, Date todate4, int o, String orderflag4,
+			LSuserMaster lsuserMaster4, LSuserMaster lsuserMaster5, Date fromdate5, Date todate5, int p,
+			String orderflag5, LSuserMaster lsuserMaster6, Date fromdate6, Date todate6, int q, String orderflag6);
+
+	List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndOrderflagAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndOrderflagAndApprovelstatus(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, String orderflag, int j, int k,
+			LSuserMaster lsuserMaster, Date fromdate2, Date todate2, int l, String orderflag2, int m, int n,
+			LSuserMaster lsuserMaster2, Date fromdate3, Date todate3, int o, String orderflag3, int p, int q,
+			LSuserMaster lsuserMaster3, Date fromdate4, Date todate4, int r, String orderflag4, int s,
+			LSuserMaster lsuserMaster4, LSuserMaster lsuserMaster5, Date fromdate5, Date todate5, int t,
+			String orderflag5, int u, LSuserMaster lsuserMaster6, Date fromdate6, Date todate6, int v,
+			String orderflag6, int w);
+
+	List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndApprovelstatus(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int j, int k,
+			LSuserMaster lsuserMaster, Date fromdate2, Date todate2, int l, int m, int n, LSuserMaster lsuserMaster2,
+			Date fromdate3, Date todate3, int o, int p, int q, LSuserMaster lsuserMaster3, Date fromdate4, Date todate4,
+			int r, int s, LSuserMaster lsuserMaster4, LSuserMaster lsuserMaster5, Date fromdate5, Date todate5, int t,
+			int u, LSuserMaster lsuserMaster6, Date fromdate6, Date todate6, int v, int w);
+
+	List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndOrderflagAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndOrderflagAndApprovelstatus(
+			int i, List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer filetype, String orderflag,
+			int j, int k, LSuserMaster lsuserMaster, Date fromdate2, Date todate2, int l, Integer filetype2,
+			String orderflag2, int m, int n, LSuserMaster lsuserMaster2, Date fromdate3, Date todate3, int o,
+			Integer filetype3, String orderflag3, int p, int q, LSuserMaster lsuserMaster3, Date fromdate4,
+			Date todate4, int r, Integer filetype4, String orderflag4, int s, LSuserMaster lsuserMaster4,
+			LSuserMaster lsuserMaster5, Date fromdate5, Date todate5, int t, Integer filetype5, String orderflag5,
+			int u, LSuserMaster lsuserMaster6, Date fromdate6, Date todate6, int v, Integer filetype6,
+			String orderflag6, int w);
+
 }

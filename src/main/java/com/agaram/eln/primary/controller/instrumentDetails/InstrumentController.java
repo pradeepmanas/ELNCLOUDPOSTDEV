@@ -1298,4 +1298,13 @@ public class InstrumentController {
 	{
 		return instrumentService.Getprotocolordersonmaterial(objorder);
 	}
+	
+	@RequestMapping("/Getcancelledordes")
+	public List<Logilaborders> Getcancelledordes(@RequestBody LSlogilablimsorderdetail objdir)throws Exception
+	{
+		return instrumentService.Getcancelledordes(objdir);
+	}
+	
+	
+	
 }

@@ -1469,5 +1469,92 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	List<Logilabprotocolorders>  findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagOrderByProtocolordercodeDesc(
 			List<LSprojectmaster> lstproject, Integer sitecode, String string);
 
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, int j, Date fromdate, Date todate, int k, Integer sitecode2, int l,
+			Integer usercode, Date fromdate2, Date todate2, int m, Integer sitecode3, int n, Date fromdate3,
+			Date todate3, List<Integer> userlist);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, int j, Date fromdate, Date todate, Integer protocoltype, int k, Integer sitecode2,
+			int l, Integer usercode, Date fromdate2, Date todate2, Integer protocoltype2, int m, Integer sitecode3,
+			int n, Date fromdate3, Date todate3, List<Integer> userlist, Integer protocoltype3);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject,
+			Integer protocoltype);
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, int j, Date fromdate, Date todate, String orderflag, int k, Integer sitecode2,
+			int l, Integer usercode, Date fromdate2, Date todate2, String orderflag2, int m, Integer sitecode3, int n,
+			Date fromdate3, Date todate3, List<Integer> userlist, String orderflag3);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrderflagOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, String orderflag);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndRejectedOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, int j, Date fromdate, Date todate, int k, int l, Integer sitecode2, int m,
+			Integer usercode, Date fromdate2, Date todate2, int n, int o, Integer sitecode3, int p, Date fromdate3,
+			Date todate3, List<Integer> userlist, int q);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndRejectedOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, int j);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndOrderflagOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, int j, Date fromdate, Date todate, Integer protocoltype, String orderflag, int k,
+			Integer sitecode2, int l, Integer usercode, Date fromdate2, Date todate2, Integer protocoltype2,
+			String orderflag2, int m, Integer sitecode3, int n, Date fromdate3, Date todate3, List<Integer> userlist,
+			Integer protocoltype3, String orderflag3);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeAndOrderflagOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, Integer protocoltype,
+			String orderflag);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, int j, Date fromdate, Date todate, Integer protocoltype, int k, int l,
+			Integer sitecode2, int m, Integer usercode, Date fromdate2, Date todate2, Integer protocoltype2, int n,
+			int o, Integer sitecode3, int p, Date fromdate3, Date todate3, List<Integer> userlist,
+			Integer protocoltype3, int q);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, Integer protocoltype,
+			int j);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, int j, Date fromdate, Date todate, String orderflag, int k, int l,
+			Integer sitecode2, int m, Integer usercode, Date fromdate2, Date todate2, String orderflag2, int n, int o,
+			Integer sitecode3, int p, Date fromdate3, Date todate3, List<Integer> userlist, String orderflag3, int q);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, String orderflag,
+			int j);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, int j, Date fromdate, Date todate, Integer protocoltype, String orderflag, int k,
+			int l, Integer sitecode2, int m, Integer usercode, Date fromdate2, Date todate2, Integer protocoltype2,
+			String orderflag2, int n, int o, Integer sitecode3, int p, Date fromdate3, Date todate3,
+			List<Integer> userlist, Integer protocoltype3, String orderflag3, int q);
+
+
+	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, Integer protocoltype,
+			String orderflag, int j);
+
 }
 

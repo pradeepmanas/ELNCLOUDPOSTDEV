@@ -1209,7 +1209,8 @@ public class DashBoardService {
 							lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
 							lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
 							lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
-							lsOrderDetail.getTestcode()))
+							lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus()
+				           ))
 					.collect(Collectors.toList()));
 			}
 			}else {
@@ -1224,7 +1225,8 @@ public class DashBoardService {
 								lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
 								lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
 								lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
-								lsOrderDetail.getTestcode()))
+								lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus()
+					            ))
 						.collect(Collectors.toList());
 			}
 	
@@ -2214,7 +2216,9 @@ public class DashBoardService {
 			            lsOrderDetail.getOrdercancell(),
 			            lsOrderDetail.getViewoption(),
 			            lsOrderDetail.getLsuserMaster(),
-			            lsOrderDetail.getTestcode()
+			            lsOrderDetail.getTestcode(),
+			            lsOrderDetail.getApprovelstatus()
+			           
 			        ))
 			        .collect(Collectors.toList());
 			}
@@ -3587,56 +3591,69 @@ public class DashBoardService {
 
 		if (objuser.getUsername().equals("Administrator")) {
 			mapSheets.put("rejectedTemplate",
-					lsfileRepository.countByCreatedateBetweenAndFilecodeGreaterThanAndRejectedOrderByFilecodeDesc(
-							fromdate, todate, 1, 1));
+					lsfileRepository.countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndRejectedOrderByFilecodeDesc(
+							fromdate, todate,0, 1, 1));
 			mapSheets.put("approvedTemplate",
 					lsfileRepository
-							.countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedAndRejectedNotOrderByFilecodeDesc(
-									fromdate, todate, 1, 1, 1));
+							.countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndApprovedAndRejectedNotOrderByFilecodeDesc(
+									fromdate, todate,0, 1, 1, 1));
 			mapSheets.put("createdTemplate", lsfileRepository
-					.countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
-							fromdate, todate, 1, 1));
+					.countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
+							fromdate, todate,0, 1, 1));
 			mapSheets.put("inprogressTemplate",
 					lsfileRepository
-							.countByCreatedateBetweenAndFilecodeGreaterThanAndApprovedAndRejectedOrderByFilecodeDesc(
-									fromdate, todate, 1, 0, 0));
+							.countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndApprovedAndRejectedOrderByFilecodeDesc(
+									fromdate, todate,0, 1, 0, 0));
+			mapSheets.put("retiredTemplate",
+					lsfileRepository
+							.countByCreatedateBetweenAndFilecodeGreaterThanAndRetirestatusOrderByFilecodeDesc(
+									fromdate, todate, 1, 1));
 		} else {
 			if (lstteamuser != null && lstteamuser.size() > 0) {
 				lstteamuser.add(objuser);
 				mapSheets.put("rejectedTemplate", lsfileRepository
-						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionAndRejectedOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate, 1, 1, 1, objuser, fromdate, todate, 2,
-								1, 1, lstteamuser, fromdate, todate, 3, 1));
+						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 1, 1, objuser, fromdate, todate,0, 2,
+								1, 1, lstteamuser, fromdate, todate,0, 3, 1));
 				mapSheets.put("approvedTemplate", lsfileRepository
-						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate, 1, 1, 1, 1, objuser, fromdate, todate,
-								2, 1, 1, 1, lstteamuser, fromdate, todate, 3, 1, 1));
+						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 1, 1, 1, objuser, fromdate, todate,0,
+								2, 1, 1, 1, lstteamuser, fromdate, todate,0, 3, 1, 1));
 				mapSheets.put("createdTemplate", lsfileRepository
-						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate, 1, 1, 1, objuser, fromdate, todate, 2,
-								1, 1, lstteamuser, fromdate, todate, 3, 1));
+						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 1, 1, objuser, fromdate, todate,0, 2,
+								1, 1, lstteamuser, fromdate, todate,0, 3, 1));
 				mapSheets.put("inprogressTemplate", lsfileRepository
-						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate, 1, 0, 1, 1, objuser, fromdate, todate,
-								2, 0, 1, 1, lstteamuser, fromdate, todate, 3, 0, 1));
+						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 0, 1, 1, objuser, fromdate, todate,0,
+								2, 0, 1, 1, lstteamuser, fromdate, todate,0, 3, 0, 1));
+				mapSheets.put("retiredTemplate", lsfileRepository
+						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndRetirestatusOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndRetirestatusOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate, 1, 1,
+								1, objuser, fromdate, todate,2, 1,
+								1, lstteamuser, fromdate, todate, 1,3));
 
 			} else {
 				mapSheets.put("rejectedTemplate", lsfileRepository
-						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndRejectedOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate, 1, 1, 1, objuser, fromdate, todate, 2,
+						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 1, 1, objuser, fromdate, todate,0, 2,
 								1));
 				mapSheets.put("approvedTemplate", lsfileRepository
-						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate, 1, 1, 1, 1, objuser, fromdate, todate,
+						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 1, 1, 1, objuser, fromdate, todate,0,
 								2, 1, 1));
 				mapSheets.put("inprogressTemplate", lsfileRepository
-						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate, 1, 0, 1, 1, objuser, fromdate, todate,
+						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 0, 1, 1, objuser, fromdate, todate,0,
 								2, 0, 1));
 				mapSheets.put("createdTemplate", lsfileRepository
-						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate, 1, 1, 1, objuser, fromdate, todate, 2,
+						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 1, 1, objuser, fromdate, todate,0, 2,
 								1));
+				mapSheets.put("retiredTemplate", lsfileRepository
+						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), fromdate, todate,1, 1,1, objuser, fromdate, todate,1, 2));
+			
 			}
 		}
 		return mapSheets;
@@ -3697,20 +3714,24 @@ public class DashBoardService {
 		List<LSuserMaster> lstteamuser = objuser.getObjuser().getTeamusers();
 		if (objuser.getUsername().equals("Administrator")) {
 			mapSheets.put("rejectedTemplate",
-					LSProtocolMasterRepository.countByStatusAndLssitemasterAndCreatedateBetweenAndRejected(1,
-							objuser.getLssitemaster().getSitecode(), fromdate, todate, 1));
+					LSProtocolMasterRepository.countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatusAndRejected(1,
+							objuser.getLssitemaster().getSitecode(), fromdate, todate,0, 1));
 			mapSheets.put("approvedTemplate",
 					LSProtocolMasterRepository
-							.countByStatusAndLssitemasterAndCreatedateBetweenAndRejectedNotAndApproved(1,
-									objuser.getLssitemaster().getSitecode(), fromdate, todate, 1, 1));
+							.countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatusAndRejectedNotAndApproved(1,
+									objuser.getLssitemaster().getSitecode(), fromdate, todate,0, 1, 1));
 			mapSheets.put("createdTemplate",
 					LSProtocolMasterRepository
-							.countByStatusAndLssitemasterAndCreatedateBetweenAndRejectedNotAndApprovedIsNull(1,
-									objuser.getLssitemaster().getSitecode(), fromdate, todate, 1));
+							.countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatusAndRejectedNotAndApprovedIsNull(1,
+									objuser.getLssitemaster().getSitecode(), fromdate, todate,0, 1));
 			mapSheets.put("inprogressTemplate",
 					LSProtocolMasterRepository
-							.countByStatusAndLssitemasterAndCreatedateBetweenAndRejectedNotAndApproved(1,
-									objuser.getLssitemaster().getSitecode(), fromdate, todate, 1, 0));
+							.countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatusAndRejectedNotAndApproved(1,
+									objuser.getLssitemaster().getSitecode(), fromdate, todate,0, 1, 0));
+			mapSheets.put("retiredTemplate",
+					LSProtocolMasterRepository
+							.countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatus(1,
+									objuser.getLssitemaster().getSitecode(), fromdate, todate,1));
 		} else {
 
 			List<Protocoltemplateget> lstprotocolmaster = new ArrayList<>();
@@ -3721,64 +3742,75 @@ public class DashBoardService {
 						.collect(Collectors.toList());
 
 				count = LSProtocolMasterRepository
-						.countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, 1,
-								objuser.getUsercode(), 1, fromdate, todate, 2, 1, usercodelist, 1, fromdate, todate, 3,
+						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0 ,1, 1,
+								objuser.getUsercode(), 1, fromdate, todate,0, 2, 1, usercodelist, 1, fromdate, todate,0, 3,
 								1);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("rejectedTemplate", count);
 
 				count = LSProtocolMasterRepository
-						.countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, 1,
-								objuser.getUsercode(), 1, fromdate, todate, 2, 1, usercodelist, 1, fromdate, todate, 3,
+						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, 1,
+								objuser.getUsercode(), 1, fromdate, todate,0, 2, 1, usercodelist, 1, fromdate, todate,0, 3,
 								1);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("approvedTemplate", count);
 
 				count = LSProtocolMasterRepository
-						.countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedIsNullOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, objuser.getUsercode(),
-								1, fromdate, todate, 2, usercodelist, 1, fromdate, todate, 3);
+						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedIsNullOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, objuser.getUsercode(),
+								1, fromdate, todate,0, 2, usercodelist, 1, fromdate, todate,0, 3);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("createdTemplate", count);
 
 				count = LSProtocolMasterRepository
-						.countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedIsNullOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, 0,
-								objuser.getUsercode(), 1, fromdate, todate, 2, 0, usercodelist, 1, fromdate, todate, 3,
+						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, 0,
+								objuser.getUsercode(), 1, fromdate, todate,0, 2, 0, usercodelist, 1, fromdate, todate,0, 3,
 								0);
 				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("inprogressTemplate", count);
+				count = LSProtocolMasterRepository
+						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,1, 1,
+								objuser.getUsercode(), 1, fromdate, todate,1, 2, usercodelist, 1, fromdate, todate,1, 3);
+				mapSheets.put("retiredTemplate", count);
 
 			} else {
 				count = LSProtocolMasterRepository
-						.countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, 1,
-								objuser.getUsercode(), 1, fromdate, todate, 2, 1);
+						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, 1,
+								objuser.getUsercode(), 1, fromdate, todate,0, 2, 1);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("rejectedTemplate", count);
 
 				count = LSProtocolMasterRepository
-						.countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, 1, 1,
-								objuser.getUsercode(), 1, fromdate, todate, 2, 1, 1);
+						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, 1, 1,
+								objuser.getUsercode(), 1, fromdate, todate,0, 2, 1, 1);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("approvedTemplate", count);
 
 				count = LSProtocolMasterRepository
-						.countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedIsNullAndRejectedNotOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, 1,
-								objuser.getUsercode(), 1, fromdate, todate, 2, 1);
+						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, 1,
+								objuser.getUsercode(), 1, fromdate, todate,0, 2, 1);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("createdTemplate", count);
 
 				count = LSProtocolMasterRepository
-						.countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndApprovedAndRejectedNotOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, 0, 1,
-								objuser.getUsercode(), 1, fromdate, todate, 2, 0, 1);
+						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, 0, 1,
+								objuser.getUsercode(), 1, fromdate, todate,0, 2, 0, 1);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("inprogressTemplate", count);
+				count = LSProtocolMasterRepository
+						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,1, 1, 1,
+								objuser.getUsercode(), 1, fromdate, todate,1, 2, 1);
+				mapSheets.put("retiredTemplate", count);
+				
 			}
 		}
 		return mapSheets;
@@ -4162,7 +4194,8 @@ public class DashBoardService {
 										lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
 										lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
 										lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
-										lsOrderDetail.getTestcode()))
+										lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus()
+							           ))
 								.collect(Collectors.toList());
 						rtnobj.put("orders", lstorders);
 
