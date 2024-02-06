@@ -217,6 +217,7 @@ public class RestService {
 		
 		String isAPICalling = env.getProperty("limsbaseservice.serviceapi");	
 		RestTemplate restTemplate = new RestTemplate();
+		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 		String result = "";
 		ObjectMapper mapper = new ObjectMapper();
 		boolean bool = false;
@@ -334,6 +335,8 @@ public class RestService {
 				LSlogilablimsorder lstLims = new LSlogilablimsorder();
 				
 				if(lslogilablimsordergroupRepository.findByLimsprimarycode(lstOrder.get(i).getLimsprimarycode()) == null) {
+					lstOrder.get(i).setBatchid(lstOrder.get(i).getBatchid());
+					lstOrder.get(i).setStestname(lstOrder.get(i).getStestname());
 					lslogilablimsordergroupRepository.save(lstOrder.get(i));
 				}
 				
@@ -345,7 +348,7 @@ public class RestService {
 					orderDetail.setOrderflag("N");
 					orderDetail.setTestcode(lstOrder.get(i).getNtestcode());
 					orderDetail.setTestname(lstOrder.get(i).getStestname());
-					orderDetail.setCreatedtimestamp(new Date());
+					orderDetail.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
 //					orderDetail.setNbatchcode(String.valueOf(lstOrder.get(i).getNbatchmastercode()));
 					orderDetail.setLsworkflow(lsworkflowRepository.findTopByOrderByWorkflowcodeAsc());
 					orderDetail.setFiletype(0);
@@ -363,7 +366,7 @@ public class RestService {
 					lstLims.setOrderflag(orderDetail.getOrderflag());
 					lstLims.setTestcode(Integer.toString(orderDetail.getTestcode()));
 //					lstLims.setNbatchcode(orderDetail.getNbatchcode());
-					lstLims.setCreatedtimestamp(new Date());
+					lstLims.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
 					lstLims.setCompletedtimestamp(null);
 					lstLimsOrders.add(lstLims);
 					lslogilablimsorderRepository.save(lstLimsOrders);
@@ -451,6 +454,7 @@ public class RestService {
 			
 			while(lstOrder.size()>i) {
 				if(lslogilablimsorderRepository.findByBatchid(lstOrder.get(i).getBatchid()) == null) {
+					lstOrder.get(i).setCreatedtimestamp(commonfunction.getCurrentUtcTime());
 					lstOrder.get(i).setCompletedtimestamp(null);
 					lslogilablimsorderRepository.save(lstOrder.get(i));
 				}

@@ -601,18 +601,25 @@ public class LSlogilablimsorderdetail {
 	}
 
 	public String getBatchid() {
+
 		String Batchid = "ELN" + this.batchcode;
 
-		if (this.filetype == 3) {
-			Batchid = "RESEARCH" + this.batchcode;
-		} else if (this.filetype == 4) {
-			Batchid = "EXCEL" + this.batchcode;
-		} else if (this.filetype == 5) {
-			Batchid = "VALIDATE" + this.batchcode;
-		} else if (this.filetype == 0) {
-			Batchid = batchid;
-		}
+		if (this.filetype != null) {
 
+			if (this.filetype == 3) {
+				Batchid = "RESEARCH" + this.batchcode;
+			} else if (this.filetype == 4) {
+				Batchid = "EXCEL" + this.batchcode;
+			} else if (this.filetype == 5) {
+				Batchid = "VALIDATE" + this.batchcode;
+			} else if (this.filetype == 0) {
+				Batchid = this.batchid;
+			}
+
+		} else {
+			Batchid = this.batchid;
+		}
+		
 		return Batchid;
 	}
 

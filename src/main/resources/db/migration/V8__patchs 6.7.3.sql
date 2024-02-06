@@ -346,3 +346,49 @@ update lsaudittrailconfigmaster set ordersequnce=100 where serialno=53;
 update lsaudittrailconfigmaster set ordersequnce=101 where serialno=30;
 update lsaudittrailconfigmaster set ordersequnce=102 where serialno=118;
 update lsaudittrailconfigmaster set ordersequnce=103 where serialno=141;
+
+update lsusergrouprights set modulename='IDS_MDL_ORDERS'  where screenname='IDS_SCN_UNLOCKORDERS'
+update lsusergrouprightsmaster set modulename='IDS_MDL_ORDERS'  where screenname='IDS_SCN_UNLOCKORDERS'
+
+update lsusergrouprightsmaster set sequenceorder='23' where sequenceorder='37' and orderno='78';
+update lsusergrouprightsmaster set sequenceorder='24' where sequenceorder='23' and orderno='10';
+update lsusergrouprightsmaster set sequenceorder='25' where sequenceorder='24' and orderno='69';
+update lsusergrouprightsmaster set sequenceorder='26' where sequenceorder='25' and orderno='70';
+update lsusergrouprightsmaster set sequenceorder='27' where sequenceorder='26' and orderno='88';
+update lsusergrouprightsmaster set sequenceorder='28' where sequenceorder='27' and orderno='124';
+update lsusergrouprightsmaster set sequenceorder='29' where sequenceorder='28' and orderno='51';
+update lsusergrouprightsmaster set sequenceorder='30' where sequenceorder='29' and orderno='50';
+update lsusergrouprightsmaster set sequenceorder='31' where sequenceorder='30' and orderno='84';
+update lsusergrouprightsmaster set sequenceorder='32' where sequenceorder='31' and orderno='83';
+update lsusergrouprightsmaster set sequenceorder='33' where sequenceorder='32' and orderno='57';
+update lsusergrouprightsmaster set sequenceorder='34' where sequenceorder='33' and orderno='125';
+update lsusergrouprightsmaster set sequenceorder='35' where sequenceorder='34' and orderno='71';
+update lsusergrouprightsmaster set sequenceorder='36' where sequenceorder='35' and orderno='72';
+update lsusergrouprightsmaster set sequenceorder='37' where sequenceorder='36' and orderno='13';
+
+
+update lsaudittrailconfigmaster set modulename='IDS_MDL_ORDERS' where modulename='IDS_MDL_MASTERS'
+update lsaudittrailconfigmaster set ordersequnce=24 where ordersequnce=42 and serialno=115;
+
+update lsaudittrailconfigmaster set ordersequnce=25 where ordersequnce=24 and serialno=113;
+update lsaudittrailconfigmaster set ordersequnce=26 where ordersequnce=25 and serialno=136;
+update lsaudittrailconfigmaster set ordersequnce=27 where ordersequnce=26 and serialno=3;
+update lsaudittrailconfigmaster set ordersequnce=28 where ordersequnce=27 and serialno=41;
+update lsaudittrailconfigmaster set ordersequnce=29 where ordersequnce=28 and serialno=114;
+update lsaudittrailconfigmaster set ordersequnce=30 where ordersequnce=29 and serialno=192;
+update lsaudittrailconfigmaster set ordersequnce=31 where ordersequnce=30 and serialno=108;
+update lsaudittrailconfigmaster set ordersequnce=32 where ordersequnce=31 and serialno=58;
+update lsaudittrailconfigmaster set ordersequnce=33 where ordersequnce=32 and serialno=137;
+update lsaudittrailconfigmaster set ordersequnce=34 where ordersequnce=33 and serialno=59;
+update lsaudittrailconfigmaster set ordersequnce=35 where ordersequnce=34 and serialno=61;
+update lsaudittrailconfigmaster set ordersequnce=36 where ordersequnce=35 and serialno=193;
+update lsaudittrailconfigmaster set ordersequnce=37 where ordersequnce=36 and serialno=60;
+update lsaudittrailconfigmaster set ordersequnce=38 where ordersequnce=37 and serialno=10;
+update lsaudittrailconfigmaster set ordersequnce=39 where ordersequnce=38 and serialno=9;
+update lsaudittrailconfigmaster set ordersequnce=40 where ordersequnce=39 and serialno=140;
+update lsaudittrailconfigmaster set ordersequnce=41 where ordersequnce=40 and serialno=8;
+update lsaudittrailconfigmaster set ordersequnce=42 where ordersequnce=41 and serialno=13;
+update lsaudittrailconfigmaster set ordersequnce=42 where ordersequnce=41 and serialno=52;
+update lsaudittrailconfigmaster set ordersequnce=24 where ordersequnce=42 and serialno=115;
+
+
