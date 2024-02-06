@@ -367,7 +367,7 @@ update lsusergrouprightsmaster set sequenceorder='36' where sequenceorder='35' a
 update lsusergrouprightsmaster set sequenceorder='37' where sequenceorder='36' and orderno='13';
 
 
-update lsaudittrailconfigmaster set modulename='IDS_MDL_ORDERS' where modulename='IDS_MDL_MASTERS'
+update lsaudittrailconfigmaster set modulename='IDS_MDL_ORDERS' where modulename='IDS_MDL_MASTERS';
 update lsaudittrailconfigmaster set ordersequnce=24 where ordersequnce=42 and serialno=115;
 
 update lsaudittrailconfigmaster set ordersequnce=25 where ordersequnce=24 and serialno=113;
