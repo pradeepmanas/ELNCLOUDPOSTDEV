@@ -347,8 +347,8 @@ update lsaudittrailconfigmaster set ordersequnce=101 where serialno=30;
 update lsaudittrailconfigmaster set ordersequnce=102 where serialno=118;
 update lsaudittrailconfigmaster set ordersequnce=103 where serialno=141;
 
-update lsusergrouprights set modulename='IDS_MDL_ORDERS'  where screenname='IDS_SCN_UNLOCKORDERS'
-update lsusergrouprightsmaster set modulename='IDS_MDL_ORDERS'  where screenname='IDS_SCN_UNLOCKORDERS'
+update lsusergrouprights set modulename='IDS_MDL_ORDERS'  where screenname='IDS_SCN_UNLOCKORDERS';
+update lsusergrouprightsmaster set modulename='IDS_MDL_ORDERS'  where screenname='IDS_SCN_UNLOCKORDERS';
 
 update lsusergrouprightsmaster set sequenceorder='23' where sequenceorder='37' and orderno='78';
 update lsusergrouprightsmaster set sequenceorder='24' where sequenceorder='23' and orderno='10';
