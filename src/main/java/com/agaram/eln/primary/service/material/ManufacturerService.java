@@ -93,7 +93,7 @@ public class ManufacturerService {
 	}
 
 	public Manufacturer getActiveManufacturerById(int nunitCode) {
-		final Manufacturer objUnit = manufacturerRepository.findByNmanufcode(nunitCode);
+		final Manufacturer objUnit = manufacturerRepository.findByNmanufcodeAndNstatus(nunitCode,1);
 		return objUnit;
 	}
 

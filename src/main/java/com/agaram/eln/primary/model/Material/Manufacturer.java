@@ -92,6 +92,16 @@ private transient String sDate;
 	
 	@Transient
 	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	private LScfttransaction objmanualaudit;
+	
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
 	public LScfttransaction getObjsilentaudit() {
 		return objsilentaudit;
 	}

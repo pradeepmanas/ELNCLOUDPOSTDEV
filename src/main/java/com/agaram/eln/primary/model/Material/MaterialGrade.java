@@ -46,8 +46,8 @@ public class MaterialGrade {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdate;
-	
-private transient String sDate;
+
+	private transient String sDate;
 	
 	public String getsDate() {
 		return sDate;
@@ -68,7 +68,6 @@ private transient String sDate;
 	public void setCreatedate(Date createdate) {
 		this.createdate = createdate;
 	}
-	
 	public String getSdescription() {
 		return sdescription;
 	}
@@ -95,6 +94,16 @@ private transient String sDate;
 	
 	@Transient
 	private LScfttransaction objsilentaudit;
+	
+	@Transient
+	private LScfttransaction objmanualaudit;
+	
+	public LScfttransaction getObjmanualaudit() {
+		return objmanualaudit;
+	}
+	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+		this.objmanualaudit = objmanualaudit;
+	}
 	public LScfttransaction getObjsilentaudit() {
 		return objsilentaudit;
 	}

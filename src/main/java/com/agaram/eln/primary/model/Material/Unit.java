@@ -39,7 +39,7 @@ public class Unit {
 	private String sdescription;
 	@Transient
 	private LScfttransaction objsilentaudit;
-
+	
 	@ManyToOne
 	private LSuserMaster createby;
 	

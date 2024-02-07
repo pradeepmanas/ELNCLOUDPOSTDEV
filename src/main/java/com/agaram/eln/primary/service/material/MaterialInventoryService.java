@@ -1575,7 +1575,6 @@ public class MaterialInventoryService {
 					try {
 						objSaveMaterialInventory.setCreateddate(commonfunction.getCurrentUtcTime());
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					objSaveMaterialInventory = materialInventoryRepository.save(objSaveMaterialInventory);
@@ -3085,7 +3084,7 @@ public class MaterialInventoryService {
 
 		boolean isReusable = objMaterial.getReusable() == null ? false : objMaterial.getReusable();
 		boolean isExpiry = objMaterial.getExpirytype() == 1;
-		Integer ntransStatus = objMaterial.getQuarantine() ? 37 : objMaterial.getOpenexpiry() ? 22 : 28;
+		Integer ntransStatus = objMaterial.getQuarantine() != null && objMaterial.getQuarantine() ? 37 :  objMaterial.getOpenexpiry() != null && objMaterial.getOpenexpiry() ? 22 : 28;
 
 		List<Integer> lstIntegerInventory = new ArrayList<Integer>();
 
