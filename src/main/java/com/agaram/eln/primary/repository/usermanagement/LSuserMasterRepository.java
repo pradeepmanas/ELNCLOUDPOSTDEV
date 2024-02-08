@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.repository.usermanagement;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -154,7 +155,18 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 
 	public Long countByUserretirestatusNot(int i);
 
+//	@Transactional
+//	@Modifying
+//	@Query(value = "SELECT distinct usercode as usercode, username as username FROM lsusermaster WHERE usercode IN (?1)", nativeQuery = true)
+//	List<Map<String, Object>> getUsernameAndUsercode(List<Integer> usercode);
+//
+	interface UserProjection {
+	    Integer getUsercode();
+	    String getUsername();
+	}
 
+	@Query(value = "SELECT DISTINCT usercode AS usercode, username AS username FROM lsusermaster WHERE usercode IN (?1)", nativeQuery = true)
+	List<UserProjection> getUsernameAndUsercode(List<Integer> usercode);
 
 
 }

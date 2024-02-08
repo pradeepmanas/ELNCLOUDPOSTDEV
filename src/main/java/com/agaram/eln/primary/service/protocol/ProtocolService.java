@@ -176,10 +176,12 @@ import com.agaram.eln.primary.repository.protocol.ProtocolvideosRepository;
 import com.agaram.eln.primary.repository.protocol.lSprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSMultisitesRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository.UserProjection;
 import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
@@ -426,6 +428,9 @@ public class ProtocolService {
 
 	@Autowired
 	private ElnprotocolTemplateworkflowRepository elnprotocolTemplateworkflowRepository;
+	
+	@Autowired
+	private LSMultisitesRepositery LSMultisitesRepositery;
 
 //	@Autowired
 //	private ElnprotocolTemplateworkflowgroupmapRepository elnprotocolTemplateworkflowgroupmapRepository;
@@ -8501,5 +8506,13 @@ public class ProtocolService {
 		mapObj.put("protocolmasterLst", LSprotocolmasterLst);
 		
 		return mapObj;
+	}
+
+	public List<UserProjection> getusercodeandusername(LSSiteMaster argObj) {
+		Map<String, Object> rtnobjects=new HashMap<>();
+	List<Integer> usercode=LSMultisitesRepositery.getusernameandusercode(argObj);
+	return lsusermasterRepository.getUsernameAndUsercode(usercode);
+//	rtnobjects.put("lsusermaster", usermaster);
+//	return rtnobjects;
 	}
 }

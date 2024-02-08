@@ -61,6 +61,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolTemplateworkflowRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowhistoryRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository.UserProjection;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 
 @RestController
@@ -1270,6 +1271,13 @@ public class ProtocolController {
 	public Map<String, Object> RetireProtocolMaster(@RequestBody Map<String, Object> argObj)throws Exception {
 
 		return ProtocolMasterService.RetireProtocolMaster(argObj);
+
+	}
+	
+	@RequestMapping(value = "/getusercodeandusername")
+	public List<UserProjection> getusercodeandusername(@RequestBody LSSiteMaster argObj)throws Exception {
+
+		return ProtocolMasterService.getusercodeandusername(argObj);
 
 	}
 }
