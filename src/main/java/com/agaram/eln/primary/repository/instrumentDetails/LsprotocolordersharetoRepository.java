@@ -74,6 +74,11 @@ public interface LsprotocolordersharetoRepository extends JpaRepository<Lsprotoc
 
 
 
+	List<Lsprotocolordershareto> findBySharetounifiedidAndSharedonBetweenAndSharestatus(String unifieduserid, Date fromdate, Date todate,
+			int i);
+
+
+
 	
 
 

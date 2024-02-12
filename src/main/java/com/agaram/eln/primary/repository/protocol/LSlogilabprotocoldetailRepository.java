@@ -1556,5 +1556,9 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, Integer protocoltype,
 			String orderflag, int j);
 
+
+	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndCreatedtimestampBetween(
+			String string, List<LSprojectmaster> lstproject, List<Elnprotocolworkflow> lstworkflow, Date fromdate, Date todate);
+
 }
 

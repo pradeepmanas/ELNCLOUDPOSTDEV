@@ -6734,12 +6734,14 @@ public class InstrumentService {
 		List<LSlogilabprotocoldetail> retuobj = new ArrayList<LSlogilabprotocoldetail>();
 
 		if (protocoltype == -1 && objdir.getOrderflag() == null) {
-			if (objdir.getLstuserMaster().length == 0) {
+			System.out.print(objdir);
+			if ((objdir.getLstuserMaster() == null)|| objdir.getLstuserMaster().length == 0) {
 				retuobj = LSlogilabprotocoldetailRepository
 						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getDirectorycode(), 2,
 								objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3,
 								objdir.getCreatedby(), fromdate, todate);
+
 			} else {
 				retuobj = LSlogilabprotocoldetailRepository
 						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(

@@ -30,6 +30,7 @@ import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
@@ -47,6 +48,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSSheetOrderStructure
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharedbyRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharetoRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharetoRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
@@ -118,6 +120,9 @@ public class DashBoardService {
 
 	@Autowired
 	private LsordersharetoRepository lsordersharetoRepository;
+	
+	@Autowired
+	private LsprotocolordersharetoRepository lsprotocolordersharetoRepository;
 
 	@Autowired
 	private LsrepositoriesRepository LsrepositoriesRepository;
@@ -157,7 +162,8 @@ public class DashBoardService {
 			long lsorder = lslogilablimsorderdetailRepository.countByFiletypeOrderByBatchcodeDesc(0);
 
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objupdateduser);
-			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objupdateduser.getLssitemaster());
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objupdateduser.getLssitemaster());
 			List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
 					.findBylsusergroup(objupdateduser.getLsusergroup());
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
@@ -261,7 +267,8 @@ public class DashBoardService {
 					todate);
 
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objupdateduser);
-			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objupdateduser.getLssitemaster());
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objupdateduser.getLssitemaster());
 			List<LSworkflowgroupmapping> lsworkflowgroupmapping = lsworkflowgroupmappingRepository
 					.findBylsusergroup(objupdateduser.getLsusergroup());
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
@@ -674,7 +681,7 @@ public class DashBoardService {
 			if (lstproject != null && lstproject.size() > 0) {
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 					if (lstproject != null && lstproject.size() > 0) {
-						
+
 						lstlimscompleted.addAndGet(lslogilablimsorderdetailRepository
 								.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 										"R", 0, fromdate, todate, "R", 1, objuser, fromdate, todate, 3, "R", 2, objuser,
@@ -715,20 +722,23 @@ public class DashBoardService {
 								.countByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNull(
 										3, lstproject, fromdate, todate));
 
-
 						lstCancelled.addAndGet(lslogilablimsorderdetailRepository
 								.countByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
 										1, lstproject, fromdate, todate, 1, objuser, fromdate, todate, 1, 2, objuser,
 										fromdate, todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser,
 										fromdate, todate, 1, objuser, fromdate, todate, 1));
 
-					
-						long countcompleted=lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforcount("R",3,fromdate, todate,objuser,objuser.getLssitemaster());
+						long countcompleted = lslogilablimsorderdetailRepository
+								.getLSlogilablimsorderdetaildashboardforcount("R", 3, fromdate, todate, objuser,
+										objuser.getLssitemaster());
 						lstlimscompleted.addAndGet(countcompleted);
-						lstpending.addAndGet(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforpendingcount("N",objuser.getLssitemaster(),fromdate, todate,objuser));
-						lstRejected.addAndGet(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforrejectcount(3, fromdate, todate, objuser,objuser.getLssitemaster()));
-						
-					
+						lstpending.addAndGet(
+								lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforpendingcount(
+										"N", objuser.getLssitemaster(), fromdate, todate, objuser));
+						lstRejected.addAndGet(
+								lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforrejectcount(3,
+										fromdate, todate, objuser, objuser.getLssitemaster()));
+
 					}
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 					if (lstproject != null && lstproject.size() > 0) {
@@ -775,14 +785,17 @@ public class DashBoardService {
 										testcode, 2, objuser, fromdate, todate, 1, testcode, 3, objuser, fromdate,
 										todate, 1, testcode, objuser, objuser, fromdate, todate, 1, testcode, objuser,
 										fromdate, todate, 1, testcode));
-						
-						
-						
-						lstlimscompleted.addAndGet(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforcompletecountfilter("R",3,fromdate, todate,objuser,objuser.getLssitemaster(),testcode));
-						lstpending.addAndGet(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforpendingcountfilter("N",objuser.getLssitemaster(),fromdate, todate,objuser,testcode));
-						lstRejected.addAndGet(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforrejectcountfilter(3, fromdate, todate, objuser,objuser.getLssitemaster(),testcode));
 
-					
+						lstlimscompleted.addAndGet(lslogilablimsorderdetailRepository
+								.getLSlogilablimsorderdetaildashboardforcompletecountfilter("R", 3, fromdate, todate,
+										objuser, objuser.getLssitemaster(), testcode));
+						lstpending.addAndGet(lslogilablimsorderdetailRepository
+								.getLSlogilablimsorderdetaildashboardforpendingcountfilter("N",
+										objuser.getLssitemaster(), fromdate, todate, objuser, testcode));
+						lstRejected.addAndGet(lslogilablimsorderdetailRepository
+								.getLSlogilablimsorderdetaildashboardforrejectcountfilter(3, fromdate, todate, objuser,
+										objuser.getLssitemaster(), testcode));
+
 					}
 				} else if (testcode == -1 && objuser.getLstprojectforfilter() != null) {
 
@@ -794,7 +807,6 @@ public class DashBoardService {
 									objuser.getLstprojectforfilter(), "R", objuser, fromdate, todate,
 									objuser.getLstprojectforfilter()));
 					;
-
 
 					lstpending.addAndGet(lslogilablimsorderdetailRepository
 							.countByOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmasterAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterOrderByBatchcodeDesc(
@@ -1152,8 +1164,6 @@ public class DashBoardService {
 		return mapOrders;
 	}
 
-	
-
 	private Map<String, Object> getallorders(List<LSprojectmaster> lstproject, Date fromdate, Date todate,
 			LSuserMaster objuser, Integer testcode, Pageable pageable, List<LSsamplemaster> lstsample1) {
 		List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
@@ -1171,66 +1181,67 @@ public class DashBoardService {
 //							todate, 3, "R", 1, objuser, fromdate, todate, "R", 2, objuser, fromdate, todate, "R", 3,
 //							objuser, fromdate, todate, "R", objuser, objuser, fromdate, todate, "R", objuser, fromdate,
 //							todate, pageable);
-			
-			if(env.getProperty("app.datasource.eln.url").toLowerCase().contains("postgres")) {
 
-			lstorders = lslogilablimsorderdetailRepository
-					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusOrOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
-							"R", lstproject, fromdate, todate, 3, "R", lstproject, fromdate, todate, "R", 0, fromdate, todate, "R", 1,
-							objuser, fromdate, todate, 3, "R", 2, objuser, fromdate, todate, 3, "R", 3, objuser,
-							fromdate, todate, 3, lstproject, "R", 1, objuser, fromdate, todate, "R", 2, objuser,
-							fromdate, todate, "R", 3, objuser, fromdate, todate, "R", objuser, objuser, fromdate,
-							todate, "R", objuser, fromdate, todate, 
-							"N", lstproject, fromdate, todate, "N", 0, fromdate,
-							todate, "N", 1, objuser, fromdate, todate, "N", 2, objuser, fromdate, todate, "N",
-							lstproject, 3, objuser, fromdate, todate, "N", 3, fromdate, todate, objuser.getUsernotify(),
-							"N", objuser, objuser, fromdate, todate, "N", objuser, fromdate, todate,
-							3, lstproject, fromdate, todate,  1, objuser, fromdate,
-							todate, 3, 2, objuser, fromdate, todate, 3, 3, objuser, fromdate, todate, 3, 3, objuser,
-							fromdate, todate, 3, objuser, objuser, fromdate, todate, 3, objuser, fromdate, todate, 3,
-							1, lstproject, fromdate, todate, 1, objuser, fromdate, todate, 1, 2, objuser, fromdate,
-							todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate, todate, 1, objuser,
-							fromdate, todate, 1,
-							pageable);
+			if (env.getProperty("app.datasource.eln.url").toLowerCase().contains("postgres")) {
 
-			
-			List<LSlogilablimsorderdetail> lstordersdem=lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardformaterial("R",3,fromdate, todate,objuser,objuser.getLssitemaster());
+				lstorders = lslogilablimsorderdetailRepository
+						.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusOrOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
+								"R", lstproject, fromdate, todate, 3, "R", lstproject, fromdate, todate, "R", 0,
+								fromdate, todate, "R", 1, objuser, fromdate, todate, 3, "R", 2, objuser, fromdate,
+								todate, 3, "R", 3, objuser, fromdate, todate, 3, lstproject, "R", 1, objuser, fromdate,
+								todate, "R", 2, objuser, fromdate, todate, "R", 3, objuser, fromdate, todate, "R",
+								objuser, objuser, fromdate, todate, "R", objuser, fromdate, todate, "N", lstproject,
+								fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser, fromdate, todate, "N", 2,
+								objuser, fromdate, todate, "N", lstproject, 3, objuser, fromdate, todate, "N", 3,
+								fromdate, todate, objuser.getUsernotify(), "N", objuser, objuser, fromdate, todate, "N",
+								objuser, fromdate, todate, 3, lstproject, fromdate, todate, 1, objuser, fromdate,
+								todate, 3, 2, objuser, fromdate, todate, 3, 3, objuser, fromdate, todate, 3, 3, objuser,
+								fromdate, todate, 3, objuser, objuser, fromdate, todate, 3, objuser, fromdate, todate,
+								3, 1, lstproject, fromdate, todate, 1, objuser, fromdate, todate, 1, 2, objuser,
+								fromdate, todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate,
+								todate, 1, objuser, fromdate, todate, 1, pageable);
+
+				List<LSlogilablimsorderdetail> lstordersdem = lslogilablimsorderdetailRepository
+						.getLSlogilablimsorderdetaildashboardformaterial("R", 3, fromdate, todate, objuser,
+								objuser.getLssitemaster());
 //			lstlimscompleted.addAndGet(countcompleted);
-			lstordersdem.addAll(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardformaterial("N",objuser.getLssitemaster(),fromdate, todate,objuser));
-			lstordersdem.addAll(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforrejectmaterial(3, fromdate, todate, objuser,objuser.getLssitemaster()));
-			if(!lstordersdem.isEmpty()) {
-			lstorders.addAll(lstordersdem.stream()
-					.map(lsOrderDetail -> new Logilabordermaster(lsOrderDetail.getBatchcode(),
-							lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(),
-							lsOrderDetail.getTestname(), lsOrderDetail.getLsfile(),
-							lsOrderDetail.getLssamplemaster(), lsOrderDetail.getLsprojectmaster(),
-							lsOrderDetail.getFiletype(), lsOrderDetail.getOrderflag(),
-							lsOrderDetail.getAssignedto(), lsOrderDetail.getCreatedtimestamp(),
-							lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
-							lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
-							lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
-							lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus()
-				           ))
-					.collect(Collectors.toList()));
-			}
-			}else {
-				List<LSlogilablimsorderdetail> lstordersdem =lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboard("R", 0, fromdate, todate,objuser,3,1,2,3,"N",objuser.getUsernotify(),1,objuser.getLssitemaster(),objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder());
+				lstordersdem.addAll(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardformaterial(
+						"N", objuser.getLssitemaster(), fromdate, todate, objuser));
+				lstordersdem.addAll(
+						lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforrejectmaterial(3,
+								fromdate, todate, objuser, objuser.getLssitemaster()));
+				if (!lstordersdem.isEmpty()) {
+					lstorders.addAll(lstordersdem.stream()
+							.map(lsOrderDetail -> new Logilabordermaster(lsOrderDetail.getBatchcode(),
+									lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(),
+									lsOrderDetail.getTestname(), lsOrderDetail.getLsfile(),
+									lsOrderDetail.getLssamplemaster(), lsOrderDetail.getLsprojectmaster(),
+									lsOrderDetail.getFiletype(), lsOrderDetail.getOrderflag(),
+									lsOrderDetail.getAssignedto(), lsOrderDetail.getCreatedtimestamp(),
+									lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
+									lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
+									lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
+									lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus()))
+							.collect(Collectors.toList()));
+				}
+			} else {
+				List<LSlogilablimsorderdetail> lstordersdem = lslogilablimsorderdetailRepository
+						.getLSlogilablimsorderdetaildashboard("R", 0, fromdate, todate, objuser, 3, 1, 2, 3, "N",
+								objuser.getUsernotify(), 1, objuser.getLssitemaster(),
+								objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder());
 				lstorders = lstordersdem.stream()
 						.map(lsOrderDetail -> new Logilabordermaster(lsOrderDetail.getBatchcode(),
-								lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(),
-								lsOrderDetail.getTestname(), lsOrderDetail.getLsfile(),
-								lsOrderDetail.getLssamplemaster(), lsOrderDetail.getLsprojectmaster(),
-								lsOrderDetail.getFiletype(), lsOrderDetail.getOrderflag(),
-								lsOrderDetail.getAssignedto(), lsOrderDetail.getCreatedtimestamp(),
-								lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
-								lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
-								lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
-								lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus()
-					            ))
+								lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(), lsOrderDetail.getTestname(),
+								lsOrderDetail.getLsfile(), lsOrderDetail.getLssamplemaster(),
+								lsOrderDetail.getLsprojectmaster(), lsOrderDetail.getFiletype(),
+								lsOrderDetail.getOrderflag(), lsOrderDetail.getAssignedto(),
+								lsOrderDetail.getCreatedtimestamp(), lsOrderDetail.getCompletedtimestamp(),
+								lsOrderDetail.getKeyword(), lsOrderDetail.getLstestmasterlocal(),
+								lsOrderDetail.getOrdercancell(), lsOrderDetail.getViewoption(),
+								lsOrderDetail.getLsuserMaster(), lsOrderDetail.getTestcode(),
+								lsOrderDetail.getApprovelstatus()))
 						.collect(Collectors.toList());
 			}
-	
-
 
 //			lstorders.addAll(lslogilablimsorderdetailRepository
 //					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
@@ -1602,8 +1613,6 @@ public class DashBoardService {
 		return mapOrders;
 	}
 
-
-
 	public Map<String, Object> Getdashboardorders(LSuserMaster objuser) throws ParseException {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
@@ -1634,7 +1643,7 @@ public class DashBoardService {
 		int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 
 		int totalSamples = lstsample1.size();
-		List<LSlogilablimsorderdetail> lstordersdem= new ArrayList<LSlogilablimsorderdetail>();
+		List<LSlogilablimsorderdetail> lstordersdem = new ArrayList<LSlogilablimsorderdetail>();
 		List<Logilabordermaster> lstorderobj = new ArrayList<Logilabordermaster>();
 		if (lstproject != null) {
 			objuser.getUsernotify().add(objuser);
@@ -1662,11 +1671,10 @@ public class DashBoardService {
 //					lstorders.addAll(lslogilablimsorderdetailRepository
 //							.findByOrderflagAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
 //									"R", 3, objuser, fromdate, todate, 3, lstproject, pageable));
-					
-					
-					 lstordersdem =lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforcompleted("R", 0, fromdate, todate,objuser,3,1,2,3,objuser.getLssitemaster(),objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder());
-					
 
+					lstordersdem = lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforcompleted(
+							"R", 0, fromdate, todate, objuser, 3, 1, 2, 3, objuser.getLssitemaster(),
+							objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder());
 
 //					count = lslogilablimsorderdetailRepository
 //							.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
@@ -1773,7 +1781,7 @@ public class DashBoardService {
 ////										"R", currentChunk, fromdate, todate, 3, objuser, pageable));
 //
 //					} else
-						if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
+					if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 						orderChunk.addAll(lslogilablimsorderdetailRepository
 								.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullAndTestcodeAndLsuserMasterNotOrderByBatchcodeDesc(
 										"R", currentChunk, fromdate, todate, 3, testcode, objuser, pageable));
@@ -1842,9 +1850,11 @@ public class DashBoardService {
 //					lstorders.addAll(lslogilablimsorderdetailRepository
 //							.findByOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 //									"N", lstproject, 3, objuser, fromdate, todate, pageable));
-					lstordersdem =lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforpending("N", 0, fromdate, todate,objuser,1,2,3,objuser.getUsernotify(),objuser.getLssitemaster(),objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder());
+					lstordersdem = lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforpending(
+							"N", 0, fromdate, todate, objuser, 1, 2, 3, objuser.getUsernotify(),
+							objuser.getLssitemaster(), objuser.getPagesize() * objuser.getPageperorder(),
+							objuser.getPageperorder());
 
-					
 //					count = count + lslogilablimsorderdetailRepository
 //							.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 //									"N", 0, fromdate, todate, "N", 1, objuser, fromdate, todate, "N", 2, objuser,
@@ -1858,11 +1868,10 @@ public class DashBoardService {
 //					count = count + lslogilablimsorderdetailRepository
 //							.countByOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNull(
 //									"N", lstproject, 3, objuser, fromdate, todate);
-					//kumu
+					// kumu
 //					count=	count+(lslogilablimsorderdetailRepository
 //							.countByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
 //									"N", currentChunk, fromdate, todate, objuser));
-
 
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 //					lstorders = lslogilablimsorderdetailRepository
@@ -2000,7 +2009,7 @@ public class DashBoardService {
 //
 //				count += countforsample;
 
-			} 
+			}
 //			else if (objuser.getObjuser().getOrderselectiontype() == 4) {
 //				lstorders = lslogilablimsorderdetailRepository
 //						.findByOrderflagAndLssamplefileInAndCreatedtimestampBetween("N", lssamplefile, fromdate, todate,
@@ -2032,7 +2041,6 @@ public class DashBoardService {
 //									lstproject, fromdate, todate);
 
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
-
 
 					lstorders.addAll(lslogilablimsorderdetailRepository
 							.findByLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullAndTestcodeOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusAndTestcodeOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusAndTestcode(
@@ -2196,31 +2204,20 @@ public class DashBoardService {
 				}
 
 			}
-			if(lstordersdem.size()>0) {
-			lstorders = lstordersdem.parallelStream()
-			        .map(lsOrderDetail -> new Logilabordermaster(
-			            lsOrderDetail.getBatchcode(),
-			            lsOrderDetail.getBatchid(),
-			            lsOrderDetail.getLsworkflow(),
-			            lsOrderDetail.getTestname(),
-			            lsOrderDetail.getLsfile(),
-			            lsOrderDetail.getLssamplemaster(),
-			            lsOrderDetail.getLsprojectmaster(),
-			            lsOrderDetail.getFiletype(),
-			            lsOrderDetail.getOrderflag(),
-			            lsOrderDetail.getAssignedto(),
-			            lsOrderDetail.getCreatedtimestamp(),
-			            lsOrderDetail.getCompletedtimestamp(),
-			            lsOrderDetail.getKeyword(),
-			            lsOrderDetail.getLstestmasterlocal(),
-			            lsOrderDetail.getOrdercancell(),
-			            lsOrderDetail.getViewoption(),
-			            lsOrderDetail.getLsuserMaster(),
-			            lsOrderDetail.getTestcode(),
-			            lsOrderDetail.getApprovelstatus()
-			           
-			        ))
-			        .collect(Collectors.toList());
+			if (lstordersdem.size() > 0) {
+				lstorders = lstordersdem.parallelStream()
+						.map(lsOrderDetail -> new Logilabordermaster(lsOrderDetail.getBatchcode(),
+								lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(), lsOrderDetail.getTestname(),
+								lsOrderDetail.getLsfile(), lsOrderDetail.getLssamplemaster(),
+								lsOrderDetail.getLsprojectmaster(), lsOrderDetail.getFiletype(),
+								lsOrderDetail.getOrderflag(), lsOrderDetail.getAssignedto(),
+								lsOrderDetail.getCreatedtimestamp(), lsOrderDetail.getCompletedtimestamp(),
+								lsOrderDetail.getKeyword(), lsOrderDetail.getLstestmasterlocal(),
+								lsOrderDetail.getOrdercancell(), lsOrderDetail.getViewoption(),
+								lsOrderDetail.getLsuserMaster(), lsOrderDetail.getTestcode(),
+								lsOrderDetail.getApprovelstatus()
+
+						)).collect(Collectors.toList());
 			}
 			if (env.getProperty("client") != null && env.getProperty("client").equals("HPCL")) {
 				Collections.sort(lstorders,
@@ -2410,7 +2407,6 @@ public class DashBoardService {
 //									directorycode, 3, fromdate, todate, objuser, "R", 3, testcode, directorycode, 3,
 //									fromdate, todate, objuser, "R", testcode);
 
-
 				}
 
 				lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
@@ -2522,7 +2518,6 @@ public class DashBoardService {
 //									directorycode, 2, fromdate, todate, objuser, "N", directorycode, 3, fromdate,
 //									todate, objuser, "N");
 
-
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 
 					lstorders = lslogilablimsorderdetailRepository
@@ -2626,7 +2621,6 @@ public class DashBoardService {
 
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 
-
 					lstorders = lslogilablimsorderdetailRepository
 							.findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusAndTestcodeOrderByBatchcodeDesc(
 									3, fromdate, todate, objuser, 3, testcode, directorycode, 1, fromdate, todate, 3,
@@ -2695,7 +2689,7 @@ public class DashBoardService {
 //				count += countforsample;
 			} else if (objuser.getObjuser().getOrderselectiontype() == 6) {
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
-				lstorders = lslogilablimsorderdetailRepository
+					lstorders = lslogilablimsorderdetailRepository
 							.findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrderByBatchcodeDesc(
 									3, fromdate, todate, objuser, 1, directorycode, 1, fromdate, todate, 1,
 									directorycode, 2, fromdate, todate, objuser, 1, directorycode, 3, fromdate, todate,
@@ -3524,7 +3518,8 @@ public class DashBoardService {
 		}
 
 //		lstorders.forEach(objorderDetail -> objorderDetail.setLstworkflow(objuser.getLstworkflow()));
-		lstorders.forEach(objorderDetail -> objorderDetail.setLstelnprotocolworkflow(objuser.getLstelnprotocolworkflow()));
+		lstorders.forEach(
+				objorderDetail -> objorderDetail.setLstelnprotocolworkflow(objuser.getLstelnprotocolworkflow()));
 		Collections.sort(lstorders, Collections.reverseOrder());
 		mapOrders.put("orderlst", lstorders);
 		mapOrders.put("count", count);
@@ -3590,70 +3585,67 @@ public class DashBoardService {
 		List<LSuserMaster> lstteamuser = objuser.getObjuser().getTeamusers();
 
 		if (objuser.getUsername().equals("Administrator")) {
-			mapSheets.put("rejectedTemplate",
-					lsfileRepository.countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndRejectedOrderByFilecodeDesc(
-							fromdate, todate,0, 1, 1));
-			mapSheets.put("approvedTemplate",
-					lsfileRepository
-							.countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndApprovedAndRejectedNotOrderByFilecodeDesc(
-									fromdate, todate,0, 1, 1, 1));
+			mapSheets.put("rejectedTemplate", lsfileRepository
+					.countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndRejectedOrderByFilecodeDesc(
+							fromdate, todate, 0, 1, 1));
+			mapSheets.put("approvedTemplate", lsfileRepository
+					.countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndApprovedAndRejectedNotOrderByFilecodeDesc(
+							fromdate, todate, 0, 1, 1, 1));
 			mapSheets.put("createdTemplate", lsfileRepository
 					.countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
-							fromdate, todate,0, 1, 1));
-			mapSheets.put("inprogressTemplate",
-					lsfileRepository
-							.countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndApprovedAndRejectedOrderByFilecodeDesc(
-									fromdate, todate,0, 1, 0, 0));
+							fromdate, todate, 0, 1, 1));
+			mapSheets.put("inprogressTemplate", lsfileRepository
+					.countByCreatedateBetweenAndRetirestatusAndFilecodeGreaterThanAndApprovedAndRejectedOrderByFilecodeDesc(
+							fromdate, todate, 0, 1, 0, 0));
 			mapSheets.put("retiredTemplate",
-					lsfileRepository
-							.countByCreatedateBetweenAndFilecodeGreaterThanAndRetirestatusOrderByFilecodeDesc(
-									fromdate, todate, 1, 1));
+					lsfileRepository.countByCreatedateBetweenAndFilecodeGreaterThanAndRetirestatusOrderByFilecodeDesc(
+							fromdate, todate, 1, 1));
 		} else {
 			if (lstteamuser != null && lstteamuser.size() > 0) {
 				lstteamuser.add(objuser);
 				mapSheets.put("rejectedTemplate", lsfileRepository
 						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 1, 1, objuser, fromdate, todate,0, 2,
-								1, 1, lstteamuser, fromdate, todate,0, 3, 1));
+								1, objuser.getLssitemaster(), fromdate, todate, 0, 1, 1, 1, objuser, fromdate, todate,
+								0, 2, 1, 1, lstteamuser, fromdate, todate, 0, 3, 1));
 				mapSheets.put("approvedTemplate", lsfileRepository
 						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 1, 1, 1, objuser, fromdate, todate,0,
-								2, 1, 1, 1, lstteamuser, fromdate, todate,0, 3, 1, 1));
+								1, objuser.getLssitemaster(), fromdate, todate, 0, 1, 1, 1, 1, objuser, fromdate,
+								todate, 0, 2, 1, 1, 1, lstteamuser, fromdate, todate, 0, 3, 1, 1));
 				mapSheets.put("createdTemplate", lsfileRepository
 						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 1, 1, objuser, fromdate, todate,0, 2,
-								1, 1, lstteamuser, fromdate, todate,0, 3, 1));
+								1, objuser.getLssitemaster(), fromdate, todate, 0, 1, 1, 1, objuser, fromdate, todate,
+								0, 2, 1, 1, lstteamuser, fromdate, todate, 0, 3, 1));
 				mapSheets.put("inprogressTemplate", lsfileRepository
 						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 0, 1, 1, objuser, fromdate, todate,0,
-								2, 0, 1, 1, lstteamuser, fromdate, todate,0, 3, 0, 1));
+								1, objuser.getLssitemaster(), fromdate, todate, 0, 1, 0, 1, 1, objuser, fromdate,
+								todate, 0, 2, 0, 1, 1, lstteamuser, fromdate, todate, 0, 3, 0, 1));
 				mapSheets.put("retiredTemplate", lsfileRepository
 						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndRetirestatusOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndRetirestatusOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate, 1, 1,
-								1, objuser, fromdate, todate,2, 1,
-								1, lstteamuser, fromdate, todate, 1,3));
+								1, objuser.getLssitemaster(), fromdate, todate, 1, 1, 1, objuser, fromdate, todate, 2,
+								1, 1, lstteamuser, fromdate, todate, 1, 3));
 
 			} else {
 				mapSheets.put("rejectedTemplate", lsfileRepository
 						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 1, 1, objuser, fromdate, todate,0, 2,
-								1));
+								1, objuser.getLssitemaster(), fromdate, todate, 0, 1, 1, 1, objuser, fromdate, todate,
+								0, 2, 1));
 				mapSheets.put("approvedTemplate", lsfileRepository
 						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 1, 1, 1, objuser, fromdate, todate,0,
-								2, 1, 1));
+								1, objuser.getLssitemaster(), fromdate, todate, 0, 1, 1, 1, 1, objuser, fromdate,
+								todate, 0, 2, 1, 1));
 				mapSheets.put("inprogressTemplate", lsfileRepository
 						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 0, 1, 1, objuser, fromdate, todate,0,
-								2, 0, 1));
+								1, objuser.getLssitemaster(), fromdate, todate, 0, 1, 0, 1, 1, objuser, fromdate,
+								todate, 0, 2, 0, 1));
 				mapSheets.put("createdTemplate", lsfileRepository
 						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate,0, 1, 1, 1, objuser, fromdate, todate,0, 2,
-								1));
+								1, objuser.getLssitemaster(), fromdate, todate, 0, 1, 1, 1, objuser, fromdate, todate,
+								0, 2, 1));
 				mapSheets.put("retiredTemplate", lsfileRepository
 						.countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndRetirestatusAndViewoptionOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), fromdate, todate,1, 1,1, objuser, fromdate, todate,1, 2));
-			
+								1, objuser.getLssitemaster(), fromdate, todate, 1, 1, 1, objuser, fromdate, todate, 1,
+								2));
+
 			}
 		}
 		return mapSheets;
@@ -3714,24 +3706,23 @@ public class DashBoardService {
 		List<LSuserMaster> lstteamuser = objuser.getObjuser().getTeamusers();
 		if (objuser.getUsername().equals("Administrator")) {
 			mapSheets.put("rejectedTemplate",
-					LSProtocolMasterRepository.countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatusAndRejected(1,
-							objuser.getLssitemaster().getSitecode(), fromdate, todate,0, 1));
+					LSProtocolMasterRepository
+							.countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatusAndRejected(1,
+									objuser.getLssitemaster().getSitecode(), fromdate, todate, 0, 1));
 			mapSheets.put("approvedTemplate",
 					LSProtocolMasterRepository
 							.countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatusAndRejectedNotAndApproved(1,
-									objuser.getLssitemaster().getSitecode(), fromdate, todate,0, 1, 1));
-			mapSheets.put("createdTemplate",
-					LSProtocolMasterRepository
-							.countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatusAndRejectedNotAndApprovedIsNull(1,
-									objuser.getLssitemaster().getSitecode(), fromdate, todate,0, 1));
+									objuser.getLssitemaster().getSitecode(), fromdate, todate, 0, 1, 1));
+			mapSheets.put("createdTemplate", LSProtocolMasterRepository
+					.countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatusAndRejectedNotAndApprovedIsNull(1,
+							objuser.getLssitemaster().getSitecode(), fromdate, todate, 0, 1));
 			mapSheets.put("inprogressTemplate",
 					LSProtocolMasterRepository
 							.countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatusAndRejectedNotAndApproved(1,
-									objuser.getLssitemaster().getSitecode(), fromdate, todate,0, 1, 0));
+									objuser.getLssitemaster().getSitecode(), fromdate, todate, 0, 1, 0));
 			mapSheets.put("retiredTemplate",
-					LSProtocolMasterRepository
-							.countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatus(1,
-									objuser.getLssitemaster().getSitecode(), fromdate, todate,1));
+					LSProtocolMasterRepository.countByStatusAndLssitemasterAndCreatedateBetweenAndRetirestatus(1,
+							objuser.getLssitemaster().getSitecode(), fromdate, todate, 1));
 		} else {
 
 			List<Protocoltemplateget> lstprotocolmaster = new ArrayList<>();
@@ -3743,74 +3734,76 @@ public class DashBoardService {
 
 				count = LSProtocolMasterRepository
 						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0 ,1, 1,
-								objuser.getUsercode(), 1, fromdate, todate,0, 2, 1, usercodelist, 1, fromdate, todate,0, 3,
-								1);
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 0, 1, 1,
+								objuser.getUsercode(), 1, fromdate, todate, 0, 2, 1, usercodelist, 1, fromdate, todate,
+								0, 3, 1);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("rejectedTemplate", count);
 
 				count = LSProtocolMasterRepository
 						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, 1,
-								objuser.getUsercode(), 1, fromdate, todate,0, 2, 1, usercodelist, 1, fromdate, todate,0, 3,
-								1);
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 0, 1, 1,
+								objuser.getUsercode(), 1, fromdate, todate, 0, 2, 1, usercodelist, 1, fromdate, todate,
+								0, 3, 1);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("approvedTemplate", count);
 
 				count = LSProtocolMasterRepository
 						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedIsNullOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, objuser.getUsercode(),
-								1, fromdate, todate,0, 2, usercodelist, 1, fromdate, todate,0, 3);
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 0, 1,
+								objuser.getUsercode(), 1, fromdate, todate, 0, 2, usercodelist, 1, fromdate, todate, 0,
+								3);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("createdTemplate", count);
 
 				count = LSProtocolMasterRepository
 						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedIsNullOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, 0,
-								objuser.getUsercode(), 1, fromdate, todate,0, 2, 0, usercodelist, 1, fromdate, todate,0, 3,
-								0);
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 0, 1, 0,
+								objuser.getUsercode(), 1, fromdate, todate, 0, 2, 0, usercodelist, 1, fromdate, todate,
+								0, 3, 0);
 				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("inprogressTemplate", count);
 				count = LSProtocolMasterRepository
 						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrCreatedbyInAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,1, 1,
-								objuser.getUsercode(), 1, fromdate, todate,1, 2, usercodelist, 1, fromdate, todate,1, 3);
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, 1,
+								objuser.getUsercode(), 1, fromdate, todate, 1, 2, usercodelist, 1, fromdate, todate, 1,
+								3);
 				mapSheets.put("retiredTemplate", count);
 
 			} else {
 				count = LSProtocolMasterRepository
 						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndRejectedOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, 1,
-								objuser.getUsercode(), 1, fromdate, todate,0, 2, 1);
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 0, 1, 1,
+								objuser.getUsercode(), 1, fromdate, todate, 0, 2, 1);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("rejectedTemplate", count);
 
 				count = LSProtocolMasterRepository
 						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, 1, 1,
-								objuser.getUsercode(), 1, fromdate, todate,0, 2, 1, 1);
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 0, 1, 1, 1,
+								objuser.getUsercode(), 1, fromdate, todate, 0, 2, 1, 1);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("approvedTemplate", count);
 
 				count = LSProtocolMasterRepository
 						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedIsNullAndRejectedNotOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, 1,
-								objuser.getUsercode(), 1, fromdate, todate,0, 2, 1);
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 0, 1, 1,
+								objuser.getUsercode(), 1, fromdate, todate, 0, 2, 1);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("createdTemplate", count);
 
 				count = LSProtocolMasterRepository
 						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionAndApprovedAndRejectedNotOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,0, 1, 0, 1,
-								objuser.getUsercode(), 1, fromdate, todate,0, 2, 0, 1);
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 0, 1, 0, 1,
+								objuser.getUsercode(), 1, fromdate, todate, 0, 2, 0, 1);
 //				lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
 				mapSheets.put("inprogressTemplate", count);
 				count = LSProtocolMasterRepository
 						.countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,1, 1, 1,
-								objuser.getUsercode(), 1, fromdate, todate,1, 2, 1);
+								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, 1, 1,
+								objuser.getUsercode(), 1, fromdate, todate, 1, 2, 1);
 				mapSheets.put("retiredTemplate", count);
-				
+
 			}
 		}
 		return mapSheets;
@@ -3827,7 +3820,8 @@ public class DashBoardService {
 			mapOrders.put("ParsedParameters", lstparsedparam);
 		} else {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objupdateduser);
-			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objupdateduser.getLssitemaster());
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objupdateduser.getLssitemaster());
 			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 
 			List<LSlogilablimsorderdetail> lstCompletedorder = lslogilablimsorderdetailRepository
@@ -3906,6 +3900,9 @@ public class DashBoardService {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		mapOrders.put("orders", lsordersharetoRepository.findBySharetounifiedidAndSharedonBetweenAndSharestatus(
 				objuser.getUnifieduserid(), fromdate, todate, 1));
+		
+		mapOrders.put("Protocolorders", lsprotocolordersharetoRepository.findBySharetounifiedidAndSharedonBetweenAndSharestatus(
+				objuser.getUnifieduserid(), fromdate, todate, 1));
 
 		return mapOrders;
 	}
@@ -3925,21 +3922,44 @@ public class DashBoardService {
 
 	public Map<String, Object> Getordersinuserworkflow(LSuserMaster objuser) {
 		List<LSprojectmaster> lstproject = objuser.getLstproject();
-		List<LSworkflow> lstworkflow = objuser.getLstworkflow();
 
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		List<LSworkflow> lstworkflow = objuser.getLstworkflow();
+		List<Elnprotocolworkflow> lstworkflow_protocol = objuser.getLstelnprotocolworkflow();
+			
+			if (lstproject != null && lstworkflow != null) {
+				List<Logilaborders> lstorders = lslogilablimsorderdetailRepository
+						.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween("N", lstproject,
+								lstworkflow, fromdate, todate);
 
-		if (lstproject != null && lstworkflow != null) {
-			List<Logilabordermaster> lstorders = lslogilablimsorderdetailRepository
-					.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween("N", lstproject,
-							lstworkflow, fromdate, todate);
-			lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
-			mapOrders.put("orders", lstorders);
-		} else {
-			mapOrders.put("orders", new ArrayList<Logilabordermaster>());
-		}
+				lstorders.addAll(lslogilablimsorderdetailRepository
+						.findByAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(objuser, fromdate, todate));
+				lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
+				mapOrders.put("orders", lstorders);
+			} else {
+				mapOrders.put("orders", new ArrayList<Logilabordermaster>());
+			}
+		
+		
+		
+			if (lstproject != null && objuser.getLstelnprotocolworkflow() != null) {
+			
+				List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository
+						.findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndCreatedtimestampBetween("N",
+								lstproject, lstworkflow_protocol, fromdate, todate);
+
+				lstorders.addAll( LSlogilabprotocoldetailRepository
+						.findBySitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+								objuser.getLssitemaster().getSitecode(), objuser,
+								fromdate, todate));
+				lstorders.forEach(objorderDetail -> objorderDetail.setLstelnprotocolworkflow(lstworkflow_protocol));
+				mapOrders.put("protocolorders", lstorders);
+			} else {
+				mapOrders.put("protocolorders", new ArrayList<Logilabprotocolorders>());
+			}
+		
 
 		return mapOrders;
 	}
@@ -4194,8 +4214,7 @@ public class DashBoardService {
 										lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
 										lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
 										lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
-										lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus()
-							           ))
+										lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus()))
 								.collect(Collectors.toList());
 						rtnobj.put("orders", lstorders);
 
