@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
+import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
@@ -340,5 +341,16 @@ public class ElnmaterialInventory {
 
 	public void setResultusedmaterial(List<ElnresultUsedMaterial> resultusedmaterial) {
 		this.resultusedmaterial = resultusedmaterial;
+	}
+	
+	@OneToMany
+	@JoinColumn(name="nmaterialinventorycode")
+	private  List<SelectedInventoryMapped> selectedinventorymapped;
+	
+	public List<SelectedInventoryMapped> getSelectedinventorymapped() {
+		return selectedinventorymapped;
+	}
+	public void setSelectedinventorymapped(List<SelectedInventoryMapped> selectedinventorymapped) {
+		this.selectedinventorymapped = selectedinventorymapped;
 	}
 }

@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 
@@ -46,6 +47,18 @@ public class LSprotocolmastertest {
 	@Transient
 	LSuserMaster LSuserMaster;
 	
+	@Transient
+	private Integer sitecode;
+	
+	
+	public Integer getSitecode() {
+		return sitecode;
+	}
+
+	public void setSitecode(Integer sitecode) {
+		this.sitecode = sitecode;
+	}
+
 	@Transient
 	LoggedUser objuser;
 	

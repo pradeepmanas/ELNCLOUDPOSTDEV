@@ -335,14 +335,14 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			List<LSprotocolmastertest> lsfiletest2, int l, Integer usercode, int m, int n,
 			List<LSprotocolmastertest> lsfiletest3, int o, List<Integer> lstteammap2, int p, int q);
 
-	@Transactional
-	@Modifying
+List<LSprotocolmaster> findByLssitemasterAndLstestInAndStatusAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrderByProtocolmastercodeDesc(
+			Integer sitecode, List<LSprotocolmastertest> lsfiletest, int i, int j, int k,
+			List<LSprotocolmastertest> lsfiletest2, int l, List<Integer> lstteammap, int m, int n,
+			List<LSprotocolmastertest> lsfiletest3, int o, Integer usercode, int p, int q,
+			List<LSprotocolmastertest> lsfiletest4, int r, List<Integer> lstteammap2, int s, int t);
+@Transactional@Modifying
 	@Query(value="select protocolmastercode from LSprotocolmaster where protocolmastername=?1",nativeQuery=true)
-	public List<Integer>  getprotocolcode(String protocolmastername);
-
-	List<LSprotocolmaster> findByStatusAndApprovedAndLssitemasterAndRetirestatus(int i, int j, Integer sitecode, int k);
-
-	List<LSprotocolmaster> findByLstestInAndStatusAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
+	public List<Integer>  getprotocolcode(String protocolmastername);List<LSprotocolmaster> findByStatusAndApprovedAndLssitemasterAndRetirestatus(int i, int j, Integer sitecode, int k);List<LSprotocolmaster> findByLstestInAndStatusAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
 			List<LSprotocolmastertest> lsfiletest, int i, int j, int k);
 
 	List<LSprotocolmaster> findByLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
@@ -409,5 +409,47 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 	long countByLssitemasterAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByProtocolmastercodeDesc(
 			Integer sitecode, int i, Date fromdate, Date todate, int j, int k, int l, Integer usercode, int m,
 			Date fromdate2, Date todate2, int n, int o, int p);
+	
 
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndLssitemasterOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndLssitemasterOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
+			Date todate2, int l, Integer sitecode2, List<Integer> usercodelist, int m, Date fromdate3, Date todate3,
+			int n, Integer sitecode3, Pageable pageable);
+
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndLssitemasterOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndLssitemasterOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
+			Date todate2, int l, Integer sitecode2, List<Integer> usercodelist, int m, Date fromdate3, Date todate3,
+			int n, Integer sitecode3);
+	
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndLssitemasterOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
+			Date todate2, int l, Integer sitecode2, Pageable pageable);
+
+	long countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndLssitemasterOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, Date fromdate, Date todate, int j, Integer usercode, int k, Date fromdate2,
+			Date todate2, int l, Integer sitecode2);
+	
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndProtocolmasternameLike(Integer sitecode, int i, String search_Key,
+			Pageable pageable);
+
+	long countByLssitemasterAndStatusAndProtocolmasternameLike(Integer sitecode, int i, String search_Key);
+
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrCreatedbyInAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, int j, String search_Key, Integer usercode, int k, int l, Integer sitecode2,
+			String search_Key2, List<Integer> usercodelist, int m, int n, Integer sitecode3, String search_Key3,
+			Pageable pageable);
+
+	long countByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrCreatedbyInAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, int j, String search_Key, Integer usercode, int k, int l, Integer sitecode2,
+			String search_Key2, List<Integer> usercodelist, int m, int n, Integer sitecode3, String search_Key3
+			);
+	
+	List<Protocoltemplateget> findByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, int j, String search_Key, Integer usercode, int k, int l, Integer sitecode2,
+			String search_Key2, Pageable pageable);
+
+	long countByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
+			Integer sitecode, int i, int j, String search_Key, Integer usercode, int k, int l, Integer sitecode2,
+			String search_Key2);
+	
 }

@@ -332,10 +332,15 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			int i, LSSiteMaster lssitemaster, int j, int k, Integer approvelstatus, int l,
 			List<LSuserMaster> lstteamuser, int m, int n, Integer approvelstatus2);
 
-	public List<LSfile> findByfilenameuserIgnoreCaseAndLssitemasterAndRetirestatus(String trim,
-			LSSiteMaster lssitemaster, int i);
+public List<Sheettemplateget> findByLssitemasterAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApproved(
+			LSSiteMaster lssitemaster, List<LSfiletest> lsfiletest, int i, int j, int k, List<LSuserMaster> lstteamuser,
+			List<LSfiletest> lsfiletest2, int l, int m, int n, LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest3,
+			int o, int p, int q, List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest4, int r, int s, int t);
 
-	public List<LSfile> findByFilecodeGreaterThanAndLssitemasterAndApprovedAndRetirestatusOrFilecodeGreaterThanAndRetirestatusAndVersionnoGreaterThanOrderByFilecodeDesc(
+	public List<Sheettemplateget> findByLssitemasterAndCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApproved(
+			LSSiteMaster lssitemaster, List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest, int i, int j, int k,
+			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest2, int l, int m, int n,
+			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int o, int p, int q);public List<LSfile> findByfilenameuserIgnoreCaseAndLssitemasterAndRetirestatus(String trim,LSSiteMaster lssitemaster, int i);public List<LSfile> findByFilecodeGreaterThanAndLssitemasterAndApprovedAndRetirestatusOrFilecodeGreaterThanAndRetirestatusAndVersionnoGreaterThanOrderByFilecodeDesc(
 			int i, LSSiteMaster lssitemaster, Integer approvelstatus, int j, int k, int l, int m);
 
 	public List<LSfile> findByFilecodeGreaterThanAndRetirestatusAndLssitemasterAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndRetirestatusAndCreatebyAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndRetirestatusAndCreatebyInAndViewoptionAndRejectedAndApprovedOrderByFilecodeDesc(
@@ -410,4 +415,26 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			int i, LSSiteMaster lssitemaster, Date fromdate, Date todate, int j, int k, int l, LSuserMaster objuser,
 			Date fromdate2, Date todate2, int m, int n);
 	
+	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, int j, String token, int k, LSuserMaster objuser, int l, String token2,
+			Pageable pageable);
+
+	public long countByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, int j, String token, int k, LSuserMaster objuser, int l, String token2);
+	
+	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, int j, String token, int k, LSuserMaster objuser, int l, String token2,
+			int m, List<LSuserMaster> lstteamuser, int n, String token3, Pageable pageable);
+
+	public long countByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, int j, String token, int k, LSuserMaster objuser, int l, String token2,
+			int m, List<LSuserMaster> lstteamuser, int n, String token3);
+	
+	public List<Sheettemplateget> findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, int j, String token, int k, LSuserMaster objuser, int l,
+			String search_Key, Pageable pageable);
+
+	public long countByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+			int i, LSSiteMaster lssitemaster, int j, String token, int k, LSuserMaster objuser, int l,
+			String search_Key);
 }

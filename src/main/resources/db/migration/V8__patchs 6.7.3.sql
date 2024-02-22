@@ -391,4 +391,7 @@ update lsaudittrailconfigmaster set ordersequnce=42 where ordersequnce=41 and se
 update lsaudittrailconfigmaster set ordersequnce=42 where ordersequnce=41 and serialno=52;
 update lsaudittrailconfigmaster set ordersequnce=24 where ordersequnce=42 and serialno=115;
 
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS sentforapprovel Boolean;
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS approvelaccept Boolean;
+
 

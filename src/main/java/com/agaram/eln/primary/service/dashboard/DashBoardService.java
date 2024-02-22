@@ -30,6 +30,7 @@ import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
@@ -48,6 +49,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSSheetOrderStructure
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharedbyRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharetoRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolOrderStructureRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharetoRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
@@ -120,7 +122,7 @@ public class DashBoardService {
 
 	@Autowired
 	private LsordersharetoRepository lsordersharetoRepository;
-	
+
 	@Autowired
 	private LsprotocolordersharetoRepository lsprotocolordersharetoRepository;
 
@@ -138,6 +140,9 @@ public class DashBoardService {
 
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private LsprotocolOrderStructureRepository lsprotocolorderStructurerepository;
 
 	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser) {
 
@@ -3671,24 +3676,26 @@ public class DashBoardService {
 				List<Integer> usercodelist = lstteamuser.stream().map(LSuserMaster::getUsercode)
 						.collect(Collectors.toList());
 				lstprotocolmaster = LSProtocolMasterRepository
-						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionOrderByProtocolmastercodeDesc(
+						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndLssitemasterOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndLssitemasterOrderByProtocolmastercodeDesc(
 								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, objuser.getUsercode(),
-								1, fromdate, todate, 2, usercodelist, 1, fromdate, todate, 3, pageable);
+								1, fromdate, todate, 2, objuser.getLssitemaster().getSitecode(), usercodelist, 1,
+								fromdate, todate, 3, objuser.getLssitemaster().getSitecode(), pageable);
 				count = LSProtocolMasterRepository
-						.countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionOrderByProtocolmastercodeDesc(
+						.countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndLssitemasterOrCreatedbyInAndStatusAndCreatedateBetweenAndViewoptionAndLssitemasterOrderByProtocolmastercodeDesc(
 								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, objuser.getUsercode(),
-								1, fromdate, todate, 2, usercodelist, 1, fromdate, todate, 3);
+								1, fromdate, todate, 2, objuser.getLssitemaster().getSitecode(), usercodelist, 1,
+								fromdate, todate, 3, objuser.getLssitemaster().getSitecode());
 
 			} else {
 				lstprotocolmaster = LSProtocolMasterRepository
-						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionOrderByProtocolmastercodeDesc(
+						.findByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndLssitemasterOrderByProtocolmastercodeDesc(
 								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, objuser.getUsercode(),
-								1, fromdate, todate, 2, pageable);
+								1, fromdate, todate, 2,objuser.getLssitemaster().getSitecode(), pageable);
 
 				count = LSProtocolMasterRepository
-						.countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionOrderByProtocolmastercodeDesc(
+						.countByLssitemasterAndStatusAndCreatedateBetweenAndViewoptionOrCreatedbyAndStatusAndCreatedateBetweenAndViewoptionAndLssitemasterOrderByProtocolmastercodeDesc(
 								objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1, objuser.getUsercode(),
-								1, fromdate, todate, 2);
+								1, fromdate, todate, 2,objuser.getLssitemaster().getSitecode());
 			}
 
 			lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
@@ -3900,9 +3907,10 @@ public class DashBoardService {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		mapOrders.put("orders", lsordersharetoRepository.findBySharetounifiedidAndSharedonBetweenAndSharestatus(
 				objuser.getUnifieduserid(), fromdate, todate, 1));
-		
-		mapOrders.put("Protocolorders", lsprotocolordersharetoRepository.findBySharetounifiedidAndSharedonBetweenAndSharestatus(
-				objuser.getUnifieduserid(), fromdate, todate, 1));
+
+		mapOrders.put("Protocolorders",
+				lsprotocolordersharetoRepository.findBySharetounifiedidAndSharedonBetweenAndSharestatus(
+						objuser.getUnifieduserid(), fromdate, todate, 1));
 
 		return mapOrders;
 	}
@@ -3928,38 +3936,34 @@ public class DashBoardService {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		List<LSworkflow> lstworkflow = objuser.getLstworkflow();
 		List<Elnprotocolworkflow> lstworkflow_protocol = objuser.getLstelnprotocolworkflow();
-			
-			if (lstproject != null && lstworkflow != null) {
-				List<Logilaborders> lstorders = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween("N", lstproject,
-								lstworkflow, fromdate, todate);
 
-				lstorders.addAll(lslogilablimsorderdetailRepository
-						.findByAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(objuser, fromdate, todate));
-				lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
-				mapOrders.put("orders", lstorders);
-			} else {
-				mapOrders.put("orders", new ArrayList<Logilabordermaster>());
-			}
-		
-		
-		
-			if (lstproject != null && objuser.getLstelnprotocolworkflow() != null) {
-			
-				List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository
-						.findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndCreatedtimestampBetween("N",
-								lstproject, lstworkflow_protocol, fromdate, todate);
+		if (lstproject != null && lstworkflow != null) {
+			List<Logilaborders> lstorders = lslogilablimsorderdetailRepository
+					.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween("N", lstproject,
+							lstworkflow, fromdate, todate);
 
-				lstorders.addAll( LSlogilabprotocoldetailRepository
-						.findBySitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
-								objuser.getLssitemaster().getSitecode(), objuser,
-								fromdate, todate));
-				lstorders.forEach(objorderDetail -> objorderDetail.setLstelnprotocolworkflow(lstworkflow_protocol));
-				mapOrders.put("protocolorders", lstorders);
-			} else {
-				mapOrders.put("protocolorders", new ArrayList<Logilabprotocolorders>());
-			}
-		
+			lstorders.addAll(lslogilablimsorderdetailRepository
+					.findByAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(objuser, fromdate, todate));
+			lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
+			mapOrders.put("orders", lstorders);
+		} else {
+			mapOrders.put("orders", new ArrayList<Logilabordermaster>());
+		}
+
+		if (lstproject != null && objuser.getLstelnprotocolworkflow() != null) {
+
+			List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository
+					.findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndCreatedtimestampBetween("N",
+							lstproject, lstworkflow_protocol, fromdate, todate);
+
+			lstorders.addAll(LSlogilabprotocoldetailRepository
+					.findBySitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+							objuser.getLssitemaster().getSitecode(), objuser, fromdate, todate));
+			lstorders.forEach(objorderDetail -> objorderDetail.setLstelnprotocolworkflow(lstworkflow_protocol));
+			mapOrders.put("protocolorders", lstorders);
+		} else {
+			mapOrders.put("protocolorders", new ArrayList<Logilabprotocolorders>());
+		}
 
 		return mapOrders;
 	}
@@ -4511,5 +4515,148 @@ public class DashBoardService {
 		}
 		rtnobj.put("count", count);
 		return rtnobj;
+	}
+
+	public Map<String, Object> Getglobalsearchforsheettemplate(LSuserMaster objuser) {
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		Map<String, Object> mapSheets = new HashMap<String, Object>();
+		List<LSuserMaster> lstteamuser = objuser.getObjuser().getTeamusers();
+		List<Sheettemplateget> lstfile = new ArrayList<>();
+		Pageable pageable = new PageRequest(objuser.getPagesize(), objuser.getPageperorder());
+		long count = 0;
+		String Search_Key = "%" + objuser.getToken() + "%"; // search key porpose kumu
+		if (objuser.getUsername().equals("Administrator")) {
+
+			lstfile = lsfileRepository
+					.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+							1, objuser.getLssitemaster(), 1, Search_Key, 1, objuser, 2, Search_Key, pageable);
+
+			count = lsfileRepository
+					.countByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+							1, objuser.getLssitemaster(), 1, Search_Key, 1, objuser, 2, Search_Key);
+			lstfile.forEach(
+					objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
+		} else {
+
+			if (lstteamuser != null && lstteamuser.size() > 0) {
+				lstteamuser.add(objuser);
+				lstfile = lsfileRepository
+						.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), 1, Search_Key, 1, objuser, 2, Search_Key, 1, lstteamuser,
+								3, Search_Key, pageable);
+
+				count = lsfileRepository
+						.countByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), 1, Search_Key, 1, objuser, 2, Search_Key, 1, lstteamuser,
+								3, Search_Key);
+
+			} else {
+
+				lstfile = lsfileRepository
+						.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), 1, objuser.getToken(), 1, objuser, 2, Search_Key,
+								pageable);
+
+				count = lsfileRepository
+						.countByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+								1, objuser.getLssitemaster(), 1, objuser.getToken(), 1, objuser, 2, Search_Key);
+			}
+			lstfile.forEach(
+					objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
+
+		}
+		mapSheets.put("Sheets", lstfile);
+		mapSheets.put("count", count);
+		return mapSheets;
+	}
+
+	public Map<String, Object> Getglobalsearchforprotocoltemplate(LSuserMaster objuser) {
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		Map<String, Object> mapSheets = new HashMap<String, Object>();
+		List<LSuserMaster> lstteamuser = objuser.getObjuser().getTeamusers();
+		Pageable pageable = new PageRequest(objuser.getPagesize(), objuser.getPageperorder());
+		String Search_Key = "%" + objuser.getToken() + "%"; // search key porpose kumu
+		long count = 0;
+		if (objuser.getUsername().equals("Administrator")) {
+			mapSheets.put("Protocol", LSProtocolMasterRepository.findByLssitemasterAndStatusAndProtocolmasternameLike(
+					objuser.getLssitemaster().getSitecode(), 1, Search_Key, pageable));
+			mapSheets.put("count", LSProtocolMasterRepository.countByLssitemasterAndStatusAndProtocolmasternameLike(
+					objuser.getLssitemaster().getSitecode(), 1, Search_Key));
+		} else {
+
+			List<Protocoltemplateget> lstprotocolmaster = new ArrayList<>();
+			if (lstteamuser != null && lstteamuser.size() > 0) {
+				lstteamuser.add(objuser);
+				List<Integer> usercodelist = lstteamuser.stream().map(LSuserMaster::getUsercode)
+						.collect(Collectors.toList());
+				lstprotocolmaster = LSProtocolMasterRepository
+						.findByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrCreatedbyInAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, 1, Search_Key, objuser.getUsercode(), 1, 2,
+								objuser.getLssitemaster().getSitecode(), Search_Key, usercodelist, 1, 3,
+								objuser.getLssitemaster().getSitecode(), Search_Key, pageable);
+				count = LSProtocolMasterRepository
+						.countByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrCreatedbyInAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1, 1, Search_Key, objuser.getUsercode(), 1, 2,
+								objuser.getLssitemaster().getSitecode(), Search_Key, usercodelist, 1, 3,
+								objuser.getLssitemaster().getSitecode(), Search_Key);
+
+			} else {
+				lstprotocolmaster = LSProtocolMasterRepository
+						.findByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1,1,Search_Key, objuser.getUsercode(),
+								1,2,objuser.getLssitemaster().getSitecode(),Search_Key, pageable);
+
+				count = LSProtocolMasterRepository
+						.countByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
+								objuser.getLssitemaster().getSitecode(), 1,1,Search_Key, objuser.getUsercode(),
+								1,2,objuser.getLssitemaster().getSitecode(),Search_Key);
+			}
+
+			lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
+			mapSheets.put("count", count);
+			mapSheets.put("Protocol", lstprotocolmaster);
+		}
+
+		return mapSheets;
+	}
+
+	public Map<String, Object> Getglobalsearchfolder(LSuserMaster objusermaster) {
+		Map<String, Object> mapfolders = new HashMap<String, Object>();
+		String Search_Key = "%" + objusermaster.getToken() + "%"; // search key porpose kumu
+		if(objusermaster.getResponse().getInformation().equals("Protocol")) {
+			List<Lsprotocolorderstructure> lstdir = new ArrayList<Lsprotocolorderstructure>();
+//			AndDirectorynameLike
+			if (objusermaster.getUsernotify() == null) {
+				lstdir = lsprotocolorderStructurerepository
+						.findBySitemasterAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster, 3,Search_Key);
+			} else {
+				lstdir = lsprotocolorderStructurerepository
+						.findBySitemasterAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster.getLssitemaster(), 3, objusermaster.getUsernotify(),Search_Key);
+			}
+			
+			mapfolders.put("Folders", lstdir);
+		}else if(objusermaster.getResponse().getInformation().equals("Sheet")) {
+			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
+			if (objusermaster.getUsernotify() == null) {
+				lstdir = lsSheetOrderStructureRepository
+						.findBySitemasterAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster, 3,Search_Key);
+			} else {
+				lstdir = lsSheetOrderStructureRepository
+						.findBySitemasterAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster.getLssitemaster(), 3, objusermaster.getUsernotify(),Search_Key);
+			}
+			mapfolders.put("Folders", lstdir);
+		}
+
+		return mapfolders;
 	}
 }

@@ -114,7 +114,7 @@ public class CsvView extends AbstractCsvView {
 	       				 {
 	       					if(!dataEntry.getKey().equalsIgnoreCase("select")) {
 	       						if(!(dataEntry.getValue() instanceof Boolean)) {
-	         					objList.add((String)dataEntry.getValue());
+	         					objList.add((String)dataEntry.getValue().toString());
 	       						}
 	       					 }
 	       				 }

@@ -258,17 +258,17 @@ public class MaterialInventoryService {
 		Map<String, Object> resObj = new ObjectMapper().readValue(f.getJsonuidata(), Map.class);
 //		Double totalQuantity = Double.parseDouble(commonfunction.getInventoryValuesFromJsonString(f.getJsondata(), "Received Quantity").get("rtnObj").toString());
 
-		resObj.put("selectedSampleStorage",
-				f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
-						? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-								.getSamplestoragelocationname()
-						: "");
-		resObj.put("selectedSampleStoragePath",
-				f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
-						? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
-								.getSamplestoragelocationname() + "->"
-								+ f.getSelectedinventorymapped().get(0).getStoragepath()
-						: "");
+//		resObj.put("selectedSampleStorage",
+//				f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
+//						? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
+//								.getSamplestoragelocationname()
+//						: "");
+//		resObj.put("selectedSampleStoragePath",
+//				f.getSelectedinventorymapped() != null && !f.getSelectedinventorymapped().isEmpty()
+//						? f.getSelectedinventorymapped().get(0).getSamplestoragelocationkey()
+//								.getSamplestoragelocationname() + "->"
+//								+ f.getSelectedinventorymapped().get(0).getStoragepath()
+//						: "");
 
 		List<Double> nqtyreceivedlst = (f.getMaterialInventoryTransactions() != null
 				&& !f.getMaterialInventoryTransactions().isEmpty())

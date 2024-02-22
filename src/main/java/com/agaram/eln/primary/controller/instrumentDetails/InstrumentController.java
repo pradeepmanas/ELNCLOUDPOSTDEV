@@ -1305,6 +1305,15 @@ public class InstrumentController {
 		return instrumentService.Getcancelledordes(objdir);
 	}
 	
-	
+	@RequestMapping("/sendapprovel")
+	public List<LSlogilablimsorderdetail> sendapprovel(@RequestBody LSlogilablimsorderdetail objdir)throws Exception
+	{
+		return instrumentService.sendapprovel(objdir);
+	}
+	@RequestMapping("/acceptapprovel")
+	public List<LSlogilablimsorderdetail> acceptapprovel(@RequestBody LSlogilablimsorderdetail objdir)throws Exception
+	{
+		return instrumentService.acceptapprovel(objdir);
+	}
 	
 }

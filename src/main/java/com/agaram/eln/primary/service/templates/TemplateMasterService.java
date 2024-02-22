@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class TemplateMasterService {
 	@Autowired
 	private Environment env;
 	
-	static final Logger logger = Logger.getLogger(TemplateMasterService.class.getName());
+//	static final Logger logger = Logger.getLogger(TemplateMasterService.class.getName());
 	
 	ObjectMapper mapper = new ObjectMapper();
 	
@@ -55,7 +55,7 @@ public class TemplateMasterService {
 			
 			Map<String, Object> mapTemplateObj = mapper.readValue(getTemplate,new TypeReference<Map<String, Object>>() {});
 			
-			logger.info("Template Objeect : "+mapTemplateObj);
+//			logger.info("Template Objeect : "+mapTemplateObj);
 			if(mapTemplateObj.containsKey("MappedTemplate")) {
 				
 				if(mapTemplateObj.get("MappedTemplate") != null) {
@@ -65,7 +65,7 @@ public class TemplateMasterService {
 					
 					int i = 0;
 					while(mappedTemplateObj.size()>i) {
-						logger.info("keyset Objeect : "+mappedTemplateObj.keySet().toArray()[i]);
+//						logger.info("keyset Objeect : "+mappedTemplateObj.keySet().toArray()[i]);
 						
 						LsMappedTemplate getTemp = new LsMappedTemplate();
 						List<LsMappedTags> lstags = new ArrayList<LsMappedTags>();
@@ -134,7 +134,7 @@ public class TemplateMasterService {
 					
 					int i = 0;
 					while(unMappedTemplateObj.size()>i) {
-						logger.info("keyset Objeect : "+unMappedTemplateObj.keySet().toArray()[i]);
+//						logger.info("keyset Objeect : "+unMappedTemplateObj.keySet().toArray()[i]);
 						
 						LsUnmappedTemplate getTemp = new LsUnmappedTemplate();
 						List<LsUnmappedTags> lstags = new ArrayList<LsUnmappedTags>();
@@ -199,7 +199,7 @@ public class TemplateMasterService {
 			return res;
 		}
 		catch(Exception e) {
-			logger.error("Error SDMSservice : "+e.getMessage());
+//			logger.error("Error SDMSservice : "+e.getMessage());
 			res.setInformation("failure");
 			res.setStatus(false);
 			return res;
@@ -213,7 +213,7 @@ public class TemplateMasterService {
 			
 			final String url = env.getProperty("sdms.template.service.url")+Service;
 			
-			logger.info("Template service Url : "+url);
+//			logger.info("Template service Url : "+url);
 
 		    RestTemplate restTemplate = new RestTemplate();
 		    
@@ -222,7 +222,7 @@ public class TemplateMasterService {
 		    return result;	
 		}
 		catch(Exception e) {
-			logger.error("Error SDMSservice : "+e.getMessage());
+//			logger.error("Error SDMSservice : "+e.getMessage());
 		}
 		return result;
 	}

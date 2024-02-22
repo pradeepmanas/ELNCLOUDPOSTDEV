@@ -72,6 +72,14 @@ public class DashBoardController {
 			return dashBoardService.Getdashboardprotocoltemplate(objuser);
 		}
 	}
+	@PostMapping("/Getglobalsearchfortemplate")
+	public Map<String, Object> Getglobalsearchfortemplate(@RequestBody LSuserMaster objuser)throws Exception {
+		if (objuser.getObjuser().getTemplatefor() == 1) {
+			return dashBoardService.Getglobalsearchforsheettemplate(objuser);
+		} else {
+			return dashBoardService.Getglobalsearchforprotocoltemplate(objuser);
+		}
+	}
 	
 	@PostMapping("/getDashboardSheetCount")
 	public Map<String, Object> getDashboardSheetCount(@RequestBody LSuserMaster objuser)throws Exception {
@@ -119,5 +127,10 @@ public class DashBoardController {
 	@PostMapping("/Getglobalsearchorders")
 	public Map<String, Object> Getglobalsearchorders(@RequestBody Map<String, Object> obj)throws Exception {
 			return dashBoardService.Getglobalsearchorders(obj);
+	}
+	
+	@RequestMapping("/Getglobalsearchfolder")
+	public Map<String, Object> Getglobalsearchfolder(@RequestBody LSuserMaster objusermaster)throws Exception {
+		return dashBoardService.Getglobalsearchfolder(objusermaster);
 	}
 }

@@ -4628,7 +4628,8 @@ public class InstrumentService {
 		Map<String, Object> map = new HashMap<>();
 
 		LSlogilablimsorderdetail objorder = lslogilablimsorderdetailRepository.findOne(batchcode);
-
+		LSlogilabprotocoldetail objpro=LSlogilabprotocoldetailRepository.findByProtocolordercode(batchcode);
+		
 		ELNFileAttachments objattachment = new ELNFileAttachments();
 
 		if (islargefile == 0) {
@@ -4642,6 +4643,26 @@ public class InstrumentService {
 				objattachment.setFileid(id);
 			}
 		}
+		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
+		String name = username.getUsername();
+		LScfttransaction list = new LScfttransaction();
+		if(objorder==null) {
+			objattachment.setBatchcode(objpro.getProtocolordercode());
+			list.setModuleName("Register Protocol Orders");
+			list.setComments(name + " " + "Uploaded the attachement in Protocol ID: " + objpro.getProtoclordername()
+					+ " " + "successfully");
+			list.setActions("Insert");
+			list.setSystemcoments("System Generated");
+			list.setTableName("profile");
+			try {
+				list.setTransactiondate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			list.setLsuserMaster(usercode);
+
+		}else {
 
 		objattachment.setFilename(filename);
 		objattachment.setFileextension(fileexe);
@@ -4650,9 +4671,6 @@ public class InstrumentService {
 		objattachment.setBatchcode(objorder.getBatchcode());
 		objattachment.setIslargefile(islargefile);
 
-		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
-		String name = username.getUsername();
-		LScfttransaction list = new LScfttransaction();
 		list.setModuleName("Register Task Orders & Execute");
 		list.setComments(
 				name + " " + "Uploaded the attachement in Order ID: " + objorder.getBatchid() + " " + "successfully");
@@ -4667,6 +4685,7 @@ public class InstrumentService {
 			e.printStackTrace();
 		}
 		list.setLsuserMaster(usercode);
+	 }
 		lscfttransactionRepository.save(list);
 		if (objorder != null && objorder.getELNFileAttachments() != null) {
 			objorder.getELNFileAttachments().add(objattachment);
@@ -4680,7 +4699,9 @@ public class InstrumentService {
 		map.put("attachmentdetails", objattachment);
 
 		return map;
+		
 	}
+
 
 	public LsOrderattachments downloadattachments(LsOrderattachments objattachments) {
 		OrderAttachment objfile = fileManipulationservice.retrieveFile(objattachments);
@@ -8952,5 +8973,19 @@ public class InstrumentService {
 			return lstorders;
 		}
 	}
-
+	public List<LSlogilablimsorderdetail> sendapprovel(LSlogilablimsorderdetail objdir) {
+		List<LSlogilablimsorderdetail> logiobj =  new ArrayList<LSlogilablimsorderdetail>();
+		logiobj=lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),objdir.getBatchid());
+		logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
+		lslogilablimsorderdetailRepository.save(logiobj);
+		return logiobj;	
+	}
+	
+	public List<LSlogilablimsorderdetail> acceptapprovel(LSlogilablimsorderdetail objdir) {
+		List<LSlogilablimsorderdetail> logiobj =  new ArrayList<LSlogilablimsorderdetail>();
+		logiobj=lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),objdir.getBatchid());
+		logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
+		lslogilablimsorderdetailRepository.save(logiobj);
+		return logiobj;	
+	}
 }

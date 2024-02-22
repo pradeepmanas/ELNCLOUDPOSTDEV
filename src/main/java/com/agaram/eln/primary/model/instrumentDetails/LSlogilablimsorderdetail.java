@@ -69,6 +69,26 @@ public class LSlogilablimsorderdetail {
 	private Integer filetype;
 	@Transient
 	LoggedUser objuser;
+	
+	private Boolean approvelaccept;
+	
+	public Boolean getApprovelaccept() {
+		return approvelaccept;
+	}
+
+	public void setApprovelaccept(Boolean approvelaccept) {
+		this.approvelaccept = approvelaccept;
+	}
+
+	private Boolean sentforapprovel;
+	
+	public Boolean getSentforapprovel() {
+		return sentforapprovel;
+	}
+
+	public void setSentforapprovel(Boolean sentforapprovel) {
+		this.sentforapprovel = sentforapprovel;
+	}
 
 	public LoggedUser getObjuser() {
 		return objuser;

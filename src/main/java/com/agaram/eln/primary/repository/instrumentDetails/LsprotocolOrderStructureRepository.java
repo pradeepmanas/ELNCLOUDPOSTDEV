@@ -42,6 +42,14 @@ public interface LsprotocolOrderStructureRepository extends JpaRepository<Lsprot
 	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j, LSuserMaster lsuserMaster2, int k);
 
+	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrderByDirectorycode(
+			LSSiteMaster lssitemaster, int i, String search_Key, LSuserMaster objusermaster, int j, String search_Key2,
+			LSuserMaster objusermaster2, int k, String search_Key3);
+
+	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeOrderByDirectorycode(
+			LSSiteMaster lssitemaster, int i, String search_Key, LSuserMaster objusermaster, int j, String search_Key2,
+			LSSiteMaster lssitemaster2, int k, List<LSuserMaster> usernotify, String search_Key3);
+
 
 
 

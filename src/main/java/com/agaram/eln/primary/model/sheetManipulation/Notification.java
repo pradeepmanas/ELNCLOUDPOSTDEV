@@ -39,6 +39,16 @@ public class Notification {
 		
 	private String intervals;
 	
+	private String screen;
+		
+	public String getScreen() {
+		return screen;
+	}
+
+	public void setScreen(String screen) {
+		this.screen = screen;
+	}
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date cautiondate;
 	

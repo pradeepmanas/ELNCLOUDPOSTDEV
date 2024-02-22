@@ -1903,21 +1903,25 @@ public class LoginService {
 				.getUserOnCode(LSuserMaster);/* to return the value this obj is created */
 
 		int i = 0;
-
-		List<LSnotification> loginlstnotifications = codelist.stream()
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		codelist.stream()
 				.filter(notification -> notification.getStatus() == 1).map(notification -> {
 
 					LSnotification LSnotification = new LSnotification();
 
-					String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\""
-							+ codelist.get(i).getBatchid() + "\",\"description\":\"" + codelist.get(i).getDescription()
+//					String Details = "{\"ordercode\" :\"" + codelist.get(i).getOrderid() + "\",\"order\" :\""
+//							+ codelist.get(i).getBatchid() + "\",\"description\":\"" + codelist.get(i).getDescription() + "\",\"screen\":\"" + codelist.get(i).getScreen() 
+//							+ "\"}";
+					
+					String Details = "{\"ordercode\" :\"" + notification.getOrderid() + "\",\"order\" :\""
+							+ notification.getBatchid() + "\",\"description\":\"" + notification.getDescription() + "\",\"screen\":\"" + notification.getScreen() 
 							+ "\"}";
-
+							
 					LSnotification.setIsnewnotification(1);
 					LSnotification.setNotification("CAUTIONALERT");
 					LSnotification.setNotificationdate(objNotification.getCurrentdate());
 					LSnotification.setNotificationdetils(Details);
-					LSnotification.setNotificationpath("/registertask");
+					LSnotification.setNotificationpath(notification.getScreen().equals("Sheet Order") ? "/registertask" : "/Protocolorder");
 					LSnotification.setNotifationfrom(objLSuserMaster);
 					LSnotification.setNotifationto(objLSuserMaster);
 					LSnotification.setRepositorycode(0);
@@ -1925,11 +1929,11 @@ public class LoginService {
 					LSnotification.setNotificationfor(1);
 
 					notification.setStatus(0);
-
+					lstnotifications.add(LSnotification);
 					return LSnotification;
 				}).collect(Collectors.toList());
 
-		LSnotificationRepository.save(loginlstnotifications);
+		LSnotificationRepository.save(lstnotifications);
 		NotificationRepository.save(codelist);
 
 		return null;

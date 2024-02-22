@@ -141,7 +141,9 @@ public class TransactionService {
 			 */
 			if ((Integer) inputMap.get("nFlag") == 1) {
 
-				lstTypes = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusOrderByNmaterialtypecode(-1, 1);
+//				lstTypes = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusOrderByNmaterialtypecode(-1, 1);
+				
+				lstTypes = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatusOrderByNmaterialtypecodeDesc(-1,1,nsiteInteger,-1,1,4);
 
 				if (!lstTypes.isEmpty()) {
 					lstCategories = materialCategoryRepository

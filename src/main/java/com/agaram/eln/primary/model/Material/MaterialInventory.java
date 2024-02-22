@@ -180,16 +180,16 @@ public class MaterialInventory {
 		this.resultusedmaterial = resultusedmaterial;
 	}
 
-	@OneToMany
-	@JoinColumn(name="nmaterialinventorycode")
-	private  List<SelectedInventoryMapped> selectedinventorymapped;
-	
-	public List<SelectedInventoryMapped> getSelectedinventorymapped() {
-		return selectedinventorymapped;
-	}
-	public void setSelectedinventorymapped(List<SelectedInventoryMapped> selectedinventorymapped) {
-		this.selectedinventorymapped = selectedinventorymapped;
-	}
+//	@OneToMany
+//	@JoinColumn(name="nmaterialinventorycode")
+//	private  List<SelectedInventoryMapped> selectedinventorymapped;
+//	
+//	public List<SelectedInventoryMapped> getSelectedinventorymapped() {
+//		return selectedinventorymapped;
+//	}
+//	public void setSelectedinventorymapped(List<SelectedInventoryMapped> selectedinventorymapped) {
+//		this.selectedinventorymapped = selectedinventorymapped;
+//	}
 	
 	public Integer getNmaterialinventorycode() {
 		return nmaterialinventorycode;
