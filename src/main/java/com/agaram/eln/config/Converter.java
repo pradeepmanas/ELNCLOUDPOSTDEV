@@ -94,7 +94,7 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 		System.out.println("contant type :" + contenttype);
 		System.out.println("encoding :" + encoding);
 		if (contenttype.equalsIgnoreCase("application/json;charset=UTF-8")
-				&& (encoding.equalsIgnoreCase("gzip, deflate") || encoding.equalsIgnoreCase("gzip, deflate, br"))
+				&& (encoding.equalsIgnoreCase("gzip, deflate") || encoding.equalsIgnoreCase("gzip, deflate, br,zstd"))
 				&& contendencoding.equalsIgnoreCase("gzip")) {
 			System.out.println("come decryption");
 			return mapper.readValue(decrypt(inputMessage.getBody(), decryptionkey), clazz);
