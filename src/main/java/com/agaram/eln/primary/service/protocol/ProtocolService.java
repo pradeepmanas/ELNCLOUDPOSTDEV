@@ -750,7 +750,9 @@ public class ProtocolService {
 			} else {
 				Lsprotocoltemplatedata lsprotocoldata = mongoTemplate.findById(lsProtocolMaster.getProtocolmastercode(),
 						Lsprotocoltemplatedata.class);
-				mapObj.put("ProtocolData", lsprotocoldata.getContent());
+				if(lsprotocoldata != null && lsprotocoldata.getContent() != null) {
+					mapObj.put("ProtocolData", lsprotocoldata.getContent());
+				}
 
 //				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
 //						Criteria.where("filename").is("protocol_" + lsProtocolMaster.getProtocolmastercode())));
@@ -3084,8 +3086,13 @@ public class ProtocolService {
 								.findById(lsprotocolmasterobj.getProtocolmastercode(), Lsprotocoltemplatedata.class);
 
 						Lsprotocolorderdata lsprotocolorderdata = new Lsprotocolorderdata();
+						if(lsprotocoltemplatedata == null) {
+							JSONObject protocolJson = new JSONObject(lSlogilabprotocoldetail.getContent());
+							lsprotocolorderdata.setContent(protocolJson.toString());	
+						}else {
+							lsprotocolorderdata.setContent(lsprotocoltemplatedata.getContent());
+						}	
 						lsprotocolorderdata.setId(lSlogilabprotocoldetail.getProtocolordercode());
-						lsprotocolorderdata.setContent(lsprotocoltemplatedata.getContent());
 						mongoTemplate.insert(lsprotocolorderdata);
 
 //						GridFSDBFile data = gridFsTemplate.findOne(new Query(Criteria.where("filename")
@@ -5166,6 +5173,8 @@ public class ProtocolService {
 		String str = g.toJson(url);
 		objimg.setSrc(str);
 		lsprotocolimagesRepository.save(objimg);
+		
+		map.put("extension", "." + objimg.getExtension());
 		map.put("link", originurl + "/protocol/downloadprotocolimage/" + objimg.getFileid() + "/"
 				+ TenantContext.getCurrentTenant() + "/" + filename + "/" + objimg.getExtension());
 
@@ -6676,6 +6685,7 @@ public class ProtocolService {
 		protocolImage.setImage(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
 		protocolImage = protocolImageRepository.insert(protocolImage);
 
+		map.put("extension", "." + objimg.getExtension());
 		map.put("link", originurl + "/protocol/downloadprotocolimagesql/" + protocolImage.getFileid() + "/" + filename
 				+ "/" + objimg.getExtension());
 
@@ -6725,7 +6735,8 @@ public class ProtocolService {
 		objattachment.setFile(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
 
 		objattachment = lsprotocolfilesContentRepository.insert(objattachment);
-
+		
+		map.put("extension", "." + objfile.getExtension());
 		map.put("link", originurl + "/protocol/downloadprotocolfilesql/" + objfile.getFileid() + "/"
 				+ objfile.getFilename() + "/" + objfile.getExtension());
 		return map;

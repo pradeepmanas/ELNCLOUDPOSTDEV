@@ -224,11 +224,22 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			LSuserMaster lsloginuser);
 
 	
+//	@Transactional
+//	@Modifying
+//	@Query(value = "select distinct LSlogilabprotocoldetail.testcode, LSlogilabprotocoldetail.lsprojectmaster_projectcode,  (select testname from lstestmasterlocal where testcode = LSlogilabprotocoldetail.testcode) as testname  from LSlogilabprotocoldetail as LSlogilabprotocoldetail"
+//			+ " where LSlogilabprotocoldetail.testcode is not null and assignedto_usercode is null and LSlogilabprotocoldetail.lsprojectmaster_projectcode is not null and LSlogilabprotocoldetail.lsprojectmaster_projectcode in (?1)", nativeQuery = true)
+//	public ArrayList<List<Object>>  getLstestmasterlocalByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(List<Integer> lsprojectcode);
+
 	@Transactional
 	@Modifying
-	@Query(value = "select distinct LSlogilabprotocoldetail.testcode, LSlogilabprotocoldetail.lsprojectmaster_projectcode,  (select testname from lstestmasterlocal where testcode = LSlogilabprotocoldetail.testcode) as testname  from LSlogilabprotocoldetail as LSlogilabprotocoldetail"
-			+ " where LSlogilabprotocoldetail.testcode is not null and assignedto_usercode is null and LSlogilabprotocoldetail.lsprojectmaster_projectcode is not null and LSlogilabprotocoldetail.lsprojectmaster_projectcode in (?1)", nativeQuery = true)
-	public ArrayList<List<Object>>  getLstestmasterlocalByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(List<Integer> lsprojectcode);
+	@Query(value = "SELECT DISTINCT l.testcode, l.lsprojectmaster_projectcode, CAST(t.testname AS varchar(250)) AS testname " +
+	        "FROM LSlogilabprotocoldetail l " +
+	        "JOIN lstestmasterlocal t ON t.testcode = l.testcode " +
+	        "WHERE l.testcode IS NOT NULL " +
+	        "AND l.assignedto_usercode IS NULL " +
+	        "AND l.lsprojectmaster_projectcode IS NOT NULL " +
+	        "AND l.lsprojectmaster_projectcode IN (?1)", nativeQuery = true)
+	public ArrayList<List<Object>> getLstestmasterlocalByOrderdisplaytypeAndLsprojectmasterInAndTestcodeIsNotNull(List<Integer> lsprojectcode);
 
 	@Transactional
 	@Modifying
@@ -1427,32 +1438,6 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	public List<Object> getLstestmasterlocalAndmaterialByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(Integer sitecode);
 
 
-	List<Logilabprotocolorders> findByElnmaterialAndTestcodeAndCreatedtimestampBetween(Elnmaterial elnmaterial,
-			Integer testcode, Date fromdate, Date todate);
-
-
-	List<Logilabprotocolorders> findByElnmaterialAndTestcodeAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetween(
-			Elnmaterial elnmaterial, Integer testcode, Integer protocoltype, String orderflag, int i, Date fromdate,
-			Date todate);
-
-
-	List<Logilabprotocolorders> findByElnmaterialAndTestcodeAndProtocoltypeAndOrderflagAndCreatedtimestampBetween(
-			Elnmaterial elnmaterial, Integer testcode, Integer protocoltype, String orderflag, Date fromdate,
-			Date todate);
-
-
-	List<Logilabprotocolorders> findByElnmaterialAndTestcodeAndOrderflagAndRejectedAndCreatedtimestampBetween(
-			Elnmaterial elnmaterial, Integer testcode, String orderflag, int i, Date fromdate, Date todate);
-
-
-	List<Logilabprotocolorders> findByElnmaterialAndTestcodeAndOrderflagAndCreatedtimestampBetween(
-			Elnmaterial elnmaterial, Integer testcode, String orderflag, Date fromdate, Date todate);
-
-
-	List<Logilabprotocolorders> findByElnmaterialAndTestcodeAndProtocoltypeAndCreatedtimestampBetween(
-			Elnmaterial elnmaterial, Integer testcode, Integer protocoltype, Date fromdate, Date todate);
-
-
 	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndAndLockeduserIsNotNullAndAssignedtoIsNullOrderByProtocolordercodeDesc(
 			String string, Integer sitecode);
 
@@ -1469,11 +1454,59 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	List<Logilabprotocolorders>  findByLsprojectmasterInAndSitecodeAndLockeduserIsNotNullAndOrderflagOrderByProtocolordercodeDesc(
 			List<LSprojectmaster> lstproject, Integer sitecode, String string);
 
-List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndCreatedtimestampBetween(
-			String string, List<LSprojectmaster> lstproject, List<Elnprotocolworkflow> lstworkflow_protocol,
-			Date fromdate, Date todate)
 
-;List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
+	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndCreatedtimestampBetween(
+			String string, List<LSprojectmaster> lstproject, List<Elnprotocolworkflow> lstworkflow_protocol,
+			Date fromdate, Date todate);
+
+
+	List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndLsuserMasterOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndCreatebyIn(
+			List<LSprojectmaster> lstproject, Elnmaterial elnmaterial, Integer testcode, Date fromdate, Date todate,
+			Elnmaterial elnmaterial2, Integer testcode2, Date fromdate2, Date todate2, int i, Elnmaterial elnmaterial3,
+			Integer testcode3, Date fromdate3, Date todate3, int j, LSuserMaster lsuserMaster, Elnmaterial elnmaterial4,
+			Integer testcode4, Date fromdate4, Date todate4, int k, List<Integer> userlist);
+
+
+	List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagAndRejectedOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndProtocoltypeAndOrderflagAndRejectedOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndLsuserMasterAndProtocoltypeAndOrderflagAndRejectedOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndCreatebyInAndProtocoltypeAndOrderflagAndRejected(
+			List<LSprojectmaster> lstproject, Elnmaterial elnmaterial, Integer testcode, Date fromdate, Date todate,
+			Integer protocoltype, String orderflag, int i, Elnmaterial elnmaterial2, Integer testcode2, Date fromdate2,
+			Date todate2, int j, Integer protocoltype2, String orderflag2, int k, Elnmaterial elnmaterial3,
+			Integer testcode3, Date fromdate3, Date todate3, int l, Integer protocoltype3, String orderflag3, int m,
+			LSuserMaster lsuserMaster, Elnmaterial elnmaterial4, Integer testcode4, Date fromdate4, Date todate4, int n,
+			List<Integer> userlist, Integer protocoltype4, String orderflag4, int o);
+
+
+	List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndProtocoltypeAndOrderflagOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndLsuserMasterAndProtocoltypeAndOrderflagOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndCreatebyInAndProtocoltypeAndOrderflag(
+			List<LSprojectmaster> lstproject, Elnmaterial elnmaterial, Integer testcode, Date fromdate, Date todate,
+			Integer protocoltype, String orderflag, Elnmaterial elnmaterial2, Integer testcode2, Date fromdate2,
+			Date todate2, int i, Integer protocoltype2, String orderflag2, Elnmaterial elnmaterial3, Integer testcode3,
+			Date fromdate3, Date todate3, int j, Integer protocoltype3, String orderflag3, LSuserMaster lsuserMaster,
+			Elnmaterial elnmaterial4, Integer testcode4, Date fromdate4, Date todate4, int k, List<Integer> userlist,
+			Integer protocoltype4, String orderflag4);
+
+
+	List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndOrderflagAndRejectedOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndOrderflagAndRejectedOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndLsuserMasterAndOrderflagAndRejectedOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndCreatebyInAndOrderflagAndRejected(
+			List<LSprojectmaster> lstproject, Elnmaterial elnmaterial, Integer testcode, Date fromdate, Date todate,
+			String orderflag, int i, Elnmaterial elnmaterial2, Integer testcode2, Date fromdate2, Date todate2, int j,
+			String orderflag2, int k, Elnmaterial elnmaterial3, Integer testcode3, Date fromdate3, Date todate3, int l,
+			String orderflag3, int m, LSuserMaster lsuserMaster, Elnmaterial elnmaterial4, Integer testcode4,
+			Date fromdate4, Date todate4, int n, List<Integer> userlist, String orderflag4, int o);
+
+
+	List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndOrderflagOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndOrderflagOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndLsuserMasterAndOrderflagOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndCreatebyInAndOrderflag(
+			List<LSprojectmaster> lstproject, Elnmaterial elnmaterial, Integer testcode, Date fromdate, Date todate,
+			String orderflag, Elnmaterial elnmaterial2, Integer testcode2, Date fromdate2, Date todate2, int i,
+			String orderflag2, Elnmaterial elnmaterial3, Integer testcode3, Date fromdate3, Date todate3, int j,
+			String orderflag3, LSuserMaster lsuserMaster, Elnmaterial elnmaterial4, Integer testcode4, Date fromdate4,
+			Date todate4, int k, List<Integer> userlist, String orderflag4);
+
+List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndProtocoltypeOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndProtocoltypeOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndLsuserMasterAndProtocoltypeOrLsprojectmasterIsNullAndElnmaterialAndTestcodeAndCreatedtimestampBetweenAndViewoptionAndCreatebyInAndProtocoltype(
+			List<LSprojectmaster> lstproject, Elnmaterial elnmaterial, Integer testcode, Date fromdate, Date todate,
+			Integer protocoltype, Elnmaterial elnmaterial2, Integer testcode2, Date fromdate2, Date todate2, int i,
+			Integer protocoltype2, Elnmaterial elnmaterial3, Integer testcode3, Date fromdate3, Date todate3, int j,
+			Integer protocoltype3, LSuserMaster lsuserMaster, Elnmaterial elnmaterial4, Integer testcode4,
+			Date fromdate4, Date todate4, int k, List<Integer> userlist, Integer protocoltype4);
+List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, int j, Date fromdate, Date todate, int k, Integer sitecode2, int l,
 			Integer usercode, Date fromdate2, Date todate2, int m, Integer sitecode3, int n, Date fromdate3,
 			Date todate3, List<Integer> userlist);
@@ -1559,6 +1592,5 @@ List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndElnprotocolwor
 			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, Integer protocoltype,
 			String orderflag, int j);
 
-	
-}
+	}
 

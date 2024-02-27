@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -38,6 +39,15 @@ public class Helpdocument {
 	private Integer nodecode;
 	
 	private Integer filetype=0;
+	
+	public String getPagename() {
+		return pagename;
+	}
+	public void setPagename(String pagename) {
+		this.pagename = pagename;
+	}
+	@Transient
+	private String pagename;
 	
 	@Column(columnDefinition = "varchar(255)")
 	 public String fileref;

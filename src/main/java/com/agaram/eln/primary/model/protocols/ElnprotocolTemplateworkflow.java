@@ -43,6 +43,17 @@ public class ElnprotocolTemplateworkflow {
 	@Transient
 	private Response response;
 	
+	@Transient
+	private Integer ismultitenant;
+	
+	
+	public Integer getIsmultitenant() {
+		return ismultitenant;
+	}
+
+	public void setIsmultitenant(Integer ismultitenant) {
+		this.ismultitenant = ismultitenant;
+	}
 	
 	public Response getResponse() {
 		return response;

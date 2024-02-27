@@ -7,8 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 //import org.springframework.web.bind.annotation.RequestBody;
@@ -169,47 +175,52 @@ public class RestService {
 	
 	@SuppressWarnings("unchecked")
 	private boolean insertTestMaster(Map<String, Object> mapObj) throws Exception {
-		
-		boolean bool=false;
-		
-		try {
-			List<LStestmaster> lstTest = new ArrayList<LStestmaster>();
-			lstTest=(List<LStestmaster>) mapObj.get("TestMaster");
-			
-			List<LStestparameter> lstparam = new ArrayList<LStestparameter>();
-			lstparam=(List<LStestparameter>) mapObj.get("TestParameter");
-			
-			int i=0;
-//			int Count=(int) LStestmasterRepository.count();
-			if(lstparam.size()>0)
-				LStestparameterRepository.deleteAll();
-			if(lstTest.size()>0)
-				LStestmasterRepository.deleteAll();			
-			
-			while(lstTest.size()>i) {
-			
-				LStestmasterRepository.save(lstTest.get(i));
-				i++;
-			}
-			
-			i=0;
-//			Count=(int) LStestparameterRepository.count();
-			
-			
-			while(lstparam.size()>i) {
-			
-				LStestparameterRepository.save(lstparam.get(i));
-				i++;
-			}
-			
-			bool=true;
-		}
-		catch (Exception e) {
-			bool=false;
-			e.getMessage();
-		}
-		return bool;
-	}
+        boolean bool = false;
+        try {
+            List<LStestmaster> lstTest = new ArrayList<LStestmaster>();
+            lstTest = (List<LStestmaster>) mapObj.get("TestMaster");
+            List<LStestparameter> lstparam = new ArrayList<LStestparameter>();
+            lstparam = (List<LStestparameter>) mapObj.get("TestParameter");
+            int i = 0;
+            List<LStestparameter> lstparamJson = new ArrayList<LStestparameter>();
+            if (lstparam.size() > 0) {
+                LStestparameterRepository.deleteAll();
+            }
+            if (lstTest.size() > 0) {
+                LStestmasterRepository.deleteAll();
+            }
+            for (int paramCode = 1000; lstTest.size() > i; ++i, ++paramCode) {
+                LStestparameter testParam = new LStestparameter();
+                testParam.setNtestparametercode(Integer.valueOf(paramCode));
+                testParam.setNisadhocparameter(Integer.valueOf(0));
+                testParam.setNisvisible(Integer.valueOf(0));
+                testParam.setNmasterauditcode((Integer)null);
+                testParam.setNparametertypecode(Integer.valueOf(paramCode));
+                testParam.setNroundingdigits(Integer.valueOf(0));
+                testParam.setNstatus(Integer.valueOf(0));
+                testParam.setNtestcode(lstTest.get(i).getNtestcode());
+                testParam.setNunitcode(Integer.valueOf(-1));
+                testParam.setSparametername("ordercontent");
+                testParam.setSparametersynonym("ordercontent");
+                testParam.setNsitecode(lstTest.get(i).getNsitecode());
+                testParam.setStestname(lstTest.get(i).getStestname());
+                lstparamJson.add(testParam);
+                LStestmasterRepository.save(lstTest.get(i));
+            }
+            for (i = 0; lstparam.size() > i; ++i) {
+                LStestparameterRepository.save(lstparam.get(i));
+            }
+            if (lstparamJson.size() > 0) {
+                LStestparameterRepository.save(lstparamJson);
+            }
+            bool = true;
+        }
+        catch (Exception e) {
+            bool = false;
+            e.getMessage();
+        }
+        return bool;
+    }
 	
 	public String ImportLimsOrder(String str) throws Exception{
 		
@@ -1080,7 +1091,7 @@ public class RestService {
 						int j = 0;
 						while (j < (orderGroup.size() + 1)) {
 							
-							if(orderGroup != null && j < orderGroup.size() &&lstResult.get(i).getParametercode().equals(orderGroup.get(j).getNtestparametercode())
+							if(orderGroup != null && !lstResult.get(i).getResult().isEmpty() && j < orderGroup.size() &&lstResult.get(i).getParametercode().equals(orderGroup.get(j).getNtestparametercode())
 									&& (lstResult.get(i).getOrderid() == 0 || lstResult.get(i).getOrderid() == orderGroup.get(j).getNtransactiontestcode())) {
 								Map<String, Object> lstMap = new HashMap<>();
 								String sresult = lstResult.get(i).getResult();
@@ -1266,5 +1277,36 @@ public class RestService {
 		//importLIMSMaterial();
 		//importLIMSMaterialTrans();
 		return true;
+	}
+	
+	public String getlinkedinuserprofile(Map<String, Object> objMap) throws Exception {
+		
+		String url = "https://www.linkedin.com/oauth/v2/accessToken?"
+                + "client_id=863mwqkv9hnwex&client_secret=yoR5dCFdmsVrFsR2&"
+                + "code=" + objMap.get("code") + "&grant_type=authorization_code&"
+                + "redirect_uri=http://localhost:3000/linkedin";
+		
+		RestTemplate restTemplate = new RestTemplate();
+		@SuppressWarnings("unused")
+		String token ="";
+		String result = restTemplate.getForObject(url, String.class);
+		try {
+		     JSONObject jsonObject = new JSONObject(result);
+		     token = (String) jsonObject.get("access_token");
+		}catch (JSONException err){
+		     
+		}
+		
+		url ="https://api.linkedin.com/v2/userinfo";
+		HttpHeaders headers = new HttpHeaders();
+	headers.set("Authorization", "Bearer "+token);
+		
+
+		HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+		ResponseEntity<String> profile = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+		
+		
+		return profile.getBody();
 	}
 }

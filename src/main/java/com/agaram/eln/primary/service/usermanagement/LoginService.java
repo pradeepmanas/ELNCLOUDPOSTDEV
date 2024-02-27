@@ -38,6 +38,7 @@ import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.jwt.JwtResponse;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
@@ -59,6 +60,7 @@ import com.agaram.eln.primary.repository.adsconnection.TbladssettingsRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSordernotificationRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
@@ -147,6 +149,9 @@ public class LoginService {
 	@Autowired
 	private LSMultisitesRepositery LSMultisitesRepositery;
 
+	@Autowired
+	private LSordernotificationRepository lsordernotificationrepo;
+	
 	static final String INITIAL_CONTEXT_FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
 	static final String SECURITY_AUTHENTICATION = "simple";
 
@@ -635,8 +640,9 @@ public class LoginService {
 		if (objExitinguser.size() != 0) {
 			String Password = AESEncryption.decrypt(objExitinguser.get(0).getPassword());
 			objExitinguser.get(0).setObjResponse(new Response());
-
-			if (Password == null) {
+			Integer Isads_User = objExitinguser.get(0).getIsadsuser();
+			if (Password == null && (Isads_User==null || Isads_User==0) ) {
+//			if (Password == null) {
 				objExitinguser.get(0).getObjResponse().setInformation("GenerateNewPassword");
 				objExitinguser.get(0).getObjResponse().setStatus(true);
 
@@ -1865,6 +1871,156 @@ public class LoginService {
 
 		return obj;
 	}
+	
+	// added for duedate notification 
+		public Notification Duedatenotification(Notification objNotification) throws ParseException {
+
+			Date fromDate = objNotification.getCurrentdate();
+			Date toDate = objNotification.getCurrentdate();
+           
+			// Set time on currentDate to 0:01 am
+			Calendar calendar1 = Calendar.getInstance();
+			calendar1.setTime(fromDate);
+			calendar1.set(Calendar.HOUR_OF_DAY, 0);
+			calendar1.set(Calendar.MINUTE, 0);
+			calendar1.set(Calendar.SECOND, 0);
+			calendar1.set(Calendar.MILLISECOND, 0);
+			fromDate = calendar1.getTime();
+
+			// Set time on currentDate1 to 23:59 pm
+			Calendar calendar2 = Calendar.getInstance();
+			calendar2.setTime(toDate);
+			calendar2.set(Calendar.HOUR_OF_DAY, 23);
+			calendar2.set(Calendar.MINUTE, 59);
+			calendar2.set(Calendar.SECOND, 59);
+			calendar2.set(Calendar.MILLISECOND, 999);
+			toDate = calendar2.getTime();
+
+			 Date overduedate=new Date();
+		        int minusdue=(overduedate.getDate()- 1);
+		        overduedate.setDate(minusdue);
+		        
+			Date overduefromDate = overduedate;
+			Date overduetoDate = overduedate;
+//
+			// Set time on currentDate to 0:01 am
+			Calendar calendar3 = Calendar.getInstance();
+			calendar3.setTime(overduefromDate);
+			calendar3.set(Calendar.HOUR_OF_DAY, 0);
+			calendar3.set(Calendar.MINUTE, 0);
+			calendar3.set(Calendar.SECOND, 0);
+			calendar3.set(Calendar.MILLISECOND, 0);
+			overduefromDate = calendar3.getTime();
+
+			// Set time on currentDate1 to 23:59 pm
+			Calendar calendar4 = Calendar.getInstance();
+			calendar4.setTime(overduetoDate);
+			calendar4.set(Calendar.HOUR_OF_DAY, 23);
+			calendar4.set(Calendar.MINUTE, 59);
+			calendar4.set(Calendar.SECOND, 59);
+			calendar4.set(Calendar.MILLISECOND, 999);
+			overduetoDate = calendar4.getTime();
+			
+			LSuserMaster LSuserMaster = new LSuserMaster(); /* to get the value */
+			LSuserMaster.setUsercode(objNotification.getUsercode());
+	
+	        List<LSOrdernotification> orderslist = lsordernotificationrepo.findByUsercodeAndCautiondateBetween(objNotification.getUsercode(), fromDate, toDate);
+	        List<LSOrdernotification> dueorderslist = lsordernotificationrepo.findByUsercodeAndDuedateBetween(objNotification.getUsercode(), fromDate, toDate);
+	        List<LSOrdernotification> overdueorderslist = lsordernotificationrepo.findByUsercodeAndDuedateBetween(objNotification.getUsercode(), overduefromDate, overduetoDate);
+
+			LSuserMaster objLSuserMaster = userService
+					.getUserOnCode(LSuserMaster);/* to return the value this obj is created */
+
+			int i = 0;
+			List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+
+			if(!orderslist.isEmpty()) {
+				orderslist.stream().forEach(indexorders->{
+					if(indexorders.getStatus() == 1) {
+							LSnotification LSnotification = new LSnotification();
+	
+							String Details = "{\"ordercode\" :\"" + indexorders.getBatchid() 
+							        + "\",\"order\" :\"" + indexorders.getBatchid() 
+							        + "\",\"date\" :\"" + indexorders.getCautiondate() 
+							        + "\",\"screen\":\"" + "sheetorders" 
+									+ "\"}";
+									
+							LSnotification.setIsnewnotification(1);
+							LSnotification.setNotification("ORDERCAUTIONALERT");
+							LSnotification.setNotificationdate(objNotification.getCurrentdate());
+							LSnotification.setNotificationdetils(Details);
+							LSnotification.setNotificationpath("/registertask");
+							LSnotification.setNotifationfrom(objLSuserMaster);
+							LSnotification.setNotifationto(objLSuserMaster);
+							LSnotification.setRepositorycode(0);
+							LSnotification.setRepositorydatacode(0);
+							LSnotification.setNotificationfor(1);
+	
+							indexorders.setStatus(0);
+							lstnotifications.add(LSnotification);				
+					        }
+	                     });
+				LSnotificationRepository.save(lstnotifications);
+				lsordernotificationrepo.save(orderslist);
+			}if (!dueorderslist.isEmpty()) {
+				dueorderslist.stream().forEach(indexdueorders->{
+					if(indexdueorders.getStatus() == 1) {
+							LSnotification LSnotification = new LSnotification();
+	
+							String Details = "{\"ordercode\" :\"" + indexdueorders.getBatchid() 
+							        + "\",\"order\" :\"" + indexdueorders.getBatchid() 
+							        + "\",\"date\" :\"" + indexdueorders.getDuedate() 
+							        + "\",\"screen\":\"" + "sheetorders" 
+									+ "\"}";
+									
+							LSnotification.setIsnewnotification(1);
+							LSnotification.setNotification("ORDERONDUEALERT");
+							LSnotification.setNotificationdate(objNotification.getCurrentdate());
+							LSnotification.setNotificationdetils(Details);
+							LSnotification.setNotificationpath("/registertask");
+							LSnotification.setNotifationfrom(objLSuserMaster);
+							LSnotification.setNotifationto(objLSuserMaster);
+							LSnotification.setRepositorycode(0);
+							LSnotification.setRepositorydatacode(0);
+							LSnotification.setNotificationfor(1);
+	
+							indexdueorders.setStatus(0);
+							lstnotifications.add(LSnotification);				
+					        }
+	                     });
+				LSnotificationRepository.save(lstnotifications);
+				lsordernotificationrepo.save(orderslist);
+			}if (!overdueorderslist .isEmpty()) {
+				overdueorderslist.stream().forEach(indexdueorders->{
+					if(indexdueorders.getStatus() == 1) {
+							LSnotification LSnotification = new LSnotification();
+	
+							String Details = "{\"ordercode\" :\"" + indexdueorders.getBatchid() 
+							        + "\",\"order\" :\"" + indexdueorders.getBatchid() 
+							        + "\",\"date\" :\"" + indexdueorders.getDuedate()
+							        + "\",\"screen\":\"" + "sheetorders" 
+									+ "\"}";
+									
+							LSnotification.setIsnewnotification(1);
+							LSnotification.setNotification("ORDEROVERDUEALERT");
+							LSnotification.setNotificationdate(objNotification.getCurrentdate());
+							LSnotification.setNotificationdetils(Details);
+							LSnotification.setNotificationpath("/registertask");
+							LSnotification.setNotifationfrom(objLSuserMaster);
+							LSnotification.setNotifationto(objLSuserMaster);
+							LSnotification.setRepositorycode(0);
+							LSnotification.setRepositorydatacode(0);
+							LSnotification.setNotificationfor(1);
+	
+							indexdueorders.setStatus(0);
+							lstnotifications.add(LSnotification);				
+					        }
+	                     });
+				LSnotificationRepository.save(lstnotifications);
+				lsordernotificationrepo.save(orderslist);
+			}
+				return null;
+		}
 
 	// added for notification
 	public Notification Loginnotification(Notification objNotification) throws ParseException {

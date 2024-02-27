@@ -44,6 +44,11 @@ public class LSSiteMaster {
 	
 	@Column(name = "istatus")
 	private Integer istatus;
+	
+	private Integer teamsize;
+	private Integer accouttype;
+	private String organisationname;
+	private String country;
 
 	@Transient
 	LScfttransaction objsilentaudit;
@@ -231,6 +236,38 @@ public class LSSiteMaster {
 
 	public void setIsmultitenant(Integer ismultitenant) {
 		this.ismultitenant = ismultitenant;
+	}
+
+	public Integer getTeamsize() {
+		return teamsize;
+	}
+
+	public void setTeamsize(Integer teamsize) {
+		this.teamsize = teamsize;
+	}
+
+	public Integer getAccouttype() {
+		return accouttype;
+	}
+
+	public void setAccouttype(Integer accouttype) {
+		this.accouttype = accouttype;
+	}
+
+	public String getOrganisationname() {
+		return organisationname;
+	}
+
+	public void setOrganisationname(String organisationname) {
+		this.organisationname = organisationname;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 
 	

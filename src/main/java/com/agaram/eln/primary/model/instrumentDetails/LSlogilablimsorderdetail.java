@@ -69,7 +69,31 @@ public class LSlogilablimsorderdetail {
 	private Integer filetype;
 	@Transient
 	LoggedUser objuser;
+
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date duedate;
 	
+	public Date getDuedate() {
+		return duedate;
+	}
+
+	public void setDuedate(Date duedate) {
+		this.duedate = duedate;
+	}
+	
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date cautiondate;
+	
+	public Date getCautiondate() {
+		return cautiondate;
+	}
+
+	public void setCautiondate(Date cautiondate) {
+		this.cautiondate = cautiondate;
+	}
+
 	private Boolean approvelaccept;
 	
 	public Boolean getApprovelaccept() {

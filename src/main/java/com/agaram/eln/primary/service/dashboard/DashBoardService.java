@@ -2148,11 +2148,16 @@ public class DashBoardService {
 			} else if (objuser.getObjuser().getOrderselectiontype() == 6) {
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 
-					lstorders = lslogilablimsorderdetailRepository
-							.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
-									1, lstproject, fromdate, todate, 1, objuser, fromdate, todate, 1, 2, objuser,
-									fromdate, todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate,
-									todate, 1, objuser, fromdate, todate, 1, pageable);
+					lstorders = lslogilablimsorderdetailRepository.
+							LsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
+							         1, objuser, fromdate, todate, 1,
+							        1, lstproject, fromdate, todate,
+							          2, objuser,fromdate, todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate,
+							        todate, 1, objuser, fromdate, todate, 1, pageable);
+//							.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
+//									1, lstproject, fromdate, todate, 1, objuser, fromdate, todate, 1, 2, objuser,
+//									fromdate, todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate,
+//									todate, 1, objuser, fromdate, todate, 1, pageable);
 
 //					count = lslogilablimsorderdetailRepository
 //							.countByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
@@ -4625,36 +4630,133 @@ public class DashBoardService {
 	public Map<String, Object> Getglobalsearchfolder(LSuserMaster objusermaster) {
 		Map<String, Object> mapfolders = new HashMap<String, Object>();
 		String Search_Key = "%" + objusermaster.getToken() + "%"; // search key porpose kumu
+		long Count_Directory = 0 ;
+		Pageable pageable = new PageRequest(objusermaster.getPagesize(), objusermaster.getPageperorder());
 		if(objusermaster.getResponse().getInformation().equals("Protocol")) {
 			List<Lsprotocolorderstructure> lstdir = new ArrayList<Lsprotocolorderstructure>();
-//			AndDirectorynameLike
 			if (objusermaster.getUsernotify() == null) {
 				lstdir = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrderByDirectorycode(
+						.findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster, 3,Search_Key,pageable);
+				Count_Directory=lsprotocolorderStructurerepository
+						.countBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
 								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
 								objusermaster, 3,Search_Key);
 			} else {
 				lstdir = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeOrderByDirectorycode(
+						.findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster.getLssitemaster(), 3, objusermaster.getUsernotify(),Search_Key,pageable);
+				
+				Count_Directory=lsprotocolorderStructurerepository
+						.countBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
 								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
 								objusermaster.getLssitemaster(), 3, objusermaster.getUsernotify(),Search_Key);
 			}
 			
 			mapfolders.put("Folders", lstdir);
+			mapfolders.put("Count_Directory", Count_Directory);
 		}else if(objusermaster.getResponse().getInformation().equals("Sheet")) {
 			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 			if (objusermaster.getUsernotify() == null) {
 				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrderByDirectorycode(
+						.findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster, 3,Search_Key,pageable);
+				
+				Count_Directory= lsSheetOrderStructureRepository
+						.countBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
 								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
 								objusermaster, 3,Search_Key);
 			} else {
 				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeOrderByDirectorycode(
+						.findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster.getLssitemaster(), 3, objusermaster.getUsernotify(),Search_Key,pageable);
+				
+				Count_Directory=  lsSheetOrderStructureRepository
+						.countBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
 								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
 								objusermaster.getLssitemaster(), 3, objusermaster.getUsernotify(),Search_Key);
 			}
 			mapfolders.put("Folders", lstdir);
+			mapfolders.put("Count_Directory", Count_Directory);
+		}
+
+		return mapfolders;
+	}
+
+	public Map<String, Object> Getglobalsearchforfile(LSuserMaster objusermaster) {
+		Map<String, Object> mapfolders = new HashMap<String, Object>();
+		String Search_Key = "%" + objusermaster.getToken() + "%"; // search key porpose kumu
+		long Count_Directory = 0 ;
+		Pageable pageable;
+		Pageable Pageable_File = new PageRequest(objusermaster.getPagesize(), objusermaster.getPageperorder());
+		if(objusermaster.getResponse().getInformation().equals("Protocol")) {
+			List<Lsprotocolorderstructure> lstdir = new ArrayList<Lsprotocolorderstructure>();
+			if (objusermaster.getUsernotify() == null) {
+				
+				Count_Directory=lsprotocolorderStructurerepository
+						.countBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster, 3,Search_Key);
+				 pageable =new PageRequest(objusermaster.getPagesize(),  (int) Count_Directory);
+//				Pageable pageable = new PageRequest(objusermaster.getPagesize(), (int) Count_Directory);
+				lstdir = lsprotocolorderStructurerepository
+						.findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster, 3,Search_Key,pageable);
+			} else {
+				
+				Count_Directory=lsprotocolorderStructurerepository
+						.countBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster.getLssitemaster(), 3, objusermaster.getUsernotify(),Search_Key);
+				 pageable =new PageRequest(objusermaster.getPagesize(),  (int) Count_Directory);
+				lstdir = lsprotocolorderStructurerepository
+						.findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster.getLssitemaster(), 3, objusermaster.getUsernotify(),Search_Key,pageable);
+				
+			}
+			
+			if(!lstdir.isEmpty()) {
+				List<Long> directorycode=lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode).collect(Collectors.toList());
+			}
+			
+//			mapfolders.put("Folders", lstdir);
+//			mapfolders.put("Count_Directory", Count_Directory);
+		}else if(objusermaster.getResponse().getInformation().equals("Sheet")) {
+			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
+			if (objusermaster.getUsernotify() == null) {
+				
+				Count_Directory= lsSheetOrderStructureRepository
+						.countBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster, 3,Search_Key);
+				 pageable =new PageRequest(objusermaster.getPagesize(),  (int) Count_Directory);
+				lstdir = lsSheetOrderStructureRepository
+						.findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster, 3,Search_Key,pageable);
+				
+			} else {
+				
+				Count_Directory=  lsSheetOrderStructureRepository
+						.countBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster.getLssitemaster(), 3, objusermaster.getUsernotify(),Search_Key);
+				 pageable =new PageRequest(objusermaster.getPagesize(),  (int) Count_Directory);
+				lstdir = lsSheetOrderStructureRepository
+						.findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,Search_Key, objusermaster, 2,Search_Key,
+								objusermaster.getLssitemaster(), 3, objusermaster.getUsernotify(),Search_Key,pageable);
+				
+				
+			}
+//			mapfolders.put("Folders", lstdir);
+//			mapfolders.put("Count_Directory", Count_Directory);
 		}
 
 		return mapfolders;

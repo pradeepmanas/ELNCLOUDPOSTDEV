@@ -197,10 +197,9 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 						: requestUrl;
 
 		List<String> uncompressedUrls = Arrays.asList("/protocol/uploadprotocolsfile",
-				"/protocol/uploadprotocolsfilesql", "/protocol/Uploadprotocolimage", "/protocol/Uploadprotocolimagesql",
-				"/protocol/removeprotocolimage", "/protocol/removeprotocolimagesql", "/protocol/loadprotocolfiles",
-				"/protocol/uploadvideo", "/protocol/uploadvideosql", "/protocol/removeprotocolvideo",
-				"/protocol/removeprotocolvideossql", "/protocol/uploadprotocolsorderfile",
+				"/protocol/Uploadprotocolimage", "/protocol/removeprotocolimage", "/protocol/removeprotocolimagesql", 
+				"/protocol/loadprotocolfiles", "/protocol/uploadvideo", "/protocol/uploadvideosql", 
+				"/protocol/removeprotocolvideo", "/protocol/removeprotocolvideossql", "/protocol/uploadprotocolsorderfile",
 				"/protocol/uploadprotocolsorderfilesql", "/protocol/Uploadprotocolorderimage",
 				"/protocol/Uploadprotocolorderimagesql", "/protocol/removeprotocoorderlimage",
 				"/protocol/removeprotocoorderlimagesql", "/protocol/loadprotocolorderfiles",
@@ -215,6 +214,8 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
         		"/findByStatus",
 				"/getMethod", "/getParserData", "/getMethodDelimiter", "/getParserMethod", "/getDelimiters",
 				"/getSubParserMethod", "/getParserFieldTechniqueListByMethodKey", "/getmethodversion",
+//				"/protocol/Uploadprotocolimagesql",
+//				"/protocol/uploadprotocolsfilesql",
 //        		"/MethodExportController/exportMethods",
 //        		"/MethodImportController/importMethods",
 //        		"/downloadFile/{fileName}",

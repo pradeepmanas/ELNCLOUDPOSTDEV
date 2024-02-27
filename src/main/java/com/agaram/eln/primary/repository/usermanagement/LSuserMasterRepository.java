@@ -168,5 +168,7 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	@Query(value = "SELECT DISTINCT usercode AS usercode, username AS username FROM lsusermaster WHERE usercode IN (?1)", nativeQuery = true)
 	List<UserProjection> getUsernameAndUsercode(List<Integer> usercode);
 
-
+	public Long countByUsernameAndAutenticatefrom(String username, Integer autenticatefrom);
+	
+	public LSuserMaster findByUsernameAndAutenticatefrom(String username, Integer autenticatefrom);
 }

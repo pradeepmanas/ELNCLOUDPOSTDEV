@@ -139,6 +139,8 @@ public class helpdocumentservice {
 	public Helpdocument savedocument(Helpdocument objhelp)
 	{
 		Helpdocument objupdatehelp = HelpdocumentRepository.findFirst1ByNodecodeOrderByNodecodeDesc(objhelp.getNodecode());
+		Helptittle heplobject=helptittleRepository.findByNodecode(objhelp.getNodecode());
+		
 		if(objupdatehelp != null)
 		{
 			objhelp.setId(objupdatehelp.getId());
@@ -150,8 +152,19 @@ public class helpdocumentservice {
 //			}
 			
 		}
-		
-		return HelpdocumentRepository.save(objhelp);
+		if(objhelp.getPagename()!=null) {
+			if(heplobject.getPage()==null) {
+				heplobject.setPage(objhelp.getPagename());
+				helptittleRepository.save(heplobject);
+			}else if(!heplobject.getPage().equals(objhelp.getPagename())) {
+				heplobject.setPage(objhelp.getPagename());
+				helptittleRepository.save(heplobject);
+			}
+			
+		}
+		HelpdocumentRepository.save(objhelp);
+		objhelp.setPagename(heplobject.getPage());
+		return objhelp;
 	}
 	
 	public List<Helptittle>  sortNodesforhelp(List<Helptittle>  objhelp)

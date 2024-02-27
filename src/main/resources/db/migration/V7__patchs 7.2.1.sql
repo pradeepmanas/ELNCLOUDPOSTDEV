@@ -1747,3 +1747,40 @@ update equipment set reqmaintanance = true where manintanancevalue is not null a
 update equipment set reqmaintanance = false where manintanancevalue is null and maintananceperiod is null;
 
 delete from LSfields where fieldcode = 61 and level04code = 'G22' and level04name = 'Formula Field';
+ALTER TABLE IF Exists Notification ADD COLUMN IF NOT EXISTS screen character varying(250);
+update Notification set screen='Sheet Order' where screen is null;
+
+DO
+$$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM   pg_constraint
+        WHERE  conname = 'fk701k777d2da33pkkl6lnamavi'
+        AND    conrelid = 'lsorderattachments'::regclass
+    ) THEN
+        ALTER TABLE lsorderattachments
+        ADD CONSTRAINT fk701k777d2da33pkkl6lnamavi
+        FOREIGN KEY (nmaterialcode)
+        REFERENCES elnmaterial (nmaterialcode);
+    END IF;
+END;
+$$;
+
+DO
+$$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM   pg_constraint
+        WHERE  conname = 'fkbvkyp7mg7pxs4oxsg45bmnj6l'
+        AND    conrelid = 'lsorderattachments'::regclass
+    ) THEN
+        ALTER TABLE lsorderattachments
+        ADD CONSTRAINT fkbvkyp7mg7pxs4oxsg45bmnj6l
+        FOREIGN KEY (nmaterialinventorycode)
+        REFERENCES elnmaterialinventory (nmaterialinventorycode);
+    END IF;
+END;
+$$;
+

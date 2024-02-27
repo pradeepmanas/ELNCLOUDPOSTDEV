@@ -1859,25 +1859,38 @@ public class FileService {
 
 	public List<ElnprotocolTemplateworkflow> InsertUpdateprotocoltemplateWorkflow(
 			ElnprotocolTemplateworkflow[] elnprotocolTemplateworkflow) {
-
+		long  obj=0;
+		obj=elnprotocoltemplateworkflowRepository.count();
 		List<ElnprotocolTemplateworkflow> elnprotocolTemplateworkflowobj = Arrays.asList(elnprotocolTemplateworkflow);
+		Integer ismultitenant=elnprotocolTemplateworkflowobj.get(0).getIsmultitenant();
 		for (ElnprotocolTemplateworkflow flow : elnprotocolTemplateworkflowobj) {
+			
+			if(ismultitenant==1) {
+				if (flow.getWorkflowcode() == 0) {
+					if(obj==0) {
+						flow.setWorkflowcode(1);
+					}else {
+						int workflowcode = elnprotocoltemplateworkflowRepository.getlargeworkflowecode();
+						flow.setWorkflowcode(workflowcode + 1);
+					}
+					elnprotocoltemplateworkflowRepository.customInsertElnprotocolTemplateworkflow(flow.getWorkflowcode(),
+							flow.getStatus(), flow.getWorkflowname(), flow.getLssitemaster().getSitecode());
+					List<ElnprotocolTemplateworkflowgroupmap> updatedGroupMapList = flow
+							.getElnprotocoltemplateworkflowgroupmap().stream()
+							.peek(groupMap -> groupMap.setWorkflowcode(flow.getWorkflowcode()))
+							.collect(Collectors.toList());
+					elnprotocolTemplateworkflowgroupmapRepository.save(updatedGroupMapList);
 
-			if (flow.getWorkflowcode() == 0) {
-				int workflowcode = elnprotocoltemplateworkflowRepository.getlargeworkflowecode();
-				flow.setWorkflowcode(workflowcode + 1);
-				elnprotocoltemplateworkflowRepository.customInsertElnprotocolTemplateworkflow(flow.getWorkflowcode(),
-						flow.getStatus(), flow.getWorkflowname(), flow.getLssitemaster().getSitecode());
-				List<ElnprotocolTemplateworkflowgroupmap> updatedGroupMapList = flow
-						.getElnprotocoltemplateworkflowgroupmap().stream()
-						.peek(groupMap -> groupMap.setWorkflowcode(flow.getWorkflowcode()))
-						.collect(Collectors.toList());
-				elnprotocolTemplateworkflowgroupmapRepository.save(updatedGroupMapList);
-
-			} else {
+				} else {
+					elnprotocolTemplateworkflowgroupmapRepository.save(flow.getElnprotocoltemplateworkflowgroupmap());
+					elnprotocoltemplateworkflowRepository.save(flow);
+				}
+			}else {
 				elnprotocolTemplateworkflowgroupmapRepository.save(flow.getElnprotocoltemplateworkflowgroupmap());
 				elnprotocoltemplateworkflowRepository.save(flow);
 			}
+
+		
 
 //			
 		}

@@ -122,7 +122,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 	                "/multitenant/getPremiumTenant", "/transaction/updateMaterialDynamicTable",
 	                "/transaction/updateMappedTemplateFieldPropsMaterialTable", "/multitenant/updateplanrights",
 	                "/User/getActiveUserCount", "/multitenant/updateplanType","/Login/getlicense","/Login/loadmultisite","/Login/LoadSitewithoutgzip","/Login/Logintenat/{Tenantname}/{Username},",
-	                "/Login/importchemdata","/Instrument/downloadsheetimages")
+	                "/Login/importchemdata","/Instrument/downloadsheetimages","/Restcall/getlinkedinuserprofile",
+	                "/Freeuserlogin/Createuser","/Freeuserlogin/Loginfreeuser")
 	        .permitAll()
 	        // all other requests need to be authenticated
 	        .anyRequest().authenticated()

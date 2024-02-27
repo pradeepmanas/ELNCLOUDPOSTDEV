@@ -292,6 +292,10 @@ public class LoginController {
 	public Notification Loginnotification(@RequestBody Notification objNotification) throws ParseException {
 		return loginService.Loginnotification(objNotification);
 	}
+	@PostMapping("/Duedatenotification")
+	public Notification Duedatenotification(@RequestBody Notification objNotification) throws ParseException {
+		return loginService.Duedatenotification(objNotification);
+	}
 
 	@PostMapping("/Resourcenotification")
 	public Lsrepositoriesdata Resourcenotification(@RequestBody Lsrepositoriesdata objNotification)

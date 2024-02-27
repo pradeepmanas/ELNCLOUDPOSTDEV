@@ -393,5 +393,52 @@ update lsaudittrailconfigmaster set ordersequnce=24 where ordersequnce=42 and se
 
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS sentforapprovel Boolean;
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS approvelaccept Boolean;
+ DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsordernotification_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE lsordernotification_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.lsordernotification
+(
+    batchcode numeric(17,0) DEFAULT nextval('lsordernotification_seq'::regclass),
+    batchid character varying(250) COLLATE pg_catalog."default",
+    cautiondate timestamp without time zone,
+    createdtimestamp timestamp without time zone,
+    duedate timestamp without time zone,
+    screen character varying(255) COLLATE pg_catalog."default",
+    status integer,
+    usercode integer,
+    CONSTRAINT lsordernotification_pkey PRIMARY KEY (batchcode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.lsordernotification
+    OWNER to postgres;
+	
+alter table lslogilablimsorderdetail drop column IF EXISTS duedate;
+alter table lslogilablimsorderdetail drop column IF EXISTS cautiondate;
+
+ALTER TABLE IF Exists lsusermaster ADD COLUMN IF NOT EXISTS autenticatefrom  INTEGER;
+ALTER TABLE IF Exists lsusermaster ADD COLUMN IF NOT EXISTS picture character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE IF Exists lsusermaster ADD COLUMN IF NOT EXISTS subcode character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE IF Exists lssitemaster ADD COLUMN IF NOT EXISTS accouttype integer;
+ALTER TABLE IF Exists lssitemaster ADD COLUMN IF NOT EXISTS country character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE IF Exists lssitemaster ADD COLUMN IF NOT EXISTS organisationname character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE IF Exists lssitemaster ADD COLUMN IF NOT EXISTS teamsize integer;
 
 

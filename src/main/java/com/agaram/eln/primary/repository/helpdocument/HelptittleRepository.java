@@ -24,4 +24,5 @@ public interface HelptittleRepository extends JpaRepository <Helptittle,Integer 
 	public void deleteByNodecode(Integer nodecode);
 	
 	public Helptittle findFirst1ByPageOrderByNodecodeDesc(String page);
+	public Helptittle findByNodecode(Integer nodecode);
 }

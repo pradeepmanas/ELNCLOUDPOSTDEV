@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -42,23 +43,22 @@ public interface LsprotocolOrderStructureRepository extends JpaRepository<Lsprot
 	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j, LSuserMaster lsuserMaster2, int k);
 
-	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrderByDirectorycode(
+	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+			LSSiteMaster lssitemaster, int i, String search_Key, LSuserMaster objusermaster, int j, String search_Key2,
+			LSuserMaster objusermaster2, int k, String search_Key3, Pageable pageable);
+
+	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
+			LSSiteMaster lssitemaster, int i, String search_Key, LSuserMaster objusermaster, int j, String search_Key2,
+			LSSiteMaster lssitemaster2, int k, List<LSuserMaster> usernotify, String search_Key3, Pageable pageable);
+
+	long countBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, String search_Key, LSuserMaster objusermaster, int j, String search_Key2,
 			LSuserMaster objusermaster2, int k, String search_Key3);
 
-	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionAndDirectorynameLikeOrCreatedbyAndViewoptionAndDirectorynameLikeOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeOrderByDirectorycode(
+	long countBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, String search_Key, LSuserMaster objusermaster, int j, String search_Key2,
 			LSSiteMaster lssitemaster2, int k, List<LSuserMaster> usernotify, String search_Key3);
 
-
-
-
-
-
-
-
-
-	
 	
 
 }

@@ -53,6 +53,9 @@ public class LSuserMaster {
 	private String createdby;
 	@Column(columnDefinition = "varchar(255)")
 	private String modifiedby;
+	private String subcode;
+	private String picture;
+	private Integer autenticatefrom;
 	@Transient
 	private List<LSuserMaster> usernotify;
 	@Transient
@@ -727,6 +730,30 @@ public class LSuserMaster {
 
 	public void setLsusermaster(LSuserMaster lsusermaster) {
 		this.lsusermaster = lsusermaster;
+	}
+
+	public String getSubcode() {
+		return subcode;
+	}
+
+	public void setSubcode(String subcode) {
+		this.subcode = subcode;
+	}
+
+	public String getPicture() {
+		return picture;
+	}
+
+	public void setPicture(String picture) {
+		this.picture = picture;
+	}
+
+	public Integer getAutenticatefrom() {
+		return autenticatefrom;
+	}
+
+	public void setAutenticatefrom(Integer autenticatefrom) {
+		this.autenticatefrom = autenticatefrom;
 	}
 
 	
