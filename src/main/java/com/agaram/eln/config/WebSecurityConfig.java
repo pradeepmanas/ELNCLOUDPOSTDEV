@@ -123,8 +123,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 	                "/transaction/updateMappedTemplateFieldPropsMaterialTable", "/multitenant/updateplanrights",
 	                "/User/getActiveUserCount", "/multitenant/updateplanType","/Login/getlicense","/Login/loadmultisite","/Login/LoadSitewithoutgzip","/Login/Logintenat/{Tenantname}/{Username},",
 	                "/Login/importchemdata","/Instrument/downloadsheetimages","/Restcall/getlinkedinuserprofile",
-	                "/Freeuserlogin/Createuser","/Freeuserlogin/Loginfreeuser")
+	                "/Freeuserlogin/Createuser","/Freeuserlogin/Loginfreeuser","/Freeuserlogin/Validateuser",
+	                "/Freeuserlogin/Setpassword","/Freeuserlogin/Resetpassword","/Freeuserlogin/Loginfreeuserwithname")
 	        .permitAll()
+			
 	        // all other requests need to be authenticated
 	        .anyRequest().authenticated()
 	        .and()

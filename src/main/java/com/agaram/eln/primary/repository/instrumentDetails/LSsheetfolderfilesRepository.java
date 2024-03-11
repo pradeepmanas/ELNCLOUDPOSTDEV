@@ -3,6 +3,7 @@ package com.agaram.eln.primary.repository.instrumentDetails;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -40,6 +41,10 @@ public List<LSsheetfolderfiles> findByDirectorycodeAndFileforAndCreatedtimestamp
 public void removeForFile(List<String> uuid);
 public List<LSsheetfolderfiles> findByDirectorycode(long directorycode);
 public List<LSsheetfolderfiles> findByDirectorycodeAndFilefor(long directorycode, String filefor);
+public List<LSsheetfolderfiles> findByDirectorycodeInAndFilenameLikeIgnoreCaseOrderByFolderfilecode(
+		List<Long> directoryCode_Sheet, String search_Key);
+public long countByDirectorycodeInAndFilenameLikeIgnoreCaseOrderByFolderfilecode(List<Long> directoryCode_Sheet,
+		String search_Key);
 
 
  

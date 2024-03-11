@@ -321,6 +321,16 @@ public class InstrumentController {
 		return instrumentService.Getorderbyfile(objorder);
 	}
 
+	@PostMapping("/GetOrdersByLinkedFiles")
+	public Map<String, Object> GetOrdersByLinkedFiles(@RequestBody Map<String, Object> mapObject)throws Exception {
+		return instrumentService.GetOrdersByLinkedFiles(mapObject);
+	}
+	
+	@PostMapping("/GetorderForLINKsheet")
+	public LSlogilablimsorderdetail GetorderForLINKsheet(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
+		return instrumentService.GetorderForLINKsheet(objorder);
+	}
+	
 	@PostMapping("/Getexcelorder")
 	public List<LSlogilablimsorderdetail> Getexcelorder(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
 		return instrumentService.Getexcelorder(objorder);

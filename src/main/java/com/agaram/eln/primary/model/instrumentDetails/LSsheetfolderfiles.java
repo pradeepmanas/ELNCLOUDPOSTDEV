@@ -47,8 +47,19 @@ public class LSsheetfolderfiles {
 	private Date fromdate;
 	
 	@Transient
+	private String folderpath;
+	
+	@Transient
 	private Date todate;
 	
+	public String getFolderpath() {
+		return folderpath;
+	}
+
+	public void setFolderpath(String folderpath) {
+		this.folderpath = folderpath;
+	}
+
 	public Date getFromdate() {
 		return fromdate;
 	}

@@ -280,70 +280,8 @@ ALTER TABLE IF Exists lsprotocolorderstructure ADD COLUMN IF NOT EXISTS floatval
 ALTER TABLE IF Exists lssheetorderstructure ADD COLUMN IF NOT EXISTS floatvalues bigint;
 
 
-delete from lsaudittrailconfigmaster where modulename='IDS_MDL_REPORTS' and taskname in('IDS_TSK_CONFIGURE','IDS_TSK_DIRECTORYSAVE','IDS_TSK_NEWTEMP','IDS_TSK_SAVE','IDS_TSK_SAVEAS','IDS_TSK_GENERATEREPORT');
-delete from lsaudittrailconfiguration where modulename='IDS_MDL_REPORTS' and taskname in('IDS_TSK_CONFIGURE','IDS_TSK_DIRECTORYSAVE','IDS_TSK_NEWTEMP','IDS_TSK_SAVE','IDS_TSK_SAVEAS','IDS_TSK_GENERATEREPORT');
-
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) 
-values(47,0,'IDS_MDL_REPORTS',94,'IDS_SCN_REPORTDESIGNER','IDS_TSK_RDEWFOLDER') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) 
-values(49,0,'IDS_MDL_REPORTS',95,'IDS_SCN_REPORTDESIGNER','IDS_TSK_RDOPEN') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) 
-values(43,0,'IDS_MDL_REPORTS',96,'IDS_SCN_REPORTDESIGNER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) 
-values(29,0,'IDS_MDL_REPORTS',98,'IDS_SCN_REPORTVIEWER','IDS_TSK_RDEWFOLDER') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) 
-values(52,0,'IDS_MDL_REPORTS',99,'IDS_SCN_REPORTVIEWER','IDS_TSK_RDOPEN') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) 
-values(53,0,'IDS_MDL_REPORTS',100,'IDS_SCN_REPORTVIEWER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) 
-values(30,0,'IDS_MDL_REPORTS',101,'IDS_SCN_REPORTVIEWER','IDS_TSK_CONTINUE') ON CONFLICT(serialno)DO NOTHING;
-
-UPDATE lsaudittrailconfigmaster set screenname='IDS_SCN_REPORTDESIGNER' where screenname='IDS_SCN_REPORTS';
-update lsaudittrailconfiguration set screenname='IDS_SCN_REPORTDESIGNER' WHERE screenname='IDS_SCN_REPORTS';
-
-update lsaudittrailconfigmaster set ordersequnce=104 where serialno=150 ;
-update lsaudittrailconfigmaster set ordersequnce=105 where serialno=151 ;
-update lsaudittrailconfigmaster set ordersequnce=106 where serialno=119 ;
-update lsaudittrailconfigmaster set ordersequnce=107 where serialno=120 ;
-update lsaudittrailconfigmaster set ordersequnce=108 where serialno=152 ;
-update lsaudittrailconfigmaster set ordersequnce=109 where serialno=153 ;
-update lsaudittrailconfigmaster set ordersequnce=110 where serialno=142 ;
-update lsaudittrailconfigmaster set ordersequnce=111 where serialno=154 ;
-update lsaudittrailconfigmaster set ordersequnce=112 where serialno=121 ;
-update lsaudittrailconfigmaster set ordersequnce=113 where serialno=155 ;
-update lsaudittrailconfigmaster set ordersequnce=114 where serialno=122 ;
-update lsaudittrailconfigmaster set ordersequnce=115 where serialno=143 ;
-update lsaudittrailconfigmaster set ordersequnce=116 where serialno=123 ;
-update lsaudittrailconfigmaster set ordersequnce=117 where serialno=124 ;
-update lsaudittrailconfigmaster set ordersequnce=118 where serialno=144 ;
-update lsaudittrailconfigmaster set ordersequnce=119 where serialno=125 ;
-update lsaudittrailconfigmaster set ordersequnce=120 where serialno=126 ;
-update lsaudittrailconfigmaster set ordersequnce=121 where serialno=145 ;
-update lsaudittrailconfigmaster set ordersequnce=122 where serialno=127 ;
-update lsaudittrailconfigmaster set ordersequnce=123 where serialno=128 ;
-update lsaudittrailconfigmaster set ordersequnce=124 where serialno=146 ;
-update lsaudittrailconfigmaster set ordersequnce=125 where serialno=129 ;
-update lsaudittrailconfigmaster set ordersequnce=126 where serialno=71 ;
-update lsaudittrailconfigmaster set ordersequnce=127 where serialno=72 ;
-update lsaudittrailconfigmaster set ordersequnce=128 where serialno=73 ;
-update lsaudittrailconfigmaster set ordersequnce=129 where serialno=74 ;
-update lsaudittrailconfigmaster set ordersequnce=130 where serialno=75 ;
-update lsaudittrailconfigmaster set ordersequnce=131 where serialno=132 ;
-update lsaudittrailconfigmaster set ordersequnce=132 where serialno=133 ;
-update lsaudittrailconfigmaster set ordersequnce=133 where serialno=134 ;
-update lsaudittrailconfigmaster set ordersequnce=134 where serialno=135 ;
-update lsaudittrailconfigmaster set ordersequnce=135 where serialno=81 ;
-update lsaudittrailconfigmaster set ordersequnce=136 where serialno=82 ;
-update lsaudittrailconfigmaster set ordersequnce=137 where serialno=83 ;
-update lsaudittrailconfigmaster set ordersequnce=108 where serialno=142 ;
-update lsaudittrailconfigmaster set ordersequnce=110 where serialno=152 ;
-update lsaudittrailconfigmaster set ordersequnce=109 where serialno=121 ;
-update lsaudittrailconfigmaster set ordersequnce=104 where serialno=150 ;
-update lsaudittrailconfigmaster set ordersequnce=106 where serialno=119 ;
-update lsaudittrailconfigmaster set screenname='IDS_SCN_UNITMASTER' where serialno=150 ;
-update lsaudittrailconfigmaster set screenname='IDS_SCN_GRADEMASTER' where serialno=119 ;
-
+-- delete from lsaudittrailconfigmaster where modulename in ('IDS_MDL_REPORTS')  and taskname in('IDS_TSK_CONFIGURE','IDS_TSK_DIRECTORYSAVE','IDS_TSK_NEWTEMP','IDS_TSK_SAVE','IDS_TSK_SAVEAS','IDS_TSK_GENERATEREPORT');
+delete from lsaudittrailconfigmaster where modulename in ('IDS_MDL_REPORTS','IDS_MDL_INVENTORY','IDS_MDL_LOGBOOK');
 ALTER TABLE IF Exists LSprotocolmaster ADD COLUMN IF NOT EXISTS fileuid varchar(250);
 ALTER TABLE IF Exists LSprotocolmaster ADD COLUMN IF NOT EXISTS fileuri varchar(500);
 ALTER TABLE IF Exists LSprotocolmaster ADD COLUMN IF NOT EXISTS containerstored integer default 0;
@@ -1325,36 +1263,36 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.elnprotocolworkflowgroupmap
     OWNER to postgres;
     
-DO $$
+
+ DO $$
 DECLARE
   Elnprotocolworkflow INTEGER := 0;
   LSworkflow INTEGER := 0;
-  hasElnprotocolworkflowWorkflowcode BOOLEAN := false;
-BEGIN
-  SELECT COUNT(*) INTO Elnprotocolworkflow FROM Elnprotocolworkflow;
-  SELECT COUNT(*) INTO LSworkflow FROM LSworkflow;
-  IF Elnprotocolworkflow = 0 AND LSworkflow != 0 THEN
-    INSERT INTO Elnprotocolworkflow
-    SELECT * FROM LSworkflow;
-  END IF;
-END
-$$;
-
-
-DO $$
-DECLARE
   elnprotocolworkflowgroupmap INTEGER := 0;
   LSworkflowgroupmapping INTEGER := 0;
-  Elnprotocolworkflow INTEGER := 0;
+   protocolorder INTEGER := 0;
+    wrokflowcode INTEGER := 0;
+	 i INTEGER := 0;
 BEGIN
-  SELECT COUNT(*) INTO elnprotocolworkflowgroupmap FROM elnprotocolworkflowgroupmap;
+   SELECT count(distinct lsworkflow_workflowcode) INTO protocolorder FROM lslogilabprotocoldetail where lsworkflow_workflowcode is not null;
+  SELECT COUNT(*) INTO Elnprotocolworkflow FROM Elnprotocolworkflow;
+  SELECT COUNT(*) INTO LSworkflow FROM LSworkflow;
+    SELECT COUNT(*) INTO elnprotocolworkflowgroupmap FROM elnprotocolworkflowgroupmap;
   SELECT COUNT(*) INTO LSworkflowgroupmapping FROM LSworkflowgroupmapping;
   SELECT COUNT(*) INTO Elnprotocolworkflow FROM Elnprotocolworkflow;
-
-  IF elnprotocolworkflowgroupmap = 0 AND LSworkflowgroupmapping != 0 AND Elnprotocolworkflow != 0 THEN
-    INSERT INTO elnprotocolworkflowgroupmap
+  IF Elnprotocolworkflow = 0 AND LSworkflow != 0 And elnprotocolworkflowgroupmap = 0 And protocolorder != 0 THEN
+    INSERT INTO Elnprotocolworkflow
+    SELECT * FROM LSworkflow;
+ LOOP
+      EXIT WHEN i > protocolorder;
+      SELECT distinct lsworkflow_workflowcode INTO wrokflowcode FROM lslogilabprotocoldetail where lsworkflow_workflowcode is not null offset i limit 1;
+if wrokflowcode!=0 THEN
+  INSERT INTO elnprotocolworkflowgroupmap
     SELECT * FROM LSworkflowgroupmapping 
-    WHERE workflowcode IS NOT NULL AND lsusergroup_usergroupcode IS NOT NULL;
+    WHERE workflowcode IS NOT NULL AND lsusergroup_usergroupcode IS NOT NULL And workflowcode=wrokflowcode;
+ END IF;
+      i := i + 1;
+    END LOOP;
   END IF;
 END
 $$;
@@ -1479,31 +1417,37 @@ ALTER TABLE IF EXISTS public.elnprotocoltemplateworkflowgroupmap
  
 DO $$
 DECLARE
-  ElnprotocolTemplateworkflow INTEGER := 0;
-  LSsheetworkflow INTEGER := 0;
-BEGIN
-  SELECT COUNT(*) INTO ElnprotocolTemplateworkflow FROM ElnprotocolTemplateworkflow;
-  SELECT COUNT(*) INTO LSsheetworkflow FROM LSsheetworkflow;
-  IF ElnprotocolTemplateworkflow = 0 AND LSsheetworkflow != 0 THEN
-   INSERT INTO ElnprotocolTemplateworkflow
-      SELECT workflowcode,status,workflowname,lssitemaster_sitecode FROM LSsheetworkflow;
-  END IF;
-END
-$$;
-
-
-DO $$
-DECLARE
   ElnprotocolTemplateworkflowgroupmap INTEGER := 0;
   LSsheetworkflowgroupmap INTEGER := 0;
   ElnprotocolTemplateworkflow INTEGER := 0;
+  i INTEGER := 0;
+  Elnprotocolworkflowcode INTEGER := 0;
+    ElnprotocolTemplateworkflow_count INTEGER;
+      lsprotocolmasterobj INTEGER := 0;
+      wrokflowcode INTEGER := 0;
 BEGIN
   SELECT COUNT(*) INTO ElnprotocolTemplateworkflowgroupmap FROM ElnprotocolTemplateworkflowgroupmap;
   SELECT COUNT(*) INTO LSsheetworkflowgroupmap FROM LSsheetworkflowgroupmap;
    SELECT COUNT(*) INTO ElnprotocolTemplateworkflow FROM ElnprotocolTemplateworkflow;
-  IF ElnprotocolTemplateworkflowgroupmap = 0 AND LSsheetworkflowgroupmap != 0 And ElnprotocolTemplateworkflow !=0 THEN
-   INSERT INTO ElnprotocolTemplateworkflowgroupmap
-      SELECT * FROM LSsheetworkflowgroupmap  where workflowcode is not null and lsusergroup_usergroupcode is not null;
+    SELECT count(distinct lssheetworkflow_workflowcode) INTO lsprotocolmasterobj FROM lsprotocolmaster where lssheetworkflow_workflowcode is not null;
+  IF ElnprotocolTemplateworkflowgroupmap = 0 AND LSsheetworkflowgroupmap != 0 And ElnprotocolTemplateworkflow =0 AND lsprotocolmasterobj != 0 THEN
+INSERT INTO ElnprotocolTemplateworkflow
+      SELECT workflowcode,status,workflowname,lssitemaster_sitecode FROM LSsheetworkflow;
+      SELECT COUNT(*) INTO ElnprotocolTemplateworkflow FROM ElnprotocolTemplateworkflow;
+      if ElnprotocolTemplateworkflow!=0 then
+	  raise notice 'lsprotocolmasterobj %', lsprotocolmasterobj;
+ LOOP
+      EXIT WHEN i > lsprotocolmasterobj;
+	   raise notice 'loop %', i;
+      SELECT distinct lssheetworkflow_workflowcode INTO wrokflowcode FROM lsprotocolmaster where lssheetworkflow_workflowcode is not null offset i limit 1;
+if wrokflowcode!=0 THEN
+ raise notice 'wrokflowcode %', wrokflowcode;
+    INSERT INTO ElnprotocolTemplateworkflowgroupmap
+      SELECT * FROM LSsheetworkflowgroupmap  where workflowcode=wrokflowcode and  workflowcode is not null and lsusergroup_usergroupcode is not null;
+ END IF;
+      i := i + 1;
+    END LOOP;
+  END IF;
   END IF;
 END
 $$;
@@ -1687,57 +1631,6 @@ ALTER TABLE IF Exists elnmaterial ADD COLUMN IF NOT EXISTS barcodetype integer;
 
 update elnmaterial set barcodetype = 1 where barcodetype is null;
 
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(150,0,'IDS_MDL_INVENTORY',99,'IDS_SCN_MATERIALTYPE','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(151,0,'IDS_MDL_INVENTORY',100,'IDS_SCN_MATERIALTYPE','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(152,0,'IDS_MDL_INVENTORY',101,'IDS_SCN_MATERIALCATEGORY','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(153,0,'IDS_MDL_INVENTORY',102,'IDS_SCN_MATERIALCATEGORY','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(154,0,'IDS_MDL_INVENTORY',103,'IDS_SCN_MATERIALCATEGORY','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(155,0,'IDS_MDL_INVENTORY',104,'IDS_SCN_STORAGELOCATION','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(156,0,'IDS_MDL_INVENTORY',105,'IDS_SCN_STORAGELOCATION','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(157,0,'IDS_MDL_INVENTORY',106,'IDS_SCN_STORAGELOCATION','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(158,0,'IDS_MDL_INVENTORY',107,'IDS_SCN_UNITMASTER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(159,0,'IDS_MDL_INVENTORY',108,'IDS_SCN_UNITMASTER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(160,0,'IDS_MDL_INVENTORY',109,'IDS_SCN_UNITMASTER','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(161,0,'IDS_MDL_INVENTORY',110,'IDS_SCN_GRADEMASTER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(162,0,'IDS_MDL_INVENTORY',111,'IDS_SCN_GRADEMASTER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(163,0,'IDS_MDL_INVENTORY',112,'IDS_SCN_GRADEMASTER','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(164,0,'IDS_MDL_INVENTORY',113,'IDS_SCN_SUPPLIER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(165,0,'IDS_MDL_INVENTORY',114,'IDS_SCN_SUPPLIER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(166,0,'IDS_MDL_INVENTORY',115,'IDS_SCN_SUPPLIER','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(167,0,'IDS_MDL_INVENTORY',116,'IDS_SCN_MANUFACTURER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(168,0,'IDS_MDL_INVENTORY',117,'IDS_SCN_MANUFACTURER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(169,0,'IDS_MDL_INVENTORY',118,'IDS_SCN_MANUFACTURER','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(170,0,'IDS_MDL_INVENTORY',119,'IDS_SCN_SECTIONMASTER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(171,0,'IDS_MDL_INVENTORY',120,'IDS_SCN_SECTIONMASTER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(172,0,'IDS_MDL_INVENTORY',121,'IDS_SCN_SECTIONMASTER','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(173,0,'IDS_MDL_INVENTORY',122,'IDS_SCN_MATERIAL','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(174,0,'IDS_MDL_INVENTORY',123,'IDS_SCN_MATERIAL','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(175,0,'IDS_MDL_INVENTORY',124,'IDS_SCN_MATERIAL','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(176,0,'IDS_MDL_INVENTORY',125,'IDS_SCN_MATERIALINVENTORY','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(177,0,'IDS_MDL_INVENTORY',126,'IDS_SCN_MATERIALINVENTORY','IDS_TSK_RESTOCK') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(178,0,'IDS_MDL_INVENTORY',127,'IDS_SCN_MATERIALINVENTORY','IDS_TSK_DISPOSE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(179,0,'IDS_MDL_INVENTORY',128,'IDS_SCN_MATERIALINVENTORY','IDS_TSK_RELEASE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(180,0,'IDS_MDL_INVENTORY',129,'IDS_SCN_MATERIALINVENTORY','IDS_TSK_OPENDATE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(181,0,'IDS_MDL_INVENTORY',130,'IDS_SCN_EQUIPMENTTYPE','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(182,0,'IDS_MDL_INVENTORY',131,'IDS_SCN_EQUIPMENTTYPE','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(183,0,'IDS_MDL_INVENTORY',132,'IDS_SCN_EQUIPMENTCATEGORY','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(184,0,'IDS_MDL_INVENTORY',133,'IDS_SCN_EQUIPMENTCATEGORY','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(185,0,'IDS_MDL_INVENTORY',134,'IDS_SCN_EQUIPMENTCATEGORY','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(186,0,'IDS_MDL_INVENTORY',135,'IDS_SCN_EQUIPMENT','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(187,0,'IDS_MDL_INVENTORY',136,'IDS_SCN_EQUIPMENT','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(188,0,'IDS_MDL_INVENTORY',137,'IDS_SCN_EQUIPMENT','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(189,0,'IDS_MDL_INVENTORY',138,'IDS_SCN_EQUIPMENT','IDS_TSK_ACT/DCT') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(190,0,'IDS_MDL_INVENTORY',139,'IDS_SCN_EQUIPMENT','IDS_TSK_CALIBRATE') ON CONFLICT(serialno)DO NOTHING;
-Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(191,0,'IDS_MDL_INVENTORY',140,'IDS_SCN_EQUIPMENT','IDS_TSK_MAINTAINE') ON CONFLICT(serialno)DO NOTHING;
-
-update lsaudittrailconfigmaster set ordersequnce = 145 where ordersequnce = 137 and screenname = 'IDS_SCN_LOGBOOK';
-update lsaudittrailconfigmaster set ordersequnce = 146 where ordersequnce = 136 and screenname = 'IDS_SCN_LOGBOOK';
-update lsaudittrailconfigmaster set ordersequnce = 147 where ordersequnce = 135 and screenname = 'IDS_SCN_LOGBOOK';
-update lsaudittrailconfigmaster set ordersequnce = 148 where ordersequnce = 134 and screenname = 'IDS_SCN_LOGBOOK';
-update lsaudittrailconfigmaster set ordersequnce = 149 where ordersequnce = 133 and screenname = 'IDS_SCN_LOGBOOK';
-update lsaudittrailconfigmaster set ordersequnce = 150 where ordersequnce = 132 and screenname = 'IDS_SCN_LOGBOOK';
-update lsaudittrailconfigmaster set ordersequnce = 151 where ordersequnce = 131 and screenname = 'IDS_SCN_LOGBOOK';
-
 ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS reqcalibration boolean;
 update equipment set reqcalibration = true where callibrationvalue is not null and callibrationperiod is not null;
 update equipment set reqcalibration = false where callibrationvalue is null and callibrationperiod is null;
@@ -1783,4 +1676,61 @@ BEGIN
     END IF;
 END;
 $$;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(148,0,'IDS_MDL_REPORTS',94,'IDS_SCN_REPORTDESIGNER','IDS_TSK_RDEWFOLDER') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(149,0,'IDS_MDL_REPORTS',95,'IDS_SCN_REPORTDESIGNER','IDS_TSK_RDOPEN') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(150,0,'IDS_MDL_REPORTS',96,'IDS_SCN_REPORTDESIGNER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(151,0,'IDS_MDL_REPORTS',97,'IDS_SCN_REPORTVIEWER','IDS_TSK_RDEWFOLDER') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(152,0,'IDS_MDL_REPORTS',98,'IDS_SCN_REPORTVIEWER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(153,0,'IDS_MDL_REPORTS',99,'IDS_SCN_REPORTVIEWER','IDS_TSK_CONTINUE') ON CONFLICT(serialno)DO NOTHING;
 
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(154,0,'IDS_MDL_INVENTORY',100,'IDS_SCN_MATERIALTYPE','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(155,0,'IDS_MDL_INVENTORY',101,'IDS_SCN_MATERIALTYPE','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(156,0,'IDS_MDL_INVENTORY',102,'IDS_SCN_MATERIALCATEGORY','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(157,0,'IDS_MDL_INVENTORY',103,'IDS_SCN_MATERIALCATEGORY','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(158,0,'IDS_MDL_INVENTORY',104,'IDS_SCN_MATERIALCATEGORY','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(159,0,'IDS_MDL_INVENTORY',105,'IDS_SCN_STORAGELOCATION','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(160,0,'IDS_MDL_INVENTORY',106,'IDS_SCN_STORAGELOCATION','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(161,0,'IDS_MDL_INVENTORY',107,'IDS_SCN_STORAGELOCATION','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(162,0,'IDS_MDL_INVENTORY',108,'IDS_SCN_UNITMASTER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(163,0,'IDS_MDL_INVENTORY',109,'IDS_SCN_UNITMASTER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(164,0,'IDS_MDL_INVENTORY',110,'IDS_SCN_UNITMASTER','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(165,0,'IDS_MDL_INVENTORY',111,'IDS_SCN_GRADEMASTER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(166,0,'IDS_MDL_INVENTORY',112,'IDS_SCN_GRADEMASTER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(167,0,'IDS_MDL_INVENTORY',113,'IDS_SCN_GRADEMASTER','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
+
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(168,0,'IDS_MDL_INVENTORY',114,'IDS_SCN_SUPPLIER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(169,0,'IDS_MDL_INVENTORY',115,'IDS_SCN_SUPPLIER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(170,0,'IDS_MDL_INVENTORY',116,'IDS_SCN_SUPPLIER','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(171,0,'IDS_MDL_INVENTORY',117,'IDS_SCN_MANUFACTURER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(172,0,'IDS_MDL_INVENTORY',118,'IDS_SCN_MANUFACTURER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(173,0,'IDS_MDL_INVENTORY',119,'IDS_SCN_MANUFACTURER','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(174,0,'IDS_MDL_INVENTORY',120,'IDS_SCN_SECTIONMASTER','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(175,0,'IDS_MDL_INVENTORY',121,'IDS_SCN_SECTIONMASTER','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(176,0,'IDS_MDL_INVENTORY',122,'IDS_SCN_SECTIONMASTER','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(177,0,'IDS_MDL_INVENTORY',123,'IDS_SCN_MATERIAL','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(178,0,'IDS_MDL_INVENTORY',124,'IDS_SCN_MATERIAL','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(179,0,'IDS_MDL_INVENTORY',125,'IDS_SCN_MATERIAL','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(180,0,'IDS_MDL_INVENTORY',126,'IDS_SCN_MATERIALINVENTORY','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(181,0,'IDS_MDL_INVENTORY',127,'IDS_SCN_MATERIALINVENTORY','IDS_TSK_RESTOCK') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(182,0,'IDS_MDL_INVENTORY',128,'IDS_SCN_MATERIALINVENTORY','IDS_TSK_DISPOSE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(183,0,'IDS_MDL_INVENTORY',129,'IDS_SCN_MATERIALINVENTORY','IDS_TSK_RELEASE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(184,0,'IDS_MDL_INVENTORY',130,'IDS_SCN_MATERIALINVENTORY','IDS_TSK_OPENDATE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(185,0,'IDS_MDL_INVENTORY',131,'IDS_SCN_EQUIPMENTTYPE','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(186,0,'IDS_MDL_INVENTORY',132,'IDS_SCN_EQUIPMENTTYPE','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(187,0,'IDS_MDL_INVENTORY',133,'IDS_SCN_EQUIPMENTCATEGORY','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(188,0,'IDS_MDL_INVENTORY',134,'IDS_SCN_EQUIPMENTCATEGORY','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(189,0,'IDS_MDL_INVENTORY',135,'IDS_SCN_EQUIPMENTCATEGORY','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(190,0,'IDS_MDL_INVENTORY',136,'IDS_SCN_EQUIPMENT','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(191,0,'IDS_MDL_INVENTORY',137,'IDS_SCN_EQUIPMENT','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(192,0,'IDS_MDL_INVENTORY',138,'IDS_SCN_EQUIPMENT','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(193,0,'IDS_MDL_INVENTORY',139,'IDS_SCN_EQUIPMENT','IDS_TSK_ACT/DCT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(194,0,'IDS_MDL_INVENTORY',140,'IDS_SCN_EQUIPMENT','IDS_TSK_CALIBRATE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(195,0,'IDS_MDL_INVENTORY',141,'IDS_SCN_EQUIPMENT','IDS_TSK_MAINTAINE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(196,0,'IDS_MDL_INVENTORY',142,'IDS_SCN_INVENTORY','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(197,0,'IDS_MDL_INVENTORY',143,'IDS_SCN_INVENTORY','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(198,0,'IDS_MDL_INVENTORY',144,'IDS_SCN_INVENTORY','IDS_TSK_DELETE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(199,0,'IDS_MDL_LOGBOOK',145,'IDS_SCN_LOGBOOK','IDS_TSK_ADDLOGBOOK') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(200,0,'IDS_MDL_LOGBOOK',146,'IDS_SCN_LOGBOOK','IDS_TSK_EDITLOGBOOK') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(201,0,'IDS_MDL_LOGBOOK',147,'IDS_SCN_LOGBOOK','IDS_TSK_RETIRELOGBOOK') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(202,0,'IDS_MDL_LOGBOOK',148,'IDS_SCN_LOGBOOK','IDS_TSK_REVIEWLOGBOOK') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(203,0,'IDS_MDL_LOGBOOK',149,'IDS_SCN_LOGBOOK','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;

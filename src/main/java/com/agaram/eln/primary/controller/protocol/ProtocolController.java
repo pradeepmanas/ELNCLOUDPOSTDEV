@@ -1280,4 +1280,21 @@ public class ProtocolController {
 		return ProtocolMasterService.getusercodeandusername(argObj);
 
 	}
+
+	@RequestMapping("/sendapprovel")
+	public LSlogilabprotocoldetail sendapprovel(@RequestBody LSlogilabprotocoldetail objdir)
+	{
+		return ProtocolMasterService.sendapprovel(objdir);
+	}
+	@RequestMapping("/acceptapprovel")
+	public LSlogilabprotocoldetail acceptapprovel(@RequestBody LSlogilabprotocoldetail objdir)throws Exception
+	{
+		return ProtocolMasterService.acceptapprovel(objdir);
+	}
+	
+	@RequestMapping("/Validateprotocolcountforfreeuser")
+	public boolean Validateprotocolcountforfreeuser(@RequestBody LSSiteMaster lssitemaster)
+	{
+		return ProtocolMasterService.Validateprotocolcountforfreeuser(lssitemaster);
+	}
 }

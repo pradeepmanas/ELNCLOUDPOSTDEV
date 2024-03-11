@@ -210,6 +210,17 @@ public class LSlogilablimsorderdetail {
 	List<LSworkflow> lstworkflow;
 	
 	@ManyToOne
+	private LSOrdernotification lsordernotification;
+	
+	public LSOrdernotification getLsordernotification() {
+		return lsordernotification;
+	}
+
+	public void setLsordernotification(LSOrdernotification lsordernotification) {
+		this.lsordernotification = lsordernotification;
+	}
+
+	@ManyToOne
 	private Material material;
 	@ManyToOne
 	private MaterialInventory materialinventory;

@@ -3,6 +3,7 @@ package com.agaram.eln.primary.repository.instrumentDetails;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -47,5 +48,11 @@ public interface LSprotocolfolderfilesRepository extends JpaRepository<LSprotoco
 	public List<LSprotocolfolderfiles> findByDirectorycodeAndFilefor(long directorycode, String filefor);
 
 	public LSprotocolfolderfiles findByUuid(String filename);
+
+	public List<LSprotocolfolderfiles> findByDirectorycodeInAndFilenameLikeIgnoreCaseOrderByFolderfilecode(
+			List<Long> directoryCode_Protocol, String search_Key);
+
+	public long countByDirectorycodeInAndFilenameLikeIgnoreCaseOrderByFolderfilecode(List<Long> directoryCode_Protocol,
+			String search_Key);
 
 }

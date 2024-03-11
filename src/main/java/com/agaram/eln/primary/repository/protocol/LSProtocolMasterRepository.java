@@ -452,4 +452,6 @@ List<LSprotocolmaster> findByLssitemasterAndLstestInAndStatusAndViewoptionAndApp
 			Integer sitecode, int i, int j, String search_Key, Integer usercode, int k, int l, Integer sitecode2,
 			String search_Key2);
 	
+	long countByLssitemaster(Integer sitecode);
+	
 }

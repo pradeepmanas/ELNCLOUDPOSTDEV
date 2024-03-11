@@ -1069,8 +1069,20 @@ public class UserService {
 			return lSusergroupRepository.findByUsergroupstatusInOrderByUsergroupcodeDesc(status);
 		}
 
-		List<LSusergroup> lstusergroup = lSusergroupRepository
-				.findBylssitemasterAndUsergroupstatusInOrderByUsergroupcodeDesc(Objclass.getSitecode(), status);
+		
+		List<LSusergroup> lstusergroup = new ArrayList<LSusergroup>();
+		
+		if(Objclass.getIsmultitenant() == 2)
+		{
+			lstusergroup = lSusergroupRepository
+					.findBylssitemasterAndUsergroupstatusInOrderByUsergroupcodeDesc(1, status);
+		}
+		else
+		{
+			lstusergroup = lSusergroupRepository
+					.findBylssitemasterAndUsergroupstatusInOrderByUsergroupcodeDesc(Objclass.getSitecode(), status);
+		}
+		
 
 		return lstusergroup;
 	}
@@ -1378,7 +1390,7 @@ public class UserService {
 	public LSuserMaster Usersendpasswormail(LSuserMaster objusermaster) throws MessagingException {
 
 		if (objusermaster.getIsmultitenant() != null && objusermaster.getMultitenantusercount() != null
-				&& objusermaster.getIsmultitenant() == 1) {
+				&& (objusermaster.getIsmultitenant() == 1 || objusermaster.getIsmultitenant() == 2)) {
 			String password = Generatetenantpassword();
 			String passwordadmin = AESEncryption.encrypt(password);
 			LSuserMaster lsuserMaster = new LSuserMaster();

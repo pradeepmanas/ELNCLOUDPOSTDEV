@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.model.usermanagement;
 
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -49,6 +51,7 @@ public class LSSiteMaster {
 	private Integer accouttype;
 	private String organisationname;
 	private String country;
+	private Date expirydate;
 
 	@Transient
 	LScfttransaction objsilentaudit;
@@ -268,6 +271,14 @@ public class LSSiteMaster {
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+
+	public Date getExpirydate() {
+		return expirydate;
+	}
+
+	public void setExpirydate(Date expirydate) {
+		this.expirydate = expirydate;
 	}
 
 	

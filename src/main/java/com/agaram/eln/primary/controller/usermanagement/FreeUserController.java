@@ -9,7 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.fetchmodel.getmasters.Usermaster;
+import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.service.usermanagement.FreeUserService;
 
 @RestController
@@ -26,5 +30,30 @@ public class FreeUserController {
 	@PostMapping("/Loginfreeuser")
 	public Map<String, Object> Loginfreeuser(@RequestBody LSuserMaster objuser) throws Exception {
 		return freeuserservice.Loginfreeuser(objuser);
+	}
+	
+	@PostMapping("/Validateuser")
+	public Usermaster Validateuser(@RequestBody LSuserMaster objuser) throws Exception {
+		return freeuserservice.Validateuser(objuser);
+	}
+	
+	@PostMapping("/Setpassword")
+	public Response Setpassword(@RequestBody LoggedUser objuser) throws Exception {
+		return freeuserservice.Setpassword(objuser);
+	}
+	
+	@PostMapping("/Resetpassword")
+	public Response Resetpassword(@RequestBody LoggedUser objuser) throws Exception {
+		return freeuserservice.Resetpassword(objuser);
+	}
+	
+	@PostMapping("/Loginfreeuserwithname")
+	public Map<String, Object> Loginfreeuserwithname(@RequestBody LSuserMaster objuser) throws Exception {
+		return freeuserservice.Loginfreeuserwithname(objuser);
+	}
+	
+	@PostMapping("/GetUsersaddrestrict")
+	public Boolean GetUsersaddrestrict(@RequestBody LSSiteMaster objsite) {
+		return freeuserservice.GetUsersaddrestrict(objsite);
 	}
 }

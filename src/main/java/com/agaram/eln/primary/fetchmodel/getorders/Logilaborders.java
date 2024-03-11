@@ -2,6 +2,7 @@ package com.agaram.eln.primary.fetchmodel.getorders;
 
 import java.util.Date;
 
+import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Elnmaterial;
@@ -39,16 +40,17 @@ public class Logilaborders extends Logilabordermaster {
 	private Long directorycode;
 	private Integer ordercancell;
 	private Integer viewoption;
-	
+	private LSOrdernotification lsordernotification;
+
 	
 	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,LSuserMaster assignedto,
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,
-			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved) {
+			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification) {
 		
-		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus);
+		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification);
 		 
 		if(lssamplefile != null)
 		{
@@ -80,7 +82,7 @@ public class Logilaborders extends Logilabordermaster {
 		this.directorycode = directorycode;
 		this.ordercancell=ordercancell;
 		this.viewoption=viewoption;
-
+        this.lsordernotification=lsordernotification != null ? lsordernotification :null;
 	}
 	
 	
@@ -275,5 +277,15 @@ public class Logilaborders extends Logilabordermaster {
 
 	public void setMaterialinventoryname(String materialinventoryname) {
 		this.materialinventoryname = materialinventoryname;
+	}
+
+
+	public LSOrdernotification getLsordernotification() {
+		return lsordernotification;
+	}
+
+
+	public void setLsordernotification(LSOrdernotification lsordernotification) {
+		this.lsordernotification = lsordernotification;
 	}
 }

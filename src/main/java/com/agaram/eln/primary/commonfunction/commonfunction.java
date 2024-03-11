@@ -467,5 +467,17 @@ public class commonfunction {
 		}
 		return null;
 	}  
+	
+	public static String getcontainername(Integer multitenant, String tenantname)
+	{
+		String tenant = tenantname;
+		if(multitenant == 2)
+		{
+			tenant = "freeusers";
+		}
+		
+		return  tenant;
+		
+	}
 
 }

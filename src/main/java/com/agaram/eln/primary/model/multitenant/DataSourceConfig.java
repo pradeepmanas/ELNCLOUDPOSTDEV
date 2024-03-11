@@ -65,7 +65,7 @@ public class DataSourceConfig implements Serializable {
 	private Integer plantyperights;
 	
 	private Integer isenableparser = 1;
-	private Integer isenablereport = 1;
+	private Integer isenablereport = 0;
 
 	public Integer getIsenableparser() {
 		return isenableparser;

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import com.agaram.eln.primary.fetchmodel.getmasters.Usermaster;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserActions;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -168,7 +169,15 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	@Query(value = "SELECT DISTINCT usercode AS usercode, username AS username FROM lsusermaster WHERE usercode IN (?1)", nativeQuery = true)
 	List<UserProjection> getUsernameAndUsercode(List<Integer> usercode);
 
-	public Long countByUsernameAndAutenticatefrom(String username, Integer autenticatefrom);
+	public Long countByUsernameIgnoreCaseAndAutenticatefromAndSubcode(String username, Integer autenticatefrom, String subcode);
 	
-	public LSuserMaster findByUsernameAndAutenticatefrom(String username, Integer autenticatefrom);
+	public LSuserMaster findByUsernameIgnoreCaseAndAutenticatefromAndSubcode(String username, Integer autenticatefrom, String subcode);
+
+	public Usermaster findTop1ByUsernameIgnoreCaseAndAutenticatefrom(String username, Integer autenticatefrom);
+	
+	public Usermaster findTop1ByUsernameIgnoreCase(String username);
+	
+	@Transactional
+	@Query(value = "SELECT count(*) FROM LSuserMaster u, LSMultisites s where s.usercode = u.usercode and u.userretirestatus <> 1 and s.lssitemaster_sitecode = ?1", nativeQuery = true)
+	public Long getactiveusersonsite(Integer sitecode );
 }

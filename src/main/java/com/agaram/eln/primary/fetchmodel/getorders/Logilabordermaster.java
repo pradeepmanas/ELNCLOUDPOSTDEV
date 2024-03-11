@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
@@ -35,10 +36,11 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private LSuserMaster createdby;
 	private Integer testcode;
 	private Integer approvelstatus;
+	private Long notificationcode;
 	
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,LSuserMaster assignedto,
-			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster ,Integer testcode,Integer approvelstatus) {
+			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster ,Integer testcode,Integer approvelstatus, LSOrdernotification lsordernotification) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -59,9 +61,9 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.viewoption=viewoption;
 		this.createdby = lsuserMaster;
 		this.approvelstatus=approvelstatus;
-		
+		//this.notificationcode=lsordernotification != null ? lsordernotification.getNotificationcode() : null;
 	}
-	
+
 	public Integer getApprovelstatus() {
 		return approvelstatus;
 	}
@@ -296,7 +298,6 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	public void setLsworkflow(LSworkflow lsworkflow) {
 		this.lsworkflow = lsworkflow;
 	}
-
 
 	public LSuserMaster getAssignedto() {
 		return assignedto;

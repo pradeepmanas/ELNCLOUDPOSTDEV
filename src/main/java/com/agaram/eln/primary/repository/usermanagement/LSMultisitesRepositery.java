@@ -29,4 +29,5 @@ public interface LSMultisitesRepositery extends JpaRepository<LSMultisites, Inte
 	@Query(value="select usercode from lsmultisites where lssitemaster_sitecode=?1",nativeQuery = true)
 	List<Integer> getusernameandusercode(LSSiteMaster lssitemaster);
 
+	LSMultisites findTop1Byusercode(Integer usercode);
 }

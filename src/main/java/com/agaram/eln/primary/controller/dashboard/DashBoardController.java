@@ -14,6 +14,7 @@ import com.agaram.eln.primary.fetchmodel.getmasters.Repositorymaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.masters.Lslogbooks;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.dashboard.DashBoardService;
 
@@ -132,5 +133,20 @@ public class DashBoardController {
 	@RequestMapping("/Getglobalsearchfolder")
 	public Map<String, Object> Getglobalsearchfolder(@RequestBody LSuserMaster objusermaster)throws Exception {
 		return dashBoardService.Getglobalsearchfolder(objusermaster);
+	}
+	@RequestMapping("/Getglobalsearchforfile")
+	public Map<String, Object> Getglobalsearchforfile(@RequestBody LSuserMaster objusermaster)throws Exception {
+		return dashBoardService.Getglobalsearchforfile(objusermaster);
+	}
+	
+	@RequestMapping("/Getglobalsearchforlogbook")
+	public Map<String, Object> Getglobalsearchforlogbook(@RequestBody LSuserMaster objusermaster)throws Exception
+	{
+		return dashBoardService.Getglobalsearchforlogbook(objusermaster);
+	}
+	@RequestMapping("/Getglobalsearchforinventory")
+	public Map<String, Object> Getglobalsearchforinventory(@RequestBody LSuserMaster objusermaster)throws Exception
+	{
+		return dashBoardService.Getglobalsearchforinventory(objusermaster);
 	}
 }

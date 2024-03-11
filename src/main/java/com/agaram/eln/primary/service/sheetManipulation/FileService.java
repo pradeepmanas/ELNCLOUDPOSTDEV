@@ -55,6 +55,7 @@ import com.agaram.eln.primary.model.sheetManipulation.Lsfileshareto;
 import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -234,7 +235,7 @@ public class FileService {
 
 		String Content = "";
 
-		if (objfile.getIsmultitenant() == 1) {
+		if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
 			Content = objfile.getFilecontent();
 		} else {
 			byte[] bytes = objfile.getFilecontent().getBytes(StandardCharsets.UTF_16);
@@ -363,7 +364,7 @@ public class FileService {
 
 	public void updatefilecontent(String Content, LSfile objfile, Boolean Isnew) {
 		// Document Doc = Document.parse(objfile.getFilecontent());
-		if (objfile.getIsmultitenant() == 1) {
+		if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
 			CloudSheetCreation objsavefile = new CloudSheetCreation();
 			objsavefile.setId((long) objfile.getFilecode());
 			objsavefile.setContent(Content);
@@ -1256,14 +1257,16 @@ public class FileService {
 
 			lsfileversionRepository.save(objfile.getLsfileversion());
 
-			if (objfile.getIsmultitenant() == 1) {
+			if (objfile.getIsmultitenant() == 1||objfile.getIsmultitenant() == 2) {
+				
 				CloudSheetCreation objCreation = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
 
 				if (objCreation != null && objCreation.getContainerstored() == 0) {
 					Content = cloudSheetCreationRepository.findById((long) objfile.getFilecode()).getContent();
 				} else {
 					Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
-							TenantContext.getCurrentTenant() + "sheetcreation");
+							commonfunction.getcontainername(objfile.getIsmultitenant(), TenantContext.getCurrentTenant())
+							+ "sheetcreation");
 				}
 			} else {
 				GridFSDBFile largefile = gridFsTemplate
@@ -1333,10 +1336,16 @@ public class FileService {
 
 	public void updatefileversioncontent(String Content, LSfileversion objfile, Integer ismultitenant)
 			throws IOException {
-		if (ismultitenant == 1) {
+		if (ismultitenant == 1 || ismultitenant == 2) {
 
+			String tenant = TenantContext.getCurrentTenant();
+			if(ismultitenant == 2)
+			{
+				tenant = "freeusers";
+			}
+			
 			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,
-					TenantContext.getCurrentTenant() + "sheetversion");
+					tenant + "sheetversion");
 			String fileUUID = (String) objMap.get("uuid");
 			String fileURI = objMap.get("uri").toString();
 
@@ -1381,7 +1390,7 @@ public class FileService {
 			LSfile objesixting = lSfileRepository.findByfilecode(objfile.getFilecode());
 			Content = objesixting.getFilecontent();
 			if (objfile != null) {
-				if (objfile.getIsmultitenant() == 1) {
+				if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
 					CloudSheetCreation objCreation = cloudSheetCreationRepository
 							.findById((long) objfile.getFilecode());
 
@@ -1389,7 +1398,8 @@ public class FileService {
 						Content = cloudSheetCreationRepository.findById((long) objfile.getFilecode()).getContent();
 					} else {
 						Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
-								TenantContext.getCurrentTenant() + "sheetcreation");
+								commonfunction.getcontainername(objfile.getIsmultitenant(), TenantContext.getCurrentTenant())
+								 + "sheetcreation");
 					}
 				} else {
 					GridFSDBFile largefile = gridFsTemplate
@@ -1417,7 +1427,7 @@ public class FileService {
 					.findByFilecodeAndVersionnoOrderByVersionnoDesc(objfile.getFilecode(), objfile.getVersionno());
 			Content = objVersion.getFilecontent();
 			if (objVersion != null) {
-				if (objfile.getIsmultitenant() == 1) {
+				if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
 					CloudSheetVersion objCreation = cloudSheetVersionRepository
 							.findById((long) objVersion.getFileversioncode());
 
@@ -1426,7 +1436,8 @@ public class FileService {
 								.getContent();
 					} else {
 						Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
-								TenantContext.getCurrentTenant() + "sheetversion");
+								commonfunction.getcontainername(objfile.getIsmultitenant(), TenantContext.getCurrentTenant())
+								 + "sheetversion");
 					}
 				} else {
 					GridFSDBFile largefile = gridFsTemplate.findOne(
@@ -1469,7 +1480,8 @@ public class FileService {
 		objreturnfile.setModifiedlist(new ArrayList<LSsheetupdates>());
 		objreturnfile.getModifiedlist().addAll(lssheetupdatesRepository.findByfilecode(objfile.getFilecode()));
 		if (objreturnfile != null) {
-			if (objfile.getIsmultitenant() == 1) {
+			if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
+				
 				CloudSheetCreation objCreation = cloudSheetCreationRepository.findById((long) objfile.getFilecode());
 
 				if (objCreation != null && objCreation.getContainerstored() == 0) {
@@ -1477,7 +1489,7 @@ public class FileService {
 							cloudSheetCreationRepository.findById((long) objfile.getFilecode()).getContent());
 				} else {
 					objreturnfile.setFilecontent(objCloudFileManipulationservice.retrieveCloudSheets(
-							objCreation.getFileuid(), TenantContext.getCurrentTenant() + "sheetcreation"));
+							objCreation.getFileuid(), commonfunction.getcontainername(objfile.getIsmultitenant(), TenantContext.getCurrentTenant()) + "sheetcreation"));
 				}
 			} else {
 				GridFSDBFile largefile = gridFsTemplate
@@ -1978,4 +1990,18 @@ public class FileService {
 		return mapObj;
 	}
 	
+	public boolean Validatesheetcountforfreeuser(LSSiteMaster lssitemaster)
+	{
+		boolean countexceeded = false;
+		long sheetcount = lSfileRepository.countByLssitemaster(lssitemaster);
+		if(sheetcount < 10)
+		{
+			countexceeded = false;
+		}
+		else
+		{
+			countexceeded = true;
+		}
+		return countexceeded;
+	}
 }

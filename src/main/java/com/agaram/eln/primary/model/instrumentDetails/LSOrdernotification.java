@@ -20,6 +20,9 @@ public class LSOrdernotification {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(columnDefinition = "numeric(17,0)",name = "notificationcode") 
+	private Long notificationcode;
+	
 	@Column(columnDefinition = "numeric(17,0)", name = "batchcode")
 	private Long batchcode;
 
@@ -41,6 +44,16 @@ public class LSOrdernotification {
 	
 	private String screen;
 	
+	private Boolean isduedateexhausted;
+
+	public Boolean getIsduedateexhausted() {
+		return isduedateexhausted;
+	}
+
+	public void setIsduedateexhausted(Boolean isduedateexhausted) {
+		this.isduedateexhausted = isduedateexhausted;
+	}
+
 	@Transient
 	private LSuserMaster lsusermaster;
 
@@ -143,8 +156,12 @@ public class LSOrdernotification {
 		this.status = status;
 	}
 
+	public Long getNotificationcode() {
+		return notificationcode;
+	}
 
-
-
+	public void setNotificationcode(Long notificationcode) {
+		this.notificationcode = notificationcode;
+	}
 
 }

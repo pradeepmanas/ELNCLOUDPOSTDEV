@@ -194,9 +194,9 @@ public class EquipmentService {
 			lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatusOrderByNequipmentcatcodeDesc(lstTypes.get(0),nsiteInteger, 1);
 			if(!lstCategories.isEmpty()) {
 				lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNullOrderByNequipmentcodeDesc(true,lstCategories.get(0),nsiteInteger, 1);
-				lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqcalibrationAndLastmaintainedNotNullOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false));
-				lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqmaintananceAndLastcallibratedNotNullOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false));
-				lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqmaintananceAndReqcalibrationOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false,false));
+				lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqcalibrationAndLastmaintainedNotNullOrderByNequipmentcodeDesc(true, lstCategories.get(0),nsiteInteger, 1, false));
+				lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqmaintananceAndLastcallibratedNotNullOrderByNequipmentcodeDesc(true, lstCategories.get(0),nsiteInteger, 1, false));
+				lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqmaintananceAndReqcalibrationOrderByNequipmentcodeDesc(true, lstCategories.get(0),nsiteInteger, 1, false,false));
 			}	
 		}	
 		
@@ -273,9 +273,9 @@ public class EquipmentService {
 		
 		lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNull(true,objCategory,nsiteInteger, 1);
 		
-		lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqcalibrationAndLastmaintainedNotNullOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false));
-		lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqmaintananceAndLastcallibratedNotNullOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false));
-		lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndNsitecodeAndNstatusAndReqmaintananceAndReqcalibrationOrderByNequipmentcodeDesc(true, nsiteInteger, 1, false,false));
+		lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqcalibrationAndLastmaintainedNotNullOrderByNequipmentcodeDesc(true, objCategory,nsiteInteger, 1, false));
+		lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqmaintananceAndLastcallibratedNotNullOrderByNequipmentcodeDesc(true, objCategory,nsiteInteger, 1, false));
+		lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqmaintananceAndReqcalibrationOrderByNequipmentcodeDesc(true, objCategory,nsiteInteger, 1, false,false));
 		
 		objmap.put("lstEquipments", lstEquipments);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
@@ -337,10 +337,28 @@ public class EquipmentService {
 
 			obj.setSequipmentid(objMaterial.getSequipmentid());
 			obj.setCreateddate(objMaterial.getCreateddate());
-			obj.setLastcallibrated(objMaterial.getLastcallibrated());
-			obj.setLastmaintained(objMaterial.getLastmaintained());
-			obj.setManintanancedate(objMaterial.getManintanancedate());
-			obj.setCallibrationdate(objMaterial.getCallibrationdate());
+			
+			if(obj.getReqcalibration()) {
+				obj.setLastcallibrated(obj.getLastcallibrated());
+				obj.setCallibrationdate(obj.getCallibrationdate());
+			}else {
+				obj.setLastcallibrated(obj.getLastcallibrated());
+				obj.setCallibrationdate(obj.getCallibrationdate());
+			}
+			
+			obj.setCallibrationvalue(obj.getCallibrationvalue());
+			obj.setCallibrationperiod(obj.getCallibrationperiod());
+			
+			if(obj.getReqmaintanance()) {
+				obj.setLastmaintained(obj.getLastmaintained());
+				obj.setManintanancedate(obj.getManintanancedate());
+			}else {
+				obj.setLastmaintained(obj.getLastmaintained());
+				obj.setManintanancedate(obj.getManintanancedate());
+			}
+			
+			obj.setManintanancevalue(obj.getManintanancevalue());
+			obj.setMaintananceperiod(obj.getMaintananceperiod());
 			
 			equipmentRepository.save(obj);
 			

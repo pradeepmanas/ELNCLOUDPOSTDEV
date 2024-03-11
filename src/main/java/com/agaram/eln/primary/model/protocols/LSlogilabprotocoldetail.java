@@ -21,6 +21,7 @@ import org.hibernate.annotations.Type;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
+import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
@@ -70,6 +71,29 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	
 	private String lockedusername;
 	
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date duedate;
+	
+	public Date getDuedate() {
+		return duedate;
+	}
+
+	public void setDuedate(Date duedate) {
+		this.duedate = duedate;
+	}
+	
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date cautiondate;
+	
+	public Date getCautiondate() {
+		return cautiondate;
+	}
+
+	public void setCautiondate(Date cautiondate) {
+		this.cautiondate = cautiondate;
+	}
 	@ManyToOne
 	private Material material;
 	@ManyToOne
@@ -85,6 +109,35 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	public void setLsLSlogilablimsorder(List<LSlogilablimsorder> lsLSlogilablimsorder) {
 		this.lsLSlogilablimsorder = lsLSlogilablimsorder;
+	}
+    private Boolean approvelaccept;
+	
+	public Boolean getApprovelaccept() {
+		return approvelaccept;
+	}
+
+	public void setApprovelaccept(Boolean approvelaccept) {
+		this.approvelaccept = approvelaccept;
+	}
+
+	private Boolean sentforapprovel;
+	
+	public Boolean getSentforapprovel() {
+		return sentforapprovel;
+	}
+
+	public void setSentforapprovel(Boolean sentforapprovel) {
+		this.sentforapprovel = sentforapprovel;
+	}
+	@ManyToOne
+	private LSOrdernotification lsordernotification;
+	
+	public LSOrdernotification getLsordernotification() {
+		return lsordernotification;
+	}
+
+	public void setLsordernotification(LSOrdernotification lsordernotification) {
+		this.lsordernotification = lsordernotification;
 	}
 
 	@ManyToOne

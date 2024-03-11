@@ -437,4 +437,6 @@ public List<Sheettemplateget> findByLssitemasterAndLstestInAndFilecodeGreaterTha
 	public long countByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
 			int i, LSSiteMaster lssitemaster, int j, String token, int k, LSuserMaster objuser, int l,
 			String search_Key);
+	
+	public long countByLssitemaster(LSSiteMaster lssitemaster);
 }

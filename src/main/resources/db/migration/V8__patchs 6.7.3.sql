@@ -393,6 +393,7 @@ update lsaudittrailconfigmaster set ordersequnce=24 where ordersequnce=42 and se
 
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS sentforapprovel Boolean;
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS approvelaccept Boolean;
+
  DO
 $do$
 DECLARE
@@ -412,9 +413,10 @@ BEGIN
 END
 $do$;
 
-CREATE TABLE IF NOT EXISTS public.lsordernotification
+  CREATE TABLE IF NOT EXISTS public.lsordernotification
 (
-    batchcode numeric(17,0) DEFAULT nextval('lsordernotification_seq'::regclass),
+    notificationcode numeric(17,0) NOT NULL DEFAULT nextval('lsordernotification_seq'::regclass),
+    batchcode numeric(17,0) ,
     batchid character varying(250) COLLATE pg_catalog."default",
     cautiondate timestamp without time zone,
     createdtimestamp timestamp without time zone,
@@ -422,7 +424,7 @@ CREATE TABLE IF NOT EXISTS public.lsordernotification
     screen character varying(255) COLLATE pg_catalog."default",
     status integer,
     usercode integer,
-    CONSTRAINT lsordernotification_pkey PRIMARY KEY (batchcode)
+    CONSTRAINT lsordernotification_pkey PRIMARY KEY (notificationcode)
 )
 
 TABLESPACE pg_default;
@@ -441,4 +443,40 @@ ALTER TABLE IF Exists lssitemaster ADD COLUMN IF NOT EXISTS country character va
 ALTER TABLE IF Exists lssitemaster ADD COLUMN IF NOT EXISTS organisationname character varying(255) COLLATE pg_catalog."default";
 ALTER TABLE IF Exists lssitemaster ADD COLUMN IF NOT EXISTS teamsize integer;
 
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS lsordernotification_notificationcode numeric(17,0);
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fki2iy92yjnyt3vkc3t1abjeme8'
+AND table_name='lslogilablimsorderdetail';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY lslogilablimsorderdetail ADD CONSTRAINT fki2iy92yjnyt3vkc3t1abjeme8 FOREIGN KEY (lsordernotification_notificationcode) REFERENCES lsordernotification (notificationcode);
+   END IF;
+END
+$do$; 
+
+ALTER TABLE IF Exists lsordernotification ADD COLUMN IF NOT EXISTS isduedateexhausted Boolean;
+
+ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS sentforapprovel Boolean;
+ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS approvelaccept Boolean;
+
+ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS lsordernotification_notificationcode numeric(17,0);
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fknjsh6prhgih9em7woet6va797'
+AND table_name='lslogilabprotocoldetail';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY lslogilabprotocoldetail ADD CONSTRAINT fknjsh6prhgih9em7woet6va797 FOREIGN KEY (lsordernotification_notificationcode) REFERENCES lsordernotification (notificationcode);
+   END IF;
+END
+$do$; 
 

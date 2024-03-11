@@ -29,6 +29,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.Lsfilesharedby;
 import com.agaram.eln.primary.model.sheetManipulation.Lsfileshareto;
 import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
@@ -307,5 +308,11 @@ public class FileController {
 		Map<String, Object> objMap = new HashMap<String, Object>();
 		objMap = fileService.GetSheetTransactionDetails(objfile);
 		return objMap;
+	}
+	
+	@PostMapping("/Validatesheetcountforfreeuser")
+	public boolean Validatesheetcountforfreeuser(@RequestBody LSSiteMaster lssitemaster)
+	{
+		return fileService.Validatesheetcountforfreeuser(lssitemaster);
 	}
 }

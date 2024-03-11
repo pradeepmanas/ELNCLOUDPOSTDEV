@@ -3,6 +3,7 @@ package com.agaram.eln.primary.repository.material;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.agaram.eln.primary.model.material.Elnmaterial;
@@ -76,5 +77,11 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 	List<ElnmaterialInventory> findBySinventoryidInAndNsitecode(List<String> lstIds, Integer nsiteInteger);
 
 	List<ElnmaterialInventory> findByMaterialOrderByNmaterialinventorycodeDesc(Elnmaterial objElnmaterial);
+
+	List<ElnmaterialInventory> findByNsitecodeAndSinventoryidLikeIgnoreCaseOrderByNmaterialinventorycodeDesc(
+			Integer sitecode, String search_Key, Pageable pageable);
+
+	long countByNsitecodeAndSinventoryidLikeIgnoreCaseOrderByNmaterialinventorycodeDesc(Integer sitecode,
+			String search_Key);
 
 }

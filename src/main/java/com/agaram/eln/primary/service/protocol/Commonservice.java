@@ -68,8 +68,13 @@ public class Commonservice {
 	@Async
 	public CompletableFuture<List<LSfile>> updatefilecontentcheck(String Content, LSfile objfile, Boolean Isnew) throws IOException {
 				
-		if (objfile.getIsmultitenant() == 1) {
-			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,TenantContext.getCurrentTenant()+"sheetcreation");
+		if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
+			String tenant = TenantContext.getCurrentTenant();
+			if(objfile.getIsmultitenant() == 2)
+			{
+				tenant = "freeusers";
+			}
+			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,tenant+"sheetcreation");
 			String fileUUID = (String) objMap.get("uuid");
 			String fileURI = objMap.get("uri").toString();
 			
@@ -100,8 +105,13 @@ public class Commonservice {
 	@Async
 	public CompletableFuture<List<LSprotocolmaster>> updateProtocolContent(String Content, LSprotocolmaster objfile) throws IOException {
 				
-		if (objfile.getIsmultitenant() == 1) {
-			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,TenantContext.getCurrentTenant()+"protocol");
+		if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
+			String tenant = TenantContext.getCurrentTenant();
+			if(objfile.getIsmultitenant() == 2)
+			{
+				tenant = "freeusers";
+			}
+			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,tenant+"protocol");
 			String fileUUID = (String) objMap.get("uuid");
 			String fileURI = objMap.get("uri").toString();
 			
