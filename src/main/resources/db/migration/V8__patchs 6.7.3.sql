@@ -480,3 +480,6 @@ AND table_name='lslogilabprotocoldetail';
 END
 $do$; 
 
+ALTER TABLE IF Exists lssitemaster ADD COLUMN IF NOT EXISTS expirydate timestamp without time zone;
+
+ALTER TABLE IF Exists lsordernotification ADD COLUMN IF NOT EXISTS period varchar(250);

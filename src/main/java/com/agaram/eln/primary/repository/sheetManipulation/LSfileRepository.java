@@ -332,7 +332,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			int i, LSSiteMaster lssitemaster, int j, int k, Integer approvelstatus, int l,
 			List<LSuserMaster> lstteamuser, int m, int n, Integer approvelstatus2);
 
-public List<Sheettemplateget> findByLssitemasterAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApproved(
+	public List<Sheettemplateget> findByLssitemasterAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndViewoptionAndApproved(
 			LSSiteMaster lssitemaster, List<LSfiletest> lsfiletest, int i, int j, int k, List<LSuserMaster> lstteamuser,
 			List<LSfiletest> lsfiletest2, int l, int m, int n, LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest3,
 			int o, int p, int q, List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest4, int r, int s, int t);
@@ -343,6 +343,8 @@ public List<Sheettemplateget> findByLssitemasterAndLstestInAndFilecodeGreaterTha
 			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int o, int p, int q);public List<LSfile> findByfilenameuserIgnoreCaseAndLssitemasterAndRetirestatus(String trim,LSSiteMaster lssitemaster, int i);public List<LSfile> findByFilecodeGreaterThanAndLssitemasterAndApprovedAndRetirestatusOrFilecodeGreaterThanAndRetirestatusAndVersionnoGreaterThanOrderByFilecodeDesc(
 			int i, LSSiteMaster lssitemaster, Integer approvelstatus, int j, int k, int l, int m);
 
+	public long countByLssheetworkflowAndApprovedOrApprovedIsNull(LSsheetworkflow objflow, int i);
+			
 	public List<LSfile> findByFilecodeGreaterThanAndRetirestatusAndLssitemasterAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndRetirestatusAndCreatebyAndViewoptionAndRejectedAndApprovedOrFilecodeGreaterThanAndRetirestatusAndCreatebyInAndViewoptionAndRejectedAndApprovedOrderByFilecodeDesc(
 			int i, int j, LSSiteMaster lssitemaster, int k, int l, Integer approvelstatus, int m, int n,
 			LSuserMaster objuser, int o, int p, Integer approvelstatus2, int q, int r, List<LSuserMaster> lstteamuser,

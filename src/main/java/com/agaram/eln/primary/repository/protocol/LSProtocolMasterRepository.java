@@ -335,12 +335,15 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			List<LSprotocolmastertest> lsfiletest2, int l, Integer usercode, int m, int n,
 			List<LSprotocolmastertest> lsfiletest3, int o, List<Integer> lstteammap2, int p, int q);
 
-List<LSprotocolmaster> findByLssitemasterAndLstestInAndStatusAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrderByProtocolmastercodeDesc(
+	List<LSprotocolmaster> findByLssitemasterAndLstestInAndStatusAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndApprovedOrderByProtocolmastercodeDesc(
 			Integer sitecode, List<LSprotocolmastertest> lsfiletest, int i, int j, int k,
 			List<LSprotocolmastertest> lsfiletest2, int l, List<Integer> lstteammap, int m, int n,
 			List<LSprotocolmastertest> lsfiletest3, int o, Integer usercode, int p, int q,
 			List<LSprotocolmastertest> lsfiletest4, int r, List<Integer> lstteammap2, int s, int t);
-@Transactional@Modifying
+	
+	long countByElnprotocoltemplateworkflowAndApprovedOrApprovedIsNull(ElnprotocolTemplateworkflow objflow, int i);
+	
+	@Transactional@Modifying
 	@Query(value="select protocolmastercode from LSprotocolmaster where protocolmastername=?1",nativeQuery=true)
 	public List<Integer>  getprotocolcode(String protocolmastername);List<LSprotocolmaster> findByStatusAndApprovedAndLssitemasterAndRetirestatus(int i, int j, Integer sitecode, int k);List<LSprotocolmaster> findByLstestInAndStatusAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
 			List<LSprotocolmastertest> lsfiletest, int i, int j, int k);

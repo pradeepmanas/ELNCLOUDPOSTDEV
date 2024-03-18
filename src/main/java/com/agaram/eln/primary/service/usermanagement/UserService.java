@@ -1072,7 +1072,7 @@ public class UserService {
 		
 		List<LSusergroup> lstusergroup = new ArrayList<LSusergroup>();
 		
-		if(Objclass.getIsmultitenant() == 2)
+		if(Objclass.getIsmultitenant()!=null && Objclass.getIsmultitenant() == 2)
 		{
 			lstusergroup = lSusergroupRepository
 					.findBylssitemasterAndUsergroupstatusInOrderByUsergroupcodeDesc(1, status);

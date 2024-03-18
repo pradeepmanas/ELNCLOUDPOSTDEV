@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="LSprotocolversion")
@@ -147,6 +148,17 @@ public class LSprotocolversion implements Comparable<LSprotocolversion>{
 	
 	public void setFileuri(String fileuri) {
 		this.fileuri = fileuri;
+	}
+	
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastmodified;
+	
+	public Date getLastmodified() {
+		return lastmodified;
+	}
+	public void setLastmodified(Date lastmodified) {
+		this.lastmodified = lastmodified;
 	}
 	
 	@Override

@@ -2,7 +2,6 @@ package com.agaram.eln.primary.service.dashboard;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -37,6 +36,7 @@ import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.masters.Lslogbooks;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail.Protocolorder;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
@@ -3968,13 +3968,13 @@ public class DashBoardService {
 		List<Elnprotocolworkflow> lstworkflow_protocol = objuser.getLstelnprotocolworkflow();
 
 		if (lstproject != null && lstworkflow != null) {
-			List<Logilaborders> lstorders = lslogilablimsorderdetailRepository
-					.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween("N", lstproject,
-							lstworkflow, fromdate, todate);
+			List<LSlogilablimsorderdetail.ordersinterface> lstorders = lslogilablimsorderdetailRepository
+					.findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetweenOrAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc("N", lstproject,
+							lstworkflow, fromdate, todate,objuser, fromdate, todate);
 
-			lstorders.addAll(lslogilablimsorderdetailRepository
-					.findByAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(objuser, fromdate, todate));
-			lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
+//			lstorders.addAll(lslogilablimsorderdetailRepository
+//					.findByAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(objuser, fromdate, todate));
+//			lstorders.forEach(objorder -> objorder.setLstworkflow(lstworkflow));
 			mapOrders.put("orders", lstorders);
 		} else {
 			mapOrders.put("orders", new ArrayList<Logilabordermaster>());
@@ -3982,14 +3982,14 @@ public class DashBoardService {
 
 		if (lstproject != null && objuser.getLstelnprotocolworkflow() != null) {
 
-			List<Logilabprotocolorders> lstorders = LSlogilabprotocoldetailRepository
-					.findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndCreatedtimestampBetween("N",
-							lstproject, lstworkflow_protocol, fromdate, todate);
+			List<Protocolorder> lstorders = LSlogilabprotocoldetailRepository
+					.findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndCreatedtimestampBetweenOrSitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc("N",
+							lstproject, lstworkflow_protocol, fromdate, todate,objuser.getLssitemaster().getSitecode(), objuser, fromdate, todate);
 
-			lstorders.addAll(LSlogilabprotocoldetailRepository
-					.findBySitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
-							objuser.getLssitemaster().getSitecode(), objuser, fromdate, todate));
-			lstorders.forEach(objorderDetail -> objorderDetail.setLstelnprotocolworkflow(lstworkflow_protocol));
+//			lstorders.addAll(LSlogilabprotocoldetailRepository
+//					.findBySitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+//							objuser.getLssitemaster().getSitecode(), objuser, fromdate, todate));
+//			lstorders.forEach(objorderDetail -> objorderDetail.setLstelnprotocolworkflow(lstworkflow_protocol));
 			mapOrders.put("protocolorders", lstorders);
 		} else {
 			mapOrders.put("protocolorders", new ArrayList<Logilabprotocolorders>());
@@ -4798,15 +4798,14 @@ public class DashBoardService {
 	}
 
 	public Map<String, Object> Getglobalsearchforinventory(LSuserMaster objusermaster) {
-		Pageable pageable = new PageRequest(objusermaster.getPagesize(), objusermaster.getPageperorder());
 		String Search_Key = "%" + objusermaster.getToken() + "%"; // search key porpose kumu
 		long count = 0;
 		List<Lslogbooks> objreview;
 		Map<String, Object> rtnobject = new HashMap<>();
 		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository
-				.findByNsitecodeAndSinventoryidLikeIgnoreCaseOrderByNmaterialinventorycodeDesc(objusermaster.getLssitemaster().getSitecode(),Search_Key,pageable);
+				.getNsitecodeAndSinventoryidLikeIgnoreCaseOrderByNmaterialinventorycodeDesc(objusermaster.getLssitemaster().getSitecode(),Search_Key,objusermaster.getPagesize() * objusermaster.getPageperorder(),objusermaster.getPageperorder());
 		count=elnmaterialInventoryReppository
-				.countByNsitecodeAndSinventoryidLikeIgnoreCaseOrderByNmaterialinventorycodeDesc(objusermaster.getLssitemaster().getSitecode(),Search_Key);
+				.getcounrNsitecodeAndSinventoryidLikeIgnoreCaseOrderByNmaterialinventorycodeDesc(objusermaster.getLssitemaster().getSitecode(),Search_Key);
 		rtnobject.put("Material", lstElnInventories);
 		rtnobject.put("Count", count);
 		return rtnobject;

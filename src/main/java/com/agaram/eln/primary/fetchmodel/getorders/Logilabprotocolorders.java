@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Elnmaterial;
@@ -67,6 +68,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	private Integer versionno;
 	List<Elnprotocolworkflow> lstelnprotocolworkflow;
 	private Elnprotocolworkflow elnprotocolworkflow;
+	private LSOrdernotification lsordernotification;
+
 
 
 	public Logilabprotocolorders(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
@@ -77,7 +80,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 //			LSworkflow lsworkflow,
 			Elnmaterial elnmaterial,ElnmaterialInventory elnmaterialinventory, Integer approved, Integer rejected,
 			Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby,
-			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow) {
+			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow,LSOrdernotification lsordernotification) {
 
 		this.protocolordercode = protocolordercode;
 		this.Testcode = Testcode;
@@ -115,6 +118,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.lockedusername=lockedusername!=null?lockedusername:null;
 		this.versionno = versionno;
 		this.elnprotocolworkflow=elnprotocolworkflow;
+        this.lsordernotification=lsordernotification != null ? lsordernotification :null;
+
 	}
 
 	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
@@ -460,6 +465,14 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 
 	public void setVersionno(Integer versionno) {
 		this.versionno = versionno;
+	}
+
+	public LSOrdernotification getLsordernotification() {
+		return lsordernotification;
+	}
+
+	public void setLsordernotification(LSOrdernotification lsordernotification) {
+		this.lsordernotification = lsordernotification;
 	}
 
 }

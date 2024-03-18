@@ -256,7 +256,7 @@ public class FileService {
 
 		if (objfile.getLssheetworkflow() == null) {
 			objfile.setLssheetworkflow(lssheetworkflowRepository
-					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objfile.getLssitemaster()));
+					.findTopByAndLssitemasterAndStatusOrderByWorkflowcodeAsc(objfile.getLssitemaster(), 1));
 		}
 
 		if (objfile.getFilecode() != null && objfile.getFilecode() > 0) {
@@ -741,7 +741,7 @@ public class FileService {
 	public Response Deletesheetworkflow(LSsheetworkflow objflow) {
 		Response response = new Response();
 
-		long onprocess = lSfileRepository.countByLssheetworkflowAndApproved(objflow, 0);
+		long onprocess = lSfileRepository.countByLssheetworkflowAndApprovedOrApprovedIsNull(objflow, 0);
 		if (onprocess > 0) {
 			response.setStatus(false);
 		} else {
@@ -1925,7 +1925,7 @@ public class FileService {
 	public Response DeleteprotocolTemplateworkflow(ElnprotocolTemplateworkflow objflow) {
 		Response response = new Response();
 
-		long onprocess = lSProtocolMasterRepository.countByElnprotocoltemplateworkflowAndApproved(objflow, 0);
+		long onprocess = lSProtocolMasterRepository.countByElnprotocoltemplateworkflowAndApprovedOrApprovedIsNull(objflow, 0);
 		if (onprocess > 0) {
 			response.setStatus(false);
 		} else {

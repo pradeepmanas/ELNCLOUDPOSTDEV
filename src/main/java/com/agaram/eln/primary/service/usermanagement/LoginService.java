@@ -1928,11 +1928,11 @@ public class LoginService {
 	        List<LSOrdernotification> dueorderslist = lsordernotificationrepo.findByUsercodeAndDuedateBetween(objNotification.getUsercode(), fromDate, toDate);
 	        List<LSOrdernotification> overdueorderslist = lsordernotificationrepo.findByUsercodeAndDuedateBetween(objNotification.getUsercode(), overduefromDate, overduetoDate);
 
+	        List<LSOrdernotification> ordernotifylist = new ArrayList<LSOrdernotification>();
+			List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+
 			LSuserMaster objLSuserMaster = userService
 					.getUserOnCode(LSuserMaster);/* to return the value this obj is created */
-
-			int i = 0;
-			List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 
 			if(!orderslist.isEmpty()) {
 				orderslist.stream().forEach(indexorders->{
@@ -1957,11 +1957,13 @@ public class LoginService {
 							LSnotification.setNotificationfor(1);
 	
 							indexorders.setStatus(0);
+							ordernotifylist.add(indexorders);
 							lstnotifications.add(LSnotification);				
 					        }
 	                     });
-				LSnotificationRepository.save(lstnotifications);
-				lsordernotificationrepo.save(orderslist);
+				
+				//LSnotificationRepository.save(lstnotifications);
+				//lsordernotificationrepo.save(orderslist);
 			}if (!dueorderslist.isEmpty()) {
 				dueorderslist.stream().forEach(indexdueorders->{
 					if(indexdueorders.getStatus() == 1) {
@@ -1985,19 +1987,20 @@ public class LoginService {
 							LSnotification.setNotificationfor(1);
 	
 							indexdueorders.setStatus(0);
+							ordernotifylist.add(indexdueorders);
 							lstnotifications.add(LSnotification);				
 					        }
 	                     });
-				LSnotificationRepository.save(lstnotifications);
-				lsordernotificationrepo.save(orderslist);
+			//	LSnotificationRepository.save(lstnotifications);
+			//	lsordernotificationrepo.save(orderslist);
 			}if (!overdueorderslist .isEmpty()) {
-				overdueorderslist.stream().forEach(indexdueorders->{
-					if(indexdueorders.getStatus() == 1) {
+				overdueorderslist.stream().forEach(indexoverdueorders->{
+					if(indexoverdueorders.getStatus() == 1) {
 							LSnotification LSnotification = new LSnotification();
 	
-							String Details = "{\"ordercode\" :\"" + indexdueorders.getBatchid() 
-							        + "\",\"order\" :\"" + indexdueorders.getBatchid() 
-							        + "\",\"date\" :\"" + indexdueorders.getDuedate()
+							String Details = "{\"ordercode\" :\"" + indexoverdueorders.getBatchid() 
+							        + "\",\"order\" :\"" + indexoverdueorders.getBatchid() 
+							        + "\",\"date\" :\"" + indexoverdueorders.getDuedate()
 							        + "\",\"screen\":\"" + "sheetorders" 
 									+ "\"}";
 									
@@ -2011,15 +2014,18 @@ public class LoginService {
 							LSnotification.setRepositorycode(0);
 							LSnotification.setRepositorydatacode(0);
 							LSnotification.setNotificationfor(1);
-	
-							indexdueorders.setStatus(0);
+							
+							indexoverdueorders.setIsduedateexhausted(true);
+							indexoverdueorders.setStatus(0);
+							ordernotifylist.add(indexoverdueorders);
+							
 							lstnotifications.add(LSnotification);				
 					        }
 	                     });
-				LSnotificationRepository.save(lstnotifications);
-				lsordernotificationrepo.save(orderslist);
-			}
-				return null;
+					}
+			LSnotificationRepository.save(lstnotifications);
+			lsordernotificationrepo.save(ordernotifylist);
+			return null;
 		}
 
 	// added for notification

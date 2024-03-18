@@ -23,6 +23,7 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail.LSuserMasterInterface;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Elnmaterial;
@@ -66,15 +67,26 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	Date modifidate;
 	@Transient
 	private String comment;
-	
+
 	private Integer lockeduser;
-	
+
 	private String lockedusername;
+
+	@Transient
+	private String period;
 	
+	public String getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(String period) {
+		this.period = period;
+	}
+
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date duedate;
-	
+
 	public Date getDuedate() {
 		return duedate;
 	}
@@ -82,11 +94,11 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setDuedate(Date duedate) {
 		this.duedate = duedate;
 	}
-	
+
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date cautiondate;
-	
+
 	public Date getCautiondate() {
 		return cautiondate;
 	}
@@ -94,15 +106,15 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setCautiondate(Date cautiondate) {
 		this.cautiondate = cautiondate;
 	}
+
 	@ManyToOne
 	private Material material;
 	@ManyToOne
 	private MaterialInventory materialinventory;
-	
+
 	@Transient
 	private List<LSlogilablimsorder> lsLSlogilablimsorder;
 
-	
 	public List<LSlogilablimsorder> getLsLSlogilablimsorder() {
 		return lsLSlogilablimsorder;
 	}
@@ -110,8 +122,9 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setLsLSlogilablimsorder(List<LSlogilablimsorder> lsLSlogilablimsorder) {
 		this.lsLSlogilablimsorder = lsLSlogilablimsorder;
 	}
-    private Boolean approvelaccept;
-	
+
+	private Boolean approvelaccept;
+
 	public Boolean getApprovelaccept() {
 		return approvelaccept;
 	}
@@ -121,7 +134,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	}
 
 	private Boolean sentforapprovel;
-	
+
 	public Boolean getSentforapprovel() {
 		return sentforapprovel;
 	}
@@ -129,9 +142,10 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setSentforapprovel(Boolean sentforapprovel) {
 		this.sentforapprovel = sentforapprovel;
 	}
+
 	@ManyToOne
 	private LSOrdernotification lsordernotification;
-	
+
 	public LSOrdernotification getLsordernotification() {
 		return lsordernotification;
 	}
@@ -144,7 +158,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private Elnmaterial elnmaterial;
 	@ManyToOne
 	private ElnmaterialInventory elnmaterialinventory;
-	
+
 	private Integer activeuser;
 
 	public Integer getActiveuser() {
@@ -154,7 +168,6 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setActiveuser(Integer activeuser) {
 		this.activeuser = activeuser;
 	}
-	
 
 	public Elnmaterial getElnmaterial() {
 		return elnmaterial;
@@ -203,7 +216,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setMaterialinventory(MaterialInventory materialinventory) {
 		this.materialinventory = materialinventory;
 	}
-	
+
 	public String getComment() {
 		return comment;
 	}
@@ -275,7 +288,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@ManyToOne
 	@Transient
 	private LStestmasterlocal lstestmasterlocal;
-	
+
 	public LStestmasterlocal getLstestmasterlocal() {
 		return lstestmasterlocal;
 	}
@@ -285,9 +298,8 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	}
 
 	private Long directorycode;
-	
-	private Integer teamcode;
 
+	private Integer teamcode;
 
 	@ManyToOne
 	private LSsamplemaster lssamplemaster;
@@ -297,10 +309,10 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@ManyToOne
 	private LSprotocolworkflow lSprotocolworkflow;
-	
+
 	@ManyToOne
 	private Elnprotocolworkflow elnprotocolworkflow;
-	
+
 	public Elnprotocolworkflow getElnprotocolworkflow() {
 		return elnprotocolworkflow;
 	}
@@ -311,10 +323,10 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@ManyToOne
 	private LSworkflow lsworkflow;
-	
+
 	private Integer ordercancell;
-	
-	private Integer orderstarted=0;
+
+	private Integer orderstarted = 0;
 
 	public Integer getOrderstarted() {
 		return orderstarted;
@@ -326,7 +338,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@ManyToOne
 	LSuserMaster orderstartedby;
-	
+
 	public LSuserMaster getOrderstartedby() {
 		return orderstartedby;
 	}
@@ -338,7 +350,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Column(name = "orderstartedon")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date orderstartedon;
-	
+
 	public Date getOrderstartedon() {
 		return orderstartedon;
 	}
@@ -348,9 +360,9 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	}
 
 	@Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+	@Column(columnDefinition = "jsonb")
 	public String protocoldatainfo;
-	
+
 	public String getProtocoldatainfo() {
 		return protocoldatainfo;
 	}
@@ -358,39 +370,36 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setProtocoldatainfo(String protocoldatainfo) {
 		this.protocoldatainfo = protocoldatainfo;
 	}
-	
+
 	@Transient
 	LSuserMaster objLoggeduser;
-	
+
 	@Transient
 	List<LSworkflow> lstworkflow;
-	
+
 	@Transient
 	List<Elnprotocolworkflow> lstelnprotocolworkflow;
-	
+
 	@Transient
 	private List<Long> lstdirectorycode;
-	
+
 	@Transient
 	Integer searchCriteriaType;
-	
+
 	@Transient
 	private List<LSuserMaster> lstuserMaster;
-	
-	
-	
-	
-	
+
 	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
 		return lstelnprotocolworkflow;
 	}
 
 	public void setLstelnprotocolworkflow(List<Elnprotocolworkflow> lstelnprotocolworkflow) {
 //		this.lstelnprotocolworkflow = lstelnprotocolworkflow;
-		if (this.elnprotocolworkflow != null && lstelnprotocolworkflow != null  && lstelnprotocolworkflow.size() > 0) {
+		if (this.elnprotocolworkflow != null && lstelnprotocolworkflow != null && lstelnprotocolworkflow.size() > 0) {
 			List<Integer> lstworkflowcode = new ArrayList<Integer>();
 			if (lstelnprotocolworkflow != null && lstelnprotocolworkflow.size() > 0) {
-				lstworkflowcode = lstelnprotocolworkflow.stream().map(Elnprotocolworkflow::getWorkflowcode).collect(Collectors.toList());
+				lstworkflowcode = lstelnprotocolworkflow.stream().map(Elnprotocolworkflow::getWorkflowcode)
+						.collect(Collectors.toList());
 
 				if (lstworkflowcode.contains(this.elnprotocolworkflow.getWorkflowcode())) {
 					this.setCanuserprocess(true);
@@ -403,7 +412,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		} else {
 			this.setCanuserprocess(false);
 		}
-		
+
 		this.lstelnprotocolworkflow = lstelnprotocolworkflow;
 	}
 
@@ -414,10 +423,10 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setLstuserMaster(List<LSuserMaster> lstuserMaster) {
 		this.lstuserMaster = lstuserMaster;
 	}
-	
+
 	@Transient
 	private LSworkflow currentStep;
-	
+
 	public LSworkflow getCurrentStep() {
 		return currentStep;
 	}
@@ -443,7 +452,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	}
 
 	private Integer viewoption;
-	
+
 	public List<LSworkflow> getLstworkflow() {
 		return lstworkflow;
 	}
@@ -468,15 +477,15 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 //		}
 //		
 //		this.lstworkflow = lstworkflow;
-	
+
 	}
 
 	@ManyToOne
 	private Lsrepositoriesdata lsrepositoriesdata;
-	
+
 	@ManyToOne
 	private Lsrepositories lsrepositories;
-	
+
 //	@Transient
 //	private Integer lStprotocolworkflow;
 //	
@@ -490,15 +499,14 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@ManyToOne
 	private LSuserMaster assignedto;
-	
+
 	public Integer versionno = 1;
-	
+
 	private Integer orderdisplaytype;
-	
 
 	@Transient
 	List<LSprojectmaster> lstproject;
-	
+
 	public LSworkflow getLsworkflow() {
 		return lsworkflow;
 	}
@@ -509,7 +517,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@Transient
 	private Integer activekey;
-	
+
 	public Integer getActivekey() {
 		return activekey;
 	}
@@ -517,7 +525,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setActivekey(Integer activekey) {
 		this.activekey = activekey;
 	}
-	
+
 	@Transient
 	private Date notificationdate;
 
@@ -553,7 +561,6 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.directorycode = directorycode;
 	}
 
-	
 	@Transient
 	LScfttransaction objmanualaudit;
 
@@ -565,17 +572,16 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@Transient
 	private Date todate;
-	
+
 	@Transient
 	private String testname;
-	
+
 	@Transient
 	private String createdbyusername;
 
-	
 //	@Transient
 //	private String tenantname;
-	
+
 	public String getCreatedbyusername() {
 		return createdbyusername;
 	}
@@ -613,10 +619,10 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@Transient
 	private Boolean canuserprocess;
-	
+
 	@Transient
 	private String unifielduserid;
-	
+
 	public List<CloudLsLogilabprotocolstepInfo> getCloudLsLogilabprotocolstepInfo() {
 		return CloudLsLogilabprotocolstepInfo;
 	}
@@ -627,16 +633,16 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@Transient
 	private List<LSprotocolorderworkflowhistory> lsprotocolorderworkflowhistory;
-	
+
 	@Transient
 	private Integer register;
-	
+
 	@Transient
 	private List<CloudLsLogilabprotocolstepInfo> CloudLsLogilabprotocolstepInfo;
-	
+
 	@Transient
 	private List<LsLogilabprotocolstepInfo> LsLogilabprotocolstepInfo;
-	
+
 	public List<LsLogilabprotocolstepInfo> getLsLogilabprotocolstepInfo() {
 		return LsLogilabprotocolstepInfo;
 	}
@@ -704,11 +710,11 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private Integer approved;
 
 	private Integer rejected;
-	
+
 	private Integer sitecode;
-	
+
 	private Integer createby;
-	
+
 	public Integer getCreateby() {
 		return createby;
 	}
@@ -736,10 +742,11 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public LSuserMaster getAssignedto() {
 		return assignedto;
 	}
+
 	public void setAssignedto(LSuserMaster assignedto) {
 		this.assignedto = assignedto;
 	}
-	
+
 	public Integer getRejected() {
 		return rejected;
 	}
@@ -828,8 +835,6 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.lsuserMaster = lsuserMaster;
 	}
 
-
-
 	public Integer getTestcode() {
 		return testcode;
 	}
@@ -854,7 +859,6 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.lsprojectmaster = lsprojectmaster;
 	}
 
-	
 	public LScfttransaction getObjmanualaudit() {
 		return objmanualaudit;
 	}
@@ -952,9 +956,9 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	}
 
 	private String fileuid;
-	
+
 	private Integer containerstored;
-	
+
 	private String fileuri;
 
 	public String getFileuid() {
@@ -980,7 +984,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setFileuri(String fileuri) {
 		this.fileuri = fileuri;
 	}
-	
+
 	@Transient
 	private String orderlink;
 
@@ -991,7 +995,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setOrderlink(String orderlink) {
 		this.orderlink = orderlink;
 	}
-	
+
 	@Transient
 	private List<LSprotocolorderversion> lSprotocolorderversion;
 
@@ -1002,6 +1006,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setlSprotocolorderversion(List<LSprotocolorderversion> lSprotocolorderversion) {
 		this.lSprotocolorderversion = lSprotocolorderversion;
 	}
+
 	@Transient
 	private String content;
 
@@ -1013,7 +1018,19 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.content = content;
 	}
 
-	
-	
-	
+	public interface Protocolorder {
+		public Long getProtocolordercode();
+
+		public String getProtoclordername();
+
+		public Date getCreatedtimestamp();
+
+		LSuserMasterInterface getAssignedto();
+
+	}
+
+	public interface LSuserMasterInterface {
+		String getUsername();
+	}
+
 }

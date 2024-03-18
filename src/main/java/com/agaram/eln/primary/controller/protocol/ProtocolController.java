@@ -1256,6 +1256,13 @@ public class ProtocolController {
 		return  ProtocolMasterService.updateprotocolordertransactions(objuser);
 	}
 	
+	@PostMapping("/protocolTemplateContentMove")
+	public Map<String, Object> protocolTemplateContentMove(@RequestBody Map<String, Object> body)throws Exception
+	{
+		return ProtocolMasterService.protocolTemplateContentMove(body);
+//		return true;
+	}
+	
 	@RequestMapping("/Getprotocolcancelledorders")
 	public Map<String,Object> Getprotocolcancelledorders(@RequestBody LSlogilabprotocoldetail  objorder)throws Exception
 	{

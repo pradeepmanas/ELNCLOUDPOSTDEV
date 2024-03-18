@@ -54,6 +54,18 @@ public class LSlogilablimsorderdetail {
 	// columnDefinition = "varchar(250)",
 	@Column(columnDefinition = "varchar(250)", name = "BatchID")
 	private String batchid;
+	
+	@Transient
+	private String period;
+	
+	public String getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(String period) {
+		this.period = period;
+	}
+
 	@Transient
 	private SearchCriteria searchCriteria;
 
@@ -1054,5 +1066,18 @@ public class LSlogilablimsorderdetail {
 	public void setOrderlink(String orderlink) {
 		this.orderlink = orderlink;
 	}
+	
+	 public interface ordersinterface {
+	        Long getBatchcode();
+	        String getBatchid();
+	        Date getCreatedtimestamp();
+	        String getTestname();
+	        LSuserMasterInterface getAssignedto();
+	    }
+	 
+	 public interface LSuserMasterInterface {
+		    String getUsername();
+		}
+
 
 }

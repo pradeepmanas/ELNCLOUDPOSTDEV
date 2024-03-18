@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.repository.protocol;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -17,11 +16,10 @@ import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail.Protocolorder;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
-import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
-import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -1455,7 +1453,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			List<LSprojectmaster> lstproject, Integer sitecode, String string);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndCreatedtimestampBetween(
+	List<Protocolorder> findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndCreatedtimestampBetween(
 			String string, List<LSprojectmaster> lstproject, List<Elnprotocolworkflow> lstworkflow_protocol,
 			Date fromdate, Date todate);
 
@@ -1591,6 +1589,13 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, Integer protocoltype,
 			String orderflag, int j);
+
+
+	List<Protocolorder> findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndCreatedtimestampBetweenOrSitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			String string, List<LSprojectmaster> lstproject, List<Elnprotocolworkflow> lstworkflow_protocol,
+			Date fromdate, Date todate, Integer sitecode, LSuserMaster objuser, Date fromdate2, Date todate2);
+	
+
 
 	}
 

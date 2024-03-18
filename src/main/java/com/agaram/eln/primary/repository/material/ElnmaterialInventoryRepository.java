@@ -3,13 +3,19 @@ package com.agaram.eln.primary.repository.material;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialType;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public interface ElnmaterialInventoryRepository extends JpaRepository<ElnmaterialInventory, Integer>{
 
@@ -78,10 +84,36 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 
 	List<ElnmaterialInventory> findByMaterialOrderByNmaterialinventorycodeDesc(Elnmaterial objElnmaterial);
 
-	List<ElnmaterialInventory> findByNsitecodeAndSinventoryidLikeIgnoreCaseOrderByNmaterialinventorycodeDesc(
-			Integer sitecode, String search_Key, Pageable pageable);
-
-	long countByNsitecodeAndSinventoryidLikeIgnoreCaseOrderByNmaterialinventorycodeDesc(Integer sitecode,
+	@Transactional
+	@Query(value = "SELECT * "
+			+ "FROM elnmaterialInventory "
+			+ "WHERE elnmaterialInventory.Nsitecode = ?1"
+			+ "  AND ("
+			+ "    LOWER(elnmaterialInventory.sinventoryid) LIKE LOWER(?2)"
+			+ "    OR"
+			+ "    LOWER(("
+			+ "      SELECT Elnmaterial.smaterialname"
+			+ "      FROM Elnmaterial"
+			+ "      WHERE Elnmaterial.nmaterialcode = elnmaterialInventory.material_nmaterialcode"
+			+ "    )) LIKE LOWER(?2)"
+			+ "  )"
+			+ "ORDER BY elnmaterialInventory.Nmaterialinventorycode DESC OFFSET ?3 ROWS FETCH NEXT ?4 ROWS ONLY"
+			+ "", nativeQuery = true)
+	List<ElnmaterialInventory> getNsitecodeAndSinventoryidLikeIgnoreCaseOrderByNmaterialinventorycodeDesc(
+			Integer sitecode, String search_Key, int m, Integer pageperorder);
+	@Query(value = "SELECT count(*) "
+			+ "FROM elnmaterialInventory "
+			+ "WHERE elnmaterialInventory.Nsitecode = ?1"
+			+ "  AND ("
+			+ "    LOWER(elnmaterialInventory.sinventoryid) LIKE LOWER(?2)"
+			+ "    OR"
+			+ "    LOWER(("
+			+ "      SELECT Elnmaterial.smaterialname"
+			+ "      FROM Elnmaterial"
+			+ "      WHERE Elnmaterial.nmaterialcode = elnmaterialInventory.material_nmaterialcode"
+			+ "    )) LIKE LOWER(?2)"
+			+ "  )", nativeQuery = true)	
+	long getcounrNsitecodeAndSinventoryidLikeIgnoreCaseOrderByNmaterialinventorycodeDesc(Integer sitecode,
 			String search_Key);
 
 }

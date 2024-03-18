@@ -15,6 +15,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail.ordersinterface;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
@@ -448,10 +449,10 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public Logilaborders findByBatchcode(Long batchcode);
 
 	public Logilabordermaster findByBatchcodeOrderByBatchcodeAsc(Long batchcode);
-
-	public List<Logilaborders> findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween(
-			String orderflag, List<LSprojectmaster> lstproject, List<LSworkflow> lsworkflow, Date fromdate,
-			Date todate);
+//
+//	public List<Logilaborders> findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetween(
+//			String orderflag, List<LSprojectmaster> lstproject, List<LSworkflow> lsworkflow, Date fromdate,
+//			Date todate);
 
 	List<Logilabordermaster> findByOrderflagAndLssamplefileInAndCreatedtimestampBetween(String string,
 			List<LSsamplefile> lssamplefile, Date fromdate, Date todate);
@@ -513,8 +514,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	List<LSlogilablimsorderdetail> findByAssignedtoAndLockeduserIsNotNullOrderByBatchcodeDesc(
 			LSuserMaster lSuserMaster);
 
-	List<Logilaborders> findByAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(LSuserMaster lSuserMaster,
-			Date fromdate, Date todate);
+
 
 	List<LSlogilablimsorderdetail> findByAssignedtoAndLsuserMasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			LSuserMaster lsselecteduser, LSuserMaster lsloginuser, Date fromdate, Date todate);
@@ -2808,5 +2808,13 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 	List<Logilaborders> findByOrderflagAndTestcodeAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
 			String orderflag, Integer testcode, List<Elnmaterial> currentChunk, Integer filetype, Date fromdate,
 			Date todate, int i, LSuserMaster lsuserMaster);
+	
+	
+	List<Logilaborders> findByAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(LSuserMaster lSuserMaster,
+			Date fromdate, Date todate);
+
+	List<ordersinterface> findByOrderflagAndLsprojectmasterInAndLsworkflowInAndCreatedtimestampBetweenOrAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+			String string, List<LSprojectmaster> lstproject, List<LSworkflow> lstworkflow, Date fromdate, Date todate,
+			LSuserMaster objuser, Date fromdate2, Date todate2);
 
 	}
