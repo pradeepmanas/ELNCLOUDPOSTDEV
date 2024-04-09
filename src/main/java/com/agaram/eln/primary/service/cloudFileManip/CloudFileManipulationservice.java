@@ -508,7 +508,7 @@ public class CloudFileManipulationservice {
 		return randomUUIDString; // id.toString();
 	}
 
-	public String storecloudfilesreturnwithpreUUID(MultipartFile file, String containername, String uuid)
+	public String storecloudfilesreturnwithpreUUID(MultipartFile file, String containername, String uuid,Integer ismultitenant)
 			throws IOException {
 
 		// String bloburi="";
@@ -522,7 +522,8 @@ public class CloudFileManipulationservice {
 			// storage
 			storageAccount = CloudStorageAccount.parse(storageConnectionString);
 			blobClient = storageAccount.createCloudBlobClient();
-			container = blobClient.getContainerReference(TenantContext.getCurrentTenant() + containername);
+			container = blobClient.getContainerReference(
+					commonfunction.getcontainername(ismultitenant, TenantContext.getCurrentTenant()) + containername);
 
 			// Create the container if it does not exist with public access.
 			System.out.println("Creating container: " + container.getName());

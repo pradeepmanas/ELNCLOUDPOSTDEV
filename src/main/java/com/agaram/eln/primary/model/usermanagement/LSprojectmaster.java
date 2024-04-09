@@ -71,6 +71,17 @@ public class LSprojectmaster {
 
 	@Transient
 	LSuserMaster lsusermaster;
+	
+	@Transient
+	private Integer usercode;
+
+	public Integer getUsercode() {
+		return usercode;
+	}
+
+	public void setUsercode(Integer usercode) {
+		this.usercode = usercode;
+	}
 
 	@ManyToOne
 	private LSuserMaster modifiedby;

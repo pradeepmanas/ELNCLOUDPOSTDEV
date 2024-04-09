@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.agaram.eln.primary.fetchmodel.getmasters.Repositorymaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.model.cfr.LSactivity;
+import com.agaram.eln.primary.model.dashboard.LsActiveWidgets;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.masters.Lslogbooks;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -148,5 +149,16 @@ public class DashBoardController {
 	public Map<String, Object> Getglobalsearchforinventory(@RequestBody LSuserMaster objusermaster)throws Exception
 	{
 		return dashBoardService.Getglobalsearchforinventory(objusermaster);
+	}
+	@RequestMapping("/getActivewidgetsdata")
+	public List<LsActiveWidgets> getActivewidgetsdata(@RequestBody LSuserMaster objusermaster)throws Exception
+	{
+		return dashBoardService.getActivewidgetsdata(objusermaster);
+	}
+	
+	@RequestMapping("/Onsaveactivewidgetsdata")
+	public LsActiveWidgets Onsaveactivewidgetsdata(@RequestBody LsActiveWidgets activeWidgets)throws Exception
+	{
+		return dashBoardService.Onsaveactivewidgetsdata(activeWidgets);
 	}
 }

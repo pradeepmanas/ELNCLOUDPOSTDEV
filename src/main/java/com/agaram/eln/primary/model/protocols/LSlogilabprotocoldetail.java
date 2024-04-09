@@ -21,6 +21,7 @@ import org.hibernate.annotations.Type;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
+import com.agaram.eln.primary.model.dashboard.LsActiveWidgets;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail.LSuserMasterInterface;
@@ -838,7 +839,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public Integer getTestcode() {
 		return testcode;
 	}
-
+	
 	public void setTestcode(Integer testcode) {
 		this.testcode = testcode;
 	}
@@ -1025,12 +1026,30 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 		public Date getCreatedtimestamp();
 
-		LSuserMasterInterface getAssignedto();
+		public LSuserMasterInterfaceforassignto getAssignedto();
+
+		public LSuserMasterInterface getLsuserMaster();
+		
+		public Integer getTestcode();
 
 	}
 
+	public interface LSuserMasterInterfaceforassignto {
+		String getUsername();
+	}
 	public interface LSuserMasterInterface {
 		String getUsername();
+	}
+	
+	@Transient
+	private LsActiveWidgets lsActiveWidgets;
+
+	public LsActiveWidgets getLsActiveWidgets() {
+		return lsActiveWidgets;
+	}
+
+	public void setLsActiveWidgets(LsActiveWidgets lsActiveWidgets) {
+		this.lsActiveWidgets = lsActiveWidgets;
 	}
 
 }

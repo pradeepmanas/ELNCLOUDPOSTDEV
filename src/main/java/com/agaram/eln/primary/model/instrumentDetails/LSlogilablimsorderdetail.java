@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,6 +21,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.dashboard.LsActiveWidgets;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
@@ -221,6 +223,28 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	List<LSworkflow> lstworkflow;
 	
+	private Boolean repeat;
+
+	public Boolean getRepeat() {
+		return repeat;
+	}
+
+	public void setRepeat(Boolean repeat) {
+		this.repeat = repeat;
+	}
+
+	@OneToMany
+	@JoinColumn(name="batchcode")
+	private List<LsAutoregister> lsautoregister;
+	
+	public List<LsAutoregister> getLsautoregister() {
+		return lsautoregister;
+	}
+
+	public void setLsautoregister(List<LsAutoregister> lsautoregister) {
+		this.lsautoregister = lsautoregister;
+	}
+
 	@ManyToOne
 	private LSOrdernotification lsordernotification;
 	
@@ -1058,6 +1082,17 @@ public class LSlogilablimsorderdetail {
 	
 	@Transient
 	private String orderlink;
+	
+	@Transient
+	private LsActiveWidgets lsActiveWidgets;
+
+	public LsActiveWidgets getLsActiveWidgets() {
+		return lsActiveWidgets;
+	}
+
+	public void setLsActiveWidgets(LsActiveWidgets lsActiveWidgets) {
+		this.lsActiveWidgets = lsActiveWidgets;
+	}
 
 	public String getOrderlink() {
 		return orderlink;
@@ -1072,12 +1107,16 @@ public class LSlogilablimsorderdetail {
 	        String getBatchid();
 	        Date getCreatedtimestamp();
 	        String getTestname();
-	        LSuserMasterInterface getAssignedto();
+	        LSuserMasterInterfaceforassign getAssignedto();
+	        LSuserMasterInterface getLsuserMaster();
 	    }
 	 
-	 public interface LSuserMasterInterface {
+	 public interface LSuserMasterInterfaceforassign {
 		    String getUsername();
 		}
+	 public interface LSuserMasterInterface {
+		 String getUsername();
+	 }
 
 
 }

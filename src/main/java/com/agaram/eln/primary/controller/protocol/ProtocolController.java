@@ -1231,7 +1231,7 @@ public class ProtocolController {
 	}
 	
 	@PostMapping("/LockUnlockprotocolorders")
-	public LSlogilabprotocoldetail LockUnlockprotocolorders(@RequestBody LSlogilabprotocoldetail protocolorders) {
+	public LSlogilabprotocoldetail LockUnlockprotocolorders(@RequestBody LSlogilabprotocoldetail protocolorders) throws ParseException {
 		return ProtocolMasterService.LockUnlockprotocolorders(protocolorders);
 	}
 	@PostMapping("/GetUnlockscreendata")

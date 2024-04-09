@@ -10,12 +10,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 //import org.springframework.scheduling.annotation.EnableScheduling;
 //import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,6 +63,9 @@ public class LoginController {
 	
 	@Autowired
 	private DatasourceService datasourceService;
+	
+	@Autowired
+	private Environment env;
 	
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -364,6 +369,13 @@ public class LoginController {
 	    }
 	}
 
-
+	@CrossOrigin(origins = "https://logilabelnlite.azurewebsites.net")
+	@PostMapping("/verifyRecaptcha")
+    public ResponseEntity<?> verifyRecaptcha(@RequestBody String token) {
+		String recaptchaSecretKey = env.getProperty("recaptchaSecretKey");
+        String url = "https://www.google.com/recaptcha/api/siteverify?secret=" + recaptchaSecretKey + "&response=" + token;
+        ResponseEntity<String> responseEntity = new RestTemplate().postForEntity(url, null, String.class);
+        return ResponseEntity.ok(responseEntity.getBody());
+    }
 
 }

@@ -180,4 +180,5 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	@Transactional
 	@Query(value = "SELECT count(*) FROM LSuserMaster u, LSMultisites s where s.usercode = u.usercode and u.userretirestatus <> 1 and s.lssitemaster_sitecode = ?1", nativeQuery = true)
 	public Long getactiveusersonsite(Integer sitecode );
+	public Long countByUserretirestatus(int i);
 }

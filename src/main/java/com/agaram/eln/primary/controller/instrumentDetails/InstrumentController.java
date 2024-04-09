@@ -85,6 +85,12 @@ public class InstrumentController {
 		return instrumentService.InsertELNOrder(objorder);
 	}
 	
+	@PostMapping("/InsertAutoRegisterOrder")
+	public LSlogilablimsorderdetail InsertAutoRegisterOrder(@RequestBody List<LSlogilablimsorderdetail> objorder)throws Exception {
+
+		return instrumentService.InsertAutoRegisterOrder(objorder);
+	}
+	
 	@PostMapping("/GetOrderonClose")
 	public Logilabordermaster GetOrderonClose(@RequestBody LSlogilablimsorderdetail objorder) {
 
@@ -1325,5 +1331,23 @@ public class InstrumentController {
 	{
 		return instrumentService.acceptapprovel(objdir);
 	}
+
+	@PostMapping(value="/stopautoregister")
+	public void stopregister(@RequestBody LSlogilablimsorderdetail objdir)
+			throws Exception {
+
+		instrumentService.stopautoregister(objdir);
+	}
 	
+	@PostMapping("/getsingleorder")
+	public LSlogilablimsorderdetail getsingleorder(@RequestBody LSlogilablimsorderdetail body)throws Exception
+	{
+		return instrumentService.getsingleorder(body);
+
+	}
+	
+	@PostMapping("/Getsingleorder")
+	public LSlogilablimsorderdetail Getsingleorder(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
+		return instrumentService.Getsingleorder(objorder);
+	}
 }

@@ -53,6 +53,8 @@ import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.usermanagement.UserService;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
@@ -156,7 +158,7 @@ public class UserController {
 	 * @throws MessagingException
 	 */
 	@PostMapping("/InsertUpdateUser")
-	public LSuserMaster InsertUpdateUser(@RequestBody LSuserMaster objusermaster) throws MessagingException {
+	public LSuserMaster InsertUpdateUser(@RequestBody LSuserMaster objusermaster) throws MessagingException, JsonParseException, JsonMappingException, IOException {
 
 		return userService.InsertUpdateUser(objusermaster);
 	}

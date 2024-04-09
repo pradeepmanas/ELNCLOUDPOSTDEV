@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -164,7 +165,7 @@ public class LSuserMaster {
 	@Transient
 	private LSusergroup lsusergrouptrans;
 
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "usercode")
 //	@JsonManagedReference
 	private List<LSMultiusergroup> multiusergroupcode;

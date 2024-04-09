@@ -1591,7 +1591,7 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 			String orderflag, int j);
 
 
-	List<Protocolorder> findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndCreatedtimestampBetweenOrSitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+	List<Protocolorder> findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndAssignedtoIsNullAndCreatedtimestampBetweenOrSitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 			String string, List<LSprojectmaster> lstproject, List<Elnprotocolworkflow> lstworkflow_protocol,
 			Date fromdate, Date todate, Integer sitecode, LSuserMaster objuser, Date fromdate2, Date todate2);
 	

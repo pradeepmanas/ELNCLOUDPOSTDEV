@@ -71,7 +71,12 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingReposit
 import com.agaram.eln.primary.repository.usermanagement.LsusersettingsRepository;
 import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.notification.EmailService;
+import com.agaram.eln.primary.service.protocol.Commonservice;
+import com.agaram.eln.primary.service.sheetManipulation.FileService;
+import com.aspose.pdf.internal.imaging.internal.Exceptions.IO.IOException;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -153,7 +158,12 @@ public class UserService {
 
 	@Autowired
 	private AuditService auditService;
-
+	@Autowired
+	Commonservice commonservice;
+	
+	@Autowired
+	private FileService fileService;
+	
 	public LSusergroup InsertUpdateUserGroup(LSusergroup objusergroup) {
 		if (lSusergroupRepository.findByusergroupnameIgnoreCaseAndLssitemaster(objusergroup.getUsergroupname(),
 				objusergroup.getLssitemaster()) != null && objusergroup.getUsergroupcode() == null) {
@@ -309,7 +319,7 @@ public class UserService {
 	}
 
 	@SuppressWarnings("unused")
-	public LSuserMaster InsertUpdateUser(LSuserMaster objusermaster) throws MessagingException {
+	public LSuserMaster InsertUpdateUser(LSuserMaster objusermaster) throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		boolean isnewuser = false;
 
 		if (objusermaster.getUsercode() == null) {

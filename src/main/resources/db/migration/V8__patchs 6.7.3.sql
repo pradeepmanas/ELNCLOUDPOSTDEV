@@ -481,5 +481,67 @@ END
 $do$; 
 
 ALTER TABLE IF Exists lssitemaster ADD COLUMN IF NOT EXISTS expirydate timestamp without time zone;
-
 ALTER TABLE IF Exists lsordernotification ADD COLUMN IF NOT EXISTS period varchar(250);
+
+ DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsautoregister_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE lsautoregister_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+
+CREATE TABLE IF NOT EXISTS public.lsautoregister
+(
+    regcode numeric(17,0) NOT NULL,
+    autocreatedate timestamp without time zone,
+    batchcode numeric(17,0),
+    "interval" integer,
+	ismultitenant integer,
+    repeat boolean,
+    screen character varying(255) COLLATE pg_catalog."default",
+    timespan character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT lsautoregister_pkey PRIMARY KEY (regcode),
+    CONSTRAINT fkmdkcpw98le9x1bhlt3qi0py1k FOREIGN KEY (batchcode)
+        REFERENCES public.lslogilablimsorderdetail (batchcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.lsautoregister
+    OWNER to postgres;
+
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS repeat Boolean;
+
+CREATE TABLE IF NOT EXISTS public.lsactivewidgets
+(
+    activewidgetscode integer NOT NULL,
+    activewidgetsdetails character varying(255) COLLATE pg_catalog."default",
+    activewidgetsdetailscode bigint,
+    activedatatimestamp timestamp without time zone,
+    activitytype character varying(255) COLLATE pg_catalog."default",
+    description character varying(255) COLLATE pg_catalog."default",
+    screenname character varying(255) COLLATE pg_catalog."default",
+    userid integer,
+    parentcode integer,
+    CONSTRAINT lsactivewidgets_pkey PRIMARY KEY (activewidgetscode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.lsactivewidgets
+    OWNER to postgres;

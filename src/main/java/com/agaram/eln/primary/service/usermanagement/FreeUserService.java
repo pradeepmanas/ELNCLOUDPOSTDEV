@@ -2,12 +2,15 @@ package com.agaram.eln.primary.service.usermanagement;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,10 @@ import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflowgroupmap;
+import com.agaram.eln.primary.model.sheetManipulation.LSfile;
+import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
+import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
+import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflowgroupmap;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
@@ -41,8 +48,10 @@ import com.agaram.eln.primary.repository.protocol.ElnprotocolTemplateworkflowRep
 import com.agaram.eln.primary.repository.protocol.ElnprotocolTemplateworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowgroupmapRepository;
+import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.protocol.lSprotocolworkflowRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
@@ -57,6 +66,11 @@ import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.repository.usermanagement.LsusersettingsRepository;
 import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
+import com.agaram.eln.primary.service.protocol.Commonservice;
+import com.agaram.eln.primary.service.protocol.ProtocolService;
+import com.agaram.eln.primary.service.sheetManipulation.FileService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 @Service
 public class FreeUserService {
@@ -121,6 +135,21 @@ public class FreeUserService {
 	@Autowired
 	private ElnprotocolTemplateworkflowgroupmapRepository elnprotocoltemplateworkflowgroupmaprepository;
 	
+	@Autowired
+	Commonservice commonservice;
+	
+	@Autowired
+	private FileService fileService;
+	
+	@Autowired
+	ProtocolService ProtocolMasterService;
+	
+	@Autowired
+	private LSfileRepository lSfileRepository;
+	
+	@Autowired
+	LSProtocolMasterRepository LSProtocolMasterRepositoryObj;
+	@SuppressWarnings("unchecked")
 	public LSuserMaster Createuser( LSuserMaster objuser) throws Exception {
 		Long usercount = lsuserMasterRepository.countByUsernameIgnoreCaseAndAutenticatefromAndSubcode(objuser.getUsername(),objuser.getAutenticatefrom(),objuser.getSubcode());
 		if(usercount <=0)
@@ -348,6 +377,74 @@ public class FreeUserService {
 			{
 				userService.Usersendpasswormail(objuser);
 			}
+			//for template create
+			ObjectMapper objectMapper = new ObjectMapper();
+			ClassPathResource resource = new ClassPathResource("import_elnlite.json");
+			// Read JSON file into a Map
+			Map<String, Object> jsonData = objectMapper.readValue(resource.getFile(), Map.class);
+			Gson gson = new Gson();
+			// sheet template
+			List<Map<String, Object>> templates = (List<Map<String, Object>>) jsonData.get("templates");
+			templates.stream().forEach(template -> {
+				String Content = gson.toJson(template.get("filecontent"));
+				List<LSfiletest> lstest = (List<LSfiletest>) template.get("lstest");
+				List<LSfilemethod> lstfilemethd = (List<LSfilemethod>) template.get("lsmethods");
+				List<LSfileparameter> lstfileparam = (List<LSfileparameter>) template.get("lsparameter");
+				LSfile objfile = new LSfile();
+				objfile.setFilecontent(Content);
+				objfile.setFilenameuser(template.get("filenameuser").toString());
+				objfile.setIsmultitenant(2);
+				objfile.setLssitemaster(objuser.getLssitemaster());
+//		        objfile.setLssheetworkflow(workflowsheettemp2);
+//		        objfile.setApproved(1);
+				objfile.setCreateby(objuser);
+				objfile.setLstest(lstest);
+				objfile.setLsmethods(lstfilemethd);
+				objfile.setLsparameter(lstfileparam);
+				objfile.setViewoption(1);
+				
+				try {
+					fileService.InsertupdateSheet(objfile);
+				} catch (java.io.IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				// for approve
+				objfile.setApproved(1);
+				lSfileRepository.save(objfile);
+			});
+
+			// protocol template
+			List<Map<String, Object>> protocols = (List<Map<String, Object>>) jsonData.get("protocols");
+			Map<String, Object> objsilentaudit = new HashMap<>();
+			Map<String, Object> newProtocolMasterObj = new HashMap<>();
+			List<Integer> lstteamusercode = new ArrayList<>();
+			lstteamusercode.add(team.getTeamcode());
+			protocols.stream().forEach(protocol -> {
+				objsilentaudit.put("lssitemaster", objuser.getLssitemaster().getSitecode());
+				objsilentaudit.put("lsuserMaster", objuser.getUsercode());
+				newProtocolMasterObj.put("createdby", objuser);
+				newProtocolMasterObj.put("protocolmastername", protocol.get("protocolmastername"));
+				newProtocolMasterObj.put("protocolstatus", 1);
+				newProtocolMasterObj.put("status", 1);
+				newProtocolMasterObj.put("ismultitenant", 2);
+				protocol.put("objsilentaudit", objsilentaudit);
+				protocol.put("createdby", objuser.getUsercode());
+				protocol.put("usercode", objuser.getUsercode());
+				protocol.put("username", objuser.getUsername());
+				protocol.put("newProtocolMasterObj", newProtocolMasterObj);
+				protocol.put("lsuserMaster", objuser);
+				protocol.put("teamuserscode", lstteamusercode);
+				try {
+					ProtocolMasterService.addProtocolMaster(protocol);
+				} catch (java.io.IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+			});
 		}
 		else
 		{

@@ -20,6 +20,7 @@ import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.dashboard.LsActiveWidgets;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.Lselninstrumentfields;
@@ -43,6 +44,7 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
+import com.agaram.eln.primary.repository.dashboard.LsActiveWidgetsRepository;
 //import com.agaram.eln.primary.repository.instrumentDetails.LSinstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMappedFieldsRepository;
@@ -126,6 +128,9 @@ public class BaseMasterService {
 	private LsMappedInstrumentsRepository lsMappedInstrumentsRepository;
 	@Autowired
 	private LsMappedFieldsRepository lsMappedFieldsRepository;
+	@Autowired
+	private LsActiveWidgetsRepository lsActiveWidgetsRepository;
+	
 	@SuppressWarnings("unused")
 	private String ModuleName = "Base Master";
 
@@ -279,17 +284,32 @@ public class BaseMasterService {
 
 			return objClass;
 		}
-
+		boolean Isnewproject=false;
 		if (objClass.getTestcode() == null) {
+			Isnewproject=true;		
 			try {
 				objClass.setCreatedate(commonfunction.getCurrentUtcTime());
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-
 		lStestmasterlocalRepository.save(objClass);
+		if(Isnewproject) {
+			LsActiveWidgets lsactvewidgobj = new LsActiveWidgets();
+			lsactvewidgobj.setActivewidgetsdetails(objClass.getTestname());
+			lsactvewidgobj.setActivewidgetsdetailscode(Long.valueOf(objClass.getTestcode()));
+			lsactvewidgobj.setActivityType("Insert");
+			lsactvewidgobj.setScreenname("Testmaster");
+			lsactvewidgobj.setUserId(objClass.getCreateby().getUsercode());
+			try {
+				lsactvewidgobj.setActivedatatimestamp(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			lsActiveWidgetsRepository.save(lsactvewidgobj);
+		}
+
+
 
 		if (objClass.getLSmaterial() != null) {
 			for (LSmaterial objMat : objClass.getLSmaterial()) {
@@ -398,17 +418,32 @@ public class BaseMasterService {
 				return objClass;
 			}
 		}
-		
+		boolean Isnewproject=false;
 		if(objClass.getProjectcode() == null) {
+			Isnewproject=true;
 			try {
 				objClass.setCreatedon(commonfunction.getCurrentUtcTime());
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
-
 		lSprojectmasterRepository.save(objClass);
+		if(Isnewproject) {
+			LsActiveWidgets lsactvewidgobj = new LsActiveWidgets();
+			lsactvewidgobj.setActivewidgetsdetails(objClass.getProjectname());
+			lsactvewidgobj.setActivewidgetsdetailscode(Long.valueOf(objClass.getProjectcode()));
+			lsactvewidgobj.setActivityType("Insert");
+			lsactvewidgobj.setScreenname("Projectmaster");
+			lsactvewidgobj.setUserId(objClass.getUsercode());
+			try {
+				lsactvewidgobj.setActivedatatimestamp(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			lsActiveWidgetsRepository.save(lsactvewidgobj);
+		}
 		objClass.getResponse().setStatus(true);
 		objClass.getResponse().setInformation("");
 		updatenotificationforproject(objClass);

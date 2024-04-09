@@ -2368,7 +2368,10 @@ public class LoginService {
 			Long usercount = lsuserMasterRepository.countByLssitemasterAndUserstatus(sitemaster, "A");
 			rtnobj.put("activeuser", usercount);
 		} else {
+
 			LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser",
+					"Active");
+			LSpreferences objMainFormUser = LSpreferencesRepository.findByTasksettingsAndValuesettings("MainFormUser",
 					"Active");
 			if (objPrefrence != null) {
 				Long activeusercount = LSactiveUserRepository.count();
@@ -2377,7 +2380,14 @@ public class LoginService {
 				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
 				rtnobj.put("Noofuser", Integer.parseInt(sConcurrentUsers));
 				rtnobj.put("activeuser", activeusercount);
-			} else {
+			} else if(objMainFormUser != null){
+				String dvalue = objMainFormUser.getValueencrypted();
+				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
+				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
+				Long usercount = lsuserMasterRepository.countByUserretirestatus(0);
+				rtnobj.put("activeuser", usercount);
+				rtnobj.put("Noofuser", Integer.parseInt(sConcurrentUsers));
+			}else {
 				Long usercount = lsuserMasterRepository.countByUsercodeNotAndUserretirestatus(1, 0);
 				rtnobj.put("activeuser", usercount);
 				rtnobj.put("Noofuser", 3);

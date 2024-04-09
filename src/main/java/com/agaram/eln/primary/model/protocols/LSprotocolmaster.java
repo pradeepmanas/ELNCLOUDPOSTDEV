@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
+import com.agaram.eln.primary.model.dashboard.LsActiveWidgets;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -456,6 +457,16 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 		this.lstuserMaster = lstuserMaster;
 	} 
 	
+	@Transient
+	private LsActiveWidgets lsActiveWidgets;
+
+	public LsActiveWidgets getLsActiveWidgets() {
+		return lsActiveWidgets;
+	}
+
+	public void setLsActiveWidgets(LsActiveWidgets lsActiveWidgets) {
+		this.lsActiveWidgets = lsActiveWidgets;
+	}
 	
 	
 }
