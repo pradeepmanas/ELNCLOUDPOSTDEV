@@ -545,3 +545,6 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.lsactivewidgets
     OWNER to postgres;
+
+ALTER TABLE IF Exists LSlogilablimsorderdetail ADD Column IF NOT EXISTS ordersaved integer;
+update LSlogilablimsorderdetail set ordersaved=0 where ordersaved is null;

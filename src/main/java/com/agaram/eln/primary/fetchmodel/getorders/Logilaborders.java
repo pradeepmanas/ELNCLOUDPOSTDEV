@@ -41,6 +41,7 @@ public class Logilaborders extends Logilabordermaster {
 	private Integer ordercancell;
 	private Integer viewoption;
 	private LSOrdernotification lsordernotification;
+	private Integer ordersaved;
 
 	
 	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
@@ -48,9 +49,9 @@ public class Logilaborders extends Logilabordermaster {
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,LSuserMaster assignedto,
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,
-			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification) {
+			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification, Integer ordersaved) {
 		
-		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification);
+		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved);
 		 
 		if(lssamplefile != null)
 		{
@@ -83,6 +84,7 @@ public class Logilaborders extends Logilabordermaster {
 		this.ordercancell=ordercancell;
 		this.viewoption=viewoption;
         this.lsordernotification=lsordernotification != null ? lsordernotification :null;
+        this.ordersaved = ordersaved;
 	}
 	
 	
@@ -287,5 +289,14 @@ public class Logilaborders extends Logilabordermaster {
 
 	public void setLsordernotification(LSOrdernotification lsordernotification) {
 		this.lsordernotification = lsordernotification;
+	}
+
+	public Integer getOrdersaved() {
+		return ordersaved;
+	}
+
+
+	public void setOrdersaved(Integer ordersaved) {
+		this.ordersaved = ordersaved;
 	}
 }

@@ -3507,6 +3507,12 @@ public class InstrumentService {
 			lssamplefileversionRepository.save(objfile.getLssamplefileversion());
 
 		}
+		
+		LSlogilablimsorderdetail orderDetail = lslogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeDesc(objfile.getBatchcode());
+		if(orderDetail.getOrdersaved().equals(0)) {
+			orderDetail.setOrdersaved(1);
+			lslogilablimsorderdetailRepository.save(orderDetail);
+		}
 
 		if (objfile.isDoversion() && versionexist) {
 
@@ -3872,6 +3878,172 @@ public class InstrumentService {
 		return objorder;
 	}
 
+	public LSlogilablimsorderdetail SheetChangeForLimsOrder(LSlogilablimsorderdetail objorder) throws IOException {
+		List<LSlogilablimsorder> lstorder = lslogilablimsorderRepository.findBybatchid(objorder.getBatchid());
+		List<Lsbatchdetails> lstbatch = LsbatchdetailsRepository.findByBatchcode(objorder.getBatchcode());
+
+		if (!LSfilemethodRepository.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()).isEmpty()) {
+			objorder.setInstrumentcode(LSfilemethodRepository
+					.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()).get(0).getInstrumentid());
+			objorder.setMethodcode(LSfilemethodRepository
+					.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()).get(0).getMethodid());
+		} else {
+			objorder.setInstrumentcode(objorder.getMethodcode());
+			objorder.setMethodcode(objorder.getMethodcode());
+		}
+		objorder.getLsfile().setLsparameter(
+				lsFileparameterRepository.findByFilecodeOrderByFileparametercode(objorder.getLsfile().getFilecode()));
+
+		lslogilablimsorderRepository.delete(lstorder);
+		
+		List<LSlogilablimsorder> lsorder = new ArrayList<LSlogilablimsorder>();
+		String Limsorder = objorder.getBatchcode().toString();
+		
+		if (objorder.getLsfile() != null) {
+			objorder.getLsfile().setLsmethods(
+					LSfilemethodRepository.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()));
+			if (objorder.getLsfile().getLsmethods() != null && objorder.getLsfile().getLsmethods().size() > 0) {
+				int methodindex = 0;
+				for (LSfilemethod objmethod : objorder.getLsfile().getLsmethods()) {
+					LSlogilablimsorder objLimsOrder = new LSlogilablimsorder();
+					String order = "";
+					if (methodindex < 10) {
+						order = Limsorder.concat("0" + methodindex);
+					} else {
+						order = Limsorder.concat("" + methodindex);
+					}
+					objLimsOrder.setOrderid(Long.parseLong(order));
+					objLimsOrder.setBatchid(objorder.getBatchid());
+					objLimsOrder.setMethodcode(objmethod.getMethodid());
+					objLimsOrder.setInstrumentcode(objmethod.getInstrumentid());
+					objLimsOrder.setTestcode(objorder.getTestcode() != null ? objorder.getTestcode().toString() : null);
+					objLimsOrder.setOrderflag("N");
+					objLimsOrder.setCreatedtimestamp(objorder.getCreatedtimestamp());
+
+					lsorder.add(objLimsOrder);
+
+					methodindex++;
+				}
+
+				lslogilablimsorderRepository.save(lsorder);
+			} else {
+
+				LSlogilablimsorder objLimsOrder = new LSlogilablimsorder();
+				if (LSfilemethodRepository.findByFilecode(objorder.getLsfile().getFilecode()) != null) {
+					objLimsOrder.setMethodcode(
+							LSfilemethodRepository.findByFilecode(objorder.getLsfile().getFilecode()).getMethodid());
+					objLimsOrder.setInstrumentcode(LSfilemethodRepository
+							.findByFilecode(objorder.getLsfile().getFilecode()).getInstrumentid());
+				}
+				objLimsOrder.setOrderid(Long.parseLong(Limsorder.concat("00")));
+				objLimsOrder.setBatchid(objorder.getBatchid());
+				objLimsOrder.setTestcode(objorder.getTestcode() != null ? objorder.getTestcode().toString() : null);
+				objLimsOrder.setOrderflag("N");
+				objLimsOrder.setCreatedtimestamp(objorder.getCreatedtimestamp());
+
+				lslogilablimsorderRepository.save(objLimsOrder);
+				lsorder.add(objLimsOrder);
+
+			}
+		}
+
+		objorder.setLsbatchdetails(lstbatch);
+		objorder.getLssamplefile().setBatchcode(objorder.getBatchcode());
+		objorder.getLsfile().setIsmultitenant(objorder.getIsmultitenant());
+
+		String contString = getfileoncode(objorder.getLsfile());
+		objorder.getLsfile().setFilecontent(contString);
+		objorder.setFilecode(objorder.getLsfile().getFilecode());
+		objorder.setFilename(objorder.getLsfile().getFilenameuser());
+
+		objorder.getLssamplefile().setFilecontent(null);
+		lssamplefileRepository.save(objorder.getLssamplefile());
+
+		LSsamplefile objfile = objorder.getLssamplefile();
+
+		if (lssamplefileversionRepository.findByBatchcodeAndVersionno(objorder.getBatchcode(), 1) != null
+				&& !contString.equals("") && contString != null) {
+
+			LSsamplefileversion objVersion = lssamplefileversionRepository.findByBatchcodeAndVersionno(objorder.getBatchcode(), 1);
+			objVersion.setModifiedby(objorder.getLsuserMaster());
+			objVersion.setFilesamplecode(objfile);
+			lssamplefileversionRepository.save(objVersion);
+			updateorderversioncontent(contString, objVersion, objorder.getIsmultitenant());
+
+		}
+
+		if (objorder.getLssamplefile() != null && objorder.getLssamplefile().getProcessed() != null
+				&& objorder.getLssamplefile().getProcessed() == 1) {
+			updateordercontent(contString, objorder.getLssamplefile(), objorder.getIsmultitenant());
+			objorder.getLssamplefile().setFilecontent(contString);
+		} else {
+
+			objorder.getLsfile().setFilecontent(null);
+
+			if (objorder.getIsmultitenant() == 1) {
+				if (cloudOrderCreationRepository
+						.findById((long) objorder.getLssamplefile().getFilesamplecode()) != null) {
+					objorder.getLssamplefile().setFilecontent(cloudOrderCreationRepository
+							.findById((long) objorder.getLssamplefile().getFilesamplecode()).getContent());
+				}
+			} else {
+				
+				String contentParams = "";
+				String contentValues = "";
+
+				Map<String, Object> objContent = commonfunction.getParamsAndValues(contString);
+
+				contentValues = (String) objContent.get("values");
+				contentParams = (String) objContent.get("parameters");
+
+				OrderCreation objsavefile = new OrderCreation();
+				objsavefile.setId((long) objfile.getFilesamplecode());
+				objsavefile.setContentvalues(contentValues);
+				objsavefile.setContentparameter(contentParams);
+	
+				Query query = new Query(Criteria.where("id").is(objsavefile.getId()));
+	
+				Boolean recordcount = mongoTemplate.exists(query, OrderCreation.class);
+	
+				if (!recordcount) {
+					mongoTemplate.insert(objsavefile);
+				} else {
+					Update update = new Update();
+					update.set("contentvalues", contentValues);
+					update.set("contentparameter", contentParams);
+	
+					mongoTemplate.upsert(query, update, OrderCreation.class);
+				}
+	
+				GridFSDBFile largefile = gridFsTemplate
+						.findOne(new Query(Criteria.where("filename").is("order_" + objfile.getFilesamplecode())));
+				if (largefile != null) {
+					gridFsTemplate.delete(new Query(Criteria.where("filename").is("order_" + objfile.getFilesamplecode())));
+				}
+				gridFsTemplate.store(new ByteArrayInputStream(contString.getBytes(StandardCharsets.UTF_8)),
+						"order_" + objfile.getFilesamplecode(), StandardCharsets.UTF_16);
+				
+				objorder.getLssamplefile().setFilecontent(contString);
+
+			}
+
+		}
+		
+		lslogilablimsorderdetailRepository.save(objorder);
+		final LSlogilablimsorderdetail objLSlogilablimsorder = objorder;
+
+		new Thread(() -> {
+			try {
+				System.out.println("inside the thread SDMS order call");
+				createLogilabLIMSOrder4SDMS(objLSlogilablimsorder);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
+
+		return objorder;
+	}
+	
 	public String getfileoncode(LSfile objfile) {
 
 		String content = "";

@@ -37,10 +37,11 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private Integer testcode;
 	private Integer approvelstatus;
 	private Long notificationcode;
+	private Integer ordersaved;
 	
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,LSuserMaster assignedto,
-			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster ,Integer testcode,Integer approvelstatus, LSOrdernotification lsordernotification) {
+			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster ,Integer testcode,Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -62,6 +63,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.createdby = lsuserMaster;
 		this.approvelstatus=approvelstatus;
 		//this.notificationcode=lsordernotification != null ? lsordernotification.getNotificationcode() : null;
+		this.ordersaved = ordersaved;
 	}
 
 	public Integer getApprovelstatus() {
@@ -308,5 +310,14 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.assignedto = assignedto;
 	}
 	
+
+	public Integer getOrdersaved() {
+		return ordersaved;
+	}
+	
+
+	public void setOrdersaved(Integer ordersaved) {
+		this.ordersaved = ordersaved;
+	}
 	
 }

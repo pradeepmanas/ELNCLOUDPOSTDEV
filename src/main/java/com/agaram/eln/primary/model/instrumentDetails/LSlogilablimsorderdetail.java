@@ -452,6 +452,17 @@ public class LSlogilablimsorderdetail {
 
 	private Integer viewoption;
 
+	@Column(name = "ordersaved")
+	private Integer ordersaved = 0;
+	
+	public Integer getOrdersaved() {
+		return ordersaved;
+	}
+
+	public void setOrdersaved(Integer ordersaved) {
+		this.ordersaved = ordersaved;
+	}
+	
 	public List<LsOrderattachments> getLsOrderattachments() {
 		return lsOrderattachments;
 	}

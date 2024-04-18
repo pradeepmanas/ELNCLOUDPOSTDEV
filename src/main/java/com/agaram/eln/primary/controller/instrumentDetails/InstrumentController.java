@@ -286,6 +286,12 @@ public class InstrumentController {
 		
 		return instrumentService.UpdateLimsOrder(objorder);
 	}
+	
+	@PostMapping("/SheetChangeForLimsOrder")
+	public LSlogilablimsorderdetail SheetChangeForLimsOrder(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
+		
+		return instrumentService.SheetChangeForLimsOrder(objorder);
+	}
 
 	@PostMapping("/Getupdatedorder")
 	public LSlogilablimsorderdetail Getupdatedorder(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
