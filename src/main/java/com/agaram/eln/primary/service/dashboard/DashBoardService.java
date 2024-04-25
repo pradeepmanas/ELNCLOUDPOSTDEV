@@ -4817,6 +4817,7 @@ public class DashBoardService {
 	}
 
 	public List<LsActiveWidgets> getActivewidgetsdata(LSuserMaster objusermaster) {
+		lsActiveWidgetsRepository.deleteCustomRows(30);
 		return lsActiveWidgetsRepository.findFirst30ByUserIdOrderByActivewidgetscodeDesc(objusermaster.getUsercode());
 	}
 
