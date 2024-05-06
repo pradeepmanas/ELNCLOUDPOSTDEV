@@ -4817,8 +4817,12 @@ public class DashBoardService {
 	}
 
 	public List<LsActiveWidgets> getActivewidgetsdata(LSuserMaster objusermaster) {
-		lsActiveWidgetsRepository.deleteCustomRows(30);
-		return lsActiveWidgetsRepository.findFirst30ByUserIdOrderByActivewidgetscodeDesc(objusermaster.getUsercode());
+		System.out.println("Before Delete --------------------------");
+		lsActiveWidgetsRepository.deleteCustomRows(30,objusermaster.getUsercode());
+		System.out.println("After Delete --------------------------");
+		List<LsActiveWidgets> rtnibj=lsActiveWidgetsRepository.findFirst30ByUserIdOrderByActivewidgetscodeDesc(objusermaster.getUsercode());
+		System.out.println("After fetch --------------------------");
+		return rtnibj;
 	}
 
 	public LsActiveWidgets Onsaveactivewidgetsdata(LsActiveWidgets activeWidgets) throws ParseException {
