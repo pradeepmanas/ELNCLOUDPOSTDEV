@@ -37,7 +37,7 @@ public class MaterialCategoryService {
 	public ResponseEntity<Object> getMaterialCategory(Integer nsitecode) {
 
 		List<MaterialCategory> lstgetMaterialCategory = MaterialCategoryRepository
-				.findByNsitecodeOrderByNmaterialcatcodeDesc(nsitecode);
+				.findByNsitecodeOrNdefaultstatusOrderByNmaterialcatcodeDesc(nsitecode,3);
 		return new ResponseEntity<>(lstgetMaterialCategory, HttpStatus.OK);
 	}
 

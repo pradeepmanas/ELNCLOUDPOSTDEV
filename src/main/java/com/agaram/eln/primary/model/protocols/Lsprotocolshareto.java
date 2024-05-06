@@ -205,4 +205,13 @@ public class Lsprotocolshareto {
 	public void setIsmultitenant(Integer ismultitenant) {
 		this.ismultitenant = ismultitenant;
 	}
+	private Integer retirestatus;
+
+	public Integer getRetirestatus() {
+		return retirestatus;
+	}
+
+	public void setRetirestatus(Integer retirestatus) {
+		this.retirestatus = retirestatus;
+	}
 }

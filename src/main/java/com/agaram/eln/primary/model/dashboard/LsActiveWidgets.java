@@ -30,16 +30,27 @@ public class LsActiveWidgets  {
 
     public String description;
     
-    public Integer parentcode; 
+    public Double parentcode; 
+    
+    public Integer folderdirfloatcode; 
     
 
-	public Integer getParentcode() {
-		return parentcode;
+    public Integer getFolderdirfloatcode() {
+		return folderdirfloatcode;
 	}
 
-	public void setParentcode(Integer parentcode) {
-		this.parentcode = parentcode;
+	public void setFolderdirfloatcode(Integer folderdirfloatcode) {
+		this.folderdirfloatcode = folderdirfloatcode;
 	}
+
+	public Double getParentcode() {
+        return parentcode;
+    }
+
+    public void setParentcode(Double parentcode) {
+        this.parentcode = parentcode;
+    }
+
 
 	public Integer getActivewidgetscode() {
 		return activewidgetscode;

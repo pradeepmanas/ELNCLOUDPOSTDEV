@@ -3,7 +3,6 @@ package com.agaram.eln.primary.repository.instrumentDetails;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.transaction.Transactional;
 
@@ -2827,4 +2826,9 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 	List<ordersinterface> findByOrderflagAndLsprojectmasterInAndLsworkflowInAndAssignedtoIsNullAndCreatedtimestampBetweenOrAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			String string, List<LSprojectmaster> lstproject, List<LSworkflow> lstworkflow, Date fromdate, Date todate,
 			LSuserMaster objuser, Date fromdate2, Date todate2);
+
+	List<LSlogilablimsorderdetail> findByBatchcodeInAndOrderflag(List<Long> batchcode, String string);
+	@Transactional
+	@Query(value = "select ordercancell from LSlogilablimsorderdetail where batchid = ?1", nativeQuery = true)
+	String getRetirestatus(String templatename);
 	}

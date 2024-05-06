@@ -1594,6 +1594,10 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	List<Protocolorder> findByOrderflagAndLsprojectmasterInAndElnprotocolworkflowInAndAssignedtoIsNullAndCreatedtimestampBetweenOrSitecodeAndAssignedtoAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 			String string, List<LSprojectmaster> lstproject, List<Elnprotocolworkflow> lstworkflow_protocol,
 			Date fromdate, Date todate, Integer sitecode, LSuserMaster objuser, Date fromdate2, Date todate2);
+
+	@Transactional
+	@Query(value = "select ordercancell from LSlogilabprotocoldetail where protocolordername = ?1", nativeQuery = true)
+	String getRetirestatus(String templatename);
 	
 
 

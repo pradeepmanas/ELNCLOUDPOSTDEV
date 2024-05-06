@@ -3220,7 +3220,9 @@ public class ProtocolService {
 			notobj.setDuedate(lSlogilabprotocoldetail.getDuedate());
 			notobj.setUsercode(lSlogilabprotocoldetail.getLsuserMaster().getUsercode());
 			notobj.setPeriod(lSlogilabprotocoldetail.getPeriod());
-			notobj.setStatus(1);
+			notobj.setCautionstatus(1);
+			notobj.setDuestatus(1);
+			notobj.setOverduestatus(1);
 			notobj.setScreen("protocol");
 
 			ordernotList.add(lsordernotificationrepo.save(notobj));
@@ -6615,6 +6617,7 @@ public class ProtocolService {
 						objprotocolordershareto.getShareprotocolcode());
 
 		if (existingshare != null) {
+			objprotocolordershareto.setRetirestatus(objprotocolordershareto.getRetirestatus());
 			objprotocolordershareto.setSharetoprotocolcode(existingshare.getSharetoprotocolcode());
 		}
 
@@ -7897,6 +7900,19 @@ public class ProtocolService {
 				objuser.setStependdate(commonfunction.getCurrentUtcTime());
 			}
 			lsprotocolorderstephistoryRepository.save(objuser);
+			
+			if(objuser.getBatchcode() != null) {
+				if(objuser.getAction().contains("Processed")) {
+					LsActiveWidgets lsActiveWidgets = new LsActiveWidgets();
+					lsActiveWidgets.setActivewidgetsdetails(objuser.getBatchid());
+					lsActiveWidgets.setActivewidgetsdetailscode(objuser.getBatchcode());
+					lsActiveWidgets.setActivityType("Open");
+					lsActiveWidgets.setScreenname("Sheet_Order");
+					lsActiveWidgets.setUserId(objuser.getCreateby().getUsercode());
+					lsActiveWidgets.setActivedatatimestamp(commonfunction.getCurrentUtcTime());
+					lsActiveWidgetsRepository.save(lsActiveWidgets);
+				}
+			}
 		}
 		return objuser;
 	}
@@ -8776,6 +8792,12 @@ public class ProtocolService {
 							LScfttransactionobj.getLssitemaster(), 2);
 
 		}
+		//Lsprotocolshareto retirestatus update
+		LsprotocolsharetoRepository.updateRetirestatus(protocolmastercode);
+		
+		//Lsprotocolsharedby retirestatus update
+		LsprotocolsharedbyRepository.updateRetirestatus(protocolmastercode);
+		
 		mapObj.put("RetiredLSprotocolmasterObj", newProtocolMasterObj);
 		mapObj.put("protocolmasterLst", LSprotocolmasterLst);
 

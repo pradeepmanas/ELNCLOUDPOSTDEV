@@ -217,4 +217,13 @@ public class Lsfileshareto {
 	public void setSharedbytofilecode(Long sharedbytofilecode) {
 		this.sharedbytofilecode = sharedbytofilecode;
 	}
+	private Integer retirestatus;
+
+	public Integer getRetirestatus() {
+		return retirestatus;
+	}
+
+	public void setRetirestatus(Integer retirestatus) {
+		this.retirestatus = retirestatus;
+	}
 }

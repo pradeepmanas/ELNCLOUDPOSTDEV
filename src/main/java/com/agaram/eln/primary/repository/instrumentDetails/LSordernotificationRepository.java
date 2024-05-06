@@ -13,5 +13,10 @@ public interface LSordernotificationRepository extends JpaRepository<LSOrdernoti
 
 	List<LSOrdernotification> findByUsercodeAndDuedateBetween(Integer usercode, Date fromDate, Date toDate);
 
+	List<LSOrdernotification> findByIsduedateexhaustedAndIscompleted(boolean b, boolean c);
+
+	List<LSOrdernotification> findByIsduedateexhaustedAndIscompletedOrIsduedateexhaustedAndIscompleted(boolean b,
+			boolean c, boolean d, Object object);
+
 
 }

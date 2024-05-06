@@ -1601,6 +1601,7 @@ public class FileService {
 				objprotocolordershareto.getSharefilecode());
 
 		if (existingshare != null) {
+			objprotocolordershareto.setRetirestatus(objprotocolordershareto.getRetirestatus());
 			objprotocolordershareto.setSharetofilecode(existingshare.getSharetofilecode());
 		}
 
@@ -1969,7 +1970,14 @@ public class FileService {
 	public LSfile lsfileRetire(LSfile objfile) {
 		LSfile file = lSfileRepository.findByfilecode(objfile.getFilecode());
 		file.setRetirestatus(objfile.getRetirestatus());
-		lSfileRepository.save(file);
+		lSfileRepository.save(file);		
+		
+		//shareto retirestatus update				
+		LsfilesharetoRepository.updateRetirestatus(objfile.getFilecode());
+		
+		//shareby retirestatus update				
+		LsfilesharedbyRepository.updateRetirestatus(objfile.getFilecode());
+		
 		return objfile;
 	}
 

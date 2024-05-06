@@ -138,4 +138,10 @@ public class EquipmentController {
 			throws Exception {
 		return equipmentService.onGetEquipmentSelect(inputMap);
 	}
+	
+	@RequestMapping(value = "/onCheckItsUsed", method = RequestMethod.POST)
+	public Boolean onCheckItsUsed(@RequestBody Equipment obj)
+			throws Exception {
+		return equipmentService.onCheckItsUsed(obj);
+	}
 }

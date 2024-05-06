@@ -108,7 +108,15 @@ public class LSsamplefile {
 	private String contentvalues;
 	@Transient
 	private String tagvalues;
+	@Transient
+	private String resultvalues;
 	
+	public String getResultvalues() {
+		return resultvalues;
+	}
+	public void setResultvalues(String resultvalues) {
+		this.resultvalues = resultvalues;
+	}
 	public String getTagvalues() {
 		return tagvalues;
 	}

@@ -456,5 +456,8 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			String search_Key2);
 	
 	long countByLssitemaster(Integer sitecode);
+	@Transactional
+	@Query(value = "select retirestatus from lsprotocolmaster where protocolmastername = ?1", nativeQuery = true)
+	String getRetirestatus(String templatename);
 	
 }

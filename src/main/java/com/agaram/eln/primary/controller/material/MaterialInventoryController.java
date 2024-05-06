@@ -2,6 +2,7 @@ package com.agaram.eln.primary.controller.material;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.service.material.MaterialInventoryService;
@@ -257,5 +259,10 @@ public class MaterialInventoryController {
 	@RequestMapping(value = "/getElnMaterialInventoryById", method = RequestMethod.POST)
 	public ResponseEntity<Object> getElnMaterialInventoryById(@RequestBody Map<String, Object> inputMap) throws Exception {
 		return materialInventoryService.getElnMaterialInventoryById(inputMap);
+	}
+	
+	@RequestMapping(value = "/getElnMaterialInventoryByMaterial", method = RequestMethod.POST)
+	public ResponseEntity<Object> getElnMaterialInventoryByMaterial(@RequestBody List<Integer> lstMaterial) throws Exception {
+		return materialInventoryService.getElnMaterialInventoryByMaterial(lstMaterial);
 	}
 }

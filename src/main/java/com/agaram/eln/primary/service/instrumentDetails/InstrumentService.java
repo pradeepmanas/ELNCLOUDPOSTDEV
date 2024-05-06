@@ -96,7 +96,8 @@ import com.agaram.eln.primary.model.instrumentDetails.Lsorderworkflowhistory;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
-import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
+import com.agaram.eln.primary.model.instrumentDetails.Lsresultfororders;
+import com.agaram.eln.primary.model.instrumentDetails.Lsresulttags;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
@@ -118,7 +119,6 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
-import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 import com.agaram.eln.primary.model.usermanagement.LSMultisites;
@@ -167,6 +167,8 @@ import com.agaram.eln.primary.repository.instrumentDetails.Lsorderworkflowhistor
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolOrderStructureRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharedbyRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharetoRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsresultforordersRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsresulttagsRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
@@ -244,6 +246,8 @@ public class InstrumentService {
 	private LSfileparameterRepository lsFileparameterRepository;
 	@Autowired
 	private LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
+	@Autowired
+	private LsresulttagsRepository lsresulttagsRepository;
 	@Autowired
 	private LSworkflowRepository lsworkflowRepository;
 //	@Autowired
@@ -325,6 +329,9 @@ public class InstrumentService {
 	@Autowired
 	private ReportfileRepository reportfileRepository;
 
+	@Autowired
+	private LsresultforordersRepository lsresultforordersRepository;
+	
 	@Autowired
 	private CloudOrderVersionRepository cloudOrderVersionRepository;
 
@@ -1075,7 +1082,9 @@ public class InstrumentService {
 					notobj.setDuedate(objorderindex.getDuedate());
 					notobj.setPeriod(objorderindex.getPeriod());
 					notobj.setUsercode(objorderindex.getLsuserMaster().getUsercode());
-					notobj.setStatus(1);
+					notobj.setCautionstatus(1);
+					notobj.setDuestatus(1);
+					notobj.setOverduestatus(1);
 					notobj.setScreen("sheetorder");
 					//lsordernotificationrepo.save(notobj);
 					ordernotList.add(lsordernotificationrepo.save(notobj));
@@ -1295,7 +1304,9 @@ public class InstrumentService {
 			notobj.setDuedate(objorder.getDuedate());
 			notobj.setPeriod(objorder.getPeriod());
 			notobj.setUsercode(objorder.getLsuserMaster().getUsercode());
-			notobj.setStatus(1);
+			notobj.setCautionstatus(1);
+			notobj.setDuestatus(1);
+			notobj.setOverduestatus(1);
 			notobj.setScreen("sheetorder");
 			//lsordernotificationrepo.save(notobj);
 			ordernotList.add(lsordernotificationrepo.save(notobj));
@@ -3004,7 +3015,7 @@ public class InstrumentService {
 				objupdatedorder.getResponse().setStatus(false);
 
 				return objupdatedorder;
-			} else {
+			} else if(!objorder.getIsmultitenant().equals(2)){
 				LSuserMaster user = new LSuserMaster();
 				user.setUsercode(objupdatedorder.getLockeduser());
 				List<LSactiveUser> LSactiveUsr = lSactiveUserRepository.findByLsusermaster(user);
@@ -3548,6 +3559,7 @@ public class InstrumentService {
 		objfile.setFilecontent(null);
 		objfile.setLssampleresult(null);
 		String tagvalues = objfile.getTagvalues();
+		String resultvalues = objfile.getResultvalues();
 		try {
 			objfile.setModifieddate(commonfunction.getCurrentUtcTime());
 		} catch (ParseException e) {
@@ -3557,6 +3569,7 @@ public class InstrumentService {
 		lssamplefileRepository.save(objfile);
 		updateordercontent(Content, objfile, objfile.getIsmultitenant());
 		updateordertagvalues(objfile, tagvalues);
+		updateorderresultvalues(objfile, resultvalues);
 		objfile.setFilecontent(Content);
 
 		if (objfile.getObjActivity() != null) {
@@ -3577,12 +3590,24 @@ public class InstrumentService {
 	}
 
 	private void updateordertagvalues(LSsamplefile objfile, String tagvalues) {
-		// for order report tagvalue sotred
+
 		lsreportfile objreport = new lsreportfile();
 		objreport.setId((long) objfile.getFilesamplecode());
 		objreport.setContent(tagvalues);
 		objreport.setContentstored(1);
 		reportfileRepository.save(objreport);
+		objreport = null;
+
+	}
+	
+	private void updateorderresultvalues(LSsamplefile objfile, String tagvalues) {
+
+		Lsresultfororders objreport = new Lsresultfororders();
+		objreport.setId((long) objfile.getFilesamplecode());
+		objreport.setBatchcode(objfile.getBatchcode());
+		objreport.setContent(tagvalues);
+		objreport.setContentstored(1);
+		lsresultforordersRepository.save(objreport);
 		objreport = null;
 
 	}
@@ -4240,6 +4265,10 @@ public class InstrumentService {
 		objorder.setLsOrderattachments(lstattach);
 		try {
 			objorder.setCompletedtimestamp(commonfunction.getCurrentUtcTime());
+			if(objorder.getLsordernotification() != null){
+				objorder.getLsordernotification().setIscompleted(true);
+				lsordernotificationrepo.save(objorder.getLsordernotification());
+			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -4791,7 +4820,7 @@ public class InstrumentService {
 //	}
 	
 	public Map<String, Object> GetOrdersByLinkedFiles(Map<String, Object> mapObj) {
-	    Map<String, Object> map = new HashMap<>();
+//	    Map<String, Object> map = new HashMap<>();
 	    ObjectMapper objectMapper = new ObjectMapper();
 	    int filetype = objectMapper.convertValue(mapObj.get("filetype"), Integer.class);
 	    LSuserMaster lsusMaster = objectMapper.convertValue(mapObj.get("lsuserMaster"), LSuserMaster.class);
@@ -4851,6 +4880,7 @@ public class InstrumentService {
 	        }
 	        lstallorders.addAll(lstorder);
 	    }
+	    Collections.reverse(lstallorders);
 	    mapObj.put("orders", lstallorders);
 	    return mapObj;
 	}
@@ -4938,6 +4968,7 @@ public class InstrumentService {
 		return objupdatedorder;
 	}
 
+	@SuppressWarnings("unused")
 	public List<LSlogilablimsorderdetail> Getexcelorder(LSlogilablimsorderdetail objorder) {
 
 		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
@@ -4946,8 +4977,8 @@ public class InstrumentService {
 		} else {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
 					.findBylsuserMaster(objorder.getLsuserMaster());
-			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
-					objorder.getLsuserMaster().getLssitemaster());
+//			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+//					objorder.getLsuserMaster().getLssitemaster());
 //			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 //			List<LSsamplemaster> lstsample = lssamplemasterrepository.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
 			List<Integer> lstsampleint = lssamplemasterrepository.getDistinctByLssitemasterSitecodeAndStatus(
@@ -7208,10 +7239,9 @@ public class InstrumentService {
 		if (objorder.getLsuserMaster().getUsername().equalsIgnoreCase("Administrator")) {
 			List<LSMultisites> obj = LSMultisitesRepositery
 					.findByLssiteMaster(objorder.getLsuserMaster().getLssitemaster());
-			List<Integer> usercode = obj.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
+			List<Integer> usercode = obj.parallelStream().map(LSMultisites::getUsercode).collect(Collectors.toList());
 			return lslogilablimsorderdetailRepository
-					.findByOrderflagAndLockeduserIsNotNullAndLockeduserInAndAssignedtoIsNullOrderByBatchcodeDesc("N",
-							usercode);
+					.findByOrderflagAndLockeduserIsNotNullAndLockeduserInAndAssignedtoIsNullOrderByBatchcodeDesc("N",usercode);
 		} else {
 			List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
 
@@ -9754,7 +9784,7 @@ public class InstrumentService {
 
 	public List<Logilaborders> Getcancelledordes(LSlogilablimsorderdetail objdir) {
 		List<Logilaborders> lstorders = new ArrayList<Logilaborders>();
-		List<Logilaborders> lstorderstrcarray = new ArrayList<Logilaborders>();
+//		List<Logilaborders> lstorderstrcarray = new ArrayList<Logilaborders>();
 		Date fromdate = objdir.getFromdate();
 		Date todate = objdir.getTodate();
 		Integer filetype = objdir.getFiletype();
@@ -9886,5 +9916,9 @@ public class InstrumentService {
 
 	public LSlogilablimsorderdetail Getsingleorder(LSlogilablimsorderdetail objorder) {
 		return lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
+	}
+
+	public void saveResulttags(Lsresulttags objorder) {
+		lsresulttagsRepository.save(objorder);	
 	}
 }

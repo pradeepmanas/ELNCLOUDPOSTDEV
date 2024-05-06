@@ -2,7 +2,11 @@ package com.agaram.eln.primary.repository.protocol;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.protocols.Lsprotocolsharedby;
 
@@ -23,6 +27,10 @@ public interface LsprotocolsharedbyRepository extends JpaRepository<Lsprotocolsh
 
 	List<Lsprotocolsharedby> findByShareprotocolcodeAndSharestatusOrderBySharedbytoprotocolcodeDesc(Long integer,
 			int i);
+	@Transactional
+	@Modifying
+	@Query(value = "update Lsprotocolsharedby set retirestatus =1 where shareprotocolcode = ?1", nativeQuery = true)
+	void updateRetirestatus(int protocolmastercode);
 
 	
 

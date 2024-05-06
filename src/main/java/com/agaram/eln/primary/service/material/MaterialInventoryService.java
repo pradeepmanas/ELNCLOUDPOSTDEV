@@ -2992,7 +2992,8 @@ public class MaterialInventoryService {
 
 		lstMaterialTypes = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatusOrderByNmaterialtypecodeDesc(-1,1,nsiteInteger,-1,1,4);
 		if(!lstMaterialTypes.isEmpty()) {
-			lstCategories = materialCategoryRepository.findByNmaterialtypecodeAndNsitecodeAndNstatusOrderByNmaterialcatcodeDesc(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1);
+			lstCategories = materialCategoryRepository.findByNmaterialtypecodeAndNsitecodeAndNstatusOrNmaterialtypecodeAndNstatusAndNdefaultstatusOrderByNmaterialcatcodeDesc
+					(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1,lstMaterialTypes.get(0).getNmaterialtypecode(),1,3);
 			if(!lstCategories.isEmpty()) {
 				lstElnmaterials = elnMaterialRepository.findByMaterialcategoryAndNsitecodeAndNstatusOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger,1);
 			}
@@ -3031,7 +3032,8 @@ public class MaterialInventoryService {
 
 		List<MaterialType> lstMaterialTypes = materialTypeRepository.findByNmaterialtypecode(ntypecode);
 		if (!lstMaterialTypes.isEmpty()) {
-			lstCategories = materialCategoryRepository.findByNmaterialtypecodeAndNsitecodeAndNstatusOrderByNmaterialcatcodeDesc(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1);
+			lstCategories = materialCategoryRepository.findByNmaterialtypecodeAndNsitecodeAndNstatusOrNmaterialtypecodeAndNstatusAndNdefaultstatusOrderByNmaterialcatcodeDesc
+					(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1,lstMaterialTypes.get(0).getNmaterialtypecode(),1,3);
 			if (!lstCategories.isEmpty()) {
 				lstElnmaterials = elnMaterialRepository.findByMaterialcategoryAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger);
 			}
@@ -3703,6 +3705,24 @@ public class MaterialInventoryService {
 		
 		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findBySinventoryidAndNsitecode(searchString, nsiteInteger);
 		objmap.put("lstELNInventory", inventoryItems);		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> getElnMaterialInventoryByMaterial(List<Integer> lstMaterial) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+        
+//		List<Integer> lstPrimaryIntegers = new ArrayList<Integer>();
+//
+//		lstMaterial.stream().peek(f -> {
+//			lstPrimaryIntegers.add(f.getNmaterialcode());
+//		}).collect(Collectors.toList());
+		
+
+		List<Elnmaterial> material = elnMaterialRepository.findByNmaterialcodeIn(lstMaterial);
+		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findByMaterialIn(material);
+		
+		objmap.put("lstELNmaterial", lstMaterial);
+		objmap.put("lstELNInventory", inventoryItems);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 

@@ -675,5 +675,10 @@ public class UserController {
 	{
 		return userService.getmultiusergroup(objuser);
 	}
+	
+	@PostMapping("/getTemplateStatus")
+	public Map<String, Object> GetTemplateStatus(@RequestBody Map<String, Object> obj) {
+		return userService.GetTemplateStatus(obj);
+	}
 }
 

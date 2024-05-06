@@ -548,3 +548,65 @@ ALTER TABLE IF EXISTS public.lsactivewidgets
 
 ALTER TABLE IF Exists LSlogilablimsorderdetail ADD Column IF NOT EXISTS ordersaved integer;
 update LSlogilablimsorderdetail set ordersaved=0 where ordersaved is null;
+
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+    AND table_name = 'lsordernotification'
+    AND column_name = 'status'
+  ) THEN
+    ALTER TABLE public.lsordernotification RENAME COLUMN status TO cautionstatus;
+  END IF;
+END $$;
+
+
+ALTER TABLE IF Exists lsordernotification ADD COLUMN IF NOT EXISTS duestatus integer;
+ALTER TABLE IF Exists lsordernotification ADD COLUMN IF NOT EXISTS overduestatus integer;
+ALTER TABLE IF Exists lsordernotification ADD COLUMN IF NOT EXISTS overduedays character varying(50) ;
+ALTER TABLE IF Exists lsordernotification ADD COLUMN IF NOT EXISTS iscompleted Boolean default false;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'Lsresulttags_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE Lsresulttags_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.Lsresulttags
+(
+    id bigint NOT NULL DEFAULT nextval('Lsresulttags_seq'::regclass),
+    content jsonb,
+    resultvalue character varying(255),
+    orderid bigint,
+    CONSTRAINT Lsresulttags_pkey PRIMARY KEY (id)
+)
+WITH (OIDS = FALSE) TABLESPACE pg_default;
+
+ALTER TABLE public.Lsresulttags OWNER to postgres;
+
+ALTER TABLE IF Exists Lsfileshareto ADD Column IF NOT EXISTS retirestatus integer;
+update Lsfileshareto set retirestatus=0 where retirestatus is null;
+
+ALTER TABLE IF Exists Lsfilesharedby ADD Column IF NOT EXISTS retirestatus integer;
+update Lsfilesharedby set retirestatus=0 where retirestatus is null;
+
+ALTER TABLE IF Exists Lsprotocolshareto ADD Column IF NOT EXISTS retirestatus integer;
+update Lsprotocolshareto set retirestatus=0 where retirestatus is null;
+
+ALTER TABLE IF Exists Lsprotocolsharedby ADD Column IF NOT EXISTS retirestatus integer;
+update Lsprotocolsharedby set retirestatus=0 where retirestatus is null;

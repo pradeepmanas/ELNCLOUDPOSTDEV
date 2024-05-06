@@ -52,6 +52,9 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdet
 import com.agaram.eln.primary.repository.material.MaterialRepository;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
+import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
+import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultisitesRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSPasswordPolicyRepository;
@@ -162,7 +165,16 @@ public class UserService {
 	Commonservice commonservice;
 	
 	@Autowired
+	private LSProtocolMasterRepository LSProtocolMasterRepository;
+	
+	@Autowired
+	private LSfileRepository LSfileRepository;
+	
+	@Autowired
 	private FileService fileService;
+	
+	@Autowired
+	private LSlogilabprotocoldetailRepository LSlogilabprotocoldetailRepository;
 	
 	public LSusergroup InsertUpdateUserGroup(LSusergroup objusergroup) {
 		if (lSusergroupRepository.findByusergroupnameIgnoreCaseAndLssitemaster(objusergroup.getUsergroupname(),
@@ -1875,6 +1887,24 @@ public class UserService {
 		
 
 
+	}
+
+	public Map<String, Object> GetTemplateStatus(Map<String, Object>  obj) {
+		
+		String status="";
+		String screen = (String) obj.get("screen");
+		String templatename = (String) obj.get("name");
+		if(screen.equals("/protocols")) {
+		 status = LSProtocolMasterRepository.getRetirestatus(templatename);
+		}else if(screen.equals("/sheetcreation")) {
+		 status = LSfileRepository.getRetirestatus(templatename);
+		}else if(screen.equals("/registertask")){
+		 status = LSlogilablimsorderdetailRepository.getRetirestatus(templatename);
+		}else if(screen.equals("/Protocolorder")) {
+		 status = LSlogilabprotocoldetailRepository.getRetirestatus(templatename);
+		}
+		obj.put("status", status);
+		return obj;
 	}
 
 }

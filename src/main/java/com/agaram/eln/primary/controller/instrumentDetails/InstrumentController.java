@@ -44,6 +44,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
+import com.agaram.eln.primary.model.instrumentDetails.Lsresulttags;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
 import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
@@ -58,7 +59,6 @@ import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.repository.methodsetup.CloudParserFileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
 import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
 
 @RestController
@@ -86,7 +86,7 @@ public class InstrumentController {
 	}
 	
 	@PostMapping("/InsertAutoRegisterOrder")
-	public LSlogilablimsorderdetail InsertAutoRegisterOrder(@RequestBody List<LSlogilablimsorderdetail> objorder)throws Exception {
+	public LSlogilablimsorderdetail InsertAutoRegisterOrder(@RequestBody List<LSlogilablimsorderdetail>objorder)throws Exception {
 
 		return instrumentService.InsertAutoRegisterOrder(objorder);
 	}
@@ -238,10 +238,11 @@ public class InstrumentController {
 //		return instrumentService.GetResults(objorder);
 //	}
 	
+	@SuppressWarnings("unchecked")
 	@PostMapping("/GetResults")
 	public Map<String, Object> GetResults(@RequestBody Map<String, Object> mapObject)throws Exception {
 		
-		final ObjectMapper mapper = new ObjectMapper();
+//		final ObjectMapper mapper = new ObjectMapper();
 		
 		
 		Map<String, Object> obj = (Map<String, Object>) mapObject.get("protoobj");
@@ -1355,5 +1356,10 @@ public class InstrumentController {
 	@PostMapping("/Getsingleorder")
 	public LSlogilablimsorderdetail Getsingleorder(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
 		return instrumentService.Getsingleorder(objorder);
+	}
+	
+	@PostMapping("/saveResulttags")
+	public void saveResulttags(@RequestBody Lsresulttags objorder)throws Exception {
+		instrumentService.saveResulttags(objorder);
 	}
 }

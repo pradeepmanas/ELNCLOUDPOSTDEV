@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.controller.usermanagement;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -302,6 +304,11 @@ public class LoginController {
 		return loginService.Duedatenotification(objNotification);
 	}
 
+//	@PostMapping("/OrdersAutoRegisterLogin")
+//	public Notification OrdersAutoRegisterLogin(@RequestBody Notification objNotification) throws ParseException, SQLException, IOException {
+//		return loginService.OrdersAutoRegisterLogin(objNotification);
+//	}
+	
 	@PostMapping("/Resourcenotification")
 	public Lsrepositoriesdata Resourcenotification(@RequestBody Lsrepositoriesdata objNotification)
 			throws ParseException {

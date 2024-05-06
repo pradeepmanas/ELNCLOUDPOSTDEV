@@ -191,4 +191,10 @@ public class MaterialController {
 
 		return objMaterialService.getELNMaterialBySearchField(inputMap);
 	}
+	
+	@RequestMapping(value = "/getElnMaterialOnProtocol", method = RequestMethod.POST)
+	public ResponseEntity<Object> getElnMaterialOnProtocol(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return objMaterialService.getElnMaterialOnProtocol(inputMap);
+	}
 }

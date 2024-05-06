@@ -1,9 +1,13 @@
 package com.agaram.eln.primary.service.usermanagement;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -14,6 +18,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.naming.AuthenticationException;
@@ -40,6 +45,7 @@ import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+
 import com.agaram.eln.primary.model.jwt.JwtResponse;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
@@ -61,6 +67,7 @@ import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSordernotificationRepository;
+
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
@@ -77,6 +84,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
 import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
 import com.agaram.eln.primary.service.cfr.AuditService;
+//import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSSiteMasterRepository.class)
@@ -151,6 +159,12 @@ public class LoginService {
 
 	@Autowired
 	private LSordernotificationRepository lsordernotificationrepo;
+//	
+//	@Autowired
+//	private InstrumentService instrumentservice;
+//	@Autowired
+//	private ScheduledtasksRepository scheduledtaskrepo;
+	
 	
 	static final String INITIAL_CONTEXT_FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
 	static final String SECURITY_AUTHENTICATION = "simple";
@@ -1872,9 +1886,46 @@ public class LoginService {
 		return obj;
 	}
 	
+//	public Notification OrdersAutoRegisterLogin(Notification objNotification) throws ParseException, SQLException, IOException {
+//		
+//		LSuserMaster LSuserMaster = new LSuserMaster(); /* to get the value */
+//		LSuserMaster.setUsercode(objNotification.getUsercode());
+//
+////		List<LSlogilablimsorderdetail> orderobjdata = new ArrayList<LSlogilablimsorderdetail>();
+////		orderobjdata=lslogilablimsorderdetailRepository.findByLsuserMasterAndRepeat(LSuserMaster,true);
+////		try {
+////			instrumentservice.InsertAutoRegisterOrder(orderobjdata);
+////		} catch (IOException e) {
+////			// TODO Auto-generated catch block
+////			e.printStackTrace();
+////		}
+//		instrumentservice.retrieveIntervalFromStorage();
+//		return objNotification;
+//	}
+	
 	// added for duedate notification 
 		public Notification Duedatenotification(Notification objNotification) throws ParseException {
 
+			List<LSOrdernotification> exhaustdays = lsordernotificationrepo.findByIsduedateexhaustedAndIscompletedOrIsduedateexhaustedAndIscompleted(true,false,true,null);
+			if(!exhaustdays.isEmpty()) {
+				exhaustdays.stream().forEach(indexexhaustdays->{
+					Date Date1=indexexhaustdays.getDuedate();
+					Date Date2=new Date();
+					
+			        LocalDate localDate1 = Date1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			        LocalDate localDate2 = Date2.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+			        long differenceInDays = ChronoUnit.DAYS.between(localDate1, localDate2);
+			        String diffdays=(int)differenceInDays+"days";
+//			        
+//					long differenceInMilliseconds = Date2.getTime() - Date1.getTime();
+//					long differenceInDays = TimeUnit.MILLISECONDS.toDays(differenceInMilliseconds);
+					indexexhaustdays.setOverduedays(diffdays);
+
+				 });
+				}
+			lsordernotificationrepo.save(exhaustdays);
+				
 			Date fromDate = objNotification.getCurrentdate();
 			Date toDate = objNotification.getCurrentdate();
            
@@ -1936,7 +1987,7 @@ public class LoginService {
 
 			if(!orderslist.isEmpty()) {
 				orderslist.stream().forEach(indexorders->{
-					if(indexorders.getStatus() == 1) {
+					if(indexorders.getCautionstatus() == 1) {
 							LSnotification LSnotification = new LSnotification();
 	
 							String Details = "{\"ordercode\" :\"" + indexorders.getBatchid() 
@@ -1956,7 +2007,7 @@ public class LoginService {
 							LSnotification.setRepositorydatacode(0);
 							LSnotification.setNotificationfor(1);
 	
-							indexorders.setStatus(0);
+							indexorders.setCautionstatus(0);
 							ordernotifylist.add(indexorders);
 							lstnotifications.add(LSnotification);				
 					        }
@@ -1966,7 +2017,7 @@ public class LoginService {
 				//lsordernotificationrepo.save(orderslist);
 			}if (!dueorderslist.isEmpty()) {
 				dueorderslist.stream().forEach(indexdueorders->{
-					if(indexdueorders.getStatus() == 1) {
+					if(indexdueorders.getDuestatus() == 1) {
 							LSnotification LSnotification = new LSnotification();
 	
 							String Details = "{\"ordercode\" :\"" + indexdueorders.getBatchid() 
@@ -1986,7 +2037,7 @@ public class LoginService {
 							LSnotification.setRepositorydatacode(0);
 							LSnotification.setNotificationfor(1);
 	
-							indexdueorders.setStatus(0);
+							indexdueorders.setDuestatus(0);
 							ordernotifylist.add(indexdueorders);
 							lstnotifications.add(LSnotification);				
 					        }
@@ -1995,7 +2046,7 @@ public class LoginService {
 			//	lsordernotificationrepo.save(orderslist);
 			}if (!overdueorderslist .isEmpty()) {
 				overdueorderslist.stream().forEach(indexoverdueorders->{
-					if(indexoverdueorders.getStatus() == 1) {
+					if(indexoverdueorders.getOverduestatus() == 1) {
 							LSnotification LSnotification = new LSnotification();
 	
 							String Details = "{\"ordercode\" :\"" + indexoverdueorders.getBatchid() 
@@ -2016,7 +2067,7 @@ public class LoginService {
 							LSnotification.setNotificationfor(1);
 							
 							indexoverdueorders.setIsduedateexhausted(true);
-							indexoverdueorders.setStatus(0);
+							indexoverdueorders.setOverduestatus(0);
 							ordernotifylist.add(indexoverdueorders);
 							
 							lstnotifications.add(LSnotification);				

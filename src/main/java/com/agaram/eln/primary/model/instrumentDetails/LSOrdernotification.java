@@ -14,6 +14,10 @@ import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
+/**
+ * @author Srimathi K R
+ *
+ */
 @Entity(name = "LSOrdernotification")
 @Table(name = "LSOrdernotification")
 public class LSOrdernotification {
@@ -46,14 +50,6 @@ public class LSOrdernotification {
 	
 	private Boolean isduedateexhausted;
 
-	public Boolean getIsduedateexhausted() {
-		return isduedateexhausted;
-	}
-
-	public void setIsduedateexhausted(Boolean isduedateexhausted) {
-		this.isduedateexhausted = isduedateexhausted;
-	}
-
 	@Transient
 	private LSuserMaster lsusermaster;
 
@@ -62,9 +58,17 @@ public class LSOrdernotification {
 	
 	private Integer usercode;
 	
-	private Integer status;
+	private Integer cautionstatus;
 
-	private String period;
+	private Integer duestatus;
+	
+	private Integer overduestatus;
+	
+	private String  overduedays;
+	
+	private Boolean iscompleted ;
+	
+		private String period;
 	
 	public String getPeriod() {
 		return period;
@@ -158,12 +162,12 @@ public class LSOrdernotification {
 		this.usercode = usercode;
 	}
 
-	public Integer getStatus() {
-		return status;
+	public Integer getCautionstatus() {
+		return cautionstatus;
 	}
 
-	public void setStatus(Integer status) {
-		this.status = status;
+	public void setCautionstatus(Integer cautionstatus) {
+		this.cautionstatus = cautionstatus;
 	}
 
 	public Long getNotificationcode() {
@@ -173,5 +177,46 @@ public class LSOrdernotification {
 	public void setNotificationcode(Long notificationcode) {
 		this.notificationcode = notificationcode;
 	}
+
+	public Boolean getIscompleted() {
+		return iscompleted;
+	}
+
+	public void setIscompleted(Boolean iscompleted) {
+		this.iscompleted = iscompleted;
+	}
+
+	public String getOverduedays() {
+		return overduedays;
+	}
+
+	public void setOverduedays(String overduedays) {
+		this.overduedays = overduedays;
+	}
+
+	public Integer getDuestatus() {
+		return duestatus;
+	}
+
+	public void setDuestatus(Integer duestatus) {
+		this.duestatus = duestatus;
+	}
+
+	public Integer getOverduestatus() {
+		return overduestatus;
+	}
+
+	public void setOverduestatus(Integer overduestatus) {
+		this.overduestatus = overduestatus;
+	}
+
+	public Boolean getIsduedateexhausted() {
+		return isduedateexhausted;
+	}
+
+	public void setIsduedateexhausted(Boolean isduedateexhausted) {
+		this.isduedateexhausted = isduedateexhausted;
+	}
+
 
 }

@@ -69,6 +69,7 @@ import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
 import com.agaram.eln.primary.service.protocol.Commonservice;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
+import com.aspose.pdf.internal.imaging.internal.Exceptions.IO.IOException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
@@ -157,7 +158,7 @@ public class FreeUserService {
 			if(objuser.getLssitemaster() != null) 
 				{
 					Calendar current = Calendar.getInstance();
-				    current.add(Calendar.DATE, 30);
+				    current.add(Calendar.DATE, 100);
 				    Date resultdate = new Date(current.getTimeInMillis());
 					objuser.getLssitemaster().setExpirydate(resultdate);
 				}
@@ -274,7 +275,7 @@ public class FreeUserService {
 			
 			LSworkflow workflowsheet = new LSworkflow();
 			workflowsheet.setLssitemaster(site);
-			workflowsheet.setWorkflowname("level 1");
+			workflowsheet.setWorkflowname("Review");
 			
 			lsworkflowrepository.save(workflowsheet);
 			
@@ -286,7 +287,7 @@ public class FreeUserService {
 			
 			LSworkflow workflowsheet2 = new LSworkflow();
 			workflowsheet2.setLssitemaster(site);
-			workflowsheet2.setWorkflowname("level 2");
+			workflowsheet2.setWorkflowname("Approve");
 			
 			lsworkflowrepository.save(workflowsheet2);
 			
@@ -299,7 +300,7 @@ public class FreeUserService {
 			LSsheetworkflow workflowsheettemp = new LSsheetworkflow();
 			workflowsheettemp.setLssitemaster(site);
 			workflowsheettemp.setStatus(1);
-			workflowsheettemp.setWorkflowname("level 1");
+			workflowsheettemp.setWorkflowname("Review");
 			
 			lssheetworkflowrepository.save(workflowsheettemp);
 			
@@ -312,7 +313,7 @@ public class FreeUserService {
 			LSsheetworkflow workflowsheettemp2 = new LSsheetworkflow();
 			workflowsheettemp2.setLssitemaster(site);
 			workflowsheettemp2.setStatus(1);
-			workflowsheettemp2.setWorkflowname("level 2");
+			workflowsheettemp2.setWorkflowname("Approve");
 			
 			lssheetworkflowrepository.save(workflowsheettemp2);
 			
@@ -324,7 +325,7 @@ public class FreeUserService {
 			
 			Elnprotocolworkflow workflowprotocol = new Elnprotocolworkflow();
 			workflowprotocol.setLssitemaster(site);
-			workflowprotocol.setWorkflowname("level 1");
+			workflowprotocol.setWorkflowname("Review");
 			
 			elnprotocolworkflowRepository.save(workflowprotocol);
 			
@@ -336,7 +337,7 @@ public class FreeUserService {
 			
 			Elnprotocolworkflow workflowprotocol2 = new Elnprotocolworkflow();
 			workflowprotocol2.setLssitemaster(site);
-			workflowprotocol2.setWorkflowname("level 2");
+			workflowprotocol2.setWorkflowname("Approve");
 			
 			elnprotocolworkflowRepository.save(workflowprotocol2);
 			
@@ -349,7 +350,7 @@ public class FreeUserService {
 			ElnprotocolTemplateworkflow workflowprotocoltemp = new ElnprotocolTemplateworkflow();
 			workflowprotocoltemp.setLssitemaster(site);
 			workflowprotocoltemp.setStatus(1);
-			workflowprotocoltemp.setWorkflowname("level 1");
+			workflowprotocoltemp.setWorkflowname("Review");
 			
 			elnprotocoltemplateworkflowrepository.save(workflowprotocoltemp);
 			
@@ -362,7 +363,7 @@ public class FreeUserService {
 			ElnprotocolTemplateworkflow workflowprotocoltemp2 = new ElnprotocolTemplateworkflow();
 			workflowprotocoltemp2.setLssitemaster(site);
 			workflowprotocoltemp2.setStatus(1);
-			workflowprotocoltemp2.setWorkflowname("level 2");
+			workflowprotocoltemp2.setWorkflowname("Approve");
 			
 			elnprotocoltemplateworkflowrepository.save(workflowprotocoltemp2);
 			
@@ -380,71 +381,82 @@ public class FreeUserService {
 			//for template create
 			ObjectMapper objectMapper = new ObjectMapper();
 			ClassPathResource resource = new ClassPathResource("import_elnlite.json");
-			// Read JSON file into a Map
-			Map<String, Object> jsonData = objectMapper.readValue(resource.getFile(), Map.class);
-			Gson gson = new Gson();
-			// sheet template
-			List<Map<String, Object>> templates = (List<Map<String, Object>>) jsonData.get("templates");
-			templates.stream().forEach(template -> {
-				String Content = gson.toJson(template.get("filecontent"));
-				List<LSfiletest> lstest = (List<LSfiletest>) template.get("lstest");
-				List<LSfilemethod> lstfilemethd = (List<LSfilemethod>) template.get("lsmethods");
-				List<LSfileparameter> lstfileparam = (List<LSfileparameter>) template.get("lsparameter");
-				LSfile objfile = new LSfile();
-				objfile.setFilecontent(Content);
-				objfile.setFilenameuser(template.get("filenameuser").toString());
-				objfile.setIsmultitenant(2);
-				objfile.setLssitemaster(objuser.getLssitemaster());
-//		        objfile.setLssheetworkflow(workflowsheettemp2);
-//		        objfile.setApproved(1);
-				objfile.setCreateby(objuser);
-				objfile.setLstest(lstest);
-				objfile.setLsmethods(lstfilemethd);
-				objfile.setLsparameter(lstfileparam);
-				objfile.setViewoption(1);
-				
-				try {
-					fileService.InsertupdateSheet(objfile);
-				} catch (java.io.IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				// for approve
-				objfile.setApproved(1);
-				lSfileRepository.save(objfile);
-			});
-
-			// protocol template
-			List<Map<String, Object>> protocols = (List<Map<String, Object>>) jsonData.get("protocols");
-			Map<String, Object> objsilentaudit = new HashMap<>();
-			Map<String, Object> newProtocolMasterObj = new HashMap<>();
-			List<Integer> lstteamusercode = new ArrayList<>();
-			lstteamusercode.add(team.getTeamcode());
-			protocols.stream().forEach(protocol -> {
-				objsilentaudit.put("lssitemaster", objuser.getLssitemaster().getSitecode());
-				objsilentaudit.put("lsuserMaster", objuser.getUsercode());
-				newProtocolMasterObj.put("createdby", objuser);
-				newProtocolMasterObj.put("protocolmastername", protocol.get("protocolmastername"));
-				newProtocolMasterObj.put("protocolstatus", 1);
-				newProtocolMasterObj.put("status", 1);
-				newProtocolMasterObj.put("ismultitenant", 2);
-				protocol.put("objsilentaudit", objsilentaudit);
-				protocol.put("createdby", objuser.getUsercode());
-				protocol.put("usercode", objuser.getUsercode());
-				protocol.put("username", objuser.getUsername());
-				protocol.put("newProtocolMasterObj", newProtocolMasterObj);
-				protocol.put("lsuserMaster", objuser);
-				protocol.put("teamuserscode", lstteamusercode);
-				try {
-					ProtocolMasterService.addProtocolMaster(protocol);
-				} catch (java.io.IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				
-			});
+			try {
+			    if (resource.exists()) {
+			        System.out.println("--------------File Exists ----------------");
+			        
+			     // Read JSON file into a Map
+					Map<String, Object> jsonData = objectMapper.readValue(resource.getInputStream(), Map.class);
+					Gson gson = new Gson();
+					// sheet template
+					List<Map<String, Object>> templates = (List<Map<String, Object>>) jsonData.get("templates");
+					templates.stream().forEach(template -> {
+						String Content = gson.toJson(template.get("filecontent"));
+						List<LSfiletest> lstest = (List<LSfiletest>) template.get("lstest");
+						List<LSfilemethod> lstfilemethd = (List<LSfilemethod>) template.get("lsmethods");
+						List<LSfileparameter> lstfileparam = (List<LSfileparameter>) template.get("lsparameter");
+						LSfile objfile = new LSfile();
+						objfile.setFilecontent(Content);
+						objfile.setFilenameuser(template.get("filenameuser").toString());
+						objfile.setIsmultitenant(2);
+						objfile.setLssitemaster(objuser.getLssitemaster());
+//				        objfile.setLssheetworkflow(workflowsheettemp2);
+//				        objfile.setApproved(1);
+						objfile.setCreateby(objuser);
+						objfile.setLstest(lstest);
+						objfile.setLsmethods(lstfilemethd);
+						objfile.setLsparameter(lstfileparam);
+						objfile.setViewoption(1);
+						
+						try {
+							fileService.InsertupdateSheet(objfile);
+						} catch (java.io.IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						// for approve
+						objfile.setApproved(1);
+						lSfileRepository.save(objfile);
+					});
+					
+					// protocol template
+					List<Map<String, Object>> protocols = (List<Map<String, Object>>) jsonData.get("protocols");
+					Map<String, Object> objsilentaudit = new HashMap<>();
+					Map<String, Object> newProtocolMasterObj = new HashMap<>();
+					List<Integer> lstteamusercode = new ArrayList<>();
+					lstteamusercode.add(team.getTeamcode());
+					protocols.stream().forEach(protocol -> {
+						objsilentaudit.put("lssitemaster", objuser.getLssitemaster().getSitecode());
+						objsilentaudit.put("lsuserMaster", objuser.getUsercode());
+						newProtocolMasterObj.put("createdby", objuser);
+						newProtocolMasterObj.put("protocolmastername", protocol.get("protocolmastername"));
+						newProtocolMasterObj.put("protocolstatus", 1);
+						newProtocolMasterObj.put("status", 1);
+						newProtocolMasterObj.put("ismultitenant", 2);
+						protocol.put("objsilentaudit", objsilentaudit);
+						protocol.put("createdby", objuser.getUsercode());
+						protocol.put("usercode", objuser.getUsercode());
+						protocol.put("username", objuser.getUsername());
+						protocol.put("newProtocolMasterObj", newProtocolMasterObj);
+						protocol.put("lsuserMaster", objuser);
+						protocol.put("teamuserscode", lstteamusercode);
+						try {
+							ProtocolMasterService.addProtocolMaster(protocol);
+						} catch (java.io.IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						
+					});
+					
+			    } else {
+			        System.out.println("--------------File Does Not Exist ----------------");
+			    }
+			} catch (IOException e) {
+			    e.printStackTrace();
+			}
 		}
 		else
 		{

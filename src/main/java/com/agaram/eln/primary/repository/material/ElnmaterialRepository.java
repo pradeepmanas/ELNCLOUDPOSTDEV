@@ -54,4 +54,6 @@ public interface ElnmaterialRepository extends JpaRepository<Elnmaterial, Intege
 
 	List<Elnmaterial> findByNsitecode(Integer sitecode);
 
+	List<Elnmaterial> findByNmaterialcodeIn(List<Integer> nmaterialcodes);
+
 }

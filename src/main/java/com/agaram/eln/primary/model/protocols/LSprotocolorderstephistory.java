@@ -62,6 +62,17 @@ public class LSprotocolorderstephistory {
 
 	@Transient
 	LScfttransaction objsilentaudit;
+	
+	@Transient
+	private String batchid;
+
+	public String getBatchid() {
+		return batchid;
+	}
+
+	public void setBatchid(String batchid) {
+		this.batchid = batchid;
+	}
 
 	public LScfttransaction getObjmanualaudit() {
 		return objmanualaudit;

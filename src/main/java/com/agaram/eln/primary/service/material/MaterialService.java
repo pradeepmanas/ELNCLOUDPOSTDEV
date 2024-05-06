@@ -1641,7 +1641,7 @@ public class MaterialService {
 		List<Elnmaterial> lstElnmaterials = new ArrayList<Elnmaterial>();
 		
 		if(ntypecode==-1) {
-			lstCategories = materialCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
+			lstCategories = materialCategoryRepository.findByNsitecodeAndNstatusOrNstatusAndNdefaultstatusOrderByNmaterialcatcodeDesc(nsiteInteger, 1,1,3);
 			
 			if(!lstCategories.isEmpty()) {
 				lstElnmaterials = elnmaterialRepository.findByMaterialcategoryAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger);
@@ -1649,7 +1649,7 @@ public class MaterialService {
 		}else {
 			if(!lstMaterialTypes.isEmpty()) {
 				lstCategories = materialCategoryRepository.
-						findByNmaterialtypecodeAndNsitecodeAndNstatus(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1);
+						findByNmaterialtypecodeAndNsitecodeAndNstatusOrNmaterialtypecodeAndNstatusAndNdefaultstatusOrderByNmaterialcatcodeDesc(lstMaterialTypes.get(0).getNmaterialtypecode(), nsiteInteger, 1,lstMaterialTypes.get(0).getNmaterialtypecode(), 1, 3);
 				
 				if(!lstCategories.isEmpty()) {
 					lstElnmaterials = elnmaterialRepository.findByMaterialcategoryAndNsitecodeOrderByNmaterialcodeDesc(lstCategories.get(0), nsiteInteger);
@@ -1668,8 +1668,29 @@ public class MaterialService {
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
 	    String searchString = (String) inputMap.get("searchString");
 	    
-	    List<Elnmaterial> lstMaterial = elnmaterialRepository.findBySmaterialnameStartingWithIgnoreCaseAndNsitecode(searchString,
-				nsiteInteger);
+	    List<Elnmaterial> lstMaterial = elnmaterialRepository.findBySmaterialnameStartingWithIgnoreCaseAndNsitecode(searchString,nsiteInteger);
+			
+		objmap.put("lstMaterial", lstMaterial);		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> getElnMaterialOnProtocol(Map<String, Object> inputMap) throws ParseException {
+		
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+//		long longFromValue = Long.parseLong(inputMap.get("fromdate").toString());
+//		long longToValue = Long.parseLong(inputMap.get("todate").toString());
+//		Date fromDate = new Date(longFromValue);
+//		Date toDate = new Date(longToValue);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		Date fromDate = sdf.parse(inputMap.get("fromdate").toString());
+		Date toDate = sdf.parse(inputMap.get("todate").toString());
+		
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		
+	    
+	    List<Elnmaterial> lstMaterial = elnmaterialRepository.findByNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(nsiteInteger,fromDate,toDate);
 			
 		objmap.put("lstMaterial", lstMaterial);		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
@@ -1685,7 +1706,7 @@ public class MaterialService {
 		
 		lstMaterialTypes = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatus(-1,1,nsiteInteger,-1,1,4);
 		if(!lstMaterialTypes.isEmpty()) {
-			lstCategories = materialCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
+			lstCategories = materialCategoryRepository.findByNsitecodeAndNstatusOrNstatusAndNdefaultstatusOrderByNmaterialcatcodeDesc(nsiteInteger, 1,1,3);
 			if(!lstCategories.isEmpty()) {
 				lstElnmaterials = elnmaterialRepository.findByNsitecodeAndNstatusOrderByNmaterialcodeDesc(nsiteInteger,1);
 			}

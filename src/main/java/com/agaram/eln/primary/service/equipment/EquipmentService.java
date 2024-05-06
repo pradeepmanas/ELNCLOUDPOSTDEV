@@ -23,6 +23,7 @@ import com.agaram.eln.primary.model.equipment.EquipmentCategory;
 import com.agaram.eln.primary.model.equipment.EquipmentHistory;
 import com.agaram.eln.primary.model.equipment.EquipmentType;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -31,6 +32,7 @@ import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentHistoryRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentTypeRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -54,6 +56,8 @@ public class EquipmentService {
 	LSlogilabprotocoldetailRepository lslogilabprotocoldetailRepository;
 	@Autowired
 	ElnresultEquipmentRepository elnresultEquipmentRepository;
+	@Autowired
+	LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
 
 	public ResponseEntity<Object> getEquipment(Map<String, Object> inputMap) throws ParseException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
@@ -622,6 +626,29 @@ public class EquipmentService {
 	
 		if(!lstEquipments2.isEmpty()) {
 			elnresultEquipmentRepository.save(lstEquipments2);
+		}
+	}
+
+	public Boolean onCheckItsUsed(Equipment objEquipment) {
+//		Equipment objEquipment = equipmentRepository.findOne(obj.getNequipmentcode());
+		objEquipment.setResponse(new Response());
+		
+		List<ElnresultEquipment> objEquipments = elnresultEquipmentRepository.findByNequipmentcode(objEquipment.getNequipmentcode());
+		
+		if(!objEquipments.isEmpty()) {
+			
+			List<Long> batchcode = objEquipments.stream().map(ElnresultEquipment::getOrdercode).distinct().collect(Collectors.toList());
+			
+			List<LSlogilablimsorderdetail> lstOrders = lslogilablimsorderdetailRepository.findByBatchcodeInAndOrderflag(batchcode,"N");
+			
+			if(!lstOrders.isEmpty()){
+				return true;
+			}else {
+				return false;
+			}
+			
+		}else {
+			return false;
 		}
 	}
 	

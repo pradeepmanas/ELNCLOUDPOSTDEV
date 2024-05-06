@@ -441,4 +441,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			String search_Key);
 	
 	public long countByLssitemaster(LSSiteMaster lssitemaster);
+	@Transactional
+	@Query(value = "select retirestatus from lsfile where filenameuser = ?1", nativeQuery = true)
+	public String getRetirestatus(String templatename);
 }

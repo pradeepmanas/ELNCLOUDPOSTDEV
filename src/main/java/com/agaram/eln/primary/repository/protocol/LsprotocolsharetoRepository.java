@@ -2,7 +2,11 @@ package com.agaram.eln.primary.repository.protocol;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.protocols.Lsprotocolshareto;
 
@@ -24,6 +28,11 @@ public interface LsprotocolsharetoRepository extends JpaRepository<Lsprotocolsha
 
 
 	List<Lsprotocolshareto> findByShareprotocolcodeAndSharestatusOrderBySharetoprotocolcodeDesc(Long integer, int i);
+
+	@Transactional
+	@Modifying
+	@Query(value = "update Lsprotocolshareto set retirestatus =1 where shareprotocolcode = ?1", nativeQuery = true)
+	void updateRetirestatus(int protocolmastercode);
 
 
 }

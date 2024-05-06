@@ -225,4 +225,13 @@ public class Lsfilesharedby {
 	public void setObjfile(LSfile objfile) {
 		this.objfile = objfile;
 	}
+	private Integer retirestatus;
+
+	public Integer getRetirestatus() {
+		return retirestatus;
+	}
+
+	public void setRetirestatus(Integer retirestatus) {
+		this.retirestatus = retirestatus;
+	}
 }
