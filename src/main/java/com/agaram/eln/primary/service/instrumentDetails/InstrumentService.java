@@ -140,6 +140,7 @@ import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepo
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderCreationRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderVersionRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationRepository;
+import com.agaram.eln.primary.repository.dashboard.LsActiveWidgetsRepository;
 import com.agaram.eln.primary.repository.fileManipulation.FileimagesRepository;
 import com.agaram.eln.primary.repository.fileManipulation.FileimagestempRepository;
 import com.agaram.eln.primary.repository.fileManipulation.LSfileimagesRepository;
@@ -464,6 +465,9 @@ public class InstrumentService {
 	@Autowired
 	private LSordernotificationRepository lsordernotificationrepo;
 
+	@Autowired
+	private LsActiveWidgetsRepository lsActiveWidgetsRepository;
+	
 	@Autowired
 	private LsAutoregisterRepository lsautoregisterrepo;
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
@@ -7244,44 +7248,67 @@ public class InstrumentService {
 					.findByOrderflagAndLockeduserIsNotNullAndLockeduserInAndAssignedtoIsNullOrderByBatchcodeDesc("N",usercode);
 		} else {
 			List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
-
-			List<Integer> lstsampleint = lssamplemasterrepository.getDistinctByLssitemasterSitecodeAndStatus(
-					objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1);
-			List<LSsamplemaster> lstsample = new ArrayList<>();
-			LSsamplemaster sample = null;
-			if (lstsampleint.size() > 0) {
-				for (Integer item : lstsampleint) {
-					sample = new LSsamplemaster();
-					sample.setSamplecode(item);
-					lstsample.add(sample);
-					sample = null; // Set sample to null after adding it to the list
-				}
-			}
-
+			List<Elnmaterial> nmaterialcode = elnmaterialRepository
+					.findByNsitecode(objorder.getLsuserMaster().getLssitemaster().getSitecode());
 			lstorder = lslogilablimsorderdetailRepository
-					.findByOrderflagAndLsprojectmasterInAndAssignedtoIsNullAndLockeduserIsNotNull("N",
-							objorder.getLstproject());
+			.findByOrderflagAndLsprojectmasterInAndAssignedtoIsNullAndLockeduserIsNotNull("N",
+					objorder.getLstproject());
 
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
-			int totalSamples = lstsample.size();
-			List<LSlogilablimsorderdetail> lstorderlimsobj = IntStream
-					.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
+			int totalSamples = nmaterialcode.size();
+			List<LSlogilablimsorderdetail> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
+					.mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
-						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
+						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
 						List<LSlogilablimsorderdetail> orderChunk = new ArrayList<>();
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndAssignedtoIsNullAndViewoptionAndLockeduserIsNotNull(
+								.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndAssignedtoIsNullAndViewoptionAndLockeduserIsNotNull(
 										"N", currentChunk, 1));
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndLockeduserIsNotNullOrderByBatchcodeDesc(
+								.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndLockeduserIsNotNullOrderByBatchcodeDesc(
 										"N", currentChunk, 2, objorder.getLsuserMaster()));
 						return orderChunk;
 					}).flatMap(List::stream).collect(Collectors.toList());
-			System.out.print(lstorderlimsobj);
-			lstorderlimsobj.addAll(lstorder);
-			lstorderlimsobj.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
-			return lstorderlimsobj;
+			
+			lstorderobj.addAll(lstorder);
+			lstorderobj.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
+			return lstorderobj;
+//			List<Integer> lstsampleint = lssamplemasterrepository.getDistinctByLssitemasterSitecodeAndStatus(
+//					objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1);
+//			List<LSsamplemaster> lstsample = new ArrayList<>();
+//			LSsamplemaster sample = null;
+//			if (lstsampleint.size() > 0) {
+//				for (Integer item : lstsampleint) {
+//					sample = new LSsamplemaster();
+//					sample.setSamplecode(item);
+//					lstsample.add(sample);
+//					sample = null; // Set sample to null after adding it to the list
+//				}
+//			}
+//
+//			lstorder = lslogilablimsorderdetailRepository
+//					.findByOrderflagAndLsprojectmasterInAndAssignedtoIsNullAndLockeduserIsNotNull("N",
+//							objorder.getLstproject());
+//
+//			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
+//			int totalSamples = lstsample.size();
+//			List<LSlogilablimsorderdetail> lstorderlimsobj = IntStream
+//					.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
+//						int startIndex = i * chunkSize;
+//						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
+//						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
+//						List<LSlogilablimsorderdetail> orderChunk = new ArrayList<>();
+//						orderChunk.addAll(lslogilablimsorderdetailRepository
+//								.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndAssignedtoIsNullAndViewoptionAndLockeduserIsNotNull(
+//										"N", currentChunk, 1));
+//						orderChunk.addAll(lslogilablimsorderdetailRepository
+//								.findByOrderflagAndLsprojectmasterIsNullAndLssamplemasterInAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndLockeduserIsNotNullOrderByBatchcodeDesc(
+//										"N", currentChunk, 2, objorder.getLsuserMaster()));
+//						return orderChunk;
+//					}).flatMap(List::stream).collect(Collectors.toList());
+//			System.out.print(lstorderlimsobj);
+
 
 		}
 
@@ -9307,6 +9334,8 @@ public class InstrumentService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Number batchid = body.getBatchcode();
+		lsActiveWidgetsRepository.updateRetirestatus(batchid);
 		return body;
 	}
 

@@ -7858,6 +7858,10 @@ public class ProtocolService {
 				.findByProtocolordercode(body.getProtocolordercode());
 		obj.setOrdercancell(body.getOrdercancell());
 		LSlogilabprotocoldetailRepository.save(obj);
+		//Dashboard lsactivewidgets update
+		Number protocolordercode = body.getProtocolordercode();
+		lsActiveWidgetsRepository.updateRetirestatus(protocolordercode);
+		
 		return body;
 	}
 
@@ -8797,6 +8801,9 @@ public class ProtocolService {
 		
 		//Lsprotocolsharedby retirestatus update
 		LsprotocolsharedbyRepository.updateRetirestatus(protocolmastercode);
+		
+		//Dashboard lsactivewidgets update
+		lsActiveWidgetsRepository.updateRetirestatus(protocolmastercode);
 		
 		mapObj.put("RetiredLSprotocolmasterObj", newProtocolMasterObj);
 		mapObj.put("protocolmasterLst", LSprotocolmasterLst);

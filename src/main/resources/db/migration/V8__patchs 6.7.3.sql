@@ -609,4 +609,14 @@ ALTER TABLE IF Exists Lsprotocolshareto ADD Column IF NOT EXISTS retirestatus in
 update Lsprotocolshareto set retirestatus=0 where retirestatus is null;
 
 ALTER TABLE IF Exists Lsprotocolsharedby ADD Column IF NOT EXISTS retirestatus integer;
+
 update Lsprotocolsharedby set retirestatus=0 where retirestatus is null;
+
+ALTER TABLE IF Exists Lscfrtransactiononorder ALTER COLUMN comments TYPE VARCHAR(500);
+
+ALTER TABLE IF Exists lsactivewidgets ADD Column IF NOT EXISTS folderdirfloatcode integer;
+
+ALTER TABLE IF Exists lsactivewidgets ALTER COLUMN  parentcode SET DATA TYPE double precision;
+
+ALTER TABLE IF Exists lsactivewidgets ADD Column IF NOT EXISTS cancelstatus integer;
+update lsactivewidgets set cancelstatus=0 where cancelstatus is null;

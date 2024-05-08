@@ -1031,6 +1031,8 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		public LSuserMasterInterface getLsuserMaster();
 		
 		public Integer getTestcode();
+		
+		public Integer getOrdercancell();
 
 	}
 

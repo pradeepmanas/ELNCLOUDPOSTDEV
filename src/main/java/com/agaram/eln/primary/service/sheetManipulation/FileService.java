@@ -42,7 +42,6 @@ import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
-import com.agaram.eln.primary.model.protocols.LSprotocolupdates;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -65,6 +64,7 @@ import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetVersionRepository;
+import com.agaram.eln.primary.repository.dashboard.LsActiveWidgetsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsSheetorderlimsrefrenceRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsorderworkflowhistoryRepositroy;
@@ -228,6 +228,9 @@ public class FileService {
 
 	@Autowired
 	private LSProtocolMasterRepository lSProtocolMasterRepository;
+	
+	@Autowired
+	private LsActiveWidgetsRepository LsActiveWidgetsRepository;
 
 	public LSfile InsertupdateSheet(LSfile objfile) throws IOException {
 
@@ -1978,6 +1981,8 @@ public class FileService {
 		//shareby retirestatus update				
 		LsfilesharedbyRepository.updateRetirestatus(objfile.getFilecode());
 		
+		//Dashboard lsactivewidgets update
+		LsActiveWidgetsRepository.updateRetirestatus(objfile.getFilecode());
 		return objfile;
 	}
 

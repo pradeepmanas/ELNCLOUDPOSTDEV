@@ -1119,6 +1119,7 @@ public class LSlogilablimsorderdetail {
 	        String getTestname();
 	        LSuserMasterInterfaceforassign getAssignedto();
 	        LSuserMasterInterface getLsuserMaster();
+	        Integer getOrdercancell();
 	    }
 	 
 	 public interface LSuserMasterInterfaceforassign {

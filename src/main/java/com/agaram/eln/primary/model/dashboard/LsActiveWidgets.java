@@ -34,8 +34,17 @@ public class LsActiveWidgets  {
     
     public Integer folderdirfloatcode; 
     
+    public Integer cancelstatus;    
 
-    public Integer getFolderdirfloatcode() {
+    public Integer getCancelstatus() {
+		return cancelstatus;
+	}
+
+	public void setCancelstatus(Integer cancelstatus) {
+		this.cancelstatus = cancelstatus;
+	}
+
+	public Integer getFolderdirfloatcode() {
 		return folderdirfloatcode;
 	}
 
