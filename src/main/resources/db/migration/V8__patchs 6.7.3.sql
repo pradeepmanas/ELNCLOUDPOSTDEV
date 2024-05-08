@@ -575,10 +575,10 @@ DECLARE
 BEGIN
    SELECT relkind
    FROM   pg_class
-   WHERE  relname = 'Lsresulttags_seq' 
+   WHERE  relname = 'lsresulttags_seq' 
    INTO  _kind;
 
-   IF NOT FOUND THEN CREATE SEQUENCE Lsresulttags_seq;
+   IF NOT FOUND THEN CREATE SEQUENCE lsresulttags_seq;
    ELSIF _kind = 'S' THEN  
      
    ELSE                  
