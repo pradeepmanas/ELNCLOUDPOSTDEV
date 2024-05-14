@@ -2831,4 +2831,6 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 	@Transactional
 	@Query(value = "select ordercancell from LSlogilablimsorderdetail where batchid = ?1", nativeQuery = true)
 	String getRetirestatus(String templatename);
+
+	List<LSlogilablimsorderdetail> findByBatchidInAndOrderflag(List<String> batchid, String string);
 	}

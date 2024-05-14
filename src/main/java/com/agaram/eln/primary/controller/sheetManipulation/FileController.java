@@ -19,7 +19,6 @@ import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
-import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileversion;
@@ -29,10 +28,10 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.Lsfilesharedby;
 import com.agaram.eln.primary.model.sheetManipulation.Lsfileshareto;
 import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
+import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
-import com.agaram.eln.primary.model.sheetManipulation.Notification;
 
 @RestController
 @RequestMapping(value = "/File")
@@ -108,6 +107,11 @@ public class FileController {
 		return fileService.GetMastersfororders(objuser);
 	}
 
+	@PostMapping("/getApprovedTemplates")
+	public Map<String, Object> getApprovedTemplates(@RequestBody LSuserMaster objuser) {
+		return fileService.getApprovedTemplates(objuser);
+	}
+	
 	@PostMapping("/GetMastersforordercreate")
 	public Map<String, Object> GetMastersforordercreate(@RequestBody LSuserMaster objuser) {
 		return fileService.GetMastersforordercreate(objuser);

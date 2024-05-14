@@ -407,6 +407,7 @@ public class FreeUserService {
 						objfile.setLsmethods(lstfilemethd);
 						objfile.setLsparameter(lstfileparam);
 						objfile.setViewoption(1);
+						objfile.setRejected(0);
 						
 						try {
 							fileService.InsertupdateSheet(objfile);

@@ -119,6 +119,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
+import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 import com.agaram.eln.primary.model.usermanagement.LSMultisites;
@@ -466,9 +467,7 @@ public class InstrumentService {
 	private LSordernotificationRepository lsordernotificationrepo;
 
 	@Autowired
-	private LsActiveWidgetsRepository lsActiveWidgetsRepository;
-	
-	@Autowired
+    private LsActiveWidgetsRepository lsActiveWidgetsRepository;
 	private LsAutoregisterRepository lsautoregisterrepo;
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 //		Map<String, Object> obj = new HashMap<>();
@@ -3040,13 +3039,13 @@ public class InstrumentService {
 			lslogilablimsorderdetailRepository.save(objupdatedorder);
 		}
 
-		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
-			int i = 0;
-			while (lsLogilaborders.size() > i) {
-				lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
-				i++;
-			}
-		}
+//		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
+//			int i = 0;
+//			while (lsLogilaborders.size() > i) {
+//				lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
+//				i++;
+//			}
+//		}
 		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
 
 		if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
@@ -7982,6 +7981,7 @@ public class InstrumentService {
 		Date todate = objorder.getTodate();
 		Integer testcode = objorder.getTestcode();
 		Integer filetype = objorder.getFiletype();
+		Notification notobj = new Notification();
 		if (filetype == -1 && objorder.getOrderflag() == null) {
 			lstorder = lslogilablimsorderdetailRepository
 					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNull(
@@ -8223,6 +8223,21 @@ public class InstrumentService {
 		}
 
 		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
+		
+		
+		new Thread(() -> {
+		try {
+			
+			System.out.println("duedatenot");
+			notobj.setCurrentdate(new Date());
+			notobj.setUsercode(objorder.getLsuserMaster().getUsercode());
+			LoginService.Duedatenotification(notobj);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}).start();
+	
+		
 		return lstorder;
 
 	}
@@ -9334,9 +9349,8 @@ public class InstrumentService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Number batchid = body.getBatchcode();
-		lsActiveWidgetsRepository.updateRetirestatus(batchid);
-		return body;
+        Number batchid = body.getBatchcode();
+		lsActiveWidgetsRepository.updateRetirestatus(batchid);		return body;
 	}
 
 	private void updateNotificationForCancelOrder(LSlogilablimsorderdetail objorder) throws ParseException {
@@ -9923,7 +9937,7 @@ public class InstrumentService {
 		lslogilablimsorderdetailRepository.save(logiobj);
 		return logiobj;	
 	}
-	public List<LSlogilablimsorderdetail> stopautoregister(LSlogilablimsorderdetail objdir) {
+	public LSlogilablimsorderdetail stopautoregister(LSlogilablimsorderdetail objdir) {
 		List<LSlogilablimsorderdetail> logiobj =  new ArrayList<LSlogilablimsorderdetail>();
 		logiobj=lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),objdir.getBatchid());
 		
@@ -9931,11 +9945,12 @@ public class InstrumentService {
 		lslogilablimsorderdetailRepository.save(logiobj);
 		
 		List<LsAutoregister> autoobj =lsautoregisterrepo.findByBatchcode(objdir.getBatchcode());
-		autoobj.get(0).setRepeat(objdir.getRepeat());
-		lsautoregisterrepo.save(autoobj);
-		
+		if(!autoobj.isEmpty()) {
+			autoobj.get(0).setRepeat(objdir.getRepeat());
+			lsautoregisterrepo.save(autoobj);
+		}
 		lslogilablimsorderdetailRepository.save(logiobj);
-		return logiobj;	
+		return logiobj.get(0);	
 	}
 	
 	public LSlogilablimsorderdetail getsingleorder(LSlogilablimsorderdetail body) {

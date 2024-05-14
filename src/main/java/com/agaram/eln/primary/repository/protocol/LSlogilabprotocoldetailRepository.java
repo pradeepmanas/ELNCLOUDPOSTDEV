@@ -1598,6 +1598,12 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	@Transactional
 	@Query(value = "select ordercancell from LSlogilabprotocoldetail where protocolordername = ?1", nativeQuery = true)
 	String getRetirestatus(String templatename);
+
+
+	List<LSlogilabprotocoldetail> findByProtocolordercodeInAndOrderflag(List<Long> batchcode, String orderflag);
+
+
+	List<LSlogilabprotocoldetail> findByProtoclordernameInAndOrderflag(List<String> batchid, String string);
 	
 
 

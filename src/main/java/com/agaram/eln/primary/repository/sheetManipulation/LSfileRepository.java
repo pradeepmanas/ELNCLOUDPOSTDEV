@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.repository.sheetManipulation;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -110,6 +109,16 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			"      ((rejected != 1) OR (versionno > 1)) \r\n" + 
 			" and createby in (?1)ORDER BY filecode DESC")
 	public List<LSfile> getsheetapprovelanduserIn(List<LSuserMaster> lstusermaster,Integer sitecode);
+	
+	@Transactional
+	@Modifying
+	@Query("SELECT NEW com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode, filenameuser) \r\n" + 
+			"FROM com.agaram.eln.primary.model.sheetManipulation.LSfile \r\n" + 
+			"WHERE retirestatus =0 AND lssitemaster_sitecode = ?2 AND \r\n" + 
+			"      (filecode > 1 AND approved = 1 AND rejected != 1) AND \r\n" + 
+			"      (rejected != 1) \r\n" + 
+			" and createby in (?1)ORDER BY filecode DESC")
+	public List<LSfile> gettemplateapprovelanduserIn(List<LSuserMaster> lstusermaster,Integer sitecode);
 	
 	//public List<LSfile> getsheetapprovelanduserIn(List<LSuserMaster> lstusermaster,Integer sitecode);
 	public List<LSfile> findByFilecodeGreaterThanAndApprovedOrFilecodeGreaterThanAndVersionnoGreaterThanOrderByFilecodeDesc(int filecode, int approved, int orfilecode, int version);

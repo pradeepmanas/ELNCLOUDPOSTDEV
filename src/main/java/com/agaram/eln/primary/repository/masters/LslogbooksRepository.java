@@ -37,6 +37,8 @@ public interface LslogbooksRepository extends JpaRepository<Lslogbooks, Integer>
 			Integer sitecode, String search_Key, Integer sitecode2, String search_Key2, Integer sitecode3,
 			String search_Key3);
 
+	public List<Lslogbooks> findByLogbookidIn(List<String> batchid);
+
 	
 	
 }

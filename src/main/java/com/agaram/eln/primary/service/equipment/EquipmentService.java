@@ -24,6 +24,7 @@ import com.agaram.eln.primary.model.equipment.EquipmentHistory;
 import com.agaram.eln.primary.model.equipment.EquipmentType;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.masters.Lslogbooks;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -33,6 +34,7 @@ import com.agaram.eln.primary.repository.equipment.EquipmentHistoryRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentTypeRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
+import com.agaram.eln.primary.repository.masters.LslogbooksRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -58,6 +60,8 @@ public class EquipmentService {
 	ElnresultEquipmentRepository elnresultEquipmentRepository;
 	@Autowired
 	LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
+	@Autowired
+	LslogbooksRepository lslogbooksRepository;
 
 	public ResponseEntity<Object> getEquipment(Map<String, Object> inputMap) throws ParseException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
@@ -637,11 +641,13 @@ public class EquipmentService {
 		
 		if(!objEquipments.isEmpty()) {
 			
-			List<Long> batchcode = objEquipments.stream().map(ElnresultEquipment::getOrdercode).distinct().collect(Collectors.toList());
+			List<String> batchid = objEquipments.stream().map(ElnresultEquipment::getBatchid).distinct().collect(Collectors.toList());
 			
-			List<LSlogilablimsorderdetail> lstOrders = lslogilablimsorderdetailRepository.findByBatchcodeInAndOrderflag(batchcode,"N");
+			List<LSlogilablimsorderdetail> lstOrders = lslogilablimsorderdetailRepository.findByBatchidInAndOrderflag(batchid,"N");
+			List<LSlogilabprotocoldetail> lstPro = lslogilabprotocoldetailRepository.findByProtoclordernameInAndOrderflag(batchid,"N");
+			List<Lslogbooks> lstLog = lslogbooksRepository.findByLogbookidIn(batchid);
 			
-			if(!lstOrders.isEmpty()){
+			if(!lstOrders.isEmpty() || !lstPro.isEmpty() || !lstLog.isEmpty()){
 				return true;
 			}else {
 				return false;

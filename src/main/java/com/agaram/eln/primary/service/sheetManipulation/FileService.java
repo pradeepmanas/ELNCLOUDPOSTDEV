@@ -2017,4 +2017,38 @@ public class FileService {
 		}
 		return countexceeded;
 	}
+
+	public Map<String, Object> getApprovedTemplates(LSuserMaster objuser) {
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		mapOrders.put("sheets", getApprovedTemplatesForResult(0, objuser));
+		return mapOrders;
+	}
+	
+	public List<LSfile> getApprovedTemplatesForResult(Integer approvelstatus, LSuserMaster objuser) {
+		if (objuser.getUsername().equals("Administrator")) {
+			return lSfileRepository.getsheetGreaterthanoneandapprovel(objuser.getLssitemaster().getSitecode());
+		} else {
+			return GetApprovedTemplatesbyuser(approvelstatus, objuser);
+		}
+	}
+	
+	public List<LSfile> GetApprovedTemplatesbyuser(Integer approvelstatus, LSuserMaster objuser) {
+		List<LSfile> lstfile = new ArrayList<LSfile>();
+
+		if (lsuserteammappingRepository.getTeamcodeByLsuserMaster(objuser.getUsercode()).size() > 0) {
+			List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(
+					lsuserteammappingRepository.getTeamcodeByLsuserMaster(objuser.getUsercode()));
+			lstteamuser.add(objuser);
+			lstfile = lSfileRepository.gettemplateapprovelanduserIn(lstteamuser, objuser.getLssitemaster().getSitecode());
+
+			lstteamuser = null;
+		} else {
+			List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
+			lstteamuser.add(objuser);
+			lstfile = lSfileRepository.gettemplateapprovelanduserIn(lstteamuser, objuser.getLssitemaster().getSitecode());
+
+			lstteamuser = null;
+		}
+		return lstfile;
+	}
 }
