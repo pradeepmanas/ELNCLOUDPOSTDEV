@@ -2413,6 +2413,17 @@ public class ProtocolService {
 		} catch (Exception e) {
 			mapObj.put("ERROR", e);
 		}
+		
+		//for eln trail order complete
+				if(objClass.getIsmultitenant().equals(2) && objClass.getAccouttype().equals(1)) {
+					objClass.setOrderflag("R");
+					try {
+					updateOrderStatus(objClass);	
+					} catch (Exception e) {
+						// TODO: handle exception
+						System.out.println(e);
+					}			
+				}
 		return mapObj;
 	}
 

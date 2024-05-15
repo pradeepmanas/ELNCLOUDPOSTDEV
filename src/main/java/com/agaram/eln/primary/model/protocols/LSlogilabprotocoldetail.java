@@ -1052,5 +1052,14 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setLsActiveWidgets(LsActiveWidgets lsActiveWidgets) {
 		this.lsActiveWidgets = lsActiveWidgets;
 	}
+	@Transient
+	private Integer accouttype;
 
+	public Integer getAccouttype() {
+		return accouttype;
+	}
+
+	public void setAccouttype(Integer accouttype) {
+		this.accouttype = accouttype;
+	}	
 }

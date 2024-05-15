@@ -4354,7 +4354,16 @@ public class InstrumentService {
 				objorder.setIsFinalStep(0);
 			}
 		}
-
+		//for eln trail order complete
+				if(objorder.getIsmultitenant().equals(2) && objorder.getAccouttype().equals(1)) {
+					objorder.setOrderflag("R");
+					try {
+						CompleteOrder(objorder);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 		return objorder;
 	}
 

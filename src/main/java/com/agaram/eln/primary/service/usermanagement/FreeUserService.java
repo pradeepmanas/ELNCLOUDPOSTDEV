@@ -274,6 +274,7 @@ public class FreeUserService {
 			lsprojectmasterrepository.save(project);
 			
 			LSworkflow workflowsheet = new LSworkflow();
+			if(!objuser.getLssitemaster().getAccouttype().equals(1)) {
 			workflowsheet.setLssitemaster(site);
 			workflowsheet.setWorkflowname("Review");
 			
@@ -284,6 +285,7 @@ public class FreeUserService {
 			workflowsheetmap.setWorkflowcode(workflowsheet.getWorkflowcode());
 			
 			lsworkflowgroupmappingrepository.save(workflowsheetmap);
+			}
 			
 			LSworkflow workflowsheet2 = new LSworkflow();
 			workflowsheet2.setLssitemaster(site);
@@ -298,6 +300,7 @@ public class FreeUserService {
 			lsworkflowgroupmappingrepository.save(workflowsheetmap2);
 			
 			LSsheetworkflow workflowsheettemp = new LSsheetworkflow();
+			if(!objuser.getLssitemaster().getAccouttype().equals(1)) {
 			workflowsheettemp.setLssitemaster(site);
 			workflowsheettemp.setStatus(1);
 			workflowsheettemp.setWorkflowname("Review");
@@ -309,6 +312,7 @@ public class FreeUserService {
 			workflowsheettempmap.setWorkflowcode(workflowsheet.getWorkflowcode());
 			
 			lssheetworkflowgroupmaprepository.save(workflowsheettempmap);
+			}
 			
 			LSsheetworkflow workflowsheettemp2 = new LSsheetworkflow();
 			workflowsheettemp2.setLssitemaster(site);
@@ -324,6 +328,7 @@ public class FreeUserService {
 			lssheetworkflowgroupmaprepository.save(workflowsheettempmap2);
 			
 			Elnprotocolworkflow workflowprotocol = new Elnprotocolworkflow();
+			if(!objuser.getLssitemaster().getAccouttype().equals(1)) {
 			workflowprotocol.setLssitemaster(site);
 			workflowprotocol.setWorkflowname("Review");
 			
@@ -334,6 +339,7 @@ public class FreeUserService {
 			workflowprotocolmap.setWorkflowcode(workflowprotocol.getWorkflowcode());
 			
 			elnprotocolworkflowgroupmapRepository.save(workflowprotocolmap);
+			}
 			
 			Elnprotocolworkflow workflowprotocol2 = new Elnprotocolworkflow();
 			workflowprotocol2.setLssitemaster(site);
@@ -348,9 +354,11 @@ public class FreeUserService {
 			elnprotocolworkflowgroupmapRepository.save(workflowprotocolmap2);
 			
 			ElnprotocolTemplateworkflow workflowprotocoltemp = new ElnprotocolTemplateworkflow();
+			if(!objuser.getLssitemaster().getAccouttype().equals(1)) {
 			workflowprotocoltemp.setLssitemaster(site);
 			workflowprotocoltemp.setStatus(1);
 			workflowprotocoltemp.setWorkflowname("Review");
+		
 			
 			elnprotocoltemplateworkflowrepository.save(workflowprotocoltemp);
 			
@@ -359,6 +367,7 @@ public class FreeUserService {
 			workflowprotocoltempmap.setWorkflowcode(workflowprotocoltemp.getWorkflowcode());
 			
 			elnprotocoltemplateworkflowgroupmaprepository.save(workflowprotocoltempmap);
+			}
 			
 			ElnprotocolTemplateworkflow workflowprotocoltemp2 = new ElnprotocolTemplateworkflow();
 			workflowprotocoltemp2.setLssitemaster(site);

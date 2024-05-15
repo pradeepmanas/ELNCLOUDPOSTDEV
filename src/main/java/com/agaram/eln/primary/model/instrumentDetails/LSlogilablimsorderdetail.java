@@ -1128,6 +1128,17 @@ public class LSlogilablimsorderdetail {
 	 public interface LSuserMasterInterface {
 		 String getUsername();
 	 }
+	 @Transient
+		private Integer accouttype;	
+
+		public Integer getAccouttype() {
+			return accouttype;
+		}
+
+		public void setAccouttype(Integer accouttype) {
+			this.accouttype = accouttype;
+		}
+
 
 
 }
