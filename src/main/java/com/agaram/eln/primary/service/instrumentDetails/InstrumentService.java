@@ -1226,7 +1226,7 @@ public class InstrumentService {
 			e.printStackTrace();
 		}
 			
-		lsautoregisterrepo.save(objorder.getLsautoregister());
+//		lsautoregisterrepo.save(objorder.getLsautoregister());
 		lslogilablimsorderdetailRepository.save(objorder);
 		
 		String Batchid = "ELN" + objorder.getBatchcode();
