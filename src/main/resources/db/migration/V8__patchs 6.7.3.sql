@@ -612,11 +612,16 @@ ALTER TABLE IF Exists Lsprotocolsharedby ADD Column IF NOT EXISTS retirestatus i
 
 update Lsprotocolsharedby set retirestatus=0 where retirestatus is null;
 
-ALTER TABLE IF Exists Lscfrtransactiononorder ALTER COLUMN comments TYPE VARCHAR(500);
+ALTER TABLE IF Exists Lscfrtransactiononorder ALTER COLUMN comments TYPE VARCHAR(3000);
 
 ALTER TABLE IF Exists lsactivewidgets ADD Column IF NOT EXISTS folderdirfloatcode integer;
 
 ALTER TABLE IF Exists lsactivewidgets ALTER COLUMN  parentcode SET DATA TYPE double precision;
 
 ALTER TABLE IF Exists lsactivewidgets ADD Column IF NOT EXISTS cancelstatus integer;
+
 update lsactivewidgets set cancelstatus=0 where cancelstatus is null;
+
+ALTER TABLE IF Exists lsactivewidgets ALTER COLUMN activewidgetsdetails TYPE VARCHAR(3000);
+
+ALTER TABLE IF Exists lsactivewidgets ADD COLUMN IF NOT EXISTS  filename character varying(255);

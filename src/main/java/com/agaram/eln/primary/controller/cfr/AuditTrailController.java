@@ -172,7 +172,7 @@ public class AuditTrailController {
 	}
 	
 	@PostMapping("/silentRecordHandlerForOrder")
-	public Lscfrtransactiononorder silentRecordHandlerForOrder(@RequestBody Map<String, Object> mapObj)
+	public Lscfrtransactiononorder silentRecordHandlerForOrder(@RequestBody Lscfrtransactiononorder[] mapObj)
 			throws ParseException {
 		return auditService.silentRecordHandlerForOrder(mapObj);
 	}

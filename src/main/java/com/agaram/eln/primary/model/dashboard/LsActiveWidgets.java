@@ -35,8 +35,18 @@ public class LsActiveWidgets  {
     public Integer folderdirfloatcode; 
     
     public Integer cancelstatus;    
+    
+	public String filename;	
 
-    public Integer getCancelstatus() {
+    public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	public Integer getCancelstatus() {
 		return cancelstatus;
 	}
 

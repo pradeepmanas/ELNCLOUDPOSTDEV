@@ -587,7 +587,8 @@ public class TransactionService {
 
 		ElnmaterialInventory objInventory = elnmaterialInventoryRepository.findByNmaterialinventorycode(objInventoryFromMap.getNmaterialinventorycode());
 
-		Double getIssuedQty = Double.parseDouble(objResultMap.get("issuedQuantity").toString());
+//		Double getIssuedQty = Double.parseDouble(objResultMap.get("issuedQuantity").toString());
+		Double getIssuedQty = Double.parseDouble(objInventory.getSavailablequantity().toString());
 		Double getUsedQty = Double.parseDouble(objResultMap.get("usedQuantity").toString());
 		Double getQtyLeft = getIssuedQty - Double.parseDouble(objResultMap.get("usedQuantity").toString());
 
@@ -623,6 +624,8 @@ public class TransactionService {
 		}
 		
 		objInventory.setSavailablequantity(getQtyLeft.toString());
+		
+		resultUsedMaterial.setQtyleft(getQtyLeft.toString());
 		
 		elnresultUsedMaterialRepository.save(resultUsedMaterial);
 		elnmaterialInventoryRepository.save(objInventory);

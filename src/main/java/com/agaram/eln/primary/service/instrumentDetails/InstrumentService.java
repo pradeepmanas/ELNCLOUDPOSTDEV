@@ -3006,7 +3006,7 @@ public class InstrumentService {
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
 				.findBybatchid(objupdatedorder.getBatchid());
-		List<String> lsorderno = new ArrayList<String>();
+//		List<String> lsorderno = new ArrayList<String>();
 		objupdatedorder.setResponse(new Response());
 		if (objupdatedorder.getLockeduser() != null) {
 

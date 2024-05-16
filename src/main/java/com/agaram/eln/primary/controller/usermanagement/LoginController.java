@@ -1,7 +1,5 @@
 package com.agaram.eln.primary.controller.usermanagement;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -376,7 +374,7 @@ public class LoginController {
 	    }
 	}
 
-	@CrossOrigin(origins = "https://logilabelnlite.azurewebsites.net")
+	@CrossOrigin(origins = {"https://logilabelnlite.azurewebsites.net" , "http://localhost:3000"})
 	@PostMapping("/verifyRecaptcha")
     public ResponseEntity<?> verifyRecaptcha(@RequestBody String token) {
 		String recaptchaSecretKey = env.getProperty("recaptchaSecretKey");

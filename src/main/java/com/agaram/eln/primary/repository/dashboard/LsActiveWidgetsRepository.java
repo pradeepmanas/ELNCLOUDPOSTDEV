@@ -12,7 +12,7 @@ import com.agaram.eln.primary.model.dashboard.LsActiveWidgets;
 
 public interface LsActiveWidgetsRepository extends JpaRepository<LsActiveWidgets, Integer>{
 
-	List<LsActiveWidgets> findFirst30ByUserIdOrderByActivewidgetscodeDesc(Integer usercode);
+	List<LsActiveWidgets> findFirst50ByUserIdOrderByActivewidgetscodeDesc(Integer usercode);
 
     @Transactional
     @Modifying

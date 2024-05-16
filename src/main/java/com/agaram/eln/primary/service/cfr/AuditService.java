@@ -566,28 +566,26 @@ public class AuditService {
 	}
 
 	
-	public Lscfrtransactiononorder silentRecordHandlerForOrder(Map<String, Object> mapObj) {
-
-		ObjectMapper objMapper = new ObjectMapper();
+	public Lscfrtransactiononorder silentRecordHandlerForOrder(Lscfrtransactiononorder[] auditdata) {
 		Lscfrtransactiononorder cfttransaction = new Lscfrtransactiononorder();
-		
-		if (mapObj.containsKey("objsilentaudit")) {
-			cfttransaction = objMapper.convertValue(mapObj.get("objsilentaudit"), Lscfrtransactiononorder.class);
-			try {
-				cfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			LscfrtransactiononorderRepository.save(cfttransaction);
-		}
-		
+		List<Lscfrtransactiononorder> obj= Arrays.asList(auditdata);
+//		List<Lscfrtransactiononorder> updatedItems = obj.parallelStream()
+//                .peek(item -> {
+//                    try {
+//                        item.setTransactiondate(commonfunction.getCurrentUtcTime());
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
+//                })
+//                .collect(Collectors.toList());
+		LscfrtransactiononorderRepository.save(obj);
 		cfttransaction.setObjResponse(new Response());
 		cfttransaction.getObjResponse().setStatus(true);
 		cfttransaction.getObjResponse().setInformation("");
 
 		return cfttransaction;
 	}
+
 	
 	public Lscfrtransactiononorder silentRecordHandlerForOrderParsedData(Lscfrtransactiononorder[] mapObj) {
 		Lscfrtransactiononorder cfttransaction = new Lscfrtransactiononorder();

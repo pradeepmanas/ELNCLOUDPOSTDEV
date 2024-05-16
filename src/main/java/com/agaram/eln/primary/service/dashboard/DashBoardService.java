@@ -4818,9 +4818,9 @@ public class DashBoardService {
 
 	public List<LsActiveWidgets> getActivewidgetsdata(LSuserMaster objusermaster) {
 		System.out.println("Before Delete --------------------------");
-		lsActiveWidgetsRepository.deleteCustomRows(30,objusermaster.getUsercode());
+		lsActiveWidgetsRepository.deleteCustomRows(50,objusermaster.getUsercode());
 		System.out.println("After Delete --------------------------");
-		List<LsActiveWidgets> rtnibj=lsActiveWidgetsRepository.findFirst30ByUserIdOrderByActivewidgetscodeDesc(objusermaster.getUsercode());
+		List<LsActiveWidgets> rtnibj=lsActiveWidgetsRepository.findFirst50ByUserIdOrderByActivewidgetscodeDesc(objusermaster.getUsercode());
 		System.out.println("After fetch --------------------------");
 		return rtnibj;
 	}

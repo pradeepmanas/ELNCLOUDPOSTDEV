@@ -72,6 +72,17 @@ public class ElnresultUsedMaterial {
 	
 	@Transient
 	Response response;
+	
+	@Transient
+	private String qtyleft;
+
+	public String getQtyleft() {
+		return qtyleft;
+	}
+
+	public void setQtyleft(String qtyleft) {
+		this.qtyleft = qtyleft;
+	}
 
 	public Integer getNresultusedmaterialcode() {
 		return nresultusedmaterialcode;
