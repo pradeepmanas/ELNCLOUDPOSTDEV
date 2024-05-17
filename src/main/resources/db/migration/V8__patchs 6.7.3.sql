@@ -625,3 +625,16 @@ update lsactivewidgets set cancelstatus=0 where cancelstatus is null;
 ALTER TABLE IF Exists lsactivewidgets ALTER COLUMN activewidgetsdetails TYPE VARCHAR(3000);
 
 ALTER TABLE IF Exists lsactivewidgets ADD COLUMN IF NOT EXISTS  filename character varying(255);
+
+
+CREATE TABLE IF NOT EXISTS public.lsresultfororders
+(
+    id bigint NOT NULL,
+    batchcode numeric(17,0),
+    content jsonb,
+    contentstored integer,
+    CONSTRAINT lsresultfororders_pkey PRIMARY KEY (id)
+)
+WITH (OIDS = FALSE)TABLESPACE pg_default;
+
+ALTER TABLE public.lsresultfororders OWNER to postgres;

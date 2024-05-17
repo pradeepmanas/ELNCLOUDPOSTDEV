@@ -5899,11 +5899,11 @@ public class ProtocolService {
 				}
 			}
 		}
-		if ((boolean) body.get("ismaterialreduce")) {
-			@SuppressWarnings("unchecked")
-			Map<String, Object> mapObj11 = (Map<String, Object>) body.get("materialinventory");
-			transactionService.createMaterialResultUsedForList(mapObj11);
-		}
+//		if ((boolean) body.get("ismaterialreduce")) {
+//			@SuppressWarnings("unchecked")
+//			Map<String, Object> mapObj11 = (Map<String, Object>) body.get("materialinventory");
+//			transactionService.createMaterialResultUsedForList(mapObj11);
+//		}
 		mapObj.put("protocolData", body.get("protocolData"));
 		mapObj.put("response", response);
 

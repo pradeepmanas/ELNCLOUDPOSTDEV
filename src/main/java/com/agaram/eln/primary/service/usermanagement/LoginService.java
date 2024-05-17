@@ -2080,21 +2080,39 @@ public class LoginService {
 		Date toDate = objNotification.getCurrentdate();
 
 		// Set time on currentDate to 0:01 am
+//		Calendar calendar1 = Calendar.getInstance();
+//		calendar1.setTime(fromDate);
+//		calendar1.set(Calendar.HOUR_OF_DAY, 0);
+//		calendar1.set(Calendar.MINUTE, 0);
+//		calendar1.set(Calendar.SECOND, 0);
+//		calendar1.set(Calendar.MILLISECOND, 0);
+//		fromDate = calendar1.getTime();
+//
+//		// Set time on currentDate1 to 23:59 pm
+//		Calendar calendar2 = Calendar.getInstance();
+//		calendar2.setTime(toDate);
+//		calendar2.set(Calendar.HOUR_OF_DAY, 23);
+//		calendar2.set(Calendar.MINUTE, 59);
+//		calendar2.set(Calendar.SECOND, 59);
+//		calendar2.set(Calendar.MILLISECOND, 999);
+//		toDate = calendar2.getTime();
+		
 		Calendar calendar1 = Calendar.getInstance();
 		calendar1.setTime(fromDate);
-		calendar1.set(Calendar.HOUR_OF_DAY, 0);
-		calendar1.set(Calendar.MINUTE, 0);
-		calendar1.set(Calendar.SECOND, 0);
-		calendar1.set(Calendar.MILLISECOND, 0);
+//		calendar1.set(Calendar.HOUR_OF_DAY, 0);
+//		calendar1.set(Calendar.MINUTE, 0);
+//		calendar1.set(Calendar.SECOND, 0);
+//		calendar1.set(Calendar.MILLISECOND, 0);
 		fromDate = calendar1.getTime();
 
 		// Set time on currentDate1 to 23:59 pm
 		Calendar calendar2 = Calendar.getInstance();
 		calendar2.setTime(toDate);
-		calendar2.set(Calendar.HOUR_OF_DAY, 23);
-		calendar2.set(Calendar.MINUTE, 59);
-		calendar2.set(Calendar.SECOND, 59);
-		calendar2.set(Calendar.MILLISECOND, 999);
+//		calendar2.set(Calendar.HOUR_OF_DAY, 23);
+//		calendar2.set(Calendar.MINUTE, 59);
+//		calendar2.set(Calendar.SECOND, 59);
+//		calendar2.set(Calendar.MILLISECOND, 999);
+		calendar2.add(Calendar.HOUR_OF_DAY, 1);
 		toDate = calendar2.getTime();
 
 		List<Notification> codelist = NotificationRepository.findByUsercodeAndCautiondateBetween(objNotification.getUsercode(), fromDate, toDate);
