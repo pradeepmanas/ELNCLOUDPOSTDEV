@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.service.usermanagement;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,8 +22,7 @@ import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflowgroupmap;
-import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
-import com.agaram.eln.primary.model.protocols.LSprotocolworkflowgroupmap;
+import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
@@ -49,9 +47,9 @@ import com.agaram.eln.primary.repository.protocol.ElnprotocolTemplateworkflowgro
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
-import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowgroupmapRepository;
-import com.agaram.eln.primary.repository.protocol.lSprotocolworkflowRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolmastertestRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSfiletestRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
@@ -150,6 +148,13 @@ public class FreeUserService {
 	
 	@Autowired
 	LSProtocolMasterRepository LSProtocolMasterRepositoryObj;
+	
+	@Autowired
+	LSfiletestRepository LSfiletestRepository;
+	
+	@Autowired
+	LSprotocolmastertestRepository LSprotocolmastertestRepository;
+	
 	@SuppressWarnings("unchecked")
 	public LSuserMaster Createuser( LSuserMaster objuser) throws Exception {
 		Long usercount = lsuserMasterRepository.countByUsernameIgnoreCaseAndAutenticatefromAndSubcode(objuser.getUsername(),objuser.getAutenticatefrom(),objuser.getSubcode());
@@ -428,6 +433,12 @@ public class FreeUserService {
 						// for approve
 						objfile.setApproved(1);
 						lSfileRepository.save(objfile);
+						// for default task mapping 
+						LSfiletest objfiletest=  new LSfiletest();						
+						objfiletest.setFilecode(objfile.getFilecode());
+						objfiletest.setTestcode(test1.getTestcode());
+						objfiletest.setTesttype(1);
+						LSfiletestRepository.save(objfiletest);
 					});
 					
 					// protocol template
@@ -458,6 +469,13 @@ public class FreeUserService {
 							e.printStackTrace();
 						}
 						
+						int protocolmastercode = new ObjectMapper().convertValue(protocol.get("protocolmastercode"),Integer.class);
+						// for default task mapping 
+						LSprotocolmastertest objprotocoltest = new LSprotocolmastertest();
+						objprotocoltest.setProtocolmastercode(protocolmastercode);
+						objprotocoltest.setTestcode(test1.getTestcode());
+						objprotocoltest.setTesttype(1);
+						LSprotocolmastertestRepository.save(objprotocoltest);
 						
 					});
 					

@@ -1499,7 +1499,7 @@ public class ProtocolService {
 		}
 		ObjectMapper objMapper = new ObjectMapper();
 		Response response = new Response();
-
+		Number protocolcode = null;
 		if (argObj.containsKey("newProtocolMasterObj")) {
 			LSuserMaster LsuserMasterObj = LSuserMasterRepositoryObj
 					.findByusercode(LScfttransactionobj.getLsuserMaster());
@@ -1581,6 +1581,7 @@ public class ProtocolService {
 			}
 			
 			LSProtocolMasterRepositoryObj.save(newProtocolMasterObj);
+			protocolcode= newProtocolMasterObj.getProtocolmastercode();
 			LsActiveWidgets lsactvewidgobj = new LsActiveWidgets();
 			lsactvewidgobj.setActivewidgetsdetails(newProtocolMasterObj.getProtocolmastername());
 			lsactvewidgobj.setActivewidgetsdetailscode(Long.valueOf(newProtocolMasterObj.getProtocolmastercode()));
@@ -1773,7 +1774,9 @@ public class ProtocolService {
 //					TenantContext.getCurrentTenant() + "protocol"));
 			mapObj.put("response", response);
 			updatenotificationforprotocolcreation(newProtocolMasterObj, argObj, false);
+			
 		}
+		argObj.put("protocolmastercode",protocolcode );
 		return mapObj;
 	}
 

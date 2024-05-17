@@ -3572,7 +3572,7 @@ public class InstrumentService {
 		lssamplefileRepository.save(objfile);
 		updateordercontent(Content, objfile, objfile.getIsmultitenant());
 		updateordertagvalues(objfile, tagvalues);
-		if(!resultvalues.equalsIgnoreCase("[]")) {
+		if(resultvalues != null && resultvalues != "" && !resultvalues.equalsIgnoreCase("[]")) {
 			updateorderresultvalues(objfile, resultvalues);
 		}
 		objfile.setFilecontent(Content);
