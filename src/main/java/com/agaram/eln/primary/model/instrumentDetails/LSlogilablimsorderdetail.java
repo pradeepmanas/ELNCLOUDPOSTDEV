@@ -232,17 +232,17 @@ public class LSlogilablimsorderdetail {
 		this.repeat = repeat;
 	}
 
-	@OneToMany
-	@JoinColumn(name="batchcode")
-	private List<LsAutoregister> lsautoregister;
-	
-	public List<LsAutoregister> getLsautoregister() {
-		return lsautoregister;
-	}
-
-	public void setLsautoregister(List<LsAutoregister> lsautoregister) {
-		this.lsautoregister = lsautoregister;
-	}
+//	@OneToMany
+//	@JoinColumn(name="batchcode")
+//	private List<LsAutoregister> lsautoregister;
+//	
+//	public List<LsAutoregister> getLsautoregister() {
+//		return lsautoregister;
+//	}
+//
+//	public void setLsautoregister(List<LsAutoregister> lsautoregister) {
+//		this.lsautoregister = lsautoregister;
+//	}
 
 	@ManyToOne
 	private LSOrdernotification lsordernotification;
@@ -308,6 +308,17 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	LScfttransaction objmanualaudit;
 
+	@Transient
+	private LsAutoregister lsautoregisterorderdetail;
+
+	public LsAutoregister getLsautoregisterorderdetail() {
+		return lsautoregisterorderdetail;
+	}
+
+	public void setLsautoregisterorderdetail(LsAutoregister lsautoregisterorderdetail) {
+		this.lsautoregisterorderdetail = lsautoregisterorderdetail;
+	}
+
 	@ManyToOne
 	private LSuserMaster lsuserMaster;
 
@@ -344,6 +355,16 @@ public class LSlogilablimsorderdetail {
 //	@Transient
 //	private List<LSlimsorder> lsLSlimsorder;
 
+	@ManyToOne
+	private LsAutoregister lsautoregisterorders;
+
+	public LsAutoregister getLsautoregisterorders() {
+		return lsautoregisterorders;
+	}
+
+	public void setLsautoregisterorders(LsAutoregister lsautoregisterorders) {
+		this.lsautoregisterorders = lsautoregisterorders;
+	}
 	@Transient
 	private List<LSlogilablimsorder> lsLSlogilablimsorder;
 
@@ -367,6 +388,7 @@ public class LSlogilablimsorderdetail {
 
 	@Transient
 	private Integer rejected;
+	
 	
 	@Transient
 	private List<Long> lstdirectorycode;

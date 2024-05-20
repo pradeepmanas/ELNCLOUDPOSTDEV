@@ -3,6 +3,7 @@ package com.agaram.eln.primary.fetchmodel.getorders;
 import java.util.Date;
 
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
+import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Elnmaterial;
@@ -42,6 +43,8 @@ public class Logilaborders extends Logilabordermaster {
 	private Integer viewoption;
 	private LSOrdernotification lsordernotification;
 	private Integer ordersaved;
+	private Boolean repeat;
+	private LsAutoregister lsautoregisterorders;
 
 	
 	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
@@ -49,9 +52,9 @@ public class Logilaborders extends Logilabordermaster {
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,LSuserMaster assignedto,
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,
-			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification, Integer ordersaved) {
+			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification, Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders) {
 		
-		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved);
+		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved,repeat,lsautoregisterorders);
 		 
 		if(lssamplefile != null)
 		{
@@ -85,6 +88,7 @@ public class Logilaborders extends Logilabordermaster {
 		this.viewoption=viewoption;
         this.lsordernotification=lsordernotification != null ? lsordernotification :null;
         this.ordersaved = ordersaved;
+        this.repeat=repeat != null ? repeat : null;
 	}
 	
 	
@@ -299,4 +303,22 @@ public class Logilaborders extends Logilabordermaster {
 	public void setOrdersaved(Integer ordersaved) {
 		this.ordersaved = ordersaved;
 	}
+
+	public Boolean getRepeat() {
+		return repeat;
+	}
+
+	public void setRepeat(Boolean repeat) {
+		this.repeat = repeat;
+	}
+
+//	public LsAutoregister getLsautoregister() {
+//		return lsautoregister;
+//	}
+//
+//
+//	public void setLsautoregister(LsAutoregister lsautoregister) {
+//		this.lsautoregister = lsautoregister;
+//	}
+	
 }

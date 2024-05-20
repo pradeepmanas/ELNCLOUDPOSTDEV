@@ -483,6 +483,7 @@ $do$;
 ALTER TABLE IF Exists lssitemaster ADD COLUMN IF NOT EXISTS expirydate timestamp without time zone;
 ALTER TABLE IF Exists lsordernotification ADD COLUMN IF NOT EXISTS period varchar(250);
 
+
  DO
 $do$
 DECLARE
@@ -501,7 +502,6 @@ BEGIN
    END IF;
 END
 $do$;
-
 
 CREATE TABLE IF NOT EXISTS public.lsautoregister
 (
@@ -525,6 +525,7 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.lsautoregister
     OWNER to postgres;
 
+	
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS repeat Boolean;
 
 CREATE TABLE IF NOT EXISTS public.lsactivewidgets
@@ -622,10 +623,108 @@ ALTER TABLE IF Exists lsactivewidgets ADD Column IF NOT EXISTS cancelstatus inte
 
 update lsactivewidgets set cancelstatus=0 where cancelstatus is null;
 
+
+DO $$ 
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.table_constraints
+        WHERE constraint_name = 'fkmdkcpw98le9x1bhlt3qi0py1k' 
+        AND table_name = 'lsautoregister'
+    ) THEN
+        ALTER TABLE public.lsautoregister
+        DROP CONSTRAINT fkmdkcpw98le9x1bhlt3qi0py1k;
+    END IF;
+END $$;
+
+drop table IF EXISTS lsautoregister;
+
+ DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsautoregister_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE lsautoregister_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+
+CREATE TABLE IF NOT EXISTS public.lsautoregister
+(
+    regcode numeric(17,0) NOT NULL DEFAULT nextval('lsautoregister_seq'::regclass),
+    autocreatedate timestamp without time zone,
+    batchcode numeric(17,0),
+    delayinminutes bigint,
+    "interval" integer,
+    ismultitenant integer,
+    repeat boolean,
+    schedulerstarttime timestamp without time zone,
+    screen character varying(255) COLLATE pg_catalog."default",
+    timespan character varying(255) COLLATE pg_catalog."default",
+    isautoreg boolean,
+    CONSTRAINT lsautoregister_pkey PRIMARY KEY (regcode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.lsautoregister
+    OWNER to postgres;
+
+
+ALTER TABLE lslogilablimsorderdetail  DROP CONSTRAINT IF EXISTS fkmdkcpw98le9x1bhlt3qi0py1k ;
+
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS lsautoregister_regcode numeric(17,0);
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS repeat Boolean;
+ALTER TABLE IF Exists LsAutoregister ADD COLUMN IF NOT EXISTS isautoreg Boolean;
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fkdaci08fpb7iky5dukmxear86a'
+AND table_name='lslogilabprotocoldetail';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY lslogilabprotocoldetail ADD CONSTRAINT fkdaci08fpb7iky5dukmxear86a FOREIGN KEY (lsautoregister_regcode) REFERENCES lsautoregister (regcode);
+   END IF;
+END
+$do$; 
+
+ALTER TABLE lslogilablimsorderdetail drop COLUMN IF EXISTS lsautoregister_regcode ;
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS lsautoregisterorders_regcode numeric(17,0);
+
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fko1y1hl0xopwucg5pfja98jdro'
+AND table_name='lslogilablimsorderdetail';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY lslogilablimsorderdetail ADD CONSTRAINT fko1y1hl0xopwucg5pfja98jdro FOREIGN KEY (lsautoregisterorders_regcode) REFERENCES lsautoregister (regcode);
+   END IF;
+END
+$do$; 
+update lsactivewidgets set cancelstatus=0 where cancelstatus is null;
+
+update lsactivewidgets set cancelstatus=0 where cancelstatus is null;
+
 ALTER TABLE IF Exists lsactivewidgets ALTER COLUMN activewidgetsdetails TYPE VARCHAR(3000);
 
 ALTER TABLE IF Exists lsactivewidgets ADD COLUMN IF NOT EXISTS  filename character varying(255);
-
 
 CREATE TABLE IF NOT EXISTS public.lsresultfororders
 (

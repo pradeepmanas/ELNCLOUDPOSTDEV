@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
+import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
@@ -36,12 +37,14 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private LSuserMaster createdby;
 	private Integer testcode;
 	private Integer approvelstatus;
-	private Long notificationcode;
+	private LSOrdernotification lsordernotification;
 	private Integer ordersaved;
+	//private Boolean repeat;
+	//private LsAutoregister lsautoregisterorders;
 	
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,LSuserMaster assignedto,
-			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster ,Integer testcode,Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved) {
+			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster ,Integer testcode,Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,Boolean repeat, LsAutoregister lsautoregisterorders) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -62,7 +65,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.viewoption=viewoption;
 		this.createdby = lsuserMaster;
 		this.approvelstatus=approvelstatus;
-		//this.notificationcode=lsordernotification != null ? lsordernotification.getNotificationcode() : null;
+		this.lsordernotification=lsordernotification;
 		this.ordersaved = ordersaved;
 	}
 
@@ -74,8 +77,30 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.approvelstatus = approvelstatus;
 	}
 
+	public LSOrdernotification getLsordernotification() {
+		return lsordernotification;
+	}
 
+	public void setLsordernotification(LSOrdernotification lsordernotification) {
+		this.lsordernotification = lsordernotification;
+	}
+/*
+	public Boolean getRepeat() {
+		return repeat;
+	}
 
+	public void setRepeat(Boolean repeat) {
+		this.repeat = repeat;
+	}
+
+	public LsAutoregister getLsautoregisterorders() {
+		return lsautoregisterorders;
+	}
+
+	public void setLsautoregisterorders(LsAutoregister lsautoregisterorders) {
+		this.lsautoregisterorders = lsautoregisterorders;
+	}
+*/
 	public LSuserMaster getCreatedby() {
 		return createdby;
 	}

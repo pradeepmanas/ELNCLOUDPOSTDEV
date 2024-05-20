@@ -1256,7 +1256,7 @@ public class DashBoardService {
 									lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
 									lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
 									lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
-									lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus(), lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved()))
+									lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus(), lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved(),lsOrderDetail.getRepeat(),lsOrderDetail.getLsautoregisterorders()))
 							.collect(Collectors.toList()));
 				}
 			} else {
@@ -1274,7 +1274,7 @@ public class DashBoardService {
 								lsOrderDetail.getKeyword(), lsOrderDetail.getLstestmasterlocal(),
 								lsOrderDetail.getOrdercancell(), lsOrderDetail.getViewoption(),
 								lsOrderDetail.getLsuserMaster(), lsOrderDetail.getTestcode(),
-								lsOrderDetail.getApprovelstatus(),lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved()))
+								lsOrderDetail.getApprovelstatus(),lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved(),lsOrderDetail.getRepeat(),lsOrderDetail.getLsautoregisterorders()))
 						.collect(Collectors.toList());
 			}
 
@@ -2255,7 +2255,7 @@ public class DashBoardService {
 								lsOrderDetail.getKeyword(), lsOrderDetail.getLstestmasterlocal(),
 								lsOrderDetail.getOrdercancell(), lsOrderDetail.getViewoption(),
 								lsOrderDetail.getLsuserMaster(), lsOrderDetail.getTestcode(),
-								lsOrderDetail.getApprovelstatus(),lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved()
+								lsOrderDetail.getApprovelstatus(),lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved(),lsOrderDetail.getRepeat(),lsOrderDetail.getLsautoregisterorders()
 
 						)).collect(Collectors.toList());
 			}
@@ -4253,7 +4253,7 @@ public class DashBoardService {
 										lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
 										lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
 										lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
-										lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus(),lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved()))
+										lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus(),lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved(),lsOrderDetail.getRepeat(),lsOrderDetail.getLsautoregisterorders()))
 								.collect(Collectors.toList());
 						rtnobj.put("orders", lstorders);
 

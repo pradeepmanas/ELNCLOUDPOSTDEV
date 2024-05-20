@@ -1002,7 +1002,8 @@ public class InstrumentService {
 				        autoobj.setAutocreatedate(futureDate);
 				 }
 
-				objorderindex.setLsautoregister(listauto);
+				 // modification done by srimathi dated on 20-05-2024
+				 //				objorderindex.setLsautoregisterorders(listauto);
 				lsautoregisterrepo.save(autoobj);
 				
 				objorderindex.setBatchcode(null);

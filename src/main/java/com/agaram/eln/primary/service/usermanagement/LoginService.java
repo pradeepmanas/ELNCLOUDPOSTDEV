@@ -3,8 +3,12 @@ package com.agaram.eln.primary.service.usermanagement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1907,15 +1911,39 @@ public class LoginService {
 				exhaustdays.stream().forEach(indexexhaustdays->{
 					Date Date1=indexexhaustdays.getDuedate();
 					Date Date2=new Date();
-					
-			        LocalDate localDate1 = Date1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			        LocalDate localDate2 = Date2.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			      // Convert Date to Instant
+			        Instant instant1 = Date1.toInstant();
+			        Instant instant2 = Date2.toInstant();
+			        
+			        // Convert Instant to LocalDateTime
+			        LocalDateTime dateTime1 = LocalDateTime.ofInstant(instant1, ZoneId.systemDefault());
+			        LocalDateTime dateTime2 = LocalDateTime.ofInstant(instant2, ZoneId.systemDefault());
+			        
+			        
+			        // Calculate the duration between the two dates
+			        Duration duration = Duration.between(dateTime1, dateTime2);
+			        
+			        
+			        // Extract the days and hours from the duration
+			        long totalHours = duration.toHours();
+			        long days = totalHours / 24;
+			        long hours = totalHours % 24;
 
-			        long differenceInDays = ChronoUnit.DAYS.between(localDate1, localDate2);
-			        String diffdays=(int)differenceInDays+"days";
+			        // Output the result
+			        System.out.println("Difference: " + days + " days and " + hours + " hours");
+			  
+			        if(days == 0 && hours!=0) {
+				        String diffdays=(int)hours+" Hours";
+						indexexhaustdays.setOverduedays(diffdays);
+			        }else if(days == 0 && hours==0) {
+			        	String diffdays="<1hour";
+			        	indexexhaustdays.setOverduedays(diffdays);
+			        }
+			        else {
+			        	String diffdays=(int)days+"Days "+(int)hours+"Hours ";
 
-					indexexhaustdays.setOverduedays(diffdays);
-
+						indexexhaustdays.setOverduedays(diffdays);
+			        }
 				 });
 			}
 			lsordernotificationrepo.save(exhaustdays);
@@ -1926,7 +1954,7 @@ public class LoginService {
 			// Set time on currentDate to 0:01 am
 			Calendar calendar1 = Calendar.getInstance();
 			calendar1.setTime(fromDate);
-			calendar1.set(Calendar.HOUR_OF_DAY, 0);
+			calendar1.set(Calendar.HOUR_OF_DAY, (fromDate.getHours()-5));
 			calendar1.set(Calendar.MINUTE, 0);
 			calendar1.set(Calendar.SECOND, 0);
 			calendar1.set(Calendar.MILLISECOND, 0);
@@ -1935,7 +1963,7 @@ public class LoginService {
 			// Set time on currentDate1 to 23:59 pm
 			Calendar calendar2 = Calendar.getInstance();
 			calendar2.setTime(toDate);
-			calendar2.set(Calendar.HOUR_OF_DAY, 23);
+			calendar2.set(Calendar.HOUR_OF_DAY, (toDate.getHours()+5));
 			calendar2.set(Calendar.MINUTE, 59);
 			calendar2.set(Calendar.SECOND, 59);
 			calendar2.set(Calendar.MILLISECOND, 999);
@@ -1968,7 +1996,7 @@ public class LoginService {
 			
 			LSuserMaster LSuserMaster = new LSuserMaster(); /* to get the value */
 			LSuserMaster.setUsercode(objNotification.getUsercode());
-	
+	 
 	        List<LSOrdernotification> orderslist = lsordernotificationrepo.findByUsercodeAndCautiondateBetween(objNotification.getUsercode(), fromDate, toDate);
 	        List<LSOrdernotification> dueorderslist = lsordernotificationrepo.findByUsercodeAndDuedateBetween(objNotification.getUsercode(), fromDate, toDate);
 	        List<LSOrdernotification> overdueorderslist = lsordernotificationrepo.findByUsercodeAndDuedateBetween(objNotification.getUsercode(), overduefromDate, overduetoDate);

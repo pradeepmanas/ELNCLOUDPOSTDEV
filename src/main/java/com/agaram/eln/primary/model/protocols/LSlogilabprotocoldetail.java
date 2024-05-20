@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.model.protocols;
 
 import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo
 import com.agaram.eln.primary.model.dashboard.LsActiveWidgets;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
+import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Elnmaterial;
@@ -614,6 +616,27 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.testname = testname;
 	}
 
+	@ManyToOne
+	private LsAutoregister lsautoregister;
+
+	public LsAutoregister getLsautoregister() {
+		return lsautoregister;
+	}
+
+	public void setLsautoregister(LsAutoregister lsautoregister) {
+		this.lsautoregister = lsautoregister;
+	}
+
+	private Boolean repeat;
+
+	public Boolean getRepeat() {
+		return repeat;
+	}
+
+	public void setRepeat(Boolean repeat) {
+		this.repeat = repeat;
+	}
+
 	@Transient
 	private String originurl;
 
@@ -622,6 +645,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@Transient
 	private String unifielduserid;
+
+	@Transient
+	private LsAutoregister lsautoregisterorder;
+
+	public LsAutoregister getLsautoregisterorder() {
+		return lsautoregisterorder;
+	}
+
+	public void setLsautoregisterorder(LsAutoregister lsautoregisterorder) {
+		this.lsautoregisterorder = lsautoregisterorder;
+	}
 
 	public List<CloudLsLogilabprotocolstepInfo> getCloudLsLogilabprotocolstepInfo() {
 		return CloudLsLogilabprotocolstepInfo;

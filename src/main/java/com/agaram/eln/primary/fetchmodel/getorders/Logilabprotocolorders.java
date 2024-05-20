@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
+import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Elnmaterial;
@@ -69,6 +70,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	List<Elnprotocolworkflow> lstelnprotocolworkflow;
 	private Elnprotocolworkflow elnprotocolworkflow;
 	private LSOrdernotification lsordernotification;
+	private LsAutoregister lsautoregister;
+	private Boolean repeat;
 
 
 
@@ -80,7 +83,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 //			LSworkflow lsworkflow,
 			Elnmaterial elnmaterial,ElnmaterialInventory elnmaterialinventory, Integer approved, Integer rejected,
 			Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby,
-			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow,LSOrdernotification lsordernotification) {
+			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow,LSOrdernotification lsordernotification,LsAutoregister lsautoregister,Boolean repeat) {
 
 		this.protocolordercode = protocolordercode;
 		this.Testcode = Testcode;
@@ -119,6 +122,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.versionno = versionno;
 		this.elnprotocolworkflow=elnprotocolworkflow;
         this.lsordernotification=lsordernotification != null ? lsordernotification :null;
+        this.lsautoregister=lsautoregister != null ? lsautoregister :null;
+        this.repeat = repeat;
 
 	}
 
@@ -372,6 +377,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.repositoryname = repositoryname;
 	}
 
+	
 //	public void setLsprojectmaster(LSprojectmaster lsprojectmaster) {
 //		this.lsprojectmaster = lsprojectmaster;
 //	}
@@ -397,6 +403,22 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 ////		}
 ////		this.lstworkflow = null;
 //	}
+
+	public LsAutoregister getLsautoregister() {
+		return lsautoregister;
+	}
+
+	public void setLsautoregister(LsAutoregister lsautoregister) {
+		this.lsautoregister = lsautoregister;
+	}
+
+	public Boolean getRepeat() {
+		return repeat;
+	}
+
+	public void setRepeat(Boolean repeat) {
+		this.repeat = repeat;
+	}
 
 	public Long getDirectorycode() {
 		return directorycode;

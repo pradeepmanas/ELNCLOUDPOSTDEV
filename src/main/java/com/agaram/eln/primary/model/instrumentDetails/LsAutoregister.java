@@ -40,8 +40,19 @@ public class LsAutoregister {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date autocreatedate;
 
+
 	private Integer ismultitenant;
 	
+    private Boolean isautoreg;
+    
+	public Boolean getIsautoreg() {
+		return isautoreg;
+	}
+
+	public void setIsautoreg(Boolean isautoreg) {
+		this.isautoreg = isautoreg;
+	}
+
 	public Integer getIsmultitenant() {
 		return ismultitenant;
 	}
