@@ -573,8 +573,7 @@ public class TransactionService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<Object> createMaterialResultUsed(Map<String, Object> inputMap)
-			throws JsonParseException, JsonMappingException, IOException {
+	public ResponseEntity<Object> createMaterialResultUsed(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
 
 		ObjectMapper Objmapper = new ObjectMapper();
 
@@ -637,6 +636,37 @@ public class TransactionService {
 				lsnotificationRepository.save(lstLSnotifications);
 			}
 		}
+
+		return new ResponseEntity<>(resultUsedMaterial, HttpStatus.OK);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<Object> createMaterialResultUsedReturn(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
+
+		ObjectMapper Objmapper = new ObjectMapper();
+
+		final LScfttransaction cft = Objmapper.convertValue(inputMap.get("silentAudit"), LScfttransaction.class);
+		final ElnmaterialInventory objInventoryFromMap = Objmapper.convertValue(inputMap.get("selectedMaterialInventory"),ElnmaterialInventory.class);
+		final Map<String, Object> objResultMap = (Map<String, Object>) inputMap.get("resultObject");
+		final LStestmasterlocal objTest = new LStestmasterlocal();
+		
+		objTest.setTestcode((Integer) objResultMap.get("testcode"));
+
+		ElnmaterialInventory objInventory = elnmaterialInventoryRepository.findByNmaterialinventorycode(objInventoryFromMap.getNmaterialinventorycode());
+
+		Double getIssuedQty = Double.parseDouble(objResultMap.get("savailablequantity").toString());
+
+		LSuserMaster objUser = new LSuserMaster();
+		objUser.setUsercode(cft.getLsuserMaster());
+
+		ElnresultUsedMaterial resultUsedMaterial = new ElnresultUsedMaterial();
+		
+		objInventory.setSavailablequantity(getIssuedQty.toString());
+		
+		resultUsedMaterial.setQtyleft(getIssuedQty.toString());
+		resultUsedMaterial.setNqtyused((double) 0);
+	
+		elnmaterialInventoryRepository.save(objInventory);
 
 		return new ResponseEntity<>(resultUsedMaterial, HttpStatus.OK);
 	}

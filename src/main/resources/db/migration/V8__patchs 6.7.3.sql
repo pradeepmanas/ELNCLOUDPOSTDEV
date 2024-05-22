@@ -483,7 +483,7 @@ $do$;
 ALTER TABLE IF Exists lssitemaster ADD COLUMN IF NOT EXISTS expirydate timestamp without time zone;
 ALTER TABLE IF Exists lsordernotification ADD COLUMN IF NOT EXISTS period varchar(250);
 
-
+/*
  DO
 $do$
 DECLARE
@@ -524,7 +524,7 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.lsautoregister
     OWNER to postgres;
-
+*/
 	
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS repeat Boolean;
 
@@ -623,7 +623,7 @@ ALTER TABLE IF Exists lsactivewidgets ADD Column IF NOT EXISTS cancelstatus inte
 
 update lsactivewidgets set cancelstatus=0 where cancelstatus is null;
 
-
+/*
 DO $$ 
 BEGIN
     IF EXISTS (
@@ -638,7 +638,7 @@ BEGIN
 END $$;
 
 drop table IF EXISTS lsautoregister;
-
+*/
  DO
 $do$
 DECLARE

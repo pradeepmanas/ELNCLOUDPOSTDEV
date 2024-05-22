@@ -1604,6 +1604,12 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 
 
 	List<LSlogilabprotocoldetail> findByProtoclordernameInAndOrderflag(List<String> batchid, String string);
+
+
+	List<LSlogilabprotocoldetail> findByLsuserMasterAndRepeat(LSuserMaster lsuserMaster, boolean b);
+
+	@Transactional
+	List<LSlogilabprotocoldetail> findByProtocolordercodeIn(List<Long> protocolordercodeauto);
 	
 
 

@@ -1911,25 +1911,18 @@ public class LoginService {
 				exhaustdays.stream().forEach(indexexhaustdays->{
 					Date Date1=indexexhaustdays.getDuedate();
 					Date Date2=new Date();
-			      // Convert Date to Instant
+			 
 			        Instant instant1 = Date1.toInstant();
-			        Instant instant2 = Date2.toInstant();
-			        
-			        // Convert Instant to LocalDateTime
+			        Instant instant2 = Date2.toInstant();		        
 			        LocalDateTime dateTime1 = LocalDateTime.ofInstant(instant1, ZoneId.systemDefault());
 			        LocalDateTime dateTime2 = LocalDateTime.ofInstant(instant2, ZoneId.systemDefault());
 			        
-			        
-			        // Calculate the duration between the two dates
 			        Duration duration = Duration.between(dateTime1, dateTime2);
 			        
-			        
-			        // Extract the days and hours from the duration
 			        long totalHours = duration.toHours();
 			        long days = totalHours / 24;
 			        long hours = totalHours % 24;
 
-			        // Output the result
 			        System.out.println("Difference: " + days + " days and " + hours + " hours");
 			  
 			        if(days == 0 && hours!=0) {
@@ -1954,7 +1947,7 @@ public class LoginService {
 			// Set time on currentDate to 0:01 am
 			Calendar calendar1 = Calendar.getInstance();
 			calendar1.setTime(fromDate);
-			calendar1.set(Calendar.HOUR_OF_DAY, (fromDate.getHours()-5));
+			calendar1.set(Calendar.HOUR_OF_DAY, (fromDate.getHours()-2));
 			calendar1.set(Calendar.MINUTE, 0);
 			calendar1.set(Calendar.SECOND, 0);
 			calendar1.set(Calendar.MILLISECOND, 0);
@@ -1963,23 +1956,23 @@ public class LoginService {
 			// Set time on currentDate1 to 23:59 pm
 			Calendar calendar2 = Calendar.getInstance();
 			calendar2.setTime(toDate);
-			calendar2.set(Calendar.HOUR_OF_DAY, (toDate.getHours()+5));
+			calendar2.set(Calendar.HOUR_OF_DAY, (toDate.getHours()+2));
 			calendar2.set(Calendar.MINUTE, 59);
 			calendar2.set(Calendar.SECOND, 59);
 			calendar2.set(Calendar.MILLISECOND, 999);
 			toDate = calendar2.getTime();
 
-			Date overduedate=new Date();
-			int minusdue=(overduedate.getDate()- 1);
-	        overduedate.setDate(minusdue);
-		        
-			Date overduefromDate = overduedate;
-			Date overduetoDate = overduedate;
+//			Date overduedate=new Date();
+//			int minusdue=(overduedate.getDate()- 1);
+//	        overduedate.setDate(minusdue);
+//		        
+			Date overduefromDate = objNotification.getCurrentdate();
+			Date overduetoDate = objNotification.getCurrentdate();
 //
 			// Set time on currentDate to 0:01 am
 			Calendar calendar3 = Calendar.getInstance();
 			calendar3.setTime(overduefromDate);
-			calendar3.set(Calendar.HOUR_OF_DAY, 0);
+			calendar3.set(Calendar.HOUR_OF_DAY, (overduefromDate.getHours()-1));
 			calendar3.set(Calendar.MINUTE, 0);
 			calendar3.set(Calendar.SECOND, 0);
 			calendar3.set(Calendar.MILLISECOND, 0);
@@ -1988,7 +1981,7 @@ public class LoginService {
 			// Set time on currentDate1 to 23:59 pm
 			Calendar calendar4 = Calendar.getInstance();
 			calendar4.setTime(overduetoDate);
-			calendar4.set(Calendar.HOUR_OF_DAY, 23);
+			calendar4.set(Calendar.HOUR_OF_DAY, (overduetoDate.getHours()+1));
 			calendar4.set(Calendar.MINUTE, 59);
 			calendar4.set(Calendar.SECOND, 59);
 			calendar4.set(Calendar.MILLISECOND, 999);
@@ -2072,7 +2065,8 @@ public class LoginService {
 							LSnotification LSnotification = new LSnotification();
 	
 							String Details = "{\"ordercode\" :\"" + indexoverdueorders.getBatchid() 
-							        + "\",\"order\" :\"" + indexoverdueorders.getBatchid() 
+							        + "\",\"order\" :\"" + indexoverdueorders.getBatchid()
+							        + "\",\"days\" :\"" + indexoverdueorders.getOverduedays()
 							        + "\",\"date\" :\"" + indexoverdueorders.getDuedate()
 							        + "\",\"screen\":\"" + "sheetorders" 
 									+ "\"}";

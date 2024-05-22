@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.controller.instrumentDetails;
 
 import java.io.ByteArrayInputStream;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,6 +45,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
+import com.agaram.eln.primary.model.instrumentDetails.Lsresultfororders;
 import com.agaram.eln.primary.model.instrumentDetails.Lsresulttags;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
@@ -86,7 +88,7 @@ public class InstrumentController {
 	}
 	
 	@PostMapping("/InsertAutoRegisterOrder")
-	public LSlogilablimsorderdetail InsertAutoRegisterOrder(@RequestBody List<LSlogilablimsorderdetail>objorder)throws Exception {
+	public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablimsorderdetail> objorder)throws Exception {
 
 		return instrumentService.InsertAutoRegisterOrder(objorder);
 	}
@@ -281,7 +283,13 @@ public class InstrumentController {
 
 		return instrumentService.SaveResultfile(objfile);
 	}
+	
+	@PostMapping("/onGetResultValuesFromSelectedOrder")
+	public List<Lsresultfororders> onGetResultValuesFromSelectedOrder(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
 
+		return instrumentService.onGetResultValuesFromSelectedOrder(objorder);
+	}
+	
 	@PostMapping("/UpdateLimsOrder")
 	public LSlogilablimsorderdetail UpdateLimsOrder(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
 		
@@ -1345,6 +1353,7 @@ public class InstrumentController {
 
 		instrumentService.stopautoregister(objdir);
 	}
+
 	
 	@PostMapping("/getsingleorder")
 	public LSlogilablimsorderdetail getsingleorder(@RequestBody LSlogilablimsorderdetail body)throws Exception

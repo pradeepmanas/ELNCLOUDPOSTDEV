@@ -16,4 +16,6 @@ public interface LsresultforordersRepository  extends JpaRepository<Lsresultforo
 	@Modifying
 	@Query(value = "select * from  lsresultfororders where id in (?1) ORDER BY id DESC", nativeQuery=true)
 	List<Lsresultfororders> getResultOrders(List<Integer> sampleFileCodeList1);
+
+	List<Lsresultfororders> findByBatchcode(Long batchcode);
 }

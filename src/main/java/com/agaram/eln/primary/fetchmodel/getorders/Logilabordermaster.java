@@ -39,12 +39,14 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private Integer approvelstatus;
 	private LSOrdernotification lsordernotification;
 	private Integer ordersaved;
-	//private Boolean repeat;
-	//private LsAutoregister lsautoregisterorders;
+	private Boolean repeat;
+	private LsAutoregister lsautoregisterorders;
 	
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,LSuserMaster assignedto,
-			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,LSuserMaster lsuserMaster ,Integer testcode,Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,Boolean repeat, LsAutoregister lsautoregisterorders) {
+			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,
+			LSuserMaster lsuserMaster ,Integer testcode,Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,Boolean repeat, 
+			LsAutoregister lsautoregisterorders) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -67,6 +69,8 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.approvelstatus=approvelstatus;
 		this.lsordernotification=lsordernotification;
 		this.ordersaved = ordersaved;
+		this.repeat=repeat;
+		this.lsautoregisterorders=lsautoregisterorders;
 	}
 
 	public Integer getApprovelstatus() {
@@ -84,7 +88,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	public void setLsordernotification(LSOrdernotification lsordernotification) {
 		this.lsordernotification = lsordernotification;
 	}
-/*
+
 	public Boolean getRepeat() {
 		return repeat;
 	}
@@ -100,7 +104,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	public void setLsautoregisterorders(LsAutoregister lsautoregisterorders) {
 		this.lsautoregisterorders = lsautoregisterorders;
 	}
-*/
+
 	public LSuserMaster getCreatedby() {
 		return createdby;
 	}

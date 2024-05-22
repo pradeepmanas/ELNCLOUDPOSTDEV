@@ -296,6 +296,9 @@ public class InstrumentService {
 //	private LSlimsorderRepository lSlimsorderRepository;
 
 	@Autowired
+	ProtocolService protocolservice;
+	
+	@Autowired
 	private LStestparameterRepository lStestparameterRepository;
 
 	@Autowired
@@ -468,7 +471,10 @@ public class InstrumentService {
 
 	@Autowired
     private LsActiveWidgetsRepository lsActiveWidgetsRepository;
+	
+	@Autowired
 	private LsAutoregisterRepository lsautoregisterrepo;
+	
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 //		Map<String, Object> obj = new HashMap<>();
 //		List<String> lsInst = new ArrayList<String>();
@@ -794,7 +800,7 @@ public class InstrumentService {
 //		return objorder;
 //	}
 
-	public LSlogilablimsorderdetail InsertAutoRegisterOrder(List<LSlogilablimsorderdetail> objorder) throws IOException {
+public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablimsorderdetail> objorder) throws IOException {
 		
 		Date fromDate = new Date();
 		Date toDate = new Date();
@@ -802,8 +808,8 @@ public class InstrumentService {
 		// Set time on currentDate to 0:01 am
 		Calendar calendar1 = Calendar.getInstance();
 		calendar1.setTime(fromDate);
-		calendar1.set(Calendar.HOUR_OF_DAY, 0);
-		calendar1.set(Calendar.MINUTE, 0);
+		calendar1.set(Calendar.HOUR_OF_DAY, (fromDate.getHours()));
+		calendar1.set(Calendar.MINUTE, (fromDate.getMinutes()-22));
 		calendar1.set(Calendar.SECOND, 0);
 		calendar1.set(Calendar.MILLISECOND, 0);
 		fromDate = calendar1.getTime();
@@ -811,12 +817,13 @@ public class InstrumentService {
 		// Set time on currentDate1 to 23:59 pm
 		Calendar calendar2 = Calendar.getInstance();
 		calendar2.setTime(toDate);
-		calendar2.set(Calendar.HOUR_OF_DAY, 23);
-		calendar2.set(Calendar.MINUTE, 59);
+		calendar2.set(Calendar.HOUR_OF_DAY, (toDate.getHours()));
+		calendar2.set(Calendar.MINUTE, (toDate.getMinutes()+22));
 		calendar2.set(Calendar.SECOND, 59);
 		calendar2.set(Calendar.MILLISECOND, 999);
 		toDate = calendar2.getTime();
 
+		List<LSlogilablimsorderdetail> orderdetail = null;
 		List<Long> batchcode = objorder.stream().map(LSlogilablimsorderdetail::getBatchcode)
 				.collect(Collectors.toList());
 		if(batchcode.size()>0){
@@ -824,14 +831,70 @@ public class InstrumentService {
 		List<Long> batchcodeauto = autoorder.stream().map(LsAutoregister::getBatchcode)
 				.collect(Collectors.toList());
 		
-		List<LSlogilablimsorderdetail> orderdetail = lslogilablimsorderdetailRepository.findByBatchcodeInOrderByBatchcodeAsc(batchcodeauto);
+		orderdetail = lslogilablimsorderdetailRepository.findByBatchcodeInOrderByBatchcodeAsc(batchcodeauto);
 		
 		if(!orderdetail.isEmpty()) {
 			Integer Ismultitenant = autoorder.get(0).getIsmultitenant();
-			orderdetail.stream().forEach(objorderindex->{
+			orderdetail.parallelStream().forEach(objorderindex->{
 				//old order is made repeat false
 				objorderindex.setRepeat(false);
+				//lslogilablimsorderdetailRepository.save(objorderindex);
+				
+
+				//for new order
+				LsAutoregister autoobj = new LsAutoregister();
+				List<LsAutoregister> listauto = new ArrayList<LsAutoregister>();
+				
+				autoorder.parallelStream().forEach(autocode->{
+					if(autocode.getBatchcode().equals(objorderindex.getBatchcode())) {
+				
+						if(autocode.getTimespan().equals("Days")) {
+							Date autodate=autocode.getAutocreatedate();
+							
+							 Calendar calendar = Calendar.getInstance();
+						        calendar.setTime(autodate);
+						        calendar.add(Calendar.DAY_OF_MONTH, autocode.getInterval());
+
+						        // Convert back to Date (if necessary)
+						        Date futureDate = calendar.getTime();   
+						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
+						        autocode.setAutocreatedate(futureDate);
+						 }else if(autocode.getTimespan().equals("Week")) {
+							 Date autodate=autocode.getAutocreatedate();
+								
+							    Calendar calendar = Calendar.getInstance();
+						        calendar.setTime(autodate);
+						        calendar.add(Calendar.DAY_OF_MONTH, (autocode.getInterval()*7));
+
+						        // Convert back to Date (if necessary)
+						        Date futureDate = calendar.getTime();   
+						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
+						        autocode.setAutocreatedate(futureDate);
+						 }else {
+							 Date autodate=autocode.getAutocreatedate();
+								
+							 Calendar calendar = Calendar.getInstance();
+						        calendar.setTime(autodate);
+						        calendar.add(Calendar.HOUR_OF_DAY,(autocode.getInterval()));
+						        Date futureDate = calendar.getTime();   
+						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
+						        autocode.setAutocreatedate(futureDate);
+						 }
+						
+						//autocode.setBatchcode(objorderindex.getBatchcode());
+						autocode.setRegcode(null);
+						autocode.setScreen("IDS_SHEETORDERS");
+						autocode.setIsautoreg(true);
+						
+						//listauto.add(lsautoregisterrepo.save(autocode));
+						listauto.add(autocode);
+						objorderindex.setLsautoregisterorders(listauto.get(0));
+						
+					}
+				});
+				lsautoregisterrepo.save(listauto);
 				lslogilablimsorderdetailRepository.save(objorderindex);
+				
 				
 				objorderindex.setLsworkflow(lsworkflowRepository
 						.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorderindex.getLsuserMaster().getLssitemaster()));
@@ -952,64 +1015,15 @@ public class InstrumentService {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-					//for new order
-				LsAutoregister autoobj = new LsAutoregister();
-				List<LsAutoregister> listauto = new ArrayList<LsAutoregister>();
-				
-				autoobj.setInterval(autoorder.get(0).getInterval());
-				autoobj.setRepeat(true);
-				autoobj.setScreen("IDS_MDL_SHEETORDER");
-				autoobj.setTimespan(autoorder.get(0).getTimespan());
-				autoobj.setIsmultitenant(Ismultitenant);				
-				
-				List<LsAutoregister> autoordersfilter = autoorder.stream()
-                        .filter(autoorders -> autoorders.getBatchcode().equals(objorderindex.getBatchcode()))
-                        .collect(Collectors.toList());
-
-				 autoordersfilter.get(0).setRepeat(false);
-				 listauto.addAll(lsautoregisterrepo.save(autoordersfilter));
-				 
-				 if(autoordersfilter.get(0).getTimespan().equals("Days")) {
-					Date autodate=autoordersfilter.get(0).getAutocreatedate();
-					
-					 Calendar calendar = Calendar.getInstance();
-				        calendar.setTime(autodate);
-				        calendar.add(Calendar.DAY_OF_MONTH, autoordersfilter.get(0).getInterval());
-
-				        // Convert back to Date (if necessary)
-				        Date futureDate = calendar.getTime();   
-				        //autoordersfilter.get(0).setAutocreatedate(futureDate);
-				        autoobj.setAutocreatedate(futureDate);
-				 }else if(autoordersfilter.get(0).getTimespan().equals("Week")) {
-					 Date autodate=autoordersfilter.get(0).getAutocreatedate();
-						
-					    Calendar calendar = Calendar.getInstance();
-				        calendar.setTime(autodate);
-				        calendar.add(Calendar.DAY_OF_MONTH, (autoordersfilter.get(0).getInterval()*7));
-
-				        // Convert back to Date (if necessary)
-				        Date futureDate = calendar.getTime();   
-				        //autoordersfilter.get(0).setAutocreatedate(futureDate);
-				        autoobj.setAutocreatedate(futureDate);
-				 }else {
-					 Date autodate=autoordersfilter.get(0).getAutocreatedate();
-						
-					 Calendar calendar = Calendar.getInstance();
-				        calendar.setTime(autodate);
-				        calendar.add(Calendar.HOUR_OF_DAY,(autoordersfilter.get(0).getInterval()));
-				        Date futureDate = calendar.getTime();   
-				        //autoordersfilter.get(0).setAutocreatedate(futureDate);
-				        autoobj.setAutocreatedate(futureDate);
-				 }
-
-				 // modification done by srimathi dated on 20-05-2024
-				 //				objorderindex.setLsautoregisterorders(listauto);
-				lsautoregisterrepo.save(autoobj);
 				
 				objorderindex.setBatchcode(null);
 				objorderindex.setBatchid(null);
 				
 				lslogilablimsorderdetailRepository.save(objorderindex);
+				if(objorderindex.getLsautoregisterorders() != null) {
+					objorderindex.getLsautoregisterorders().setBatchcode(objorderindex.getBatchcode());
+					lsautoregisterrepo.save(objorderindex.getLsautoregisterorders());
+				}
 				
 				String Batchid = "ELN" + objorderindex.getBatchcode();
 				if (objorderindex.getFiletype() == 3) {
@@ -1118,10 +1132,26 @@ public class InstrumentService {
 				updatenotificationfororder(objorderindex);
 		      
 				//return objorder1;	
+				LScfttransaction auditobj = new LScfttransaction();
+				auditobj.setLsuserMaster(objorderindex.getLsuserMaster().getUsercode());
+				try {
+					auditobj.setTransactiondate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				auditobj.setModuleName("IDS_SCN_SHEETORDERS");
+				auditobj.setActions("IDS_TSK_REGISTERED");
+				auditobj.setManipulatetype("IDS_AUDIT_INSERTORDERS");
+				auditobj.setComments("order: "+objorderindex.getBatchid()+" is now autoregistered");
+				auditobj.setLssitemaster(objorderindex.getLsuserMaster().getLssitemaster().getSitecode());
+				auditobj.setSystemcoments("Audittrail.Audittrailhistory.Audittype.IDS_AUDIT_SYSTEMGENERATED");
+				lscfttransactionRepository.save(auditobj);
 			 });
 			}
 		  }	
-		return null;
+		
+		return orderdetail;
 	}
 
 	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder) throws IOException {
@@ -1226,10 +1256,20 @@ public class InstrumentService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			
-//		lsautoregisterrepo.save(objorder.getLsautoregister());
-		lslogilablimsorderdetailRepository.save(objorder);
+
+		 lslogilablimsorderdetailRepository.save(objorder);
 		
+		if(objorder.getRepeat()!=null && objorder.getLsautoregisterorderdetail()!=null&&objorder.getRepeat()) {
+			final List<LsAutoregister> autoordernotList = new ArrayList<>(1);
+			
+			objorder.getLsautoregisterorderdetail().setBatchcode(objorder.getBatchcode());
+			objorder.getLsautoregisterorderdetail().setRepeat(true);
+			
+			autoordernotList.add(lsautoregisterrepo.save(objorder.getLsautoregisterorderdetail()));
+			objorder.setLsautoregisterorders(autoordernotList.get(0));
+			lslogilablimsorderdetailRepository.save(objorder);
+		}
+
 		String Batchid = "ELN" + objorder.getBatchcode();
 		if (objorder.getFiletype() == 3) {
 			Batchid = "RESEARCH" + objorder.getBatchcode();
@@ -1320,6 +1360,7 @@ public class InstrumentService {
 			}
 		}
 		lslogilablimsorderdetailRepository.save(objorder);
+		
 		
 		if (objorder.getLssamplefile() != null) {
 			updateordercontent(Content, objorder.getLssamplefile(), objorder.getIsmultitenant());
@@ -3603,7 +3644,6 @@ public class InstrumentService {
 		objreport.setContentstored(1);
 		reportfileRepository.save(objreport);
 		objreport = null;
-
 	}
 	
 	private void updateorderresultvalues(LSsamplefile objfile, String tagvalues) {
@@ -3615,7 +3655,13 @@ public class InstrumentService {
 		objreport.setContentstored(1);
 		lsresultforordersRepository.save(objreport);
 		objreport = null;
-
+	}
+	
+	public List<Lsresultfororders> onGetResultValuesFromSelectedOrder(LSlogilablimsorderdetail objOrder) {
+		
+		List<Lsresultfororders> objResultList = lsresultforordersRepository.findByBatchcode(objOrder.getBatchcode());
+		
+		return objResultList;
 	}
 
 	public void updateordercontent(String Content, LSsamplefile objfile, Integer ismultitenant) throws IOException {
@@ -7444,6 +7490,19 @@ public class InstrumentService {
 
 		mapfolders.put("directory", lstdir);
 //		
+		new Thread(() -> {
+			try {
+				
+				System.out.println("autoregisterorder");
+
+				List<LSlogilabprotocoldetail> orderobjdata = new ArrayList<LSlogilabprotocoldetail>();
+				orderobjdata=LSlogilabprotocoldetailRepository.findByLsuserMasterAndRepeat(objusermaster.getLsuserMaster(),true);
+				
+				protocolservice.addautoProtocolOrder(orderobjdata);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
 		return mapfolders;
 //	
 	}
@@ -8199,8 +8258,8 @@ public class InstrumentService {
 							return orderChunk;
 						}).flatMap(List::stream).collect(Collectors.toList());
 //				System.out.print(lstorderobj);
-				lstorderobj.addAll(lstorder);
-				lstorderobj.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
+				lstorder.addAll(lstorderobj);
+				lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
 //				return lstorderobj;
 
 			} else {
@@ -8237,17 +8296,17 @@ public class InstrumentService {
 		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
 		
 		
-		new Thread(() -> {
-		try {
-			
-			System.out.println("duedatenot");
-			notobj.setCurrentdate(new Date());
-			notobj.setUsercode(objorder.getLsuserMaster().getUsercode());
-			LoginService.Duedatenotification(notobj);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}).start();
+//		new Thread(() -> {
+//		try {
+//			
+//			System.out.println("duedatenot");
+//			notobj.setCurrentdate(new Date());
+//			notobj.setUsercode(objorder.getLsuserMaster().getUsercode());
+//			LoginService.Duedatenotification(notobj);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	    }).start();
 	
 		
 		return lstorder;
@@ -9965,11 +10024,26 @@ public class InstrumentService {
 		return logiobj.get(0);	
 	}
 	
+	public LSlogilabprotocoldetail stopprotoautoregister(LSlogilabprotocoldetail objdir) {
+		LSlogilabprotocoldetail logiobj =  new LSlogilabprotocoldetail();
+		logiobj=LSlogilabprotocoldetailRepository.findByProtocolordercodeAndProtoclordername(objdir.getProtocolordercode(), objdir.getProtoclordername());
+		
+		logiobj.setRepeat(objdir.getRepeat());
+		LSlogilabprotocoldetailRepository.save(logiobj);
+		
+		List<LsAutoregister> autoobj =lsautoregisterrepo.findByBatchcode(objdir.getProtocolordercode());
+		if(!autoobj.isEmpty()) {
+			autoobj.get(0).setRepeat(objdir.getRepeat());
+			lsautoregisterrepo.save(autoobj);
+		}
+		LSlogilabprotocoldetailRepository.save(logiobj);
+		return logiobj;	
+	}
+	
 	public LSlogilablimsorderdetail getsingleorder(LSlogilablimsorderdetail body) {
 		LSlogilablimsorderdetail obj = lslogilablimsorderdetailRepository.findByBatchid(body.getBatchid());
 		return obj;
 	}
-
 	public LSlogilablimsorderdetail Getsingleorder(LSlogilablimsorderdetail objorder) {
 		return lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 	}
@@ -9977,4 +10051,6 @@ public class InstrumentService {
 	public void saveResulttags(Lsresulttags objorder) {
 		lsresulttagsRepository.save(objorder);	
 	}
+
+	
 }

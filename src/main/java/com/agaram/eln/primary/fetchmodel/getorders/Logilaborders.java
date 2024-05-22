@@ -52,9 +52,11 @@ public class Logilaborders extends Logilabordermaster {
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,LSuserMaster assignedto,
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,
-			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification, Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders) {
+			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification, 
+			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders) {
 		
-		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved,repeat,lsautoregisterorders);
+		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,
+				lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved,repeat,lsautoregisterorders);
 		 
 		if(lssamplefile != null)
 		{
@@ -89,6 +91,7 @@ public class Logilaborders extends Logilabordermaster {
         this.lsordernotification=lsordernotification != null ? lsordernotification :null;
         this.ordersaved = ordersaved;
         this.repeat=repeat != null ? repeat : null;
+        this.lsautoregisterorders=lsautoregisterorders != null ? lsautoregisterorders : null;
 	}
 	
 	
@@ -312,13 +315,15 @@ public class Logilaborders extends Logilabordermaster {
 		this.repeat = repeat;
 	}
 
-//	public LsAutoregister getLsautoregister() {
-//		return lsautoregister;
-//	}
-//
-//
-//	public void setLsautoregister(LsAutoregister lsautoregister) {
-//		this.lsautoregister = lsautoregister;
-//	}
+
+	public LsAutoregister getLsautoregisterorders() {
+		return lsautoregisterorders;
+	}
+
+
+	public void setLsautoregisterorders(LsAutoregister lsautoregisterorders) {
+		this.lsautoregisterorders = lsautoregisterorders;
+	}
+
 	
 }

@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -66,8 +67,10 @@ import com.agaram.eln.primary.model.fileManipulation.UserSignature;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LSsheetfolderfiles;
+import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
@@ -139,6 +142,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderRep
 import com.agaram.eln.primary.repository.instrumentDetails.LSordernotificationRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSprotocolfolderfilesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSsheetfolderfilesRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsAutoregisterRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolOrderStructureRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharedbyRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharetoRepository;
@@ -219,6 +223,9 @@ public class ProtocolService {
 	@Autowired
 	LSProtocolMasterRepository LSProtocolMasterRepositoryObj;
 
+	@Autowired
+	LsAutoregisterRepository lsautoregisterrepo;
+	
 	@Autowired
 	LSProtocolStepRepository LSProtocolStepRepositoryObj;
 
@@ -2911,8 +2918,419 @@ public class ProtocolService {
 		return lstOrder;
 
 	}
+	
+public Map<String, Object> addautoProtocolOrder(List<LSlogilabprotocoldetail> lSlogilabprotocoldetail) throws ParseException {
+		
+		Date fromDate = new Date();
+		Date toDate = new Date();
+       
+		// Set time on currentDate to 0:01 am
+		Calendar calendar1 = Calendar.getInstance();
+		calendar1.setTime(fromDate);
+		calendar1.set(Calendar.HOUR_OF_DAY, (fromDate.getHours()));
+		calendar1.set(Calendar.MINUTE, (fromDate.getMinutes()-22));
+		calendar1.set(Calendar.SECOND, 0);
+		calendar1.set(Calendar.MILLISECOND, 0);
+		fromDate = calendar1.getTime();
 
-	public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabprotocoldetail) throws ParseException {
+		// Set time on currentDate1 to 23:59 pm
+		Calendar calendar2 = Calendar.getInstance();
+		calendar2.setTime(toDate);
+		calendar2.set(Calendar.HOUR_OF_DAY, (toDate.getHours()));
+		calendar2.set(Calendar.MINUTE, (toDate.getMinutes()+22));
+		calendar2.set(Calendar.SECOND, 59);
+		calendar2.set(Calendar.MILLISECOND, 999);
+		toDate = calendar2.getTime();
+
+		List<Long> protocolordercode = lSlogilabprotocoldetail.stream().map(LSlogilabprotocoldetail::getProtocolordercode)
+				.collect(Collectors.toList());
+		if(protocolordercode.size()>0){
+		List<LsAutoregister> autoorder = lsautoregisterrepo.findByAutocreatedateBetweenAndBatchcodeIn(fromDate,toDate,protocolordercode);
+		List<Long> protocolordercodeauto = autoorder.stream().map(LsAutoregister::getBatchcode)
+				.collect(Collectors.toList());
+		
+		List<LSlogilabprotocoldetail> orderdetail = LSlogilabprotocoldetailRepository.findByProtocolordercodeIn(protocolordercodeauto);
+		
+		if(!orderdetail.isEmpty()) {
+			
+            Integer Ismultitenant = autoorder.get(0).getIsmultitenant();
+			
+			orderdetail.stream().forEach(objorderindex->{	
+				
+				objorderindex.setRepeat(false);
+				LSlogilabprotocoldetailRepository.save(objorderindex);
+				
+				autoorder.stream().forEach(autocode->{
+					if(autocode.getBatchcode().equals(objorderindex.getProtocolordercode())) {
+				
+						if(autocode.getTimespan().equals("Days")) {
+							Date autodate=autocode.getAutocreatedate();
+							
+							 Calendar calendar = Calendar.getInstance();
+						        calendar.setTime(autodate);
+						        calendar.add(Calendar.DAY_OF_MONTH, autocode.getInterval());
+
+						        // Convert back to Date (if necessary)
+						        Date futureDate = calendar.getTime();   
+						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
+						        autocode.setAutocreatedate(futureDate);
+						 }else if(autocode.getTimespan().equals("Week")) {
+							 Date autodate=autocode.getAutocreatedate();
+								
+							    Calendar calendar = Calendar.getInstance();
+						        calendar.setTime(autodate);
+						        calendar.add(Calendar.DAY_OF_MONTH, (autocode.getInterval()*7));
+
+						        // Convert back to Date (if necessary)
+						        Date futureDate = calendar.getTime();   
+						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
+						        autocode.setAutocreatedate(futureDate);
+						 }else {
+							 Date autodate=autocode.getAutocreatedate();
+								
+							 Calendar calendar = Calendar.getInstance();
+						        calendar.setTime(autodate);
+						        calendar.add(Calendar.HOUR_OF_DAY,(autocode.getInterval()));
+						        Date futureDate = calendar.getTime();   
+						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
+						        autocode.setAutocreatedate(futureDate);
+						 }
+						
+						autocode.setBatchcode(null);
+						autocode.setRegcode(null);
+						autocode.setScreen("IDS_PROTOCOLORDERS");
+						autocode.setIsautoreg(true);
+						lsautoregisterrepo.save(autocode);
+						objorderindex.setLsautoregister(autocode);
+					}
+				});
+				
+				objorderindex.setProtoclordername(null);
+				objorderindex.setProtocolordercode(null);
+				
+				Map<String, Object> mapObj = new HashMap<String, Object>();
+				String Content = "";
+				try {
+					objorderindex.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (objorderindex != null) {
+					objorderindex.setVersionno(0);
+
+					if (objorderindex.getProtocoltype() == 2
+							&& objorderindex.getLsprotocolmaster().getProtocolmastercode() == -2) {
+						LSprotocolmaster lsprotocolmasterobj = LSProtocolMasterRepositoryObj.findByDefaulttemplate(1);
+						if (lsprotocolmasterobj == null) {
+							LSprotocolmaster lsprotocolmaster = new LSprotocolmaster();
+							lsprotocolmaster.setProtocolmastername("Default Protocol");
+							lsprotocolmaster.setStatus(0);
+							lsprotocolmaster.setCreatedby(objorderindex.getCreateby());
+							lsprotocolmaster.setCreatedate(objorderindex.getCreatedtimestamp());
+							lsprotocolmaster.setLssitemaster(objorderindex.getSitecode());
+							LSProtocolMasterRepositoryObj.save(lsprotocolmaster);
+							objorderindex.setLsprotocolmaster(lsprotocolmaster);
+						} else {
+							objorderindex.setLsprotocolmaster(lsprotocolmasterobj);
+						}
+
+					}
+
+					LSlogilabprotocoldetailRepository.save(objorderindex);
+
+					// sri
+					List<LSlogilablimsorder> lsorder = new ArrayList<LSlogilablimsorder>();
+					List <LSprotocolmethod> protmethod = lsprotocolmethodrepo.findByProtocolmastercode(objorderindex.getLsprotocolmaster().getProtocolmastercode());
+					if (protmethod != null
+							&& protmethod.size() > 0) {
+						int protocolmethodindex = 0;
+
+						// int methodindex = 0;
+						for (LSprotocolmethod objmethod : objorderindex.getLsprotocolmaster().getLsprotocolmethod()) {
+							LSlogilablimsorder objLimsOrder = new LSlogilablimsorder();
+							String Limsorder = objorderindex.getProtocolordercode().toString();
+
+							// lSlogilabprotocoldetail.setProbatchid("PRO"+Limsorder);
+							String order = "";
+							if (protocolmethodindex < 10) {
+								order = Limsorder.concat("0" + protocolmethodindex);
+							} else {
+								order = Limsorder.concat("" + protocolmethodindex);
+							}
+							objLimsOrder.setOrderid(Long.parseLong(order));
+							objLimsOrder.setBatchid("ELN" + objorderindex.getProtocolordercode());
+							objLimsOrder.setMethodcode(objmethod.getMethodid());
+							objLimsOrder.setInstrumentcode(objmethod.getInstrumentid());
+							objLimsOrder.setTestcode(objorderindex.getTestcode() != null
+									? objorderindex.getTestcode().toString()
+									: null);
+							objLimsOrder.setOrderflag("N");
+							objLimsOrder.setCreatedtimestamp(objorderindex.getCreatedtimestamp());
+
+							lsorder.add(objLimsOrder);
+							protocolmethodindex++;
+						}
+
+						lslogilablimsorderrepo.save(lsorder);
+						objorderindex.setLsLSlogilablimsorder(lsorder);
+					}
+
+					if (objorderindex.getProtocolordercode() != null) {
+
+						String ProtocolOrderName = "ELN" + objorderindex.getProtocolordercode();
+
+						objorderindex.setProtoclordername(ProtocolOrderName);
+
+						objorderindex.setOrderflag("N");
+
+						List<LSprotocolstep> lstSteps = LSProtocolStepRepositoryObj.findByProtocolmastercodeAndStatus(
+								objorderindex.getLsprotocolmaster().getProtocolmastercode(), 1);
+
+						List<LSlogilabprotocolsteps> lststep1 = new ObjectMapper().convertValue(lstSteps,
+								new TypeReference<List<LSlogilabprotocolsteps>>() {
+								});
+						List<CloudLsLogilabprotocolstepInfo> objinfo = new ArrayList<CloudLsLogilabprotocolstepInfo>();
+						List<LsLogilabprotocolstepInfo> objmongoinfo = new ArrayList<LsLogilabprotocolstepInfo>();
+						if (!lststep1.isEmpty()) {
+							for (LSlogilabprotocolsteps LSprotocolstepObj1 : lststep1) {
+
+								LSprotocolstepObj1.setModifiedusername(null);
+								LSprotocolstepObj1.setProtocolordercode(objorderindex.getProtocolordercode());
+								LSprotocolstepObj1.setOrderstepflag("N");
+								// LSprotocolstepObj1.setVersionno(0);
+
+								LSlogilabprotocolstepsRepository.save(LSprotocolstepObj1);
+
+								if (objorderindex.getIsmultitenant() == 1
+										|| objorderindex.getIsmultitenant() == 2) {
+
+									LSprotocolstepInformation lsprotocolstepInformation = lsprotocolstepInformationRepository
+											.findById(LSprotocolstepObj1.getProtocolstepcode());
+									if (lsprotocolstepInformation != null) {
+										LSprotocolstepObj1
+												.setLsprotocolstepInfo(lsprotocolstepInformation.getLsprotocolstepInfo());
+									} else {
+										Gson g = new Gson();
+										LSprotocolstepObj1.setLsprotocolstepInfo(g.toJson(""));
+									}
+									CloudLsLogilabprotocolstepInfo CloudLSprotocolstepInfoObj = new CloudLsLogilabprotocolstepInfo();
+									CloudLSprotocolstepInfoObj.setId(LSprotocolstepObj1.getProtocolorderstepcode());
+									CloudLSprotocolstepInfoObj
+											.setLsprotocolstepInfo(LSprotocolstepObj1.getLsprotocolstepInfo());
+									CloudLsLogilabprotocolstepInfoRepository.save(CloudLSprotocolstepInfoObj);
+
+									objinfo.add(CloudLSprotocolstepInfoObj);
+
+									// mapObj.put("CloudLsLogilabprotocolstepInfo", objinfo);
+
+								} else {
+									LSprotocolstepInfo newLSprotocolstepInfo = mongoTemplate
+											.findById(LSprotocolstepObj1.getProtocolstepcode(), LSprotocolstepInfo.class);
+
+									List<LSprotocolimages> objimg = new ArrayList<>();
+									List<LSprotocolfiles> objfile = new ArrayList<>();
+									List<LSprotocolvideos> objvideo = new ArrayList<>();
+									objfile = lsprotocolfilesRepository
+											.findByProtocolstepcode(LSprotocolstepObj1.getProtocolstepcode());
+									objimg = lsprotocolimagesRepository
+											.findByProtocolstepcode(LSprotocolstepObj1.getProtocolstepcode());
+									objvideo = lsprotocolvideosRepository
+											.findByProtocolstepcode(LSprotocolstepObj1.getProtocolstepcode());
+
+									if (newLSprotocolstepInfo != null) {
+										LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+										LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+										if (objimg.size() != 0) {
+											for (LSprotocolimages img : objimg) {
+												if (img.getFileid() != null) {
+													String id = img.getFileid() + objorderindex.getProtoclordername();
+
+													String con = LSprotocolstepObj1.getLsprotocolstepInfo();
+													String finalinfo = con.replaceAll(img.getFileid(), id);
+
+													LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
+												}
+
+											}
+										}
+										if (objfile.size() != 0) {
+											for (LSprotocolfiles file : objfile) {
+												if (file.getFileid() != null) {
+													String id = file.getFileid()
+															+ objorderindex.getProtoclordername();
+
+													String con = LSprotocolstepObj1.getLsprotocolstepInfo();
+													String finalinfo = con.replaceAll(file.getFileid(), id);
+
+													LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
+												}
+											}
+
+										}
+										if (objvideo.size() != 0) {
+											for (LSprotocolvideos video : objvideo) {
+												if (video.getFileid() != null) {
+													String id = video.getFileid()
+															+ objorderindex.getProtoclordername();
+
+													String con = LSprotocolstepObj1.getLsprotocolstepInfo();
+													String finalinfo = con.replaceAll(video.getFileid(), id);
+													LSprotocolstepObj1.setLsprotocolstepInfo(finalinfo);
+												}
+											}
+										}
+									}
+									LsLogilabprotocolstepInfo LsLogilabprotocolstepInfoObj = new LsLogilabprotocolstepInfo();
+									// Gson g = new Gson();
+									// String str = g.toJson(LSprotocolstepObj1.getLsprotocolstepInfo());
+									LsLogilabprotocolstepInfoObj.setId(LSprotocolstepObj1.getProtocolorderstepcode());
+									LsLogilabprotocolstepInfoObj.setContent(LSprotocolstepObj1.getLsprotocolstepInfo());
+									mongoTemplate.insert(LsLogilabprotocolstepInfoObj);
+
+									objmongoinfo.add(LsLogilabprotocolstepInfoObj);
+
+								}
+
+							}
+						} else {
+							LSprotocolmaster lsprotocolmasterobj = LSProtocolMasterRepositoryObj.findByprotocolmastercode(
+									objorderindex.getLsprotocolmaster().getProtocolmastercode());
+							if (Ismultitenant == 1
+									|| Ismultitenant == 2) {
+								if (lsprotocolmasterobj.getContainerstored() == null
+										&& objorderindex.getContent() != null
+										&& !objorderindex.getContent().isEmpty()) {
+								
+									try {
+										JSONObject protocolJson = new JSONObject(objorderindex.getContent());
+										protocolJson.put("protocolname", objorderindex.getProtoclordername());
+										updateProtocolOrderContent(protocolJson.toString(), objorderindex,
+												objorderindex.getIsmultitenant());
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								} else {
+									try {
+										Content = objCloudFileManipulationservice.retrieveCloudSheets(
+												lsprotocolmasterobj.getFileuid(),
+												commonfunction.getcontainername(Ismultitenant,
+														TenantContext.getCurrentTenant()) + "protocol");
+										JSONObject protocolJson = new JSONObject(Content);
+										protocolJson.put("protocolname", objorderindex.getProtoclordername());
+										updateProtocolOrderContent(protocolJson.toString(), objorderindex,
+												Ismultitenant);
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+							} else {
+
+								GridFSDBFile data = gridFsTemplate.findOne(new Query(Criteria.where("filename")
+										.is("protocol_" + lsprotocolmasterobj.getProtocolmastercode())));
+								if (data == null && objorderindex.getContent() != null
+										&& !objorderindex.getContent().isEmpty()) {
+									JSONObject protocolJson = new JSONObject(objorderindex.getContent());
+									protocolJson.put("protocolname", objorderindex.getProtoclordername());
+									Content = protocolJson.toString();
+								} else {
+									Content = new BufferedReader(
+											new InputStreamReader(data.getInputStream(), StandardCharsets.UTF_8)).lines()
+											.collect(Collectors.joining("\n"));
+								}
+							}
+							mapObj.put("protocolData", Content);
+						}
+						if (objinfo.size() != 0) {
+							objorderindex.setCloudLsLogilabprotocolstepInfo(objinfo);
+						} else if (objmongoinfo.size() != 0) {
+							objorderindex.setLsLogilabprotocolstepInfo(objmongoinfo);
+						}
+
+//						if (lSlogilabprotocoldetail.getIsmultitenant() == 1) {
+						boolean isversion = true;
+						boolean nochanges = true;
+
+//						checkagain
+//						updateCloudProtocolorderVersion(objorderindex.getProtocolordercode(), null, null, null,
+//								isversion, objorderindex.getSitecode(), nochanges,
+//								Ismultitenant, objorderindex.getCreatedbyusername(),
+//								objorderindex.getCreateby());
+
+
+						List<LSprotocolsampleupdates> lstsamplelst = LSprotocolsampleupdatesRepository.findByProtocolmastercode(
+								objorderindex.getLsprotocolmaster().getProtocolmastercode());
+
+						List<LSprotocolordersampleupdates> protocolordersample = new ObjectMapper().convertValue(lstsamplelst,
+								new TypeReference<List<LSprotocolordersampleupdates>>() {
+								});
+
+						for (LSprotocolordersampleupdates samplelist : protocolordersample) {
+
+							samplelist.setProtocolordercode(objorderindex.getProtocolordercode());
+							lsprotocolordersampleupdatesRepository.save(samplelist);
+						}
+
+						LSSiteMaster site = LSSiteMasterRepository.findBysitecode(objorderindex.getSitecode());
+
+//						lSlogilabprotocoldetail
+//								.setLsworkflow(lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(site));
+						objorderindex.setElnprotocolworkflow(
+								elnprotocolworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(site));
+
+						if(objorderindex.getLsActiveWidgets() != null){
+							LsActiveWidgets lsActiveWidgets = objorderindex.getLsActiveWidgets();
+							lsActiveWidgets.setActivewidgetsdetails(objorderindex.getProtoclordername());
+							lsActiveWidgets.setActivewidgetsdetailscode(objorderindex.getProtocolordercode());
+							try {
+								lsActiveWidgets.setActivedatatimestamp(commonfunction.getCurrentUtcTime());
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							lsActiveWidgetsRepository.save(lsActiveWidgets);
+							lsActiveWidgets = null;
+						}
+						objorderindex.setLstelnprotocolworkflow(objorderindex.getLstelnprotocolworkflow());
+//						lSlogilabprotocoldetail.setLstworkflow(lSlogilabprotocoldetail.getLstworkflow());
+						
+						if(objorderindex.getLsautoregister()!= null) {
+							objorderindex.getLsautoregister().setBatchcode(objorderindex.getProtocolordercode());
+							lsautoregisterrepo.save(objorderindex.getLsautoregister());
+							objorderindex.setRepeat(true);
+							
+							LSlogilabprotocoldetailRepository.save(objorderindex);
+						}
+					}
+
+					mapObj.put("AddedProtocol", lSlogilabprotocoldetail);
+				}
+				LScfttransaction auditobj = new LScfttransaction();
+				auditobj.setLsuserMaster(objorderindex.getLsuserMaster().getUsercode());
+				try {
+					auditobj.setTransactiondate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				auditobj.setModuleName("IDS_SCN_PROTOCOLORDERS");
+				auditobj.setActions("IDS_TSK_REGISTERED");
+				auditobj.setManipulatetype("IDS_AUDIT_INSERTORDERS");
+				auditobj.setComments("order: "+objorderindex.getProtocolordercode()+" is now autoregistered");
+				auditobj.setLssitemaster(objorderindex.getLsuserMaster().getLssitemaster().getSitecode());
+				auditobj.setSystemcoments("Audittrail.Audittrailhistory.Audittype.IDS_AUDIT_SYSTEMGENERATED");
+				lscfttransactionRepository.save(auditobj);
+			});
+			
+		
+		}
+		}
+		return null;
+		}
+
+public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabprotocoldetail) throws ParseException {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		String Content = "";
 		try {
@@ -2980,6 +3398,12 @@ public class ProtocolService {
 				lSlogilabprotocoldetail.setLsLSlogilablimsorder(lsorder);
 			}
 
+			if(lSlogilabprotocoldetail.getLsautoregisterorder()!= null &&  lSlogilabprotocoldetail.getRepeat() && lSlogilabprotocoldetail.getRepeat()!=null ){
+				lSlogilabprotocoldetail.getLsautoregisterorder().setBatchcode(lSlogilabprotocoldetail.getProtocolordercode());
+				lsautoregisterrepo.save(lSlogilabprotocoldetail.getLsautoregisterorder());
+				lSlogilabprotocoldetail.setLsautoregister(lSlogilabprotocoldetail.getLsautoregisterorder());
+			}
+			
 			if (lSlogilabprotocoldetail.getProtocolordercode() != null) {
 
 				String ProtocolOrderName = "ELN" + lSlogilabprotocoldetail.getProtocolordercode();
@@ -3221,6 +3645,7 @@ public class ProtocolService {
 				lSlogilabprotocoldetail.setLstelnprotocolworkflow(lSlogilabprotocoldetail.getLstelnprotocolworkflow());
 //				lSlogilabprotocoldetail.setLstworkflow(lSlogilabprotocoldetail.getLstworkflow());
 			}
+			
 			mapObj.put("AddedProtocol", lSlogilabprotocoldetail);
 		}
 
@@ -8975,5 +9400,19 @@ public class ProtocolService {
 		}
 		return countexceeded;
 	}
-
+	public LSlogilabprotocoldetail stopprotoautoregister(LSlogilabprotocoldetail objdir) {
+		LSlogilabprotocoldetail logiobj =  new LSlogilabprotocoldetail();
+		logiobj=LSlogilabprotocoldetailRepository.findByProtocolordercodeAndProtoclordername(objdir.getProtocolordercode(), objdir.getProtoclordername());
+		
+		logiobj.setRepeat(objdir.getRepeat());
+		LSlogilabprotocoldetailRepository.save(logiobj);
+		
+		List<LsAutoregister> autoobj =lsautoregisterrepo.findByBatchcode(objdir.getProtocolordercode());
+		if(!autoobj.isEmpty()) {
+			autoobj.get(0).setRepeat(objdir.getRepeat());
+			lsautoregisterrepo.save(autoobj);
+		}
+		LSlogilabprotocoldetailRepository.save(logiobj);
+		return logiobj;	
+	}
 }

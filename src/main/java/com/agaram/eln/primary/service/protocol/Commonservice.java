@@ -163,8 +163,8 @@ public class Commonservice {
 
 				for (int i = 0; i < objteam.size(); i++) {
 					LSusersteam objteam1 = LSusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
-
-					List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
+					List<LSuserteammapping> lstusers = lsuserteammappingRepository.findByteamcode(objteam1.getTeamcode());
+//					List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
 
 					for (int j = 0; j < lstusers.size(); j++) {
 
@@ -209,8 +209,8 @@ public class Commonservice {
 
 				for (int i = 0; i < objteam.size(); i++) {
 					LSusersteam objteam1 = LSusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
-
-					List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
+					List<LSuserteammapping> lstusers = lsuserteammappingRepository.findByteamcode(objteam1.getTeamcode());
+//					List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
 
 					for (int j = 0; j < lstusers.size(); j++) {
 

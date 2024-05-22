@@ -20,6 +20,7 @@ import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.service.material.MaterialInventoryService;
+import com.agaram.eln.primary.service.material.MaterialService;
 
 @SuppressWarnings("unused")
 @RestController
@@ -28,6 +29,9 @@ public class MaterialInventoryController {
 
 	@Autowired
 	private MaterialInventoryService materialInventoryService;
+	
+	@Autowired
+	private MaterialService materialService;
 
 	@RequestMapping(value = "/getMaterialInventory", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getMaterialInventory(@RequestBody Map<String, Object> inputMap) throws Exception {
@@ -197,6 +201,12 @@ public class MaterialInventoryController {
 	public ResponseEntity<Object> getElnMaterialInventoryByFilterForprotocol(@RequestBody Map<String, Object> inputMap) throws Exception {
 		
 		return (ResponseEntity<Object>) materialInventoryService.getElnMaterialInventoryByFilterForprotocol(inputMap);
+	}
+	
+	@RequestMapping(value = "/getElnMaterialByFilter", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getElnMaterialByFilter(@RequestBody Map<String, Object> inputMap) throws Exception {
+		
+		return (ResponseEntity<Object>) materialService.getElnMaterialByFilter(inputMap);
 	}
 	
 	@RequestMapping(value = "/getElnMaterialInventoryByStorage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -263,6 +263,13 @@ public class ProtocolController {
 
 	}
 	
+	@RequestMapping(value = "/addautoProtocolOrder")
+	protected Map<String, Object> addautoProtocolOrder(@RequestBody List<LSlogilabprotocoldetail> LSlogilabprotocoldetail)throws Exception {
+
+		return ProtocolMasterService.addautoProtocolOrder(LSlogilabprotocoldetail);
+
+	}
+	
 	@RequestMapping(value = "/addProtocolOrderafter")
 	protected Map<String, Object> addProtocolOrderafter(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail)throws Exception {
 
@@ -1303,5 +1310,12 @@ public class ProtocolController {
 	public boolean Validateprotocolcountforfreeuser(@RequestBody LSSiteMaster lssitemaster)
 	{
 		return ProtocolMasterService.Validateprotocolcountforfreeuser(lssitemaster);
+	}
+	
+	@PostMapping(value="/stopprotoautoregister")
+	public void stopregister(@RequestBody LSlogilabprotocoldetail proobj)
+			throws Exception {
+
+		ProtocolMasterService.stopprotoautoregister(proobj);
 	}
 }
