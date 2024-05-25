@@ -114,6 +114,14 @@ public class LSfile {
 	private Integer rejected;
 	private Integer retirestatus;
 	
+	private Integer resultsheet;
+	
+	public Integer getResultsheet() {
+		return resultsheet;
+	}
+	public void setResultsheet(Integer resultsheet) {
+		this.resultsheet = resultsheet;
+	}
 	public Integer getRetirestatus() {
 		return retirestatus;
 	}

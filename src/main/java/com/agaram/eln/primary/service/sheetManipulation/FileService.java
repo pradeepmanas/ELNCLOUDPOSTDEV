@@ -247,8 +247,8 @@ public class FileService {
 
 		List<LSfile> filename  = lSfileRepository.findByfilenameuserIgnoreCaseAndLssitemasterAndRetirestatus(objfile.getFilenameuser().trim(),
 				objfile.getLssitemaster(),0);
-		if (objfile.getFilecode() == null
-				&&  filename!= null &&  filename.size() > 0 && objfile.getRetirestatus() == null) {
+		
+		if (objfile.getFilecode() == null &&  filename!= null &&  filename.size() > 0 && objfile.getRetirestatus() == null) {
 
 			objfile.setResponse(new Response());
 			objfile.getResponse().setStatus(false);
@@ -320,6 +320,11 @@ public class FileService {
 		if (objfile.getModifiedlist() != null) {
 
 			lssheetupdatesRepository.save(objfile.getModifiedlist());
+		}
+		
+		if(objfile.getFilecode() != null){
+			LSfile clsFile = lSfileRepository.findByfilecode(objfile.getFilecode());
+			objfile.setResultsheet(clsFile.getResultsheet());
 		}
 
 		objfile.setFilecontent(null);
@@ -2050,5 +2055,11 @@ public class FileService {
 			lstteamuser = null;
 		}
 		return lstfile;
+	}
+
+	public void updateResultForTemplate(LSfile lsfile) {
+		LSfile objLSfile = lSfileRepository.findByfilecode(lsfile.getFilecode());
+		objLSfile.setResultsheet(1);
+		lSfileRepository.save(objLSfile);
 	}
 }

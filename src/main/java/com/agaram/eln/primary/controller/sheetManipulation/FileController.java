@@ -319,4 +319,10 @@ public class FileController {
 	{
 		return fileService.Validatesheetcountforfreeuser(lssitemaster);
 	}
+	
+	@PostMapping("/updateResultForTemplate")
+	public void updateResultForTemplate(@RequestBody LSfile lsfile)
+	{
+		fileService.updateResultForTemplate(lsfile);
+	}
 }

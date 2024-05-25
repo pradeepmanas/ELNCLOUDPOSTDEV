@@ -119,7 +119,6 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
-import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 import com.agaram.eln.primary.model.usermanagement.LSMultisites;
@@ -4914,7 +4913,7 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 					}
 				}
 
-	            lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfile(lstproject, filetype, lSfile);
+	            lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndOrdercancellNot(lstproject, filetype, lSfile,1);
 
 	            int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 	            int totalSamples = lstsample.size();
@@ -8052,11 +8051,24 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 		Date todate = objorder.getTodate();
 		Integer testcode = objorder.getTestcode();
 		Integer filetype = objorder.getFiletype();
-		Notification notobj = new Notification();
+//		Notification notobj = new Notification();
+		List<LSSheetOrderStructure> lstdir;
+		if (objorder.getLstuserMaster() == null) {
+		    lstdir = lsSheetOrderStructureRepository
+		        .findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+		            objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
+		            objorder.getLsuserMaster(), 3);
+		} else {
+		    lstdir = lsSheetOrderStructureRepository
+		        .findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+		            objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
+		            objorder.getLsuserMaster().getLssitemaster(), 3, objorder.getLstuserMaster());
+		}
+		List<Long> Directory_Code=lstdir.stream().map(LSSheetOrderStructure::getDirectorycode).collect(Collectors.toList());
 		if (filetype == -1 && objorder.getOrderflag() == null) {
 			lstorder = lslogilablimsorderdetailRepository
-					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNull(
-							objorder.getOrderflag(), lstproject, fromdate, todate);
+					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndDirectorycodeIn(
+							objorder.getOrderflag(), lstproject, fromdate, todate,objorder.getOrderflag(), fromdate, todate,Directory_Code);
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = nmaterialcode.size();
 			List<Logilaborders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
@@ -8081,8 +8093,8 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 		} else if (filetype == -1 && objorder.getOrderflag() != null) {
 
 			lstorder = lslogilablimsorderdetailRepository
-					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNull(
-							objorder.getOrderflag(), lstproject, fromdate, todate);
+					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndDirectorycodeIn(
+							objorder.getOrderflag(), lstproject, fromdate, todate,objorder.getOrderflag(), fromdate, todate,Directory_Code);
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = nmaterialcode.size();
 			List<Logilaborders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
@@ -8106,9 +8118,10 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 				&& objorder.getApprovelstatus() == 3) {
 
 			lstorder = lslogilablimsorderdetailRepository
-					.findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
+					.findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndDirectorycodeIn(
 							objorder.getOrderflag(), objorder.getApprovelstatus(), lstproject, filetype, fromdate,
-							todate);
+							todate,objorder.getOrderflag(), objorder.getApprovelstatus(), filetype, fromdate,
+							todate,Directory_Code);
 
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = nmaterialcode.size();
@@ -8134,9 +8147,10 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 				&& objorder.getApprovelstatus() == 1) {
 
 			lstorder = lslogilablimsorderdetailRepository
-					.findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
+					.findByOrderflagAndApprovelstatusAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndDirectorycodeIn(
 							objorder.getOrderflag(), objorder.getApprovelstatus(), lstproject, filetype, fromdate,
-							todate);
+							todate,	objorder.getOrderflag(), objorder.getApprovelstatus(), filetype, fromdate,
+							todate,Directory_Code);
 
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = nmaterialcode.size();
@@ -8160,8 +8174,8 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 
 		} else if (testcode != null && testcode != -1 && objorder.getLsprojectmaster() == null) {
 	    	lstorder = lslogilablimsorderdetailRepository
-					.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrderByBatchcodeDesc(
-							objorder.getOrderflag(), lstproject, filetype, fromdate, todate,testcode);
+					.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeOrOrderflagAndLsprojectmasterIsNullAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndTestcodeAndDirectorycodeInOrderByBatchcodeDesc(
+							objorder.getOrderflag(), lstproject, filetype, fromdate, todate,testcode,objorder.getOrderflag(), filetype, fromdate, todate,testcode,Directory_Code);
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = nmaterialcode.size();
 			List<Logilaborders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
@@ -8187,9 +8201,10 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 				&& testcode != null && testcode != -1) {
 
 			lstorder = lslogilablimsorderdetailRepository
-					.findByOrderflagAndLsprojectmasterInAndTestcodeAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNull(
-							objorder.getOrderflag(), lstproject, testcode, filetype, objorder.getLsprojectmaster(),
-							fromdate, todate);
+					.findByOrderflagAndLsprojectmasterInAndTestcodeAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndDirectorycodeIn(
+							objorder.getOrderflag(), lstproject, testcode, filetype,
+							fromdate, todate,objorder.getOrderflag(), testcode, filetype,
+							fromdate, todate,Directory_Code);
 
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = nmaterialcode.size();
@@ -8226,9 +8241,15 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 		else {
 			if (objorder.getLstuserMaster() != null) {
 
+//				lstorder = lslogilablimsorderdetailRepository
+//						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+//								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
+				
 				lstorder = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
+						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndDirectorycodeInOrderByBatchcodeDesc(
+								objorder.getOrderflag(), lstproject, filetype, fromdate, todate,
+                            objorder.getOrderflag(), filetype, fromdate, todate,Directory_Code
+                                );
 
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 				int totalSamples = nmaterialcode.size();
@@ -8257,15 +8278,16 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 
 							return orderChunk;
 						}).flatMap(List::stream).collect(Collectors.toList());
-//				System.out.print(lstorderobj);
+				
+				
+				
 				lstorder.addAll(lstorderobj);
 				lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
-//				return lstorderobj;
 
 			} else {
 				lstorder = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
-								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
+						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndDirectorycodeInOrderByBatchcodeDesc(
+								objorder.getOrderflag(), lstproject, filetype, fromdate, todate,objorder.getOrderflag(), filetype, fromdate, todate,Directory_Code);
 
 				lstorder.addAll(lslogilablimsorderdetailRepository
 						.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMaster(
@@ -8293,22 +8315,7 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 			}
 		}
 
-		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
-		
-		
-//		new Thread(() -> {
-//		try {
-//			
-//			System.out.println("duedatenot");
-//			notobj.setCurrentdate(new Date());
-//			notobj.setUsercode(objorder.getLsuserMaster().getUsercode());
-//			LoginService.Duedatenotification(notobj);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	    }).start();
-	
-		
+		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));		
 		return lstorder;
 
 	}
@@ -8645,12 +8652,21 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 
 		int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 		int totalSamples = lstsample.size();
-
+		
+		List<Lsprotocolorderstructure> lstdir;
+		if (objorder.getLstuserMaster() == null) {
+			lstdir = lsprotocolorderStructurerepository
+					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+							objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
+							objorder.getLsuserMaster(), 3);
+		} else {
+			lstdir = lsprotocolorderStructurerepository
+					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+							objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
+							objorder.getLsuserMaster().getLssitemaster(), 3, objorder.getLstuserMaster());
+		}
+		List<Long> Directory_Code=lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode).collect(Collectors.toList());
 		if (objorder.getTestcode() == null && objorder.getLsprojectmaster() == null && objorder.getRejected() == null) {
-//			lstorder = LSlogilabprotocoldetailRepository
-//					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyInOrderByProtocolordercodeDesc(objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate,
-//					        objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 1, objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 2,objorder.getLsuserMaster().getUsercode(), objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample, 3,userlist);
-
 			lstorder.addAll(LSlogilabprotocoldetailRepository
 					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
 							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
@@ -8676,9 +8692,6 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 					}).flatMap(List::stream).collect(Collectors.toList());
 			lstorder.addAll(lstorderobj);
 
-//					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInOrderByProtocolordercodeDesc(
-//							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate,
-//							objorder.getOrderflag(), protocoltype, fromdate, todate, lstsample);
 		} else if (objorder.getTestcode() == null && objorder.getLsprojectmaster() == null
 				&& objorder.getRejected() != null) {
 
@@ -8805,7 +8818,6 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 
 		}
 
-//		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
 		lstorder.forEach(
 				objorderDetail -> objorderDetail.setLstelnprotocolworkflow(objorder.getLstelnprotocolworkflow()));
 		List<Long> protocolordercode = new ArrayList<>();
