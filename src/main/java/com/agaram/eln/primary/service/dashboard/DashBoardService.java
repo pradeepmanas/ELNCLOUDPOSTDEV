@@ -18,6 +18,7 @@ import org.springframework.cloud.cloudfoundry.com.fasterxml.jackson.databind.Obj
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
@@ -77,12 +78,15 @@ import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepositor
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
-import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 
+@EnableScheduling
 @Service
 public class DashBoardService {
 	@Autowired
 	private LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
+	
+//	@Autowired
+//    private DataSourceConfigRepository configRepo;
 
 	@Autowired
 	private LSactivityRepository lsactivityRepository;
@@ -114,6 +118,9 @@ public class DashBoardService {
 	@Autowired
 	private LSuserMasterRepository lsuserMasterRepository;
 
+//	@Autowired
+//	private LsresultforordersRepository lsresultforordersRepository;
+	
 	@Autowired
 	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
 
@@ -156,8 +163,8 @@ public class DashBoardService {
 	@Autowired
 	private LsprotocolOrderStructureRepository lsprotocolorderStructurerepository;
 	
-	@Autowired
-	private InstrumentService instrumentService;
+//	@Autowired
+//	private InstrumentService instrumentService;
 	
 	@Autowired
 	private LSsheetfolderfilesRepository lssheetfolderfilesRepository;
@@ -173,6 +180,11 @@ public class DashBoardService {
 	
 	@Autowired 
 	private LsActiveWidgetsRepository lsActiveWidgetsRepository;
+	
+//	@Autowired
+//	private NotificationRepository notificationRepository;
+	
+//	private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
 
 	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser) {
 
@@ -711,7 +723,7 @@ public class DashBoardService {
 			long countforsample = 0L;
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = lstsample1.size();
-			List<Logilabordermaster> lstorderobj = new ArrayList<Logilabordermaster>();
+//			List<Logilabordermaster> lstorderobj = new ArrayList<Logilabordermaster>();
 
 			if (lstproject != null && lstproject.size() > 0) {
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
@@ -1205,7 +1217,7 @@ public class DashBoardService {
 		List<Logilabordermaster> lstorderobj = new ArrayList<Logilabordermaster>();
 		Map<String, Object> mapOrders = new HashMap<>();
 		long count = 0;
-		long countforsample = 0L;
+//		long countforsample = 0L;
 		int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 		int totalSamples = lstsample1.size();
 		if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
@@ -1655,7 +1667,7 @@ public class DashBoardService {
 		Integer testcode = objuser.getTestcode();
 //		List<LSsamplefile> lssamplefile = lssamplefileRepository.findByprocessed(1);
 		Pageable pageable = new PageRequest(objuser.getPagesize(), objuser.getPageperorder());
-		long count = 0;
+//		long count = 0;
 		List<LSprojectmaster> lstproject = objuser.getLstproject();
 		List<Logilabordermaster> lstorders = new ArrayList<Logilabordermaster>();
 		List<LSworkflow> lstworkflow = objuser.getLstworkflow();
@@ -1673,7 +1685,7 @@ public class DashBoardService {
 		}
 //		long count = 0;
 
-		long countforsample = 0L;
+//		long countforsample = 0L;
 
 		int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 

@@ -248,8 +248,8 @@ public class FileController {
 	}
 
 	@PostMapping("/ValidateNotification")
-	public Notification ValidateNotification(@RequestBody Notification objnotification) throws ParseException {
-		return fileService.ValidateNotification(objnotification);
+	public void ValidateNotification(@RequestBody Notification objnotification) throws ParseException {
+		fileService.ValidateNotification(objnotification);
 	}
 
 	@PostMapping("/UploadLimsFile")

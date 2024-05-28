@@ -3,6 +3,8 @@ package com.agaram.eln;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -16,6 +18,7 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 
 import com.agaram.eln.primary.viewResolver.ExcelViewResolver;
 import com.agaram.eln.primary.viewResolver.PdfViewResolver;
+import com.agaram.eln.primary.service.starterRunner.StarterRunner;
 import com.agaram.eln.primary.viewResolver.CsvViewResolver; 
 
 @SpringBootApplication
@@ -24,7 +27,7 @@ import com.agaram.eln.primary.viewResolver.CsvViewResolver;
 //@EntityScan({"com.agaram.eln.*"})
 //@EnableJpaRepositories({"com.agaram.eln.*"})
 //@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-public class Application extends SpringBootServletInitializer implements WebApplicationInitializer {
+public class Application extends SpringBootServletInitializer implements WebApplicationInitializer, CommandLineRunner {
 
 	public static int initTimer = 0;
 	public static String SDMSDB = "";
@@ -83,6 +86,14 @@ public class Application extends SpringBootServletInitializer implements WebAppl
 	    @Bean
 	    public ViewResolver pdfViewResolver() {
 	        return new PdfViewResolver();
-	    }	 
+	    }
+	    
+	    @Autowired
+	    private StarterRunner starterRunner;
+
+		@Override
+		public void run(String... args) throws Exception {
+			starterRunner.executeOnStartup();
+		}	 
 }
 

@@ -6,11 +6,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -1742,9 +1749,83 @@ public class FileService {
 		return true;
 	}
 
-	public Notification ValidateNotification(Notification objnotification) throws ParseException {
+	public void ValidateNotification(Notification objnotification) throws ParseException {
 		NotificationRepository.save(objnotification);
-		return null;
+		scheduleNotification(objnotification);
+	}
+	
+	public void scheduleNotification(Notification objnotification) throws ParseException {
+		
+		Date cautionDate = objnotification.getCautiondate();
+		Instant caution = cautionDate.toInstant();
+		
+		LocalDateTime cautionTime = LocalDateTime.ofInstant(caution, ZoneId.systemDefault());
+		
+		LocalDateTime currentTime = LocalDateTime.now();
+		
+		if(cautionTime.isAfter(currentTime) && objnotification != null) {
+			Duration duration = Duration.between(currentTime, cautionTime);
+			long delay = duration.toMillis();
+			scheduleNotification(objnotification ,delay);
+		}
+		
+	}
+	
+	private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
+	
+	private void scheduleNotification(Notification objNotification , long delay) {
+		TimerTask task = new TimerTask() {
+			@SuppressWarnings("unlikely-arg-type")
+			public void run() {
+				try {
+					executeNotificationPop(objNotification);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				scheduledTasks.remove(objNotification.getNotificationid());
+			}
+		};
+		Timer timer = new Timer();
+		timer.schedule(task, delay);
+		scheduledTasks.put(Integer.parseInt(objNotification.getNotificationid().toString()), task);
+	}
+
+	protected void executeNotificationPop(Notification objNotification) throws ParseException {
+		LocalDateTime localDateTime = LocalDateTime.now();
+	    Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+		Date cDate = Date.from(instant);
+		
+		objNotification.setCurrentdate(cDate);
+		
+		loginnotification(objNotification);
+	}
+	
+	public void loginnotification(Notification objNotification) throws ParseException {
+
+		LSuserMaster LSuserMaster = new LSuserMaster();
+		LSuserMaster.setUsercode(objNotification.getUsercode());
+
+		LSnotification LSnotification = new LSnotification();
+
+		String Details = "{\"ordercode\" :\"" + objNotification.getOrderid() + "\",\"order\" :\""
+				+ objNotification.getBatchid() + "\",\"description\":\"" + objNotification.getDescription()
+				+ "\",\"screen\":\"" + objNotification.getScreen() + "\"}";
+
+		LSnotification.setIsnewnotification(1);
+		LSnotification.setNotification("CAUTIONALERT");
+		LSnotification.setNotificationdate(objNotification.getCurrentdate());
+		LSnotification.setNotificationdetils(Details);
+		LSnotification.setNotificationpath(objNotification.getScreen().equals("Sheet Order") ? "/registertask" : "/Protocolorder");
+		LSnotification.setNotifationfrom(LSuserMaster);
+		LSnotification.setNotifationto(LSuserMaster);
+		LSnotification.setRepositorycode(0);
+		LSnotification.setRepositorydatacode(0);
+		LSnotification.setNotificationfor(1);
+
+		objNotification.setStatus(0);
+		LSnotificationRepository.save(LSnotification);
+		NotificationRepository.save(objNotification);
+		
 	}
 
 	public Map<String, Object> UploadLimsFile(MultipartFile file, Long batchcode, String filename) throws IOException {

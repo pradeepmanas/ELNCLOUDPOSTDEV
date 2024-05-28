@@ -17,4 +17,5 @@ public interface ReportfileRepository extends JpaRepository<lsreportfile, Long>{
 			+ "lsreportfile where id in (?1) ORDER BY id DESC", nativeQuery=true)
 	List<lsreportfile> getReportFile(List<Integer> sampleFileCodeList1);
 
+
 }

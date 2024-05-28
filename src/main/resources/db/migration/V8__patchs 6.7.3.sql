@@ -737,3 +737,7 @@ CREATE TABLE IF NOT EXISTS public.lsresultfororders
 WITH (OIDS = FALSE)TABLESPACE pg_default;
 
 ALTER TABLE public.lsresultfororders OWNER to postgres;
+
+ALTER TABLE IF Exists lsfile ADD Column IF NOT EXISTS resultsheet integer;
+
+update lsfile set resultsheet = 0 where resultsheet is null;
