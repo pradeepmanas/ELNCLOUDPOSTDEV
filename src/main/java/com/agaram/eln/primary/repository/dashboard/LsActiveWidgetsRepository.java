@@ -16,7 +16,7 @@ public interface LsActiveWidgetsRepository extends JpaRepository<LsActiveWidgets
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM lsactivewidgets WHERE activewidgetscode in (SELECT activewidgetscode FROM lsactivewidgets order by activewidgetscode desc OFFSET ?1 ) and userId=?2", nativeQuery = true)
+    @Query(value = "DELETE FROM lsactivewidgets WHERE activewidgetscode in (SELECT activewidgetscode FROM lsactivewidgets where userId=?2 order by activewidgetscode desc OFFSET ?1 ) and userId=?2", nativeQuery = true)
     void deleteCustomRows(int limit, Integer integer);
     
     @Transactional
