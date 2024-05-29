@@ -4913,7 +4913,7 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 					}
 				}
 
-	            lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndOrdercancellNot(lstproject, filetype, lSfile,1);
+	            lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndOrdercancellIsNull(lstproject, filetype, lSfile);
 
 	            int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 	            int totalSamples = lstsample.size();

@@ -41,7 +41,7 @@ public class StarterRunner {
 
     public void executeOnStartup() throws SQLException {
         System.out.println("Task executed on startup");
-//        checkAndScheduleReminders();
+        checkAndScheduleReminders();
     }
 
     public Notification mapResultSetToNotification(ResultSet rs) throws SQLException {

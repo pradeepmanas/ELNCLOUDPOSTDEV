@@ -2841,4 +2841,7 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 
 	List<LSlogilablimsorderdetail> findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndOrdercancellNot(
 			List<LSprojectmaster> lstproject, int filetype, LSfile lSfile, int i);
+
+	List<LSlogilablimsorderdetail> findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndOrdercancellIsNull(
+			List<LSprojectmaster> lstproject, int filetype, LSfile lSfile);
 	}

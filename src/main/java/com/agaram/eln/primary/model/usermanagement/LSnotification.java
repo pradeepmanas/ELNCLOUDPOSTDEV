@@ -12,13 +12,16 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.GenericGenerator;
+
 @Entity
 @Table(name = "LSnotification")
 public class LSnotification {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO,generator="seq")
 	@Column(columnDefinition = "numeric(17,0)",name = "notificationcode") 
+	@GenericGenerator(name = "seq", strategy="increment")
 	private Long notificationcode;
 	
 	@Column(columnDefinition = "varchar(120)")
@@ -40,7 +43,6 @@ public class LSnotification {
 	
 	private int notificationfor;
 	
-//	@Column(columnDefinition = "date",name = "CreatedTimeStamp")
 	@Column(name = "CreatedTimeStamp")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date notificationdate;
