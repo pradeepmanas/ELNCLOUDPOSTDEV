@@ -66,15 +66,19 @@ public class StarterRunner {
     public void checkAndScheduleReminders() throws SQLException {
         List<Datasourcemaster> configList = configRepo.findByinitialize(true);
 
+        // Get current date and time
         LocalDateTime localDateTime = LocalDateTime.now();
         Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
 
-        Date fromDate = Date.from(instant);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(fromDate);
-        calendar.add(Calendar.HOUR_OF_DAY, 1);
-        Date toDate = calendar.getTime();
+        // Convert to java.sql.Date
+        Date toDate = Date.from(instant);
 
+        // Get the current date and subtract one day
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(toDate);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);  // Subtract one day
+        Date fromDate = new Date(calendar.getTimeInMillis());
+        
         for (Datasourcemaster objData : configList) {
             HikariConfig configuration = createHikariConfig(objData);
             try (HikariDataSource dataSource = new HikariDataSource(configuration);
@@ -114,7 +118,7 @@ public class StarterRunner {
         return configuration;
     }
 
-    private void scheduleNotificationIfDue(Notification objNotification, HikariConfig configuration) {
+    private void scheduleNotificationIfDue(Notification objNotification, HikariConfig configuration) throws SQLException {
         Date cautionDate = objNotification.getCautiondate();
         Instant caution = cautionDate.toInstant();
         LocalDateTime cautionTime = LocalDateTime.ofInstant(caution, ZoneId.systemDefault());
@@ -124,6 +128,8 @@ public class StarterRunner {
             Duration duration = Duration.between(currentTime, cautionTime);
             long delay = duration.toMillis();
             scheduleNotification(objNotification, delay, configuration);
+        }else {
+        	executeNotificationPop(objNotification, configuration);
         }
     }
 
@@ -158,10 +164,10 @@ public class StarterRunner {
                     + "\",\"screen\":\"" + notification.getScreen() + "\"}";
             String path = notification.getScreen().equals("Sheet Order") ? "/registertask" : "/Protocolorder";
 
-            String updateString = "INSERT INTO public.lsnotification(notificationcode, isnewnotification, notification, " +
+            String updateString = "INSERT INTO public.lsnotification(isnewnotification, notification, " +
                     "createdtimestamp, notificationdetils, notificationpath, notifationfrom_usercode, " +
-                    "notifationto_usercode, repositorycode, repositorydatacode, notificationfor) VALUES (2, 1, 'CAUTIONALERT', ?, ?, ?, ?, ?, 0, 0, 1); " +
-                    "UPDATE Notification SET status = 1 WHERE notificationid = ?";
+                    "notifationto_usercode, repositorycode, repositorydatacode, notificationfor) VALUES ( 1, 'CAUTIONALERT', ?, ?, ?, ?, ?, 0, 0, 1); " +
+                    "UPDATE Notification SET status = 0 WHERE notificationid = ?";
 
             try (PreparedStatement pst = con.prepareStatement(updateString)) {
                 pst.setTimestamp(1, new Timestamp(cDate.getTime()));
@@ -177,177 +183,4 @@ public class StarterRunner {
             e.printStackTrace(); // Consider logging this properly
         }
     }
-	
-//	@Autowired
-//    private DataSourceConfigRepository configRepo;
-//	
-//	private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
-//
-//	public void executeOnStartup() throws SQLException {
-//		System.out.println("Task executed on startup");
-//		checkAndScheduleReminders();
-//	}
-//
-//	public Notification mapResultSetToNotification(ResultSet rs) throws SQLException {
-//		Notification notification = new Notification();
-//		notification.setNotificationid(rs.getLong("notificationid"));
-//		notification.setAddedon(rs.getTimestamp("addedon")); // Using getTimestamp for Date fields
-//		notification.setOrderid(rs.getLong("orderid"));
-//		notification.setAddedby(rs.getString("addedby"));
-//		notification.setDuedate(rs.getTimestamp("duedate")); // Using getTimestamp for Date fields
-//		notification.setIntervals(rs.getString("intervals"));
-//		notification.setScreen(rs.getString("screen"));
-//		notification.setCautiondate(rs.getTimestamp("cautiondate")); // Using getTimestamp for Date fields
-//		notification.setDescription(rs.getString("description"));
-//		notification.setUsercode(rs.getInt("usercode"));
-//		notification.setStatus(rs.getInt("status"));
-//		notification.setCurrentdate(rs.getTimestamp("currentdate")); // Using getTimestamp for Date fields
-//		notification.setBatchid(rs.getString("batchid"));
-//
-//		return notification;
-//	}
-//
-////	@Scheduled(fixedRate = 36000, initialDelay = 1000)
-//	public void checkAndScheduleReminders() throws SQLException {
-//
-//		List<Datasourcemaster> configList = configRepo.findByinitialize(true);
-//
-//		LocalDateTime localDateTime = LocalDateTime.now();
-//		Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-//
-//		Date fromDate = Date.from(instant);
-//		Date toDate = Date.from(instant);
-//
-//		Calendar calendar1 = Calendar.getInstance();
-//		calendar1.setTime(fromDate);
-//		fromDate = calendar1.getTime();
-//
-//		Calendar calendar2 = Calendar.getInstance();
-//		calendar2.setTime(toDate);
-//		calendar2.add(Calendar.HOUR_OF_DAY, 1);
-//		toDate = calendar2.getTime();
-//
-//		if (!configList.isEmpty()) {
-//
-//			for (Datasourcemaster objData : configList) {
-//
-//				HikariConfig configuration = new HikariConfig();
-//				configuration.setDriverClassName("org.postgresql.Driver");
-//				configuration.setJdbcUrl(objData.getUrl());
-//				configuration.setUsername(objData.getUsername());
-//				configuration.setPassword(objData.getPassword());
-//				configuration.setMaximumPoolSize(10);
-//				configuration.setPoolName(objData.getUrl());
-//				configuration.setMinimumIdle(5);
-//				configuration.setConnectionTestQuery("SELECT 1");
-//				configuration.setConnectionTimeout(300000);
-//				configuration.setConnectionTimeout(120000);
-//				configuration.setLeakDetectionThreshold(300000);
-//
-//				// Like this you can configure multiple properties here
-//				HikariDataSource dataSource = new HikariDataSource(configuration);
-//
-//				Connection con = null;
-//
-//				try {
-//					con = dataSource.getConnection();
-//
-//					String updateString = "SELECT * FROM Notification WHERE status = 1 and cautiondate BETWEEN '"
-//							+ fromDate + "' AND '" + toDate + "';";
-//
-//					Statement st = con.createStatement();
-//
-//					ResultSet rs = st.executeQuery(updateString);
-//
-//					while (rs.next()) {
-//
-//						Notification objNotification = mapResultSetToNotification(rs);
-//
-//						Date cautionDate = objNotification.getCautiondate();
-//						Instant caution = cautionDate.toInstant();
-//
-//						LocalDateTime cautionTime = LocalDateTime.ofInstant(caution, ZoneId.systemDefault());
-//
-//						LocalDateTime currentTime = LocalDateTime.now();
-//
-//						if (cautionTime.isAfter(currentTime) && rs != null) {
-//							Duration duration = Duration.between(currentTime, cautionTime);
-//							long delay = duration.toMillis();
-//							scheduleNotification(objNotification, delay, configuration);
-//						}
-//					}
-//
-//					con.close();
-//					dataSource.close();
-//					dataSource = null;
-//				} catch (SQLException e) {
-//
-//				} finally {
-//					if (con != null) {
-//						try {
-//							con.close();
-//						} catch (SQLException e) {
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-//
-//	private void scheduleNotification(Notification objNotification, long delay, HikariConfig configuration) {
-//		TimerTask task = new TimerTask() {
-//			@SuppressWarnings("unlikely-arg-type")
-//			public void run() {
-//				try {
-//					executeNotificationPop(objNotification, configuration);
-//				} catch (SQLException e) {
-//					e.printStackTrace();
-//				}
-//				scheduledTasks.remove(objNotification.getNotificationid());
-//			}
-//		};
-//		Timer timer = new Timer();
-//		timer.schedule(task, 5000);
-//		scheduledTasks.put(Integer.parseInt(objNotification.getNotificationid().toString()), task);
-//	}
-//
-//	public void executeNotificationPop(Notification notification, HikariConfig configuration) throws SQLException {
-//
-//		// Like this you can configure multiple properties here
-//		HikariDataSource dataSource = new HikariDataSource(configuration);
-//
-//		LocalDateTime localDateTime = LocalDateTime.now();
-//		Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-//
-//		Date cDate = Date.from(instant);
-//
-//		Connection con = null;
-//
-//		try {
-//			con = dataSource.getConnection();
-//
-//			String Details = "{\"ordercode\" :\"" + notification.getOrderid() + "\",\"order\" :\""
-//					+ notification.getBatchid() + "\",\"description\":\"" + notification.getDescription()
-//					+ "\",\"screen\":\"" + notification.getScreen() + "\"}";
-//			String path = notification.getScreen().equals("Sheet Order") ? "/registertask" : "/Protocolorder";
-//
-//			String updateString = "INSERT INTO public.lsnotification(\r\n"
-//					+ "notificationcode, isnewnotification, notification, createdtimestamp, notificationdetils, notificationpath, "
-//					+ "notifationfrom_usercode, notifationto_usercode, repositorycode, repositorydatacode, notificationfor)\r\n"
-//					+ "	VALUES ( 2, 1, 'CAUTIONALERT', '" + cDate + "', '" + Details + "', '" + path + "', "
-//					+ notification.getUsercode() + ", " + notification.getUsercode() + ", 0, 0, 1); \n";
-//
-//			updateString += "update Notification set status = 1 where notificationid = "
-//					+ notification.getNotificationid();
-//
-//			Statement st = con.createStatement();
-//
-//			st.execute(updateString);
-//
-//			dataSource.close();
-//			dataSource = null;
-//		} catch (SQLException e) {
-//
-//		}
-//	}
 }

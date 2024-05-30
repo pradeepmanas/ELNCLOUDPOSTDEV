@@ -8344,18 +8344,18 @@ public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabpro
 			}
 			lsprotocolorderstephistoryRepository.save(objuser);
 			
-			if(objuser.getBatchcode() != null) {
-				if(objuser.getAction().contains("Processed")) {
-					LsActiveWidgets lsActiveWidgets = new LsActiveWidgets();
-					lsActiveWidgets.setActivewidgetsdetails(objuser.getBatchid());
-					lsActiveWidgets.setActivewidgetsdetailscode(objuser.getBatchcode());
-					lsActiveWidgets.setActivityType("Open");
-					lsActiveWidgets.setScreenname("Sheet_Order");
-					lsActiveWidgets.setUserId(objuser.getCreateby().getUsercode());
-					lsActiveWidgets.setActivedatatimestamp(commonfunction.getCurrentUtcTime());
-					lsActiveWidgetsRepository.save(lsActiveWidgets);
-				}
-			}
+//			if(objuser.getBatchcode() != null) {
+//				if(objuser.getAction().contains("Processed")||objuser.getAction().contains("Opened")) {
+//					LsActiveWidgets lsActiveWidgets = new LsActiveWidgets();
+//					lsActiveWidgets.setActivewidgetsdetails(objuser.getBatchid());
+//					lsActiveWidgets.setActivewidgetsdetailscode(objuser.getBatchcode());
+//					lsActiveWidgets.setActivityType("Open");
+//					lsActiveWidgets.setScreenname("Sheet_Order");
+//					lsActiveWidgets.setUserId(objuser.getCreateby().getUsercode());
+//					lsActiveWidgets.setActivedatatimestamp(commonfunction.getCurrentUtcTime());
+//					lsActiveWidgetsRepository.save(lsActiveWidgets);
+//				}
+//			}
 		}
 		return objuser;
 	}

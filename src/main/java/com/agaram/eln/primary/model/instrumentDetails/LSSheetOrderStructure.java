@@ -44,8 +44,7 @@ public class LSSheetOrderStructure {
 	private boolean edit;
 	private Integer length;
 	private Long parentdircode;
-	
-	
+
 	private Long floatvalues;
 
 	public Long getFloatvalues() {
@@ -56,14 +55,12 @@ public class LSSheetOrderStructure {
 		this.floatvalues = floatvalues;
 	}
 
-
 	@Transient
 	private Long dircodetomove;
 
-	
 	@Transient
 	private Integer filetype;
-	
+
 	@ManyToOne
 	public LSuserMaster createdby;
 
@@ -74,28 +71,28 @@ public class LSSheetOrderStructure {
 	private LSSiteMaster sitemaster;
 
 	private Integer viewoption;
-	
+
 	@Transient
 	private List<Logilaborders> lsorderitems;
-	
+
 	@Transient
 	LoggedUser objuser;
-	
+
 	@Transient
 	private LSuserMaster lsuserMaster;
-	
+
 	@Transient
 	private String teamname;
-	
+
 	@Transient
 	private List<LSuserMaster> lstuserMaster;
-	
+
 	@Transient
 	private Integer ismultitenant;
-	
+
 	@Transient
 	private SearchCriteria searchCriteria;
-	
+
 	public List<LSuserMaster> getLstuserMaster() {
 		return lstuserMaster;
 	}
@@ -103,7 +100,7 @@ public class LSSheetOrderStructure {
 	public void setLstuserMaster(List<LSuserMaster> lstuserMaster) {
 		this.lstuserMaster = lstuserMaster;
 	}
-	
+
 	public String getTeamname() {
 		return teamname;
 	}
@@ -325,5 +322,4 @@ public class LSSheetOrderStructure {
 		this.searchCriteria = searchCriteria;
 	}
 
-	
 }

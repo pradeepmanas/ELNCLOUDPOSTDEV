@@ -741,3 +741,35 @@ ALTER TABLE public.lsresultfororders OWNER to postgres;
 ALTER TABLE IF Exists lsfile ADD Column IF NOT EXISTS resultsheet integer;
 
 update lsfile set resultsheet = 0 where resultsheet is null;
+
+DO
+$do$
+DECLARE
+    _kind "char";
+    _max_notificationcode INT;
+BEGIN
+    -- Check if the sequence exists
+    SELECT relkind
+    INTO   _kind
+    FROM   pg_class
+    WHERE  relname = 'notification_sequence';
+
+    IF NOT FOUND THEN
+        -- Get the maximum notificationcode value
+        SELECT COALESCE(MAX(notificationcode), 0) + 10
+        INTO   _max_notificationcode
+        FROM   lsnotification
+
+        -- Create the sequence starting from the max notificationcode value
+        EXECUTE format('CREATE SEQUENCE notification_sequence START WITH %s', _max_notificationcode);
+    ELSIF _kind = 'S' THEN  
+        -- Sequence exists, do nothing
+        RAISE NOTICE 'Sequence already exists, doing nothing.';
+    ELSE             
+        -- Something else with the same name exists, handle it appropriately
+        RAISE EXCEPTION 'A non-sequence object with the name "notification_sequence" already exists.';
+    END IF;
+END
+$do$;
+
+ALTER TABLE lsnotification ALTER COLUMN notificationcode SET DEFAULT nextval('notification_sequence');
