@@ -758,7 +758,7 @@ BEGIN
         -- Get the maximum notificationcode value
         SELECT COALESCE(MAX(notificationcode), 0) + 10
         INTO   _max_notificationcode
-        FROM   lsnotification
+        FROM   lsnotification;
 
         -- Create the sequence starting from the max notificationcode value
         EXECUTE format('CREATE SEQUENCE notification_sequence START WITH %s', _max_notificationcode);
