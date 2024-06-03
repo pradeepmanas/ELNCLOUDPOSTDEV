@@ -220,7 +220,7 @@
     <artifactId>spring-test</artifactId>
 </dependency>
 
-    	<dependency>
+    	<!--<dependency>
             <groupId>com.groupdocs</groupId>
             <artifactId>groupdocs-annotation</artifactId>
             <version>20.2</version>
@@ -284,7 +284,7 @@
             <groupId>com.groupdocs</groupId>
             <artifactId>groupdocs-watermark</artifactId>
             <version>20.5</version>
-        </dependency>
+        </dependency>-->
 	</dependencies>
 
 	<build>

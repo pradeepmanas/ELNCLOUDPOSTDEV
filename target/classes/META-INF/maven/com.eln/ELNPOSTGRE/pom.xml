@@ -203,7 +203,13 @@
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
 			<version>5.5.13.1</version>
-		</dependency>
+		</dependency>	
+			<!-- Aspose Library -->	
+	   <dependency>
+            <groupId>com.aspose</groupId>
+            <artifactId>aspose-pdf</artifactId>
+            <version>22.12</version>
+        </dependency> 
 		<dependency>
 		    <groupId>com.google.code.gson</groupId>
 		    <artifactId>gson</artifactId>
@@ -213,6 +219,72 @@
     <groupId>org.springframework</groupId>
     <artifactId>spring-test</artifactId>
 </dependency>
+
+    	<!--<dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-annotation</artifactId>
+            <version>20.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-assembly</artifactId>
+            <version>20.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-comparison</artifactId>
+            <version>20.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-conversion</artifactId>
+            <version>20.10.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-editor</artifactId>
+            <version>20.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-merger</artifactId>
+            <version>20.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-metadata</artifactId>
+            <version>20.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-parser</artifactId>
+            <version>20.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-redaction</artifactId>
+            <version>20.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-search</artifactId>
+            <version>20.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-signature</artifactId>
+            <version>20.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-viewer</artifactId>
+            <version>20.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-watermark</artifactId>
+            <version>20.5</version>
+        </dependency>-->
 	</dependencies>
 
 	<build>
@@ -260,7 +332,57 @@
 			  </configuration>
 			</plugin>-->
 		</plugins>
-
 	</build>
+	 <repositories>   
+        <repository>
+            <id>GroupDocsJavaAPI</id>
+            <name>GroupDocs Java API</name>
+            <url>https://repository.groupdocs.com/repo/</url>
+        </repository>
+        <repository>
+            <id>AsposeJavaAPI</id>
+            <name>Aspose Java API</name>
+            <url>https://repository.aspose.com/repo/</url>
+        </repository>
+    </repositories>
+<!-- <repositories>    -->
+	<!-- <repository>
+		<id>spring-snapshots</id>
+		<name>Spring Snapshots</name>
+		<url>https://repo.spring.io/snapshot</url>
+		<releases>
+			<enabled>false</enabled>
+		</releases>
+	</repository>
+		
+	<repository>
+            <id>AsposeJavaAPI</id>
+            <name>Aspose Java API</name>
+            <url>https://releases.aspose.com/java/repo/</url>
+    </repository>
+    <repository>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <id>central</id>
+        <name>libs-release</name>
+        <url>http://maven.aspose.com/artifactory/libs-release</url>
+    </repository> -->
+    
+    <!-- <repository>
+         <id>GroupDocsJavaAPI</id>
+         <name>GroupDocs Java API</name>
+         <url>http://repository.groupdocs.com/repo/</url>
+    </repository> -->
+
+ <!-- <repository>
+    
+   <snapshots />
+        <id>snapshots</id>
+        <name>libs-snapshot</name>
+        <url>http://maven.aspose.com/artifactory/libs-snapshot</url>
+    </repository> -->
+		
+ <!-- </repositories>    -->
 
 </project>
