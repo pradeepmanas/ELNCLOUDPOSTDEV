@@ -215,12 +215,8 @@
 		    <artifactId>gson</artifactId>
 		    <version>2.8.5</version>
 		</dependency>
-				<dependency>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-test</artifactId>
-</dependency>
 
-	 <dependency>
+		<dependency>
             <groupId>com.groupdocs</groupId>
             <artifactId>groupdocs-annotation</artifactId>
             <version>20.2</version>
@@ -285,7 +281,10 @@
             <artifactId>groupdocs-watermark</artifactId>
             <version>20.5</version>
         </dependency>
-	</dependencies>
+				<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-test</artifactId>
+</dependency>
 	</dependencies>
 
 	<build>
@@ -357,11 +356,12 @@
         <name>libs-release</name>
         <url>http://maven.aspose.com/artifactory/libs-release</url>
     </repository>
-    <repository>
+  <repository>
          <id>GroupDocsJavaAPI</id>
          <name>GroupDocs Java API</name>
          <url>http://repository.groupdocs.com/repo/</url>
     </repository>
+
  <repository>
     
    <snapshots />
