@@ -144,22 +144,7 @@ public class HibernateConfig {
 		        databasePopulator.addScript(new ClassPathResource("import_usermaster_ls.sql"));
 	        }
 	
-	        if(env.getProperty("spring.jpa.hibernate.ddl-auto") != null)
-	        {
-	        	if(env.getProperty("spring.jpa.hibernate.ddl-auto")=="create"
-	        		&& enableinitialize)
-		        {
-	        		databasePopulator.addScript(new ClassPathResource("import_patchs_ls.sql"));
-		        }
-	        	else 
-		        {
-		        	databasePopulator.addScript(new ClassPathResource("import_patchs_ls.sql"));
-		        }
-	        }
-	        else 
-	        {
-	        	databasePopulator.addScript(new ClassPathResource("import_patchs_ls.sql"));
-	        }
+	        databasePopulator.addScript(new ClassPathResource("import_patchs_ls.sql"));
 	        
 	        dataSourceInitializer.setDatabasePopulator(databasePopulator);
 	        dataSourceInitializer.setEnabled(true);

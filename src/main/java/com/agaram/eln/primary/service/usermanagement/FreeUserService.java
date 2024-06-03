@@ -171,8 +171,8 @@ public class FreeUserService {
 			
 			
 			
-			String unifieduser = objuser.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "") + "u"
-					+ objuser.getUsercode() + "s" + site.getSitecode() + objuser.getUnifieduserid();
+			String unifieduser = objuser.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "") +
+					+ site.getSitecode() + "@elnlite";
 
 			objuser.setUnifieduserid(unifieduser);
 			try {

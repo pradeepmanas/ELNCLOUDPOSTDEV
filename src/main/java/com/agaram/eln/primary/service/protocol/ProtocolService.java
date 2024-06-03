@@ -2,8 +2,11 @@ package com.agaram.eln.primary.service.protocol;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
@@ -30,6 +33,7 @@ import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -52,6 +56,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.config.CustomMultipartFile;
+import com.agaram.eln.primary.commonfunction.Constants;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
@@ -201,6 +206,12 @@ import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservic
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.material.TransactionService;
 import com.google.gson.Gson;
+import com.groupdocs.assembly.License;
+import com.groupdocs.editor.EditableDocument;
+import com.groupdocs.editor.Editor;
+import com.groupdocs.editor.formats.WordProcessingFormats;
+import com.groupdocs.editor.options.WordProcessingEditOptions;
+import com.groupdocs.editor.options.WordProcessingSaveOptions;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.OperationContext;
 import com.microsoft.azure.storage.StorageException;
@@ -3583,15 +3594,26 @@ public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabpro
 //					}
 						GridFSDBFile data = gridFsTemplate.findOne(new Query(Criteria.where("filename")
 								.is("protocol_" + lsprotocolmasterobj.getProtocolmastercode())));
-						if (data == null && lSlogilabprotocoldetail.getContent() != null
-								&& !lSlogilabprotocoldetail.getContent().isEmpty()) {
+						if(data == null && lSlogilabprotocoldetail.getContent() != null && !lSlogilabprotocoldetail.getContent().isEmpty()) {
 							JSONObject protocolJson = new JSONObject(lSlogilabprotocoldetail.getContent());
 							protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
 							Content = protocolJson.toString();
 						} else {
 							Content = new BufferedReader(
 									new InputStreamReader(data.getInputStream(), StandardCharsets.UTF_8)).lines()
-									.collect(Collectors.joining("\n"));
+									.collect(Collectors.joining("\n"));								
+						}
+						
+						if (gridFsTemplate.findOne(new Query(Criteria.where("filename")
+								.is("protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode()))) == null) {
+							try {
+								gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
+										"protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode(),
+										StandardCharsets.UTF_16);
+							} catch (Exception e) {
+								System.out.println("error protocoldata lslogilabprotocoldetail content update mongodb"
+										+ lSlogilabprotocoldetail.getProtocolordercode());
+							}
 						}
 					}
 					mapObj.put("protocolData", Content);
@@ -9414,5 +9436,123 @@ public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabpro
 		}
 		LSlogilabprotocoldetailRepository.save(logiobj);
 		return logiobj;	
+	}
+	
+	static void saveNewDocument(InputStream document)
+    {
+        try /*JAVA: was using*/
+        {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = document.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            document.close();
+            out.close();
+        } catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+    
+	public ByteArrayInputStream Exportwithgroupdocs(LSprotocolmaster protocol) throws IOException {
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		objMap.put("protocolmastercode", protocol.getProtocolmastercode());
+		objMap.put("ismultitenant", 1);
+		objMap = getProtocolStepLst(objMap);
+		
+//		String licensePath = Constants.LICENSE;
+		
+		String documentPath = Constants.SAMPLE_DOCX;
+		
+		byte[] data = null;
+        try {
+        	 
+        	
+//        	License license = new License();
+//        	license.setLicense(licensePath);
+        	String outputFilePath = System.getProperty("java.io.tmpdir") + "\\"+protocol.getProtocolmastername()+".docx";
+        	File.createTempFile(protocol.getProtocolmastername(), ".docx", new File(System.getProperty("java.io.tmpdir")));
+        	
+        	Editor editor = new Editor(outputFilePath); //passing path to the constructor, default WordProcessingLoadOptions will be applied automatically
+        	
+        	WordProcessingEditOptions editOptions = new WordProcessingEditOptions();
+        	editOptions.setEnableLanguageInformation(true);
+
+        	editor.edit(editOptions);
+        	EditableDocument afterEdit = EditableDocument.fromMarkup(formhtmldataforprotocols(objMap), null);
+        	
+//        			Constants.getOutputDirectoryPath("newdocdes.docx");
+      	
+        	WordProcessingSaveOptions saveOptions = new WordProcessingSaveOptions(WordProcessingFormats.Docx);
+        	editor.save(afterEdit, outputFilePath, saveOptions);
+        	
+//        	File targetFile = new File(System.getProperty("java.io.tmpdir") + "\\" + "newdocdes.docx");
+//        	try (FileInputStream inputStream = new FileInputStream(targetFile)) {
+//                inputStream.read(data);
+//            }
+
+        	data = FileUtils.readFileToByteArray(new File(System.getProperty("java.io.tmpdir") + "\\" + protocol.getProtocolmastername()+".docx"));
+//        			Files.readAllBytes(System.getProperty("java.io.tmpdir") + "\\" + "newdocdes.docx");
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        ByteArrayInputStream bis = new ByteArrayInputStream(data);
+        
+		return bis;
+	}
+	
+	public String formhtmldataforprotocols(Map<String, Object> protocoldatamap)
+	{
+		String editorvalue ="";
+		
+        
+        try {
+        	 
+        	JSONObject jsonObj = new JSONObject(protocoldatamap.get("ProtocolData").toString());
+    		JSONObject obsrtactobj = jsonObj.getJSONObject("abstract");
+    		JSONArray objsection = jsonObj.getJSONArray("sections");
+    		editorvalue+= obsrtactobj.getString("value");
+        	
+        	for (Object item : objsection){
+        		JSONObject objitem = (JSONObject) item;
+        	    JSONArray objsteps = objitem.getJSONArray("steps");
+        	    for (Object stepitem : objsteps){
+        	    	JSONArray objeditors = ((JSONObject) stepitem).getJSONArray("editors");
+        	    	
+        	    	for (Object editoritem : objeditors){
+        	    		JSONObject objeditor = (JSONObject) editoritem;
+                	    
+                	    
+                	    switch (objeditor.getString("editortype")) {
+                		case "documenteditor":
+                			JSONObject objeditorvalue = objeditor.getJSONObject("value");
+                			editorvalue+= objeditorvalue.getString("data");
+                			break;
+                		
+                		default:
+                			
+                		}
+                	    
+        	    	}
+        	    }
+        	}
+        	    	
+        	editorvalue = "<html> <head><title>Validate</title></head>" + 
+        			"<body><div>"+
+        			
+        			editorvalue.replaceAll("clear: both;", "").
+        			replaceAll("text-transform: none;", "").replaceAll(" white-space: normal;", "").
+        			replaceAll("white-space: pre-wrap;", "").replaceAll("white-space: pre !important;", "")
+        			.replaceAll("white-space: nowrap;", "")+
+
+        			"</div></body></html>";
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        	
+		return editorvalue;
 	}
 }

@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.repository.protocol;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -437,49 +438,6 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	List<Logilabprotocolorders> findFirst20ByProtocolordercodeLessThanAndLsprojectmasterInOrProtocolordercodeLessThanAndDirectorycodeInOrderByProtocolordercodeDesc(
 			Long protocolordercode, List<LSprojectmaster> lstproject, Long protocolordercode2,
 			List<Long> directorycode);
-
-
-
-	List<Logilabprotocolorders> findByOrderflagAndRejectedAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInOrderByProtocolordercodeDesc(
-			String orderflag, int i, List<LSprojectmaster> lstproject, Integer protocoltype, Date fromdate, Date todate,
-			String orderflag2, int j, Integer protocoltype2, Date fromdate2, Date todate2,
-			List<LSsamplemaster> lstsample);
-
-
-	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInOrderByProtocolordercodeDesc(
-			String orderflag, LSprojectmaster lsprojectmaster, Integer protocoltype, Date fromdate, Date todate,
-			String orderflag2, Integer protocoltype2, Date fromdate2, Date todate2, List<LSsamplemaster> lstsample);
-
-
-	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInOrderByProtocolordercodeDesc(
-			String orderflag, List<LSprojectmaster> lstproject, Integer testcode, Integer protocoltype, Date fromdate,
-			Date todate, String orderflag2, Integer testcode2, Integer protocoltype2, Date fromdate2, Date todate2,
-			List<LSsamplemaster> lstsample);
-
-
-	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInOrderByProtocolordercodeDesc(
-			String orderflag, LSprojectmaster lsprojectmaster, Integer testcode, Integer protocoltype, Date fromdate,
-			Date todate, String orderflag2, Integer testcode2, Integer protocoltype2, Date fromdate2, Date todate2,
-			List<LSsamplemaster> lstsample);
-
-
-	List<Logilabprotocolorders> findByOrderflagAndRejectedAndLsprojectmasterInAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInOrderByProtocolordercodeDesc(
-			String orderflag, int i, List<LSprojectmaster> lstproject, Integer testcode, Integer protocoltype,
-			Date fromdate, Date todate, String orderflag2, int j, Integer testcode2, Integer protocoltype2,
-			Date fromdate2, Date todate2, List<LSsamplemaster> lstsample);
-
-
-	List<Logilabprotocolorders> findByOrderflagAndRejectedAndLsprojectmasterAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInOrderByProtocolordercodeDesc(
-			String orderflag, int i, LSprojectmaster lsprojectmaster, Integer protocoltype, Date fromdate, Date todate,
-			String orderflag2, int j, Integer protocoltype2, Date fromdate2, Date todate2,
-			List<LSsamplemaster> lstsample);
-
-
-	List<Logilabprotocolorders> findByOrderflagAndRejectedAndLsprojectmasterAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInOrderByProtocolordercodeDesc(
-			String orderflag, int i, LSprojectmaster lsprojectmaster, Integer testcode, Integer protocoltype,
-			Date fromdate, Date todate, String orderflag2, int j, Integer testcode2, Integer protocoltype2,
-			Date fromdate2, Date todate2, List<LSsamplemaster> lstsample);
-
 
 //	List<Logilabprotocolorders> findBySitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterIn(
 //			Integer sitecode, java.util.Date fromdate2, java.util.Date todate, List<LSprojectmaster> lstproject);
@@ -1377,19 +1335,6 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			String orderflag, List<LSprojectmaster> lstproject, Integer protocoltype, Date fromdate, Date todate);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoption(
-			String orderflag, Integer protocoltype, Date fromdate, Date todate, List<LSsamplemaster> lstsample, int i);
-
-
-	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreateby(
-			String orderflag, Integer protocoltype, Date fromdate, Date todate, List<LSsamplemaster> lstsample, int i,
-			Integer usercode);
-
-
-	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLssamplemasterInAndViewoptionAndCreatebyInOrderByProtocolordercodeDesc(
-			String orderflag, Integer protocoltype, Date fromdate, Date todate, List<LSsamplemaster> lstsample, int i,
-			List<Integer> userlist);
-
 
 	List<LSlogilabprotocoldetail> findBylsprojectmasterAndTestcodeInAndLssamplemasterIn(LSprojectmaster lsproject,
 			List<Integer> testid, List<LSsamplemaster> lssample);
@@ -1610,7 +1555,121 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 
 	@Transactional
 	List<LSlogilabprotocoldetail> findByProtocolordercodeIn(List<Long> protocolordercodeauto);
-	
+
+
+	List<Logilabprotocolorders>  findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoption(
+			String orderflag, Integer protocoltype, Date fromdate, Date todate, List<Elnmaterial> currentChunk, int i);
+
+
+	List<Logilabprotocolorders>  findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreateby(
+			String orderflag, Integer protocoltype, Date fromdate, Date todate, List<Elnmaterial> currentChunk, int i,
+			Integer usercode);
+
+
+	List<Logilabprotocolorders>  findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreatebyInOrderByProtocolordercodeDesc(
+			String orderflag, Integer protocoltype, Date fromdate, Date todate, List<Elnmaterial> currentChunk, int i,
+			List<Integer> userlist);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndRejectedAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+			String orderflag, int i, List<LSprojectmaster> lstproject, Integer protocoltype, Date fromdate, Date todate,
+			String orderflag2, int j, Integer protocoltype2, Date fromdate2, Date todate2,
+			List<Elnmaterial> currentChunk);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+			String orderflag, LSprojectmaster lsprojectmaster, Integer protocoltype, Date fromdate, Date todate,
+			String orderflag2, Integer protocoltype2, Date fromdate2, Date todate2, List<Elnmaterial> currentChunk);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+			String orderflag, List<LSprojectmaster> lstproject, Integer testcode, Integer protocoltype, Date fromdate,
+			Date todate, String orderflag2, Integer testcode2, Integer protocoltype2, Date fromdate2, Date todate2,
+			List<Elnmaterial> currentChunk);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+			String orderflag, LSprojectmaster lsprojectmaster, Integer testcode, Integer protocoltype, Date fromdate,
+			Date todate, String orderflag2, Integer testcode2, Integer protocoltype2, Date fromdate2, Date todate2,
+			List<Elnmaterial> currentChunk);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndRejectedAndLsprojectmasterInAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+			String orderflag, int i, List<LSprojectmaster> lstproject, Integer testcode, Integer protocoltype,
+			Date fromdate, Date todate, String orderflag2, int j, Integer testcode2, Integer protocoltype2,
+			Date fromdate2, Date todate2, List<Elnmaterial> currentChunk);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndRejectedAndLsprojectmasterAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+			String orderflag, int i, LSprojectmaster lsprojectmaster, Integer protocoltype, Date fromdate, Date todate,
+			String orderflag2, int j, Integer protocoltype2, Date fromdate2, Date todate2,
+			List<Elnmaterial> currentChunk);
+
+
+	List<Logilabprotocolorders> findByOrderflagAndRejectedAndLsprojectmasterAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+			String orderflag, int i, LSprojectmaster lsprojectmaster, Integer testcode, Integer protocoltype,
+			Date fromdate, Date todate, String orderflag2, int j, Integer testcode2, Integer protocoltype2,
+			Date fromdate2, Date todate2, List<Elnmaterial> currentChunk);
+
+
+	List<Logilabprotocolorders>  findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrderByProtocolordercodeDesc(
+			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype,
+			List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
+			String orderflag2, Integer protocoltype2, List<Long> directory_Code3, int k, Date fromdate3, Date todate3,
+			List<Integer> userlist, String orderflag3, Integer protocoltype3);
+
+
+	List<Logilabprotocolorders>  findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrderByProtocolordercodeDesc(
+			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype,
+			List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
+			String orderflag2, Integer protocoltype2, List<Long> directory_Code3, int k, LSuserMaster lsuserMaster2,
+			Date fromdate3, Date todate3, String orderflag3, Integer protocoltype3);
+
+
+	List<Logilabprotocolorders> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
+			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype, int j,
+			List<Long> directory_Code2, int k, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
+			String orderflag2, Integer protocoltype2, int l, List<Long> directory_Code3, int m,
+			LSuserMaster lsuserMaster2, Date fromdate3, Date todate3, String orderflag3, Integer protocoltype3, int n);
+
+
+	List<Logilabprotocolorders> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
+			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype, int j,
+			List<Long> directory_Code2, int k, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
+			String orderflag2, Integer protocoltype2, int l, List<Long> directory_Code3, int m, Date fromdate3,
+			Date todate3, List<Integer> userlist, String orderflag3, Integer protocoltype3, int n);
+
+
+	List<Logilabprotocolorders> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrderByProtocolordercodeDesc(
+			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype,
+			Integer testcode, List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2,
+			Date todate2, String orderflag2, Integer protocoltype2, Integer testcode2, List<Long> directory_Code3,
+			int k, LSuserMaster lsuserMaster2, Date fromdate3, Date todate3, String orderflag3, Integer protocoltype3,
+			Integer testcode3);
+
+
+	List<Logilabprotocolorders> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrderByProtocolordercodeDesc(
+			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype,
+			Integer testcode, List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2,
+			Date todate2, String orderflag2, Integer protocoltype2, Integer testcode2, List<Long> directory_Code3,
+			int k, Date fromdate3, Date todate3, List<Integer> userlist, String orderflag3, Integer protocoltype3,
+			Integer testcode3);
+
+
+	List<Logilabprotocolorders> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
+			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype, int j,
+			Integer testcode, List<Long> directory_Code2, int k, LSuserMaster lsuserMaster, Date fromdate2,
+			Date todate2, String orderflag2, Integer protocoltype2, int l, Integer testcode2,
+			List<Long> directory_Code3, int m, LSuserMaster lsuserMaster2, Date fromdate3, Date todate3,
+			String orderflag3, Integer protocoltype3, int n, Integer testcode3);
+
+
+	List<Logilabprotocolorders> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
+			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype, int j,
+			List<Long> directory_Code2, Integer testcode, int k, LSuserMaster lsuserMaster, Date fromdate2,
+			Date todate2, String orderflag2, Integer protocoltype2, int l, Integer testcode2,
+			List<Long> directory_Code3, int m, Date fromdate3, Date todate3, List<Integer> userlist, String orderflag3,
+			Integer protocoltype3, int n, Integer testcode3);
 
 
 	}

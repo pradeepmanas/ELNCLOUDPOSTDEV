@@ -1623,7 +1623,7 @@ public class LoginService {
 	}
 
 	public LSuserMaster createuserforazure(LSuserMaster objuser) {
-		;
+		
 		List<LSMultisites> objformultisite = LSMultisitesRepositery.findByLssiteMaster(objuser.getLssitemaster());
 		List<Integer> usercode = objformultisite.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
 		List<LSuserMaster> userobj = lSuserMasterRepository
@@ -1726,7 +1726,7 @@ public class LoginService {
 		if (objuser.getUsername() == null)
 			return null;
 
-		LSuserMaster userDetails = lsuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(
+		LSuserMaster userDetails = lsuserMasterRepository.findTop1ByUsernameIgnoreCaseAndLoginfromAndLssitemaster(
 				objuser.getUsername(), "1", objuser.getLssitemaster());
 
 		LSPasswordPolicy policydays = LSPasswordPolicyRepository.findByLssitemaster(objuser.getLssitemaster());

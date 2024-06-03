@@ -12,10 +12,10 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class StarterRunner {
 	@Autowired
     private DataSourceConfigRepository configRepo;
 
-    private Map<Integer, TimerTask> scheduledTasks = new ConcurrentHashMap<>();
+//    private Map<Integer, TimerTask> scheduledTasks = new ConcurrentHashMap<>();
     
     private static final int MAX_POOL_SIZE = 10;
     private static final int MIN_IDLE = 5;
@@ -132,23 +132,35 @@ public class StarterRunner {
         	executeNotificationPop(objNotification, configuration);
         }
     }
+    
+//    private final Timer timer = new Timer();
+    private final ConcurrentMap<Integer, TimerTask> scheduledTasks = new ConcurrentHashMap<>();
 
-    private void scheduleNotification(Notification objNotification, long delay, HikariConfig configuration) {
+    public void scheduleNotification(final Notification objNotification, long delay, HikariConfig configuration) {
+        int notificationId = objNotification.getNotificationid().intValue();
+
+        // Check if a task is already scheduled for this notification ID
+        if (scheduledTasks.containsKey(notificationId)) {
+            System.out.println("Task already scheduled for notification ID: " + notificationId);
+            return;
+        }
+
         TimerTask task = new TimerTask() {
-            @SuppressWarnings("unlikely-arg-type")
-			@Override
+            @Override
             public void run() {
                 try {
-                    executeNotificationPop(objNotification, configuration);
+                	executeNotificationPop(objNotification, configuration);
                 } catch (SQLException e) {
                     e.printStackTrace(); // Consider logging this properly
                 }
-                scheduledTasks.remove(objNotification.getNotificationid());
+                scheduledTasks.remove(notificationId);
             }
         };
+
+        // Schedule the task and add it to the scheduledTasks map
         Timer timer = new Timer();
         timer.schedule(task, delay);
-        scheduledTasks.put(objNotification.getNotificationid().intValue(), task);
+        scheduledTasks.put(notificationId, task);
     }
 
     public void executeNotificationPop(Notification notification, HikariConfig configuration) throws SQLException {

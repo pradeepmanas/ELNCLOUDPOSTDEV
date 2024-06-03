@@ -12,5 +12,7 @@ public interface NotificationRepository extends JpaRepository<Notification , Int
 	List<Notification> findByUsercode(Integer usercode);
 
 	List<Notification> findByUsercodeAndCautiondateBetween(Integer usercode, Date fromDate, Date toDate);
+
+	List<Notification> findByStatusAndCautiondateBetween(int i, Date fromDate, Date toDate);
 	
 }

@@ -1318,4 +1318,15 @@ public class ProtocolController {
 
 		ProtocolMasterService.stopprotoautoregister(proobj);
 	}
+
+	@RequestMapping("/Exportwithgroupdocs")
+	public ResponseEntity<InputStreamResource> Exportwithgroupdocs(@RequestBody LSprotocolmaster protocol) throws IOException
+	{
+		ByteArrayInputStream bis = ProtocolMasterService.Exportwithgroupdocs(protocol);
+
+		HttpHeaders header = new HttpHeaders();
+//		header.setContentType(MediaType.parseMediaType("image/png"));
+		header.set("Content-Disposition", "attachment; filename=" + protocol.getProtocolmastername() + ".docx");
+		return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+	}
 }
