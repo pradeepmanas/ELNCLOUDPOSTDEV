@@ -219,6 +219,72 @@
     <groupId>org.springframework</groupId>
     <artifactId>spring-test</artifactId>
 </dependency>
+
+    	<dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-annotation</artifactId>
+            <version>20.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-assembly</artifactId>
+            <version>20.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-comparison</artifactId>
+            <version>20.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-conversion</artifactId>
+            <version>20.10.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-editor</artifactId>
+            <version>20.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-merger</artifactId>
+            <version>20.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-metadata</artifactId>
+            <version>20.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-parser</artifactId>
+            <version>20.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-redaction</artifactId>
+            <version>20.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-search</artifactId>
+            <version>20.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-signature</artifactId>
+            <version>20.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-viewer</artifactId>
+            <version>20.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-watermark</artifactId>
+            <version>20.5</version>
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -268,27 +334,33 @@
 		</plugins>
 	</build>
 <repositories>   
-<repository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/snapshot</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
+	<repository>
+		<id>spring-snapshots</id>
+		<name>Spring Snapshots</name>
+		<url>https://repo.spring.io/snapshot</url>
+		<releases>
+			<enabled>false</enabled>
+		</releases>
+	</repository>
 		
-	 		  <repository>
+	<repository>
             <id>AsposeJavaAPI</id>
             <name>Aspose Java API</name>
             <url>https://releases.aspose.com/java/repo/</url>
-        </repository>
-        <repository>
+    </repository>
+    <repository>
         <snapshots>
             <enabled>false</enabled>
         </snapshots>
         <id>central</id>
         <name>libs-release</name>
         <url>http://maven.aspose.com/artifactory/libs-release</url>
+    </repository>
+    
+    <repository>
+         <id>GroupDocsJavaAPI</id>
+         <name>GroupDocs Java API</name>
+         <url>http://repository.groupdocs.com/repo/</url>
     </repository>
 
  <repository>
@@ -300,4 +372,5 @@
     </repository>
 		
  </repositories>   
+
 </project>
