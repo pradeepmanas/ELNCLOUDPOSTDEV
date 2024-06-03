@@ -357,28 +357,28 @@
 	</build>
 
 	<repositories>   
-<repository>
+<!-- <repository>
 			<id>spring-snapshots</id>
 			<name>Spring Snapshots</name>
 			<url>https://repo.spring.io/snapshot</url>
 			<releases>
 				<enabled>false</enabled>
 			</releases>
-		</repository>
+		</repository> -->
 		
 	 		  <repository>
             <id>AsposeJavaAPI</id>
             <name>Aspose Java API</name>
             <url>https://releases.aspose.com/java/repo/</url>
         </repository>
-        <repository>
+        <!-- <repository>
         <snapshots>
             <enabled>false</enabled>
         </snapshots>
         <id>central</id>
         <name>libs-release</name>
         <url>http://maven.aspose.com/artifactory/libs-release</url>
-    </repository>
+    </repository> -->
 
 	  <repository>
          <id>GroupDocsJavaAPI</id>
@@ -386,13 +386,13 @@
          <url>http://repository.groupdocs.com/repo/</url>
     </repository>
 
- <repository>
+ <!-- <repository>
     
    <snapshots />
         <id>snapshots</id>
         <name>libs-snapshot</name>
         <url>http://maven.aspose.com/artifactory/libs-snapshot</url>
-    </repository>
+    </repository> -->
 		
  </repositories>  
 
