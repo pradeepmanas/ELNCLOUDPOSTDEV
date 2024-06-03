@@ -220,6 +220,11 @@
     <artifactId>spring-test</artifactId>
 </dependency>
 
+		<dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-editor</artifactId>
+            <version>20.11</version>
+        </dependency>
     	<!--<dependency>
             <groupId>com.groupdocs</groupId>
             <artifactId>groupdocs-annotation</artifactId>
