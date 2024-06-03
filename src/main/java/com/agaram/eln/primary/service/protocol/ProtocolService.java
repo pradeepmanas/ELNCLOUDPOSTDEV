@@ -56,7 +56,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.config.CustomMultipartFile;
-import com.agaram.eln.primary.commonfunction.Constants;
+//import com.agaram.eln.primary.commonfunction.Constants;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
@@ -9464,7 +9464,7 @@ public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabpro
 		
 //		String licensePath = Constants.LICENSE;
 		
-		String documentPath = Constants.SAMPLE_DOCX;
+//		String documentPath = Constants.SAMPLE_DOCX;
 		
 		byte[] data = null;
         try {
