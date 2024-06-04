@@ -339,6 +339,12 @@
          <name>GroupDocs Java API</name>
          <url>http://repository.groupdocs.com/repo/</url>
     </repository>
+    
+    <repository>
+         <id>GroupDocsArtifactRepository</id>
+         <name>GroupDocs Artifact Repository</name>
+         <url>https://artifact.groupdocs.com/repo/</url>
+    </repository>
 
  <repository>
     
