@@ -206,12 +206,12 @@ import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservic
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.material.TransactionService;
 import com.google.gson.Gson;
-import com.groupdocs.assembly.License;
-import com.groupdocs.editor.EditableDocument;
-import com.groupdocs.editor.Editor;
-import com.groupdocs.editor.formats.WordProcessingFormats;
-import com.groupdocs.editor.options.WordProcessingEditOptions;
-import com.groupdocs.editor.options.WordProcessingSaveOptions;
+//import com.groupdocs.assembly.License;
+//import com.groupdocs.editor.EditableDocument;
+//import com.groupdocs.editor.Editor;
+//import com.groupdocs.editor.formats.WordProcessingFormats;
+//import com.groupdocs.editor.options.WordProcessingEditOptions;
+//import com.groupdocs.editor.options.WordProcessingSaveOptions;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.OperationContext;
 import com.microsoft.azure.storage.StorageException;
@@ -9475,18 +9475,18 @@ public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabpro
         	String outputFilePath = System.getProperty("java.io.tmpdir") + "\\"+protocol.getProtocolmastername()+".docx";
         	File.createTempFile(protocol.getProtocolmastername(), ".docx", new File(System.getProperty("java.io.tmpdir")));
         	
-        	Editor editor = new Editor(outputFilePath); //passing path to the constructor, default WordProcessingLoadOptions will be applied automatically
-        	
-        	WordProcessingEditOptions editOptions = new WordProcessingEditOptions();
-        	editOptions.setEnableLanguageInformation(true);
-
-        	editor.edit(editOptions);
-        	EditableDocument afterEdit = EditableDocument.fromMarkup(formhtmldataforprotocols(objMap), null);
-        	
-//        			Constants.getOutputDirectoryPath("newdocdes.docx");
-      	
-        	WordProcessingSaveOptions saveOptions = new WordProcessingSaveOptions(WordProcessingFormats.Docx);
-        	editor.save(afterEdit, outputFilePath, saveOptions);
+//        	Editor editor = new Editor(outputFilePath); //passing path to the constructor, default WordProcessingLoadOptions will be applied automatically
+//        	
+//        	WordProcessingEditOptions editOptions = new WordProcessingEditOptions();
+//        	editOptions.setEnableLanguageInformation(true);
+//
+//        	editor.edit(editOptions);
+//        	EditableDocument afterEdit = EditableDocument.fromMarkup(formhtmldataforprotocols(objMap), null);
+//        	
+////        			Constants.getOutputDirectoryPath("newdocdes.docx");
+//      	
+//        	WordProcessingSaveOptions saveOptions = new WordProcessingSaveOptions(WordProcessingFormats.Docx);
+//        	editor.save(afterEdit, outputFilePath, saveOptions);
         	
 //        	File targetFile = new File(System.getProperty("java.io.tmpdir") + "\\" + "newdocdes.docx");
 //        	try (FileInputStream inputStream = new FileInputStream(targetFile)) {
