@@ -88,7 +88,7 @@ public class InstrumentController {
 	}
 	
 	@PostMapping("/InsertAutoRegisterOrder")
-	public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablimsorderdetail> objorder)throws Exception {
+	public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail objorder)throws Exception {
 
 		return instrumentService.InsertAutoRegisterOrder(objorder);
 	}
