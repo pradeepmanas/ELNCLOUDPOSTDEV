@@ -35,6 +35,7 @@ import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
@@ -298,10 +299,14 @@ public class LoginController {
 		return loginService.Loginnotification(objNotification);
 	}
 	@PostMapping("/Duedatenotification")
-	public Notification Duedatenotification(@RequestBody Notification objNotification) throws ParseException {
-		return loginService.Duedatenotification(objNotification);
+	public Notification Duedatenotification(@RequestBody LSOrdernotification objNotification) throws ParseException {
+		return loginService.cautiondatenotification(objNotification);
 	}
 
+	@PostMapping("/notifyoverduedays")
+	public Notification notifyoverduedays(@RequestBody LSOrdernotification objNotification) throws ParseException {
+		return loginService.notifyoverduedays(objNotification);
+	}
 //	@PostMapping("/OrdersAutoRegisterLogin")
 //	public Notification OrdersAutoRegisterLogin(@RequestBody Notification objNotification) throws ParseException, SQLException, IOException {
 //		return loginService.OrdersAutoRegisterLogin(objNotification);

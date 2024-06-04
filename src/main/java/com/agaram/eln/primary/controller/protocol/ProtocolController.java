@@ -264,7 +264,7 @@ public class ProtocolController {
 	}
 	
 	@RequestMapping(value = "/addautoProtocolOrder")
-	protected Map<String, Object> addautoProtocolOrder(@RequestBody List<LSlogilabprotocoldetail> LSlogilabprotocoldetail)throws Exception {
+	protected Map<String, Object> addautoProtocolOrder(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail)throws Exception {
 
 		return ProtocolMasterService.addautoProtocolOrder(LSlogilabprotocoldetail);
 

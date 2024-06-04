@@ -1,5 +1,9 @@
 package com.agaram.eln.primary.service.usermanagement;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,6 +22,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 import javax.naming.AuthenticationException;
@@ -30,6 +36,7 @@ import javax.naming.directory.InitialDirContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +44,7 @@ import com.agaram.eln.config.ADS_Connection;
 import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.config.JwtTokenUtil;
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.fetchtenantsource.Datasourcemaster;
 import com.agaram.eln.primary.model.adsconnection.Tbladssettings;
 import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -81,8 +89,9 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
 import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
 import com.agaram.eln.primary.service.cfr.AuditService;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 //import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
-
 @Service
 @EnableJpaRepositories(basePackageClasses = LSSiteMasterRepository.class)
 
@@ -106,7 +115,10 @@ public class LoginService {
 	private LSlogilabprotocoldetailRepository lslogilabprotocoldetailRepository;
 	@Autowired
 	private LSactiveUserRepository lsactiveUserRepository;
-
+	
+	@Autowired
+	private DataSourceConfigRepository configRepo;
+	
 	@Autowired
 	private LSusergroupRepository LSusergroupRepository;
 
@@ -1901,195 +1913,379 @@ public class LoginService {
 //	}
 	
 	// added for duedate notification 
-		@SuppressWarnings("deprecation")
-		public Notification Duedatenotification(Notification objNotification) throws ParseException {
-
-			List<LSOrdernotification> exhaustdays = lsordernotificationrepo.findByIsduedateexhaustedAndIscompletedOrIsduedateexhaustedAndIscompleted(true,false,true,null);
-			if(!exhaustdays.isEmpty()) {
-				exhaustdays.stream().forEach(indexexhaustdays->{
-					Date Date1=indexexhaustdays.getDuedate();
-					Date Date2=new Date();
-			 
-			        Instant instant1 = Date1.toInstant();
-			        Instant instant2 = Date2.toInstant();		        
-			        LocalDateTime dateTime1 = LocalDateTime.ofInstant(instant1, ZoneId.systemDefault());
-			        LocalDateTime dateTime2 = LocalDateTime.ofInstant(instant2, ZoneId.systemDefault());
-			        
-			        Duration duration = Duration.between(dateTime1, dateTime2);
-			        
-			        long totalHours = duration.toHours();
-			        long days = totalHours / 24;
-			        long hours = totalHours % 24;
-
-			        System.out.println("Difference: " + days + " days and " + hours + " hours");
-			  
-			        if(days == 0 && hours!=0) {
-				        String diffdays=(int)hours+" Hours";
-						indexexhaustdays.setOverduedays(diffdays);
-			        }else if(days == 0 && hours==0) {
-			        	String diffdays="<1hour";
-			        	indexexhaustdays.setOverduedays(diffdays);
-			        }
-			        else {
-			        	String diffdays=(int)days+"Days "+(int)hours+"Hours ";
-
-						indexexhaustdays.setOverduedays(diffdays);
-			        }
-				 });
-			}
-			lsordernotificationrepo.save(exhaustdays);
-				
-			Date fromDate = objNotification.getCurrentdate();
-			Date toDate = objNotification.getCurrentdate();
-           
-			// Set time on currentDate to 0:01 am
-			Calendar calendar1 = Calendar.getInstance();
-			calendar1.setTime(fromDate);
-			calendar1.set(Calendar.HOUR_OF_DAY, (fromDate.getHours()-2));
-			calendar1.set(Calendar.MINUTE, 0);
-			calendar1.set(Calendar.SECOND, 0);
-			calendar1.set(Calendar.MILLISECOND, 0);
-			fromDate = calendar1.getTime();
-
-			// Set time on currentDate1 to 23:59 pm
-			Calendar calendar2 = Calendar.getInstance();
-			calendar2.setTime(toDate);
-			calendar2.set(Calendar.HOUR_OF_DAY, (toDate.getHours()+2));
-			calendar2.set(Calendar.MINUTE, 59);
-			calendar2.set(Calendar.SECOND, 59);
-			calendar2.set(Calendar.MILLISECOND, 999);
-			toDate = calendar2.getTime();
-
-//			Date overduedate=new Date();
-//			int minusdue=(overduedate.getDate()- 1);
-//	        overduedate.setDate(minusdue);
-//		        
-			Date overduefromDate = objNotification.getCurrentdate();
-			Date overduetoDate = objNotification.getCurrentdate();
+	
+	public LSOrdernotification mapResultSetToNotification(ResultSet rs) throws SQLException {
+        LSOrdernotification ordernot = new LSOrdernotification();
+        ordernot.setBatchcode(rs.getLong("batchcode"));
+        ordernot.setBatchid(rs.getString("batchid"));
+        ordernot.setCautiondate(rs.getTimestamp("cautiondate"));
+        ordernot.setCautionstatus(rs.getInt("cautionstatus"));
+        ordernot.setDuedate(rs.getTimestamp("duedate"));
+        ordernot.setDuestatus(rs.getInt("duestatus"));
+        ordernot.setIscompleted(rs.getBoolean("iscompleted"));
+        ordernot.setNotificationcode(rs.getLong("notificationcode"));
+        //ordernot.setOverduedays(rs.getString("overduedays"));
+        ordernot.setOverduestatus(rs.getInt("overduestatus"));
+        ordernot.setPeriod(rs.getString("period"));
+        ordernot.setScreen(rs.getString("screen"));
+       // ordernot.setSitecode(rs.getInt("sitecode"));
+        ordernot.setUsercode(rs.getInt("usercode"));
+        return ordernot;
+    }
+	
+	
+//	@Scheduled(fixedRate = 36000, initialDelay = 1000)
+//	public void checkAndScheduleReminders() throws SQLException {
+//		
+//		List<Datasourcemaster> configList = configRepo.findByinitialize(true);
+//		
+//		LocalDateTime localDateTime = LocalDateTime.now();
+//        Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
 //
-			// Set time on currentDate to 0:01 am
-			Calendar calendar3 = Calendar.getInstance();
-			calendar3.setTime(overduefromDate);
-			calendar3.set(Calendar.HOUR_OF_DAY, (overduefromDate.getHours()-1));
-			calendar3.set(Calendar.MINUTE, 0);
-			calendar3.set(Calendar.SECOND, 0);
-			calendar3.set(Calendar.MILLISECOND, 0);
-			overduefromDate = calendar3.getTime();
+//        Date fromDate = Date.from(instant);
+//        Date toDate = Date.from(instant);
+//        
+//		Calendar calendar1 = Calendar.getInstance();
+//		calendar1.setTime(fromDate);
+//		fromDate = calendar1.getTime();
+//		
+//		Calendar calendar2 = Calendar.getInstance();
+//		calendar2.setTime(toDate);
+//		calendar2.add(Calendar.HOUR_OF_DAY, 1);
+//		toDate = calendar2.getTime();
+//		
+//		if(!configList.isEmpty()) {
+//			
+//			for(Datasourcemaster objData : configList) {
+//				
+//				HikariConfig configuration = new HikariConfig();
+//	            configuration.setDriverClassName("org.postgresql.Driver");
+//	            configuration.setJdbcUrl(objData.getUrl());
+//	            configuration.setUsername(objData.getUsername());
+//	            configuration.setPassword(objData.getPassword());
+//	            configuration.setMaximumPoolSize(10);
+//	            configuration.setPoolName(objData.getUrl());
+//	            configuration.setMinimumIdle(5);
+//	            configuration.setConnectionTestQuery("SELECT 1");
+//	            configuration.setConnectionTimeout(300000);
+//	            configuration.setConnectionTimeout(120000);
+//	            configuration.setLeakDetectionThreshold(300000);
+//
+//	            // Like this you can configure multiple properties here 
+//				HikariDataSource dataSource = new HikariDataSource(configuration);
+//	            
+//	            Connection con = null;
+//	            
+//				try {
+//					con = dataSource.getConnection();
+//					
+//					//String updateString ="SELECT * FROM lsordernotification WHERE cautionstatus = 1 and cautiondate BETWEEN '"+fromDate+"' AND '"+toDate+"';";
+//				    
+//					String updateString ="SELECT * FROM lsordernotification WHERE cautionstatus = 1";
+//					   
+//					Statement st = con.createStatement();
+//					
+//					ResultSet rs = st.executeQuery(updateString);
+//					
+//					while(rs.next()){
+//						
+//						LSOrdernotification objNotification = mapResultSetToNotification(rs);
+//						
+//						Date cautionDate = objNotification.getCautiondate();
+//						Instant caution = cautionDate.toInstant();
+//						
+//						LocalDateTime cautionTime = LocalDateTime.ofInstant(caution, ZoneId.systemDefault());
+//						
+//						LocalDateTime currentTime = LocalDateTime.now();
+//						
+//						if(cautionTime.isAfter(currentTime) && rs != null) {
+//							Duration duration = Duration.between(currentTime, cautionTime);
+//							long delay = duration.toMillis();
+//							try {
+//								scheduleNotification(objNotification);
+//							} catch (ParseException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
+//						}
+//				    }
+//					
+//					con.close();
+//					dataSource.close();
+//		        	dataSource = null;
+//				} catch (SQLException e) {
+//				    
+//				} finally {
+//				    if (con != null) {
+//				        try {
+//				        	con.close();
+//				        } catch (SQLException e) {
+//				        }
+//				    }
+//				}
+//			}
+//		}
+//	}
 
-			// Set time on currentDate1 to 23:59 pm
-			Calendar calendar4 = Calendar.getInstance();
-			calendar4.setTime(overduetoDate);
-			calendar4.set(Calendar.HOUR_OF_DAY, (overduetoDate.getHours()+1));
-			calendar4.set(Calendar.MINUTE, 59);
-			calendar4.set(Calendar.SECOND, 59);
-			calendar4.set(Calendar.MILLISECOND, 999);
-			overduetoDate = calendar4.getTime();
+	
+	public void ValidateNotification(LSOrdernotification objnotification) throws ParseException {
+		lsordernotificationrepo.save(objnotification);
+		scheduleNotificationduringregister(objnotification);
+	}
+	
+	
+public void scheduleNotificationduringregister(LSOrdernotification objnotification) throws ParseException {
+		
+		Date cautionDate = objnotification.getCautiondate();
+		Instant caution = cautionDate.toInstant();
+		
+		LocalDateTime cautionTime = LocalDateTime.ofInstant(caution, ZoneId.systemDefault());
+		LocalDateTime currentTime = LocalDateTime.now();
+		
+		if(cautionTime.isAfter(currentTime) && objnotification != null) {
+			Duration duration = Duration.between(currentTime, cautionTime);
+			long delay = duration.toMillis();
+			schedulecautionNotification(objnotification ,delay);
 			
-			LSuserMaster LSuserMaster = new LSuserMaster(); /* to get the value */
-			LSuserMaster.setUsercode(objNotification.getUsercode());
-	 
-	        List<LSOrdernotification> orderslist = lsordernotificationrepo.findByUsercodeAndCautiondateBetween(objNotification.getUsercode(), fromDate, toDate);
-	        List<LSOrdernotification> dueorderslist = lsordernotificationrepo.findByUsercodeAndDuedateBetween(objNotification.getUsercode(), fromDate, toDate);
-	        List<LSOrdernotification> overdueorderslist = lsordernotificationrepo.findByUsercodeAndDuedateBetween(objNotification.getUsercode(), overduefromDate, overduetoDate);
+		}
+		
+		Date dueDate = objnotification.getDuedate();
+		Instant due = dueDate.toInstant();
+		
+		LocalDateTime dueTime = LocalDateTime.ofInstant(due, ZoneId.systemDefault());
+		if(dueTime.isAfter(currentTime) && objnotification != null) {
+			Duration duration = Duration.between(currentTime, dueTime);
+			long delay = duration.toMillis();
+			scheduledueNotification(objnotification ,delay);
+		}
+		Date overdueDate = objnotification.getDuedate();
+		overdueDate.setMinutes(overdueDate.getMinutes()+10);
+		Instant overdue = overdueDate.toInstant();
+		
+		LocalDateTime overdueTime = LocalDateTime.ofInstant(overdue, ZoneId.systemDefault());
+		if(overdueTime.isAfter(currentTime) && objnotification != null) {
+			Duration duration = Duration.between(currentTime, overdueTime);
+			long delay = duration.toMillis();
+			scheduleoverdueNotification(objnotification ,delay);
+		}
+	}
 
-	        List<LSOrdernotification> ordernotifylist = new ArrayList<LSOrdernotification>();
+private void schedulecautionNotification(LSOrdernotification objNotification , long delay) {
+	
+	if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false){
+		TimerTask task = new TimerTask() {
+			@SuppressWarnings("unlikely-arg-type")
+			public void run() {
+				try {
+					cautiondatenotification(objNotification);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				scheduledTasks.remove(objNotification.getNotificationcode());
+			}
+		};
+		Timer timer = new Timer();
+		timer.schedule(task, delay);
+		scheduledTasks.put(Integer.parseInt(objNotification.getNotificationcode().toString()), task);
+	}
+}
+private void scheduledueNotification(LSOrdernotification objNotification , long delay) {
+	if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false){
+		TimerTask task = new TimerTask() {
+			@SuppressWarnings("unlikely-arg-type")
+			public void run() {
+				try {
+					duedatenotification(objNotification);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				scheduledTasks.remove(objNotification.getNotificationcode());
+			}
+		};
+		Timer timer = new Timer();
+		timer.schedule(task, delay);
+		scheduledTasks.put(Integer.parseInt(objNotification.getNotificationcode().toString()), task);
+	}
+}
+private void scheduleoverdueNotification(LSOrdernotification objNotification , long delay) {
+	if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false){
+		TimerTask task = new TimerTask() {
+			@SuppressWarnings("unlikely-arg-type")
+			public void run() {
+				try {
+					overduenotification(objNotification);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				scheduledTasks.remove(objNotification.getNotificationcode());
+			}
+		};
+		Timer timer = new Timer();
+		timer.schedule(task, delay);
+		scheduledTasks.put(Integer.parseInt(objNotification.getNotificationcode().toString()), task);
+	}
+}
+private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
+
+public Notification duedatenotification(LSOrdernotification objNotification) throws ParseException {
+	LSuserMaster LSuserMaster = new LSuserMaster();
+	LSuserMaster.setUsercode(objNotification.getUsercode());
+	
+	List<LSOrdernotification> ordernotifylist = new ArrayList<LSOrdernotification>();
+	List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+
+	
+			if(objNotification.getDuestatus() == 1) {
+					LSnotification LSnotification = new LSnotification();
+
+					String Details = "{\"ordercode\" :\"" + objNotification.getBatchid() 
+			        + "\",\"order\" :\"" + objNotification.getBatchid() 
+			        + "\",\"date\" :\"" + objNotification.getDuedate() 
+			        + "\",\"screen\":\"" + "sheetorders" 
+					+ "\"}";
+					
+					LSnotification.setIsnewnotification(1);
+					LSnotification.setNotification("ORDERONDUEALERT");
+					LSnotification.setNotificationdate(new Date());
+					LSnotification.setNotificationdetils(Details);
+					LSnotification.setNotificationpath("/registertask");
+					LSnotification.setNotifationfrom(LSuserMaster);
+					LSnotification.setNotifationto(LSuserMaster);
+					LSnotification.setRepositorycode(0);
+					LSnotification.setRepositorydatacode(0);
+					LSnotification.setNotificationfor(1);
+
+					objNotification.setDuestatus(0);
+					ordernotifylist.add(objNotification);
+					lstnotifications.add(LSnotification);				
+			        }
+			
+
+				LSnotificationRepository.save(lstnotifications);
+				lsordernotificationrepo.save(ordernotifylist);
+				notifyoverduedays(objNotification);
+				return null;
+}
+
+public Notification overduenotification(LSOrdernotification objNotification) throws ParseException {
+	LSuserMaster LSuserMaster = new LSuserMaster();
+	LSuserMaster.setUsercode(objNotification.getUsercode());
+	
+	List<LSOrdernotification> ordernotifylist = new ArrayList<LSOrdernotification>();
+	List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+
+	
+			if(objNotification.getOverduestatus() == 1) {
+				//if(indexoverdueorders.getOverduestatus() == 1) {
+					LSnotification LSnotification = new LSnotification();
+
+					String Details = "{\"ordercode\" :\"" + objNotification.getBatchid() 
+					        + "\",\"order\" :\"" + objNotification.getBatchid()
+					        + "\",\"days\" :\"" + objNotification.getOverduedays()
+					        + "\",\"date\" :\"" + objNotification.getDuedate()
+					        + "\",\"screen\":\"" + "sheetorders" 
+							+ "\"}";
+							
+					LSnotification.setIsnewnotification(1);
+					LSnotification.setNotification("ORDEROVERDUEALERT");
+					LSnotification.setNotificationdate(new Date());
+					LSnotification.setNotificationdetils(Details);
+					LSnotification.setNotificationpath("/registertask");
+					LSnotification.setNotifationfrom(LSuserMaster);
+					LSnotification.setNotifationto(LSuserMaster);
+					LSnotification.setRepositorycode(0);
+					LSnotification.setRepositorydatacode(0);
+					LSnotification.setNotificationfor(1);
+					
+					objNotification.setIsduedateexhausted(true);
+					objNotification.setOverduestatus(0);
+					
+					ordernotifylist.add(objNotification);
+					lstnotifications.add(LSnotification);				
+			        }
+			
+
+	LSnotificationRepository.save(lstnotifications);
+	lsordernotificationrepo.save(ordernotifylist);
+	notifyoverduedays(objNotification);
+	return null;
+}
+public Notification notifyoverduedays(LSOrdernotification objNotification) throws ParseException {
+	List<LSOrdernotification> exhaustdays = lsordernotificationrepo.findByIsduedateexhaustedAndIscompletedOrIsduedateexhaustedAndIscompleted(true,false,true,null);
+	if(!exhaustdays.isEmpty()) {
+		exhaustdays.stream().forEach(indexexhaustdays->{
+			Date Date1=indexexhaustdays.getDuedate();
+			Date Date2=new Date();
+	 
+	        Instant instant1 = Date1.toInstant();
+	        Instant instant2 = Date2.toInstant();		        
+	        LocalDateTime dateTime1 = LocalDateTime.ofInstant(instant1, ZoneId.systemDefault());
+	        LocalDateTime dateTime2 = LocalDateTime.ofInstant(instant2, ZoneId.systemDefault());
+	        
+	        Duration duration = Duration.between(dateTime1, dateTime2);
+	        
+	        long totalHours = duration.toHours();
+	        long days = totalHours / 24;
+	        long hours = totalHours % 24;
+
+	        System.out.println("Difference: " + days + " days and " + hours + " hours");
+	  
+	        if(days == 0 && hours!=0) {
+		        String diffdays=(int)hours+" Hours";
+				indexexhaustdays.setOverduedays(diffdays);
+	        }else if(days == 0 && hours==0) {
+	        	String diffdays="<1hour";
+	        	indexexhaustdays.setOverduedays(diffdays);
+	        }
+	        else {
+	        	String diffdays=(int)days+"Days "+(int)hours+"Hours ";
+
+				indexexhaustdays.setOverduedays(diffdays);
+	        }
+		 });
+	}
+	lsordernotificationrepo.save(exhaustdays);
+	return null;
+
+}
+		@SuppressWarnings("deprecation")
+public Notification cautiondatenotification(LSOrdernotification objNotification) throws ParseException {
+
+			LSuserMaster LSuserMaster = new LSuserMaster();
+			LSuserMaster.setUsercode(objNotification.getUsercode());
+			
+			List<LSOrdernotification> ordernotifylist = new ArrayList<LSOrdernotification>();
 			List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 
-			LSuserMaster objLSuserMaster = userService
-					.getUserOnCode(LSuserMaster);/* to return the value this obj is created */
-
-			if(!orderslist.isEmpty()) {
-				orderslist.stream().forEach(indexorders->{
-					if(indexorders.getCautionstatus() == 1) {
+					if(objNotification.getCautionstatus() == 1) {
 							LSnotification LSnotification = new LSnotification();
 	
-							String Details = "{\"ordercode\" :\"" + indexorders.getBatchid() 
-							        + "\",\"order\" :\"" + indexorders.getBatchid() 
-							        + "\",\"date\" :\"" + indexorders.getCautiondate() 
+							String Details = "{\"ordercode\" :\"" + objNotification.getBatchid() 
+							        + "\",\"order\" :\"" + objNotification.getBatchid() 
+							        + "\",\"date\" :\"" + objNotification.getCautiondate() 
 							        + "\",\"screen\":\"" + "sheetorders" 
 									+ "\"}";
 									
 							LSnotification.setIsnewnotification(1);
 							LSnotification.setNotification("ORDERCAUTIONALERT");
-							LSnotification.setNotificationdate(objNotification.getCurrentdate());
+							LSnotification.setNotificationdate(new Date());
 							LSnotification.setNotificationdetils(Details);
 							LSnotification.setNotificationpath("/registertask");
-							LSnotification.setNotifationfrom(objLSuserMaster);
-							LSnotification.setNotifationto(objLSuserMaster);
+							LSnotification.setNotifationfrom(LSuserMaster);
+							LSnotification.setNotifationto(LSuserMaster);
 							LSnotification.setRepositorycode(0);
 							LSnotification.setRepositorydatacode(0);
 							LSnotification.setNotificationfor(1);
 	
-							indexorders.setCautionstatus(0);
-							ordernotifylist.add(indexorders);
+							objNotification.setCautionstatus(0);
+							ordernotifylist.add(objNotification);
 							lstnotifications.add(LSnotification);				
 					        }
-	                     });
-				
-				//LSnotificationRepository.save(lstnotifications);
-				//lsordernotificationrepo.save(orderslist);
-			}if (!dueorderslist.isEmpty()) {
-				dueorderslist.stream().forEach(indexdueorders->{
-					if(indexdueorders.getDuestatus() == 1) {
-							LSnotification LSnotification = new LSnotification();
-	
-							String Details = "{\"ordercode\" :\"" + indexdueorders.getBatchid() 
-							        + "\",\"order\" :\"" + indexdueorders.getBatchid() 
-							        + "\",\"date\" :\"" + indexdueorders.getDuedate() 
-							        + "\",\"screen\":\"" + "sheetorders" 
-									+ "\"}";
-									
-							LSnotification.setIsnewnotification(1);
-							LSnotification.setNotification("ORDERONDUEALERT");
-							LSnotification.setNotificationdate(objNotification.getCurrentdate());
-							LSnotification.setNotificationdetils(Details);
-							LSnotification.setNotificationpath("/registertask");
-							LSnotification.setNotifationfrom(objLSuserMaster);
-							LSnotification.setNotifationto(objLSuserMaster);
-							LSnotification.setRepositorycode(0);
-							LSnotification.setRepositorydatacode(0);
-							LSnotification.setNotificationfor(1);
-	
-							indexdueorders.setDuestatus(0);
-							ordernotifylist.add(indexdueorders);
-							lstnotifications.add(LSnotification);				
-					        }
-	                     });
-			//	LSnotificationRepository.save(lstnotifications);
-			//	lsordernotificationrepo.save(orderslist);
-			}if (!overdueorderslist .isEmpty()) {
-				overdueorderslist.stream().forEach(indexoverdueorders->{
-					if(indexoverdueorders.getOverduestatus() == 1) {
-							LSnotification LSnotification = new LSnotification();
-	
-							String Details = "{\"ordercode\" :\"" + indexoverdueorders.getBatchid() 
-							        + "\",\"order\" :\"" + indexoverdueorders.getBatchid()
-							        + "\",\"days\" :\"" + indexoverdueorders.getOverduedays()
-							        + "\",\"date\" :\"" + indexoverdueorders.getDuedate()
-							        + "\",\"screen\":\"" + "sheetorders" 
-									+ "\"}";
-									
-							LSnotification.setIsnewnotification(1);
-							LSnotification.setNotification("ORDEROVERDUEALERT");
-							LSnotification.setNotificationdate(objNotification.getCurrentdate());
-							LSnotification.setNotificationdetils(Details);
-							LSnotification.setNotificationpath("/registertask");
-							LSnotification.setNotifationfrom(objLSuserMaster);
-							LSnotification.setNotifationto(objLSuserMaster);
-							LSnotification.setRepositorycode(0);
-							LSnotification.setRepositorydatacode(0);
-							LSnotification.setNotificationfor(1);
-							
-							indexoverdueorders.setIsduedateexhausted(true);
-							indexoverdueorders.setOverduestatus(0);
-							ordernotifylist.add(indexoverdueorders);
-							
-							lstnotifications.add(LSnotification);				
-					        }
-	                     });
-					}
+					
+
 			LSnotificationRepository.save(lstnotifications);
 			lsordernotificationrepo.save(ordernotifylist);
+			notifyoverduedays(objNotification);
 			return null;
 		}
 

@@ -1,13 +1,23 @@
 package com.agaram.eln.primary.service.instrumentDetails;
 
 import java.io.BufferedReader;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -20,6 +30,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import com.zaxxer.hikari.HikariDataSource;
 
 import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
@@ -46,6 +57,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
@@ -57,6 +69,7 @@ import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
+import com.agaram.eln.primary.fetchtenantsource.Datasourcemaster;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 //import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -119,6 +132,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
+import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 import com.agaram.eln.primary.model.usermanagement.LSMultisites;
@@ -179,6 +193,7 @@ import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserBlockRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.SubParserFieldRepository;
+import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
 import com.agaram.eln.primary.repository.notification.EmailRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowgroupmapRepository;
@@ -218,6 +233,12 @@ import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Service
 //@EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
@@ -263,6 +284,7 @@ public class InstrumentService {
 	private LSactivityRepository lsactivityRepository;
 	@Autowired
 	private LScfttransactionRepository lscfttransactionRepository;
+
 
 	@Autowired
 	private LSsampleresultRepository lssampleresultRepository;
@@ -421,6 +443,9 @@ public class InstrumentService {
 	ProtocolService ProtocolMasterService;
 
 	@Autowired
+	LoginService loginservice;
+	
+	@Autowired
 	UserService userService;
 
 	@Autowired
@@ -474,6 +499,7 @@ public class InstrumentService {
 	@Autowired
 	private LsAutoregisterRepository lsautoregisterrepo;
 	
+	private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 //		Map<String, Object> obj = new HashMap<>();
 //		List<String> lsInst = new ArrayList<String>();
@@ -647,6 +673,11 @@ public class InstrumentService {
 		return obj;
 	}
 
+	
+	
+	
+	
+
 //	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder) {
 //
 //		objorder.setLsworkflow(lsworkflowRepository
@@ -799,42 +830,23 @@ public class InstrumentService {
 //		return objorder;
 //	}
 
-public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablimsorderdetail> objorder) throws IOException {
+public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail objorderindex) throws IOException {
 		
-		Date fromDate = new Date();
-		Date toDate = new Date();
-       
-		// Set time on currentDate to 0:01 am
-		Calendar calendar1 = Calendar.getInstance();
-		calendar1.setTime(fromDate);
-		calendar1.set(Calendar.HOUR_OF_DAY, (fromDate.getHours()));
-		calendar1.set(Calendar.MINUTE, (fromDate.getMinutes()-22));
-		calendar1.set(Calendar.SECOND, 0);
-		calendar1.set(Calendar.MILLISECOND, 0);
-		fromDate = calendar1.getTime();
-
-		// Set time on currentDate1 to 23:59 pm
-		Calendar calendar2 = Calendar.getInstance();
-		calendar2.setTime(toDate);
-		calendar2.set(Calendar.HOUR_OF_DAY, (toDate.getHours()));
-		calendar2.set(Calendar.MINUTE, (toDate.getMinutes()+22));
-		calendar2.set(Calendar.SECOND, 59);
-		calendar2.set(Calendar.MILLISECOND, 999);
-		toDate = calendar2.getTime();
-
-		List<LSlogilablimsorderdetail> orderdetail = null;
-		List<Long> batchcode = objorder.stream().map(LSlogilablimsorderdetail::getBatchcode)
-				.collect(Collectors.toList());
-		if(batchcode.size()>0){
-		List<LsAutoregister> autoorder = lsautoregisterrepo.findByAutocreatedateBetweenAndBatchcodeIn(fromDate,toDate,batchcode);
-		List<Long> batchcodeauto = autoorder.stream().map(LsAutoregister::getBatchcode)
-				.collect(Collectors.toList());
+		LSlogilablimsorderdetail autoregorderobj = new LSlogilablimsorderdetail();
+		LSlogilablimsorderdetail orderdetail = null;
 		
-		orderdetail = lslogilablimsorderdetailRepository.findByBatchcodeInOrderByBatchcodeAsc(batchcodeauto);
+//		List<Long> batchcode = objorder.stream().map(LSlogilablimsorderdetail::getBatchcode)
+//				.collect(Collectors.toList());
+	//	if(objorder.getBatchcode().size()>0){
+		List<LsAutoregister> autoorder = lsautoregisterrepo.findByBatchcode(objorderindex.getBatchcode());
+//		List<Long> batchcodeauto = autoorder.stream().map(LsAutoregister::getBatchcode)
+//				.collect(Collectors.toList());
+//		
+//		orderdetail = lslogilablimsorderdetailRepository.findByBatchcodeInOrderByBatchcodeAsc(batchcodeauto);
 		
-		if(!orderdetail.isEmpty()) {
+	//	if(!orderdetail.isEmpty()) {
 			Integer Ismultitenant = autoorder.get(0).getIsmultitenant();
-			orderdetail.parallelStream().forEach(objorderindex->{
+		//	orderdetail.parallelStream().forEach(objorderindex->{
 				//old order is made repeat false
 				objorderindex.setRepeat(false);
 				//lslogilablimsorderdetailRepository.save(objorderindex);
@@ -844,53 +856,53 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 				LsAutoregister autoobj = new LsAutoregister();
 				List<LsAutoregister> listauto = new ArrayList<LsAutoregister>();
 				
-				autoorder.parallelStream().forEach(autocode->{
-					if(autocode.getBatchcode().equals(objorderindex.getBatchcode())) {
+				//autoorder.parallelStream().forEach(autocode->{
+					if(autoorder.get(0).getBatchcode().equals(objorderindex.getBatchcode())) {
 				
-						if(autocode.getTimespan().equals("Days")) {
-							Date autodate=autocode.getAutocreatedate();
+						if(autoorder.get(0).getTimespan().equals("Days")) {
+							Date autodate=autoorder.get(0).getAutocreatedate();
 							
 							 Calendar calendar = Calendar.getInstance();
 						        calendar.setTime(autodate);
-						        calendar.add(Calendar.DAY_OF_MONTH, autocode.getInterval());
+						        calendar.add(Calendar.DAY_OF_MONTH, autoorder.get(0).getInterval());
 
 						        // Convert back to Date (if necessary)
 						        Date futureDate = calendar.getTime();   
 						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
-						        autocode.setAutocreatedate(futureDate);
-						 }else if(autocode.getTimespan().equals("Week")) {
-							 Date autodate=autocode.getAutocreatedate();
+						        autoorder.get(0).setAutocreatedate(futureDate);
+						 }else if(autoorder.get(0).getTimespan().equals("Week")) {
+							 Date autodate=autoorder.get(0).getAutocreatedate();
 								
 							    Calendar calendar = Calendar.getInstance();
 						        calendar.setTime(autodate);
-						        calendar.add(Calendar.DAY_OF_MONTH, (autocode.getInterval()*7));
+						        calendar.add(Calendar.DAY_OF_MONTH, (autoorder.get(0).getInterval()*7));
 
 						        // Convert back to Date (if necessary)
 						        Date futureDate = calendar.getTime();   
 						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
-						        autocode.setAutocreatedate(futureDate);
+						        autoorder.get(0).setAutocreatedate(futureDate);
 						 }else {
-							 Date autodate=autocode.getAutocreatedate();
+							 Date autodate=autoorder.get(0).getAutocreatedate();
 								
 							 Calendar calendar = Calendar.getInstance();
 						        calendar.setTime(autodate);
-						        calendar.add(Calendar.HOUR_OF_DAY,(autocode.getInterval()));
+						        calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
 						        Date futureDate = calendar.getTime();   
 						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
-						        autocode.setAutocreatedate(futureDate);
+						        autoorder.get(0).setAutocreatedate(futureDate);
 						 }
 						
 						//autocode.setBatchcode(objorderindex.getBatchcode());
-						autocode.setRegcode(null);
-						autocode.setScreen("IDS_SHEETORDERS");
-						autocode.setIsautoreg(true);
+						autoorder.get(0).setRegcode(null);
+						autoorder.get(0).setScreen("IDS_SHEETORDERS");
+						autoorder.get(0).setIsautoreg(true);
 						
 						//listauto.add(lsautoregisterrepo.save(autocode));
-						listauto.add(autocode);
+						listauto.add(autoorder.get(0));
 						objorderindex.setLsautoregisterorders(listauto.get(0));
 						
 					}
-				});
+				//});
 				lsautoregisterrepo.save(listauto);
 				lslogilablimsorderdetailRepository.save(objorderindex);
 				
@@ -1112,6 +1124,15 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 				}
 				lslogilablimsorderdetailRepository.save(objorderindex);
 				
+				if(objorderindex.getRepeat()!=null && objorderindex.getLsautoregisterorderdetail()!=null&&objorderindex.getRepeat()) {
+					try {
+						ValidateAutoRegister(objorderindex);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
 				if (objorderindex.getLssamplefile() != null) {
 					try {
 						updateordercontent(Content, objorderindex.getLssamplefile(), Ismultitenant);
@@ -1146,15 +1167,14 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 				auditobj.setLssitemaster(objorderindex.getLsuserMaster().getLssitemaster().getSitecode());
 				auditobj.setSystemcoments("Audittrail.Audittrailhistory.Audittype.IDS_AUDIT_SYSTEMGENERATED");
 				lscfttransactionRepository.save(auditobj);
-			 });
-			}
-		  }	
-		
+		//	 });
+		//	}
+		//  }	
+
 		return orderdetail;
 	}
 
 	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder) throws IOException {
-
 		objorder.setLsworkflow(lsworkflowRepository
 				.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
 
@@ -1351,15 +1371,29 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 			notobj.setDuestatus(1);
 			notobj.setOverduestatus(1);
 			notobj.setScreen("sheetorder");
+			notobj.setIscompleted(false);
 			//lsordernotificationrepo.save(notobj);
 			ordernotList.add(lsordernotificationrepo.save(notobj));
 			if(ordernotList.size() > 0)
 			{
 				objorder.setLsordernotification(ordernotList.get(0));
+				try {
+					loginservice.ValidateNotification(ordernotList.get(0));
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		lslogilablimsorderdetailRepository.save(objorder);
-		
+		if(objorder.getRepeat()!=null && objorder.getLsautoregisterorderdetail()!=null&&objorder.getRepeat()) {
+			try {
+				ValidateAutoRegister(objorder);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		if (objorder.getLssamplefile() != null) {
 			updateordercontent(Content, objorder.getLssamplefile(), objorder.getIsmultitenant());
@@ -1387,6 +1421,47 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 		return objorder;
 	}
 	
+	public void ValidateAutoRegister(LSlogilablimsorderdetail objlogilaborderdetail) throws ParseException {
+		//lsordernotificationrepo.save(objnotification);
+		scheduleAutoregduringregister(objlogilaborderdetail);
+	}
+	
+
+	public void scheduleAutoregduringregister(LSlogilablimsorderdetail objlogilaborderdetail) throws ParseException {
+		Date AutoCreateDate = objlogilaborderdetail.getLsautoregisterorders().getAutocreatedate();
+		Instant autocreate = AutoCreateDate.toInstant();
+		
+		LocalDateTime AutoCreateTime = LocalDateTime.ofInstant(autocreate, ZoneId.systemDefault());
+		LocalDateTime currentTime = LocalDateTime.now();
+		
+		if(AutoCreateTime.isAfter(currentTime) && objlogilaborderdetail != null) {
+			Duration duration = Duration.between(currentTime, AutoCreateTime);
+			long delay = duration.toMillis();
+			scheduleAutoRegister(objlogilaborderdetail ,delay);
+			
+		}
+		
+	}
+
+	private void scheduleAutoRegister(LSlogilablimsorderdetail objlogilaborderdetail , long delay) {
+		
+		//if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false){
+			TimerTask task = new TimerTask() {
+				@SuppressWarnings("unlikely-arg-type")
+				public void run() {
+					try {
+						InsertAutoRegisterOrder(objlogilaborderdetail);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					scheduledTasks.remove(objlogilaborderdetail.getBatchcode());
+				}
+			};
+			Timer timer = new Timer();
+			timer.schedule(task, delay);
+			scheduledTasks.put(Integer.parseInt(objlogilaborderdetail.getBatchcode().toString()), task);
+		//}
+	}
 	private void createLogilabLIMSOrder4SDMS(LSlogilablimsorderdetail objLSlogilablimsorder) throws IOException {
 
 		List<LSlogilablimsorder> lstLSlogilablimsorder = lslogilablimsorderRepository
@@ -7116,19 +7191,19 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 //			}
 //		}).start();
 		
-		new Thread(() -> {
-			try {
-				
-				System.out.println("autoregisterorder");
-
-				List<LSlogilablimsorderdetail> orderobjdata = new ArrayList<LSlogilablimsorderdetail>();
-				orderobjdata=lslogilablimsorderdetailRepository.findByLsuserMasterAndRepeat(objorder.getLsuserMaster(),true);
-				
-				InsertAutoRegisterOrder(orderobjdata);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}).start();
+//		new Thread(() -> {
+//			try {
+//				
+//				System.out.println("autoregisterorder");
+//
+//				List<LSlogilablimsorderdetail> orderobjdata = new ArrayList<LSlogilablimsorderdetail>();
+//				orderobjdata=lslogilablimsorderdetailRepository.findByLsuserMasterAndRepeat(objorder.getLsuserMaster(),true);
+//				
+//				InsertAutoRegisterOrder(orderobjdata);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}).start();
 		
 		return mapfolders;
 	}
@@ -7489,19 +7564,19 @@ public List<LSlogilablimsorderdetail> InsertAutoRegisterOrder(List<LSlogilablims
 
 		mapfolders.put("directory", lstdir);
 //		
-		new Thread(() -> {
-			try {
-				
-				System.out.println("autoregisterorder");
-
-				List<LSlogilabprotocoldetail> orderobjdata = new ArrayList<LSlogilabprotocoldetail>();
-				orderobjdata=LSlogilabprotocoldetailRepository.findByLsuserMasterAndRepeat(objusermaster.getLsuserMaster(),true);
-				
-				protocolservice.addautoProtocolOrder(orderobjdata);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}).start();
+//		new Thread(() -> {
+//			try {
+//				
+//				System.out.println("autoregisterorder");
+//
+//				List<LSlogilabprotocoldetail> orderobjdata = new ArrayList<LSlogilabprotocoldetail>();
+//				orderobjdata=LSlogilabprotocoldetailRepository.findByLsuserMasterAndRepeat(objusermaster.getLsuserMaster(),true);
+//				
+//				protocolservice.addautoProtocolOrder(orderobjdata);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}).start();
 		return mapfolders;
 //	
 	}

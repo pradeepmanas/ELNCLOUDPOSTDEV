@@ -232,18 +232,6 @@ public class LSlogilablimsorderdetail {
 		this.repeat = repeat;
 	}
 
-//	@OneToMany
-//	@JoinColumn(name="batchcode")
-//	private List<LsAutoregister> lsautoregister;
-//	
-//	public List<LsAutoregister> getLsautoregister() {
-//		return lsautoregister;
-//	}
-//
-//	public void setLsautoregister(List<LsAutoregister> lsautoregister) {
-//		this.lsautoregister = lsautoregister;
-//	}
-
 	@ManyToOne
 	private LSOrdernotification lsordernotification;
 	

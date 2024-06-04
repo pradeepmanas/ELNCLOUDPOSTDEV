@@ -1376,7 +1376,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	
 	@Transactional
 	@Modifying
-	@Query(value = "select distinct LSlogilabprotocoldetail.testcode, LSlogilabprotocoldetail.elnmaterial_nmaterialcode,  CAST((select testname from lstestmasterlocal where testcode =  LSlogilabprotocoldetail.testcode) as varchar(50))as testname  from LSlogilabprotocoldetail as LSlogilabprotocoldetail"
+	@Query(value = "select distinct LSlogilabprotocoldetail.testcode, LSlogilabprotocoldetail.elnmaterial_nmaterialcode,  CAST((select testname from lstestmasterlocal where testcode =  LSlogilabprotocoldetail.testcode) as varchar(250))as testname  from LSlogilabprotocoldetail as LSlogilabprotocoldetail"
 			+ " where LSlogilabprotocoldetail.testcode is not null and LSlogilabprotocoldetail.elnmaterial_nmaterialcode is not null and LSlogilabprotocoldetail.elnmaterial_nmaterialcode in (select nmaterialcode from elnmaterial where nsitecode=?1)", nativeQuery = true)
 	public List<Object> getLstestmasterlocalAndmaterialByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(Integer sitecode);
 

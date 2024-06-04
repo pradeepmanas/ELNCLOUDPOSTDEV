@@ -20,5 +20,7 @@ public interface LsAutoregisterRepository extends JpaRepository<LsAutoregister, 
 	@Transactional
 	List<LsAutoregister> findByAutocreatedateBetweenAndBatchcodeIn(Date fromDate, Date toDate, List<Long> batchcode);
 
+	List<LsAutoregister> findByAutocreatedateBetweenAndBatchcode(Date fromDate, Date toDate, Long batchcode);
+
 	
 }
