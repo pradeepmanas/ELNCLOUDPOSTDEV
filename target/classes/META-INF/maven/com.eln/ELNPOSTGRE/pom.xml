@@ -306,48 +306,12 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
-			<!--  <plugin> 
-			  <groupId>com.microsoft.azure</groupId>  
-			  <artifactId>azure-webapp-maven-plugin</artifactId>  
-			  <version>1.12.0</version>  
-			  <configuration>
-			   
-			   <resourceGroup>your-resource-group</resourceGroup>
-			   <appName>your-app-name</appName>
-			             
-
-			   <linuxRuntime>tomcat 8.5-jre8</linuxRuntime>
-			 
-			   <deploymentType>war</deploymentType>
-			   
-			    <deployment>
-			      <resources>
-			        <resource>
-			          <directory>${project.basedir}/target</directory>
-			          <includes>
-			            <include>*.war</include>
-			          </includes>
-			        </resource>
-			      </resources>
-			    </deployment>
-			  </configuration>
-			</plugin>-->
 		</plugins>
+
 	</build>
-	 <repositories>   
-        <repository>
-            <id>GroupDocsJavaAPI</id>
-            <name>GroupDocs Java API</name>
-            <url>https://repository.groupdocs.com/repo/</url>
-        </repository>
-        <repository>
-            <id>AsposeJavaAPI</id>
-            <name>Aspose Java API</name>
-            <url>https://repository.aspose.com/repo/</url>
-        </repository>
-    </repositories>
-<!-- <repositories>    -->
-	<!-- <repository>
+	
+<repositories>   
+	<repository>
 		<id>spring-snapshots</id>
 		<name>Spring Snapshots</name>
 		<url>https://repo.spring.io/snapshot</url>
@@ -368,22 +332,22 @@
         <id>central</id>
         <name>libs-release</name>
         <url>http://maven.aspose.com/artifactory/libs-release</url>
-    </repository> -->
+    </repository>
     
-    <!-- <repository>
+    <repository>
          <id>GroupDocsJavaAPI</id>
          <name>GroupDocs Java API</name>
          <url>http://repository.groupdocs.com/repo/</url>
-    </repository> -->
+    </repository>
 
- <!-- <repository>
+ <repository>
     
    <snapshots />
         <id>snapshots</id>
         <name>libs-snapshot</name>
         <url>http://maven.aspose.com/artifactory/libs-snapshot</url>
-    </repository> -->
+    </repository>
 		
- <!-- </repositories>    -->
+ </repositories>   
 
 </project>
