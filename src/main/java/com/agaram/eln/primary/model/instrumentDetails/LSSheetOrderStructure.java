@@ -46,6 +46,16 @@ public class LSSheetOrderStructure {
 	private Long parentdircode;
 
 	private Long floatvalues;
+	
+	public Double parentcodeondefaultfoder; 
+	
+	public Double getParentcodeondefaultfoder() {
+		return parentcodeondefaultfoder;
+	}
+
+	public void setParentcodeondefaultfoder(Double parentcodeondefaultfoder) {
+		this.parentcodeondefaultfoder = parentcodeondefaultfoder;
+	}
 
 	public Long getFloatvalues() {
 		return floatvalues;

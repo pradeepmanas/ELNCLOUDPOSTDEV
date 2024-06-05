@@ -16,10 +16,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.json.JSONObject;
@@ -1772,36 +1771,36 @@ public class FileService {
 		
 	}
 	
-//	private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
+	private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
 
-	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+//	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	
 	private void scheduleNotification(Notification objNotification , long delay) {
-//		TimerTask task = new TimerTask() {
-//			@SuppressWarnings("unlikely-arg-type")
-//			public void run() {
-//				try {
-//					executeNotificationPop(objNotification);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//				scheduledTasks.remove(objNotification.getNotificationid());
-//			}
-//		};
-//		Timer timer = new Timer();
-//		timer.schedule(task, delay);
-//		scheduledTasks.put(Integer.parseInt(objNotification.getNotificationid().toString()), task);
-		
-		scheduler.schedule(new Runnable() {
-			@Override
+		TimerTask task = new TimerTask() {
+			@SuppressWarnings("unlikely-arg-type")
 			public void run() {
 				try {
 					executeNotificationPop(objNotification);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				scheduledTasks.remove(objNotification.getNotificationid());
 			}
-		}, delay, TimeUnit.MILLISECONDS);
+		};
+		Timer timer = new Timer();
+		timer.schedule(task, delay);
+		scheduledTasks.put(Integer.parseInt(objNotification.getNotificationid().toString()), task);
+		
+//		scheduler.schedule(new Runnable() {
+//			@Override
+//			public void run() {
+//				try {
+//					executeNotificationPop(objNotification);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}, delay, TimeUnit.MILLISECONDS);
 	}
 
 

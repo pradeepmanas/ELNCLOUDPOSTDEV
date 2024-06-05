@@ -2765,18 +2765,18 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 			Pageable pageable);
 	
 
-	List<Logilaborders> findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+	List<Logilaborders> findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
 			String orderflag, List<Elnmaterial> currentChunk, Date fromdate, Date todate, int i);
 
-	List<Logilaborders> findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+	List<Logilaborders> findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
 			String orderflag, List<Elnmaterial> currentChunk, Date fromdate, Date todate, int i,
 			LSuserMaster lsuserMaster);
 
-	List<Logilaborders> findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+	List<Logilaborders> findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
 			String orderflag, Integer approvelstatus, List<Elnmaterial> currentChunk, Integer filetype, Date fromdate,
 			Date todate, int i);
 
-	List<Logilaborders> findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+	List<Logilaborders> findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
 			String orderflag, Integer approvelstatus, List<Elnmaterial> currentChunk, Integer filetype, Date fromdate,
 			Date todate, int i, LSuserMaster lsuserMaster);
 
@@ -2789,14 +2789,14 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 			String orderflag, Integer testcode, List<Elnmaterial> currentChunk, Integer filetype,
 			LSprojectmaster lsprojectmaster, Date fromdate, Date todate, int i, LSuserMaster lsuserMaster);
 
-	List<Logilaborders> findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMaster(
+	List<Logilaborders> findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMaster(
 			String orderflag, List<Elnmaterial> currentChunk, Integer filetype, Date fromdate, Date todate, int i,
 			LSuserMaster lsuserMaster);
 
-	List<Logilaborders> findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+	List<Logilaborders> findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
 			String orderflag, List<Elnmaterial> currentChunk, Integer filetype, Date fromdate, Date todate, int i);
 
-	List<Logilaborders> findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+	List<Logilaborders> findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
 			String orderflag, List<Elnmaterial> currentChunk, Integer filetype, Date fromdate, Date todate, int i,
 			LSuserMaster lsuserMaster);
 
@@ -2804,12 +2804,12 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 	List<Logilaborders> findByOrderflagAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNull(
 			String orderflag, Integer filetype, LSprojectmaster lsprojectmaster, Date fromdate, Date todate);
 
-	List<Logilaborders> findByOrderflagAndTestcodeAndLsprojectmasterIsNullAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrOrderflagAndTestcodeAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+	List<Logilaborders> findByOrderflagAndTestcodeAndLsprojectmasterIsNullAndDirectorycodeIsNullAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrOrderflagAndTestcodeAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
 			String orderflag, Integer testcode, Integer filetype, Date fromdate, Date todate,
 			List<Elnmaterial> currentChunk, String orderflag2, Integer testcode2, List<Elnmaterial> currentChunk2,
 			Integer filetype2, Date fromdate2, Date todate2, int i);
 
-	List<Logilaborders> findByOrderflagAndTestcodeAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+	List<Logilaborders> findByOrderflagAndTestcodeAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
 			String orderflag, Integer testcode, List<Elnmaterial> currentChunk, Integer filetype, Date fromdate,
 			Date todate, int i, LSuserMaster lsuserMaster);
 	
@@ -2902,6 +2902,8 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 			Date todate2, String orderflag2, Integer filetype2, Integer approvelstatus2, List<Long> directory_Code3,
 			int k, Date fromdate3, Date todate3, List<LSuserMaster> lstuserMaster, String orderflag3, Integer filetype3,
 			Integer approvelstatus3);
+
+
 
 
 
