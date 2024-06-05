@@ -7168,13 +7168,13 @@ public class InstrumentService {
 //						return orderChunk;
 //					}).flatMap(List::stream) // Flatten the list of arrays to a single list
 //					.collect(Collectors.toList());
-//		List<Elnmaterial> Matireal_List = elnmaterialRepository
-//				.findByNsitecodeOrderByNmaterialcodeDesc(objorder.getLsuserMaster().getLssitemaster().getSitecode());
-//		List<Object> Material_List_Ordes = lslogilablimsorderdetailRepository
-//				.getLstestmasterlocalAndmaterialByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(
-//						objorder.getLsuserMaster().getLssitemaster().getSitecode());
-//		mapfolders.put("Materialtest", Material_List_Ordes);
-//		mapfolders.put("Material", Matireal_List);
+		List<Elnmaterial> Matireal_List = elnmaterialRepository
+				.findByNsitecodeOrderByNmaterialcodeDesc(objorder.getLsuserMaster().getLssitemaster().getSitecode());
+		List<Object> Material_List_Ordes = lslogilablimsorderdetailRepository
+				.getLstestmasterlocalAndmaterialByOrderdisplaytypeAndLSsamplemasterInAndTestcodeIsNotNull(
+						objorder.getLsuserMaster().getLssitemaster().getSitecode());
+		mapfolders.put("Materialtest", Material_List_Ordes);
+		mapfolders.put("Material", Matireal_List);
 //			mapfolders.put("sampletests", lsttest);
 //			mapfolders.put("samples", lstsample);
 //		} else {
@@ -8106,10 +8106,10 @@ public class InstrumentService {
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
 						List<Logilaborders> orderChunk = new ArrayList<>();
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+								.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
 										objorder.getOrderflag(), currentChunk, fromdate, todate, 1));
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+								.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
 										objorder.getOrderflag(), currentChunk, fromdate, todate, 2,
 										objorder.getLsuserMaster()));
 						return orderChunk;
@@ -8131,10 +8131,10 @@ public class InstrumentService {
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
 						List<Logilaborders> orderChunk = new ArrayList<>();
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+								.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
 										objorder.getOrderflag(), currentChunk, fromdate, todate, 1));
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+								.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
 										objorder.getOrderflag(), currentChunk, fromdate, todate, 2,
 										objorder.getLsuserMaster()));
 						return orderChunk;
@@ -8174,11 +8174,11 @@ public class InstrumentService {
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
 						List<Logilaborders> orderChunk = new ArrayList<>();
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+								.findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
 										objorder.getOrderflag(), objorder.getApprovelstatus(), currentChunk, filetype,
 										fromdate, todate, 1));
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+								.findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
 										objorder.getOrderflag(), objorder.getApprovelstatus(), currentChunk, filetype,
 										fromdate, todate, 2, objorder.getLsuserMaster()));
 						return orderChunk;
@@ -8222,11 +8222,11 @@ public class InstrumentService {
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
 						List<Logilaborders> orderChunk = new ArrayList<>();
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+								.findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
 										objorder.getOrderflag(), objorder.getApprovelstatus(), currentChunk, filetype,
 										fromdate, todate, 1));
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+								.findByOrderflagAndApprovelstatusAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
 										objorder.getOrderflag(), objorder.getApprovelstatus(), currentChunk, filetype,
 										fromdate, todate, 2, objorder.getLsuserMaster()));
 						return orderChunk;
@@ -8267,12 +8267,12 @@ public class InstrumentService {
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
 						List<Logilaborders> orderChunk = new ArrayList<>();
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndTestcodeAndLsprojectmasterIsNullAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrOrderflagAndTestcodeAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+								.findByOrderflagAndTestcodeAndLsprojectmasterIsNullAndDirectorycodeIsNullAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrOrderflagAndTestcodeAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
 										objorder.getOrderflag(), testcode, filetype, fromdate, todate, currentChunk,
 										objorder.getOrderflag(), testcode, currentChunk, filetype, fromdate, todate,
 										1));
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByOrderflagAndTestcodeAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+								.findByOrderflagAndTestcodeAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
 										objorder.getOrderflag(), testcode, currentChunk, filetype, fromdate, todate, 2,
 										objorder.getLsuserMaster()));
 						return orderChunk;
@@ -8356,16 +8356,16 @@ public class InstrumentService {
 							List<Logilaborders> orderChunk = new ArrayList<>();
 
 							orderChunk.addAll(lslogilablimsorderdetailRepository
-									.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMaster(
+									.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMaster(
 											objorder.getOrderflag(), currentChunk, filetype, fromdate, todate, 2,
 											objorder.getLsuserMaster()));
 
 							orderChunk.addAll(lslogilablimsorderdetailRepository
-									.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+									.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
 											objorder.getOrderflag(), currentChunk, filetype, fromdate, todate, 1));
 
 							orderChunk.addAll(lslogilablimsorderdetailRepository
-									.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+									.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
 											objorder.getOrderflag(), currentChunk, filetype, fromdate, todate, 3,
 											objorder.getLsuserMaster()));
 
@@ -8389,16 +8389,16 @@ public class InstrumentService {
 								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
 
 				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMaster(
+						.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMaster(
 								objorder.getOrderflag(), nmaterialcode, filetype, fromdate, todate, 2,
 								objorder.getLsuserMaster()));
 
 				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
+						.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoption(
 								objorder.getOrderflag(), nmaterialcode, filetype, fromdate, todate, 1));
 
 				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
+						.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrderByBatchcodeDesc(
 								objorder.getOrderflag(), nmaterialcode, filetype, fromdate, todate, 3,
 								objorder.getLsuserMaster()));
 

@@ -69,16 +69,16 @@ public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster
 	public List<LSprojectmaster> findByLsusersteamInAndStatusAndLssitemaster(
 			List<LSusersteam> findByLsuserteammappingInAndStatus, int i, LSSiteMaster lssitemaster);
 	public interface ProjectOrTaskOrMaterialView {
-		String getSourceTable();
-
-		String getName();
+	    String getSourceTable();
+	    String getName();
 	}
 
 	@Transactional
-	@Query(value = "SELECT 'lsprojectmaster' AS name, projectname AS sourceTable FROM lsprojectmaster WHERE projectname LIKE ?1 AND lssitemaster_sitecode = ?2 "
-			+ "UNION "
-			+ "SELECT 'lstestmasterlocal' AS name, testname AS sourceTable FROM lstestmasterlocal WHERE testname LIKE ?1 AND lssitemaster_sitecode = ?2 "
-			+ "UNION "
-			+ "SELECT 'elnmaterial' AS name, smaterialname AS sourceTable FROM elnmaterial WHERE smaterialname LIKE ?1 AND nsitecode = ?2", nativeQuery = true)
-	List<ProjectOrTaskOrMaterialView> getProjectOrTaskOrMaterialSearchBased(String searchkey, Integer sitecode);
+    @Query(value = "SELECT  projectname AS name, 'lsprojectmaster' AS sourceTable FROM lsprojectmaster WHERE LOWER(projectname) LIKE LOWER(?1) AND lssitemaster_sitecode = ?2 AND status=1"
+                 + "UNION "
+                 + "SELECT testname AS name,'lstestmasterlocal' AS sourceTable FROM lstestmasterlocal WHERE LOWER(testname) LIKE LOWER(?1) AND lssitemaster_sitecode = ?2 AND teststatus='A' "
+                 + "UNION "
+                 + "SELECT smaterialname AS name,'elnmaterial' AS sourceTable  FROM elnmaterial WHERE LOWER(smaterialname) LIKE LOWER(?1) AND nsitecode = ?2 AND nstatus=1", 
+           nativeQuery = true)
+    List<ProjectOrTaskOrMaterialView> getProjectOrTaskOrMaterialSearchBased(String searchkey, Integer sitecode);
 }
