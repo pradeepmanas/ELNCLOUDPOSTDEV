@@ -60,6 +60,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.repository.methodsetup.CloudParserFileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository.ProjectOrTaskOrMaterialView;
 import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 import com.mongodb.gridfs.GridFSDBFile;
 
@@ -1370,5 +1371,11 @@ public class InstrumentController {
 	@PostMapping("/saveResulttags")
 	public void saveResulttags(@RequestBody Lsresulttags objorder)throws Exception {
 		instrumentService.saveResulttags(objorder);
+	}
+	
+	@PostMapping("/Suggesionforfolder")
+	public List<ProjectOrTaskOrMaterialView>  Suggesionforfolder(@RequestBody Map<String,Object> searchobj){
+		return instrumentService.Suggesionforfolder(searchobj);
+		
 	}
 }
