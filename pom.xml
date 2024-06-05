@@ -221,11 +221,7 @@
     <artifactId>spring-test</artifactId>
 </dependency>
 
-		<dependency>
-            <groupId>com.groupdocs</groupId>
-            <artifactId>groupdocs-editor</artifactId>
-            <version>24.4</version>
-        </dependency>
+		
     	<!-- <dependency>
             <groupId>com.groupdocs</groupId>
             <artifactId>groupdocs-annotation</artifactId>
