@@ -2983,12 +2983,18 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 				
 				autoorder.stream().forEach(autocode->{
 					if(autocode.getBatchcode().equals(lSlogilabprotocoldetail.getProtocolordercode())) {
-				
+						Date currentdate = null;
+						try {
+							currentdate = commonfunction.getCurrentUtcTime();
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						if(autocode.getTimespan().equals("Days")) {
-							Date autodate=autocode.getAutocreatedate();
+							//Date autodate=autocode.getAutocreatedate();
 							
 							 Calendar calendar = Calendar.getInstance();
-						        calendar.setTime(autodate);
+						        calendar.setTime(currentdate);
 						        calendar.add(Calendar.DAY_OF_MONTH, autocode.getInterval());
 
 						        // Convert back to Date (if necessary)
@@ -2996,10 +3002,10 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
 						        autocode.setAutocreatedate(futureDate);
 						 }else if(autocode.getTimespan().equals("Week")) {
-							 Date autodate=autocode.getAutocreatedate();
+							 //Date autodate=autocode.getAutocreatedate();
 								
 							    Calendar calendar = Calendar.getInstance();
-						        calendar.setTime(autodate);
+						        calendar.setTime(currentdate);
 						        calendar.add(Calendar.DAY_OF_MONTH, (autocode.getInterval()*7));
 
 						        // Convert back to Date (if necessary)
@@ -3007,10 +3013,10 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
 						        autocode.setAutocreatedate(futureDate);
 						 }else {
-							 Date autodate=autocode.getAutocreatedate();
+							 //Date autodate=autocode.getAutocreatedate();
 								
 							 Calendar calendar = Calendar.getInstance();
-						        calendar.setTime(autodate);
+						        calendar.setTime(currentdate);
 						        calendar.add(Calendar.HOUR_OF_DAY,(autocode.getInterval()));
 						        Date futureDate = calendar.getTime();   
 						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
@@ -3693,7 +3699,7 @@ public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabpro
 			notobj.setDuestatus(1);
 			notobj.setIscompleted(false);
 			notobj.setOverduestatus(1);
-			notobj.setScreen("protocol");
+			notobj.setScreen("Protocolorder");
 
 			ordernotList.add(lsordernotificationrepo.save(notobj));
 			lSlogilabprotocoldetail.setLsordernotification(ordernotList.get(0));

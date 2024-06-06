@@ -298,10 +298,10 @@ public class LoginController {
 	public Notification Loginnotification(@RequestBody Notification objNotification) throws ParseException {
 		return loginService.Loginnotification(objNotification);
 	}
-	@PostMapping("/Duedatenotification")
-	public Notification Duedatenotification(@RequestBody LSOrdernotification objNotification) throws ParseException {
-		return loginService.cautiondatenotification(objNotification);
-	}
+//	@PostMapping("/Duedatenotification")
+//	public Notification Duedatenotification(@RequestBody LSOrdernotification objNotification) throws ParseException {
+//		return loginService.cautiondatenotification(objNotification);
+//	}
 
 	@PostMapping("/notifyoverduedays")
 	public Notification notifyoverduedays(@RequestBody LSOrdernotification objNotification) throws ParseException {

@@ -44,9 +44,18 @@ public class Lsprotocolorderstructure {
 	private boolean edit;
 	private Integer length;
 	private Long parentdircode;
-	
-	
+
 	private Long floatvalues;
+
+	public Double parentcodeondefaultfoder;
+
+	public Double getParentcodeondefaultfoder() {
+		return parentcodeondefaultfoder;
+	}
+
+	public void setParentcodeondefaultfoder(Double parentcodeondefaultfoder) {
+		this.parentcodeondefaultfoder = parentcodeondefaultfoder;
+	}
 
 	public Long getFloatvalues() {
 		return floatvalues;
@@ -64,22 +73,22 @@ public class Lsprotocolorderstructure {
 
 	@ManyToOne
 	private LSSiteMaster sitemaster;
-	
+
 	@Transient
 	LoggedUser objuser;
-	
+
 	@Transient
 	private Integer protocoltype;
-	
+
 	@Transient
 	Integer searchCriteriaType;
-	
+
 	@Transient
 	private String orderflag;
-	
+
 	@Transient
 	private String teamname;
-	
+
 	public String getTeamname() {
 		return teamname;
 	}
@@ -90,20 +99,18 @@ public class Lsprotocolorderstructure {
 
 	@Transient
 	private Integer rejected;
-	
+
 	@Transient
 	List<LSworkflow> lstworkflow;
-	
+
 	@Transient
 	List<Elnprotocolworkflow> lstelnprotocolworkflow;
 
 	@Transient
 	private LSuserMaster lsuserMaster;
-	
+
 	@Transient
 	private Integer[] lstuserMaster;
-	
-
 
 	public Integer[] getLstuserMaster() {
 		return lstuserMaster;
@@ -325,6 +332,7 @@ public class Lsprotocolorderstructure {
 	public void setLogilabprotocolorders(List<Logilabprotocolorders> logilabprotocolorders) {
 		this.logilabprotocolorders = logilabprotocolorders;
 	}
+
 	public List<LSworkflow> getLstworkflow() {
 		return lstworkflow;
 	}

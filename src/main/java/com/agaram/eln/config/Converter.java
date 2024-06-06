@@ -223,10 +223,7 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 //        		"/MethodImportController/importMethods",
 //        		"/downloadFile/{fileName}",
 				// "/getFileData",
-				"/Login/LoadSitewithoutgzip", "/Login/Logintenat/","/Login/importchemdata",
-				    "/DashBoardDemo/Getdashboardordercount",
-	                "/DashBoardDemo/Getdashboardorders"
-	          
+				"/Login/LoadSitewithoutgzip", "/Login/Logintenat/","/Login/importchemdata"
 //				"/protocol/Uploadprotocolimageondrag"
 
 		);
