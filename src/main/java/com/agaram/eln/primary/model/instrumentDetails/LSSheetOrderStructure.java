@@ -49,6 +49,16 @@ public class LSSheetOrderStructure {
 	
 	public Double parentcodeondefaultfoder; 
 	
+	private String foldermapping;
+	
+	public String getFoldermapping() {
+		return foldermapping;
+	}
+
+	public void setFoldermapping(String foldermapping) {
+		this.foldermapping = foldermapping;
+	}
+
 	public Double getParentcodeondefaultfoder() {
 		return parentcodeondefaultfoder;
 	}

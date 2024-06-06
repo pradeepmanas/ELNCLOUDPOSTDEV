@@ -89,3 +89,17 @@ BEGIN
     EXECUTE 'ALTER SEQUENCE notification_sequence RESTART WITH ' || (max_notificationcode_value + 1);
 	END IF;
 END $$;
+
+DO $$
+DECLARE
+	max_serialno_value INTEGER;
+BEGIN
+    SELECT MAX(serialno) INTO max_serialno_value FROM lscfttransaction;
+	IF max_serialno_value IS NOT NULL THEN
+    EXECUTE 'ALTER SEQUENCE notification_sequence RESTART WITH ' || (max_serialno_value + 1);
+	END IF;
+END $$;
+
+ALTER TABLE IF Exists LSSheetOrderStructure ADD Column IF NOT EXISTS foldermapping character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE IF Exists Lsprotocolorderstructure ADD Column IF NOT EXISTS foldermapping character varying(255) COLLATE pg_catalog."default";

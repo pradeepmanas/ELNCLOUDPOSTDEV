@@ -202,7 +202,10 @@ public class StarterRunner {
     	ordernot.setLsworkflow(lstworkflow);
     	
     	ordernot.setViewoption(rs.getInt("viewoption"));
-    	ordernot.setOrdercancell(rs.getInt("ordercancell"));
+    	
+    	rs.getString("ordercancell");
+    	ordernot.setOrdercancell(rs.getString("ordercancell") != null ? rs.getInt("ordercancell") : null);
+    	
     	ordernot.setTeamcode(rs.getInt("teamcode"));
     	ordernot.setApprovelstatus(rs.getInt("approvelstatus"));
     	
@@ -312,7 +315,8 @@ public class StarterRunner {
     	
     	//orderobj.getLstestmasterlocal().setTestcode(rs.getInt("testcode"));
     	orderobj.setViewoption(rs.getInt("viewoption"));
-    	orderobj.setOrdercancell(rs.getInt("ordercancell"));
+    	rs.getString("ordercancell");
+    	orderobj.setOrdercancell(rs.getString("ordercancell") != null ? rs.getInt("ordercancell") : null);
     	orderobj.setTeamcode(rs.getInt("teamcode"));
     	
 //    	Material material = new Material();
@@ -348,6 +352,8 @@ public class StarterRunner {
     	orderobj.setLsautoregisterorders(lsAutoregister);
     	orderobj.setOrderflag(rs.getString("orderflag"));
     	
+    	orderobj.setTestcode(rs.getInt("testcode"));
+    	orderobj.setTestname(rs.getString("testname"));
     	//orderobj.getLsautoregisterorders().setRegcode(rs.getLong("regcode"));
     	return orderobj;
     	
@@ -540,7 +546,6 @@ public class StarterRunner {
         calendar.add(Calendar.HOUR_OF_DAY , +12);
         toDate=calendar.getTime();
       
-       
         LocalDateTime  previousDate = localDateTime.minusDays(1);
         Instant preinstant = previousDate.atZone(ZoneId.systemDefault()).toInstant();
         Date fromDate=Date.from(preinstant);  
@@ -667,9 +672,10 @@ public class StarterRunner {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR_OF_DAY , +12);
         toDate=calendar.getTime();
-        int subhours = 24;
-        calendar.add(Calendar.HOUR_OF_DAY , -subhours);
-        Date fromDate = calendar.getTime();
+        
+        LocalDateTime  previousDate = localDateTime.minusDays(1);
+        Instant preinstant = previousDate.atZone(ZoneId.systemDefault()).toInstant();
+        Date fromDate=Date.from(preinstant);  
         
         for (Datasourcemaster objData : configList) {
             HikariConfig configuration = createHikariConfig(objData);
@@ -1202,14 +1208,18 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 			        //autoordersfilter.get(0).setAutocreatedate(futureDate);
 			        autoobj.setAutocreatedate(futureDate);
 			 }else {
-				 //Date autodate=lSlogilabprotocoldetail.getLsautoregister().getAutocreatedate();
-					
-				 Calendar calendar = Calendar.getInstance();
+				
+				    Calendar calendar = Calendar.getInstance();
 			        calendar.setTime(currentdate);
 			        calendar.add(Calendar.HOUR_OF_DAY,(lSlogilabprotocoldetail.getLsautoregister().getInterval()));
 			        Date futureDate = calendar.getTime();   
-			        //autoordersfilter.get(0).setAutocreatedate(futureDate);
 			        autoobj.setAutocreatedate(futureDate);
+//				 Calendar calendar = Calendar.getInstance();
+//			        calendar.setTime(currentdate);
+//			       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
+//			        calendar.add(Calendar.MINUTE , (10));
+//			        Date futureDate = calendar.getTime();   
+//			        autoobj.setAutocreatedate(futureDate);
 			 }
 			
 			autoobj.setScreen("IDS_PROTOCOLORDERS");
@@ -1322,9 +1332,7 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 	                   pst.setInt(5,lSlogilabprotocoldetail.getSitecode());
 	                   pst.executeUpdate();
 	               }
-	             
-					//LSProtocolMasterRepositoryObj.save(lsprotocolmaster);
-				
+	           
 					lSlogilabprotocoldetail.setLsprotocolmaster(lsprotocolmaster);
 				} else {
 					lSlogilabprotocoldetail.setLsprotocolmaster(protomasterobj);
@@ -1551,61 +1559,10 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 //	           	 		
 //	           	 	    pst.executeUpdate();
 //	           	 }
+						if(lSlogilabprotocoldetail.getRepeat() == true) {
+							scheduleProtocolAutoRegisteration(lSlogilabprotocoldetail , configuration);
+						}
 						
-//						final List<LSOrdernotification> ordernotList = new ArrayList<>(1);
-//						if (lSlogilabprotocoldetail.getCautiondate() != null && lSlogilabprotocoldetail.getDuedate() != null) {
-//							LSOrdernotification notobj = new LSOrdernotification();
-//							notobj.setBatchcode(lSlogilabprotocoldetail.getProtocolordercode());
-//							notobj.setBatchid(lSlogilabprotocoldetail.getProtoclordername());
-//							notobj.setCautiondate(lSlogilabprotocoldetail.getCautiondate());
-//							notobj.setCreatedtimestamp(lSlogilabprotocoldetail.getCreatedtimestamp());
-//							notobj.setDuedate(lSlogilabprotocoldetail.getDuedate());
-//							notobj.setUsercode(lSlogilabprotocoldetail.getLsuserMaster().getUsercode());
-//							notobj.setPeriod(lSlogilabprotocoldetail.getPeriod());
-//							notobj.setCautionstatus(1);
-//							notobj.setDuestatus(1);
-//							notobj.setIscompleted(false);
-//							notobj.setOverduestatus(1);
-//							notobj.setScreen("protocol");
-//
-//							ordernotList.add(notobj);
-//							lSlogilabprotocoldetail.setLsordernotification(ordernotList.get(0));
-//					
-//							String notificationquery = "INSERT INTO LSOrdernotification(batchcode,batchid,cautiondate,createdtimestamp,duedate,usercode,period,cautionstatus"
-//									+ "duestatus,iscompleted,overduestatus,screen)"
-//									+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?) "; 
-//				                      
-//				
-//				               try (PreparedStatement pst = con.prepareStatement(notificationquery)) {
-//				                   pst.setLong(1, lSlogilabprotocoldetail.getProtocolordercode());
-//				                   pst.setString(2, lSlogilabprotocoldetail.getProtoclordername());
-//				                   pst.setTimestamp(CONNECTION_THRESHOLD, null);
-//				                   pst.setTimestamp(CONNECTION_THRESHOLD, null);
-//				                   pst.setTimestamp(CONNECTION_THRESHOLD, null);
-//				                   pst.setInt(6, lSlogilabprotocoldetail.getLsuserMaster().getUsercode());
-//				                   pst.setString(7, lSlogilabprotocoldetail.getLsordernotification().getPeriod());
-//				                   pst.setInt(8, 1);
-//				                   pst.setInt(9, 1);
-//				                   pst.setBoolean(10, false);
-//				                   pst.setInt(11, 1);
-//				                   pst.setString(12, "protocol");
-//				                   
-//				                   int affectedRows=pst.executeUpdate();
-//				                   
-//				                   if (affectedRows > 0) {
-//				                       // Retrieve the generated keys
-//				                	   ResultSet rs = pst.getGeneratedKeys();
-//				                       if (rs.next()) {
-//				                           long generatenotificationcode = rs.getLong(1);
-//				                           System.out.println("Inserted record's protocolordercode: " + generatenotificationcode);
-//				                           lSlogilabprotocoldetail.getLsordernotification().setNotificationcode(generatenotificationcode);
-//				                       }
-//				                   } else {
-//				                       System.out.println("No record inserted.");
-//				                   }
-//				               }
-//						}  
-
 							Calendar transcalendar = Calendar.getInstance();
 					        calendar.setTime(commonfunction.getCurrentUtcTime());
 					        Date transcalendardate = transcalendar.getTime(); 
@@ -1698,14 +1655,18 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 						        
 						        autoobj.setAutocreatedate(futureDate);
 						 }else {
-							 //Date autodate=objorder.getLsautoregisterorders().getAutocreatedate();
-								
-							 Calendar calendar = Calendar.getInstance();
+							
+							    Calendar calendar = Calendar.getInstance();
 						        calendar.setTime(currentdate);
 						        calendar.add(Calendar.HOUR_OF_DAY,(objorder.getLsautoregisterorders().getInterval()));
-						        Date futureDate = calendar.getTime();   
-						       
+						        Date futureDate = calendar.getTime(); 
 						        autoobj.setAutocreatedate(futureDate);
+						        
+//							    Calendar calendar = Calendar.getInstance();
+//						        calendar.setTime(currentdate);
+//						        calendar.add(Calendar.MINUTE , (10));
+//						        Date futureDate = calendar.getTime();   
+//						        autoobj.setAutocreatedate(futureDate);
 						 }
 						
 						autoobj.setScreen("IDS_SHEETORDERS");
@@ -1758,14 +1719,6 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
       	 		try (PreparedStatement pst = con.prepareStatement(deftem)) {
       	 			pst.setLong(1, objorder.getBatchcode());
       	 			pst.executeUpdate();
-//      	 			try (ResultSet rs = pst.executeQuery()) {
-//                   while (rs.next()) {
-//                	   LSlogilablimsorderdetail limsorderobj = mapResultSetToLslogilabOrder(rs);
-                	   objorder.setRepeat(false);
-//                   }
-//               } catch (SQLException e) {
-//                    e.printStackTrace(); // Consider logging this properly
-//                }
               }
 				
 	    		if (objorder.getLsfile() != null) {
@@ -1881,9 +1834,9 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 		                 		+ "lsfile_filecode,lsprojectmaster_projectcode,lssamplefile_filesamplecode,"
 		                 		+ "filecode,keyword,lockedusername,directorycode,orderdisplaytype,"
 		                 		+ "lstestmasterlocal_testcode,viewoption,ordercancell,teamcode,createdtimestamp,orderflag,"
-		                 		+ "lsautoregisterorders_regcode,"
+		                 		+ "lsautoregisterorders_regcode,testcode,testname,"
 		                 		+ "elnmaterialinventory_nmaterialinventorycode,elnmaterial_nmaterialcode) "
-		                 		+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		                 		+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	                		 
 	                		 
 		               try (PreparedStatement pst = con.prepareStatement(updateString, Statement.RETURN_GENERATED_KEYS)) {
@@ -1903,14 +1856,16 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 		                   pst.setInt(12, objorder.getOrderdisplaytype());
 		                   pst.setInt(13,objorder.getLstestmasterlocal().getTestcode());
 		                   pst.setInt(14,objorder.getViewoption());
-		                   pst.setInt(15,objorder.getOrdercancell());
+		                   pst.setObject(15,objorder.getOrdercancell());
 		                   pst.setInt(16, objorder.getTeamcode());
 		                   pst.setTimestamp(17, new Timestamp(createddate.getTime()));
 		                   pst.setString(18, objorder.getOrderflag());
 		                   pst.setLong(19, objorder.getLsautoregisterorders().getRegcode());
 		                   //pst.setObject(20, objorder.getMaterial().getNmaterialcode());
-		                   pst.setObject(20, objorder.getElnmaterialinventory().getNmaterialinventorycode());
-		                   pst.setObject(21, objorder.getElnmaterial().getNmaterialcode());
+		                   pst.setInt(20,objorder.getTestcode());
+		                   pst.setString(21, objorder.getTestname());
+		                   pst.setObject(22, objorder.getElnmaterialinventory().getNmaterialinventorycode());
+		                   pst.setObject(23, objorder.getElnmaterial().getNmaterialcode());
 		                   
 		                   
 		
@@ -1951,6 +1906,10 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 		            	   pst.setLong(4, objorder.getLsautoregisterorders().getRegcode());
 		            	   
 		            	   pst.executeUpdate();
+		               }
+		               
+		               if(objorder.getRepeat() == true) {
+		            	   scheduleAutoRegisteration(objorder , configuration);
 		               }
 		               
 		               Calendar transcalendar = Calendar.getInstance();

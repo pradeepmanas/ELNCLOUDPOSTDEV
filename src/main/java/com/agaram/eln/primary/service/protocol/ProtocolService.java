@@ -3013,7 +3013,6 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
 						        autocode.setAutocreatedate(futureDate);
 						 }else {
-							 //Date autodate=autocode.getAutocreatedate();
 								
 							 Calendar calendar = Calendar.getInstance();
 						        calendar.setTime(currentdate);
@@ -3021,6 +3020,15 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 						        Date futureDate = calendar.getTime();   
 						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
 						        autocode.setAutocreatedate(futureDate);
+							 
+							 
+//							 Calendar calendar = Calendar.getInstance();
+//						        calendar.setTime(currentdate);
+//						       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
+//						        calendar.add(Calendar.MINUTE , (10));
+//						        Date futureDate = calendar.getTime();   
+//						        autocode.setAutocreatedate(futureDate);
+						        
 						 }
 						
 						autocode.setBatchcode(null);

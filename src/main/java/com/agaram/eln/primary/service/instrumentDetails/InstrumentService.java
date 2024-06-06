@@ -850,49 +850,44 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 				LsAutoregister autoobj = new LsAutoregister();
 				List<LsAutoregister> listauto = new ArrayList<LsAutoregister>();
 				
-				//autoorder.parallelStream().forEach(autocode->{
 					if(autoorder.get(0).getBatchcode().equals(objorderindex.getBatchcode())) {
 				
 						Date currentdate = commonfunction.getCurrentUtcTime();
 						if(autoorder.get(0).getTimespan().equals("Days")) {
-							//Date autodate=autoorder.get(0).getAutocreatedate();
-							
 							 Calendar calendar = Calendar.getInstance();
 						        calendar.setTime(currentdate);
 						        calendar.add(Calendar.DAY_OF_MONTH, autoorder.get(0).getInterval());
 
-						        // Convert back to Date (if necessary)
 						        Date futureDate = calendar.getTime();   
-						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
 						        autoorder.get(0).setAutocreatedate(futureDate);
 						 }else if(autoorder.get(0).getTimespan().equals("Week")) {
-							 //Date autodate=autoorder.get(0).getAutocreatedate();
-								
+							
 							    Calendar calendar = Calendar.getInstance();
 						        calendar.setTime(currentdate);
 						        calendar.add(Calendar.DAY_OF_MONTH, (autoorder.get(0).getInterval()*7));
 
-						        // Convert back to Date (if necessary)
 						        Date futureDate = calendar.getTime();   
-						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
 						        autoorder.get(0).setAutocreatedate(futureDate);
 						 }else {
-							 //Date autodate=autoorder.get(0).getAutocreatedate();
-								
-							 Calendar calendar = Calendar.getInstance();
+							
+							    Calendar calendar = Calendar.getInstance();
 						        calendar.setTime(currentdate);
 						        calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
 						        Date futureDate = calendar.getTime();   
-						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
 						        autoorder.get(0).setAutocreatedate(futureDate);
+							 
+//							    Calendar calendar = Calendar.getInstance();
+//						        calendar.setTime(currentdate);
+//						       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
+//						        calendar.add(Calendar.MINUTE , (10));
+//						        Date futureDate = calendar.getTime();   
+//						        autoorder.get(0).setAutocreatedate(futureDate);
 						 }
 						
-						//autocode.setBatchcode(objorderindex.getBatchcode());
 						autoorder.get(0).setRegcode(null);
 						autoorder.get(0).setScreen("IDS_SHEETORDERS");
 						autoorder.get(0).setIsautoreg(true);
 						
-						//listauto.add(lsautoregisterrepo.save(autocode));
 						listauto.add(autoorder.get(0));
 						objorderindex.setLsautoregisterorders(listauto.get(0));
 						
