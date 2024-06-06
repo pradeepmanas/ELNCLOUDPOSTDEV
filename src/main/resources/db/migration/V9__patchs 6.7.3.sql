@@ -31,14 +31,6 @@ BEGIN
 END
 $do$;
 
-DO $$
-DECLARE
-    max_serialno_value INTEGER;
-BEGIN
-    SELECT MAX(regcode) INTO max_serialno_value FROM lsautoregister;
-    EXECUTE 'ALTER SEQUENCE lsautoregister_seq RESTART WITH ' || (max_serialno_value + 1);
-END $$;
-
 ALTER TABLE IF Exists LSlogilabprotocoldetail ALTER COLUMN  protocolordercode SET DEFAULT nextval('orderDetail');
 --ALTER SEQUENCE protocolordercode INCREMENT BY 1;
 
@@ -77,3 +69,23 @@ ALTER TABLE lscfttransaction ALTER COLUMN serialno SET DEFAULT nextval('lscfttra
 ALTER TABLE IF Exists LSSheetOrderStructure ADD Column IF NOT EXISTS parentcodeondefaultfoder double precision;
 
 ALTER TABLE IF Exists Lsprotocolorderstructure ADD Column IF NOT EXISTS parentcodeondefaultfoder double precision;
+
+DO $$
+DECLARE
+	max_regcode_value INTEGER;
+BEGIN
+    SELECT MAX(regcode) INTO max_regcode_value FROM lsautoregister;
+	IF max_regcode_value IS NOT NULL THEN
+    EXECUTE 'ALTER SEQUENCE lsautoregister_seq RESTART WITH ' || (max_regcode_value + 1);
+	END IF;
+END $$;
+
+DO $$
+DECLARE
+	max_notificationcode_value INTEGER;
+BEGIN
+    SELECT MAX(notificationcode) INTO max_notificationcode_value FROM lsnotification;
+	IF max_notificationcode_value IS NOT NULL THEN
+    EXECUTE 'ALTER SEQUENCE notification_sequence RESTART WITH ' || (max_notificationcode_value + 1);
+	END IF;
+END $$;
