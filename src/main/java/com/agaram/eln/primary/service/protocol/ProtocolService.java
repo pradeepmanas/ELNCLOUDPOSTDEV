@@ -220,6 +220,7 @@ import com.google.gson.Gson;
 //import com.groupdocs.editor.formats.WordProcessingFormats;
 //import com.groupdocs.editor.options.WordProcessingEditOptions;
 //import com.groupdocs.editor.options.WordProcessingSaveOptions;
+import com.aspose.words.*;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.OperationContext;
 import com.microsoft.azure.storage.StorageException;
@@ -9546,19 +9547,35 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
         	
 //        	License license = new License();
 //        	license.setLicense(licensePath);
-        	String outputFilePath = System.getProperty("java.io.tmpdir") + "\\"+protocol.getProtocolmastername()+".docx";
-        	File.createTempFile(protocol.getProtocolmastername(), ".docx", new File(System.getProperty("java.io.tmpdir")));
+//        	String outputFilePath = System.getProperty("java.io.tmpdir") + "\\"+protocol.getProtocolmastername()+".docx";
+//        	File.createTempFile(protocol.getProtocolmastername(), ".docx", new File(System.getProperty("java.io.tmpdir")));
+        	
+        	Document docA = new Document();
+        	DocumentBuilder builder = new DocumentBuilder(docA);
+
+        	// Insert text to the document start.
+        	builder.moveToDocumentStart();
+        	builder.insertHtml(protocol.getProtocoldatainfo());
+//        	formhtmldataforprotocols(docA, objMap);
+
+        
+
+//        	Document docB = new Document(System.getProperty("java.io.tmpdir") + "\\"+protocol.getProtocolmastername()+".docx");
+        	// Add document B to the and of document A, preserving document B formatting.
+//        	docA.appendDocument(docB, ImportFormatMode.KEEP_SOURCE_FORMATTING);
+//
+//        	docA.save(System.getProperty("java.io.tmpdir") + "\\"+protocol.getProtocolmastername()+".docx");
         	
 //        	Editor editor = new Editor(outputFilePath); //passing path to the constructor, default WordProcessingLoadOptions will be applied automatically
-//        	
+////        	
 //        	WordProcessingEditOptions editOptions = new WordProcessingEditOptions();
 //        	editOptions.setEnableLanguageInformation(true);
-//
+////
 //        	editor.edit(editOptions);
 //        	EditableDocument afterEdit = EditableDocument.fromMarkup(formhtmldataforprotocols(objMap), null);
-//        	
-////        			Constants.getOutputDirectoryPath("newdocdes.docx");
-//      	
+////        	
+//////        			Constants.getOutputDirectoryPath("newdocdes.docx");
+////      	
 //        	WordProcessingSaveOptions saveOptions = new WordProcessingSaveOptions(WordProcessingFormats.Docx);
 //        	editor.save(afterEdit, outputFilePath, saveOptions);
         	
@@ -9566,8 +9583,13 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 //        	try (FileInputStream inputStream = new FileInputStream(targetFile)) {
 //                inputStream.read(data);
 //            }
-
-        	data = FileUtils.readFileToByteArray(new File(System.getProperty("java.io.tmpdir") + "\\" + protocol.getProtocolmastername()+".docx"));
+        	ByteArrayOutputStream docOutStream = new ByteArrayOutputStream();
+        	docA.save(docOutStream, SaveFormat.DOCX);
+        	
+        	// Convert the document to byte form.
+        	data = docOutStream.toByteArray();
+        	
+//        	data = FileUtils.readFileToByteArray(new File(System.getProperty("java.io.tmpdir") + "\\" + protocol.getProtocolmastername()+".docx"));
 //        			Files.readAllBytes(System.getProperty("java.io.tmpdir") + "\\" + "newdocdes.docx");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
@@ -9578,17 +9600,19 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		return bis;
 	}
 	
-	public String formhtmldataforprotocols(Map<String, Object> protocoldatamap)
+	public DocumentBuilder formhtmldataforprotocols(Document doc, Map<String, Object> protocoldatamap)
 	{
-		String editorvalue ="";
-		
-        
+		DocumentBuilder builder = new DocumentBuilder(doc);
+
+    	// Insert text to the document start.
+    	builder.moveToDocumentStart();
+    
         try {
         	 
         	JSONObject jsonObj = new JSONObject(protocoldatamap.get("ProtocolData").toString());
     		JSONObject obsrtactobj = jsonObj.getJSONObject("abstract");
     		JSONArray objsection = jsonObj.getJSONArray("sections");
-    		editorvalue+= obsrtactobj.getString("value");
+    		builder.insertHtml(obsrtactobj.getString("value"));
         	
         	for (Object item : objsection){
         		JSONObject objitem = (JSONObject) item;
@@ -9603,7 +9627,23 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
                 	    switch (objeditor.getString("editortype")) {
                 		case "documenteditor":
                 			JSONObject objeditorvalue = objeditor.getJSONObject("value");
-                			editorvalue+= objeditorvalue.getString("data");
+                			builder.insertHtml(objeditorvalue.getString("data"));
+                			break;
+                		case "sheeteditor":
+                			JSONObject objsheeteditorvalue = objeditor.getJSONObject("value");
+                			JSONObject sheetcontent = objsheeteditorvalue.getJSONObject("data");
+                			JSONArray sheets = objsheeteditorvalue.getJSONArray("sheets");
+                			String sheetdata ="";
+                			int lastrowindex = -1;
+                		    int lastcellindex = -1;
+                			for (Object sheet : sheets){
+                			
+                			}
+                			for (Object sheet : sheets){
+                				sheetdata +=" <Table key={sheetindex} stripped bordered hover size=\"sm\"><tbody>";
+                				
+                				sheetdata +="</tbody></Table>";
+                			}
                 			break;
                 		
                 		default:
@@ -9614,19 +9654,19 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
         	    }
         	}
         	    	
-        	editorvalue = "<html> <head><title>Validate</title></head>" + 
-        			"<body><div>"+
-        			
-        			editorvalue.replaceAll("clear: both;", "").
-        			replaceAll("text-transform: none;", "").replaceAll(" white-space: normal;", "").
-        			replaceAll("white-space: pre-wrap;", "").replaceAll("white-space: pre !important;", "")
-        			.replaceAll("white-space: nowrap;", "")+
+//        	editorvalue = "<html> <head><title>Validate</title></head>" + 
+//        			"<body><div>"+
+//        			editorvalue+
+//        			editorvalue.replaceAll("clear: both;", "").
+//        			replaceAll("text-transform: none;", "").replaceAll(" white-space: normal;", "").
+//        			replaceAll("white-space: pre-wrap;", "").replaceAll("white-space: pre !important;", "")
+//        			.replaceAll("white-space: nowrap;", "")+
 
-        			"</div></body></html>";
+//        			"</div></body></html>";
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
         	
-		return editorvalue;
+		return builder;
 	}
 }
