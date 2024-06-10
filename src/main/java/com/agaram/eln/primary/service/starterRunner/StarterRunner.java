@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.service.starterRunner;
 
 import java.io.BufferedReader;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,36 +18,23 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
-
 import java.util.stream.Collectors;
-
 import java.util.concurrent.ConcurrentMap;
-
-
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-
 import com.agaram.eln.primary.commonfunction.commonfunction;
-import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchtenantsource.Datasourcemaster;
-import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
-import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
-import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.dashboard.LsActiveWidgets;
 import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
@@ -56,22 +44,12 @@ import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
-import com.agaram.eln.primary.model.material.Material;
-import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
-import com.agaram.eln.primary.model.protocols.LSlogilabprotocolsteps;
-import com.agaram.eln.primary.model.protocols.LSprotocolfiles;
-import com.agaram.eln.primary.model.protocols.LSprotocolimages;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
-import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
-import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
-import com.agaram.eln.primary.model.protocols.LSprotocolstepInfo;
-import com.agaram.eln.primary.model.protocols.LSprotocolvideos;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
-import com.agaram.eln.primary.model.protocols.LsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
@@ -82,17 +60,15 @@ import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
-import com.aspose.pdf.internal.eps.postscript.l0f;
-import com.google.gson.Gson;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.support.ScheduledMethodRunnable;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
 
 
 @Service
@@ -110,7 +86,6 @@ public class StarterRunner {
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
 	
-   // private Map<Integer, TimerTask> scheduledTasks = new ConcurrentHashMap<>();
     private final ConcurrentMap<Integer, TimerTask> scheduledTasks = new ConcurrentHashMap<>();
 
     private static final int MAX_POOL_SIZE = 10;
@@ -118,12 +93,55 @@ public class StarterRunner {
     private static final int CONNECTION_TIMEOUT = 120000;
     private static final int CONNECTION_THRESHOLD = 120000;
 
-    public void executeOnStartup() throws SQLException, IOException {
+    Date currentdate = null;
+    Date gettoDate=null;
+    Date getfromDate=null;
+    
+    public void executeOnStartup() throws Exception {
+
         System.out.println("Task executed on startup");
-        checkAndScheduleReminders();
-        checkAndScheduleRemindersforOrders();
-        checkAndScheduleautoOrderRegister();
-        checkAndScheduleProtocolautoRegister();      
+        new Thread(() -> {
+			try {
+				System.out.println("auto register for sheet");
+				checkAndScheduleautoOrderRegister();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
+        
+        new Thread(() -> {
+			try {
+				System.out.println("reminder alert concept");
+				checkAndScheduleReminders();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
+    
+        
+        new Thread(() -> {
+			try {
+				System.out.println("reminder for orders");
+				checkAndScheduleRemindersforOrders();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
+        
+      
+        new Thread(() -> {
+			try {
+				System.out.println("auto register for protocol");
+				checkAndScheduleProtocolautoRegister();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
+        
+        //checkAndScheduleReminders();
+        //checkAndScheduleRemindersforOrders();
+        //checkAndScheduleautoOrderRegister();
+       // checkAndScheduleProtocolautoRegister();      
     }
     public LsActiveWidgets mapResultSetToLsactivewidgets (ResultSet rs)throws SQLException{
     	LsActiveWidgets lsactivewidgets = new LsActiveWidgets();
@@ -175,7 +193,6 @@ public class StarterRunner {
     	ordernot.setCreateby(rs.getInt("createby"));
     	//ordernot.setVersionno(rs.getInt("versiono"));
     	
-    	
     	LsAutoregister lsAutoregister = new LsAutoregister();
     	lsAutoregister.setRegcode(rs.getLong("lsAutoregister_regcode"));
     	ordernot.setLsautoregister(lsAutoregister);
@@ -208,17 +225,7 @@ public class StarterRunner {
     	
     	ordernot.setTeamcode(rs.getInt("teamcode"));
     	ordernot.setApprovelstatus(rs.getInt("approvelstatus"));
-    	
-    	//ordernot.setTestname(rs.getString("testname"));
-    	
-//    	Material material = new Material();
-//    	material.setNmaterialcode(rs.getInt("material_nmaterialcode"));
-//    	ordernot.setMaterial(material);
-//    	
-//    	MaterialInventory materialinventory = new MaterialInventory();
-//    	materialinventory.setNmaterialinventorycode(rs.getInt("materialinventory_nmaterialinventorycode"));
-//    	ordernot.setMaterialinventory(materialinventory);
-    	
+    
     	ordernot.setFileuid(rs.getString("fileuid"));
     	ordernot.setFileuri(rs.getString("fileuri"));
     	ordernot.setContainerstored(rs.getInt("containerstored"));
@@ -237,8 +244,7 @@ public class StarterRunner {
     	ElnmaterialInventory elnmaterialinventory = new ElnmaterialInventory();
     	elnmaterialinventory.setNmaterialinventorycode(rs.getString("elnmaterialinventory_nmaterialinventorycode") != null ? rs.getInt("elnmaterialinventory_nmaterialinventorycode") : null);
     	ordernot.setElnmaterialinventory(elnmaterialinventory);
-    	
-    	
+    
     	Elnprotocolworkflow elnprotocolworkflow = new Elnprotocolworkflow();
     	elnprotocolworkflow.setWorkflowcode(rs.getInt("elnprotocolworkflow_workflowcode"));
     	ordernot.setElnprotocolworkflow(elnprotocolworkflow);
@@ -365,10 +371,6 @@ public class StarterRunner {
     	fileobj.setFilecode(rs.getInt("filecode"));
     	fileobj.setFilecontent(rs.getString("filecontent"));
     	
-//    	LSSiteMaster lssitemaster = new LSSiteMaster();
-//    	lssitemaster.setSitecode(rs.getInt("sitecode"));
-//    	
-//    	fileobj.setLssitemaster(lssitemaster);
     	fileobj.setFilenameuser(rs.getString("filenameuser"));
     	return fileobj;
     }
@@ -387,7 +389,6 @@ public class StarterRunner {
     	lsworkflow.setWorkflowcode(rs.getInt("workflowcode"));
     	lsworkflow.setWorkflowname(rs.getString("workflowname"));
     	
-    //	lsworkflow.setObjuser((LoggedUser) rs.getObject("LoggedUser"));
 		return lsworkflow; 	
     }
     
@@ -534,23 +535,36 @@ public class StarterRunner {
 		return lsprotocolstep;
     	
     }
-    public void checkAndScheduleProtocolautoRegister() throws SQLException, IOException {
-    	List<Datasourcemaster> configList = configRepo.findByinitialize(true);
+   
+    public void getCurrentUTCDate() throws Exception {
+    	currentdate = commonfunction.getCurrentUtcTime();
+	}
+    
+    public void gettofromdate() {
 
         LocalDateTime localDateTime = LocalDateTime.now();
         Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-
-        Date toDate = Date.from(instant);
-      
+         gettoDate = Date.from(instant);
+         
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR_OF_DAY , +12);
-        toDate=calendar.getTime();
+        gettoDate=calendar.getTime();
       
-        LocalDateTime  previousDate = localDateTime.minusDays(1);
-        Instant preinstant = previousDate.atZone(ZoneId.systemDefault()).toInstant();
-        Date fromDate=Date.from(preinstant);  
-
+//        LocalDateTime  previousDate = localDateTime.minusDays(1);
+//        Instant preinstant = previousDate.atZone(ZoneId.systemDefault()).toInstant();
+ //       getfromDate=Date.from(preinstant);  
         
+        Calendar fromcalendar = Calendar.getInstance();
+        fromcalendar.add(Calendar.HOUR_OF_DAY, -12);
+        getfromDate=fromcalendar.getTime();
+    }
+    
+    public void checkAndScheduleProtocolautoRegister() throws Exception {
+    	List<Datasourcemaster> configList = configRepo.findByinitialize(true);
+     
+    	gettofromdate();
+    	getCurrentUTCDate();
+    	
         for (Datasourcemaster objData : configList) {
             HikariConfig configuration = createHikariConfig(objData);
             try (HikariDataSource dataSource = new HikariDataSource(configuration);
@@ -559,13 +573,13 @@ public class StarterRunner {
             	String checkrepeat = "SELECT * FROM lslogilabprotocoldetail WHERE repeat = true and createdtimestamp BETWEEN ? AND ?";
             	 try (PreparedStatement pst = con.prepareStatement(checkrepeat)) {
                      
-                 	 pst.setTimestamp(1, new Timestamp(fromDate.getTime()));
-                     pst.setTimestamp(2, new Timestamp(toDate.getTime()));
+                 	 pst.setTimestamp(1, new Timestamp(getfromDate.getTime()));
+                     pst.setTimestamp(2, new Timestamp(gettoDate.getTime()));
 
                      try (ResultSet rs = pst.executeQuery()) {
                          while (rs.next()) {
                         	 LSlogilabprotocoldetail orderobj = mapResultSetToOrderLSlogilabprotocoldetail(rs);
-                             scheduleProtocolAutoRegisteration(orderobj, configuration);
+                             scheduleProtocolAutoRegisteration(orderobj, configuration,currentdate);
                          }
                      } catch (SQLException e) {
  		                e.printStackTrace(); // Consider logging this properly
@@ -575,10 +589,10 @@ public class StarterRunner {
         }
     }
     
-    private void scheduleProtocolAutoRegisteration(LSlogilabprotocoldetail orderobj, HikariConfig configuration) throws SQLException, IOException {
-    	 
-    	LsAutoregister objlsauto = null ;
-    	LSuserMaster objuser = null;
+    private void scheduleProtocolAutoRegisteration(LSlogilabprotocoldetail orderobj, HikariConfig configuration , Date currentdate) throws SQLException, IOException {	 
+    	LsAutoregister objlsauto = null ;	
+    	  LSprotocolmaster protocolmasterobj = null;
+
     	 try (HikariDataSource dataSource = new HikariDataSource(configuration);
                  Connection con = dataSource.getConnection()) {
 
@@ -592,31 +606,81 @@ public class StarterRunner {
                         while (rs.next()) {
                         	 objlsauto = mapResultSetToLsAutoregister(rs);
                         	 orderobj.setLsautoregisterorder(objlsauto);
-                        	 orderobj.setLsautoregister(objlsauto);
-                           
+                        	 orderobj.setLsautoregister(objlsauto);        
                         }
                     } catch (SQLException e) {
 		                e.printStackTrace(); // Consider logging this properly
 		            }
                 }
+                
+                String deftemppromast = "SELECT * FROM LSProtocolMaster WHERE protocolmastercode = ?";
+				
+       	 		try (PreparedStatement pst = con.prepareStatement(deftemppromast)) {
+                
+       	 		pst.setInt(1, orderobj.getLsprotocolmaster().getProtocolmastercode());
+       	 		
+       	 			try (ResultSet rs = pst.executeQuery()) {
+                    while (rs.next()) {
+                    	protocolmasterobj = mapResultSetToLsprotocolmaster(rs);
+                    	orderobj.setLsprotocolmaster(protocolmasterobj);
+                    	 //protocolSteps.add(protostepobj);
+                    }
+                } catch (SQLException e) {
+	                e.printStackTrace(); // Consider logging this properly
+	            }
+              }
     	 }
-    	Date Autoregdate = objlsauto.getAutocreatedate();
-    	Instant auto = Autoregdate.toInstant();
-        LocalDateTime autoTime = LocalDateTime.ofInstant(auto, ZoneId.systemDefault());
-        LocalDateTime currentTime = LocalDateTime.now();
-
-        if (autoTime.isAfter(currentTime)) {
-            Duration duration = Duration.between(currentTime, autoTime);
-            long delay = duration.toMillis();
-            scheduleForProtocolAutoRegOrders(orderobj, delay, configuration);
-        }else {
-        	try {
-				ExecuteProtocolAutoRegistration(orderobj,configuration);
-			} catch (ParseException | SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-        }
+    	if(objlsauto != null) { 
+	    	Date Autoregdate = objlsauto.getAutocreatedate();
+	    	Instant auto = Autoregdate.toInstant();
+	        LocalDateTime autoTime = LocalDateTime.ofInstant(auto, ZoneId.systemDefault());
+	        LocalDateTime currentTime = LocalDateTime.now();
+	
+	        if (autoTime.isAfter(currentTime)) {
+	            Duration duration = Duration.between(currentTime, autoTime);
+	            long delay = duration.toMillis();
+	            scheduleForProtocolAutoRegOrders(orderobj, delay, configuration,currentdate);
+	        }else {
+	        	
+	        	
+//	        	TimerTask task = new TimerTask() {
+//		            @SuppressWarnings("unlikely-arg-type")
+//					@Override
+//		            public void run() {
+//		                try {
+//		                	ExecuteProtocolAutoRegistration(orderobj, configuration,currentdate);
+//		                }  catch (SQLException | ParseException | IOException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//		                scheduledTasks.remove(orderobj.getProtocolordercode());
+//		            }
+//		        };
+//		        Timer timer = new Timer();
+//		        timer.schedule(task, 45000);
+//		        scheduledTasks.put(orderobj.getProtocolordercode().intValue(), task);
+	        	
+	        	try {
+					ExecuteProtocolAutoRegistration(orderobj, configuration,currentdate);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        
+	        }
+    	}
    }
     
     public void updateProtocolOrderContent(String Content, LSlogilabprotocoldetail objOrder, Integer ismultitenant,HikariConfig configuration)
@@ -661,23 +725,13 @@ public class StarterRunner {
 		} 
 	}
     
-    public void checkAndScheduleautoOrderRegister() throws SQLException, IOException {
+    public void checkAndScheduleautoOrderRegister() throws Exception {
     	List<Datasourcemaster> configList = configRepo.findByinitialize(true);
-
-        LocalDateTime localDateTime = LocalDateTime.now();
-        Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-
-        Date toDate = Date.from(instant);
-        
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.HOUR_OF_DAY , +12);
-        toDate=calendar.getTime();
-        
-        LocalDateTime  previousDate = localDateTime.minusDays(1);
-        Instant preinstant = previousDate.atZone(ZoneId.systemDefault()).toInstant();
-        Date fromDate=Date.from(preinstant);  
-        
         for (Datasourcemaster objData : configList) {
+        	
+        	gettofromdate();
+        	getCurrentUTCDate();
+        	
             HikariConfig configuration = createHikariConfig(objData);
             try (HikariDataSource dataSource = new HikariDataSource(configuration);
                     Connection con = dataSource.getConnection()) {
@@ -685,13 +739,13 @@ public class StarterRunner {
             	String checkrepeat = "SELECT * FROM LSlogilablimsorderdetail WHERE repeat = true and createdtimestamp BETWEEN ? AND ?";
             	 try (PreparedStatement pst = con.prepareStatement(checkrepeat)) {
                      
-                 	 pst.setTimestamp(1, new Timestamp(fromDate.getTime()));
-                     pst.setTimestamp(2, new Timestamp(toDate.getTime()));
+                 	 pst.setTimestamp(1, new Timestamp(getfromDate.getTime()));
+                     pst.setTimestamp(2, new Timestamp(gettoDate.getTime()));
 
                      try (ResultSet rs = pst.executeQuery()) {
                          while (rs.next()) {
                         	 LSlogilablimsorderdetail orderobj = mapResultSetToLslogilabOrder(rs);
-                             scheduleAutoRegisteration(orderobj, configuration);
+                             scheduleAutoRegisteration(orderobj, configuration,currentdate);
                          }
                      } catch (SQLException e) {
  		                e.printStackTrace(); // Consider logging this properly
@@ -701,7 +755,7 @@ public class StarterRunner {
         }
     }
 
-    private void scheduleAutoRegisteration(LSlogilablimsorderdetail orderobj, HikariConfig configuration) throws SQLException, IOException {
+    private void scheduleAutoRegisteration(LSlogilablimsorderdetail orderobj, HikariConfig configuration,Date currentdate) throws SQLException, IOException {
     	LsAutoregister objlsauto = null ;
     	LSuserMaster objuser = null;
     	 try (HikariDataSource dataSource = new HikariDataSource(configuration);
@@ -733,31 +787,62 @@ public class StarterRunner {
                        while (rs.next()) {
                     	   objuser = mapResultsetToLsUsermaster(rs);
                        	   orderobj.setLsuserMaster(objuser);
-                       	   //orderobj.setAssignedto(objuser);
-                          // scheduleNotificationForCaution(objNotification, configuration);
                        }
                    } catch (SQLException e) {
 		                e.printStackTrace(); // Consider logging this properly
 		            }
                }
     	 }
-    	Date Autoregdate = objlsauto.getAutocreatedate();
-    	Instant auto = Autoregdate.toInstant();
-        LocalDateTime autoTime = LocalDateTime.ofInstant(auto, ZoneId.systemDefault());
-        LocalDateTime currentTime = LocalDateTime.now();
-
-        if (autoTime.isAfter(currentTime)) {
-            Duration duration = Duration.between(currentTime, autoTime);
-            long delay = duration.toMillis();
-            scheduleForAutoRegOrders(orderobj, delay, configuration);
-        }else {
-        	try {
-				ExecuteAutoRegistration(orderobj,configuration);
-			} catch (ParseException | SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-        }
+    	if(objlsauto != null) { 
+	    	Date Autoregdate = objlsauto.getAutocreatedate();
+	    	Instant auto = Autoregdate.toInstant();
+	        LocalDateTime autoTime = LocalDateTime.ofInstant(auto, ZoneId.systemDefault());
+	        LocalDateTime currentTime = LocalDateTime.now();
+	
+	        if (autoTime.isAfter(currentTime)) {
+	            Duration duration = Duration.between(currentTime, autoTime);
+	            long delay = duration.toMillis();
+	            scheduleForAutoRegOrders(orderobj, delay, configuration,currentdate);
+	        }else {
+	        	
+	        	
+//	        	TimerTask task = new TimerTask() {
+//		            @SuppressWarnings("unlikely-arg-type")
+//					@Override
+//		            public void run() {
+//		                try {
+//		                	ExecuteAutoRegistration(orderobj, configuration,currentdate);
+//		                }  catch (SQLException | ParseException | IOException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//		                scheduledTasks.remove(orderobj.getBatchcode());
+//		            }
+//		        };
+//		        Timer timer = new Timer();
+//		        timer.schedule(task, 45000);
+//		        scheduledTasks.put(orderobj.getBatchcode().intValue(), task);
+	        	
+	        	try {
+					ExecuteAutoRegistration(orderobj, configuration,currentdate);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        }
+    	}
     }
     
     public void checkAndScheduleRemindersforOrders() throws SQLException {
@@ -837,26 +922,26 @@ public class StarterRunner {
 		              }
 					}
 					
-					 String overduedaysquery = "SELECT * FROM lsordernotification WHERE (Isduedateexhausted = true and Iscompleted = false)"
-					 		+ "OR"
-					 		+ " Isduedateexhausted = true and Iscompleted isnull";
-
-					 try (PreparedStatement pst = con.prepareStatement(overduedaysquery)) {
-						
-						    try (ResultSet rs = pst.executeQuery()) {
-						        while (rs.next()) {
-						            LSOrdernotification objNotification = mapResultSetToOrderNotification(rs);
-						            notifyoverduedays(objNotification, configuration);
-						        }
-						    } catch (ParseException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					 
-		             catch (SQLException e) {
-		                e.printStackTrace(); // Consider logging this properly
-		            }
+//					 String overduedaysquery = "SELECT * FROM lsordernotification WHERE (Isduedateexhausted = true and Iscompleted = false)"
+//					 		+ "OR"
+//					 		+ " Isduedateexhausted = true and Iscompleted isnull";
+//
+//					 try (PreparedStatement pst = con.prepareStatement(overduedaysquery)) {
+//						
+//						    try (ResultSet rs = pst.executeQuery()) {
+//						        while (rs.next()) {
+//						            LSOrdernotification objNotification = mapResultSetToOrderNotification(rs);
+//						            notifyoverduedays(objNotification, configuration);
+//						        }
+//						    } catch (ParseException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
+//						}
+//					 
+//		             catch (SQLException e) {
+//		                e.printStackTrace(); // Consider logging this properly
+//		            }
             }
         }
     }
@@ -921,7 +1006,7 @@ public class StarterRunner {
 	             
 	                    try {
 							executecautiondatenotification(objNotification, configuration);
-						} catch (ParseException e) {
+						} catch (ParseException | InterruptedException | SQLException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
@@ -955,7 +1040,7 @@ public class StarterRunner {
 	            public void run() {
 	                	try {
 							executeduedatenotification(objNotification, configuration);
-						} catch (ParseException e) {
+						} catch (ParseException | InterruptedException | SQLException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
@@ -989,7 +1074,7 @@ public class StarterRunner {
                 
                 	try {
 						executeoverduenotification(objNotification, configuration);
-					} catch (ParseException e) {
+					} catch (ParseException | SQLException | InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -1072,7 +1157,7 @@ public class StarterRunner {
 	            public void run() {
 	                try {
 	                	executecautiondatenotification(objNotification, configuration);
-	                } catch (ParseException e) {
+	                } catch (ParseException | InterruptedException | SQLException e) {
 	                    e.printStackTrace(); // Consider logging this properly
 	                }
 	                scheduledTasks.remove(objNotification.getNotificationcode());
@@ -1084,7 +1169,7 @@ public class StarterRunner {
     	}
     }
 
-    private void scheduleForAutoRegOrders(LSlogilablimsorderdetail orderobj, long delay, HikariConfig configuration) {
+    private void scheduleForAutoRegOrders(LSlogilablimsorderdetail orderobj, long delay, HikariConfig configuration,Date currentdate) {
     	
     	if((orderobj.getRepeat()!=null || orderobj.getRepeat() != false) && orderobj.getLsautoregisterorders()!=null) {
     		TimerTask task = new TimerTask() {
@@ -1092,12 +1177,16 @@ public class StarterRunner {
 				@Override
 	            public void run() {
 	                try {
-	                	ExecuteAutoRegistration(orderobj, configuration);
+	                	ExecuteAutoRegistration(orderobj, configuration,currentdate);
 	                }  catch (SQLException | ParseException | IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}finally {
+						scheduledTasks.remove(orderobj.getBatchcode());
 					}
-	                scheduledTasks.remove(orderobj.getBatchcode());
 	            }
 	        };
 	        Timer timer = new Timer();
@@ -1107,7 +1196,7 @@ public class StarterRunner {
   
     }
     
-private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, long delay, HikariConfig configuration) {
+    private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, long delay, HikariConfig configuration,Date currentdate) {
     	
     	if((orderobj.getRepeat()!=null || orderobj.getRepeat() != false) && orderobj.getLsautoregister()!=null) {
     		TimerTask task = new TimerTask() {
@@ -1115,12 +1204,16 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 				@Override
 	            public void run() {
 	                try {
-	                	ExecuteProtocolAutoRegistration(orderobj, configuration);
+	                	ExecuteProtocolAutoRegistration(orderobj, configuration,currentdate);
 	                }  catch (SQLException | ParseException | IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}finally {
 	                scheduledTasks.remove(orderobj.getProtocolordercode());
+					}
 	            }
 	        };
 	        Timer timer = new Timer();
@@ -1138,7 +1231,7 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 	            public void run() {
 	                try {
 	                	executeduedatenotification(objNotification, configuration);
-	                } catch (ParseException e) {
+	                } catch (ParseException | InterruptedException | SQLException e) {
 	                    e.printStackTrace(); // Consider logging this properly
 	                }
 	                scheduledTasks.remove(objNotification.getNotificationcode());
@@ -1158,7 +1251,7 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 	            public void run() {
 	                try {
 	                	executeoverduenotification(objNotification, configuration);
-	                } catch (ParseException e) {
+	                } catch (ParseException | SQLException | InterruptedException e) {
 	                    e.printStackTrace(); // Consider logging this properly
 	                }
 	                scheduledTasks.remove(objNotification.getNotificationcode());
@@ -1170,51 +1263,35 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
     	}
     }
     
-    public void ExecuteProtocolAutoRegistration(LSlogilabprotocoldetail lSlogilabprotocoldetail , HikariConfig configuration)throws ParseException, SQLException, IOException {
-    	   
+    public LsAutoregister getautoregisterdetails (LsAutoregister lsautoregister , HikariConfig configuration , Date currentdate,String screen) throws SQLException, InterruptedException {
     	try (HikariDataSource dataSource = new HikariDataSource(configuration);
                 Connection con = dataSource.getConnection()) {
-
-   		 LSprotocolmaster protomasterobj=null;
-   		 LSprotocolstep protostepobj=null;
-   		 
-   	  //  Map<String, Object> mapObj = new HashMap<String, Object>();
-		String Content = "";
-		
-		LsAutoregister autoobj = new LsAutoregister();
-		
-		if(lSlogilabprotocoldetail.getLsautoregister()!= null) {
-			
-			Date currentdate = commonfunction.getCurrentUtcTime();
-			
-			if(lSlogilabprotocoldetail.getLsautoregister().getTimespan().equals("Days")) {
-				//Date autodate=lSlogilabprotocoldetail.getLsautoregister().getAutocreatedate();
+	    	LsAutoregister autoobj = new LsAutoregister();
+	    	long generatedregcode = 0;
+	    	if(lsautoregister.getTimespan().equals("Days")) {
 				
 				 Calendar calendar = Calendar.getInstance();
 			        calendar.setTime(currentdate);
-			        calendar.add(Calendar.DAY_OF_MONTH, lSlogilabprotocoldetail.getLsautoregister().getInterval());
+			        calendar.add(Calendar.DAY_OF_MONTH, lsautoregister.getInterval());
 			        Date futureDate = calendar.getTime();  
 			        autoobj.setAutocreatedate(futureDate);
 			   
-			 }else if(lSlogilabprotocoldetail.getLsautoregister().getTimespan().equals("Week")) {
-				// Date autodate=lSlogilabprotocoldetail.getLsautoregister().getAutocreatedate();
-					
+			 }else if(lsautoregister.getTimespan().equals("Week")) {
+	
 				    Calendar calendar = Calendar.getInstance();
 			        calendar.setTime(currentdate);
-			        calendar.add(Calendar.DAY_OF_MONTH, (lSlogilabprotocoldetail.getLsautoregister().getInterval()*7));
-
-			        // Convert back to Date (if necessary)
+			        calendar.add(Calendar.DAY_OF_MONTH, (lsautoregister.getInterval()*7));
+	
 			        Date futureDate = calendar.getTime();   
-			        //autoordersfilter.get(0).setAutocreatedate(futureDate);
 			        autoobj.setAutocreatedate(futureDate);
 			 }else {
 				
 				    Calendar calendar = Calendar.getInstance();
 			        calendar.setTime(currentdate);
-			        calendar.add(Calendar.HOUR_OF_DAY,(lSlogilabprotocoldetail.getLsautoregister().getInterval()));
+			        calendar.add(Calendar.HOUR_OF_DAY,(lsautoregister.getInterval()));
 			        Date futureDate = calendar.getTime();   
 			        autoobj.setAutocreatedate(futureDate);
-//				 Calendar calendar = Calendar.getInstance();
+//				    Calendar calendar = Calendar.getInstance();
 //			        calendar.setTime(currentdate);
 //			       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
 //			        calendar.add(Calendar.MINUTE , (10));
@@ -1222,74 +1299,85 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 //			        autoobj.setAutocreatedate(futureDate);
 			 }
 			
-			autoobj.setScreen("IDS_PROTOCOLORDERS");
+			autoobj.setScreen(screen);
 			autoobj.setIsautoreg(true);
-			autoobj.setInterval(lSlogilabprotocoldetail.getLsautoregister().getInterval());
-			autoobj.setTimespan(lSlogilabprotocoldetail.getLsautoregister().getTimespan());
-			autoobj.setIsmultitenant(lSlogilabprotocoldetail.getLsautoregister().getIsmultitenant());
+			autoobj.setInterval(lsautoregister.getInterval());
+			autoobj.setTimespan(lsautoregister.getTimespan());
+			autoobj.setIsmultitenant(lsautoregister.getIsmultitenant());
 			autoobj.setRepeat(true);
-			lSlogilabprotocoldetail.setLsautoregister(autoobj);	
-		}
+			autoobj.setRegcode(null);
 			
-		
-			 Calendar autocalendar = Calendar.getInstance();
-		        autocalendar.setTime(autoobj.getAutocreatedate());
-		        Date autocreateddate = autocalendar.getTime(); 
-		        
-			String autoregtablequery = "Insert into lsautoregister (autocreatedate,interval,isautoreg,"
-					+ "ismultitenant,repeat,screen,timespan) Values (?,?,?,?,?,?,?)";
+			Calendar autocalendar = Calendar.getInstance();
+	        autocalendar.setTime(autoobj.getAutocreatedate());
+	        Date autocreateddate = autocalendar.getTime(); 
+	        
+	        
+	        
+	        String autoregtablequery = "Insert into lsautoregister (regcode,autocreatedate,interval,isautoreg,"
+				+ "ismultitenant,repeat,screen,timespan) Values ((SELECT COALESCE(MAX(regcode), 0) + 1 FROM lsautoregister),?,?,?,?,?,?,?)";
 	
-	       try (PreparedStatement pst = con.prepareStatement(autoregtablequery, Statement.RETURN_GENERATED_KEYS)) {
-	          
-	       	pst.setTimestamp(1, new Timestamp(autocreateddate.getTime()));
-	       	pst.setInt(2, autoobj.getInterval());
-	       	pst.setBoolean(3, autoobj.getIsautoreg());
-	       	pst.setInt(4, autoobj.getIsmultitenant());
-	       	pst.setBoolean(5, autoobj.getRepeat());
-	       	pst.setString(6, autoobj.getScreen());
-	       	pst.setString(7, autoobj.getTimespan());
-	          
-	       	int affectedRows=pst.executeUpdate();
-	              
-	              if (affectedRows > 0) {
-	                  // Retrieve the generated keys
-	           	   ResultSet rs = pst.getGeneratedKeys();
-	                  if (rs.next()) {
-	                      long generatedregcode = rs.getLong(1);
-	                      System.out.println("Inserted record's regcode: " + generatedregcode);
-	                      lSlogilabprotocoldetail.getLsautoregister().setRegcode(generatedregcode);
-	                      // Use the generated key for future use
-	                  }
-	              } else {
-	                  System.out.println("No record inserted.");
-	              }
-	       }
-		
+	       
+	        try (PreparedStatement pst = con.prepareStatement(autoregtablequery, Statement.RETURN_GENERATED_KEYS)) {
+	      
+		   	pst.setTimestamp(1, new Timestamp(autocreateddate.getTime()));
+		   	pst.setInt(2, autoobj.getInterval());
+		   	pst.setBoolean(3, autoobj.getIsautoreg());
+		   	pst.setInt(4, autoobj.getIsmultitenant());
+		   	pst.setBoolean(5, autoobj.getRepeat());
+		   	pst.setString(6, autoobj.getScreen());
+		   	pst.setString(7, autoobj.getTimespan());
+	      
+		   	int affectedRows=pst.executeUpdate();
+		          
+		          if (affectedRows > 0) {
+		             
+		       	   ResultSet rs = pst.getGeneratedKeys();
+		              if (rs.next()) {
+		                  generatedregcode = rs.getLong(1);
+		                  System.out.println("Inserted record's regcode: " + generatedregcode);
+		                  autoobj.setRegcode(generatedregcode);
+		                  
+		              }
+		          } else {
+		              System.out.println("No record inserted.");
+		          }
+		          
+		          Thread.sleep(30000);
+		          String updateSequenceSQL = "SELECT setval('lsautoregister_seq', ?)";
+		          try (PreparedStatement pstmt = con.prepareStatement(updateSequenceSQL)) {
+		              pstmt.setLong(1, generatedregcode);
+		              pstmt.execute();
+		              Thread.sleep(15000);
+		              System.out.println("Sequence updated successfully.");
+		          } catch (Exception e) {
+		              e.printStackTrace();
+		          }
+		   	   }
+		return autoobj;
+    	}
+    }
 
-			String deftem = "update LSlogilabprotocoldetail set repeat=false WHERE protocolordercode=?";
- 	 		try (PreparedStatement pst = con.prepareStatement(deftem)) {
-          
- 	 			pst.setLong(1, lSlogilabprotocoldetail.getProtocolordercode());
- 	 			pst.executeUpdate();
- 	 			lSlogilabprotocoldetail.setRepeat(false);
- 	 			
-// 	 			try (ResultSet rs = pst.executeQuery()) {
-//              while (rs.next()) {
-//           	   LSlogilabprotocoldetail protoobj = mapResultSetToOrderLSlogilabprotocoldetail(rs);
-//              	   lSlogilabprotocoldetail.setRepeat(protoobj.getRepeat());;
-//              }
-//          } catch (SQLException e) {
-//               e.printStackTrace(); // Consider logging this properly
-//           }
-         }
- 	 		
-		try {
-			lSlogilabprotocoldetail.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+    public void ExecuteProtocolAutoRegistration(LSlogilabprotocoldetail lSlogilabprotocoldetail , HikariConfig configuration, Date currentdate)throws ParseException, SQLException, IOException, InterruptedException {
+    	   
+    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
+                Connection con = dataSource.getConnection()) {
+
+   		 LSprotocolmaster protomasterobj=null;
+   		
+   		
+   		Long originalProtocolOrderCode = lSlogilabprotocoldetail.getProtocolordercode();
+        Long clonedProtocolOrderCode = new Long(originalProtocolOrderCode);
+   		
+		if(lSlogilabprotocoldetail.getLsautoregister()!= null) {
+			
+			LsAutoregister auditregdetails =  getautoregisterdetails(lSlogilabprotocoldetail.getLsautoregister(),configuration,currentdate,"ProtocolOrder");
+			lSlogilabprotocoldetail.setLsautoregister(auditregdetails);	
+			
 		}
-		if (lSlogilabprotocoldetail != null) {
+	
+			lSlogilabprotocoldetail.setCreatedtimestamp(currentdate);
+
+		if (lSlogilabprotocoldetail != null && lSlogilabprotocoldetail.getLsautoregister()!= null) {
 			lSlogilabprotocoldetail.setVersionno(0);
 
 			if (lSlogilabprotocoldetail.getProtocoltype() == 2
@@ -1299,16 +1387,16 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
           	 		try (PreparedStatement pst = con.prepareStatement(deftempromaster)) {
                    
           	 			try (ResultSet rs = pst.executeQuery()) {
-                       while (rs.next()) {
-                       	 protomasterobj = mapResultSetToLsprotocolmaster(rs);
-                       	 lSlogilabprotocoldetail.setLsprotocolmaster(protomasterobj);
-                       }
-                   } catch (SQLException e) {
-		                e.printStackTrace(); // Consider logging this properly
-		            }
-               }	
+	                       while (rs.next()) {
+	                       	 protomasterobj = mapResultSetToLsprotocolmaster(rs);
+	                       	 lSlogilabprotocoldetail.setLsprotocolmaster(protomasterobj);
+	                       }
+		                   } catch (SQLException e) {
+				                e.printStackTrace(); // Consider logging this properly
+				          }
+          	 			deftempromaster = "";
+                      }	
 				
-				//LSprotocolmaster lsprotocolmasterobj = LSProtocolMasterRepositoryObj.findByDefaulttemplate(1);
 				if (protomasterobj == null) {
 					LSprotocolmaster lsprotocolmaster = new LSprotocolmaster();
 					lsprotocolmaster.setProtocolmastername("Default Protocol");
@@ -1317,9 +1405,8 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 					lsprotocolmaster.setCreatedate(lSlogilabprotocoldetail.getCreatedtimestamp());
 					lsprotocolmaster.setLssitemaster(lSlogilabprotocoldetail.getSitecode());
 					
-					String updateString = "INSERT INTO lsprotocolmaster (protocolmastername,status,createdby,createdate,lssitemaster) "
-							+ "VALUES (?,?,?,?,?)";
-               		 
+					String updateString = "INSERT INTO lsprotocolmaster (protocolmastername,status,createdby,createdate,lssitemaster) VALUES (?,?,?,?,?)";
+		
 					 Calendar protocalendar = Calendar.getInstance();
 					 protocalendar.setTime(lsprotocolmaster.getCreatedate());
 				     Date protocalendardate = protocalendar.getTime(); 
@@ -1330,9 +1417,11 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 	                   pst.setInt(3, lsprotocolmaster.getCreatedby());
 	                   pst.setTimestamp(4, new Timestamp(protocalendardate.getTime()));
 	                   pst.setInt(5,lSlogilabprotocoldetail.getSitecode());
+	                   pst.setLong(6, lSlogilabprotocoldetail.getProtocolordercode());
 	                   pst.executeUpdate();
+	                   
 	               }
-	           
+	                updateString="";
 					lSlogilabprotocoldetail.setLsprotocolmaster(lsprotocolmaster);
 				} else {
 					lSlogilabprotocoldetail.setLsprotocolmaster(protomasterobj);
@@ -1340,61 +1429,29 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 
 			   }
 	
-			lSlogilabprotocoldetail.setProtoclordername(null);
-			lSlogilabprotocoldetail.setProtocolordercode(null);
+				lSlogilabprotocoldetail.setProtoclordername(null);
+				lSlogilabprotocoldetail.setProtocolordercode(null);
 			
-				LSSiteMaster siteobj=null;
-				String sitequery = "SELECT * FROM lssitemaster WHERE sitecode = ?";
-	   	 		try (PreparedStatement pst = con.prepareStatement(sitequery)) {
-	            
-	   	 		pst.setInt(1, lSlogilabprotocoldetail.getSitecode());
-	   	 		
-	   	 			try (ResultSet rs = pst.executeQuery()) {
-	                while (rs.next()) {
-	                	 siteobj = mapResultSetToLSiteMaster(rs);
-	             
-	                	 //protocolSteps.add(protostepobj);
-	                }
-	            } catch (SQLException e) {
-	                e.printStackTrace(); // Consider logging this properly
-	            	}
-	   	 		}
-	
-		   	     List<Elnprotocolworkflow> proworkflowlist= new ArrayList<>();
-		   	     Elnprotocolworkflow workflowobj = new Elnprotocolworkflow();
-	   	     
-				String workflowquery = "SELECT * FROM elnprotocolworkflow WHERE lssitemaster_sitecode = ?";
-			 		try (PreparedStatement pst = con.prepareStatement(workflowquery)) {
-		        
-			 		pst.setInt(1, lSlogilabprotocoldetail.getSitecode());
-			 		
-			 			try (ResultSet rs = pst.executeQuery()) {
-		            while (rs.next()) {
-		            	 workflowobj = mapResultSetToElnprotocolworkflow(rs);
-		            	 proworkflowlist.add(workflowobj);
-		            	 //protocolSteps.add(protostepobj);
-		            }
-			        } catch (SQLException e) {
-			            e.printStackTrace(); // Consider logging this properly
-			        }
-		      }
-		 	    lSlogilabprotocoldetail.setElnprotocolworkflow(workflowobj);
-		 	    lSlogilabprotocoldetail.setLstelnprotocolworkflow(proworkflowlist);
 
+				String deftem = "update LSlogilabprotocoldetail set repeat=false WHERE protocolordercode=?";
+			 		try (PreparedStatement pst = con.prepareStatement(deftem)) {
+		      
+			 			pst.setLong(1, clonedProtocolOrderCode);
+			 			pst.executeUpdate();
+			 			lSlogilabprotocoldetail.setRepeat(false);
+		         }
+			 		deftem="";
+			 		
 			String updateString = "INSERT INTO lSlogilabprotocoldetail (testcode,createdtimestamp,keyword,protocoltype,lsprojectmaster_projectcode,"
 					+ "lsusermaster_usercode,approved,versionno,createby,sitecode,viewoption,"
 					+ "fileuid,fileuri,containerstored,lsprotocolmaster_protocolmastercode,repeat,"
 					+ "orderflag,elnprotocolworkflow_workflowcode,lsautoregister_regcode,"
 					+ "elnmaterial_nmaterialcode,elnmaterialinventory_nmaterialinventorycode) "
 					+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-       		 
-			Calendar calendar = Calendar.getInstance();
-	        calendar.setTime(lSlogilabprotocoldetail.getCreatedtimestamp());
-	        Date createddate = calendar.getTime(); 
-        
+					
 		           try (PreparedStatement pst = con.prepareStatement(updateString, Statement.RETURN_GENERATED_KEYS)) {
 		               pst.setInt(1, lSlogilabprotocoldetail.getTestcode());
-		               pst.setTimestamp(2, new Timestamp(createddate.getTime()));
+		               pst.setTimestamp(2, new Timestamp(currentdate.getTime()));
 		               pst.setString(3, lSlogilabprotocoldetail.getKeyword());
 		               pst.setInt(4 , lSlogilabprotocoldetail.getProtocoltype());
 		               pst.setInt(5,lSlogilabprotocoldetail.getLsprojectmaster().getProjectcode());
@@ -1430,15 +1487,16 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 	                   } else {
 	                       System.out.println("No record inserted.");
 	                   }
+	                   updateString="";
 		           }
           
-		           String deftemp = "update lsautoregister set batchcode = ? where regcode=?";
+		           String deftemp = "update lsautoregister set batchcode = ? where regcode=?;"+"update LSlogilabprotocoldetail set repeat=false WHERE protocolordercode=?";
 					
 		   	 		try (PreparedStatement pst = con.prepareStatement(deftemp)) {
 		            
 		   	 		pst.setLong(1, lSlogilabprotocoldetail.getProtocolordercode());
 		   	 		pst.setLong(2, lSlogilabprotocoldetail.getLsautoregister().getRegcode());
-				     	
+				    pst.setLong(3, clonedProtocolOrderCode); 	
 		   	 	    pst.executeUpdate();
 		   	 	    lSlogilabprotocoldetail.getLsautoregister().setBatchcode(lSlogilabprotocoldetail.getProtocolordercode());
 
@@ -1451,372 +1509,291 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 
 						lSlogilabprotocoldetail.setOrderflag("N");
 
-						//List<LSprotocolstep> protocolSteps = new ArrayList<LSprotocolstep>();
-                       LSprotocolmaster protocolmasterobj = null;
-//						String deftem = "SELECT * FROM LSProtocolStep WHERE protocolmastercode = ? and status = 1";
-//	           	 		try (PreparedStatement pst = con.prepareStatement(deftem)) {
-//	                    
-//	           	 		pst.setInt(1, lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode());
-//	           	 		
-//	           	 			try (ResultSet rs = pst.executeQuery()) {
-//	                        while (rs.next()) {
-//	                        	 protostepobj = mapResultSetToLsprotocolstep(rs);
-//	                        	 protocolSteps.add(protostepobj);
-//	                        }
-//	                    } catch (SQLException e) {
-//			                e.printStackTrace(); // Consider logging this properly
-//			            }
-//	                }
-		               
-						List<CloudLsLogilabprotocolstepInfo> objinfo = new ArrayList<CloudLsLogilabprotocolstepInfo>();
-						List<LsLogilabprotocolstepInfo> objmongoinfo = new ArrayList<LsLogilabprotocolstepInfo>();
-			
-						String deftemppromast = "SELECT * FROM LSProtocolMaster WHERE protocolmastercode = ?";
-	           	 		try (PreparedStatement pst = con.prepareStatement(deftemppromast)) {
-	                    
-	           	 		pst.setInt(1, lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode());
-	           	 		
-	           	 			try (ResultSet rs = pst.executeQuery()) {
-	                        while (rs.next()) {
-	                        	protocolmasterobj = mapResultSetToLsprotocolmaster(rs);
-	                        	 //protocolSteps.add(protostepobj);
-	                        }
-	                    } catch (SQLException e) {
-			                e.printStackTrace(); // Consider logging this properly
-			            }
-	                  }
-			
-						if (lSlogilabprotocoldetail.getLsautoregister().getIsmultitenant() == 1
-								|| lSlogilabprotocoldetail.getLsautoregister().getIsmultitenant() == 2) {
-							if (protocolmasterobj.getContainerstored() == null
-									&& lSlogilabprotocoldetail.getContent() != null
-									&& !lSlogilabprotocoldetail.getContent().isEmpty()) {
-								
-								try {
-									JSONObject protocolJson = new JSONObject(lSlogilabprotocoldetail.getContent());
-									protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
-									updateProtocolOrderContent(protocolJson.toString(), lSlogilabprotocoldetail,
-											lSlogilabprotocoldetail.getIsmultitenant(),configuration);
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							} else {
-								try {
-									Content = objCloudFileManipulationservice.retrieveCloudSheets(
-											protocolmasterobj.getFileuid(),
-											commonfunction.getcontainername(lSlogilabprotocoldetail.getLsautoregister().getIsmultitenant(),
-													(String) dataSource.getDataSourceProperties().getProperty("tenantName")) + "protocol");
-									JSONObject protocolJson = new JSONObject(Content);
-									protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
-									updateProtocolOrderContent(protocolJson.toString(), lSlogilabprotocoldetail,
-											lSlogilabprotocoldetail.getLsautoregister().getIsmultitenant(),configuration);
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							}
-						} else {
-							GridFSDBFile data = gridFsTemplate.findOne(new Query(Criteria.where("filename")
-									.is("protocol_" + protocolmasterobj.getProtocolmastercode())));
-							if(data == null && lSlogilabprotocoldetail.getContent() != null && !lSlogilabprotocoldetail.getContent().isEmpty()) {
-								JSONObject protocolJson = new JSONObject(lSlogilabprotocoldetail.getContent());
-								protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
-								Content = protocolJson.toString();
-							} else {
-								Content = new BufferedReader(
-										new InputStreamReader(data.getInputStream(), StandardCharsets.UTF_8)).lines()
-										.collect(Collectors.joining("\n"));								
-							}
-							
-							if (gridFsTemplate.findOne(new Query(Criteria.where("filename")
-									.is("protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode()))) == null) {
-								try {
-									gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
-											"protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode(),
-											StandardCharsets.UTF_16);
-								} catch (Exception e) {
-									System.out.println("error protocoldata lslogilabprotocoldetail content update mongodb"
-											+ lSlogilabprotocoldetail.getProtocolordercode());
-								}
-							}
-						}
-			
-//						LsActiveWidgets lsActiveWidgets = null;
-//					
-//						Calendar widgetcalendar = Calendar.getInstance();
-//						widgetcalendar.setTime(commonfunction.getCurrentUtcTime());
-//				        Date widgetdate = widgetcalendar.getTime(); 
-//						
-//						String activewidgets = "Insert into LsActiveWidgets (activewidgetsdetails,activedatatimestamp,activewidgetsdetailscode,screenname)"
-//								+ "values(?,?,?,?) ";
-//	           	 		try (PreparedStatement pst = con.prepareStatement(activewidgets)) {
-//	                    
-//	           	 		pst.setString(1,lSlogilabprotocoldetail.getProtoclordername() );
-//	           	 		pst.setTimestamp(2, new Timestamp(widgetdate.getTime()));
-//	           	 		pst.setLong(3, lSlogilabprotocoldetail.getProtocolordercode());
-//	           	 		pst.setString(4, "protocolorder");
-//	           	 		
-//	           	 	    pst.executeUpdate();
-//	           	 }
+						updateprotoorderdatacontent(lSlogilabprotocoldetail,configuration);
+						
 						if(lSlogilabprotocoldetail.getRepeat() == true) {
-							scheduleProtocolAutoRegisteration(lSlogilabprotocoldetail , configuration);
+							scheduleProtocolAutoRegisteration(lSlogilabprotocoldetail , configuration,currentdate);
 						}
 						
-							Calendar transcalendar = Calendar.getInstance();
-					        calendar.setTime(commonfunction.getCurrentUtcTime());
-					        Date transcalendardate = transcalendar.getTime(); 
-
 							String comments = "order: "+lSlogilabprotocoldetail.getProtocolordercode()+" is now autoregistered";
-							String systemcomments = "Audittrail.Audittrailhistory.Audittype.IDS_AUDIT_SYSTEMGENERATED";
-									
-							String auditquery = "INSERT INTO LScfttransaction(moduleName,actions,manipulatetype,transactiondate,comments,lssitemaster_sitecode,systemcoments,lsusermaster_usercode)"
-									+ " VALUES (?,?,?,?,?,?,?,?) "; 
-				                      
-				
-				               try (PreparedStatement pst = con.prepareStatement(auditquery)) {
-				                   pst.setString(1, "IDS_SCN_PROTOCOLORDERS");
-				                   pst.setString(2, "IDS_TSK_REGISTERED");
-				                   pst.setString(3, "IDS_AUDIT_INSERTORDERS");
-				                   pst.setTimestamp(4, new Timestamp(transcalendardate.getTime()));
-				                   pst.setString(5, comments);
-				                   pst.setInt(6, lSlogilabprotocoldetail.getSitecode());
-				                   pst.setString(7, systemcomments);
-				                   pst.setInt(8, lSlogilabprotocoldetail.getLsuserMaster().getUsercode());
-				                   
-				                   pst.executeUpdate();
-				               }
+				            String screen ="IDS_SCN_PROTOCOLORDERS";
+				            int site=lSlogilabprotocoldetail.getSitecode();
+				            int usercode=lSlogilabprotocoldetail.getLsuserMaster().getUsercode();
+				            
+				            insertaudit(comments,screen,site , usercode , currentdate , configuration);  
+
+							
+				               comments="";
+				               screen="";
 						}
 			
 			 }
 	     }
       }
-   // }
-    public void ExecuteAutoRegistration(LSlogilablimsorderdetail objorder , HikariConfig configuration)throws ParseException, SQLException, IOException {
+    public void updatesheetordercontent(LSlogilablimsorderdetail objorder,CloudSheetCreation cloudobject,HikariConfig configuration) throws IOException, SQLException {
+    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
+                Connection con = dataSource.getConnection()) {
+			String Content = "";
+	    	 if ((objorder.getLsfile().getApproved() != null && objorder.getLsfile().getApproved() == 1)
+						|| (objorder.getFiletype() == 5)) {
+	         	 if (objorder.getLsautoregisterorders().getIsmultitenant() == 1 || objorder.getLsautoregisterorders().getIsmultitenant() == 2) {
+	
+						if (cloudobject != null) {
+							if (cloudobject.getContainerstored() == 0) {
+								Content = cloudobject.getContent();
+							} else {
+								Content = objCloudFileManipulationservice.retrieveCloudSheets(cloudobject.getFileuid(),
+										commonfunction.getcontainername(objorder.getLsautoregisterorders().getIsmultitenant(), (String) dataSource.getDataSourceProperties().getProperty("tenantName"))
+										 + "sheetcreation");
+							}
+						} else {
+							Content = objorder.getLsfile().getFilecontent();
+						}
+					} 
+	         	 else 
+					{
+	
+						GridFSDBFile largefile = gridFsTemplate.findOne(
+								new Query(Criteria.where("filename").is("file_" + objorder.getLsfile().getFilecode())));
+						if (largefile == null) {
+							largefile = gridFsTemplate.findOne(
+									new Query(Criteria.where("_id").is("file_" + objorder.getLsfile().getFilecode())));
+						}
+	
+						if (largefile != null) {
+							Content = new BufferedReader(
+									new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+									.collect(Collectors.joining("\n"));
+						} else {
+							if (mongoTemplate.findById(objorder.getLsfile().getFilecode(), SheetCreation.class) != null) {
+								Content = mongoTemplate.findById(objorder.getLsfile().getFilecode(), SheetCreation.class)
+										.getContent();
+							} else {
+								Content = objorder.getLsfile().getFilecontent();
+							}
+						}
+	
+					}
+	         	 
+	          }else {
+					if (objorder.getFiletype() != 4 && objorder.getLsfile().getFilecode() != 1) {
+						Integer lastapprovedvesrion = objorder.getLsfile().getVersionno() > 1
+								? (objorder.getLsfile().getVersionno() - 1)
+								: objorder.getLsfile().getVersionno();
+						objorder.getLsfile().setVersionno(lastapprovedvesrion);
+						objorder.getLsfile().setIsmultitenant(objorder.getIsmultitenant());
+						objorder.getLsfile().setIsmultitenant(objorder.getIsmultitenant());
+						//Content = fileService.GetfileverContent(objorder.getLsfile());
+					}
+				}
+    	}
+    }
+    public void updateprotoorderdatacontent ( LSlogilabprotocoldetail lSlogilabprotocoldetail,HikariConfig configuration) throws SQLException {
+    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
+                Connection con = dataSource.getConnection()) {
+		String Content = "";
+		
+    	if (lSlogilabprotocoldetail.getLsautoregister().getIsmultitenant() == 1
+				|| lSlogilabprotocoldetail.getLsautoregister().getIsmultitenant() == 2) {
+			if (lSlogilabprotocoldetail.getLsprotocolmaster().getContainerstored() == null
+					&& lSlogilabprotocoldetail.getContent() != null
+					&& !lSlogilabprotocoldetail.getContent().isEmpty()) {
+				
+				try {
+					JSONObject protocolJson = new JSONObject(lSlogilabprotocoldetail.getContent());
+					protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
+					updateProtocolOrderContent(protocolJson.toString(), lSlogilabprotocoldetail,
+							lSlogilabprotocoldetail.getIsmultitenant(),configuration);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					Content = objCloudFileManipulationservice.retrieveCloudSheets(
+							lSlogilabprotocoldetail.getLsprotocolmaster().getFileuid(),
+							commonfunction.getcontainername(lSlogilabprotocoldetail.getLsautoregister().getIsmultitenant(),
+									(String) dataSource.getDataSourceProperties().getProperty("tenantName")) + "protocol");
+					JSONObject protocolJson = new JSONObject(Content);
+					protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
+					updateProtocolOrderContent(protocolJson.toString(), lSlogilabprotocoldetail,
+							lSlogilabprotocoldetail.getLsautoregister().getIsmultitenant(),configuration);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} else {
+			GridFSDBFile data = gridFsTemplate.findOne(new Query(Criteria.where("filename")
+					.is("protocol_" + lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode())));
+			if(data == null && lSlogilabprotocoldetail.getContent() != null && !lSlogilabprotocoldetail.getContent().isEmpty()) {
+				JSONObject protocolJson = new JSONObject(lSlogilabprotocoldetail.getContent());
+				protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
+				Content = protocolJson.toString();
+			} else {
+				Content = new BufferedReader(
+						new InputStreamReader(data.getInputStream(), StandardCharsets.UTF_8)).lines()
+						.collect(Collectors.joining("\n"));								
+			}
+			
+			if (gridFsTemplate.findOne(new Query(Criteria.where("filename")
+					.is("protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode()))) == null) {
+				try {
+					gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
+							"protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode(),
+							StandardCharsets.UTF_16);
+				} catch (Exception e) {
+					System.out.println("error protocoldata lslogilabprotocoldetail content update mongodb"
+							+ lSlogilabprotocoldetail.getProtocolordercode());
+				}
+			}
+		  }
+		}
+    }
+    public LSfile getlsfiledata(LSlogilablimsorderdetail objorder , HikariConfig configuration ) throws SQLException {
+    	LSfile lsfileobj = null;
+    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
+                Connection con = dataSource.getConnection()) {
+    	 String lsfilequery = "SELECT * FROM LSfile WHERE filecode = ? ";
+
+         try (PreparedStatement pst = con.prepareStatement(lsfilequery)) {
+            
+         	pst.setInt(1, objorder.getLsfile().getFilecode());
+            
+             try (ResultSet rs = pst.executeQuery()) {
+                 while (rs.next()) {
+                	 lsfileobj = mapResultsetToLSFile(rs);
+                	  objorder.setLsfile(lsfileobj);
+                 }
+             } catch (SQLException e) {
+	                e.printStackTrace(); // Consider logging this properly
+	            }
+            }
+         lsfilequery="";
+    	}
+    	return lsfileobj;
+    }
+    
+    public CloudSheetCreation getsheetcreationdata(LSlogilablimsorderdetail objorder , HikariConfig configuration )throws SQLException {
+    	CloudSheetCreation cloudobject=null;
+    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
+                Connection con = dataSource.getConnection()) {
+    		
+    	    String cloudquery = "SELECT * FROM LSSheetCreationfiles WHERE id = ? ";
+
+            try (PreparedStatement pst = con.prepareStatement(cloudquery)) {
+                   
+                	pst.setLong(1, objorder.getLsfile().getFilecode());
+                   
+                    try (ResultSet rs = pst.executeQuery()) {
+                        while (rs.next()) {
+                   	     cloudobject = mapResultsetToCloudSheet(rs);
+                   	     
+                        }
+                    } catch (SQLException e) {
+		                e.printStackTrace(); // Consider logging this properly
+		            }
+                }
+            cloudquery="";
+    	}
+    	return cloudobject;
+    }
+    
+    public void insertaudit(String comments,String screen,int site,int usercode,Date currentdate , HikariConfig configuration) throws SQLException, InterruptedException {
+    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
+                Connection con = dataSource.getConnection()) {
+//    	String auditquery = "INSERT INTO LScfttransaction(moduleName,actions,manipulatetype,transactiondate,comments,lssitemaster_sitecode,systemcoments,lsusermaster_usercode)"
+//				+ " VALUES (?,?,?,?,?,?,?,?) "; 
+    	int generatedserialno = 0;
+    	String auditquery = "INSERT INTO lscfttransaction (serialno, moduleName,actions,manipulatetype,transactiondate,comments,lssitemaster_sitecode,systemcoments,lsusermaster_usercode) " +
+                "VALUES ((SELECT COALESCE(MAX(serialno), 0) + 1 FROM lscfttransaction), ?,?,?,?,?,?,?,?)";
+
+    	
+    	
+    	String systemcomments = "Audittrail.Audittrailhistory.Audittype.IDS_AUDIT_SYSTEMGENERATED";         
+
+           try (PreparedStatement pst = con.prepareStatement(auditquery, Statement.RETURN_GENERATED_KEYS)) {
+               pst.setString(1, screen);
+               pst.setString(2, "IDS_TSK_REGISTERED");
+               pst.setString(3, "IDS_AUDIT_INSERTORDERS");
+               pst.setTimestamp(4, new Timestamp(currentdate.getTime()));
+               pst.setString(5, comments);
+               pst.setInt(6, site);
+               pst.setString(7, systemcomments);
+               pst.setInt(8, usercode);
+               
+               int affectedRows=pst.executeUpdate();
+               if (affectedRows > 0) {
+  	             
+    	       	   ResultSet rs = pst.getGeneratedKeys();
+    	              if (rs.next()) {
+    	                  generatedserialno = rs.getInt(1);
+    	                  System.out.println("Inserted record's serialno: " + generatedserialno);
+    	                  //autoobj.setRegcode(generatedregcode);
+    	                  
+    	              }
+    	          } else {
+    	              System.out.println("No record inserted.");
+    	          }
+               
+               Thread.sleep(45000);
+	 	          String updateSequenceSQL = "SELECT setval('lscfttransaction_sequence', ?)";
+	 	          try (PreparedStatement pstmt = con.prepareStatement(updateSequenceSQL)) {
+	 	              pstmt.setLong(1, generatedserialno);
+	 	              pstmt.execute();
+	 	              Thread.sleep(15000);
+	 	              System.out.println("audit Sequence updated successfully.");
+	 	          } catch (Exception e) {
+	 	              e.printStackTrace();
+	 	          }
+ 	          
+           }
+           auditquery="";
+           systemcomments="";
+            
+    	}
+    }
+    public void ExecuteAutoRegistration(LSlogilablimsorderdetail objorder , HikariConfig configuration,Date currentdate)throws ParseException, SQLException, IOException, InterruptedException {
     	if((objorder.getRepeat()!=null || objorder.getRepeat() != false) && objorder.getLsautoregisterorders()!=null) {
-    		LSworkflow lsworkflow = null;
+    		//LSworkflow lsworkflow = null;
     		
 	    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
 	                Connection con = dataSource.getConnection()) {
-	    		
-//	    		 String lsworkflowquery = "SELECT * FROM lsworkflow WHERE sitecode = ? ";
-//
-//	    		try (PreparedStatement pst = con.prepareStatement(lsworkflowquery)) {
-//                    
-//                 	pst.setInt(1, objorder.getLsuserMaster().getLssitemaster().getSitecode());
-//                    
-//                     try (ResultSet rs = pst.executeQuery()) {
-//                         while (rs.next()) {
-//                             //LSOrdernotification objNotification = mapResultSetToOrderNotification(rs);
-//                             //scheduleNotificationForCaution(objNotification, configuration);
-//                        	 lsworkflow = mapResultsetToLSworkflow(rs);
-//                        	 objorder.setLsworkflow(lsworkflow);
-//                         }
-//                     } catch (SQLException e) {
-// 		                e.printStackTrace(); // Consider logging this properly
-// 		            }
-//                 }
-	    		
-	    		
+	
 	    		objorder.setOrderflag("N");
 
-	    		String Content = "";
 	    		String defaultContent = "{\"activeSheet\":\"Sheet1\",\"sheets\":[{\"name\":\"Sheet1\",\"rows\":[],\"columns\":[],\"selection\":\"A1:A1\",\"activeCell\":\"A1:A1\",\"frozenRows\":0,\"frozenColumns\":0,\"showGridLines\":true,\"gridLinesColor\":null,\"mergedCells\":[],\"hyperlinks\":[],\"defaultCellStyle\":{\"fontFamily\":\"Arial\",\"fontSize\":\"12\"},\"drawings\":[]}],\"names\":[],\"columnWidth\":64,\"rowHeight\":20,\"images\":[],\"charts\":[],\"tags\":[],\"fieldcount\":0,\"Batchcoordinates\":{\"resultdirection\":1,\"parameters\":[]}}";
-	    		LSfile fileobj = null;
-	    		CloudSheetCreation cloudobject=null;
 	    		
-	    		LsAutoregister autoobj = new LsAutoregister();
-				List<LsAutoregister> listauto = new ArrayList<LsAutoregister>();
-				
-					if(objorder.getLsautoregisterorders()!= null) {
-				
-						Date currentdate = commonfunction.getCurrentUtcTime();
-						
-						if(objorder.getLsautoregisterorders().getTimespan().equals("Days")) {
-							//Date autodate=objorder.getLsautoregisterorders().getAutocreatedate();
-							
-							 Calendar calendar = Calendar.getInstance();
-						        calendar.setTime(currentdate);
-						        calendar.add(Calendar.DAY_OF_MONTH, objorder.getLsautoregisterorders().getInterval());
-
-						        // Convert back to Date (if necessary)
-						        Date futureDate = calendar.getTime();   
-						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
-						        autoobj.setAutocreatedate(futureDate);
-						 }else if(objorder.getLsautoregisterorders().getTimespan().equals("Week")) {
-							 //Date autodate=objorder.getLsautoregisterorders().getAutocreatedate();
-								
-							    Calendar calendar = Calendar.getInstance();
-						        calendar.setTime(currentdate);
-						        calendar.add(Calendar.DAY_OF_MONTH, (objorder.getLsautoregisterorders().getInterval()*7));
-
-						      
-						        Date futureDate = calendar.getTime();   
-						        
-						        autoobj.setAutocreatedate(futureDate);
-						 }else {
-							
-							    Calendar calendar = Calendar.getInstance();
-						        calendar.setTime(currentdate);
-						        calendar.add(Calendar.HOUR_OF_DAY,(objorder.getLsautoregisterorders().getInterval()));
-						        Date futureDate = calendar.getTime(); 
-						        autoobj.setAutocreatedate(futureDate);
-						        
-//							    Calendar calendar = Calendar.getInstance();
-//						        calendar.setTime(currentdate);
-//						        calendar.add(Calendar.MINUTE , (10));
-//						        Date futureDate = calendar.getTime();   
-//						        autoobj.setAutocreatedate(futureDate);
-						 }
-						
-						autoobj.setScreen("IDS_SHEETORDERS");
-						autoobj.setIsautoreg(true);
-						autoobj.setInterval(objorder.getLsautoregisterorders().getInterval());
-						autoobj.setTimespan(objorder.getLsautoregisterorders().getTimespan());
-						autoobj.setIsmultitenant(objorder.getLsautoregisterorders().getIsmultitenant());
-						autoobj.setRepeat(true);
-						objorder.setLsautoregisterorders(autoobj);
-						
+					if(objorder.getLsautoregisterorders()!= null) {	
+						LsAutoregister auditregdetails =  getautoregisterdetails(objorder.getLsautoregisterorders(),configuration,currentdate,"sheetOrder");
+						objorder.setLsautoregisterorders(auditregdetails);		
 					}
-			
-				//lsautoregisterrepo.save(autoobj);
 					
-					 Calendar autocalendar = Calendar.getInstance();
-				        autocalendar.setTime(autoobj.getAutocreatedate());
-				        Date autocreateddate = autocalendar.getTime(); 
-				        
-				String autoregtablequery = "Insert into lsautoregister (autocreatedate,interval,isautoreg,"
-						+ "ismultitenant,repeat,screen,timespan) Values (?,?,?,?,?,?,?)";
-
-                try (PreparedStatement pst = con.prepareStatement(autoregtablequery, Statement.RETURN_GENERATED_KEYS)) {
-                   
-                	pst.setTimestamp(1, new Timestamp(autocreateddate.getTime()));
-                	pst.setInt(2, autoobj.getInterval());
-                	pst.setBoolean(3, autoobj.getIsautoreg());
-                	pst.setInt(4, autoobj.getIsmultitenant());
-                	pst.setBoolean(5, autoobj.getRepeat());
-                	pst.setString(6, autoobj.getScreen());
-                	pst.setString(7, autoobj.getTimespan());
-                   
-                	int affectedRows=pst.executeUpdate();
-	                   
-	                   if (affectedRows > 0) {
-	                       // Retrieve the generated keys
-	                	   ResultSet rs = pst.getGeneratedKeys();
-	                       if (rs.next()) {
-	                           long generatedregcode = rs.getLong(1);
-	                           System.out.println("Inserted record's regcode: " + generatedregcode);
-	                           objorder.getLsautoregisterorders().setRegcode(generatedregcode);
-
-	                           // Use the generated key for future use
-	                       }
-	                   } else {
-	                       System.out.println("No record inserted.");
-	                   }
-                }
-                
-                String deftem = "update LSlogilablimsorderdetail set repeat=false WHERE batchcode=?";
-      	 		try (PreparedStatement pst = con.prepareStatement(deftem)) {
-      	 			pst.setLong(1, objorder.getBatchcode());
-      	 			pst.executeUpdate();
-              }
+					Long Previousbatch = objorder.getBatchcode();
+			        Long clonedbatchcode = new Long(Previousbatch);
+			   
+//                String deftem = "update LSlogilablimsorderdetail set repeat=false WHERE batchcode=?";
+//      	 		try (PreparedStatement pst = con.prepareStatement(deftem)) {
+//      	 			pst.setLong(1, objorder.getBatchcode());
+//      	 			pst.executeUpdate();
+//              }
 				
-	    		if (objorder.getLsfile() != null) {
-	    			 String lsfilequery = "SELECT * FROM LSfile WHERE filecode = ? ";
-
-	                 try (PreparedStatement pst = con.prepareStatement(lsfilequery)) {
-	                    
-	                 	pst.setInt(1, objorder.getLsfile().getFilecode());
-	                    
-	                     try (ResultSet rs = pst.executeQuery()) {
-	                         while (rs.next()) {
-	                        	  fileobj = mapResultsetToLSFile(rs);
-	                        	  objorder.setLsfile(fileobj);
-	                         }
-	                     } catch (SQLException e) {
-	 		                e.printStackTrace(); // Consider logging this properly
-	 		            }
-	                 }
+	    		if (objorder.getLsfile() != null && objorder.getLsautoregisterorders()!= null) {
+	    			
+	    			LSfile lsfileobj=getlsfiledata(objorder,configuration);
+	    			CloudSheetCreation cloudobject=getsheetcreationdata(objorder,configuration);
+	    		
+	                 updatesheetordercontent(objorder,cloudobject,configuration);
 	                 
-	                 String cloudquery = "SELECT * FROM LSSheetCreationfiles WHERE id = ? ";
-
-	                 try (PreparedStatement pst = con.prepareStatement(cloudquery)) {
-		                    
-		                 	pst.setLong(1, fileobj.getFilecode());
-		                    
-		                     try (ResultSet rs = pst.executeQuery()) {
-		                         while (rs.next()) {
-		                    	     cloudobject = mapResultsetToCloudSheet(rs);
-		                    	     
-		                         }
-		                     } catch (SQLException e) {
-		 		                e.printStackTrace(); // Consider logging this properly
-		 		            }
-		                 }
-	                 
-	                 
-	                 if ((objorder.getLsfile().getApproved() != null && objorder.getLsfile().getApproved() == 1)
-	     					|| (objorder.getFiletype() == 5)) {
-	                	 if (objorder.getLsautoregisterorders().getIsmultitenant() == 1 || objorder.getLsautoregisterorders().getIsmultitenant() == 2) {
-
-	     					if (cloudobject != null) {
-	     						if (cloudobject.getContainerstored() == 0) {
-	     							Content = cloudobject.getContent();
-	     						} else {
-	     							Content = objCloudFileManipulationservice.retrieveCloudSheets(cloudobject.getFileuid(),
-	     									commonfunction.getcontainername(objorder.getLsautoregisterorders().getIsmultitenant(), (String) dataSource.getDataSourceProperties().getProperty("tenantName"))
-	     									 + "sheetcreation");
-	     						}
-	     					} else {
-	     						Content = objorder.getLsfile().getFilecontent();
-	     					}
-	     				} 
-	                	 else 
-	     				{
-
-	     					GridFSDBFile largefile = gridFsTemplate.findOne(
-	     							new Query(Criteria.where("filename").is("file_" + objorder.getLsfile().getFilecode())));
-	     					if (largefile == null) {
-	     						largefile = gridFsTemplate.findOne(
-	     								new Query(Criteria.where("_id").is("file_" + objorder.getLsfile().getFilecode())));
-	     					}
-
-	     					if (largefile != null) {
-	     						Content = new BufferedReader(
-	     								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-	     								.collect(Collectors.joining("\n"));
-	     					} else {
-	     						if (mongoTemplate.findById(objorder.getLsfile().getFilecode(), SheetCreation.class) != null) {
-	     							Content = mongoTemplate.findById(objorder.getLsfile().getFilecode(), SheetCreation.class)
-	     									.getContent();
-	     						} else {
-	     							Content = objorder.getLsfile().getFilecontent();
-	     						}
-	     					}
-
-	     				}
-	                	 
-	                 }else {
-	     				if (objorder.getFiletype() != 4 && objorder.getLsfile().getFilecode() != 1) {
-	    					Integer lastapprovedvesrion = objorder.getLsfile().getVersionno() > 1
-	    							? (objorder.getLsfile().getVersionno() - 1)
-	    							: objorder.getLsfile().getVersionno();
-	    					objorder.getLsfile().setVersionno(lastapprovedvesrion);
-	    					objorder.getLsfile().setIsmultitenant(objorder.getIsmultitenant());
-	    					objorder.getLsfile().setIsmultitenant(objorder.getIsmultitenant());
-	    					//Content = fileService.GetfileverContent(objorder.getLsfile());
-	    				}
-	    			}
-	                 
-	                 try {
-	         			objorder.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
-	         		} catch (ParseException e) {
-	         			// TODO Auto-generated catch block
-	         			e.printStackTrace();
-	         		}
-	                 Calendar calendar = Calendar.getInstance();
-				        calendar.setTime(objorder.getCreatedtimestamp());
-				        Date createddate = calendar.getTime(); 
+//	                 try {
+//	         			objorder.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
+//	         		} catch (ParseException e) {
+//	         			// TODO Auto-generated catch block
+//	         			e.printStackTrace();
+//	         		}
+//	                 Calendar calendar = Calendar.getInstance();
+//				        calendar.setTime(objorder.getCreatedtimestamp());
+//				        Date createddate = calendar.getTime(); 
 				        
 //	                 String updateString = "INSERT INTO lslogilablimsorderdetail (approvelaccept ,sentforapprovel,approvelstatus"
 //	                 		+ "approved,repeat,filetype,lsworkflow_workflowcode,lsusermaster_usercode,"
@@ -1858,7 +1835,7 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 		                   pst.setInt(14,objorder.getViewoption());
 		                   pst.setObject(15,objorder.getOrdercancell());
 		                   pst.setInt(16, objorder.getTeamcode());
-		                   pst.setTimestamp(17, new Timestamp(createddate.getTime()));
+		                   pst.setTimestamp(17, new Timestamp(currentdate.getTime()));
 		                   pst.setString(18, objorder.getOrderflag());
 		                   pst.setLong(19, objorder.getLsautoregisterorders().getRegcode());
 		                   //pst.setObject(20, objorder.getMaterial().getNmaterialcode());
@@ -1866,25 +1843,22 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 		                   pst.setString(21, objorder.getTestname());
 		                   pst.setObject(22, objorder.getElnmaterialinventory().getNmaterialinventorycode());
 		                   pst.setObject(23, objorder.getElnmaterial().getNmaterialcode());
-		                   
-		                   
-		
+		             
 		                   int affectedRows=pst.executeUpdate();
 		                   
 		                   if (affectedRows > 0) {
-		                       // Retrieve the generated keys
 		                	   ResultSet rs = pst.getGeneratedKeys();
 		                       if (rs.next()) {
 		                           long generatedBatchcode = rs.getLong(1);
 		                           System.out.println("Inserted record's batchcode: " + generatedBatchcode);
 		                           objorder.setBatchcode(generatedBatchcode);
 
-		                           // Use the generated key for future use
 		                       }
 		                   } else {
 		                       System.out.println("No record inserted.");
 		                   }
 		               }
+		               updateString="";
 		               String Batchid = "ELN" + objorder.getBatchcode();
 		       		if (objorder.getFiletype() == 3) {
 		       			Batchid = "RESEARCH" + objorder.getBatchcode();
@@ -1897,51 +1871,41 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 		       		objorder.setBatchid(Batchid);
 
 		       		String updateString2 = "UPDATE lslogilablimsorderdetail SET Batchid = ? WHERE batchcode = ? ;"
-		       				+ "UPDATE lsautoregister set Batchcode = ? where regcode=?";
+		       				+ "UPDATE lsautoregister set Batchcode = ? where regcode=?;"+
+		       				"update LSlogilablimsorderdetail set repeat=false WHERE batchcode=?";
 		
 		               try (PreparedStatement pst = con.prepareStatement(updateString2)) {
 		            	   pst.setString(1, objorder.getBatchid());
 		            	   pst.setLong(2, objorder.getBatchcode());
 		            	   pst.setLong(3,objorder.getBatchcode());
 		            	   pst.setLong(4, objorder.getLsautoregisterorders().getRegcode());
-		            	   
+		            	   pst.setLong(5, clonedbatchcode);
 		            	   pst.executeUpdate();
 		               }
-		               
+		               updateString2="";
+		              
 		               if(objorder.getRepeat() == true) {
-		            	   scheduleAutoRegisteration(objorder , configuration);
+		            	   scheduleAutoRegisteration(objorder , configuration,currentdate);
 		               }
-		               
-		               Calendar transcalendar = Calendar.getInstance();
-				        calendar.setTime(commonfunction.getCurrentUtcTime());
-				        Date transcalendardate = transcalendar.getTime(); 
-
 						String comments = "order: "+objorder.getBatchcode()+" is now autoregistered";
-						String systemcomments = "Audittrail.Audittrailhistory.Audittype.IDS_AUDIT_SYSTEMGENERATED";
-								
-						String auditquery = "INSERT INTO LScfttransaction(moduleName,actions,manipulatetype,transactiondate,comments,lssitemaster_sitecode,systemcoments,lsusermaster_usercode)"
-								+ " VALUES (?,?,?,?,?,?,?,?) "; 
-			                      
+						String screen="IDS_SCN_SHEETORDERS";
+						int sitecode=1;
+						int usercode = objorder.getLsuserMaster().getUsercode();
+						insertaudit(comments,screen,sitecode,usercode,currentdate,configuration);
+						
+						
+						 
+						 comments="";
+						 screen="";
+						 defaultContent="";
 			
-			               try (PreparedStatement pst = con.prepareStatement(auditquery)) {
-			                   pst.setString(1, "IDS_SCN_SHEETORDERS");
-			                   pst.setString(2, "IDS_TSK_REGISTERED");
-			                   pst.setString(3, "IDS_AUDIT_INSERTORDERS");
-			                   pst.setTimestamp(4, new Timestamp(transcalendardate.getTime()));
-			                   pst.setString(5, comments);
-			                   pst.setInt(6, 1);
-			                   pst.setString(7, systemcomments);
-			                   pst.setInt(8, objorder.getLsuserMaster().getUsercode());
-			                   
-			                   pst.executeUpdate();
-			               }
 	    		}
 	    		
 	    	}
     	}
     }
     
-    public void executecautiondatenotification(LSOrdernotification objNotification, HikariConfig configuration) throws ParseException {
+    public void executecautiondatenotification(LSOrdernotification objNotification, HikariConfig configuration) throws ParseException, InterruptedException, SQLException {
     	if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false) {
 	    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
 	                Connection con = dataSource.getConnection()) {
@@ -1966,30 +1930,29 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 					+ "\"}";
 	               String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder";
 	
-	               String updateString = "INSERT INTO lsnotification(isnewnotification, notification, " +
-	                       "createdtimestamp, notificationdetils, notificationpath, notifationfrom_usercode, " +
-	                       "notifationto_usercode, repositorycode, repositorydatacode, notificationfor) VALUES (1, 'ORDERCAUTIONALERT', ?, ?, ?, ?, ?, 0, 0, 1); " 
-	                       +
+	               String updateString = 
 	                       "UPDATE LSORDERNOTIFICATION SET cautionstatus = 0 WHERE notificationcode = ?";
 	
 	               try (PreparedStatement pst = con.prepareStatement(updateString)) {
-	                   pst.setTimestamp(1, new Timestamp(cDate.getTime()));
-	                   pst.setString(2, Details);
-	                   pst.setString(3, path);
-	                   pst.setInt(4, objNotification.getUsercode());
-	                   pst.setInt(5, objNotification.getUsercode());
-	                   pst.setLong(6, objNotification.getNotificationcode());
+//	                   pst.setTimestamp(1, new Timestamp(cDate.getTime()));
+//	                   pst.setString(2, Details);
+//	                   pst.setString(3, path);
+//	                   pst.setInt(4, objNotification.getUsercode());
+//	                   pst.setInt(5, objNotification.getUsercode());
+	                   pst.setLong(1, objNotification.getNotificationcode());
 	
 	                   pst.executeUpdate();
 	               }
-	           } catch (SQLException e) {
+	            catch (SQLException e) {
 	               e.printStackTrace(); // Consider logging this properly
 	           }
+	             insernotification(configuration,Details,path,objNotification.getUsercode(),cDate);
+	    	}
     	}
     	//notifyoverduedays(objNotification,configuration);
     }
     
-    public void executeduedatenotification(LSOrdernotification objNotification, HikariConfig configuration) throws ParseException {
+    public void executeduedatenotification(LSOrdernotification objNotification, HikariConfig configuration) throws ParseException, InterruptedException, SQLException {
     	if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false) {
 	    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
 	                Connection con = dataSource.getConnection()) {
@@ -2012,28 +1975,78 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 	               
 	               String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder";
 	
-	               String updateString = "INSERT INTO public.lsnotification( isnewnotification, notification, " +
-	                       "createdtimestamp, notificationdetils, notificationpath, notifationfrom_usercode, " +
-	                       "notifationto_usercode, repositorycode, repositorydatacode, notificationfor) VALUES ( 1, 'ORDERONDUEALERT', ?, ?, ?, ?, ?, 0, 0, 1); " +
-	                       "UPDATE LSORDERNOTIFICATION SET duestatus = 0 WHERE notificationcode = ?";
+	               String updateString ="UPDATE LSORDERNOTIFICATION SET duestatus = 0 WHERE notificationcode = ?";
 	
 	               try (PreparedStatement pst = con.prepareStatement(updateString)) {
-	                   pst.setTimestamp(1, new Timestamp(cDate.getTime()));
-	                   pst.setString(2, Details);
-	                   pst.setString(3, path);
-	                   pst.setInt(4, objNotification.getUsercode());
-	                   pst.setInt(5, objNotification.getUsercode());
-	                   pst.setLong(6, objNotification.getNotificationcode());
+//	                   pst.setTimestamp(1, new Timestamp(cDate.getTime()));
+//	                   pst.setString(2, Details);
+//	                   pst.setString(3, path);
+//	                   pst.setInt(4, objNotification.getUsercode());
+//	                   pst.setInt(5, objNotification.getUsercode());
+	                   pst.setLong(1, objNotification.getNotificationcode());
 	
 	                   pst.executeUpdate();
 	               }
-	           } catch (SQLException e) {
+	            catch (SQLException e) {
 	               e.printStackTrace(); // Consider logging this properly
 	           }
+	    	insernotification(configuration,Details,path,objNotification.getUsercode(),cDate);
     	}
-    	
+      }
     }
-    public void executeoverduenotification(LSOrdernotification objNotification, HikariConfig configuration) throws ParseException {
+    
+    public void insernotification(HikariConfig configuration,String Details,String path,int usercode,Date cDate) throws InterruptedException {
+    	int generatednotificationcode=0;
+    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
+                Connection con = dataSource.getConnection()) {
+    	String updateString = "INSERT INTO public.lsnotification( notificationcode,isnewnotification, notification, " +
+                "createdtimestamp, notificationdetils, notificationpath, notifationfrom_usercode, " +
+                "notifationto_usercode, repositorycode, repositorydatacode, notificationfor) VALUES "
+                + "((SELECT COALESCE(MAX(notificationcode), 0) + 1 FROM lsnotification),1, 'ORDEROVERDUEALERT', ?, ?, ?, ?, ?, 0, 0, 1)"; 
+               
+        
+        try (PreparedStatement pst = con.prepareStatement(updateString,Statement.RETURN_GENERATED_KEYS)) {
+            pst.setTimestamp(1, new Timestamp(cDate.getTime()));
+            pst.setString(2, Details);
+            pst.setString(3, path);
+            pst.setInt(4, usercode);
+            pst.setInt(5, usercode);
+            //pst.setLong(6, objNotification.getNotificationcode());
+
+            int affectedRows=pst.executeUpdate();
+            
+            if (affectedRows > 0) {
+	             
+ 	       	   ResultSet rs = pst.getGeneratedKeys();
+ 	              if (rs.next()) {
+ 	            	 generatednotificationcode = rs.getInt(1);
+ 	                  System.out.println("Inserted record's notificationcode: " + generatednotificationcode);
+ 	                  //autoobj.setRegcode(generatedregcode);
+ 	                  
+ 	              }
+ 	          } else {
+ 	              System.out.println("No record inserted.");
+ 	          }
+            
+            Thread.sleep(15000);
+	 	          String updateSequenceSQL = "SELECT setval('notification_sequence', ?)";
+	 	          try (PreparedStatement pstmt = con.prepareStatement(updateSequenceSQL)) {
+	 	              pstmt.setLong(1, generatednotificationcode);
+	 	              pstmt.execute();
+	 	              Thread.sleep(15000);
+	 	              System.out.println("Sequence updated successfully.");
+	 	          } catch (Exception e) {
+	 	              e.printStackTrace();
+	 	          }
+	          
+        }
+    } catch (SQLException e) {
+        e.printStackTrace(); // Consider logging this properly
+    
+    }
+    
+}
+    public void executeoverduenotification(LSOrdernotification objNotification, HikariConfig configuration) throws ParseException, SQLException, InterruptedException {
     	if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false) {
 	    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
 	                Connection con = dataSource.getConnection()) {
@@ -2056,28 +2069,21 @@ private void scheduleForProtocolAutoRegOrders(LSlogilabprotocoldetail orderobj, 
 					+ "\"}";
 	               
 	               String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder";
-	
-	               String updateString = "INSERT INTO public.lsnotification( isnewnotification, notification, " +
-	                       "createdtimestamp, notificationdetils, notificationpath, notifationfrom_usercode, " +
-	                       "notifationto_usercode, repositorycode, repositorydatacode, notificationfor) VALUES (1, 'ORDEROVERDUEALERT', ?, ?, ?, ?, ?, 0, 0, 1); " +
-	                       "UPDATE LSORDERNOTIFICATION SET overduestatus = 0 , isduedateexhausted = true WHERE notificationcode = ?";
-	
-	               
-	               try (PreparedStatement pst = con.prepareStatement(updateString)) {
-	                   pst.setTimestamp(1, new Timestamp(cDate.getTime()));
-	                   pst.setString(2, Details);
-	                   pst.setString(3, path);
-	                   pst.setInt(4, objNotification.getUsercode());
-	                   pst.setInt(5, objNotification.getUsercode());
-	                   pst.setLong(6, objNotification.getNotificationcode());
-	
-	                   pst.executeUpdate();
-	               }
-	           } catch (SQLException e) {
-	               e.printStackTrace(); // Consider logging this properly
-	           }
+
+	                String update = "UPDATE LSORDERNOTIFICATION SET overduestatus = 0 , isduedateexhausted = true WHERE notificationcode = ?";
+
+	                try (PreparedStatement pst = con.prepareStatement(update)) {
+	                   
+	                    pst.setLong(1, objNotification.getNotificationcode());
+	                    pst.executeUpdate();
+	                } catch (SQLException e) {
+	                e.printStackTrace(); // Consider logging this properly
+	            
+	                }
+	    	    insernotification(configuration,Details,path,objNotification.getUsercode(),cDate);
+	    	}
     	}
-    	notifyoverduedays(objNotification,configuration);
+    	//notifyoverduedays(objNotification,configuration);
     }
     
     public void notifyoverduedays(LSOrdernotification objNotification, HikariConfig configuration) throws ParseException {

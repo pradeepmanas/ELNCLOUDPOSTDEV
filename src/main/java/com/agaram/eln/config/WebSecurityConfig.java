@@ -125,7 +125,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 	                "/Login/importchemdata","/Instrument/downloadsheetimages","/Restcall/getlinkedinuserprofile",
 	                "/Freeuserlogin/Createuser","/Freeuserlogin/Loginfreeuser","/Freeuserlogin/Validateuser",
 	                "/Freeuserlogin/Setpassword","/Freeuserlogin/Resetpassword","/Freeuserlogin/Loginfreeuserwithname",
-	                "/Login/verifyRecaptcha")
+	                "/Login/verifyRecaptcha",	                
+	                "/DashBoardDemo/Getdashboardordercount",
+	                "/DashBoardDemo/Getdashboardorders"
+	                )
+	        
+	        		
 	        .permitAll()
 			
 	        // all other requests need to be authenticated

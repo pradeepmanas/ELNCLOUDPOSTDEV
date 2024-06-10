@@ -220,6 +220,7 @@ import com.google.gson.Gson;
 //import com.groupdocs.editor.formats.WordProcessingFormats;
 //import com.groupdocs.editor.options.WordProcessingEditOptions;
 //import com.groupdocs.editor.options.WordProcessingSaveOptions;
+import com.aspose.words.*;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.OperationContext;
 import com.microsoft.azure.storage.StorageException;
@@ -2943,41 +2944,10 @@ public class ProtocolService {
 	
 public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogilabprotocoldetail) throws ParseException {
 		
-//		Date fromDate = new Date();
-//		Date toDate = new Date();
-//       
-//		Calendar calendar1 = Calendar.getInstance();
-//		calendar1.setTime(fromDate);
-//		calendar1.set(Calendar.HOUR_OF_DAY, (fromDate.getHours()));
-//		calendar1.set(Calendar.MINUTE, (fromDate.getMinutes()-22));
-//		calendar1.set(Calendar.SECOND, 0);
-//		calendar1.set(Calendar.MILLISECOND, 0);
-//		fromDate = calendar1.getTime();
-//
-//		Calendar calendar2 = Calendar.getInstance();
-//		calendar2.setTime(toDate);
-//		calendar2.set(Calendar.HOUR_OF_DAY, (toDate.getHours()));
-//		calendar2.set(Calendar.MINUTE, (toDate.getMinutes()+22));
-//		calendar2.set(Calendar.SECOND, 59);
-//		calendar2.set(Calendar.MILLISECOND, 999);
-//		toDate = calendar2.getTime();
-
-//		List<Long> protocolordercode = lSlogilabprotocoldetail.stream().map(LSlogilabprotocoldetail::getProtocolordercode)
-//				.collect(Collectors.toList());
-//		if(protocolordercode.size()>0){
 		List<LsAutoregister> autoorder = lsautoregisterrepo.findByBatchcode(lSlogilabprotocoldetail.getProtocolordercode());
-//		List<Long> protocolordercodeauto = autoorder.stream().map(LsAutoregister::getBatchcode)
-//				.collect(Collectors.toList());
-//		
-//		List<LSlogilabprotocoldetail> orderdetail = LSlogilabprotocoldetailRepository.findByProtocolordercodeIn(protocolordercodeauto);
-		
-	//	if(!orderdetail.isEmpty()) {
-			
+
             Integer Ismultitenant = autoorder.get(0).getIsmultitenant();
 			
-		//	orderdetail.stream().forEach(objorderindex->{	
-				
-
             lSlogilabprotocoldetail.setRepeat(false);
 				LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
 				
@@ -2991,26 +2961,20 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 							e.printStackTrace();
 						}
 						if(autocode.getTimespan().equals("Days")) {
-							//Date autodate=autocode.getAutocreatedate();
-							
+						
 							 Calendar calendar = Calendar.getInstance();
 						        calendar.setTime(currentdate);
 						        calendar.add(Calendar.DAY_OF_MONTH, autocode.getInterval());
 
-						        // Convert back to Date (if necessary)
 						        Date futureDate = calendar.getTime();   
-						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
 						        autocode.setAutocreatedate(futureDate);
 						 }else if(autocode.getTimespan().equals("Week")) {
-							 //Date autodate=autocode.getAutocreatedate();
-								
+						
 							    Calendar calendar = Calendar.getInstance();
 						        calendar.setTime(currentdate);
 						        calendar.add(Calendar.DAY_OF_MONTH, (autocode.getInterval()*7));
 
-						        // Convert back to Date (if necessary)
 						        Date futureDate = calendar.getTime();   
-						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
 						        autocode.setAutocreatedate(futureDate);
 						 }else {
 								
@@ -3432,6 +3396,13 @@ public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabpro
 
 			if(lSlogilabprotocoldetail.getLsautoregisterorder()!= null &&  lSlogilabprotocoldetail.getRepeat() && lSlogilabprotocoldetail.getRepeat()!=null ){
 				lSlogilabprotocoldetail.getLsautoregisterorder().setBatchcode(lSlogilabprotocoldetail.getProtocolordercode());
+				
+				
+//				LsAutoregister regobj = lsautoregisterrepo.findTopByOrderByRegcodeDesc();
+//				Long regcode = regobj.getRegcode()+1;
+//				lSlogilabprotocoldetail.getLsautoregisterorder().setRegcode(regcode);
+				
+				
 				lsautoregisterrepo.save(lSlogilabprotocoldetail.getLsautoregisterorder());
 				lSlogilabprotocoldetail.setLsautoregister(lSlogilabprotocoldetail.getLsautoregisterorder());
 				ValidateProtocolAutoRegistration(lSlogilabprotocoldetail);
@@ -5017,6 +4988,13 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 			e.printStackTrace();
 		}
 		LSlogilabprotocoldetailRepository.save(lslogilabprotocoldetail);
+		
+
+		if (lslogilabprotocoldetail.getLsordernotification() != null) {
+			lslogilabprotocoldetail.getLsordernotification().setIscompleted(true);
+			lsordernotificationrepo.save(lslogilabprotocoldetail.getLsordernotification());
+		}
+		
 //			LScfttransactionobj.setTableName("LSlogilabprotocoldetail");
 		mapOrders.put("curentprotocolorder", argMap);
 
@@ -9546,19 +9524,35 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
         	
 //        	License license = new License();
 //        	license.setLicense(licensePath);
-        	String outputFilePath = System.getProperty("java.io.tmpdir") + "\\"+protocol.getProtocolmastername()+".docx";
-        	File.createTempFile(protocol.getProtocolmastername(), ".docx", new File(System.getProperty("java.io.tmpdir")));
+//        	String outputFilePath = System.getProperty("java.io.tmpdir") + "\\"+protocol.getProtocolmastername()+".docx";
+//        	File.createTempFile(protocol.getProtocolmastername(), ".docx", new File(System.getProperty("java.io.tmpdir")));
+        	
+        	Document docA = new Document();
+        	DocumentBuilder builder = new DocumentBuilder(docA);
+
+        	// Insert text to the document start.
+        	builder.moveToDocumentStart();
+        	builder.insertHtml(protocol.getProtocoldatainfo());
+//        	formhtmldataforprotocols(docA, objMap);
+
+        
+
+//        	Document docB = new Document(System.getProperty("java.io.tmpdir") + "\\"+protocol.getProtocolmastername()+".docx");
+        	// Add document B to the and of document A, preserving document B formatting.
+//        	docA.appendDocument(docB, ImportFormatMode.KEEP_SOURCE_FORMATTING);
+//
+//        	docA.save(System.getProperty("java.io.tmpdir") + "\\"+protocol.getProtocolmastername()+".docx");
         	
 //        	Editor editor = new Editor(outputFilePath); //passing path to the constructor, default WordProcessingLoadOptions will be applied automatically
-//        	
+////        	
 //        	WordProcessingEditOptions editOptions = new WordProcessingEditOptions();
 //        	editOptions.setEnableLanguageInformation(true);
-//
+////
 //        	editor.edit(editOptions);
 //        	EditableDocument afterEdit = EditableDocument.fromMarkup(formhtmldataforprotocols(objMap), null);
-//        	
-////        			Constants.getOutputDirectoryPath("newdocdes.docx");
-//      	
+////        	
+//////        			Constants.getOutputDirectoryPath("newdocdes.docx");
+////      	
 //        	WordProcessingSaveOptions saveOptions = new WordProcessingSaveOptions(WordProcessingFormats.Docx);
 //        	editor.save(afterEdit, outputFilePath, saveOptions);
         	
@@ -9566,8 +9560,13 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 //        	try (FileInputStream inputStream = new FileInputStream(targetFile)) {
 //                inputStream.read(data);
 //            }
-
-        	data = FileUtils.readFileToByteArray(new File(System.getProperty("java.io.tmpdir") + "\\" + protocol.getProtocolmastername()+".docx"));
+        	ByteArrayOutputStream docOutStream = new ByteArrayOutputStream();
+        	docA.save(docOutStream, SaveFormat.DOCX);
+        	
+        	// Convert the document to byte form.
+        	data = docOutStream.toByteArray();
+        	
+//        	data = FileUtils.readFileToByteArray(new File(System.getProperty("java.io.tmpdir") + "\\" + protocol.getProtocolmastername()+".docx"));
 //        			Files.readAllBytes(System.getProperty("java.io.tmpdir") + "\\" + "newdocdes.docx");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
@@ -9578,17 +9577,19 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		return bis;
 	}
 	
-	public String formhtmldataforprotocols(Map<String, Object> protocoldatamap)
+	public DocumentBuilder formhtmldataforprotocols(Document doc, Map<String, Object> protocoldatamap)
 	{
-		String editorvalue ="";
-		
-        
+		DocumentBuilder builder = new DocumentBuilder(doc);
+
+    	// Insert text to the document start.
+    	builder.moveToDocumentStart();
+    
         try {
         	 
         	JSONObject jsonObj = new JSONObject(protocoldatamap.get("ProtocolData").toString());
     		JSONObject obsrtactobj = jsonObj.getJSONObject("abstract");
     		JSONArray objsection = jsonObj.getJSONArray("sections");
-    		editorvalue+= obsrtactobj.getString("value");
+    		builder.insertHtml(obsrtactobj.getString("value"));
         	
         	for (Object item : objsection){
         		JSONObject objitem = (JSONObject) item;
@@ -9603,7 +9604,23 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
                 	    switch (objeditor.getString("editortype")) {
                 		case "documenteditor":
                 			JSONObject objeditorvalue = objeditor.getJSONObject("value");
-                			editorvalue+= objeditorvalue.getString("data");
+                			builder.insertHtml(objeditorvalue.getString("data"));
+                			break;
+                		case "sheeteditor":
+                			JSONObject objsheeteditorvalue = objeditor.getJSONObject("value");
+                			JSONObject sheetcontent = objsheeteditorvalue.getJSONObject("data");
+                			JSONArray sheets = objsheeteditorvalue.getJSONArray("sheets");
+                			String sheetdata ="";
+                			int lastrowindex = -1;
+                		    int lastcellindex = -1;
+                			for (Object sheet : sheets){
+                			
+                			}
+                			for (Object sheet : sheets){
+                				sheetdata +=" <Table key={sheetindex} stripped bordered hover size=\"sm\"><tbody>";
+                				
+                				sheetdata +="</tbody></Table>";
+                			}
                 			break;
                 		
                 		default:
@@ -9614,19 +9631,19 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
         	    }
         	}
         	    	
-        	editorvalue = "<html> <head><title>Validate</title></head>" + 
-        			"<body><div>"+
-        			
-        			editorvalue.replaceAll("clear: both;", "").
-        			replaceAll("text-transform: none;", "").replaceAll(" white-space: normal;", "").
-        			replaceAll("white-space: pre-wrap;", "").replaceAll("white-space: pre !important;", "")
-        			.replaceAll("white-space: nowrap;", "")+
+//        	editorvalue = "<html> <head><title>Validate</title></head>" + 
+//        			"<body><div>"+
+//        			editorvalue+
+//        			editorvalue.replaceAll("clear: both;", "").
+//        			replaceAll("text-transform: none;", "").replaceAll(" white-space: normal;", "").
+//        			replaceAll("white-space: pre-wrap;", "").replaceAll("white-space: pre !important;", "")
+//        			.replaceAll("white-space: nowrap;", "")+
 
-        			"</div></body></html>";
+//        			"</div></body></html>";
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
         	
-		return editorvalue;
+		return builder;
 	}
 }

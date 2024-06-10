@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -19,8 +20,14 @@ import com.agaram.eln.primary.model.general.Response;
 @Entity
 @Table(name = "LScfttransaction")
 public class LScfttransaction {
+	
+	
+	
+	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@SequenceGenerator(name = "lscfttransaction_sequence", sequenceName = "lscfttransaction_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "lscfttransaction_sequence")
 	@Basic(optional = false)
 	@Column(name = "serialno")
 	private Integer serialno;
