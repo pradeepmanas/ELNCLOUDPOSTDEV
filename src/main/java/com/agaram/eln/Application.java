@@ -27,7 +27,7 @@ import com.agaram.eln.primary.viewResolver.CsvViewResolver;
 //@EntityScan({"com.agaram.eln.*"})
 //@EnableJpaRepositories({"com.agaram.eln.*"})
 //@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-public class Application extends SpringBootServletInitializer implements WebApplicationInitializer, CommandLineRunner {
+public class Application extends SpringBootServletInitializer implements WebApplicationInitializer {
 
 	public static int initTimer = 0;
 	public static String SDMSDB = "";
@@ -88,12 +88,12 @@ public class Application extends SpringBootServletInitializer implements WebAppl
 	        return new PdfViewResolver();
 	    }
 	    
-	    @Autowired
-	    private StarterRunner starterRunner;
-
-		@Override
-		public void run(String... args) throws Exception {
-			starterRunner.executeOnStartup();
-		}	 
+//	    @Autowired
+//	    private StarterRunner starterRunner;
+//
+//		@Override
+//		public void run(String... args) throws Exception {
+//			starterRunner.executeOnStartup();
+//		}	 
 }
 
