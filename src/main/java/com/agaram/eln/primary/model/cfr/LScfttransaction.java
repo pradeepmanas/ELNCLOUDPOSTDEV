@@ -21,13 +21,10 @@ import com.agaram.eln.primary.model.general.Response;
 @Table(name = "LScfttransaction")
 public class LScfttransaction {
 	
-	
-	
-	
 	@Id
-//	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@SequenceGenerator(name = "lscfttransaction_sequence", sequenceName = "lscfttransaction_sequence", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "lscfttransaction_sequence")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	//@SequenceGenerator(name = "lscfttransaction_sequence", sequenceName = "lscfttransaction_sequence", allocationSize = 1)
+	//@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "lscfttransaction_sequence")
 	@Basic(optional = false)
 	@Column(name = "serialno")
 	private Integer serialno;

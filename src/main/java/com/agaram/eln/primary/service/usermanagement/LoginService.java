@@ -1,7 +1,9 @@
 package com.agaram.eln.primary.service.usermanagement;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,6 +36,7 @@ import javax.naming.directory.InitialDirContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +44,7 @@ import com.agaram.eln.config.ADS_Connection;
 import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.config.JwtTokenUtil;
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.fetchtenantsource.Datasourcemaster;
 import com.agaram.eln.primary.model.adsconnection.Tbladssettings;
 import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -85,6 +89,8 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
 import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
 import com.agaram.eln.primary.service.cfr.AuditService;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 //import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 @Service
 @EnableJpaRepositories(basePackageClasses = LSSiteMasterRepository.class)
@@ -2266,7 +2272,7 @@ public Notification notifyoverduedays(LSOrdernotification objNotification) throw
 
 }
 		@SuppressWarnings("deprecation")
-public Notification cautiondatenotification(LSOrdernotification objNotification) throws ParseException {
+public void cautiondatenotification(LSOrdernotification objNotification) throws ParseException {
 		if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false){
 			LSuserMaster LSuserMaster = new LSuserMaster();
 			LSuserMaster.setUsercode(objNotification.getUsercode());
@@ -2311,7 +2317,6 @@ public Notification cautiondatenotification(LSOrdernotification objNotification)
 			lsordernotificationrepo.save(ordernotifylist);
 			notifyoverduedays(objNotification);
 		  }
-		return null;
 	 }
 
 	// added for notification

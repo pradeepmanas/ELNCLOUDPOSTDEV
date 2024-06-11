@@ -16,10 +16,10 @@ import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 
-import com.agaram.eln.primary.service.starterRunner.StarterRunner;
-import com.agaram.eln.primary.viewResolver.CsvViewResolver;
 import com.agaram.eln.primary.viewResolver.ExcelViewResolver;
-import com.agaram.eln.primary.viewResolver.PdfViewResolver; 
+import com.agaram.eln.primary.viewResolver.PdfViewResolver;
+import com.agaram.eln.primary.service.starterRunner.StarterRunner;
+import com.agaram.eln.primary.viewResolver.CsvViewResolver; 
 
 @SpringBootApplication
 @EnableJpaRepositories("com.agaram.eln.primary")
@@ -27,7 +27,6 @@ import com.agaram.eln.primary.viewResolver.PdfViewResolver;
 //@EntityScan({"com.agaram.eln.*"})
 //@EnableJpaRepositories({"com.agaram.eln.*"})
 //@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-//@EnableAsync
 public class Application extends SpringBootServletInitializer implements WebApplicationInitializer, CommandLineRunner {
 
 	public static int initTimer = 0;
@@ -91,27 +90,10 @@ public class Application extends SpringBootServletInitializer implements WebAppl
 	    
 	    @Autowired
 	    private StarterRunner starterRunner;
-	    
-//	    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
 		@Override
 		public void run(String... args) throws Exception {
 			starterRunner.executeOnStartup();
-//			executorService.submit(() -> {
-//				try {
-//					longRunningTask();
-//				} catch (SQLException e) {
-//					e.printStackTrace();
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//			});
-			
 		}	 
-		
-//		@Async
-//	    public void longRunningTask() throws Exception {
-//			starterRunner.executeOnStartup();
-//	    }
 }
 

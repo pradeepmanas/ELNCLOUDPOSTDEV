@@ -23,8 +23,12 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 public class LSOrdernotification {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	//@GeneratedValue(strategy = GenerationType.AUTO,generator="seq")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(columnDefinition = "numeric(17,0)",name = "notificationcode") 
+	//@GenericGenerator(name = "seq", strategy="increment")
+	
+	
 	private Long notificationcode;
 	
 	@Column(columnDefinition = "numeric(17,0)", name = "batchcode")

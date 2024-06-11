@@ -1311,12 +1311,12 @@ public class StarterRunner {
 	        autocalendar.setTime(autoobj.getAutocreatedate());
 	        Date autocreateddate = autocalendar.getTime(); 
 	        
+//	        (SELECT COALESCE(MAX(regcode), 0) + 1 FROM lsautoregister),
 	        
-	        
-	        String autoregtablequery = "Insert into lsautoregister (regcode,autocreatedate,interval,isautoreg,"
-				+ "ismultitenant,repeat,screen,timespan) Values ((SELECT COALESCE(MAX(regcode), 0) + 1 FROM lsautoregister),?,?,?,?,?,?,?)";
+	        String autoregtablequery = "Insert into lsautoregister (autocreatedate,interval,isautoreg,"
+				+ "ismultitenant,repeat,screen,timespan) Values (?,?,?,?,?,?,?)";
 	
-	       
+//	        , Statement.RETURN_GENERATED_KEYS
 	        try (PreparedStatement pst = con.prepareStatement(autoregtablequery, Statement.RETURN_GENERATED_KEYS)) {
 	      
 		   	pst.setTimestamp(1, new Timestamp(autocreateddate.getTime()));
@@ -1342,16 +1342,16 @@ public class StarterRunner {
 		              System.out.println("No record inserted.");
 		          }
 		          
-		          Thread.sleep(30000);
-		          String updateSequenceSQL = "SELECT setval('lsautoregister_seq', ?)";
-		          try (PreparedStatement pstmt = con.prepareStatement(updateSequenceSQL)) {
-		              pstmt.setLong(1, generatedregcode);
-		              pstmt.execute();
-		              Thread.sleep(15000);
-		              System.out.println("Sequence updated successfully.");
-		          } catch (Exception e) {
-		              e.printStackTrace();
-		          }
+//		          Thread.sleep(30000);
+//		          String updateSequenceSQL = "SELECT setval('lsautoregister_seq', ?)";
+//		          try (PreparedStatement pstmt = con.prepareStatement(updateSequenceSQL)) {
+//		              pstmt.setLong(1, generatedregcode);
+//		              pstmt.execute();
+//		              Thread.sleep(15000);
+//		              System.out.println("Sequence updated successfully.");
+//		          } catch (Exception e) {
+//		              e.printStackTrace();
+//		          }
 		   	   }
 		return autoobj;
     	}
@@ -1650,7 +1650,7 @@ public class StarterRunner {
 		  }
 		}
     }
-    public LSfile getlsfiledata(LSlogilablimsorderdetail objorder , HikariConfig configuration ) throws SQLException {
+    public void getlsfiledata(LSlogilablimsorderdetail objorder , HikariConfig configuration ) throws SQLException {
     	LSfile lsfileobj = null;
     	try (HikariDataSource dataSource = new HikariDataSource(configuration);
                 Connection con = dataSource.getConnection()) {
@@ -1671,7 +1671,7 @@ public class StarterRunner {
             }
          lsfilequery="";
     	}
-    	return lsfileobj;
+    	//return lsfileobj;
     }
     
     public CloudSheetCreation getsheetcreationdata(LSlogilablimsorderdetail objorder , HikariConfig configuration )throws SQLException {
@@ -1702,17 +1702,15 @@ public class StarterRunner {
     public void insertaudit(String comments,String screen,int site,int usercode,Date currentdate , HikariConfig configuration) throws SQLException, InterruptedException {
     	try (HikariDataSource dataSource = new HikariDataSource(configuration);
                 Connection con = dataSource.getConnection()) {
-//    	String auditquery = "INSERT INTO LScfttransaction(moduleName,actions,manipulatetype,transactiondate,comments,lssitemaster_sitecode,systemcoments,lsusermaster_usercode)"
-//				+ " VALUES (?,?,?,?,?,?,?,?) "; 
+    	String auditquery = "INSERT INTO LScfttransaction(moduleName,actions,manipulatetype,transactiondate,comments,lssitemaster_sitecode,systemcoments,lsusermaster_usercode)"
+				+ " VALUES (?,?,?,?,?,?,?,?) "; 
     	int generatedserialno = 0;
-    	String auditquery = "INSERT INTO lscfttransaction (serialno, moduleName,actions,manipulatetype,transactiondate,comments,lssitemaster_sitecode,systemcoments,lsusermaster_usercode) " +
-                "VALUES ((SELECT COALESCE(MAX(serialno), 0) + 1 FROM lscfttransaction), ?,?,?,?,?,?,?,?)";
-
-    	
-    	
+//    	String auditquery = "INSERT INTO lscfttransaction (serialno, moduleName,actions,manipulatetype,transactiondate,comments,lssitemaster_sitecode,systemcoments,lsusermaster_usercode) " +
+//                "VALUES ((SELECT COALESCE(MAX(serialno), 0) + 1 FROM lscfttransaction), ?,?,?,?,?,?,?,?)";
+ 	
     	String systemcomments = "Audittrail.Audittrailhistory.Audittype.IDS_AUDIT_SYSTEMGENERATED";         
-
-           try (PreparedStatement pst = con.prepareStatement(auditquery, Statement.RETURN_GENERATED_KEYS)) {
+//    	, Statement.RETURN_GENERATED_KEYS
+           try (PreparedStatement pst = con.prepareStatement(auditquery)) {
                pst.setString(1, screen);
                pst.setString(2, "IDS_TSK_REGISTERED");
                pst.setString(3, "IDS_AUDIT_INSERTORDERS");
@@ -1722,30 +1720,32 @@ public class StarterRunner {
                pst.setString(7, systemcomments);
                pst.setInt(8, usercode);
                
-               int affectedRows=pst.executeUpdate();
-               if (affectedRows > 0) {
-  	             
-    	       	   ResultSet rs = pst.getGeneratedKeys();
-    	              if (rs.next()) {
-    	                  generatedserialno = rs.getInt(1);
-    	                  System.out.println("Inserted record's serialno: " + generatedserialno);
-    	                  //autoobj.setRegcode(generatedregcode);
-    	                  
-    	              }
-    	          } else {
-    	              System.out.println("No record inserted.");
-    	          }
+               pst.executeUpdate();
                
-               Thread.sleep(45000);
-	 	          String updateSequenceSQL = "SELECT setval('lscfttransaction_sequence', ?)";
-	 	          try (PreparedStatement pstmt = con.prepareStatement(updateSequenceSQL)) {
-	 	              pstmt.setLong(1, generatedserialno);
-	 	              pstmt.execute();
-	 	              Thread.sleep(15000);
-	 	              System.out.println("audit Sequence updated successfully.");
-	 	          } catch (Exception e) {
-	 	              e.printStackTrace();
-	 	          }
+//               int affectedRows=pst.executeUpdate();
+//               if (affectedRows > 0) {
+//  	             
+//    	       	   ResultSet rs = pst.getGeneratedKeys();
+//    	              if (rs.next()) {
+//    	                  generatedserialno = rs.getInt(1);
+//    	                  System.out.println("Inserted record's serialno: " + generatedserialno);
+//    	                  //autoobj.setRegcode(generatedregcode);
+//    	                  
+//    	              }
+//    	          } else {
+//    	              System.out.println("No record inserted.");
+//    	          }
+               
+//               Thread.sleep(45000);
+//	 	          String updateSequenceSQL = "SELECT setval('lscfttransaction_sequence', ?)";
+//	 	          try (PreparedStatement pstmt = con.prepareStatement(updateSequenceSQL)) {
+//	 	              pstmt.setLong(1, generatedserialno);
+//	 	              pstmt.execute();
+//	 	              Thread.sleep(15000);
+//	 	              System.out.println("audit Sequence updated successfully.");
+//	 	          } catch (Exception e) {
+//	 	              e.printStackTrace();
+//	 	          }
  	          
            }
            auditquery="";
@@ -1762,7 +1762,7 @@ public class StarterRunner {
 	
 	    		objorder.setOrderflag("N");
 
-	    		String defaultContent = "{\"activeSheet\":\"Sheet1\",\"sheets\":[{\"name\":\"Sheet1\",\"rows\":[],\"columns\":[],\"selection\":\"A1:A1\",\"activeCell\":\"A1:A1\",\"frozenRows\":0,\"frozenColumns\":0,\"showGridLines\":true,\"gridLinesColor\":null,\"mergedCells\":[],\"hyperlinks\":[],\"defaultCellStyle\":{\"fontFamily\":\"Arial\",\"fontSize\":\"12\"},\"drawings\":[]}],\"names\":[],\"columnWidth\":64,\"rowHeight\":20,\"images\":[],\"charts\":[],\"tags\":[],\"fieldcount\":0,\"Batchcoordinates\":{\"resultdirection\":1,\"parameters\":[]}}";
+	    		//String defaultContent = "{\"activeSheet\":\"Sheet1\",\"sheets\":[{\"name\":\"Sheet1\",\"rows\":[],\"columns\":[],\"selection\":\"A1:A1\",\"activeCell\":\"A1:A1\",\"frozenRows\":0,\"frozenColumns\":0,\"showGridLines\":true,\"gridLinesColor\":null,\"mergedCells\":[],\"hyperlinks\":[],\"defaultCellStyle\":{\"fontFamily\":\"Arial\",\"fontSize\":\"12\"},\"drawings\":[]}],\"names\":[],\"columnWidth\":64,\"rowHeight\":20,\"images\":[],\"charts\":[],\"tags\":[],\"fieldcount\":0,\"Batchcoordinates\":{\"resultdirection\":1,\"parameters\":[]}}";
 	    		
 					if(objorder.getLsautoregisterorders()!= null) {	
 						LsAutoregister auditregdetails =  getautoregisterdetails(objorder.getLsautoregisterorders(),configuration,currentdate,"sheetOrder");
@@ -1780,7 +1780,7 @@ public class StarterRunner {
 				
 	    		if (objorder.getLsfile() != null && objorder.getLsautoregisterorders()!= null) {
 	    			
-	    			LSfile lsfileobj=getlsfiledata(objorder,configuration);
+	    			getlsfiledata(objorder,configuration);
 	    			CloudSheetCreation cloudobject=getsheetcreationdata(objorder,configuration);
 	    		
 	                 updatesheetordercontent(objorder,cloudobject,configuration);
@@ -1811,9 +1811,9 @@ public class StarterRunner {
 		                 		+ "lsfile_filecode,lsprojectmaster_projectcode,lssamplefile_filesamplecode,"
 		                 		+ "filecode,keyword,lockedusername,directorycode,orderdisplaytype,"
 		                 		+ "lstestmasterlocal_testcode,viewoption,ordercancell,teamcode,createdtimestamp,orderflag,"
-		                 		+ "lsautoregisterorders_regcode,testcode,testname,"
+		                 		+ "testcode,testname,"
 		                 		+ "elnmaterialinventory_nmaterialinventorycode,elnmaterial_nmaterialcode) "
-		                 		+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		                 		+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	                		 
 	                		 
 		               try (PreparedStatement pst = con.prepareStatement(updateString, Statement.RETURN_GENERATED_KEYS)) {
@@ -1892,19 +1892,16 @@ public class StarterRunner {
 						int sitecode=1;
 						int usercode = objorder.getLsuserMaster().getUsercode();
 						insertaudit(comments,screen,sitecode,usercode,currentdate,configuration);
-						
-						
 						 
 						 comments="";
 						 screen="";
-						 defaultContent="";
 			
 	    		}
 	    		
 	    	}
     	}
     }
-     
+    
     public void executecautiondatenotification(LSOrdernotification objNotification, HikariConfig configuration) throws ParseException, InterruptedException, SQLException {
     	if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false) {
 	    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
@@ -2090,7 +2087,6 @@ public class StarterRunner {
     	//notifyoverduedays(objNotification,configuration);
     }
     
-   
     public void notifyoverduedays(LSOrdernotification objNotification, HikariConfig configuration) throws ParseException {
     	
     	if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false) {
