@@ -3690,8 +3690,10 @@ public class MaterialInventoryService {
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
 	    String searchString = (String) inputMap.get("searchString"); 
 	    
-	    List<Elnmaterial> lstMaterial = elnMaterialRepository.findBySmaterialnameStartingWithIgnoreCaseAndNsitecode(searchString,nsiteInteger);
-		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findByMaterialIn(lstMaterial);
+//	    List<Elnmaterial> lstMaterial = elnMaterialRepository.findBySmaterialnameStartingWithIgnoreCaseAndNsitecode(searchString,nsiteInteger);
+//		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findByMaterialIn(lstMaterial);
+	    
+	    List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findBySinventoryidStartingWithIgnoreCaseAndNsitecode(searchString,nsiteInteger);
 			
 		objmap.put("lstMaterialInventory", inventoryItems);		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
@@ -3710,16 +3712,9 @@ public class MaterialInventoryService {
 
 	public ResponseEntity<Object> getElnMaterialInventoryByMaterial(List<Integer> lstMaterial) {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-        
-//		List<Integer> lstPrimaryIntegers = new ArrayList<Integer>();
-//
-//		lstMaterial.stream().peek(f -> {
-//			lstPrimaryIntegers.add(f.getNmaterialcode());
-//		}).collect(Collectors.toList());
-		
 
 		List<Elnmaterial> material = elnMaterialRepository.findByNmaterialcodeIn(lstMaterial);
-		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findByMaterialIn(material);
+		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findByMaterialInAndNtransactionstatusAndNstatusOrderByNmaterialinventorycodeDesc(material,28,1);
 		
 		objmap.put("lstELNmaterial", lstMaterial);
 		objmap.put("lstELNInventory", inventoryItems);

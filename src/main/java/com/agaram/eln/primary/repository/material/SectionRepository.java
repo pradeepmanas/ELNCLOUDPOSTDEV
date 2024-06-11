@@ -3,6 +3,7 @@ package com.agaram.eln.primary.repository.material;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.material.Section;
 
@@ -39,4 +40,6 @@ public interface SectionRepository  extends JpaRepository<Section, Integer>{
 	public List<Section> findByNstatusAndNsitecodeOrderByNsectioncode(int i, Integer nsiteInteger);
 
 	public Section findBySsectionnameIgnoreCaseAndNsitecodeAndNstatus(String ssectionname, Integer nsitecode, int i);
+	@Query(value ="select * from section where ssectionname = ?1 and nsitecode = ?2",nativeQuery = true)
+	public Section getSectionDetails(String string, Number sitecode);
 }

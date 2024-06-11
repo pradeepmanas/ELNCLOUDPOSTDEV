@@ -1831,7 +1831,9 @@ public class ProtocolService {
 		for (int i = 0; i < objteam.size(); i++) {
 			LSusersteam objteam1 = lsusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
 
-			List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
+//			List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
+			List<LSuserteammapping> lstusers = LSuserteammappingRepositoryObj
+					.findByteamcode(objteam1.getTeamcode());
 			if(lstusers != null) {
 			for (int j = 0; j < lstusers.size(); j++) {		
 				
@@ -6296,9 +6298,9 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 
 					if (ismultitenant == 1 || ismultitenant == 2) {
 						String content = objCloudFileManipulationservice.retrieveCloudSheets(protocolOrder.getFileuid(),
-								TenantContext.getCurrentTenant() + "protocolorder");
+								commonfunction.getcontainername(ismultitenant, TenantContext.getCurrentTenant()) + "protocolorder");
 						Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(
-								content, TenantContext.getCurrentTenant() + "protocolorderversion");
+								content, commonfunction.getcontainername(ismultitenant, TenantContext.getCurrentTenant()) + "protocolorderversion");
 						String fileUUID = (String) objMap.get("uuid");
 						String fileURI = objMap.get("uri").toString();
 
@@ -8829,10 +8831,10 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		if (multitenent == 1 || multitenent == 2) {
 			if (versionMaster.getFileuid() != null) {
 				mapObj.put("ProtocolData", objCloudFileManipulationservice.retrieveCloudSheets(
-						versionMaster.getFileuid(), TenantContext.getCurrentTenant() + "protocolorderversion"));
+						versionMaster.getFileuid(), commonfunction.getcontainername(multitenent, TenantContext.getCurrentTenant()) + "protocolorderversion"));
 			} else {
 				mapObj.put("ProtocolData", objCloudFileManipulationservice.retrieveCloudSheets(protocol.getFileuid(),
-						TenantContext.getCurrentTenant() + "protocolorder"));
+						commonfunction.getcontainername(multitenent, TenantContext.getCurrentTenant()) + "protocolorder"));
 			}
 		} else {
 //			Lsprotocolorderversiondata lsprotocolversiondata = mongoTemplate

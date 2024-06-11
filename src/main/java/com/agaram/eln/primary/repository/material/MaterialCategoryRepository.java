@@ -3,6 +3,7 @@ package com.agaram.eln.primary.repository.material;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.material.MaterialCategory;
 
@@ -57,5 +58,7 @@ public interface MaterialCategoryRepository extends JpaRepository<MaterialCatego
 			Integer nsiteInteger, int i, int j, int k);
 	public List<MaterialCategory> findByNmaterialtypecodeAndNsitecodeAndNstatusOrNmaterialtypecodeAndNstatusAndNdefaultstatusOrderByNmaterialcatcodeDesc(
 			Integer nmaterialtypecode, Integer nsiteInteger, int i, Integer nmaterialtypecode2, int j, int k);
+	@Query(value ="select * from materialcategory where smaterialcatname = ?1 and nsitecode = ?2", nativeQuery = true)
+	public MaterialCategory getMaterialCatgeoryDetails(String string, Number sitecode);
 	
 }

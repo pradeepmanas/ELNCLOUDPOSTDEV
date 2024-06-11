@@ -5,17 +5,13 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialType;
-import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 public interface ElnmaterialInventoryRepository extends JpaRepository<ElnmaterialInventory, Integer>{
 
@@ -115,5 +111,11 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 			+ "  )", nativeQuery = true)	
 	long getcounrNsitecodeAndSinventoryidLikeIgnoreCaseOrderByNmaterialinventorycodeDesc(Integer sitecode,
 			String search_Key);
+
+	List<ElnmaterialInventory> findBySinventoryidStartingWithIgnoreCaseAndNsitecode(String searchString,
+			Integer nsiteInteger);
+
+	List<ElnmaterialInventory> findByMaterialInAndNtransactionstatusAndNstatusOrderByNmaterialinventorycodeDesc(
+			List<Elnmaterial> material, int i, int j);
 
 }

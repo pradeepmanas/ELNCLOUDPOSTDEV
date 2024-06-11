@@ -152,6 +152,17 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	private LScentralisedUsers lscentralisedusers;
 	
+	@Transient
+	private LSSheetOrderStructure lssheetOrderStructure;
+	
+	public LSSheetOrderStructure getLssheetOrderStructure() {
+		return lssheetOrderStructure;
+	}
+
+	public void setLssheetOrderStructure(LSSheetOrderStructure lssheetOrderStructure) {
+		this.lssheetOrderStructure = lssheetOrderStructure;
+	}
+
 	public LScentralisedUsers getLscentralisedusers() {
 		return lscentralisedusers;
 	}

@@ -3,6 +3,7 @@ package com.agaram.eln.primary.repository.material;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.material.MaterialType;
 
@@ -37,4 +38,8 @@ public interface MaterialTypeRepository extends JpaRepository<MaterialType, Inte
 	public List<MaterialType> findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatusOrderByNmaterialtypecodeDesc(
 			int i, int j, Integer nsitecode, int k, int l, int m);
 	public MaterialType findBySmaterialtypenameIgnoreCase(String string);
+	@Query(value = "select nmaterialtypecode from materialtype where smaterialtypename = ?1 and nsitecode = ?2", nativeQuery = true)
+	public Number getNameAndKey(Object value, Number sitecode);
+	@Query(value = "select * from materialtype where smaterialtypename = ?1 and nsitecode = ?2 ", nativeQuery = true)
+	public MaterialType getMaterialTypeDetails(String string, Number sitecode);
 } 

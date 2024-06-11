@@ -1,22 +1,16 @@
 package com.agaram.eln.primary.service.instrumentDetails;
 
 import java.io.BufferedReader;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,10 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import com.zaxxer.hikari.HikariDataSource;
 
 import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
@@ -57,7 +52,6 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
@@ -69,7 +63,6 @@ import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
-import com.agaram.eln.primary.fetchtenantsource.Datasourcemaster;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 //import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -132,7 +125,6 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
-import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 import com.agaram.eln.primary.model.usermanagement.LSMultisites;
@@ -193,7 +185,6 @@ import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserBlockRepository;
 import com.agaram.eln.primary.repository.methodsetup.ParserFieldRepository;
 import com.agaram.eln.primary.repository.methodsetup.SubParserFieldRepository;
-import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
 import com.agaram.eln.primary.repository.notification.EmailRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowgroupmapRepository;
@@ -234,12 +225,6 @@ import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
-
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 @Service
 //@EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
@@ -826,7 +811,7 @@ public class InstrumentService {
 
 public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail objorderindex) throws IOException, ParseException {
 		
-		LSlogilablimsorderdetail autoregorderobj = new LSlogilablimsorderdetail();
+//		LSlogilablimsorderdetail autoregorderobj = new LSlogilablimsorderdetail();
 		LSlogilablimsorderdetail orderdetail = null;
 		
 //		List<Long> batchcode = objorder.stream().map(LSlogilablimsorderdetail::getBatchcode)
@@ -847,7 +832,7 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 				
 
 				//for new order
-				LsAutoregister autoobj = new LsAutoregister();
+//				LsAutoregister autoobj = new LsAutoregister();
 				List<LsAutoregister> listauto = new ArrayList<LsAutoregister>();
 				
 					if(autoorder.get(0).getBatchcode().equals(objorderindex.getBatchcode())) {
@@ -4844,16 +4829,16 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
 						List<LSlogilablimsorderdetail> orderChunk = new ArrayList<>();
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfile(
+								.findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileOrderByBatchcodeDesc(
 										objorder.getFiletype(), objorder.getLsfile()));
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfile(
+								.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrderByBatchcodeDesc(
 										currentChunk, objorder.getFiletype(), 1, objorder.getLsfile()));
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfile(
+								.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrderByBatchcodeDesc(
 										currentChunk, objorder.getFiletype(), 2, objorder.getLsfile()));
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfile(
+								.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrderByBatchcodeDesc(
 										currentChunk, objorder.getFiletype(), 3, objorder.getLsfile()));
 						return orderChunk;
 					}).flatMap(List::stream).collect(Collectors.toList());
@@ -4981,7 +4966,7 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 				}
 
 				lstorder = lslogilablimsorderdetailRepository
-						.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndOrdercancellIsNull(lstproject,
+						.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndOrdercancellIsNullOrderByBatchcodeDesc(lstproject,
 								filetype, lSfile);
 
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
@@ -4995,11 +4980,11 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 
 							List<LSlogilablimsorderdetail> orderChunk = new ArrayList<>();
 							orderChunk.addAll(lslogilablimsorderdetailRepository
-									.findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfile(
+									.findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileOrderByBatchcodeDesc(
 											filetype, lSfile));
 							for (int viewOption = 1; viewOption <= 3; viewOption++) {
 								orderChunk.addAll(lslogilablimsorderdetailRepository
-										.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfile(
+										.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrderByBatchcodeDesc(
 												currentChunk, filetype, viewOption, lSfile));
 							}
 							return orderChunk;
@@ -5010,8 +4995,11 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 			}
 			lstallorders.addAll(lstorder);
 		}
-		Collections.reverse(lstallorders);
-		mapObj.put("orders", lstallorders);
+		
+		List<LSlogilablimsorderdetail> uniqueOrders = lstallorders.stream().distinct().collect(Collectors.toList());
+//		Collections.reverse(uniqueOrders);
+		mapObj.put("orders", uniqueOrders);
+		
 		return mapObj;
 	}
 
@@ -7935,6 +7923,8 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 							objorder.getOrderflag(), filetype, objorder.getLsprojectmaster(),
 							objorder.getLstestmasterlocal(), fromdate, todate);
 		}
+		
+		lstorder.addAll(Getordersondirectory(objorder.getLssheetOrderStructure()));
 		// }
 		if (objorder.getSearchCriteria() != null && objorder.getSearchCriteria().getContentsearchtype() != null
 				&& objorder.getSearchCriteria().getContentsearch() != null) {
@@ -8502,6 +8492,19 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 							objorder.getLsprojectmaster(), objorder.getTestcode(), 1, protocoltype, fromdate, todate);
 		}
 //		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
+		Map<String, Object> obj = Getprotocolordersondirectory(objorder.getLsprotocolorderstructure());
+		if (obj.containsKey("protocolorders")) {
+		    List<LSlogilabprotocoldetail> protocolOrders = (List<LSlogilabprotocoldetail>) obj.get("protocolorders");
+		    lstorder.addAll(protocolOrders.stream()
+					.map(lsOrderDetail -> new Logilabprotocolorders(lsOrderDetail.getProtocolordercode(),lsOrderDetail.getTeamcode(),lsOrderDetail.getProtoclordername(),lsOrderDetail.getOrderflag()
+							,lsOrderDetail.getProtocoltype(),lsOrderDetail.getCreatedtimestamp(),lsOrderDetail.getCompletedtimestamp(),lsOrderDetail.getLsprotocolmaster()
+							,lsOrderDetail.getlSprotocolworkflow(), lsOrderDetail.getLssamplemaster(),lsOrderDetail.getLsprojectmaster(), lsOrderDetail.getKeyword(),lsOrderDetail.getDirectorycode(),lsOrderDetail.getCreateby(),lsOrderDetail.getAssignedto()
+							,lsOrderDetail.getLsrepositoriesdata(),lsOrderDetail.getLsrepositories(),lsOrderDetail.getElnmaterial(),lsOrderDetail.getElnmaterialinventory(),lsOrderDetail.getApproved(),lsOrderDetail.getRejected()
+							,lsOrderDetail.getOrdercancell(),lsOrderDetail.getViewoption(),lsOrderDetail.getOrderstarted(),lsOrderDetail.getOrderstartedby(),lsOrderDetail.getOrderstartedon(),lsOrderDetail.getLockeduser()
+							,lsOrderDetail.getLockedusername(),lsOrderDetail.getVersionno(),lsOrderDetail.getElnprotocolworkflow(),lsOrderDetail.getLsordernotification(),lsOrderDetail.getLsautoregister(),lsOrderDetail.getRepeat())).collect(Collectors.toList()));
+					
+		}
+
 		lstorder.forEach(
 				objorderDetail -> objorderDetail.setLstelnprotocolworkflow(objorder.getLstelnprotocolworkflow()));
 		List<Long> protocolordercode = new ArrayList<>();
@@ -8743,7 +8746,7 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
 		Integer protocoltype = objorder.getProtocoltype();
-		List<LSlogilabprotocoldetail> retuobj = new ArrayList<LSlogilabprotocoldetail>();
+//		List<LSlogilabprotocoldetail> retuobj = new ArrayList<LSlogilabprotocoldetail>();
 //		List<LSsamplemaster> lstsample = lssamplemasterrepository.findSamplecodeAndSamplenameBystatusAndLssitemaster(1,
 //				objorder.getLsuserMaster().getLssitemaster());
 		List<Elnmaterial> nmaterialcode = elnmaterialRepository
@@ -10069,6 +10072,19 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 							objorder.getLsuserMaster(), objorder.getElnmaterial(), objorder.getTestcode(), fromdate,
 							todate, 3, userlist, protocoltype);
 
+		}
+		Map<String, Object> obj = Getprotocolordersondirectory(objorder.getLsprotocolorderstructure());
+		if (obj.containsKey("protocolorders")) {
+		    @SuppressWarnings("unchecked")
+			List<LSlogilabprotocoldetail> protocolOrders = (List<LSlogilabprotocoldetail>) obj.get("protocolorders");
+		    lstorder.addAll(protocolOrders.stream()
+					.map(lsOrderDetail -> new Logilabprotocolorders(lsOrderDetail.getProtocolordercode(),lsOrderDetail.getTeamcode(),lsOrderDetail.getProtoclordername(),lsOrderDetail.getOrderflag()
+							,lsOrderDetail.getProtocoltype(),lsOrderDetail.getCreatedtimestamp(),lsOrderDetail.getCompletedtimestamp(),lsOrderDetail.getLsprotocolmaster()
+							,lsOrderDetail.getlSprotocolworkflow(), lsOrderDetail.getLssamplemaster(),lsOrderDetail.getLsprojectmaster(), lsOrderDetail.getKeyword(),lsOrderDetail.getDirectorycode(),lsOrderDetail.getCreateby(),lsOrderDetail.getAssignedto()
+							,lsOrderDetail.getLsrepositoriesdata(),lsOrderDetail.getLsrepositories(),lsOrderDetail.getElnmaterial(),lsOrderDetail.getElnmaterialinventory(),lsOrderDetail.getApproved(),lsOrderDetail.getRejected()
+							,lsOrderDetail.getOrdercancell(),lsOrderDetail.getViewoption(),lsOrderDetail.getOrderstarted(),lsOrderDetail.getOrderstartedby(),lsOrderDetail.getOrderstartedon(),lsOrderDetail.getLockeduser()
+							,lsOrderDetail.getLockedusername(),lsOrderDetail.getVersionno(),lsOrderDetail.getElnprotocolworkflow(),lsOrderDetail.getLsordernotification(),lsOrderDetail.getLsautoregister(),lsOrderDetail.getRepeat())).collect(Collectors.toList()));
+					
 		}
 
 		lstorder.forEach(

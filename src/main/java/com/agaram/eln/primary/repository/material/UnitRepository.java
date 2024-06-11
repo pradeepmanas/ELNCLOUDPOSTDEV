@@ -3,7 +3,7 @@ package com.agaram.eln.primary.repository.material;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.material.Unit;
 
@@ -51,5 +51,7 @@ public interface UnitRepository extends JpaRepository<Unit, Integer>{
 	public List<Unit> findByNsitecodeAndNstatusOrderByNunitcodeDesc(Integer nsiteInteger, int i);
 
 	public Unit findBySunitnameIgnoreCaseAndNsitecodeAndNstatus(String sunitname, Integer nsitecode, int i);
+	@Query(value ="select * from unit where sunitname = ?1 and nsitecode = ?2", nativeQuery = true)
+	public Unit getUnitDetails(String string, Number sitecode);
 
 }

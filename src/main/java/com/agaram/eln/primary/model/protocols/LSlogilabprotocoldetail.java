@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.model.protocols;
 
 import java.util.ArrayList;
-
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +25,7 @@ import com.agaram.eln.primary.model.dashboard.LsActiveWidgets;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Elnmaterial;
@@ -69,6 +69,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	Date modifidate;
 	@Transient
 	private String comment;
+	
+	@Transient
+	private Lsprotocolorderstructure lsprotocolorderstructure;
+	
+	public Lsprotocolorderstructure getLsprotocolorderstructure() {
+		return lsprotocolorderstructure;
+	}
+
+	public void setLsprotocolorderstructure(Lsprotocolorderstructure lsprotocolorderstructure) {
+		this.lsprotocolorderstructure = lsprotocolorderstructure;
+	}
 
 	private Integer lockeduser;
 
