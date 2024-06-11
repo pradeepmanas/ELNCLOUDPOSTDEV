@@ -5117,9 +5117,9 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 		} else {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
 					.findBylsuserMaster(objorder.getLsuserMaster());
-//			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
-//					objorder.getLsuserMaster().getLssitemaster());
-//			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objorder.getLsuserMaster().getLssitemaster());
+			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
 //			List<LSsamplemaster> lstsample = lssamplemasterrepository.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
 			List<Integer> lstsampleint = lssamplemasterrepository.getDistinctByLssitemasterSitecodeAndStatus(
 					objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1);
@@ -5133,8 +5133,8 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 					sample = null; // Set sample to null after adding it to the list
 				}
 			}
-//			lstorder = lslogilablimsorderdetailRepository
-//					.findByFiletypeAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getFiletype(), lstproject);
+			lstorder = lslogilablimsorderdetailRepository
+					.findByFiletypeAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getFiletype(), lstproject);
 
 //			lstorder = lslogilablimsorderdetailRepository
 //					.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterInOrderByBatchcodeDesc(

@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.service.starterRunner;
 
 import java.io.BufferedReader;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,17 +20,21 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
+
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchtenantsource.Datasourcemaster;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
@@ -65,10 +68,6 @@ import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservic
 import com.mongodb.gridfs.GridFSDBFile;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.support.ScheduledMethodRunnable;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 
 @Service
@@ -100,43 +99,43 @@ public class StarterRunner {
     public void executeOnStartup() throws Exception {
 
         System.out.println("Task executed on startup");
-        new Thread(() -> {
-			try {
-				System.out.println("auto register for sheet");
-				checkAndScheduleautoOrderRegister();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}).start();
+//        new Thread(() -> {
+//			try {
+//				System.out.println("auto register for sheet");
+//				checkAndScheduleautoOrderRegister();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}).start();
         
-        new Thread(() -> {
-			try {
+//        new Thread(() -> {
+//			try {
 				System.out.println("reminder alert concept");
 				checkAndScheduleReminders();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}).start();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}).start();
     
         
-        new Thread(() -> {
-			try {
-				System.out.println("reminder for orders");
-				checkAndScheduleRemindersforOrders();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}).start();
+//        new Thread(() -> {
+//			try {
+//				System.out.println("reminder for orders");
+//				checkAndScheduleRemindersforOrders();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}).start();
         
       
-        new Thread(() -> {
-			try {
-				System.out.println("auto register for protocol");
-				checkAndScheduleProtocolautoRegister();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}).start();
+//        new Thread(() -> {
+//			try {
+//				System.out.println("auto register for protocol");
+//				checkAndScheduleProtocolautoRegister();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}).start();
         
         //checkAndScheduleReminders();
         //checkAndScheduleRemindersforOrders();
@@ -947,7 +946,7 @@ public class StarterRunner {
     }
 
     
-    public void checkAndScheduleReminders() throws SQLException {
+    public void checkAndScheduleReminders() throws SQLException, InterruptedException {
         List<Datasourcemaster> configList = configRepo.findByinitialize(true);
 
         // Get current date and time
@@ -1105,7 +1104,7 @@ public class StarterRunner {
         return configuration;
     }
 
-    private void scheduleNotificationIfDue(Notification objNotification, HikariConfig configuration) throws SQLException {
+    private void scheduleNotificationIfDue(Notification objNotification, HikariConfig configuration) throws SQLException, InterruptedException {
         Date cautionDate = objNotification.getCautiondate();
         Instant caution = cautionDate.toInstant();
         LocalDateTime cautionTime = LocalDateTime.ofInstant(caution, ZoneId.systemDefault());
@@ -1116,7 +1115,12 @@ public class StarterRunner {
             long delay = duration.toMillis();
             scheduleNotification(objNotification, delay, configuration);
         }else {
-        	executeNotificationPop(objNotification, configuration);
+        	try {
+				executeNotificationPop(objNotification, configuration);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
     }
     
@@ -1135,10 +1139,11 @@ public class StarterRunner {
             @Override
             public void run() {
                 try {
-                	executeNotificationPop(objNotification, configuration);
-                } catch (SQLException e) {
-                    e.printStackTrace(); // Consider logging this properly
-                }
+					executeNotificationPop(objNotification, configuration);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 scheduledTasks.remove(notificationId);
             }
         };
@@ -1762,7 +1767,7 @@ public class StarterRunner {
 	
 	    		objorder.setOrderflag("N");
 
-	    		String defaultContent = "{\"activeSheet\":\"Sheet1\",\"sheets\":[{\"name\":\"Sheet1\",\"rows\":[],\"columns\":[],\"selection\":\"A1:A1\",\"activeCell\":\"A1:A1\",\"frozenRows\":0,\"frozenColumns\":0,\"showGridLines\":true,\"gridLinesColor\":null,\"mergedCells\":[],\"hyperlinks\":[],\"defaultCellStyle\":{\"fontFamily\":\"Arial\",\"fontSize\":\"12\"},\"drawings\":[]}],\"names\":[],\"columnWidth\":64,\"rowHeight\":20,\"images\":[],\"charts\":[],\"tags\":[],\"fieldcount\":0,\"Batchcoordinates\":{\"resultdirection\":1,\"parameters\":[]}}";
+//	    		String defaultContent = "{\"activeSheet\":\"Sheet1\",\"sheets\":[{\"name\":\"Sheet1\",\"rows\":[],\"columns\":[],\"selection\":\"A1:A1\",\"activeCell\":\"A1:A1\",\"frozenRows\":0,\"frozenColumns\":0,\"showGridLines\":true,\"gridLinesColor\":null,\"mergedCells\":[],\"hyperlinks\":[],\"defaultCellStyle\":{\"fontFamily\":\"Arial\",\"fontSize\":\"12\"},\"drawings\":[]}],\"names\":[],\"columnWidth\":64,\"rowHeight\":20,\"images\":[],\"charts\":[],\"tags\":[],\"fieldcount\":0,\"Batchcoordinates\":{\"resultdirection\":1,\"parameters\":[]}}";
 	    		
 					if(objorder.getLsautoregisterorders()!= null) {	
 						LsAutoregister auditregdetails =  getautoregisterdetails(objorder.getLsautoregisterorders(),configuration,currentdate,"sheetOrder");
@@ -1897,7 +1902,7 @@ public class StarterRunner {
 						 
 						 comments="";
 						 screen="";
-						 defaultContent="";
+//						 defaultContent="";
 			
 	    		}
 	    		
@@ -2028,7 +2033,7 @@ public class StarterRunner {
  	              System.out.println("No record inserted.");
  	          }
             
-            Thread.sleep(15000);
+            Thread.sleep(30000);
 	 	          String updateSequenceSQL = "SELECT setval('notification_sequence', ?)";
 	 	          try (PreparedStatement pstmt = con.prepareStatement(updateSequenceSQL)) {
 	 	              pstmt.setLong(1, generatednotificationcode);
@@ -2136,36 +2141,61 @@ public class StarterRunner {
     	}
     }
     
-    public void executeNotificationPop(Notification notification, HikariConfig configuration) throws SQLException {
-        try (HikariDataSource dataSource = new HikariDataSource(configuration);
-             Connection con = dataSource.getConnection()) {
+	public void executeNotificationPop(Notification notification, HikariConfig configuration) throws SQLException, InterruptedException {
+		
+		try (HikariDataSource dataSource = new HikariDataSource(configuration); Connection con = dataSource.getConnection()) {
 
-            LocalDateTime localDateTime = LocalDateTime.now();
-            Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-            Date cDate = Date.from(instant);
+			LocalDateTime localDateTime = LocalDateTime.now();
+			Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+			Date cDate = Date.from(instant);
 
-            String details = "{\"ordercode\" :\"" + notification.getOrderid() + "\",\"order\" :\""
-                    + notification.getBatchid() + "\",\"description\":\"" + notification.getDescription()
-                    + "\",\"screen\":\"" + notification.getScreen() + "\"}";
-            String path = notification.getScreen().equals("Sheet Order") ? "/registertask" : "/Protocolorder";
+			String details = "{\"ordercode\" :\"" + notification.getOrderid() + "\",\"order\" :\""
+					+ notification.getBatchid() + "\",\"description\":\"" + notification.getDescription()
+					+ "\",\"screen\":\"" + notification.getScreen() + "\"}";
+			
+			String path = notification.getScreen().equals("Sheet Order") ? "/registertask" : "/Protocolorder";
 
-            String updateString = "INSERT INTO public.lsnotification(isnewnotification, notification, " +
-                    "createdtimestamp, notificationdetils, notificationpath, notifationfrom_usercode, " +
-                    "notifationto_usercode, repositorycode, repositorydatacode, notificationfor) VALUES ( 1, 'CAUTIONALERT', ?, ?, ?, ?, ?, 0, 0, 1); " +
-                    "UPDATE Notification SET status = 0 WHERE notificationid = ?";
+			String updateString = "INSERT INTO public.lsnotification(isnewnotification, notification, "
+					+ "createdtimestamp, notificationdetils, notificationpath, notifationfrom_usercode, "
+					+ "notifationto_usercode, repositorycode, repositorydatacode, notificationfor) VALUES "
+					+ "(1, 'CAUTIONALERT', ?, ?, ?, ?, ?, 0, 0, 1); "
+					+ "UPDATE Notification SET status = 0 WHERE notificationid = ?;";
 
-            try (PreparedStatement pst = con.prepareStatement(updateString)) {
-                pst.setTimestamp(1, new Timestamp(cDate.getTime()));
-                pst.setString(2, details);
-                pst.setString(3, path);
-                pst.setInt(4, notification.getUsercode());
-                pst.setInt(5, notification.getUsercode());
-                pst.setLong(6, notification.getNotificationid());
+			try (PreparedStatement pst = con.prepareStatement(updateString)) {
+				
+				pst.setTimestamp(1, new Timestamp(cDate.getTime()));
+				pst.setString(2, details);
+				pst.setString(3, path);
+				pst.setInt(4, notification.getUsercode());
+				pst.setInt(5, notification.getUsercode());
+				pst.setLong(6, notification.getNotificationid());
 
-                pst.executeUpdate();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); // Consider logging this properly
-        }
-    }
+				pst.executeUpdate();
+				
+//				int affectedRows = pst.executeUpdate();
+//				int generatednotificationcode = 0;
+//				if (affectedRows > 0) {
+//					ResultSet rs = pst.getGeneratedKeys();
+//					if (rs.next()) {
+//						generatednotificationcode = rs.getInt(1);
+//						System.out.println("Inserted record's notificationcode: " + generatednotificationcode);
+//					}
+//				} else {
+//					System.out.println("No record inserted.");
+//				}
+//				Thread.sleep(30000);
+//				String updateSequenceSQL = "SELECT setval('notification_sequence', ?)";
+//				try (PreparedStatement pstmt = con.prepareStatement(updateSequenceSQL)) {
+//					pstmt.setLong(1, generatednotificationcode);
+//					pstmt.execute();
+//					Thread.sleep(15000);
+//					System.out.println("Sequence updated successfully.");
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace(); // Consider logging this properly
+		}
+	}
 }

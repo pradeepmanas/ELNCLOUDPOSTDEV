@@ -18,6 +18,8 @@ public class LSnotification {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.AUTO,generator="seq")
 	@Column(columnDefinition = "numeric(17,0)",name = "notificationcode")
 	private Long notificationcode;
 	

@@ -14,6 +14,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.agaram.eln.primary.fetchtenantsource.Datasourcemaster;
 import com.agaram.eln.primary.model.general.Response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -439,6 +440,10 @@ public class DataSourceConfig implements Serializable {
 
 	public void setNoofusers(int noofusers) {
 		this.noofusers = noofusers;
+	}
+	public Datasourcemaster orElse(Object object) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
