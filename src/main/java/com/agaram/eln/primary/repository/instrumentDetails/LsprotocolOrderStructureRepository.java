@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.instrumentDetails;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -34,14 +35,10 @@ public interface LsprotocolOrderStructureRepository extends JpaRepository<Lsprot
 	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j);
 
-	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j, LSSiteMaster lssitemaster2, int k,
-			List<LSuserMaster> lstuserMaster);
+
 
 	Lsprotocolorderstructure findByParentdircodeAndDirectorynameIgnoreCase(Long parentdircode, String directoryname);
 
-	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j, LSuserMaster lsuserMaster2, int k);
 
 	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, String search_Key, LSuserMaster objusermaster, int j, String search_Key2,
@@ -50,6 +47,18 @@ public interface LsprotocolOrderStructureRepository extends JpaRepository<Lsprot
 	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, String search_Key, LSuserMaster objusermaster, int j, String search_Key2,
 			LSSiteMaster lssitemaster2, int k, List<LSuserMaster> usernotify, String search_Key3, Pageable pageable);
+
+	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+			LSSiteMaster lssitemaster, int i, List<Long> immutableNegativeValues, LSuserMaster lsuserMaster, int j,
+			LSuserMaster lsuserMaster2, int k);
+
+	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+			LSSiteMaster lssitemaster, int i, List<Long> immutableNegativeValues, LSuserMaster lsuserMaster, int j,
+			LSSiteMaster lssitemaster2, int k, List<LSuserMaster> lstuserMaster);
+
+	List<Lsprotocolorderstructure> findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrderByDirectorycode(
+			LSSiteMaster lssitemaster, int i, List<Long> immutableNegativeValues, LSuserMaster lsuserMaster, int j);
+
 
 
 	

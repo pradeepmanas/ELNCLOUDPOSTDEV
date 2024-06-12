@@ -2,6 +2,7 @@ package com.agaram.eln.primary.service.dashboard;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -4671,38 +4672,41 @@ public class DashBoardService {
 
 	public Map<String, Object> Getglobalsearchfolder(LSuserMaster objusermaster) {
 		Map<String, Object> mapfolders = new HashMap<String, Object>();
+		List<Long> immutableNegativeValues = Arrays.asList(-3L, -22L);
 		if(objusermaster.getResponse().getInformation().equals("Protocol")) {
 			List<Lsprotocolorderstructure> lstdir = new ArrayList<Lsprotocolorderstructure>();
 			if (objusermaster.getUsernotify() == null) {
 				lstdir = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								objusermaster.getLssitemaster(), 1, objusermaster, 2,
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,immutableNegativeValues, objusermaster, 2,
 								objusermaster, 3);
 
 			} else {
 				lstdir = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								objusermaster.getLssitemaster(), 1, objusermaster, 2,
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,immutableNegativeValues, objusermaster, 2,
 								objusermaster.getLssitemaster(), 3, objusermaster.getUsernotify());
 				
 			}
-			
+			  lstdir.addAll(lsprotocolorderStructurerepository.findByDirectorycodeIn(immutableNegativeValues));
 			mapfolders.put("Folders_Protocol", lstdir);
 		}else if(objusermaster.getResponse().getInformation().equals("Sheet")) {
 			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 			if (objusermaster.getUsernotify() == null) {
 				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								objusermaster.getLssitemaster(), 1, objusermaster, 2,
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,immutableNegativeValues, objusermaster, 2,
 								objusermaster, 3);
 				
 			} else {
 				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								objusermaster.getLssitemaster(), 1, objusermaster, 2,
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,immutableNegativeValues, objusermaster, 2,
 								objusermaster.getLssitemaster(), 3, objusermaster.getUsernotify());
 				
 			}
+
+			  lstdir.addAll(lsSheetOrderStructureRepository.findByDirectorycodeIn(immutableNegativeValues));
 			mapfolders.put("Folders_Sheet", lstdir);
 		}
 
@@ -4715,20 +4719,21 @@ public class DashBoardService {
 		long Count_Directory_File = 0 ;
 //		Pageable pageable = new PageRequest(objusermaster.getPagesize(), objusermaster.getPageperorder());
 		objusermaster.setActiveusercode(objusermaster.getResponse().getInformation().equals("Protocol") ? 2 : 1);
-		
+		List<Long> immutableNegativeValues = Arrays.asList(-3L, -22L);
 		
 		List<Lsprotocolorderstructure> lstdirpro;
 		if (objusermaster.getResponse().getInformation().equals("Protocol")) {
 			if (objusermaster.getUsernotify() == null) {
 				lstdirpro = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								objusermaster.getLssitemaster(), 1, objusermaster, 2, objusermaster, 3);
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,immutableNegativeValues, objusermaster, 2, objusermaster, 3);
 			} else {
 				lstdirpro = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								objusermaster.getLssitemaster(), 1, objusermaster, 2, objusermaster.getLssitemaster(), 3,
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,immutableNegativeValues, objusermaster, 2, objusermaster.getLssitemaster(), 3,
 								objusermaster.getUsernotify());
 			}
+			lstdirpro.addAll(lsprotocolorderStructurerepository.findByDirectorycodeIn(immutableNegativeValues));
 //			List<Lsprotocolorderstructure> lsprotocolorderstructure = new ObjectMapper().convertValue(lstdirpro, new TypeReference<Lsprotocolorderstructure>() {});
 			List<Long> directoryCode_Protocol = lstdirpro.stream().map(Lsprotocolorderstructure::getDirectorycode).collect(Collectors.toList());
 			List<LSprotocolfolderfiles>lstfiles = lsprotocolfolderfilesRepository
@@ -4759,14 +4764,15 @@ public class DashBoardService {
 
 			if (objusermaster.getUsernotify() == null) {
 				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								objusermaster.getLssitemaster(), 1, objusermaster, 2, objusermaster, 3);
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,immutableNegativeValues, objusermaster, 2, objusermaster, 3);
 			} else {
 				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								objusermaster.getLssitemaster(), 1, objusermaster, 2, objusermaster.getLssitemaster(), 3,
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+								objusermaster.getLssitemaster(), 1,immutableNegativeValues, objusermaster, 2, objusermaster.getLssitemaster(), 3,
 								objusermaster.getUsernotify());
 			}
+			lstdir.addAll(lsSheetOrderStructureRepository.findByDirectorycodeIn(immutableNegativeValues));
 			List<Long> directoryCode_Sheet = lstdir.stream().map(LSSheetOrderStructure::getDirectorycode).collect(Collectors.toList());
 		
 			List<LSsheetfolderfiles>lstfiles = lssheetfolderfilesRepository

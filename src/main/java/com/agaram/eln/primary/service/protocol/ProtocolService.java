@@ -5533,6 +5533,7 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 
 	public Map<String, Object> Getinitialorders(LSlogilabprotocoldetail objorder) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		List<Long> immutableNegativeValues = Arrays.asList(-3L, -22L);
 		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 			mapOrders.put("orders", Getadministratororder(objorder));
 			mapOrders.put("ordercount", LSlogilabprotocoldetailRepository.count());
@@ -5542,15 +5543,16 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 			List<Long> directorycode = new ArrayList<Long>();
 			if (objorder.getLstuserMaster().size() == 0) {
 				lstdir = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2);
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrderByDirectorycode(
+								objorder.getLsuserMaster().getLssitemaster(), 1,immutableNegativeValues, objorder.getLsuserMaster(), 2);
 				directorycode = lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode)
 						.collect(Collectors.toList());
 			} else {
 				lstdir = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+								objorder.getLsuserMaster().getLssitemaster(), 1,immutableNegativeValues, objorder.getLsuserMaster(), 2,
 								objorder.getLsuserMaster().getLssitemaster(), 3, objorder.getLstuserMaster());
+				  lstdir.addAll(lsprotocolorderStructurerepository.findByDirectorycodeIn(immutableNegativeValues));
 				directorycode = lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode)
 						.collect(Collectors.toList());
 

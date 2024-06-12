@@ -6514,6 +6514,7 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 
 	public Map<String, Object> Getinitialorders(LSlogilablimsorderdetail objorder) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		List<Long> immutableNegativeValues = Arrays.asList(-3L, -22L);
 		if (objorder.getLsuserMaster() != null && objorder.getLsuserMaster().getUsername() != null) {
 			if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 				mapOrders.put("orders", Getadministratororder(objorder));
@@ -6522,14 +6523,15 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 				List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 				if (objorder.getLstuserMaster().size() == 0) {
 					lstdir = lsSheetOrderStructureRepository
-							.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-									objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2);
+							.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrderByDirectorycode(
+									objorder.getLsuserMaster().getLssitemaster(), 1,immutableNegativeValues, objorder.getLsuserMaster(), 2);
 				} else {
 					lstdir = lsSheetOrderStructureRepository
-							.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-									objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
+							.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+									objorder.getLsuserMaster().getLssitemaster(), 1,immutableNegativeValues, objorder.getLsuserMaster(), 2,
 									objorder.getLsuserMaster().getLssitemaster(), 3, objorder.getLstuserMaster());
 				}
+				  lstdir.addAll(lsSheetOrderStructureRepository.findByDirectorycodeIn(immutableNegativeValues));
 				List<Long> directorycode = lstdir.stream().map(LSSheetOrderStructure::getDirectorycode)
 						.collect(Collectors.toList());
 				mapOrders.put("directorycode", directorycode);
@@ -7104,18 +7106,19 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 
 		Map<String, Object> mapfolders = new HashMap<String, Object>();
 		List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
-
+		 List<Long> immutableNegativeValues = Arrays.asList(-3L, -22L);
 		if (objorder.getLstuserMaster() == null) {
 			lstdir = lsSheetOrderStructureRepository
-					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-							objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
+					.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+							objorder.getLsuserMaster().getLssitemaster(), 1,immutableNegativeValues, objorder.getLsuserMaster(), 2,
 							objorder.getLsuserMaster(), 3);
 		} else {
 			lstdir = lsSheetOrderStructureRepository
-					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-							objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
+					.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+							objorder.getLsuserMaster().getLssitemaster(), 1,immutableNegativeValues, objorder.getLsuserMaster(), 2,
 							objorder.getLsuserMaster().getLssitemaster(), 3, objorder.getLstuserMaster());
 		}
+		lstdir.addAll(lsSheetOrderStructureRepository.findByDirectorycodeIn(immutableNegativeValues));
 		if (objorder.getLstproject() != null && objorder.getLstproject().size() > 0) {
 			ArrayList<List<Object>> lsttest = new ArrayList<List<Object>>();
 			List<Integer> lsprojectcode = objorder.getLstproject().stream().map(LSprojectmaster::getProjectcode)
@@ -7485,21 +7488,21 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 	}
 
 	public Map<String, Object> Getfoldersforprotocolorders(LSlogilabprotocoldetail objusermaster) {
-
+		 List<Long> immutableNegativeValues = Arrays.asList(-3L, -22L);
 		Map<String, Object> mapfolders = new HashMap<String, Object>();
 		List<Lsprotocolorderstructure> lstdir = new ArrayList<Lsprotocolorderstructure>();
 		if (objusermaster.getLstuserMaster() == null) {
 			lstdir = lsprotocolorderStructurerepository
-					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-							objusermaster.getLsuserMaster().getLssitemaster(), 1, objusermaster.getLsuserMaster(), 2,
+					.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+							objusermaster.getLsuserMaster().getLssitemaster(), 1,immutableNegativeValues, objusermaster.getLsuserMaster(), 2,
 							objusermaster.getLsuserMaster(), 3);
 		} else {
 			lstdir = lsprotocolorderStructurerepository
-					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-							objusermaster.getLsuserMaster().getLssitemaster(), 1, objusermaster.getLsuserMaster(), 2,
+					.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+							objusermaster.getLsuserMaster().getLssitemaster(), 1,immutableNegativeValues, objusermaster.getLsuserMaster(), 2,
 							objusermaster.getLsuserMaster().getLssitemaster(), 3, objusermaster.getLstuserMaster());
 		}
-
+		lstdir.addAll(lsprotocolorderStructurerepository.findByDirectorycodeIn(immutableNegativeValues));
 		if (objusermaster.getLstproject() != null && objusermaster.getLstproject().size() > 0) {
 			List<Integer> lsprojectcode = objusermaster.getLstproject().stream().map(LSprojectmaster::getProjectcode)
 					.collect(Collectors.toList());
@@ -8757,19 +8760,20 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 
 		int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 		int totalSamples = nmaterialcode.size();
-
+		List<Long> immutableNegativeValues = Arrays.asList(-3L, -22L);
 		List<Lsprotocolorderstructure> lstdir;
 		if (objorder.getLstuserMaster() == null) {
 			lstdir = lsprotocolorderStructurerepository
-					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-							objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
+					.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+							objorder.getLsuserMaster().getLssitemaster(), 1,immutableNegativeValues, objorder.getLsuserMaster(), 2,
 							objorder.getLsuserMaster(), 3);
 		} else {
 			lstdir = lsprotocolorderStructurerepository
-					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-							objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
+					.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+							objorder.getLsuserMaster().getLssitemaster(), 1,immutableNegativeValues, objorder.getLsuserMaster(), 2,
 							objorder.getLsuserMaster().getLssitemaster(), 3, objorder.getLstuserMaster());
 		}
+		  lstdir.addAll(lsprotocolorderStructurerepository.findByDirectorycodeIn(immutableNegativeValues));
 		List<Long> Directory_Code = lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode)
 				.collect(Collectors.toList());
 		if (objorder.getTestcode() == null && objorder.getLsprojectmaster() == null && objorder.getRejected() == null) {
@@ -9714,62 +9718,63 @@ public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail
 
 	public Map<String, Object> Getfoldersfordashboard(LSuserMaster lsusermaster) {
 		Map<String, Object> mapfolders = new HashMap<String, Object>();
-
+		List<Long> immutableNegativeValues = Arrays.asList(-3L, -22L);
 		List<Lsprotocolorderstructure> lstdirpro = new ArrayList<Lsprotocolorderstructure>();
 		if (lsusermaster.getActiveusercode() != null && lsusermaster.getActiveusercode() == 2) {
 			if (lsusermaster.getUsernotify() == null) {
 				lstdirpro = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster, 3);
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1,immutableNegativeValues, lsusermaster, 2, lsusermaster, 3);
 			} else {
 				lstdirpro = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1,immutableNegativeValues, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
 								lsusermaster.getUsernotify());
 			}
-
+			lstdirpro.addAll(lsprotocolorderStructurerepository.findByDirectorycodeIn(immutableNegativeValues));
 			mapfolders.put("directorypro", lstdirpro);
 		} else if (lsusermaster.getActiveusercode() != null && lsusermaster.getActiveusercode() == 1) {
 			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 
 			if (lsusermaster.getUsernotify() == null) {
 				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster, 3);
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1,immutableNegativeValues, lsusermaster, 2, lsusermaster, 3);
 			} else {
 				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1,immutableNegativeValues, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
 								lsusermaster.getUsernotify());
 
 			}
-
+			  lstdir.addAll(lsSheetOrderStructureRepository.findByDirectorycodeIn(immutableNegativeValues));
 			mapfolders.put("directory", lstdir);
 		} else {
 			List<LSSheetOrderStructure> lstdir = new ArrayList<LSSheetOrderStructure>();
 
 			if (lsusermaster.getUsernotify() == null) {
 				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster, 3);
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1,immutableNegativeValues, lsusermaster, 2, lsusermaster, 3);
 			} else {
 				lstdir = lsSheetOrderStructureRepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1,immutableNegativeValues, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
 								lsusermaster.getUsernotify());
 
 			}
+			  lstdir.addAll(lsSheetOrderStructureRepository.findByDirectorycodeIn(immutableNegativeValues));
 			if (lsusermaster.getUsernotify() == null) {
 				lstdirpro = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster, 3);
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1,immutableNegativeValues, lsusermaster, 2, lsusermaster, 3);
 			} else {
 				lstdirpro = lsprotocolorderStructurerepository
-						.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-								lsusermaster.getLssitemaster(), 1, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
+						.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+								lsusermaster.getLssitemaster(), 1,immutableNegativeValues, lsusermaster, 2, lsusermaster.getLssitemaster(), 3,
 								lsusermaster.getUsernotify());
 			}
-
+			lstdirpro.addAll(lsprotocolorderStructurerepository.findByDirectorycodeIn(immutableNegativeValues));
 			mapfolders.put("directorypro", lstdirpro);
 			mapfolders.put("directory", lstdir);
 

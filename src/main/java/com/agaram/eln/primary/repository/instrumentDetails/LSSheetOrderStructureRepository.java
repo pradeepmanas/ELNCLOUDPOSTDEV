@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.instrumentDetails;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -33,16 +34,12 @@ public interface LSSheetOrderStructureRepository extends JpaRepository<LSSheetOr
 	
 	List<LSSheetOrderStructure> findByDirectorycodeIn(List<Long> directorycode);
 
-	List<LSSheetOrderStructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j, LSSiteMaster lssitemaster2, int k,
-			List<LSuserMaster> lstuserMaster);
+
 
 	LSSheetOrderStructure findByParentdircodeAndDirectorynameIgnoreCase(Long parentdircode, String directoryname);
 
 	LSSheetOrderStructure findByDirectorynameIgnoreCaseAndParentdircode(String directoryname, Long parentdircode);
 
-	List<LSSheetOrderStructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j, LSuserMaster lsuserMaster2, int k);
 
 	List<LSSheetOrderStructure> findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, String search_Key, LSuserMaster objusermaster, int j, String search_Key2,
@@ -59,6 +56,19 @@ public interface LSSheetOrderStructureRepository extends JpaRepository<LSSheetOr
 	List<LSSheetOrderStructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInAndDirectorycodeNotOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, LSuserMaster lsuserMaster, int j, LSSiteMaster lssitemaster2, int k,
 			List<LSuserMaster> lstuserMaster, Long l);
+
+
+
+	List<LSSheetOrderStructure> findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+			LSSiteMaster lssitemaster, int i, List<Long> immutableNegativeValues, LSuserMaster lsuserMaster, int j,
+			LSuserMaster lsuserMaster2, int k);
+
+	List<LSSheetOrderStructure> findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+			LSSiteMaster lssitemaster, int i, List<Long> immutableNegativeValues, LSuserMaster lsuserMaster, int j,
+			LSSiteMaster lssitemaster2, int k, List<LSuserMaster> lstuserMaster);
+
+	List<LSSheetOrderStructure> findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrderByDirectorycode(
+			LSSiteMaster lssitemaster, int i, List<Long> immutableNegativeValues, LSuserMaster lsuserMaster, int j);
 
 
 
