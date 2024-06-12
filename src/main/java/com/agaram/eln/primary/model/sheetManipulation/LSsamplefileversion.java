@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "LSsamplefileversion")
 public class LSsamplefileversion {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Basic(optional = false)
 	@Column(name = "filesamplecodeversion")
 	private Integer filesamplecodeversion;

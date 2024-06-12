@@ -44,7 +44,7 @@ import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 @Table(name = "LSlogilabprotocoldetail")
 public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldetail> {
 	@Id
-	@SequenceGenerator(name = "orderGen", sequenceName = "orderDetail", initialValue = 1000000, allocationSize = 1)
+	@SequenceGenerator(name = "orderGen", sequenceName = "orderDetailProtocol", initialValue = 1000000, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orderGen")
 	@Column(columnDefinition = "numeric(17,0)", name = "Protocolordercode")
 	private Long protocolordercode;

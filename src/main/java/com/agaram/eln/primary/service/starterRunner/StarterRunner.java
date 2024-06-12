@@ -18,6 +18,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +34,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchtenantsource.Datasourcemaster;
+import com.agaram.eln.primary.model.cloudFileManip.CloudOrderVersion;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.dashboard.LsActiveWidgets;
 import com.agaram.eln.primary.model.general.SheetCreation;
@@ -52,6 +55,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolstep;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
+import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
@@ -62,6 +66,7 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
+import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -86,6 +91,9 @@ public class StarterRunner {
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
 	
+	@Autowired
+	private InstrumentService instservice;
+	
     private final ConcurrentMap<Integer, TimerTask> scheduledTasks = new ConcurrentHashMap<>();
 
     private static final int MAX_POOL_SIZE = 10;
@@ -96,7 +104,8 @@ public class StarterRunner {
     Date currentdate = null;
     Date gettoDate=null;
     Date getfromDate=null;
-    
+    private static String defaultContent = "{\"activeSheet\":\"Sheet1\",\"sheets\":[{\"name\":\"Sheet1\",\"rows\":[],\"columns\":[],\"selection\":\"A1:A1\",\"activeCell\":\"A1:A1\",\"frozenRows\":0,\"frozenColumns\":0,\"showGridLines\":true,\"gridLinesColor\":null,\"mergedCells\":[],\"hyperlinks\":[],\"defaultCellStyle\":{\"fontFamily\":\"Arial\",\"fontSize\":\"12\"},\"drawings\":[]}],\"names\":[],\"columnWidth\":64,\"rowHeight\":20,\"images\":[],\"charts\":[],\"tags\":[],\"fieldcount\":0,\"Batchcoordinates\":{\"resultdirection\":1,\"parameters\":[]}}";
+	
     public void executeOnStartup() throws Exception {
 
         System.out.println("Task executed on startup");
@@ -1530,7 +1539,8 @@ public class StarterRunner {
 			 }
 	     }
       }
-    public void updatesheetordercontent(LSlogilablimsorderdetail objorder,CloudSheetCreation cloudobject,HikariConfig configuration) throws IOException, SQLException {
+    public void updatesheetordercontent(LSlogilablimsorderdetail objorder,CloudSheetCreation cloudobject,HikariConfig configuration,Date currentdate) throws IOException, SQLException, ParseException {
+    	//int generatedsampleversioncode=0;
     	try (HikariDataSource dataSource = new HikariDataSource(configuration);
                 Connection con = dataSource.getConnection()) {
 			String Content = "";
@@ -1586,9 +1596,133 @@ public class StarterRunner {
 						//Content = fileService.GetfileverContent(objorder.getLsfile());
 					}
 				}
+	    	 if (Content == null || Content.equals("")) {
+					Content = defaultContent;
+				}
+	    	 
+	    	 //if (objorder.getLssamplefile().getLssamplefileversion() != null) {
+
+	 			String Contentversion = Content;
+	 			
+	 			LSsamplefileversion versobj = new LSsamplefileversion();
+	 			versobj.setCreatedate(currentdate);
+	 			versobj.setVersionname("version_1");
+	 			versobj.setVersionno(1);
+		 			LSuserMaster obj = new LSuserMaster();
+		 			obj.setCreateddate(currentdate);
+	 			versobj.setCreatebyuser(obj);
+	 			
+	 			String insertversion = "INSERT INTO LSsamplefileversion(createdate,versionno,versionname,createbyuser_usercode,batchcode)"
+	 					+ " VALUES (?,1,'version_1',?,0) ";   
+	 			try (PreparedStatement pst = con.prepareStatement(insertversion, Statement.RETURN_GENERATED_KEYS)) {
+	                pst.setTimestamp(1, new Timestamp(currentdate.getTime()));
+	                pst.setInt(2, objorder.getLsuserMaster().getUsercode());
+	                
+	                int affectedRows=pst.executeUpdate();
+	                   
+	                   if (affectedRows > 0) {
+	                	   ResultSet rs = pst.getGeneratedKeys();
+	                       if (rs.next()) {
+	                           int sampleversioncode = rs.getInt(1);
+	                           System.out.println("Inserted record's sampleversioncode: " + sampleversioncode);
+	                           versobj.setFilesamplecodeversion(sampleversioncode);
+	                       }
+	                   } else {
+	                       System.out.println("No record inserted.");
+	                   }
+	 			}
+	 			insertversion="";
+	 			//lssamplefileversionRepository.save(objorder.getLssamplefile().getLssamplefileversion());
+	 			updateorderversioncontent(Contentversion, versobj,
+	 					objorder.getLsautoregisterorders().getIsmultitenant(),configuration);
+
+	 			Contentversion = null;
+	 		//}
+	 			
+	 			List<LSsamplefileversion> versionlist = new ArrayList<>();
+	 			versionlist.add(versobj);
+	    	 
+	    	 
+	    		 LSsamplefile sampobj = new LSsamplefile();
+	    		 sampobj.setCreatedate(currentdate);
+	    		 sampobj.setVersionno(1);
+	    		 sampobj.setCreatebyuser(obj);
+	    		 sampobj.setBatchcode(0);
+	    		 sampobj.setProcessed(0);
+	    		 sampobj.setLssamplefileversion(versionlist);
+	    		 
+	    		 objorder.setLssamplefile(sampobj);
+	 			
+	    		 String insertsample = "INSERT INTO LSsamplefile(createdate,versionno,createbyuser_usercode,batchcode,processed)"
+		 					+ " VALUES (?,1,?,0,0) ";   
+		 			try (PreparedStatement pst = con.prepareStatement(insertsample, Statement.RETURN_GENERATED_KEYS)) {
+		                pst.setTimestamp(1, new Timestamp(currentdate.getTime()));
+		                pst.setInt(2, objorder.getLsuserMaster().getUsercode());
+		                
+		                int affectedRows=pst.executeUpdate();
+		                   
+		                   if (affectedRows > 0) {
+		                	   ResultSet rs = pst.getGeneratedKeys();
+		                       if (rs.next()) {
+		                           int filesamplecode = rs.getInt(1);
+		                           System.out.println("Inserted record's filesamplecode: " + filesamplecode);
+		                           sampobj.setFilesamplecode(filesamplecode);
+		                       }
+		                   } else {
+		                       System.out.println("No record inserted.");
+		                   }
+		 			}
+		 			objorder.setLssamplefile(sampobj);		
     	}
     }
-    public void updateprotoorderdatacontent ( LSlogilabprotocoldetail lSlogilabprotocoldetail,HikariConfig configuration) throws SQLException {
+  
+    public void updateorderversioncontent(String Content, LSsamplefileversion objfile, Integer ismultitenant ,HikariConfig configuration)
+			throws IOException, SQLException {
+    	long id=0;
+    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
+                Connection con = dataSource.getConnection()) {
+		if (ismultitenant == 1 || ismultitenant == 2) {
+			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,
+					commonfunction.getcontainername(ismultitenant, (String) dataSource.getDataSourceProperties().getProperty("tenantName")) + "orderversion");
+			String fileUUID = (String) objMap.get("uuid");
+			String fileURI = objMap.get("uri").toString();
+
+			
+			if (objfile.getFilesamplecodeversion() != null) {
+					id=objfile.getFilesamplecodeversion();
+			} else {
+					id=1;
+			}
+//			objsavefile.setFileuri(fileURI);
+//			objsavefile.setFileuid(fileUUID);
+//			objsavefile.setContainerstored(1);
+
+			//cloudOrderVersionRepository.save(objsavefile);
+			String insertsample = "INSERT INTO LSOrderVersionfiles(id,fileuid,fileuri,containerstored)"
+ 					+ " VALUES (?,?,?,1) ";   
+			try (PreparedStatement pst = con.prepareStatement(insertsample)) {
+				pst.setLong(1, id);
+				pst.setString(2, fileUUID);
+				pst.setString(3, fileURI);
+                
+                pst.executeUpdate();
+			}
+			
+		} else {
+
+			GridFSDBFile largefile = gridFsTemplate.findOne(
+					new Query(Criteria.where("filename").is("orderversion_" + objfile.getFilesamplecodeversion())));
+			if (largefile != null) {
+				gridFsTemplate.delete(
+						new Query(Criteria.where("filename").is("orderversion_" + objfile.getFilesamplecodeversion())));
+			}
+			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
+					"orderversion_" + objfile.getFilesamplecodeversion(), StandardCharsets.UTF_16);
+
+		   }
+    	}
+	}
+	public void updateprotoorderdatacontent ( LSlogilabprotocoldetail lSlogilabprotocoldetail,HikariConfig configuration) throws SQLException {
     	try (HikariDataSource dataSource = new HikariDataSource(configuration);
                 Connection con = dataSource.getConnection()) {
 		String Content = "";
@@ -1783,7 +1917,7 @@ public class StarterRunner {
 	    			getlsfiledata(objorder,configuration);
 	    			CloudSheetCreation cloudobject=getsheetcreationdata(objorder,configuration);
 	    		
-	                 updatesheetordercontent(objorder,cloudobject,configuration);
+	                 updatesheetordercontent(objorder,cloudobject,configuration,currentdate);
 	                 
 //	                 try {
 //	         			objorder.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
@@ -1811,9 +1945,9 @@ public class StarterRunner {
 		                 		+ "lsfile_filecode,lsprojectmaster_projectcode,lssamplefile_filesamplecode,"
 		                 		+ "filecode,keyword,lockedusername,directorycode,orderdisplaytype,"
 		                 		+ "lstestmasterlocal_testcode,viewoption,ordercancell,teamcode,createdtimestamp,orderflag,"
-		                 		+ "testcode,testname,"
+		                 		+ "lsautoregisterorders_regcode,testcode,testname,"
 		                 		+ "elnmaterialinventory_nmaterialinventorycode,elnmaterial_nmaterialcode) "
-		                 		+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		                 		+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	                		 
 	                		 
 		               try (PreparedStatement pst = con.prepareStatement(updateString, Statement.RETURN_GENERATED_KEYS)) {
@@ -2169,4 +2303,5 @@ public class StarterRunner {
             e.printStackTrace(); // Consider logging this properly
         }
     }
+   
 }
