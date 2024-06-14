@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.protocol;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 
 import java.io.ByteArrayInputStream;
@@ -230,6 +231,14 @@ import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import com.mongodb.gridfs.GridFSDBFile;
+import com.spire.doc.BookmarkStart;
+import com.spire.doc.Document;
+import com.spire.doc.FileFormat;
+import com.spire.doc.Section;
+import com.spire.doc.TextWatermark;
+import com.spire.doc.documents.BreakType;
+import com.spire.doc.documents.HyperlinkType;
+import com.spire.doc.documents.Paragraph;
 
 @Service
 @EnableJpaRepositories(basePackageClasses = LSProtocolMasterRepository.class)
@@ -9531,7 +9540,17 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 //        	String outputFilePath = System.getProperty("java.io.tmpdir") + "\\"+protocol.getProtocolmastername()+".docx";
 //        	File.createTempFile(protocol.getProtocolmastername(), ".docx", new File(System.getProperty("java.io.tmpdir")));
         	
-        	Document docA = new Document();
+        	com.aspose.words.Document docA = new com.aspose.words.Document();
+        	
+        	TextWatermarkOptions options = new TextWatermarkOptions();
+        	options.setFontFamily("Arial");
+        	options.setFontSize(36);
+        	options.setColor(Color.blue);
+        	options.setLayout(WatermarkLayout.DIAGONAL);
+        	options.isSemitrasparent(false);
+
+        	docA.getWatermark().setText("Agaram", options);
+        	
         	DocumentBuilder builder = new DocumentBuilder(docA);
 
         	// Insert text to the document start.
@@ -9581,9 +9600,9 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		return bis;
 	}
 	
-	public DocumentBuilder formhtmldataforprotocols(Document doc, Map<String, Object> protocoldatamap)
+	public com.aspose.words.DocumentBuilder formhtmldataforprotocols(com.aspose.words.Document doc, Map<String, Object> protocoldatamap)
 	{
-		DocumentBuilder builder = new DocumentBuilder(doc);
+		com.aspose.words.DocumentBuilder builder = new com.aspose.words.DocumentBuilder(doc);
 
     	// Insert text to the document start.
     	builder.moveToDocumentStart();
@@ -9649,5 +9668,77 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
         }
         	
 		return builder;
+	}
+	
+	public ByteArrayInputStream Exportwithspire(LSprotocolmaster protocol) throws IOException {
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		objMap.put("protocolmastercode", protocol.getProtocolmastercode());
+		objMap.put("ismultitenant", 1);
+		objMap = getProtocolStepLst(objMap);
+		byte[] data = null;
+		
+		Document doc = new Document();
+		
+		Section section = doc.addSection();
+		
+//		Paragraph paragraph = new Paragraph(doc);
+//		 paragraph.appendHTML(protocol.getProtocoldatainfo());
+//		 paragraph.app
+		
+		//Create a TextWatermark instance
+		        TextWatermark txtWatermark = new TextWatermark();
+		
+		        //Set the format of the text watermark
+		        txtWatermark.setText("Agaram");
+		        txtWatermark.setFontSize(40);
+		        txtWatermark.setColor(Color.blue);
+		        txtWatermark.setLayout(com.spire.doc.documents.WatermarkLayout.Diagonal);
+		
+		        //Add the text watermark to document
+		        section.getDocument().setWatermark(txtWatermark);
+
+		
+		Paragraph paragraph = section.addParagraph();
+//		paragraph.appendHyperlink("https://www-iceblue.com/", "Home Page", HyperlinkType.Web_Link);
+		
+		        paragraph.appendBreak(BreakType.Line_Break);
+		        paragraph.appendBreak(BreakType.Line_Break);
+		
+//		        paragraph.appendHyperlink("mailto:support@e-iceblue.com", "Mail Us", HyperlinkType.E_Mail_Link);
+		
+		        //Append line breaks
+//		        paragraph.appendBreak(BreakType.Line_Break);
+//		        paragraph.appendBreak(BreakType.Line_Break);
+		        //Add a file link
+//		        String filePath = "C:\\Users\\Administrator\\Desktop\\report.xlsx";
+//		        paragraph.appendHyperlink(filePath, "Click to open the report", HyperlinkType.File_Link);
+		
+		        //Append line breaks
+//		        paragraph.appendBreak(BreakType.Line_Break);
+//		        paragraph.appendBreak(BreakType.Line_Break);
+		        //Add another section and create a bookmark
+//		        Section section2 = doc.addSection();
+//		        Paragraph bookmarkParagraph = section2.addParagraph();
+//		        bookmarkParagraph.appendText("Here is a bookmark");
+//		        BookmarkStart start = bookmarkParagraph.appendBookmarkStart("myBookmark");
+//		        bookmarkParagraph.getItems().insert(0, start);
+//		        bookmarkParagraph.appendBookmarkEnd("myBookmark");
+		        //Link to the bookmark
+//		        paragraph.appendHyperlink("myBookmark", "Jump to a location inside this document", HyperlinkType.Bookmark);
+		
+		        //Append line breaks
+//		        paragraph.appendBreak(BreakType.Line_Break);
+//		        paragraph.appendBreak(BreakType.Line_Break);
+		        
+		        paragraph.appendHTML(protocol.getProtocoldatainfo());
+
+
+		ByteArrayOutputStream docOutStream = new ByteArrayOutputStream();
+		doc.saveToFile(docOutStream, FileFormat.Docx_2013);
+		data = docOutStream.toByteArray();
+		
+		ByteArrayInputStream bis = new ByteArrayInputStream(data);
+        
+		return bis;
 	}
 }

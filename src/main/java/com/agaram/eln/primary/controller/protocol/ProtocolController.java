@@ -1329,4 +1329,15 @@ public class ProtocolController {
 		header.set("Content-Disposition", "attachment; filename=" + protocol.getProtocolmastername() + ".docx");
 		return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
 	}
+	
+	@RequestMapping("/Exportwithspire")
+	public ResponseEntity<InputStreamResource> Exportwithspire(@RequestBody LSprotocolmaster protocol) throws IOException
+	{
+		ByteArrayInputStream bis = ProtocolMasterService.Exportwithspire(protocol);
+
+		HttpHeaders header = new HttpHeaders();
+//		header.setContentType(MediaType.parseMediaType("image/png"));
+		header.set("Content-Disposition", "attachment; filename=" + protocol.getProtocolmastername() + ".docx");
+		return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
+	}
 }
