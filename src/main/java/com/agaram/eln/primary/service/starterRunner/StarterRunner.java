@@ -273,7 +273,7 @@ public class StarterRunner {
     	LSlogilablimsorderdetail orderobj = new LSlogilablimsorderdetail();
     	orderobj.setBatchcode(rs.getLong("batchcode"));
     	orderobj.setBatchid(rs.getString("batchid"));
-    	orderobj.setApprovelaccept(rs.getBoolean("approvelaccept"));
+    	orderobj.setApprovelaccept(rs.getString("approvelaccept"));
     	orderobj.setSentforapprovel(rs.getBoolean("sentforapprovel"));
     	orderobj.setApprovelstatus(rs.getInt("approvelstatus"));
     	orderobj.setApproved(rs.getInt("approved"));
