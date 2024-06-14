@@ -66,6 +66,7 @@ import com.agaram.eln.primary.repository.material.MaterialInventoryTransactionRe
 import com.agaram.eln.primary.repository.material.MaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.agaram.eln.primary.repository.material.ResultUsedMaterialRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -123,6 +124,9 @@ public class TransactionService {
 	
 	@Autowired
 	private EquipmentHistoryRepository equipmentHistoryRepository;
+	
+	@Autowired
+	private LStestmasterlocalRepository lStestmasterlocalRepository;
 
 	public ResponseEntity<Object> getLoadOnInventoryData(Map<String, Object> inputMap) {
 
@@ -745,7 +749,12 @@ public class TransactionService {
 
 		ElnresultEquipment resultEquipment = new ElnresultEquipment();
 		if (objTest.getTestcode() != -1) {
-			resultEquipment.setLstestmasterlocal(objTest);
+			LStestmasterlocal isPresent = lStestmasterlocalRepository.findBytestcode(objTest.getTestcode());
+			if(isPresent != null){
+				resultEquipment.setLstestmasterlocal(objTest);
+			}else {
+				resultEquipment.setLstestmasterlocal(null);
+			}
 		}
 		resultEquipment.setCreatedby(objUser);
 		resultEquipment.setBatchid(objResultMap.get("batchid").toString());

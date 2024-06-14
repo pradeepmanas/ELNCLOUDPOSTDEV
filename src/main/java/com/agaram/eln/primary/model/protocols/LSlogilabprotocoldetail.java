@@ -69,10 +69,20 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	Date modifidate;
 	@Transient
 	private String comment;
-	
+
 	@Transient
 	private Lsprotocolorderstructure lsprotocolorderstructure;
-	
+
+	private Integer autoregistercount;
+
+	public Integer getAutoregistercount() {
+		return autoregistercount;
+	}
+
+	public void setAutoregistercount(Integer autoregistercount) {
+		this.autoregistercount = autoregistercount;
+	}
+
 	public Lsprotocolorderstructure getLsprotocolorderstructure() {
 		return lsprotocolorderstructure;
 	}
@@ -87,7 +97,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@Transient
 	private String period;
-	
+
 	public String getPeriod() {
 		return period;
 	}
@@ -883,7 +893,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public Integer getTestcode() {
 		return testcode;
 	}
-	
+
 	public void setTestcode(Integer testcode) {
 		this.testcode = testcode;
 	}
@@ -1073,9 +1083,9 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		public LSuserMasterInterfaceforassignto getAssignedto();
 
 		public LSuserMasterInterface getLsuserMaster();
-		
+
 		public Integer getTestcode();
-		
+
 		public Integer getOrdercancell();
 
 	}
@@ -1083,10 +1093,11 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public interface LSuserMasterInterfaceforassignto {
 		String getUsername();
 	}
+
 	public interface LSuserMasterInterface {
 		String getUsername();
 	}
-	
+
 	@Transient
 	private LsActiveWidgets lsActiveWidgets;
 
@@ -1097,6 +1108,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setLsActiveWidgets(LsActiveWidgets lsActiveWidgets) {
 		this.lsActiveWidgets = lsActiveWidgets;
 	}
+
 	@Transient
 	private Integer accouttype;
 
@@ -1106,5 +1118,5 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	public void setAccouttype(Integer accouttype) {
 		this.accouttype = accouttype;
-	}	
+	}
 }

@@ -172,3 +172,9 @@ END
 $do$;
 
 ALTER TABLE lslogilabprotocoldetail ALTER COLUMN protocolordercode SET DEFAULT nextval('orderDetailProtocol');
+
+ALTER TABLE IF Exists LSlogilablimsorderdetail ADD COLUMN IF NOT EXISTS autoregistercount integer;
+
+ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS autoregistercount integer;
+
+ALTER TABLE IF Exists lslogilablimsorderdetail ALTER COLUMN approvelaccept TYPE character varying;

@@ -265,6 +265,7 @@ public class StarterRunner {
     	ordernot.setSentforapprovel(rs.getBoolean("sentforapprovel"));
     	ordernot.setLockedusername(rs.getString("lockedusername"));
     	ordernot.setRepeat(rs.getBoolean("repeat"));
+    	ordernot.setAutoregistercount(rs.getInt("autoregistercount")-1);
     	
         return ordernot;
     }
@@ -336,6 +337,7 @@ public class StarterRunner {
     	rs.getString("ordercancell");
     	orderobj.setOrdercancell(rs.getString("ordercancell") != null ? rs.getInt("ordercancell") : null);
     	orderobj.setTeamcode(rs.getInt("teamcode"));
+    	orderobj.setAutoregistercount(rs.getInt("autoregistercount")-1);
     	
 //    	Material material = new Material();
 //    	material.setNmaterialcode(rs.getInt("material_nmaterialcode"));
@@ -581,7 +583,7 @@ public class StarterRunner {
             try (HikariDataSource dataSource = new HikariDataSource(configuration);
                     Connection con = dataSource.getConnection()) {
             	
-            	String checkrepeat = "SELECT * FROM lslogilabprotocoldetail WHERE repeat = true";
+            	String checkrepeat = "SELECT * FROM lslogilabprotocoldetail WHERE repeat = true and autoregistercount > 0";
             	 try (PreparedStatement pst = con.prepareStatement(checkrepeat)) {
                      
                  	// pst.setTimestamp(1, new Timestamp(getfromDate.getTime()));
@@ -780,7 +782,7 @@ public class StarterRunner {
                     Connection con = dataSource.getConnection()) {
             	
             	//String checkrepeat = "SELECT * FROM LSlogilablimsorderdetail WHERE repeat = true and createdtimestamp BETWEEN ? AND ?";
-            	String checkrepeat = "SELECT * FROM LSlogilablimsorderdetail WHERE repeat = true ";
+            	String checkrepeat = "SELECT * FROM LSlogilablimsorderdetail WHERE repeat = true and autoregistercount > 0";
             	
             	 try (PreparedStatement pst = con.prepareStatement(checkrepeat)) {
                      
@@ -788,12 +790,18 @@ public class StarterRunner {
                    //  pst.setTimestamp(2, new Timestamp(gettoDate.getTime()));
 
                      try (ResultSet rs = pst.executeQuery()) {
-                         while (rs.next()) {
-                        	 LSlogilablimsorderdetail orderobj = mapResultSetToLslogilabOrder(rs);
-                        	 
-                             //scheduleAutoRegisteration(orderobj, configuration,currentdate);
-                        	 checkinsheetrange(orderobj, configuration);
-                         }
+                    	
+                        	 while (rs.next()) {
+//                        		 Integer autoregisterCount =rs.getInt("autoregistercount");
+//                                if (autoregisterCount != null && autoregisterCount > 0) {
+                            	 LSlogilablimsorderdetail orderobj = mapResultSetToLslogilabOrder(rs);
+                            	 
+                                 //scheduleAutoRegisteration(orderobj, configuration,currentdate);
+                            	 checkinsheetrange(orderobj, configuration);
+//                                 }
+                             }
+                        
+                        
                      } catch (SQLException e) {
  		                e.printStackTrace(); // Consider logging this properly
  		            }
@@ -1349,17 +1357,17 @@ public class StarterRunner {
 			        autoobj.setAutocreatedate(futureDate);
 			 }else {
 				
-//				    Calendar calendar = Calendar.getInstance();
-//			        calendar.setTime(currentdate);
-//			        calendar.add(Calendar.HOUR_OF_DAY,(lsautoregister.getInterval()));
-//			        Date futureDate = calendar.getTime();   
-//			        autoobj.setAutocreatedate(futureDate);
 				    Calendar calendar = Calendar.getInstance();
 			        calendar.setTime(currentdate);
-			       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
-			        calendar.add(Calendar.MINUTE , (10));
+			        calendar.add(Calendar.HOUR_OF_DAY,(lsautoregister.getInterval()));
 			        Date futureDate = calendar.getTime();   
 			        autoobj.setAutocreatedate(futureDate);
+//				    Calendar calendar = Calendar.getInstance();
+//			        calendar.setTime(currentdate);
+//			       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
+//			        calendar.add(Calendar.MINUTE , (10));
+//			        Date futureDate = calendar.getTime();   
+//			        autoobj.setAutocreatedate(futureDate);
 			 }
 			
 			autoobj.setScreen(screen);
@@ -1509,8 +1517,8 @@ public class StarterRunner {
 					+ "lsusermaster_usercode,approved,versionno,createby,sitecode,viewoption,"
 					+ "fileuid,fileuri,containerstored,lsprotocolmaster_protocolmastercode,repeat,"
 					+ "orderflag,elnprotocolworkflow_workflowcode,lsautoregister_regcode,"
-					+ "elnmaterial_nmaterialcode,elnmaterialinventory_nmaterialinventorycode) "
-					+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "elnmaterial_nmaterialcode,elnmaterialinventory_nmaterialinventorycode,autoregistercount) "
+					+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 					
 		           try (PreparedStatement pst = con.prepareStatement(updateString, Statement.RETURN_GENERATED_KEYS)) {
 		               pst.setInt(1, lSlogilabprotocoldetail.getTestcode());
@@ -1529,7 +1537,12 @@ public class StarterRunner {
 		               pst.setString(13, lSlogilabprotocoldetail.getFileuri());
 		               pst.setInt(14, lSlogilabprotocoldetail.getContainerstored());
 		               pst.setInt(15,lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode());
-		               pst.setBoolean(16, true);
+		               if(lSlogilabprotocoldetail.getAutoregistercount()==0) {
+	            		   pst.setBoolean(16, false);
+	            	   }else {
+	            		   pst.setBoolean(16, true);
+	            	   }
+		               pst.setObject(22, lSlogilabprotocoldetail.getAutoregistercount());
 		               pst.setString(17, "N");
 		               pst.setInt(18,lSlogilabprotocoldetail.getElnprotocolworkflow().getWorkflowcode());
 		               pst.setLong(19, lSlogilabprotocoldetail.getLsautoregister().getRegcode());
@@ -2087,12 +2100,17 @@ public class StarterRunner {
 		                 		+ "filecode,keyword,lockedusername,directorycode,orderdisplaytype,"
 		                 		+ "lstestmasterlocal_testcode,viewoption,ordercancell,teamcode,createdtimestamp,orderflag,"
 		                 		+ "lsautoregisterorders_regcode,testcode,testname,"
-		                 		+ "elnmaterialinventory_nmaterialinventorycode,elnmaterial_nmaterialcode) "
-		                 		+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		                 		+ "elnmaterialinventory_nmaterialinventorycode,elnmaterial_nmaterialcode,autoregistercount) "
+		                 		+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	                		 
 	                		 
 		               try (PreparedStatement pst = con.prepareStatement(updateString, Statement.RETURN_GENERATED_KEYS)) {
-		                   pst.setBoolean(1, true);
+		            	   if(objorder.getAutoregistercount()==0) {
+		            		   pst.setBoolean(1, false);
+		            	   }else {
+		            		   pst.setBoolean(1, true);
+		            	   }
+		                  
 		                   pst.setInt(2, objorder.getFiletype());
 		                   pst.setInt(3, objorder.getLsworkflow().getWorkflowcode());
 		                   pst.setInt(4, objorder.getLsuserMaster().getUsercode());
@@ -2118,7 +2136,7 @@ public class StarterRunner {
 		                   pst.setString(21, objorder.getTestname());
 		                   pst.setObject(22, objorder.getElnmaterialinventory().getNmaterialinventorycode());
 		                   pst.setObject(23, objorder.getElnmaterial().getNmaterialcode());
-		             
+		                   pst.setObject(24, objorder.getAutoregistercount());
 		                   int affectedRows=pst.executeUpdate();
 		                   
 		                   if (affectedRows > 0) {

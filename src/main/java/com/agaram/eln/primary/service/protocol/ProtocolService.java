@@ -2956,10 +2956,11 @@ public class ProtocolService {
 public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogilabprotocoldetail) throws ParseException {
 		
 		List<LsAutoregister> autoorder = lsautoregisterrepo.findByBatchcode(lSlogilabprotocoldetail.getProtocolordercode());
-
+		Map<String, Object> mapObj = new HashMap<String, Object>();
             Integer Ismultitenant = autoorder.get(0).getIsmultitenant();
-			
+            if (lSlogilabprotocoldetail.getAutoregistercount()!=null && lSlogilabprotocoldetail.getAutoregistercount() > 0) {
             lSlogilabprotocoldetail.setRepeat(false);
+            Integer autoregistercount=lSlogilabprotocoldetail.getAutoregistercount()-1;
 				LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
 				
 				autoorder.stream().forEach(autocode->{
@@ -3018,7 +3019,7 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 				lSlogilabprotocoldetail.setProtoclordername(null);
 				lSlogilabprotocoldetail.setProtocolordercode(null);
 				
-				Map<String, Object> mapObj = new HashMap<String, Object>();
+		
 				String Content = "";
 				try {
 					lSlogilabprotocoldetail.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
@@ -3309,8 +3310,9 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 						if(lSlogilabprotocoldetail.getLsautoregister()!= null) {
 							lSlogilabprotocoldetail.getLsautoregister().setBatchcode(lSlogilabprotocoldetail.getProtocolordercode());
 							lsautoregisterrepo.save(lSlogilabprotocoldetail.getLsautoregister());
-							lSlogilabprotocoldetail.setRepeat(true);
-							
+//							lSlogilabprotocoldetail.setRepeat(true);
+							lSlogilabprotocoldetail.setRepeat(autoregistercount==0?false:true);
+							lSlogilabprotocoldetail.setAutoregistercount(autoregistercount);
 							LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
 						}
 					}
@@ -3333,6 +3335,7 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 				auditobj.setSystemcoments("Audittrail.Audittrailhistory.Audittype.IDS_AUDIT_SYSTEMGENERATED");
 				lscfttransactionRepository.save(auditobj);
 			//});
+            }
 				return mapObj;
 		
 		}

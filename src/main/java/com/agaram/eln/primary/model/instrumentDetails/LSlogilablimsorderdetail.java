@@ -234,6 +234,16 @@ public class LSlogilablimsorderdetail {
 	List<LSworkflow> lstworkflow;
 	
 	private Boolean repeat;
+	
+    private Integer autoregistercount;
+
+	public Integer getAutoregistercount() {
+		return autoregistercount;
+	}
+
+	public void setAutoregistercount(Integer autoregistercount) {
+		this.autoregistercount = autoregistercount;
+	}
 
 	public Boolean getRepeat() {
 		return repeat;
