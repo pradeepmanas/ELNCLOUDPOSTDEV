@@ -249,11 +249,7 @@
 	        <version>12.5.1</version>
 	    </dependency>
 
-		 <repository>
-        <id>com.e-iceblue</id>
-        <name>e-iceblue</name>
-        <url>https://repo.e-iceblue.com/nexus/content/groups/public/</url>
-        </repository>
+
 		
     	<!-- <dependency>
             <groupId>com.groupdocs</groupId>
@@ -321,6 +317,7 @@
             <version>20.5</version>
         </dependency> -->
 	</dependencies>
+	
 
 	<build>
 		<plugins>
@@ -380,13 +377,13 @@
          <url>https://artifact.groupdocs.com/repo/</url>
     </repository>
 
- <repository>
+       <repository>
     
-   <snapshots />
+        <snapshots />
         <id>snapshots</id>
         <name>libs-snapshot</name>
         <url>http://maven.aspose.com/artifactory/libs-snapshot</url>
-    </repository>
+      </repository>
     
 		<repository>
            <id>jogamp-remote</id>
@@ -394,6 +391,12 @@
            <url>http://www.jogamp.org/deployment/maven/</url>
            <layout>default</layout>
          </repository>
+
+		<repository>
+        <id>com.e-iceblue</id>
+        <name>e-iceblue</name>
+        <url>https://repo.e-iceblue.com/nexus/content/groups/public/</url>
+        </repository>
  </repositories>   
  
 
