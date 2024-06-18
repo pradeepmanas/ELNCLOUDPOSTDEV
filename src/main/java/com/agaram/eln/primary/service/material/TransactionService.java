@@ -600,7 +600,13 @@ public class TransactionService {
 
 		ElnresultUsedMaterial resultUsedMaterial = new ElnresultUsedMaterial();
 		if (objTest.getTestcode() != -1) {
-			resultUsedMaterial.setTestcode(objTest);
+//			resultUsedMaterial.setTestcode(objTest);
+			LStestmasterlocal isPresent = lStestmasterlocalRepository.findBytestcode(objTest.getTestcode());
+			if(isPresent != null){
+				resultUsedMaterial.setTestcode(objTest);
+			}else {
+				resultUsedMaterial.setTestcode(null);
+			}
 		}
 //		resultUsedMaterial.setCreateddate(cft.getTransactiondate());
 		resultUsedMaterial.setCreatedbyusercode(objUser);
