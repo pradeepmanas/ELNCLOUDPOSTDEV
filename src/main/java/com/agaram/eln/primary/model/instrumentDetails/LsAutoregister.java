@@ -47,7 +47,10 @@ public class LsAutoregister {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date autocreatedate;
 
-
+	@Column(name = "stoptime")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date stoptime;
+	
 	private Integer ismultitenant;
 	
     private Boolean isautoreg;
@@ -122,6 +125,14 @@ public class LsAutoregister {
 
 	public void setAutocreatedate(Date autocreatedate) {
 		this.autocreatedate = autocreatedate;
+	}
+
+	public Date getStoptime() {
+		return stoptime;
+	}
+
+	public void setStoptime(Date stoptime) {
+		this.stoptime = stoptime;
 	}
 	
 	

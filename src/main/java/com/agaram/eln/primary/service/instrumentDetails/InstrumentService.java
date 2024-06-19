@@ -117,6 +117,7 @@ import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+import com.agaram.eln.primary.model.protocols.LSprotocolorderstephistory;
 import com.agaram.eln.primary.model.reports.lsreportfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
@@ -815,8 +816,20 @@ public class InstrumentService {
 		LSlogilablimsorderdetail orderdetail = null;
 		List<LsAutoregister> autoorder = lsautoregisterrepo.findByBatchcode(objorderindex.getBatchcode());
 		Integer Ismultitenant = autoorder.get(0).getIsmultitenant();
+
+		LSprotocolorderstephistory lsprotocolorderstephistory = new LSprotocolorderstephistory();
+		lsprotocolorderstephistory.setBatchcode(objorderindex.getBatchcode());
+		lsprotocolorderstephistory.setStepstartdate(commonfunction.getCurrentUtcTime());
+		lsprotocolorderstephistory.setCreateby(objorderindex.getLsuserMaster());
+		lsprotocolorderstephistory.setViewoption(2);
+		lsprotocolorderstephistory.setAction(objorderindex.getBatchid() + "auto Registration is stopped");
+		protocolservice.updatetransactionhistory(lsprotocolorderstephistory);
+
 		objorderindex.setRepeat(false);
-		if (objorderindex.getAutoregistercount()!=null && objorderindex.getAutoregistercount() > 0) {
+		objorderindex.getLsautoregisterorders().setStoptime(commonfunction.getCurrentUtcTime());
+		lsautoregisterrepo.save(objorderindex.getLsautoregisterorders());
+
+		if (objorderindex.getAutoregistercount() != null && objorderindex.getAutoregistercount() > 0) {
 
 			List<LsAutoregister> listauto = new ArrayList<LsAutoregister>();
 
@@ -846,17 +859,21 @@ public class InstrumentService {
 					Date futureDate = calendar.getTime();
 					autoorder.get(0).setAutocreatedate(futureDate);
 
-//							    Calendar calendar = Calendar.getInstance();
-//						        calendar.setTime(currentdate);
-//						       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
-//						        calendar.add(Calendar.MINUTE , (2));
-//						        Date futureDate = calendar.getTime();   
-//						        autoorder.get(0).setAutocreatedate(futureDate);
+//					Calendar calendar = Calendar.getInstance();
+//					calendar.setTime(currentdate);
+//					// calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
+//					calendar.add(Calendar.MINUTE, (4));
+//					Date futureDate = calendar.getTime();
+//					autoorder.get(0).setAutocreatedate(futureDate);
 				}
 
 				autoorder.get(0).setRegcode(null);
 				autoorder.get(0).setScreen("IDS_SHEETORDERS");
-				autoorder.get(0).setIsautoreg(true);
+				if (objorderindex.getAutoregistercount() - 1 == 0) {
+					autoorder.get(0).setIsautoreg(false);
+				} else {
+					autoorder.get(0).setIsautoreg(true);
+				}
 
 				listauto.add(autoorder.get(0));
 				objorderindex.setLsautoregisterorders(listauto.get(0));
@@ -864,7 +881,7 @@ public class InstrumentService {
 			}
 			// });
 			lsautoregisterrepo.save(listauto);
-			Integer autoregistercount=objorderindex.getAutoregistercount()-1;
+			Integer autoregistercount = objorderindex.getAutoregistercount() - 1;
 //			objorderindex.setAutoregistercount(autoregistercount);
 			lslogilablimsorderdetailRepository.save(objorderindex);
 
@@ -1009,7 +1026,7 @@ public class InstrumentService {
 			}
 			lslogilablimsorderdetailRepository.setbatchidBybatchcode(Batchid, objorderindex.getBatchcode());
 			objorderindex.setBatchid(Batchid);
-			objorderindex.setRepeat(autoregistercount==0?false:true);
+			objorderindex.setRepeat(autoregistercount == 0 ? false : true);
 			objorderindex.setAutoregistercount(autoregistercount);
 			lslogilablimsorderdetailRepository.save(objorderindex);
 
@@ -1134,6 +1151,25 @@ public class InstrumentService {
 			auditobj.setLssitemaster(objorderindex.getLsuserMaster().getLssitemaster().getSitecode());
 			auditobj.setSystemcoments("Audittrail.Audittrailhistory.Audittype.IDS_AUDIT_SYSTEMGENERATED");
 			lscfttransactionRepository.save(auditobj);
+
+			if (autoregistercount == 0) {
+				LSprotocolorderstephistory lsprotocolorderstephistory1 = new LSprotocolorderstephistory();
+				lsprotocolorderstephistory1.setBatchcode(objorderindex.getBatchcode());
+				lsprotocolorderstephistory1.setStepstartdate(commonfunction.getCurrentUtcTime());
+				lsprotocolorderstephistory1.setCreateby(objorderindex.getLsuserMaster());
+				lsprotocolorderstephistory1.setViewoption(2);
+				lsprotocolorderstephistory1.setAction(objorderindex.getBatchid() + "auto Registration is stopped");
+				protocolservice.updatetransactionhistory(lsprotocolorderstephistory1);
+			} else {
+				LSprotocolorderstephistory lsprotocolorderstephistory1 = new LSprotocolorderstephistory();
+				lsprotocolorderstephistory1.setBatchcode(objorderindex.getBatchcode());
+				lsprotocolorderstephistory1.setStepstartdate(commonfunction.getCurrentUtcTime());
+				lsprotocolorderstephistory1.setCreateby(objorderindex.getLsuserMaster());
+				lsprotocolorderstephistory1.setViewoption(2);
+				lsprotocolorderstephistory1.setAction(objorderindex.getBatchid() + "auto Registration is Started");
+				protocolservice.updatetransactionhistory(lsprotocolorderstephistory1);
+			}
+			// lsprotocolorderstephistoryRepository.save(lsprotocolorderstephistory);
 			// });
 			// }
 			// }
@@ -8328,6 +8364,10 @@ public class InstrumentService {
 						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
 
+//				lstorder = lslogilablimsorderdetailRepository
+//						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
+
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 				int totalSamples = nmaterialcode.size();
 
@@ -10227,16 +10267,31 @@ public class InstrumentService {
 		return logiobj;
 	}
 
-	public List<LSlogilablimsorderdetail> acceptapprovel(LSlogilablimsorderdetail objdir) {
+	@SuppressWarnings("unlikely-arg-type")
+	public List<LSlogilablimsorderdetail> acceptapprovel(LSlogilablimsorderdetail objdir) throws ParseException {
 		List<LSlogilablimsorderdetail> logiobj = new ArrayList<LSlogilablimsorderdetail>();
 		logiobj = lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),
 				objdir.getBatchid());
-		logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
+
+		if (objdir.getApprovelaccept().equals("3")) {
+			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
+			logiobj.get(0).setApprovelstatus(objdir.getApprovelstatus());
+			logiobj.get(0).setOrderflag("R");
+			logiobj.get(0).setDirectorycode(null);
+			logiobj.get(0).setCompletedtimestamp(commonfunction.getCurrentUtcTime());
+
+		} else if (objdir.getApprovelaccept().equals("2")) {
+			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
+			logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
+		} else {
+
+			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
+		}
 		lslogilablimsorderdetailRepository.save(logiobj);
 		return logiobj;
 	}
 
-	public LSlogilablimsorderdetail stopautoregister(LSlogilablimsorderdetail objdir) {
+	public LSlogilablimsorderdetail stopautoregister(LSlogilablimsorderdetail objdir) throws ParseException {
 		List<LSlogilablimsorderdetail> logiobj = new ArrayList<LSlogilablimsorderdetail>();
 		logiobj = lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),
 				objdir.getBatchid());
@@ -10247,6 +10302,7 @@ public class InstrumentService {
 		List<LsAutoregister> autoobj = lsautoregisterrepo.findByBatchcode(objdir.getBatchcode());
 		if (!autoobj.isEmpty()) {
 			autoobj.get(0).setRepeat(objdir.getRepeat());
+			autoobj.get(0).setStoptime(commonfunction.getCurrentUtcTime());
 			lsautoregisterrepo.save(autoobj);
 		}
 		lslogilablimsorderdetailRepository.save(logiobj);

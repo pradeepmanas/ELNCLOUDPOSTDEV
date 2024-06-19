@@ -584,29 +584,29 @@ public class FileService {
 			List<Integer> lstteammap = lsuserteammappingRepository
 					.getTeamcodeByLsuserMaster(objtest.getObjLoggeduser().getUsercode());
 
-			if (lstteammap.size() > 0) {
+//			if (lstteammap.size() > 0) {
 				List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
 				lstteamuser.add(objtest.getObjLoggeduser());
 				lsfiles = lSfileRepository
-						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApproved(
+						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrderByFilecodeDesc(
 								lstteamuser, lsfiletest, 1,0, 1, 1, objtest.getObjLoggeduser(), lsfiletest, 1, 0,2, 1,
 								lstteamuser, lsfiletest, 1,0, 3, 1);
 				lsfiles.addAll(lSfileRepository
-						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThan(
+						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrderByFilecodeDesc(
 								lstteamuser, lsfiletest, 1,0, 1, 0, 1, objtest.getObjLoggeduser(), lsfiletest, 1,0, 2, 0, 1,
 								lstteamuser, lsfiletest, 1,0, 3, 0, 1));
-			} else {
-				List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
-				lstteamuser.add(objtest.getObjLoggeduser());
-				lsfiles = lSfileRepository
-						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApproved(
-								lstteamuser, lsfiletest, 1,0, 1, 1, objtest.getObjLoggeduser(), lsfiletest, 1,0, 2, 1,
-								lstteamuser, lsfiletest, 1,0, 3, 1);
-				lsfiles.addAll(lSfileRepository
-						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThan(
-								lstteamuser, lsfiletest, 1,0, 1, 0, 1, objtest.getObjLoggeduser(), lsfiletest, 1,0, 2, 0, 1,
-								lstteamuser, lsfiletest, 1,0, 3, 0, 1));
-			}
+//			} else {
+//				List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
+//				lstteamuser.add(objtest.getObjLoggeduser());
+//				lsfiles = lSfileRepository
+//						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApproved(
+//								lstteamuser, lsfiletest, 1,0, 1, 1, objtest.getObjLoggeduser(), lsfiletest, 1,0, 2, 1,
+//								lstteamuser, lsfiletest, 1,0, 3, 1);
+//				lsfiles.addAll(lSfileRepository
+//						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThan(
+//								lstteamuser, lsfiletest, 1,0, 1, 0, 1, objtest.getObjLoggeduser(), lsfiletest, 1,0, 2, 0, 1,
+//								lstteamuser, lsfiletest, 1,0, 3, 0, 1));
+//			}
 		}
 
 		lsfiletest = null;
@@ -685,7 +685,7 @@ public class FileService {
 		Map<String, Object> mapReq4Material = new HashMap<String, Object>();
 		mapOrders.put("test", masterService.getTestmaster(objuser));
 		mapOrders.put("sample", masterService.getsamplemaster(objuser));
-		List<LSprojectmaster> prolist = lsprojectrepo.findByLsusersteamInAndStatusAndLssitemaster(
+		List<LSprojectmaster> prolist = lsprojectrepo.findByLsusersteamInAndStatusAndLssitemasterOrderByProjectcodeDesc(
 				LSusersteamRepository.findByLsuserteammappingInAndStatusAndLssitemaster(lsuserteammappingRepository.findBylsuserMaster(objuser), 1,objuser.getLssitemaster())
 				, 1,objuser.getLssitemaster());
 		mapOrders.put("project", prolist);
@@ -961,7 +961,8 @@ public class FileService {
 				for (int i = 0; i < objteam.size(); i++) {
 					LSusersteam objteam1 = LSusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
 
-					List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
+//					List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
+					List<LSuserteammapping> lstusers = lsuserteammappingRepository.findByteamcode(objteam1.getTeamcode());
 
 					for (int j = 0; j < lstusers.size(); j++) {
 
@@ -1007,7 +1008,8 @@ public class FileService {
 				for (int i = 0; i < objteam.size(); i++) {
 					LSusersteam objteam1 = LSusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
 
-					List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
+//					List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
+					List<LSuserteammapping> lstusers = lsuserteammappingRepository.findByteamcode(objteam1.getTeamcode());
 
 					for (int j = 0; j < lstusers.size(); j++) {
 

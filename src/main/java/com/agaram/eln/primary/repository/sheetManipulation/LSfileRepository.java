@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.sheetManipulation;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -363,16 +364,6 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			int i, int j, LSSiteMaster lssitemaster, int k, int l, Integer approvelstatus, int m, int n,
 			List<LSuserMaster> lstteamuser, int o, int p, Integer approvelstatus2);
 
-	public List<Sheettemplateget> findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApproved(
-			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest, int i, int j, int k, int l,
-			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest2, int m, int n, int o, int p,
-			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int q, int r, int s, int t);
-
-	public List<Sheettemplateget> findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThan(
-			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest, int i, int j, int k, int l, int m,
-			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest2, int n, int o, int p, int q, int r,
-			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int s, int t, int u, int v, int w);
-
 	public List<Sheettemplateget> findBylstestInAndApprovedAndRetirestatus(List<LSfiletest> lsfiletest, int i, int j);
 
 	public long countByFilecodeGreaterThanAndLssitemasterAndCreatedateBetweenAndViewoptionAndRetirestatusOrFilecodeGreaterThanAndCreatebyAndCreatedateBetweenAndViewoptionAndRetirestatusOrFilecodeGreaterThanAndCreatebyInAndCreatedateBetweenAndRetirestatusAndViewoptionOrderByFilecodeDesc(
@@ -453,4 +444,14 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	@Transactional
 	@Query(value = "select retirestatus from lsfile where filenameuser = ?1", nativeQuery = true)
 	public String getRetirestatus(String templatename);
+
+	public List<Sheettemplateget> findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrderByFilecodeDesc(
+			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest, int i, int j, int k, int l,
+			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest2, int m, int n, int o, int p,
+			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int q, int r, int s, int t);
+
+	public List<Sheettemplateget> findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrderByFilecodeDesc(
+			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest, int i, int j, int k, int l, int m,
+			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest2, int n, int o, int p, int q, int r,
+			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int s, int t, int u, int v, int w);
 }

@@ -31,7 +31,7 @@ BEGIN
 END
 $do$;
 
-ALTER TABLE IF Exists LSlogilabprotocoldetail ALTER COLUMN  protocolordercode SET DEFAULT nextval('orderDetail');
+ALTER TABLE IF Exists LSlogilabprotocoldetail ALTER COLUMN  protocolordercode SET DEFAULT nextval('orderDetailProtocol');
 --ALTER SEQUENCE protocolordercode INCREMENT BY 1;
 
 DO
@@ -171,10 +171,568 @@ ALTER TABLE IF Exists lssamplefile ALTER COLUMN  filesamplecode SET DEFAULT next
 -- END
 -- $do$;
 
-ALTER TABLE lslogilabprotocoldetail ALTER COLUMN protocolordercode SET DEFAULT nextval('orderDetailProtocol');
+-- ALTER TABLE lslogilabprotocoldetail ALTER COLUMN protocolordercode SET DEFAULT nextval('orderDetailProtocol');
 
 ALTER TABLE IF Exists LSlogilablimsorderdetail ADD COLUMN IF NOT EXISTS autoregistercount integer;
 
 ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS autoregistercount integer;
 
 ALTER TABLE IF Exists lslogilablimsorderdetail ALTER COLUMN approvelaccept TYPE character varying;
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename,screenname, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (126, 'IDS_TSK_EQUIPMENTTYPE', 'IDS_MDL_INVENTORY', 'IDS_SCN_EQUIPMENT','0', '0', 'NA', 'NA', '0,0,0',82) ON CONFLICT(orderno)DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 82 AND orderno <> 126;
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename,screenname, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (127, 'IDS_SCN_EQUIPMENTCATEGORY', 'IDS_MDL_INVENTORY', 'IDS_SCN_EQUIPMENT','0', '0', '0', '0', '0,0,0',83) ON CONFLICT(orderno)DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 83 AND orderno <> 127;
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename,screenname, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (128, 'IDS_TSK_EQUIPMENTMASTER', 'IDS_MDL_INVENTORY', 'IDS_SCN_EQUIPMENTMASTER','0', '0', '0', '0', '0,0,0',84) ON CONFLICT(orderno)DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 84 AND orderno <> 128;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_EQUIPMENTTYPE', 'IDS_MDL_INVENTORY', 'administrator', '1', '0', 'NA', 'NA', 1,1,'IDS_SCN_EQUIPMENT'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_EQUIPMENTTYPE' and screenname='IDS_SCN_EQUIPMENT' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_EQUIPMENTCATEGORY', 'IDS_MDL_INVENTORY', 'administrator', '1', '0', '0', '0', 1,1,'IDS_SCN_EQUIPMENT'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_EQUIPMENTCATEGORY' and screenname='IDS_SCN_EQUIPMENT' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_EQUIPMENTMASTER', 'IDS_MDL_INVENTORY', 'administrator', '1', '0', '0', '0', 1,1,'IDS_SCN_EQUIPMENTMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_EQUIPMENTMASTER' and screenname='IDS_SCN_EQUIPMENTMASTER' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename,screenname, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (129, 'IDS_TSK_EQUIPMENTACT', 'IDS_MDL_INVENTORY', 'IDS_SCN_EQUIPMENTMASTER','0', 'NA', 'NA', 'NA', '0,0,0',85) ON CONFLICT(orderno)DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 85 AND orderno <> 129;
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename,screenname, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (130, 'IDS_TSK_EQUIPMENTCAL', 'IDS_MDL_INVENTORY', 'IDS_SCN_EQUIPMENTMASTER','0', 'NA', 'NA', 'NA', '0,0,0',86) ON CONFLICT(orderno)DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 86 AND orderno <> 130;
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename,screenname, sallow, screate,sdelete, sedit, status,sequenceorder) VALUES (131, 'IDS_TSK_EQUIPMENTMAINT', 'IDS_MDL_INVENTORY', 'IDS_SCN_EQUIPMENTMASTER','0', 'NA', 'NA', 'NA', '0,0,0',87) ON CONFLICT(orderno)DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 87 AND orderno <> 131;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_EQUIPMENTACT', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_EQUIPMENTMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_EQUIPMENTACT' and screenname='IDS_SCN_EQUIPMENTMASTER' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_EQUIPMENTCAL', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_EQUIPMENTMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_EQUIPMENTCAL' and screenname='IDS_SCN_EQUIPMENTMASTER' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_EQUIPMENTMAINT', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_EQUIPMENTMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_EQUIPMENTMAINT' and screenname='IDS_SCN_EQUIPMENTMASTER' and usergroupid_usergroupcode = 1); 
+
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_INVENTORY' where screenname != 'IDS_SCN_EQUIPMENT' and screenname != 'IDS_SCN_EQUIPMENTMASTER' and modulename = 'IDS_MDL_INVENTORY';
+update lsusergrouprights set screenname = 'IDS_SCN_INVENTORY' where screenname != 'IDS_SCN_EQUIPMENT' and screenname != 'IDS_SCN_EQUIPMENTMASTER' and modulename = 'IDS_MDL_INVENTORY';
+
+-- update lsusergrouprightsmaster set sequenceorder = '88' where sequenceorder = '82' and modulename = 'IDS_MDL_LOGBOOK' and displaytopic = 'IDS_SCN_LOGBOOK';
+-- update lsusergrouprightsmaster set sequenceorder = '89' where sequenceorder = '83' and modulename = 'IDS_MDL_LOGBOOK' and displaytopic = 'IDS_TSK_ADDLOGBOOK';
+-- update lsusergrouprightsmaster set sequenceorder = '90' where sequenceorder = '84' and modulename = 'IDS_MDL_LOGBOOK' and displaytopic = 'IDS_TSK_EDITLOGBOOK';
+-- update lsusergrouprightsmaster set sequenceorder = '91' where sequenceorder = '85' and modulename = 'IDS_MDL_LOGBOOK' and displaytopic = 'IDS_TSK_RETIRELOGBOOK';
+-- update lsusergrouprightsmaster set sequenceorder = '92' where sequenceorder = '86' and modulename = 'IDS_MDL_LOGBOOK' and displaytopic = 'IDS_TSK_REVIEWLOGBOOK';
+
+update lsusergrouprights set sequenceorder = '88' where modulename = 'IDS_MDL_LOGBOOK' and displaytopic = 'IDS_SCN_LOGBOOK';
+update lsusergrouprights set sequenceorder = '89' where modulename = 'IDS_MDL_LOGBOOK' and displaytopic = 'IDS_TSK_ADDLOGBOOK';
+update lsusergrouprights set sequenceorder = '90' where modulename = 'IDS_MDL_LOGBOOK' and displaytopic = 'IDS_TSK_EDITLOGBOOK';
+update lsusergrouprights set sequenceorder = '91' where modulename = 'IDS_MDL_LOGBOOK' and displaytopic = 'IDS_TSK_RETIRELOGBOOK';
+update lsusergrouprights set sequenceorder = '92' where modulename = 'IDS_MDL_LOGBOOK' and displaytopic = 'IDS_TSK_REVIEWLOGBOOK';
+
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_MATERIAL' where displaytopic = 'IDS_SCN_MATERIAL';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_MATERIALCATEGORY' where displaytopic = 'IDS_SCN_MATERIALCATEGORY';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_STORAGELOCATION' where displaytopic = 'IDS_SCN_STORAGELOCATION';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_SECTIONMASTER' where displaytopic = 'IDS_SCN_SECTIONMASTER';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_UNITMASTER' where displaytopic = 'IDS_SCN_UNITMASTER';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_MATERIALTYPE' where displaytopic = 'IDS_SCN_MATERIALTYPE';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_MATERIALINVENTORY' where displaytopic = 'IDS_SCN_MATERIALINVENTORY';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_GRADEMASTER' where displaytopic = 'IDS_SCN_GRADEMASTER';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_SUPPLIER' where displaytopic = 'IDS_SCN_SUPPLIER';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_MANUFACTURER' where displaytopic = 'IDS_SCN_MANUFACTURER';
+
+update lsusergrouprights set screenname = 'IDS_SCN_MATERIAL' where displaytopic = 'IDS_SCN_MATERIAL';
+update lsusergrouprights set screenname = 'IDS_SCN_MATERIALCATEGORY' where displaytopic = 'IDS_SCN_MATERIALCATEGORY';
+update lsusergrouprights set screenname = 'IDS_SCN_STORAGELOCATION' where displaytopic = 'IDS_SCN_STORAGELOCATION';
+update lsusergrouprights set screenname = 'IDS_SCN_SECTIONMASTER' where displaytopic = 'IDS_SCN_SECTIONMASTER';
+update lsusergrouprights set screenname = 'IDS_SCN_UNITMASTER' where displaytopic = 'IDS_SCN_UNITMASTER';
+update lsusergrouprights set screenname = 'IDS_SCN_MATERIALTYPE' where displaytopic = 'IDS_SCN_MATERIALTYPE';
+update lsusergrouprights set screenname = 'IDS_SCN_MATERIALINVENTORY' where displaytopic = 'IDS_SCN_MATERIALINVENTORY';
+update lsusergrouprights set screenname = 'IDS_SCN_GRADEMASTER' where displaytopic = 'IDS_SCN_GRADEMASTER';
+update lsusergrouprights set screenname = 'IDS_SCN_SUPPLIER' where displaytopic = 'IDS_SCN_SUPPLIER';
+update lsusergrouprights set screenname = 'IDS_SCN_MANUFACTURER' where displaytopic = 'IDS_SCN_MANUFACTURER';
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (133, 'IDS_TSK_ACTIVIWIDGET', 'IDS_MDL_DASHBOARD', 'IDS_SCN_DASHBOARD', '0', 'NA', 'NA', 'NA', '0,0,0', 4) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 4 AND orderno <> 133;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ACTIVIWIDGET', 'IDS_MDL_DASHBOARD', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_DASHBOARD'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ACTIVIWIDGET' and screenname='IDS_SCN_DASHBOARD' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (134, 'IDS_TSK_CANCELORDER', 'IDS_MDL_ORDERS', 'IDS_SCN_SHEETORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 6) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 6 AND orderno <> 134;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_CANCELORDER', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_CANCELORDER' and screenname='IDS_SCN_SHEETORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (135, 'IDS_TSK_AUTOREGORDER', 'IDS_MDL_ORDERS', 'IDS_SCN_SHEETORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 7) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 7 AND orderno <> 135;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_AUTOREGORDER', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_AUTOREGORDER' and screenname='IDS_SCN_SHEETORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (136, 'IDS_TSK_DUEDATE', 'IDS_MDL_ORDERS', 'IDS_SCN_SHEETORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 8) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 8 AND orderno <> 136;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_DUEDATE', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_DUEDATE' and screenname='IDS_SCN_SHEETORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (137, 'IDS_TSK_NEWFOLDER', 'IDS_MDL_ORDERS', 'IDS_SCN_SHEETORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 9) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 9 AND orderno <> 137;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_NEWFOLDER', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_NEWFOLDER' and screenname='IDS_SCN_SHEETORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (138, 'IDS_TSK_CANCELORDER', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 23) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 23 AND orderno <> 138;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_CANCELORDER', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_CANCELORDER' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (139, 'IDS_TSK_AUTOREGORDER', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 24) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 24 AND orderno <> 139;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_AUTOREGORDER', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_AUTOREGORDER' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (140, 'IDS_TSK_DUEDATE', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 25) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 25 AND orderno <> 140;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_DUEDATE', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_DUEDATE' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (141, 'IDS_TSK_SHARE', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 26) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 26 AND orderno <> 141;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_SHARE', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SHARE' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (142, 'IDS_TSK_COPYLINK', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 27) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 27 AND orderno <> 142;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_COPYLINK', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_COPYLINK' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+update lsusergrouprightsmaster set screate = 'NA',sedit = 'NA', sdelete = 'NA' where displaytopic = 'IDS_TSK_FOLDERCREATIONPROTOCOL';
+update lsusergrouprights set screate = 'NA',sedit = 'NA', sdelete = 'NA' where displaytopic = 'IDS_TSK_FOLDERCREATIONPROTOCOL';
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (143, 'IDS_TSK_SHARE', 'IDS_MDL_ORDERS', 'IDS_SCN_SHEETORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 10) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 10 AND orderno <> 143;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_SHARE', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SHARE' and screenname='IDS_SCN_SHEETORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (144, 'IDS_TSK_COPYLINK', 'IDS_MDL_ORDERS', 'IDS_SCN_SHEETORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 11) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 11 AND orderno <> 144;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_COPYLINK', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_COPYLINK' and screenname='IDS_SCN_SHEETORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (145, 'IDS_TSK_FOLDERDEL', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 28) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 28 AND orderno <> 145;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_FOLDERDEL', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_FOLDERDEL' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (146, 'IDS_TSK_FOLDERDEL', 'IDS_MDL_ORDERS', 'IDS_SCN_SHEETORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 12) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 12 AND orderno <> 146;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_FOLDERDEL', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_FOLDERDEL' and screenname='IDS_SCN_SHEETORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (147, 'IDS_TSK_ADDSEC', 'IDS_MDL_TEMPLATES', 'IDS_SCN_PROTOCOLTEMPLATE', '0', 'NA', 'NA', 'NA', '0,0,0', 48) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 48 AND orderno <> 147;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDSEC', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLTEMPLATE' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDSEC' and screenname='IDS_SCN_PROTOCOLTEMPLATE' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (148, 'IDS_TSK_ADDRESULT', 'IDS_MDL_TEMPLATES', 'IDS_SCN_PROTOCOLTEMPLATE', '0', 'NA', 'NA', 'NA', '0,0,0', 49) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 49 AND orderno <> 148;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDRESULT', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLTEMPLATE' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDRESULT' and screenname='IDS_SCN_PROTOCOLTEMPLATE' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (149, 'IDS_TSK_ADDREFF', 'IDS_MDL_TEMPLATES', 'IDS_SCN_PROTOCOLTEMPLATE', '0', 'NA', 'NA', 'NA', '0,0,0', 50) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 50 AND orderno <> 149;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDREFF', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLTEMPLATE' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDREFF' and screenname='IDS_SCN_PROTOCOLTEMPLATE' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (150, 'IDS_TSK_ADDRESMATERIAL', 'IDS_MDL_TEMPLATES', 'IDS_SCN_PROTOCOLTEMPLATE', '0', 'NA', 'NA', 'NA', '0,0,0', 51) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 51 AND orderno <> 150;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDRESMATERIAL', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLTEMPLATE' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDRESMATERIAL' and screenname='IDS_SCN_PROTOCOLTEMPLATE' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (151, 'IDS_TSK_ADDRESEQUIPMENT', 'IDS_MDL_TEMPLATES', 'IDS_SCN_PROTOCOLTEMPLATE', '0', 'NA', 'NA', 'NA', '0,0,0', 52) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 52 AND orderno <> 151;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDRESEQUIPMENT', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLTEMPLATE' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDRESEQUIPMENT' and screenname='IDS_SCN_PROTOCOLTEMPLATE' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (152, 'IDS_TSK_ADDSTEP', 'IDS_MDL_TEMPLATES', 'IDS_SCN_PROTOCOLTEMPLATE', '0', 'NA', 'NA', 'NA', '0,0,0', 53) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 53 AND orderno <> 152;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDSTEP', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLTEMPLATE' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDSTEP' and screenname='IDS_SCN_PROTOCOLTEMPLATE' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (153, 'IDS_TSK_ADDEDITOR', 'IDS_MDL_TEMPLATES', 'IDS_SCN_PROTOCOLTEMPLATE', '0', 'NA', 'NA', 'NA', '0,0,0', 54) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 54 AND orderno <> 153;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDEDITOR', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLTEMPLATE' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDEDITOR' and screenname='IDS_SCN_PROTOCOLTEMPLATE' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (154, 'IDS_TSK_IMPORTJSON', 'IDS_MDL_TEMPLATES', 'IDS_SCN_PROTOCOLTEMPLATE', '0', 'NA', 'NA', 'NA', '0,0,0', 55) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 55 AND orderno <> 154;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_IMPORTJSON', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLTEMPLATE' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_IMPORTJSON' and screenname='IDS_SCN_PROTOCOLTEMPLATE' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (155, 'IDS_TSK_EXPORTJSON', 'IDS_MDL_TEMPLATES', 'IDS_SCN_PROTOCOLTEMPLATE', '0', 'NA', 'NA', 'NA', '0,0,0', 56) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 56 AND orderno <> 155;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_EXPORTJSON', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLTEMPLATE' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_EXPORTJSON' and screenname='IDS_SCN_PROTOCOLTEMPLATE' and usergroupid_usergroupcode = 1); 
+
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (156, 'IDS_TSK_ADDRESULT', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 29) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 29 AND orderno <> 156;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDRESULT', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDRESULT' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (157, 'IDS_TSK_ADDREFF', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 30) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 30 AND orderno <> 157;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDREFF', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDREFF' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (158, 'IDS_TSK_ADDRESMATERIAL', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 31) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 31 AND orderno <> 158;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDRESMATERIAL', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDRESMATERIAL' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (159, 'IDS_TSK_ADDRESEQUIPMENT', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 32) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 32 AND orderno <> 159;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDRESEQUIPMENT', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDRESEQUIPMENT' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (160, 'IDS_TSK_ADDSTEP', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 33) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 33 AND orderno <> 160;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDSTEP', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDSTEP' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (161, 'IDS_TSK_ADDEDITOR', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 34) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 34 AND orderno <> 161;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDEDITOR', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDEDITOR' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (162, 'IDS_TSK_EXPORTJSON', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 35) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 35 AND orderno <> 162;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_EXPORTJSON', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_EXPORTJSON' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (163, 'IDS_TSK_ADDSEC', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 36) ON CONFLICT (orderno) DO NOTHING;
+
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 36 AND orderno <> 163;
+    END IF;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ADDSEC', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ADDSEC' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+ALTER TABLE IF Exists lsautoregister ADD Column IF NOT EXISTS stoptime timestamp without time zone;

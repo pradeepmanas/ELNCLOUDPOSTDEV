@@ -81,4 +81,7 @@ public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster
                  + "SELECT smaterialname AS name,'elnmaterial' AS sourceTable  FROM elnmaterial WHERE LOWER(smaterialname) LIKE LOWER(?1) AND nsitecode = ?2 AND nstatus=1", 
            nativeQuery = true)
     List<ProjectOrTaskOrMaterialView> getProjectOrTaskOrMaterialSearchBased(String searchkey, Integer sitecode);
+
+	public List<LSprojectmaster> findByLsusersteamInAndStatusAndLssitemasterOrderByProjectcodeDesc(
+			List<LSusersteam> findByLsuserteammappingInAndStatusAndLssitemaster, int i, LSSiteMaster lssitemaster);
 }
