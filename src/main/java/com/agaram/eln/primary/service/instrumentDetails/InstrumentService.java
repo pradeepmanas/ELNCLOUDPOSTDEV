@@ -117,7 +117,6 @@ import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
-import com.agaram.eln.primary.model.protocols.LSprotocolorderstephistory;
 import com.agaram.eln.primary.model.reports.lsreportfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
@@ -814,20 +813,14 @@ public class InstrumentService {
 			throws IOException, ParseException {
 
 		LSlogilablimsorderdetail orderdetail = null;
-		List<LsAutoregister> autoorder = lsautoregisterrepo.findByBatchcode(objorderindex.getBatchcode());
+		List<LsAutoregister> autoorder = lsautoregisterrepo.findByBatchcodeAndScreen(objorderindex.getBatchcode(),objorderindex.getLsautoregisterorders().getScreen());
 		Integer Ismultitenant = autoorder.get(0).getIsmultitenant();
 
-		LSprotocolorderstephistory lsprotocolorderstephistory = new LSprotocolorderstephistory();
-		lsprotocolorderstephistory.setBatchcode(objorderindex.getBatchcode());
-		lsprotocolorderstephistory.setStepstartdate(commonfunction.getCurrentUtcTime());
-		lsprotocolorderstephistory.setCreateby(objorderindex.getLsuserMaster());
-		lsprotocolorderstephistory.setViewoption(2);
-		lsprotocolorderstephistory.setAction(objorderindex.getBatchid() + "auto Registration is stopped");
-		protocolservice.updatetransactionhistory(lsprotocolorderstephistory);
-
 		objorderindex.setRepeat(false);
-		objorderindex.getLsautoregisterorders().setStoptime(commonfunction.getCurrentUtcTime());
-		lsautoregisterrepo.save(objorderindex.getLsautoregisterorders());
+		lslogilablimsorderdetailRepository.save(objorderindex);
+		
+		//objorderindex.getLsautoregisterorders().setStoptime(commonfunction.getCurrentUtcTime());
+		//lsautoregisterrepo.save(objorderindex.getLsautoregisterorders());
 
 		if (objorderindex.getAutoregistercount() != null && objorderindex.getAutoregistercount() > 0) {
 
@@ -868,7 +861,9 @@ public class InstrumentService {
 				}
 
 				autoorder.get(0).setRegcode(null);
-				autoorder.get(0).setScreen("IDS_SHEETORDERS");
+				autoorder.get(0).setBatchcode(null);
+				autoorder.get(0).setStoptime(null);
+				autoorder.get(0).setScreen("Sheet_Order");
 				if (objorderindex.getAutoregistercount() - 1 == 0) {
 					autoorder.get(0).setIsautoreg(false);
 				} else {
@@ -883,7 +878,7 @@ public class InstrumentService {
 			lsautoregisterrepo.save(listauto);
 			Integer autoregistercount = objorderindex.getAutoregistercount() - 1;
 //			objorderindex.setAutoregistercount(autoregistercount);
-			lslogilablimsorderdetailRepository.save(objorderindex);
+			//lslogilablimsorderdetailRepository.save(objorderindex);
 
 			objorderindex.setLsworkflow(lsworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorderindex.getLsuserMaster().getLssitemaster()));
@@ -1152,27 +1147,6 @@ public class InstrumentService {
 			auditobj.setSystemcoments("Audittrail.Audittrailhistory.Audittype.IDS_AUDIT_SYSTEMGENERATED");
 			lscfttransactionRepository.save(auditobj);
 
-			if (autoregistercount == 0) {
-				LSprotocolorderstephistory lsprotocolorderstephistory1 = new LSprotocolorderstephistory();
-				lsprotocolorderstephistory1.setBatchcode(objorderindex.getBatchcode());
-				lsprotocolorderstephistory1.setStepstartdate(commonfunction.getCurrentUtcTime());
-				lsprotocolorderstephistory1.setCreateby(objorderindex.getLsuserMaster());
-				lsprotocolorderstephistory1.setViewoption(2);
-				lsprotocolorderstephistory1.setAction(objorderindex.getBatchid() + "auto Registration is stopped");
-				protocolservice.updatetransactionhistory(lsprotocolorderstephistory1);
-			} else {
-				LSprotocolorderstephistory lsprotocolorderstephistory1 = new LSprotocolorderstephistory();
-				lsprotocolorderstephistory1.setBatchcode(objorderindex.getBatchcode());
-				lsprotocolorderstephistory1.setStepstartdate(commonfunction.getCurrentUtcTime());
-				lsprotocolorderstephistory1.setCreateby(objorderindex.getLsuserMaster());
-				lsprotocolorderstephistory1.setViewoption(2);
-				lsprotocolorderstephistory1.setAction(objorderindex.getBatchid() + "auto Registration is Started");
-				protocolservice.updatetransactionhistory(lsprotocolorderstephistory1);
-			}
-			// lsprotocolorderstephistoryRepository.save(lsprotocolorderstephistory);
-			// });
-			// }
-			// }
 		}
 
 		return orderdetail;
@@ -10299,17 +10273,18 @@ public class InstrumentService {
 		logiobj.get(0).setRepeat(objdir.getRepeat());
 		lslogilablimsorderdetailRepository.save(logiobj);
 
-		List<LsAutoregister> autoobj = lsautoregisterrepo.findByBatchcode(objdir.getBatchcode());
+		List<LsAutoregister> autoobj = lsautoregisterrepo.findByBatchcodeAndScreen(objdir.getBatchcode(),"Sheet_Order");
 		if (!autoobj.isEmpty()) {
 			autoobj.get(0).setRepeat(objdir.getRepeat());
 			autoobj.get(0).setStoptime(commonfunction.getCurrentUtcTime());
+			logiobj.get(0).setLsautoregisterorders(autoobj.get(0));
 			lsautoregisterrepo.save(autoobj);
 		}
 		lslogilablimsorderdetailRepository.save(logiobj);
 		return logiobj.get(0);
 	}
 
-	public LSlogilabprotocoldetail stopprotoautoregister(LSlogilabprotocoldetail objdir) {
+	public LSlogilabprotocoldetail stopprotoautoregister(LSlogilabprotocoldetail objdir) throws ParseException {
 		LSlogilabprotocoldetail logiobj = new LSlogilabprotocoldetail();
 		logiobj = LSlogilabprotocoldetailRepository.findByProtocolordercodeAndProtoclordername(
 				objdir.getProtocolordercode(), objdir.getProtoclordername());
@@ -10317,9 +10292,10 @@ public class InstrumentService {
 		logiobj.setRepeat(objdir.getRepeat());
 		LSlogilabprotocoldetailRepository.save(logiobj);
 
-		List<LsAutoregister> autoobj = lsautoregisterrepo.findByBatchcode(objdir.getProtocolordercode());
+		List<LsAutoregister> autoobj = lsautoregisterrepo.findByBatchcodeAndScreen(objdir.getProtocolordercode(),objdir.getLsautoregister().getScreen());
 		if (!autoobj.isEmpty()) {
 			autoobj.get(0).setRepeat(objdir.getRepeat());
+			autoobj.get(0).setStoptime(commonfunction.getCurrentUtcTime());
 			lsautoregisterrepo.save(autoobj);
 		}
 		LSlogilabprotocoldetailRepository.save(logiobj);

@@ -1348,11 +1348,11 @@ public class InstrumentController {
 		return instrumentService.acceptapprovel(objdir);
 	}
 
-	@PostMapping(value="/stopautoregister")
-	public void stopregister(@RequestBody LSlogilablimsorderdetail objdir)
+	@RequestMapping("/stopautoregister")
+	public LSlogilablimsorderdetail stopregister(@RequestBody LSlogilablimsorderdetail objdir)
 			throws Exception {
 
-		instrumentService.stopautoregister(objdir);
+		return instrumentService.stopautoregister(objdir);
 	}
 
 	

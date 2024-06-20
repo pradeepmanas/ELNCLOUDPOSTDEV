@@ -27,4 +27,6 @@ public interface LsAutoregisterRepository extends JpaRepository<LsAutoregister, 
 	LsAutoregister findTopByOrderByRegcode();
 
 	LsAutoregister findTopByOrderByRegcodeDesc();
+
+	List<LsAutoregister> findByBatchcodeAndScreen(Long batchcode, String screen);
 }

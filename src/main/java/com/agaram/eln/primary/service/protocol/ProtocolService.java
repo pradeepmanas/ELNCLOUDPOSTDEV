@@ -2955,21 +2955,15 @@ public class ProtocolService {
 	
 public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogilabprotocoldetail) throws ParseException {
 		
-		List<LsAutoregister> autoorder = lsautoregisterrepo.findByBatchcode(lSlogilabprotocoldetail.getProtocolordercode());
+		List<LsAutoregister> autoorder = lsautoregisterrepo.findByBatchcodeAndScreen(lSlogilabprotocoldetail.getProtocolordercode(),lSlogilabprotocoldetail.getLsautoregister().getScreen());
 		Map<String, Object> mapObj = new HashMap<String, Object>();
             Integer Ismultitenant = autoorder.get(0).getIsmultitenant();
             if (lSlogilabprotocoldetail.getAutoregistercount()!=null && lSlogilabprotocoldetail.getAutoregistercount() > 0) {
             	
-            	LSprotocolorderstephistory lsprotocolorderstephistory = new  LSprotocolorderstephistory();
-				lsprotocolorderstephistory.setProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
-				lsprotocolorderstephistory.setStepstartdate(commonfunction.getCurrentUtcTime());
-				lsprotocolorderstephistory.setCreateby(lSlogilabprotocoldetail.getLsuserMaster());
-				lsprotocolorderstephistory.setViewoption(2);
-				lsprotocolorderstephistory.setAction(lSlogilabprotocoldetail.getProtoclordername() + "auto Registration is stopped");   
-				
-				updatetransactionhistory(lsprotocolorderstephistory);
-            	
             lSlogilabprotocoldetail.setRepeat(false);
+           // lSlogilabprotocoldetail.getLsautoregister().setStoptime(commonfunction.getCurrentUtcTime());
+          //  lsautoregisterrepo.save(lSlogilabprotocoldetail.getLsautoregister());
+            
             Integer autoregistercount=lSlogilabprotocoldetail.getAutoregistercount()-1;
 				LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
 				
@@ -3019,7 +3013,8 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 						
 						autocode.setBatchcode(null);
 						autocode.setRegcode(null);
-						autocode.setScreen("IDS_PROTOCOLORDERS");
+						autocode.setStoptime(null);
+						autocode.setScreen("Protocol_Order");
 						autocode.setIsautoreg(true);
 						lsautoregisterrepo.save(autocode);
 						lSlogilabprotocoldetail.setLsautoregister(autocode);
@@ -3345,25 +3340,7 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 				auditobj.setSystemcoments("Audittrail.Audittrailhistory.Audittype.IDS_AUDIT_SYSTEMGENERATED");
 				lscfttransactionRepository.save(auditobj);
 				
-				if(autoregistercount==0) {
-					LSprotocolorderstephistory lsprotocolorderstephistory1 = new  LSprotocolorderstephistory();
-					lsprotocolorderstephistory1.setProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
-					lsprotocolorderstephistory1.setStepstartdate(commonfunction.getCurrentUtcTime());
-					lsprotocolorderstephistory1.setCreateby(lSlogilabprotocoldetail.getLsuserMaster());
-					lsprotocolorderstephistory1.setViewoption(2);
-					lsprotocolorderstephistory1.setAction(lSlogilabprotocoldetail.getProtoclordername() + "auto Registration is stopped");   
-					
-					updatetransactionhistory(lsprotocolorderstephistory1);
-				}else {
-					LSprotocolorderstephistory lsprotocolorderstephistory1 = new  LSprotocolorderstephistory();
-					lsprotocolorderstephistory1.setProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
-					lsprotocolorderstephistory1.setStepstartdate(commonfunction.getCurrentUtcTime());
-					lsprotocolorderstephistory1.setCreateby(lSlogilabprotocoldetail.getLsuserMaster());
-					lsprotocolorderstephistory1.setViewoption(2);
-					lsprotocolorderstephistory1.setAction(lSlogilabprotocoldetail.getProtoclordername() + "auto Registration is Started");   
-					
-					updatetransactionhistory(lsprotocolorderstephistory1);
-				}
+			
 				//lsprotocolorderstephistoryRepository.save(lsprotocolorderstephistory);
 			//});
             }
@@ -9528,10 +9505,12 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		logiobj.setRepeat(objdir.getRepeat());
 		LSlogilabprotocoldetailRepository.save(logiobj);
 		
-		List<LsAutoregister> autoobj =lsautoregisterrepo.findByBatchcode(objdir.getProtocolordercode());
+		List<LsAutoregister> autoobj =lsautoregisterrepo.findByBatchcodeAndScreen(objdir.getProtocolordercode(),"Protocol_Order");
 		if(!autoobj.isEmpty()) {
 			autoobj.get(0).setRepeat(objdir.getRepeat());
 			autoobj.get(0).setStoptime(commonfunction.getCurrentUtcTime());
+			//lsautoregister
+			logiobj.setLsautoregister(autoobj.get(0));
 			lsautoregisterrepo.save(autoobj);
 		}
 		LSlogilabprotocoldetailRepository.save(logiobj);

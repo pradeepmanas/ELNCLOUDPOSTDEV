@@ -611,11 +611,12 @@ public class StarterRunner {
                 Connection con = dataSource.getConnection()) {
 
     		 LsAutoregister objlsauto = null ;	
-    		 String autoregquery = "SELECT * FROM Lsautoregister WHERE batchcode=? ";
+    		 String autoregquery = "SELECT * FROM Lsautoregister WHERE batchcode=? and screen=?";
 
              try (PreparedStatement pst = con.prepareStatement(autoregquery)) {
                 
              	pst.setLong(1, orderobj.getProtocolordercode());
+             	pst.setString(2, "Protocol_Order");
               
                  try (ResultSet rs = pst.executeQuery()) {
                      while (rs.next()) {
@@ -818,11 +819,12 @@ public class StarterRunner {
     	try (HikariDataSource dataSource = new HikariDataSource(configuration);
                 Connection con = dataSource.getConnection()) {
     		
-   		 String autoregquery = "SELECT * FROM Lsautoregister WHERE batchcode=? ";
+   		 String autoregquery = "SELECT * FROM Lsautoregister WHERE batchcode=? and screen=?";
 
             try (PreparedStatement pst = con.prepareStatement(autoregquery)) {
                
             	pst.setLong(1, orderobj.getBatchcode());
+            	pst.setString(2, "Sheet_Order");
              
                 try (ResultSet rs = pst.executeQuery()) {
                     while (rs.next()) {
@@ -1337,6 +1339,15 @@ public class StarterRunner {
     public LsAutoregister getautoregisterdetails (LsAutoregister lsautoregister , HikariConfig configuration , Date currentdate,String screen) throws SQLException, InterruptedException {
     	try (HikariDataSource dataSource = new HikariDataSource(configuration);
                 Connection con = dataSource.getConnection()) {
+    		
+//    		String deftemp = "update lsautoregister set stoptime = ? where regcode=?";
+//    		
+//    		try (PreparedStatement pst = con.prepareStatement(deftemp)) {
+//    		   	pst.setTimestamp(1, new Timestamp(currentdate.getTime()));
+//    		   	pst.setLong(2, lsautoregister.getRegcode());
+//    		}
+//    		deftemp="";
+    		
 	    	LsAutoregister autoobj = new LsAutoregister();
 	    	long generatedregcode = 0;
 	    	if(lsautoregister.getTimespan().equals("Days")) {
@@ -1362,10 +1373,11 @@ public class StarterRunner {
 			        calendar.add(Calendar.HOUR_OF_DAY,(lsautoregister.getInterval()));
 			        Date futureDate = calendar.getTime();   
 			        autoobj.setAutocreatedate(futureDate);
+			        
 //				    Calendar calendar = Calendar.getInstance();
 //			        calendar.setTime(currentdate);
 //			       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
-//			        calendar.add(Calendar.MINUTE , (10));
+//			        calendar.add(Calendar.MINUTE , (4));
 //			        Date futureDate = calendar.getTime();   
 //			        autoobj.setAutocreatedate(futureDate);
 			 }
@@ -1427,54 +1439,7 @@ public class StarterRunner {
 		return autoobj;
     	}
     }
-
-    public void updateprototransaction(LSlogilabprotocoldetail lSlogilabprotocoldetail , HikariConfig configuration, Date currentdate,String action) throws SQLException {
-    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
-                Connection con = dataSource.getConnection()) {
-//    	lsprotocolorderstephistory.setProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
-//		lsprotocolorderstephistory.setStepstartdate(commonfunction.getCurrentUtcTime());
-//		lsprotocolorderstephistory.setCreateby(lSlogilabprotocoldetail.getLsuserMaster());
-//		lsprotocolorderstephistory.setViewoption(2);
-//		lsprotocolorderstephistory.setAction(lSlogilabprotocoldetail.getProtoclordername() + "auto Registration is stopped");   
-		
-		String updateString = "INSERT INTO lsprotocolorderstephistory (protocolordercode,stepstartdate,createby_usercode,viewoption,Action) VALUES (?,?,?,?,?)";
-	
-      try (PreparedStatement pst = con.prepareStatement(updateString)) {
-          pst.setLong(1, lSlogilabprotocoldetail.getProtocolordercode());
-          pst.setTimestamp(2, new Timestamp(currentdate.getTime()));
-          pst.setInt(3, lSlogilabprotocoldetail.getLsuserMaster().getUsercode());
-          pst.setInt(4, 2);
-          pst.setString(5, action);
-          pst.executeUpdate();
-          
-         }
-        updateString="";
-    	}
-    }
-    
-    public void updateautotransaction(LSlogilablimsorderdetail sheetorder , HikariConfig configuration, Date currentdate,String action) throws SQLException {
-    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
-                Connection con = dataSource.getConnection()) {
-//    		lsprotocolorderstephistory.setBatchcode(objorderindex.getBatchcode());
-//			lsprotocolorderstephistory.setStepstartdate(commonfunction.getCurrentUtcTime());
-//			lsprotocolorderstephistory.setCreateby(objorderindex.getLsuserMaster());
-//			lsprotocolorderstephistory.setViewoption(2);
-//			lsprotocolorderstephistory.setAction(objorderindex.getBatchid() + "auto Registration is stopped");   
-			
-		String updateString = "INSERT INTO lsprotocolorderstephistory (batchcode,stepstartdate,createby_usercode,viewoption,Action) VALUES (?,?,?,?,?)";
-	
-      try (PreparedStatement pst = con.prepareStatement(updateString)) {
-          pst.setLong(1, sheetorder.getBatchcode());
-          pst.setTimestamp(2, new Timestamp(currentdate.getTime()));
-          pst.setInt(3, sheetorder.getLsuserMaster().getUsercode());
-          pst.setInt(4, 2);
-          pst.setString(5, action);
-          pst.executeUpdate();
-          
-         }
-        updateString="";
-    	}
-    }
+ 
     public void ExecuteProtocolAutoRegistration(LSlogilabprotocoldetail lSlogilabprotocoldetail , HikariConfig configuration, Date currentdate)throws ParseException, SQLException, IOException, InterruptedException {
     	   
     	try (HikariDataSource dataSource = new HikariDataSource(configuration);
@@ -1487,10 +1452,11 @@ public class StarterRunner {
         Long clonedProtocolOrderCode = new Long(originalProtocolOrderCode);
         
         String action= lSlogilabprotocoldetail.getProtoclordername() + "auto Registration is stopped";
-        updateprototransaction(lSlogilabprotocoldetail,configuration,currentdate,action);
+      
+        
 		if(lSlogilabprotocoldetail.getLsautoregister()!= null) {
 			
-			LsAutoregister auditregdetails =  getautoregisterdetails(lSlogilabprotocoldetail.getLsautoregister(),configuration,currentdate,"ProtocolOrder");
+			LsAutoregister auditregdetails =  getautoregisterdetails(lSlogilabprotocoldetail.getLsautoregister(),configuration,currentdate,"Protocol_Order");
 			lSlogilabprotocoldetail.setLsautoregister(auditregdetails);	
 			
 		}
@@ -1652,16 +1618,6 @@ public class StarterRunner {
 				            
 				            insertaudit(comments,screen,site , usercode , currentdate , configuration);  
 
-				            if(lSlogilabprotocoldetail.getAutoregistercount()==0) {
-				            	 String action1= lSlogilabprotocoldetail.getProtoclordername() + "auto Registration is stopped";
-						         updateprototransaction(lSlogilabprotocoldetail,configuration,currentdate,action1);
-						         action1="";
-				            }else {
-				            	  String action1= lSlogilabprotocoldetail.getProtoclordername() + "auto Registration is Started";
-						          updateprototransaction(lSlogilabprotocoldetail,configuration,currentdate,action1);
-						          action1="";
-				            }
-				          
 				               comments="";
 				               screen="";
 						}
@@ -2111,7 +2067,7 @@ public class StarterRunner {
 	    		//String defaultContent = "{\"activeSheet\":\"Sheet1\",\"sheets\":[{\"name\":\"Sheet1\",\"rows\":[],\"columns\":[],\"selection\":\"A1:A1\",\"activeCell\":\"A1:A1\",\"frozenRows\":0,\"frozenColumns\":0,\"showGridLines\":true,\"gridLinesColor\":null,\"mergedCells\":[],\"hyperlinks\":[],\"defaultCellStyle\":{\"fontFamily\":\"Arial\",\"fontSize\":\"12\"},\"drawings\":[]}],\"names\":[],\"columnWidth\":64,\"rowHeight\":20,\"images\":[],\"charts\":[],\"tags\":[],\"fieldcount\":0,\"Batchcoordinates\":{\"resultdirection\":1,\"parameters\":[]}}";
 	    		
 					if(objorder.getLsautoregisterorders()!= null) {	
-						LsAutoregister auditregdetails =  getautoregisterdetails(objorder.getLsautoregisterorders(),configuration,currentdate,"sheetOrder");
+						LsAutoregister auditregdetails =  getautoregisterdetails(objorder.getLsautoregisterorders(),configuration,currentdate,"Sheet_Order");
 						objorder.setLsautoregisterorders(auditregdetails);		
 					}
 					
@@ -2119,8 +2075,6 @@ public class StarterRunner {
 			        Long clonedbatchcode = new Long(Previousbatch);
 			   
 			        String action= objorder.getBatchid() + "auto Registration is stopped";
-			        updateautotransaction(objorder,configuration,currentdate,action);
-			        
 			        
 //                String deftem = "update LSlogilablimsorderdetail set repeat=false WHERE batchcode=?";
 //      	 		try (PreparedStatement pst = con.prepareStatement(deftem)) {
@@ -2257,16 +2211,7 @@ public class StarterRunner {
 						int sitecode=1;
 						int usercode = objorder.getLsuserMaster().getUsercode();
 						insertaudit(comments,screen,sitecode,usercode,currentdate,configuration);
-						 
-						if(objorder.getAutoregistercount()==0) {
-			            	 String action1= objorder.getBatchid() + "auto Registration is stopped";
-					         updateautotransaction(objorder,configuration,currentdate,action1);
-					         action1="";
-			            }else {
-			            	  String action1= objorder.getBatchid() + "auto Registration is Started";
-					          updateautotransaction(objorder,configuration,currentdate,action1);
-					          action1="";
-			            }
+						
 						 comments="";
 						 screen="";
 			
