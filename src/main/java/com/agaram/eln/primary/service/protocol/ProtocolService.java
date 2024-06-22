@@ -9502,7 +9502,11 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		LSlogilabprotocoldetail logiobj =  new LSlogilabprotocoldetail();
 		logiobj=LSlogilabprotocoldetailRepository.findByProtocolordercodeAndProtoclordername(objdir.getProtocolordercode(), objdir.getProtoclordername());
 		
+		LStestmasterlocal testmast = new LStestmasterlocal();
+		testmast=lstestmasterlocalRepository.findByTestcode(logiobj.getTestcode());
+		
 		logiobj.setRepeat(objdir.getRepeat());
+		logiobj.setTestname(testmast.getTestname());
 		LSlogilabprotocoldetailRepository.save(logiobj);
 		
 		List<LsAutoregister> autoobj =lsautoregisterrepo.findByBatchcodeAndScreen(objdir.getProtocolordercode(),"Protocol_Order");
@@ -9511,6 +9515,8 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 			autoobj.get(0).setStoptime(commonfunction.getCurrentUtcTime());
 			//lsautoregister
 			logiobj.setLsautoregister(autoobj.get(0));
+			logiobj.setCanuserprocess(true);
+//			/objdir.setRepeat(false);
 			lsautoregisterrepo.save(autoobj);
 		}
 		LSlogilabprotocoldetailRepository.save(logiobj);

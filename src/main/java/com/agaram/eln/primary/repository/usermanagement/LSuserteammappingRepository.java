@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 
 public interface LSuserteammappingRepository  extends JpaRepository<LSuserteammapping, Integer> {
@@ -37,4 +39,5 @@ public interface LSuserteammappingRepository  extends JpaRepository<LSuserteamma
 	public List<Integer> getusermastercode(List<Integer> teamCode,LSuserMaster lsusermaster);
 
 	public List<LSuserteammapping> findByLsuserMasterAndTeamcodeNotNull(LSprotocolmaster newProtocolMasterObj);
+	public LSusersteam findByTeamnameAndLssitemaster(String team_name, LSSiteMaster site);
 }

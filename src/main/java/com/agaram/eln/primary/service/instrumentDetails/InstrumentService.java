@@ -10278,6 +10278,8 @@ public class InstrumentService {
 			autoobj.get(0).setRepeat(objdir.getRepeat());
 			autoobj.get(0).setStoptime(commonfunction.getCurrentUtcTime());
 			logiobj.get(0).setLsautoregisterorders(autoobj.get(0));
+			logiobj.get(0).setRepeat(false);
+			logiobj.get(0).setCanuserprocess(true);
 			lsautoregisterrepo.save(autoobj);
 		}
 		lslogilablimsorderdetailRepository.save(logiobj);

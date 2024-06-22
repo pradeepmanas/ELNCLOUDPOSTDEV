@@ -635,6 +635,7 @@ public class TransactionService {
 		objInventory.setSavailablequantity(getQtyLeft.toString());
 		
 		resultUsedMaterial.setQtyleft(getQtyLeft.toString());
+		resultUsedMaterial.setIsreturn(0);
 		
 		elnresultUsedMaterialRepository.save(resultUsedMaterial);
 		elnmaterialInventoryRepository.save(objInventory);
@@ -665,6 +666,8 @@ public class TransactionService {
 		ElnmaterialInventory objInventory = elnmaterialInventoryRepository.findByNmaterialinventorycode(objInventoryFromMap.getNmaterialinventorycode());
 
 		Double getIssuedQty = Double.parseDouble(objResultMap.get("savailablequantity").toString());
+		
+		Double getUsedQty = Double.parseDouble(objResultMap.get("usedQuantity").toString());
 
 		LSuserMaster objUser = new LSuserMaster();
 		objUser.setUsercode(cft.getLsuserMaster());
@@ -673,9 +676,90 @@ public class TransactionService {
 		
 		objInventory.setSavailablequantity(getIssuedQty.toString());
 		
+		resultUsedMaterial.setCreatedbyusercode(objUser);
+		resultUsedMaterial.setNqtyused(getUsedQty);
+		resultUsedMaterial.setBatchid(objResultMap.get("batchid").toString());
+		resultUsedMaterial.setNmaterialcode(objInventory.getMaterial().getNmaterialcode());
+		resultUsedMaterial.setNmaterialcategorycode(objInventory.getMaterialcategory().getNmaterialcatcode());
+		resultUsedMaterial.setNinventorycode(objInventory.getNmaterialinventorycode());
+		resultUsedMaterial.setNmaterialtypecode(objInventory.getMaterialtype().getNmaterialtypecode());
+		resultUsedMaterial.setOrdercode(Long.valueOf(objResultMap.get("ordercode").toString()));
+		resultUsedMaterial.setTransactionscreen(Integer.parseInt(objResultMap.get("transactionscreen").toString()));
+		resultUsedMaterial.setTemplatecode(Integer.parseInt(objResultMap.get("templatecode").toString()));
+		resultUsedMaterial.setJsondata(cft.getComments());
+		resultUsedMaterial.setNstatus(1);
+		resultUsedMaterial.setResponse(new Response());
+		resultUsedMaterial.getResponse().setStatus(true);
+		try {
+			resultUsedMaterial.setCreateddate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		resultUsedMaterial.setIsreturn(1);
 		resultUsedMaterial.setQtyleft(getIssuedQty.toString());
-		resultUsedMaterial.setNqtyused((double) 0);
+		resultUsedMaterial.setNqtyused(getUsedQty);
 	
+		elnresultUsedMaterialRepository.save(resultUsedMaterial);
+		elnmaterialInventoryRepository.save(objInventory);
+
+		return new ResponseEntity<>(resultUsedMaterial, HttpStatus.OK);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<Object> createMaterialResultUsedReturnChange(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {
+
+		ObjectMapper Objmapper = new ObjectMapper();
+
+		final LScfttransaction cft = Objmapper.convertValue(inputMap.get("silentAudit"), LScfttransaction.class);
+		final ElnmaterialInventory objInventoryFromMap = Objmapper.convertValue(inputMap.get("selectedMaterialInventory"),ElnmaterialInventory.class);
+		final Map<String, Object> objResultMap = (Map<String, Object>) inputMap.get("resultObject");
+		final LStestmasterlocal objTest = new LStestmasterlocal();
+//		final Map<String, Object> retObj = (Map<String, Object>) inputMap.get("retObj");
+		
+		objTest.setTestcode((Integer) objResultMap.get("testcode"));
+
+		ElnmaterialInventory objInventory = elnmaterialInventoryRepository.findByNmaterialinventorycode(objInventoryFromMap.getNmaterialinventorycode());
+		
+		Double previousUsedQuantity= Double.parseDouble(inputMap.get("Usedquantity_Copy").toString());
+		
+		Double getIssuedQty = Double.parseDouble(objInventory.getSavailablequantity());
+		Double savailableQty = previousUsedQuantity + getIssuedQty;
+		
+		LSuserMaster objUser = new LSuserMaster();
+		objUser.setUsercode(cft.getLsuserMaster());
+
+		ElnresultUsedMaterial resultUsedMaterial = new ElnresultUsedMaterial();
+		
+		objInventory.setSavailablequantity(savailableQty.toString());
+		
+		resultUsedMaterial.setCreatedbyusercode(objUser);
+		resultUsedMaterial.setNqtyused(previousUsedQuantity);
+		resultUsedMaterial.setNqtyleft(savailableQty);
+		resultUsedMaterial.setBatchid(objResultMap.get("batchid").toString());
+		resultUsedMaterial.setNmaterialcode(objInventory.getMaterial().getNmaterialcode());
+		resultUsedMaterial.setNmaterialcategorycode(objInventory.getMaterialcategory().getNmaterialcatcode());
+		resultUsedMaterial.setNinventorycode(objInventory.getNmaterialinventorycode());
+		resultUsedMaterial.setNmaterialtypecode(objInventory.getMaterialtype().getNmaterialtypecode());
+		resultUsedMaterial.setOrdercode(Long.valueOf(objResultMap.get("ordercode").toString()));
+		resultUsedMaterial.setTransactionscreen(Integer.parseInt(objResultMap.get("transactionscreen").toString()));
+		resultUsedMaterial.setTemplatecode(Integer.parseInt(objResultMap.get("templatecode").toString()));
+		resultUsedMaterial.setJsondata(cft.getComments());
+		resultUsedMaterial.setNstatus(1);
+		resultUsedMaterial.setResponse(new Response());
+		resultUsedMaterial.getResponse().setStatus(true);
+		try {
+			resultUsedMaterial.setCreateddate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		resultUsedMaterial.setIsreturn(1);
+		resultUsedMaterial.setNqtyused(previousUsedQuantity);
+	
+		elnresultUsedMaterialRepository.save(resultUsedMaterial);
 		elnmaterialInventoryRepository.save(objInventory);
 
 		return new ResponseEntity<>(resultUsedMaterial, HttpStatus.OK);

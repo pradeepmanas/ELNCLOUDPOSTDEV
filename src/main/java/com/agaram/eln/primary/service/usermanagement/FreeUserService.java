@@ -336,7 +336,7 @@ public class FreeUserService {
 
 				LSsheetworkflowgroupmap workflowsheettempmap = new LSsheetworkflowgroupmap();
 				workflowsheettempmap.setLsusergroup(objusergroup);
-				workflowsheettempmap.setWorkflowcode(workflowsheet.getWorkflowcode());
+				workflowsheettempmap.setWorkflowcode(workflowsheettemp.getWorkflowcode());
 
 				lssheetworkflowgroupmaprepository.save(workflowsheettempmap);
 			}
@@ -416,9 +416,102 @@ public class FreeUserService {
 			ClassPathResource resource = new ClassPathResource("import_elnlite.json");
 
 			Map<String, Object> jsonData = objectMapper.readValue(resource.getInputStream(), Map.class);
+			// team insert
+			List<String> userteam = (List<String>) jsonData.get("team");
+			System.out.println("-------------- team insert insert start----------------");
+			userteam.stream().forEach(teams -> {
+				
+				LSusersteam uteam = new LSusersteam();
+				uteam.setCreateby(objuser);
+				uteam.setModifiedby(objuser);
+				uteam.setTeamname(teams.toString());
+				uteam.setLssitemaster(site);
+				try {
+					uteam.setCreatedate(commonfunction.getCurrentUtcTime());
+					uteam.setModifieddate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				uteam.setProjectteamstatus("A");
+				uteam.setStatus(1);
+				uteam.setLssitemaster(site);
 
+				lsusersteamrepository.save(uteam);
+				
+				//userteam mapping 
+				
+				LSuserteammapping teammaping = new LSuserteammapping();
+				teammaping.setTeamcode(uteam.getTeamcode());
+				teammaping.setLsuserMaster(objuser);
+				lsuserteammappingrepository.save(teammaping);
+			});
+			System.out.println("-------------- team insert start----------------");
+			
+			//project master insert
+			List<String> objproject = (List<String>) jsonData.get("project");
+			System.out.println("-------------- project master insert start----------------");
+			objproject.stream().forEach(projects -> {
+				LSprojectmaster obj_project = new LSprojectmaster();
+				obj_project.setCreatedby(objuser.getUsername());
+				try {
+					obj_project.setCreatedon(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				obj_project.setLssitemaster(site);
+				obj_project.setLsusermaster(objuser);			
+				obj_project.setModifiedby(objuser);
+				
+				String obj_pname= null;
+				if (projects.equals("Analytical Validation_1")) {
+					obj_pname = projects.toString().replace("_1", "").trim();
+				}else if(projects.equals("Analytical Validation_2")) {
+					obj_pname = projects.toString().replace("_2", "").trim();
+				}else {
+					obj_pname= projects;
+				}
+				
+				obj_project.setProjectname(obj_pname);
+				String team_name = null;
+				
+				
+				switch (projects) {
+				case "Assay Design and Development":
+					team_name="QC";
+					break;
+				case "Genetic Hereditary":
+					team_name="R&D";
+					break;
+				case "Analytical Validation_1":
+					team_name="R&D";
+					break;
+				case "Diagnostic Accuracy Studies":
+					team_name="Clinical Research";
+					break;
+				case "Analytical Validation_2":
+					team_name="QC";
+					break;
+				case "Development and Optimization of a New Method for Amines Synthesis":
+					team_name="R&D";
+					break;
+				}
+				
+				LSusersteam obj_team = lsusersteamrepository.findByTeamnameAndLssitemaster(team_name,site);
+				
+				obj_project.setLsusersteam(obj_team);
+				obj_project.setProjectstatus("A");
+				obj_project.setStatus(1);
+
+				lsprojectmasterrepository.save(obj_project);
+				
+			});
+			System.out.println("-------------- project master insert End----------------");
+			
 			// testmaster insert
 			List<String> testmaster = (List<String>) jsonData.get("testmaster");
+			System.out.println("-------------- testmaster insert start----------------");
 			testmaster.stream().forEach(test -> {
 				LStestmasterlocal objtest = new LStestmasterlocal();
 				objtest.setCreateby(objuser);
@@ -435,7 +528,7 @@ public class FreeUserService {
 				objtest.setModifiedby(objuser);
 				lStestmasterlocalRepository.save(objtest);
 			});
-			;
+			System.out.println("-------------- testmaster insert End----------------");
 
 			// for template create
 

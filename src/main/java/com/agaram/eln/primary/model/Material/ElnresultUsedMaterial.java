@@ -56,6 +56,8 @@ public class ElnresultUsedMaterial {
 	@Column(name = "nstatus", nullable = false)
 	private Integer nstatus = 1;
 	
+	private Integer isreturn;
+	
 	@Column(name = "jsondata")
 	private String jsondata;
 	
@@ -75,6 +77,14 @@ public class ElnresultUsedMaterial {
 	
 	@Transient
 	private String qtyleft;
+
+	public Integer getIsreturn() {
+		return isreturn;
+	}
+
+	public void setIsreturn(Integer isreturn) {
+		this.isreturn = isreturn;
+	}
 
 	public String getQtyleft() {
 		return qtyleft;

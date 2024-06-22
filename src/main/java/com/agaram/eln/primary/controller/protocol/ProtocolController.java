@@ -106,7 +106,7 @@ public class ProtocolController {
 		objMap = ProtocolMasterService.getLSProtocolMasterLst(argObj);
 		return objMap;
 	}
-	
+
 	@RequestMapping(value = "/getApprovedprotocolLst")
 	protected Map<String, Object> getApprovedprotocolLst(@RequestBody LSSiteMaster site)throws Exception {
 		Map<String, Object> objMap = new HashMap<String, Object>();
@@ -1313,10 +1313,10 @@ public class ProtocolController {
 	}
 	
 	@PostMapping(value="/stopprotoautoregister")
-	public void stopregister(@RequestBody LSlogilabprotocoldetail proobj)
+	public LSlogilabprotocoldetail stopregister(@RequestBody LSlogilabprotocoldetail proobj)
 			throws Exception {
 
-		ProtocolMasterService.stopprotoautoregister(proobj);
+		return ProtocolMasterService.stopprotoautoregister(proobj);
 	}
 
 	@RequestMapping("/Exportwithgroupdocs")

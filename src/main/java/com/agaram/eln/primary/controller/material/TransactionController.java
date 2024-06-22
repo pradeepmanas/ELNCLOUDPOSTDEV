@@ -59,6 +59,12 @@ public class TransactionController {
 		return transactionService.createMaterialResultUsedReturn(inputMap);
 	}
 	
+	@PostMapping(value = "/createMaterialResultUsedReturnChange")
+	public ResponseEntity<Object> createMaterialResultUsedReturnChange(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return transactionService.createMaterialResultUsedReturnChange(inputMap);
+	}
+	
 	@PostMapping(value = "/createEquipmentResultUsed")
 	public ResponseEntity<Object> createEquipmentResultUsed(@RequestBody Map<String, Object> inputMap) throws Exception {
 
