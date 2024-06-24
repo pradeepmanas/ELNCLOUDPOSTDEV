@@ -1494,21 +1494,22 @@ public class LoginService {
 						objExitinguser.getObjResponse().setStatus(true);
 
 						if (objuser.getObjsilentaudit() != null) {
-							objuser.getObjsilentaudit().setLsuserMaster(objExitinguser.getUsercode());
-							objuser.getObjsilentaudit().setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
-							objuser.getObjsilentaudit().setModuleName(ModuleName);
-							objuser.getObjsilentaudit().setComments("User Logged in Successfully");
-							objuser.getObjsilentaudit().setActions("IDS_TSK_LOGIN");
-							objuser.getObjsilentaudit().setSystemcoments("System Generated");
-							objuser.getObjsilentaudit().setManipulatetype("Login");
-							objuser.getObjsilentaudit().setTableName("LSactiveuser");
+							LScfttransaction lScfttransaction = new LScfttransaction();
+							lScfttransaction.setLsuserMaster(objExitinguser.getUsercode());
+							lScfttransaction.setLssitemaster(objExitinguser.getLssitemaster().getSitecode());
+							lScfttransaction.setModuleName(ModuleName);
+							lScfttransaction.setComments("User Logged in Successfully");
+							lScfttransaction.setActions("IDS_TSK_LOGIN");
+							lScfttransaction.setSystemcoments("System Generated");
+							lScfttransaction.setManipulatetype("Login");
+							lScfttransaction.setTableName("LSactiveuser");
 							try {
-								objuser.getObjsilentaudit().setTransactiondate(commonfunction.getCurrentUtcTime());
+								lScfttransaction.setTransactiondate(commonfunction.getCurrentUtcTime());
 							} catch (ParseException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							lscfttransactionRepository.save(objuser.getObjsilentaudit());
+							lscfttransactionRepository.save(lScfttransaction);
 
 						}
 
