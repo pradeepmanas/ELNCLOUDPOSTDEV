@@ -261,7 +261,7 @@ public class StarterRunner {
     	elnprotocolworkflow.setWorkflowcode(rs.getInt("elnprotocolworkflow_workflowcode"));
     	ordernot.setElnprotocolworkflow(elnprotocolworkflow);
     	
-    	ordernot.setApprovelaccept(rs.getBoolean("approvelaccept"));
+    	ordernot.setApprovelaccept(rs.getString("approvelaccept"));
     	ordernot.setSentforapprovel(rs.getBoolean("sentforapprovel"));
     	ordernot.setLockedusername(rs.getString("lockedusername"));
     	ordernot.setRepeat(rs.getBoolean("repeat"));

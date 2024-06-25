@@ -1331,8 +1331,8 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			String searchkeywords, String searchkeywords2);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
-			String orderflag, List<LSprojectmaster> lstproject, Integer protocoltype, Date fromdate, Date todate);
+//	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
+//			String orderflag, List<LSprojectmaster> lstproject, Integer protocoltype, Date fromdate, Date todate);
 
 
 
@@ -1670,6 +1670,10 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 			Date todate2, String orderflag2, Integer protocoltype2, int l, Integer testcode2,
 			List<Long> directory_Code3, int m, Date fromdate3, Date todate3, List<Integer> userlist, String orderflag3,
 			Integer protocoltype3, int n, Integer testcode3);
+
+
+	Collection<? extends Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetween(
+			String orderflag, List<LSprojectmaster> lstproject, Integer protocoltype, Date fromdate, Date todate);
 
 
 	}

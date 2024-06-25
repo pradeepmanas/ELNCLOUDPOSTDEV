@@ -8334,13 +8334,13 @@ public class InstrumentService {
 
 		else {
 			if (objorder.getLstuserMaster() != null) {
-				lstorder = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
-
 //				lstorder = lslogilablimsorderdetailRepository
-//						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 //								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
+
+				lstorder = lslogilablimsorderdetailRepository
+						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
 
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 				int totalSamples = nmaterialcode.size();
@@ -8800,9 +8800,14 @@ public class InstrumentService {
 		List<Long> Directory_Code = lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode)
 				.collect(Collectors.toList());
 		if (objorder.getTestcode() == null && objorder.getLsprojectmaster() == null && objorder.getRejected() == null) {
+//			lstorder.addAll(LSlogilabprotocoldetailRepository
+//					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
+//							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
+			
 			lstorder.addAll(LSlogilabprotocoldetailRepository
-					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
+					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetween(
 							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
+			
 
 			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 					.parallel().mapToObj(i -> {
@@ -10242,7 +10247,7 @@ public class InstrumentService {
 	}
 
 	@SuppressWarnings("unlikely-arg-type")
-	public List<LSlogilablimsorderdetail> acceptapprovel(LSlogilablimsorderdetail objdir) throws ParseException {
+	public LSlogilablimsorderdetail acceptapprovel(LSlogilablimsorderdetail objdir) throws ParseException {
 		List<LSlogilablimsorderdetail> logiobj = new ArrayList<LSlogilablimsorderdetail>();
 		logiobj = lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),
 				objdir.getBatchid());
@@ -10256,13 +10261,13 @@ public class InstrumentService {
 
 		} else if (objdir.getApprovelaccept().equals("2")) {
 			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
-			logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
+			//logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
 		} else {
 
 			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
 		}
 		lslogilablimsorderdetailRepository.save(logiobj);
-		return logiobj;
+		return logiobj.get(0);
 	}
 
 	public LSlogilablimsorderdetail stopautoregister(LSlogilablimsorderdetail objdir) throws ParseException {

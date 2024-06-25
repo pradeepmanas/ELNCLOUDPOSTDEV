@@ -9479,15 +9479,42 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		return logiobj;
 	}
 
-	public LSlogilabprotocoldetail acceptapprovel(LSlogilabprotocoldetail objdir) {
+//	public LSlogilabprotocoldetail acceptapprovel(LSlogilabprotocoldetail objdir) {
+//		LSlogilabprotocoldetail logiobj = new LSlogilabprotocoldetail();
+//		logiobj = LSlogilabprotocoldetailRepository.findByProtocolordercodeAndProtoclordername(
+//				objdir.getProtocolordercode(), objdir.getProtoclordername());
+//		logiobj.setApprovelaccept(objdir.getApprovelaccept());
+//		LSlogilabprotocoldetailRepository.save(logiobj);
+//		return logiobj;
+//	}
+
+	@SuppressWarnings("unlikely-arg-type")
+	public LSlogilabprotocoldetail acceptapprovel(LSlogilabprotocoldetail objdir) throws ParseException {
 		LSlogilabprotocoldetail logiobj = new LSlogilabprotocoldetail();
 		logiobj = LSlogilabprotocoldetailRepository.findByProtocolordercodeAndProtoclordername(
 				objdir.getProtocolordercode(), objdir.getProtoclordername());
-		logiobj.setApprovelaccept(objdir.getApprovelaccept());
+
+		if (objdir.getApprovelaccept().equals("3")) {
+			logiobj.setApprovelaccept(objdir.getApprovelaccept());
+			logiobj.setApprovelstatus(objdir.getApprovelstatus());
+			logiobj.setOrderflag("R");
+			logiobj.setApproved(0);
+			logiobj.setRejected(1);
+			logiobj.setDirectorycode(null);
+			logiobj.setCompletedtimestamp(commonfunction.getCurrentUtcTime());
+
+		} else if (objdir.getApprovelaccept().equals("2")) {
+			logiobj.setApprovelaccept(objdir.getApprovelaccept());
+			//logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
+		} else {
+
+			logiobj.setApprovelaccept(objdir.getApprovelaccept());
+		}
 		LSlogilabprotocoldetailRepository.save(logiobj);
 		return logiobj;
 	}
 
+	
 	public boolean Validateprotocolcountforfreeuser(LSSiteMaster lssitemaster) {
 		boolean countexceeded = false;
 		long sheetcount = LSProtocolMasterRepositoryObj.countByLssitemaster(lssitemaster.getSitecode());

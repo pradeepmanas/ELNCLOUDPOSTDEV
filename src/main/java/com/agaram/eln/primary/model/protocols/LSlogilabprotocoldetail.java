@@ -146,13 +146,13 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.lsLSlogilablimsorder = lsLSlogilablimsorder;
 	}
 
-	private Boolean approvelaccept;
+	private String approvelaccept;
 
-	public Boolean getApprovelaccept() {
+	public String getApprovelaccept() {
 		return approvelaccept;
 	}
 
-	public void setApprovelaccept(Boolean approvelaccept) {
+	public void setApprovelaccept(String approvelaccept) {
 		this.approvelaccept = approvelaccept;
 	}
 
