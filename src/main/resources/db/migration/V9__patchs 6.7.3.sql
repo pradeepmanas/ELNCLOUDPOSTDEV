@@ -1140,3 +1140,5 @@ update lsusergrouprightsmaster set screate = '0',sedit= '0' where  screenname = 
 update lsusergrouprights set screate = '0',sedit= '0' where  screenname = 'IDS_SCN_MATERIALTYPEPARAMS' and displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS';
 
 ALTER TABLE IF Exists lslogilabprotocoldetail ALTER COLUMN approvelaccept TYPE character varying;
+ALTER TABLE IF Exists lssitemaster DROP Column IF EXISTS destinationname;
+ALTER TABLE IF Exists lsusermaster ADD Column IF NOT EXISTS designationname character varying(255);

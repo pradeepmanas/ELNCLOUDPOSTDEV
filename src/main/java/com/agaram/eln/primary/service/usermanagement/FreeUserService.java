@@ -40,6 +40,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.usermanagement.LSMultisites;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
+import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -68,6 +69,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultisitesRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
+import com.agaram.eln.primary.repository.usermanagement.LSPasswordPolicyRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -181,18 +183,41 @@ public class FreeUserService {
 	@Autowired
 	private ElnmaterialRepository ElnmaterialRepository;
 	
+	@Autowired
+	private LSPasswordPolicyRepository LSPasswordPolicyRepository;
+	
 	@SuppressWarnings("unchecked")
 	public LSuserMaster Createuser( LSuserMaster objuser) throws Exception {
+
 		Long usercount = lsuserMasterRepository.countByUsernameIgnoreCaseAndAutenticatefromAndSubcode(
 				objuser.getUsername(), objuser.getAutenticatefrom(), objuser.getSubcode());
 		if (usercount <= 0) {
 			if (objuser.getLssitemaster() != null) {
 				Calendar current = Calendar.getInstance();
-				current.add(Calendar.DATE, 100);
+				current.add(Calendar.DATE, 30);
 				Date resultdate = new Date(current.getTimeInMillis());
 				objuser.getLssitemaster().setExpirydate(resultdate);
 			}
 			LSSiteMaster site = lSSiteMasterRepository.save(objuser.getLssitemaster());
+			
+			LSPasswordPolicy objpolicy = new LSPasswordPolicy();
+			
+			objpolicy.setComplexpasswrd(0);
+			objpolicy.setDbbased(null);
+			objpolicy.setIdletime(15);
+			objpolicy.setIdletimeshowcheck(1);
+			objpolicy.setLockpolicy(5);
+			objpolicy.setMaxpasswrdlength(10);
+			objpolicy.setMincapitalchar(0);
+			objpolicy.setMinnumericchar(0);
+			objpolicy.setMinpasswrdlength(4);
+			objpolicy.setMinsmallchar(0);
+			objpolicy.setMinspecialchar(0);
+			objpolicy.setPasswordexpiry(90);
+			objpolicy.setPasswordhistory(5);
+			objpolicy.setLssitemaster(site);
+			
+			LSPasswordPolicyRepository.save(objpolicy);
 
 			String unifieduser = objuser.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "")
 					+ +site.getSitecode() + "@elnlite";

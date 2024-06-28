@@ -680,5 +680,9 @@ public class UserController {
 	public Map<String, Object> GetTemplateStatus(@RequestBody Map<String, Object> obj) {
 		return userService.GetTemplateStatus(obj);
 	}
+	@PostMapping("/updateProfileDetails")
+	public Map<String, Object> updateProfileDetails(@RequestBody Map<String, Object> obj) {
+		return userService.updateProfileDetails(obj);
+	}
 }
 

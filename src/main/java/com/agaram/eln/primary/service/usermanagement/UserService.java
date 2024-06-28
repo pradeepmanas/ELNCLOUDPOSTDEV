@@ -387,6 +387,7 @@ public class UserService {
 				updateUser.setEmailid(objusermaster.getEmailid());
 				updateUser.setUnifieduserid(objusermaster.getUnifieduserid());
 				updateUser.setMultiusergroupcode(objusermaster.getMultiusergroupcode());
+				updateUser.setDesignationname(objusermaster.getDesignationname());
 			}
 
 			objusermaster.setCreateddate(updateUser.getCreateddate());
@@ -1375,6 +1376,9 @@ public class UserService {
 		objresmap.put("newnotificationcount", lsnotificationRepository
 				.countByNotifationtoAndIsnewnotificationAndNotificationforOrNotifationtoAndIsnewnotificationAndNotificationfor(
 						lsnotification.getNotifationto(), 1, 1, lsnotification.getNotifationto(), 1, 2));
+		objresmap.put("mynotificationcount", lsnotificationRepository
+				.countByNotifationtoAndIsnewnotificationAndNotificationfor(
+						lsnotification.getNotifationto(), 1, 1));
 
 		return objresmap;
 	}
@@ -1902,6 +1906,23 @@ public class UserService {
 		 status = LSlogilablimsorderdetailRepository.getRetirestatus(templatename);
 		}else if(screen.equals("/Protocolorder")) {
 		 status = LSlogilabprotocoldetailRepository.getRetirestatus(templatename);
+		}
+		obj.put("status", status);
+		return obj;
+	}
+	
+	public Map<String, Object> updateProfileDetails(Map<String, Object> obj) {
+		String status ="";
+		String profile_name = (String) obj.get("userFullname");
+		String destination_name = (String) obj.get("designationname");
+		Integer usercode = (Integer) obj.get("usercode");
+		if(profile_name != null) {
+			lsuserMasterRepository.updateProfile(profile_name,usercode);
+			status="1";
+		}
+		if(destination_name != null) {
+			lsuserMasterRepository.updateDestination(destination_name,usercode);
+			status="2";
 		}
 		obj.put("status", status);
 		return obj;

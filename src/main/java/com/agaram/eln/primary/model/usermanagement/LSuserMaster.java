@@ -111,6 +111,7 @@ public class LSuserMaster {
 
 	private Integer labsheet;
 	private String emailid;
+	private String designationname;
 	private String profileimage;
 	private String profileimagename;
 	private Integer verificationcode;
@@ -755,6 +756,14 @@ public class LSuserMaster {
 
 	public void setAutenticatefrom(Integer autenticatefrom) {
 		this.autenticatefrom = autenticatefrom;
+	}
+
+	public String getDesignationname() {
+		return designationname;
+	}
+
+	public void setDesignationname(String designationname) {
+		this.designationname = designationname;
 	}
 
 	

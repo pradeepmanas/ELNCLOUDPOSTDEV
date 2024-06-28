@@ -263,7 +263,7 @@ public class StarterRunner {
     	
     	ordernot.setApprovelaccept(rs.getString("approvelaccept"));
     	ordernot.setSentforapprovel(rs.getBoolean("sentforapprovel"));
-    	ordernot.setLockedusername(rs.getString("lockedusername"));
+    	//ordernot.setLockedusername(rs.getString("lockedusername"));
     	ordernot.setRepeat(rs.getBoolean("repeat"));
     	ordernot.setAutoregistercount(rs.getInt("autoregistercount")-1);
     	
@@ -284,7 +284,7 @@ public class StarterRunner {
     	lstworkflow.setWorkflowcode(rs.getInt("lsworkflow_workflowcode"));
     	orderobj.setLsworkflow(lstworkflow);
     	
-    	orderobj.setLockeduser(rs.getInt("lockeduser"));
+    	//orderobj.setLockeduser(rs.getInt("lockeduser"));
     	
     	LSuserMaster lsusermaster1 = new LSuserMaster();
     	lsusermaster1.setUsercode(rs.getInt("lsusermaster_usercode"));
@@ -324,7 +324,7 @@ public class StarterRunner {
     	//orderobj.getLsrepositoriesdata().setRepositorycode(rs.getInt("repositorydatacode"));
     	orderobj.setFilecode(rs.getInt("filecode"));
     	orderobj.setKeyword(rs.getString("keyword"));
-    	orderobj.setLockedusername(rs.getString("lockedusername"));
+    	//orderobj.setLockedusername(rs.getString("lockedusername"));
     	orderobj.setDirectorycode(rs.getLong("directorycode"));
     	orderobj.setOrderdisplaytype(rs.getInt("orderdisplaytype"));
     	

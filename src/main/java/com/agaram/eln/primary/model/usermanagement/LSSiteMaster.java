@@ -279,9 +279,6 @@ public class LSSiteMaster {
 
 	public void setExpirydate(Date expirydate) {
 		this.expirydate = expirydate;
-	}
-
-	
-	
+	}	
 	
 }
