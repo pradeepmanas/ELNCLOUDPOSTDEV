@@ -1142,3 +1142,15 @@ update lsusergrouprights set screate = '0',sedit= '0' where  screenname = 'IDS_S
 ALTER TABLE IF Exists lslogilabprotocoldetail ALTER COLUMN approvelaccept TYPE character varying;
 ALTER TABLE IF Exists lssitemaster DROP Column IF EXISTS destinationname;
 ALTER TABLE IF Exists lsusermaster ADD Column IF NOT EXISTS designationname character varying(255);
+
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_PARSER' where modulename = 'IDS_MDL_SETUP' and displaytopic = 'IDS_SCN_DELIMITER';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_PARSER' where modulename = 'IDS_MDL_SETUP' and displaytopic = 'IDS_SCN_METHODDELIMITER';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_PARSER' where modulename = 'IDS_MDL_SETUP' and displaytopic = 'IDS_SCN_METHODMASTER';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_PARSER' where modulename = 'IDS_MDL_SETUP' and displaytopic = 'IDS_SCN_INSTRUMENTCATEGORY';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_PARSER' where modulename = 'IDS_MDL_SETUP' and displaytopic = 'IDS_SCN_INSTRUMENTMASTER';
+
+update lsusergrouprights set screenname = 'IDS_SCN_PARSER' where modulename = 'IDS_MDL_SETUP' and displaytopic = 'IDS_SCN_DELIMITER';
+update lsusergrouprights set screenname = 'IDS_SCN_PARSER' where modulename = 'IDS_MDL_SETUP' and displaytopic = 'IDS_SCN_METHODDELIMITER';
+update lsusergrouprights set screenname = 'IDS_SCN_PARSER' where modulename = 'IDS_MDL_SETUP' and displaytopic = 'IDS_SCN_METHODMASTER';
+update lsusergrouprights set screenname = 'IDS_SCN_PARSER' where modulename = 'IDS_MDL_SETUP' and displaytopic = 'IDS_SCN_INSTRUMENTCATEGORY';
+update lsusergrouprights set screenname = 'IDS_SCN_PARSER' where modulename = 'IDS_MDL_SETUP' and displaytopic = 'IDS_SCN_INSTRUMENTMASTER';
