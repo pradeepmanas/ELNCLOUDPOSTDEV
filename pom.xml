@@ -249,7 +249,50 @@
 	        <version>12.5.1</version>
 	    </dependency>
 
-
+        <dependency>
+	        <groupId>com.syncfusion</groupId>
+	        <artifactId>syncfusion-ej2-wordprocessor</artifactId>
+	       <version>26.1.38</version>
+	    </dependency>
+	    <dependency>
+	        <groupId>com.syncfusion</groupId>
+		    <artifactId>syncfusion-ej2-spellchecker</artifactId>
+		    <version>21.1.37</version>
+	    </dependency>
+	    <dependency>
+		    <groupId>com.syncfusion</groupId>
+		    <artifactId>syncfusion-javahelper</artifactId>
+		    <version>22.2.8</version>
+		    
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-webp -->
+		<dependency>
+		    <groupId>com.twelvemonkeys.imageio</groupId>
+		    <artifactId>imageio-webp</artifactId>
+		    <version>3.11.0</version>
+		</dependency>
+		<dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-tiff</artifactId>
+            <version>3.2</version>
+        </dependency>
+	 	<dependency>
+		   <groupId>com.syncfusion</groupId>
+		   <artifactId>syncfusion-docio</artifactId>
+		   <version>26.1.39</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>18.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.syncfusion/syncfusion-licensing -->
+		<dependency>
+		    <groupId>com.syncfusion</groupId>
+		    <artifactId>syncfusion-licensing</artifactId>
+		    <version>26.1.39</version>
+		    <scope>runtime</scope>
+		</dependency>
 		
     	<!-- <dependency>
             <groupId>com.groupdocs</groupId>
@@ -357,6 +400,12 @@
             <url>https://releases.aspose.com/java/repo/</url>
     </repository>
     <repository>
+	 <id>imageio-webp</id>
+            <name>Image io webp</name>
+            <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+    
+    <repository>
         <snapshots>
             <enabled>false</enabled>
         </snapshots>
@@ -391,7 +440,17 @@
            <url>http://www.jogamp.org/deployment/maven/</url>
            <layout>default</layout>
          </repository>
-
+        <repository>
+        <id>Syncfusion-Java</id>
+        <name>Syncfusion Java repo</name>
+        <url>https://jars.syncfusion.com/repository/maven-public/</url>
+        </repository>
+    
+    <!-- <repository>
+	    <id>imageio-webp</id>
+	    <name>imageio webp</name>
+	    <url>https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-webp</url>
+    </repository> -->
 		<repository>
         <id>com.e-iceblue</id>
         <name>e-iceblue</name>

@@ -127,7 +127,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 	                "/Freeuserlogin/Setpassword","/Freeuserlogin/Resetpassword","/Freeuserlogin/Loginfreeuserwithname",
 	                "/Login/verifyRecaptcha",	                
 	                "/DashBoardDemo/Getdashboardordercount",
-	                "/DashBoardDemo/Getdashboardorders","/documenteditor/Import","/smartdevice/Getdata"
+	                "/DashBoardDemo/Getdashboardorders","/documenteditor/api/wordeditor/Import","/smartdevice/Getdata","/documenteditor/Import"
 	                )
 	        
 	        		

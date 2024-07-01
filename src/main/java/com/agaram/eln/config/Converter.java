@@ -225,7 +225,8 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 				// "/getFileData",
 				"/Login/LoadSitewithoutgzip", "/Login/Logintenat/","/Login/importchemdata",
 				    "/DashBoardDemo/Getdashboardordercount",
-	                "/DashBoardDemo/Getdashboardorders","/documenteditor/Import","/smartdevice/Getdata"
+	                "/DashBoardDemo/Getdashboardorders","/documenteditor/api/wordeditor/Import","/smartdevice/Getdata"
+	                ,"/documenteditor/Import"
 	          
 //				"/protocol/Uploadprotocolimageondrag"
 
