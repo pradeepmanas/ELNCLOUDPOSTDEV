@@ -699,6 +699,7 @@ public class TransactionService {
 		
 		resultUsedMaterial.setIsreturn(1);
 		resultUsedMaterial.setQtyleft(getIssuedQty.toString());
+		resultUsedMaterial.setNqtyleft(getIssuedQty);
 		resultUsedMaterial.setNqtyused(getUsedQty);
 	
 		elnresultUsedMaterialRepository.save(resultUsedMaterial);
@@ -737,6 +738,7 @@ public class TransactionService {
 		resultUsedMaterial.setCreatedbyusercode(objUser);
 		resultUsedMaterial.setNqtyused(previousUsedQuantity);
 		resultUsedMaterial.setNqtyleft(savailableQty);
+		resultUsedMaterial.setQtyleft(savailableQty.toString());
 		resultUsedMaterial.setBatchid(objResultMap.get("batchid").toString());
 		resultUsedMaterial.setNmaterialcode(objInventory.getMaterial().getNmaterialcode());
 		resultUsedMaterial.setNmaterialcategorycode(objInventory.getMaterialcategory().getNmaterialcatcode());
@@ -1038,7 +1040,7 @@ public class TransactionService {
 		
 		calendar.setTime(currentDate);
 		// Add -1 days from the previous day of the current date
-		calendar.add(Calendar.DAY_OF_YEAR, -1);
+		calendar.add(Calendar.DAY_OF_YEAR, -2);
 		// Set the ending time of the day
 		calendar.set(Calendar.HOUR_OF_DAY, 23);
 		calendar.set(Calendar.MINUTE, 59);

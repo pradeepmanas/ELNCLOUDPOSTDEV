@@ -190,5 +190,7 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	@Query(value = "update LSuserMaster set designationname = ?1 where usercode = ?2" ,nativeQuery = true)
 	public void updateDestination(String destination_name, Integer usercode);
 	
-	
+	@Transactional
+	@Query(value = "select count(*) from lsusermaster where lssitemaster_sitecode = ?1 and userretirestatus != 1", nativeQuery = true)
+	public Long GetActiveuser(int sitecode);
 }

@@ -2622,7 +2622,22 @@ public void cautiondatenotification(LSOrdernotification objNotification) throws 
 	public Map<String, Object> getlicense(Map<String, Object> obj) {
 
 		Map<String, Object> rtnobj = new HashMap<>();
-
+		
+		//for eln lite lic
+				if(obj.get("isMultitenant").toString().equals("2")) {
+					String strNumber = (String) obj.get("lssitemaster");
+					int sitecode = Integer.parseInt(strNumber);		
+					Integer usercode = (Integer) obj.get("usercode");
+					Long usercount = lsuserMasterRepository.GetActiveuser(sitecode);
+					LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(sitecode);			
+					LSuserMaster objuser = lsuserMasterRepository.findByusercode(usercode);
+					
+					rtnobj.put("activeuser", usercount);
+					rtnobj.put("Noofuser", objsite.getTeamsize());
+					rtnobj.put("startDate", objuser.getCreateddate());
+					rtnobj.put("expiryDate", objsite.getExpirydate());
+					return rtnobj;
+				}
 		if (obj.get("licencetype") != null && obj.get("licencetype").equals("2")) {
 			Long activeusercount = LSactiveUserRepository.count();
 			rtnobj.put("activeuser", activeusercount);

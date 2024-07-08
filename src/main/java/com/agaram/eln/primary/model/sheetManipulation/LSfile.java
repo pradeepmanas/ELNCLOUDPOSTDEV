@@ -74,6 +74,16 @@ public class LSfile {
 	private List<LSfiletest> lstest;
 	
 	@Transient
+	private String resultvalues;
+	
+	public String getResultvalues() {
+		return resultvalues;
+	}
+	public void setResultvalues(String resultvalues) {
+		this.resultvalues = resultvalues;
+	}
+	
+	@Transient
 	private Boolean isnewsheet;
 
 	public Boolean getIsnewsheet() {

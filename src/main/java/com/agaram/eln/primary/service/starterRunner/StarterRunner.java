@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.service.starterRunner;
 
 import java.io.BufferedReader;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,23 +21,24 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
+
 import com.agaram.eln.primary.commonfunction.commonfunction;
-import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchtenantsource.Datasourcemaster;
-import com.agaram.eln.primary.model.cloudFileManip.CloudOrderCreation;
-import com.agaram.eln.primary.model.cloudFileManip.CloudOrderVersion;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.dashboard.LsActiveWidgets;
 import com.agaram.eln.primary.model.general.OrderCreation;
@@ -69,14 +69,9 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
-import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.support.ScheduledMethodRunnable;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 
 @Service
@@ -94,8 +89,8 @@ public class StarterRunner {
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
 	
-	@Autowired
-	private InstrumentService instservice;
+//	@Autowired
+//	private InstrumentService instservice;
 	
     private final ConcurrentMap<Integer, TimerTask> scheduledTasks = new ConcurrentHashMap<>();
 
@@ -597,6 +592,7 @@ public class StarterRunner {
  		                e.printStackTrace(); // Consider logging this properly
  		            }
                  }
+            	 con.close();
             }	
         }
     }
@@ -645,7 +641,7 @@ public class StarterRunner {
 		                e.printStackTrace(); // Consider logging this properly
 		            }
              }
-             
+             con.close();             
     	}
     }
     private void scheduleProtocolAutoRegisteration(LSlogilabprotocoldetail orderobj, HikariConfig configuration , Date currentdate,LocalDateTime autoTime) throws SQLException, IOException {	 
@@ -672,6 +668,7 @@ public class StarterRunner {
 	                e.printStackTrace(); // Consider logging this properly
 	            }
               }
+       	 	con.close();
     	 }
     	if(orderobj.getLsautoregister() != null) { 
 //	    	Date Autoregdate = orderobj.getLsautoregister().getAutocreatedate();
@@ -766,6 +763,7 @@ public class StarterRunner {
    	 		
 			//LSlogilabprotocoldetailRepository.save(objOrder);
 		  }
+		 con.close();
 		} 
 	}
     
@@ -802,6 +800,7 @@ public class StarterRunner {
  		                e.printStackTrace(); // Consider logging this properly
  		            }
                  }
+            	 con.close();
             }	
         }
     }
@@ -844,6 +843,7 @@ public class StarterRunner {
 		                e.printStackTrace(); // Consider logging this properly
 		            }
             }
+            con.close();
     	}
     }
     private void scheduleAutoRegisteration(LSlogilablimsorderdetail orderobj, HikariConfig configuration,Date currentdate,LocalDateTime autoTime) throws SQLException, IOException {
@@ -867,6 +867,7 @@ public class StarterRunner {
 		                e.printStackTrace(); // Consider logging this properly
 		            }
                }
+               con.close();
     	 }
     	if(orderobj.getLsautoregisterorders() != null) { 
 //	    	Date Autoregdate = objlsauto.getAutocreatedate();
@@ -996,6 +997,7 @@ public class StarterRunner {
 //		             catch (SQLException e) {
 //		                e.printStackTrace(); // Consider logging this properly
 //		            }
+			   con.close();	
             }
         }
     }
@@ -1035,6 +1037,7 @@ public class StarterRunner {
                         }
                     }
                 }
+                con.close();
             } catch (SQLException e) {
                 e.printStackTrace(); // Consider logging this properly
             }
@@ -1334,15 +1337,7 @@ public class StarterRunner {
     public LsAutoregister getautoregisterdetails (LsAutoregister lsautoregister , HikariConfig configuration , Date currentdate,String screen) throws SQLException, InterruptedException {
     	try (HikariDataSource dataSource = new HikariDataSource(configuration);
                 Connection con = dataSource.getConnection()) {
-    		
-//    		String deftemp = "update lsautoregister set stoptime = ? where regcode=?";
-//    		
-//    		try (PreparedStatement pst = con.prepareStatement(deftemp)) {
-//    		   	pst.setTimestamp(1, new Timestamp(currentdate.getTime()));
-//    		   	pst.setLong(2, lsautoregister.getRegcode());
-//    		}
-//    		deftemp="";
-    		
+    	
 	    	LsAutoregister autoobj = new LsAutoregister();
 	    	long generatedregcode = 0;
 	    	if(lsautoregister.getTimespan().equals("Days")) {
@@ -1431,7 +1426,9 @@ public class StarterRunner {
 //		              e.printStackTrace();
 //		          }
 		   	   }
-		return autoobj;
+	        con.close();
+		    return autoobj;
+		 
     	}
     }
  
@@ -1637,6 +1634,7 @@ public class StarterRunner {
 						}
 			
 			 }
+		    con.close();
 	     }
       }
     public void updatesheetordercontent(LSlogilablimsorderdetail objorder,CloudSheetCreation cloudobject,HikariConfig configuration,Date currentdate) throws IOException, SQLException, ParseException {
@@ -1777,6 +1775,7 @@ public class StarterRunner {
 		 			if (objorder.getLssamplefile() != null) {
 			       		updateordercontent(Content, objorder.getLssamplefile(), objorder.getLsautoregisterorders().getIsmultitenant(),configuration);
 			        }
+		 con.close();
     	}
     }
   
@@ -1824,6 +1823,7 @@ public class StarterRunner {
 					"orderversion_" + objfile.getFilesamplecodeversion(), StandardCharsets.UTF_16);
 
 		   }
+		  con.close();
     	}
 	}
     
@@ -1901,6 +1901,7 @@ public class StarterRunner {
 			contentParams = null;
 			contentValues = null;
 			objContent = null;
+			con.close();
 		}
 	}
     
@@ -1964,6 +1965,7 @@ public class StarterRunner {
 				}
 			}
 		  }
+    	con.close();
 		}
     }
     public void getlsfiledata(LSlogilablimsorderdetail objorder , HikariConfig configuration ) throws SQLException {
@@ -1986,6 +1988,7 @@ public class StarterRunner {
 	            }
             }
          lsfilequery="";
+         con.close();
     	}
     	//return lsfileobj;
     }
@@ -2011,6 +2014,7 @@ public class StarterRunner {
 		            }
                 }
             cloudquery="";
+            con.close();
     	}
     	return cloudobject;
     }
@@ -2066,7 +2070,7 @@ public class StarterRunner {
            }
            auditquery="";
            systemcomments="";
-            
+           con.close();
     	}
     }
     public void ExecuteAutoRegistration(LSlogilablimsorderdetail objorder , HikariConfig configuration,Date currentdate)throws ParseException, SQLException, IOException, InterruptedException {
@@ -2248,7 +2252,7 @@ public class StarterRunner {
 						 screen="";
 			
 	    		}
-	    		
+	    		con.close();
 	    	}
     	}
     }
@@ -2298,6 +2302,7 @@ public class StarterRunner {
 	               e.printStackTrace(); // Consider logging this properly
 	           }
 	             insernotification(configuration,Details,notification,path,objNotification.getUsercode(),cDate);
+	             con.close();
 	    	}
     	}
     	//notifyoverduedays(objNotification,configuration);
@@ -2342,6 +2347,7 @@ public class StarterRunner {
 	               e.printStackTrace(); // Consider logging this properly
 	           }
 	    	insernotification(configuration,Details,notification,path,objNotification.getUsercode(),cDate);
+	    	con.close();
     	}
       }
     }
@@ -2394,6 +2400,7 @@ public class StarterRunner {
 //	 	          }
 	          
         }
+        con.close();
     } catch (SQLException e) {
         e.printStackTrace(); // Consider logging this properly
     
@@ -2435,6 +2442,7 @@ public class StarterRunner {
 	            
 	                }
 	    	    insernotification(configuration,Details,notification,path,objNotification.getUsercode(),cDate);
+	    	    con.close();
 	    	}
     	}
     	//notifyoverduedays(objNotification,configuration);
@@ -2518,6 +2526,7 @@ public class StarterRunner {
 
                 pst.executeUpdate();
             }
+            con.close();
         } catch (SQLException e) {
             e.printStackTrace(); // Consider logging this properly
         }

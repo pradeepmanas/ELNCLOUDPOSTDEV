@@ -325,4 +325,31 @@ public class FileController {
 	{
 		fileService.updateResultForTemplate(lsfile);
 	}
+	
+	@PostMapping("/getApprovedTemplatesWithTask")
+	public Map<String, Object> getApprovedTemplatesWithTask(@RequestBody LSuserMaster objuser) {
+		return fileService.getApprovedTemplatesWithTask(objuser);
+	}
+	
+	@PostMapping("/getApprovedTemplatesByTask")
+	public Map<String, Object> getApprovedTemplatesByTask(@RequestBody LSuserMaster objuser) {
+		return fileService.getApprovedTemplatesByTask(objuser);
+	}
+	
+	@PostMapping("/updateResultKeys")
+	public void updateResultKeys(@RequestBody LSfile lsfile)
+	{
+		fileService.updateResultKeys(lsfile);
+	}
+	
+	@PostMapping("/updateTagKeys")
+	public void updateTagKeys(@RequestBody LSfile lsfile)
+	{
+		fileService.updateTagKeys(lsfile);
+	}
+	
+	@PostMapping("/onGetResultTagFromTemplate")
+	public Map<String, Object> onGetResultTagFromTemplate(@RequestBody LSfile objOrder) {
+		return fileService.onGetResultTagFromTemplate(objOrder);
+	}
 }

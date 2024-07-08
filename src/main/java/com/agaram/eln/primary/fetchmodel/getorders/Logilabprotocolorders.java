@@ -72,6 +72,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	private LSOrdernotification lsordernotification;
 	private LsAutoregister lsautoregister;
 	private Boolean repeat;
+	private Boolean sentforapprovel;
+	private String approvelaccept;
 
 
 
@@ -83,7 +85,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 //			LSworkflow lsworkflow,
 			Elnmaterial elnmaterial,ElnmaterialInventory elnmaterialinventory, Integer approved, Integer rejected,
 			Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby,
-			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow,LSOrdernotification lsordernotification,LsAutoregister lsautoregister,Boolean repeat) {
+			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow,
+			LSOrdernotification lsordernotification,LsAutoregister lsautoregister,Boolean repeat,Boolean sentforapprovel,String approvelaccept) {
 
 		this.protocolordercode = protocolordercode;
 		this.Testcode = Testcode;
@@ -124,7 +127,9 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
         this.lsordernotification=lsordernotification != null ? lsordernotification :null;
         this.lsautoregister=lsautoregister != null ? lsautoregister :null;
         this.repeat = repeat;
-
+		this.sentforapprovel=sentforapprovel;
+		this.approvelaccept=approvelaccept;
+        
 	}
 
 	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
@@ -497,4 +502,19 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.lsordernotification = lsordernotification;
 	}
 
+	public Boolean getSentforapprovel() {
+		return sentforapprovel;
+	}
+
+	public void setSentforapprovel(Boolean sentforapprovel) {
+		this.sentforapprovel = sentforapprovel;
+	}
+
+	public String getApprovelaccept() {
+		return approvelaccept;
+	}
+
+	public void setApprovelaccept(String approvelaccept) {
+		this.approvelaccept = approvelaccept;
+	}
 }

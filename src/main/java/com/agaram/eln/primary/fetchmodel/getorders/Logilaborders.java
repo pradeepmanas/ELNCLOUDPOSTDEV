@@ -45,6 +45,8 @@ public class Logilaborders extends Logilabordermaster {
 	private Integer ordersaved;
 	private Boolean repeat;
 	private LsAutoregister lsautoregisterorders;
+	private Boolean sentforapprovel;
+	private String approvelaccept;
 
 	
 	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
@@ -53,10 +55,10 @@ public class Logilaborders extends Logilabordermaster {
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,
 			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification, 
-			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders) {
+			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept) {
 		
 		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,
-				lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved,repeat,lsautoregisterorders);
+				lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved,repeat,lsautoregisterorders,sentforapprovel,approvelaccept);
 		 
 		if(lssamplefile != null)
 		{
@@ -92,6 +94,8 @@ public class Logilaborders extends Logilabordermaster {
         this.ordersaved = ordersaved;
         this.repeat=repeat != null ? repeat : null;
         this.lsautoregisterorders=lsautoregisterorders != null ? lsautoregisterorders : null;
+        this.sentforapprovel=sentforapprovel!=null?sentforapprovel:null;
+        this.approvelaccept=approvelaccept!=null?approvelaccept:null;
 	}
 	
 	
@@ -323,6 +327,26 @@ public class Logilaborders extends Logilabordermaster {
 
 	public void setLsautoregisterorders(LsAutoregister lsautoregisterorders) {
 		this.lsautoregisterorders = lsautoregisterorders;
+	}
+
+
+	public Boolean getSentforapprovel() {
+		return sentforapprovel;
+	}
+
+
+	public void setSentforapprovel(Boolean sentforapprovel) {
+		this.sentforapprovel = sentforapprovel;
+	}
+
+
+	public String getApprovelaccept() {
+		return approvelaccept;
+	}
+
+
+	public void setApprovelaccept(String approvelaccept) {
+		this.approvelaccept = approvelaccept;
 	}
 
 	

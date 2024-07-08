@@ -194,7 +194,7 @@ public class FreeUserService {
 		if (usercount <= 0) {
 			if (objuser.getLssitemaster() != null) {
 				Calendar current = Calendar.getInstance();
-				current.add(Calendar.DATE, 30);
+				current.add(Calendar.DATE, objuser.getLssitemaster().getAccouttype().toString().equals("3") ? 90 : 30);
 				Date resultdate = new Date(current.getTimeInMillis());
 				objuser.getLssitemaster().setExpirydate(resultdate);
 			}
@@ -234,7 +234,7 @@ public class FreeUserService {
 			if (objuser.getAutenticatefrom() != 0) {
 				objuser.setPassword(objuser.getSubcode());
 			}
-
+			objuser.setEdulevel(objuser.getEdulevel());
 			lsuserMasterRepository.save(objuser);
 
 			LSMultisites lmultisites = new LSMultisites();
@@ -1000,7 +1000,12 @@ public class FreeUserService {
 			
 			final UserDetails userDetails = userDetailsService
 					.loadUserByUsername(objcurrentuser.getUsername()+ "[" + objcurrentuser.getLssitemaster().getSitecode() + "]");
-
+			if(userDetails == null) {
+				objresponse.setStatus(false);
+				objresponse.setInformation("User Retired");
+				loginobject.put("objResponse", objresponse);
+				return loginobject;
+				}else {
 			final String token = jwtTokenUtil.generateToken(userDetails);
 			loginobject.put("token", token);
 			objresponse.setStatus(true);
@@ -1015,6 +1020,7 @@ public class FreeUserService {
 					objresponse.setInformation("User expired");
 				}
 			}
+		}
 		}
 		else
 		{

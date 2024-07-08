@@ -1338,7 +1338,7 @@ public class InstrumentController {
 	}
 	
 	@RequestMapping("/sendapprovel")
-	public List<LSlogilablimsorderdetail> sendapprovel(@RequestBody LSlogilablimsorderdetail objdir)throws Exception
+	public LSlogilablimsorderdetail sendapprovel(@RequestBody LSlogilablimsorderdetail objdir)throws Exception
 	{
 		return instrumentService.sendapprovel(objdir);
 	}
@@ -1355,6 +1355,13 @@ public class InstrumentController {
 		return instrumentService.stopautoregister(objdir);
 	}
 
+	
+//	@RequestMapping("/sendnotification")
+//	public LSlogilablimsorderdetail sendnotification(@RequestBody LSlogilablimsorderdetail objdir)
+//			throws Exception {
+//
+//		return instrumentService.sendnotification(objdir);
+//	}
 	
 	@PostMapping("/getsingleorder")
 	public LSlogilablimsorderdetail getsingleorder(@RequestBody LSlogilablimsorderdetail body)throws Exception

@@ -75,7 +75,6 @@ import com.agaram.eln.primary.repository.usermanagement.LsusersettingsRepository
 import com.agaram.eln.primary.service.cfr.AuditService;
 import com.agaram.eln.primary.service.notification.EmailService;
 import com.agaram.eln.primary.service.protocol.Commonservice;
-import com.agaram.eln.primary.service.sheetManipulation.FileService;
 import com.aspose.pdf.internal.imaging.internal.Exceptions.IO.IOException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -170,8 +169,8 @@ public class UserService {
 	@Autowired
 	private LSfileRepository LSfileRepository;
 	
-	@Autowired
-	private FileService fileService;
+//	@Autowired
+//	private FileService fileService;
 	
 	@Autowired
 	private LSlogilabprotocoldetailRepository LSlogilabprotocoldetailRepository;
@@ -388,6 +387,7 @@ public class UserService {
 				updateUser.setUnifieduserid(objusermaster.getUnifieduserid());
 				updateUser.setMultiusergroupcode(objusermaster.getMultiusergroupcode());
 				updateUser.setDesignationname(objusermaster.getDesignationname());
+				updateUser.setEdulevel(objusermaster.getEdulevel());
 			}
 
 			objusermaster.setCreateddate(updateUser.getCreateddate());

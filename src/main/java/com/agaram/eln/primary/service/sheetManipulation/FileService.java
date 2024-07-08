@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
@@ -34,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
+import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 //import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplatefortest;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
@@ -58,7 +60,9 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.Lsfilesharedby;
 import com.agaram.eln.primary.model.sheetManipulation.Lsfileshareto;
+import com.agaram.eln.primary.model.sheetManipulation.Lsresultfortemplate;
 import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
+import com.agaram.eln.primary.model.sheetManipulation.Lstagfortemplate;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -88,6 +92,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepositor
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfiletestRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileversionRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSresultfortemplateRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsheetupdatesRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsheetworkflowgroupmapRepository;
@@ -96,6 +101,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappin
 import com.agaram.eln.primary.repository.sheetManipulation.LsfilesharedbyRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LsfilesharetoRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LssheetworkflowhistoryRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LstagfortemplateRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
@@ -136,7 +142,10 @@ public class FileService {
 	private CloudFileManipulationservice objCloudFileManipulationservice;
 	@Autowired
 	private LSnotificationRepository LSnotificationRepository;
-
+	@Autowired
+	private LSresultfortemplateRepository LSresultfortemplateRepository;
+	@Autowired
+	private LstagfortemplateRepository LstagfortemplateRepository;
 	@Autowired
 	private LSworkflowgroupmappingRepository lsworkflowgroupmappingRepository;
 
@@ -2158,5 +2167,116 @@ public class FileService {
 		LSfile objLSfile = lSfileRepository.findByfilecode(lsfile.getFilecode());
 		objLSfile.setResultsheet(1);
 		lSfileRepository.save(objLSfile);
+	}
+
+	public Map<String, Object> getApprovedTemplatesWithTask(LSuserMaster objuser) {
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		List<Testmaster> lstTestmasters = masterService.getTestmaster(objuser);
+		mapOrders.put("task", lstTestmasters);
+		
+		if(!lstTestmasters.isEmpty()) {
+			
+			List<LSfile> lstFile = new ArrayList<LSfile>();
+			
+			if (objuser.getUsername().equals("Administrator")) {
+				lstFile = lSfileRepository.getsheetGreaterthanoneandapprovel(objuser.getLssitemaster().getSitecode());
+			} else {
+				lstFile = GetApprovedSheetsbyuser(1, objuser);
+			}
+			
+			List<LSfiletest> lstMappedTask = lSfiletestRepository.findByTestcodeAndTesttype(lstTestmasters.get(0).getTestcode(), 1);
+			
+			if(!lstMappedTask.isEmpty()) {
+				// Extract filecodes from lsfiletestList where testtype is 1
+		        Set<Integer> filecodesWithTestType1 = lstMappedTask.stream()
+		                .filter(lsfiletest -> lsfiletest.getTesttype() == 1)
+		                .map(LSfiletest::getFilecode)
+		                .collect(Collectors.toSet());
+
+		        // Filter lsfileList based on the extracted filecodes
+		        List<LSfile> filteredLsfileList = lstFile.stream()
+		                .filter(lsfile -> filecodesWithTestType1.contains(lsfile.getFilecode()))
+		                .collect(Collectors.toList());
+		        
+		        mapOrders.put("template", filteredLsfileList);
+			}else {
+				mapOrders.put("template",new ArrayList<Testmaster>());
+			}
+			
+		}else {
+			mapOrders.put("template",new ArrayList<Testmaster>());
+		}
+		
+		return mapOrders;
+	}
+
+	public Map<String, Object> getApprovedTemplatesByTask(LSuserMaster objuser) {
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+
+		List<LSfile> lstFile = new ArrayList<LSfile>();
+
+		if (objuser.getUsername().equals("Administrator")) {
+			lstFile = lSfileRepository.getsheetGreaterthanoneandapprovel(objuser.getLssitemaster().getSitecode());
+		} else {
+			lstFile = GetApprovedTemplatesbyuser(1, objuser);
+		}
+
+		List<LSfiletest> lstMappedTask = lSfiletestRepository.findByTestcodeAndTesttype(objuser.getTestcode(), 1);
+
+		if (!lstMappedTask.isEmpty()) {
+			Set<Integer> filecodesWithTestType1 = lstMappedTask.stream()
+					.filter(lsfiletest -> lsfiletest.getTesttype() == 1).map(LSfiletest::getFilecode)
+					.collect(Collectors.toSet());
+
+			List<LSfile> filteredLsfileList = lstFile.stream()
+					.filter(lsfile -> filecodesWithTestType1.contains(lsfile.getFilecode()))
+					.collect(Collectors.toList());
+
+			mapOrders.put("template", filteredLsfileList);
+		} else {
+			mapOrders.put("template", new ArrayList<Testmaster>());
+		}
+
+		return mapOrders;
+	}
+
+	public void updateResultKeys(LSfile objfile) {
+		String resultvalues = objfile.getResultvalues();
+		if (resultvalues != null && resultvalues != "" && !resultvalues.equalsIgnoreCase("[]")) {
+			updateTemplateResultvalues(objfile, resultvalues);
+		}
+	}	
+	
+	private void updateTemplateResultvalues(LSfile objfile, String tagvalues) {
+		Lsresultfortemplate objreport = new Lsresultfortemplate();
+		objreport.setId((long) objfile.getFilecode());
+		objreport.setContent(tagvalues);
+		objreport.setContentstored(1);
+		LSresultfortemplateRepository.save(objreport);
+		objreport = null;
+	}
+
+	public void updateTagKeys(LSfile objfile) {
+		String resultvalues = objfile.getResultvalues();
+		if (resultvalues != null && resultvalues != "" && !resultvalues.equalsIgnoreCase("[]")) {
+			updateTemplateTagvalues(objfile, resultvalues);
+		}
+	}
+	
+	private void updateTemplateTagvalues(LSfile objfile, String tagvalues) {
+		Lstagfortemplate objreport = new Lstagfortemplate();
+		objreport.setId((long) objfile.getFilecode());
+		objreport.setContent(tagvalues);
+		objreport.setContentstored(1);
+		LstagfortemplateRepository.save(objreport);
+		objreport = null;
+	}
+	
+	public Map<String, Object> onGetResultTagFromTemplate(LSfile objOrder) {
+
+		Map<String, Object> mapRtnObj = new HashMap<String, Object>();
+		mapRtnObj.put("result", LSresultfortemplateRepository.findById(objOrder.getFilecode()));
+		mapRtnObj.put("tag", LstagfortemplateRepository.findById(objOrder.getFilecode()));
+		return mapRtnObj;
 	}
 }

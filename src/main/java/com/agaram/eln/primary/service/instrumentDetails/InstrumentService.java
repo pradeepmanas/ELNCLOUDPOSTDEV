@@ -1084,6 +1084,9 @@ public class InstrumentService {
 				}
 			}
 
+			 lssamplefileRepository.setbatchcodeOnsamplefile(objorderindex1.getBatchcode(),
+					 objorderindex1.getLssamplefile().getFilesamplecode());
+			 
 			final List<LSOrdernotification> ordernotList = new ArrayList<>(1);
 			if (objorderindex1.getCautiondate() != null && objorderindex1.getDuedate() != null) {
 				LSOrdernotification notobj = new LSOrdernotification();
@@ -3134,7 +3137,7 @@ public class InstrumentService {
 				lslogilablimsorderdetailRepository.save(objupdatedorder);
 			}
 
-		} else {
+		} else if(!objorder.getIsmultitenant().equals(2)){
 			objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
 			objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
 			objupdatedorder.setActiveuser(objorder.getActiveuser());
@@ -7285,11 +7288,11 @@ public class InstrumentService {
 		}
 		if (objdir.getSearchCriteria() != null && objdir.getSearchCriteria().getContentsearchtype() != null
 				&& objdir.getSearchCriteria().getContentsearch() != null) {
-			lstorderstrcarray.forEach(objorderDetail -> objorderDetail.setCanuserprocess(true));
+		//	lstorderstrcarray.forEach(objorderDetail -> objorderDetail.setCanuserprocess(true));
 
 			return lstorderstrcarray;
 		} else {
-			lstorder.forEach(objorderDetail -> objorderDetail.setCanuserprocess(true));
+			//lstorder.forEach(objorderDetail -> objorderDetail.setCanuserprocess(true));
 
 			return lstorder;
 		}
@@ -8343,13 +8346,13 @@ public class InstrumentService {
 
 		else {
 			if (objorder.getLstuserMaster() != null) {
-//				lstorder = lslogilablimsorderdetailRepository
-//						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-//								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
-
 				lstorder = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
+
+//				lstorder = lslogilablimsorderdetailRepository
+//						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
 
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 				int totalSamples = nmaterialcode.size();
@@ -8534,7 +8537,7 @@ public class InstrumentService {
 							lsOrderDetail.getOrderstartedon(), lsOrderDetail.getLockeduser(),
 							lsOrderDetail.getLockedusername(), lsOrderDetail.getVersionno(),
 							lsOrderDetail.getElnprotocolworkflow(), lsOrderDetail.getLsordernotification(),
-							lsOrderDetail.getLsautoregister(), lsOrderDetail.getRepeat()))
+							lsOrderDetail.getLsautoregister(), lsOrderDetail.getRepeat(),lsOrderDetail.getSentforapprovel(),lsOrderDetail.getApprovelaccept()))
 					.collect(Collectors.toList()));
 
 		}
@@ -8809,15 +8812,14 @@ public class InstrumentService {
 		List<Long> Directory_Code = lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode)
 				.collect(Collectors.toList());
 		if (objorder.getTestcode() == null && objorder.getLsprojectmaster() == null && objorder.getRejected() == null) {
-//			lstorder.addAll(LSlogilabprotocoldetailRepository
-//					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
-//							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
-			
 			lstorder.addAll(LSlogilabprotocoldetailRepository
-					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetween(
+					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
 							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
 			
-
+//			lstorder.addAll(LSlogilabprotocoldetailRepository
+//					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetween(
+//							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
+			
 			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
@@ -10139,7 +10141,7 @@ public class InstrumentService {
 							lsOrderDetail.getOrderstartedon(), lsOrderDetail.getLockeduser(),
 							lsOrderDetail.getLockedusername(), lsOrderDetail.getVersionno(),
 							lsOrderDetail.getElnprotocolworkflow(), lsOrderDetail.getLsordernotification(),
-							lsOrderDetail.getLsautoregister(), lsOrderDetail.getRepeat()))
+							lsOrderDetail.getLsautoregister(), lsOrderDetail.getRepeat(),lsOrderDetail.getSentforapprovel(),lsOrderDetail.getApprovelaccept()))
 					.collect(Collectors.toList()));
 
 		}
@@ -10246,13 +10248,16 @@ public class InstrumentService {
 		}
 	}
 
-	public List<LSlogilablimsorderdetail> sendapprovel(LSlogilablimsorderdetail objdir) {
+	public LSlogilablimsorderdetail sendapprovel(LSlogilablimsorderdetail objdir) {
 		List<LSlogilablimsorderdetail> logiobj = new ArrayList<LSlogilablimsorderdetail>();
 		logiobj = lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),
 				objdir.getBatchid());
 		logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
-		lslogilablimsorderdetailRepository.save(logiobj);
-		return logiobj;
+		logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
+		logiobj.get(0).setCanuserprocess(false);
+		
+		lslogilablimsorderdetailRepository.save(logiobj.get(0));
+		return logiobj.get(0);
 	}
 
 	@SuppressWarnings("unlikely-arg-type")
@@ -10260,27 +10265,66 @@ public class InstrumentService {
 		List<LSlogilablimsorderdetail> logiobj = new ArrayList<LSlogilablimsorderdetail>();
 		logiobj = lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),
 				objdir.getBatchid());
-
+		String screen="Sheet Order";
+		
 		if (objdir.getApprovelaccept().equals("3")) {
 			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
 			logiobj.get(0).setApprovelstatus(objdir.getApprovelstatus());
 			logiobj.get(0).setOrderflag("R");
 			logiobj.get(0).setDirectorycode(null);
 			logiobj.get(0).setCompletedtimestamp(commonfunction.getCurrentUtcTime());
+			
+			String Notification = "REJECTALERT";
+			sendnotification(logiobj.get(0),Notification,screen);
 
 		} else if (objdir.getApprovelaccept().equals("2")) {
 			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
-			logiobj.get(0).setCanuserprocess(true);
-		
+			//logiobj.get(0).setCanuserprocess(true);
+			logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
+			
+			String Notification = "RETURNALERT";
+			
+			sendnotification(logiobj.get(0),Notification,screen);
 			//logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
 		} else {
 
 			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
+			
+			String Notification = "APPROVEALERT";
+			sendnotification(logiobj.get(0),Notification,screen);
+			
 		}
 		lslogilablimsorderdetailRepository.save(logiobj);
+		
+		
+		
+		
 		return logiobj.get(0);
 	}
+	
+	@SuppressWarnings("unlikely-arg-type")
+	public void sendnotification(LSlogilablimsorderdetail objdir,String Notification,String screen) throws ParseException {
+		
+		LSnotification LSnotification = new LSnotification();
+		
+		String Details = "{\"ordercode\" :\"" + objdir.getBatchcode() + "\",\"order\" :\""
+				+ objdir.getBatchid()  + "\",\"user\":\"" + objdir.getLsuserMaster().getUsername()
+				+ "\"}";
+				
+		LSnotification.setIsnewnotification(1);
+		LSnotification.setNotification(Notification);
+		LSnotification.setNotificationdate(commonfunction.getCurrentUtcTime());
+		LSnotification.setNotificationdetils(Details);
+		LSnotification.setNotificationpath(screen.equals("Sheet Order") ? "/registertask" : "/Protocolorder");
+		LSnotification.setNotifationfrom(objdir.getLsuserMaster());
+		LSnotification.setNotifationto(objdir.getAssignedto());
+		LSnotification.setRepositorycode(0);
+		LSnotification.setRepositorydatacode(0);
+		LSnotification.setNotificationfor(1);
 
+		lsnotificationRepository.save(LSnotification);
+		
+	}
 	public LSlogilablimsorderdetail stopautoregister(LSlogilablimsorderdetail objdir) throws ParseException {
 		List<LSlogilablimsorderdetail> logiobj = new ArrayList<LSlogilablimsorderdetail>();
 		logiobj = lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),

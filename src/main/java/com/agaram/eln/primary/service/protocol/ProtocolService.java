@@ -9088,7 +9088,7 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 
 		LSlogilabprotocoldetail rtnobj = LSlogilabprotocoldetailRepository
 				.findOne(protocolorders.getProtocolordercode());
-		if ((rtnobj != null && rtnobj.getLockeduser() == null) && protocolorders.getComment().equals("Order_Lock")) {
+		if (!protocolorders.getIsmultitenant().equals(2) && (rtnobj != null && rtnobj.getLockeduser() == null) && protocolorders.getComment().equals("Order_Lock")) {
 			rtnobj.setLockeduser(protocolorders.getLockeduser());
 			rtnobj.setLockedusername(protocolorders.getLockedusername());
 			rtnobj.setActiveuser(protocolorders.getActiveuser());
@@ -9482,6 +9482,7 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 				objdir.getProtocolordercode(), objdir.getProtoclordername());
 
 		logiobj.setSentforapprovel(objdir.getSentforapprovel());
+		logiobj.setApprovelaccept(objdir.getApprovelaccept());
 		LSlogilabprotocoldetailRepository.save(logiobj);
 		return logiobj;
 	}
@@ -9501,6 +9502,7 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		logiobj = LSlogilabprotocoldetailRepository.findByProtocolordercodeAndProtoclordername(
 				objdir.getProtocolordercode(), objdir.getProtoclordername());
 
+		String screen="Protocol Order";
 		if (objdir.getApprovelaccept().equals("3")) {
 			logiobj.setApprovelaccept(objdir.getApprovelaccept());
 			logiobj.setApprovelstatus(objdir.getApprovelstatus());
@@ -9510,18 +9512,48 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 			logiobj.setDirectorycode(null);
 			logiobj.setCompletedtimestamp(commonfunction.getCurrentUtcTime());
 
+			String Notification = "REJECTALERT";
+			sendnotification(logiobj,Notification,screen);
+			
 		} else if (objdir.getApprovelaccept().equals("2")) {
 			logiobj.setApprovelaccept(objdir.getApprovelaccept());
-			//logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
+			logiobj.setSentforapprovel(objdir.getSentforapprovel());
+			
+            String Notification = "RETURNALERT";	
+			sendnotification(logiobj,Notification,screen);
 		} else {
 
 			logiobj.setApprovelaccept(objdir.getApprovelaccept());
+			String Notification = "APPROVEALERT";
+			sendnotification(logiobj,Notification,screen);
 		}
 		LSlogilabprotocoldetailRepository.save(logiobj);
 		return logiobj;
 	}
 
-	
+	@SuppressWarnings("unlikely-arg-type")
+	public void sendnotification(LSlogilabprotocoldetail objdir,String Notification,String screen) throws ParseException {
+		
+		LSnotification LSnotification = new LSnotification();
+		
+		String Details = "{\"ordercode\" :\"" + objdir.getProtocolordercode() + "\",\"order\" :\""
+				+ objdir.getProtoclordername()  + "\",\"user\":\"" + objdir.getLsuserMaster().getUsername()
+				+ "\"}";
+				
+		LSnotification.setIsnewnotification(1);
+		LSnotification.setNotification(Notification);
+		LSnotification.setNotificationdate(commonfunction.getCurrentUtcTime());
+		LSnotification.setNotificationdetils(Details);
+		LSnotification.setNotificationpath(screen.equals("Sheet Order") ? "/registertask" : "/Protocolorder");
+		LSnotification.setNotifationfrom(objdir.getLsuserMaster());
+		LSnotification.setNotifationto(objdir.getAssignedto());
+		LSnotification.setRepositorycode(0);
+		LSnotification.setRepositorydatacode(0);
+		LSnotification.setNotificationfor(1);
+
+		lsnotificationRepository.save(LSnotification);
+		
+	}
 	public boolean Validateprotocolcountforfreeuser(LSSiteMaster lssitemaster) {
 		boolean countexceeded = false;
 		long sheetcount = LSProtocolMasterRepositoryObj.countByLssitemaster(lssitemaster.getSitecode());

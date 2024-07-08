@@ -41,12 +41,14 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private Integer ordersaved;
 	private Boolean repeat;
 	private LsAutoregister lsautoregisterorders;
+	private Boolean sentforapprovel;
+	private String approvelaccept;
 	
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,LSuserMaster assignedto,
 			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,
 			LSuserMaster lsuserMaster ,Integer testcode,Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,Boolean repeat, 
-			LsAutoregister lsautoregisterorders) {
+			LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -71,7 +73,31 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.ordersaved = ordersaved;
 		this.repeat=repeat;
 		this.lsautoregisterorders=lsautoregisterorders;
+		this.sentforapprovel=sentforapprovel;
+		this.approvelaccept=approvelaccept;
+		
+		
 	}
+
+	
+	public Boolean getSentforapprovel() {
+		return sentforapprovel;
+	}
+
+
+	public void setSentforapprovel(Boolean sentforapprovel) {
+		this.sentforapprovel = sentforapprovel;
+	}
+
+	public String getApprovelaccept() {
+		return approvelaccept;
+	}
+
+
+	public void setApprovelaccept(String approvelaccept) {
+		this.approvelaccept = approvelaccept;
+	}
+
 
 	public Integer getApprovelstatus() {
 		return approvelstatus;
