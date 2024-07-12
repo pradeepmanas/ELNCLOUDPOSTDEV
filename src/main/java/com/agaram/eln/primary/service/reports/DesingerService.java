@@ -1,6 +1,10 @@
 package com.agaram.eln.primary.service.reports;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -8,39 +12,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
-import org.supercsv.cellprocessor.ParseInt;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
-import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
-import com.agaram.eln.primary.model.methodsetup.Delimiter;
-import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
-import com.agaram.eln.primary.model.protocols.LSprotocolordersampleupdates;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
 import com.agaram.eln.primary.model.protocols.LSprotocolstepInfo;
 import com.agaram.eln.primary.model.protocols.LSprotocolversion;
 import com.agaram.eln.primary.model.reports.reportdesigner.Cloudreporttemplate;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportDesignerStructure;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
-import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
-import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
-import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cloudProtocol.LSprotocolstepInformationRepository;
-import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolStepRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
@@ -48,6 +44,7 @@ import com.agaram.eln.primary.repository.protocol.LSprotocolmastertestRepository
 import com.agaram.eln.primary.repository.protocol.LSprotocolversionRepository;
 import com.agaram.eln.primary.repository.reports.reportdesigner.CloudreporttemplateRepository;
 import com.agaram.eln.primary.repository.reports.reportdesigner.ReportDesignerStructureRepository;
+import com.agaram.eln.primary.repository.reports.reportdesigner.ReportTemplateMappingRepository;
 import com.agaram.eln.primary.repository.reports.reportdesigner.ReporttemplateRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 
@@ -89,6 +86,9 @@ public class DesingerService {
 
 	@Autowired
 	private CloudFileManipulationservice objCloudFileManipulationservice;
+	
+	@Autowired
+	private ReportTemplateMappingRepository reportTemplateMappingRepository;
 
 	public Map<String, Object> getreportsource(Map<String, Object> argObj) {
 		Map<String, Object> rtnObj = new HashMap<String, Object>();
@@ -180,15 +180,52 @@ public class DesingerService {
 		return template;
 	}
 
-	public Cloudreporttemplate gettemplatedata(Reporttemplate template) {
-		return cloudreporttemplaterepository.findOne(template.getTemplatecode());
+	public Reporttemplate gettemplatedata(Reporttemplate objfile) throws IOException {
+//		return cloudreporttemplaterepository.findOne(template.getTemplatecode());
+
+		if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
+			String tenant = TenantContext.getCurrentTenant();
+			if (objfile.getIsmultitenant() == 2) {
+				tenant = "freeusers";
+			}
+			String containerName = tenant + "reportdocument";
+			String documentName = objfile.getFileuid();
+			byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName, documentName);
+			if (documentBytes != null) {
+				String jsonContent = new String(documentBytes, StandardCharsets.UTF_8);
+				System.out.println("JSON Content:");
+				System.out.println(jsonContent);
+				objfile.setTemplatecontent(jsonContent);
+				// Optionally parse the JSON content into Java objects here
+			} else {
+				System.out.println("Failed to retrieve JSON content from Azure Blob Storage.");
+			}
+//			 String documentContent =getDocumentContent(retrievedBytes);
+////			String retrievedContent = convertBytesToString(retrievedBytes);
+//			System.out.println("Retrieved Document Content: " + documentContent);
+//			objfile.setTemplatecontent(documentContent);
+		}
+		return objfile;
 	}
+
+	public String getDocumentContent(byte[] documentBytes) throws IOException {
+		InputStream inputStream = new ByteArrayInputStream(documentBytes);
+		XWPFDocument document = new XWPFDocument(inputStream);
+
+		StringBuilder documentContent = new StringBuilder();
+		document.getParagraphs().forEach(paragraph -> documentContent.append(paragraph.getText()).append("\n"));
+
+		return documentContent.toString();
+	}
+//	public String convertBytesToString(byte[] bytes) {
+//		return new String(bytes, StandardCharsets.UTF_8);
+//	}
 
 	public Map<String, Object> getfolders(ReportDesignerStructure objdir) {
 		Map<String, Object> rtnObj = new HashMap<String, Object>();
 		List<ReportDesignerStructure> lstdir = new ArrayList<ReportDesignerStructure>();
 
-		if (objdir.getLstuserMaster() != null && objdir.getLstuserMaster().size() == 0) {
+		if (objdir.getLstuserMaster() == null || objdir.getLstuserMaster().size() == 0) {
 
 			lstdir = reportDesignerStructureRepository
 					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
@@ -230,7 +267,18 @@ public class DesingerService {
 
 	public List<Reporttemplate> gettemplateonfolder(ReportDesignerStructure objdir) throws Exception {
 		List<Reporttemplate> lsttemplate = new ArrayList<Reporttemplate>();
-		lsttemplate = reporttemplaterepository.findByReportdesignstructure(objdir);
+		if(objdir.getFilefor().equals("RDT")||objdir.getFilefor().equals("RAT")){
+			if(objdir.getLstuserMaster()==null) {
+				objdir.setLstuserMaster(new ArrayList<LSuserMaster>());
+				objdir.getLstuserMaster().add(objdir.getCreatedby());
+			}
+			
+			lsttemplate=reporttemplaterepository.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrderByTemplatecodeDesc(objdir.getSitemaster(),1,objdir.getTemplatetype(),objdir.getLstuserMaster(),
+					objdir.getFromdate(),objdir.getTodate(),objdir.getSitemaster(),2,objdir.getTemplatetype(),objdir.getCreatedby(),objdir.getFromdate(),objdir.getTodate(),objdir.getSitemaster(),1,objdir.getTemplatetype(),objdir.getLstuserMaster(),objdir.getFromdate(),objdir.getTodate());
+		}else if(objdir.getFilefor().equals("DR")) {
+			lsttemplate = reporttemplaterepository.findByReportdesignstructure(objdir);	
+		}
+		
 		return lsttemplate;
 	}
 
@@ -296,7 +344,7 @@ public class DesingerService {
 //				LSprotocolstepObj1.setProtocolname(name);
 				if (newobj != null) {
 					LSprotocolstepObj1.setLsprotocolstepInformation(newobj.getLsprotocolstepInfo());
-					
+
 				}
 				LSprotocolstepLst.add(LSprotocolstepObj1);
 
@@ -306,7 +354,7 @@ public class DesingerService {
 				if (newLSprotocolstepInfo != null) {
 //						LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
 					LSprotocolstepObj1.setLsprotocolstepInformation(newLSprotocolstepInfo.getContent());
-					
+
 				}
 				LSprotocolstepLst.add(LSprotocolstepObj1);
 			}
@@ -340,5 +388,24 @@ public class DesingerService {
 
 		rtnObj.put("lstprotocoltempl", lstprotocol);
 		return rtnObj;
+	}
+
+	public Reporttemplate approvereporttemplate(Reporttemplate objdir) throws ParseException {
+		objdir.setCompleteddate(commonfunction.getCurrentUtcTime());
+		reporttemplaterepository.save(objdir);
+		return objdir;
+	}
+
+	public List<Reporttemplate> gettemplateonfoldermapping(ReportDesignerStructure objdir) {
+		return reporttemplaterepository.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInOrderByTemplatecodeDesc(objdir.getSitemaster(),1,objdir.getTemplatetype(),objdir.getLstuserMaster(),
+				objdir.getSitemaster(),2,objdir.getTemplatetype(),objdir.getCreatedby(),objdir.getSitemaster(),1,objdir.getTemplatetype(),objdir.getLstuserMaster());
+	}
+	
+	public Reporttemplate updatereporttemplatemapping(Reporttemplate objdir) {
+		
+//		reporttemplaterepository.save(objdir);
+		reportTemplateMappingRepository.deleteByTemplatecode(objdir.getTemplatecode());
+		reportTemplateMappingRepository.save(objdir.getReportTemplateMappings());
+		return objdir;
 	}
 }

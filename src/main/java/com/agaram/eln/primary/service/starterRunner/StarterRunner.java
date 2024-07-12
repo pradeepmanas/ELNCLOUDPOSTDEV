@@ -1358,18 +1358,18 @@ public class StarterRunner {
 			        autoobj.setAutocreatedate(futureDate);
 			 }else {
 				
-				    Calendar calendar = Calendar.getInstance();
-			        calendar.setTime(currentdate);
-			        calendar.add(Calendar.HOUR_OF_DAY,(lsautoregister.getInterval()));
-			        Date futureDate = calendar.getTime();   
-			        autoobj.setAutocreatedate(futureDate);
-			        
 //				    Calendar calendar = Calendar.getInstance();
 //			        calendar.setTime(currentdate);
-//			       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
-//			        calendar.add(Calendar.MINUTE , (4));
+//			        calendar.add(Calendar.HOUR_OF_DAY,(lsautoregister.getInterval()));
 //			        Date futureDate = calendar.getTime();   
 //			        autoobj.setAutocreatedate(futureDate);
+			        
+				    Calendar calendar = Calendar.getInstance();
+			        calendar.setTime(currentdate);
+			       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
+			        calendar.add(Calendar.MINUTE , (15));
+			        Date futureDate = calendar.getTime();   
+			        autoobj.setAutocreatedate(futureDate);
 			 }
 			
 			autoobj.setScreen(screen);
@@ -2260,7 +2260,69 @@ public class StarterRunner {
    
     
     public void executecautiondatenotification(LSOrdernotification objNotification, HikariConfig configuration) throws ParseException, InterruptedException, SQLException {
-    	if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false) {
+    	
+    	LSlogilablimsorderdetail order = null;
+    	LSlogilabprotocoldetail protocolorder = null;
+    	
+    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
+                Connection con = dataSource.getConnection()) {
+    		
+    		if(objNotification.getScreen().equals("sheetorder")) {
+	    		String orderobj = "SELECT * FROM lslogilablimsorderdetail WHERE batchcode=?";
+	       	    try (PreparedStatement pst = con.prepareStatement(orderobj)) {
+	                
+	            	 pst.setLong(1, objNotification.getBatchcode());
+	              //  pst.setTimestamp(2, new Timestamp(gettoDate.getTime()));
+	
+	                try (ResultSet rs = pst.executeQuery()) {
+	                    while (rs.next()) {
+	                    	order = mapResultSetToLslogilabOrder(rs);
+	                     
+	                    }
+	                } catch (SQLException e) {
+		                e.printStackTrace(); // Consider logging this properly
+		            }	    		
+	                orderobj="";
+	       	     }
+    		}else {
+       	    
+		       	 String protoobj = "SELECT * FROM lslogilabprotocoldetail WHERE protocolordercode=?";
+		    	    try (PreparedStatement pst = con.prepareStatement(protoobj)) {
+		             
+		         	 pst.setLong(1, objNotification.getBatchcode());
+		           //  pst.setTimestamp(2, new Timestamp(gettoDate.getTime()));
+		
+		             try (ResultSet rs = pst.executeQuery()) {
+		                 while (rs.next()) {
+		                	 protocolorder = mapResultSetToOrderLSlogilabprotocoldetail(rs);
+		                  
+		                 }
+		             } catch (SQLException e) {
+			                e.printStackTrace(); // Consider logging this properly
+			            }	    		
+		             
+		    	     }
+		    	    protoobj="";
+    		  }
+    		con.close();
+    	}
+    	
+    	int cancel;
+    	int approvelstatus;
+    	int completed;
+    	
+    	if(order==null) {
+    		 cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
+    		 approvelstatus = protocolorder.getApprovelstatus()== null ? 0 :protocolorder.getApprovelstatus();
+    		 completed=protocolorder.getCompletedtimestamp() == null ? 0 : 1;
+    	}else {
+    	   cancel = order.getOrdercancell() == null ? 0 : order.getOrdercancell();
+    	   approvelstatus = order.getApprovelstatus()== null ? 0 :order.getApprovelstatus();
+    	   completed=order.getCompletedtimestamp() == null ? 0 : 1;
+    	}
+    	
+    	if(completed ==0 && (cancel == 0) && (approvelstatus != 3)){
+    		
 	    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
 	                Connection con = dataSource.getConnection()) {
 	
@@ -2309,7 +2371,69 @@ public class StarterRunner {
     }
     
     public void executeduedatenotification(LSOrdernotification objNotification, HikariConfig configuration) throws ParseException, InterruptedException, SQLException {
-    	if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false) {
+    	
+    	LSlogilablimsorderdetail order = null;
+    	LSlogilabprotocoldetail protocolorder = null;
+    	
+    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
+                Connection con = dataSource.getConnection()) {
+
+    		if(objNotification.getScreen().equals("sheetorder")) {
+	    		String orderobj = "SELECT * FROM lslogilablimsorderdetail WHERE batchcode=?";
+	       	    try (PreparedStatement pst = con.prepareStatement(orderobj)) {
+	                
+	            	 pst.setLong(1, objNotification.getBatchcode());
+	              //  pst.setTimestamp(2, new Timestamp(gettoDate.getTime()));
+	
+	                try (ResultSet rs = pst.executeQuery()) {
+	                    while (rs.next()) {
+	                    	order = mapResultSetToLslogilabOrder(rs);
+	                     
+	                    }
+	                } catch (SQLException e) {
+		                e.printStackTrace(); // Consider logging this properly
+		            }	    		
+	                orderobj="";
+	       	     }
+    		}else {
+	       	    
+	       	 String protoobj = "SELECT * FROM lslogilabprotocoldetail WHERE protocolordercode=?";
+	    	    try (PreparedStatement pst = con.prepareStatement(protoobj)) {
+	             
+	         	 pst.setLong(1, objNotification.getBatchcode());
+	           //  pst.setTimestamp(2, new Timestamp(gettoDate.getTime()));
+	
+	             try (ResultSet rs = pst.executeQuery()) {
+	                 while (rs.next()) {
+	                	 protocolorder = mapResultSetToOrderLSlogilabprotocoldetail(rs);
+	                  
+	                 }
+	             } catch (SQLException e) {
+		                e.printStackTrace(); // Consider logging this properly
+		            }	    		
+	             
+	    	     }
+	    	    protoobj="";
+    		}
+	    	   
+	    	    con.close();
+    	}
+    	
+    	int cancel;
+    	int approvelstatus;
+    	int completed;
+    	
+    	if(order==null) {
+    		 cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
+    		 approvelstatus = protocolorder.getApprovelstatus()== null ? 0 :protocolorder.getApprovelstatus();
+    		 completed=protocolorder.getCompletedtimestamp() == null ? 0 : 1;
+    	}else {
+    	   cancel = order.getOrdercancell() == null ? 0 : order.getOrdercancell();
+    	   approvelstatus = order.getApprovelstatus()== null ? 0 :order.getApprovelstatus();
+    	   completed=order.getCompletedtimestamp() == null ? 0 : 1;
+    	}
+    	
+    	if(completed ==0 && (cancel == 0) && (approvelstatus != 3)){
 	    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
 	                Connection con = dataSource.getConnection()) {
 	
@@ -2408,7 +2532,68 @@ public class StarterRunner {
     
 }
     public void executeoverduenotification(LSOrdernotification objNotification, HikariConfig configuration) throws ParseException, SQLException, InterruptedException {
-    	if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false) {
+
+    	LSlogilablimsorderdetail order = null;
+    	LSlogilabprotocoldetail protocolorder = null;
+    	
+    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
+                Connection con = dataSource.getConnection()) {
+    		if(objNotification.getScreen().equals("sheetorder")) {
+
+	    		String orderobj = "SELECT * FROM lslogilablimsorderdetail WHERE batchcode=?";
+	       	    try (PreparedStatement pst = con.prepareStatement(orderobj)) {
+	                
+	            	 pst.setLong(1, objNotification.getBatchcode());
+	              //  pst.setTimestamp(2, new Timestamp(gettoDate.getTime()));
+	
+	                try (ResultSet rs = pst.executeQuery()) {
+	                    while (rs.next()) {
+	                    	order = mapResultSetToLslogilabOrder(rs);
+	                     
+	                    }
+	                } catch (SQLException e) {
+		                e.printStackTrace(); // Consider logging this properly
+		            }	    		
+	                orderobj="";
+	       	     }
+    		}else {  
+	       	    
+	       	 String protoobj = "SELECT * FROM lslogilabprotocoldetail WHERE protocolordercode=?";
+	    	    try (PreparedStatement pst = con.prepareStatement(protoobj)) {
+	             
+	         	 pst.setLong(1, objNotification.getBatchcode());
+	           //  pst.setTimestamp(2, new Timestamp(gettoDate.getTime()));
+	
+	             try (ResultSet rs = pst.executeQuery()) {
+	                 while (rs.next()) {
+	                	 protocolorder = mapResultSetToOrderLSlogilabprotocoldetail(rs);
+	                  
+	                 }
+	             } catch (SQLException e) {
+		                e.printStackTrace(); // Consider logging this properly
+		            }	    		
+	             
+	    	     }
+	    	    protoobj="";
+    		}
+	    	    con.close();
+	    	}
+    	
+    	int cancel;
+    	int approvelstatus;
+    	int completed;
+    	
+    	if(order==null) {
+    		 cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
+    		 approvelstatus = protocolorder.getApprovelstatus()== null ? 0 :protocolorder.getApprovelstatus();
+    		 completed=protocolorder.getCompletedtimestamp() == null ? 0 : 1;
+    	}else {
+    	   cancel = order.getOrdercancell() == null ? 0 : order.getOrdercancell();
+    	   approvelstatus = order.getApprovelstatus()== null ? 0 :order.getApprovelstatus();
+    	   completed=order.getCompletedtimestamp() == null ? 0 : 1;
+    	}
+    	
+    	if(completed ==0 && (cancel == 0) && (approvelstatus != 3)){
 	    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
 	                Connection con = dataSource.getConnection()) {
 	

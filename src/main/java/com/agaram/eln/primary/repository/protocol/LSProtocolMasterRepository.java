@@ -353,10 +353,10 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			List<LSprotocolmastertest> lsfiletest2, int m, Integer usercode, int n, int o, int p,
 			List<LSprotocolmastertest> lsfiletest3, int q, List<Integer> lstteammap2, int r, int s, int t);
 
-	List<LSprotocolmaster> findByLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
-			List<LSprotocolmastertest> lsfiletest, int i, List<Integer> lstteammap, int j, int k,
-			List<LSprotocolmastertest> lsfiletest2, int l, int m, Integer usercode, int n, int o, int p,
-			List<LSprotocolmastertest> lsfiletest3, int q, List<Integer> lstteammap2, int r, int s, int t);
+//	List<LSprotocolmaster> findByLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
+//			List<LSprotocolmastertest> lsfiletest, int i, List<Integer> lstteammap, int j, int k,
+//			List<LSprotocolmastertest> lsfiletest2, int l, int m, Integer usercode, int n, int o, int p,
+//			List<LSprotocolmastertest> lsfiletest3, int q, List<Integer> lstteammap2, int r, int s, int t);
 
 	List<LSprotocolmaster> findByProtocolmastercodeNotAndRetirestatusAndProtocolmasternameIgnoreCase(
 			int protocolmastercode, int i, String pname);

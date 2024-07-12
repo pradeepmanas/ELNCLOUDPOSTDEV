@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -73,6 +74,31 @@ public class ReportDesignerStructure {
 	
 	@Transient
 	private LSuserMaster lsuserMaster;
+	
+	@Transient
+	private String filefor;
+	
+	
+	@Transient
+	private Integer templatetype;
+
+
+	public Integer getTemplatetype() {
+		return templatetype;
+	}
+
+	public void setTemplatetype(Integer templatetype) {
+		this.templatetype = templatetype;
+	}
+
+
+	public String getFilefor() {
+		return filefor;
+	}
+
+	public void setFilefor(String filefor) {
+		this.filefor = filefor;
+	}
 
 	public Long getDirectorycode() {
 		return directorycode;

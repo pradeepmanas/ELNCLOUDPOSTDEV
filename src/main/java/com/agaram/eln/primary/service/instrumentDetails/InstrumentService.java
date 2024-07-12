@@ -849,18 +849,18 @@ public class InstrumentService {
 					autoorder.get(0).setAutocreatedate(futureDate);
 				} else {
 
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(currentdate);
-					calendar.add(Calendar.HOUR_OF_DAY, (autoorder.get(0).getInterval()));
-					Date futureDate = calendar.getTime();
-					autoorder.get(0).setAutocreatedate(futureDate);
-
 //					Calendar calendar = Calendar.getInstance();
 //					calendar.setTime(currentdate);
-//					// calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
-//					calendar.add(Calendar.MINUTE, (4));
+//					calendar.add(Calendar.HOUR_OF_DAY, (autoorder.get(0).getInterval()));
 //					Date futureDate = calendar.getTime();
 //					autoorder.get(0).setAutocreatedate(futureDate);
+
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(currentdate);
+					// calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
+					calendar.add(Calendar.MINUTE, (15));
+					Date futureDate = calendar.getTime();
+					autoorder.get(0).setAutocreatedate(futureDate);
 				}
 
 				autoorder.get(0).setRegcode(null);
@@ -8385,7 +8385,7 @@ public class InstrumentService {
 				lstorder.addAll(lstorderobj);
 
 				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeOrderByBatchcodeDesc(
+						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrderByBatchcodeDesc(
 								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype, Directory_Code,
 								2, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,
 								Directory_Code, 3, fromdate, todate, objorder.getLstuserMaster(),
@@ -8413,7 +8413,7 @@ public class InstrumentService {
 								objorder.getLsuserMaster()));
 
 				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeOrderByBatchcodeDesc(
+						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrderByBatchcodeDesc(
 								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype, Directory_Code,
 								2, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,
 								Directory_Code, 3, objorder.getLsuserMaster(), fromdate, todate,
@@ -8842,16 +8842,16 @@ public class InstrumentService {
 					}).flatMap(List::stream).collect(Collectors.toList());
 			lstorder.addAll(lstorderobj);
 
-			if (objorder.getLstuserMaster().size() == 0) {
+			if (objorder.getLstuserMaster() == null || objorder.getLstuserMaster().size() == 0) {
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrderByProtocolordercodeDesc(
+						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrderByProtocolordercodeDesc(
 								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,
 								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
 								objorder.getOrderflag(), protocoltype, Directory_Code, 3, objorder.getLsuserMaster(),
 								fromdate, todate, objorder.getOrderflag(), protocoltype));
 			} else {
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrderByProtocolordercodeDesc(
+						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrderByProtocolordercodeDesc(
 								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,
 								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
 								objorder.getOrderflag(), protocoltype, Directory_Code, 3, fromdate, todate, userlist,
@@ -8983,7 +8983,7 @@ public class InstrumentService {
 					}).flatMap(List::stream).collect(Collectors.toList());
 			lstorder.addAll(lstorderobj);
 
-			if (objorder.getLstuserMaster().size() == 0) {
+			if (objorder.getLstuserMaster() == null ||objorder.getLstuserMaster().size() == 0) {
 				lstorder.addAll(LSlogilabprotocoldetailRepository
 						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
 								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype, 1,
@@ -10257,6 +10257,19 @@ public class InstrumentService {
 		logiobj.get(0).setCanuserprocess(false);
 		
 		lslogilablimsorderdetailRepository.save(logiobj.get(0));
+		
+		String screen="Sheet Order";
+		String Notification = "SENDFORAPPROVEL";
+		
+		LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
+		LSuserMaster notifyto = logiobj.get(0).getAssignedto();
+		try {
+			sendnotification(logiobj.get(0),Notification,screen,notifyto,notifyfrom);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return logiobj.get(0);
 	}
 
@@ -10275,7 +10288,9 @@ public class InstrumentService {
 			logiobj.get(0).setCompletedtimestamp(commonfunction.getCurrentUtcTime());
 			
 			String Notification = "REJECTALERT";
-			sendnotification(logiobj.get(0),Notification,screen);
+			LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
+			LSuserMaster notifyto = logiobj.get(0).getAssignedto();
+			sendnotification(logiobj.get(0),Notification,screen,notifyto,notifyfrom);
 
 		} else if (objdir.getApprovelaccept().equals("2")) {
 			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
@@ -10283,15 +10298,19 @@ public class InstrumentService {
 			logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
 			
 			String Notification = "RETURNALERT";
+			LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
+			LSuserMaster notifyto = logiobj.get(0).getAssignedto();
 			
-			sendnotification(logiobj.get(0),Notification,screen);
+			sendnotification(logiobj.get(0),Notification,screen,notifyto,notifyfrom);
 			//logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
 		} else {
 
 			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
 			
 			String Notification = "APPROVEALERT";
-			sendnotification(logiobj.get(0),Notification,screen);
+			LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
+			LSuserMaster notifyto = logiobj.get(0).getAssignedto();
+			sendnotification(logiobj.get(0),Notification,screen,notifyto,notifyfrom);
 			
 		}
 		lslogilablimsorderdetailRepository.save(logiobj);
@@ -10303,12 +10322,12 @@ public class InstrumentService {
 	}
 	
 	@SuppressWarnings("unlikely-arg-type")
-	public void sendnotification(LSlogilablimsorderdetail objdir,String Notification,String screen) throws ParseException {
+	public void sendnotification(LSlogilablimsorderdetail objdir,String Notification,String screen,LSuserMaster notifyfrom,LSuserMaster notifyto) throws ParseException {
 		
 		LSnotification LSnotification = new LSnotification();
 		
 		String Details = "{\"ordercode\" :\"" + objdir.getBatchcode() + "\",\"order\" :\""
-				+ objdir.getBatchid()  + "\",\"user\":\"" + objdir.getLsuserMaster().getUsername()
+				+ objdir.getBatchid()  + "\",\"user\":\"" + objdir.getLsuserMaster().getUsername() + "\",\"notifyto\":\"" + objdir.getAssignedto().getUsername()
 				+ "\"}";
 				
 		LSnotification.setIsnewnotification(1);
@@ -10316,8 +10335,8 @@ public class InstrumentService {
 		LSnotification.setNotificationdate(commonfunction.getCurrentUtcTime());
 		LSnotification.setNotificationdetils(Details);
 		LSnotification.setNotificationpath(screen.equals("Sheet Order") ? "/registertask" : "/Protocolorder");
-		LSnotification.setNotifationfrom(objdir.getLsuserMaster());
-		LSnotification.setNotifationto(objdir.getAssignedto());
+		LSnotification.setNotifationfrom(notifyfrom);
+		LSnotification.setNotifationto(notifyto);
 		LSnotification.setRepositorycode(0);
 		LSnotification.setRepositorydatacode(0);
 		LSnotification.setNotificationfor(1);

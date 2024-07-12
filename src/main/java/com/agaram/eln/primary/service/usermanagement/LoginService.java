@@ -717,14 +717,38 @@ public class LoginService {
 	public LSuserMaster UpdatePassword(LoggedUser objuser) {
 		LSuserMaster objExitinguser = new LSuserMaster();
 		String username = objuser.getsUsername();
+		
 		LSSiteMaster objsiteobj = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
-		objExitinguser = lSuserMasterRepository.findByusernameIgnoreCaseAndLssitemaster(username, objsiteobj);
+		List<LSMultisites> objformultisite = LSMultisitesRepositery.findByLssiteMaster(objsiteobj);
+		List<Integer> usercode = objformultisite.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
+		List<LSuserMaster> userobj = lSuserMasterRepository
+				.findByUsernameIgnoreCaseAndUsercodeInAndLoginfromAndUserretirestatusNot(username, usercode, "0", 1);
+		LSSiteMaster[] tempobj = { null };
+		LSSiteMaster[] multisitelogin = { null };
+		if (!userobj.isEmpty()) {
+			userobj.forEach(items -> {
+				items.getLsmultisites().forEach(values -> {
+
+					if (values.getLssiteMaster().getSitecode() == Integer.parseInt(objuser.getsSiteCode())) {
+						tempobj[0] = items.getLssitemaster();
+						multisitelogin[0] = values.getLssiteMaster();
+						items.setLssitemaster(values.getLssiteMaster());
+					}
+				});
+			});
+			objExitinguser = userobj.get(0);
+		}
+	
+		
+		//objExitinguser = lSuserMasterRepository.findByusernameIgnoreCaseAndLssitemaster(username, objsiteobj);
 		List<LSPasswordHistoryDetails> listofpwd = new ArrayList<LSPasswordHistoryDetails>();
 		LSPasswordHistoryDetails objectpwd = new LSPasswordHistoryDetails();
 		List<LSPasswordHistoryDetails> result = new ArrayList<LSPasswordHistoryDetails>();
-		LSPasswordPolicy passHistorycount = LSPasswordPolicyRepository
+		LSPasswordPolicy passHistorycount = null ;
+		if(objExitinguser != null) {
+			passHistorycount = LSPasswordPolicyRepository
 				.findByLssitemaster(objExitinguser.getLssitemaster());
-
+		}
 		listofpwd = LSPasswordHistoryDetailsRepository
 				.findTop5ByAndLsusermasterInOrderByPasswordcodeDesc(objExitinguser);
 
@@ -839,6 +863,7 @@ public class LoginService {
 			objExitinguser.getObjResponse().setInformation("ID_INVALID");
 			objExitinguser.getObjResponse().setStatus(false);
 		}
+		
 		return objExitinguser;
 	}
 
@@ -2135,7 +2160,31 @@ private void scheduleoverdueNotification(LSOrdernotification objNotification , l
 private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
 
 public void duedatenotification(LSOrdernotification objNotification) throws ParseException {
-	if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false){
+	
+	LSOrdernotification notobj = lsordernotificationrepo.findByBatchcode(objNotification.getBatchcode());	
+	LSlogilablimsorderdetail order = null;
+	LSlogilabprotocoldetail protocolorder = null;
+	
+	if(objNotification.getScreen().equals("sheetorder")) {
+	    order = lslogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeDesc(objNotification.getBatchcode());
+	}else {
+	    protocolorder = lslogilabprotocoldetailRepository.findByProtocolordercode(objNotification.getBatchcode());
+	}
+	
+	int cancel;
+	int approvelstatus;
+	
+	if(order==null) {
+		 cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
+		 approvelstatus = protocolorder.getApprovelstatus()== null ? 0 :protocolorder.getApprovelstatus();
+	}else {
+	   cancel = order.getOrdercancell() == null ? 0 : order.getOrdercancell();
+	   approvelstatus = order.getApprovelstatus()== null ? 0 :order.getApprovelstatus();
+	}
+	 
+	if((notobj.getIscompleted() == null || notobj.getIscompleted() == false) && 
+			(cancel == 0) && (approvelstatus != 3)){
+		
 		LSuserMaster LSuserMaster = new LSuserMaster();
 		LSuserMaster.setUsercode(objNotification.getUsercode());
 		
@@ -2184,7 +2233,32 @@ public void duedatenotification(LSOrdernotification objNotification) throws Pars
 }
 
 public void overduenotification(LSOrdernotification objNotification) throws ParseException {
-	if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false){
+	
+	LSOrdernotification notobj = lsordernotificationrepo.findByBatchcode(objNotification.getBatchcode());	
+	LSlogilablimsorderdetail order = null;
+	LSlogilabprotocoldetail protocolorder = null;
+	
+	if(objNotification.getScreen().equals("sheetorder")) {
+	    order = lslogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeDesc(objNotification.getBatchcode());
+	}else {
+	    protocolorder = lslogilabprotocoldetailRepository.findByProtocolordercode(objNotification.getBatchcode());
+	}
+	
+	int cancel;
+	int approvelstatus;
+	
+	if(order==null) {
+		 cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
+		 approvelstatus = protocolorder.getApprovelstatus()== null ? 0 :protocolorder.getApprovelstatus();
+	}else {
+	   cancel = order.getOrdercancell() == null ? 0 : order.getOrdercancell();
+	   approvelstatus = order.getApprovelstatus()== null ? 0 :order.getApprovelstatus();
+	}
+	 
+	 
+	if((notobj.getIscompleted() == null || notobj.getIscompleted() == false) && 
+			(cancel == 0) && (approvelstatus != 3)){
+	
 		LSuserMaster LSuserMaster = new LSuserMaster();
 		LSuserMaster.setUsercode(objNotification.getUsercode());
 		
@@ -2274,7 +2348,32 @@ public Notification notifyoverduedays(LSOrdernotification objNotification) throw
 }
 		@SuppressWarnings("deprecation")
 public void cautiondatenotification(LSOrdernotification objNotification) throws ParseException {
-		if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false){
+			
+		LSOrdernotification notobj = lsordernotificationrepo.findByBatchcode(objNotification.getBatchcode());	
+		LSlogilablimsorderdetail order = null;
+		LSlogilabprotocoldetail protocolorder = null;
+			
+		if(objNotification.getScreen().equals("sheetorder")) {
+		    order = lslogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeDesc(objNotification.getBatchcode());
+		}else {
+			protocolorder = lslogilabprotocoldetailRepository.findByProtocolordercode(objNotification.getBatchcode());
+		}
+			
+		int cancel;
+		int approvelstatus;
+			
+		if(order==null) {
+			cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
+	        approvelstatus = protocolorder.getApprovelstatus()== null ? 0 :protocolorder.getApprovelstatus();
+		}else {
+		    cancel = order.getOrdercancell() == null ? 0 : order.getOrdercancell();
+			approvelstatus = order.getApprovelstatus()== null ? 0 :order.getApprovelstatus();
+		}
+			 
+		 
+		if((notobj.getIscompleted() == null || notobj.getIscompleted() == false) && 
+				(cancel == 0) && (approvelstatus != 3)){
+			
 			LSuserMaster LSuserMaster = new LSuserMaster();
 			LSuserMaster.setUsercode(objNotification.getUsercode());
 			

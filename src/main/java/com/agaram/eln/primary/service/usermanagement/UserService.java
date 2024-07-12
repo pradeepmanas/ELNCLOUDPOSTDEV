@@ -309,7 +309,24 @@ public class UserService {
 //		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1,
 //				objusergroup.getLssitemaster());
 	}
+	
+	public List<LSuserMaster> GetUsersregister(LSuserMaster objusergroup) {
 
+//		if (objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
+//
+////			return lsuserMasterRepository.findByUserretirestatusNotOrderByCreateddateDesc(1);
+//			return lsuserMasterRepository.findAllByOrderByCreateddateDesc();
+//		}
+
+		List<LSMultisites> obj = LSMultisitesRepositery.findByLssiteMaster(objusergroup.getLssitemaster());
+		List<Integer> usercode = obj.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
+		return lsuserMasterRepository.findByUsercodeInAndUserretirestatusNot(usercode, 1);
+//		return lsuserMasterRepository.findByLssitemasterOrderByCreateddateDesc(objusergroup.getLssitemaster());
+
+//		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1,
+//				objusergroup.getLssitemaster());
+	}
+	
 	public List<LSuserMaster> GetUsersOnsite(LSSiteMaster objclass) {
 		if (objclass.getObjsilentaudit() != null) {
 			objclass.getObjsilentaudit().setTableName("LSuserMaster");

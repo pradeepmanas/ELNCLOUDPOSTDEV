@@ -1,14 +1,17 @@
 package com.agaram.eln.primary.model.reports.reportdesigner;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -33,6 +36,40 @@ public class Reporttemplate {
 
 	@ManyToOne
 	private LSuserMaster modifiedby;
+	
+	@ManyToOne
+	private LSuserMaster approvedby;
+	
+//	@OneToMany(mappedBy = "reporttemplate", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany
+	@JoinColumn(name="templatecode")
+    private List<ReportTemplateMapping> reportTemplateMappings;
+
+	public LSuserMaster getApprovedby() {
+		return approvedby;
+	}
+
+	public List<ReportTemplateMapping> getReportTemplateMappings() {
+		return reportTemplateMappings;
+	}
+
+	public void setReportTemplateMappings(List<ReportTemplateMapping> reportTemplateMappings) {
+		this.reportTemplateMappings = reportTemplateMappings;
+	}
+
+	public void setApprovedby(LSuserMaster approvedby) {
+		this.approvedby = approvedby;
+	}
+
+	private Date completeddate;
+	
+	public Date getCompleteddate() {
+		return completeddate;
+	}
+
+	public void setCompleteddate(Date completeddate) {
+		this.completeddate = completeddate;
+	}
 
 	@ManyToOne
 	private LSSiteMaster sitemaster;
@@ -40,7 +77,71 @@ public class Reporttemplate {
 	private Integer viewoption;
 
 	private Integer templatetype;
+	
+	
+	private String fileuid;
 
+	private String fileuri;
+	
+	private Integer containerstored;
+	
+	private String fileextention;
+	
+	@Transient 
+	private Response responce;
+	
+//	@Transient
+//	List<LSprojectmaster> lstproject;
+//
+//	public List<LSprojectmaster> getLstproject() {
+//		return lstproject;
+//	}
+//
+//	public void setLstproject(List<LSprojectmaster> lstproject) {
+//		this.lstproject = lstproject;
+//	}
+
+	public Response getResponce() {
+		return responce;
+	}
+
+	public void setResponce(Response responce) {
+		this.responce = responce;
+	}
+
+	public String getFileextention() {
+		return fileextention;
+	}
+
+	public void setFileextention(String fileextention) {
+		this.fileextention = fileextention;
+	}
+
+	public Integer getContainerstored() {
+		return containerstored;
+	}
+
+	public void setContainerstored(Integer containerstored) {
+		this.containerstored = containerstored;
+	}
+
+	public String getFileuid() {
+		return fileuid;
+	}
+
+	public void setFileuid(String fileuid) {
+		this.fileuid = fileuid;
+	}
+
+	public String getFileuri() {
+		return fileuri;
+	}
+
+	public void setFileuri(String fileuri) {
+		this.fileuri = fileuri;
+	}
+
+	
 	@Transient
 	private Response response;
 
@@ -49,6 +150,18 @@ public class Reporttemplate {
 
 	@Transient
 	private String templatecontent;
+	
+	@Transient
+	private Integer ismultitenant;
+
+	public Integer getIsmultitenant() {
+		return ismultitenant;
+	}
+
+	public void setIsmultitenant(Integer ismultitenant) {
+		this.ismultitenant = ismultitenant;
+	}
+
 	
 	private Integer reporttype;	
 

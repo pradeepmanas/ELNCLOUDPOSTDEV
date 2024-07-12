@@ -206,11 +206,11 @@
 			<version>5.5.13.1</version>
 		</dependency>	
 			<!-- Aspose Library -->	
-	   <dependency>
+	   <!-- <dependency>
             <groupId>com.aspose</groupId>
             <artifactId>aspose-pdf</artifactId>
             <version>22.12</version>
-        </dependency> 
+        </dependency>  -->
 		<dependency>
 		    <groupId>com.google.code.gson</groupId>
 		    <artifactId>gson</artifactId>
@@ -230,7 +230,7 @@
 		     <artifactId>jogl-all-main</artifactId>
 		     <version>2.0-rc11</version>
 		 </dependency> -->
-		 <dependency>
+		 <!-- <dependency>
 			<groupId>com.aspose</groupId>
 			<artifactId>aspose-words</artifactId>
 			<version>22.11</version>
@@ -241,13 +241,13 @@
 			<artifactId>aspose-words</artifactId>
 			<version>22.11</version>
 			<classifier>javadoc</classifier>
-		</dependency>
+		</dependency> -->
 
-		<dependency>
+		<!-- <dependency>
 	        <groupId>e-iceblue</groupId>
 	        <artifactId>spire.doc</artifactId>
 	        <version>12.5.1</version>
-	    </dependency>
+	    </dependency> -->
 
         <dependency>
 	        <groupId>com.syncfusion</groupId>
@@ -385,34 +385,34 @@
 	</build>
 	
 <repositories>   
-	<repository>
+	<!-- <repository>
 		<id>spring-snapshots</id>
 		<name>Spring Snapshots</name>
 		<url>https://repo.spring.io/snapshot</url>
 		<releases>
 			<enabled>false</enabled>
 		</releases>
-	</repository>
+	</repository> -->
 		
-	<repository>
+	<!-- <repository>
             <id>AsposeJavaAPI</id>
             <name>Aspose Java API</name>
             <url>https://releases.aspose.com/java/repo/</url>
-    </repository>
+    </repository> -->
     <repository>
 	 <id>imageio-webp</id>
             <name>Image io webp</name>
             <url>https://repo1.maven.org/maven2/</url>
     </repository>
     
-    <repository>
+    <!-- <repository>
         <snapshots>
             <enabled>false</enabled>
         </snapshots>
         <id>central</id>
         <name>libs-release</name>
         <url>http://maven.aspose.com/artifactory/libs-release</url>
-    </repository>
+    </repository> -->
     
     <repository>
          <id>GroupDocsJavaAPI</id>
@@ -426,13 +426,13 @@
          <url>https://artifact.groupdocs.com/repo/</url>
     </repository>
 
-       <repository>
+       <!-- <repository>
     
         <snapshots />
         <id>snapshots</id>
         <name>libs-snapshot</name>
         <url>http://maven.aspose.com/artifactory/libs-snapshot</url>
-      </repository>
+      </repository> -->
     
 		<repository>
            <id>jogamp-remote</id>

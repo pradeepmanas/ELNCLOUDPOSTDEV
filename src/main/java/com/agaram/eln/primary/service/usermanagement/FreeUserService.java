@@ -296,7 +296,7 @@ public class FreeUserService {
 			LSusersteam team = new LSusersteam();
 			team.setCreateby(objuser);
 			team.setModifiedby(objuser);
-			team.setTeamname("team");
+			team.setTeamname("Project Team A");
 			team.setLssitemaster(site);
 			team.setCreatedate(commonfunction.getCurrentUtcTime());
 			team.setModifieddate(commonfunction.getCurrentUtcTime());
@@ -319,7 +319,7 @@ public class FreeUserService {
 			project.setLsusermaster(objuser);
 			project.setLsusersteam(team);
 			project.setModifiedby(objuser);
-			project.setProjectname("project");
+			project.setProjectname("Sample Project");
 			project.setProjectstatus("A");
 			project.setStatus(1);
 

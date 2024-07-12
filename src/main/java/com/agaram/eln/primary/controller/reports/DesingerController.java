@@ -36,7 +36,7 @@ public class DesingerController {
 	}
 	
 	@RequestMapping(value = "/gettemplatedata")
-	protected Cloudreporttemplate gettemplatedata(@RequestBody Reporttemplate template) throws ServletException, IOException {
+	protected Reporttemplate gettemplatedata(@RequestBody Reporttemplate template) throws ServletException, IOException {
 		return desingerservice.gettemplatedata(template);
 	}
 	
@@ -63,5 +63,20 @@ public class DesingerController {
 	@RequestMapping("/getordersonreport")
 	public Map<String,Object> getordersonreport (@RequestBody Map<String, Object> objMap){
 		return desingerservice.getordersonreport(objMap);
+	}
+	
+	@RequestMapping("/approvereporttemplate")
+	public Reporttemplate approvereporttemplate(@RequestBody Reporttemplate objdir)throws Exception {
+		return desingerservice.approvereporttemplate(objdir);
+	}
+	
+	@RequestMapping("/gettemplateonfoldermapping")
+	public List<Reporttemplate> gettemplateonfoldermapping(@RequestBody ReportDesignerStructure objdir)throws Exception {
+		return desingerservice.gettemplateonfoldermapping(objdir);
+	}
+	
+	@RequestMapping("/updatereporttemplatemapping")
+	public Reporttemplate updatereporttemplatemapping(@RequestBody Reporttemplate objdir)throws Exception {
+		return desingerservice.updatereporttemplatemapping(objdir);
 	}
 }

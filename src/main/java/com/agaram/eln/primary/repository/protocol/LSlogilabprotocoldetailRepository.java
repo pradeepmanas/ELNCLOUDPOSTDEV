@@ -1612,19 +1612,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 			Date fromdate2, Date todate2, List<Elnmaterial> currentChunk);
 
 
-	List<Logilabprotocolorders>  findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrderByProtocolordercodeDesc(
-			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype,
-			List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
-			String orderflag2, Integer protocoltype2, List<Long> directory_Code3, int k, Date fromdate3, Date todate3,
-			List<Integer> userlist, String orderflag3, Integer protocoltype3);
-
-
-	List<Logilabprotocolorders>  findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeOrderByProtocolordercodeDesc(
-			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype,
-			List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
-			String orderflag2, Integer protocoltype2, List<Long> directory_Code3, int k, LSuserMaster lsuserMaster2,
-			Date fromdate3, Date todate3, String orderflag3, Integer protocoltype3);
-
 
 	List<Logilabprotocolorders> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
 			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype, int j,
@@ -1674,6 +1661,21 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	Collection<? extends Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
 			String orderflag, List<LSprojectmaster> lstproject, Integer protocoltype, Date fromdate, Date todate);
 
+	List<LSlogilabprotocoldetail> findByRepeatAndAutoregistercountGreaterThan(boolean b, int i);
+
+
+	List<Logilabprotocolorders> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype,
+			List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
+			String orderflag2, Integer protocoltype2, List<Long> directory_Code3, int k, LSuserMaster lsuserMaster2,
+			Date fromdate3, Date todate3, String orderflag3, Integer protocoltype3);
+
+
+	List<Logilabprotocolorders> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype,
+			List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
+			String orderflag2, Integer protocoltype2, List<Long> directory_Code3, int k, Date fromdate3, Date todate3,
+			List<Integer> userlist, String orderflag3, Integer protocoltype3);
 
 	}
 

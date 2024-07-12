@@ -128,6 +128,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 	                "/Login/verifyRecaptcha",	                
 	                "/DashBoardDemo/Getdashboardordercount",
 	                "/DashBoardDemo/Getdashboardorders","/documenteditor/api/wordeditor/Import","/smartdevice/Getdata","/documenteditor/Import"
+	                ,"/documenteditor/api/wordeditor/RestrictEditing"
 	                )
 	        
 	        		

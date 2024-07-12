@@ -454,5 +454,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest2, int n, int o, int p, int q, int r,
 			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest3, int s, int t, int u, int v, int w);
 
+	public List<LSfile> findByFilecodeOrderByFilecodeDesc(Integer filecode);
+
 
 }

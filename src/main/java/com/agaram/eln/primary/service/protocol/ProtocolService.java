@@ -2996,20 +2996,20 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 						        autocode.setAutocreatedate(futureDate);
 						 }else {
 								
-							 Calendar calendar = Calendar.getInstance();
-						        calendar.setTime(currentdate);
-						        calendar.add(Calendar.HOUR_OF_DAY,(autocode.getInterval()));
-						        Date futureDate = calendar.getTime();   
-						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
-						        autocode.setAutocreatedate(futureDate);
-							 
-							 
 //							 Calendar calendar = Calendar.getInstance();
 //						        calendar.setTime(currentdate);
-//						       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
-//						        calendar.add(Calendar.MINUTE , (4));
+//						        calendar.add(Calendar.HOUR_OF_DAY,(autocode.getInterval()));
 //						        Date futureDate = calendar.getTime();   
+//						        //autoordersfilter.get(0).setAutocreatedate(futureDate);
 //						        autocode.setAutocreatedate(futureDate);
+							 
+							 
+							 Calendar calendar = Calendar.getInstance();
+						        calendar.setTime(currentdate);
+						       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
+						        calendar.add(Calendar.MINUTE , (15));
+						        Date futureDate = calendar.getTime();   
+						        autocode.setAutocreatedate(futureDate);
 						        
 						 }
 						
@@ -7329,19 +7329,19 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 				List<LSuserMaster> lstteamuser = LSuserteammappingRepositoryObj.getLsuserMasterByTeamcode(lstteammap);
 				lstteamuser.add(objtest.getObjLoggeduser());
 				lstteammap = lstteamuser.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
-				lsfiles = LSProtocolMasterRepositoryObj
-						.findByLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
-								lsfiletest, 1, lstteammap, 1, 0, 1, lsfiletest, 1,
-								objtest.getObjLoggeduser().getUsercode(), 2, 0, 1, lsfiletest, 1, lstteammap, 3, 0, 1);
-
 			} else {
 				lstteammap.add(objtest.getObjLoggeduser().getUsercode());
-				lsfiles = LSProtocolMasterRepositoryObj
-						.findByLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
-								lsfiletest, 1, lstteammap, 1, 1, lsfiletest, 1, 0,
-								objtest.getObjLoggeduser().getUsercode(), 2, 0, 1, lsfiletest, 1, lstteammap, 3, 0, 1);
+//				lsfiles = LSProtocolMasterRepositoryObj
+//						.findByLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
+//								lsfiletest, 1, lstteammap, 1, 1, lsfiletest, 1, 0,
+//								objtest.getObjLoggeduser().getUsercode(), 2, 0, 1, lsfiletest, 1, lstteammap, 3, 0, 1);
 
 			}
+			
+			lsfiles = LSProtocolMasterRepositoryObj
+					.findByLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
+							lsfiletest, 1, lstteammap, 1, 0, 1, lsfiletest, 1,
+							objtest.getObjLoggeduser().getUsercode(), 2, 0, 1, lsfiletest, 1, lstteammap, 3, 0, 1);
 			// lsfiles = LSProtocolMasterRepositoryObj.findByLstestInAndStatus(lsfiletest,
 			// 1);
 		}
@@ -9089,9 +9089,17 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		LSlogilabprotocoldetail rtnobj = LSlogilabprotocoldetailRepository
 				.findOne(protocolorders.getProtocolordercode());
 		if (!protocolorders.getIsmultitenant().equals(2) && (rtnobj != null && rtnobj.getLockeduser() == null) && protocolorders.getComment().equals("Order_Lock")) {
-			rtnobj.setLockeduser(protocolorders.getLockeduser());
-			rtnobj.setLockedusername(protocolorders.getLockedusername());
-			rtnobj.setActiveuser(protocolorders.getActiveuser());
+			if(!protocolorders.getIsmultitenant().equals(2)) {
+				rtnobj.setLockeduser(protocolorders.getLockeduser());
+				rtnobj.setLockedusername(protocolorders.getLockedusername());	
+				rtnobj.setActiveuser(protocolorders.getActiveuser());
+				rtnobj.setComment("Order_Lock");
+			}else {
+				rtnobj.setLockeduser(null);
+				rtnobj.setLockedusername(null);
+				rtnobj.setActiveuser(null);	
+				rtnobj.setComment("Order_Unlock");
+			}			
 			LsActiveWidgets lsActiveWidgets = new LsActiveWidgets();
 			lsActiveWidgets.setActivewidgetsdetails(rtnobj.getProtoclordername());
 			lsActiveWidgets.setActivewidgetsdetailscode(rtnobj.getProtocolordercode());
@@ -9101,7 +9109,6 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 			lsActiveWidgets.setActivedatatimestamp(commonfunction.getCurrentUtcTime());
 			lsActiveWidgetsRepository.save(lsActiveWidgets);
 			LSlogilabprotocoldetailRepository.save(rtnobj);
-			rtnobj.setComment("Order_Lock");
 		} else if (rtnobj.getLockeduser() != null && protocolorders.getLockeduser().equals(rtnobj.getLockeduser())
 				&& protocolorders.getComment().equals("Order_Lock")) {
 			rtnobj.setComment("IDS_SAME_USER_OPEN");
@@ -9484,6 +9491,18 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		logiobj.setSentforapprovel(objdir.getSentforapprovel());
 		logiobj.setApprovelaccept(objdir.getApprovelaccept());
 		LSlogilabprotocoldetailRepository.save(logiobj);
+		
+		String screen="Sheet Order";
+		String Notification = "SENDFORAPPROVEL";
+		
+		LSuserMaster notifyfrom = logiobj.getLsuserMaster();
+		LSuserMaster notifyto = logiobj.getAssignedto();
+		try {
+			sendnotification(logiobj,Notification,screen,notifyto,notifyfrom);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return logiobj;
 	}
 
@@ -9513,26 +9532,32 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 			logiobj.setCompletedtimestamp(commonfunction.getCurrentUtcTime());
 
 			String Notification = "REJECTALERT";
-			sendnotification(logiobj,Notification,screen);
+			LSuserMaster notifyfrom = logiobj.getLsuserMaster();
+			LSuserMaster notifyto = logiobj.getAssignedto();
+			sendnotification(logiobj,Notification,screen,notifyto,notifyfrom);
 			
 		} else if (objdir.getApprovelaccept().equals("2")) {
 			logiobj.setApprovelaccept(objdir.getApprovelaccept());
 			logiobj.setSentforapprovel(objdir.getSentforapprovel());
 			
             String Notification = "RETURNALERT";	
-			sendnotification(logiobj,Notification,screen);
+            LSuserMaster notifyfrom = logiobj.getLsuserMaster();
+			LSuserMaster notifyto = logiobj.getAssignedto();
+			sendnotification(logiobj,Notification,screen,notifyto,notifyfrom);
 		} else {
 
 			logiobj.setApprovelaccept(objdir.getApprovelaccept());
 			String Notification = "APPROVEALERT";
-			sendnotification(logiobj,Notification,screen);
+			LSuserMaster notifyfrom = logiobj.getLsuserMaster();
+			LSuserMaster notifyto = logiobj.getAssignedto();
+			sendnotification(logiobj,Notification,screen,notifyto,notifyfrom);
 		}
 		LSlogilabprotocoldetailRepository.save(logiobj);
 		return logiobj;
 	}
 
 	@SuppressWarnings("unlikely-arg-type")
-	public void sendnotification(LSlogilabprotocoldetail objdir,String Notification,String screen) throws ParseException {
+	public void sendnotification(LSlogilabprotocoldetail objdir,String Notification,String screen,LSuserMaster notifyto,LSuserMaster notifyfrom) throws ParseException {
 		
 		LSnotification LSnotification = new LSnotification();
 		
@@ -9545,8 +9570,8 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		LSnotification.setNotificationdate(commonfunction.getCurrentUtcTime());
 		LSnotification.setNotificationdetils(Details);
 		LSnotification.setNotificationpath(screen.equals("Sheet Order") ? "/registertask" : "/Protocolorder");
-		LSnotification.setNotifationfrom(objdir.getLsuserMaster());
-		LSnotification.setNotifationto(objdir.getAssignedto());
+		LSnotification.setNotifationfrom(notifyfrom);
+		LSnotification.setNotifationto(notifyto);
 		LSnotification.setRepositorycode(0);
 		LSnotification.setRepositorydatacode(0);
 		LSnotification.setNotificationfor(1);

@@ -4,9 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +18,8 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
-import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
-import com.agaram.eln.primary.model.protocols.LSprotocolfiles;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
-import com.agaram.eln.primary.model.protocols.LSprotocolstep;
+import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
@@ -29,8 +27,8 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationRepository;
-import com.agaram.eln.primary.repository.cloudProtocol.LSprotocolstepInformationRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
+import com.agaram.eln.primary.repository.reports.reportdesigner.ReporttemplateRepository;
 //import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
@@ -65,7 +63,10 @@ public class Commonservice {
 	@Autowired
 	private LSProtocolMasterRepository lsProtocolMasterRepository;
 	
-	@Async
+	@Autowired
+	public ReporttemplateRepository reporttemplateRepository;
+	
+//	@Async
 	public CompletableFuture<List<LSfile>> updatefilecontentcheck(String Content, LSfile objfile, Boolean Isnew) throws IOException {
 				
 		if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
@@ -99,6 +100,25 @@ public class Commonservice {
 		List<LSfile> obj =new ArrayList<>();
 		obj.add(objfile);
 		return CompletableFuture.completedFuture(obj);
+
+	}
+	
+//	@Async
+	public Reporttemplate uploadToAzureBlobStorage (byte[] documentBytes, Reporttemplate objFile,String uniqueDocumentName) throws IOException {
+	    if (objFile.getIsmultitenant() == 1 || objFile.getIsmultitenant() == 2) {
+	        String tenant = TenantContext.getCurrentTenant();
+	        if (objFile.getIsmultitenant() == 2) {
+	            tenant = "freeusers";
+	        }
+//	        String uniqueDocumentName = Documentname + "_" + UUID.randomUUID().toString() + ".json";
+	        Map<String, Object> objMap = objCloudFileManipulationservice.storecloudReportfile(documentBytes, tenant + "reportdocument", uniqueDocumentName);
+	        String fileUUID = (String) objMap.get("blobName");
+	        String fileURI = objMap.get("blobUri").toString();
+	        objFile.setFileuid(fileUUID);
+	        objFile.setFileuri(fileURI);
+	        objFile.setContainerstored(1);
+	    }
+	    return objFile;
 
 	}
 	

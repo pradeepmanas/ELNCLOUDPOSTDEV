@@ -1234,3 +1234,76 @@ CREATE TABLE IF NOT EXISTS public.Lstagfortemplate
 WITH (OIDS = FALSE)TABLESPACE pg_default;
 
 ALTER TABLE public.Lstagfortemplate OWNER to postgres;
+
+ALTER TABLE IF Exists Reporttemplate ADD Column IF NOT EXISTS  fileuid character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE IF Exists Reporttemplate ADD Column IF NOT EXISTS  fileuri character varying(255) COLLATE pg_catalog."default";
+
+
+ALTER TABLE IF Exists Reporttemplate ADD Column IF NOT EXISTS    containerstored integer;
+
+ALTER TABLE IF Exists Reporttemplate ADD Column IF NOT EXISTS  fileextention character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE IF Exists Reporttemplate ADD Column IF NOT EXISTS   approvedby_usercode integer;
+
+DO
+$do$
+DECLARE
+  multiusergroupcount INTEGER := 0;
+BEGIN
+  SELECT count(*)
+  INTO multiusergroupcount
+  FROM information_schema.table_constraints 
+  WHERE constraint_name = 'fkm2lrbimlxl8xpuiwsn1wjckva'
+    AND table_name = 'reporttemplate';
+
+  IF multiusergroupcount = 0 THEN
+    ALTER TABLE ONLY reporttemplate
+    ADD CONSTRAINT fkm2lrbimlxl8xpuiwsn1wjckva FOREIGN KEY (approvedby_usercode) REFERENCES lsusermaster (usercode);
+  END IF;
+END
+$do$;
+
+ALTER TABLE IF Exists Reporttemplate ADD Column IF NOT EXISTS completeddate timestamp without time zone;
+
+
+ DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'reporttemplatemapping_templatemapid_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE reporttemplatemapping_templatemapid_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+
+CREATE TABLE IF NOT EXISTS public.reporttemplatemapping
+(
+    templatemapid bigint NOT NULL DEFAULT nextval('reporttemplatemapping_templatemapid_seq'::regclass),
+    templatecode bigint,
+    lsusersteam_teamcode integer,
+    CONSTRAINT reporttemplatemapping_pkey PRIMARY KEY (templatemapid),
+    CONSTRAINT fk63td7sw75singebqfyskunwer FOREIGN KEY (lsusersteam_teamcode)
+        REFERENCES public.lsusersteam (teamcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fklr0cs90si471e6rmigg0odops FOREIGN KEY (templatecode)
+        REFERENCES public.reporttemplate (templatecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.reporttemplatemapping
+    OWNER to postgres;

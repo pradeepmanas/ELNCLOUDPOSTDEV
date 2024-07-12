@@ -2,7 +2,6 @@ package com.agaram.eln.primary.controller.syncwordconverter;
 
 import java.util.Map;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.syncwordconverter.CustomParameter;
 import com.agaram.eln.primary.model.syncwordconverter.CustomRestrictParameter;
 import com.agaram.eln.primary.model.syncwordconverter.SaveParameter;
@@ -66,9 +66,12 @@ public class DocumenteditorController {
 	
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping("/api/wordeditor/Save")
-	public void save(@RequestBody SaveParameter data) throws Exception {
-		documenteditorService.save(data);
+	public Reporttemplate save(@RequestBody Reporttemplate data) throws Exception {
+		return documenteditorService.save(data);
 	}
+//	public void save(@RequestBody SaveParameter data) throws Exception {
+//		documenteditorService.save(data);
+//	}
 	
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping("/api/wordeditor/ExportSFDT")
