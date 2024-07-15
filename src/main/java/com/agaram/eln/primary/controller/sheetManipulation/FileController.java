@@ -348,6 +348,12 @@ public class FileController {
 		fileService.updateTagKeys(lsfile);
 	}
 	
+	@PostMapping("/updateTagForTemplate")
+	public void updateTagForTemplate(@RequestBody LSfile lsfile)
+	{
+		fileService.updateTagForTemplate(lsfile);
+	}
+	
 	@PostMapping("/onGetResultTagFromTemplate")
 	public Map<String, Object> onGetResultTagFromTemplate(@RequestBody LSfile objOrder) {
 		return fileService.onGetResultTagFromTemplate(objOrder);

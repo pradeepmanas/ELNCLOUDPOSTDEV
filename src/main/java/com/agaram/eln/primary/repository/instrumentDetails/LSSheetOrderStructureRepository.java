@@ -27,8 +27,7 @@ public interface LSSheetOrderStructureRepository extends JpaRepository<LSSheetOr
 
 	LSSheetOrderStructure findByParentdircodeAndDirectoryname(Long parentdircode, String directoryname);
 
-	LSSheetOrderStructure findByDirectorycodeAndParentdircodeAndDirectorynameNot(Long directorycode, Long parentdircode,
-			String directoryname);
+
 
 	List<LSSheetOrderStructure> findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(LSSiteMaster site,Integer siteviewopt,LSuserMaster createduser,Integer userviewopt);
 	
@@ -37,8 +36,6 @@ public interface LSSheetOrderStructureRepository extends JpaRepository<LSSheetOr
 
 
 	LSSheetOrderStructure findByParentdircodeAndDirectorynameIgnoreCase(Long parentdircode, String directoryname);
-
-	LSSheetOrderStructure findByDirectorynameIgnoreCaseAndParentdircode(String directoryname, Long parentdircode);
 
 
 	List<LSSheetOrderStructure> findBySitemasterAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrCreatedbyAndViewoptionAndDirectorynameLikeIgnoreCaseOrderByDirectorycode(
@@ -69,6 +66,15 @@ public interface LSSheetOrderStructureRepository extends JpaRepository<LSSheetOr
 
 	List<LSSheetOrderStructure> findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrderByDirectorycode(
 			LSSiteMaster lssitemaster, int i, List<Long> immutableNegativeValues, LSuserMaster lsuserMaster, int j);
+
+	LSSheetOrderStructure findByDirectorycodeAndParentdircodeAndDirectorynameNotAndSitemaster(Long directorycode,
+			Long parentdircode, String directoryname, LSSiteMaster sitemaster);
+
+	LSSheetOrderStructure findByDirectorynameIgnoreCaseAndParentdircodeAndSitemaster(String directoryname,
+			Long parentdircode, LSSiteMaster sitemaster);
+
+	LSSheetOrderStructure findByDirectorycodeAndParentdircodeAndDirectorynameNot(Long directorycode, Long parentdircode,
+			String directoryname);
 
 
 

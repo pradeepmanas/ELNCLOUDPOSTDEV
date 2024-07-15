@@ -3007,7 +3007,7 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 							 Calendar calendar = Calendar.getInstance();
 						        calendar.setTime(currentdate);
 						       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
-						        calendar.add(Calendar.MINUTE , (15));
+						        calendar.add(Calendar.MINUTE , (2));
 						        Date futureDate = calendar.getTime();   
 						        autocode.setAutocreatedate(futureDate);
 						        
@@ -3434,7 +3434,7 @@ public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabpro
 				
 				lsautoregisterrepo.save(lSlogilabprotocoldetail.getLsautoregisterorder());
 				lSlogilabprotocoldetail.setLsautoregister(lSlogilabprotocoldetail.getLsautoregisterorder());
-				ValidateProtocolAutoRegistration(lSlogilabprotocoldetail);
+				//ValidateProtocolAutoRegistration(lSlogilabprotocoldetail);
 			}
 			
 			if (lSlogilabprotocoldetail.getProtocolordercode() != null) {

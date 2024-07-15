@@ -1762,7 +1762,7 @@ public class FileService {
 
 	public void ValidateNotification(Notification objnotification) throws ParseException {
 		NotificationRepository.save(objnotification);
-		scheduleNotification(objnotification);
+		//scheduleNotification(objnotification);
 	}
 	
 	public void scheduleNotification(Notification objnotification) throws ParseException {
@@ -2278,5 +2278,11 @@ public class FileService {
 		mapRtnObj.put("result", LSresultfortemplateRepository.findById(objOrder.getFilecode()));
 		mapRtnObj.put("tag", LstagfortemplateRepository.findById(objOrder.getFilecode()));
 		return mapRtnObj;
+	}
+
+	public void updateTagForTemplate(LSfile lsfile) {
+		LSfile objLSfile = lSfileRepository.findByfilecode(lsfile.getFilecode());
+		objLSfile.setTagsheet(1);
+		lSfileRepository.save(objLSfile);
 	}
 }

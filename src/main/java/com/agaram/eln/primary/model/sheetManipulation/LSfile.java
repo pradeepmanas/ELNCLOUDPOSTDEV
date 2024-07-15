@@ -125,7 +125,14 @@ public class LSfile {
 	private Integer retirestatus;
 	
 	private Integer resultsheet;
+	private Integer tagsheet;
 	
+	public Integer getTagsheet() {
+		return tagsheet;
+	}
+	public void setTagsheet(Integer tagsheet) {
+		this.tagsheet = tagsheet;
+	}
 	public Integer getResultsheet() {
 		return resultsheet;
 	}

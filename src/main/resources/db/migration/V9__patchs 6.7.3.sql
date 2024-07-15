@@ -1307,3 +1307,7 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.reporttemplatemapping
     OWNER to postgres;
+
+ALTER TABLE IF Exists lsfile ADD Column IF NOT EXISTS tagsheet integer;
+
+update lsfile set tagsheet = 0 where tagsheet is null;
