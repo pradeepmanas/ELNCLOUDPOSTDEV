@@ -207,6 +207,12 @@ public class UserController {
 		return userService.GetUsers(objusermaster);
 	}
 	
+	@PostMapping("/GetUsersregister")
+	public List<LSuserMaster> GetUsersregister(@RequestBody LSuserMaster objusermaster)throws Exception
+	{
+		return userService.GetUsersregister(objusermaster);
+	}
+	
 	@PostMapping("/GetUsersOnsite")
 	public List<LSuserMaster> GetUsersOnsite(@RequestBody LSSiteMaster objclass)throws Exception
 	{

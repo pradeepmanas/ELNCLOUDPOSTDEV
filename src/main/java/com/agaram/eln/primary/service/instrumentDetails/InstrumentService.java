@@ -1435,6 +1435,11 @@ public class InstrumentService {
 
 		// if(objNotification.getIscompleted() == null ||
 		// objNotification.getIscompleted() == false){
+		if (scheduledTasks.containsKey(Integer.parseInt(objlogilaborderdetail.getBatchcode().toString()))) {
+            System.out.println("Task already scheduled for batch ID: " + Integer.parseInt(objlogilaborderdetail.getBatchcode().toString()));
+            return;
+        }
+		
 		TimerTask task = new TimerTask() {
 			@SuppressWarnings("unlikely-arg-type")
 			public void run() {
@@ -10402,6 +10407,19 @@ public class InstrumentService {
 		List<ProjectOrTaskOrMaterialView> rtnobj = lsprojectmasterRepository
 				.getProjectOrTaskOrMaterialSearchBased(Searchkey, sitecode);
 		return rtnobj;
+	}
+	
+	public Map<String, Object> Getordersonfiles(LSfile[] objfiles)
+	{
+		List<LSfile> files = Arrays.asList(objfiles);
+		Map<String, Object> mapRtnObj = new HashMap<String, Object>();
+		List<Logilaborders> orders = lslogilablimsorderdetailRepository.findByLsfileIn(files);
+		List<Long> batchcode = orders.stream().map(Logilaborders::getBatchcode)
+				.collect(Collectors.toList());
+		mapRtnObj.put("orders", orders);
+		mapRtnObj.put("results", lsresultforordersRepository.findByBatchcodeInOrderByIdDesc(batchcode));
+		mapRtnObj.put("tags", lsresulttagsRepository.findByOrderidInOrderByIdDesc(batchcode));
+		return mapRtnObj;
 	}
 
 }

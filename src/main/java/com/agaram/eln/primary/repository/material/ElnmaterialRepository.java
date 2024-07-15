@@ -3,7 +3,10 @@ package com.agaram.eln.primary.repository.material;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.MaterialCategory;
@@ -55,5 +58,8 @@ public interface ElnmaterialRepository extends JpaRepository<Elnmaterial, Intege
 	List<Elnmaterial> findByNsitecode(Integer sitecode);
 
 	List<Elnmaterial> findByNmaterialcodeIn(List<Integer> nmaterialcodes);
+	@Transactional
+	@Query(value = "select * from elnmaterial where smaterialname = ?1 and nsitecode = ?2",nativeQuery = true)
+	Elnmaterial getMaterialDetails(String material_name, Number sitecode);
 
 }

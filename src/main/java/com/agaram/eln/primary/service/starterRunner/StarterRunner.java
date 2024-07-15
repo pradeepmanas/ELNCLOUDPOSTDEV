@@ -1,6 +1,15 @@
 package com.agaram.eln.primary.service.starterRunner;
 
 import java.io.BufferedReader;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Map;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -870,9 +879,6 @@ public class StarterRunner {
                con.close();
     	 }
     	if(orderobj.getLsautoregisterorders() != null) { 
-//	    	Date Autoregdate = objlsauto.getAutocreatedate();
-//	    	Instant auto = Autoregdate.toInstant();
-//	        LocalDateTime autoTime = LocalDateTime.ofInstant(auto, ZoneId.systemDefault());
 	        LocalDateTime currentTime = LocalDateTime.now();
 	
 	        if (autoTime.isAfter(currentTime)) {
@@ -1227,14 +1233,21 @@ public class StarterRunner {
     }
 
     private void scheduleForAutoRegOrders(LSlogilablimsorderdetail orderobj, long delay, HikariConfig configuration,Date currentdate) {
+    	Set<Integer> runningTasks = new HashSet<>();
     	
     	int batchcode = orderobj.getBatchcode().intValue();
 
-    	if (scheduledTasks.containsKey(batchcode)) {
-            System.out.println("Task already scheduled for batch ID: " + batchcode);
-            return;
-        }
+//    	if (scheduledTasks.containsKey(batchcode)) {
+//            System.out.println("Task already scheduled for batch ID: " + batchcode);
+//            return;
+//        }
     	
+    	 synchronized (runningTasks) {
+    		 if (runningTasks.contains(batchcode)) {
+                 System.out.println("Task already scheduled or running for batch ID: " + batchcode);
+                 return;
+             }
+    		 
     	if((orderobj.getRepeat()!=null || orderobj.getRepeat() != false) && orderobj.getLsautoregisterorders()!=null) {
     		TimerTask task = new TimerTask() {
 	            @SuppressWarnings("unlikely-arg-type")
@@ -1249,14 +1262,19 @@ public class StarterRunner {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}finally {
-						scheduledTasks.remove(batchcode);
-					}
+                        synchronized (runningTasks) {
+                            runningTasks.remove(batchcode);
+                        }
+                        scheduledTasks.remove(batchcode);
+                    }
 	            }
 	        };
+	        runningTasks.add(batchcode);
 	        Timer timer = new Timer();
 	        timer.schedule(task, delay);
 	        scheduledTasks.put(batchcode, task);
     	}
+      }
   
     }
     
@@ -1367,7 +1385,7 @@ public class StarterRunner {
 				    Calendar calendar = Calendar.getInstance();
 			        calendar.setTime(currentdate);
 			       // calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
-			        calendar.add(Calendar.MINUTE , (15));
+			        calendar.add(Calendar.MINUTE , (2));
 			        Date futureDate = calendar.getTime();   
 			        autoobj.setAutocreatedate(futureDate);
 			 }
@@ -2073,35 +2091,47 @@ public class StarterRunner {
            con.close();
     	}
     }
+    public LSlogilablimsorderdetail getcurrentsheetrecord(HikariConfig configuration) throws SQLException{
+    	LSlogilablimsorderdetail objorder = null;
+    	
+    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
+                Connection con = dataSource.getConnection()) {
+
+    		String oldrecord = "SELECT * FROM lslogilablimsorderdetail WHERE batchcode=?";
+       	    try (PreparedStatement pst = con.prepareStatement(oldrecord)) {
+                
+            	 pst.setLong(1, objorder.getBatchcode());
+              //  pst.setTimestamp(2, new Timestamp(gettoDate.getTime()));
+
+                try (ResultSet rs = pst.executeQuery()) {
+                    while (rs.next()) {
+                    	 objorder = mapResultSetToLslogilabOrder(rs);
+                     
+                    }
+                } catch (SQLException e) {
+	                e.printStackTrace(); // Consider logging this properly
+	            }	    		
+                
+       	     }
+       	 oldrecord="";
+    	}
+		return objorder;
+    	   
+    }
     public void ExecuteAutoRegistration(LSlogilablimsorderdetail objorder , HikariConfig configuration,Date currentdate)throws ParseException, SQLException, IOException, InterruptedException {
-    	if((objorder.getRepeat()!=null || objorder.getRepeat() != false) && objorder.getLsautoregisterorders()!=null) {
-    		//LSworkflow lsworkflow = null;
+    	
     		LSlogilablimsorderdetail objorder1 = null;
     		
 	    	try (HikariDataSource dataSource = new HikariDataSource(configuration);
 	                Connection con = dataSource.getConnection()) {
 	
-	    		String oldrecord = "SELECT * FROM lslogilablimsorderdetail WHERE batchcode=?";
-           	    try (PreparedStatement pst = con.prepareStatement(oldrecord)) {
-                    
-                	 pst.setLong(1, objorder.getBatchcode());
-                  //  pst.setTimestamp(2, new Timestamp(gettoDate.getTime()));
+	    		objorder1=getcurrentsheetrecord(configuration);
+           	 
+		        objorder1.setLsuserMaster(objorder.getLsuserMaster());
+		        objorder1.setLsautoregisterorders(objorder.getLsautoregisterorders());
+           	    	
 
-                    try (ResultSet rs = pst.executeQuery()) {
-                        while (rs.next()) {
-                        	 objorder1 = mapResultSetToLslogilabOrder(rs);
-                         
-                        }
-                    } catch (SQLException e) {
-		                e.printStackTrace(); // Consider logging this properly
-		            }	    		
-                    
-           	     }
-		           	objorder1.setLsuserMaster(objorder.getLsuserMaster());
-		           	objorder1.setLsautoregisterorders(objorder.getLsautoregisterorders());
-           	    	oldrecord="";
-
-	    	
+           	    if((objorder1.getRepeat()!=null || objorder1.getRepeat() != false) && objorder1.getLsautoregisterorders()!=null) {
 					if(objorder1.getLsautoregisterorders()!= null) {	
 						LsAutoregister auditregdetails =  getautoregisterdetails(objorder1.getLsautoregisterorders(),configuration,currentdate,"Sheet_Order");
 						objorder1.setLsautoregisterorders(auditregdetails);		

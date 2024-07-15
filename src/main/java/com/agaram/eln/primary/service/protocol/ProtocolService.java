@@ -3824,6 +3824,10 @@ private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
 private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , long delay) {
 	
 	//if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false){
+	if (scheduledTasks.containsKey(Integer.parseInt(objprotocolorder.getProtocolordercode().toString()))) {
+        System.out.println("Task already scheduled for batch ID: " + Integer.parseInt(objprotocolorder.getProtocolordercode().toString()));
+        return;
+    }
 		TimerTask task = new TimerTask() {
 			@SuppressWarnings("unlikely-arg-type")
 			public void run() {

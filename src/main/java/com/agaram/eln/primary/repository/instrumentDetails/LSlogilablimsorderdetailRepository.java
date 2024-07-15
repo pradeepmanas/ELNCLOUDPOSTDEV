@@ -2909,5 +2909,5 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 			Date fromdate3, Date todate3, String orderflag3, Integer filetype3);
 
 	
-	
+	List<Logilaborders> findByLsfileIn(List<LSfile> files);
 	}

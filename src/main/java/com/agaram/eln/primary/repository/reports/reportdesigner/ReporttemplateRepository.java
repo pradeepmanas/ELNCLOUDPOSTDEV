@@ -16,8 +16,6 @@ public interface ReporttemplateRepository extends JpaRepository<Reporttemplate, 
 
 	public Optional<Reporttemplate> findByTemplatenameIgnoreCase(String templatename);
 
-	Reporttemplate findByTemplatenameIgnoreCaseAndSitemaster(String templatename, LSSiteMaster sitemaster);
-
 	public List<Reporttemplate> findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrderByTemplatecodeDesc(
 			LSSiteMaster sitemaster, int i, Integer templatetype, List<LSuserMaster> lstuserMaster, Date fromdate,
 			Date todate, LSSiteMaster sitemaster2, int j, Integer templatetype2, LSuserMaster createdby, Date fromdate2,
@@ -30,6 +28,8 @@ public interface ReporttemplateRepository extends JpaRepository<Reporttemplate, 
 			int k, Integer templatetype3, List<LSuserMaster> lstuserMaster2);
 
 	public Reporttemplate findByTemplatecode(long l);
+
+	public Reporttemplate findTopByTemplatenameIgnoreCaseAndSitemaster(String templatename, LSSiteMaster sitemaster);
 
 
 }

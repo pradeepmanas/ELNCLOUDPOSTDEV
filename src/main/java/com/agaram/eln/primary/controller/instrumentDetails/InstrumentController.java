@@ -52,6 +52,7 @@ import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
 import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
@@ -1384,5 +1385,11 @@ public class InstrumentController {
 	public List<ProjectOrTaskOrMaterialView>  Suggesionforfolder(@RequestBody Map<String,Object> searchobj){
 		return instrumentService.Suggesionforfolder(searchobj);
 		
+	}
+	
+	@RequestMapping("/Getordersonfiles")
+	public Map<String, Object> Getordersonfiles(@RequestBody LSfile[] objfiles)throws Exception
+	{
+		return instrumentService.Getordersonfiles(objfiles);
 	}
 }

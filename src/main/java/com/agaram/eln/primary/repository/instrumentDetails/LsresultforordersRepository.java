@@ -18,4 +18,5 @@ public interface LsresultforordersRepository  extends JpaRepository<Lsresultforo
 	List<Lsresultfororders> getResultOrders(List<Integer> sampleFileCodeList1);
 
 	List<Lsresultfororders> findByBatchcode(Long batchcode);
+	List<Lsresultfororders> findByBatchcodeInOrderByIdDesc(List<Long> batchcode);
 }

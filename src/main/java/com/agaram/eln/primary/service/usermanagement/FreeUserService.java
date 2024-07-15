@@ -20,6 +20,7 @@ import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.getmasters.Usermaster;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.Elnmaterial;
+import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.Section;
@@ -49,6 +50,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.model.usermanagement.Lsusersettings;
+import com.agaram.eln.primary.repository.material.ElnmaterialInventoryRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
@@ -77,6 +79,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.repository.usermanagement.LsusersettingsRepository;
 import com.agaram.eln.primary.service.JWTservice.JwtUserDetailsService;
+import com.agaram.eln.primary.service.material.MaterialInventoryService;
 import com.agaram.eln.primary.service.protocol.Commonservice;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
@@ -86,6 +89,8 @@ import com.google.gson.Gson;
 
 @Service
 public class FreeUserService {
+	@Autowired
+	private MaterialInventoryService elnMaterialInventoryService;
 	
 	@Autowired
 	private LSuserMasterRepository lsuserMasterRepository;
@@ -184,6 +189,9 @@ public class FreeUserService {
 	private ElnmaterialRepository ElnmaterialRepository;
 	
 	@Autowired
+	ElnmaterialInventoryRepository elnmaterialInventoryReppository;
+	
+	@Autowired
 	private LSPasswordPolicyRepository LSPasswordPolicyRepository;
 	
 	@SuppressWarnings("unchecked")
@@ -267,31 +275,31 @@ public class FreeUserService {
 			test1.setCreateby(objuser);
 			test1.setCreatedate(commonfunction.getCurrentUtcTime());
 			test1.setStatus(1);
-			test1.setTestname("task 1");
+			test1.setTestname("Sample Task");
 			test1.setTeststatus("A");
 			test1.setLssitemaster(site);
 			test1.setModifiedby(objuser);
 			lStestmasterlocalRepository.save(test1);
 
-			LStestmasterlocal test2 = new LStestmasterlocal();
-			test2.setCreateby(objuser);
-			test2.setCreatedate(commonfunction.getCurrentUtcTime());
-			test2.setStatus(1);
-			test2.setTestname("task 2");
-			test2.setTeststatus("A");
-			test2.setLssitemaster(site);
-			test2.setModifiedby(objuser);
-			lStestmasterlocalRepository.save(test2);
-
-			LStestmasterlocal test3 = new LStestmasterlocal();
-			test3.setCreateby(objuser);
-			test3.setCreatedate(commonfunction.getCurrentUtcTime());
-			test3.setStatus(1);
-			test3.setTestname("task 3");
-			test3.setTeststatus("A");
-			test3.setLssitemaster(site);
-			test3.setModifiedby(objuser);
-			lStestmasterlocalRepository.save(test3);
+//			LStestmasterlocal test2 = new LStestmasterlocal();
+//			test2.setCreateby(objuser);
+//			test2.setCreatedate(commonfunction.getCurrentUtcTime());
+//			test2.setStatus(1);
+//			test2.setTestname("task 2");
+//			test2.setTeststatus("A");
+//			test2.setLssitemaster(site);
+//			test2.setModifiedby(objuser);
+//			lStestmasterlocalRepository.save(test2);
+//
+//			LStestmasterlocal test3 = new LStestmasterlocal();
+//			test3.setCreateby(objuser);
+//			test3.setCreatedate(commonfunction.getCurrentUtcTime());
+//			test3.setStatus(1);
+//			test3.setTestname("task 3");
+//			test3.setTeststatus("A");
+//			test3.setLssitemaster(site);
+//			test3.setModifiedby(objuser);
+//			lStestmasterlocalRepository.save(test3);
 
 			LSusersteam team = new LSusersteam();
 			team.setCreateby(objuser);
@@ -900,6 +908,83 @@ public class FreeUserService {
 				});
 
 				System.out.println("--------------material insert end ----------------");
+
+				System.out.println("--------------ElnmaterialInventory insert start ----------------");
+				
+				List<Map<String, Object>> ElnmaterialInventory = (List<Map<String, Object>>) jsonData.get("ElnmaterialInventory");
+				String sformattype = "{yyyy}/{99999}";
+				ElnmaterialInventory.stream().forEach(types -> {
+					types.forEach((key, value) -> {
+						ArrayList<String> objvalue = (ArrayList<String>) value;
+						// 0 cat
+						// 1 mtype
+						// 2 unit
+						// 3 section
+						// 4 value
+						String material_name = key;
+						if (key.equals("Starch_0")) {
+							material_name = key.toString().replace("_0", "").trim();
+						}
+						// find names
+						Elnmaterial objMaterial = ElnmaterialRepository.getMaterialDetails(material_name,sitecode);
+						MaterialCategory objMaterialcat = MaterialCategoryRepository
+								.getMaterialCatgeoryDetails(objvalue.get(0).toString(), sitecode);
+						MaterialType objMaterialType = MaterialTypeRepository
+								.getMaterialTypeDetails(objvalue.get(1).toString(), sitecode);
+						Unit objUnit = UnitRepository.getUnitDetails(objvalue.get(2).toString(), sitecode);
+						Section objSection = SectionRepository.getSectionDetails(objvalue.get(3).toString(), sitecode);
+						String quantity = objvalue.get(4).toString();						// insert ElnmaterialInventory insert DB
+						ElnmaterialInventory objelninv = new ElnmaterialInventory();
+						try {
+							objelninv.setCreateddate(commonfunction.getCurrentUtcTime());
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						objelninv.setExpirydate(null);
+						objelninv.setIsexpiry(false);
+						objelninv.setJsondata("{}");
+						objelninv.setManufacdate(null);
+						objelninv.setNqtynotification((double) 0);
+						objelninv.setNsitecode((Integer) sitecode);
+						objelninv.setNstatus(1);
+						objelninv.setNtransactionstatus(28);
+						objelninv.setOpendate(null);
+						objelninv.setReceiveddate(null);
+						objelninv.setRemarks(null);
+						objelninv.setSavailablequantity(quantity);
+						objelninv.setSbatchno(null);
+						//to do						
+						objelninv.setSinventoryid("");
+						objelninv.setSreceivedquantity(quantity);
+						objelninv.setCreatedby(objuser);
+						objelninv.setManufacturer(null);
+						objelninv.setMaterial(objMaterial);
+						objelninv.setMaterialcategory(objMaterialcat);
+						objelninv.setMaterialgrade(null);
+						objelninv.setMaterialtype(objMaterialType);
+						objelninv.setSection(objSection);
+						objelninv.setSupplier(null);
+						objelninv.setUnit(objUnit);
+						
+						elnmaterialInventoryReppository.save(objelninv);
+						String stridformat = null;
+						try {
+							stridformat = elnMaterialInventoryService.returnSubstring(objMaterialType.getSmaterialtypename()) + "/"
+									+ elnMaterialInventoryService.returnSubstring(material_name) + "/"
+									+ elnMaterialInventoryService.getfnFormat(objelninv.getNmaterialinventorycode(), sformattype);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						System.out.println(stridformat);
+						objelninv.setSinventoryid(stridformat);
+
+						elnmaterialInventoryReppository.save(objelninv);
+					});
+				});
+				
+				System.out.println("--------------ElnmaterialInventory insert end ----------------");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

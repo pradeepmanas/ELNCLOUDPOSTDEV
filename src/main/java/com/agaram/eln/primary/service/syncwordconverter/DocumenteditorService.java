@@ -18,12 +18,17 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.model.general.OrderCreation;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.syncwordconverter.CustomParameter;
@@ -44,12 +49,24 @@ import com.syncfusion.javahelper.system.collections.generic.ListSupport;
 import com.syncfusion.javahelper.system.io.StreamSupport;
 import com.syncfusion.javahelper.system.reflection.AssemblySupport;
 import com.twelvemonkeys.imageio.plugins.tiff.TIFFImageReaderSpi;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.gridfs.GridFS;
+import com.mongodb.gridfs.GridFSDBFile;
+import com.mongodb.gridfs.GridFSFile;
+import com.mongodb.gridfs.GridFSInputFile;
+
+import java.io.IOException;
+
 
 @Service
 public class DocumenteditorService {
 
 	@Autowired
 	Commonservice commonservice;
+	
+    @Autowired
+    private MongoDbFactory mongoDbFactory;
 
 	@Autowired
 	public ReporttemplateRepository reporttemplateRepository;
@@ -265,13 +282,14 @@ public class DocumenteditorService {
 				Isnew_Template = true;
 			}
 			Reporttemplate existingTemplate = new Reporttemplate();
-			String name = data.getTemplatename() + ".json";
+//			String name = data.getTemplatename() + ".json";
 			String jsonContent = convertObjectToJson(data.getTemplatecontent());
 			byte[] documentBytes = jsonContent.getBytes(StandardCharsets.UTF_8);
-			String uniqueDocumentName = name + "_" + UUID.randomUUID().toString() + ".json";
+			String uniqueDocumentName = data.getTemplatename() + "_" + UUID.randomUUID().toString() + ".json";
+			if(data.getIsmultitenant()==1) {
 			if (Isnew_Template) {
 				existingTemplate = reporttemplateRepository
-						.findByTemplatenameIgnoreCaseAndSitemaster(data.getTemplatename(), data.getSitemaster());
+						.findTopByTemplatenameIgnoreCaseAndSitemaster(data.getTemplatename(), data.getSitemaster());
 				if (existingTemplate == null) {
 					data = commonservice.uploadToAzureBlobStorage(documentBytes, data, uniqueDocumentName);
 					data.setDateCreated(commonfunction.getCurrentUtcTime());
@@ -292,6 +310,42 @@ public class DocumenteditorService {
 				
 			}
             	data.setResponce(response);
+			}else {
+				try {
+//					OrderCreation objsavefile = new OrderCreation();
+//					objsavefile.setId((long) objfile.getFilesamplecode());
+//					objsavefile.setContentvalues(contentValues);
+//					objsavefile.setContentparameter(contentParams);
+//
+//					Query query = new Query(Criteria.where("id").is(objsavefile.getId()));
+//
+//					Boolean recordcount = mongoTemplate.exists(query, OrderCreation.class);
+//
+//					if (!recordcount) {
+//						mongoTemplate.insert(objsavefile);
+//					} else {
+//						Update update = new Update();
+//						update.set("contentvalues", contentValues);
+//						update.set("contentparameter", contentParams);
+//
+//						mongoTemplate.upsert(query, update, OrderCreation.class);
+//					}
+//
+//					GridFSDBFile largefile = gridFsTemplate
+//							.findOne(new Query(Criteria.where("filename").is("order_" + objfile.getFilesamplecode())));
+//					if (largefile != null) {
+//						gridFsTemplate.delete(new Query(Criteria.where("filename").is("order_" + objfile.getFilesamplecode())));
+//					}
+//					gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
+//							"order_" + objfile.getFilesamplecode(), StandardCharsets.UTF_16);
+//
+//					objsavefile = null;
+
+		            System.out.println("JSON file saved to GridFS with filename: " + uniqueDocumentName);
+		        } catch (Exception ex) {
+		            throw new IOException("Failed to save JSON file to GridFS: " + ex.getMessage(), ex);
+		        }
+			}
             	return data;
 		} catch (Exception ex) {
 			throw new Exception("Failed to save document: " + ex.getMessage(), ex);
