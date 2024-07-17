@@ -31,5 +31,7 @@ public interface ReporttemplateRepository extends JpaRepository<Reporttemplate, 
 
 	public Reporttemplate findTopByTemplatenameIgnoreCaseAndSitemaster(String templatename, LSSiteMaster sitemaster);
 
+	public List<Reporttemplate> findByTemplatecodeInAndTemplatetypeOrderByTemplatecodeDesc(List<Long> lstTempCode,int i);
+
 
 }

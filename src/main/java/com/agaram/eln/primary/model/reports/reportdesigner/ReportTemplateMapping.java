@@ -5,9 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 
 
@@ -23,6 +23,17 @@ public class ReportTemplateMapping {
 
 	@ManyToOne
 	private LSusersteam lsusersteam;
+	
+	@ManyToOne
+	private LSprojectmaster lsprojectmaster;
+
+	public LSprojectmaster getLsprojectmaster() {
+		return lsprojectmaster;
+	}
+
+	public void setLsprojectmaster(LSprojectmaster lsprojectmaster) {
+		this.lsprojectmaster = lsprojectmaster;
+	}
 
 	public Long getTemplatemapid() {
 		return templatemapid;

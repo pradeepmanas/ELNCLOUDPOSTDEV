@@ -493,39 +493,6 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date fromdate2, Date todate2);
 
 
-	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-			Long directorycode, int i, Date fromdate, Date todate, Long directorycode2, int j, LSuserMaster createdby,
-			Date fromdate2, Date todate2, Long directorycode3, int k, Date fromdate3, Date todate3,
-			Integer[] lstuserMaster);
-
-
-
-	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-			Long directorycode, int i, Integer protocoltype, String orderflag, int j, Date fromdate, Date todate,
-			Long directorycode2, int k, Integer protocoltype2, String orderflag2, int l, LSuserMaster createdby,
-			Date fromdate2, Date todate2, Long directorycode3, int m, Integer protocoltype3, String orderflag3, int n,
-			Date fromdate3, Date todate3, Integer[] lstuserMaster);
-
-
-	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-			Long directorycode, int i, Integer protocoltype, String orderflag, Date fromdate, Date todate,
-			Long directorycode2, int j, Integer protocoltype2, String orderflag2, LSuserMaster createdby,
-			Date fromdate2, Date todate2, Long directorycode3, int k, Integer protocoltype3, String orderflag3,
-			Date fromdate3, Date todate3, Integer[] lstuserMaster);
-
-
-	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-			Long directorycode, int i, String orderflag, int j, Date fromdate, Date todate, Long directorycode2, int k,
-			String orderflag2, int l, LSuserMaster createdby, Date fromdate2, Date todate2, Long directorycode3, int m,
-			String orderflag3, int n, Date fromdate3, Date todate3, Integer[] lstuserMaster);
-
-
-	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-			Long directorycode, int i, String orderflag, Date fromdate, Date todate, Long directorycode2, int j,
-			String orderflag2, LSuserMaster createdby, Date fromdate2, Date todate2, Long directorycode3, int k,
-			String orderflag3, Date fromdate3, Date todate3, Integer[] lstuserMaster);
-
-
 
 //	Object countByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndApprovelstatusNotAndOrdercancellIsNull(
 //			String string, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, int i);
@@ -712,50 +679,6 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	long countByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndTestcodeAndRejectedIsNull(
 			String string, Integer sitecode, Date fromdate, Date todate, LSprojectmaster lstprojectforfilter,
 			Integer testcode);
-
-
-	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			Long directorycode, int i, Date fromdate, Date todate, Long directorycode2, int j, LSuserMaster createdby,
-			Date fromdate2, Date todate2, Long directorycode3, int k, LSuserMaster createdby2, Date fromdate3,
-			Date todate3);
-
-
-	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			Long directorycode, int i, Integer protocoltype, String orderflag, int j, Date fromdate, Date todate,
-			Long directorycode2, int k, Integer protocoltype2, String orderflag2, int l, LSuserMaster createdby,
-			Date fromdate2, Date todate2, Long directorycode3, int m, Integer protocoltype3, String orderflag3, int n,
-			LSuserMaster createdby2, Date fromdate3, Date todate3);
-
-
-	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			Long directorycode, int i, Integer protocoltype, String orderflag, Date fromdate, Date todate,
-			Long directorycode2, int j, Integer protocoltype2, String orderflag2, LSuserMaster createdby,
-			Date fromdate2, Date todate2, Long directorycode3, int k, Integer protocoltype3, String orderflag3,
-			LSuserMaster createdby2, Date fromdate3, Date todate3);
-
-
-	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			Long directorycode, int i, String orderflag, int j, Date fromdate, Date todate, Long directorycode2, int k,
-			String orderflag2, int l, LSuserMaster createdby, Date fromdate2, Date todate2, Long directorycode3, int m,
-			String orderflag3, int n, LSuserMaster createdby2, Date fromdate3, Date todate3);
-
-
-	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			Long directorycode, int i, String orderflag, Date fromdate, Date todate, Long directorycode2, int j,
-			String orderflag2, LSuserMaster createdby, Date fromdate2, Date todate2, Long directorycode3, int k,
-			String orderflag3, LSuserMaster createdby2, Date fromdate3, Date todate3);
-
-
-	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-			Long directorycode, int i, Integer protocoltype, Date fromdate, Date todate, Long directorycode2, int j,
-			Integer protocoltype2, LSuserMaster createdby, Date fromdate2, Date todate2, Long directorycode3, int k,
-			Integer protocoltype3, LSuserMaster createdby2, Date fromdate3, Date todate3);
-
-
-	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-			Long directorycode, int i, Integer protocoltype, Date fromdate, Date todate, Long directorycode2, int j,
-			Integer protocoltype2, LSuserMaster createdby, Date fromdate2, Date todate2, Long directorycode3, int k,
-			Integer protocoltype3, Date fromdate3, Date todate3, Integer[] lstuserMaster);
 
 
 
@@ -1676,6 +1599,92 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 			List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
 			String orderflag2, Integer protocoltype2, List<Long> directory_Code3, int k, Date fromdate3, Date todate3,
 			List<Integer> userlist, String orderflag3, Integer protocoltype3);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+			Long directorycode, int i, Date fromdate, Date todate, Integer sitecode, Long directorycode2, int j,
+			LSuserMaster createdby, Date fromdate2, Date todate2, Integer sitecode2, Long directorycode3, int k,
+			LSuserMaster createdby2, Date fromdate3, Date todate3, Integer sitecode3);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+			Long directorycode, int i, Date fromdate, Date todate, Integer sitecode, Long directorycode2, int j,
+			LSuserMaster createdby, Date fromdate2, Date todate2, Integer sitecode2, Long directorycode3, int k,
+			Date fromdate3, Date todate3, Integer[] lstuserMaster, Integer sitecode3);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+			Long directorycode, int i, Integer protocoltype, String orderflag, int j, Date fromdate, Date todate,
+			Integer sitecode, Long directorycode2, int k, Integer protocoltype2, String orderflag2, int l,
+			LSuserMaster createdby, Date fromdate2, Date todate2, Integer sitecode2, Long directorycode3, int m,
+			Integer protocoltype3, String orderflag3, int n, LSuserMaster createdby2, Date fromdate3, Date todate3,
+			Integer sitecode3);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+			Long directorycode, int i, Integer protocoltype, String orderflag, Date fromdate, Date todate,
+			Integer sitecode, Long directorycode2, int j, Integer protocoltype2, String orderflag2,
+			LSuserMaster createdby, Date fromdate2, Date todate2, Integer sitecode2, Long directorycode3, int k,
+			Integer protocoltype3, String orderflag3, LSuserMaster createdby2, Date fromdate3, Date todate3,
+			Integer sitecode3);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+			Long directorycode, int i, Integer protocoltype, String orderflag, int j, Date fromdate, Date todate,
+			Integer sitecode, Long directorycode2, int k, Integer protocoltype2, String orderflag2, int l,
+			LSuserMaster createdby, Date fromdate2, Date todate2, Integer sitecode2, Long directorycode3, int m,
+			Integer protocoltype3, String orderflag3, int n, Date fromdate3, Date todate3, Integer[] lstuserMaster,
+			Integer sitecode3);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+			Long directorycode, int i, Integer protocoltype, String orderflag, Date fromdate, Date todate,
+			Integer sitecode, Long directorycode2, int j, Integer protocoltype2, String orderflag2,
+			LSuserMaster createdby, Date fromdate2, Date todate2, Integer sitecode2, Long directorycode3, int k,
+			Integer protocoltype3, String orderflag3, Date fromdate3, Date todate3, Integer[] lstuserMaster,
+			Integer sitecode3);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+			Long directorycode, int i, String orderflag, int j, Date fromdate, Date todate, Integer sitecode,
+			Long directorycode2, int k, String orderflag2, int l, LSuserMaster createdby, Date fromdate2, Date todate2,
+			Integer sitecode2, Long directorycode3, int m, String orderflag3, int n, LSuserMaster createdby2,
+			Date fromdate3, Date todate3, Integer sitecode3);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+			Long directorycode, int i, String orderflag, Date fromdate, Date todate, Integer sitecode,
+			Long directorycode2, int j, String orderflag2, LSuserMaster createdby, Date fromdate2, Date todate2,
+			Integer sitecode2, Long directorycode3, int k, String orderflag3, LSuserMaster createdby2, Date fromdate3,
+			Date todate3, Integer sitecode3);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+			Long directorycode, int i, String orderflag, int j, Date fromdate, Date todate, Integer sitecode,
+			Long directorycode2, int k, String orderflag2, int l, LSuserMaster createdby, Date fromdate2, Date todate2,
+			Integer sitecode2, Long directorycode3, int m, String orderflag3, int n, Date fromdate3, Date todate3,
+			Integer[] lstuserMaster, Integer sitecode3);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+			Long directorycode, int i, String orderflag, Date fromdate, Date todate, Integer sitecode,
+			Long directorycode2, int j, String orderflag2, LSuserMaster createdby, Date fromdate2, Date todate2,
+			Integer sitecode2, Long directorycode3, int k, String orderflag3, Date fromdate3, Date todate3,
+			Integer[] lstuserMaster, Integer sitecode3);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+			Long directorycode, int i, Integer protocoltype, Date fromdate, Date todate, Integer sitecode,
+			Long directorycode2, int j, Integer protocoltype2, LSuserMaster createdby, Date fromdate2, Date todate2,
+			Integer sitecode2, Long directorycode3, int k, Integer protocoltype3, LSuserMaster createdby2,
+			Date fromdate3, Date todate3, Integer sitecode3);
+
+
+	List<LSlogilabprotocoldetail> findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+			Long directorycode, int i, Integer protocoltype, Date fromdate, Date todate, Integer sitecode,
+			Long directorycode2, int j, Integer protocoltype2, LSuserMaster createdby, Date fromdate2, Date todate2,
+			Integer sitecode2, Long directorycode3, int k, Integer protocoltype3, Date fromdate3, Date todate3,
+			Integer[] lstuserMaster, Integer sitecode3);
 
 	}
 

@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,10 +40,31 @@ public class Reporttemplate {
 	@ManyToOne
 	private LSuserMaster approvedby;
 	
-//	@OneToMany(mappedBy = "reporttemplate", cascade = CascadeType.ALL, orphanRemoval = true)
-	@OneToMany
+	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name="templatecode")
     private List<ReportTemplateMapping> reportTemplateMappings;
+	
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name="templatecode")
+    private List<ReportTemplateVersion> reportTemplateVersion;
+	
+	public List<ReportTemplateVersion> getReportTemplateVersion() {
+		return reportTemplateVersion;
+	}
+
+	public void setReportTemplateVersion(List<ReportTemplateVersion> reportTemplateVersion) {
+		this.reportTemplateVersion = reportTemplateVersion;
+	}
+
+	public Integer versionno = 1;
+
+	public Integer getVersionno() {
+		return versionno;
+	}
+
+	public void setVersionno(Integer versionno) {
+		this.versionno = versionno;
+	}
 
 	public LSuserMaster getApprovedby() {
 		return approvedby;
@@ -87,8 +108,6 @@ public class Reporttemplate {
 	
 	private String fileextention;
 	
-	@Transient 
-	private Response responce;
 	
 //	@Transient
 //	List<LSprojectmaster> lstproject;
@@ -100,14 +119,6 @@ public class Reporttemplate {
 //	public void setLstproject(List<LSprojectmaster> lstproject) {
 //		this.lstproject = lstproject;
 //	}
-
-	public Response getResponce() {
-		return responce;
-	}
-
-	public void setResponce(Response responce) {
-		this.responce = responce;
-	}
 
 	public String getFileextention() {
 		return fileextention;
@@ -153,6 +164,17 @@ public class Reporttemplate {
 	
 	@Transient
 	private Integer ismultitenant;
+	
+	@Transient
+	private boolean isnewversion;
+
+	public boolean isIsnewversion() {
+		return isnewversion;
+	}
+
+	public void setIsnewversion(boolean isnewversion) {
+		this.isnewversion = isnewversion;
+	}
 
 	public Integer getIsmultitenant() {
 		return ismultitenant;

@@ -1,7 +1,6 @@
 package com.agaram.eln.primary.repository.instrumentDetails;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -91,12 +90,12 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public long countByFiletypeAndOrderflagAndLssamplefileIn(Integer filetype, String orderflag,
 			List<LSsamplefile> lssamplefile);
 
-	public List<LSlogilablimsorderdetail> findByLsprojectmasterInOrderByBatchcodeDesc(List<LSprojectmaster> lstproject);
+	//public List<LSlogilablimsorderdetail> findByLsprojectmasterInOrderByBatchcodeDesc(List<LSprojectmaster> lstproject);
 
 	public long countByLsprojectmasterInOrderByBatchcodeDesc(List<LSprojectmaster> lstproject);
 
-	public List<LSlogilablimsorderdetail> findByOrderflagAndLssamplefileInAndLsprojectmasterIn(String orderflag,
-			List<LSsamplefile> lssamplefile, List<LSprojectmaster> lstproject);
+//	public List<LSlogilablimsorderdetail> findByOrderflagAndLssamplefileInAndLsprojectmasterIn(String orderflag,
+//			List<LSsamplefile> lssamplefile, List<LSprojectmaster> lstproject);
 
 	public long countByOrderflagAndLssamplefileInAndLsprojectmasterIn(String orderflag, List<LSsamplefile> lssamplefile,
 			List<LSprojectmaster> lstproject);
@@ -2804,7 +2803,7 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 			String string, List<LSprojectmaster> lstproject, List<LSworkflow> lstworkflow, Date fromdate, Date todate,
 			LSuserMaster objuser, Date fromdate2, Date todate2);
 
-	List<LSlogilablimsorderdetail> findByLsuserMasterAndRepeat(LSuserMaster lsuserMaster, boolean b);
+//	List<LSlogilablimsorderdetail> findByLsuserMasterAndRepeat(LSuserMaster lsuserMaster, boolean b);
 
     @Transactional
 	List<LSlogilablimsorderdetail> findByBatchcodeInOrderByBatchcodeAsc(List<Long> batchcodeauto);
@@ -2880,7 +2879,10 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 	List<Logilaborders> findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String orderflag, List<LSprojectmaster> lstproject, Integer filetype, Date fromdate, Date todate);
 	
-	List<LSlogilablimsorderdetail> findByRepeatAndAutoregistercountGreaterThan(boolean b, int i);
+//	List<LSlogilablimsorderdetail> findByRepeatAndAutoregistercountGreaterThan(boolean b, int i);
+	
+	List<LSlogilablimsorderdetail> findByFiletypeAndOrderflagAndLsprojectmasterInAndApprovelstatusNotAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+			Integer filetype, String orderflag, List<LSprojectmaster> lstproject, int i, Date fromdate, Date todate);
 
 	List<Logilaborders> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrderByBatchcodeDesc(
 			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer filetype,
@@ -2895,7 +2897,7 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 			Date fromdate3, Date todate3, String orderflag3, Integer filetype3);
 
 	
-	List<Logilaborders> findByLsfileIn(List<LSfile> files);
+//	List<Logilaborders> findByLsfileIn(List<LSfile> files);
 
 	List<Logilaborders> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			Long directorycode, int i, Date fromdate, Date todate);
@@ -2925,4 +2927,7 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 			Long directorycode, int i, LSuserMaster createdby, Integer filetype, Date fromdate, Date todate,
 			Long directorycode2, int j, Integer filetype2, Date fromdate2, Date todate2,
 			List<LSuserMaster> lstuserMaster);
+
+	List<Logilaborders> findByLsfileInAndCreatedtimestampBetweenOrderByBatchcodeDesc(List<LSfile> files, Date fromdate,
+			Date todate);
 	}

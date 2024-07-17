@@ -1376,10 +1376,10 @@ public class InstrumentController {
 		return instrumentService.Getsingleorder(objorder);
 	}
 	
-	@PostMapping("/saveResulttags")
-	public void saveResulttags(@RequestBody Lsresulttags objorder)throws Exception {
-		instrumentService.saveResulttags(objorder);
-	}
+//	@PostMapping("/saveResulttags")
+//	public void saveResulttags(@RequestBody Lsresulttags objorder)throws Exception {
+//		instrumentService.saveResulttags(objorder);
+//	}
 	
 	@PostMapping("/Suggesionforfolder")
 	public List<ProjectOrTaskOrMaterialView>  Suggesionforfolder(@RequestBody Map<String,Object> searchobj){
@@ -1387,9 +1387,20 @@ public class InstrumentController {
 		
 	}
 	
+//	@RequestMapping("/Getordersonfiles")
+//	public Map<String, Object> Getordersonfiles(@RequestBody LSfile[] objfiles)throws Exception
+//	{
+//		return instrumentService.Getordersonfiles(objfiles);
+//	}
+	
 	@RequestMapping("/Getordersonfiles")
-	public Map<String, Object> Getordersonfiles(@RequestBody LSfile[] objfiles)throws Exception
+	public Map<String, Object> Getordersonfiles(@RequestBody Map<String,Object> mapObj)throws Exception
 	{
-		return instrumentService.Getordersonfiles(objfiles);
+		return instrumentService.Getordersonfiles(mapObj);
+	}
+	
+	@PostMapping("/GetOrdersbyuseronDetailview")
+	public List<LSlogilablimsorderdetail> GetOrdersbyuseronDetailview(@RequestBody LSlogilablimsorderdetail objorder)throws Exception{
+		return instrumentService.GetOrdersbyuseronDetailview(objorder);
 	}
 }

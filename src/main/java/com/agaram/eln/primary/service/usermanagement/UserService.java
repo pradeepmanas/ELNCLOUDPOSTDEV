@@ -1432,6 +1432,7 @@ public class UserService {
 	@SuppressWarnings("unused")
 	public LSuserMaster Usersendpasswormail(LSuserMaster objusermaster) throws MessagingException {
 
+
 		if (objusermaster.getIsmultitenant() != null && objusermaster.getMultitenantusercount() != null
 				&& (objusermaster.getIsmultitenant() == 1 || objusermaster.getIsmultitenant() == 2)) {
 			String password = Generatetenantpassword();
@@ -1440,23 +1441,66 @@ public class UserService {
 			objusermaster.setPassword(passwordadmin);
 			Email email = new Email();
 			email.setMailto(objusermaster.getEmailid());
-			email.setSubject("ELN User Credentials");
-
-			email.setMailcontent(
-					"<b>Dear Customer,</b><br><center><img src=\"cid:image\"  style =width:120px; height:100px border: 3px;'></center><br><br>"
-							+ "<p><p>Thanks for your interest in Logilab ELN.</p>Please use below mentioned Username and Password for your Login in ELN Application.<br><br>"
-							+ "Click the URL mentioned below to go to Logilab ELN Login page. <br><br>"
-							+ "After entered the username and click the password field, new password generation screen will appear.<br><br>"
-							+ "Paste the password in the Old Password Textbox, and then generate your new password.<br><br>"
-							+ "<b style='margin-left: 76px;'>Username:</b>\t\t " + objusermaster.getUsername()
-							+ "<br><br>" + "<b style='margin-left: 76px;'>Password &nbsp;:</b>\t\t" + password
-							+ "<br><br>" + "<b style='margin-left: 76px;'><a href=" + objusermaster.getUserloginlink()
-							+ ">Click here to Logilab ELN Login page</a></b><br><br>"
-							+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
-							+ "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
-							+ "<img src=\"cid:seconimage\"  style ='width:120px; height:120px;border: 3px;'"
-							+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
-							+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
+			
+			if(objusermaster.getIsmultitenant() == 2) {
+				email.setSubject("ELN LITE User Credentials");
+				email.setMailcontent(
+						"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
+						+ "        <!-- Header -->\r\n"
+						+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
+						+ "           <img src=\"https://logilabelnlite.azurewebsites.net/images/Agaram_Technologies_Logo.svg\" width=\"130px\"/>\r\n"
+						+ "           <img src=\"https://logilabelnlite.azurewebsites.net/images/ag_logo.svg\" width=\"75px\" style=\"float: right;\"/>\r\n"
+						+ "        </div>\r\n"
+						+ "        \r\n"
+						+ "        <!-- Content -->\r\n"
+						+ "        <div class=\"content\" style=\" padding: 20px; background-color: #cce0fb;\">\r\n"
+						+ "            <p><b>Dear Customer,</b></p>\r\n"
+						+ "            <div class=\"content-text\" style=\"text-align: center;\">\r\n"
+						+ "                <p class=\"text-align\" style=\"color: #000; font-size: 14px;\">Thanks for your interest in Logilab ELN.</p>\r\n"
+						+ "                <p style=\"color: #626367; font-size: 14px;\">we've set up an account for you. Kindly create a password.</p>\r\n"
+						+ "                <p style=\"font-size: 14px; color: #032c67;\"><b><a href=\""+objusermaster.getUserloginlink()+"\" style=\"color: #032c67; text-decoration: underline\"><u>Click here to visit Logilab ELN's Login page</u></a></b></p>\r\n"
+						+ "                <ul style=\"list-style: none; margin-bottom: 25px;\">\r\n"
+						+ "                    <li style=\"padding-bottom: 5px; color: #626367; font-size: 14px;\">1. After logging in, a new password generation screen will appear</li>\r\n"
+						+ "                    <li style=\"color: #626367; font-size: 14px;\">2. Paste the temporary password and proceed.</li>\r\n"
+						+ "                </ul>\r\n"
+						+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Username</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"+objusermaster.getUsername()+"</span></div>\r\n"
+						+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Temporary Password</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"+password+"</span></div>\r\n"
+						+ "                <p style=\"font-size: 12px;color: #626367;\">Please note that organization's password policies might apply to your password</p>\r\n"
+						+ "                <p style=\"color: #000;font-size: 13px;\"><b>Plase contact our support team by mail at <span style=\"color: #1d75f1;\">support@agaramtech.com</span> for any queries.</b></p>\r\n"
+						+ "            </div>\r\n"
+						+ "            \r\n"
+						+ "            \r\n"
+						+ "        </div>\r\n"
+						+ "        \r\n"
+						+ "        <!-- Footer -->\r\n"
+						+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
+						+ "            <img src=\"https://logilabelnlite.azurewebsites.net/images/Agaram Technologies_horizontal.png\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
+						+ "            <div>\r\n"
+						+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
+						+ "                <p style=\"color: #032c67;\"><a href=\"https://www.logilabeln.com\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Term @ Conditions</u></a> | <a href=\"#\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
+						+ "            </div>\r\n"
+						+ "        </div>\r\n"
+						+ "    </div>"						
+						);
+			}else {
+				email.setSubject("ELN User Credentials");
+				email.setMailcontent(
+						"<b>Dear Customer,</b><br><center><img src=\"cid:image\"  style =width:120px; height:100px border: 3px;'></center><br><br>"
+								+ "<p><p>Thanks for your interest in Logilab ELN.</p>Please use below mentioned Username and Password for your Login in ELN Application.<br><br>"
+								+ "Click the URL mentioned below to go to Logilab ELN Login page. <br><br>"
+								+ "After entered the username and click the password field, new password generation screen will appear.<br><br>"
+								+ "Paste the password in the Old Password Textbox, and then generate your new password.<br><br>"
+								+ "<b style='margin-left: 76px;'>Username:</b>\t\t " + objusermaster.getUsername()
+								+ "<br><br>" + "<b style='margin-left: 76px;'>Password &nbsp;:</b>\t\t" + password
+								+ "<br><br>" + "<b style='margin-left: 76px;'><a href=" + objusermaster.getUserloginlink()
+								+ ">Click here to Logilab ELN Login page</a></b><br><br>"
+								+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
+								+ "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
+								+ "<img src=\"cid:seconimage\"  style ='width:120px; height:120px;border: 3px;'"
+								+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
+								+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
+			}
+			
 
 			emailService.sendEmail(email);
 			lsuserMasterRepository.setpasswordandpasswordstatusByusercode(objusermaster.getPassword(),
@@ -1465,6 +1509,7 @@ public class UserService {
 
 		return objusermaster;
 
+	
 	}
 
 	public List<LScentralisedUsers> Getallcentraliseduser(LScentralisedUsers objctrluser) {

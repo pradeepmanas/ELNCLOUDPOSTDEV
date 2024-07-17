@@ -241,7 +241,11 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 		    // Compress the response
 		    compressedBytes = compress(uncompressedBytes);
 		}
+//	    outputMessage.getHeaders().setContentType(MediaType.APPLICATION_OCTET_STREAM);
+//	    outputMessage.getHeaders().setContentLength(compressedBytes.length);
 		outputMessage.getBody().write(compressedBytes);
+//	    outputMessage.getBody().flush();
+//	    outputMessage.getBody().close();
 	}
 //	@Override
 //	protected void writeInternal(Object o, HttpOutputMessage outputMessage)

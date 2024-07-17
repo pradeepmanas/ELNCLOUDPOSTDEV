@@ -33,19 +33,22 @@ import com.agaram.eln.primary.model.protocols.LSprotocolstepInfo;
 import com.agaram.eln.primary.model.protocols.LSprotocolversion;
 import com.agaram.eln.primary.model.reports.reportdesigner.Cloudreporttemplate;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportDesignerStructure;
+import com.agaram.eln.primary.model.reports.reportdesigner.ReportTemplateMapping;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cloudProtocol.LSprotocolstepInformationRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSProtocolStepRepository;
-import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolmastertestRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolversionRepository;
 import com.agaram.eln.primary.repository.reports.reportdesigner.CloudreporttemplateRepository;
 import com.agaram.eln.primary.repository.reports.reportdesigner.ReportDesignerStructureRepository;
 import com.agaram.eln.primary.repository.reports.reportdesigner.ReportTemplateMappingRepository;
 import com.agaram.eln.primary.repository.reports.reportdesigner.ReporttemplateRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 
 @Service
@@ -61,13 +64,13 @@ public class DesingerService {
 	private ReportDesignerStructureRepository reportDesignerStructureRepository;
 
 	@Autowired
-	private LSlogilabprotocoldetailRepository lslogilabprotocoldetailRepository;
-
-	@Autowired
 	private LSProtocolMasterRepository LSProtocolMasterRepositoryObj;
 
 	@Autowired
 	private LSprotocolmastertestRepository lsprotocolmastertestRepository;
+	
+	@Autowired
+	private LSprojectmasterRepository lsprojectmasterRepository;
 
 	@Autowired
 	private LSProtocolStepRepository LSProtocolStepRepositoryObj;
@@ -208,6 +211,7 @@ public class DesingerService {
 		return objfile;
 	}
 
+	@SuppressWarnings("resource")
 	public String getDocumentContent(byte[] documentBytes) throws IOException {
 		InputStream inputStream = new ByteArrayInputStream(documentBytes);
 		XWPFDocument document = new XWPFDocument(inputStream);
@@ -411,5 +415,37 @@ public class DesingerService {
 		reportTemplateMappingRepository.deleteByTemplatecode(objdir.getTemplatecode());
 		reportTemplateMappingRepository.save(objdir.getReportTemplateMappings());
 		return objdir;
+	}
+
+	public Map<String, Object> onGetReportTemplateBasedOnProject(Map<String, Object> objMap) {
+		
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		
+		ObjectMapper objm = new ObjectMapper();
+		LSSiteMaster objLsSiteMaster = objm.convertValue(objMap.get("sitemaster"), LSSiteMaster.class);
+		Integer getType = (Integer) objMap.get("gettype");
+
+		List<Reporttemplate> lstTemp = new ArrayList<Reporttemplate>();
+		
+		if(getType == 1) {
+			List<LSprojectmaster> listProj = lsprojectmasterRepository.findByLssitemasterAndStatusOrderByProjectcodeDesc(objLsSiteMaster, 1);
+			
+			if(!listProj.isEmpty()) {
+				List<ReportTemplateMapping> lstMappedTemp = reportTemplateMappingRepository.findByLsprojectmaster(listProj.get(0));
+				List<Long> lstTempCode = lstMappedTemp.stream().map(ReportTemplateMapping::getTemplatecode).collect(Collectors.toList());
+				lstTemp = reporttemplaterepository.findByTemplatecodeInAndTemplatetypeOrderByTemplatecodeDesc(lstTempCode,2);
+			}
+			
+			rtnMap.put("project", listProj);
+		}else {
+			LSprojectmaster objProject = objm.convertValue(objMap.get("project"), LSprojectmaster.class);
+			List<ReportTemplateMapping> lstMappedTemp = reportTemplateMappingRepository.findByLsprojectmaster(objProject);
+			List<Long> lstTempCode = lstMappedTemp.stream().map(ReportTemplateMapping::getTemplatecode).collect(Collectors.toList());
+			lstTemp = reporttemplaterepository.findByTemplatecodeInAndTemplatetypeOrderByTemplatecodeDesc(lstTempCode,2);
+		}
+		
+		rtnMap.put("template", lstTemp);
+		
+		return rtnMap;
 	}
 }

@@ -27,6 +27,17 @@ public class lsreportfile {
     @Column(columnDefinition = "jsonb")
 	private String content;
 	
+	@Column(columnDefinition = "numeric(17,0)", name = "batchcode")
+	private Long batchcode;
+	
+	public Long getBatchcode() {
+		return batchcode;
+	}
+
+	public void setBatchcode(Long batchcode) {
+		this.batchcode = batchcode;
+	}
+
 	private Integer contentstored;
 
 	public long getId() {

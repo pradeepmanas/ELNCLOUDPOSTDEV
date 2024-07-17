@@ -3,11 +3,15 @@ package com.agaram.eln.primary.service.syncwordconverter;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -19,22 +23,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
-import com.agaram.eln.primary.model.general.OrderCreation;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.reports.reportdesigner.ReportTemplateVersion;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.syncwordconverter.CustomParameter;
 import com.agaram.eln.primary.model.syncwordconverter.CustomRestrictParameter;
 import com.agaram.eln.primary.model.syncwordconverter.SaveParameter;
 import com.agaram.eln.primary.model.syncwordconverter.SpellCheckJsonData;
+import com.agaram.eln.primary.repository.reports.reportdesigner.ReportTemplateVersionRepository;
 import com.agaram.eln.primary.repository.reports.reportdesigner.ReporttemplateRepository;
 import com.agaram.eln.primary.service.protocol.Commonservice;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,27 +51,22 @@ import com.syncfusion.javahelper.system.collections.generic.ListSupport;
 import com.syncfusion.javahelper.system.io.StreamSupport;
 import com.syncfusion.javahelper.system.reflection.AssemblySupport;
 import com.twelvemonkeys.imageio.plugins.tiff.TIFFImageReaderSpi;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.gridfs.GridFS;
-import com.mongodb.gridfs.GridFSDBFile;
-import com.mongodb.gridfs.GridFSFile;
-import com.mongodb.gridfs.GridFSInputFile;
-
-import java.io.IOException;
-
 
 @Service
 public class DocumenteditorService {
 
 	@Autowired
 	Commonservice commonservice;
-	
-    @Autowired
-    private MongoDbFactory mongoDbFactory;
+
+	@Autowired
+	private MongoDbFactory mongoDbFactory;
 
 	@Autowired
 	public ReporttemplateRepository reporttemplateRepository;
+	
+	
+	@Autowired
+	public ReportTemplateVersionRepository reportTemplateVersionRepository;
 
 	public String uploadFile(MultipartFile file) throws Exception {
 		try {
@@ -278,6 +275,7 @@ public class DocumenteditorService {
 		try {
 			Response response = new Response();
 			boolean Isnew_Template = false;
+			boolean Isnew_Version = false;
 			if (data.getTemplatecode() == null) {
 				Isnew_Template = true;
 			}
@@ -285,32 +283,113 @@ public class DocumenteditorService {
 //			String name = data.getTemplatename() + ".json";
 			String jsonContent = convertObjectToJson(data.getTemplatecontent());
 			byte[] documentBytes = jsonContent.getBytes(StandardCharsets.UTF_8);
-			String uniqueDocumentName = data.getTemplatename() + "_" + UUID.randomUUID().toString() + ".json";
-			if(data.getIsmultitenant()==1) {
-			if (Isnew_Template) {
-				existingTemplate = reporttemplateRepository
-						.findTopByTemplatenameIgnoreCaseAndSitemaster(data.getTemplatename(), data.getSitemaster());
-				if (existingTemplate == null) {
-					data = commonservice.uploadToAzureBlobStorage(documentBytes, data, uniqueDocumentName);
-					data.setDateCreated(commonfunction.getCurrentUtcTime());
-					reporttemplateRepository.save(data);
-					response.setStatus(true);
-				
+			String uniqueDocumentName ="";
+			Map<String, Object> reporttemplatemap = new HashMap<>();
+			if (data.getIsmultitenant() == 1) {
+				if (Isnew_Template) {
+					 uniqueDocumentName = data.getTemplatename() + "_" + UUID.randomUUID().toString() + ".json";
+					existingTemplate = reporttemplateRepository
+							.findTopByTemplatenameIgnoreCaseAndSitemaster(data.getTemplatename(), data.getSitemaster());
+					if (existingTemplate == null) {
+
+						reporttemplatemap = commonservice.uploadToAzureBlobStorage(documentBytes, data,
+								uniqueDocumentName, "reportdocument", 1, null,Isnew_Version);
+						data = (Reporttemplate) reporttemplatemap.get("Reporttemplate");
+						data.setDateCreated(commonfunction.getCurrentUtcTime());
+						reporttemplateRepository.save(data);
+						response.setStatus(true);
+						
+						Map<String, Object> reporttemplatever = new HashMap<>();
+						uniqueDocumentName = data.getTemplatename() + "_" + "Version_" + data.getVersionno() + "_"
+								+ UUID.randomUUID().toString() + ".json";
+						ReportTemplateVersion templateversion=new ReportTemplateVersion();
+						templateversion.setTemplatecode(data.getTemplatecode());
+						templateversion.setCreatedate(commonfunction.getCurrentUtcTime());
+						templateversion.setCreatedby(data.getCreatedby().getUsercode());
+						templateversion.setTemplatename(data.getTemplatename());
+						templateversion.setVersionname("version_"+data.getVersionno());
+						templateversion.setVersionno(data.getVersionno());
+						templateversion.setSitecode(data.getSitemaster().getSitecode());
+						templateversion.setTemplatetype(data.getTemplatetype());
+						reporttemplatever = commonservice.uploadToAzureBlobStorage(documentBytes, data,
+								uniqueDocumentName, "reporttemplateversion", 1,templateversion,true);
+						templateversion=(ReportTemplateVersion) reporttemplatever.get("ReportTemplateVersion");
+						reportTemplateVersionRepository.save(templateversion);
+						data.setReportTemplateVersion(new ArrayList<ReportTemplateVersion>());
+						data.getReportTemplateVersion().add(templateversion);
+
+					} else {
+						response.setStatus(false);
+						response.setInformation("IDS_MSG_ALREADY");
+
+					}
 				} else {
-					response.setStatus(false);
-					response.setInformation("IDS_MSG_ALREADY");
-				
+					Map<String, Object> reporttemplatever = new HashMap<>();
+
+					if (data.isIsnewversion()) {
+						uniqueDocumentName = data.getTemplatename() + "_" + "Version_" + data.getVersionno() + "_"
+								+ UUID.randomUUID().toString() + ".json";
+						List<ReportTemplateVersion> reportversion = data.getReportTemplateVersion().stream()
+								.map(items -> {
+									return items;
+								}).filter(itemsv -> itemsv.isIsnewversion()).collect(Collectors.toList());
+						Isnew_Version = true;
+						String jsonContent_version = convertObjectToJson(
+								reportversion.get(0).getTemplateversioncontent());
+						byte[] documentBytes_version = jsonContent_version.getBytes(StandardCharsets.UTF_8);
+						reporttemplatever = commonservice.uploadToAzureBlobStorage(documentBytes_version, data,
+								uniqueDocumentName, "reporttemplateversion", 1, reportversion.get(0),Isnew_Version);
+						ReportTemplateVersion templateversion=(ReportTemplateVersion) reporttemplatever.get("ReportTemplateVersion");
+						templateversion.setCreatedate(commonfunction.getCurrentUtcTime());
+						reportTemplateVersionRepository.save(templateversion);
+						Reporttemplate data_new=reporttemplateRepository.findByTemplatecode(data.getTemplatecode());
+						data_new.setTemplatecontent(data.getTemplatecontent());
+						response.setStatus(true);
+						data_new.setResponse(response);
+						return data_new;
+					}else {
+						if (data.getReportTemplateVersion() != null && !data.getReportTemplateVersion().isEmpty()) {
+						     Reporttemplate finalData = data; 
+						    List<ReportTemplateVersion> reportversion = finalData.getReportTemplateVersion().stream()
+						            .filter(itemsv -> itemsv.getVersionno() == finalData.getVersionno())
+						            .collect(Collectors.toList());
+						    uniqueDocumentName = reportversion.get(0).getFileuid();
+							reporttemplatever = commonservice.uploadToAzureBlobStorage(documentBytes, data,
+									uniqueDocumentName, "reporttemplateversion", 1, reportversion.get(0),true);
+							ReportTemplateVersion templateversion=(ReportTemplateVersion) reporttemplatever.get("ReportTemplateVersion");
+							templateversion.setModifieddate(commonfunction.getCurrentUtcTime());
+							reportTemplateVersionRepository.save(templateversion);
+							 List<ReportTemplateVersion> updatedVersions = data.getReportTemplateVersion().stream()
+							            .map(items -> {
+							                if (items.getTemplateversioncode() == templateversion.getTemplateversioncode()) {
+							                    return templateversion;
+							                }
+							                return items;
+							            })
+							            .collect(Collectors.toList());
+							    data.setReportTemplateVersion(updatedVersions);
+						}
+					}
+					uniqueDocumentName = data.getFileuid();
+					reporttemplatemap = commonservice.uploadToAzureBlobStorage(documentBytes, data, uniqueDocumentName,
+							"reportdocument", 1, null,false);
+					data = (Reporttemplate) reporttemplatemap.get("Reporttemplate");
+					data.setDateModified(commonfunction.getCurrentUtcTime());
+					reporttemplateRepository.save(data);
+
+
+//					if(Isnew_Version) {
+//						Reporttemplate data_new=reporttemplateRepository.findByTemplatecode(data.getTemplatecode());
+//						data_new.setTemplatecontent(data.getTemplatecontent());
+//						response.setStatus(true);
+//						data_new.setResponse(response);
+//						return data_new;
+//					}
+					response.setStatus(true);
+
 				}
-			}else {
-				uniqueDocumentName=data.getFileuid();
-				data = commonservice.uploadToAzureBlobStorage(documentBytes, data, uniqueDocumentName);
-				data.setDateModified(commonfunction.getCurrentUtcTime());
-				reporttemplateRepository.save(data);
-				response.setStatus(true);
-				
-			}
-            	data.setResponce(response);
-			}else {
+				data.setResponse(response);
+			} else {
 				try {
 //					OrderCreation objsavefile = new OrderCreation();
 //					objsavefile.setId((long) objfile.getFilesamplecode());
@@ -341,12 +420,12 @@ public class DocumenteditorService {
 //
 //					objsavefile = null;
 
-		            System.out.println("JSON file saved to GridFS with filename: " + uniqueDocumentName);
-		        } catch (Exception ex) {
-		            throw new IOException("Failed to save JSON file to GridFS: " + ex.getMessage(), ex);
-		        }
+					System.out.println("JSON file saved to GridFS with filename: " + uniqueDocumentName);
+				} catch (Exception ex) {
+					throw new IOException("Failed to save JSON file to GridFS: " + ex.getMessage(), ex);
+				}
 			}
-            	return data;
+			return data;
 		} catch (Exception ex) {
 			throw new Exception("Failed to save document: " + ex.getMessage(), ex);
 		}

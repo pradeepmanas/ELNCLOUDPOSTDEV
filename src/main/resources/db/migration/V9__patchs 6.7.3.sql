@@ -1311,3 +1311,44 @@ ALTER TABLE IF EXISTS public.reporttemplatemapping
 ALTER TABLE IF Exists lsfile ADD Column IF NOT EXISTS tagsheet integer;
 
 update lsfile set tagsheet = 0 where tagsheet is null;
+
+ALTER TABLE IF Exists reporttemplatemapping ADD COLUMN IF NOT EXISTS lsprojectmaster_projectcode integer;
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fkms9ayvec5kyd981y26m8hb5pj'
+AND table_name='reporttemplatemapping';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY reporttemplatemapping ADD CONSTRAINT fkms9ayvec5kyd981y26m8hb5pj FOREIGN KEY (lsprojectmaster_projectcode) REFERENCES lsprojectmaster (projectcode);
+   END IF;
+END
+$do$; 
+
+ALTER TABLE IF Exists Reporttemplate ADD Column IF NOT EXISTS versionno integer DEFAULT 1;
+
+CREATE TABLE IF NOT EXISTS public.reporttemplateversion
+(
+    templateversioncode integer NOT NULL,
+    createdate timestamp without time zone,
+    createdby integer,
+    fileuid character varying(255) COLLATE pg_catalog."default",
+    fileuri character varying(255) COLLATE pg_catalog."default",
+    modifieddate timestamp without time zone,
+    sitecode integer,
+    templatecode bigint,
+    templatename character varying(255) COLLATE pg_catalog."default",
+    templatetype integer,
+    versionname character varying(255) COLLATE pg_catalog."default",
+    versionno integer,
+    CONSTRAINT reporttemplateversion_pkey PRIMARY KEY (templateversioncode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.reporttemplateversion  OWNER to postgres;
+
+ALTER TABLE IF Exists lsreportfile ADD COLUMN IF NOT EXISTS batchcode numeric(17,0);

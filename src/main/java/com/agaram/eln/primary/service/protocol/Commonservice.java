@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.reports.reportdesigner.ReportTemplateVersion;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
@@ -41,51 +43,51 @@ public class Commonservice {
 
 //	@Autowired
 //	private LSMultiusergroupRepositery lsMultiusergroupRepositery;
-	
-	
+
 	@Autowired
 	private CloudSheetCreationRepository cloudSheetCreationRepository;
 	@Autowired
 	private CloudFileManipulationservice objCloudFileManipulationservice;
-	
+
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
-	
+
 	@Autowired
 	private LSusersteamRepository LSusersteamRepository;
-	
+
 	@Autowired
 	private LSuserteammappingRepository lsuserteammappingRepository;
-	
+
 	@Autowired
 	LSnotificationRepository lsnotificationRepository;
-	
+
 	@Autowired
 	private LSProtocolMasterRepository lsProtocolMasterRepository;
-	
+
 	@Autowired
 	public ReporttemplateRepository reporttemplateRepository;
-	
+
 //	@Async
-	public CompletableFuture<List<LSfile>> updatefilecontentcheck(String Content, LSfile objfile, Boolean Isnew) throws IOException {
-				
+	public CompletableFuture<List<LSfile>> updatefilecontentcheck(String Content, LSfile objfile, Boolean Isnew)
+			throws IOException {
+
 		if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
 			String tenant = TenantContext.getCurrentTenant();
-			if(objfile.getIsmultitenant() == 2)
-			{
+			if (objfile.getIsmultitenant() == 2) {
 				tenant = "freeusers";
 			}
-			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,tenant+"sheetcreation");
+			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,
+					tenant + "sheetcreation");
 			String fileUUID = (String) objMap.get("uuid");
 			String fileURI = objMap.get("uri").toString();
-			
+
 			CloudSheetCreation objsavefile = new CloudSheetCreation();
 			objsavefile.setId((long) objfile.getFilecode());
 			objsavefile.setFileuri(fileURI);
 			objsavefile.setFileuid(fileUUID);
 			objsavefile.setContainerstored(1);
 			cloudSheetCreationRepository.save(objsavefile);
-			
+
 			objsavefile = null;
 		} else {
 
@@ -97,58 +99,70 @@ public class Commonservice {
 			gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
 					"file_" + objfile.getFilecode(), StandardCharsets.UTF_16);
 		}
-		List<LSfile> obj =new ArrayList<>();
+		List<LSfile> obj = new ArrayList<>();
 		obj.add(objfile);
 		return CompletableFuture.completedFuture(obj);
 
 	}
-	
-//	@Async
-	public Reporttemplate uploadToAzureBlobStorage (byte[] documentBytes, Reporttemplate objFile,String uniqueDocumentName) throws IOException {
-	    if (objFile.getIsmultitenant() == 1 || objFile.getIsmultitenant() == 2) {
-	        String tenant = TenantContext.getCurrentTenant();
-	        if (objFile.getIsmultitenant() == 2) {
-	            tenant = "freeusers";
-	        }
-//	        String uniqueDocumentName = Documentname + "_" + UUID.randomUUID().toString() + ".json";
-	        Map<String, Object> objMap = objCloudFileManipulationservice.storecloudReportfile(documentBytes, tenant + "reportdocument", uniqueDocumentName);
-	        String fileUUID = (String) objMap.get("blobName");
-	        String fileURI = objMap.get("blobUri").toString();
-	        objFile.setFileuid(fileUUID);
-	        objFile.setFileuri(fileURI);
-	        objFile.setContainerstored(1);
-	    }
-	    return objFile;
 
-	}
-	
-	@Async
-	public CompletableFuture<List<LSprotocolmaster>> updateProtocolContent(String Content, LSprotocolmaster objfile) throws IOException {
-				
-		if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
+//	@Async
+	public Map<String, Object> uploadToAzureBlobStorage(byte[] documentBytes, Reporttemplate objFile,
+			String uniqueDocumentName, String containerName, Integer Type, ReportTemplateVersion reportTemplateVersion,
+			boolean isnew_Version) throws IOException {
+		Map<String, Object> rtnobject = new HashMap<>();
+		if (objFile.getIsmultitenant() == 1 || objFile.getIsmultitenant() == 2) {
 			String tenant = TenantContext.getCurrentTenant();
-			if(objfile.getIsmultitenant() == 2)
-			{
+			if (objFile.getIsmultitenant() == 2) {
 				tenant = "freeusers";
 			}
-			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,tenant+"protocol");
+			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudReportfile(documentBytes,
+					tenant + containerName, uniqueDocumentName);
+			String fileUUID = (String) objMap.get("blobName");
+			String fileURI = objMap.get("blobUri").toString();
+			if (isnew_Version) {
+				reportTemplateVersion.setFileuid(fileUUID);
+				reportTemplateVersion.setFileuri(fileURI);
+				rtnobject.put("ReportTemplateVersion", reportTemplateVersion);
+			} else {
+				objFile.setFileuid(fileUUID);
+				objFile.setFileuri(fileURI);
+				objFile.setContainerstored(1);
+				rtnobject.put("Reporttemplate", objFile);
+			}
+
+		}
+		return rtnobject;
+
+	}
+
+	@Async
+	public CompletableFuture<List<LSprotocolmaster>> updateProtocolContent(String Content, LSprotocolmaster objfile)
+			throws IOException {
+
+		if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
+			String tenant = TenantContext.getCurrentTenant();
+			if (objfile.getIsmultitenant() == 2) {
+				tenant = "freeusers";
+			}
+			Map<String, Object> objMap = objCloudFileManipulationservice.storecloudSheetsreturnwithpreUUID(Content,
+					tenant + "protocol");
 			String fileUUID = (String) objMap.get("uuid");
 			String fileURI = objMap.get("uri").toString();
-			
+
 			objfile.setFileuri(fileURI);
 			objfile.setFileuid(fileUUID);
 			objfile.setContainerstored(1);
 			lsProtocolMasterRepository.save(objfile);
 		}
-		List<LSprotocolmaster> obj =new ArrayList<>();
+		List<LSprotocolmaster> obj = new ArrayList<>();
 		obj.add(objfile);
 		return CompletableFuture.completedFuture(obj);
 
 	}
-	
+
 	@Async
-	public CompletableFuture<List<LSfile>> updatenotificationforsheetthread(LSfile objFile, Boolean isNew, LSsheetworkflow previousworkflow,
-			Boolean IsNewsheet) {
+	public CompletableFuture<List<LSfile>> updatenotificationforsheetthread(LSfile objFile, Boolean isNew,
+			LSsheetworkflow previousworkflow, Boolean IsNewsheet) {
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		List<LSuserteammapping> objteam = lsuserteammappingRepository
 				.findByTeamcodeNotNullAndLsuserMaster(objFile.getLSuserMaster());
@@ -183,7 +197,8 @@ public class Commonservice {
 
 				for (int i = 0; i < objteam.size(); i++) {
 					LSusersteam objteam1 = LSusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
-					List<LSuserteammapping> lstusers = lsuserteammappingRepository.findByteamcode(objteam1.getTeamcode());
+					List<LSuserteammapping> lstusers = lsuserteammappingRepository
+							.findByteamcode(objteam1.getTeamcode());
 //					List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
 
 					for (int j = 0; j < lstusers.size(); j++) {
@@ -229,7 +244,8 @@ public class Commonservice {
 
 				for (int i = 0; i < objteam.size(); i++) {
 					LSusersteam objteam1 = LSusersteamRepository.findByteamcode(objteam.get(i).getTeamcode());
-					List<LSuserteammapping> lstusers = lsuserteammappingRepository.findByteamcode(objteam1.getTeamcode());
+					List<LSuserteammapping> lstusers = lsuserteammappingRepository
+							.findByteamcode(objteam1.getTeamcode());
 //					List<LSuserteammapping> lstusers = objteam1.getLsuserteammapping();
 
 					for (int j = 0; j < lstusers.size(); j++) {
@@ -275,7 +291,7 @@ public class Commonservice {
 
 		objteam = null;
 		lstnotifications = null;
-		List<LSfile> obj =new ArrayList<>();
+		List<LSfile> obj = new ArrayList<>();
 		obj.add(objFile);
 		return CompletableFuture.completedFuture(obj);
 	}

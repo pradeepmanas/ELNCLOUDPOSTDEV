@@ -1,20 +1,6 @@
 package com.agaram.eln.primary.service.instrumentDetails;
 
 import java.io.BufferedReader;
-
-
-import java.io.BufferedReader;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
-import java.io.ByteArrayInputStream;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -32,9 +19,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -117,7 +106,6 @@ import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.instrumentDetails.Lsresultfororders;
-import com.agaram.eln.primary.model.instrumentDetails.Lsresulttags;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
@@ -189,7 +177,6 @@ import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolOrderStruct
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharedbyRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharetoRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsresultforordersRepository;
-import com.agaram.eln.primary.repository.instrumentDetails.LsresulttagsRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
@@ -268,8 +255,8 @@ public class InstrumentService {
 	private LSfileparameterRepository lsFileparameterRepository;
 	@Autowired
 	private LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
-	@Autowired
-	private LsresulttagsRepository lsresulttagsRepository;
+//	@Autowired
+//	private LsresulttagsRepository lsresulttagsRepository;
 	@Autowired
 	private LSworkflowRepository lsworkflowRepository;
 //	@Autowired
@@ -7313,7 +7300,7 @@ public class InstrumentService {
 		if (filetype != null && filetype == -1) {
 			if (objdir.getLstuserMaster() == null) {
 				
-				if(objdir.getDirectorycode()==-3L) {
+				if(objdir.getDirectorycode()==-3L || objdir.getDirectorycode()==-22L) {
 //					
 					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, fromdate, todate,objdir.getCreatedby());
 				}else {
@@ -7327,7 +7314,7 @@ public class InstrumentService {
 								objdir.getCreatedby(), fromdate, todate));
 				
 			} else {
-				if(objdir.getDirectorycode()==-3L) {
+				if(objdir.getDirectorycode()==-3L|| objdir.getDirectorycode()==-22L) {
 					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, fromdate, todate,objdir.getCreatedby());
 				}else {
 					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, fromdate, todate);
@@ -7342,7 +7329,7 @@ public class InstrumentService {
 			}
 		} else {
 			if (objdir.getLstuserMaster() == null) {
-				if(objdir.getDirectorycode()==-3L) {
+				if(objdir.getDirectorycode()==-3L|| objdir.getDirectorycode()==-22L) {
 					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, filetype, fromdate, todate,objdir.getCreatedby());
 				}else {
 					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, filetype, fromdate, todate);
@@ -7354,7 +7341,7 @@ public class InstrumentService {
 								objdir.getCreatedby(), filetype, fromdate, todate));
 
 			} else {
-				if(objdir.getDirectorycode()==-3L) {
+				if(objdir.getDirectorycode()==-3L|| objdir.getDirectorycode()==-22L) {
 					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, filetype, fromdate, todate,objdir.getCreatedby());
 				}else {
 					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, filetype, fromdate, todate);
@@ -7857,17 +7844,17 @@ public class InstrumentService {
 			System.out.print(objdir);
 			if ((objdir.getLstuserMaster() == null) || objdir.getLstuserMaster().length == 0) {
 				retuobj = LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getDirectorycode(), 2,
-								objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3,
-								objdir.getCreatedby(), fromdate, todate);
+						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+								objdir.getDirectorycode(), 1, fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+								objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
+								objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
 
 			} else {
 				retuobj = LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getDirectorycode(), 2,
-								objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3, fromdate, todate,
-								objdir.getLstuserMaster());
+						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+								objdir.getDirectorycode(), 1, fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+								objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, fromdate, todate,
+								objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
 
 			}
 
@@ -7876,85 +7863,85 @@ public class InstrumentService {
 				if (objdir.getRejected() != null) {
 
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
 									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate,
-									todate, objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(), 1,
-									objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3, protocoltype,
-									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate);
+									todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(), 1,
+									objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
+									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
 				} else {
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,
+							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,objdir.getSitemaster().getSitecode(),
 									objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(),
-									objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3, protocoltype,
-									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate);
+									objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
+									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
 				}
 			} else {
 				if (objdir.getRejected() != null) {
 
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
+							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
 									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate,
-									todate, objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(), 1,
-									objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3, protocoltype,
-									objdir.getOrderflag(), 1, fromdate, todate, objdir.getLstuserMaster());
+									todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(), 1,
+									objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
+									objdir.getOrderflag(), 1, fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
 				} else {
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,
+							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,objdir.getSitemaster().getSitecode(),
 									objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(),
-									objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3, protocoltype,
-									objdir.getOrderflag(), fromdate, todate, objdir.getLstuserMaster());
+									objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
+									objdir.getOrderflag(), fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
 				}
 			}
 		} else if (protocoltype == -1 && objdir.getOrderflag() != null) {
 			if (objdir.getLstuserMaster().length == 0) {
 				if (objdir.getRejected() != null) {
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,
+							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,objdir.getSitemaster().getSitecode(),
 									objdir.getDirectorycode(), 2, objdir.getOrderflag(), 1, objdir.getCreatedby(),
-									fromdate, todate, objdir.getDirectorycode(), 3, objdir.getOrderflag(), 1,
-									objdir.getCreatedby(), fromdate, todate);
+									fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, objdir.getOrderflag(), 1,
+									objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
 				} else {
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,
+							.findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,objdir.getSitemaster().getSitecode(),
 									objdir.getDirectorycode(), 2, objdir.getOrderflag(), objdir.getCreatedby(),
-									fromdate, todate, objdir.getDirectorycode(), 3, objdir.getOrderflag(),
-									objdir.getCreatedby(), fromdate, todate);
+									fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, objdir.getOrderflag(),
+									objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
 				}
 			} else {
 				if (objdir.getRejected() != null) {
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,
+							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,objdir.getSitemaster().getSitecode(),
 									objdir.getDirectorycode(), 2, objdir.getOrderflag(), 1, objdir.getCreatedby(),
-									fromdate, todate, objdir.getDirectorycode(), 3, objdir.getOrderflag(), 1, fromdate,
-									todate, objdir.getLstuserMaster());
+									fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, objdir.getOrderflag(), 1, fromdate,
+									todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
 				} else {
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,
+							.findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,objdir.getSitemaster().getSitecode(),
 									objdir.getDirectorycode(), 2, objdir.getOrderflag(), objdir.getCreatedby(),
-									fromdate, todate, objdir.getDirectorycode(), 3, objdir.getOrderflag(), fromdate,
-									todate, objdir.getLstuserMaster());
+									fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, objdir.getOrderflag(), fromdate,
+									todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
 				}
 
 			}
 		} else if (protocoltype != -1 && objdir.getOrderflag() == null) {
 			if (objdir.getLstuserMaster().length == 0) {
 				retuobj = LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate, objdir.getDirectorycode(),
-								2, protocoltype, objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3,
-								protocoltype, objdir.getCreatedby(), fromdate, todate);
+						.findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(),
+								2, protocoltype, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
+								protocoltype, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
 			} else {
 				retuobj = LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate, objdir.getDirectorycode(),
-								2, protocoltype, objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3,
-								protocoltype, fromdate, todate, objdir.getLstuserMaster());
+						.findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(),
+								2, protocoltype, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
+								protocoltype, fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
 			}
 
 		}
@@ -10376,8 +10363,13 @@ public class InstrumentService {
 			logiobj.get(0).setCompletedtimestamp(commonfunction.getCurrentUtcTime());
 			
 			String Notification = "REJECTALERT";
-			LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
-			LSuserMaster notifyto = logiobj.get(0).getAssignedto();
+			
+		//	LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
+		//	LSuserMaster notifyto = logiobj.get(0).getAssignedto();
+			
+			LSuserMaster notifyfrom = logiobj.get(0).getAssignedto();
+			LSuserMaster notifyto = logiobj.get(0).getLsuserMaster();
+			
 			sendnotification(logiobj.get(0),Notification,screen,notifyto,notifyfrom);
 
 		} else if (objdir.getApprovelaccept().equals("2")) {
@@ -10386,8 +10378,12 @@ public class InstrumentService {
 			logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
 			
 			String Notification = "RETURNALERT";
-			LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
-			LSuserMaster notifyto = logiobj.get(0).getAssignedto();
+			
+//			LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
+//			LSuserMaster notifyto = logiobj.get(0).getAssignedto();
+			
+			LSuserMaster notifyfrom = logiobj.get(0).getAssignedto();
+			LSuserMaster notifyto = logiobj.get(0).getLsuserMaster();
 			
 			sendnotification(logiobj.get(0),Notification,screen,notifyto,notifyfrom);
 			//logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
@@ -10396,8 +10392,10 @@ public class InstrumentService {
 			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
 			
 			String Notification = "APPROVEALERT";
-			LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
-			LSuserMaster notifyto = logiobj.get(0).getAssignedto();
+//			LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
+//			LSuserMaster notifyto = logiobj.get(0).getAssignedto();
+			LSuserMaster notifyfrom = logiobj.get(0).getAssignedto();
+			LSuserMaster notifyto = logiobj.get(0).getLsuserMaster();
 			sendnotification(logiobj.get(0),Notification,screen,notifyto,notifyfrom);
 			
 		}
@@ -10480,9 +10478,9 @@ public class InstrumentService {
 		return lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 	}
 
-	public void saveResulttags(Lsresulttags objorder) {
-		lsresulttagsRepository.save(objorder);
-	}
+//	public void saveResulttags(Lsresulttags objorder) {
+//		lsresulttagsRepository.save(objorder);
+//	}
 
 	public List<ProjectOrTaskOrMaterialView> Suggesionforfolder(Map<String, Object> searchobj) {
 		String Searchkey = "%" + searchobj.get("Searchkey") + "%";
@@ -10496,13 +10494,64 @@ public class InstrumentService {
 	{
 		List<LSfile> files = Arrays.asList(objfiles);
 		Map<String, Object> mapRtnObj = new HashMap<String, Object>();
-		List<Logilaborders> orders = lslogilablimsorderdetailRepository.findByLsfileIn(files);
-		List<Long> batchcode = orders.stream().map(Logilaborders::getBatchcode)
-				.collect(Collectors.toList());
+//		List<Logilaborders> orders = lslogilablimsorderdetailRepository.findByLsfileIn(files);
+//		List<Long> batchcode = orders.stream().map(Logilaborders::getBatchcode)
+//				.collect(Collectors.toList());
+//		mapRtnObj.put("orders", orders);
+//		mapRtnObj.put("results", lsresultforordersRepository.findByBatchcodeInOrderByIdDesc(batchcode));
+//		mapRtnObj.put("tags", lsresulttagsRepository.findByOrderidInOrderByIdDesc(batchcode));
+		return mapRtnObj;
+	}
+
+	public Map<String, Object> Getordersonfiles(Map<String, Object> mapObj) throws ParseException {
+		
+		ObjectMapper objm = new ObjectMapper();
+		
+		List<LSfile> files = objm.convertValue(mapObj.get("filelist"), new TypeReference<List<LSfile>>() {});
+		
+		 // Extract fromdate and todate
+        String fromdateStr = (String) mapObj.get("fromdate");
+        String todateStr = (String) mapObj.get("todate");
+        
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        // Parse the date strings into Date objects
+        Date fromdate = formatter.parse(fromdateStr);
+        Date todate = formatter.parse(todateStr);
+        
+     // Set the end of the day for todate
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(todate);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+        todate = calendar.getTime();
+		
+//		List<LSfile> files = Arrays.asList(objfiles);
+		Map<String, Object> mapRtnObj = new HashMap<String, Object>();
+		List<Logilaborders> orders = lslogilablimsorderdetailRepository.findByLsfileInAndCreatedtimestampBetweenOrderByBatchcodeDesc(files, fromdate,todate );
+		List<Long> batchcode = orders.stream().map(Logilaborders::getBatchcode).collect(Collectors.toList());
+				
 		mapRtnObj.put("orders", orders);
 		mapRtnObj.put("results", lsresultforordersRepository.findByBatchcodeInOrderByIdDesc(batchcode));
-		mapRtnObj.put("tags", lsresulttagsRepository.findByOrderidInOrderByIdDesc(batchcode));
+		mapRtnObj.put("tags", reportfileRepository.findByBatchcodeInOrderByIdDesc(batchcode));
+		
 		return mapRtnObj;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<LSlogilablimsorderdetail> GetOrdersbyuseronDetailview(LSlogilablimsorderdetail obj) {
+		List<LSlogilablimsorderdetail> lstorders = new ArrayList<LSlogilablimsorderdetail>();
+//		
+//		List<LSprojectmaster> lstproList = (List<LSprojectmaster>) obj.get("projects");
+//		int filetype = (int) obj.get("filetype");
+//		Date fromdate = (Date) obj.get("fromdate");
+//		Date todate = (Date) obj.get("todate");
+	
+		lstorders = lslogilablimsorderdetailRepository.findByFiletypeAndOrderflagAndLsprojectmasterInAndApprovelstatusNotAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+				obj.getFiletype(), "R", obj.getLstproject(), 3, obj.getFromdate(), obj.getTodate());
+		return lstorders;
 	}
 
 }

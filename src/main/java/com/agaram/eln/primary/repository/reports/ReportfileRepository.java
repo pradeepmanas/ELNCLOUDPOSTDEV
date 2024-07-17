@@ -13,9 +13,10 @@ import com.agaram.eln.primary.model.reports.lsreportfile;
 public interface ReportfileRepository extends JpaRepository<lsreportfile, Long>{
 	@Transactional
 	@Modifying
-	@Query(value = "select * from "
-			+ "lsreportfile where id in (?1) ORDER BY id DESC", nativeQuery=true)
+	@Query(value = "select * from lsreportfile where id in (?1) ORDER BY id DESC", nativeQuery=true)
 	List<lsreportfile> getReportFile(List<Integer> sampleFileCodeList1);
+
+	List<lsreportfile> findByBatchcodeInOrderByIdDesc(List<Long> batchcode);
 
 
 }

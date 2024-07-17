@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
-import com.agaram.eln.primary.model.reports.reportdesigner.Cloudreporttemplate;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportDesignerStructure;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.service.reports.DesingerService;
@@ -78,5 +76,10 @@ public class DesingerController {
 	@RequestMapping("/updatereporttemplatemapping")
 	public Reporttemplate updatereporttemplatemapping(@RequestBody Reporttemplate objdir)throws Exception {
 		return desingerservice.updatereporttemplatemapping(objdir);
+	}
+	
+	@RequestMapping("/onGetReportTemplateBasedOnProject")
+	public Map<String, Object> onGetReportTemplateBasedOnProject(@RequestBody Map<String, Object> objMap)throws Exception {
+		return desingerservice.onGetReportTemplateBasedOnProject(objMap);
 	}
 }
