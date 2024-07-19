@@ -859,7 +859,7 @@ public class InstrumentService {
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(currentdate);
 					// calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
-					calendar.add(Calendar.MINUTE, (2));
+					calendar.add(Calendar.MINUTE, (10));
 					Date futureDate = calendar.getTime();
 					autoorder.get(0).setAutocreatedate(futureDate);
 				}
@@ -1115,7 +1115,7 @@ public class InstrumentService {
 			if (objorderindex1.getRepeat() != null && objorderindex1.getLsautoregisterorders() != null
 					&& objorderindex1.getRepeat()) {
 				try {
-					//ValidateAutoRegister(objorderindex1);
+					ValidateAutoRegister(objorderindex1);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -1427,9 +1427,7 @@ public class InstrumentService {
 			Duration duration = Duration.between(currentTime, AutoCreateTime);
 			long delay = duration.toMillis();
 			scheduleAutoRegister(objlogilaborderdetail, delay);
-
 		}
-
 	}
 
 	private void scheduleAutoRegister(LSlogilablimsorderdetail objlogilaborderdetail, long delay) {
@@ -1454,9 +1452,7 @@ public class InstrumentService {
 //		timer.schedule(task, delay);
 //		scheduledTasks.put(Integer.parseInt(objlogilaborderdetail.getBatchcode().toString()), task);
 	
-		
         Set<Integer> runningTasks = new HashSet<>();
-    	
     	int batchcode = objlogilaborderdetail.getBatchcode().intValue();
 
 //    	if (scheduledTasks.containsKey(batchcode)) {
@@ -1651,6 +1647,19 @@ public class InstrumentService {
 				}
 			} else if (objorder.getAssignedto() != null) {
 
+				if (objorder.getOrderflag().equalsIgnoreCase("R")) {
+					Notifiction = "ORDERCOMPLETEDASSIGN";
+
+					Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
+					+ "\", \"previousworkflow\":\"" + "" + "\", \"previousworkflowcode\":\"" + -1
+					+ "\", \"currentworkflow\":\"" + objorder.getLsworkflow().getWorkflowname()
+					+ "\", \"assignedto\":\"" + objorder.getAssignedto().getUsername() + "\", \"completeduser\":\""
+					+ objorder.getObjLoggeduser().getUsername() + "\", \"currentworkflowcode\":\""
+					+ objorder.getLsworkflow().getWorkflowcode() + "\"}";
+					
+				} else {
+					
+				
 				Notifiction = "ORDERCREATIONANDASSIGN";
 				Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
 						+ "\", \"previousworkflow\":\"" + "" + "\", \"previousworkflowcode\":\"" + -1
@@ -1658,7 +1667,8 @@ public class InstrumentService {
 						+ "\", \"assignedto\":\"" + objorder.getAssignedto().getUsername() + "\", \"assignedby\":\""
 						+ objorder.getObjLoggeduser().getUsername() + "\", \"currentworkflowcode\":\""
 						+ objorder.getLsworkflow().getWorkflowcode() + "\"}";
-
+				}
+				
 				LSnotification objnotify = new LSnotification();
 				objnotify.setNotifationfrom(
 						lsuserMasterRepository.findByusercode(objorder.getObjLoggeduser().getUsercode()));
@@ -1670,6 +1680,7 @@ public class InstrumentService {
 				objnotify.setNotificationpath("/registertask");
 				objnotify.setNotificationfor(1);
 				lsnotificationRepository.save(objnotify);
+				
 			}
 			Details = null;
 			Notifiction = null;
@@ -8612,7 +8623,8 @@ public class InstrumentService {
 							lsOrderDetail.getOrderstartedon(), lsOrderDetail.getLockeduser(),
 							lsOrderDetail.getLockedusername(), lsOrderDetail.getVersionno(),
 							lsOrderDetail.getElnprotocolworkflow(), lsOrderDetail.getLsordernotification(),
-							lsOrderDetail.getLsautoregister(), lsOrderDetail.getRepeat(),lsOrderDetail.getSentforapprovel(),lsOrderDetail.getApprovelaccept()))
+							lsOrderDetail.getLsautoregister(), lsOrderDetail.getRepeat(),lsOrderDetail.getSentforapprovel(),
+							lsOrderDetail.getApprovelaccept(),lsOrderDetail.getAutoregistercount()))
 					.collect(Collectors.toList()));
 
 		}
@@ -10216,7 +10228,8 @@ public class InstrumentService {
 							lsOrderDetail.getOrderstartedon(), lsOrderDetail.getLockeduser(),
 							lsOrderDetail.getLockedusername(), lsOrderDetail.getVersionno(),
 							lsOrderDetail.getElnprotocolworkflow(), lsOrderDetail.getLsordernotification(),
-							lsOrderDetail.getLsautoregister(), lsOrderDetail.getRepeat(),lsOrderDetail.getSentforapprovel(),lsOrderDetail.getApprovelaccept()))
+							lsOrderDetail.getLsautoregister(), lsOrderDetail.getRepeat(),lsOrderDetail.getSentforapprovel(),
+							lsOrderDetail.getApprovelaccept(),lsOrderDetail.getAutoregistercount()))
 					.collect(Collectors.toList()));
 
 		}

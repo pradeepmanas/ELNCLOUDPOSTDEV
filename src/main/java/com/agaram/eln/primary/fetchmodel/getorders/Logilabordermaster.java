@@ -43,12 +43,13 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private LsAutoregister lsautoregisterorders;
 	private Boolean sentforapprovel;
 	private String approvelaccept;
+	private Integer autoregistercount;
 	
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,LSuserMaster assignedto,
 			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,
 			LSuserMaster lsuserMaster ,Integer testcode,Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,Boolean repeat, 
-			LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept) {
+			LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept,Integer autoregistercount) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -75,6 +76,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.lsautoregisterorders=lsautoregisterorders;
 		this.sentforapprovel=sentforapprovel;
 		this.approvelaccept=approvelaccept;
+		this.autoregistercount=autoregistercount;
 		
 		
 	}
@@ -374,5 +376,15 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	public void setOrdersaved(Integer ordersaved) {
 		this.ordersaved = ordersaved;
 	}
+
+	public Integer getAutoregistercount() {
+		return autoregistercount;
+	}
+
+
+	public void setAutoregistercount(Integer autoregistercount) {
+		this.autoregistercount = autoregistercount;
+	}
+	
 	
 }

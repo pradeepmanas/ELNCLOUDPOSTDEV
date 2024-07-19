@@ -49,6 +49,17 @@ public class ReportTemplateVersion {
 	private boolean isnewversion;
 	
 	@Transient
+	private Integer ismultitenant;
+	
+	public Integer getIsmultitenant() {
+		return ismultitenant;
+	}
+
+	public void setIsmultitenant(Integer ismultitenant) {
+		this.ismultitenant = ismultitenant;
+	}
+
+	@Transient
 	private String templateversioncontent;
 
 	public String getTemplateversioncontent() {

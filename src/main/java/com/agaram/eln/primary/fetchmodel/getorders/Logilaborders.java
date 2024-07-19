@@ -7,7 +7,6 @@ import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Elnmaterial;
-import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
@@ -47,7 +46,7 @@ public class Logilaborders extends Logilabordermaster {
 	private LsAutoregister lsautoregisterorders;
 	private Boolean sentforapprovel;
 	private String approvelaccept;
-
+	private Integer autoregistercount;
 	
 	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
@@ -55,10 +54,10 @@ public class Logilaborders extends Logilabordermaster {
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,
 			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification, 
-			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept) {
+			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept,Integer autoregistercount) {
 		
 		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,
-				lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved,repeat,lsautoregisterorders,sentforapprovel,approvelaccept);
+				lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved,repeat,lsautoregisterorders,sentforapprovel,approvelaccept,autoregistercount);
 		 
 		if(lssamplefile != null)
 		{
@@ -96,6 +95,7 @@ public class Logilaborders extends Logilabordermaster {
         this.lsautoregisterorders=lsautoregisterorders != null ? lsautoregisterorders : null;
         this.sentforapprovel=sentforapprovel!=null?sentforapprovel:null;
         this.approvelaccept=approvelaccept!=null?approvelaccept:null;
+        this.autoregistercount = autoregistercount != null ? autoregistercount:null;
 	}
 	
 	
@@ -347,6 +347,16 @@ public class Logilaborders extends Logilabordermaster {
 
 	public void setApprovelaccept(String approvelaccept) {
 		this.approvelaccept = approvelaccept;
+	}
+
+
+	public Integer getAutoregistercount() {
+		return autoregistercount;
+	}
+
+
+	public void setAutoregistercount(Integer autoregistercount) {
+		this.autoregistercount = autoregistercount;
 	}
 
 	

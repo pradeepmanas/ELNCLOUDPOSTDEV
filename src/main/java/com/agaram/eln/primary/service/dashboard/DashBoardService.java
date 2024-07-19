@@ -1270,7 +1270,7 @@ public class DashBoardService {
 									lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
 									lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
 									lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus(), lsOrderDetail.getLsordernotification(), 
-									lsOrderDetail.getOrdersaved(),lsOrderDetail.getRepeat(),lsOrderDetail.getLsautoregisterorders(),lsOrderDetail.getSentforapprovel(),lsOrderDetail.getApprovelaccept()))
+									lsOrderDetail.getOrdersaved(),lsOrderDetail.getRepeat(),lsOrderDetail.getLsautoregisterorders(),lsOrderDetail.getSentforapprovel(),lsOrderDetail.getApprovelaccept(),lsOrderDetail.getAutoregistercount()))
 							.collect(Collectors.toList()));
 				}
 			} else {
@@ -1288,7 +1288,8 @@ public class DashBoardService {
 								lsOrderDetail.getKeyword(), lsOrderDetail.getLstestmasterlocal(),
 								lsOrderDetail.getOrdercancell(), lsOrderDetail.getViewoption(),
 								lsOrderDetail.getLsuserMaster(), lsOrderDetail.getTestcode(),
-								lsOrderDetail.getApprovelstatus(),lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved(),lsOrderDetail.getRepeat(),lsOrderDetail.getLsautoregisterorders(),lsOrderDetail.getSentforapprovel(),lsOrderDetail.getApprovelaccept()))
+								lsOrderDetail.getApprovelstatus(),lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved(),lsOrderDetail.getRepeat(),
+								lsOrderDetail.getLsautoregisterorders(),lsOrderDetail.getSentforapprovel(),lsOrderDetail.getApprovelaccept(),lsOrderDetail.getAutoregistercount()))
 						.collect(Collectors.toList());
 			}
 
@@ -2270,7 +2271,7 @@ public class DashBoardService {
 								lsOrderDetail.getOrdercancell(), lsOrderDetail.getViewoption(),
 								lsOrderDetail.getLsuserMaster(), lsOrderDetail.getTestcode(),
 								lsOrderDetail.getApprovelstatus(),lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved(),lsOrderDetail.getRepeat(),
-								lsOrderDetail.getLsautoregisterorders(),lsOrderDetail.getSentforapprovel(),lsOrderDetail.getApprovelaccept()
+								lsOrderDetail.getLsautoregisterorders(),lsOrderDetail.getSentforapprovel(),lsOrderDetail.getApprovelaccept(),lsOrderDetail.getAutoregistercount()
 
 						)).collect(Collectors.toList());
 			}
@@ -4269,7 +4270,8 @@ public class DashBoardService {
 										lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
 										lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
 										lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus(),lsOrderDetail.getLsordernotification(), 
-										lsOrderDetail.getOrdersaved(),lsOrderDetail.getRepeat(),lsOrderDetail.getLsautoregisterorders(),lsOrderDetail.getSentforapprovel(),lsOrderDetail.getApprovelaccept()))
+										lsOrderDetail.getOrdersaved(),lsOrderDetail.getRepeat(),lsOrderDetail.getLsautoregisterorders(),
+										lsOrderDetail.getSentforapprovel(),lsOrderDetail.getApprovelaccept(),lsOrderDetail.getAutoregistercount()))
 								.collect(Collectors.toList());
 						rtnobj.put("orders", lstorders);
 

@@ -22,9 +22,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
@@ -2960,15 +2962,15 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 		List<LsAutoregister> autoorder = lsautoregisterrepo.findByBatchcodeAndScreen(lSlogilabprotocoldetail1.getProtocolordercode(),lSlogilabprotocoldetail1.getLsautoregister().getScreen());
 		Map<String, Object> mapObj = new HashMap<String, Object>();
             Integer Ismultitenant = autoorder.get(0).getIsmultitenant();
-            if (lSlogilabprotocoldetail1.getAutoregistercount()!=null && lSlogilabprotocoldetail1.getAutoregistercount() > 0) {
-            	
+           
             lSlogilabprotocoldetail1.setRepeat(false);
            // lSlogilabprotocoldetail.getLsautoregister().setStoptime(commonfunction.getCurrentUtcTime());
           //  lsautoregisterrepo.save(lSlogilabprotocoldetail.getLsautoregister());
-            
+      
             Integer autoregistercount=lSlogilabprotocoldetail1.getAutoregistercount()-1;
 				LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail1);
 				
+		if (lSlogilabprotocoldetail1.getAutoregistercount()!=null && lSlogilabprotocoldetail1.getAutoregistercount() > 0) {
 				autoorder.stream().forEach(autocode->{
 					if(autocode.getBatchcode().equals(lSlogilabprotocoldetail1.getProtocolordercode())) {
 						Date currentdate = null;
@@ -3319,14 +3321,26 @@ public Map<String, Object> addautoProtocolOrder(LSlogilabprotocoldetail lSlogila
 //						lSlogilabprotocoldetail.setLstworkflow(lSlogilabprotocoldetail.getLstworkflow());
 						
 						lSlogilabprotocoldetail1.setOrdercancell(null);
+						
 						if(lSlogilabprotocoldetail1.getLsautoregister()!= null) {
+							
 							lSlogilabprotocoldetail1.getLsautoregister().setBatchcode(lSlogilabprotocoldetail1.getProtocolordercode());
 							lsautoregisterrepo.save(lSlogilabprotocoldetail1.getLsautoregister());
 //							lSlogilabprotocoldetail.setRepeat(true);
 							lSlogilabprotocoldetail1.setRepeat(autoregistercount==0?false:true);
 							lSlogilabprotocoldetail1.setAutoregistercount(autoregistercount);
 							LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail1);
+							
 						}
+						
+						if(lSlogilabprotocoldetail1.getLsautoregister()!= null &&  lSlogilabprotocoldetail1.getRepeat() && lSlogilabprotocoldetail1.getRepeat()!=null ){
+							
+							lSlogilabprotocoldetail1.getLsautoregister().setBatchcode(lSlogilabprotocoldetail1.getProtocolordercode());
+							lsautoregisterrepo.save(lSlogilabprotocoldetail1.getLsautoregister());
+							lSlogilabprotocoldetail.setLsautoregister(lSlogilabprotocoldetail1.getLsautoregister());
+							ValidateProtocolAutoRegistration(lSlogilabprotocoldetail1);
+						}
+						
 					}
 
 					mapObj.put("AddedProtocol", lSlogilabprotocoldetail1);
@@ -3426,15 +3440,13 @@ public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabpro
 			if(lSlogilabprotocoldetail.getLsautoregisterorder()!= null &&  lSlogilabprotocoldetail.getRepeat() && lSlogilabprotocoldetail.getRepeat()!=null ){
 				lSlogilabprotocoldetail.getLsautoregisterorder().setBatchcode(lSlogilabprotocoldetail.getProtocolordercode());
 				
-				
 //				LsAutoregister regobj = lsautoregisterrepo.findTopByOrderByRegcodeDesc();
 //				Long regcode = regobj.getRegcode()+1;
 //				lSlogilabprotocoldetail.getLsautoregisterorder().setRegcode(regcode);
 				
-				
 				lsautoregisterrepo.save(lSlogilabprotocoldetail.getLsautoregisterorder());
 				lSlogilabprotocoldetail.setLsautoregister(lSlogilabprotocoldetail.getLsautoregisterorder());
-				//ValidateProtocolAutoRegistration(lSlogilabprotocoldetail);
+				ValidateProtocolAutoRegistration(lSlogilabprotocoldetail);
 			}
 			
 			if (lSlogilabprotocoldetail.getProtocolordercode() != null) {
@@ -3823,26 +3835,56 @@ private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
 
 private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , long delay) {
 	
-	//if(objNotification.getIscompleted() == null || objNotification.getIscompleted() == false){
-	if (scheduledTasks.containsKey(Integer.parseInt(objprotocolorder.getProtocolordercode().toString()))) {
-        System.out.println("Task already scheduled for batch ID: " + Integer.parseInt(objprotocolorder.getProtocolordercode().toString()));
-        return;
-    }
-		TimerTask task = new TimerTask() {
-			@SuppressWarnings("unlikely-arg-type")
-			public void run() {
-				try {
-					addautoProtocolOrder(objprotocolorder);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				scheduledTasks.remove(objprotocolorder.getProtocolordercode());
-			}
-		};
-		Timer timer = new Timer();
-		timer.schedule(task, delay);
-		scheduledTasks.put(Integer.parseInt(objprotocolorder.getProtocolordercode().toString()), task);
-	//}
+//	if (scheduledTasks.containsKey(Integer.parseInt(objprotocolorder.getProtocolordercode().toString()))) {
+//        System.out.println("Task already scheduled for batch ID: " + Integer.parseInt(objprotocolorder.getProtocolordercode().toString()));
+//        return;
+//    }
+//		TimerTask task = new TimerTask() {
+//			@SuppressWarnings("unlikely-arg-type")
+//			public void run() {
+//				try {
+//					addautoProtocolOrder(objprotocolorder);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//				scheduledTasks.remove(objprotocolorder.getProtocolordercode());
+//			}
+//		};
+//		Timer timer = new Timer();
+//		timer.schedule(task, delay);
+//		scheduledTasks.put(Integer.parseInt(objprotocolorder.getProtocolordercode().toString()), task);
+	
+		Set<Integer> runningTasks = new HashSet<>();
+	    synchronized (runningTasks) {
+	    	if (scheduledTasks.containsKey(Integer.parseInt(objprotocolorder.getProtocolordercode().toString()))) {
+	    	        System.out.println("Task already scheduled for protocolordercode: " + Integer.parseInt(objprotocolorder.getProtocolordercode().toString()));
+	    	        return;
+	    	    }
+	    		 
+	    	if((objprotocolorder.getRepeat()!=null && objprotocolorder.getRepeat() != false)) {
+	    		TimerTask task = new TimerTask() {
+		            @SuppressWarnings("unlikely-arg-type")
+					@Override
+		            public void run() {
+		                try {
+		                	addautoProtocolOrder(objprotocolorder);
+		                } catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} finally {
+	                        synchronized (runningTasks) {
+	                            runningTasks.remove(Integer.parseInt(objprotocolorder.getProtocolordercode().toString()));
+	                        }
+	                        scheduledTasks.remove(Integer.parseInt(objprotocolorder.getProtocolordercode().toString()));
+	                    }
+		            }
+		        };
+		        runningTasks.add(Integer.parseInt(objprotocolorder.getProtocolordercode().toString()));
+		        Timer timer = new Timer();
+		        timer.schedule(task, delay);
+		        scheduledTasks.put(Integer.parseInt(objprotocolorder.getProtocolordercode().toString()), task);
+	    	}
+	    }
 }
 	private void createLogilabLIMSOrder4SDMS(LSlogilabprotocoldetail objLSlogilabprotoorder) throws IOException {
 

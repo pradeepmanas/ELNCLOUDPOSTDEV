@@ -71,6 +71,28 @@ public class ReportViewerStructure {
 	
 	@Transient
 	private LSuserMaster lsuserMaster;
+	
+	@Transient
+	private String filefor;
+	
+	@Transient
+	private Integer templatetype;
+
+	public String getFilefor() {
+		return filefor;
+	}
+
+	public void setFilefor(String filefor) {
+		this.filefor = filefor;
+	}
+
+	public Integer getTemplatetype() {
+		return templatetype;
+	}
+
+	public void setTemplatetype(Integer templatetype) {
+		this.templatetype = templatetype;
+	}
 
 	public Long getDirectorycode() {
 		return directorycode;

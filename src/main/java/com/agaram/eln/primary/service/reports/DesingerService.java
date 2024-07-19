@@ -34,6 +34,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolversion;
 import com.agaram.eln.primary.model.reports.reportdesigner.Cloudreporttemplate;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportDesignerStructure;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportTemplateMapping;
+import com.agaram.eln.primary.model.reports.reportdesigner.ReportTemplateVersion;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -184,8 +185,6 @@ public class DesingerService {
 	}
 
 	public Reporttemplate gettemplatedata(Reporttemplate objfile) throws IOException {
-//		return cloudreporttemplaterepository.findOne(template.getTemplatecode());
-
 		if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
 			String tenant = TenantContext.getCurrentTenant();
 			if (objfile.getIsmultitenant() == 2) {
@@ -199,14 +198,10 @@ public class DesingerService {
 				System.out.println("JSON Content:");
 				System.out.println(jsonContent);
 				objfile.setTemplatecontent(jsonContent);
-				// Optionally parse the JSON content into Java objects here
 			} else {
 				System.out.println("Failed to retrieve JSON content from Azure Blob Storage.");
 			}
-//			 String documentContent =getDocumentContent(retrievedBytes);
-////			String retrievedContent = convertBytesToString(retrievedBytes);
-//			System.out.println("Retrieved Document Content: " + documentContent);
-//			objfile.setTemplatecontent(documentContent);
+
 		}
 		return objfile;
 	}
@@ -447,5 +442,27 @@ public class DesingerService {
 		rtnMap.put("template", lstTemp);
 		
 		return rtnMap;
+	}
+
+	public ReportTemplateVersion gettemplateversiondata(ReportTemplateVersion objfile) {
+		if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
+			String tenant = TenantContext.getCurrentTenant();
+			if (objfile.getIsmultitenant() == 2) {
+				tenant = "freeusers";
+			}
+			String containerName = tenant + "reporttemplateversion";
+			String documentName = objfile.getFileuid();
+			byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName, documentName);
+			if (documentBytes != null) {
+				String jsonContent = new String(documentBytes, StandardCharsets.UTF_8);
+				System.out.println("JSON Content:");
+				System.out.println(jsonContent);
+				objfile.setTemplateversioncontent(jsonContent);
+			} else {
+				System.out.println("Failed to retrieve JSON content from Azure Blob Storage.");
+			}
+
+		}
+		return objfile;
 	}
 }

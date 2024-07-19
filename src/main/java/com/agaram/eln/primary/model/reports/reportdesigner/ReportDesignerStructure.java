@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
-import javax.persistence.Column;
+//import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,10 +17,9 @@ import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
-import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
-import com.fasterxml.jackson.annotation.JsonFormat;
+//import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "ReportDesignerStructure")
@@ -77,7 +76,6 @@ public class ReportDesignerStructure {
 	
 	@Transient
 	private String filefor;
-	
 	
 	@Transient
 	private Integer templatetype;

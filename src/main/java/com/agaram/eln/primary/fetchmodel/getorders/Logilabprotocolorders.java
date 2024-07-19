@@ -38,11 +38,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	private LSprojectmaster lsprojectmaster;
 
 	private String keyword;
-
 	private Integer Testcode;
-
 	private Long directorycode;
-
 	private Integer createby;
 
 	private String repositoryitemname;
@@ -74,9 +71,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	private Boolean repeat;
 	private Boolean sentforapprovel;
 	private String approvelaccept;
-
-
-
+	private Integer autoregistercount;
+	
 	public Logilabprotocolorders(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
 			LSprotocolworkflow lSprotocolworkflow, LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster,
@@ -86,7 +82,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 			Elnmaterial elnmaterial,ElnmaterialInventory elnmaterialinventory, Integer approved, Integer rejected,
 			Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby,
 			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow,
-			LSOrdernotification lsordernotification,LsAutoregister lsautoregister,Boolean repeat,Boolean sentforapprovel,String approvelaccept) {
+			LSOrdernotification lsordernotification,LsAutoregister lsautoregister,Boolean repeat,
+			Boolean sentforapprovel,String approvelaccept,Integer autoregistercount) {
 
 		this.protocolordercode = protocolordercode;
 		this.Testcode = Testcode;
@@ -129,7 +126,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
         this.repeat = repeat;
 		this.sentforapprovel=sentforapprovel;
 		this.approvelaccept=approvelaccept;
-        
+		this.autoregistercount=autoregistercount;
 	}
 
 	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
@@ -517,4 +514,13 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	public void setApprovelaccept(String approvelaccept) {
 		this.approvelaccept = approvelaccept;
 	}
+
+	public Integer getAutoregistercount() {
+		return autoregistercount;
+	}
+
+	public void setAutoregistercount(Integer autoregistercount) {
+		this.autoregistercount = autoregistercount;
+	}
+	
 }

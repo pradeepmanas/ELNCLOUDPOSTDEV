@@ -3,17 +3,18 @@ package com.agaram.eln.primary.model.reports.reportviewer;
 import java.util.Date;
 import java.util.List;
 
-import com.agaram.eln.primary.model.general.Response;
-
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -29,8 +30,9 @@ public class Reports {
 
 	private String reportname;
 
-	private Date dateCreated;
-	private Date dateModified;
+	private Date datecreated;
+	private Date datemodified;
+	
 	@ManyToOne
 	public LSuserMaster createdby;
 
@@ -41,6 +43,8 @@ public class Reports {
 	private LSSiteMaster sitemaster;
 
 	private Integer viewoption;
+	
+	private Integer versionno;
 
 	private Integer templatetype;
 
@@ -57,6 +61,24 @@ public class Reports {
 	public void setLstestmasterlocal(List<LStestmasterlocal> lstestmasterlocal) {
 		this.lstestmasterlocal = lstestmasterlocal;
 	}
+	
+	public Integer getVersionno() {
+		return versionno;
+	}
+
+	public void setVersionno(Integer versionno) {
+		this.versionno = versionno;
+	}
+
+	public List<ReportsVersion> getReportVersions() {
+		return reportVersions;
+	}
+
+	public void setReportVersions(List<ReportsVersion> reportVersions) {
+		this.reportVersions = reportVersions;
+	}
+
+
 
 	@ManyToOne
 	private Reporttemplate reporttemplate;
@@ -64,7 +86,7 @@ public class Reports {
 	@Transient
 	private String reporttemplatecontent;
 
-//	@Transient
+	@Transient
 	private Date fromdate;
 
 	@Transient
@@ -73,6 +95,61 @@ public class Reports {
 	@Transient
 	private Integer ismultitenant;	
 	
+	private String fileuid;
+
+	private String fileuri;
+	
+	private Integer containerstored;
+	
+	private String fileextention;
+	
+	@ManyToOne
+	private LSuserMaster approvedby;	
+	
+	@OneToMany
+	@JoinColumn(name="reportcode")
+	private List<ReportsVersion> reportVersions;
+	
+	public LSuserMaster getApprovedby() {
+		return approvedby;
+	}
+
+	public void setApprovedby(LSuserMaster approvedby) {
+		this.approvedby = approvedby;
+	}
+
+	public String getFileuid() {
+		return fileuid;
+	}
+
+	public void setFileuid(String fileuid) {
+		this.fileuid = fileuid;
+	}
+
+	public String getFileuri() {
+		return fileuri;
+	}
+
+	public void setFileuri(String fileuri) {
+		this.fileuri = fileuri;
+	}
+
+	public Integer getContainerstored() {
+		return containerstored;
+	}
+
+	public void setContainerstored(Integer containerstored) {
+		this.containerstored = containerstored;
+	}
+
+	public String getFileextention() {
+		return fileextention;
+	}
+
+	public void setFileextention(String fileextention) {
+		this.fileextention = fileextention;
+	}
+
 	public Integer getIsmultitenant() {
 		return ismultitenant;
 	}
@@ -107,21 +184,21 @@ public class Reports {
 	public void setReportname(String reportname) {
 		this.reportname = reportname;
 	}
-
-	public Date getDateCreated() {
-		return dateCreated;
+	
+	public Date getDatecreated() {
+		return datecreated;
 	}
 
-	public void setDateCreated(Date dateCreated) {
-		this.dateCreated = dateCreated;
+	public void setDatecreated(Date datecreated) {
+		this.datecreated = datecreated;
 	}
 
-	public Date getDateModified() {
-		return dateModified;
+	public Date getDatemodified() {
+		return datemodified;
 	}
 
-	public void setDateModified(Date dateModified) {
-		this.dateModified = dateModified;
+	public void setDatemodified(Date datemodified) {
+		this.datemodified = datemodified;
 	}
 
 	public LSuserMaster getCreatedby() {
@@ -204,4 +281,13 @@ public class Reports {
 		this.todate = todate;
 	}
 
+	private Date completeddate;
+	
+	public Date getCompleteddate() {
+		return completeddate;
+	}
+
+	public void setCompleteddate(Date completeddate) {
+		this.completeddate = completeddate;
+	}
 }

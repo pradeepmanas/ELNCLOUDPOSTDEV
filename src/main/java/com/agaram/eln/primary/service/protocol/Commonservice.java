@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,8 @@ import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportTemplateVersion;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
+import com.agaram.eln.primary.model.reports.reportviewer.Reports;
+import com.agaram.eln.primary.model.reports.reportviewer.ReportsVersion;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
@@ -135,6 +136,31 @@ public class Commonservice {
 
 	}
 
+	
+	public Reports uploadToAzureBlobStorage(byte[] documentBytes, Reports objFile, String uniqueDocumentName) throws IOException {
+		String tenant = TenantContext.getCurrentTenant();
+
+		Map<String, Object> objMap = objCloudFileManipulationservice.storecloudReportfile(documentBytes, tenant + "report", uniqueDocumentName);
+		String fileUUID = (String) objMap.get("blobName");
+		String fileURI = objMap.get("blobUri").toString();
+		objFile.setFileuid(fileUUID);
+		objFile.setFileuri(fileURI);
+		objFile.setContainerstored(1);
+		return objFile;
+	}
+	
+	public ReportsVersion uploadToAzureBlobStorage(byte[] documentBytes, ReportsVersion objVersion, String uniqueDocumentName) throws IOException {
+		String tenant = TenantContext.getCurrentTenant();
+
+		Map<String, Object> objMap = objCloudFileManipulationservice.storecloudReportfile(documentBytes, tenant + "reportversion", uniqueDocumentName);
+		String fileUUID = (String) objMap.get("blobName");
+		String fileURI = objMap.get("blobUri").toString();
+		objVersion.setFileuid(fileUUID);
+		objVersion.setFileuri(fileURI);
+		objVersion.setContainerstored(1);
+		return objVersion;
+	}
+	
 	@Async
 	public CompletableFuture<List<LSprotocolmaster>> updateProtocolContent(String Content, LSprotocolmaster objfile)
 			throws IOException {
@@ -295,5 +321,4 @@ public class Commonservice {
 		obj.add(objFile);
 		return CompletableFuture.completedFuture(obj);
 	}
-
 }

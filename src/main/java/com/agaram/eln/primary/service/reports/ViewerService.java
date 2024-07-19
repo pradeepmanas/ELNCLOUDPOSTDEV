@@ -2,7 +2,6 @@ package com.agaram.eln.primary.service.reports;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,10 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Env;
-import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -30,13 +26,12 @@ import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderimages;
 import com.agaram.eln.primary.model.protocols.LsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.reports.lsreportfile;
-import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.reports.reportviewer.Cloudreports;
 import com.agaram.eln.primary.model.reports.reportviewer.ReportViewerStructure;
 import com.agaram.eln.primary.model.reports.reportviewer.Reports;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
-import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderCreationRepository;
 import com.agaram.eln.primary.repository.cloudProtocol.CloudLsLogilabprotocolstepInfoRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
@@ -49,19 +44,13 @@ import com.agaram.eln.primary.repository.reports.reportviewer.CloudreportsReposi
 import com.agaram.eln.primary.repository.reports.reportviewer.ReportViewerStructureRepository;
 import com.agaram.eln.primary.repository.reports.reportviewer.ReportsRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
-import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.blob.CloudBlob;
-import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
-import com.microsoft.azure.storage.blob.ListBlobItem;
 
 @Service
 public class ViewerService {
@@ -70,9 +59,6 @@ public class ViewerService {
 
 	@Autowired
 	private CloudOrderCreationRepository cloudOrderCreationRepository;
-
-	@Autowired
-	private LSprojectmasterRepository lsprojectmasterRepository;
 
 	@Autowired
 	private ReportViewerStructureRepository reportViewerstructureRepository;
@@ -106,11 +92,7 @@ public class ViewerService {
 	private MongoTemplate mongoTemplate;
 
 	@Autowired
-	private Environment env;
-	
-	@Autowired
 	private ReportfileRepository reportfileRepository;
-
 
 	@SuppressWarnings("unused")
 	public Map<String, Object> getreportdata(Reports report) throws URISyntaxException {
@@ -120,10 +102,9 @@ public class ViewerService {
 			List<LSlogilablimsorderdetail> lstorder = lslogilablimsorderdetailRepository
 					.findByCreatedtimestampBetweenOrderByBatchcodeDesc(report.getFromdate(), report.getTodate());
 
-if (lstorder != null && !lstorder.isEmpty()) {
-				lstorder.parallelStream()
-						.filter(order -> order.getLssamplefile() != null
-								&& order.getLssamplefile().getFilesamplecode() != null)
+			if (lstorder != null && !lstorder.isEmpty()) {
+				lstorder.parallelStream().filter(
+						order -> order.getLssamplefile() != null && order.getLssamplefile().getFilesamplecode() != null)
 //							.forEach(order -> setFileContentFromBlob(container, order));
 						.forEach(order -> {
 							try {
@@ -137,8 +118,6 @@ if (lstorder != null && !lstorder.isEmpty()) {
 			rtnObj.put("sheetorder", lstorder);
 		} else if (report.getReporttemplate().getReporttype() == 2) {
 
-//	List<LStestmasterlocal> lstest = null;
-//	Map<String, Object> rtnObj1 = new HashMap<>();
 			List<Integer> testid = report.getLstestmasterlocal().stream().map(LStestmasterlocal::getTestcode)
 					.collect(Collectors.toList());
 
@@ -171,13 +150,14 @@ if (lstorder != null && !lstorder.isEmpty()) {
 
 			List<LSlogilabprotocoldetail> lstorder = lslogilabprotocoldetailRepository
 					.findByLsprotocolmasterInAndTestcodeIn(lstpm, testid);
-			
-			List<Long> lstpmc = lstorder.stream().map(LSlogilabprotocoldetail::getProtocolordercode).collect(Collectors.toList());
+
+			List<Long> lstpmc = lstorder.stream().map(LSlogilabprotocoldetail::getProtocolordercode)
+					.collect(Collectors.toList());
 			ArrayList<String> arrayList = new ArrayList<>();
 			if (lstorder != null && !lstorder.isEmpty()) {
 				lstorder.parallelStream().forEach(order -> {
 					if (order.getFileuid() != null && order.getFileuri() != null) {
-						setProtocolFileContentFromBlob(order, rtnObj,arrayList);
+						setProtocolFileContentFromBlob(order, rtnObj, arrayList);
 					} else {
 						List<LSlogilabprotocolsteps> LSprotocolsteplst = new ArrayList<LSlogilabprotocolsteps>();
 
@@ -190,10 +170,13 @@ if (lstorder != null && !lstorder.isEmpty()) {
 
 								if (report.getIsmultitenant() == 1) {
 
-									CloudLsLogilabprotocolstepInfo newLSprotocolstepInfo = cloudLsLogilabprotocolstepInfoRepository.findById(LSprotocolstepObj1.getProtocolorderstepcode());
-									List<LSprotocolorderimages> lsprotocolorderimages = lsprotocolorderimagesRepository.findByProtocolorderstepcode(LSprotocolstepObj1.getProtocolorderstepcode());
+									CloudLsLogilabprotocolstepInfo newLSprotocolstepInfo = cloudLsLogilabprotocolstepInfoRepository
+											.findById(LSprotocolstepObj1.getProtocolorderstepcode());
+									List<LSprotocolorderimages> lsprotocolorderimages = lsprotocolorderimagesRepository
+											.findByProtocolorderstepcode(LSprotocolstepObj1.getProtocolorderstepcode());
 									if (newLSprotocolstepInfo != null) {
-										LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
+										LSprotocolstepObj1
+												.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
 									}
 									if (lsprotocolorderimages.size() != 0) {
 										LSprotocolstepObj1.setLsprotocolorderimages(lsprotocolorderimages);
@@ -211,7 +194,7 @@ if (lstorder != null && !lstorder.isEmpty()) {
 
 							}
 						}
-						
+
 						if (LSprotocolsteplst != null) {
 							rtnObj.put("protocolstepLst", LSprotocolstepLst);
 //							rtnObj.put("countforstep", countforstep);
@@ -222,10 +205,10 @@ if (lstorder != null && !lstorder.isEmpty()) {
 				});
 
 			}
-			
+
 			rtnObj.put("selected", treeList);
 			rtnObj.put("lstprotocolordertempl", lstorder);
-			
+
 		}
 
 		return rtnObj;
@@ -241,12 +224,13 @@ if (lstorder != null && !lstorder.isEmpty()) {
 				order.getLssamplefile().setFilecontent(file.get(0).getContent());
 			}
 		}
-	
+
 		return null;
 	}
 
-	private Object setProtocolFileContentFromBlob(LSlogilabprotocoldetail order, Map<String, Object> rtnObj, ArrayList<String> arrayList) {
-		
+	private Object setProtocolFileContentFromBlob(LSlogilabprotocoldetail order, Map<String, Object> rtnObj,
+			ArrayList<String> arrayList) {
+
 		try {
 			arrayList.add(objCloudFileManipulationservice.retrieveCloudSheets(order.getFileuid(),
 					TenantContext.getCurrentTenant() + "protocolorder"));
@@ -268,6 +252,7 @@ if (lstorder != null && !lstorder.isEmpty()) {
 //		return arrayList;
 //	}
 
+	@SuppressWarnings("unused")
 	private void setFileContentFromBlob(CloudBlobContainer container, LSlogilablimsorderdetail order) {
 		List<Integer> sampleFileCodeList1 = lssamplefileRepository.getFilesamplecodeByBatchcodeIn(order.getBatchcode());
 		List<CloudOrderCreationRepository> fileuuid = cloudOrderCreationRepository.getFileuid(sampleFileCodeList1);
@@ -381,9 +366,29 @@ if (lstorder != null && !lstorder.isEmpty()) {
 		return report;
 	}
 
-	public List<Reports> getreportsonfolder(ReportViewerStructure reportstructure) throws Exception {
+	public List<Reports> getreportsonfolder(ReportViewerStructure objReport) throws Exception {
+//		List<Reports> lstreports = new ArrayList<Reports>();
+//		lstreports = reportsRepository.findByReportviewerstructure(reportstructure);
+//		return lstreports;
+
 		List<Reports> lstreports = new ArrayList<Reports>();
-		lstreports = reportsRepository.findByReportviewerstructure(reportstructure);
+		if (objReport.getFilefor().equals("RDT") || objReport.getFilefor().equals("RAT")) {
+			if (objReport.getLstuserMaster() == null) {
+				objReport.setLstuserMaster(new ArrayList<LSuserMaster>());
+				objReport.getLstuserMaster().add(objReport.getCreatedby());
+			}
+
+			lstreports = reportsRepository
+					.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDatecreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDatecreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDatecreatedBetweenOrderByReportcodeDesc(
+							objReport.getSitemaster(), 1, objReport.getTemplatetype(), objReport.getLstuserMaster(),
+							objReport.getFromdate(), objReport.getTodate(), objReport.getSitemaster(), 2,
+							objReport.getTemplatetype(), objReport.getCreatedby(), objReport.getFromdate(),
+							objReport.getTodate(), objReport.getSitemaster(), 1, objReport.getTemplatetype(),
+							objReport.getLstuserMaster(), objReport.getFromdate(), objReport.getTodate());
+		} else if (objReport.getFilefor().equals("DR")) {
+			lstreports = reportsRepository.findByReportviewerstructure(objReport);
+		}
+
 		return lstreports;
 	}
 

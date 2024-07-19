@@ -1352,3 +1352,32 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.reporttemplateversion  OWNER to postgres;
 
 ALTER TABLE IF Exists lsreportfile ADD COLUMN IF NOT EXISTS batchcode numeric(17,0);
+
+ALTER TABLE IF Exists Reports ADD Column IF NOT EXISTS fileuid character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE IF Exists Reports ADD Column IF NOT EXISTS fileuri character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE IF Exists Reports ADD Column IF NOT EXISTS containerstored integer;
+
+ALTER TABLE IF Exists Reports ADD Column IF NOT EXISTS fileextention character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE IF Exists Reports ADD Column IF NOT EXISTS approvedby_usercode integer;
+
+ALTER TABLE IF Exists Reports ADD Column IF NOT EXISTS versionno integer;
+
+ALTER TABLE IF Exists Reports ADD Column IF NOT EXISTS completeddate timestamp without time zone;
+
+CREATE TABLE IF NOT EXISTS ReportsVersion (
+    reportversioncode integer NOT NULL,
+    reportcode bigint,
+    versionno integer,
+    datecreated timestamp without time zone,
+    datemodified timestamp without time zone,
+    fileuid character varying(255) COLLATE pg_catalog."default",
+    fileuri character varying(255) COLLATE pg_catalog."default",
+    containerstored integer,
+    fileextention VARCHAR,
+    sitecode integer,
+    createdby integer,
+    CONSTRAINT reportsversion_pkey PRIMARY KEY (reportversioncode)
+);

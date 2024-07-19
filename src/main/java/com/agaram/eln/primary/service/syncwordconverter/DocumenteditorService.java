@@ -327,12 +327,13 @@ public class DocumenteditorService {
 					Map<String, Object> reporttemplatever = new HashMap<>();
 
 					if (data.isIsnewversion()) {
+						data.setTemplatetype(1);
 						uniqueDocumentName = data.getTemplatename() + "_" + "Version_" + data.getVersionno() + "_"
 								+ UUID.randomUUID().toString() + ".json";
 						List<ReportTemplateVersion> reportversion = data.getReportTemplateVersion().stream()
 								.map(items -> {
 									return items;
-								}).filter(itemsv -> itemsv.isIsnewversion()).collect(Collectors.toList());
+								}).filter(itemsv -> itemsv.isIsnewversion() && itemsv.getTemplateversioncode()==null).collect(Collectors.toList());
 						Isnew_Version = true;
 						String jsonContent_version = convertObjectToJson(
 								reportversion.get(0).getTemplateversioncontent());
@@ -342,11 +343,11 @@ public class DocumenteditorService {
 						ReportTemplateVersion templateversion=(ReportTemplateVersion) reporttemplatever.get("ReportTemplateVersion");
 						templateversion.setCreatedate(commonfunction.getCurrentUtcTime());
 						reportTemplateVersionRepository.save(templateversion);
-						Reporttemplate data_new=reporttemplateRepository.findByTemplatecode(data.getTemplatecode());
-						data_new.setTemplatecontent(data.getTemplatecontent());
-						response.setStatus(true);
-						data_new.setResponse(response);
-						return data_new;
+//						Reporttemplate data_new=reporttemplateRepository.findByTemplatecode(data.getTemplatecode());
+//						data_new.setTemplatecontent(data.getTemplatecontent());
+//						response.setStatus(true);
+//						data_new.setResponse(response);
+//						return data_new;
 					}else {
 						if (data.getReportTemplateVersion() != null && !data.getReportTemplateVersion().isEmpty()) {
 						     Reporttemplate finalData = data; 
@@ -378,13 +379,13 @@ public class DocumenteditorService {
 					reporttemplateRepository.save(data);
 
 
-//					if(Isnew_Version) {
-//						Reporttemplate data_new=reporttemplateRepository.findByTemplatecode(data.getTemplatecode());
-//						data_new.setTemplatecontent(data.getTemplatecontent());
-//						response.setStatus(true);
-//						data_new.setResponse(response);
-//						return data_new;
-//					}
+					if(Isnew_Version) {
+						Reporttemplate data_new=reporttemplateRepository.findByTemplatecode(data.getTemplatecode());
+						data_new.setTemplatecontent(data.getTemplatecontent());
+						response.setStatus(true);
+						data_new.setResponse(response);
+						return data_new;
+					}
 					response.setStatus(true);
 
 				}
