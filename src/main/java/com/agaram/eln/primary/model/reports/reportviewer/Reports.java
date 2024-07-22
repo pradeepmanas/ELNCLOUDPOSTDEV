@@ -47,6 +47,17 @@ public class Reports {
 	private Integer versionno;
 
 	private Integer templatetype;
+	
+	@Transient
+	private boolean isnewversion;
+
+	public boolean isIsnewversion() {
+		return isnewversion;
+	}
+
+	public void setIsnewversion(boolean isnewversion) {
+		this.isnewversion = isnewversion;
+	}
 
 	@ManyToOne
 	private ReportViewerStructure reportviewerstructure;
@@ -77,8 +88,6 @@ public class Reports {
 	public void setReportVersions(List<ReportsVersion> reportVersions) {
 		this.reportVersions = reportVersions;
 	}
-
-
 
 	@ManyToOne
 	private Reporttemplate reporttemplate;

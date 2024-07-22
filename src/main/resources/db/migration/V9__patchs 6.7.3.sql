@@ -1381,3 +1381,5 @@ CREATE TABLE IF NOT EXISTS ReportsVersion (
     createdby integer,
     CONSTRAINT reportsversion_pkey PRIMARY KEY (reportversioncode)
 );
+
+ALTER TABLE IF Exists reporttemplateversion ADD Column IF NOT EXISTS  createdbyname character varying(255) COLLATE pg_catalog."default";

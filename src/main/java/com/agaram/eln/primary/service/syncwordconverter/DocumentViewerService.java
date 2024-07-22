@@ -110,12 +110,19 @@ public class DocumentViewerService {
         String uniqueDocumentName = existingReport.getReportname() + "_" + UUID.randomUUID().toString() + ".json";
 
         data = updateReportContent(data, documentBytes, uniqueDocumentName);
-        data.setVersionno(existingReport.getVersionno() + 1);
+        
         data.setDatemodified(commonfunction.getCurrentUtcTime());
         response.setStatus(true);
         
+        if(data.isIsnewversion()) {
+        	data.setVersionno(existingReport.getVersionno() + 1);
+        	createReportVersion(data, documentBytes, uniqueDocumentName);
+        }else {
+        	ReportsVersion version = reportsVersionRepository.findByVersionnoAndReportcode(existingReport.getVersionno(),existingReport.getReportcode());
+        	updateReportVersionContent(version, documentBytes, uniqueDocumentName);
+        }
+        
         reportsRepository.save(data);
-        createReportVersion(data, documentBytes, uniqueDocumentName);
     }
     
     private void setReportCreationData(Reports data) throws ParseException {
@@ -125,7 +132,7 @@ public class DocumentViewerService {
     }
 
     private void createReportVersion(Reports data, byte[] documentBytes, String uniqueDocumentName) throws Exception {
-        
+    	
     	ReportsVersion version = new ReportsVersion();
         version.setReportcode(data.getReportcode());
         version.setContainerstored(data.getContainerstored());

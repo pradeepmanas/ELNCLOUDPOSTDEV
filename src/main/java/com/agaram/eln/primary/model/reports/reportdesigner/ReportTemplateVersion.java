@@ -37,6 +37,8 @@ public class ReportTemplateVersion {
 	
 	public Integer createdby;
 	
+	public String createdbyname;
+
 	private Integer sitecode;
 	
 	private Integer templatetype;
@@ -44,6 +46,14 @@ public class ReportTemplateVersion {
 	private String fileuid;
 
 	private String fileuri;
+	
+	public String getCreatedbyname() {
+		return createdbyname;
+	}
+
+	public void setCreatedbyname(String createdbyname) {
+		this.createdbyname = createdbyname;
+	}
 	
 	@Transient
 	private boolean isnewversion;

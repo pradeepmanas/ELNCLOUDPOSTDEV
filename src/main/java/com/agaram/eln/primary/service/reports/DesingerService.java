@@ -273,7 +273,7 @@ public class DesingerService {
 			}
 			
 			lsttemplate=reporttemplaterepository.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrderByTemplatecodeDesc(objdir.getSitemaster(),1,objdir.getTemplatetype(),objdir.getLstuserMaster(),
-					objdir.getFromdate(),objdir.getTodate(),objdir.getSitemaster(),2,objdir.getTemplatetype(),objdir.getCreatedby(),objdir.getFromdate(),objdir.getTodate(),objdir.getSitemaster(),1,objdir.getTemplatetype(),objdir.getLstuserMaster(),objdir.getFromdate(),objdir.getTodate());
+					objdir.getFromdate(),objdir.getTodate(),objdir.getSitemaster(),2,objdir.getTemplatetype(),objdir.getCreatedby(),objdir.getFromdate(),objdir.getTodate(),objdir.getSitemaster(),3,objdir.getTemplatetype(),objdir.getLstuserMaster(),objdir.getFromdate(),objdir.getTodate());
 		}else if(objdir.getFilefor().equals("DR")) {
 			lsttemplate = reporttemplaterepository.findByReportdesignstructure(objdir);	
 		}
