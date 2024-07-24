@@ -72,6 +72,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	private Boolean sentforapprovel;
 	private String approvelaccept;
 	private Integer autoregistercount;
+	private LSuserMaster lsuserMaster;
 	
 	public Logilabprotocolorders(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
@@ -83,7 +84,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 			Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby,
 			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow,
 			LSOrdernotification lsordernotification,LsAutoregister lsautoregister,Boolean repeat,
-			Boolean sentforapprovel,String approvelaccept,Integer autoregistercount) {
+			Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, LSuserMaster lsuserMaster) {
 
 		this.protocolordercode = protocolordercode;
 		this.Testcode = Testcode;
@@ -127,6 +128,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.sentforapprovel=sentforapprovel;
 		this.approvelaccept=approvelaccept;
 		this.autoregistercount=autoregistercount;
+		this.lsuserMaster = lsuserMaster!=null? new LSuserMaster(lsuserMaster.getUsercode(),lsuserMaster.getUsername(),lsuserMaster.getLssitemaster()):null;
+		
 	}
 
 	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
@@ -522,5 +525,12 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	public void setAutoregistercount(Integer autoregistercount) {
 		this.autoregistercount = autoregistercount;
 	}
-	
+
+	public LSuserMaster getLsuserMaster() {
+		return lsuserMaster;
+	}
+
+	public void setLsuserMaster(LSuserMaster lsuserMaster) {
+		this.lsuserMaster = lsuserMaster;
+	}
 }

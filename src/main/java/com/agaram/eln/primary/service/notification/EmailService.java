@@ -1,11 +1,7 @@
 package com.agaram.eln.primary.service.notification;
 
-import java.net.URL;
 import java.util.Random;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.URLDataSource;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
@@ -195,55 +191,4 @@ public class EmailService {
 		return email;
 
 	}
-
-	public Email sendEmailelnLite(Email email) throws MessagingException {
-		String from = env.getProperty("spring.mail.username");
-        String to = email.getMailto();
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true); // true indicates multipart message
-
-        helper.setSubject(email.getSubject());
-        helper.setFrom(from);
-        helper.setTo(to);
-
-        // Create the multipart for mixed content (text and images)
-        MimeMultipart multipart = new MimeMultipart("related");
-
-        // Part 1: HTML content
-        BodyPart htmlPart = new MimeBodyPart();
-        String htmlText = email.getMailcontent(); // Ensure this HTML has correct cid references
-        htmlPart.setContent(htmlText, "text/html; charset=utf-8"); // Set HTML content
-        multipart.addBodyPart(htmlPart);
-
-        // Attach inline images
-        attachInlineImage(multipart, "images/eln_lite_logo.png", "<image1>");
-        attachInlineImage(multipart, "images/ag_logo.png", "<image2>");
-        attachInlineImage(multipart, "images/Agaram_Technologies_horizontal.png", "<image3>");
-
-        // Set the multipart as the message content
-        message.setContent(multipart);
-
-        // Send the message
-        mailSender.send(message);
-
-        // Optionally, save the email to repository
-        EmailRepository.save(email);
-
-        return email;
-		
-	}
-	private void attachInlineImage(MimeMultipart multipart, String imagePath, String contentId) throws MessagingException {
-        try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            MimeBodyPart imagePart = new MimeBodyPart();
-            URL imageUrl = classLoader.getResource(imagePath);
-            DataSource fds = new URLDataSource(imageUrl);
-            imagePart.setDataHandler(new DataHandler(fds));
-            imagePart.setHeader("Content-ID", contentId);
-            imagePart.setDisposition(MimeBodyPart.INLINE); // Set Content-Disposition to inline
-            multipart.addBodyPart(imagePart);
-        } catch (Exception e) {
-            throw new MessagingException("Failed to attach inline image: " + imagePath, e);
-        }
-    }
 }

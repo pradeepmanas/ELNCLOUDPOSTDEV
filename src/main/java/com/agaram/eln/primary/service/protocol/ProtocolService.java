@@ -9552,8 +9552,12 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		String screen="Sheet Order";
 		String Notification = "SENDFORAPPROVEL";
 		
-		LSuserMaster notifyfrom = logiobj.getLsuserMaster();
-		LSuserMaster notifyto = logiobj.getAssignedto();
+//		LSuserMaster notifyfrom = logiobj.getLsuserMaster();
+//		LSuserMaster notifyto = logiobj.getAssignedto();
+		
+		LSuserMaster notifyfrom = logiobj.getAssignedto();
+		LSuserMaster notifyto = logiobj.getLsuserMaster();
+		
 		try {
 			sendnotification(logiobj,Notification,screen,notifyto,notifyfrom);
 		} catch (ParseException e) {
@@ -9589,10 +9593,10 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 			logiobj.setCompletedtimestamp(commonfunction.getCurrentUtcTime());
 
 			String Notification = "REJECTALERT";
-//			LSuserMaster notifyfrom = logiobj.getLsuserMaster();
-//			LSuserMaster notifyto = logiobj.getAssignedto();
-			LSuserMaster notifyfrom = logiobj.getAssignedto();
-			LSuserMaster notifyto = logiobj.getLsuserMaster();
+			LSuserMaster notifyfrom = logiobj.getLsuserMaster();
+			LSuserMaster notifyto = logiobj.getAssignedto();
+//			LSuserMaster notifyfrom = logiobj.getAssignedto();
+//			LSuserMaster notifyto = logiobj.getLsuserMaster();
 			
 			sendnotification(logiobj,Notification,screen,notifyto,notifyfrom);
 			
@@ -9601,22 +9605,22 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 			logiobj.setSentforapprovel(objdir.getSentforapprovel());
 			
             String Notification = "RETURNALERT";	
-//            LSuserMaster notifyfrom = logiobj.getLsuserMaster();
-//			LSuserMaster notifyto = logiobj.getAssignedto();
+            LSuserMaster notifyfrom = logiobj.getLsuserMaster();
+			LSuserMaster notifyto = logiobj.getAssignedto();
             
-            LSuserMaster notifyfrom = logiobj.getAssignedto();
-			LSuserMaster notifyto = logiobj.getLsuserMaster();
+//            LSuserMaster notifyfrom = logiobj.getAssignedto();
+//			LSuserMaster notifyto = logiobj.getLsuserMaster();
 			
 			sendnotification(logiobj,Notification,screen,notifyto,notifyfrom);
 		} else {
 
 			logiobj.setApprovelaccept(objdir.getApprovelaccept());
 			String Notification = "APPROVEALERT";
-//			LSuserMaster notifyfrom = logiobj.getLsuserMaster();
-//			LSuserMaster notifyto = logiobj.getAssignedto();
+			LSuserMaster notifyfrom = logiobj.getLsuserMaster();
+			LSuserMaster notifyto = logiobj.getAssignedto();
 			
-			LSuserMaster notifyfrom = logiobj.getAssignedto();
-			LSuserMaster notifyto = logiobj.getLsuserMaster();
+//			LSuserMaster notifyfrom = logiobj.getAssignedto();
+//			LSuserMaster notifyto = logiobj.getLsuserMaster();
 			
 			sendnotification(logiobj,Notification,screen,notifyto,notifyfrom);
 		}
@@ -9630,7 +9634,7 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		LSnotification LSnotification = new LSnotification();
 		
 		String Details = "{\"ordercode\" :\"" + objdir.getProtocolordercode() + "\",\"order\" :\""
-				+ objdir.getProtoclordername()  + "\",\"user\":\"" + objdir.getLsuserMaster().getUsername()
+				+ objdir.getProtoclordername()  + "\",\"user\":\"" + objdir.getLsuserMaster().getUsername() + "\",\"notifyto\":\"" + objdir.getAssignedto().getUsername()
 				+ "\"}";
 				
 		LSnotification.setIsnewnotification(1);

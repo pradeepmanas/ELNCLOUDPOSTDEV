@@ -8624,7 +8624,7 @@ public class InstrumentService {
 							lsOrderDetail.getLockedusername(), lsOrderDetail.getVersionno(),
 							lsOrderDetail.getElnprotocolworkflow(), lsOrderDetail.getLsordernotification(),
 							lsOrderDetail.getLsautoregister(), lsOrderDetail.getRepeat(),lsOrderDetail.getSentforapprovel(),
-							lsOrderDetail.getApprovelaccept(),lsOrderDetail.getAutoregistercount()))
+							lsOrderDetail.getApprovelaccept(),lsOrderDetail.getAutoregistercount(),lsOrderDetail.getLsuserMaster()))
 					.collect(Collectors.toList()));
 
 		}
@@ -10229,7 +10229,7 @@ public class InstrumentService {
 							lsOrderDetail.getLockedusername(), lsOrderDetail.getVersionno(),
 							lsOrderDetail.getElnprotocolworkflow(), lsOrderDetail.getLsordernotification(),
 							lsOrderDetail.getLsautoregister(), lsOrderDetail.getRepeat(),lsOrderDetail.getSentforapprovel(),
-							lsOrderDetail.getApprovelaccept(),lsOrderDetail.getAutoregistercount()))
+							lsOrderDetail.getApprovelaccept(),lsOrderDetail.getAutoregistercount(),lsOrderDetail.getLsuserMaster()))
 					.collect(Collectors.toList()));
 
 		}
@@ -10545,10 +10545,12 @@ public class InstrumentService {
 		Map<String, Object> mapRtnObj = new HashMap<String, Object>();
 		List<Logilaborders> orders = lslogilablimsorderdetailRepository.findByLsfileInAndCreatedtimestampBetweenOrderByBatchcodeDesc(files, fromdate,todate );
 		List<Long> batchcode = orders.stream().map(Logilaborders::getBatchcode).collect(Collectors.toList());
+		List<Integer> filecode = files.stream().map(LSfile::getFilecode).collect(Collectors.toList());
 				
 		mapRtnObj.put("orders", orders);
 		mapRtnObj.put("results", lsresultforordersRepository.findByBatchcodeInOrderByIdDesc(batchcode));
 		mapRtnObj.put("tags", reportfileRepository.findByBatchcodeInOrderByIdDesc(batchcode));
+		mapRtnObj.put("files", LSfileRepository.findByFilecodeIn(filecode));
 		
 		return mapRtnObj;
 	}
