@@ -190,6 +190,7 @@ public class MethodImportService {
 			
 			//newly added for userdefined methodname
 			impMethod.setMethodname(userdefinedmethod.getMethodname());
+			impMethod.setInstrawdataurl(userdefinedmethod.getInstrawdataurl());
 			
 		//	final Optional<Method> methodExist = methodRepo.findByMethodnameAndInstmasterAndStatus(expMethod.getMethodname(), instMasterList.get(0), 1);
 			final Optional<Method> methodExist = methodRepo.findByMethodnameAndInstmasterAndStatus(impMethod.getMethodname(), instMasterList.get(0), 1);

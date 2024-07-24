@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 @Entity
@@ -21,11 +22,20 @@ public class LSMultisites {
 	private LSSiteMaster lssiteMaster;
 	private Integer defaultsiteMaster;
 	
+	@Transient
+	private Integer multiusergroupcode;
+	
 	public int getMultisitecode() {
 		return multisitecode;
 	}
 	public void setMultisitecode(int multisitecode) {
 		this.multisitecode = multisitecode;
+	}
+	public Integer getMultiusergroupcode() {
+		return multiusergroupcode;
+	}
+	public void setMultiusergroupcode(Integer multiusergroupcode) {
+		this.multiusergroupcode = multiusergroupcode;
 	}
 	public Integer getUsercode() {
 		return usercode;

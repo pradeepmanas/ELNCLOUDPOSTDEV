@@ -1665,8 +1665,8 @@ public class MaterialService {
 	public ResponseEntity<Object> getELNMaterialBySearchField(Map<String, Object> inputMap) {
 		
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-	    String searchString = (String) inputMap.get("searchString");
+		Integer nsiteInteger = new ObjectMapper().convertValue(inputMap.get("nsitecode"), Integer.class);
+	    String searchString = (String) inputMap.get("searchString"); 
 	    
 	    List<Elnmaterial> lstMaterial = elnmaterialRepository.findBySmaterialnameStartingWithIgnoreCaseAndNsitecode(searchString,nsiteInteger);
 			

@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -277,13 +279,25 @@ public class EquipmentService {
 		Integer ncatcode = (Integer) inputMap.get("ncatcode");
 		
 		EquipmentCategory objCategory = equipmentCategoryRepository.findByNequipmentcatcode(ncatcode);
+		
 		List<Equipment> lstEquipments = new ArrayList<Equipment>();
 		
 		lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNull(true,objCategory,nsiteInteger, 1);
-		
 		lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqcalibrationAndLastmaintainedNotNullOrderByNequipmentcodeDesc(true, objCategory,nsiteInteger, 1, false));
 		lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqmaintananceAndLastcallibratedNotNullOrderByNequipmentcodeDesc(true, objCategory,nsiteInteger, 1, false));
 		lstEquipments.addAll(equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqmaintananceAndReqcalibrationOrderByNequipmentcodeDesc(true, objCategory,nsiteInteger, 1, false,false));
+		
+//		 List<Equipment> lstEquipments = Stream.of(
+//	                equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndLastmaintainedNotNullAndLastcallibratedNotNull(
+//	                        true, objCategory, nsiteInteger, 1),
+//	                equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqcalibrationAndLastmaintainedNotNullOrderByNequipmentcodeDesc(
+//	                        true, objCategory, nsiteInteger, 1, false),
+//	                equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqmaintananceAndLastcallibratedNotNullOrderByNequipmentcodeDesc(
+//	                        true, objCategory, nsiteInteger, 1, false),
+//	                equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatusAndReqmaintananceAndReqcalibrationOrderByNequipmentcodeDesc(
+//	                        true, objCategory, nsiteInteger, 1, false, false)
+//	        ).flatMap(Collection::stream)
+//	         .collect(Collectors.toList());
 		
 		objmap.put("lstEquipments", lstEquipments);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
@@ -569,9 +583,11 @@ public class EquipmentService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
-	public ResponseEntity<Object> OsearchEquipment(String searchname) {
+	public ResponseEntity<Object> OsearchEquipment(Map<String, Object> inputMap) {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-		 List<Equipment> lstEquipments = equipmentRepository.findBySequipmentnameStartingWithIgnoreCase(searchname);
+		Integer nsiteInteger = new ObjectMapper().convertValue(inputMap.get("nsitecode"), Integer.class);
+	    String searchString = (String) inputMap.get("searchString"); 
+		List<Equipment> lstEquipments = equipmentRepository.findBySequipmentnameStartingWithIgnoreCaseAndNsitecodeOrderByNequipmentcodeDesc(searchString,nsiteInteger);
 		objmap.put("lstEquipment", lstEquipments);		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}

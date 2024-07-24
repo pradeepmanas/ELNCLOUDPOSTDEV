@@ -1448,8 +1448,8 @@ public class UserService {
 						"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
 						+ "        <!-- Header -->\r\n"
 						+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
-						+ "           <img src=\"https://logilabelnlite.azurewebsites.net/images/Agaram_Technologies_Logo.svg\" width=\"130px\"/>\r\n"
-						+ "           <img src=\"https://logilabelnlite.azurewebsites.net/images/ag_logo.svg\" width=\"75px\" style=\"float: right;\"/>\r\n"
+						+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
+						+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
 						+ "        </div>\r\n"
 						+ "        \r\n"
 						+ "        <!-- Content -->\r\n"
@@ -1474,10 +1474,10 @@ public class UserService {
 						+ "        \r\n"
 						+ "        <!-- Footer -->\r\n"
 						+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
-						+ "            <img src=\"https://logilabelnlite.azurewebsites.net/images/Agaram Technologies_horizontal.png\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
+						+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
 						+ "            <div>\r\n"
 						+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
-						+ "                <p style=\"color: #032c67;\"><a href=\"https://www.logilabeln.com\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Term @ Conditions</u></a> | <a href=\"#\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
+						+ "                <p style=\"color: #032c67;\"><a href=\"https://www.logilabeln.com\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Term @ Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
 						+ "            </div>\r\n"
 						+ "        </div>\r\n"
 						+ "    </div>"						
@@ -1502,7 +1502,7 @@ public class UserService {
 			}
 			
 
-			emailService.sendEmail(email);
+			emailService.sendEmailelnLite(email);
 			lsuserMasterRepository.setpasswordandpasswordstatusByusercode(objusermaster.getPassword(),
 					objusermaster.getPasswordstatus(), objusermaster.getUsercode());
 		}

@@ -129,8 +129,8 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value = "/OsearchEquipment", method = RequestMethod.POST)
-	public ResponseEntity<Object> OsearchEquipment(@RequestBody String Searchname) throws Exception {
-		return equipmentService.OsearchEquipment(Searchname);
+	public ResponseEntity<Object> OsearchEquipment(@RequestBody Map<String, Object> inputMap) throws Exception {
+		return equipmentService.OsearchEquipment(inputMap);
 	}
 	
 	@RequestMapping(value = "/onGetEquipmentSelect", method = RequestMethod.POST)

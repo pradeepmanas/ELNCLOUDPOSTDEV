@@ -2718,6 +2718,15 @@ public class ProtocolService {
 		LSuserMaster createby = lsusermasterRepository.findByusercode(objClass.getCreateby());
 		if (objClass.getAssignedto() != null) {
 
+			if (objClass.getOrderflag().equalsIgnoreCase("R")) {
+
+				Notifiction = "PROTOCOLORDERCOMPLETED";
+
+				Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
+						+ objClass.getProtoclordername() + "\", \"completeduser\":\""
+						+ objClass.getLsuserMaster().getUsername() + "\"}";
+
+			} else {
 			Notifiction = "PROTOCOLORDERCREATIONANDASSIGN";
 
 			Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
@@ -2725,6 +2734,7 @@ public class ProtocolService {
 					+ objClass.getCreatedbyusername() + "\", \"previousworkflowcode\":\"" + -1
 					+ "\", \"currentworkflow\":\"" + objClass.getElnprotocolworkflow().getWorkflowname()
 					+ "\", \"currentworkflowcode\":\"" + objClass.getElnprotocolworkflow().getWorkflowcode() + "\"}";
+			}
 			LSnotification objnotify = new LSnotification();
 			objnotify.setNotifationfrom(obj);
 			objnotify.setNotifationto(objClass.getAssignedto());
@@ -2735,6 +2745,7 @@ public class ProtocolService {
 			objnotify.setNotificationpath("/Protocolorder");
 			objnotify.setNotificationfor(1);
 			lsnotificationRepository.save(objnotify);
+			
 		} else if (objClass != null && objClass.getLsprojectmaster() != null
 				&& objClass.getLsprojectmaster().getLsusersteam() != null) {
 			LSusersteam objteam = lsusersteamRepository
