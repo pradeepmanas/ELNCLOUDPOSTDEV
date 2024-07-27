@@ -5777,7 +5777,7 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 	}
 
 	public Map<String, Object> uploadprotocolsfile(MultipartFile file, Integer protocolstepcode,
-			Integer protocolmastercode, Integer stepno, String protocolstepname, String originurl) {
+			Integer protocolmastercode, Integer stepno, String protocolstepname, String originurl, String editoruuid) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		String id = null;
@@ -5787,7 +5787,12 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
+		String filenamedata = FilenameUtils.removeExtension(file.getOriginalFilename());
+		
+		LSprotocolfiles parentfile = lsprotocolfilesRepository.findFirst1ByEditoruuidAndFilenameOrderByProtocolstepfilecodeDesc(
+				editoruuid,filenamedata);
+		
 		LSprotocolfiles objfile = new LSprotocolfiles();
 		objfile.setExtension(FilenameUtils.getExtension(file.getOriginalFilename()));
 		objfile.setFileid(id);
@@ -5795,9 +5800,22 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		objfile.setProtocolstepcode(protocolstepcode);
 		objfile.setProtocolstepname(protocolstepname);
 		objfile.setStepno(stepno);
-		objfile.setFilename(FilenameUtils.removeExtension(file.getOriginalFilename()));
+		objfile.setEditoruuid(editoruuid);
+		if(parentfile != null)
+		{
+			Integer versiondata = parentfile.getVersion()!=null? parentfile.getVersion()+1:1;
+			objfile.setFilename(filenamedata+"_V"+(versiondata));
+			parentfile.setVersion(versiondata);
+			lsprotocolfilesRepository.save(parentfile);
+		}
+		else
+		{
+			objfile.setFilename(filenamedata);
+		}
+		objfile.setVersion(0);
 
 		lsprotocolfilesRepository.save(objfile);
+		map.put("name", objfile.getFilename());
 		map.put("extension", "." + objfile.getExtension());
 		map.put("link", originurl + "/protocol/downloadprotocolfile/" + objfile.getFileid() + "/"
 				+ TenantContext.getCurrentTenant() + "/" + objfile.getFilename() + "/" + objfile.getExtension());

@@ -55,6 +55,8 @@ public class LSprotocolfolderfiles {
 	@Transient
 	private String folderpath;
 	
+	private Integer version;
+	
 	public String getFolderpath() {
 		return folderpath;
 	}
@@ -157,6 +159,14 @@ public class LSprotocolfolderfiles {
 
 	public void setFileviewfor(Integer fileviewfor) {
 		this.fileviewfor = fileviewfor;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 	
 	

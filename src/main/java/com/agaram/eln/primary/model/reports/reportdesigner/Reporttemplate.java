@@ -48,6 +48,17 @@ public class Reporttemplate {
 	@JoinColumn(name="templatecode")
     private List<ReportTemplateVersion> reportTemplateVersion;
 	
+	@Transient
+	private String keystorevariable;
+	
+	public String getKeystorevariable() {
+		return keystorevariable;
+	}
+
+	public void setKeystorevariable(String keystorevariable) {
+		this.keystorevariable = keystorevariable;
+	}
+
 	public List<ReportTemplateVersion> getReportTemplateVersion() {
 		return reportTemplateVersion;
 	}

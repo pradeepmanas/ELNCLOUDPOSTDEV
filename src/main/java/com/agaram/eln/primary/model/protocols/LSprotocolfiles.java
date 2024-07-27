@@ -20,6 +20,8 @@ public class LSprotocolfiles {
 	public String fileid;
 	public String extension;
 	public String filename;
+	private Integer version;
+	public String editoruuid;
 	
 	@Transient
 	private String link;
@@ -85,6 +87,18 @@ public class LSprotocolfiles {
 	}
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+	public Integer getVersion() {
+		return version;
+	}
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+	public String getEditoruuid() {
+		return editoruuid;
+	}
+	public void setEditoruuid(String editoruuid) {
+		this.editoruuid = editoruuid;
 	}
 	
 	

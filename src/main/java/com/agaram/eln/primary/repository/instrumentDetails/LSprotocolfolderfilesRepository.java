@@ -54,5 +54,7 @@ public interface LSprotocolfolderfilesRepository extends JpaRepository<LSprotoco
 
 	public long countByDirectorycodeInAndFilenameLikeIgnoreCaseOrderByFolderfilecode(List<Long> directoryCode_Protocol,
 			String search_Key);
+	
+	public LSprotocolfolderfiles findFirst1ByDirectorycodeAndFilenameOrderByFolderfilecode(Long directorycode, String filename);
 
 }

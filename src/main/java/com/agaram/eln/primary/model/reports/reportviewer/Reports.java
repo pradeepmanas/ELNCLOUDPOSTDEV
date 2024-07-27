@@ -64,6 +64,17 @@ public class Reports {
 
 	@Transient
 	private List<LStestmasterlocal> lstestmasterlocal;
+	
+	@Transient
+	private String keystorevariable;
+	
+	public String getKeystorevariable() {
+		return keystorevariable;
+	}
+
+	public void setKeystorevariable(String keystorevariable) {
+		this.keystorevariable = keystorevariable;
+	}
 
 	public List<LStestmasterlocal> getLstestmasterlocal() {
 		return lstestmasterlocal;

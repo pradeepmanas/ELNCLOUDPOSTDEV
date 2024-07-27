@@ -466,10 +466,11 @@ public class ProtocolController {
 			@RequestParam("protocolmastercode") Integer protocolmastercode, 
 			@RequestParam("stepno") Integer stepno,
 			@RequestParam("protocolstepname") String protocolstepname,
-			@RequestParam("originurl") String originurl)throws Exception
+			@RequestParam("originurl") String originurl,
+			@RequestParam("editoruuid") String editoruuid)throws Exception
 	{
 	
-		return ProtocolMasterService.uploadprotocolsfile(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl );
+		return ProtocolMasterService.uploadprotocolsfile(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl,editoruuid );
 	}
 	
 	@PostMapping("/uploadprotocolsfileondrag")
@@ -478,10 +479,11 @@ public class ProtocolController {
 			@RequestParam("protocolmastercode") Integer protocolmastercode, 
 			@RequestParam("stepno") Integer stepno,
 			@RequestParam("protocolstepname") String protocolstepname,
-			@RequestParam("originurl") String originurl)throws Exception
+			@RequestParam("originurl") String originurl,
+			@RequestParam("editoruuid") String editoruuid)throws Exception
 	{
 	
-		return ProtocolMasterService.uploadprotocolsfile(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl );
+		return ProtocolMasterService.uploadprotocolsfile(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl,editoruuid );
 	}
 	
 	@PostMapping("/Uploadprotocolimage")

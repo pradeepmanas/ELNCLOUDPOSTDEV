@@ -31,6 +31,8 @@ BEGIN
 END
 $do$;
 
+
+
 --ALTER SEQUENCE protocolordercode INCREMENT BY 1;
 
 DO
@@ -62,6 +64,7 @@ BEGIN
     END IF;
 END
 $do$;
+
 
 ALTER TABLE lscfttransaction ALTER COLUMN serialno SET DEFAULT nextval('lscfttransaction_sequence');
 
@@ -1078,120 +1081,6 @@ UPDATE lsusergrouprights SET sequenceorder = CASE
     ELSE sequenceorder -- Retain the current value if no match
 END;
 
-UPDATE lsaudittrailconfigmaster
-SET ordersequnce = CASE
-    WHEN screenname = 'IDS_SCN_SHEETORDERS' THEN 1
-    WHEN screenname = 'IDS_SCN_PROTOCOLORDERS' THEN 2
-    WHEN screenname = 'IDS_SCN_UNLOCKORDERS' THEN 3
-
-    WHEN screenname = 'IDS_SCN_SHEETTEMPLATES' THEN 4
-    WHEN screenname = 'IDS_SCN_PROTOCOLTEMP' THEN 5
-    WHEN screenname = 'IDS_SCN_TEMPLATEMAPPING' THEN 6
-
-    WHEN screenname = 'IDS_SCN_SAMPLEMASTER' THEN 7
-
-    WHEN screenname = 'IDS_SCN_USERGROUP' THEN 8
-    WHEN screenname = 'IDS_SCN_SITEMASTER' THEN 9
-    WHEN screenname = 'IDS_SCN_USERMASTER' THEN 10
-    WHEN screenname = 'IDS_SCN_USERRIGHTS' THEN 11
-    WHEN screenname = 'IDS_SCN_PROJECTMASTER' THEN 12
-    WHEN screenname = 'IDS_SCN_PROJECTTEAM' THEN 13
-    WHEN screenname = 'IDS_SCN_TASKMASTER' THEN 14
-    WHEN screenname = 'IDS_SCN_ORDERWORKFLOW' THEN 15
-    WHEN screenname = 'IDS_SCN_TEMPLATEWORKFLOW' THEN 16
-    WHEN screenname = 'IDS_SCN_DOMAIN' THEN 17
-    WHEN screenname = 'IDS_SCN_PASSWORDPOLICY' THEN 18
-
-    WHEN screenname = 'IDS_SCN_INSTRUMENTCATEGORY' THEN 19
-    WHEN screenname = 'IDS_SCN_INSTRUMENTMASTER' THEN 20
-    WHEN screenname = 'IDS_SCN_DELIMITER' THEN 21
-    WHEN screenname = 'IDS_SCN_METHODDELIMITER' THEN 22
-    WHEN screenname = 'IDS_SCN_METHODMASTER' THEN 23
-
-    WHEN screenname = 'IDS_SCN_AUDITTRAILHIS' THEN 24
-    WHEN screenname = 'IDS_SCN_AUDITTRAILCONFIG' THEN 25
-    WHEN screenname = 'IDS_SCN_CFRSETTINGS' THEN 26
-
-    WHEN screenname = 'IDS_SCN_REPORTDESIGNER' THEN 27
-    WHEN screenname = 'IDS_SCN_REPORTVIEWER' THEN 28
-
-    WHEN screenname = 'IDS_SCN_MATERIALCATEGORY' THEN 29
-    WHEN screenname = 'IDS_SCN_STORAGELOCATION' THEN 30
-    WHEN screenname = 'IDS_SCN_MATERIALTYPE' THEN 31
-    WHEN screenname = 'IDS_SCN_UNITMASTER' THEN 32
-    WHEN screenname = 'IDS_SCN_GRADEMASTER' THEN 33
-    WHEN screenname = 'IDS_SCN_SUPPLIER' THEN 34
-    WHEN screenname = 'IDS_SCN_MANUFACTURER' THEN 35
-    WHEN screenname = 'IDS_SCN_SECTIONMASTER' THEN 36
-    WHEN screenname = 'IDS_SCN_INVENTORY' THEN 37
-    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 38
-    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 39
-
-    WHEN screenname = 'IDS_SCN_EQUIPMENTTYPE' THEN 40
-    WHEN screenname = 'IDS_SCN_EQUIPMENTCATEGORY' THEN 41
-    WHEN screenname = 'IDS_SCN_EQUIPMENT' THEN 42
-
-    WHEN screenname = 'IDS_MDL_LOGBOOK' THEN 43
-    ELSE ordersequnce -- Retain the current value if no match
-END;
-
-UPDATE lsaudittrailconfiguration
-SET ordersequnce = CASE
-    WHEN screenname = 'IDS_SCN_SHEETORDERS' THEN 1
-    WHEN screenname = 'IDS_SCN_PROTOCOLORDERS' THEN 2
-    WHEN screenname = 'IDS_SCN_UNLOCKORDERS' THEN 3
-
-    WHEN screenname = 'IDS_SCN_SHEETTEMPLATES' THEN 4
-    WHEN screenname = 'IDS_SCN_PROTOCOLTEMP' THEN 5
-    WHEN screenname = 'IDS_SCN_TEMPLATEMAPPING' THEN 6
-
-    WHEN screenname = 'IDS_SCN_SAMPLEMASTER' THEN 7
-
-    WHEN screenname = 'IDS_SCN_USERGROUP' THEN 8
-    WHEN screenname = 'IDS_SCN_SITEMASTER' THEN 9
-    WHEN screenname = 'IDS_SCN_USERMASTER' THEN 10
-    WHEN screenname = 'IDS_SCN_USERRIGHTS' THEN 11
-    WHEN screenname = 'IDS_SCN_PROJECTMASTER' THEN 12
-    WHEN screenname = 'IDS_SCN_PROJECTTEAM' THEN 13
-    WHEN screenname = 'IDS_SCN_TASKMASTER' THEN 14
-    WHEN screenname = 'IDS_SCN_ORDERWORKFLOW' THEN 15
-    WHEN screenname = 'IDS_SCN_TEMPLATEWORKFLOW' THEN 16
-    WHEN screenname = 'IDS_SCN_DOMAIN' THEN 17
-    WHEN screenname = 'IDS_SCN_PASSWORDPOLICY' THEN 18
-
-    WHEN screenname = 'IDS_SCN_INSTRUMENTCATEGORY' THEN 19
-    WHEN screenname = 'IDS_SCN_INSTRUMENTMASTER' THEN 20
-    WHEN screenname = 'IDS_SCN_DELIMITER' THEN 21
-    WHEN screenname = 'IDS_SCN_METHODDELIMITER' THEN 22
-    WHEN screenname = 'IDS_SCN_METHODMASTER' THEN 23
-
-    WHEN screenname = 'IDS_SCN_AUDITTRAILHIS' THEN 24
-    WHEN screenname = 'IDS_SCN_AUDITTRAILCONFIG' THEN 25
-    WHEN screenname = 'IDS_SCN_CFRSETTINGS' THEN 26
-
-    WHEN screenname = 'IDS_SCN_REPORTDESIGNER' THEN 27
-    WHEN screenname = 'IDS_SCN_REPORTVIEWER' THEN 28
-
-    WHEN screenname = 'IDS_SCN_MATERIALCATEGORY' THEN 29
-    WHEN screenname = 'IDS_SCN_STORAGELOCATION' THEN 30
-    WHEN screenname = 'IDS_SCN_MATERIALTYPE' THEN 31
-    WHEN screenname = 'IDS_SCN_UNITMASTER' THEN 32
-    WHEN screenname = 'IDS_SCN_GRADEMASTER' THEN 33
-    WHEN screenname = 'IDS_SCN_SUPPLIER' THEN 34
-    WHEN screenname = 'IDS_SCN_MANUFACTURER' THEN 35
-    WHEN screenname = 'IDS_SCN_SECTIONMASTER' THEN 36
-    WHEN screenname = 'IDS_SCN_INVENTORY' THEN 37
-    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 38
-    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 39
-
-    WHEN screenname = 'IDS_SCN_EQUIPMENTTYPE' THEN 40
-    WHEN screenname = 'IDS_SCN_EQUIPMENTCATEGORY' THEN 41
-    WHEN screenname = 'IDS_SCN_EQUIPMENT' THEN 42
-
-    WHEN screenname = 'IDS_MDL_LOGBOOK' THEN 43
-    ELSE ordersequnce -- Retain the current value if no match
-END;
-
 update lsusergrouprightsmaster set screate = '0',sedit= '0' where  screenname = 'IDS_SCN_MATERIALTYPEPARAMS' and displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS';
 update lsusergrouprights set screate = '0',sedit= '0' where  screenname = 'IDS_SCN_MATERIALTYPEPARAMS' and displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS';
 
@@ -1382,4 +1271,134 @@ CREATE TABLE IF NOT EXISTS ReportsVersion (
     CONSTRAINT reportsversion_pkey PRIMARY KEY (reportversioncode)
 );
 
+INSERT INTO lsaudittrailconfigmaster (serialno, manualaudittrail, modulename, ordersequnce, screenname, taskname) VALUES (211, 0, 'IDS_MDL_REPORTS', 1, 'IDS_SCN_REPORTMAPPING', 'IDS_TSK_SAVE') ON CONFLICT (serialno) DO NOTHING;
+INSERT INTO lsaudittrailconfigmaster (serialno, manualaudittrail, modulename, ordersequnce, screenname, taskname) VALUES (212, 0, 'IDS_MDL_REPORTS', 1, 'IDS_SCN_REPORTVIEWER', 'IDS_TSK_RDOPEN') ON CONFLICT (serialno) DO NOTHING;
+
+UPDATE lsaudittrailconfigmaster
+SET ordersequnce = CASE
+    WHEN screenname = 'IDS_SCN_SHEETORDERS' THEN 1
+    WHEN screenname = 'IDS_SCN_PROTOCOLORDERS' THEN 2
+    WHEN screenname = 'IDS_SCN_UNLOCKORDERS' THEN 3
+
+    WHEN screenname = 'IDS_SCN_SHEETTEMPLATES' THEN 4
+    WHEN screenname = 'IDS_SCN_PROTOCOLTEMP' THEN 5
+    WHEN screenname = 'IDS_SCN_TEMPLATEMAPPING' THEN 6
+
+    WHEN screenname = 'IDS_SCN_SAMPLEMASTER' THEN 7
+
+    WHEN screenname = 'IDS_SCN_USERGROUP' THEN 8
+    WHEN screenname = 'IDS_SCN_SITEMASTER' THEN 9
+    WHEN screenname = 'IDS_SCN_USERMASTER' THEN 10
+    WHEN screenname = 'IDS_SCN_USERRIGHTS' THEN 11
+    WHEN screenname = 'IDS_SCN_PROJECTMASTER' THEN 12
+    WHEN screenname = 'IDS_SCN_PROJECTTEAM' THEN 13
+    WHEN screenname = 'IDS_SCN_TASKMASTER' THEN 14
+    WHEN screenname = 'IDS_SCN_ORDERWORKFLOW' THEN 15
+    WHEN screenname = 'IDS_SCN_TEMPLATEWORKFLOW' THEN 16
+    WHEN screenname = 'IDS_SCN_DOMAIN' THEN 17
+    WHEN screenname = 'IDS_SCN_PASSWORDPOLICY' THEN 18
+
+    WHEN screenname = 'IDS_SCN_INSTRUMENTCATEGORY' THEN 19
+    WHEN screenname = 'IDS_SCN_INSTRUMENTMASTER' THEN 20
+    WHEN screenname = 'IDS_SCN_DELIMITER' THEN 21
+    WHEN screenname = 'IDS_SCN_METHODDELIMITER' THEN 22
+    WHEN screenname = 'IDS_SCN_METHODMASTER' THEN 23
+
+    WHEN screenname = 'IDS_SCN_AUDITTRAILHIS' THEN 24
+    WHEN screenname = 'IDS_SCN_AUDITTRAILCONFIG' THEN 25
+    WHEN screenname = 'IDS_SCN_CFRSETTINGS' THEN 26
+
+    WHEN screenname = 'IDS_SCN_REPORTDESIGNER' THEN 27
+    WHEN screenname = 'IDS_SCN_REPORTVIEWER' THEN 28
+	WHEN screenname = 'IDS_SCN_REPORTMAPPING' THEN 29
+
+    WHEN screenname = 'IDS_SCN_MATERIALCATEGORY' THEN 30
+    WHEN screenname = 'IDS_SCN_STORAGELOCATION' THEN 31
+    WHEN screenname = 'IDS_SCN_MATERIALTYPE' THEN 32
+    WHEN screenname = 'IDS_SCN_UNITMASTER' THEN 33
+    WHEN screenname = 'IDS_SCN_GRADEMASTER' THEN 34
+    WHEN screenname = 'IDS_SCN_SUPPLIER' THEN 35
+    WHEN screenname = 'IDS_SCN_MANUFACTURER' THEN 36
+    WHEN screenname = 'IDS_SCN_SECTIONMASTER' THEN 37
+    WHEN screenname = 'IDS_SCN_INVENTORY' THEN 38
+    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 39
+    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 40
+
+    WHEN screenname = 'IDS_SCN_EQUIPMENTTYPE' THEN 41
+    WHEN screenname = 'IDS_SCN_EQUIPMENTCATEGORY' THEN 42
+    WHEN screenname = 'IDS_SCN_EQUIPMENT' THEN 43
+
+    WHEN screenname = 'IDS_MDL_LOGBOOK' THEN 44
+    ELSE ordersequnce -- Retain the current value if no match
+END;
+
+UPDATE lsaudittrailconfiguration
+SET ordersequnce = CASE
+    WHEN screenname = 'IDS_SCN_SHEETORDERS' THEN 1
+    WHEN screenname = 'IDS_SCN_PROTOCOLORDERS' THEN 2
+    WHEN screenname = 'IDS_SCN_UNLOCKORDERS' THEN 3
+
+    WHEN screenname = 'IDS_SCN_SHEETTEMPLATES' THEN 4
+    WHEN screenname = 'IDS_SCN_PROTOCOLTEMP' THEN 5
+    WHEN screenname = 'IDS_SCN_TEMPLATEMAPPING' THEN 6
+
+    WHEN screenname = 'IDS_SCN_SAMPLEMASTER' THEN 7
+
+    WHEN screenname = 'IDS_SCN_USERGROUP' THEN 8
+    WHEN screenname = 'IDS_SCN_SITEMASTER' THEN 9
+    WHEN screenname = 'IDS_SCN_USERMASTER' THEN 10
+    WHEN screenname = 'IDS_SCN_USERRIGHTS' THEN 11
+    WHEN screenname = 'IDS_SCN_PROJECTMASTER' THEN 12
+    WHEN screenname = 'IDS_SCN_PROJECTTEAM' THEN 13
+    WHEN screenname = 'IDS_SCN_TASKMASTER' THEN 14
+    WHEN screenname = 'IDS_SCN_ORDERWORKFLOW' THEN 15
+    WHEN screenname = 'IDS_SCN_TEMPLATEWORKFLOW' THEN 16
+    WHEN screenname = 'IDS_SCN_DOMAIN' THEN 17
+    WHEN screenname = 'IDS_SCN_PASSWORDPOLICY' THEN 18
+
+    WHEN screenname = 'IDS_SCN_INSTRUMENTCATEGORY' THEN 19
+    WHEN screenname = 'IDS_SCN_INSTRUMENTMASTER' THEN 20
+    WHEN screenname = 'IDS_SCN_DELIMITER' THEN 21
+    WHEN screenname = 'IDS_SCN_METHODDELIMITER' THEN 22
+    WHEN screenname = 'IDS_SCN_METHODMASTER' THEN 23
+
+    WHEN screenname = 'IDS_SCN_AUDITTRAILHIS' THEN 24
+    WHEN screenname = 'IDS_SCN_AUDITTRAILCONFIG' THEN 25
+    WHEN screenname = 'IDS_SCN_CFRSETTINGS' THEN 26
+
+    WHEN screenname = 'IDS_SCN_REPORTDESIGNER' THEN 27
+    WHEN screenname = 'IDS_SCN_REPORTVIEWER' THEN 28
+    WHEN screenname = 'IDS_SCN_REPORTMAPPING' THEN 29
+
+    WHEN screenname = 'IDS_SCN_MATERIALCATEGORY' THEN 30
+    WHEN screenname = 'IDS_SCN_STORAGELOCATION' THEN 31
+    WHEN screenname = 'IDS_SCN_MATERIALTYPE' THEN 32
+    WHEN screenname = 'IDS_SCN_UNITMASTER' THEN 33
+    WHEN screenname = 'IDS_SCN_GRADEMASTER' THEN 34
+    WHEN screenname = 'IDS_SCN_SUPPLIER' THEN 35
+    WHEN screenname = 'IDS_SCN_MANUFACTURER' THEN 36
+    WHEN screenname = 'IDS_SCN_SECTIONMASTER' THEN 37
+    WHEN screenname = 'IDS_SCN_INVENTORY' THEN 38
+    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 39
+    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 40
+
+    WHEN screenname = 'IDS_SCN_EQUIPMENTTYPE' THEN 41
+    WHEN screenname = 'IDS_SCN_EQUIPMENTCATEGORY' THEN 42
+    WHEN screenname = 'IDS_SCN_EQUIPMENT' THEN 43
+
+    WHEN screenname = 'IDS_MDL_LOGBOOK' THEN 44
+    ELSE ordersequnce -- Retain the current value if no match
+END;
+
 ALTER TABLE IF Exists reporttemplateversion ADD Column IF NOT EXISTS  createdbyname character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE IF Exists lsorderattachments ADD Column IF NOT EXISTS version integer;
+ALTER TABLE IF Exists lsprotocolfiles ADD Column IF NOT EXISTS version integer;
+ALTER TABLE IF Exists lsprotocolfiles ADD Column IF NOT EXISTS editoruuid character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE IF Exists lssheetfolderfiles ADD Column IF NOT EXISTS version integer;
+ALTER TABLE IF Exists lsprotocolfolderfiles ADD Column IF NOT EXISTS version integer;
+
+
+ALTER TABLE lsordernotification ALTER COLUMN notificationcode TYPE numeric(17,0);
+ALTER TABLE lsautoregister ALTER COLUMN regcode TYPE numeric(17,0);
+

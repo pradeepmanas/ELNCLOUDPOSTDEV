@@ -5333,6 +5333,8 @@ public class InstrumentService {
 
 		LSlogilablimsorderdetail objorder = lslogilablimsorderdetailRepository.findOne(batchcode);
 
+		LsOrderattachments parentobjattachment = lsOrderattachmentsRepository.findFirst1ByFilenameAndBatchcodeOrderByAttachmentcodeDesc(filename,batchcode);
+		
 		LsOrderattachments objattachment = new LsOrderattachments();
 
 		if (islargefile == 0) {
@@ -5342,12 +5344,25 @@ public class InstrumentService {
 			}
 		}
 
-		objattachment.setFilename(filename);
+		if(parentobjattachment != null && filename!= null && filename.lastIndexOf(".")>-1)
+		{
+			Integer versiondata = parentobjattachment.getVersion()!=null? parentobjattachment.getVersion()+1:1;
+			String originalname = filename.substring(0, filename.lastIndexOf("."));
+			String extension = filename.substring(filename.lastIndexOf("."), filename.length());
+			objattachment.setFilename(originalname+"_V"+(versiondata)+extension);
+			parentobjattachment.setVersion(versiondata);
+			lsOrderattachmentsRepository.save(parentobjattachment);
+		}
+		else
+		{
+			objattachment.setFilename(filename);
+		}
 		objattachment.setFileextension(fileexe);
 		objattachment.setCreateby(lsuserMasterRepository.findByusercode(usercode));
 		objattachment.setCreatedate(currentdate);
 		objattachment.setBatchcode(objorder.getBatchcode());
 		objattachment.setIslargefile(islargefile);
+		objattachment.setVersion(0);
 
 		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
 		String name = username.getUsername();
@@ -6705,8 +6720,10 @@ public class InstrumentService {
 		objfile.setFilename(file.getOriginalFilename());
 		objfile.setDirectorycode(directorycode);
 		objfile.setFilefor(filefor);
-		Response response = validatefileexistonfolder(objfile);
-		if (response.getStatus()) {
+		Response response = new Response();
+		
+//		Response response = validatefileexistonfolder(objfile);
+//		if (response.getStatus()) {
 			String uuID = "";
 			if (ismultitenant == 1 || ismultitenant == 2) {
 				uuID = cloudFileManipulationservice.storecloudfilesreturnwithpreUUID(file, "sheetfolderfiles", uid,
@@ -6715,11 +6732,27 @@ public class InstrumentService {
 				uuID = fileManipulationservice.storeLargeattachmentwithpreuid(file.getOriginalFilename(), file, uid);
 			}
 
+			LSsheetfolderfiles parentobjattachment = lssheetfolderfilesRepository.findFirst1ByDirectorycodeAndFilenameOrderByFolderfilecode(directorycode, file.getOriginalFilename());
+			
 			LSsheetfolderfiles lsfiles = new LSsheetfolderfiles();
 			lsfiles.setUuid(uuID);
 			lsfiles.setFilesize(file.getSize());
 			lsfiles.setDirectorycode(directorycode);
-			lsfiles.setFilename(file.getOriginalFilename());
+			
+			if(parentobjattachment != null && file.getOriginalFilename()!= null && file.getOriginalFilename().lastIndexOf(".")>-1)
+			{
+				Integer versiondata = parentobjattachment.getVersion()!=null? parentobjattachment.getVersion()+1:1;
+				String originalname = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."));
+				String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
+				lsfiles.setFilename(originalname+"_V"+(versiondata)+extension);
+				parentobjattachment.setVersion(versiondata);
+				lssheetfolderfilesRepository.save(parentobjattachment);
+			}
+			else
+			{
+				lsfiles.setFilename(file.getOriginalFilename());
+			}
+			
 			LSuserMaster lsuser = new LSuserMaster();
 			lsuser.setUsercode(usercode);
 			lsfiles.setCreateby(lsuser);
@@ -6729,14 +6762,17 @@ public class InstrumentService {
 			lsfiles.setFilefor(filefor);
 			lsfiles.setCreatedtimestamp(createddate);
 			lsfiles.setFileviewfor(fileviewfor);
+			lsfiles.setVersion(0);
 
 			lssheetfolderfilesRepository.save(lsfiles);
 
-		} else {
-			response.setInformation("IDS_INFO_FILEEXIST");
-		}
+//		} else {
+//			response.setInformation("IDS_INFO_FILEEXIST");
+//		}
+		response.setStatus(true);
 		map.put("res", response);
 		map.put("uid", uid);
+		map.put("name", lsfiles.getFilename());
 		return map;
 	}
 
@@ -9577,8 +9613,9 @@ public class InstrumentService {
 		objfile.setFilename(file.getOriginalFilename());
 		objfile.setDirectorycode(directorycode);
 		objfile.setFilefor(filefor);
-		Response response = validateprotocolexistonfolder(objfile);
-		if (response.getStatus()) {
+		Response response = new Response();
+//		Response response = validateprotocolexistonfolder(objfile);
+//		if (response.getStatus()) {
 			String uuID = "";
 			if (ismultitenant == 1 || ismultitenant == 2) {
 				uuID = cloudFileManipulationservice.storecloudfilesreturnwithpreUUID(file, "protocolfolderfiles", uid,
@@ -9586,12 +9623,26 @@ public class InstrumentService {
 			} else {
 				uuID = fileManipulationservice.storeLargeattachmentwithpreuid(file.getOriginalFilename(), file, uid);
 			}
+			
+			LSprotocolfolderfiles parentobjattachment = lsprotocolfolderfilesRepository.findFirst1ByDirectorycodeAndFilenameOrderByFolderfilecode(directorycode, file.getOriginalFilename());
 
 			LSprotocolfolderfiles lsfiles = new LSprotocolfolderfiles();
 			lsfiles.setUuid(uuID);
 			lsfiles.setFilesize(file.getSize());
 			lsfiles.setDirectorycode(directorycode);
-			lsfiles.setFilename(file.getOriginalFilename());
+			if(parentobjattachment != null && file.getOriginalFilename()!= null && file.getOriginalFilename().lastIndexOf(".")>-1)
+			{
+				Integer versiondata = parentobjattachment.getVersion()!=null? parentobjattachment.getVersion()+1:1;
+				String originalname = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."));
+				String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
+				lsfiles.setFilename(originalname+"_V"+(versiondata)+extension);
+				parentobjattachment.setVersion(versiondata);
+				lsprotocolfolderfilesRepository.save(parentobjattachment);
+			}
+			else
+			{
+				lsfiles.setFilename(file.getOriginalFilename());
+			}
 			LSuserMaster lsuser = new LSuserMaster();
 			lsuser.setUsercode(usercode);
 			lsfiles.setCreateby(lsuser);
@@ -9604,11 +9655,13 @@ public class InstrumentService {
 
 			lsprotocolfolderfilesRepository.save(lsfiles);
 
-		} else {
-			response.setInformation("IDS_INFO_FILEEXIST");
-		}
+//		} else {
+//			response.setInformation("IDS_INFO_FILEEXIST");
+//		}
+		response.setStatus(true);
 		map.put("res", response);
 		map.put("uid", uid);
+		map.put("name", lsfiles.getFilename());
 		return map;
 	}
 

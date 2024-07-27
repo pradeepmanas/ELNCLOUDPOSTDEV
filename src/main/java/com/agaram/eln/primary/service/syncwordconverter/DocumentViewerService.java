@@ -194,6 +194,13 @@ public class DocumentViewerService {
                         byte[] documentBytes = documentBytesOpt.get();
                         String jsonContent = new String(documentBytes, StandardCharsets.UTF_8);
                         objReport.setReporttemplatecontent(jsonContent);
+                        
+//                        @SuppressWarnings("unchecked")
+//						Map<String, String> map = objectMapper.readValue(jsonContent, LinkedHashMap.class);
+//                        
+//                        objReport.setReporttemplatecontent(map.getOrDefault("content", ""));
+//                        objReport.setKeystorevariable(map.getOrDefault("keystorevariable", ""));
+                        
                     } else {
                         System.out.println("Failed to retrieve JSON content from Azure Blob Storage.");
                     }

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -226,15 +227,23 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 				"/Login/LoadSitewithoutgzip", "/Login/Logintenat/","/Login/importchemdata",
 				    "/DashBoardDemo/Getdashboardordercount",
 	                "/DashBoardDemo/Getdashboardorders","/documenteditor/api/wordeditor/Import","/smartdevice/Getdata"
-	                ,"/documenteditor/Import","/documenteditor/api/wordeditor/RestrictEditing"
+	                ,"/documenteditor/Import","/documenteditor/api/wordeditor/RestrictEditing","/Instrument/uploadfilessheetfolder"
+	                ,"/Instrument/uploadfilesprotocolfolder"
 	          
 //				"/protocol/Uploadprotocolimageondrag"
 
 		);
+		
+		Integer secondindex = StringUtils.ordinalIndexOf(requestUrl, "/", 3);
+		String suburl = "";
+		if(secondindex>-1)
+		{
+			suburl = requestUrl.substring(0, secondindex);
+		}
 		byte[] uncompressedBytes = mapper.writeValueAsBytes(o);
 		byte[] compressedBytes;
 
-		if (uncompressedUrls.contains(requestUrl)) {
+		if (uncompressedUrls.contains(requestUrl)||uncompressedUrls.contains(suburl)) {
 		    // Don't compress the response
 		    compressedBytes = uncompressedBytes;
 		} else {

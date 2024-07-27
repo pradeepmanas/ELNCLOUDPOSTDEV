@@ -52,6 +52,8 @@ public class LSsheetfolderfiles {
 	@Transient
 	private Date todate;
 	
+	private Integer version;
+	
 	public String getFolderpath() {
 		return folderpath;
 	}
@@ -156,6 +158,14 @@ public class LSsheetfolderfiles {
 
 	public void setFileviewfor(Integer fileviewfor) {
 		this.fileviewfor = fileviewfor;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 	
 	

@@ -594,7 +594,11 @@ public class FileService {
 					.getTeamcodeByLsuserMaster(objtest.getObjLoggeduser().getUsercode());
 
 //			if (lstteammap.size() > 0) {
-				List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
+			List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();
+			if(lstteammap != null && lstteammap.size() >0)
+			{
+				lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lstteammap);
+			}
 				lstteamuser.add(objtest.getObjLoggeduser());
 				lsfiles = lSfileRepository
 						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrderByFilecodeDesc(

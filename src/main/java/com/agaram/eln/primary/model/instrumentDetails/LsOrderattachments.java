@@ -45,6 +45,7 @@ public class LsOrderattachments {
 	private Integer islargefile;
 	private Integer nmaterialcode;
 	private Integer nmaterialinventorycode;
+	private Integer version;
 		
 	public Integer getNmaterialinventorycode() {
 		return nmaterialinventorycode;
@@ -187,6 +188,14 @@ public class LsOrderattachments {
 
 	public void setResponse(Response response) {
 		this.response = response;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 	
 	

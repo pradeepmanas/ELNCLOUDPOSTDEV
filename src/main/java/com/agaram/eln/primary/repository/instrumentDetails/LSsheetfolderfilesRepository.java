@@ -46,7 +46,7 @@ public List<LSsheetfolderfiles> findByDirectorycodeInAndFilenameLikeIgnoreCaseOr
 public long countByDirectorycodeInAndFilenameLikeIgnoreCaseOrderByFolderfilecode(List<Long> directoryCode_Sheet,
 		String search_Key);
 
-
+public LSsheetfolderfiles findFirst1ByDirectorycodeAndFilenameOrderByFolderfilecode(Long directorycode, String filename);
  
 
 }
