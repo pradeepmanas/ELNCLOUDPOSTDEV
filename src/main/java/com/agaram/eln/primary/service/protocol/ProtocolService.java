@@ -7482,7 +7482,7 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 	}
 
 	public Map<String, Object> uploadprotocolsfilesql(MultipartFile file, Integer protocolstepcode,
-			Integer protocolmastercode, Integer stepno, String protocolstepname, String originurl) throws IOException {
+			Integer protocolmastercode, Integer stepno, String protocolstepname, String originurl,String editoruuid) throws IOException {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 
@@ -7495,13 +7495,31 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 //	}
 		String Fieldid = Generatetenantpassword();
 		LSprotocolfiles objfile = new LSprotocolfiles();
+		
+		String filenamedata = FilenameUtils.removeExtension(file.getOriginalFilename());
+		
+		LSprotocolfiles parentfile = lsprotocolfilesRepository.findFirst1ByEditoruuidAndFilenameOrderByProtocolstepfilecodeDesc(
+				editoruuid,filenamedata);
+		
 		objfile.setExtension(FilenameUtils.getExtension(file.getOriginalFilename()));
 		objfile.setFileid(Fieldid);
 		objfile.setProtocolmastercode(protocolmastercode);
 		objfile.setProtocolstepcode(protocolstepcode);
 		objfile.setProtocolstepname(protocolstepname);
 		objfile.setStepno(stepno);
-		objfile.setFilename(FilenameUtils.removeExtension(file.getOriginalFilename()));
+		objfile.setEditoruuid(editoruuid);
+		if(parentfile != null)
+		{
+			Integer versiondata = parentfile.getVersion()!=null? parentfile.getVersion()+1:1;
+			objfile.setFilename(filenamedata+"_V"+(versiondata));
+			parentfile.setVersion(versiondata);
+			lsprotocolfilesRepository.save(parentfile);
+		}
+		else
+		{
+			objfile.setFilename(filenamedata);
+		}
+		objfile.setVersion(0);
 
 		lsprotocolfilesRepository.save(objfile);
 
@@ -7512,7 +7530,7 @@ private void scheduleAutoRegister(LSlogilabprotocoldetail objprotocolorder , lon
 		objattachment.setFile(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
 
 		objattachment = lsprotocolfilesContentRepository.insert(objattachment);
-
+		map.put("name", objfile.getFilename());
 		map.put("extension", "." + objfile.getExtension());
 		map.put("link", originurl + "/protocol/downloadprotocolfilesql/" + objfile.getFileid() + "/"
 				+ objfile.getFilename() + "/" + objfile.getExtension());

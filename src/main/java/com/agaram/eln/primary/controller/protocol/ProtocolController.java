@@ -801,10 +801,10 @@ public class ProtocolController {
 			@RequestParam("protocolmastercode") Integer protocolmastercode, 
 			@RequestParam("stepno") Integer stepno,
 			@RequestParam("protocolstepname") String protocolstepname,
-			@RequestParam("originurl") String originurl) throws IOException
+			@RequestParam("originurl") String originurl, @RequestParam("editoruuid")  String editoruuid) throws IOException
 	{
 	
-		return ProtocolMasterService.uploadprotocolsfilesql(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl );
+		return ProtocolMasterService.uploadprotocolsfilesql(file, protocolstepcode,protocolmastercode,stepno,protocolstepname,originurl,editoruuid );
 	}
 	
 	@RequestMapping(value = "downloadprotocolfilesql/{fileid}/{filename}/{extension}", method = RequestMethod.GET)

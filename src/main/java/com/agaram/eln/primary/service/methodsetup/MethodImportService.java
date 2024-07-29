@@ -187,6 +187,7 @@ public class MethodImportService {
 			
 			final MethodVersion impmethodversion = new MethodVersion(expMethod.getMethodversion().get(0));
 			final List<MethodVersion> methversionList = new ArrayList<>(1);
+			final MethodVersion methodversionobj = new MethodVersion();
 			
 			//newly added for userdefined methodname
 			impMethod.setMethodname(userdefinedmethod.getMethodname());
@@ -197,9 +198,19 @@ public class MethodImportService {
 			if(!methodExist.isPresent()) {
 				
 				//method version
-				impmethodversion.setMvno(0);
-				impmethodversion.setMethodkey(1);
-				methversionList.add(methversionRepo.save(impmethodversion));
+//				impmethodversion.setMvno(0);
+//				impmethodversion.setMethodkey(0);
+//				methversionList.add(methversionRepo.save(impmethodversion));
+				
+				//method version
+				methodversionobj.setBlobid(impmethodversion.getBlobid());
+				methodversionobj.setCreateddate(impmethodversion.getCreateddate());
+				methodversionobj.setFilename(impmethodversion.getFilename());
+				methodversionobj.setInstrawdataurl(impmethodversion.getInstrawdataurl());
+				methodversionobj.setMvno(0);
+				methodversionobj.setStatus(impmethodversion.getStatus());
+				methodversionobj.setVersion(impmethodversion.getVersion());
+				methversionList.add(methversionRepo.save(methodversionobj));
 				
 				
 				impMethod.setMethodkey(0);
@@ -210,6 +221,9 @@ public class MethodImportService {
 				impMethod.setMethodversion(methversionList);
 				methodList.add(methodRepo.save(impMethod));
 				importedMethods.add(methodList.get(0));
+				// added to get newly imported method key in version table
+				methodversionobj.setMethodkey(methodList.get(0).getMethodkey());
+				methversionList.add(methversionRepo.save(methodversionobj));
 				
 			} else {
 //				methodList.add(methodExist.get());
@@ -331,15 +345,21 @@ public class MethodImportService {
 
 //		    Delimiter
 			String delimiterJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item.get("Delimiter"));
-			final List<Delimiter> expDelimiter = mapper.readValue(delimiterJson, new TypeReference<List<Delimiter>>(){});
+			List<Delimiter> expDelimiter = mapper.readValue(delimiterJson, new TypeReference<List<Delimiter>>(){});
+			 List<Delimiter> expdelimiterStatusList = expDelimiter.stream()
+			            .filter(register -> register.getStatus() == 1)
+			            .collect(Collectors.toList());
+			
+			
 			final List<Delimiter> currDelimiter = delimiterRepo.findByStatus(1, new Sort(Sort.Direction.ASC, "delimiterkey"));
 			final List<Delimiter> newDelimiter = new ArrayList<>();
-			final List<Delimiter> delimiterExist = getAnyDelimiter(expDelimiter, currDelimiter);
+			final List<Delimiter> delimiterExist = getAnyDelimiter(expdelimiterStatusList, currDelimiter);
 			if(!delimiterExist.isEmpty()) {
 				delimiterExist.forEach(delimiterItem -> {
 					delimiterItem.setDelimiterkey(0);
 					delimiterItem.setCreatedby(createdUser);
 					delimiterItem.setCreateddate(date);
+					delimiterItem.setLssitemaster(site);
 					
 					newDelimiter.add(delimiterItem);
 				});
@@ -352,12 +372,19 @@ public class MethodImportService {
 			List<MethodDelimiter> expMethodDelimiter = mapper.readValue(methodDelimiterJson, new TypeReference<List<MethodDelimiter>>(){});
 			final List<MethodDelimiter> currMethodDelimiter = methodDelimiterRepo.findByStatus(1, new Sort(Sort.Direction.ASC, "methoddelimiterkey"));
 			final List<MethodDelimiter> newMethodDelimiter = new ArrayList<>();
-			final List<MethodDelimiter> methodDelimiterExist = getAnyMethodDelimiter(expMethodDelimiter, currMethodDelimiter);
+			final List<MethodDelimiter> newMethodDelimiter1 = new ArrayList<>();
+			
+			 List<MethodDelimiter> expMethodDelimiterStatusList = expMethodDelimiter.stream()
+			            .filter(register -> register.getStatus() == 1 && register.getDelimiter()!=null && register.getDelimiter().getDelimiterkey() != null)
+			            .collect(Collectors.toList());
+			 
+			final List<MethodDelimiter> methodDelimiterExist = getAnyMethodDelimiter(expMethodDelimiterStatusList, currMethodDelimiter);
 		    if(!methodDelimiterExist.isEmpty()) {
 		    	methodDelimiterExist.forEach(methodDelimiterItem -> {
 		    		methodDelimiterItem.setMethoddelimiterkey(0);
 		    		methodDelimiterItem.setCreatedby(createdUser);
 		    		methodDelimiterItem.setCreateddate(date);
+		    		methodDelimiterItem.setLssitemaster(site);
 		    		final Delimiter delimItem = delimiter.stream()															
 		    				.filter(delim -> delim.getDelimitername().equals(methodDelimiterItem.getDelimiter().getDelimitername()))
 							.findAny()
@@ -365,8 +392,13 @@ public class MethodImportService {
 		    		methodDelimiterItem.setDelimiter(delimItem);
 		    		
 		    		newMethodDelimiter.add(methodDelimiterItem);
+
+		    		List<MethodDelimiter> finalMethoddelimiterlist = newMethodDelimiter.stream()
+		    	            .filter(register -> register.getDelimiter()!=null && register.getDelimiter().getDelimiterkey() != null)
+		    	            .collect(Collectors.toList());
+		    		newMethodDelimiter1.addAll(finalMethoddelimiterlist);
 		    	});
-		    	methodDelimiterRepo.save(newMethodDelimiter);
+		    	methodDelimiterRepo.save(newMethodDelimiter1);
 		    }
 		    final List<MethodDelimiter> methodDelimiter = methodDelimiterRepo.findByStatus(1, new Sort(Sort.Direction.ASC, "methoddelimiterkey"));
 			

@@ -51,22 +51,11 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	public List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterIn(String orderflag,
 			List<LSprojectmaster> lstproject);
-
-//	public long countByOrderflag(String orderflag);
-
+	
 	public long countByOrderflagAndLssamplefileIn(String orderflag, List<LSsamplefile> lssamplefile);
-
-//	public List<LSlogilablimsorderdetail> findByOrderflagAndLssamplefileIn(String orderflag,
-//			List<LSsamplefile> lssamplefile);
 
 	public List<LSlogilablimsorderdetail> findByFiletypeAndOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc(
 			Integer filetype, String orderflag, List<LSprojectmaster> lstproject, List<LSworkflow> lsworkflow);
-
-//	public List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc(
-//			String orderflag, List<LSprojectmaster> lstproject, List<LSworkflow> lsworkflow);
-
-//	public List<LSlogilablimsorderdetail> findByOrderflagAndLsprojectmasterInAndLsworkflowInAndLockeduserIsNotNullOrderByBatchcodeDesc(
-//			String orderflag, List<LSprojectmaster> lstproject, List<LSworkflow> lsworkflow);
 
 	public long countByOrderflagAndLsprojectmasterInAndLsworkflowInOrderByBatchcodeDesc(String orderflag,
 			List<LSprojectmaster> lstproject, List<LSworkflow> lsworkflow);
@@ -77,11 +66,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public long countByOrderflagAndLsprojectmasterInOrderByBatchcodeDesc(String orderflag,
 			List<LSprojectmaster> lstproject);
 
-	public List<LSlogilablimsorderdetail> findByFiletypeAndOrderflagAndLsprojectmasterInOrderByBatchcodeDesc(
-			Integer filetype, String orderflag, List<LSprojectmaster> lstproject);
-
-	public List<LSlogilablimsorderdetail> findByFiletypeOrderByBatchcodeDesc(Integer filetype);
-
 	public long countByFiletypeOrderByBatchcodeDesc(Integer filetype);
 
 	public List<LSlogilablimsorderdetail> findByFiletypeAndLssamplefileInOrderByBatchcodeDesc(Integer filetype,
@@ -89,13 +73,8 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	public long countByFiletypeAndOrderflagAndLssamplefileIn(Integer filetype, String orderflag,
 			List<LSsamplefile> lssamplefile);
-
-	//public List<LSlogilablimsorderdetail> findByLsprojectmasterInOrderByBatchcodeDesc(List<LSprojectmaster> lstproject);
-
+	
 	public long countByLsprojectmasterInOrderByBatchcodeDesc(List<LSprojectmaster> lstproject);
-
-//	public List<LSlogilablimsorderdetail> findByOrderflagAndLssamplefileInAndLsprojectmasterIn(String orderflag,
-//			List<LSsamplefile> lssamplefile, List<LSprojectmaster> lstproject);
 
 	public long countByOrderflagAndLssamplefileInAndLsprojectmasterIn(String orderflag, List<LSsamplefile> lssamplefile,
 			List<LSprojectmaster> lstproject);
@@ -104,9 +83,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Integer filetype, String orderflag, Date fromdate, Date todate);
 
 	public long countByFiletypeAndOrderflagAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-			Integer filetype, String orderflag, Date fromdate, Date todate);
-
-	public List<LSlogilablimsorderdetail> findFirst15ByFiletypeAndOrderflagAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 			Integer filetype, String orderflag, Date fromdate, Date todate);
 
 	public List<LSlogilablimsorderdetail> findFirst10ByFiletypeAndOrderflagAndBatchcodeLessThanAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
@@ -119,9 +95,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Integer filetype, String orderflag, Date fromdate, Date todate);
 
 	public long countByFiletypeAndOrderflagAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-			Integer filetype, String orderflag, Date fromdate, Date todate);
-
-	public List<LSlogilablimsorderdetail> findFirst15ByFiletypeAndOrderflagAndCompletedtimestampBetweenOrderByBatchcodeDesc(
 			Integer filetype, String orderflag, Date fromdate, Date todate);
 
 	public List<LSlogilablimsorderdetail> findFirst10ByFiletypeAndOrderflagAndBatchcodeLessThanAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
@@ -140,9 +113,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public long countByFiletypeAndOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			Integer filetype, String orderflag, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 
-	public List<LSlogilablimsorderdetail> findFirst15ByFiletypeAndOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-			Integer filetype, String orderflag, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
-
 	public List<LSlogilablimsorderdetail> findFirst10ByFiletypeAndOrderflagAndBatchcodeLessThanAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			Integer filetype, String orderflag, Long batchcode, List<LSprojectmaster> lstproject, Date fromdate,
 			Date todate);
@@ -157,9 +127,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	public long countByFiletypeAndOrderflagAndLsprojectmasterInAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			Integer filetype, String orderflag, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 
-	public List<LSlogilablimsorderdetail> findFirst15ByFiletypeAndOrderflagAndLsprojectmasterInAndCompletedtimestampBetweenOrderByBatchcodeDesc(
-			Integer filetype, String orderflag, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
-
 	public List<LSlogilablimsorderdetail> findFirst10ByFiletypeAndOrderflagAndBatchcodeLessThanAndLsprojectmasterInAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			Integer filetype, String orderflag, Long batchcode, List<LSprojectmaster> lstproject, Date fromdate,
 			Date todate);
@@ -172,9 +139,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	public List<LSlogilablimsorderdetail> findByFiletypeAndLsfileAndLsprojectmasterInOrderByBatchcodeDesc(
 			Integer filetype, LSfile lSfile, List<LSprojectmaster> lstproject);
-
-	public List<LSlogilablimsorderdetail> findByFiletypeAndLsprojectmasterInOrderByBatchcodeDesc(Integer filetype,
-			List<LSprojectmaster> lstproject);
 
 	public long countByLsworkflowAndOrderflag(LSworkflow lsworkflow, String orderflag);
 
@@ -2864,9 +2828,6 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 			int k, Date fromdate3, Date todate3, List<LSuserMaster> lstuserMaster, String orderflag3, Integer filetype3,
 			Integer approvelstatus3);
 
-	List<LSlogilablimsorderdetail> findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndOrdercancellIsNullOrderByBatchcodeDesc(
-			List<LSprojectmaster> lstproject, int filetype, LSfile lSfile);
-
 	List<LSlogilablimsorderdetail> findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileOrderByBatchcodeDesc(
 			int filetype, LSfile lSfile);
 
@@ -2879,7 +2840,7 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 	List<Logilaborders> findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			String orderflag, List<LSprojectmaster> lstproject, Integer filetype, Date fromdate, Date todate);
 	
-//	List<LSlogilablimsorderdetail> findByRepeatAndAutoregistercountGreaterThan(boolean b, int i);
+	List<LSlogilablimsorderdetail> findByRepeatAndAutoregistercountGreaterThan(boolean b, int i);
 	
 	List<LSlogilablimsorderdetail> findByFiletypeAndOrderflagAndLsprojectmasterInAndApprovelstatusNotAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 			Integer filetype, String orderflag, List<LSprojectmaster> lstproject, int i, Date fromdate, Date todate);
@@ -2930,4 +2891,16 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 
 	List<Logilaborders> findByLsfileInAndCreatedtimestampBetweenOrderByBatchcodeDesc(List<LSfile> files, Date fromdate,
 			Date todate);
+
+	List<LSlogilablimsorderdetail> findByFiletypeAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+			int filetype1, LSfile lSfile1, int i, int filetype2, LSfile lSfile2);
+
+	List<LSlogilablimsorderdetail> findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+			List<LSprojectmaster> lstproject1, int filetype1, LSfile lSfile1, int i, List<LSprojectmaster> lstproject2, int filetype2, LSfile lSfile2);
+
+	List<LSlogilablimsorderdetail> findByFiletypeAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+			Integer filetype1, int i, Integer filetype2);
+
+	List<LSlogilablimsorderdetail> findByFiletypeAndLsprojectmasterInAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsprojectmasterInAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+			Integer filetype1, List<LSprojectmaster> lstproject1, int i, Integer filetype2, List<LSprojectmaster> lstproject2);
 	}

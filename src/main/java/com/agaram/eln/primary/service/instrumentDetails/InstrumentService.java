@@ -5017,8 +5017,8 @@ public class InstrumentService {
 			List<LSlogilablimsorderdetail> lstorder = new ArrayList<>();
 
 			if ("administrator".equalsIgnoreCase(lsusMaster.getUsername().trim())) {
-				lstorder = lslogilablimsorderdetailRepository.findByFiletypeAndLsfileOrderByBatchcodeDesc(filetype,
-						lSfile);
+				lstorder = lslogilablimsorderdetailRepository.findByFiletypeAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+						filetype, lSfile, 3, filetype, lSfile);
 			} else {
 				List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(lsusMaster);
 				List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
@@ -5038,9 +5038,8 @@ public class InstrumentService {
 					}
 				}
 
-				lstorder = lslogilablimsorderdetailRepository
-						.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndOrdercancellIsNullOrderByBatchcodeDesc(
-								lstproject, filetype, lSfile);
+				lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+								lstproject, filetype, lSfile, 3, lstproject, filetype, lSfile);
 
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 				int totalSamples = lstsample.size();
@@ -5052,13 +5051,11 @@ public class InstrumentService {
 							List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
 
 							List<LSlogilablimsorderdetail> orderChunk = new ArrayList<>();
-							orderChunk.addAll(lslogilablimsorderdetailRepository
-									.findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileOrderByBatchcodeDesc(
-											filetype, lSfile));
+							orderChunk.addAll(lslogilablimsorderdetailRepository.findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileOrderByBatchcodeDesc(
+										filetype, lSfile));
 							for (int viewOption = 1; viewOption <= 3; viewOption++) {
-								orderChunk.addAll(lslogilablimsorderdetailRepository
-										.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrderByBatchcodeDesc(
-												currentChunk, filetype, viewOption, lSfile));
+								orderChunk.addAll(lslogilablimsorderdetailRepository.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrderByBatchcodeDesc(
+										currentChunk, filetype, viewOption, lSfile));
 							}
 							return orderChunk;
 						}).flatMap(List::stream).collect(Collectors.toList());
@@ -5174,7 +5171,8 @@ public class InstrumentService {
 
 		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
 		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
-			lstorder = lslogilablimsorderdetailRepository.findByFiletypeOrderByBatchcodeDesc(objorder.getFiletype());
+			lstorder = lslogilablimsorderdetailRepository.findByFiletypeAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+					objorder.getFiletype(), 3, 1);
 		} else {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
 					.findBylsuserMaster(objorder.getLsuserMaster());
@@ -5194,8 +5192,8 @@ public class InstrumentService {
 					sample = null; // Set sample to null after adding it to the list
 				}
 			}
-			lstorder = lslogilablimsorderdetailRepository
-					.findByFiletypeAndLsprojectmasterInOrderByBatchcodeDesc(objorder.getFiletype(), lstproject);
+			lstorder = lslogilablimsorderdetailRepository.findByFiletypeAndLsprojectmasterInAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsprojectmasterInAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+					objorder.getFiletype(), lstproject, 3, objorder.getFiletype(), lstproject);
 
 //			lstorder = lslogilablimsorderdetailRepository
 //					.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterInOrderByBatchcodeDesc(
@@ -5275,6 +5273,8 @@ public class InstrumentService {
 
 		LSlogilablimsorderdetail objorder = lslogilablimsorderdetailRepository.findOne(batchcode);
 
+		LsOrderattachments parentobjattachment = lsOrderattachmentsRepository.findFirst1ByFilenameAndBatchcodeOrderByAttachmentcodeDesc(filename,batchcode);
+		
 		LsOrderattachments objattachment = new LsOrderattachments();
 
 		if (islargefile == 0) {
@@ -5289,12 +5289,26 @@ public class InstrumentService {
 			}
 		}
 
-		objattachment.setFilename(filename);
+		if(parentobjattachment != null && filename!= null && filename.lastIndexOf(".")>-1)
+		{
+			Integer versiondata = parentobjattachment.getVersion()!=null? parentobjattachment.getVersion()+1:1;
+			String originalname = filename.substring(0, filename.lastIndexOf("."));
+			String extension = filename.substring(filename.lastIndexOf("."), filename.length());
+			objattachment.setFilename(originalname+"_V"+(versiondata)+extension);
+			parentobjattachment.setVersion(versiondata);
+			lsOrderattachmentsRepository.save(parentobjattachment);
+		}
+		else
+		{
+			objattachment.setFilename(filename);
+		}
+		
 		objattachment.setFileextension(fileexe);
 		objattachment.setCreateby(lsuserMasterRepository.findByusercode(usercode));
 		objattachment.setCreatedate(currentdate);
 		objattachment.setBatchcode(objorder.getBatchcode());
 		objattachment.setIslargefile(islargefile);
+		objattachment.setVersion(0);
 
 		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
 		String name = username.getUsername();
