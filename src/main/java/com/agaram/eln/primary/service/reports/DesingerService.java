@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +27,9 @@ import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
@@ -464,5 +468,80 @@ public class DesingerService {
 
 		}
 		return objfile;
+	}
+
+	public ReportDesignerStructure UpdateFolderforReportDesignerStructure(ReportDesignerStructure folders) {
+		reportDesignerStructureRepository.updatedirectory(folders.getParentdircode(), folders.getPath(),
+				folders.getDirectorycode(), folders.getDirectoryname());
+		return folders;
+	}
+
+	public List<ReportDesignerStructure> DeletedirectoriesonReportDesigner(ReportDesignerStructure[] directories) {
+		List<ReportDesignerStructure> lstdirectories = Arrays.asList(directories);
+
+		lstdirectories.forEach(structure -> {
+			if (structure.getParentdircode() == -2) {
+				reportDesignerStructureRepository.delete(structure.getDirectorycode());
+				reportDesignerStructureRepository.updateparentdirectory(structure.getDircodetomove(),
+						structure.getDirectorycode());
+			} else {
+				reportDesignerStructureRepository.updatedirectory(structure.getParentdircode(), structure.getPath(),
+						structure.getDirectorycode(), structure.getDirectoryname());
+			}
+		});
+
+		return lstdirectories;
+
+	}
+
+	public ReportDesignerStructure getMoveDirectoryonReportDesigner(ReportDesignerStructure objdir) {
+		Response objResponse = new Response();
+		ReportDesignerStructure lstdir = null;
+		String dir = objdir.getDirectoryname();
+		if (objdir.getDirectorycode() != null) {
+			lstdir = reportDesignerStructureRepository.findByDirectorycodeAndParentdircodeAndDirectorynameNot(
+					objdir.getDirectorycode(), objdir.getParentdircode(), objdir.getDirectoryname());
+		} else {
+			lstdir = reportDesignerStructureRepository.findByParentdircodeAndDirectoryname(objdir.getParentdircode(),
+					objdir.getDirectoryname());
+		}
+		while (lstdir != null) {
+			if (dir.charAt(dir.length() - 1) == ')') {
+				char temp = dir.charAt(dir.length() - 2);
+				int n = Character.getNumericValue(temp);
+				n = n + 1;
+				dir = dir.substring(0, dir.length() - 2) + n + dir.substring(dir.length() - 1);
+				objdir.setDirectoryname(dir);
+			} else {
+				dir = dir + " (2)";
+				objdir.setDirectoryname(dir);
+			}
+			lstdir = reportDesignerStructureRepository.findByParentdircodeAndDirectoryname(objdir.getParentdircode(),
+					objdir.getDirectoryname());
+
+		}
+		objdir.setResponse(objResponse);
+		return objdir;
+	}
+
+	public List<Reporttemplate> UpdateReporttemplate(Reporttemplate[] files) {
+		List<Reporttemplate> lstfile = Arrays.asList(files);
+		if (lstfile.size() > 0) {
+			List<Long> lstfilesid = lstfile.stream().map(Reporttemplate::getTemplatecode)
+					.collect(Collectors.toList());
+			reporttemplaterepository.updatedirectory(lstfile.get(0).getReportdesignstructure().getDirectorycode(), lstfilesid);
+		}
+		return lstfile;
+	}
+
+	public Reporttemplate UpdateReporttemplateforsinglefile(Reporttemplate file) {
+		reporttemplaterepository.updatedirectoryonsinglefile(file.getReportdesignstructure().getDirectorycode(), file.getTemplatecode());
+		return file;
+	}
+
+	public ReportDesignerStructure MovedirectoryonReporttemplate(ReportDesignerStructure directory) {
+		reportDesignerStructureRepository.updatedirectory(directory.getParentdircode(), directory.getPath(),
+				directory.getDirectorycode(), directory.getDirectoryname());
+		return directory;
 	}
 }

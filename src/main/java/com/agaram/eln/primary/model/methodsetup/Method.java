@@ -343,7 +343,8 @@ public class Method implements Serializable, Diffable<Method>{
 		//return methodstatus;
 		if(methodstatus != null)
 		{
-		return  methodstatus.trim().equals("A")?"Active":"Retired";
+//		return  methodstatus.trim().equals("A")?"Active":"Retired";
+			return  status == 1 ?"Active":"Retired";
 		}
 		else
 		{

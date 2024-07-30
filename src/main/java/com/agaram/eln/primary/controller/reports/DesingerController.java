@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportDesignerStructure;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportTemplateVersion;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
@@ -89,4 +92,38 @@ public class DesingerController {
 		return desingerservice.gettemplateversiondata(template);
 	}
 	
+	@RequestMapping("/UpdateFolderforReportDesignerStructure")
+	public ReportDesignerStructure UpdateFolderforReportDesignerStructure(@RequestBody ReportDesignerStructure folders)throws Exception
+	{
+		return desingerservice.UpdateFolderforReportDesignerStructure(folders);
+	}
+	
+	@RequestMapping("/DeletedirectoriesonReportDesigner")
+	public List<ReportDesignerStructure> DeletedirectoriesonReportDesigner(@RequestBody ReportDesignerStructure[] directories)throws Exception
+	{
+		return desingerservice.DeletedirectoriesonReportDesigner(directories);
+	}
+	
+	@RequestMapping("/getMoveDirectoryonReportDesigner")
+	public ReportDesignerStructure getMoveDirectoryonReportDesigner(@RequestBody ReportDesignerStructure objdir)throws Exception {
+		return desingerservice.getMoveDirectoryonReportDesigner(objdir);
+	}
+	
+	@RequestMapping("/UpdateReporttemplate")
+	public List<Reporttemplate> UpdateReporttemplate(@RequestBody Reporttemplate[] files)throws Exception
+	{
+		return desingerservice.UpdateReporttemplate(files);
+	}
+	
+	@RequestMapping("/UpdateReporttemplateforsinglefile")
+	public Reporttemplate UpdateReporttemplateforsinglefile(@RequestBody Reporttemplate file)throws Exception
+	{
+		return desingerservice.UpdateReporttemplateforsinglefile(file);
+	}
+	
+	@RequestMapping("/MovedirectoryonReporttemplate")
+	public ReportDesignerStructure MovedirectoryonReporttemplate(@RequestBody ReportDesignerStructure directory)throws Exception
+	{
+		return desingerservice.MovedirectoryonReporttemplate(directory);
+	}
 }

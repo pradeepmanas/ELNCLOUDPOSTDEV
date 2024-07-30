@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportDesignerStructure;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
@@ -31,7 +34,17 @@ public interface ReporttemplateRepository extends JpaRepository<Reporttemplate, 
 
 	public Reporttemplate findTopByTemplatenameIgnoreCaseAndSitemaster(String templatename, LSSiteMaster sitemaster);
 
-	public List<Reporttemplate> findByTemplatecodeInAndTemplatetypeOrderByTemplatecodeDesc(List<Long> lstTempCode,int i);
+	public List<Reporttemplate> findByTemplatecodeInAndTemplatetypeOrderByTemplatecodeDesc(List<Long> lstTempCode,
+			int i);
 
+	@Transactional
+	@Modifying
+	@Query(value="update Reporttemplate o set o.reportdesignstructure_directorycode = ?1 where o.templatecode in (?2)",nativeQuery=true)
+	public void updatedirectory(Long directorycode, List<Long> lstfilesid);
+
+	@Transactional
+	@Modifying
+	@Query(value="update Reporttemplate o set o.reportdesignstructure_directorycode = ?1 where o.templatecode = ?2",nativeQuery=true)
+	void updatedirectoryonsinglefile(Long directorycode, Long long1);
 
 }

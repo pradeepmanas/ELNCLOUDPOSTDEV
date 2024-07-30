@@ -1402,3 +1402,5 @@ ALTER TABLE IF Exists lsprotocolfolderfiles ADD Column IF NOT EXISTS version int
 ALTER TABLE lsordernotification ALTER COLUMN notificationcode TYPE numeric(17,0);
 ALTER TABLE lsautoregister ALTER COLUMN regcode TYPE numeric(17,0);
 
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_MATERIALTYPEPARAMS' where displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS';
+update lsusergrouprights set screenname = 'IDS_SCN_MATERIALTYPEPARAMS' where displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS';

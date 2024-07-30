@@ -497,14 +497,7 @@ public class FreeUserService {
 				obj_project.setLsusermaster(objuser);			
 				obj_project.setModifiedby(objuser);
 				
-				String obj_pname= null;
-				if (projects.equals("Analytical Validation_1")) {
-					obj_pname = projects.toString().replace("_1", "").trim();
-				}else if(projects.equals("Analytical Validation_2")) {
-					obj_pname = projects.toString().replace("_2", "").trim();
-				}else {
-					obj_pname= projects;
-				}
+				String obj_pname= projects;			
 				
 				obj_project.setProjectname(obj_pname);
 				String team_name = null;
@@ -517,14 +510,14 @@ public class FreeUserService {
 				case "Genetic Hereditary":
 					team_name="R&D";
 					break;
-				case "Analytical Validation_1":
-					team_name="R&D";
+				case "Analytical Validation":
+					team_name="QC";
 					break;
 				case "Diagnostic Accuracy Studies":
 					team_name="Clinical Research";
 					break;
-				case "Analytical Validation_2":
-					team_name="QC";
+				case "Method Validation":
+					team_name="R&D";
 					break;
 				case "Development and Optimization of a New Method for Amines Synthesis":
 					team_name="R&D";

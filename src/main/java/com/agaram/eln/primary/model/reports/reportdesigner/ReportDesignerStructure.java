@@ -79,7 +79,18 @@ public class ReportDesignerStructure {
 	
 	@Transient
 	private Integer templatetype;
+	
+	@Transient
+	private Long dircodetomove;
 
+
+	public Long getDircodetomove() {
+		return dircodetomove;
+	}
+
+	public void setDircodetomove(Long dircodetomove) {
+		this.dircodetomove = dircodetomove;
+	}
 
 	public Integer getTemplatetype() {
 		return templatetype;

@@ -6708,7 +6708,7 @@ public class InstrumentService {
 	public Map<String, Object> uploadsheetimages(MultipartFile file, String originurl, String username,
 			String sitecode) {
 		Map<String, Object> map = new HashMap<String, Object>();
-
+		int multitenant = Integer.parseInt(env.getProperty("ismultitenant"));
 		String id = null;
 		try {
 			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "sheetimagestemp");
@@ -6721,8 +6721,14 @@ public class InstrumentService {
 		final String getExtn = FilenameUtils.getExtension(file.getOriginalFilename()) == "" ? "png"
 				: FilenameUtils.getExtension(file.getOriginalFilename());
 
-		map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + TenantContext.getCurrentTenant()
-				+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
+		if(multitenant == 2) {
+			map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + commonfunction.getcontainername(multitenant, TenantContext.getCurrentTenant())
+			+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
+		}else {
+			map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + TenantContext.getCurrentTenant()
+			+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
+		}
+		
 		return map;
 	}
 
@@ -6906,11 +6912,11 @@ public class InstrumentService {
 			String copyfrom = fileObj.get("copyfrom");
 			String copyto = fileObj.get("copyto");
 			String isnew = fileObj.get("isnew");
-
+			int ismultitenant = Integer.parseInt(env.getProperty("ismultitenant"));
 			if (isnew.equals("true")) {
 				cloudFileManipulationservice.movefiletoanothercontainerandremove(
-						TenantContext.getCurrentTenant() + "sheetimagestemp",
-						TenantContext.getCurrentTenant() + "sheetimages", copyfrom);
+					 commonfunction.getcontainername(ismultitenant,TenantContext.getCurrentTenant()) + "sheetimagestemp",
+					 commonfunction.getcontainername(ismultitenant,TenantContext.getCurrentTenant()) + "sheetimages", copyfrom);
 			}
 
 			try {

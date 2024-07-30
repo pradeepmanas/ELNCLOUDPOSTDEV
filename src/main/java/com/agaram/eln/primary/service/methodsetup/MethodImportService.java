@@ -206,7 +206,7 @@ public class MethodImportService {
 				methodversionobj.setBlobid(impmethodversion.getBlobid());
 				methodversionobj.setCreateddate(impmethodversion.getCreateddate());
 				methodversionobj.setFilename(impmethodversion.getFilename());
-				methodversionobj.setInstrawdataurl(impmethodversion.getInstrawdataurl());
+				methodversionobj.setInstrawdataurl(impMethod.getInstrawdataurl());
 				methodversionobj.setMvno(0);
 				methodversionobj.setStatus(impmethodversion.getStatus());
 				methodversionobj.setVersion(impmethodversion.getVersion());
@@ -218,12 +218,14 @@ public class MethodImportService {
 				impMethod.setSite(site);
 				impMethod.setCreatedby(createdUser);
 				impMethod.setCreateddate(date);
+				impMethod.setMethodstatus("A");
 				impMethod.setMethodversion(methversionList);
 				methodList.add(methodRepo.save(impMethod));
 				importedMethods.add(methodList.get(0));
 				// added to get newly imported method key in version table
-				methodversionobj.setMethodkey(methodList.get(0).getMethodkey());
-				methversionList.add(methversionRepo.save(methodversionobj));
+				//methodversionobj.setMethodkey(methodList.get(0).getMethodkey());
+				methversionList.get(0).setMethodkey(methodList.get(0).getMethodkey());
+				methversionList.add(methversionRepo.save(methversionList.get(0)));
 				
 			} else {
 //				methodList.add(methodExist.get());
