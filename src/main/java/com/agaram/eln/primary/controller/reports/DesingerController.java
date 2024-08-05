@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.controller.reports;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -12,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
-import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
-import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportDesignerStructure;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportTemplateVersion;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
@@ -125,5 +124,20 @@ public class DesingerController {
 	public ReportDesignerStructure MovedirectoryonReporttemplate(@RequestBody ReportDesignerStructure directory)throws Exception
 	{
 		return desingerservice.MovedirectoryonReporttemplate(directory);
+	}
+	
+	@RequestMapping("/RenameReporttemplate")
+	public Reporttemplate RenameReporttemplate(@RequestBody Reporttemplate Template) throws ParseException {
+		return desingerservice.RenameReporttemplate(Template);
+	}
+	
+	@RequestMapping("/TocheckTemplateexist")
+	public Response TocheckTemplateexist(@RequestBody Reporttemplate Template) {
+		return desingerservice.TocheckTemplateexist(Template);
+	}
+	
+	@RequestMapping("/MoveReportTemplate")
+	public Reporttemplate MoveReportTemplate(@RequestBody Reporttemplate Template) {
+		return desingerservice.MoveReportTemplate(Template);
 	}
 }

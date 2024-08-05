@@ -1,8 +1,8 @@
 package com.agaram.eln.primary.controller.instrumentDetails;
 
 import java.io.ByteArrayInputStream;
-
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,13 +46,11 @@ import com.agaram.eln.primary.model.instrumentDetails.Lsordersharedby;
 import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.instrumentDetails.Lsresultfororders;
-import com.agaram.eln.primary.model.instrumentDetails.Lsresulttags;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
 import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
-import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
@@ -576,7 +574,7 @@ public class InstrumentController {
 	}
 
 	@PostMapping("/GetsharedorderStatus")
-	public Lsordersharedby GetsharedorderStatus(@RequestBody Lsordersharedby objorder) throws IOException {
+	public Lsordersharedby GetsharedorderStatus(@RequestBody Lsordersharedby objorder) throws IOException, ParseException {
 		return instrumentService.GetsharedorderStatus(objorder);
 	}
 

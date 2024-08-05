@@ -114,7 +114,7 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	@Modifying
 	@Query("SELECT NEW com.agaram.eln.primary.model.sheetManipulation.LSfile(filecode, filenameuser) \r\n" + 
 			"FROM com.agaram.eln.primary.model.sheetManipulation.LSfile \r\n" + 
-			"WHERE retirestatus = 0 And resultsheet = 1 AND lssitemaster_sitecode = ?2 AND \r\n" + 
+			"WHERE retirestatus = 0 And (tagsheet = 1 OR resultsheet = 1) AND lssitemaster_sitecode = ?2 AND \r\n" + 
 			"      (filecode > 1 AND approved = 1 AND rejected != 1) AND \r\n" + 
 			"      (rejected != 1) \r\n" + 
 			" and createby in (?1)ORDER BY filecode DESC")

@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportTemplateVersion;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
@@ -38,9 +39,11 @@ import com.agaram.eln.primary.model.syncwordconverter.SaveParameter;
 import com.agaram.eln.primary.model.syncwordconverter.SpellCheckJsonData;
 import com.agaram.eln.primary.repository.reports.reportdesigner.ReportTemplateVersionRepository;
 import com.agaram.eln.primary.repository.reports.reportdesigner.ReporttemplateRepository;
+import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.protocol.Commonservice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.syncfusion.docio.WordDocument;
 import com.syncfusion.ej2.spellchecker.SpellChecker;
 import com.syncfusion.ej2.wordprocessor.FormatType;
@@ -63,6 +66,9 @@ public class DocumenteditorService {
 
 	@Autowired
 	public ReporttemplateRepository reporttemplateRepository;
+	
+	@Autowired
+	private CloudFileManipulationservice objCloudFileManipulationservice;
 	
 	
 	@Autowired
@@ -343,11 +349,6 @@ public class DocumenteditorService {
 						ReportTemplateVersion templateversion=(ReportTemplateVersion) reporttemplatever.get("ReportTemplateVersion");
 						templateversion.setCreatedate(commonfunction.getCurrentUtcTime());
 						reportTemplateVersionRepository.save(templateversion);
-//						Reporttemplate data_new=reporttemplateRepository.findByTemplatecode(data.getTemplatecode());
-//						data_new.setTemplatecontent(data.getTemplatecontent());
-//						response.setStatus(true);
-//						data_new.setResponse(response);
-//						return data_new;
 					}else {
 						if (data.getReportTemplateVersion() != null && !data.getReportTemplateVersion().isEmpty()) {
 						     Reporttemplate finalData = data; 
@@ -555,5 +556,33 @@ public class DocumenteditorService {
 		default:
 			return FormatType.Docx;
 		}
+	}
+
+	public Reporttemplate SaveAs(Reporttemplate data) throws Exception {
+		Reporttemplate templateobject=new Reporttemplate();
+		if (data.getIsmultitenant() == 1 || data.getIsmultitenant() == 2) {
+			String tenant = TenantContext.getCurrentTenant();
+			if (data.getIsmultitenant() == 2) {
+				tenant = "freeusers";
+			}
+			String containerName = tenant + "reportdocument";
+			String documentName = data.getSaveastemplate().getFileuid();
+			byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName, documentName);
+			if (documentBytes != null) {
+				String jsonContent = new String(documentBytes, StandardCharsets.UTF_8);
+				Gson gson = new Gson();
+				String singleStringifiedJson = gson.fromJson(jsonContent, String.class);
+				System.out.println("JSON Content:");
+//				System.out.println(jsonContent);
+				data.setTemplatecontent(singleStringifiedJson);
+				templateobject=save(data);
+			} else {
+				System.out.println("Failed to retrieve JSON content from Azure Blob Storage.");
+			}
+
+		}else {
+			
+		}
+		return templateobject;
 	}
 }

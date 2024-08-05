@@ -84,4 +84,10 @@ public class DocumenteditorController {
 	public ResponseEntity<Resource> export(@RequestParam("data") MultipartFile data, String fileName) throws Exception {
 		return documenteditorService.export(data,fileName);
 	}
+	
+	@CrossOrigin(origins = "*", allowedHeaders = "*")
+	@PostMapping("/api/wordeditor/SaveAs")
+	public Reporttemplate SaveAs(@RequestBody Reporttemplate data) throws Exception {
+		return documenteditorService.SaveAs(data);
+	}
 }

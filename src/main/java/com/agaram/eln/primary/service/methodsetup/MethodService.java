@@ -1623,6 +1623,7 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	   final String methodstatus= (String) mapObject.get("methodstatus");
 //	   final String comments = (String) mapObject.get("comments");
 	   
+	   final MethodVersion methodversion = mapper.convertValue(mapObject.get("methodversion"), MethodVersion.class);   
 	   final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);	   
 	   final InstrumentMaster instMaster = instMastRepo.findOne(instrumentKey);
 	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
@@ -1658,6 +1659,8 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 		   
 		   //Making entry in 'method' table for the selected instrument
 		   final Method newMethod = new Method(methodByKey.get());
+		   
+		   MethodVersion versionobj =  methodversionrepository.save(methodversion);
 		   newMethod.setMethodkey(0);
 		   newMethod.setMethodname(methodName);
 		   newMethod.setInstmaster(instMaster);
@@ -1667,7 +1670,9 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 		   newMethod.setObjsilentaudit(cft.getObjsilentaudit());
 		   
 		   final Method savedMethod = methodRepo.save(newMethod);
-		   
+		   versionobj.setMethodkey(savedMethod.getMethodkey());
+		   methodversionrepository.save(versionobj);
+			
 		   //Start - Making entries for SampleTextSplit, SampleLineSplit, SampleExtract for the newly created Method
 		   
 		   final List<SampleTextSplit> textList = (List<SampleTextSplit>) textSplitService.getSampleTextSplitByMethod(methodKey).getBody();		   

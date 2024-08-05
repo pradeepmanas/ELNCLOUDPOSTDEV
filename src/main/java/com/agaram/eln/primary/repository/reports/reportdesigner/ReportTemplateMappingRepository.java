@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.reports.reportdesigner;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -13,5 +14,7 @@ public interface ReportTemplateMappingRepository extends JpaRepository<ReportTem
 	void deleteByTemplatecode(Long templatecode);
 
 	List<ReportTemplateMapping> findByLsprojectmaster(LSprojectmaster lSprojectmaster);
+
+	Optional<List<ReportTemplateMapping>> findByLsprojectmasterOrderByTemplatemapid(LSprojectmaster objClass);
 
 }

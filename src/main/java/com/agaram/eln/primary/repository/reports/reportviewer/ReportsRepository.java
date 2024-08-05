@@ -21,6 +21,14 @@ public interface ReportsRepository extends JpaRepository<Reports, Long> {
 			Date todate, LSSiteMaster sitemaster2, int j, Integer templatetype2, LSuserMaster createdby, Date fromdate2,
 			Date todate2, LSSiteMaster sitemaster3, int k, Integer templatetype3, List<LSuserMaster> lstuserMaster2,
 			Date fromdate3, Date todate3);
+	
+	public List<Reports> findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDatecreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDatecreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDatecreatedBetweenOrderByDatemodifiedDesc(
+			LSSiteMaster sitemaster, int i, Integer templatetype, List<LSuserMaster> lstuserMaster, Date fromdate,
+			Date todate, LSSiteMaster sitemaster2, int j, Integer templatetype2, LSuserMaster createdby, Date fromdate2,
+			Date todate2, LSSiteMaster sitemaster3, int k, Integer templatetype3, List<LSuserMaster> lstuserMaster2,
+			Date fromdate3, Date todate3);
 
 	public Reports findTopByReportnameIgnoreCaseAndSitemaster(String reportname, LSSiteMaster sitemaster);
+
+	public List<Reports> findByReportcodeIn(List<Long> templateCodes);
 }

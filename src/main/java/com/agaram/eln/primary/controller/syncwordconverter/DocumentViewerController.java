@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.controller.syncwordconverter;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.model.reports.reportviewer.Reports;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.service.syncwordconverter.DocumentViewerService;
 
 @RestController
@@ -53,4 +55,14 @@ public class DocumentViewerController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
+    
+    @RequestMapping("/getReportsBasedProject")
+   	public ResponseEntity<List<Reports>> getReportsBasedProject(@RequestBody LSprojectmaster objClass)throws Exception {
+       	try {
+               List<Reports> savedData = documentViewerService.getReportsBasedProject(objClass);
+               return new ResponseEntity<>(savedData, HttpStatus.OK);
+           } catch (Exception e) {
+               return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+           }
+   	}
 }

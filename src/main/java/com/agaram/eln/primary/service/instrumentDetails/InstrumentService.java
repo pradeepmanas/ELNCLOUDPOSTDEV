@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -1468,7 +1469,6 @@ public class InstrumentService {
     		 
     	if((objlogilaborderdetail.getRepeat()!=null && objlogilaborderdetail.getRepeat() != false)) {
     		TimerTask task = new TimerTask() {
-	            @SuppressWarnings("unlikely-arg-type")
 				@Override
 	            public void run() {
 	                try {
@@ -2336,9 +2336,9 @@ public class InstrumentService {
 		} else {
 			List<CloudOrderCreation> orders = new ArrayList<CloudOrderCreation>();
 			if (searchCriteria.getContentsearchtype() == 1 || searchCriteria.getContentsearchtype() == 3) {
-				orders = cloudOrderCreationRepository.findByContentvaluesequal(searchtext);
+				orders = cloudOrderCreationRepository.findByContentvaluesequal("%" + searchtext + "%");
 			} else if (searchCriteria.getContentsearchtype() == 2) {
-				orders = cloudOrderCreationRepository.findByContentparameterequal(searchtext);
+				orders = cloudOrderCreationRepository.findByContentparameterequal("%" + searchtext + "%");
 			}
 			idList = orders.stream().map(CloudOrderCreation::getId).collect(Collectors.toList());
 		}
@@ -3165,13 +3165,15 @@ public class InstrumentService {
 				lsworkflowgroupmappingRepository.findBylsusergroup(lsusergroup));
 	}
 
-	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder) throws IOException {
-
+	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder) throws IOException, ParseException {
+		 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+	       
 		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
 				.findBybatchid(objupdatedorder.getBatchid());
 //		List<String> lsorderno = new ArrayList<String>();
 		objupdatedorder.setResponse(new Response());
+	        System.out.println("Locked User Start:   " + dtf.format(LocalDateTime.now()));
 		if (objupdatedorder.getLockeduser() != null) {
 
 			if (objupdatedorder.getFiletype() != 1 && !objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R")
@@ -3202,7 +3204,7 @@ public class InstrumentService {
 			objupdatedorder.setIsLock(1);
 			lslogilablimsorderdetailRepository.save(objupdatedorder);
 		}
-
+		System.out.println("Locked User End  " + dtf.format(LocalDateTime.now()));
 //		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
 //			int i = 0;
 //			while (lsLogilaborders.size() > i) {
@@ -3211,7 +3213,7 @@ public class InstrumentService {
 //			}
 //		}
 		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
-
+		System.out.println("Work Flow Start  " + dtf.format(LocalDateTime.now()));
 		if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
 			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode)
 					.collect(Collectors.toList());
@@ -3222,7 +3224,7 @@ public class InstrumentService {
 				objupdatedorder.setCanuserprocess(false);
 			}
 		}
-
+		System.out.println("Work Flow ENd  " + dtf.format(LocalDateTime.now()));
 		if (objupdatedorder.getFiletype() == 0) {
 			objupdatedorder.setCanuserprocess(true);
 		}
@@ -3233,7 +3235,7 @@ public class InstrumentService {
 		} else {
 			objupdatedorder.setIsLockbycurrentuser(0);
 		}
-
+		System.out.println("Work Flow Final Step Start  " + dtf.format(LocalDateTime.now()));
 		if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
 			LSworkflow objlastworkflow = lsworkflowRepository
 					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
@@ -3244,12 +3246,12 @@ public class InstrumentService {
 				objupdatedorder.setIsFinalStep(0);
 			}
 		}
-
+		System.out.println("Work Flow Final Step End  " + dtf.format(LocalDateTime.now()));
 		if (objupdatedorder.getFiletype() == 0) {
 			objupdatedorder
 					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
 		}
-
+		System.out.println("Get File Content Start  " + dtf.format(LocalDateTime.now()));
 		if (objupdatedorder.getLssamplefile() != null) {
 			if (objorder.getIsmultitenant() == 1 || objorder.getIsmultitenant() == 2) {
 				CloudOrderCreation objCreation = cloudOrderCreationRepository
@@ -3287,7 +3289,7 @@ public class InstrumentService {
 				}
 			}
 		}
-
+		System.out.println("Get File Content End  " + dtf.format(LocalDateTime.now()));
 		lsLogilaborders = null;
 		objupdatedorder.setLstworkflow(objorder.getLstworkflow());
 
@@ -3299,6 +3301,7 @@ public class InstrumentService {
 		objupdatedorder.getResponse().setStatus(true);
 		objupdatedorder.setlSprotocolorderstephistory(
 				lsprotocolorderstephistoryRepository.findByBatchcode(objupdatedorder.getBatchcode()));
+		System.out.println("Return   " + dtf.format(LocalDateTime.now()));
 		return objupdatedorder;
 	}
 
@@ -3763,6 +3766,7 @@ public class InstrumentService {
 		lsreportfile objreport = new lsreportfile();
 		objreport.setId((long) objfile.getFilesamplecode());
 		objreport.setContent(tagvalues);
+		objreport.setBatchcode(objfile.getBatchcode());
 		objreport.setContentstored(1);
 		reportfileRepository.save(objreport);
 		objreport = null;
@@ -4386,7 +4390,7 @@ public class InstrumentService {
 
 		if (objupdated.getLssamplefile() != null) {
 
-			if (objorder.getIsmultitenant() == 1) {
+			if (objorder.getIsmultitenant() == 1 || objorder.getIsmultitenant() == 2) {
 				CloudOrderCreation file = cloudOrderCreationRepository
 						.findById((long) objupdated.getLssamplefile().getFilesamplecode());
 				if (file != null) {
@@ -4813,14 +4817,14 @@ public class InstrumentService {
 			Content = objVersion.getFilecontent();
 
 			if (objVersion != null) {
-				if (objfile.getIsmultitenant() == 1) {
+				if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
 					CloudOrderVersion objCreation = cloudOrderVersionRepository
 							.findById((long) objVersion.getFilesamplecodeversion());
 					if (objCreation != null && objCreation.getContainerstored() == 0) {
 						Content = objCreation.getContent();
 					} else {
 						Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
-								TenantContext.getCurrentTenant() + "orderversion");
+								commonfunction.getcontainername(objfile.getIsmultitenant(), TenantContext.getCurrentTenant()) + "orderversion");
 					}
 				} else {
 
@@ -5982,7 +5986,7 @@ public class InstrumentService {
 		return existingshare;
 	}
 
-	public Lsordersharedby GetsharedorderStatus(Lsordersharedby objorder) throws IOException {
+	public Lsordersharedby GetsharedorderStatus(Lsordersharedby objorder) throws IOException, ParseException {
 
 		LSlogilablimsorderdetail objorgorder = new LSlogilablimsorderdetail();
 
@@ -6001,7 +6005,7 @@ public class InstrumentService {
 		return objorder;
 	}
 
-	public Lsordershareto GetsharedtomeorderStatus(Lsordershareto objorder) throws IOException {
+	public Lsordershareto GetsharedtomeorderStatus(Lsordershareto objorder) throws IOException, ParseException {
 
 		LSlogilablimsorderdetail objorgorder = new LSlogilablimsorderdetail();
 
@@ -6708,7 +6712,7 @@ public class InstrumentService {
 	public Map<String, Object> uploadsheetimages(MultipartFile file, String originurl, String username,
 			String sitecode) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		int multitenant = Integer.parseInt(env.getProperty("ismultitenant"));
+//		int multitenant = Integer.parseInt(env.getProperty("ismultitenant"));
 		String id = null;
 		try {
 			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "sheetimagestemp");
@@ -6721,13 +6725,13 @@ public class InstrumentService {
 		final String getExtn = FilenameUtils.getExtension(file.getOriginalFilename()) == "" ? "png"
 				: FilenameUtils.getExtension(file.getOriginalFilename());
 
-		if(multitenant == 2) {
-			map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + commonfunction.getcontainername(multitenant, TenantContext.getCurrentTenant())
-			+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
-		}else {
+//		if(multitenant == 2) {
+//			map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + commonfunction.getcontainername(multitenant, TenantContext.getCurrentTenant())
+//			+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
+//		}else {
 			map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + TenantContext.getCurrentTenant()
 			+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
-		}
+//		}
 		
 		return map;
 	}
@@ -6912,11 +6916,11 @@ public class InstrumentService {
 			String copyfrom = fileObj.get("copyfrom");
 			String copyto = fileObj.get("copyto");
 			String isnew = fileObj.get("isnew");
-			int ismultitenant = Integer.parseInt(env.getProperty("ismultitenant"));
+//			int ismultitenant = Integer.parseInt(env.getProperty("ismultitenant"));
 			if (isnew.equals("true")) {
 				cloudFileManipulationservice.movefiletoanothercontainerandremove(
-					 commonfunction.getcontainername(ismultitenant,TenantContext.getCurrentTenant()) + "sheetimagestemp",
-					 commonfunction.getcontainername(ismultitenant,TenantContext.getCurrentTenant()) + "sheetimages", copyfrom);
+					TenantContext.getCurrentTenant() + "sheetimagestemp",
+					TenantContext.getCurrentTenant() + "sheetimages", copyfrom);
 			}
 
 			try {
@@ -8662,6 +8666,7 @@ public class InstrumentService {
 //		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
 		Map<String, Object> obj = Getprotocolordersondirectory(objorder.getLsprotocolorderstructure());
 		if (obj.containsKey("protocolorders")) {
+			@SuppressWarnings("unchecked")
 			List<LSlogilabprotocoldetail> protocolOrders = (List<LSlogilabprotocoldetail>) obj.get("protocolorders");
 			lstorder.addAll(protocolOrders.stream()
 					.map(lsOrderDetail -> new Logilabprotocolorders(lsOrderDetail.getProtocolordercode(),
@@ -10434,7 +10439,7 @@ public class InstrumentService {
 		return logiobj.get(0);
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
+	
 	public LSlogilablimsorderdetail acceptapprovel(LSlogilablimsorderdetail objdir) throws ParseException {
 		List<LSlogilablimsorderdetail> logiobj = new ArrayList<LSlogilablimsorderdetail>();
 		logiobj = lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),
@@ -10493,7 +10498,7 @@ public class InstrumentService {
 		return logiobj.get(0);
 	}
 	
-	@SuppressWarnings("unlikely-arg-type")
+	
 	public void sendnotification(LSlogilablimsorderdetail objdir,String Notification,String screen,LSuserMaster notifyfrom,LSuserMaster notifyto) throws ParseException {
 		
 		LSnotification LSnotification = new LSnotification();
@@ -10578,7 +10583,7 @@ public class InstrumentService {
 	
 	public Map<String, Object> Getordersonfiles(LSfile[] objfiles)
 	{
-		List<LSfile> files = Arrays.asList(objfiles);
+//		List<LSfile> files = Arrays.asList(objfiles);
 		Map<String, Object> mapRtnObj = new HashMap<String, Object>();
 //		List<Logilaborders> orders = lslogilablimsorderdetailRepository.findByLsfileIn(files);
 //		List<Long> batchcode = orders.stream().map(Logilaborders::getBatchcode)
@@ -10616,7 +10621,7 @@ public class InstrumentService {
 		
 //		List<LSfile> files = Arrays.asList(objfiles);
 		Map<String, Object> mapRtnObj = new HashMap<String, Object>();
-		List<Logilaborders> orders = lslogilablimsorderdetailRepository.findByLsfileInAndCreatedtimestampBetweenOrderByBatchcodeDesc(files, fromdate,todate );
+		List<Logilaborders> orders = lslogilablimsorderdetailRepository.findByOrderflagAndLsfileInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc("R", files, fromdate,todate );
 		List<Long> batchcode = orders.stream().map(Logilaborders::getBatchcode).collect(Collectors.toList());
 		List<Integer> filecode = files.stream().map(LSfile::getFilecode).collect(Collectors.toList());
 				
@@ -10628,14 +10633,9 @@ public class InstrumentService {
 		return mapRtnObj;
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	public List<LSlogilablimsorderdetail> GetOrdersbyuseronDetailview(LSlogilablimsorderdetail obj) {
 		List<LSlogilablimsorderdetail> lstorders = new ArrayList<LSlogilablimsorderdetail>();
-//		
-//		List<LSprojectmaster> lstproList = (List<LSprojectmaster>) obj.get("projects");
-//		int filetype = (int) obj.get("filetype");
-//		Date fromdate = (Date) obj.get("fromdate");
-//		Date todate = (Date) obj.get("todate");
 	
 		lstorders = lslogilablimsorderdetailRepository.findByFiletypeAndOrderflagAndLsprojectmasterInAndApprovelstatusNotAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
 				obj.getFiletype(), "R", obj.getLstproject(), 3, obj.getFromdate(), obj.getTodate());

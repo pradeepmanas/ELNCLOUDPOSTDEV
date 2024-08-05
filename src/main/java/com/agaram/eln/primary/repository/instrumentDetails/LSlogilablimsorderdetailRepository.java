@@ -2903,4 +2903,7 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 
 	List<LSlogilablimsorderdetail> findByFiletypeAndLsprojectmasterInAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsprojectmasterInAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
 			Integer filetype1, List<LSprojectmaster> lstproject1, int i, Integer filetype2, List<LSprojectmaster> lstproject2);
+
+	List<Logilaborders> findByOrderflagAndLsfileInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+			String string, List<LSfile> files, Date fromdate, Date todate);
 	}

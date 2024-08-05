@@ -1,7 +1,9 @@
 package com.agaram.eln.primary.model.reports.reportdesigner;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Basic;
 //import javax.persistence.Column;
@@ -30,7 +32,7 @@ public class ReportDesignerStructure {
 	private Long directorycode;
 
 	private String path;
-	
+
 	private Integer size;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateCreated;
@@ -52,37 +54,47 @@ public class ReportDesignerStructure {
 	private LSSiteMaster sitemaster;
 
 	private Integer viewoption;
-	
+
 	@Transient
 	LoggedUser objuser;
-	
+
 	@Transient
 	private Response response;
-	
+
 	@Transient
 	private List<LSuserMaster> lstuserMaster;
-	
+
 	@Transient
 	private Date fromdate;
 
 	@Transient
 	private Date todate;
-	
+
 	@Transient
 	private Integer ismultitenant;
-	
+
 	@Transient
 	private LSuserMaster lsuserMaster;
-	
+
 	@Transient
 	private String filefor;
-	
+
 	@Transient
 	private Integer templatetype;
-	
+
 	@Transient
 	private Long dircodetomove;
 
+	@Transient
+	private Map<String, String> searchData = new HashMap<>();
+	
+	public Map<String, String> getSearchData() {
+		return searchData;
+	}
+
+	public void setSearchData(Map<String, String> searchData) {
+		this.searchData = searchData;
+	}
 
 	public Long getDircodetomove() {
 		return dircodetomove;
@@ -99,7 +111,6 @@ public class ReportDesignerStructure {
 	public void setTemplatetype(Integer templatetype) {
 		this.templatetype = templatetype;
 	}
-
 
 	public String getFilefor() {
 		return filefor;
@@ -268,6 +279,5 @@ public class ReportDesignerStructure {
 	public void setLsuserMaster(LSuserMaster lsuserMaster) {
 		this.lsuserMaster = lsuserMaster;
 	}
-	
-	
+
 }

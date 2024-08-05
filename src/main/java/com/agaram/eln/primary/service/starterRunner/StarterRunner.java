@@ -2137,7 +2137,7 @@ public class StarterRunner {
 	
 	    		if (objorder1.getLsfile() != null && objorder1.getLsautoregisterorders()!= null) {
 	    			
-	    			getlsfiledata(objorder1,configuration);
+//	    			getlsfiledata(objorder1,configuration);
 	    			CloudSheetCreation cloudobject=getsheetcreationdata(objorder1,configuration);
 	    		
 	                 updatesheetordercontent(objorder1,cloudobject,configuration);

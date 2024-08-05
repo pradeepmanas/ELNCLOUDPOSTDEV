@@ -18,10 +18,10 @@ public interface CloudOrderCreationRepository  extends JpaRepository<CloudOrderC
 	public List<CloudOrderCreation> findByContentvaluesContaining(String Value);
 	public List<CloudOrderCreation> findByContentparameterContaining(String Value);
 	
-	@Query(value = "SELECT * FROM lsOrderCreationfiles WHERE text(contentvalues) like %:value%", nativeQuery = true)
+	@Query(value = "SELECT * FROM lsOrderCreationfiles WHERE text(contentvalues) LIKE value", nativeQuery = true)
 	public List<CloudOrderCreation> findByContentvaluesequal(@Param("value") String value);
 	
-	@Query(value = "SELECT * FROM lsOrderCreationfiles WHERE text(contentparameter) like %:value%", nativeQuery = true)
+	@Query(value = "SELECT * FROM lsOrderCreationfiles WHERE text(contentparameter) LIKE value", nativeQuery = true)
 	public List<CloudOrderCreation> findByContentparameterequal(@Param("value") String value);
 	@Transactional
 	@Modifying

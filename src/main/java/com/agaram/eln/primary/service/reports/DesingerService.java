@@ -27,9 +27,6 @@ import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
-import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
-import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
-import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
@@ -73,7 +70,7 @@ public class DesingerService {
 
 	@Autowired
 	private LSprotocolmastertestRepository lsprotocolmastertestRepository;
-	
+
 	@Autowired
 	private LSprojectmasterRepository lsprojectmasterRepository;
 
@@ -94,7 +91,7 @@ public class DesingerService {
 
 	@Autowired
 	private CloudFileManipulationservice objCloudFileManipulationservice;
-	
+
 	@Autowired
 	private ReportTemplateMappingRepository reportTemplateMappingRepository;
 
@@ -171,7 +168,7 @@ public class DesingerService {
 		objcoludrepo.setTemplatecontent(template.getTemplatecontent());
 
 		final Optional<Reporttemplate> templateByName = reporttemplaterepository
-				.findByTemplatenameIgnoreCase(template.getTemplatename());
+				.findByTemplatenameIgnoreCaseAndSitemaster(template.getTemplatename(), template.getSitemaster());
 
 		if (templateByName.isPresent()) {
 			template.setResponse(new Response());
@@ -200,7 +197,7 @@ public class DesingerService {
 			if (documentBytes != null) {
 				String jsonContent = new String(documentBytes, StandardCharsets.UTF_8);
 				System.out.println("JSON Content:");
-				System.out.println(jsonContent);
+//				System.out.println(jsonContent);
 				objfile.setTemplatecontent(jsonContent);
 			} else {
 				System.out.println("Failed to retrieve JSON content from Azure Blob Storage.");
@@ -270,18 +267,55 @@ public class DesingerService {
 
 	public List<Reporttemplate> gettemplateonfolder(ReportDesignerStructure objdir) throws Exception {
 		List<Reporttemplate> lsttemplate = new ArrayList<Reporttemplate>();
-		if(objdir.getFilefor().equals("RDT")||objdir.getFilefor().equals("RAT")){
-			if(objdir.getLstuserMaster()==null) {
+		if (objdir.getFilefor().equals("RDT") || objdir.getFilefor().equals("RAT")) {
+			if (objdir.getLstuserMaster() == null) {
 				objdir.setLstuserMaster(new ArrayList<LSuserMaster>());
 				objdir.getLstuserMaster().add(objdir.getCreatedby());
 			}
+
+			lsttemplate = reporttemplaterepository
+					.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrderByTemplatecodeDesc(
+							objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+							objdir.getFromdate(), objdir.getTodate(), objdir.getSitemaster(), 2,
+							objdir.getTemplatetype(), objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(),
+							objdir.getSitemaster(), 3, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+							objdir.getFromdate(), objdir.getTodate());
+		} else if (objdir.getFilefor().equals("DR")) {
+			String searchKeyword = objdir.getSearchData().get("searchkeyword");
+			String searchtemplatename = objdir.getSearchData().get("searchtemplatename");
+			if(objdir.getTemplatetype()==-1 && searchKeyword != null && searchKeyword.equals("") && searchtemplatename != null && searchtemplatename.equals("") ) {
+				lsttemplate = reporttemplaterepository
+						.findBySitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureOrSitemasterAndViewoptionAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureOrSitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureOrderByTemplatecodeDesc(
+								objdir.getSitemaster(), 1, objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(),objdir, objdir.getSitemaster(), 2,
+								 objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(),objdir,
+								objdir.getSitemaster(), 3,  objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(),objdir);
+			}else if(objdir.getTemplatetype()!=-1 && searchKeyword != null && searchKeyword.equals("") && searchtemplatename != null && searchtemplatename.equals("")) {
+				lsttemplate = reporttemplaterepository
+						.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureOrderByTemplatecodeDesc(
+								objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(),objdir, objdir.getSitemaster(), 2,
+								objdir.getTemplatetype(), objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(),objdir,
+								objdir.getSitemaster(), 3, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(),objdir);
+			}else if(objdir.getTemplatetype()==-1 && searchKeyword != null && !searchKeyword.equals("") && searchtemplatename != null && searchtemplatename.equals("")) {
+				lsttemplate = reporttemplaterepository
+						.findBySitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseOrderByTemplatecodeDesc(
+								objdir.getSitemaster(), 1, objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(),objdir,searchKeyword, objdir.getSitemaster(), 2,
+								 objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(),objdir,searchKeyword,
+								objdir.getSitemaster(), 3,  objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(),objdir,searchKeyword);
+				
+			}
 			
-			lsttemplate=reporttemplaterepository.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrderByTemplatecodeDesc(objdir.getSitemaster(),1,objdir.getTemplatetype(),objdir.getLstuserMaster(),
-					objdir.getFromdate(),objdir.getTodate(),objdir.getSitemaster(),2,objdir.getTemplatetype(),objdir.getCreatedby(),objdir.getFromdate(),objdir.getTodate(),objdir.getSitemaster(),3,objdir.getTemplatetype(),objdir.getLstuserMaster(),objdir.getFromdate(),objdir.getTodate());
-		}else if(objdir.getFilefor().equals("DR")) {
-			lsttemplate = reporttemplaterepository.findByReportdesignstructure(objdir);	
+			
+			
+			
+//			lsttemplate = reporttemplaterepository.findByReportdesignstructure(objdir);
 		}
-		
+
 		return lsttemplate;
 	}
 
@@ -400,16 +434,19 @@ public class DesingerService {
 	}
 
 	public List<Reporttemplate> gettemplateonfoldermapping(ReportDesignerStructure objdir) {
-		if(objdir.getLstuserMaster()==null) {
+		if (objdir.getLstuserMaster() == null) {
 			objdir.setLstuserMaster(new ArrayList<LSuserMaster>());
 			objdir.getLstuserMaster().add(objdir.getCreatedby());
 		}
-		return reporttemplaterepository.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInOrderByTemplatecodeDesc(objdir.getSitemaster(),1,objdir.getTemplatetype(),objdir.getLstuserMaster(),
-				objdir.getSitemaster(),2,objdir.getTemplatetype(),objdir.getCreatedby(),objdir.getSitemaster(),1,objdir.getTemplatetype(),objdir.getLstuserMaster());
+		return reporttemplaterepository
+				.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInOrderByTemplatecodeDesc(
+						objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+						objdir.getSitemaster(), 2, objdir.getTemplatetype(), objdir.getCreatedby(),
+						objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster());
 	}
-	
+
 	public Reporttemplate updatereporttemplatemapping(Reporttemplate objdir) {
-		
+
 //		reporttemplaterepository.save(objdir);
 		reportTemplateMappingRepository.deleteByTemplatecode(objdir.getTemplatecode());
 		reportTemplateMappingRepository.save(objdir.getReportTemplateMappings());
@@ -417,34 +454,41 @@ public class DesingerService {
 	}
 
 	public Map<String, Object> onGetReportTemplateBasedOnProject(Map<String, Object> objMap) {
-		
+
 		Map<String, Object> rtnMap = new HashMap<String, Object>();
-		
+
 		ObjectMapper objm = new ObjectMapper();
 		LSSiteMaster objLsSiteMaster = objm.convertValue(objMap.get("sitemaster"), LSSiteMaster.class);
 		Integer getType = (Integer) objMap.get("gettype");
 
 		List<Reporttemplate> lstTemp = new ArrayList<Reporttemplate>();
-		
-		if(getType == 1) {
-			List<LSprojectmaster> listProj = lsprojectmasterRepository.findByLssitemasterAndStatusOrderByProjectcodeDesc(objLsSiteMaster, 1);
-			
-			if(!listProj.isEmpty()) {
-				List<ReportTemplateMapping> lstMappedTemp = reportTemplateMappingRepository.findByLsprojectmaster(listProj.get(0));
-				List<Long> lstTempCode = lstMappedTemp.stream().map(ReportTemplateMapping::getTemplatecode).collect(Collectors.toList());
-				lstTemp = reporttemplaterepository.findByTemplatecodeInAndTemplatetypeOrderByTemplatecodeDesc(lstTempCode,2);
+
+		if (getType == 1) {
+			List<LSprojectmaster> listProj = lsprojectmasterRepository
+					.findByLssitemasterAndStatusOrderByProjectcodeDesc(objLsSiteMaster, 1);
+
+			if (!listProj.isEmpty()) {
+				List<ReportTemplateMapping> lstMappedTemp = reportTemplateMappingRepository
+						.findByLsprojectmaster(listProj.get(0));
+				List<Long> lstTempCode = lstMappedTemp.stream().map(ReportTemplateMapping::getTemplatecode)
+						.collect(Collectors.toList());
+				lstTemp = reporttemplaterepository
+						.findByTemplatecodeInAndTemplatetypeOrderByTemplatecodeDesc(lstTempCode, 2);
 			}
-			
+
 			rtnMap.put("project", listProj);
-		}else {
+		} else {
 			LSprojectmaster objProject = objm.convertValue(objMap.get("project"), LSprojectmaster.class);
-			List<ReportTemplateMapping> lstMappedTemp = reportTemplateMappingRepository.findByLsprojectmaster(objProject);
-			List<Long> lstTempCode = lstMappedTemp.stream().map(ReportTemplateMapping::getTemplatecode).collect(Collectors.toList());
-			lstTemp = reporttemplaterepository.findByTemplatecodeInAndTemplatetypeOrderByTemplatecodeDesc(lstTempCode,2);
+			List<ReportTemplateMapping> lstMappedTemp = reportTemplateMappingRepository
+					.findByLsprojectmaster(objProject);
+			List<Long> lstTempCode = lstMappedTemp.stream().map(ReportTemplateMapping::getTemplatecode)
+					.collect(Collectors.toList());
+			lstTemp = reporttemplaterepository.findByTemplatecodeInAndTemplatetypeOrderByTemplatecodeDesc(lstTempCode,
+					2);
 		}
-		
+
 		rtnMap.put("template", lstTemp);
-		
+
 		return rtnMap;
 	}
 
@@ -527,15 +571,16 @@ public class DesingerService {
 	public List<Reporttemplate> UpdateReporttemplate(Reporttemplate[] files) {
 		List<Reporttemplate> lstfile = Arrays.asList(files);
 		if (lstfile.size() > 0) {
-			List<Long> lstfilesid = lstfile.stream().map(Reporttemplate::getTemplatecode)
-					.collect(Collectors.toList());
-			reporttemplaterepository.updatedirectory(lstfile.get(0).getReportdesignstructure().getDirectorycode(), lstfilesid);
+			List<Long> lstfilesid = lstfile.stream().map(Reporttemplate::getTemplatecode).collect(Collectors.toList());
+			reporttemplaterepository.updatedirectory(lstfile.get(0).getReportdesignstructure().getDirectorycode(),
+					lstfilesid);
 		}
 		return lstfile;
 	}
 
 	public Reporttemplate UpdateReporttemplateforsinglefile(Reporttemplate file) {
-		reporttemplaterepository.updatedirectoryonsinglefile(file.getReportdesignstructure().getDirectorycode(), file.getTemplatecode());
+		reporttemplaterepository.updatedirectoryonsinglefile(file.getReportdesignstructure().getDirectorycode(),
+				file.getTemplatecode());
 		return file;
 	}
 
@@ -543,5 +588,32 @@ public class DesingerService {
 		reportDesignerStructureRepository.updatedirectory(directory.getParentdircode(), directory.getPath(),
 				directory.getDirectorycode(), directory.getDirectoryname());
 		return directory;
+	}
+
+	public Reporttemplate RenameReporttemplate(Reporttemplate template) throws ParseException {
+		Date ModifiedDate=template.getKeystorevariable().equals("Rename_File")?commonfunction.getCurrentUtcTime():template.getDateModified();
+		reporttemplaterepository.updateTemplateDetails(template.getTemplatecode(), template.getTemplatename(),
+				ModifiedDate,template.getReportdesignstructure().getDirectorycode());
+		return template;
+	}
+
+	public Response TocheckTemplateexist(Reporttemplate template) {
+		final Optional<Reporttemplate> IstemplateExist = reporttemplaterepository
+				.findByTemplatenameIgnoreCaseAndSitemaster(template.getTemplatename(), template.getSitemaster());
+		Response response = new Response();
+		if (IstemplateExist.isPresent()) {
+			response.setStatus(true);
+		} else {
+			response.setStatus(false);
+		}
+		return response;
+	}
+
+	public Reporttemplate MoveReportTemplate(Reporttemplate template) {
+		reporttemplaterepository.updateTemplateDetails(template.getTemplatecode(), template.getTemplatename(),
+				template.getDateModified(),template.getDircodetomove());
+		template.setResponse(new Response());
+		template.getResponse().setStatus(true);;
+		return template;
 	}
 }

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -20,8 +22,11 @@ import org.springframework.stereotype.Service;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.reports.reportdesigner.ReportTemplateMapping;
 import com.agaram.eln.primary.model.reports.reportviewer.Reports;
 import com.agaram.eln.primary.model.reports.reportviewer.ReportsVersion;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
+import com.agaram.eln.primary.repository.reports.reportdesigner.ReportTemplateMappingRepository;
 import com.agaram.eln.primary.repository.reports.reportviewer.ReportsRepository;
 import com.agaram.eln.primary.repository.reports.reportviewer.ReportsVersionRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
@@ -41,6 +46,9 @@ public class DocumentViewerService {
     
     @Autowired
     private ReportsVersionRepository reportsVersionRepository;
+    
+    @Autowired
+    private ReportTemplateMappingRepository reportTemplateMappingRepository;
     
     @Autowired
     private CloudFileManipulationservice objCloudFileManipulationservice;
@@ -248,5 +256,29 @@ public class DocumentViewerService {
 	        }
 	        return reportsRepository.save(report);
 	    }).orElseThrow(() -> new IllegalArgumentException("Report not found with code: " + objReport.getReportcode()));
+	}
+
+	public List<Reports> getReportsBasedProject(LSprojectmaster objClass) {
+		
+		Optional<List<ReportTemplateMapping>> mapLst = reportTemplateMappingRepository.findByLsprojectmasterOrderByTemplatemapid(objClass);
+		
+		if(mapLst.isPresent()) {
+		
+			// Assuming mapLst is already defined as Optional<List<ReportTemplateMapping>>
+			Optional<List<Long>> templateCodesOptional = mapLst.map(lst -> 
+			    lst.stream()
+			       .map(ReportTemplateMapping::getTemplatecode)
+			       .collect(Collectors.toList())
+			);
+
+			// To get the list of template codes, you can use templateCodesOptional.orElse(Collections.emptyList());
+			List<Long> templateCodes = templateCodesOptional.orElse(Collections.emptyList());
+			
+			List<Reports> mapReportLst = reportsRepository.findByReportcodeIn(templateCodes);
+			
+			return mapReportLst;
+			
+		}		
+		return null;
 	}
 }

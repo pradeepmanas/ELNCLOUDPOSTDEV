@@ -51,6 +51,16 @@ public class Reporttemplate {
 	@Transient
 	private String keystorevariable;
 	
+	public String keyword;
+	
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+
 	public String getKeystorevariable() {
 		return keystorevariable;
 	}
@@ -120,6 +130,10 @@ public class Reporttemplate {
 	private String fileextention;
 	
 	
+	@Transient
+	private Reporttemplate saveastemplate;
+	
+	
 //	@Transient
 //	List<LSprojectmaster> lstproject;
 //
@@ -130,6 +144,14 @@ public class Reporttemplate {
 //	public void setLstproject(List<LSprojectmaster> lstproject) {
 //		this.lstproject = lstproject;
 //	}
+
+	public Reporttemplate getSaveastemplate() {
+		return saveastemplate;
+	}
+
+	public void setSaveastemplate(Reporttemplate saveastemplate) {
+		this.saveastemplate = saveastemplate;
+	}
 
 	public String getFileextention() {
 		return fileextention;
@@ -178,6 +200,18 @@ public class Reporttemplate {
 	
 	@Transient
 	private boolean isnewversion;
+	
+	@Transient
+	private Long dircodetomove;
+
+
+	public Long getDircodetomove() {
+		return dircodetomove;
+	}
+
+	public void setDircodetomove(Long dircodetomove) {
+		this.dircodetomove = dircodetomove;
+	}
 
 	public boolean isIsnewversion() {
 		return isnewversion;

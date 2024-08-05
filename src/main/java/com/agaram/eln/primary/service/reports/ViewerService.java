@@ -367,9 +367,6 @@ public class ViewerService {
 	}
 
 	public List<Reports> getreportsonfolder(ReportViewerStructure objReport) throws Exception {
-//		List<Reports> lstreports = new ArrayList<Reports>();
-//		lstreports = reportsRepository.findByReportviewerstructure(reportstructure);
-//		return lstreports;
 
 		List<Reports> lstreports = new ArrayList<Reports>();
 		if (objReport.getFilefor().equals("RDT") || objReport.getFilefor().equals("RAT")) {
@@ -385,6 +382,7 @@ public class ViewerService {
 							objReport.getTemplatetype(), objReport.getCreatedby(), objReport.getFromdate(),
 							objReport.getTodate(), objReport.getSitemaster(), 1, objReport.getTemplatetype(),
 							objReport.getLstuserMaster(), objReport.getFromdate(), objReport.getTodate());
+			
 		} else if (objReport.getFilefor().equals("DR")) {
 			lstreports = reportsRepository.findByReportviewerstructure(objReport);
 		}

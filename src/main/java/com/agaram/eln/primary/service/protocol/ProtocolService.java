@@ -906,7 +906,7 @@ public class ProtocolService {
 		for (LSlogilabprotocolsteps LSprotocolstepObj1 : LSlogilabprotocolsteps) {
 			if ((int) argObj.get("ismultitenant") == 1 || (int) argObj.get("ismultitenant") == 2) {
 				CloudLsLogilabprotocolstepInfo newLSprotocolstepInfo = CloudLsLogilabprotocolstepInfoRepository
-						.findByContentvaluesequal(searchcontent, LSprotocolstepObj1.getProtocolorderstepcode());
+						.findByContentvaluesequal("%" + searchcontent + "%", LSprotocolstepObj1.getProtocolorderstepcode());
 				if (newLSprotocolstepInfo != null) {
 //						LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getLsprotocolstepInfo());
 					ordercode.add(LSprotocolstepObj1.getProtocolordercode());
@@ -976,7 +976,7 @@ public class ProtocolService {
 				for (LSlogilabprotocolsteps LSprotocolstepObj1 : LSlogilabprotocolsteps) {
 					if (ismultitenant == 1 || ismultitenant == 2) {
 						CloudLsLogilabprotocolstepInfo newLSprotocolstepInfo = CloudLsLogilabprotocolstepInfoRepository
-								.findByContentvaluesequal(searchcontent, LSprotocolstepObj1.getProtocolorderstepcode());
+								.findByContentvaluesequal("%" + searchcontent + "%", LSprotocolstepObj1.getProtocolorderstepcode());
 						if (newLSprotocolstepInfo != null) {
 							ordercode.add(LSprotocolstepObj1.getProtocolordercode());
 						}
