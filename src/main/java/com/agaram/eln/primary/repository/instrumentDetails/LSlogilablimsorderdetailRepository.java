@@ -2906,4 +2906,10 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 
 	List<Logilaborders> findByOrderflagAndLsfileInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
 			String string, List<LSfile> files, Date fromdate, Date todate);
+	
+	List<LSlogilablimsorderdetail> findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrderByBatchcodeDesc(
+			List<Elnmaterial> currentChunk, int filetype, int viewOption, LSfile lSfile);
+
+	List<LSlogilablimsorderdetail> findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
+			List<Elnmaterial> currentChunk, Integer filetype, int i);
 	}

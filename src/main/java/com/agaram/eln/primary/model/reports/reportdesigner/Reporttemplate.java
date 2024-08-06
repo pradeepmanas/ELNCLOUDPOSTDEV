@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -53,6 +54,51 @@ public class Reporttemplate {
 	
 	public String keyword;
 	
+	private Integer lockeduser;
+	
+	@Transient
+	LSuserMaster objLoggeduser;
+	
+	@Transient 
+	private boolean isalreadyLock;
+
+
+	
+	public boolean isIsalreadyLock() {
+		return isalreadyLock;
+	}
+
+	public void setIsalreadyLock(boolean isalreadyLock) {
+		this.isalreadyLock = isalreadyLock;
+	}
+
+	public LSuserMaster getObjLoggeduser() {
+		return objLoggeduser;
+	}
+
+	public void setObjLoggeduser(LSuserMaster objLoggeduser) {
+		this.objLoggeduser = objLoggeduser;
+	}
+
+	private String lockedusername;
+
+	
+	public Integer getLockeduser() {
+		return lockeduser;
+	}
+
+	public void setLockeduser(Integer lockeduser) {
+		this.lockeduser = lockeduser;
+	}
+
+	public String getLockedusername() {
+		return lockedusername;
+	}
+
+	public void setLockedusername(String lockedusername) {
+		this.lockedusername = lockedusername;
+	}
+
 	public String getKeyword() {
 		return keyword;
 	}

@@ -1404,3 +1404,9 @@ ALTER TABLE lsautoregister ALTER COLUMN regcode TYPE numeric(17,0);
 
 update lsusergrouprightsmaster set screenname = 'IDS_SCN_MATERIALTYPEPARAMS' where displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS';
 update lsusergrouprights set screenname = 'IDS_SCN_MATERIALTYPEPARAMS' where displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS';
+
+ALTER TABLE IF Exists Reporttemplate ADD Column IF NOT EXISTS  keyword character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE IF Exists reporttemplate ADD COLUMN IF NOT EXISTS lockeduser INTEGER;
+
+ALTER TABLE IF Exists reporttemplate ADD COLUMN IF NOT EXISTS lockedusername character varying(255);

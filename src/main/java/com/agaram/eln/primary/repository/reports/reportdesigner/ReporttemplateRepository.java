@@ -72,5 +72,78 @@ public interface ReporttemplateRepository extends JpaRepository<Reporttemplate, 
 			String searchKeyword2, LSSiteMaster sitemaster3, int k, List<LSuserMaster> lstuserMaster2, Date fromdate3,
 			Date todate3, ReportDesignerStructure objdir3, String searchKeyword3);
 
+	public List<Reporttemplate> findBySitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndTemplatenameContainingIgnoreCaseOrderByTemplatecodeDesc(
+			LSSiteMaster sitemaster, int i, List<LSuserMaster> lstuserMaster, Date fromdate, Date todate,
+			ReportDesignerStructure objdir, String searchKeyword, LSSiteMaster sitemaster2, int j,
+			LSuserMaster createdby, Date fromdate2, Date todate2, ReportDesignerStructure objdir2,
+			String searchKeyword2, LSSiteMaster sitemaster3, int k, List<LSuserMaster> lstuserMaster2, Date fromdate3,
+			Date todate3, ReportDesignerStructure objdir3, String searchKeyword3);
+
+	public List<Reporttemplate> findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatenameContainingIgnoreCaseOrderByTemplatecodeDesc(
+			LSSiteMaster sitemaster, int i, Integer templatetype, List<LSuserMaster> lstuserMaster, Date fromdate,
+			Date todate, ReportDesignerStructure objdir, String searchKeyword, String searchtemplatename,
+			LSSiteMaster sitemaster2, int j, Integer templatetype2, LSuserMaster createdby, Date fromdate2,
+			Date todate2, ReportDesignerStructure objdir2, String searchKeyword2, String searchtemplatename2,
+			LSSiteMaster sitemaster3, int k, Integer templatetype3, List<LSuserMaster> lstuserMaster2, Date fromdate3,
+			Date todate3, ReportDesignerStructure objdir3, String searchKeyword3, String searchtemplatename3);
+
+	public List<Reporttemplate> findBySitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatetypeOrSitemasterAndViewoptionAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatetypeOrSitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatetypeOrderByTemplatecodeDesc(
+			LSSiteMaster sitemaster, int i, List<LSuserMaster> lstuserMaster, Date fromdate, Date todate,
+			ReportDesignerStructure objdir, String searchKeyword, Integer templatetype, LSSiteMaster sitemaster2, int j,
+			LSuserMaster createdby, Date fromdate2, Date todate2, ReportDesignerStructure objdir2,
+			String searchKeyword2, Integer templatetype2, LSSiteMaster sitemaster3, int k,
+			List<LSuserMaster> lstuserMaster2, Date fromdate3, Date todate3, ReportDesignerStructure objdir3,
+			String searchKeyword3, Integer templatetype3);
+
+	public List<Reporttemplate> findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndTemplatenameContainingIgnoreCaseOrderByTemplatecodeDesc(
+			LSSiteMaster sitemaster, int i, Integer templatetype, List<LSuserMaster> lstuserMaster, Date fromdate,
+			Date todate, ReportDesignerStructure objdir, String searchtemplatename, LSSiteMaster sitemaster2, int j,
+			Integer templatetype2, LSuserMaster createdby, Date fromdate2, Date todate2,
+			ReportDesignerStructure objdir2, String searchtemplatename2, LSSiteMaster sitemaster3, int k,
+			Integer templatetype3, List<LSuserMaster> lstuserMaster2, Date fromdate3, Date todate3,
+			ReportDesignerStructure objdir3, String searchtemplatename3);
+
+	public List<Reporttemplate> findBySitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatenameContainingIgnoreCaseOrderByTemplatecodeDesc(
+			LSSiteMaster sitemaster, int i, List<LSuserMaster> lstuserMaster, Date fromdate, Date todate,
+			ReportDesignerStructure objdir, String searchKeyword, String searchtemplatename, LSSiteMaster sitemaster2,
+			int j, LSuserMaster createdby, Date fromdate2, Date todate2, ReportDesignerStructure objdir2,
+			String searchKeyword2, String searchtemplatename2, LSSiteMaster sitemaster3, int k,
+			List<LSuserMaster> lstuserMaster2, Date fromdate3, Date todate3, ReportDesignerStructure objdir3,
+			String searchKeyword3, String searchtemplatename3);
+
+	public List<Reporttemplate> findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndKeywordContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenAndKeywordContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndKeywordContainingIgnoreCaseOrderByTemplatecodeDesc(
+			LSSiteMaster sitemaster, int i, Integer templatetype, List<LSuserMaster> lstuserMaster, Date fromdate,
+			Date todate, String searchKeyword, LSSiteMaster sitemaster2, int j, Integer templatetype2,
+			LSuserMaster createdby, Date fromdate2, Date todate2, String searchKeyword2, LSSiteMaster sitemaster3,
+			int k, Integer templatetype3, List<LSuserMaster> lstuserMaster2, Date fromdate3, Date todate3,
+			String searchKeyword3);
+
+	public List<Reporttemplate> findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndTemplatenameContainingIgnoreCaseOrderByTemplatecodeDesc(
+			LSSiteMaster sitemaster, int i, Integer templatetype, List<LSuserMaster> lstuserMaster, Date fromdate,
+			Date todate, String searchtemplatename, LSSiteMaster sitemaster2, int j, Integer templatetype2,
+			LSuserMaster createdby, Date fromdate2, Date todate2, String searchtemplatename2, LSSiteMaster sitemaster3,
+			int k, Integer templatetype3, List<LSuserMaster> lstuserMaster2, Date fromdate3, Date todate3,
+			String searchtemplatename3);
+
+	public List<Reporttemplate> findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndTemplatenameContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenAndTemplatenameContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndTemplatenameContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByTemplatecodeDesc(
+			LSSiteMaster sitemaster, int i, Integer templatetype, List<LSuserMaster> lstuserMaster, Date fromdate,
+			Date todate, String searchtemplatename, String searchKeyword, LSSiteMaster sitemaster2, int j,
+			Integer templatetype2, LSuserMaster createdby, Date fromdate2, Date todate2, String searchtemplatename2,
+			String searchKeyword2, LSSiteMaster sitemaster3, int k, Integer templatetype3,
+			List<LSuserMaster> lstuserMaster2, Date fromdate3, Date todate3, String searchtemplatename3,
+			String searchKeyword3);
+
+	public List<Reporttemplate> findBySitemasterAndAndLockeduserIsNotNullOrderByTemplatecodeDesc(
+			LSSiteMaster lssitemaster);
+
+	public List<Reporttemplate> findBySitemasterAndViewoptionAndCreatedbyInAndLockeduserIsNotNullOrSitemasterAndViewoptionAndCreatedbyAndLockeduserIsNotNullOrSitemasterAndViewoptionAndCreatedbyInAndLockeduserIsNotNullOrderByTemplatecodeDesc(
+			LSSiteMaster lssitemaster, int i, List<LSuserMaster> usernotify, LSSiteMaster lssitemaster2, int j,
+			LSuserMaster objdir, LSSiteMaster lssitemaster3, int k, List<LSuserMaster> usernotify2);
+
+	@Transactional
+	@Modifying
+	@Query(value="update Reporttemplate set lockeduser=null,lockedusername=null where templatecode in(?1)")
+	void Updatelockedusersonreporttemplate(List<Long> reporttemplate);
+
 
 }

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
+import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
@@ -186,6 +187,26 @@ public class DesingerService {
 	}
 
 	public Reporttemplate gettemplatedata(Reporttemplate objfile) throws IOException {
+		objfile.setResponse(new Response());
+		Reporttemplate Report_Objects=reporttemplaterepository.findByTemplatecode(objfile.getTemplatecode());
+		if(Report_Objects.getLockeduser()==null) {
+			Report_Objects.setLockeduser(objfile.getLockeduser());
+			Report_Objects.setLockedusername(objfile.getLockedusername());
+			reporttemplaterepository.save(Report_Objects);
+			objfile.setIsalreadyLock(false);
+			objfile.getResponse().setStatus(true);
+		}else if(Report_Objects.getLockeduser()!=null && Report_Objects.getLockeduser().equals(objfile.getObjLoggeduser().getUsercode()))
+		{
+			objfile.getResponse().setInformation("IDS_SAME_USER_OPEN");
+			objfile.getResponse().setStatus(false);
+		}else if(Report_Objects.getLockeduser()!=null) {
+			objfile.getResponse().setInformation("ALREADY_LOCKED");
+			objfile.getResponse().setStatus(false);
+			objfile.setLockeduser(Report_Objects.getLockeduser());
+			objfile.setLockedusername(Report_Objects.getLockedusername());
+			objfile.setIsalreadyLock(true);
+		}
+		
 		if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
 			String tenant = TenantContext.getCurrentTenant();
 			if (objfile.getIsmultitenant() == 2) {
@@ -267,52 +288,139 @@ public class DesingerService {
 
 	public List<Reporttemplate> gettemplateonfolder(ReportDesignerStructure objdir) throws Exception {
 		List<Reporttemplate> lsttemplate = new ArrayList<Reporttemplate>();
+		String searchKeyword = objdir.getSearchData().get("searchkeyword");
+		String searchtemplatename = objdir.getSearchData().get("searchtemplatename");
 		if (objdir.getFilefor().equals("RDT") || objdir.getFilefor().equals("RAT")) {
 			if (objdir.getLstuserMaster() == null) {
 				objdir.setLstuserMaster(new ArrayList<LSuserMaster>());
 				objdir.getLstuserMaster().add(objdir.getCreatedby());
 			}
+			
+			if(searchKeyword != null && searchKeyword.equals("")
+					&& searchtemplatename != null && searchtemplatename.equals("")) {
+				lsttemplate = reporttemplaterepository
+						.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrderByTemplatecodeDesc(
+								objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(), objdir.getSitemaster(), 2,
+								objdir.getTemplatetype(), objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(),
+								objdir.getSitemaster(), 3, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate());
+			}else if(searchKeyword != null && !searchKeyword.equals("")
+					&& searchtemplatename != null && searchtemplatename.equals("")) {
+				lsttemplate = reporttemplaterepository
+						.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndKeywordContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenAndKeywordContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndKeywordContainingIgnoreCaseOrderByTemplatecodeDesc(
+								objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(),searchKeyword, objdir.getSitemaster(), 2,
+								objdir.getTemplatetype(), objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(),searchKeyword,
+								objdir.getSitemaster(), 3, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(),searchKeyword);
+			}else if(searchKeyword != null && searchKeyword.equals("")
+					&& searchtemplatename != null && !searchtemplatename.equals("")) {
+				lsttemplate = reporttemplaterepository
+						.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndTemplatenameContainingIgnoreCaseOrderByTemplatecodeDesc(
+								objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(),searchtemplatename, objdir.getSitemaster(), 2,
+								objdir.getTemplatetype(), objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(),searchtemplatename,
+								objdir.getSitemaster(), 3, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(),searchtemplatename);
+			}else if(searchKeyword != null && !searchKeyword.equals("")
+					&& searchtemplatename != null && !searchtemplatename.equals("")) {
+				lsttemplate = reporttemplaterepository
+						.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndTemplatenameContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenAndTemplatenameContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndTemplatenameContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByTemplatecodeDesc(
+								objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(),searchtemplatename,searchKeyword, objdir.getSitemaster(), 2,
+								objdir.getTemplatetype(), objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(),searchtemplatename,searchKeyword,
+								objdir.getSitemaster(), 3, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(),searchtemplatename,searchKeyword);
+			}
 
-			lsttemplate = reporttemplaterepository
-					.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenOrderByTemplatecodeDesc(
-							objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster(),
-							objdir.getFromdate(), objdir.getTodate(), objdir.getSitemaster(), 2,
-							objdir.getTemplatetype(), objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(),
-							objdir.getSitemaster(), 3, objdir.getTemplatetype(), objdir.getLstuserMaster(),
-							objdir.getFromdate(), objdir.getTodate());
+			
 		} else if (objdir.getFilefor().equals("DR")) {
-			String searchKeyword = objdir.getSearchData().get("searchkeyword");
-			String searchtemplatename = objdir.getSearchData().get("searchtemplatename");
-			if(objdir.getTemplatetype()==-1 && searchKeyword != null && searchKeyword.equals("") && searchtemplatename != null && searchtemplatename.equals("") ) {
+			
+			if (objdir.getTemplatetype() == -1 && searchKeyword != null && searchKeyword.equals("")
+					&& searchtemplatename != null && searchtemplatename.equals("")) {
 				lsttemplate = reporttemplaterepository
 						.findBySitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureOrSitemasterAndViewoptionAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureOrSitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureOrderByTemplatecodeDesc(
-								objdir.getSitemaster(), 1, objdir.getLstuserMaster(),
-								objdir.getFromdate(), objdir.getTodate(),objdir, objdir.getSitemaster(), 2,
-								 objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(),objdir,
-								objdir.getSitemaster(), 3,  objdir.getLstuserMaster(),
-								objdir.getFromdate(), objdir.getTodate(),objdir);
-			}else if(objdir.getTemplatetype()!=-1 && searchKeyword != null && searchKeyword.equals("") && searchtemplatename != null && searchtemplatename.equals("")) {
+								objdir.getSitemaster(), 1, objdir.getLstuserMaster(), objdir.getFromdate(),
+								objdir.getTodate(), objdir, objdir.getSitemaster(), 2, objdir.getCreatedby(),
+								objdir.getFromdate(), objdir.getTodate(), objdir, objdir.getSitemaster(), 3,
+								objdir.getLstuserMaster(), objdir.getFromdate(), objdir.getTodate(), objdir);
+			} else if (objdir.getTemplatetype() != -1 && searchKeyword != null && searchKeyword.equals("")
+					&& searchtemplatename != null && searchtemplatename.equals("")) {
 				lsttemplate = reporttemplaterepository
 						.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureOrderByTemplatecodeDesc(
 								objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster(),
-								objdir.getFromdate(), objdir.getTodate(),objdir, objdir.getSitemaster(), 2,
-								objdir.getTemplatetype(), objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(),objdir,
-								objdir.getSitemaster(), 3, objdir.getTemplatetype(), objdir.getLstuserMaster(),
-								objdir.getFromdate(), objdir.getTodate(),objdir);
-			}else if(objdir.getTemplatetype()==-1 && searchKeyword != null && !searchKeyword.equals("") && searchtemplatename != null && searchtemplatename.equals("")) {
+								objdir.getFromdate(), objdir.getTodate(), objdir, objdir.getSitemaster(), 2,
+								objdir.getTemplatetype(), objdir.getCreatedby(), objdir.getFromdate(),
+								objdir.getTodate(), objdir, objdir.getSitemaster(), 3, objdir.getTemplatetype(),
+								objdir.getLstuserMaster(), objdir.getFromdate(), objdir.getTodate(), objdir);
+			} else if (objdir.getTemplatetype() == -1 && searchKeyword != null && !searchKeyword.equals("")
+					&& searchtemplatename != null && searchtemplatename.equals("")) {
+//				lsttemplate = reporttemplaterepository.findByKeywordContainingIgnoreCase("s");
+
 				lsttemplate = reporttemplaterepository
 						.findBySitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseOrderByTemplatecodeDesc(
-								objdir.getSitemaster(), 1, objdir.getLstuserMaster(),
-								objdir.getFromdate(), objdir.getTodate(),objdir,searchKeyword, objdir.getSitemaster(), 2,
-								 objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(),objdir,searchKeyword,
-								objdir.getSitemaster(), 3,  objdir.getLstuserMaster(),
-								objdir.getFromdate(), objdir.getTodate(),objdir,searchKeyword);
+								objdir.getSitemaster(), 1, objdir.getLstuserMaster(), objdir.getFromdate(),
+								objdir.getTodate(), objdir, searchKeyword, objdir.getSitemaster(), 2,
+								objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(), objdir, searchKeyword,
+								objdir.getSitemaster(), 3, objdir.getLstuserMaster(), objdir.getFromdate(),
+								objdir.getTodate(), objdir, searchKeyword);
+
+			} else if (objdir.getTemplatetype() == -1 && searchKeyword != null && searchKeyword.equals("")
+					&& searchtemplatename != null && !searchtemplatename.equals("")) {
+				lsttemplate = reporttemplaterepository
+						.findBySitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndTemplatenameContainingIgnoreCaseOrderByTemplatecodeDesc(
+								objdir.getSitemaster(), 1, objdir.getLstuserMaster(), objdir.getFromdate(),
+								objdir.getTodate(), objdir, searchtemplatename, objdir.getSitemaster(), 2,
+								objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(), objdir,
+								searchtemplatename, objdir.getSitemaster(), 3, objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(), objdir, searchtemplatename);
+			} else if (objdir.getTemplatetype() != -1 && searchKeyword != null && !searchKeyword.equals("")
+					&& searchtemplatename != null && searchtemplatename.equals("")) {
+
+				lsttemplate = reporttemplaterepository
+						.findBySitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatetypeOrSitemasterAndViewoptionAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatetypeOrSitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatetypeOrderByTemplatecodeDesc(
+								objdir.getSitemaster(), 1, objdir.getLstuserMaster(), objdir.getFromdate(),
+								objdir.getTodate(), objdir, searchKeyword,objdir.getTemplatetype(), objdir.getSitemaster(), 2,
+								objdir.getCreatedby(), objdir.getFromdate(), objdir.getTodate(), objdir, searchKeyword,objdir.getTemplatetype(),
+								objdir.getSitemaster(), 3, objdir.getLstuserMaster(), objdir.getFromdate(),
+								objdir.getTodate(), objdir, searchKeyword,objdir.getTemplatetype());
 				
+			} else if (objdir.getTemplatetype() != -1 && searchKeyword != null && searchKeyword.equals("")
+					&& searchtemplatename != null && !searchtemplatename.equals("")) {
+				lsttemplate = reporttemplaterepository
+						.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndTemplatenameContainingIgnoreCaseOrderByTemplatecodeDesc(
+								objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(), objdir,searchtemplatename, objdir.getSitemaster(), 2,
+								objdir.getTemplatetype(), objdir.getCreatedby(), objdir.getFromdate(),
+								objdir.getTodate(), objdir,searchtemplatename, objdir.getSitemaster(), 3, objdir.getTemplatetype(),
+								objdir.getLstuserMaster(), objdir.getFromdate(), objdir.getTodate(), objdir,searchtemplatename);
+			} else if (objdir.getTemplatetype() == -1 && searchKeyword != null && !searchKeyword.equals("")
+					&& searchtemplatename != null && !searchtemplatename.equals("")) {
+				
+				
+				lsttemplate = reporttemplaterepository
+						.findBySitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatenameContainingIgnoreCaseOrderByTemplatecodeDesc(
+								objdir.getSitemaster(), 1,objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(), objdir, searchKeyword, searchtemplatename,
+								objdir.getSitemaster(), 2, objdir.getCreatedby(),
+								objdir.getFromdate(), objdir.getTodate(), objdir, searchKeyword, searchtemplatename,
+								objdir.getSitemaster(), 3, objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(), objdir, searchKeyword, searchtemplatename);
 			}
-			
-			
-			
-			
+
+			else if (objdir.getTemplatetype() != -1 && searchKeyword != null && !searchKeyword.equals("")
+					&& searchtemplatename != null && !searchtemplatename.equals("")) {
+				lsttemplate = reporttemplaterepository
+						.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatenameContainingIgnoreCaseOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureAndKeywordContainingIgnoreCaseAndTemplatenameContainingIgnoreCaseOrderByTemplatecodeDesc(
+								objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(), objdir, searchKeyword, searchtemplatename,
+								objdir.getSitemaster(), 2, objdir.getTemplatetype(), objdir.getCreatedby(),
+								objdir.getFromdate(), objdir.getTodate(), objdir, searchKeyword, searchtemplatename,
+								objdir.getSitemaster(), 3, objdir.getTemplatetype(), objdir.getLstuserMaster(),
+								objdir.getFromdate(), objdir.getTodate(), objdir, searchKeyword, searchtemplatename);
+			}
+
 //			lsttemplate = reporttemplaterepository.findByReportdesignstructure(objdir);
 		}
 
@@ -591,9 +699,10 @@ public class DesingerService {
 	}
 
 	public Reporttemplate RenameReporttemplate(Reporttemplate template) throws ParseException {
-		Date ModifiedDate=template.getKeystorevariable().equals("Rename_File")?commonfunction.getCurrentUtcTime():template.getDateModified();
+		Date ModifiedDate = template.getKeystorevariable().equals("Rename_File") ? commonfunction.getCurrentUtcTime()
+				: template.getDateModified();
 		reporttemplaterepository.updateTemplateDetails(template.getTemplatecode(), template.getTemplatename(),
-				ModifiedDate,template.getReportdesignstructure().getDirectorycode());
+				ModifiedDate, template.getReportdesignstructure().getDirectorycode());
 		return template;
 	}
 
@@ -611,9 +720,40 @@ public class DesingerService {
 
 	public Reporttemplate MoveReportTemplate(Reporttemplate template) {
 		reporttemplaterepository.updateTemplateDetails(template.getTemplatecode(), template.getTemplatename(),
-				template.getDateModified(),template.getDircodetomove());
+				template.getDateModified(), template.getDircodetomove());
 		template.setResponse(new Response());
-		template.getResponse().setStatus(true);;
+		template.getResponse().setStatus(true);
+		;
 		return template;
+	}
+
+	public List<Reporttemplate> GetUnlockscreendata(LSuserMaster objdir) {
+		List<Reporttemplate> telsttemplate;
+		if (objdir.getUsername().equalsIgnoreCase("Administrator")) {
+			return reporttemplaterepository
+					.findBySitemasterAndAndLockeduserIsNotNullOrderByTemplatecodeDesc(
+							objdir.getLssitemaster());
+		} else {
+			telsttemplate = reporttemplaterepository
+					.findBySitemasterAndViewoptionAndCreatedbyInAndLockeduserIsNotNullOrSitemasterAndViewoptionAndCreatedbyAndLockeduserIsNotNullOrSitemasterAndViewoptionAndCreatedbyInAndLockeduserIsNotNullOrderByTemplatecodeDesc(
+							objdir.getLssitemaster(), 1,objdir.getUsernotify(),
+							objdir.getLssitemaster(), 2,
+							objdir,
+							objdir.getLssitemaster(), 3, objdir.getUsernotify()
+							);	
+		}
+		
+		
+		return telsttemplate;
+	}
+
+	public Boolean UnloackReporttemplate(Long[] reporttemplate) {
+		if (reporttemplate.length > 0) {
+			List<Long> reporttemplatecode = Arrays.asList(reporttemplate);
+			reporttemplaterepository.Updatelockedusersonreporttemplate(reporttemplatecode);
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

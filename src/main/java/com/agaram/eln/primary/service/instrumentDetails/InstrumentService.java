@@ -5031,6 +5031,8 @@ public class InstrumentService {
 
 				List<Integer> lstsampleint = lssamplemasterrepository
 						.getDistinctByLssitemasterSitecodeAndStatus(lsusMaster.getLssitemaster().getSitecode(), 1);
+				List<Elnmaterial> nmaterialcode = elnmaterialRepository
+						.findByNsitecode(lsusMaster.getLssitemaster().getSitecode());
 				List<LSsamplemaster> lstsample = new ArrayList<>();
 				LSsamplemaster sample = null;
 				if (lstsampleint.size() > 0) {
@@ -5046,19 +5048,20 @@ public class InstrumentService {
 								lstproject, filetype, lSfile, 3, lstproject, filetype, lSfile);
 
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
-				int totalSamples = lstsample.size();
+				int totalSamples = nmaterialcode.size();
 
 				List<LSlogilablimsorderdetail> lstorderlimsobj = IntStream
 						.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
 							int startIndex = i * chunkSize;
 							int endIndex = Math.min(startIndex + chunkSize, totalSamples);
-							List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
+							List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
+//							List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
 
 							List<LSlogilablimsorderdetail> orderChunk = new ArrayList<>();
 							orderChunk.addAll(lslogilablimsorderdetailRepository.findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileOrderByBatchcodeDesc(
 										filetype, lSfile));
 							for (int viewOption = 1; viewOption <= 3; viewOption++) {
-								orderChunk.addAll(lslogilablimsorderdetailRepository.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrderByBatchcodeDesc(
+								orderChunk.addAll(lslogilablimsorderdetailRepository.findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrderByBatchcodeDesc(
 										currentChunk, filetype, viewOption, lSfile));
 							}
 							return orderChunk;
@@ -5187,6 +5190,8 @@ public class InstrumentService {
 			List<Integer> lstsampleint = lssamplemasterrepository.getDistinctByLssitemasterSitecodeAndStatus(
 					objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1);
 			List<LSsamplemaster> lstsample = new ArrayList<>();
+			List<Elnmaterial> nmaterialcode = elnmaterialRepository
+					.findByNsitecode(objorder.getLsuserMaster().getLssitemaster().getSitecode());
 			LSsamplemaster sample = null;
 			if (lstsampleint.size() > 0) {
 				for (Integer item : lstsampleint) {
@@ -5213,21 +5218,22 @@ public class InstrumentService {
 //					lstsample, objorder.getFiletype(),2,
 //					lstsample, objorder.getFiletype(),3);
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
-			int totalSamples = lstsample.size();
+			int totalSamples = nmaterialcode.size();
 			List<LSlogilablimsorderdetail> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
-						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
+//						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
+						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
 						List<LSlogilablimsorderdetail> orderChunk = new ArrayList<>();
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoption(
+								.findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
 										currentChunk, objorder.getFiletype(), 1));
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoption(
+								.findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
 										currentChunk, objorder.getFiletype(), 2));
 						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoption(
+								.findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
 										currentChunk, objorder.getFiletype(), 3));
 						return orderChunk;
 					}).flatMap(List::stream).collect(Collectors.toList());

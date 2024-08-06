@@ -1766,7 +1766,7 @@ public class FileService {
 
 	public void ValidateNotification(Notification objnotification) throws ParseException {
 		NotificationRepository.save(objnotification);
-		//scheduleNotification(objnotification);
+		scheduleNotification(objnotification);
 	}
 	
 	public void scheduleNotification(Notification objnotification) throws ParseException {

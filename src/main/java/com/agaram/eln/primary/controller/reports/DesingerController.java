@@ -8,15 +8,18 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportDesignerStructure;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportTemplateVersion;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.reports.DesingerService;
 
 @RestController
@@ -139,5 +142,15 @@ public class DesingerController {
 	@RequestMapping("/MoveReportTemplate")
 	public Reporttemplate MoveReportTemplate(@RequestBody Reporttemplate Template) {
 		return desingerservice.MoveReportTemplate(Template);
+	}
+	
+	@PostMapping("/GetUnlockscreendata")
+	public List<Reporttemplate> GetUnlockscreendata(@RequestBody LSuserMaster protocolorders) {
+		return desingerservice.GetUnlockscreendata(protocolorders);
+	}
+	
+	@PostMapping("/UnloackReporttemplate")
+	public Boolean UnloackReporttemplate(@RequestBody Long[] Reporttemplate) {
+		return desingerservice.UnloackReporttemplate(Reporttemplate);
 	}
 }
