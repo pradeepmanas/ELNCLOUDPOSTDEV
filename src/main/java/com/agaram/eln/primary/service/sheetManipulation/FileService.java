@@ -36,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
+import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrderDetails;
 //import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplatefortest;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
@@ -77,6 +78,7 @@ import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationReposi
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetVersionRepository;
 import com.agaram.eln.primary.repository.dashboard.LsActiveWidgetsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LogilablimsorderdetailsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsSheetorderlimsrefrenceRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsorderworkflowhistoryRepositroy;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolTemplateworkflowRepository;
@@ -247,6 +249,9 @@ public class FileService {
 	
 	@Autowired
 	private LsActiveWidgetsRepository LsActiveWidgetsRepository;
+	
+	@Autowired
+	private LogilablimsorderdetailsRepository logilablimsorderdetailsRepository;
 
 	public LSfile InsertupdateSheet(LSfile objfile) throws IOException {
 
@@ -1125,7 +1130,7 @@ public class FileService {
 		}
 
 		Integer userCode = Integer.parseInt(objMap.get("usercode").toString());
-		LSlogilablimsorderdetail orderDetail = LSlogilablimsorderdetailRepository.findOne(BatchID);
+		LogilabOrderDetails orderDetail = logilablimsorderdetailsRepository.findByBatchcode(BatchID);
 
 		if (orderDetail != null) {
 
@@ -1143,8 +1148,8 @@ public class FileService {
 				orderDetail.setLockeduser(null);
 				orderDetail.setLockedusername(null);
 				orderDetail.setActiveuser(null);
-
-				LSlogilablimsorderdetailRepository.save(orderDetail);
+				logilablimsorderdetailsRepository.UpdateOrderOnunlockData(orderDetail.getBatchcode());
+//				LSlogilablimsorderdetailRepository.save(orderDetail);
 
 				orderDetail.setResponse(new Response());
 				orderDetail.getResponse().setStatus(true);

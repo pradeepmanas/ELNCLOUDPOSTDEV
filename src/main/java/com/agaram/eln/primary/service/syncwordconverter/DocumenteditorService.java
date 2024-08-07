@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -44,6 +48,7 @@ import com.agaram.eln.primary.service.protocol.Commonservice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.mongodb.gridfs.GridFSDBFile;
 import com.syncfusion.docio.WordDocument;
 import com.syncfusion.ej2.spellchecker.SpellChecker;
 import com.syncfusion.ej2.wordprocessor.FormatType;
@@ -73,6 +78,9 @@ public class DocumenteditorService {
 	
 	@Autowired
 	public ReportTemplateVersionRepository reportTemplateVersionRepository;
+	
+	@Autowired
+	private GridFsTemplate gridFsTemplate;
 
 	public String uploadFile(MultipartFile file) throws Exception {
 		try {
@@ -392,46 +400,96 @@ public class DocumenteditorService {
 				}
 				data.setResponse(response);
 			} else {
-				try {
-//					OrderCreation objsavefile = new OrderCreation();
-//					objsavefile.setId((long) objfile.getFilesamplecode());
-//					objsavefile.setContentvalues(contentValues);
-//					objsavefile.setContentparameter(contentParams);
-//
-//					Query query = new Query(Criteria.where("id").is(objsavefile.getId()));
-//
-//					Boolean recordcount = mongoTemplate.exists(query, OrderCreation.class);
-//
-//					if (!recordcount) {
-//						mongoTemplate.insert(objsavefile);
-//					} else {
-//						Update update = new Update();
-//						update.set("contentvalues", contentValues);
-//						update.set("contentparameter", contentParams);
-//
-//						mongoTemplate.upsert(query, update, OrderCreation.class);
-//					}
-//
-//					GridFSDBFile largefile = gridFsTemplate
-//							.findOne(new Query(Criteria.where("filename").is("order_" + objfile.getFilesamplecode())));
-//					if (largefile != null) {
-//						gridFsTemplate.delete(new Query(Criteria.where("filename").is("order_" + objfile.getFilesamplecode())));
-//					}
-//					gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
-//							"order_" + objfile.getFilesamplecode(), StandardCharsets.UTF_16);
-//
-//					objsavefile = null;
 
-					System.out.println("JSON file saved to GridFS with filename: " + uniqueDocumentName);
-				} catch (Exception ex) {
-					throw new IOException("Failed to save JSON file to GridFS: " + ex.getMessage(), ex);
+				Map<String, Object> reporttemplatever = new HashMap<>();
+
+				if (data.isIsnewversion()) {
+					data.setTemplatetype(1);
+					List<ReportTemplateVersion> reportversion = data.getReportTemplateVersion().stream()
+							.map(items -> {
+								return items;
+							}).filter(itemsv -> itemsv.isIsnewversion()
+									&& itemsv.getTemplateversioncode() == null)
+							.collect(Collectors.toList());
+					Isnew_Version = true;
+					String jsonContent_version = convertObjectToJson(
+							reportversion.get(0).getTemplateversioncontent());
+					byte[] documentBytes_version = jsonContent_version.getBytes(StandardCharsets.UTF_8);
+					ReportTemplateVersion templateversion = reportversion.get(0);
+					templateversion.setCreatedate(commonfunction.getCurrentUtcTime());
+					reportTemplateVersionRepository.save(templateversion);
+					String templateVersionFileName = "ReportTemplateVersion_"
+							+ templateversion.getTemplateversioncode();
+					deleteAndStoreFile(gridFsTemplate, templateVersionFileName,
+							new ByteArrayInputStream(documentBytes_version));
+				} else {
+					if (data.getReportTemplateVersion() != null && !data.getReportTemplateVersion().isEmpty()) {
+						Reporttemplate finalData = data;
+						List<ReportTemplateVersion> reportversion = finalData.getReportTemplateVersion()
+								.stream().filter(itemsv -> itemsv.getVersionno() == finalData.getVersionno())
+								.collect(Collectors.toList());
+						String templateVersionFileName = "ReportTemplateVersion_"
+								+ reportversion.get(0).getTemplateversioncode();
+						ReportTemplateVersion templateversion = reportversion.get(0);
+						templateversion.setModifieddate(commonfunction.getCurrentUtcTime());
+						reportTemplateVersionRepository.save(templateversion);
+						deleteAndStoreFile(gridFsTemplate, templateVersionFileName,
+								new ByteArrayInputStream(documentBytes));
+						List<ReportTemplateVersion> updatedVersions = data.getReportTemplateVersion().stream()
+								.map(items -> {
+									if (items.getTemplateversioncode() == templateversion
+											.getTemplateversioncode()) {
+										return templateversion;
+									}
+									return items;
+								}).collect(Collectors.toList());
+						data.setReportTemplateVersion(updatedVersions);
+					}
 				}
+				String templateFileName = "ReportTemplate_" + data.getTemplatecode();
+				deleteAndStoreFile(gridFsTemplate, templateFileName, new ByteArrayInputStream(documentBytes));
+//				data = (Reporttemplate) reporttemplatemap.get("Reporttemplate");
+				data.setDateModified(commonfunction.getCurrentUtcTime());
+				reporttemplateRepository.save(data);
+
+				if (Isnew_Version) {
+					Reporttemplate data_new = reporttemplateRepository
+							.findByTemplatecode(data.getTemplatecode());
+					data_new.setTemplatecontent(data.getTemplatecontent());
+					response.setStatus(true);
+					data_new.setResponse(response);
+					return data_new;
+				}
+				response.setStatus(true);
+
 			}
 			return data;
 		} catch (Exception ex) {
 			throw new Exception("Failed to save document: " + ex.getMessage(), ex);
 		}
 
+	}
+	
+	@SuppressWarnings("unused")
+	private void deleteAndStoreFile(GridFsTemplate gridFsTemplate, String fileName, ByteArrayInputStream inputStream) {
+	    GridFSDBFile file = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileName)));
+	    if (file != null) {
+	        gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileName)));
+	    }
+	    gridFsTemplate.store(inputStream, fileName, StandardCharsets.UTF_16);
+	}
+	
+	private ReportTemplateVersion createTemplateVersion(Reporttemplate data) throws ParseException {
+	    ReportTemplateVersion templateVersion = new ReportTemplateVersion();
+	    templateVersion.setTemplatecode(data.getTemplatecode());
+	    templateVersion.setCreatedate(commonfunction.getCurrentUtcTime());
+	    templateVersion.setCreatedby(data.getCreatedby().getUsercode());
+	    templateVersion.setTemplatename(data.getTemplatename());
+	    templateVersion.setVersionname("version_" + data.getVersionno());
+	    templateVersion.setVersionno(data.getVersionno());
+	    templateVersion.setSitecode(data.getSitemaster().getSitecode());
+	    templateVersion.setTemplatetype(data.getTemplatetype());
+	    return templateVersion;
 	}
 
 	private String convertObjectToJson(Object object) {

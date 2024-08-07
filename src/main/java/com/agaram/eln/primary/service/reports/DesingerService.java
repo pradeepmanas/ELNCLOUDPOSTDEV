@@ -1,8 +1,10 @@
 package com.agaram.eln.primary.service.reports;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -20,6 +22,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
@@ -53,6 +58,7 @@ import com.agaram.eln.primary.repository.reports.reportdesigner.ReportTemplateMa
 import com.agaram.eln.primary.repository.reports.reportdesigner.ReporttemplateRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
+import com.mongodb.gridfs.GridFSDBFile;
 
 @Service
 public class DesingerService {
@@ -95,6 +101,10 @@ public class DesingerService {
 
 	@Autowired
 	private ReportTemplateMappingRepository reportTemplateMappingRepository;
+	
+	
+	@Autowired
+	private GridFsTemplate gridFsTemplate;
 
 	public Map<String, Object> getreportsource(Map<String, Object> argObj) {
 		Map<String, Object> rtnObj = new HashMap<String, Object>();
@@ -224,6 +234,12 @@ public class DesingerService {
 				System.out.println("Failed to retrieve JSON content from Azure Blob Storage.");
 			}
 
+		}else {
+			GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
+					Criteria.where("filename").is("ReportTemplate_" + objfile.getTemplatecode())));
+			String jsonContent=new BufferedReader(new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8))
+							.lines().collect(Collectors.joining("\n"));
+			objfile.setTemplatecontent(jsonContent);
 		}
 		return objfile;
 	}
@@ -288,6 +304,11 @@ public class DesingerService {
 
 	public List<Reporttemplate> gettemplateonfolder(ReportDesignerStructure objdir) throws Exception {
 		List<Reporttemplate> lsttemplate = new ArrayList<Reporttemplate>();
+		if(objdir.getLstuserMaster()==null) {
+			List<LSuserMaster> newUserMasterList = new ArrayList<>();
+			newUserMasterList.add(objdir.getCreatedby());
+			objdir.setLstuserMaster(newUserMasterList);			
+		}
 		String searchKeyword = objdir.getSearchData().get("searchkeyword");
 		String searchtemplatename = objdir.getSearchData().get("searchtemplatename");
 		if (objdir.getFilefor().equals("RDT") || objdir.getFilefor().equals("RAT")) {
@@ -618,6 +639,14 @@ public class DesingerService {
 				System.out.println("Failed to retrieve JSON content from Azure Blob Storage.");
 			}
 
+		}else {
+
+			GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
+					Criteria.where("filename").is("ReportTemplateVersion_" + objfile.getTemplateversioncode())));
+			String jsonContent=new BufferedReader(new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8))
+							.lines().collect(Collectors.joining("\n"));
+			objfile.setTemplateversioncontent(jsonContent);
+		
 		}
 		return objfile;
 	}

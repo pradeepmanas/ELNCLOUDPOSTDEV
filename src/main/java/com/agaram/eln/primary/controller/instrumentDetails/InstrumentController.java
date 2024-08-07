@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrderDetails;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.cfr.LSactivity;
@@ -220,7 +221,7 @@ public class InstrumentController {
 	}
 
 	@PostMapping("/GetorderStatus")
-	public LSlogilablimsorderdetail GetorderStatus(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
+	public LogilabOrderDetails GetorderStatus(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
 		return instrumentService.GetorderStatus(objorder);
 	}
 	

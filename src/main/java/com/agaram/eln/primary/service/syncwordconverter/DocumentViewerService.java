@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +22,7 @@ import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.reports.reportdesigner.ReportTemplateMapping;
+import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.reports.reportviewer.Reports;
 import com.agaram.eln.primary.model.reports.reportviewer.ReportsVersion;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
@@ -77,18 +77,13 @@ public class DocumentViewerService {
         String uniqueDocumentName = data.getReportname() + "_" + UUID.randomUUID().toString() + ".json";
 
         try {
-            if (data.getIsmultitenant() == 1) {
-                if (isNewTemplate) {
-                    handleNewTemplate(data, documentBytes, uniqueDocumentName, response);
-                } else {
-                    handleExistingTemplate(data, documentBytes, response);
-                }
-            } else {
-                saveToGridFSonReport(data, documentBytes);
-                updateReportTimestamps(data, isNewTemplate);
-                response.setStatus(true);
-                reportsRepository.save(data);
-            }
+        	 if (data.getIsmultitenant() != 2) {
+                 if (isNewTemplate) {
+                     handleNewTemplate(data, documentBytes, uniqueDocumentName, response);
+                 } else {
+                     handleExistingTemplate(data, documentBytes, response);
+                 }
+             }
             data.setResponse(response);
             return data;
         } catch (IOException e) {
@@ -102,8 +97,13 @@ public class DocumentViewerService {
         Optional<Reports> existingReportOpt = Optional.ofNullable(reportsRepository.findTopByReportnameIgnoreCaseAndSitemaster(data.getReportname(), data.getSitemaster()));
         
         if (!existingReportOpt.isPresent()) {
-            data = updateReportContent(data, documentBytes, uniqueDocumentName);
-            setReportCreationData(data);
+        	if(data.getIsmultitenant() == 1) {
+                data = updateReportContent(data, documentBytes, uniqueDocumentName);
+        	}else {
+        		saveToGridFSonReport(data, documentBytes);
+        	}
+        	data.setDatecreated(commonfunction.getCurrentUtcTime());
+        	data.setDatemodified(commonfunction.getCurrentUtcTime());
             response.setStatus(true);
             reportsRepository.save(data);
             createReportVersion(data, documentBytes, uniqueDocumentName);
@@ -117,7 +117,11 @@ public class DocumentViewerService {
         Reports existingReport = reportsRepository.findOne(data.getReportcode());
         String uniqueDocumentName = existingReport.getReportname() + "_" + UUID.randomUUID().toString() + ".json";
 
-        data = updateReportContent(data, documentBytes, uniqueDocumentName);
+        if(data.getIsmultitenant() == 1) {
+        	 data = updateReportContent(data, documentBytes, uniqueDocumentName);
+        }else {
+        	saveToGridFSonReport(data, documentBytes);
+        }       
         
         data.setDatemodified(commonfunction.getCurrentUtcTime());
         response.setStatus(true);
@@ -132,12 +136,6 @@ public class DocumentViewerService {
         
         reportsRepository.save(data);
     }
-    
-    private void setReportCreationData(Reports data) throws ParseException {
-        data.setDatecreated(commonfunction.getCurrentUtcTime());
-        data.setDatemodified(commonfunction.getCurrentUtcTime());
-        data.setVersionno(1);
-    }
 
     private void createReportVersion(Reports data, byte[] documentBytes, String uniqueDocumentName) throws Exception {
     	
@@ -151,8 +149,11 @@ public class DocumentViewerService {
         version.setSitecode(data.getSitemaster().getSitecode());
         version.setVersionno(data.getVersionno());
         
-        updateReportVersionContent(version, documentBytes, uniqueDocumentName);
-        
+        if(data.getIsmultitenant() == 1) {
+        	updateReportVersionContent(version, documentBytes, uniqueDocumentName);
+        }else {
+        	saveToGridFSonReportVersion(version,documentBytes);
+        }        
         reportsVersionRepository.save(version);
     }
 
@@ -163,12 +164,16 @@ public class DocumentViewerService {
     private Reports updateReportContent(Reports data, byte[] documentBytes, String uniqueDocumentName) throws Exception {
         return commonservice.uploadToAzureBlobStorage(documentBytes, data, uniqueDocumentName);
     }
-
-    private void updateReportTimestamps(Reports data, boolean isNewTemplate) throws ParseException {
-        if (isNewTemplate) {
-            data.setDatecreated(commonfunction.getCurrentUtcTime());
+    
+    private void saveToGridFSonReportVersion(ReportsVersion data, byte[] documentBytes) throws IOException {
+        try {
+            String reportName = "reportversion_" + data.getReportversioncode();
+            gridFsTemplate.delete(new Query(Criteria.where("reportname").is(reportName)));
+            gridFsTemplate.store(new ByteArrayInputStream(documentBytes), reportName, StandardCharsets.UTF_8.name());
+            
+        } catch (Exception e) {
+            throw new IOException("Failed to upload file to GridFS: " + e.getMessage(), e);
         }
-        data.setDatemodified(commonfunction.getCurrentUtcTime());
     }
 
     private void saveToGridFSonReport(Reports data, byte[] documentBytes) throws IOException {
@@ -203,12 +208,6 @@ public class DocumentViewerService {
                         String jsonContent = new String(documentBytes, StandardCharsets.UTF_8);
                         objReport.setReporttemplatecontent(jsonContent);
                         
-//                        @SuppressWarnings("unchecked")
-//						Map<String, String> map = objectMapper.readValue(jsonContent, LinkedHashMap.class);
-//                        
-//                        objReport.setReporttemplatecontent(map.getOrDefault("content", ""));
-//                        objReport.setKeystorevariable(map.getOrDefault("keystorevariable", ""));
-                        
                     } else {
                         System.out.println("Failed to retrieve JSON content from Azure Blob Storage.");
                     }
@@ -226,17 +225,17 @@ public class DocumentViewerService {
     private String retrieveJsonContentFromGridFS(Reports objReport) throws IOException {
         String jsonContent = "";
         GridFSDBFile largefile = gridFsTemplate
-            .findOne(new Query(Criteria.where("reportname").is("report_" + objReport.getFileuid())));
+            .findOne(new Query(Criteria.where("reportname").is("report_" + objReport.getReportcode())));
 
         if (largefile == null) {
-            largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is("report_" + objReport.getFileuid())));
+            largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is("report_" + objReport.getReportcode())));
         }
 
         if (largefile != null) {
             jsonContent = new BufferedReader(new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8))
                 .lines().collect(Collectors.joining("\n"));
         } else {
-            Reports report = mongoTemplate.findById(objReport.getFileuid(), Reports.class);
+            Reports report = mongoTemplate.findById(objReport.getReportcode(), Reports.class);
             if (report != null) {
                 jsonContent = report.getReporttemplatecontent();
             }
@@ -281,4 +280,41 @@ public class DocumentViewerService {
 		}		
 		return null;
 	}
+	
+	public Reporttemplate getReportTemplateData(Reporttemplate objfile) {
+        objfile.setResponse(new Response());
+
+        if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
+            String tenant = TenantContext.getCurrentTenant();
+            if (objfile.getIsmultitenant() == 2) {
+                return objfile;
+            }
+            String containerName = tenant + "reportdocument";
+            String documentName = objfile.getFileuid();
+            byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName, documentName);
+
+            Optional<String> optionalContent = Optional.ofNullable(documentBytes).map(bytes -> new String(bytes, StandardCharsets.UTF_8));
+            
+            if (optionalContent.isPresent()) {
+                objfile.setTemplatecontent(optionalContent.get());
+            } else {
+            	System.out.println("Failed to retrieve JSON content from Azure Blob Storage.");
+            }
+        } else {
+            GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
+                    Criteria.where("filename").is("ReportTemplate_" + objfile.getTemplatecode())));
+
+            if (largefile != null) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8))) {
+                    String jsonContent = reader.lines().collect(Collectors.joining("\n"));
+                    objfile.setTemplatecontent(jsonContent);
+                } catch (Exception e) {
+                	System.out.println("Error reading JSON content from GridFS --> "+ e);
+                }
+            } else {
+            	System.out.println("No file found in GridFS with the specified template code.");
+            }
+        }
+        return objfile;
+    }
 }

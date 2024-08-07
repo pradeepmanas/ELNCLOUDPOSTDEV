@@ -2912,4 +2912,6 @@ List<Logilaborders> findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBet
 
 	List<LSlogilablimsorderdetail> findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
 			List<Elnmaterial> currentChunk, Integer filetype, int i);
+	
+
 	}

@@ -13,7 +13,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -64,6 +63,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
+import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrderDetails;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
@@ -161,6 +161,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSordernotificationRe
 import com.agaram.eln.primary.repository.instrumentDetails.LSprotocolfolderfilesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSresultdetailsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSsheetfolderfilesRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LogilablimsorderdetailsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsAutoregisterRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMappedInstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
@@ -484,6 +485,9 @@ public class InstrumentService {
 
 	@Autowired
 	private LsAutoregisterRepository lsautoregisterrepo;
+	
+	@Autowired
+	private LogilablimsorderdetailsRepository logilablimsorderdetailsRepository;
 
 	private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
@@ -3165,144 +3169,148 @@ public class InstrumentService {
 				lsworkflowgroupmappingRepository.findBylsusergroup(lsusergroup));
 	}
 
-	public LSlogilablimsorderdetail GetorderStatus(LSlogilablimsorderdetail objorder) throws IOException, ParseException {
-		 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-	       
-		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
-		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
-				.findBybatchid(objupdatedorder.getBatchid());
-//		List<String> lsorderno = new ArrayList<String>();
-		objupdatedorder.setResponse(new Response());
-	        System.out.println("Locked User Start:   " + dtf.format(LocalDateTime.now()));
-		if (objupdatedorder.getLockeduser() != null) {
+	public LogilabOrderDetails GetorderStatus(LSlogilablimsorderdetail objorder) throws IOException, ParseException {
+	      
+			 LogilabOrderDetails objupdatedorder = logilablimsorderdetailsRepository.findByBatchcode(objorder.getBatchcode());
+			objupdatedorder.setResponse(new Response());
+		    
+			if (objupdatedorder.getLockeduser() != null) {
 
-			if (objupdatedorder.getFiletype() != 1 && !objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R")
-					&& objupdatedorder.getAssignedto() == null
-					&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
+				if (objupdatedorder.getFiletype() != 1 && !objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R")
+						&& objupdatedorder.getAssignedto() == null
+						&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
 
-				objupdatedorder.getResponse().setInformation("IDS_SAME_USER_OPEN");
-				objupdatedorder.getResponse().setStatus(false);
+					objupdatedorder.getResponse().setInformation("IDS_SAME_USER_OPEN");
+					objupdatedorder.getResponse().setStatus(false);
 
-				return objupdatedorder;
-			} else if (!objorder.getIsmultitenant().equals(2)) {
-				LSuserMaster user = new LSuserMaster();
-				user.setUsercode(objupdatedorder.getLockeduser());
-				List<LSactiveUser> LSactiveUsr = lSactiveUserRepository.findByLsusermaster(user);
-				if (LSactiveUsr.isEmpty()) {
-					objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
-					objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
-					objupdatedorder.setActiveuser(objorder.getActiveuser());
+					return objupdatedorder;
+				} else if (!objorder.getIsmultitenant().equals(2)) {
+					LSuserMaster user = new LSuserMaster();
+					user.setUsercode(objupdatedorder.getLockeduser());
+					List<LSactiveUser> LSactiveUsr = lSactiveUserRepository.findByLsusermaster(user);
+					if (LSactiveUsr.isEmpty()) {
+						objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
+						objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
+						objupdatedorder.setActiveuser(objorder.getActiveuser());
+					}
+					objupdatedorder.setIsLock(1);
+//					lslogilablimsorderdetailRepository.save(objupdatedorder);
+					logilablimsorderdetailsRepository.UpdateOrderData(objorder.getObjLoggeduser().getUsercode(),objorder.getObjLoggeduser().getUsername(),objorder.getActiveuser(),objupdatedorder.getBatchcode());
 				}
+
+			} else if(!objorder.getIsmultitenant().equals(2)){
+				objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
+				objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
+				objupdatedorder.setActiveuser(objorder.getActiveuser());
 				objupdatedorder.setIsLock(1);
-				lslogilablimsorderdetailRepository.save(objupdatedorder);
+//				lslogilablimsorderdetailRepository.save(objupdatedorder);
+				logilablimsorderdetailsRepository.UpdateOrderData(objorder.getObjLoggeduser().getUsercode(),objorder.getObjLoggeduser().getUsername(),objorder.getActiveuser(),objupdatedorder.getBatchcode());
 			}
-
-		} else if(!objorder.getIsmultitenant().equals(2)){
-			objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
-			objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
-			objupdatedorder.setActiveuser(objorder.getActiveuser());
-			objupdatedorder.setIsLock(1);
-			lslogilablimsorderdetailRepository.save(objupdatedorder);
-		}
-		System.out.println("Locked User End  " + dtf.format(LocalDateTime.now()));
-//		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
-//			int i = 0;
-//			while (lsLogilaborders.size() > i) {
-//				lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
-//				i++;
+//			System.out.println("Locked User End  " + dtf.format(LocalDateTime.now()));
+//			if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
+//				int i = 0;
+//				while (lsLogilaborders.size() > i) {
+//					lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
+//					i++;
+//				}
 //			}
-//		}
-		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
-		System.out.println("Work Flow Start  " + dtf.format(LocalDateTime.now()));
-		if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
-			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode)
-					.collect(Collectors.toList());
-			if (objorder.getLstworkflow() != null && objupdatedorder.getLsworkflow() != null
-					&& lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode())) {
+//			objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
+//			System.out.println("Work Flow Start  " + dtf.format(LocalDateTime.now()));
+			if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
+				List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode)
+						.collect(Collectors.toList());
+				if (objorder.getLstworkflow() != null && objupdatedorder.getLsworkflow() != null
+						&& lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode())) {
+					objupdatedorder.setCanuserprocess(true);
+				} else {
+					objupdatedorder.setCanuserprocess(false);
+				}
+			}
+//			System.out.println("Work Flow ENd  " + dtf.format(LocalDateTime.now()));
+			if (objupdatedorder.getFiletype() == 0) {
+				List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
+						.findBybatchid(objupdatedorder.getBatchid());
+				objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
 				objupdatedorder.setCanuserprocess(true);
-			} else {
-				objupdatedorder.setCanuserprocess(false);
+				objupdatedorder
+				.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
+				lsLogilaborders = null;
 			}
-		}
-		System.out.println("Work Flow ENd  " + dtf.format(LocalDateTime.now()));
-		if (objupdatedorder.getFiletype() == 0) {
-			objupdatedorder.setCanuserprocess(true);
-		}
-
-		if (objupdatedorder.getLockeduser() != null && objorder.getObjLoggeduser() != null
-				&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
-			objupdatedorder.setIsLockbycurrentuser(1);
-		} else {
-			objupdatedorder.setIsLockbycurrentuser(0);
-		}
-		System.out.println("Work Flow Final Step Start  " + dtf.format(LocalDateTime.now()));
-		if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
-			LSworkflow objlastworkflow = lsworkflowRepository
-					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
-			if (objlastworkflow != null && objupdatedorder.getLsworkflow() != null
-					&& objupdatedorder.getLsworkflow().equals(objlastworkflow)) {
-				objupdatedorder.setIsFinalStep(1);
+			if (objupdatedorder.getLockeduser() != null && objorder.getObjLoggeduser() != null
+					&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
+				objupdatedorder.setIsLockbycurrentuser(1);
 			} else {
-				objupdatedorder.setIsFinalStep(0);
+				objupdatedorder.setIsLockbycurrentuser(0);
 			}
-		}
-		System.out.println("Work Flow Final Step End  " + dtf.format(LocalDateTime.now()));
-		if (objupdatedorder.getFiletype() == 0) {
-			objupdatedorder
-					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
-		}
-		System.out.println("Get File Content Start  " + dtf.format(LocalDateTime.now()));
-		if (objupdatedorder.getLssamplefile() != null) {
-			if (objorder.getIsmultitenant() == 1 || objorder.getIsmultitenant() == 2) {
-				CloudOrderCreation objCreation = cloudOrderCreationRepository
-						.findById((long) objupdatedorder.getLssamplefile().getFilesamplecode());
-				if (objCreation != null && objCreation.getContainerstored() == 0) {
-					objupdatedorder.getLssamplefile().setFilecontent(objCreation.getContent());
+//			System.out.println("Work Flow Final Step Start  " + dtf.format(LocalDateTime.now()));
+			if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
+				LSworkflow objlastworkflow = lsworkflowRepository
+						.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
+				if (objlastworkflow != null && objupdatedorder.getLsworkflow() != null
+						&& objupdatedorder.getLsworkflow().equals(objlastworkflow)) {
+					objupdatedorder.setIsFinalStep(1);
 				} else {
-					objupdatedorder.getLssamplefile().setFilecontent(
-							objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
-									commonfunction.getcontainername(objorder.getIsmultitenant(),
-											TenantContext.getCurrentTenant()) + "ordercreation"));
+					objupdatedorder.setIsFinalStep(0);
 				}
-			} else {
+			}
+//			System.out.println("Work Flow Final Step End  " + dtf.format(LocalDateTime.now()));
+			if (objupdatedorder.getFiletype() == 0) {
+				objupdatedorder
+						.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
+			}
+//			System.out.println("Get File Content Start  " + dtf.format(LocalDateTime.now()));
+			if (objupdatedorder.getLssamplefile() != null) {
+				if (objorder.getIsmultitenant() == 1 || objorder.getIsmultitenant() == 2) {
+					CloudOrderCreation objCreation = cloudOrderCreationRepository
+							.findById((long) objupdatedorder.getLssamplefile().getFilesamplecode());
+					if (objCreation != null && objCreation.getContainerstored() == 0) {
+						objupdatedorder.getLssamplefile().setFilecontent(objCreation.getContent());
+					} else {
+						objupdatedorder.getLssamplefile().setFilecontent(
+								objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+										commonfunction.getcontainername(objorder.getIsmultitenant(),
+												TenantContext.getCurrentTenant()) + "ordercreation"));
+					}
+				} else {
 
-				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename")
-						.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
-				if (largefile == null) {
-					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id")
+					GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename")
 							.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
-				}
+					if (largefile == null) {
+						largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id")
+								.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
+					}
 
-				if (largefile != null) {
-					objupdatedorder.getLssamplefile()
-							.setFilecontent(new BufferedReader(
-									new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-									.collect(Collectors.joining("\n")));
-				} else {
+					if (largefile != null) {
+						objupdatedorder.getLssamplefile()
+								.setFilecontent(new BufferedReader(
+										new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+										.collect(Collectors.joining("\n")));
+					} else {
 
-					if (mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
-							OrderCreation.class) != null) {
-						objupdatedorder.getLssamplefile().setFilecontent(mongoTemplate
-								.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class)
-								.getContent());
+						if (mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
+								OrderCreation.class) != null) {
+							objupdatedorder.getLssamplefile().setFilecontent(mongoTemplate
+									.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class)
+									.getContent());
+						}
 					}
 				}
 			}
-		}
-		System.out.println("Get File Content End  " + dtf.format(LocalDateTime.now()));
-		lsLogilaborders = null;
-		objupdatedorder.setLstworkflow(objorder.getLstworkflow());
+//			System.out.println("Get File Content End  " + dtf.format(LocalDateTime.now()));
+//			lsLogilaborders = null;
+			objupdatedorder.setLstworkflow(objorder.getLstworkflow());
 
-		if (objorder.getLsuserMaster() != null && objorder.getLsuserMaster().getUnifieduserid() != null) {
-			LScentralisedUsers objUserId = new LScentralisedUsers();
-			objUserId.setUnifieduserid(objorder.getLsuserMaster().getUnifieduserid());
-			objupdatedorder.setLscentralisedusers(userService.Getcentraliseduserbyid(objUserId));
-		}
-		objupdatedorder.getResponse().setStatus(true);
-		objupdatedorder.setlSprotocolorderstephistory(
-				lsprotocolorderstephistoryRepository.findByBatchcode(objupdatedorder.getBatchcode()));
-		System.out.println("Return   " + dtf.format(LocalDateTime.now()));
-		return objupdatedorder;
+			if (objorder.getLsuserMaster() != null && objorder.getLsuserMaster().getUnifieduserid() != null) {
+				LScentralisedUsers objUserId = new LScentralisedUsers();
+				objUserId.setUnifieduserid(objorder.getLsuserMaster().getUnifieduserid());
+				objupdatedorder.setLscentralisedusers(userService.Getcentraliseduserbyid(objUserId));
+			}
+			objupdatedorder.getResponse().setStatus(true);
+			objupdatedorder.setLsorderworkflowhistory(lsorderworkflowhistoryRepositroy.findByBatchcodeOrderByHistorycode(objupdatedorder.getBatchcode()));
+//			objupdatedorder.setlSprotocolorderstephistory(
+//					lsprotocolorderstephistoryRepository.findByBatchcode(objupdatedorder.getBatchcode()));
+//			System.out.println("Return   " + dtf.format(LocalDateTime.now()));
+			return objupdatedorder;
 	}
 
 	public LSlogilablimsorderdetail GetorderStatusFromBatchID(LSlogilablimsorderdetail objorder) {
@@ -6002,7 +6010,7 @@ public class InstrumentService {
 		objorgorder.setObjmanualaudit(objorder.getObjmanualaudit());
 		objorgorder.setIsmultitenant(objorder.getIsmultitenant());
 
-		objorgorder = GetorderStatus(objorgorder);
+		LogilabOrderDetails objorgorderobj = GetorderStatus(objorgorder);
 
 		objorder = lsordersharedbyRepository.findOne(objorder.getSharedbycode());
 
@@ -6021,7 +6029,7 @@ public class InstrumentService {
 		objorgorder.setObjmanualaudit(objorder.getObjmanualaudit());
 		objorgorder.setIsmultitenant(objorder.getIsmultitenant());
 
-		objorgorder = GetorderStatus(objorgorder);
+		LogilabOrderDetails objorgorderobj = GetorderStatus(objorgorder);
 
 		// objorder= lsordersharetoRepository.findOne(objorder.getSharetocode());
 

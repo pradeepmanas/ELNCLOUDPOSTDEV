@@ -1502,7 +1502,13 @@ public class UserService {
 			}
 			
 
-			emailService.sendEmailelnLite(email);
+		
+			if(objusermaster.getIsmultitenant() == 2) {
+				emailService.sendEmailelnLite(email);
+			}else {
+				emailService.sendEmail(email);
+			}
+			
 			lsuserMasterRepository.setpasswordandpasswordstatusByusercode(objusermaster.getPassword(),
 					objusermaster.getPasswordstatus(), objusermaster.getUsercode());
 		}

@@ -89,12 +89,11 @@ public class Application extends SpringBootServletInitializer implements WebAppl
 	        return new PdfViewResolver();
 	    }
 	    
-//	    @Autowired
-//	    private StarterRunner starterRunner;
+	    @Autowired
+	    private StarterRunner starterRunner;
 
-//		@Override
-//		public void run(String... args) throws Exception {
-//			starterRunner.executeOnStartup();
-//		}	 
+		public void run(String... args) throws Exception {
+			starterRunner.executeOnStartup();
+		}	 
 }
 

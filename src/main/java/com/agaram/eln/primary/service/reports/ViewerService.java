@@ -377,11 +377,9 @@ public class ViewerService {
 
 			lstreports = reportsRepository
 					.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDatecreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDatecreatedBetweenOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDatecreatedBetweenOrderByReportcodeDesc(
-							objReport.getSitemaster(), 1, objReport.getTemplatetype(), objReport.getLstuserMaster(),
-							objReport.getFromdate(), objReport.getTodate(), objReport.getSitemaster(), 2,
-							objReport.getTemplatetype(), objReport.getCreatedby(), objReport.getFromdate(),
-							objReport.getTodate(), objReport.getSitemaster(), 1, objReport.getTemplatetype(),
-							objReport.getLstuserMaster(), objReport.getFromdate(), objReport.getTodate());
+							objReport.getSitemaster(), 1, objReport.getTemplatetype(), objReport.getLstuserMaster(), objReport.getFromdate(), objReport.getTodate(), 
+							objReport.getSitemaster(), 2, objReport.getTemplatetype(), objReport.getCreatedby(), objReport.getFromdate(), objReport.getTodate(), 
+							objReport.getSitemaster(), 1, objReport.getTemplatetype(), objReport.getLstuserMaster(), objReport.getFromdate(), objReport.getTodate());
 			
 		} else if (objReport.getFilefor().equals("DR")) {
 			lstreports = reportsRepository.findByReportviewerstructure(objReport);
