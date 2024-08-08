@@ -12,7 +12,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
@@ -55,9 +54,6 @@ public class DocumentViewerService {
     
     @Autowired
     private GridFsTemplate gridFsTemplate;
-    
-    @Autowired
-    private MongoTemplate mongoTemplate;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -97,15 +93,20 @@ public class DocumentViewerService {
         Optional<Reports> existingReportOpt = Optional.ofNullable(reportsRepository.findTopByReportnameIgnoreCaseAndSitemaster(data.getReportname(), data.getSitemaster()));
         
         if (!existingReportOpt.isPresent()) {
+        	
+        	data.setDatecreated(commonfunction.getCurrentUtcTime());
+        	data.setDatemodified(commonfunction.getCurrentUtcTime());
+        	
+        	reportsRepository.save(data);
+        	
         	if(data.getIsmultitenant() == 1) {
                 data = updateReportContent(data, documentBytes, uniqueDocumentName);
         	}else {
         		saveToGridFSonReport(data, documentBytes);
         	}
-        	data.setDatecreated(commonfunction.getCurrentUtcTime());
-        	data.setDatemodified(commonfunction.getCurrentUtcTime());
+        	
             response.setStatus(true);
-            reportsRepository.save(data);
+            
             createReportVersion(data, documentBytes, uniqueDocumentName);
         } else {
             response.setStatus(false);
@@ -166,10 +167,13 @@ public class DocumentViewerService {
     }
     
     private void saveToGridFSonReportVersion(ReportsVersion data, byte[] documentBytes) throws IOException {
-        try {
-            String reportName = "reportversion_" + data.getReportversioncode();
-            gridFsTemplate.delete(new Query(Criteria.where("reportname").is(reportName)));
-            gridFsTemplate.store(new ByteArrayInputStream(documentBytes), reportName, StandardCharsets.UTF_8.name());
+        try {        	
+        	String reportName = "reportversion_" + data.getReportversioncode();
+        	GridFSDBFile file = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(reportName)));
+    	    if (file != null) {
+    	        gridFsTemplate.delete(new Query(Criteria.where("filename").is(reportName)));
+    	    }
+    	    gridFsTemplate.store(new ByteArrayInputStream(documentBytes), reportName, StandardCharsets.UTF_16);
             
         } catch (Exception e) {
             throw new IOException("Failed to upload file to GridFS: " + e.getMessage(), e);
@@ -178,9 +182,12 @@ public class DocumentViewerService {
 
     private void saveToGridFSonReport(Reports data, byte[] documentBytes) throws IOException {
         try {
-            String reportName = "report_" + data.getFileuid();
-            gridFsTemplate.delete(new Query(Criteria.where("reportname").is(reportName)));
-            gridFsTemplate.store(new ByteArrayInputStream(documentBytes), reportName, StandardCharsets.UTF_8.name());
+        	String reportName = "report_" + data.getReportcode();
+        	GridFSDBFile file = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(reportName)));
+    	    if (file != null) {
+    	        gridFsTemplate.delete(new Query(Criteria.where("filename").is(reportName)));
+    	    }
+    	    gridFsTemplate.store(new ByteArrayInputStream(documentBytes), reportName, StandardCharsets.UTF_16);
         } catch (Exception e) {
             throw new IOException("Failed to upload file to GridFS: " + e.getMessage(), e);
         }
@@ -223,23 +230,11 @@ public class DocumentViewerService {
     }
 
     private String retrieveJsonContentFromGridFS(Reports objReport) throws IOException {
-        String jsonContent = "";
-        GridFSDBFile largefile = gridFsTemplate
-            .findOne(new Query(Criteria.where("reportname").is("report_" + objReport.getReportcode())));
-
-        if (largefile == null) {
-            largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is("report_" + objReport.getReportcode())));
-        }
-
-        if (largefile != null) {
-            jsonContent = new BufferedReader(new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8))
-                .lines().collect(Collectors.joining("\n"));
-        } else {
-            Reports report = mongoTemplate.findById(objReport.getReportcode(), Reports.class);
-            if (report != null) {
-                jsonContent = report.getReporttemplatecontent();
-            }
-        }
+    	 String jsonContent = "";
+         GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
+ 				Criteria.where("filename").is("report_" + objReport.getReportcode())));
+ 		jsonContent = new BufferedReader(new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8))
+ 						.lines().collect(Collectors.joining("\n"));
         return jsonContent;
     }
 	

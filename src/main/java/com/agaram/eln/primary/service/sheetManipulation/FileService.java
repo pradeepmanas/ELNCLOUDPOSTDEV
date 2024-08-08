@@ -2156,8 +2156,8 @@ public class FileService {
 		List<LSfile> lstfile = new ArrayList<LSfile>();
 
 		if (lsuserteammappingRepository.getTeamcodeByLsuserMaster(objuser.getUsercode()).size() > 0) {
-			List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(
-					lsuserteammappingRepository.getTeamcodeByLsuserMaster(objuser.getUsercode()));
+			
+			List<LSuserMaster> lstteamuser = lsuserteammappingRepository.getLsuserMasterByTeamcode(lsuserteammappingRepository.getTeamcodeByLsuserMaster(objuser.getUsercode()));
 			lstteamuser.add(objuser);
 			lstfile = lSfileRepository.gettemplateapprovelanduserIn(lstteamuser, objuser.getLssitemaster().getSitecode());
 
@@ -2222,14 +2222,8 @@ public class FileService {
 	public Map<String, Object> getApprovedTemplatesByTask(LSuserMaster objuser) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 
-		List<LSfile> lstFile = new ArrayList<LSfile>();
-
-		if (objuser.getUsername().equals("Administrator")) {
-			lstFile = lSfileRepository.getsheetGreaterthanoneandapprovel(objuser.getLssitemaster().getSitecode());
-		} else {
-			lstFile = GetApprovedTemplatesbyuser(1, objuser);
-		}
-
+		List<LSfile> lstFile = GetApprovedTemplatesbyuser(1, objuser);
+		
 		List<LSfiletest> lstMappedTask = lSfiletestRepository.findByTestcodeAndTesttype(objuser.getTestcode(), 1);
 
 		if (!lstMappedTask.isEmpty()) {

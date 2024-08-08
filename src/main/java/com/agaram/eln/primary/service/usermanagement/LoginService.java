@@ -2174,12 +2174,63 @@ public void duedatenotification(LSOrdernotification objNotification) throws Pars
 	int cancel;
 	int approvelstatus;
 	
+	List<LSOrdernotification> ordernotifylist = new ArrayList<LSOrdernotification>();
+	List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+
+	LSuserMaster assigneduser = new LSuserMaster();
+	
+	Date dueDate = objNotification.getDuedate();
+	Instant due = dueDate.toInstant();
+	
+	LocalDateTime dueTime = LocalDateTime.ofInstant(due, ZoneId.systemDefault());
+	LocalDate duedate = dueTime.toLocalDate();
+	
+	LSnotification LSnotification = new LSnotification();
+	
+	String Details = "{\"ordercode\" :\"" + objNotification.getBatchid() 
+    + "\",\"order\" :\"" + objNotification.getBatchid() 
+    + "\",\"date\" :\"" + duedate 
+    + "\",\"screen\":\"" + objNotification.getScreen() 
+	+ "\"}";
+	
+	String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder";
+	
+	
 	if(order==null) {
 		 cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
 		 approvelstatus = protocolorder.getApprovelstatus()== null ? 0 :protocolorder.getApprovelstatus();
+		 assigneduser=protocolorder.getAssignedto();
+		   if(protocolorder.getAssignedto()!=null) {
+			   LSnotification.setIsnewnotification(1);
+				LSnotification.setNotification("ORDERONDUEALERT");
+				LSnotification.setNotificationdate(new Date());
+				LSnotification.setNotificationdetils(Details);
+				LSnotification.setNotificationpath(path);
+				LSnotification.setNotifationfrom(assigneduser);
+				LSnotification.setNotifationto(assigneduser);
+				LSnotification.setRepositorycode(0);
+				LSnotification.setRepositorydatacode(0);
+				LSnotification.setNotificationfor(1);
+				lstnotifications.add(LSnotification);	
+		   }
 	}else {
 	   cancel = order.getOrdercancell() == null ? 0 : order.getOrdercancell();
 	   approvelstatus = order.getApprovelstatus()== null ? 0 :order.getApprovelstatus();
+	   
+	   assigneduser=order.getAssignedto();
+	   if(order.getAssignedto()!=null) {
+		   LSnotification.setIsnewnotification(1);
+			LSnotification.setNotification("ORDERONDUEALERT");
+			LSnotification.setNotificationdate(new Date());
+			LSnotification.setNotificationdetils(Details);
+			LSnotification.setNotificationpath(path);
+			LSnotification.setNotifationfrom(assigneduser);
+			LSnotification.setNotifationto(assigneduser);
+			LSnotification.setRepositorycode(0);
+			LSnotification.setRepositorydatacode(0);
+			LSnotification.setNotificationfor(1);
+			lstnotifications.add(LSnotification);	
+	   }
 	}
 	 
 	if((notobj.getIscompleted() == null || notobj.getIscompleted() == false) && 
@@ -2188,40 +2239,24 @@ public void duedatenotification(LSOrdernotification objNotification) throws Pars
 		LSuserMaster LSuserMaster = new LSuserMaster();
 		LSuserMaster.setUsercode(objNotification.getUsercode());
 		
-		List<LSOrdernotification> ordernotifylist = new ArrayList<LSOrdernotification>();
-		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-	
-		Date dueDate = objNotification.getDuedate();
-		Instant due = dueDate.toInstant();
-		
-		LocalDateTime dueTime = LocalDateTime.ofInstant(due, ZoneId.systemDefault());
-		LocalDate duedate = dueTime.toLocalDate();
 		
 				if(objNotification.getDuestatus() == 1) {
-						LSnotification LSnotification = new LSnotification();
-	
-						String Details = "{\"ordercode\" :\"" + objNotification.getBatchid() 
-				        + "\",\"order\" :\"" + objNotification.getBatchid() 
-				        + "\",\"date\" :\"" + duedate 
-				        + "\",\"screen\":\"" + objNotification.getScreen() 
-						+ "\"}";
-						
-						String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder";
-						
-						LSnotification.setIsnewnotification(1);
-						LSnotification.setNotification("ORDERONDUEALERT");
-						LSnotification.setNotificationdate(new Date());
-						LSnotification.setNotificationdetils(Details);
-						LSnotification.setNotificationpath(path);
-						LSnotification.setNotifationfrom(LSuserMaster);
-						LSnotification.setNotifationto(LSuserMaster);
-						LSnotification.setRepositorycode(0);
-						LSnotification.setRepositorydatacode(0);
-						LSnotification.setNotificationfor(1);
+				        LSnotification LSnotification1 = new LSnotification();
+
+						LSnotification1.setIsnewnotification(1);
+						LSnotification1.setNotification("ORDERONDUEALERT");
+						LSnotification1.setNotificationdate(new Date());
+						LSnotification1.setNotificationdetils(Details);
+						LSnotification1.setNotificationpath(path);
+						LSnotification1.setNotifationfrom(LSuserMaster);
+						LSnotification1.setNotifationto(LSuserMaster);
+						LSnotification1.setRepositorycode(0);
+						LSnotification1.setRepositorydatacode(0);
+						LSnotification1.setNotificationfor(1);
 	
 						objNotification.setDuestatus(0);
 						ordernotifylist.add(objNotification);
-						lstnotifications.add(LSnotification);				
+						lstnotifications.add(LSnotification1);				
 				        }
 				
 	
@@ -2247,12 +2282,65 @@ public void overduenotification(LSOrdernotification objNotification) throws Pars
 	int cancel;
 	int approvelstatus;
 	
+	List<LSOrdernotification> ordernotifylist = new ArrayList<LSOrdernotification>();
+	List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+	LSnotification LSnotification = new LSnotification();
+	
+	LSuserMaster assigneduser = new LSuserMaster();
+
+	Date dueDate = objNotification.getDuedate();
+	Instant due = dueDate.toInstant();
+	
+	LocalDateTime dueTime = LocalDateTime.ofInstant(due, ZoneId.systemDefault());
+	LocalDate duedate = dueTime.toLocalDate();
+	
+	String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder";
+	
+	String Details = "{\"ordercode\" :\"" + objNotification.getBatchid() 
+    + "\",\"order\" :\"" + objNotification.getBatchid()
+    + "\",\"days\" :\"" + objNotification.getOverduedays()
+    + "\",\"date\" :\"" + duedate
+    + "\",\"screen\":\"" + objNotification.getScreen() 
+	+ "\"}";
+	
 	if(order==null) {
 		 cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
 		 approvelstatus = protocolorder.getApprovelstatus()== null ? 0 :protocolorder.getApprovelstatus();
+		 
+		 assigneduser = protocolorder.getAssignedto();
+		 if(protocolorder.getAssignedto()!=null) {
+			 
+			 LSnotification.setIsnewnotification(1);
+			 LSnotification.setNotification("ORDEROVERDUEALERT");
+			 LSnotification.setNotificationdate(new Date());
+			 LSnotification.setNotificationdetils(Details);
+			 LSnotification.setNotificationpath(path);
+			 LSnotification.setNotifationfrom(assigneduser);
+			 LSnotification.setNotifationto(assigneduser);
+			 LSnotification.setRepositorycode(0);
+			 LSnotification.setRepositorydatacode(0);
+			 LSnotification.setNotificationfor(1);
+			 lstnotifications.add(LSnotification);	
+		 }
 	}else {
 	   cancel = order.getOrdercancell() == null ? 0 : order.getOrdercancell();
 	   approvelstatus = order.getApprovelstatus()== null ? 0 :order.getApprovelstatus();
+	   
+	   assigneduser=order.getAssignedto();
+	   if(order.getAssignedto()!=null) {
+		   
+		    LSnotification.setIsnewnotification(1);
+			LSnotification.setNotification("ORDEROVERDUEALERT");
+			LSnotification.setNotificationdate(new Date());
+			LSnotification.setNotificationdetils(Details);
+			LSnotification.setNotificationpath(path);
+			LSnotification.setNotifationfrom(assigneduser);
+			LSnotification.setNotifationto(assigneduser);
+			LSnotification.setRepositorycode(0);
+			LSnotification.setRepositorydatacode(0);
+			LSnotification.setNotificationfor(1);
+			lstnotifications.add(LSnotification);	
+	   }
 	}
 	 
 	 
@@ -2262,44 +2350,27 @@ public void overduenotification(LSOrdernotification objNotification) throws Pars
 		LSuserMaster LSuserMaster = new LSuserMaster();
 		LSuserMaster.setUsercode(objNotification.getUsercode());
 		
-		List<LSOrdernotification> ordernotifylist = new ArrayList<LSOrdernotification>();
-		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-	
-		Date dueDate = objNotification.getDuedate();
-		Instant due = dueDate.toInstant();
-		
-		LocalDateTime dueTime = LocalDateTime.ofInstant(due, ZoneId.systemDefault());
-		LocalDate duedate = dueTime.toLocalDate();
-		
-		String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder";
 		
 				if(objNotification.getOverduestatus() == 1) {
 					//if(indexoverdueorders.getOverduestatus() == 1) {
-						LSnotification LSnotification = new LSnotification();
-	
-						String Details = "{\"ordercode\" :\"" + objNotification.getBatchid() 
-						        + "\",\"order\" :\"" + objNotification.getBatchid()
-						        + "\",\"days\" :\"" + objNotification.getOverduedays()
-						        + "\",\"date\" :\"" + duedate
-						        + "\",\"screen\":\"" + objNotification.getScreen() 
-								+ "\"}";
-								
-						LSnotification.setIsnewnotification(1);
-						LSnotification.setNotification("ORDEROVERDUEALERT");
-						LSnotification.setNotificationdate(new Date());
-						LSnotification.setNotificationdetils(Details);
-						LSnotification.setNotificationpath(path);
-						LSnotification.setNotifationfrom(LSuserMaster);
-						LSnotification.setNotifationto(LSuserMaster);
-						LSnotification.setRepositorycode(0);
-						LSnotification.setRepositorydatacode(0);
-						LSnotification.setNotificationfor(1);
+						
+					    LSnotification LSnotification1 = new LSnotification();
+						LSnotification1.setIsnewnotification(1);
+						LSnotification1.setNotification("ORDEROVERDUEALERT");
+						LSnotification1.setNotificationdate(new Date());
+						LSnotification1.setNotificationdetils(Details);
+						LSnotification1.setNotificationpath(path);
+						LSnotification1.setNotifationfrom(LSuserMaster);
+						LSnotification1.setNotifationto(LSuserMaster);
+						LSnotification1.setRepositorycode(0);
+						LSnotification1.setRepositorydatacode(0);
+						LSnotification1.setNotificationfor(1);
 						
 						objNotification.setIsduedateexhausted(true);
 						objNotification.setOverduestatus(0);
 						
 						ordernotifylist.add(objNotification);
-						lstnotifications.add(LSnotification);				
+						lstnotifications.add(LSnotification1);				
 				        }
 				
 	
@@ -2362,12 +2433,62 @@ public void cautiondatenotification(LSOrdernotification objNotification) throws 
 		int cancel;
 		int approvelstatus;
 			
+		Date cautionDate = objNotification.getCautiondate();
+		Instant caution = cautionDate.toInstant();
+		LocalDateTime cautionTime = LocalDateTime.ofInstant(caution, ZoneId.systemDefault());
+		LocalDate cautiondate = cautionTime.toLocalDate();
+		
+		LSuserMaster assigneduser = new LSuserMaster();
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		LSnotification LSnotification = new LSnotification();
+		
+		String Details = "{\"ordercode\" :\"" + objNotification.getBatchid() 
+        + "\",\"order\" :\"" + objNotification.getBatchid() 
+        + "\",\"date\" :\"" + cautiondate
+        + "\",\"screen\":\"" + objNotification.getScreen() 
+		+ "\"}";
+        String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder"; 
+
+
 		if(order==null) {
 			cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
 	        approvelstatus = protocolorder.getApprovelstatus()== null ? 0 :protocolorder.getApprovelstatus();
+	        
+	        if(protocolorder.getAssignedto()!= null) {
+		        assigneduser=protocolorder.getAssignedto();
+		        
+		        LSnotification.setIsnewnotification(1);
+				LSnotification.setNotification("ORDERCAUTIONALERT");
+				LSnotification.setNotificationdate(new Date());
+				LSnotification.setNotificationdetils(Details);
+				LSnotification.setNotificationpath(path);
+				LSnotification.setNotifationfrom(assigneduser);
+				LSnotification.setNotifationto(assigneduser);
+				LSnotification.setRepositorycode(0);
+				LSnotification.setRepositorydatacode(0);
+				LSnotification.setNotificationfor(1);
+				lstnotifications.add(LSnotification);	
+	       }
 		}else {
 		    cancel = order.getOrdercancell() == null ? 0 : order.getOrdercancell();
 			approvelstatus = order.getApprovelstatus()== null ? 0 :order.getApprovelstatus();
+			
+			if(order.getAssignedto() != null) {
+				assigneduser=order.getAssignedto();
+				
+				LSnotification.setIsnewnotification(1);
+				LSnotification.setNotification("ORDERCAUTIONALERT");
+				LSnotification.setNotificationdate(new Date());
+				LSnotification.setNotificationdetils(Details);
+				LSnotification.setNotificationpath(path);
+				LSnotification.setNotifationfrom(assigneduser);
+				LSnotification.setNotifationto(assigneduser);
+				LSnotification.setRepositorycode(0);
+				LSnotification.setRepositorydatacode(0);
+				LSnotification.setNotificationfor(1);
+				lstnotifications.add(LSnotification);	
+				
+			}
 		}
 			 
 		 
@@ -2378,41 +2499,26 @@ public void cautiondatenotification(LSOrdernotification objNotification) throws 
 			LSuserMaster.setUsercode(objNotification.getUsercode());
 			
 			List<LSOrdernotification> ordernotifylist = new ArrayList<LSOrdernotification>();
-			List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
-
-			Date cautionDate = objNotification.getCautiondate();
-			Instant caution = cautionDate.toInstant();
-			
-			LocalDateTime cautionTime = LocalDateTime.ofInstant(caution, ZoneId.systemDefault());
-			LocalDate cautiondate = cautionTime.toLocalDate();
 			
 					if(objNotification.getCautionstatus() == 1) {
-							LSnotification LSnotification = new LSnotification();
 	
-							String Details = "{\"ordercode\" :\"" + objNotification.getBatchid() 
-							        + "\",\"order\" :\"" + objNotification.getBatchid() 
-							        + "\",\"date\" :\"" + cautiondate
-							        + "\",\"screen\":\"" + objNotification.getScreen() 
-									+ "\"}";
-							String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder"; 
-							
-							LSnotification.setIsnewnotification(1);
-							LSnotification.setNotification("ORDERCAUTIONALERT");
-							LSnotification.setNotificationdate(new Date());
-							LSnotification.setNotificationdetils(Details);
-							LSnotification.setNotificationpath(path);
-							LSnotification.setNotifationfrom(LSuserMaster);
-							LSnotification.setNotifationto(LSuserMaster);
-							LSnotification.setRepositorycode(0);
-							LSnotification.setRepositorydatacode(0);
-							LSnotification.setNotificationfor(1);
+						LSnotification LSnotification1 = new LSnotification();
+							LSnotification1.setIsnewnotification(1);
+							LSnotification1.setNotification("ORDERCAUTIONALERT");
+							LSnotification1.setNotificationdate(new Date());
+							LSnotification1.setNotificationdetils(Details);
+							LSnotification1.setNotificationpath(path);
+							LSnotification1.setNotifationfrom(LSuserMaster);
+							LSnotification1.setNotifationto(LSuserMaster);
+							LSnotification1.setRepositorycode(0);
+							LSnotification1.setRepositorydatacode(0);
+							LSnotification1.setNotificationfor(1);
 	
 							objNotification.setCautionstatus(0);
 							ordernotifylist.add(objNotification);
-							lstnotifications.add(LSnotification);				
+							lstnotifications.add(LSnotification1);				
 					        }
 					
-
 			LSnotificationRepository.save(lstnotifications);
 			lsordernotificationrepo.save(ordernotifylist);
 			notifyoverduedays(objNotification);

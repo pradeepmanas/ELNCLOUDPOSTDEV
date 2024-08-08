@@ -402,65 +402,95 @@ public class DocumenteditorService {
 			} else {
 
 				Map<String, Object> reporttemplatever = new HashMap<>();
+				
+				if (Isnew_Template) {
+	
+						existingTemplate = reporttemplateRepository
+								.findTopByTemplatenameIgnoreCaseAndSitemaster(data.getTemplatename(), data.getSitemaster());
+						if (existingTemplate == null) {
+							data.setDateCreated(commonfunction.getCurrentUtcTime());
+							reporttemplateRepository.save(data);
+							response.setStatus(true);
+							String templateFileName = "ReportTemplate_" + data.getTemplatecode();
+							deleteAndStoreFile(gridFsTemplate, templateFileName, new ByteArrayInputStream(documentBytes));
+							ReportTemplateVersion templateversion=new ReportTemplateVersion();
+							templateversion=createTemplateVersion(data);
+							reportTemplateVersionRepository.save(templateversion);
+							String templateVersionFileName = "ReportTemplateVersion_"
+									+ templateversion.getTemplateversioncode();
+							deleteAndStoreFile(gridFsTemplate, templateVersionFileName,
+									new ByteArrayInputStream(documentBytes));
+							data.setReportTemplateVersion(new ArrayList<ReportTemplateVersion>());
+							data.getReportTemplateVersion().add(templateversion);
 
-				if (data.isIsnewversion()) {
-					data.setTemplatetype(1);
-					List<ReportTemplateVersion> reportversion = data.getReportTemplateVersion().stream()
-							.map(items -> {
-								return items;
-							}).filter(itemsv -> itemsv.isIsnewversion()
-									&& itemsv.getTemplateversioncode() == null)
-							.collect(Collectors.toList());
-					Isnew_Version = true;
-					String jsonContent_version = convertObjectToJson(
-							reportversion.get(0).getTemplateversioncontent());
-					byte[] documentBytes_version = jsonContent_version.getBytes(StandardCharsets.UTF_8);
-					ReportTemplateVersion templateversion = reportversion.get(0);
-					templateversion.setCreatedate(commonfunction.getCurrentUtcTime());
-					reportTemplateVersionRepository.save(templateversion);
-					String templateVersionFileName = "ReportTemplateVersion_"
-							+ templateversion.getTemplateversioncode();
-					deleteAndStoreFile(gridFsTemplate, templateVersionFileName,
-							new ByteArrayInputStream(documentBytes_version));
-				} else {
-					if (data.getReportTemplateVersion() != null && !data.getReportTemplateVersion().isEmpty()) {
-						Reporttemplate finalData = data;
-						List<ReportTemplateVersion> reportversion = finalData.getReportTemplateVersion()
-								.stream().filter(itemsv -> itemsv.getVersionno() == finalData.getVersionno())
-								.collect(Collectors.toList());
-						String templateVersionFileName = "ReportTemplateVersion_"
-								+ reportversion.get(0).getTemplateversioncode();
-						ReportTemplateVersion templateversion = reportversion.get(0);
-						templateversion.setModifieddate(commonfunction.getCurrentUtcTime());
-						reportTemplateVersionRepository.save(templateversion);
-						deleteAndStoreFile(gridFsTemplate, templateVersionFileName,
-								new ByteArrayInputStream(documentBytes));
-						List<ReportTemplateVersion> updatedVersions = data.getReportTemplateVersion().stream()
+						} else {
+							response.setStatus(false);
+							response.setInformation("IDS_MSG_ALREADY");
+
+						}
+					
+				}else {
+					if (data.isIsnewversion()) {
+						data.setTemplatetype(1);
+						List<ReportTemplateVersion> reportversion = data.getReportTemplateVersion().stream()
 								.map(items -> {
-									if (items.getTemplateversioncode() == templateversion
-											.getTemplateversioncode()) {
-										return templateversion;
-									}
 									return items;
-								}).collect(Collectors.toList());
-						data.setReportTemplateVersion(updatedVersions);
+								}).filter(itemsv -> itemsv.isIsnewversion()
+										&& itemsv.getTemplateversioncode() == null)
+								.collect(Collectors.toList());
+						Isnew_Version = true;
+						String jsonContent_version = convertObjectToJson(
+								reportversion.get(0).getTemplateversioncontent());
+						byte[] documentBytes_version = jsonContent_version.getBytes(StandardCharsets.UTF_8);
+						ReportTemplateVersion templateversion = reportversion.get(0);
+						templateversion.setCreatedate(commonfunction.getCurrentUtcTime());
+						reportTemplateVersionRepository.save(templateversion);
+						String templateVersionFileName = "ReportTemplateVersion_"
+								+ templateversion.getTemplateversioncode();
+						deleteAndStoreFile(gridFsTemplate, templateVersionFileName,
+								new ByteArrayInputStream(documentBytes_version));
+					} else {
+						if (data.getReportTemplateVersion() != null && !data.getReportTemplateVersion().isEmpty()) {
+							Reporttemplate finalData = data;
+							List<ReportTemplateVersion> reportversion = finalData.getReportTemplateVersion()
+									.stream().filter(itemsv -> itemsv.getVersionno() == finalData.getVersionno())
+									.collect(Collectors.toList());
+							String templateVersionFileName = "ReportTemplateVersion_"
+									+ reportversion.get(0).getTemplateversioncode();
+							ReportTemplateVersion templateversion = reportversion.get(0);
+							templateversion.setModifieddate(commonfunction.getCurrentUtcTime());
+							reportTemplateVersionRepository.save(templateversion);
+							deleteAndStoreFile(gridFsTemplate, templateVersionFileName,
+									new ByteArrayInputStream(documentBytes));
+							List<ReportTemplateVersion> updatedVersions = data.getReportTemplateVersion().stream()
+									.map(items -> {
+										if (items.getTemplateversioncode() == templateversion
+												.getTemplateversioncode()) {
+											return templateversion;
+										}
+										return items;
+									}).collect(Collectors.toList());
+							data.setReportTemplateVersion(updatedVersions);
+						}
 					}
-				}
-				String templateFileName = "ReportTemplate_" + data.getTemplatecode();
-				deleteAndStoreFile(gridFsTemplate, templateFileName, new ByteArrayInputStream(documentBytes));
-//				data = (Reporttemplate) reporttemplatemap.get("Reporttemplate");
-				data.setDateModified(commonfunction.getCurrentUtcTime());
-				reporttemplateRepository.save(data);
-
-				if (Isnew_Version) {
-					Reporttemplate data_new = reporttemplateRepository
-							.findByTemplatecode(data.getTemplatecode());
-					data_new.setTemplatecontent(data.getTemplatecontent());
+					String templateFileName = "ReportTemplate_" + data.getTemplatecode();
+					deleteAndStoreFile(gridFsTemplate, templateFileName, new ByteArrayInputStream(documentBytes));
+//					data = (Reporttemplate) reporttemplatemap.get("Reporttemplate");
+					data.setDateModified(commonfunction.getCurrentUtcTime());
+					reporttemplateRepository.save(data);
+					
+					if (Isnew_Version) {
+						Reporttemplate data_new = reporttemplateRepository
+								.findByTemplatecode(data.getTemplatecode());
+						data_new.setTemplatecontent(data.getTemplatecontent());
+						response.setStatus(true);
+						data_new.setResponse(response);
+						return data_new;
+					}
 					response.setStatus(true);
-					data_new.setResponse(response);
-					return data_new;
 				}
-				response.setStatus(true);
+				
+				data.setResponse(response);
 
 			}
 			return data;
@@ -470,7 +500,7 @@ public class DocumenteditorService {
 
 	}
 	
-	@SuppressWarnings("unused")
+
 	private void deleteAndStoreFile(GridFsTemplate gridFsTemplate, String fileName, ByteArrayInputStream inputStream) {
 	    GridFSDBFile file = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileName)));
 	    if (file != null) {

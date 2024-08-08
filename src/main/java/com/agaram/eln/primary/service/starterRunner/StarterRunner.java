@@ -249,7 +249,7 @@ public class StarterRunner {
     	
     	LSuserMaster lsusermaster3 = new LSuserMaster();
     	lsusermaster3.setUsercode(rs.getInt("orderstartedby_usercode"));
-    	ordernot.setAssignedto(lsusermaster3);
+    	ordernot.setOrderstartedby(lsusermaster3);
     
     	rs.getString("elnmaterial_nmaterialcode");
     	Elnmaterial elnmaterial = new Elnmaterial();
@@ -2318,15 +2318,31 @@ public class StarterRunner {
     	int cancel;
     	int approvelstatus;
     	int completed;
+    	int isassigned;
+    	
+    	LSuserMaster assigneduser = new LSuserMaster();
     	
     	if(order==null) {
     		 cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
     		 approvelstatus = protocolorder.getApprovelstatus()== null ? 0 :protocolorder.getApprovelstatus();
     		 completed=protocolorder.getCompletedtimestamp() == null ? 0 : 1;
+    		 if(protocolorder.getAssignedto().getUsercode() != 0) {
+    			 assigneduser=protocolorder.getAssignedto();
+    			 isassigned=1;
+    		 }else {
+    			 isassigned=0;
+    		 }
     	}else {
     	   cancel = order.getOrdercancell() == null ? 0 : order.getOrdercancell();
     	   approvelstatus = order.getApprovelstatus()== null ? 0 :order.getApprovelstatus();
     	   completed=order.getCompletedtimestamp() == null ? 0 : 1;
+    	   if(order.getAssignedto().getUsercode() != 0) {
+    		   assigneduser=order.getAssignedto();
+    		   isassigned=1;
+    	   }else {
+    		   isassigned=0;
+    	   }
+    	   
     	}
     	
     	if(completed ==0 && (cancel == 0) && (approvelstatus != 3)){
@@ -2359,11 +2375,7 @@ public class StarterRunner {
 	                       "UPDATE LSORDERNOTIFICATION SET cautionstatus = 0 WHERE notificationcode = ?";
 	
 	               try (PreparedStatement pst = con.prepareStatement(updateString)) {
-//	                   pst.setTimestamp(1, new Timestamp(cDate.getTime()));
-//	                   pst.setString(2, Details);
-//	                   pst.setString(3, path);
-//	                   pst.setInt(4, objNotification.getUsercode());
-//	                   pst.setInt(5, objNotification.getUsercode());
+
 	                   pst.setLong(1, objNotification.getNotificationcode());
 	
 	                   pst.executeUpdate();
@@ -2371,7 +2383,11 @@ public class StarterRunner {
 	            catch (SQLException e) {
 	               e.printStackTrace(); // Consider logging this properly
 	           }
-	             insernotification(configuration,Details,notification,path,objNotification.getUsercode(),cDate);
+	             if(isassigned == 0) {  
+	            	 insernotification(configuration,Details,notification,path,objNotification.getUsercode(),cDate,0);
+	             }else {
+	            	 insernotification(configuration,Details,notification,path,objNotification.getUsercode(),cDate,assigneduser.getUsercode());
+	             }
 	             con.close();
 	    	}
     	}
@@ -2430,15 +2446,29 @@ public class StarterRunner {
     	int cancel;
     	int approvelstatus;
     	int completed;
+    	int isassigned;
     	
+    	LSuserMaster assigneduser = new LSuserMaster();
     	if(order==null) {
     		 cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
     		 approvelstatus = protocolorder.getApprovelstatus()== null ? 0 :protocolorder.getApprovelstatus();
     		 completed=protocolorder.getCompletedtimestamp() == null ? 0 : 1;
+    		 if(protocolorder.getAssignedto().getUsercode() !=0) {
+    			 assigneduser=protocolorder.getAssignedto();
+    			 isassigned=1;
+    		 }else {
+    			 isassigned=0;
+    		 }
     	}else {
     	   cancel = order.getOrdercancell() == null ? 0 : order.getOrdercancell();
     	   approvelstatus = order.getApprovelstatus()== null ? 0 :order.getApprovelstatus();
     	   completed=order.getCompletedtimestamp() == null ? 0 : 1;
+    	   if(order.getAssignedto().getUsercode() != 0) {
+	  			 assigneduser=order.getAssignedto();
+	  			 isassigned=1;
+		  		 }else {
+		  			 isassigned=0;
+		  		 }
     	}
     	
     	if(completed ==0 && (cancel == 0) && (approvelstatus != 3)){
@@ -2478,13 +2508,17 @@ public class StarterRunner {
 	            catch (SQLException e) {
 	               e.printStackTrace(); // Consider logging this properly
 	           }
-	    	insernotification(configuration,Details,notification,path,objNotification.getUsercode(),cDate);
+	               if(isassigned == 0) {
+	            	   	insernotification(configuration,Details,notification,path,objNotification.getUsercode(),cDate,0);
+	               }else {
+	            	   insernotification(configuration,Details,notification,path,objNotification.getUsercode(),cDate,assigneduser.getUsercode());
+	               }
 	    	con.close();
     	}
       }
     }
     
-    public void insernotification(HikariConfig configuration,String Details,String notification,String path,int usercode,Date cDate) throws InterruptedException {
+    public void insernotification(HikariConfig configuration,String Details,String notification,String path,int usercode,Date cDate,int assignedusercode) throws InterruptedException {
     	//int generatednotificationcode=0;
 //    	(SELECT COALESCE(MAX(notificationcode), 0) + 1 FROM lsnotification)
     	try (HikariDataSource dataSource = new HikariDataSource(configuration);
@@ -2494,43 +2528,39 @@ public class StarterRunner {
                 "notifationto_usercode, repositorycode, repositorydatacode, notificationfor) VALUES "
                 + "(1, ?, ?, ?, ?, ?, ?, 0, 0, 1)"; 
                
-        
-        try (PreparedStatement pst = con.prepareStatement(updateString)) {
-        	pst.setString(1, notification);
-            pst.setTimestamp(2, new Timestamp(cDate.getTime()));
-            pst.setString(3, Details);
-            pst.setString(4, path);
-            pst.setInt(5, usercode);
-            pst.setInt(6, usercode);
-            //pst.setLong(6, objNotification.getNotificationcode());
-
-           // int affectedRows=
-            		pst.executeUpdate();
-            
-//            if (affectedRows > 0) {
-//	             
-// 	       	   ResultSet rs = pst.getGeneratedKeys();
-// 	              if (rs.next()) {
-// 	            	 generatednotificationcode = rs.getInt(1);
-// 	                  System.out.println("Inserted record's notificationcode: " + generatednotificationcode);
-// 	                  //autoobj.setRegcode(generatedregcode);
-// 	                  
-// 	              }
-// 	          } else {
-// 	              System.out.println("No record inserted.");
-// 	          }
-            
-//            Thread.sleep(15000);
-//	 	          String updateSequenceSQL = "SELECT setval('notification_sequence', ?)";
-//	 	          try (PreparedStatement pstmt = con.prepareStatement(updateSequenceSQL)) {
-//	 	              pstmt.setLong(1, generatednotificationcode);
-//	 	              pstmt.execute();
-//	 	              Thread.sleep(15000);
-//	 	              System.out.println("Sequence updated successfully.");
-//	 	          } catch (Exception e) {
-//	 	              e.printStackTrace();
-//	 	          }
-	          
+        if(assignedusercode == 0) {
+	        try (PreparedStatement pst = con.prepareStatement(updateString)) {
+	        	pst.setString(1, notification);
+	            pst.setTimestamp(2, new Timestamp(cDate.getTime()));
+	            pst.setString(3, Details);
+	            pst.setString(4, path);
+	            pst.setInt(5, usercode);
+	            pst.setInt(6, usercode);
+	            
+	            pst.executeUpdate();
+	      
+	        }
+        }else {
+        	try (PreparedStatement pst = con.prepareStatement(updateString)) {
+	        	pst.setString(1, notification);
+	            pst.setTimestamp(2, new Timestamp(cDate.getTime()));
+	            pst.setString(3, Details);
+	            pst.setString(4, path);
+	            pst.setInt(5, usercode);
+	            pst.setInt(6, usercode);
+	           
+	            pst.executeUpdate();
+	            
+	            pst.setString(1, notification);
+	            pst.setTimestamp(2, new Timestamp(cDate.getTime()));
+	            pst.setString(3, Details);
+	            pst.setString(4, path);
+	            pst.setInt(5, assignedusercode);
+	            pst.setInt(6, assignedusercode);
+	           
+	            pst.executeUpdate();
+	      
+	        }
         }
         con.close();
     } catch (SQLException e) {
@@ -2590,15 +2620,33 @@ public class StarterRunner {
     	int cancel;
     	int approvelstatus;
     	int completed;
+    	int isassigned;
+    	
+    	LSuserMaster assigneduser = new LSuserMaster();
     	
     	if(order==null) {
     		 cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
     		 approvelstatus = protocolorder.getApprovelstatus()== null ? 0 :protocolorder.getApprovelstatus();
     		 completed=protocolorder.getCompletedtimestamp() == null ? 0 : 1;
+    		 
+    		 if(protocolorder.getAssignedto().getUsercode() != 0) {
+      			 assigneduser=protocolorder.getAssignedto();
+      			 isassigned=1;
+    	  	 }else {
+    	  		isassigned=0;
+    	  	 }
+    		 
     	}else {
     	   cancel = order.getOrdercancell() == null ? 0 : order.getOrdercancell();
     	   approvelstatus = order.getApprovelstatus()== null ? 0 :order.getApprovelstatus();
     	   completed=order.getCompletedtimestamp() == null ? 0 : 1;
+    	   
+    	   if(order.getAssignedto().getUsercode() != 0) {
+    			 assigneduser=order.getAssignedto();
+    			 isassigned=1;
+  	  		 }else {
+  	  			 isassigned=0;
+  	  		 }
     	}
     	
     	if(completed ==0 && (cancel == 0) && (approvelstatus != 3)){
@@ -2634,7 +2682,11 @@ public class StarterRunner {
 	                e.printStackTrace(); // Consider logging this properly
 	            
 	                }
-	    	    insernotification(configuration,Details,notification,path,objNotification.getUsercode(),cDate);
+	                if(isassigned == 0) {
+	                	insernotification(configuration,Details,notification,path,objNotification.getUsercode(),cDate,0);
+	                }else {
+	                	insernotification(configuration,Details,notification,path,objNotification.getUsercode(),cDate,assigneduser.getUsercode());
+	                }
 	    	    con.close();
 	    	}
     	}
