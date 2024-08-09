@@ -1475,3 +1475,5 @@ UPDATE lsusergrouprights SET sequenceorder = CASE
 END;
 
 DELETE FROM LSPasswordPolicy WHERE policycode NOT IN (SELECT MAX(policycode) FROM LSPasswordPolicy GROUP BY lssitemaster_sitecode);
+
+ALTER TABLE IF Exists lsautoregister ADD COLUMN IF NOT EXISTS timerIdname character varying(255);
