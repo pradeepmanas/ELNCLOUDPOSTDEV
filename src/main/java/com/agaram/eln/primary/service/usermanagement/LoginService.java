@@ -1767,7 +1767,7 @@ public class LoginService {
 		LSuserMaster userDetails = lsuserMasterRepository.findTop1ByUsernameIgnoreCaseAndLoginfromAndLssitemaster(
 				objuser.getUsername(), "1", objuser.getLssitemaster());
 
-		LSPasswordPolicy policydays = LSPasswordPolicyRepository.findByLssitemaster(objuser.getLssitemaster());
+		LSPasswordPolicy policydays = LSPasswordPolicyRepository.findTopByAndLssitemasterOrderByPolicycodeDesc(objuser.getLssitemaster());
 		if (policydays == null) {
 			LSSiteMaster lssitemaster = new LSSiteMaster();
 			lssitemaster.setSitecode(1);

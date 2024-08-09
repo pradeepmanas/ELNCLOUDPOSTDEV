@@ -13,6 +13,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -27,6 +29,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -228,6 +231,7 @@ import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
+import java.util.UUID;
 
 @Service
 //@EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
@@ -485,11 +489,15 @@ public class InstrumentService {
 
 	@Autowired
 	private LsAutoregisterRepository lsautoregisterrepo;
-	
+
 	@Autowired
 	private LogilablimsorderdetailsRepository logilablimsorderdetailsRepository;
 
 	private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
+
+	private static Map<String, Timer> timerMap = new HashMap<>();
+	private static Map<String, Boolean> timerStatusMap = new HashMap<>();
+	 private ConcurrentHashMap<String, LSlogilablimsorderdetail> orderDetailMap = new ConcurrentHashMap<>();
 //	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 //		Map<String, Object> obj = new HashMap<>();
 //		List<String> lsInst = new ArrayList<String>();
@@ -814,83 +822,97 @@ public class InstrumentService {
 //
 //		return objorder;
 //	}
+	public static String generateUniqueTimerId() {
+		return UUID.randomUUID().toString();
+	}
 
-	public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail objorderindex)
-			throws IOException, ParseException {
 
-		List <LSlogilablimsorderdetail> oldorder = lslogilablimsorderdetailRepository.findBybatchcode(objorderindex.getBatchcode());
-		LSlogilablimsorderdetail objorderindex1=oldorder.get(0);
-		
-		LSlogilablimsorderdetail orderdetail = null;
-		List<LsAutoregister> autoorder = lsautoregisterrepo.findByBatchcodeAndScreen(objorderindex1.getBatchcode(),objorderindex1.getLsautoregisterorders().getScreen());
+	public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail objorderindex,
+			String timerId1) throws IOException, ParseException {
+
+		List<LSlogilablimsorderdetail> oldorder = lslogilablimsorderdetailRepository
+				.findBybatchcode(objorderindex.getBatchcode());
+		LSlogilablimsorderdetail objorderindex1 = oldorder.get(0);
+
+//		LSlogilablimsorderdetail orderdetail = null;
+		List<LsAutoregister> autoorder = lsautoregisterrepo.findByBatchcodeAndScreen(objorderindex1.getBatchcode(),
+				objorderindex1.getLsautoregisterorders().getScreen());
 		Integer Ismultitenant = autoorder.get(0).getIsmultitenant();
 
-		objorderindex1.setRepeat(false);
-		lslogilablimsorderdetailRepository.save(objorderindex1);
+		Integer autoregistercount = objorderindex1.getAutoregistercount();
+		if(autoorder != null) {
+			autoorder.get(0).setRepeat(false);
+			lsautoregisterrepo.save(autoorder.get(0));
+		}
 		
-		//objorderindex.getLsautoregisterorders().setStoptime(commonfunction.getCurrentUtcTime());
-		//lsautoregisterrepo.save(objorderindex.getLsautoregisterorders());
-
-		if (objorderindex1.getAutoregistercount() != null && objorderindex1.getAutoregistercount() > 0) {
-
+		if (autoregistercount > 0) {
+//			Integer autoregistercountObj = objorderindex1.getAutoregistercount() - 1;
+			objorderindex1.setRepeat(false);
+			objorderindex1.setAutoregistercount(0);
+			lslogilablimsorderdetailRepository.save(objorderindex1);
+			
+			
+		}
+		if (autoregistercount != null && autoregistercount > 0) {
+			autoregistercount = autoregistercount - 1;
 			List<LsAutoregister> listauto = new ArrayList<LsAutoregister>();
 
 			if (autoorder.get(0).getBatchcode().equals(objorderindex1.getBatchcode())) {
 
 				Date currentdate = commonfunction.getCurrentUtcTime();
-				if (autoorder.get(0).getTimespan().equals("Days")) {
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(currentdate);
-					calendar.add(Calendar.DAY_OF_MONTH, autoorder.get(0).getInterval());
-
-					Date futureDate = calendar.getTime();
-					autoorder.get(0).setAutocreatedate(futureDate);
-				} else if (autoorder.get(0).getTimespan().equals("Week")) {
-
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(currentdate);
-					calendar.add(Calendar.DAY_OF_MONTH, (autoorder.get(0).getInterval() * 7));
-
-					Date futureDate = calendar.getTime();
+				if (autoorder.get(0).getDelayinminutes() != null) {
+					Instant now = Instant.now();
+					Instant futureInstant = now.plus(Duration.ofMillis(autoorder.get(0).getDelayinminutes()));
+					Date futureDate = Date.from(futureInstant);
 					autoorder.get(0).setAutocreatedate(futureDate);
 				} else {
+					if (autoorder.get(0).getTimespan().equals("Days")) {
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(currentdate);
+						calendar.add(Calendar.DAY_OF_MONTH, autoorder.get(0).getInterval());
 
-//					Calendar calendar = Calendar.getInstance();
-//					calendar.setTime(currentdate);
-//					calendar.add(Calendar.HOUR_OF_DAY, (autoorder.get(0).getInterval()));
-//					Date futureDate = calendar.getTime();
-//					autoorder.get(0).setAutocreatedate(futureDate);
+						Date futureDate = calendar.getTime();
+						autoorder.get(0).setAutocreatedate(futureDate);
+					} else if (autoorder.get(0).getTimespan().equals("Week")) {
 
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(currentdate);
-					// calendar.add(Calendar.HOUR_OF_DAY,(autoorder.get(0).getInterval()));
-					calendar.add(Calendar.MINUTE, (10));
-					Date futureDate = calendar.getTime();
-					autoorder.get(0).setAutocreatedate(futureDate);
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(currentdate);
+						calendar.add(Calendar.DAY_OF_MONTH, (autoorder.get(0).getInterval() * 7));
+
+						Date futureDate = calendar.getTime();
+						autoorder.get(0).setAutocreatedate(futureDate);
+					} else {
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(currentdate);
+						calendar.add(Calendar.MINUTE, (10));
+						Date futureDate = calendar.getTime();
+						autoorder.get(0).setAutocreatedate(futureDate);
+					}
+
 				}
-
 				autoorder.get(0).setRegcode(null);
 				autoorder.get(0).setBatchcode(null);
 				autoorder.get(0).setStoptime(null);
 				autoorder.get(0).setScreen("Sheet_Order");
-				if (objorderindex1.getAutoregistercount() - 1 == 0) {
+//				if (autoregistercount == 0) {
 					autoorder.get(0).setIsautoreg(false);
-				} else {
-					autoorder.get(0).setIsautoreg(true);
-				}
+//				} else {
+//					autoorder.get(0).setIsautoreg(true);
+//				}
 
 				listauto.add(autoorder.get(0));
 				objorderindex1.setLsautoregisterorders(listauto.get(0));
 
 			}
-			
-			lsautoregisterrepo.save(listauto);
-			Integer autoregistercount = objorderindex1.getAutoregistercount() - 1;
-//			objorderindex.setAutoregistercount(autoregistercount);
-			//lslogilablimsorderdetailRepository.save(objorderindex);
 
-			objorderindex1.setLsworkflow(lsworkflowRepository
-					.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorderindex1.getLsuserMaster().getLssitemaster()));
+			listauto.get(0).setTimerIdname(timerId1);
+			lsautoregisterrepo.save(listauto);
+			timerStatusMap.put(timerId1, true);
+//			objorderindex.setAutoregistercount(autoregistercount);
+			// lslogilablimsorderdetailRepository.save(objorderindex);
+
+			objorderindex1.setLsworkflow(lsworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(
+					objorderindex1.getLsuserMaster().getLssitemaster()));
 
 			objorderindex1.setOrderflag("N");
 
@@ -1004,8 +1026,7 @@ public class InstrumentService {
 //				objorderindex.setLockeduser(objorderindex.getAssignedto().getUsercode());
 //				objorderindex.setLockedusername(objorderindex.getAssignedto().getUsername());
 //			}
-			
-			
+
 			try {
 				objorderindex1.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
 			} catch (ParseException e) {
@@ -1019,6 +1040,11 @@ public class InstrumentService {
 			lslogilablimsorderdetailRepository.save(objorderindex1);
 			if (objorderindex1.getLsautoregisterorders() != null) {
 				objorderindex1.getLsautoregisterorders().setBatchcode(objorderindex1.getBatchcode());
+				if (autoregistercount == 0) {
+					autoorder.get(0).setIsautoreg(false);
+				} else {
+					autoorder.get(0).setIsautoreg(true);
+				}
 				lsautoregisterrepo.save(objorderindex1.getLsautoregisterorders());
 			}
 
@@ -1090,9 +1116,9 @@ public class InstrumentService {
 				}
 			}
 
-			 lssamplefileRepository.setbatchcodeOnsamplefile(objorderindex1.getBatchcode(),
-					 objorderindex1.getLssamplefile().getFilesamplecode());
-			 
+			lssamplefileRepository.setbatchcodeOnsamplefile(objorderindex1.getBatchcode(),
+					objorderindex1.getLssamplefile().getFilesamplecode());
+
 			final List<LSOrdernotification> ordernotList = new ArrayList<>(1);
 			if (objorderindex1.getCautiondate() != null && objorderindex1.getDuedate() != null) {
 				LSOrdernotification notobj = new LSOrdernotification();
@@ -1116,16 +1142,16 @@ public class InstrumentService {
 			}
 			objorderindex1.setOrdercancell(null);
 			lslogilablimsorderdetailRepository.save(objorderindex1);
-			
-			if (objorderindex1.getRepeat() != null && objorderindex1.getLsautoregisterorders() != null
-					&& objorderindex1.getRepeat()) {
-				try {
-					ValidateAutoRegister(objorderindex1);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+
+//			if (objorderindex1.getRepeat() != null && objorderindex1.getLsautoregisterorders() != null
+//					&& objorderindex1.getRepeat()) {
+//				try {
+//					scheduleAutoregduringregister(objorderindex1, autoorder.get(0).getDelayinminutes(),timerId1);
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
 
 			if (objorderindex1.getLssamplefile() != null) {
 				try {
@@ -1138,7 +1164,7 @@ public class InstrumentService {
 //			List<LSlogilablimsorderdetail> neworder = lslogilablimsorderdetailRepository.findBybatchcode(objorderindex.getBatchcode());
 //			neworder.get(0).setOrdercancell(null);
 //			lslogilablimsorderdetailRepository.save(neworder);
-			
+
 			objorderindex1.setLstworkflow(objorderindex1.getLstworkflow());
 
 			Content = null;
@@ -1165,12 +1191,35 @@ public class InstrumentService {
 			auditobj.setSystemcoments("Audittrail.Audittrailhistory.Audittype.IDS_AUDIT_SYSTEMGENERATED");
 			lscfttransactionRepository.save(auditobj);
 
+		} else {
+			String timerId = autoorder.get(0).getTimerIdname();
+			if (timerId != null) {
+				stopTimer(timerId);
+
+			}
+
 		}
 
-		return orderdetail;
+		return objorderindex1;
 	}
 
-	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder) throws IOException {
+	
+	 public void stopTimer(String timerId) {
+	        Timer timer = timerMap.get(timerId);
+	        if (timer != null) {
+	            timer.cancel();
+	            timer.purge(); 
+	            timerMap.remove(timerId); 
+	            timerStatusMap.remove(timerId);
+	            orderDetailMap.remove(timerId);
+	            System.out.println("Timer " + timerId + " stopped.");
+	        } else {
+	            System.out.println("No timer found with ID " + timerId);
+	        }
+	    }
+	
+	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder)
+			throws IOException, ParseException {
 		objorder.setLsworkflow(lsworkflowRepository
 				.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
 
@@ -1273,13 +1322,22 @@ public class InstrumentService {
 		}
 
 		lslogilablimsorderdetailRepository.save(objorder);
-
+		long milliseconds = 0;
+		String timerId1 = generateUniqueTimerId();
 		if (objorder.getRepeat() != null && objorder.getLsautoregisterorderdetail() != null && objorder.getRepeat()) {
 			final List<LsAutoregister> autoordernotList = new ArrayList<>(1);
 
+			Map<String, Object> RtnObject = commonfunction.getdelaymillisecondforautoregister( objorder.getLsautoregisterorderdetail().getTimespan(),objorder.getLsautoregisterorderdetail().getInterval());
+			Date updatedDate = (Date) RtnObject.get("Date");
+			milliseconds = (long) RtnObject.get("delay");
+			objorder.getLsautoregisterorderdetail().setAutocreatedate(updatedDate);
 			objorder.getLsautoregisterorderdetail().setBatchcode(objorder.getBatchcode());
 			objorder.getLsautoregisterorderdetail().setRepeat(true);
-
+			objorder.getLsautoregisterorderdetail().setDelayinminutes(milliseconds);
+			objorder.getLsautoregisterorderdetail().setTimerIdname(timerId1);
+//			if(objorder.getAutoregistercount()!=null && objorder.getAutoregistercount() >0) {
+//				objorder.getLsautoregisterorderdetail().setIsautoreg(true);
+//			}
 			autoordernotList.add(lsautoregisterrepo.save(objorder.getLsautoregisterorderdetail()));
 			objorder.setLsautoregisterorders(autoordernotList.get(0));
 			lslogilablimsorderdetailRepository.save(objorder);
@@ -1383,7 +1441,7 @@ public class InstrumentService {
 		lslogilablimsorderdetailRepository.save(objorder);
 		if (objorder.getRepeat() != null && objorder.getLsautoregisterorderdetail() != null && objorder.getRepeat()) {
 			try {
-				ValidateAutoRegister(objorder);
+				scheduleAutoregduringregister(objorder, milliseconds, timerId1);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1416,87 +1474,73 @@ public class InstrumentService {
 		return objorder;
 	}
 
-	public void ValidateAutoRegister(LSlogilablimsorderdetail objlogilaborderdetail) throws ParseException {
-		// lsordernotificationrepo.save(objnotification);
-		scheduleAutoregduringregister(objlogilaborderdetail);
-	}
+//	public void ValidateAutoRegister(LSlogilablimsorderdetail objlogilaborderdetail,long milliseconds) throws ParseException {
+//		// lsordernotificationrepo.save(objnotification);
+//		scheduleAutoregduringregister(objlogilaborderdetail,milliseconds);
+//	}
 
-	public void scheduleAutoregduringregister(LSlogilablimsorderdetail objlogilaborderdetail) throws ParseException {
+	public void scheduleAutoregduringregister(LSlogilablimsorderdetail objlogilaborderdetail, long milliseconds,
+			String timerId1) throws ParseException {
 		Date AutoCreateDate = objlogilaborderdetail.getLsautoregisterorders().getAutocreatedate();
 		Instant autocreate = AutoCreateDate.toInstant();
-
 		LocalDateTime AutoCreateTime = LocalDateTime.ofInstant(autocreate, ZoneId.systemDefault());
 		LocalDateTime currentTime = LocalDateTime.now();
 
 		if (AutoCreateTime.isAfter(currentTime) && objlogilaborderdetail != null) {
-			Duration duration = Duration.between(currentTime, AutoCreateTime);
-			long delay = duration.toMillis();
-			scheduleAutoRegister(objlogilaborderdetail, delay);
+//			Duration duration = Duration.between(currentTime, AutoCreateTime);
+//			long delay = duration.toMillis();
+			long delay = milliseconds;
+			scheduleAutoRegister(objlogilaborderdetail, delay, timerId1);
 		}
 	}
 
-	private void scheduleAutoRegister(LSlogilablimsorderdetail objlogilaborderdetail, long delay) {
-
-//		if (scheduledTasks.containsKey(Integer.parseInt(objlogilaborderdetail.getBatchcode().toString()))) {
-//            System.out.println("Task already scheduled for batch ID: " + Integer.parseInt(objlogilaborderdetail.getBatchcode().toString()));
-//            return;
-//        }
-//		
-//		TimerTask task = new TimerTask() {
-//			@SuppressWarnings("unlikely-arg-type")
-//			public void run() {
-//				try {
-//					InsertAutoRegisterOrder(objlogilaborderdetail);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//				scheduledTasks.remove(objlogilaborderdetail.getBatchcode());
-//			}
-//		};
-//		Timer timer = new Timer();
-//		timer.schedule(task, delay);
-//		scheduledTasks.put(Integer.parseInt(objlogilaborderdetail.getBatchcode().toString()), task);
+	private void scheduleAutoRegister(LSlogilablimsorderdetail objlogilaborderdetail, long delay, String timerId1) {
+		Set<Integer> runningTasks = new HashSet<>();
 	
-        Set<Integer> runningTasks = new HashSet<>();
-    	int batchcode = objlogilaborderdetail.getBatchcode().intValue();
+		int batchcode = objlogilaborderdetail.getBatchcode().intValue();
+		synchronized (runningTasks) {
+			if (runningTasks.contains(batchcode)) {
+				System.out.println("Task already scheduled or running for batch ID: " + batchcode);
+				return;
+			}
+			if ((objlogilaborderdetail.getRepeat() != null && objlogilaborderdetail.getRepeat() != false)) {
+				Timer timer = new Timer();
+				TimerTask task = new TimerTask() {
+					@Override
+					public void run() {
+						try {
+							LSlogilablimsorderdetail objlogilaborderdetailObject=objlogilaborderdetail;
+							 Timer timerobj = timerMap.get(timerId1);
+							 if (timerobj == null) {
+								 timerMap.put(timerId1, timer);
+							 }else {
+								 objlogilaborderdetailObject=orderDetailMap.get(timerId1);
+							 }
+							 
+							 objlogilaborderdetailObject=InsertAutoRegisterOrder(objlogilaborderdetailObject, timerId1);
+							 orderDetailMap.put(timerId1, objlogilaborderdetailObject);
+							 System.out.println("kumu");
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} finally {
+							synchronized (runningTasks) {
+								runningTasks.remove(batchcode);
+							}
+							scheduledTasks.remove(batchcode);
+						}
+					}
+				};
+				runningTasks.add(batchcode);
 
-//    	if (scheduledTasks.containsKey(batchcode)) {
-//            System.out.println("Task already scheduled for batch ID: " + batchcode);
-//            return;
-//        }
-    	
-    	 synchronized (runningTasks) {
-    		 if (runningTasks.contains(batchcode)) {
-                 System.out.println("Task already scheduled or running for batch ID: " + batchcode);
-                 return;
-             }
-    		 
-    	if((objlogilaborderdetail.getRepeat()!=null && objlogilaborderdetail.getRepeat() != false)) {
-    		TimerTask task = new TimerTask() {
-				@Override
-	            public void run() {
-	                try {
-	                	InsertAutoRegisterOrder(objlogilaborderdetail);
-	                } catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} finally {
-                        synchronized (runningTasks) {
-                            runningTasks.remove(batchcode);
-                        }
-                        scheduledTasks.remove(batchcode);
-                    }
-	            }
-	        };
-	        runningTasks.add(batchcode);
-	        Timer timer = new Timer();
-	        timer.schedule(task, delay);
-	        scheduledTasks.put(batchcode, task);
-    	}
-      }
+//	        timer.schedule(task, delay);
+				timer.scheduleAtFixedRate(task, delay, delay);
+				scheduledTasks.put(batchcode, task);
+			}
+		}
 	}
 
 	private void createLogilabLIMSOrder4SDMS(LSlogilablimsorderdetail objLSlogilablimsorder) throws IOException {
@@ -1655,24 +1699,23 @@ public class InstrumentService {
 					Notifiction = "ORDERCOMPLETEDASSIGN";
 
 					Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
-					+ "\", \"previousworkflow\":\"" + "" + "\", \"previousworkflowcode\":\"" + -1
-					+ "\", \"currentworkflow\":\"" + objorder.getLsworkflow().getWorkflowname()
-					+ "\", \"assignedto\":\"" + objorder.getAssignedto().getUsername() + "\", \"completeduser\":\""
-					+ objorder.getObjLoggeduser().getUsername() + "\", \"currentworkflowcode\":\""
-					+ objorder.getLsworkflow().getWorkflowcode() + "\"}";
-					
+							+ "\", \"previousworkflow\":\"" + "" + "\", \"previousworkflowcode\":\"" + -1
+							+ "\", \"currentworkflow\":\"" + objorder.getLsworkflow().getWorkflowname()
+							+ "\", \"assignedto\":\"" + objorder.getAssignedto().getUsername()
+							+ "\", \"completeduser\":\"" + objorder.getObjLoggeduser().getUsername()
+							+ "\", \"currentworkflowcode\":\"" + objorder.getLsworkflow().getWorkflowcode() + "\"}";
+
 				} else {
-					
-				
-				Notifiction = "ORDERCREATIONANDASSIGN";
-				Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
-						+ "\", \"previousworkflow\":\"" + "" + "\", \"previousworkflowcode\":\"" + -1
-						+ "\", \"currentworkflow\":\"" + objorder.getLsworkflow().getWorkflowname()
-						+ "\", \"assignedto\":\"" + objorder.getAssignedto().getUsername() + "\", \"assignedby\":\""
-						+ objorder.getObjLoggeduser().getUsername() + "\", \"currentworkflowcode\":\""
-						+ objorder.getLsworkflow().getWorkflowcode() + "\"}";
+
+					Notifiction = "ORDERCREATIONANDASSIGN";
+					Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
+							+ "\", \"previousworkflow\":\"" + "" + "\", \"previousworkflowcode\":\"" + -1
+							+ "\", \"currentworkflow\":\"" + objorder.getLsworkflow().getWorkflowname()
+							+ "\", \"assignedto\":\"" + objorder.getAssignedto().getUsername() + "\", \"assignedby\":\""
+							+ objorder.getObjLoggeduser().getUsername() + "\", \"currentworkflowcode\":\""
+							+ objorder.getLsworkflow().getWorkflowcode() + "\"}";
 				}
-				
+
 				LSnotification objnotify = new LSnotification();
 				objnotify.setNotifationfrom(
 						lsuserMasterRepository.findByusercode(objorder.getObjLoggeduser().getUsercode()));
@@ -1684,7 +1727,7 @@ public class InstrumentService {
 				objnotify.setNotificationpath("/registertask");
 				objnotify.setNotificationfor(1);
 				lsnotificationRepository.save(objnotify);
-				
+
 			}
 			Details = null;
 			Notifiction = null;
@@ -3170,42 +3213,47 @@ public class InstrumentService {
 	}
 
 	public LogilabOrderDetails GetorderStatus(LSlogilablimsorderdetail objorder) throws IOException, ParseException {
-	      
-			 LogilabOrderDetails objupdatedorder = logilablimsorderdetailsRepository.findByBatchcode(objorder.getBatchcode());
-			objupdatedorder.setResponse(new Response());
-		    
-			if (objupdatedorder.getLockeduser() != null) {
 
-				if (objupdatedorder.getFiletype() != 1 && !objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R")
-						&& objupdatedorder.getAssignedto() == null
-						&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
+		LogilabOrderDetails objupdatedorder = logilablimsorderdetailsRepository
+				.findByBatchcode(objorder.getBatchcode());
+		objupdatedorder.setResponse(new Response());
 
-					objupdatedorder.getResponse().setInformation("IDS_SAME_USER_OPEN");
-					objupdatedorder.getResponse().setStatus(false);
+		if (objupdatedorder.getLockeduser() != null) {
 
-					return objupdatedorder;
-				} else if (!objorder.getIsmultitenant().equals(2)) {
-					LSuserMaster user = new LSuserMaster();
-					user.setUsercode(objupdatedorder.getLockeduser());
-					List<LSactiveUser> LSactiveUsr = lSactiveUserRepository.findByLsusermaster(user);
-					if (LSactiveUsr.isEmpty()) {
-						objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
-						objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
-						objupdatedorder.setActiveuser(objorder.getActiveuser());
-					}
-					objupdatedorder.setIsLock(1);
-//					lslogilablimsorderdetailRepository.save(objupdatedorder);
-					logilablimsorderdetailsRepository.UpdateOrderData(objorder.getObjLoggeduser().getUsercode(),objorder.getObjLoggeduser().getUsername(),objorder.getActiveuser(),objupdatedorder.getBatchcode());
+			if (objupdatedorder.getFiletype() != 1 && !objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R")
+					&& objupdatedorder.getAssignedto() == null
+					&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
+
+				objupdatedorder.getResponse().setInformation("IDS_SAME_USER_OPEN");
+				objupdatedorder.getResponse().setStatus(false);
+
+				return objupdatedorder;
+			} else if (!objorder.getIsmultitenant().equals(2)) {
+				LSuserMaster user = new LSuserMaster();
+				user.setUsercode(objupdatedorder.getLockeduser());
+				List<LSactiveUser> LSactiveUsr = lSactiveUserRepository.findByLsusermaster(user);
+				if (LSactiveUsr.isEmpty()) {
+					objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
+					objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
+					objupdatedorder.setActiveuser(objorder.getActiveuser());
 				}
-
-			} else if(!objorder.getIsmultitenant().equals(2)){
-				objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
-				objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
-				objupdatedorder.setActiveuser(objorder.getActiveuser());
 				objupdatedorder.setIsLock(1);
-//				lslogilablimsorderdetailRepository.save(objupdatedorder);
-				logilablimsorderdetailsRepository.UpdateOrderData(objorder.getObjLoggeduser().getUsercode(),objorder.getObjLoggeduser().getUsername(),objorder.getActiveuser(),objupdatedorder.getBatchcode());
+//					lslogilablimsorderdetailRepository.save(objupdatedorder);
+				logilablimsorderdetailsRepository.UpdateOrderData(objorder.getObjLoggeduser().getUsercode(),
+						objorder.getObjLoggeduser().getUsername(), objorder.getActiveuser(),
+						objupdatedorder.getBatchcode());
 			}
+
+		} else if (!objorder.getIsmultitenant().equals(2)) {
+			objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
+			objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
+			objupdatedorder.setActiveuser(objorder.getActiveuser());
+			objupdatedorder.setIsLock(1);
+//				lslogilablimsorderdetailRepository.save(objupdatedorder);
+			logilablimsorderdetailsRepository.UpdateOrderData(objorder.getObjLoggeduser().getUsercode(),
+					objorder.getObjLoggeduser().getUsername(), objorder.getActiveuser(),
+					objupdatedorder.getBatchcode());
+		}
 //			System.out.println("Locked User End  " + dtf.format(LocalDateTime.now()));
 //			if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
 //				int i = 0;
@@ -3216,101 +3264,102 @@ public class InstrumentService {
 //			}
 //			objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
 //			System.out.println("Work Flow Start  " + dtf.format(LocalDateTime.now()));
-			if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
-				List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode)
-						.collect(Collectors.toList());
-				if (objorder.getLstworkflow() != null && objupdatedorder.getLsworkflow() != null
-						&& lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode())) {
-					objupdatedorder.setCanuserprocess(true);
-				} else {
-					objupdatedorder.setCanuserprocess(false);
-				}
-			}
-//			System.out.println("Work Flow ENd  " + dtf.format(LocalDateTime.now()));
-			if (objupdatedorder.getFiletype() == 0) {
-				List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
-						.findBybatchid(objupdatedorder.getBatchid());
-				objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
+		if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
+			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode)
+					.collect(Collectors.toList());
+			if (objorder.getLstworkflow() != null && objupdatedorder.getLsworkflow() != null
+					&& lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode())) {
 				objupdatedorder.setCanuserprocess(true);
-				objupdatedorder
-				.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
-				lsLogilaborders = null;
-			}
-			if (objupdatedorder.getLockeduser() != null && objorder.getObjLoggeduser() != null
-					&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
-				objupdatedorder.setIsLockbycurrentuser(1);
 			} else {
-				objupdatedorder.setIsLockbycurrentuser(0);
+				objupdatedorder.setCanuserprocess(false);
 			}
+		}
+//			System.out.println("Work Flow ENd  " + dtf.format(LocalDateTime.now()));
+		if (objupdatedorder.getFiletype() == 0) {
+			List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
+					.findBybatchid(objupdatedorder.getBatchid());
+			objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
+			objupdatedorder.setCanuserprocess(true);
+			objupdatedorder
+					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
+			lsLogilaborders = null;
+		}
+		if (objupdatedorder.getLockeduser() != null && objorder.getObjLoggeduser() != null
+				&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
+			objupdatedorder.setIsLockbycurrentuser(1);
+		} else {
+			objupdatedorder.setIsLockbycurrentuser(0);
+		}
 //			System.out.println("Work Flow Final Step Start  " + dtf.format(LocalDateTime.now()));
-			if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
-				LSworkflow objlastworkflow = lsworkflowRepository
-						.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
-				if (objlastworkflow != null && objupdatedorder.getLsworkflow() != null
-						&& objupdatedorder.getLsworkflow().equals(objlastworkflow)) {
-					objupdatedorder.setIsFinalStep(1);
-				} else {
-					objupdatedorder.setIsFinalStep(0);
-				}
+		if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
+			LSworkflow objlastworkflow = lsworkflowRepository
+					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
+			if (objlastworkflow != null && objupdatedorder.getLsworkflow() != null
+					&& objupdatedorder.getLsworkflow().equals(objlastworkflow)) {
+				objupdatedorder.setIsFinalStep(1);
+			} else {
+				objupdatedorder.setIsFinalStep(0);
 			}
+		}
 //			System.out.println("Work Flow Final Step End  " + dtf.format(LocalDateTime.now()));
-			if (objupdatedorder.getFiletype() == 0) {
-				objupdatedorder
-						.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
-			}
+		if (objupdatedorder.getFiletype() == 0) {
+			objupdatedorder
+					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
+		}
 //			System.out.println("Get File Content Start  " + dtf.format(LocalDateTime.now()));
-			if (objupdatedorder.getLssamplefile() != null) {
-				if (objorder.getIsmultitenant() == 1 || objorder.getIsmultitenant() == 2) {
-					CloudOrderCreation objCreation = cloudOrderCreationRepository
-							.findById((long) objupdatedorder.getLssamplefile().getFilesamplecode());
-					if (objCreation != null && objCreation.getContainerstored() == 0) {
-						objupdatedorder.getLssamplefile().setFilecontent(objCreation.getContent());
-					} else {
-						objupdatedorder.getLssamplefile().setFilecontent(
-								objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
-										commonfunction.getcontainername(objorder.getIsmultitenant(),
-												TenantContext.getCurrentTenant()) + "ordercreation"));
-					}
+		if (objupdatedorder.getLssamplefile() != null) {
+			if (objorder.getIsmultitenant() == 1 || objorder.getIsmultitenant() == 2) {
+				CloudOrderCreation objCreation = cloudOrderCreationRepository
+						.findById((long) objupdatedorder.getLssamplefile().getFilesamplecode());
+				if (objCreation != null && objCreation.getContainerstored() == 0) {
+					objupdatedorder.getLssamplefile().setFilecontent(objCreation.getContent());
+				} else {
+					objupdatedorder.getLssamplefile().setFilecontent(
+							objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
+									commonfunction.getcontainername(objorder.getIsmultitenant(),
+											TenantContext.getCurrentTenant()) + "ordercreation"));
+				}
+			} else {
+
+				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename")
+						.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
+				if (largefile == null) {
+					largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id")
+							.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
+				}
+
+				if (largefile != null) {
+					objupdatedorder.getLssamplefile()
+							.setFilecontent(new BufferedReader(
+									new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+									.collect(Collectors.joining("\n")));
 				} else {
 
-					GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename")
-							.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
-					if (largefile == null) {
-						largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id")
-								.is("order_" + objupdatedorder.getLssamplefile().getFilesamplecode())));
-					}
-
-					if (largefile != null) {
-						objupdatedorder.getLssamplefile()
-								.setFilecontent(new BufferedReader(
-										new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-										.collect(Collectors.joining("\n")));
-					} else {
-
-						if (mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
-								OrderCreation.class) != null) {
-							objupdatedorder.getLssamplefile().setFilecontent(mongoTemplate
-									.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class)
-									.getContent());
-						}
+					if (mongoTemplate.findById(objupdatedorder.getLssamplefile().getFilesamplecode(),
+							OrderCreation.class) != null) {
+						objupdatedorder.getLssamplefile().setFilecontent(mongoTemplate
+								.findById(objupdatedorder.getLssamplefile().getFilesamplecode(), OrderCreation.class)
+								.getContent());
 					}
 				}
 			}
+		}
 //			System.out.println("Get File Content End  " + dtf.format(LocalDateTime.now()));
 //			lsLogilaborders = null;
-			objupdatedorder.setLstworkflow(objorder.getLstworkflow());
+		objupdatedorder.setLstworkflow(objorder.getLstworkflow());
 
-			if (objorder.getLsuserMaster() != null && objorder.getLsuserMaster().getUnifieduserid() != null) {
-				LScentralisedUsers objUserId = new LScentralisedUsers();
-				objUserId.setUnifieduserid(objorder.getLsuserMaster().getUnifieduserid());
-				objupdatedorder.setLscentralisedusers(userService.Getcentraliseduserbyid(objUserId));
-			}
-			objupdatedorder.getResponse().setStatus(true);
-			objupdatedorder.setLsorderworkflowhistory(lsorderworkflowhistoryRepositroy.findByBatchcodeOrderByHistorycode(objupdatedorder.getBatchcode()));
+		if (objorder.getLsuserMaster() != null && objorder.getLsuserMaster().getUnifieduserid() != null) {
+			LScentralisedUsers objUserId = new LScentralisedUsers();
+			objUserId.setUnifieduserid(objorder.getLsuserMaster().getUnifieduserid());
+			objupdatedorder.setLscentralisedusers(userService.Getcentraliseduserbyid(objUserId));
+		}
+		objupdatedorder.getResponse().setStatus(true);
+		objupdatedorder.setLsorderworkflowhistory(
+				lsorderworkflowhistoryRepositroy.findByBatchcodeOrderByHistorycode(objupdatedorder.getBatchcode()));
 //			objupdatedorder.setlSprotocolorderstephistory(
 //					lsprotocolorderstephistoryRepository.findByBatchcode(objupdatedorder.getBatchcode()));
 //			System.out.println("Return   " + dtf.format(LocalDateTime.now()));
-			return objupdatedorder;
+		return objupdatedorder;
 	}
 
 	public LSlogilablimsorderdetail GetorderStatusFromBatchID(LSlogilablimsorderdetail objorder) {
@@ -4832,7 +4881,8 @@ public class InstrumentService {
 						Content = objCreation.getContent();
 					} else {
 						Content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
-								commonfunction.getcontainername(objfile.getIsmultitenant(), TenantContext.getCurrentTenant()) + "orderversion");
+								commonfunction.getcontainername(objfile.getIsmultitenant(),
+										TenantContext.getCurrentTenant()) + "orderversion");
 					}
 				} else {
 
@@ -5029,8 +5079,9 @@ public class InstrumentService {
 			List<LSlogilablimsorderdetail> lstorder = new ArrayList<>();
 
 			if ("administrator".equalsIgnoreCase(lsusMaster.getUsername().trim())) {
-				lstorder = lslogilablimsorderdetailRepository.findByFiletypeAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-						filetype, lSfile, 3, filetype, lSfile);
+				lstorder = lslogilablimsorderdetailRepository
+						.findByFiletypeAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+								filetype, lSfile, 3, filetype, lSfile);
 			} else {
 				List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(lsusMaster);
 				List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
@@ -5052,7 +5103,8 @@ public class InstrumentService {
 					}
 				}
 
-				lstorder = lslogilablimsorderdetailRepository.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+				lstorder = lslogilablimsorderdetailRepository
+						.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
 								lstproject, filetype, lSfile, 3, lstproject, filetype, lSfile);
 
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
@@ -5066,11 +5118,13 @@ public class InstrumentService {
 //							List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
 
 							List<LSlogilablimsorderdetail> orderChunk = new ArrayList<>();
-							orderChunk.addAll(lslogilablimsorderdetailRepository.findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileOrderByBatchcodeDesc(
-										filetype, lSfile));
+							orderChunk.addAll(lslogilablimsorderdetailRepository
+									.findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileOrderByBatchcodeDesc(
+											filetype, lSfile));
 							for (int viewOption = 1; viewOption <= 3; viewOption++) {
-								orderChunk.addAll(lslogilablimsorderdetailRepository.findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrderByBatchcodeDesc(
-										currentChunk, filetype, viewOption, lSfile));
+								orderChunk.addAll(lslogilablimsorderdetailRepository
+										.findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrderByBatchcodeDesc(
+												currentChunk, filetype, viewOption, lSfile));
 							}
 							return orderChunk;
 						}).flatMap(List::stream).collect(Collectors.toList());
@@ -5186,8 +5240,9 @@ public class InstrumentService {
 
 		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
 		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
-			lstorder = lslogilablimsorderdetailRepository.findByFiletypeAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-					objorder.getFiletype(), 3, 1);
+			lstorder = lslogilablimsorderdetailRepository
+					.findByFiletypeAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+							objorder.getFiletype(), 3, 1);
 		} else {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
 					.findBylsuserMaster(objorder.getLsuserMaster());
@@ -5209,8 +5264,9 @@ public class InstrumentService {
 					sample = null; // Set sample to null after adding it to the list
 				}
 			}
-			lstorder = lslogilablimsorderdetailRepository.findByFiletypeAndLsprojectmasterInAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsprojectmasterInAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-					objorder.getFiletype(), lstproject, 3, objorder.getFiletype(), lstproject);
+			lstorder = lslogilablimsorderdetailRepository
+					.findByFiletypeAndLsprojectmasterInAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsprojectmasterInAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+							objorder.getFiletype(), lstproject, 3, objorder.getFiletype(), lstproject);
 
 //			lstorder = lslogilablimsorderdetailRepository
 //					.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterInOrderByBatchcodeDesc(
@@ -5291,8 +5347,9 @@ public class InstrumentService {
 
 		LSlogilablimsorderdetail objorder = lslogilablimsorderdetailRepository.findOne(batchcode);
 
-		LsOrderattachments parentobjattachment = lsOrderattachmentsRepository.findFirst1ByFilenameAndBatchcodeOrderByAttachmentcodeDesc(filename,batchcode);
-		
+		LsOrderattachments parentobjattachment = lsOrderattachmentsRepository
+				.findFirst1ByFilenameAndBatchcodeOrderByAttachmentcodeDesc(filename, batchcode);
+
 		LsOrderattachments objattachment = new LsOrderattachments();
 
 		if (islargefile == 0) {
@@ -5307,20 +5364,17 @@ public class InstrumentService {
 			}
 		}
 
-		if(parentobjattachment != null && filename!= null && filename.lastIndexOf(".")>-1)
-		{
-			Integer versiondata = parentobjattachment.getVersion()!=null? parentobjattachment.getVersion()+1:1;
+		if (parentobjattachment != null && filename != null && filename.lastIndexOf(".") > -1) {
+			Integer versiondata = parentobjattachment.getVersion() != null ? parentobjattachment.getVersion() + 1 : 1;
 			String originalname = filename.substring(0, filename.lastIndexOf("."));
 			String extension = filename.substring(filename.lastIndexOf("."), filename.length());
-			objattachment.setFilename(originalname+"_V"+(versiondata)+extension);
+			objattachment.setFilename(originalname + "_V" + (versiondata) + extension);
 			parentobjattachment.setVersion(versiondata);
 			lsOrderattachmentsRepository.save(parentobjattachment);
-		}
-		else
-		{
+		} else {
 			objattachment.setFilename(filename);
 		}
-		
+
 		objattachment.setFileextension(fileexe);
 		objattachment.setCreateby(lsuserMasterRepository.findByusercode(usercode));
 		objattachment.setCreatedate(currentdate);
@@ -5365,8 +5419,9 @@ public class InstrumentService {
 
 		LSlogilablimsorderdetail objorder = lslogilablimsorderdetailRepository.findOne(batchcode);
 
-		LsOrderattachments parentobjattachment = lsOrderattachmentsRepository.findFirst1ByFilenameAndBatchcodeOrderByAttachmentcodeDesc(filename,batchcode);
-		
+		LsOrderattachments parentobjattachment = lsOrderattachmentsRepository
+				.findFirst1ByFilenameAndBatchcodeOrderByAttachmentcodeDesc(filename, batchcode);
+
 		LsOrderattachments objattachment = new LsOrderattachments();
 
 		if (islargefile == 0) {
@@ -5376,17 +5431,14 @@ public class InstrumentService {
 			}
 		}
 
-		if(parentobjattachment != null && filename!= null && filename.lastIndexOf(".")>-1)
-		{
-			Integer versiondata = parentobjattachment.getVersion()!=null? parentobjattachment.getVersion()+1:1;
+		if (parentobjattachment != null && filename != null && filename.lastIndexOf(".") > -1) {
+			Integer versiondata = parentobjattachment.getVersion() != null ? parentobjattachment.getVersion() + 1 : 1;
 			String originalname = filename.substring(0, filename.lastIndexOf("."));
 			String extension = filename.substring(filename.lastIndexOf("."), filename.length());
-			objattachment.setFilename(originalname+"_V"+(versiondata)+extension);
+			objattachment.setFilename(originalname + "_V" + (versiondata) + extension);
 			parentobjattachment.setVersion(versiondata);
 			lsOrderattachmentsRepository.save(parentobjattachment);
-		}
-		else
-		{
+		} else {
 			objattachment.setFilename(filename);
 		}
 		objattachment.setFileextension(fileexe);
@@ -6743,10 +6795,10 @@ public class InstrumentService {
 //			map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + commonfunction.getcontainername(multitenant, TenantContext.getCurrentTenant())
 //			+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
 //		}else {
-			map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + TenantContext.getCurrentTenant()
-			+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
+		map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + TenantContext.getCurrentTenant()
+				+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
 //		}
-		
+
 		return map;
 	}
 
@@ -6759,50 +6811,50 @@ public class InstrumentService {
 		objfile.setDirectorycode(directorycode);
 		objfile.setFilefor(filefor);
 		Response response = new Response();
-		
+
 //		Response response = validatefileexistonfolder(objfile);
 //		if (response.getStatus()) {
-			String uuID = "";
-			if (ismultitenant == 1 || ismultitenant == 2) {
-				uuID = cloudFileManipulationservice.storecloudfilesreturnwithpreUUID(file, "sheetfolderfiles", uid,
-						ismultitenant);
-			} else {
-				uuID = fileManipulationservice.storeLargeattachmentwithpreuid(file.getOriginalFilename(), file, uid);
-			}
+		String uuID = "";
+		if (ismultitenant == 1 || ismultitenant == 2) {
+			uuID = cloudFileManipulationservice.storecloudfilesreturnwithpreUUID(file, "sheetfolderfiles", uid,
+					ismultitenant);
+		} else {
+			uuID = fileManipulationservice.storeLargeattachmentwithpreuid(file.getOriginalFilename(), file, uid);
+		}
 
-			LSsheetfolderfiles parentobjattachment = lssheetfolderfilesRepository.findFirst1ByDirectorycodeAndFilenameOrderByFolderfilecode(directorycode, file.getOriginalFilename());
-			
-			LSsheetfolderfiles lsfiles = new LSsheetfolderfiles();
-			lsfiles.setUuid(uuID);
-			lsfiles.setFilesize(file.getSize());
-			lsfiles.setDirectorycode(directorycode);
-			
-			if(parentobjattachment != null && file.getOriginalFilename()!= null && file.getOriginalFilename().lastIndexOf(".")>-1)
-			{
-				Integer versiondata = parentobjattachment.getVersion()!=null? parentobjattachment.getVersion()+1:1;
-				String originalname = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."));
-				String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
-				lsfiles.setFilename(originalname+"_V"+(versiondata)+extension);
-				parentobjattachment.setVersion(versiondata);
-				lssheetfolderfilesRepository.save(parentobjattachment);
-			}
-			else
-			{
-				lsfiles.setFilename(file.getOriginalFilename());
-			}
-			
-			LSuserMaster lsuser = new LSuserMaster();
-			lsuser.setUsercode(usercode);
-			lsfiles.setCreateby(lsuser);
-			LSSiteMaster lssite = new LSSiteMaster();
-			lssite.setSitecode(sitecode);
-			lsfiles.setLssitemaster(lssite);
-			lsfiles.setFilefor(filefor);
-			lsfiles.setCreatedtimestamp(createddate);
-			lsfiles.setFileviewfor(fileviewfor);
-			lsfiles.setVersion(0);
+		LSsheetfolderfiles parentobjattachment = lssheetfolderfilesRepository
+				.findFirst1ByDirectorycodeAndFilenameOrderByFolderfilecode(directorycode, file.getOriginalFilename());
 
-			lssheetfolderfilesRepository.save(lsfiles);
+		LSsheetfolderfiles lsfiles = new LSsheetfolderfiles();
+		lsfiles.setUuid(uuID);
+		lsfiles.setFilesize(file.getSize());
+		lsfiles.setDirectorycode(directorycode);
+
+		if (parentobjattachment != null && file.getOriginalFilename() != null
+				&& file.getOriginalFilename().lastIndexOf(".") > -1) {
+			Integer versiondata = parentobjattachment.getVersion() != null ? parentobjattachment.getVersion() + 1 : 1;
+			String originalname = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."));
+			String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."),
+					file.getOriginalFilename().length());
+			lsfiles.setFilename(originalname + "_V" + (versiondata) + extension);
+			parentobjattachment.setVersion(versiondata);
+			lssheetfolderfilesRepository.save(parentobjattachment);
+		} else {
+			lsfiles.setFilename(file.getOriginalFilename());
+		}
+
+		LSuserMaster lsuser = new LSuserMaster();
+		lsuser.setUsercode(usercode);
+		lsfiles.setCreateby(lsuser);
+		LSSiteMaster lssite = new LSSiteMaster();
+		lssite.setSitecode(sitecode);
+		lsfiles.setLssitemaster(lssite);
+		lsfiles.setFilefor(filefor);
+		lsfiles.setCreatedtimestamp(createddate);
+		lsfiles.setFileviewfor(fileviewfor);
+		lsfiles.setVersion(0);
+
+		lssheetfolderfilesRepository.save(lsfiles);
 
 //		} else {
 //			response.setInformation("IDS_INFO_FILEEXIST");
@@ -6933,8 +6985,8 @@ public class InstrumentService {
 //			int ismultitenant = Integer.parseInt(env.getProperty("ismultitenant"));
 			if (isnew.equals("true")) {
 				cloudFileManipulationservice.movefiletoanothercontainerandremove(
-					TenantContext.getCurrentTenant() + "sheetimagestemp",
-					TenantContext.getCurrentTenant() + "sheetimages", copyfrom);
+						TenantContext.getCurrentTenant() + "sheetimagestemp",
+						TenantContext.getCurrentTenant() + "sheetimages", copyfrom);
 			}
 
 			try {
@@ -7229,11 +7281,12 @@ public class InstrumentService {
 		Response objResponse = new Response();
 		LSSheetOrderStructure lstdir = null;
 		if (objdir.getDirectorycode() != null) {
-			lstdir = lsSheetOrderStructureRepository.findByDirectorycodeAndParentdircodeAndDirectorynameNotAndSitemaster(
-					objdir.getDirectorycode(), objdir.getParentdircode(), objdir.getDirectoryname(),objdir.getSitemaster());
+			lstdir = lsSheetOrderStructureRepository
+					.findByDirectorycodeAndParentdircodeAndDirectorynameNotAndSitemaster(objdir.getDirectorycode(),
+							objdir.getParentdircode(), objdir.getDirectoryname(), objdir.getSitemaster());
 		} else {
 			lstdir = lsSheetOrderStructureRepository.findByDirectorynameIgnoreCaseAndParentdircodeAndSitemaster(
-					objdir.getDirectoryname(), objdir.getParentdircode(),objdir.getSitemaster());
+					objdir.getDirectoryname(), objdir.getParentdircode(), objdir.getSitemaster());
 		}
 		if (lstdir != null) {
 			objResponse.setStatus(false);
@@ -7379,63 +7432,73 @@ public class InstrumentService {
 		Date fromdate = objdir.getObjuser().getFromdate();
 		Date todate = objdir.getObjuser().getTodate();
 		Integer filetype = objdir.getFiletype();
-		
-		
 
 		if (filetype != null && filetype == -1) {
 			if (objdir.getLstuserMaster() == null) {
-				
-				if(objdir.getDirectorycode()==-3L || objdir.getDirectorycode()==-22L) {
+
+				if (objdir.getDirectorycode() == -3L || objdir.getDirectorycode() == -22L) {
 //					
-					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, fromdate, todate,objdir.getCreatedby());
-				}else {
-					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, fromdate, todate);
-				
+					lstorder = lslogilablimsorderdetailRepository
+							.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(
+									objdir.getDirectorycode(), 1, fromdate, todate, objdir.getCreatedby());
+				} else {
+					lstorder = lslogilablimsorderdetailRepository
+							.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+									objdir.getDirectorycode(), 1, fromdate, todate);
+
 				}
 				lstorder.addAll(lslogilablimsorderdetailRepository
 						.findByDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-								 objdir.getDirectorycode(), 2,
-								objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3,
-								objdir.getCreatedby(), fromdate, todate));
-				
+								objdir.getDirectorycode(), 2, objdir.getCreatedby(), fromdate, todate,
+								objdir.getDirectorycode(), 3, objdir.getCreatedby(), fromdate, todate));
+
 			} else {
-				if(objdir.getDirectorycode()==-3L|| objdir.getDirectorycode()==-22L) {
-					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, fromdate, todate,objdir.getCreatedby());
-				}else {
-					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, fromdate, todate);
-					
+				if (objdir.getDirectorycode() == -3L || objdir.getDirectorycode() == -22L) {
+					lstorder = lslogilablimsorderdetailRepository
+							.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(
+									objdir.getDirectorycode(), 1, fromdate, todate, objdir.getCreatedby());
+				} else {
+					lstorder = lslogilablimsorderdetailRepository
+							.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+									objdir.getDirectorycode(), 1, fromdate, todate);
+
 				}
 				lstorder.addAll(lslogilablimsorderdetailRepository
 						.findByDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
-								 objdir.getDirectorycode(), 2,
-								objdir.getCreatedby(), fromdate, todate, objdir.getDirectorycode(), 3, fromdate, todate,
-								objdir.getLstuserMaster()));
-				
+								objdir.getDirectorycode(), 2, objdir.getCreatedby(), fromdate, todate,
+								objdir.getDirectorycode(), 3, fromdate, todate, objdir.getLstuserMaster()));
+
 			}
 		} else {
 			if (objdir.getLstuserMaster() == null) {
-				if(objdir.getDirectorycode()==-3L|| objdir.getDirectorycode()==-22L) {
-					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, filetype, fromdate, todate,objdir.getCreatedby());
-				}else {
-					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, filetype, fromdate, todate);
+				if (objdir.getDirectorycode() == -3L || objdir.getDirectorycode() == -22L) {
+					lstorder = lslogilablimsorderdetailRepository
+							.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(
+									objdir.getDirectorycode(), 1, filetype, fromdate, todate, objdir.getCreatedby());
+				} else {
+					lstorder = lslogilablimsorderdetailRepository
+							.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+									objdir.getDirectorycode(), 1, filetype, fromdate, todate);
 				}
 				lstorder.addAll(lslogilablimsorderdetailRepository
 						.findByDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-								 objdir.getDirectorycode(), 2,
-								objdir.getCreatedby(), filetype, fromdate, todate, objdir.getDirectorycode(), 3,
-								objdir.getCreatedby(), filetype, fromdate, todate));
+								objdir.getDirectorycode(), 2, objdir.getCreatedby(), filetype, fromdate, todate,
+								objdir.getDirectorycode(), 3, objdir.getCreatedby(), filetype, fromdate, todate));
 
 			} else {
-				if(objdir.getDirectorycode()==-3L|| objdir.getDirectorycode()==-22L) {
-					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, filetype, fromdate, todate,objdir.getCreatedby());
-				}else {
-					lstorder = lslogilablimsorderdetailRepository.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(objdir.getDirectorycode(), 1, filetype, fromdate, todate);
+				if (objdir.getDirectorycode() == -3L || objdir.getDirectorycode() == -22L) {
+					lstorder = lslogilablimsorderdetailRepository
+							.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(
+									objdir.getDirectorycode(), 1, filetype, fromdate, todate, objdir.getCreatedby());
+				} else {
+					lstorder = lslogilablimsorderdetailRepository
+							.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+									objdir.getDirectorycode(), 1, filetype, fromdate, todate);
 				}
 				lstorder.addAll(lslogilablimsorderdetailRepository
 						.findByDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
-							 objdir.getDirectorycode(), 2,
-								objdir.getCreatedby(), filetype, fromdate, todate, objdir.getDirectorycode(), 3,
-								filetype, fromdate, todate, objdir.getLstuserMaster()));
+								objdir.getDirectorycode(), 2, objdir.getCreatedby(), filetype, fromdate, todate,
+								objdir.getDirectorycode(), 3, filetype, fromdate, todate, objdir.getLstuserMaster()));
 
 			}
 		}
@@ -7448,11 +7511,12 @@ public class InstrumentService {
 		}
 		if (objdir.getSearchCriteria() != null && objdir.getSearchCriteria().getContentsearchtype() != null
 				&& objdir.getSearchCriteria().getContentsearch() != null) {
-		//	lstorderstrcarray.forEach(objorderDetail -> objorderDetail.setCanuserprocess(true));
+			// lstorderstrcarray.forEach(objorderDetail ->
+			// objorderDetail.setCanuserprocess(true));
 
 			return lstorderstrcarray;
 		} else {
-			//lstorder.forEach(objorderDetail -> objorderDetail.setCanuserprocess(true));
+			// lstorder.forEach(objorderDetail -> objorderDetail.setCanuserprocess(true));
 
 			return lstorder;
 		}
@@ -7930,16 +7994,18 @@ public class InstrumentService {
 			if ((objdir.getLstuserMaster() == null) || objdir.getLstuserMaster().length == 0) {
 				retuobj = LSlogilabprotocoldetailRepository
 						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
-								objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
-								objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
+								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getSitemaster().getSitecode(),
+								objdir.getDirectorycode(), 2, objdir.getCreatedby(), fromdate, todate,
+								objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
+								objdir.getCreatedby(), fromdate, todate, objdir.getSitemaster().getSitecode());
 
 			} else {
 				retuobj = LSlogilabprotocoldetailRepository
 						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
-								objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, fromdate, todate,
-								objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
+								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getSitemaster().getSitecode(),
+								objdir.getDirectorycode(), 2, objdir.getCreatedby(), fromdate, todate,
+								objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, fromdate, todate,
+								objdir.getLstuserMaster(), objdir.getSitemaster().getSitecode());
 
 			}
 
@@ -7950,16 +8016,20 @@ public class InstrumentService {
 					retuobj = LSlogilabprotocoldetailRepository
 							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
 									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate,
-									todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(), 1,
-									objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
-									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
+									todate, objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+									protocoltype, objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
+									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
+									objdir.getSitemaster().getSitecode());
 				} else {
 					retuobj = LSlogilabprotocoldetailRepository
 							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,objdir.getSitemaster().getSitecode(),
-									objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(),
-									objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
-									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
+									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype,
+									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
+									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
+									objdir.getSitemaster().getSitecode());
 				}
 			} else {
 				if (objdir.getRejected() != null) {
@@ -7967,16 +8037,20 @@ public class InstrumentService {
 					retuobj = LSlogilabprotocoldetailRepository
 							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
 									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate,
-									todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(), 1,
-									objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
-									objdir.getOrderflag(), 1, fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
+									todate, objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+									protocoltype, objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
+									objdir.getOrderflag(), 1, fromdate, todate, objdir.getLstuserMaster(),
+									objdir.getSitemaster().getSitecode());
 				} else {
 					retuobj = LSlogilabprotocoldetailRepository
 							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,objdir.getSitemaster().getSitecode(),
-									objdir.getDirectorycode(), 2, protocoltype, objdir.getOrderflag(),
-									objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
-									objdir.getOrderflag(), fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
+									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype,
+									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
+									objdir.getOrderflag(), fromdate, todate, objdir.getLstuserMaster(),
+									objdir.getSitemaster().getSitecode());
 				}
 			}
 		} else if (protocoltype == -1 && objdir.getOrderflag() != null) {
@@ -7984,33 +8058,41 @@ public class InstrumentService {
 				if (objdir.getRejected() != null) {
 					retuobj = LSlogilabprotocoldetailRepository
 							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,objdir.getSitemaster().getSitecode(),
-									objdir.getDirectorycode(), 2, objdir.getOrderflag(), 1, objdir.getCreatedby(),
-									fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, objdir.getOrderflag(), 1,
-									objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
+									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
+									objdir.getSitemaster().getSitecode());
 				} else {
 					retuobj = LSlogilabprotocoldetailRepository
 							.findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,objdir.getSitemaster().getSitecode(),
-									objdir.getDirectorycode(), 2, objdir.getOrderflag(), objdir.getCreatedby(),
-									fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, objdir.getOrderflag(),
-									objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
+									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
+									objdir.getSitemaster().getSitecode());
 				}
 			} else {
 				if (objdir.getRejected() != null) {
 					retuobj = LSlogilabprotocoldetailRepository
 							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,objdir.getSitemaster().getSitecode(),
-									objdir.getDirectorycode(), 2, objdir.getOrderflag(), 1, objdir.getCreatedby(),
-									fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, objdir.getOrderflag(), 1, fromdate,
-									todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
+									objdir.getOrderflag(), 1, fromdate, todate, objdir.getLstuserMaster(),
+									objdir.getSitemaster().getSitecode());
 				} else {
 					retuobj = LSlogilabprotocoldetailRepository
 							.findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,objdir.getSitemaster().getSitecode(),
-									objdir.getDirectorycode(), 2, objdir.getOrderflag(), objdir.getCreatedby(),
-									fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, objdir.getOrderflag(), fromdate,
-									todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
+									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
+									objdir.getOrderflag(), fromdate, todate, objdir.getLstuserMaster(),
+									objdir.getSitemaster().getSitecode());
 				}
 
 			}
@@ -8018,15 +8100,19 @@ public class InstrumentService {
 			if (objdir.getLstuserMaster().length == 0) {
 				retuobj = LSlogilabprotocoldetailRepository
 						.findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(),
-								2, protocoltype, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
-								protocoltype, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
+								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate,
+								objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype,
+								objdir.getCreatedby(), fromdate, todate, objdir.getSitemaster().getSitecode(),
+								objdir.getDirectorycode(), 3, protocoltype, objdir.getCreatedby(), fromdate, todate,
+								objdir.getSitemaster().getSitecode());
 			} else {
 				retuobj = LSlogilabprotocoldetailRepository
 						.findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(),
-								2, protocoltype, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
-								protocoltype, fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
+								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate,
+								objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype,
+								objdir.getCreatedby(), fromdate, todate, objdir.getSitemaster().getSitecode(),
+								objdir.getDirectorycode(), 3, protocoltype, fromdate, todate, objdir.getLstuserMaster(),
+								objdir.getSitemaster().getSitecode());
 			}
 
 		}
@@ -8682,24 +8768,22 @@ public class InstrumentService {
 		if (obj.containsKey("protocolorders")) {
 			@SuppressWarnings("unchecked")
 			List<LSlogilabprotocoldetail> protocolOrders = (List<LSlogilabprotocoldetail>) obj.get("protocolorders");
-			lstorder.addAll(protocolOrders.stream()
-					.map(lsOrderDetail -> new Logilabprotocolorders(lsOrderDetail.getProtocolordercode(),
-							lsOrderDetail.getTeamcode(), lsOrderDetail.getProtoclordername(),
-							lsOrderDetail.getOrderflag(), lsOrderDetail.getProtocoltype(),
-							lsOrderDetail.getCreatedtimestamp(), lsOrderDetail.getCompletedtimestamp(),
-							lsOrderDetail.getLsprotocolmaster(), lsOrderDetail.getlSprotocolworkflow(),
-							lsOrderDetail.getLssamplemaster(), lsOrderDetail.getLsprojectmaster(),
-							lsOrderDetail.getKeyword(), lsOrderDetail.getDirectorycode(), lsOrderDetail.getCreateby(),
-							lsOrderDetail.getAssignedto(), lsOrderDetail.getLsrepositoriesdata(),
-							lsOrderDetail.getLsrepositories(), lsOrderDetail.getElnmaterial(),
-							lsOrderDetail.getElnmaterialinventory(), lsOrderDetail.getApproved(),
-							lsOrderDetail.getRejected(), lsOrderDetail.getOrdercancell(), lsOrderDetail.getViewoption(),
-							lsOrderDetail.getOrderstarted(), lsOrderDetail.getOrderstartedby(),
-							lsOrderDetail.getOrderstartedon(), lsOrderDetail.getLockeduser(),
-							lsOrderDetail.getLockedusername(), lsOrderDetail.getVersionno(),
-							lsOrderDetail.getElnprotocolworkflow(), lsOrderDetail.getLsordernotification(),
-							lsOrderDetail.getLsautoregister(), lsOrderDetail.getRepeat(),lsOrderDetail.getSentforapprovel(),
-							lsOrderDetail.getApprovelaccept(),lsOrderDetail.getAutoregistercount(),lsOrderDetail.getLsuserMaster()))
+			lstorder.addAll(protocolOrders.stream().map(lsOrderDetail -> new Logilabprotocolorders(
+					lsOrderDetail.getProtocolordercode(), lsOrderDetail.getTeamcode(),
+					lsOrderDetail.getProtoclordername(), lsOrderDetail.getOrderflag(), lsOrderDetail.getProtocoltype(),
+					lsOrderDetail.getCreatedtimestamp(), lsOrderDetail.getCompletedtimestamp(),
+					lsOrderDetail.getLsprotocolmaster(), lsOrderDetail.getlSprotocolworkflow(),
+					lsOrderDetail.getLssamplemaster(), lsOrderDetail.getLsprojectmaster(), lsOrderDetail.getKeyword(),
+					lsOrderDetail.getDirectorycode(), lsOrderDetail.getCreateby(), lsOrderDetail.getAssignedto(),
+					lsOrderDetail.getLsrepositoriesdata(), lsOrderDetail.getLsrepositories(),
+					lsOrderDetail.getElnmaterial(), lsOrderDetail.getElnmaterialinventory(),
+					lsOrderDetail.getApproved(), lsOrderDetail.getRejected(), lsOrderDetail.getOrdercancell(),
+					lsOrderDetail.getViewoption(), lsOrderDetail.getOrderstarted(), lsOrderDetail.getOrderstartedby(),
+					lsOrderDetail.getOrderstartedon(), lsOrderDetail.getLockeduser(), lsOrderDetail.getLockedusername(),
+					lsOrderDetail.getVersionno(), lsOrderDetail.getElnprotocolworkflow(),
+					lsOrderDetail.getLsordernotification(), lsOrderDetail.getLsautoregister(),
+					lsOrderDetail.getRepeat(), lsOrderDetail.getSentforapprovel(), lsOrderDetail.getApprovelaccept(),
+					lsOrderDetail.getAutoregistercount(), lsOrderDetail.getLsuserMaster()))
 					.collect(Collectors.toList()));
 
 		}
@@ -8977,11 +9061,11 @@ public class InstrumentService {
 			lstorder.addAll(LSlogilabprotocoldetailRepository
 					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
 							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
-			
+
 //			lstorder.addAll(LSlogilabprotocoldetailRepository
 //					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetween(
 //							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
-			
+
 			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
@@ -9145,7 +9229,7 @@ public class InstrumentService {
 					}).flatMap(List::stream).collect(Collectors.toList());
 			lstorder.addAll(lstorderobj);
 
-			if (objorder.getLstuserMaster() == null ||objorder.getLstuserMaster().size() == 0) {
+			if (objorder.getLstuserMaster() == null || objorder.getLstuserMaster().size() == 0) {
 				lstorder.addAll(LSlogilabprotocoldetailRepository
 						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
 								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype, 1,
@@ -9655,44 +9739,44 @@ public class InstrumentService {
 		Response response = new Response();
 //		Response response = validateprotocolexistonfolder(objfile);
 //		if (response.getStatus()) {
-			String uuID = "";
-			if (ismultitenant == 1 || ismultitenant == 2) {
-				uuID = cloudFileManipulationservice.storecloudfilesreturnwithpreUUID(file, "protocolfolderfiles", uid,
-						ismultitenant);
-			} else {
-				uuID = fileManipulationservice.storeLargeattachmentwithpreuid(file.getOriginalFilename(), file, uid);
-			}
-			
-			LSprotocolfolderfiles parentobjattachment = lsprotocolfolderfilesRepository.findFirst1ByDirectorycodeAndFilenameOrderByFolderfilecode(directorycode, file.getOriginalFilename());
+		String uuID = "";
+		if (ismultitenant == 1 || ismultitenant == 2) {
+			uuID = cloudFileManipulationservice.storecloudfilesreturnwithpreUUID(file, "protocolfolderfiles", uid,
+					ismultitenant);
+		} else {
+			uuID = fileManipulationservice.storeLargeattachmentwithpreuid(file.getOriginalFilename(), file, uid);
+		}
 
-			LSprotocolfolderfiles lsfiles = new LSprotocolfolderfiles();
-			lsfiles.setUuid(uuID);
-			lsfiles.setFilesize(file.getSize());
-			lsfiles.setDirectorycode(directorycode);
-			if(parentobjattachment != null && file.getOriginalFilename()!= null && file.getOriginalFilename().lastIndexOf(".")>-1)
-			{
-				Integer versiondata = parentobjattachment.getVersion()!=null? parentobjattachment.getVersion()+1:1;
-				String originalname = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."));
-				String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
-				lsfiles.setFilename(originalname+"_V"+(versiondata)+extension);
-				parentobjattachment.setVersion(versiondata);
-				lsprotocolfolderfilesRepository.save(parentobjattachment);
-			}
-			else
-			{
-				lsfiles.setFilename(file.getOriginalFilename());
-			}
-			LSuserMaster lsuser = new LSuserMaster();
-			lsuser.setUsercode(usercode);
-			lsfiles.setCreateby(lsuser);
-			LSSiteMaster lssite = new LSSiteMaster();
-			lssite.setSitecode(sitecode);
-			lsfiles.setLssitemaster(lssite);
-			lsfiles.setFilefor(filefor);
-			lsfiles.setCreatedtimestamp(createddate);
-			lsfiles.setFileviewfor(fileviewfor);
+		LSprotocolfolderfiles parentobjattachment = lsprotocolfolderfilesRepository
+				.findFirst1ByDirectorycodeAndFilenameOrderByFolderfilecode(directorycode, file.getOriginalFilename());
 
-			lsprotocolfolderfilesRepository.save(lsfiles);
+		LSprotocolfolderfiles lsfiles = new LSprotocolfolderfiles();
+		lsfiles.setUuid(uuID);
+		lsfiles.setFilesize(file.getSize());
+		lsfiles.setDirectorycode(directorycode);
+		if (parentobjattachment != null && file.getOriginalFilename() != null
+				&& file.getOriginalFilename().lastIndexOf(".") > -1) {
+			Integer versiondata = parentobjattachment.getVersion() != null ? parentobjattachment.getVersion() + 1 : 1;
+			String originalname = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."));
+			String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."),
+					file.getOriginalFilename().length());
+			lsfiles.setFilename(originalname + "_V" + (versiondata) + extension);
+			parentobjattachment.setVersion(versiondata);
+			lsprotocolfolderfilesRepository.save(parentobjattachment);
+		} else {
+			lsfiles.setFilename(file.getOriginalFilename());
+		}
+		LSuserMaster lsuser = new LSuserMaster();
+		lsuser.setUsercode(usercode);
+		lsfiles.setCreateby(lsuser);
+		LSSiteMaster lssite = new LSSiteMaster();
+		lssite.setSitecode(sitecode);
+		lsfiles.setLssitemaster(lssite);
+		lsfiles.setFilefor(filefor);
+		lsfiles.setCreatedtimestamp(createddate);
+		lsfiles.setFileviewfor(fileviewfor);
+
+		lsprotocolfolderfilesRepository.save(lsfiles);
 
 //		} else {
 //			response.setInformation("IDS_INFO_FILEEXIST");
@@ -10304,24 +10388,22 @@ public class InstrumentService {
 		if (obj.containsKey("protocolorders")) {
 			@SuppressWarnings("unchecked")
 			List<LSlogilabprotocoldetail> protocolOrders = (List<LSlogilabprotocoldetail>) obj.get("protocolorders");
-			lstorder.addAll(protocolOrders.stream()
-					.map(lsOrderDetail -> new Logilabprotocolorders(lsOrderDetail.getProtocolordercode(),
-							lsOrderDetail.getTeamcode(), lsOrderDetail.getProtoclordername(),
-							lsOrderDetail.getOrderflag(), lsOrderDetail.getProtocoltype(),
-							lsOrderDetail.getCreatedtimestamp(), lsOrderDetail.getCompletedtimestamp(),
-							lsOrderDetail.getLsprotocolmaster(), lsOrderDetail.getlSprotocolworkflow(),
-							lsOrderDetail.getLssamplemaster(), lsOrderDetail.getLsprojectmaster(),
-							lsOrderDetail.getKeyword(), lsOrderDetail.getDirectorycode(), lsOrderDetail.getCreateby(),
-							lsOrderDetail.getAssignedto(), lsOrderDetail.getLsrepositoriesdata(),
-							lsOrderDetail.getLsrepositories(), lsOrderDetail.getElnmaterial(),
-							lsOrderDetail.getElnmaterialinventory(), lsOrderDetail.getApproved(),
-							lsOrderDetail.getRejected(), lsOrderDetail.getOrdercancell(), lsOrderDetail.getViewoption(),
-							lsOrderDetail.getOrderstarted(), lsOrderDetail.getOrderstartedby(),
-							lsOrderDetail.getOrderstartedon(), lsOrderDetail.getLockeduser(),
-							lsOrderDetail.getLockedusername(), lsOrderDetail.getVersionno(),
-							lsOrderDetail.getElnprotocolworkflow(), lsOrderDetail.getLsordernotification(),
-							lsOrderDetail.getLsautoregister(), lsOrderDetail.getRepeat(),lsOrderDetail.getSentforapprovel(),
-							lsOrderDetail.getApprovelaccept(),lsOrderDetail.getAutoregistercount(),lsOrderDetail.getLsuserMaster()))
+			lstorder.addAll(protocolOrders.stream().map(lsOrderDetail -> new Logilabprotocolorders(
+					lsOrderDetail.getProtocolordercode(), lsOrderDetail.getTeamcode(),
+					lsOrderDetail.getProtoclordername(), lsOrderDetail.getOrderflag(), lsOrderDetail.getProtocoltype(),
+					lsOrderDetail.getCreatedtimestamp(), lsOrderDetail.getCompletedtimestamp(),
+					lsOrderDetail.getLsprotocolmaster(), lsOrderDetail.getlSprotocolworkflow(),
+					lsOrderDetail.getLssamplemaster(), lsOrderDetail.getLsprojectmaster(), lsOrderDetail.getKeyword(),
+					lsOrderDetail.getDirectorycode(), lsOrderDetail.getCreateby(), lsOrderDetail.getAssignedto(),
+					lsOrderDetail.getLsrepositoriesdata(), lsOrderDetail.getLsrepositories(),
+					lsOrderDetail.getElnmaterial(), lsOrderDetail.getElnmaterialinventory(),
+					lsOrderDetail.getApproved(), lsOrderDetail.getRejected(), lsOrderDetail.getOrdercancell(),
+					lsOrderDetail.getViewoption(), lsOrderDetail.getOrderstarted(), lsOrderDetail.getOrderstartedby(),
+					lsOrderDetail.getOrderstartedon(), lsOrderDetail.getLockeduser(), lsOrderDetail.getLockedusername(),
+					lsOrderDetail.getVersionno(), lsOrderDetail.getElnprotocolworkflow(),
+					lsOrderDetail.getLsordernotification(), lsOrderDetail.getLsautoregister(),
+					lsOrderDetail.getRepeat(), lsOrderDetail.getSentforapprovel(), lsOrderDetail.getApprovelaccept(),
+					lsOrderDetail.getAutoregistercount(), lsOrderDetail.getLsuserMaster()))
 					.collect(Collectors.toList()));
 
 		}
@@ -10435,92 +10517,88 @@ public class InstrumentService {
 		logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
 		logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
 		logiobj.get(0).setCanuserprocess(false);
-		
+
 		lslogilablimsorderdetailRepository.save(logiobj.get(0));
-		
-		String screen="Sheet Order";
+
+		String screen = "Sheet Order";
 		String Notification = "SENDFORAPPROVEL";
-		
+
 		LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
 		LSuserMaster notifyto = logiobj.get(0).getAssignedto();
 		try {
-			sendnotification(logiobj.get(0),Notification,screen,notifyto,notifyfrom);
+			sendnotification(logiobj.get(0), Notification, screen, notifyto, notifyfrom);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return logiobj.get(0);
 	}
 
-	
 	public LSlogilablimsorderdetail acceptapprovel(LSlogilablimsorderdetail objdir) throws ParseException {
 		List<LSlogilablimsorderdetail> logiobj = new ArrayList<LSlogilablimsorderdetail>();
 		logiobj = lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),
 				objdir.getBatchid());
-		String screen="Sheet Order";
-		
+		String screen = "Sheet Order";
+
 		if (objdir.getApprovelaccept().equals("3")) {
 			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
 			logiobj.get(0).setApprovelstatus(objdir.getApprovelstatus());
 			logiobj.get(0).setOrderflag("R");
 			logiobj.get(0).setDirectorycode(null);
 			logiobj.get(0).setCompletedtimestamp(commonfunction.getCurrentUtcTime());
-			
+
 			String Notification = "REJECTALERT";
-			
-		//	LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
-		//	LSuserMaster notifyto = logiobj.get(0).getAssignedto();
-			
+
+			// LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
+			// LSuserMaster notifyto = logiobj.get(0).getAssignedto();
+
 			LSuserMaster notifyfrom = logiobj.get(0).getAssignedto();
 			LSuserMaster notifyto = logiobj.get(0).getLsuserMaster();
-			
-			sendnotification(logiobj.get(0),Notification,screen,notifyto,notifyfrom);
+
+			sendnotification(logiobj.get(0), Notification, screen, notifyto, notifyfrom);
 
 		} else if (objdir.getApprovelaccept().equals("2")) {
 			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
-			//logiobj.get(0).setCanuserprocess(true);
+			// logiobj.get(0).setCanuserprocess(true);
 			logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
-			
+
 			String Notification = "RETURNALERT";
-			
+
 //			LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
 //			LSuserMaster notifyto = logiobj.get(0).getAssignedto();
-			
+
 			LSuserMaster notifyfrom = logiobj.get(0).getAssignedto();
 			LSuserMaster notifyto = logiobj.get(0).getLsuserMaster();
-			
-			sendnotification(logiobj.get(0),Notification,screen,notifyto,notifyfrom);
-			//logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
+
+			sendnotification(logiobj.get(0), Notification, screen, notifyto, notifyfrom);
+			// logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
 		} else {
 
 			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
-			
+
 			String Notification = "APPROVEALERT";
 //			LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
 //			LSuserMaster notifyto = logiobj.get(0).getAssignedto();
 			LSuserMaster notifyfrom = logiobj.get(0).getAssignedto();
 			LSuserMaster notifyto = logiobj.get(0).getLsuserMaster();
-			sendnotification(logiobj.get(0),Notification,screen,notifyto,notifyfrom);
-			
+			sendnotification(logiobj.get(0), Notification, screen, notifyto, notifyfrom);
+
 		}
 		lslogilablimsorderdetailRepository.save(logiobj);
-		
-		
-		
-		
+
 		return logiobj.get(0);
 	}
-	
-	
-	public void sendnotification(LSlogilablimsorderdetail objdir,String Notification,String screen,LSuserMaster notifyfrom,LSuserMaster notifyto) throws ParseException {
-		
+
+	public void sendnotification(LSlogilablimsorderdetail objdir, String Notification, String screen,
+			LSuserMaster notifyfrom, LSuserMaster notifyto) throws ParseException {
+
 		LSnotification LSnotification = new LSnotification();
-		
-		String Details = "{\"ordercode\" :\"" + objdir.getBatchcode() + "\",\"order\" :\""
-				+ objdir.getBatchid()  + "\",\"user\":\"" + objdir.getLsuserMaster().getUsername() + "\",\"notifyto\":\"" + objdir.getAssignedto().getUsername()
-				+ "\"}";
-				
+
+		String Details = "{\"ordercode\" :\"" + objdir.getBatchcode() + "\",\"order\" :\"" + objdir.getBatchid()
+				+ "\",\"user\":\"" + objdir.getLsuserMaster().getUsername() + "\",\"notifyto\":\""
+				+ objdir.getAssignedto().getUsername() + "\"}";
+
 		LSnotification.setIsnewnotification(1);
 		LSnotification.setNotification(Notification);
 		LSnotification.setNotificationdate(commonfunction.getCurrentUtcTime());
@@ -10533,17 +10611,20 @@ public class InstrumentService {
 		LSnotification.setNotificationfor(1);
 
 		lsnotificationRepository.save(LSnotification);
-		
+
 	}
+
 	public LSlogilablimsorderdetail stopautoregister(LSlogilablimsorderdetail objdir) throws ParseException {
 		List<LSlogilablimsorderdetail> logiobj = new ArrayList<LSlogilablimsorderdetail>();
 		logiobj = lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),
 				objdir.getBatchid());
 
 		logiobj.get(0).setRepeat(objdir.getRepeat());
+		logiobj.get(0).setAutoregistercount(0);
 		lslogilablimsorderdetailRepository.save(logiobj);
 
-		List<LsAutoregister> autoobj = lsautoregisterrepo.findByBatchcodeAndScreen(objdir.getBatchcode(),"Sheet_Order");
+		List<LsAutoregister> autoobj = lsautoregisterrepo.findByBatchcodeAndScreen(objdir.getBatchcode(),
+				"Sheet_Order");
 		if (!autoobj.isEmpty()) {
 			autoobj.get(0).setRepeat(objdir.getRepeat());
 			autoobj.get(0).setStoptime(commonfunction.getCurrentUtcTime());
@@ -10553,6 +10634,11 @@ public class InstrumentService {
 			lsautoregisterrepo.save(autoobj);
 		}
 		lslogilablimsorderdetailRepository.save(logiobj);
+		String timerId = autoobj.get(0).getTimerIdname();
+		if (timerId != null) {
+			stopTimer(timerId);
+
+		}
 		return logiobj.get(0);
 	}
 
@@ -10564,7 +10650,8 @@ public class InstrumentService {
 		logiobj.setRepeat(objdir.getRepeat());
 		LSlogilabprotocoldetailRepository.save(logiobj);
 
-		List<LsAutoregister> autoobj = lsautoregisterrepo.findByBatchcodeAndScreen(objdir.getProtocolordercode(),objdir.getLsautoregister().getScreen());
+		List<LsAutoregister> autoobj = lsautoregisterrepo.findByBatchcodeAndScreen(objdir.getProtocolordercode(),
+				objdir.getLsautoregister().getScreen());
 		if (!autoobj.isEmpty()) {
 			autoobj.get(0).setRepeat(objdir.getRepeat());
 			autoobj.get(0).setStoptime(commonfunction.getCurrentUtcTime());
@@ -10594,9 +10681,8 @@ public class InstrumentService {
 				.getProjectOrTaskOrMaterialSearchBased(Searchkey, sitecode);
 		return rtnobj;
 	}
-	
-	public Map<String, Object> Getordersonfiles(LSfile[] objfiles)
-	{
+
+	public Map<String, Object> Getordersonfiles(LSfile[] objfiles) {
 //		List<LSfile> files = Arrays.asList(objfiles);
 		Map<String, Object> mapRtnObj = new HashMap<String, Object>();
 //		List<Logilaborders> orders = lslogilablimsorderdetailRepository.findByLsfileIn(files);
@@ -10609,50 +10695,53 @@ public class InstrumentService {
 	}
 
 	public Map<String, Object> Getordersonfiles(Map<String, Object> mapObj) throws ParseException {
-		
-		ObjectMapper objm = new ObjectMapper();
-		
-		List<LSfile> files = objm.convertValue(mapObj.get("filelist"), new TypeReference<List<LSfile>>() {});
-		
-		 // Extract fromdate and todate
-        String fromdateStr = (String) mapObj.get("fromdate");
-        String todateStr = (String) mapObj.get("todate");
-        
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        // Parse the date strings into Date objects
-        Date fromdate = formatter.parse(fromdateStr);
-        Date todate = formatter.parse(todateStr);
-        
-     // Set the end of the day for todate
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(todate);
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
-        todate = calendar.getTime();
-		
+		ObjectMapper objm = new ObjectMapper();
+
+		List<LSfile> files = objm.convertValue(mapObj.get("filelist"), new TypeReference<List<LSfile>>() {
+		});
+
+		// Extract fromdate and todate
+		String fromdateStr = (String) mapObj.get("fromdate");
+		String todateStr = (String) mapObj.get("todate");
+
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		// Parse the date strings into Date objects
+		Date fromdate = formatter.parse(fromdateStr);
+		Date todate = formatter.parse(todateStr);
+
+		// Set the end of the day for todate
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(todate);
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		calendar.set(Calendar.MILLISECOND, 999);
+		todate = calendar.getTime();
+
 //		List<LSfile> files = Arrays.asList(objfiles);
 		Map<String, Object> mapRtnObj = new HashMap<String, Object>();
-		List<Logilaborders> orders = lslogilablimsorderdetailRepository.findByOrderflagAndLsfileInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc("R", files, fromdate,todate );
+		List<Logilaborders> orders = lslogilablimsorderdetailRepository
+				.findByOrderflagAndLsfileInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+						"R", files, fromdate, todate);
 		List<Long> batchcode = orders.stream().map(Logilaborders::getBatchcode).collect(Collectors.toList());
 		List<Integer> filecode = files.stream().map(LSfile::getFilecode).collect(Collectors.toList());
-				
+
 		mapRtnObj.put("orders", orders);
 		mapRtnObj.put("results", lsresultforordersRepository.findByBatchcodeInOrderByIdDesc(batchcode));
 		mapRtnObj.put("tags", reportfileRepository.findByBatchcodeInOrderByIdDesc(batchcode));
 		mapRtnObj.put("files", LSfileRepository.findByFilecodeIn(filecode));
-		
+
 		return mapRtnObj;
 	}
-	
-	
+
 	public List<LSlogilablimsorderdetail> GetOrdersbyuseronDetailview(LSlogilablimsorderdetail obj) {
 		List<LSlogilablimsorderdetail> lstorders = new ArrayList<LSlogilablimsorderdetail>();
-	
-		lstorders = lslogilablimsorderdetailRepository.findByFiletypeAndOrderflagAndLsprojectmasterInAndApprovelstatusNotAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
-				obj.getFiletype(), "R", obj.getLstproject(), 3, obj.getFromdate(), obj.getTodate());
+
+		lstorders = lslogilablimsorderdetailRepository
+				.findByFiletypeAndOrderflagAndLsprojectmasterInAndApprovelstatusNotAndCompletedtimestampBetweenAndAssignedtoIsNullOrderByBatchcodeDesc(
+						obj.getFiletype(), "R", obj.getLstproject(), 3, obj.getFromdate(), obj.getTodate());
 		return lstorders;
 	}
 

@@ -88,11 +88,11 @@ public class InstrumentController {
 		return instrumentService.InsertELNOrder(objorder);
 	}
 	
-	@PostMapping("/InsertAutoRegisterOrder")
-	public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail objorder)throws Exception {
-
-		return instrumentService.InsertAutoRegisterOrder(objorder);
-	}
+//	@PostMapping("/InsertAutoRegisterOrder")
+//	public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail objorder)throws Exception {
+//
+//		return instrumentService.InsertAutoRegisterOrder(objorder);
+//	}
 	
 	@PostMapping("/GetOrderonClose")
 	public Logilabordermaster GetOrderonClose(@RequestBody LSlogilablimsorderdetail objorder) {

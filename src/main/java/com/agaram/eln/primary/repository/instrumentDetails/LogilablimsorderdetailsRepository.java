@@ -23,4 +23,6 @@ public interface LogilablimsorderdetailsRepository extends JpaRepository<LSlogil
 	@Modifying
 	@Query(value = "update LSlogilablimsorderdetail set lockeduser = null, lockedusername = null, activeuser = null where batchcode = ?1", nativeQuery = true)
 	void UpdateOrderOnunlockData(Long batchcode);
+	
+	
 }

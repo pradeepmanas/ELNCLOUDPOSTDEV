@@ -43,6 +43,16 @@ public class LsAutoregister {
 	
 	private String timespan;
 	
+	private Long delayinminutes;
+	
+	public Long getDelayinminutes() {
+		return delayinminutes;
+	}
+
+	public void setDelayinminutes(Long delayinminutes) {
+		this.delayinminutes = delayinminutes;
+	}
+
 	@Column(name = "autocreatedate")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date autocreatedate;
@@ -55,6 +65,16 @@ public class LsAutoregister {
 	
     private Boolean isautoreg;
     
+    private String timerIdname;
+    
+	public String getTimerIdname() {
+		return timerIdname;
+	}
+
+	public void setTimerIdname(String timerIdname) {
+		this.timerIdname = timerIdname;
+	}
+
 	public Boolean getIsautoreg() {
 		return isautoreg;
 	}

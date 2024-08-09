@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.Timer;
 import java.util.stream.IntStream;
 
 import org.json.JSONArray;
@@ -22,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.agaram.eln.config.AESEncryption;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 
 public class commonfunction {
 
@@ -479,5 +482,54 @@ public class commonfunction {
 		return  tenant;
 		
 	}
+	
+	
+	public static Map<String,Object> getdelaymillisecondforautoregister(String timeType, Integer interval)throws ParseException {
+		Map<String,Object> RtnObject=new HashMap<>();
+		Date currentDate = getCurrentUtcTime();
+		LocalDateTime currentDateTime = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+//		String timeType = objorder.getLsautoregisterorderdetail().getTimespan();
+//		Integer interval = objorder.getLsautoregisterorderdetail().getInterval();
+
+		LocalDateTime updatedDateTime = currentDateTime;
+
+		if (timeType.equals("Minutes")) {
+		    updatedDateTime = updatedDateTime.plus(interval, ChronoUnit.MINUTES);
+		} else if (timeType.equals("Hours")) {
+		    updatedDateTime = updatedDateTime.plus(interval, ChronoUnit.HOURS);
+		} else if (timeType.equals("Days")) {
+		    updatedDateTime = updatedDateTime.plus(interval, ChronoUnit.DAYS);
+		} else if (timeType.equals("Weeks")) {
+		    updatedDateTime = updatedDateTime.plus(interval, ChronoUnit.WEEKS);
+		}
+		  Date updatedDate =Date.from(updatedDateTime.atZone(ZoneId.systemDefault()).toInstant());
+	        long currentMillis = currentDate.getTime();
+	        long updatedMillis = updatedDate.getTime();
+	        long milliseconds = updatedMillis - currentMillis;
+	        
+	        RtnObject.put("Date", updatedDate);
+	        RtnObject.put("delay", milliseconds);
+	        return RtnObject;
+	}
+	
+//	 public static Map<String, Object> stopTimer(String timerId, Map<String, Timer> timerMap, Map<String, Boolean> timerStatusMap) {
+//	        Timer timer = timerMap.get(timerId);
+//	        if (timer != null) {
+//	            timer.cancel();
+//	            timer.purge(); 
+//	            timerMap.remove(timerId); 
+//	            timerStatusMap.put(timerId, false);
+//	            System.out.println("Timer " + timerId + " stopped.");
+//	        } else {
+//	            System.out.println("No timer found with ID " + timerId);
+//	        }
+//	        Map<String, Object> resultMap = new HashMap<>();
+//	        resultMap.put("timerMap", timerMap);
+//	        resultMap.put("timerStatusMap", timerStatusMap);
+//	        
+//	        return resultMap;
+//	    }
+	 
+	 
 
 }

@@ -263,12 +263,12 @@ public class ProtocolController {
 
 	}
 	
-	@RequestMapping(value = "/addautoProtocolOrder")
-	protected Map<String, Object> addautoProtocolOrder(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail)throws Exception {
-
-		return ProtocolMasterService.addautoProtocolOrder(LSlogilabprotocoldetail);
-
-	}
+//	@RequestMapping(value = "/addautoProtocolOrder")
+//	protected Map<String, Object> addautoProtocolOrder(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail)throws Exception {
+//
+//		return ProtocolMasterService.addautoProtocolOrder(LSlogilabprotocoldetail);
+//
+//	}
 	
 	@RequestMapping(value = "/addProtocolOrderafter")
 	protected Map<String, Object> addProtocolOrderafter(@RequestBody LSlogilabprotocoldetail LSlogilabprotocoldetail)throws Exception {
