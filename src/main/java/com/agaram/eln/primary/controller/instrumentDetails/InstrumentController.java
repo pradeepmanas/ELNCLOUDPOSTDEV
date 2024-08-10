@@ -1087,9 +1087,14 @@ public class InstrumentController {
 	}
 	
 	@RequestMapping("/Getorderbyflaganduser")
-	public List<Logilaborders> Getorderbyflaganduser(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
+	public ResponseEntity<Map<String, Object>> Getorderbyflaganduser(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
 	{
-		return instrumentService.Getorderbyflaganduser(objorder);
+		try {
+			Map<String, Object> returnMap = instrumentService.Getorderbyflaganduser(objorder);
+			return new ResponseEntity<>(returnMap,HttpStatus.OK);
+		}catch (Exception e) {
+			return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	@RequestMapping("/Getprotocolordersonsample")
 	public Map<String,Object> Getprotocolordersonsample(@RequestBody LSlogilabprotocoldetail objorder)throws Exception

@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.service.methodsetup;
 
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 
 
@@ -1337,254 +1338,85 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
    }
    
    @SuppressWarnings("resource")
-  	public String getSQLFileData(String fileName,Integer methodKey) throws IOException, InterruptedException {
-//  		String Content = "";
-  		String rawDataText="";
-  		byte[] bytes = null;
+	public String getSQLFileData(String fileName, Integer methodKey) throws IOException, InterruptedException {
+//		String Content = "";
+		String rawDataText = "";
+		byte[] bytes = null;
 
-  		final String ext = FilenameUtils.getExtension(fileName); 
-  		final String name = FilenameUtils.getBaseName(fileName);
-  		
-  	   String fileid = fileName;
-  		GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
-  		if (largefile == null) {
-  			largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
-  		}
+		final String ext = FilenameUtils.getExtension(fileName);
+		final String name = FilenameUtils.getBaseName(fileName);
 
-  		if (largefile != null) {
-  			
-  			if (ext.equalsIgnoreCase("pdf")) {
-  				
-//  				List<Method> methodobj = methodRepo.findByInstrawdataurl(fileName);
-  				List<Method> methodobj = methodRepo.findByMethodkey(methodKey);
-  				
-  				Integer converterstatus = methodobj.get(0).getConverterstatus();
-  				if(converterstatus == 1) //pdf to txt
-  				{
-  				    String userDirectory = new File("").getAbsolutePath();
-	 				   System.out.println(userDirectory);
-	 				
-	 				String commanddev =  userDirectory+"\\src\\main\\resources\\" +"Aspose License";//folder path in development 
-	 				System.out.println(commanddev);
-			        File folder = new File(commanddev);
-//
-			        if (folder.exists() && folder.isDirectory()) {//presence of folder check in dev
-			            System.out.println("Folder exists in dev");
-			            
-			          License asposePdfLicenseText = new License();
-	 		            try {
-							asposePdfLicenseText.setLicense(userDirectory+"\\src\\main\\resources\\Aspose License\\Aspose.PDF.Java.lic");
-						} catch (Exception e1) {
-							e1.printStackTrace();
+		String fileid = fileName;
+		GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
+		if (largefile == null) {
+			largefile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileid)));
+		}
+
+		if (largefile != null) {
+
+			if (ext.equalsIgnoreCase("pdf")) {
+
+//			List<Method> methodobj = methodRepo.findByInstrawdataurl(fileName);
+				List<Method> methodobj = methodRepo.findByMethodkey(methodKey);
+
+				Integer converterstatus = methodobj.get(0).getConverterstatus();
+				if (converterstatus == 1) // pdf to txt
+				{
+					try (InputStream pdfInputStream = new BufferedInputStream(largefile.getInputStream())) {
+						PDDocument document = PDDocument.load(pdfInputStream);
+						// Create PDFTextStripper object
+						PDFTextStripper pdfStripper = new PDFTextStripper();
+						// Extract text
+						System.out.println(" Extract text start ");
+						String extractedText = pdfStripper.getText(document);
+						System.out.println(" Extract text End ");
+						// Write the extracted text to a temporary file
+						File tempFile = File.createTempFile(name, ".txt");
+						System.out.println("File Path:" + tempFile.getPath());
+						try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+							writer.write(extractedText);
+							System.out.println("File Writer in text done ");
 						}
-	 	
-  		            Document convertPDFDocumentToText = new Document(largefile.getInputStream());
-
-  		            TextAbsorber textAbsorber = new TextAbsorber(new TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Pure));
-
-  		            convertPDFDocumentToText.getPages().accept(textAbsorber);
-
-  		            String ExtractedText = textAbsorber.getText();
-  		            BufferedWriter writer = null;
-
-				    	final File tempFile = File.createTempFile(name, ".txt");
-			            String tempPath = tempFile.toString();
-			            
-  					try {
-  						writer = new BufferedWriter(new FileWriter(tempPath));
-  					} catch (IOException e) {
-  						e.printStackTrace();
-  					}
-  	
-  		            try {
-  						writer.write(ExtractedText);
-  					} catch (IOException e) {
-  						e.printStackTrace();
-  					}
-  		            
-  		            try {
-  						writer.close();
-  					} catch (IOException e) {
-  						e.printStackTrace();
-  					}
-
-  		            System.out.println("Done");
-  		            
-  		          byte[] bytesArray = new byte[(int) tempFile.length()]; 	
-     	          FileInputStream fis = new FileInputStream(tempFile);
-	              fis.read(bytesArray); //read file into bytes[]
-	              fis.close();	
-	           		 	           
-	 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
-	 	          tempFile.delete();
-	 	          tempPath="";
-	 			}else { //folder path for tomcat
-	 				 
-  				  License asposePdfLicenseText = new License();
-  				System.out.println("now entering into tomcat");
-  				   System.out.println(env.getProperty("parserconvertor"));
-  				 System.out.println(env.getProperty("parserconvertor")+"Aspose License/Aspose.PDFforJava.lic");
-  				 
-	 		            try {      	
-	 		            	asposePdfLicenseText.setLicense(env.getProperty("parserconvertor")+"Aspose License/Aspose.PDF.Java.lic");
-						} catch (Exception e1) {
-							e1.printStackTrace();
+						// Read the content of the temp file into a byte array
+						byte[] bytesArray = new byte[(int) tempFile.length()];
+						try (FileInputStream fis = new FileInputStream(tempFile)) {
+							fis.read(bytesArray); // read file into bytes[]
 						}
-	 	
-		            Document convertPDFDocumentToText = new Document(largefile.getInputStream());
-
-		            TextAbsorber textAbsorber = new TextAbsorber(new TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Pure));
-
-		            convertPDFDocumentToText.getPages().accept(textAbsorber);
-
-		            String ExtractedText = textAbsorber.getText();
-
-		            BufferedWriter writer = null;
-
-				    	final File tempFile = File.createTempFile(name, ".txt");
-			            String tempPath = tempFile.toString();
-			            
-					try {
-						writer = new BufferedWriter(new FileWriter(tempPath));
+						// Convert byte array to string
+						rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+						// Delete the temporary file
+						tempFile.delete();
+						System.out.println("the temporary file deleted");
+						System.out.println("Text extraction completed.");
 					} catch (IOException e) {
-						
 						e.printStackTrace();
 					}
-		        
-		    		            try {
-						writer.write(ExtractedText);
-					} catch (IOException e) {
-	
-						e.printStackTrace();
-					}
-		            
-		            try {
-						writer.close();
-					} catch (IOException e) {
-										e.printStackTrace();
-					}
 
-		            System.out.println("Done");
-		            
-		          byte[] bytesArray = new byte[(int) tempFile.length()]; 	
-   	              FileInputStream fis = new FileInputStream(tempFile);
-	              fis.read(bytesArray); //read file into bytes[]
-	              fis.close();	
-	           		 	           
-	 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
-	 	          tempFile.delete();
-	 	          tempPath="";
-  				}
-	 				
-  				}  //pdf to txt
-  					
-  					
-  				else { //pdf to csv
+					return rawDataText;
+				}
 
-  	 				    String userDirectory = new File("").getAbsolutePath();
-  	 				    System.out.println(userDirectory);
-  	 					String commanddev =  userDirectory+"\\src\\main\\resources\\" +"Aspose License";//folder path in development
-    	 				 System.out.println(commanddev);
-  	 			        File folder = new File(commanddev);
-  	//
-  	 			        if (folder.exists() && folder.isDirectory()) { //presence of folder check in dev
-  	 			            System.out.println("Folder exists in dev");
-  	 			            
-  	 			           License asposePdfLicenseCSV = new License();
-  	 			           try {
-  	 							asposePdfLicenseCSV.setLicense(userDirectory+"\\src\\main\\resources\\Aspose License\\Aspose.PDF.Java.lic");
-  	 						} catch (Exception e) {
-  	 				    		e.printStackTrace();
-  	 						}       
-  	 				        
-  	 				      //  Document convertPDFDocumentToCSV = new Document("uploads/" + fileName);
-  	 				       Document convertPDFDocumentToCSV = new Document(largefile.getInputStream());
-  	 				        
-  	 				        ExcelSaveOptions csvSave = new ExcelSaveOptions();
-  	 				        csvSave.setFormat(ExcelSaveOptions.ExcelFormat.CSV);
-  	 				        
-  	 				    	final File tempFile = File.createTempFile(name, ".csv");
-  	 			            String tempPath = tempFile.toString();
-  	 			            
-  	 				      //  convertPDFDocumentToCSV.save("uploads/" + name + ".csv", csvSave);
-//  	 				       convertPDFDocumentToCSV.save(userDirectory+"\\src\\main\\resources\\conversion-files\\GUAVA export.csv", csvSave);
+			} else if (ext.equalsIgnoreCase("csv")) {
 
-  	 				    	 convertPDFDocumentToCSV.save(tempPath, csvSave);
-  	 				        System.out.println("Done");
+				File templocfile = stream2file(largefile.getInputStream(), fileName, ".csv");
+				File newfile = new File(templocfile.getAbsolutePath());
 
-  	    				    //   File file = new File(userDirectory+"\\src\\main\\resources\\conversion-files\\GUAVA export.csv");
-  			  		    	
-  		    	  	               byte[] bytesArray = new byte[(int) tempFile.length()]; 	
-  			        	           FileInputStream fis = new FileInputStream(tempFile);
-  			 	                   fis.read(bytesArray); //read file into bytes[]
-  			 	                   fis.close();	
-  			 	           		 	           
-  		 		 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
-  		 		 	          rawDataText = rawDataText.replaceAll("\"", "");
-  		 		 	          tempFile.delete();
-  			 	              tempPath="";
-  		 			        
-  	 			        } else {//folder path in tomcat
-  	 			        	 License asposePdfLicenseCSV = new License();
-  	 			            System.out.println("now entering into tomcat");
+				byte[] bytesArray = new byte[(int) templocfile.length()];
+				FileInputStream fis = new FileInputStream(newfile);
+				fis.read(bytesArray); // read file into bytes[]
+				fis.close();
 
-  	 	  				   System.out.println(env.getProperty("parserconvertor"));
-  	 	  				 System.out.println(env.getProperty("parserconvertor")+"Aspose License/Aspose.PDFforJava.lic");
-  	 			           try {
-  								asposePdfLicenseCSV.setLicense(env.getProperty("parserconvertor")+"Aspose License/Aspose.PDF.Java.lic");
-  							} catch (Exception e) {
-  						
-  								e.printStackTrace();
-  							}      
-  	 			        
-  						 System.out.println(userDirectory);
-  					
-  						  Document convertPDFDocumentToCSV = new Document(largefile.getInputStream());
-  					        
-  					        ExcelSaveOptions csvSave = new ExcelSaveOptions();
-  					        csvSave.setFormat(ExcelSaveOptions.ExcelFormat.CSV);
-  					        
-  					    	final File tempFile = File.createTempFile(name, ".csv");
-  				            String tempPath = tempFile.toString();
+				rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+				rawDataText = rawDataText.replaceAll("\"", "");
 
-  					    	 convertPDFDocumentToCSV.save(tempPath, csvSave);
-  					        System.out.println("Done");
-                                                                                                                                                
-  		    	  	               byte[] bytesArray = new byte[(int) tempFile.length()]; 	
-  			        	           FileInputStream fis = new FileInputStream(tempFile);
-  			 	                   fis.read(bytesArray); //read file into bytes[]
-  			 	                   fis.close();	
-  			 	           		 	                                                                             
-  		 		 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
-  		 		 	          rawDataText = rawDataText.replaceAll("\"", "");
-  		 		 	          tempFile.delete();
-  			 	              tempPath="";
-  	 			           }			
-         				}
- 				    }else if (ext.equalsIgnoreCase("csv")) {
+			} else {
+				rawDataText = new BufferedReader(
+						new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+						.collect(Collectors.joining("\n"));
 
- 				     File templocfile = stream2file(largefile.getInputStream(),fileName, ".csv");
-	 		  		 File newfile = new File(templocfile.getAbsolutePath());
-	 		  			 
-   	  	              byte[] bytesArray = new byte[(int) templocfile.length()]; 	
-        	          FileInputStream fis = new FileInputStream(newfile);
-	                  fis.read(bytesArray); //read file into bytes[]
- 	                  fis.close();	
-		 	          
-	 	              rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
-	 	              rawDataText = rawDataText.replaceAll("\"", "");
-	 	          
-  			 }
-  			else
-  			{
-  			    rawDataText = new BufferedReader(
-  				new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
-  					.collect(Collectors.joining("\n"));
-  
-  		    } 
-  		}		
-  		return rawDataText;
-  }  
+			}
+		}
+		return rawDataText;
+	}  
 
 
     /**

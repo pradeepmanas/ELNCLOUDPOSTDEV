@@ -27,7 +27,7 @@ import com.agaram.eln.primary.viewResolver.CsvViewResolver;
 //@EntityScan({"com.agaram.eln.*"})
 //@EnableJpaRepositories({"com.agaram.eln.*"})
 //@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-public class Application extends SpringBootServletInitializer implements WebApplicationInitializer {
+public class Application extends SpringBootServletInitializer implements WebApplicationInitializer,CommandLineRunner {
 
 	public static int initTimer = 0;
 	public static String SDMSDB = "";

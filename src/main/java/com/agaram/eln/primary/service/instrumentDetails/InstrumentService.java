@@ -1513,8 +1513,15 @@ public class InstrumentService {
 							 Timer timerobj = timerMap.get(timerId1);
 							 if (timerobj == null) {
 								 timerMap.put(timerId1, timer);
-							 }else {
-								 objlogilaborderdetailObject=orderDetailMap.get(timerId1);
+							 }
+							 else {
+								 if(orderDetailMap.size()>0) {
+									 objlogilaborderdetailObject=orderDetailMap.get(timerId1);
+								 }
+								 if(objlogilaborderdetailObject == null) {
+									 objlogilaborderdetailObject=objlogilaborderdetail;
+								 }
+								 
 							 }
 							 
 							 objlogilaborderdetailObject=InsertAutoRegisterOrder(objlogilaborderdetailObject, timerId1);
@@ -1535,7 +1542,7 @@ public class InstrumentService {
 					}
 				};
 				runningTasks.add(batchcode);
-
+				 timerMap.put(timerId1, timer);
 //	        timer.schedule(task, delay);
 				timer.scheduleAtFixedRate(task, delay, delay);
 				scheduledTasks.put(batchcode, task);
@@ -4529,10 +4536,12 @@ public class InstrumentService {
 		return objorder;
 	}
 
-	public LSlogilablimsorderdetail updateworflowforOrder(LSlogilablimsorderdetail objorder) {
+	public LSlogilablimsorderdetail updateworflowforOrder(LSlogilablimsorderdetail objorder) throws ParseException {
 
 		LSlogilablimsorderdetail objDbOrder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 
+		
+		
 		updatenotificationfororderworkflow(objorder,
 				lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode()).getLsworkflow());
 
@@ -4597,6 +4606,14 @@ public class InstrumentService {
 				e.printStackTrace();
 			}
 		}
+		
+		if(objorder.getApprovelstatus()!=null && objorder.getApprovelstatus()==3) {
+			objDbOrder.setRepeat(false);
+			objDbOrder.setBatchcode(objorder.getBatchcode());
+			objDbOrder.setBatchid(objorder.getBatchid());
+			stopautoregister(objDbOrder);
+		}
+		
 		return objorder;
 	}
 
@@ -8315,7 +8332,8 @@ public class InstrumentService {
 		}
 	}
 
-	public List<Logilaborders> Getorderbyflaganduser(LSlogilablimsorderdetail objorder) {
+	public Map<String, Object> Getorderbyflaganduser(LSlogilablimsorderdetail objorder) {
+		Map<String, Object> rtn_object=new HashMap<>();
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 				objorder.getLsuserMaster().getLssitemaster());
@@ -8678,7 +8696,9 @@ public class InstrumentService {
 		}
 
 		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
-		return lstorder;
+		rtn_object.put("Orders", lstorder);
+//		rtn_object.get("Orders")
+		return rtn_object;
 
 	}
 
