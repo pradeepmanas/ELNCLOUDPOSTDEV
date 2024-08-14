@@ -3142,6 +3142,7 @@ public class ProtocolService {
 					lSlogilabprotocoldetail1.setProtoclordername(ProtocolOrderName);
 
 					lSlogilabprotocoldetail1.setOrderflag("N");
+					LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail1);
 
 					List<LSprotocolstep> lstSteps = LSProtocolStepRepositoryObj.findByProtocolmastercodeAndStatus(
 							lSlogilabprotocoldetail1.getLsprotocolmaster().getProtocolmastercode(), 1);
@@ -3276,10 +3277,16 @@ public class ProtocolService {
 											lsprotocolmasterobj.getFileuid(),
 											commonfunction.getcontainername(Ismultitenant,
 													TenantContext.getCurrentTenant()) + "protocol");
+									if(Content==null) {
+										Content =lSlogilabprotocoldetail.getContent();
+										lSlogilabprotocoldetail1.setContent(Content);
+									}
 									JSONObject protocolJson = new JSONObject(Content);
 									protocolJson.put("protocolname", lSlogilabprotocoldetail1.getProtoclordername());
 									updateProtocolOrderContent(protocolJson.toString(), lSlogilabprotocoldetail1,
 											Ismultitenant);
+									
+									
 								} catch (IOException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -3921,7 +3928,6 @@ public class ProtocolService {
 			if ((objprotocolorder.getRepeat() != null && objprotocolorder.getRepeat() != false)) {
 				Timer timer = new Timer();
 				TimerTask task = new TimerTask() {
-					@SuppressWarnings("unlikely-arg-type")
 					@Override
 					public void run() {
 						try {
@@ -9766,6 +9772,7 @@ public class ProtocolService {
 
 		logiobj.setRepeat(objdir.getRepeat());
 		logiobj.setTestname(testmast.getTestname());
+		logiobj.setAutoregistercount(0);
 		LSlogilabprotocoldetailRepository.save(logiobj);
 
 		List<LsAutoregister> autoobj = lsautoregisterrepo.findByBatchcodeAndScreen(objdir.getProtocolordercode(),
@@ -9780,6 +9787,11 @@ public class ProtocolService {
 			lsautoregisterrepo.save(autoobj);
 		}
 		LSlogilabprotocoldetailRepository.save(logiobj);
+		String timerId = autoobj.get(0).getTimerIdname();
+		if (timerId != null) {
+			stopTimer(timerId);
+
+		}
 		return logiobj;
 	}
 

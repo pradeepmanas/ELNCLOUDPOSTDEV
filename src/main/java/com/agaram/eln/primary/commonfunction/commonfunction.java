@@ -512,24 +512,31 @@ public class commonfunction {
 	        return RtnObject;
 	}
 	
-//	 public static Map<String, Object> stopTimer(String timerId, Map<String, Timer> timerMap, Map<String, Boolean> timerStatusMap) {
-//	        Timer timer = timerMap.get(timerId);
-//	        if (timer != null) {
-//	            timer.cancel();
-//	            timer.purge(); 
-//	            timerMap.remove(timerId); 
-//	            timerStatusMap.put(timerId, false);
-//	            System.out.println("Timer " + timerId + " stopped.");
-//	        } else {
-//	            System.out.println("No timer found with ID " + timerId);
-//	        }
-//	        Map<String, Object> resultMap = new HashMap<>();
-//	        resultMap.put("timerMap", timerMap);
-//	        resultMap.put("timerStatusMap", timerStatusMap);
-//	        
-//	        return resultMap;
-//	    }
-	 
+
+	public static String getEmptyProtocolContent() {
+	    String jsonString = "{\n" +
+	        "  \"protocolname\": \"\",\n" +
+	        "  \"AI\": {\n" +
+	        "    \"value\": {\n" +
+	        "      \"data\": []\n" +
+	        "    }\n" +
+	        "  },\n" +
+	        "  \"abstract\": {\n" +
+	        "    \"value\": \"\"\n" +
+	        "  },\n" +
+	        "  \"matrices\": {\n" +
+	        "    \"value\": \"\"\n" +
+	        "  },\n" +
+	        "  \"material\": {\n" +
+	        "    \"value\": \"\"\n" +
+	        "  },\n" +
+	        "  \"sections\": [],\n" +
+	        "  \"result\": {}\n" +
+	        "}";
+
+	    return jsonString;
+	}
+
 	 
 
 }

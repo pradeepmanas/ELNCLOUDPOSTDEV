@@ -2187,7 +2187,7 @@ public void duedatenotification(LSOrdernotification objNotification) throws Pars
 	
 	LSnotification LSnotification = new LSnotification();
 	
-	String Details = "{\"ordercode\" :\"" + objNotification.getBatchid() 
+	String Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() 
     + "\",\"order\" :\"" + objNotification.getBatchid() 
     + "\",\"date\" :\"" + duedate 
     + "\",\"screen\":\"" + objNotification.getScreen() 
@@ -2296,7 +2296,7 @@ public void overduenotification(LSOrdernotification objNotification) throws Pars
 	
 	String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder";
 	
-	String Details = "{\"ordercode\" :\"" + objNotification.getBatchid() 
+	String Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() 
     + "\",\"order\" :\"" + objNotification.getBatchid()
     + "\",\"days\" :\"" + objNotification.getOverduedays()
     + "\",\"date\" :\"" + duedate
@@ -2442,7 +2442,7 @@ public void cautiondatenotification(LSOrdernotification objNotification) throws 
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		LSnotification LSnotification = new LSnotification();
 		
-		String Details = "{\"ordercode\" :\"" + objNotification.getBatchid() 
+		String Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() 
         + "\",\"order\" :\"" + objNotification.getBatchid() 
         + "\",\"date\" :\"" + cautiondate
         + "\",\"screen\":\"" + objNotification.getScreen() 
