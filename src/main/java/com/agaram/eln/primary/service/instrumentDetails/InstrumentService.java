@@ -10716,14 +10716,14 @@ public class InstrumentService {
 		});
 
 		// Extract fromdate and todate
-		String fromdateStr = (String) mapObj.get("fromdate");
-		String todateStr = (String) mapObj.get("todate");
+		Long fromdateStr = (Long) mapObj.get("fromdate");
+		Long todateStr = (Long) mapObj.get("todate");
 
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
 		// Parse the date strings into Date objects
-		Date fromdate = formatter.parse(fromdateStr);
-		Date todate = formatter.parse(todateStr);
+		Date fromdate = new Date(fromdateStr); // formatter.parse(fromdateStr);
+		Date todate = new Date(todateStr);
 
 		// Set the end of the day for todate
 		Calendar calendar = Calendar.getInstance();
