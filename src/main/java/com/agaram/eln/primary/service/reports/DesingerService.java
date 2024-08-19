@@ -198,24 +198,24 @@ public class DesingerService {
 
 	public Reporttemplate gettemplatedata(Reporttemplate objfile) throws IOException {
 		objfile.setResponse(new Response());
-		Reporttemplate Report_Objects=reporttemplaterepository.findByTemplatecode(objfile.getTemplatecode());
-		if(Report_Objects.getLockeduser()==null) {
-			Report_Objects.setLockeduser(objfile.getLockeduser());
-			Report_Objects.setLockedusername(objfile.getLockedusername());
-			reporttemplaterepository.save(Report_Objects);
-			objfile.setIsalreadyLock(false);
-			objfile.getResponse().setStatus(true);
-		}else if(Report_Objects.getLockeduser()!=null && Report_Objects.getLockeduser().equals(objfile.getObjLoggeduser().getUsercode()))
-		{
-			objfile.getResponse().setInformation("IDS_SAME_USER_OPEN");
-			objfile.getResponse().setStatus(false);
-		}else if(Report_Objects.getLockeduser()!=null) {
-			objfile.getResponse().setInformation("ALREADY_LOCKED");
-			objfile.getResponse().setStatus(false);
-			objfile.setLockeduser(Report_Objects.getLockeduser());
-			objfile.setLockedusername(Report_Objects.getLockedusername());
-			objfile.setIsalreadyLock(true);
-		}
+//		Reporttemplate Report_Objects=reporttemplaterepository.findByTemplatecode(objfile.getTemplatecode());
+//		if(Report_Objects.getLockeduser()==null) {
+//			Report_Objects.setLockeduser(objfile.getLockeduser());
+//			Report_Objects.setLockedusername(objfile.getLockedusername());
+//			reporttemplaterepository.save(Report_Objects);
+//			objfile.setIsalreadyLock(false);
+//			objfile.getResponse().setStatus(true);
+//		}else if(Report_Objects.getLockeduser()!=null && Report_Objects.getLockeduser().equals(objfile.getObjLoggeduser().getUsercode()))
+//		{
+//			objfile.getResponse().setInformation("IDS_SAME_USER_OPEN");
+//			objfile.getResponse().setStatus(false);
+//		}else if(Report_Objects.getLockeduser()!=null) {
+//			objfile.getResponse().setInformation("ALREADY_LOCKED");
+//			objfile.getResponse().setStatus(false);
+//			objfile.setLockeduser(Report_Objects.getLockeduser());
+//			objfile.setLockedusername(Report_Objects.getLockedusername());
+//			objfile.setIsalreadyLock(true);
+//		}
 		
 		if (objfile.getIsmultitenant() == 1 || objfile.getIsmultitenant() == 2) {
 			String tenant = TenantContext.getCurrentTenant();

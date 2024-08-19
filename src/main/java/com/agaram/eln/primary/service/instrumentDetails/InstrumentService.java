@@ -3282,15 +3282,16 @@ public class InstrumentService {
 			}
 		}
 //			System.out.println("Work Flow ENd  " + dtf.format(LocalDateTime.now()));
+		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
+				.findBybatchid(objupdatedorder.getBatchid());
+		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
 		if (objupdatedorder.getFiletype() == 0) {
-			List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
-					.findBybatchid(objupdatedorder.getBatchid());
-			objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
 			objupdatedorder.setCanuserprocess(true);
 			objupdatedorder
 					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
-			lsLogilaborders = null;
 		}
+		lsLogilaborders = null;
+
 		if (objupdatedorder.getLockeduser() != null && objorder.getObjLoggeduser() != null
 				&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
 			objupdatedorder.setIsLockbycurrentuser(1);
@@ -3309,10 +3310,6 @@ public class InstrumentService {
 			}
 		}
 //			System.out.println("Work Flow Final Step End  " + dtf.format(LocalDateTime.now()));
-		if (objupdatedorder.getFiletype() == 0) {
-			objupdatedorder
-					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
-		}
 //			System.out.println("Get File Content Start  " + dtf.format(LocalDateTime.now()));
 		if (objupdatedorder.getLssamplefile() != null) {
 			if (objorder.getIsmultitenant() == 1 || objorder.getIsmultitenant() == 2) {
@@ -3352,7 +3349,6 @@ public class InstrumentService {
 			}
 		}
 //			System.out.println("Get File Content End  " + dtf.format(LocalDateTime.now()));
-//			lsLogilaborders = null;
 		objupdatedorder.setLstworkflow(objorder.getLstworkflow());
 
 		if (objorder.getLsuserMaster() != null && objorder.getLsuserMaster().getUnifieduserid() != null) {
@@ -5121,7 +5117,7 @@ public class InstrumentService {
 				}
 
 				lstorder = lslogilablimsorderdetailRepository
-						.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+						.findByLsprojectmasterInAndFiletypeAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
 								lstproject, filetype, lSfile, 3, lstproject, filetype, lSfile);
 
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
@@ -10532,13 +10528,11 @@ public class InstrumentService {
 
 	public LSlogilablimsorderdetail sendapprovel(LSlogilablimsorderdetail objdir) {
 		List<LSlogilablimsorderdetail> logiobj = new ArrayList<LSlogilablimsorderdetail>();
-		logiobj = lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),
-				objdir.getBatchid());
+		logiobj = logilablimsorderdetailsRepository.getOrderDetails(objdir.getBatchcode());
 		logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
 		logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
 		logiobj.get(0).setCanuserprocess(false);
-
-		lslogilablimsorderdetailRepository.save(logiobj.get(0));
+		logilablimsorderdetailsRepository.save(logiobj.get(0));
 
 		String screen = "Sheet Order";
 		String Notification = "SENDFORAPPROVEL";

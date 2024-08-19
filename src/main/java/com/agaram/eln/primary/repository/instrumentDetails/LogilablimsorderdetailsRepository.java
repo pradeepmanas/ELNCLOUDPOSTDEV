@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.repository.instrumentDetails;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,8 +13,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 
 public interface LogilablimsorderdetailsRepository extends JpaRepository<LSlogilablimsorderdetail, Long> {
 	
-	LogilabOrderDetails findByBatchcode(Long batchcode);
-	
+	LogilabOrderDetails findByBatchcode(Long batchcode);	
 	
 	@Transactional
 	@Modifying
@@ -23,6 +24,10 @@ public interface LogilablimsorderdetailsRepository extends JpaRepository<LSlogil
 	@Modifying
 	@Query(value = "update LSlogilablimsorderdetail set lockeduser = null, lockedusername = null, activeuser = null where batchcode = ?1", nativeQuery = true)
 	void UpdateOrderOnunlockData(Long batchcode);
+	
+	@Transactional
+	@Query(value="select * from LSlogilablimsorderdetail where batchcode= ?1 ", nativeQuery=true)
+	List<LSlogilablimsorderdetail> getOrderDetails(Long batchcode);
 	
 	
 }
