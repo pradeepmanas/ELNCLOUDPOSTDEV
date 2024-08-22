@@ -92,17 +92,17 @@ public class MaterialTypeService {
 			
 			if(objlstTypes.isEmpty()) {
 				
-//				List<MaterialType> objlstTypes1 = materialTypeRepository.findAll();
+			List<MaterialType> objlstTypes1 = materialTypeRepository.findAll();
 				
-//				objMaterialType.setNmaterialtypecode(objlstTypes1.size()+1);
+				objMaterialType.setNmaterialtypecode(objlstTypes1.size()+1);
 				objMaterialType.setNdefaultstatus(3);
 				objMaterialType.setNstatus(1);
 				objMaterialType.setCreatedate(commonfunction.getCurrentUtcTime());
 				objMaterialType.setCreateby(objMaterialType.getCreateby());
-				
-				materialTypeRepository.save(objMaterialType);
 				objMaterialType.setInfo("IDS_SUCCESS");
+				materialTypeRepository.save(objMaterialType);
 				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
+				
 			}else {
 				
 				objMaterialType.setInfo("IDS_FAIL_ALREADY_EXIST");

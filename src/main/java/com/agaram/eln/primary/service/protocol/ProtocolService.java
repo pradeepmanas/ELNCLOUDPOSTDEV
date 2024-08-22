@@ -139,6 +139,7 @@ import com.agaram.eln.primary.model.protocols.Protocolordervideos;
 import com.agaram.eln.primary.model.protocols.Protocolvideos;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
+import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
@@ -204,6 +205,7 @@ import com.agaram.eln.primary.repository.protocol.ProtocolvideosRepository;
 import com.agaram.eln.primary.repository.protocol.lSprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultisitesRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSSiteMasterRepository;
@@ -491,6 +493,9 @@ public class ProtocolService {
 	@Autowired
 	private LSordernotificationRepository lsordernotificationrepo;
 
+	@Autowired
+	private NotificationRepository notificationRepository;
+	
 	@Autowired
 	private LsActiveWidgetsRepository lsActiveWidgetsRepository;
 	
@@ -3804,6 +3809,21 @@ public class ProtocolService {
 
 			ordernotList.add(lsordernotificationrepo.save(notobj));
 			lSlogilabprotocoldetail.setLsordernotification(ordernotList.get(0));
+			
+			Notification notify = new Notification();
+			notify.setBatchid(lSlogilabprotocoldetail.getProtoclordername());
+			notify.setOrderid(lSlogilabprotocoldetail.getProtocolordercode());
+			notify.setLsusermaster(lSlogilabprotocoldetail.getLsuserMaster());
+			notify.setAddedby(lSlogilabprotocoldetail.getLsuserMaster().getUsername());
+			notify.setUsercode(lSlogilabprotocoldetail.getLsuserMaster().getUsercode());
+			notify.setSitecode(lSlogilabprotocoldetail.getLsuserMaster().getLssitemaster().getSitecode());
+			notify.setScreen("sheetorder");
+			notify.setCurrentdate(commonfunction.getCurrentUtcTime());
+			notify.setCautiondate(lSlogilabprotocoldetail.getCautiondate());
+			notify.setDuedate(lSlogilabprotocoldetail.getDuedate());
+			notify.setAddedon(commonfunction.getCurrentUtcTime());
+			notify.setStatus(1);
+			notificationRepository.save(notify);
 		}
 		if (ordernotList.size() > 0) {
 			lSlogilabprotocoldetail.setLsordernotification(ordernotList.get(0));

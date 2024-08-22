@@ -1350,13 +1350,11 @@ INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate
 SELECT 'IDS_TSK_SAVE', 'IDS_MDL_REPORTS', 'administrator', '1', '0', '0', '0', 1,1,'IDS_SCN_REPORTS' 
 WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SAVE' and screenname='IDS_SCN_REPORTVIEVER' and usergroupid_usergroupcode = 1); 
 
-
-
 UPDATE lsusergrouprights SET screenname = 'IDS_SCN_REPORTVIEVER' WHERE screenname = 'IDS_SCN_REPORTS' AND (displaytopic = 'IDS_SCN_REPORTVIEWER' OR displaytopic = 'IDS_SCN_REPORTVIEWERNEWFOLDER');
 update lsusergrouprights set screenname = 'IDS_SCN_REPORTMAPPER' where screenname = 'IDS_SCN_REPORTS' and displaytopic = 'IDS_TSK_REPORTMAPPING';
 
 UPDATE lsusergrouprightsmaster SET screenname = 'IDS_SCN_REPORTVIEVER' WHERE screenname = 'IDS_SCN_REPORTS' AND (displaytopic = 'IDS_SCN_REPORTVIEWER' OR displaytopic = 'IDS_SCN_REPORTVIEWERNEWFOLDER');
-update lsusergrouprightsmaster set screenname = 'IDS_SCN_REPORTMAPPER' where screenname = 'IDS_SCN_REPORTS' and displaytopic = 'IDS_TSK_REPORTMAPPING';
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_REPORTMAPPER' where screenname = 'IDS_SCN_REPORTVIEWER' and displaytopic = 'IDS_TSK_REPORTMAPPING';
 
 UPDATE lsusergrouprightsmaster SET sequenceorder = CASE
     WHEN screenname = 'IDS_SCN_DASHBOARD' THEN 1
@@ -1473,7 +1471,3 @@ UPDATE lsusergrouprights SET sequenceorder = CASE
     WHEN screenname = 'IDS_SCN_LOGBOOK' THEN 45
     ELSE sequenceorder -- Retain the current value if no match
 END;
-
-DELETE FROM LSPasswordPolicy WHERE policycode NOT IN (SELECT MAX(policycode) FROM LSPasswordPolicy GROUP BY lssitemaster_sitecode);
-
-ALTER TABLE IF Exists lsautoregister ADD COLUMN IF NOT EXISTS timerIdname character varying(255);

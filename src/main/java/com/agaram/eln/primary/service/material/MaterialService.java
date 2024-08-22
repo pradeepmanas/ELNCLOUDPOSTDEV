@@ -1541,16 +1541,24 @@ public class MaterialService {
 	public ResponseEntity<Object> getElnMaterial(Map<String, Object> inputMap) throws ParseException {
 		
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
-		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
+		if(inputMap.get("fromdate") != null) {
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+			
+			
+			Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
+			Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
+			
+			List<Elnmaterial> lstElnmaterials = elnmaterialRepository
+					.findByNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(nsiteInteger,fromDate,toDate);
+			objmap.put("lstMaterial", lstElnmaterials);
+		}else {
+			List<Elnmaterial> lstElnmaterials = elnmaterialRepository
+					.findByNsitecodeOrderByNmaterialcodeDesc(nsiteInteger);
+			objmap.put("lstMaterial", lstElnmaterials);
+		}
+
 		
-		List<Elnmaterial> lstElnmaterials = elnmaterialRepository
-				.findByNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(nsiteInteger,fromDate,toDate);
-		
-		objmap.put("lstMaterial", lstElnmaterials);
 		objmap.put("objsilentaudit", inputMap.get("objsilentaudit"));
 		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);

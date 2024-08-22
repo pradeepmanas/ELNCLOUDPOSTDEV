@@ -1390,7 +1390,8 @@ public class StarterRunner {
 	}
 
 	public LsAutoregister getautoregisterdetails(LsAutoregister lsautoregister, HikariConfig configuration,
-			String screen, Integer autoregistercount, String timerId) throws SQLException, InterruptedException, ParseException {
+			String screen, Integer autoregistercount, String timerId)
+			throws SQLException, InterruptedException, ParseException {
 		try (HikariDataSource dataSource = new HikariDataSource(configuration);
 				Connection con = dataSource.getConnection()) {
 //			Date currentdate = commonfunction.getCurrentUtcTime();
@@ -1473,7 +1474,7 @@ public class StarterRunner {
 					: 0;
 			if (lSlogilabprotocoldetail1.getLsautoregister() != null) {
 				LsAutoregister auditregdetails = getautoregisterdetails(lSlogilabprotocoldetail1.getLsautoregister(),
-						configuration, "Protocol_Order", autoregistercount,ParrenttimerId);
+						configuration, "Protocol_Order", autoregistercount, ParrenttimerId);
 				lSlogilabprotocoldetail1.setLsautoregister(auditregdetails);
 
 			}
@@ -1567,8 +1568,8 @@ public class StarterRunner {
 						+ "lsusermaster_usercode,approved,versionno,createby,sitecode,viewoption,"
 						+ "fileuid,fileuri,containerstored,lsprotocolmaster_protocolmastercode,repeat,"
 						+ "orderflag,elnprotocolworkflow_workflowcode,lsautoregister_regcode,"
-						+ "elnmaterial_nmaterialcode,elnmaterialinventory_nmaterialinventorycode,autoregistercount,directorycode) "
-						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+						+ "elnmaterial_nmaterialcode,elnmaterialinventory_nmaterialinventorycode,autoregistercount,directorycode,assignedto_usercode) "
+						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 				try (PreparedStatement pst = con.prepareStatement(updateString, Statement.RETURN_GENERATED_KEYS)) {
 					pst.setInt(1, lSlogilabprotocoldetail1.getTestcode());
@@ -1606,14 +1607,20 @@ public class StarterRunner {
 					pst.setObject(20, lSlogilabprotocoldetail1.getElnmaterial().getNmaterialcode());
 					pst.setObject(21, lSlogilabprotocoldetail1.getElnmaterialinventory().getNmaterialinventorycode());
 					pst.setInt(22, autoregistercount);
-					
-					if (lSlogilabprotocoldetail1.getDirectorycode() != null && lSlogilabprotocoldetail1.getDirectorycode() != 0) {
-					    pst.setLong(23, lSlogilabprotocoldetail1.getDirectorycode());
+
+					if (lSlogilabprotocoldetail1.getDirectorycode() != null
+							&& lSlogilabprotocoldetail1.getDirectorycode() != 0) {
+						pst.setLong(23, lSlogilabprotocoldetail1.getDirectorycode());
 					} else {
-					    pst.setNull(23, java.sql.Types.BIGINT);
+						pst.setNull(23, java.sql.Types.BIGINT);
+					}
+					if (lSlogilabprotocoldetail1.getAssignedto() != null
+							&& lSlogilabprotocoldetail1.getAssignedto().getUsercode() != null) {
+						pst.setInt(24, lSlogilabprotocoldetail1.getAssignedto().getUsercode());
+					} else {
+						pst.setNull(24, java.sql.Types.INTEGER);
 					}
 
-					
 					int affectedRows = pst.executeUpdate();
 
 					if (affectedRows > 0) {
@@ -1687,7 +1694,7 @@ public class StarterRunner {
 									Timer timerObj = timerMap.get(ChildTimerid);
 									if (timerObj == null) {
 										timerMap.put(ChildTimerid, timer);
-									}else {
+									} else {
 										if (protocolorderDetailMap.size() > 0) {
 											objLSlogilabprotocoldetail = protocolorderDetailMap.get(ChildTimerid);
 										}
@@ -1695,19 +1702,17 @@ public class StarterRunner {
 											objLSlogilabprotocoldetail = objorderObj;
 										}
 									}
-									
-									if(objLSlogilabprotocoldetail.getAutoregistercount()==0) {
+
+									if (objLSlogilabprotocoldetail.getAutoregistercount() == 0) {
 										if (!ChildTimerid.isEmpty()) {
 											stopTimer(ChildTimerid);
 										}
-									}else {
+									} else {
 										objLSlogilabprotocoldetail = ExecuteAutoRegistrationChildorderforprotocol(
 												objLSlogilabprotocoldetail, configuration, ChildTimerid);
 										protocolorderDetailMap.put(ChildTimerid, objLSlogilabprotocoldetail);
 										System.out.println("kumu");
 									}
-									
-									
 
 								} catch (Exception e) {
 									if (!ChildTimerid.isEmpty()) {
@@ -1769,7 +1774,7 @@ public class StarterRunner {
 				if (lSlogilabprotocoldetail1.getLsautoregister() != null) {
 					LsAutoregister auditregdetails = getautoregisterdetails(
 							lSlogilabprotocoldetail1.getLsautoregister(), configuration, "Protocol_Order",
-							autoregistercount,timerId);
+							autoregistercount, timerId);
 					lSlogilabprotocoldetail1.setLsautoregister(auditregdetails);
 				}
 
@@ -1860,8 +1865,8 @@ public class StarterRunner {
 						+ "lsusermaster_usercode,approved,versionno,createby,sitecode,viewoption,"
 						+ "fileuid,fileuri,containerstored,lsprotocolmaster_protocolmastercode,repeat,"
 						+ "orderflag,elnprotocolworkflow_workflowcode,lsautoregister_regcode,"
-						+ "elnmaterial_nmaterialcode,elnmaterialinventory_nmaterialinventorycode,autoregistercount) "
-						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+						+ "elnmaterial_nmaterialcode,elnmaterialinventory_nmaterialinventorycode,autoregistercount,directorycode,assignedto_usercode) "
+						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 				try (PreparedStatement pst = con.prepareStatement(updateString, Statement.RETURN_GENERATED_KEYS)) {
 					pst.setInt(1, lSlogilabprotocoldetail1.getTestcode());
@@ -1898,6 +1903,20 @@ public class StarterRunner {
 					pst.setObject(20, lSlogilabprotocoldetail1.getElnmaterial().getNmaterialcode());
 					pst.setObject(21, lSlogilabprotocoldetail1.getElnmaterialinventory().getNmaterialinventorycode());
 					pst.setInt(22, autoregistercount);
+
+					if (lSlogilabprotocoldetail1.getDirectorycode() != null
+							&& lSlogilabprotocoldetail1.getDirectorycode() != 0) {
+						pst.setLong(23, lSlogilabprotocoldetail1.getDirectorycode());
+					} else {
+						pst.setNull(23, java.sql.Types.BIGINT);
+					}
+					if (lSlogilabprotocoldetail1.getAssignedto() != null
+							&& lSlogilabprotocoldetail1.getAssignedto().getUsercode() != null) {
+						pst.setInt(24, lSlogilabprotocoldetail1.getAssignedto().getUsercode());
+					} else {
+						pst.setNull(24, java.sql.Types.INTEGER);
+					}
+
 					int affectedRows = pst.executeUpdate();
 
 					if (affectedRows > 0) {
@@ -2523,7 +2542,7 @@ public class StarterRunner {
 			String timerId1 = generateUniqueTimerId();
 			objorder1.getLsautoregisterorders().setTimerIdname(timerId1);
 			LsAutoregister auditregdetails = getautoregisterdetails(objorder1.getLsautoregisterorders(), configuration,
-					"Sheet_Order", autoregistercount,ParrenttimerId);
+					"Sheet_Order", autoregistercount, ParrenttimerId);
 
 			objorder1.setLsautoregisterorders(auditregdetails);
 			Long Previousbatch = objorder1.getBatchcode();
@@ -2542,8 +2561,8 @@ public class StarterRunner {
 						+ "filecode,keyword,lockedusername,directorycode,orderdisplaytype,"
 						+ "lstestmasterlocal_testcode,viewoption,ordercancell,teamcode,createdtimestamp,orderflag,"
 						+ "lsautoregisterorders_regcode,testcode,testname,"
-						+ "elnmaterialinventory_nmaterialinventorycode,elnmaterial_nmaterialcode,autoregistercount) "
-						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+						+ "elnmaterialinventory_nmaterialinventorycode,elnmaterial_nmaterialcode,autoregistercount,assignedto_usercode) "
+						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 				try (PreparedStatement pst = con.prepareStatement(updateString, Statement.RETURN_GENERATED_KEYS)) {
 					if (objorder1.getAutoregistercount() == 0) {
@@ -2579,6 +2598,12 @@ public class StarterRunner {
 					pst.setObject(22, objorder1.getElnmaterialinventory().getNmaterialinventorycode());
 					pst.setObject(23, objorder1.getElnmaterial().getNmaterialcode());
 					pst.setInt(24, autoregistercount);
+					if (objorder1.getAssignedto() != null && objorder1.getAssignedto().getUsercode() != null) {
+						pst.setInt(25, objorder1.getAssignedto().getUsercode());
+
+					} else {
+						pst.setNull(25, java.sql.Types.INTEGER);
+					}
 					int affectedRows = pst.executeUpdate();
 
 					if (affectedRows > 0) {
@@ -2760,7 +2785,7 @@ public class StarterRunner {
 					&& objorder.getAutoregistercount() != null && objorder.getAutoregistercount() > 0) {
 				objorder1.getLsautoregisterorders().setTimerIdname(timerId);
 				LsAutoregister auditregdetails = getautoregisterdetails(objorder1.getLsautoregisterorders(),
-						configuration, "Sheet_Order", autoregistercount,timerId);
+						configuration, "Sheet_Order", autoregistercount, timerId);
 				objorder1.setLsautoregisterorders(auditregdetails);
 				Long Previousbatch = objorder1.getBatchcode();
 				Long clonedbatchcode = new Long(Previousbatch);
@@ -2778,8 +2803,8 @@ public class StarterRunner {
 							+ "filecode,keyword,lockedusername,directorycode,orderdisplaytype,"
 							+ "lstestmasterlocal_testcode,viewoption,ordercancell,teamcode,createdtimestamp,orderflag,"
 							+ "lsautoregisterorders_regcode,testcode,testname,"
-							+ "elnmaterialinventory_nmaterialinventorycode,elnmaterial_nmaterialcode,autoregistercount) "
-							+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+							+ "elnmaterialinventory_nmaterialinventorycode,elnmaterial_nmaterialcode,autoregistercount,assignedto_usercode) "
+							+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 					try (PreparedStatement pst = con.prepareStatement(updateString, Statement.RETURN_GENERATED_KEYS)) {
 						if (autoregistercount == 0) {
@@ -2810,6 +2835,12 @@ public class StarterRunner {
 						pst.setObject(22, objorder1.getElnmaterialinventory().getNmaterialinventorycode());
 						pst.setObject(23, objorder1.getElnmaterial().getNmaterialcode());
 						pst.setInt(24, autoregistercount);
+						if (objorder1.getAssignedto() != null && objorder1.getAssignedto().getUsercode() != null) {
+							pst.setInt(25, objorder1.getAssignedto().getUsercode());
+
+						} else {
+							pst.setNull(25, java.sql.Types.INTEGER);
+						}
 						int affectedRows = pst.executeUpdate();
 
 						if (affectedRows > 0) {

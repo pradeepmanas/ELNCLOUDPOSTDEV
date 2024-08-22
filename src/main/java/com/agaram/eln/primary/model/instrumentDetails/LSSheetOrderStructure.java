@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.SearchCriteria;
+import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
@@ -51,6 +52,17 @@ public class LSSheetOrderStructure {
 	
 	private String foldermapping;
 	
+	@Transient
+	List<LSworkflow> lstworkflow;
+	
+	public List<LSworkflow> getLstworkflow() {
+		return lstworkflow;
+	}
+
+	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+		this.lstworkflow = lstworkflow;
+	}
+
 	public String getFoldermapping() {
 		return foldermapping;
 	}

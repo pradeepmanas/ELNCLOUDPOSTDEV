@@ -131,6 +131,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
+import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 import com.agaram.eln.primary.model.usermanagement.LSMultisites;
@@ -208,6 +209,7 @@ import com.agaram.eln.primary.repository.sheetManipulation.LSsampleresultReposit
 import com.agaram.eln.primary.repository.sheetManipulation.LStestparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSworkflowgroupmappingRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
 import com.agaram.eln.primary.repository.templates.LsMappedTemplateRepository;
 import com.agaram.eln.primary.repository.templates.LsUnmappedTemplateRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultisitesRepositery;
@@ -484,6 +486,9 @@ public class InstrumentService {
 	@Autowired
 	private LSordernotificationRepository lsordernotificationrepo;
 
+	@Autowired
+	private NotificationRepository notificationRepository;
+	
 	@Autowired
 	private LsActiveWidgetsRepository lsActiveWidgetsRepository;
 
@@ -1437,6 +1442,21 @@ public class InstrumentService {
 					e.printStackTrace();
 				}
 			}
+			
+			Notification notify = new Notification();
+			notify.setBatchid(objorder.getBatchid());
+			notify.setOrderid(objorder.getBatchcode());
+			notify.setLsusermaster(objorder.getLsuserMaster());
+			notify.setAddedby(objorder.getLsuserMaster().getUsername());
+			notify.setUsercode(objorder.getLsuserMaster().getUsercode());
+			notify.setSitecode(objorder.getLsuserMaster().getLssitemaster().getSitecode());
+			notify.setScreen("sheetorder");
+			notify.setCurrentdate(commonfunction.getCurrentUtcTime());
+			notify.setCautiondate(objorder.getCautiondate());
+			notify.setDuedate(objorder.getDuedate());
+			notify.setAddedon(commonfunction.getCurrentUtcTime());
+			notify.setStatus(1);
+			notificationRepository.save(notify);
 		}
 		lslogilablimsorderdetailRepository.save(objorder);
 		if (objorder.getRepeat() != null && objorder.getLsautoregisterorderdetail() != null && objorder.getRepeat()) {
@@ -3282,10 +3302,12 @@ public class InstrumentService {
 			}
 		}
 //			System.out.println("Work Flow ENd  " + dtf.format(LocalDateTime.now()));
-		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
-				.findBybatchid(objupdatedorder.getBatchid());
+		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository.findBybatchid(objupdatedorder.getBatchid());
 		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
+		
 		if (objupdatedorder.getFiletype() == 0) {
+			List<Lsbatchdetails> lstbatch = LsbatchdetailsRepository.findByBatchcode(objupdatedorder.getBatchcode());
+			objupdatedorder.setLsbatchdetails(lstbatch);
 			objupdatedorder.setCanuserprocess(true);
 			objupdatedorder
 					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
@@ -5255,7 +5277,7 @@ public class InstrumentService {
 		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
 			lstorder = lslogilablimsorderdetailRepository
 					.findByFiletypeAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-							objorder.getFiletype(), 3, 1);
+							objorder.getFiletype(), 3, objorder.getFiletype());
 		} else {
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
 					.findBylsuserMaster(objorder.getLsuserMaster());
@@ -7515,24 +7537,28 @@ public class InstrumentService {
 
 			}
 		}
-
+		lstorder.forEach(objorderDetail -> objorderDetail.setLstworkflow(objdir.getLstworkflow()));
 		if (objdir.getSearchCriteria() != null && objdir.getSearchCriteria().getContentsearchtype() != null
 				&& objdir.getSearchCriteria().getContentsearch() != null) {
 
 			lstorderstrcarray = GetordersondirectoryFilter(objdir, lstorder);
-
-		}
-		if (objdir.getSearchCriteria() != null && objdir.getSearchCriteria().getContentsearchtype() != null
-				&& objdir.getSearchCriteria().getContentsearch() != null) {
-			// lstorderstrcarray.forEach(objorderDetail ->
-			// objorderDetail.setCanuserprocess(true));
-
 			return lstorderstrcarray;
-		} else {
-			// lstorder.forEach(objorderDetail -> objorderDetail.setCanuserprocess(true));
-
-			return lstorder;
 		}
+	
+//		if (objdir.getSearchCriteria() != null && objdir.getSearchCriteria().getContentsearchtype() != null
+//				&& objdir.getSearchCriteria().getContentsearch() != null) {
+//			// lstorderstrcarray.forEach(objorderDetail ->
+//			// objorderDetail.setCanuserprocess(true));
+//
+//		
+//		} 
+//			else {
+//			// lstorder.forEach(objorderDetail -> objorderDetail.setCanuserprocess(true));
+		
+//
+			return lstorder;
+//		}
+			
 	}
 
 	public List<LSSheetOrderStructure> Deletedirectories(LSSheetOrderStructure[] directories) {

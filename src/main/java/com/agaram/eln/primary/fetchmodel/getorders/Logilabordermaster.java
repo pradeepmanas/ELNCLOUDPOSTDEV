@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
+import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
@@ -14,7 +15,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
-public class Logilabordermaster implements Comparable<Logilabordermaster>{
+public class Logilabordermaster implements Comparable<Logilabordermaster> {
 	private Long batchcode;
 	private String batchid;
 	List<LSworkflow> lstworkflow;
@@ -44,12 +45,15 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	private Boolean sentforapprovel;
 	private String approvelaccept;
 	private Integer autoregistercount;
-	
+	private String materialname;
+
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
-			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,LSuserMaster assignedto,
-			Date createdtimestamp, Date completedtimestamp,String keyword, LStestmasterlocal lstestmasterlocal,Integer ordercancell,Integer viewoption,
-			LSuserMaster lsuserMaster ,Integer testcode,Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,Boolean repeat, 
-			LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept,Integer autoregistercount) {
+			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,
+			LSuserMaster assignedto, Date createdtimestamp, Date completedtimestamp, String keyword,
+			LStestmasterlocal lstestmasterlocal, Integer ordercancell, Integer viewoption, LSuserMaster lsuserMaster,
+			Integer testcode, Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,
+			Boolean repeat, LsAutoregister lsautoregisterorders, Boolean sentforapprovel, String approvelaccept,
+			Integer autoregistercount, Elnmaterial elnmaterial) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -63,29 +67,37 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		this.createdtimestamp = createdtimestamp;
 		this.completedtimestamp = completedtimestamp;
 		this.keyword = keyword;
-		this.lsworkflow =lsworkflow != null ? new LSworkflow(lsworkflow.getWorkflowcode(),lsworkflow.getWorkflowname()):null;
-		this.ordercancell=ordercancell;
-		this.assignedto =assignedto;
-		this.testcode=testcode;
-		this.viewoption=viewoption;
+		this.lsworkflow = lsworkflow != null
+				? new LSworkflow(lsworkflow.getWorkflowcode(), lsworkflow.getWorkflowname())
+				: null;
+		this.ordercancell = ordercancell;
+		this.assignedto = assignedto;
+		this.testcode = testcode;
+		this.viewoption = viewoption;
 		this.createdby = lsuserMaster;
-		this.approvelstatus=approvelstatus;
-		this.lsordernotification=lsordernotification;
+		this.approvelstatus = approvelstatus;
+		this.lsordernotification = lsordernotification;
 		this.ordersaved = ordersaved;
-		this.repeat=repeat;
-		this.lsautoregisterorders=lsautoregisterorders;
-		this.sentforapprovel=sentforapprovel;
-		this.approvelaccept=approvelaccept;
-		this.autoregistercount=autoregistercount;
-		
-		
+		this.repeat = repeat;
+		this.lsautoregisterorders = lsautoregisterorders;
+		this.sentforapprovel = sentforapprovel;
+		this.approvelaccept = approvelaccept;
+		this.autoregistercount = autoregistercount;
+		this.materialname = elnmaterial != null ? elnmaterial.getSmaterialname() : null;
+
 	}
 
-	
+	public String getMaterialname() {
+		return materialname;
+	}
+
+	public void setMaterialname(String materialname) {
+		this.materialname = materialname;
+	}
+
 	public Boolean getSentforapprovel() {
 		return sentforapprovel;
 	}
-
 
 	public void setSentforapprovel(Boolean sentforapprovel) {
 		this.sentforapprovel = sentforapprovel;
@@ -95,11 +107,9 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		return approvelaccept;
 	}
 
-
 	public void setApprovelaccept(String approvelaccept) {
 		this.approvelaccept = approvelaccept;
 	}
-
 
 	public Integer getApprovelstatus() {
 		return approvelstatus;
@@ -148,22 +158,22 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	public void setViewoption(Integer viewoption) {
 		this.viewoption = viewoption;
 	}
-   public Integer getTestcode() {
+
+	public Integer getTestcode() {
 		return testcode;
 	}
 
 	public void setTestcode(Integer testcode) {
 		this.testcode = testcode;
 	}
+
 	public Integer getOrdercancell() {
 		return ordercancell;
 	}
 
-
 	public void setOrdercancell(Integer ordercancell) {
 		this.ordercancell = ordercancell;
 	}
-
 
 	public String getKeyword() {
 		return keyword;
@@ -182,24 +192,24 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	}
 
 	public String getBatchid() {
-		
-		if(this.batchid != null) {
-			return this.batchid;
-			}else {
-				String Batchid = "ELN" + this.batchcode;
 
-				if (this.filetype == 3) {
-					Batchid = "RESEARCH" + this.batchcode;
-				} else if (this.filetype == 4) {
-					Batchid = "EXCEL" + this.batchcode;
-				} else if (this.filetype == 5) {
-					Batchid = "VALIDATE" + this.batchcode;
-				} else if (this.filetype == 0) {
-					Batchid = batchid;
-				}
-				return Batchid;	
+		if (this.batchid != null) {
+			return this.batchid;
+		} else {
+			String Batchid = "ELN" + this.batchcode;
+
+			if (this.filetype == 3) {
+				Batchid = "RESEARCH" + this.batchcode;
+			} else if (this.filetype == 4) {
+				Batchid = "EXCEL" + this.batchcode;
+			} else if (this.filetype == 5) {
+				Batchid = "VALIDATE" + this.batchcode;
+			} else if (this.filetype == 0) {
+				Batchid = batchid;
 			}
-		
+			return Batchid;
+		}
+
 	}
 
 	public void setBatchid(String batchid) {
@@ -240,7 +250,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 //	}
 	public void setLstworkflow(List<LSworkflow> lstworkflow) {
 
-		if (lstworkflow != null  && this.workflowcode !=null && lstworkflow.size() > 0) {
+		if (lstworkflow != null && this.workflowcode != null && lstworkflow.size() > 0) {
 			// if(lstworkflow.contains(this.lsworkflow))
 
 			List<Integer> lstworkflowcode = new ArrayList<Integer>();
@@ -321,11 +331,9 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		return filecode;
 	}
 
-
 	public void setFilecode(Integer filecode) {
 		this.filecode = filecode;
 	}
-
 
 	public String getOrderflag() {
 		return orderflag;
@@ -342,17 +350,15 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 	public void setCreatedtimestamp(Date createdtimestamp) {
 		this.createdtimestamp = createdtimestamp;
 	}
-	
+
 	@Override
 	public int compareTo(Logilabordermaster o) {
 		return this.getBatchcode().compareTo(o.getBatchcode());
 	}
 
-
 	public LSworkflow getLsworkflow() {
 		return lsworkflow;
 	}
-
 
 	public void setLsworkflow(LSworkflow lsworkflow) {
 		this.lsworkflow = lsworkflow;
@@ -362,16 +368,13 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		return assignedto;
 	}
 
-
 	public void setAssignedto(LSuserMaster assignedto) {
 		this.assignedto = assignedto;
 	}
-	
 
 	public Integer getOrdersaved() {
 		return ordersaved;
 	}
-	
 
 	public void setOrdersaved(Integer ordersaved) {
 		this.ordersaved = ordersaved;
@@ -381,10 +384,8 @@ public class Logilabordermaster implements Comparable<Logilabordermaster>{
 		return autoregistercount;
 	}
 
-
 	public void setAutoregistercount(Integer autoregistercount) {
 		this.autoregistercount = autoregistercount;
 	}
-	
-	
+
 }
