@@ -1471,3 +1471,41 @@ UPDATE lsusergrouprights SET sequenceorder = CASE
     WHEN screenname = 'IDS_SCN_LOGBOOK' THEN 45
     ELSE sequenceorder -- Retain the current value if no match
 END;
+
+CREATE TABLE IF NOT EXISTS public.screenmaster
+(
+    screencode integer NOT NULL,
+    screenname character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT screenmaster_pkey PRIMARY KEY (screencode)
+)
+
+TABLESPACE pg_default;
+
+CREATE TABLE IF NOT EXISTS public.barcodemaster
+(
+    barcodeno integer NOT NULL,
+    barcodefileid character varying(255) COLLATE pg_catalog."default",
+    barcodename character varying(255) COLLATE pg_catalog."default",
+    createdon timestamp without time zone,
+    status integer,
+    createdby_usercode integer,
+    screen_screencode integer,
+    lssitemaster_sitecode integer,
+    CONSTRAINT barcodemaster_pkey PRIMARY KEY (barcodeno),
+    CONSTRAINT fk74xnn83meuhenxwn86fuxtn6q FOREIGN KEY (lssitemaster_sitecode)
+        REFERENCES public.lssitemaster (sitecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkapaj7g1ioh34oquegovh7qr5x FOREIGN KEY (createdby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkiqalqug5ecbnce224xtipcvjo FOREIGN KEY (screen_screencode)
+        REFERENCES public.screenmaster (screencode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+INSERT INTO public.screenmaster(screencode, screenname) VALUES (1, 'IDS_SCN_MATERIALTYPE') ON CONFLICT (screencode) DO NOTHING;
