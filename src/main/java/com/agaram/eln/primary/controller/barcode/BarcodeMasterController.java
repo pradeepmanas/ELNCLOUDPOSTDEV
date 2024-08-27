@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.controller.barcode;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class BarcodeMasterController {
 	
 	@PostMapping("/InsertBarcode")
 	public ResponseEntity<Object> InsertBarcode(MultipartHttpServletRequest request)
-			throws JsonMappingException, JsonProcessingException {
+			throws JsonMappingException, JsonProcessingException, ParseException {
 		return barcodemasterservice.InsertBarcode(request);
 	}
 	

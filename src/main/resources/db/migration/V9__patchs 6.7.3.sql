@@ -1321,7 +1321,7 @@ BEGIN
 END $$;
 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) 
-SELECT 'IDS_TSK_SAVE', 'IDS_MDL_REPORTS', 'administrator', '1', '0', '0', '0', 1,1,'IDS_SCN_REPORTS' 
+SELECT 'IDS_TSK_SAVE', 'IDS_MDL_REPORTS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_REPORTS' 
 WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SAVE' and screenname='IDS_SCN_REPORTS' and usergroupid_usergroupcode = 1); 
 
 DO $$
@@ -1334,7 +1334,7 @@ BEGIN
 END $$;
 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) 
-SELECT 'IDS_TSK_INSERT', 'IDS_MDL_REPORTS', 'administrator', '1', '0', '0', '0', 1,1,'IDS_SCN_REPORTS' 
+SELECT 'IDS_TSK_INSERT', 'IDS_MDL_REPORTS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_REPORTS' 
 WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_INSERT' and screenname='IDS_SCN_REPORTS' and usergroupid_usergroupcode = 1); 
 
 DO $$
@@ -1347,7 +1347,7 @@ BEGIN
 END $$;
 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) 
-SELECT 'IDS_TSK_SAVE', 'IDS_MDL_REPORTS', 'administrator', '1', '0', '0', '0', 1,1,'IDS_SCN_REPORTS' 
+SELECT 'IDS_TSK_SAVE', 'IDS_MDL_REPORTS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_REPORTS' 
 WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SAVE' and screenname='IDS_SCN_REPORTVIEVER' and usergroupid_usergroupcode = 1); 
 
 UPDATE lsusergrouprights SET screenname = 'IDS_SCN_REPORTVIEVER' WHERE screenname = 'IDS_SCN_REPORTS' AND (displaytopic = 'IDS_SCN_REPORTVIEWER' OR displaytopic = 'IDS_SCN_REPORTVIEWERNEWFOLDER');
@@ -1509,3 +1509,58 @@ CREATE TABLE IF NOT EXISTS public.barcodemaster
 TABLESPACE pg_default;
 
 INSERT INTO public.screenmaster(screencode, screenname) VALUES (1, 'IDS_SCN_MATERIALTYPE') ON CONFLICT (screencode) DO NOTHING;
+
+ALTER TABLE IF Exists LSSheetOrderStructure ADD COLUMN IF NOT EXISTS projectfolder boolean;
+
+ALTER TABLE IF Exists lsprotocolorderstructure ADD COLUMN IF NOT EXISTS projectfolder boolean;
+
+update LSusergrouprightsmaster set screenname = 'IDS_SCN_REPORTS' where modulename = 'IDS_MDL_REPORTS' and screenname = 'IDS_SCN_REPORTDESIGNER';
+update LSusergrouprights set screenname = 'IDS_SCN_REPORTS' where modulename = 'IDS_MDL_REPORTS' and screenname = 'IDS_SCN_REPORTDESIGNER';
+
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+    VALUES (187, 'IDS_TSK_BARCODEMASTER', 'IDS_MDL_SETUP', 'IDS_SCN_BARCODEMASTER', '0', '0', '0', '0', '0,0,0', 20) ON CONFLICT (orderno) DO NOTHING;
+END $$;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+SELECT 'IDS_TSK_BARCODEMASTER', 'IDS_MDL_SETUP', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_BARCODEMASTER' ,20
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_BARCODEMASTER' and screenname='IDS_SCN_BARCODEMASTER' and usergroupid_usergroupcode = 1); 
+
+INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+VALUES (193, 'IDS_TSK_BARCODESCANNER', 'IDS_MDL_INVENTORY', 'IDS_SCN_MATERIALINVENTORY', '0', 'NA', 'NA', 'NA', '0,0,0', 31) ON CONFLICT (orderno) DO NOTHING;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+SELECT 'IDS_TSK_BARCODESCANNER', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_MATERIALINVENTORY' ,31
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_BARCODESCANNER' and screenname='IDS_SCN_MATERIALINVENTORY' and usergroupid_usergroupcode = 1); 
+
+INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+VALUES (189, 'IDS_TSK_RESTOCK', 'IDS_MDL_INVENTORY', 'IDS_SCN_MATERIALINVENTORY', '0', 'NA', 'NA', 'NA', '0,0,0', 31) ON CONFLICT (orderno) DO NOTHING;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+SELECT 'IDS_TSK_RESTOCK', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_MATERIALINVENTORY' ,31
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_RESTOCK' and screenname='IDS_SCN_MATERIALINVENTORY' and usergroupid_usergroupcode = 1); 
+
+INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+VALUES (190, 'IDS_TSK_OPEN', 'IDS_MDL_INVENTORY', 'IDS_SCN_MATERIALINVENTORY', '0', 'NA', 'NA', 'NA', '0,0,0', 31) ON CONFLICT (orderno) DO NOTHING;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+SELECT 'IDS_TSK_OPEN', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_MATERIALINVENTORY' ,31
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_OPEN' and screenname='IDS_SCN_MATERIALINVENTORY' and usergroupid_usergroupcode = 1); 
+
+INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+VALUES (191, 'IDS_TSK_RELEASE', 'IDS_MDL_INVENTORY', 'IDS_SCN_MATERIALINVENTORY', '0', 'NA', 'NA', 'NA', '0,0,0', 31) ON CONFLICT (orderno) DO NOTHING;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+SELECT 'IDS_TSK_RELEASE', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_MATERIALINVENTORY' ,31
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_RELEASE' and screenname='IDS_SCN_MATERIALINVENTORY' and usergroupid_usergroupcode = 1); 
+
+INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+VALUES (192, 'IDS_TSK_DISPOSE', 'IDS_MDL_INVENTORY', 'IDS_SCN_MATERIALINVENTORY', '0', 'NA', 'NA', 'NA', '0,0,0', 31) ON CONFLICT (orderno) DO NOTHING;
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+SELECT 'IDS_TSK_DISPOSE', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_MATERIALINVENTORY' ,31
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_DISPOSE' and screenname='IDS_SCN_MATERIALINVENTORY' and usergroupid_usergroupcode = 1); 
+
+ALTER TABLE IF Exists lsusermaster ADD Column IF NOT EXISTS getstart character varying(255);

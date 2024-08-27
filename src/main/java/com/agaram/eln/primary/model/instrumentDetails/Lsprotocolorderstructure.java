@@ -50,6 +50,17 @@ public class Lsprotocolorderstructure {
 	public Double parentcodeondefaultfoder;
 
 	private String foldermapping;
+	
+	private Boolean projectfolder;
+	
+	public Boolean isProjectfolder() {
+		return projectfolder;
+	}
+
+	public void setProjectfolder(Boolean projectfolder) {
+		this.projectfolder = projectfolder;
+	}
+	
 
 	public String getFoldermapping() {
 		return foldermapping;

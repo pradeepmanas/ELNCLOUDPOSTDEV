@@ -2162,7 +2162,7 @@ public class LoginService {
 
 	public void duedatenotification(LSOrdernotification objNotification) throws ParseException {
 		
-		LSOrdernotification notobj = lsordernotificationrepo.findByBatchcode(objNotification.getBatchcode());	
+		LSOrdernotification notobj = lsordernotificationrepo.findByBatchcodeAndScreen(objNotification.getBatchcode(), objNotification.getScreen());	
 		LSlogilablimsorderdetail order = null;
 		LSlogilabprotocoldetail protocolorder = null;
 		
@@ -2270,7 +2270,7 @@ public class LoginService {
 
 	public void overduenotification(LSOrdernotification objNotification) throws ParseException {
 		
-		LSOrdernotification notobj = lsordernotificationrepo.findByBatchcode(objNotification.getBatchcode());	
+		LSOrdernotification notobj = lsordernotificationrepo.findByBatchcodeAndScreen(objNotification.getBatchcode(), objNotification.getScreen());	
 		LSlogilablimsorderdetail order = null;
 		LSlogilabprotocoldetail protocolorder = null;
 		
@@ -2423,7 +2423,7 @@ public class LoginService {
 	@SuppressWarnings("deprecation")
 	public void cautiondatenotification(LSOrdernotification objNotification) throws ParseException {
 			
-		LSOrdernotification notobj = lsordernotificationrepo.findByBatchcode(objNotification.getBatchcode());	
+		LSOrdernotification notobj = lsordernotificationrepo.findByBatchcodeAndScreen(objNotification.getBatchcode(), objNotification.getScreen());	
 		LSlogilablimsorderdetail order = null;
 		LSlogilabprotocoldetail protocolorder = null;
 			

@@ -52,6 +52,16 @@ public class LSSheetOrderStructure {
 	
 	private String foldermapping;
 	
+	private Boolean projectfolder;
+	
+	public Boolean isProjectfolder() {
+		return projectfolder;
+	}
+
+	public void setProjectfolder(Boolean projectfolder) {
+		this.projectfolder = projectfolder;
+	}
+
 	@Transient
 	List<LSworkflow> lstworkflow;
 	

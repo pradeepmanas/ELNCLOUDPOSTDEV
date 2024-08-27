@@ -3263,12 +3263,13 @@ public class InstrumentService {
 					objupdatedorder.setLockeduser(objorder.getObjLoggeduser().getUsercode());
 					objupdatedorder.setLockedusername(objorder.getObjLoggeduser().getUsername());
 					objupdatedorder.setActiveuser(objorder.getActiveuser());
+					logilablimsorderdetailsRepository.UpdateOrderData(objorder.getObjLoggeduser().getUsercode(),
+							objorder.getObjLoggeduser().getUsername(), objorder.getActiveuser(),
+							objupdatedorder.getBatchcode());
 				}
 				objupdatedorder.setIsLock(1);
 //					lslogilablimsorderdetailRepository.save(objupdatedorder);
-				logilablimsorderdetailsRepository.UpdateOrderData(objorder.getObjLoggeduser().getUsercode(),
-						objorder.getObjLoggeduser().getUsername(), objorder.getActiveuser(),
-						objupdatedorder.getBatchcode());
+			
 			}
 
 		} else if (!objorder.getIsmultitenant().equals(2)) {

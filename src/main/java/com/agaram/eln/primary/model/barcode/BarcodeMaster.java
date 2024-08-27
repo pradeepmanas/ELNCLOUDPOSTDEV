@@ -30,6 +30,7 @@ public class BarcodeMaster {
 	private ScreenMaster screen;
 	private Date createdon;
 	private String barcodefileid;
+	private String barcodefilename;
 	@ManyToOne
 	private LSSiteMaster lssitemaster;
 	
@@ -80,6 +81,12 @@ public class BarcodeMaster {
 	}
 	public void setLssitemaster(LSSiteMaster lssitemaster) {
 		this.lssitemaster = lssitemaster;
+	}
+	public String getBarcodefilename() {
+		return barcodefilename;
+	}
+	public void setBarcodefilename(String barcodefilename) {
+		this.barcodefilename = barcodefilename;
 	}
 	
 }

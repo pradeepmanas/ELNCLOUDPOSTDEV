@@ -1127,4 +1127,15 @@ public class FreeUserService {
 		}
 		return allowuseradd;
 	}
+	
+	public Map<String, Object> GetStartSkip(LSuserMaster objuser) {
+		Map<String, Object> objstart = new HashMap<>();
+	LSuserMaster objuserstart = lsuserMasterRepository.findByUsercodeAndGetstart(objuser.getUsercode(),"Active");
+		if(objuserstart == null && objuser.getUsercode() != null) {
+			lsuserMasterRepository.GetStartSkipUpdate("Active",objuser.getUsercode());	
+			objstart.put("getstartshow", true);
+		}
+		objstart.put("getactive", objuserstart);
+		return objstart;
+	}
 }

@@ -3808,7 +3808,6 @@ public class ProtocolService {
 			notobj.setScreen("Protocolorder");
 
 			ordernotList.add(lsordernotificationrepo.save(notobj));
-			lSlogilabprotocoldetail.setLsordernotification(ordernotList.get(0));
 			
 			Notification notify = new Notification();
 			notify.setBatchid(lSlogilabprotocoldetail.getProtoclordername());

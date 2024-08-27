@@ -56,4 +56,8 @@ public class FreeUserController {
 	public Boolean GetUsersaddrestrict(@RequestBody LSSiteMaster objsite) {
 		return freeuserservice.GetUsersaddrestrict(objsite);
 	}
+	@PostMapping("/GetStartSkip")
+	public Map<String, Object> GetStartSkip(@RequestBody LSuserMaster objuser) throws Exception {
+		return freeuserservice.GetStartSkip(objuser);
+	}
 }

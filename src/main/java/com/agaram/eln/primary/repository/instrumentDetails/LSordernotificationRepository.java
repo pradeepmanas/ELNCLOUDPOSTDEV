@@ -26,6 +26,8 @@ public interface LSordernotificationRepository extends JpaRepository<LSOrdernoti
 
 	LSOrdernotification findByBatchcode(Long batchcode);
 
+	LSOrdernotification findByBatchcodeAndScreen(Long batchcode, String screen);
+
 
 
 }

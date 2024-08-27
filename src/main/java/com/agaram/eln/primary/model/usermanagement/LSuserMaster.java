@@ -113,6 +113,7 @@ public class LSuserMaster {
 	private String emailid;
 	private String designationname;
 	private String edulevel;
+	private String getstart;
 	private String profileimage;
 	private String profileimagename;
 	private Integer verificationcode;
@@ -773,6 +774,14 @@ public class LSuserMaster {
 
 	public void setEdulevel(String edulevel) {
 		this.edulevel = edulevel;
+	}
+
+	public String getGetstart() {
+		return getstart;
+	}
+
+	public void setGetstart(String getstart) {
+		this.getstart = getstart;
 	}
 
 	
