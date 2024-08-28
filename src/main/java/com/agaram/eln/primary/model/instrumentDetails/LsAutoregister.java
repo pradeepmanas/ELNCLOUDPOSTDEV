@@ -28,7 +28,7 @@ public class LsAutoregister {
 //	 @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "lsautoregister_seq")
 	// @SequenceGenerator( allocationSize = 1, name = "lsautoregister_seq")
 	 
-	@Column(columnDefinition = "numeric(17,0)",name = "regcode") 
+//	@Column(columnDefinition = "numeric(17,0)",name = "regcode") 
 	private Long regcode;
 	
 	@Column(columnDefinition = "numeric(17,0)", name = "batchcode")

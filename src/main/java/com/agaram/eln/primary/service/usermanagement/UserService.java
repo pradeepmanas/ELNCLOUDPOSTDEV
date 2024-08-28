@@ -49,6 +49,7 @@ import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.model.usermanagement.Lsusersettings;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
+import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialRepository;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
@@ -157,7 +158,9 @@ public class UserService {
 	@Autowired
 	private LSMultisitesRepositery LSMultisitesRepositery;
 	
-
+	@Autowired
+	ElnmaterialRepository elnmaterialRepository;
+	
 	@Autowired
 	private AuditService auditService;
 	@Autowired
@@ -1820,7 +1823,39 @@ public class UserService {
 //			if (lstMaterialByName.isEmpty() && lstMaterialByPrefix.isEmpty()) {
 //			if (lstMaterialByName.isEmpty()) {
 
-			listofallmaster.getMaterial().stream().peek(f -> {
+			/**
+			 * Start 
+			 * Old code
+			 */
+//			listofallmaster.getMaterial().stream().peek(f -> {
+//				try {
+//					f.setCreateddate(commonfunction.getCurrentUtcTime());
+//				} catch (ParseException e) {
+//					e.printStackTrace();
+//				}
+//			}).collect(Collectors.toList());
+//
+//			materialRepository.save(listofallmaster.getMaterial());
+//			listofallmaster.setMaterial(listofallmaster.getMaterial());
+//			listofallmaster.setObjResponse(new Response());
+//			listofallmaster.getObjResponse().setStatus(true);
+//			listofallmaster.getObjResponse().setInformation("IDS_MSG_SUCCESSMSG");
+
+			/**
+			 * end 
+			 * Old code
+			 */
+			
+			/**
+			 * Start 
+			 * new code
+			 * Added by sathishkumar chandrasekar, 28-08-2024
+			 * For import multiple materials(master record)
+			 */
+			
+			
+			
+			listofallmaster.getElnmaterial().stream().peek(f -> {
 				try {
 					f.setCreateddate(commonfunction.getCurrentUtcTime());
 				} catch (ParseException e) {
@@ -1828,11 +1863,15 @@ public class UserService {
 				}
 			}).collect(Collectors.toList());
 
-			materialRepository.save(listofallmaster.getMaterial());
-			listofallmaster.setMaterial(listofallmaster.getMaterial());
+			elnmaterialRepository.save(listofallmaster.getElnmaterial());
+			listofallmaster.setElnmaterial(listofallmaster.getElnmaterial());
 			listofallmaster.setObjResponse(new Response());
 			listofallmaster.getObjResponse().setStatus(true);
 			listofallmaster.getObjResponse().setInformation("IDS_MSG_SUCCESSMSG");
+			/**
+			 * end 
+			 * New code
+			 */
 
 			return listofallmaster;
 //			} else {

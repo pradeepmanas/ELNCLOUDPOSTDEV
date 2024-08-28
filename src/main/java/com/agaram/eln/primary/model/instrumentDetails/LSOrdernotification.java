@@ -24,7 +24,7 @@ public class LSOrdernotification {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(columnDefinition = "numeric(17,0)",name = "notificationcode") 
+	//@Column(columnDefinition = "numeric(17,0)",name = "notificationcode") 
 	
 	private Long notificationcode;
 	

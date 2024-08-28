@@ -1564,3 +1564,7 @@ SELECT 'IDS_TSK_DISPOSE', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA',
 WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_DISPOSE' and screenname='IDS_SCN_MATERIALINVENTORY' and usergroupid_usergroupcode = 1); 
 
 ALTER TABLE IF Exists lsusermaster ADD Column IF NOT EXISTS getstart character varying(255);
+
+ALTER TABLE IF Exists barcodemaster ADD COLUMN IF NOT EXISTS barcodefilename character varying(255);
+
+ALTER TABLE IF Exists LsAutoregister ADD Column IF NOT EXISTS timerIdname character varying(255);

@@ -252,18 +252,17 @@
         <dependency>
 	        <groupId>com.syncfusion</groupId>
 	        <artifactId>syncfusion-ej2-wordprocessor</artifactId>
-	       <version>26.1.38</version>
+	      <version>26.2.11</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>com.syncfusion</groupId>
 		    <artifactId>syncfusion-ej2-spellchecker</artifactId>
-		    <version>21.1.37</version>
+		   <version>26.2.11</version>
 	    </dependency>
-	    <dependency>
-		    <groupId>com.syncfusion</groupId>
-		    <artifactId>syncfusion-javahelper</artifactId>
-		    <version>22.2.8</version>
-		    
+		<dependency>
+			<groupId>com.syncfusion</groupId>
+			<artifactId>syncfusion-javahelper</artifactId>
+			<version>26.2.11</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-webp -->
 		<dependency>
@@ -279,7 +278,7 @@
 	 	<dependency>
 		   <groupId>com.syncfusion</groupId>
 		   <artifactId>syncfusion-docio</artifactId>
-		   <version>26.1.39</version>
+		  <version>26.2.11</version>
 		</dependency>
 		<dependency>
 		    <groupId>com.google.guava</groupId>
@@ -290,7 +289,7 @@
 		<dependency>
 		    <groupId>com.syncfusion</groupId>
 		    <artifactId>syncfusion-licensing</artifactId>
-		    <version>26.1.39</version>
+		  <version>26.2.11</version>
 		    <scope>runtime</scope>
 		</dependency>
 		

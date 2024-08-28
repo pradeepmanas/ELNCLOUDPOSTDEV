@@ -49,26 +49,26 @@ public class BarcodeMasterService {
 			String filename = request.getParameter("filename");
 			List<MultipartFile> file = request.getFiles("file");
 			String UUId = "";
-			
-			if(isMultitenant == 1 || isMultitenant==2)
-			{
-				UUID objGUID = UUID.randomUUID();
-				String randomUUIDString = objGUID.toString();
-				UUId = cloudFileManipulationservice.storecloudfilesreturnwithpreUUID(file.get(0), "barcodefiles", randomUUIDString,
-						isMultitenant);
-			}
-			else
-			{
-				UUId = fileManipulationservice.storeLargeattachment(filename, file.get(0));
-			}
-			
 			Date currentdate = commonfunction.getCurrentUtcTime();
 			barcode.setCreatedon(currentdate);
-			barcode.setBarcodefilename(filename);
-			barcode.setBarcodefileid(UUId);
-			
+			if(file.size() > 0)
+			{
+				if(isMultitenant == 1 || isMultitenant==2)
+				{
+					UUID objGUID = UUID.randomUUID();
+					String randomUUIDString = objGUID.toString();
+					UUId = cloudFileManipulationservice.storecloudfilesreturnwithpreUUID(file.get(0), "barcodefiles", randomUUIDString,
+							isMultitenant);
+				}
+				else
+				{
+					UUId = fileManipulationservice.storeLargeattachment(filename, file.get(0));
+				}
+				barcode.setBarcodefilename(filename);
+				barcode.setBarcodefileid(UUId);
+			}
 			barcodemasterrepository.save(barcode);
-			
+			returnMap.put("Barcode", barcode);
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
