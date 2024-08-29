@@ -651,8 +651,6 @@ public class UserController {
 	 return userService.getActiveUserCount(objMap);
 	}
 	
-	
-	
 	@PostMapping("/InsertImportedlist")
 	public Listofallmaster InsertImportedlist(@RequestBody Listofallmaster listofallmaster) throws MessagingException {
 

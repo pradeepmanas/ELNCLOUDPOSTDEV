@@ -3,7 +3,10 @@ package com.agaram.eln.primary.service.barcode;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,6 +19,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
+import javax.print.attribute.HashPrintServiceAttributeSet;
+import javax.print.attribute.PrintServiceAttributeSet;
+import javax.print.attribute.standard.PrinterName;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -42,6 +56,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.gridfs.GridFSDBFile;
 
 @Service
 public class BarcodeMasterService {
@@ -116,55 +131,71 @@ public class BarcodeMasterService {
 		BarcodeMaster barcode = barcodemasterrepository.findOne(Integer.parseInt(barcodeid));
 		HttpHeaders header = new HttpHeaders();
 		InputStreamResource resource = null;
-		
+		InputStream stream = null;
 		if(Integer.parseInt(ismultitenant) == 1 || Integer.parseInt(ismultitenant)==2)
 		{
-			InputStream stream =  cloudFileManipulationservice.retrieveCloudFile(barcode.getBarcodefileid(), tenant+"barcodefiles");
-			String data = readFromInputStream(stream);
-			
-			switch(screen)
-			{
-				case "1":
-					data = updatematerialcontent(data, Integer.parseInt(primarykey),path,username);
-				break;
-			}
-			
-//			data = data.replace("$BarcodeId$", barcode.getBarcodename());
-			RestTemplate restTemplate = new RestTemplate();
-			String uri = "http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/"+data;
-			HttpHeaders headers = new HttpHeaders();
-
-			HttpEntity<String> entity = new HttpEntity<String>(headers);
-			
-			ResponseEntity<byte[]> ctc = restTemplate.exchange(uri, HttpMethod.GET, entity, byte[].class);
-			byte[] barcodearray = ctc.getBody();
-			
-			int size = barcodearray.length;
-			InputStream is = null;
-			try {
-				is = new ByteArrayInputStream(barcodearray);
-				resource = new InputStreamResource(is);
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				try {
-					if (is != null)
-						is.close();
-				} catch (Exception ex) {
-
-				}
-			}
-			
-			header.set("Content-Disposition", "attachment; filename=" + "label.png");
-			header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-			header.setContentLength(size);
-			
+			 stream =  cloudFileManipulationservice.retrieveCloudFile(barcode.getBarcodefileid(), tenant+"barcodefiles");
 		}
 		else
 		{
-			
+			GridFSDBFile gridFsFile = null;
+
+			try {
+				gridFsFile = retrieveLargeFile(barcode.getBarcodefileid());
+				stream = gridFsFile.getInputStream();
+			} catch (IllegalStateException e) {
+
+				e.printStackTrace();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
 		}
+		
+		String data = readFromInputStream(stream);
+		
+		switch(screen)
+		{
+			case "1":
+				data = updatematerialcontent(data, Integer.parseInt(primarykey),path,username);
+			break;
+		}
+		
+//		data = data.replace("$BarcodeId$", barcode.getBarcodename());
+		RestTemplate restTemplate = new RestTemplate();
+		String uri = "http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/"+data;
+		HttpHeaders headers = new HttpHeaders();
+
+		HttpEntity<String> entity = new HttpEntity<String>(headers);
+		
+		ResponseEntity<byte[]> ctc = restTemplate.exchange(uri, HttpMethod.GET, entity, byte[].class);
+		byte[] barcodearray = ctc.getBody();
+		
+		int size = barcodearray.length;
+		InputStream is = null;
+		try {
+			is = new ByteArrayInputStream(barcodearray);
+			resource = new InputStreamResource(is);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (is != null)
+					is.close();
+			} catch (Exception ex) {
+
+			}
+		}
+		
+		header.set("Content-Disposition", "attachment; filename=" + "label.png");
+		header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		header.setContentLength(size);
+		
 		return new ResponseEntity<>(resource, header, HttpStatus.OK);
+	}
+	
+	public GridFSDBFile retrieveLargeFile(String fileid) throws IllegalStateException, IOException {
+		return fileManipulationservice.retrieveLargeFile(fileid);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -195,5 +226,73 @@ public class BarcodeMasterService {
 			    }
 			  return resultStringBuilder.toString();
 	}
+	
+	public Map<String, Object> printBarcode(Map<String, Object> inputMap) throws IOException, NumberFormatException, ParseException, PrintException
+	{
+		Map<String, Object> returnmap = new HashMap<String, Object>();
+		String sprintername = (String) inputMap.get("sprintername");
+		Integer barcodeid =(Integer) inputMap.get("barcode"); 
+		Integer ismultitenant=(Integer) inputMap.get("ismultitenant");
+		String tenant=(String) inputMap.get("tenant");
+		Integer screen=(Integer) inputMap.get("screen"); 
+		Integer primarykey=(Integer) inputMap.get("primarykey");
+		String path=(String) inputMap.get("path");
+		String username=(String) inputMap.get("username");
+		
+		BarcodeMaster barcode = barcodemasterrepository.findOne(barcodeid);
+		InputStream stream = null;
+		if(ismultitenant == 1 || ismultitenant==2)
+		{
+			 stream =  cloudFileManipulationservice.retrieveCloudFile(barcode.getBarcodefileid(), tenant+"barcodefiles");
+		}
+		else
+		{
+			GridFSDBFile gridFsFile = null;
+
+			try {
+				gridFsFile = retrieveLargeFile(barcode.getBarcodefileid());
+				stream = gridFsFile.getInputStream();
+			} catch (IllegalStateException e) {
+
+				e.printStackTrace();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+		
+		String data = readFromInputStream(stream);
+		
+		switch(screen)
+		{
+			case 1:
+				data = updatematerialcontent(data, primarykey,path,username);
+			break;
+		}
+		
+		UUID objGUID = UUID.randomUUID();
+		String randomUUIDString = objGUID.toString();
+		File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + randomUUIDString +".prn"); 
+		FileWriter writer = new FileWriter(convFile);
+	    writer.write(data);
+	    writer.close();
+		FileInputStream psStream = new FileInputStream(convFile);
+        String printerPath = "";
+        DocFlavor psInFormat = DocFlavor.INPUT_STREAM.AUTOSENSE;
+        Doc myDoc = new SimpleDoc(psStream, psInFormat, null);
+        PrintServiceAttributeSet aset = new HashPrintServiceAttributeSet();
+        aset.add(new PrinterName(printerPath, null)); // Ensure correct printerPath is provided
+
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        for (PrintService printer : services) {
+            if (printer.getName().equalsIgnoreCase(sprintername)) {
+                DocPrintJob job = printer.createPrintJob();
+                job.print(myDoc, null);
+            }
+        }
+		
+		return returnmap;
+	}
+	
 
 }

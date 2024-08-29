@@ -4,6 +4,9 @@ package com.agaram.eln.primary.controller.barcode;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
+
+import javax.print.PrintException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -49,4 +52,9 @@ public class BarcodeMasterController {
 		return barcodemasterservice.getbarcodefileoncode(barcode, ismultitenant, tenant,screen,primarykey,path,username);
 	}
 	
+	@PostMapping("/printBarcode")
+	public Map<String, Object> printBarcode(@RequestBody Map<String, Object> inputMap) throws NumberFormatException, IOException, ParseException, PrintException
+	{
+		return barcodemasterservice.printBarcode(inputMap);
+	}
 }
