@@ -8,6 +8,7 @@ import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.instrumentDetails.Lsbatchdetails;
 import com.agaram.eln.primary.model.instrumentDetails.Lsorderworkflowhistory;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
@@ -42,6 +43,7 @@ public class LogilabOrderDetails extends Logilaborders {
 	private LStestmasterlocal lstestmasterlocal;
 	private LSworkflow lsworkflow;
 	private List<Lsbatchdetails> lsbatchdetails;
+	private List<LsOrderattachments> lsOrderattachments;
 
 	public LogilabOrderDetails(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
@@ -197,6 +199,14 @@ public class LogilabOrderDetails extends Logilaborders {
 
 	public void setLsbatchdetails(List<Lsbatchdetails> lsbatchdetails) {
 		this.lsbatchdetails = lsbatchdetails;
+	}
+
+	public List<LsOrderattachments> getLsOrderattachments() {
+		return lsOrderattachments;
+	}
+
+	public void setLsOrderattachments(List<LsOrderattachments> lsOrderattachments) {
+		this.lsOrderattachments = lsOrderattachments;
 	}
 
 }

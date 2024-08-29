@@ -1568,3 +1568,19 @@ ALTER TABLE IF Exists lsusermaster ADD Column IF NOT EXISTS getstart character v
 ALTER TABLE IF Exists barcodemaster ADD COLUMN IF NOT EXISTS barcodefilename character varying(255);
 
 ALTER TABLE IF Exists LsAutoregister ADD Column IF NOT EXISTS timerIdname character varying(255);
+
+ALTER TABLE IF Exists materialtype ADD COLUMN IF NOT EXISTS barcode_barcodeno integer;
+
+DO
+$do$
+declare
+  barcodecount integer :=0;
+begin
+SELECT count(*) into barcodecount FROM
+information_schema.table_constraints WHERE constraint_name='fkgv6y6qb9lh0sos5hkblhhmb5u'
+AND table_name='materialtype';
+ IF barcodecount =0 THEN
+ 	ALTER TABLE ONLY materialtype ADD CONSTRAINT fkgv6y6qb9lh0sos5hkblhhmb5u FOREIGN KEY (barcode_barcodeno) REFERENCES barcodemaster (barcodeno);
+   END IF;
+END
+$do$; 

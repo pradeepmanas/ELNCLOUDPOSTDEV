@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
 
+import com.agaram.eln.primary.model.barcode.BarcodeMaster;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -70,6 +71,9 @@ public class MaterialType implements Serializable {
 	private Boolean expvalidation;
 	private Boolean quarvalidation;
 	private Integer sampletype;
+	
+	@ManyToOne
+	private BarcodeMaster barcode;
 	
 	public Integer getSampletype() {
 		return sampletype;
@@ -181,5 +185,12 @@ public class MaterialType implements Serializable {
 	public void setsDate(String sDate) {
 		this.sDate = sDate;
 	}
+	public BarcodeMaster getBarcode() {
+		return barcode;
+	}
+	public void setBarcode(BarcodeMaster barcode) {
+		this.barcode = barcode;
+	}
+	
 }
 

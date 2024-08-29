@@ -52,8 +52,9 @@ public class MaterialTypeService {
 	LSpreferencesRepository lspreferencesRepository;
 
 	public ResponseEntity<Object> getMaterialType(MaterialType objMaterialType) {
-		return new ResponseEntity<>(materialTypeRepository.
-				findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatusOrderByNmaterialtypecodeDesc(-1,1,objMaterialType.getNsitecode(),-1,1,4), HttpStatus.OK);
+		List<MaterialType> lstmaterialtype = materialTypeRepository.
+				findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatusOrderByNmaterialtypecodeDesc(-1,1,objMaterialType.getNsitecode(),-1,1,4);
+		return new ResponseEntity<>(lstmaterialtype, HttpStatus.OK);
 	}
 
 	public ResponseEntity<Object> getMaterialTypeField(MaterialType objMaterialType) {

@@ -231,7 +231,7 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 	                ,"/Instrument/uploadfilesprotocolfolder"
 	          
 //				"/protocol/Uploadprotocolimageondrag"
-
+,"/Barcode/Getbarcodefileoncode"
 		);
 		
 		Integer secondindex = StringUtils.ordinalIndexOf(requestUrl, "/", 3);
