@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.barcode;
 
+import java.awt.print.PrinterJob;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -46,6 +47,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.barcode.BarcodeMaster;
+import com.agaram.eln.primary.model.barcode.Printer;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.barcode.BarcodeMasterRepository;
@@ -270,28 +272,58 @@ public class BarcodeMasterService {
 			break;
 		}
 		
-		UUID objGUID = UUID.randomUUID();
-		String randomUUIDString = objGUID.toString();
-		File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + randomUUIDString +".prn"); 
-		FileWriter writer = new FileWriter(convFile);
-	    writer.write(data);
-	    writer.close();
-		FileInputStream psStream = new FileInputStream(convFile);
-        String printerPath = "";
-        DocFlavor psInFormat = DocFlavor.INPUT_STREAM.AUTOSENSE;
-        Doc myDoc = new SimpleDoc(psStream, psInFormat, null);
-        PrintServiceAttributeSet aset = new HashPrintServiceAttributeSet();
-        aset.add(new PrinterName(printerPath, null)); // Ensure correct printerPath is provided
-
-        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
-        for (PrintService printer : services) {
-            if (printer.getName().equalsIgnoreCase(sprintername)) {
-                DocPrintJob job = printer.createPrintJob();
-                job.print(myDoc, null);
-            }
-        }
+//		UUID objGUID = UUID.randomUUID();
+//		String randomUUIDString = objGUID.toString();
+//		File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + randomUUIDString +".prn"); 
+//		FileWriter writer = new FileWriter(convFile);
+//	    writer.write(data);
+//	    writer.close();
+//		FileInputStream psStream = new FileInputStream(convFile);
+//        String printerPath = "";
+//        DocFlavor psInFormat = DocFlavor.INPUT_STREAM.AUTOSENSE;
+//        Doc myDoc = new SimpleDoc(psStream, psInFormat, null);
+//        PrintServiceAttributeSet aset = new HashPrintServiceAttributeSet();
+//        aset.add(new PrinterName(printerPath, null)); // Ensure correct printerPath is provided
+//
+//        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+//        for (PrintService printer : services) {
+//            if (printer.getName().equalsIgnoreCase(sprintername)) {
+//                DocPrintJob job = printer.createPrintJob();
+//                job.print(myDoc, null);
+//            }
+//        }
+		
+		returnmap.put("data", data);
 		
 		return returnmap;
+	}
+	
+	public List<Printer> getPrinter() {
+		
+		List<Printer> lstprinter = new ArrayList<>();
+		Printer p1 = new Printer();
+		
+		PrintService defaultService =
+			    PrintServiceLookup.lookupDefaultPrintService();
+		PrintService[] services = PrinterJob.lookupPrintServices();
+		String serviceName ="";
+		if (defaultService != null) {
+			serviceName = defaultService.getName();
+			p1.setSprintername(serviceName);
+			lstprinter.add(p1);
+		}
+
+			//NIBSCRT-2110
+			for (PrintService printer : services) {
+				if (serviceName != null && !serviceName.equals(printer.getName()) ) {
+					Printer p = new Printer();
+					p.setSprintername(printer.getName());
+					lstprinter.add(p);
+				}
+ 
+			}
+		
+		return lstprinter;
 	}
 	
 
