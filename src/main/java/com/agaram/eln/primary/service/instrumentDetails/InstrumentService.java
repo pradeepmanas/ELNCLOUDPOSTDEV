@@ -5521,11 +5521,26 @@ public class InstrumentService {
 		}
 		list.setLsuserMaster(usercode);
 		lscfttransactionRepository.save(list);
-		if (objorder != null && objorder.getLsOrderattachments() != null) {
-			objorder.getLsOrderattachments().add(objattachment);
-		} else {
-			objorder.setLsOrderattachments(new ArrayList<LsOrderattachments>());
-			objorder.getLsOrderattachments().add(objattachment);
+		
+		if (objorder != null) {
+		    if (objorder.getLsOrderattachments() == null) {
+		        objorder.setLsOrderattachments(new ArrayList<LsOrderattachments>());
+		    }
+		    objorder.getLsOrderattachments().add(objattachment);
+		    objorder.getLsOrderattachments().sort((a1, a2) -> {
+		        Long code1 = a1.getAttachmentcode();
+		        Long code2 = a2.getAttachmentcode();
+		        
+		        if (code1 == null && code2 == null) {
+		            return 0; // Both are null, considered equal
+		        } else if (code1 == null) {
+		            return -1; // Null values are placed first
+		        } else if (code2 == null) {
+		            return 1; // Null values are placed first
+		        } else {
+		            return code2.compareTo(code1); // Regular comparison, descending order
+		        }
+		    });
 		}
 
 		lsOrderattachmentsRepository.save(objorder.getLsOrderattachments());
