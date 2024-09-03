@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.ScreenMaster;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -88,5 +89,10 @@ public class BarcodeMaster {
 	public void setBarcodefilename(String barcodefilename) {
 		this.barcodefilename = barcodefilename;
 	}
+	public void setResponse(Response response) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

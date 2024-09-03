@@ -4,9 +4,6 @@ package com.agaram.eln.primary.controller.barcode;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
-import java.util.Map;
-
-import javax.print.PrintException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -20,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.agaram.eln.primary.model.barcode.BarcodeMaster;
+import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.barcode.BarcodeMasterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,6 +35,7 @@ public class BarcodeMasterController {
 			throws JsonMappingException, JsonProcessingException, ParseException {
 		return barcodemasterservice.InsertBarcode(request);
 	}
+
 	
 	@PostMapping("/GetBarcodemaster")
 	public List<BarcodeMaster> GetBarcodemaster(@RequestBody LSuserMaster objuser)
@@ -52,9 +52,16 @@ public class BarcodeMasterController {
 		return barcodemasterservice.getbarcodefileoncode(barcode, ismultitenant, tenant,screen,primarykey,path,username);
 	}
 	
-	@PostMapping("/printBarcode")
-	public Map<String, Object> printBarcode(@RequestBody Map<String, Object> inputMap) throws NumberFormatException, IOException, ParseException, PrintException
+//	@PostMapping("/UpdateBarcode")
+//	public BarcodeMaster UpdateBarcode(MultipartHttpServletRequest request)
+//		throws ParseException, IOException {
+//	//	throws JsonMappingException, JsonProcessingException, ParseException {
+//		return barcodemasterservice.UpdateBarcode(request);
+//	}
+	
+	@PostMapping("/UpdateBarcode")
+	public BarcodeMaster UpdateBarcode(@RequestBody BarcodeMaster objClass)throws Exception
 	{
-		return barcodemasterservice.printBarcode(inputMap);
+		return barcodemasterservice.UpdateBarcode(objClass);
 	}
 }
