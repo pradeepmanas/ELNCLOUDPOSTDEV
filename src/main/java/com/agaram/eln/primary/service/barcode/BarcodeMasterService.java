@@ -325,6 +325,11 @@ public class BarcodeMasterService {
 		
 		return lstprinter;
 	}
-	
 
+	public BarcodeMaster UpdateBarcode(BarcodeMaster objClass) {
+
+		objClass.setStatus(-1);
+		barcodemasterrepository.save(objClass);
+		return objClass;
+}
 }
