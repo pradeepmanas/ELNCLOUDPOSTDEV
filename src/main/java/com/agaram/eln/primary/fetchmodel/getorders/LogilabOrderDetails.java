@@ -15,6 +15,7 @@ import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.MaterialInventory;
+import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
@@ -44,6 +45,9 @@ public class LogilabOrderDetails extends Logilaborders {
 	private LSworkflow lsworkflow;
 	private List<Lsbatchdetails> lsbatchdetails;
 	private List<LsOrderattachments> lsOrderattachments;
+    private List<ELNFileAttachments> elnfileAttachments;
+
+	
 
 	public LogilabOrderDetails(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
@@ -53,7 +57,8 @@ public class LogilabOrderDetails extends Logilaborders {
 			String keyword, Long directorycode, LStestmasterlocal lstestmasterlocal, Integer ordercancell,
 			Integer viewoption, Elnmaterial elnmaterial, MaterialInventory materialinventory, String lockedusername,
 			Integer activeuser, Integer approved,LSOrdernotification lsordernotification, 
-			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept,Integer autoregistercount
+			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,
+			String approvelaccept,Integer autoregistercount
 //			,
 //			List<Lsorderworkflowhistory> lsorderworkflowhistory
 	) {
@@ -169,6 +174,14 @@ public class LogilabOrderDetails extends Logilaborders {
 		this.lsLSlogilablimsorder = lsLSlogilablimsorder;
 	}
 
+	public List<ELNFileAttachments> getElnfileAttachments() {
+		return elnfileAttachments;
+	}
+
+	public void setElnfileAttachments(List<ELNFileAttachments> elnfileAttachments) {
+		this.elnfileAttachments = elnfileAttachments;
+	}
+	
 	public Integer getActiveuser() {
 		return activeuser;
 	}

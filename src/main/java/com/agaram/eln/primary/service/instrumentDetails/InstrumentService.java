@@ -3307,6 +3307,11 @@ public class InstrumentService {
 				.findByBatchcodeOrderByAttachmentcodeDesc(objorder.getBatchcode());
 		objupdatedorder.setLsOrderattachments(lstattach);
 		
+		List<ELNFileAttachments> lstelnfileattach = elnFileattachmentsRepository
+				.findByBatchcodeOrderByAttachmentcodeDesc(objorder.getBatchcode());
+		objupdatedorder.setElnfileAttachments(lstelnfileattach);
+		
+		
 		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository.findBybatchid(objupdatedorder.getBatchid());
 		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
 		

@@ -1861,8 +1861,8 @@ public class ProtocolService {
 			if (lstusers != null) {
 				for (int j = 0; j < lstusers.size(); j++) {
 
-					if (newProtocolMasterObj.getLSuserMaster().getUsercode() != lstusers.get(j).getLsuserMaster()
-							.getUsercode()) {
+					if (newProtocolMasterObj.getLSuserMaster().getUsercode().intValue() != lstusers.get(j).getLsuserMaster()
+							.getUsercode().intValue()) {
 						if (lstnotified.contains(lstusers.get(j).getLsuserMaster()))
 							continue;
 

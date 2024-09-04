@@ -1362,37 +1362,49 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 				Integer converterstatus = methodobj.get(0).getConverterstatus();
 				if (converterstatus == 1) // pdf to txt
 				{
-					try (InputStream pdfInputStream = new BufferedInputStream(largefile.getInputStream())) {
-						PDDocument document = PDDocument.load(pdfInputStream);
-						// Create PDFTextStripper object
-						PDFTextStripper pdfStripper = new PDFTextStripper();
-						// Extract text
-						System.out.println(" Extract text start ");
-						String extractedText = pdfStripper.getText(document);
-						System.out.println(" Extract text End ");
-						// Write the extracted text to a temporary file
-						File tempFile = File.createTempFile(name, ".txt");
-						System.out.println("File Path:" + tempFile.getPath());
-						try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
-							writer.write(extractedText);
-							System.out.println("File Writer in text done ");
-						}
-						// Read the content of the temp file into a byte array
-						byte[] bytesArray = new byte[(int) tempFile.length()];
-						try (FileInputStream fis = new FileInputStream(tempFile)) {
-							fis.read(bytesArray); // read file into bytes[]
-						}
-						// Convert byte array to string
-						rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
-						// Delete the temporary file
-						tempFile.delete();
-						System.out.println("the temporary file deleted");
-						System.out.println("Text extraction completed.");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
 
-					return rawDataText;
+					 String parsedText = "";
+					 PDFParser parser = null;
+					 PDDocument pdDoc = null;
+					 COSDocument cosDoc = null;
+					 PDFTextStripper pdfStripper;
+					 
+
+					    try {
+					    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(largefile.getInputStream());
+					        parser = new PDFParser(raFile);
+					        parser.setLenient(true);
+					        parser.parse();
+					        cosDoc = parser.getDocument();
+					        pdfStripper = new PDFTextStripper();
+					        pdfStripper.setSortByPosition( true );
+					              			       
+					        pdDoc = new PDDocument(cosDoc);
+					        pdfStripper.setWordSeparator("\t");
+					        pdfStripper.setSuppressDuplicateOverlappingText(true);
+					        Matrix matrix = new Matrix();
+					        matrix.clone();
+					        pdfStripper.setTextLineMatrix(matrix);
+					   
+					        parsedText = pdfStripper.getText(pdDoc);
+
+					    } catch (Exception e) {
+					        e.printStackTrace();
+					        try {
+					            if (cosDoc != null)
+					                cosDoc.close();
+					            if (pdDoc != null)
+					                pdDoc.close();
+					        } catch (Exception e1) {
+					            e1.printStackTrace();
+					        }
+	
+					    }    
+					    
+					    rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);
+				 
+				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
+				        System.out.println("PDFfile-rawDataText:"+rawDataText);
 				}
 
 			} else if (ext.equalsIgnoreCase("csv")) {

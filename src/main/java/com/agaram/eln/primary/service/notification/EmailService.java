@@ -198,6 +198,7 @@ public class EmailService {
 
 	public Email sendEmailelnLite(Email email) throws MessagingException {
 		String from = env.getProperty("spring.mail.username");
+		String cc = env.getProperty("spring.mail.mailcc");
         String to = email.getMailto();
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true); // true indicates multipart message
@@ -205,7 +206,7 @@ public class EmailService {
         helper.setSubject(email.getSubject());
         helper.setFrom(from);
         helper.setTo(to);
-
+        helper.setCc(cc);
         // Create the multipart for mixed content (text and images)
         MimeMultipart multipart = new MimeMultipart("related");
 

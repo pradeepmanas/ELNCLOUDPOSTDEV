@@ -276,8 +276,8 @@ public class Commonservice {
 
 					for (int j = 0; j < lstusers.size(); j++) {
 
-						if (objFile.getLSuserMaster().getUsercode() != lstusers.get(j).getLsuserMaster()
-								.getUsercode()) {
+						if (objFile.getLSuserMaster().getUsercode().intValue() != lstusers.get(j).getLsuserMaster()
+								.getUsercode().intValue()) {
 							if (lstnotified.contains(lstusers.get(j).getLsuserMaster()))
 								continue;
 
