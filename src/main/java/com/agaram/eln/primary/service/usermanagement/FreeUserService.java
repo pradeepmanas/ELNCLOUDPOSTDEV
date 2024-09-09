@@ -592,7 +592,7 @@ public class FreeUserService {
 						objfile.setFilenameuser(template.get("filenameuser").toString());
 						objfile.setIsmultitenant(2);
 						objfile.setLssitemaster(objuser.getLssitemaster());
-//				        objfile.setLssheetworkflow(workflowsheettemp2);
+				        objfile.setLssheetworkflow(workflowsheettemp2);
 //				        objfile.setApproved(1);
 						objfile.setCreateby(objuser);
 						objfile.setLstest(lstest);
@@ -679,6 +679,7 @@ public class FreeUserService {
 						protocol.put("newProtocolMasterObj", newProtocolMasterObj);
 						protocol.put("lsuserMaster", objuser);
 						protocol.put("teamuserscode", lstteamusercode);
+						protocol.put("liteworkflow", workflowprotocol2);
 						try {
 							ProtocolMasterService.addProtocolMaster(protocol);
 						} catch (java.io.IOException e) {

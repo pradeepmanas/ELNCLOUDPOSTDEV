@@ -25,7 +25,9 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.barcode.BarcodeMasterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping(value = "/Barcode", method = RequestMethod.POST)
@@ -62,15 +64,26 @@ public class BarcodeMasterController {
 //		return barcodemasterservice.UpdateBarcode(request);
 //	}
 	
-	@PostMapping("/UpdateBarcode")
-	public BarcodeMaster UpdateBarcode(@RequestBody BarcodeMaster objClass)throws Exception
+	@PostMapping("/RetiredBarcode")
+	public BarcodeMaster RetiredBarcode(@RequestBody BarcodeMaster objClass)throws Exception
 	{
-		return barcodemasterservice.UpdateBarcode(objClass);
+		return barcodemasterservice.RetiredBarcode(objClass);
 	}
 	
 	@PostMapping("/printBarcode")
 	public Map<String, Object> printBarcode(@RequestBody Map<String, Object> inputMap) throws NumberFormatException, IOException, ParseException, PrintException
 	{
 		return barcodemasterservice.printBarcode(inputMap);
+	}
+	
+	@PostMapping("/updateBarcodeMaster")
+	public ResponseEntity<Object> updateBarcodeMaster(@RequestBody  Map<String, Object> inputMap)throws Exception
+	{
+		
+		ObjectMapper objMapper = new ObjectMapper();
+		BarcodeMaster objBarcode = objMapper.convertValue(inputMap.get("Barcode"), new TypeReference<BarcodeMaster>() {});
+		
+		
+		return barcodemasterservice.updateBarcodeMaster(objBarcode);
 	}
 }

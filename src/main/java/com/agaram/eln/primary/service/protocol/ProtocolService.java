@@ -1620,6 +1620,10 @@ public class ProtocolService {
 						.findBysitecode(LScfttransactionobj.getLssitemaster());
 //				LSprotocolworkflow lsprotocolworkflow = lSprotocolworkflowRepository
 //						.findTopByAndLssitemasterOrderByWorkflowcodeAsc(lssitemaster);
+				if(argObj.get("liteworkflow") != null && argObj.get("ismultitenant").equals(2)) {
+					newProtocolMasterObj.setElnprotocoltemplateworkflow(elnprotocolTemplateworkflowRepository
+							.findTopByAndLssitemasterAndStatusOrderByWorkflowcodeDesc(lssitemaster, 1));
+				}
 				if (newProtocolMasterObj.getElnprotocoltemplateworkflow() == null) {
 					newProtocolMasterObj.setElnprotocoltemplateworkflow(elnprotocolTemplateworkflowRepository
 							.findTopByAndLssitemasterAndStatusOrderByWorkflowcodeAsc(lssitemaster, 1));

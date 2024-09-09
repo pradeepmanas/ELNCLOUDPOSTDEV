@@ -1585,6 +1585,9 @@ AND table_name='materialtype';
 END
 $do$; 
 
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_MATERIALINVENTORY' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_DISPOSE' and modulename = 'IDS_MDL_INVENTORY';
+update lsusergrouprights set screenname = 'IDS_SCN_MATERIALINVENTORY' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_DISPOSE' and modulename = 'IDS_MDL_INVENTORY';
+
 update lsusergrouprightsmaster set screenname = 'IDS_SCN_MATERIALINVENTORY' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_BARCODESCANNER' and modulename = 'IDS_MDL_INVENTORY';
 update lsusergrouprights set screenname = 'IDS_SCN_MATERIALINVENTORY' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_BARCODESCANNER' and modulename = 'IDS_MDL_INVENTORY';
 
@@ -1596,3 +1599,12 @@ update lsusergrouprights set screenname = 'IDS_SCN_MATERIALINVENTORY' where scre
 
 update lsusergrouprightsmaster set screenname = 'IDS_SCN_MATERIALINVENTORY' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_RESTOCK' and modulename = 'IDS_MDL_INVENTORY';
 update lsusergrouprights set screenname = 'IDS_SCN_MATERIALINVENTORY' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_RESTOCK' and modulename = 'IDS_MDL_INVENTORY';
+
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_EQUIPMENTMASTER' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_ACTDEACT' and modulename = 'IDS_MDL_INVENTORY';
+update lsusergrouprights set screenname = 'IDS_SCN_EQUIPMENTMASTER' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_ACTDEACT' and modulename = 'IDS_MDL_INVENTORY';
+
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_EQUIPMENTMASTER' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_CALIBRATE' and modulename = 'IDS_MDL_INVENTORY';
+update lsusergrouprights set screenname = 'IDS_SCN_EQUIPMENTMASTER' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_CALIBRATE' and modulename = 'IDS_MDL_INVENTORY';
+
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_EQUIPMENTMASTER' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_MAINTANN' and modulename = 'IDS_MDL_INVENTORY';
+update lsusergrouprights set screenname = 'IDS_SCN_EQUIPMENTMASTER' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_MAINTANN' and modulename = 'IDS_MDL_INVENTORY';

@@ -35,5 +35,7 @@ public interface ElnprotocolTemplateworkflowRepository extends JpaRepository<Eln
 
 	ElnprotocolTemplateworkflow findTopByAndLssitemasterAndStatusOrderByWorkflowcodeAsc(LSSiteMaster lssitemaster, int i);
 
+	ElnprotocolTemplateworkflow findTopByAndLssitemasterAndStatusOrderByWorkflowcodeDesc(LSSiteMaster lssitemaster, int i);
+
 
 }

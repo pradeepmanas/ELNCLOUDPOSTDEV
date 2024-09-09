@@ -20,7 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
@@ -48,7 +50,9 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.barcode.BarcodeMaster;
 import com.agaram.eln.primary.model.barcode.Printer;
+import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
+import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.barcode.BarcodeMasterRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialInventoryRepository;
@@ -58,6 +62,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.mongodb.gridfs.GridFSDBFile;
 
 @Service
@@ -200,18 +206,54 @@ public class BarcodeMasterService {
 		return fileManipulationservice.retrieveLargeFile(fileid);
 	}
 	
-	@SuppressWarnings("deprecation")
+
 	private String updatematerialcontent(String data, Integer materialcode,String path, String username) throws ParseException
 	{
 		ElnmaterialInventory inventory = elnmaterialInventoryReppository.findOne(materialcode);
 		if(inventory != null)
 		{
-			Date currentdata = commonfunction.getCurrentUtcTime();
+	        Date currentdata = commonfunction.getCurrentUtcTime();
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd ");
 			data = data.replace("$materialid$", inventory.getSinventoryid()).replace("$materialname$", inventory.getMaterial().getSmaterialname())
 					.replace("$storagepath$", path).replace("$batchno$", inventory.getSbatchno()).replace("$generatedby$", username)
 					.replace("$generateddate$", dateFormat.format(currentdata));
-			
+			    MaterialCategory materialCategory = inventory.getMaterialcategory();
+			  if (materialCategory != null && "Cell Bank".equalsIgnoreCase(materialCategory.getSmaterialtypename())) {
+		            JsonParser parser = new JsonParser();
+		            JsonObject jsonObject = parser.parse(inventory.getJsondata()).getAsJsonObject();
+		            JsonObject materialJsonDataObject = parser.parse(inventory.getMaterial().getJsondata()).getAsJsonObject();
+		            JsonElement dynamicfields = materialJsonDataObject.get("dynamicfields");
+		            if (jsonObject.has("depositorName") && !jsonObject.get("depositorName").getAsString().isEmpty()) {
+		                data = data.replace("$depositor$", jsonObject.get("depositorName").getAsString());
+		            }
+		            if (dynamicfields.isJsonArray()) {
+		                JsonArray dynamicFieldsArray = dynamicfields.getAsJsonArray();
+
+		                for (JsonElement element : dynamicFieldsArray) {
+		                    if (element.isJsonObject()) {
+		                        JsonObject field = element.getAsJsonObject();
+		                        int datatype = field.get("datatype").getAsInt();
+		                        String fieldName = field.get("fieldname").getAsString();
+
+		                        if (datatype == 4 && "Storage Condition".equalsIgnoreCase(fieldName)) {
+		                            JsonElement valueElement = field.get("value");
+		                            if (valueElement.isJsonObject()) {
+		                                String storageCondition = valueElement.getAsJsonObject().get("value").getAsString();
+		                                data = data.replace("$storagecondition$", storageCondition);
+		                            }
+		                        } else if (datatype == 1 && "Project id".equalsIgnoreCase(fieldName)) {
+		                            String projectId = field.get("value").getAsString();
+		                            data = data.replace("$projectid$", projectId);
+		                        }
+		                    }
+		                }
+		            }
+		            if (jsonObject.has("dateofarrival") && !jsonObject.get("dateofarrival").getAsString().isEmpty()) {
+		                data = data.replace("$freezingdate$", jsonObject.get("dateofarrival").getAsString());
+		            }
+
+		            System.out.println(data);
+		        }
 		}
 		return data;
 	}
@@ -326,10 +368,56 @@ public class BarcodeMasterService {
 		return lstprinter;
 	}
 
-	public BarcodeMaster UpdateBarcode(BarcodeMaster objClass) {
+	public BarcodeMaster RetiredBarcode(BarcodeMaster objClass) {
 
 		objClass.setStatus(-1);
 		barcodemasterrepository.save(objClass);
 		return objClass;
 }
+
+	
+	public BarcodeMaster getActiveBarcodeById(int barcodeno) {
+
+		 BarcodeMaster objBarcode = barcodemasterrepository.findByBarcodeno(barcodeno);
+
+		return objBarcode;
+	}
+	
+	
+	
+	public ResponseEntity<Object> updateBarcodeMaster(BarcodeMaster objBarcode) {
+		 BarcodeMaster objBarcode2 = barcodemasterrepository.findByBarcodeno(objBarcode.getBarcodeno());
+       //final BarcodeMaster unit = getActiveBarcodeById(objBarcode.getBarcodeno());
+		
+		 objBarcode2.setResponse(new Response());
+        
+//        if (unit == null) {
+//        	objBarcode.getResponse().setStatus(false);
+//        	objBarcode.getResponse().setInformation("IDS_ALREADYDELETED");
+//			return new ResponseEntity<>(objBarcode, HttpStatus.OK);
+//		}
+//        else {
+
+		//	final BarcodeMaster unit1 = barcodemasterrepository.findByBarcodenameIgnoreCaseAndStatus(objBarcode2.getBarcodename(),1);
+
+//			if (unit1 == null || (unit1.getBarcodeno().equals(objBarcode.getBarcodeno()))) {
+
+			if(objBarcode2!=null && objBarcode2.getBarcodeno()!=null) {
+				
+				objBarcode2.setBarcodename(objBarcode.getBarcodename());
+				barcodemasterrepository.save(objBarcode2);
+				//objBarcode.getResponse().setStatus(true);
+				//objBarcode.getResponse().setInformation("IDS_SUCCESS");
+				return new ResponseEntity<>(objBarcode2, HttpStatus.OK);
+
+			}
+//			else {
+//				objBarcode.getResponse().setStatus(false);
+//				objBarcode.getResponse().setInformation("IDS_ALREADYEXIST");
+//				return new ResponseEntity<>(objBarcode, HttpStatus.OK);
+//			}
+			return new ResponseEntity<>(objBarcode2, HttpStatus.OK);
+		}
+
+
 }
