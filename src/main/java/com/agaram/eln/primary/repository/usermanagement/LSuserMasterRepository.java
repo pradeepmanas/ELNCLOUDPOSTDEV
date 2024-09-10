@@ -200,4 +200,6 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	public void GetStartSkipUpdate(String string, int i);
 
 	public LSuserMaster findByUsercodeAndGetstart(Integer usercode, String string);
+
+	public List<LSuserMaster> findByUsercodeIn(List<Integer> usercode);
 }

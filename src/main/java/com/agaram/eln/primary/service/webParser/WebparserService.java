@@ -59,13 +59,12 @@ public class WebparserService {
 
 		String result = "";
 
-		Map<String, Object> childMap = new HashMap<>();
+		Map<String, Object> sitecodeMap = new HashMap<>();
+		sitecodeMap.put("sitecode", "1");
+		sitecodeMap.put("sitename", "Default");
 
-		childMap.put("sitekey", 1);
-		childMap.put("sitename", "chennai");
-		childMap.put("status", 1);
-
-		map.put("site", childMap);
+		map.put("sitecode", sitecodeMap);
+		map.put("sortOrder", "DESC");
 
 		String getTest = webparserCalling("getMethod", map);
 		List<Lswebparsermethod> lstObj = fieldMapper.readValue(getTest, new TypeReference<List<Lswebparsermethod>>() {

@@ -1740,4 +1740,22 @@ public class MaterialService {
 		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+	
+	public ResponseEntity<Object> getELNPropsAll(Integer nsiteInteger) {
+		
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		List<MaterialType> lstMaterialTypes =  new ArrayList<MaterialType>();
+		List<MaterialCategory> lstCategories = new ArrayList<MaterialCategory>();
+		
+		lstMaterialTypes = materialTypeRepository.findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatus(-1,1,nsiteInteger,-1,1,4);
+		lstCategories = materialCategoryRepository.findByNsitecodeAndNstatusOrderByNmaterialcatcodeDesc(nsiteInteger, 1);
+		List<Unit> lstUnits = unitRepository.findByNsitecodeAndNstatusOrderByNunitcodeDesc(nsiteInteger,1);
+		
+		objmap.put("lstCategories", lstCategories);
+		objmap.put("lstType", lstMaterialTypes);
+		objmap.put("lstUnit", lstUnits);
+		
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
 }

@@ -308,7 +308,12 @@ public class UserService {
 
 		List<LSMultisites> obj = LSMultisitesRepositery.findByLssiteMaster(objusergroup.getLssitemaster());
 		List<Integer> usercode = obj.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
-		return lsuserMasterRepository.findByUsercodeInAndUserretirestatusNot(usercode, 1);
+
+		if(objusergroup.getObjResponse()!=null && objusergroup.getObjResponse().getInformation().equals("UserMaster")) {
+			return lsuserMasterRepository.findByUsercodeIn(usercode);
+		}else {
+			return lsuserMasterRepository.findByUsercodeInAndUserretirestatusNot(usercode, 1);
+		}
 //		return lsuserMasterRepository.findByLssitemasterOrderByCreateddateDesc(objusergroup.getLssitemaster());
 
 //		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1,
