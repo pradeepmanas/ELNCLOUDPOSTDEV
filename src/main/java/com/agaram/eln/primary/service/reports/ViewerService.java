@@ -308,13 +308,13 @@ public class ViewerService {
 		List<ReportViewerStructure> lstdir = new ArrayList<ReportViewerStructure>();
 		if (objdir.getLstuserMaster() != null && objdir.getLstuserMaster().size() == 0) {
 			lstdir = reportViewerstructureRepository
+					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+							objdir.getLsuserMaster().getLssitemaster(), 1, objdir.getLsuserMaster(), 2);
+		} else {
+			lstdir = reportViewerstructureRepository
 					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
 							objdir.getLsuserMaster().getLssitemaster(), 1, objdir.getLsuserMaster(), 2,
 							objdir.getLsuserMaster().getLssitemaster(), 3, objdir.getLstuserMaster());
-		} else {
-			lstdir = reportViewerstructureRepository
-					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-							objdir.getLsuserMaster().getLssitemaster(), 1, objdir.getLsuserMaster(), 2);
 		}
 		rtnObj.put("directory", lstdir);
 		return rtnObj;

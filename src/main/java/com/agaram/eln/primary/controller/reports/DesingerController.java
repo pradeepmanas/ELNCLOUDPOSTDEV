@@ -140,7 +140,7 @@ public class DesingerController {
 	}
 	
 	@RequestMapping("/MoveReportTemplate")
-	public List<Reporttemplate> MoveReportTemplate(@RequestBody Reporttemplate[] Template) {
+	public Reporttemplate MoveReportTemplate(@RequestBody Reporttemplate Template) {
 		return desingerservice.MoveReportTemplate(Template);
 	}
 	

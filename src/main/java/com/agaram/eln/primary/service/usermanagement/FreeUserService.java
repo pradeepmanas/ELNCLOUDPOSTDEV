@@ -441,9 +441,9 @@ public class FreeUserService {
 
 			elnprotocoltemplateworkflowgroupmaprepository.save(workflowprotocoltempmap2);
 
-				//for email eln lite
+			if (objuser.getAutenticatefrom() == 0) {
 				userService.Usersendpasswormail(objuser);
-			
+			}
 
 			ObjectMapper objectMapper = new ObjectMapper();
 			ClassPathResource resource = new ClassPathResource("import_elnlite.json");
@@ -593,7 +593,6 @@ public class FreeUserService {
 						objfile.setIsmultitenant(2);
 						objfile.setLssitemaster(objuser.getLssitemaster());
 				        objfile.setLssheetworkflow(workflowsheettemp2);
-				        objfile.setLSuserMaster(objuser);
 //				        objfile.setApproved(1);
 						objfile.setCreateby(objuser);
 						objfile.setLstest(lstest);
@@ -601,7 +600,6 @@ public class FreeUserService {
 						objfile.setLsparameter(lstfileparam);
 						objfile.setViewoption(1);
 						objfile.setRejected(0);
-						objfile.setIsnewsheet(true);
 
 						try {
 							fileService.InsertupdateSheet(objfile);

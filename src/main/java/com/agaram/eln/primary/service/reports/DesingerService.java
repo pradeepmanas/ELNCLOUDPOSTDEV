@@ -33,7 +33,6 @@ import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.cloudProtocol.LSprotocolstepInformation;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
-import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
@@ -748,15 +747,13 @@ public class DesingerService {
 		return response;
 	}
 
-	public List<Reporttemplate> MoveReportTemplate(Reporttemplate[] template) {
-		List<Reporttemplate> rttemplate = Arrays.asList(template);
-		List<Long> lstfilesid = rttemplate.stream().map(Reporttemplate::getTemplatecode)
-				.collect(Collectors.toList());
-		reporttemplaterepository.updateTemplateDetailsMove(lstfilesid,rttemplate.get(0).getDircodetomove());
-		rttemplate.get(0).setResponse(new Response());
-		rttemplate.get(0).getResponse().setStatus(true);
-		
-		return rttemplate;
+	public Reporttemplate MoveReportTemplate(Reporttemplate template) {
+		reporttemplaterepository.updateTemplateDetails(template.getTemplatecode(), template.getTemplatename(),
+				template.getDateModified(), template.getDircodetomove());
+		template.setResponse(new Response());
+		template.getResponse().setStatus(true);
+		;
+		return template;
 	}
 
 	public List<Reporttemplate> GetUnlockscreendata(LSuserMaster objdir) {

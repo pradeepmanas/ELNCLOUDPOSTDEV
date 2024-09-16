@@ -1,12 +1,10 @@
 package com.agaram.eln.primary.service.syncwordconverter;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -650,38 +648,29 @@ public class DocumenteditorService {
 
 	public Reporttemplate SaveAs(Reporttemplate data) throws Exception {
 		Reporttemplate templateobject=new Reporttemplate();
-//		if (data.getIsmultitenant() == 1 || data.getIsmultitenant() == 2) {
+		if (data.getIsmultitenant() == 1 || data.getIsmultitenant() == 2) {
 			String tenant = TenantContext.getCurrentTenant();
 			if (data.getIsmultitenant() == 2) {
 				tenant = "freeusers";
 			}
-			if(data.getIsmultitenant() == 1 || data.getIsmultitenant() == 2) {
-				String containerName = tenant + "reportdocument";
-				String documentName = data.getSaveastemplate().getFileuid();
-				byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName, documentName);
-				if (documentBytes != null) {
-					String jsonContent = new String(documentBytes, StandardCharsets.UTF_8);
-					Gson gson = new Gson();
-					String singleStringifiedJson = gson.fromJson(jsonContent, String.class);
-					System.out.println("JSON Content:");
-//					System.out.println(jsonContent);
-					data.setTemplatecontent(singleStringifiedJson);
-					
-				}
-			}else {
-				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
-						Criteria.where("filename").is("ReportTemplate_" + data.getSaveastemplate().getTemplatecode())));
-				String jsonContent=new BufferedReader(new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8))
-								.lines().collect(Collectors.joining("\n"));
+			String containerName = tenant + "reportdocument";
+			String documentName = data.getSaveastemplate().getFileuid();
+			byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName, documentName);
+			if (documentBytes != null) {
+				String jsonContent = new String(documentBytes, StandardCharsets.UTF_8);
 				Gson gson = new Gson();
 				String singleStringifiedJson = gson.fromJson(jsonContent, String.class);
+				System.out.println("JSON Content:");
+//				System.out.println(jsonContent);
 				data.setTemplatecontent(singleStringifiedJson);
+				templateobject=save(data);
+			} else {
+				System.out.println("Failed to retrieve JSON content from Azure Blob Storage.");
 			}
 
-			templateobject=save(data);
-//		}else {
-//			
-//		}
+		}else {
+			
+		}
 		return templateobject;
 	}
 }

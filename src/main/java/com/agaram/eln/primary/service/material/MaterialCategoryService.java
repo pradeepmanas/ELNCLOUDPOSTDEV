@@ -45,8 +45,8 @@ public class MaterialCategoryService {
 		ObjectMapper objmapper = new ObjectMapper();
 		final MaterialCategory materialCategory = objmapper.convertValue(inputMap.get("materialcategory"), MaterialCategory.class);
 		materialCategory.setResponse(new Response());
-		
-		List<MaterialCategory> lstgetMaterialCategory = MaterialCategoryRepository.findBySmaterialcatnameIgnoreCaseAndNsitecode(materialCategory.getSmaterialcatname(),materialCategory.getNsitecode());
+		List<MaterialCategory> lstgetMaterialCategory = MaterialCategoryRepository
+				.findBySmaterialcatnameIgnoreCaseAndNsitecodeAndNstatus(materialCategory.getSmaterialcatname(),materialCategory.getNsitecode(),1);
 		
 		LSuserMaster objMaster = new LSuserMaster();
 		objMaster.setUsercode(materialCategory.getObjsilentaudit().getLsuserMaster());
@@ -76,7 +76,8 @@ public class MaterialCategoryService {
 	}
 
 	public ResponseEntity<Object> deleteMaterialCategory(MaterialCategory materialCategory, LScfttransaction obj) {
-		final MaterialCategory objMaterialCategory = MaterialCategoryRepository.findByNmaterialcatcode(materialCategory.getNmaterialcatcode());
+		final MaterialCategory objMaterialCategory = MaterialCategoryRepository
+				.findByNmaterialcatcode(materialCategory.getNmaterialcatcode());
 		if (objMaterialCategory == null) {
 			return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 		} else {
@@ -96,7 +97,7 @@ public class MaterialCategoryService {
 			materialCategory.getResponse().setInformation("IDS_ALREADYDELETED");
 			return new ResponseEntity<>(materialCategory, HttpStatus.OK);
 		} else {
-			final MaterialCategory materialCategoryObj = MaterialCategoryRepository.findByNsitecodeAndSmaterialcatnameIgnoreCase(materialCategory.getNsitecode(),materialCategory.getSmaterialcatname());
+			final MaterialCategory materialCategoryObj = MaterialCategoryRepository.findByNsitecodeAndSmaterialcatnameIgnoreCaseAndNstatus(materialCategory.getNsitecode(),materialCategory.getSmaterialcatname(),1);
 			
 			if (materialCategoryObj == null || (materialCategoryObj.getNmaterialcatcode().equals(materialCategory.getNmaterialcatcode()))) {
 				MaterialCategoryRepository.save(materialCategory);
