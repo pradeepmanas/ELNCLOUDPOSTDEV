@@ -49,8 +49,13 @@ public interface ReporttemplateRepository extends JpaRepository<Reporttemplate, 
 			LSSiteMaster sitemaster);
 	@Transactional
 	@Modifying
-	@Query(value = "UPDATE reporttemplate SET templatename = ?2, datemodified = ?3, reportdesignstructure_directorycode = ?4 WHERE templatecode = ?1", nativeQuery = true)
+	@Query(value = "UPDATE reporttemplate SET templatename = ?2, datemodified = ?3, reportdesignstructure_directorycode = ?4 WHERE templatecode = ?1 ", nativeQuery = true)
 	public void updateTemplateDetails(Long templatecode, String templatename, Date currentUtcTime, Long directoryCode);
+	
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE reporttemplate SET reportdesignstructure_directorycode = ?2 WHERE templatecode in (?1)", nativeQuery = true)
+	public void updateTemplateDetailsMove(List<Long> templatecode,Long directoryCode);
 
 	public List<Reporttemplate> findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyAndDateCreatedBetweenAndReportdesignstructureOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInAndDateCreatedBetweenAndReportdesignstructureOrderByTemplatecodeDesc(
 			LSSiteMaster sitemaster, int i, Integer templatetype, List<LSuserMaster> lstuserMaster, Date fromdate,

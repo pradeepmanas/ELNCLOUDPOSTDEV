@@ -1608,3 +1608,5 @@ update lsusergrouprights set screenname = 'IDS_SCN_EQUIPMENTMASTER' where screen
 
 update lsusergrouprightsmaster set screenname = 'IDS_SCN_EQUIPMENTMASTER' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_MAINTANN' and modulename = 'IDS_MDL_INVENTORY';
 update lsusergrouprights set screenname = 'IDS_SCN_EQUIPMENTMASTER' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_MAINTANN' and modulename = 'IDS_MDL_INVENTORY';
+
+INSERT INTO public.screenmaster(screencode, screenname) VALUES (2, 'IDS_SCN_SHEETTEMPLATE') ON CONFLICT (screencode) DO NOTHING;
