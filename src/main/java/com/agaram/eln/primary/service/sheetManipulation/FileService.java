@@ -729,7 +729,7 @@ public class FileService {
 
 		if (lstfiles != null && lstfiles.size() > 0) {
 			listfiles = lstfiles.stream().map(lsfile -> new Sheettemplatefortest(lsfile.getFilecode(),
-					lsfile.getFilenameuser(), lsfile.getCreatedate(), lsfile.getLstest())).collect(Collectors.toList());
+					lsfile.getFilenameuser(), lsfile.getCreatedate(), lsfile.getLstest(),lsfile.getTagsheet())).collect(Collectors.toList());
 		}
 
 		mapOrders.put("sheets", listfiles);

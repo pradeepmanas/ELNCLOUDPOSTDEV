@@ -218,7 +218,7 @@ public class BarcodeMasterService {
 					.replace("$storagepath$", path).replace("$batchno$", inventory.getSbatchno()).replace("$generatedby$", username)
 					.replace("$generateddate$", dateFormat.format(currentdata));
 			    MaterialCategory materialCategory = inventory.getMaterialcategory();
-			  if (materialCategory != null && "Cell Bank".equalsIgnoreCase(materialCategory.getSmaterialtypename())) {
+			  if (materialCategory != null && "Cell Bank".equals(materialCategory.getSmaterialtypename())) {
 		            JsonParser parser = new JsonParser();
 		            JsonObject jsonObject = parser.parse(inventory.getJsondata()).getAsJsonObject();
 		            JsonObject materialJsonDataObject = parser.parse(inventory.getMaterial().getJsondata()).getAsJsonObject();
@@ -418,6 +418,13 @@ public class BarcodeMasterService {
 //			}
 			return new ResponseEntity<>(objBarcode2, HttpStatus.OK);
 		}
+
+	public List<BarcodeMaster> GetBarcodemasterOnScreenbased(BarcodeMaster objuser) {
+
+		List<BarcodeMaster> lstbarcode = new ArrayList<BarcodeMaster>();
+		lstbarcode = barcodemasterrepository.findByLssitemasterAndScreenOrderByBarcodenoDesc(objuser.getLssitemaster(),objuser.getScreen());
+		return lstbarcode;
+	}
 
 
 }
