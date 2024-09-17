@@ -10,23 +10,13 @@ public class Sheettemplatefortest {
 	private String filenameuser;
 	private List<LSfiletest> lstest;
 	private Date createddate;
-	private Integer tagsheet;
 
-	public Sheettemplatefortest(Integer filecode, String filenameuser, Date createddate, List<LSfiletest> lstest,
-			Integer tagsheet) {
+	public Sheettemplatefortest(Integer filecode, String filenameuser, Date createddate, List<LSfiletest> lstest) {
 		this.filecode = filecode;
 		this.filenameuser = filenameuser;
 		this.lstest = lstest;
 		this.createddate = createddate;
-		this.tagsheet = tagsheet;
-	}
 
-	public Integer getTagsheet() {
-		return tagsheet;
-	}
-
-	public void setTagsheet(Integer tagsheet) {
-		this.tagsheet = tagsheet;
 	}
 
 	public Integer getFilecode() {

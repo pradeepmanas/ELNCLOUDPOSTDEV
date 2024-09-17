@@ -86,10 +86,4 @@ public class BarcodeMasterController {
 		
 		return barcodemasterservice.updateBarcodeMaster(objBarcode);
 	}
-	@PostMapping("/GetBarcodemasterOnScreenbased")
-	public List<BarcodeMaster> GetBarcodemasterOnScreenbased(@RequestBody BarcodeMaster objuser)
-	{
-		return barcodemasterservice.GetBarcodemasterOnScreenbased(objuser);
-	}
-	
 }
