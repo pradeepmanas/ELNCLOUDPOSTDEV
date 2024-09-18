@@ -36,6 +36,33 @@ public class BarcodeMaster {
 	@ManyToOne
 	private LSSiteMaster lssitemaster;
 	
+	@Transient
+	private Integer ismultitenant;
+	@Transient
+	private String commonstring;
+	
+	public Integer getFilecode() {
+		return filecode;
+	}
+	public void setFilecode(Integer filecode) {
+		this.filecode = filecode;
+	}
+
+	@Transient
+	private Integer filecode;
+	
+	public String getCommonstring() {
+		return commonstring;
+	}
+	public void setCommonstring(String commonstring) {
+		this.commonstring = commonstring;
+	}
+	public Integer getIsmultitenant() {
+		return ismultitenant;
+	}
+	public void setIsmultitenant(Integer ismultitenant) {
+		this.ismultitenant = ismultitenant;
+	}
 	public Integer getBarcodeno() {
 		return barcodeno;
 	}

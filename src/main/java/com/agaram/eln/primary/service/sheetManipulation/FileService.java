@@ -40,6 +40,7 @@ import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrderDetails;
 //import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplatefortest;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
+import com.agaram.eln.primary.model.barcode.BarcodeMaster;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetVersion;
 import com.agaram.eln.primary.model.general.Response;
@@ -72,6 +73,7 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
+import com.agaram.eln.primary.repository.barcode.BarcodeMasterRepository;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationRepository;
@@ -252,6 +254,9 @@ public class FileService {
 	
 	@Autowired
 	private LogilablimsorderdetailsRepository logilablimsorderdetailsRepository;
+	
+	@Autowired
+	private BarcodeMasterRepository barcodeMasterRepository;
 
 	public LSfile InsertupdateSheet(LSfile objfile) throws IOException {
 
@@ -729,7 +734,7 @@ public class FileService {
 
 		if (lstfiles != null && lstfiles.size() > 0) {
 			listfiles = lstfiles.stream().map(lsfile -> new Sheettemplatefortest(lsfile.getFilecode(),
-					lsfile.getFilenameuser(), lsfile.getCreatedate(), lsfile.getLstest())).collect(Collectors.toList());
+					lsfile.getFilenameuser(), lsfile.getCreatedate(), lsfile.getLstest(),lsfile.getTagsheet())).collect(Collectors.toList());
 		}
 
 		mapOrders.put("sheets", listfiles);
@@ -2288,4 +2293,6 @@ public class FileService {
 		objLSfile.setTagsheet(1);
 		lSfileRepository.save(objLSfile);
 	}
+
+	
 }

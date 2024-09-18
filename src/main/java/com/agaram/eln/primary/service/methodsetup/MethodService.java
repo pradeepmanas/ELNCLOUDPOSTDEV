@@ -2,6 +2,15 @@ package com.agaram.eln.primary.service.methodsetup;
 
 
 import java.io.BufferedInputStream;
+
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.BufferedReader;
 
 
@@ -609,27 +618,7 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 					        pdfStripper.setTextLineMatrix(matrix);
 					   
 					        parsedText = pdfStripper.getText(pdDoc);
-//					      					        
-//					        //converting into multipart file
-//						        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
-//						        		fileName, "text/plain", parsedText.getBytes());
-//						        
-//						        //storing file in blob
-//						        String textid = null;
-//					    		try {
-//					    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
-//					    		} catch (IOException e) {
-//					    			// TODO Auto-generated catch block
-//					    			e.printStackTrace();
-//					    		}
-//			
-//					    		CloudParserFile objfile = new CloudParserFile();
-//					    		objfile.setFileid(textid);
-//					    		objfile.setExtension(".txt");
-//					    		objfile.setFilename(name+".txt");
-//					    			
-//					    		cloudparserfilerepository.save(objfile);
-//					    		
+
 					    } catch (Exception e) {
 					        e.printStackTrace();
 					        try {
@@ -694,42 +683,11 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 					writer.write("\n");
 
 				}
-				
-//				while ((line = br.readLine()) != null) {
-//					tempArr = line.split(",");
-//					// User for loop to iterate String Array and write data to text file
-//					for (String str : tempArr) {
-//						writer.write(str + "\t");
-//					}
-//					// Write each line of CSV file to multiple lines
-//					writer.write("\n");
-//
-//				}
+	
 				writer.close();
 
 			    bytes = FileUtils.readFileToByteArray(tempFile);
 
-//				
-//				//converting into multipart file
-//		        MultipartFile convertedmultipartfile = new MockMultipartFile(fileName,
-//		        		fileName, "text/plain", bytes);
-//		        
-//		        //storing file in blob
-//		        String textid = null;
-//	    		try {
-//	    			textid = cloudFileManipulationservice.storecloudfilesreturnUUID(convertedmultipartfile, "parsertextfile");
-//	    		} catch (IOException e) {
-//	    			// TODO Auto-generated catch block
-//	    			e.printStackTrace();
-//	    		}
-//
-//	    		CloudParserFile objfile = new CloudParserFile();
-//	    		objfile.setFileid(textid);
-//	    		objfile.setExtension(".txt");
-//	    		objfile.setFilename(name+".txt");
-//	    			
-//	    		cloudparserfilerepository.save(objfile);
-//
 	    		rawDataText = new String(bytes, StandardCharsets.ISO_8859_1); 
 		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
 		        System.out.println("CSVfile-rawDataText:"+rawDataText);
@@ -738,6 +696,67 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 			        e.printStackTrace();
 			   }
 			 }
+			   else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx") ) {
+			
+					final File tempFile = File.createTempFile(fileName, "csv");
+					
+				        try (FileInputStream fis = new FileInputStream(file);
+				                //HSSFWorkbook workbook = new HSSFWorkbook(fis);
+				                BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+
+				        	 // Determine whether the file is .xls or .xlsx
+				            Workbook workbook = null;
+				            if (ext.equals("xls")) {
+				                workbook = new HSSFWorkbook(fis); // For .xls
+				            } else if (ext.equals("xlsx")) {
+				                workbook = new XSSFWorkbook(fis); // For .xlsx
+				            } else {
+				                throw new IllegalArgumentException("The specified file is not Excel (.xls or .xlsx)");
+				            }
+				            
+				            Sheet sheet = workbook.getSheetAt(0); // Get the first sheet
+				            DataFormatter formatter = new DataFormatter(); // To format the data as it appears in Excel
+
+				               for (Row row : sheet) {
+				                   StringBuilder sb = new StringBuilder();
+				                   for (Cell cell : row) {
+				                       switch (cell.getCellType()) {
+				                           case STRING:
+				                               sb.append(cell.getStringCellValue());
+				                               break;
+				                           case NUMERIC:
+				                               // Use the formatter to get the exact cell value without rounding
+				                               String formattedValue = formatter.formatCellValue(cell);
+				                               sb.append(formattedValue);
+				                               break;
+				                           case BOOLEAN:
+				                               sb.append(cell.getBooleanCellValue());
+				                               break;
+				                           case FORMULA:
+				                               sb.append(cell.getCellFormula()); // Handle formula as needed
+				                               break;
+				                           default:
+				                               sb.append("");
+				                               break;
+				                       }
+				                       sb.append(","); // Separate columns by a comma
+				                   }
+				                   // Remove the last comma and add a newline
+				                   writer.write(sb.toString().replaceAll(",$", ""));
+				                   writer.newLine();
+				               }
+
+				               writer.flush();
+				              
+				           } catch (IOException e) {
+				               e.printStackTrace();
+				           }
+				        
+				           bytes = FileUtils.readFileToByteArray(tempFile);
+				    	   rawDataText = new String(bytes, StandardCharsets.UTF_8); 
+			               System.out.println("Conversion complete. Check " + rawDataText);
+					}
+				
 			   else
 			   {
 				   RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
@@ -758,576 +777,7 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
         	return null;
         } 
    }
-   
-//        
-//   @SuppressWarnings("resource")
-//public String getFileData(final String fileName,String tenant,Integer methodKey) throws FileNotFoundException, IOException
-// {
-//	   try
-//        {			
-//		   File file = null;
-//		   final String ext = FilenameUtils.getExtension(fileName); 
-//		   String rawDataText="";
-//		   
-//		   final String name = FilenameUtils.getBaseName(fileName);
-//		   
-//		   CloudParserFile obj = cloudparserfilerepository.findTop1Byfilename(fileName);
-//		   String fileid = obj.fileid;
-//		   System.out.println("going to retrieve file from blob");
-//		   file = stream2file(cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "parserfile"),fileName, ext);
-//		   
-//		   byte[] bytes = null;
-//
-//		    if(file !=null)
-//		    {
-// 	
-//		if (ext.equalsIgnoreCase("pdf")) {  	
-//	        List<Method> methodobj = methodRepo.findByMethodkey(methodKey);
-//  				
-//  				Integer converterstatus = methodobj.get(0).getConverterstatus();
-//  				if(converterstatus == 1) //pdf to txt
-//  				{
-//  					
-//  					new ClassPathResource("Aspose.PDF.Java.lic");
-//  			       System.out.println("classpath:"+new ClassPathResource("Aspose.PDF.Java.lic"));
-//
-//  			     License asposePdfLicenseText = new License();
-//  			     asposePdfLicenseText.setLicense(new ClassPathResource("Aspose.PDF.Java.lic"));
-//  					
-//  					
-//  					
-//  					
-//  				    String userDirectory = new File("").getAbsolutePath();
-//	 				   System.out.println("userDirectory:"+userDirectory);
-//	 				
-//	 				String commanddev =  userDirectory+"\\src\\main\\resources\\" +"Aspose License";//folder path in development 
-//	 				System.out.println("commanddev:"+commanddev);
-//			        File folder = new File(commanddev);
-//
-//			        if (folder.exists() && folder.isDirectory()) {//presence of folder check in dev
-//			            System.out.println("Folder exists in dev");
-//			            
-//			          License asposePdfLicenseText = new License();
-//	 		            try {
-//	 		            	
-//							asposePdfLicenseText.setLicense(userDirectory+"\\src\\main\\resources\\Aspose License\\Aspose.PDF.Java.lic");
-//							System.out.println("license is set");
-//						} catch (Exception e1) {
-//							
-//							e1.printStackTrace();
-//							System.out.println("license is not set");
-//						}
-//	 		            
-//	 		        RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
-//  		            Document convertPDFDocumentToText = new Document(raFileinputstream);
-//
-//  		            TextAbsorber textAbsorber = new TextAbsorber(new TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Pure));
-//
-//  		            convertPDFDocumentToText.getPages().accept(textAbsorber);
-//
-//  		            String ExtractedText = textAbsorber.getText();
-//  		            BufferedWriter writer = null;
-//
-//				    	final File tempFile = File.createTempFile(name, ".txt");
-//				    	
-//			            String tempPath = tempFile.toString();
-//			            
-//			            
-//  					try {
-//  						writer = new BufferedWriter(new FileWriter(tempPath));
-//  					} catch (IOException e) {
-//  						e.printStackTrace();
-//  					}
-//  	
-//  		            try {
-//  						writer.write(ExtractedText);
-//  					} catch (IOException e) {
-//  						e.printStackTrace();
-//  					}
-//  		            
-//  		            try {
-//  						writer.close();
-//  					} catch (IOException e) {
-//  						e.printStackTrace();
-//  					}
-//
-//  		            System.out.println("Done");
-//  		            
-//  		          byte[] bytesArray = new byte[(int) tempFile.length()]; 	
-//     	          FileInputStream fis = new FileInputStream(tempFile);
-//	              fis.read(bytesArray); //read file into bytes[]
-//	              fis.close();	
-//	           		 	           
-//	 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
-//	 	          System.out.println("PDF-TXT-rawDataText:"+rawDataText);
-//	 	          tempFile.delete();
-//	 	          tempPath="";
-//	 			}else {// in cloudpath
-//	 				System.out.println("Folder exist in azure");
-////			         String azure = "src/main/resources/"+"Aspose License";
-//// 		 				 System.out.println("azure:"+azure);
-////  	 			         File azurefolder = new File(azure);
-////  	
-////  	 			         System.out.println("azureexists:"+azurefolder.exists());
-////  	 			         System.out.println("azurefolderisdir:"+azurefolder.isDirectory());
-////  	 			         System.out.println("License path i created :"+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
-////  	 			         
-////  	
-////  	 			         String azure1 = "src//main//resources//"+"Aspose License";
-////		 				 System.out.println("azure:"+azure1);
-////	 			         File azurefolder1 = new File(azure1);
-////	
-////	 			         System.out.println("azureexists1:"+azurefolder1.exists());
-////	 			         System.out.println("azurefolderisdir1:"+azurefolder1.isDirectory());
-////	 			         System.out.println("License path i created :"+"src//main//resources//Aspose License//Aspose.PDF.Java.lic"); 
-////	
-////	 			         
-////	 			         String azure2 = "src\\main\\resources\\"+"Aspose License";
-////		 				 System.out.println("azure:"+azure2);
-////	 			         File azurefolder2 = new File(azure2);
-////	
-////	 			         System.out.println("azureexists2:"+azurefolder2.exists());
-////	 			         System.out.println("azurefolderisdir2:"+azurefolder2.isDirectory());
-////	 			         System.out.println("License path i created :"+"src\\main\\resources\\Aspose License\\Aspose.PDF.Java.lic"); 
-////	
-////	 			         String azure3 = userDirectory+"src/main/resources/"+"Aspose License";
-////	  		 				 System.out.println("azure:"+azure3);
-////	   	 			         File azurefolder3 = new File(azure3);
-////	   	
-////	   	 			         System.out.println("azureexists3:"+azurefolder3.exists());
-////	   	 			         System.out.println("azurefolderisdir3:"+azurefolder3.isDirectory());
-////	   	 			         System.out.println("License path i created :"+userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
-////	   	 			        
-////	   	 			     
-////	   	 			     String azure4 = "src/main/resources/Aspose.PDF.Java.lic";  
-////	   	 			     File f = new File(azure4);
-////	   	 			     System.out.println("azureexists4:"+f.exists());
-////	   	 			
-////
-////	   	 			     String azure5 = "src//main//resources//Aspose.PDF.Java.lic";  
-////	   	 			     File f1 = new File(azure5);
-////	   	 			     System.out.println("azureexists5:"+f1.exists());
-////	   	 			
-////	   	 		     String azure6 = "/src/main/resources/Aspose.PDF.Java.lic";  
-////   	 			     File f2 = new File(azure6);
-////   	 			     System.out.println("azureexists6:"+f2.exists());
-////   	 			
-////   	 		        String azure7 = "//src//main//resources//Aspose.PDF.Java.lic";  
-////	 			     File f7 = new File(azure7);
-////	 			     System.out.println("azureexists7:"+f7.exists());
-////	 			
-////	 			    String azure8 = "/Aspose.PDF.Java.lic";  
-////	 			     File f8 = new File(azure8);
-////	 			     System.out.println("azureexists8:"+f8.exists());
-////	 			
-////	 			    String azure9 = "//Aspose.PDF.Java.lic";  
-////	 			     File f9 = new File(azure9);
-////	 			     System.out.println("azureexists9:"+f9.exists());
-////	 			
-////			         String azure10 = userDirectory+"src/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
-////			         File f10 = new File(azure10);
-////		  		 				 System.out.println("azureexists10:"+f10.exists());
-////		   	 			 
-////		
-////		   	 			         String azure11 = userDirectory+"/src//main//java//com//agaram//eln/Aspose.PDF.Java.lic";
-////		   	 		         File f11 = new File(azure11);
-////	  		 				 System.out.println("azureexists11:"+f11.exists());
-////	
-////	   	 		         String azure12 = "src/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
-////	   	 	         File f12 = new File(azure12);
-////		 				 System.out.println("azureexists12:"+f12.exists());
-////
-////   	 			         
-////   	 		         String azure13 = "src//main//java//com//agaram//eln/Aspose.PDF.Java.lic";
-////   	 	             File f13 = new File(azure13);
-////	 				 System.out.println("azureexists13:"+f13.exists());
-////	
-////	 				String azure14 = "/pradeepmanas/ELNCLOUDPOSTDEV/blob/main/Aspose.PDF.Java.lic";
-////	 				 File f14 = new File(azure14);
-////	 				 System.out.println("azureexists14:"+f14.exists());
-////	
-////	  				String azure15 = "//pradeepmanas//ELNCLOUDPOSTDEV//blob//main//Aspose.PDF.Java.lic";
-////	 				 File f15 = new File(azure15);
-////	 				 System.out.println("azureexists15:"+f15.exists());
-////	
-////	 			//	https://github.com/pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose%20License
-////	 					
-////	 			         String azure16 ="/pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose%20License";
-////	 		  		 	 System.out.println("azure:"+azure16);
-////	 		   	 		 File azurefolder16 = new File(azure16);
-////	 		   	 		 System.out.println("azureexists16:"+azurefolder16.exists());
-////	 		   	 		
-////	 		   	 	 String azure17 ="//pradeepmanas//ELNCLOUDPOSTDEV//tree//main//src//main//resources//Aspose%20License";
-//// 		  		 	 System.out.println("azure:"+azure17);
-//// 		   	 		 File azurefolder17 = new File(azure17);
-//// 		   	 		 System.out.println("azureexists17:"+azurefolder17.exists());
-//// 		   	 		
-////
-////	 		   	 	 String azure22 ="pradeepmanas//ELNCLOUDPOSTDEV//tree//main//src//main//resources//Aspose%20License";
-//// 		  		 	 System.out.println("azure:"+azure22);
-//// 		   	 		 File azurefolder22 = new File(azure22);
-//// 		   	 		 System.out.println("azureexists22:"+azurefolder22.exists());
-//// 		   	 		 
-//// 		   	 	   String azure25 ="pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose%20License";
-////		  		 	 System.out.println("azure:"+azure25);
-////		   	 		 File azurefolder25 = new File(azure25);
-////		   	 		 System.out.println("azureexists25:"+azurefolder25.exists());
-////		   	 		
-//// 		   	 //	https://github.com/pradeepmanas/ELNCLOUDPOSTDEV/blob/main/src/main/java/com/agaram/eln/Aspose.PDF.Java.lic
-//// 		   	 		
-//// 	  				String azure18 = "//pradeepmanas//ELNCLOUDPOSTDEV//blob//main//java//com//agaram//eln//Aspose.PDF.Java.lic";
-////				 File f18 = new File(azure18);
-////				 System.out.println("azureexists18:"+f18.exists());
-////
-////	  				String azure19 = "/pradeepmanas/ELNCLOUDPOSTDEV/blob/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
-////				 File f19 = new File(azure19);
-////				 System.out.println("azureexists19:"+f19.exists());
-////
-////	  				String azure23 = "pradeepmanas/ELNCLOUDPOSTDEV/blob/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
-////				 File f23 = new File(azure23);
-////				 System.out.println("azureexists23:"+f23.exists());
-////
-////	  				String azure24 = "pradeepmanas//ELNCLOUDPOSTDEV//blob//main//java//com//agaram//eln//Aspose.PDF.Java.lic";
-////				 File f24 = new File(azure24);
-////				 System.out.println("azureexists24:"+f24.exists());
-////
-////			     String azure20 ="/pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose License";
-////		  		 	 System.out.println("azure:"+azure20);
-////		   	 		 File azurefolder20 = new File(azure20);
-////		   	 		 System.out.println("azureexists20:"+azurefolder20.exists());
-////		   	 		
-////		   	 	 String azure21 ="//pradeepmanas//ELNCLOUDPOSTDEV//tree//main//src//main//resources//Aspose License";
-////	  		 	 System.out.println("azure:"+azure21);
-////	   	 		 File azurefolder21 = new File(azure21);
-////	   	 		 System.out.println("azureexists21:"+azurefolder21.exists());
-////	   	 		
-////	   	 	 String azure26 ="pradeepmanas//ELNCLOUDPOSTDEV//tree//main//src//main//resources//Aspose License";
-////  		 	 System.out.println("azure:"+azure26);
-////   	 		 File azurefolder26= new File(azure26);
-////   	 		 System.out.println("azureexists26:"+azurefolder26.exists());
-////   	 		
-////		     String azure27 ="pradeepmanas/ELNCLOUDPOSTDEV/tree/main/src/main/resources/Aspose License";
-////  		 	 System.out.println("azure:"+azure27);
-////   	 		 File azurefolder27 = new File(azure27);
-////   	 		 System.out.println("azureexists27:"+azurefolder27.exists());
-//
-//
-////	         String azure = "src/main/resources/asposelicense";
-////	 				 System.out.println("azure:"+azure);
-////	 				 String absoluteTestPath = new File(azure).getAbsolutePath();
-////			         File azurefolder = new File(absoluteTestPath); 	
-////			         System.out.println("azureexists:"+azurefolder.exists());
-////			         System.out.println("azurefolderisdir:"+azurefolder.isDirectory());
-////			      	 			         
-////	 			     
-////	 			     String azure5 = "src/main/resources/asposelicense/Aspose.PDF.Java.lic";  
-////	 			    String absoluteTestPath1 = new File(azure5).getAbsolutePath();
-////	 			     File f = new File(absoluteTestPath1);
-////	 			     System.out.println("azureexists4:"+f.exists());
-////	 			
-////	 			 String azure4 = "src/main/resources/Aspose.PDF.Java.lic";  
-////	 			 String absoluteTestPath2 = new File(azure4).getAbsolutePath();
-////			     File f1 = new File(absoluteTestPath2);
-////			     System.out.println("azureexists4:"+f1.exists());
-////			
-////			    String azure8 = "/Aspose.PDF.Java.lic";  
-////			   String absoluteTestPath3 = new File(azure8).getAbsolutePath();
-////			     File f8 = new File(absoluteTestPath3);
-////			     System.out.println("azureexists8:"+f8.exists());
-////			
-////
-////	 		         String azure12 = "src/main/java/com/agaram/eln/Aspose.PDF.Java.lic";
-////	 		     String absoluteTestPath4 = new File(azure12).getAbsolutePath();
-////	 	         File f12 = new File(azure12);
-//// 				 System.out.println("azureexists12:"+f12.exists());
-//
-//
-////   	 		 File f = new File("Aspose.PDF.Java.lic"); 
-////   	 	     String absolute = f.getAbsolutePath(); 
-////   	 	     Path path = Paths.get(absolute);
-////
-////   	     	 System.out.println("stringabsolute:"+absolute); 
-////   	         System.out.println("absolutepath:"+path);
-////   	     	 Boolean value=Files.exists(path);
-//   	 			
-////				String filePath="src/main/resources/Aspose.PDF.Java.lic";
-////		        Path relativePath = Paths.get(filePath);
-////		        Path absolutePath = relativePath.toAbsolutePath();
-////		        Boolean value=Files.exists(absolutePath);
-////		        System.out.println("existscheck:"+value);
-////		        
-//		      
-//		       new ClassPathResource("Aspose.PDF.Java.lic");
-//		       System.out.println("classpath:"+new ClassPathResource("Aspose.PDF.Java.lic"));
-//
-////		        String resourceLocation = "src/main/resources/Aspose.PDF.Java.lic";
-//
-//		        // Create a ClassPathResource object
-////		        Resource resource = new ClassPathResource(resourceLocation);
-////		        Boolean value1=resource.exists();
-////		        System.out.println("resourceexistscheck:"+value1);
-//		        
-//
-//		        String fileName2 = "Aspose.PDF.Java.lic";
-//
-//		        // Use the ClassLoader to get the resource URL
-//		        ClassLoader classLoader = MethodService.class.getClassLoader();
-//		        java.net.URL resourceUrl = classLoader.getResource(fileName2);
-//
-//		        // Check if the resource URL is not null (file exists in the classpath)
-//		        if (resourceUrl != null) {
-//		            System.out.println("File '" + fileName2 + "' exists in the classpath.");
-//		            System.out.println("File URL: " + resourceUrl);
-//		            
-//		            // Extract the classpath entry from the URL
-//		          //  String classpathEntry = extractClasspathEntry(resourceUrl);
-//
-//		         // Convert the URL to a string
-//		            String urlString = resourceUrl.toString();
-//		            System.out.println("urlString: " + urlString);
-//		            // Check if the URL is a file URL
-//		             if (urlString.startsWith("jar:file:")) {
-//		                // For JAR file URLs, extract the JAR file path
-//		            	 System.out.println("For JAR file URLs, extract the JAR file path");
-//		                int jarSeparatorIndex = urlString.indexOf('!');
-//		                if (jarSeparatorIndex != -1) {
-//		                	urlString= urlString.substring("jar:file:".length(), jarSeparatorIndex);
-//		                }
-//		            }
-//
-//		            // If the URL format is not recognized, return the full URL
-//		          //  return urlString;
-//		            
-//		            // Print the classpath entry
-//		            System.out.println("Classpath Entry for '" + fileName2 + "':");
-//		            System.out.println(urlString);
-//		            
-//		        } else {
-//		            System.out.println("File '" + fileName2 + "' does not exist in the classpath.");
-//		        }
-//
-//	 				 License asposePdfLicenseText = new License();
-//	 		            try {
-//	 		            	
-//							//asposePdfLicenseText.setLicense("jar:file:/tmp/app.jar!/BOOT-INF/classes!/Aspose.PDF.Java.lic");
-//							//System.out.println("license is set for path: jar:file:/tmp/app.jar!/BOOT-INF/classes!/Aspose.PDF.Java.lic");
-////							asposePdfLicenseText.setLicense("/BOOT-INF/classes!/Aspose.PDF.Java.lic");
-////							System.out.println("license is set for path: /BOOT-INF/classes!/Aspose.PDF.Java.lic");
-//	 		            	asposePdfLicenseText.setLicense("/tmp/app.jar!/BOOT-INF/classes!/Aspose.PDF.Java.lic");
-//							System.out.println("license is set for path:/tmp/app.jar!/BOOT-INF/classes!/Aspose.PDF.Java.lic");
-//						} catch (Exception e1) {
-//							                                                                                                                              
-//							e1.printStackTrace();
-//							System.out.println("license is not set");
-//						}
-//	 		            
-//	 		        RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
-//		            Document convertPDFDocumentToText = new Document(raFileinputstream);
-//
-//		            TextAbsorber textAbsorber = new TextAbsorber(new TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Pure));
-//
-//		            convertPDFDocumentToText.getPages().accept(textAbsorber);
-//
-//		            String ExtractedText = textAbsorber.getText();
-//		            BufferedWriter writer = null;
-//
-//				    	final File tempFile = File.createTempFile(name, ".txt");
-//				    	
-//			            String tempPath = tempFile.toString();
-//			            
-//			            
-//					try {
-//						writer = new BufferedWriter(new FileWriter(tempPath));
-//					} catch (IOException e) {
-//						e.printStackTrace();
-//					}
-//	
-//		            try {
-//						writer.write(ExtractedText);
-//					} catch (IOException e) {
-//						e.printStackTrace();
-//					}
-//		            
-//		            try {
-//						writer.close();
-//					} catch (IOException e) {
-//						e.printStackTrace();
-//					}
-//
-//		            System.out.println("Done");
-//		            
-//		          byte[] bytesArray = new byte[(int) tempFile.length()]; 	
-//  	              FileInputStream fis = new FileInputStream(tempFile);
-//	              fis.read(bytesArray); //read file into bytes[]
-//	              fis.close();	
-//	           		 	           
-//	 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
-//	 	          System.out.println("PDF-TXT-rawDataText:"+rawDataText);
-//	 	          tempFile.delete();
-//	 	          tempPath="";			
-//	 			  }
-//  				}  //pdf to txt
-//  			 		
-//  				else { //pdf to csv
-//
-//  	 				    String userDirectory = new File("").getAbsolutePath();
-//  	 				    System.out.println(userDirectory);
-//  	 					String commanddev =  userDirectory+"\\src\\main\\resources\\" +"Aspose License";//folder path in development
-//    	 				 System.out.println("commanddev:"+commanddev);
-//  	 			        File folder = new File(commanddev);
-//  	//
-//  	 			        if (folder.exists() && folder.isDirectory()) { //presence of folder check in dev
-//  	 			            System.out.println("Folder exists in dev");
-//  	 			            
-//  	 			           License asposePdfLicenseCSV = new License();
-//  	 			           try {
-//  	 			        	   
-//  	 							asposePdfLicenseCSV.setLicense(userDirectory+"\\src\\main\\resources\\Aspose License\\Aspose.PDF.Java.lic");
-//  	 							System.out.println("License is set");
-//  	 						} catch (Exception e) {
-//  	 							
-//  	 				    		e.printStackTrace();
-//  	 				    		System.out.println("License not set");
-//  	 						}       
-//  	 				        
-//  	 				    
-//  	 			           RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
-//  	 				       Document convertPDFDocumentToCSV = new Document(raFileinputstream);
-//  	 				        
-//  	 				        ExcelSaveOptions csvSave = new ExcelSaveOptions();
-//  	 				        csvSave.setFormat(ExcelSaveOptions.ExcelFormat.CSV);
-//  	 				        
-//  	 				    	final File tempFile = File.createTempFile(name, ".csv");
-//  	 			            String tempPath = tempFile.toString();
-//
-//  	 				    	 convertPDFDocumentToCSV.save(tempPath, csvSave);
-//  	 				        System.out.println("Done");
-//
-//  	 				        byte[] bytesArray = new byte[(int) tempFile.length()]; 	
-//  			        	    FileInputStream fis = new FileInputStream(tempFile);
-//  			 	            fis.read(bytesArray); //read file into bytes[]
-//  			 	            fis.close();	
-//  			 	           		 	           
-//  		 		 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
-//  		 		 	          System.out.println("PDF-CSV-rawDataText:"+rawDataText);
-//  		 		 	          rawDataText = rawDataText.replaceAll("\"", "");
-//  		 		 	          tempFile.delete();
-//  			 	              tempPath="";
-//  		 			        
-//  	 			        } else {
-//  	 			         System.out.println("Folder exists in azure");
-//  	 			         String azure = "src/main/resources/"+"Aspose License";
-//  	 	 		 				 System.out.println("azure:"+azure);
-//  	 	  	 			         File azurefolder = new File(azure);
-//  	 	  	
-//  	 	  	 			         System.out.println("azureexists:"+azurefolder.exists());
-//  	 	  	 			         System.out.println("azurefolderisdir:"+azurefolder.isDirectory());
-//  	 	  	 			         System.out.println("License path i created :"+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
-//  	 	  	 			         
-//  	 	  	
-//  	 	  	 			         String azure1 = "src//main//resources//"+"Aspose License";
-//  	 			 				 System.out.println("azure:"+azure1);
-//  	 		 			         File azurefolder1 = new File(azure1);
-//  	 		
-//  	 		 			         System.out.println("azureexists1:"+azurefolder1.exists());
-//  	 		 			         System.out.println("azurefolderisdir1:"+azurefolder1.isDirectory());
-//  	 		 			         System.out.println("License path i created :"+"src//main//resources//Aspose License//Aspose.PDF.Java.lic"); 
-//  	 		
-//  	 		 			         
-//  	 		 			         String azure2 = "src\\main\\resources\\"+"Aspose License";
-//  	 			 				 System.out.println("azure:"+azure2);
-//  	 		 			         File azurefolder2 = new File(azure2);
-//  	 		
-//  	 		 			         System.out.println("azureexists2:"+azurefolder2.exists());
-//  	 		 			         System.out.println("azurefolderisdir2:"+azurefolder2.isDirectory());
-//  	 		 			         System.out.println("License path i created :"+"src\\main\\resources\\Aspose License\\Aspose.PDF.Java.lic"); 
-//  	 		
-//  	 		 			         String azure3 = userDirectory+"src/main/resources/"+"Aspose License";
-//  	 		  		 				 System.out.println("azure:"+azure3);
-//  	 		   	 			         File azurefolder3 = new File(azure3);
-//  	 		   	
-//  	 		   	 			         System.out.println("azureexists3:"+azurefolder3.exists());
-//  	 		   	 			         System.out.println("azurefolderisdir3:"+azurefolder3.isDirectory());
-//  	 		   	 			         System.out.println("License path i created :"+userDirectory+"src/main/resources/Aspose License/Aspose.PDF.Java.lic"); 
-//  	 		   	 			          			         
-//  	 		   	 			     String azure4 = userDirectory+"Aspose.PDF.Java.lic";  
-//  	 		   	 			     File f = new File(azure4);
-//  	 		   	 			     System.out.println("azureexists4:"+f.exists());
-//  	 		   	 			    
-//	 			           License asposePdfLicenseCSV = new License();
-//	 			           try {
-//	 			        	   
-//	 							asposePdfLicenseCSV.setLicense(azure4);
-//	 							System.out.println("License is set");
-//	 						} catch (Exception e) {
-//	 							
-//	 				    		e.printStackTrace();
-//	 				    		System.out.println("License not set");
-//	 						}       
-//	 				        
-//	 				    
-//	 			           RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
-//	 				       Document convertPDFDocumentToCSV = new Document(raFileinputstream);
-//	 				        
-//	 				        ExcelSaveOptions csvSave = new ExcelSaveOptions();
-//	 				        csvSave.setFormat(ExcelSaveOptions.ExcelFormat.CSV);
-//	 				        
-//	 				    	final File tempFile = File.createTempFile(name, ".csv");
-//	 			            String tempPath = tempFile.toString();
-//
-//	 				    	 convertPDFDocumentToCSV.save(tempPath, csvSave);
-//	 				        System.out.println("Done");
-//
-//	 				        byte[] bytesArray = new byte[(int) tempFile.length()]; 	
-//			        	    FileInputStream fis = new FileInputStream(tempFile);
-//			 	            fis.read(bytesArray); //read file into bytes[]
-//			 	            fis.close();	
-//			 	           		 	           
-//		 		 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
-//		 		 	          System.out.println("PDF-CSV-rawDataText:"+rawDataText);
-//		 		 	          rawDataText = rawDataText.replaceAll("\"", "");
-//		 		 	          tempFile.delete();
-//			 	              tempPath="";
-//
-//  	 			          }
-//         				}
-// 				    }else if (ext.equalsIgnoreCase("csv")) {
-// 				    	
-//     		    	 RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
-//     		    	 
-// 				     File templocfile = stream2file(raFileinputstream,fileName, ".csv");
-//	 		  		 File newfile = new File(templocfile.getAbsolutePath());
-//	 		  			 
-//   	  	              byte[] bytesArray = new byte[(int) templocfile.length()]; 	
-//        	          FileInputStream fis = new FileInputStream(newfile);
-//	                  fis.read(bytesArray); //read file into bytes[]
-// 	                  fis.close();	
-//		 	          
-//	 	              rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
-//	 	              rawDataText = rawDataText.replaceAll("\"", "");
-//	 	               System.out.println("CSVFile-rawDataText:"+rawDataText);
-//	 	          
-//  			 }
-//  			else
-//  			{
-//  				 RandomAccessBufferedFileInputStream raFileinputstream = new RandomAccessBufferedFileInputStream(file);
-//  			    rawDataText = new BufferedReader(
-//  				new InputStreamReader(raFileinputstream, StandardCharsets.UTF_8)).lines()
-//  					.collect(Collectors.joining("\n"));
-//  			   System.out.println("TXTFile-rawDataText:"+rawDataText);
-//  
-//  		    } 
-//
-//		    }	   
-//			System.out.println(rawDataText); 
-//           return rawDataText;    
-//        } 	  
-//        catch (IOException e) 
-//        { 
-//        	return null;
-//        } 
-//   }
-//   
+
    public static File stream2file (InputStream in,String filename,String ext) throws IOException {
        final File tempFile = File.createTempFile(filename, ext);
        tempFile.deleteOnExit();
@@ -1420,7 +870,66 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 				rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
 				rawDataText = rawDataText.replaceAll("\"", "");
 
-			} else {
+			} else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx") ) {
+				  
+					File originalfiletemploc = stream2file(largefile.getInputStream(), fileName, ".ext");
+					final File tempconvertedFile = File.createTempFile(fileName, "csv");
+					
+				        try (FileInputStream fis = new FileInputStream(originalfiletemploc.getAbsolutePath());
+				                BufferedWriter writer = new BufferedWriter(new FileWriter(tempconvertedFile))) {
+				      
+				            Workbook workbook = null;
+				            if (ext.equals("xls")) {
+				                workbook = new HSSFWorkbook(fis); // For .xls
+				            } else if (ext.equals("xlsx")) {
+				                workbook = new XSSFWorkbook(fis); // For .xlsx
+				            } else {
+				                throw new IllegalArgumentException("The specified file is not Excel (.xls or .xlsx)");
+				            }
+				            
+				            Sheet sheet = workbook.getSheetAt(0); // Get the first sheet
+				            DataFormatter formatter = new DataFormatter(); // To format the data as it appears in Excel
+
+				               for (Row row : sheet) {
+				                   StringBuilder sb = new StringBuilder();
+				                   for (Cell cell : row) {
+				                       switch (cell.getCellType()) {
+				                           case STRING:
+				                               sb.append(cell.getStringCellValue());
+				                               break;
+				                           case NUMERIC:
+				                               // Use the formatter to get the exact cell value without rounding
+				                               String formattedValue = formatter.formatCellValue(cell);
+				                               sb.append(formattedValue);
+				                               break;
+				                           case BOOLEAN:
+				                               sb.append(cell.getBooleanCellValue());
+				                               break;
+				                           case FORMULA:
+				                               sb.append(cell.getCellFormula()); // Handle formula as needed
+				                               break;
+				                           default:
+				                               sb.append("");
+				                               break;
+				                       }
+				                       sb.append(","); // Separate columns by a comma
+				                   }
+				                   // Remove the last comma and add a newline
+				                   writer.write(sb.toString().replaceAll(",$", ""));
+				                   writer.newLine();
+				               }
+
+				               writer.flush();
+				              
+				           } catch (IOException e) {
+				               e.printStackTrace();
+				           }
+				        
+				           bytes = FileUtils.readFileToByteArray(tempconvertedFile);
+				    	   rawDataText = new String(bytes, StandardCharsets.UTF_8); 
+			               System.out.println("Conversion complete. Check " + rawDataText);
+					}
+			else {
 				rawDataText = new BufferedReader(
 						new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
 						.collect(Collectors.joining("\n"));

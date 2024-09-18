@@ -2,12 +2,7 @@ package com.agaram.eln.primary.service.barcode;
 
 import java.awt.print.PrinterJob;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,19 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import javax.print.Doc;
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
+import java.util.Arrays;
+
 import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
-import javax.print.SimpleDoc;
-import javax.print.attribute.HashPrintServiceAttributeSet;
-import javax.print.attribute.PrintServiceAttributeSet;
-import javax.print.attribute.standard.PrinterName;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -53,17 +40,22 @@ import com.agaram.eln.primary.model.barcode.Printer;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialCategory;
+import com.agaram.eln.primary.model.sheetManipulation.LSfile;
+import com.agaram.eln.primary.model.sheetManipulation.LsfilemapBarcode;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.barcode.BarcodeMasterRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialInventoryRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LsfilemapBarcodeRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mongodb.gridfs.GridFSDBFile;
 
 @Service
@@ -80,6 +72,9 @@ public class BarcodeMasterService {
 	
 	@Autowired
 	private ElnmaterialInventoryRepository elnmaterialInventoryReppository;
+	
+	@Autowired
+	private LsfilemapBarcodeRepository lsfilemapBarcodeRepository;
 	
 	public ResponseEntity<Object> InsertBarcode(MultipartHttpServletRequest request)
 			throws JsonMappingException, JsonProcessingException, ParseException {
@@ -419,5 +414,53 @@ public class BarcodeMasterService {
 			return new ResponseEntity<>(objBarcode2, HttpStatus.OK);
 		}
 
+	public List<BarcodeMaster> GetBarcodemasterOnScreenbased(BarcodeMaster objuser) {
+
+		List<BarcodeMaster> lstbarcode = new ArrayList<BarcodeMaster>();
+		lstbarcode = barcodemasterrepository.findByLssitemasterAndScreenOrderByBarcodenoDesc(objuser.getLssitemaster(),objuser.getScreen());
+		return lstbarcode;
+	}
+	
+	public ResponseEntity<String> getbarcodeContent(Integer barcodeid, Integer ismultitenant, String tenant
+			) throws JsonParseException, JsonMappingException, IOException, NumberFormatException, ParseException {
+		
+		BarcodeMaster barcode = barcodemasterrepository.findOne(barcodeid);
+		HttpHeaders header = new HttpHeaders();
+		InputStream stream = null;
+		if(ismultitenant == 1 || ismultitenant ==2)
+		{
+			 stream =  cloudFileManipulationservice.retrieveCloudFile(barcode.getBarcodefileid(), tenant+"barcodefiles");
+		}
+		else
+		{
+			GridFSDBFile gridFsFile = null;
+
+			try {
+				gridFsFile = retrieveLargeFile(barcode.getBarcodefileid());
+				stream = gridFsFile.getInputStream();
+			} catch (IllegalStateException e) {
+
+				e.printStackTrace();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+		
+		String data = readFromInputStream(stream);
+		return new ResponseEntity<>(data, header, HttpStatus.OK);
+		
+	}
+
+	public List<LsfilemapBarcode> getmappedbarcode(LSfile objuser) {
+
+		List<LsfilemapBarcode> filemapBarcode = lsfilemapBarcodeRepository.findByFilecode(objuser.getFilecode());
+		return filemapBarcode;
+	}
+	public List<LsfilemapBarcode> onupdateSheetmapbarcode(LsfilemapBarcode[] objOrder) {
+		 List<LsfilemapBarcode> LsfilemapBarcode = Arrays.asList(objOrder);
+		lsfilemapBarcodeRepository.save(LsfilemapBarcode);
+		return LsfilemapBarcode;
+	}
 
 }

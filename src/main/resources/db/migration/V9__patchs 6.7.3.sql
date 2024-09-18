@@ -1610,3 +1610,18 @@ update lsusergrouprightsmaster set screenname = 'IDS_SCN_EQUIPMENTMASTER' where 
 update lsusergrouprights set screenname = 'IDS_SCN_EQUIPMENTMASTER' where screenname = 'IDS_SCN_INVENTORY' and displaytopic = 'IDS_TSK_MAINTANN' and modulename = 'IDS_MDL_INVENTORY';
 
 INSERT INTO public.screenmaster(screencode, screenname) VALUES (2, 'IDS_SCN_SHEETTEMPLATE') ON CONFLICT (screencode) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS public.lsfilemapbarcode
+(
+    filebarcode integer NOT NULL,
+    content jsonb,
+    filecode integer,
+    labelparameter character varying(255) COLLATE pg_catalog."default",
+    barcodeno integer,
+    CONSTRAINT lsfilemapbarcode_pkey PRIMARY KEY (filebarcode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.lsfilemapbarcode
+    OWNER to postgres;

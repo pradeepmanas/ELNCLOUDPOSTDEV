@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.agaram.eln.primary.model.barcode.BarcodeMaster;
-import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
-import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
+import com.agaram.eln.primary.model.sheetManipulation.LSfile;
+import com.agaram.eln.primary.model.sheetManipulation.LsfilemapBarcode;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.barcode.BarcodeMasterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,6 +56,11 @@ public class BarcodeMasterController {
 			throws ParseException, IOException {
 		return barcodemasterservice.getbarcodefileoncode(barcode, ismultitenant, tenant,screen,primarykey,path,username);
 	}
+	@PostMapping(value = "/getbarcodeContent")
+	public ResponseEntity<String> getbarcodeContent(@RequestBody BarcodeMaster Obj)
+					throws ParseException, IOException {
+		return barcodemasterservice.getbarcodeContent(Obj.getBarcodeno(), Obj.getIsmultitenant(), Obj.getCommonstring());
+	}
 	
 //	@PostMapping("/UpdateBarcode")
 //	public BarcodeMaster UpdateBarcode(MultipartHttpServletRequest request)
@@ -85,5 +90,20 @@ public class BarcodeMasterController {
 		
 		
 		return barcodemasterservice.updateBarcodeMaster(objBarcode);
+	}
+	@PostMapping("/GetBarcodemasterOnScreenbased")
+	public List<BarcodeMaster> GetBarcodemasterOnScreenbased(@RequestBody BarcodeMaster objuser)
+	{
+		return barcodemasterservice.GetBarcodemasterOnScreenbased(objuser);
+	}
+	
+	@PostMapping("/getmappedbarcode")
+	public List<LsfilemapBarcode> getmappedbarcode(@RequestBody LSfile objuser)
+	{
+		return barcodemasterservice.getmappedbarcode(objuser);
+	}
+	@PostMapping("/onupdateSheetmapbarcode")
+	public List<LsfilemapBarcode> onupdateSheetmapbarcode(@RequestBody LsfilemapBarcode[]  objOrder) {
+		return barcodemasterservice.onupdateSheetmapbarcode(objOrder);
 	}
 }

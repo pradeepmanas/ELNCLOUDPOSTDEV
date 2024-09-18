@@ -606,8 +606,6 @@ public class CommonFunction {
 				 
 				 if(delimiter.equalsIgnoreCase("None")) {
 					 System.out.println("delimiter: none");
-					// String str = trimmedData;
-					// System.out.println("getdatablock-str:"+str);
 					 List<String> List=Arrays.asList(trimmedData);
 					 System.out.println("List:"+ List);
 					 finaloutputList.add(List);
@@ -616,7 +614,12 @@ public class CommonFunction {
 					 outputList = finaloutputList;
 					 System.out.println("getdatablock-outputList:"+outputList);
 					
-				 }else {
+				 }else if (delimiter.equalsIgnoreCase(",")) {        //adding Empty string due to trailing comma used only for comma delimiter
+					    String[] str = data.split(delimiter , -1);
+						System.out.println("getdatablock-str:"+str);
+						outputList.add(Arrays.asList(str));	 
+				 }
+				 else {
 					 System.out.println("delimiter:"+delimiter);
 					 System.out.println("splitteddata:"+trimmedData.split(delimiter));
 					String[] str = trimmedData.split(delimiter!= "None" ? delimiter: "ChummaKizhi");
@@ -625,7 +628,7 @@ public class CommonFunction {
 				 }
 				 
 				 
-				 
+				
 			 }	
 			 
 		   }
