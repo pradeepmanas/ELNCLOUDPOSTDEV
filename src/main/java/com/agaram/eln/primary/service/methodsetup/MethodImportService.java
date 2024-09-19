@@ -145,7 +145,8 @@ public class MethodImportService {
 			final InstrumentCategory expInstCategory = mapper.readValue(instCategoryJson, InstrumentCategory.class);
 			final InstrumentCategory impInstCategory = new InstrumentCategory(expInstCategory);
 			final List<InstrumentCategory> instCategoryList = new ArrayList<>(1);
-			final Optional<InstrumentCategory> instCategoryExist = instCategoryRepo.findByInstcatnameAndStatus(expInstCategory.getInstcatname(), 1);
+		
+			final Optional<InstrumentCategory> instCategoryExist = instCategoryRepo.findByInstcatnameAndStatusAndLssitemaster(expInstCategory.getInstcatname(), 1,site);
             Date date = new Date();		
             if(!instCategoryExist.isPresent()) {
 				impInstCategory.setInstcatkey(0);

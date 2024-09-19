@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -135,8 +136,7 @@ import org.apache.commons.io.IOUtils;
 @Service
 public class MethodService {
 
-	//private static String ;
-
+	
 	@Autowired
 	MethodRepository methodRepo;
 	
@@ -593,108 +593,108 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	                List<Method> methodobj = methodRepo.findByMethodkey(methodKey);
 	  				Integer converterstatus = methodobj.get(0).getConverterstatus();
 	  				
-	  				if(converterstatus==1) {
+	  				if(converterstatus.equals(1)) {
 	
-					   String parsedText = "";
-					   PDFParser parser = null;
-					    PDDocument pdDoc = null;
-					    COSDocument cosDoc = null;
-					    PDFTextStripper pdfStripper;
-	
-					    try {
-					    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(file);
-					        parser = new PDFParser(raFile);
-					        parser.setLenient(true);
-					        parser.parse();
-					        cosDoc = parser.getDocument();
-					        pdfStripper = new PDFTextStripper();
-					        pdfStripper.setSortByPosition( true );
-					              			       
-					        pdDoc = new PDDocument(cosDoc);
-					        pdfStripper.setWordSeparator("\t");
-					        pdfStripper.setSuppressDuplicateOverlappingText(true);
-					        Matrix matrix = new Matrix();
-					        matrix.clone();
-					        pdfStripper.setTextLineMatrix(matrix);
-					   
-					        parsedText = pdfStripper.getText(pdDoc);
+	  					 InputStream licenseStream = getLicenseStream();
+	  					 
+					    final File tempconvertedtextFile = File.createTempFile(fileName, "txt");
+						
+						 License asposePdfLicenseText = new License();
+		 		            try {
+								asposePdfLicenseText.setLicense(licenseStream);
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+		 	
+			            Document convertPDFDocumentToText = new Document(file.getAbsolutePath());
 
-					    } catch (Exception e) {
-					        e.printStackTrace();
-					        try {
-					            if (cosDoc != null)
-					                cosDoc.close();
-					            if (pdDoc != null)
-					                pdDoc.close();
-					        } catch (Exception e1) {
-					            e1.printStackTrace();
-					        }
-	
-					    }    
-					    
-					    rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);
-				 
-				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-				        System.out.println("PDFfile-rawDataText:"+rawDataText);
+			            TextAbsorber textAbsorber = new TextAbsorber(new TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Pure));
+
+			            convertPDFDocumentToText.getPages().accept(textAbsorber);
+
+			            String ExtractedText = textAbsorber.getText();
+			            BufferedWriter writer = null;
+
+						try {
+							writer = new BufferedWriter(new FileWriter(tempconvertedtextFile));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+		
+			            try {
+							writer.write(ExtractedText);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+			            
+			            try {
+							writer.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+
+			            System.out.println("Done");
+			            
+				        
+			          byte[] bytesArray = new byte[(int) tempconvertedtextFile.length()]; 	
+	 	              FileInputStream fis = new FileInputStream(tempconvertedtextFile);
+		              fis.read(bytesArray); //read file into bytes[]
+		              fis.close();	
+		           		 	           
+		 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+	  				}else { //pdf to csv
+	  					InputStream licenseStream = getLicenseStream();
+						 
+		 				  final File convertedcsvfile = File.createTempFile(fileName, "csv");
+							
+		 			           License asposePdfLicenseCSV = new License();
+		 			           try {
+		 							asposePdfLicenseCSV.setLicense(licenseStream);
+		 						} catch (Exception e) {
+		 				    		e.printStackTrace();
+		 						}       
+		 				        
+		 				        Document convertPDFDocumentToCSV = new Document(file.getAbsolutePath());
+		 				        
+		 				        ExcelSaveOptions csvSave = new ExcelSaveOptions();
+		 				        csvSave.setFormat(ExcelSaveOptions.ExcelFormat.CSV);
+		 				        
+		 				    	convertPDFDocumentToCSV.save(convertedcsvfile.getAbsolutePath(), csvSave);
+		 				        System.out.println("Done");
+
+			    	  	        byte[] bytesArray = new byte[(int) convertedcsvfile.length()]; 	
+				        	    FileInputStream fis = new FileInputStream(convertedcsvfile);
+				 	            fis.read(bytesArray); //read file into bytes[]
+				 	            fis.close();	
+				 	           		 	           
+			 		 	        rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+			 		 	        rawDataText = rawDataText.substring(1); // Start from index 1 to the end
+				 	            rawDataText = rawDataText.replace("\n\"", "\n");
+				 	            rawDataText = rawDataText.replace("\",", ",");
+				 	            rawDataText = rawDataText.replace(",\"", ",");
+				 	            rawDataText = rawDataText.replace("\"\"", "\"");
+				 	            rawDataText=rawDataText.replace("\"\r\n", "\r\n");
+		 			        
 					   
-	  				}	  				
+	  				}
 	  				
 			   }  else if (ext.equalsIgnoreCase("csv")) {
 				   
-			//   File file = new File(path);
-				try {
-				FileReader fr = new FileReader(file);
-				// User BufferReader
-				BufferedReader br = new BufferedReader(fr);
-				String line = "";
-		      //  String resultline;
-			      StringBuffer sb = new StringBuffer();
+					byte[] bytesArray = new byte[(int) file.length()];
+					FileInputStream fis = new FileInputStream(file);
+					fis.read(bytesArray); // read file into bytes[]
+					fis.close();
 
-				
-				String[] tempArr;
-				//create temp file     
-				final File tempFile = File.createTempFile(fileName, ext);
-				
-				// User FileWriter to write content to text file
-				FileWriter writer = new FileWriter(tempFile);
-			//	 Use while loop to check when file contains data
-				while ((line = br.readLine()) != null) {
-					tempArr = line.split(",");
-					// User for loop to iterate String Array and write data to text file
-					for (String str : tempArr) {
-					//	writer.write(str + "\t ");[already written]
-						sb.append(str).append(",");
+	 	              rawDataText = new String(bytesArray, StandardCharsets.UTF_8);  
 
-					}
-				      String appendedline = sb.toString();
-				      
-
-  				      String resultline = appendedline.replaceAll("\"", "");
-  				      String finalresult = resultline.replaceAll(",$", "");
-
-				    //  String resultline = appendedline.trim();
-				  //    String resultline = appendedline.replaceAll("\\s+$", "");
-
-				      writer.write(finalresult);
-				      sb.setLength(0);
-				      appendedline ="";
-				      resultline="";
-					// Write each line of CSV file to multiple lines
-					writer.write("\n");
-
-				}
-	
-				writer.close();
-
-			    bytes = FileUtils.readFileToByteArray(tempFile);
-
-	    		rawDataText = new String(bytes, StandardCharsets.ISO_8859_1); 
-		        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-		        System.out.println("CSVfile-rawDataText:"+rawDataText);
-				}
-				catch (Exception e) {
-			        e.printStackTrace();
-			   }
+	 	              rawDataText = rawDataText.substring(1); // Start from index 1 to the end
+	 	              rawDataText = rawDataText.replace("\n\"", "\n");
+	 	              rawDataText = rawDataText.replace("\",", ",");
+	 	       
+	 	              rawDataText = rawDataText.replace(",\"", ",");
+	 	          
+	 	             rawDataText = rawDataText.replace("\"\"", "\"");
+	 	            rawDataText=rawDataText.replace("\"\r\n", "\r\n");
 			 }
 			   else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx") ) {
 			
@@ -785,6 +785,40 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
            IOUtils.copy(in, out);
        }
        return tempFile;
+   }
+   
+   private static InputStream getLicenseStream() {
+       
+   	String licenseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+   	"<License>\n"+
+   	 "<Data>\n"+
+   	    "<LicensedTo>Agaram Technologies Private Ltd</LicensedTo>\n"+
+   	    "<EmailTo>mukunth@agaramtech.com</EmailTo>\n"+
+   	    "<LicenseType>Developer OEM</LicenseType>\n"+
+   	    "<LicenseNote>1 Developer And Unlimited Deployment Locations</LicenseNote>\n"+
+   	    "<OrderID>230713115513</OrderID>\n"+
+   	    "<UserID>961336</UserID>\n"+
+   	    "<OEM>This is a redistributable license</OEM>\n"+
+   	    "<Products>\n"+
+   	      "<Product>Aspose.PDF for Java</Product>\n"+
+   	    "</Products>\n"+
+   	    "<EditionType>Professional</EditionType>\n"+
+   	    "<SerialNumber>70819740-45dc-48d2-ac0c-ec13bf2b3a78</SerialNumber>\n"+
+   	    "<SubscriptionExpiry>20240713</SubscriptionExpiry>\n"+
+   	    "<LicenseVersion>3.0</LicenseVersion>\n"+
+   	   " <LicenseInstructions>https://purchase.aspose.com/policies/use-license</LicenseInstructions>\n"+
+   	  "</Data>\n"+
+   	  "<Signature>cegenUxQNwdae0mvL7NDVJTGjnfp+b5xzb1+8AcIb9KAXtrragPtqL2lgsm13NjMpVLgH8MB/DSB/WW7Cy1n4XpRUUO67QEbRfDXhStHnyGR8k4mVimOBwifbjyBkKmKHMkKhiO/xRMLd6qap06HggZoy3Bzb2Qn6THYzU75GOFnZ+xii7c5OXKd4LJ1idZ/wzUPnPdCyJ642wsQ5eSrHyD39hAk4Hhv5ZSkN8KW+JMJSh4KcIjgSt3ehEXXoRvUs9SICWE3aUAIFGumrRomiwHmCgvNCbEbzIpuxQ+J13+7RBAstZq3dHfvKnvy562rKGkC+ls/VNb9aVzxLpWdYw==</Signature>\n"+
+   	"</License>";
+
+   	
+       // Convert the license string to an InputStream and return it
+       InputStream licenseStream = new ByteArrayInputStream(licenseContent.getBytes(StandardCharsets.UTF_8));
+       
+       // Explicitly clear the license content string to allow for garbage collection
+       licenseContent = null; // Make the string eligible for GC
+
+       return licenseStream;
    }
    
    @SuppressWarnings("resource")
