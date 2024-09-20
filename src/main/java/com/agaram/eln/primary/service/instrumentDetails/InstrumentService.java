@@ -1015,6 +1015,25 @@ public class InstrumentService {
 				}
 
 				Contentversion = null;
+			} else {
+				LSsamplefileversion sampversion1 = new LSsamplefileversion();
+				sampversion1.setCreatebyuser(objorderindex1.getLsuserMaster());
+				sampversion1.setCreateby(objorderindex1.getLsuserMaster().getUsercode());
+				sampversion1.setCreatedate(commonfunction.getCurrentUtcTime());
+				sampversion1.setVersionname("version_1");
+				sampversion1.setVersionno(1);
+				lssamplefileversionRepository.save(sampversion1);
+				
+				List<LSsamplefileversion> samplefileVersions = new ArrayList<LSsamplefileversion>();
+				samplefileVersions.add(sampversion1);
+				
+				LSsamplefile samplefile = new LSsamplefile();
+				samplefile.setCreatebyuser(objorderindex1.getLsuserMaster());
+				samplefile.setLssamplefileversion(samplefileVersions);
+//				samplefile.setCreatedate(commonfunction.getCurrentUtcTime());
+				samplefile.setVersionno(1);
+				
+				objorderindex1.setLssamplefile(samplefile);
 			}
 			try {
 				objorderindex1.getLssamplefile().setCreatedate(commonfunction.getCurrentUtcTime());
@@ -9141,7 +9160,7 @@ public class InstrumentService {
 				.collect(Collectors.toList());
 		if (objorder.getTestcode() == null && objorder.getLsprojectmaster() == null && objorder.getRejected() == null) {
 			lstorder.addAll(LSlogilabprotocoldetailRepository
-					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNull(
+					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrdercancellIsNull(
 							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
 
 //			lstorder.addAll(LSlogilabprotocoldetailRepository
@@ -9156,14 +9175,14 @@ public class InstrumentService {
 						List<Logilabprotocolorders> orderChunk = new ArrayList<>();
 //						AndElnmaterialIn
 						orderChunk.addAll(LSlogilabprotocoldetailRepository
-								.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoption(
+								.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndOrdercancellIsNull(
 										objorder.getOrderflag(), protocoltype, fromdate, todate, currentChunk, 1));
 						orderChunk.addAll(LSlogilabprotocoldetailRepository
-								.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreateby(
+								.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreatebyAndOrdercancellIsNull(
 										objorder.getOrderflag(), protocoltype, fromdate, todate, currentChunk, 2,
 										objorder.getLsuserMaster().getUsercode()));
 						orderChunk.addAll(LSlogilabprotocoldetailRepository
-								.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreatebyInOrderByProtocolordercodeDesc(
+								.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreatebyInAndOrdercancellIsNullOrderByProtocolordercodeDesc(
 										objorder.getOrderflag(), protocoltype, fromdate, todate, currentChunk, 3,
 										userlist));
 						return orderChunk;
@@ -9172,14 +9191,14 @@ public class InstrumentService {
 
 			if (objorder.getLstuserMaster() == null || objorder.getLstuserMaster().size() == 0) {
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByProtocolordercodeDesc(
 								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,
 								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
 								objorder.getOrderflag(), protocoltype, Directory_Code, 3, objorder.getLsuserMaster(),
 								fromdate, todate, objorder.getOrderflag(), protocoltype));
 			} else {
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullOrderByProtocolordercodeDesc(
+						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByProtocolordercodeDesc(
 								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,
 								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
 								objorder.getOrderflag(), protocoltype, Directory_Code, 3, fromdate, todate, userlist,
