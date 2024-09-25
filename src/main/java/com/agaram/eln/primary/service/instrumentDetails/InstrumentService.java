@@ -1616,7 +1616,7 @@ public class InstrumentService {
 		}).collect(Collectors.toList());
 
 		if (!lstMaPObject.isEmpty())
-			sdmsServiceCalling("ftpviewdata/createLogilabLIMSOrder", lstMaPObject);
+			sdmsServiceCalling("IntegrationSDMS/createLogilabLIMSOrder", lstMaPObject);
 	}
 
 	private String sdmsServiceCalling(String uri, List<Map<String, Object>> lstMaPObject) {
@@ -4547,8 +4547,10 @@ public class InstrumentService {
 //		String Content = objorder.getLssamplefile().getFilecontent();
 		objorder.getLssamplefile().setFilecontent(null);
 		lssamplefileRepository.save(objorder.getLssamplefile());
-		objorder.getLsparsedparameters().forEach((param) -> param.setBatchcode(objorder.getBatchcode()));
-		lsparsedparametersRespository.save(objorder.getLsparsedparameters());
+		if(objorder.getLsparsedparameters() !=null) {
+			objorder.getLsparsedparameters().forEach((param) -> param.setBatchcode(objorder.getBatchcode()));
+			lsparsedparametersRespository.save(objorder.getLsparsedparameters());
+			}	
 //		lsorderworkflowhistoryRepositroy.save(objorder.getLsorderworkflowhistory());
 		List<LsOrderattachments> lstattach = lsOrderattachmentsRepository
 				.findByBatchcodeOrderByAttachmentcodeDesc(objorder.getBatchcode());

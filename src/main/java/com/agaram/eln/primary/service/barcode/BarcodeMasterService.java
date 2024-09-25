@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.Arrays;
+import java.util.Collections;
 
 import javax.print.PrintException;
 import javax.print.PrintService;
@@ -201,6 +203,22 @@ public class BarcodeMasterService {
 		return fileManipulationservice.retrieveLargeFile(fileid);
 	}
 	
+	
+	private String UpdatecontentOnBarcodeusingOrders(String data, String username,
+			List<Map<String, Object>> barcodedata) throws ParseException {
+		 Date currentdata = commonfunction.getCurrentUtcTime();
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd ");
+		for (Map<String, Object> map : barcodedata) {
+            for (String key : map.keySet()) {
+            	data = data.replace(key, map.get(key).toString()); 
+            }
+        }
+		data = data.replace("$generatedby$", username)
+		.replace("$generateddate$", dateFormat.format(currentdata));
+		return data;
+		
+	}
+	
 
 	private String updatematerialcontent(String data, Integer materialcode,String path, String username) throws ParseException
 	{
@@ -213,7 +231,7 @@ public class BarcodeMasterService {
 					.replace("$storagepath$", path).replace("$batchno$", inventory.getSbatchno()).replace("$generatedby$", username)
 					.replace("$generateddate$", dateFormat.format(currentdata));
 			    MaterialCategory materialCategory = inventory.getMaterialcategory();
-			  if (materialCategory != null && "Cell Bank".equalsIgnoreCase(materialCategory.getSmaterialtypename())) {
+			  if (materialCategory != null && "Cell Bank".equals(materialCategory.getSmaterialtypename())) {
 		            JsonParser parser = new JsonParser();
 		            JsonObject jsonObject = parser.parse(inventory.getJsondata()).getAsJsonObject();
 		            JsonObject materialJsonDataObject = parser.parse(inventory.getMaterial().getJsondata()).getAsJsonObject();
@@ -459,8 +477,128 @@ public class BarcodeMasterService {
 	}
 	public List<LsfilemapBarcode> onupdateSheetmapbarcode(LsfilemapBarcode[] objOrder) {
 		 List<LsfilemapBarcode> LsfilemapBarcode = Arrays.asList(objOrder);
+		 if(!LsfilemapBarcode.isEmpty() && LsfilemapBarcode.get(0).getFilecode() != null) {
+			 lsfilemapBarcodeRepository.deleteByFilecode(LsfilemapBarcode.get(0).getFilecode());
+		 }
 		lsfilemapBarcodeRepository.save(LsfilemapBarcode);
 		return LsfilemapBarcode;
+	}
+
+	public Map<String, Object> getmappedbarcodeOnsheetorder(LSfile objuser) {
+		Map<String, Object> rtn=new HashMap<>();
+		List<LsfilemapBarcode> filemapBarcode = lsfilemapBarcodeRepository.findByFilecode(objuser.getFilecode());
+		List<Integer> barcodes=filemapBarcode.stream().map(LsfilemapBarcode::getBarcodeno).collect(Collectors.toList());
+		List<BarcodeMaster> barcodesList=barcodemasterrepository.findByBarcodenoIn(barcodes);
+		rtn.put("filemapBarcode", filemapBarcode);
+		rtn.put("barcodesList", barcodesList);
+		return rtn;
+	}
+
+	public ResponseEntity<InputStreamResource> GetbarcodefilecodeonOrderscreen(String barcodeid, String ismultitenant,
+			String tenant, String screen, String username, List<Map<String, Object>> barcodedata) throws IOException, NumberFormatException, ParseException {
+		
+		BarcodeMaster barcode = barcodemasterrepository.findOne(Integer.parseInt(barcodeid));
+		HttpHeaders header = new HttpHeaders();
+		InputStreamResource resource = null;
+		InputStream stream = null;
+		if(Integer.parseInt(ismultitenant) == 1 || Integer.parseInt(ismultitenant)==2)
+		{
+			 stream =  cloudFileManipulationservice.retrieveCloudFile(barcode.getBarcodefileid(), tenant+"barcodefiles");
+		}
+		else
+		{
+			GridFSDBFile gridFsFile = null;
+
+			try {
+				gridFsFile = retrieveLargeFile(barcode.getBarcodefileid());
+				stream = gridFsFile.getInputStream();
+			} catch (IllegalStateException e) {
+
+				e.printStackTrace();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+		
+		String data = readFromInputStream(stream);
+		
+		switch(screen)
+		{
+			case "2":
+				data = UpdatecontentOnBarcodeusingOrders(data,username,barcodedata);
+			break;
+		}
+		
+		RestTemplate restTemplate = new RestTemplate();
+		String uri = "http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/"+data;
+		HttpHeaders headers = new HttpHeaders();
+
+		HttpEntity<String> entity = new HttpEntity<String>(headers);
+		
+		ResponseEntity<byte[]> ctc = restTemplate.exchange(uri, HttpMethod.GET, entity, byte[].class);
+		byte[] barcodearray = ctc.getBody();
+		
+		int size = barcodearray.length;
+		InputStream is = null;
+		try {
+			is = new ByteArrayInputStream(barcodearray);
+			resource = new InputStreamResource(is);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (is != null)
+					is.close();
+			} catch (Exception ex) {
+
+			}
+		}
+		
+		header.set("Content-Disposition", "attachment; filename=" + "label.png");
+		header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		header.setContentLength(size);
+		
+		return new ResponseEntity<>(resource, header, HttpStatus.OK);
+	}
+
+	public Map<String, Object> PrintBarcodeorders(String barcodeid, String ismultitenant, String tenant, String screen,
+			String username, List<Map<String, Object>> barcodedata) throws IOException, ParseException {
+		Map<String, Object> returnmap = new HashMap<String, Object>();
+		BarcodeMaster barcode = barcodemasterrepository.findOne(Integer.parseInt(barcodeid));
+		HttpHeaders header = new HttpHeaders();
+		InputStreamResource resource = null;
+		InputStream stream = null;
+		if(Integer.parseInt(ismultitenant) == 1 || Integer.parseInt(ismultitenant)==2)
+		{
+			 stream =  cloudFileManipulationservice.retrieveCloudFile(barcode.getBarcodefileid(), tenant+"barcodefiles");
+		}
+		else
+		{
+			GridFSDBFile gridFsFile = null;
+
+			try {
+				gridFsFile = retrieveLargeFile(barcode.getBarcodefileid());
+				stream = gridFsFile.getInputStream();
+			} catch (IllegalStateException e) {
+
+				e.printStackTrace();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+		
+		String data = readFromInputStream(stream);
+		
+		switch(screen)
+		{
+			case "2":
+				data = UpdatecontentOnBarcodeusingOrders(data,username,barcodedata);
+			break;
+		}
+		returnmap.put("Data", data);
+		 return returnmap;
 	}
 
 }

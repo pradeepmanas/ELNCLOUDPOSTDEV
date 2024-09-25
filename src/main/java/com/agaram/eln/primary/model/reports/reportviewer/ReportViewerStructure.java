@@ -58,6 +58,17 @@ public class ReportViewerStructure {
 	private Response response;
 	
 	@Transient
+	private Long dircodetomove;
+	
+	public Long getDircodetomove() {
+		return dircodetomove;
+	}
+
+	public void setDircodetomove(Long dircodetomove) {
+		this.dircodetomove = dircodetomove;
+	}
+
+	@Transient
 	private List<LSuserMaster> lstuserMaster;
 	
 	@Transient

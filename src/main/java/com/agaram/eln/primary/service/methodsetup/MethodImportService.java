@@ -363,6 +363,7 @@ public class MethodImportService {
 					delimiterItem.setCreatedby(createdUser);
 					delimiterItem.setCreateddate(date);
 					delimiterItem.setLssitemaster(site);
+					delimiterItem.setDelimiterstatus("A");
 					
 					newDelimiter.add(delimiterItem);
 				});
@@ -388,6 +389,8 @@ public class MethodImportService {
 		    		methodDelimiterItem.setCreatedby(createdUser);
 		    		methodDelimiterItem.setCreateddate(date);
 		    		methodDelimiterItem.setLssitemaster(site);
+		    		methodDelimiterItem.setMethoddelimiterstatus("A");
+					
 		    		final Delimiter delimItem = delimiter.stream()															
 		    				.filter(delim -> delim.getDelimitername().equals(methodDelimiterItem.getDelimiter().getDelimitername()))
 							.findAny()

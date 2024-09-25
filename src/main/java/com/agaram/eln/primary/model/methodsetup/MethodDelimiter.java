@@ -249,7 +249,8 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 		//return methoddelimiterstatus;
 		if(methoddelimiterstatus != null)
 		{
-		return  methoddelimiterstatus.trim().equals("A")?"Active":"Retired";
+		//return  methoddelimiterstatus.trim().equals("A")?"Active":"Retired";
+			return  status == 1 ?"Active":"Retired";
 		}
 		else
 		{

@@ -573,8 +573,6 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 		   final String ext = FilenameUtils.getExtension(fileName); 
 		   String rawDataText="";
 		   
-		   final String name = FilenameUtils.getBaseName(fileName);
-		   
 		   CloudParserFile obj = cloudparserfilerepository.findTop1Byfilename(fileName);
 		   String fileid = obj.fileid;
 			 
@@ -823,12 +821,11 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
    
    @SuppressWarnings("resource")
 	public String getSQLFileData(String fileName, Integer methodKey) throws IOException, InterruptedException {
-//		String Content = "";
+
 		String rawDataText = "";
 		byte[] bytes = null;
 
 		final String ext = FilenameUtils.getExtension(fileName);
-		final String name = FilenameUtils.getBaseName(fileName);
 
 		String fileid = fileName;
 		GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileid)));
@@ -838,75 +835,116 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 
 		if (largefile != null) {
 
+			File originalfiletemploc = stream2file(largefile.getInputStream(), fileName, "."+ext);
+			
 			if (ext.equalsIgnoreCase("pdf")) {
 
-//			List<Method> methodobj = methodRepo.findByInstrawdataurl(fileName);
 				List<Method> methodobj = methodRepo.findByMethodkey(methodKey);
 
 				Integer converterstatus = methodobj.get(0).getConverterstatus();
-				if (converterstatus == 1) // pdf to txt
+				if (converterstatus.equals(1)) // pdf to txt
 				{
-
-					 String parsedText = "";
-					 PDFParser parser = null;
-					 PDDocument pdDoc = null;
-					 COSDocument cosDoc = null;
-					 PDFTextStripper pdfStripper;
+					 InputStream licenseStream = getLicenseStream();
 					 
+					 final File tempconvertedtextFile = File.createTempFile(fileName, "txt");
+					
+					 License asposePdfLicenseText = new License();
+	 		            try {
+							asposePdfLicenseText.setLicense(licenseStream);
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+	 	
+		            Document convertPDFDocumentToText = new Document(largefile.getInputStream());
 
-					    try {
-					    	RandomAccessBufferedFileInputStream raFile = new RandomAccessBufferedFileInputStream(largefile.getInputStream());
-					        parser = new PDFParser(raFile);
-					        parser.setLenient(true);
-					        parser.parse();
-					        cosDoc = parser.getDocument();
-					        pdfStripper = new PDFTextStripper();
-					        pdfStripper.setSortByPosition( true );
-					              			       
-					        pdDoc = new PDDocument(cosDoc);
-					        pdfStripper.setWordSeparator("\t");
-					        pdfStripper.setSuppressDuplicateOverlappingText(true);
-					        Matrix matrix = new Matrix();
-					        matrix.clone();
-					        pdfStripper.setTextLineMatrix(matrix);
-					   
-					        parsedText = pdfStripper.getText(pdDoc);
+		            TextAbsorber textAbsorber = new TextAbsorber(new TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Pure));
 
-					    } catch (Exception e) {
-					        e.printStackTrace();
-					        try {
-					            if (cosDoc != null)
-					                cosDoc.close();
-					            if (pdDoc != null)
-					                pdDoc.close();
-					        } catch (Exception e1) {
-					            e1.printStackTrace();
-					        }
+		            convertPDFDocumentToText.getPages().accept(textAbsorber);
+
+		            String ExtractedText = textAbsorber.getText();
+		            BufferedWriter writer = null;
+
+					try {
+						writer = new BufferedWriter(new FileWriter(tempconvertedtextFile));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 	
-					    }    
-					    
-					    rawDataText = new String(parsedText.getBytes(), StandardCharsets.ISO_8859_1);
-				 
-				        rawDataText = rawDataText.replaceAll("\r\n\r\n", "\r\n");
-				        System.out.println("PDFfile-rawDataText:"+rawDataText);
+		            try {
+						writer.write(ExtractedText);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+		            
+		            try {
+						writer.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+		            System.out.println("Done");
+		            
+			        
+		          byte[] bytesArray = new byte[(int) tempconvertedtextFile.length()]; 	
+	              FileInputStream fis = new FileInputStream(tempconvertedtextFile);
+	              fis.read(bytesArray); //read file into bytes[]
+	              fis.close();	
+	           		 	           
+	 	          rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+	 	         
+				}else { //pdf to csv
+ 					InputStream licenseStream = getLicenseStream();
+					 
+	 				  final File convertedcsvfile = File.createTempFile(fileName, "csv");
+						
+	 			           License asposePdfLicenseCSV = new License();
+	 			           try {
+	 							asposePdfLicenseCSV.setLicense(licenseStream);
+	 						} catch (Exception e) {
+	 				    		e.printStackTrace();
+	 						}       
+	 				        
+	 				        Document convertPDFDocumentToCSV = new Document(largefile.getInputStream());
+	 				        
+	 				        ExcelSaveOptions csvSave = new ExcelSaveOptions();
+	 				        csvSave.setFormat(ExcelSaveOptions.ExcelFormat.CSV);
+	 				        
+	 				    	convertPDFDocumentToCSV.save(convertedcsvfile.getAbsolutePath(), csvSave);
+	 				        System.out.println("Done");
+
+		    	  	        byte[] bytesArray = new byte[(int) convertedcsvfile.length()]; 	
+			        	    FileInputStream fis = new FileInputStream(convertedcsvfile);
+			 	            fis.read(bytesArray); //read file into bytes[]
+			 	            fis.close();	
+			 	           		 	           
+		 		 	        rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
+		 		 	        rawDataText = rawDataText.substring(1); // Start from index 1 to the end
+			 	            rawDataText = rawDataText.replace("\n\"", "\n");
+			 	            rawDataText = rawDataText.replace("\",", ",");
+			 	            rawDataText = rawDataText.replace(",\"", ",");
+			 	            rawDataText = rawDataText.replace("\"\"", "\"");
+			 	            rawDataText=rawDataText.replace("\"\r\n", "\r\n");
 				}
 
 			} else if (ext.equalsIgnoreCase("csv")) {
+				
+					byte[] bytesArray = new byte[(int) originalfiletemploc.length()];
+					FileInputStream fis = new FileInputStream(originalfiletemploc);
+					fis.read(bytesArray); // read file into bytes[]
+					fis.close();
 
-				File templocfile = stream2file(largefile.getInputStream(), fileName, ".csv");
-				File newfile = new File(templocfile.getAbsolutePath());
+	 	              rawDataText = new String(bytesArray, StandardCharsets.UTF_8);  
 
-				byte[] bytesArray = new byte[(int) templocfile.length()];
-				FileInputStream fis = new FileInputStream(newfile);
-				fis.read(bytesArray); // read file into bytes[]
-				fis.close();
-
-				rawDataText = new String(bytesArray, StandardCharsets.UTF_8);
-				rawDataText = rawDataText.replaceAll("\"", "");
-
-			} else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx") ) {
+	 	              rawDataText = rawDataText.substring(1); // Start from index 1 to the end
+	 	              rawDataText = rawDataText.replace("\n\"", "\n");
+	 	              rawDataText = rawDataText.replace("\",", ",");
+	 	       
+	 	              rawDataText = rawDataText.replace(",\"", ",");
+	 	          
+	 	             rawDataText = rawDataText.replace("\"\"", "\"");
+	 	            rawDataText=rawDataText.replace("\"\r\n", "\r\n");
+			 }else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx") ) {
 				  
-					File originalfiletemploc = stream2file(largefile.getInputStream(), fileName, ".ext");
 					final File tempconvertedFile = File.createTempFile(fileName, "csv");
 					
 				        try (FileInputStream fis = new FileInputStream(originalfiletemploc.getAbsolutePath());
@@ -972,7 +1010,6 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 		}
 		return rawDataText;
 	}  
-
 
     /**
     * This method is used to get Method entity based on its primary key

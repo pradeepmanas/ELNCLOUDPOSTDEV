@@ -3,6 +3,7 @@ package com.agaram.eln.primary.service.reports;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -390,5 +391,22 @@ public class ViewerService {
 
 	public Cloudreports getreportcontent(Reports report) throws Exception {
 		return cloudreportsRepository.findOne(report.getReportcode());
+	}
+
+	public List<ReportViewerStructure> deleteContextClick(ReportViewerStructure[] directories) {
+		List<ReportViewerStructure> lstdirectories = Arrays.asList(directories);
+
+		lstdirectories.forEach(structure -> {
+			if (structure.getParentdircode() == -2) {
+				reportViewerstructureRepository.delete(structure.getDirectorycode());
+				reportViewerstructureRepository.updateparentdirectory(structure.getDircodetomove(),
+						structure.getDirectorycode());
+			} else {
+				reportViewerstructureRepository.updatedirectory(structure.getParentdircode(), structure.getPath(),
+						structure.getDirectorycode(), structure.getDirectoryname());
+			}
+		});
+
+		return lstdirectories;
 	}
 }

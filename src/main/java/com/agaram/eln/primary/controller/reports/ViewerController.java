@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+//import com.agaram.eln.primary.model.reports.reportdesigner.ReportDesignerStructure;
 import com.agaram.eln.primary.model.reports.reportviewer.Cloudreports;
 import com.agaram.eln.primary.model.reports.reportviewer.ReportViewerStructure;
 import com.agaram.eln.primary.model.reports.reportviewer.Reports;
@@ -71,5 +72,11 @@ public class ViewerController {
 	@RequestMapping(value = "/getreportcontent")
 	protected Cloudreports getreportcontent(@RequestBody Reports report) throws Exception {
 		return viewerservice.getreportcontent(report);
+	}
+	
+	@RequestMapping("/deleteContextClick")
+	public List<ReportViewerStructure> deleteContextClick(@RequestBody ReportViewerStructure[] directories)throws Exception
+	{
+		return viewerservice.deleteContextClick(directories);
 	}
 }

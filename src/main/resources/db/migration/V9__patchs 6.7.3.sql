@@ -1625,3 +1625,7 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.lsfilemapbarcode
     OWNER to postgres;
+    
+ALTER TABLE IF Exists LsfilemapBarcode ADD Column IF NOT EXISTS tagname character varying(255);
+
+ALTER TABLE IF Exists LsfilemapBarcode ADD Column IF NOT EXISTS barocodename character varying(255);

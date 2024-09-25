@@ -14,4 +14,5 @@ public interface BarcodeMasterRepository  extends JpaRepository<BarcodeMaster, I
 	public BarcodeMaster findByBarcodeno(Integer barcodeno);
 	public BarcodeMaster findByBarcodenameIgnoreCaseAndStatus(String Barcodename, int i);
 	List<BarcodeMaster> findByLssitemasterAndScreenOrderByBarcodenoDesc(LSSiteMaster lssitemaster, ScreenMaster screen);
+	List<BarcodeMaster> findByBarcodenoIn(List<Integer> barcodes);
 }

@@ -4012,7 +4012,7 @@ public class ProtocolService {
 		}).collect(Collectors.toList());
 
 		if (!lstMaPObject.isEmpty())
-			sdmsServiceCalling("ftpviewdata/createLogilabLIMSOrder", lstMaPObject);
+			sdmsServiceCalling("IntegrationSDMS/createLogilabLIMSOrder", lstMaPObject);
 	}
 
 	private String sdmsServiceCalling(String uri, List<Map<String, Object>> lstMaPObject) {

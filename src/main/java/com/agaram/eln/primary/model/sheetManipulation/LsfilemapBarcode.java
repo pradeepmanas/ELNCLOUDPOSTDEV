@@ -30,6 +30,27 @@ public class LsfilemapBarcode {
 	private String labelparameter;
 	
 	private Integer barcodeno;
+	
+	
+	private String tagname;
+	
+	private String barocodename;
+
+	public String getBarocodename() {
+		return barocodename;
+	}
+
+	public void setBarocodename(String barocodename) {
+		this.barocodename = barocodename;
+	}
+
+	public String getTagname() {
+		return tagname;
+	}
+
+	public void setTagname(String tagname) {
+		this.tagname = tagname;
+	}
 
 	public Integer getBarcodeno() {
 		return barcodeno;

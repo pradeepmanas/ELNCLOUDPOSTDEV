@@ -247,12 +247,14 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	public String getDelimiterstatus() {
 		if(delimiterstatus != null)
 		{
-		return  delimiterstatus.trim().equals("A")?"Active":"Retired";
+		//return  delimiterstatus.trim().equals("A")?"Active":"Retired";
+			return  status == 1 ?"Active":"Retired";
 		}
 		else
 		{
 			return "";
 		}
+
 	}
 
 	public void setDelimiterstatus(String delimiterstatus) {

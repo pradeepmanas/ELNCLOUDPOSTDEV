@@ -63,6 +63,9 @@ public class ReportDesignerStructure {
 
 	@Transient
 	private List<LSuserMaster> lstuserMaster;
+	
+	@Transient
+	private Long dircodetomove;
 
 	@Transient
 	private Date fromdate;
@@ -82,8 +85,8 @@ public class ReportDesignerStructure {
 	@Transient
 	private Integer templatetype;
 
-	@Transient
-	private Long dircodetomove;
+//	@Transient
+//	private Long dircodetomove;
 
 	@Transient
 	private Map<String, String> searchData = new HashMap<>();
