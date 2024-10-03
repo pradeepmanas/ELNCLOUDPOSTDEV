@@ -1456,11 +1456,16 @@ public class UserService {
 	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 	        // Format the date
 	        String formattedDate = date.format(formatter);
-	        Integer accounttype =objusermaster.getLssitemaster().getAccouttype();
-	        // days print
-	        Integer days =  accounttype.toString().equals("3") ? 90 : 30;
-	        String Accounttype = accounttype.toString().equals("3") ? "Academic" : accounttype.toString().equals("2") ? "Corporate" : "Personal" ;
-			if((objusermaster.getAutenticatefrom() == 1 || objusermaster.getAutenticatefrom() == 2) && objusermaster.getIsmultitenant() == 2) {		
+	        Integer accounttype;
+	        Integer days = null;
+	        String Accounttype = null;
+	        if(objusermaster.getIsmultitenant().equals(2)) {
+	        	accounttype =objusermaster.getLssitemaster().getAccouttype();
+		        // days print
+	        	days=  accounttype.toString().equals("3") ? 90 : 30;
+		        Accounttype = accounttype.toString().equals("3") ? "Academic" : accounttype.toString().equals("2") ? "Corporate" : "Personal" ;		
+	        }
+	        if(objusermaster.getAutenticatefrom() != null && (objusermaster.getAutenticatefrom() == 1 || objusermaster.getAutenticatefrom() == 2) && objusermaster.getIsmultitenant() == 2) {		
 	
 				email.setSubject("ELN LITE User Credentials");
 				email.setMailcontent(
@@ -1496,7 +1501,7 @@ public class UserService {
 						+ "    </div>"						
 						);
 				
-			}else if(objusermaster.getAutenticatefrom() == 0 && objusermaster.getIsmultitenant() == 2) {
+			}else if(objusermaster.getAutenticatefrom() != null && objusermaster.getAutenticatefrom() == 0 && objusermaster.getIsmultitenant() == 2) {
 				email.setSubject("ELN LITE User Credentials");
 				email.setMailcontent(
 						"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
